@@ -90,7 +90,7 @@ Transitions = Transition.cpp Transition.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h \
-Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h Model.cpp Model.h mathlib.c mathlib.h ModelTypes.cpp ModelTypes.h
+Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h Model.cpp Model.h mathlib.c mathlib.h ModelTypes.cpp ModelTypes.h
 
 ActorsInMenus = \
 Banner.cpp Banner.h BannerCache.cpp BannerCache.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
