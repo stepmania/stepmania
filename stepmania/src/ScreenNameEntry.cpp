@@ -117,7 +117,6 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 //	GAMESTATE->m_iRankingIndex[PLAYER_1] = 0;
 
 
-
 	/* Save options.  We'll reset them to display letters, and we must put them
 	 * back when we're done. */
 	GAMESTATE->StoreSelectedOptions();
@@ -129,21 +128,29 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		GAMESTATE->m_SongOptions = SongOptions();
 	}
 
+	int p;
+	// Find out if players deserve to enter their name
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_bStillEnteringName[p] = GAMESTATE->m_iRankingIndex[p] != -1;
+
+	if( !AnyStillEntering() )
+	{
+		/* Nobody made a high score. */
+		HandleScreenMessage( SM_GoToNextScreen );
+		return;
+	}
 
 	GAMESTATE->m_bPastHereWeGo = true;	// enable the gray arrows
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenNameEntry background") );
 	this->AddChild( &m_Background );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		// Find out if player deserves to enter their name
-		bool bNewHighScore = GAMESTATE->m_iRankingIndex[p] != -1;
-		m_bStillEnteringName[p] = bNewHighScore;	// false if they made a new high score
 		for( int i=0; i<MAX_RANKING_NAME_LENGTH; i++ )
 			m_sSelectedName[p] += ' ';
 
-		if( !bNewHighScore )
+		if( !m_bStillEnteringName[p] )
 			continue;	// skip
 
 		// remove modifiers that may have been on the last song
@@ -220,22 +227,6 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	}
 
 
-
-	bool bAnyStillEntering = false;
-	
-	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			bAnyStillEntering |= m_bStillEnteringName[p];
-		if( !bAnyStillEntering )
-		{
-			HandleScreenMessage( SM_GoToNextScreen );
-			return;
-		}
-	}
-
-
-
-
 	if( !PREFSMAN->m_bMenuTimer )
 		m_Timer.Disable();
 	else
@@ -257,6 +248,13 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	m_fFakeBeat = 0;
 }
 
+bool ScreenNameEntry::AnyStillEntering() const
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( m_bStillEnteringName[p] )
+			return true;
+	return false;
+}
 
 ScreenNameEntry::~ScreenNameEntry()
 {
@@ -370,16 +368,17 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		{
 			GAMESTATE->RestoreSelectedOptions();
 
-			Grade max_grade = GRADE_E;
-			vector<Song*> vSongs;
-			StageStats stats;
-			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
 			/* Hack: go back to the select course screen in event mode. */
 			if( PREFSMAN->m_bEventMode && GAMESTATE->IsCourseMode() )
 			{
 				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 				break;
 			}
+
+			Grade max_grade = GRADE_E;
+			vector<Song*> vSongs;
+			StageStats stats;
+			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsHumanPlayer(p) )
@@ -417,9 +416,6 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
 	}
 
-	bool bAnyStillEntering = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		bAnyStillEntering |= m_bStillEnteringName[p];
-	if( !bAnyStillEntering && !m_Out.IsTransitioning() )
+	if( !AnyStillEntering() && !m_Out.IsTransitioning() )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 }

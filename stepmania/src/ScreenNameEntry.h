@@ -32,6 +32,7 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 private:
+	bool AnyStillEntering() const;
 
 	BGAnimation		m_Background;
 
