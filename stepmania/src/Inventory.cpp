@@ -26,9 +26,15 @@ Inventory::Inventory()
 {
 	RefreshPossibleItems();
 	
-	m_soundAcquireItem.Load( THEME->GetPathTo("Sounds","gameplay battle aquire item") );
-	m_soundUseItem.Load( THEME->GetPathTo("Sounds","gameplay battle use item") );
-	m_soundItemEnding.Load( THEME->GetPathTo("Sounds","gameplay battle item ending") );
+	// don't load battle sounds if they're not going to be used
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+		m_soundAcquireItem.Load( THEME->GetPathTo("Sounds","gameplay battle aquire item") );
+		m_soundUseItem.Load( THEME->GetPathTo("Sounds","gameplay battle use item") );
+		m_soundItemEnding.Load( THEME->GetPathTo("Sounds","gameplay battle item ending") );
+		break;
+	}
 }
 
 void Inventory::RefreshPossibleItems()

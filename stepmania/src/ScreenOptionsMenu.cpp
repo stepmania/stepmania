@@ -40,8 +40,8 @@ enum {
 
 OptionRowData g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	{ "",	1, {"Appearance Options"} },
+	{ "",	1, {"Config Key/Joy Mappings"} },
 	{ "",	1, {"Input Options"} },
-	{ "",	1, {"Config Key/Joy"} },
 	{ "",	1, {"Gameplay Options"} },
 	{ "",	1, {"Graphic Options"} },
 	{ "",	1, {"Machine Options"} },
