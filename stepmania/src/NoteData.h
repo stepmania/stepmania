@@ -61,15 +61,12 @@ public:
 	void PadTapNotes(int rows);
 	void SetTapNote(int track, int row, TapNote t);
 
-	void LoadFromSMNoteDataString( CString sSMNoteData );
-	CString GetSMNoteDataString();
-
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
 	void CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
 	void CopyAll( NoteData* pFrom );
 	
-	inline bool IsRowEmpty( int index )
+	inline bool IsRowEmpty( int index ) const
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 			if( GetTapNote(t, index) != TAP_EMPTY )
@@ -131,14 +128,23 @@ public:
 	void SnapToNearestNoteType( NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
 	void SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 
-	NoteType GetSmallestNoteTypeForMeasure( int iMeasureIndex );
-
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();
 	void ConvertHoldNotesTo2sAnd3s();
 
 	void Convert4sToHoldNotes();
 	void ConvertHoldNotesTo4s();
+};
+
+/* Utils for NoteData.  Things should go in here if they can be (cleanly and
+ * efficiently) implemented using only NoteData's primitives; this improves
+ * abstraction and makes it much easier to change NoteData internally in
+ * the future. */
+namespace NoteDataUtil
+{
+	NoteType GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex );
+	void LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData );
+	CString GetSMNoteDataString(NoteData &in);
 };
 
 #endif

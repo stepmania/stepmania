@@ -20,7 +20,7 @@
 #include "RageException.h"
 #include "GameState.h"
 #include "math.h"
-
+#include "NotesLoaderSM.h"
 
 
 NoteData::NoteData()
@@ -36,126 +36,6 @@ void NoteData::Init()
 
 NoteData::~NoteData()
 {
-}
-
-void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
-{
-	int iNumTracks = m_iNumTracks;
-	Init();
-	m_iNumTracks = iNumTracks;
-
-	// strip comments out of sSMNoteData
-	while( sSMNoteData.Find("//") != -1 )
-	{
-		int iIndexCommentStart = sSMNoteData.Find("//");
-		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-			sSMNoteData.Delete( iIndexCommentStart, 2 );
-		else
-			sSMNoteData.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
-	}
-
-	CStringArray asMeasures;
-	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
-	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
-	{
-		CString &sMeasureString = asMeasures[m];
-		TrimLeft(sMeasureString);
-		TrimRight(sMeasureString);
-
-		CStringArray asMeasureLines;
-		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
-
-		//ASSERT( asMeasureLines.size() == 4  ||
-		//	    asMeasureLines.size() == 8  ||
-		//	    asMeasureLines.size() == 12  ||
-		//	    asMeasureLines.size() == 16 );
-
-
-		for( unsigned l=0; l<asMeasureLines.size(); l++ )
-		{
-			CString &sMeasureLine = asMeasureLines[l];
-			TrimLeft(sMeasureLine);
-			TrimRight(sMeasureLine);
-
-			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
-			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
-			const int iIndex = BeatToNoteRow( fBeat );
-
-//			if( m_iNumTracks != sMeasureLine.GetLength() )
-//				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
-
-			for( int c=0; c<min(sMeasureLine.GetLength(),m_iNumTracks); c++ )
-			{
-				TapNote t;
-				switch(sMeasureLine[c])
-				{
-				case '0': t = TAP_EMPTY; break;
-				case '1': t = TAP_TAP; break;
-				case '2': t = TAP_HOLD_HEAD; break;
-				case '3': t = TAP_HOLD_TAIL; break;
-				default: ASSERT(0); t = TAP_EMPTY; break;
-				}
-
-				SetTapNote(c, iIndex, t);
-			}
-		}
-	}
-	this->Convert2sAnd3sToHoldNotes();
-
-	Compress();
-}
-
-CString NoteData::GetSMNoteDataString()
-{
-	this->ConvertHoldNotesTo2sAnd3s();
-
-	float fLastBeat = GetLastBeat();
-	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
-
-	CStringArray asMeasureStrings;
-
-	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
-	{
-		NoteType nt = GetSmallestNoteTypeForMeasure( m );
-		int iRowSpacing;
-		if( nt == NOTE_TYPE_INVALID )
-			iRowSpacing = 1;
-		else
-			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
-
-		CStringArray asMeasureLines;
-		asMeasureLines.push_back( ssprintf("  // measure %d", m+1) );
-
-		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
-		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
-
-		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
-		{
-			CString szLineString;
-			for( int t=0; t<m_iNumTracks; t++ ) {
-				char c;
-				switch(GetTapNote(t, r)) {
-				case TAP_EMPTY: c = '0'; break;
-				case TAP_TAP:   c = '1'; break;
-				case TAP_HOLD_HEAD: c = '2'; break;
-				case TAP_HOLD_TAIL: c = '3'; break;
-				default: ASSERT(0); c = '0'; break;
-				}
-				szLineString.append(1, c);
-			}
-			
-			asMeasureLines.push_back( szLineString );
-		}
-
-		CString sMeasureString = join( "\n", asMeasureLines );
-
-		asMeasureStrings.push_back( sMeasureString );
-	}
-
-	this->Convert2sAnd3sToHoldNotes();
-
-	return join( "\n,", asMeasureStrings );
 }
 
 /* Clear [iNoteIndexBegin,iNoteIndexEnd]; that is, including iNoteIndexEnd. */
@@ -1006,43 +886,6 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 }
 
 
-NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )
-{
-	const int iMeasureStartIndex = iMeasureIndex * ROWS_PER_MEASURE;
-	const int iMeasureLastIndex = (iMeasureIndex+1) * ROWS_PER_MEASURE - 1;
-
-	// probe to find the smallest note type
-	NoteType nt;
-	for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
-	{
-		float fBeatSpacing = NoteTypeToBeat( nt );
-		int iRowSpacing = int(roundf( fBeatSpacing * ROWS_PER_BEAT ));
-
-		bool bFoundSmallerNote = false;
-		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
-		{
-			if( i % iRowSpacing == 0 )
-				continue;	// skip
-			
-			if( !IsRowEmpty(i) )
-			{
-				bFoundSmallerNote = true;
-				break;
-			}
-		}
-
-		if( bFoundSmallerNote )
-			continue;	// searching the next NoteType
-		else
-			break;	// stop searching.  We found the smallest NoteType
-	}
-
-	if( nt == NUM_NOTE_TYPES )	// we didn't find one
-		return NOTE_TYPE_INVALID;	// well-formed notes created in the editor should never get here
-	else
-		return nt;
-}
-
 void NoteData::PadTapNotes(int rows)
 {
 	int needed = rows - m_TapNotes[0].size() + 1;
@@ -1143,4 +986,161 @@ void NoteData::Compress()
 void NoteData::Decompress()
 {
 	SetDivisor(1);
+}
+
+NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
+{
+	const int iMeasureStartIndex = iMeasureIndex * ROWS_PER_MEASURE;
+	const int iMeasureLastIndex = (iMeasureIndex+1) * ROWS_PER_MEASURE - 1;
+
+	// probe to find the smallest note type
+	NoteType nt;
+	for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
+	{
+		float fBeatSpacing = NoteTypeToBeat( nt );
+		int iRowSpacing = int(roundf( fBeatSpacing * ROWS_PER_BEAT ));
+
+		bool bFoundSmallerNote = false;
+		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
+		{
+			if( i % iRowSpacing == 0 )
+				continue;	// skip
+			
+			if( !n.IsRowEmpty(i) )
+			{
+				bFoundSmallerNote = true;
+				break;
+			}
+		}
+
+		if( bFoundSmallerNote )
+			continue;	// searching the next NoteType
+		else
+			break;	// stop searching.  We found the smallest NoteType
+	}
+
+	if( nt == NUM_NOTE_TYPES )	// we didn't find one
+		return NOTE_TYPE_INVALID;	// well-formed notes created in the editor should never get here
+	else
+		return nt;
+}
+
+void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData )
+{
+	/* Clear notes, but keep the same number of tracks. */
+	int iNumTracks = out.m_iNumTracks;
+	out.Init();
+	out.m_iNumTracks = iNumTracks;
+
+	// strip comments out of sSMNoteData
+	while( sSMNoteData.Find("//") != -1 )
+	{
+		int iIndexCommentStart = sSMNoteData.Find("//");
+		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+			sSMNoteData.Delete( iIndexCommentStart, 2 );
+		else
+			sSMNoteData.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+	}
+
+	CStringArray asMeasures;
+	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
+	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
+	{
+		CString &sMeasureString = asMeasures[m];
+		TrimLeft(sMeasureString);
+		TrimRight(sMeasureString);
+
+		CStringArray asMeasureLines;
+		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
+
+		//ASSERT( asMeasureLines.size() == 4  ||
+		//	    asMeasureLines.size() == 8  ||
+		//	    asMeasureLines.size() == 12  ||
+		//	    asMeasureLines.size() == 16 );
+
+
+		for( unsigned l=0; l<asMeasureLines.size(); l++ )
+		{
+			CString &sMeasureLine = asMeasureLines[l];
+			TrimLeft(sMeasureLine);
+			TrimRight(sMeasureLine);
+
+			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
+			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
+			const int iIndex = BeatToNoteRow( fBeat );
+
+//			if( m_iNumTracks != sMeasureLine.GetLength() )
+//				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+
+			for( int c=0; c<min(sMeasureLine.GetLength(),out.m_iNumTracks); c++ )
+			{
+				TapNote t;
+				switch(sMeasureLine[c])
+				{
+				case '0': t = TAP_EMPTY; break;
+				case '1': t = TAP_TAP; break;
+				case '2': t = TAP_HOLD_HEAD; break;
+				case '3': t = TAP_HOLD_TAIL; break;
+				default: ASSERT(0); t = TAP_EMPTY; break;
+				}
+
+				out.SetTapNote(c, iIndex, t);
+			}
+		}
+	}
+	out.Convert2sAnd3sToHoldNotes();
+
+	out.Compress();
+}
+
+CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
+{
+	in.ConvertHoldNotesTo2sAnd3s();
+
+	float fLastBeat = in.GetLastBeat();
+	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
+
+	CStringArray asMeasureStrings;
+	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
+	{
+		NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
+		int iRowSpacing;
+		if( nt == NOTE_TYPE_INVALID )
+			iRowSpacing = 1;
+		else
+			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
+
+		CStringArray asMeasureLines;
+		asMeasureLines.push_back( ssprintf("  // measure %d", m+1) );
+
+		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
+		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+
+		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
+		{
+			CString szLineString;
+			for( int t=0; t<in.m_iNumTracks; t++ ) {
+				char c;
+				switch(in.GetTapNote(t, r)) {
+				case TAP_EMPTY: c = '0'; break;
+				case TAP_TAP:   c = '1'; break;
+				case TAP_HOLD_HEAD: c = '2'; break;
+				case TAP_HOLD_TAIL: c = '3'; break;
+				default: ASSERT(0); c = '0'; break;
+				}
+				szLineString.append(1, c);
+			}
+			
+			asMeasureLines.push_back( szLineString );
+		}
+
+		CString sMeasureString = join( "\n", asMeasureLines );
+
+		asMeasureStrings.push_back( sMeasureString );
+	}
+
+	in.Convert2sAnd3sToHoldNotes();
+
+	return join( "\n,", asMeasureStrings );
 }

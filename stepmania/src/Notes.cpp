@@ -76,13 +76,13 @@ void Notes::WriteSMNotesTag( FILE* fp )
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->m_iNumTracks == GameManager::NotesTypeToNumTracks(m_NotesType) );
-	m_sSMNoteData = pNewNoteData->GetSMNoteDataString();
+	m_sSMNoteData = NoteDataUtil::GetSMNoteDataString(*pNewNoteData);
 }
 
 void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 {
 	pNoteDataOut->m_iNumTracks = GameManager::NotesTypeToNumTracks( m_NotesType );
-	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );
+	NoteDataUtil::LoadFromSMNoteDataString( *pNoteDataOut, m_sSMNoteData );
 }
 
 // Color is a function of Difficulty and Intended Style
