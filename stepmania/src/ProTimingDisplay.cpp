@@ -12,7 +12,7 @@ static CachedThemeMetric	MISS_COMMAND		("ProTimingDisplay","MissCommand");
 
 ProTimingDisplay::ProTimingDisplay()
 {
-	m_Judgment.LoadFromNumbers( THEME->GetPathToF("ProTimingDisplay Judgment") );
+	m_Judgment.LoadFromNumbers( THEME->GetPathToN("ProTimingDisplay Judgment") );
 	m_Judgment.SetName( "Judgment" );
 	this->AddChild( &m_Judgment );
 
