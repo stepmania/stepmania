@@ -6,17 +6,6 @@
 #include "PrefsManager.h"
 #include "RageFileManager.h"
 #include "TimingData.h"
-CString GradeToString( Grade g )
-{
-        // string is meant to be human readable
-        switch( g )
-        {
-        case GRADE_NO_DATA:     return "NoData";
-        case GRADE_FAILED:      return "Failed";
-        default:
-                return ssprintf("%02d",g+1);
-        }
-};
 
 CString InitialWorkingDirectory = ".";
 CString DirOfExecutable = ".";
@@ -154,7 +143,7 @@ int main()
 	FILEMAN			= new RageFileManager;
 	LOG                     = new RageLog();
 	PREFSMAN		= new PrefsManager; // TimingData needs PREFSMAN; it probably shouldn't
-	LOG->ShowLogOutput( true );
+	LOG->SetShowLogOutput( true );
 	LOG->SetFlushing( true );
 
 	run();

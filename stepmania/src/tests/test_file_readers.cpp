@@ -235,7 +235,7 @@ int main()
 	FILEMAN = new RageFileManager;
 
 	LOG			= new RageLog();
-	LOG->ShowLogOutput( true );
+	LOG->SetShowLogOutput( true );
 	LOG->SetFlushing( true );
 
 	/* Create a binary file to test with. */
