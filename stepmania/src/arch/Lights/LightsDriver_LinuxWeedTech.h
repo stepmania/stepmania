@@ -6,7 +6,7 @@
 #ifndef LightsDriver_LinuxWeedTech_H
 #define LightsDriver_LinuxWeedTech_H
 
-#include "LightsDriver.h"
+#include "arch/Lights/LightsDriver.h"
 
 class LightsDriver_LinuxWeedTech : public LightsDriver
 {

@@ -14,6 +14,10 @@ LightsDriver *MakeLightsDriver(CString driver)
 	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
 #endif
 	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
+
+#ifdef LINUX
+	if(!driver.CompareNoCase("WeedTech")) ret = new LightsDriver_LinuxWeedTech;
+#endif
 	if(!driver.CompareNoCase("Null") || !ret )
 	{
 		if( driver.CompareNoCase("Null") )
