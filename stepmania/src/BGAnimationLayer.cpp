@@ -434,8 +434,8 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 {
 	Init();
-	if( sAniDir.Right(1) != SLASH )
-		sAniDir += SLASH;
+	if( sAniDir.Right(1) != "/" )
+		sAniDir += "/";
 
 	ASSERT( IsADirectory(sAniDir) );
 

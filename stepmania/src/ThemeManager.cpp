@@ -33,7 +33,7 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 const CString BASE_THEME_NAME = "default";
 const CString FALLBACK_THEME_NAME = "fallback";
-const CString LANGUAGES_SUBDIR = "Languages" SLASH;
+const CString LANGUAGES_SUBDIR = "Languages/";
 const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = "Themes/";
 const CString METRICS_FILE = "metrics.ini";
@@ -174,7 +174,7 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 {
-	return THEMES_DIR + sThemeName + SLASH;
+	return THEMES_DIR + sThemeName + "/";
 }
 
 CString ThemeManager::GetPathTo( CString sThemeName, ElementCategory category, CString sFileName ) 
@@ -193,17 +193,17 @@ try_element_again:
 
 	if( bLookingForSpecificFile )
 	{
-		GetDirListing( sThemeDir + sCategory+SLASH+sFileName, asElementPaths, bDirsOnly, true );
+		GetDirListing( sThemeDir + sCategory+"/"+sFileName, asElementPaths, bDirsOnly, true );
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
 		/* First, look for redirs. */
-		GetDirListing( sThemeDir + sCategory + SLASH + sFileName + ".redir",
+		GetDirListing( sThemeDir + sCategory + "/" + sFileName + ".redir",
 						asElementPaths, false, true );
 
 		const CString wildcard = (category == BGAnimations? "":"*");
 		CStringArray asPaths;
-		GetDirListing( sThemeDir + sCategory + SLASH + sFileName + wildcard,
+		GetDirListing( sThemeDir + sCategory + "/" + sFileName + wildcard,
 						asPaths, bDirsOnly, true );
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
@@ -347,7 +347,7 @@ try_element_again:
 
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
-	CString sMessage = "The theme element '" + sCategory + SLASH + sFileName +"' is missing.";
+	CString sMessage = "The theme element '" + sCategory + "/" + sFileName +"' is missing.";
 	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement") )
 	{
 	case ArchHooks::retry:
@@ -356,7 +356,7 @@ try_element_again:
 		goto try_element_again;
 	case ArchHooks::ignore:
 		LOG->Warn( 
-			"Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
+			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
@@ -369,7 +369,7 @@ try_element_again:
 		Cache[sFileName] = GetPathTo( category, "_missing" );
 		return Cache[sFileName];
 	case ArchHooks::abort:
-		RageException::Throw( "Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
+		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 

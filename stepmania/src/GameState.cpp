@@ -303,7 +303,7 @@ void GameState::ReloadCharacters()
 	}
 	
 	if( !FoundDefault )
-		RageException::Throw( "'Characters" SLASH "default' is missing." );
+		RageException::Throw( "'Characters/default' is missing." );
 
 	// If FoundDefault, then we're not empty. -Chris
 //	if( m_pCharacters.empty() )

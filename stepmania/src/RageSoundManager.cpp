@@ -215,8 +215,8 @@ void RageSoundManager::PlayOnceFromDir( CString sDir )
 		return;
 
 	// make sure there's a slash at the end of this path
-	if( sDir.Right(1) != SLASH )
-		sDir += SLASH;
+	if( sDir.Right(1) != "/" )
+		sDir += "/";
 
 	CStringArray arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );

@@ -48,7 +48,7 @@ void NoteSkinManager::RefreshNoteSkinData( Game game )
 
 	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
 
-	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + SLASH;
+	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
 	CStringArray asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
@@ -156,7 +156,7 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 {
 	CString sGame = GAMESTATE->GetCurrentGameDef()->m_szName;
 
-	return NOTESKINS_DIR + sGame + SLASH + sSkinName + SLASH;
+	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
 }
 
 CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue )

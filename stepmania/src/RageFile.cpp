@@ -26,15 +26,14 @@ void FixSlashesInPlace( CString &sPath )
 
 CString FixSlashes( CString sPath )
 {
-    sPath.Replace( "/", SLASH );
-    sPath.Replace( "\\", SLASH );
+	FixSlashesInPlace( sPath );
     return sPath;
 }
 
 void CollapsePath( CString &sPath )
 {
 	CStringArray as;
-	split( sPath, SLASH, as );
+	split( sPath, "/", as );
 
 	for( unsigned i=0; i<as.size(); i++ )
 	{
@@ -45,7 +44,7 @@ void CollapsePath( CString &sPath )
 			i -= 2;
 		}
 	}
-	sPath = join( SLASH, as );
+	sPath = join( "/", as );
 }
 
 RageFile::RageFile()

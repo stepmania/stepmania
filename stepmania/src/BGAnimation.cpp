@@ -57,8 +57,8 @@ void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddT
 	if( sAniDir.empty() )
 		 return;
 
-	if( sAniDir.Right(1) != SLASH )
-		sAniDir += SLASH;
+	if( sAniDir.Right(1) != "/" )
+		sAniDir += "/";
 
 	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 
@@ -79,9 +79,6 @@ void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddT
 		if( ini.GetValue(sLayer, "Import", sImportDir) )
 		{
 			// import a whole BGAnimation
-#ifdef _XBOX
-			sImportDir.Replace( "/", SLASH );
-#endif
 			sImportDir = sAniDir + sImportDir;
 			CollapsePath( sImportDir );
 			AddLayersFromAniDir( sImportDir, layersAddTo, Generic );
@@ -104,8 +101,8 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( sAniDir.empty() )
 		 return;
 
-	if( sAniDir.Right(1) != SLASH )
-		sAniDir += SLASH;
+	if( sAniDir.Right(1) != "/" )
+		sAniDir += "/";
 
 	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 

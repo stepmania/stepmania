@@ -53,8 +53,8 @@ void SongCacheIndex::ReadCacheIndex()
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
 	EmptyDir( CACHE_DIR );
-	EmptyDir( CACHE_DIR "Banners" SLASH );
-	EmptyDir( CACHE_DIR "Songs" SLASH );
+	EmptyDir( CACHE_DIR "Banners/" );
+	EmptyDir( CACHE_DIR "Songs/" );
 
 	CacheIndex.Reset();
 }

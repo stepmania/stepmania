@@ -25,8 +25,8 @@ Transition::Transition()
 
 void Transition::Load( CString sBGAniDir )
 {
-	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != SLASH )
-		sBGAniDir += SLASH;
+	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != "/" )
+		sBGAniDir += "/";
 
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
 

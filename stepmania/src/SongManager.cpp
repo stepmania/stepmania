@@ -146,7 +146,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 
 	CString sBannerPath;
 	if( !arrayGroupBanners.empty() )
-		sBannerPath = sDir+sGroupDirName+SLASH+arrayGroupBanners[0] ;
+		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
 	else
 	{
 		// Look for a group banner in the parent folder
@@ -167,8 +167,8 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 {
 	/* Make sure sDir has a trailing slash. */
-	TrimRight( sDir, "/\\" );
-	sDir += SLASH;
+	if( sDir.Right(1) != "/" )
+		sDir += "/";
 
 	// Find all group directories in "Songs" folder
 	CStringArray arrayGroupDirs;
@@ -186,7 +186,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
-		GetDirListing( sDir+sGroupDirName + SLASH "*", arraySongDirs, true, true );
+		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		SortCStringArray( arraySongDirs );
 
 		unsigned j;
@@ -235,12 +235,12 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 {
 	// Find all symlink files in this folder
 	CStringArray arraySymLinks;
-	GetDirListing( sDir+sGroupFolder+SLASH+"*.include", arraySymLinks, false );
+	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
 	SortCStringArray( arraySymLinks );
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
 		MsdFile		msdF;
-		msdF.ReadFile( sDir+sGroupFolder+SLASH+arraySymLinks[s].c_str() );
+		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str() );
 		CString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
 		
 		Song* pNewSong = new Song;
@@ -511,7 +511,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 		// Find all CRS files in this group directory
 		CStringArray arrayCoursePaths;
-		GetDirListing( COURSES_DIR + sGroupDirName + SLASH + "*.crs", arrayCoursePaths, false, true );
+		GetDirListing( COURSES_DIR + sGroupDirName + "/*.crs", arrayCoursePaths, false, true );
 		SortCStringArray( arrayCoursePaths );
 
 		for( unsigned j=0; j<arrayCoursePaths.size(); j++ )
@@ -615,7 +615,7 @@ void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutoge
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	const CString sCourseSuffix = sPreferredGroup + SLASH + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	const CString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	CString sCoursePath = SONGS_DIR + sCourseSuffix;
 
 	/* Couldn't find course in DWI path or alternative song folders */
@@ -750,8 +750,8 @@ Song* SongManager::GetRandomSong()
 
 Song* SongManager::GetSongFromDir( CString sDir )
 {
-	if( sDir.Right(1) != SLASH )
-		sDir += SLASH;
+	if( sDir.Right(1) != "/" )
+		sDir += "/";
 
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
 		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )

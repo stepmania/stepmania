@@ -68,7 +68,7 @@ int RageFileObj::GetFileSize()
 int RageFileDriver::GetPathValue( const CString &path )
 {
 	vector<CString> parts;
-	split( path, SLASH, parts, true );
+	split( path, "/", parts, true );
 
 	CString PartialPath;
 
@@ -76,7 +76,7 @@ int RageFileDriver::GetPathValue( const CString &path )
 	{
 		PartialPath += parts[i];
 		if( i+1 < parts.size() )
-			PartialPath += SLASH;
+			PartialPath += "/";
 
 		const RageFileManager::FileType Type = GetFileType( PartialPath );
 		switch( Type )

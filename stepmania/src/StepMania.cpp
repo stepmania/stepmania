@@ -1108,7 +1108,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		/* XXX slow? */
 		for( int i=0; i<10000; i++ )
 		{
-			sPath = ssprintf("Screenshots" SLASH "screen%04d.bmp",i);
+			sPath = ssprintf("Screenshots/screen%04d.bmp",i);
 			if( !DoesFileExist(sPath) )
 				break;
 		}
