@@ -498,6 +498,12 @@ void ScreenOptionsMaster::ExportOptions()
 		PREFSMAN->SaveGlobalPrefsToDisk();
 		PREFSMAN->SaveGamePrefsToDisk();
 	}
+
+	if( ChangeMask & OPT_RESET_GAME )
+	{
+		ResetGame();
+		m_NextScreen = "";
+	}
 }
 
 void ScreenOptionsMaster::MenuStart( PlayerNumber pn )
@@ -515,7 +521,7 @@ void ScreenOptionsMaster::GoToNextState()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
-	else
+	else if( m_NextScreen != "" )
 		SCREENMAN->SetNewScreen( m_NextScreen );
 }
 

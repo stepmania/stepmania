@@ -5,6 +5,7 @@ static const int MAX_OPTIONS=16;
 #define OPT_SAVE_PREFERENCES	0x1
 #define OPT_APPLY_GRAPHICS		0x2
 #define OPT_APPLY_THEME			0x4
+#define OPT_RESET_GAME			0x8
 
 struct ConfOption
 {

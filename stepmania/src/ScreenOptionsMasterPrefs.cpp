@@ -9,6 +9,9 @@
 #include "SongOptions.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
+#include "GameManager.h"
+#include "GameState.h"
+#include "InputMapper.h"
 
 /* "sel" is the selection in the menu. */
 template<class T>
@@ -31,6 +34,42 @@ static void MoveData( int &sel, bool &opt, bool ToSel )
 		MoveData( sel, opt, ToSel ); \
 	}
 
+
+static void GameChoices( CStringArray &out )
+{
+	vector<Game> aGames;
+	GAMEMAN->GetEnabledGames( aGames );
+	for( unsigned i=0; i<aGames.size(); i++ )
+	{
+		Game game = aGames[i];
+		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;
+		sGameName.MakeUpper();
+		out.push_back( sGameName );
+	}
+}
+
+static void GameSel( int &sel, bool ToSel, const CStringArray &choices )
+{
+	if( ToSel )
+	{
+		const CString sCurGameName = GAMEMAN->GetGameDefForGame(GAMESTATE->m_CurGame)->m_szName;
+
+		sel = 0;
+		for(unsigned i = 0; i < choices.size(); ++i)
+			if( !stricmp(choices[i], sCurGameName) )
+				sel = i;
+	} else {
+		PREFSMAN->SaveGamePrefsToDisk();
+		INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
+
+		vector<Game> aGames;
+		GAMEMAN->GetEnabledGames( aGames );
+		GAMESTATE->m_CurGame = aGames[sel];
+
+		PREFSMAN->ReadGamePrefsFromDisk();
+		INPUTMAPPER->ReadMappingsFromDisk();
+	}
+}
 
 static void LanguageChoices( CStringArray &out )
 {
@@ -353,6 +392,9 @@ MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
 
 static const ConfOption g_ConfOptions[] =
 {
+	/* Select game */
+	ConfOption( "Game",					GameSel, GameChoices ),
+
 	/* Appearance options */
 	ConfOption( "Language",				Language, LanguageChoices ),
 	ConfOption( "Theme",				Theme, ThemeChoices ),
@@ -445,7 +487,8 @@ int ConfOption::GetEffects() const
 		{ TextureResolution,	OPT_APPLY_GRAPHICS },
 		{ KeepTexturesInMemory,	OPT_APPLY_GRAPHICS },
 		{ RefreshRate,			OPT_APPLY_GRAPHICS },
-		{ WaitForVsync,			OPT_APPLY_GRAPHICS }
+		{ WaitForVsync,			OPT_APPLY_GRAPHICS },
+		{ GameSel,				OPT_RESET_GAME }
 	};
 
 	int ret = OPT_SAVE_PREFERENCES;
