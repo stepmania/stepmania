@@ -604,6 +604,10 @@ void ScreenGameplay::Init()
 //		}
 	}
 
+	m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
+	m_Overlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
+	this->AddChild( m_Overlay );
+
 	
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
@@ -646,10 +650,6 @@ void ScreenGameplay::Init()
 		m_textDebug.SetName( "Debug" );
 		SET_XY( m_textDebug );
 		this->AddChild( &m_textDebug );
-
-		m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
-		m_Overlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
-		this->AddChild( m_Overlay );
 
 		m_In.Load( THEME->GetPathB(m_sName,"in") );
 		m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );

@@ -13,9 +13,6 @@ public:
 	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-protected:
-	BGAnimation	m_Overlay;
 };
 
 #endif
