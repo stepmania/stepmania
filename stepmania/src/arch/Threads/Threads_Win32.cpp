@@ -94,6 +94,29 @@ MutexImpl_Win32::~MutexImpl_Win32()
 	CloseHandle( mutex );
 }
 
+static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
+{
+	DWORD ret = WaitForSingleObject( h, ms );
+	switch( ret )
+	{
+	case WAIT_OBJECT_0:
+		return true;
+
+	case WAIT_TIMEOUT:
+		return false;
+
+	case WAIT_ABANDONED:
+		/* The docs aren't particular about what this does, but it should never happen. */
+		FAIL_M( "WAIT_ABANDONED" );
+
+	case WAIT_FAILED:
+		FAIL_M( werr_ssprintf(GetLastError(), "WaitForSingleObject") );
+
+	default:
+		FAIL_M( "unknown" );
+	}
+}
+
 bool MutexImpl_Win32::Lock()
 {
 	int len = 15000;
@@ -102,31 +125,22 @@ bool MutexImpl_Win32::Lock()
 	while( tries-- )
 	{
 		/* Wait for fifteen seconds.  If it takes longer than that, we're probably deadlocked. */
-		DWORD ret = WaitForSingleObject( mutex, len );
-
-		switch( ret )
-		{
-		case WAIT_ABANDONED:
-			/* The docs aren't particular about what this does, but it should never happen. */
-			ASSERT( 0 );
-			break;
-
-		case WAIT_OBJECT_0:
+		if( SimpleWaitForSingleObject( mutex, len ) )
 			return true;
 
-		case WAIT_TIMEOUT:
-			/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
-			 * timeout, just in case we're debugging and happened to stop while waiting
-			 * on the mutex. */
-			len = 1000;
-			break;
-
-		case WAIT_FAILED:
-			FAIL_M( werr_ssprintf(GetLastError(), "WaitForSingleObject(%s)", this->m_Parent->GetName().c_str()) );
-		}
+		/* Timed out; probably deadlocked.  Try again one more time, with a smaller
+		 * timeout, just in case we're debugging and happened to stop while waiting
+		 * on the mutex. */
+		len = 1000;
 	}
 
 	return false;
+}
+
+
+bool MutexImpl_Win32::TryLock()
+{
+	return SimpleWaitForSingleObject( mutex, 0 );
 }
 
 void MutexImpl_Win32::Unlock()
@@ -152,6 +166,60 @@ uint64_t GetInvalidThreadId()
 MutexImpl *MakeMutex( RageMutex *pParent )
 {
 	return new MutexImpl_Win32( pParent );
+}
+
+SemaImpl_Win32::SemaImpl_Win32( int iInitialValue )
+{
+	sem = CreateSemaphore( NULL, iInitialValue, 999999999, NULL );
+	m_iCounter = iInitialValue;
+}
+
+SemaImpl_Win32::~SemaImpl_Win32()
+{
+	CloseHandle( sem );
+}
+
+void SemaImpl_Win32::Post()
+{
+	++m_iCounter;
+	ReleaseSemaphore( sem, 1, NULL );
+}
+
+bool SemaImpl_Win32::Wait()
+{
+	int len = 15000;
+	int tries = 2;
+
+	while( tries-- )
+	{
+		/* Wait for fifteen seconds.  If it takes longer than that, we're probably deadlocked. */
+		if( SimpleWaitForSingleObject( sem, len ) )
+		{
+			--m_iCounter;
+			return true;
+		}
+
+		/* Timed out; probably deadlocked.  Try again one more time, with a smaller
+		 * timeout, just in case we're debugging and happened to stop while waiting
+		 * on the mutex. */
+		len = 1000;
+	}
+
+	return false;
+}
+
+bool SemaImpl_Win32::TryWait()
+{
+	if( !SimpleWaitForSingleObject( sem, 0 ) )
+		return false;
+
+	--m_iCounter;
+	return true;
+}
+
+SemaImpl *MakeSemaphore( int iInitialValue )
+{
+	return new SemaImpl_Win32( iInitialValue );
 }
 
 /*

@@ -145,6 +145,11 @@ bool MutexImpl_Pthreads::Lock()
 		case 0:
 			return true;
 
+		case EINTR:
+			/* Ignore it. */
+			++tries;
+			continue;
+
 		case ETIMEDOUT:
 			/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
 			 * timeout, just in case we're debugging and happened to stop while waiting
@@ -153,19 +158,35 @@ bool MutexImpl_Pthreads::Lock()
 			break;
 
 		default:
-			RageException::Throw( "pthread_mutex_timedlock: %s", strerror(ret) );
+			FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(ret)) );
 		}
 	}
 
 	return false;
 #else
-	int ret = pthread_mutex_lock( &mutex );
-	if( ret )
-		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(ret) );
+	int ret;
+	do
+	{
+		CHECKPOINT;
+		ret = pthread_mutex_lock( &mutex );
+	}
+	while( ret == -1 && ret == EINTR );
+
+	ASSERT_M( ret == 0, ssprintf("pthread_mutex_lock: %s", strerror(errno)) );
+
 	return true;
 #endif
 }
 
+bool MutexImpl_Pthreads::TryLock()
+{
+	int ret = pthread_mutex_trylock( &mutex );
+	if( ret == EBUSY )
+		return false;
+	if( ret )
+		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(ret) );
+	return true;
+}
 
 void MutexImpl_Pthreads::Unlock()
 {
@@ -189,6 +210,58 @@ uint64_t GetInvalidThreadId()
 MutexImpl *MakeMutex( RageMutex *pParent )
 {
 	return new MutexImpl_Pthreads( pParent );
+}
+
+SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
+{
+	sem_init( &sem, 0, iInitialValue );
+}
+
+SemaImpl_Pthreads::~SemaImpl_Pthreads()
+{
+	sem_destroy( &sem );
+}
+
+int SemaImpl_Pthreads::GetValue() const
+{
+	int ret;
+	sem_getvalue( &sem, &ret );
+	return ret;
+}
+
+void SemaImpl_Pthreads::Post()
+{
+	sem_post( &sem );
+}
+
+bool SemaImpl_Pthreads::Wait()
+{
+	int ret;
+	do
+	{
+		CHECKPOINT;
+		ret = sem_wait( &sem );
+	}
+	while( ret == -1 && errno == EINTR );
+
+	ASSERT_M( ret == 0, ssprintf("sem_wait: %s", strerror(errno)) );
+
+	return true;
+}
+
+bool SemaImpl_Pthreads::TryWait()
+{
+	int ret = sem_trywait( &sem );
+	if( ret == EBUSY )
+		return false;
+	if( ret )
+		RageException::Throw( "sem_trywait failed: %s", strerror(ret) );
+	return true;
+}
+
+SemaImpl *MakeSemaphore( int iInitialValue )
+{
+	return new SemaImpl_Pthreads( iInitialValue );
 }
 
 

@@ -7,17 +7,6 @@ class RageMutex;
 
 class ThreadImpl
 {
-#if defined(PID_BASED_THREADS)
-	/* Keep a list of child PIDs, so we can send them SIGKILL.  This has an
-	 * added bonus: if this is corrupted, we'll just send signals and they'll
-	 * fail; we won't blow up (unless we're root). */
-//	int pid;
-#endif
-
-#if defined(DARWIN)
-//	thread_act_t ThreadHandle;
-#endif
-
 public:
 	virtual ~ThreadImpl() { }
 	virtual void Halt( bool Kill ) = 0;
@@ -46,15 +35,30 @@ public:
 	 * all other errors should fail with an assertion. */
 	virtual bool Lock() = 0;
 
+	/* Non-blocking lock.  If locking the mutex would block because the mutex is already
+	 * locked by another thread, return false; otherwise return true and lock the mutex. */
+	virtual bool TryLock() = 0;
+
 	/* Unlock the mutex.  This must only be called when the mutex is locked; implementations
 	 * may fail with an assertion if the mutex is not locked. */
 	virtual void Unlock() = 0;
+};
+
+class SemaImpl
+{
+public:
+	virtual ~SemaImpl() { }
+	virtual int GetValue() const = 0;
+	virtual void Post() = 0;
+	virtual bool Wait() = 0;
+	virtual bool TryWait() = 0;
 };
 
 /* These functions must be implemented by the thread implementation. */
 ThreadImpl *MakeThread( int (*fn)(void *), void *data );
 ThreadImpl *MakeThisThread();
 MutexImpl *MakeMutex( RageMutex *pParent );
+SemaImpl *MakeSemaphore( int iInitialValue );
 uint64_t GetThisThreadId();
 
 /* Since ThreadId is implementation-defined, we can't define a universal invalid

@@ -20,15 +20,35 @@ public:
 	int Wait();
 };
 
-struct MutexImpl_Win32: public MutexImpl
+class MutexImpl_Win32: public MutexImpl
 {
-	HANDLE mutex;
-
+public:
 	MutexImpl_Win32( RageMutex *parent );
 	~MutexImpl_Win32();
 
 	bool Lock();
+	bool TryLock();
 	void Unlock();
+
+private:
+	HANDLE mutex;
+};
+
+class SemaImpl_Win32: public SemaImpl
+{
+public:
+	SemaImpl_Win32( int iInitialValue );
+	~SemaImpl_Win32();
+	int GetValue() const { return m_iCounter; }
+	void Post();
+	bool Wait();
+	bool TryWait();
+
+private:
+	HANDLE sem;
+
+	/* We have to track the count ourself, since Windows gives no way to query it. */
+	int m_iCounter;
 };
 
 #endif

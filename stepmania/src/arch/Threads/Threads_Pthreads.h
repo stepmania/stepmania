@@ -10,9 +10,6 @@
 class ThreadImpl_Pthreads: public ThreadImpl
 {
 public:
-//	HANDLE ThreadHandle;
-//	DWORD ThreadId;
-
 	pthread_t thread;
 
 #if defined(PID_BASED_THREADS)
@@ -36,15 +33,32 @@ public:
 	int Wait();
 };
 
-struct MutexImpl_Pthreads: public MutexImpl
+class MutexImpl_Pthreads: public MutexImpl
 {
-	pthread_mutex_t mutex;
-
+public:
 	MutexImpl_Pthreads( RageMutex *parent );
 	~MutexImpl_Pthreads();
 
 	bool Lock();
+	bool TryLock();
 	void Unlock();
+
+private:
+	pthread_mutex_t mutex;
+};
+
+class SemaImpl_Pthreads: public SemaImpl
+{
+public:
+	SemaImpl_Pthreads( int iInitialValue );
+	~SemaImpl_Pthreads();
+	int GetValue() const;
+	void Post();
+	bool Wait();
+	bool TryWait();
+
+private:
+	sem_t sem;
 };
 
 #endif
