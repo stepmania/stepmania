@@ -463,22 +463,22 @@ void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn 
 	int iNumNotesInThisRow = 0;
 	for( int c=0; c<GetNumTracks(); c++ )	// for each column
 	{
-		if( GetTapNote(c, iIndexThatWasSteppedOn) != TAP_EMPTY )	// if there is a note in this col
-		{
-			iNumNotesInThisRow++;
+		if( GetTapNote(c, iIndexThatWasSteppedOn) == TAP_EMPTY )
+			continue; /* no note in this col */
 
-			// show the ghost arrow for this column
-			switch( score )
+		iNumNotesInThisRow++;
+
+		// show the ghost arrow for this column
+		switch( score )
+		{
+		case TNS_GREAT:
+		case TNS_PERFECT:
+		case TNS_MARVELOUS:
 			{
-			case TNS_GREAT:
-			case TNS_PERFECT:
-			case TNS_MARVELOUS:
-				{
-					bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-					m_GhostArrowRow.TapNote( c, score, bBright );
-				}
-				break;
+				bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				m_GhostArrowRow.TapNote( c, score, bBright );
 			}
+			break;
 		}
 	}
 		
