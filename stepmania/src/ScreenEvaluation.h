@@ -27,7 +27,7 @@
 #include "ComboGraph.h"
 #include "BGAnimation.h"
 #include "ActorUtil.h"
-
+#include "ConditionalBGA.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 const int NUM_JUDGE_LINES =	9;	// marvelous, perfect, great, good, boo, miss, ok, max_combo, error
@@ -69,6 +69,8 @@ protected:
 	BGAnimation m_bgFailedBack;
 	BGAnimation m_bgFailedOverlay;
 	BGAnimation m_bgPassedOverlay;
+//	BGAnimation m_bgSpecialBack;
+	ConditionalBGA m_bgCondBga;
 
 	MenuElements		m_Menu;
 

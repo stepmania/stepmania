@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -82,29 +82,28 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Intermediate_Dir "../Debug_Xbox"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_XBOX" /D "_DEBUG" /YX /FD /G6 /Ztmp /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_sound-1.0.0" /I "vorbis" /D "WIN32" /D "_DEBUG" /D "_XBOX" /D "OGG_ONLY" /D "DEBUG" /FR /YX"global.h" /FD /G6 /Ztmp /c
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+XBCP=xbecopy.exe
+# ADD BASE XBCP /NOLOGO
+# ADD XBCP /NOLOGO
+XBE=imagebld.exe
+# ADD BASE XBE /nologo /stack:0x10000 /debug
+# ADD XBE /nologo /stack:0x10000 /debug /out:"../default.xbe"
 LINK32=link.exe
 # ADD BASE LINK32 xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib /nologo /incremental:no /debug /machine:I386 /subsystem:xbox /fixed:no /TMP
 # ADD LINK32 $(intdir)\verstub.obj xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib /nologo /map /debug /machine:I386 /nodefaultlib:"libcd" /nodefaultlib:"libcmt" /out:"../StepManiaXbox-debug.exe" /subsystem:xbox /fixed:no /TMP
 # SUBTRACT LINK32 /incremental:no
-XBE=imagebld.exe
-# ADD BASE XBE /nologo /stack:0x10000 /debug
-# ADD XBE /nologo /stack:0x10000 /debug /out:"../default.xbe"
-XBCP=xbecopy.exe
-# ADD BASE XBCP /NOLOGO
-# ADD XBCP /NOLOGO
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_XBOX" /D "_DEBUG" /YX /FD /G6 /Ztmp /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_sound-1.0.0" /I "vorbis" /D "WIN32" /D "_DEBUG" /D "_XBOX" /D "OGG_ONLY" /D "DEBUG" /FR /YX"global.h" /FD /G6 /Ztmp /c
 # Begin Special Build Tool
 IntDir=.\../Debug_Xbox
 TargetDir=\stepmania\stepmania
 TargetName=default
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                                    	cl                                                                                                                                                                                                                                                                     /Zl                                                                                                                                                                                                                                                                     /nologo                                                                                                                                                                                                                                                                     /c \
-                                                                                                                                                                                                                                                                                                  verstub.cpp                                                                                                                                                                                                                                                                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -162,30 +161,29 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Intermediate_Dir "../Release_Xbox"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_sound-1.0.0" /I "vorbis" /D "WIN32" /D "NDEBUG" /D "_XBOX" /FR /YX /FD /c
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+XBCP=xbecopy.exe
+# ADD BASE XBCP /NOLOGO
+# ADD XBCP /NOLOGO
+XBE=imagebld.exe
+# ADD BASE XBE /nologo /stack:0x10000 /debug
+# ADD XBE /nologo /testid:"123456" /stack:0x10000 /debug /out:"../default.xbe"
 LINK32=link.exe
 # ADD BASE LINK32 $(intdir)\verstub.obj xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib /nologo /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:IX86 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
 # SUBTRACT BASE LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # ADD LINK32 $(intdir)\verstub.obj xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib /nologo /incremental:no /map /machine:I386 /nodefaultlib:"libc" /nodefaultlib:"libcmtd" /out:"../StepManiaXbox.exe" /subsystem:xbox /fixed:no /TMP /OPT:REF
 # SUBTRACT LINK32 /pdb:none /debug
-XBE=imagebld.exe
-# ADD BASE XBE /nologo /stack:0x10000 /debug
-# ADD XBE /nologo /testid:"123456" /stack:0x10000 /debug /out:"../default.xbe"
-XBCP=xbecopy.exe
-# ADD BASE XBCP /NOLOGO
-# ADD XBCP /NOLOGO
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_sound-1.0.0" /I "vorbis" /D "WIN32" /D "NDEBUG" /D "_XBOX" /FR /YX /FD /c
 # Begin Special Build Tool
 IntDir=.\../Release_Xbox
 TargetDir=\stepmania\stepmania
 TargetName=default
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                                     	cl                                                                                                                                                                                                                                                                      /Zl                                                                                                                                                                                                                                                                      /nologo                                                                                                                                                                                                                                                                      /c \
-                                                                                                                                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                                                                                                                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -2878,8 +2876,6 @@ SOURCE=.\StepMania.cpp
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-# ADD CPP /D "OGG_ONLY"
 
 !ENDIF 
 
@@ -6029,6 +6025,25 @@ SOURCE=.\UnlockSystem.cpp
 SOURCE=.\UnlockSystem.h
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\ConditionalBGA.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ConditionalBGA.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\cursor1.cur

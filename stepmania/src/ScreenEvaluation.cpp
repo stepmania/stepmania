@@ -32,6 +32,7 @@
 #include "ProfileManager.h"
 #include "song.h"
 #include "StageStats.h"
+#include "Grade.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -77,6 +78,9 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
 #define SOUNDSEQ_TIME( i )					THEME->GetMetricF(m_sName,ssprintf("SoundSeqTime%d", i+1))
 #define SOUNDSEQ_NAME( i )					THEME->GetMetric (m_sName,ssprintf("SoundSeqName%d", i+1))
+#define USE_GRADE_SPECIFIC_BG				THEME->GetMetricB(m_sName,"UseGradeSpecificBG")
+#define USE_STYLE_SPECIFIC_BG				THEME->GetMetricB(m_sName,"UseStyleSpecificBG")
+
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
@@ -255,8 +259,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	// load pass/fail sound
 	//
-	if(m_Type==stage)
-	{
+//	if(m_Type==stage)
+//	{
 		int snd=0;
 		for(snd=0;snd<NUM_SEQUENCE_SOUNDS;snd++) // grab in any sound sequence the user may want to throw onto this screen
 		{
@@ -265,24 +269,68 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			temp.sSound.Load(THEME->GetPathToS(SOUNDSEQ_NAME(snd),false));
 			m_SoundSequences.push_back(temp);
 		}
-	}
+//	}
+	
+	CString bgpath = m_sName;
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
-	if(m_bFailed && m_Type==stage)
+	if(m_bFailed && (m_Type==stage||m_Type==course))
 	{
-		m_bgFailedBack.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Failed Background") );
-		m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Failed Overlay") );
+		bgpath += " Failed Background";
+		m_bgFailedBack.LoadFromAniDir( THEME->GetPathToB(bgpath) );
+		bgpath = m_sName;
+		bgpath += " Failed Overlay";
+		m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathToB(bgpath) );
 		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Failed",false));
-	//	m_sndPassFail.Play();
+		m_sndPassFail.Play(); // why was this commented out? the BGA's wont play sound so its a NEEDED element - Frieza
 	}
-	else if( m_Type == stage )
+	else if(m_Type==stage||m_Type==course)
 	{
+		bgpath += " Passed Overlay";
 		// the themer can use the regular background for passed background
-		m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Passed Overlay") );
+		m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathToB(bgpath) );
 		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Passed",false));
-	//	m_sndPassFail.Play();
+		m_sndPassFail.Play();
 	}
 
-	
+	m_bgCondBga.Load(m_sName);
+
+	// Special Background Stuff
+/*	if(m_Type == stage)
+	{
+		if(USE_GRADE_SPECIFIC_BG || USE_STYLE_SPECIFIC_BG) // put other 'whatever specific' checks here
+		{
+			CString bgpath = "ScreenEvaluationStage ";
+			
+			if(USE_GRADE_SPECIFIC_BG) // individual check for grades
+			{
+				int highestgrade=GRADE_NO_DATA;
+				CString gradename = "";
+				unsigned pn=0;
+				for(pn=0;pn<NUM_PLAYERS;pn++)
+				{
+					if( GAMESTATE->IsPlayerEnabled( (PlayerNumber)pn ) )
+					{
+						int playergrade = stageStats.GetGrade((PlayerNumber)pn);
+						if(playergrade < highestgrade)
+						{
+							highestgrade = playergrade;
+							gradename = GradeToString((Grade)playergrade);
+						}
+
+					}
+				}
+				bgpath += gradename;			
+			}
+			if(USE_STYLE_SPECIFIC_BG)
+			{
+				CString stylename = ssprintf("%d", GAMESTATE->m_CurStyle);
+				bgpath += stylename;
+			}
+			
+			m_bgSpecialBack.LoadFromAniDir( THEME->GetPathToB(bgpath) );
+		}
+	}
+*/	
 	//
 	// load other sounds
 	//
@@ -1161,7 +1209,8 @@ void ScreenEvaluation::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	if(m_bFailed && m_Type == stage)
+	m_bgCondBga.Update(fDeltaTime);
+	if(m_bFailed && (m_Type==stage||m_Type==course))
 	{
 		if(	m_timerSoundSequences.Ago() > FAILED_SOUND_TIME && !m_bPassFailTriggered )
 		{
@@ -1171,7 +1220,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		m_bgFailedBack.Update( fDeltaTime );
 		m_bgFailedOverlay.Update( fDeltaTime );
 	}
-	else if (m_Type == stage) // STAGE eval AND passed
+	else if (m_Type==stage||m_Type==course) // STAGE/NONSTOP eval AND passed
 	{
 		if(	m_timerSoundSequences.Ago() > PASSED_SOUND_TIME && !m_bPassFailTriggered )
 		{
@@ -1182,8 +1231,8 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		m_bgPassedOverlay.Update( fDeltaTime );
 
 	}
-	if(m_Type == stage) // stage eval ... pass / fail / whatever
-	{
+//	if(m_Type == stage) // stage eval ... pass / fail / whatever
+//	{
 		for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
 		{
 			if(m_SoundSequences[snd].fTime != -1) // already played? skip...
@@ -1195,7 +1244,10 @@ void ScreenEvaluation::Update( float fDeltaTime )
 				}
 			}
 		}
-	}
+//	}
+	
+//	if(USE_GRADE_SPECIFIC_BG)
+//		m_bgSpecialBack.Update(fDeltaTime);
 
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
@@ -1225,16 +1277,21 @@ void ScreenEvaluation::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
 
+	m_bgCondBga.DrawPrimitives();
 	// draw the failed background here if the player(s) failed
-	if(m_bFailed && m_Type == stage)
+	if(m_bFailed && (m_Type==stage||m_Type==course))
 		m_bgFailedBack.Draw();
+
+	// draw any special backgrounds if the player failed.
+//	if(USE_GRADE_SPECIFIC_BG)
+//		m_bgSpecialBack.Draw();
 
 	Screen::DrawPrimitives();
 	
 	// draw the pass / failed overlays here respectively
-	if(m_bFailed && m_Type == stage)
+	if(m_bFailed && (m_Type==stage||m_Type==course))
 		m_bgFailedOverlay.Draw();
-	else if (m_Type == stage)
+	else if (m_Type==stage||m_Type==course)
 		m_bgPassedOverlay.Draw();
 
 	m_Menu.DrawTopLayer();
