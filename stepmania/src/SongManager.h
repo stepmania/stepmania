@@ -64,6 +64,7 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
+	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const;
 	const vector<Song*> &GetBestSongs( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestSongs[slot]; }
 	const vector<Course*> &GetBestCourses( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[slot]; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;

@@ -422,14 +422,24 @@ CString SongManager::GetDifficultyThemeName( Difficulty dc ) const
 	return THEME->GetMetric( "Common", sMetricName );
 }
 
-void SongManager::GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages ) const
+static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &AddTo, CString sGroupName, int iMaxStages )
 {
 	AddTo.clear();
 
-	for( unsigned i=0; i<m_pSongs.size(); i++ )
-		if( sGroupName==GROUP_ALL_MUSIC || sGroupName==m_pSongs[i]->m_sGroupName )
-			if( GetNumStagesForSong(m_pSongs[i])<=iMaxStages )
-				AddTo.push_back( m_pSongs[i] );
+	for( unsigned i=0; i<Songs.size(); i++ )
+		if( sGroupName==GROUP_ALL_MUSIC || sGroupName==Songs[i]->m_sGroupName )
+			if( SongManager::GetNumStagesForSong(Songs[i]) <= iMaxStages )
+				AddTo.push_back( Songs[i] );
+}
+
+void SongManager::GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages ) const
+{
+	GetSongsFromVector( m_pSongs, AddTo, sGroupName, iMaxStages );
+}
+
+void SongManager::GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages, ProfileSlot slot ) const
+{
+	GetSongsFromVector( m_pBestSongs[slot], AddTo, sGroupName, iMaxStages );
 }
 
 int SongManager::GetNumSongs() const
@@ -873,13 +883,33 @@ Course *SongManager::FindCourse( CString sName )
 
 	return NULL;
 }
+#include "UnlockSystem.h"
 
 void SongManager::UpdateBest()
 {
 	// update players best
 	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
 	{
-		m_pBestSongs[i] = m_pSongs;
+		vector<Song*> &Best = m_pBestSongs[i];
+		Best = m_pSongs;
+
+		for ( unsigned j=0; j < Best.size() ; ++j )
+		{
+			bool bFiltered = false;
+			/* Filter out hidden songs. */
+			if( Best[j]->GetDisplayed() != Song::SHOW_ALWAYS )
+				bFiltered = true;
+			/* Filter out locked songs. */
+			if( UNLOCKMAN->SongIsLocked(Best[j]) )
+				bFiltered = true;
+			if( !bFiltered )
+				continue;
+
+			/* Remove it. */
+			swap( Best[j], Best.back() );
+			Best.erase( Best.end()-1 );
+		}
+
 		SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
 
 		m_pBestCourses[i] = m_pCourses;
