@@ -3,6 +3,7 @@
 #include "Notes.h"
 #include "RageUtil.h"
 #include "GameManager.h"
+#include "RageLog.h"
 
 void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 {
@@ -95,7 +96,10 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
-		RageException::Throw( "Error opening song file '%s' for writing.", sPath.GetString() );
+	{
+		LOG->Warn( "Error opening song file '%s' for writing.", sPath.GetString() );
+		return false;
+	}
 
 	WriteGlobalTags(fp, out);
 	if(bSavingCache) {

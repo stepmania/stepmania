@@ -45,7 +45,8 @@ RageLog::~RageLog()
 {
 	Flush();
 	FreeConsole();
-	fclose( m_fileLog );
+	if( m_fileLog )
+		fclose( m_fileLog );
 }
 
 void RageLog::ShowConsole()
@@ -68,7 +69,8 @@ void RageLog::Trace( const char *fmt, ...)
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
 
-	fprintf( m_fileLog, "%s\n", sBuff.GetString() ); 
+	if( m_fileLog )
+		fprintf( m_fileLog, "%s\n", sBuff.GetString() ); 
 	printf( "%s\n", sBuff.GetString() ); 
 	CrashLog(sBuff);
 

@@ -92,6 +92,10 @@ bool IniFile::ReadFile()
 void IniFile::WriteFile()
 {
 	FILE* fp = fopen( path, "w" );
+
+	if( fp == NULL )
+		return;
+
 	for (keymap::const_iterator k = keys.begin(); k != keys.end(); ++k)
 	{
 		if (k->second.empty())
