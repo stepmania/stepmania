@@ -175,30 +175,23 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 		DISPLAY->DrawFan( v, 7 );
 
-
 		//
-		// use a strip to draw the thick line
+		// use a line loop to draw the thick line
 		//
-		for( i=0; i<NUM_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
+		for( i=0; i<NUM_RADAR_CATEGORIES; i++ )
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
-			const float fDistFromCenterInner = fDistFromCenter-RADAR_EDGE_WIDTH/2;
-			const float fDistFromCenterOutter = fDistFromCenter+RADAR_EDGE_WIDTH/2;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
-			const float fXInner = cosf(fRotation) * fDistFromCenterInner;
-			const float fXOutter = cosf(fRotation) * fDistFromCenterOutter;
-			const float fYInner = -sinf(fRotation) * fDistFromCenterInner;
-			const float fYOutter = -sinf(fRotation) * fDistFromCenterOutter;
+			const float fX = cosf(fRotation) * fDistFromCenter;
+			const float fY = -sinf(fRotation) * fDistFromCenter;
 
-			v[i*2+0].p = RageVector3( fXInner, fYInner, 0 );
-			v[i*2+1].p = RageVector3( fXOutter, fYOutter,	0 );
-			v[i*2+0].c = PlayerToColor( (PlayerNumber)p );
-			v[i*2+1].c = v[i*2+0].c;
+			v[i+0].p = RageVector3( fX, fY, 0 );
+			v[i+0].c = PlayerToColor( (PlayerNumber)p );
 		}
 
-		DISPLAY->DrawStrip( v, 12 );
+		DISPLAY->DrawLoop( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );
 	}
 }
 
