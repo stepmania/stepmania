@@ -9,6 +9,8 @@
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "StepMania.h"
+
 #include <errno.h>
 
 /* Pull in all of our SDL libraries here. */
@@ -318,6 +320,25 @@ RageSurface *RageSurfaceFromSDLSurface( SDL_Surface *surf )
 	}
 
 	return ret;
+}
+
+void HandleSDLEvents()
+{
+	/* This needs to be called before anything that handles SDL events. */
+	SDL_PumpEvents();
+
+	// process all queued events
+	SDL_Event event;
+	while(SDL_GetEvent(event, SDL_QUITMASK))
+	{
+		switch(event.type)
+		{
+		case SDL_QUIT:
+			LOG->Trace("SDL_QUIT: shutting down");
+			ExitGame();
+			break;
+		}
+	}
 }
 
 /*

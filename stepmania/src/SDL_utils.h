@@ -31,6 +31,8 @@ void mySDL_WM_SetIcon( CString sIconFile );
 SDL_Surface *SDLSurfaceFromRageSurface( RageSurface *surf );
 RageSurface *RageSurfaceFromSDLSurface( SDL_Surface *surf );
 
+void HandleSDLEvents();
+
 #endif
 
 /*
