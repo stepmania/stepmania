@@ -297,6 +297,21 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		AA0FA06B05AD38D300DA0695 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = libresample.h;
+			path = include/libresample.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA0FA06C05AD38D300DA0695 = {
+			fileRef = AA0FA06B05AD38D300DA0695;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA14ED0F0509F40000E3FAD7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1123,7 +1138,6 @@
 				AA29CD240558741A00961A51,
 				AA29CD250558741A00961A51,
 				AA29CD270558741A00961A51,
-				AA29CD280558741A00961A51,
 				AA29CD290558741A00961A51,
 				AA29CD2A0558741A00961A51,
 				AA29CD2B0558741A00961A51,
@@ -2670,12 +2684,6 @@
 		};
 		AA29CD270558741A00961A51 = {
 			fileRef = AAFC80460513A6EB00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CD280558741A00961A51 = {
-			fileRef = AAAE28D70522527D00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5834,20 +5842,12 @@
 		AA67BFD40558752500EF34A6 = {
 			buildActionMask = 2147483647;
 			files = (
-				AA67BFD50558752500EF34A6,
 				AA67BFD60558752500EF34A6,
 				AA67BFD70558752500EF34A6,
+				AA0FA06C05AD38D300DA0695,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFD50558752500EF34A6 = {
-			fileRef = AAAE28D70522527D00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
 		};
 		AA67BFD60558752500EF34A6 = {
 			fileRef = AAAE28DC052252A500D02EE9;
@@ -11859,17 +11859,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		AAAE28D70522527D00D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = resample.h;
-			path = include/resample.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
 		AAAE28DB052252A500D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -11982,7 +11971,7 @@
 		};
 		AAAE28FA0522550400D02EE9 = {
 			children = (
-				AAAE28D70522527D00D02EE9,
+				AA0FA06B05AD38D300DA0695,
 			);
 			isa = PBXGroup;
 			name = include;
