@@ -37,7 +37,7 @@
 #define GRADE_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("GradeP%dX",p+1))
 #define GRADE_Y					THEME->GetMetricF("ScreenEvaluation","GradeY")
 #define PERCENT_BASE_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseP%dX",p+1))
-#define PERCENT_BASE_DP_X( p )	THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseDPP%dX",p+1))
+#define DANCE_POINT_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("DancePointP%dX",p+1))
 #define PERCENT_BASE_Y			THEME->GetMetricF("ScreenEvaluation","PercentBaseY")
 #define JUDGE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","JudgeLabelsX")
 #define MARVELOUS_X(o,p)		THEME->GetMetricF("ScreenEvaluation",ssprintf("Marvelous%sP%dX",o?"Oni":"",p+1))
@@ -328,7 +328,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 				m_textOniPercentLarge[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
 				m_textOniPercentLarge[p].TurnShadowOff();
-				m_textOniPercentLarge[p].SetXY( (PREFSMAN->m_bDancePointsForOni ? PERCENT_BASE_DP_X(p) : PERCENT_BASE_X(p) ), PERCENT_BASE_Y );
+				m_textOniPercentLarge[p].SetXY( (PREFSMAN->m_bDancePointsForOni ? DANCE_POINT_X(p) : PERCENT_BASE_X(p) ), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
 				m_textOniPercentLarge[p].SetVertAlign( Actor::align_bottom );
 				m_textOniPercentLarge[p].SetEffectGlowShift( 2.5f );
