@@ -437,8 +437,8 @@ static RageColor scale( float x, float l1, float h1, const RageColor &a, const R
 
 bool Sprite::EarlyAbortDraw()
 {
-//	return m_pTexture == NULL && !m_bDrawIfTextureNull;
-	return false;
+	return m_pTexture == NULL && !m_bDrawIfTextureNull;
+//	return false;
 }
 
 void Sprite::DrawPrimitives()
