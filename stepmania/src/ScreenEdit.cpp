@@ -1484,7 +1484,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 			
 				// reload the music to fix sync problems
-				m_soundMusic.Load(m_pSong->GetMusicPath());
+				// m_soundMusic.Load(m_pSong->GetMusicPath());
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
@@ -1513,7 +1513,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 
 				// reload the music to fix sync problems
-				m_soundMusic.Load(m_pSong->GetMusicPath());
+				// m_soundMusic.Load(m_pSong->GetMusicPath());
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
