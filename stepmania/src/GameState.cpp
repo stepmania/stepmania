@@ -17,6 +17,7 @@
 #include "PrefsManager.h"
 #include "InputMapper.h"
 #include "song.h"
+#include "Course.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "SongManager.h"
@@ -166,6 +167,16 @@ void GameState::ResetLastRanking()
 		m_RankingCategory[p] = (RankingCategory)-1;
 		m_iRankingIndex[p] = -1;
 	}
+}
+
+void GameState::StoreRankingName( PlayerNumber pn, CString name )
+{
+	const int index = GAMESTATE->m_iRankingIndex[pn];
+
+	if( GAMESTATE->IsCourseMode() )
+		GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][index].sName = name;
+	else
+		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][index].sName = name;
 }
 
 void GameState::ReloadCharacters()

@@ -252,6 +252,9 @@ public:
 	Course*				m_pRankingCourse;		// meaningless unless Course was played
 	int					m_iRankingIndex[NUM_PLAYERS];		// -1 if no new high score
 
+	/* Called by name entry screens: */
+	void StoreRankingName( PlayerNumber pn, CString name );
+
 	//
 	// Arrow positioning
 	//
