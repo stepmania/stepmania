@@ -10,11 +10,11 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Notes.h"
-
 #include "GameConstantsAndTypes.h"
-#include "RageUtil.h"
-#include "StyleDef.h"
+#include "Grade.h"
+
+struct Notes;
+class StyleDef;
 
 extern const int FILE_CACHE_VERSION;
 
@@ -117,12 +117,12 @@ public:
 	CString GetMovieBackgroundPath() const {return m_sSongDir+m_sMovieBackgroundFile; };
 
 
-	bool HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); };
-	bool HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); };
-	bool HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
-	bool HasCDTitle() const 	{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
-	bool HasMovieBackground() const {return m_sMovieBackgroundFile != ""&&  IsAFile(GetMovieBackgroundPath()); };
-	bool HasBGChanges() const 	{return m_BackgroundChanges.GetSize() > 0; };
+	bool HasMusic() const;
+	bool HasBanner() const;
+	bool HasBackground() const;
+	bool HasCDTitle() const;
+	bool HasMovieBackground() const;
+	bool HasBGChanges() const;
 
 	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
 	CArray<StopSegment, StopSegment&> m_StopSegments;	// this must be sorted before gameplay
@@ -175,15 +175,7 @@ public:
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, DifficultyClass dc ) const;
 	void GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const;
-	int GetNumTimesPlayed() const
-	{
-		int iTotalNumTimesPlayed = 0;
-		for( int i=0; i<m_apNotes.GetSize(); i++ )
-		{
-			iTotalNumTimesPlayed += m_apNotes[i]->m_iNumTimesPlayed;
-		}
-		return iTotalNumTimesPlayed;
-	}
+	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
 	Grade GetGradeForDifficultyClass( const StyleDef *s, int p, DifficultyClass dc ) const;

@@ -13,8 +13,8 @@
 
 #include "RageUtil.h"
 #include "D3DX8Math.h"	// for D3DXCOLOR
-class IniFile;
 
+class IniFile;
 
 class ThemeManager
 {

@@ -23,6 +23,8 @@
 #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "StyleDef.h"
+#include "Notes.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -957,4 +959,21 @@ bool Song::RouletteDisplayed() const
 {
 	if(!PREFSMAN->m_bHiddenSongs) return true;
 	return m_SelectionDisplay != SHOW_NEVER;
+}
+
+bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); };
+bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); };
+bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
+bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
+bool Song::HasMovieBackground() const {return m_sMovieBackgroundFile != ""&&  IsAFile(GetMovieBackgroundPath()); };
+bool Song::HasBGChanges() const 	{return m_BackgroundChanges.GetSize() > 0; };
+
+int Song::GetNumTimesPlayed() const
+{
+	int iTotalNumTimesPlayed = 0;
+	for( int i=0; i<m_apNotes.GetSize(); i++ )
+	{
+		iTotalNumTimesPlayed += m_apNotes[i]->m_iNumTimesPlayed;
+	}
+	return iTotalNumTimesPlayed;
 }
