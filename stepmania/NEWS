@@ -1,4 +1,8 @@
 ------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  Precise adjustment of timing window for each grade via the
+	stepmania.ini file (see JudgeWindowPerfectPercent, JudgeWindowGreatPercent,
+	etc).
+OPTIMIZATION:  Better texture caching algorithm for faster loading of menus.
 NEW FEATURE: Ez2SelectStyle ScrollingList Contents now Metric Configurable.
 NEW FEATURE: PPP and PUMP use Ez2SelectStyle Menus to become more
 	arcade-accurate.

@@ -49,9 +49,9 @@ bool MsdFile::ReadFile( CString sNewPath )
 
 	int iBytesRead = fread( szFileString, 1, iBufferSize, fp );
 
-	ASSERT( iBufferSize > iBytesRead );		// why are these not always =?
-	/* because iBufferSize is the filesize+1000.  why are we using Windows
-	 * API calls for simple file access, anyway? XXX -glenn */
+	ASSERT( iBufferSize > iBytesRead );
+	/* why are we using Windows API calls for simple file access, anyway? XXX -glenn */
+	/* What is the C way to get the file size?  I don't see 'fstat' in C library... -Chris */
 
 	m_iNumValues = 0;
 

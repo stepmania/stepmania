@@ -369,7 +369,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprPercentFrame[p].SetXY( GRADE_X(p), GRADE_Y );
 				this->AddChild( &m_sprPercentFrame[p] );
 
-				m_textOniPercentLarge[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"0123456789%. :x" );
+				m_textOniPercentLarge[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
 				m_textOniPercentLarge[p].TurnShadowOff();
 				m_textOniPercentLarge[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
@@ -377,7 +377,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentLarge[p].SetEffectGlowing( 1.0f );
 				this->AddChild( &m_textOniPercentLarge[p] );
 
-				m_textOniPercentSmall[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"0123456789%. :x" );
+				m_textOniPercentSmall[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
 				m_textOniPercentSmall[p].TurnShadowOff();
 				m_textOniPercentSmall[p].SetZoom( 0.5f );
 				m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
@@ -401,7 +401,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprCourseFrame[p].SetXY( BONUS_X(p), BONUS_Y );
 				this->AddChild( &m_sprCourseFrame[p] );
 		
-				m_textSongsSurvived[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation stage numbers 5x3"),"0123456789%. :x");
+				m_textSongsSurvived[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation stage numbers") );
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 				m_textSongsSurvived[p].SetText( ssprintf("%02d", GAMESTATE->m_iSongsBeforeFail[p]) );
@@ -511,7 +511,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
-			m_textJudgeNumbers[l][p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation score numbers 5x3"), "0123456789%. :x" );
+			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation score numbers") );
 			m_textJudgeNumbers[l][p].TurnShadowOff();
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_ONI,p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 0.7f );

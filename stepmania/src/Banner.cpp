@@ -77,7 +77,7 @@ bool Banner::LoadFromGroup( CString sGroupName )
 	else if( sGroupBannerPath != "" )
 		Banner::Load( sGroupBannerPath );
 	else
-		Banner::Load( THEME->GetPathTo("Graphics","select music section banner") );
+		Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
 
 	return true;
 }

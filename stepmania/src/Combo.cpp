@@ -35,7 +35,7 @@ Combo::Combo()
 	m_sprCombo.SetX( 40 );
 	m_sprCombo.SetZoom( 1.0f );
 
-	m_textComboNumber.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay combo numbers 5x3"), "0123456789%. :x" );
+	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay combo numbers") );
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
 	m_textComboNumber.SetX( 0 );

@@ -105,7 +105,7 @@ ScreenStage::ScreenStage()
 	
 	for( int i=0; i<4; i++ )
 	{
-		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers") );
+		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage parts 5x3") );
 
 		if( g_StageType != STAGE_TYPE_EZ2 ) // DONT DIFFUSE COLORS FOR EZ2. Coz we actually set the color in the .png
 			m_sprNumbers[i].SetDiffuse( GAMESTATE->GetStageColor() );

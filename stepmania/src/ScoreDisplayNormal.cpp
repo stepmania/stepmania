@@ -26,7 +26,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
 	// init the text
-	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay score numbers 5x3"), "0123456789%. :x" );
+	BitmapText::LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
 	TurnShadowOff();
 
 	m_fScore = 0;

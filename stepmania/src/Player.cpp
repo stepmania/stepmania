@@ -389,9 +389,9 @@ void Player::Step( int col )
 
 		TapNoteScore &score = m_TapNoteScores[col][iIndexOverlappingNote];
 
-		if(		 fPercentFromPerfect < 0.25f )	score = TNS_PERFECT;
-		else if( fPercentFromPerfect < 0.50f )	score = TNS_GREAT;
-		else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
+		if(		 fPercentFromPerfect < PREFSMAN->m_fJudgeWindowPerfectPercent )	score = TNS_PERFECT;
+		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGreatPercent )	score = TNS_GREAT;
+		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGoodPercent )	score = TNS_GOOD;
 		else									score = TNS_BOO;
 
 		if( GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay )
@@ -633,7 +633,7 @@ void Player::HandleNoteScore( HoldNoteScore score )
 
 float Player::GetMaxBeatDifference()
 {
-	return GAMESTATE->m_fCurBPS * PREFSMAN->m_fJudgeWindow * GAMESTATE->m_SongOptions.m_fMusicRate;
+	return GAMESTATE->m_fCurBPS * PREFSMAN->m_fJudgeWindowSeconds * GAMESTATE->m_SongOptions.m_fMusicRate;
 }
 
 void Player::FadeToFail()

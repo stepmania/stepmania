@@ -1208,7 +1208,7 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 			return NotesType(i);
 	
 	// invalid NotesType
-	ASSERT(0);
+	LOG->Warn( "Invalid NotesType string '%s' encountered.  Assuming this is 'dance-single'.", sNotesType );
 	return NOTES_TYPE_DANCE_SINGLE;
 }
 

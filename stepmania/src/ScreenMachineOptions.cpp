@@ -88,15 +88,15 @@ void ScreenMachineOptions::ImportOptions()
 	 * impossible, and perhaps it *is* justice that even the CPU fails
 	 * it.  :)
 	 */
-	if(      PREFSMAN->m_fJudgeWindow == 0.24f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 0;
-	else if( PREFSMAN->m_fJudgeWindow == 0.22f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 1;
-	else if( PREFSMAN->m_fJudgeWindow == 0.20f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 2;
-	else if( PREFSMAN->m_fJudgeWindow == 0.18f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
-	else if( PREFSMAN->m_fJudgeWindow == 0.16f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 4;
-	else if( PREFSMAN->m_fJudgeWindow == 0.14f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 5;
-	else if( PREFSMAN->m_fJudgeWindow == 0.12f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 6;
-	else if( PREFSMAN->m_fJudgeWindow == 0.06f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 7;
-//	else if( PREFSMAN->m_fJudgeWindow == 0.02f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 8;
+	if(      PREFSMAN->m_fJudgeWindowSeconds == 0.24f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 0;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.22f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 1;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.20f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 2;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.18f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.16f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 4;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.14f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 5;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.12f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 6;
+	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.06f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 7;
+//	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.02f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 8;
 	else											m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
 
 	if(      PREFSMAN->m_fLifeDifficultyScale == 1.60f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 0;
@@ -121,15 +121,15 @@ void ScreenMachineOptions::ExportOptions()
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
-	case 0:	PREFSMAN->m_fJudgeWindow = 0.24f;	break;
-	case 1:	PREFSMAN->m_fJudgeWindow = 0.22f;	break;
-	case 2:	PREFSMAN->m_fJudgeWindow = 0.20f;	break;
-	case 3:	PREFSMAN->m_fJudgeWindow = 0.18f;	break;
-	case 4:	PREFSMAN->m_fJudgeWindow = 0.16f;	break;
-	case 5:	PREFSMAN->m_fJudgeWindow = 0.14f;	break;
-	case 6:	PREFSMAN->m_fJudgeWindow = 0.12f;	break;
-	case 7:	PREFSMAN->m_fJudgeWindow = 0.06f;	break;
-//	case 8:	PREFSMAN->m_fJudgeWindow = 0.02f;	break;
+	case 0:	PREFSMAN->m_fJudgeWindowSeconds = 0.24f;	break;
+	case 1:	PREFSMAN->m_fJudgeWindowSeconds = 0.22f;	break;
+	case 2:	PREFSMAN->m_fJudgeWindowSeconds = 0.20f;	break;
+	case 3:	PREFSMAN->m_fJudgeWindowSeconds = 0.18f;	break;
+	case 4:	PREFSMAN->m_fJudgeWindowSeconds = 0.16f;	break;
+	case 5:	PREFSMAN->m_fJudgeWindowSeconds = 0.14f;	break;
+	case 6:	PREFSMAN->m_fJudgeWindowSeconds = 0.12f;	break;
+	case 7:	PREFSMAN->m_fJudgeWindowSeconds = 0.06f;	break;
+//	case 8:	PREFSMAN->m_fJudgeWindowSeconds = 0.02f;	break;
 	default:	ASSERT(0);
 	}
 

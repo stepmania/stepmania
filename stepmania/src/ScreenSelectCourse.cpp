@@ -118,13 +118,12 @@ ScreenSelectCourse::ScreenSelectCourse()
 		this->AddChild( &m_HighScore[p] );
 	}	
 
-	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","select music hold") );
-	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
-	m_textHoldForOptions.SetText( "press START again for options" );
-	m_textHoldForOptions.SetZoom( 1 );
-	m_textHoldForOptions.SetZoomY( 0 );
-	m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-	this->AddChild( &m_textHoldForOptions );
+	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message 1x2") );
+	m_sprOptionsMessage.StopAnimating();
+	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
+	m_sprOptionsMessage.SetZoomY( 0 );
+	m_sprOptionsMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	this->AddChild( &m_sprOptionsMessage );
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
@@ -201,7 +200,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 	{
 		m_bGoToOptions = true;
-		m_textHoldForOptions.SetText( "Entering Options..." );
+		m_sprOptionsMessage.SetState( 1 );
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
@@ -286,14 +285,14 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		m_bMadeChoice = true;
 
 		// show "hold START for options"
-		m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-		m_textHoldForOptions.BeginTweening( 0.25f );	// fade in
-		m_textHoldForOptions.SetTweenZoomY( 1 );
-		m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
-		m_textHoldForOptions.BeginTweening( 2.0f );	// sleep
-		m_textHoldForOptions.BeginTweening( 0.25f );	// fade out
-		m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-		m_textHoldForOptions.SetTweenZoomY( 0 );
+		m_sprOptionsMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
+		m_sprOptionsMessage.SetTweenZoomY( 1 );
+		m_sprOptionsMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
+		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
+		m_sprOptionsMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprOptionsMessage.SetTweenZoomY( 0 );
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
 

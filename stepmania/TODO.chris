@@ -2,6 +2,11 @@
 Fix
 /////////////////////////
 
+on Ez2, the Ranking doesn't save (AAA, AA, A, B e.t.c.)
+but the score does, any ideas why?
+
+timing window in INI
+
 if you do an entire song in it. and save it'll crash
 
 re-add texture hints

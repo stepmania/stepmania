@@ -60,7 +60,7 @@ protected:
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
-	BitmapText			m_textHoldForOptions;
+	Sprite				m_sprOptionsMessage;
 
 	RageSoundSample		m_soundSelect;
 	RageSoundSample		m_soundOptionsChange;
