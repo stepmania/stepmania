@@ -637,6 +637,7 @@ int main(int argc, char* argv[])
 
 	LOG->SetLogging( PREFSMAN->m_bLogging );
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
+	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 
 	CheckSettings();
 

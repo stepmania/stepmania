@@ -36,10 +36,12 @@ public:
 
 	void SetLogging( bool b );	// enable or disable logging
 	void SetFlushing( bool b );	// enable or disable flushing
+	void SetTimestamping( bool b );	// enable or disable timestamping
 
 private:
 	bool m_bEnabled;
 	bool m_bFlush;
+	bool m_bTimestamping;
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
 	void UpdateMappedLog();

@@ -16,7 +16,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "PrefsManager.h"
 #include "RageFile.h"
 #include <time.h>
 #include "ProductInfo.h"
@@ -87,6 +86,7 @@ RageLog::RageLog()
 {
 	m_bEnabled = true;
 	m_bFlush = false;
+	m_bTimestamping = false;
 
 	// delete old log files
 	remove( LOG_PATH );
@@ -144,6 +144,11 @@ void RageLog::SetLogging( bool b )
 void RageLog::SetFlushing( bool b )
 {
 	m_bFlush = b;
+}
+
+void RageLog::SetTimestamping( bool b )
+{
+	m_bTimestamping = b;
 }
 
 void RageLog::ShowConsole()
@@ -206,7 +211,7 @@ void RageLog::Warn( const char *fmt, ...)
 
 void RageLog::Write( int where, CString str)
 {
-	if( PREFSMAN && PREFSMAN->m_bTimestamping )
+	if( m_bTimestamping )
 		str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
 
 	if( where&WRITE_TO_INFO && m_fileInfo )
