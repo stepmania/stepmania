@@ -35,7 +35,6 @@ PrefsManager::PrefsManager()
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
-	ReadStaticPrefsFromDisk();
 }
 
 void PrefsManager::Init()
@@ -312,6 +311,9 @@ PrefsManager::~PrefsManager()
 void PrefsManager::ReadGlobalPrefsFromDisk()
 {
 	ReadPrefsFromFile( STEPMANIA_INI_PATH );
+
+	/* Static preferences always override StepMania.ini. */
+	ReadStaticPrefsFromDisk();
 }
 
 void PrefsManager::ReadStaticPrefsFromDisk()
