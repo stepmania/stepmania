@@ -83,6 +83,11 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
   20,000,000 for the second song
   30,000,000 for the third song
   40,000,000 for the fourth song
+
+  We extend this to work with nonstop courses of any length.
+
+  We also keep track of this scoring type in endless, with 100mil per iteration
+  of all songs, though this score isn't actually seen anywhere right now.
 */
 	//
 	// Calculate the score multiplier
@@ -93,15 +98,15 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 		const int numSongsInCourse = apNotes.size();
 		ASSERT( numSongsInCourse != 0 );
 
-		if ( iSongInCourseIndex == numSongsInCourse - 1 )
-			m_bIsLastSongInCourse = true;
+		const int iIndex = iSongInCourseIndex % numSongsInCourse;
+		m_bIsLastSongInCourse = (iIndex+1 == numSongsInCourse);
 
 		if( numSongsInCourse < 10 )
 		{
 			const int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
 			ASSERT(courseMult >= 0);
 
-			m_iMaxPossiblePoints = (100000000 * (iSongInCourseIndex+1)) / courseMult;
+			m_iMaxPossiblePoints = (100000000 * (iIndex+1)) / courseMult;
 		}
 		else
 		{
@@ -201,7 +206,13 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	{
 		m_iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
+		{
 			m_iScore += 100000000 - m_iMaxScoreSoFar;
+
+			/* If we're in Endless mode, we'll come around here again, so reset
+			 * the bonus counter. */
+			m_iMaxScoreSoFar = 0;
+		}
 	}
 
 	ASSERT(m_iScore >= 0);
