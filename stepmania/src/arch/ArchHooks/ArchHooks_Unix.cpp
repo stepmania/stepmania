@@ -135,12 +135,18 @@ void ArchHooks_Unix::SetTime( tm newtime )
 	system( "hwclock --systohc" );
 }
 
-int64_t ArchHooks_Unix::GetMicrosecondsSinceStart()
+static int64_t GetMicrosecondsSinceEpoch()
 {
 	struct timeval tv;
 	gettimeofday( &tv, NULL );
 
 	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
+}
+
+int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+{
+	static int64_t iStartTime = GetMicrosecondsSinceEpoch();
+	return GetMicrosecondsSinceEpoch() - iStartTime;
 }
 
 /*
