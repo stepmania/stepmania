@@ -914,16 +914,16 @@ RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
 	}
 }
 
-CString SongManager::GetDifficultyThemeName( const CString &in ) const
+CString SongManager::GetDifficultyThemeName( Difficulty dc ) const
 {
-	switch( StringToDifficulty(in) )
+	switch( dc )
 	{
 	case DIFFICULTY_BEGINNER:	return BEGINNER_DESCRIPTION;
 	case DIFFICULTY_EASY:		return EASY_DESCRIPTION;
 	case DIFFICULTY_MEDIUM:		return MEDIUM_DESCRIPTION;
 	case DIFFICULTY_HARD:		return HARD_DESCRIPTION;
 	case DIFFICULTY_CHALLENGE:	return CHALLENGE_DESCRIPTION;
-	default:					return in;  // something else
+	default:	ASSERT(0);		return "";  // something else
 	}
 }
 

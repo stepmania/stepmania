@@ -149,12 +149,14 @@ void DifficultyList::SetFromGameState()
 				continue;
 			}
 
-			met.SetFromNotes( m_CurSteps[m] );
-			const CString desc = m_CurSteps[m]->GetDescription();
+			Steps* pSteps = m_CurSteps[m];
+
+			met.SetFromNotes( pSteps );
+			Difficulty dc = pSteps->GetDifficulty();
 			m_Descriptions[m].SetZoomX(1);
-			m_Descriptions[m].SetTextMaxWidth( DESCRIPTION_MAX_WIDTH, SONGMAN->GetDifficultyThemeName(desc) );
+			m_Descriptions[m].SetTextMaxWidth( DESCRIPTION_MAX_WIDTH, SONGMAN->GetDifficultyThemeName(dc) );
 			/* Don't mess with alpha; it might be fading on. */
-			m_Descriptions[m].SetDiffuseColor( SONGMAN->GetDifficultyColor( m_CurSteps[m]->GetDifficulty() ) );
+			m_Descriptions[m].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
 		}
 	}
 

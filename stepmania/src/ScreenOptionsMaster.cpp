@@ -105,16 +105,17 @@ void ScreenOptionsMaster::SetStep( OptionRow &row, OptionRowHandler &hand )
 	}
 	else if( GAMESTATE->m_pCurSong )	// playing a song
 	{
-		vector<Steps*> vNotes;
-		GAMESTATE->m_pCurSong->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-		SortNotesArrayByDifficulty( vNotes );
-		for( unsigned i=0; i<vNotes.size(); i++ )
+		vector<Steps*> vSteps;
+		GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		SortNotesArrayByDifficulty( vSteps );
+		for( unsigned i=0; i<vSteps.size(); i++ )
 		{
-			CString s = vNotes[i]->GetDescription();
-			s.MakeUpper();
+			Steps* pSteps = vSteps[i];
 
-			// convert to theme-defined values
-			s = SONGMAN->GetDifficultyThemeName(s);
+			CString s;
+			// convert to theme-defined difficulty name
+			s = SONGMAN->GetDifficultyThemeName( pSteps->GetDifficulty() );
+			s += ssprintf( " (%d)", pSteps->GetMeter() );
 
 			row.choices.push_back( s );
 		}
@@ -443,10 +444,14 @@ int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHand
 		}
 		else if( GAMESTATE->m_pCurSong )   // playing a song
 		{
-			vector<Steps*> vNotes;
-			GAMESTATE->m_pCurSong->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-			SortNotesArrayByDifficulty( vNotes );
-			GAMESTATE->m_pCurNotes[pn] = vNotes[ sel ];
+			vector<Steps*> vSteps;
+			GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+			SortNotesArrayByDifficulty( vSteps );
+			Steps* pSteps = vSteps[ sel ];
+			// set current notes
+			GAMESTATE->m_pCurNotes[pn] = pSteps;
+			// set preferred difficulty
+			GAMESTATE->m_PreferredDifficulty[pn] = pSteps->GetDifficulty();
 		}
 
 		break;
