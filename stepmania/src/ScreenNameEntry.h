@@ -31,14 +31,15 @@ public:
 
 	virtual void MenuStart( PlayerNumber pn );
 
+	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 private:
 	bool AnyStillEntering() const;
 
 	BGAnimation		m_Background;
 
 	GrayArrowRow	m_GrayArrowRow[NUM_PLAYERS];
-	BitmapText		m_textSelectedChars[NUM_PLAYERS][MAX_RANKING_NAME_LENGTH];
-	BitmapText		m_textScrollingChars[NUM_PLAYERS][MAX_RANKING_NAME_LENGTH];
+	BitmapText		m_textSelectedChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
+	BitmapText		m_textScrollingChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textCategory[NUM_PLAYERS];
 	MenuTimer		m_Timer;
 

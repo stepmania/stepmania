@@ -42,6 +42,7 @@
 #define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawTotal")
 #define FAKE_BEATS_PER_SEC			THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
 #define TIMER_SECONDS				THEME->GetMetricI("ScreenNameEntry","TimerSeconds")
+#define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 
 
 // cache for frequently used metrics
