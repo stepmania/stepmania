@@ -234,16 +234,13 @@ void ScreenSMOnlineLogin::SendLogin()
 			else
 				HashedName += PreHashedName.c_str()[i];
 
-		NSMAN->m_SMOnlinePacket.ClearPacket();
-
+	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0); //Login command
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)m_iPlayer); //Player
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0); //MD5 hash style
 	NSMAN->m_SMOnlinePacket.WriteNT(m_sUserName);
 	NSMAN->m_SMOnlinePacket.WriteNT(HashedName);
-
 	NSMAN->SendSMOnline( );
-
 }
 
 #endif
