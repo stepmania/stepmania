@@ -37,6 +37,7 @@ public:
 	void MenuRight( const PlayerNumber p );
 	void MenuStart( const PlayerNumber p );
 	void MenuBack( const PlayerNumber p );
+	void MenuDown( const PlayerNumber p );
 	void TweenOffScreen();
 	void TweenPlyOffScreen();
 

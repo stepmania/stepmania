@@ -97,7 +97,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			PUMP_BUTTON_SELECT,		// MENU_BUTTON_BACK
 		},
 	},
-	{	// GAME_EZ2
+/*	{	// GAME_EZ2
 		"ez2",						// m_szName
 		"Ez2dancer",				// m_szDescription
 		2,							// m_iNumInstruments
@@ -118,7 +118,32 @@ GameDef g_GameDefs[NUM_GAMES] =
 			EZ2_BUTTON_DOWN,			// MENU_BUTTON_START
 			EZ2_BUTTON_SELECT,			// MENU_BUTTON_BACK
 		},
+	},*/
+	{	// GAME_EZ2 ********* TEMPORARY DDR BORROWAGE FOR MENUS (The Input System needs WORK!) ********
+		"ez2",						// m_szName
+		"Ez2dancer",				// m_szDescription
+		2,							// m_iNumInstruments
+		NUM_DANCE_BUTTONS,			// m_iButtonsPerInstrument // If it works, i'll go with it, but i'm a bit unsure here...
+		{	// m_szButtonNames
+			"UpLeft",
+			"UpLeftHand",
+			"LrLeftHand",
+			"UpRight",
+			"UpRightHand",
+			"LrRightHand",
+			"Down",
+			"Back"
+		},
+		{	// m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_szButtonNames
+			DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
+			DANCE_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
+			DANCE_BUTTON_UP,		// MENU_BUTTON_UP
+			DANCE_BUTTON_DOWN,		// MENU_BUTTON_DOWN
+			DANCE_BUTTON_START,		// MENU_BUTTON_START
+			DANCE_BUTTON_SELECT,	// MENU_BUTTON_BACK
+		},
 	},
+
 };
 
 

@@ -221,6 +221,9 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprOpt[0].BeginTweening( 0 );
 		m_sprOpt[0].SetTweenZoomY( 0 );
 		m_iSelectedStyle = 1; // make sure we DONT have CLUB selected
+		m_sprOpt[DS_EASY].SetXY( EASY_X[m_iSelectedStyle]-350, OPT_Y[0] );
+		m_sprOpt[DS_HARD].SetXY( HARD_X[m_iSelectedStyle]-350, OPT_Y[0] );
+		m_sprOpt[DS_REAL].SetXY( HARD_X[m_iSelectedStyle], OPT_Y[0] );	
 		MenuLeft( PLAYER_1 ); // shift left so that we're clean again.
 
 	}
@@ -314,6 +317,12 @@ void ScreenEz2SelectStyle::MenuBack( const PlayerNumber p )
 //	TweenOffScreen();
 }
 
+void ScreenEz2SelectStyle::MenuDown( const PlayerNumber p )
+{
+	MenuStart(p);
+}
+
+
 /************************************
 SetFadedStyles
 Desc: Fades out non-highlighted items
@@ -388,6 +397,79 @@ void ScreenEz2SelectStyle::MenuRight( PlayerNumber p )
 			
 			SetFadedStyles();
 		}
+	}
+	else // Two Players (means NO club option...)
+	{
+		if (((m_iSelectedPlayer == 0 && p == PLAYER_2) || (m_iSelectedPlayer == 1 && p == PLAYER_1)) != TRUE) // make sure players who haven't selected yet can't choose a style
+		{
+			if( m_iSelectedStyle == DS_REAL )		// wrap to the last dance style
+				m_iSelectedStyle = DS_EASY;
+			else
+				m_iSelectedStyle = m_iSelectedStyle + 1;
+
+			if( m_iSelectedStyle == DS_REAL ) // (REALLY EASY)
+			{
+				m_sprOpt[DS_HARD].SetXY( CLUB_X[m_iSelectedStyle]+700, OPT_Y[0] ); // First move it over the other side off-screen...
+				m_sprOpt[DS_REAL].SetXY( REAL_X[m_iSelectedStyle]+350, OPT_Y[0] );	
+				m_sprOpt[DS_EASY].SetXY( CLUB_X[m_iSelectedStyle]+350, OPT_Y[0] );
+			}
+			else if( m_iSelectedStyle == DS_HARD ) // (REALLY REAL)
+			{
+				m_sprOpt[DS_EASY].SetXY( REAL_X[m_iSelectedStyle]+700, OPT_Y[0] ); // First move it over the other side off-screen...
+				m_sprOpt[DS_HARD].SetXY( HARD_X[m_iSelectedStyle]+350, OPT_Y[0] );	
+				m_sprOpt[DS_REAL].SetXY( REAL_X[m_iSelectedStyle]+350, OPT_Y[0] );					
+			}
+			else if( m_iSelectedStyle == DS_EASY ) // (REALLY HARD)
+			{
+				m_sprOpt[DS_REAL].SetXY( HARD_X[m_iSelectedStyle]+700, OPT_Y[0] ); // First move it over the other side off-screen...
+				m_sprOpt[DS_EASY].SetXY( EASY_X[m_iSelectedStyle]+350, OPT_Y[0] );		
+				m_sprOpt[DS_HARD].SetXY( HARD_X[m_iSelectedStyle]+350, OPT_Y[0] );					
+			}
+
+
+			/* NOTE: Because we're really shifting three values using a setup for four values
+			   the DS_ values are shifted out of phase by 1, i.e. DS_REAL is now actually DS_EASY
+			   Confused? I was =) Anyhow, this will only happen if there are two players and we don't want 
+			   them playing double
+			*/
+			if (m_iSelectedStyle == DS_REAL)
+			{
+				m_sprOpt[DS_EASY].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_EASY].SetTweenX( CLUB_X[m_iSelectedStyle] );
+				m_sprOpt[DS_EASY].SetTweenY( OPT_Y[m_iSelectedStyle] );
+				m_sprOpt[DS_HARD].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_HARD].SetTweenX( CLUB_X[m_iSelectedStyle] + 350 );
+				m_sprOpt[DS_HARD].SetTweenY( OPT_Y[m_iSelectedStyle] );
+				m_sprOpt[DS_REAL].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_REAL].SetTweenX( REAL_X[m_iSelectedStyle] );
+				m_sprOpt[DS_REAL].SetTweenY( OPT_Y[m_iSelectedStyle] );	
+			}	
+			else if (m_iSelectedStyle == DS_HARD)
+			{
+				m_sprOpt[DS_EASY].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_EASY].SetTweenX( REAL_X[m_iSelectedStyle] + 350 );
+				m_sprOpt[DS_EASY].SetTweenY( OPT_Y[m_iSelectedStyle] );
+				m_sprOpt[DS_HARD].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_HARD].SetTweenX( HARD_X[m_iSelectedStyle] );
+				m_sprOpt[DS_HARD].SetTweenY( OPT_Y[m_iSelectedStyle] );
+				m_sprOpt[DS_REAL].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_REAL].SetTweenX( REAL_X[m_iSelectedStyle] );
+				m_sprOpt[DS_REAL].SetTweenY( OPT_Y[m_iSelectedStyle] );	
+			}
+			else if (m_iSelectedStyle == DS_EASY)
+			{
+				m_sprOpt[DS_EASY].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_EASY].SetTweenX( EASY_X[m_iSelectedStyle] );
+				m_sprOpt[DS_EASY].SetTweenY( OPT_Y[m_iSelectedStyle] );
+				m_sprOpt[DS_HARD].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_HARD].SetTweenX( HARD_X[m_iSelectedStyle] );
+				m_sprOpt[DS_HARD].SetTweenY( OPT_Y[m_iSelectedStyle] );
+				m_sprOpt[DS_REAL].BeginTweening( 0.2f, TWEEN_BIAS_BEGIN );
+				m_sprOpt[DS_REAL].SetTweenX( HARD_X[m_iSelectedStyle] + 350 );
+				m_sprOpt[DS_REAL].SetTweenY( OPT_Y[m_iSelectedStyle] );	
+			}
+		}
+		SetFadedStyles();
 	}
 }
 
@@ -533,6 +615,9 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 		m_sprOpt[0].BeginTweening( 0 );
 		m_sprOpt[0].SetTweenZoomY( 0 );
 		m_iSelectedStyle = 1; // make sure we DONT have CLUB selected
+		m_sprOpt[DS_EASY].SetXY( EASY_X[m_iSelectedStyle]-350, OPT_Y[0] );
+		m_sprOpt[DS_HARD].SetXY( HARD_X[m_iSelectedStyle]-350, OPT_Y[0] );
+		m_sprOpt[DS_REAL].SetXY( HARD_X[m_iSelectedStyle], OPT_Y[0] );	
 		MenuLeft( p ); // shift left so that we're clean again.
 	}
 	else
