@@ -9,37 +9,54 @@
 
 bool GetFileVersion( CString fn, CString &out )
 {
-	DWORD ignore;
-	DWORD iSize = GetFileVersionInfoSize( (char *) fn.c_str(), &ignore );
-	if( !iSize )
-		return false;
+	do {
+		DWORD ignore;
+		DWORD iSize = GetFileVersionInfoSize( (char *) fn.c_str(), &ignore );
+		if( !iSize )
+			break;
 
-	CString VersionBuffer( iSize, ' ' );
-	if( !GetFileVersionInfo( (char *) fn.c_str(), NULL, iSize, (char *) VersionBuffer.c_str() ) )
-		return false;
+		CString VersionBuffer( iSize, ' ' );
+		if( !GetFileVersionInfo( (char *) fn.c_str(), NULL, iSize, (char *) VersionBuffer.c_str() ) )
+			break;
 
-	WORD *iTrans;
-	UINT iTransCnt;
+		WORD *iTrans;
+		UINT iTransCnt;
 
-	if( !VerQueryValue( (void *) VersionBuffer.c_str() , "\\VarFileInfo\\Translation",
-			(void **) &iTrans, &iTransCnt ) )
-		return false;
+		if( !VerQueryValue( (void *) VersionBuffer.c_str() , "\\VarFileInfo\\Translation",
+				(void **) &iTrans, &iTransCnt ) )
+			break;
 
-	if( iTransCnt == 0 )
-		return false;
+		if( iTransCnt == 0 )
+			break;
 
-	char *str;
-	UINT len;
+		char *str;
+		UINT len;
 
-	CString sRes = ssprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
-		iTrans[0], iTrans[1] );
-	if( !VerQueryValue( (void *) VersionBuffer.c_str(), (char *) sRes.c_str(),
-			(void **) &str,  &len ) )
-		return false;
+		CString sRes = ssprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
+			iTrans[0], iTrans[1] );
+		if( !VerQueryValue( (void *) VersionBuffer.c_str(), (char *) sRes.c_str(),
+				(void **) &str,  &len ) )
+			break;
 
-	out = CString( str, len );
+		out = CString( str, len );
+		return true;
+	} while(0);
 
-	return true;
+	/* If we can't get the file version, let's at least try to get the
+	 * size and date. */
+	do {
+		struct stat st;
+		if( stat( fn, &st ) == -1 )
+			break;
+
+		struct tm t;
+		gmtime_r( &st.st_mtime, &t );
+		out = ssprintf( "%ib, %02i-%02i-%04i", st.st_size, t.tm_mon, t.tm_mday, t.tm_year+1900 );
+
+		return true;
+	} while(0);
+
+	return false;
 }
 
 CString FindSystemFile( CString fn )
