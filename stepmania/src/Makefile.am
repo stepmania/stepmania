@@ -40,7 +40,7 @@ ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPlayerOptions.cpp 
 ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
 ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenResetToDefaults.cpp ScreenResetToDefaults.h ScreenSandbox.cpp ScreenSandbox.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
-ScreenSelectCourse.cpp ScreenSelectCourse.h ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h \
+ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h \
 ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
 ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSetTime.cpp ScreenSetTime.h \
