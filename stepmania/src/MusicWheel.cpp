@@ -469,10 +469,13 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			for ( i=0; arraySongs.size() < 30 && i < arrayAllSongs.size(); i++ )
 			{
 				// weed out songs that require more songs than are available
-				if ( SONGMAN->GetNumStagesForSong(arrayAllSongs[i]) > GAMESTATE->GetNumStagesLeft() )
+				Song *pSong = arrayAllSongs[i];
+				if( SONGMAN->GetNumStagesForSong(pSong) > GAMESTATE->GetNumStagesLeft() )
+					continue;
+				if( UNLOCKSYS->SongIsLocked(pSong) )
 					continue;
 
-				arraySongs.push_back(arrayAllSongs[i]);
+				arraySongs.push_back( pSong );
 			}
 
 			bUseSections = false;
