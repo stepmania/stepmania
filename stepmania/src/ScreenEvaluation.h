@@ -148,6 +148,7 @@ protected:
 	bool m_bPassFailTriggered; // has the pass / fail sound been played yet?
 	RageTimer m_timerSoundSequences; // timer used for triggering sounds.
 	vector<EvalSoundSequence> m_SoundSequences; // a sequence of sounds to be played (although they're stored in no particular order!)	
+	bool m_bSavedScreenshot[NUM_PLAYERS];
 };
 
 #endif

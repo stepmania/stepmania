@@ -20,6 +20,7 @@ void ResetGame( bool ReturnToFirstScreen=true );
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
 void SaveGamePrefsToDisk();
 void ChangeCurrentGame( Game g );
+bool SaveScreenshot( CString sDir, bool bSaveUncompressed = false );
 
 #if defined(_WINDOWS)
 #include "windows.h"

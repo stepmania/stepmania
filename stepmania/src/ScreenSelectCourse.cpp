@@ -63,8 +63,6 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
 	GAMESTATE->FinishStage();
 
-	CodeDetector::RefreshCacheItems();
- 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
 
 	m_MusicWheel.Load();

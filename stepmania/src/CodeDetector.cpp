@@ -61,7 +61,8 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"NextGame",
 	"NextGame2",
 	"NextBannerGroup",
-	"NextBannerGroup2"
+	"NextBannerGroup2",
+	"SaveScreenshot"
 };
 
 CodeItem g_CodeItems[CodeDetector::NUM_CODES];

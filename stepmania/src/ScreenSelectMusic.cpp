@@ -99,8 +99,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
 
-	CodeDetector::RefreshCacheItems();
-
 	m_MusicWheel.Load();
 
 	int p;
@@ -690,6 +688,8 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 
 	/* XXX: What's the difference between this and StyleI.player? */
+	/* StyleI won't be valid if it's a menu button that's pressed.  
+	 * There's got to be a better way of doing this.  -Chris */
 	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;

@@ -33,6 +33,9 @@
 #include "song.h"
 #include "StageStats.h"
 #include "Grade.h"
+#include "CodeDetector.h"
+#include "RageDisplay.h"
+#include "StepMania.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -138,6 +141,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
 
 	m_bFailed = false; // the evaluation is not showing failed results by default
+
+	ZERO( m_bSavedScreenshot );
+
 
 	m_sName = sClassName;
 	if( !TYPE.CompareNoCase("stage") )
@@ -1303,6 +1309,26 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 
 	if( m_Menu.IsTransitioning() )
 		return;
+
+	if( GameI.IsValid() )
+	{
+		PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+
+		if( CodeDetector::EnteredCode(GameI.controller, CodeDetector::CODE_SAVE_SCREENSHOT) )
+		{
+			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
+				PROFILEMAN->IsUsingProfile(pn) )
+			{
+				/* XXX: What's the difference between this and StyleI.player? */
+				/* StyleI won't be valid if it's a menu button that's pressed.  
+				 * There's got to be a better way of doing this.  -Chris */
+				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn);
+				SaveScreenshot( sDir );
+				m_bSavedScreenshot[pn] = true;
+				return;	// handled
+			}
+		}
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }

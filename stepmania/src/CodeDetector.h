@@ -74,6 +74,7 @@ public:
 		CODE_NEXT_GAME2,
 		CODE_BW_NEXT_GROUP,
 		CODE_BW_NEXT_GROUP2,
+		CODE_SAVE_SCREENSHOT,
 		NUM_CODES	// leave this at the end
 	};
 

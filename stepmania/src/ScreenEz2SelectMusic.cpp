@@ -85,7 +85,6 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : Screen( sName )
 	m_bScanning = false;
 	m_fRemainingWaitTime = 0.0f;
 	i_ErrorDetected=0;
-	CodeDetector::RefreshCacheItems();
 
 	if(PREVIEWMUSICMODE == 4)
 	{

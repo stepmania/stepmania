@@ -31,6 +31,8 @@
 
 #include "SDL_utils.h"
 
+#include "CodeDetector.h"
+
 //
 // StepMania global classes
 //
@@ -995,6 +997,8 @@ int main(int argc, char* argv[])
 
 	ResetGame();
 
+	CodeDetector::RefreshCacheItems();
+
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
 
@@ -1079,6 +1083,28 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+bool SaveScreenshot( CString sDir, bool bSaveUncompressed )
+{
+	// Save Screenshot.
+	CString sPath;
+	
+	FlushDirCache();
+
+	/* XXX slow? */
+	for( int i=0; i<10000; i++ )
+	{
+		sPath = ssprintf( sDir+"screen%04d.%s",i,bSaveUncompressed ? "bmp" : "jpg" );
+		if( !DoesFileExist(sPath) )
+			break;
+	}
+	bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveUncompressed ? RageDisplay::bmp : RageDisplay::jpg );
+	if( bResult )
+		SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
+	else
+		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+	return bResult;
+}
+
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput GameI, MenuInput MenuI, StyleInput StyleI )
@@ -1124,6 +1150,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		TEXTUREMAN->ReloadAll();
 		SCREENMAN->ReloadCreditsText();
 		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+		CodeDetector::RefreshCacheItems();
 	
 		// HACK: Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
@@ -1178,24 +1205,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	{
 		// If holding LShift save a BMP, else save a JPG
 		bool bSaveBmp = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
-
-		// Save Screenshot.
-		CString sPath;
-		
-		FlushDirCache();
-
-		/* XXX slow? */
-		for( int i=0; i<10000; i++ )
-		{
-			sPath = ssprintf("Screenshots/screen%04d.%s",i,bSaveBmp?"bmp":"jpg");
-			if( !DoesFileExist(sPath) )
-				break;
-		}
-		bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveBmp ? RageDisplay::bmp : RageDisplay::jpg );
-		if( bResult )
-			SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
-		else
-			SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+		SaveScreenshot( "Screenshots/", bSaveBmp ? RageDisplay::bmp : RageDisplay::jpg );
 		return true;	// handled
 	}
 

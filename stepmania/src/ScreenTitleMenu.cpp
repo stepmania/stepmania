@@ -80,8 +80,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	LIGHTSMAN->SetLightMode( LIGHTMODE_JOINING );	// do this after Reset!
 
 
-	CodeDetector::RefreshCacheItems();
-
 	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.Command( PREFSMAN->m_iCoinMode==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
 	this->AddChild( &m_sprLogo );
