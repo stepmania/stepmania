@@ -45,7 +45,7 @@ public:
 	int GetFileSize() const { return m_pFile->GetFileSize(); }
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
-private:
+protected:
 	int ReadInternal( void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
 	int WriteInternal( const void *pBuffer, size_t iBytes );
 	int FlushInternal();

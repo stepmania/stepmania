@@ -233,7 +233,7 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 		if( err != Z_OK )
 			FAIL_M( ssprintf("deflate: err %i", err) );
 			
-		if( m_pDeflate->avail_out > 0 )
+		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
 			int iRet = m_pFile->Write( buf, sizeof(buf)-m_pDeflate->avail_out );
 			if( iRet == -1 )
@@ -247,6 +247,9 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 	return iBytes;
 }
 
+/* Note that flushing clears compression state, so (unlike most Flush() calls)
+ * calling this *does* change the result of the output if you continue writing
+ * data. */
 int RageFileObjDeflate::FlushInternal()
 {
 	m_pDeflate->avail_in = 0;
@@ -272,7 +275,7 @@ int RageFileObjDeflate::FlushInternal()
 		}
 
 		if( err == Z_STREAM_END )
-			return 0;
+			return m_pFile->Flush();
 	}
 }
 
