@@ -98,6 +98,7 @@ public:
 	void ReadCourseScoresFromDir( CString sDir, ProfileSlot slot );
 	void ReadCategoryScoresFromDir( CString sDir, ProfileSlot slot );
 
+	void SaveSongScoresToDirXml( CString sDir, ProfileSlot slot );
 	void SaveSongScoresToDir( CString sDir, ProfileSlot slot );
 	void SaveCourseScoresToDir( CString sDir, ProfileSlot slot );
 	void SaveCategoryScoresToDir( CString sDir, ProfileSlot slot );

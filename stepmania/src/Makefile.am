@@ -67,7 +67,7 @@ ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreKeeperRave.cpp ScoreKee
 Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
 Style.h StyleDef.cpp StyleDef.h StyleInput.h TimingData.cpp TimingData.h TitleSubstitution.cpp TitleSubstitution.h
 
-FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
+FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h XmlFile.cpp XmlFile.h
 
 StepMania = StdString.h StepMania.cpp StepMania.h global.cpp global.h
 

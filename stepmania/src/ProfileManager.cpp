@@ -31,6 +31,7 @@
 #include "Bookkeeper.h"
 #include <time.h>
 #include "MemoryCardManager.h"
+#include "XmlFile.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -220,6 +221,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn )
 
 	SaveCategoryScoresToDir( m_sProfileDir[pn], (ProfileSlot)pn );
 	SaveSongScoresToDir( m_sProfileDir[pn], (ProfileSlot)pn );
+	SaveSongScoresToDirXml( m_sProfileDir[pn], (ProfileSlot)pn );
 	SaveCourseScoresToDir( m_sProfileDir[pn], (ProfileSlot)pn );
 	SaveStatsWebPageToDir( m_sProfileDir[pn], (ProfileSlot)pn );
 	
@@ -389,6 +391,7 @@ void ProfileManager::SaveMachineScoresToDisk()
 
 	SaveCategoryScoresToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 	SaveSongScoresToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	SaveSongScoresToDirXml( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 	SaveCourseScoresToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 	SaveStatsWebPageToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 }
@@ -927,6 +930,86 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, ProfileSlot slot )
 			}
 		}
 	}
+}
+
+void ProfileManager::SaveSongScoresToDirXml( CString sDir, ProfileSlot slot )
+{
+	Profile* pProfile = GetProfile( slot );
+	ASSERT( pProfile );
+
+	CString fn = sDir + SONG_SCORES_FILE+".xml";
+
+	LOG->Trace("SongManager::SaveSongScoresToFile %s", fn.c_str());
+
+	RageFile f;
+	if( !f.Open(fn, RageFile::WRITE) )
+	{
+		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", fn.c_str(), f.GetError().c_str() );
+		return;
+	}
+	
+	XNode xml;
+	xml.name = "SongScores";
+
+	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
+	
+	for( unsigned s=0; s<vpSongs.size(); s++ )	// foreach song
+	{
+		Song* pSong = vpSongs[s];
+		ASSERT(pSong);
+
+		/* If the song has never been played, don't write anything.  This keeps
+		 * us from saving a dozen copies of each song for all autogen difficulties,
+		 * since most people only use a couple game modes. */
+		vector<Steps*> vNotesToWrite;
+		for( unsigned i=0; i<pSong->m_apNotes.size(); ++i )
+		{
+			Steps* pNotes = pSong->m_apNotes[i];
+			HighScoreList &hsl = pProfile->GetStepsHighScoreList( pNotes );
+			if( hsl.iNumTimesPlayed == 0  &&  hsl.vHighScores.empty() )
+				continue;
+			vNotesToWrite.push_back( pNotes );
+		}
+
+		if( vNotesToWrite.empty() )
+			continue;
+
+		LPXNode pSongNode = xml.AppendChild( "Song" );
+		pSongNode->AppendChild( "Dir", pSong->GetSongDir() );
+
+		for( unsigned n=0; n<vNotesToWrite.size(); n++ )
+		{
+			LPXNode pStepsNode = pSongNode->AppendChild( "Steps" );
+
+			Steps* pNotes = vNotesToWrite[n];
+			ASSERT(pNotes);
+		
+			HighScoreList &hsl = pProfile->GetStepsHighScoreList( pNotes );
+		
+			pStepsNode->AppendChild( "StepsType", pNotes->m_StepsType );
+			pStepsNode->AppendChild( "Difficulty", pNotes->GetDifficulty() );
+			pStepsNode->AppendChild( "Description", pNotes->GetDescription() );
+			pStepsNode->AppendChild( "NumTimesPlayed", hsl.iNumTimesPlayed );
+
+			for( int l=0; l<(int)hsl.vHighScores.size(); l++ )
+			{
+				HighScore &hs = hsl.vHighScores[l];
+
+				LPXNode pHighScoreNode = pSongNode->AppendChild( "HighScore" );
+
+				// tricky:  wipe out "name to fill in" markers
+				if( IsRankingToFillIn(hs.sName) )
+					hs.sName = "";
+
+				pHighScoreNode->AppendChild( "Name", hs.sName );
+				pHighScoreNode->AppendChild( "Grade", hs.grade );
+				pHighScoreNode->AppendChild( "Score", hs.iScore );
+				pHighScoreNode->AppendChild( "Percent", hs.fPercentDP );
+			}
+		}
+	}
+	
+	FileWrite( f, xml.GetXML() );
 }
 
 /* static CString HTMLQuoteDoubleQuotes( CString str )

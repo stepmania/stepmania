@@ -810,6 +810,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="MsdFile.h">
 			</File>
+			<File
+				RelativePath="XmlFile.cpp">
+			</File>
+			<File
+				RelativePath="XmlFile.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
