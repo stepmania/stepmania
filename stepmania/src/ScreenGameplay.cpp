@@ -153,7 +153,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			m_asModifiersQueue[p].clear();
 			for( unsigned c=0; c<ci.size(); ++c )
 			{
-				m_apNotesQueue[p].push_back( ci[c].Notes );
+				m_apNotesQueue[p].push_back( ci[c].pNotes );
 				m_asModifiersQueue[p].push_back( ci[c].Modifiers );
 			}
 		}
