@@ -1449,24 +1449,28 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 
 		for( int c=0; c<inout.GetNumTracks(); c++ )
 		{
-			if( iOldIndex == iNewIndex )
-				continue;
-
 			TapNote tnNew = inout.GetTapNote(c, iOldIndex);
 			if( tnNew.type == TapNote::empty )
 				continue;
 
 			inout.SetTapNote(c, iOldIndex, TAP_EMPTY);
 
-			const TapNote &tnOld = inout.GetTapNote(c, iNewIndex);
-			if( tnNew.type == TapNote::tap && tnOld.type == TapNote::hold_head )
+			if( tnNew.type == TapNote::tap && inout.IsHoldNoteAtBeat(c, iNewIndex) )
 				continue; // HoldNotes override TapNotes
 
-			int iNewDuration = Quantize( tnNew.iDuration, BeatToNoteRow(fSnapInterval1) );
-			if( iNewDuration == 0 )
-				continue;
+			if( tnNew.type == TapNote::hold_head )
+			{
+				/* Quantize the duration.  If the result is empty, just discard the hold. */
+				tnNew.iDuration = Quantize( tnNew.iDuration, BeatToNoteRow(fSnapInterval1) );
+				if( tnNew.iDuration == 0 )
+					continue;
+
+				/* We might be moving a hold note downwards, or extending its duration
+				 * downwards.  Make sure there isn't anything else in the new range. */
+				inout.ClearRangeForTrack( iNewIndex, iNewIndex+tnNew.iDuration+1, c );
+			}
 			
-			inout.SetTapNote(c, iNewIndex, tnNew );
+			inout.SetTapNote( c, iNewIndex, tnNew );
 		}
 	}
 }
