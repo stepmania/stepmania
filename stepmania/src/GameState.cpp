@@ -1265,3 +1265,4 @@ bool GameState::IsTimeToPlayAttractSounds()
 	m_iNumTimesThroughAttract %= PREFSMAN->m_iAttractSoundFrequency;
 	return m_iNumTimesThroughAttract==0;
 }
+
