@@ -53,6 +53,8 @@ public:
 	float GetSecondsIntoAnimation() const;
 
 	bool		m_bSphereMapped;
+	float		m_fTexOffsetX;
+	float		m_fTexOffsetY;
 	float		m_fTexVelocityX;
 	float		m_fTexVelocityY;
 	BlendMode	m_BlendMode;

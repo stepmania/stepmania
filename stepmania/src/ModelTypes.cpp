@@ -17,6 +17,8 @@ AnimatedTexture::AnimatedTexture()
 	m_bSphereMapped = false;
 	m_fTexVelocityX = 0;
 	m_fTexVelocityY = 0;
+	m_fTexOffsetX = 0;
+	m_fTexOffsetY = 0;
 	m_BlendMode = BLEND_NORMAL;
 }
 
@@ -47,6 +49,8 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		
 		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_fTexVelocityX );
 		pAnimatedTexture->GetAttrValue( "TexVelocityY", m_fTexVelocityY );
+		pAnimatedTexture->GetAttrValue( "TexOffsetX", m_fTexOffsetX );
+		pAnimatedTexture->GetAttrValue( "TexOffsetY", m_fTexOffsetY );
 		
 		for( int i=0; i<1000; i++ )
 		{
