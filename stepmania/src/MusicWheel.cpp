@@ -56,6 +56,7 @@ CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
 CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
+#define MOST_PLAYED_SONGS_TO_SHOW	THEME->GetMetricI("MusicWheel","MostPlayedSongsToShow")
 #define SORT_MENU_NAMES				THEME->GetMetric ("MusicWheel","SortMenuNames")
 #define SORT_MENU_ACTIONS			THEME->GetMetric ("MusicWheel","SortMenuActions")
 #define MODE_MENU_NAMES				THEME->GetMetric ("MusicWheel","ModeMenuNames")
@@ -474,7 +475,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			const vector<Song*> arrayAllSongs = SONGMAN->GetBestSongs();
 
-			for ( i=0; arraySongs.size() < 30 && i < arrayAllSongs.size(); i++ )
+			const unsigned SongsToShow = MOST_PLAYED_SONGS_TO_SHOW;
+			for ( i=0; arraySongs.size() < SongsToShow && i < arrayAllSongs.size(); i++ )
 			{
 				// weed out songs that require more songs than are available
 				Song *pSong = arrayAllSongs[i];
