@@ -137,8 +137,12 @@ float fmodfp(float x, float y);
 int power_of_two(int input);
 bool IsAnInt( const CString &s );
 bool IsHexVal( const CString &s );
-float TimeToSeconds( const CString &sHMS );
-CString SecondsToTime( float fSecs );
+float HHMMSSToSeconds( const CString &sHMS );
+CString SecondsToHHMMSS( float fSecs );
+CString SecondsToMMSSMsMs( float fSecs );
+CString PrettyPercent( float fNumerator, float fDenominator );
+CString Commify( int iNum );
+
 
 struct tm GetLocalTime();
 

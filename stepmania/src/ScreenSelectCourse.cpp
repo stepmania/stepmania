@@ -403,9 +403,9 @@ void ScreenSelectCourse::AfterCourseChange()
 			m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
 			float fTotalSeconds;
 			if( pCourse->GetTotalSeconds(fTotalSeconds) )
-				m_textTime.SetText( SecondsToTime(fTotalSeconds) );
+				m_textTime.SetText( SecondsToMMSSMsMs(fTotalSeconds) );
 			else
-				m_textTime.SetText( "xx:xx:xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
+				m_textTime.SetText( "xx:xx.xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
 
 			m_Banner.LoadFromCourse( pCourse );
 
@@ -434,7 +434,7 @@ void ScreenSelectCourse::AfterCourseChange()
 				{
 					/* use survive time */
 					float fSurviveSeconds = hsl.GetTopScore().fSurviveSeconds;
-					CString s = SecondsToTime(fSurviveSeconds);
+					CString s = SecondsToMMSSMsMs(fSurviveSeconds);
 
 					/* dim the inital unsignificant digits */
 					/*XXX we'd like to have a dimmed ':' and '.', but 

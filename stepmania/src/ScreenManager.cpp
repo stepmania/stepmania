@@ -266,8 +266,6 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 		m_SkipBackground.SetDiffuse(RageColor(0,0,0,0.4f));
 	}
 
-	CString time(SecondsToTime(RageTimer::GetTimeSinceStart()));
-
 	/* Use our own timer, so we ignore `/tab. */
 	const float UpdateTime = SkipTimer.GetDeltaTime();
 
@@ -291,6 +289,8 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 
 		if(skip)
 		{
+			CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()));
+
 			static const RageColor colors[] = {
 				RageColor(0,0,0,0),		  /* unused */
 				RageColor(0.2f,0.2f,1,1), /* light blue */
@@ -306,7 +306,11 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 		}
 	}
 
-	m_textTime.SetText( time );
+	if(PREFSMAN->m_bTimestamping)
+	{
+		CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()));
+		m_textTime.SetText( time );
+	}
 }
 
 void ScreenSystemLayer::Update( float fDeltaTime )

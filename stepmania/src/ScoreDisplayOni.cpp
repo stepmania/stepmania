@@ -48,5 +48,5 @@ void ScoreDisplayOni::Update( float fDelta )
 	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		fSecsIntoPlay = g_CurStageStats.fAliveSeconds[m_PlayerNumber];
 
-	m_text.SetText( SecondsToTime(fSecsIntoPlay) );
+	m_text.SetText( SecondsToMMSSMsMs(fSecsIntoPlay) );
 }

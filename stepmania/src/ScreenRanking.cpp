@@ -736,7 +736,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				if( pts.pCourse->IsOni() )
 				{
 					m_textPoints[l].SetText( ssprintf("%04d",hs.iScore) );
-					m_textTime[l].SetText( SecondsToTime(hs.fSurviveSeconds) );
+					m_textTime[l].SetText( SecondsToMMSSMsMs(hs.fSurviveSeconds) );
 					m_textScores[l].SetText( "" );
 				} else {
 					m_textPoints[l].SetText( "" );

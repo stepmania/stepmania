@@ -78,6 +78,11 @@ void Profile::InitGeneralData()
 	m_iNumToasties = 0;
 	m_UnlockedSongs.clear();
 	m_sLastMachinePlayed = "";
+	m_iNumTapsAndHolds = 0;
+	m_iNumJumps = 0;
+	m_iNumHolds = 0;
+	m_iNumMines = 0;
+	m_iNumHands = 0;
 
 	int i;
 	for( i=0; i<NUM_PLAY_MODES; i++ )
@@ -124,12 +129,12 @@ CString Profile::GetDisplayName() const
 		return "NoName";
 }
 
-CString Profile::GetDisplayCaloriesBurned()
+CString Profile::GetDisplayCaloriesBurned() const
 {
 	if( m_fWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
-		return ssprintf("%iCal",m_fCaloriesBurned);
+		return ssprintf("%0.3fCal",m_fCaloriesBurned);
 }
 
 int Profile::GetTotalNumSongsPlayed() const
@@ -497,6 +502,11 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
 	pGeneralDataNode->AppendChild( "NumToasties",					m_iNumToasties );
+	pGeneralDataNode->AppendChild( "NumTapsAndHolds",				m_iNumTapsAndHolds );
+	pGeneralDataNode->AppendChild( "NumJumps",						m_iNumJumps );
+	pGeneralDataNode->AppendChild( "NumHolds",						m_iNumHolds );
+	pGeneralDataNode->AppendChild( "NumMines",						m_iNumMines );
+	pGeneralDataNode->AppendChild( "NumHands",						m_iNumHands );
 
 	{
 		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
@@ -605,7 +615,8 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 		wstr = wstr.substr(0, 12);
 	m_sDisplayName = WStringToCString(wstr);
 	// TODO: strip invalid chars?
-	CLAMP( m_fWeightPounds, 0, 500 );
+	if( m_fWeightPounds != 0 )
+		CLAMP( m_fWeightPounds, 50, 500 );
 }
 
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )
@@ -624,6 +635,11 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pNode->GetChildValue( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
 	pNode->GetChildValue( "NumToasties",					m_iNumToasties );
+	pNode->GetChildValue( "NumTapsAndHolds",				m_iNumTapsAndHolds );
+	pNode->GetChildValue( "NumJumps",						m_iNumJumps );
+	pNode->GetChildValue( "NumHolds",						m_iNumHolds );
+	pNode->GetChildValue( "NumMines",						m_iNumMines );
+	pNode->GetChildValue( "NumHands",						m_iNumHands );
 
 	{
 		XNode* pUnlockedSongs = pNode->GetChild("UnlockedSongs");
@@ -699,6 +715,25 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	}
 }
 
+void Profile::AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands )
+{
+	m_iNumTapsAndHolds += iNumTapsAndHolds;
+	m_iNumJumps += iNumJumps;
+	m_iNumHolds += iNumHolds;
+	m_iNumMines += iNumMines;
+	m_iNumHands += iNumHands;
+
+	if( m_fWeightPounds != 0 )
+	{
+		float fCals = 
+			SCALE( m_fWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iNumTapsAndHolds +
+			SCALE( m_fWeightPounds, 100.f, 200.f, 0.111f, 0.193f ) * iNumJumps +
+			SCALE( m_fWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iNumHolds +
+			SCALE( m_fWeightPounds, 100.f, 200.f, 0.000f, 0.000f ) * iNumMines +
+			SCALE( m_fWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iNumHands;
+		m_fCaloriesBurned += fCals;
+	}
+}
 
 XNode* Profile::SaveSongScoresCreateNode() const
 {

@@ -310,10 +310,10 @@ float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg
 
 	/* 2+ args */
 	if(arg3.empty())
-		return TimeToSeconds( arg1+":"+arg2 );
+		return HHMMSSToSeconds( arg1+":"+arg2 );
 
 	/* 3+ args */
-	return TimeToSeconds( arg1+":"+arg2+":"+arg3 );
+	return HHMMSSToSeconds( arg1+":"+arg2+":"+arg3 );
 }
 
 bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )

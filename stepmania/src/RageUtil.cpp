@@ -94,10 +94,10 @@ bool IsHexVal( const CString &s )
 	return true;
 }
 
-float TimeToSeconds( const CString &sHMS )
+float HHMMSSToSeconds( const CString &sHHMMSS )
 {
 	CStringArray arrayBits;
-	split( sHMS, ":", arrayBits, false );
+	split( sHHMMSS, ":", arrayBits, false );
 
 	while( arrayBits.size() < 3 )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
@@ -110,23 +110,40 @@ float TimeToSeconds( const CString &sHMS )
 	return fSeconds;
 }
 
-CString SecondsToTime( float fSecs )
+CString SecondsToHHMMSS( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
-	CString sReturn = ssprintf( "%02d:%02d:%02.0f", iMinsDisplay, iSecsDisplay, min(99.0f,fLeftoverDisplay) );
-	if( iMinsDisplay >= 60 )
-	{
-		/* Oops.  Probably a really long endless course.  Do "hh:mm.ss"; use a period
-		 * to differentiate between "mm:ss:ms".  I'd much prefer reversing those, since
-		 * it makes much more sense to do "mm:ss.ms", but people would probably complain
-		 * about "arcade accuracy" ... 
-		 */
-		sReturn = ssprintf( "%02d:%02d.%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
-	}
+	CString sReturn = ssprintf( "%02d:%02d:%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
+	return sReturn;
+}
 
-	ASSERT( sReturn.GetLength() <= 8 );
+CString SecondsToMMSSMsMs( float fSecs )
+{
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
+	CString sReturn = ssprintf( "%02d:%02d.%02.0f", iMinsDisplay, iSecsDisplay, min(99.0f,fLeftoverDisplay) );
+	return sReturn;
+}
+
+CString PrettyPercent( float fNumerator, float fDenominator)
+{
+	return ssprintf("%0.2f%%",(float)fNumerator/(float)fDenominator*100);
+}
+
+CString Commify( int iNum ) 
+{
+	CString sNum = ssprintf("%d",iNum);
+	CString sReturn;
+	for( int i=0; i<sNum.length(); i++ )
+	{
+		char cDigit = sNum[sNum.length()-1-i];
+		if( i!=0 && i%3 == 0 )
+			sReturn = ',' + sReturn;
+		sReturn = cDigit + sReturn;
+	}
 	return sReturn;
 }
 

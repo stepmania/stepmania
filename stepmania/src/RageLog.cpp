@@ -251,7 +251,7 @@ void RageLog::Write( int where, const CString &line )
 
 	CString LineHeader;
 	if( m_bTimestamping )
-		LineHeader += SecondsToTime(RageTimer::GetTimeSinceStart()) + ": ";
+		LineHeader += SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) + ": ";
 	if( where & WRITE_LOUD )
 		LineHeader += "WARNING: ";
 

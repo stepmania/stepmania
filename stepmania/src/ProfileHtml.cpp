@@ -23,6 +23,7 @@
 #include "Bookkeeper.h"
 #include "PrefsManager.h"
 #include "CryptManager.h"
+#include "RageUtil.h"
 
 
 const CString STATS_HTML	= "Stats.html";
@@ -40,7 +41,6 @@ inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_
 inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded=false)		{ PRINT_OPEN(f,sName,bExpanded,MakeUniqueId()); }
 inline void PRINT_CLOSE(RageFile &f)										{ f.Write( "</div>\n" "</div>\n" ); g_Level--; ASSERT(g_Level>=0); }
 
-#define PRETTY_PERCENT(numerator,denominator) ssprintf("%0.2f%%",(float)numerator/(float)denominator*100)
 
 struct Table
 {
@@ -52,7 +52,7 @@ struct Table
 		Line(CString n)							{ sName = n; }
 		Line(CString n,CString v)				{ sName = n; sValue = v; }
 		Line(CString n,bool v)					{ sName = n; sValue = ssprintf("%s",v?"yes":"no"); }
-		Line(CString n,int v)					{ sName = n; sValue = ssprintf("%d",v); }
+		Line(CString n,int v)					{ sName = n; sValue = Commify(v); }
 		Line(int r,CString n,int v)				{ sRank = ssprintf("%d",r); sName = n; sValue = ssprintf("%d",v); }
 		Line(int r,CString n,CString sn,int v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sValue = ssprintf("%d",v); }
 		Line(int r,CString n,CString sn,CString ssn,int v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sSubSubName = ssn; sValue = ssprintf("%d",v); }
@@ -274,11 +274,16 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			TABLE_LINE2( "UsingProfileDefaultModifiers",	pProfile->m_bUsingProfileDefaultModifiers );
 			TABLE_LINE2( "DefaultModifiers",				pProfile->m_sDefaultModifiers );
 			TABLE_LINE2( "TotalPlays",						pProfile->m_iTotalPlays );
-			TABLE_LINE2( "TotalPlaySeconds",				pProfile->m_iTotalPlaySeconds );
-			TABLE_LINE2( "TotalGameplaySeconds",			pProfile->m_iTotalGameplaySeconds );
+			TABLE_LINE2( "TotalPlay",						SecondsToHHMMSS(pProfile->m_iTotalPlaySeconds) );
+			TABLE_LINE2( "TotalGameplay",					SecondsToHHMMSS(pProfile->m_iTotalGameplaySeconds) );
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
-			TABLE_LINE2( "CaloriesBurned",					pProfile->m_fCaloriesBurned );
+			TABLE_LINE2( "CaloriesBurned",					pProfile->GetDisplayCaloriesBurned() );
 			TABLE_LINE2( "LastMachinePlayed",				pProfile->m_sLastMachinePlayed );
+			TABLE_LINE2( "NumTapsAndHolds",					pProfile->m_iNumTapsAndHolds );
+			TABLE_LINE2( "NumJumps",						pProfile->m_iNumJumps );
+			TABLE_LINE2( "NumHolds",						pProfile->m_iNumHolds );
+			TABLE_LINE2( "NumMines",						pProfile->m_iNumMines );
+			TABLE_LINE2( "NumHands",						pProfile->m_iNumHands );
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -393,7 +398,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 					if( iNumTimesPlayed == 0 || iNumTimesPlayed < iPopularNumPlaysThreshold )	// not popular
 						break;	// done searching
-					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
+					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), PrettyPercent(iNumTimesPlayed,iTotalPlays) );
 				}
 				if( i == 0 )
 					TABLE_LINE1("empty");
@@ -414,7 +419,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 					if( iNumTimesPlayed >= iPopularNumPlaysThreshold )	// not unpopular
 						break;	// done searching
-					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
+					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), PrettyPercent(iNumTimesPlayed,iTotalPlays) );
 				}
 				if( i == 0 )
 					TABLE_LINE1("empty");
@@ -442,7 +447,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 					s += " ";
 					s += DifficultyToString(pSteps->GetDifficulty());
-					TABLE_LINE5(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), s, PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
+					TABLE_LINE5(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), s, PrettyPercent(iNumTimesPlayed,iTotalPlays) );
 				}
 				if( i == 0 )
 					TABLE_LINE1("empty");
@@ -463,7 +468,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 				{
 					Course* pCourse = vpCourses[i];
 					int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed(pCourse);
-					TABLE_LINE3(i+1, pCourse->m_sName, PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
+					TABLE_LINE3(i+1, pCourse->m_sName, PrettyPercent(iNumTimesPlayed,iTotalPlays) );
 				}
 				if( i == 0 )
 					TABLE_LINE1("empty");
@@ -761,7 +766,7 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		CString sBPM = (fMinBPM==fMaxBPM) ? ssprintf("%.1f",fMinBPM) : ssprintf("%.1f - %.1f",fMinBPM,fMaxBPM);
 		TABLE_LINE2( "BPM", sBPM );
 		TABLE_LINE2( "Credit", pSong->m_sCredit );
-		TABLE_LINE2( "MusicLength", SecondsToTime(pSong->m_fMusicLengthSeconds) );
+		TABLE_LINE2( "MusicLength", SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 		TABLE_LINE2( "Lyrics", !pSong->m_sLyricsFile.empty() );
 		TABLE_LINE2( "NumTimesPlayed", pProfile->GetSongNumTimesPlayed(pSong) );
 		END_TABLE;

@@ -66,7 +66,7 @@ public:
 	// smart accessors
 	//
 	CString GetDisplayName() const;
-	CString GetDisplayCaloriesBurned();
+	CString GetDisplayCaloriesBurned() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
@@ -93,6 +93,11 @@ public:
 	int m_iNumExtraStagesPassed;
 	int m_iNumExtraStagesFailed;
 	int m_iNumToasties;
+	int m_iNumTapsAndHolds;
+	int m_iNumJumps;
+	int m_iNumHolds;
+	int m_iNumMines;
+	int m_iNumHands;
 	set<int> m_UnlockedSongs;
 	mutable CString m_sLastMachinePlayed;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
@@ -102,6 +107,7 @@ public:
 	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPassedByGrade[NUM_GRADES];
 
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 
 	//
 	// Steps high scores

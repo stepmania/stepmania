@@ -436,6 +436,13 @@ void ProfileManager::IncrementToastiesCount( PlayerNumber pn )
 	++PROFILEMAN->GetMachineProfile()->m_iNumToasties;
 }
 
+void ProfileManager::AddStepTotals( PlayerNumber pn, int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands )
+{
+	if( PROFILEMAN->IsUsingProfile(pn) )
+		PROFILEMAN->GetProfile(pn)->AddStepTotals( iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+	PROFILEMAN->GetMachineProfile()->AddStepTotals( iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+}
+
 //
 // Song stats
 //

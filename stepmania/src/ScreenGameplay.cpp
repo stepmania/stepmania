@@ -2133,7 +2133,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					fMaxSurviveSeconds = max( fMaxSurviveSeconds, g_CurStageStats.fAliveSeconds[p] );
 			ASSERT( fMaxSurviveSeconds > 0 );
-			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
+			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxSurviveSeconds) );
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
 		}
 		

@@ -269,10 +269,10 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		}
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
-			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
+			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
 
 		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
-			out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1] );
+			out.m_fMusicSampleLengthSeconds = HHMMSSToSeconds( sParams[1] );
 
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{

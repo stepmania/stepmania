@@ -740,7 +740,7 @@ void ScreenEvaluation::Init()
 			m_textTime[p].SetDiffuse( PlayerToColor(p) );
 			m_textTime[p].SetName( ssprintf("TimeNumberP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_textTime[p] );
-			m_textTime[p].SetText( SecondsToTime(stageStats.fAliveSeconds[p]) );
+			m_textTime[p].SetText( SecondsToMMSSMsMs(stageStats.fAliveSeconds[p]) );
 			this->AddChild( &m_textTime[p] );
 		}
 	}
@@ -872,6 +872,18 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
+
+		//
+		// Add step totals
+		//
+		int iNumTapsAndHolds	= stageStats.fRadarPossible[p][RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= stageStats.fRadarPossible[p][RADAR_NUM_JUMPS];
+		int iNumHolds			= stageStats.fRadarPossible[p][RADAR_NUM_HOLDS];
+		int iNumMines			= stageStats.fRadarPossible[p][RADAR_NUM_MINES];
+		int iNumHands			= stageStats.fRadarPossible[p][RADAR_NUM_HANDS];
+
+		PROFILEMAN->AddStepTotals( (PlayerNumber)p, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+
 
 		// whether or not to save scores when the stage was failed
 		// depends on if this is a course or not ... it's handled

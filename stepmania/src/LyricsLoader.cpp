@@ -85,7 +85,7 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 			
 			LyricSegment seg;
 			seg.m_Color = CurrentColor;
-			seg.m_fStartTime = TimeToSeconds(sValueName);
+			seg.m_fStartTime = HHMMSSToSeconds(sValueName);
 			seg.m_sLyric = sValueData;
 			
 			seg.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files

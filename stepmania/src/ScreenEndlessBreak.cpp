@@ -59,7 +59,7 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 
 	//BitmapText stuff
 	m_textTimeRemaining.LoadFromFont( THEME->GetPathToF("Common Normal") );
-	m_textTimeRemaining.SetText( SecondsToTime(m_fCountdownSecs) );
+	m_textTimeRemaining.SetText( SecondsToMMSSMsMs(m_fCountdownSecs) );
 	m_textTimeRemaining.SetX( CENTER_X );
 	m_textTimeRemaining.SetY( CENTER_Y );
 
@@ -74,7 +74,7 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 
 void ScreenEndlessBreak::Update(float fDeltaTime)
 {
-	m_textTimeRemaining.SetText( SecondsToTime(m_fCountdownSecs) );
+	m_textTimeRemaining.SetText( SecondsToMMSSMsMs(m_fCountdownSecs) );
 	if( !m_bExiting )
 		if(m_fCountdownSecs <= 0)
 		{		
