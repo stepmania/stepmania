@@ -52,7 +52,8 @@ ScreenSandbox::ScreenSandbox()
 		"p  Play\n"
 		"s  Stop\n"
 		"l  Toggle looping\n"
-		"a  Toggle autostop\n");
+		"a  Toggle autostop\n"
+		"f  Fire sound in the background");
 
 	for(int i = 0; i < nsounds; ++i)
 	{
@@ -133,6 +134,9 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 			break;
 		case 'a':
 			s[selected].s.SetAutoStop(!s[selected].s.GetAutoStop());
+			break;
+		case 'f':
+			SOUNDMAN->PlayCopy(s[selected].s);
 			break;
 
 /*		case SDLK_LEFT:
