@@ -100,6 +100,8 @@ private:
 	wstring			m_sSelection[NUM_PLAYERS];
 	bool			m_bStillEnteringName[NUM_PLAYERS];
 	bool			m_bGoToNextScreenWhenCardsRemoved;
+
+	ActorCommands	CHANGE_COMMAND;
 };
 
 #endif

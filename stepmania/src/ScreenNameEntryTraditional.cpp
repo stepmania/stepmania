@@ -29,6 +29,8 @@
 // Defines specific to ScreenNameEntryTraditional
 //
 #define NEXT_SCREEN					THEME->GetMetric(m_sName,"NextScreen")
+static const ThemeMetric<apActorCommands>	ALPHABET_INIT_COMMMAND	("ScreenNameEntryTraditional","AlphabetInitCommand");
+static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND		("ScreenNameEntryTraditional","OKInitCommand");
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
 	if( !actor.GetName().empty() ) \
@@ -119,7 +121,8 @@ float HighScoreWheel::Scroll()
 }
 
 REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
-ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : ScreenWithMenuElements( sClassName )
+ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : ScreenWithMenuElements( sClassName ),
+	CHANGE_COMMAND("stoptweening;decelerate,.12")
 {
 	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );
 
@@ -225,7 +228,7 @@ void ScreenNameEntryTraditional::Init()
 				Letter->SetText( ssprintf("%lc", Chars[ch]) );
 				m_textAlphabet[p].push_back( Letter );
 				m_Keyboard[p].AddChild( Letter );
-				Letter->RunCommands( THEME->GetMetricA("ScreenNameEntryTraditional","AlphabetInitCommand") );
+				Letter->RunCommands( ALPHABET_INIT_COMMMAND );
 
 				m_AlphabetLetter[p].push_back( Chars[ch] );
 			}
@@ -242,7 +245,7 @@ void ScreenNameEntryTraditional::Init()
 				m_Keyboard[p].AddChild( Letter );
 
 				m_AlphabetLetter[p].push_back( CHAR_BACK );
-				Letter->RunCommands( THEME->GetMetricA("ScreenNameEntryTraditional","OKInitCommand") );
+				Letter->RunCommands( OK_INIT_COMMMAND );
 			}
 
 			/* Add "OK". */
@@ -257,7 +260,7 @@ void ScreenNameEntryTraditional::Init()
 				m_Keyboard[p].AddChild( Letter );
 
 				m_AlphabetLetter[p].push_back( CHAR_OK );
-				Letter->RunCommands( THEME->GetMetricA("ScreenNameEntryTraditional","OKInitCommand") );
+				Letter->RunCommands( OK_INIT_COMMMAND );
 			}
 
 			m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
@@ -447,7 +450,7 @@ void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 		const bool hidden = ( Pos < First || Pos > Last );
 		const int ActualPos = clamp( Pos, First-1, Last+1 );
 
-		bt->RunCommands( ActorCommands("stoptweening;decelerate,.12") );
+		bt->RunCommands( CHANGE_COMMAND );
 		bt->SetX( ActualPos * ALPHABET_GAP_X );
 		bt->SetDiffuseAlpha( hidden? 0.0f:1.0f );
 	}
