@@ -21,6 +21,8 @@ class MsdFile
 	void AddParam( char *buf, int len );
 	void AddValue();
 
+	unsigned m_iNumValues;	// tells how many values are valid
+
 public:
 	MsdFile();
 
@@ -33,8 +35,10 @@ public:
 
 	CString m_sParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
 
-	unsigned m_iNumValues;	// tells how many values are valid
+	/* #param:param:param:param; <- one whole value */
 	unsigned m_iNumParams[MAX_VALUES];	// tells how many params this value has
+
+	unsigned GetNumValues() const { return m_iNumValues; }
 };
 
 #endif

@@ -21,7 +21,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
 	CString iStep;			// this is the value we read for STEP
 
-	for( unsigned i=0; i<msd.m_iNumValues; i++ )
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		CString* sParams = msd.m_sParams[i];
 		CString sValueName = sParams[0];
@@ -190,7 +190,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s'.", sPath.GetString() );
 
-	for( i=0; i < msd.m_iNumValues; i++ )
+	for( i=0; i < msd.GetNumValues(); i++ )
 	{
 		CString* sParams = msd.m_sParams[i];
 		CString sValueName = sParams[0];
