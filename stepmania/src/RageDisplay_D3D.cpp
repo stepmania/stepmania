@@ -508,10 +508,8 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 			&g_pd3dDevice );
 		if( FAILED(hr) )
 		{
-#if defined _WINDOWS
-			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-#endif
-			RageException::Throw( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
+			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
+			return ssprintf( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	else
@@ -520,10 +518,8 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		hr = g_pd3dDevice->Reset( &g_d3dpp );
 		if( FAILED(hr) )
 		{
-#if defined _WINDOWS
-			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-#endif
-			RageException::Throw( "g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
+			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
+			return ssprintf("g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	
