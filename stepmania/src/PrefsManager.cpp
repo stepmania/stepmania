@@ -76,7 +76,7 @@ PrefsManager::PrefsManager()
 	m_bSoloSingle = false;
 	m_bDelayedTextureDelete = true;
 	m_bDelayedScreenLoad = false;
-	m_bBannerCache = false; // XXX
+	m_bBannerCache = true;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
