@@ -417,14 +417,16 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 	highlight.SetXY( (float)iX, (float)iY );
 }
 
-void ScreenOptions::UpdateText( PlayerNumber player_no, int row )
+void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 {
-	int iChoiceInRow = m_iSelectedOption[player_no][row];
+	int iChoiceInRow = m_iSelectedOption[player_no][iRow];
 
-	bool bLotsOfOptions = m_bRowIsLong[row];
+	bool bLotsOfOptions = m_bRowIsLong[iRow];
+
+	OptionRow &row = m_OptionRow[iRow];
 
 	if( bLotsOfOptions )
-		m_textItems[row][player_no].SetText( m_OptionRow[row].choices[iChoiceInRow] );
+		m_textItems[iRow][row.bOneChoiceForAllPlayers?0:player_no].SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()

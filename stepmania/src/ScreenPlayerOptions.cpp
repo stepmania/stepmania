@@ -64,7 +64,7 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Hide",				false, "OFF","DARK","BLIND"),	
 	OptionRow( "Perspec\n-tive",	false, "" ),
 	OptionRow( "Step",				false, "" ),
-	OptionRow( "Character",			false, "" ),
+	OptionRow( "Charac\n-ter",		false, "" ),
 	OptionRow( "Life\nType",	true, "BAR","BATTERY" ),	
 	OptionRow( "Bar\nDrain",	true, "NORMAL","NO RECOVER","SUDDEN DEATH" ),	
 	OptionRow( "Bat\nLives",	true, "1","2","3","4","5","6","7","8","9","10" ),	
