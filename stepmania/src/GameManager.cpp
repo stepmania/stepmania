@@ -985,7 +985,7 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 {
 	sNotesType.MakeLower();
 	for( int i=0; i<NUM_STYLES; i++ )
-		if( g_StyleDefs[i].m_szName == sNotesType )
+		if( g_StyleDefs[i].m_szStyleName == sNotesType )
 			return g_StyleDefs[i].m_NotesType;
 	
 	// invalid NotesType
@@ -997,7 +997,7 @@ CString GameManager::NotesTypeToString( NotesType nt )
 {
 	for( int i=0; i<NUM_STYLES; i++ )
 		if( g_StyleDefs[i].m_NotesType == nt  )
-			return g_StyleDefs[i].m_szName ;
+			return g_StyleDefs[i].m_szStyleName ;
 
 	// invalid NotesType
 	ASSERT(0);
