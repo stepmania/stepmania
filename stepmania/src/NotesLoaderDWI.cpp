@@ -242,6 +242,27 @@ bool DWILoader::LoadFromDWITokens(
 	return true;
 }
 
+/* STUPID ALERT!
+ * This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
+ * or milliseconds.
+ * What's even more dumb is that the value can contain a ':'.  Colon is supposed to be a parameter separator!
+ */
+float DWILoader::ParseBrokenDWITimestamp(const CString *sParams, int iNumParams)
+{
+	if( iNumParams == 4 )
+		return TimeToSeconds( sParams[1]+":"+sParams[2]+":"+sParams[3] );
+	
+	if( iNumParams == 3 )
+		return TimeToSeconds( sParams[1]+":"+sParams[2] );
+	
+	// iNumParams == 2
+	/* If the value contains a period, treat it as seconds; otherwise ms. */
+	if(sParams[1].find_first_of(".") != sParams[1].npos)
+		return (float)atof(sParams[1].GetString());
+	else
+		return float(atof(sParams[1].GetString())) / 1000.f;
+}
+
 bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.GetString() );
@@ -257,6 +278,12 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 		int iNumParams = msd.m_iNumParams[i];
 		CString* sParams = msd.m_sParams[i];
 		CString sValueName = sParams[0];
+
+		if(iNumParams < 1)
+		{
+			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.GetString());
+			continue;
+		}
 
 		// handle the data
 		if( 0==stricmp(sValueName,"FILE") )
@@ -279,27 +306,10 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
-		{
-			// STUPID ALERT!
-			// This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", or "SSS.sssss".
-			// What's even more dumb is that the value can contain a ':'.  Colon is supposed to be a parameter separator!
-			if( iNumParams == 4 )
-				out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1]+":"+sParams[2]+":"+sParams[3] );
-			else if( iNumParams == 3 )
-				out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );
-			else // if( iNumParams == 2 )
-				out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
-		}
+			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams, iNumParams);
 
 		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
-		{
-			if( iNumParams == 4 )
-				out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1]+":"+sParams[2]+":"+sParams[3] );
-			else if( iNumParams == 3 )
-				out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );
-			else // if( iNumParams == 2 )
-				out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1] );
-		}
+			out.m_fMusicSampleLengthSeconds = ParseBrokenDWITimestamp(sParams, iNumParams);
 
 		else if( 0==stricmp(sValueName,"FREEZE") )
 		{

@@ -24,6 +24,7 @@ class DWILoader: public NotesLoader {
 
 	bool LoadFromDWIFile( CString sPath, Song &out );
 
+	static float ParseBrokenDWITimestamp(const CString *sParams, int iNumParams);
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool Loadable( CString sPath );
