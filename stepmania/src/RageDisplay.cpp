@@ -206,7 +206,7 @@ void RageDisplay::SetDefaultRenderStates()
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( true );
 	LoadMenuPerspective(0, CENTER_X, CENTER_Y);	// 0 FOV = ortho
-	ResetCentering();
+	ChangeCentering(0,0,1,1);
 }
 
 
@@ -621,21 +621,11 @@ RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, fl
 	return m;
 }
 
-void RageDisplay::ResetCentering()
+void RageDisplay::ChangeCentering( int trans_x, int trans_y, float scale_x, float scale_y )
 {
-	RageMatrixIdentity( &m_Centering );
-}
-
-void RageDisplay::CenteringTranslate( float x, float y, float z )
-{
-	RageMatrix m;
-	RageMatrixTranslation( &m, x, y, z );
-	RageMatrixMultiply( &m_Centering, &m, &m_Centering );
-}
-
-void RageDisplay::CenteringScale( float x, float y, float z )
-{
-	RageMatrix m;
-	RageMatrixScaling( &m, x, y, z );
-	RageMatrixMultiply( &m_Centering, &m, &m_Centering );
+	RageMatrix m1;
+	RageMatrix m2;
+	RageMatrixTranslation( &m1, trans_x, trans_y, 0 );
+	RageMatrixScaling( &m2, scale_x, scale_y, 1 );
+	RageMatrixMultiply( &m_Centering, &m1, &m2 );
 }

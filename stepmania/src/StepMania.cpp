@@ -165,6 +165,12 @@ void ApplyGraphicOptions()
 
 	bNeedReload |= DISPLAY->SetVideoMode( GetCurVideoModeParams() );
 
+	DISPLAY->ChangeCentering(
+		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageScaleX,
+		PREFSMAN->m_fCenterImageScaleY );
+
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_iMovieColorDepth,
@@ -802,6 +808,13 @@ int main(int argc, char* argv[])
 	delete loading_window;		// destroy this before init'ing Display
 
 	DISPLAY = CreateDisplay();
+
+	DISPLAY->ChangeCentering(
+		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageScaleX,
+		PREFSMAN->m_fCenterImageScaleY );
+
 	TEXTUREMAN	= new RageTextureManager();
 	TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 

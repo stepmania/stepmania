@@ -64,37 +64,73 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	if( m_Menu.IsTransitioning() )
 		return;
 
-	if( type != IET_RELEASE )
+	if( type == IET_RELEASE )
+		return;
+
+
+	bool bHoldingShift = 
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) ||
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT));
+
+	int iScale;
+	switch( type )
 	{
+	case IET_SLOW_REPEAT:	iScale = 4;		break;
+	case IET_FAST_REPEAT:	iScale = 16;	break;
+	default:				iScale = 1;		break;
 	}
 
 	switch( DeviceI.button )
 	{
 	case SDLK_SPACE:
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) )
-		{
-			if( DeviceI.button == SDLK_LEFT )
-				DISPLAY->CenteringScale( 0.999f, 1, 1 );
-			if( DeviceI.button == SDLK_DOWN )
-				DISPLAY->CenteringScale( 1.f, 1/0.999f, 1.f );
-			if( DeviceI.button == SDLK_UP )
-				DISPLAY->CenteringScale( 1.f, 0.999f, 1.f );
-			if( DeviceI.button == SDLK_RIGHT )
-				DISPLAY->CenteringScale( 1/0.999f, 1.f, 1.f );
-		}
-		else
-		{
-			if( DeviceI.button == SDLK_LEFT )
-				DISPLAY->CenteringTranslate( -1, 0, 0 );
-			if( DeviceI.button == SDLK_DOWN )
-				DISPLAY->CenteringTranslate( 0, +1, 0 );
-			if( DeviceI.button == SDLK_UP )
-				DISPLAY->CenteringTranslate( 0, -1, 0 );
-			if( DeviceI.button == SDLK_RIGHT )
-				DISPLAY->CenteringTranslate( +1, 0, 0 );
-		}
+		PREFSMAN->m_iCenterImageTranslateX = 0;
+		PREFSMAN->m_iCenterImageTranslateY = 0;
+		PREFSMAN->m_fCenterImageScaleX = 1;
+		PREFSMAN->m_fCenterImageScaleY = 1;
 		break;
+	case SDLK_LEFT:
+		if( bHoldingShift )
+			PREFSMAN->m_fCenterImageScaleX -= 0.001f * iScale;
+		else
+			PREFSMAN->m_iCenterImageTranslateX -= 1 * iScale;
+		break;
+	case SDLK_RIGHT:
+		if( bHoldingShift )
+			PREFSMAN->m_fCenterImageScaleX += 0.001f * iScale;
+		else
+			PREFSMAN->m_iCenterImageTranslateX += 1 * iScale;
+		break;
+	case SDLK_UP:
+		if( bHoldingShift )
+			PREFSMAN->m_fCenterImageScaleY -= 0.001f * iScale;
+		else
+			PREFSMAN->m_iCenterImageTranslateY -= 1 * iScale;
+		break;
+	case SDLK_DOWN:
+		if( bHoldingShift )
+			PREFSMAN->m_fCenterImageScaleY += 0.001f * iScale;
+		else
+			PREFSMAN->m_iCenterImageTranslateY += 1 * iScale;
+		break;
+	}
+
+	switch( DeviceI.button )
+	{
+	case SDLK_SPACE:
+	case SDLK_LEFT:
+	case SDLK_RIGHT:
+	case SDLK_UP:
+	case SDLK_DOWN:
+		DISPLAY->ChangeCentering(
+			PREFSMAN->m_iCenterImageTranslateX, 
+			PREFSMAN->m_iCenterImageTranslateY,
+			PREFSMAN->m_fCenterImageScaleX,
+			PREFSMAN->m_fCenterImageScaleY );
+		break;
+	}
+
+	switch( DeviceI.button )
+	{
 	case SDLK_ESCAPE:
 		if(!m_Menu.IsTransitioning())
 		{

@@ -133,6 +133,11 @@ PrefsManager::PrefsManager()
 	m_bVsync = true;
 	m_sLanguage = "";	// ThemeManager will deal with this invalid language
 
+	m_iCenterImageTranslateX = 0;
+	m_iCenterImageTranslateY = 0;
+	m_fCenterImageScaleX = 1;
+	m_fCenterImageScaleY = 1;
+
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
@@ -288,6 +293,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		ini.GetValue( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
+	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
+	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
+	ini.GetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
+	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 
 	CString sAdditionalSongFolders;
 	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
@@ -404,6 +413,11 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		ini.SetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
+
+	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
+	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
+	ini.SetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
+	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

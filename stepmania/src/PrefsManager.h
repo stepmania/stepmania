@@ -99,7 +99,11 @@ public:
 	int				m_iEndlessNumStagesUntilBreak;
 	int				m_iEndlessBreakLength;
 	CString			m_sLanguage;
-	CString			m_sDefaultProfile[NUM_PLAYERS];	// directory name of profile on HD
+	CString			m_sDefaultProfile[NUM_PLAYERS];	// directory name of profile
+	int				m_iCenterImageTranslateX;
+	int				m_iCenterImageTranslateY;
+	float			m_fCenterImageScaleX;
+	float			m_fCenterImageScaleY;
 
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
