@@ -9,6 +9,8 @@
 /* We only actually get 1000 using SDL. */
 #define TIMESTAMP_RESOLUTION 1000000
 
+const RageZeroTimer_t RageZeroTimer;
+
 float RageTimer::GetTimeSinceStart()
 {
 	return SDL_GetTicks() / 1000.0f;

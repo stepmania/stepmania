@@ -60,8 +60,13 @@ public:
 private:
 	static RageTimer Sum(const RageTimer &lhs, float tm);
 	static float Difference(const RageTimer &lhs, const RageTimer &rhs);
-
 };
+
+struct RageZeroTimer_t: public RageTimer
+{
+	RageZeroTimer_t() { SetZero(); }
+};
+extern const RageZeroTimer_t RageZeroTimer;
 
 #endif
 
