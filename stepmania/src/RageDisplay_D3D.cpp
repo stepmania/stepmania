@@ -665,6 +665,9 @@ void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], const Uint16 p
 	StatsAddVerts( iNumIndices );
 }
 
+/* Use the default poly-based implementation.  D3D lines apparently don't support
+ * AA with greater-than-one widths. */
+/*
 void RageDisplay_D3D::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
@@ -679,7 +682,7 @@ void RageDisplay_D3D::DrawLineStrip( const RageVertex v[], int iNumVerts, float 
 	);
 	StatsAddVerts( iNumVerts );
 }
-
+*/
 void RageDisplay_D3D::SetTexture( RageTexture* pTexture )
 {
 	if( pTexture == NULL )

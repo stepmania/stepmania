@@ -64,7 +64,7 @@ public:
 	void DrawStrip( const RageVertex v[], int iNumVerts );
 	void DrawTriangles( const RageVertex v[], int iNumVerts );
 	void DrawIndexedTriangles( const RageVertex v[], const Uint16* pIndices, int iNumIndices );
-	void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
+//	void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
 
 	void SaveScreenshot( CString sPath );
 protected:

@@ -76,6 +76,74 @@ void RageDisplay::ResetStats()
 
 void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSinceLastCheck += iNumVertsRendered; }
 
+/* Draw a line as a quad.  GL_LINES with antialiasing off can draw line
+ * ends at odd angles--they're forced to axis-alignment regardless of the
+ * angle of the line. */
+void RageDisplay::DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth )
+{
+	/* soh cah toa strikes strikes again! */
+	float opp = p2.p.x - p1.p.x;
+	float adj = p2.p.y - p1.p.y;
+	float hyp = powf(opp*opp + adj*adj, 0.5f);
+
+	float lsin = opp/hyp;
+	float lcos = adj/hyp;
+
+	RageVertex v[4];
+
+	v[0] = v[1] = p1;
+	v[2] = v[3] = p2;
+
+	float ydist = lsin * LineWidth/2;
+	float xdist = lcos * LineWidth/2;
+	
+	v[0].p.x += xdist;
+	v[0].p.y -= ydist;
+	v[1].p.x -= xdist;
+	v[1].p.y += ydist;
+	v[2].p.x -= xdist;
+	v[2].p.y += ydist;
+	v[3].p.x += xdist;
+	v[3].p.y -= ydist;
+
+	this->DrawQuad(v);
+}
+
+
+void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
+{
+	ASSERT( iNumVerts >= 2 );
+
+	/* Draw a line strip with rounded corners using polys.  This is used on
+	 * cards that have strange allergic reactions to antialiased points and
+	 * lines. */
+	int i;
+	for(i = 0; i < iNumVerts-1; ++i)
+		DrawPolyLine(v[i], v[i+1], LineWidth);
+
+	/* Join the lines with circles so we get rounded corners. */
+	for(i = 0; i < iNumVerts; ++i)
+		DrawCircle( v[i], LineWidth/2 );
+}
+
+void RageDisplay::DrawCircle( const RageVertex &p, float radius )
+{
+	const int subdivisions = 32;
+	RageVertex v[subdivisions+2];
+	v[0] = p;
+
+	for(int i = 0; i < subdivisions+1; ++i) 
+	{
+		const float fRotation = float(i) / subdivisions * 2*PI;
+		const float fX = cosf(fRotation) * radius;
+		const float fY = -sinf(fRotation) * radius;
+		v[1+i] = v[0];
+		v[1+i].p.x += fX;
+		v[1+i].p.y += fY;
+	}
+
+	this->DrawFan( v, subdivisions+2 );
+}
 
 
 

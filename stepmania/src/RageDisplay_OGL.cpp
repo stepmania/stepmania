@@ -485,127 +485,74 @@ void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], const Uint16 p
 	StatsAddVerts( iNumIndices );
 }
 
-/* Draw a line as a quad.  GL_LINES with antialiasing off can draw line
- * ends at odd angles--they're forced to axis-alignment regardless of the
- * angle of the line. */
-void DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth )
-{
-	/* soh cah toa strikes strikes again! */
-	float opp = p2.p.x - p1.p.x;
-	float adj = p2.p.y - p1.p.y;
-	float hyp = powf(opp*opp + adj*adj, 0.5f);
-
-	float lsin = opp/hyp;
-	float lcos = adj/hyp;
-
-	RageVertex v[4];
-
-	v[0] = v[1] = p1;
-	v[2] = v[3] = p2;
-
-	float ydist = lsin * LineWidth/2;
-	float xdist = lcos * LineWidth/2;
-	
-	v[0].p.x += xdist;
-	v[0].p.y -= ydist;
-	v[1].p.x -= xdist;
-	v[1].p.y += ydist;
-	v[2].p.x -= xdist;
-	v[2].p.y += ydist;
-	v[3].p.x += xdist;
-	v[3].p.y -= ydist;
-
-	DISPLAY->DrawQuad(v);
-}
-
 void RageDisplay_OGL::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
-	
+
+	if( g_bAALinesBroken )
+	{
+		RageDisplay::DrawLineStrip(v, iNumVerts, LineWidth );
+		return;
+	}
+
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (const float*)GetProjection() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)GetModelViewTop() );
 
-	if( g_bAALinesBroken )
-	{
-		/* Draw a line strip with rounded corners using polys.  This is used on
-		 * cards that have strange allergic reactions to antialiased points and
-		 * lines. */
-		int i;
-		for(i = 0; i < iNumVerts-1; ++i)
-			DrawPolyLine(v[i], v[i+1], LineWidth);
+	/* Draw a nice AA'd line loop.  One problem with this is that point and line
+	 * sizes don't always precisely match, which doesn't look quite right.
+	 * It's worth it for the AA, though. */
+	glEnable(GL_LINE_SMOOTH);
 
-		/* Join the lines with circles so we get rounded corners. */
-		GLUquadricObj *q =  gluNewQuadric();
-		for(i = 0; i < iNumVerts; ++i)
-		{
-			glPushMatrix();
-			glColor4ub(v[i].c.r, v[i].c.g, v[i].c.b, v[i].c.a);
-			glTexCoord3fv(v[i].t);
-			glTranslatef(v[i].p.x, v[i].p.y, v[i].p.z);
+	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
+	 * but these width functions actually want raster sizes (that is, actual pixels).
+	 * Scale the line width and point size by the average ratio of the scale. */
+	float WidthVal = float(wind->GetWidth()) / SCREEN_WIDTH;
+	float HeightVal = float(wind->GetHeight()) / SCREEN_HEIGHT;
+	LineWidth *= (WidthVal + HeightVal) / 2;
 
-			gluDisk(q, 0, LineWidth/2, 32, 32);
-			glPopMatrix();
-		}
-		gluDeleteQuadric(q);
-	}
-	else
-	{
-		/* Draw a nice AA'd line loop.  One problem with this is that point and line
-		 * sizes don't always precisely match, which doesn't look quite right.
-		 * It's worth it for the AA, though. */
-		glEnable(GL_LINE_SMOOTH);
+	/* Clamp the width to the hardware max for both lines and points (whichever
+	 * is more restrictive). */
+	LineWidth = clamp(LineWidth, g_line_range[0], g_line_range[1]);
+	LineWidth = clamp(LineWidth, g_point_range[0], g_point_range[1]);
 
-		/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
-		 * but these width functions actually want raster sizes (that is, actual pixels).
-		 * Scale the line width and point size by the average ratio of the scale. */
-		float WidthVal = float(wind->GetWidth()) / SCREEN_WIDTH;
-		float HeightVal = float(wind->GetHeight()) / SCREEN_HEIGHT;
-		LineWidth *= (WidthVal + HeightVal) / 2;
+	/* Hmm.  The granularity of lines and points might be different; for example,
+	 * if lines are .5 and points are .25, we might want to snap the width to the
+	 * nearest .5, so the hardware doesn't snap them to different sizes.  Does it
+	 * matter? */
+	glLineWidth(LineWidth);
 
-		/* Clamp the width to the hardware max for both lines and points (whichever
-		 * is more restrictive). */
-		LineWidth = clamp(LineWidth, g_line_range[0], g_line_range[1]);
-		LineWidth = clamp(LineWidth, g_point_range[0], g_point_range[1]);
+	/* Draw the line loop: */
+	SetupVertices( v, iNumVerts );
+	glDrawArrays( GL_LINE_STRIP, 0, iNumVerts );
 
-		/* Hmm.  The granularity of lines and points might be different; for example,
-		 * if lines are .5 and points are .25, we might want to snap the width to the
-		 * nearest .5, so the hardware doesn't snap them to different sizes.  Does it
-		 * matter? */
-		glLineWidth(LineWidth);
+	glDisable(GL_LINE_SMOOTH);
 
-		/* Draw the line loop: */
-		SetupVertices( v, iNumVerts );
-		glDrawArrays( GL_LINE_STRIP, 0, iNumVerts );
+	/* Round off the corners.  This isn't perfect; the point is sometimes a little
+	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
+	 * that. */
+	glPointSize(LineWidth);
 
-		glDisable(GL_LINE_SMOOTH);
+	/* Hack: if the points will all be the same, we don't want to draw
+	 * any points at all, since there's nothing to connect.  That'll happen
+	 * if both scale factors in the matrix are ~0.  (Actually, I think
+	 * it's true if two of the three scale factors are ~0, but we don't
+	 * use this for anything 3d at the moment anyway ...)  This is needed
+	 * because points aren't scaled like regular polys--a zero-size point
+	 * will still be drawn. */
+	RageMatrix mat;
+	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)mat );
 
-		/* Round off the corners.  This isn't perfect; the point is sometimes a little
-		 * larger than the line, causing a small bump on the edge.  Not sure how to fix
-		 * that. */
-		glPointSize(LineWidth);
+	if(mat.m[0][0] < 1e-5 && mat.m[1][1] < 1e-5) 
+		return;
 
-		/* Hack: if the points will all be the same, we don't want to draw
-		 * any points at all, since there's nothing to connect.  That'll happen
-		 * if both scale factors in the matrix are ~0.  (Actually, I think
-		 * it's true if two of the three scale factors are ~0, but we don't
-		 * use this for anything 3d at the moment anyway ...)  This is needed
-		 * because points aren't scaled like regular polys--a zero-size point
-		 * will still be drawn. */
-		RageMatrix mat;
-		glGetFloatv( GL_MODELVIEW_MATRIX, (float*)mat );
+	glEnable(GL_POINT_SMOOTH);
 
-		if(mat.m[0][0] < 1e-5 && mat.m[1][1] < 1e-5) 
-			return;
+	SetupVertices( v, iNumVerts );
+	glDrawArrays( GL_POINTS, 0, iNumVerts );
 
-		glEnable(GL_POINT_SMOOTH);
-
-		SetupVertices( v, iNumVerts );
-		glDrawArrays( GL_POINTS, 0, iNumVerts );
-
-		glDisable(GL_POINT_SMOOTH);
-	}
+	glDisable(GL_POINT_SMOOTH);
 }
 
 void RageDisplay_OGL::SetTexture( RageTexture* pTexture )
