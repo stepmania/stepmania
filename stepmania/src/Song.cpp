@@ -302,7 +302,7 @@ struct SongID
 	{
 		if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
 			return NULL;
-		Steps *ret = p->GetStepsByDifficulty( st, dc, false );
+		Steps *ret = p->GetStepsByDifficulty( st, dc, true );
 		RAGE_ASSERT_M( ret, ssprintf("%i, %i", st, dc) );	// we had something selected before reloading, so it better still be there after!
 		return ret;
 	}
