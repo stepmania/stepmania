@@ -10,19 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-/* Couples notes:
- * Couples is just two sets of notes, paired as a game type, with a fallback
- * to the normal mode.  This lets us import Pump _2 songs without having to
- * duplicate the _1 side for couples.  This way, we get to handle couples
- * the same way in every game.  (Which is nice, because not many people
- * use couples.)
- *
- * This does mean it's impossible to tell (in the current UI) whether a
- * given song has couples or not; they all show up the same, even if both
- * sides are using the fallback.  (Except that couples songs tend to have
- * slightly varying radar values, unless the pattern is just flipped.)
- * -glenn
- */
 #include "Notes.h"
 #include "RageUtil.h"
 #include <math.h>	// for fmod
@@ -567,35 +554,14 @@ void Song::TidyUpData()
 	}
 }
 
-/* Get Notes that match a given style and player. 
- *
- * If UseFallbacks is true, fallback notes will be returned if (and
- * only if) no non-fallback notes are found at all.
- *
- * If UseFallbacks is false, fallback notes will never be returned.
- */
-void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo, bool UseFallbacks ) const
+/* Get Notes that match a given style and player. */
+void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
-	int cnt = GetNotesThatMatch( s->m_NotesTypes[p], arrayAddTo );
-
-	if ( UseFallbacks && !cnt )
-		GetNotesThatMatch( s->m_FallbackNotesType, arrayAddTo );
-}
-
-/* Get note patterns of the given type; return the number of patterns returned. */
-int Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
-{
-	int ret=0;
-
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
 	{
-		if( m_apNotes[i]->m_NotesType == nt )
-		{
+		if( m_apNotes[i]->m_NotesType == s->m_NotesTypes[p] )
 			arrayAddTo.Add( m_apNotes[i] );
-			ret++;
-		}
 	}
-	return ret;
 }
 
 /* Return whether the song is playable in the given style. */
@@ -604,8 +570,7 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{
 		if(st->m_NotesTypes[pn] == NOTES_TYPE_INVALID) continue; /* unused */
-		if(!SongHasNotesType(st->m_NotesTypes[pn]) &&
-		   !SongHasNotesType(st->m_FallbackNotesType))
+		if(!SongHasNotesType(st->m_NotesTypes[pn]))
 			return false;
 	}
 	return true;

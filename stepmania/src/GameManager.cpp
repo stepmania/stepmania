@@ -381,7 +381,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"DDR Single",								// m_szName
 		{ NOTES_TYPE_DANCE_SINGLE,NOTES_TYPE_DANCE_SINGLE },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
@@ -409,7 +408,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		false,									// m_bUsedForEdit
 		"DDR Versus",							// m_szName
 		{ NOTES_TYPE_DANCE_SINGLE,NOTES_TYPE_DANCE_SINGLE }, // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
@@ -437,7 +435,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"DDR Double",							// m_szName
 		{ NOTES_TYPE_DANCE_DOUBLE,NOTES_TYPE_DANCE_DOUBLE },	// m_NotesTypes
-		NOTES_TYPE_INVALID,
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
@@ -473,7 +470,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		false,								// m_bUsedForEdit
 		"DDR Couples",						// m_szName
 		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_2 },	// m_NotesTypes
-		NOTES_TYPE_DANCE_SINGLE,			// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		4,									// m_iColsPerPlayer
@@ -501,7 +497,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,								// m_bUsedForEdit
 		"DDR Solo",							// m_szName
 		{ NOTES_TYPE_DANCE_SOLO,NOTES_TYPE_DANCE_SOLO },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 320, 320 },						// m_iCenterX
 		6,									// m_iColsPerPlayer
@@ -533,7 +528,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"DDR Couples Player 1",					// m_szName
 		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_1 }, // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
@@ -561,7 +555,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"DDR Couples Player 2",					// m_szName
 		{ NOTES_TYPE_DANCE_COUPLE_2, NOTES_TYPE_DANCE_COUPLE_2 }, // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
@@ -617,7 +610,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"Pump Single",							// m_szName
 		{ NOTES_TYPE_PUMP_SINGLE,NOTES_TYPE_PUMP_SINGLE },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -647,7 +639,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		false,									// m_bUsedForEdit
 		"Pump Versus",							// m_szName
 		{ NOTES_TYPE_PUMP_SINGLE,NOTES_TYPE_PUMP_SINGLE },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -677,7 +668,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"Pump Double",							// m_szName
 		{ NOTES_TYPE_PUMP_DOUBLE,NOTES_TYPE_PUMP_DOUBLE }, // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
@@ -717,7 +707,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		false,									// m_bUsedForEdit
 		"Pump Couples",							// m_szName
 		{ NOTES_TYPE_PUMP_COUPLE_1,NOTES_TYPE_PUMP_COUPLE_2},	// m_NotesTypes
-		NOTES_TYPE_PUMP_SINGLE,					// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -747,7 +736,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"Pump Couples Player 1",				// m_szName
 		{ NOTES_TYPE_PUMP_COUPLE_1,NOTES_TYPE_PUMP_COUPLE_1},	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -777,7 +765,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"Pump Couples Player 2",				// m_szName
 		{ NOTES_TYPE_PUMP_COUPLE_2,NOTES_TYPE_PUMP_COUPLE_2},	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -808,7 +795,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2 Single",							// m_szName
 		{ NOTES_TYPE_EZ2_SINGLE,NOTES_TYPE_EZ2_SINGLE  },	 // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -838,7 +824,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2 SingleHard",							// m_szName
 		{ NOTES_TYPE_EZ2_SINGLE_HARD,NOTES_TYPE_EZ2_SINGLE_HARD}, // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -868,7 +853,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2 Real",								// m_szName
 		{ NOTES_TYPE_EZ2_REAL,NOTES_TYPE_EZ2_REAL },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		7,										// m_iColsPerPlayer
@@ -902,7 +886,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2Double",							// m_szName
 		{ NOTES_TYPE_EZ2_DOUBLE,NOTES_TYPE_EZ2_DOUBLE },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
@@ -942,7 +925,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2 Versus",							// m_szName
 		{ NOTES_TYPE_EZ2_SINGLE,NOTES_TYPE_EZ2_SINGLE },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -972,7 +954,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2 VersusHard",						// m_szName
 		{ NOTES_TYPE_EZ2_SINGLE_HARD,NOTES_TYPE_EZ2_SINGLE_HARD },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -1002,7 +983,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"EZ2 VersusReal",						// m_szName
 		{ NOTES_TYPE_EZ2_REAL,NOTES_TYPE_EZ2_REAL },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		7,										// m_iColsPerPlayer
@@ -1036,7 +1016,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForEdit
 		"Para Single",							// m_szName
 		{ NOTES_TYPE_PARA,NOTES_TYPE_PARA}, // m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		5,										// m_iColsPerPlayer

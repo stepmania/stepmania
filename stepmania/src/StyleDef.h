@@ -46,9 +46,6 @@ public:
 	 * for each player in couples. */
 	NotesType	m_NotesTypes[NUM_PLAYERS];
 									
-	/* This type is used as a fallback; if, for any player, m_StyleType[p] isn't
-	* available, this type will be used.  Use NOTES_TYPE_INVALID for no fallback. */
-	NotesType	m_FallbackNotesType;
 	enum StyleType
 	{
 		ONE_PLAYER_ONE_CREDIT,	// e.g. single

@@ -265,8 +265,7 @@ void SongSelector::OnNotesTypeChange()
 	m_textStyle.SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
 
 	m_pNotess.RemoveAll();
-	/* Only get primary notes in this style, not fallback notes. */
-	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle()), 0, m_pNotess, false );
+	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle()), 0, m_pNotess );
 	SortNotesArrayByDifficulty( m_pNotess );
 	m_pNotess.Add( NULL );		// marker for "(NEW)"
 	m_iSelectedNotes = 0;
