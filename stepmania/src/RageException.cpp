@@ -32,7 +32,7 @@ const char* RageException::what() const throw ()
 	return m_sError;
 }
 
-RageException::ThrowFatal(const char *fmt, ...)
+RageException::Throw(const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);

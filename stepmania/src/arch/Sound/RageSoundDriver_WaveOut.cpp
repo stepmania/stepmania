@@ -106,7 +106,7 @@ bool RageSound_WaveOut::GetPCM()
 
 	MMRESULT ret = waveOutWrite(wo, &buffers[b], sizeof(buffers[b]));
   	if(ret != MMSYSERR_NOERROR)
-		RageException::ThrowFatal(wo_ssprintf(ret, "waveOutWrite failed"));
+		RageException::Throw(wo_ssprintf(ret, "waveOutWrite failed"));
 
 	/* Increment last_cursor_pos. */
 	last_cursor_pos += chunksize_frames;
@@ -167,7 +167,7 @@ int RageSound_WaveOut::GetPosition(const RageSound *snd) const
 	tm.wType = TIME_SAMPLES;
 	MMRESULT ret = waveOutGetPosition(wo, &tm, sizeof(tm));
   	if(ret != MMSYSERR_NOERROR)
-		RageException::ThrowFatal(wo_ssprintf(ret, "waveOutGetPosition failed"));
+		RageException::Throw(wo_ssprintf(ret, "waveOutGetPosition failed"));
 
 	return tm.u.sample;
 }
