@@ -236,7 +236,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		/* XXX: Maybe this should be enabled for all ONE_PLAYER_ONE_CREDIT modes.
 		 * I don't feel like testing that right now, though. */
 		if( PREFSMAN->m_bSoloSingle && 
-			GAMESTATE->GetCurrentStyleDef()->m_NotesType == STYLE_DANCE_SINGLE &&
+			GAMESTATE->m_CurStyle == STYLE_DANCE_SINGLE &&
 			GAMESTATE->GetNumSidesJoined() == 1 )
 			fPlayerX = SCREEN_WIDTH/2;
 
