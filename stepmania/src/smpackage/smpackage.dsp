@@ -85,9 +85,14 @@ LINK32=link.exe
 
 # Name "smpackage - Win32 Release"
 # Name "smpackage - Win32 Debug"
-# Begin Group "Stepmania Package files"
+# Begin Source File
 
-# PROP Default_Filter ""
+SOURCE=.\install.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\manage.bmp
+# End Source File
 # Begin Source File
 
 SOURCE=..\RageUtil.cpp
@@ -95,6 +100,10 @@ SOURCE=..\RageUtil.cpp
 # Begin Source File
 
 SOURCE=..\RageUtil.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ReadMe.txt
 # End Source File
 # Begin Source File
 
@@ -111,6 +120,10 @@ SOURCE=.\smpackage.h
 # Begin Source File
 
 SOURCE=.\res\smpackage.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\smpackage.ICO
 # End Source File
 # Begin Source File
 
@@ -144,23 +157,6 @@ SOURCE=.\StdAfx.cpp
 # Begin Source File
 
 SOURCE=.\StdAfx.h
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=.\install.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\manage.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ReadMe.txt
-# End Source File
-# Begin Source File
-
-SOURCE=.\smpackage.ICO
 # End Source File
 # Begin Source File
 

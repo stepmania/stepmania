@@ -67,7 +67,7 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	}
 
 	
-	SCREEN->Translate( pos.x+0.5f, pos.y-0.5f, pos.z );	// offset so that pixels are aligned to texels
+	SCREEN->Translate( pos.x-0.5f, pos.y-0.5f, pos.z );	// offset so that pixels are aligned to texels
 	SCREEN->Scale( scale.x, scale.y, 1 );
 
 	// super slow!	

@@ -15,8 +15,9 @@
 //-----------------------------------------------------------------------------
 // UTIL globals
 //-----------------------------------------------------------------------------
-const CString g_sLogFileName = "debug.log";
-
+const CString g_sLogFileName = "log.txt";
+const CString g_sErrorFileName = "error.txt";
+FILE* g_fileLog = NULL;
 
 //-----------------------------------------------------------------------------
 // Name: randomf()
@@ -67,12 +68,11 @@ void RageLogStart()
 {
 #if defined(DEBUG) | defined(_DEBUG)
 
-	// delete the old log and create a new one
+	// create a new log file, overwriting the old one
 	DeleteFile( g_sLogFileName );
-	FILE *fp = NULL;
-    fp = fopen( g_sLogFileName, "w" );
-	fclose( fp );
+	g_fileLog = fopen( g_sLogFileName, "w" );
 
+	// let the OS close the file when the app exits
 
 	SYSTEMTIME st;
     GetLocalTime( &st );
@@ -98,16 +98,7 @@ void RageLog( LPCTSTR fmt, ...)
     CString sBuff = vssprintf( fmt, va );
 	sBuff += "\n";
 
-	FILE *fp = NULL;
-
-	// open our logging file
-    fp = fopen( g_sLogFileName, "a" );
-    if( fp==NULL ) 
-		RageLog( ssprintf("Couldn't write to log %s", g_sLogFileName) );
-
-	fprintf(fp, sBuff);
-
-	fclose(fp);
+	fprintf(g_fileLog, sBuff);
 }
 
 void RageLogHr( HRESULT hr, LPCTSTR fmt, ...)
@@ -398,8 +389,6 @@ void SortCStringArray( CStringArray &arrayCStrings, BOOL bSortAcsending )
 
 VOID DisplayErrorAndDie( CString sError )
 {
-	// Something very bad happened.  Display an error dialog, then exit right away.
-
 	/*
 	////////////////////////
 	// get a stack trace
@@ -418,19 +407,12 @@ VOID DisplayErrorAndDie( CString sError )
 	}
 	sError += "\n\n" + fromClipboard;
 	*/
+	
+	FILE* fp = fopen( g_sErrorFileName, "w" );
 
-	RageLog( "" );
-	RageLog( "// Fatal Error /////////////////////////////" );
-	RageLog( sError );
-	RageLog( "////////////////////////////////////////////" );
+	fprintf( fp, sError );
+	fclose( fp );
 
-
-	MessageBox(
-	  NULL,					// handle of owner window
-	  sError,			// text in message box
-	  "Fatal Error",		// address of title of message box
-	  MB_OK | MB_ICONERROR	// style of message box
-	);
 	exit(1);
 }
 
