@@ -260,7 +260,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		row.m_textItems.push_back( bt );
 
 		bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-		bt->SetText( "EXIT" );
+		bt->SetText( THEME->GetMetric("OptionNames","Exit") );
 		bt->SetZoom( ITEMS_ZOOM );
 		bt->EnableShadow( false );
 		bt->SetX( CENTER_X );
