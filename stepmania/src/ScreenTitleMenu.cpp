@@ -240,6 +240,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) )
 	{
 		THEME->NextTheme();
+		ApplyGraphicOptions();	// update window title and icon
 		SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		TEXTUREMAN->DoDelayedDelete();

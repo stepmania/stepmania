@@ -264,6 +264,7 @@ int main(int argc, char* argv[])
 	delete loading_window;		// destroy this before init'ing Display
 
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
+	PREFSMAN->ReadGamePrefsFromDisk();
 
 	DISPLAY		= new RageDisplay(
 		PREFSMAN->m_bWindowed, 

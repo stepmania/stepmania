@@ -156,7 +156,11 @@ void ScreenAppearanceOptions::ExportOptions()
 
 	int iSelectedTheme = m_iSelectedOption[0][AO_THEME];
 	CString sNewTheme = m_OptionRow[AO_THEME].choices[iSelectedTheme];
-	THEME->SwitchTheme( sNewTheme );
+	if( THEME->GetCurThemeName() != sNewTheme )
+	{
+		THEME->SwitchTheme( sNewTheme );
+		ApplyGraphicOptions();	// reset graphics to apply new window title and icon
+	}
 	TEXTUREMAN->DoDelayedDelete();	// delete all textures that don't have references
 
     int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
