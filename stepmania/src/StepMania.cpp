@@ -1087,7 +1087,7 @@ int main(int argc, char* argv[])
 	MEMCARDMAN	= new MemoryCardManager;
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
-	UNLOCKMAN	= new UnlockSystem;
+	UNLOCKMAN	= new UnlockManager;
 	NSMAN 		= new NetworkSyncManager( loading_window ); 
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
