@@ -48,7 +48,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 		return fYOffset;
 
 	const float* fAccels = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAccels;
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	//const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
