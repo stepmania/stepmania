@@ -267,6 +267,10 @@ static void InitCharAliases()
 	CharAliases["cubed"]		= 0x00b3; /* ³ */
 	CharAliases["oq"]			= 0x201c; /* “ */
 	CharAliases["cq"]			= 0x201d; /* ” */
+	CharAliases["leftarrow"]	= 0x2190; /* ← */
+	CharAliases["uparrow"]		= 0x2191; /* ↑ */
+	CharAliases["rightarrow"]	= 0x2192; /* → */
+	CharAliases["downarrow"]	= 0x2193; /* ↓ */
 
 	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 	CharAliases["up"]			= 0xE000;
