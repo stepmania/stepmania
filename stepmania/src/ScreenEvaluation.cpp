@@ -88,7 +88,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 const ScreenMessage SM_GoToSelectCourse			=	ScreenMessage(SM_User+3);
-//const ScreenMessage SM_GoToEvaluationSummary	=	ScreenMessage(SM_User+4);
 const ScreenMessage SM_GoToEndScreen			=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
@@ -1336,9 +1335,6 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		else
 			SCREENMAN->SetNewScreen( END_SCREEN );
 		break;
-//	case SM_GoToEvaluationSummary:
-//		SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
-//		break;
 	case SM_PlayCheer:
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 		break;
