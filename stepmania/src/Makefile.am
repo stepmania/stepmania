@@ -202,6 +202,7 @@ RageFileDriverZip.cpp RageFileDriverZip.h
 
 Rage = $(Helpers) $(PCRE)\
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
+RageDisplay_Null.cpp RageDisplay_Null.h \
 RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \

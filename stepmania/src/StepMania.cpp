@@ -351,6 +351,8 @@ static void CheckSettings()
 #include "RageDisplay_OGL.h"
 #endif
 
+#include "RageDisplay_Null.h"
+
 #include "archutils/Win32/VideoDriverInfo.h"
 
 static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_BestBets&siteid=us&target=http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
@@ -653,6 +655,8 @@ RageDisplay *CreateDisplay()
 			};
 #endif
 		}
+		else if( sRenderer.CompareNoCase("null")==0 )
+			return new RageDisplay_Null();
 		else
 			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
 	}
