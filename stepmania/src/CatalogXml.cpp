@@ -13,6 +13,7 @@
 #include "GameState.h"
 #include <set>
 #include "Foreach.h"
+#include "GameManager.h"
 
 
 void SaveCatalogXml()
@@ -116,7 +117,18 @@ void SaveCatalogXml()
 		GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
 		for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
 		{
-			pNode->AppendChild( "CourseDifficulty", DifficultyToString(*iter) );
+			pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
+		}
+	}
+
+	{
+		XNode* pNode = xml.AppendChild( "StepsTypesToShow" );
+
+		vector<StepsType> vStepsTypes;
+		GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
+		for( vector<StepsType>::const_iterator iter = vStepsTypes.begin(); iter != vStepsTypes.end(); iter++ )
+		{
+			pNode->AppendChild( "StepsType", GAMEMAN->NotesTypeToString(*iter) );
 		}
 	}
 
