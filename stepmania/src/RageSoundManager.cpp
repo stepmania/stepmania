@@ -191,7 +191,7 @@ void RageSoundManager::PlayOnce( CString sPath )
 	/* We're responsible for freeing it. */
 	owned_sounds.insert(snd);
 
-//	snd->Play();
+	snd->Play();
 }
 
 void RageSoundManager::PlayOnceFromDir( CString sDir )
