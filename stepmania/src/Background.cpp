@@ -81,10 +81,7 @@ Background::Background()
 	}
 
 	if( bOneOrMoreChars && !bShowingBeginnerHelper )
-	{
 		m_pDancingCharacters = new DancingCharacters;
-		m_pDancingCharacters->LoadNextSong();
-	}
 	else
 		m_pDancingCharacters = NULL;
 }
