@@ -276,7 +276,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 		profile.LoadEditableDataFromDir( sProfileDir );
 		d.sName = profile.GetDisplayName();
-		
+		UnmountMountPoint( TEMP_MOUNT_POINT );
+
 		LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
 	      }
 	  }
@@ -645,17 +646,7 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString s
 {
 	ASSERT( !pDevice->sOsMountDir.empty() );
 	
-	/* Unmount any previous mounts for this mountpoint. */
-	vector<RageFileManager::DriverLocation> Mounts;
-	FILEMAN->GetLoadedDrivers( Mounts );
-	for( unsigned i = 0; i < Mounts.size(); ++i )
-    {
-		if( Mounts[i].Type.CompareNoCase( "dir" ) )
-			continue; // wrong type
-		if( Mounts[i].MountPoint.CompareNoCase( sMountPoint ) )
-			continue; // wrong mount point
-		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
-    }
+	UnmountMountPoint( sMountPoint );
 	
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );

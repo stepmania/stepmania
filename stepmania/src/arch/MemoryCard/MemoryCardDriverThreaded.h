@@ -53,6 +53,10 @@ protected:
 	bool m_bStorageDevicesChanged;
 	RageMutex m_mutexStorageDevices;	// protects the above two
 	bool m_bForceRedetectNextUpdate;	// on the next update, redetect from scratch report new devices found
+
+
+	// placed here for use by derivitives to eliminate duplicate code
+	void UnmountMountPoint( const CString &sMountPoint );
 };
 
 #endif

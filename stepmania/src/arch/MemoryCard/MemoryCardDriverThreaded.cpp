@@ -135,6 +135,21 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	return true;
 }
 
+
+void MemoryCardDriverThreaded::UnmountMountPoint( const CString &sMountPoint )
+{
+	vector<RageFileManager::DriverLocation> Mounts;
+	FILEMAN->GetLoadedDrivers( Mounts );
+	for( unsigned i = 0; i < Mounts.size(); ++i )
+	{
+		if( Mounts[i].Type.CompareNoCase( "dir" ) )
+				continue; // wrong type
+		if( Mounts[i].MountPoint.CompareNoCase( sMountPoint ) )
+				continue; // wrong mount point
+		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
+	}
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
