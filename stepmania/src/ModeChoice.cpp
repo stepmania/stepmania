@@ -231,21 +231,6 @@ int GetNumCreditsPaid()
 }
 
 
-int GetSidesRequiredToPlayStyle( Style style )
-{
-	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
-	{
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:
-		return 1;
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		return 2;
-	default:
-		ASSERT(0);
-		return 1;
-	}
-}
-
 int GetCreditsRequiredToPlayStyle( Style style )
 {
 	if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM )
@@ -300,32 +285,48 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 	if ( m_style != STYLE_INVALID )
 	{
-		int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
 		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
-		int iNumSidesPlusCredits = iNumSidesJoined + iCredits;
-		CLAMP( iNumSidesPlusCredits, 0, NUM_PLAYERS );
+		const int iNumCreditsPaid = GetNumCreditsPaid();
+		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		
 		switch( PREFSMAN->m_iCoinMode )
 		{
 		case COIN_HOME:
 		case COIN_FREE:
-			iNumSidesPlusCredits = NUM_PLAYERS;
+			iCredits = NUM_PLAYERS; /* not iNumCreditsPaid */
 		}
-
-		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
-		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		
-		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough players must be
-		 * joined.  With it enabled, simply having enough credits lying in the machine
-		 * is sufficient. */
-		bool bPlayable = iNumSidesJoined == iNumSidesRequired;
+		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must be
+		 * paid.  (This means that enough sides must be joined.)  Enabled, simply having
+		 * enough credits lying in the machine is sufficient; we'll deduct the extra in
+		 * Apply(). */
+		int iNumCreditsAvailable = iNumCreditsPaid;
 		if( PREFSMAN->m_bDelayedCreditsReconcile )
-			bPlayable |= iNumSidesJoined < iNumSidesRequired && iNumSidesPlusCredits >= iNumCreditsRequired;
+			iNumCreditsAvailable += iCredits;
 
-		if( !bPlayable )
+		if( iNumCreditsAvailable < iNumCreditsRequired )
 		{
 			if( why )
-				*why = ssprintf( "need %i sides, have %i", iNumSidesRequired, iNumSidesJoined );
+				*why = ssprintf( "need %i credits, have %i", iNumCreditsRequired, iNumCreditsAvailable );
+			return false;
+		}
+
+		/* If you've paid too much already, don't allow the mode.  (If we allow this,
+		 * the credits will be "refunded" in Apply(), but that's confusing.) */
+		if( PREFSMAN->m_iCoinMode == COIN_PAY && iNumCreditsPaid > iNumCreditsRequired )
+		{
+			if( why )
+				*why = ssprintf( "too many credits paid (%i > %i)", iNumCreditsPaid, iNumCreditsRequired );
+			return false;
+		}
+
+		/* If both sides are joined, disallow singles modes, since easy to select them
+		 * accidentally, instead of versus mode. */
+		if( GAMEMAN->GetStyleDefForStyle(m_style)->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT &&
+			GAMESTATE->GetNumSidesJoined() > 1 )
+		{
+			if( why )
+				*why = "too many players joined for ONE_PLAYER_ONE_CREDIT";
 			return false;
 		}
 	}
