@@ -89,6 +89,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 
 	avail = 0;
 	eof = false;
+	read_offset = (int) ov_pcm_tell(vf);
 
     return OPEN_OK;
 }
@@ -130,8 +131,91 @@ int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 		SetError( ov_ssprintf(ret, "ogg: SetPosition failed") );
 		return -1;
 	}
+	read_offset = (int) ov_pcm_tell(vf);
 
 	return ms;
+}
+
+bool RageSoundReader_Vorbisfile::FillBuf()
+{
+	if( avail )
+		return true;
+
+	vorbis_info *vi = ov_info( vf, -1 );
+	ASSERT( vi != NULL );
+	const int bytes_per_frame = 2*vi->channels;
+
+	char tmpbuf[4096];
+	int ret = 0;
+
+	{
+		int curofs = (int) ov_pcm_tell(vf);
+		if( curofs < read_offset )
+		{
+			/* The timestamps moved backwards.  Ignore it.  This file probably
+			 * won't sync correctly. */
+			LOG->Trace( "p ahead %p %i < %i, we're ahead by %i", 
+				this, curofs, read_offset, read_offset-curofs );
+			read_offset = curofs;
+		}
+		else if( curofs > read_offset )
+		{
+			/* Our offset doesn't match.  We have a hole in the data, or corruption.
+			 * If we're reading with accurate syncing, insert silence to line it up.
+			 * That way, corruptions in the file won't casue desyncs. */
+
+			/* In bytes: */
+			int silence = (curofs - read_offset) * bytes_per_frame;
+			CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
+			silence = min( silence, (int) sizeof(tmpbuf) );
+
+			memset( tmpbuf, 0, silence );
+			ret = silence;
+		}
+	}
+
+	if( ret == 0 )
+	{
+		int bstream;
+#if defined(INTEGER_OGG)
+		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), &bstream );
+#else // float vorbis decoder
+		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), (SDL_BYTEORDER == SDL_BIG_ENDIAN)?1:0, 2, 1, &bstream );
+#endif
+
+		if( ret == OV_HOLE )
+			return true;
+		if( ret == OV_EBADLINK )
+		{
+			SetError( ssprintf("Read: OV_EBADLINK") );
+			return false;
+		}
+
+		if( ret == 0 )
+		{
+			eof = true;
+			return true;
+		}
+	}
+
+	read_offset += ret / bytes_per_frame;
+
+	/* If we have a different number of channels, we need to convert. */
+	ASSERT( vi->channels == 1 || vi->channels == 2 );
+	if( vi->channels == 1 )
+	{
+		Sint16 *indata = (Sint16 *)tmpbuf;
+		Sint16 *outdata = (Sint16 *)buffer;
+		int size = ret / sizeof(Sint16);
+		for( unsigned pos = 0; pos < unsigned(size); ++pos )
+			outdata[pos*2] = outdata[pos*2+1] = indata[pos];
+		ret *= 2;
+	}
+	else
+		memcpy( buffer, tmpbuf, ret ); /* XXX optimize */
+
+	avail = ret;
+	return true;
 }
 
 int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
@@ -142,47 +226,11 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 	int bytes_read = 0;
 	while(len)
 	{
-		if(!avail)
-		{
-			vorbis_info *vi = ov_info(vf, -1);
-			ASSERT(vi != NULL);
-			
-			char tmpbuf[4096];
-			int bstream;
+		if( !FillBuf() )
+			return -1;
 
-#if defined(INTEGER_OGG)
-			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), &bstream);
-#else // float vorbis decoder
-			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), (SDL_BYTEORDER == SDL_BIG_ENDIAN)?1:0, 2, 1, &bstream);
-#endif
-
-			if(ret == OV_HOLE)
-				continue;
-			if(ret == OV_EBADLINK)
-			{
-				SetError(ssprintf("Read: OV_EBADLINK"));
-				return -1;
-			}
-		
-			if(ret == 0)
-				return bytes_read;
-
-			/* If we have a different number of channels, we need to convert. */
-			ASSERT(vi->channels == 1 || vi->channels == 2);
-			if(vi->channels == 1)
-			{
-				Sint16 *indata = (Sint16 *)tmpbuf;
-				Sint16 *outdata = (Sint16 *)buffer;
-				int size = ret / sizeof(Sint16);
-				for(unsigned pos = 0; pos < unsigned(size); ++pos)
-					outdata[pos*2] = outdata[pos*2+1] = indata[pos];
-				ret *= 2;
-			}
-			else
-				memcpy(buffer, tmpbuf, ret); /* XXX optimize */
-
-			avail = ret;
-		}
+		if( eof && !avail )
+			break;
 
 		unsigned size = min(avail, len);
 		memcpy(buf, buffer, size);

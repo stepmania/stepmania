@@ -11,7 +11,9 @@ class RageSoundReader_Vorbisfile: public SoundReader_FileReader {
 	unsigned avail;
 	bool eof;
 	int SetPosition(int ms, bool accurate);
+	bool FillBuf();
 	CString filename;
+	int read_offset;
 
 public:
 	OpenResult Open(CString filename);
