@@ -19,6 +19,7 @@
 #include <set>
 #include "XmlFile.h"
 #include "HighScore.h"
+#include "TimeConstants.h"
 
 
 //
@@ -106,6 +107,7 @@ public:
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPassedByGrade[NUM_GRADES];
+	int m_iCaloriesByDayForLastYear[DAYS_IN_YEAR];
 
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 

@@ -872,7 +872,7 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 				BEGIN_TABLE(4);
 				for( int i=0; i<DAYS_IN_WEEK; i++ )
 				{
-					CString sDay = DAY_OF_WEEK_TO_NAME[i];
+					CString sDay = DayOfWeekToString(i);
 					TABLE_LINE2( sDay, coins[i] );
 				}
 				END_TABLE;
@@ -882,12 +882,12 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 
 		// GetCoinsByHour
 		{
-			int coins[HOURS_PER_DAY];
+			int coins[HOURS_IN_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
-			PRINT_OPEN(f, ssprintf("Coins for Last %d Hours",HOURS_PER_DAY), true );
+			PRINT_OPEN(f, ssprintf("Coins for Last %d Hours",HOURS_IN_DAY), true );
 			{
 				BEGIN_TABLE(4);
-				for( int i=0; i<HOURS_PER_DAY; i++ )
+				for( int i=0; i<HOURS_IN_DAY; i++ )
 				{
 					CString sHour = ssprintf("hour %d",i);
 					TABLE_LINE2( sHour, coins[i] );

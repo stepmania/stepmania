@@ -95,6 +95,7 @@ void Profile::InitGeneralData()
 		m_iNumSongsPlayedByMeter[i] = 0;
 	ZERO( m_iNumSongsPassedByPlayMode );
 	ZERO( m_iNumSongsPassedByGrade );
+	ZERO( m_iCaloriesByDayForLastYear );
 }
 
 void Profile::InitSongScores()
@@ -583,6 +584,18 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 			pNumSongsPassedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumSongsPassedByPlayMode[pm] );
 		}
 	}
+
+	{
+		XNode* pCaloriesByDayForLastYear = pGeneralDataNode->AppendChild("CaloriesByDayForLastYear");
+		for( int i=0; i<DAYS_IN_YEAR; i++ )
+		{
+			/* Don't save empty. */
+			if( m_iCaloriesByDayForLastYear[i]==0 )
+				continue;
+			pCaloriesByDayForLastYear->AppendChild( DayInYearToString(i), m_iCaloriesByDayForLastYear[i] );
+		}
+	}
+
 	return pGeneralDataNode;
 }
 
@@ -711,6 +724,14 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		if( pNumSongsPassedByPlayMode )
 			FOREACH_PlayMode( pm )
 				pNumSongsPassedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumSongsPassedByPlayMode[pm] );
+	
+	}
+
+	{
+		XNode* pCaloriesByDayForLastYear = pNode->GetChild("CaloriesByDayForLastYear");
+		if( pCaloriesByDayForLastYear )
+			for( int i=0; i<DAYS_IN_YEAR; i++ )
+				pCaloriesByDayForLastYear->GetChildValue( DayInYearToString(i), m_iCaloriesByDayForLastYear[i] );
 	
 	}
 }

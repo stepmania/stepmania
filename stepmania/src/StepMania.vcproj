@@ -804,6 +804,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="StyleInput.h">
 			</File>
 			<File
+				RelativePath="TimeConstants.cpp">
+			</File>
+			<File
+				RelativePath="TimeConstants.h">
+			</File>
+			<File
 				RelativePath="TimingData.cpp">
 			</File>
 			<File

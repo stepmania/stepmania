@@ -62,8 +62,8 @@ Bookkeeper::Bookkeeper()
 	int i, j;
 
 	m_iLastSeenTime = time(NULL);
-	for( i=0; i<DAYS_PER_YEAR; i++ )
-		for( j=0; j<HOURS_PER_DAY; j++ )
+	for( i=0; i<DAYS_IN_YEAR; i++ )
+		for( j=0; j<HOURS_IN_DAY; j++ )
 			m_iCoinsByHourForYear[i][j] = 0;
 
 	ReadFromDisk();
@@ -96,9 +96,9 @@ void Bookkeeper::ReadFromDisk()
 	if( !FileRead(f, m_iLastSeenTime) )
 		WARN_AND_RETURN;
 
-    for (int i=0; i<DAYS_PER_YEAR; ++i)
+    for (int i=0; i<DAYS_IN_YEAR; ++i)
 	{
-        for (int j=0; j<HOURS_PER_DAY; ++j)
+        for (int j=0; j<HOURS_IN_DAY; ++j)
 		{
 			int iCoins;
 			if( !FileRead(f, iCoins) )
@@ -123,8 +123,8 @@ void Bookkeeper::WriteToDisk()
 	
 	FileWrite(f, m_iLastSeenTime);
 
-	for (int i=0; i<DAYS_PER_YEAR; ++i)
-        for (int j=0; j<HOURS_PER_DAY; ++j)
+	for (int i=0; i<DAYS_IN_YEAR; ++i)
+        for (int j=0; j<HOURS_IN_DAY; ++j)
             FileWrite( f, m_iCoinsByHourForYear[i][j] );
 }
 
@@ -154,12 +154,12 @@ void Bookkeeper::UpdateLastSeenTime()
 		tOld.tm_hour != tNew.tm_hour )
 	{
 		tOld.tm_hour++;
-		if( tOld.tm_hour == HOURS_PER_DAY )
+		if( tOld.tm_hour == HOURS_IN_DAY )
 		{
 			tOld.tm_hour = 0;
 			tOld.tm_yday++;
 		}
-		if( tOld.tm_yday == DAYS_PER_YEAR )
+		if( tOld.tm_yday == DAYS_IN_YEAR )
 		{
 			tOld.tm_yday = 0;
 			tOld.tm_year++;
@@ -185,7 +185,7 @@ void Bookkeeper::CoinInserted()
 int Bookkeeper::GetCoinsForDay( int iDayOfYear )
 {
 	int iCoins = 0;
-	for( int i=0; i<HOURS_PER_DAY; i++ )
+	for( int i=0; i<HOURS_IN_DAY; i++ )
 		iCoins += m_iCoinsByHourForYear[iDayOfYear][i];
 	return iCoins;
 }
@@ -241,27 +241,22 @@ void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] )
     tm time;
 	localtime_r( &lOldTime, &time );
 
-	for( int d=0; d<DAYS_PER_YEAR; d++ )
+	for( int d=0; d<DAYS_IN_YEAR; d++ )
 	{
 		coins[GetDayOfWeek(time)] += GetCoinsForDay( time.tm_yday );
 		time = GetYesterday( time );
 	}
 }
 
-void Bookkeeper::GetCoinsByHour( int coins[HOURS_PER_DAY] )
+void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] )
 {
 	UpdateLastSeenTime();
 
-	for( int h=0; h<HOURS_PER_DAY; h++ )
+	for( int h=0; h<HOURS_IN_DAY; h++ )
 	{
 		coins[h] = 0;
 
-		for( int d=0; d<DAYS_PER_YEAR; d++ )
+		for( int d=0; d<DAYS_IN_YEAR; d++ )
 			coins[h] += m_iCoinsByHourForYear[d][h];
 	}
-}
-
-CString HourToString( int iHourIndex )
-{
-	return ssprintf("%02d:00", iHourIndex);
 }
