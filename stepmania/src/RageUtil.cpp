@@ -11,7 +11,31 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-unsigned long randseed = time(NULL);
+int randseed = time(NULL);
+
+// From "Numerical Recipes in C".
+float RandomFloat( int &seed )
+{
+	const int MASK = 123459876;
+	seed ^= MASK;
+
+	const int IA = 16807;
+	const int IM = 2147483647;
+
+	const int IQ = 127773;
+	const int IR = 2836;
+
+	long k = seed / IQ;
+	seed = IA*(seed-k*IQ)-IR*k;
+	if( seed < 0 )
+			seed += IM;
+
+	const float AM = .999999f / IM;
+	float ans = AM * seed;
+
+	seed ^= MASK;
+	return ans;
+}
 
 RandomGen::RandomGen( unsigned long seed_ )
 {
@@ -22,8 +46,7 @@ RandomGen::RandomGen( unsigned long seed_ )
 
 int RandomGen::operator() ( int maximum )
 {
-	seed = 1664525L * seed + 1013904223L;
-	return (seed >> 2) % maximum;
+	return int(RandomFloat( seed ) * maximum);
 }
 
 
