@@ -400,7 +400,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
 //	const bool  bWavy = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_DRUNK] > 0;
-	const int	fYStep = 16; //bWavy ? 16 : 128;	// use small steps only if wavy
+	const bool WavyPartsNeedZBuffer = ArrowsNeedZBuffer( m_PlayerNumber );
+	/* Hack: Z effects need a finer grain step. */
+	const int	fYStep = WavyPartsNeedZBuffer? 4: 16; //bWavy ? 16 : 128;	// use small steps only if wavy
 
 	const float fColorScale		= 1*fLife + (1-fLife)*cache->m_fHoldNGGrayPercent;
 
@@ -427,7 +429,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		DISPLAY->SetBackfaceCull( false );
-		DISPLAY->SetZBuffer( false );
+		DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
@@ -498,7 +500,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		DISPLAY->SetBackfaceCull( false );
-		DISPLAY->SetZBuffer( false );
+		DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
@@ -582,7 +584,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		DISPLAY->SetBackfaceCull( false );
-		DISPLAY->SetZBuffer( false );
+		DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else

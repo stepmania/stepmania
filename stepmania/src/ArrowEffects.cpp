@@ -238,5 +238,20 @@ float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat )
 
 float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos )
 {
-	return 0;
+	float fZPos=0;
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+
+	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*sinf( fYPos/16.0f );
+
+	return fZPos;
+}
+
+bool ArrowsNeedZBuffer( PlayerNumber pn )
+{
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
+		return true;
+
+	return false;
 }

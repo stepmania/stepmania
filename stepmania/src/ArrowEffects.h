@@ -44,8 +44,11 @@ float ArrowGetYPos(	PlayerNumber pn, float fYOffset );
 //	fYPos (in the case of EFFECT_DRUNK).
 float ArrowGetXPos( PlayerNumber pn, int iCol, float fYPos );
 
+//  Z position; normally 0.  Only visible in perspective modes.
 float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos );
 
+// Enable this if any ZPos effects are enabled.
+bool ArrowsNeedZBuffer( PlayerNumber pn );
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	AppearanceType.
