@@ -134,6 +134,19 @@ static void ChangeToDirOfExecutable(const char *argv0)
 #endif
 }
 
+void UpdateHWnd()
+{
+#ifdef _WINDOWS
+	/* Grab the window manager specific information */
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+	if ( SDL_GetWMInfo(&info) < 0 ) 
+		RageException::Throw( "SDL_GetWMInfo failed" );
+
+	g_hWndMain = info.window;
+#endif
+}
+
 static RageDisplay::VideoModeParams GetCurVideoModeParams()
 {
 	return RageDisplay::VideoModeParams(
@@ -200,6 +213,9 @@ void ApplyGraphicOptions()
 		TEXTUREMAN->ReloadAll();
 
 	StoreActualGraphicOptions( false );
+
+	/* Recreating the window changes the hwnd. */
+	UpdateHWnd();
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
@@ -939,15 +955,7 @@ int main(int argc, char* argv[])
 	mySDL_EventState(SDL_QUIT, SDL_ENABLE);
 	mySDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
 
-	/* Grab the window manager specific information */
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if ( SDL_GetWMInfo(&info) < 0 ) 
-		RageException::Throw( "SDL_GetWMInfo failed" );
-
-#ifdef _WINDOWS
-	g_hWndMain = info.window;
-#endif
+	UpdateHWnd();
 
 	SONGMAN->PreloadSongImages();
 
