@@ -224,15 +224,8 @@ void test_backtracing_main_thread()
 	g_ThreadId = -1;
 }
 
-int main( int argc, char *argv[] )
+void go()
 {
-	test_handle_args( argc, argv );
-
-	test_init();
-
-	InitializeBacktrace();
-	printf("'%s'\n", ThreadsVersion().c_str());
-
 	/* Test the main thread suspending a secondary thread, and vice versa. */
 	test_suspend_secondary_thread();
 	test_suspend_main_thread();
@@ -240,6 +233,19 @@ int main( int argc, char *argv[] )
 	/* Test the main thread backtracing a secondary thread, and vice versa. */
 	test_backtracing_secondary_thread();
 	test_backtracing_main_thread();
+}
+
+int main( int argc, char *argv[] )
+{
+	test_handle_args( argc, argv );
+
+	test_init();
+
+	InitializeBacktrace();
+
+	printf("'%s'\n", ThreadsVersion().c_str());
+
+	go();
 
 	test_deinit();
 
