@@ -395,6 +395,7 @@ void ScreenEvaluation::Init()
 					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
 					this->AddChild( &m_DifficultyIcon[p] );
 					
+					m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
 					m_DifficultyMeter[p].Load( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
 					switch( m_Type )
 					{
@@ -407,7 +408,6 @@ void ScreenEvaluation::Init()
 					default:
 						ASSERT(0);
 					}
-					m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 					this->AddChild( &m_DifficultyMeter[p] );
 					
