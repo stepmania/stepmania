@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageFileManager.h"
 #include "RageFileDriver.h"
+#include "RageUtil.h"
 #include <errno.h>
 
 RageFileManager *FILEMAN = NULL;
@@ -33,6 +34,15 @@ RageFileManager::RageFileManager()
 
 	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). */
 	RageFileManager::AddFS( "dir", "/", "/" );
+#endif
+
+#if defined(WIN32)
+	/* Temporary hack for accessing files by drive letter. */
+	for( char c = 'A'; c <= 'Z'; ++c )
+	{
+		const CString path = ssprintf( "%c:/", c );
+		RageFileManager::AddFS( "dir", path, path );
+	}
 #endif
 }
 
