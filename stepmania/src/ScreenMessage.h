@@ -12,6 +12,7 @@ enum ScreenMessage {
 	SM_DoneOpeningWipingLeft,
 	SM_DoneOpeningWipingRight,
 	SM_MenuTimer,
+	SM_DoneFadingIn,
 	SM_BeginFadingOut,
 	SM_GoToNextScreen,
 	SM_GoToPrevScreen,

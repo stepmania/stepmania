@@ -116,7 +116,7 @@ void ScreenWithMenuElements::Init()
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
 
-	m_In.StartTransitioning();
+	m_In.StartTransitioning( SM_DoneFadingIn );
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
@@ -165,6 +165,25 @@ void ScreenWithMenuElements::ResetTimer()
 
 void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 {
+	TweenOffScreen();
+
+	m_Out.StartTransitioning(smSendWhenDone);
+
+	/* Ack.  If the transition finishes transparent (eg. _options to options),
+	 * then we don't want to send the message until all of the *actors* are
+	 * done tweening.  However, if it finishes with something onscreen (most
+	 * of the rest), we have to send the message immediately after it finishes,
+	 * or we'll draw a frame without the transition.
+	 *
+	 * For now, I'll make the SMMAX2 option tweening faster. */
+	/* This includes all of the actors: */
+//	float TimeUntilFinished = GetTweenTimeLeft();
+//	TimeUntilFinished = max(TimeUntilFinished, m_Out.GetLengthSeconds());
+//	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
+}
+
+void ScreenWithMenuElements::TweenOffScreen()
+{
 	if( m_bTimerEnabled )
 	{
 		m_MenuTimer->SetSeconds( 0 );
@@ -183,19 +202,6 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 
 	SCREENMAN->PlaySharedBackgroundOffCommand();
 
-	m_Out.StartTransitioning(smSendWhenDone);
-
-	/* Ack.  If the transition finishes transparent (eg. _options to options),
-	 * then we don't want to send the message until all of the *actors* are
-	 * done tweening.  However, if it finishes with something onscreen (most
-	 * of the rest), we have to send the message immediately after it finishes,
-	 * or we'll draw a frame without the transition.
-	 *
-	 * For now, I'll make the SMMAX2 option tweening faster. */
-	/* This includes all of the actors: */
-//	float TimeUntilFinished = GetTweenTimeLeft();
-//	TimeUntilFinished = max(TimeUntilFinished, m_Out.GetLengthSeconds());
-//	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
 }
 
 void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )

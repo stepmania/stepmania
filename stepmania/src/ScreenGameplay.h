@@ -139,7 +139,6 @@ protected:
 	Transition	m_Toasty;	// easter egg
 	Transition	m_Win[NUM_PLAYERS];
 	Transition	m_Draw;
-	AutoActor	m_Overlay;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 

@@ -28,6 +28,8 @@ public:
 	void StopTimer();
 	void ResetTimer();
 
+	void TweenOffScreen();
+
 protected:
 	virtual void StartPlayingMusic();
 

@@ -65,7 +65,6 @@ static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBet
 /* Global, so it's accessible from ShowSavePrompt: */
 static float g_fOldOffset;  // used on offset screen to calculate difference
 
-AutoScreenMessage( SM_PlayReady )
 AutoScreenMessage( SM_PlayGo )
 
 // received while STATE_DANCING
@@ -572,11 +571,6 @@ void ScreenGameplay::Init()
 //		}
 	}
 
-	m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
-	m_Overlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
-	this->AddChild( m_Overlay );
-
-	
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Ready.Load( THEME->GetPathB(m_sName,"ready") );
@@ -1250,10 +1244,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_pSoundMusic->Play( &p );
 
 			UpdateSongPosition(0);
-
-			//We need to artifically trigger the sm_playeready so we can end game
-			//We want to post so this happens only after we're done what we're doing.
-			SCREENMAN->PostMessageToTopScreen( SM_PlayReady, 0.0 );
 		}
 		else
 		{
@@ -1271,8 +1261,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			 */
 
 			/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
-
-			m_In.StartTransitioning( SM_PlayReady );
 		}
 	}
 
@@ -2081,7 +2069,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
 	CHECKPOINT_M( ssprintf("HandleScreenMessage(%i)", SM) );
-	if( SM == SM_PlayReady )
+	if( SM == SM_DoneFadingIn )
 	{
 		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
 		m_Ready.StartTransitioning( SM_PlayGo );
@@ -2411,7 +2399,6 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
-	m_Overlay->PlayCommand("On");
 
 	if (m_ShowScoreboard)
 		FOREACH_NSScoreBoardColumn( sc )
@@ -2420,6 +2407,8 @@ void ScreenGameplay::TweenOnScreen()
 
 void ScreenGameplay::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	OFF_COMMAND( m_sprLifeFrame );
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_sprCourseSongNumber );
@@ -2448,7 +2437,6 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
-	m_Overlay->PlayCommand("Off");
 
 	if (m_ShowScoreboard)
 		FOREACH_NSScoreBoardColumn( sc )
