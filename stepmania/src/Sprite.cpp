@@ -98,9 +98,22 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 		RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
 
 	ID.filename = sFontDir + sTextureFile;	// save the path of the real texture
+	{
+		vector<CString> asElementPaths;
+		GetDirListing( ID.filename + "*", asElementPaths, false, true );
+		if(asElementPaths.size() == 0)
+			RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
+		if(asElementPaths.size() > 1)
+		{
+			CString message = ssprintf( 
+				"There is more than one file that matches "
+				"'%s/%s'.  Please remove all but one of these matches.",
+				ID.filename.c_str() );
 
-	if( !DoesFileExist(ID.filename) )
-		RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
+			RageException::Throw( message ); 
+		}
+		ID.filename = asElementPaths[0];
+	}
 
 	// Load the texture
 	LoadFromTexture( ID );
