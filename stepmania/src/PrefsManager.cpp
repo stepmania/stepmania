@@ -182,7 +182,7 @@ PrefsManager::PrefsManager()
 	m_fCenterImageScaleX = 1;
 	m_fCenterImageScaleY = 1;
 
-	m_iAttractSoundFrequency = 4;
+	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
 	g_bAutoRestart = false;
 
