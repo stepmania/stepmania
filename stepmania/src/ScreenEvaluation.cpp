@@ -363,7 +363,7 @@ void ScreenEvaluation::Init()
 			{
 				FOREACH_EnabledPlayer( p )
 				{
-					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation difficulty icons 1x%d",NUM_DIFFICULTIES)) );
+					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation difficulty icons")) );
 					switch( m_Type )
 					{
 					case stage:
