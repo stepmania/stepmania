@@ -57,6 +57,22 @@ void DSound::SetPrimaryBufferMode()
 	if( FAILED(hr) )
 		LOG->Warn(hr_ssprintf(hr, "SetFormat on primary buffer"));
 
+	/* MS docs:
+	 *
+	 * When there are no sounds playing, DirectSound stops the mixer engine and halts DMA 
+	 * (direct memory access) activity. If your application has frequent short intervals of
+	 * silence, the overhead of starting and stopping the mixer each time a sound is played
+	 * may be worse than the DMA overhead if you kept the mixer active. Also, some sound
+	 * hardware or drivers may produce unwanted audible artifacts from frequent starting and
+	 * stopping of playback. If your application is playing audio almost continuously with only
+	 * short breaks of silence, you can force the mixer engine to remain active by calling the
+	 * IDirectSoundBuffer::Play method for the primary buffer. The mixer will continue to run
+	 * silently.
+	 *
+	 * However, I just added the above code and I don't want to change more until it's tested.
+	 */
+//	buf->Play(0, 0, DSBPLAY_LOOPING);
+
 	buf->Release();
 #endif
 }
