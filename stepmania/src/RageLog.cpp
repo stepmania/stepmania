@@ -303,8 +303,12 @@ const char *RageLog::GetRecentLog( int n )
 {
 	if( n >= BACKLOG_LINES || n >= backlog_cnt )
 		return false;
-	n += backlog_start;
-	n %= BACKLOG_LINES;
+
+	if( backlog_cnt == BACKLOG_LINES )
+	{
+		n += backlog_start;
+		n %= BACKLOG_LINES;
+	}
 	/* Make sure it's terminated: */
 	backlog[n][ sizeof(backlog[n])-1 ] = 0;
 
