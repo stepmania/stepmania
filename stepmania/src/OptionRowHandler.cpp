@@ -497,7 +497,7 @@ public:
 		defOut.Init();
 
 		m_sName = sLuaFunction;
-	//	m_bUseModNameForIcon = true;
+		defOut.m_bAllowThemeItems = false;	// Lua options are always dynamic and can theme themselves.
 
 		/* Run the Lua expression.  It should return a table. */
 		m_pLuaTable->SetFromExpression( sLuaFunction );
