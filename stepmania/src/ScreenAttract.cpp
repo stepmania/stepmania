@@ -59,7 +59,7 @@ ScreenAttract::ScreenAttract( CString sClassName )
 
 
 	float fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
-	this->SendScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
+	this->PostScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
 }
 
 
@@ -121,7 +121,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			SCREENMAN->SendMessageToTopScreen( SM_BeginFadingOut, 0 );
+			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
 			break;
 		}
 	}

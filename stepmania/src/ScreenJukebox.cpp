@@ -131,7 +131,7 @@ ScreenJukebox::ScreenJukebox( bool bDemonstration ) : ScreenGameplay( PrepareFor
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
 	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
+		this->PostScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
 		return;
 	}
 
@@ -171,7 +171,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			SCREENMAN->SendMessageToTopScreen( SM_NotesEnded, 0 );
+			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
 			break;
 		/* XXX: this is a copy-and-paste from ScreenAttract */
 		case MENU_BUTTON_START:

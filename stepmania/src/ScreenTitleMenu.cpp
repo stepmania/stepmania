@@ -132,7 +132,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenTitleMenu music") );
 
-	this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
+	this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 
 	this->MoveToTail( &m_In );	// put it in the back so it covers up the stuff we just added
 	this->MoveToTail( &m_Out );	// put it in the back so it covers up the stuff we just added
@@ -227,7 +227,7 @@ void ScreenTitleMenu::Update( float fDelta )
 {
 	if(TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
 	{
-		this->SendScreenMessage( SM_GoToAttractLoop, 0 );
+		this->PostScreenMessage( SM_GoToAttractLoop, 0 );
 		TimeToDemonstration.GetDeltaTime();
 	}
 	Screen::Update(fDelta);
@@ -240,7 +240,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_PlayComment:
 		m_soundAttract.PlayRandom();
-		this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );
+		this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );
 		break;
 	case SM_GoToNextScreen:
 		switch( m_Choice )

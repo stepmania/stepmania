@@ -181,7 +181,7 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
 	m_soundSelect.Play();
-	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing, 0 );
+	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
 
 	//
 	// TweenOffScreen

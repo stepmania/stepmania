@@ -199,7 +199,7 @@ void Screen::MenuCoin( PlayerNumber pn )
 	// This is now handled globally by Stepmania.cpp  --  Miryokuteki
 }
 
-void Screen::SendScreenMessage( const ScreenMessage SM, float fDelay )
+void Screen::PostScreenMessage( const ScreenMessage SM, float fDelay )
 {
 	ASSERT( fDelay >= 0.0 );
 

@@ -216,7 +216,7 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_StartTweeningOffScreen:
 		TweenOffScreen();
-		this->SendScreenMessage( SM_StartFadingOut, 0.8f );
+		this->PostScreenMessage( SM_StartFadingOut, 0.8f );
 		break;
 	case SM_StartFadingOut:
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
@@ -410,7 +410,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
-	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
+	this->PostScreenMessage( SM_StartTweeningOffScreen, 0.7f );
 }
 
 void ScreenSelectDifficultyEX::ShowSelected( PlayerNumber pv )

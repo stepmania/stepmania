@@ -271,7 +271,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 
 
 	TweenOffScreen();
-	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
+	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
 }
 
 void ScreenSelectGroup::MenuBack( PlayerNumber pn )

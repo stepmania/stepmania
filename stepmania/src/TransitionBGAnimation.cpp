@@ -40,7 +40,7 @@ void TransitionBGAnimation::Update( float fDeltaTime )
 		{
 			m_fSecsIntoTransition = 0.0;
 			m_State = finished;
-			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone, 0 );
+			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 		}
 
 		m_fSecsIntoTransition += fDeltaTime;
@@ -49,7 +49,7 @@ void TransitionBGAnimation::Update( float fDeltaTime )
 
 void TransitionBGAnimation::DrawPrimitives()
 {
-	if( m_State == transitioning )
+//	if( m_State == transitioning )
 		m_BGAnimation.Draw();
 }
 

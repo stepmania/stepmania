@@ -649,7 +649,7 @@ void MusicWheel::Update( float fDeltaTime )
 				if(GAMESTATE->m_SongSortOrder > MaxSelectableSort)
 					GAMESTATE->m_SongSortOrder = SongSortOrder(0);
 
-				SCREENMAN->SendMessageToTopScreen( SM_SortOrderChanged, 0 );
+				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
 				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
 
 				//RebuildWheelItems();
@@ -684,7 +684,7 @@ void MusicWheel::Update( float fDeltaTime )
 					}
 				}
 
-				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 				RebuildWheelItemDisplays();
 				TweenOnScreen(true);
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
@@ -744,7 +744,7 @@ void MusicWheel::Update( float fDeltaTime )
 				m_fLockedWheelVelocity = 0;
 
 				/* Send this again so the screen starts sample music. */
-				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 			}
 			else
 			{
@@ -862,7 +862,7 @@ void MusicWheel::ChangeMusic(int dist)
 	if(GAMESTATE->m_bDifficultCourses && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP)
 		GetSelectedCourse()->MakeDifficult();
 
-	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 
 	/* If we're moving automatically, don't play this; it'll be called in Update. */
 	if(!IsMoving())
@@ -916,7 +916,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		m_WheelState = STATE_LOCKED;
 		m_soundStart.Play();
 		m_fLockedWheelVelocity = 0;
-		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 		return false;
 	}
 
@@ -1195,7 +1195,7 @@ void MusicWheel::Move(int n)
 
 		/* Make sure the user always gets an SM_SongChanged when
 		 * Moving() is 0, so the final banner, etc. always gets set. */
-		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	}
 
 	m_TimeBeforeMovingBegins = TIME_BEFORE_SLOW_REPEATS;

@@ -51,7 +51,7 @@ void Transition::Update( float fDeltaTime )
 				break;
 			}
 
-			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone, 0 );
+			SCREENMAN->PostMessageToTopScreen( m_MessageToSendWhenDone, 0 );
 		}
 
 		m_fPercentThroughTransition += fDeltaTime/m_fTransitionTime;

@@ -51,7 +51,7 @@ ScreenDemonstration::ScreenDemonstration() : ScreenJukebox( PrepareForDemonstrat
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
 	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
+		this->PostScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
 		return;
 	}
 
@@ -67,7 +67,7 @@ ScreenDemonstration::ScreenDemonstration() : ScreenJukebox( PrepareForDemonstrat
 	GAMESTATE->m_bPastHereWeGo = true;
 
 	m_DancingState = STATE_DANCING;
-	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
+	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
 }
 
 ScreenDemonstration::~ScreenDemonstration()

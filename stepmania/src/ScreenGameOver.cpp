@@ -34,8 +34,8 @@ ScreenGameOver::ScreenGameOver()
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenGameOver music") );
 
-	this->SendScreenMessage( SM_PlayAnnouncer, 0.5 );
-	this->SendScreenMessage( SM_StartFadingOut, 5 );
+	this->PostScreenMessage( SM_PlayAnnouncer, 0.5 );
+	this->PostScreenMessage( SM_StartFadingOut, 5 );
 }
 
 
@@ -61,5 +61,5 @@ void ScreenGameOver::MenuStart( PlayerNumber pn )
 		return;
 
 	this->ClearMessageQueue();
-	this->SendScreenMessage( SM_StartFadingOut, 0 );
+	this->PostScreenMessage( SM_StartFadingOut, 0 );
 }

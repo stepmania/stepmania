@@ -154,7 +154,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
-	this->SendScreenMessage( SM_ShowNextPage, 0.5f );
+	this->PostScreenMessage( SM_ShowNextPage, 0.5f );
 }
 
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
@@ -170,7 +170,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		{
 			SetPage( m_vPagesToShow[0] );
 			m_vPagesToShow.erase( m_vPagesToShow.begin() );
-			this->SendScreenMessage( SM_HidePage, SECONDS_PER_PAGE-1 );
+			this->PostScreenMessage( SM_HidePage, SECONDS_PER_PAGE-1 );
 			TweenPageOnScreen();
 		}
 		else
@@ -180,7 +180,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_HidePage:
 		TweenPageOffScreen();
-		this->SendScreenMessage( SM_ShowNextPage, 1 );
+		this->PostScreenMessage( SM_ShowNextPage, 1 );
 		break;
 	}
 

@@ -87,22 +87,21 @@ const ScreenMessage SM_PlayCheer			=	ScreenMessage(SM_User+6);
 
 ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 {
-/*
 	//
 	// debugging
 	//
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+	GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;
 	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-	GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
-	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->GetNotes( NOTES_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
-	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->GetNotes( NOTES_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
+	GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
+//	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->GetNotes( NOTES_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
+//	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->GetNotes( NOTES_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
-	GAMESTATE->m_iCurrentStageIndex = 2;
-*/
+//	GAMESTATE->m_iCurrentStageIndex = 2;
+
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
@@ -315,38 +314,41 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 		m_sprGradeFrame[p].Command( GRADE_FRAME_ON_COMMAND(p) );
 		this->AddChild( &m_sprGradeFrame[p] );
 
-		m_Grades[p].Command( GRADE_ON_COMMAND(p) );
 		if( SPIN_GRADES )
 			m_Grades[p].SpinAndSettleOn( grade[p] );
 		else
 			m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
+		m_Grades[p].Command( GRADE_ON_COMMAND(p) );
 		this->AddChild( &m_Grades[p] );
 
-		m_textPercentWhole[p].LoadFromNumbers( GET_THEME_ELEMENT_FALLBACK("Numbers"," percent numbers") );
-		m_textPercentWhole[p].EnableShadow( false );
-		m_textPercentWhole[p].Command( PERCENT_WHOLE_ON_COMMAND(p) );
-		this->AddChild( &m_textPercentWhole[p] );
+		if( !PREFSMAN->m_bDancePointsForOni )
+		{
+			m_textPercentWhole[p].LoadFromNumbers( GET_THEME_ELEMENT_FALLBACK("Numbers"," percent numbers") );
+			m_textPercentWhole[p].EnableShadow( false );
+			m_textPercentWhole[p].Command( PERCENT_WHOLE_ON_COMMAND(p) );
+			this->AddChild( &m_textPercentWhole[p] );
 
-		m_textPercentRemainder[p].LoadFromNumbers( GET_THEME_ELEMENT_FALLBACK("Numbers"," percent numbers") );
-		m_textPercentRemainder[p].EnableShadow( false );
-		m_textPercentRemainder[p].Command( PERCENT_REMAINDER_ON_COMMAND(p) );
-		this->AddChild( &m_textPercentRemainder[p] );
+			m_textPercentRemainder[p].LoadFromNumbers( GET_THEME_ELEMENT_FALLBACK("Numbers"," percent numbers") );
+			m_textPercentRemainder[p].EnableShadow( false );
+			m_textPercentRemainder[p].Command( PERCENT_REMAINDER_ON_COMMAND(p) );
+			this->AddChild( &m_textPercentRemainder[p] );
 
-		stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
-		float fPercentDancePoints =  stageStats.iActualDancePoints[p] / (float)stageStats.iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
-		fPercentDancePoints = max( fPercentDancePoints, 0 );
-//		int iPercentWhole = int(fPercentDancePoints*100);
-//		int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
-//		m_textPercentWhole[p].SetText( ssprintf("%02d", iPercentWhole) );
-//		m_textPercentRemainder[p].SetText( ssprintf(".%01d%%", iPercentRemainder) );
-		m_textPercentWhole[p].SetText( "00" );
-		m_textPercentRemainder[p].SetText( ".11%" );
-
-		m_textDancePoints[p].LoadFromNumbers( GET_THEME_ELEMENT_FALLBACK("Numbers"," percent numbers") );
-		m_textDancePoints[p].EnableShadow( false );
-		m_textDancePoints[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
-		m_textDancePoints[p].Command( DANCE_POINTS_ON_COMMAND(p) );
-		this->AddChild( &m_textDancePoints[p] );
+			stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
+			float fPercentDancePoints =  stageStats.iActualDancePoints[p] / (float)stageStats.iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
+			fPercentDancePoints = max( fPercentDancePoints, 0 );
+			int iPercentWhole = int(fPercentDancePoints*100);
+			int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
+			m_textPercentWhole[p].SetText( ssprintf("%02d", iPercentWhole) );
+			m_textPercentRemainder[p].SetText( ssprintf(".%01d%%", iPercentRemainder) );
+		}
+		else	// PREFSMAN->m_bDancePointsForOni
+		{
+			m_textDancePoints[p].LoadFromNumbers( GET_THEME_ELEMENT_FALLBACK("Numbers"," percent numbers") );
+			m_textDancePoints[p].EnableShadow( false );
+			m_textDancePoints[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
+			m_textDancePoints[p].Command( DANCE_POINTS_ON_COMMAND(p) );
+			this->AddChild( &m_textDancePoints[p] );
+		}
 	}
 
 
@@ -506,7 +508,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	case GRADE_AA:
 	case GRADE_AAA:	
 	case GRADE_AAAA:	
-		this->SendScreenMessage( SM_PlayCheer, 2.5f );	
+		this->PostScreenMessage( SM_PlayCheer, 2.5f );	
 		break;
 	}
 

@@ -185,7 +185,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
-	this->SendScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );
+	this->PostScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );
 
 	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenMusicScroll in") );
 //	this->AddChild( &m_In );	// draw and update manually
@@ -255,11 +255,11 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenMusicScroll::MenuStart( PlayerNumber pn )
 {
-	this->SendScreenMessage( SM_BeginFadingOut, 0 );
+	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
 void ScreenMusicScroll::MenuBack( PlayerNumber pn )
 {
-	this->SendScreenMessage( SM_BeginFadingOut, 0 );
+	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 

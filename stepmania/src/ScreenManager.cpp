@@ -508,10 +508,16 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 	pNewTopScreen->HandleScreenMessage( SM );
 }
 
-void ScreenManager::SendMessageToTopScreen( ScreenMessage SM, float fDelay )
+void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )
 {
 	Screen* pTopScreen = m_ScreenStack.back();
-	pTopScreen->SendScreenMessage( SM, fDelay );
+	pTopScreen->PostScreenMessage( SM, fDelay );
+}
+
+void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
+{
+	Screen* pTopScreen = m_ScreenStack.back();
+	pTopScreen->HandleScreenMessage( SM );
 }
 
 

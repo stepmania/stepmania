@@ -842,7 +842,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_OniFade.IsClosing() )
 		{
 			GAMESTATE->m_fSongBeat = 0;
-			this->SendScreenMessage( SM_NotesEnded, 0 );
+			this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
 
 		//
@@ -854,7 +854,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( GAMESTATE->m_SongOptions.m_LifeType )
 			{
 			case SongOptions::LIFE_BAR:
-				if( AllAreFailing() )	SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
+				if( AllAreFailing() )	SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 				if( AllAreInDanger() )	m_Background.TurnDangerOn();
 				else					m_Background.TurnDangerOff();
 
@@ -867,7 +867,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						
 				break;
 			case SongOptions::LIFE_BATTERY:
-				if( AllFailedEarlier() )SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
+				if( AllFailedEarlier() )SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 				if( AllAreInDanger() )	m_Background.TurnDangerOn();
 				else					m_Background.TurnDangerOff();
 
@@ -1289,7 +1289,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
 				{
-					this->SendScreenMessage( SM_BeginFailed, 0 );
+					this->PostScreenMessage( SM_BeginFailed, 0 );
 				}
 				else	// ! failed
 				{
@@ -1298,13 +1298,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					{
 						m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
-//						this->SendScreenMessage( SM_ShowTryExtraStage, 1 );
+//						this->PostScreenMessage( SM_ShowTryExtraStage, 1 );
 					}
 					else
 					{
 						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
-//						this->SendScreenMessage( SM_ShowCleared, 1 );
+//						this->PostScreenMessage( SM_ShowCleared, 1 );
 					}
 				}
 			}
@@ -1412,7 +1412,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprCleared.BeginTweening(1.5f); // sleep
 		m_sprCleared.BeginTweening(0.7f);
 		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,0) );
-		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
+		SCREENMAN->PostMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
 		break;
 */
 /*	case SM_ShowTryExtraStage:
@@ -1442,7 +1442,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_sprTryExtraStage.BeginTweening( 2 );	// sleep
 			m_sprTryExtraStage.BeginTweening( 1 );	// fade out
 			m_sprTryExtraStage.SetTweenDiffuse( colorStage );
-			SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
+			SCREENMAN->PostMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
 		}
 		break;
 */
@@ -1487,37 +1487,32 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToStateAfterCleared );
 			break;
 		}
-		SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_BATTLE:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationCourse" );
+			break;
+		default:
+			ASSERT(0);
+		}
 		break;
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.StopPlaying();
-//		m_Failed.StartTransitioning( SM_ShowFailed );
-//		this->SendScreenMessage( SM_GoToScreenAfterFail, 0.2f );
-//		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.0f );
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
 
 		// make the background invisible so we don't waste power drawing it
 		m_Background.BeginTweening( 1 );
 		m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
 
-		/*
-		m_sprFailed.SetZoom( 4 );
-		m_sprFailed.BeginBlurredTweening( 0.8f, TWEEN_DECELERATE );
-		m_sprFailed.SetTweenZoom( 0.5f );			// zoom out
-		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
-		m_sprFailed.BeginTweening( 0.3f );
-		m_sprFailed.SetTweenZoom( 1.1f );			// bounce
-		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
-		m_sprFailed.BeginTweening( 0.2f );
-		m_sprFailed.SetTweenZoom( 1.0f );			// come to rest
-		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
-		m_sprFailed.BeginTweening( 2 );		// sleep
-		m_sprFailed.BeginTweening( 1 );
-		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0) );
-*/
 		// show the survive time if extra stage
+		// TODO:  Move this animation to a metric?
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 		{
 			float fMaxSurviveSeconds = 0;
@@ -1535,14 +1530,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
-
-//		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 5.0f );
 		break;
 
-/*	case SM_PlayFailComment:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
-		break;
-*/
 	case SM_GoToScreenAfterFail:
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
@@ -1554,16 +1543,25 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		}
 
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP  ||
-			GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  
-			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS ||
-			GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
-			SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
-		else if( PREFSMAN->m_bEventMode )
-			HandleScreenMessage( SM_GoToScreenAfterBack );
-		else
-			SCREENMAN->SetNewScreen( "ScreenGameOver" );
-		break;
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_BATTLE:
+			if( PREFSMAN->m_bEventMode )
+				HandleScreenMessage( SM_GoToScreenAfterBack );
+			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+				SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
+			else
+				SCREENMAN->SetNewScreen( "ScreenGameOver" );
+			break;
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			SCREENMAN->SetNewScreen( "ScreenEvaluationCourse" );
+			break;
+		default:
+			ASSERT(0);
+		}
 	}
 }
 

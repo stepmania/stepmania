@@ -32,7 +32,7 @@ ScreenStyleSplash::ScreenStyleSplash()
 
 	if(!PREFSMAN->m_bShowDontDie)
 	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
+		this->PostScreenMessage( SM_GoToNextScreen, 0.f );
 		return;
 	}
 
@@ -46,7 +46,7 @@ ScreenStyleSplash::ScreenStyleSplash()
 	m_Menu.Load( "ScreenStyleSplash" );
 	this->AddChild( &m_Menu );
 
-	this->SendScreenMessage( SM_StartClosing, 2 );
+	this->PostScreenMessage( SM_StartClosing, 2 );
 }
 
 

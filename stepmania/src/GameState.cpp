@@ -192,6 +192,7 @@ GameDef* GameState::GetCurrentGameDef()
 
 const StyleDef* GameState::GetCurrentStyleDef()
 {
+
 	ASSERT( m_CurStyle != STYLE_INVALID );	// the style must be set before calling this
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }

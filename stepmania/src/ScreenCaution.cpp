@@ -33,7 +33,7 @@ ScreenCaution::ScreenCaution()
 
 	if(!PREFSMAN->m_bShowDontDie)
 	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
+		this->PostScreenMessage( SM_GoToNextScreen, 0.f );
 		return;
 	}
 
@@ -50,7 +50,7 @@ ScreenCaution::ScreenCaution()
 	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
 	this->AddChild( &m_Back );
 
-	this->SendScreenMessage( SM_StartClosing, 3 );
+	this->PostScreenMessage( SM_StartClosing, 3 );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenCaution music") );
 }

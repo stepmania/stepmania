@@ -364,7 +364,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 	{
 		SCREENMAN->Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
 		i_ErrorDetected=1;
-		this->SendScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
+		this->PostScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
 	}
 
 	Screen::Update( fDeltaTime );

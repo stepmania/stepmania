@@ -37,7 +37,7 @@ public:
 	static bool JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if a player joined
 	virtual void HandleScreenMessage( const ScreenMessage SM ) {};
 
-	void SendScreenMessage( const ScreenMessage SM, const float fDelay );
+	void PostScreenMessage( const ScreenMessage SM, const float fDelay );
 	void ClearMessageQueue();
 	void ClearMessageQueue( const ScreenMessage SM );	// clear of a specific SM
 

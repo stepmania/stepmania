@@ -50,7 +50,8 @@ public:
 	void PopTopScreen( ScreenMessage SM = SM_RegainingFocus );
 	void SystemMessage( CString sMessage );
 
-	void SendMessageToTopScreen( ScreenMessage SM, float fDelay );
+	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
+	void SendMessageToTopScreen( ScreenMessage SM );
 
 	void RefreshCreditsMessages();
 

@@ -259,7 +259,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 		{
 			m_soundChangeNotes.Play();
 			GAMESTATE->m_bDifficultCourses = false;
-			SCREENMAN->SendMessageToTopScreen(SM_SongChanged,0);
+			SCREENMAN->PostMessageToTopScreen(SM_SongChanged,0);
 		}	
 	}
 
@@ -269,7 +269,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 		{
 			m_soundChangeNotes.Play();
 			GAMESTATE->m_bDifficultCourses = true;
-			SCREENMAN->SendMessageToTopScreen(SM_SongChanged,0);
+			SCREENMAN->PostMessageToTopScreen(SM_SongChanged,0);
 		}	
 	}
 
@@ -361,7 +361,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		 * hit accidentally.  Accept an initial START right away, though,
 		 * so we don't ignore deliberate fast presses (which would be
 		 * annoying). */
-		this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+		this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 
 
 		m_Menu.StartTransitioning( SM_GoToNextScreen );

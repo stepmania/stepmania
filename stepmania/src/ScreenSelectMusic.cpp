@@ -686,7 +686,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			 * hit accidentally.  Accept an initial START right away, though,
 			 * so we don't ignore deliberate fast presses (which would be
 			 * annoying). */
-			this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 		}
 
 		m_Menu.StartTransitioning( SM_GoToNextScreen );

@@ -222,7 +222,7 @@ ScreenNameEntry::ScreenNameEntry()
 			bAnyStillEntering |= m_bStillEnteringName[p];
 		if( !bAnyStillEntering )
 		{
-			this->SendScreenMessage( SM_GoToNextScreen, 0 );
+			this->PostScreenMessage( SM_GoToNextScreen, 0 );
 			return;
 		}
 	}

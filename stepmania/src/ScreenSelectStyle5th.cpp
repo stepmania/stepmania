@@ -387,8 +387,8 @@ void ScreenSelectStyle5th::AfterChange()
 		break;
 	}
 
-	this->SendScreenMessage( SM_TweenExplanation2, 1 );
-	this->SendScreenMessage( SM_UpdateAnimations, TWEEN_TIME );
+	this->PostScreenMessage( SM_TweenExplanation2, 1 );
+	this->PostScreenMessage( SM_UpdateAnimations, TWEEN_TIME );
 }
 
 void ScreenSelectStyle5th::TweenOffScreen()
@@ -451,7 +451,7 @@ void ScreenSelectStyle5th::TweenOnScreen()
 	m_textExplanation1.SetText( TEXT_EXPLANATION1[m_iSelection] );
 	m_textExplanation2.SetText( TEXT_EXPLANATION2[m_iSelection] );
 
-	this->SendScreenMessage( SM_TweenExplanation2, 1 );
-	this->SendScreenMessage( SM_UpdateAnimations, TWEEN_TIME );
+	this->PostScreenMessage( SM_TweenExplanation2, 1 );
+	this->PostScreenMessage( SM_UpdateAnimations, TWEEN_TIME );
 
 }

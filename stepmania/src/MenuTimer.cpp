@@ -127,7 +127,7 @@ void MenuTimer::Update( float fDeltaTime )
 			m_soundBeep.Play();
 			break;
 		case 0:
-			SCREENMAN->SendMessageToTopScreen( SM_MenuTimer, 0 );
+			SCREENMAN->PostMessageToTopScreen( SM_MenuTimer, 0 );
 			Stop();
 			break;
 		}

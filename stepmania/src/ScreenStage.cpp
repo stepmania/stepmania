@@ -72,7 +72,7 @@ ScreenStage::ScreenStage()
 	
 	/* Prep the new screen once the animation is complete.  This way, we
 	 * start loading the gameplay screen as soon as possible. */
-	this->SendScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
+	this->PostScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
 
 	/* Start fading out after m_In is complete, minus the length of m_Out.  This
 	 * essentially makes m_In a timer to pad the length, so we always wait a minimum
@@ -83,7 +83,7 @@ ScreenStage::ScreenStage()
 	/* Never do this before we send SM_PrepScreen--we havn't loaded the screen yet. */
 	fStartFadingOutSeconds = max(fStartFadingOutSeconds, m_Background.GetLengthSeconds());
 
-	this->SendScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
+	this->PostScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
 
 
 	//g_StageType = (StageType)STAGE_TYPE; 
@@ -557,8 +557,8 @@ ScreenStage::ScreenStage()
 //	m_Fade.SetOpened();
 //*/
 
-	//this->SendScreenMessage( SM_DoneFadingIn, 1.0f );
-	//this->SendScreenMessage( SM_StartFadingOut, 4.0f );
+	//this->PostScreenMessage( SM_DoneFadingIn, 1.0f );
+	//this->PostScreenMessage( SM_StartFadingOut, 4.0f );
 }
 
 void ScreenStage::Update( float fDeltaTime )

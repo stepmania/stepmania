@@ -139,7 +139,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		m_iCurToastyCombo += iNumTapsInRow;
 
 		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
-			SCREENMAN->SendMessageToTopScreen( SM_PlayToasty, 0 );
+			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
 		break;
 	default:
 		m_iCurToastyCombo = 0;
@@ -175,16 +175,16 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 	#define CROSSED( i ) (iOldCombo<i && i<=iCurCombo)
 
-			if     ( CROSSED(100) )	SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );
-			else if( CROSSED(200) )	SCREENMAN->SendMessageToTopScreen( SM_200Combo, 0 );
-			else if( CROSSED(300) )	SCREENMAN->SendMessageToTopScreen( SM_300Combo, 0 );
-			else if( CROSSED(400) )	SCREENMAN->SendMessageToTopScreen( SM_400Combo, 0 );
-			else if( CROSSED(500) )	SCREENMAN->SendMessageToTopScreen( SM_500Combo, 0 );
-			else if( CROSSED(600) )	SCREENMAN->SendMessageToTopScreen( SM_600Combo, 0 );
-			else if( CROSSED(700) )	SCREENMAN->SendMessageToTopScreen( SM_700Combo, 0 );
-			else if( CROSSED(800) )	SCREENMAN->SendMessageToTopScreen( SM_800Combo, 0 );
-			else if( CROSSED(900) )	SCREENMAN->SendMessageToTopScreen( SM_900Combo, 0 );
-			else if( CROSSED(1000))	SCREENMAN->SendMessageToTopScreen( SM_1000Combo, 0 );
+			if     ( CROSSED(100) )	SCREENMAN->PostMessageToTopScreen( SM_100Combo, 0 );
+			else if( CROSSED(200) )	SCREENMAN->PostMessageToTopScreen( SM_200Combo, 0 );
+			else if( CROSSED(300) )	SCREENMAN->PostMessageToTopScreen( SM_300Combo, 0 );
+			else if( CROSSED(400) )	SCREENMAN->PostMessageToTopScreen( SM_400Combo, 0 );
+			else if( CROSSED(500) )	SCREENMAN->PostMessageToTopScreen( SM_500Combo, 0 );
+			else if( CROSSED(600) )	SCREENMAN->PostMessageToTopScreen( SM_600Combo, 0 );
+			else if( CROSSED(700) )	SCREENMAN->PostMessageToTopScreen( SM_700Combo, 0 );
+			else if( CROSSED(800) )	SCREENMAN->PostMessageToTopScreen( SM_800Combo, 0 );
+			else if( CROSSED(900) )	SCREENMAN->PostMessageToTopScreen( SM_900Combo, 0 );
+			else if( CROSSED(1000))	SCREENMAN->PostMessageToTopScreen( SM_1000Combo, 0 );
 
 			// new max combo
 			GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
@@ -202,7 +202,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 					pInventory->OnComboBroken( m_PlayerNumber, iCurCombo );
 			default:
 				if( iCurCombo>50 )
-					SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );
+					SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 			}
 
 			iCurCombo = 0;

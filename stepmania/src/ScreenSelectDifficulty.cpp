@@ -144,7 +144,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_BeginFadingOut:
 		TweenOffScreen();
-		SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
+		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
 		m_Menu.m_MenuTimer.Stop();
 		break;
 	}
@@ -335,7 +335,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
-	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
+	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
 // Err, this breaks back ...
