@@ -2137,8 +2137,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
 			
 			// Increment update failed extra stage count.
-			if( PREFSMAN->m_bUseUnlockSystem )
-				UNLOCKMAN->UnlockFailExtraStage();
+			UNLOCKMAN->UnlockFailExtraStage();
 		}
 		
 		// Feels hackish. Feel free to make cleaner.
