@@ -17,9 +17,9 @@
 #include "ProfileManager.h"
 #include "ezsockets.h"
 #include "RageLog.h"
-
+#include "StepMania.h"
 #include "RageUtil.h"
-	//String compare functions for command line args
+
 
 NetworkSyncManager::NetworkSyncManager()
 {
@@ -28,9 +28,7 @@ NetworkSyncManager::NetworkSyncManager()
     
 	useSMserver = false;
 
-
-
-
+	StartUp();
 }
 
 NetworkSyncManager::~NetworkSyncManager ()
@@ -41,53 +39,56 @@ NetworkSyncManager::~NetworkSyncManager ()
 	delete NetPlayerClient;
 }
 
-void NetworkSyncManager::StartUp (CString ServerIP)
+void NetworkSyncManager::StartUp()
 {
-	LOG->Trace ("Network Sync IP:%s",ServerIP.c_str());
-			
-	if (!ServerIP.CompareNoCase("LISTEN"))
-		if (Listen(8765)) {
-			useSMserver = true;
-		} else
-			useSMserver = false;
-	else
-		if (Connect(ServerIP.c_str(),8765) == true)
+	CString ServerIP;
+	if( GetCommandlineArgument( "netip", &ServerIP ) )
+	{
+		if( !Connect(ServerIP.c_str(),8765) )
 		{
-			useSMserver = true;
-		} else
-			useSMserver = false;
-		
+			LOG->Warn( "Network Sync Manager failed to connect" );
+			return;
+		}
 
-	if (useSMserver) {
-		int ClientCommand=3;
-		NetPlayerClient->send((char*) &ClientCommand, 4);
+	}
+	else if( GetCommandlineArgument( "listen" ) )
+	{
+		if( !Listen(8765) )
+		{
+			LOG->Warn( "Listen() failed");
+			return;
+		}
 
-		NetPlayerClient->receive(m_ServerVersion);
-			//If network play is desired
-			//AND the connection works
-			//Halt until we know what server 
-			//version we're dealing with
-		vector <CString> ProfileNames;
-		PROFILEMAN->GetLocalProfileNames(ProfileNames);
-		
-		netName PlayerName;
-		int i;
+	}
+
+	useSMserver = true;
+
+	int ClientCommand=3;
+	NetPlayerClient->send((char*) &ClientCommand, 4);
+
+	NetPlayerClient->receive(m_ServerVersion);
+	// If network play is desired and the connection works,
+	// halt until we know what server version we're dealing with
+	vector <CString> ProfileNames;
+	PROFILEMAN->GetLocalProfileNames(ProfileNames);
 	
-		if (ProfileNames.size()>0) {
-			PlayerName.m_packID = 30;
-			for (i=0;i<strlen(ProfileNames[0]);i++)
-				PlayerName.m_data[i] = ProfileNames[0][i];
-			NetPlayerClient->send((char*) &PlayerName,20);
-		}
-		if (ProfileNames.size()>1) {
-			PlayerName.m_packID = 31;
-			for (i=0;i<strlen(ProfileNames[1]);i++)
-				PlayerName.m_data[i] = ProfileNames[1][i];
-			NetPlayerClient->send((char*) &PlayerName,20);
-		}
-		LOG->Info("Server Version: %d",m_ServerVersion);
-	} else
-		LOG->Info("Network Sync Manager failed to connect");
+	netName PlayerName;
+	if( ProfileNames.size() > 0 )
+	{
+		PlayerName.m_packID = 30;
+		for( unsigned i=0; i < strlen(ProfileNames[0]); i++ )
+			PlayerName.m_data[i] = ProfileNames[0][i];
+		NetPlayerClient->send((char*) &PlayerName,20);
+	}
+	if( ProfileNames.size() > 1 )
+	{
+		PlayerName.m_packID = 31;
+		for( unsigned i=0; i < strlen(ProfileNames[1]); i++ )
+			PlayerName.m_data[i] = ProfileNames[1][i];
+		NetPlayerClient->send( (char*) &PlayerName,20 );
+	}
+
+	LOG->Info("Server Version: %d",m_ServerVersion);
 }
 
 

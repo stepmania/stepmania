@@ -31,5 +31,6 @@ extern HWND g_hWndMain;
 
 extern int g_argc;
 extern char **g_argv;
+bool GetCommandlineArgument( const CString &option, CString *argument=NULL );
 
 #endif

@@ -23,8 +23,6 @@ public:
 	NetworkSyncManager();
 	~NetworkSyncManager();
 
-	void StartUp (CString ServerIP);
-
     //If "useSMserver" then send score to server
 	void ReportScore(int playerID, int step, int score, int combo);	
 	void ReportSongOver();	//Report to server that song is over
@@ -34,6 +32,8 @@ public:
 	int m_playerLife[NUM_PLAYERS];	//Life
 
 private:
+	void StartUp();
+
 	int m_playerID;  //these are currently unused, but need to stay
 	int m_step;
 	int m_score;

@@ -857,7 +857,7 @@ static void ApplyLogPreferences()
  * --foo; short arguments (-x) are not supported.  (As commandline arguments
  * are not intended for common, general use, having short options isn't
  * needed.)  If argument is non-NULL, accept an argument. */
-bool GetCommandlineArgument( const CString &option, CString *argument=NULL )
+bool GetCommandlineArgument( const CString &option, CString *argument )
 {
 	const CString optstr = "--" + option;
 	
@@ -890,8 +890,6 @@ bool GetCommandlineArgument( const CString &option, CString *argument=NULL )
 static void ProcessArgsFirst()
 {
 	CString Argument;
-	if( GetCommandlineArgument( "netip", &Argument ) )
-		NSMAN->StartUp( Argument );
 	if( GetCommandlineArgument( "test", &Argument ) )
 		LOG->Info ("Test: \"%s\"", Argument.c_str() );
 }
