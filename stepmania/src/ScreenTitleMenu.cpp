@@ -149,8 +149,8 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	// Dear Andy:
 	// The above code breaks the program by making the announcer unswitchable.
-	// This is the wrong place for such a code change anyway. Might I suggest
-	// changing something in the PrefsManager instead?
+	// This is probably the wrong place for such a code change anyway.
+	// Cheers
 	// -- dro kulix
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
