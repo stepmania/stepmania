@@ -163,7 +163,7 @@ ScreenNameEntry::ScreenNameEntry()
 				continue; /* We have enough columns. */
 
 			/* Find out if this column is associated with the START menu button. */
-			StyleInput si(PlayerNumber(p), t);
+			StyleInput si((PlayerNumber)p, t);
 			GameInput gi=GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput(si);
 			MenuInput m=GAMESTATE->GetCurrentGameDef()->GameInputToMenuInput(gi);
 			if(m.button == MENU_BUTTON_START)
