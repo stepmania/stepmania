@@ -122,7 +122,7 @@ private:
 	 * (we're not playing); and we can't seek back to the current playing position
 	 * when we stop (too slow), but we want to be able to report the position we
 	 * were at when we stopped without jumping to the last position we buffered. */
-	float stopped_position;
+	int stopped_position;
 	bool    playing;
 
 	/* Number of samples input and output when changing speed.  Currently,
@@ -132,7 +132,7 @@ private:
 
 	CString error;
 
-	float GetPositionSecondsInternal() const;
+	int GetPositionSecondsInternal() const;
 	bool SetPositionSamples( int samples = -1 );
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);
