@@ -178,8 +178,8 @@ retry:
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the BGAnimationLayer that we're in. */
 		if( sFile == "" )
-			RageException::Throw( "The actor file in '%s' is missing the File attribute",
-				sAniDir.c_str() );
+			RageException::Throw( "The actor file in '%s' is missing the File attribute or has an invalid Type \"%s\"",
+				sAniDir.c_str(), sType.c_str() );
 
 		/* XXX: We need to do a theme search, since the file we're loading might
 		 * be overridden by the theme. */
