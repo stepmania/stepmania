@@ -1,3 +1,7 @@
+-------------------------- CVS after 3.00 final ----------------
+CHANGE: OKs now count as a step in score calculation.
+CHANGE: Maximum number of hold steps removed.
+
 ------------------------CVS after 3.00 beta 6rc2----------------
 BUG FIX:  Crash handler works better in full screen.
 BUG FIX:  Crash handler restarts correctly.
