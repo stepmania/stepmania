@@ -462,6 +462,31 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			else
 				delete pNewNotes;
 		}
+		else if( 0==stricmp(sValueName,"DISPLAYTITLE") ||
+			0==stricmp(sValueName,"DISPLAYARTIST") )
+		{
+			/* We don't want to support these tags.  However, we don't want
+			 * to pick up images used here as song images (eg. banners). */
+			CString param = sParams[1];
+			/* "{foo} ... {foo2}" */
+			unsigned pos = 0;
+			while( pos < CString::npos )
+			{
+
+				unsigned startpos = param.find('{', pos);
+				if( startpos == CString::npos )
+					break;
+				unsigned endpos = param.find('}', startpos);
+				if( endpos == CString::npos )
+					break;
+
+				CString sub = param.substr( startpos+1, endpos-startpos-1 );
+
+				pos = endpos + 1;
+
+				BlacklistedImages.insert( sub );
+			}
+		}
 		else
 			// do nothing.  We don't care about this value name
 			;
