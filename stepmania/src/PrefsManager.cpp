@@ -227,12 +227,6 @@ void PrefsManager::Init()
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
 
-	/* Write machine stats takes too long for many people; disable it by default. */
-	m_bWriteMachineStatsHtml = false;
-
-	/* Most people use local profiles, so writing profile stats is redundant. */
-	m_bWritePlayerStatsHtml = false;
-
 	m_bEditorShowBGChangesPlay = false;
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
@@ -543,8 +537,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
-	ini.GetValue( "Options", "WriteMachineStatsHtml",			m_bWriteMachineStatsHtml );
-	ini.GetValue( "Options", "WritePlayerStatsHtml",			m_bWritePlayerStatsHtml );
 
 	ini.GetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
 
@@ -776,8 +768,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
-	ini.SetValue( "Options", "WriteMachineStatsHtml",			m_bWriteMachineStatsHtml );
-	ini.SetValue( "Options", "WritePlayerStatsHtml",			m_bWritePlayerStatsHtml );
 	
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 

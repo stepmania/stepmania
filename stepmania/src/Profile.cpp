@@ -701,9 +701,7 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		}
 	}
 
-	if( (IsMachine() && PREFSMAN->m_bWriteMachineStatsHtml) ||
-		(!IsMachine() && PREFSMAN->m_bWritePlayerStatsHtml) )
-		SaveStatsWebPageToDir( sDir );
+	SaveStatsWebPageToDir( sDir );
 
 	//
 	// create edits dir
