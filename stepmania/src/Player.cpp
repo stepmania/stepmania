@@ -883,6 +883,9 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
 			score = TNS_PERFECT;
 
+		LOG->Trace("XXX: %i at %f, %f ago, lbu %f ago, music at %f, step was at %f, off by %f (sc %f)",
+			score, fStepSeconds, fStepSeconds, GAMESTATE->m_LastBeatUpdate.Ago(),
+			fCurrentMusicSeconds, fMusicSeconds, fNoteOffset, fScaledSecondsFromPerfect );
 //		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
