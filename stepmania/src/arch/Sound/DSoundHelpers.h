@@ -36,7 +36,6 @@ class DSoundBuf
 	char *locked_buf;
 	int locked_len;
 
-//	int GetPos();
 public:
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 	DSoundBuf(DSound &ds, hw hardware, 
