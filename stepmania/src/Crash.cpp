@@ -1327,16 +1327,16 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 
 	if (GetVersionEx(&ovi)) {
-		Report(NULL, hFile, "Windows %d.%d (Win%s build %d) [%s]"
-			,ovi.dwMajorVersion
-			,ovi.dwMinorVersion
-			,ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS
+		Report(NULL, hFile, "Windows %d.%d (Win%s build %d) [%s]",
+			ovi.dwMajorVersion,
+			ovi.dwMinorVersion,
+			ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS
 			? (ovi.dwMinorVersion>0 ? "98" : "95")
 				: ovi.dwPlatformId == VER_PLATFORM_WIN32_NT
 					? (ovi.dwMajorVersion >= 5 ? "2000" : "NT")
-					: "?"
-			,ovi.dwBuildNumber & 0xffff
-			,ovi.szCSDVersion);
+					: "?",
+			ovi.dwBuildNumber & 0xffff,
+			ovi.szCSDVersion);
 	}
 	Report(NULL, hFile, "");
 
