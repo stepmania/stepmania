@@ -458,20 +458,28 @@ drivers are required to use these devices.  These drivers are often finicky
 and incompatible with some sound cards.  PlayStation->Parallel adaptors can 
 be purchased from the StepMania web site or any importer.
 
-For Windows 98 and Windows Me users, the recommended driver is "DirectPad Pro 
-5.0 for Win9x".  For Windows 2000 and Windows XP, the recommended drivers are 
-NTPad XP 1.x.  Both of these drivers can be downloaded from Aldos web site: 
-http://www.aldostools.com/dpad.html
+For Windows 98 and Windows Me users, the recommended driver is "DirectPad Pro
+5.0 for Win9x".  For Windows 2000 and Windows XP, the recommended drivers is
+NTPad XP 1.x or PSXPAD.
 
+Win98/WinME
+  "DirectPad Pro 5.0 for Win9x", found at
+   http://www.aldostools.com/dpad.html
+
+Win2K/WinXP
+NTPad XP 1.x, found at
+   http://www.aldostools.com/dpad.html
+PSXPAD 0.8.2002.0606b, found at
+   http://www.psxpad.com/download/downcnt.php?name=psxp_a020606b
 
 ************************************************************
 8. Compatibility Issues
 ************************************************************
 
 Some video card/driver combinations have visual errors when running StepMania. 
-If you experience any visual errors, please visit your video card manufacturer's 
-web site and download the latest Direct3D 8.1 drivers. Below is a list of known 
-issues that are thought to be video card driver bugs:
+If you experience any visual errors, please visit your video card 
+manufacturer's web site and download the latest Direct3D 8.1 drivers. Below 
+is a list of known issues that are thought to be video card driver bugs:
 
 * S3 Savage family cards (e.g. Diamond Stealth)
 Symptom: The right edge of some graphics appears "cut off".
@@ -525,8 +533,8 @@ GeForce chip or an ATI Radeon chip.
 
 1. Install the latest drivers for your video card.
 2. Press F5 in the game to toggle between high detail and low detail modes.
-3. Tweak the Display Resolution and Texture Resolution setting in the GameOptions 
-   screen.
+3. Tweak the Display Resolution and Texture Resolution setting in the 
+   GameOptions screen.
 
 * Chris, will you tell me when the next version will be released?
 
@@ -535,7 +543,7 @@ I'd rather not going to say.  Sorry.  It's gotten me in trouble before.
 * Why won't you tell me?  I promise I won't tell anyone else.
 
 The reason I won't tell is because: a) I don't know yet, and b) I don't want 
-to make  anyone angry if it takes longer than I expect (it usually does).
+to make anyone angry if it takes longer than expected (it usually does).
 
 
 ************************************************************
@@ -1132,10 +1140,9 @@ creates your home directory and is required for things to start working.
 ************************************************************
 
 Thanks to:
-	Warrior Bob (Dave H) for helping with the readme!
+	redcrusher for help on ez2 graphics
 	Dj Slash & Tony Thai for the caution graphic
 	Kyle "KeeL" Ward for his awesome menu music (www.ampcast.com/keel)
-	Gotetsu for helping track down bugs and other various tasks
 
 ************************************************************
 End of document

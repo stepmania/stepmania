@@ -714,6 +714,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="GroupList.h">
 			</File>
 			<File
+				RelativePath="MenuBGAnims.h">
+			</File>
+			<File
+				RelativePath="MenuBgAnims.cpp">
+			</File>
+			<File
 				RelativePath="MenuElements.cpp">
 			</File>
 			<File

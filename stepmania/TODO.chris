@@ -2,9 +2,9 @@
 Fix
 /////////////////////////
 
-fix movie texture crash
+faster IniFile (with std::map?)
 
-eval letters glow faster
+fix movie texture crash
 
 The "groove bar" reports at the results screen is broken. 
 Getting a nearly full voltage bar on a 
