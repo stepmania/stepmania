@@ -21,7 +21,7 @@
 #include "ThemeManager.h"
 #include "RageFile.h"
 
-const int MAX_LAYERS = 100;
+const int MAX_LAYERS = 1000;
 
 BGAnimation::BGAnimation()
 {
