@@ -250,7 +250,6 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 	{
 		if( bOptional )
 		{
-			g_Cache[CacheString] = sPath;
 			return sPath;
 		}
 
