@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
 #include "RegistryAccess.h"
-#include "windows.h"
+#include <windows.h>
 #include <mmsystem.h>
 
 
