@@ -15,6 +15,7 @@
 #include "RageTextureManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageSurfaceUtils_Palettize.h"
 
 #include "Banner.h"
 
@@ -374,9 +375,29 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 
 	RageSurfaceUtils::ApplyHotPinkColorKey( img );
 
-	{
-		RageSurfaceUtils::Zoom( img, width, height );
+	RageSurfaceUtils::Zoom( img, width, height );
 
+	/*
+	 * When paletted banner cache is enabled, cached banners are paletted.  Cached
+	 * 32-bit banners take 1/16 as much memory, 16-bit banners take 1/8, and paletted
+	 * banners take 1/4.
+	 *
+	 * When paletted banner cache is disabled, cached banners are stored in 16-bit
+	 * RGBA.  Cached 32-bit banners take 1/8 as much memory, cached 16-bit banners
+	 * take 1/4, and cached paletted banners take 1/2.
+	 *
+	 * Paletted cache is disabled by default because palettization takes time, causing
+	 * the initial cache run to take longer.  Also, newer ATI hardware doesn't supported
+	 * paletted textures, which would slow down runtime, because we have to depalettize
+	 * on use.  They'd still have the same memory benefits, though, since we only load
+	 * one cached banner into a texture at once, and the speed hit may not matter on
+	 * newer ATI cards.  RGBA is safer, though.
+	 */
+	if( PREFSMAN->m_bPalettedBannerCache )
+	{
+		if( img->fmt.BytesPerPixel != 1 )
+			RageSurfaceUtils::Palettize( img );
+	} else {
 		/* Dither to the final format.  We use A1RGB5, since that's usually supported
 		 * natively by both OpenGL and D3D. */
 		RageSurface *dst = CreateSurface( img->w, img->h, 16,
