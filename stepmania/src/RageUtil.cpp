@@ -20,6 +20,8 @@
 #include <math.h>
 #include <fstream>
 #include <map>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 unsigned long randseed = time(NULL);
 
