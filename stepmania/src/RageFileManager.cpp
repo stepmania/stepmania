@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
+#include "RageThreads.h"
 
 #include <errno.h>
 #if defined(LINUX)
@@ -12,6 +13,9 @@
 #endif
 
 RageFileManager *FILEMAN = NULL;
+
+/* Lock this before touching any of these globals (except FILEMAN itself). */
+static RageMutex *g_Mutex;
 
 // Mountpoints as directories cause a problem.  If "Themes/default" is a mountpoint, and
 // doesn't exist anywhere else, then GetDirListing("Themes/*") must return "default".  The
@@ -56,6 +60,8 @@ static vector<LoadedDriver> g_Drivers;
 
 RageFileManager::RageFileManager()
 {
+	g_Mutex = new RageMutex;
+
 	g_Mountpoints = new RageFileDriverMountpoints;
 	LoadedDriver ld;
 	ld.driver = g_Mountpoints;
@@ -131,6 +137,8 @@ RageFileManager::~RageFileManager()
 
 //	delete g_Mountpoints; // g_Mountpoints was g_Drivers
 	g_Mountpoints = NULL;
+
+	delete g_Mutex;
 }
 
 CString LoadedDriver::GetPath( CString path )
@@ -155,6 +163,8 @@ bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; 
 bool ieq( const CString &a, const CString &b ) { return a.CompareNoCase(b) == 0; }
 void RageFileManager::GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
+	LockMut( *g_Mutex );
+	
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		LoadedDriver &ld = g_Drivers[i];
@@ -181,6 +191,8 @@ void RageFileManager::GetDirListing( const CString &sPath, CStringArray &AddTo, 
 
 bool RageFileManager::Remove( const CString &sPath )
 {
+	LockMut( *g_Mutex );
+
 	/* Multiple drivers may have the same file. */
 	bool Deleted = false;
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
@@ -201,6 +213,8 @@ bool RageFileManager::Remove( const CString &sPath )
 #include "RageFileDriverZip.h"
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
+	LockMut( *g_Mutex );
+
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
 	ASSERT( Root != "" );
@@ -231,6 +245,8 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 
 bool RageFileManager::IsMounted( CString MountPoint )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 		if( !g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
 			return true;
@@ -242,6 +258,8 @@ bool RageFileManager::IsMounted( CString MountPoint )
  * inserted). */
 bool RageFileManager::MountpointIsReady( CString MountPoint )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		if( g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
@@ -255,6 +273,8 @@ bool RageFileManager::MountpointIsReady( CString MountPoint )
 
 void RageFileManager::FlushDirCache( const CString &sPath )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		if( sPath.size() == 0 )
@@ -273,6 +293,8 @@ void RageFileManager::FlushDirCache( const CString &sPath )
 
 RageFileManager::FileType RageFileManager::GetFileType( const CString &sPath )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		const CString p = g_Drivers[i].GetPath( sPath );
@@ -289,6 +311,8 @@ RageFileManager::FileType RageFileManager::GetFileType( const CString &sPath )
 
 int RageFileManager::GetFileSizeInBytes( const CString &sPath )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		const CString p = g_Drivers[i].GetPath( sPath );
@@ -304,6 +328,8 @@ int RageFileManager::GetFileSizeInBytes( const CString &sPath )
 
 int RageFileManager::GetFileHash( const CString &sPath )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		const CString p = g_Drivers[i].GetPath( sPath );
@@ -325,6 +351,8 @@ static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
 
 void AddReference( const RageFileObj *obj, RageFileDriver *driver )
 {
+	LockMut( *g_Mutex );
+
 	pair< const RageFileObj *, RageFileDriver * > ref;
 	ref.first = obj;
 	ref.second = driver;
@@ -337,6 +365,8 @@ void AddReference( const RageFileObj *obj, RageFileDriver *driver )
 
 void RemoveReference( const RageFileObj *obj )
 {
+	LockMut( *g_Mutex );
+
 	FileReferences::iterator it = g_Refs.find( obj );
 	RAGE_ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", obj->GetDisplayPath().c_str() ) );
 	g_Refs.erase( it );
@@ -345,6 +375,8 @@ void RemoveReference( const RageFileObj *obj )
 /* Used only by RageFile: */
 RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p, int &err )
 {
+	LockMut( *g_Mutex );
+
 	err = ENOENT;
 
 	/* If writing, we need to do a heuristic to figure out which driver to write with--there
@@ -378,6 +410,8 @@ RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p,
 /* Copy a RageFileObj for a new RageFile. */
 RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 {
+	LockMut( *g_Mutex );
+
 	FileReferences::const_iterator it = g_Refs.find( cpy );
 	RAGE_ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
 
@@ -391,6 +425,8 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 
 RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err )
 {
+	LockMut( *g_Mutex );
+
 	/*
 	 * The value for a driver to open a file is the number of directories and/or files
 	 * that would have to be created in order to write it, or 0 if the file already exists.
@@ -455,6 +491,8 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, Ra
 
 void RageFileManager::Close( RageFileObj *obj )
 {
+	LockMut( *g_Mutex );
+
 	if( obj == NULL )
 		return;
 
