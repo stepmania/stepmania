@@ -100,6 +100,7 @@ void ScrollingList::StartBouncing()
 	}
 	else
 	{
+		m_RippleCSprite.SetCroppedSize( 100, 100 );
 		m_RippleCSprite.Load( m_apCSprites[m_iSelection]->GetTexturePath() );
 		m_RippleCSprite.SetXY( m_apCSprites[m_iSelection]->GetX(), m_apCSprites[m_iSelection]->GetY() );
 		m_RippleCSprite.SetZoom( 2.0f );
