@@ -13,10 +13,10 @@
 
 #include "ActorFrame.h"
 #include "Banner.h"
-#include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "RandomSample.h"
 #include "Style.h"
+#include "BitmapText.h"
 
 
 class JukeboxMenu: public ActorFrame 

@@ -21,7 +21,8 @@
  * of these. */
 struct RageTextureID
 {
-	CString filename;
+	CString filename;	// font file name if !text.empty()
+	CString text;
 	int iMaxSize;
 	int iMipMaps;
 	int iAlphaBits;
@@ -82,7 +83,6 @@ public:
 	
 	const RectF *GetTextureCoordRect( int frameNo ) const;
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
-	const CString &GetFilePath() const { return GetID().filename; }
 
 	int		m_iRefCount;
 	bool	m_bCacheThis;

@@ -18,8 +18,6 @@ LowLevelWindow_SDL::LowLevelWindow_SDL()
 
 	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
 	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
-
-	Windowed = false;
 }
 
 LowLevelWindow_SDL::~LowLevelWindow_SDL()
@@ -34,8 +32,10 @@ void *LowLevelWindow_SDL::GetProcAddress(CString s)
 	return SDL_GL_GetProcAddress(s);
 }
 
-bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+bool LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
+	CurrentParams = p;
+
 	/* We need to preserve the event mask and all events, since they're lost by
 	 * SDL_QuitSubSystem(SDL_INIT_VIDEO). */
 	vector<SDL_Event> events;
@@ -72,21 +72,18 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	mySDL_PushEvents(events);
 
 	/* Set SDL window title and icon -before- creating the window */
-	SDL_WM_SetCaption(sWindowTitle, "");
-	mySDL_WM_SetIcon( sIconFile );
+	SDL_WM_SetCaption( p.sWindowTitle, "");
+	mySDL_WM_SetIcon( p.sIconFile );
 
-
-	Windowed = false;
 
 	int flags = SDL_RESIZABLE | SDL_OPENGL; // | SDL_DOUBLEBUF; // no need for DirectDraw to be double-buffered
-	if( !windowed )
+	if( !p.windowed )
 		flags |= SDL_FULLSCREEN;
 
-	Windowed = windowed;
-	SDL_ShowCursor( Windowed );
+	SDL_ShowCursor( p.windowed );
 
-	ASSERT( bpp == 16 || bpp == 32 );
-	switch( bpp )
+	ASSERT( p.bpp == 16 || p.bpp == 32 );
+	switch( p.bpp )
 	{
 	case 16:
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -103,25 +100,29 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
 
 #ifdef SDL_HAS_REFRESH_RATE
-	if(rate == REFRESH_DEFAULT)
+	if( p.rate == REFRESH_DEFAULT )
 		SDL_SM_SetRefreshRate(0);
 	else
-		SDL_SM_SetRefreshRate(rate);
+		SDL_SM_SetRefreshRate(p.rate);
 #endif
 
 #if defined(WIN32)
 //	mySDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
 #endif
 
-	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
+	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
 	if(!screen)
-		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+	{
+		LOG->Trace("SDL_SetVideoMode failed: %s", SDL_GetError());
+		return false;	// failed to set mode
+	}
 
-	bool NewOpenGLContext = true;	// always a new context because we're resetting SDL_Video
+	bNewDeviceOut = true;	// always a new context because we're resetting SDL_Video
 
 	/* XXX: This event only exists in the SDL tree, and is only needed in
 	 * Windows.  Eventually, it'll probably get upstreamed, and once it's
 	 * in the real branch we can remove this #if. */
+	/* Why did I comment this out?  -Chris */
 #if defined(WIN32)
 //	SDL_Event e;
 //	if(SDL_GetEvent(e, SDL_OPENGLRESETMASK))
@@ -151,11 +152,7 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 			colorbits, r, g, b, a, depth, stencil);
 	}
 
-	CurrentWidth = screen->w;
-	CurrentHeight = screen->h;
-	CurrentBPP = bpp;
-
-	return NewOpenGLContext;
+	return true;	// we set the video mode successfully
 }
 
 void LowLevelWindow_SDL::SwapBuffers()
@@ -171,26 +168,18 @@ void LowLevelWindow_SDL::Update(float fDeltaTime)
 		switch(event.type)
 		{
 		case SDL_VIDEORESIZE:
-			CurrentWidth = event.resize.w;
-			CurrentHeight = event.resize.h;
+			CurrentParams.width = event.resize.w;
+			CurrentParams.height = event.resize.h;
 
 			/* Let DISPLAY know that our resolution has changed. */
 			DISPLAY->ResolutionChanged();
 			break;
 		case SDL_ACTIVEEVENT:
 			if( event.active.gain  &&		// app regaining focus
-				!DISPLAY->IsWindowed() )	// full screen
+				!DISPLAY->GetVideoModeParams().windowed )	// full screen
 			{
 				// need to reacquire an OGL context
-				DISPLAY->SetVideoMode( 
-					DISPLAY->IsWindowed(), 
-					DISPLAY->GetWidth(), 
-					DISPLAY->GetHeight(), 
-					DISPLAY->GetBPP(), 
-					0, 
-					0,
-					"",
-					"" );	// FIXME: preserve prefs
+				DISPLAY->SetVideoMode( DISPLAY->GetVideoModeParams() );
 			}
 			break;
 		}

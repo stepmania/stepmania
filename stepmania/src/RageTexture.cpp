@@ -49,6 +49,7 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 {
 #define COMP(a) if(a<rhs.a) return true; if(a>rhs.a) return false;
 	COMP(filename);
+	COMP(text);
 	COMP(iMaxSize);
 	COMP(iMipMaps);
 	COMP(iAlphaBits);
@@ -63,16 +64,18 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 
 bool RageTextureID::operator==(const RageTextureID &rhs) const
 {
+#define EQUAL(a) (a==rhs.a)
 	return 
-		filename == rhs.filename &&
-		iMaxSize == rhs.iMaxSize &&
-		iMipMaps == rhs.iMipMaps &&
-		iAlphaBits == rhs.iAlphaBits &&
-		iColorDepth == rhs.iColorDepth &&
-		iTransparencyOnly == rhs.iTransparencyOnly &&
-		bDither == rhs.bDither &&
-		bStretch == rhs.bStretch &&
-		bHotPinkColorKey == rhs.bHotPinkColorKey;
+		EQUAL(filename) &&
+		EQUAL(text) &&
+		EQUAL(iMaxSize) &&
+		EQUAL(iMipMaps) &&
+		EQUAL(iAlphaBits) &&
+		EQUAL(iColorDepth) &&
+		EQUAL(iTransparencyOnly) &&
+		EQUAL(bDither) &&
+		EQUAL(bStretch) &&
+		EQUAL(bHotPinkColorKey);
 }
 
 
@@ -114,7 +117,7 @@ RageTexture::~RageTexture()
 
 void RageTexture::CreateFrameRects()
 {
-	GetFrameDimensionsFromFileName( GetFilePath(), &m_iFramesWide, &m_iFramesHigh );
+	GetFrameDimensionsFromFileName( GetID().filename, &m_iFramesWide, &m_iFramesHigh );
 
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.

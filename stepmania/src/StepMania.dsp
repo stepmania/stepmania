@@ -61,10 +61,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                   	cl                                                                                                                                    /Zl                                                                                                                                    /nologo                                                                                                                                    /c                                                                                                                                    verstub.cpp                                                                                                                                    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                    	cl                                                                                                                                     /Zl                                                                                                                                     /nologo                                                                                                                                     /c                                                                                                                                     verstub.cpp                                                                                                                                     /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -100,7 +100,7 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
-PreLink_Cmds=disasm\verinc                                                                                                                                   	cl                                                                                                                                    /Zl                                                                                                                                    /nologo                                                                                                                                    /c                                                                                                                                    verstub.cpp                                                                                                                                    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                    	cl                                                                                                                                     /Zl                                                                                                                                     /nologo                                                                                                                                     /c                                                                                                                                     verstub.cpp                                                                                                                                     /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -137,10 +137,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                   	cl                                                                                                                                    /Zl                                                                                                                                    /nologo                                                                                                                                    /c                                                                                                                                    verstub.cpp                                                                                                                                    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                    	cl                                                                                                                                     /Zl                                                                                                                                     /nologo                                                                                                                                     /c                                                                                                                                     verstub.cpp                                                                                                                                     /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1938,6 +1938,23 @@ SOURCE=.\BitmapText.cpp
 # Begin Source File
 
 SOURCE=.\BitmapText.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CompositedText.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\CompositedText.h
 # End Source File
 # Begin Source File
 

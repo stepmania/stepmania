@@ -223,7 +223,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 			CString sError = ssprintf( "Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
 #if defined(WIN32) && !defined(_XBOX) // XXX arch?
-			if( DISPLAY->IsWindowed() )
+			if( DISPLAY->GetVideoModeParams().windowed )
 				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
 #endif
 			continue;
@@ -235,7 +235,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
 			LOG->Warn( sError );
 #if defined(WIN32) // XXX arch?
-			if( DISPLAY->IsWindowed() )
+			if( DISPLAY->GetVideoModeParams().windowed )
 				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
 #endif
 			continue;

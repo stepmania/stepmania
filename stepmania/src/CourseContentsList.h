@@ -13,7 +13,6 @@
 
 #include "DifficultyMeter.h"
 #include "BitmapText.h"
-#include "TextBanner.h"
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "Quad.h"

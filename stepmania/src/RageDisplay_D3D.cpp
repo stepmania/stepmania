@@ -56,8 +56,7 @@ D3DCAPS8				g_DeviceCaps;
 D3DDISPLAYMODE			g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
 int						g_ModelMatrixCnt=0;
-bool g_Windowed;
-int g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
+RageDisplay::VideoModeParams	g_CurrentParams;
 
 /* Direct3D doesn't associate a palette with textures.
  * Instead, we load a palette into a slot.  We need to keep track
@@ -187,7 +186,7 @@ const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 
 
 
-RageDisplay_D3D::RageDisplay_D3D( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 {
 	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
 	LOG->MapLog("renderer", "Current renderer: Direct3D");
@@ -247,8 +246,6 @@ RageDisplay_D3D::RageDisplay_D3D( bool windowed, int width, int height, int bpp,
 	SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
 	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
 
-	g_Windowed = false;
-
 	g_PaletteIndex.clear();
 	for( int i = 0; i < 256; ++i )
 		g_PaletteIndex.push_back(i);
@@ -256,23 +253,16 @@ RageDisplay_D3D::RageDisplay_D3D( bool windowed, int width, int height, int bpp,
 	// Save the original desktop format.
 	g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
 
-
 	// Create the SDL window
 	int flags = SDL_RESIZABLE | SDL_SWSURFACE;
-	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
+	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
 	if(!screen)
 	{
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 	}
 
-
-	if( SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile ) )
-		return;
-	if( SetVideoMode( false, width, height, bpp, rate, vsync, sWindowTitle, sIconFile ) )
-		return;
-	if( SetVideoMode( false, width, height, 16, rate, vsync, sWindowTitle, sIconFile ) )
-		return;
+	SetVideoMode( p );
 }
 
 void RageDisplay_D3D::Update(float fDeltaTime)
@@ -283,8 +273,8 @@ void RageDisplay_D3D::Update(float fDeltaTime)
 		switch(event.type)
 		{
 		case SDL_VIDEORESIZE:
-			g_CurrentWidth = event.resize.w;
-			g_CurrentHeight = event.resize.h;
+			g_CurrentParams.width = event.resize.w;
+			g_CurrentParams.height = event.resize.h;
 
 			/* Let DISPLAY know that our resolution has changed. */
 			ResolutionChanged();
@@ -382,41 +372,18 @@ HWND GetHwnd()
 
 
 /* Set the video mode. */
-bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
+	g_CurrentParams = p;
+
 	HRESULT hr;
 
-	if( FindBackBufferType( windowed, bpp ) == -1 )	// no possible back buffer formats
-		return false;
+	if( FindBackBufferType( p.windowed, p.bpp ) == -1 )	// no possible back buffer formats
+		return false;	// failed to set mode
 
 	/* Set SDL window title and icon -before- creating the window */
-	SDL_WM_SetCaption(sWindowTitle, "");
-	mySDL_WM_SetIcon( sIconFile );
-
-
-	/* Round to the nearest valid fullscreen resolution */
-	if( !windowed )
-	{
-		if(      width <= 320 )		width = 320;
-		else if( width <= 400 )		width = 400;
-		else if( width <= 512 )		width = 512;
-		else if( width <= 640 )		width = 640;
-		else if( width <= 800 )		width = 800;
-		else if( width <= 1024 )	width = 1024;
-		else if( width <= 1280 )	width = 1280;
-
-		switch( width )
-		{
-		case 320:	height = 240;	break;
-		case 400:	height = 300;	break;
-		case 512:	height = 384;	break;
-		case 640:	height = 480;	break;
-		case 800:	height = 600;	break;
-		case 1024:	height = 768;	break;
-		case 1280:	height = 960;	break;
-		default:	ASSERT(0);
-		}
-	}
+	SDL_WM_SetCaption( p.sWindowTitle, "" );
+	mySDL_WM_SetIcon( p.sIconFile );
 
 	
 	// HACK: On Windows 98, we can't call SDL_SetVideoMode while D3D is full screen.
@@ -424,22 +391,17 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 	// Not in exclusive access mode".  So, we'll Reset the D3D device, then resize the 
 	// SDL window only if we're not fullscreen.
 
-	g_Windowed = windowed;
-	g_CurrentWidth = width;
-	g_CurrentHeight = height;
-	g_CurrentBPP = bpp;
-
-	SDL_ShowCursor( windowed );
+	SDL_ShowCursor( p.windowed );
 
     ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
-	g_d3dpp.BackBufferWidth			=	width;
-    g_d3dpp.BackBufferHeight		=	height;
-    g_d3dpp.BackBufferFormat		=	FindBackBufferType( windowed, bpp );
+	g_d3dpp.BackBufferWidth			=	p.width;
+    g_d3dpp.BackBufferHeight		=	p.height;
+    g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
     g_d3dpp.BackBufferCount			=	1;
     g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
 	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
 	g_d3dpp.hDeviceWindow			=	NULL;
-    g_d3dpp.Windowed				=	windowed;
+    g_d3dpp.Windowed				=	p.windowed;
     g_d3dpp.EnableAutoDepthStencil	=	TRUE;
     g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
     g_d3dpp.Flags					=	0;
@@ -447,7 +409,7 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 
 	/* Windowed must always use D3DPRESENT_INTERVAL_DEFAULT. */
 	g_d3dpp.FullScreen_PresentationInterval = 
-		(windowed || vsync) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
+		(p.windowed || p.vsync) ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
 		g_d3dpp.BackBufferWidth, g_d3dpp.BackBufferHeight, g_d3dpp.BackBufferFormat,
@@ -458,10 +420,9 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 		g_d3dpp.FullScreen_PresentationInterval
 	);
 
-	bool bCreateNewDevice = g_pd3dDevice == NULL;
-
-	if( bCreateNewDevice )		// device is not yet created.  We need to create it
+	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
 	{
+		bNewDeviceOut = true;
 		hr = g_pd3d->CreateDevice(
 			D3DADAPTER_DEFAULT, 
 			D3DDEVTYPE_HAL, 
@@ -482,6 +443,7 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 	}
 	else
 	{
+		bNewDeviceOut = false;
 		hr = g_pd3dDevice->Reset( &g_d3dpp );
 		if( FAILED(hr) )
 		{
@@ -490,7 +452,7 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 		}
 	}
 	
-	if( this->IsWindowed() )
+	if( p.windowed )
 	{
 		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
 		
@@ -499,9 +461,9 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 	//	if( !windowed )
 	//		flags |= SDL_FULLSCREEN;
 
-		SDL_ShowCursor( g_Windowed );
+		SDL_ShowCursor( p.windowed );
 
-		SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
+		SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
 		if(!screen)
 		{
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
@@ -516,7 +478,7 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 	/* Palettes were lost by Reset(), so mark them unloaded. */
 	g_TexResourceToPaletteIndex.clear();
 
-	return bCreateNewDevice;
+	return true;	// mode change successful
 }
 
 void RageDisplay_D3D::ResolutionChanged()
@@ -533,10 +495,10 @@ void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(g_CurrentWidth) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(g_CurrentHeight) / SCREEN_HEIGHT );
+	shift_left = int( shift_left * float(g_CurrentParams.width) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(g_CurrentParams.height) / SCREEN_HEIGHT );
 
-	D3DVIEWPORT8 viewData = { shift_left, -shift_down, g_CurrentWidth, g_CurrentHeight, 0.f, 1.f };
+	D3DVIEWPORT8 viewData = { shift_left, -shift_down, g_CurrentParams.width, g_CurrentParams.height, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
@@ -548,7 +510,7 @@ int RageDisplay_D3D::GetMaxTextureSize() const
 void RageDisplay_D3D::BeginFrame()
 {
 	if( g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
-		SetVideoMode( g_Windowed, g_CurrentWidth, g_CurrentHeight, g_CurrentBPP, 0, 0, "", "" );	// FIXME: preserve prefs
+		SetVideoMode( g_CurrentParams );
 
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
@@ -585,11 +547,7 @@ void RageDisplay_D3D::SaveScreenshot( CString sPath )
 #endif
 }
 
-
-bool RageDisplay_D3D::IsWindowed() const { return g_Windowed; }
-int RageDisplay_D3D::GetWidth() const { return g_CurrentWidth; }
-int RageDisplay_D3D::GetHeight() const { return g_CurrentHeight; }
-int RageDisplay_D3D::GetBPP() const { return g_CurrentBPP; }
+RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { return g_CurrentParams; }
 
 #define SEND_CURRENT_MATRICES \
 	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjection() ); \

@@ -28,6 +28,7 @@ public:
 private:
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
+	//Sprite	m_textTitle, m_textSubTitle, m_textArtist;
 };
 
 #endif

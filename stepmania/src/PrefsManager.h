@@ -85,14 +85,12 @@ public:
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
 
-	/* 0 = no; 1 = yes; -1 = auto (turn on for known-bad drivers) */
-	int				m_iPolygonRadar;
-
 	CStringArray	m_asAdditionalSongFolders;
 	CString			m_DWIPath;
 
-	CString			m_sVideoRenderers;
 	CString			m_sLastSeenVideoDriver;
+	CString			m_sVideoRenderers;
+	bool			m_bAntiAliasing;
 	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;

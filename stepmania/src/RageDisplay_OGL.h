@@ -4,21 +4,17 @@
 class RageDisplay_OGL: public RageDisplay
 {
 public:
-	RageDisplay_OGL( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
+	RageDisplay_OGL( VideoModeParams params );
 	~RageDisplay_OGL();
 	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
-	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	void BeginFrame();	
 	void EndFrame();
-	bool IsWindowed() const;
-	int GetWidth() const;
-	int GetHeight() const;
-	int GetBPP() const;
+	VideoModeParams GetVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt );
 	unsigned CreateTexture( PixelFormat pixfmt, SDL_Surface*& img );
@@ -65,6 +61,7 @@ public:
 
 	void SaveScreenshot( CString sPath );
 protected:
+	bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 

@@ -28,7 +28,7 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 	m_quad1.SetDiffuse( RageColor(0,0,1,1) );
 	m_quad1.SetZ( 0 );
 	m_quad1.SetUseZBuffer( true );
-	this->AddChild( &m_quad1 );
+//	this->AddChild( &m_quad1 );
 
 	m_quad2.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_quad2.SetDiffuse( RageColor(0,1,0,1) );
@@ -47,6 +47,13 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 //	m_model.LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\howtoplay.bones.txt" );
 //	this->AddChild(&m_model);
 //	m_model.SetEffectSpin( RageVector3(0,90,90) );
+
+	RageTextureID ID;
+	ID.filename = THEME->GetPathToF("MusicWheelItem roulette");
+	ID.text = "testing,\ntesting,\n1\n2\n3\n\n\n";
+	m_text.Load( ID );
+	m_text.SetXY( CENTER_X, CENTER_Y );
+	this->AddChild( &m_text );
 
 	this->AddChild( &m_In );
 

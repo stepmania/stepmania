@@ -72,7 +72,6 @@ namespace GLExt {
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT = NULL;
 PFNGLCOLORTABLEPROC GLExt::glColorTableEXT = NULL;
 PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
-bool	g_bAALinesBroken = false;
 bool	g_bEXT_texture_env_combine = true;
 /* OpenGL system information that generally doesn't change at runtime. */
 
@@ -193,14 +192,14 @@ void GetGLExtensions(set<string> &ext)
 		ext.insert(lst[i]);
 }
 
-RageDisplay_OGL::RageDisplay_OGL( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p )
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
 	wind = MakeLowLevelWindow();
 
-	SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
+	SetVideoMode( p );
 
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
@@ -306,22 +305,11 @@ void SetupExtensions()
 	GLExt::wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
 	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
-	g_bAALinesBroken = false;
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	CheckPalettedTextures();
 
 	// Checks for known bad drivers
 	CString sRenderer = (const char*)glGetString(GL_RENDERER);
-	
-	if( sRenderer.Left(12) == "3Dfx/Voodoo3" )
-	{
-		LOG->Info("Anti-aliased lines are known to cause problems with this driver.");
-		g_bAALinesBroken = true;
-/* Shouldn't be needed anymore.
-		LOG->Info("Paletted textures are broken with this driver.");
-		GLExt::glColorTableEXT = NULL;
-		GLExt::glGetColorTableParameterivEXT = NULL; */
-	}
 }
 
 void DumpOpenGLDebugInfo()
@@ -390,21 +378,23 @@ void DumpOpenGLDebugInfo()
 
 void RageDisplay_OGL::ResolutionChanged()
 {
-	SetViewport(0,0);
+ 	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */
 	BeginFrame();
 	EndFrame();
 }
 
-/* Set the video mode.  In some cases, changing the video mode will reset
- * the rendering context; returns true if we need to reload textures. */
-bool RageDisplay_OGL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
+// Return true if mode change was successful.
+// bNewDeviceOut is set true if a new device was created and textures
+// need to be reloaded.
+bool RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 //	LOG->Trace( "RageDisplay_OGL::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
-	bool NewOpenGLContext = wind->SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
+	if( !wind->TryVideoMode( p, bNewDeviceOut ) )
+		return false;	// failed to set video mode
 
-	if(NewOpenGLContext)
+	if( bNewDeviceOut )
 	{
 		/* We have a new OpenGL context, so we have to tell our textures that
 		 * their OpenGL texture number is invalid. */
@@ -422,21 +412,21 @@ bool RageDisplay_OGL::SetVideoMode( bool windowed, int width, int height, int bp
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
 	if( GLExt::wglSwapIntervalEXT )
-	    GLExt::wglSwapIntervalEXT(vsync);
+	    GLExt::wglSwapIntervalEXT(p.vsync);
 	
 	ResolutionChanged();
 
-	return NewOpenGLContext;
+	return true;	// successfully set mode
 }
 
 void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(wind->GetWidth()) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(wind->GetHeight()) / SCREEN_HEIGHT );
+	shift_left = int( shift_left * float(wind->GetVideoModeParams().width) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(wind->GetVideoModeParams().height) / SCREEN_HEIGHT );
 
-	glViewport(shift_left, -shift_down, wind->GetWidth(), wind->GetHeight());
+	glViewport(shift_left, -shift_down, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height);
 }
 
 int RageDisplay_OGL::GetMaxTextureSize() const
@@ -473,23 +463,26 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 {
 	ASSERT( sPath.Right(3).CompareNoCase("bmp") == 0 );	// we can only save bitmaps
 
+	int width = wind->GetVideoModeParams().width;
+	int height = wind->GetVideoModeParams().height;
+
 	SDL_Surface *image = SDL_CreateRGBSurface(
-		SDL_SWSURFACE, wind->GetWidth(), wind->GetHeight(),
+		SDL_SWSURFACE, width, height,
         24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
 	SDL_Surface *temp = SDL_CreateRGBSurface(
-		SDL_SWSURFACE, wind->GetWidth(), wind->GetHeight(),
+		SDL_SWSURFACE, width, height,
 		24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
 
-	glReadPixels(0, 0, wind->GetWidth(), wind->GetHeight(), GL_RGB,
+	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGB,
 	             GL_UNSIGNED_BYTE, image->pixels);
 
 	// flip vertically
 	int pitch = image->pitch;
-	for( int y=0; y<wind->GetHeight(); y++ )
+	for( int y=0; y<wind->GetVideoModeParams().height; y++ )
 		memcpy( 
 			(char *)temp->pixels + pitch * y,
-			(char *)image->pixels + pitch * (wind->GetHeight()-1-y),
-			3*wind->GetWidth() );
+			(char *)image->pixels + pitch * (height-1-y),
+			3*width );
 
 	SDL_SaveBMP( temp, sPath );
 
@@ -498,10 +491,7 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 }
 
 
-bool RageDisplay_OGL::IsWindowed() const { return wind->IsWindowed(); }
-int RageDisplay_OGL::GetWidth() const { return wind->GetWidth(); }
-int RageDisplay_OGL::GetHeight() const { return wind->GetHeight(); }
-int RageDisplay_OGL::GetBPP() const { return wind->GetBPP(); }
+RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
 
 static void SetupVertices( const RageVertex v[], int iNumVerts )
 {
@@ -631,7 +621,7 @@ void RageDisplay_OGL::DrawLineStrip( const RageVertex v[], int iNumVerts, float 
 {
 	ASSERT( iNumVerts >= 2 );
 
-	if( g_bAALinesBroken )
+	if( !GetVideoModeParams().bAntiAliasing )
 	{
 		RageDisplay::DrawLineStrip(v, iNumVerts, LineWidth );
 		return;
@@ -650,8 +640,8 @@ void RageDisplay_OGL::DrawLineStrip( const RageVertex v[], int iNumVerts, float 
 	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
 	 * but these width functions actually want raster sizes (that is, actual pixels).
 	 * Scale the line width and point size by the average ratio of the scale. */
-	float WidthVal = float(wind->GetWidth()) / SCREEN_WIDTH;
-	float HeightVal = float(wind->GetHeight()) / SCREEN_HEIGHT;
+	float WidthVal = float(wind->GetVideoModeParams().width) / SCREEN_WIDTH;
+	float HeightVal = float(wind->GetVideoModeParams().height) / SCREEN_HEIGHT;
 	LineWidth *= (WidthVal + HeightVal) / 2;
 
 	/* Clamp the width to the hardware max for both lines and points (whichever

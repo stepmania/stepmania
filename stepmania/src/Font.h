@@ -16,11 +16,14 @@
 #include "IniFile.h"
 
 class FontPage;
+struct SDL_Surface;
 
 struct glyph {
 	FontPage *fp;
 	RageTexture *Texture;
 	RageTexture *GetTexture() const { return const_cast<RageTexture *>(Texture); }
+	SDL_Surface *Surface;
+	SDL_Surface *GetSurface() const { return Surface; }
 
 	/* Number of pixels to advance horizontally after drawing this character. */
 	int hadvance;
@@ -33,6 +36,9 @@ struct glyph {
 
 	/* Texture coordinate rect. */
 	RectF rect;
+
+	/* rect in pixels */
+	RectI blitSrc;	
 };
 
 struct FontPageSettings
@@ -71,6 +77,7 @@ class FontPage
 {
 public:
 	RageTexture* m_pTexture;
+	SDL_Surface* m_pSurface;
 
 	CString m_sTexturePath;
 

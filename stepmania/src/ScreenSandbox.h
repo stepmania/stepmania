@@ -34,6 +34,7 @@ public:
 	Quad m_quad2;
 	Transition	m_In;
 	Transition	m_Out;
+	Sprite	m_text;
 };
 
 

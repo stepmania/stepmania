@@ -84,7 +84,7 @@ PrefsManager::PrefsManager()
 	m_iCoinsPerCredit = 1;
 	m_bJointPremium = false;
 	m_iBoostAppPriority = -1;
-	m_iPolygonRadar = -1;
+	m_bAntiAliasing = false;
 	m_ShowSongOptions = YES;
 	m_bDancePointsForOni = false;
 	m_bTimestamping = false;
@@ -112,7 +112,7 @@ PrefsManager::PrefsManager()
 	m_bHiddenSongs = false;
 	m_bVsync = true;
 	
-	m_sVideoRenderers = "";
+	m_sVideoRenderers = "";	// StepMania.cpp sets this on first run
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	/* This is experimental: let's see if preloading helps people's skipping.
@@ -178,8 +178,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "DelayedScreenLoad",			m_bDelayedScreenLoad );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
-	ini.GetValue ( "Options", "VideoRenderers",				m_sVideoRenderers );
-	ini.GetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
@@ -189,7 +187,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.GetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
-	ini.GetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
 	ini.GetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
@@ -210,6 +207,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.GetValueB( "Options", "FirstRun",					m_bFirstRun );
 	ini.GetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
+	ini.GetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
+	ini.GetValue ( "Options", "VideoRenderers",				m_sVideoRenderers );
+	ini.GetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -278,7 +278,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.SetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
-	ini.SetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
 	ini.SetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
@@ -298,7 +297,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.SetValueB( "Options", "FirstRun",					m_bFirstRun );
 	ini.SetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
-
+	ini.SetValue ( "Options", "VideoRenderers",				m_sVideoRenderers );
+	ini.SetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
+	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
@@ -307,8 +308,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValueF( "Options", "SoundVolume",			m_fSoundVolume );
-	if(m_sVideoRenderers != "")
-		ini.SetValue ( "Options", "Renderer",				m_sVideoRenderers );
 
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );

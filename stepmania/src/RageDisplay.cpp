@@ -48,6 +48,53 @@ CString PixelFormatToString( PixelFormat pixfmt )
 	return s[pixfmt];
 };
 
+// Return true if device was re-created and we need to reload textures.
+bool RageDisplay::SetVideoMode( VideoModeParams p )
+{
+	/* Round to the nearest valid fullscreen resolution */
+	if( !p.windowed )
+	{
+		if(      p.width <= 320 )	p.width = 320;
+		else if( p.width <= 400 )	p.width = 400;
+		else if( p.width <= 512 )	p.width = 512;
+		else if( p.width <= 640 )	p.width = 640;
+		else if( p.width <= 800 )	p.width = 800;
+		else if( p.width <= 1024 )	p.width = 1024;
+		else if( p.width <= 1280 )	p.width = 1280;
+
+		switch( p.width )
+		{
+		case 320:	p.height = 240;	break;
+		case 400:	p.height = 300;	break;
+		case 512:	p.height = 384;	break;
+		case 640:	p.height = 480;	break;
+		case 800:	p.height = 600;	break;
+		case 1024:	p.height = 768;	break;
+		case 1280:	p.height = 960;	break;
+		default:	ASSERT(0);
+		}
+	}
+
+	bool bNeedReloadTextures;
+	
+	if( this->TryVideoMode(p,bNeedReloadTextures) )
+		return bNeedReloadTextures;
+	
+	// fall back
+	p.windowed = false;
+	if( this->TryVideoMode(p,bNeedReloadTextures) )
+		return bNeedReloadTextures;
+	p.bpp = 16;
+	if( this->TryVideoMode(p,bNeedReloadTextures) )
+		return bNeedReloadTextures;
+	p.width = 640;
+	p.height = 480;
+	if( this->TryVideoMode(p,bNeedReloadTextures) )
+		return bNeedReloadTextures;
+
+	RageException::Throw( "SetVideoMode failed.  Tried to fall back to other modes, but nothing worked." );
+}
+
 void RageDisplay::ProcessStatsOnFlip()
 {
 	g_iFramesRenderedSinceLastCheck++;

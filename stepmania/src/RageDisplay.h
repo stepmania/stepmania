@@ -59,24 +59,63 @@ class RageDisplay
 	friend class RageTexture;
 
 public:
+
+	struct VideoModeParams
+	{
+		// Initialize with a constructor so to guarantee all paramters
+		// are filled (in case new params are added).
+		VideoModeParams( 
+			bool _windowed,
+			int _width,
+			int _height,
+			int _bpp,
+			int _rate,
+			bool _vsync,
+			bool _bAntiAliasing,
+			CString _sWindowTitle,
+			CString _sIconFile )
+		{
+			windowed = _windowed;
+			width = _width;
+			height = _height;
+			bpp = _bpp;
+			rate = _rate;
+			vsync = _vsync;
+			bAntiAliasing = _bAntiAliasing;
+			sWindowTitle = _sWindowTitle;
+			sIconFile = _sIconFile;
+		}
+		VideoModeParams() {}
+
+		bool windowed;
+		int width;
+		int height;
+		int bpp;
+		int rate;
+		bool vsync;
+		bool bAntiAliasing;
+		CString sWindowTitle;
+		CString sIconFile;
+	};
+
 	virtual const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const = 0;
-//	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
-	virtual ~RageDisplay() { };
+
 	virtual void Update(float fDeltaTime) { }
 
 	virtual bool IsSoftwareRenderer() = 0;
 
-	virtual bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile ) = 0;
+	// Don't override this.  Override TryVideoMode() instead.
+	// This will set the video mode to be as close as possible to params.
+	// Return true if device was re-created and we need to reload textures.
+	bool SetVideoMode( VideoModeParams params );
 
 	/* Call this when the resolution has been changed externally: */
 	virtual void ResolutionChanged() { }
 
 	virtual void BeginFrame() = 0;	
 	virtual void EndFrame() = 0;
-	virtual bool IsWindowed() const = 0;
-	virtual int GetWidth() const = 0;
-	virtual int GetHeight() const = 0;
-	virtual int GetBPP() const = 0;
+	virtual VideoModeParams GetVideoModeParams() const = 0;
+	bool IsWindowed() const { return this->GetVideoModeParams().windowed; }
 	
 	virtual void SetBlendMode( BlendMode mode ) = 0;
 
@@ -140,6 +179,11 @@ public:
 	virtual void SaveScreenshot( CString sPath ) = 0;
 
 protected:
+	// Return true if mode change was successful.
+	// bNewDeviceOut is set true if a new device was created and textures
+	// need to be reloaded.
+	virtual bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
+
 	virtual void SetViewport(int shift_left, int shift_down) = 0;
 
 	void DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth );

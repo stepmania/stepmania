@@ -7,21 +7,17 @@ class RageException_D3DNoAcceleration: public exception { };
 class RageDisplay_D3D: public RageDisplay
 {
 public:
-	RageDisplay_D3D( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
+	RageDisplay_D3D( VideoModeParams params );
 	~RageDisplay_D3D();
 	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
-	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	void BeginFrame();	
 	void EndFrame();
-	bool IsWindowed() const;
-	int GetWidth() const;
-	int GetHeight() const;
-	int GetBPP() const;
+	VideoModeParams GetVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt );
 	unsigned CreateTexture( PixelFormat pixfmt, SDL_Surface*& img );
@@ -68,6 +64,7 @@ public:
 
 	void SaveScreenshot( CString sPath );
 protected:
+	bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 

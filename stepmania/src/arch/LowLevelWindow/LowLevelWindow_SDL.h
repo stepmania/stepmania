@@ -5,21 +5,17 @@
 
 class LowLevelWindow_SDL: public LowLevelWindow
 {
-	bool Windowed;
-	int CurrentHeight, CurrentWidth, CurrentBPP;
+	RageDisplay::VideoModeParams CurrentParams;
 
 public:
 	LowLevelWindow_SDL();
 	~LowLevelWindow_SDL();
 	void *GetProcAddress(CString s);
-	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
+	bool TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut );
 	void SwapBuffers();
 	void Update(float fDeltaTime);
 
-	bool IsWindowed() const { return Windowed; }
-	int GetWidth() const { return CurrentWidth; }
-	int GetHeight() const { return CurrentHeight; }
-	int GetBPP() const { return CurrentBPP; }
+	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
 };
 #undef ARCH_LOW_LEVEL_WINDOW
 #define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_SDL

@@ -25,6 +25,8 @@
 #include "SDL_utils.h"
 #include "SDL_dither.h"
 
+#include "CompositedText.h"
+
 #include "RageTimer.h"
 
 static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
@@ -82,12 +84,21 @@ void RageBitmapTexture::Create()
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
-	SDL_Surface *img = IMG_Load(GetFilePath());
+	SDL_Surface *img;
+	if( GetID().filename.Right(3).CompareNoCase("ini")==0 )
+	{
+		img = CreateCompositedText( GetID().filename, GetID().text );
+	}
+	else
+	{
+		img = IMG_Load( GetID().filename );
+	}
+
 
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
-		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", GetFilePath().c_str(), SDL_GetError() );
+		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", GetID().filename.c_str(), SDL_GetError() );
 
 	if(actualID.bHotPinkColorKey)
 	{
@@ -111,7 +122,7 @@ void RageBitmapTexture::Create()
 	}
 
 	// look in the file name for a format hints
-	CString HintString = GetFilePath();
+	CString HintString = GetID().filename;
 	HintString.MakeLower();
 
 	if( HintString.Find("4alphaonly") != -1 )		actualID.iTransparencyOnly = 4;

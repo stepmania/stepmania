@@ -88,14 +88,16 @@ void ApplyGraphicOptions()
 	bool bNeedReload = false;
 
 	bNeedReload |= DISPLAY->SetVideoMode( 
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
+		RageDisplay::VideoModeParams(
+			PREFSMAN->m_bWindowed,
+			PREFSMAN->m_iDisplayWidth,
+			PREFSMAN->m_iDisplayHeight,
+			PREFSMAN->m_iDisplayColorDepth,
+			PREFSMAN->m_iRefreshRate,
+			PREFSMAN->m_bVsync,
+			PREFSMAN->m_bAntiAliasing,
+			THEME->GetMetric("Common","WindowTitle"),
+			THEME->GetPathToG("Common window icon") ) );
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_bDelayedTextureDelete, 
@@ -104,14 +106,23 @@ void ApplyGraphicOptions()
 	if( bNeedReload )
 		TEXTUREMAN->ReloadAll();
 
-	SCREENMAN->SystemMessage( ssprintf("%s %dx%d %d color %d texture %dHz %s",
+	// find out what we actually got
+	PREFSMAN->m_bWindowed = DISPLAY->GetVideoModeParams().windowed;
+	PREFSMAN->m_iDisplayWidth = DISPLAY->GetVideoModeParams().width;
+	PREFSMAN->m_iDisplayHeight = DISPLAY->GetVideoModeParams().height;
+	PREFSMAN->m_iDisplayColorDepth = DISPLAY->GetVideoModeParams().bpp;
+	PREFSMAN->m_iRefreshRate = DISPLAY->GetVideoModeParams().rate;
+	PREFSMAN->m_bVsync = DISPLAY->GetVideoModeParams().vsync;
+
+	SCREENMAN->SystemMessage( ssprintf("%s %dx%d %d color %d texture %dHz %s %s",
 		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
 		PREFSMAN->m_iDisplayWidth, 
 		PREFSMAN->m_iDisplayHeight, 
 		PREFSMAN->m_iDisplayColorDepth, 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync ? "Vsync" : "NoSync" ) );
+		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
+		PREFSMAN->m_bAntiAliasing? "AA" : "NoAA" ) );
 }
 
 void ExitGame()
@@ -215,43 +226,6 @@ static void BoostAppPri()
 #include "RageDisplay_OGL.h"
 #endif
 
-/* XXX: Passing all of the SetVideoMode arguments to the ctor is cumbersome. */
-#if !defined(_XBOX)
-static RageDisplay *CreateDisplay_OGL()
-{
-	return new RageDisplay_OGL(
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
-}
-#endif
-
-#if defined(WIN32)
-static RageDisplay *CreateDisplay_D3D()
-{
-	return new RageDisplay_D3D(
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
-}
-#endif
-
-#if defined(_XBOX)
-RageDisplay *CreateDisplay() { return CreateDisplay_D3D(); }
-#elif !defined(WIN32)
-RageDisplay *CreateDisplay() { return CreateDisplay_OGL(); }
-#else
-
 #include "archutils/Win32/VideoDriverInfo.h"
 #include "Regex.h"
 
@@ -314,6 +288,7 @@ RageDisplay *CreateDisplay()
 			ini.GetValueI( sKey, "Height", PREFSMAN->m_iDisplayHeight );
 			ini.GetValueI( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
 			ini.GetValueI( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
+			ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
 
 			// Update last seen video card
 			PREFSMAN->m_sLastSeenVideoDriver = GetPrimaryVideoDriverName();
@@ -321,6 +296,18 @@ RageDisplay *CreateDisplay()
 			break; // stop looking
 		}
 	}
+
+
+	RageDisplay::VideoModeParams params(
+			PREFSMAN->m_bWindowed,
+			PREFSMAN->m_iDisplayWidth,
+			PREFSMAN->m_iDisplayHeight,
+			PREFSMAN->m_iDisplayColorDepth,
+			PREFSMAN->m_iRefreshRate,
+			PREFSMAN->m_bVsync,
+			PREFSMAN->m_bAntiAliasing,
+			THEME->GetMetric("Common","WindowTitle"),
+			THEME->GetPathToG("Common window icon") );
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
@@ -334,42 +321,48 @@ RageDisplay *CreateDisplay()
 
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
+#if !defined(_XBOX)
 			/* Try to create an OpenGL renderer.  This should always succeed.  (Actually,
 			 * SDL may throw, but that only happens with broken driver installations, and
 			 * we probably don't want to fall back on D3D in that case anyway.) */
 			error += "Initializing OpenGL...\n";
 
-			RageDisplay *ret = CreateDisplay_OGL();
+			RageDisplay *ret = new RageDisplay_OGL( params );
 			
 			if( PREFSMAN->m_bAllowUnacceleratedRenderer || !ret->IsSoftwareRenderer() )
 				return ret;
 			else
 			{
 				error += "Your system is reporting that OpenGL hardware acceleration is not available.  "
-					"Please obtain an updated driver from your video card manufacturer.";
+					"Please obtain an updated driver from your video card manufacturer.\n\n";
 				delete ret;
 			}
+#endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
+#if defined(WIN32)
 			error += "Initializing Direct3D...\n";
 			try {
-				return CreateDisplay_D3D();
+				return new RageDisplay_D3D( params );
 			} catch(RageException_D3DNotInstalled e) {
-				error += "DirectX 8.1 or greater is not installed.  You can download it from:\n"+D3DURL;
+				error += "DirectX 8.1 or greater is not installed.  You can download it from:\n"+D3DURL+"\n\n";
 			} catch(RageException_D3DNoAcceleration e) {
 				error += "Your system is reporting that Direct3D hardware acceleration is not available.  "
-					"Please obtain an updated driver from your video card manufacturer.";
+					"Please obtain an updated driver from your video card manufacturer.\n\n";
 			};
+#endif
 		}
 		else
 			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
 	}
 
+	if( asRenderers.empty() )
+		error += "No video renderers attempted.\n\n";
+
 	RageException::Throw( error );
 }
 
-#endif
 
 static void RestoreAppPri()
 {
