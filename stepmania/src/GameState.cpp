@@ -341,7 +341,7 @@ const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
 
 void GameState::ResetMusicStatistics()
 {	
-	m_fMusicSeconds = MUSIC_SECONDS_INVALID;
+	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
 	m_fSongBeat = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
