@@ -122,6 +122,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		g_CurStageStats.UpdateComboList( PLAYER_1, 25, false );
 		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
 		g_CurStageStats.UpdateComboList( PLAYER_1, 100, false );
+		g_vPlayedStageStats.clear();
 	}
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
