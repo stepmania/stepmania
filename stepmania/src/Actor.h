@@ -189,7 +189,7 @@ public:
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
 	TweenState& DestTweenState()	// where Actor will end when its tween finish
 	{
-		if( m_TweenStates.empty() )	// not tweening
+		if( m_Tweens.empty() )	// not tweening
 			return m_current;
 		else
 			return LatestTween();
@@ -339,10 +339,14 @@ protected:
 	RageVector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
-	deque<TweenState>	m_TweenStates;	// use deque for contant time delete of the head
-	deque<TweenInfo>	m_TweenInfo;
+	struct TweenStateAndInfo
+	{
+		TweenState state;
+		TweenInfo info;
+	};
+	deque<TweenStateAndInfo>	m_Tweens;	// use deque for contant time delete of the head
 
-	TweenState& LatestTween() { ASSERT(m_TweenStates.size()>0);	return m_TweenStates.back(); };
+	TweenState& LatestTween() { ASSERT(m_Tweens.size()>0);	return m_Tweens.back().state; };
 
 	//
 	// Temporary variables that are filled just before drawing
