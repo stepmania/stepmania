@@ -911,7 +911,8 @@ void Player::Step( int col, const RageTimer &tm )
 
 	/* Search for keyed sounds separately.  If we can't find a nearby note, search
 	 * backwards indefinitely, and ignore grading. */
-	iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
+	if( iIndexOverlappingNote == -1 )
+		iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
 						   iStepSearchRows,
 						   MAX_NOTE_ROW,
 						   true );
