@@ -26,6 +26,8 @@ public:
 	~RageTextureManager();
 
 	RageTexture* LoadTexture( RageTextureID ID );
+	bool IsTextureRegistered( RageTextureID ID ) const;
+	void RegisterTexture( RageTextureID ID, RageTexture *p );
 	void CacheTexture( RageTextureID ID );
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
@@ -42,8 +44,9 @@ public:
 	void DoDelayedDelete()	{ GarbageCollect(delayed_delete); }
 	
 	void InvalidateTextures();
-
-	void RageTextureManager::DiagnosticOutput() const;
+	
+	void AdjustTextureID(RageTextureID &ID) const;
+	void DiagnosticOutput() const;
 
 protected:
 	void DeleteTexture( RageTexture *t );

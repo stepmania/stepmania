@@ -24,6 +24,16 @@
 
 RageTextureManager*		TEXTUREMAN		= NULL;
 
+static CString GetExtension(const CString &fn)
+{
+	CString sDir, sFName, sExt;
+	splitpath( fn, sDir, sFName, sExt );
+	sExt.MakeLower();
+
+	return sExt;
+}
+
+
 //-----------------------------------------------------------------------------
 // constructor/destructor
 //-----------------------------------------------------------------------------
@@ -53,16 +63,42 @@ void RageTextureManager::Update( float fDeltaTime )
 	}
 }
 
-//-----------------------------------------------------------------------------
-// Load/Unload textures from disk
-//-----------------------------------------------------------------------------
+void RageTextureManager::AdjustTextureID(RageTextureID &ID) const
+{
+	if( ID.iColorDepth == -1 )
+		ID.iColorDepth = m_iTextureColorDepth;
+	ID.iMaxSize = min( ID.iMaxSize, m_iMaxTextureResolution );
+}
+
+/* If you've set up a texture yourself, register it here so it can be referenced
+ * and deleted by an ID.  This takes ownership.  They're kept around until the
+ * ne*/
+bool RageTextureManager::IsTextureRegistered( RageTextureID ID ) const
+{
+	AdjustTextureID(ID);
+	return m_mapPathToTexture.find(ID) != m_mapPathToTexture.end();
+}
+
+void RageTextureManager::RegisterTexture( RageTextureID ID, RageTexture *pTexture )
+{
+	AdjustTextureID(ID);
+
+	/* Make sure we don't already have a texture with this ID.  If we do, the
+	 * caller should have used it. */
+	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
+	if(p != m_mapPathToTexture.end())
+		/* Oops, found the texture. */
+		RageException::Throw("Custom texture \"%s\" already registered!", ID.filename.c_str());
+
+	m_mapPathToTexture[ID] = pTexture;
+}
+
+// Load and unload textures from disk.
 RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
 	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
 
-	if( ID.iColorDepth == -1 )
-		ID.iColorDepth = m_iTextureColorDepth;
-	ID.iMaxSize = min( ID.iMaxSize, m_iMaxTextureResolution );
+	AdjustTextureID(ID);
 
 	/* We could have two copies of the same bitmap if there are equivalent but
 	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
@@ -77,9 +113,7 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	}
 
 	// The texture is not already loaded.  Load it.
-	CString sDir, sFName, sExt;
-	splitpath( ID.filename, sDir, sFName, sExt );
-	sExt.MakeLower();
+	const CString sExt = GetExtension(ID.filename);
 
 	RageTexture* pTexture;
 	if( sExt == ".avi" || sExt == ".mpg" || sExt == ".mpeg" )
