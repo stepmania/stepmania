@@ -123,15 +123,10 @@ bool BeginnerHelper::CanUse()
 	if( GAMESTATE->m_CurGame != GAME_DANCE )
 		return false;
 
-	vector<Character*> apCharacters;
-	GAMESTATE->GetCharacters( apCharacters );
-	if( apCharacters.size() == 0 )
-		return false;
-
-	switch (GAMESTATE->m_CurStyle)
+	switch( GAMESTATE->m_CurStyle )
 	{
-		case STYLE_DANCE_SOLO:
-		case STYLE_DANCE_DOUBLE: return false;
+	case STYLE_DANCE_SOLO:
+	case STYLE_DANCE_DOUBLE: return false;
 	}
 	return true;
 }
@@ -182,13 +177,7 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		if( GAMESTATE->m_pCurNotes[pl]->GetDifficulty() != DIFFICULTY_BEGINNER )
 			continue;
 
-		// if there is no character set, try loading a random one.
-		// XXX: If the character is turned on by us, it should be reverted 
-		Character *Character = GAMESTATE->m_pCurCharacters[pl];
-		if( Character == NULL )
-			Character = GAMESTATE->GetRandomCharacter();
-
-		/* If there aren't any characters, CanUse() should have returned false. */
+		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
 		ASSERT( Character != NULL );
 
 		// Load textures
@@ -212,7 +201,8 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
 	}
 
-	return (m_bInitialized = true);
+	m_bInitialized = true;
+	return true;
 }
 
 void BeginnerHelper::FlashOnce()
