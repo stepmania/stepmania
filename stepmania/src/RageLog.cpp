@@ -66,7 +66,7 @@ map<CString, CString> LogMaps;
 #define LOG_PATH BASE_PATH "log.txt"
 #define INFO_PATH BASE_PATH "info.txt"
 
-#if defined(_WINDOWS)
+#if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
 extern const char *version_time;
 #endif
@@ -103,7 +103,7 @@ RageLog::RageLog()
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
 	this->Trace( "" );
-#if defined(_WINDOWS)
+#if defined(HAVE_VERSION_INFO)
 	this->Info("Compiled %s (build %i)", version_time, version_num);
 #endif
 }

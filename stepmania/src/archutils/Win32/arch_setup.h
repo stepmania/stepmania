@@ -40,5 +40,8 @@
 #define NEED_TRUNCF
 #define NEED_ROUNDF
 
+/* For RageLog */
+#define HAVE_VERSION_INFO
+
 #endif
 

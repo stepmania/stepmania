@@ -22,6 +22,10 @@
 #include "archutils/Darwin/Crash.h"
 #endif
 
+#if defined(HAVE_VERSION_INFO)
+extern const unsigned version_num;
+#endif
+
 struct BacktraceNames
 {
     CString Symbol, File;
@@ -339,8 +343,11 @@ static void child_process()
         exit(1);
     }
 
-    fprintf(CrashDump, "StepMania crash report\n");
-    fprintf(CrashDump, "--------------------------------------\n");
+    fprintf(CrashDump, "StepMania crash report");
+#if defined(HAVE_VERSION_INFO)
+    fprintf(CrashDump, " -- build %u", version_num);
+#endif
+    fprintf(CrashDump, "\n--------------------------------------\n");
     fprintf(CrashDump, "\n");
 
     CString Signal;

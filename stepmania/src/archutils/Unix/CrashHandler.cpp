@@ -383,9 +383,11 @@ static void do_backtrace(void **buf, size_t size)
 
 void CrashSignalHandler( int signal )
 {
+#if !defined(BACKTRACE_METHOD_POWERPC_DARWIN)
 	/* Don't dump a debug file if the user just hit ^C. */
 	if( signal == SIGINT || signal == SIGTERM )
 		return;
+#endif
 
 	static bool received = false;
 
