@@ -7,13 +7,11 @@
 #include "LuaManager.h"
 #include "LuaBinding.h"
 
-#define MAX_SIMULTANEOUS_LUA_FUNCTIONS 10000
-
 static CString GetNextFunctionName()
 {
 	static int id = 0;
-	id = (id+1) % MAX_SIMULTANEOUS_LUA_FUNCTIONS;
-	return ssprintf("F%d",id);
+	++id;
+	return ssprintf( "F%08x",id );
 }
 
 ActorCommands::ActorCommands( const Commands& cmds )
