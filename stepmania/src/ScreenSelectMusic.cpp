@@ -532,6 +532,36 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 	AfterNotesChange( pn );
 }
 
+void ScreenSelectMusic::AdjustOptions()
+{
+	/* Find the easiest difficulty notes selected by either player. */
+	Difficulty dc = DIFFICULTY_INVALID;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
+	}
+
+	/* In event mode, switch to fail-end-of-stage if either chose beginner or easy. */
+	if(PREFSMAN->m_bEventMode && dc <= DIFFICULTY_EASY)
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_END_OF_SONG;
+
+	/* Otherwise, if either chose beginner's steps, and this is the first stage,
+	 * turn off failure completely (always give a second shot). */
+	else if(dc == DIFFICULTY_BEGINNER)
+	{
+		/* Beginners get a freebie and then end-of-song. */
+		if(GAMESTATE->m_iCurrentStageIndex == 0)
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_OFF;
+		else
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_END_OF_SONG;
+	}
+	/* Easy is always end-of-song. */
+	else if(dc == DIFFICULTY_EASY)
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FailType::FAIL_END_OF_SONG;
+}
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -665,6 +695,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
 
 		m_Menu.StopTimer();
+		AdjustOptions();
 
 		this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
 		break;

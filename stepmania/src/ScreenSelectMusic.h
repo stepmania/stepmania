@@ -53,6 +53,7 @@ protected:
 	void SortOrderChanged();
 
 	void UpdateOptionsDisplays();
+	void AdjustOptions();
 
 	vector<Notes*> m_arrayNotes[NUM_PLAYERS];
 	int					m_iSelection[NUM_PLAYERS];
