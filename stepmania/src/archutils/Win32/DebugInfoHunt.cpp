@@ -3,59 +3,55 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#include <d3d8.h>
-#pragma comment(lib, "d3d8.lib")
+
+void PrintDebugInfoWin9x()
+{
+	HKEY    hkey;
+	if (RegOpenKey(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Services\\Class\\Display\\0000", &hkey) !=  ERROR_SUCCESS)
+		return;
+
+	char    szBuffer[MAX_PATH];
+	DWORD   nSize;
+
+#define GETSZ2(a) 	nSize = sizeof(szBuffer)-1;	if( RegQueryValueEx(hkey, a, NULL, NULL, (LPBYTE)szBuffer, &nSize) == ERROR_SUCCESS ) LOG->Info("%-15s:\t%s", a, szBuffer);
+
+	LOG->Info("Video Driver Information (win9x):");
+    GETSZ2("DriverDate");
+    GETSZ2("DriverDesc");
+    GETSZ2("MatchingDeviceId");
+    GETSZ2("ProviderName");
+    GETSZ2("Ver");
+
+	RegCloseKey(hkey);
+}
 
 
-/*
- * The only way I've found to get the display driver version is through
- * D3D.  (There's an interface in DirectDraw, but it always returned 0.)
- * Make sure this doesn't break if D3D isn't available!
- */
+void PrintDebugInfoWinNT()
+{
+	HKEY    hkey;
+	if (RegOpenKey(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}\\0000", &hkey) !=  ERROR_SUCCESS)
+		return;
+
+	char    szBuffer[MAX_PATH];
+	DWORD   nSize;
+
+#define GETSZ2(a) 	nSize = sizeof(szBuffer)-1;	if( RegQueryValueEx(hkey, a, NULL, NULL, (LPBYTE)szBuffer, &nSize) == ERROR_SUCCESS ) LOG->Info("%-15s:\t%s", a, szBuffer);
+
+	LOG->Info("Video Driver Information (winnt):");
+    GETSZ2("DriverDate");
+    GETSZ2("DriverDesc");
+    GETSZ2("DriverVersion");
+    GETSZ2("InfSection");
+    GETSZ2("ProviderName");
+    GETSZ2("MatchingDeviceId");
+
+	RegCloseKey(hkey);
+}
+
 static void GetDisplayDriverDebugInfo()
 {
-	if (FAILED(CoInitialize(NULL)))
-		return;
-
-	IDirect3D8 *m_pd3d = NULL;
-	try
-	{
-		// Construct a Direct3D object
-		m_pd3d = Direct3DCreate8( D3D_SDK_VERSION );
-	}
-	catch (...) 
-	{
-	}
-
-    if( m_pd3d == NULL )
-	{
-		LOG->Info("Couldn't get video driver info (no d3d)");
-		return;
-	}
-
-	HRESULT  hr;
-
-	D3DADAPTER_IDENTIFIER8 id;
-	hr = m_pd3d->GetAdapterIdentifier(D3DADAPTER_DEFAULT, D3DENUM_NO_WHQL_LEVEL, &id);
-	if(FAILED(hr))
-	{
-		LOG->Info(hr_ssprintf(hr, "Couldn't get video driver info"));
-		return;
-	}
-
-	LOG->Info("Video description: %s", id.Description);
-	LOG->Info("Chipset rev: %i  Vendor ID: %i  Device ID: %i", id.Revision, id.VendorId, id.DeviceId);
-	LOG->Info("Video driver: %s %i.%i.%i", id.Driver,
-		LOWORD(id.DriverVersion.HighPart),
-		HIWORD(id.DriverVersion.LowPart), 
-		LOWORD(id.DriverVersion.LowPart));
-	LOG->Info("Video ID: {%8.8x-%4.4x-%4.4x-%6.6x}",
-		id.DeviceIdentifier.Data1,
-		id.DeviceIdentifier.Data2,
-		id.DeviceIdentifier.Data3,
-		id.DeviceIdentifier.Data4);
-
-	CoUninitialize();
+	PrintDebugInfoWin9x();	// will print nothing if not 9x
+	PrintDebugInfoWinNT();  // will print nothing if not NT
 }
 
 static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
