@@ -640,22 +640,26 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			if (m_iSelectedStyle == 0) // easy
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+				PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_EASY;
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-				m_soundInvalid.PlayRandom();
-				return;
+			//	m_soundInvalid.PlayRandom();
+			//	return;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+				PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
-				// GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
-				m_soundInvalid.PlayRandom();
-				return;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
+				//m_soundInvalid.PlayRandom();
+				//return;
 			}
 			else // club
 			{
-				m_soundInvalid.PlayRandom();
-				return;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
+				//m_soundInvalid.PlayRandom();
+				//return;
 			}
 		}
 		m_soundSelect.PlayRandom();
