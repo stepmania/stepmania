@@ -837,13 +837,11 @@ class LunaPrefsManager : public Luna<T>
 public:
 	LunaPrefsManager() { LUA->Register( Register ); }
 
-	static int GetEventMode( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bEventMode ); return 1; }
-	static int SetEventMode( T* p, lua_State *L )		{ p->m_bEventMode = BArg(1); return 0; }
+//	static int GetEventMode( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bEventMode ); return 1; }
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetEventMode )
-		ADD_METHOD( SetEventMode )
+//		ADD_METHOD( GetEventMode )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
@@ -861,23 +859,6 @@ public:
 LUA_REGISTER_CLASS( PrefsManager )
 // lua end
 
-
-
-CoinMode PrefsManager::GetCoinMode()
-{
-	if( m_bEventMode && m_CoinMode == COIN_PAY )
-		return COIN_FREE; 
-	else 
-		return m_CoinMode; 
-}
-
-Premium	PrefsManager::GetPremium() 
-{ 
-	if(m_bEventMode) 
-		return PREMIUM_NONE; 
-	else 
-		return m_Premium; 
-}
 
 #include "RageLog.h"
 #include "LuaFunctions.h"

@@ -197,9 +197,9 @@ void ScreenSelectMode::UpdateSelectableChoices()
 			(mc.m_pStyle == NULL) ?
 			1 :
 			1;
-			if( PREFSMAN->GetPremium()!=PREMIUM_JOINT ||
+			if( GAMESTATE->GetPremium()!=PREMIUM_JOINT ||
 			(
-				(PREFSMAN->GetPremium()==PREMIUM_JOINT) && 
+				(GAMESTATE->GetPremium()==PREMIUM_JOINT) && 
 				( 
 					(INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == SidesJoinedToPlay)) || 
 					(

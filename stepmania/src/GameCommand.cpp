@@ -392,7 +392,7 @@ int GetNumCreditsPaid()
 	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
 
 	// players other than the first joined for free
-	if( PREFSMAN->GetPremium() == PREMIUM_JOINT )
+	if( GAMESTATE->GetPremium() == PREMIUM_JOINT )
 		iNumCreditsPaid = min( iNumCreditsPaid, 1 );
 
 	return iNumCreditsPaid;
@@ -401,7 +401,7 @@ int GetNumCreditsPaid()
 
 int GetCreditsRequiredToPlayStyle( const Style *style )
 {
-	if( PREFSMAN->GetPremium() == PREMIUM_JOINT )
+	if( GAMESTATE->GetPremium() == PREMIUM_JOINT )
 		return 1;
 
 	switch( style->m_StyleType )
@@ -411,7 +411,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 	case TWO_PLAYERS_TWO_SIDES:
 		return 2;
 	case ONE_PLAYER_TWO_SIDES:
-		return (PREFSMAN->GetPremium() == PREMIUM_DOUBLES) ? 1 : 2;
+		return (GAMESTATE->GetPremium() == PREMIUM_DOUBLES) ? 1 : 2;
 	default:
 		ASSERT(0);
 		return 1;
@@ -457,7 +457,7 @@ bool GameCommand::IsPlayable( CString *why ) const
 		const int iNumCreditsPaid = GetNumCreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
 		
-		switch( PREFSMAN->GetCoinMode() )
+		switch( GAMESTATE->GetCoinMode() )
 		{
 		case COIN_HOME:
 		case COIN_FREE:

@@ -386,7 +386,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 
 			// There shouldn't be NameEntry in event mode.  -Chris
 //			/* Hack: go back to the select course screen in event mode. */
-//			if( PREFSMAN->m_bEventMode && GAMESTATE->IsCourseMode() )
+//			if( GAMESTATE->GetEventMode() && GAMESTATE->IsCourseMode() )
 //			{
 //				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 //				break;

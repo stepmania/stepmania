@@ -37,7 +37,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	// Don't show screen title menu (says "Press Start") 
 	// if there are 0 credits and inserted and CoinMode is pay.
-	if( PREFSMAN->GetCoinMode() == COIN_PAY  &&
+	if( GAMESTATE->GetCoinMode() == COIN_PAY  &&
 		GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 	{
 		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
@@ -78,7 +78,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 	m_textMaxStages.LoadFromFont( THEME->GetPathF(m_sName,"MaxStages") );
 	m_textMaxStages.SetName( "MaxStages" );
 	CString sText = 
-		PREFSMAN->m_bEventMode ?
+		GAMESTATE->GetEventMode() ?
 		CString("event mode") :
 		ssprintf( "%d %s%s max", PREFSMAN->m_iNumArcadeStages, MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iNumArcadeStages>1)?"s":"" );
 	m_textMaxStages.SetText( sText );

@@ -75,7 +75,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
 		case MENU_BUTTON_COIN:
-			switch( PREFSMAN->GetCoinMode() )
+			switch( GAMESTATE->GetCoinMode() )
 			{
 			case COIN_PAY:
 				LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit );

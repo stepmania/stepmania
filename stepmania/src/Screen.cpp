@@ -193,11 +193,11 @@ bool Screen::JoinInput( const MenuInput &MenuI )
 
 		/* subtract coins */
 		int iCoinsToCharge = 0;
-		if( PREFSMAN->GetCoinMode() == COIN_PAY )
+		if( GAMESTATE->GetCoinMode() == COIN_PAY )
 			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 		// If joint premium don't take away a credit for the 2nd join.
-		if( PREFSMAN->GetPremium() == PREMIUM_JOINT  &&  
+		if( GAMESTATE->GetPremium() == PREMIUM_JOINT  &&  
 			GAMESTATE->GetNumSidesJoined() == 1 )
 			iCoinsToCharge = 0;
 

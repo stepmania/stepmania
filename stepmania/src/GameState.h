@@ -271,6 +271,17 @@ public:
 	//
 	int m_iStopCourseAtSeconds;			// -1 == don't stop early
 
+	//
+	// Preference wrappers
+	//
+	// These options have weird interactions depending on m_bEventMode, 
+	// so wrap them
+	bool		m_bTemporaryEventMode;
+	bool		GetEventMode();
+	CoinMode	GetCoinMode();
+	Premium		GetPremium();
+
+	
 	// Lua
 	void PushSelf( lua_State *L );
 };

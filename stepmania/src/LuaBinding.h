@@ -66,7 +66,7 @@ public:
 		lua_settable(L, metatable);
 		
 		// fill method table with methods from class T
-		for (unsigned i=0; i<s_pvMethods->size(); i++ )
+		for (unsigned i=0; s_pvMethods && i<s_pvMethods->size(); i++ )
 		{
 			const MyRegType *l = &(*s_pvMethods)[i];
 			lua_pushstring(L, l->name);

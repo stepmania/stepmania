@@ -384,7 +384,7 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 
 	// In event mode, set the score's name immediately to the Profile's last
 	// used name.  If no profile last used name exists, use "EVNT".
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
@@ -453,7 +453,7 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 
 	// In event mode, set the score's name immediately to the Profile's last
 	// used name.  If no profile last used name exists, use "EVNT".
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )

@@ -183,7 +183,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		}
 		else // bShowCreditsMessage
 		{
-			switch( PREFSMAN->GetCoinMode() )
+			switch( GAMESTATE->GetCoinMode() )
 			{
 			case COIN_HOME:
 				if( GAMESTATE->PlayersCanJoin() )

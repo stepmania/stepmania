@@ -1436,7 +1436,7 @@ static void HandleInputEvents(float fDeltaTime)
 			continue;	// skip
 		
 		// check back in event mode
-		if( PREFSMAN->m_bEventMode &&
+		if( GAMESTATE->GetEventMode() &&
 			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_BACK_IN_EVENT_MODE) )
 		{
 			MenuI.player = PLAYER_1;

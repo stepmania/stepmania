@@ -951,7 +951,7 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && STATSMAN->m_CurStageStats.m_player[p].bFailed )	// already failed
 			ShowOniGameOver(p);
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && !PREFSMAN->m_bEventMode && !GAMESTATE->m_bDemonstrationOrJukebox)
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && !GAMESTATE->GetEventMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
 		{
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetStageIndex(), 

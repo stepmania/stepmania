@@ -204,6 +204,8 @@ void GameState::Reset()
 
 	m_iStopCourseAtSeconds = -1;
 
+	m_bTemporaryEventMode = false;
+
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 
 	ApplyCmdline();
@@ -700,7 +702,7 @@ void GameState::FinishStage()
 
 
 
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 	{
 		const int iSaveProfileEvery = 3;
 		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
@@ -720,14 +722,14 @@ int GameState::GetNumStagesLeft() const
 {
 	if( IsExtraStage() || IsExtraStage2() )
 		return 1;
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 		return 999;
 	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
 }
 
 bool GameState::IsFinalStage() const
 {
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 		return false;
 
 	if( this->IsCourseMode() )
@@ -742,14 +744,14 @@ bool GameState::IsFinalStage() const
 
 bool GameState::IsExtraStage() const
 {
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages+1;
 }
@@ -760,7 +762,7 @@ CString GameState::GetStageText() const
 	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return "nonstop";
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return "endless";
-	else if( PREFSMAN->m_bEventMode )			return "event";
+	else if( GAMESTATE->GetEventMode() )		return "event";
 	else if( IsFinalStage() )					return "final";
 	else if( IsExtraStage() )					return "extra1";
 	else if( IsExtraStage2() )					return "extra2";
@@ -815,7 +817,7 @@ bool GameState::PlayersCanJoin() const
 
 bool GameState::EnoughCreditsToJoin() const
 {
-	switch( PREFSMAN->GetCoinMode() )
+	switch( GAMESTATE->GetCoinMode() )
 	{
 	case COIN_PAY:
 		return GAMESTATE->m_iCoins >= PREFSMAN->m_iCoinsPerCredit;
@@ -962,7 +964,7 @@ bool GameState::IsBattleMode() const
 
 bool GameState::HasEarnedExtraStage() const
 {
-	if( PREFSMAN->m_bEventMode )
+	if( GAMESTATE->GetEventMode() )
 		return false;
 
 	if( !PREFSMAN->m_bAllowExtraStage )
@@ -1302,7 +1304,7 @@ void GameState::AdjustFailType()
 	/* If beginner's steps were chosen, and this is the first stage,
 		* turn off failure completely--always give a second try. */
 	if(dc == DIFFICULTY_BEGINNER &&
-		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
+		GAMESTATE->GetEventMode() && /* stage index is meaningless in event mode */
 		this->m_iCurrentStageIndex == 0)
 		setmax(this->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
 }
@@ -1826,14 +1828,25 @@ Difficulty GameState::GetEasiestNotesDifficulty() const
 	return dc;
 }
 
-bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
+bool GameState::GetEventMode()
 {
-	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
-	SongOptions so = GAMESTATE->m_SongOptions;
-	po.FromString( sModifier );
-	so.FromString( sModifier );
+	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode; 
+}
 
-	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
+CoinMode GameState::GetCoinMode()
+{
+	if( GetEventMode() && PREFSMAN->m_CoinMode == COIN_PAY )
+		return COIN_FREE; 
+	else 
+		return PREFSMAN->m_CoinMode; 
+}
+
+Premium	GameState::GetPremium() 
+{ 
+	if( GetEventMode() ) 
+		return PREMIUM_NONE; 
+	else 
+		return PREFSMAN->m_Premium; 
 }
 
 
@@ -1860,6 +1873,9 @@ public:
 		p->ApplyGameCommand(SArg(1),pn);
 		return 0;
 	}
+	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int SetCurrentCourse( T* p, lua_State *L )		{ Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; return 0; }
+	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
 
 	static void Register(lua_State *L)
 	{
@@ -1868,6 +1884,9 @@ public:
 		ADD_METHOD( GetPlayerDisplayName )
 		ADD_METHOD( GetMasterPlayerNumber )
 		ADD_METHOD( ApplyGameCommand )
+		ADD_METHOD( GetCurrentCourse )
+		ADD_METHOD( SetCurrentCourse )
+		ADD_METHOD( SetTemporaryEventMode )
 		Luna<T>::Register( L );
 
 		// add global singleton
@@ -1911,6 +1930,16 @@ LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
  * can't easily do if we return pointers. */
 LuaFunction_NoArgs( CurSong,				GAMESTATE->m_pCurSong )
 LuaFunction_PlayerNumber( CurSteps,			GAMESTATE->m_pCurSteps[pn] )
+
+bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
+{
+	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
+	SongOptions so = GAMESTATE->m_SongOptions;
+	po.FromString( sModifier );
+	so.FromString( sModifier );
+
+	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
+}
 
 int LuaFunc_UsingModifier( lua_State *L )
 {

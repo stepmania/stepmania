@@ -540,7 +540,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	// it isn't, do so here
 	/* No, wait: if we're playing nonstop, event mode just means that we can play another
 	 * nonstop course later, so it shouldn't affect life difficulty. */
-/*	if (PREFSMAN->m_bEventMode)
+/*	if (GAMESTATE->GetEventMode())
 	{
 		m_fLifeDifficulty = m_fBaseLifeDifficulty;
 		return;

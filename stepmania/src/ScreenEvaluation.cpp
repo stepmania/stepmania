@@ -1375,8 +1375,10 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 	{
-		if( PREFSMAN->m_bEventMode )
+		if( GAMESTATE->GetEventMode() )
+		{
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		}
 		else
 		{
 			/* Go to FAILED_SCREEN if we failed a non-extra stage. */
@@ -1457,7 +1459,7 @@ void ScreenEvaluation::EndScreen()
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
 
-	if( !PREFSMAN->m_bEventMode )
+	if( !GAMESTATE->GetEventMode() )
 	{
 		switch( m_Type )
 		{

@@ -149,8 +149,6 @@ public:
 	// so wrap them.
 	CoinMode		m_CoinMode;
 	Premium			m_Premium;
-	CoinMode	GetCoinMode();
-	Premium		GetPremium();
 
 	bool			m_bDelayedCreditsReconcile;
 	bool			m_bPickExtraStage;
