@@ -20,7 +20,7 @@ AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in
 
 
 const CString EMPTY_ANNOUNCER_NAME = "Empty";
-const CString ANNOUNCERS_DIR  = BASE_PATH "Announcers" SLASH;
+const CString ANNOUNCERS_DIR  = "Announcers/";
 
 AnnouncerManager::AnnouncerManager()
 {
