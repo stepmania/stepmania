@@ -606,6 +606,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
+#ifndef DARWIN
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 	{
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
@@ -616,12 +617,28 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			return true;
 		}
 	}
+#else
+  if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_q))
+  {
+    if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
+       INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))
+    {
+      // pressed CMD-Q
+      ExitGame();
+      return true;
+    }
+  }
+#endif
 
+#ifndef DARWIN
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_SYSREQ))
-	{
+#else
+  if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_KP_MULTIPLY))
+#endif
+  {
 		// Save Screenshot.
 		CString sPath;
-		for( int i=0; i<1000; i++ )
+		for( int i=0; i<10000; i++ )
 		{
 			sPath = ssprintf("screen%04d.bmp",i);
 			if( !DoesFileExist(sPath) )
