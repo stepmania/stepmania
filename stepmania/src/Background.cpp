@@ -159,10 +159,6 @@ void Background::LoadFromSong( Song* pSong )
 	//
 	// Load the static background that will before notes start and after notes end
 	//
-
-	
-	Sprite sprDummy;
-	sprDummy.LoadBG( sSongBackgroundPath );
 	
 	{
 		BGAnimation *pTempBGA = new BGAnimation;
