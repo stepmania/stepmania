@@ -24,7 +24,6 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 GameState::GameState()
 {
 	m_CurGame = GAME_DANCE;
-	m_CurGame = GAME_DANCE;
 	Reset();
 }
 
@@ -44,6 +43,7 @@ void GameState::Reset()
 	m_SongSortOrder = SORT_GROUP;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
+	m_bDemonstration = false;
 	m_iCurrentStageIndex = 0;
 
 
@@ -208,7 +208,9 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
-	if( IsFinalStage() )
+	if( m_bDemonstration )
+		return "Demo";
+	else if( IsFinalStage() )
 		return "Final";
 	else if( IsExtraStage() )
 		return "Extra";

@@ -30,6 +30,7 @@
 #include "ScreenEz2SelectPlayer.h"
 #include "GameState.h"
 #include "GameManager.h"
+#include "ScreenGameplay.h"
 
 
 //
@@ -52,7 +53,7 @@ const float CHOICES_GAP_Y		= 52;
 const float HELP_X				= CENTER_X;
 const float HELP_Y				= SCREEN_HEIGHT-55;
 
-const CString EZ2_ANNOUNCER_NAME = "ez2";
+//const CString EZ2_ANNOUNCER_NAME = "ez2";
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToCaution			=	ScreenMessage(SM_User+2);
@@ -64,6 +65,12 @@ const ScreenMessage SM_GoToAppearanceOptions=	ScreenMessage(SM_User+7);
 const ScreenMessage SM_GoToEdit				=	ScreenMessage(SM_User+10);
 const ScreenMessage SM_DoneOpening			=	ScreenMessage(SM_User+11);
 const ScreenMessage SM_GoToEz2				=	ScreenMessage(SM_User+12);
+const ScreenMessage SM_FadeToDemonstration	=	ScreenMessage(SM_User+13);
+const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+14);
+
+
+const float SECONDS_BEFORE_DEMONSTRATION = 5;
+
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
@@ -75,8 +82,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
-
-	int i;
 
 	m_sprBG.Load( THEME->GetPathTo(GRAPHIC_TITLE_MENU_BACKGROUND) );
 	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
@@ -121,7 +126,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	this->AddSubActor( &m_textSongs );
 
 
-	for( i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
+	for( int i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
 	{
 		m_textChoice[i].Load( THEME->GetPathTo(FONT_HEADER1) );
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
@@ -138,7 +143,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	/*
 	
 	// Chris:
-	// I'm removing thos not that announcer prefs are saved per Game.
+	// I'm removing this now that announcer prefs are saved per Game.
 	
 	// LEAVE THIS HERE! ITS ESSENTIAL
 	// I know you're a fan of removing my code, but if this isn't here
@@ -202,16 +207,14 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
 
-	for( i=0; i<3000; i++ )
-		this->SendScreenMessage( SM_PlayAttract, (float)20+i*20 );
-
-
 	m_TitleMenuChoice = CHOICE_GAME_START;
 	GainFocus( m_TitleMenuChoice );
 	
 	MUSIC->Stop();
 
-	//this->SendScreenMessage( SM_TimeToFadeOut, 30.0 );
+	for( i=12; i<SECONDS_BEFORE_DEMONSTRATION; i+=10 )
+		this->SendScreenMessage( SM_PlayAttract, (float)i );
+	this->SendScreenMessage( SM_FadeToDemonstration, SECONDS_BEFORE_DEMONSTRATION );
 }
 
 
@@ -237,9 +240,6 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_DoneOpening:
 		break;
-	case SM_PlayAttract:
-		m_soundAttract.PlayRandom();
-		break;
 	case SM_GoToCaution:
 		SCREENMAN->SetNewScreen( new ScreenCaution );
 		break;
@@ -263,6 +263,73 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToEz2:
 		SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
+		break;
+	case SM_FadeToDemonstration:
+		{	
+			// Set up the game state for a demonstration
+			switch( GAMESTATE->m_CurGame )
+			{
+			case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
+			case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
+			case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
+			default:	ASSERT(0);
+			}
+
+			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+
+			// choose a Song and Notes
+			Song* pSongToPlay = NULL;
+			Notes* pNotesToPlay = NULL;
+			for( int i=0; i<100; i++ )	// try 100 times
+			{
+				Song* pSong = SONGMAN->m_pSongs[ rand()%SONGMAN->m_pSongs.GetSize() ];
+				for( int j=0; j<10; j++ )	// try 10 times
+				{
+					Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
+					if( pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+					{
+						// found something we can use!
+						pSongToPlay = pSong;
+						pNotesToPlay = pNotes;
+						goto found_song_and_notes;
+					}
+				}
+			}
+			// Couldn't find Song/Notes to play.  Abort demonstration!
+			GAMESTATE->Reset();
+			return;
+
+found_song_and_notes:
+			ASSERT( pSongToPlay );
+
+			GAMESTATE->m_pCurSong = pSongToPlay;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				GAMESTATE->m_pCurNotes[p] = pNotesToPlay;
+
+			// choose some cool options
+			for( p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( GAMESTATE->IsPlayerEnabled(p) )
+				{
+					GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = (RandomFloat(0,1)>0.7f ? 1.5f : 1.0f) ;
+					GAMESTATE->m_PlayerOptions[p].m_EffectType = PlayerOptions::EffectType(rand()%PlayerOptions::NUM_EFFECT_TYPES);
+					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::AppearanceType(rand()%(PlayerOptions::NUM_APPEARANCE_TYPES-1));	// don't use blink
+					GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = RandomFloat(0,1) > 0.8f;
+					GAMESTATE->m_PlayerOptions[p].m_ColorType = PlayerOptions::ColorType(rand()%PlayerOptions::NUM_COLOR_TYPES);
+					GAMESTATE->m_PlayerOptions[p].m_bDark = RandomFloat(0,1) > 0.8f;
+				}
+			}
+			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType(rand()%SongOptions::NUM_LIFE_TYPES);
+
+			GAMESTATE->m_bDemonstration = true;
+			m_Fade.CloseWipingRight( SM_GoToDemonstration );
+		}
+		break;
+	case SM_GoToDemonstration:
+		{
+			ASSERT( GAMESTATE->m_pCurSong );
+			SCREENMAN->SetNewScreen( new ScreenGameplay );
+		}
 		break;
 	}
 }

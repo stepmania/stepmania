@@ -140,8 +140,9 @@ void Player::Update( float fDeltaTime )
 	//
 	// Check for TapNote misses
 	//
-	UpdateTapNotesMissedOlderThan( GAMESTATE->m_fSongBeat - GetMaxBeatDifference() );
-
+	int iNumMisses = UpdateTapNotesMissedOlderThan( GAMESTATE->m_fSongBeat - GetMaxBeatDifference() );
+	if( iNumMisses > 0 )
+		int kjsdfsd = 0;
 
 	//
 	// update HoldNotes logic
@@ -482,7 +483,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 
 void Player::CrossedRow( int iNoteRow )
 {
-	if( PREFSMAN->m_bAutoPlay )
+	if( PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration )
 	{
 		// check to see if there's at the crossed row
 		for( int t=0; t<m_iNumTracks; t++ )

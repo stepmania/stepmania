@@ -209,7 +209,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 			GetDirListing( RANDOMMOVIES_DIR + "*.avi", asMovieNames );
 			GetDirListing( RANDOMMOVIES_DIR + "*.mpg", asMovieNames );
 			GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", asMovieNames );
-			for( int i=0; i<min(asMovieNames.GetSize(),8); i++ )	// only load up to 8 background because they take a long time to load
+			for( int i=0; i<min(asMovieNames.GetSize(),5); i++ )	// only load up to 5 background because they are slow to load
 			{
 				CString sMovieName = asMovieNames[rand()%asMovieNames.GetSize()];
 				m_BackgroundAnimations.Add( new BackgroundAnimation(RANDOMMOVIES_DIR+sMovieName, NULL) );

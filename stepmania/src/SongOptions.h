@@ -14,7 +14,7 @@
 
 struct SongOptions
 {
-	enum LifeType { LIFE_BAR=0, LIFE_BATTERY };
+	enum LifeType { LIFE_BAR=0, LIFE_BATTERY, NUM_LIFE_TYPES };
 	LifeType m_LifeType;
 	enum DrainType { DRAIN_NORMAL, DRAIN_NO_RECOVER, DRAIN_SUDDEN_DEATH };
 	DrainType m_DrainType;	// only used with LifeBar

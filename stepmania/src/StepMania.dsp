@@ -456,6 +456,14 @@ SOURCE=.\TransitionKeepAlive.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\TransitionOniFade.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionOniFade.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TransitionRectWipe.cpp
 # End Source File
 # Begin Source File

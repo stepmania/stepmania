@@ -131,6 +131,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_GAMEPLAY_DANGER_TEXT:				sAssetPrefix = "Graphics\\gameplay danger text";			break;
 		case GRAPHIC_GAMEPLAY_DIFFICULTY_BANNER_ICONS:	sAssetPrefix = "Graphics\\gameplay difficulty banner icons";break;
 		case GRAPHIC_GAMEPLAY_DIFFICULTY_BANNER_FRAME:	sAssetPrefix = "Graphics\\gameplay difficulty banner frame";break;
+		case GRAPHIC_GAMEPLAY_DEMONSTRATION:			sAssetPrefix = "Graphics\\gameplay demonstration";			break;
 		case GRAPHIC_GAMEPLAY_FAILED:					sAssetPrefix = "Graphics\\gameplay failed";					break;
 		case GRAPHIC_GAMEPLAY_HERE_WE_GO:				sAssetPrefix = "Graphics\\gameplay here we go";				break;
 		case GRAPHIC_GAMEPLAY_JUDGEMENT:				sAssetPrefix = "Graphics\\gameplay judgement 1x9";			break;
@@ -247,6 +248,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case SOUND_GAMEPLAY_ONI_GAIN_LIFE:		sAssetPrefix = "Sounds\\gameplay oni gain life";		break;
 		case SOUND_GAMEPLAY_ONI_LOSE_LIFE:		sAssetPrefix = "Sounds\\gameplay oni lose life";		break;
 		case SOUND_GAMEPLAY_ONI_DIE:			sAssetPrefix = "Sounds\\gameplay oni die";				break;
+		case SOUND_INSERT_COIN:					sAssetPrefix = "Sounds\\insert coin";					break;
 		case SOUND_MENU_BACK:					sAssetPrefix = "Sounds\\menu back";						break;
 		case SOUND_MENU_EXPLANATION_SWOOSH:		sAssetPrefix = "Sounds\\menu explanation swoosh";		break;
 		case SOUND_MENU_INVALID:				sAssetPrefix = "Sounds\\menu invalid";					break;

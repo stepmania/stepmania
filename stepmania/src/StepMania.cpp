@@ -694,6 +694,7 @@ HRESULT CreateObjects( HWND hWnd )
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
 
+	//SCREENMAN->SetNewScreen( new ScreenAttractLogo );
 	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 	//SCREENMAN->SetNewScreen( new ScreenLoading );
 	//SCREENMAN->SetNewScreen( new ScreenSandbox );

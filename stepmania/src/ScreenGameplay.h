@@ -113,6 +113,9 @@ private:
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber p );
 
+	Quad				m_quadDemonstrationBox;
+	Sprite				m_sprDemonstration;
+
 	RandomSample	m_soundFail;
 	RandomSample	m_soundOniDie;
 	RandomSample	m_announcerReady;

@@ -510,12 +510,14 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 {
 	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
 
+	int t;
+
 	switch( tt )
 	{
 	case PlayerOptions::TURN_NONE:
 		return;		// nothing to do
 	case PlayerOptions::TURN_MIRROR:
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( t=0; t<m_iNumTracks; t++ )
 			iTakeFromTrack[t] = m_iNumTracks-t-1;
 		break;
 	case PlayerOptions::TURN_LEFT:
@@ -581,10 +583,10 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		break;
 	case PlayerOptions::TURN_SHUFFLE:
 		CArray<int,int> aiTracksLeftToMap;
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( t=0; t<m_iNumTracks; t++ )
 			aiTracksLeftToMap.Add( t );
 		
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( t=0; t<m_iNumTracks; t++ )
 		{
 			int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
 			int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
@@ -600,7 +602,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	this->ConvertHoldNotesTo2sAnd3s();
 
 	// transform notes
-	for( int t=0; t<m_iNumTracks; t++ )
+	for( t=0; t<m_iNumTracks; t++ )
 		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
 			tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
 

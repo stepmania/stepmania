@@ -567,16 +567,18 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
+			int i;
+
 			CArray<Course*,Course*> apCourses;
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ONI:
-				for( int i=0; i<SONGMAN->m_aOniCourses.GetSize(); i++ )
+				for( i=0; i<SONGMAN->m_aOniCourses.GetSize(); i++ )
 					apCourses.Add( &SONGMAN->m_aOniCourses[i] );
 				SortCoursePointerArrayByDifficulty( apCourses );
 				break;
 			case PLAY_MODE_ENDLESS:
-				for( int i=0; i<SONGMAN->m_aEndlessCourses.GetSize(); i++ )
+				for( i=0; i<SONGMAN->m_aEndlessCourses.GetSize(); i++ )
 					apCourses.Add( &SONGMAN->m_aEndlessCourses[i] );
 				break;
 			}

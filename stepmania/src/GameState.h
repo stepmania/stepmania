@@ -47,7 +47,8 @@ public:
 	DifficultyClass	m_PreferredDifficultyClass[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	PlayMode		m_PlayMode;
-	bool			m_bEditing;
+	bool			m_bEditing;			// NoteField does special stuff when this is true
+	bool			m_bDemonstration;	// ScreenGameplay does special stuff when this is true
 	int				m_iCurrentStageIndex;	// incremented on Eval screen
 
 	int				GetStageIndex();

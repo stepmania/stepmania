@@ -518,25 +518,25 @@ Header section...
 #COURSE:...; - name of the course
 #LIVES:<0..10>;  - An integer between 0 and 10.  This line is optional.
 #REPEAT:<YES|NO>;  - start over after last stage?
-#SONG:<group folder>\<song folder>:<description>; - 
+#SONG:<group folder>\<song folder>:<description>[:modifiers]; - 
   group folder - The name of the folder that contains the song folder.
   song folder - the name of the folder that contains files for the song
   description - BASIC, TRICK, SSR, MANIAC, HEAVY, etc.
+  modifiers - One or more of:
+	0.5x, 0.75x, 1.5x, 2.0x, 3.0x, 4.0x, 5.0x, 8.0x
+	boost, wave, drunk, dizzy, space, mini
+	hidden, sudden, stealth 
+	mirror, left, right, shuffle
+	little
+	reverse
+	note, flat, plain
+	noholds
+	nofreeze
+	dark
+	norecover, suddendeath, power-drop, death
+	0.7xmusic, 0.8xmusic, 0.9xmusic, 1.0xmusic, 1.1xmusic, 
+		1.2xmusic, 1.3xmusic, 1.4xmusic, 1.5xmusic
 
-//The modifiers section could be a list of comma-separated tags, like: 
-//"1.5x,REVERSE,SUDDEN", etc.  We'd have to come up with a standard set for 
-//features common to both SM and DWI... and new ones could be added for features 
-//only supported by SM perhaps (Space, Drunk, etc...).
-//
-//The number of songs in a course is just how many "#SONG:"... lines there are.
-//
-//So... and "ENDLESS" mode would be as simple as: #COURSE:Endless; #REPEATS:YES; 
-//#SONG:*:7..9;
-//
-//New features could be added to the end of the "#SONG" line in the future. 
-//...how does this all sound to you? That way courses could easily be used between 
-//versions and passed around. :)
-//
 
 ************************************************************
 16. Improving Image Quality with Texture Hints
@@ -633,6 +633,7 @@ variables take effect.
 ************************************************************
 
 ------------------------CVS after 3.00 beta 5----------------
+OPTIMIZATION:  Much faster song loading.
 BUG FIX:  New hashing algorithm prevents multiple songs from hashing to the same 
      cache file.
 BUG FIX:  "Select Group" screen now only displays songs and groups available in
@@ -663,6 +664,9 @@ NEW FEATURE:  During gameplay:  F8 = toggle AutoPlay
 NEW FEATURE:  During gameplay:  F9 = decrease offset, F10 = increase offset, 
 NEW FEATURE:  During gameplay:  F11 = decrease BPM of current segment, F12 = 
 	 increase BPM of current segment.
+NEW FEATURE:  After changing Offset or BPM during gameplay, I prompt will appear
+	at the end of the stage or course asking if you want to save changes.
+	Chosing cancel will revert to the pre-modified values.
 CHANGE:  Life meters graphics are now part of the theme system
 CHANGE:	 New Song Option:  Choose Oni life battery or normal life meter
 BUG FIX:  Life Bar no-recover and sudden death options now work.
@@ -684,6 +688,25 @@ NEW FEATURE:  MenuInput option.  Setting this option to "USE ONLY DEDICATED MENU
 	buttons that can be dedicated to controlling the menus (like a DDR arcade
 	cabinet).  Also, using only dedicated menu buttons will allow you to enter
 	codes at the Select Music screen using the dance panels.
+NEW FEATURE:  Random background movies.  Put a bunch of movies in RandomMovies and
+	change the BackgroundMode setting in Game Options to "RANDOM MOVIES".
+CHANGE:  Made folders for DWI-style CDTitles and DWI-style Music.
+BUG FIX:  Fixed more HoldNote drawing ugliness.
+BUG FIX:  Hidden and Sudden now work with Reverse.
+BUG FIX:  Group names are now correct when using the SongFolders option
+BUG FIX:  No longer crashes in Select Group with > 15 groups
+NEW FEATURE:  PlayerOptions and SongOptions displays on the Select Music screen.
+BUG FIX:  Extra stage actually works!  Props to Bruno for all of his help with this.
+	You can manually specify extra stage 1 and 2 by creating a .CRS files in the 
+	group folder called extra1.crs and extra2.crs.  These courses must contain 
+	exactly one valid song.  Don't forget to specify modifiers - see the CRS File 
+	Format section in the readme for more information.  If a CRS file is not found
+	or is invalid, the program will choose approprite Song/Notes/Options.
+BUG FIX:  Browsing past a song that don't have notes for some Difficulties will not 
+	change your preferred difficulty.
+BUG FIX:  TurnMirror, TurnLeft, and TurnShuffle now work.  TurnRight does the same 
+	thing is as TurnLeft temporarily.
+NEW FEATURE:  Demonstration plays after sitting idle at title screen.
 
 ------------------------Version 3.00 beta 4------------------
 BUG FIX:  Fixed crash entering Config Joy/Key (duh!)
@@ -1026,8 +1049,9 @@ Bug fix: Good and Boo arrows not being drawn.
 21. Thanks
 ************************************************************
 
-Thnaks to:
+Thanks to:
 	Dj Slash & Tony Thai for the caution graphic
+	Kyle "KeeL" Ward for his awesome menu music (www.ampcast.com/keel)
 
 ************************************************************
 End of document

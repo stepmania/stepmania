@@ -26,7 +26,7 @@ const float PROMPT_X	=	CENTER_X;
 const float PROMPT_Y	=	CENTER_Y + 120;
 
 
-ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, PromptType pt, bool bDefaultAnswer, void(*OnYes)(void* pContext), void(*OnNo)(void* pContext) )
+ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, PromptType pt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
 	m_SMSendWhenDone = SM_SendWhenDone;
 	m_pOnYes = OnYes;
@@ -154,8 +154,12 @@ void ScreenPrompt::MenuStart( const PlayerNumber p )
 	m_textAnswer[1].BeginTweening( 0.2f );
 	m_textAnswer[1].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-
 	SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_START) );
+
+	if( m_bAnswer )
+		m_pOnYes();
+	else
+		m_pOnNo();
 }
 
 void ScreenPrompt::MenuBack( const PlayerNumber p )
