@@ -361,7 +361,7 @@ int main(int argc, char **argv) {
 
 		long t;
 
-		static const char header[64]="[01|01] VirtualDub symbolic debug information\r\n\x1A";
+		static const char header[64]="[01|01] StepMania symbolic debug information\r\n\x1A";
 
 		fwrite(header, 64, 1, fo);
 

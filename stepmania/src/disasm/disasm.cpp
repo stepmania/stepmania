@@ -932,7 +932,7 @@ void dump_ia(FILE *f) {
 		decomp_bytes += 2;
 	}
 
-	static const char header[64]="[01|01] VirtualDub disasm module (IA32:P4/Athlon V1.00)\r\n\x1A";
+	static const char header[64]="[01|01] StepMania disasm module (IA32:P4/Athlon V1.00)\r\n\x1A";
 
 	fwrite(header, 64, 1, f);
 
@@ -1043,7 +1043,7 @@ int main(int argc, char **argv) {
 	parse_ia(f);
 	fclose(f);
 
-	f = fopen(argc>2?argv[2]:"ia32.bin", "wb");
+	f = fopen(argc>2?argv[2]:"ia32.vdi", "wb");
 	dump_ia(f);
 	fclose(f);
 
