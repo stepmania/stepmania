@@ -373,8 +373,19 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	 * Scale the line width and point size by the average ratio of the scale. */
 	float WidthVal = float(g_CurrentWidth) / SCREEN_WIDTH;
 	float HeightVal = float(g_CurrentHeight) / SCREEN_HEIGHT;
-	float factor = (WidthVal + HeightVal) / 2;
-	glLineWidth(LineWidth * factor);
+	LineWidth *= (WidthVal + HeightVal) / 2;
+
+	/* Clamp the width to the hardware max for both lines and points (whichever
+	 * is more restrictive). */
+	LineWidth = clamp(LineWidth, g_oglspecs.line_range[0], g_oglspecs.line_range[1]);
+	LineWidth = clamp(LineWidth, g_oglspecs.point_range[0], g_oglspecs.point_range[1]);
+
+	/* Hmm.  The granularity of lines and points might be different; for example,
+	 * if lines are .5 and points are .25, we might want to snap the width to the
+	 * nearest .5, so the hardware doesn't snap them to different sizes.  Does it
+	 * matter? */
+
+	glLineWidth(LineWidth);
 
 	/* Draw the line loop: */
 	g_vertMode = GL_LINE_LOOP;
@@ -385,12 +396,8 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 
 	/* Round off the corners.  This isn't perfect; the point is sometimes a little
 	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
-	 * that. 
-	 *
-	 * Fudged the point size down a little.  This fixes it in the radar with a
-	 * line size of 3 at 640x480 and 1024x768; I don't know what it would do at
-	 * other line sizes. */
-	glPointSize((LineWidth - .3f) * factor);
+	 * that. */
+	glPointSize(LineWidth);
 
 	/* Hack: if the points will all be the same, we don't want to draw
 	 * any points at all, since there's nothing to connect.  That'll happen
