@@ -483,26 +483,28 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 //	}
 
 
-//	if ( score==TNS_PERFECT  ||  score == TNS_GREAT  ||  bHoldNoteOnThisBeat  )
+	/* If the whole row was hit with perfects or greats, remove the row
+	 * from the NoteField, so it disappears. */
 	if ( score==TNS_PERFECT  ||  score == TNS_GREAT )
 		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
+	int iNumNotesInThisRow = 0;
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
 	{
-		int iNumNotesInThisRow = 0;
-
 		if( m_TapNotes[c][iIndexThatWasSteppedOn] != '0' )	// if there is a note in this col
 		{
 			iNumNotesInThisRow++;
-			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );	// show the ghost arrow for this column
+
+			// show the ghost arrow for this column
+			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );
 		}
+	}
 		
-		if( iNumNotesInThisRow > 0 )
-		{
-			HandleNoteScore( score, iNumNotesInThisRow );	// update score - called once per note in this row
-			m_Combo.UpdateScore( score, iNumNotesInThisRow );
-			GAMESTATE->m_iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
-		}
+	if( iNumNotesInThisRow > 0 )
+	{
+		HandleNoteScore( score, iNumNotesInThisRow );	// update score
+		m_Combo.UpdateScore( score, iNumNotesInThisRow );
+		GAMESTATE->m_iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 	}
 
 	// update the judgement, score, and life
