@@ -569,7 +569,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 				}
 
 				if( fTotalMinBpm == -1 || fTotalMaxBpm == -1 )
-					sTitle += ssprintf( " (???)", fTotalMinBpm );
+					sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
 				else if( fTotalMinBpm == fTotalMaxBpm )
 					sTitle += ssprintf( " (%.0f)", fTotalMinBpm );
 				else
