@@ -937,8 +937,10 @@ void NORETURN debug_crash()
 }
 
 /* Get a stack trace of the current thread and the specified thread. */
-void ForceCrashHandlerDeadlock( const char *reason, HANDLE hThread )
+void ForceCrashHandlerDeadlock( CString reason, uint64_t iThreadHandle )
 {
+	HANDLE hThread = (HANDLE) iThreadHandle;
+
 	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
 

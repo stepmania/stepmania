@@ -12,7 +12,7 @@ void NORETURN debug_crash();
 void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
 void SymLookup( const void *ptr, char *buf );
 void ForceCrashHandler( const char *reason );
-void ForceCrashHandlerDeadlock( const char *reason, HANDLE hThread );
+void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle );
 
 #endif
 /*
