@@ -397,6 +397,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		 */
 		lowersum = achv[indx].value;
 		halfsum = sm / 2;
+		int i;
 		for ( i = 1; i < clrs - 1; ++i )
 		{
 			if ( lowersum >= halfsum )
@@ -449,7 +450,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		int clrs = bv[bi].colors;
 		long r = 0, g = 0, b = 0, a = 0, sum = 0;
 
-		for ( i = 0; i < clrs; ++i )
+		for ( int i = 0; i < clrs; ++i )
 		{
 			r += PAM_GETR( achv[indx + i].acolor ) * achv[indx + i].value;
 			g += PAM_GETG( achv[indx + i].acolor ) * achv[indx + i].value;
