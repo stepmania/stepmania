@@ -116,3 +116,4 @@ void CombinedLifeMeterTug::ChangeLifeMine( PlayerNumber pn )
 	CLAMP( GAMESTATE->m_fTugLifePercentP1, 0, 1 );
 	
 }
+
