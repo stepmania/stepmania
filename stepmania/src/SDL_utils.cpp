@@ -263,6 +263,24 @@ void SetupSDL()
 	/* Attempt to shut down the window on crash. */
         RegisterEmergencyShutdownCallback( EmergencyShutdownSDL );
 #endif
+
+#if defined(LINUX)
+	static bool bSetVideoDriver = false;
+	if( !bSetVideoDriver )
+	{
+		bSetVideoDriver = true;
+
+		/* Most people don't have this set.  SDL has a habit of trying to
+		 * fall back on other drivers (svgalib, aalib), so set it to "x11". */
+		const char *sVideoDriver = getenv("SDL_VIDEODRIVER");
+		if( sVideoDriver == NULL || sVideoDriver[0] == 0 )
+		{
+			static char env[] = "SDL_VIDEODRIVER=x11";
+			putenv( env );
+		} else if( strcmp( sVideoDriver, "x11" ) )
+			LOG->Info( "SDL_VIDEODRIVER has been set to %s", sVideoDriver );
+	}
+#endif
 }
 
 /*
