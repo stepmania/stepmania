@@ -251,7 +251,12 @@ InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h LightsManager.cpp Ligh
 MemoryCardManager.cpp MemoryCardManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
 NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
 ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
-UnlockSystem.cpp UnlockSystem.h ezsockets.cpp ezsockets.h
+UnlockSystem.cpp UnlockSystem.h
+
+if !WITHOUT_NETWORKING
+# Compile NetworkSyncManager even if networking is disabled; it'll stub itself.
+GlobalSingletons += ezsockets.cpp ezsockets.h
+endif
 
 crypto = \
 crypto/CryptBn.cpp crypto/CryptBn.h crypto/CryptMD5.cpp crypto/CryptMD5.h crypto/CryptNoise.cpp \

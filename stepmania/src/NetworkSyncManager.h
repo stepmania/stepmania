@@ -32,7 +32,7 @@ public:
 	void Update(float fDeltaTime);
 
 private:
-
+#if defined(WITH_NETWORKING)
 	void StartUp();
 
 	int m_playerID;  //these are currently unused, but need to stay
@@ -74,7 +74,7 @@ private:
 	{
 		char data[73];
 	};
-    
+#endif
 };
 
 extern NetworkSyncManager *NSMAN;

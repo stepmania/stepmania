@@ -1,6 +1,24 @@
 #include "global.h"
-#include "ezsockets.h"
 #include "NetworkSyncManager.h"
+
+NetworkSyncManager *NSMAN;
+
+#if !defined(WITH_NETWORKING)
+
+NetworkSyncManager::NetworkSyncManager() { }
+NetworkSyncManager::~NetworkSyncManager () { }
+void NetworkSyncManager::CloseConnection() { }
+void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
+bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
+void NetworkSyncManager::ReportSongOver() { }
+void NetworkSyncManager::StartRequest() { }
+void NetworkSyncManager::SendSongs() { }
+void NetworkSyncManager::DisplayStartupStatus() { }
+void NetworkSyncManager::Update( float fDeltaTime ) { }
+
+#else
+#include "ezsockets.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
 #include "StepMania.h"
@@ -17,8 +35,6 @@
 #include "GameState.h"
 #include "StageStats.h"
 #include "Steps.h"
-
-NetworkSyncManager *NSMAN;
 
 NetworkSyncManager::NetworkSyncManager()
 {
@@ -336,6 +352,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 void NetworkSyncManager::Update(float fDeltaTime)
 {
 }
+#endif
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
