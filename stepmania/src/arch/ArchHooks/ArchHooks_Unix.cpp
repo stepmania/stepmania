@@ -37,6 +37,7 @@ static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	ExitGame();
 }
 
+#if defined(CRASH_HANDLER)
 static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
         /* Don't dump a debug file if the user just hit ^C. */
@@ -45,6 +46,7 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 
 	CrashSignalHandler( signal, si, uc );
 }
+#endif
 
 static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 {
@@ -57,7 +59,14 @@ static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
+#if defined(CRASH_HANDLER)
+	/* If we ran the crash handler, then die. */
 	kill( getpid(), SIGKILL );
+#else
+	/* We didn't run the crash handler.  Run the default handler, so we can dump core. */
+	SignalHandler::ResetSignalHandlers();
+	raise( signal );
+#endif
 }
 	
 ArchHooks_Unix::ArchHooks_Unix()
