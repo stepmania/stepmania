@@ -2680,6 +2680,14 @@ SOURCE=.\ScreenOptionsMasterPrefs.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenPackages.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenPackages.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenPlayerOptions.cpp
 # End Source File
 # Begin Source File

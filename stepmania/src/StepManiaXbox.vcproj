@@ -555,6 +555,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenOptionsMasterPrefs.h">
 			</File>
 			<File
+				RelativePath="ScreenPackages.cpp">
+			</File>
+			<File
+				RelativePath="ScreenPackages.h">
+			</File>
+			<File
 				RelativePath="ScreenPlayerOptions.cpp">
 			</File>
 			<File

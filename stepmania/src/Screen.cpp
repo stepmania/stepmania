@@ -276,6 +276,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenNetSelectMusic.h"
 #include "ScreenNetRoom.h"
 #include "ScreenNetEvaluation.h"
+#include "ScreenPackages.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenRanking.h"
 #include "ScreenLogo.h"
@@ -382,6 +383,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenNetSelectMusic );
 	IF_RETURN( ScreenNetRoom );
 	IF_RETURN( ScreenNetEvaluation );
+	IF_RETURN( ScreenPackages );
 #endif
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
