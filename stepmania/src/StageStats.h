@@ -14,7 +14,8 @@ class Steps;
 
 struct StageStats
 {
-	StageStats();
+	StageStats() { Init(); }
+	void Init();
 	void AddStats( const StageStats& other );		// accumulate
 	Grade GetGrade( PlayerNumber pn ) const;
 	bool OnePassed() const;

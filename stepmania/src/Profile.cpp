@@ -288,26 +288,24 @@ int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
 	int iTotal = 0;
 
 	// add course high scores
+	vector<Course*> vCourses;
+	SONGMAN->GetAllCourses( vCourses, false );
+	for( unsigned i=0; i<vCourses.size(); i++ )
 	{
-		vector<Course*> vCourses;
-		SONGMAN->GetAllCourses( vCourses, false );
-		for( unsigned i=0; i<vCourses.size(); i++ )
+		const Course* pCourse = vCourses[i];
+		
+		// Don't count any course that has any entries that change over time.
+		if( !pCourse->AllSongsAreFixed() )
+			continue;
+
+		FOREACH_ShownCourseDifficulty( cd )
 		{
-			const Course* pCourse = vCourses[i];
-			
-			// Don't count any course that has any entries that change over time.
-			if( !pCourse->AllSongsAreFixed() )
+			Trail* pTrail = pCourse->GetTrail(st,cd);
+			if( pTrail == NULL )
 				continue;
 
-			FOREACH_ShownCourseDifficulty( cd )
-			{
-				Trail* pTrail = pCourse->GetTrail(st,cd);
-				if( pTrail == NULL )
-					continue;
-
-				const RadarValues& fRadars = pTrail->GetRadarValues();
-				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-			}
+			const RadarValues& fRadars = pTrail->GetRadarValues();
+			iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 		}
 	}
 

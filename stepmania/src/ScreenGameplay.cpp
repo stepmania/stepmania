@@ -1804,6 +1804,13 @@ void RevertChanges( void* papSongsQueue )
 	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
 	for( unsigned i=0; i<apSongsQueue.size(); i++ )
 		apSongsQueue[i]->RevertFromDisk();
+
+	// We need to regen any Courses that have any of the songs we just reloaded.
+	// Regen all Courses for now.
+	vector<Course*> vpAllCourses;
+	SONGMAN->GetAllCourses( vpAllCourses, true );
+	FOREACH( Course*, vpAllCourses, pCourse )
+		(*pCourse)->RegenTrails();
 }
 
 void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
