@@ -35,7 +35,7 @@ const int MAX_STYLES_PER_GAME = 10;
 // The user will map these DeviceInputs to the GameButtons "MenuLeft (optional)", "MenuStart", and 
 // "MenuRight (optional)".
 //
-// Example 2:  A user is using PlayStation DDR soft pads to play.  His controller don't have dedicated
+// Example 2:  A user is using PlayStation DDR soft pads to play.  His controller doesn't have dedicated
 // DeviceInputs for MenuLeft and MenuRight.  The user maps Up, Down, Left, and Right as normal.
 // Since the Left and Right GameButtons have the flag FLAG_SECONDARY_MENU_*, they will function as 
 // MenuLeft and MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
@@ -56,14 +56,7 @@ public:
 	GameButton	m_SecondaryMenuButton[NUM_MENU_BUTTONS];
 	int		m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
 
-	GameButton ButtonNameToIndex( const CString &sButtonName )
-	{
-		for( int i=0; i<m_iButtonsPerController; i++ ) 
-			if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
-				return i;
-		return GAME_BUTTON_INVALID;
-	}
-
+	GameButton ButtonNameToIndex( const CString &sButtonName );
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
 };

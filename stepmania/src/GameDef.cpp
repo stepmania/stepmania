@@ -20,7 +20,14 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
+GameButton GameDef::ButtonNameToIndex( const CString &sButtonName )
+{
+	for( int i=0; i<m_iButtonsPerController; i++ ) 
+		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
+			return i;
 
+	return GAME_BUTTON_INVALID;
+}
 
 MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 {
