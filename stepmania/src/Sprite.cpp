@@ -693,7 +693,7 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, b
 
 const RectF *Sprite::GetCurrentTextureCoordRect() const
 {
-	ASSERT_M( m_iCurState < (int) m_States.size(), ssprintf("%i, %i", m_iCurState, m_States.size()) );
+	ASSERT_M( m_iCurState < (int) m_States.size(), ssprintf("%d, %d", int(m_iCurState), int(m_States.size())) );
 
 	unsigned int uFrameNo = m_States[m_iCurState].iFrameIndex;
 	return m_pTexture->GetTextureCoordRect( uFrameNo );
