@@ -247,11 +247,11 @@
 				</xsl:call-template>
 				
 				<xsl:call-template name="CollapsibleSubSection">
-					<xsl:with-param name="title">Passed Count by Grade</xsl:with-param>
+					<xsl:with-param name="title">Stages Passed by Grade</xsl:with-param>
 					<xsl:with-param name="text">
 						<xsl:call-template name="PrintVerticalDataTable">
 							<xsl:with-param name="text">
-								<xsl:variable name="NumSongsPassedByGrade" select="NumSongsPassedByGrade" />
+								<xsl:variable name="NumStagesPassedByGrade" select="NumStagesPassedByGrade" />
 								<xsl:for-each select="$Catalog/Types/Grade">
 									<xsl:call-template name="PrintVerticalDataRow">
 										<xsl:with-param name="name">
@@ -259,7 +259,7 @@
 										</xsl:with-param>
 										<xsl:with-param name="value">
 											<xsl:variable name="blah" select="." />
-											<xsl:value-of select="sum($NumSongsPassedByGrade/*[name()=$blah])" />
+											<xsl:value-of select="sum($NumStagesPassedByGrade/*[name()=$blah])" />
 										</xsl:with-param>
 									</xsl:call-template>
 								</xsl:for-each>
@@ -269,11 +269,11 @@
 				</xsl:call-template>
 				
 				<xsl:call-template name="CollapsibleSubSection">
-					<xsl:with-param name="title">Passed Count by PlayMode</xsl:with-param>
+					<xsl:with-param name="title">Stages Passed by PlayMode</xsl:with-param>
 					<xsl:with-param name="text">
 						<xsl:call-template name="PrintVerticalDataTable">
 							<xsl:with-param name="text">
-								<xsl:variable name="NumSongsPassedByPlayMode" select="NumSongsPassedByPlayMode" />
+								<xsl:variable name="NumStagesPassedByPlayMode" select="NumStagesPassedByPlayMode" />
 								<xsl:for-each select="$Catalog/Types/PlayMode">
 									<xsl:call-template name="PrintVerticalDataRow">
 										<xsl:with-param name="name">
@@ -281,7 +281,7 @@
 										</xsl:with-param>
 										<xsl:with-param name="value">
 											<xsl:variable name="blah" select="." />
-											<xsl:value-of select="sum($NumSongsPassedByPlayMode/*[name()=$blah])" />
+											<xsl:value-of select="sum($NumStagesPassedByPlayMode/*[name()=$blah])" />
 										</xsl:with-param>
 									</xsl:call-template>
 								</xsl:for-each>

@@ -116,8 +116,8 @@ public:
 	map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
-	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];
-	int m_iNumSongsPassedByGrade[NUM_GRADES];
+	int m_iNumStagesPassedByPlayMode[NUM_PLAY_MODES];
+	int m_iNumStagesPassedByGrade[NUM_GRADES];
 
 	//
 	// Song high scores

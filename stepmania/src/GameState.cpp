@@ -307,11 +307,11 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 
 	// If you fail in a course, you passed all but the final song.
 	// FIXME: Not true.  If playing with 2 players, one player could have failed earlier.
-	int iNumSongsPassed = ss.vpSongs.size();
-	if( ss.bFailed[pn] )
-		iNumSongsPassed -= 1;
-	pProfile->m_iNumSongsPassedByPlayMode[ss.playMode] += iNumSongsPassed;
-	pProfile->m_iNumSongsPassedByGrade[ss.GetGrade(pn)] += iNumSongsPassed;
+	if( !ss.bFailed[pn] )
+	{
+		pProfile->m_iNumStagesPassedByPlayMode[ss.playMode] ++;
+		pProfile->m_iNumStagesPassedByGrade[ss.GetGrade(pn)] ++;
+	}
 }
 
 void GameState::EndGame()
@@ -524,12 +524,10 @@ void GameState::ResetStageStatistics()
 	}
 
 
+	FOREACH_PlayerNumber( p )
 	{
-		FOREACH_PlayerNumber( p )
-		{
-			m_vLastPerDifficultyAwards[p].clear();
-			m_vLastPeakComboAwards[p].clear();
-		}
+		m_vLastPerDifficultyAwards[p].clear();
+		m_vLastPeakComboAwards[p].clear();
 	}
 }
 
