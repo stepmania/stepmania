@@ -6,8 +6,11 @@
 /* This contains the information necessary to backtrace a thread. */
 struct BacktraceContext
 {
-#if defined(LINUX)
+#if defined(CPU_X86) || defined(CPU_X86_64)
 	const void *ip, *bp, *sp;
+#endif
+
+#if defined(LINUX)
 	pid_t pid;
 #endif
 
