@@ -104,7 +104,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 			identifier.Driver, identifier.Description );
 }
 
-int RageDisplay::MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const
+unsigned RageDisplay::MaxRefresh(unsigned uWidth, unsigned uHeight, D3DFORMAT fmt) const
 {
 	UINT mx = D3DPRESENT_RATE_DEFAULT;
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
@@ -113,8 +113,8 @@ int RageDisplay::MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const
 		if( !SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
 			continue;
 
-		if(mode.Width != iWidth) continue;
-		if(mode.Height != iHeight) continue;
+		if(mode.Width != uWidth) continue;
+		if(mode.Height != uHeight) continue;
 		if(mode.Format != fmt) continue;
 
 		if(mx == D3DPRESENT_RATE_DEFAULT || mode.RefreshRate > mx)
@@ -125,7 +125,7 @@ int RageDisplay::MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const
 
 /* Get the maximum refresh rate available in the given size, for any format
  * that fits bpp. */
-void RageDisplay::GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const
+void RageDisplay::GetHzAtResolution(unsigned width, unsigned height, unsigned bpp, CArray<int,int> &add) const
 {
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
 	{
@@ -206,7 +206,7 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 
 	// Test each back buffer format until we find something that works.
-	D3DFORMAT fmtBackBuffer;	// fill this in below...
+	D3DFORMAT fmtBackBuffer=D3DFMT_UNKNOWN;	// fill this in below...
 	int i;
 	for( i=0; i < arrayBackBufferFormats.GetSize(); i++ )
 	{
@@ -231,6 +231,10 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 		if( SUCCEEDED(hr) )
 			break;	// done searching
 	}
+
+	if(fmtBackBuffer == D3DFMT_UNKNOWN) 
+		throw RageException( "Couldn't find a valid format." );
+
 	LOG->Trace( "This will work." );
 
 	if( i == arrayBackBufferFormats.GetSize() )		// we didn't find an appropriate format
@@ -445,7 +449,7 @@ HRESULT RageDisplay::Restore()
 	return S_OK;
 }
 
-int RageDisplay::GetBPP(D3DFORMAT fmt) const
+unsigned RageDisplay::GetBPP(D3DFORMAT fmt) const
 { 
 	switch( fmt )
 	{

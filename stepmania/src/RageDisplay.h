@@ -67,9 +67,9 @@ public:
 
 
 	bool IsWindowed() const	{ return !!m_d3dpp.Windowed; };
-	int GetWidth() const	{ return m_d3dpp.BackBufferWidth; };
-	int GetHeight() const	{ return m_d3dpp.BackBufferHeight; };
-	int GetBPP() const		{ return GetBPP( m_d3dpp.BackBufferFormat ); }
+	unsigned GetWidth() const	{ return m_d3dpp.BackBufferWidth; };
+	unsigned GetHeight() const	{ return m_d3dpp.BackBufferHeight; };
+	unsigned GetBPP() const		{ return GetBPP( m_d3dpp.BackBufferFormat ); }
 	
 //	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
 	void SetViewTransform( const D3DXMATRIX* pMatrix );
@@ -92,11 +92,11 @@ public:
 	int GetTPF() const { return m_iTPF; };
 	int GetDPF() const { return m_iDPF; };
 
-	void GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const;
+	void GetHzAtResolution(unsigned width, unsigned height, unsigned bpp, CArray<int,int> &add) const;
 
 private:
-	int MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const;
-	int GetBPP(D3DFORMAT fmt) const;
+	unsigned MaxRefresh(unsigned iWidth, unsigned iHeight, D3DFORMAT fmt) const;
+	unsigned GetBPP(D3DFORMAT fmt) const;
 	HRESULT SetMode();
 	D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP);
 	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.ElementAt( m_MatrixStack.GetSize()-1 ); };
