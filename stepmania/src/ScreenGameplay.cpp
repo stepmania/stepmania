@@ -272,9 +272,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 
-	m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenGameplay stage "+GAMESTATE->GetStageText()) );
-	m_sprStage.SetXY( STAGE_X, STAGE_Y(bExtra) );
-
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay song num") );
@@ -288,6 +285,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	{
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenGameplay stage "+GAMESTATE->GetStageText()) );
+		m_sprStage.SetXY( STAGE_X, STAGE_Y(bExtra) );
 		this->AddChild( &m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -1525,6 +1524,7 @@ void ScreenGameplay::TweenOnScreen()
 {
 	unsigned i, p;
 
+	/* XXX: m_sprLifeFrame.GetChildren(apActorsInLifeFrame) */
 	vector<Actor*> apActorsInLifeFrame;
 	apActorsInLifeFrame.push_back( &m_sprLifeFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
