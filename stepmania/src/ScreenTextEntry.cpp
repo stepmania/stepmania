@@ -253,6 +253,11 @@ void ScreenTextEntry::AppendToAnswer( CString s )
 
 void ScreenTextEntry::BackspaceInAnswer()
 {
+	if( m_sAnswer.empty() )
+	{
+		SCREENMAN->PlayInvalidSound();
+		return;
+	}
 	m_sAnswer.erase( m_sAnswer.end()-1 );
 	m_sndBackspace.Play();
 	UpdateAnswerText();
