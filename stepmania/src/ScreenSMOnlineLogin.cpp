@@ -94,7 +94,7 @@ OptionRowData g_ProfileLine[1] = {
 	  m_iPlayer=0;
 	  while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 	 	++m_iPlayer;
-      SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
+      SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
 	}
   }
 
