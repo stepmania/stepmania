@@ -71,10 +71,10 @@ RageSound::RageSound():
 	playing_thread = 0;
 	databuf.reserve(internal_buffer_size);
 
-	/* Register ourself. */
-	SOUNDMAN->RegisterSound( this );
-
 	ID = SOUNDMAN->GetUniqueID();
+
+	/* Register ourself last, once everything is initialized. */
+	SOUNDMAN->RegisterSound( this );
 }
 
 RageSound::~RageSound()
@@ -100,11 +100,11 @@ RageSound::RageSound(const RageSound &cpy):
 
 	*this = cpy;
 
-	/* Register ourself. */
-	SOUNDMAN->RegisterSound( this );
-
 	/* We have a different ID than our parent. */
 	ID = SOUNDMAN->GetUniqueID();
+
+	/* Register ourself. */
+	SOUNDMAN->RegisterSound( this );
 }
 
 RageSound &RageSound::operator=( const RageSound &cpy )
