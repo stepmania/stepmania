@@ -60,7 +60,13 @@ public:
 
 protected:
 	void Init();
-	void CommitScores( const StageStats &stageStats, int iPersonalHighScoreIndex[NUM_PLAYERS], int iMachineHighScoreIndex[NUM_PLAYERS], RankingCategory rc[NUM_PLAYERS] );
+	void CommitScores( 
+		const StageStats &stageStats, 
+		int iPersonalHighScoreIndexOut[NUM_PLAYERS], 
+		int iMachineHighScoreIndexOut[NUM_PLAYERS], 
+		RankingCategory rcOut[NUM_PLAYERS],
+		PerDifficultyAward pdaToShowOut[NUM_PLAYERS],
+		PeakComboAward pcaToShowOut[NUM_PLAYERS] );
 	void EndScreen();
 
 	Type				m_Type;
