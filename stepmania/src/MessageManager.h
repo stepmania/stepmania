@@ -12,6 +12,8 @@ public:
 	virtual void HandleMessage( const CString& sMessage ) = 0;
 };
 
+struct lua_State;
+
 enum Message
 {
 	MESSAGE_CURRENT_SONG_CHANGED,
@@ -42,6 +44,9 @@ public:
 	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
 	void Broadcast( const CString& sMessage );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	typedef set<IMessageSubscriber*> SubscribersSet;

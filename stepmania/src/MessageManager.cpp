@@ -59,6 +59,41 @@ void MessageManager::Broadcast( const CString& sMessage )
 	}
 }
 
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaMessageManager: public Luna<T>
+{
+public:
+	LunaMessageManager() { LUA->Register( Register ); }
+
+	static int Broadcast( T* p, lua_State *L )
+	{
+		p->Broadcast( SArg(1) );
+		return 0;
+	}
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( Broadcast )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( MESSAGEMAN )
+		{
+			lua_pushstring(L, "MESSAGEMAN");
+			MESSAGEMAN->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( MessageManager )
+// lua end
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
