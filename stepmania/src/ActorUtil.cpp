@@ -98,7 +98,18 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 			{
 				Song *pSong = GAMESTATE->m_pCurSong;
 				if( pSong == NULL )
-					pSong = SONGMAN->GetRandomSong();
+				{
+					// probe for a random banner
+					for( int i=0; i<300; i++ )
+					{
+						pSong = SONGMAN->GetRandomSong();
+						if( pSong == NULL )
+							break;
+						if( !pSong->ShowInDemonstrationAndRanking() )
+							continue;
+						break;
+					}
+				}
 
 				if( pSong && pSong->HasBanner() )
 					sFile = pSong->GetBannerPath();
@@ -120,7 +131,20 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 			{
 				Course *pCourse = GAMESTATE->m_pCurCourse;
 				if( pCourse == NULL )
-					pCourse = SONGMAN->GetRandomCourse();
+				{
+					// probe for a random banner
+					for( int i=0; i<300; i++ )
+					{
+						pCourse = SONGMAN->GetRandomCourse();
+						if( pCourse == NULL )
+							break;
+						if( !pCourse->ShowInDemonstrationAndRanking() )
+							continue;
+						if( pCourse->m_bIsAutogen )
+							continue;
+						break;
+					}
+				}
 
 				if( pCourse && pCourse->HasBanner() )
 					sFile = pCourse->m_sBannerPath;

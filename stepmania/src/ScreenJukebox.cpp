@@ -11,6 +11,7 @@
 #include "Steps.h"
 #include "ScreenAttract.h"
 #include "RageUtil.h"
+#include "UnlockSystem.h"
 
 // HACK: This belongs in ScreenDemonstration
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenDemonstration","DifficultiesToShow")
@@ -69,8 +70,9 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 
 		if( !pSong->HasMusic() )
 			continue;	// skip
-
-		if( pSong->NeverDisplayed() )
+		if( UNLOCKMAN->SongIsLocked(pSong) )
+			continue;
+		if( !pSong->ShowInDemonstrationAndRanking() )
 			continue;	// skip
 
 		Difficulty dc = vDifficultiesToShow[ rand()%vDifficultiesToShow.size() ];

@@ -182,7 +182,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			Song *pSong = SONGMAN->GetAllSongs()[s];
 			if( UNLOCKMAN->SongIsLocked(pSong) )
 				continue;
-			if( pSong->IsTutorial() )
+			if( !pSong->ShowInDemonstrationAndRanking() )
 				continue;
 
 			StepsScoreRowItem* pStepsScoreRowItem = new StepsScoreRowItem;

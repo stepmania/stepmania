@@ -1231,10 +1231,10 @@ Song::SelectionDisplay Song::GetDisplayed() const
 		return SHOW_ALWAYS;
 	return m_SelectionDisplay;
 }
-
 bool Song::NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
 bool Song::NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
 bool Song::RouletteDisplayed() const { if(IsTutorial()) return false; return GetDisplayed() != SHOW_NEVER; }
+bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
 
 
 bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); }

@@ -186,6 +186,7 @@ public:
 	bool NormallyDisplayed() const;
 	bool NeverDisplayed() const;
 	bool RouletteDisplayed() const;
+	bool ShowInDemonstrationAndRanking() const;
 
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
 	void RemoveSteps( const Steps* pSteps );
