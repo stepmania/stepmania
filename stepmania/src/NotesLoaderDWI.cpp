@@ -247,20 +247,26 @@ bool DWILoader::LoadFromDWITokens(
  * or milliseconds.
  * What's even more dumb is that the value can contain a ':'.  Colon is supposed to be a parameter separator!
  */
-float DWILoader::ParseBrokenDWITimestamp(const CString *sParams, int iNumParams)
+float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg2, const CString &arg3)
 {
-	if( iNumParams == 4 )
-		return TimeToSeconds( sParams[1]+":"+sParams[2]+":"+sParams[3] );
-	
-	if( iNumParams == 3 )
-		return TimeToSeconds( sParams[1]+":"+sParams[2] );
-	
-	// iNumParams == 2
-	/* If the value contains a period, treat it as seconds; otherwise ms. */
-	if(sParams[1].find_first_of(".") != sParams[1].npos)
-		return (float)atof(sParams[1].GetString());
-	else
-		return float(atof(sParams[1].GetString())) / 1000.f;
+	if(arg1.empty()) return 0;
+
+	/* 1+ args */
+	if(arg2.empty())
+	{
+		/* If the value contains a period, treat it as seconds; otherwise ms. */
+		if(arg1.find_first_of(".") != arg1.npos)
+			return (float)atof(arg1.GetString());
+		else
+			return float(atof(arg1.GetString())) / 1000.f;
+	}
+
+	/* 2+ args */
+	if(arg3.empty())
+		return TimeToSeconds( arg1+":"+arg2 );
+
+	/* 3+ args */
+	return TimeToSeconds( arg1+":"+arg2+":"+arg3 );
 }
 
 bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
@@ -275,8 +281,8 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
-		int iNumParams = msd.m_iNumParams[i];
-		CString* sParams = msd.m_sParams[i];
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
 		CString sValueName = sParams[0];
 
 		if(iNumParams < 1)
@@ -306,10 +312,10 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
-			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams, iNumParams);
+			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
 		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
-			out.m_fMusicSampleLengthSeconds = ParseBrokenDWITimestamp(sParams, iNumParams);
+			out.m_fMusicSampleLengthSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
 		else if( 0==stricmp(sValueName,"FREEZE") )
 		{

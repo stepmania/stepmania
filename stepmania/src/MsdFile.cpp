@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -40,37 +41,21 @@
 #include "RageLog.h"
 #include "io.h"
 #include "fcntl.h"
-
-
-MsdFile::MsdFile()
-{
-	m_iNumValues = 0;
-}
-
-MsdFile::~MsdFile()
-{
-}
+#include "RageUtil.h"
 
 void MsdFile::AddParam( char *buf, int len )
 {
-	int valueno = m_iNumValues-1;
-	int paramno = m_iNumParams[valueno];
-	ASSERT( paramno < MAX_PARAMS_PER_VALUE );
-	m_iNumParams[valueno]++;
-	m_sParams[valueno][paramno] = CString(buf, len);
+	values.back().params.push_back(CString(buf, len));
 }
 
 void MsdFile::AddValue() /* (no extra charge) */
 {
-	m_iNumValues++;
-	ASSERT( m_iNumValues < MAX_VALUES );
+	values.push_back(value_t());
 }
 
 void MsdFile::ReadBuf( char *buf, int len )
 {
 	int value_start = -1;
-	memset(m_iNumParams, 0, sizeof(m_iNumParams));
-	m_iNumValues = 0;
 
 	bool ReadingValue=false;
 	int i = 0;
@@ -163,7 +148,7 @@ bool MsdFile::ReadFile( CString sNewPath )
    if( (fd = open(sNewPath, _O_RDONLY, 0)) == -1 )
 	   return false;
 
-	int iBufferSize = _filelength( fd ) + 1000; // +1000 because sometimes the bytes read is > filelength.  Why?
+	int iBufferSize = GetFileSizeInBytes(sNewPath) + 1000; // +1000 because sometimes the bytes read is > filelength.  Why?
 
 	// allocate a string to hold the file
 	char* szFileString = new char[iBufferSize];
@@ -181,3 +166,10 @@ bool MsdFile::ReadFile( CString sNewPath )
 	return true;
 }
 
+CString MsdFile::GetParam(unsigned val, unsigned par) const
+{
+	if(val >= GetNumValues()) return 0;
+	if(par >= GetNumParams(val)) return 0;
+
+	return values[val].params[par];
+}

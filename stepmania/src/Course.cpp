@@ -50,8 +50,8 @@ void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
-		CString sValueName = msd.m_sParams[i][0];
-		CString* sParams = msd.m_sParams[i];
+		CString sValueName = msd.GetParam(i, 0);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
 
 		// handle the data
 		if( 0 == stricmp(sValueName, "COURSE") )
@@ -59,20 +59,17 @@ void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 
 		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
-			sParams[1].MakeLower();
-			if( sParams[1].Find("yes") != -1 )
+			CString str = sParams[1];
+			str.MakeLower();
+			if( str.Find("yes") != -1 )
 				m_bRepeat = true;
 		}
 
 		else if( 0 == stricmp(sValueName, "LIVES") )
-		{
 			m_iLives = atoi( sParams[1] );
-		}
 
 		else if( 0 == stricmp(sValueName, "EXTRA") )
-		{
 			m_iExtra = atoi( sParams[1] );
-		}
 
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
