@@ -11,26 +11,15 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageSound.h"
-#include "RageUtil.h"
+class RageSound;
 
 class RandomSample
 {
 public:
 	RandomSample();
-	virtual ~RandomSample();
+	~RandomSample();
 
-	virtual bool Load( CString sFilePath, int iMaxToLoad = 1000 /*load all*/ )
-	{
-		CString sDir, sFName, sExt;
-		splitrelpath( sFilePath, sDir, sFName, sExt );
-
-		sExt.MakeLower();
-
-		if( sExt == "" )	return LoadSoundDir( sFilePath, iMaxToLoad );
-		else				return LoadSound( sFilePath );
-	};
-
+	bool Load( CString sFilePath, int iMaxToLoad = 1000 /*load all*/ );
 	void PlayRandom();
 	void Stop();
 

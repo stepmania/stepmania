@@ -12,6 +12,7 @@
 
 
 #include "RandomSample.h"
+#include "RageSound.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 
@@ -26,6 +27,18 @@ RandomSample::~RandomSample()
 {
 	for( unsigned i=0; i<m_pSamples.size(); i++ )
 		SAFE_DELETE( m_pSamples[i] );
+}
+
+
+bool RandomSample::Load( CString sFilePath, int iMaxToLoad )
+{
+	CString sDir, sFName, sExt;
+	splitrelpath( sFilePath, sDir, sFName, sExt );
+
+	sExt.MakeLower();
+
+	if( sExt == "" )        return LoadSoundDir( sFilePath, iMaxToLoad );
+	else                            return LoadSound( sFilePath );
 }
 
 
