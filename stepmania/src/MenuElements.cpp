@@ -129,6 +129,14 @@ void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone )
 
 void MenuElements::TweenTopLayerOffScreen()
 {
+/*
+ This trick is neat, but there's a problem: fOriginalX may not be the settled
+ position--we might still be tweening, and if it's a bounce tween, it might be
+ left of center, which means fOriginalX+SCREEN_WIDTH won't actually take it
+ completely off-screen.  fOriginalX+SCREEN_WIDTH*2 would, but that'd make the
+ bounce faster.  SCREEN_WIDTH+SCREEN_WIDTH/2 would, but ignoring fOriginalX
+ will make each component tween off at a different rate ...
+ -glenn
 	CArray<Actor*,Actor*> apActorsInTopFrame;
 	apActorsInTopFrame.Add( &m_sprTopEdge );
 	apActorsInTopFrame.Add( &m_sprStyleIcon );
@@ -139,7 +147,21 @@ void MenuElements::TweenTopLayerOffScreen()
 		apActorsInTopFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
 		apActorsInTopFrame[i]->SetTweenX( fOriginalX+SCREEN_WIDTH );
 	}
+	*/
 
+	m_sprTopEdge.StopTweening();
+	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+	m_sprTopEdge.SetTweenX( TOP_EDGE_X+SCREEN_WIDTH );
+
+	m_sprStyleIcon.StopTweening();
+	m_sprStyleIcon.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+	m_sprStyleIcon.SetTweenX( STYLE_ICON_X+SCREEN_WIDTH );
+
+	m_MenuTimer.StopTweening();
+	m_MenuTimer.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+	m_MenuTimer.SetTweenX( TIMER_X+SCREEN_WIDTH );
+
+	m_textHelp.StopTweening();
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_textHelp.SetTweenZoomY( 0 );
 }
@@ -168,6 +190,7 @@ void MenuElements::TweenBottomLayerOnScreen()
 void MenuElements::TweenBottomLayerOffScreen()
 {
 	float fOriginalY = m_sprBottomEdge.GetY();
+	m_sprBottomEdge.StopTweening();
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY + 100 );
 
