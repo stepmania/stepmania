@@ -627,12 +627,12 @@ void Regex::Compile()
         if(pattern[i] == '(') backrefs++;
     ASSERT(backrefs+1 < 128);
 }
+
 void Regex::Release()
 {
     delete (regex_t *)reg;
 	reg = NULL;
 }
-
 
 Regex::Regex(const CString &pattern_)
 {
