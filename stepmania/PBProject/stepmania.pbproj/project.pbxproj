@@ -1769,12 +1769,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		AA245ACF07437CE500A27459 = {
-			fileRef = AA245ACE07437CE500A27459;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA251B7505841FCE00027ACB = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -5764,7 +5758,6 @@
 				AA230EB006043704002672F3,
 				AA230EB106043704002672F3,
 				AAA8E0030696984300FCE1F9,
-				AA245ACF07437CE500A27459,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
