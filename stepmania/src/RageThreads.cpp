@@ -664,21 +664,28 @@ RageEvent::~RageEvent()
 	delete m_pEvent;
 }
 
+/* For each of these calls, the mutex must be locked, and must not be locked recursively. */
 void RageEvent::Wait()
 {
 	ASSERT( IsLockedByThisThread() );
+	ASSERT( m_LockCnt == 0 );
+
 	m_pEvent->Wait();
+
+	m_LockedBy = GetThisThreadId();
 }
 
 void RageEvent::Signal()
 {
 	ASSERT( IsLockedByThisThread() );
+	ASSERT( m_LockCnt == 0 );
 	m_pEvent->Signal();
 }
 
 void RageEvent::Broadcast()
 {
 	ASSERT( IsLockedByThisThread() );
+	ASSERT( m_LockCnt == 0 );
 	m_pEvent->Broadcast();
 }
 
