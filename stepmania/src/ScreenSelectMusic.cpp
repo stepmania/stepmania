@@ -716,7 +716,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		 * XXX: When we're not changing banners and not rouletting, show some
 		 * kind of "moving fast" fallback banner.  (When rouletting, just keep
 		 * showing the roulette banner.) */
-		if(m_MusicWheel.IsRouletting() || !PREFSMAN->m_bChangeBannersWhenFast)
+		if(m_MusicWheel.IsRouletting() ||
+			(m_MusicWheel.IsMoving() && !PREFSMAN->m_bChangeBannersWhenFast))
 			no_banner_change = true;
 	}
 
@@ -790,7 +791,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fPlaySampleCountdown = 0;
 }
 
-
 void ScreenSelectMusic::PlayMusicSample()
 {
 	//LOG->Trace( "ScreenSelectSong::PlayMusicSample()" );
@@ -831,7 +831,7 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 void ScreenSelectMusic::SortOrderChanged()
 {
-	m_MusicSortDisplay.SetState( GAMESTATE->m_SongSortOrder );
+	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 
 	// tween music sort on screen
 //	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );
