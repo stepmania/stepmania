@@ -419,7 +419,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	// Do this after Result-specific displays so that the text will draw on top of 
 	// the bonus frame.
 	//
-	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
+	int l;
+	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		// EZ2 should hide these things by placing them off screen with theme metrics
 		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels 1x8") );
