@@ -3,7 +3,8 @@ The build process has been revised a little bit.
 1. Download StepMania Libs.tgz from:
 http://cs.washington.edu/homes/steve/sm/StepMania_Libs.tgz
 2. Decompress and install `StepMania_Libs.tgz' using Install.app.
-3. Build StepMania by running `pbxbuild' in the PBProject directory.
+3. Cd to the PBProject directory enter: $ touch ver.cpp
+4. Build StepMania by running `pbxbuild' in the PBProject directory.
 
 
 NOTES
