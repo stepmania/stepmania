@@ -797,10 +797,10 @@ bool RageDisplay_OGL::BeginFrame()
 
 void RageDisplay_OGL::EndFrame()
 {
-	// Give up the CPU to the OpenGL host if it wants it; in any case, make
-	// sure the frame is done. This helps graphics smoothness a lot by
-	// making sure we get the most out of each frame.
-	glFinish();
+	// glFlush(), not glFinish(); NVIDIA_GLX's glFinish()'s behavior is
+	// nowhere near performance-friendly and uses unholy amounts of CPU for
+	// Gog-knows-what.
+	glFlush();
 
 	wind->SwapBuffers();
 	ProcessStatsOnFlip();
