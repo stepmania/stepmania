@@ -3,12 +3,15 @@
 
 #include "RageFileManager.h"
 #include "RageLog.h"
+#include "archutils/Unix/CrashHandler.h"
 
 CString g_Driver = "dir", g_Root = ".";
 CString argv0;
 
 void test_handle_args( int argc, char *argv[] )
 {
+        CrashHandlerHandleArgs( argc, argv );
+
 	argv0 = argv[0];
 
 	while( 1 )
@@ -39,6 +42,8 @@ void test_handle_args( int argc, char *argv[] )
 
 void test_init()
 {
+	InitializeCrashHandler();
+
 	FILEMAN = new RageFileManager( argv0 );
 	FILEMAN->Mount( g_Driver, g_Root, "" );
 
