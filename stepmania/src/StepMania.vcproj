@@ -639,6 +639,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NoteData.h">
 			</File>
 			<File
+				RelativePath="NoteDataUtil.cpp">
+			</File>
+			<File
+				RelativePath="NoteDataUtil.h">
+			</File>
+			<File
 				RelativePath="NoteDataWithScoring.cpp">
 			</File>
 			<File
@@ -724,6 +730,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScoreKeeper.h">
+			</File>
+			<File
+				RelativePath="ScoreKeeper5th.cpp">
+			</File>
+			<File
+				RelativePath="ScoreKeeper5th.h">
 			</File>
 			<File
 				RelativePath="ScoreKeeperMAX2.cpp">
