@@ -1,8 +1,19 @@
 #ifndef RAGEDISPLAY_D3D_H
 #define RAGEDISPLAY_D3D_H
 
-class RageException_D3DNotInstalled: public exception { };
-class RageException_D3DNoAcceleration: public exception { };
+class RageException_D3DNotInstalled: public exception
+{
+		const char *what() const { return
+				"DirectX 8.1 or greater is not installed.  You can download it from:\n"
+				"http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en"; }
+};
+
+class RageException_D3DNoAcceleration: public exception
+{
+		const char *what() const { return
+				"Your system is reporting that Direct3D hardware acceleration is not available.  "
+				"Please obtain an updated driver from your video card manufacturer.\n\n"; }
+};
 				
 
 class RageDisplay_D3D: public RageDisplay

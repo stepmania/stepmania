@@ -407,12 +407,7 @@ RageDisplay *CreateDisplay()
 			error += "Initializing Direct3D...\n";
 			try {
 				return new RageDisplay_D3D( params );
-			} catch(RageException_D3DNotInstalled e) {
-				error += "DirectX 8.1 or greater is not installed.  You can download it from:\n"+D3DURL+"\n\n";
-			} catch(RageException_D3DNoAcceleration e) {
-				error += "Your system is reporting that Direct3D hardware acceleration is not available.  "
-					"Please obtain an updated driver from your video card manufacturer.\n\n";
-			} catch(RageException e) {
+			} catch( const exception &e ) {
 				error += CString(e.what()) + "\n";
 			};
 #endif
