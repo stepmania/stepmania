@@ -132,9 +132,9 @@ bool RageInput::FeedSDLEvent(const SDL_Event &event)
 	{
 		InputDevice i = InputDevice(DEVICE_JOY1 + event.jhat.which);
 		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_UP), !!(event.jhat.value & SDL_HAT_UP));
-		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_DOWN), !!(event.jhat.value & JOY_HAT_DOWN));
-		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_LEFT), !!(event.jhat.value & JOY_HAT_LEFT));
-		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_RIGHT), !!(event.jhat.value & JOY_HAT_RIGHT));
+		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_DOWN), !!(event.jhat.value & SDL_HAT_DOWN));
+		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_LEFT), !!(event.jhat.value & SDL_HAT_LEFT));
+		INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_RIGHT), !!(event.jhat.value & SDL_HAT_RIGHT));
 		return true;
 	}
 	}
