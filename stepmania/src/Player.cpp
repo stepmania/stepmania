@@ -708,8 +708,16 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			break;
 		}
 		case PC_CPU:
-			score = PlayerAI::GetTapNoteScore( GAMESTATE->m_iCpuSkill[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );			
-
+		case PC_AUTOPLAY:
+			switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
+			{
+			case PC_CPU:
+				score = PlayerAI::GetTapNoteScore( GAMESTATE->m_iCpuSkill[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
+				break;
+			case PC_AUTOPLAY:
+				score = TNS_MARVELOUS;
+				break;
+			}
 
 			if( GAMESTATE->m_CurGame == GAME_EZ2 ) // scores are only perfect/good/miss on ez2 adjust accordingly
 			{
@@ -795,40 +803,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			}
 
 			break;
-		case PC_AUTOPLAY:
-			if(GAMESTATE->m_CurGame == GAME_EZ2 || GAMESTATE->m_CurGame == GAME_PNM) // these gametypes never hit marvelous on autoplay
-			{
-				score = TNS_PERFECT;
-			}
-			else
-			{
-				score = TNS_MARVELOUS;
-			}
-			// Don't step on mines
-			if( tn == TAP_MINE )
-				return;
 
-			if( IsTapAttack(tn) )
-			{
-				m_soundAttackLaunch.Play();
-				score = TNS_NONE;	// don't score this as anything
-				
-				// put attack in effect
-				Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
-				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
-				
-				// remove all TapAttacks on this row
-				for( int t=0; t<this->GetNumTracks(); t++ )
-				{
-					TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
-					if( IsTapAttack(tn) )
-					{
-						this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-					}
-				}
-			}
-			break;
 		default:
 			ASSERT(0);
 			score = TNS_NONE;
