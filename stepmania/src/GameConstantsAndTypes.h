@@ -7,8 +7,9 @@
 
  Desc: Things that are used in many places and don't change often.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -107,7 +108,8 @@ RageColor PlayerToColor( PlayerNumber pn );
 RageColor PlayerToColor( int p );
 
 
-enum SongSortOrder { 
+enum SongSortOrder {
+	SORT_GROUP_NOHEADER,
 	SORT_GROUP, 
 	SORT_TITLE, 
 	SORT_BPM, 

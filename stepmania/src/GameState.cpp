@@ -5,8 +5,9 @@
 
  Desc: See Header.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -61,7 +62,9 @@ void GameState::Reset()
 	m_sPreferredGroup	= "";
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-	m_SongSortOrder = SORT_GROUP;
+	if(PREFSMAN != NULL) // Reset() is called once before PREFSMAN is initialized, but is called again
+						 // at least once before m_SongSortOrder is ever used
+		m_SongSortOrder = (PREFSMAN->m_bMusicWheelUsesSections ? SORT_GROUP_NOHEADER : SORT_GROUP);
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstration = false;

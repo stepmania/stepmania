@@ -5,8 +5,9 @@
 
  Desc: A graphic displayed in the MusicSortDisplay during Dancing.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -20,7 +21,7 @@
 
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music sort icons 1x4") );
+	Load( THEME->GetPathTo("Graphics","music sort icons 1x5") );
 	StopAnimating();
 }
 
@@ -28,6 +29,7 @@ void MusicSortDisplay::Set( SongSortOrder so )
 { 
 	switch( so )
 	{
+	case SORT_GROUP_NOHEADER:
 	case SORT_GROUP:
 	case SORT_TITLE:
 	case SORT_BPM:

@@ -5,8 +5,9 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -521,6 +522,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			// sort the songs
 			switch( so )
 			{
+			case SORT_GROUP_NOHEADER:
 			case SORT_GROUP:
 			case SORT_ROULETTE:
 				SortSongPointerArrayByGroup( arraySongs );
@@ -553,6 +555,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			bool bUseSections = false;
 			switch( so )
 			{
+			case SORT_GROUP_NOHEADER:	bUseSections = false; break;
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
 			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == "ALL MUSIC";	break;
@@ -827,7 +830,11 @@ void MusicWheel::Update( float fDeltaTime )
 				CString sPrevSelectedSection = m_CurWheelItemData[m_iSelection]->m_sSectionName;
 
 				// change the sort order
-				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS );
+				if(!PREFSMAN->m_bMusicWheelUsesSections && ( SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS) == SongSortOrder(SORT_GROUP_NOHEADER) ))
+					GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+2) % NUM_SORT_ORDERS);
+				else
+					GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS );
+
 				SCREENMAN->SendMessageToTopScreen( SM_SortOrderChanged, 0 );
 				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
 
