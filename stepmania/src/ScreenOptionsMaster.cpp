@@ -107,7 +107,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 		row.choices.push_back( "" );
 		hand.ListEntries.push_back( ModeChoice() );
 	}
-	else if( GAMESTATE->m_pCurCourse )   // playing a course
+	else if( GAMESTATE->IsCourseMode() )   // playing a course
 	{
 		row.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
 
@@ -127,7 +127,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 			}
 		}
 	}
-	else if( GAMESTATE->m_pCurSong )	// playing a song
+	else // !GAMESTATE->IsCourseMode(), playing a song
 	{
 		vector<Steps*> vSteps;
 		GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
@@ -147,10 +147,6 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 			mc.m_dc = pSteps->GetDifficulty();
 			hand.ListEntries.push_back( mc );
 		}
-	}
-	else
-	{
-		row.choices.push_back( ENTRY_NAME("N/A") );
 	}
 }
 

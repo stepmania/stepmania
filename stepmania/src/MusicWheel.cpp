@@ -897,6 +897,9 @@ void MusicWheel::Update( float fDeltaTime )
 
 				m_iSelection = 0;
 
+				//
+				// Select the previously selected item
+				//
 				switch( GAMESTATE->m_SongSortOrder )
 				{
 				case SORT_PREFERRED:
@@ -929,7 +932,9 @@ void MusicWheel::Update( float fDeltaTime )
 					ASSERT(0);
 				}
 
+				//
 				// Change difficulty for sorts by meter
+				//
 				Difficulty dc = DIFFICULTY_INVALID;
 				switch( GAMESTATE->m_SongSortOrder )
 				{
@@ -939,9 +944,40 @@ void MusicWheel::Update( float fDeltaTime )
 				case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
 				}
 				if( dc != DIFFICULTY_INVALID )
+				{
 					for( int p=0; p<NUM_PLAYERS; p++ )
 						if( GAMESTATE->IsPlayerEnabled(p) )
 							GAMESTATE->m_PreferredDifficulty[p] = dc;
+				}
+
+				//
+				// Unselect the current song if this is a course mode.
+				// Unselect the current course if this is a song sort.
+				//
+				switch( GAMESTATE->m_SongSortOrder )
+				{
+				case SORT_PREFERRED:
+				case SORT_GROUP:
+				case SORT_TITLE:
+				case SORT_BPM:
+				case SORT_GRADE:
+				case SORT_ARTIST:
+				case SORT_MOST_PLAYED:
+				case SORT_ROULETTE:
+				case SORT_EASY_METER:
+				case SORT_MEDIUM_METER:
+				case SORT_HARD_METER:
+				case SORT_CHALLENGE_METER:
+					GAMESTATE->m_pCurCourse = NULL;
+					break;
+				case SORT_ALL_COURSES:
+				case SORT_NONSTOP_COURSES:
+				case SORT_ONI_COURSES:
+				case SORT_ENDLESS_COURSES:
+					GAMESTATE->m_pCurSong = NULL;
+					break;
+				}
+
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 				RebuildMusicWheelItems();
