@@ -12,7 +12,6 @@
 */
 
 #include "RageBitmapTexture.h"
-#include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
@@ -88,8 +87,9 @@ RageBitmapTexture::~RageBitmapTexture()
 		glDeleteTextures(1, &m_uGLTextureID);
 }
 
-void RageBitmapTexture::Reload( RageTextureID name )
+void RageBitmapTexture::Reload( RageTextureID ID )
 {
+	RageTexture::Reload(ID);
 	DISPLAY->SetTexture(0);
 
 	if(m_uGLTextureID) 
@@ -122,7 +122,7 @@ void RageBitmapTexture::Create()
 	else if( HintString.Find("1 alpha") != -1 )	m_ActualID.iAlphaBits = 1;
 	else if( HintString.Find("1alpha") != -1 )	m_ActualID.iAlphaBits = 1;
 	else if( HintString.Find("0alpha") != -1 )	m_ActualID.iAlphaBits = 0;
-	if( HintString.Find("dither") != -1 )		m_ActualID.bDither = true; 
+	if( HintString.Find("dither") != -1 )		m_ActualID.bDither = true;
 
 	/* Load the image into an SDL surface. */
 	/* XXX we were lowercasing this before */
@@ -135,7 +135,7 @@ void RageBitmapTexture::Create()
 	/* Figure out which texture format to use. */
 	GLenum fmtTexture;
 
-	if( TEXTUREMAN->GetTextureColorDepth() == 16 )	
+	if( m_ActualID.iColorDepth == 16 )	
 	{
 		/* Bits of alpha in the source: */
 		int src_alpha_bits = 8 - img->format->Aloss;
@@ -164,10 +164,10 @@ void RageBitmapTexture::Create()
 			break;
 		}
 	} 
-	else if( TEXTUREMAN->GetTextureColorDepth() == 32 )
+	else if( m_ActualID.iColorDepth == 32 )
 		fmtTexture = GL_RGBA8;
 	else
-		RageException::Throw( "Invalid color depth: %d bits", TEXTUREMAN->GetTextureColorDepth() );
+		RageException::Throw( "Invalid color depth: %d bits", m_ActualID.iColorDepth );
 
 	/* Cap the max texture size to the hardware max. */
 	m_ActualID.iMaxSize = min( m_ActualID.iMaxSize, DISPLAY->GetMaxTextureSize() );

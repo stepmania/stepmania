@@ -9,18 +9,21 @@
 -----------------------------------------------------------------------------
 */
 
- 
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
 #include "RageTexture.h"
 #include "RageUtil.h"
+#include "RageTextureManager.h"
 #include <string.h>
 
+void RageTextureID::Init()
+{
+	iMaxSize = 2048;
+	iMipMaps = 4;
+	iAlphaBits = 4;
+	bDither = false;
+	bStretch = false;
+	iColorDepth = TEXTUREMAN->GetTextureColorDepth();
+}
 
-//-----------------------------------------------------------------------------
-// RageTexture constructor
-//-----------------------------------------------------------------------------
 RageTexture::RageTexture( RageTextureID name )
 {
 //	LOG->Trace( "RageTexture::RageTexture()" );

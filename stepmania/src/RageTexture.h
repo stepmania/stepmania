@@ -26,20 +26,14 @@ struct RageTextureID
 	int iMaxSize;
 	int iMipMaps;
 	int iAlphaBits;
+	int iColorDepth;
 	bool bDither;
 	bool bStretch;
 
 	/* Define an ordering so this can be used in a set<>. */
 	bool operator< (const RageTextureID &rhs) const	{ return filename < rhs.filename; }
+	void Init();
 
-	void Init()
-	{
-		iMaxSize = 2048;
-		iMipMaps = 4;
-		iAlphaBits = 4;
-		bDither = false;
-		bStretch = false;
-	}
 	RageTextureID() { Init(); }
 	RageTextureID(const CString &fn) { Init(); filename=fn; }
 };
@@ -53,7 +47,7 @@ public:
 	RageTexture( RageTextureID file );
 	virtual ~RageTexture() = 0;
 	virtual void Update( float fDeltaTime ) {}
-	virtual void Reload( RageTextureID file ) = 0;
+	virtual void Reload( RageTextureID ID ) { m_ID = m_ActualID = ID; }
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
 	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
