@@ -7,40 +7,69 @@
  *
  */
 
-/*
- * Since I cannot use the <wchar.h> header beacuse Apple decided to be really
- * stupid when it released the old SDKs, I'm going to write really bad
- * implementations for a few functions since they are not actually used
- * anywhere in StepMania (I hope). If the need arises, I can write real
- * real functions for these.
- */
-
 #define	_BSD_WCHAR_T_DEFINED_
 #include <stddef.h>
+#include <string>
+#include <cstring>
 
-#define CRASH(x) *(char*)0=0; return x
+
 extern "C" {
 #ifndef wcslen
-size_t wcslen(const wchar_t *w) { CRASH(0); }
+size_t wcslen(const wchar_t *ws)
+{
+    size_t n = 0;
+    
+    while (*(ws++) != NULL)
+        ++n;
+    return n;
+}
 #endif
 
 #ifndef wmemchr
-wchar_t *wmemchr(const wchar_t *w1, wchar_t w2, size_t s) { CRASH(NULL); }
+wchar_t *wmemchr(const wchar_t *ws, wchar_t wc, size_t n)
+{
+    for (unsigned i=0; i<n; ++i, ++ws)
+        if (*ws == wc)
+            return (wchar_t *)ws;
+    return NULL;
+}
 #endif
 
 #ifndef wmemcmp
-int wmemcmp(const wchar_t *w1, const wchar_t *w2, size_t s) { CRASH(0); }
+int wmemcmp(const wchar_t *ws1, const wchar_t *ws2, size_t n)
+{
+    for (unsigned i=0; i<n; ++i, ++ws1, ++ws2)
+        if (*ws1 != *ws2)
+            return *ws1 - *ws2;
+    return 0;
+}
 #endif
 
 #ifndef wmemcpy
-wchar_t *wmemcpy(wchar_t *dst, const wchar_t *src, size_t s) { CRASH(NULL); }
+wchar_t *wmemcpy(wchar_t *ws1, const wchar_t *ws2, size_t n)
+{
+    return (wchar_t *)memcpy(ws1, ws2, n * sizeof(wchar_t));
+}
 #endif
 
 #ifndef wmemmove
-wchar_t *wmemmove(wchar_t *dst, const wchar_t *src, size_t s) { CRASH(NULL); }
+wchar_t *wmemmove(wchar_t *ws1, const wchar_t *ws2, size_t n)
+{
+    return (wchar_t *)memmove(ws1, ws2, n * sizeof(wchar_t));
+}
 #endif
 
 #ifndef wmemset
-wchar_t *wmemset(wchar_t *w1 , wchar_t w, size_t s) { CRASH(NULL); }
+wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n)
+{
+    wchar_t *temp = ws;
+    for (unsigned i=0; i<n; ++i, ++temp)
+        *temp = wc;
+    return ws;
+}
 #endif
 }
+
+#ifndef wstring
+template class std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >;
+#endif
