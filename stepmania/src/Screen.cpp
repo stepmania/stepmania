@@ -100,6 +100,64 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	}
 }
 
+bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	if( type != IET_FIRST_PRESS )
+		return false;
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
+	{
+		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
+		/* ResetGame();
+				This causes problems on ScreenIntroMovie, which results in the
+				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
+
+		CString sMessage = "Coin Mode: ";
+		switch( PREFSMAN->m_CoinMode )
+		{
+		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
+		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
+		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
+		}
+		SCREENMAN->RefreshCreditsMessages();
+		SCREENMAN->SystemMessage( sMessage );
+		return true;
+	}
+	return false;
+}
+
+bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	if( !GAMESTATE->m_bPlayersCanJoin )
+		return false;
+
+	if( MenuI.IsValid()  &&  MenuI.button==MENU_BUTTON_START )
+	{
+		/* If this side is already in, don't re-join (and re-pay!). */
+		if(GAMESTATE->m_bSideIsJoined[MenuI.player])
+			return false;
+
+		/* subtract coins */
+		if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+				return false;	// not enough coins
+			else
+				GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
+
+		GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
+		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
+			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
+
+		SCREENMAN->RefreshCreditsMessages();
+
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+
+		return true;
+	}
+
+	return false;
+}
+
+
 void Screen::MenuCoin( PlayerNumber pn )
 {
 	// This is now handled globally by Stepmania.cpp  --  Miryokuteki

@@ -86,32 +86,18 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 	//LOG->Trace( "ScreenDemonstration::Input()" );
 
 
-	// Stop music on Start or Coin
-	// TODO:  Change ScreenGameplay to play sound through the global sound object
-	// so that this don't need to be special cased.
 	if( MenuI.IsValid() )
 	{
 		switch( MenuI.button )
 		{
 		case MENU_BUTTON_COIN:
-			m_soundMusic.Stop();
-			break;
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
 
-			switch( PREFSMAN->m_CoinMode )
-			{
-			case PrefsManager::COIN_PAY:
+			if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
-				// fall through
-			case PrefsManager::COIN_FREE:
-			case PrefsManager::COIN_HOME:
-				m_soundMusic.Stop();
-				break;
-			default:
-				ASSERT(0);
-			}
+			m_soundMusic.Stop();
 			break;
 		}
 	}

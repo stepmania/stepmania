@@ -57,17 +57,8 @@ ScreenCaution::ScreenCaution()
 
 void ScreenCaution::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	PlayerNumber pn = MenuI.player;
-	if( MenuI.IsValid()  &&  pn!=PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[pn] )
-	{
-		GAMESTATE->m_bSideIsJoined[pn] = true;
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
-		SCREENMAN->RefreshCreditsMessages();
-		return;	// don't fall though
-	}
-
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
-		return;
+	if( Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
+		return;	// handled
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
@@ -95,7 +86,8 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenCaution::MenuStart( PlayerNumber pn )
 {
-	m_Out.StartTransitioning( SM_GoToNextScreen );
+	if( !m_Out.IsTransitioning() )
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenCaution::MenuBack( PlayerNumber pn )

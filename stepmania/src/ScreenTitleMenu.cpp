@@ -51,6 +51,8 @@ ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
+	GAMESTATE->m_bPlayersCanJoin = true;
+
 	if( PREFSMAN->m_CoinMode!=PrefsManager::COIN_HOME  &&  PREFSMAN->m_bJointPremium )
 	{		
 		m_JointPremium.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu joint premium") );
@@ -159,119 +161,74 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( !MenuI.IsValid() )
 		return;
 
-	switch( PREFSMAN->m_CoinMode )
+
+
+	switch( MenuI.button )
 	{
-	case PrefsManager::COIN_HOME:
-		switch( MenuI.button )
+	case MENU_BUTTON_UP:
+		if( PREFSMAN->m_CoinMode != PrefsManager::COIN_HOME )
+			break;
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+			break;
+		TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
+		LoseFocus( m_Choice );
+		if( m_Choice == 0 ) // wrap around
+			m_Choice = (Choice)((int)NUM_CHOICES); 
+		m_Choice = Choice( m_Choice-1 );
+		m_soundChange.Play();
+		GainFocus( m_Choice );
+		break;
+	case MENU_BUTTON_DOWN:
+		if( PREFSMAN->m_CoinMode != PrefsManager::COIN_HOME )
+			break;
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+			break;
+		TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
+		LoseFocus( m_Choice );
+		if( m_Choice == (int)ScreenTitleMenu::NUM_CHOICES-1 ) 
+			m_Choice = (Choice)-1; // wrap around
+		m_Choice = Choice( m_Choice+1 );
+		m_soundChange.Play();
+		GainFocus( m_Choice );
+		break;
+	case MENU_BUTTON_BACK:
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+			break;
+		m_Out.StartTransitioning( SM_GoToAttractLoop );
+		break;
+	case MENU_BUTTON_START:
+		if( m_In.IsTransitioning() )
+			break;
+		/* break if the choice is invalid */
+		switch( m_Choice )
 		{
-		case MENU_BUTTON_UP:
-			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-				break;
-			TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
-			LoseFocus( m_Choice );
-			if( m_Choice == 0 ) // wrap around
-				m_Choice = (Choice)((int)NUM_CHOICES); 
-			m_Choice = Choice( m_Choice-1 );
-			m_soundChange.Play();
-			GainFocus( m_Choice );
-			break;
-		case MENU_BUTTON_DOWN:
-			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-				break;
-			TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
-			LoseFocus( m_Choice );
-			if( m_Choice == (int)ScreenTitleMenu::NUM_CHOICES-1 ) 
-				m_Choice = (Choice)-1; // wrap around
-			m_Choice = Choice( m_Choice+1 );
-			m_soundChange.Play();
-			GainFocus( m_Choice );
-			break;
-		case MENU_BUTTON_BACK:
-			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-				break;
-			m_Out.StartTransitioning( SM_GoToAttractLoop );
-			break;
-		case MENU_BUTTON_START:
-			if( m_In.IsTransitioning() )
-				break;
-			/* break if the choice is invalid */
-			switch( m_Choice )
+		case CHOICE_GAME_START:
+		case CHOICE_SELECT_GAME:
+		case CHOICE_OPTIONS:
+		#ifdef DEBUG
+		case CHOICE_SANDBOX:
+		#endif
+		case CHOICE_JUKEBOX:
+		case CHOICE_EDIT:
+			if( SONGMAN->GetNumSongs() == 0 )
 			{
-			case CHOICE_GAME_START:
-			case CHOICE_SELECT_GAME:
-			case CHOICE_OPTIONS:
-			#ifdef DEBUG
-			case CHOICE_SANDBOX:
-			#endif
-			case CHOICE_JUKEBOX:
-			case CHOICE_EDIT:
-				if( SONGMAN->GetNumSongs() == 0 )
-				{
-					m_soundInvalid.Play();
-					SCREENMAN->SystemMessage( "No songs are installed" );
-					break;
-				}
+				m_soundInvalid.Play();
+				SCREENMAN->SystemMessage( "No songs are installed" );
 				break;
-			case CHOICE_EXIT:
-				ExitGame();
-				LOG->Trace("CHOICE_EXIT: shutting down");
-				return;
-			default:
-				ASSERT(0);
 			}
-
-			/* If this side is already in, don't re-join (and re-pay!). */
-			if(GAMESTATE->m_bSideIsJoined[MenuI.player])
-				break;
-
-			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
-			if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
-				GAMESTATE->m_MasterPlayerNumber = MenuI.player;
-
-			SCREENMAN->RefreshCreditsMessages();
-
-			m_soundSelect.Play();
-
-			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-				break;
-			m_Out.StartTransitioning( SM_GoToNextScreen );
-		}
-		break;
-	case PrefsManager::COIN_PAY:
-	case PrefsManager::COIN_FREE:
-		switch( MenuI.button )
-		{
-		case MENU_BUTTON_BACK:
-			m_Out.StartTransitioning( SM_GoToAttractLoop );
 			break;
-		case MENU_BUTTON_START:
-			/* If this side is already in, don't re-join (and re-pay!). */
-			if(GAMESTATE->m_bSideIsJoined[MenuI.player])
-				break;
-
-			/* subtract coins */
-			if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
-				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-					break;	// not enough coins
-				else
-					GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
-
-			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
-			if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
-				GAMESTATE->m_MasterPlayerNumber = MenuI.player;
-
-			SCREENMAN->RefreshCreditsMessages();
-		
-			m_soundSelect.Play();
-
-			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-				break;
-			m_Out.StartTransitioning( SM_GoToNextScreen );
-			break;
+		case CHOICE_EXIT:
+			ExitGame();
+			LOG->Trace("CHOICE_EXIT: shutting down");
+			return;
+		default:
+			ASSERT(0);
 		}
-		break;
+
+		if( Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
+			if( !m_Out.IsTransitioning() )
+				m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
-	
 
 //	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }

@@ -386,7 +386,7 @@ int main(int argc, char* argv[])
 bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput GameI, MenuInput MenuI, StyleInput StyleI )
 {
 	/* None of the globals keys act on types other than FIRST_PRESS */
-	if( type == IET_FIRST_PRESS ) 
+	if( type != IET_FIRST_PRESS ) 
 		return false;
 
 	switch( MenuI.button )

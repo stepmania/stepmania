@@ -76,31 +76,6 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 	AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning() );
 }
 
-bool ScreenAttract::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-	if( type != IET_FIRST_PRESS )
-		return false;
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
-	{
-		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		/* ResetGame();
-				This causes problems on ScreenIntroMovie, which results in the
-				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
-
-		CString sMessage = "Coin Mode: ";
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
-		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
-		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
-		}
-		SCREENMAN->RefreshCreditsMessages();
-		SCREENMAN->SystemMessage( sMessage );
-		return true;
-	}
-	return false;
-}
-
 void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning )
 {
 	if(type != IET_FIRST_PRESS) 
@@ -124,7 +99,9 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 			case PrefsManager::COIN_FREE:
 			case PrefsManager::COIN_HOME:
 				SOUNDMAN->StopMusic();
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
+				/* We already played the it was a coin was inserted.  Don't play it again. */
+				if( MenuI.button != MENU_BUTTON_COIN )
+					SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
