@@ -284,16 +284,17 @@ static void InitCharAliases()
 		{ "sharp",		0x266F }, /* ♯ */
 
 		/* These are internal-use glyphs; they don't have real Unicode codepoints. */
-		{ "up",	0xE000 },
-		{ "down",	0xE001 },
-		{ "left",	0xE002 },
-		{ "right",	0xE003 },
-		{ "menuup",	0xE004 },
+		{ "up",			0xE000 },
+		{ "down",		0xE001 },
+		{ "left",		0xE002 },
+		{ "right",		0xE003 },
+		{ "menuup",		0xE004 },
 		{ "menudown",	0xE005 },
 		{ "menuleft",	0xE006 },
 		{ "menuright",	0xE007 },
-		{ "start",	0xE008 },
-		{ "ok",		0xE009 },
+		{ "start",		0xE008 },
+		{ "ok",			0xE009 },
+		{ "nextrow",	0xE00A },
 		{ NULL, 	0 }
 	};
 
