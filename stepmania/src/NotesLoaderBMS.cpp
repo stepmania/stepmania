@@ -25,20 +25,21 @@
 //    Right		16-56
 //
 //	Notice that 15 and 25 have double meanings!  What were they thinking???
-//	While reading in, use the 6 panel mapping.  After reading in, detect if only 4 notes
+//	While reading in, use the 6 panel mapping.  After reading in, detect if 
+//only 4 notes
 //	are used.  If so, shift the Up+Right column back to the Up column
 //
 
-// MD 10/26/03 - Hey, folks, BMSes are used for things BESIDES DDR steps, 
+// MD 10/26/03 - Hey, folks, BMSes are used for things BESIDES DDR steps,
 //    and so we're borking up BMSes that are for pnm/bm/etc.
 //
-// pnm-nine:   11-15,21-24
+// pnm-nine:   11-15,22-25
 // pnm-five:   13-15,21-22
 // bm-single:  11-16
 // bm-double:  11-16,21-26
 // bm-single7: 11-16,18-19
 // bm-double7: 11-16,18-19,21-26,28-29
-// 
+//
 // So the magics for these are:
 // pnm-nine: nothing >5, with 12, 14, 22 and/or 24
 // pnm-five: nothing >5, with 14 and/or 22
@@ -81,7 +82,8 @@ StepsType BMSLoader::CheckTracksMagic( void ) {
 		return STEPS_TYPE_DANCE_SOLO;
 	case 8:
 		// Could also be couple or 7-key.
-		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 0)
+		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 
+0)
 			// these four tracks are IIDX-related
 			return STEPS_TYPE_DANCE_DOUBLE;
 		else
@@ -97,7 +99,8 @@ StepsType BMSLoader::CheckTracksMagic( void ) {
 	}
 }
 
-void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut )
+void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, 
+char &cNoteCharOut )
 {
 	if( iBMSTrack > 40 )
 	{
@@ -156,15 +159,16 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	ResetTracksMagic();
 
 	RageFile file(sPath);
-	
+
 	if (!file.IsOpen())
-        RageException::Throw("Failed to open %s for reading.", sPath.c_str());
+        RageException::Throw("Failed to open %s for reading.", 
+sPath.c_str());
 	while (!file.AtEOF())
 	{
 		CString line = file.GetLine();
 		StripCrnl(line);
 		CString value_name;		// fill these in
-		CString value_data;	
+		CString value_data;
 
 		// BMS value names can be separated by a space or a colon.
 		int iIndexOfFirstColon = line.Find( ":" );
@@ -174,7 +178,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			iIndexOfFirstColon = 10000;
 		if( iIndexOfFirstSpace == -1 )
 			iIndexOfFirstSpace = 10000;
-		
+
 		int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
 
 		if( iIndexOfSeparator != 10000 )
@@ -190,13 +194,14 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 		value_name.MakeLower();
 
-		if( -1 != value_name.Find("#player") ) 
+		if( -1 != value_name.Find("#player") )
 		{
 			switch( atoi(value_data) )
 			{
 			case 1:		// 4 or 6 single
 				out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
-				// if the mode should be solo, then we'll update m_DanceStyle below when we read in step data
+				// if the mode should be solo, then we'll update m_DanceStyle below when 
+// we read in step data
 				break;
 			case 2:		// couple/battle
 				out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
@@ -214,7 +219,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		if( -1 != value_name.Find("#title") )
 		{
 			value_data.MakeLower();
-			
+
 			// extract the Steps description (looks like 'Music <BASIC>')
 			int iPosOpenBracket = value_data.Find( "<" );
 			if( iPosOpenBracket == -1 )
@@ -224,7 +229,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 				iPosCloseBracket = value_data.Find( ")" );
 
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
-				value_data = value_data.substr( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
+				value_data = value_data.substr( iPosOpenBracket+1, 
+iPosCloseBracket-iPosOpenBracket-1 );
 			LOG->Trace( "Steps description found to be '%s'", value_data.c_str() );
 
 			out.SetDescription(value_data);
@@ -233,7 +239,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			if( value_data.Find("6") != -1 )
 				out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
 		}
-		if( -1 != value_name.Find("#playlevel") ) 
+		if( -1 != value_name.Find("#playlevel") )
 		{
 			out.SetMeter(atoi(value_data));
 		}
@@ -259,7 +265,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			}
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
-			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
+			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d",
 			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
 
 
@@ -273,7 +279,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 					int iColumnNumber;
 					char cNoteChar;
-					
+
 					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
 
 					if( iColumnNumber != -1 )
@@ -282,7 +288,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			}
 		}
 	}
-	
+
 	// MD 10/26/03 - dance-couple is the only one we should retain unchanged.
 	if( out.m_StepsType != STEPS_TYPE_DANCE_COUPLE)
 	{
@@ -290,9 +296,10 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	}
 
 	/* We fix this later, since we're not moving columns around right now.
-	if( out.m_StepsType == STEPS_TYPE_DANCE_SINGLE  || 
-		out.m_StepsType == STEPS_TYPE_DANCE_DOUBLE  || 
-		out.m_StepsType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
+	if( out.m_StepsType == STEPS_TYPE_DANCE_SINGLE  ||
+		out.m_StepsType == STEPS_TYPE_DANCE_DOUBLE  ||
+		out.m_StepsType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then 
+the Up+Right track really contains the notes for Up
 	{
 		pNoteData->MoveTapNoteTrack(DANCE_NOTE_PAD1_UP, DANCE_NOTE_PAD1_UPRIGHT);
 	}
@@ -347,19 +354,21 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[0] = BMS_P1_KEY3;
 		iTransformNewToOld[1] = BMS_P1_KEY4;
 		iTransformNewToOld[2] = BMS_P1_KEY5;
-		iTransformNewToOld[3] = BMS_P2_KEY1;
-		iTransformNewToOld[4] = BMS_P2_KEY2;
-		break;		
+		// fix these columns!
+		iTransformNewToOld[3] = BMS_P2_KEY2;
+		iTransformNewToOld[4] = BMS_P2_KEY3;
+		break;
 	case STEPS_TYPE_PNM_NINE:
-		iTransformNewToOld[0] = BMS_P1_KEY1;
-		iTransformNewToOld[1] = BMS_P1_KEY2;
-		iTransformNewToOld[2] = BMS_P1_KEY3;
-		iTransformNewToOld[3] = BMS_P1_KEY4;
-		iTransformNewToOld[4] = BMS_P1_KEY5;
-		iTransformNewToOld[5] = BMS_P2_KEY1;
-		iTransformNewToOld[6] = BMS_P2_KEY2;
-		iTransformNewToOld[7] = BMS_P2_KEY3;
-		iTransformNewToOld[8] = BMS_P2_KEY4;
+		iTransformNewToOld[0] = BMS_P1_KEY1; // lwhite
+		iTransformNewToOld[1] = BMS_P1_KEY2; // lyellow
+		iTransformNewToOld[2] = BMS_P1_KEY3; // lgreen
+		iTransformNewToOld[3] = BMS_P1_KEY4; // lblue
+		iTransformNewToOld[4] = BMS_P1_KEY5; // red
+		// fix these columns!
+		iTransformNewToOld[5] = BMS_P2_KEY2; // rblue
+		iTransformNewToOld[6] = BMS_P2_KEY3; // rgreen
+		iTransformNewToOld[7] = BMS_P2_KEY4; // ryellow
+		iTransformNewToOld[8] = BMS_P2_KEY5; // rwhite
 		break;
 	// MD 10/26/03 - uncomment this section when we get around to BM support outside 5-key
 	//    10/29/03 - helps if I actually do what I suggest.
@@ -411,7 +420,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	NoteData* pNoteData2 = new NoteData;
 	pNoteData2->SetNumTracks( iNumNewTracks );
-	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
+	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld 
+);
 
 	out.SetNoteData(pNoteData2);
 
@@ -441,11 +451,12 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	// load the Steps from the rest of the BMS files
 	unsigned i;
-	for( i=0; i<arrayBMSFileNames.size(); i++ ) 
+	for( i=0; i<arrayBMSFileNames.size(); i++ )
 	{
 		Steps* pNewNotes = new Steps;
 
-		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], *pNewNotes );
+		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], 
+*pNewNotes );
 		if( ok )
 			out.m_apNotes.push_back( pNewNotes );
 		else
@@ -455,7 +466,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
 	RageFile file(sPath);
-	
+
 	if (!file.IsOpen())
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 	while (!file.AtEOF())
@@ -463,7 +474,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		CString line = file.GetLine();
 		StripCrnl(line);
 		CString value_name;		// fill these in
-		CString value_data;	
+		CString value_data;
 
 		// BMS value names can be separated by a space or a colon.
 		int iIndexOfFirstColon = line.Find( ":" );
@@ -473,7 +484,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			iIndexOfFirstColon = 10000;
 		if( iIndexOfFirstSpace == -1 )
 			iIndexOfFirstSpace = 10000;
-		
+
 		int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
 
 		if( iIndexOfSeparator != 10000 )
@@ -492,7 +503,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 		// handle the data
-		if( value_name == "#title" ) 
+		if( value_name == "#title" )
 		{
 			// strip Steps type out of description leaving only song title - looks like 'B4U <BASIC>'
 			unsigned iIndex = value_data.find_last_of('<');
@@ -501,27 +512,28 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			if( iIndex != value_data.npos )
 			{
 				value_data = value_data.Left( iIndex );
-				GetMainAndSubTitlesFromFullTitle( value_data, out.m_sMainTitle, out.m_sSubTitle );
+				GetMainAndSubTitlesFromFullTitle( value_data, out.m_sMainTitle, 
+out.m_sSubTitle );
 			}
 			else
 				out.m_sMainTitle = value_data;
 		}
-		else if( value_name == "#artist" ) 
+		else if( value_name == "#artist" )
 		{
 			out.m_sArtist = value_data;
 		}
-		else if( value_name == "#bpm" ) 
+		else if( value_name == "#bpm" )
 		{
 			BPMSegment newSeg( 0, (float)atof(value_data) );
 			out.AddBPMSegment( newSeg );
-		
+
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
 		}
-		else if( value_name == "#backbmp" ) 
+		else if( value_name == "#backbmp" )
 		{
 			out.m_sBackgroundFile = value_data;
 		}
-		else if( value_name == "#wav" ) 
+		else if( value_name == "#wav" )
 		{
 			out.m_sMusicFile = value_data;
 		}
@@ -544,7 +556,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			}
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
-			//LOG->Trace( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d", 
+			//LOG->Trace( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d",
 			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
 			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
@@ -585,19 +597,21 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					// open the song file again and and look for this tag's value
 					/* I don't like this. I think we should just seek back to the beginning
-					 * rather than open the file again. However, I'm not changing the logic,
+					 * rather than open the file again. However, I'm not changing the 
+logic,
 					 * only the implementation. -- Steve
 					 */
 					RageFile file(sPath);//Why doesn't VC6 bitch here but it does with int??
-					
+
 					if (!file.IsOpen())
-						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
+						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() 
+);
 					while (!file.AtEOF())
 					{
 						CString line = file.GetLine();
 						StripCrnl(line);
 						CString value_name;		// fill these in
-						CString value_data;	
+						CString value_data;
 
 						// BMS value names can be separated by a space or a colon.
 						int iIndexOfFirstColon = line.Find( ":" );
@@ -607,7 +621,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 							iIndexOfFirstColon = 10000;
 						if( iIndexOfFirstSpace == -1 )
 							iIndexOfFirstSpace = 10000;
-						
+
 						int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
 
 						if( iIndexOfSeparator != 10000 )
@@ -627,18 +641,20 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					}
 
 					if( fBPM == -1 )	// we didn't find the line we were looking for
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", 
+sTagToLookFor.c_str(), sPath.c_str() );
 					else
 					{
 						BPMSegment newSeg( NoteRowToBeat(iStepIndex), fBPM );
 						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", 
+newSeg.m_fStartBeat, newSeg.m_fBPM );
 					}
 
 					break;
 				}
 				case 9:	{ // stop
-					// This is a very inefficient way to parse, but it doesn't 
+					// This is a very inefficient way to parse, but it doesn't
 					// matter much because this is only parsed on the first run after the song is installed.
 					CString sTagToLookFor = ssprintf( "#STOP%02x", arrayNotes[j] );
 					float fFreezeStartBeat = NoteRowToBeat(iStepIndex);
@@ -647,7 +663,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					// open the song file again and and look for this tag's value
 					RageFile file(sPath);//Why doesn't VC6 bitch here but it does with int??
-						
+
 					if (!file.IsOpen())
                         RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 					while (!file.AtEOF())
@@ -655,7 +671,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						CString line = file.GetLine();
 						StripCrnl(line);
 						CString value_name;		// fill these in
-						CString value_data;	
+						CString value_data;
 
 						// BMS value names can be separated by a space or a colon.
 						int iIndexOfFirstColon = line.Find( ":" );
@@ -665,7 +681,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 							iIndexOfFirstColon = 10000;
 						if( iIndexOfFirstSpace == -1 )
 							iIndexOfFirstSpace = 10000;
-						
+
 						int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
 
 						if( iIndexOfSeparator != 10000 )
@@ -685,7 +701,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 							float fBPM = -1;
 							for( unsigned i=0; i<out.m_BPMSegments.size()-1; i++ )
 							{
-								if( out.m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat && 
+								if( out.m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat &&
 									out.m_BPMSegments[i+1].m_fStartBeat > fFreezeStartBeat )
 								{
 									fBPM = out.m_BPMSegments[i].m_fBPM;
@@ -703,13 +719,15 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", 
+sTagToLookFor.c_str(), sPath.c_str() );
 					}
 					else
 					{
 						StopSegment newSeg( fFreezeStartBeat, fFreezeSecs );
 						out.AddStopSegment( newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", 
+newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
 					}
 
 					break;
@@ -720,9 +738,10 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	}
 
 	for( i=0; i<out.m_BPMSegments.size(); i++ )
-		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d", 
+		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d",
 					out.m_BPMSegments[i].m_fStartBeat, out.m_BPMSegments[i].m_fBPM, i );
 
 	return true;
 }
+
 
