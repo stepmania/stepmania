@@ -12,6 +12,7 @@
 #include "Steps.h"
 
 
+#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define EXPLANATION_TEXT			THEME->GetMetric (m_sName,"ExplanationText")
 #define HELP_TEXT					THEME->GetMetric (m_sName,"HelpText")
 
@@ -50,7 +51,7 @@ void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GoToPrevScreen:
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

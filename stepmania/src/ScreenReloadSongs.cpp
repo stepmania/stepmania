@@ -10,6 +10,8 @@
 
 #include "arch/LoadingWindow/LoadingWindow.h"
 
+#define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
+
 static const int DrawFrameRate = 20;
 class ScreenReloadSongsLoadingWindow: public LoadingWindow
 {
@@ -74,7 +76,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 
 	SONGMAN->Reload( m_LoadingWindow );
 	UNLOCKMAN->UpdateSongs();
-	SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+	SCREENMAN->SetNewScreen( NEXT_SCREEN );
 }
 
 /*

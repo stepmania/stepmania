@@ -12,6 +12,7 @@
 #include "Style.h"
 
 #define NEXT_SCREEN				THEME->GetMetric("ScreenStyleSplash","NextScreen")
+#define PREV_SCREEN				THEME->GetMetric("ScreenStyleSplash","PrevScreen")
 #define NONSTOP_SCREEN				THEME->GetMetric("ScreenStyleSplash","NonstopScreen")
 #define ONI_SCREEN				THEME->GetMetric("ScreenStyleSplash","OniScreen")
 
@@ -64,7 +65,7 @@ void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 	
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );

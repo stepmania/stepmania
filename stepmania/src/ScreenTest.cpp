@@ -5,6 +5,8 @@
 #include "ScreenTestFonts.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
+#include "ThemeManager.h"
+#include "CommonMetrics.h"
 
 
 ScreenTest::~ScreenTest()
@@ -53,7 +55,7 @@ void ScreenTest::Input( const DeviceInput& DeviceI, const InputEventType type, c
 		if( DeviceI.button == KEY_ESC )
 		{
 			if( type != IET_FIRST_PRESS ) return;
-			SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 			return;
 		}
 	}

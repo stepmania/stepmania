@@ -13,6 +13,7 @@
 #include "Steps.h"
 #include "song.h"
 
+#define PREV_SCREEN					THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT			THEME->GetMetric(m_sName,"ExplanationText")
 #define HELP_TEXT					THEME->GetMetric(m_sName,"HelpText")
 
@@ -51,7 +52,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		m_Selector.RefreshNotes();
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenEdit" );

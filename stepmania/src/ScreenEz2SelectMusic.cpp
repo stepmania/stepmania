@@ -20,6 +20,7 @@
 #include "PlayerState.h"
 #include "Command.h"
 
+#define PREV_SCREEN				THEME->GetMetric ("ScreenEz2SelectMusic","PrevScreen")
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
 #define SCROLLING_LIST_ROT		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListRotation")
@@ -374,7 +375,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	case SM_GoToNextScreen:
 		if( m_bGoToOptions )
@@ -388,7 +389,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_NoSongs:
-		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 	break;
 	}
 
