@@ -353,14 +353,14 @@ int Profile::GetActualCourseDancePointsForStepsType( StepsType st ) const
 
 float Profile::GetPercentCompleteForStepsType( StepsType st ) const
 {
-	float fPossible = 
+	int iPossible = 
 		GetPossibleSongDancePointsForStepsType( st ) +
 		GetPossibleCourseDancePointsForStepsType( st );
-	float fActual = 
+	int iActual = 
 		GetActualSongDancePointsForStepsType( st ) +
 		GetActualCourseDancePointsForStepsType( st );
 
-	return fActual / fPossible;
+	return float(iActual) / iPossible;
 }
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
