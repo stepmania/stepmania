@@ -34,12 +34,11 @@ protected:
 class RageFileObj
 {
 protected:
-	RageFile &parent;
 	void SetError( const CString &sErr ) { m_sError = sErr; }
 	CString m_sError;
 
 public:
-	RageFileObj( RageFile &p ): parent(p) { }
+	RageFileObj( RageFile &p ) { }
 	virtual ~RageFileObj() { }
 
 	CString GetError() const { return m_sError; }
@@ -47,7 +46,7 @@ public:
 	
 	virtual int Seek( int offset ) = 0;
 	virtual int GetFileSize() = 0;
-	virtual CString GetDisplayPath() const { return parent.GetRealPath(); }
+	virtual CString GetDisplayPath() const { return ""; }
 
 	/* Raw I/O: */
 	virtual int Read(void *buffer, size_t bytes) = 0;

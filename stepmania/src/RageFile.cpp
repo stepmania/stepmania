@@ -30,10 +30,14 @@ RageFile::RageFile( const RageFile &cpy )
 
 CString RageFile::GetPath() const
 {
-    if ( !IsOpen() )
+	if ( !IsOpen() )
 		return "";
 
-	return m_File->GetDisplayPath();
+	CString sRet = m_File->GetDisplayPath();
+	if( sRet != "" )
+		return sRet;
+
+	return GetRealPath();
 }
 
 bool RageFile::Open( const CString& path, int mode )
