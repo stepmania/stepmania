@@ -224,9 +224,9 @@ static void WheelSpeed( int &sel, bool ToSel, const CStringArray &choices )
 	}
 	else
 	{
-		int map[] = { 5, 10, 15, 25 };
+		int mapping[] = { 5, 10, 15, 25 };
 		ASSERT( sel >= 0 && sel < 4 );
-		PREFSMAN->m_iMusicWheelSwitchSpeed = map[sel];
+		PREFSMAN->m_iMusicWheelSwitchSpeed = mapping[sel];
 	}
 }
 
@@ -243,17 +243,17 @@ MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer );
 MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
 template<class T>
-static void MoveMap( int &sel, T &opt, bool ToSel, const T *map, unsigned cnt )
+static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
-		/* opt -> sel.  Find the closest entry in map. */
+		/* opt -> sel.  Find the closest entry in mapping. */
 		T best_dist = (T) 0;
 		bool have_best = false;
 
 		for( unsigned i = 0; i < cnt; ++i )
 		{
-			const T val = map[i];
+			const T val = mapping[i];
 			T dist = opt > val? (T)(opt-val): (T)(val-opt);
 			if( have_best && dist > best_dist )
 				continue;
@@ -265,33 +265,33 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *map, unsigned cnt )
 		}
 	} else {
 		/* sel -> opt */
-		opt = map[sel];
+		opt = mapping[sel];
 	}
 }
 
 
 static void JudgeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const float map[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
-	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, map, ARRAYSIZE(map) );
+	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
+	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const float map[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
-	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, map, ARRAYSIZE(map) );
+	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
+	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void ShowSongOptions( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const PrefsManager::Maybe map[] = { PrefsManager::YES,PrefsManager::NO,PrefsManager::ASK };
-	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, map, ARRAYSIZE(map) );
+	const PrefsManager::Maybe mapping[] = { PrefsManager::YES,PrefsManager::NO,PrefsManager::ASK };
+	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 1,2,3,4,5,6,7,8 };
-	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
@@ -332,8 +332,8 @@ MOVE( JointPremium,			PREFSMAN->m_bJointPremium );
 
 static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 1,2,3,4,5,6,7,8 };
-	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
 
 	if( ToSel && PREFSMAN->m_bEventMode )
 		sel = 7;
@@ -349,40 +349,40 @@ MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
 
 static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 320,400,512,640,800,1024,1280 };
-	MoveMap( sel, PREFSMAN->m_iDisplayWidth, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 320,400,512,640,800,1024,1280 };
+	MoveMap( sel, PREFSMAN->m_iDisplayWidth, ToSel, mapping, ARRAYSIZE(mapping) );
 	if( !ToSel )
 		PREFSMAN->m_iDisplayHeight = PREFSMAN->m_iDisplayWidth * 3 / 4;
 }
 
 static void DisplayColor( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 16,32 };
+	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void TextureResolution( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 256,512,1024,2048 };
-	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 256,512,1024,2048 };
+	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void TextureColor( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iTextureColorDepth, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 16,32 };
+	MoveMap( sel, PREFSMAN->m_iTextureColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
-	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
+	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void MovieDecode( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int map[] = { 1,2,3,4 };
-	MoveMap( sel, PREFSMAN->m_iMovieDecodeMS, ToSel, map, ARRAYSIZE(map) );
+	const int mapping[] = { 1,2,3,4 };
+	MoveMap( sel, PREFSMAN->m_iMovieDecodeMS, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Sound options */
