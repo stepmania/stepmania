@@ -474,6 +474,10 @@ void ScreenManager::SetNewScreen( CString sClassName )
 {
 	m_DelayedScreen = sClassName;
 
+	// bypass unlock screen if unlocks aren't being used
+	if (sClassName == "ScreenUnlock" && !PREFSMAN->m_bUseUnlockSystem)
+		m_DelayedScreen = THEME->GetMetric("ScreenUnlock","NextScreen");
+
 	/* If we're not delaying screen loads, load it now.  Otherwise, we'll load
 	 * it on the next iteration.  Only delay if we already have a screen
 	 * loaded; otherwise, there's no reason to delay. */
