@@ -20,7 +20,6 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "InputMapper.h"
-#include "InputQueue.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageSounds.h"
