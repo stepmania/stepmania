@@ -64,24 +64,24 @@ XToString( CoinMode );
 
 
 static const CString SortOrderNames[NUM_SORT_ORDERS] = {
-	"PREFERRED",
-	"GROUP",
-	"TITLE",
+	"Preferred",
+	"Group",
+	"Title",
 	"BPM",
-	"PLAYERS BEST",
-	"TOP GRADE",
-	"ARTIST",
-	"EASY METER",
-	"MEDIUM METER",
-	"HARD METER",
-	"CHALLENGE METER",
-	"SORT",
-	"MODE",
-	"COURSES",
-	"NONSTOP",
-	"ONI",
-	"ENDLESS",
-	"ROULETTE"
+	"Popularity",
+	"TopGrade",
+	"Artist",
+	"EasyMeter",
+	"MediumMeter",
+	"HardMeter",
+	"ChallengeMeter",
+	"Sort",
+	"Mode",
+	"Courses",
+	"Nonstop",
+	"Oni",
+	"Endless",
+	"Roulette",
 };
 XToString( SortOrder );
 StringToX( SortOrder );
