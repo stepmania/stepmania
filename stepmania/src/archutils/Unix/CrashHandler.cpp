@@ -135,7 +135,6 @@ static void parent_process( int to_child, void **BacktracePointers, int SignalRe
  * XXX: make sure the parent dying doesn't take out the child
  */
 
-#if defined(BACKTRACE_METHOD_X86_LINUX)
 /* The x86 backtrace() in glibc doesn't make any effort at all to decode
  * signal trampolines.  The result is that it doesn't properly show the
  * function that actually caused the signal--which is the most important
@@ -156,6 +155,7 @@ static const char *itoa(unsigned n)
 	return p;
 }
 
+#if defined(BACKTRACE_METHOD_X86_LINUX)
 static int xtoi( const char *hex )
 {
 	int ret = 0;
