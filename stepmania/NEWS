@@ -28,7 +28,8 @@ CHANGE:  AutoGen now only generated dance->pump and pump->dance to cut
 CHANGE:  Texure cache disabled because of performance problems on low memory 
 	systems.  If you have >= 128MB memory, you may want re-enable it by 
 	setting UnloadTextureDelaySeconds=1800.
-	
+BUG FIX:  Fixed super shuffle generating impossible HoldNote patterns
+
 ------------------------CVS after 3.00 beta 6----------------
 CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life.
 CHANGE:  Judge difficulty strictness increased slightly.

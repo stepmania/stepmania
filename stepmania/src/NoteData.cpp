@@ -566,6 +566,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		}
 		break;
 	case PlayerOptions::TURN_SHUFFLE:
+	case PlayerOptions::TURN_SUPER_SHUFFLE:		// use this code to shuffle the HoldNotes
 		{
 			CArray<int,int> aiTracksLeftToMap;
 			for( t=0; t<m_iNumTracks; t++ )
@@ -580,7 +581,6 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			}
 		}
 		break;
-	case PlayerOptions::TURN_SUPER_SHUFFLE:
 		// handle this below
 		break;
 	default:
@@ -597,42 +597,55 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
 			tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
 
+	this->CopyAll( &tempNoteData );		// copy note data from newData back into this
+	this->Convert2sAnd3sToHoldNotes();
+
+
+
+
 
 	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
 	{
-		this->Convert2sAnd3sToHoldNotes();		// so we don't super-shuffle HoldNotes
-		for( int r=0; r<this->GetLastRow(); r++ )	// foreach row
-		{
-			if( !this->IsRowEmpty(r) )
-			{
-				// shuffle this row
-				CArray<int,int> aiTracksLeftToMap;
-				for( t=0; t<m_iNumTracks; t++ )
-					aiTracksLeftToMap.Add( t );
-				
-				for( t=0; t<m_iNumTracks; t++ )
-				{
-					int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
-					int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
-					aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
-					iTakeFromTrack[t] = iRandTrack;
-				}
+		// We already did the normal shuffling code above, which did a good job
+		// of shuffling HoldNotes without creating impossible patterns.
+		// Now, go in and shuffle the TapNotes some more.
 
-				for( t=0; t<m_iNumTracks; t++ )
-					tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
+		// clear tempNoteData because we're going to use it as a scratch buffer again
+		tempNoteData.Init();
+		tempNoteData.m_iNumTracks = this->m_iNumTracks;
+
+		// copy all HoldNotes before copying taps
+		for( int i=0; i<this->m_iNumHoldNotes; i++ )
+			tempNoteData.AddHoldNote( this->m_HoldNotes[i] );
+
+		this->ConvertHoldNotesTo4s();
+
+		for( int r=0; r<=this->GetLastRow(); r++ )	// foreach row
+		{
+			if( this->IsRowEmpty(r) )
+				continue;	// no need to super shuffle this row
+
+			// shuffle this row
+			CArray<int,int> aiTracksThatCouldHaveTapNotes;
+			for( t=0; t<m_iNumTracks; t++ )
+				if( m_TapNotes[t][r] != '4' )	// any point that isn't part of a hold
+					aiTracksThatCouldHaveTapNotes.Add( t );
+
+			for( t=0; t<m_iNumTracks; t++ )
+			{
+				if( m_TapNotes[t][r] != '4'  &&  m_TapNotes[t][r] != '0' )	// there is a tap note here (and not a HoldNote)
+				{
+					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.GetSize();
+					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
+					aiTracksThatCouldHaveTapNotes.RemoveAt( iRandIndex );
+	
+					tempNoteData.m_TapNotes[iTo][r] = m_TapNotes[t][r];
+				}
 			}
 		}
-		for( int i=0; i<this->m_iNumHoldNotes; i++ )
-		{
-			HoldNote& hn = this->m_HoldNotes[i];
-			HoldNote newHN = hn;
-			hn.m_iTrack = rand() % m_iNumTracks;
-			tempNoteData.AddHoldNote( newHN );
-		}
-	}
 
-	this->CopyAll( &tempNoteData );		// copy note data from newData back into this
-	this->Convert2sAnd3sToHoldNotes();
+		this->CopyAll( &tempNoteData );		// copy note data from newData back into this
+	}
 }
 
 void NoteData::MakeLittle()
@@ -661,11 +674,14 @@ void NoteData::MakeLittle()
  * this to do this. -glenn
  *
 
+ * This code intentially leaves the '2' behind because a hold head is 
+ * treated exactly like a tap note for scoring purposes.
+
  */
 void NoteData::Convert2sAnd3sToHoldNotes()
 {
-	// Any note will end a hold (not just a '3').  This makes parsing DWIs much easier, 
-	// plus we don't want tap notes in the middle of a hold!
+	// Any note will end a hold (not just a '3').  This makes parsing DWIs much easier.
+	// Plus, allowing tap notes in the middle of a hold doesn't make sense!
 
 	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
 	{

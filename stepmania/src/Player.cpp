@@ -410,9 +410,11 @@ void Player::Step( int col )
 		bDestroyedNote = (score >= TNS_GOOD);
 
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
-		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) {
+		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) 
+		{
 			m_fOffset[m_iOffsetSample++] = fNoteOffset;
-			if (m_iOffsetSample >= SAMPLE_COUNT) {
+			if (m_iOffsetSample >= SAMPLE_COUNT) 
+			{
 				float stddev = 0.0f, mean = 0.0f;
 				int i;
 				

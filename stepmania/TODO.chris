@@ -2,6 +2,7 @@
 Fix
 /////////////////////////
 
+super shuffle doesn't correctly handle holds (Ayla Part 2)
 
 There's a major Oni course bug (at least in Pump mode):
 
