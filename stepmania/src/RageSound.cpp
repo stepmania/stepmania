@@ -174,25 +174,21 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	if(!NewSample->Open(sSoundFilePath.GetString()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
+	Sample = NewSample;
 
 	/* Try to precache. */
 	if(precache)
 	{
 		SoundReader_Preload *Preload = new SoundReader_Preload;
-		if(Preload->Open(NewSample))
-		{
+		if(Preload->Open(Sample)) {
 			Sample = Preload;
-			delete NewSample;
-			return true;
+		} else {
+			/* Preload failed.  It read some data, so we need to rewind the
+			 * reader. */
+			Sample->SetPosition_Fast(0);
+			delete Preload;
 		}
-
-		/* Preload failed.  It read some data, so we need to rewind the
-		 * reader. */
-		NewSample->SetPosition_Fast(0);
-		delete Preload;
 	}
-
-	Sample = NewSample;
 
 	return true;
 }

@@ -16,6 +16,9 @@ int SoundReader_Preload::total_samples() const
 
 bool SoundReader_Preload::Open(SoundReader *source)
 {
+	ASSERT(source);
+//	samplerate = source->GetSampleRate();
+
 	/* Check the length, and see if we think it'll fit in the buffer. */
 	int len = source->GetLength_Fast();
 	if(len != -1)
@@ -23,8 +26,7 @@ bool SoundReader_Preload::Open(SoundReader *source)
 		float secs = len / 1000.f;
 
 		int pcmsize = int(secs * samplerate * samplesize); /* seconds -> bytes */
-		if(!PREFSMAN->m_bSoundPreloadAll && 
-			pcmsize > max_prebuf_size)
+		if(pcmsize > max_prebuf_size)
 			return false; /* Don't bother trying to preload it. */
 
 		buf.get_owned().reserve(pcmsize);
@@ -45,12 +47,12 @@ bool SoundReader_Preload::Open(SoundReader *source)
 		/* Add the buffer. */
 		buf.get_owned().append(buffer, buffer+cnt);
 
-		if(!PREFSMAN->m_bSoundPreloadAll &&
-			buf.get_owned().size() > max_prebuf_size)
+		if(buf.get_owned().size() > max_prebuf_size)
 			return false; /* too big */
 	}
 
 	position = 0;
+	delete source;
 	return true;
 }
 

@@ -29,15 +29,19 @@ class SoundReader_Preload: public SoundReader {
 
 	int total_samples() const;
 
+	int samplerate;
+
 public:
-	/* This will throw a nonfatal exception if this sound isn't
-	 * suitable for preloading. */
+	/* Return true if the sound has been preloaded, in which case source will
+	 * be deleted.  Otherwise, return false. */
 	bool Open(SoundReader *source);
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition_Accurate(int ms);
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
+	int GetSampleRate() const { return samplerate; }
+
 	SoundReader *Copy() const;
 	~SoundReader_Preload() { }
 };
