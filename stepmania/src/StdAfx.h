@@ -26,6 +26,7 @@
  * Actually, this is a valid warning, but we do it all over the
  * place, eg. with ScreenMessages.  Those should be fixed, but later. XXX */
 #pragma warning (disable : 4063)
+#pragma warning (disable : 4127)
 #endif
 
 #include <afxwin.h>         // MFC core and standard components
@@ -39,6 +40,33 @@
 #include <dinput.h>
 
 #include "STDCarray.h"
+
+#if 0
+#include "StdString.h"
+
+/* Use CStdString: */
+#define CString CStdString
+#define CStringArray StdCArray<CString,CString>
+#else
+
+/* Arg.  VC7's CString has GetString(), an equivalent of c_str().
+ * VC6 doesn't have that.  We need it to transition to std::string
+ * sanely.  So, sneakily add it.  This goes away when we finish
+ * transitioning. */
+#if _MSC_VER < 1300 /* VC6, not VC7 */
+class CStringTemp: public CString {
+public:
+	CStringTemp() {}
+	CStringTemp(const char *s): CString(s) { }
+	CStringTemp(const CString &s): CString(s) {}
+
+	const char *GetString() const { return (const char *) *this; }
+};
+#define CString CStringTemp
+#define CStringArray CArray<CStringTemp,CStringTemp>
+#endif
+
+#endif
 
 /* Include this here to make sure our assertion handler is always
  * used.  (This file is a dependency of most everything anyway,
