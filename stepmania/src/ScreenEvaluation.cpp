@@ -207,11 +207,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		best_grade = min( best_grade, grade[p] ); 
 
 		// if its extra stage, update # passed stages
-		if (PREFSMAN->m_bUseUnlockSystem &&
-			(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
+		if ( (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
 			grade[p] > GRADE_FAILED &&
 			m_Type != summary)
-					UNLOCKSYS->UnlockClearExtraStage();
+			UNLOCKSYS->UnlockClearExtraStage();
 	}
 
 
