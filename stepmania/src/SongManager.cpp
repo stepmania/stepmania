@@ -147,9 +147,6 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	RageTimer tm;
 	LoadStepManiaSongDir( SONGS_DIR, ld );
 
-	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
-        LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], ld );
-
 	if( PREFSMAN->m_DWIPath != "" )
 		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "/Songs", ld );
 
@@ -1147,16 +1144,6 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 {
 	const CString sCourseSuffix = sPreferredGroup + SLASH + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	CString sCoursePath = SONGS_DIR + sCourseSuffix;
-	if( !DoesFileExist(sCoursePath) ) 
-	{
-		/* try alternative song folders */
-		for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
-		{
-			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + SLASH + sCourseSuffix;
-			if( DoesFileExist(sCoursePath) ) 
-				break;
-		}
-	}
 
 	if( !DoesFileExist(sCoursePath) && PREFSMAN->m_DWIPath.size() )
 		sCoursePath = PREFSMAN->m_DWIPath + SLASH "Songs" SLASH + sCourseSuffix;
