@@ -429,6 +429,8 @@ void Player::Step( int col, RageTimer tm )
 
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
+		GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += (int) roundf( fSecondsFromPerfect * 1000 );
+
 		// calculate TapNoteScore
 		TapNoteScore score;
 

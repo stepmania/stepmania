@@ -41,6 +41,7 @@ struct StageStats
 	/* The number of songs played and passed, respectively. */
 	int		iSongsPassed[NUM_PLAYERS];
 	int		iSongsPlayed[NUM_PLAYERS];
+	int		iTotalError[NUM_PLAYERS];
 };
 
 
