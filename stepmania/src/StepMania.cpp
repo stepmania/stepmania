@@ -1091,7 +1091,7 @@ int main(int argc, char* argv[])
 
 	// UGLY: Reload the current theme now that all global singletons are
 	// constructed so that they can be registered with Lua.
-	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), THEME->GetCurLanguage() );
+	THEME->UpdateLuaGlobals();
 
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
     
