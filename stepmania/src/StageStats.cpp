@@ -55,7 +55,7 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 {
 	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// should be calling this is player isn't joined!
 
-	if( bFailed[pn] )
+	if( bFailed[pn] || !iPossibleDancePoints[pn] )
 		return GRADE_E;
 
 	/* Based on the percentage of your total "Dance Points" to the maximum
