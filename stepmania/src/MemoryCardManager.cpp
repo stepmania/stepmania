@@ -203,8 +203,8 @@ void MemoryCardManager::AssignUnassignedCards()
 					UsbStorageDevice &usbd = vUnassignedDevices[i];
 					if( usbd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) == 0 )	// match
 					{
-						LOG->Trace( "dir match:  iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
-							usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
+						LOG->Trace( "dir match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
+							usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
 						goto match;
 					}
 				}
@@ -227,8 +227,8 @@ void MemoryCardManager::AssignUnassignedCards()
 					PREFSMAN->m_iMemoryCardUsbLevel[p] != usbd.iLevel )
 					continue;	// not a match
 
-				LOG->Trace( "bus/port match:  iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
-					usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
+				LOG->Trace( "bus/port match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
+					usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
 				goto match;
 			}
 			
