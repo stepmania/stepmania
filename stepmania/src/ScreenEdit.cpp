@@ -684,6 +684,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( iCol >= m_NoteFieldEdit.m_iNumTracks )	// this button is not in the range of columns for this StyleDef
 				break;
 
+			/* XXX: easier to do with 4s */
 			// check for to see if the user intended to remove a HoldNote
 			bool bRemovedAHoldNote = false;
 			for( int i=0; i<m_NoteFieldEdit.m_iNumHoldNotes; i++ )	// for each HoldNote
@@ -701,10 +702,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( !bRemovedAHoldNote )
 			{
 				// We didn't remove a HoldNote, so the user wants to add or delete a TapNote
-				if( m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] == '0' )
-					m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] = '1';
+				if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) == '0' )
+					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, '1');
 				else
-					m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] = '0';
+					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex,  '0');
 			}
 		}
 		break;
