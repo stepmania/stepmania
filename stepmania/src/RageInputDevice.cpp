@@ -58,6 +58,10 @@ CString DeviceInput::GetDescription()
 		case JOY_RIGHT:		sReturn += "Right";		break;
 		case JOY_UP:		sReturn += "Up";		break;
 		case JOY_DOWN:		sReturn += "Down";		break;
+		case JOY_LEFT_2:	sReturn += "Left2";		break;
+		case JOY_RIGHT_2:	sReturn += "Right2";	break;
+		case JOY_UP_2:		sReturn += "Up2";		break;
+		case JOY_DOWN_2:	sReturn += "Down2";		break;
 		case JOY_Z_UP:		sReturn += "Z-Up";		break;
 		case JOY_Z_DOWN:	sReturn += "Z-Down";	break;
 		case JOY_ROT_UP:  sReturn += "R-Up";		break;
@@ -260,9 +264,6 @@ char DeviceInput::ToChar() const
 	case DEVICE_KEYBOARD:
 		if( button < 128 )
 			return (char) button;
-		/* XXX: SDLK_WORLD_* are for international keyboards; we can handle those,
-		 * now, by mapping it to Unicode.  However, I can't find any documentation
-		 * on those keysyms. */
 		return '\0';
 	default:
 		return '\0';

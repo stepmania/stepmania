@@ -205,14 +205,26 @@ enum InputDevice {
 	DEVICE_NONE			// means this is NULL
 };
 
-// button byte codes for directional pad
-enum JoystickButton {
+/* Joystick inputs.  We try to have enough input names so any input on a reasonable
+ * joystick has an obvious mapping, but keep it generic and don't try to handle odd
+ * special cases.  For example, many controllers have two sticks, so the JOY_LEFT_2, etc.
+ * pairs are useful for many types of sticks. */
+enum JoystickButton
+{
+	/* Standard axis: */
 	JOY_LEFT = 0, JOY_RIGHT, 
 	JOY_UP, JOY_DOWN,
+
+	/* Secondary sticks: */
+	JOY_LEFT_2, JOY_RIGHT_2,
+	JOY_UP_2, JOY_DOWN_2,
+
 	JOY_Z_UP, JOY_Z_DOWN,
 	JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
 	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
 	JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
+
+	/* Buttons: */
 	JOY_1,	JOY_2,	JOY_3,	JOY_4,	JOY_5,	JOY_6,	JOY_7,	JOY_8,	JOY_9,	JOY_10,
 	JOY_11,	JOY_12,	JOY_13,	JOY_14,	JOY_15,	JOY_16,	JOY_17,	JOY_18,	JOY_19,	JOY_20,
 	JOY_21,	JOY_22,	JOY_23,	JOY_24, JOY_25, JOY_26, JOY_27, JOY_28, JOY_29, JOY_30,
@@ -273,17 +285,22 @@ struct DeviceInput
 public:
 	InputDevice device;
 	int button;
+
+	/* This is usually 0 or 1.  Analog joystick inputs can set this to a percentage (0..1).
+	 * This should be 0 for analog axes within the dead zone. */
+	float level;
+
 	RageTimer ts;
 
-	DeviceInput(): device(DEVICE_NONE), button(-1), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, int b ): device(d), button(b), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, int b, const RageTimer &t ):
-		device(d), button(b), ts(t) { }
+	DeviceInput(): device(DEVICE_NONE), button(-1), ts(RageZeroTimer), level(0) { }
+	DeviceInput( InputDevice d, int b, float l=0 ): device(d), button(b), level(l), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, int b, float l, const RageTimer &t ):
+		device(d), button(b), level(l), ts(t) { }
 
-	bool operator==( const DeviceInput &other ) 
+	bool operator==( const DeviceInput &other ) const
 	{ 
 		/* Return true if we represent the same button on the same device.  Don't
-		 * compare ts. */
+		 * compare level or ts. */
 		return device == other.device  &&  button == other.button;
 	};
 
