@@ -1495,6 +1495,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageException.h">
 			</File>
 			<File
+				RelativePath="RageFile.cpp">
+			</File>
+			<File
 				RelativePath=".\RageInput.cpp">
 			</File>
 			<File
