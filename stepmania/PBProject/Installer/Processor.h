@@ -18,9 +18,10 @@ using namespace std;
 class Processor
 {
 private:
-    typedef void (*handleFileFunc)(const char *file, const char *archivePath, bool overwrite);
-    typedef const char *(*getPathFunc)(const char *id);
+    typedef void (*handleFileFunc)(const CString& file, const CString& archivePath, bool overwrite);
+    typedef const CString (*getPathFunc)(const CString& ID);
     typedef void (*errorFunc)(const char *fmt, ...);
+    typedef bool (*askFunc)(const CString& question);
 
     stack<unsigned> mReturnStack;
     bool mDoGoto;
@@ -32,6 +33,7 @@ private:
     CString mCWD;
     handleFileFunc mHandleFile;
     getPathFunc mGetPath;
+    askFunc mAsk;
     errorFunc mError;
     bool mInstalling;
 
@@ -39,8 +41,8 @@ private:
     bool ResolveConditional(const CString& cond);
     static void DefaultError(const char *fmt, ...);
 public:
-    Processor(CString& path, handleFileFunc f, getPathFunc p, bool i)
-        : mDoGoto(false), mPath(path), mCWD("."), mHandleFile(f), mGetPath(p),
+    Processor(CString& path, handleFileFunc f, getPathFunc p, askFunc a, bool i)
+        : mDoGoto(false), mPath(path), mCWD("."), mHandleFile(f), mGetPath(p), mAsk(a),
         mError(Processor::DefaultError), mInstalling(i) { }
     void ProcessLine(const CString& line, unsigned& nextLine);
     void SetErrorFunc(errorFunc f) { mError = f; }

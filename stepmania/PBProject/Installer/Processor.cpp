@@ -209,6 +209,13 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
+    if (parts[0] == "ASK")
+    {
+        if (parts.size() != 3)
+            goto error;
+        mVars[parts[1]] = (*mAsk)(parts[2]);
+    }
+
 error:
     (*mError)("%s is an invalid command", line.c_str());
     ++nextLine;

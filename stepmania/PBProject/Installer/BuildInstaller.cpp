@@ -17,7 +17,7 @@ using namespace std;
 #include <stack>
 #include <map>
 
-void HandleFile(const char *file, const char *archivePath, bool overwrite)
+void HandleFile(const CString& file, const CString& archivePath, bool overwrite)
 {
     static bool archiveMade = false;
     CString command;
@@ -29,14 +29,11 @@ void HandleFile(const char *file, const char *archivePath, bool overwrite)
         archiveMade = true;
         command = "tar cfP '";
     }
-    command += archivePath;
-    command += "' '";
-    command += file;
-    command += "'";
+    command += archivePath + "' '" + file + "'";
     
     system(command);
     
-    printf("%s\n", file);
+    printf("%s\n", file.c_str());
 }
 
 void PrintUsage(int err)
@@ -75,6 +72,7 @@ int main(int argc, char *argv[])
     if (inFile == "help" || inFile == "-h" || inFile == "--help")
         PrintUsage(0);
 
+    outDir += "/files";
 
     InstallerFile config(inFile);
     unsigned nextLine = 0;
@@ -96,10 +94,14 @@ int main(int argc, char *argv[])
 
     CString archivePath = outDir + "/archive.tar";
 
-    Processor p(archivePath, HandleFile, NULL, false);
+    Processor p(archivePath, HandleFile, NULL, NULL, false);
 
     while (nextLine < config.GetNumLines())
         p.ProcessLine(config.GetLine(nextLine), nextLine);
+
+    /* Compress the archive after it is created */
+    command = "gzip '" + archivePath + "'";
+    system(command);
 
     if (!config.WriteFile(outDir + "/config"))
     {

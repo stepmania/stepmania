@@ -10,8 +10,11 @@
 #ifndef INSTALLER_FILE_H
 #define INSTALLER_FILE_H
 
+#include "StdString.h"
 #include <cstdio>
 #include <vector>
+
+using namespace std;
 
 class InstallerFile {
 private:
