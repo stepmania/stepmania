@@ -164,7 +164,11 @@ void DancingCharacters::DrawPrimitives()
 {
 	DISPLAY->EnterPerspective( 45, false );
 
-	float fPercentIntoSweep = SCALE(GAMESTATE->m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
+	float fPercentIntoSweep;
+	if(m_fThisCameraStartBeat == m_fThisCameraEndBeat)
+		fPercentIntoSweep = 0;
+	else 
+		fPercentIntoSweep = SCALE(GAMESTATE->m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
 	float fCameraPanY = SCALE( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
 	float fCameraHeight = SCALE( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
