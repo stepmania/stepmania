@@ -395,7 +395,7 @@ void Course::MemCardData::AddHighScore( HighScore hs, int &iIndexOut )
 	{
 		vHighScores.insert( vHighScores.begin()+i, hs );
 		iIndexOut = i;
-		if( vHighScores.size() > NUM_RANKING_LINES )
+		if( vHighScores.size() > unsigned(NUM_RANKING_LINES) )
 			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
 	}
 }
