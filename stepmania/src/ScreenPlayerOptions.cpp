@@ -37,16 +37,16 @@ enum {
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
-	{ "Speed",	9, {"x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8"} },	
-	{ "Boost",  2, {"OFF","ON"} },	
-	{ "Effect", 8, {"OFF","WAVE", "DRUNK", "DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
-	{ "Appear\nance", 5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH", "BLINK"} },	
-	{ "Turn",	5, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE"} },	
-	{ "Little", 2, {"OFF","ON"} },	
-	{ "Scroll", 2, {"STANDARD","REVERSE"} },	
-	{ "Color",	4, {"VIVID","NOTE","FLAT","PLAIN"} },	
-	{ "Holds",	2, {"OFF","ON"} },	
-	{ "Dark",	2, {"OFF","ON"} },	
+	{ "Speed",			9, {"x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8"} },	
+	{ "Boost",			2, {"OFF","ON"} },	
+	{ "Effect",			8, {"OFF","WAVE", "DRUNK", "DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
+	{ "Appear\n-ance",	5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH", "BLINK"} },	
+	{ "Turn",			5, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE"} },	
+	{ "Little",			2, {"OFF","ON"} },	
+	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
+	{ "Color",			4, {"VIVID","NOTE","FLAT","PLAIN"} },	
+	{ "Holds",			2, {"OFF","ON"} },	
+	{ "Dark",			2, {"OFF","ON"} },	
 };
 
 

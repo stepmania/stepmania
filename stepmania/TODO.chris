@@ -2,6 +2,25 @@
 Fix
 /////////////////////////
 
+the only other thing is to encorporate `...'   to replace <...>, and instead turn the <...> as triple jumps or more than 2 arrow jumps. its the new DWI format.
+
+change "bg change" to show a list
+
+change background change to look for movies in song dir and bganimations in song dir
+
+You're saying that right now the max combo text is being drawn underneath the bonus frame?
+
+ the MAX announcer dosnt say "Extra Stage" anymore
+SlinkyWizard30: and there is no "%" sign on Oni
+
+crash loading bga in Win98
+
+editor play and record without set range
+
+editor intro prompt
+
+oni-specific comments
+
 arcade mode
 
 about us page
@@ -14,29 +33,19 @@ RMA phone
 
 RMA Kiko USB
 
+couples format
+
+3/5 button options toggle
+
 kitsappt photos
 
-100 flash on OK
-
 slower eval bar tween
-
-post graphics jobs needed on web site.
 
 max style judge tween
 
 add turns to editor
 
-precise timing adjustment
-
-draw taps on same row as hold with hold head
-
-max style lifemeter animation
-
 164 theme
-
-warning
-
-name entry
 
 gap between wheel items
 
@@ -46,13 +55,117 @@ fix screwed up scroll bar
 
 ready, here we go between each stage of a course
 
+team seattle link
+
 send disc to Penny Arcade
 
 different top bar frame for oni
 
+get rid of demonstration box.
+
+rename "gameplay top frame", "bototm frame" to "life frame", score frame"
+
+long ver, marathon balloons
+
+flag for use hold head
+
+warning screen
+
+explanation text in options
+
+lyrics
+
+
+//////////////////////
+Animachanic suggestions:
+//////////////////////
+Suggestions for SM to make it more MAX2-esque:
+
+-The BPM numbers are of a more "squarish" font, and by default are very light gray in color.
+-BPMs that change or go high are displayed in a light purple rather than red.
+-When you select difficulty, the banners don't bounce/jiggle, they sort of scroll upwards.
+-The sort select needs to be changed. MAX2 does it very quickly, nearly twice or three times
+faster than 5th does. Also, the sound byte for it is different.
+-I don't know if this is already being implemented, but it would be nice to make a "MAX2"
+song selection, including songs from previous mixes, but being able to change their font
+color on the song selection screen.
+-When you change songs, the BPM numbers scroll upwards.
+-On the evaluation screen, on the song banner, the icon for difficulty is displayed on the
+left side at the top rather than the bottom.
+-Also on the evaluation screen, the numbers start spinning much faster than they do in SM,
+and they decelerate.
+-You know how the grade letter "pulses"? The pulses need to be faster, about twice as fast,
+and the amount of time they are "glowing" needs to be shortened to about half the amount
+of time it is currently set to "glow".
+-It would be nice if when you selected options, the little boxes to the side of the options
+screen would display what you had selected.
+-The "select difficulty" banners should be level with each other.
+-I don't know if this is just lag on my system, but you should be able to scroll through the
+songs faster when you hold down left or right.
+
+AMENDS:
+
+-Difficulty in feet should go up to ten.
+-When changing songs, feet icons should not "bounce" when you switch songs rapidly.
+-The CD titles should rotate a little faster, and should have a little more depth to them.
+-1st stage text should be blue, 2nd stage text should be green, 3rd stage text should be 
+yellow, and final/extra stage should be red.
+-It would be more realistic if it didn't prompt you to hit enter a second time for options;
+it should instruct you to hold enter in the readme. Just an idea.
+-I'm currently in the process of setting up all the MAX2 (and MAX songs available on MAX2)
+to play close to arcade-accurate previews. Once I finish I can send the files to you.
+
+That's it for now.
+
+
+
+//////////////////////
+Spig suggestions:
+//////////////////////
+If you're free of bugs heres what you can think of putting in or changing:
+
+- Make SMANIAC songs show the Oni Banner instead of heavy
+
+- Add a new color for SMANIAC like blue
+
+- Support for oni specific gameplay frames
+
+- Support for extra stage specific gameplay frames
+
+- In the MAX2 skin, the max combo doesn't show
+
+- Perhaps see what the groove radar looks like with a 1 pixel border, it may be a bit thick?
+
+- Support for the results screen to show up to 5 stages cleared instead of 3
+
+- (popular request) When choosing ALL MUSIC mode, do NOT start off by showing folder's. Instead, just leave all the songs out with each group being colored its specifc color. then, if the user wants by folder, all he/she has to do is sort to it by tapping UP-DOWN-UP-DOWN 
+
+- Suport for ONI specifc gameplay frames
+
+- Good/boo/missed jumps count only as 1
+
+- Combo only goes up after getting PERFECTS
+
+- Changing the metrics "StageY=" doesn't change the placement of the stage number.
+http://spig.krystaljungle.com/STEPMANIA/oni.JPG
+Perhaps we can have the stage number on the bar like that, and where it the STAGE is, it could say ONI. Just like the picture.
+
+
+
+
 /////////////////////
 Punt:
 /////////////////////
+
+warning
+
+name entry
+
+change transition oni to show banner
+
+max style lifemeter animation
+
+precise timing adjustment
 
 texture cache
 

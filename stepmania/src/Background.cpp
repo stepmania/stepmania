@@ -250,6 +250,7 @@ void Background::LoadFromSong( Song* pSong )
 			{
 				CStringArray arrayPossibleAnims;
 				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
+				// strip out "cvs" and "danger"
 				for( int i=arrayPossibleAnims.GetSize()-1; i>=0; i-- )
 					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs")  ||  -1!=arrayPossibleAnims[i].Find("anger") )
 						arrayPossibleAnims.RemoveAt(i);
@@ -352,6 +353,10 @@ void Background::LoadFromSong( Song* pSong )
 		m_BackgroundAnimations[i]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 		m_BackgroundAnimations[i]->SetZoom( fZoom );
 	}
+		
+	m_BGADanger.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+	m_BGADanger.SetZoom( fZoom );
+	
 }
 
 

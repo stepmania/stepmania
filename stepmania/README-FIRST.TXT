@@ -736,6 +736,10 @@ Example:
 
 \BGAnimations\<anim folder>\<layer files>
 
+Why?
+
+Grouping all of the graphics for an animation into one file would be a pain.  If you want your sprites to have animation and you put all the frames for multiple animations into one big graphics file:  a) That file would be huge and many video cards can't draw large textures, b) You'd have to create some other text file that says which frames of the graphic belong to which sprite, c) If your sprites are different sizes, there will be a lot of wasted space between the frames of that graphic, and d) It's a pain for the artist to cut and paste a whole bunch of frames from different animations into one graphic (and make sure everything is lined up right).
+
 The BGAnimations folder should contain several folders for individual background animations.  Currently, these background animations cycle in order of their folder names, changing every 4 measures of the song.
 
 In an animation folder, each sprite represents one layer.  Multiple layers can be specified by having multiple sprites.  Layers are drawn from back to front in order of their file name.  Different "layer effects" are specified by adding tokens to the file name.  Here are an explanation of the currently supported tokens:
@@ -791,6 +795,7 @@ tileflipy,
 
 tilepulse,
        - Tiles zoom in and out.
+
 
 
 ************************************************************

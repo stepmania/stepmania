@@ -1,13 +1,15 @@
 ; NSIS Install Script
-; created by BBF and chrisdanford
+; created by 
+;     BBF 
+;     chrisdanford
 ; I use the following command to create the installer:
 ; D:\Program Files\NSIS>makensis.exe /v3 /cd "m:\Dev Projects\CVS\stepmania\stepmania.nsi"
 ;
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
 Name "StepMania"
-OutFile "stepmania300beta6.exe"
-!define PRODUCT_NAME "StepMania 3.0 beta 6"
+OutFile "stepmania300beta6rc.exe"
+!define PRODUCT_NAME "StepMania 3.0 beta 6 Release Candidate"
 
 
 ; Some default compiler settings (uncomment and change at will):
@@ -98,6 +100,7 @@ File "Announcers\instructions.txt"
 CreateDirectory "$INSTDIR\BGAnimations"
 SetOutPath "$INSTDIR\BGAnimations"
 File "BGAnimations\instructions.txt"
+File /r "BGAnimations\danger"
 
 CreateDirectory "$INSTDIR\Cache"
 SetOutPath "$INSTDIR\Cache"
@@ -142,6 +145,7 @@ SetOutPath "$INSTDIR"
 File "bass.dll"
 File "COPYING.txt"
 File "README-FIRST.TXT"
+File "NEWS"
 File "stepmania.exe"
 File "stepmania.ini"
 File "smpackage.exe"
@@ -219,6 +223,7 @@ RMDir "$INSTDIR\Visualizations"
 Delete "$INSTDIR\bass.dll"
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.TXT"
+Delete "$INSTDIR\NEWS"
 Delete "$INSTDIR\stepmania.exe"
 Delete "$INSTDIR\stepmania.ini"
 Delete "$INSTDIR\smpackage.exe"

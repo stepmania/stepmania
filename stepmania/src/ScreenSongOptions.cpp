@@ -30,9 +30,9 @@ enum {
 };
 
 OptionRowData g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
-	{ "Life Type",	2, {"BAR","BATTERY"} },	
-	{ "Bar Drain",	3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
-	{ "Bat Lives",	10, {"1","2","3","4","5","6","7","8","9","10"} },	
+	{ "Life\nType",	2, {"BAR","BATTERY"} },	
+	{ "Bar\nDrain",	3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
+	{ "Bat\nLives",	10, {"1","2","3","4","5","6","7","8","9","10"} },	
 	{ "Fail",		3, {"ARCADE","END OF SONG","OFF"} },	
 	{ "Assist",		2, {"OFF","TICK"} },	
 	{ "Rate",		9, {"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5"} },	

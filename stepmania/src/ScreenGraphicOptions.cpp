@@ -38,15 +38,15 @@ enum {
 };
 OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Display",		2,  {"FULLSCREEN", "WINDOWED"} },
-	{ "Display Res",	7,  {"320","400","512","640","800","1024","1280"} },
-	{ "Texture Res",	3,  {"256","512","1024"} },
-	{ "Refresh Rate",	11, {"DEFAULT","MAX","60","70","72","75","80","85","90","100","120"} },
-	{ "Show Stats",		2,  {"OFF","ON"} },
-	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
-	{ "BG Brightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
-	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
-	{ "BG For Banner",	2,  {"NO", "YES (slow)"} },
-	{ "Wait for Vsync",	2,  {"NO", "YES"} },
+	{ "Display\nRes",	7,  {"320","400","512","640","800","1024","1280"} },
+	{ "Texture\nRes",	3,  {"256","512","1024"} },
+	{ "Refresh\nRate",	11, {"DEFAULT","MAX","60","70","72","75","80","85","90","100","120"} },
+	{ "Show\nStats",	2,  {"OFF","ON"} },
+	{ "BG\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
+	{ "BG\nBrightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
+	{ "Movie\nDecode",	4,  {"1ms","2ms","3ms","4ms"} },
+	{ "BG For\nBanner",	2,  {"NO", "YES (slow)"} },
+	{ "Wait for\nVsync",2,  {"NO", "YES"} },
 };
 
 static const int HorizRes[] = {

@@ -531,6 +531,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		}
 	}
 		
+
+	bool bOneHasNewRecord = false;
+	for( p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) && bNewRecord[p] )
+			bOneHasNewRecord = true;
 	
 	if( m_bTryExtraStage )
 	{
@@ -540,6 +545,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		this->AddChild( &m_sprTryExtraStage );
 
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","evaluation extra stage") );
+	}
+	else if( bOneHasNewRecord )
+	{
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}
 	else
 	{
@@ -565,13 +574,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_SUMMARY:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
-			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
-			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
-			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
-			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
-			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aa") );	break;
-			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
+			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final e") );		break;
+			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final d") );		break;
+			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final c") );		break;
+			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final b") );		break;
+			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final a") );		break;
+			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
+			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade

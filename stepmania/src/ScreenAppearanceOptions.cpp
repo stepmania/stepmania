@@ -35,10 +35,10 @@ enum {
 };
 
 OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
-	{ "Announcer",	1, {"OFF"} },	// fill this in on ImportOptions()
-	{ "Theme",		0, {""} },		// fill this in on ImportOptions()
-	{ "Note Skin",	0, {""} },		// fill this in on ImportOptions()
-	{ "How^To Play",2, {"OFF","ON"} },
+	{ "Announ\n-cer",	1, {"OFF"} },	// fill this in on ImportOptions()
+	{ "Theme",			0, {""} },		// fill this in on ImportOptions()
+	{ "Note\nSkin",		0, {""} },		// fill this in on ImportOptions()
+	{ "How To\nPlay",	2, {"OFF","ON"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :

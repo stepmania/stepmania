@@ -134,9 +134,6 @@ void GameDef::GetSkinNames( CStringArray &AddTo ) const
 	for( int i=AddTo.GetSize()-1; i>=0; i-- )
 		if( 0 == stricmp("cvs", AddTo[i]) )
 			AddTo.RemoveAt( i );
-
-	if( AddTo.GetSize() == 0 )
-		throw RageException( "The folder '%s' must contain at least one skin.", sBaseSkinFolder );
 }
 
 bool GameDef::HasASkinNamed( CString sSkin ) const

@@ -351,7 +351,7 @@ ScreenGameplay::ScreenGameplay()
 	this->AddChild( &m_Fade );
 
 
-	m_textSurviveTime.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay survive time numbers 7x2"), "01234 :56789%." );
+	m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","survive time") );
 	m_textSurviveTime.TurnShadowOff();
 	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 	m_textSurviveTime.SetText( "" );
@@ -380,6 +380,7 @@ ScreenGameplay::ScreenGameplay()
 		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
 		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
 		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
+		m_announcerOni.Load(			ANNOUNCER->GetPathTo("gameplay comment oni") );
 
 		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
 		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
@@ -679,12 +680,20 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_fTimeLeftBeforeDancingComment -= fDeltaTime;
 			if( m_fTimeLeftBeforeDancingComment <= 0 )
 			{
-				if( OneIsHot() )
-					m_announcerHot.PlayRandom();
-				else if( AllAreInDanger() )
-					m_announcerDanger.PlayRandom();
-				else
-					m_announcerGood.PlayRandom();
+				switch( GAMESTATE->m_PlayMode )
+				{
+				case PLAY_MODE_ARCADE:
+					if( OneIsHot() )			m_announcerHot.PlayRandom();
+					else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
+					else						m_announcerGood.PlayRandom();
+					break;
+				case PLAY_MODE_ONI:
+				case PLAY_MODE_ENDLESS:
+					m_announcerOni.PlayRandom();
+					break;
+				default:
+					ASSERT(0);
+				}
 
 				m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
 			}

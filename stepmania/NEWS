@@ -1,4 +1,6 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+BUG FIX:  Editor no longer crashes if you try to drag a hold note up
+	before beat 0.
 CHANGE:  Hold head now drawn in place tap note graphic when a Hold starts
 	on the same row.
 CHANGE:  Added bright ghost flash on hold note score of OK.

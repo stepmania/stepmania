@@ -717,6 +717,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				newHN.m_iTrack = col;
 				newHN.m_fStartBeat = min(fStartBeat, fEndBeat);
 				newHN.m_fEndBeat = max(fStartBeat, fEndBeat);
+
+				newHN.m_fStartBeat = max(newHN.m_fStartBeat, 0);
+				newHN.m_fEndBeat = max(newHN.m_fEndBeat, 0);
+
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}
 

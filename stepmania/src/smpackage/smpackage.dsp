@@ -96,11 +96,11 @@ SOURCE=.\manage.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=..\RageUtil.cpp
+SOURCE=.\RageUtil.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\RageUtil.h
+SOURCE=.\RageUtil.h
 # End Source File
 # Begin Source File
 

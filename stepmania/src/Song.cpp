@@ -398,7 +398,7 @@ void Song::TidyUpData()
 	m_sSubTitle.TrimRight();
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.GetSize() == 0 )
-		throw RageException( "No #BPM specified in '%s.'", GetSongFilePath() );
+		throw RageException( "No #BPM specified in '%s.'", m_sSongDir+m_sSongFileName );
 
 	if( !HasMusic() )
 	{

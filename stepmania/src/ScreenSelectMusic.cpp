@@ -100,7 +100,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select music info frame") );
+	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select music banner frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
@@ -196,7 +196,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;	// skip
 
-		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame") );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame 1x2") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
@@ -318,7 +318,7 @@ void ScreenSelectMusic::TweenOffScreen()
 
 	m_GrooveRadar.TweenOffScreen();
 
-	m_textSongOptions.FadeOff( 0, "fade", TWEEN_TIME );
+	m_textSongOptions.FadeOff( 0, "foldy", TWEEN_TIME );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{

@@ -129,6 +129,7 @@ private:
 	RandomSample	m_announcerDanger;
 	RandomSample	m_announcerGood;
 	RandomSample	m_announcerHot;
+	RandomSample	m_announcerOni;
 	RandomSample	m_announcer100Combo;
 	RandomSample	m_announcer200Combo;
 	RandomSample	m_announcer300Combo;

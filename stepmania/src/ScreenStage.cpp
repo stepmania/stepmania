@@ -193,8 +193,6 @@ ScreenStage::ScreenStage()
 	}
 	m_frameStage.AddChild( &m_sprStage );
 
-	this->AddChild( &m_Fade );	// fade should draw last, on top of everything else
-	m_Fade.SetOpened();
 
 
 	//
@@ -215,6 +213,9 @@ ScreenStage::ScreenStage()
 		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
 		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
 		m_frameStage.SetTweenY( CENTER_Y );
+
+		this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
+		this->AddChild( &m_frameStage ); 
 	}
 
 
@@ -229,6 +230,8 @@ ScreenStage::ScreenStage()
 
 		m_frameStage.SetXY( CENTER_X, CENTER_Y+160 );
 		m_frameStage.SetZoom( 0.5f );
+
+		this->AddChild( &m_frameStage ); 
 	}
 
 
@@ -504,6 +507,9 @@ ScreenStage::ScreenStage()
 		
 		m_stagename.SetTweenX(CENTER_X+70); // set their new locations
 		AddChild( &m_stagename ); //add the actor
+	
+		this->AddChild( &m_frameStage ); 
+
 		//////////////////////////////
 		// END stage name         //
 		//////////////////////////////
@@ -511,8 +517,8 @@ ScreenStage::ScreenStage()
 		m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
 	}
 
-	/* Add this last, so it's on top (except for the QuadMask, due to SetZ) */
-	this->AddChild( &m_frameStage ); 
+	this->AddChild( &m_Fade );	// fade should draw last, on top of everything else
+	m_Fade.SetOpened();
 
 	this->SendScreenMessage( SM_DoneFadingIn, 1.0f );
 	this->SendScreenMessage( SM_StartFadingOut, 4.0f );

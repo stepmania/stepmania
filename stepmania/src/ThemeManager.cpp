@@ -182,11 +182,24 @@ try_element_again:
 		CString sNewFileName;
 		file.ReadString( sNewFileName );
 //			CString sNewFilePath = sDir+"\\"+sNewFileName; // This is what it used to be, FONT redirs were getting extra slashes
-		// at the start of their file names, so I took out this extra slash - Andy.
-		CString sNewFilePath = sDir+sNewFileName;
-		if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
-			throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath ); 
-		return sNewFilePath;
+			// at the start of their file names, so I took out this extra slash - Andy.
+			file.Close();
+			CString sNewFilePath = sDir+sNewFileName;
+			if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
+			{
+#ifdef _DEBUG
+				if( IDRETRY == AfxMessageBox( ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath), MB_RETRYCANCEL ) )
+					goto try_element_again;
+#endif
+				throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath ); 
+			}
+			else
+				return sNewFilePath;
+		}
+		else
+		{
+			return asPossibleElementFilePaths[0];
+		}
 	}
 
 	return asPossibleElementFilePaths[0];

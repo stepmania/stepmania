@@ -158,6 +158,9 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ok 2x1") );
+		m_sprOK[p].SetState( p );
+		m_sprOK[p].StopAnimating();
+		m_sprOK[p].SetDiffuse( D3DXCOLOR(1,1,1,0) );
 		m_framePages.AddChild( &m_sprOK[p] );
 	}
 
