@@ -484,7 +484,7 @@ void ScreenManager::Draw()
 	 * that'll confuse the "zero out the next update after loading a screen logic.
 	 * If we don't render, don't call BeginFrame or EndFrame.  That way, we won't
 	 * clear the buffer, and we won't wait for vsync. */
-	if( m_ScreenStack.back()->IsFirstUpdate() )
+	if( m_ScreenStack.size() && m_ScreenStack.back()->IsFirstUpdate() )
 		return;
 
 	if( !DISPLAY->BeginFrame() )
