@@ -17,7 +17,7 @@
 #include "RageLog.h"
 #include "IniFile.h"
 #include "NoteData.h"
-#include "RageSound.h"
+#include "RageSoundReader_FileReader.h"
 #include "RageException.h"
 #include "SongManager.h"
 #include "SongCacheIndex.h"
@@ -491,10 +491,14 @@ void Song::TidyUpData()
 	/* This must be done before radar calculation. */
 	if( HasMusic() )
 	{
-		RageSound sound;
-		sound.Load( GetMusicPath(), false ); /* don't pre-cache */
+		CString error;
+		SoundReader *Sample = SoundReader_FileReader::OpenFile( GetMusicPath(), error );
+		if( Sample == NULL )
+			RageException::Throw( "Error opening sound '%s': '%s'",
+				GetMusicPath().c_str(), error.c_str());
 
-		m_fMusicLengthSeconds = sound.GetLengthSeconds();
+		m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
+		delete Sample;
 
 		if(m_fMusicLengthSeconds == -1)
 		{
