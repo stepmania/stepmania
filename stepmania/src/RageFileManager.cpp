@@ -313,6 +313,8 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 
 		if( LOG )
 			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", Type.c_str(), Root.c_str() );
+		else
+			fprintf( stderr, "Can't mount unknown VFS type \"%s\", root \"%s\"\n", Type.c_str(), Root.c_str() );
 		return;
 	}
 
