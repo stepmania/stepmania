@@ -57,7 +57,7 @@ void DifficultyMeter::SetFromCourse( Course* pCourse )
 		return;
 	}
 
-	int meter = pCourse->GetMeter();
+	int meter = (int) roundf(pCourse->GetMeter());
 	SetMeter( meter );
 	
 	// XXX

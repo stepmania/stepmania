@@ -87,15 +87,18 @@ PlayMode Course::GetPlayMode() const
 }
 
 const int DifficultMeterRamp = 3;
-int Course::GetMeter( int Difficult ) const
+float Course::GetMeter( int Difficult ) const
 {
 	if( m_iMeter != -1 )
-		return m_iMeter + IsDifficult(Difficult)? DifficultMeterRamp:0;
+		return float(m_iMeter + IsDifficult(Difficult)? DifficultMeterRamp:0);
 
 	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
 			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());*/
 	vector<Info> ci;
 	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, Difficult );
+
+	if( ci.size() == 0 )
+		return 0;
 
 	/* Take the average meter. */
 	float fTotalMeter = 0;
@@ -109,7 +112,7 @@ int Course::GetMeter( int Difficult ) const
 			{
 				int iMeterLow, iMeterHigh;
 				GetMeterRange(ci[c], iMeterLow, iMeterHigh );
-				fTotalMeter += int( (iMeterLow + iMeterHigh) / 2.0f );
+				fTotalMeter += (iMeterLow + iMeterHigh) / 2.0f;
 				break;
 			}
 			case DIFFICULTY_BEGINNER:	fTotalMeter += 1; break;
@@ -122,7 +125,7 @@ int Course::GetMeter( int Difficult ) const
 		else
 			fTotalMeter += ci[c].pNotes->GetMeter();
 	}
-	return (int)roundf( fTotalMeter / ci.size() );
+	return fTotalMeter / ci.size();
 }
 
 void Course::LoadFromCRSFile( CString sPath )
@@ -843,15 +846,8 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 
 static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	// GLENN: we must use the member variable because getmeter
-	// returns an int, and a loss of precision occurs when that
-	// happens.  Anyways, we already have this variable
-	// from updatecoursestats.
-	// Plus players best/courses with randomo courses should
-	// go at the end.
-
-	float fNum1 = pCourse1->SortOrder_AvgDifficulty;
-	float fNum2 = pCourse2->SortOrder_AvgDifficulty;
+	float fNum1 = pCourse1->GetMeter( false );
+	float fNum2 = pCourse2->GetMeter( false );
 
 	if( fNum1 < fNum2 )
 		return true;

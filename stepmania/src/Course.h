@@ -117,7 +117,7 @@ public:
 	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
 	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
 	PlayMode GetPlayMode() const;
-	int GetMeter( int Difficult = -1 ) const;
+	float GetMeter( int Difficult = -1 ) const;
 
 	void LoadFromCRSFile( CString sPath );
 	void Save();
