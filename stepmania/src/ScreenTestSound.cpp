@@ -56,13 +56,22 @@ ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 		UpdateText(i);
 }
 
+ScreenTestSound::~ScreenTestSound()
+{
+	for( int i = 0; i < nsounds; ++i )
+	{
+		/* Delete copied sounds. */
+		vector<RageSound *> &snds = m_sSoundCopies[i];
+		for( unsigned j = 0; j < snds.size(); ++j )
+			delete snds[j];
+	}
+}
 
 void ScreenTestSound::UpdateText(int n)
 {
 	CString fn = Basename( s[n].s.GetLoadedFilePath() );
 
-	vector<RageSound *> snds;
-	SOUNDMAN->GetCopies(s[n].s, snds);
+	vector<RageSound *> &snds = m_sSoundCopies[n];
 
 	CString pos;
 	for(unsigned p = 0; p < snds.size(); ++p)
@@ -92,8 +101,22 @@ void ScreenTestSound::UpdateText(int n)
 void ScreenTestSound::Update(float f)
 {
 	Screen::Update(f);
+
 	for(int i = 0; i < nsounds; ++i)
+	{
 		UpdateText(i);
+
+		/* Delete copied sounds that have finished playing. */
+		vector<RageSound *> &snds = m_sSoundCopies[i];
+		for( unsigned j = 0; j < snds.size(); ++j )
+		{
+			if( snds[j]->IsPlaying() )
+				continue;
+			delete snds[j];
+			snds.erase( snds.begin()+j );
+			--j;
+		}
+	}
 }
 
 void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -112,10 +135,23 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 		case '4':
 		case '5': selected = DeviceI.button - '0'-1; break;
 		case 'p':
-			s[selected].s.Play();
+		{
+			/* We want to be able to read the position of copied sounds; if we let
+			 * RageSound copy itself, then the copy will be owned by RageSoundManager
+			 * and we won't be allowed to touch it.  Copy it ourself. */
+			RageSound *pCopy = new RageSound( s[selected].s );
+			m_sSoundCopies[selected].push_back( pCopy );
+			pCopy->Play();
 			break;
+		}
 		case 's':
-			s[selected].s.Stop();
+			for( int i = 0; i < nsounds; ++i )
+			{
+				/* Stop copied sounds. */
+				vector<RageSound *> &snds = m_sSoundCopies[i];
+				for( unsigned j = 0; j < snds.size(); ++j )
+					snds[j]->Stop();
+			}
 			break;
 		case 'l':
 			{

@@ -11,6 +11,7 @@ class ScreenTestSound : public Screen
 {
 public:
 	ScreenTestSound( CString sName );
+	~ScreenTestSound();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -23,6 +24,7 @@ public:
 		BitmapText txt;
 	};
 	Sound s[nsounds];
+	vector<RageSound *> m_sSoundCopies[nsounds];
 	BitmapText HEEEEEEEEELP;
 	
 	int selected;
