@@ -416,6 +416,7 @@ void Player::Step( int col )
 			break;
 		default:
 			ASSERT(0);
+			score==TNS_NONE;
 		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
