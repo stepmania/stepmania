@@ -1097,7 +1097,7 @@ void ScreenEvaluation::CommitScores(
 
 			FOREACH_PeakComboAward( pca )
 			{
-			      int iLevel = 100/*0*/ * (pca+1);
+			      int iLevel = 1000 * (pca+1);
 				bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
 				LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
 				if( bCrossedLevel )
