@@ -864,15 +864,6 @@ void ApplyGraphicOptions()
 	int iTextureBPP		= 16;
 
 	int &iRefreshRate	= PREFSMAN->m_iRefreshRate;
-	switch( iRefreshRate )
-	{
-	case 120:	break;
-	case 100:	break;
-	case 85:	break;
-	case 75:	break;
-	case 60:	break;
-	default:	throw RageException( "Invalid RefreshRate '%d'", iRefreshRate );
-	}
 
 	CString sMessage = ssprintf( "%s - %dx%d, %dx%d textures%s", 
 		bWindowed ? "Windowed" : "FullScreen", 
