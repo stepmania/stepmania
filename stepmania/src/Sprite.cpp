@@ -166,29 +166,22 @@ bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps,
 
 void Sprite::Update( float fDeltaTime )
 {
-	//PrintDebugInfo();
-
 	Actor::Update( fDeltaTime );	// do tweening
 
+	if( !m_bIsAnimating )
+	    return;
 
 	// update animation
-	if( m_bIsAnimating )
+	m_fSecsIntoState += fDeltaTime;
+
+	if( m_fSecsIntoState > m_fDelay[m_iCurState] )		// it's time to switch frames
 	{
-		m_fSecsIntoState += fDeltaTime;
-
-		if( m_fSecsIntoState > m_fDelay[m_iCurState] )		// it's time to switch frames
-		{
-			// increment frame and reset the counter
-			m_fSecsIntoState -= m_fDelay[m_iCurState];		// leave the left over time for the next frame
-			m_iCurState ++;
-			if( m_iCurState >= m_iNumStates )
-				m_iCurState = 0;
-		}
+		// increment frame and reset the counter
+		m_fSecsIntoState -= m_fDelay[m_iCurState];		// leave the left over time for the next frame
+		m_iCurState ++;
+		if( m_iCurState >= m_iNumStates )
+			m_iCurState = 0;
 	}
-
-
-
-
 }
 
 
