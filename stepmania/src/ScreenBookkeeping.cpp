@@ -129,7 +129,8 @@ void ScreenBookkeeping::ChangeView( View newView )
 			sData += "\n";
 
 			sTitle += "Average\n";
-			sData += ssprintf("%d\n",iTotalLast/NUM_LAST_DAYS);
+			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
+			sData += ssprintf("%.1f\n",fAverage);
 			
 			m_textCols[0].SetHorizAlign( Actor::align_left );
 			m_textCols[0].SetText( sTitle );
@@ -153,7 +154,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 				for( int row=0; row<52/4; row++ )
 				{
 					int week = row*4+col;
-					sTemp += ssprintf("%d ago: %d\n", week+1, coins[week]);
+					sTemp += LastWeekToString(week) + ssprintf(": %d",coins[week]) + "\n";
 				}
 
 				m_textCols[col].SetHorizAlign( Actor::align_left );
