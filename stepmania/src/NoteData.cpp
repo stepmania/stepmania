@@ -473,20 +473,9 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 	const int iTracksToOverlap = iOriginalTracks / iNewNumTracks;
 	if( iTracksToOverlap )
 	{
-		// if we have at least as many tracks in the old mode
-		// as we do in the mode we're going to
-		for (int ix = 0; ix < iNewNumTracks; ix++)
+		for ( int i = 0; i < iOriginalTracks; i++ )
 		{
-			for (int iy = 0; iy < iTracksToOverlap; iy++)
-			{
-				CombineTracks( ix, ix + iy * iNewNumTracks );
-			}
-		}
-		const int iUnevenTracks = iOriginalTracks % iNewNumTracks;
-		for (int ix = iOriginalTracks - iUnevenTracks; ix < iOriginalTracks; ix++)
-		{
-			// spread out the remaining tracks evenly
-			CombineTracks( (ix * iOriginalTracks) % iNewNumTracks, ix );
+			CombineTracks( i % iNewNumTracks, i );
 		}
 	}
 	SetNumTracks( iNewNumTracks );
