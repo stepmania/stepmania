@@ -71,6 +71,35 @@ void pump(const char *p)
 	}
 }
 
+void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
+{
+	CString str = ssprintf( "Mode: " );
+	bool bInvalidFormat = false;
+
+	if( pfd.dwFlags & PFD_GENERIC_FORMAT )
+	{
+		if( pfd.dwFlags & PFD_GENERIC_ACCELERATED ) str += "MCD ";
+		else { str += "software "; bInvalidFormat = true; }
+	}
+	else
+		str += "ICD ";
+
+	if( pfd.iPixelType != PFD_TYPE_RGBA ) { str += "indexed "; bInvalidFormat = true; }
+	if( !(pfd.dwFlags & PFD_SUPPORT_OPENGL) ) { str += "!OPENGL "; bInvalidFormat = true; }
+	if( !(pfd.dwFlags & PFD_DRAW_TO_WINDOW) ) { str += "!window "; bInvalidFormat = true; }
+	if( !(pfd.dwFlags & PFD_DOUBLEBUFFER) ) { str += "!dbuff "; bInvalidFormat = true; }
+
+	str += ssprintf( "%i (%i%i%i) ", pfd.cColorBits, pfd.cRedBits, pfd.cGreenBits, pfd.cBlueBits );
+	if( pfd.cAlphaBits ) str += ssprintf( "%i alpha ", pfd.cAlphaBits );
+	if( pfd.cDepthBits ) str += ssprintf( "%i depth ", pfd.cDepthBits );
+	if( pfd.cStencilBits ) str += ssprintf( "%i stencil ", pfd.cStencilBits );
+	if( pfd.cAccumBits ) str += ssprintf( "%i accum ", pfd.cAccumBits );
+
+	if( bInvalidFormat )
+		LOG->Warn( "Invalid format: %s", str.c_str() );
+	else
+		LOG->Info( "%s", str.c_str() );
+}
 
 /* This function does not reset the video mode if it fails, because we might be trying
  * yet another video mode, so we'd just thrash the display.  On fatal error,
@@ -171,10 +200,7 @@ CString LowLevelWindow_Win32::TryVideoMode( RageDisplay::VideoModeParams p, bool
 
 		DescribePixelFormat( GraphicsWindow::GetHDC(), iPixelFormat, sizeof(g_CurrentPixelFormat), &g_CurrentPixelFormat );
 
-		LOG->Info( "Got %i bpp (%i%i%i%i), %i depth",
-			g_CurrentPixelFormat.cColorBits, g_CurrentPixelFormat.cRedBits,
-			g_CurrentPixelFormat.cBlueBits, g_CurrentPixelFormat.cGreenBits,
-			g_CurrentPixelFormat.cAlphaBits, g_CurrentPixelFormat.cDepthBits );
+		DumpPixelFormat( g_CurrentPixelFormat );
 	}
 
 	if( g_HGLRC == NULL )
