@@ -18,7 +18,6 @@
 #include "TextBanner.h"
 #include "RandomSample.h"
 #include "SmallGradeDisplay.h"
-#include "RageSoundStream.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
