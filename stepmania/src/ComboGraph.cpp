@@ -6,8 +6,11 @@
 #include "ActorUtil.h"
 #include "BitmapText.h"
 #include "Sprite.h"
+#include "ThemeMetric.h"
 
 const int MinComboSizeToShow = 5;
+
+static ThemeMetric<float> NUMBERS_Y("ComboGraph","NumbersY");
 
 void ComboGraph::Load( const CString& sScreen, const CString& sElement, const StageStats &s, PlayerNumber pn )
 {
@@ -71,6 +74,7 @@ void ComboGraph::Load( const CString& sScreen, const CString& sElement, const St
 		const float CenterPercent = start + size/2;
 		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -width/2.0f, width/2.0f );
 		text->SetX( CenterXPos );
+		text->SetY( NUMBERS_Y );
 
 		text->SetText( ssprintf("%i",combo.GetStageCnt()) );
 		ON_COMMAND( text );
