@@ -77,7 +77,6 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 #endif
 }
 
-/* Err, this is ugly--breaks arch encapsulation. Hmm. */
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
 {
 	CStringArray DriversToTry;
@@ -129,7 +128,6 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	return ret;
 }
 
-/* Err, this is ugly--breaks arch encapsulation. Hmm. */
 LightsDriver *MakeLightsDriver(CString driver)
 {
 	LOG->Trace("Initializing lights driver: %s", driver.c_str());
@@ -150,7 +148,6 @@ LightsDriver *MakeLightsDriver(CString driver)
 	return ret;
 }
 
-/* Err, this is ugly--breaks arch encapsulation. Hmm. */
 MemoryCardDriver *MakeMemoryCardDriver()
 {
 	MemoryCardDriver *ret = NULL;
