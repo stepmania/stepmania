@@ -221,19 +221,23 @@ void RageSoundManager::GetCopies(RageSound &snd, vector<RageSound *> &snds)
 			snds.push_back(*i);
 }
 
-
+/* Don't hold the lock when we don't have to.  We call this function from other
+ * threads, to avoid stalling the gameplay thread. */
 void RageSoundManager::PlayOnce( CString sPath )
 {
 	/* We want this to start quickly, so don't try to prebuffer it. */
 	RageSound *snd = new RageSound;
 	snd->Load(sPath, false);
 
-	/* We're responsible for freeing it. */
+	snd->Play();
+
+	/* We're responsible for freeing it.  Add it to owned_sounds *after* we start
+	 * playing, so RageSoundManager::Update doesn't free it before we actually start
+	 * it. */
+	LockMut(lock);
 	lock.Lock();
 	owned_sounds.insert(snd);
 	lock.Unlock();
-
-	snd->Play();
 }
 
 void RageSoundManager::SetPrefs(float MixVol)
