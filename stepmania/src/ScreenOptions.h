@@ -140,6 +140,8 @@ protected:
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
 	ThemeMetric<CString>			OPTION_ROW_TYPE;
+
+	float m_fLockInputSecs;
 };
 
 #endif

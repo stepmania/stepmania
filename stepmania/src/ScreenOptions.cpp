@@ -97,6 +97,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
 	OPTION_ROW_TYPE					(m_sName,"OptionRowType")
 {
+	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
+	
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 }
 
@@ -484,6 +486,8 @@ void ScreenOptions::Update( float fDeltaTime )
 {
 	//LOG->Trace( "ScreenOptions::Update(%f)", fDeltaTime );
 
+	m_fLockInputSecs = max( 0, m_fLockInputSecs-fDeltaTime );
+
 	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
@@ -496,7 +500,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType sele
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
-	if( m_Back.IsTransitioning() || m_Out.IsTransitioning() )
+	if( m_Back.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
 		return;
 
 	if( selectType == IET_RELEASE )

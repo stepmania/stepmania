@@ -260,6 +260,9 @@ void ScreenSelectMaster::Init()
 	TweenOnScreen();
 
 	m_fLockInputSecs = (bool)OVERRIDE_LOCK_INPUT_SECONDS ? LOCK_INPUT_SECONDS : this->GetTweenTimeLeft();
+	if( m_fLockInputSecs == 0 )
+		m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
+
 }
 
 void ScreenSelectMaster::Update( float fDelta )
