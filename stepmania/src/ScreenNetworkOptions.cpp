@@ -32,6 +32,8 @@ OptionRowData g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 const ScreenMessage	SM_DoneConnecting		= ScreenMessage(SM_User+1);
 const ScreenMessage	SM_ServerNameEnter		= ScreenMessage(SM_User+2);
 
+static Preference<CString> g_sLastServer( Options, "LastConnectedServer",	"" );
+
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
@@ -79,10 +81,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
 			UpdateConnectStatus( );
-#if defined( WITHOUT_NETWORKING )
-#else
-			PREFSMAN->m_sLastServer = ScreenTextEntry::s_sLastAnswer;
-#endif
+			g_sLastServer = ScreenTextEntry::s_sLastAnswer;
 		}
 		break;
 	case SM_ServerNameEnter:
@@ -115,7 +114,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		if ( !NSMAN->useSMserver )
 		{
 			VIRTUALKB.Reset(VKMODE_IP);
-			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", PREFSMAN->m_sLastServer );
+			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", g_sLastServer );
 		}
 		else {
 			NSMAN->CloseConnection();

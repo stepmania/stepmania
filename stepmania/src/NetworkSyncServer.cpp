@@ -12,6 +12,8 @@ StepManiaLanServer::StepManiaLanServer() { }
 StepManiaLanServer::~StepManiaLanServer() { }
 #else
 
+static Preference<float> g_fStartWait( Options, "ServerWaitSeconds",	2 );
+
 LanPlayer::LanPlayer()
 {
 	score = 0;
@@ -295,7 +297,7 @@ void StepManiaLanServer::CheckReady()
 		//that will not use a lot of CPU.
 		//When you try playing the music as soon as it's loaded
 		//it will not always play ... immediately
-		usleep ( int( PREFSMAN->m_fStartWait * 1000000.0 ) );
+		usleep( int( g_fStartWait * 1000000.0 ) );
 
 		//The next three loops are seperate because we want to minimize what is done
 		//during the actual loop that starts the clients. This is in an atempt
