@@ -45,6 +45,7 @@
 #include "PlayerState.h"
 #include "GameplayMessages.h"
 #include "Style.h"
+#include "LuaManager.h"
 
 //
 // Defines
@@ -2334,17 +2335,20 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToStateAfterCleared:
+	case SM_GoToScreenAfterFail:
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
-			ShowSavePrompt( SM_GoToStateAfterCleared );
+			ShowSavePrompt( SM );
 			break;
 		}
 		
 		SongFinished();
 		StageFinished( false );
 
+		LUA->SetGlobal( "Passed", SM == SM_GoToStateAfterCleared );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		LUA->UnsetGlobal( "Passed" );
 		break;
 
 	case SM_LoseFocus:
@@ -2380,57 +2384,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SOUND->PlayOnceFromAnnouncer( "gameplay failed" );
 		break;
 
-	case SM_GoToScreenAfterFail:
-		if( m_bChangedOffsetOrBPM )
-		{
-			m_bChangedOffsetOrBPM = false;
-			ShowSavePrompt( SM_GoToScreenAfterFail );
-			break;
-		}
-
-		SongFinished();
-		StageFinished( false );
-		
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_REGULAR:
-		case PLAY_MODE_BATTLE:
-		case PLAY_MODE_RAVE:
-			if( PREFSMAN->m_bEventMode )
-			{
-				if(EVAL_ON_FAIL) // go to the eval screen if we fail
-				{
-					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
-				}
-				else // the theme says just fail and go back to the song select for event mode
-				{
-					SCREENMAN->DeletePreparedScreens();
-					SCREENMAN->SetNewScreen( PREV_SCREEN );
-				}
-			}
-			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-				SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
-			else
-			{
-				if(EVAL_ON_FAIL) // go to the eval screen if we fail
-					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
-				else // if not just game over now
-					SCREENMAN->SetNewScreen( "ScreenGameOver" );
-			}
-			break;
-		case PLAY_MODE_NONSTOP:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationNonstop" );
-			break;
-		case PLAY_MODE_ONI:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationOni" );
-			break;
-		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationEndless" );
-			break;
-		default:
-			ASSERT(0);
-		}
-		break;
 	case SM_StopMusic:
 		m_pSoundMusic->Stop();
 		break;
