@@ -5,11 +5,15 @@
 #include "MovieTexture_Null.h"
 
 /* Why is this _WINDOWS and not WIN32?
- * --steve */
+ * --steve 
+ *
+ * _WINDOWS is Windows only, where _WIN32 is Windows and Xbox, I think. Does this
+ * work on the Xbox? -glenn */
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
+#define HAVE_FFMPEG
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
-#else
+#else /* config.h */
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 #endif
 
@@ -87,7 +91,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 #ifdef _WINDOWS
 			if (!Driver.CompareNoCase("DShow")) ret = new MovieTexture_DShow(ID);
 #endif
-#ifdef HAVE_AVCODEC
+#ifdef SUPPORT_MOVIETEXTURE_FFMPEG
 			if (!Driver.CompareNoCase("FFMpeg")) ret = new MovieTexture_FFMpeg(ID);
 #endif
 			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
