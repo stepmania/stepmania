@@ -29,7 +29,7 @@ void RageSound_Null::MixerThread()
 {
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
-	while(!SOUNDMAN && !shutdown) sleep(10);
+	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
 
 	/* not sure if a nansleep is needed, but certainly helps
 	 * when there is LOG->Trace in GetData() */
