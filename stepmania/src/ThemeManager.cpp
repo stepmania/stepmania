@@ -384,7 +384,7 @@ try_element_again:
 				{ "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "png", NULL },
 				{ "mp3", "ogg", "wav", NULL },
-				{ "sm", NULL },
+				{ "*", NULL },
 			};		
 			const char **asset_masks = masks[category];
 
@@ -399,7 +399,7 @@ try_element_again:
 				if( asset_masks[i][0] == 0 && !IsADirectory(asPaths[p]) )
 					continue;
 
-				if( ext == asset_masks[i] )
+				if( ext == asset_masks[i] || !strcmp(asset_masks[i], "*") )
 				{
 					asElementPaths.push_back( asPaths[p] );
 					break;
