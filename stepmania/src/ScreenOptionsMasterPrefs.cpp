@@ -62,14 +62,12 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
 
 
 /* "sel" is the selection in the menu. */
-template<class T>
-static void MoveData( int &sel, T &opt, bool ToSel )
+static void MoveData( int &sel, int &opt, bool ToSel )
 {
-	if( ToSel )	(int&) sel = opt;
-	else		opt = (T) sel;
+	if( ToSel )	sel = opt;
+	else		opt = !!sel;
 }
 
-template<>
 static void MoveData( int &sel, bool &opt, bool ToSel )
 {
 	if( ToSel )	sel = opt;
@@ -242,8 +240,8 @@ MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
 MOVE( Caution,				PREFSMAN->m_bShowCaution );
 MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
 MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
-MOVE( WheelSections,		PREFSMAN->m_MusicWheelUsesSections );
-MOVE( CourseSort,			PREFSMAN->m_iCourseSortOrder );
+MOVE( WheelSections,		(int &) PREFSMAN->m_MusicWheelUsesSections );
+MOVE( CourseSort,			(int &) PREFSMAN->m_iCourseSortOrder );
 MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
 MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
@@ -253,7 +251,7 @@ MOVE( AutogenSteps,			PREFSMAN->m_bAutogenSteps );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
 
 /* Background options */
-MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
+MOVE( DancingCharacters,	(int &) PREFSMAN->m_ShowDancingCharacters );
 MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -320,7 +318,7 @@ static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
-MOVE( ScoringType,			PREFSMAN->m_iScoringType );
+MOVE( ScoringType,			(int &) PREFSMAN->m_iScoringType );
 
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
