@@ -35,9 +35,18 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 	
 	out.m_LyricSegments.clear();
 	
-	while(input.GetError() == 0 && !input.AtEOF())
+	while( 1 )
 	{
-		CString line = input.GetLine();
+		CString line;
+		int ret = input.GetLine( line );
+		if( ret == 0 )
+			break;
+		if( ret == -1 )
+		{
+			LOG->Warn("Error reading %s: %s", input.GetPath().c_str(), input.GetError().c_str() );
+			break;
+		}
+
 		if(!line.compare(0, 2, "//"))
 			continue;
 		
