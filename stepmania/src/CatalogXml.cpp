@@ -53,6 +53,7 @@ void SaveCatalogXml()
 			XNode* pStepsIDNode = stepsID.CreateNode();
 			pSongNode->AppendChild( pStepsIDNode );
 			
+			pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
 			pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
 		}
 	}
@@ -91,6 +92,7 @@ void SaveCatalogXml()
 				XNode* pTrailIDNode = trailID.CreateNode();
 				pCourseNode->AppendChild( pTrailIDNode );
 				
+				pTrailIDNode->AppendChild( "Meter", pTrail->GetMeter() );
 				pTrailIDNode->AppendChild( pTrail->GetRadarValues().CreateNode() );
 			}
 		}
