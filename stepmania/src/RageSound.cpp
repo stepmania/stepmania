@@ -47,7 +47,7 @@
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
-const int samplerate = 44100;
+inline int samplerate() { return SOUNDMAN->GetDriverSampleRate(); }
 
 /* The most data to buffer when streaming.  This should generally be at least as large
  * as the largest hardware buffer. */
@@ -59,7 +59,7 @@ const int read_block_size = 1024;
 /* The number of samples we should keep pos_map data for.  This being too high
  * is mostly harmless (the data is small).  Let's keep a second; no sane audio
  * driver will have that much latency. */
-const int pos_map_backlog_samples = samplerate;
+int pos_map_backlog_samples() { return samplerate(); }
 
 RageSound::RageSound()
 {
@@ -177,11 +177,11 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 	Sample = NewSample;
 
-	if(Sample->GetSampleRate() != samplerate)
+	if(Sample->GetSampleRate() != samplerate())
 	{
 		RageSoundReader_Resample *Resample = new RageSoundReader_Resample;
 		Resample->Open(Sample);
-		Resample->SetSampleRate(44100);
+		Resample->SetSampleRate(samplerate());
 		Sample = Resample;
 	}
 
@@ -205,7 +205,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 void RageSound::SetStartSeconds( float secs )
 {
 	ASSERT(!playing);
-	m_StartSample = int(secs*samplerate);
+	m_StartSample = int(secs*samplerate());
 }
 
 void RageSound::SetLengthSeconds(float secs)
@@ -216,13 +216,13 @@ void RageSound::SetLengthSeconds(float secs)
 	if(secs == -1)
 		m_LengthSamples = -1;
 	else
-		m_LengthSamples = int(secs*samplerate);
+		m_LengthSamples = int(secs*samplerate());
 }
 
 void RageSound::Update(float delta)
 {
 	if(playing && delta)
-		FillBuf(int(delta * samplerate * samplesize));
+		FillBuf(int(delta * samplerate() * samplesize));
 }
 
 /* Return the number of bytes available in the input buffer. */
@@ -393,7 +393,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 
 	ASSERT(playing);
 	/* Erase old pos_map data. */
-	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples)
+	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples())
 		pos_map.pop_front();
 
 	/*
@@ -483,7 +483,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 
 			for(int samp = 0; samp < got_samples; ++samp)
 			{
-				float fSecsUntilSilent = float(m_StartSample + m_LengthSamples - this_position) / samplerate;
+				float fSecsUntilSilent = float(m_StartSample + m_LengthSamples - this_position) / samplerate();
 				float fVolPercent = fSecsUntilSilent / fade_length;
 
 				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
@@ -568,7 +568,7 @@ float RageSound::GetPositionSeconds() const
 	{
 		if(stopped_position != -1)
 			return stopped_position;
-		return GetPlaybackRate() * position / float(samplerate);
+		return GetPlaybackRate() * position / float(samplerate());
 	}
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
@@ -576,7 +576,7 @@ float RageSound::GetPositionSeconds() const
 	{
 		if(pos_map.empty()) {
 			LOG->Trace("no data yet; %i", position);
-			return GetPlaybackRate() * position / float(samplerate);
+			return GetPlaybackRate() * position / float(samplerate());
 		}
 	}
 
@@ -594,7 +594,7 @@ float RageSound::GetPositionSeconds() const
 			/* cur_sample lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
 			int diff = pos_map[i].position - pos_map[i].sampleno;
-			return GetPlaybackRate() * float(cur_sample + diff) / samplerate;
+			return GetPlaybackRate() * float(cur_sample + diff) / samplerate();
 		}
 
 		/* See if the current position is close to the beginning of this block. */
@@ -625,12 +625,12 @@ float RageSound::GetPositionSeconds() const
 	 */
 	LOG->Trace("Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position);
 
-	return GetPlaybackRate() * closest_position / float(samplerate);
+	return GetPlaybackRate() * closest_position / float(samplerate());
 }
 
 bool RageSound::SetPositionSeconds( float fSeconds )
 {
-	return SetPositionSamples( fSeconds == -1? -1: int(fSeconds * samplerate) );
+	return SetPositionSamples( fSeconds == -1? -1: int(fSeconds * samplerate()) );
 }
 
 bool RageSound::SetPositionSamples( int samples )
@@ -661,7 +661,7 @@ bool RageSound::SetPositionSamples( int samples )
 
 	/* The position we're going to seek the input stream to.  We have
 	 * to do this in floating point to avoid overflow. */
-	int ms = int(float(samples) * 1000.f / samplerate);
+	int ms = int(float(samples) * 1000.f / samplerate());
 	ms = max(ms, 0);
 
 	databuf.clear();
