@@ -29,6 +29,7 @@
 #include "UnlockSystem.h"
 #include "Course.h"
 #include "LightsManager.h"
+#include "ProfileManager.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -250,9 +251,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 				rc[p] = AverageMeterToRankingCategory( fAverageMeter );
 
-				SongManager::CategoryData::HighScore hs;
+				ProfileManager::CategoryData::HighScore hs;
 				hs.iScore = stageStats.iScore[p];
-				SONGMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
+				PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
 
 				// If unlocking is enabled, save the dance points
 				if( PREFSMAN->m_bUseUnlockSystem )

@@ -100,9 +100,5 @@ void ScreenMusicScroll::Update( float fDeltaTime )
 
 void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 {
-	/* XXX: is this needed anymore? */
-	if( SM == SM_GoToNextScreen )
-		SONGMAN->SaveMachineScoresToDisk();
-
 	ScreenAttract::HandleScreenMessage( SM );
 }

@@ -89,10 +89,10 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 		if( i == 0 )
 		{
-			SongManager::CategoryData::HighScore hs;
+			ProfileManager::CategoryData::HighScore hs;
 			hs.iScore = 1234567;
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			SONGMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a );
+			PROFILEMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a );
 		}
 	}
 

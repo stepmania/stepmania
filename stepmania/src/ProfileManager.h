@@ -14,6 +14,7 @@
 
 
 #include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 
 struct Profile
 {
@@ -54,11 +55,59 @@ public:
 	bool SaveProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 
+	void SaveMachineProfile();
+
 	bool IsUsingProfile( PlayerNumber pn ) { return !m_sProfileDir[pn].empty(); }
 	Profile* GetProfile( PlayerNumber pn );
 
+	Profile* GetMachineProfile() { return &m_MachineProfile; }
 
 	bool IsUsingMemoryCard( PlayerNumber pn ) { return m_bUsingMemoryCard[pn]; }
+
+
+	//
+	// High scores
+	//
+	void InitMachineScoresFromDisk();
+	void SaveMachineScoresToDisk();
+
+	struct CategoryData
+	{
+		struct HighScore
+		{
+			int iScore;
+			CString	sName;
+
+			HighScore()
+			{
+				iScore = 0;
+			}
+
+			bool operator>=( const HighScore& other ) const
+			{
+				return iScore >= other.iScore;
+			}
+		};
+		vector<HighScore> vHighScores;
+
+		void AddHighScore( HighScore hs, int &iIndexOut );
+
+	} m_CategoryDatas[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
+
+	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iMachineIndexOut )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		m_CategoryDatas[nt][rc].AddHighScore( hs, iMachineIndexOut );
+	}
+
+	void ReadSM300NoteScores();
+	void ReadStepsMemCardDataFromFile( CString fn, int c );
+	void ReadCourseMemCardDataFromFile( CString fn, int c );
+	void ReadCategoryRankingsFromFile( CString fn );
+
+	void SaveStepsMemCardDataToFile( CString fn, int c );
+	void SaveCourseMemCardDataToFile( CString fn, int c );
+	void SaveCategoryRankingsToFile( CString fn );
 
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
@@ -74,6 +123,10 @@ private:
 	
 	// actual loaded profile data
 	Profile	m_Profile[NUM_PLAYERS];	
+
+	Profile m_MachineProfile;
+
+	void WriteStatsWebPage();
 };
 
 

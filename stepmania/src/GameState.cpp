@@ -31,8 +31,6 @@
 #include "ProfileManager.h"
 #include "arch/arch.h"
 #include "ThemeManager.h"
-//#include "fstream"
-#include "Bookkeeper.h"
 #include "LightsManager.h"
 #include "RageFile.h"
 
@@ -143,10 +141,6 @@ void GameState::Reset()
 		PROFILEMAN->SaveProfile( (PlayerNumber)p );
 		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
 	}
-
-	// save stats info intermitently in case of crash
-	BOOKKEEPER->WriteToDisk();
-	SONGMAN->SaveMachineScoresToDisk();
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
 }
@@ -959,7 +953,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 
 			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
-				vector<SongManager::CategoryData::HighScore> &vHighScores = SONGMAN->m_CategoryDatas[nt][i].vHighScores;
+				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[nt][i].vHighScores;
 				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
 					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )

@@ -86,53 +86,9 @@ public:
 	Course* GetCourseFromName( CString sName );
 
 
-	//
-	// High scores
-	//
-	void InitMachineScoresFromDisk();
-	void SaveMachineScoresToDisk();
+	void UpdateBest();	// update Players Best
 
-	struct CategoryData
-	{
-		struct HighScore
-		{
-			int iScore;
-			CString	sName;
-
-			HighScore()
-			{
-				iScore = 0;
-			}
-
-			bool operator>=( const HighScore& other ) const
-			{
-				return iScore >= other.iScore;
-			}
-		};
-		vector<HighScore> vHighScores;
-
-		void AddHighScore( HighScore hs, int &iIndexOut );
-
-	} m_CategoryDatas[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
-
-	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iMachineIndexOut )
-	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		m_CategoryDatas[nt][rc].AddHighScore( hs, iMachineIndexOut );
-	}
-
-	void UpdateBest();
-
-	void UpdateRankingCourses();
-
-	void ReadSM300NoteScores();
-	void ReadStepsMemCardDataFromFile( CString fn, int c );
-	void ReadCourseMemCardDataFromFile( CString fn, int c );
-	void ReadCategoryRankingsFromFile( CString fn );
-
-	void SaveStepsMemCardDataToFile( CString fn, int c );
-	void SaveCourseMemCardDataToFile( CString fn, int c );
-	void SaveCategoryRankingsToFile( CString fn );
+	void UpdateRankingCourses();	// courses shown on the ranking screen
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
@@ -143,8 +99,6 @@ protected:
 	void AddGroup( CString sDir, CString sGroupDirName );
 
 	Song *FindSong( CString sGroup, CString sSong );
-
-	void WriteStatsWebPage();
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs[NUM_MEMORY_CARDS];

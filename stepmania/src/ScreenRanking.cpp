@@ -21,6 +21,7 @@
 #include "NoteData.h"
 #include "NoteDataUtil.h"
 #include "ActorUtil.h"
+#include "ProfileManager.h"
 
 static int g_iLastSongShown = 0;
 
@@ -419,9 +420,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				SongManager::CategoryData::HighScore hs;
-				if( l < (int)SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
-					hs = SONGMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores[l];
+				ProfileManager::CategoryData::HighScore hs;
+				if( l < (int)PROFILEMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
+					hs = PROFILEMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores[l];
 				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
 

@@ -313,6 +313,19 @@ void SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
 }
 
+bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2)
+{
+	if( pStep1->m_StepsType < pStep2->m_StepsType )
+		return true;
+	if( pStep1->m_StepsType > pStep2->m_StepsType )
+		return false;
+	return pStep1->GetDifficulty() < pStep2->GetDifficulty();
+}
+
+void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers )
+{
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByTypeAndDifficulty );
+}
 
 
 bool Steps::MemCardData::HighScore::operator>=( const Steps::MemCardData::HighScore& other ) const

@@ -30,6 +30,8 @@
 #include "UnlockSystem.h"
 #include "ProductInfo.h"
 #include "LightsManager.h"
+#include "Bookkeeper.h"
+#include "ProfileManager.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -70,6 +72,12 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 		return;
 	}
+
+
+	// HACK: save stats intermitently in case of crash
+	BOOKKEEPER->WriteToDisk();
+	PROFILEMAN->SaveMachineScoresToDisk();
+
 
 	/* XXX We really need two common calls: 1, something run when exiting from gameplay
 	 * (to do this reset), and 2, something run when entering gameplay, to apply default
