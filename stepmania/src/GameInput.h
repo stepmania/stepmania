@@ -10,6 +10,9 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
+
+#include "ForeachEnum.h"
+
 enum GameController
 {
 	GAME_CONTROLLER_1 = 0,	// left controller
@@ -17,8 +20,12 @@ enum GameController
 	MAX_GAME_CONTROLLERS,	// leave this at the end
 	GAME_CONTROLLER_INVALID,
 };
+#define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, MAX_GAME_CONTROLLERS, gc )
 
 typedef int GameButton;
+const GameButton MAX_GAME_BUTTONS = 20;
+const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
+#define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, MAX_GAME_BUTTONS, gb )
 
 enum	// DanceButtons
 {
@@ -222,9 +229,6 @@ enum	// PnM Buttons
 	PNM_BUTTON_OPERATOR,
 	NUM_PNM_BUTTONS,		// leave this at the end
 };
-
-const GameButton MAX_GAME_BUTTONS = 20;
-const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
 
 
 

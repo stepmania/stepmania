@@ -20,8 +20,7 @@ public:
 	LightsDriver_Win32Parallel();
 	virtual ~LightsDriver_Win32Parallel();
 	
-	virtual void SetLight( Light light, bool bOn );
-	virtual void Flush();
+	virtual void Set( const LightsState *ls );
 };
 
 

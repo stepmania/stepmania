@@ -14,6 +14,7 @@
 */
 
 #include "PlayerNumber.h"	// TODO: Get rid of this dependency.  -Chris
+#include "ForeachEnum.h"
 
 //
 // Screen Dimensions
@@ -33,9 +34,6 @@
 #define	SCREEN_FAR		(1000)
 
 #define	ARROW_SIZE		(64)
-
-
-#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; ((int&)var)++ )
 
 
 //

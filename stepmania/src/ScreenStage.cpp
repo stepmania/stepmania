@@ -58,7 +58,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 {
 	SOUND->StopMusic();
 
-	LIGHTSMAN->SetLightMode( LIGHTMODE_STAGE );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
 
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName + " "+GAMESTATE->GetStageText()) );

@@ -13,14 +13,15 @@
 
 #include "LightsManager.h"
 
+struct LightsState;
+
 class LightsDriver
 {
 public:
 	LightsDriver() {};
 	virtual ~LightsDriver() {};
 	
-	virtual void SetLight( Light light, bool bOn ) = 0;
-	virtual void Flush() = 0;
+	virtual void Set( const LightsState *ls ) = 0;
 };
 
 

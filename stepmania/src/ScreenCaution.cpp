@@ -79,10 +79,10 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		break;
 	case SM_GoToNextScreen:
-		LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}

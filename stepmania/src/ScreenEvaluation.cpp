@@ -162,7 +162,7 @@ void ScreenEvaluation::Init()
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
-	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	m_bFailed = g_CurStageStats.AllFailed();
 

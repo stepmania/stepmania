@@ -12,6 +12,7 @@
 
 #include "LightsDriver_Win32Parallel.h"
 #include "windows.h"
+#include "RageUtil.h"
 
 
 HINSTANCE hDLL = NULL;
@@ -23,17 +24,29 @@ ISDRIVERINSTALLED* IsDriverInstalled = NULL;
 
 const int LIGHTS_PER_PARALLEL_PORT = 8;
 const int MAX_PARALLEL_PORTS = 3;
-DWORD LPT_ADDRESS[MAX_PARALLEL_PORTS] = 
+short LPT_ADDRESS[MAX_PARALLEL_PORTS] = 
 {
 	0x378,	// LPT1
 	0x278,	// LPT2
 	0x3bc,	// LPT3
 };
-void LightToLptAndPin( Light light, int &lpt_out, int &pin_out )
+
+int CabinetLightToIndex( CabinetLight cl )
 {
-	lpt_out = light / LIGHTS_PER_PARALLEL_PORT;
+	return cl;
+}
+
+int GameControllerAndGameButtonToIndex( GameController gc, GameButton gb )
+{
+	CLAMP( (int&)gb, 0, 3 );
+	return NUM_CABINET_LIGHTS + gc*4 + gb;
+}
+
+void IndexToLptAndPin( int index, int &lpt_out, int &pin_out )
+{
+	lpt_out = index / LIGHTS_PER_PARALLEL_PORT;
 	ASSERT( lpt_out >= 0 && lpt_out < MAX_PARALLEL_PORTS );
-	pin_out = light % LIGHTS_PER_PARALLEL_PORT;
+	pin_out = index % LIGHTS_PER_PARALLEL_PORT;
 }
 
 LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
@@ -56,33 +69,53 @@ LightsDriver_Win32Parallel::~LightsDriver_Win32Parallel()
 	FreeLibrary( hDLL );
 }
 
-BYTE g_data[MAX_PARALLEL_PORTS] =
+void LightsDriver_Win32Parallel::Set( const LightsState *ls )
 {
-	0x00,
-	0x00,
-	0x00
-};
-
-void LightsDriver_Win32Parallel::SetLight( Light light, bool bOn )
-{
-	int lpt;
-	int pin;
-	LightToLptAndPin( light, lpt, pin );
-
-	BYTE &data = g_data[lpt];
-	BYTE mask = (BYTE) (0x01 << pin);
-	if( bOn )
-		data |= mask;
-	else
-		data &= ~mask;
-}
-
-void LightsDriver_Win32Parallel::Flush()
-{
-	for( int i=0; i<MAX_PARALLEL_PORTS; i++ )
+	BYTE data[MAX_PARALLEL_PORTS] =
 	{
-		BYTE &data = g_data[i];
-		DWORD address = LPT_ADDRESS[i];
-		PortOut( (short) address, data );
+		0x00,
+		0x00,
+		0x00
+	};
+
+	{
+		FOREACH_CabinetLight( cl )
+		{
+			bool bOn = ls->m_bCabinetLights[cl];
+			int index = CabinetLightToIndex( cl );
+			int lpt;
+			int pin;
+			IndexToLptAndPin( index, lpt, pin );
+			BYTE mask = (BYTE) (0x01 << pin);
+			if( bOn )
+				data[lpt] |= mask;
+			else
+				data[lpt] &= ~mask;
+		}
+	}
+	
+	FOREACH_GameController( gc )
+	{
+		FOREACH_GameButton( gb )
+		{
+			bool bOn = ls->m_bGameButtonLights[gc][gb];
+			int index = GameControllerAndGameButtonToIndex( gc, gb );
+			int lpt;
+			int pin;
+			IndexToLptAndPin( index, lpt, pin );
+			BYTE mask = (BYTE) (0x01 << pin);
+			if( bOn )
+				data[lpt] |= mask;
+			else
+				data[lpt] &= ~mask;
+		}
+	}
+
+	{
+		for( int i=0; i<MAX_PARALLEL_PORTS; i++ )
+		{
+			short address = LPT_ADDRESS[i];
+			PortOut( address, data[i] );
+		}
 	}
 }

@@ -19,8 +19,7 @@ public:
 	LightsDriver_Null() {};
 	virtual ~LightsDriver_Null() {};
 	
-	virtual void SetLight( Light light, bool bOn ) {};
-	virtual void Flush() {};
+	void Set( const LightsState *ls ) {};
 };
 
 

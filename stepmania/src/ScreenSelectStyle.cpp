@@ -31,7 +31,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 {
 	m_iSelection = 0;
 
-	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	unsigned i;
 	for( i=0; i<m_aModeChoices.size(); i++ )

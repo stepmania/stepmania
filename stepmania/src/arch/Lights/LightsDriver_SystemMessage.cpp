@@ -14,28 +14,34 @@
 #include "ScreenManager.h"
 
 
-bool g_bLightOn[NUM_LIGHTS];
-
 LightsDriver_SystemMessage::LightsDriver_SystemMessage()
 {
-	memset( g_bLightOn, 0, sizeof(g_bLightOn) );
 }
 
 LightsDriver_SystemMessage::~LightsDriver_SystemMessage()
 {
 }
 
-void LightsDriver_SystemMessage::SetLight( Light light, bool bOn )
+void LightsDriver_SystemMessage::Set( const LightsState *ls )
 {
-	g_bLightOn[light] = bOn;
-}
-
-void LightsDriver_SystemMessage::Flush()
-{
-	CString s = "Lights: ";
-	for( int i=0; i<NUM_LIGHTS; i++ )
+	CString s;
+	
+	s += "Cabinet: ";
+	FOREACH_CabinetLight( cl )
 	{
-		s += g_bLightOn[i] ? '1' : '0';
+		s += ls->m_bCabinetLights[cl] ? '1' : '0';
 	}
+	s += "\n";
+	
+	FOREACH_GameController( gc )
+	{
+		s += ssprintf("Controller%d: ",gc+1);
+		FOREACH_GameButton( gb )
+		{
+			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
+		}
+		s += "\n";
+	}
+
 	SCREENMAN->SystemMessageNoAnimate( s );
 }

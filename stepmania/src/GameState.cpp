@@ -165,7 +165,7 @@ void GameState::Reset()
 
 	MEMCARDMAN->LockCards( false );
 
-	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 }
 
 void GameState::BeginGame()

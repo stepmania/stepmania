@@ -77,7 +77,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	 * things stinks ... */
 	GAMESTATE->Reset();
 
-	LIGHTSMAN->SetLightMode( LIGHTMODE_JOINING );	// do this after Reset!
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );	// do this after Reset!
 
 
 	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );

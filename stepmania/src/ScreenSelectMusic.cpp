@@ -82,7 +82,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
-	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	m_bInCourseDisplayMode = GAMESTATE->IsCourseMode();
 

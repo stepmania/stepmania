@@ -11,39 +11,41 @@
 -----------------------------------------------------------------------------
 */
 
+#include "PlayerNumber.h"
+#include "GameInput.h"
+#include "ForeachEnum.h"
 
-enum Light
+enum CabinetLight
 {
 	LIGHT_MARUQEE_UP_LEFT,
 	LIGHT_MARUQEE_UP_RIGHT,
 	LIGHT_MARUQEE_LR_LEFT,
 	LIGHT_MARUQEE_LR_RIGHT,
-	LIGHT_MENU_LEFT,
-	LIGHT_MENU_RIGHT,
+	LIGHT_BUTTONS_LEFT,
+	LIGHT_BUTTONS_RIGHT,
 	LIGHT_BASS_LEFT,
 	LIGHT_BASS_RIGHT,
-	LIGHT_GAME_BUTTON1,	// 
-	LIGHT_GAME_BUTTON2,
-	LIGHT_GAME_BUTTON3,
-	LIGHT_GAME_BUTTON4,
-	LIGHT_GAME_BUTTON5,
-	LIGHT_GAME_BUTTON6,
-	LIGHT_GAME_BUTTON7,
-	LIGHT_GAME_BUTTON8,
-	NUM_LIGHTS
+	NUM_CABINET_LIGHTS
+};
+#define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CABINET_LIGHTS, i )
+
+enum LightsMode
+{
+	LIGHTSMODE_ATTRACT,
+	LIGHTSMODE_JOINING,
+	LIGHTSMODE_MENU,
+	LIGHTSMODE_DEMONSTRATION,
+	LIGHTSMODE_GAMEPLAY_READY,
+	LIGHTSMODE_GAMEPLAY_GO,
+	LIGHTSMODE_STAGE,
+	LIGHTSMODE_ALL_CLEARED,
+	LIGHTSMODE_TEST,
 };
 
-const Light LIGHT_LAST_GAME_BUTTON = LIGHT_GAME_BUTTON8;
-
-enum LightMode
+struct LightsState
 {
-	LIGHTMODE_ATTRACT,
-	LIGHTMODE_JOINING,
-	LIGHTMODE_MENU,
-	LIGHTMODE_DEMONSTRATION,
-	LIGHTMODE_GAMEPLAY,
-	LIGHTMODE_STAGE,
-	LIGHTMODE_ALL_CLEARED,
+	bool m_bCabinetLights[NUM_CABINET_LIGHTS];
+	bool m_bGameButtonLights[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
 };
 
 class LightsDriver;
@@ -56,14 +58,13 @@ public:
 	
 	void Update( float fDeltaTime );
 
-	void SetLightMode( LightMode lm );
-	void SetAllUpperLights( bool bOn );
+	void SetLightsMode( LightsMode lm );
 
 private:
-	void SetLight( Light light, bool bOn );
 
 	LightsDriver* m_pDriver;
-	LightMode m_LightMode;
+	LightsMode m_LightsMode;
+	LightsState m_LightsState;
 };
 
 

@@ -99,9 +99,9 @@ void ScreenGameplay::Init()
 	int p;
 
 	if( m_bDemonstration )
-		LIGHTSMAN->SetLightMode( LIGHTMODE_DEMONSTRATION );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
 	else
-		LIGHTSMAN->SetLightMode( LIGHTMODE_GAMEPLAY );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY_READY );
 
 	m_soundMusic = NULL;
 
@@ -1388,9 +1388,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			s_fSecsLeftOnUpperLights = 0;
 	}
 	if( s_fSecsLeftOnUpperLights>0 )
-		LIGHTSMAN->SetAllUpperLights( true );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY_READY );
 	else
-		LIGHTSMAN->SetAllUpperLights( false );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY_GO );
 
 	//
 	// update song position meter
@@ -1977,7 +1977,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->RemoveAllActiveAttacks();
 
-			LIGHTSMAN->SetLightMode( LIGHTMODE_ALL_CLEARED );
+			LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
 
 
 			if( bAllReallyFailed )

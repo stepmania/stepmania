@@ -19,8 +19,7 @@ public:
 	LightsDriver_SystemMessage();
 	virtual ~LightsDriver_SystemMessage();
 	
-	virtual void SetLight( Light light, bool bOn );
-	virtual void Flush();
+	virtual void Set( const LightsState *ls );
 };
 
 

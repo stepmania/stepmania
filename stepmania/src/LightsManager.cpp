@@ -24,7 +24,7 @@ LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our p
 
 LightsManager::LightsManager(CString sDriver)
 {
-	m_LightMode = LIGHTMODE_JOINING;
+	m_LightsMode = LIGHTSMODE_JOINING;
 
 	m_pDriver = MakeLightsDriver(sDriver);
 }
@@ -39,9 +39,9 @@ void LightsManager::Update( float fDeltaTime )
 	//
 	// Update cabinet lights
 	//
-	switch( m_LightMode )
+	switch( m_LightsMode )
 	{
-	case LIGHTMODE_JOINING:
+	case LIGHTSMODE_JOINING:
 		{
 			switch( GAMESTATE->GetNumSidesJoined() )
 			{
@@ -51,95 +51,92 @@ void LightsManager::Update( float fDeltaTime )
 //					float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
 					bool bOn = (iSec%2)==0; 
 					for( int i=0; i<8; i++ )
-						m_pDriver->SetLight( (Light)i, bOn );
+						m_LightsState.m_bCabinetLights[i] = bOn;
 				}
 				break;
 			default:
 				for( int i=0; i<8; i++ )
 				{
 					bool bOn = GAMESTATE->m_bSideIsJoined[i%2];
-					m_pDriver->SetLight( (Light)i, bOn );
+					m_LightsState.m_bCabinetLights[i] = bOn;
 				}
 			}
 		}
 		break;
-	case LIGHTMODE_ATTRACT:
+	case LIGHTSMODE_ATTRACT:
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStart();
 			int i;
 			for( i=0; i<4; i++ )
 			{
 				bool bOn = (iSec%4)==i;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 			for( i=4; i<6; i++ )
 			{
 				bool bOn = false;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 			for( i=6; i<8; i++ )
 			{
 				bool bOn = (iSec%3)==0;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 		}
 		break;
-	case LIGHTMODE_MENU:
+	case LIGHTSMODE_MENU:
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStart();
 			int i;
 			for( i=0; i<2; i++ )
 			{
 				bool bOn = (iSec%2)==0;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 			for( i=2; i<4; i++ )
 			{
 				bool bOn = (iSec%2)==1;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 			for( i=4; i<6; i++ )
 			{
 				bool bOn = (iSec%2)==0;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 			for( i=6; i<8; i++ )
 			{
 				bool bOn = (iSec%2)==1;
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 			}
 		}
 		break;
-	case LIGHTMODE_DEMONSTRATION:
-	case LIGHTMODE_GAMEPLAY:
+	case LIGHTSMODE_DEMONSTRATION:
+	case LIGHTSMODE_GAMEPLAY_READY:
+	case LIGHTSMODE_GAMEPLAY_GO:
 		{
 			int i;
 
-			// top lights are controlled my ScreenGameplay
-			//for( int i=0; i<4; i++ )
-			//	m_pDriver->SetLight( (Light)i, bOn );
+			bool bMarqueeLightsOn = m_LightsMode == LIGHTSMODE_GAMEPLAY_READY;
+
+			for( i=0; i<4; i++ )
+				m_LightsState.m_bCabinetLights[i] = bMarqueeLightsOn;
 
 			// menu lights are always off
 			for( i=4; i<6; i++ )
-				m_pDriver->SetLight( (Light)i, false );
+				m_LightsState.m_bCabinetLights[i] = false;
 
 			// bass lights
 			float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
 			bool bOn = fBeatPercentage < 0.1 || fBeatPercentage > 0.9; 
 			for( i=7; i<8; i++ )
-				m_pDriver->SetLight( (Light)i, bOn );
+				m_LightsState.m_bCabinetLights[i] = bOn;
 		}
 		break;
-	case LIGHTMODE_STAGE:
+	case LIGHTSMODE_STAGE:
+	case LIGHTSMODE_ALL_CLEARED:
 		{
-			for( int i=0; i<8; i++ )
-				m_pDriver->SetLight( (Light)i, true );
-		}
-		break;
-	case LIGHTMODE_ALL_CLEARED:
-		{
-			for( int i=0; i<8; i++ )
-				m_pDriver->SetLight( (Light)i, false );
+			FOREACH_CabinetLight( cl )
+				m_LightsState.m_bCabinetLights[cl] = true;
 		}
 		break;
 	default:
@@ -151,48 +148,37 @@ void LightsManager::Update( float fDeltaTime )
 	//
 	// FIXME:  Works only with Game==dance
 	// FIXME:  lights pads for players who aren't playing
-	switch( m_LightMode )
+	switch( m_LightsMode )
 	{
-	case LIGHTMODE_ATTRACT:
-	case LIGHTMODE_MENU:
-	case LIGHTMODE_DEMONSTRATION:
+	case LIGHTSMODE_ATTRACT:
+	case LIGHTSMODE_MENU:
+	case LIGHTSMODE_DEMONSTRATION:
 		{
-			for( int i=LIGHT_GAME_BUTTON1; i<=LIGHT_LAST_GAME_BUTTON; i++ )
-				m_pDriver->SetLight( (Light)i, false );
+			ZERO( m_LightsState.m_bGameButtonLights );
 		}
 		break;
-	case LIGHTMODE_ALL_CLEARED:
-	case LIGHTMODE_STAGE:
-	case LIGHTMODE_JOINING:
+	case LIGHTSMODE_ALL_CLEARED:
+	case LIGHTSMODE_STAGE:
+	case LIGHTSMODE_JOINING:
 		{
-			for( int c=0; c<2; c++ )
+			FOREACH_GameController( gc )
 			{
-//				GameController gc = (GameController)c;
-				bool bOn = GAMESTATE->m_bSideIsJoined[c];
+				bool bOn = GAMESTATE->m_bSideIsJoined[gc];
 
-				for( int i=0; i<4; i++ )
-				{
-//					GameButton gb = (GameButton)i;
-					Light light = (Light)(LIGHT_GAME_BUTTON1 + c*4+i);
-					m_pDriver->SetLight( light, bOn );
-				}
+				FOREACH_GameButton( gb )
+					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 			}
 		}
 		break;
-	case LIGHTMODE_GAMEPLAY:
+	case LIGHTSMODE_GAMEPLAY_READY:
+	case LIGHTSMODE_GAMEPLAY_GO:
 		{
-			for( int c=0; c<2; c++ )
+			FOREACH_GameController( gc )
 			{
-				GameController gc = (GameController)c;
-
-				for( int i=0; i<4; i++ )
+				FOREACH_GameButton( gb )
 				{
-					GameButton gb = (GameButton)i;
-
-					Light light = (Light)(LIGHT_GAME_BUTTON1 + c*4+i);
-
 					bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
-					m_pDriver->SetLight( light, bOn );
+					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 				}
 			}
 		}
@@ -202,18 +188,10 @@ void LightsManager::Update( float fDeltaTime )
 	}
 
 	// apply new light values we set above
-	m_pDriver->Flush();
+	m_pDriver->Set( &m_LightsState );
 }
 
-void LightsManager::SetLightMode( LightMode lm )
+void LightsManager::SetLightsMode( LightsMode lm )
 {
-	m_LightMode = lm;
-}
-
-void LightsManager::SetAllUpperLights( bool bOn )
-{
-	for( int i=0; i<4; i++ )
-	{
-		m_pDriver->SetLight( (Light)i, bOn );
-	}
+	m_LightsMode = lm;
 }
