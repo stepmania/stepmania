@@ -114,34 +114,17 @@ AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
 AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )
 
-# We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
-AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf roundf truncf])
-AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
-[#if !defined(HAVE_POWF)
-#define NEED_POWF
-#endif
-#if !defined(HAVE_SQRTF)
-#define NEED_SQRTF
-#endif
-#if !defined(HAVE_SINF)
-#define NEED_SINF
-#endif
-#if !defined(HAVE_COSF)
-#define NEED_COSF
-#endif
-#if !defined(HAVE_TANF)
-#define NEED_TANF
-#endif
-#if !defined(HAVE_ACOSF)
-#define NEED_ACOSF
-#endif
-#if !defined(HAVE_ROUNDF)
-#define NEED_ROUNDF
-#endif
-#if !defined(HAVE_TRUNCF)
-#define NEED_TRUNCF
-#endif
-])
+AC_CHECK_DECL(powf, , AC_DEFINE([NEED_POWF],1,[Need powf]), [#include <math.h>])
+AC_CHECK_DECL(sqrtf, , AC_DEFINE([NEED_SQRTF],1,[Need sqrtf]), [#include <math.h>])
+AC_CHECK_DECL(sinf, , AC_DEFINE([NEED_SINF],1,[Need sinf]), [#include <math.h>])
+AC_CHECK_DECL(tanf, , AC_DEFINE([NEED_COSF],1,[Need tanf]), [#include <math.h>])
+AC_CHECK_DECL(cosf, , AC_DEFINE([NEED_TANF],1,[Need cosf]), [#include <math.h>])
+AC_CHECK_DECL(acosf, , AC_DEFINE([NEED_ACOSF],1,[Need acosf]), [#include <math.h>])
+AC_CHECK_DECL(roundf, , AC_DEFINE([NEED_ROUNDF],1,[Need roundf]), [#include <math.h>])
+AC_CHECK_DECL(truncf, , AC_DEFINE([NEED_TRUNCF],1,[Need truncf]), [#include <math.h>])
+
+# This doesn't work on glibc math functions:
+# AC_CHECK_FUNCS([sqrtf sinf tanf cosf acosf roundf truncf])
 
 AC_CHECK_DECLS([SIGPWR],,,[#include <signal.h>])
 
