@@ -531,6 +531,16 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 	}
 }
 
+/* Get a complete copy of a FileSet.  This isn't very efficient, since it's a deep
+ * copy, but allows retrieving a copy from elsewhere without having to worry about
+ * our locking semantics. */
+void FilenameDB::GetFileSetCopy( CString sDir, FileSet &out )
+{
+	FileSet *pFileSet = GetFileSet( sDir );
+	out = *pFileSet;
+	m_Mutex.Unlock(); /* locked by GetFileSet */
+}
+
 /*
  * Copyright (c) 2003-2004 Glenn Maynard
  * All rights reserved.

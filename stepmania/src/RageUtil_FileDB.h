@@ -123,6 +123,8 @@ public:
 	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache();
+
+	void GetFileSetCopy( CString dir, FileSet &out );
 };
 
 /* This FilenameDB must be populated in advance. */
