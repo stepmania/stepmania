@@ -16,12 +16,8 @@
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
 
-
-
-CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName ) 
+CString ThemeManager::ElementToAssetPath( ThemeElement te ) 
 {
-	CString sThemeDir = ThemeNameToThemeDir( sThemeName );
-
 	CString sAssetPath;		// fill this in below
 
 	switch( te )
@@ -121,6 +117,16 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		default:
 			RageError( ssprintf("Unhandled theme element %d", te) );
 	}
+	
+	return sAssetPath;
+}
+
+
+CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName ) 
+{
+	CString sThemeDir = ThemeNameToThemeDir( sThemeName );
+
+	CString sAssetPath = ElementToAssetPath( te );
 
 	CString sAssetDir, sAssetFileName, sThrowAway;
 	splitrelpath( sAssetPath, sAssetDir, sAssetFileName, sThrowAway );

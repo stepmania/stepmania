@@ -35,39 +35,48 @@ const WindowMessage	SM_SongChanged		=	WindowMessage(SM_User+47);	// this should 
 const WindowMessage SM_PlaySongSample	=	WindowMessage(SM_User+48);	
 
 
+enum WheelItemType { TYPE_SECTION, TYPE_MUSIC };
 
-class WheelItem : public Actor
+
+struct WheelItemData
 {
 public:
-	WheelItem();
+	WheelItemData();
+
+	void LoadFromSectionName( CString sSectionName );
+	void LoadFromSong( Song* pSong );
+
+	WheelItemType	m_WheelItemType;
+	D3DXCOLOR		m_colorTint;
+	CString			m_sSectionName;
+	Song*			m_pSong;
+	MusicStatusDisplayType m_MusicStatusDisplayType;
+};
+
+
+class WheelItemDisplay : public Actor,
+						 public WheelItemData
+{
+public:
+	WheelItemDisplay();
 
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
-	void SetTintColor( D3DXCOLOR c );
 	void SetDiffuseColor( D3DXCOLOR c );
-
 
 	CString GetSectionName()
 	{
-		return m_textSectionName.GetText();
+		return m_sSectionName;
 	};
 
-	void LoadFromSong( Song* pSong );
-	void LoadFromSectionName( CString sSectionName );
-
-	// common
-	enum WheelItemType { TYPE_SECTION, TYPE_MUSIC };
-	WheelItemType m_WheelItemType;
-	D3DXCOLOR m_colorTint;
-	CString m_sSectionName;
+	void LoadFromWheelItemData( WheelItemData* pWID );
 
 	// for a section
 	Sprite m_sprSectionBackground;
 	BitmapText m_textSectionName;
 
 	// for a music
-	Song*				m_pSong;
 	MusicStatusDisplay	m_MusicStatusDisplay;
 	TextBanner			m_Banner;
 };
@@ -97,11 +106,12 @@ public:
 	float GetBannerX( float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
-	Song* GetSelectedSong() { return GetCurWheelItems()[m_iSelection].m_pSong; };
+	Song* GetSelectedSong() { return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
 
 
 protected:
-	void BuildWheelItems( CArray<WheelItem, WheelItem&> &arrayWheelItems, SongSortOrder so );
+	void BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItems, SongSortOrder so );
+	void RebuildWheelItemDisplays();
 	void SwitchSortOrder();
 
 
@@ -110,13 +120,14 @@ protected:
 
 	MusicSortDisplay	m_MusicSortDisplay;
 
-	
-	
-	CArray<WheelItem, WheelItem&> m_WheelItems[NUM_SORT_ORDERS];
 	SongSortOrder m_SortOrder;
-	CArray<WheelItem, WheelItem&> &GetCurWheelItems() { return m_WheelItems[m_SortOrder]; };
+
+	CArray<WheelItemData, WheelItemData&> m_WheelItemDatas[NUM_SORT_ORDERS];
+	CArray<WheelItemData, WheelItemData&> &GetCurWheelItemDatas() { return m_WheelItemDatas[m_SortOrder]; };
 	
-	int	m_iSelection;
+	WheelItemDisplay m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
+	
+	int	m_iSelection;		// index into GetCurWheelItemDatas()
 	CString m_sExpandedSectionName;
 
 

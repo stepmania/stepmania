@@ -126,7 +126,7 @@ public:
 		CStringArray arrayThemeNames;
 		GetThemeNames( arrayThemeNames );
 		for( int i=0; i<arrayThemeNames.GetSize(); i++ )
-			CheckThemeIsComplete( arrayThemeNames[i] );
+			AssertThemeIsComplete( arrayThemeNames[i] );
 
 		SetTheme( DEFAULT_THEME_NAME );
 	};
@@ -160,16 +160,17 @@ public:
 
 		return true;
 	};
-	bool CheckThemeIsComplete( CString sThemeName )		// return false if theme doesn't exist
+
+	void AssertThemeIsComplete( CString sThemeName )		// return false if theme doesn't exist
 	{
 		for( int i=0; i<NUM_THEME_ELEMENTS; i++ )
 		{
 			if( GetPathTo( (ThemeElement)i, sThemeName ) == "" )
-			return false;
+				RageError( ssprintf( "The theme element for theme '%s' called '%s' could not be found.", sThemeName, ElementToAssetPath((ThemeElement)i) ) );
 		}
-
-		return true;
 	};
+	
+	CString ElementToAssetPath( ThemeElement te );
 
 	CString GetPathTo( ThemeElement te )
 	{

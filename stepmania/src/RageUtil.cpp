@@ -409,14 +409,14 @@ VOID DisplayErrorAndDie( CString sError )
 	*/
 #ifdef DEBUG	// don't use error handler in Release mode
 	AfxMessageBox( sError );
+	AfxDebugBreak();
 	exit(1);
 #else
 	FILE* fp = fopen( g_sErrorFileName, "w" );
 	fprintf( fp, sError );
 	fclose( fp );
 	// generate an exception so the error handler shows
-	int d = 0;
-	int ksg = 3/d;
+	throw(1);
 #endif
 }
 

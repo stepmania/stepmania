@@ -165,7 +165,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		MSG msg;
 		ZeroMemory( &msg, sizeof(msg) );
 
-
 		while( WM_QUIT != msg.message  )
 		{
 			// Look for messages, if none are found then 

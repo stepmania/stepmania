@@ -190,6 +190,9 @@ float BitmapText::GetLineWidthInSourcePixels( int iLineNo )
 	{
 		char c = sLine[i];
 		int iFrameNo = m_iCharToFrameNo[c];
+		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
+			RageError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
+
 		fLineWidth += m_fFrameNoToWidth[iFrameNo];
 	}
 
@@ -238,7 +241,8 @@ void BitmapText::RebuildVertexBuffer()
 		{
 			char c = sLine[j];
 			int iFrameNo = m_iCharToFrameNo[c];
-			ASSERT( iFrameNo != -1 );	// this font doesn't impelemnt this character
+			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
+				RageError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
 			float fCharWidth = m_fFrameNoToWidth[iFrameNo];
 
 			//if( c == ' ' )
@@ -465,9 +469,9 @@ void BitmapText::SetText( CString sText )
 		sText = sText.Left( MAX_NUM_VERTICIES );
 
 	// strip out foreign chars
-	for( int i=0; i<sText.GetLength(); i++ )
-		if( sText[i] > NUM_CHARS-1 )
-			sText.Delete(i);
+	for( int i=0; i<sText.GetLength(); i++ )	// for each character
+		if( sText[i] < 0  || sText[i] > NUM_CHARS-1 )
+			sText.SetAt( i, ' ' );
 
 
 	m_sTextLines.RemoveAll(); 

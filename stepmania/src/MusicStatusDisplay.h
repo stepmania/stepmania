@@ -19,7 +19,7 @@ class MusicStatusDisplay;
 #include "ThemeManager.h"
 
 
-
+enum MusicStatusDisplayType { TYPE_NEW, TYPE_NONE, TYPE_CROWN1, TYPE_CROWN2, TYPE_CROWN3 };
 
 class MusicStatusDisplay : public Sprite
 {
@@ -28,79 +28,72 @@ public:
 	{
 		Load( THEME->GetPathTo(GRAPHIC_MUSIC_STATUS_ICONS) );
 		StopAnimating();
-		SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-		m_bIsNew = false;
-		m_Rank = NO_CROWN;
-		m_bIsBlinking = false;
-		m_bDisplayNewIcon = true;
+		SetType( TYPE_NONE );
+	};
 
-		SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// invisible
-	}
-	void SetIsNew( bool bIsNew )
+	void SetType( MusicStatusDisplayType msdt )
 	{
-		m_bIsNew = bIsNew;
-		if( m_bIsNew )
-			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
-		else
-			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
-		SetState( 0 );
-	};
-	void SetBlinking( bool bIsBlinking )
-	{
-		m_bIsBlinking = bIsBlinking;
-	};
-	void SetRank( int i )
-	{
-		switch( i )
+		m_MusicStatusDisplayType = msdt;
+
+		switch( m_MusicStatusDisplayType )
 		{
-		case 1:		m_Rank = CROWN_1;	SetState( 0 );	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	break;
-		case 2:		m_Rank = CROWN_2;	SetState( 0 );	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	break;
-		case 3:		m_Rank = CROWN_3;	SetState( 0 );	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	break;
-		default:	m_Rank = NO_CROWN;	SetDiffuseColor( D3DXCOLOR(0,0,0,0) );					break;
+		case TYPE_NEW:
+			m_MusicStatusDisplayType = TYPE_NEW;	
+			SetState( 0 );	
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			break;
+		case TYPE_CROWN1:
+			m_MusicStatusDisplayType = TYPE_CROWN1;	
+			SetState( 1 );	
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	
+			break;
+		case TYPE_CROWN2:
+			m_MusicStatusDisplayType = TYPE_CROWN2;	
+			SetState( 2 );	
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	
+			break;
+		case TYPE_CROWN3:
+			m_MusicStatusDisplayType = TYPE_CROWN3;	
+			SetState( 3 );	
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	
+			break;
+		case TYPE_NONE:
+		default:
+			m_MusicStatusDisplayType = TYPE_NONE;	
+			SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+			break;
 		}
 	};
+
 	virtual void Update( float fDeltaTime )
 	{
 		Sprite::Update( fDeltaTime );
 
-		if( m_bIsBlinking )
+		switch( m_MusicStatusDisplayType )
 		{
+		case TYPE_CROWN1:
+		case TYPE_CROWN2:
+		case TYPE_CROWN3:
+			// blink
 			if( (GetTickCount() % 1000) > 500 )		// show the new icon
-			{
-				if( m_bIsNew )
-				{
-					SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-					SetState( 0 );
-				}
-				else
-				{
-					SetDiffuseColor( D3DXCOLOR(0,0,0,0) );		// invisible
-				}
-			}
-			else	// show the rank icon
-			{
 				SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-				switch( m_Rank )
-				{
-				case CROWN_1:	SetState(1);							break;
-				case CROWN_2:	SetState(2);							break;
-				case CROWN_3:	SetState(3);							break;
-				case NO_CROWN:	SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	break;
-				}
-			}
+			else
+					SetDiffuseColor( D3DXCOLOR(0,0,0,0) );		// invisible
 		}
 	};
 
+	virtual void RenderPrimitives()
+	{
+		if( m_MusicStatusDisplayType == TYPE_NONE )
+			return;
+
+		Sprite::RenderPrimitives();
+	}
 
 protected:
 
-	bool m_bIsNew;
-	enum Rank { NO_CROWN, CROWN_1, CROWN_2, CROWN_3 };
-	Rank m_Rank;
-
-	bool m_bIsBlinking;	// blink in order to display the new and crown icons
-	bool m_bDisplayNewIcon;
+	enum MusicStatusDisplayType m_MusicStatusDisplayType;
 };
 
 
