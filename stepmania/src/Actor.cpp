@@ -18,6 +18,8 @@
 
 Actor::Actor()
 {
+	m_iNumTweenStates = 0;
+
 	m_size									= D3DXVECTOR2( 1, 1 );
 	m_pos			= m_start_pos			= D3DXVECTOR3( 0, 0, 0 );
 	m_rotation		= m_start_rotation		= D3DXVECTOR3( 0, 0, 0 );
@@ -43,6 +45,7 @@ Actor::Actor()
 	m_fShadowLength = 4;
 
 	m_bBlendAdd = false;
+
 }
 
 
@@ -194,9 +197,9 @@ void Actor::Update( float fDeltaTime )
 
 
 	// update tweening
-	if( m_QueuedTweens.GetSize() > 0 )		// we are performing some type of tweening
+	if( m_iNumTweenStates > 0 )		// we are performing a tween
 	{
-		TweenState &TS = m_QueuedTweens[0];
+		TweenState &TS = m_QueuedTweens[0];		// earliest tween
 
 		if( TS.m_fTimeLeftInTween == TS.m_fTweenTime )	// we are just beginning this tween
 		{
@@ -218,7 +221,10 @@ void Actor::Update( float fDeltaTime )
 			for(int i=0; i<4; i++) m_colorDiffuse[i] = TS.m_end_colorDiffuse[i];
 			m_colorAdd		= TS.m_end_colorAdd;
 			
-			m_QueuedTweens.RemoveAt( 0 );
+			// delete the head tween
+			for( int i=0; i<m_iNumTweenStates-1; i++ )
+                m_QueuedTweens[i] = m_QueuedTweens[i+1];
+			m_iNumTweenStates--;
 			return;
 		}
 		else		// in the middle of tweening.  Recalcute the curent position.
@@ -234,7 +240,7 @@ void Actor::Update( float fDeltaTime )
 				fPercentAlongPath = fPercentThroughTween;
 				break;
 			case TWEEN_BIAS_BEGIN:
-				fPercentAlongPath = (float) sqrt( fPercentThroughTween );
+				fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);
 				break;
 			case TWEEN_BIAS_END:
 				fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;
@@ -249,7 +255,7 @@ void Actor::Update( float fDeltaTime )
 				fPercentAlongPath = 1 - cosf( fPercentThroughTween*D3DX_PI*2.5f )/(1+fPercentThroughTween*3);
 				break;
 			default:
-				ASSERT( false );
+				ASSERT(0);
 				break;
 			}
 
@@ -267,7 +273,6 @@ void Actor::Update( float fDeltaTime )
 }
 
 
-
 void Actor::BeginTweening( float time, TweenType tt )
 {
 	StopTweening();	// cancel current tweens
@@ -279,13 +284,13 @@ void Actor::BeginTweeningQueued( float time, TweenType tt )
 	ASSERT( time >= 0 );
 
 	// add a new TweenState to the tail, and initialize it
-	m_QueuedTweens.Add( TweenState() );
-	TweenState &TS = m_QueuedTweens[m_QueuedTweens.GetSize()-1];
+	m_iNumTweenStates++;
+	TweenState &TS = m_QueuedTweens[m_iNumTweenStates-1];	// latest tween state
 
-	if( m_QueuedTweens.GetSize() >= 2 )		// if there was already a TS on the stack
+	if( m_iNumTweenStates >= 2 )		// if there was already a TS on the stack
 	{
 		// initialize the new TS from the last TS in the list
-		TS = m_QueuedTweens[m_QueuedTweens.GetSize()-2];
+		TS = m_QueuedTweens[m_iNumTweenStates-2];
 	}
 	else
 	{
@@ -302,6 +307,12 @@ void Actor::BeginTweeningQueued( float time, TweenType tt )
 	TS.m_fTweenTime = time;
 	TS.m_fTimeLeftInTween = time;
 }
+
+void Actor::StopTweening()
+{
+	m_iNumTweenStates = 0;
+}
+
 
 void Actor::SetTweenX( float x )			{ GetLatestTween().m_end_pos.x = x; } 
 void Actor::SetTweenY( float y )			{ GetLatestTween().m_end_pos.y = y; }

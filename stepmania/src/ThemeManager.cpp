@@ -90,6 +90,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_DANCER_P2:							sAssetPrefix = "Graphics\\dancer p2";						break;
 		case GRAPHIC_DIFFICULTY_ICONS:					sAssetPrefix = "Graphics\\select music difficulty icons";	break;
 		case GRAPHIC_EDIT_BACKGROUND:					sAssetPrefix = "Graphics\\edit background";					break;
+		case GRAPHIC_EDIT_TOP_EDGE:						sAssetPrefix = "Graphics\\edit top edge";					break;
 		case GRAPHIC_EDIT_SNAP_INDICATOR:				sAssetPrefix = "Graphics\\edit snap indicator";				break;
 		case GRAPHIC_FALLBACK_BACKGROUND:				sAssetPrefix = "Graphics\\Fallback Background";				break;
 		case GRAPHIC_FALLBACK_BANNER:					sAssetPrefix = "Graphics\\Fallback Banner";					break;
@@ -110,8 +111,6 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_GAMEPLAY_OPENING_STAR:				sAssetPrefix = "Graphics\\gameplay opening star";			break;
 		case GRAPHIC_GAMEPLAY_READY:					sAssetPrefix = "Graphics\\gameplay Ready";					break;
 		case GRAPHIC_GAMEPLAY_TOP_FRAME:				sAssetPrefix = "Graphics\\gameplay top frame";				break;
-		case GRAPHIC_GRAPHIC_OPTIONS_BACKGROUND:		sAssetPrefix = "Graphics\\graphic options background";		break;
-		case GRAPHIC_GRAPHIC_OPTIONS_TOP_EDGE:			sAssetPrefix = "Graphics\\graphic options top edge";		break;
 		case GRAPHIC_KEEP_ALIVE:						sAssetPrefix = "Graphics\\keep alive";						break;
 		case GRAPHIC_LIFEMETER_FRAME:					sAssetPrefix = "Graphics\\Life Meter Frame";				break;
 		case GRAPHIC_LIFEMETER_PILLS:					sAssetPrefix = "Graphics\\life meter pills 17x1";			break;
@@ -133,6 +132,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_RESULTS_GRADES:					sAssetPrefix = "Graphics\\results grades 1x7";				break;
 		case GRAPHIC_RESULTS_JUDGE_LABELS:				sAssetPrefix = "Graphics\\results judge labels 1x6";		break;
 		case GRAPHIC_RESULTS_SCORE_LABELS:				sAssetPrefix = "Graphics\\results score labels 1x2";		break;
+		case GRAPHIC_RESULTS_SUMMARY_TOP_EDGE:			sAssetPrefix = "Graphics\\results summary top edge";			break;
 		case GRAPHIC_RESULTS_TOP_EDGE:					sAssetPrefix = "Graphics\\results top edge";				break;
 		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P1:		sAssetPrefix = "Graphics\\select difficulty arrow p1";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P2:		sAssetPrefix = "Graphics\\select difficulty arrow p2";		break;
@@ -210,6 +210,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case SOUND_MENU_PROMPT:					sAssetPrefix = "Sounds\\menu prompt";					break;
 		case SOUND_MENU_START:					sAssetPrefix = "Sounds\\menu start";					break;
 		case SOUND_MENU_SWOOSH:					sAssetPrefix = "Sounds\\menu swoosh";					break;
+		case SOUND_MENU_TIMER:					sAssetPrefix = "Sounds\\menu timer";					break;
 		case SOUND_MUSIC_SCROLL_MUSIC:			sAssetPrefix = "Sounds\\music scroll music";			break;
 		case SOUND_OPTION_CHANGE_COL:			sAssetPrefix = "Sounds\\option change col";				break;
 		case SOUND_OPTION_CHANGE_ROW:			sAssetPrefix = "Sounds\\option change row";				break;

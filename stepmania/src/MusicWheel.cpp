@@ -21,6 +21,7 @@
 #include "GameConstantsAndTypes.h"
 
 
+const float FADE_TIME	=	1.0f;
 
 const float SWITCH_MUSIC_TIME	=	0.3f;
 
@@ -190,6 +191,8 @@ void WheelItemDisplay::RefreshGrades()
 
 void WheelItemDisplay::Update( float fDeltaTime )
 {
+	Actor::Update( fDeltaTime );
+
 	switch( m_WheelItemType )
 	{
 	case TYPE_SECTION:
@@ -237,6 +240,12 @@ void WheelItemDisplay::DrawPrimitives()
 MusicWheel::MusicWheel() 
 { 
 	LOG->WriteLine( "MusicWheel::MusicWheel()" );
+
+	
+	// for debugging
+	if( GAMEMAN->m_CurStyle == STYLE_NONE )
+		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -515,44 +524,6 @@ float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 {	
 	float fX = (1-cosf((fPosOffsetsFromMiddle)/3))*95.0f;
 	
-	float fPercentOffScreen = 0;
-	switch( m_WheelState )
-	{
-	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
-	case STATE_TWEENING_OFF_SCREEN:
-		fPercentOffScreen = 1 - (m_fTimeLeftInState / FADE_TIME);
-		break;
-	case STATE_FLYING_ON_AFTER_NEXT_SORT:
-	case STATE_TWEENING_ON_SCREEN:
-		fPercentOffScreen = m_fTimeLeftInState / FADE_TIME;
-		break;
-	default:
-		fPercentOffScreen = 1;
-		break;
-	}
-
-	switch( m_WheelState )
-	{
-	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
-	case STATE_TWEENING_OFF_SCREEN:
-	case STATE_FLYING_ON_AFTER_NEXT_SORT:
-	case STATE_TWEENING_ON_SCREEN:
-		{
-		/*
-		float fDistFromCenter = fabsf( fPosOffsetsFromMiddle );
-		float fPercentOffScreen = 1- (m_fTimeLeftInState / FADE_TIME);
-		float fXLogicalOffset = max( 0, fPercentOffScreen - 1 + (fDistFromCenter+3)/6 );
-		fXLogicalOffset = powf( fXLogicalOffset, 1.7f );	// accelerate 
-		float fXPixelOffset = fXLogicalOffset * 600;
-		fX += fXPixelOffset;
-		*/
-		const float fShift = fPosOffsetsFromMiddle/NUM_WHEEL_ITEMS_TO_DRAW - 0.5f;	// this is always < 0
-		const float fXTween = fShift * 800 + fPercentOffScreen * 1200;
-		fX = max( fX, fXTween );
-		}
-		break;
-	}
-
 	return (float)roundf( fX );
 }
 
@@ -622,19 +593,23 @@ void MusicWheel::DrawPrimitives()
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 
-		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
+		switch( m_WheelState )
+		{
+		case STATE_IDLE:
+		case STATE_SWITCHING_MUSIC:
+			{
+				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
 
-		float fY = GetBannerY( fThisBannerPositionOffsetFromSelection );
-		if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
-			continue; // skip
+				float fY = GetBannerY( fThisBannerPositionOffsetFromSelection );
+				if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
+					continue; // skip
 
-		float fX = GetBannerX( fThisBannerPositionOffsetFromSelection );
-		display.SetXY( fX, fY );
+				float fX = GetBannerX( fThisBannerPositionOffsetFromSelection );
+				display.SetXY( fX, fY );
+			}
+			break;
+		};
 
-		float fBrightness = GetBannerBrightness( m_fPositionOffsetFromSelection );
-		float fAlpha = GetBannerAlpha( m_fPositionOffsetFromSelection );
-
-		display.SetDiffuseColor( D3DXCOLOR(fBrightness, fBrightness, fBrightness, fAlpha) );
 		display.Draw();
 	}
 
@@ -716,6 +691,8 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 
 			RebuildWheelItemDisplays();
+
+			TweenOnScreen();
 
 			}
 			break;
@@ -840,6 +817,8 @@ void MusicWheel::NextSort()
 	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );
 	m_MusicSortDisplay.SetTweenXY( SORT_ICON_OFF_SCREEN_X, SORT_ICON_OFF_SCREEN_Y );
 
+	TweenOffScreen();
+
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	m_fTimeLeftInState = FADE_TIME;
 }
@@ -892,23 +871,83 @@ void MusicWheel::TweenOnScreen()
 	m_WheelState = STATE_TWEENING_ON_SCREEN;
 	m_fTimeLeftInState = FADE_TIME; 
 
-	float fOriginalZoomY;
-	fOriginalZoomY = m_sprSelectionOverlay.GetZoomY();
-	m_sprSelectionOverlay.SetZoomY( 0 );
-	m_sprSelectionOverlay.BeginTweening( FADE_TIME );
-	m_sprSelectionOverlay.SetTweenZoomY( fOriginalZoomY );
 
+	m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_MusicSortDisplay.BeginTweening( FADE_TIME );
+	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		float fOriginalX = m_HighScore[p].GetX();
+		m_HighScore[p].SetX( fOriginalX+320 );
+		m_HighScore[p].BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
+		m_HighScore[p].SetTweenX( fOriginalX );
+	}
+
+
+	float fX = GetBannerX(0);
+	float fY = GetBannerY(0);
+	m_sprSelectionOverlay.SetXY( fX+320, fY );
+	m_sprSelectionOverlay.BeginTweeningQueued( 0.5f );	// sleep
+	m_sprSelectionOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+	m_sprSelectionOverlay.SetTweenX( fX );
+
+
+	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	{
+		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
+
+		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
+		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
+		display.SetXY( fX+320, fY );
+		display.BeginTweeningQueued( 0.04f*i );	// sleep
+		display.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
+		display.SetTweenX( fX );
+	}
 }
-						   
 						   
 void MusicWheel::TweenOffScreen()
 {
 	m_WheelState = STATE_TWEENING_OFF_SCREEN;
 	m_fTimeLeftInState = FADE_TIME;
 
-	m_sprSelectionOverlay.BeginTweening( FADE_TIME );
-	m_sprSelectionOverlay.SetTweenZoomY( 0 );
+	
+	m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_MusicSortDisplay.SetEffectNone();
+	m_MusicSortDisplay.BeginTweening( FADE_TIME );
+	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );
-	m_MusicSortDisplay.SetTweenXY( SORT_ICON_OFF_SCREEN_X, SORT_ICON_OFF_SCREEN_Y );
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_HighScore[p].BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
+		m_HighScore[p].SetTweenX( m_HighScore[p].GetX()+320 );
+	}
+
+
+	float fX = GetBannerX(0);
+	float fY = GetBannerY(0);
+	m_sprSelectionOverlay.SetXY( fX, fY );
+	m_sprSelectionOverlay.BeginTweeningQueued( 0 );	// sleep
+	m_sprSelectionOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
+	m_sprSelectionOverlay.SetTweenX( fX+320 );
+
+
+	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	{
+		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
+
+		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
+		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
+		display.SetXY( fX, fY );
+		display.BeginTweeningQueued( 0.04f*i );	// sleep
+		display.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
+		display.SetTweenX( fX+320 );
+	}
+
+
+
 }

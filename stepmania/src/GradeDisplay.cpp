@@ -18,6 +18,9 @@
 
 
 const float SCROLL_TIME = 5.0f;
+const int NUM_GRADE_FRAMES = 7;
+const float GRADE_FRAME_HEIGHT = 1/(float)NUM_GRADE_FRAMES;
+const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 
 GradeDisplay::GradeDisplay()
@@ -37,7 +40,14 @@ void GradeDisplay::Update( float fDeltaTime )
 	m_fTimeLeftInScroll -= fDeltaTime;
 	m_fTimeLeftInScroll = max( 0, m_fTimeLeftInScroll );
 
-	const float fPercentIntoScrolling = 1 - (m_fTimeLeftInScroll/SCROLL_TIME);
+	float fPercentIntoScrolling = 1 - (m_fTimeLeftInScroll/SCROLL_TIME);
+	if( fPercentIntoScrolling < 0.75 )
+		fPercentIntoScrolling = (fPercentIntoScrolling/0.75f) * (1 + 1.0f/NUM_GRADE_FRAMES);
+	else if( fPercentIntoScrolling < 0.9 )
+		fPercentIntoScrolling = 1 + 1.0f/NUM_GRADE_FRAMES;
+	else
+		fPercentIntoScrolling = (1 + 1.0f/NUM_GRADE_FRAMES) - ((fPercentIntoScrolling-0.9f)/0.1f) * 1.0f/NUM_GRADE_FRAMES;
+
 	FRECT frectCurrentTextureCoords;
 	frectCurrentTextureCoords.left   = m_frectStartTexCoords.left*(1-fPercentIntoScrolling)   + m_frectDestTexCoords.left*fPercentIntoScrolling;
 	frectCurrentTextureCoords.top    = m_frectStartTexCoords.top*(1-fPercentIntoScrolling)    + m_frectDestTexCoords.top*fPercentIntoScrolling;
@@ -79,9 +89,28 @@ void GradeDisplay::SetGrade( Grade g )
 
 void GradeDisplay::SpinAndSettleOn( Grade g )
 {
+	ASSERT( g != GRADE_NO_DATA );
+	m_Grade = g;
+
 	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
-	m_frectStartTexCoords = *m_pTexture->GetTextureCoordRect( 0 );
-	m_frectDestTexCoords = *m_pTexture->GetTextureCoordRect( 6 );
+	int iFrameNo;
+	switch( g )
+	{
+	case GRADE_AAA:		iFrameNo = 0;	break;
+	case GRADE_AA:		iFrameNo = 1;	break;
+	case GRADE_A:		iFrameNo = 2;	break;
+	case GRADE_B:		iFrameNo = 3;	break;
+	case GRADE_C:		iFrameNo = 4;	break;
+	case GRADE_D:		iFrameNo = 5;	break;
+	case GRADE_E:		iFrameNo = 6;	break;
+	default:	ASSERT(0);
+	}
+
+	m_frectDestTexCoords = *m_pTexture->GetTextureCoordRect( iFrameNo );
+	m_frectStartTexCoords = m_frectDestTexCoords;
+	m_frectStartTexCoords.top += GRADES_TO_SCROLL * GRADE_FRAME_HEIGHT;
+	m_frectStartTexCoords.bottom += GRADES_TO_SCROLL * GRADE_FRAME_HEIGHT;
+
 	m_fTimeLeftInScroll = SCROLL_TIME;
 }

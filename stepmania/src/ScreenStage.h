@@ -10,10 +10,7 @@
 */
 
 #include "Screen.h"
-
-class BitmapText;
-class Sprite;
-class TransitionFadeWipe;
+#include "BitmapText.h"
 
 
 class ScreenStage : public Screen
@@ -21,18 +18,13 @@ class ScreenStage : public Screen
 public:
 	ScreenStage();
 	ScreenStage( bool bTryExtraStage );
-	~ScreenStage();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
 	bool			m_bTryExtraStage;
 
-	BitmapText*		m_ptextStage;
-	
-	Sprite*			m_psprUnderscore;
-
-	TransitionFadeWipe*		m_pWipe;
+	BitmapText		m_textStage;
 };
 
 

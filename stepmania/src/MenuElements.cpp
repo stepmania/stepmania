@@ -19,19 +19,21 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
+#include "RageLog.h"
+#include "GameManager.h"
 
 
 const float HELP_X		=	CENTER_X;
-const float HELP_Y		=	SCREEN_HEIGHT-28;
+const float HELP_Y		=	SCREEN_BOTTOM-28;
 
-const float STYLE_LOCAL_X	=	160;
-const float STYLE_LOCAL_Y	=	6;
+const float STYLE_ICON_LOCAL_X	=	130;
+const float STYLE_ICON_LOCAL_Y	=	6;
 
 const float TIMER_LOCAL_X	=	270;
 const float TIMER_LOCAL_Y	=	0;
 
 const float CREDIT_X[NUM_PLAYERS]	=	{160,480};
-const float CREDIT_Y[NUM_PLAYERS]	=	{SCREEN_BOTTOM-20, SCREEN_BOTTOM-20};
+const float CREDIT_Y[NUM_PLAYERS]	=	{SCREEN_BOTTOM-8, SCREEN_BOTTOM-8};
 
 
 MenuElements::MenuElements()
@@ -47,7 +49,15 @@ MenuElements::MenuElements()
 	this->AddActor( &m_frameBottomBar );
 	this->AddActor( &m_textHelp );
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		this->AddActor( &m_sprCreditInfo[p] );
+		this->AddActor( &m_textCreditInfo[p] );
+
+	m_KeepAlive.SetZ( -2 );
+	m_KeepAlive.SetOpened();
+	this->AddActor( &m_KeepAlive );
+
+	m_Wipe.SetZ( -2 );
+	m_Wipe.SetOpened();
+	this->AddActor( &m_Wipe );
 }
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText )
@@ -66,8 +76,12 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	
 	m_sprStyleIcon.Load( THEME->GetPathTo(GRAPHIC_MENU_STYLE_ICONS) );
 	m_sprStyleIcon.StopAnimating();
-	m_sprStyleIcon.SetXY( STYLE_LOCAL_X, STYLE_LOCAL_Y );
+	m_sprStyleIcon.SetXY( STYLE_ICON_LOCAL_X, STYLE_ICON_LOCAL_Y );
 	m_sprStyleIcon.SetZ( -1 );
+	if( GAMEMAN->m_CurStyle == STYLE_NONE )
+		m_sprStyleIcon.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	else
+		m_sprStyleIcon.SetState( GAMEMAN->m_CurStyle );
 
 	m_MenuTimer.SetXY( TIMER_LOCAL_X, TIMER_LOCAL_Y );
 	m_MenuTimer.SetZ( -1 );
@@ -83,58 +97,76 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_textHelp.SetText( sHelpText );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();
-	m_textHelp.SetShadowLength( 2 );
+	m_textHelp.TurnShadowOff();
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprCreditInfo[p].Load( THEME->GetPathTo(FONT_NORMAL) );
-		m_sprCreditInfo[p].SetXY( CREDIT_X[p], CREDIT_Y[p] );
-		m_sprCreditInfo[p].SetZ( -1 );
-		m_sprCreditInfo[p].SetText( "FREE PLAY" );
-		m_sprCreditInfo[p].SetZoom( 0.5f );
-		m_sprCreditInfo[p].TurnShadowOff();
+		m_textCreditInfo[p].Load( THEME->GetPathTo(FONT_NORMAL) );
+		m_textCreditInfo[p].SetXY( CREDIT_X[p], CREDIT_Y[p] );
+		m_textCreditInfo[p].SetZ( -1 );
+
+		if( GAMEMAN->m_CurStyle == STYLE_NONE )
+			m_textCreditInfo[p].SetText( "PRESS START" );
+		else if( GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+			m_textCreditInfo[p].SetText( "PRESENT" );
+		else	// not enabled
+			m_textCreditInfo[p].SetText( "CREDIT(S):  0 / 0" );
+
+
+		m_textCreditInfo[p].SetZoom( 0.5f );
+		m_textCreditInfo[p].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+		m_textCreditInfo[p].TurnShadowOff();
 	}
 	
 	m_soundSwoosh.Load( THEME->GetPathTo(SOUND_MENU_SWOOSH) );
 	m_soundBack.Load( THEME->GetPathTo(SOUND_MENU_BACK) );
 
 
-	SetTopEdgeOnScreen();
-	SetBackgroundOnScreen();
+
+	m_frameTopBar.SetXY( CENTER_X, m_sprTopEdge.GetZoomedHeight()/2 );
+
+	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT - m_sprBottomEdge.GetZoomedHeight()/2 );
 }
 
-
-void MenuElements::TweenTopEdgeOnScreen()
+void MenuElements::TweenTopLayerOnScreen()
 {
-	SetTopEdgeOffScreen();
-
+	m_frameTopBar.SetXY( CENTER_X+SCREEN_WIDTH, m_sprTopEdge.GetZoomedHeight()/2 );
 	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_SPRING );
 	m_frameTopBar.SetTweenX( CENTER_X );
 
-	float fOriginalZoomY = m_textHelp.GetZoomY();
+	float fOriginalZoom = m_textHelp.GetZoomY();
 	m_textHelp.SetZoomY( 0 );
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textHelp.SetTweenZoomY( fOriginalZoomY );
+	m_textHelp.SetTweenZoomY( fOriginalZoom );
+}
 
+void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone )
+{
+	TweenTopLayerOnScreen();
+	m_KeepAlive.OpenWipingRight( smSendWhenDone );
 	m_soundSwoosh.Play();
 }
 
-void MenuElements::TweenTopEdgeOffScreen()
+void MenuElements::TweenTopLayerOffScreen()
 {
 	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_BIAS_END );
 	m_frameTopBar.SetTweenX( SCREEN_WIDTH*1.5f );
 
-
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_textHelp.SetTweenZoomY( 0 );
+}
 
+void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
+{
+	TweenTopLayerOffScreen();
+	m_KeepAlive.CloseWipingRight( smSendWhenDone );
 	m_soundSwoosh.Play();
 }
 
-void MenuElements::TweenBackgroundOnScreen()
-{
-	SetBackgroundOffScreen();
 
+void MenuElements::TweenBottomLayerOnScreen()
+{
+	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT + m_sprBottomEdge.GetZoomedHeight()/2 );
 	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_frameBottomBar.SetTweenY( SCREEN_HEIGHT - m_sprBottomEdge.GetZoomedHeight()/2 );
 
@@ -142,10 +174,9 @@ void MenuElements::TweenBackgroundOnScreen()
 	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
-	m_soundSwoosh.Play();
 }
 
-void MenuElements::TweenBackgroundOffScreen()
+void MenuElements::TweenBottomLayerOffScreen()
 {
 	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_frameBottomBar.SetTweenY( SCREEN_HEIGHT + m_sprTopEdge.GetZoomedHeight() );
@@ -153,42 +184,27 @@ void MenuElements::TweenBackgroundOffScreen()
 	m_sprBG.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,1) );
-
-	m_soundBack.Play();
 }
 
-void MenuElements::TweenAllOnScreen()
+void MenuElements::TweenOnScreenFromBlack( ScreenMessage smSendWhenDone )
 {
-	TweenTopEdgeOnScreen();
-	TweenBackgroundOnScreen();
+	TweenTopLayerOnScreen();
+	TweenBottomLayerOnScreen();
+	m_Wipe.OpenWipingRight( smSendWhenDone );
+	m_soundSwoosh.Play();
 }
 
-void MenuElements::TweenAllOffScreen()
+void MenuElements::TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound )
 {
-	TweenTopEdgeOffScreen();
-	TweenBackgroundOffScreen();
+	if( !bPlayBackSound )
+	{
+		TweenTopLayerOffScreen();
+		TweenBottomLayerOffScreen();
+	}
+	m_Wipe.CloseWipingRight( smSendWhenDone );
+	if( bPlayBackSound )
+		m_soundBack.Play();
 }
-
-void MenuElements::SetBackgroundOnScreen()
-{
-	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT - m_sprBottomEdge.GetZoomedHeight()/2 );
-}
-
-void MenuElements::SetBackgroundOffScreen()
-{
-	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT + m_sprBottomEdge.GetZoomedHeight()/2 );
-}
-
-void MenuElements::SetTopEdgeOnScreen()
-{
-	m_frameTopBar.SetXY( CENTER_X, m_sprTopEdge.GetZoomedHeight()/2 );
-}
-
-void MenuElements::SetTopEdgeOffScreen()
-{
-	m_frameTopBar.SetXY( CENTER_X+SCREEN_WIDTH, m_sprTopEdge.GetZoomedHeight()/2 );
-}
-
 
 void MenuElements::DrawPrimitives()
 {
@@ -200,6 +216,11 @@ void MenuElements::DrawTopLayer()
 	m_frameTopBar.Draw();
 	m_frameBottomBar.Draw();
 	m_textHelp.Draw();
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_textCreditInfo[p].Draw();
+
+	m_KeepAlive.Draw();
+	m_Wipe.Draw();
 }
 
 void MenuElements::DrawBottomLayer()

@@ -314,6 +314,48 @@ struct PlayerOptions
 	bool m_bHoldNotes;
 	enum DrainType { DRAIN_NORMAL=0, DRAIN_NO_RECOVER, DRAIN_SUDDEN_DEATH };
 	DrainType m_DrainType;
+
+	CString GetString()
+	{
+		CString sReturn;
+		if( m_fArrowScrollSpeed != 1 )
+			sReturn += ssprintf( "%2.1fX, ", m_fArrowScrollSpeed );
+		switch( m_EffectType )
+		{
+		case EFFECT_NONE:							break;
+		case EFFECT_BOOST:	sReturn += "Boost, ";	break;
+		case EFFECT_WAVE:	sReturn += "Wave, ";	break;
+		case EFFECT_DRUNK:	sReturn += "Drunk, ";	break;
+		case EFFECT_DIZZY:	sReturn += "Dizzy, ";	break;
+		case EFFECT_SPACE:	sReturn += "Space, ";	break;
+		default:	ASSERT(0);	// invalid EFFECT
+		}
+		switch( m_AppearanceType )
+		{
+		case APPEARANCE_VISIBLE:							break;
+		case APPEARANCE_HIDDEN:		sReturn += "Hidden, ";	break;
+		case APPEARANCE_SUDDEN:		sReturn += "Sudden, ";	break;
+		case APPEARANCE_STEALTH:	sReturn += "Stealth, ";	break;
+		default:	ASSERT(0);	// invalid EFFECT
+		}
+		switch( m_TurnType )
+		{
+		case TURN_NONE:								break;
+		case TURN_MIRROR:	sReturn += "Mirror, ";	break;
+		case TURN_LEFT:		sReturn += "Left, ";	break;
+		case TURN_RIGHT:	sReturn += "Right, ";	break;
+		case TURN_SHUFFLE:	sReturn += "Shuffle, ";	break;
+		default:	ASSERT(0);	// invalid EFFECT
+		}
+		if( m_bLittle )
+			sReturn += "Little, ";
+		if( m_bReverseScroll )
+			sReturn += "Reverse, ";
+
+		if( sReturn.GetLength() > 2 )
+			sReturn.Delete( sReturn.GetLength()-2, 2 );	// delete the trailing ", "
+		return sReturn;
+	}
 };
 
 struct SongOptions
@@ -332,8 +374,19 @@ struct SongOptions
 };
 
 
-struct ScoreSummary {
-	ScoreSummary() { perfect=great=good=boo=miss=ok=ng=max_combo=0; score=0; };
+struct ScoreSummary 
+{
 	int perfect, great, good, boo, miss, ok, ng, max_combo;
 	float score;
+
+	float fRadarActual[NUM_RADAR_VALUES];
+	float fRadarPossible[NUM_RADAR_VALUES];
+
+	ScoreSummary() 
+	{ 
+		perfect=great=good=boo=miss=ok=ng=max_combo=0; 
+		score=0;
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+			fRadarActual[r] = fRadarPossible[r] = 0;
+	}
 };

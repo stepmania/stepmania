@@ -15,7 +15,6 @@
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "Banner.h"
-#include "TransitionKeepAlive.h"
 #include "SongInfoFrame.h"
 #include "MenuElements.h"
 #include "GrooveRadar.h"
@@ -37,14 +36,15 @@ public:
 	void TweenOnScreen();
 	void TweenOffScreen();
 
-	void MenuLeft( const PlayerNumber p );
-	void MenuRight( const PlayerNumber p );
-	void EasierDifficulty( const PlayerNumber p );
-	void HarderDifficulty( const PlayerNumber p );
+	void MenuLeft( const PlayerNumber p, const InputEventType type );
+	void MenuRight( const PlayerNumber p, const InputEventType type );
 	void MenuStart( const PlayerNumber p );
 	void MenuBack( const PlayerNumber p );
 
 protected:
+	void EasierDifficulty( const PlayerNumber p );
+	void HarderDifficulty( const PlayerNumber p );
+
 	void AfterNotesChange( const PlayerNumber p );
 	void AfterMusicChange();
 	void PlayMusicSample();
@@ -66,9 +66,6 @@ protected:
 
 	RandomSample m_soundSelect;
 	RandomSample m_soundChangeNotes;
-
-	TransitionKeepAlive m_Wipe;
-	TransitionFade		m_Fade;
 };
 
 

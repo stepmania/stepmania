@@ -100,6 +100,9 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_iSelection[p] = 0;
+		m_bChosen[p] = false;
+
 		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
@@ -123,14 +126,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 		m_sprOK[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_OK) );
 		this->AddActor( &m_sprOK[p] );
-
-		m_iSelection[p] = 0;
-		m_bChosen[p] = false;
 	}
 	
-
-	m_Fade.SetZ( -2 );
-	this->AddActor( &m_Fade );
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_DIFFICULTY_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -145,7 +142,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
         MUSIC->Play( true );
 	}
 
-	m_Fade.OpenWipingRight();
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 }
 
@@ -161,7 +158,7 @@ void ScreenSelectDifficulty::Input( const DeviceInput& DeviceI, const InputEvent
 {
 	LOG->WriteLine( "ScreenSelectDifficulty::Input()" );
 
-	if( m_Fade.IsClosing() )
+	if( m_Menu.IsClosing() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -195,7 +192,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 		break;
 	case SM_StartFadingOut:
-		m_Fade.CloseWipingRight( SM_GoToNextState );
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 		break;
 	}
 }
@@ -279,7 +276,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	// check to see if everyone has chosen
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_bChosen[p] == false )
+		if( GAMEMAN->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
 	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
@@ -287,15 +284,11 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 void ScreenSelectDifficulty::MenuBack( const PlayerNumber p )
 {
-	m_Fade.CloseWipingLeft( SM_GoToPrevState );
-
-	TweenOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
 }
 
 void ScreenSelectDifficulty::TweenOffScreen()
 {
-	m_Menu.TweenTopEdgeOffScreen();
-
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_sprExplanation.BeginTweening( 0.5, Actor::TWEEN_BOUNCE_BEGIN );
 	m_sprExplanation.SetTweenXY( EXPLANATION_X-400, EXPLANATION_Y );
@@ -341,7 +334,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 void ScreenSelectDifficulty::TweenOnScreen() 
 {
-	m_Menu.TweenTopEdgeOnScreen();
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 
 	m_sprExplanation.SetXY( EXPLANATION_X-400, EXPLANATION_Y );
 	m_sprExplanation.BeginTweening( 0.3f, Actor::TWEEN_BOUNCE_END );

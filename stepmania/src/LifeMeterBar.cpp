@@ -33,20 +33,19 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 
 	switch( score )
 	{
-	case TNS_PERFECT:	m_fLifePercentage += 0.03f;	break;
+	case TNS_PERFECT:	m_fLifePercentage += 0.02f;	break;
 	case TNS_GREAT:		m_fLifePercentage += 0.01f;	break;
 	case TNS_GOOD:		m_fLifePercentage += 0.00f;	break;
 	case TNS_BOO:		m_fLifePercentage -= 0.05f;	break;
 	case TNS_MISS:		m_fLifePercentage -= 0.10f;	break;
 	}
+	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
 
 	bool bIsDoingGreat = IsDoingGreat();
 
 	if( bWasDoingGreat && !bIsDoingGreat )
 		m_fLifePercentage -= 0.10f;		// make it take a while to get back to "doing great"
 
-	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
-	
 	ResetBarVelocity();
 }
 
@@ -60,7 +59,7 @@ void LifeMeterBar::ResetBarVelocity()
 
 bool LifeMeterBar::IsDoingGreat() 
 { 
-	return m_fLifePercentage == 1; 
+	return m_fLifePercentage >= 1; 
 }
 
 bool LifeMeterBar::IsAboutToFail() 
@@ -77,15 +76,16 @@ void LifeMeterBar::Update( float fDeltaTime )
 {
 	m_fLifeVelocity *= 1-fDeltaTime*2;	// dampen
 
-	if( fabsf(m_fLifeVelocity) < 0.01f )
+	// there are some cases where we want to snap the meter
+	bool bSnap = m_fTrailingLifePercentage >= 1;
+
+	if( bSnap )
 	{
-		// snap
 		m_fTrailingLifePercentage = m_fLifePercentage;
 		m_fLifeVelocity = 0;
 	}
 	else
 	{
-
 		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
 		m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
 	}

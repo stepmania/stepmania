@@ -11,7 +11,6 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionKeepAlive.h"
 #include "RandomSample.h"
 #include "Screen.h"
 #include "Quad.h"
@@ -63,8 +62,6 @@ private:
 	CStringArray m_arrayGroupNames;
 	int m_iSelection;
 	bool m_bChosen;
-
-	TransitionKeepAlive m_Fade;
 };
 
 

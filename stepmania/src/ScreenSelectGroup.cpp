@@ -112,9 +112,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 	}
 
 
-	m_Fade.SetZ( -2 );
-	this->AddActor( &m_Fade );
-
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_GROUP_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 
@@ -127,7 +124,7 @@ ScreenSelectGroup::ScreenSelectGroup()
         MUSIC->Play( true );
 	}
 
-	m_Fade.OpenWipingRight();
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 	AfterChange();
 }
@@ -144,7 +141,7 @@ void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->WriteLine( "ScreenSelectGroup::Input()" );
 
-	if( m_Fade.IsClosing()  ||  m_bChosen )
+	if( m_Menu.IsClosing()  ||  m_bChosen )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -171,7 +168,7 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
 		break;
 	case SM_StartFadingOut:
-		m_Fade.CloseWipingRight( SM_GoToNextState );
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 		break;
 	}
 }
@@ -293,20 +290,17 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 
 
 	TweenOffScreen();
+
 	this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 }
 
 void ScreenSelectGroup::MenuBack( const PlayerNumber p )
 {
-	m_Fade.CloseWipingLeft( SM_GoToPrevState );
-
-	TweenOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
 }
 
 void ScreenSelectGroup::TweenOffScreen()
 {
-	m_Menu.TweenTopEdgeOffScreen();
-
 	m_sprExplanation.BeginTweeningQueued( 0.8f );
 	m_sprExplanation.BeginTweeningQueued( 0.5f, TWEEN_BOUNCE_BEGIN );
 	m_sprExplanation.SetTweenX( EXPLANATION_X-400 );
@@ -349,7 +343,7 @@ void ScreenSelectGroup::TweenOffScreen()
 
 void ScreenSelectGroup::TweenOnScreen() 
 {
-	m_Menu.TweenTopEdgeOnScreen();
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 
 	m_sprExplanation.SetX( EXPLANATION_X-400 );
 	m_sprExplanation.BeginTweening( 0.5f, TWEEN_BOUNCE_END );

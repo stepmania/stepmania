@@ -15,7 +15,6 @@
 #include "Quad.h"
 #include "RandomSample.h"
 #include "Quad.h"
-#include "TransitionKeepAlive.h"
 #include "MenuElements.h"
 
 
@@ -54,8 +53,6 @@ private:
 	CArray<Style,Style>	m_aPossibleStyles;
 
 	Style	GetSelectedStyle() { return m_aPossibleStyles[m_iSelection]; };
-
-	TransitionKeepAlive m_Fade;
 };
 
 

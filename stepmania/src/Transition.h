@@ -73,11 +73,11 @@ protected:
 			return m_fPercentThroughTransition;
 		case closing_right:
 		case closing_left:
-			return 1.0f - m_fPercentThroughTransition;
+			return 1 - m_fPercentThroughTransition;
 		case opened:
-			return 0;
-		case closed:
 			return 1;
+		case closed:
+			return 0;
 		default:
 			ASSERT( false );
 			return 0;

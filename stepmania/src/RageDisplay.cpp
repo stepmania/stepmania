@@ -327,8 +327,9 @@ HRESULT RageDisplay::BeginFrame()
 	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
-	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
-	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
+//	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
+//	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 
 
     m_pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );

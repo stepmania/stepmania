@@ -34,7 +34,10 @@ const float LIFE_Y				= SCREEN_TOP+28;
 const float SCORE_X[NUM_PLAYERS] = { CENTER_X-214, CENTER_X+214 };
 const float SCORE_Y				 = SCREEN_BOTTOM-38;
 
-const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+50, SCREEN_RIGHT-50 };
+const float PLAYER_OPTIONS_X[NUM_PLAYERS]	= { CENTER_X-214, CENTER_X+214 };
+const float PLAYER_OPTIONS_Y[NUM_PLAYERS]	= { SCREEN_BOTTOM-60, SCREEN_BOTTOM-40 };
+
+const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+70, SCREEN_RIGHT-70 };
 const float DIFFICULTY_Y				= SCREEN_BOTTOM-80;
 
 const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.20f;
@@ -106,6 +109,7 @@ ScreenGameplay::ScreenGameplay()
 			&m_LifeMeter[p],
 			&m_ScoreDisplay[p]
 		);
+		
 
 		this->AddActor( &m_Player[p] );
 	}
@@ -113,13 +117,19 @@ ScreenGameplay::ScreenGameplay()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_quadLifeMeterBG[p].SetXY( LIFE_X[p], LIFE_Y );
+		m_quadLifeMeterBG[p].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+		m_quadLifeMeterBG[p].SetZoomX( 256 );
+		m_quadLifeMeterBG[p].SetZoomY( (p==PLAYER_1) ? 20.0f : -20.0f );
+		this->AddActor( &m_quadLifeMeterBG[p] );
+
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
 		m_LifeMeter[p].SetPlayerOptions( PREFSMAN->m_PlayerOptions[p] );
 		m_LifeMeter[p].SetXY( LIFE_X[p], LIFE_Y );
 		m_LifeMeter[p].SetZoomX( 256 );
-		m_LifeMeter[p].SetZoomY( 20 );
+		m_LifeMeter[p].SetZoomY( (p==PLAYER_1) ? 20.0f : -20.0f );
 		this->AddActor( &m_LifeMeter[p] );
 	}
 
@@ -131,12 +141,12 @@ ScreenGameplay::ScreenGameplay()
 	m_sprBottomFrame.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
 	this->AddActor( &m_sprBottomFrame );
 
-	m_textSmallStage.Load( THEME->GetPathTo(FONT_HEADER1) );
-	m_textSmallStage.TurnShadowOff();
-	m_textSmallStage.SetXY( CENTER_X, 60 );
-	m_textSmallStage.SetDiffuseColor( D3DXCOLOR(0.3f,1,1,1) );
-	m_textSmallStage.SetText( PREFSMAN->GetStageText() );
-	this->AddActor( &m_textSmallStage );
+	m_textStageNumber.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textStageNumber.TurnShadowOff();
+	m_textStageNumber.SetXY( CENTER_X, 60 );
+	m_textStageNumber.SetDiffuseColor( D3DXCOLOR(0.3f,1,1,1) );
+	m_textStageNumber.SetText( PREFSMAN->GetStageText() );
+	this->AddActor( &m_textStageNumber );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -147,6 +157,14 @@ ScreenGameplay::ScreenGameplay()
 		m_ScoreDisplay[p].SetXY( SCORE_X[p], SCORE_Y );
 		m_ScoreDisplay[p].SetZoom( 0.8f );
 		this->AddActor( &m_ScoreDisplay[p] );
+
+		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
+		m_textPlayerOptions[p].TurnShadowOff();
+		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X[p], PLAYER_OPTIONS_Y[p] );
+		m_textPlayerOptions[p].SetZoom( 0.5f );
+		m_textPlayerOptions[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_textPlayerOptions[p].SetText( PREFSMAN->m_PlayerOptions[p].GetString() );
+		this->AddActor( &m_textPlayerOptions[p] );
 	}
 
 	
@@ -377,7 +395,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		if( StyleI.IsValid() )
 		{
-			m_Player[StyleI.player].HandlePlayerStep( fSongBeat, StyleI.col, fMaxBeatsCanBeOffBy ); 
+			if( GAMEMAN->IsPlayerEnabled( StyleI.player ) )
+				m_Player[StyleI.player].HandlePlayerStep( fSongBeat, StyleI.col, fMaxBeatsCanBeOffBy ); 
 		}
 	}
 }
@@ -455,9 +474,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToResults:
 		// send score summaries to the PREFSMAN object so ScreenResults can grab it.
-		PREFSMAN->m_ScoreSummary[PLAYER_1] = m_Player[PLAYER_1].GetScoreSummary();
-		PREFSMAN->m_ScoreSummary[PLAYER_2] = m_Player[PLAYER_2].GetScoreSummary();
-		SCREENMAN->SetNewScreen( new ScreenResults );
+		PREFSMAN->m_ScoreSummary[PLAYER_1][PREFSMAN->m_iNumArcadeStages-1] = m_Player[PLAYER_1].GetScoreSummary();
+		PREFSMAN->m_ScoreSummary[PLAYER_2][PREFSMAN->m_iNumArcadeStages-1] = m_Player[PLAYER_2].GetScoreSummary();
+		SCREENMAN->SetNewScreen( new ScreenResults(false) );
 		break;
 
 

@@ -72,6 +72,7 @@ RageSound::RageSound( HWND hWnd )
 
 RageSound::~RageSound()
 {
+	BASS_Stop();
 	BASS_Free();
 }
 

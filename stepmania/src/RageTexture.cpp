@@ -61,7 +61,9 @@ void RageTexture::CreateFrameRects()
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	///////////////////////////////////
+	m_TextureCoordRects.SetSize( 1, 10 );	// most textures will have only one frame
 	m_TextureCoordRects.RemoveAll();
+
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
 	{
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)

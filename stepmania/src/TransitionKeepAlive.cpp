@@ -38,32 +38,17 @@ void TransitionKeepAlive::Update( float fDeltaTime )
 
 void TransitionKeepAlive::DrawPrimitives()
 {
-	if( m_TransitionState == closing_left )	// we're going back
-	{
-		// Draw a fade
+	// draw keep alive graphic
 
-		const float fPercentageOpaque = 1 - GetPercentageOpen();
-		if( fPercentageOpaque == 0 )
-			return;	// draw nothing
+	float fPercentClosed = 1 - this->GetPercentageOpen();
+	fPercentClosed = min( 1, fPercentClosed*2 );
+	const float fPercentColor = fPercentClosed;
+	const float fPercentAlpha = min( fPercentClosed * 2, 1 );
 
-		D3DXCOLOR colorTemp = m_Color * fPercentageOpaque;
-		m_rect.SetDiffuseColor( colorTemp );
-		m_rect.Draw();
-	}
-	else	// we're going forward
-	{
-		// draw keep alive graphic
-
-		float fPercentClosed = 1 - this->GetPercentageOpen();
-		fPercentClosed = min( 1, fPercentClosed*2 );
-		const float fPercentColor = fPercentClosed;
-		const float fPercentAlpha = min( fPercentClosed * 2, 1 );
-
-		m_sprLogo.SetDiffuseColor( D3DXCOLOR(fPercentColor,fPercentColor,fPercentColor,fPercentAlpha) );
-		m_sprLogo.SetZoomY( fPercentClosed );
-		if( fPercentClosed > 0 )
-			m_sprLogo.Draw();
-	}
+	m_sprLogo.SetDiffuseColor( D3DXCOLOR(fPercentColor,fPercentColor,fPercentColor,fPercentAlpha) );
+	m_sprLogo.SetZoomY( fPercentClosed );
+	if( fPercentClosed > 0 )
+		m_sprLogo.Draw();
 }
 
 

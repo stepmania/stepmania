@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenTitleMenu.h
+ Class: ScreenTitleMenu
 
- Desc: The main title screen and menu.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -27,6 +28,7 @@
 #include "SongManager.h"
 #include "AnnouncerManager.h"
 #include "ErrorCatcher/ErrorCatcher.h"
+#include "GameManager.h"
 
 
 //
@@ -34,10 +36,7 @@
 //
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
-	"GAME MODE",
-	"NONSTOP MODE",
-	"ENDLESS MODE",
-	"ONI MODE",
+	"GAME START",
 	"SWITCH GAME",
 	"CONFIG INSTRUMENTS",
 	"GAME OPTIONS",
@@ -46,8 +45,8 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"EXIT",
 };
 
-const float CHOICES_START_Y		= 52;
-const float CHOICES_GAP_Y		= 38;
+const float CHOICES_START_Y		= 66;
+const float CHOICES_GAP_Y		= 50;
 
 const float HELP_X				= CENTER_X;
 const float HELP_Y				= SCREEN_HEIGHT-55;
@@ -136,28 +135,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 		this->SendScreenMessage( SM_PlayAttract, (float)15+i*15 );
 
 
-	m_TitleMenuChoice = CHOICE_GAME_MODE;
+	m_TitleMenuChoice = CHOICE_GAME_START;
 	GainFocus( m_TitleMenuChoice );
 
-/*
-	MUSIC->Stop();
-	
-	// find a random song and play it
-	if( GAMEINFO->m_pSongs.GetSize() > 0 )
-	{
-		for( i=0; i<50; i++ )	// try 50 times to find a song with music
-		{
-			int iRandomSongIndex = rand() % GAMEINFO->m_pSongs.GetSize();
-			Song* pSong = GAMEINFO->m_pSongs[iRandomSongIndex];
-			if( pSong->HasMusic() )
-			{
-				MUSIC->Load( pSong->GetMusicPath() );
-				MUSIC->Play();
-				break;
-			}
-		}
-	}
-*/
 
 	MUSIC->Stop();
 
@@ -265,10 +245,11 @@ void ScreenTitleMenu::MenuDown( const PlayerNumber p )
 
 void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 {	
+	GAMEMAN->m_sMasterPlayerNumber = p;
 
 	switch( m_TitleMenuChoice )
 	{
-	case CHOICE_GAME_MODE:
+	case CHOICE_GAME_START:
 		m_soundSelect.PlayRandom();
 		m_Fade.CloseWipingRight( SM_GoToCaution );
 		return;
@@ -287,11 +268,6 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 	case CHOICE_SYNCHRONIZE:
 		m_soundSelect.PlayRandom();
 		m_Fade.CloseWipingRight( SM_GoToSynchronize );
-		return;
-	case CHOICE_NONSTOP_MODE:
-	case CHOICE_ENDLESS_MODE:
-	case CHOICE_ONI_MODE:
-		m_soundInvalid.PlayRandom();
 		return;
 	case CHOICE_EDIT:
 		m_soundSelect.PlayRandom();

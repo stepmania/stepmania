@@ -496,7 +496,7 @@ bool Notes::LoadFromDWITokens(
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
 	}
 	else
-		ASSERT( false );
+		ASSERT(0);
 
 	m_sDescription = sDescription;
 
@@ -622,6 +622,8 @@ bool Notes::LoadFromDWITokens(
 	}
 
 	m_pNoteData->Convert2sAnd3sToHoldNotes();	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
+
+	ASSERT( m_pNoteData->m_iNumTracks > 0 );
 
 	return true;
 }

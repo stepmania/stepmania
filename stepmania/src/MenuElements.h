@@ -18,6 +18,8 @@
 #include "RandomSample.h"
 #include "TransitionFade.h"
 #include "MenuTimer.h"
+#include "TransitionFadeWipe.h"
+#include "TransitionKeepAlive.h"
 
 
 const float MENU_ELEMENTS_TWEEN_TIME	=	0.30f;
@@ -35,21 +37,20 @@ public:
 	void DrawTopLayer();
 	void DrawBottomLayer();
 
-	void TweenTopEdgeOnScreen();
-	void TweenTopEdgeOffScreen();
+	void TweenOnScreenFromMenu( ScreenMessage smSendWhenDone );
+	void TweenOffScreenToMenu( ScreenMessage smSendWhenDone );
 
-	void TweenAllOnScreen();	// tween top edge + background
-	void TweenAllOffScreen();
+	void TweenOnScreenFromBlack( ScreenMessage smSendWhenDone );
+	void TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound );
+
+	bool IsClosing() { return m_Wipe.IsClosing() || m_KeepAlive.IsClosing(); };
 
 protected:
-	void TweenBackgroundOnScreen();
-	void TweenBackgroundOffScreen();
+	void TweenTopLayerOnScreen();
+	void TweenTopLayerOffScreen();
 
-	void SetBackgroundOnScreen();
-	void SetBackgroundOffScreen();
-
-	void SetTopEdgeOnScreen();
-	void SetTopEdgeOffScreen();
+	void TweenBottomLayerOnScreen();
+	void TweenBottomLayerOffScreen();
 
 
 	// stuff in the top bar
@@ -65,8 +66,10 @@ protected:
 	// stuff in the main frame
 	Sprite		m_sprBG;
 	BitmapText	m_textHelp;
-	BitmapText	m_sprCreditInfo[NUM_PLAYERS];
+	BitmapText	m_textCreditInfo[NUM_PLAYERS];
 
+	TransitionFadeWipe	m_Wipe;
+	TransitionKeepAlive	m_KeepAlive;
 
 	RageSoundSample m_soundSwoosh;
 	RageSoundSample m_soundBack;

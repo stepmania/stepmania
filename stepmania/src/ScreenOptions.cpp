@@ -51,7 +51,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 		ssprintf("%s %s to change line   %s %s to select between options      then press NEXT", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) )
 		);
 	this->AddActor( &m_Menu );
-	m_Menu.TweenAllOnScreen();
+	m_Menu.TweenOnScreenFromBlack( SM_None );
 
 	// init row numbers and element colors
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -297,7 +297,7 @@ void ScreenOptions::MenuBack( const PlayerNumber p )
 {
 	Screen::MenuBack( p );
 
-	m_Menu.TweenAllOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_None, true );
 
 	m_Wipe.CloseWipingLeft( SM_GoToPrevState );
 }
@@ -307,7 +307,7 @@ void ScreenOptions::MenuStart( const PlayerNumber p )
 {
 	Screen::MenuStart( p );
 
-	m_Menu.TweenAllOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_None, false );
 
 	m_SoundNext.PlayRandom();
 	m_Wipe.CloseWipingRight( SM_GoToNextState );

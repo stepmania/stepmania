@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenTitleMenu.h
+ Class: ScreenTitleMenu
 
  Desc: The main title screen and menu.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -28,10 +29,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	enum TitleMenuChoice {
-		CHOICE_GAME_MODE = 0,
-		CHOICE_NONSTOP_MODE,
-		CHOICE_ENDLESS_MODE,
-		CHOICE_ONI_MODE,
+		CHOICE_GAME_START = 0,
 		CHOICE_SELECT_GAME,
 		CHOICE_MAP_INSTRUMENTS,
 		CHOICE_GAME_OPTIONS,

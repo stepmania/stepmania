@@ -366,6 +366,7 @@ GameDef* GameManager::GetCurrentGameDef()
 
 StyleDef* GameManager::GetCurrentStyleDef()
 {
+	ASSERT( m_CurStyle != STYLE_NONE );
 	return &g_StyleDefs[ m_CurStyle ];
 }
 

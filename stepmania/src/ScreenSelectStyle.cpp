@@ -30,10 +30,10 @@ const float ICONS_SPACING_X	= 76;
 const float ICON_Y			= SCREEN_TOP + 100;
 
 const float EXPLANATION_X	= SCREEN_RIGHT - 160;
-const float EXPLANATION_Y	= CENTER_Y;
+const float EXPLANATION_Y	= CENTER_Y-70;
 
 const float INFO_X			= SCREEN_RIGHT - 160;
-const float INFO_Y			= CENTER_Y+200;
+const float INFO_Y			= CENTER_Y+40;
 
 const float PREVIEW_X		= SCREEN_LEFT + 160;
 const float PREVIEW_Y		= CENTER_Y;
@@ -83,9 +83,6 @@ ScreenSelectStyle::ScreenSelectStyle()
 		);
 	this->AddActor( &m_Menu );
 
-	m_Fade.SetZ( -2 );
-	this->AddActor( &m_Fade );
-
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 
@@ -99,10 +96,9 @@ ScreenSelectStyle::ScreenSelectStyle()
         MUSIC->Play( true );
 	}
 
-	m_soundChange.PlayRandom();
 	AfterChange();
 	TweenOnScreen();
-	m_Menu.TweenAllOnScreen();
+	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
 
@@ -122,7 +118,7 @@ void ScreenSelectStyle::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->WriteLine( "ScreenSelectStyle::Input()" );
 
-	if( m_Fade.IsClosing() )
+	if( m_Menu.IsClosing() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -135,7 +131,7 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_1);
+		MenuStart(PLAYER_NONE);
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
@@ -158,16 +154,34 @@ void ScreenSelectStyle::AfterChange()
 
 	ThemeElement te;
 
+	// Tween Preview
 	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_0+GetSelectedStyle());
 	m_sprPreview.Load( THEME->GetPathTo(te) );
-	m_sprPreview.SetZoomX( 0 );
-	m_sprPreview.BeginTweening( 0.3f, Actor::TWEEN_BOUNCE_END );
-	m_sprPreview.SetTweenZoomX( 1 );
 
+	m_sprPreview.StopTweening();
+	m_sprPreview.SetAddColor( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+	m_sprPreview.BeginTweeningQueued( 0.25f );			// sleep
+
+	m_sprPreview.BeginTweeningQueued( 0.2f );			// fade to white
+	m_sprPreview.SetTweenAddColor( D3DXCOLOR(1,1,1,1) );
+	m_sprPreview.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+	m_sprPreview.BeginTweeningQueued( 0.01f );			// turn color on
+	m_sprPreview.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+
+	m_sprPreview.BeginTweeningQueued( 0.2f );			// fade to color
+	m_sprPreview.SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+
+
+	// Tween Info
 	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_0+GetSelectedStyle());
 	m_sprInfo.Load( THEME->GetPathTo(te) );
+	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );
-	m_sprInfo.BeginTweening( 0.3f, Actor::TWEEN_BOUNCE_END );
+	m_sprInfo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprInfo.SetTweenZoomY( 1 );
 }
 
@@ -196,7 +210,8 @@ void ScreenSelectStyle::MenuRight( const PlayerNumber p )
 
 void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 {
-	GAMEMAN->m_sMasterPlayerNumber = p;
+	if( p != PLAYER_NONE )
+		GAMEMAN->m_sMasterPlayerNumber = p;
 	GAMEMAN->m_CurStyle = GetSelectedStyle();
 
 	AnnouncerElement ae;
@@ -214,11 +229,9 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 	}
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ae) );
 
-	m_Menu.TweenTopEdgeOffScreen();
+	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 
 	m_soundSelect.PlayRandom();
-
-	m_Fade.CloseWipingRight( SM_GoToNextState );
 
 	TweenOffScreen();
 }
@@ -227,11 +240,11 @@ void ScreenSelectStyle::MenuBack( const PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenAllOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
 
-	m_Fade.CloseWipingLeft( SM_GoToPrevState );
+//	m_Fade.CloseWipingLeft( SM_GoToPrevState );
 
-	TweenOffScreen();
+//	TweenOffScreen();
 }
 
 
@@ -271,6 +284,9 @@ void ScreenSelectStyle::TweenOnScreen()
 	m_sprExplanation.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprExplanation.SetTweenZoomY( fOriginalZoom );
 
+
+	// let AfterChange tween Preview and Info
+	/*	
 	fOriginalZoom = m_sprPreview.GetZoomY();
 	m_sprPreview.SetZoomY( 0 );
 	m_sprPreview.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
@@ -280,4 +296,5 @@ void ScreenSelectStyle::TweenOnScreen()
 	m_sprInfo.SetZoomY( 0 );
 	m_sprInfo.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprInfo.SetTweenZoomY( fOriginalZoom );
+	*/
 }

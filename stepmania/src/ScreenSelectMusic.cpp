@@ -63,6 +63,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 {
 	LOG->WriteLine( "ScreenSelectMusic::ScreenSelectMusic()" );
 
+	// for debugging
+	if( GAMEMAN->m_CurStyle == STYLE_NONE )
+		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+
 	int p;
 
 	m_Menu.Load(
@@ -104,18 +108,13 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
 	this->AddActor( &m_MusicWheel );
 
-	m_Wipe.SetZ( -2 );
-	this->AddActor( &m_Wipe );
-
-	m_Fade.SetZ( -2 );
-	this->AddActor( &m_Fade );
-
 	m_textHoldForOptions.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
 	m_textHoldForOptions.SetText( "hold NEXT for options" );
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_textHoldForOptions.SetZ( -4 );
 	this->AddActor( &m_textHoldForOptions );
 
 
@@ -127,7 +126,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	AfterMusicChange();
 	TweenOnScreen();
-	m_Wipe.OpenWipingRight();
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 }
 
 
@@ -146,8 +145,6 @@ void ScreenSelectMusic::DrawPrimitives()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
-	m_Menu.TweenTopEdgeOnScreen();
-
 	float fOriginalZoomY;
 
 	m_SongInfoFrame.SetXY( SONG_INFO_FRAME_X - 400, SONG_INFO_FRAME_Y );
@@ -181,8 +178,6 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	m_Menu.TweenAllOffScreen();
-
 	m_SongInfoFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BOUNCE_END );
 	m_SongInfoFrame.SetTweenXY( SONG_INFO_FRAME_X - 400, SONG_INFO_FRAME_Y );
 
@@ -219,7 +214,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->WriteLine( "ScreenSelectMusic::Input()" );
 
-	if( m_Wipe.IsClosing()  ||  m_Fade.IsClosing() )
+	if( m_Menu.IsClosing() )
 		return;		// ignore
 
 	if( MenuI.player == PLAYER_NONE )
@@ -323,7 +318,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectMusic::MenuLeft( const PlayerNumber p )
+void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType type )
 {
 	m_MusicWheel.PrevMusic();
 	
@@ -331,7 +326,7 @@ void ScreenSelectMusic::MenuLeft( const PlayerNumber p )
 }
 
 
-void ScreenSelectMusic::MenuRight( const PlayerNumber p )
+void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType type )
 {
 	m_MusicWheel.NextMusic();
 
@@ -354,6 +349,8 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 			}
 
 			TweenOffScreen();
+			m_Menu.TweenOffScreenToBlack( SM_None, false );
+
 			m_soundSelect.PlayRandom();
 
 			bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
@@ -362,7 +359,7 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 			{
 				if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;	// skip
-				if( SONGMAN->m_pCurNotes[p]->m_iMeter >= 9 )
+				if( SONGMAN->m_pCurNotes[p]  &&  SONGMAN->m_pCurNotes[p]->m_iMeter >= 9 )
 					bIsHard = true;
 			}
 
@@ -376,16 +373,17 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 			;
 
 			// show "hold NEXT for options"
+			m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
-			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			m_textHoldForOptions.SetTweenZoomY( 1 );
-			m_textHoldForOptions.BeginTweeningQueued( 1.0f );	// sleep
+			m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
 			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
 			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			m_textHoldForOptions.SetTweenZoomY( 0 );
 
-			m_Fade.SetTransitionTime( 1.5f );	// give enough time for m_textHoldForOptions to complete its tweens
-			m_Fade.CloseWipingRight( SM_GoToNextState );
+			m_Menu.TweenOffScreenToBlack( SM_None, false );
+
+			this->SendScreenMessage( SM_GoToNextState, 2.5f );
 		}
 		break;
 	case TYPE_SECTION:
@@ -400,13 +398,9 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 
 void ScreenSelectMusic::MenuBack( const PlayerNumber p )
 {
-	Screen::MenuBack( p );
-
 	MUSIC->Stop();
 
-	m_Wipe.CloseWipingLeft( SM_GoToPrevState );
-
-	TweenOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
 }
 
 void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )

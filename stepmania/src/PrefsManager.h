@@ -16,7 +16,7 @@
 
 
 const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input
-
+const int MAX_NUM_STAGES = 10;
 
 class PrefsManager
 {
@@ -25,17 +25,16 @@ public:
 	~PrefsManager();
 
 	// Options that ARE saved between sessions
-	enum WindowMode{ WINDOW_MODE_FULLSCREEN, WINDOW_MODE_WINDOWED, WINDOW_MODE_MAXIMIZED, NUM_WINDOW_MODES };
-	WindowMode		m_WindowMode;
-	bool			m_bHighDetail;
-	bool			m_bHighTextureDetail;
-	bool			m_bIgnoreJoyAxes;
-	bool			m_bShowFPS;
-	bool			m_bUseRandomVis;
-	bool			m_bAnnouncer;
-	bool			m_bEventMode;
-	int				m_iNumArcadeStages;
-	int				m_iDifficulty;
+	bool	m_bWindowed;
+	bool	m_bHighDetail;
+	bool	m_bHighTextureDetail;
+	bool	m_bIgnoreJoyAxes;
+	bool	m_bShowFPS;
+	bool	m_bUseRandomVis;
+	bool	m_bAnnouncer;
+	bool	m_bEventMode;
+	int		m_iNumArcadeStages;
+	int		m_iDifficulty;
 
 	void ReadPrefsFromDisk();
 	void SavePrefsToDisk();
@@ -55,9 +54,7 @@ public:
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
 	SongOptions		m_SongOptions;
 
-	ScoreSummary	m_ScoreSummary[NUM_PLAYERS];	// for passing from Dancing to Results
-
-
+	ScoreSummary	m_ScoreSummary[NUM_PLAYERS][MAX_NUM_STAGES];	// for passing from Dancing to Results
 };
 
 

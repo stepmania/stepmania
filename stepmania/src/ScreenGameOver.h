@@ -10,9 +10,7 @@
 */
 
 #include "Screen.h"
-
-class Sprite;
-class TransitionFadeWipe;
+#include "Sprite.h"
 
 
 class ScreenGameOver : public Screen
@@ -20,15 +18,12 @@ class ScreenGameOver : public Screen
 public:
 	ScreenGameOver();
 
-	~ScreenGameOver();
-
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-private:
-	
-	Sprite*			m_psprGameOver;
+	virtual void MenuStart( const PlayerNumber p );
 
-	TransitionFadeWipe*		m_pWipe;
+private:
+	Sprite			m_sprGameOver;
 };
 
 

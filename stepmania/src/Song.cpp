@@ -215,8 +215,8 @@ bool Song::LoadFromSongDir( CString sDir )
 	//
 	// First look in the cache for this song (without loading NoteData)
 	//
-	if( LoadFromCacheFile(false) )
-		return true;
+	//if( LoadFromCacheFile(false) )
+	//	return true;
 
 
 	//
@@ -255,8 +255,8 @@ bool Song::LoadFromSongDir( CString sDir )
 	// In order to save memory, we're going to save the file back to the cache, 
 	// then unload all the large NoteData. 
 	//
-	SaveToCacheFile();
-	LoadFromCacheFile( false );
+	//SaveToCacheFile();
+	//LoadFromCacheFile( false );
 
 	return true;
 }
@@ -454,39 +454,14 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 	// get group name
 	sDir.MakeLower();
-	if( sDir.Find( "dwi support" ) != -1 )	// loading from DWI support
-	{
-		int iIndexOfFirstBackslash = sDir.Find('\\');
-		int iIndexOfSecondBackslash = sDir.Find('\\', iIndexOfFirstBackslash+1);
-		int iIndexOfThirdBackslash = sDir.Find('\\', iIndexOfSecondBackslash+1);
-		m_sGroupName = sDir.Mid( iIndexOfSecondBackslash+1, iIndexOfThirdBackslash-iIndexOfSecondBackslash-1 );
-	}
-	else
-	{
-		// get group name
-		CStringArray sDirectoryParts;
-		split( m_sSongDir, "\\", sDirectoryParts, true );
-		m_sGroupName = sDirectoryParts[1];
-	}
+	CStringArray sDirectoryParts;
+	split( m_sSongDir, "\\", sDirectoryParts, true );
+	m_sGroupName = sDirectoryParts[1];
 
-	// save probable image paths
-	m_sBackgroundPath = ssprintf(".\\DWI Support\\Backgrounds\\%s\\%s.avi", m_sGroupName, sFName);
-	if( !DoesFileExist( GetBackgroundPath() ) )
-		m_sBackgroundPath = ssprintf(".\\DWI Support\\Backgrounds\\%s\\%s.mpg", m_sGroupName, sFName);
-	if( !DoesFileExist( GetBackgroundPath() ) )
-		m_sBackgroundPath = ssprintf(".\\DWI Support\\Backgrounds\\%s\\%s.mpeg", m_sGroupName, sFName);
-	if( !DoesFileExist( GetBackgroundPath() ) )
-		m_sBackgroundPath = ssprintf(".\\DWI Support\\Backgrounds\\%s\\%s.png", m_sGroupName, sFName);
-	
-	m_sBannerPath = ssprintf(".\\DWI Support\\Banners\\%s\\%s.png", m_sGroupName, sFName);
 
-	
 	CStdioFile file;	
 	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
 		FatalError( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
-
-
-//	MessageBox( NULL, sFName, sFName, MB_OK );
 
 
 	// read the whole file into a sFileText
@@ -518,12 +493,11 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 		// handle the data
 		if( sValueName == "#FILE" )
-			m_sMusicPath = CString("DWI Support\\") + arrayValueTokens[1];
+			m_sMusicPath = arrayValueTokens[1];
 
 		else if( sValueName == "#TITLE" )
-		{
 			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
-		}
+
 		else if( sValueName == "#ARTIST" )
 			m_sArtist = arrayValueTokens[1];
 

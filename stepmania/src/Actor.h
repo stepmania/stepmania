@@ -13,6 +13,8 @@
 #include <d3dx8math.h>
 
 
+const int MAX_TWEEN_STATES = 10;
+
 class Actor
 {
 public:
@@ -92,7 +94,7 @@ public:
 
 	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	virtual void BeginTweeningQueued( float time, TweenType tt = TWEEN_LINEAR );
-	virtual void StopTweening() { m_QueuedTweens.RemoveAll(); };
+	virtual void StopTweening();
 	virtual void SetTweenX( float x );
 	virtual void SetTweenY( float y );
 	virtual void SetTweenZ( float z );
@@ -206,8 +208,9 @@ protected:
 		};
 	};
 
-	CArray<TweenState, TweenState&> m_QueuedTweens;
-	TweenState& GetLatestTween() { return m_QueuedTweens[m_QueuedTweens.GetSize()-1]; };
+	TweenState	m_QueuedTweens[MAX_TWEEN_STATES];
+	int			m_iNumTweenStates;
+	TweenState& GetLatestTween() { return m_QueuedTweens[m_iNumTweenStates-1]; };
 
 
 	//

@@ -20,7 +20,7 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 PrefsManager::PrefsManager()
 {
-	m_WindowMode = WINDOW_MODE_FULLSCREEN;
+	m_bWindowed = false;
 	m_bHighDetail = true;
 	m_bHighTextureDetail = true;
 	m_bIgnoreJoyAxes = false;
@@ -52,7 +52,7 @@ void PrefsManager::ReadPrefsFromDisk()
 	if( !ini.ReadFile() )
 		return;		// could not read config file, load nothing
 
-	ini.GetValueI( "Options", "WindowMode",			(int&)m_WindowMode );
+	ini.GetValueB( "Options", "Windowed",			m_bWindowed );
 	ini.GetValueB( "Options", "HighDetail",			m_bHighDetail );
 	ini.GetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
@@ -70,7 +70,7 @@ void PrefsManager::SavePrefsToDisk()
 	IniFile ini;
 	ini.SetPath( "StepMania.ini" );
 
-	ini.SetValueI( "Options", "WindowMode",			(int)m_WindowMode );
+	ini.SetValueB( "Options", "Windowed",			m_bWindowed );
 	ini.SetValueB( "Options", "HighDetail",			m_bHighDetail );
 	ini.GetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );

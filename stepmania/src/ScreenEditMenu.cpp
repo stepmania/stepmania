@@ -95,7 +95,7 @@ ScreenEditMenu::ScreenEditMenu()
 
 	m_Menu.Load( 
 		THEME->GetPathTo(GRAPHIC_EDIT_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_TOP_EDGE),
+		THEME->GetPathTo(GRAPHIC_EDIT_TOP_EDGE),
 		ssprintf("%s %s change music    NEXT to continue", CString(char(1)), CString(char(2)) )
 		);
 	this->AddActor( &m_Menu );
@@ -112,7 +112,7 @@ ScreenEditMenu::ScreenEditMenu()
 	MUSIC->Play( true );
 
 
-	m_Menu.TweenAllOnScreen();
+	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
 
@@ -306,7 +306,7 @@ void ScreenEditMenu::MenuRight( const PlayerNumber p )
 
 void ScreenEditMenu::MenuStart( const PlayerNumber p )
 {
-	m_Menu.TweenAllOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_None, false );
 
 	MUSIC->Stop();
 
@@ -321,7 +321,7 @@ void ScreenEditMenu::MenuStart( const PlayerNumber p )
 
 void ScreenEditMenu::MenuBack( const PlayerNumber p )
 {	
-	m_Menu.TweenAllOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_None, true );
 
 
 	MUSIC->Stop();

@@ -32,7 +32,6 @@ protected:
 	Grade m_Grade;
 
 	// for scrolling
-	void ScrollToVirtualFrame( int iFrameNo );	// a virtual frame is a tiled state number
 	FRECT m_frectStartTexCoords;
 	FRECT m_frectDestTexCoords;
 	float m_fTimeLeftInScroll;

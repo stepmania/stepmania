@@ -55,15 +55,17 @@ private:
 
 	Background		m_Background;
 
+	Quad			m_quadLifeMeterBG[NUM_PLAYERS];
 	LifeMeterBar	m_LifeMeter[NUM_PLAYERS];
 
 	Sprite			m_sprTopFrame;
 	Sprite			m_sprBottomFrame;
+	BitmapText		m_textPlayerOptions[NUM_PLAYERS];
 
 	ScoreDisplayRolling		m_ScoreDisplay[NUM_PLAYERS];
 
 
-	BitmapText			m_textSmallStage;
+	BitmapText			m_textStageNumber;
 
 	TransitionStarWipe	m_StarWipe;
 

@@ -10,7 +10,6 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionKeepAlive.h"
 #include "RandomSample.h"
 #include "Screen.h"
 #include "Quad.h"
@@ -52,8 +51,6 @@ private:
 
 	int m_iSelection[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
-
-	TransitionKeepAlive m_Fade;
 };
 
 

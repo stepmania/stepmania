@@ -29,7 +29,6 @@
 
 const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
-const float FADE_TIME	=	0.7f;
 
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
 const ScreenMessage SM_PlaySongSample	=	ScreenMessage(SM_User+48);	
@@ -102,15 +101,15 @@ public:
 	void NextSort();
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
+	float GetBannerX( float fPosOffsetsFromMiddle );
 	float GetBannerY( float fPosOffsetsFromMiddle );
 	float GetBannerBrightness( float fPosOffsetsFromMiddle );
 	float GetBannerAlpha( float fPosOffsetsFromMiddle );
-	float GetBannerX( float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
-	WheelItemType GetSelectedType()	{ return GetCurWheelItemDatas()[m_iSelection].m_WheelItemType; };
-	Song* GetSelectedSong()			{ return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
-	CString GetSelectedSection()	{ return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
+	WheelItemType	GetSelectedType()	{ return GetCurWheelItemDatas()[m_iSelection].m_WheelItemType; };
+	Song*			GetSelectedSong()	{ return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
+	CString			GetSelectedSection(){ return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
 
 
 protected:
@@ -127,15 +126,15 @@ protected:
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	ScoreDisplayRolling	m_HighScore[NUM_PLAYERS];
 
-	SongSortOrder m_SortOrder;
+	SongSortOrder		m_SortOrder;
 
 	CArray<WheelItemData, WheelItemData&> m_WheelItemDatas[NUM_SORT_ORDERS];
 	CArray<WheelItemData, WheelItemData&> &GetCurWheelItemDatas() { return m_WheelItemDatas[m_SortOrder]; };
 	
-	WheelItemDisplay m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
+	WheelItemDisplay	m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
 	
-	int	m_iSelection;		// index into GetCurWheelItemDatas()
-	CString m_sExpandedSectionName;
+	int					m_iSelection;		// index into GetCurWheelItemDatas()
+	CString				m_sExpandedSectionName;
 
 
 	enum WheelState { 
@@ -147,9 +146,9 @@ protected:
 		STATE_TWEENING_OFF_SCREEN, 
 		STATE_WAITING_OFF_SCREEN
 	};
-	WheelState m_WheelState;
-	float m_fTimeLeftInState;
-	float m_fPositionOffsetFromSelection;
+	WheelState			m_WheelState;
+	float				m_fTimeLeftInState;
+	float				m_fPositionOffsetFromSelection;
 
 
 	// having sounds here causes a crash in Bass.  What the heck!?!?!

@@ -416,9 +416,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
             switch( LOWORD(wParam) )
             {
 				case IDM_TOGGLEFULLSCREEN:
-					PREFSMAN->m_WindowMode = PrefsManager::WindowMode( PREFSMAN->m_WindowMode+1 );
-					if( PREFSMAN->m_WindowMode >= PrefsManager::NUM_WINDOW_MODES )
-						PREFSMAN->m_WindowMode = PrefsManager::WindowMode( 0 );
+					PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
 					ApplyGraphicOptions();
 					return 0;
 				case IDM_CHANGEDETAIL:
@@ -516,15 +514,14 @@ HRESULT CreateObjects( HWND hWnd )
 	TEXTUREMAN	= new RageTextureManager( DISPLAY );
 
 	// These things depend on the TextureManager, so do them last!
-	FONT	= new FontManager;
-	SCREENMAN		= new ScreenManager;
+	FONT		= new FontManager;
+	SCREENMAN	= new ScreenManager;
 
-//	SCREENMAN->SystemMessage( ssprintf("Found %d songs.", SONGMAN->m_pSongs.GetSize()) );
 
 
 	//SCREENMAN->SetNewScreen( new ScreenLoading );
 	//SCREENMAN->SetNewScreen( new ScreenSandbox );
-	//SCREENMAN->SetNewScreen( new ScreenResults );
+	//SCREENMAN->SetNewScreen( new ScreenResults(false) );
 	//SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
 	//SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 	//SCREENMAN->SetNewScreen( new ScreenGameplay );
@@ -575,7 +572,7 @@ HRESULT RestoreObjects()
 	/////////////////////
 	// Restore the window
 	/////////////////////
-	
+
     // Set window size
     RECT rcWnd;
 	if( DISPLAY->IsWindowed() )
@@ -596,6 +593,7 @@ HRESULT RestoreObjects()
 				  RECTWIDTH(rcWnd), 
 				  RECTHEIGHT(rcWnd),
                   0 );
+
 
 
 	///////////////////////////
@@ -756,8 +754,7 @@ void ApplyGraphicOptions()
 {
 	InvalidateObjects();
 
-	bool bWindowed			= PREFSMAN->m_WindowMode != PrefsManager::WINDOW_MODE_FULLSCREEN;
-	bool bMaximized			= PREFSMAN->m_WindowMode == PrefsManager::WINDOW_MODE_MAXIMIZED;
+	bool bWindowed			= PREFSMAN->m_bWindowed;
 	CString sProfileName	= PREFSMAN->m_bHighDetail ? "High Detail" : "Low Detail";
 	DWORD dwWidth			= PREFSMAN->m_bHighDetail ? 640 : 320;
 	DWORD dwHeight			= PREFSMAN->m_bHighDetail ? 480 : 240;
