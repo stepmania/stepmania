@@ -99,7 +99,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 
 			/* Note that, until we call advance_read_pointer, we can safely write to p[0]. */
 			const int frames_to_read = min( frames_left, p[0]->frames_in_buffer );
-			mix.write( p[0]->p, frames_to_read * channels, s.volume, got_frames*channels );
+			mix.write( (Sint16*)p[0]->p, frames_to_read * channels, s.volume, got_frames*channels );
 
 			SOUNDMAN->CommitPlayingPosition( s.sound_id, frameno+got_frames, p[0]->position, frames_to_read );
 
@@ -117,7 +117,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 	}
 
 	memset( buf, 0, frames*bytes_per_frame );
-	mix.read( buf );
+	mix.read( (Sint16*)buf );
 }
 
 
