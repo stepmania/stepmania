@@ -1189,6 +1189,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\Dialog\DialogDriver_Win32.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="Threads"
+					Filter="">
+					<File
+						RelativePath="arch\Threads\Threads.h">
+					</File>
+					<File
+						RelativePath="arch\Threads\Threads_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\Threads\Threads_Win32.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"

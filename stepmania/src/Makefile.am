@@ -141,8 +141,10 @@ endif
 
 Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h
 
+Threads = arch/Threads/Threads.h arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
+
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
-	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) \
+	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
 	   arch/arch.cpp arch/arch.h arch/arch_default.h arch/arch_linux.h arch/arch_platform.h
 
 RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
@@ -281,13 +283,12 @@ GtkModule_so_LDADD = $(GTK_LIBS)
 GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 endif
 
-# XXX: Make ArchHooks not depend on Display
-# Display depends on SaveJPEG  and SDL_utils, SDL_utils depends on SDL_rotozoom.
 all_test_SOURCES = \
 		$(ArchUtils) \
 		$(PCRE) \
 		$(RageFile) \
 		$(ArchHooks) \
+		$(Threads) \
 		tests/test_misc.cpp tests/test_misc.h \
 		IniFile.cpp IniFile.h \
 		PrefsManager.cpp PrefsManager.h \
