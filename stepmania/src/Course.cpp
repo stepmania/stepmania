@@ -65,12 +65,7 @@ void Course::LoadFromCRSFile( CString sPath )
 	GetDirListing( sFName + ".bmp", arrayPossibleBanners, false, true );
 	GetDirListing( sFName + ".gif", arrayPossibleBanners, false, true );
 	if( !arrayPossibleBanners.empty() )
-	{
 		m_sBannerPath = arrayPossibleBanners[0];
-
-		/* Cache and load the course banner. */
-		BANNERCACHE->CacheBanner( m_sBannerPath );
-	}
 
 	AttackArray attacks;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
@@ -260,6 +255,11 @@ void Course::LoadFromCRSFile( CString sPath )
 	tsub.Subst( title );
 	m_sMainTitle = title.Title;
 	m_sMainTitleTranslit = title.TitleTranslit;
+
+	/* Cache and load the course banner.  Only bother doing this if at least one
+	 * song was found in the course. */
+	if( m_sBannerPath != "" && !m_entries.empty() )
+		BANNERCACHE->CacheBanner( m_sBannerPath );
 }
 
 void Course::RevertFromDisk()
