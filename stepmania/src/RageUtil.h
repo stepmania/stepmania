@@ -197,12 +197,15 @@ void TrimRight(CString &str, const char *s = "\r\n\t ");
 
 /* Fix Windows breakage ... */
 #ifdef WIN32
+#include <direct.h> /* has stuff that should be in unistd.h */
 #define getcwd _getcwd
 #define wgetcwd _wgetcwd
 #define chdir _chdir
 #define wchdir _wchdir
 #define alloca _alloca
 #define stat _stat
+#else
+#include <unistd.h> /* correct place with correct definitions */
 #endif
 
 #endif
