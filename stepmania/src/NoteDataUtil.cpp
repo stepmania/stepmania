@@ -777,9 +777,8 @@ void NoteDataUtil::Quick( NoteData &in, float fStartBeat, float fEndBeat )
 // this BMR-izer for your steps.  Use with caution.
 void NoteDataUtil::BMRize( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,1.0f,0.5f,1.0f,false,fStartBeat,fEndBeat);	// add 8ths between 4ths
-	InsertIntelligentTaps(in,0.5f,0.25f,0.5f,false,fStartBeat,fEndBeat); // then add 16ths between ALL 8ths
-	// ...net result: OUCH. :-)
+	Big( in, fStartBeat, fEndBeat );
+	Quick( in, fStartBeat, fEndBeat );
 }
 
 void NoteDataUtil::Skippy( NoteData &in, float fStartBeat, float fEndBeat )
@@ -787,11 +786,21 @@ void NoteDataUtil::Skippy( NoteData &in, float fStartBeat, float fEndBeat )
 	InsertIntelligentTaps(in,1.0f,0.75f,1.0f,true,fStartBeat,fEndBeat);	// add 16ths between 4ths
 }
 
-void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, float fInsertOffsetBeats, float fWindowStrideBeats, bool bSkippy, float fStartBeat, float fEndBeat )
+void NoteDataUtil::InsertIntelligentTaps( 
+	NoteData &in, 
+	float fWindowSizeBeats, 
+	float fInsertOffsetBeats, 
+	float fWindowStrideBeats, 
+	bool bSkippy, 
+	float fStartBeat, 
+	float fEndBeat )
 {
 	ASSERT( fInsertOffsetBeats <= fWindowSizeBeats );
 	ASSERT( fWindowSizeBeats <= fWindowStrideBeats );
 	in.ConvertHoldNotesTo4s();
+
+	bool bRequireNoteAtBeginningOfWindow = !bSkippy;
+	bool bRequireNoteAtEndOfWindow = true;
 
 	/* Start on a multiple of fBeatInterval. */
 	fStartBeat = froundf( fStartBeat, fWindowStrideBeats );
@@ -812,10 +821,12 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, 
 		// following two lines have been changed because the behavior of treating hold-heads
 		// as different from taps doesn't feel right, and because we need to check
 		// against TAP_ADDITION with the BMRize mod.
-		if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTapOrHoldHead(iRowEarlier)!=1 )
-			continue;
-		if( in.GetNumTapNonEmptyTracks(iRowLater)!=1 || in.GetNumTracksWithTapOrHoldHead(iRowLater)!=1 )
-			continue;
+		if( bRequireNoteAtBeginningOfWindow )
+			if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTapOrHoldHead(iRowEarlier)!=1 )
+				continue;
+		if( bRequireNoteAtEndOfWindow )
+			if( in.GetNumTapNonEmptyTracks(iRowLater)!=1 || in.GetNumTracksWithTapOrHoldHead(iRowLater)!=1 )
+				continue;
 		// there is a 4th and 8th note surrounding iRowBetween
 		
 		// don't insert a new note if there's already one within this interval
@@ -836,8 +847,11 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, 
 		if( bSkippy  &&
 			iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
 		{
-			iTrackOfNoteToAdd = iTrackOfNoteEarlier;
-			goto done_looking_for_track_to_add;
+			if( iTrackOfNoteEarlier != -1 )
+			{
+				iTrackOfNoteToAdd = iTrackOfNoteEarlier;
+				goto done_looking_for_track_to_add;
+			}
 		}
 
 		// try to choose a track between the earlier and later notes
@@ -847,12 +861,14 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, 
 			goto done_looking_for_track_to_add;
 		}
 		
+		// try to choose a track just to the left
 		if( min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1 >= 0 )
 		{
 			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1;
 			goto done_looking_for_track_to_add;
 		}
 
+		// try to choose a track just to the right
 		if( max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1 < in.GetNumTracks() )
 		{
 			iTrackOfNoteToAdd = max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
@@ -1375,20 +1391,35 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, fStartBeat, fEndBeat );
 	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, fStartBeat, fEndBeat );
 
-	// apply little before others
+	// apply removing transforms before others
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);
+
+	// AddIntelligentTap transforms need small gaps space between
+	// notes to have an effect.  Run them first.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] )		NoteDataUtil::BMRize(nd, fStartBeat, fEndBeat);
+
+	// Skippy will still add taps to places that the other 
+	// AddIntelligentTaps above won't.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);
+
+	// These don't need any particular sized gaps between notes
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
+
+	// Jump-adding transforms aren't much affected by additional taps
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, st, fStartBeat, fEndBeat);
+
+	// Transforms that add holds go last.  If they went first, most tap-adding 
+	// transforms wouldn't do anything because tap-adding transforms skip areas where
+	// there's a hold.
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
+	
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads(nd, fStartBeat, fEndBeat);

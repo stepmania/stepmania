@@ -53,7 +53,14 @@ namespace NoteDataUtil
 	void Quick( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void BMRize( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Skippy( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, float fInsertOffsetBeats, float fWindowStrideBeats, bool bSkippy, float fStartBeat = 0, float fEndBeat = 99999 );
+	void InsertIntelligentTaps( 
+		NoteData &in, 
+		float fWindowSizeBeats, 
+		float fInsertOffsetBeats, 
+		float fWindowStrideBeats, 
+		bool bSkippy, 
+		float fStartBeat = 0, 
+		float fEndBeat = 99999 );
 	void AddMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Echo( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
