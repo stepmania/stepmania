@@ -1165,18 +1165,25 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 	// iterate over all TapNotes in the interval and snap them
 	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
 	{
+		LOG->Trace("index %i", i);
 		int iOldIndex = i;
 		float fOldBeat = NoteRowToBeat( iOldIndex );
 		float fNewBeat1 = froundf( fOldBeat, fSnapInterval1 );
 		float fNewBeat2 = froundf( fOldBeat, fSnapInterval2 );
 
+		LOG->Trace("oldbeat %.2f, nb1 %.2f, nb2 %.2f", fOldBeat, fNewBeat1, fNewBeat2);
 		bool bNewBeat1IsCloser = fabsf(fNewBeat1-fOldBeat) < fabsf(fNewBeat2-fOldBeat);
 		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;
 		int iNewIndex = BeatToNoteRow( fNewBeat );
+		LOG->Trace("closer %i, newbeat %.2f, index %i", 
+			bNewBeat1IsCloser, fNewBeat, iNewIndex);
 
 		for( int c=0; c<in.GetNumTracks(); c++ )
 		{
 			TapNote note = in.GetTapNote(c, iOldIndex);
+			if( note == TAP_EMPTY )
+				continue;
+
 			in.SetTapNote(c, iOldIndex, TAP_EMPTY);
 			// HoldNotes override TapNotes
 			if(in.GetTapNote(c, iNewIndex) == TAP_TAP)
