@@ -197,6 +197,13 @@ void RageBitmapTexture::Create()
 	ASSERT( m_iTextureWidth <= m_prefs.iMaxSize );
 	ASSERT( m_iTextureHeight <= m_prefs.iMaxSize );
 
+	if(m_prefs.bStretch)
+	{
+		/* The hints asked for the image to be stretched to the texture size,
+		 * probably for tiling. */
+		m_iImageWidth = m_iTextureWidth;
+		m_iImageHeight = m_iTextureHeight;
+	}
 
 	/* If the source is larger than the texture, we have to scale it down; that's
 	 * "stretching", I guess. */
@@ -215,10 +222,7 @@ void RageBitmapTexture::Create()
 		int mask = 0;
 		ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
 			PixFmtMasks[mask][0], PixFmtMasks[mask][1], PixFmtMasks[mask][2], PixFmtMasks[mask][3]);
-
-		zoomSurface(img, m_iTextureWidth, m_iTextureHeight );
-		m_iImageWidth = m_iTextureWidth;
-		m_iImageHeight = m_iTextureHeight;
+		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
 
 	if( m_prefs.bDither )
