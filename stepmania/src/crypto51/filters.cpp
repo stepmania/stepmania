@@ -605,38 +605,4 @@ unsigned int StringStore::CopyRangeTo2(BufferedTransformation &target, unsigned 
 	return blockedBytes;
 }
 
-unsigned int RandomNumberStore::TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel, bool blocking)
-{
-	if (!blocking)
-		throw NotImplemented("RandomNumberStore: nonblocking transfer is not implemented by this object");
-
-	unsigned long transferMax = transferBytes;
-	for (transferBytes = 0; transferBytes<transferMax && m_count < m_length; ++transferBytes, ++m_count)
-		target.ChannelPut(channel, m_rng.GenerateByte());
-	return 0;
-}
-
-unsigned int NullStore::CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end, const std::string &channel, bool blocking) const
-{
-	static const byte nullBytes[128] = {0};
-	while (begin < end)
-	{
-		unsigned int len = STDMIN(end-begin, 128UL);
-		unsigned int blockedBytes = target.ChannelPut2(channel, nullBytes, len, 0, blocking);
-		if (blockedBytes)
-			return blockedBytes;
-		begin += len;
-	}
-	return 0;
-}
-
-unsigned int NullStore::TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel, bool blocking)
-{
-	unsigned long begin = 0;
-	unsigned int blockedBytes = NullStore::CopyRangeTo2(target, begin, transferBytes, channel, blocking);
-	transferBytes = begin;
-	m_size -= begin;
-	return blockedBytes;
-}
-
 NAMESPACE_END

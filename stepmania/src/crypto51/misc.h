@@ -369,64 +369,6 @@ inline word64 ByteReverse(word64 value)
 }
 #endif
 
-inline byte BitReverse(byte value)
-{
-	value = ((value & 0xAA) >> 1) | ((value & 0x55) << 1);
-	value = ((value & 0xCC) >> 2) | ((value & 0x33) << 2);
-	return rotlFixed(value, 4);
-}
-
-inline word16 BitReverse(word16 value)
-{
-	value = ((value & 0xAAAA) >> 1) | ((value & 0x5555) << 1);
-	value = ((value & 0xCCCC) >> 2) | ((value & 0x3333) << 2);
-	value = ((value & 0xF0F0) >> 4) | ((value & 0x0F0F) << 4);
-	return ByteReverse(value);
-}
-
-inline word32 BitReverse(word32 value)
-{
-	value = ((value & 0xAAAAAAAA) >> 1) | ((value & 0x55555555) << 1);
-	value = ((value & 0xCCCCCCCC) >> 2) | ((value & 0x33333333) << 2);
-	value = ((value & 0xF0F0F0F0) >> 4) | ((value & 0x0F0F0F0F) << 4);
-	return ByteReverse(value);
-}
-
-#ifdef WORD64_AVAILABLE
-inline word64 BitReverse(word64 value)
-{
-#ifdef SLOW_WORD64
-	return (word64(BitReverse(word32(value))) << 32) | BitReverse(word32(value>>32));
-#else
-	value = ((value & W64LIT(0xAAAAAAAAAAAAAAAA)) >> 1) | ((value & W64LIT(0x5555555555555555)) << 1);
-	value = ((value & W64LIT(0xCCCCCCCCCCCCCCCC)) >> 2) | ((value & W64LIT(0x3333333333333333)) << 2);
-	value = ((value & W64LIT(0xF0F0F0F0F0F0F0F0)) >> 4) | ((value & W64LIT(0x0F0F0F0F0F0F0F0F)) << 4);
-	return ByteReverse(value);
-#endif
-}
-#endif
-
-template <class T>
-inline T BitReverse(T value)
-{
-	if (sizeof(T) == 1)
-		return (T)BitReverse((byte)value);
-	else if (sizeof(T) == 2)
-		return (T)BitReverse((word16)value);
-	else if (sizeof(T) == 4)
-		return (T)BitReverse((word32)value);
-	else
-	{
-#ifdef WORD64_AVAILABLE
-		assert(sizeof(T) == 8);
-		return (T)BitReverse((word64)value);
-#else
-		assert(false);
-		return 0;
-#endif
-	}
-}
-
 template <class T>
 inline T ConditionalByteReverse(ByteOrder order, T value)
 {
@@ -459,31 +401,6 @@ inline void GetUserKey(ByteOrder order, T *out, unsigned int outlen, const byte 
 	memcpy(out, in, inlen);
 	memset((byte *)out+inlen, 0, outlen*U-inlen);
 	ConditionalByteReverse(order, out, out, RoundUpToMultipleOf(inlen, U));
-}
-
-inline byte UnalignedGetWordNonTemplate(ByteOrder order, const byte *block, byte*)
-{
-	return block[0];
-}
-
-inline word16 UnalignedGetWordNonTemplate(ByteOrder order, const byte *block, word16*)
-{
-	return (order == BIG_ENDIAN_ORDER)
-		? block[1] | (block[0] << 8)
-		: block[0] | (block[1] << 8);
-}
-
-inline word32 UnalignedGetWordNonTemplate(ByteOrder order, const byte *block, word32*)
-{
-	return (order == BIG_ENDIAN_ORDER)
-		? word32(block[3]) | (word32(block[2]) << 8) | (word32(block[1]) << 16) | (word32(block[0]) << 24)
-		: word32(block[0]) | (word32(block[1]) << 8) | (word32(block[2]) << 16) | (word32(block[3]) << 24);
-}
-
-template <class T>
-inline T UnalignedGetWord(ByteOrder order, const byte *block, T*dummy=NULL)
-{
-	return UnalignedGetWordNonTemplate(order, block, dummy);
 }
 
 inline void UnalignedPutWord(ByteOrder order, byte *block, byte value, const byte *xorBlock = NULL)
@@ -538,24 +455,6 @@ inline void UnalignedPutWord(ByteOrder order, byte *block, word32 value, const b
 }
 
 template <class T>
-inline T GetWord(bool assumeAligned, ByteOrder order, const byte *block)
-{
-	if (assumeAligned)
-	{
-		assert(IsAligned<T>(block));
-		return ConditionalByteReverse(order, *reinterpret_cast<const T *>(block));
-	}
-	else
-		return UnalignedGetWord<T>(order, block);
-}
-
-template <class T>
-inline void GetWord(bool assumeAligned, ByteOrder order, T &result, const byte *block)
-{
-	result = GetWord<T>(assumeAligned, order, block);
-}
-
-template <class T>
 inline void PutWord(bool assumeAligned, ByteOrder order, byte *block, T value, const byte *xorBlock = NULL)
 {
 	if (assumeAligned)
@@ -568,73 +467,6 @@ inline void PutWord(bool assumeAligned, ByteOrder order, byte *block, T value, c
 	}
 	else
 		UnalignedPutWord(order, block, value, xorBlock);
-}
-
-template <class T, class B, bool A=true>
-class GetBlock
-{
-public:
-	GetBlock(const void *block)
-		: m_block((const byte *)block) {}
-
-	template <class U>
-	inline GetBlock<T, B, A> & operator()(U &x)
-	{
-		CRYPTOPP_COMPILE_ASSERT(sizeof(U) >= sizeof(T));
-		x = GetWord<T>(A, B::ToEnum(), m_block);
-		m_block += sizeof(T);
-		return *this;
-	}
-
-private:
-	const byte *m_block;
-};
-
-template <class T, class B, bool A=true>
-class PutBlock
-{
-public:
-	PutBlock(const void *xorBlock, void *block)
-		: m_xorBlock((const byte *)xorBlock), m_block((byte *)block) {}
-
-	template <class U>
-	inline PutBlock<T, B, A> & operator()(U x)
-	{
-		PutWord(A, B::ToEnum(), m_block, (T)x, m_xorBlock);
-		m_block += sizeof(T);
-		if (m_xorBlock)
-			m_xorBlock += sizeof(T);
-		return *this;
-	}
-
-private:
-	const byte *m_xorBlock;
-	byte *m_block;
-};
-
-template <class T, class B, bool A=true>
-struct BlockGetAndPut
-{
-	// function needed because of C++ grammatical ambiguity between expression-statements and declarations
-	static inline GetBlock<T, B, A> Get(const void *block) {return GetBlock<T, B, A>(block);}
-	typedef PutBlock<T, B, A> Put;
-};
-
-template <class T>
-std::string WordToString(T value, ByteOrder order = BIG_ENDIAN_ORDER)
-{
-	if (!NativeByteOrderIs(order))
-		value = ByteReverse(value);
-
-	return std::string((char *)&value, sizeof(value));
-}
-
-template <class T>
-T StringToWord(const std::string &str, ByteOrder order = BIG_ENDIAN_ORDER)
-{
-	T value = 0;
-	memcpy(&value, str.data(), STDMIN(sizeof(value), str.size()));
-	return NativeByteOrderIs(order) ? value : ByteReverse(value);
 }
 
 // ************** help remove warning on g++ ***************

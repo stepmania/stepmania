@@ -458,44 +458,6 @@ private:
 	unsigned int m_length, m_count;
 };
 
-//! .
-class RandomNumberStore : public Store
-{
-public:
-	RandomNumberStore(RandomNumberGenerator &rng, unsigned long length)
-		: m_rng(rng), m_length(length), m_count(0) {}
-
-	bool AnyRetrievable() const {return MaxRetrievable() != 0;}
-	unsigned long MaxRetrievable() const {return m_length-m_count;}
-
-	unsigned int TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel=NULL_CHANNEL, bool blocking=true);
-	unsigned int CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end=ULONG_MAX, const std::string &channel=NULL_CHANNEL, bool blocking=true) const
-	{
-		throw NotImplemented("RandomNumberStore: CopyRangeTo2() is not supported by this store");
-	}
-
-private:
-	void StoreInitialize(const NameValuePairs &parameters) {m_count = 0;}
-
-	RandomNumberGenerator &m_rng;
-	const unsigned long m_length;
-	unsigned long m_count;
-};
-
-//! .
-class NullStore : public Store
-{
-public:
-	NullStore(unsigned long size = ULONG_MAX) : m_size(size) {}
-	void StoreInitialize(const NameValuePairs &parameters) {}
-	unsigned long MaxRetrievable() const {return m_size;}
-	unsigned int TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel=NULL_CHANNEL, bool blocking=true);
-	unsigned int CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end=ULONG_MAX, const std::string &channel=NULL_CHANNEL, bool blocking=true) const;
-
-private:
-	unsigned long m_size;
-};
-
 //! A Filter that pumps data into its attachment as input
 class Source : public InputRejecting<Filter>
 {
@@ -568,14 +530,6 @@ public:
 	template <class T> StringSource(const T &string, bool pumpAll, BufferedTransformation *attachment = NULL)
 #endif
 		: SourceTemplate<StringStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputBuffer", ConstByteArrayParameter(string)));}
-};
-
-//! .
-class RandomNumberSource : public SourceTemplate<RandomNumberStore>
-{
-public:
-	RandomNumberSource(RandomNumberGenerator &rng, unsigned int length, bool pumpAll, BufferedTransformation *attachment = NULL)
-		: SourceTemplate<RandomNumberStore>(attachment, RandomNumberStore(rng, length)) {if (pumpAll) PumpAll();}
 };
 
 NAMESPACE_END

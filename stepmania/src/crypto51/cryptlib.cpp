@@ -596,14 +596,6 @@ unsigned int PK_FixedLengthCryptoSystem::CiphertextLength(unsigned int plainText
 		return 0;
 }
 
-DecodingResult PK_FixedLengthDecryptor::Decrypt(RandomNumberGenerator &rng, const byte *cipherText, unsigned int cipherTextLength, byte *plainText) const
-{
-	if (cipherTextLength != FixedCiphertextLength())
-		return DecodingResult();
-
-	return FixedLengthDecrypt(rng, cipherText, plainText);
-}
-
 unsigned int PK_Signer::Sign(RandomNumberGenerator &rng, PK_MessageAccumulator *messageAccumulator, byte *signature) const
 {
 	std::auto_ptr<PK_MessageAccumulator> m(messageAccumulator);

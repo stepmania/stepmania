@@ -1151,27 +1151,6 @@ public:
 #endif
 };
 
-//! interface for encryptors with fixed length ciphertext
-
-class PK_FixedLengthEncryptor : public PK_Encryptor, virtual public PK_FixedLengthCryptoSystem
-{
-};
-
-//! interface for decryptors with fixed length ciphertext
-
-class PK_FixedLengthDecryptor : public PK_Decryptor, virtual public PK_FixedLengthCryptoSystem
-{
-public:
-	//! decrypt a byte string, and return the length of plaintext
-	/*! \pre length of cipherText == CipherTextLength()
-		\pre size of plainText == MaxPlainTextLength()
-		\return the actual length of the plaintext, or 0 if decryption fails.
-	*/
-	virtual DecodingResult FixedLengthDecrypt(RandomNumberGenerator &rng, const byte *cipherText, byte *plainText) const =0;
-
-	DecodingResult Decrypt(RandomNumberGenerator &rng, const byte *cipherText, unsigned int cipherTextLength, byte *plainText) const;
-};
-
 //! interface for public-key signers and verifiers
 
 /*! This class provides an interface common to signers and verifiers

@@ -10,13 +10,9 @@
 #include "algparam.h"
 
 
-#include "oaep.cpp"
-
 NAMESPACE_BEGIN(CryptoPP)
 
  
-template class OAEP<SHA>;
-
 OID RSAFunction::GetAlgorithmID() const
 {
 	return ASN1::rsaEncryption();

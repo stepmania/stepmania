@@ -7,7 +7,6 @@
 */
 
 #include "pkcspad.h"
-#include "oaep.h"
 #include "integer.h"
 #include "asn.h"
 
@@ -108,22 +107,12 @@ struct RSA
 	typedef InvertibleRSAFunction PrivateKey;
 };
 
-//! <a href="http://www.weidai.com/scan-mirror/ca.html#RSA">RSA cryptosystem</a>
-template <class STANDARD>
-struct RSAES : public TF_ES<STANDARD, RSA>
-{
-};
-
 //! <a href="http://www.weidai.com/scan-mirror/sig.html#RSA">RSA signature scheme with appendix</a>
 /*! See documentation of PKCS1v15 for a list of hash functions that can be used with it. */
 template <class STANDARD, class H>
 struct RSASS : public TF_SS<STANDARD, H, RSA>
 {
 };
-
-// The two RSA encryption schemes defined in PKCS #1 v2.0
-typedef RSAES<OAEP<SHA> >::Decryptor RSAES_OAEP_SHA_Decryptor;
-typedef RSAES<OAEP<SHA> >::Encryptor RSAES_OAEP_SHA_Encryptor;
 
 // The three RSA signature schemes defined in PKCS #1 v2.0
 typedef RSASS<PKCS1v15, SHA>::Signer RSASSA_PKCS1v15_SHA_Signer;

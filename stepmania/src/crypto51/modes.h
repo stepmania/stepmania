@@ -150,23 +150,6 @@ public:
 	void ProcessBlocks(byte *outString, const byte *inString, unsigned int numberOfBlocks);
 };
 
-class CBC_CTS_Encryption : public CBC_Encryption
-{
-public:
-	void SetStolenIV(byte *iv) {m_stolenIV = iv;}
-	unsigned int MinLastBlockSize() const {return BlockSize()+1;}
-	void ProcessLastBlock(byte *outString, const byte *inString, unsigned int length);
-
-protected:
-	void UncheckedSetKey(const NameValuePairs &params, const byte *key, unsigned int length)
-	{
-		CBC_Encryption::UncheckedSetKey(params, key, length);
-		m_stolenIV = params.GetValueWithDefault(Name::StolenIV(), (byte *)NULL);
-	}
-
-	byte *m_stolenIV;
-};
-
 class CBC_Decryption : public CBC_ModeBase
 {
 public:

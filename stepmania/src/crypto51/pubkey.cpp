@@ -99,24 +99,4 @@ DecodingResult TF_VerifierBase::RecoverAndRestart(byte *recoveredMessage, PK_Mes
 	return result;
 }
 
-DecodingResult TF_DecryptorBase::FixedLengthDecrypt(RandomNumberGenerator &rng, const byte *cipherText, byte *plainText) const
-{
-	SecByteBlock paddedBlock(PaddedBlockByteLength());
-	Integer x = GetTrapdoorFunctionInterface().CalculateInverse(rng, Integer(cipherText, FixedCiphertextLength()));
-	if (x.ByteCount() > paddedBlock.size())
-		x = Integer::Zero();	// don't return false here to prevent timing attack
-	x.Encode(paddedBlock, paddedBlock.size());
-	return GetMessageEncodingInterface().Unpad(paddedBlock, PaddedBlockBitLength(), plainText);
-}
-
-void TF_EncryptorBase::Encrypt(RandomNumberGenerator &rng, const byte *plainText, unsigned int plainTextLength, byte *cipherText) const
-{
-	if (plainTextLength > FixedMaxPlaintextLength())
-		throw InvalidArgument(AlgorithmName() + ": message too long for this public key");
-
-	SecByteBlock paddedBlock(PaddedBlockByteLength());
-	GetMessageEncodingInterface().Pad(rng, plainText, plainTextLength, paddedBlock, PaddedBlockBitLength());
-	GetTrapdoorFunctionInterface().ApplyRandomizedFunction(rng, Integer(paddedBlock, paddedBlock.size())).Encode(cipherText, FixedCiphertextLength());
-}
-
 NAMESPACE_END

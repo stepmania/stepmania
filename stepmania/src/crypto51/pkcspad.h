@@ -7,15 +7,6 @@
 NAMESPACE_BEGIN(CryptoPP)
 
 //! <a href="http://www.weidai.com/scan-mirror/ca.html#cem_PKCS1-1.5">EME-PKCS1-v1_5</a>
-class PKCS_EncryptionPaddingScheme : public PK_EncryptionMessageEncodingMethod
-{
-public:
-	static const char * StaticAlgorithmName() {return "EME-PKCS1-v1_5";}
-
-	unsigned int MaxUnpaddedLength(unsigned int paddedLength) const;
-	void Pad(RandomNumberGenerator &rng, const byte *raw, unsigned int inputLength, byte *padded, unsigned int paddedLength) const;
-	DecodingResult Unpad(const byte *padded, unsigned int paddedLength, byte *raw) const;
-};
 
 template <class H> struct PKCS_DigestDecoration
 {
@@ -48,14 +39,11 @@ public:
 
 //! PKCS #1 version 1.5, for use with RSAES and RSASS
 /*! The following hash functions are supported for signature: SHA, MD2, MD5, RIPEMD160, SHA256, SHA384, SHA512. */
-struct PKCS1v15 : public SignatureStandard, public EncryptionStandard
+struct PKCS1v15 : public SignatureStandard
 {
-	typedef PKCS_EncryptionPaddingScheme EncryptionMessageEncodingMethod;
 	typedef PKCS1v15_SignatureMessageEncodingMethod SignatureMessageEncodingMethod;
 };
 
-// PKCS_DecoratedHashModule can be instantiated with the following
-// classes as specified in PKCS#1 v2.0 and P1363a
 class SHA;
 
 NAMESPACE_END

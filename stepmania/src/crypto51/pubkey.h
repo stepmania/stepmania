@@ -106,22 +106,6 @@ public:
 // ********************************************************
 
 //! .
-class PK_EncryptionMessageEncodingMethod
-{
-public:
-	virtual ~PK_EncryptionMessageEncodingMethod() {}
-
-	//! max size of unpadded message in bytes, given max size of padded message in bits (1 less than size of modulus)
-	virtual unsigned int MaxUnpaddedLength(unsigned int paddedLength) const =0;
-
-	virtual void Pad(RandomNumberGenerator &rng, const byte *raw, unsigned int inputLength, byte *padded, unsigned int paddedBitLength) const =0;
-
-	virtual DecodingResult Unpad(const byte *padded, unsigned int paddedBitLength, byte *raw) const =0;
-};
-
-// ********************************************************
-
-//! .
 template <class TFI, class MEI>
 class TF_Base
 {
@@ -133,35 +117,6 @@ protected:
 
 	typedef MEI MessageEncodingInterface;
 	virtual const MessageEncodingInterface & GetMessageEncodingInterface() const =0;
-};
-
-// ********************************************************
-
-//! .
-template <class INTERFACE, class BASE>
-class TF_CryptoSystemBase : public INTERFACE, protected BASE
-{
-public:
-	unsigned int FixedMaxPlaintextLength() const {return this->GetMessageEncodingInterface().MaxUnpaddedLength(PaddedBlockBitLength());}
-	unsigned int FixedCiphertextLength() const {return this->GetTrapdoorFunctionBounds().MaxImage().ByteCount();}
-
-protected:
-	unsigned int PaddedBlockByteLength() const {return BitsToBytes(PaddedBlockBitLength());}
-	unsigned int PaddedBlockBitLength() const {return this->GetTrapdoorFunctionBounds().PreimageBound().BitCount()-1;}
-};
-
-//! .
-class TF_DecryptorBase : public TF_CryptoSystemBase<PK_FixedLengthDecryptor, TF_Base<TrapdoorFunctionInverse, PK_EncryptionMessageEncodingMethod> >
-{
-public:
-	DecodingResult FixedLengthDecrypt(RandomNumberGenerator &rng, const byte *cipherText, byte *plainText) const;
-};
-
-//! .
-class TF_EncryptorBase : public TF_CryptoSystemBase<PK_FixedLengthEncryptor, TF_Base<RandomizedTrapdoorFunction, PK_EncryptionMessageEncodingMethod> >
-{
-public:
-	void Encrypt(RandomNumberGenerator &rng, const byte *plainText, unsigned int plainTextLength, byte *cipherText) const;
 };
 
 // ********************************************************
@@ -464,18 +419,6 @@ public:
 
 //! .
 template <class SCHEME_OPTIONS>
-class TF_DecryptorImpl : public TF_PrivateObjectImpl<TF_DecryptorBase, SCHEME_OPTIONS>
-{
-};
-
-//! .
-template <class SCHEME_OPTIONS>
-class TF_EncryptorImpl : public TF_PublicObjectImpl<TF_EncryptorBase, SCHEME_OPTIONS>
-{
-};
-
-//! .
-template <class SCHEME_OPTIONS>
 class TF_SignerImpl : public TF_PrivateObjectImpl<TF_SignerBase, SCHEME_OPTIONS>
 {
 	PK_MessageAccumulator * NewSignatureAccumulator(RandomNumberGenerator &rng = NullRNG()) const
@@ -496,34 +439,7 @@ class TF_VerifierImpl : public TF_PublicObjectImpl<TF_VerifierBase, SCHEME_OPTIO
 
 // ********************************************************
 
-class MaskGeneratingFunction
-{
-public:
-	virtual ~MaskGeneratingFunction() {}
-	virtual void GenerateAndMask(HashTransformation &hash, byte *output, unsigned int outputLength, const byte *input, unsigned int inputLength, bool mask = true) const =0;
-};
-
 void P1363_MGF1KDF2_Common(HashTransformation &hash, byte *output, unsigned int outputLength, const byte *input, unsigned int inputLength, bool mask, unsigned int counterStart);
-
-//! .
-class P1363_MGF1 : public MaskGeneratingFunction
-{
-public:
-	static const char * StaticAlgorithmName() {return "MGF1";}
-#if 0
-	// VC60 workaround: this function causes internal compiler error
-	template <class H>
-	static void GenerateAndMaskTemplate(byte *output, unsigned int outputLength, const byte *input, unsigned int inputLength, H* dummy=NULL)
-	{
-		H h;
-		P1363_MGF1KDF2_Common(h, output, outputLength, input, inputLength, mask, 0);
-	}
-#endif
-	void GenerateAndMask(HashTransformation &hash, byte *output, unsigned int outputLength, const byte *input, unsigned int inputLength, bool mask = true) const
-	{
-		P1363_MGF1KDF2_Common(hash, output, outputLength, input, inputLength, mask, 0);
-	}
-};
 
 // ********************************************************
 
@@ -653,33 +569,8 @@ public:
 #endif
 };
 
-//! Base class for public key encryption standard classes. These classes are used to select from variants of algorithms. Note that not all standards apply to all algorithms.
-struct EncryptionStandard {};
-
 //! Base class for public key signature standard classes. These classes are used to select from variants of algorithms. Note that not all standards apply to all algorithms.
 struct SignatureStandard {};
-
-template <class STANDARD, class KEYS, class ALG_INFO>
-class TF_ES;
-
-//! Trapdoor Function Based Encryption Scheme
-template <class STANDARD, class KEYS, class ALG_INFO = TF_ES<STANDARD, KEYS, int> >
-class TF_ES : public KEYS
-{
-	typedef typename STANDARD::EncryptionMessageEncodingMethod MessageEncodingMethod;
-
-public:
-	//! see EncryptionStandard for a list of standards
-	typedef STANDARD Standard;
-	typedef TF_CryptoSchemeOptions<ALG_INFO, KEYS, MessageEncodingMethod> SchemeOptions;
-
-	static std::string StaticAlgorithmName() {return KEYS::StaticAlgorithmName() + "/" + MessageEncodingMethod::StaticAlgorithmName();}
-
-	//! implements PK_Decryptor interface
-	typedef PK_FinalTemplate<TF_DecryptorImpl<SchemeOptions> > Decryptor;
-	//! implements PK_Encryptor interface
-	typedef PK_FinalTemplate<TF_EncryptorImpl<SchemeOptions> > Encryptor;
-};
 
 template <class STANDARD, class H, class KEYS, class ALG_INFO>	// VC60 workaround: doesn't work if KEYS is first parameter
 class TF_SS;
