@@ -543,38 +543,24 @@ void NoteField::DrawPrimitives()
 
 			bool bIsAddition = (tn == TAP_ADDITION);
 			bool bIsMine = (tn == TAP_MINE);
+			bool bIsAttack = IsTapAttack(tn);
 
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
 			NoteDisplayCols *nd = CurDisplay->second;
-			nd->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
-		}
-
-
-		//
-		// Draw all AttackNotes in this column
-		//
-		for( i=0; i < GetNumAttackNotes(); i++ )
-		{
-			const AttackNote& an = GetAttackNote( i );
-
-			// If this AttackNote isn't on the screen, skip it
-			if( an.iTrack != c  ||  
-				an.fBeat < fFirstBeatToDraw  ||  
-				an.fBeat > fLastBeatToDraw )
-				continue;	// skip
-
-			bool bIsInSelectionRange = false;
-			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
+			if( bIsAttack )
 			{
-				bIsInSelectionRange = m_fBeginMarker<=an.fBeat && an.fBeat<=m_fEndMarker;
+				const Attack& attack = GetAttackAt( c, i );
+				Sprite sprite;
+				sprite.Load( THEME->GetPathToG("NoteField attack "+attack.sModifier) );
+				float fBeat = NoteRowToBeat(i);
+				SearchForBeat( CurDisplay, NextDisplay, fBeat );
+				NoteDisplayCols *nd = CurDisplay->second;
+				nd->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 			}
-
-
-			Sprite sprite;
-			sprite.Load( THEME->GetPathToG("NoteField attack "+an.sModifiers) );
-			SearchForBeat( CurDisplay, NextDisplay, an.fBeat );
-			NoteDisplayCols *nd = CurDisplay->second;
-			nd->display[c].DrawActor( &sprite, an.iTrack, an.fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+			else
+			{
+				nd->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+			}
 		}
 
 

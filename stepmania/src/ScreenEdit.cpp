@@ -677,17 +677,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 			}
 
-			// check for to see if the user intended to remove an AttackNote
-			for( i=0; i<m_NoteFieldEdit.GetNumAttackNotes(); i++ )
-			{
-				const AttackNote& an = m_NoteFieldEdit.GetAttackNote(i);
-				if( an.fBeat == fSongBeat && an.iTrack == iCol )
-				{
-					m_NoteFieldEdit.RemoveAttackNote( i );
-					return;
-				}
-			}
-
 			if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) != TAP_EMPTY )
 			{
 				m_NoteFieldEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
@@ -1286,7 +1275,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			PlayerOptions poChosen = GAMESTATE->m_PlayerOptions[PLAYER_1];
 			CString sMods = poChosen.GetString();
-			m_NoteFieldEdit.AddAttackNote( AttackNote(g_iLastInsertAttackTrack,GAMESTATE->m_fSongBeat,sMods,g_fLastInsertAttackDurationSeconds) );
+			const int iSongIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			
+			Attack attack;
+			attack.level = ATTACK_LEVEL_1;	// does this matter?
+			attack.fSecsRemaining = g_fLastInsertAttackDurationSeconds;
+			attack.sModifier = sMods;
+			
+			m_NoteFieldEdit.AddAttackNote( g_iLastInsertAttackTrack, iSongIndex, attack );
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;

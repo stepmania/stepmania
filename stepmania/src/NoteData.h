@@ -15,6 +15,8 @@
 */
 
 #include "NoteTypes.h"
+#include <map>
+#include "Attack.h"
 
 
 class NoteData
@@ -25,7 +27,7 @@ class NoteData
 
 	vector<HoldNote>	m_HoldNotes;
 
-	vector<AttackNote>	m_AttackNotes;
+	map<TapNote,Attack>	m_AttackMap;
 
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
@@ -134,20 +136,22 @@ public:
 	void GetTracksHeldAtRow( int row, vector<int>& viTracksOut );
 	int GetNumTracksHeldAtRow( int row );
 
+	//
 	// used in edit/record
+	//
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
 	void RemoveHoldNote( int index );
 	HoldNote &GetHoldNote( int index ) { return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
 
-	// used in edit/record
-	void AddAttackNote( AttackNote an );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
-	void RemoveAttackNote( int index );
-	const AttackNote& GetAttackNote( int index ) { return m_AttackNotes[index]; }
-	void ShuffleAttackNotesOnSameRow();
+	void AddAttackNote( int track, int row, Attack attack );
+	void PruneUnusedAttacksFromMap();	// slow
+	const Attack& GetAttackAt( int track, int row );
+	// remove Attacks with SetTapNote(TAP_EMPTY)
 
+	//
 	// statistics
-
+	//
 	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
 	 * accuracy.) */
 	float GetMaxBeat() const { return NoteRowToBeat(GetMaxRow()); }
@@ -164,7 +168,6 @@ public:
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
-	int GetNumAttackNotes() const { return m_AttackNotes.size(); }
 
 	// Transformations
 	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track

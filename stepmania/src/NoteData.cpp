@@ -174,39 +174,65 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
-void NoteData::AddAttackNote( AttackNote an )
+void NoteData::AddAttackNote( int track, int row, Attack attack )
 {
-	m_AttackNotes.push_back(an);	
-}
+	PruneUnusedAttacksFromMap();
 
-void NoteData::RemoveAttackNote( int index )
-{
-	m_AttackNotes.erase( m_AttackNotes.begin()+index );
-}
-
-bool CompareAttackNotes( const AttackNote& an1, const AttackNote& an2 )
-{
-	return an1.fBeat < an2.fBeat;
-}
-
-void NoteData::ShuffleAttackNotesOnSameRow()
-{
-	// sort, then shuffle
-	sort( m_AttackNotes.begin(), m_AttackNotes.end(), CompareAttackNotes );
-
-	for( int i=0; i<m_AttackNotes.size();  ) 
+	// find first unused attack index
+	TapNote tn;
+	for( tn = TAP_ATTACK_BEGIN; tn<=TAP_ATTACK_END; tn++ )
 	{
-		// Shuffle with other AttackNotes that are on the same row.
-		// Lame shuffle...
-		for( int j=i+1; j<m_AttackNotes.size(); j++ )
+		if( m_AttackMap.find(tn) == m_AttackMap.end() )	// this TapNote value is free to use
+			goto done_searching;
+	}
+	ASSERT(0);
+
+done_searching:
+	
+	m_AttackMap[tn] = attack;
+	SetTapNote( track, row, tn );
+}
+
+void NoteData::PruneUnusedAttacksFromMap()
+{
+	// Add all used AttackNote values to a map.
+	map<TapNote,int> mapAttackToNothing;
+
+	int max_row = GetMaxRow();
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		for( int r=0; r<=max_row; r++ )
 		{
-			if( m_AttackNotes[i].fBeat != m_AttackNotes[j].fBeat )
-				break;	// stop searching
-			if( rand()%2 )
-				swap( m_AttackNotes[i].fBeat, m_AttackNotes[j].fBeat );
+			TapNote tn = GetTapNote(t, r);
+			if( IsTapAttack( tn ) )
+				mapAttackToNothing[tn] = 1;
+		}
+	}
+
+	// Remove all items from m_AttackMap that don't have corresponding
+	// TapNotes in use.
+	for( TapNote tn = TAP_ATTACK_BEGIN; tn<=TAP_ATTACK_END; tn++ )
+	{
+		bool bInAttackMap = m_AttackMap.find(tn) != m_AttackMap.end();
+		bool bActuallyUsed = mapAttackToNothing.find(tn) != mapAttackToNothing.end();
+
+		if( bActuallyUsed && !bInAttackMap )
+			ASSERT( 0 );
+
+		if( bInAttackMap && !bActuallyUsed )
+		{
+			m_AttackMap.erase( tn );
 		}
 	}
 }
+
+const Attack& NoteData::GetAttackAt( int track, int row )
+{
+	TapNote tn = GetTapNote(track, row);
+	ASSERT( IsTapAttack(tn) );
+	return m_AttackMap[tn];
+}
+
 
 int NoteData::GetFirstRow() const
 { 
@@ -677,5 +703,3 @@ int NoteData::GetNumTracksHeldAtRow( int row )
 	GetTracksHeldAtRow( row, viTracks );
 	return viTracks.size();
 }
-
-

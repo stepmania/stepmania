@@ -495,6 +495,9 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 	ASSERT( col >= 0  &&  col <= GetNumTracks() );
 
+	//
+	// Check for step on a TapNote
+	//
 	int iIndexOverlappingNote = GetClosestNote( col, GAMESTATE->m_fSongBeat, 
 						   StepSearchDistanceForwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
 						   StepSearchDistanceBackwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
@@ -557,8 +560,23 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			}
 
 
-			if( tn == TAP_MINE )
+			switch( tn )
 			{
+//			case TAP_ATTACK:
+//				// stepped too close to mine?
+//				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowAttackSeconds )
+//				{
+//					m_soundAttack.Play();
+//					score = TNS_MISS;
+//					// put attack in effect
+//				}
+//				else
+//				{
+//					score = TNS_NONE;
+//				}
+//				break;
+
+			case TAP_MINE:
 				// stepped too close to mine?
 				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
 				{
@@ -575,9 +593,9 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				{
 					score = TNS_NONE;
 				}
-			}
-			else	// not a mine
-			{
+				break;
+
+			default:	// not a mine
 				if(GAMESTATE->m_CurGame == GAME_EZ2)
 				{
 					/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
@@ -599,6 +617,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
 					else	score = TNS_NONE;
 				}
+				break;
 			}
 			break;
 		}

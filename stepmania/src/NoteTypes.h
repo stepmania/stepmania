@@ -70,6 +70,11 @@ static const TapNote TAP_REMOVED_HOLD_TAIL	= '\'';
 
 // MD 11/12/03 end
 
+// mine note - don't step!
+static const TapNote TAP_ATTACK_BEGIN		= 'a';
+static const TapNote TAP_ATTACK_END			= 'z';
+
+inline bool IsTapAttack( TapNote tn ) { return tn>=TAP_ATTACK_BEGIN && tn<=TAP_ATTACK_END; }
 
 enum 
 {
@@ -130,15 +135,6 @@ struct HoldNote
 	int		iTrack;	
 	float	fStartBeat;
 	float	fEndBeat;
-};
-
-struct AttackNote
-{
-	AttackNote( int t, float b, CString m, float d ) { iTrack=t; fBeat=b; sModifiers=m; fDurationSeconds=d; }
-	int		iTrack;	
-	float	fBeat;
-	CString sModifiers;
-	float	fDurationSeconds;
 };
 
 
