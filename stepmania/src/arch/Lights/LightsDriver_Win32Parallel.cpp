@@ -75,7 +75,14 @@ void LightsDriver_Win32Parallel::SetLight( Light light, bool bOn )
 		data |= mask;
 	else
 		data &= ~mask;
+}
 
-	DWORD address = LPT_ADDRESS[lpt];
-	PortOut( address, data );
+void LightsDriver_Win32Parallel::Flush()
+{
+	for( int i=0; i<MAX_PARALLEL_PORTS; i++ )
+	{
+		BYTE &data = g_data[i];
+		DWORD address = LPT_ADDRESS[i];
+		PortOut( address, data );
+	}
 }

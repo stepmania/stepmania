@@ -190,6 +190,9 @@ void LightsManager::Update( float fDeltaTime )
 	default:
 		ASSERT(0);
 	}
+
+	// apply new light values we set above
+	m_pDriver->Flush();
 }
 
 void LightsManager::SetLightMode( LightMode lm )

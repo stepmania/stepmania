@@ -1,8 +1,8 @@
-#ifndef LightsDriver_Win32Parallel_H
-#define LightsDriver_Win32Parallel_H
+#ifndef LightsDriver_LinuxSerial_H
+#define LightsDriver_LinuxSerial_H
 /*
 -----------------------------------------------------------------------------
- Class: LightsDriver_Win32Parallel
+ Class: LightsDriver_LinuxSerial
 
  Desc: Control lights.
 
@@ -13,11 +13,11 @@
 
 #include "arch/Lights/LightsDriver.h"
 
-class LightsDriver_Win32Parallel : public LightsDriver
+class LightsDriver_LinuxSerial : public LightsDriver
 {
 public:
-	LightsDriver_Win32Parallel();
-	virtual ~LightsDriver_Win32Parallel();
+	LightsDriver_LinuxSerial();
+	virtual ~LightsDriver_LinuxSerial();
 	
 	virtual void SetLight( Light light, bool bOn );
 	virtual void Flush();

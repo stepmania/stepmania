@@ -20,6 +20,7 @@ public:
 	virtual ~LightsDriver_Null() {};
 	
 	virtual void SetLight( Light light, bool bOn ) {};
+	virtual void Flush() {};
 };
 
 
