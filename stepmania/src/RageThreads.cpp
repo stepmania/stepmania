@@ -26,6 +26,7 @@
  * main thread as a thread.  So, we'll have to do this nonportably. */
 #if defined(LINUX)
 #define PID_BASED_THREADS
+#include "archutils/Unix/LinuxThreadHelpers.h"
 #endif
 
 #if defined(WIN32)
@@ -184,7 +185,7 @@ RageThread::~RageThread()
 void ThreadSlot::SetupThisThread()
 {
 #if defined(PID_BASED_THREADS)
-	pid = getpid();
+	pid = GetCurrentThreadId();
 #endif
 
 #ifdef _WINDOWS
@@ -314,15 +315,15 @@ void RageThread::HaltAllThreads( bool Kill )
 	 * This isn't ideal, since it can cause the process to background
 	 * as far as the shell is concerned, so the shell prompt can display
 	 * before the crash handler actually displays a message. */
-	int ThisThread = getpid();
+	int ThisThreadID = GetCurrentThreadId();
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
 		const int pid = g_ThreadSlots[entry].pid;
-		if( pid <= 0 || pid == ThisThread )
+		if( pid <= 0 || pid == ThisThreadID )
 			continue;
-		kill( pid, Kill? SIGKILL:SIGSTOP );
+		SuspendThread( pid );
 	}
 #elif defined(WIN32)
 	const int ThisThreadID = GetCurrentThreadId();
@@ -346,15 +347,15 @@ void RageThread::ResumeAllThreads()
 {
 #if defined(PID_BASED_THREADS)
 	/* Send a SIGCONT to all other threads. */
-	int ThisThread = getpid();
+	int ThisThreadID = GetCurrentThreadId();
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
 		const int pid = g_ThreadSlots[entry].pid;
-		if( pid <= 0 || pid == ThisThread )
+		if( pid <= 0 || pid == ThisThreadID )
 			continue;
-		kill( pid, SIGCONT );
+		ResumeThread( pid );
 	}
 #elif defined(WIN32)
 	const int ThisThreadID = GetCurrentThreadId();
