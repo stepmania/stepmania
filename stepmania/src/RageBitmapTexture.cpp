@@ -347,7 +347,7 @@ retry:
 		GLExt::glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 
 		int RealFormat = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT_EXT, &RealFormat);
+		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
 		if(RealFormat != GL_RGBA8)
 		{
 			/* This is a case I don't expect to happen; if it does, log,
