@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51,lua-5.0"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,crypto51,lua-5.0"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -619,6 +619,15 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Inventory.h">
+			</File>
+			<File
+				RelativePath="LuaFunctions.h">
+			</File>
+			<File
+				RelativePath="LuaHelpers.cpp">
+			</File>
+			<File
+				RelativePath="LuaHelpers.h">
 			</File>
 			<File
 				RelativePath="LyricsLoader.cpp">
