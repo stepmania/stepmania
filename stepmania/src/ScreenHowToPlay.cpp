@@ -249,7 +249,7 @@ void ScreenHowToPlay::Update( float fDelta )
 {
 	if(GAMESTATE->m_pCurSong != NULL)
 	{
-		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
+		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_Timing );
 		m_fFakeSecondsIntoSong += fDelta;
 
 		static int iLastNoteRowCounted = 0;

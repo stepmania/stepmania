@@ -392,7 +392,7 @@ void ScreenEdit::PlayPreviewMusic()
 void ScreenEdit::Update( float fDeltaTime )
 {
 	if( m_soundMusic.IsPlaying())
-		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
+		GAMESTATE->UpdateSongPosition( m_soundMusic.GetPositionSeconds(), GAMESTATE->m_pCurSong->m_Timing );
 
 	if( m_EditMode == MODE_RECORDING  )	
 	{

@@ -353,12 +353,10 @@ void GameState::ResetStageStatistics()
 	}
 }
 
-void GameState::UpdateSongPosition(float fPositionSeconds)
+void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing )
 {
-	ASSERT(m_pCurSong);
-
 	m_fMusicSeconds = fPositionSeconds;
-	m_pCurSong->GetBeatAndBPSFromElapsedTime( m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 

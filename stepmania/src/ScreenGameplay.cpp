@@ -1066,7 +1066,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	 * a new ScreenJukebox and reset music statistics, and if we do this then
 	 * we'll un-reset them.) */
 	if(m_soundMusic.IsPlaying())
-		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
+		GAMESTATE->UpdateSongPosition( m_soundMusic.GetPositionSeconds(), GAMESTATE->m_pCurSong->m_Timing );
 
 	if( m_bZeroDeltaOnNextUpdate )
 	{
