@@ -1298,9 +1298,6 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsUsingProfile(pn) )
 			{
-				/* XXX: What's the difference between this and StyleI.player? */
-				/* StyleI won't be valid if it's a menu button that's pressed.  
-				 * There's got to be a better way of doing this.  -Chris */
 				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
 				CString sFileName = SaveScreenshot( sDir, true, true );
 				CString sPath = sDir+sFileName;
