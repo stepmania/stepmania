@@ -92,8 +92,6 @@ in the scrolling list
 *************************************/
 void ScrollingList::Load( const CStringArray& asGraphicPaths )
 {
-	RageTexturePrefs prefs;
-
 	Unload();
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{
@@ -123,7 +121,7 @@ void ScrollingList::Load( const CStringArray& asGraphicPaths )
 				pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2 );
 			}
 
-			pNewCSprite->Load( asGraphicPaths[i], prefs );
+			pNewCSprite->Load( asGraphicPaths[i] );
 			m_apCSprites.push_back( pNewCSprite );
 		}
 	}

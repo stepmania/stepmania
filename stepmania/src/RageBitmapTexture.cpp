@@ -31,8 +31,6 @@
 
 #include "RageTimer.h"
 
-
-
 /* Definitions for various texture formats.  We'll probably want RGBA
  * in OpenGL, not ARGB ... All of these are in local (little) endian;
  * this may or may not need adjustment for OpenGL. */
@@ -74,8 +72,8 @@ int PixFmtMaskNo(GLenum fmt)
 //-----------------------------------------------------------------------------
 // RageBitmapTexture constructor
 //-----------------------------------------------------------------------------
-RageBitmapTexture::RageBitmapTexture( CString sFilePath, RageTexturePrefs prefs ) :
-	RageTexture( sFilePath, prefs )
+RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :
+	RageTexture( name )
 {
 //	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
@@ -90,7 +88,7 @@ RageBitmapTexture::~RageBitmapTexture()
 		glDeleteTextures(1, &m_uGLTextureID);
 }
 
-void RageBitmapTexture::Reload( RageTexturePrefs prefs )
+void RageBitmapTexture::Reload( RageTextureID name )
 {
 	DISPLAY->SetTexture(0);
 
@@ -117,20 +115,22 @@ void RageBitmapTexture::Reload( RageTexturePrefs prefs )
 void RageBitmapTexture::Create()
 {
 	// look in the file name for a format hints
-	m_sFilePath.MakeLower();
+	CString HintString = GetFilePath();
+	HintString.MakeLower();
 
-	if( m_sFilePath.Find("no alpha") != -1 )		m_prefs.iAlphaBits = 0;
-	else if( m_sFilePath.Find("1 alpha") != -1 )	m_prefs.iAlphaBits = 1;
-	else if( m_sFilePath.Find("1alpha") != -1 )		m_prefs.iAlphaBits = 1;
-	else if( m_sFilePath.Find("0alpha") != -1 )		m_prefs.iAlphaBits = 0;
-	if( m_sFilePath.Find("dither") != -1 )			m_prefs.bDither = true; 
+	if( HintString.Find("no alpha") != -1 )		m_ActualID.iAlphaBits = 0;
+	else if( HintString.Find("1 alpha") != -1 )	m_ActualID.iAlphaBits = 1;
+	else if( HintString.Find("1alpha") != -1 )	m_ActualID.iAlphaBits = 1;
+	else if( HintString.Find("0alpha") != -1 )	m_ActualID.iAlphaBits = 0;
+	if( HintString.Find("dither") != -1 )		m_ActualID.bDither = true; 
 
 	/* Load the image into an SDL surface. */
-	SDL_Surface *img = IMG_Load(m_sFilePath);
+	/* XXX we were lowercasing this before */
+	SDL_Surface *img = IMG_Load(GetFilePath());
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
-		RageException::Throw( "Couldn't load %s: %s", m_sFilePath, SDL_GetError() );
+		RageException::Throw( "Couldn't load %s: %s", GetFilePath(), SDL_GetError() );
 
 	/* Figure out which texture format to use. */
 	GLenum fmtTexture;
@@ -149,7 +149,7 @@ void RageBitmapTexture::Create()
 			src_alpha_bits = max( 1, src_alpha_bits );
 
 		/* Don't use more than we were hinted to. */
-		src_alpha_bits = min( m_prefs.iAlphaBits, src_alpha_bits );
+		src_alpha_bits = min( m_ActualID.iAlphaBits, src_alpha_bits );
 
 		/* XXX Scan the image, and see if it actually uses its alpha channel/color key
 		* (if any).  Reduce to 1 or 0 bits of alpha if possible. */
@@ -170,24 +170,24 @@ void RageBitmapTexture::Create()
 		RageException::Throw( "Invalid color depth: %d bits", TEXTUREMAN->GetTextureColorDepth() );
 
 	/* Cap the max texture size to the hardware max. */
-	m_prefs.iMaxSize = min( m_prefs.iMaxSize, DISPLAY->GetMaxTextureSize() );
+	m_ActualID.iMaxSize = min( m_ActualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
 	/* Save information about the source. */
 	m_iSourceWidth = img->w;
 	m_iSourceHeight = img->h;
 
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, m_prefs.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, m_prefs.iMaxSize );
+	m_iImageWidth = min( m_iSourceWidth, m_ActualID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, m_ActualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
-	ASSERT( m_iTextureWidth <= m_prefs.iMaxSize );
-	ASSERT( m_iTextureHeight <= m_prefs.iMaxSize );
+	ASSERT( m_iTextureWidth <= m_ActualID.iMaxSize );
+	ASSERT( m_iTextureHeight <= m_ActualID.iMaxSize );
 
-	if(m_prefs.bStretch)
+	if(m_ActualID.bStretch)
 	{
 		/* The hints asked for the image to be stretched to the texture size,
 		 * probably for tiling. */
@@ -198,15 +198,15 @@ void RageBitmapTexture::Create()
 	/* If the source is larger than the texture, we have to scale it down; that's
 	 * "stretching", I guess. */
 	if(m_iSourceWidth != m_iImageWidth || m_iSourceHeight > m_iImageHeight)
-		m_prefs.bStretch = true;
+		m_ActualID.bStretch = true;
 
 	int target = PixFmtMaskNo(fmtTexture);
 
 	/* Dither only when the target is 16bpp, not when it's 32bpp. */
 	if( PixFmtMasks[target][4] /* XXX magic 4 */ == 32)
-		m_prefs.bDither = false;
+		m_ActualID.bDither = false;
 
-	if( m_prefs.bStretch ) 
+	if( m_ActualID.bStretch ) 
 	{
 		/* resize currently only does RGBA8888 */
 		int mask = 0;
@@ -215,7 +215,7 @@ void RageBitmapTexture::Create()
 		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
 
-	if( m_prefs.bDither )
+	if( m_ActualID.bDither )
 	{
 		/* Dither down to the destination format. */
 		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[target][4],

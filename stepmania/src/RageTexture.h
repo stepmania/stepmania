@@ -17,25 +17,31 @@
 
 const int MAX_TEXTURE_FRAMES = 256;
 
-
-struct RageTexturePrefs
+/* A unique texture is identified by a RageTextureID.  (Loading the
+ * same file with two different dither settings is considered two
+ * different textures, for example.) */
+struct RageTextureID
 {
-	bool bForceReload;
+	CString filename;
 	int iMaxSize;
 	int iMipMaps;
 	int iAlphaBits;
 	bool bDither;
 	bool bStretch;
 
-	RageTexturePrefs()
+	/* Define an ordering so this can be used in a set<>. */
+	bool operator< (const RageTextureID &rhs) const	{ return filename < rhs.filename; }
+
+	void Init()
 	{
-		bForceReload = false;
 		iMaxSize = 2048;
 		iMipMaps = 4;
 		iAlphaBits = 4;
 		bDither = false;
 		bStretch = false;
 	}
+	RageTextureID() { Init(); }
+	RageTextureID(const CString &fn) { Init(); filename=fn; }
 };
 
 //-----------------------------------------------------------------------------
@@ -44,10 +50,10 @@ struct RageTexturePrefs
 class RageTexture
 {
 public:
-	RageTexture( CString sFilePath, RageTexturePrefs prefs );
+	RageTexture( RageTextureID file );
 	virtual ~RageTexture() = 0;
 	virtual void Update( float fDeltaTime ) {}
-	virtual void Reload( RageTexturePrefs prefs ) = 0;
+	virtual void Reload( RageTextureID file ) = 0;
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
 	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
@@ -78,26 +84,35 @@ public:
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 	
 	const RectF *GetTextureCoordRect( int frameNo ) const;
-	int   GetNumFrames() const {return m_iFramesWide*m_iFramesHigh;}
-	CString GetFilePath() const {return m_sFilePath;}
+	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
+	const CString &GetFilePath() const { return GetID().filename; }
 
 	int		m_iRefCount;
 	int		m_iTimeOfLastUnload;
 
+	/* The ID that we were asked to load: */
+	const RageTextureID &GetID() const { return m_ID; }
+
+	/* The ID that we actually got: */
+	const RageTextureID &GetActualID() const { return m_ActualID; }
+
+private:
+	/* The file we were asked to load.  (This is never changed.) */
+	RageTextureID m_ID;
 
 protected:
-
-	virtual void CreateFrameRects();
-	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
-
-	CString	m_sFilePath;
-	RageTexturePrefs m_prefs;
+	/* We might change settings when loading (due to hints, hardware
+	 * limitations, etc).  The data actually loaded is here: */
+	RageTextureID m_ActualID;
 
 	int		m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
 	int		m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
 	int		m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
 	int		m_iFramesWide,		m_iFramesHigh;		// The number of frames of animation in each row and column of this texture
 	CArray<RectF,RectF>	m_TextureCoordRects;	// size = m_iFramesWide * m_iFramesHigh
+
+	virtual void CreateFrameRects();
+	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 };
 
 #endif

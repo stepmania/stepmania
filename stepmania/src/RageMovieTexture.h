@@ -43,11 +43,11 @@ typedef char TCHAR, *PTCHAR;
 class RageMovieTexture : public RageTexture
 {
 public:
-	RageMovieTexture( const CString &sFilePath, RageTexturePrefs prefs );
+	RageMovieTexture( RageTextureID ID );
 	virtual ~RageMovieTexture();
 	void Update(float fDeltaTime);
 
-	virtual void Reload( RageTexturePrefs prefs );
+	virtual void Reload( RageTextureID ID );
 
 	virtual void Play();
 	virtual void Pause();
@@ -57,13 +57,9 @@ public:
 	virtual bool IsPlaying() const;
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
-//	LPDIRECT3DTEXTURE8 GetBackBuffer() { return m_pd3dTexture[!m_iIndexFrontBuffer]; }
-//	void Flip() { m_iIndexFrontBuffer = !m_iIndexFrontBuffer; }
-
 	void NewData(char *buffer);
 
 protected:
-//	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
 	int m_iIndexFrontBuffer;	// index of the buffer that should be rendered from - either 0 or 1
 
 	char *buffer;

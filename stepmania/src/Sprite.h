@@ -28,14 +28,22 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-	virtual bool Load( CString sFilePath ) { return Load( sFilePath, RageTexturePrefs() ); }
-	virtual bool Load( CString sFilePath, RageTexturePrefs prefs )
+	/* Just a convenience function; load an image that'll be used in the
+	 * background. */
+	virtual bool LoadBG( RageTextureID ID )
 	{
-		ASSERT( sFilePath != "" );
-		if( sFilePath.Right(7) == ".sprite" )
-			return LoadFromSpriteFile( sFilePath, prefs );
+		ID.iMipMaps = 1;
+		ID.bDither = true;
+		return Load(ID);
+	}
+
+	virtual bool Load( RageTextureID ID )
+	{
+		ASSERT( ID.filename != "" );
+		if( ID.filename.Right(7) == ".sprite" )
+			return LoadFromSpriteFile( ID );
 		else 
-			return LoadFromTexture( sFilePath, prefs );
+			return LoadFromTexture( ID );
 	};
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };
@@ -48,8 +56,7 @@ public:
 	virtual void SetState( int iNewState );
 	
 	int		GetNumStates()		{ return m_iNumStates; };
-	CString	GetTexturePath()	{ return m_sTexturePath; };
-
+	CString	GetTexturePath()	{ ASSERT(m_pTexture); return m_pTexture->GetID().filename; };
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
@@ -60,14 +67,13 @@ public:
 	void StopUsingCustomCoords();
 
 protected:
-	virtual bool LoadFromTexture( CString sTexturePath, RageTexturePrefs prefs );
-	virtual bool LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs );
+	virtual bool LoadFromTexture( RageTextureID ID );
+	virtual bool LoadFromSpriteFile( RageTextureID ID );
 
 
 	CString	m_sSpritePath;
 	RageTexture* m_pTexture;
 	bool	m_bDrawIfTextureNull;
-	CString	m_sTexturePath;
 
 	int		m_iStateToFrame[MAX_SPRITE_STATES];	// array of indicies into m_rectBitmapFrames
 	float	m_fDelay[MAX_SPRITE_STATES];

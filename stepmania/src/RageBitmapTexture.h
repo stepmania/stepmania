@@ -18,11 +18,11 @@
 class RageBitmapTexture : public RageTexture
 {
 public:
-	RageBitmapTexture( CString sFilePath, RageTexturePrefs prefs );
+	RageBitmapTexture( RageTextureID name );
 	virtual ~RageBitmapTexture();
 	/* only called by RageTextureManager::InvalidateTextures */
 	virtual void Invalidate() { m_uGLTextureID = 0; }
-	virtual void Reload( RageTexturePrefs prefs );
+	virtual void Reload( RageTextureID name );
 
 protected:
 	void Create();	// called by constructor and Reload

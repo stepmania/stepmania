@@ -25,10 +25,10 @@ Banner::Banner()
 	Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
 }
 
-bool Banner::Load( CString sFilePath, RageTexturePrefs prefs )
+bool Banner::Load( RageTextureID ID )
 {
 	// note that the defaults are changes for faster loading
-	return CroppedSprite::Load( sFilePath, prefs );
+	return CroppedSprite::Load( ID );
 };
 
 void Banner::Update( float fDeltaTime )
@@ -107,9 +107,9 @@ bool Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 
 bool Banner::LoadRoulette()
 {
-	RageTexturePrefs prefs;
-	prefs.iMipMaps = 0;
-	Banner::Load( THEME->GetPathTo("Graphics","select music roulette banner"), prefs );
+	RageTextureID ID(THEME->GetPathTo("Graphics","select music roulette banner"));
+	ID.iMipMaps = 0;
+	Banner::Load( ID );
 	m_bScrolling = true;
 
 	return true;

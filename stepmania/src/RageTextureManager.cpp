@@ -33,19 +33,19 @@ RageTextureManager::RageTextureManager( int iTextureColorDepth, int iSecondsBefo
 
 RageTextureManager::~RageTextureManager()
 {
-	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i)
 	{
 		RageTexture* pTexture = i->second;
 		if( pTexture->m_iRefCount )
-			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.GetString(), pTexture->m_iRefCount );
+			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.GetString(), pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 }
 
 void RageTextureManager::Update( float fDeltaTime )
 {
-	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i)
 	{
 		RageTexture* pTexture = i->second;
@@ -56,11 +56,11 @@ void RageTextureManager::Update( float fDeltaTime )
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk
 //-----------------------------------------------------------------------------
-RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, RageTexturePrefs prefs )
+RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
-	sTexturePath.MakeLower();
+	ID.filename.MakeLower();
 
-//	LOG->Trace( "RageTextureManager::LoadTexture(%s).", sTexturePath.GetString() );
+	LOG->Trace( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() );
 
 	// holder for the new texture
 	RageTexture* pTexture;
@@ -70,7 +70,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, RageTextureP
 	// of the same bitmap if there are equivalent but different paths
 	// (e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp" ).
 
-	std::map<CString, RageTexture*>::iterator p = m_mapPathToTexture.find(sTexturePath);
+	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
 	if(p != m_mapPathToTexture.end()) {
 		pTexture = p->second;
 
@@ -81,16 +81,16 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, RageTextureP
 	else	// the texture is not already loaded
 	{
 		CString sDrive, sDir, sFName, sExt;
-		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
+		splitpath( false, ID.filename, sDrive, sDir, sFName, sExt );
 
 		if( sExt == "avi" )
-			pTexture = new RageMovieTexture( sTexturePath, prefs );
+			pTexture = new RageMovieTexture( ID );
 		else
-			pTexture = new RageBitmapTexture( sTexturePath, prefs );
+			pTexture = new RageBitmapTexture( ID );
 
-		LOG->Trace( "RageTextureManager: Loaded '%s'.", sTexturePath.GetString() );
+		LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
 
-		m_mapPathToTexture[sTexturePath] = pTexture;
+		m_mapPathToTexture[ID] = pTexture;
 	}
 
 //	LOG->Trace( "Display: %.2f KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem()/1000000.0f );
@@ -121,13 +121,13 @@ void RageTextureManager::GCTextures()
 	LOG->Trace("Performing texture garbage collection");
 	timeLastGarbageCollect = time(NULL);
 
-	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); )
 	{
-		std::map<CString, RageTexture*>::iterator j = i;
+		std::map<RageTextureID, RageTexture*>::iterator j = i;
 		i++;
 
-		CString sPath = j->first;
+		CString sPath = j->first.filename;
 		RageTexture* pTexture = j->second;
 		if( pTexture->m_iRefCount==0  &&
 			pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload < time(NULL) )
@@ -139,26 +139,31 @@ void RageTextureManager::GCTextures()
 }
 
 
-void RageTextureManager::UnloadTexture( CString sTexturePath )
+void RageTextureManager::UnloadTexture( RageTextureID ID )
 {
-	sTexturePath.MakeLower();
+	ID.filename.MakeLower();
 
-//	LOG->Trace( "RageTextureManager::UnloadTexture(%s).", sTexturePath.GetString() );
-
-	if( sTexturePath == "" )
+	if( ID.filename == "" )
 	{
 		//LOG->Trace( "RageTextureManager::UnloadTexture(): tried to Unload a blank texture." );
 		return;
 	}
-	
-	std::map<CString, RageTexture*>::iterator p = m_mapPathToTexture.find(sTexturePath);
+	LOG->Trace( "RageTextureManager::UnloadTexture(%s).", ID.filename.GetString() );
+
+	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
 	if(p == m_mapPathToTexture.end())
-		RageException::Throw( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath.GetString() );
+		RageException::Throw( "Tried to Unload texture '%s' that wasn't loaded.", ID.filename.GetString() );
 	
 	RageTexture* pTexture = p->second;
-	pTexture->m_iRefCount--;
-	pTexture->m_iTimeOfLastUnload = time(NULL);
-	ASSERT( pTexture->m_iRefCount >= 0 );
+	UnloadTexture(p->second);
+	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
+}
+
+void RageTextureManager::UnloadTexture( RageTexture *t )
+{
+	t->m_iRefCount--;
+	t->m_iTimeOfLastUnload = time(NULL);
+	ASSERT( t->m_iRefCount >= 0 );
 
 	/* Always unload movies, so we don't waste time decoding.
 	 *
@@ -168,39 +173,38 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	 * 
 	 * Also, if texture caching is off, just remove it now instead of doing
 	 * garbage collection. */
-	if( pTexture->m_iRefCount == 0  && 
-		(pTexture->IsAMovie() || !m_iSecondsBeforeUnload ))
+	m_iSecondsBeforeUnload = 0;
+	if( t->m_iRefCount == 0  && 
+		(t->IsAMovie() || !m_iSecondsBeforeUnload ))
 	{
 		//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
-		SAFE_DELETE( pTexture );		// free the texture
-		m_mapPathToTexture.erase(p);	// and remove the key in the map
+		m_mapPathToTexture.erase(t->GetID());	// and remove the key in the map
+		SAFE_DELETE( t );		// free the texture
 	}
 
 	GCTextures();
-
-	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
 }
 
 void RageTextureManager::ReloadAll()
 {
-	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i)
 	{
 		RageTexture* pTexture = i->second;
 
-		pTexture->Reload( RageTexturePrefs() );			// this is not entirely correct.  Hints are lost! XXX
+		pTexture->Reload( i->first );
 	}
 }
 
 /* In some cases, changing the display mode will reset the rendering context,
  * releasing all textures.  We don't want to reload immediately if that happens,
  * since we might be changing texture preferences too, which also may have to reload
- * textures.  Instead, tell all textures that their texutre ID is invalid, so it
+ * textures.  Instead, tell all textures that their texture ID is invalid, so it
  * doesn't try to free it later when we really do reload (since that ID might be
  * associated with a different texture).  Ack. */
 void RageTextureManager::InvalidateTextures()
 {
-	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i)
 	{
 		RageTexture* pTexture = i->second;

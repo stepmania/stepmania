@@ -59,14 +59,14 @@ BGAnimationLayer::BGAnimationLayer()
 void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 {
 	m_iNumSprites = 1;
-	m_Sprites[0].Load( sPath );
+	m_Sprites[0].LoadBG( sPath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 }
 
 void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 {
 	m_iNumSprites = 1;
-	m_Sprites[0].Load( sMoviePath );
+	m_Sprites[0].LoadBG( sMoviePath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].GetTexture()->Play();
 	::Sleep( 50 );	// decode a frame so we don't see a black flash at the beginning
@@ -79,7 +79,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewi
 void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 {
 	m_iNumSprites = 1;
-	m_Sprites[0].Load( sMoviePath );
+	m_Sprites[0].LoadBG( sMoviePath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].SetBlendModeAdd();
 }
@@ -142,12 +142,12 @@ found_effect:
 	{
 	case EFFECT_CENTER:
 		m_iNumSprites = 1;
-		m_Sprites[0].Load( sPath );
+		m_Sprites[0].LoadBG( sPath );
 		m_Sprites[0].SetXY( CENTER_X, CENTER_Y );
 		break;
 	case EFFECT_STRETCH_STILL:
 		m_iNumSprites = 1;
-		m_Sprites[0].Load( sPath );
+		m_Sprites[0].LoadBG( sPath );
 		m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 		break;
 	case EFFECT_STRETCH_SCROLL_LEFT:
@@ -159,9 +159,9 @@ found_effect:
 	case EFFECT_STRETCH_TWIST:
 		{
 			m_iNumSprites = 1;
-			RageTexturePrefs prefs;
-			prefs.bStretch = true;
-			m_Sprites[0].Load( sPath, prefs );
+			RageTextureID ID(sPath);
+			ID.bStretch = true;
+			m_Sprites[0].LoadBG( ID );
 			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
 
@@ -184,9 +184,9 @@ found_effect:
 	case EFFECT_STRETCH_SCROLL_H:
 		{
 			m_iNumSprites = 1;
-			RageTexturePrefs prefs;
-			prefs.bStretch = true;
-			m_Sprites[0].Load( sPath, prefs );
+			RageTextureID ID(sPath);
+			ID.bStretch = true;
+			m_Sprites[0].LoadBG( ID );
 			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,0,SCREEN_RIGHT, int(m_Sprites[0].GetUnzoomedHeight())) );
 			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
 			m_vTexCoordVelocity = RageVector2(+0.5f,0);
@@ -195,20 +195,20 @@ found_effect:
 		break;
 	case EFFECT_STRETCH_SPIN:
 		m_iNumSprites = 1;
-		m_Sprites[0].Load( sPath );
+		m_Sprites[0].LoadBG( sPath );
 		m_Sprites[0].ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
 		m_fRotationalVelocity = 1;
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
 	case EFFECT_PARTICLES_SPIRAL_IN:
 		{
-			m_Sprites[0].Load( sPath );
+			m_Sprites[0].LoadBG( sPath );
 			int iSpriteArea = int( m_Sprites[0].GetUnzoomedWidth()*m_Sprites[0].GetUnzoomedHeight() );
 			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
 			m_iNumSprites = min( iMaxArea / iSpriteArea,  MAX_SPRITES );
 			for( int i=0; i<m_iNumSprites; i++ )
 			{
-				m_Sprites[i].Load( sPath );
+				m_Sprites[i].LoadBG( sPath );
 				m_Sprites[i].SetZoom( randomf(0.2f,2) );
 				m_Sprites[i].SetRotation( randomf(0,PI*2) );
 			}
@@ -220,13 +220,13 @@ found_effect:
 	case EFFECT_PARTICLES_FLOAT_RIGHT:
 	case EFFECT_PARTICLES_BOUNCE:
 		{
-			m_Sprites[0].Load( sPath );
+			m_Sprites[0].LoadBG( sPath );
 			int iSpriteArea = int( m_Sprites[0].GetUnzoomedWidth()*m_Sprites[0].GetUnzoomedHeight() );
 			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
 			m_iNumSprites = min( iMaxArea / iSpriteArea,  MAX_SPRITES );
 			for( int i=0; i<m_iNumSprites; i++ )
 			{
-				m_Sprites[i].Load( sPath );
+				m_Sprites[i].LoadBG( sPath );
 				m_Sprites[i].SetZoom( 0.7f + 0.6f*i/(float)m_iNumSprites );
 				m_Sprites[i].SetX( randomf( GetGuardRailLeft(&m_Sprites[i]), GetGuardRailRight(&m_Sprites[i]) ) );
 				m_Sprites[i].SetY( randomf( GetGuardRailTop(&m_Sprites[i]), GetGuardRailBottom(&m_Sprites[i]) ) );
@@ -249,7 +249,7 @@ found_effect:
 	case EFFECT_TILE_FLIP_Y:
 	case EFFECT_TILE_PULSE:
 		{
-			m_Sprites[0].Load( sPath );
+			m_Sprites[0].LoadBG( sPath );
 			int iNumTilesWide = 1+int(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth());
 			int iNumTilesHigh = 1+int(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight());
 			if( m_Effect == EFFECT_TILE_SCROLL_LEFT ||
@@ -271,7 +271,7 @@ found_effect:
 				for( int y=0; y<iNumTilesHigh; y++ )
 				{
 					int i = x+y*iNumTilesWide;
-					m_Sprites[i].Load( sPath );
+					m_Sprites[i].LoadBG( sPath );
 					m_Sprites[i].SetX( (x+0.5f)*m_Sprites[i].GetUnzoomedWidth() );
 					m_Sprites[i].SetY( (y+0.5f)*m_Sprites[i].GetUnzoomedHeight() );
 				}

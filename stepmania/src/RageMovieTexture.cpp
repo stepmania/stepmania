@@ -38,12 +38,11 @@
 //-----------------------------------------------------------------------------
 // RageMovieTexture constructor
 //-----------------------------------------------------------------------------
-RageMovieTexture::RageMovieTexture( const CString &sFilePath, RageTexturePrefs prefs ) :
-	RageTexture( sFilePath, prefs )
+RageMovieTexture::RageMovieTexture( RageTextureID ID ) :
+	RageTexture( ID )
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
-	m_FilePath = sFilePath;
 	buffer_changed = false;
 
 	m_uGLTextureID = 0;
@@ -80,7 +79,7 @@ RageMovieTexture::~RageMovieTexture()
 		glDeleteTextures(1, &m_uGLTextureID);
 }
 
-void RageMovieTexture::Reload( RageTexturePrefs prefs )
+void RageMovieTexture::Reload( RageTextureID ID )
 {
 	// do nothing
 }
@@ -208,8 +207,8 @@ void RageMovieTexture::NewData(char *data)
 bool RageMovieTexture::CreateTexture()
 {
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, m_prefs.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, m_prefs.iMaxSize );
+	m_iImageWidth = min( m_iSourceWidth, m_ActualID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, m_ActualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);

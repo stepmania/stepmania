@@ -37,9 +37,7 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
-//	LOG->Trace( "Sprite Destructor" );
-
-	TEXTUREMAN->UnloadTexture( m_sTexturePath ); 
+	UnloadTexture();
 }
 
 
@@ -52,13 +50,13 @@ Sprite::~Sprite()
 // Delay0000=1.0
 // Frame0001=3
 // Delay0000=2.0
-bool Sprite::LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs )
+bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 {
-	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath.GetString()) );
+	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.GetString()) );
 
 	//Init();
 
-	m_sSpritePath = sSpritePath;
+	m_sSpritePath = ID.filename;
 
 
 	// Split for the directory.  We'll need it below
@@ -80,14 +78,13 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs )
 	if( sTextureFile == ""  )
 		RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.GetString() );
 
-	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
+	ID.filename = sFontDir + sTextureFile;	// save the path of the real texture
 
-	if( !DoesFileExist(sTexturePath) )
-		RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.GetString(), sTexturePath.GetString() );
-
+	if( !DoesFileExist(ID.filename) )
+		RageException::Throw( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.GetString(), ID.filename.GetString() );
 
 	// Load the texture
-	LoadFromTexture( sTexturePath, prefs );
+	LoadFromTexture( ID );
 
 	// Read in frames and delays from the sprite file, 
 	// overwriting the states that LoadFromTexture created.
@@ -101,7 +98,7 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs )
 			break;
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
 			RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
-				m_sSpritePath.GetString(), sFrameKey.GetString(), m_iStateToFrame[i], sTexturePath.GetString(), m_pTexture->GetNumFrames() );
+				m_sSpritePath.GetString(), sFrameKey.GetString(), m_iStateToFrame[i], ID.filename.GetString(), m_pTexture->GetNumFrames() );
 		m_fDelay[i] = 0.2f;
 		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
 			break;
@@ -126,19 +123,16 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs )
 void Sprite::UnloadTexture()
 {
 	if( m_pTexture != NULL )			// If there was a previous bitmap...
-		TEXTUREMAN->UnloadTexture( m_sTexturePath );	// Unload it.
+		TEXTUREMAN->UnloadTexture( m_pTexture );	// Unload it.
 	m_pTexture = NULL;
-	m_sTexturePath = "";
 }
 
-bool Sprite::LoadFromTexture( CString sTexturePath, RageTexturePrefs prefs )
+bool Sprite::LoadFromTexture( RageTextureID ID )
 {
 	UnloadTexture();
 
-	m_sTexturePath = sTexturePath;
-
-	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath, prefs );
-	assert( m_pTexture != NULL );
+	m_pTexture = TEXTUREMAN->LoadTexture( ID );
+	ASSERT( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled
 	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();

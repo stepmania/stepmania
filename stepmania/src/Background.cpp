@@ -161,23 +161,8 @@ void Background::LoadFromSong( Song* pSong )
 	//
 
 	
-	// Tricky!  The song background looks terrible unless its loaded with no alpha 
-	// and dithered.  Create a dummy sprite that loads the texture with the proper 
-	// hints so we don't have to hack up BGAnimation to handle this special
-	// case.
-	// XXX: This assumes the TextureManager doesn't track hints.  Also, BGA
-	// backgrounds (bottom layer) should do this, too, for the same reason.
-	// We can probably handle this intelligently in the texture loader and get
-	// rid of bDither completely, but only if there aren't some weird BGAs out
-	// there that actually use the alpha channel.  (In that case, the texture
-	// loader would have no way of knowing that the image, seeming to use the
-	// alpha layer, actually doesn't since it's the back-most image.  Hmm.)
 	Sprite sprDummy;
-	RageTexturePrefs prefs;
-	prefs.bForceReload = true;
-	prefs.iMipMaps = 1;
-	prefs.bDither = true;
-	sprDummy.Load( sSongBackgroundPath, prefs );
+	sprDummy.LoadBG( sSongBackgroundPath );
 	
 	{
 		BGAnimation *pTempBGA = new BGAnimation;

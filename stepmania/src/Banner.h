@@ -21,8 +21,7 @@ class Banner : public CroppedSprite
 public:
 	Banner();
 
-	virtual bool Load( CString sFilePath, RageTexturePrefs prefs );
-	virtual bool Load( CString sFilePath ) { return Load( sFilePath, RageTexturePrefs() ); }
+	virtual bool Load( RageTextureID ID );
 
 	virtual void Update( float fDeltaTime );
 

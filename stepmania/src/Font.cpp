@@ -38,7 +38,7 @@ Font::Font( const CString &sASCIITexturePath )
 	// load texture
 	m_sTexturePath = sASCIITexturePath;
 	m_sTexturePath.MakeLower();
-	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath, RageTexturePrefs() );
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 	if( m_pTexture->GetNumFrames() != 16*16 )
 		RageException::Throw( "The font '%s' has only %d frames.  All fonts must have 16*16 frames.", m_sTexturePath.GetString() );
@@ -115,7 +115,7 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 	m_sTexturePath.MakeLower();
 
 
-	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath, RageTexturePrefs() );
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
 

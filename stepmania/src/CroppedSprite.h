@@ -21,7 +21,7 @@ public:
 	CroppedSprite();
 	virtual ~CroppedSprite() { }
 
-	bool Load( CString sFilePath, RageTexturePrefs prefs );
+	bool Load( RageTextureID ID );
 	void SetCroppedSize( float fWidth, float fHeight );
 
 protected:

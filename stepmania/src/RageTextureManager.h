@@ -25,9 +25,10 @@ public:
 	virtual void Update( float fDeltaTime );
 	~RageTextureManager();
 
-	RageTexture* LoadTexture( CString sTexturePath, RageTexturePrefs prefs );
-	bool IsTextureLoaded( CString sTexturePath );
-	void UnloadTexture( CString sTexturePath );
+	RageTexture* LoadTexture( RageTextureID ID );
+	bool IsTextureLoaded( CString sTexturePath ); // XXX
+	void UnloadTexture( RageTextureID ID );
+	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
 	bool SetPrefs( int iTextureColorDepth, int iSecsBeforeUnload );
@@ -42,7 +43,7 @@ protected:
 	int m_iTextureColorDepth;
 	int m_iSecondsBeforeUnload;
 
-	std::map<CString, RageTexture*> m_mapPathToTexture;
+	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
 };
 
 extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program

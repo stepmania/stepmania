@@ -21,12 +21,11 @@
 //-----------------------------------------------------------------------------
 // RageTexture constructor
 //-----------------------------------------------------------------------------
-RageTexture::RageTexture( CString sFilePath, RageTexturePrefs prefs )
+RageTexture::RageTexture( RageTextureID name )
 {
 //	LOG->Trace( "RageTexture::RageTexture()" );
 
-	m_sFilePath = sFilePath;
-	m_prefs = prefs;
+	m_ID = m_ActualID = name;
 	m_iRefCount = 1;
 
 	m_iSourceWidth = m_iSourceHeight = 0;
@@ -43,7 +42,7 @@ RageTexture::~RageTexture()
 
 void RageTexture::CreateFrameRects()
 {
-	GetFrameDimensionsFromFileName( m_sFilePath, &m_iFramesWide, &m_iFramesHigh );
+	GetFrameDimensionsFromFileName( GetFilePath(), &m_iFramesWide, &m_iFramesHigh );
 
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
