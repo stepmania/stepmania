@@ -545,17 +545,10 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
+		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
+		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-		{
-			CString sBGMovieFile = arrayPossibleMovies[0];
-			
-			// calculate start beat of music
-			float fMusicStartBeat, fBPS;
-			bool bFreeze;
-			this->GetBeatAndBPSFromElapsedTime( -this->m_fBeat0OffsetInSeconds, fMusicStartBeat, fBPS, bFreeze );
-
-			this->AddBackgroundChange( BackgroundChange(fMusicStartBeat,sBGMovieFile) );
-		}
+			this->AddBackgroundChange( BackgroundChange(0,arrayPossibleMovies[0]) );
 	}
 
 	for( i=0; i<m_apNotes.size(); i++ )
