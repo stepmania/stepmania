@@ -126,7 +126,7 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	buffer_lock( "buffer_lock", 1 ),
 	buffer_finished( "buffer_finished", 0 )
 {
-	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
+	LOG->Trace( "MovieTexture_DShow::MovieTexture_DShow()" );
 
 	static bool first = true;
 	if( first )
