@@ -20,7 +20,9 @@ void ResetGame( bool ReturnToFirstScreen=true );
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
 void SaveGamePrefsToDisk();
 void ChangeCurrentGame( Game g );
-bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature );
+
+// If successful, return filename of screenshot in sDir, else return ""
+CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature );
 
 #if defined(_WINDOWS)
 #include "windows.h"

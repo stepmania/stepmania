@@ -110,6 +110,56 @@ bool CryptManager::VerifyFile( CString sPath )
 	return verifierFilter->GetLastResult();
 }
 
+CString CryptManager::GetFileSignature( CString sPath )
+{
+	CString sPrivFilename = PRIVATE_KEY_PATH;
+	CString sMessageFilename = sPath;
+
+	if( !IsAFile(sPrivFilename) )
+		return "";
+
+	if( !IsAFile(sMessageFilename) )
+		return "";
+
+	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
+	// be wrapped in a try catch?
+
+	RageFileSource privFile(sPrivFilename, true, new HexDecoder);
+	RSASSA_PKCS1v15_SHA_Signer priv(privFile);
+	AutoSeededRandomPool rng;
+	CString sSignature;
+	RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new HexEncoder(new StringSink(sSignature))));
+	return sSignature;
+}
+
+bool CryptManager::VerifyFile( CString sPath, CString sSignature )
+{
+	CString sPubFilename = PUBLIC_KEY_PATH;
+	CString sMessageFilename = sPath;
+
+	if( !IsAFile(sPubFilename) )
+		return false;
+
+	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
+	// be wrapped in a try catch?
+
+	RageFileSource pubFile(sPubFilename, true, new HexDecoder);
+	RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
+
+	StringSource signatureFile(sSignature, true);
+	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		return false;
+	SecByteBlock signature(pub.SignatureLength());
+	signatureFile.Get(signature, signature.size());
+
+	VerifierFilter *verifierFilter = new VerifierFilter(pub);
+	verifierFilter->Put(signature, pub.SignatureLength());
+	RageFileSource f(sMessageFilename, true, verifierFilter);
+
+	return verifierFilter->GetLastResult();
+}
+
+
 void CryptManager::DigestFile(const char *filename)
 {
 //	MD5 md5;

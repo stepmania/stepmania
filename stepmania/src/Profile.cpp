@@ -48,6 +48,7 @@ const int SM_390A12_COURSE_SCORES_VERSION = 8;
 #define CATEGORY_SCORES_XML	"CategoryScores.xml"
 #define SONG_SCORES_XML		"SongScores.xml"
 #define COURSE_SCORES_XML	"CourseScores.xml"
+#define SCREENSHOT_DATA_XML	"ScreenshotData.xml"
 
 
 #define DEFAULT_PROFILE_NAME	""
@@ -94,6 +95,11 @@ void Profile::InitCategoryScores()
 	for( int st=0; st<NUM_STEPS_TYPES; st++ )
 		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 			m_CategoryHighScores[st][rc].Init();
+}
+
+void Profile::InitScreenshotData()
+{
+	m_vScreenshots.clear();
 }
 
 CString Profile::GetDisplayName() const
@@ -283,6 +289,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 	LoadSongScoresFromDir( sDir );
 	LoadCourseScoresFromDir( sDir );
 	LoadCategoryScoresFromDir( sDir );
+	LoadScreenshotDataFromDir( sDir );
 	return bResult;
 }
 
@@ -300,6 +307,7 @@ bool Profile::SaveAllToDir( CString sDir ) const
 	DeleteCourseScoresFromDirSM390a12( sDir );
 	SaveCategoryScoresToDir( sDir );
 	DeleteCategoryScoresFromDirSM390a12( sDir );
+	SaveScreenshotDataToDir( sDir );
 	SaveStatsWebPageToDir( sDir );
 	SaveMachinePublicKeyToDir( sDir );
 	return bResult;
@@ -1006,4 +1014,80 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
 {
 	FileCopy( CRYPTMAN->GetPublicKeyFileName(), "public.key.rsa" );
+}
+
+void Profile::AddScreenshot( Screenshot screenshot )
+{
+	m_vScreenshots.push_back( screenshot );
+}
+
+void Profile::LoadScreenshotDataFromDir( CString sDir )
+{
+	CHECKPOINT;
+
+	CString fn = sDir + SCREENSHOT_DATA_XML;
+
+	CRYPT_VERIFY_FILE;
+
+	XNode xml;
+	if( !xml.LoadFromFile( fn ) )
+	{
+		LOG->Warn( "Couldn't open file \"%s\" for writing.", fn.c_str() );
+		return;
+	}
+	
+	if( xml.name != "ScreenshotData" )
+		WARN_AND_RETURN;
+
+	for( XNodes::iterator screenshot = xml.childs.begin(); 
+		screenshot != xml.childs.end(); 
+		screenshot++ )
+	{
+		if( (*screenshot)->name != "Screenshot" )
+			WARN_AND_CONTINUE;
+
+		Screenshot ss;
+		
+		if( !(*screenshot)->GetChildValue("FileName",ss.sFileName) )
+			WARN_AND_CONTINUE;
+
+		if( !(*screenshot)->GetChildValue("Signature",ss.sSignature) )
+			WARN_AND_CONTINUE;
+
+		XNode *pHighScoreNode = (*screenshot)->GetChild("HighScore");
+		if( pHighScoreNode == NULL )
+			WARN_AND_CONTINUE;
+		
+		HighScore &hs = ss.highScore;
+		hs.LoadFromNode( pHighScoreNode );
+
+		m_vScreenshots.push_back( ss );
+	}	
+}
+
+void Profile::SaveScreenshotDataToDir( CString sDir ) const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile );
+
+	CString fn = sDir + SCREENSHOT_DATA_XML;
+
+	XNode xml;
+	xml.name = "ScreenshotData";
+
+	for( int i=0; i<m_vScreenshots.size(); i++ )
+	{
+		const Screenshot &ss = m_vScreenshots[i];
+
+		XNode* pScreenshotNode = xml.AppendChild( "Screenshot" );
+
+		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
+		pScreenshotNode->AppendChild( "Signature", ss.sSignature );
+		pScreenshotNode->AppendChild( ss.highScore.CreateNode() );
+	}
+
+	xml.SaveToFile( fn );
+	CRYPT_WRITE_SIG;
 }

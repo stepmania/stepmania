@@ -12,6 +12,9 @@ public:
 	static void SignFile( CString sPath );
 	static bool VerifyFile( CString sPath );
 
+	static CString GetFileSignature( CString sPath );
+	static bool VerifyFile( CString sPath, CString sSignature );
+
 	static void DigestFile(const char *filename);
 
 	static CString GetPublicKeyFileName();

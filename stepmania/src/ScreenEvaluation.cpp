@@ -36,6 +36,7 @@
 #include "CodeDetector.h"
 #include "RageDisplay.h"
 #include "StepMania.h"
+#include "CryptManager.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -100,6 +101,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	
 	if( PREFSMAN->m_bScreenTestMode )
 	{
+		PROFILEMAN->LoadProfileFromMemoryCard(PLAYER_1);
+
 		GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
 		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
@@ -903,7 +906,7 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		// depends on if this is a course or not ... it's handled
 		// below in the switch
 
-		HighScore hs;
+		HighScore &hs = m_HighScore[p];
 		hs.grade = stageStats.GetGrade( (PlayerNumber)p );
 		hs.iScore = stageStats.iScore[p];
 		hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
@@ -1301,7 +1304,19 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				/* StyleI won't be valid if it's a menu button that's pressed.  
 				 * There's got to be a better way of doing this.  -Chris */
 				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
-				SaveScreenshot( sDir, true, true );
+				CString sFileName = SaveScreenshot( sDir, true, true );
+				CString sPath = sDir+sFileName;
+				
+				if( !sFileName.empty() )
+				{
+					Profile* pProfile = PROFILEMAN->GetProfile(pn);
+					Profile::Screenshot screenshot;
+					screenshot.sFileName = sFileName;
+					screenshot.sSignature = CRYPTMAN->GetFileSignature( sPath );
+					screenshot.highScore = m_HighScore[pn];
+					pProfile->AddScreenshot( screenshot );
+				}
+
 				m_bSavedScreenshot[pn] = true;
 				return;	// handled
 			}

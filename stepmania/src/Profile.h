@@ -107,6 +107,19 @@ public:
 
 
 	//
+	// Screenshot Data
+	//
+	struct Screenshot
+	{
+		CString sFileName;	// no directory part - just the file name
+		CString sSignature;	// sFile signed with the machine's private key
+		HighScore highScore;	// high score that the screenshot is taken of
+	};
+	vector<Screenshot> m_vScreenshots;
+	void AddScreenshot( Screenshot screenshot );
+
+	
+	//
 	// Init'ing
 	//
 	void InitAll()
@@ -115,11 +128,13 @@ public:
 		InitSongScores(); 
 		InitCourseScores(); 
 		InitCategoryScores(); 
+		InitScreenshotData(); 
 	}
 	void InitGeneralData(); 
 	void InitSongScores(); 
 	void InitCourseScores(); 
 	void InitCategoryScores(); 
+	void InitScreenshotData(); 
 
 	//
 	// Loading and saving
@@ -144,6 +159,9 @@ public:
 	void LoadCategoryScoresFromDir( CString sDir );
 	void SaveCategoryScoresToDir( CString sDir ) const;
 	void DeleteCategoryScoresFromDirSM390a12( CString sDir ) const;
+
+	void LoadScreenshotDataFromDir( CString sDir );
+	void SaveScreenshotDataToDir( CString sDir ) const;
 
 	void SaveStatsWebPageToDir( CString sDir ) const;
 

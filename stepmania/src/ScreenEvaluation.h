@@ -28,6 +28,7 @@
 #include "BGAnimation.h"
 #include "ActorUtil.h"
 #include "ConditionalBGA.h"
+#include "HighScore.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 const int NUM_JUDGE_LINES =	9;	// marvelous, perfect, great, good, boo, miss, ok, max_combo, error
@@ -145,6 +146,8 @@ protected:
 	bool m_bPassFailTriggered; // has the pass / fail sound been played yet?
 	RageTimer m_timerSoundSequences; // timer used for triggering sounds.
 	vector<EvalSoundSequence> m_SoundSequences; // a sequence of sounds to be played (although they're stored in no particular order!)	
+
+	HighScore m_HighScore[NUM_PLAYERS];
 	bool m_bSavedScreenshot[NUM_PLAYERS];
 };
 

@@ -1096,7 +1096,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
+CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 {
 	//
 	// Find a file name for the screenshot
@@ -1125,12 +1125,13 @@ bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 	//
 	// Save the screenshot
 	//
-	CString sScreenshotPath = ssprintf( sDir+"screen%04d.%s",fileno,bSaveCompressed ? "jpg" : "bmp" );
-	bool bResult = DISPLAY->SaveScreenshot( sScreenshotPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
+	CString sFileName = ssprintf( "screen%04d.%s",fileno,bSaveCompressed ? "jpg" : "bmp" );
+	CString sPath = sDir+sFileName;
+	bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
 	if( !bResult )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
-		return false;
+		return "";
 	}
 
 	SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
@@ -1141,9 +1142,9 @@ bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 	FlushDirCache();
 
 	if( bMakeSignature )
-		CryptManager::SignFile( sScreenshotPath );
+		CryptManager::SignFile( sPath );
 
-	return false;
+	return sFileName;
 }
 
 /* Returns true if the key has been handled and should be discarded, false if
@@ -1197,6 +1198,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		// so we don't have to play through a whole song to get new output.
 		BOOKKEEPER->WriteToDisk();
 		PROFILEMAN->SaveMachineProfile();
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
+				PROFILEMAN->SaveProfile( (PlayerNumber)p );
 
 		/* If we're in screen test mode, reload the screen. */
 		if( PREFSMAN->m_bScreenTestMode )
