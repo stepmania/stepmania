@@ -661,7 +661,7 @@ void Actor::Command( CString sCommandString )
 		CString& sName = asTokens[0];
 		sName.MakeLower();
 
-		// Act on command
+		// Commands that go in the tweening queue:
 		if     ( sName=="sleep" )			BeginTweening( fParam(1), TWEEN_LINEAR );
 		else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
 		else if( sName=="accelerate" )		BeginTweening( fParam(1), TWEEN_ACCELERATE );
@@ -715,6 +715,7 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
 		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
+		// Commands that take effect immediately (ignoring the tweening queue):
 		else if( sName=="animate" )			EnableAnimation( bParam(1) );
 		else if( sName=="texturewrapping" )	EnableTextureWrapping( bParam(1) );
 		else if( sName=="additiveblend" )	EnableAdditiveBlend( bParam(1) );
