@@ -13,6 +13,8 @@ static int frames_to_buffer;
 static const int num_chunks = 8;
 static int chunksize() { return frames_to_buffer / num_chunks; }
 
+static int underruns = 0, logged_underruns = 0;
+
 RageSound_Generic_Software::sound::sound()
 {
 	snd = NULL;
@@ -120,15 +122,14 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 
 //			LOG->Trace( "incr fr rd %i += %i = %i (%i left) (state %i) (%p)",
 //				OldFramesRead, (int) frames_to_read, (int) s.frames_read, (int) s.frames_buffered(), s.state, s.snd );
-			ASSERT( s.frames_read <= s.frames_written );
 
 			got_frames += frames_to_read;
 			frames_left -= frames_to_read;
 		}
 
 		/* If we don't have enough to fill the buffer, we've underrun. */
-//		if( got_frames < frames && s.state == sound::PLAYING )
-//			s.underruns++
+		if( got_frames < frames && s.state == sound::PLAYING )
+			++underruns;
 	}
 
 	memset( buf, 0, frames*bytes_per_frame );
@@ -246,6 +247,22 @@ void RageSound_Generic_Software::Update(float delta)
 		 * be used again. */
 		sounds[i].state = sound::HALTING;
 //		LOG->Trace("set (#%i) %p from STOPPING to HALTING", i, sounds[i].snd);
+	}
+
+	static float fNext = 0;
+	if( RageTimer::GetTimeSinceStart() >= fNext )
+	{
+		/* Lockless: only Mix() can write to underruns. */
+		int current_underruns = underruns;
+		if( current_underruns > logged_underruns )
+		{
+			LOG->Trace( "Mixing underruns: %i", current_underruns - logged_underruns );
+			logged_underruns = current_underruns;
+
+			/* Don't log again for at least a second, or we'll burst output
+			 * and possibly cause more underruns. */
+			fNext = RageTimer::GetTimeSinceStart() + 1;
+		}
 	}
 }
 
