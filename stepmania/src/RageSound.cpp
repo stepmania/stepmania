@@ -222,16 +222,14 @@ void RageSound::SetLengthSeconds(float secs)
 	m_LengthSeconds = secs;
 }
 
-/* Start playing from m_StartSeconds. TODO: a way to start playing
- * from the current pos (unpause) */
+/* Start playing from the current position.  If the sound is already
+ * playing, Stop is called. */
 void RageSound::Play()
 {
 	LockMutex L(SOUNDMAN->lock);
 
 	if(playing) Stop();
 	playing = true;
-
-	SetPositionSeconds(m_StartSeconds);
 
 	// Tell the sound manager to start mixing us
 	SOUNDMAN->StartMixing(this);
@@ -316,21 +314,40 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 	while(size)
 	{
 		int got;
+		int MaxBytes;
+		if(m_LengthSeconds != -1)
+		{
+			/* We have a length; only read up to the end.  MaxPosition is the
+			 * sample position of the end. */
+			int MaxPosition = int((m_StartSeconds + m_LengthSeconds) * samplerate);
+
+			/* Number of bytes until MaxPosition. */
+			MaxBytes = (MaxPosition - position) * samplesize;
+
+			/* If it's negative, we're past the end, so cap it at 0. */
+			MaxBytes = max(0, MaxBytes);
+
+			/* Don't read more than size. */
+			MaxBytes = min(MaxBytes, size);
+		}
+		else
+			MaxBytes = size;
+
 		if(position < 0) {
 			/* We havn't *really* started playing yet, so just feed silence.  How
-			* many more bytes of silence do we need? */
+			 * many more bytes of silence do we need? */
 			got = -position * samplesize;
-			got = min(got, size);
+			got = min(got, MaxBytes);
 			memset(buffer, 0, got);
 		} else if(big) {
 			/* Feed data out of our streaming buffer. */
 			ASSERT(stream.Sample);
-			got = min(int(stream.buf.size()), size);
+			got = min(int(stream.buf.size()), MaxBytes);
 			stream.buf.read(buffer, got);
 		} else {
 			/* Feed data out of our full buffer. */
 			int byte_pos = position * samplesize;
-			got = min(int(full_buf.size())-byte_pos, size);
+			got = min(int(full_buf.size())-byte_pos, MaxBytes);
 			got = max(got, 0);
 			if(got)
 				memcpy(buffer, full_buf.data()+byte_pos, got);
@@ -354,14 +371,22 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			/* If we've passed the stop point (m_StartSeconds+m_LengthSeconds), pretend
 			 * we've hit EOF. */
 			if(m_LengthSeconds != -1 &&
-					float(position)/samplerate > m_StartSeconds+m_LengthSeconds)
+					float(position)/samplerate >= m_StartSeconds+m_LengthSeconds)
 				HitEOF = true;
 
 			if(!HitEOF)
 				continue;
 
+			if(Loop && m_LengthSeconds == 0)
+			{
+				/* Oops.  Looping with seconds == 0 doesn't make much sense.
+				 * It might happen if we're given an empty sound file as input,
+				 * though.  Let's just stop. */
+				break;
+			}
+
 			/* We're at EOF.  If we're not looping, just stop. */
-			if(Loop)
+			if(Loop && m_LengthSeconds != 0)
 			{
 				/* Rewind and start over. */
 				SetPositionSeconds(m_StartSeconds);
@@ -443,14 +468,9 @@ void RageSound::Stop()
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 
-	if(big) {
-		ASSERT(stream.Sample);
-		Sound_Rewind(stream.Sample);
-		stream.buf.clear();
-	}
+	SetPositionSeconds(m_StartSeconds);
 
 	playing = false;
-	position = 0;
 	for(int i = 0; i < 4; ++i)
 		pos_map[i].clear();
 }

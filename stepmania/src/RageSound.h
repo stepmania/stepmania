@@ -82,6 +82,22 @@ public:
 	~RageSound();
 	RageSound(const RageSound &cpy);
 
+
+	/* Called only by the sound drivers: */
+	/* This function should return the number of bytes actually put into buffer.
+	 * If less than size is returned, it signals the stream to stop; once it's
+	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
+	 * can still be called (the sound is still playing). */
+	int GetPCM(char *buffer, int size, int sampleno);
+
+	/* Called by the sound driver when a sound has actually finished stopping
+	 * normally.  Not called when Stop() is called to stop the sound prematurely. */
+	void SoundStopped();
+
+	void Update(float delta);
+
+	/* User API from here on: */
+
 	/* If cache is true, we'll preload the entire file into memory if it's
 	 * small enough.  False is only generally used when we're going to do
 	 * operations on a file but not actually play it (eg. to find out
@@ -91,8 +107,11 @@ public:
 	void LoadAndPlayIfNotAlready( CString sSoundFilePath );
 	void Unload();
 
+	/* If enabled, then the sound will automatically stop when it reaches
+	 * the end; otherwise it'll feed silence until Stop() is called. */
 	void SetAutoStop(bool yes=true) { AutoStop=yes; }
 	bool GetAutoStop() const { return AutoStop; }
+
 	void SetStartSeconds(float secs = 0); /* default = beginning */
 	void SetLengthSeconds(float secs = -1); /* default = no length limit */
 	void Play();
@@ -111,19 +130,6 @@ public:
 	
 	/* Query only: */
 	bool IsStreaming() const { return big; }
-
-	/* Called only by the sound drivers: */
-	/* This function should return the number of bytes actually put into buffer.
-	 * If less than size is returned, it signals the stream to stop; once it's
-	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
-	 * can still be called (the sound is still playing). */
-	int GetPCM(char *buffer, int size, int sampleno);
-
-	/* Called by the sound driver when a sound has actually finished stopping
-	 * normally.  Not called when Stop() is called to stop the sound prematurely. */
-	void SoundStopped();
-
-	void Update(float delta);
 };
 
 #endif
