@@ -241,24 +241,43 @@ void BeginnerHelper::DrawPrimitives()
 
 	m_sFlash.Draw();
 
-	DISPLAY->SetLighting( true );
-	DISPLAY->SetLightDirectional( 
-		0, 
-		RageColor(0.5,0.5,0.5,1), 
-		RageColor(1,1,1,1),
-		RageColor(0,0,0,1),
-		RageVector3(0, 0, 1) );
+	bool DrawCelShaded = PREFSMAN->m_bCelShadeModels;
 
-	m_mDancePad.Draw();
+	if(DrawCelShaded)
+	{
+		m_mDancePad.DrawCelShaded();
+	}
+	else
+	{
+		DISPLAY->SetLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.5,0.5,0.5,1), 
+			RageColor(1,1,1,1),
+			RageColor(0,0,0,1),
+			RageVector3(0, 0, 1) );
+
+		m_mDancePad.Draw();
+	}
+
 	for( int scd=0; scd<NUM_PLAYERS*2; scd++ )
 		m_sStepCircle[scd].Draw();		// Should be drawn before the dancer, but after the pad, so it is drawn over the pad and under the dancer.
 	
-	FOREACH_PlayerNumber( pn )	// Draw each dancer
-		if( GAMESTATE->IsHumanPlayer(pn) )
-			m_mDancer[pn].Draw();
+	if(DrawCelShaded)
+	{
+		FOREACH_PlayerNumber( pn )	// Draw each dancer
+			if( GAMESTATE->IsHumanPlayer(pn) )
+				m_mDancer[pn].DrawCelShaded();
+	}
+	else
+	{
+		FOREACH_PlayerNumber( pn )	// Draw each dancer
+			if( GAMESTATE->IsHumanPlayer(pn) )
+				m_mDancer[pn].Draw();
 
-	DISPLAY->SetLightOff( 0 );
-	DISPLAY->SetLighting( false );
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
+	}
 }
 
 void BeginnerHelper::Step( int pn, int CSTEP )
