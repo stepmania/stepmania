@@ -268,10 +268,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 		//Update changes
 		FOREACH_EnabledPlayer(p)
-		{
-			m_OptionIconRow[p].Load( p );
 			m_OptionIconRow[p].Refresh();
-		}
 	}
 	else if( SM == SM_SongChanged )
 	{
