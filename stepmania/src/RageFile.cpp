@@ -277,13 +277,6 @@ int RageFile::Seek( int offset )
 
 	ResetBuf();
 	
-	if( offset == 0 )
-	{
-		m_File->Rewind();
-		m_FilePos = 0;
-		return 0;
-	}
-
 	int pos = m_File->Seek( offset );
 	if( pos == -1 )
 		return -1;
