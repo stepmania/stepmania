@@ -95,26 +95,26 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 	int sum = (N * (N + 1)) / 2;
 
 	int iMaxPossiblePoints = 0;
+	int courseMult = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
 		const int numSongsInCourse = apNotes.size();
-		int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
+		courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
 
 		if ( iSongInCourseIndex == numSongsInCourse - 1 )
 			m_bIsLastSongInCourse = true;
 
-		iMaxPossiblePoints = (10000000 * (iSongInCourseIndex+1)) / courseMult;
+		iMaxPossiblePoints = (100000000 * (iSongInCourseIndex+1)) / courseMult;
 		m_iMaxScoreSoFar += iMaxPossiblePoints;
 	}
 	else
 	{
 		int iMeter = pNotes->GetMeter();
 		CLAMP( iMeter, 1, 10 );
-		iMaxPossiblePoints = iMeter * 1000000;
+		iMaxPossiblePoints = iMeter * 10000000;
 	}
-
-	m_iScoreMultiplier = iMaxPossiblePoints / sum;
-	m_iPointBonus = (iMaxPossiblePoints * 10) - (sum * 10 * m_iScoreMultiplier);
+	m_iScoreMultiplier = iMaxPossiblePoints / (10*sum);
+	m_iPointBonus = iMaxPossiblePoints - (sum * 10 * m_iScoreMultiplier);
 
 	ASSERT( m_iScoreMultiplier >= 0 );
 	ASSERT( m_iPointBonus >= 0 );
@@ -182,7 +182,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	printf( "score: %i\n", m_iScore );
 
-	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = float(m_iScore);
+	GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber] = m_iScore;
 }
 
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory )

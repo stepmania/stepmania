@@ -204,9 +204,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 				CString sName = SONGMAN->m_MachineScores[pts.nt][pts.category][l].sName;
-				float fScore = SONGMAN->m_MachineScores[pts.nt][pts.category][l].fScore;
+				int iScore = SONGMAN->m_MachineScores[pts.nt][pts.category][l].iScore;
 				m_textNames[l].SetText( sName );
-				m_textScores[l].SetText( ssprintf("%09.0f",fScore) );
+				m_textScores[l].SetText( ssprintf("%09i",iScore) );
 				m_textPoints[l].SetText( "" );
 				m_textTime[l].SetText( "" );
 				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );

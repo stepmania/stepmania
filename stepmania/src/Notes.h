@@ -60,7 +60,7 @@ public:
 		int iScore;
 	} m_MemCardScores[NUM_MEMORY_CARDS];
 
-	void AddScore( PlayerNumber pn, Grade grade, float iScore, bool& bNewRecordOut );
+	void AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut );
 
 
 	void TidyUpData();

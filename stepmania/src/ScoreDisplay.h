@@ -19,7 +19,7 @@ class ScoreDisplay : public ActorFrame
 public:
 	virtual void Init( PlayerNumber pn ) { m_PlayerNumber = pn; };
 
-	virtual void SetScore( float fNewScore ) {};
+	virtual void SetScore( int iNewScore ) {};
 
 protected:
 	PlayerNumber m_PlayerNumber;	// needed to look up statistics in GAMESTATE

@@ -200,7 +200,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			{
 				if( GAMESTATE->IsHumanPlayer(p) )
 				{
-					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.fScore[p], bNewRecord[p] );
+					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p], bNewRecord[p] );
 				}
 			}
 		}
@@ -222,7 +222,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				fTotalDP += stageStats.iActualDancePoints[p];
 			}
 
-			SONGMAN->AddScores( nt, bIsHumanPlayer, cat, stageStats.fScore, iRankingIndex );
+			SONGMAN->AddScores( nt, bIsHumanPlayer, cat, stageStats.iScore, iRankingIndex );
 
 			COPY( GAMESTATE->m_RankingCategory, cat );
 			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
@@ -591,7 +591,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			m_textScore[p].SetDiffuse( PlayerToColor(p) );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
 			UtilSetXYAndOnCommand( m_textScore[p], "ScreenEvaluation" );
-			m_textScore[p].SetText( ssprintf("%*.0f", NUM_SCORE_DIGITS, stageStats.fScore[p]) );
+			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, stageStats.iScore[p]) );
 			this->AddChild( &m_textScore[p] );
 		}
 	}

@@ -274,7 +274,7 @@ void Notes::SetRadarValue(int r, float val)
 	m_fRadarValues[r] = val;
 }
 
-void Notes::AddScore( PlayerNumber pn, Grade grade, float iScore, bool& bNewRecordOut )
+void Notes::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut )
 {
 	bNewRecordOut = false;
 

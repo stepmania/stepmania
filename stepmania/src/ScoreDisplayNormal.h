@@ -25,16 +25,16 @@ public:
 
 	virtual void Update( float fDeltaTime );
 
-	virtual void SetScore( float fNewScore );
+	virtual void SetScore( int iNewScore );
 	virtual void SetText( CString s );
 
 protected:
 	Sprite		m_sprFrame;
 	BitmapText	m_text;
 
-	float m_fScore;			// the actual score
-	float m_fTrailingScore;	// what is displayed temporarily
-	float m_fScoreVelocity;	// how fast trailing approaches real score
+	int   m_iScore;			// the actual score
+	int   m_iTrailingScore;	// what is displayed temporarily
+	int   m_iScoreVelocity;	// how fast trailing approaches real score
 };
 
 #endif

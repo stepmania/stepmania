@@ -663,7 +663,7 @@ void Player::HandleTapRowScore( unsigned row )
 		m_pScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pInventory);
 
 	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
+		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
@@ -689,7 +689,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 		m_pScoreKeeper->HandleHoldScore(holdScore, tapScore);
 
 	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
+		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );

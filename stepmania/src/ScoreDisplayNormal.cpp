@@ -14,7 +14,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
-#include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 
@@ -34,9 +33,9 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	m_text.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayNormal") );
 	m_text.EnableShadow( false );
 
-	m_fScore = 0;
-	m_fTrailingScore = 0;
-	m_fScoreVelocity = 0;
+	m_iScore = 0;
+	m_iTrailingScore = 0;
+	m_iScoreVelocity = 0;
 
 	CString s;
 	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
@@ -51,13 +50,13 @@ void ScoreDisplayNormal::Init( PlayerNumber pn )
 	m_text.SetDiffuse( PlayerToColor(pn) );
 }
 
-void ScoreDisplayNormal::SetScore( float fNewScore ) 
-{ 
-	m_fScore = fNewScore;
+void ScoreDisplayNormal::SetScore( int iNewScore ) 
+{
+	m_iScore = iNewScore;
 
-	float fDelta = (float)m_fScore - m_fTrailingScore;
+	int iDelta = m_iScore - m_iTrailingScore;
 
-	m_fScoreVelocity = fDelta / SCORE_TWEEN_TIME;	// in score units per second
+	m_iScoreVelocity = int(float(iDelta) / SCORE_TWEEN_TIME);	// in score units per second
 }
 
 void ScoreDisplayNormal::SetText( CString s ) 
@@ -69,19 +68,20 @@ void ScoreDisplayNormal::Update( float fDeltaTime )
 {
 	ScoreDisplay::Update( fDeltaTime );
 
-	if( m_fTrailingScore != m_fScore )
+	if( m_iTrailingScore != m_iScore )
 	{
-		float fDeltaBefore = (float)m_fScore - m_fTrailingScore;
-		m_fTrailingScore += m_fScoreVelocity * fDeltaTime;
-		float fDeltaAfter = (float)m_fScore - m_fTrailingScore;
+		int iDeltaBefore = m_iScore - m_iTrailingScore;
+		m_iTrailingScore += int(m_iScoreVelocity * fDeltaTime);
+		int iDeltaAfter = m_iScore - m_iTrailingScore;
 
-		if( fDeltaBefore * fDeltaAfter < 0 )	// the sign changed
+		if( (iDeltaBefore < 0 && iDeltaAfter > 0) ||
+			(iDeltaBefore > 0 && iDeltaAfter < 0) )	// the sign changed
 		{
-			m_fTrailingScore = (float)m_fScore;
-			m_fScoreVelocity = 0;
+			m_iTrailingScore = m_iScore;
+			m_iScoreVelocity = 0;
 		}
 
-		m_text.SetText( ssprintf("%*.0f", NUM_SCORE_DIGITS, m_fTrailingScore) );
+		m_text.SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, m_iTrailingScore) );
 	}
 }
 

@@ -247,7 +247,7 @@ void SongManager::InitMachineScoresFromDisk()
 			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 				for( int k=0; k<NUM_RANKING_LINES; k++ )
 				{
-					m_MachineScores[i][j][k].fScore = 573000;
+					m_MachineScores[i][j][k].iScore = 573000;
 					m_MachineScores[i][j][k].sName = DEFAULT_RANKING_NAME;
 				}
 	}
@@ -267,7 +267,7 @@ void SongManager::InitMachineScoresFromDisk()
 							if( fp && !feof(fp) )
 							{
 								char szName[256];
-								fscanf(fp, "%f %[^\n]\n", &m_MachineScores[i][j][k].fScore, szName);
+								fscanf(fp, "%f %[^\n]\n", &m_MachineScores[i][j][k].iScore, szName);
 								m_MachineScores[i][j][k].sName = szName;
 							}
 			}
@@ -364,14 +364,14 @@ void SongManager::InitMachineScoresFromDisk()
 						
 						int iNumTimesPlayed;
 						Grade grade;
-						float fScore;
-						if( sscanf(line.c_str(), "%d %d %f\n", &iNumTimesPlayed, &grade, &fScore) != 3 )
+						int iScore;
+						if( sscanf(line.c_str(), "%d %d %i\n", &iNumTimesPlayed, &grade, &iScore) != 3 )
 							break;
 						if( pNotes )
 						{
 							pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
 							pNotes->m_MemCardScores[c].grade = grade;
-							pNotes->m_MemCardScores[c].fScore = fScore;
+							pNotes->m_MemCardScores[c].iScore = iScore;
 						}
 					}
 				}
@@ -434,7 +434,7 @@ void SongManager::SaveMachineScoresToDisk()
 				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 					for( int k=0; k<NUM_RANKING_LINES; k++ )
 						if( fp )
-							fprintf(fp, "%f %s\n", m_MachineScores[i][j][k].fScore, m_MachineScores[i][j][k].sName.c_str());
+							fprintf(fp, "%i %s\n", m_MachineScores[i][j][k].iScore, m_MachineScores[i][j][k].sName.c_str());
 			fclose(fp);
 		}
 	}
@@ -512,10 +512,10 @@ void SongManager::SaveMachineScoresToDisk()
 						pNotes->GetDifficulty(),
 						pNotes->GetDescription().c_str() );
 
-					fprintf(fp, "%d %d %f\n", 
+					fprintf(fp, "%d %d %i\n", 
 						pNotes->m_MemCardScores[c].iNumTimesPlayed,
 						pNotes->m_MemCardScores[c].grade,
-						pNotes->m_MemCardScores[c].fScore);
+						pNotes->m_MemCardScores[c].iScore);
 				}
 			}
 
@@ -998,13 +998,11 @@ struct CategoryScoreToInsert
 {
 	PlayerNumber pn;
 	RankingCategory cat;
-	float fScore;
+	int iScore;
 
 	static int CompareDescending( const CategoryScoreToInsert &hs1, const CategoryScoreToInsert &hs2 )
 	{
-		if( hs1.fScore > hs2.fScore )		return -1;
-		else if( hs1.fScore == hs2.fScore )	return 0;
-		else								return +1;
+		return hs1.iScore > hs2.iScore;
 	}
 	static void SortDescending( vector<CategoryScoreToInsert>& vHSout )
 	{ 
@@ -1015,7 +1013,7 @@ struct CategoryScoreToInsert
 // set iNewRecordIndex = -1 if not a new record
 void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
 							RankingCategory hsc[NUM_PLAYERS],
-							float fScore[NUM_PLAYERS],
+							int iScore[NUM_PLAYERS],
 							int iNewRecordIndexOut[NUM_PLAYERS] )
 {
 	vector<CategoryScoreToInsert> vHS;
@@ -1029,7 +1027,7 @@ void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
 		CategoryScoreToInsert hs;
 		hs.pn = (PlayerNumber)p;
 		hs.cat = hsc[p];
-		hs.fScore = fScore[p];
+		hs.iScore = iScore[p];
 		vHS.push_back( hs );
 	}
 
@@ -1043,13 +1041,13 @@ void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
 		MachineScore* machineScores = m_MachineScores[nt][newHS.cat];
 		for( int i=0; i<NUM_RANKING_LINES; i++ )
 		{
-			if( newHS.fScore > machineScores[i].fScore )
+			if( newHS.iScore > machineScores[i].iScore )
 			{
 				// We found the insert point.  Shift down.
 				for( int j=NUM_RANKING_LINES-1; j>i; j-- )
 					machineScores[j] = machineScores[j-1];
 				// insert
-				machineScores[i].fScore = newHS.fScore;
+				machineScores[i].iScore = newHS.iScore;
 				machineScores[i].sName = DEFAULT_RANKING_NAME;
 				iNewRecordIndexOut[newHS.pn] = i;
 				break;
