@@ -614,30 +614,43 @@ void StripCrnl(CString &s)
 }
 
 /* path is a .redir pathname.  Read it and return the real one. */
-CString DerefRedir(const CString &path)
+CString DerefRedir(const CString &_path)
 {
-	if( GetExtension(path) != "redir" )
+	CString path = _path;
+
+	for( int i=0; i<100; i++ )
 	{
-		CString path2 = path;
-		return path2;
+		if( GetExtension(path) != "redir" )
+		{
+			return path;
+		}
+
+		CString sNewFileName = GetRedirContents( path );
+
+		/* Empty is invalid. */
+		if( sNewFileName == "" )
+			return "";
+
+		FixSlashesInPlace( sNewFileName );
+
+		CString path2 = Dirname(path) + sNewFileName;
+
+		CollapsePath( path2 );
+
+		path2 += "*";
+
+		vector<CString> matches;
+		GetDirListing( path2, matches, false, true );
+
+		if( matches.empty() )
+			RageException::Throw( "The redirect '%s' references a file '%s' which doesn't exist.", path.c_str(), path2.c_str() );
+		else if( matches.size() > 1 )
+			RageException::Throw( "The redirect '%s' references a file '%s' with multiple matches.", path.c_str(), path2.c_str() );
+
+		path = matches[0];
 	}
 
-	CString sNewFileName = GetRedirContents( path );
-
-	/* Empty is invalid. */
-	if(sNewFileName == "")
-		return "";
-
-	FixSlashesInPlace( sNewFileName );
-
-	CString path2 = Dirname(path) + sNewFileName;
-
-	CollapsePath( path2 );
-
-	if( !DoesFileExist(path2) )
-		RageException::Throw( "The redirect '%s' references a file '%s' which doesn't exist.", path.c_str(), path2.c_str() );
-
-	return path2;
+	RageException::Throw( "Circular redirect '%s'", path.c_str() );
 }
 
 /* XXX: This can be used to read one line from any file; rename it. */
