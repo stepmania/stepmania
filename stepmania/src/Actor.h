@@ -81,9 +81,14 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void UpdateTweening( float fDeltaTime );
 
-	virtual float GetX()					{ return DestTweenState().pos.x; };
-	virtual float GetY()					{ return DestTweenState().pos.y; };
-	virtual float GetZ()					{ return DestTweenState().pos.z; };
+	/* Return the current coordinates, not the destination coordinates;
+	 * that's what the old behavior was, at least, and it's what ScreenMusicScroll
+	 * expects.  I could see uses for knowing the destination coords, though,
+	 * especially now that setting parameters when tweening and when not tweening
+	 * is somewhat abstracted.  Hmmm. -glenn */
+	virtual float GetX() const				{ return m_current.pos.x; };
+	virtual float GetY() const				{ return m_current.pos.y; };
+	virtual float GetZ() const				{ return m_current.pos.z; };
 	virtual void  SetX( float x )			{ DestTweenState().pos.x = x; };
 	virtual void  SetY( float y )			{ DestTweenState().pos.y = y; };
 	virtual void  SetZ( float z )			{ DestTweenState().pos.z = z; };
