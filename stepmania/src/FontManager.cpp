@@ -179,7 +179,10 @@ void FontManager::GetFontPaths(const CString &sFontOrTextureFilePath,
 	ASSERT(sExt.CompareNoCase("redir")); /* don't give us a redir! */
 
 	if(!sExt.empty())
+	{
 		TexturePaths.push_back(sFontOrTextureFilePath);
+		return;
+	}
 
 	/* If we have no extension, we need to search. */
 	GetDirListing( sFontOrTextureFilePath + "*.png", TexturePaths, false, true );
