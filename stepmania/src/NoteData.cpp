@@ -689,16 +689,16 @@ void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap
 		return;
 	}
 
-	if( iStartRow == 0 )
+	if( iStartRow <= 0 )
 		begin = mapTrack.begin(); /* optimization */
-	else if( iStartRow == MAX_NOTE_ROW )
+	else if( iStartRow >= MAX_NOTE_ROW )
 		begin = mapTrack.end(); /* optimization */
 	else
 		begin = mapTrack.lower_bound( iStartRow );
 
-	if( iEndRow == 0 )
+	if( iEndRow <= 0 )
 		end = mapTrack.begin(); /* optimization */
-	else if( iEndRow == MAX_NOTE_ROW )
+	else if( iEndRow >= MAX_NOTE_ROW )
 		end = mapTrack.end(); /* optimization */
 	else
 		end = mapTrack.lower_bound( iEndRow );
@@ -721,7 +721,9 @@ void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow,
 		{
 			int iHoldStartRow = prev->first;
 			int iHoldEndRow = iHoldStartRow + tn.iDuration;
-			if( iHoldEndRow > iStartRow || (bIncludeAdjacent && iHoldEndRow == iStartRow ) )
+			if( bIncludeAdjacent )
+				++iHoldEndRow;
+			if( iHoldEndRow > iStartRow )
 			{
 				/* The previous note is a hold. */
 				begin = prev;
