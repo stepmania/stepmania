@@ -466,19 +466,27 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 
 void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 {
-	SetNumTracks( pOriginal->GetNumTracks() );
-	CopyRange( pOriginal, 0, pOriginal->GetLastRow(), 0 );
+	SetNumTracks( iNewNumTracks );
 
-	const int iOriginalTracks = pOriginal->GetNumTracks();
-	const int iTracksToOverlap = iOriginalTracks / iNewNumTracks;
-	if( iTracksToOverlap )
+	NoteData in;
+	in.To2sAnd3s( *pOriginal );
+
+	for ( int i = 0; i < in.GetNumTracks(); i++ )
 	{
-		for ( int i = 0; i < iOriginalTracks; i++ )
+		int iTrackTo = i % iNewNumTracks;
+		int iTrackFrom = i;
+		const int iLastRow = in.GetMaxRow();
+
+		for( int row = 0; row < iLastRow; ++row )
 		{
-			CombineTracks( i % iNewNumTracks, i );
+			const TapNote iStepFrom = in.m_TapNotes[iTrackFrom][row];
+
+			if( GetTapNote(iTrackTo, row) == TAP_EMPTY ) 
+				SetTapNote( iTrackTo, row, iStepFrom );
 		}
 	}
-	SetNumTracks( iNewNumTracks );
+
+	ConvertHoldNotesTo2sAnd3s();
 }
 
 void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNewNumTracks )
@@ -594,35 +602,4 @@ void NoteData::EliminateAllButOneTap(int row)
 		if( m_TapNotes[track][row] == TAP_TAP )
 			m_TapNotes[track][row] = TAP_EMPTY;
 	}
-}
-
-void NoteData::CombineTracks( int iTrackTo, int iTrackFrom )
-{
-	LOG->Trace("NoteData::CombineTracks( %i , %i )", iTrackTo, iTrackFrom);
-	if( iTrackFrom < 0 || iTrackTo < 0 )
-		return;
-
-	const int iLastRow = GetMaxRow();
-	LOG->Trace("NoteData::CombineTracks - %i rows", iLastRow);
-
-	for( int row = 0; row < iLastRow; ++row )
-	{
-		const TapNote iStepFrom = m_TapNotes[iTrackFrom][row];
-		const TapNote iStepTo = m_TapNotes[iTrackTo][row];
-
-		if( iStepFrom == iStepTo )
-		{
-			// no reason to combine same steps
-			continue;
-		}
-		if( iStepTo != TAP_EMPTY ) 
-		{
-			// Mines from "from" track will not knock out any steps in
-			// the "to" track, but this behavior is fine, I think...
-			continue;
-		}
-		m_TapNotes[iTrackTo][row] = iStepFrom;
-	}
-
-	return;
 }
