@@ -70,7 +70,7 @@ class RageFileObjZipDeflated: public RageFileObj
 {
 private:
 	const FileInfo &info;
-	RageFile zip;
+	RageFileBasic *m_pFile;
 	int CFilePos, UFilePos;
 
 	z_stream dstrm;
@@ -78,7 +78,7 @@ private:
 	int decomp_buf_avail;
 
 public:
-	RageFileObjZipDeflated( const RageFile &f, const FileInfo &info );
+	RageFileObjZipDeflated( RageFileBasic *pFile, const FileInfo &info );
 	RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy );
 	~RageFileObjZipDeflated();
 	int ReadInternal( void *pBuffer, size_t iBytes );
@@ -437,7 +437,7 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 	case STORED:
 		return new RageFileObjZipStored( zip.Copy(), info->data_offset, info->uncompr_size );
 	case DEFLATED:
-		return new RageFileObjZipDeflated( zip, *info );
+		return new RageFileObjZipDeflated( zip.Copy(), *info );
 	default:
 		/* unknown compression method */
 		ASSERT( 0 );
@@ -454,10 +454,10 @@ void RageFileDriverZip::FlushDirCache( const CString &sPath )
 
 /* We make a copy of the RageFile: multiple files may read from the same ZIP at once;
  * this way, we don't have to keep seeking around. */
-RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInfo &info_ ):
-	info(info_),
-	zip( f )
+RageFileObjZipDeflated::RageFileObjZipDeflated( RageFileBasic *pFile, const FileInfo &info_ ):
+	info(info_)
 {
+	m_pFile = pFile;
 	decomp_buf_avail = 0;
 
 	dstrm.zalloc = Z_NULL;
@@ -475,14 +475,14 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 
 RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy ):
 	RageFileObj( cpy ),
-	info( cpy.info ),
-	zip( cpy.zip )
+	info( cpy.info )
 {
 	/* XXX completely untested */
 	/* Copy the entire decode state. */
 	/* inflateInit2 isn't widespread yet */
 	ASSERT( 0 );
 /*
+	m_pFile = cpy.m_pFile->Copy();
 	inflateCopy( &dstrm, const_cast<z_streamp>(&cpy.dstrm) );
 
 	decomp_buf_ptr = decomp_buf + (cpy.decomp_buf_ptr - cpy.decomp_buf);
@@ -495,6 +495,8 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cp
 
 RageFileObjZipDeflated::~RageFileObjZipDeflated()
 {
+	delete m_pFile;
+
 	int err = inflateEnd( &dstrm );
 	if( err != Z_OK )
 		LOG->Trace( "Huh? inflateEnd() err = %i", err );
@@ -510,10 +512,10 @@ int RageFileObjZipDeflated::ReadInternal( void *buf, size_t bytes )
 		{
 			decomp_buf_ptr = decomp_buf;
 			decomp_buf_avail = 0;
-			int got = zip.Read( decomp_buf, sizeof(decomp_buf) );
+			int got = m_pFile->Read( decomp_buf, sizeof(decomp_buf) );
 			if( got == -1 )
 			{
-				SetError( zip.GetError() );
+				SetError( m_pFile->GetError() );
 				return -1;
 			}
 			if( got == 0 )
@@ -569,7 +571,7 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 	{
 		UFilePos = info.uncompr_size;
 		CFilePos = info.compr_size;
-		zip.Seek( info.data_offset + info.compr_size );
+		m_pFile->Seek( info.data_offset + info.compr_size );
 		decomp_buf_ptr = decomp_buf;
 		decomp_buf_avail = 0;
 		inflateReset( &dstrm );
@@ -582,7 +584,7 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 		decomp_buf_ptr = decomp_buf;
 		decomp_buf_avail = 0;
 
-		zip.Seek( info.data_offset );
+		m_pFile->Seek( info.data_offset );
 		CFilePos = 0;
 		UFilePos = 0;
 	}
