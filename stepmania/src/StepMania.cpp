@@ -691,13 +691,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	}
 #endif
 
-#ifndef DARWIN
 	/* XXX: Er, this doesn't work; Windows traps this key and takes a screenshot
 	 * into the clipboard.  I don't want to disable that, though; it's useful. */
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F11))
-#else
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_KP_MULTIPLY))
-#endif
 	{
 		// Save Screenshot.
 		CString sPath;
