@@ -30,6 +30,7 @@ enum {
 	AO_ANNOUNCER = 0,
 	AO_THEME,
 	AO_SKIN,
+	AO_HOWTOPLAY,
 	NUM_APPEARANCE_OPTIONS_LINES
 };
 
@@ -37,6 +38,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Announcer",	1, {"OFF"} },	// fill this in on ImportOptions()
 	{ "Theme",		0, {""} },		// fill this in on ImportOptions()
 	{ "Note Skin",	0, {""} },		// fill this in on ImportOptions()
+	{ "How^To Play",2, {"OFF","ON"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -135,6 +137,8 @@ void ScreenAppearanceOptions::ImportOptions()
 	}
 	if( m_iSelectedOption[0][AO_SKIN] == -1 )
 		m_iSelectedOption[0][AO_SKIN] = 0;
+
+	m_iSelectedOption[0][AO_HOWTOPLAY]					= PREFSMAN->m_bHowToPlay? 1:0;
 }
 
 void ScreenAppearanceOptions::ExportOptions()
@@ -152,6 +156,8 @@ void ScreenAppearanceOptions::ExportOptions()
 	int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
 	CString sNewSkin = m_OptionRowData[AO_SKIN].szOptionsText[iSelectedSkin];
 	GAMEMAN->SwitchNoteSkin( sNewSkin );
+
+	PREFSMAN->m_bHowToPlay				= !!m_iSelectedOption[0][AO_HOWTOPLAY];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();
