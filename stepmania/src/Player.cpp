@@ -236,12 +236,6 @@ void Player::Load( const NoteData& noteData )
 	m_ProTimingDisplay.SetX( JUDGMENT_X(pn,bPlayerUsingBothSides) );
 	m_ProTimingDisplay.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
-	/* These commands add to the above positioning, and are usually empty. */
-	m_Judgment.RunCommands( g_NoteFieldMode[pn].m_JudgmentCmd );
-	m_ProTimingDisplay.RunCommands( g_NoteFieldMode[pn].m_JudgmentCmd );
-	m_Combo.RunCommands( g_NoteFieldMode[pn].m_ComboCmd );
-	m_AttackDisplay.RunCommands( g_NoteFieldMode[pn].m_AttackDisplayCmd );
-
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 

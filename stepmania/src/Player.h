@@ -8,7 +8,6 @@
 #include "HoldJudgment.h"
 #include "Combo.h"
 #include "NoteDataWithScoring.h"
-#include "ArrowBackdrop.h"
 #include "RageTimer.h"
 #include "ProTimingDisplay.h"
 #include "RageSound.h"
@@ -78,7 +77,6 @@ protected:
 	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
 	int				m_iOffsetSample;
 
-	ArrowBackdrop	m_ArrowBackdrop;
 	NoteField*		m_pNoteField;
 
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];

@@ -19,7 +19,6 @@ NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
 
 NoteFieldMode::NoteFieldMode()
 {
-	m_fFirstPixelToDrawScale = m_fLastPixelToDrawScale = 1.0f;
 }
 
 void NoteFieldMode::BeginDrawTrack(int tn)
@@ -55,17 +54,6 @@ void NoteFieldMode::Load(const XNode *pNode, int pn)
 
 	/* Required: */
 	ASSERT( pNode->GetAttrValue("Name",			m_Name ) );
-
-	// if we aren't loading a player, we can bail here.
-	if(pn == -1)
-		return;
-
-	GetValue( pNode, pn, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
-	GetValue( pNode, pn, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
-
-	CString s;
-	if( GetValue( pNode, pn, "Judgment",			s ) )	m_JudgmentCmd = ParseCommands(s);
-	if( GetValue( pNode, pn, "Combo",				s ) )	m_ComboCmd = ParseCommands(s);
 }
 
 NoteFieldPositioning::NoteFieldPositioning(CString fn)

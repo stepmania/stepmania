@@ -430,13 +430,8 @@ void NoteField::DrawPrimitives()
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
 	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_MINI] );
 	
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	float fFirstDrawScale = g_NoteFieldMode[pn].m_fFirstPixelToDrawScale;
-	float fLastDrawScale = g_NoteFieldMode[pn].m_fLastPixelToDrawScale;
-
-	iFirstPixelToDraw = (int)(iFirstPixelToDraw * fFirstDrawScale * fDrawScale);
-	iLastPixelToDraw = (int)(iLastPixelToDraw * fLastDrawScale * fDrawScale);
+	iFirstPixelToDraw = (int)(iFirstPixelToDraw * fDrawScale);
+	iLastPixelToDraw = (int)(iLastPixelToDraw * fDrawScale);
 
 
 	// Probe for first and last notes on the screen

@@ -24,10 +24,6 @@ struct NoteFieldMode
 	CString m_Id;
 
 	float m_fPositionTrackX[MAX_NOTE_TRACKS];
-	
-	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
-
-	Commands m_JudgmentCmd, m_ComboCmd, m_AttackDisplayCmd;
 };
 
 class NoteFieldPositioning
