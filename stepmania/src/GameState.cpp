@@ -208,7 +208,7 @@ int GameState::GetCourseSongIndex()
 	int iSongIndex = 0;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( IsPlayerEnabled(p) )
-			iSongIndex = max( iSongIndex, m_CurStageStats.iSongsPassed[p] );
+			iSongIndex = max( iSongIndex, m_CurStageStats.iSongsPlayed[p] );
 	return iSongIndex;
 }
 
