@@ -26,7 +26,6 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_TITLE_MENU_BACKGROUND:		sAssetPath = "Graphics\\title menu background";		break;
 		case GRAPHIC_SELECT_STYLE_BACKGROUND:	sAssetPath = "Graphics\\select style background";	break;
 		case GRAPHIC_SELECT_MUSIC_BACKGROUND:	sAssetPath = "Graphics\\select music background";	break;
-		case GRAPHIC_OPTIONS_BACKGROUND:		sAssetPath = "Graphics\\options background";		break;
 		case GRAPHIC_RESULT_BACKGROUND:			sAssetPath = "Graphics\\result background";			break;
 		case GRAPHIC_SELECT_STYLE_TOP_EDGE:		sAssetPath = "Graphics\\select style top edge";		break;
 		case GRAPHIC_SELECT_MUSIC_TOP_EDGE:		sAssetPath = "Graphics\\select music top edge";		break;
@@ -75,6 +74,11 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_ARROWS_RIGHT:			sAssetPath = "Graphics\\arrows right 1x4";				break;
 		case GRAPHIC_EDIT_BACKGROUND:		sAssetPath = "Graphics\\edit background";				break;
 		case GRAPHIC_EDIT_SNAP_INDICATOR:	sAssetPath = "Graphics\\edit snap indicator";			break;
+		case GRAPHIC_GAME_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\game options background";	break;
+		case GRAPHIC_PLAYER_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\player options background";	break;
+		case GRAPHIC_MUSIC_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\music options background";	break;
+		case GRAPHIC_SYNCHRONIZE_BACKGROUND:	sAssetPath = "Graphics\\synchronize background";	break;
+		case GRAPHIC_SYNCHRONIZE_TOP_EDGE:		sAssetPath = "Graphics\\synchronize top edge";		break;
 
 		case SOUND_FAILED:					sAssetPath = "Sounds\\failed";							break;
 		case SOUND_ASSIST:					sAssetPath = "Sounds\\Assist";							break;

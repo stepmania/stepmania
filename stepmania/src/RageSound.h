@@ -25,10 +25,11 @@ public:
 	RageSound( HWND hWnd );
 	~RageSound();
 
+	float GetPlayLatency() { return m_info.latency / 1000.0f; };
 
 private:
 	HWND		m_hWndApp;	// this is set on GRAPHICS_Create()
-
+	BASS_INFO	m_info;
 };
 
 

@@ -54,10 +54,6 @@ Player::Player()
 	this->AddActor( &m_Combo );
 	this->AddActor( &m_LifeMeter );
 	this->AddActor( &m_Score );
-
-
-	// assist
-	m_soundAssistTick.Load( THEME->GetPathTo(SOUND_ASSIST) );
 }
 
 
@@ -251,11 +247,6 @@ void Player::RenderPrimitives()
 
 }
 
-void Player::CrossedIndex( int iIndex )
-{
-
-}
-
 bool Player::IsThereANoteAtIndex( int iIndex )
 {
 	return m_TapStepsOriginal[iIndex] != STEP_NONE;
@@ -268,13 +259,10 @@ void Player::HandlePlayerStep( float fSongBeat, TapStep player_step, float fMaxB
 {
 	//RageLog( "Player::HandlePlayerStep()" );
 
-	// update gray arrows
 	int iColumnNum = m_Style.TapStepToColumnNumber( player_step );
-	// For single player and two player, iColumnNum will be 4/5 or 8/9/10/11 for
-	// up-left and up-right hits. Seemed this was the simplest way to ignore them in game.
-	if (iColumnNum >= m_Style.m_iNumColumns)
-		return;
-	
+	if( iColumnNum == -1 )	// if this TapStep is not used in the current Style
+		return;		// ignore the step
+
 	m_GrayArrows.Step( iColumnNum );
 
 	CheckForCompleteStep( fSongBeat, player_step, fMaxBeatDiff );

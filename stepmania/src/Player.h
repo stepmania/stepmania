@@ -82,8 +82,6 @@ protected:
 	LifeMeterPills					m_LifeMeter;
 	ScoreDisplayRollingWithFrame	m_Score;
 	
-	SoundSet		m_soundAssistTick;
-
 };
 
 

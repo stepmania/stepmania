@@ -206,7 +206,7 @@ void Actor::Update( float fDeltaTime )
 
 void Actor::BeginTweening( float time, TweenType tt )
 {
-	StopTweening();
+	StopTweening();	// cancel current tweens
 	BeginTweeningQueued( time, tt );
 }
 
@@ -214,16 +214,25 @@ void Actor::BeginTweeningQueued( float time, TweenType tt )
 {
 	ASSERT( time > 0 );
 
+	// add a new TweenState to the tail, and initialize it
 	m_QueuedTweens.Add( TweenState() );
-
 	TweenState &TS = m_QueuedTweens[m_QueuedTweens.GetSize()-1];
 
-	// set our tween starting and ending values to the current position
-	TS.m_end_pos			= m_pos;
-	TS.m_end_scale			= m_scale;
-	TS.m_end_rotation		= m_rotation;
-	for(int i=0; i<4; i++)	TS.m_end_colorDiffuse[i]	= m_colorDiffuse[i];
-	TS.m_end_colorAdd		= m_colorAdd;
+	if( m_QueuedTweens.GetSize() >= 2 )		// if there was already a TS on the stack
+	{
+		// initialize the new TS from the last TS in the list
+		TS = m_QueuedTweens[m_QueuedTweens.GetSize()-2];
+	}
+	else
+	{
+		// This new TS is the only TS.
+		// Set our tween starting and ending values to the current position.
+		TS.m_end_pos			= m_pos;
+		TS.m_end_scale			= m_scale;
+		TS.m_end_rotation		= m_rotation;
+		for(int i=0; i<4; i++)	TS.m_end_colorDiffuse[i]	= m_colorDiffuse[i];
+		TS.m_end_colorAdd		= m_colorAdd;
+	}
 
 	TS.m_TweenType = tt;
 	TS.m_fTweenTime = time;

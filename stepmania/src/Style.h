@@ -26,16 +26,13 @@ struct Style
 
 	int TapStepToColumnNumber( TapStep tap_step )
 	{
-		//for (int i=0; i<m_iNumColumns; i++)
-		for( int i=0; i<MAX_NUM_COLUMNS; i++ ) 
-		// Switched to MAX_NUM_COLUMNS so up-left and up-right don't cause ASSERT(false)
-		// Player.HandelPlayerStep will ignore up-left and up-right if it needs.
+		for (int i=0; i<m_iNumColumns; i++)
 		{
 			if( m_ColumnToTapStep[i] == tap_step )
 				return i;
 		}
-		ASSERT( false );
-		return -1;
+
+		return -1;	// the TapStep is not used in this style
 	};
 
 };

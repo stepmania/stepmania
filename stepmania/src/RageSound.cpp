@@ -22,6 +22,7 @@ LPRageSound				SOUND	= NULL;
 
 RageSound::RageSound( HWND hWnd )
 {
+	RageLog( "RageSound::RageSound()" );
 	// save the HWND
 	if( !hWnd )
 		RageError( "RageSound called with NULL hWnd." );
@@ -30,7 +31,7 @@ RageSound::RageSound( HWND hWnd )
 	if( BASS_GetVersion() != MAKELONG(1,3) )
 		RageError( "BASS version 1.3 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
 
-	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL, m_hWndApp ) )
+	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL|BASS_DEVICE_LATENCY, m_hWndApp ) )
 	{
 		RageError( 
 			"There was an error while initializing your sound card.\n\n"
@@ -42,6 +43,29 @@ RageSound::RageSound( HWND hWnd )
 	}
 
 	BASS_Start();
+
+	ZeroMemory( &m_info, sizeof(m_info) );
+	m_info.size = sizeof(m_info);
+	BASS_GetInfo( &m_info );
+
+
+	RageLog( 
+		"Sound card info:\n"
+		" - play latency is %u ms\n"
+		" - total device hardware memory is %u bytes\n"
+		" - free device hardware memory is %u bytes\n"
+		" - number of free sample slots in the hardware is %u\n"
+		" - number of free 3D sample slots in the hardware is %u\n"
+		" - min sample rate supported by the hardware is %u\n"
+		" - max sample rate supported by the hardware is %u",
+		m_info.latency,
+		m_info.hwsize,
+		m_info.hwfree,
+		m_info.freesam,
+		m_info.free3d,
+		m_info.minrate,
+		m_info.maxrate
+		);
 }
 
 RageSound::~RageSound()
