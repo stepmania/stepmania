@@ -61,6 +61,16 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 #define NEED_ROUNDF
 #define MISSING_STDINT_H
 
+inline int lrintf( float f )
+{
+	int retval;
+
+	_asm fld f;
+	_asm fistp retval;
+
+	return retval;
+}
+
 /* For RageLog */
 #define HAVE_VERSION_INFO
 
