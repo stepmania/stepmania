@@ -125,7 +125,7 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	this->Info( "Statics:\n%s", GetAdditionalLog() );
+	this->Info( "%s", GetAdditionalLog() );
 
 	Flush();
 	HideConsole();
