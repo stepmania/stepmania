@@ -74,6 +74,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 			s.Deallocate();
 			s.state = sound::STOPPED;
 			s.available = true; /* do this last */
+			s.paused = false;
 
 //			LOG->Trace("set %p from HALTING to STOPPED", sounds[i].snd);
 			continue;
@@ -411,7 +412,11 @@ bool RageSound_Generic_Software::PauseMixing( RageSoundBase *snd, bool bStop )
 		if( !sounds[i].available && sounds[i].snd == snd )
 			break;
 
-	if( i == ARRAYSIZE(sounds) )
+	/* A sound can be paused in PLAYING or STOPPING.  (STOPPING means the sound
+	 * has been decoded to the end, and we're waiting for that data to finish, so
+	 * externally it looks and acts like PLAYING.) */
+	if( i == ARRAYSIZE(sounds) ||
+		(sounds[i].state != sound::PLAYING && sounds[i].state != sound::STOPPING) )
 	{
 		LOG->Trace( "not pausing a sound because it's not playing" );
 		return false;
