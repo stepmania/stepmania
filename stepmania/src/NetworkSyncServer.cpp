@@ -234,20 +234,20 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 		numPlayers = SortStats(playersPtr);
 		Reply.ClearPacket();
 		Reply.Write1( 4+128 );
-		Reply.Write1(numPlayers);
+		Reply.Write1( (uint8_t) numPlayers );
 		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write4(playersPtr[x]->score);
 		for (int x = 0; x < numPlayers; x++) 
-			Reply.Write1(playersPtr[x]->projgrade);
+			Reply.Write1( (uint8_t) playersPtr[x]->projgrade );
 		for (int x = 0; x < numPlayers; x++) 
-			Reply.Write1(playersPtr[x]->diff);
+			Reply.Write1( (uint8_t) playersPtr[x]->diff );
 		for (int y = 6; y >= 1; y--)
 			for (int x = 0; x < numPlayers; x++)
-				Reply.Write2(playersPtr[x]->steps[y]);
+				Reply.Write2( (uint16_t) playersPtr[x]->steps[y] );
 		for (int x = 0; x < numPlayers; x++) 
-			Reply.Write2(playersPtr[x]->steps[8]);  //Tack on OK
+			Reply.Write2( (uint16_t) playersPtr[x]->steps[8] );  //Tack on OK
 		for (int x = 0; x < numPlayers; x++) 
-			Reply.Write2(playersPtr[x]->maxCombo);
+			Reply.Write2( (uint16_t) playersPtr[x]->maxCombo );
 		SendToAllClients(Reply);
 	}
 }
@@ -357,7 +357,7 @@ void StepManiaLanServer::SendNetPacket(int client, char *data, int size) {
 void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {
 	CString numname;
 	for (int x = 0; x < numPlayers; x++)
-		data.Write1(playersPtr[x]->PlayerID);
+		data.Write1( (uint8_t) playersPtr[x]->PlayerID );
 }
 
 void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {

@@ -595,7 +595,7 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case 9:
 			{
-				int ServerMaxPlayers=m_packet.Read1();
+				/*int ServerMaxPlayers=*/m_packet.Read1();
 				int PlayersInThisPacket=m_packet.Read1();
 				m_PlayerStatus.clear();
 				m_PlayerNames.clear();
