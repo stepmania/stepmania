@@ -353,14 +353,43 @@ bool Song::LoadFromSongDir( CString sDir )
 
 	{
 		/* Generated filename; this doesn't always point to a loadable file,
-		 * but instead points to the place we should write changed files to.
-		 * If we have an SM file in the directory, this should aways point to it. */
+		 * but instead points to the file we should write changed files to,
+		 * and will always be an .SM.
+		 *
+		 * This is a little tricky.  We can't always use the song title directly,
+		 * since it might contain characters we can't store in filenames.  Two
+		 * easy options: we could manually filter out invalid characters, or we
+		 * could use the name of the directory, which is always a valid filename
+		 * and should always be the same as the song.  The former might not catch
+		 * everything--filename restrictions are platform-specific; we might even
+		 * be on an 8.3 filesystem, so let's do the latter.
+		 *
+		 * We can't rely on searching for other data filenames; it works for DWIs,
+		 * but not KSFs and BMSs.
+		 *
+		 * So, let's do this (by priority):
+		 * 1. If there's an .SM file, use that filename.  No reason to use anything
+		 *    else; it's the filename in use.
+		 * 2. If there's a .DWI, use it with a changed extension.
+		 * 3. Otherwise, use the name of the directory, since it's definitely a valid
+		 *    filename, and should always be the title of the song (unlike KSFs).
+		 */
+		m_sSongFileName = m_sSongDir;
 		CStringArray asFileNames;
 		GetDirListing( m_sSongDir+"*.sm", asFileNames );
 		if( asFileNames.GetSize() > 0 )
-			m_sSongFileName = m_sSongDir + asFileNames[0];
-		else
-			m_sSongFileName = m_sSongDir + GetFullTitle() + ".sm";
+			m_sSongFileName += asFileNames[0];
+		else {
+			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
+			if( asFileNames.GetSize() > 0 ) {
+				m_sSongFileName += asFileNames[0];
+				/* XXX: This would mess up "vote.for.dwight.d.eisenhower.dwi". */
+				m_sSongFileName.Replace( ".dwi", ".sm" );
+			} else {
+				m_sSongFileName += sDirectoryParts[sDirectoryParts.GetSize()-2];	// last item
+				m_sSongFileName += ".sm";
+			}
+		}
 	}
 
 	return true;
