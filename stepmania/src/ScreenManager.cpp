@@ -378,6 +378,7 @@ retry:
 		pNewBGA->LoadFromAniDir( sNewBGA );
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
+		m_pSharedBGA->PlayCommand( "On" );
 
 		m_sLastLoadedBackgroundPath = sNewBGA;
 	}
