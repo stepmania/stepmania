@@ -11,11 +11,6 @@ struct CrashData
 		/* We received a fatal signal.  si and uc are valid. */
 		SIGNAL,
 
-#if defined(DARWIN)
-		/* We received a fatal exception. */
-		OSX_EXCEPTION,
-#endif
-
 		/* We're forcing a crash (eg. failed ASSERT). */
 		FORCE_CRASH_THIS_THREAD,
 
@@ -32,9 +27,6 @@ struct CrashData
 	/* SIGNAL only: */
 	int signal;
 	siginfo_t si;
-
-	/* OSX_EXCEPTION only: */
-	int kind;
 	
 	/* FORCE_CRASH_THIS_THREAD and FORCE_CRASH_DEADLOCK only: */
 	char reason[256];
@@ -44,9 +36,4 @@ struct CrashData
 
 const char *SignalName( int signo );
 
-#if defined(DARWIN)
-const char *ExceptionName( int signo );
 #endif
-
-#endif
-
