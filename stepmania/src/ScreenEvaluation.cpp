@@ -379,7 +379,7 @@ void ScreenEvaluation::Init()
 						m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
 						break;
 					case course:
-						m_DifficultyIcon[p].SetFromDifficulty( p, GAMESTATE->m_PreferredCourseDifficulty[p] );
+						m_DifficultyIcon[p].SetFromTrail( p, GAMESTATE->m_pCurTrail[p] );
 						break;
 					default:
 						ASSERT(0);
