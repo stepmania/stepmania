@@ -99,11 +99,12 @@ bool TextBanner::LoadFromSong( const Song* pSong )
 		return true;
 	}
 
-	m_textTitle.SetText( pSong->GetDisplayMainTitle() );
-	m_textSubTitle.SetText( pSong->GetDisplaySubTitle() );
-	m_textArtist.SetText( g_sArtistPrependString + pSong->GetDisplayArtist() );
+	m_textTitle.SetText( pSong->GetDisplayMainTitle(), pSong->GetTranslitMainTitle() );
+	m_textSubTitle.SetText( pSong->GetDisplaySubTitle(), pSong->GetTranslitSubTitle() );
+	m_textArtist.SetText( g_sArtistPrependString + pSong->GetDisplayArtist(),
+						  g_sArtistPrependString + pSong->GetTranslitArtist() );
 
-	bool bTwoLines = pSong->m_sSubTitle.length() == 0;
+	bool bTwoLines = m_textSubTitle.GetText().size() == 0;
 
 	float fTitleZoom	= bTwoLines ? g_fTwoLinesTitleZoom	: g_fThreeLinesTitleZoom;
 	float fSubTitleZoom = bTwoLines ? 0						: g_fThreeLinesSubTitleZoom;
