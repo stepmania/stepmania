@@ -67,7 +67,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
 
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	// init scoring
 	NoteDataWithScoring::Init();

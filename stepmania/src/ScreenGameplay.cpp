@@ -438,7 +438,7 @@ ScreenGameplay::ScreenGameplay()
 
 
 	// Get the current StyleDef definition (used below)
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -685,7 +685,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 		NoteData originalNoteData;
 		GAMESTATE->m_pCurNotes[p]->GetNoteData( &originalNoteData );
 		
-		StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		NoteData newNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &originalNoteData, &newNoteData );
 
