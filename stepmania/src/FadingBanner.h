@@ -12,9 +12,9 @@ class FadingBanner : public ActorFrame
 public:
 	FadingBanner();
 
-	virtual bool Load( RageTextureID ID );
 	void ScaleToClipped( float fWidth, float fHeight );
 
+	bool Load( RageTextureID ID );
 	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadSort();
