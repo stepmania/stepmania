@@ -193,7 +193,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 	{
 		NoteType nt = NoteDataUtil::GetSmallestNoteTypeForMeasure( notedata, m );
 
-		double fCurrentIncrementer;
+		double fCurrentIncrementer = 0;
 		switch( nt )
 		{
 		case NOTE_TYPE_4TH:
