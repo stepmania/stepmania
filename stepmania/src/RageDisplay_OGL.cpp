@@ -1646,7 +1646,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 {
 	if( glImageFormat != GL_COLOR_INDEX || glTexFormat == GL_COLOR_INDEX8_EXT )
 	{
-		glPixelTransferi( GL_MAP_COLOR, FALSE );
+		glPixelTransferi( GL_MAP_COLOR, false );
 		return;
 	}
 
@@ -1666,7 +1666,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
-	glPixelTransferi( GL_MAP_COLOR, TRUE );
+	glPixelTransferi( GL_MAP_COLOR, true );
 	GLenum error = glGetError();
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 }
