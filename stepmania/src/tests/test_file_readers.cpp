@@ -2,7 +2,11 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageUtil.h"
+#include "RageUtil_FileDB.h"
 #include "RageFileManager.h"
+
+CString InitialWorkingDirectory = ".";
+CString DirOfExecutable = ".";
 
 void CreateBinaryTestFile( FILE *out, int size )
 {
@@ -228,11 +232,11 @@ void TestSeek( bool relative )
 
 int main()
 {
+	FILEMAN = new RageFileManager;
+
 	LOG			= new RageLog();
 	LOG->ShowLogOutput( true );
 	LOG->SetFlushing( true );
-	
-	FILEMAN = new RageFileManager;
 
 	/* Create a binary file to test with. */
 	CreateBinaryTestFile( "test.1", 4096 );

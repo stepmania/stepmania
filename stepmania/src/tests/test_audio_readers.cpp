@@ -3,11 +3,15 @@
 #include "RageSoundReader_MP3.h"
 #include "RageTimer.h"
 #include "RageInputDevice.h"
+#include "RageFileManager.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+CString InitialWorkingDirectory = ".";
+CString DirOfExecutable = ".";
 
 void ReadData( SoundReader *snd,
 	       int ms,		/* start */
@@ -243,6 +247,7 @@ bool test_file( const char *fn, float expected_fix )
 }
 int main()
 {
+        FILEMAN = new RageFileManager;
 	LOG			= new RageLog();
 	LOG->ShowLogOutput( true );
 	LOG->SetFlushing( true );
