@@ -44,6 +44,9 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
+	m_bLoop = true;
+	m_bPlaying = false;
+
 	m_uTexHandle = 0;
 	buffer = NULL;
 	buffer_lock = SDL_CreateSemaphore(1);
@@ -55,9 +58,6 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
-
-	m_bLoop = true;
-	m_bPlaying = false;
 }
 
 /* Hold buffer_lock.  If it's held, then the decoding thread is waiting
@@ -308,8 +308,7 @@ void MovieTexture_DShow::Create()
 	CreateTexture();
 
 	// Start the graph running
-    if( !PlayMovie() )
-        RageException::Throw( "Could not run the DirectShow graph." );
+    Play();
 }
 
 
@@ -373,11 +372,12 @@ void MovieTexture_DShow::CreateTexture()
 	SDL_FreeSurface( img );
 }
 
-bool MovieTexture_DShow::PlayMovie()
+
+void MovieTexture_DShow::Play()
 {
 	SkipUpdates();
 
-	LOG->Trace("MovieTexture_DShow::PlayMovie()");
+	LOG->Trace("MovieTexture_DShow::Play()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
@@ -389,14 +389,6 @@ bool MovieTexture_DShow::PlayMovie()
 	m_bPlaying = true;
 
 	StopSkippingUpdates();
-
-	return true;
-}
-
-
-void MovieTexture_DShow::Play()
-{
-	PlayMovie();
 }
 
 void MovieTexture_DShow::Pause()
@@ -461,11 +453,6 @@ void MovieTexture_DShow::SetPlaybackRate( float fRate )
 		this->Pause();
 		return;
 	}
-}
-
-bool MovieTexture_DShow::IsPlaying() const
-{
-	return m_bPlaying;
 }
 
 

@@ -58,7 +58,8 @@ public:
 	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
 	virtual void SetPlaybackRate( float fRate );
-	virtual bool IsPlaying() const;
+	virtual bool IsPlaying() const { return m_bPlaying; }
+
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
 	void NewData(const char *buffer);
@@ -70,7 +71,6 @@ private:
 	void Create();
 
 	void CreateTexture();
-	bool PlayMovie();
 	void SkipUpdates();
 	void StopSkippingUpdates();
 	void CheckFrame();
