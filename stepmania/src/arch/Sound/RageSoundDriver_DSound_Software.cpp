@@ -8,18 +8,16 @@
 #include "RageUtil.h"
 #include "RageSoundManager.h"
 
-#include "SDL.h"
 
-/* samples */
-const int channels = 2;
-const int bytes_per_frame = channels*2; /* 16-bit */
-const int samplerate = 44100;
-const int buffersize = 1024*4;	/* in frames */
+static const int channels = 2;
+static const int bytes_per_frame = channels*2; /* 16-bit */
+static const int samplerate = 44100;
+static const int buffersize = 1024*4;	/* in frames */
 
 /* We'll fill the buffer in chunks this big.  This should evenly divide the
  * buffer size. */
-const int num_chunks = 8;
-const int chunksize = buffersize / num_chunks;
+static const int num_chunks = 8;
+static const int chunksize = buffersize / num_chunks;
 
 int RageSound_DSound_Software::MixerThread_start(void *p)
 {
