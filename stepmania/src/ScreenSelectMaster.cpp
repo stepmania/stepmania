@@ -194,7 +194,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_bChosen[p] = false;
 	}
 	
-	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())) );
+	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())), true );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 	m_soundStart.Load( THEME->GetPathToS( ssprintf("%s start", m_sName.c_str())) );
 
