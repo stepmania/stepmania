@@ -23,9 +23,9 @@ enum {
 class NotesLoader {
 protected:
 	virtual void GetApplicableFiles( CString sPath, CStringArray &out )=0;
-	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 
 public:
+	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;
 	bool Loadable( CString sPath );
 };
