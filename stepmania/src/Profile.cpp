@@ -520,10 +520,11 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 	ini.GetValue("Editable","WeightPounds",				m_fWeightPounds);
 
 	// This is data that the user can change, so we have to validate it.
-	if( m_sDisplayName.GetLength() > 12 )
-		m_sDisplayName = m_sDisplayName.Left(12);
+	wstring wstr = CStringToWstring(m_sDisplayName);
+	if( wstr.size() > 12 )
+		wstr = wstr.substr(0, 12);
+	m_sDisplayName = WStringToCString(wstr);
 	// TODO: strip invalid chars?
-	// TODO: is 12 chars reasonable for all UTF8 strings?
 	CLAMP( m_fWeightPounds, 0, 500 );
 }
 
