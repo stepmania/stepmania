@@ -504,15 +504,6 @@ void ScreenGameplay::Init()
 		SET_XY( m_textCourseSongNumber[p] );
 		m_textCourseSongNumber[p].SetText( "" );
 		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
-
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
-		{
-			m_textPlayerName[p].LoadFromFont( THEME->GetPathF(m_sName,"player") );
-			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
-			SET_XY( m_textPlayerName[p] );
-			this->AddChild( &m_textPlayerName[p] );
-		}
 	}
 
 	FOREACH_EnabledPlayer(p)
@@ -2432,8 +2423,6 @@ void ScreenGameplay::TweenOnScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		ON_COMMAND( m_textCourseSongNumber[p] );
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
-			ON_COMMAND( m_textPlayerName[p] );
 		ON_COMMAND( m_textStepsDescription[p] );
 		if( m_pPrimaryScoreDisplay[p] )
 			ON_COMMAND( *m_pPrimaryScoreDisplay[p] );
@@ -2474,8 +2463,6 @@ void ScreenGameplay::TweenOffScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		OFF_COMMAND( m_textCourseSongNumber[p] );
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
-			OFF_COMMAND( m_textPlayerName[p] );
 		OFF_COMMAND( m_textStepsDescription[p] );
 		if( m_pPrimaryScoreDisplay[p] )
 			OFF_COMMAND( *m_pPrimaryScoreDisplay[p] );

@@ -65,9 +65,6 @@ protected:
 
 	ConditionalBGA m_bgCondBga;
 
-	// player name area
-	BitmapText			m_textPlayerName[NUM_PLAYERS];
-
 	// banner area
 	Banner				m_LargeBanner;
 	AutoActor			m_sprLargeBannerFrame;

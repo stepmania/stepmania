@@ -31,7 +31,6 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	BitmapText m_textPlayerName[NUM_PLAYERS];
 	struct Line
 	{
 		BitmapText title;

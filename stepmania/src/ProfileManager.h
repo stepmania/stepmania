@@ -9,6 +9,7 @@
 
 class Song;
 class Style;
+struct lua_State;
 
 class ProfileManager
 {
@@ -83,6 +84,8 @@ public:
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
 
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 private:
 	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );

@@ -1089,6 +1089,10 @@ int main(int argc, char* argv[])
 	NSMAN 		= new NetworkSyncManager( loading_window ); 
 	MESSAGEMAN	= new MessageManager;
 
+	// UGLY: Reload the current theme now that all global singletons are
+	// constructed so that they can be registered with Lua.
+	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), THEME->GetCurLanguage() );
+
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
     
 	DISPLAY = CreateDisplay();

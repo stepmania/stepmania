@@ -412,20 +412,6 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 		m_framePage.AddChild( &m_textExplanation[p] );
 	}
 
-	/* Hack: if m_CurStyle is set, we're probably in the player or song options menu, so
-	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
-	if( GAMESTATE->m_pCurStyle != NULL )
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			m_textPlayerName[p].LoadFromFont( THEME->GetPathF(m_sName,"player") );
-			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
-			SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
-			m_framePage.AddChild( &m_textPlayerName[p] );
-		}
-	}
-
 	if( SHOW_SCROLL_BAR )
 	{
 		m_ScrollBar.SetName( "DualScrollBar", "ScrollBar" );

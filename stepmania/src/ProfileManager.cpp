@@ -531,6 +531,37 @@ bool ProfileManager::IsUsingProfile( ProfileSlot slot ) const
 	}
 }
 
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaProfileManager : public Luna<T>
+{
+public:
+	LunaProfileManager() { LUA->Register( Register ); }
+
+	static int IsUsingProfile( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsUsingProfile((PlayerNumber)IArg(1)) ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( IsUsingProfile )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reload the theme just before 
+		// initializing the display.
+		if( PROFILEMAN )
+		{
+			lua_pushstring(L, "PROFILEMAN");
+			THEME->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( ProfileManager )
+// lua end
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

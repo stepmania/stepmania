@@ -298,18 +298,6 @@ void ScreenEvaluation::Init()
 
 	
 	//
-	// init player name area
-	//
-	FOREACH_EnabledPlayer( p )
-	{
-		m_textPlayerName[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerName") );
-		m_textPlayerName[p].SetName( ssprintf("PlayerNameP%d",p+1) );
-		m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
-		SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
-		this->AddChild( &m_textPlayerName[p] );
-	}
-
-	//
 	// init banner area
 	//
 	if( SHOW_BANNER_AREA )
@@ -1117,12 +1105,6 @@ void ScreenEvaluation::CommitScores(
 
 void ScreenEvaluation::TweenOffScreen()
 {
-	// player name area
-	FOREACH_EnabledPlayer( p ) 
-	{
-		OFF_COMMAND( m_textPlayerName[p] );
-	}
-
 	// large banner area
 	OFF_COMMAND( m_LargeBanner );
 	OFF_COMMAND( m_sprLargeBannerFrame );
