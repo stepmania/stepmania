@@ -1038,7 +1038,7 @@ public:
 		AssertNoGLError();
 
 		GLExt::glGenBuffersARB( 1, &m_nTriangles );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTriangles );
 		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
