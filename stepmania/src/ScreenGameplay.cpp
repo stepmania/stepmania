@@ -600,7 +600,7 @@ void ScreenGameplay::Init()
 	m_fLastBPS = 0;
 
 	ZERO( m_pInventory );
-    FOREACH_PlayerNumber(p)
+	FOREACH_PlayerNumber(p)
 	{
 //		switch( GAMESTATE->m_PlayMode )
 //		{
@@ -694,6 +694,19 @@ void ScreenGameplay::Init()
 			break;
 		}
 	}
+
+	FOREACH_PlayerNumber(pn)
+		m_Player[pn].Init( 
+			PLAYER_TYPE,
+			GAMESTATE->m_pPlayerState[pn], 
+			&STATSMAN->m_CurStageStats.m_player[pn],
+			m_pLifeMeter[pn], 
+			m_pCombinedLifeMeter, 
+			m_pPrimaryScoreDisplay[pn], 
+			m_pSecondaryScoreDisplay[pn], 
+			m_pInventory[pn], 
+			m_pPrimaryScoreKeeper[pn], 
+			m_pSecondaryScoreKeeper[pn] );
 
 
 	/* LoadNextSong first, since that positions some elements which need to be
@@ -826,17 +839,6 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	{
 		NoteData nd = ndTransformed;
 		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
-		m_Player[p].Init( 
-			PLAYER_TYPE,
-			GAMESTATE->m_pPlayerState[p], 
-			&STATSMAN->m_CurStageStats.m_player[p],
-			m_pLifeMeter[p], 
-			m_pCombinedLifeMeter, 
-			m_pPrimaryScoreDisplay[p], 
-			m_pSecondaryScoreDisplay[p], 
-			m_pInventory[p], 
-			m_pPrimaryScoreKeeper[p], 
-			m_pSecondaryScoreKeeper[p] );
 		m_Player[p].Load( nd );
 	}
 
@@ -2065,7 +2067,6 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
  */
 void ScreenGameplay::SongFinished()
 {
-	LOG->Trace("SongFinished");
 	// save any statistics
     FOREACH_EnabledPlayer(p)
 	{
