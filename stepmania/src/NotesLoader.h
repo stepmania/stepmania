@@ -28,6 +28,7 @@ protected:
 	set<CString> BlacklistedImages;
 
 public:
+	virtual ~NotesLoader() { }
 	const set<CString> &GetBlacklistedImages() const { return BlacklistedImages; }
 	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;
