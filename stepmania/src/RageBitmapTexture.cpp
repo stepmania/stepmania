@@ -103,16 +103,6 @@ void RageBitmapTexture::Reload( RageTexturePrefs prefs )
 	Create();
 }
 
-
-static int power_of_two(int input)
-{
-    int value = 1;
-
-	while ( value < input ) value <<= 1;
-
-	return value;
-}
-
 /*
  * Each dwMaxSize, dwTextureColorDepth and iAlphaBits are maximums; we may
  * use less.  iAlphaBits must be 0, 1 or 4.
@@ -258,6 +248,7 @@ void RageBitmapTexture::Create()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, fmtTexture, img->w, img->h, 0, GL_RGBA,
 			GL_UNSIGNED_BYTE, img->pixels);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 
 	SDL_FreeSurface(img);

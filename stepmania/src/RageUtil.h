@@ -112,6 +112,7 @@ inline float froundf( const float f, const float fRoundInterval )
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }
 
+int power_of_two(int input);
 bool IsAnInt( const char *s );
 float TimeToSeconds( CString sHMS );
 CString SecondsToTime( float fSecs );

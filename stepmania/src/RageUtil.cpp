@@ -20,6 +20,15 @@ unsigned long randseed = time(NULL);
 #include <sys/stat.h>
 #include <sys/types.h>
 
+int power_of_two(int input)
+{
+    int value = 1;
+
+	while ( value < input ) value <<= 1;
+
+	return value;
+}
+
 bool IsAnInt( const char *s )
 {
 	if( s[0] == '\0' )
