@@ -168,6 +168,10 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 			return;	// don't let the screen handle the MENU_START press
 	}
 
+	// block input of disabled players
+	if( !ALLOW_DISABLED_PLAYER_INPUT && !GAMESTATE->IsPlayerEnabled(MenuI.player) )
+		return;
+
 	if( IsTransitioning() )
 		return;
 
