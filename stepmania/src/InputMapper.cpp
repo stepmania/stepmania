@@ -69,13 +69,12 @@ void InputMapper::ReadMappingsFromDisk()
 
 	ClearAllMappings();
 
-	CString sPath = GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini");
 	IniFile ini;
-	ini.SetPath( sPath );
+	ini.SetPath( "Keymaps.ini" );
 	if( !ini.ReadFile() )
-		LOG->Warn( "could not input mapping file '%s'.", sPath.GetString() );
+		LOG->Warn( "could not input mapping file \"Keymaps.ini"\"." );
 
-	const IniFile::key *Key = ini.GetKey( "Input" );
+	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGameDef()->m_szName );
 
 	if( Key  )
 	{
@@ -108,9 +107,11 @@ void InputMapper::ReadMappingsFromDisk()
 void InputMapper::SaveMappingsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini") );
-//	ini.ReadFile();		// don't read the file so that we overwrite everything there
-
+	ini.SetPath( "Keymaps.ini" );
+	ini.ReadFile();
+	
+	// erase the key so that we overwrite everything for this game
+	ini.DeleteKey( GAMESTATE->GetCurrentGameDef()->m_szName );
 
 	// iterate over our input map and write all mappings to the ini file
 	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
@@ -124,7 +125,7 @@ void InputMapper::SaveMappingsToDisk()
 			sValueString = ssprintf( "%s,%s,%s", 
 				m_GItoDI[i][j][0].toString().GetString(), m_GItoDI[i][j][1].toString().GetString(), m_GItoDI[i][j][2].toString().GetString() );
 			
-			ini.SetValue( "Input", sNameString, sValueString );
+			ini.SetValue( GAMESTATE->GetCurrentGameDef()->m_szName, sNameString, sValueString );
 		}
 	}
 

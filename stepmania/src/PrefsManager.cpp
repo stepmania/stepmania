@@ -73,7 +73,7 @@ PrefsManager::PrefsManager()
 	m_bChangeBannersWhenFast = false;
 	m_bEasterEggs = true;
 	m_bMarvelousTiming = true;
-
+	
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
@@ -195,7 +195,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 
-	/* Only write this if it's been changed.  This ensures that we can change
+	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
 	 * tweaked this value). */
 	if(m_bSoundDrivers != DEFAULT_SOUND_DRIVER_LIST)
@@ -218,15 +218,15 @@ void PrefsManager::ReadGamePrefsFromDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( sGameName+"Prefs.ini" );
+	ini.SetPath( "GamePrefs.ini" );
 	ini.ReadFile();	// it's OK if this fails
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
 	// if these calls fail, the three strings will keep the initial values set above.
-	ini.GetValue( "Options", "Announcer",		sAnnouncer );
-	ini.GetValue( "Options", "Theme",			sTheme );
-	ini.GetValue( "Options", "NoteSkin",		sNoteSkin );
+	ini.GetValue( sGameName, "Announcer",		sAnnouncer );
+	ini.GetValue( sGameName, "Theme",			sTheme );
+	ini.GetValue( sGameName, "NoteSkin",		sNoteSkin );
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
@@ -241,11 +241,12 @@ void PrefsManager::SaveGamePrefsToDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( sGameName+"Prefs.ini" );
+	ini.SetPath( "GamePrefs.ini" );
+	ini.ReadFile();	// it's OK if this fails
 
-	ini.SetValue( "Options", "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
-	ini.SetValue( "Options", "Theme",			THEME->GetCurThemeName() );
-	ini.SetValue( "Options", "NoteSkin",		GAMEMAN->GetCurNoteSkin() );
+	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
+	ini.SetValue( sGameName, "Theme",			THEME->GetCurThemeName() );
+	ini.SetValue( sGameName, "NoteSkin",		GAMEMAN->GetCurNoteSkin() );
 
 	ini.WriteFile();
 }
