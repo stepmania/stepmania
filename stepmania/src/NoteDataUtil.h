@@ -104,6 +104,8 @@ namespace NoteDataUtil
 
 	void RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove );
 	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep );
+
+	int GetNumUsedTracks( const NoteData& in );
 };
 
 #endif

@@ -293,7 +293,8 @@ public:
 		NUM_TRANSFORM_TYPES 
 	};
 	enum AlterType 
-	{ 
+	{
+		autogen_to_fill_width,
 		backwards, 
 		swap_sides, 
 		copy_left_to_right, 

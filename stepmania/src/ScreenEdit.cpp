@@ -386,7 +386,7 @@ static Menu g_AreaMenu(
 	MenuRow( ScreenEdit::quantize,				"Quantize",							true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
 	MenuRow( ScreenEdit::turn,					"Turn",								true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
 	MenuRow( ScreenEdit::transform,				"Transform",						true, true, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" ),
-	MenuRow( ScreenEdit::alter,					"Alter",							true, true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
+	MenuRow( ScreenEdit::alter,					"Alter",							true, true, 0, "Autogen To Fill Width","Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
 	MenuRow( ScreenEdit::tempo,					"Tempo",							true, false, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
 	MenuRow( ScreenEdit::play,					"Play selection",					true, true, 0, NULL ),
 	MenuRow( ScreenEdit::record,				"Record in selection",				true, true, 0, NULL ),
@@ -2132,6 +2132,15 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				AlterType at = (AlterType)iAnswers[c];
 				switch( at )
 				{
+				case autogen_to_fill_width:	
+					{
+						NoteData temp( m_Clipboard );
+						int iNumUsedTracks = NoteDataUtil::GetNumUsedTracks( temp );
+						temp.SetNumTracks( iNumUsedTracks );
+						NoteDataUtil::LoadTransformedSlidingWindow( temp, m_Clipboard, m_Clipboard.GetNumTracks() );
+						NoteDataUtil::FixImpossibleRows( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
+					}
+					break;
 				case backwards:				NoteDataUtil::Backwards( m_Clipboard );			break;
 				case swap_sides:			NoteDataUtil::SwapSides( m_Clipboard );			break;
 				case copy_left_to_right:	NoteDataUtil::CopyLeftToRight( m_Clipboard );	break;

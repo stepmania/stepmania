@@ -334,6 +334,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 
 	out.SetNumTracks( iNewNumTracks );
 
+	if( in.GetNumTracks() == 0 )
+		return;	// nothing to do and don't AV below
 
 	int iCurTrackOffset = 0;
 	int iTrackOffsetMin = 0;
@@ -1840,6 +1842,22 @@ void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type 
 				ndInOut.SetTapNote( t, row, TAP_EMPTY );
 		}
 	}
+}
+
+int NoteDataUtil::GetNumUsedTracks( const NoteData& in )
+{
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		bool bHasAnyTapsInTrack = false;
+		FOREACH_NONEMPTY_ROW_IN_TRACK( in, t, row )
+		{
+			bHasAnyTapsInTrack = true;
+			break;
+		}
+		if( !bHasAnyTapsInTrack )
+			return t;
+	}
+	return in.GetNumTracks();
 }
 
 
