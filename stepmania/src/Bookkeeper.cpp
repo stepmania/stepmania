@@ -95,11 +95,18 @@ void Bookkeeper::ReadFromDisk()
     RageFile file(COINS_DAT, "r");
     if (file.IsOpen())
     {
-        FILE *fp = file.GetFilePointer();
-    
+		const CString line = file.GetLine();
+
+		vector<CString> parts;
+		split( line, " ", parts, true );
+
+		int p = 0;
         for (int i=0; i<DAYS_PER_YEAR; ++i)
             for (int j=0; j<HOURS_PER_DAY; ++j)
-                fscanf(fp, "%d ", &m_iCoinsByHourForYear[i][j]);
+			{
+                m_iCoinsByHourForYear[i][j] = atoi( parts[p++] );
+				LOG->Trace("XXXX %i %i: %i", i, j, m_iCoinsByHourForYear[i][j] );
+			}
     }
 }
 
@@ -122,11 +129,11 @@ void Bookkeeper::WriteToDisk()
     
     if (file.IsOpen())
     {
-        FILE *fp = file.GetFilePointer();
-        
+		CString line;
         for (int i=0; i<DAYS_PER_YEAR; ++i)
             for (int j=0; j<HOURS_PER_DAY; ++j)
-                fprintf(fp, "%d ", m_iCoinsByHourForYear[i][j]);
+                line += ssprintf( "%d ", m_iCoinsByHourForYear[i][j] );
+		file.PutString( line );
     }
 }
 
