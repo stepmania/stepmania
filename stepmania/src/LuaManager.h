@@ -4,6 +4,7 @@
 struct lua_State;
 typedef void (*RegisterWithLuaFn)(lua_State*);
 
+
 class LuaManager
 {
 public:
@@ -68,6 +69,10 @@ public:
 };
 
 extern LuaManager *LUA;
+
+#define REGISTER_WITH_LUA_FUNCTION( Fn ) \
+	class Register##Fn { public: Register##Fn() { LuaManager::Register( Fn ); } }; \
+	static Register##Fn register##Fn;
 
 #endif
 

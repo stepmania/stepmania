@@ -282,8 +282,6 @@ void ThemeManager::UpdateLuaGlobals()
 	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
 	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
-	FOREACH_PlayerNumber( pn )
-		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
 
 	/* Run all script files in Lua for all themes.  Start from the deepest fallback
 	 * theme and work outwards. */
