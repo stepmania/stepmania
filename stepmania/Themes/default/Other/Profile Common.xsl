@@ -510,7 +510,7 @@ HR	{
 		<xsl:if test="$Catalog/InternetRankingViewGuidUrl != ''">
 			<xsl:element name="a">
 				<xsl:attribute name="href">
-					<xsl:value-of select="$Catalog/InternetRankingViewGuidUrl" />?Guid=<xsl:value-of select="." />
+					<xsl:value-of select="$Catalog/InternetRankingViewGuidUrl" />Guid=<xsl:value-of select="." />
 				</xsl:attribute>
 				<xsl:attribute name="target">
 					_new
