@@ -344,6 +344,11 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, CString No
 	}
 }
 
+bool NoteDisplay::DrawHoldHeadForTapsOnSameRow() const
+{
+	return cache->m_bDrawHoldHeadForTapsOnSameRow;
+}
+
 void NoteDisplay::Update( float fDeltaTime )
 {
 	/* This function is static: it's called once per game loop, not once per

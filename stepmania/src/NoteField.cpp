@@ -632,14 +632,22 @@ void NoteField::DrawPrimitives()
 			if( fYOffset < iFirstPixelToDraw )	// off screen
 				continue;	// skip
 
-			// See if there is a hold step that begins on this index.
+			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
+			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
+			NoteDisplayCols *nd = CurDisplay->second;
+
+			// See if there is a hold step that begins on this index.  Only do this
+			// if the note skin cares.
 			bool bHoldNoteBeginsOnThisBeat = false;
-			for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
+			if( nd->display[c].DrawHoldHeadForTapsOnSameRow() )
 			{
-				if( m_pNoteData->GetTapNote(c2, i).type == TapNote::hold_head)
+				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
-					bHoldNoteBeginsOnThisBeat = true;
-					break;
+					if( m_pNoteData->GetTapNote(c2, i).type == TapNote::hold_head)
+					{
+						bHoldNoteBeginsOnThisBeat = true;
+						break;
+					}
 				}
 			}
 
@@ -654,9 +662,6 @@ void NoteField::DrawPrimitives()
 			bool bIsMine = (tn.type == TapNote::mine);
 			bool bIsAttack = (tn.type == TapNote::attack);
 
-			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
-			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
-			NoteDisplayCols *nd = CurDisplay->second;
 			if( bIsAttack )
 			{
 				Sprite sprite;
