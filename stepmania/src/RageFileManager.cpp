@@ -705,6 +705,8 @@ RageFileBasic *RageFileManager::Open( CString sPath, int mode, int &err )
 	if( (mode & RageFile::WRITE) && PathUsesSlowFlush(sPath) )
 		mode |= RageFile::SLOW_FLUSH;
 
+	NormalizePath( sPath );
+
 	/* If writing, we need to do a heuristic to figure out which driver to write with--there
 	 * may be several that will work. */
 	if( mode & RageFile::WRITE )
@@ -731,8 +733,6 @@ RageFileBasic *RageFileManager::CopyFileObj( const RageFileBasic *cpy )
 
 RageFileBasic *RageFileManager::OpenForReading( CString sPath, int mode, int &err )
 {
-	NormalizePath( sPath );
-
 	vector<LoadedDriver> aDriverList;
 	ReferenceAllDrivers( aDriverList );
 
@@ -782,8 +782,6 @@ RageFileBasic *RageFileManager::OpenForWriting( CString sPath, int mode, int &er
 	 * If the given path can not be created, return -1.  This happens if a path
 	 * that needs to be a directory is a file, or vice versa.
 	 */
-	NormalizePath( sPath );
-
 	vector<LoadedDriver> aDriverList;
 	ReferenceAllDrivers( aDriverList );
 
