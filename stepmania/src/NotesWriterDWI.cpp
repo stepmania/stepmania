@@ -326,7 +326,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		RageException::Throw( "Error opening song file '%s' for writing.", sPath.c_str() );
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	fprintf( fp, "#TITLE:%s;\n", out.GetTranslitMainTitle().c_str() );
+	fprintf( fp, "#TITLE:%s;\n", out.GetFullTranslitTitle().c_str() );
 	fprintf( fp, "#ARTIST:%s;\n", out.GetTranslitArtist().c_str() );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
 	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
