@@ -17,12 +17,12 @@ void SMLoader::LoadFromSMTokens(
 	Notes &out
 )
 {
-	sNotesType.TrimLeft(); 
-	sNotesType.TrimRight(); 
-	sDescription.TrimLeft(); 
-	sDescription.TrimRight(); 
-	sDifficulty.TrimLeft(); 
-	sDifficulty.TrimRight(); 
+	TrimLeft(sNotesType); 
+	TrimRight(sNotesType); 
+	TrimLeft(sDescription); 
+	TrimRight(sDescription); 
+	TrimLeft(sDifficulty); 
+	TrimRight(sDifficulty); 
 
 
 //	LOG->Trace( "Notes::LoadFromSMTokens()" );

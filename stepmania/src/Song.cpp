@@ -366,9 +366,9 @@ bool Song::LoadFromSongDir( CString sDir )
 
 void Song::TidyUpData()
 {
-	m_sMainTitle.TrimRight();
+	TrimRight(m_sMainTitle);
 	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
-	m_sSubTitle.TrimRight();
+	TrimRight(m_sSubTitle);
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.empty() )
 		throw RageException( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );

@@ -45,7 +45,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	NoteData notedata;	// read it into here
 
 	CStringArray asRows;
-	iStep.TrimLeft();
+	TrimLeft(iStep);
 	split( iStep, "\n", asRows, true );
 
 	int iHoldStartRow[13];

@@ -136,8 +136,8 @@ void PlayerOptions::FromString( CString sOptions )
 	for( unsigned i=0; i<asBits.size(); i++ )
 	{
 		CString& sBit = asBits[i];
-		sBit.TrimLeft();
-		sBit.TrimRight();
+		TrimLeft(sBit);
+		TrimRight(sBit);
 		
 		if(	     sBit == "0.5x" )		m_fArrowScrollSpeed = 0.5f;
 		else if( sBit == "0.75x" )		m_fArrowScrollSpeed = 0.75f;

@@ -70,8 +70,8 @@ void SongOptions::FromString( CString sOptions )
 	for( unsigned i=0; i<asBits.size(); i++ )
 	{
 		CString& sBit = asBits[i];
-		sBit.TrimLeft();
-		sBit.TrimRight();
+		TrimLeft(sBit);
+		TrimRight(sBit);
 		
 		if(	     sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;

@@ -77,8 +77,8 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
 	{
 		CString &sMeasureString = asMeasures[m];
-		sMeasureString.TrimLeft();
-		sMeasureString.TrimRight();
+		TrimLeft(sMeasureString);
+		TrimRight(sMeasureString);
 
 		CStringArray asMeasureLines;
 		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
@@ -92,8 +92,8 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 		for( unsigned l=0; l<asMeasureLines.size(); l++ )
 		{
 			CString &sMeasureLine = asMeasureLines[l];
-			sMeasureLine.TrimLeft();
-			sMeasureLine.TrimRight();
+			TrimLeft(sMeasureLine);
+			TrimRight(sMeasureLine);
 
 			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;

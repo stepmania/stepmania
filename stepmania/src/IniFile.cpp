@@ -12,6 +12,7 @@
 */
 
 #include "IniFile.h"
+#include "RageUtil.h"
 #include <fstream>
 using namespace std;
 
@@ -56,8 +57,8 @@ bool IniFile::ReadFile()
 		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 		{
 			keyname = line;
-			keyname.TrimLeft('[');
-			keyname.TrimRight(']');
+			TrimLeft(keyname, "[");
+			TrimRight(keyname, "]");
 		}
 		else //if a value
 		{

@@ -113,7 +113,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 {
 	// trim off the trailing slash if any
-	sDir.TrimRight( "/\\" );
+	TrimRight( sDir, "/\\" );
 
 	// Find all group directories in "Songs" folder
 	CStringArray arrayGroupDirs;
@@ -176,7 +176,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 void SongManager::LoadDWISongDir( CString DWIHome )
 {
 	// trim off the trailing slash if any
-	DWIHome.TrimRight( "/\\" );
+	TrimRight( DWIHome, "/\\" );
 
 	// this has to be fixed, DWI doesn't put files
 	// in it's DWI folder.  It puts them in Songs/<MIX>/<SONGNAME>
