@@ -17,6 +17,7 @@
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
+#define SHOW_BANNER				THEME->GetMetricB(m_sName,"ShowBanner")
 
 const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 
@@ -85,7 +86,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	SET_XY_AND_ON_COMMAND( m_Artist );
 	SET_XY_AND_ON_COMMAND( m_SongTitle );
 
-	if ( PREFSMAN->m_bShowBanners )
+	if ( SHOW_BANNER )
 		if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->HasBanner() )
 		{
 			m_Banner.LoadFromSong( GAMESTATE->m_pCurSong );
