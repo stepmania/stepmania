@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenTestSound.h"
 #include "RageDisplay.h"
-#include "SDL.h"
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
