@@ -67,7 +67,7 @@ public:
 	map<CString,CString> m_mapEnv;
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
-	int				m_iGameSeed, m_iRoundSeed;
+	int				m_iGameSeed, m_iStageSeed;
 
 	bool			PlayersCanJoin() const;	// true if it's not too late for a player to join
 	bool			EnoughCreditsToJoin() const;	// true if an unjoined player can join by pressint start

@@ -89,7 +89,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	float fScrollSpeed = pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
 	if( pPlayerState->m_CurrentPlayerOptions.m_fRandomSpeed > 0 && !bAbsolute )
 	{
-		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
+		int seed = GAMESTATE->m_iStageSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 
 		/* Temporary hack: the first call to RandomFloat isn't "random"; it takes an extra
 		 * call to get the RNG rolling. */

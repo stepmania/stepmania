@@ -682,7 +682,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	//
 	// Check to see if the Trail cache is out of date
 	//
-	if( m_iTrailCacheSeed != GAMESTATE->m_iRoundSeed )
+	if( m_iTrailCacheSeed != GAMESTATE->m_iStageSeed )
 	{
 		/* If we have any random entries (so that the seed matters), invalidate the cache. */
 		bool bHaveRandom = false;
@@ -694,7 +694,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		if( bHaveRandom )
 			m_TrailCache.clear();
 
-		m_iTrailCacheSeed = GAMESTATE->m_iRoundSeed;
+		m_iTrailCacheSeed = GAMESTATE->m_iStageSeed;
 	}
 
 	//
@@ -794,7 +794,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	// Construct a new Trail, add it to the cache, then return it.
 	//
 	/* Different seed for each course, but the same for the whole round: */
-	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sMainTitle) );
+	RandomGen rnd( GAMESTATE->m_iStageSeed + GetHashForString(m_sMainTitle) );
 
 	vector<CourseEntry> tmp_entries;
 	if( m_bRandomize )

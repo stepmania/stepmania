@@ -61,7 +61,7 @@ GameState::GameState() :
 	ReloadCharacters();
 
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
-	m_iRoundSeed = m_iGameSeed = 0;
+	m_iStageSeed = m_iGameSeed = 0;
 
 	m_PlayMode = PLAY_MODE_INVALID; // used by IsPlayerEnabled before the first screen
 	FOREACH_PlayerNumber( p )
@@ -157,7 +157,7 @@ void GameState::Reset()
 	NOTESKIN->RefreshNoteSkinData( this->m_pCurGame );
 
 	m_iGameSeed = rand();
-	m_iRoundSeed = rand();
+	m_iStageSeed = rand();
 
 	m_pCurSong.Set( NULL );
 	m_pPreferredSong = NULL;
@@ -647,7 +647,7 @@ void GameState::ResetStageStatistics()
 
 	// Reset the round seed.  Do this here and not in FinishStage so that players
 	// get new shuffle patterns if they Back out of gameplay and play again.
-	GAMESTATE->m_iRoundSeed = rand();
+	GAMESTATE->m_iStageSeed = rand();
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
