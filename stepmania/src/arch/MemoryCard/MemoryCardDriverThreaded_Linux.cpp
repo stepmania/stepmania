@@ -46,6 +46,15 @@ static bool TestWrite( CCStringRef sDir )
   return true;
 }
 
+static bool ExecuteCommand( CCStringRef sCommand )
+{
+  LOG->Trace( "executing '%s'", sCommand.c_str() );
+  int ret = system(sCommand);
+  if( ret != 0 )
+    LOG->Warn( "failed to execute '%s' with error %d.", sCommand.c_str(), ret );
+  return ret == 0;
+}
+
 void MemoryCardDriverThreaded_Linux::MountThreadMain()
 {
   int fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
@@ -116,9 +125,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	    {
 	      UsbStorageDeviceEx &d = *vDisconnects[i];
 	      CString sCommand = "umount " + d.sOsMountDir;
-	      LOG->Trace( "executing '%s'", sCommand.c_str() );
-	      if( system(sCommand) == -1 )
-		LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+	      ExecuteCommand( sCommand );
 	    }
 	  
 	  // mount all connects
@@ -131,16 +138,12 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	      // wasn't unmounted before, then our mount call will fail and the 
 	      // mount may contain an out-of-date view of the files on the device.
               sCommand = "umount " + d.sOsMountDir;
-              LOG->Trace( "executing '%s'", sCommand.c_str() );
-              if( system(sCommand) == -1 )
-                LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+              ExecuteCommand( sCommand );   // don't care if this fails
 
 	      sCommand = "mount " + d.sOsMountDir;
-	      LOG->Trace( "executing '%s'", sCommand.c_str() );
-	      if( system(sCommand) == -1 )
-		LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+	      bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
-	      d.bWriteTestSucceeded = TestWrite( d.sOsMountDir );
+	      d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
 	      LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
 	    }
 
@@ -380,9 +383,6 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice, CString
 		return;
 
 	// already unmounted by the mounting thread
-	//CString sCommand = "umount " + pDevice->sOsMountDir;
-	//LOG->Trace( "executing '%s'", sCommand.c_str() );
-	//system( sCommand );
 }
 
 void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
@@ -395,22 +395,13 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 	// that the flush is completed on return.  However, we can mount the filesystem
 	// with the flag "-o sync", which forces synchronous access (but that's probably
 	// very slow.) -glenn
-	CString sCommand = "mount -o remount " + pDevice->sOsMountDir;
-	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	if( system(sCommand) == -1 )
-	  LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
-
+	ExecuteCommand( "mount -o remount " + pDevice->sOsMountDir );
 }
 
 void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 {
-  CString sCommand;
-  sCommand = "rmmod usb-storage";
-  if( system(sCommand) == -1 )
-    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
-  sCommand = "modprobe usb-storage";
-  if( system(sCommand) == -1 )
-    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+  ExecuteCommand( "rmmod usb-storage" );
+  ExecuteCommand( "modprobe usb-storage" );
 }
 
 
