@@ -105,7 +105,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	default:
 		ASSERT(0);
 	}
-	LOG->Trace( "total error %i", stageStats.iTotalError[0], stageStats.iTotalError[1] );
+	LOG->Trace( "total error: %i, %i", stageStats.iTotalError[0], stageStats.iTotalError[1] );
 
 /*
 	//
@@ -987,6 +987,18 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		// Increment the stage counter.
 		int iNumStagesOfLastSong;
 		iNumStagesOfLastSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		{
+			/* XXX: If it's an extra stage, always increment by one.  This is because
+			 * in some unusual cases we can pick a long or marathon song as an extra
+			 * stage.  The most common cause of this is when an entire group of songs
+			 * is long/nonstop mixes.
+			 * 
+			 * We can't simply not choose long songs as extra stages: if there are no
+			 * regular songs to choose, we'll end up with no song to use as an extra stage. */
+			iNumStagesOfLastSong = 1;
+		}
 		GAMESTATE->m_iCurrentStageIndex += iNumStagesOfLastSong;
 
 		// save current stage stats
