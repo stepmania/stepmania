@@ -90,6 +90,25 @@ bool SetupNetwork()
 #endif
 }
 
+// if Xbox has 128 meg RAM make sure its used
+void EnableExtraRAM()
+{
+	LARGE_INTEGER regVal;
+
+ 	// Verify that we have 128 megs available
+	MEMORYSTATUS memStatus;
+	GlobalMemoryStatus( &memStatus );
+	if( memStatus.dwTotalPhys < (100 * 1024 * 1024) )
+		return;
+
+	// Grab the existing default type (0x02FF)
+	READMSRREG( 0x02FF, &regVal );
+  
+	// Set the default to WriteBack (0x06)
+	regVal.LowPart = (regVal.LowPart & ~0xFF) | 0x06;
+	WRITEMSRREG( 0x02FF, regVal );
+}
+
 ArchHooks_Xbox::ArchHooks_Xbox()
 {
 	XGetCustomLaunchData();
@@ -98,6 +117,8 @@ ArchHooks_Xbox::ArchHooks_Xbox()
 	MountDrives();
 
 	SetupNetwork();
+
+	EnableExtraRAM();
 }
 
 ArchHooks_Xbox::~ArchHooks_Xbox()

@@ -11,6 +11,34 @@ public:
 	~ArchHooks_Xbox();
 };
 
+// Read a 64 bit MSR register
+inline void READMSRREG( UINT32 reg, LARGE_INTEGER *val ) 
+{
+UINT32 lowPart, highPart;
+	__asm
+	{
+		mov   ecx, reg
+		rdmsr
+		mov   lowPart, eax
+		mov   highPart, edx
+	};
+
+	val->LowPart = lowPart;
+	val->HighPart = highPart;
+}
+
+// Write a 64 bit MSR register
+inline void WRITEMSRREG( UINT32 reg, LARGE_INTEGER val ) 
+{
+	__asm
+	{
+		mov   ecx, reg
+		mov   eax, val.LowPart
+		mov   edx, val.HighPart
+		wrmsr
+	};
+}
+
 #undef ARCH_HOOKS
 #define ARCH_HOOKS ArchHooks_Xbox
 
