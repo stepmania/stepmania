@@ -4,8 +4,8 @@
 #define THEME_METRIC_H
 
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include <map>
+#include "Foreach.h"
 
 class IThemeMetric
 {
@@ -174,12 +174,16 @@ public:
 	}
 	void Read()
 	{
-		FOREACHM( CString, ThemeMetricT, m_metric, m )
+		// HACK: GCC (3.4) takes this and pretty much nothing else.
+		// I don't know why.
+		for( typename map<CString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
 			m->second.Read();
 	}
 	const T& GetValue( CString s ) const
 	{
-		map<CString,ThemeMetricT>::const_iterator iter = m_metric.find(s);
+		// HACK: GCC (3.4) takes this and pretty much nothing else.
+		// I don't know why.
+		typename map<CString,ThemeMetric<T> >::const_iterator iter = m_metric.find(s);
 		ASSERT( iter != m_metric.end() );
 		return iter->second.GetValue();
 	}
