@@ -630,8 +630,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 		0,
 		D3DRTYPE_TEXTURE,
 		d3dfmt);
-	if(FAILED(hr))
-		LOG->Trace("format %i not supported", pixfmt);
+
     return SUCCEEDED( hr );
 }
 
