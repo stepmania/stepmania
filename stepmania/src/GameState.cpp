@@ -1491,7 +1491,6 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_ENDLESS:
 		{
 			CHECKPOINT;
-			StepsType st = GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = m_pCurCourse;
 			ASSERT( pCourse );
 			Trail *pTrail = m_pCurTrail[pn];
@@ -1527,7 +1526,6 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			// Find Personal Records
 			if( PROFILEMAN->IsUsingProfile( pn ) )
 			{
-				Trail *pTrail = pCourse->GetTrail( st, cd );
 				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, pTrail );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
@@ -1728,15 +1726,23 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficul
 
 bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 {
+	/* If we have a course selected, only choose among difficulties available in the course. */
+	const Course *pCourse = this->m_pCurCourse;
+
 	set<CourseDifficulty> asDiff;
 	GetCourseDifficultiesToShow( asDiff );
 
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
-	do {
+	while( 1 )
+	{
 		cd = (CourseDifficulty)(cd+dir);
 		if( cd < 0 || cd >= NUM_COURSE_DIFFICULTIES )
 			return false;
-	} while( asDiff.find(cd) == asDiff.end() );
+		if( asDiff.find(cd) == asDiff.end() )
+			continue; /* not available */
+		if( !pCourse || pCourse->HasCourseDifficulty( GAMESTATE->GetCurrentStyleDef()->m_StepsType, cd ) )
+			break;
+	}
 
 	return ChangePreferredCourseDifficulty( pn, cd );
 }
