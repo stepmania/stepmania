@@ -25,7 +25,7 @@
 #define SONGS_Y							THEME->GetMetricF("ScreenLogo","SongsY")
 
 
-ScreenLogo::ScreenLogo() : ScreenAttract("Logo","logo")
+ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo","logo")
 {
 	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("logo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
@@ -56,5 +56,5 @@ ScreenLogo::ScreenLogo() : ScreenAttract("Logo","logo")
 	m_textSongs.SetShadowLength( 2 );
 	this->AddChild( &m_textSongs );
 
-	this->MoveToBack( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
+	this->MoveToTail( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
 }

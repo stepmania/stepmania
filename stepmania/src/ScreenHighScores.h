@@ -11,11 +11,18 @@
 
 #include "ScreenAttract.h"
 
+#define NUM_HIGH_SCORES	5
 
 class ScreenHighScores : public ScreenAttract
 {
 public:
-	ScreenHighScores() : ScreenAttract("HighScores","high scores") { };
+	ScreenHighScores();
+
+protected:
+	BitmapText m_textCategory;
+	Sprite m_sprBullets[NUM_HIGH_SCORES];
+	BitmapText m_textNames[NUM_HIGH_SCORES];
+	BitmapText m_textScores[NUM_HIGH_SCORES];
 };
 
 

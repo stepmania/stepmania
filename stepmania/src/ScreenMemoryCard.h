@@ -15,7 +15,7 @@
 class ScreenMemoryCard : public ScreenAttract
 {
 public:
-	ScreenMemoryCard() : ScreenAttract("MemoryCard","memory card") { };
+	ScreenMemoryCard() : ScreenAttract("ScreenMemoryCard","memory card") { };
 
 };
 

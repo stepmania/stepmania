@@ -27,8 +27,8 @@
 #include "RageSoundManager.h"
 
 
-#define SECONDS_TO_SHOW					THEME->GetMetricF("Screen"+m_sMetricName,"SecondsToShow")
-#define NEXT_SCREEN						THEME->GetMetric("Screen"+m_sMetricName,"NextScreen")
+#define SECONDS_TO_SHOW					THEME->GetMetricF(m_sMetricName,"SecondsToShow")
+#define NEXT_SCREEN						THEME->GetMetric(m_sMetricName,"NextScreen")
 
 const ScreenMessage SM_BeginFadingOut	=	ScreenMessage(SM_User+2);
 const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+3);

@@ -19,7 +19,7 @@ void ActorFrame::AddChild( Actor* pActor )
 	m_SubActors.push_back( pActor );
 }
 
-void ActorFrame::MoveToBack( Actor* pActor )
+void ActorFrame::MoveToTail( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter == m_SubActors.end() )	// didn't find
@@ -32,7 +32,7 @@ void ActorFrame::MoveToBack( Actor* pActor )
 	m_SubActors.push_back( pActor );
 }
 
-void ActorFrame::MoveToFront( Actor* pActor )
+void ActorFrame::MoveToHead( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter == m_SubActors.end() )	// didn't find

@@ -319,6 +319,7 @@ static void InitCharAliases()
 	CharAliases["uparrow"]		= 0x2191; /* ↑ */
 	CharAliases["rightarrow"]	= 0x2192; /* → */
 	CharAliases["downarrow"]	= 0x2193; /* ↓ */
+	CharAliases["doublezeta"]	= 0xE009; /* ↓ */
 
 	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 	CharAliases["up"]			= 0xE000;
@@ -330,7 +331,6 @@ static void InitCharAliases()
 	CharAliases["menuleft"]		= 0xE006;
 	CharAliases["menuright"]	= 0xE007;
 	CharAliases["start"]		= 0xE008;
-	CharAliases["zz"]			= 0xE009;
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{

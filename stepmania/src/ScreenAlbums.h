@@ -15,7 +15,7 @@
 class ScreenAlbums : public ScreenAttract
 {
 public:
-	ScreenAlbums() : ScreenAttract("Albums","albums") { };
+	ScreenAlbums() : ScreenAttract("ScreenAlbums","albums") { };
 
 };
 

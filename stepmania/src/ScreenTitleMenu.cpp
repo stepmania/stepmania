@@ -127,7 +127,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 
-	this->MoveToBack( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
+	this->MoveToTail( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
 }
 
 ScreenTitleMenu::~ScreenTitleMenu()
