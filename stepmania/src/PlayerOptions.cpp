@@ -36,6 +36,7 @@ CString PlayerOptions::GetString()
 	case APPEARANCE_HIDDEN:		sReturn += "Hidden, ";	break;
 	case APPEARANCE_SUDDEN:		sReturn += "Sudden, ";	break;
 	case APPEARANCE_STEALTH:	sReturn += "Stealth, ";	break;
+	case APPEARANCE_BLINK:	sReturn += "Blink, ";	break;
 	default:	ASSERT(0);	// invalid EFFECT
 	}
 	switch( m_TurnType )

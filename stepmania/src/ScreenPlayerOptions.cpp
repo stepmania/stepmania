@@ -40,7 +40,7 @@ enum {
 OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Speed",	8, {"x0.5","x0.75","x1","x1.5","x2","x3","x5","x8"} },	
 	{ "Effect", 7, {"OFF","BOOST","WAVE", "DRUNK", "DIZZY","SPACE","MINI"} },	
-	{ "Appear", 4, {"VISIBLE","HIDDEN","SUDDEN","STEALTH"} },	
+	{ "Appear", 5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH", "BLINK"} },	
 	{ "Turn",	5, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE"} },	
 	{ "Little", 2, {"OFF","ON"} },	
 	{ "Scroll", 2, {"STANDARD","REVERSE"} },	

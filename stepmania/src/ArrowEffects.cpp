@@ -99,6 +99,11 @@ float ArrowGetYPos( const PlayerOptions& po, float fYOffset )
 float ArrowGetAlpha( const PlayerOptions& po, float fYPos )
 {
 	float fAlpha;
+	static	float blinktimer=0;
+	if (blinktimer == 0)
+		blinktimer = TIMER->GetTimeSinceStart();
+	
+	static int blinkstate=2;
 	switch( po.m_AppearanceType )
 	{ 
 	case PlayerOptions::APPEARANCE_VISIBLE:
@@ -112,6 +117,42 @@ float ArrowGetAlpha( const PlayerOptions& po, float fYPos )
 		break;
 	case PlayerOptions::APPEARANCE_STEALTH:
 		fAlpha = 0;
+		break;
+	case PlayerOptions::APPEARANCE_BLINK: // this is an Ez2dancer Appearance Mode
+		if (TIMER->GetTimeSinceStart() > blinktimer + 0.20f)
+		{
+			blinktimer = TIMER->GetTimeSinceStart();
+			if (blinkstate == 1)
+			{
+				blinkstate = 2;
+			}
+			else if (blinkstate == 0)
+			{
+				blinkstate = 3;
+			}
+			else if (blinkstate == 2)
+			{
+				blinkstate = 0;
+			}
+			else
+			{
+				blinkstate = 1;
+			}
+		}
+
+		if (blinkstate == 1)
+		{
+			fAlpha = 1;			
+		}
+		else if (blinkstate == 0)
+		{				
+			fAlpha = 0;
+		}
+		else
+		{
+			fAlpha = ((fYPos-200)/200) + (((SCREEN_HEIGHT-fYPos)-260)/200);	
+		}
+
 		break;
 	default:
 		ASSERT( false );
