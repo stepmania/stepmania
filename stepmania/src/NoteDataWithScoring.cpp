@@ -12,8 +12,6 @@
 
 #include "NoteDataWithScoring.h"
 
-#include "RageLog.h"
-
 NoteDataWithScoring::NoteDataWithScoring()
 {
 	Init();
