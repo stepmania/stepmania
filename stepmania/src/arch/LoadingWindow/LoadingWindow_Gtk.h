@@ -3,9 +3,9 @@
 
 #include "LoadingWindow_Null.h"
 
-extern void CreateGtkLoadingWindow();
-extern void DestroyGtkLoadingWindow();
-extern void SetGtkLoadingWindowText(const char *s);
+void CreateGtkLoadingWindow();
+void DestroyGtkLoadingWindow();
+void SetGtkLoadingWindowText(const char *s);
 
 class LoadingWindow_Gtk : public LoadingWindow {
 public:
