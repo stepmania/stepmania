@@ -688,9 +688,6 @@ void ScreenGameplay::LoadNextSong()
 			continue;
 
 		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
-		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
-		if( m_pSecondaryScoreKeeper[p] )
-			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
 
 		// Put courses options into effect.
 		GAMESTATE->ApplyModifiers( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex] );
@@ -714,8 +711,15 @@ void ScreenGameplay::LoadNextSong()
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
-
 		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+
+		/* The actual note data for scoring is the base class of Player.  This includes
+		 * transforms, like Wide.  Otherwise, the scoring will operate on the worng
+		 * data. */
+		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p], &m_Player[p] );
+		if( m_pSecondaryScoreKeeper[p] )
+			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p], &m_Player[p] );
+
 		if( m_bDemonstration )
 		{
 			GAMESTATE->m_PlayerController[p] = PC_CPU;

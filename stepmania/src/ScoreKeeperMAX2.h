@@ -35,7 +35,8 @@ class ScoreKeeperMAX2: public ScoreKeeper
 public:
 	ScoreKeeperMAX2( const vector<Notes*>& apNotes, PlayerNumber pn);
 
-	void OnNextSong( int iSongInCourseIndex, Notes* pNotes );	// before a song plays (called multiple times if course)
+	// before a song plays (called multiple times if course)
+	void OnNextSong( int iSongInCourseIndex, Notes* pNotes, NoteData* pNoteData );
 
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );

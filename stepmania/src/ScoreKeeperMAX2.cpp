@@ -72,7 +72,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber p
 	m_bIsLastSongInCourse = false;
 }
 
-void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
+void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes, NoteData* pNoteData )
 {
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -128,9 +128,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
-	NoteData noteData;
-	pNotes->GetNoteData( &noteData );
-	m_iNumTapsAndHolds = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
+	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTaps() + pNoteData->GetNumHoldNotes();
 
 	m_iPointBonus = m_iMaxPossiblePoints;
 
