@@ -32,6 +32,7 @@
 #include "arch/arch.h"
 #include "RageFile.h"
 #include "NoteDataUtil.h"
+#include "SDL_utils.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -43,7 +44,6 @@
 #include "LyricsLoader.h"
 
 #include "SDL.h"
-#include "SDL_image.h"
 
 #include <set>
 
@@ -580,7 +580,7 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 
 static bool ImageIsLoadable( const CString &sPath )
 {
-	SDL_Surface *img = IMG_Load( sPath );
+	SDL_Surface *img = SDL_LoadImage( sPath );
 	if( !img )
 	{
 		LOG->Warn( "Error loading song image \"%s\": %s", sPath.c_str(), SDL_GetError() );
@@ -821,7 +821,7 @@ void Song::TidyUpData()
 			continue;	// skip
 
 		CString sPath = m_sSongDir + arrayImages[i];
-		SDL_Surface *img = IMG_Load( sPath );
+		SDL_Surface *img = SDL_LoadImage( sPath );
 		if( !img )
 		{
 			LOG->Trace("Couldn't load '%s': %s", sPath.c_str(), SDL_GetError());

@@ -21,7 +21,6 @@
 #include "arch/ArchHooks/ArchHooks.h"
 
 #include "SDL.h"
-#include "SDL_image.h"
 #include "SDL_endian.h"
 #include "SDL_rotozoom.h"
 #include "SDL_utils.h"
@@ -83,7 +82,7 @@ void RageBitmapTexture::Create()
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
 	ResolvePath( actualID.filename );
-	SDL_Surface *img = IMG_Load( actualID.filename );
+	SDL_Surface *img = SDL_LoadImage( actualID.filename );
 
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */

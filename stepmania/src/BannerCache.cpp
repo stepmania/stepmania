@@ -15,7 +15,6 @@
 #include "PrefsManager.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
-#include "SDL_image.h"
 #include "SDL_rotozoom.h"
 #include "SDL_utils.h"
 #include "RageDisplay.h"
@@ -305,7 +304,7 @@ void BannerCache::CacheBanner( CString BannerPath )
 
 void BannerCache::CacheBannerInternal( CString BannerPath )
 {
-	SDL_Surface *img = IMG_Load( BannerPath );
+	SDL_Surface *img = SDL_LoadImage( BannerPath );
 	if(img == NULL)
 		RageException::Throw( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
 
