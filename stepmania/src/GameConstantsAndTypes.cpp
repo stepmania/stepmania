@@ -108,8 +108,8 @@ StringToX( CourseDifficulty );
 
 static const CString PlayModeNames[NUM_PLAY_MODES] = {
 	"arcade",
-	"oni",
 	"nonstop",
+	"oni",
 	"endless",
 	"battle",
 	"rave",
