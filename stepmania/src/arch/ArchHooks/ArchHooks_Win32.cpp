@@ -27,11 +27,6 @@ void ArchHooks_Win32::Log(CString str, bool important)
 	CrashLog(str);
 }
 
-void ArchHooks_Win32::AdditionalLog(CString str)
-{
-	AdditionalLog(str);
-}
-
 void ArchHooks_Win32::DumpDebugInfo()
 {
 	/* This is a good time to do the debug search: before we actually
