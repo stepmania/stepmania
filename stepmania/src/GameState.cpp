@@ -124,6 +124,8 @@ int GameState::GetStageIndex()
 
 int GameState::GetNumStagesLeft()
 {
+	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+		return 1;
 	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
 }
 
