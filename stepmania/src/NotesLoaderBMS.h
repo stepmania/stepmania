@@ -2,8 +2,6 @@
 #define NOTES_LOADER_BMS_H
 
 #include "NotesLoader.h"
-#include "GameConstantsAndTypes.h"
-#include "NoteTypes.h"
 #include <map>
 
 class Song;

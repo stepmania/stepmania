@@ -6,6 +6,7 @@
 #include "RageTextureID.h"
 #include "RageUtil.h"
 #include "RageTypes.h"
+#include <map>
 
 class FontPage;
 class RageTexture;

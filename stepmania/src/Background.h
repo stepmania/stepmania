@@ -9,6 +9,8 @@
 #include "BGAnimation.h"
 #include "song.h"
 #include <deque>
+#include <map>
+
 class DancingCharacters;
 
 class BrightnessOverlay: public ActorFrame

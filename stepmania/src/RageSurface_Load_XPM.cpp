@@ -6,6 +6,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface.h"
+#include <map>
 
 #define CheckLine() \
 	if( xpm[line] == NULL ) { \
