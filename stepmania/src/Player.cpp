@@ -455,9 +455,9 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fStartBeat = StepIndexToBeat( hs.m_iStartIndex );
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
-		if( fStartBeat+fMaxBeatDifference*2 < m_fSongBeat && m_fSongBeat < fEndBeat-fMaxBeatDifference*2  &&	// if the song beat is in the range of this hold
-			m_HoldStepScores[i] == HOLD_SCORE_NONE  ||  
-			m_HoldStepScores[i] == HOLD_STEPPED_ON )	// this hold doesn't already have a score
+		// update the "electric arrow"
+		if( m_HoldStepScores[i] == HOLD_STEPPED_ON  &&	// this hold doesn't already have a score
+			fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
 			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
 			if( GAMEINFO->IsButtonDown( PlayerI ) )		// they're holding the button down
@@ -465,7 +465,14 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 				int iCol = m_StepToColumnNumber[ hs.m_Step ];
 				m_HoldGhostArrow[iCol].Step();
 			}
-			else		// they're not holding the button down
+		}
+
+		// update the logic
+		if( (m_HoldStepScores[i] == HOLD_SCORE_NONE  ||  m_HoldStepScores[i] == HOLD_STEPPED_ON)  &&	// this hold doesn't already have a score
+			fStartBeat+fMaxBeatDifference/2 < m_fSongBeat && m_fSongBeat < fEndBeat-fMaxBeatDifference/2 )	// if the song beat is in the range of this hold
+		{
+			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
+			if( !GAMEINFO->IsButtonDown( PlayerI ) )		// they're not holding the button down
 			{
 				m_HoldStepScores[i] = HOLD_SCORE_NG;
 				int iCol = m_StepToColumnNumber[ hs.m_Step ];
@@ -480,7 +487,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		HoldStep &hs = m_HoldSteps[i];
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
-		if( fEndBeat < m_fSongBeat  &&					// if this hold step is in the past
+		if(  m_fSongBeat > fEndBeat  &&					// if this hold step is in the past
 			m_HoldStepScores[i] == HOLD_STEPPED_ON )	// and it doesn't yet have a score
 		{
 			m_HoldStepScores[i] = HOLD_SCORE_OK;
@@ -800,7 +807,8 @@ void Player::DrawColorArrows()
 
 	for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
 	{				
-		if( m_LeftToStepOn[i] != 0 )	// this step is not yet complete 
+		if( m_LeftToStepOn[i] != 0  || 	// this step is not yet complete 
+			m_StepScore[i] == good  ||  m_StepScore[i] == boo  ||  m_StepScore[i] == miss )
 		{		
 			float fYOffset = GetColorArrowYOffset( i, m_fSongBeat );
 			float fYPos = GetColorArrowYPos( i, m_fSongBeat );
