@@ -28,11 +28,13 @@
 #include "ThemeManager.h"
 #include "Combo.h"
 
-#define GRAY_ARROWS_Y		THEME->GetMetricF("Player","GrayArrowsY")
-#define JUDGMENT_Y			THEME->GetMetricF("Player","JudgmentY")
-#define COMBO_Y				THEME->GetMetricF("Player","ComboY")
-#define HOLD_JUDGMENT_Y		THEME->GetMetricF("Player","HoldJudgmentY")
-CachedThemeMetric			BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+#define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
+#define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
+#define COMBO_Y						THEME->GetMetricF("Player","ComboY")
+#define HOLD_JUDGMENT_Y				THEME->GetMetricF("Player","HoldJudgmentY")
+CachedThemeMetric					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+#define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
+#define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
 
 
 Player::Player()
@@ -119,22 +121,22 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	default:		ASSERT(0);
 	}
 
-	int iPixelsToDrawBefore = -60;
-	int iPixelsToDrawAfter = 350;
+	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
+	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
 	// If both options are on, we *do* need to multiply it twice.
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )
 	{
-		iPixelsToDrawBefore *= 2;
-		iPixelsToDrawAfter *= 2;
+		iStartDrawingAtPixels *= 2;
+		iStopDrawingAtPixels *= 2;
 	}
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
-		iPixelsToDrawBefore *= 2;
-		iPixelsToDrawAfter *= 2;
+		iStartDrawingAtPixels *= 2;
+		iStopDrawingAtPixels *= 2;
 	}
 
-	m_NoteField.Load( (NoteData*)this, pn, iPixelsToDrawBefore, iPixelsToDrawAfter );
+	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	
 	m_GrayArrowRow.Load( pn );
 	m_GhostArrowRow.Load( pn );
