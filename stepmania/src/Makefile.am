@@ -35,7 +35,7 @@ ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameE
 ScreenOptions.cpp ScreenOptions.h ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
-ScreenRaveOptions.cpp ScreenRaveOptions.h ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenSandbox.cpp ScreenSandbox.h \
+ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenSandbox.cpp ScreenSandbox.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
 ScreenSelectCourse.cpp ScreenSelectCourse.h ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h \
 ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h ScreenSelectGroup.cpp ScreenSelectGroup.h \

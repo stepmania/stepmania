@@ -395,12 +395,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenRanking.h">
 			</File>
 			<File
-				RelativePath="ScreenRaveOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenRaveOptions.h">
-			</File>
-			<File
 				RelativePath="ScreenReloadSongs.cpp">
 			</File>
 			<File
