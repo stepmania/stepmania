@@ -23,6 +23,11 @@ CString CategoryToString( RadarCategory cat )
 	case RADAR_AIR:		return "air";
 	case RADAR_FREEZE:	return "freeze";
 	case RADAR_CHAOS:	return "chaos";
+	case RADAR_NUM_TAPS_AND_HOLDS: return "taps";
+	case RADAR_NUM_JUMPS: return "jumps";
+	case RADAR_NUM_HOLDS: return "holds";
+	case RADAR_NUM_MINES: return "mines";
+	case RADAR_NUM_HANDS: return "hands";
 	default:	ASSERT(0);		return "";	// invalid
 	}
 }

@@ -177,6 +177,12 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber p
 	case RADAR_AIR:		return GetActualAirRadarValue( fSongSeconds, pn );		break;
 	case RADAR_FREEZE:	return GetActualFreezeRadarValue( fSongSeconds, pn );	break;
 	case RADAR_CHAOS:	return GetActualChaosRadarValue( fSongSeconds, pn );	break;
+	/* XXX: TODO */
+	case RADAR_NUM_TAPS_AND_HOLDS: return 0;
+	case RADAR_NUM_JUMPS: return 0;
+	case RADAR_NUM_HOLDS: return 0;
+	case RADAR_NUM_MINES: return 0;
+	case RADAR_NUM_HANDS: return 0;
 	default:	ASSERT(0);  return 0;
 	}
 }

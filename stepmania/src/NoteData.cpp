@@ -321,7 +321,7 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 	{
 		for( int i=iStartIndex; i<=iEndIndex; i++ )
 		{
-			if( GetTapNote(t, i) != TAP_EMPTY )
+			if( GetTapNote(t, i) != TAP_EMPTY && GetTapNote(t, i) != TAP_MINE )
 				iNumNotes++;
 		}
 	}
@@ -344,6 +344,24 @@ int NoteData::GetNumRowsWithTap( float fStartBeat, float fEndBeat ) const
 	return iNumNotes;
 }
 
+int NoteData::GetNumMines( float fStartBeat, float fEndBeat ) const
+{
+	int iNumMines = 0;
+
+	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+	
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		for( int i=iStartIndex; i<=iEndIndex; i++ )
+			if( GetTapNote(t, i) == TAP_MINE )
+				iNumMines++;
+	}
+	
+	return iNumMines;
+}
+
 int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) const
 {
 	int iNumNotes = 0;
@@ -359,27 +377,30 @@ int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) co
 	return iNumNotes;
 }
 
-int NoteData::GetNumDoubles( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 {
-	int iNumDoubles = 0;
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
 
-	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
+	const int iStartIndex = BeatToNoteRow( fStartBeat );
+	const int iEndIndex = BeatToNoteRow( fEndBeat );
 
+	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
+			if( GetTapNote(t, i) == TAP_MINE )
+				continue; // mines don't count
 			if( GetTapNote(t, i) != TAP_EMPTY )
 				iNumNotesThisIndex++;
 		}
-		if( iNumNotesThisIndex >= 2 )
-			iNumDoubles++;
+		if( iNumNotesThisIndex >= MinTaps )
+			iNum++;
 	}
 	
-	return iNumDoubles;
+	return iNum;
 }
 
 int NoteData::GetNumHoldNotes( float fStartBeat, float fEndBeat ) const

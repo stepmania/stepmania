@@ -39,13 +39,20 @@
 //
 const int MAX_METER = 12;
 
-enum RadarCategory	// starting from 12-o'clock rotating clockwise
+/* This is just cached song data.  Not all of it may actually be displayed
+ * in the radar. */
+enum RadarCategory
 {
 	RADAR_STREAM = 0,
 	RADAR_VOLTAGE,
 	RADAR_AIR,
 	RADAR_FREEZE,
 	RADAR_CHAOS,
+	RADAR_NUM_TAPS_AND_HOLDS,
+	RADAR_NUM_JUMPS,
+	RADAR_NUM_HOLDS,
+	RADAR_NUM_MINES,
+	RADAR_NUM_HANDS,
 	NUM_RADAR_CATEGORIES	// leave this at the end
 };
 
