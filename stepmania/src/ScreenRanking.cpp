@@ -20,10 +20,8 @@
 #include "PrefsManager.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"
-#include "ScoreKeeperMAX2.h"
-#include "ScoreKeeper5th.h"
 
-int g_iLastSongShown = 0;
+static int g_iLastSongShown = 0;
 
 
 #define CATEGORY_X					THEME->GetMetricF("ScreenRanking","CategoryX")
@@ -93,8 +91,6 @@ const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 {
-	g_iLastSongShown++;
-
 	this->AddChild( &m_sprCategory );
 
 	this->AddChild( &m_banner );
