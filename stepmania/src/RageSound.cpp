@@ -279,7 +279,7 @@ void RageSound::RateChange(char *buf, int &cnt,
 			/* Input 4 samples, output 5; 25% slowdown with no
 			 * rounding error. */
 
-			Sint16 samps[16];
+			Sint16 samps[20];	// max 2x rate
 			ASSERT(size_t(speed_input_samples) <= sizeof(samps)/sizeof(*samps));
 			int s;
 			for(s = 0; s < speed_input_samples; ++s) {

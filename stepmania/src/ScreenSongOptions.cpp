@@ -39,7 +39,7 @@ OptionRow g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
 	OptionRow( "Bat\nLives",	"1","2","3","4","5","6","7","8","9","10" ),	
 	OptionRow( "Fail",			"ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Assist\nTick",	"OFF", "ON" ),
-	OptionRow( "Rate",			"x0.3","x0.4","x0.5","x0.6","x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5","x1.6","x1.7","x1.8","x1.9","x2.0" ),	
+	OptionRow( "Rate",			"0.3x","0.4x","0.5x","0.6x","0.7x","0.8x","0.9x","1.0x","1.1x","1.2x","1.3x","1.4x","1.5x","1.6x","1.7x","1.8x","1.9x","2.0x" ),	
 	OptionRow( "Auto\nAdjust",	"OFF", "ON" ),	
 };
 
