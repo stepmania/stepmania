@@ -494,14 +494,15 @@ void Player::DrawColorArrows()
 		{		
 			float fYPos = GetColorArrowYPos( i, m_fSongBeat );
 
-			float fPercentToTop = (float)(fYPos - (float)GRAY_ARROW_Y) / (SCREEN_HEIGHT - GRAY_ARROW_Y);
-				
+			// beats until the note is stepped on.
+			float fBeatsTilStep = StepIndexToBeat( i ) - m_fSongBeat;
+
 			//RageLog( "iYPos: %d, iFrameNo: %d, m_OriginalStep[i]: %d", iYPos, iFrameNo, m_OriginalStep[i] );
 
 			for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
 				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
 					m_ColorArrow[c].SetY( fYPos );
-					m_ColorArrow[c].CalculateColor( fPercentToTop );
+					m_ColorArrow[c].CalculateColor( fBeatsTilStep );
 					m_ColorArrow[c].Draw();
 				}
 			}
