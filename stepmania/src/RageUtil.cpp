@@ -76,7 +76,7 @@ bool IsAnInt( const CString &s )
 
 bool IsHexVal( const CString &s )
 {
-	if( s[0] == '\0' )
+	if( !s.size() )
 		return false;
 
 	for( int i=0; s[i]; i++ )
