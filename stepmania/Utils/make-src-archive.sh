@@ -44,6 +44,7 @@ rm -rf smlobby
 # *nix source archives.
 #rm -rf mad-0.15.0b
 
+rm -rf lua-5.0
 rm -rf vorbis
 rm -rf BaseClasses
 rm -rf ddk
