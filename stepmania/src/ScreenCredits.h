@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenMusicScroll.h
+ File: ScreenCredits.h
 
  Desc: Music plays and song names scroll across the screen.
 
@@ -10,21 +10,15 @@
 */
 
 #include "Screen.h"
-#include "Sprite.h"
 #include "TransitionBGAnimation.h"
-#include "RageSoundManager.h"
-#include "MenuElements.h"
+#include "ActorScroller.h"
 
 
-const unsigned MAX_MUSIC_LINES = 1200;
-//const unsigned MAX_CREDIT_LINES = 100;
-const unsigned MAX_TOTAL_LINES = MAX_MUSIC_LINES;// + MAX_CREDIT_LINES;
-
-
-class ScreenMusicScroll : public Screen
+class ScreenCredits : public Screen
 {
 public:
-	ScreenMusicScroll();
+	ScreenCredits();
+	~ScreenCredits();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -37,10 +31,18 @@ public:
 
 private:
 
-	BGAnimation		m_Background;
-	BitmapText		m_textLines[MAX_TOTAL_LINES];
-	unsigned 		m_iNumLines;
-	float			m_fTimeLeftInScreen;
+	BGAnimation				m_Background;
+
+	ActorScroller			m_ScrollerBackgrounds;
+	vector<Actor*>			m_vBackgrounds;
+
+	ActorScroller			m_ScrollerFrames;
+	vector<Actor*>			m_vFrames;
+
+	ActorScroller			m_ScrollerTexts;
+	vector<Actor*>			m_vTexts;
+
+	BGAnimation				m_Overlay;
 
 	TransitionBGAnimation	m_In;
 	TransitionBGAnimation	m_Out;

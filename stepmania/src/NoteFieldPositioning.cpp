@@ -143,7 +143,8 @@ void NoteFieldPositioning::LoadFromStyleDef(const StyleDef *s, PlayerNumber pn)
 		if(!fgets(buf, 1000, f)) break;
 		sscanf(buf, "%f", &m_fFov[t]);
 	}
-	fclose(f);
+	if( f )
+		fclose(f);
 // XXX
 
 }

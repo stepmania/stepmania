@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                           	cl                                                                                            /Zl                                                                                            /nologo                                                                                            /c                                                                                            verstub.cpp                                                                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                            	cl                                                                                             /Zl                                                                                             /nologo                                                                                             /c                                                                                             verstub.cpp                                                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                           	cl                                                                                            /Zl                                                                                            /nologo                                                                                            /c                                                                                            verstub.cpp                                                                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                            	cl                                                                                             /Zl                                                                                             /nologo                                                                                             /c                                                                                             verstub.cpp                                                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -407,6 +407,14 @@ SOURCE=.\NoteDataWithScoring.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\NoteFieldPositioning.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteFieldPositioning.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Notes.cpp
 # End Source File
 # Begin Source File
@@ -552,14 +560,6 @@ SOURCE=.\TitleSubstitution.cpp
 # Begin Source File
 
 SOURCE=.\TitleSubstitution.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteFieldPositioning.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteFieldPositioning.h
 # End Source File
 # End Group
 # Begin Group "File Types"
@@ -932,11 +932,23 @@ SOURCE=.\Actor.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ActorCollision.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ActorFrame.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ActorFrame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorScroller.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorScroller.h
 # End Source File
 # Begin Source File
 
@@ -1509,6 +1521,14 @@ SOURCE=.\ScreenCaution.h
 # Begin Source File
 
 SOURCE=.\ScreenCompany.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenCredits.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenCredits.h
 # End Source File
 # Begin Source File
 

@@ -31,110 +31,7 @@
 
 const CString CREDIT_LINES[] = 
 {
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"GRAPHICS:",
-	"v1ral (Lucas Tang)",
-	"SPiGuMuS",
-	"Visage",
-	"DJ McFox (Ryan McKanna)",
-	"Cloud34 (Lamden Travis)",
-	"Redcrusher (Michael Curry)",
-	"Steve 'healing_vision' Klise",
-	"Mauro Panichella",
-	"",
-	"",
-	"",
-	"WEB DESIGN:",
-	"Brian 'Bork' Bugh",
-	"",
-	"",
-	"",
-	"SOUND:",
-	"Kyle 'KeeL' Ward",
-	"Jim 'Animechanic' Cabeen"
-	"",
-	"",
-	"",
-	"TESTING:",
-	"Gotetsu",
-	"spds (James Sanders)",
-	"",
-	"",
-	"",
-	"PROGRAMMING:",
-	"Chris Danford",
-	"Andrew 'Frieza' Livy",
-	"Glenn Maynard",
-	"Bruno Figueiredo",
-	"Dro Kulix (Peter S. May)",
-	"nmspaz (Jared Roberts)",
-	"binarys (Brendan Walker)",
-	"Lance Gilbert (Neovanglist)",
-	"Michel Donais",
-	"Mantis (Ben Nordstrom)",
-	"Parasyte (Chris Gomez)",
-	"dirkthedaring (Michael Patterson)",
-	"angedelamort (Sauleil Lamarre)",
-	"Edwin Evans",
-	"Brian 'Bork' Bugh",
-	"Elvis314 (Joel Maher)",
-	"Kefabi (Garth Smith)",
-	"Pkillah (Playah Killah)",
-	"DJ McFox (Ryan McKanna)",
-	"Robert Kemmetmueller",
-	"Shabach (Ben Andersen)",
-	"SlinkyWizard (Will Valladao)",
-	"TheChip (The Chip)",
-	"WarriorBob (David H)",
-	"Mike Waltson",
-	"",
-	"",
-	"",
-	"SPECIAL THANKS TO:",
-	"SimWolf",
-	"DJ DraftHorse",
-	"Dance With Intensity",
-	"BeMaNiRuler",
-	"DDRLlama",
-	"DDRManiaX",
-	"NMR",
-	"Random Hajile",
-	"Lagged",
-	"The Melting Pot",
-	"DDRJamz Global BBS",
-	"Eric 'WaffleKing' Webster",
-	"Mark 'Foobly' Verrey",
-	"Mandarin Blue",
-	"Anne Kiel",
-	"BeMaNiFiNiNaTiC (Jeremy Hine)",
-	"Garett Sakamoto",
-	"SailorBob",
-	"AngelTK (Kenny Lai)",
-	"Illusionz - Issaquah, WA",
-	"Quarters - Kirkland, WA",
-	"Segapark - Bournemouth, UK",
-	"Pier Amusements - Bournemouth, UK",
-	"Westcliff Amusements - Bournemouth, UK",
-	"Naoki",
-	"Konami Computer Entertainment Japan",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"Please, join the StepMania team and help us out!",
+""
 };
 const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
@@ -168,14 +65,14 @@ ScreenMusicScroll::ScreenMusicScroll()
 		m_iNumLines++;
 	}
 
-	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
-	{
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","ScreenMusicScroll titles") );
-		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
-		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
-
-		m_iNumLines++;
-	}
+//	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
+//	{
+//		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","ScreenMusicScroll titles") );
+//		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
+//		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
+//
+//		m_iNumLines++;
+//	}
 
 	for( i=0; i<m_iNumLines; i++ )
 	{

@@ -272,6 +272,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenGameplayOptions.h"
 #include "ScreenStyleSplash.h"
 #include "ScreenAutogenOptions.h"
+#include "ScreenCredits.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -332,6 +333,7 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenGameplayOptions") )		ret = new ScreenGameplayOptions;
 	else if( 0==stricmp(sClassName, "ScreenStyleSplash") )			ret = new ScreenStyleSplash;
 	else if( 0==stricmp(sClassName, "ScreenAutogenOptions") )		ret = new ScreenAutogenOptions;
+	else if( 0==stricmp(sClassName, "ScreenCredits") )				ret = new ScreenCredits;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 	return ret;

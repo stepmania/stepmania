@@ -310,8 +310,8 @@ void Sprite::DrawPrimitives()
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
-		v[0].c = m_temp.diffuse[2];	// bottom left
-		v[1].c = m_temp.diffuse[0];	// top left
+		v[0].c = m_temp.diffuse[0];	// top left
+		v[1].c = m_temp.diffuse[2];	// bottom left
 		v[2].c = m_temp.diffuse[3];	// bottom right
 		v[3].c = m_temp.diffuse[1];	// top right
 		DISPLAY->DrawQuad( v );

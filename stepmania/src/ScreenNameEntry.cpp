@@ -356,7 +356,19 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
+		{
+			Grade max_grade = GRADE_E;
+			vector<Song*> vSongs;
+			StageStats stats;
+			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
+			if( max_grade >= GRADE_AA )
+				SCREENMAN->SetNewScreen( "ScreenCredits" );
+			else
+				SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
+		}
 		break;
 	}
 }

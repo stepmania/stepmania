@@ -203,6 +203,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenCompany.h">
 			</File>
 			<File
+				RelativePath="ScreenCredits.cpp">
+			</File>
+			<File
+				RelativePath="ScreenCredits.h">
+			</File>
+			<File
 				RelativePath="ScreenDemonstration.cpp">
 			</File>
 			<File
@@ -1514,10 +1520,19 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\Actor.h">
 			</File>
 			<File
+				RelativePath="ActorCollision.h">
+			</File>
+			<File
 				RelativePath=".\ActorFrame.cpp">
 			</File>
 			<File
 				RelativePath=".\ActorFrame.h">
+			</File>
+			<File
+				RelativePath="ActorScroller.cpp">
+			</File>
+			<File
+				RelativePath="ActorScroller.h">
 			</File>
 			<File
 				RelativePath=".\BitmapText.cpp">

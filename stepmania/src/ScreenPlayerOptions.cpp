@@ -123,7 +123,7 @@ void ScreenPlayerOptions::ImportOptions()
 
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_fDark==1 ? 1 : 0;
-		m_iSelectedOption[p][PO_PERSPECTIVE]= SCALE( po.m_fPerspectiveTilt, -1, +1, 0, 2 );
+		m_iSelectedOption[p][PO_PERSPECTIVE]= SCALE( (int)po.m_fPerspectiveTilt, -1, +1, 0, 2 );
 
 
 		po.Init();
@@ -171,7 +171,7 @@ void ScreenPlayerOptions::ExportOptions()
 
 		po.m_bHoldNotes			= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
 		po.m_fDark				= (m_iSelectedOption[p][PO_DARK] == 1) ? 1.f : 0.f;
-		po.m_fPerspectiveTilt	= m_iSelectedOption[p][PO_PERSPECTIVE] - 1;
+		po.m_fPerspectiveTilt	= (float)m_iSelectedOption[p][PO_PERSPECTIVE] - 1;
 	}
 }
 
