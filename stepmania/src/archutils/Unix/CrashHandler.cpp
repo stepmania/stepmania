@@ -56,10 +56,22 @@ static void spawn_child_process(int from_parent)
 	_exit(1);
 }
 
+/* write(), but retry a couple times on EINTR. */
+int retried_write( int fd, const void *buf, size_t count )
+{
+	int tries = 3, ret;
+	do
+	{
+		ret = write( fd, buf, count );
+	}
+	while( tries-- && ret == -1 && errno == EINTR );
+	
+	return ret;
+}
 
 static void parent_write(int to_child, const void *p, size_t size)
 {
-	size_t ret = write(to_child, p, size);
+	size_t ret = retried_write(to_child, p, size);
 	if(ret != size)
 	{
 		safe_print(fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", NULL);
