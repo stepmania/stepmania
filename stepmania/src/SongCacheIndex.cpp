@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "GroupList.h"
 #include "ThemeManager.h"
 #include "SongManager.h"

@@ -78,7 +78,7 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -799,20 +799,20 @@ SOURCE=.\ScreenDimensions.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\StdAfx.cpp
+SOURCE=.\globla.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
 
-# ADD CPP /Yc"stdafx.h"
+# ADD CPP /Yc"global.h"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
-SOURCE=.\StdAfx.h
+SOURCE=.\global.h
 # End Source File
 # Begin Source File
 
@@ -1478,7 +1478,7 @@ SOURCE=.\ScreenEditMenu.cpp
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
 
-# ADD CPP /YX"stdafx.h"
+# ADD CPP /YX"global.h"
 
 !ENDIF 
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "DifficultyRating.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"

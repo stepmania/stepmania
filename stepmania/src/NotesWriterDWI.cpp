@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "NotesWriterDWI.h"
 #include "NoteTypes.h"
 #include "NoteData.h"

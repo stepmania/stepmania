@@ -1,3 +1,3 @@
-#include "stdafx.h"
+#include "global.h"
 #include "ScoreKeeper.h"
 

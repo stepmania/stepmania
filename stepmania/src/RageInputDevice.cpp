@@ -3,7 +3,7 @@
  * interface for describing input devices.
  */
 
-#include "stdafx.h"
+#include "global.h"
 #include "RageInputDevice.h"
 #include "RageUtil.h"
 

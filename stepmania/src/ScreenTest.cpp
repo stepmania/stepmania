@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 /*
 -----------------------------------------------------------------------------
  File: ScreenTest.h
@@ -12,7 +12,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "stdafx.h"
+#include "global.h"
 #include "ScreenTest.h"
 #include "ScreenSandbox.h"
 #include "ScreenTestSound.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 
 #include "SDL.h"
 #include "SDL_dither.h"

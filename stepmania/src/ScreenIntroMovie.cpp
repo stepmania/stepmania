@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "ScreenIntroMovie.h"
 
 void ScreenIntroMovie::Update( float fDelta )

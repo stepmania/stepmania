@@ -1,4 +1,4 @@
-#include "stdafx.h"	// testing updates
+#include "global.h"	// testing updates
 /*
 -----------------------------------------------------------------------------
  Class: ActorFrame

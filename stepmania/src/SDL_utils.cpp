@@ -7,7 +7,7 @@
  * Portions from SDL source and documentation.
  */
 
-#include "stdafx.h"
+#include "global.h"
 
 #include "SDL.h"
 #include "SDL_utils.h"

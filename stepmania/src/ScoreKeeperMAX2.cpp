@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "ScoreKeeperMAX2.h"
 #include "GameState.h"
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "NotesWriterSM.h"
 #include "Notes.h"
 #include "RageUtil.h"

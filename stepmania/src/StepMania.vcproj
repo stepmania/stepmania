@@ -688,10 +688,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="StepMania"
 			Filter="">
 			<File
-				RelativePath=".\StdAfx.cpp">
+				RelativePath=".\global.cpp">
 			</File>
 			<File
-				RelativePath=".\StdAfx.h">
+				RelativePath=".\global.h">
 			</File>
 			<File
 				RelativePath="StdString.h">

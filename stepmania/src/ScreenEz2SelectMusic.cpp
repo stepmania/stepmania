@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 /*
 -----------------------------------------------------------------------------
  File: ScreenEz2SelectMusic.cpp
@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "stdafx.h"
+#include "global.h"
 
 #include "ScreenEz2SelectMusic.h"
 

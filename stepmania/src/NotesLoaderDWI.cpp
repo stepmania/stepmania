@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 
 #include "NotesLoaderDWI.h"
 #include "NotesLoader.h"

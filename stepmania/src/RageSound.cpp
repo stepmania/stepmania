@@ -31,7 +31,7 @@
  * be passed to it with an offset of 0 (or the gap, however it works out).
  */
 
-#include "stdafx.h"
+#include "global.h"
 #include "RageSound.h"
 #include "RageSoundManager.h"
 #include "RageUtil.h"

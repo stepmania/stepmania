@@ -5,7 +5,7 @@
  * should be positioned just like any other actor, calling SetX and SetY
  * in the parent; that position will become the center of the frustum.
  */
-#include "stdafx.h"
+#include "global.h"
 
 #include "Sample3dObject.h"
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 /*
 -----------------------------------------------------------------------------
  File: ScreenSandbox.h
@@ -15,7 +15,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "stdafx.h"
+#include "global.h"
 #include "ScreenSandbox.h"
 
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "RageMovieTextureHelper.h"
 #include "RageUtil.h"
 #include "RageLog.h"

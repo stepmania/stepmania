@@ -1,7 +1,7 @@
 /* Handle and provide an interface to the sound driver.  Delete sounds that
  * have been detached from their owner when they're finished playing.  Distribute Update
  * calls to all sounds. */
-#include "stdafx.h"
+#include "global.h"
 
 #include "RageSoundManager.h"
 #include "RageException.h"

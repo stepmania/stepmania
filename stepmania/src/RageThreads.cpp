@@ -10,7 +10,7 @@
  * SDL for the rest.)
  */
 
-#include "stdafx.h"
+#include "global.h"
 
 #include "RageThreads.h"
 #include "RageTimer.h"
