@@ -49,6 +49,7 @@ public:
 	float			m_fJudgeWindowGreatSeconds;
 	float			m_fJudgeWindowGoodSeconds;
 	float			m_fJudgeWindowBooSeconds;
+	float			m_fJudgeWindowOKSeconds;
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;

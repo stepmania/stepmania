@@ -67,8 +67,6 @@ const float FRAME_JUDGE_AND_COMBO_BEAT_TIME = 0.2f;
 const float ARROWS_Y			= SCREEN_TOP + ARROW_SIZE * 1.5f;
 const float HOLD_JUDGEMENT_Y	= ARROWS_Y + 80;
 
-const float HOLD_ARROW_NG_TIME	=	0.18f;
-
 
 Player::Player()
 {
@@ -265,7 +263,7 @@ void Player::Update( float fDeltaTime )
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
 				// Increase life
-				fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
+				fLife += fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
 				fLife = min( fLife, 1 );	// clamp
 
 				m_GhostArrowRow.HoldNote( hn.iTrack );		// update the "electric ghost" effect
@@ -275,7 +273,7 @@ void Player::Update( float fDeltaTime )
 				if( fSongBeat-hn.fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
 				{
 					// Decrease life
-					fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
+					fLife -= fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
 					fLife = max( fLife, 0 );	// clamp
 				}
 			}

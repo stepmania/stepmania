@@ -61,6 +61,7 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowGreatSeconds = 0.090f;
 	m_fJudgeWindowGoodSeconds = 0.135f;
 	m_fJudgeWindowBooSeconds = 0.180f;
+	m_fJudgeWindowOKSeconds = 0.120f;
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;
@@ -138,6 +139,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "JudgeWindowGreatSeconds",	m_fJudgeWindowGreatSeconds );
 	ini.GetValueF( "Options", "JudgeWindowGoodSeconds",		m_fJudgeWindowGoodSeconds );
 	ini.GetValueF( "Options", "JudgeWindowBooSeconds",		m_fJudgeWindowBooSeconds );
+	ini.GetValueF( "Options", "JudgeWindowOKSeconds",		m_fJudgeWindowOKSeconds );
 	ini.GetValueF( "Options", "LifeDifficultyScale",		m_fLifeDifficultyScale );
 	ini.GetValueI( "Options", "MovieDecodeMS",				m_iMovieDecodeMS );
 	ini.GetValueB( "Options", "UseBGIfNoBanner",			m_bUseBGIfNoBanner );
@@ -213,6 +215,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "JudgeWindowGreatSeconds",	m_fJudgeWindowGreatSeconds );
 	ini.SetValueF( "Options", "JudgeWindowGoodSeconds",		m_fJudgeWindowGoodSeconds );
 	ini.SetValueF( "Options", "JudgeWindowBooSeconds",		m_fJudgeWindowBooSeconds );
+	ini.SetValueF( "Options", "JudgeWindowOKSeconds",		m_fJudgeWindowOKSeconds );
 	ini.SetValueF( "Options", "LifeDifficultyScale",		m_fLifeDifficultyScale );
 	ini.SetValueI( "Options", "MovieDecodeMS",				m_iMovieDecodeMS );
 	ini.SetValueB( "Options", "UseBGIfNoBanner",			m_bUseBGIfNoBanner );
