@@ -268,6 +268,25 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_SongChanged:
 		GAMESTATE->m_pCurSong = m_MusicWheel.GetSelectedSong();
 		MusicChanged();
+		break;
+	case SM_SMOnlinePack:
+		if ( NSMAN->m_SMOnlinePacket.Read1() == 1 )
+			switch ( NSMAN->m_SMOnlinePacket.Read1() )
+			{
+			case 0: //Room title Change
+				{
+					CString titleSub;
+					titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
+					titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
+					if ( NSMAN->m_SMOnlinePacket.Read1() != 1 )
+					{
+						CString SMOnlineSelectScreen;
+						THEME->GetMetric( m_sName, "RoomSelectScreen", SMOnlineSelectScreen );
+						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
+					}
+				}
+			}
+		break;
 	}
 	//Must be at end, as so it is last resort for SMOnline packets.
 	//If it doens't know what to do, then it'll just remove them.
