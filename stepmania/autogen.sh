@@ -16,6 +16,7 @@ PKG_NAME="stepmania"
 # Actually, there's a chance we'll work with later versions, too, but it's
 # not worth bending over backward to try to detect it right now.
 ACLOCAL=aclocal-1.7
+AUTOHEADER=autoheader
 AUTOMAKE=automake-1.7
 ACLOCAL_OPTIONS="-I autoconf/m4/"
 AUTOMAKE_OPTIONS=-a
@@ -66,6 +67,7 @@ fi
 
 $ACLOCAL $ACLOCAL_OPTIONS
 $AUTOCONF
+$AUTOHEADER
 $AUTOMAKE $AUTOMAKE_OPTIONS
 
 #make -f Makefile.am srcdir=. acinclude.m4
