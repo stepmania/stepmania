@@ -41,6 +41,13 @@
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
+
+	if (!PREFSMAN->m_bUseUnlockSystem)
+	{
+		this->HandleScreenMessage( SM_GoToNextScreen );
+		return;
+	}
+
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
