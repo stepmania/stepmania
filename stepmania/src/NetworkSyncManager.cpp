@@ -81,7 +81,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 
 	SendNetPack.m_playerID = playerID;
 	SendNetPack.m_combo=combo;
-	SendNetPack.m_score=score;			//Load packet with aproperate info
+	SendNetPack.m_score=score;			//Load packet with appropriate info
 	SendNetPack.m_step=step-1;
 	SendNetPack.m_life=m_playerLife[playerID];
 
@@ -99,9 +99,9 @@ void NetworkSyncManager::ReportSongOver()
 
 	netHolder SendNetPack;	//Create packet to send to server
 
-	SendNetPack.m_playerID = 21;	
+	SendNetPack.m_playerID = 21; // Song over Packet player ID
 	SendNetPack.m_combo=0;
-	SendNetPack.m_score=0;		//Use PID 21 (Song over Packet)
+	SendNetPack.m_score=0;
 	SendNetPack.m_step=0;
 	SendNetPack.m_life=0;
 	
@@ -124,9 +124,9 @@ void NetworkSyncManager::StartRequest()
 
 	netHolder SendNetPack;
 
-	SendNetPack.m_playerID = 20;
+	SendNetPack.m_playerID = 20; // Song Start Request Packet player ID
 	SendNetPack.m_combo=0;
-	SendNetPack.m_score=0;	//PID 20 (Song Start Request Packet)
+	SendNetPack.m_score=0;
 	SendNetPack.m_step=0;
 	SendNetPack.m_life=0;
 

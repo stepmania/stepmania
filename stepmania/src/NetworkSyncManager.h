@@ -13,8 +13,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "global.h"
-#include "GameState.h"
+#include "PlayerNumber.h"
  
 class EzSockets;
 
