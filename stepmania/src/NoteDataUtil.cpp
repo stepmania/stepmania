@@ -372,7 +372,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 	int LastSourceRow[MAX_NOTE_TRACKS];
 	int DestRow[MAX_NOTE_TRACKS];
 	
-	for( unsigned tr = 0; tr < MAX_NOTE_TRACKS; ++tr )
+	for( int tr = 0; tr < MAX_NOTE_TRACKS; ++tr )
 	{
 		LastSourceTrack[tr] = -1;
 		LastSourceRow[tr] = -9999;
