@@ -48,6 +48,11 @@ static void GetDisplayDriverDebugInfo()
 		LOWORD(id.DriverVersion.HighPart),
 		HIWORD(id.DriverVersion.LowPart), 
 		LOWORD(id.DriverVersion.LowPart));
+	LOG->Info("Video ID: {%8.8x-%4.4x-%4.4x-%6.6x}",
+		id.DeviceIdentifier.Data1,
+		id.DeviceIdentifier.Data2,
+		id.DeviceIdentifier.Data3,
+		id.DeviceIdentifier.Data4);
 
 	CoUninitialize();
 }
