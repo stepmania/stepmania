@@ -93,6 +93,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next"), true );
 	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev"), true );
 	m_SoundStart.Load( THEME->GetPathToS("Common start") );
+	m_SoundToggleOn.Load( THEME->GetPathToS("ScreenOptions toggle on") );
+	m_SoundToggleOff.Load( THEME->GetPathToS("ScreenOptions toggle off") );
 
 	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
@@ -1107,6 +1109,10 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	{
 		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
 		row.m_vbSelected[pn][iChoiceInRow] ^= true;
+		if( row.m_vbSelected[pn][iChoiceInRow] )
+			m_SoundToggleOn.Play();
+		else
+			m_SoundToggleOff.Play();
 	}
 	else
 	{

@@ -175,6 +175,8 @@ protected:
 	RageSound		m_SoundNextRow;
 	RageSound		m_SoundPrevRow;
 	RageSound		m_SoundStart;
+	RageSound		m_SoundToggleOn;
+	RageSound		m_SoundToggleOff;
 };
 
 
