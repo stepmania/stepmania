@@ -233,9 +233,11 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:
+	case MENU_BUTTON_LEFT:
 		MoveCursor( true );
 		break;
 	case MENU_BUTTON_DOWN:
+	case MENU_BUTTON_RIGHT:
 		MoveCursor( false );
 		break;
 	case MENU_BUTTON_BACK:
