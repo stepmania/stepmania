@@ -30,15 +30,7 @@ bool IniFile::ReadFile( const CString &sPath )
 			return true; /* eof */
 		}
 
-		if( line.size() >= 3 &&
-			line[0] == '\xef' &&
-			line[1] == '\xbb' &&
-			line[2] == '\xbf'
-			)
-		{
-			/* Obnoxious NT marker for UTF-8.  Remove it. */
-			line.erase(0, 3);
-		}
+		utf8_remove_bom( line );
 
 		if( line == "" )
 			continue;
