@@ -112,9 +112,9 @@ void LightsDriver_LinuxSerial::Flush()
 	temp_data_to_write[0] = 'Y';
 	temp_data_to_write[1] = 'o';
 	for( int i=0; i<NUM_DATA_BYTES; i++ )
-		temp_data[2+i] = ~g_data[i];	// flip bits so that 0=on, 1=off.
+		temp_data_to_write[2+i] = ~g_data[i];	// flip bits so that 0=on, 1=off.
 
-	WriteString( temp_data, sizeof(temp_data) );
+	WriteString( temp_data_to_write, sizeof(temp_data_to_write) );
 
 	LOG->Trace( "Leaving LightsDriver_LinuxSerial::Flush()" );
 }
