@@ -327,6 +327,8 @@ bool Alsa9Buf::WaitUntilFramesCanBeFilled( int timeout_ms )
 		return false;
 	ALSA_ASSERT("snd_pcm_wait");
 
+	dsnd_pcm_hwsync( pcm );
+
 	return err == 1;
 }
 
