@@ -23,11 +23,11 @@ const float PARTICLE_SPEED = 300;
 const float SPIRAL_MAX_ZOOM = 2;
 const float SPIRAL_MIN_ZOOM = 0.3f;
 
-#define MAX_TILES_WIDE (SCREEN_WIDTH/32+2)
-#define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
+#define MAX_TILES_WIDE int(SCREEN_WIDTH/32+2)
+#define MAX_TILES_HIGH int(SCREEN_HEIGHT/32+2)
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
-#define FullScreenRectI RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
+#define FullScreenRectI RectI((int)SCREEN_LEFT,(int)SCREEN_TOP,(int)SCREEN_RIGHT,(int)SCREEN_BOTTOM)
 
 
 BGAnimationLayer::BGAnimationLayer( bool Generic )
@@ -280,7 +280,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			Sprite s;
 			s.Load( sPath );
 			int iSpriteArea = int( s.GetUnzoomedWidth()*s.GetUnzoomedHeight() );
-			const int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
+			const int iMaxArea = int(SCREEN_WIDTH*SCREEN_HEIGHT);
 			m_iNumParticles = iMaxArea / iSpriteArea;
 			m_iNumParticles = min( m_iNumParticles, MAX_SPRITES );
 
