@@ -18,8 +18,6 @@
 
 #include "baseclasses/streams.h"
 
-class CTextureRenderer;
-
 //-----------------------------------------------------------------------------
 // RageMovieTexture Class Declarations
 //-----------------------------------------------------------------------------
@@ -75,7 +73,6 @@ protected:
 	// DirectShow pointers
 	//-----------------------------------------------------------------------------
 	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
-    CTextureRenderer        *m_pCTR;        // DShow Texture renderer
 	bool					m_bLoop;
 	bool					m_bPlaying;
 };

@@ -370,18 +370,9 @@ void RageMovieTexture::Create()
 	if( FAILED( hr = InitDShowTextureRenderer() ) )
         throw RageException( hr, "Could not initialize the DirectShow Texture Renderer!" );
 
-	if( FAILED( hr = CreateD3DTexture() ) )
-        throw RageException( hr, "Could not create the D3D Texture!" );
-
-	// Pass the D3D texture to our TextureRenderer so it knows 
-	// where to render new movie frames to.
-	if( FAILED( hr = m_pCTR->SetRenderTarget( this ) ) )
-        throw RageException( hr, "RageMovieTexture: SetRenderTarget failed." );
-
 	// Start the graph running
     if( FAILED( hr = PlayMovie() ) )
         throw RageException( hr, "Could not run the DirectShow graph." );
-
 }
 
 
@@ -410,10 +401,11 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
         throw RageException( hr, "Could not create CLSID_FilterGraph!" );
     
     // Create the Texture Renderer object
-    m_pCTR = new CTextureRenderer();
+    CTextureRenderer *pCTR = new CTextureRenderer;
     
-    // Get a pointer to the IBaseFilter on the TextureRenderer, add it to graph
-    CComPtr<IBaseFilter> pFTR = m_pCTR;
+    /* Get a pointer to the IBaseFilter on the TextureRenderer, and add it to the
+	 * graph.  When m_pGB is released, it will free pFTR. */
+    CComPtr<IBaseFilter> pFTR = pCTR;
     if( FAILED( hr = m_pGB->AddFilter(pFTR, L"TEXTURERENDERER" ) ) )
         throw RageException( hr, "Could not add renderer filter to graph!" );
     
@@ -453,10 +445,20 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
     
     // The graph is built, now get the set the output video width and height.
 	// The source and image width will always be the same since we can't scale the video
-	m_iSourceWidth  = m_pCTR->GetVidWidth();
-	m_iSourceHeight = m_pCTR->GetVidHeight();
+	m_iSourceWidth  = pCTR->GetVidWidth();
+	m_iSourceHeight = pCTR->GetVidHeight();
 	m_iImageWidth   = m_iSourceWidth;
 	m_iImageHeight  = m_iSourceHeight;
+
+	/* We've set up the movie, so we know the dimensions we need.  Set
+	 * up the texture. */
+	if( FAILED( hr = CreateD3DTexture() ) )
+        throw RageException( hr, "Could not create the D3D Texture!" );
+
+	// Pass the D3D texture to our TextureRenderer so it knows 
+	// where to render new movie frames to.
+	if( FAILED( hr = pCTR->SetRenderTarget( this ) ) )
+        throw RageException( hr, "RageMovieTexture: SetRenderTarget failed." );
 
     return S_OK;
 }
@@ -548,15 +550,11 @@ void RageMovieTexture::CheckMovieStatus()
 void RageMovieTexture::CleanupDShow()
 {
 	LOG->Trace("RageMovieTexture::CleanupDShow()");
-	m_pCTR->SetRenderTarget( NULL );
     // Shut down the graph
     if (m_pGB) {
 		Stop();
 		m_pGB.Release ();
 	}
-
-	// MEM LEAK!  Why in the world does this cause a crash...  I'm commenting it out for now.
-	//	SAFE_DELETE( m_pCTR );
 }
     
 void RageMovieTexture::Play()
