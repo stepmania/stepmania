@@ -576,7 +576,7 @@ void NoteField::DrawPrimitives()
 		NextDisplay = CurDisplay; ++NextDisplay;
 
 		// draw notes from furthest to closest
-		for( int i=iLastIndexToDraw; i>=iFirstIndexToDraw; --i )	//	 for each row
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, c, i, iFirstIndexToDraw, iLastIndexToDraw )
 		{	
 			TapNote tn = GetTapNote(c, i);
 			if( tn.type == TapNote::empty )	// no note here
