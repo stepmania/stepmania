@@ -176,7 +176,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	if(SOUNDMAN->GetDriverSampleRate() != -1 &&
 	   Sample->GetSampleRate() != SOUNDMAN->GetDriverSampleRate())
 	{
-		RageSoundReader_Resample *Resample = new RageSoundReader_Resample;
+		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( RageSoundReader_Resample::RESAMP_NORMAL );
 		Resample->Open(Sample);
 		Resample->SetSampleRate(SOUNDMAN->GetDriverSampleRate());
 		Sample = Resample;
