@@ -204,7 +204,7 @@ private:
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, int Difficult = -1 ) const;
 
 	typedef pair<StepsType,bool> InfoParams;
-	typedef vector<Course::Info> InfoData;
+	typedef vector<Info> InfoData;
 	typedef map<InfoParams, InfoData> InfoCache;
 	mutable InfoCache m_InfoCache;
 };
