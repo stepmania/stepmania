@@ -122,7 +122,11 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 			if( iRet == 4 )
 			{
 				if( iClass == 8 )	// storage class
+				{
+					LOG->Trace( "index: %u, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
+						vDevicesOut.size(), usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
 					vDevicesOut.push_back( usbd );
+				}
 				continue;	// stop processing this line
 			}
 		}
