@@ -200,12 +200,8 @@ void RageLog::Write( int where, CString str)
 
 	printf("%s\n", str.c_str() );
 
-//#ifdef DEBUG
-	Flush();
-#else
 	if( (PREFSMAN && PREFSMAN->m_bDebugMode) || (where & WRITE_TO_INFO) )
 		Flush();
-#endif
 }
 
 void RageLog::Flush()
