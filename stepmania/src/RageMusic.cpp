@@ -3,6 +3,8 @@
 #include "RageMusic.h"
 #include "RageSound.h"
 
+RageMusic *MUSIC = NULL;
+
 RageMusic::RageMusic()
 {
 	music = new RageSound;
