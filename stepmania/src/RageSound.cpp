@@ -57,7 +57,8 @@ struct RageSoundParams
 	RageSoundParams();
 
 	/* The amount of data to play (or loop): */
-	int m_StartFrames, m_LengthFrames;
+	float m_StartSecond;
+	float m_LengthSeconds;
 
 	/* Amount of time to fade out at the end. */
 	float m_FadeLength;
@@ -83,8 +84,8 @@ struct RageSoundParams
 RageSoundParams::RageSoundParams():
 	StartTime( RageZeroTimer )
 {
-	m_StartFrames = 0;
-	m_LengthFrames = -1;
+	m_StartSecond = 0;
+	m_LengthSeconds = -1;
 	m_FadeLength = 0;
 	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
 	m_Balance = 0; // center
@@ -228,7 +229,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 void RageSound::SetStartSeconds( float secs )
 {
 	ASSERT(!playing);
-	m_Param->m_StartFrames = int( secs*samplerate() );
+	m_Param->m_StartSecond = secs;
 }
 
 void RageSound::SetLengthSeconds(float secs)
@@ -236,10 +237,7 @@ void RageSound::SetLengthSeconds(float secs)
 	RAGE_ASSERT_M( secs == -1 || secs >= 0, ssprintf("%f",secs) );
 	ASSERT(!playing);
 	
-	if(secs == -1)
-		m_Param->m_LengthFrames = -1;
-	else
-		m_Param->m_LengthFrames = int(secs*samplerate());
+	m_Param->m_LengthSeconds = secs;
 }
 
 /* Read data at the rate we're playing it.  We only do this to smooth out the rate
@@ -382,11 +380,11 @@ int RageSound::FillBuf(int bytes)
  * that would be read. */
 int RageSound::GetData(char *buffer, int size)
 {
-	if( m_Param->m_LengthFrames != -1 )
+	if( m_Param->m_LengthSeconds != -1 )
 	{
-		/* We have a length; only read up to the end.  MaxPosition is the
-		 * sample position of the end. */
-		int FramesToRead = m_Param->m_StartFrames + m_Param->m_LengthFrames - position;
+		/* We have a length; only read up to the end. */
+		const float LastSecond = m_Param->m_StartSecond + m_Param->m_LengthSeconds;
+		int FramesToRead = int(LastSecond*samplerate()) - position;
 
 		/* If it's negative, we're past the end, so cap it at 0. Don't read
 		 * more than size. */
@@ -462,22 +460,22 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 					 * position is very close to the end of the file, so we're looping
 					 * over the remainder.  If we keep doing this, we'll chew CPU rewinding,
 					 * so stop. */
-					LOG->Warn("Sound %s is busy looping.  Sound stopped (start = %i, length = %i)",
-						GetLoadedFilePath().c_str(), m_Param->m_StartFrames, m_Param->m_LengthFrames);
+					LOG->Warn( "Sound %s is busy looping.  Sound stopped (start = %f, length = %f)",
+						GetLoadedFilePath().c_str(), m_Param->m_StartSecond, m_Param->m_LengthSeconds );
 
 					return 0;
 				}
 
 				/* Rewind and start over. */
-				SetPositionFrames( m_Param->m_StartFrames );
+				SetPositionSeconds( m_Param->m_StartSecond );
 
 				/* Make sure we can get some data.  If we can't, then we'll have
 				 * nothing to send and we'll just end up coming back here. */
 				if(!Bytes_Available()) FillBuf(size);
 				if(GetData(NULL, size) == 0)
 				{
-					LOG->Warn("Can't loop data in %s; no data available at start point %i",
-						GetLoadedFilePath().c_str(), m_Param->m_StartFrames);
+					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
+						GetLoadedFilePath().c_str(), m_Param->m_StartSecond );
 
 					/* Stop here. */
 					return bytes_stored;
@@ -506,14 +504,15 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 		 * m_LengthFrames is -1, we don't know the length we're playing.
 		 * (m_LengthFrames is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if( m_Param->m_FadeLength != 0 && m_Param->m_LengthFrames != -1 )
+		if( m_Param->m_FadeLength != 0 && m_Param->m_LengthSeconds != -1 )
 		{
 			Sint16 *p = (Sint16 *) buffer;
 			int this_position = position;
 
 			for(int samp = 0; samp < got_frames; ++samp)
 			{
-				float fSecsUntilSilent = float( m_Param->m_StartFrames + m_Param->m_LengthFrames - this_position ) / samplerate();
+				const float fLastSecond = m_Param->m_StartSecond+m_Param->m_LengthSeconds;
+				const float fSecsUntilSilent = fLastSecond - float(this_position) / samplerate();
 				float fVolPercent = fSecsUntilSilent / m_Param->m_FadeLength;
 
 				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
@@ -752,7 +751,10 @@ float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) c
 
 bool RageSound::SetPositionSeconds( float fSeconds )
 {
-	return SetPositionFrames( fSeconds == -1? -1: int(fSeconds * samplerate()) );
+	if( fSeconds == -1 )
+		fSeconds = m_Param->m_StartSecond;
+
+	return SetPositionFrames( int(fSeconds * samplerate()) );
 }
 
 /* This is always the desired sample rate of the current driver. */
@@ -764,9 +766,6 @@ int RageSound::GetSampleRate() const
 
 bool RageSound::SetPositionFrames( int frames )
 {
-	if( frames == -1 )
-		frames = m_Param->m_StartFrames;
-
 	/* This can take a while.  Only lock the sound buffer if we're actually playing. */
 	LockMutex L(SOUNDMAN->lock);
 	if(!playing)
