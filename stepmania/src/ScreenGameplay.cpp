@@ -1411,13 +1411,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
-	//NSMAN Update Life in NSMAN.
+	FOREACH_EnabledPlayer( pn )
 	{
-		FOREACH_EnabledPlayer( pn )
-		{
-			ASSERT( m_pLifeMeter[pn] );
+		if( m_pLifeMeter[pn] )
 			NSMAN->m_playerLife[pn] = int(m_pLifeMeter[pn]->GetLife()*10000);
-		}
 	}
 }
 
