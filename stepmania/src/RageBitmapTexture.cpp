@@ -81,45 +81,7 @@ void RageBitmapTexture::Create()
 	}
 
 	if(actualID.bHotPinkColorKey)
-	{
-		// HACK:  Some Pump banners and DDR PC textures have (248,0,248) as the color key.
-		// Search the edge for (248,0,248).  If we find it, use that as the color key.
-		// TODO:  Get rid of this hack and save DDR PC textures in a format that supports alpha.
-		bool bUse248 = false;
-		{
-			const uint8_t *p = (uint8_t*)img->pixels;
-			for( int i=0; i<img->w; i++ )
-			{
-				uint8_t color[4];
-				mySDL_GetRGBAV( p, img, color );
-				if( color[0]==248 && color[1]==0 && color[2]==248 )
-				{
-					bUse248 = true;
-					goto apply_color_key;
-				}
-				p += img->format->BytesPerPixel;
-			}
-		}
-		{
-			const uint8_t *p = (uint8_t*)img->pixels;
-			p += img->pitch * (img->h-1);
-			for( int i=0; i<img->w; i++ )
-			{
-				uint8_t color[4];
-				mySDL_GetRGBAV( p, img, color );
-				if( color[0]==248 && color[1]==0 && color[2]==248 )
-				{
-					bUse248 = true;
-					goto apply_color_key;
-				}
-				p += img->format->BytesPerPixel;
-			}
-		}
-apply_color_key:
-		int color = mySDL_MapRGBExact(img->format, bUse248 ? 248 : 0xFF, 0, bUse248 ? 248 : 0xFF);
-		if( color != -1 )
-			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color );
-	}
+		ApplyHotPinkColorKey( img );
 
 	{
 		/* Do this after setting the color key for paletted images; it'll also return
@@ -210,14 +172,6 @@ apply_color_key:
 		SDL_FreeSurface(img);
 		img = dst;
 	}
-	
-	if( img->format->BitsPerPixel == 8 && actualID.iGrayscaleBits == -1 && !(img->unused1 & ALPHA_PALETTE) )
-	{
-		/* Unless we set up the palette ourself, assume the "unused" bit is undefined,
-		 * and set it to 255.  We use it for alpha. */
-		for( int index = 0; index < img->format->palette->ncolors; ++index )
-			img->format->palette->colors[index].unused = 0xFF;
-	}
 
 	/* Figure out which texture format to use. */
 	// if the source is palleted, load palleted no matter what the prefs
@@ -235,13 +189,9 @@ apply_color_key:
 				/* Bits of alpha in the source: */
 				int src_alpha_bits = 8 - img->format->Aloss;
 
-				/* No real alpha in paletted input. */
+				/* Aloss is wrong when BytesPerPixel == 1. */
 				if( img->format->BytesPerPixel == 1 )
-					src_alpha_bits = 0;
-
-				/* Colorkeyed input effectively has at least one bit of alpha: */
-				if( img->flags & SDL_SRCCOLORKEY )
-					src_alpha_bits = max( 1, src_alpha_bits );
+					src_alpha_bits = 8;
 
 				/* Don't use more than we were hinted to. */
 				src_alpha_bits = min( actualID.iAlphaBits, src_alpha_bits );
