@@ -8,6 +8,10 @@
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
+
+/* When a sound has fewer than min_fill_frames buffered, buffer at maximum speed.
+ * Once beyond that */
+static const int min_fill_frames = 1024*4;
 static int frames_to_buffer;
 
 /* 512 is about 10ms, which is big enough for the tolerance of most schedulers. */
@@ -164,51 +168,66 @@ void RageSound_Generic_Software::DecodeThread()
 		LockMut( m_Mutex );
 //		LOG->Trace("begin mix");
 
-		unsigned i;
-		for( i = 0; i < ARRAYSIZE(sounds); ++i )
+		for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 		{
 			/* The volume can change while the sound is playing; update it. */
 			if( sounds[i].state == sound::PLAYING || sounds[i].state == sound::STOPPING )
 				sounds[i].volume = sounds[i].snd->GetVolume();
 		}
 
-		/* Fill PLAYING sounds, prioritizing sounds that have less sound buffered. */
-		while( 1 )
+		/*
+		 * If a buffer is low on data, keep filling until it has a reasonable amount.
+		 * However, once beyond a certain threshold, clamp the rate at which we fill
+		 * it.  For example, if the threshold is 4k frames, and we have a 32k frame
+		 * buffer, fill the buffer as fast as we can until it reaches 4k frames; but
+		 * beyond that point, only fill it at a rate relative to realtime (for example,
+		 * at 2x realtime).
+		 *
+		 * This allows a stream to have a large buffer, for higher reliability, without
+		 * causing major CPU bursts when the stream starts or underruns.  (Filling 32k
+		 * takes more CPU than filling 4k frames, and may cause a gameplay skip.)
+		 */
+		for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 		{
-			sound *pSound = NULL;
-			int64_t num_writable = 0;
-			for( i = 0; i < ARRAYSIZE(sounds); ++i )
-			{
-				if( sounds[i].state != sound::PLAYING )
-					continue;
-				if( pSound == NULL || sounds[i].buffer.num_writable() > num_writable )
-				{
-					num_writable = sounds[i].buffer.num_writable();
-					pSound = &sounds[i];
-				}
-			}
+			if( sounds[i].state != sound::PLAYING )
+				continue;
 
-			if( pSound == NULL )
-				break;
-
-			if( !num_writable )
-				break;
+			sound *pSound = &sounds[i];
 
 			CHECKPOINT;
-			if( !GetDataForSound( *pSound ) )
+			int frames_filled = 0;
+			while( pSound->buffer.num_writable() )
 			{
-				/* This sound is finishing. */
-				pSound->state = sound::STOPPING;
-//				LOG->Trace("mixer: (#%i) eof (%p)", i, pSound->snd );
+				/* If there are more than min_fill_frames available, check for
+				 * rate clamping. */
+				if( pSound->buffer.num_readable()*samples_per_block >= min_fill_frames )
+				{
+					/* Don't write more than two chunks worth of data in one
+					 * iteration.  Since we delay for one chunk period per loop,
+					 * this means we'll fill at no more than 2x realtime. */
+					if( frames_filled >= chunksize()*2 )
+						break;
+				}
+
+				int wrote = GetDataForSound( *pSound );
+				if( !wrote )
+				{
+					/* This sound is finishing. */
+					pSound->state = sound::STOPPING;
+					break;
+//					LOG->Trace("mixer: (#%i) eof (%p)", i, pSound->snd );
+				}
+
+				frames_filled += wrote;
 			}
 		}
 //		LOG->Trace("end mix");
 	}
 }
 
-/* Buffer a block of sound data for the given sound.  If end of file is reached,
- * return false. */
-bool RageSound_Generic_Software::GetDataForSound( sound &s )
+/* Buffer a block of sound data for the given sound.  Return the number of
+ * frames buffered.  If end of file is reached, return 0. */
+int RageSound_Generic_Software::GetDataForSound( sound &s )
 {
 	sound_block *p[2];
 	unsigned psize[2];
@@ -218,7 +237,8 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 	ASSERT( psize[0] > 0 );
 
 	sound_block *b = p[0];
-	bool eof = !s.snd->GetDataToPlay( b->buf, ARRAYSIZE(b->buf)/channels, b->position, b->frames_in_buffer );
+	int size = ARRAYSIZE(b->buf)/channels;
+	bool eof = !s.snd->GetDataToPlay( b->buf, size, b->position, b->frames_in_buffer );
 	b->p = b->buf;
 
 	s.buffer.advance_write_pointer( 1 );
@@ -226,7 +246,7 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 //	LOG->Trace( "incr fr wr %i (state %i) (%p)",
 //		(int) b->frames_in_buffer, s.state, s.snd );
 
-	return !eof;
+	return eof? 0:size;
 }
 
 
@@ -308,10 +328,13 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
 	bool ReachedEOF = false;
-	while( !ReachedEOF && s.buffer.num_writable() )
+	int frames_filled = 0;
+	while( !ReachedEOF && frames_to_buffer < min_fill_frames )
 	{
 //		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.snd );
-		if( !GetDataForSound( s ) )
+		int wrote = GetDataForSound( s );
+		frames_filled += wrote;
+		if( !wrote )
 		{
 //		LOG->Trace("StartMixing: XXX hit EOF (%p)", s.snd );
 			ReachedEOF = true;

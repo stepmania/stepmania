@@ -134,7 +134,7 @@ private:
 	void DecodeThread();
 	RageThread m_DecodeThread;
 
-	bool GetDataForSound( sound &s );
+	int GetDataForSound( sound &s );
 };
 
 #endif
