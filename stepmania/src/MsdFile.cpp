@@ -143,8 +143,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 		return false;
 	}
 
-	/* XXX: f.GetFileSizeInBytes() */
-	int iBufferSize = GetFileSizeInBytes(sNewPath);
+	const int iBufferSize = f.GetFileSize();
 
 	// allocate a string to hold the file
 	char* szFileString = new char[iBufferSize];
