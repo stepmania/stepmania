@@ -412,24 +412,8 @@ void Player::Step( int col )
 			}
 		}
 
-
-
-
-		if (score > TNS_NONE) 
-		{
-			bool bRowDestroyed = true;
-			for( int t=0; t<GetNumTracks(); t++ )			// did this complete the elimination of the row?
-			{
-				if( GetTapNote(t, iIndexOverlappingNote) != TAP_EMPTY  &&			// there is a note here
-					GetTapNoteScore(t, iIndexOverlappingNote) == TNS_NONE )			// and it doesn't have a score
-				{
-					bRowDestroyed = false;
-					break;	// stop searching
-				}
-			}
-			if( bRowDestroyed )
-				OnRowDestroyed( score, iIndexOverlappingNote );
-		}
+		if (score > TNS_NONE && IsRowComplete(iIndexOverlappingNote, TNS_BOO) )
+			OnRowDestroyed( score, iIndexOverlappingNote );
 	}
 
 	if( !bDestroyedNote )
