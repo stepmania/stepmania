@@ -8,6 +8,7 @@
 #define BITMAP_LOADING                  117
 #define BITMAP_CRASH                    121
 #define BITMAP_ERROR                    129
+#define IDD_OK                          129
 #define IDD_DISASM_CRASH                199
 #define IDC_SHOCKWAVEFLASH1             1000
 #define IDC_BUTTON_RESTART              1001
@@ -28,6 +29,9 @@
 #define IDC_VIEW_LOG                    1012
 #define IDC_STATIC_MESSAGE3             1013
 #define IDC_PROGRESS1                   1014
+#define IDC_HUSH                        1016
+#define IDC_MESSAGE                     1017
+#define IDC_CHECK2                      1019
 #define IDC_ASMBOX                      1133
 #define IDC_REGDUMP                     1283
 #define IDC_STATIC_BOMBREASON           1284
@@ -38,9 +42,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        129
+#define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         40009
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

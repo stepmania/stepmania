@@ -80,6 +80,20 @@ BEGIN
     LTEXT           "Estimated call stack",IDC_STATIC,7,184,64,8
 END
 
+IDD_OK DIALOGEX 0, 0, 318, 74
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
+    WS_CAPTION
+CAPTION "StepMania"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,131,53,50,14
+    CONTROL         "&Don't display this message",IDC_HUSH,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,211,56,100,10
+    EDITTEXT        IDC_MESSAGE,7,7,304,40,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | 
+                    WS_VSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -103,6 +117,14 @@ BEGIN
         RIGHTMARGIN, 398
         VERTGUIDE, 286
         BOTTOMMARGIN, 270
+    END
+
+    IDD_OK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 311
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 67
     END
 END
 #endif    // APSTUDIO_INVOKED
