@@ -18,7 +18,7 @@ ULONG		randseed = time(NULL);
 #include <direct.h>
 #include <numeric>
 #include <math.h>
-using namespace std;
+#include <sys/stat.h>
 
 bool IsAnInt( const char *s )
 {
@@ -615,9 +615,9 @@ unsigned int GetHashForFile( CString sPath )
 
 	hash += GetFileSizeInBytes( sPath ); 
 
-	CFileStatus status;
-	if( CFile::GetStatus(sPath, status) )
-		hash += status.m_mtime.GetHour() * 3600 + status.m_mtime.GetMinute() * 60 + status.m_mtime.GetSecond();
+	struct stat st;
+	if( stat(sPath.GetString(), &st) != -1)
+		hash += st.st_mtime;
 
 	return hash;
 }
