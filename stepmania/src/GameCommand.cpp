@@ -215,7 +215,7 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		{
 			CString sWarning = ssprintf( "Command '%s' is not valid.", command->GetOriginalCommandString().c_str() );
 			LOG->Warn( sWarning );
-			Dialog::OK( sWarning, "FRAME_DIMENSIONS_WARNING" );
+			Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
 		}
 	}
 
