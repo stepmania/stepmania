@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                             	cl                                              /Zl                                              /nologo                                              /c                                              verstub.cpp                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                              	cl                                               /Zl                                               /nologo                                               /c                                               verstub.cpp                                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                             	cl                                              /Zl                                              /nologo                                              /c                                              verstub.cpp                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                              	cl                                               /Zl                                               /nologo                                               /c                                               verstub.cpp                                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -320,6 +320,22 @@ SOURCE=.\Font.cpp
 # Begin Source File
 
 SOURCE=.\Font.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontCharAliases.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontCharAliases.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontCharmaps.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontCharmaps.h
 # End Source File
 # Begin Source File
 

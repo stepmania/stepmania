@@ -455,6 +455,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\Font.h">
 			</File>
 			<File
+				RelativePath="FontCharAliases.cpp">
+			</File>
+			<File
+				RelativePath="FontCharAliases.h">
+			</File>
+			<File
+				RelativePath="FontCharmaps.cpp">
+			</File>
+			<File
+				RelativePath="FontCharmaps.h">
+			</File>
+			<File
 				RelativePath="Game.h">
 			</File>
 			<File
