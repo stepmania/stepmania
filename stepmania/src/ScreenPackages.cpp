@@ -415,20 +415,20 @@ CString ScreenPackages::StripOutContainers( const CString & In )
 
 	int i = 0;
 	char t = In.at(i);
-	while ( ( t == ' ' ) && ( i < In.length() ) ) 
+	while( t == ' ' && i < In.length() )
 	{
 		t = In.at(++i);
 	}
 
-	if ( ( t == '\"' ) || ( t == '\'' ) )
+	if( t == '\"' || t == '\'' )
 	{
 		int j = i+1; 
 		char u = In.at(j);
-		while ( ( u != t ) && ( j < In.length() ) )
+		while( u != t && j < In.length() )
 		{
 			u = In.at(++j);
 		}
-		if (j==i)
+		if( j == i )
 			return StripOutContainers( In.substr(i+1) );
 		else
 			return StripOutContainers( In.substr(i+1, j-i-1) );
@@ -440,7 +440,7 @@ void ScreenPackages::UpdateProgress()
 {
 	float DownloadedRatio;
 
-	if ( m_iTotalBytes < 1 )
+	if( m_iTotalBytes < 1 )
 		DownloadedRatio = 0;
 	else
 		DownloadedRatio = float(m_iDownloaded) / float(m_iTotalBytes);
@@ -462,7 +462,7 @@ void ScreenPackages::CancelDownload( )
 	m_fOutputFile.Close();
 	m_sStatus = "Failed.";
 	m_sBUFFER = "";
-	if ( ! FILEMAN->Remove( "Packages/" + m_sEndName ) )
+	if( !FILEMAN->Remove( "Packages/" + m_sEndName ) )
 		SCREENMAN->SystemMessage( "Packages/" + m_sEndName );
 }
 void ScreenPackages::EnterURL( const CString & sURL )
@@ -472,7 +472,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	int Port=80;
 	CString Addy;
 
-	if ( !ParseHTTPAddress( sURL, Proto, Server, Port, Addy ) )
+	if( !ParseHTTPAddress( sURL, Proto, Server, Port, Addy ) )
 	{
 		m_sStatus = "Invalid URL.";
 		UpdateProgress();
@@ -481,13 +481,13 @@ void ScreenPackages::EnterURL( const CString & sURL )
 
 	//Determine if this is a website, or a package?
 	//Criteria: does it end with *zip?
-	if ( Addy.Right(3).CompareNoCase("zip") == 0 )
+	if( Addy.Right(3).CompareNoCase("zip") == 0 )
 		m_bIsPackage=true;
 	else
 		m_bIsPackage = false;
 
 	int k=0,j=0;
-	while ( k >= 0 )
+	while( k >= 0 )
 	{
 		j = k+1;
 		k = Addy.Find( '/', j );
@@ -495,12 +495,12 @@ void ScreenPackages::EnterURL( const CString & sURL )
 
 	//If there is no '/' in the addy, ignore it all
 	//for base address.
-	if ( Addy.Find( '/', 0 ) < 0 )
+	if( Addy.Find( '/', 0 ) < 0 )
 		j = 0;
 
 	m_sEndName = Addy.Right( Addy.length() - j + 1 );
 
-	if ( Port == 80 )
+	if( Port == 80 )
 		m_sBaseAddress = "http://" + Server + "/" + Addy.substr(0, j);
 	else
 		m_sBaseAddress = "http://" + Server + ssprintf( ":%d/", Port ) + Addy.substr(0, j);
@@ -512,7 +512,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	//XXX: This should be fixed by a prompt or something?
 
 	//if we are not talking about a file, let's not worry
-	if ( ( m_sEndName != "" ) && m_bIsPackage )
+	if( m_sEndName != "" && m_bIsPackage )
 	{
 		CStringArray AddTo;
 		GetDirListing( "Packages/"+m_sEndName, AddTo, false, false );
@@ -523,7 +523,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 			return;
 		}
 
-		if (!m_fOutputFile.Open( "Packages/"+m_sEndName, RageFile::WRITE ))
+		if( !m_fOutputFile.Open( "Packages/"+m_sEndName, RageFile::WRITE ) )
 		{
 			m_sStatus = m_fOutputFile.GetError();
 			UpdateProgress();
@@ -542,7 +542,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 
 	m_wSocket.blocking = true;
 
-	if (!m_wSocket.connect( Server, Port ))
+	if( !m_wSocket.connect( Server, Port ) )
 	{
 		m_sStatus = "Failed to connect.";
 		UpdateProgress();
