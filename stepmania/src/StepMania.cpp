@@ -185,7 +185,7 @@ void HandleException( CString error )
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
 
-	HOOKS->MessageBoxError( error ); // throw up a pretty error dialog
+	Dialog::Error( error ); // throw up a pretty error dialog
 }
 	
 void ExitGame()
@@ -1014,6 +1014,7 @@ int main(int argc, char* argv[])
 	
 	atexit(SDL_Quit);   /* Clean up on exit */
 
+	/* This should be done after PREFSMAN is set up, so it can use Dialog::OK(). */
 	Dialog::Init();
 
 	/* Fire up the SDL, but don't actually start any subsystems.
@@ -1042,8 +1043,6 @@ int main(int argc, char* argv[])
 	if( PREFSMAN->m_bFirstRun )
 		OnFirstRun();
 
-	/* This should be done after PREFSMAN is set up, so it can use HOOKS->MessageBoxOK,
-	 * but before we do more complex things that might crash. */
 	HOOKS->DumpDebugInfo();
 
 	CheckSettings();
