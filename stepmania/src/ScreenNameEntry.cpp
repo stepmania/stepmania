@@ -90,7 +90,6 @@ ScreenNameEntry::ScreenNameEntry()
 {
 	LOG->Trace( "ScreenNameEntry::ScreenNameEntry()" );
 
-
 	
 	// update cache
 	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
@@ -192,6 +191,9 @@ ScreenNameEntry::ScreenNameEntry()
 
 		if( !bNewHighScore )
 			continue;	// skip
+
+		// remove modifiers that may have been on the last song
+		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
 
 		ASSERT( GAMESTATE->IsPlayerEnabled(p) );	// they better be enabled if they made a high score!
 
