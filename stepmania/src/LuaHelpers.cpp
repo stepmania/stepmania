@@ -10,12 +10,12 @@
 LuaFunctionList *g_LuaFunctionList = NULL;
 
 #if defined(_WINDOWS)
-	#pragma comment(lib, "lua-5.0/LibLua.lib")
-	#pragma comment(lib, "lua-5.0/LibLuaLib.lib")
+	#pragma comment(lib, "lua-5.0/lib/LibLua.lib")
+	#pragma comment(lib, "lua-5.0/lib/LibLuaLib.lib")
 #endif
 #if defined(_XBOX)
-	#pragma comment(lib, "lua-5.0/LibLuaXbox.lib")
-	#pragma comment(lib, "lua-5.0/LibLuaLibXbox.lib")
+	#pragma comment(lib, "lua-5.0/lib/LibLuaXbox.lib")
+	#pragma comment(lib, "lua-5.0/lib/LibLuaLibXbox.lib")
 #endif
 #if defined(_WINDOWS) || defined (_XBOX)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
