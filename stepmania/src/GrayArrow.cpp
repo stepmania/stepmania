@@ -17,6 +17,7 @@
 #include <math.h>
 #include "ThemeManager.h"
 
+#include "RageLog.h"
 
 #define STEP_SECONDS		THEME->GetMetricF("GrayArrow","StepSeconds")
 #define STEP_ZOOM			THEME->GetMetricF("GrayArrow","StepZoom")
@@ -38,10 +39,26 @@ void GrayArrow::Update( float fDeltaTime )
 
 	Sprite::Update( fDeltaTime );
 
-	float fPercentIntoBeat = fmodf(GAMESTATE->m_fSongBeat,1);
-	if( fPercentIntoBeat < 0 )
-		fPercentIntoBeat += 1;
-	int iNewState = (fPercentIntoBeat<0.1f)||(fPercentIntoBeat>0.9f) ? 0 : 1;
+	/* These could be metrics or configurable.  I'd prefer the flash to
+	 * start on the beat, I think ... -glenn */
+
+	/* Start flashing 10% of a beat before the beat starts. */
+	const float flash_offset = -0.1f;
+
+	/* Flash for 20% of a beat. */
+	const float flash_length = 0.2f;
+
+	float cur_beat = GAMESTATE->m_fSongBeat;
+
+	/* Make sure that the first flash (when cur_beat is passing 0) is just as
+	 * long as others. */
+	cur_beat += 1.0f;
+	cur_beat -= flash_offset;
+
+	float fPercentIntoBeat = fmodf(cur_beat, 1);
+
+	int iNewState = (fPercentIntoBeat < flash_length)? 0:1;
+
 	CLAMP( iNewState, 0, Sprite::GetNumStates() );
 	SetState( iNewState );
 }
