@@ -1,7 +1,7 @@
 #include "global.h"
 #include "AutoKeysounds.h"
 #include "GameState.h"
-#include "Song.h"
+#include "song.h"
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
