@@ -183,7 +183,7 @@ ScreenTitleMenu::~ScreenTitleMenu()
 
 void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->Trace( "ScreenTitleMenu::Input()" );
+//	LOG->Trace( "ScreenTitleMenu::Input()" );
 
 	if( m_Fade.IsClosing() )
 		return;
