@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_CNAMBUF		(131072)
-#define MAX_FNAMBUF		(131072)
+#define MAX_CNAMBUF		(0x100000)
+#define MAX_FNAMBUF		(0x20000)
 #define MAX_SEGMENTS	(64)
 #define MAX_GROUPS		(64)
 
@@ -48,6 +48,16 @@ long grpstart[MAX_GROUPS];
 char line[8192];
 long codeseg_flags = 0;
 FILE *f, *fo;
+
+char *strtack(char *s, const char *t, const char *s_max) {
+	while(s < s_max && (*s = *t))
+		++s, ++t;
+
+	if (s == s_max)
+		return NULL;
+
+	return s+1;
+}
 
 bool readline() {
 	if (!fgets(line, sizeof line, f))
@@ -150,9 +160,10 @@ void parsename(long rva, char *buf) {
 			++idx;
 		}
 
-		if (csptr >= cnamptr) {
-			strcpy(cnamptr, class_name);
-			while(*cnamptr++);
+		if (csptr >= cnamptr && strcmp(csptr, class_name) ) {
+			cnamptr = strtack(cnamptr, class_name, cnambuf+MAX_CNAMBUF);
+			if(!cnambuf)
+				throw "Too many class names; increase MAX_CNAMBUF.";
 		}
 
 		*fnamptr++ = 1 + (idx / 128);
@@ -162,11 +173,9 @@ void parsename(long rva, char *buf) {
 			*fnamptr++ = special_func;
 	}
 
-	if (func_name) {
-		strcpy(fnamptr, func_name);
-		while(*fnamptr++);
-	} else
-		*fnamptr++ = 0;
+	fnamptr = strtack(fnamptr, func_name? func_name:"", fnambuf+MAX_FNAMBUF);
+	if(!fnamptr)
+		throw "Too many func names; increase MAX_FNAMBUF.";
 }
 
 struct RVASorter {
