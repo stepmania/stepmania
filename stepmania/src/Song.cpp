@@ -448,10 +448,6 @@ void FixupPath( CString &path )
 	/* Replace backslashes with slashes in all paths. */	
 	FixSlashesInPlace( path );
 
-	bool StartsWithDot = false;
-	if( path.Left(2) == "./" )
-		StartsWithDot = true;
-
 	CollapsePath( path );
 
 	/* Many imported files contain erroneous whitespace before or after
@@ -459,9 +455,6 @@ void FixupPath( CString &path )
 	 * so let's just remove it. */
 	TrimLeft( path );
 	TrimRight( path );
-
-	if( StartsWithDot )
-		path = "./" + path;
 }
 
 /* Songs in BlacklistImages will never be autodetected as song images. */
