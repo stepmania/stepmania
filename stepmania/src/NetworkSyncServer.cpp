@@ -506,9 +506,9 @@ void StepManiaLanServer::NewClientCheck()
 
 }
 
-void StepManiaLanServer::SendValue(Uint8 value, int clientNum)
+void StepManiaLanServer::SendValue(uint8_t value, int clientNum)
 {
-	Client[clientNum].clientSocket.SendPack((char*)&value, sizeof(Uint8));
+	Client[clientNum].clientSocket.SendPack((char*)&value, sizeof(uint8_t));
 }
 
 void StepManiaLanServer::RelayChat(PacketFunctions& Packet, int clientNum)

@@ -4,8 +4,6 @@
 #include "ezsockets.h"
 #include "NetworkSyncManager.h"
 
-typedef unsigned char Uint8;
-
 #define NETMAXBUFFERSIZE 1020
 #define NUMBERCLIENTS 16
 
@@ -99,7 +97,7 @@ private:
 	int FindEmptyClient();
 	void NewClientCheck();
 	void ParseData(PacketFunctions& Packet, int clientNum);
-	void SendValue(Uint8 value, int clientNum);
+	void SendValue(uint8_t value, int clientNum);
 	void CheckReady();
 	void MoveClientToHost();
 	void StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[],
