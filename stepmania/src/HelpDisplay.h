@@ -20,14 +20,15 @@ class HelpDisplay : public ActorFrame
 public:
 	HelpDisplay();
 	void Load();
-	void SetTips( const CStringArray &arrayTips );
+	void SetTips( const CStringArray &arrayTips ) { SetTips( arrayTips, arrayTips ); }
+	void SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt );
 
 	virtual void Update( float fDeltaTime );
 
 protected:
 	BitmapText m_textTip;
 
-	CStringArray m_arrayTips;
+	CStringArray m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
 	
 	float m_fSecsUntilSwitch;

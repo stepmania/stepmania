@@ -29,20 +29,24 @@ HelpDisplay::HelpDisplay()
 void HelpDisplay::Load()
 {
 	m_textTip.SetName( "Tip" );
-	m_textTip.LoadFromFont( THEME->GetPathToF("HelpDisplay") );
+	m_textTip.LoadFromFont( THEME->GetPathToF("HelpDisplay") ); // XXX
 	ON_COMMAND( m_textTip );
 	this->AddChild( &m_textTip );
 
 	m_fSecsUntilSwitch = TIP_SHOW_TIME;
 }
 
-void HelpDisplay::SetTips( const CStringArray &arrayTips )
+void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt )
 { 
+	ASSERT( arrayTips.size() == arrayTipsAlt.size() );
+	m_textTip.SetText( "" );
+
 	m_arrayTips = arrayTips;
-	if( !m_arrayTips.empty() )
-		m_textTip.SetText( m_arrayTips[0] );
-	else
-		m_textTip.SetText( "" );
+	m_arrayTipsAlt = arrayTipsAlt;
+
+	m_iCurTipIndex = 0;
+	m_fSecsUntilSwitch = 0;
+	Update( 0 );
 }
 
 
@@ -50,15 +54,16 @@ void HelpDisplay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	if( !m_arrayTips.empty() )
-	{
-		m_fSecsUntilSwitch -= fDeltaTime;
-		if( m_fSecsUntilSwitch < 0 )		// time to switch states
-		{
-			m_iCurTipIndex++;
-			m_iCurTipIndex = m_iCurTipIndex % m_arrayTips.size();
-			m_fSecsUntilSwitch = TIP_SHOW_TIME;
-			m_textTip.SetText( m_arrayTips[m_iCurTipIndex] );
-		}
-	}
+	if( m_arrayTips.empty() )
+		return;
+
+	m_fSecsUntilSwitch -= fDeltaTime;
+	if( m_fSecsUntilSwitch > 0 )
+		return;
+
+	// time to switch states
+	m_fSecsUntilSwitch = TIP_SHOW_TIME;
+	m_textTip.SetText( m_arrayTips[m_iCurTipIndex], m_arrayTipsAlt[m_iCurTipIndex] );
+	m_iCurTipIndex++;
+	m_iCurTipIndex = m_iCurTipIndex % m_arrayTips.size();
 }
