@@ -134,7 +134,7 @@ protected:
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 	BitmapText			m_textSongTitle;
-	MeterDisplay		m_meterSongPosition;
+	SongMeterDisplay		m_meterSongPosition;
 
 	Player				m_Player[NUM_PLAYERS];
 

@@ -21,6 +21,12 @@ private:
 	AutoActor  m_sprTip;
 };
 
+class SongMeterDisplay: public MeterDisplay 
+{
+public:
+	virtual void Update( float fDeltaTime );
+};
+
 #endif
 
 /*

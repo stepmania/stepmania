@@ -1,6 +1,8 @@
 #include "global.h"
 #include "MeterDisplay.h"
 #include "RageUtil.h"
+#include "GameState.h"
+#include "song.h"
 
 
 MeterDisplay::MeterDisplay()
@@ -29,6 +31,18 @@ void MeterDisplay::SetPercent( float fPercent )
 	m_sprStream.SetCropRight( 1-fPercent );
 
 	m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
+}
+
+void SongMeterDisplay::Update( float fDeltaTime )
+{
+	float fSongStartSeconds = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fFirstBeat );
+	float fSongEndSeconds = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+	float fPercentPositionSong = SCALE( GAMESTATE->m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
+	CLAMP( fPercentPositionSong, 0, 1 );
+	
+	SetPercent( fPercentPositionSong );
+
+	MeterDisplay::Update( fDeltaTime );
 }
 
 /*

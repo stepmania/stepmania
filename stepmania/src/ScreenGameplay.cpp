@@ -1551,14 +1551,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// update lights
 	//
 	UpdateLights();
-	//
-	// update song position meter
-	//
-	float fSongStartSeconds = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fFirstBeat );
-	float fSongEndSeconds = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
-	float fPercentPositionSong = SCALE( GAMESTATE->m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
-	CLAMP( fPercentPositionSong, 0, 1 );
-	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
 	if( NSMAN->useSMserver )
 	{
