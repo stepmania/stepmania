@@ -43,10 +43,11 @@ bool IniFile::ReadFile( RageFileBasic &f )
 
 		utf8_remove_bom( line );
 
-		if( line == "" )
+		if( line.size() == 0 )
 			continue;
-
-		if( line.substr(0, 2) == "//" || line.substr(0) == "#" )
+		if( line[0] == '#' )
+			continue; /* comment */
+		if( line.size() > 1 && line[0] == '/' && line[1] == '/' )
 			continue; /* comment */
 
 		if( line[0] == '[' && line[line.GetLength()-1] == ']'  )
