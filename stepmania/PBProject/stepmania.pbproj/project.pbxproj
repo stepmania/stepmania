@@ -2389,6 +2389,7 @@
 				AA8A405206EEFF72002F25AB,
 				AA54709206F559DF008EB9B2,
 				AA21D5A20712AE16008B825F,
+				AAFC6CF2072A30440053AAD3,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4300,6 +4301,7 @@
 				AA8A3E6406EDCD11002F25AB,
 				AA8A405106EEFF72002F25AB,
 				AA21D59D0712ADE4008B825F,
+				AAFC6CF1072A30440053AAD3,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8877,6 +8879,8 @@
 		};
 		AA6E01540477136A005F316C = {
 			children = (
+				AAFC6CEF072A30440053AAD3,
+				AAFC6CF0072A30440053AAD3,
 				AAB3B36B04C38B4600D02EE9,
 				AAB3B36C04C38B4600D02EE9,
 				AA69675106840991007802A5,
@@ -16485,6 +16489,34 @@
 		};
 		AAF74591061181F700B19AD1 = {
 			fileRef = AAF7458F061181F700B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC6CEF072A30440053AAD3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = InputHandler_MonkeyKeyboard.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAFC6CF0072A30440053AAD3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = InputHandler_MonkeyKeyboard.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAFC6CF1072A30440053AAD3 = {
+			fileRef = AAFC6CEF072A30440053AAD3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC6CF2072A30440053AAD3 = {
+			fileRef = AAFC6CF0072A30440053AAD3;
 			isa = PBXBuildFile;
 			settings = {
 			};
