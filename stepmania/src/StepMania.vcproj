@@ -34,10 +34,10 @@
 				AssemblerListingLocation=".\../Debug/"
 				ObjectFile=".\../Debug/"
 				ProgramDataBaseFileName=".\../Debug/"
-				BrowseInformation="2"
-				WarningLevel="3"
+				BrowseInformation="0"
+				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -465,6 +465,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="NotesLoaderSM.h">
+			</File>
+			<File
+				RelativePath="NotesWriterDWI.cpp">
+			</File>
+			<File
+				RelativePath="NotesWriterDWI.h">
 			</File>
 			<File
 				RelativePath=".\Player.cpp">
@@ -1150,6 +1156,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 		</Filter>
 		<File
 			RelativePath=".\error.bmp">
+		</File>
+		<File
+			RelativePath="error2.bmp">
 		</File>
 		<File
 			RelativePath="loading.bmp">
