@@ -1,3 +1,5 @@
+#ifndef SCREENRAVEOPTIONS_H
+#define SCREENRAVEOPTIONS_H
 /*
 -----------------------------------------------------------------------------
  File: ScreenRaveOptions
@@ -9,18 +11,16 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenOptions.h"
+#include "ScreenOptionsMaster.h"
 
-class ScreenRaveOptions : public ScreenOptions
+class ScreenRaveOptions : public ScreenOptionsMaster
 {
 public:
 	ScreenRaveOptions( CString sName );
 
 private:
-	void ImportOptions();
-	void ExportOptions();
-
 	void GoToNextState();
 	void GoToPrevState();
 };
 
+#endif

@@ -57,6 +57,8 @@ static int g_iLastSongShown = 0;
 #define PERCENT_START_Y				THEME->GetMetricF("ScreenRanking","PercentStartY")
 #define PERCENT_ON_COMMAND( l )		THEME->GetMetric ("ScreenRanking",ssprintf("Percent%dOnCommand",l+1))
 #define PERCENT_OFF_COMMAND( l )	THEME->GetMetric ("ScreenRanking",ssprintf("Percent%dOffCommand",l+1))
+#define PERCENT_DECIMAL_PLACES		THEME->GetMetricI("ScreenRanking","PercentDecimalPlaces")
+#define PERCENT_TOTAL_SIZE			THEME->GetMetricI("ScreenRanking","PercentTotalSize")
 #define DIFFICULTY_START_X			THEME->GetMetricF("ScreenRanking","DifficultyStartX")
 #define DIFFICULTY_START_Y			THEME->GetMetricF("ScreenRanking","DifficultyStartY")
 #define DIFFICULTY_SPACING_X		THEME->GetMetricF("ScreenRanking","DifficultySpacingX")
@@ -554,8 +556,10 @@ void ScreenRanking::SetPage( PageToShow pts )
 						if( hs.sName.empty() )
 							hs.sName = EMPTY_SCORE_NAME;
 
-						m_textPercent[l][d].SetText( ssprintf("%s\n%0.3f%%", hs.sName.c_str(), hs.fPercentDP*100) );
-						m_textPercent[l][d].SetText( ssprintf("%s\n%0.3f%%", hs.sName.c_str(), hs.fPercentDP*100) );
+						CString s;
+						s = hs.sName + "\n";
+						s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, hs.fPercentDP*100 );
+						m_textPercent[l][d].SetText( s );
 						m_textPercent[l][d].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 					}
 				}
