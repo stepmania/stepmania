@@ -506,6 +506,11 @@ int main(int argc, char* argv[])
 	SDL_Init(SDL_flags);
 
 	LoadingWindow *loading_window = MakeLoadingWindow();
+	if( loading_window == NULL )
+	{
+		LOG->Trace("Couldn't open any loading windows.\n");
+		exit(1);
+	}
 
 	loading_window->Paint();
 
