@@ -66,7 +66,6 @@ public:
 	CString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	float GetCaloriesBurnedToday() const;
-	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
 	float GetSongsPossible( StepsType st, Difficulty dc ) const;
 	float GetCoursesPossible( StepsType st, CourseDifficulty cd ) const;
@@ -129,7 +128,7 @@ public:
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	/* This stat counts once per song, even if two players are active. */
-	int m_iNumSingleSongsPlayed;
+	int m_iNumTotalSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumStagesPassedByGrade[NUM_GRADES];
 

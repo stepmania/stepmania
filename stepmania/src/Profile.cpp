@@ -102,7 +102,7 @@ void Profile::InitGeneralData()
 		m_iNumSongsPlayedByDifficulty[i] = 0;
 	for( int i=0; i<MAX_METER+1; i++ )
 		m_iNumSongsPlayedByMeter[i] = 0;
-	m_iNumSingleSongsPlayed = 0;
+	m_iNumTotalSongsPlayed = 0;
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
 
@@ -183,14 +183,6 @@ float Profile::GetCaloriesBurnedToday() const
 {
 	DateTime now = DateTime::GetNowDate();
 	return GetCaloriesBurnedForDay(now);
-}
-
-int Profile::GetTotalNumSongsPlayed() const
-{
-	int iTotal = 0;
-	FOREACH_PlayMode( i )
-		iTotal += m_iNumSongsPlayedByPlayMode[i];
-	return iTotal;
 }
 
 int Profile::GetTotalNumSongsPassed() const
@@ -886,7 +878,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		}
 	}
 
-	pGeneralDataNode->AppendChild( "NumSingleSongsPlayed", m_iNumSingleSongsPlayed );
+	pGeneralDataNode->AppendChild( "NumTotalSongsPlayed", m_iNumTotalSongsPlayed );
 
 	{
 		XNode* pNumStagesPassedByPlayMode = pGeneralDataNode->AppendChild("NumStagesPassedByPlayMode");
@@ -1056,7 +1048,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				pNumSongsPlayedByMeter->GetChildValue( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
 	}
 
-	pNode->GetChildValue("NumSingleSongsPlayed", m_iNumSingleSongsPlayed );
+	pNode->GetChildValue("NumTotalSongsPlayed", m_iNumTotalSongsPlayed );
 
 	{
 		const XNode* pNumStagesPassedByGrade = pNode->GetChild("NumStagesPassedByGrade");
@@ -1703,7 +1695,7 @@ public:
 	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); return 0; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
 	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
-	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalNumSongsPlayed() ); return 1; }
+	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
 	
 
