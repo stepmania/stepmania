@@ -871,7 +871,8 @@ void ScreenSelectMusic::PlayMusicSample()
 	{
 		SOUNDMAN->PlayMusic(pSong->GetMusicPath(), true,
 			pSong->m_fMusicSampleStartSeconds,
-			pSong->m_fMusicSampleLengthSeconds);
+			pSong->m_fMusicSampleLengthSeconds,
+			1.5f); /* fade out for 1.5 seconds */
 	}
 //	else
 //		SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select music music") );

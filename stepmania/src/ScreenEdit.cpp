@@ -1158,7 +1158,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SOUNDMAN->PlayMusic("");
 		SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
 			m_pSong->m_fMusicSampleStartSeconds,
-			m_pSong->m_fMusicSampleLengthSeconds );
+			m_pSong->m_fMusicSampleLengthSeconds,
+			1.5f );
 		break;
 	case SDLK_LEFTBRACKET:
 	case SDLK_RIGHTBRACKET:
