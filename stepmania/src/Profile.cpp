@@ -1145,7 +1145,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 
 	// UGLY...
 	bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile());
-	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+	// Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
 	SaveStatsWebPage( 
 		sDir,
