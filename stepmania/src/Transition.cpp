@@ -16,9 +16,13 @@ void Transition::Load( CString sBGAniDir )
 	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != "/" )
 		sBGAniDir += "/";
 
+	bool bWasLoaded = m_sprTransition.IsLoaded();
 	m_sprTransition.Load( sBGAniDir );
 	m_sprTransition->PlayCommand( "On" );
 	m_fLengthSeconds = m_sprTransition->GetTweenTimeLeft();
+
+	if( !bWasLoaded )
+		this->AddChild( m_sprTransition );
 
 	m_State = waiting;
 
@@ -51,25 +55,26 @@ void Transition::Update( float fDeltaTime )
 	if( m_bFirstUpdate )
 		m_sound.PlayRandom();
 
-	Actor::Update( fDeltaTime );
-
+	// Check this before running Update, so we draw the last frame of the finished
+	// transition before sending m_MessageToSendWhenDone.
 	if( m_sprTransition->GetTweenTimeLeft() == 0 )	// over
 	{
-		SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 		m_State = finished;
+		SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 	}
 
-	m_sprTransition->Update( fDeltaTime );
+	ActorFrame::Update( fDeltaTime );
+}
+
+void Transition::Reset()
+{
+	ASSERT( m_State == finished );
+	m_State = waiting;
 }
 
 bool Transition::EarlyAbortDraw()
 {
 	return m_State != transitioning;
-}
-
-void Transition::DrawPrimitives()
-{
-	m_sprTransition->Draw();
 }
 
 void Transition::StartTransitioning( ScreenMessage send_when_done )

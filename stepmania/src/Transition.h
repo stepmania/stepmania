@@ -3,13 +3,13 @@
 #ifndef TRANSITION_H
 #define TRANSITION_H
 
-#include "Actor.h"
+#include "ActorFrame.h"
 #include "AutoActor.h"
 #include "ScreenMessage.h"
 #include "RandomSample.h"
 
 
-class Transition : public Actor
+class Transition : public ActorFrame
 {
 public:
 	Transition();
@@ -17,11 +17,11 @@ public:
 	void Load( CString sBGAniDir );
 
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw();
 	virtual float GetTweenTimeLeft() const;
+	void Reset(); // explicitly allow transitioning again
 
 	bool IsTransitioning() const	{ return m_State == transitioning; };
 	bool IsFinished() const	{ return m_State == finished; };
