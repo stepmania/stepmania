@@ -221,9 +221,9 @@ void Course::LoadFromCRSFile( CString sPath )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 				     * it obscures important warnings--and regular users never look there, anyway. */
-					//LOG->Warn( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
-					//			"This entry will be ignored.",
-					//			m_sPath.c_str(), sSong.c_str());
+					LOG->Trace( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
+								"This entry will be ignored.",
+								m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
