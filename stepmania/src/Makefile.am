@@ -175,7 +175,7 @@ Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
-NetworkManager.cpp NetworkManager.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
+NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
 ProfileManager.cpp ProfileManager.h ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h \
 ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h
 
@@ -192,7 +192,7 @@ stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
 		  $(srcdir)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
-		  $(SDL_LIBS) -lSDL_image -lSDL_net
+		  $(SDL_LIBS) -lSDL_image
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
