@@ -46,7 +46,6 @@
 #include <AudioToolbox/AudioConverter.h>
 #include <vector>
 
-extern "C" void CAShow(void *);
 
 // ____________________________________________________________________________
 //
@@ -57,13 +56,6 @@ public:
 	FormatConverterClient() :
 		mConverter(NULL)
 	{
-	}
-	
-		// ONLY NEEDED FOR Puma build - should be removed....
-	FormatConverterClient(const AudioStreamBasicDescription &src, const AudioStreamBasicDescription &dest) :
-		mConverter(NULL)
-	{
-		Initialize(src, dest);
 	}
 	
 	virtual ~FormatConverterClient()
@@ -118,23 +110,6 @@ public:
 		SetProperty(kAudioConverterSampleRateConverterQuality, sizeof(UInt32), &inQuality );
 	}
 
-#if 0	
-	OSStatus	ConvertBuffer(void *src, UInt32 srcSize, void *dest, UInt32 destSize)
-	{
-		OSStatus err;
-		verify_noerr(err = AudioConverterConvertBuffer(mConverter, srcSize, src, &destSize, dest));
-		return err;
-	}
-	
-	OSStatus	FillBuffer(	UInt32&							ioOutputDataSize,
-							void*							outOutputData)
-	{
-		OSStatus err;
-		verify_noerr(err = AudioConverterFillBuffer(mConverter, InputProc, this, &ioOutputDataSize, outOutputData));
-		return err;
-	}
-#endif
-
 	OSStatus	FillComplexBuffer(	UInt32 &							ioOutputDataPacketSize,
 									AudioBufferList &					outOutputData,
 									AudioStreamPacketDescription*		outPacketDescription)
@@ -142,8 +117,6 @@ public:
 		OSStatus err;
 		err = AudioConverterFillComplexBuffer(mConverter, InputProc, this,
 			&ioOutputDataPacketSize, &outOutputData, outPacketDescription);
-		//printf("\n\nFillComplexBuffer returned %ld packets\n", ioOutputDataPacketSize);
-		//DumpBufferList(outOutputData);
 		return err;
 	}
 	
@@ -172,9 +145,7 @@ private:
 			for (UInt32 i = ioData->mNumberBuffers; i--; ++buf) {
 				buf->mDataByteSize = nBytes;
 			}
-//printf("\n\nInputProc - %ld packets, %ld bytes\n", *ioNumberDataPackets, nBytes);
 			err = This->FormatConverterInputProc(*ioNumberDataPackets, *ioData, outDataPacketDescription);
-//DumpBufferList(*ioData);
 		} catch (OSStatus err) {
 			return err;
 		}
@@ -183,32 +154,6 @@ private:
 		}
 		return err;
 	}
-
-#if DEBUG
-public:
-	void Show()
-	{
-		CAShow(mConverter);
-	}
-
-	static void	DumpBufferList(AudioBufferList &abl)
-	{
-		printf("%ld buffers:\n", abl.mNumberBuffers);
-		AudioBuffer *buf = abl.mBuffers;
-		for (UInt32 i = 0; i < abl.mNumberBuffers; ++i, ++buf) {
-			printf("buffer[%ld]:\n", i);
-			DumpBuffer(buf);
-		}
-	}
-	
-	static void	DumpBuffer(AudioBuffer *buf)
-	{
-		printf("  channels=%ld, ptr=0x%X, size=%ld\n", buf->mNumberChannels, int(buf->mData), buf->mDataByteSize);
-		Float32 *p = static_cast<Float32 *>(buf->mData);
-		for (int i = buf->mDataByteSize / sizeof(Float32); i--; ++p)
-			printf("%f\n", *p);
-	}
-#endif
 
 protected:
 	AudioConverterRef			mConverter;
