@@ -9,12 +9,12 @@
 RageModelGeometry::RageModelGeometry ()
 {
 	m_iRefCount = 1;
-	m_pGeometry = DISPLAY->CreateCompiledGeometry();
+	m_pCompiledGeometry = DISPLAY->CreateCompiledGeometry();
 }
 
 RageModelGeometry::~RageModelGeometry ()
 {
-	DISPLAY->DeleteCompiledGeometry( m_pGeometry );
+	DISPLAY->DeleteCompiledGeometry( m_pCompiledGeometry );
 }
 
 void RageModelGeometry::OptimizeBones()
@@ -243,7 +243,7 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 	OptimizeBones();
 
 	// send the finalized vertices to the graphics card
-	m_pGeometry->Set( m_Meshes );
+	m_pCompiledGeometry->Set( m_Meshes );
 
 	f.Close();
 }

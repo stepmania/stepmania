@@ -25,7 +25,7 @@ public:
 	int m_iRefCount;
 
 	vector<msMesh> m_Meshes;
-    RageCompiledGeometry* m_pGeometry;	// video memory copy of geometry shared by all meshes
+    RageCompiledGeometry* m_pCompiledGeometry;	// video memory copy of geometry shared by all meshes
 
 	RageVector3 m_vMins, m_vMaxs;
 };

@@ -546,7 +546,7 @@ void Model::DrawMesh( int i ) const
 	}
 
 	// Draw it
-	const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
+	const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pCompiledGeometry;
 	DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
 
 	if( pMesh->nBoneIndex != -1 )
