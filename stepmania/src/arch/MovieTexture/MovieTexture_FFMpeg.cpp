@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "RageUtil.h"
+#include "RageTimer.h"
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 
@@ -189,8 +190,6 @@ static CString averr_ssprintf( int err, const char *fmt, ... )
 
 void MovieTexture_FFMpeg::CreateDecoder()
 {
-	m_Timer = 0;
-
 	RageTextureID actualID = GetID();
 
 	actualID.iAlphaBits = 0;
@@ -342,8 +341,11 @@ void MovieTexture_FFMpeg::DecoderThread()
 	bool FrameSkipMode = false;
 	unsigned Frame = 0;
 	float LastFrameDelay = 0;
+	float Clock = 0;
+	RageTimer Timer;
 
 	CHECKPOINT;
+
 	while( m_State != DECODER_QUIT )
 	{
 		if( m_State == PAUSE_DECODER )
@@ -351,15 +353,14 @@ void MovieTexture_FFMpeg::DecoderThread()
 			SDL_Delay( 5 );
 			
 			/* The video isn't running; skip time. */
-			m_RunningTimer.GetDeltaTime();
+			Timer.GetDeltaTime();
 			continue;
 		}
 
 		CHECKPOINT;
 
-		/* We're playing.  Update the play timer. */
-		float TimePassed = m_RunningTimer.GetDeltaTime();
-		m_Timer += TimePassed * m_Rate;
+		/* We're playing.  Update the clock. */
+		Clock += Timer.GetDeltaTime() * m_Rate;
 		
 		/* Read a packet. */
 		avcodec::AVPacket pkt;
@@ -382,6 +383,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 				FrameSkipMode = false;
 				Frame = 0;
 				LastFrameDelay = 0;
+				Clock = 0;
 				continue;
 			}
 
@@ -458,13 +460,13 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 			m_Position = CurrentTimestamp;
 
-			const float Offset = CurrentTimestamp - m_Timer;
+			const float Offset = CurrentTimestamp - Clock;
 			bool SkipThisTextureUpdate = false;
 		
 			/* If we're ahead, we're decoding too fast; delay. */
 			if( Offset > 0 )
 			{
-				SDL_Delay( int(1000*(CurrentTimestamp - m_Timer)) );
+				SDL_Delay( int(1000*(CurrentTimestamp - Clock)) );
 				if( FrameSkipMode )
 				{
 					/* We're caught up; stop skipping frames. */
