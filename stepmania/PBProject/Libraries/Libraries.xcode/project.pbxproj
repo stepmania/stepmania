@@ -125,8 +125,6 @@
 //4F3
 //4F4
 		4F0BB7EC011F40E904CA0E50 = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
@@ -141,8 +139,6 @@
 			name = Development;
 		};
 		4F0BB7ED011F40E904CA0E50 = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -3389,7 +3385,6 @@
 				AA4B437F05737115005FB5DB,
 				AA4B438305737115005FB5DB,
 				AA4B438505737115005FB5DB,
-				AA4B438805737115005FB5DB,
 				AA4B438D05737116005FB5DB,
 				AA4B438F05737116005FB5DB,
 				AA4B439205737116005FB5DB,
@@ -3406,9 +3401,6 @@
 				AA4B43BB05737116005FB5DB,
 				AA4B43C505737161005FB5DB,
 				AA4B43C605737161005FB5DB,
-				AA4B4417057371C1005FB5DB,
-				AA4B4419057371C1005FB5DB,
-				AA4B441B057371C1005FB5DB,
 				AA4B44380573727B005FB5DB,
 				AA4B443B0573727B005FB5DB,
 				AA4B443F0573727B005FB5DB,
@@ -3419,7 +3411,6 @@
 				AA4B449705737B44005FB5DB,
 				AA4B449805737B44005FB5DB,
 				AA4B4517057381BA005FB5DB,
-				AA4B451F057381BA005FB5DB,
 				AA4B4525057381BA005FB5DB,
 				AA4B4532057381BA005FB5DB,
 				AA4B4537057381BA005FB5DB,
@@ -3428,6 +3419,15 @@
 				AA4B455E0573839A005FB5DB,
 				AA4B45610573839A005FB5DB,
 				AA4B45620573839A005FB5DB,
+				AA90E5B406C44E0500A6878F,
+				AA90E5B606C44E0500A6878F,
+				AA90E5B906C44E0500A6878F,
+				AA90E73A06C4573D00A6878F,
+				AA90E75F06C458B500A6878F,
+				AA90E76606C458B500A6878F,
+				AA90E76B06C458B500A6878F,
+				AA90E77A06C4592F00A6878F,
+				AA90E77B06C4592F00A6878F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3490,13 +3490,6 @@
 				AA4B43BD05737116005FB5DB,
 				AA4B43C705737161005FB5DB,
 				AA4B43C805737161005FB5DB,
-				AA4B4416057371C1005FB5DB,
-				AA4B4418057371C1005FB5DB,
-				AA4B441A057371C1005FB5DB,
-				AA4B441C057371C1005FB5DB,
-				AA4B441D057371C1005FB5DB,
-				AA4B441E057371C1005FB5DB,
-				AA4B441F057371C1005FB5DB,
 				AA4B44360573727B005FB5DB,
 				AA4B443A0573727B005FB5DB,
 				AA4B443C0573727B005FB5DB,
@@ -3516,7 +3509,6 @@
 				AA4B4519057381BA005FB5DB,
 				AA4B451A057381BA005FB5DB,
 				AA4B451B057381BA005FB5DB,
-				AA4B451E057381BA005FB5DB,
 				AA4B4520057381BA005FB5DB,
 				AA4B4521057381BA005FB5DB,
 				AA4B4522057381BA005FB5DB,
@@ -3554,6 +3546,46 @@
 				AA4B45630573839A005FB5DB,
 				AA4B45640573839A005FB5DB,
 				AA4B459305738655005FB5DB,
+				AA90E5B306C44E0500A6878F,
+				AA90E5B506C44E0500A6878F,
+				AA90E5B706C44E0500A6878F,
+				AA90E5B806C44E0500A6878F,
+				AA90E5BA06C44E0500A6878F,
+				AA90E5BB06C44E0500A6878F,
+				AA90E5BC06C44E0500A6878F,
+				AA90E5BD06C44E0500A6878F,
+				AA90E73906C4573D00A6878F,
+				AA90E73C06C457DE00A6878F,
+				AA90E73E06C4581D00A6878F,
+				AA90E75606C458B500A6878F,
+				AA90E75706C458B500A6878F,
+				AA90E75806C458B500A6878F,
+				AA90E75906C458B500A6878F,
+				AA90E75A06C458B500A6878F,
+				AA90E75B06C458B500A6878F,
+				AA90E75C06C458B500A6878F,
+				AA90E75D06C458B500A6878F,
+				AA90E75E06C458B500A6878F,
+				AA90E76006C458B500A6878F,
+				AA90E76106C458B500A6878F,
+				AA90E76206C458B500A6878F,
+				AA90E76306C458B500A6878F,
+				AA90E76406C458B500A6878F,
+				AA90E76506C458B500A6878F,
+				AA90E76706C458B500A6878F,
+				AA90E76806C458B500A6878F,
+				AA90E76906C458B500A6878F,
+				AA90E76A06C458B500A6878F,
+				AA90E76C06C458B500A6878F,
+				AA90E76E06C458DF00A6878F,
+				AA90E77906C4592F00A6878F,
+				AA90E77C06C4592F00A6878F,
+				AA90E77D06C4592F00A6878F,
+				AA90E77E06C4592F00A6878F,
+				AA90E77F06C4592F00A6878F,
+				AA90E78006C4592F00A6878F,
+				AA90E78106C4592F00A6878F,
+				AA90E78206C4592F00A6878F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3585,6 +3617,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "$(BUILD_DIR)";
 				FRAMEWORK_VERSION = A;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -3607,6 +3640,7 @@
 				WARNING_CFLAGS = "-Wmost";
 			};
 			dependencies = (
+				AA90E67706C452B100A6878F,
 			);
 			isa = PBXNativeTarget;
 			name = ffmpeg;
@@ -3654,12 +3688,41 @@
 				AA4B448305737AAC005FB5DB,
 			);
 			isa = PBXGroup;
-			name = ffmpeg;
+			path = "ffmpeg-0.4.9-pre1";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B433605737051005FB5DB = {
 			children = (
+				AA90E76D06C458DF00A6878F,
+				AA90E73F06C458B400A6878F,
+				AA90E74006C458B400A6878F,
+				AA90E74106C458B400A6878F,
+				AA90E74206C458B400A6878F,
+				AA90E74306C458B400A6878F,
+				AA90E74406C458B400A6878F,
+				AA90E74506C458B400A6878F,
+				AA90E74606C458B400A6878F,
+				AA90E74706C458B400A6878F,
+				AA90E74806C458B400A6878F,
+				AA90E74906C458B400A6878F,
+				AA90E74A06C458B400A6878F,
+				AA90E74B06C458B400A6878F,
+				AA90E74C06C458B400A6878F,
+				AA90E74D06C458B400A6878F,
+				AA90E74E06C458B400A6878F,
+				AA90E74F06C458B400A6878F,
+				AA90E75006C458B400A6878F,
+				AA90E75106C458B400A6878F,
+				AA90E75206C458B500A6878F,
+				AA90E75306C458B500A6878F,
+				AA90E75406C458B500A6878F,
+				AA90E75506C458B500A6878F,
+				AA90E73D06C4581D00A6878F,
+				AA90E73B06C457DE00A6878F,
+				AA90E73706C4573D00A6878F,
+				AA90E73806C4573D00A6878F,
+				AA90E5A706C44E0500A6878F,
 				AA4B442A0573727B005FB5DB,
 				AA4B442C0573727B005FB5DB,
 				AA4B442E0573727B005FB5DB,
@@ -3676,21 +3739,13 @@
 				AA4B434105737114005FB5DB,
 				AA4B434205737114005FB5DB,
 				AA4B434305737114005FB5DB,
-				AA4B440C057371C1005FB5DB,
-				AA4B440D057371C1005FB5DB,
-				AA4B440E057371C1005FB5DB,
-				AA4B440F057371C1005FB5DB,
 				AA4B434405737114005FB5DB,
 				AA4B434505737115005FB5DB,
 				AA4B434605737115005FB5DB,
 				AA4B434705737115005FB5DB,
-				AA4B434805737115005FB5DB,
 				AA4B434905737115005FB5DB,
 				AA4B434A05737115005FB5DB,
-				AA4B4410057371C1005FB5DB,
 				AA4B434B05737115005FB5DB,
-				AA4B4411057371C1005FB5DB,
-				AA4B4412057371C1005FB5DB,
 				AA4B434C05737115005FB5DB,
 				AA4B434D05737115005FB5DB,
 				AA4B434E05737115005FB5DB,
@@ -3699,7 +3754,6 @@
 				AA4B435105737115005FB5DB,
 				AA4B435205737115005FB5DB,
 				AA4B435305737115005FB5DB,
-				AA4B4413057371C1005FB5DB,
 				AA4B435505737115005FB5DB,
 				AA4B435405737115005FB5DB,
 				AA4B435605737115005FB5DB,
@@ -3722,8 +3776,6 @@
 				AA4B436405737115005FB5DB,
 				AA4B43C305737161005FB5DB,
 				AA4B436505737115005FB5DB,
-				AA4B4414057371C1005FB5DB,
-				AA4B4415057371C1005FB5DB,
 				AA4B436605737115005FB5DB,
 				AA4B436705737115005FB5DB,
 				AA4B436805737115005FB5DB,
@@ -3756,12 +3808,22 @@
 				AA4B44D905737FFD005FB5DB,
 			);
 			isa = PBXGroup;
-			name = avcodec;
+			path = libavcodec;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B433905737059005FB5DB = {
 			children = (
+				AA90E76F06C4592F00A6878F,
+				AA90E77006C4592F00A6878F,
+				AA90E77106C4592F00A6878F,
+				AA90E77206C4592F00A6878F,
+				AA90E77306C4592F00A6878F,
+				AA90E77406C4592F00A6878F,
+				AA90E77506C4592F00A6878F,
+				AA90E77606C4592F00A6878F,
+				AA90E77706C4592F00A6878F,
+				AA90E77806C4592F00A6878F,
 				AA4B44DD057381B9005FB5DB,
 				AA4B44DE057381B9005FB5DB,
 				AA4B44DF057381B9005FB5DB,
@@ -3776,8 +3838,6 @@
 				AA4B44E6057381B9005FB5DB,
 				AA4B44E7057381B9005FB5DB,
 				AA4B44E8057381B9005FB5DB,
-				AA4B44EB057381B9005FB5DB,
-				AA4B44EC057381B9005FB5DB,
 				AA4B44ED057381B9005FB5DB,
 				AA4B44EE057381B9005FB5DB,
 				AA4B44EF057381B9005FB5DB,
@@ -3823,7 +3883,7 @@
 				AA4B450F057381B9005FB5DB,
 			);
 			isa = PBXGroup;
-			name = avformat;
+			path = libavformat;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3831,8 +3891,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = common.c;
-			path = "ffmpeg-0.4.8/libavcodec/common.c";
+			path = common.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3840,8 +3899,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = common.h;
-			path = "ffmpeg-0.4.8/libavcodec/common.h";
+			path = common.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3849,8 +3907,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = cyuv.c;
-			path = "ffmpeg-0.4.8/libavcodec/cyuv.c";
+			path = cyuv.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3858,8 +3915,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = dpcm.c;
-			path = "ffmpeg-0.4.8/libavcodec/dpcm.c";
+			path = dpcm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3867,8 +3923,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = dsputil.c;
-			path = "ffmpeg-0.4.8/libavcodec/dsputil.c";
+			path = dsputil.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3876,8 +3931,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = dsputil.h;
-			path = "ffmpeg-0.4.8/libavcodec/dsputil.h";
+			path = dsputil.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3885,8 +3939,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = dv.c;
-			path = "ffmpeg-0.4.8/libavcodec/dv.c";
+			path = dv.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3894,8 +3947,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = dvdata.h;
-			path = "ffmpeg-0.4.8/libavcodec/dvdata.h";
+			path = dvdata.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3903,8 +3955,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = error_resilience.c;
-			path = "ffmpeg-0.4.8/libavcodec/error_resilience.c";
+			path = error_resilience.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3912,17 +3963,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = eval.c;
-			path = "ffmpeg-0.4.8/libavcodec/eval.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B434805737115005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = fastmemcpy.h;
-			path = "ffmpeg-0.4.8/libavcodec/fastmemcpy.h";
+			path = eval.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3930,8 +3971,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = fdctref.c;
-			path = "ffmpeg-0.4.8/libavcodec/fdctref.c";
+			path = fdctref.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3939,8 +3979,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = fft.c;
-			path = "ffmpeg-0.4.8/libavcodec/fft.c";
+			path = fft.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3948,8 +3987,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ffv1.c;
-			path = "ffmpeg-0.4.8/libavcodec/ffv1.c";
+			path = ffv1.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3957,8 +3995,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = golomb.c;
-			path = "ffmpeg-0.4.8/libavcodec/golomb.c";
+			path = golomb.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3966,8 +4003,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = golomb.h;
-			path = "ffmpeg-0.4.8/libavcodec/golomb.h";
+			path = golomb.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3975,8 +4011,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = h263.c;
-			path = "ffmpeg-0.4.8/libavcodec/h263.c";
+			path = h263.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3984,8 +4019,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = h263data.h;
-			path = "ffmpeg-0.4.8/libavcodec/h263data.h";
+			path = h263data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3993,8 +4027,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = h263dec.c;
-			path = "ffmpeg-0.4.8/libavcodec/h263dec.c";
+			path = h263dec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4002,8 +4035,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = h264.c;
-			path = "ffmpeg-0.4.8/libavcodec/h264.c";
+			path = h264.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4011,8 +4043,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = h264data.h;
-			path = "ffmpeg-0.4.8/libavcodec/h264data.h";
+			path = h264data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4020,8 +4051,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = huffyuv.c;
-			path = "ffmpeg-0.4.8/libavcodec/huffyuv.c";
+			path = huffyuv.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4029,8 +4059,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = imgconvert_template.h;
-			path = "ffmpeg-0.4.8/libavcodec/imgconvert_template.h";
+			path = imgconvert_template.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4038,8 +4067,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = imgconvert.c;
-			path = "ffmpeg-0.4.8/libavcodec/imgconvert.c";
+			path = imgconvert.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4047,8 +4075,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = imgresample.c;
-			path = "ffmpeg-0.4.8/libavcodec/imgresample.c";
+			path = imgresample.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4056,8 +4083,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = indeo3.c;
-			path = "ffmpeg-0.4.8/libavcodec/indeo3.c";
+			path = indeo3.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4065,8 +4091,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = indeo3data.h;
-			path = "ffmpeg-0.4.8/libavcodec/indeo3data.h";
+			path = indeo3data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4074,8 +4099,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = interplayvideo.c;
-			path = "ffmpeg-0.4.8/libavcodec/interplayvideo.c";
+			path = interplayvideo.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4083,8 +4107,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = jfdctfst.c;
-			path = "ffmpeg-0.4.8/libavcodec/jfdctfst.c";
+			path = jfdctfst.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4092,8 +4115,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = jfdctint.c;
-			path = "ffmpeg-0.4.8/libavcodec/jfdctint.c";
+			path = jfdctint.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4101,8 +4123,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = jrevdct.c;
-			path = "ffmpeg-0.4.8/libavcodec/jrevdct.c";
+			path = jrevdct.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4110,8 +4131,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mace.c;
-			path = "ffmpeg-0.4.8/libavcodec/mace.c";
+			path = mace.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4119,8 +4139,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mdct.c;
-			path = "ffmpeg-0.4.8/libavcodec/mdct.c";
+			path = mdct.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4128,8 +4147,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mem.c;
-			path = "ffmpeg-0.4.8/libavcodec/mem.c";
+			path = mem.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4137,8 +4155,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mjpeg.c;
-			path = "ffmpeg-0.4.8/libavcodec/mjpeg.c";
+			path = mjpeg.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4146,8 +4163,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = motion_est.c;
-			path = "ffmpeg-0.4.8/libavcodec/motion_est.c";
+			path = motion_est.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4155,8 +4171,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpeg12.c;
-			path = "ffmpeg-0.4.8/libavcodec/mpeg12.c";
+			path = mpeg12.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4164,8 +4179,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpegaudio.h;
-			path = "ffmpeg-0.4.8/libavcodec/mpegaudio.h";
+			path = mpegaudio.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4173,8 +4187,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpegaudiodec.c;
-			path = "ffmpeg-0.4.8/libavcodec/mpegaudiodec.c";
+			path = mpegaudiodec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4182,8 +4195,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpegvideo.h;
-			path = "ffmpeg-0.4.8/libavcodec/mpegvideo.h";
+			path = mpegvideo.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4191,8 +4203,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = msmpeg4.c;
-			path = "ffmpeg-0.4.8/libavcodec/msmpeg4.c";
+			path = msmpeg4.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4200,8 +4211,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = opts.c;
-			path = "ffmpeg-0.4.8/libavcodec/opts.c";
+			path = opts.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4209,8 +4219,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = pcm.c;
-			path = "ffmpeg-0.4.8/libavcodec/pcm.c";
+			path = pcm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4218,8 +4227,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ra144.c;
-			path = "ffmpeg-0.4.8/libavcodec/ra144.c";
+			path = ra144.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4227,8 +4235,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = ra144.h;
-			path = "ffmpeg-0.4.8/libavcodec/ra144.h";
+			path = ra144.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4236,8 +4243,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ra288.c;
-			path = "ffmpeg-0.4.8/libavcodec/ra288.c";
+			path = ra288.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4245,8 +4251,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = ra288.h;
-			path = "ffmpeg-0.4.8/libavcodec/ra288.h";
+			path = ra288.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4254,8 +4259,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ratecontrol.c;
-			path = "ffmpeg-0.4.8/libavcodec/ratecontrol.c";
+			path = ratecontrol.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4263,8 +4267,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = raw.c;
-			path = "ffmpeg-0.4.8/libavcodec/raw.c";
+			path = raw.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4272,8 +4275,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = resample.c;
-			path = "ffmpeg-0.4.8/libavcodec/resample.c";
+			path = resample.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4281,8 +4283,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = roqvideo.c;
-			path = "ffmpeg-0.4.8/libavcodec/roqvideo.c";
+			path = roqvideo.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4290,8 +4291,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = rv10.c;
-			path = "ffmpeg-0.4.8/libavcodec/rv10.c";
+			path = rv10.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4299,8 +4299,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = simple_idct.c;
-			path = "ffmpeg-0.4.8/libavcodec/simple_idct.c";
+			path = simple_idct.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4308,8 +4307,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = simple_idct.h;
-			path = "ffmpeg-0.4.8/libavcodec/simple_idct.h";
+			path = simple_idct.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4317,8 +4315,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = svq1_cb.h;
-			path = "ffmpeg-0.4.8/libavcodec/svq1_cb.h";
+			path = svq1_cb.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4326,8 +4323,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = svq1_vlc.h;
-			path = "ffmpeg-0.4.8/libavcodec/svq1_vlc.h";
+			path = svq1_vlc.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4335,8 +4331,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = svq1.c;
-			path = "ffmpeg-0.4.8/libavcodec/svq1.c";
+			path = svq1.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4344,8 +4339,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = utils.c;
-			path = "ffmpeg-0.4.8/libavcodec/utils.c";
+			path = utils.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4353,8 +4347,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = vcr1.c;
-			path = "ffmpeg-0.4.8/libavcodec/vcr1.c";
+			path = vcr1.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4362,8 +4355,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = vp3.c;
-			path = "ffmpeg-0.4.8/libavcodec/vp3.c";
+			path = vp3.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4371,8 +4363,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = vp3data.h;
-			path = "ffmpeg-0.4.8/libavcodec/vp3data.h";
+			path = vp3data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4380,8 +4371,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = wmadata.h;
-			path = "ffmpeg-0.4.8/libavcodec/wmadata.h";
+			path = wmadata.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4389,8 +4379,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = wmadec.c;
-			path = "ffmpeg-0.4.8/libavcodec/wmadec.c";
+			path = wmadec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4398,8 +4387,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = xan.c;
-			path = "ffmpeg-0.4.8/libavcodec/xan.c";
+			path = xan.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4462,12 +4450,6 @@
 		};
 		AA4B438705737115005FB5DB = {
 			fileRef = AA4B434705737115005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B438805737115005FB5DB = {
-			fileRef = AA4B434805737115005FB5DB;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4794,8 +4776,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpeg4data.h;
-			path = "ffmpeg-0.4.8/libavcodec/mpeg4data.h";
+			path = mpeg4data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4803,8 +4784,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpeg12data.h;
-			path = "ffmpeg-0.4.8/libavcodec/mpeg12data.h";
+			path = mpeg12data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4812,8 +4792,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpegaudio.c;
-			path = "ffmpeg-0.4.8/libavcodec/mpegaudio.c";
+			path = mpegaudio.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4821,8 +4800,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpegvideo.c;
-			path = "ffmpeg-0.4.8/libavcodec/mpegvideo.c";
+			path = mpegvideo.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -4850,162 +4828,11 @@
 			settings = {
 			};
 		};
-		AA4B440C057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = dsputil_altivec.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/dsputil_altivec.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B440D057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = dsputil_altivec.h;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/dsputil_altivec.h";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B440E057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = dsputil_ppc.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/dsputil_ppc.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B440F057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = dsputil_ppc.h;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/dsputil_ppc.h";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4410057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = fft_altivec.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/fft_altivec.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4411057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = gcc_fixes.h;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/gcc_fixes.h";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4412057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = gmc_altivec.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/gmc_altivec.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4413057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = idct_altivec.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/idct_altivec.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4414057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = mpegvideo_altivec.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/mpegvideo_altivec.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4415057371C1005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = mpegvideo_ppc.c;
-			path = "ffmpeg-0.4.8/libavcodec/ppc/mpegvideo_ppc.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B4416057371C1005FB5DB = {
-			fileRef = AA4B440C057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B4417057371C1005FB5DB = {
-			fileRef = AA4B440D057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B4418057371C1005FB5DB = {
-			fileRef = AA4B440E057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B4419057371C1005FB5DB = {
-			fileRef = AA4B440F057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B441A057371C1005FB5DB = {
-			fileRef = AA4B4410057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B441B057371C1005FB5DB = {
-			fileRef = AA4B4411057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B441C057371C1005FB5DB = {
-			fileRef = AA4B4412057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B441D057371C1005FB5DB = {
-			fileRef = AA4B4413057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B441E057371C1005FB5DB = {
-			fileRef = AA4B4414057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B441F057371C1005FB5DB = {
-			fileRef = AA4B4415057371C1005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA4B442A0573727B005FB5DB = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = 4xm.c;
-			path = "ffmpeg-0.4.8/libavcodec/4xm.c";
+			path = 4xm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5013,8 +4840,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = ac3.h;
-			path = "ffmpeg-0.4.8/libavcodec/ac3.h";
+			path = ac3.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5022,8 +4848,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ac3enc.c;
-			path = "ffmpeg-0.4.8/libavcodec/ac3enc.c";
+			path = ac3enc.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5031,8 +4856,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = ac3tab.h;
-			path = "ffmpeg-0.4.8/libavcodec/ac3tab.h";
+			path = ac3tab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5040,8 +4864,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = adpcm.c;
-			path = "ffmpeg-0.4.8/libavcodec/adpcm.c";
+			path = adpcm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5049,8 +4872,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = allcodecs.c;
-			path = "ffmpeg-0.4.8/libavcodec/allcodecs.c";
+			path = allcodecs.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5058,8 +4880,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = avcodec.c;
-			path = "ffmpeg-0.4.8/libavcodec/avcodec.c";
+			path = avcodec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5067,8 +4888,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = avcodec.h;
-			path = "ffmpeg-0.4.8/libavcodec/avcodec.h";
+			path = avcodec.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5076,8 +4896,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = cabac.c;
-			path = "ffmpeg-0.4.8/libavcodec/cabac.c";
+			path = cabac.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5085,8 +4904,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = cabac.h;
-			path = "ffmpeg-0.4.8/libavcodec/cabac.h";
+			path = cabac.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5157,8 +4975,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = config.h;
-			path = "ffmpeg-0.4.8/config.h";
+			path = config.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5172,8 +4989,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = bswap.h;
-			path = "ffmpeg-0.4.8/libavcodec/bswap.h";
+			path = bswap.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5181,8 +4997,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = cljr.c;
-			path = "ffmpeg-0.4.8/libavcodec/cljr.c";
+			path = cljr.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5190,8 +5005,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpegaudiodectab.h;
-			path = "ffmpeg-0.4.8/libavcodec/mpegaudiodectab.h";
+			path = mpegaudiodectab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5199,8 +5013,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpegaudiotab.h;
-			path = "ffmpeg-0.4.8/libavcodec/mpegaudiotab.h";
+			path = mpegaudiotab.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5208,8 +5021,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = msmpeg4data.h;
-			path = "ffmpeg-0.4.8/libavcodec/msmpeg4data.h";
+			path = msmpeg4data.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5247,8 +5059,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = asv1.c;
-			path = "ffmpeg-0.4.8/libavcodec/asv1.c";
+			path = asv1.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5260,64 +5071,64 @@
 		};
 		AA4B44DD057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = 4xm.c;
-			path = "ffmpeg-0.4.8/libavformat/4xm.c";
+			path = 4xm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44DE057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = allformats.c;
-			path = "ffmpeg-0.4.8/libavformat/allformats.c";
+			path = allformats.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44DF057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = asf.c;
-			path = "ffmpeg-0.4.8/libavformat/asf.c";
+			path = asf.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E0057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = au.c;
-			path = "ffmpeg-0.4.8/libavformat/au.c";
+			path = au.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E1057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = avidec.c;
-			path = "ffmpeg-0.4.8/libavformat/avidec.c";
+			path = avidec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E2057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = avienc.c;
-			path = "ffmpeg-0.4.8/libavformat/avienc.c";
+			path = avienc.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E3057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = avio.c;
-			path = "ffmpeg-0.4.8/libavformat/avio.c";
+			path = avio.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5325,107 +5136,88 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = avio.h;
-			path = "ffmpeg-0.4.8/libavformat/avio.h";
+			path = avio.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E5057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = aviobuf.c;
-			path = "ffmpeg-0.4.8/libavformat/aviobuf.c";
+			path = aviobuf.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E6057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = crc.c;
-			path = "ffmpeg-0.4.8/libavformat/crc.c";
+			path = crc.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E7057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = cutils.c;
-			path = "ffmpeg-0.4.8/libavformat/cutils.c";
+			path = cutils.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44E8057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = dv.c;
-			path = "ffmpeg-0.4.8/libavformat/dv.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B44EB057381B9005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = dvcore.c;
-			path = "ffmpeg-0.4.8/libavformat/dvcore.c";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA4B44EC057381B9005FB5DB = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = dvcore.h;
-			path = "ffmpeg-0.4.8/libavformat/dvcore.h";
+			path = dv.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44ED057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ffm.c;
-			path = "ffmpeg-0.4.8/libavformat/ffm.c";
+			path = ffm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44EE057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = file.c;
-			path = "ffmpeg-0.4.8/libavformat/file.c";
+			path = file.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44EF057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = flvdec.c;
-			path = "ffmpeg-0.4.8/libavformat/flvdec.c";
+			path = flvdec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F0057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = flvenc.c;
-			path = "ffmpeg-0.4.8/libavformat/flvenc.c";
+			path = flvenc.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F1057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = framehook.c;
-			path = "ffmpeg-0.4.8/libavformat/framehook.c";
+			path = framehook.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5433,107 +5225,106 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = framehook.h;
-			path = "ffmpeg-0.4.8/libavformat/framehook.h";
+			path = framehook.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F3057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = gif.c;
-			path = "ffmpeg-0.4.8/libavformat/gif.c";
+			path = gif.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F4057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = gifdec.c;
-			path = "ffmpeg-0.4.8/libavformat/gifdec.c";
+			path = gifdec.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F6057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = idroq.c;
-			path = "ffmpeg-0.4.8/libavformat/idroq.c";
+			path = idroq.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F7057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = img.c;
-			path = "ffmpeg-0.4.8/libavformat/img.c";
+			path = img.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F8057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = ipmovie.c;
-			path = "ffmpeg-0.4.8/libavformat/ipmovie.c";
+			path = ipmovie.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44F9057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = jpeg.c;
-			path = "ffmpeg-0.4.8/libavformat/jpeg.c";
+			path = jpeg.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44FA057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mov.c;
-			path = "ffmpeg-0.4.8/libavformat/mov.c";
+			path = mov.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44FB057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = movenc.c;
-			path = "ffmpeg-0.4.8/libavformat/movenc.c";
+			path = movenc.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44FC057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mp3.c;
-			path = "ffmpeg-0.4.8/libavformat/mp3.c";
+			path = mp3.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44FD057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpeg.c;
-			path = "ffmpeg-0.4.8/libavformat/mpeg.c";
+			path = mpeg.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B44FE057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpegts.c;
-			path = "ffmpeg-0.4.8/libavformat/mpegts.c";
+			path = mpegts.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5541,44 +5332,43 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = mpegts.h;
-			path = "ffmpeg-0.4.8/libavformat/mpegts.h";
+			path = mpegts.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4500057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpegtsenc.c;
-			path = "ffmpeg-0.4.8/libavformat/mpegtsenc.c";
+			path = mpegtsenc.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4501057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = mpjpeg.c;
-			path = "ffmpeg-0.4.8/libavformat/mpjpeg.c";
+			path = mpjpeg.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4502057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = nut.c;
-			path = "ffmpeg-0.4.8/libavformat/nut.c";
+			path = nut.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4503057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = os_support.c;
-			path = "ffmpeg-0.4.8/libavformat/os_support.c";
+			path = os_support.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5586,107 +5376,106 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = os_support.h;
-			path = "ffmpeg-0.4.8/libavformat/os_support.h";
+			path = os_support.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4505057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = png.c;
-			path = "ffmpeg-0.4.8/libavformat/png.c";
+			path = png.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4506057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = pnm.c;
-			path = "ffmpeg-0.4.8/libavformat/pnm.c";
+			path = pnm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4507057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = psxstr.c;
-			path = "ffmpeg-0.4.8/libavformat/psxstr.c";
+			path = psxstr.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4508057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = raw.c;
-			path = "ffmpeg-0.4.8/libavformat/raw.c";
+			path = raw.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B4509057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = rm.c;
-			path = "ffmpeg-0.4.8/libavformat/rm.c";
+			path = rm.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B450A057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = swf.c;
-			path = "ffmpeg-0.4.8/libavformat/swf.c";
+			path = swf.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B450B057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = utils.c;
-			path = "ffmpeg-0.4.8/libavformat/utils.c";
+			path = utils.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B450C057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = wav.c;
-			path = "ffmpeg-0.4.8/libavformat/wav.c";
+			path = wav.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B450D057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = wc3movie.c;
-			path = "ffmpeg-0.4.8/libavformat/wc3movie.c";
+			path = wc3movie.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B450E057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = yuv.c;
-			path = "ffmpeg-0.4.8/libavformat/yuv.c";
+			path = yuv.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B450F057381B9005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = yuv4mpeg.c;
-			path = "ffmpeg-0.4.8/libavformat/yuv4mpeg.c";
+			path = yuv4mpeg.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5761,18 +5550,6 @@
 		};
 		AA4B451B057381BA005FB5DB = {
 			fileRef = AA4B44E8057381B9005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B451E057381BA005FB5DB = {
-			fileRef = AA4B44EB057381B9005FB5DB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA4B451F057381BA005FB5DB = {
-			fileRef = AA4B44EC057381B9005FB5DB;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5985,8 +5762,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = avformat.h;
-			path = "ffmpeg-0.4.8/libavformat/avformat.h";
+			path = avformat.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5994,8 +5770,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = avi.h;
-			path = "ffmpeg-0.4.8/libavformat/avi.h";
+			path = avi.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6018,10 +5793,10 @@
 		};
 		AA4B45550573839A005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = rtp.c;
-			path = "ffmpeg-0.4.8/libavformat/rtp.c";
+			path = rtp.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6029,26 +5804,25 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = rtp.h;
-			path = "ffmpeg-0.4.8/libavformat/rtp.h";
+			path = rtp.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B45570573839A005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = rtpproto.c;
-			path = "ffmpeg-0.4.8/libavformat/rtpproto.c";
+			path = rtpproto.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B45580573839A005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = rtsp.c;
-			path = "ffmpeg-0.4.8/libavformat/rtsp.c";
+			path = rtsp.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6056,8 +5830,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = rtsp.h;
-			path = "ffmpeg-0.4.8/libavformat/rtsp.h";
+			path = rtsp.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6065,26 +5838,25 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = rtspcodes.h;
-			path = "ffmpeg-0.4.8/libavformat/rtspcodes.h";
+			path = rtspcodes.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B455B0573839A005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = tcp.c;
-			path = "ffmpeg-0.4.8/libavformat/tcp.c";
+			path = tcp.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		AA4B455C0573839A005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = udp.c;
-			path = "ffmpeg-0.4.8/libavformat/udp.c";
+			path = udp.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6147,10 +5919,10 @@
 		};
 		AA4B459205738655005FB5DB = {
 			fileEncoding = 30;
+			includeInIndex = 1;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
-			name = http.c;
-			path = "ffmpeg-0.4.8/libavformat/http.c";
+			path = http.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6436,6 +6208,723 @@
 			isa = PBXTargetDependency;
 			target = AABD0A1905DF0D30004F7929;
 			targetProxy = AA7B2C1D0659FDEE00A0F53D;
+		};
+		AA90E5A706C44E0500A6878F = {
+			children = (
+				AA90E5A806C44E0500A6878F,
+				AA90E5A906C44E0500A6878F,
+				AA90E5AA06C44E0500A6878F,
+				AA90E5AB06C44E0500A6878F,
+				AA90E5AC06C44E0500A6878F,
+				AA90E5AD06C44E0500A6878F,
+				AA90E5AE06C44E0500A6878F,
+				AA90E5AF06C44E0500A6878F,
+				AA90E5B006C44E0500A6878F,
+				AA90E5B106C44E0500A6878F,
+				AA90E5B206C44E0500A6878F,
+			);
+			isa = PBXGroup;
+			path = ppc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5A806C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dsputil_altivec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5A906C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dsputil_altivec.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5AA06C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dsputil_ppc.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5AB06C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dsputil_ppc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5AC06C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = fdct_altivec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5AD06C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = fft_altivec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5AE06C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = gcc_fixes.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5AF06C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = gmc_altivec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5B006C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = idct_altivec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5B106C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mpegvideo_altivec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5B206C44E0500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mpegvideo_ppc.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E5B306C44E0500A6878F = {
+			fileRef = AA90E5A806C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5B406C44E0500A6878F = {
+			fileRef = AA90E5A906C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5B506C44E0500A6878F = {
+			fileRef = AA90E5AA06C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5B606C44E0500A6878F = {
+			fileRef = AA90E5AB06C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5B706C44E0500A6878F = {
+			fileRef = AA90E5AC06C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5B806C44E0500A6878F = {
+			fileRef = AA90E5AD06C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5B906C44E0500A6878F = {
+			fileRef = AA90E5AE06C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5BA06C44E0500A6878F = {
+			fileRef = AA90E5AF06C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5BB06C44E0500A6878F = {
+			fileRef = AA90E5B006C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5BC06C44E0500A6878F = {
+			fileRef = AA90E5B106C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E5BD06C44E0500A6878F = {
+			fileRef = AA90E5B206C44E0500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E67606C452B100A6878F = {
+			containerPortal = 0867D690FE84028FC02AAC07;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = AA07AC55057321F700774A48;
+			remoteInfo = Ogg;
+		};
+		AA90E67706C452B100A6878F = {
+			isa = PBXTargetDependency;
+			target = AA07AC55057321F700774A48;
+			targetProxy = AA90E67606C452B100A6878F;
+		};
+		AA90E73706C4573D00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = faandct.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E73806C4573D00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = faandct.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E73906C4573D00A6878F = {
+			fileRef = AA90E73706C4573D00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E73A06C4573D00A6878F = {
+			fileRef = AA90E73806C4573D00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E73B06C457DE00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = vp3dsp.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E73C06C457DE00A6878F = {
+			fileRef = AA90E73B06C457DE00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E73D06C4581D00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = parser.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E73E06C4581D00A6878F = {
+			fileRef = AA90E73D06C4581D00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E73F06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = 8bps.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74006C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = adx.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74106C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = cinepak.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74206C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = flac.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74306C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = flicvideo.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74406C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = g726.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74506C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = h261.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74606C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = idcinvideo.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74706C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = integer.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74806C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = integer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74906C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = lcl.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74A06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = msrle.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74B06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = msvideo1.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74C06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = pthread.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74D06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = qtrle.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74E06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = rational.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E74F06C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = rational.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75006C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = resample2.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75106C458B400A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = rpza.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75206C458B500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = smc.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75306C458B500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = truemotion1.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75406C458B500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = truemotion1data.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75506C458B500A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = vmdav.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E75606C458B500A6878F = {
+			fileRef = AA90E73F06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75706C458B500A6878F = {
+			fileRef = AA90E74006C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75806C458B500A6878F = {
+			fileRef = AA90E74106C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75906C458B500A6878F = {
+			fileRef = AA90E74206C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75A06C458B500A6878F = {
+			fileRef = AA90E74306C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75B06C458B500A6878F = {
+			fileRef = AA90E74406C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75C06C458B500A6878F = {
+			fileRef = AA90E74506C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75D06C458B500A6878F = {
+			fileRef = AA90E74606C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75E06C458B500A6878F = {
+			fileRef = AA90E74706C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E75F06C458B500A6878F = {
+			fileRef = AA90E74806C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76006C458B500A6878F = {
+			fileRef = AA90E74906C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76106C458B500A6878F = {
+			fileRef = AA90E74A06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76206C458B500A6878F = {
+			fileRef = AA90E74B06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76306C458B500A6878F = {
+			fileRef = AA90E74C06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76406C458B500A6878F = {
+			fileRef = AA90E74D06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76506C458B500A6878F = {
+			fileRef = AA90E74E06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76606C458B500A6878F = {
+			fileRef = AA90E74F06C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76706C458B500A6878F = {
+			fileRef = AA90E75006C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76806C458B500A6878F = {
+			fileRef = AA90E75106C458B400A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76906C458B500A6878F = {
+			fileRef = AA90E75206C458B500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76A06C458B500A6878F = {
+			fileRef = AA90E75306C458B500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76B06C458B500A6878F = {
+			fileRef = AA90E75406C458B500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76C06C458B500A6878F = {
+			fileRef = AA90E75506C458B500A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76D06C458DF00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = vqavideo.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E76E06C458DF00A6878F = {
+			fileRef = AA90E76D06C458DF00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E76F06C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = "asf-enc.c";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77006C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = asf.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77106C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dv.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77206C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = flic.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77306C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = idcin.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77406C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = matroska.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77506C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = segafilm.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77606C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sgi.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77706C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sierravmd.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77806C4592F00A6878F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = westwood.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA90E77906C4592F00A6878F = {
+			fileRef = AA90E76F06C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E77A06C4592F00A6878F = {
+			fileRef = AA90E77006C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E77B06C4592F00A6878F = {
+			fileRef = AA90E77106C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E77C06C4592F00A6878F = {
+			fileRef = AA90E77206C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E77D06C4592F00A6878F = {
+			fileRef = AA90E77306C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E77E06C4592F00A6878F = {
+			fileRef = AA90E77406C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E77F06C4592F00A6878F = {
+			fileRef = AA90E77506C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E78006C4592F00A6878F = {
+			fileRef = AA90E77606C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E78106C4592F00A6878F = {
+			fileRef = AA90E77706C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA90E78206C4592F00A6878F = {
+			fileRef = AA90E77806C4592F00A6878F;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAA71D8205EDD1ED00D2E8FF = {
 			children = (
@@ -7825,7 +8314,7 @@
 		AABBF9AC0659E9F300738526 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			lastKnownFileType = text.plist.xml;
+			lastKnownFileType = text.xml;
 			path = Info.plist;
 			refType = 4;
 			sourceTree = "<group>";
@@ -9283,7 +9772,7 @@
 		};
 		AABD0A1B05DF0D30004F7929 = {
 			isa = PBXFileReference;
-			lastKnownFileType = text.plist.xml;
+			lastKnownFileType = text.xml;
 			path = "lua-Info.plist";
 			refType = 4;
 			sourceTree = "<group>";
