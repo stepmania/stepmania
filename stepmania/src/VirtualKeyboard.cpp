@@ -131,14 +131,16 @@ wchar_t VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput 
 		{
 			// make a space or .
 
-			if(currentMode != VKMODE_IP)
+			switch( currentMode )
+			{
+			case VKMODE_PROFILE:
 			{
 				if(cur_string.empty())
 					*nextChar = true;
 				
 				return ' ';
 			}
-			else if(currentMode == VKMODE_IP)
+			case VKMODE_IP:
 			{
 				if(!cur_string.empty())
 					return '.';
