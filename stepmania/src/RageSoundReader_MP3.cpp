@@ -348,13 +348,20 @@ void fill_frame_index_cache( madlib_t *mad )
 }
 
 /* Handle first-stage decoding: extracting the MP3 frame data. */
-int RageSoundReader_MP3::do_mad_frame_decode()
+int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 {
 	int bytes_read = 0;
 
 	while(1)
 	{
-		if( !mad_frame_decode(&mad->Frame,&mad->Stream) )
+		int ret;
+
+		/* Always actually decode the first packet, so we cleanly pass Xing tags. */
+		if( headers_only && !mad->first_frame )
+			ret=mad_header_decode( &mad->Frame.header,&mad->Stream );
+		else
+			ret=mad_frame_decode( &mad->Frame,&mad->Stream );
+		if( !ret )
 		{
 			/* OK. */
 			if( mad->first_frame )
@@ -1069,10 +1076,9 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 	}
 
 	MADLIB_rewind();
-	/* XXX use mad_header_decode (do_mad_frame_decode(true)?) */
 	while(1)
 	{
-		int ret = do_mad_frame_decode();
+		int ret = do_mad_frame_decode( true );
 		if( ret == -1 )
 			return -1; /* it set the error */
 		if( ret == 0 ) /* EOF */
