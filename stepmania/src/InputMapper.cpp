@@ -558,7 +558,7 @@ void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
 
 void InputMapper::MenuToGame( MenuInput MenuI, GameInput GameIout[4] )
 {
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	pGameDef->MenuInputToGameInput( MenuI, GameIout );
 }
 
