@@ -1619,6 +1619,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
+	if( type == IET_LEVEL_CHANGED )
+		return;
+
 	if( MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
 		!m_Back.IsTransitioning() )

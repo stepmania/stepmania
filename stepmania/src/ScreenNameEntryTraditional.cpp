@@ -660,8 +660,6 @@ void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType
 {
 	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
-	if( type == IET_RELEASE )
-		return;		// ignore
 
 	--m_SelectedChar[pn];
 	wrap( m_SelectedChar[pn], m_textAlphabet[pn].size() );
@@ -673,8 +671,6 @@ void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventTyp
 {
 	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
-	if( type == IET_RELEASE )
-		return;		// ignore
 
 	++m_SelectedChar[pn];
 	wrap( m_SelectedChar[pn], m_textAlphabet[pn].size() );

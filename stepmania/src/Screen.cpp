@@ -109,7 +109,15 @@ void Screen::MenuBack(	PlayerNumber pn, const InputEventType type )
 void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Don't send release messages with the default handler. */
-	if(type == IET_RELEASE) return; // don't care
+	switch( type )
+	{
+	case IET_FIRST_PRESS:
+	case IET_SLOW_REPEAT:
+	case IET_FAST_REPEAT:
+		break; /* OK */
+	default:
+		return; // don't care
+	}
 
 	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
 	if( MenuI.button == MENU_BUTTON_BACK && DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == KEY_ESC )

@@ -664,6 +664,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	if( DeviceI.device != DEVICE_KEYBOARD )
 		return;
 
+	if( type == IET_LEVEL_CHANGED )
+		return;		// don't care
+
 	if(type == IET_RELEASE)
 	{
 		switch( DeviceI.button ) {

@@ -162,9 +162,6 @@ void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenMiniMenu::MenuUp( PlayerNumber pn, const InputEventType type )
 {
-	if( type == IET_RELEASE )
-		return;
-
 	if( GetGoUpSpot() != -1 )
 	{
 		BeforeLineChanged();
@@ -175,9 +172,6 @@ void ScreenMiniMenu::MenuUp( PlayerNumber pn, const InputEventType type )
 
 void ScreenMiniMenu::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	if( type == IET_RELEASE )
-		return;
-
 	if( GetGoDownSpot() != -1 )
 	{
 		BeforeLineChanged();
@@ -188,9 +182,6 @@ void ScreenMiniMenu::MenuDown( PlayerNumber pn, const InputEventType type )
 
 void ScreenMiniMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	if( type == IET_RELEASE )
-		return;
-
 	if( CanGoLeft() )
 	{
 		m_iCurAnswers[m_iCurLine]--;
@@ -200,9 +191,6 @@ void ScreenMiniMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 
 void ScreenMiniMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	if( type == IET_RELEASE )
-		return;
-
 	if( CanGoRight() )
 	{
 		m_iCurAnswers[m_iCurLine]++;
@@ -212,9 +200,6 @@ void ScreenMiniMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenMiniMenu::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-	if( type == IET_RELEASE )
-		return;
-
 	m_Out.StartTransitioning( SM_GoToOK );
 
 	SCREENMAN->PlayStartSound();
