@@ -33,7 +33,7 @@ public:
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();
 	bool	m_bDrawDangerLight;
-	void Change2DAnimState(int iPlayerNum, int iState);
+	void Change2DAnimState( PlayerNumber pn, int iState );
 protected:
 
 	Model	*m_pCharacter[NUM_PLAYERS];

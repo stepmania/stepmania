@@ -303,12 +303,12 @@ void DancingCharacters::Update( float fDelta )
 	}
 }
 
-void DancingCharacters::Change2DAnimState(int iPlayerNum, int iState)
+void DancingCharacters::Change2DAnimState( PlayerNumber pn, int iState )
 {
-	if(iPlayerNum >= NUM_PLAYERS) { ASSERT(0); } // player out of bounds?
-	if(iState >= AS2D_MAXSTATES) { ASSERT(0); } // invalid state?
+	ASSERT( pn < NUM_PLAYERS );
+	ASSERT( iState < AS2D_MAXSTATES );
 	
-	m_i2DAnimState[iPlayerNum] = iState;
+	m_i2DAnimState[pn] = iState;
 }
 
 void DancingCharacters::DrawPrimitives()
