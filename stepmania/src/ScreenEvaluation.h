@@ -25,6 +25,8 @@
 #include "PercentageDisplay.h"
 #include "GraphDisplay.h"
 #include "ComboGraph.h"
+#include "BGAnimation.h"
+#include "ActorUtil.h"
 
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
@@ -112,6 +114,7 @@ protected:
 	Sprite				m_sprPersonalRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
+	AutoActor			m_FullCombo[NUM_PLAYERS];
 };
 
 #endif

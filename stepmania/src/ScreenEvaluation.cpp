@@ -58,6 +58,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
 #define SHOW_COMBO_AREA						THEME->GetMetricB(m_sName,"ShowComboArea")
+#define SHOW_FULL_COMBO						THEME->GetMetricB(m_sName,"ShowFullCombo")
 #define GRAPH_START_HEIGHT					THEME->GetMetricF(m_sName,"GraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 
@@ -712,6 +713,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			UtilSetXYAndOnCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprPersonalRecord[p] );
 		}
+
+		if( SHOW_FULL_COMBO && stageStats.FullCombo( (PlayerNumber) p ) )
+		{
+			m_FullCombo[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation full combo P%i",p+1)) );
+			this->AddChild( m_FullCombo[p] );
+		}
 	}
 
 	bool bOneHasNewTopRecord = false;
@@ -936,6 +943,7 @@ void ScreenEvaluation::TweenOffScreen()
 			continue;
 		UtilOffCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
 		UtilOffCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
+		UtilOffCommand( m_FullCombo[p], "ScreenEvaluation" );
 	}
 	UtilOffCommand( m_sprTryExtraStage, "ScreenEvaluation" );
 }
