@@ -15,7 +15,6 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "MenuElements.h"
-#include "HelpDisplay.h"
 #include "MusicBannerWheel.h"
 #include "MenuElements.h"
 #include "DifficultyRating.h"
