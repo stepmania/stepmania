@@ -243,9 +243,9 @@ void Sprite::DrawPrimitives()
 			v[2].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
 			v[3].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
 
-			// if the texture has more than one frame, we're going to get border mess from the 
-			// neighboring frame, so don't bother turning wrapping off.
-			if( m_pTexture->GetNumFrames() == 1 )	
+			if( m_bTextureWrapping )	
+				DISPLAY->EnableTextureWrapping();
+			else
 				DISPLAY->DisableTextureWrapping();
 		}
 	}

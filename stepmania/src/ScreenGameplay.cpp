@@ -70,8 +70,8 @@
 #define ACTIVE_ITEMS_Y( p, e, r )		THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
 #define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
 #define DEBUG_Y							THEME->GetMetricF("ScreenGameplay","DebugY")
-#define STATUS_ICONS_X					THEME->GetMetricF("ScreenGameplay","StatusIconsX")
-#define STATUS_ICONS_Y					THEME->GetMetricF("ScreenGameplay","StatusIconsY")
+#define AUTOPLAY_X						THEME->GetMetricF("ScreenGameplay","AutoPlayX")
+#define AUTOPLAY_Y						THEME->GetMetricF("ScreenGameplay","AutoPlayY")
 #define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
 #define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
 CachedThemeMetric SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
@@ -104,6 +104,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
+	 m_bDemonstration = bDemonstration;
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	G_TICK_EARLY_SECONDS.Refresh();
@@ -396,9 +397,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	//this->AddChild( &m_textLyrics ); -- THIS IS NOT DONE YET!! (Miryokuteki)
 	
 
-	m_textOptions.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
-	this->AddChild( &m_textOptions );
-	UpdateOptionsText();
+	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
+	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
+	this->AddChild( &m_textAutoPlay );
+	UpdateAutoPlayText();
 	
 
 	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
@@ -471,60 +473,37 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_soundFail.Load(				THEME->GetPathTo("Sounds","ScreenGameplay failed") );
 		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","ScreenGameplay extra") );
 		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","ScreenGameplay oni die") );
-		m_announcerReady.Load(			ANNOUNCER->GetPathTo("ScreenGameplay ready") );
+		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("ScreenGameplay here we go extra") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
 		else if( GAMESTATE->IsFinalStage() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("ScreenGameplay here we go final") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
 		else
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("ScreenGameplay here we go normal") );
-		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment danger") );
-		m_announcerGood.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment good") );
-		m_announcerHot.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment hot") );
-		m_announcerOni.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment oni") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
+		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
+		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
+		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
+		m_announcerOni.Load(			ANNOUNCER->GetPathTo("gameplay comment oni") );
 
-		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 100 combo") );
-		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 200 combo") );
-		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 300 combo") );
-		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 400 combo") );
-		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 500 combo") );
-		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 600 combo") );
-		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 700 combo") );
-		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 800 combo") );
-		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 900 combo") );
-		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 1000 combo") );
-		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("ScreenGameplay combo stopped") );
+		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
+		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
+		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("gameplay 300 combo") );
+		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("gameplay 400 combo") );
+		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("gameplay 500 combo") );
+		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("gameplay 600 combo") );
+		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("gameplay 700 combo") );
+		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("gameplay 800 combo") );
+		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
+		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
+		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
 		m_soundAssistTick.Load(			THEME->GetPathTo("Sounds","ScreenGameplay assist tick") );
 	}
 
-	//
-	// Get the transitions rolling
-	//
-	if( bDemonstration )
-	{
-		StartPlayingSong( 0, 0 );	// *kick* (no transitions)
-	}
-	else
-	{
-		float fMinTimeToMusic = m_In.GetLengthSeconds();	// start of m_Ready
-		float fMinTimeToNotes = fMinTimeToMusic + m_Ready.GetLengthSeconds() + m_Go.GetLengthSeconds()+2;	// end of Go
-
-		/*
-		 * Tell the music to start, but don't actually make any noise for
-		 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
-		 *
-		 * This is only a minimum: the music might be started later, to meet
-		 * the minimum-time-to-notes value.  If you're writing song data,
-		 * and you want to make sure we get ideal timing here, make sure there's
-		 * a bit of space at the beginning of the music with no steps. 
-		 */
-
-		/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
-
-		m_In.StartTransitioning( SM_PlayReady );
-	}
-
 	m_iRowLastCrossed = -1;
+
+	// Get the transitions rolling on the first update.
+	// We can't do this in the constructor because ScreenGameplay is constructed 
+	// in the middle of ScreenStage.
 }
 
 ScreenGameplay::~ScreenGameplay()
@@ -762,6 +741,38 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+	if( m_bFirstUpdate )
+	{
+		//
+		// Get the transitions rolling
+		//
+		if( m_bDemonstration )
+		{
+			StartPlayingSong( 0, 0 );	// *kick* (no transitions)
+		}
+		else
+		{
+			float fMinTimeToMusic = m_In.GetLengthSeconds();	// start of m_Ready
+			float fMinTimeToNotes = fMinTimeToMusic + m_Ready.GetLengthSeconds() + m_Go.GetLengthSeconds()+2;	// end of Go
+
+			/*
+			 * Tell the music to start, but don't actually make any noise for
+			 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
+			 *
+			 * This is only a minimum: the music might be started later, to meet
+			 * the minimum-time-to-notes value.  If you're writing song data,
+			 * and you want to make sure we get ideal timing here, make sure there's
+			 * a bit of space at the beginning of the music with no steps. 
+			 */
+
+			/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
+
+			m_In.StartTransitioning( SM_PlayReady );
+		}
+	}
+
+
+
 	/* Very important:  Update GAMESTATE's song beat information
 	 * -before- calling update on all the classes that depend on it.
 	 * If you don't do this first, the classes are all acting on old 
@@ -996,7 +1007,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		case SDLK_F6:
 			m_bChangedOffsetOrBPM = true;
 			GAMESTATE->m_SongOptions.m_bAutoSync = !GAMESTATE->m_SongOptions.m_bAutoSync;	// toggle
-			UpdateOptionsText();
+			UpdateAutoPlayText();
 			break;
 		case SDLK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
@@ -1013,7 +1024,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			break;
 		case SDLK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			UpdateOptionsText();
+			UpdateAutoPlayText();
 			break;
 		case SDLK_F9:
 		case SDLK_F10:
@@ -1098,7 +1109,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	}
 }
 
-void ScreenGameplay::UpdateOptionsText()
+void ScreenGameplay::UpdateAutoPlayText()
 {
 	CString sText;
 
@@ -1109,6 +1120,8 @@ void ScreenGameplay::UpdateOptionsText()
 
 	if( sText.length() > 0 )
 		sText.resize( sText.length()-5 );
+
+	m_textAutoPlay.SetText( sText );
 }
 
 void SaveChanges()
@@ -1505,13 +1518,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,0) );
 		}
 
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("ScreenGameplay failed") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 
 //		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 5.0f );
 		break;
 
 /*	case SM_PlayFailComment:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("ScreenGameplay failed") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 		break;
 */
 	case SM_GoToScreenAfterFail:

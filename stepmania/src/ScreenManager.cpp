@@ -205,6 +205,11 @@ void ScreenManager::LoadPreppedScreen()
 {
 	ASSERT( m_ScreenBuffered != NULL);
 	SetNewScreen( m_ScreenBuffered  );
+	
+	// Need to update the new screen once, or else it will be 
+	// drawn before ever being Update()d.
+	Update( 0 );
+	
 	m_ScreenBuffered = NULL;
 }
 

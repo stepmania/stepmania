@@ -521,7 +521,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_sprTryExtraStage.SetEffectGlowShift( 2.5f );
 		this->AddChild( &m_sprTryExtraStage );
 
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEvaluation extra stage") );
+		if( GAMESTATE->IsExtraStage() )
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEvaluation extra2") );
+		else
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEvaluation extra1") );
 	}
 	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{

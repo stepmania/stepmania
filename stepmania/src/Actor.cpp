@@ -42,6 +42,7 @@ Actor::Actor()
 
 	m_bShadow = false;
 	m_fShadowLength = 4;
+	m_bTextureWrapping = false;
 	m_bIsAnimating = true;
 	m_bBlendAdd = false;
 }
@@ -619,9 +620,9 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
 		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(0) );
 		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(0),fParam(1),fParam(2)) );
-		else if( sName=="startanimating" )	this->StartAnimating();
-		else if( sName=="stopanimating" )	this->StopAnimating();
-		else if( sName=="additiveblend" )	EnableAdditiveBlend( iParam(0)!=0 );
+		else if( sName=="animate" )			EnableAnimation( bParam(0) );
+		else if( sName=="texturewrapping" )	EnableTextureWrapping( bParam(0) );
+		else if( sName=="additiveblend" )	EnableAdditiveBlend( bParam(0) );
 		else
 		{
 			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );

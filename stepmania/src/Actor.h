@@ -273,6 +273,8 @@ public:
 	virtual void StartAnimating()	{ this->EnableAnimation(true); };
 	virtual void StopAnimating()	{ this->EnableAnimation(false); };
 
+	virtual void EnableTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
+
 	//
 	// fade command
 	//
@@ -345,6 +347,7 @@ protected:
 	//
 	bool	m_bShadow;
 	float	m_fShadowLength;
+	bool	m_bTextureWrapping;
 	bool	m_bIsAnimating;
 	bool	m_bBlendAdd;
 

@@ -112,8 +112,8 @@ protected:
 	BitmapText			m_textDebug;
 	BitmapText			m_textLyrics;
 
-	BitmapText			m_textOptions;	// for AutoPlay, AutoAdjust
-	void	UpdateOptionsText();
+	BitmapText			m_textAutoPlay;	// for AutoPlay, AutoAdjust
+	void	UpdateAutoPlayText();
 	
 	BitmapText			m_MaxCombo;
 
@@ -163,7 +163,7 @@ protected:
 	RandomSample	m_announcer1000Combo;
 	RandomSample	m_announcerComboStopped;
 
-	
+	bool			m_bDemonstration;
 	int				m_iRowLastCrossed;
 
 	RageSound		m_soundAssistTick;

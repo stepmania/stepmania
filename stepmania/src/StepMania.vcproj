@@ -304,12 +304,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenMachineOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenManager.cpp">
-			</File>
-			<File
-				RelativePath="ScreenManager.h">
-			</File>
-			<File
 				RelativePath="ScreenMapControllers.cpp">
 			</File>
 			<File
@@ -1608,6 +1602,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\PrefsManager.h">
+			</File>
+			<File
+				RelativePath="ScreenManager.cpp">
+			</File>
+			<File
+				RelativePath="ScreenManager.h">
 			</File>
 			<File
 				RelativePath=".\SongManager.cpp">
