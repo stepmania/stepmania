@@ -170,7 +170,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 		}
 
 		/* Half-doubles is offset; "0011111100000". */
-		if( STEPS_TYPE_PUMP_HALFDOUBLE )
+		if( out.m_StepsType == STEPS_TYPE_PUMP_HALFDOUBLE )
 			sRowString.erase( 0, 2 );
 
 		// the length of a note in a row depends on TICKCOUNT
