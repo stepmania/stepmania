@@ -1,13 +1,10 @@
 #include "global.h"
 
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #include "SongCacheIndex.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageFileManager.h"
 #include "song.h"
-#include "arch/arch.h"
 
 #define CACHE_DIR "Cache/"
 
@@ -26,19 +23,14 @@ SongCacheIndex::~SongCacheIndex()
 
 static void EmptyDir( CString dir )
 {
-#ifdef _XBOX
-	ASSERT(dir[dir.size()-1] == '\\');
-#else
 	ASSERT(dir[dir.size()-1] == '/');
-#endif
 
-	/* XXX RageFile */
 	CStringArray asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
 	{
 		if( !IsADirectory(dir + asCacheFileNames[i]) )
-			remove( dir + asCacheFileNames[i] );
+			FILEMAN->Remove( dir + asCacheFileNames[i] );
 	}
 }
 
