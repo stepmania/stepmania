@@ -8,11 +8,29 @@
 
 #include "SDL_utils.h"
 
+//DDD
+//#include <time.h>
+
 const int channels = 2;
-const int samplesize = channels*2;              /* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 1024*8;   /* in frames */
-const int buffersize = buffersize_frames * samplesize; /* in bytes */
+const int bytes_per_sample = 2;  /* 16-bit */
+
+const int samples_per_frame = channels;
+const int bytes_per_frame = bytes_per_sample * samples_per_frame;
+
+const int buffersize_frames = 1024*2;
+const int buffersize_samples = buffersize_frames * samples_per_frame;
+const int buffersize_bytes = buffersize_frames * bytes_per_frame;
+
+//DDD
+//char* GetTime()
+//{
+//	static char temp[100];
+//	struct timeval now;
+//	gettimeofday(&now,NULL);
+//	sprintf(temp, "%d%06d", now.tv_sec-1046494000, now.tv_usec);
+//	return temp;
+//}
 
 /**
  * int err; must be defined before using this macro
@@ -50,45 +68,46 @@ bool RageSound_ALSA9::GetData()
 
         int err;
 
-        /* Create a 32-bit buffer to mix sounds. */
+	/* Sint16 represents a single sample
+	 * each frame contains one sample per channel
+	 */
         static Sint16 *buf = NULL, *buf2 = NULL;
-	int bufsize = buffersize_frames * channels;
 
 	if (!buf)
 	{
-		buf = new Sint16[bufsize];
-		buf2 = new Sint16[bufsize];
+		buf = new Sint16[buffersize_samples];
+		buf2 = new Sint16[buffersize_samples];
 	}
-        memset(buf, 0, bufsize*sizeof(Uint16));
-        memset(buf2, 0, bufsize*sizeof(Uint16));
+        memset(buf, 0, buffersize_bytes);
+        memset(buf2, 0, buffersize_bytes);
         SoundMixBuffer mix;
-
 
         for(unsigned i = 0; i < sounds.size(); ++i)
         {
                 if(sounds[i]->stopping)
                         continue;
 
-                /* Call the callback. */
-                unsigned got = sounds[i]->snd->GetPCM((char *) buf, bufsize, last_cursor_pos);  
+                /* Call the callback.
+		 * Get the units straight,
+		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
+		 */
+                unsigned got = sounds[i]->snd->GetPCM((char *) buf, buffersize_bytes, last_cursor_pos);  
 
-                mix.write((Sint16 *) buf, got/2);
+                mix.write((Sint16 *) buf, got/bytes_per_sample);
 
-                if(got < bufsize)
+                if(got < buffersize_bytes)
                 {
                         /* This sound is finishing. */
                         sounds[i]->stopping = true;
-                        sounds[i]->flush_pos = last_cursor_pos + (got / samplesize);
                 }
         }
 
 	mix.read((Sint16*)buf2);
         int r;
 	Sint16 *start = buf2;
+	int new_cursor = last_cursor_pos;
 
-	/* it doesn't make sense to me why we must divide by two
-	 * but we must */
-	snd_pcm_uframes_t remaining = buffersize_frames/2;
+	snd_pcm_uframes_t remaining = buffersize_frames;
         while (remaining > 0)
         {
 		r = snd_pcm_mmap_writei(pcm, start, remaining);
@@ -102,11 +121,12 @@ bool RageSound_ALSA9::GetData()
 			break;
                 }
 
-		start += r*channels;
+		start += r*samples_per_frame;
 		remaining -= r;
-		last_cursor_pos += r;
+		new_cursor += r;
 
         }
+	last_cursor_pos = new_cursor;
 
         return true;
 }
@@ -188,16 +208,10 @@ void RageSound_ALSA9::StopMixing(RageSound *snd)
 
 int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 {
-	/* what's below tries to use the status time of the pcm device
-	 * but since we use last_cursor_pos for the GetPCM() call, 
-	 * it doesn't match up with what RageSound is expecting
-	 */
-
         LockMutex L(SOUNDMAN->lock);
 
         int err;
         snd_pcm_status_t *status;
-        //snd_timestamp_t now;
         snd_pcm_sframes_t delay;
 
         snd_pcm_status_alloca(&status);
@@ -207,26 +221,10 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 	snd_pcm_state_t state = snd_pcm_status_get_state(status);
 	if (state == SND_PCM_STATE_PREPARED) return 0;
 
-        //snd_pcm_status_get_tstamp(status, &now);   
-
+	/* delay is returned in frames */
         delay = snd_pcm_status_get_delay(status);
 
-	//LOG->Trace("RageSound_ALSA9::GetPosition %d", last_cursor_pos - delay);
 	return last_cursor_pos - delay;
-
-	/* we need startup_time else we will be returning
-	 * samples-since-1970, which will surely overflow int
-	 */
-	//float this_sec = (now.tv_sec - startup_time.tv_sec)
-	//	+ ((float)now.tv_usec)/1000000;
-
-	//LOG->Trace("RageSound_ALSA9::GetPosition %d", (int)(this_sec * samplerate)+800000);
-        
-	/* the +800000 was a fudge to compensate for the difference 
-	 * between this and last_cursor_pos */
-        //return (int)(this_sec * samplerate)+800000;
-
-
 }       
 
 
@@ -243,7 +241,19 @@ RageSound_ALSA9::RageSound_ALSA9()
         /* open the device */
         // if we instead use plughw: then our requested format WILL be provided
         err = snd_pcm_open(&pcm, "hw:0,0", SND_PCM_STREAM_PLAYBACK, 0);  
-        ALSA_ASSERT("snd_pcm_open");
+	if (err == -EBUSY)
+	{
+		RageException::ThrowNonfatal("Could not allocate access to sound device hw:0,0");
+	}
+	else if (err == -SND_ERROR_INCOMPATIBLE_VERSION)
+	{
+		RageException::ThrowNonfatal("ALSA kernal API is incompatible");
+	}
+	else if (err < 0)
+	{
+		RageException::ThrowNonfatal("Unhandled error snd_pcm_open");
+		//XXX give the error, via sprintf
+	}
 
         /* allocate the hardware parameters structure */
         err = snd_pcm_hw_params_malloc(&hwparams);
@@ -292,9 +302,6 @@ RageSound_ALSA9::RageSound_ALSA9()
 	snd_output_flush(errout);
 
 
-	gettimeofday(&startup_time, NULL);
-	/* add error checking before Jan 2038 */
-
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
 }
 
@@ -328,8 +335,7 @@ float RageSound_ALSA9::GetPlayLatency() const
 	 * played now
 	 */
 
-
-	/*XXX I'm assuming GetPlayLatency() is supposed to return seconds */
+	/* this returns seconds */
 	return ((float)delay)/samplerate;
 }
 

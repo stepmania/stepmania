@@ -26,16 +26,14 @@ public:
 	struct sound {
 		RageSound *snd;
 		bool stopping;
-		int samples_buffered;
                 int flush_pos; /* state == STOPPING only */
-        sound() { snd = NULL; stopping=false; samples_buffered=0; }
+        sound() { snd = NULL; stopping=false; }
 	};
 
 	/* List of currently playing sounds: */
 	vector<sound *> sounds;
 
 	bool shutdown;
-	struct timeval startup_time;
         int last_cursor_pos;
 
 	snd_pcm_t *pcm;
