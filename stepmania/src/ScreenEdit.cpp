@@ -553,16 +553,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
-	m_Player.Init( 
-		GAMESTATE->m_pPlayerState[PLAYER_1], 
-		NULL,
-		NULL, 
-		NULL, 
-		NULL, 
-		NULL, 
-		NULL, 
-		NULL, 
-		NULL );
+	m_Player.Init( GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player.Load( noteData );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
@@ -2181,7 +2172,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				/* If we're in course display mode, set that up. */
 				SetupCourseAttacks();
 
-				m_Player.Init( GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 				m_Player.Load( m_NoteFieldEdit );
 				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
