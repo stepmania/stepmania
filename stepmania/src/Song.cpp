@@ -770,6 +770,9 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat()
 {
+	float fFirstBeat = 999999; /* inf */
+	float fLastBeat = 0;
+
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
 		Steps* pSteps = m_vpSteps[i];
@@ -790,11 +793,9 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		pSteps->SetRadarValues( v );
 
 
-		/* Calculate first/last beat.
-		 *
-		 * Many songs have stray, empty song patterns.  Ignore them, so
+		/* Many songs have stray, empty song patterns.  Ignore them, so
 		 * they don't force the first beat of the whole song to 0. */
-		if(tempNoteData.GetLastRow() == 0)
+		if( tempNoteData.GetLastRow() == 0 )
 			continue;
 
 		// Don't set first/last beat based on lights.  They often start very 
@@ -802,17 +803,12 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( pSteps->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 			continue;
 
-		float fFirstBeat = tempNoteData.GetFirstBeat();
-		float fLastBeat = tempNoteData.GetLastBeat();
-		if( m_fFirstBeat == -1 )
-			m_fFirstBeat = fFirstBeat;
-		else
-			m_fFirstBeat = min( m_fFirstBeat, fFirstBeat );
-		if( m_fLastBeat == -1 )
-			m_fLastBeat = fLastBeat;
-		else
-			m_fLastBeat = max( m_fLastBeat, fLastBeat );
+		fFirstBeat = min( fFirstBeat, tempNoteData.GetFirstBeat() );
+		fLastBeat = max( fLastBeat, tempNoteData.GetLastBeat() );
 	}
+
+	m_fFirstBeat = fFirstBeat;
+	m_fLastBeat = fLastBeat;
 }
 
 void Song::GetSteps( 
