@@ -817,16 +817,17 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		if(m_TimeToPlayJudgeSound[l] == -1)
 			continue;
 
+		if(RageTimer::GetTimeSinceStart() < m_fScreenCreateTime + m_TimeToPlayJudgeSound[l])
+			continue;
+
 		RageColor c;
 		c.a = 1;
-		if((m_fScreenCreateTime + m_TimeToPlayJudgeSound[l]) < RageTimer::GetTimeSinceStart())
+		if((SOUND_ON_FULL_ALPHA && (m_sprJudgeLabels[l].GetDiffuse().a ==  c.a || m_textJudgeNumbers[l][PLAYER_1].GetDiffuse().a == c.a || m_textJudgeNumbers[l][PLAYER_2].GetDiffuse().a == c.a) || !SOUND_ON_FULL_ALPHA) )
 		{
-			if((SOUND_ON_FULL_ALPHA && (m_sprJudgeLabels[l].GetDiffuse().a ==  c.a || m_textJudgeNumbers[l][PLAYER_1].GetDiffuse().a == c.a || m_textJudgeNumbers[l][PLAYER_2].GetDiffuse().a == c.a) || !SOUND_ON_FULL_ALPHA) )
-			{
-				m_soundJudgeSound[l].Play();
-				m_TimeToPlayJudgeSound[l] = -1;
-			}
+			m_soundJudgeSound[l].Play();
+			m_TimeToPlayJudgeSound[l] = -1;
 		}
+
 	}
 }
 
