@@ -68,6 +68,11 @@ void MessageManager::Broadcast( const CString& sMessage ) const
 	}
 }
 
+void MessageManager::Broadcast( Message m ) const
+{
+	Broadcast( MessageToString(m) );
+}
+
 // lua start
 #include "LuaBinding.h"
 
