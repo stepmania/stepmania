@@ -57,9 +57,9 @@ public:
 	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
 	Song* GetRandomSong();
 
-	void GetNonstopCourses( vector<Course*> AddTo );	// add to if life meter type is BAR.
-	void GetOniCourses( vector<Course*> AddTo );		// add to if life meter type is BATTERY.
-	void GetEndlessCourses( vector<Course*> AddTo );	// add to if set to REPEAT.
+	void GetNonstopCourses( vector<Course*> &AddTo );	// add to if life meter type is BAR.
+	void GetOniCourses( vector<Course*> &AddTo );		// add to if life meter type is BATTERY.
+	void GetEndlessCourses( vector<Course*> &AddTo );	// add to if set to REPEAT.
 
 	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );

@@ -461,7 +461,7 @@ void SongManager::CleanCourses()
 	}
 }
 
-void SongManager::GetNonstopCourses( vector<Course*> AddTo )
+void SongManager::GetNonstopCourses( vector<Course*> &AddTo )
 {
 	PlayerOptions po;
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
@@ -475,7 +475,7 @@ void SongManager::GetNonstopCourses( vector<Course*> AddTo )
 	}
 }
 
-void SongManager::GetOniCourses( vector<Course*> AddTo )
+void SongManager::GetOniCourses( vector<Course*> &AddTo )
 {
 	PlayerOptions po;
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
@@ -489,7 +489,7 @@ void SongManager::GetOniCourses( vector<Course*> AddTo )
 	}
 }
 
-void SongManager::GetEndlessCourses( vector<Course*> AddTo )
+void SongManager::GetEndlessCourses( vector<Course*> &AddTo )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
 	{
