@@ -23,6 +23,7 @@
 #include "BitmapText.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"
+#include "GameState.h"
 
 
 #define BACKGROUNDS_SPACING_X				THEME->GetMetricF("ScreenCredits","BackgroundsSpacingX")

@@ -19,6 +19,7 @@
 #include "AnnouncerManager.h"
 #include "song.h"
 #include "SongUtil.h"
+#include "GameState.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenMusicScroll","ScrollDelay")
