@@ -930,11 +930,21 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 					WARN_AND_CONTINUE;
 
 				pSteps = pSong->GetStepsByDescription( st, sDescription );				
+				if( pSteps == NULL )
+				{
+					LOG->Trace("Edit steps \"%s\" missing in song \"%s\"; scoring data will be lost", sDescription.c_str(), sSongDir.c_str() );
+					continue;
+				}
 			}
 			else
+			{
 				pSteps = pSong->GetStepsByDifficulty( st, dc );
-			if( pSteps == NULL )
-				WARN_AND_CONTINUE;
+				if( pSteps == NULL )
+				{
+					LOG->Trace("\"%s\" steps missing in song \"%s\"; scoring data will be lost", DifficultyToString(dc).c_str(), sSongDir.c_str() );
+					continue;
+				}
+			}
 
 			XNode *pHighScoreListNode = (*steps)->GetChild("HighScoreList");
 			if( pHighScoreListNode == NULL )
