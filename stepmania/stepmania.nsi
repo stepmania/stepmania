@@ -248,6 +248,11 @@ File "Program\dbghelp.dll"
 File "Program\zlib1.dll"
 File "Program\lua.dll"
 
+SetOverwrite off
+SetOutPath "$INSTDIR\Data\MachineProfile"
+File "Docs\stats.html"
+SetOverwrite on
+
 SetOutPath "$INSTDIR"
 File "COPYING.txt"
 File "README-FIRST.html"
@@ -400,10 +405,16 @@ Delete "$INSTDIR\Program\resample.dll"
 Delete "$INSTDIR\Program\dbghelp.dll"
 Delete "$INSTDIR\Program\zlib1.dll"
 Delete "$INSTDIR\Program\lua.dll"
+RMDir "$INSTDIR\Program"
+
+; It's harmless to delete this, as long as we leave Stats.xml alone; it'll be rewritten
+; by the program the next time it's run.
+Delete "$INSTDIR\Data\MachineProfile\stats.html"
+RMDir "$INSTDIR\Data\MachineProfile"
+
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.html"
 Delete "$INSTDIR\NEWS"
-RMDir "$INSTDIR\Program"
 Delete "$INSTDIR\log.txt"
 Delete "$INSTDIR\info.txt"
 Delete "$INSTDIR\crashinfo.txt"
