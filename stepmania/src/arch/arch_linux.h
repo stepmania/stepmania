@@ -1,19 +1,17 @@
 #ifndef LINUX_ARCH_H
 #define LINUX_ARCH_H
 
-#include "global.h"
-
 #ifdef HAVE_ALSA
-#  include "Sound/RageSoundDriver_ALSA9.h"
+#include "Sound/RageSoundDriver_ALSA9.h"
 #endif
 
+#ifdef HAVE_OSS
 #include "Sound/RageSoundDriver_OSS.h"
+#endif
 
 #ifdef HAVE_GTK
-#  include "LoadingWindow/LoadingWindow_Gtk.h"
+#include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
-#include "InputHandler/InputHandler_SDL.h"
-#include "LowLevelWindow/LowLevelWindow_SDL.h"
 
 #endif
 /*

@@ -26,7 +26,9 @@
 LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }
 ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
 ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
+#if defined(SUPPORT_OPENGL)
 LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }
+#endif
 
 void MakeInputHandlers(vector<InputHandler *> &Add)
 {
@@ -34,7 +36,11 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 	Add.push_back(new InputHandler_DInput);
 	Add.push_back(new InputHandler_Win32_Pump);
 //	Add.push_back(new InputHandler_Win32_Para);
-#else
+#else if defined(_XBOX)
+	// Add.push_back(new InputHandler_DInput);
+#endif
+
+#if defined(SUPPORT_SDL_INPUT)
 	Add.push_back(new InputHandler_SDL);
 #endif
 }
