@@ -27,6 +27,7 @@ public:
 	virtual ~ActorFrame();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadChildrenFromNode( const CString& sDir, const XNode* pNode );
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
@@ -77,6 +78,18 @@ protected:
 	float m_fFOV;	// -1 = no change
 	bool m_bOverrideLighting;	// if true, set ligthing to m_bLighting
 	bool m_bLighting;
+};
+
+class ActorFrameAutoDeleteChildren : public ActorFrame
+{
+public:
+	ActorFrameAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
+	void LoadFromNode( const CString& sDir, const XNode* pNode )
+	{
+		ActorFrame::LoadFromNode( sDir, pNode );
+
+		LoadChildrenFromNode( sDir, pNode );
+	}
 };
 
 #endif

@@ -19,31 +19,6 @@ LUA_REGISTER_CLASS( ActorFrame )
  * that string instead create an ActorFrameAutoDeleteChildren object.
  */
 //REGISTER_ACTOR_CLASS( ActorFrame )
-class ActorFrameAutoDeleteChildren : public ActorFrame
-{
-public:
-	ActorFrameAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
-	void LoadFromNode( const CString& sDir, const XNode* pNode )
-	{
-		ActorFrame::LoadFromNode( sDir, pNode );
-
-		//
-		// Load children
-		//
-		const XNode* pChildren = pNode->GetChild("children");
-		if( pChildren )
-		{
-			FOREACH_CONST_Child( pChildren, pChild )
-			{
-				Actor* pChildActor = ActorUtil::LoadFromActorFile( sDir, pChild );
-				if( pChildActor )
-					AddChild( pChildActor );
-			}
-			SortByDrawOrder();
-		}
-	}
-
-};
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameAutoDeleteChildren, ActorFrame )
 
 
@@ -70,6 +45,27 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
 	pNode->GetAttrValue( "FOV", m_fFOV );
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
+}
+
+void ActorFrame::LoadChildrenFromNode( const CString& sDir, const XNode* pNode )
+{
+	// Shoudn't be calling this unless we're going to delete our children.
+	ASSERT( m_bDeleteChildren );
+
+	//
+	// Load children
+	//
+	const XNode* pChildren = pNode->GetChild("children");
+	if( pChildren )
+	{
+		FOREACH_CONST_Child( pChildren, pChild )
+		{
+			Actor* pChildActor = ActorUtil::LoadFromActorFile( sDir, pChild );
+			if( pChildActor )
+				AddChild( pChildActor );
+		}
+		SortByDrawOrder();
+	}
 }
 
 void ActorFrame::AddChild( Actor* pActor )

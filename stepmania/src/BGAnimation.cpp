@@ -181,7 +181,7 @@ void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	DEBUG_ASSERT( pNode->m_sName == "BGAnimation" );
 
-	ActorScroller::LoadFromNode( sDir, pNode );
+	ActorScrollerAutoDeleteChildren::LoadFromNode( sDir, pNode );
 
 	this->RunCommandsOnChildren( ActorCommands("PlayCommand,Init") );
 

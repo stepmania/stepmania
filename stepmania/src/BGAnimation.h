@@ -10,7 +10,7 @@
 struct XNode;
 class IniFile;
 
-class BGAnimation : public ActorScroller
+class BGAnimation : public ActorScrollerAutoDeleteChildren
 {
 public:
 	BGAnimation();

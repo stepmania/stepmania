@@ -6,6 +6,16 @@
 #include "IniFile.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
+#include "ActorUtil.h"
+
+/* Tricky: We need ActorFrames created in XML to auto delete their children.
+ * We don't want classes that derive from ActorFrame to auto delete their 
+ * children.  The name "ActorFrame" is widely used in XML, so we'll have
+ * that string instead create an ActorFrameAutoDeleteChildren object.
+ */
+//REGISTER_ACTOR_CLASS( ActorScroller )
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorScrollerAutoDeleteChildren, ActorScroller )
+
 
 ActorScroller::ActorScroller()
 {

@@ -46,6 +46,18 @@ protected:
 	RageVector3	m_vTranslateTerm2;
 };
 
+class ActorScrollerAutoDeleteChildren : public ActorScroller
+{
+public:
+	ActorScrollerAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
+	void LoadFromNode( const CString& sDir, const XNode* pNode )
+	{
+		ActorScroller::LoadFromNode( sDir, pNode );
+
+		LoadChildrenFromNode( sDir, pNode );
+	}
+};
+
 #endif
 
 /*
