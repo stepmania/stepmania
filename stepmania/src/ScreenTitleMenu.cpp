@@ -26,6 +26,8 @@
 #include "PlayerState.h"
 
 #define MAX_STAGES_TEXT				THEME->GetMetric (m_sName,"MaxStagesText")
+#define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
+
 
 REGISTER_SCREEN_CLASS( ScreenTitleMenu );
 ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) : 
@@ -113,7 +115,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	 * so that the right m_aGameCommands will show */
 	if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
 	{
-		SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+		SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
 		return;
 	}
 

@@ -18,6 +18,7 @@
 #include "BGAnimation.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+#define START_SCREEN			THEME->GetMetric ("ScreenAttract","StartScreen")
 
 
 REGISTER_SCREEN_CLASS( ScreenAttract );
@@ -89,8 +90,8 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 					SCREENMAN->PlayCoinSound();
 				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
 				usleep( (int)(JOIN_PAUSE_SECONDS*1000*1000) );	// do a little pause, like the arcade does
-				LOG->Trace("ScreenAttract::AttractInput: go to ScreenTitleBranch" );
-				SCREENMAN->SetNewScreen( "ScreenTitleBranch" );
+				LOG->Trace("ScreenAttract::AttractInput: go to START_SCREEN" );
+				SCREENMAN->SetNewScreen( START_SCREEN );
 				break;
 			default:
 				ASSERT(0);
