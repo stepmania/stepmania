@@ -66,69 +66,69 @@ bool RageSound_ALSA9::GetData()
 {
 	LockMutex L(SOUNDMAN->lock);
 
-        int err;
+    int err;
 
 	/* Sint16 represents a single sample
 	 * each frame contains one sample per channel
 	 */
-        static Sint16 *buf = NULL, *buf2 = NULL;
+    static Sint16 *buf = NULL, *buf2 = NULL;
 
 	if (!buf)
 	{
 		buf = new Sint16[buffersize_samples];
 		buf2 = new Sint16[buffersize_samples];
 	}
-        memset(buf, 0, buffersize_bytes);
-        memset(buf2, 0, buffersize_bytes);
-        SoundMixBuffer mix;
+    memset(buf, 0, buffersize_bytes);
+    memset(buf2, 0, buffersize_bytes);
+    SoundMixBuffer mix;
 
-        for(unsigned i = 0; i < sounds.size(); ++i)
-        {
-                if(sounds[i]->stopping)
-                        continue;
+	for(unsigned i = 0; i < sounds.size(); ++i)
+	{
+		if(sounds[i]->stopping)
+			continue;
 
-                /* Call the callback.
+		/* Call the callback.
 		 * Get the units straight,
 		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
 		 */
-                unsigned got = sounds[i]->snd->GetPCM((char *) buf, buffersize_bytes, last_cursor_pos);  
+		unsigned got = sounds[i]->snd->GetPCM((char *) buf, buffersize_bytes, last_cursor_pos);  
 
-                mix.write((Sint16 *) buf, got/bytes_per_sample);
+		mix.write((Sint16 *) buf, got/bytes_per_sample);
 
-                if(got < buffersize_bytes)
-                {
-                        /* This sound is finishing. */
-                        sounds[i]->stopping = true;
-                }
-        }
+		if(got < buffersize_bytes)
+		{
+			/* This sound is finishing. */
+			sounds[i]->stopping = true;
+		}
+    }
 
 	mix.read((Sint16*)buf2);
-        int r;
+	int r;
 	Sint16 *start = buf2;
 	int new_cursor = last_cursor_pos;
 
 	snd_pcm_uframes_t remaining = buffersize_frames;
-        while (remaining > 0)
-        {
+	while (remaining > 0)
+	{
 		r = snd_pcm_mmap_writei(pcm, start, remaining);
-                if (r == -EAGAIN) {
+		if (r == -EAGAIN) {
 			continue;
 		}
-                if (r <= 0)
-                {
-                        LOG->Trace("RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s", snd_strerror(r));
+		if (r <= 0)
+		{
+			LOG->Trace("RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s", snd_strerror(r));
 			Recover(r);
 			break;
-                }
+		}
 
 		start += r*samples_per_frame;
 		remaining -= r;
 		new_cursor += r;
+	}
 
-        }
 	last_cursor_pos = new_cursor;
 
-        return true;
+	return true;
 }
 
 /**
@@ -179,8 +179,8 @@ void RageSound_ALSA9::Update(float delta)
 	{
 		if(!sounds[i]->stopping) continue;
 
-                if(GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
-                        continue; /* stopping but still flushing */
+		if(GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
+			continue; /* stopping but still flushing */
 
 		/* This sound is done. */
 		snds[i]->snd->StopPlaying();
@@ -208,21 +208,22 @@ void RageSound_ALSA9::StopMixing(RageSound *snd)
 
 int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 {
-        LockMutex L(SOUNDMAN->lock);
+	LockMutex L(SOUNDMAN->lock);
 
-        int err;
-        snd_pcm_status_t *status;
-        snd_pcm_sframes_t delay;
+	int err;
+	snd_pcm_status_t *status;
+	snd_pcm_sframes_t delay;
 
-        snd_pcm_status_alloca(&status);
-        err = snd_pcm_status(pcm, status);
+	snd_pcm_status_alloca(&status);
+	err = snd_pcm_status(pcm, status);
+	
 	ALSA_ASSERT("snd_pcm_status");
 
 	snd_pcm_state_t state = snd_pcm_status_get_state(status);
 	if (state == SND_PCM_STATE_PREPARED) return 0;
 
 	/* delay is returned in frames */
-        delay = snd_pcm_status_get_delay(status);
+	delay = snd_pcm_status_get_delay(status);
 
 	return last_cursor_pos - delay;
 }       
@@ -231,16 +232,16 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 RageSound_ALSA9::RageSound_ALSA9()
 {
 	shutdown = false;
-        int err;
+	int err;
 
 	last_cursor_pos = 0;
 
 	snd_pcm_hw_params_t *hwparams;
 	snd_pcm_sw_params_t *swparams;
 
-        /* open the device */
-        // if we instead use plughw: then our requested format WILL be provided
-        err = snd_pcm_open(&pcm, "hw:0,0", SND_PCM_STREAM_PLAYBACK, 0);  
+	/* open the device */
+	// if we instead use plughw: then our requested format WILL be provided
+	err = snd_pcm_open(&pcm, "hw:0,0", SND_PCM_STREAM_PLAYBACK, 0);  
 	if (err == -EBUSY)
 	{
 		RageException::ThrowNonfatal("Could not allocate access to sound device hw:0,0");
@@ -255,39 +256,39 @@ RageSound_ALSA9::RageSound_ALSA9()
 		//XXX give the error, via sprintf
 	}
 
-        /* allocate the hardware parameters structure */
-        err = snd_pcm_hw_params_malloc(&hwparams);
-        ALSA_ASSERT("snd_pcm_hw_params_malloc");
+	/* allocate the hardware parameters structure */
+	err = snd_pcm_hw_params_malloc(&hwparams);
+	ALSA_ASSERT("snd_pcm_hw_params_malloc");
 
-        /* not exactly sure what this does */
-        err = snd_pcm_hw_params_any(pcm, hwparams);
-        ALSA_ASSERT("snd_pcm_hw_params_any");
+	/* not exactly sure what this does */
+	err = snd_pcm_hw_params_any(pcm, hwparams);
+	ALSA_ASSERT("snd_pcm_hw_params_any");
 
-        /* set to mmap mode (with channels interleaved) */
-        err = snd_pcm_hw_params_set_access(pcm, hwparams, SND_PCM_ACCESS_MMAP_INTERLEAVED);
-        ALSA_ASSERT("snd_pcm_hw_params_set_access");
+	/* set to mmap mode (with channels interleaved) */
+	err = snd_pcm_hw_params_set_access(pcm, hwparams, SND_PCM_ACCESS_MMAP_INTERLEAVED);
+	ALSA_ASSERT("snd_pcm_hw_params_set_access");
 
-        /* set PCM format (signed 16bit, little endian) */
-        err = snd_pcm_hw_params_set_format(pcm, hwparams, SND_PCM_FORMAT_S16_LE);
-        ALSA_ASSERT("snd_pcm_hw_params_set_format");
+	/* set PCM format (signed 16bit, little endian) */
+	err = snd_pcm_hw_params_set_format(pcm, hwparams, SND_PCM_FORMAT_S16_LE);
+	ALSA_ASSERT("snd_pcm_hw_params_set_format");
 
-        /* set number of channels */
-        err = snd_pcm_hw_params_set_channels(pcm, hwparams, 2);
-        ALSA_ASSERT("snd_pcm_hw_params_set_channels");
+	/* set number of channels */
+	err = snd_pcm_hw_params_set_channels(pcm, hwparams, 2);
+	ALSA_ASSERT("snd_pcm_hw_params_set_channels");
 
-        unsigned int rate = samplerate;
-        err = snd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
-        // check if we got the rate we desire
+	unsigned int rate = samplerate;
+	err = snd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
+	// check if we got the rate we desire
 
-        /* write the hardware parameters to the device */
-        err = snd_pcm_hw_params(pcm, hwparams);
-        ALSA_ASSERT("snd_pcm_hw_params");
+	/* write the hardware parameters to the device */
+	err = snd_pcm_hw_params(pcm, hwparams);
+	ALSA_ASSERT("snd_pcm_hw_params");
 
-        snd_pcm_hw_params_free(hwparams);
+	snd_pcm_hw_params_free(hwparams);
 
-        /* prepare the device to reveice data */
-        err = snd_pcm_prepare(pcm);
-        ALSA_ASSERT("snd_pcm_prepare");
+	/* prepare the device to reveice data */
+	err = snd_pcm_prepare(pcm);
+	ALSA_ASSERT("snd_pcm_prepare");
 
 	//XXX should RageException::ThrowNonfatal if something went wrong
 
@@ -313,18 +314,18 @@ RageSound_ALSA9::~RageSound_ALSA9()
 	SDL_WaitThread(MixerThreadPtr, NULL);
 	LOG->Trace("Mixer thread shut down.");
  
-        snd_pcm_close(pcm);
+	snd_pcm_close(pcm);
 }
 
 float RageSound_ALSA9::GetPlayLatency() const
 {
-        int err;
-        snd_pcm_status_t *status;
-        snd_pcm_sframes_t delay;
+	int err;
+	snd_pcm_status_t *status;
+	snd_pcm_sframes_t delay;
 
-        snd_pcm_status_alloca(&status);
-        err = snd_pcm_status(pcm, status);
-        ALSA_ASSERT("snd_pcm_status");
+	snd_pcm_status_alloca(&status);
+	err = snd_pcm_status(pcm, status);
+	ALSA_ASSERT("snd_pcm_status");
 
 	delay = snd_pcm_status_get_delay(status);
 	/*XXX not sure if delay is the thing to use for 
