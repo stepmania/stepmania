@@ -13,7 +13,7 @@ class ScreenNetSelectBase : public ScreenWithMenuElements
 public:
 	ScreenNetSelectBase( const CString& sName );
 
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type,
+	void Input( const DeviceInput& DeviceI, const InputEventType type,
 						const GameInput& GameI, const MenuInput& MenuI,
 						const StyleInput& StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

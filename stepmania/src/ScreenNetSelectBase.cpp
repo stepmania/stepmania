@@ -163,6 +163,8 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 			m_sTextInput += c;
 			UpdateTextInput();
 		}
+		if( c >= ' ' ) 
+			return;
 		break;
 	}
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
