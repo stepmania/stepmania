@@ -12,6 +12,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Game.h"
+#include "HelpDisplay.h"
 
 
 #define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")
@@ -36,7 +37,14 @@ const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
-	
+
+#ifdef _XBOX
+	CStringArray strArray;
+	CString text("Use joypad to navigate, START to assign, A, B, X or Y to clear, BACK when done.");
+	strArray.push_back(text);
+	m_textHelp->SetTips(strArray);
+#endif
+
 	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 	{
 		CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
@@ -153,41 +161,35 @@ static bool IsAxis( const DeviceInput& DeviceI )
 
 void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-#ifdef _XBOX
-	if(!m_iWaitingForPress && DeviceI.device == DEVICE_JOY1)
-	{
-		// map the xbox controller buttons to the keyboard equivalents
-		DeviceInput keymap;
-		keymap.device = DEVICE_KEYBOARD;
-
-		if(DeviceI.button == JOY_HAT_LEFT)
-			keymap.button = SDLK_LEFT;
-		else if(DeviceI.button == JOY_HAT_RIGHT)
-			keymap.button = SDLK_RIGHT;
-		else if(DeviceI.button == JOY_HAT_UP)
-			keymap.button = SDLK_UP;
-		else if(DeviceI.button == JOY_HAT_DOWN)
-			keymap.button = SDLK_DOWN;
-		else if(DeviceI.button == JOY_9)
-			keymap.button = SDLK_RETURN;
-		else if(DeviceI.button == JOY_10)
-			keymap.button = SDLK_ESCAPE;
-		
-
-		 InputInternal(keymap, type, GameI, MenuI, StyleI);
-		 return;
-	}
-#endif
-	InputInternal(DeviceI, type, GameI, MenuI, StyleI);
-}
-
-void ScreenMapControllers::InputInternal( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
 		return;	// ignore
 
 	LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
 		DeviceI.device, DeviceI.button );
+
+	int button = DeviceI.button;
+
+#ifdef _XBOX
+	if(!m_iWaitingForPress && DeviceI.device == DEVICE_JOY1)
+	{
+		// map the xbox controller buttons to the keyboard equivalents
+		if(DeviceI.button == JOY_HAT_LEFT)
+			button = SDLK_LEFT;
+		else if(DeviceI.button == JOY_HAT_RIGHT)
+			button = SDLK_RIGHT;
+		else if(DeviceI.button == JOY_HAT_UP)
+			button = SDLK_UP;
+		else if(DeviceI.button == JOY_HAT_DOWN)
+			button = SDLK_DOWN;
+		else if(DeviceI.button == JOY_9)
+			button = SDLK_RETURN;
+		else if(DeviceI.button == JOY_10)
+			button = SDLK_ESCAPE;
+		else if(DeviceI.button == JOY_1 || DeviceI.button == JOY_2 ||
+				DeviceI.button == JOY_3 || DeviceI.button == JOY_4)
+			button = SDLK_DELETE;
+	}
+#endif
 
 	//
 	// TRICKY:  This eliminates the need for a separate "ignore joy axes"
@@ -232,16 +234,28 @@ void ScreenMapControllers::InputInternal( const DeviceInput& DeviceI, const Inpu
 			m_DeviceIToMap = DeviceI;
 		}
 	}
+#ifdef _XBOX
+	else if( DeviceI.device == DEVICE_JOY1 )
+#else
 	else if( DeviceI.device == DEVICE_KEYBOARD )
+#endif
 	{
-		switch( DeviceI.button )
+		switch( button )
 		{
 		/* We only advertise space as doing this, but most games
 		 * use either backspace or delete, and I find them more
 		 * intuitive, so allow them, too. -gm */
-		case SDLK_SPACE:
+
+		/* XXX: For some reason that eludes me, this function gets sent an
+		 * SDLK_SPACE button press every time the JOY_HAT_UP button is pressed.
+		 * Had to put this in to prevent mappings being erased everytime the user
+		 * pressed up on the joypad. */
+
 		case SDLK_DELETE:
+#ifndef _XBOX
+		case SDLK_SPACE:
 		case SDLK_BACKSPACE: /* Clear the selected input mapping. */
+#endif
 			{
 				GameInput curGameI( (GameController)m_iCurController, (GameButton)m_iCurButton );
 				INPUTMAPPER->ClearFromInputMap( curGameI, m_iCurSlot );
@@ -259,6 +273,7 @@ void ScreenMapControllers::InputInternal( const DeviceInput& DeviceI, const Inpu
 				m_iCurSlot = NUM_CHANGABLE_SLOTS-1;
 				m_iCurController--;
 			}
+
 			break;
 		case SDLK_RIGHT:	/* Move the selection right, wrapping down. */
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
