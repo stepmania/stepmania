@@ -68,7 +68,7 @@ public:
 /* This inputs and outputs 16-bit 44khz stereo input. */
 class SoundMixBuffer
 {
-	basic_string<Sint32,char_traits_Sint32> mixbuf;
+	basic_string<Sint32> mixbuf;
 	float vol;
 
 public:

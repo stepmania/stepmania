@@ -28,9 +28,9 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 
 void FixHiddenAlpha(SDL_Surface *img);
 
-struct char_traits_Sint32: public char_traits<Sint32>
+template<>
+struct char_traits<Sint32>
 {
-
 	static Sint32 *copy(Sint32 *s, const Sint32 *p, size_t n)
 	{
 		memcpy(s, p, n * sizeof(Sint32));
@@ -50,8 +50,6 @@ struct char_traits_Sint32: public char_traits<Sint32>
 	{
 		c1 = c2;
 	}
-
-
 };
 
 #endif
