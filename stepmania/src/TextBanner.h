@@ -12,6 +12,7 @@ class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
+	void Init();	// load metrics
 	void LoadFromSong( const Song* pSong );
 	void LoadFromString( 
 		CString sDisplayTitle, CString sTranslitTitle, 
@@ -20,7 +21,6 @@ public:
 
 private:
 	bool m_bInitted;
-	void Init();
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 
