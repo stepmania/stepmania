@@ -753,6 +753,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
 		type != IET_RELEASE  &&
+		type != IET_LEVEL_CHANGED &&
 		IsTransitioning() &&
 		!GAMESTATE->IsExtraStage()  &&
 		!GAMESTATE->IsExtraStage2() )
