@@ -498,12 +498,15 @@ int RageSoundReader_MP3::resync()
 	/* Seek backwards up to 4k. */
 	int origpos = mad->inbuf_filepos;
 	int seekpos = origpos - 1024*4;
-	if(seekpos < 0) seekpos = 0;
-		seek_stream_to_byte( seekpos );
+	if( seekpos < 0 )
+		seekpos = 0;
+	seek_stream_to_byte( seekpos );
 
 	/* We're already synced if we're at the beginning. */
-	if( mad->inbuf_filepos == 0 )
-		return 1;
+	/* ... but we need to resync anyway; even if seekpos < 0, origpos might
+	 * not have been. */
+//	if( mad->inbuf_filepos == 0 )
+//		return 1;
 
 	/* Agh.  This is annoying.  We want to decode enough so that the next frame
 	 * read will be the first frame after the current file pointer.  If we just
@@ -825,15 +828,22 @@ int RageSoundReader_MP3::SetPosition_hard( int ms )
 			mad->outleft = 0;
 			synth_output();
 
-			/* Skip (mad->Timer - desired) worth of frames in the output to line up. */
-			mad_timer_t skip = mad->Timer;
-			mad_timer_sub( &skip, desired );
+			/* mad->Timer is the timestamp of the next frame.  Subtract the frame length
+			 * to find out the timestamp of the frame we just synthed. */
+			mad_timer_t ts = mad->Timer;
+			mad_timer_sub( &ts, mad->framelength );
+
+			/* We just synthed data starting at ts, containing desired offset.
+			 * Skip (desired - ts) worth of frames in the output to line up. */
+			mad_timer_t skip = desired;
+			mad_timer_sub( &skip, ts );
 
 			int samples = mad_timer_count( skip, (mad_units) SampleRate );
 
 			/* Skip 'samples' samples; each sample is 2 * channels bytes, since
 			 * we're currently always using AUDIO_S16SYS. */
 			mad->outpos = samples * 2 * this->Channels;
+			mad->outleft -= samples * 2 * this->Channels;
 			return ms;
 		}
 
