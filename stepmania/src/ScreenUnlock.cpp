@@ -17,6 +17,7 @@
 #include "RageLog.h"
 #include "UnlockSystem.h"
 #include "SongManager.h"
+#include "ActorUtil.h"
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {

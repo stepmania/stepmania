@@ -11,7 +11,6 @@
 */
 #include "ScreenAttract.h"
 #include "Style.h"
-#include "ActorUtil.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
