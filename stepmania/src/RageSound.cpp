@@ -520,7 +520,7 @@ void RageSound::StopPlaying()
 	if(!playing)
 		return;
 
-	stopped_position = GetPositionSeconds();
+	stopped_position = GetPositionSecondsInternal();
 
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
@@ -555,7 +555,8 @@ float RageSound::GetLengthSeconds()
 	return len / 1000.f; /* ms -> secs */
 }
 
-float RageSound::GetPositionSeconds() const
+/* Get the position, not counting GetOffsetFix. */
+float RageSound::GetPositionSecondsInternal() const
 {
 	LockMut(SOUNDMAN->lock);
 
@@ -623,6 +624,13 @@ float RageSound::GetPositionSeconds() const
 
 	return GetPlaybackRate() * closest_position / float(samplerate());
 }
+
+float RageSound::GetPositionSeconds() const
+{
+	LOG->Trace("XXX fix %f", Sample->GetOffsetFix());
+	return GetPositionSecondsInternal() + Sample->GetOffsetFix();
+}
+
 
 bool RageSound::SetPositionSeconds( float fSeconds )
 {

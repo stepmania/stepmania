@@ -27,6 +27,7 @@ public:
 	RageSoundReader_Resample_Fast();
 	virtual ~RageSoundReader_Resample_Fast();
 	SoundReader *Copy() const;
+	float GetOffsetFix() const { return source->GetOffsetFix(); }
 
 	/* Change the actual sample rate of a sound. */
 	void SetSampleRate(int hz);

@@ -11,6 +11,7 @@ class RageSoundReader_MP3: public SoundReader_FileReader
 public:
 	int SampleRate;
     int Channels;
+	float OffsetFix;
 
 	CString filename;
     FILE *rw;
@@ -40,6 +41,8 @@ public:
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return SampleRate; }
+	float GetOffsetFix() const { return OffsetFix; }
+
 	RageSoundReader_MP3();
 	~RageSoundReader_MP3();
 	RageSoundReader_MP3( const RageSoundReader_MP3 & ); /* not defined; don't use */

@@ -604,12 +604,24 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 
 	SampleRate = mad->Frame.header.samplerate;
 	mad->framelength = mad->Frame.header.duration;
-	this->Channels = 0;
+	this->Channels = MAD_NCHANNELS( &mad->Frame.header );
 
 	/* Since we've already decoded a frame, just synth it instead of rewinding
 	 * the stream. */
 	synth_output();
-	this->Channels = MAD_NCHANNELS( &mad->Frame.header );
+
+	/*
+	 * Hack: Old code was setting Channels = 0 before synth_output.  This caused
+	 * the first synthed frame to not be written to the output buffer, offsetting
+	 * the whole song by a buffer.  On one test song, it was 1152/44100, or 26ms.
+	 * This affects all MP3s.  We can't leave the bug in, since we need to handle
+	 * seeks properly, too.  So, let's make the offset to fix seeks available.
+	 *
+	 * This is negative: if we have 26ms of extra data, then song offsets are
+	 * fixed by subtracting 26ms.
+	 */
+
+	this->OffsetFix = - (float) mad->Synth.pcm.length / mad->Frame.header.samplerate;
 
     if(mad->length == -1)
     {

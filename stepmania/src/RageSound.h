@@ -132,6 +132,7 @@ private:
 
 	CString error;
 
+	float GetPositionSecondsInternal() const;
 	bool SetPositionSamples( int samples = -1 );
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);

@@ -30,6 +30,7 @@ class SoundReader_Preload: public SoundReader {
 	int total_samples() const;
 
 	int samplerate;
+	float OffsetFix;
 
 public:
 	/* Return true if the sound has been preloaded, in which case source will
@@ -41,6 +42,7 @@ public:
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return samplerate; }
+	float GetOffsetFix() const { return OffsetFix; }
 
 	SoundReader *Copy() const;
 	~SoundReader_Preload() { }
