@@ -14,18 +14,7 @@
 !include "src\ProductInfo.inc"
 
 !system "echo This may take a moment ..." ignore
-!system "utils\upx StepMania.exe" ignore
-!system "utils\upx smpackage.exe" ignore
-!system "utils\upx msvcr70.dll" ignore
-!system "utils\upx msvcp70.dll" ignore
-!system "utils\upx jpeg.dll" ignore
-!system "utils\upx SDL.dll" ignore
-!system "utils\upx SDL_image.dll" ignore
-!system "utils\upx avcodec.dll" ignore
-!system "utils\upx avformat.dll" ignore
-!system "utils\upx resample.dll" ignore
-!system "utils\upx dbghelp.dll" ignore
-!system "utils\upx zlib1.dll" ignore
+!system "utils\upx Program\*.exe Program\*.dll" ignore
 
 Name "${PRODUCT_NAME_VER}"
 OutFile "${PRODUCT_NAME_VER}.exe"
@@ -66,6 +55,14 @@ do_uninstall_nsis:
 Exec "$INSTDIR\uninst.exe"
 old_nsis_not_installed:
 
+IfFileExists "$INSTDIR\Program\uninst.exe" prompt_uninstall_nsis2 old_nsis_not_installed2
+prompt_uninstall_nsis2:
+MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of StepMania must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_nsis2
+Abort
+do_uninstall_nsis2:
+Exec "$INSTDIR\Program\uninst.exe"
+old_nsis_not_installed2:
+
 ; Check for DirectX 8.0 (to be moved to the right section later)
 ; We only use this for sound.  Actually, I could probably make the sound
 ; work with an earlier one; I'm not sure if that's needed or not.  For one
@@ -101,17 +98,17 @@ Section ""
 ; write out uninstaller
 SetOutPath "$INSTDIR"
 SetOverwrite on
-WriteUninstaller "$INSTDIR\uninst.exe"
+WriteUninstaller "$INSTDIR\Program\uninst.exe"
 
 ; add registry entries
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "" "$INSTDIR"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
-WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninst.exe"'
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\Program\uninst.exe"'
 
-WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
-WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\smpackage.exe,0"
-WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\smpackage.exe,0"
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 
 ; Begin copying files
@@ -197,24 +194,25 @@ File "Data\AI.ini"
 File "Data\Unlocks.dat"
 File "Data\splash.bmp"
 
-SetOutPath "$INSTDIR"
-File "msvcr70.dll"
-File "msvcp70.dll"
-File "jpeg.dll"
-File "SDL.dll"
-File "SDL_image.dll"
-File "avcodec.dll"
-File "avformat.dll"
-File "resample.dll"
-File "dbghelp.dll"
-File "zlib1.dll"
+SetOutPath "$INSTDIR\Program"
+File "Program\stepmania.exe"
+File "Program\stepmania.vdi"
+File "Program\smpackage.exe"
+File "Program\msvcr70.dll"
+File "Program\msvcp70.dll"
+File "Program\jpeg.dll"
+File "Program\SDL.dll"
+File "Program\SDL_image.dll"
+File "Program\avcodec.dll"
+File "Program\avformat.dll"
+File "Program\resample.dll"
+File "Program\dbghelp.dll"
+File "Program\zlib1.dll"
 
+SetOutPath "$INSTDIR"
 File "COPYING.txt"
 File "README-FIRST.html"
 File "NEWS"
-File "stepmania.exe"
-File "stepmania.vdi"
-File "smpackage.exe"
 
 ; What to do here?  Better to just delete an existing INI than to
 ; drop the local one in ... -glenn
@@ -241,13 +239,13 @@ File "smpackage.exe"
 ; Create Start Menu icons
 SetShellVarContext current  # 	'all' doesn't work on Win9x
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
+CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\stepmania.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open StepMania Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Data\MachineProfile\stats.html"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\smpackage.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\uninst.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 
 # We want to delete a few old desktop icons, since they weren't being
@@ -274,7 +272,7 @@ UninstallText "This will uninstall StepMania from your system.$\nAny add-on pack
 Section Uninstall
 
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
-Delete "$INSTDIR\uninst.exe"
+Delete "$INSTDIR\Program\uninst.exe"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
@@ -345,22 +343,23 @@ Delete "$INSTDIR\Data\GamePrefs.ini"
 Delete "$INSTDIR\Data\splash.bmp"
 RMDir "$INSTDIR\Data"
 
-Delete "$INSTDIR\msvcr70.dll"
-Delete "$INSTDIR\msvcp70.dll"
-Delete "$INSTDIR\jpeg.dll"
-Delete "$INSTDIR\SDL.dll"
-Delete "$INSTDIR\SDL_image.dll"
-Delete "$INSTDIR\avcodec.dll"
-Delete "$INSTDIR\avformat.dll"
-Delete "$INSTDIR\resample.dll"
-Delete "$INSTDIR\dbghelp.dll"
-Delete "$INSTDIR\zlib1.dll"
+Delete "$INSTDIR\Program\stepmania.exe"
+Delete "$INSTDIR\Program\smpackage.exe"
+Delete "$INSTDIR\Program\StepMania.vdi"
+Delete "$INSTDIR\Program\msvcr70.dll"
+Delete "$INSTDIR\Program\msvcp70.dll"
+Delete "$INSTDIR\Program\jpeg.dll"
+Delete "$INSTDIR\Program\SDL.dll"
+Delete "$INSTDIR\Program\SDL_image.dll"
+Delete "$INSTDIR\Program\avcodec.dll"
+Delete "$INSTDIR\Program\avformat.dll"
+Delete "$INSTDIR\Program\resample.dll"
+Delete "$INSTDIR\Program\dbghelp.dll"
+Delete "$INSTDIR\Program\zlib1.dll"
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.html"
 Delete "$INSTDIR\NEWS"
-Delete "$INSTDIR\stepmania.exe"
-Delete "$INSTDIR\smpackage.exe"
-Delete "$INSTDIR\StepMania.vdi"
+RMDir "$INSTDIR\Program"
 Delete "$INSTDIR\log.txt"
 Delete "$INSTDIR\info.txt"
 Delete "$INSTDIR\crashinfo.txt"
