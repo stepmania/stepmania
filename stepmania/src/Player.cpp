@@ -579,7 +579,6 @@ void Player::CrossedRow( int iNoteRow )
 
 void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 {
-printf("SCORE 1\n");
 	ASSERT( iNumTapsInRow >= 1 );
 
 	// don't accumulate points if AutoPlay is on.
@@ -591,6 +590,11 @@ printf("SCORE 1\n");
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber]);
+
+	if( m_pLifeMeter ) {
+		m_pLifeMeter->ChangeLife( score );
+		m_pLifeMeter->OnDancePointsChange();    // update oni life meter
+	}
 }
 
 
