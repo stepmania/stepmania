@@ -388,7 +388,8 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
-		if( p!=pn && GetCurrentPage()==PAGE_1 )
+		if( !SHARED_PREVIEW_AND_CURSOR &&
+			(p!=pn && GetCurrentPage()==PAGE_1) )
 			continue;	// skip
 
 		const int iOldChoice = m_iChoice[p];
