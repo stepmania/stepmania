@@ -160,7 +160,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		else if( 0 == stricmp(sValueName, "MODS") )
 		{
 			Attack attack;
-
+			float end = -9999;
 			for( unsigned j = 1; j < sParams.params.size(); ++j )
 			{
 				CStringArray sBits;
@@ -175,13 +175,16 @@ void Course::LoadFromCRSFile( CString sPath )
 					attack.fStartSecond = (float) atof( sBits[1] );
 				else if( !sBits[0].CompareNoCase("LEN") )
 					attack.fSecsRemaining = (float) atof( sBits[1] );
+				else if( !sBits[0].CompareNoCase("END") )
+					end = (float) atof( sBits[1] );
 				else if( !sBits[0].CompareNoCase("MODS") )
-				{
 					attack.sModifier = sBits[1];
-				
-					attacks.push_back( attack );
-				}
 			}
+
+			if( end != -9999 )
+				attack.fSecsRemaining = end - attack.fStartSecond;
+				
+			attacks.push_back( attack );
 		}
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
