@@ -14,11 +14,11 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-const int channels = 2;
+static const int channels = 2;
 int samplerate = 44100;
 
-const int samples_per_frame = channels;
-const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
+static const int samples_per_frame = channels;
+static const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
 
 /* Linux 2.6 has a fine-grained scheduler.  We can almost always use a smaller buffer
  * size than in 2.4.  XXX: Some cards can handle smaller buffer sizes than others. */
@@ -39,7 +39,7 @@ void RageSound_ALSA9_Software::MixerThread()
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
 
-	setpriority( PRIO_PROCESS, getpid(), -15 );
+	setpriority( PRIO_PROCESS, 0, -15 );
 
 //	RageTimer UnderrunTest;
 	while(!shutdown)
@@ -66,122 +66,17 @@ bool RageSound_ALSA9_Software::GetData()
 	if( frames_to_fill <= 0 )
 		return false;
 
-	/* Sint16 represents a single sample
-	 * each frame contains one sample per channel
-	 */
-    static Sint16 *buf = NULL;
+	static Sint16 *buf = NULL;
 	if (!buf)
 		buf = new Sint16[max_writeahead*samples_per_frame];
-
-    static SoundMixBuffer mix;
 
 	const int64_t play_pos = pcm->GetPlayPos();
 	const int64_t cur_play_pos = pcm->GetPosition();
 
-	LockMutex L(SOUNDMAN->lock);
-	for(unsigned i = 0; i < sounds.size(); ++i)
-	{
-		if(sounds[i]->stopping)
-			continue;
-
-		int bytes_read = 0;
-		int bytes_left = frames_to_fill*bytes_per_frame;
-
-		/* Does the sound have a start time? */
-		if( !sounds[i]->start_time.IsZero() )
-		{
-			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
-			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
-			const int64_t iFramesBeforeStart = int64_t( fSecondsBeforeStart * samplerate );
-			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
-
-			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
-			bytes_read += iSilentBytesInThisBuffer;
-			bytes_left -= iSilentBytesInThisBuffer;
-
-			if( !iSilentBytesInThisBuffer )
-				sounds[i]->start_time.SetZero();
-		}
-
-		/* Call the callback.
-		 * Get the units straight,
-		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
-		 */
-		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, play_pos+bytes_read/bytes_per_frame );
-		bytes_read += got;
-		bytes_left -= got;
-
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
-
-		if( bytes_left > 0 )
-		{
-			/* This sound is finishing. */
-			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = pcm->GetPlayPos() + (bytes_read / bytes_per_frame);
-		}
-    }
-	L.Unlock();
-
-    memset( buf, 0, frames_to_fill * bytes_per_frame );
-	mix.read( buf );
-
+	this->Mix( buf, frames_to_fill, play_pos, cur_play_pos );
 	pcm->Write( buf, frames_to_fill );
+
 	return true;
-}
-
-
-void RageSound_ALSA9_Software::StartMixing(RageSoundBase *snd)
-{
-	sound *s = new sound;
-	s->snd = snd;
-	s->start_time = snd->GetStartTime();
-
-	LockMutex L(SOUNDMAN->lock);
-	sounds.push_back(s);
-}
-
-void RageSound_ALSA9_Software::Update(float delta)
-{
-	LockMutex L(SOUNDMAN->lock);
-
-	/* SoundStopped might erase sounds out from under us, so make a copy
-	 * of the sound list. */
-	vector<sound *> snds = sounds;
-	for(unsigned i = 0; i < snds.size(); ++i)
-	{
-		if(!snds[i]->stopping) continue;
-
-		if(GetPosition(snds[i]->snd) < snds[i]->flush_pos)
-			continue; /* stopping but still flushing */
-
-		/* This sound is done. */
-		snds[i]->snd->StopPlaying();
-	}
-}
-
-void RageSound_ALSA9_Software::StopMixing(RageSoundBase *snd)
-{
-	LockMutex L(SOUNDMAN->lock);
-
-	/* Find the sound. */
-	unsigned i;
-	for(i = 0; i < sounds.size(); ++i)
-		if(sounds[i]->snd == snd) break;
-	if(i == sounds.size())
-	{
-		LOG->Trace("not stopping a sound because it's not playing");
-		return;
-	}
-
-	delete sounds[i];
-	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
-
-	/* If nothing is playing, reset the sample count; this is just to
-	 * prevent eventual overflow. */
-	if( sounds.empty() )
-		pcm->Reset();
 }
 
 
@@ -189,6 +84,11 @@ int64_t RageSound_ALSA9_Software::GetPosition(const RageSoundBase *snd) const
 {
 	return pcm->GetPosition();
 }       
+
+void RageSound_ALSA9_Software::SetupDecodingThread()
+{
+	setpriority( PRIO_PROCESS, 0, -5 );
+}
 
 
 RageSound_ALSA9_Software::RageSound_ALSA9_Software()

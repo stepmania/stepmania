@@ -3,25 +3,13 @@
 
 #include "RageSound.h"
 #include "RageThreads.h"
-#include "RageSoundDriver.h"
+#include "RageSoundDriver_Generic_Software.h"
 
 #include "ALSA9Helpers.h"
 
-class RageSound_ALSA9_Software: public RageSoundDriver
+class RageSound_ALSA9_Software: public RageSound_Generic_Software
 {
 private:
-	struct sound
-	{
-		RageSoundBase *snd;
-		RageTimer start_time;
-		bool stopping;
-		int64_t flush_pos; /* state == STOPPING only */
-		sound() { snd = NULL; stopping=false; }
-	};
-
-	/* List of currently playing sounds: */
-	vector<sound *> sounds;
-
 	bool shutdown;
 
 	Alsa9Buf *pcm;
@@ -34,13 +22,12 @@ private:
 
 public:
 	/* virtuals: */
-	void StartMixing(RageSoundBase *snd);
-	void StopMixing(RageSoundBase *snd);
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
         int GetSampleRate( int rate ) const;
-	
-	void Update(float delta);
+
+	void SetupDecodingThread();
+		
 
 	RageSound_ALSA9_Software();
 	~RageSound_ALSA9_Software();
@@ -49,7 +36,7 @@ public:
 #endif
 
 /*
- * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2003-2004 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  * 
