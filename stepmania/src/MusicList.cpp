@@ -59,13 +59,21 @@ void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 			CString sTitle = Songs[iIndex]->GetFullDisplayTitle();
 			// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
 			if( sTitle.GetLength() > 40 )
-			{
-				sTitle = sTitle.Left( 37 );
-				sTitle += "...";
-			}
-			sText += sTitle + "\n";
+				sTitle = sTitle.Left( 37 ) + "...";
+
+			CString sTrTitle = Songs[iIndex]->GetFullTranslitTitle();
+			if( sTrTitle.GetLength() > 40 )
+				sTrTitle = sTrTitle.Left( 37 ) + "...";
+
+			/* If the main title isn't complete for this font, and we have a translit,
+			 * use it. */
+			if(m_textTitles[c].StringWillUseAlternate(sTitle, sTrTitle))
+				sText += sTrTitle;
+			else
+				sText += sTitle;
+			sText += "\n";
 		}
-		m_ContentsText[m_ContentsText.size()-1].ContentsText[c] = sText;
+		m_ContentsText[group].ContentsText[c] = sText;
 	}
 
 }

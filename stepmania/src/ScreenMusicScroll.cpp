@@ -159,7 +159,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		Song* pSong = arraySongs[i];
 		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","music scroll") );
-		m_textLines[m_iNumLines].SetText( pSong->GetFullDisplayTitle() );
+		m_textLines[m_iNumLines].SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
 		m_textLines[m_iNumLines].SetDiffuse( SONGMAN->GetSongColor(pSong) );
 		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
 
