@@ -80,7 +80,7 @@ bool EzSockets::accept(EzSockets &socket) {
     //As does everything else -- Steve
 	int length = sizeof(socket);
 
-  socket.sock = ::accept(sock, (struct sockaddr *)&socket.addr,&length);
+  socket.sock = ::accept(sock, (struct sockaddr *)&socket.addr,(socklen_t *)&length);
   if (socket.sock < 0) {
     return false;
   }
