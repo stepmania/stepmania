@@ -89,22 +89,22 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 
 	ClearPacket(m_packet);
 
-	Write1(m_packet,2);	//Hello Packet
+	Write1(m_packet, 2);	//Hello Packet
 
-	Write1(m_packet,NETPROTOCOLVERSION);
+	Write1(m_packet, NETPROTOCOLVERSION);
 	int ctr = 2 * 16 + 0;
 	Write1(m_packet, (uint8_t) ctr);
 
-	vector <CString> profileNames;
+	vector<CString> profileNames;
 	PROFILEMAN->GetLocalProfileNames(profileNames);
 
 	FOREACH_PlayerNumber(pn)
 	{
-		int localID=atoi(PREFSMAN->m_sDefaultLocalProfileID[pn])-1;
-		if ((localID>=0)&&(localID<profileNames.size()))
-			WriteNT(m_packet,profileNames[localID]);
+		int localID = atoi(PREFSMAN->m_sDefaultLocalProfileID[pn])-1;
+		if (localID >= 0 && localID < int(profileNames.size()))
+			WriteNT(m_packet, profileNames[localID]);
 		else
-			WriteNT(m_packet,"[No Profile Set]");
+			WriteNT(m_packet, "[No Profile Set]");
 	}
 
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
@@ -115,8 +115,8 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	//Move mode to blocking in order to give CPU back to the 
 	//system, and not wait.
 	
-	bool dontExit=true;
-	NetPlayerClient->blocking=true;
+	bool dontExit = true;
+	NetPlayerClient->blocking = true;
 	while (dontExit)
 	{
 		ClearPacket(m_packet);
@@ -127,7 +127,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		//Only allow passing on handshake. 
 		//Otherwise scoreboard updates and such will confuse us.
 	}
-	NetPlayerClient->blocking=false;
+	NetPlayerClient->blocking = false;
 	m_ServerVersion = Read1(m_packet);
 	m_ServerName = ReadNT(m_packet);
 
