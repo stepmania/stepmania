@@ -17,23 +17,10 @@
  */
 class ArchHooks
 {
-protected:
-    bool MessageIsIgnored( CString ID );
-    void IgnoreMessage( CString ID );
-	
 public:
 	/* This is called as soon as SDL is set up, the loading window is shown
 	 * and we can safely log and throw. */
 	virtual void DumpDebugInfo() { }
-
-	/* Message box stuff.  Not supported on all archs.  The ID can be used
-	 * to identify a class of messages, for "don't display this dialog"-type
-	 * prompts.  (Don't overload these, overload *Private below.) */
-	enum MessageBoxResult { abort, retry, ignore, cancel };
-	void MessageBoxError( CString error, CString ID = "" );
-	void MessageBoxOK( CString sMessage, CString ID = "" );
-	MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID = "" );
-	MessageBoxResult MessageBoxRetryCancel( CString sMessage, CString ID = "" );
 
 	virtual ~ArchHooks() { }
 	/* This is called once each time through the game loop */
@@ -49,13 +36,6 @@ public:
 	virtual void ExitTimeCriticalSection() { }
 
 	virtual void SetTime( tm newtime ) { }
-
-protected:
-	virtual void MessageBoxErrorPrivate( CString sMessage, CString ID ) { printf("Error: %s\n", sMessage.c_str()); }
-	virtual void MessageBoxOKPrivate( CString sMessage, CString ID ) {}
-	virtual MessageBoxResult MessageBoxAbortRetryIgnorePrivate( CString sMessage, CString ID ) { return ignore; } 
-	virtual MessageBoxResult MessageBoxRetryCancelPrivate( CString sMessage, CString ID ) { return cancel; } 
-
 };
 
 #endif
