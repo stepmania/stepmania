@@ -35,7 +35,7 @@ PrefsManager::PrefsManager()
 	m_iDisplayHeight = 480;
 	m_iDisplayColorDepth = 16;
 	m_iTextureColorDepth = 16;
-	m_iRefreshRateMode = REFRESH_DEFAULT;
+	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = true;
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef _DEBUG
@@ -89,7 +89,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
 	ini.GetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
 	ini.GetValueI( "Options", "TextureColorDepth",			m_iTextureColorDepth );
-	ini.GetValueI( "Options", "RefreshRate",				(int&)m_iRefreshRateMode );
+	ini.GetValueI( "Options", "RefreshRate",				m_iRefreshRate );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",				m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",	m_bOnlyDedicatedMenuButtons );
 	ini.GetValueB( "Options", "ShowStats",					m_bShowStats );
@@ -140,7 +140,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
 	ini.SetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
 	ini.SetValueI( "Options", "TextureColorDepth",			m_iTextureColorDepth );
-	ini.SetValueI( "Options", "RefreshRate",				m_iRefreshRateMode );
+	ini.SetValueI( "Options", "RefreshRate",				m_iRefreshRate );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",				m_bIgnoreJoyAxes );
 	ini.SetValueB( "Options", "UseDedicatedMenuButtons",	m_bOnlyDedicatedMenuButtons );
 	ini.SetValueB( "Options", "ShowStats",					m_bShowStats );
