@@ -134,7 +134,7 @@ protected:
 	NoteField		m_NoteFieldEdit;
 	SnapDisplay		m_SnapDisplay;
 
-	AutoActor		m_sprHelp;
+	AutoActor		m_sprOverlay;
 	BitmapText		m_textHelp;
 	BitmapText		m_textInfo;		// status information that changes
 

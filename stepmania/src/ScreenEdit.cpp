@@ -557,8 +557,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	m_Out.Load( THEME->GetPathToB("ScreenEdit out") );
 
-	m_sprHelp.LoadAndSetName( m_sName, "Help" );
-	SET_XY_AND_ON_COMMAND( m_sprHelp );
+	m_sprOverlay.LoadAndSetName( m_sName, "Overlay" );
+	SET_XY_AND_ON_COMMAND( m_sprOverlay );
 
 	m_textHelp.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
@@ -708,7 +708,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_NoteFieldEdit.Update( fDeltaTime );
 	m_In.Update( fDeltaTime );
 	m_Out.Update( fDeltaTime );
-	m_sprHelp->Update( fDeltaTime );
+	m_sprOverlay->Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
 	m_textInfo.Update( fDeltaTime );
 
@@ -810,7 +810,7 @@ void ScreenEdit::DrawPrimitives()
 	{
 	case MODE_EDITING:
 		{
-			m_sprHelp->Draw();
+			m_sprOverlay->Draw();
 			m_textHelp.Draw();
 			m_textInfo.Draw();
 			m_SnapDisplay.Draw();
