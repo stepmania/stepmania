@@ -3,36 +3,11 @@
 #include "RageSurface_Load_PNG.h"
 #include "RageSurface_Load_JPEG.h"
 #include "RageSurface_Load_GIF.h"
+#include "RageSurface_Load_BMP.h"
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "RageLog.h"
-#include "SDL_utils.h"
 #include <set>
-
-static RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
-{
-	RageFile f;
-	if( !f.Open(sPath) )
-	{
-		error = f.GetError();
-		return RageSurfaceUtils::OPEN_FATAL_ERROR;
-	}
-
-	SDL_RWops rw;
-	OpenRWops( &rw, &f );
-	SDL_Surface *pSDLSurface = SDL_LoadBMP_RW( &rw, false );
-	SDL_RWclose( &rw );
-
-	if( pSDLSurface == NULL )
-	{
-		error = SDL_GetError();
-		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
-	}
-
-	ret = RageSurfaceFromSDLSurface( pSDLSurface );
-
-	return RageSurfaceUtils::OPEN_OK;
-}
 
 
 static RageSurface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error, CString format, bool &bKeepTrying )
