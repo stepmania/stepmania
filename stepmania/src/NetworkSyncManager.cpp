@@ -248,7 +248,7 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( 10 );
-	m_packet.Write1( i );
+	m_packet.Write1( (uint8_t) i );
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
 }
 
