@@ -28,6 +28,7 @@
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "CourseUtil.h"
+#include "GameState.h"
 
 
 const CString STATS_HTML	= "Stats.html";
@@ -867,6 +868,11 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 					if( pCourse->HasCourseDifficulty(st,cd) )
 					{
 						TranslatedWrite(f,"<td>");
+						/* HACK: Course::GetMeter() requires that a style be set, since
+						 * a course can have different meter values depending on which
+						 * style is set. */
+						if( GAMESTATE->m_CurStyle == STYLE_INVALID )
+							GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 						TranslatedWrite(f, ssprintf("(%d)",pCourse->GetMeter(cd)) );
 						HighScore hs = pProfile->GetCourseHighScoreList(pCourse, st, cd).GetTopScore();
 						Grade grade = hs.grade;
