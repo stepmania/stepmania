@@ -596,9 +596,9 @@ void ScreenPackages::HTTPUpdate()
 		m_sStatus = "Waiting for header.";
 		//We don't know if we are using unix-style or dos-style
 		int HeaderEnd = m_sBUFFER.find("\n\n");
-		if( HeaderEnd < 0 )
+		if( HeaderEnd == m_sBUFFER.npos )
 			HeaderEnd = m_sBUFFER.find("\r\n\r\n");
-		if( HeaderEnd >= 0 )
+		if( HeaderEnd != m_sBUFFER.npos )
 		{
 			int i = m_sBUFFER.find(" ");
 			int j = m_sBUFFER.find(" ",i+1);
@@ -606,7 +606,7 @@ void ScreenPackages::HTTPUpdate()
 			if ( i < 0 || j < 0 || k < 0 )
 			{
 				m_iResponseCode = -100;
-				m_iResponceName = "Malformed responce.";
+				m_iResponceName = "Malformed response.";
 			}
 			m_iResponseCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
 			m_iResponceName = m_sBUFFER.substr( j+1, k-j).c_str();
