@@ -234,10 +234,8 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 }
 
 
-const float fCenterLine = 160;	// from fYOffset == 0
-const float fFadeDist = 100;
-// Number of pixels visible when both sudden and hidden are on:
-const float fFadeDeadZone = 10;
+#define CENTER_LINE_Y 160	// from fYOffset == 0
+#define FADE_DIST_Y 40
 
 static float GetCenterLine( PlayerNumber pn )
 {
@@ -246,7 +244,46 @@ static float GetCenterLine( PlayerNumber pn )
 
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
 	 * not 160. */
-	return fCenterLine / fZoom;
+	return CENTER_LINE_Y / fZoom;
+}
+
+static float GetHiddenSudden( PlayerNumber pn ) 
+{
+	const float* fAppearances = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances;
+	return fAppearances[PlayerOptions::APPEARANCE_HIDDEN] *
+		fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
+}
+
+//
+//  -gray arrows-
+// 
+//  ...invisible...
+//  -hidden end line-
+//  -hidden start line-
+//  ...visible...
+//  -sudden end line-
+//  -sudden start line-
+//  ...invisible...
+//
+// TRICKY:  We fudge hidden and sudden to be farther apart if they're both on.
+static float GetHiddenEndLine( PlayerNumber pn )
+{
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -0.0f, -1.25f );
+}
+
+static float GetHiddenStartLine( PlayerNumber pn )
+{
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +1.0f, -0.25f );
+}
+
+static float GetSuddenEndLine( PlayerNumber pn )
+{
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -1.0f, +0.25f );
+}
+
+static float GetSuddenStartLine( PlayerNumber pn )
+{
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +0.0f, +1.25f );
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
@@ -265,22 +302,20 @@ static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYOffset, 
 	float fVisibleAdjust = 0;
 
 	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] > 0 )
-		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * SCALE( fDistFromCenterLine, 0, fFadeDist, -1, 0 );
-	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] > 0 )
-		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * SCALE( fDistFromCenterLine, 0, -fFadeDist, -1, 0 );
-	const float HiddenSudden =
-		fAppearances[PlayerOptions::APPEARANCE_HIDDEN] *
-		fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
-	if( HiddenSudden > 0 )
 	{
-		/* Fading arrows in and out in such a small space looks bad.  Simply add
-		 * 2, to counteract -1 for hidden and -1 for sudden. */
-		if( fabsf(fDistFromCenterLine) < fFadeDeadZone )
-			fVisibleAdjust += 2 * HiddenSudden;
+		float fHiddenVisibleAdjust = SCALE( fYPos, GetHiddenStartLine(pn), GetHiddenEndLine(pn), 0, -1 );
+		CLAMP( fHiddenVisibleAdjust, -1, 0 );
+		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
+	}
+	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] > 0 )
+	{
+		float fSuddenVisibleAdjust = SCALE( fYPos, GetSuddenStartLine(pn), GetSuddenEndLine(pn), -1, 0 );
+		CLAMP( fSuddenVisibleAdjust, -1, 0 );
+		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
 
 	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] > 0 )
-		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_STEALTH] * -1;
+		fVisibleAdjust *= (1 - fAppearances[PlayerOptions::APPEARANCE_STEALTH]);
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
 	{
 		float f = sinf(RageTimer::GetTimeSinceStart()*10);
