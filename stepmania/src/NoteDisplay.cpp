@@ -419,6 +419,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
+		DISPLAY->SetBackfaceCull( false );
+		DISPLAY->SetZBuffer( false );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
@@ -484,6 +486,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
+		DISPLAY->SetBackfaceCull( false );
+		DISPLAY->SetZBuffer( false );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
@@ -562,6 +566,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
+		DISPLAY->SetBackfaceCull( false );
+		DISPLAY->SetZBuffer( false );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else

@@ -53,8 +53,10 @@ public:
 
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
 
-		m_quadMask.SetDiffuse( RageColor(0,0,0,0) );
+		m_quadMask.SetDiffuse( RageColor(0,0,0,1) );
 		m_quadMask.SetZ( 1 );
+		m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
+		m_quadMask.SetUseZBuffer( true );
 
 		CString sGraphicPath;
 		RageTextureID ID;
@@ -63,10 +65,12 @@ public:
 		sGraphicPath = ssprintf("LifeMeterBar %snormal", bExtra?"extra ":"");
 		ID.filename = THEME->GetPathToG(sGraphicPath);
 		m_sprStreamNormal.Load( ID );
+		m_sprStreamNormal.SetUseZBuffer( true );
 
 		sGraphicPath = ssprintf("LifeMeterBar %shot", bExtra?"extra ":"");
 		ID.filename = THEME->GetPathToG(sGraphicPath);
 		m_sprStreamHot.Load( ID );
+		m_sprStreamHot.SetUseZBuffer( true );
 
 		sGraphicPath = ssprintf("LifeMeterBar %sframe", bExtra?"extra ":"");
 		ID.filename = THEME->GetPathToG(sGraphicPath);
@@ -116,8 +120,6 @@ public:
 
 	void DrawPrimitives()
 	{
-		DISPLAY->SetZBuffer( true );
-
 		if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		{
 			DrawMask( m_fPercent );		// this is the "right endcap" to the life
@@ -138,8 +140,6 @@ public:
 			}
 
 		}
-
-		DISPLAY->SetZBuffer( false );
 
 		m_sprFrame.Draw();
 
@@ -226,7 +226,6 @@ public:
 
 		m_quadMask.StretchTo( rect );
 		m_quadMask.Draw();
-		
 	}
 };
 
