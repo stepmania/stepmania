@@ -173,7 +173,6 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	 * 
 	 * Also, if texture caching is off, just remove it now instead of doing
 	 * garbage collection. */
-	m_iSecondsBeforeUnload = 0;
 	if( t->m_iRefCount == 0  && 
 		(t->IsAMovie() || !m_iSecondsBeforeUnload ))
 	{
