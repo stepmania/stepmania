@@ -635,7 +635,15 @@ void Song::TidyUpData()
 			m_sBannerFile = arrayImages[i];
 			continue;
 		}
-		if( !HasCDTitle()  &&  width<=100  &&  height<=50 )
+		/* Agh.  DWI's inline title images are triggering this, resulting in kanji,
+		 * etc., being used as a CDTitle for songs with none.  Some sample data
+		 * from random incarnatoins:
+		 *   42x50 35x50 50x50 144x49
+		 * It looks like ~50 height is what people use to align to DWI's font.
+		 *
+		 * My tallest CDTitle is 44.  Let's cut off in the middle and hope for
+		 * the best. */
+		if( !HasCDTitle()  &&  width<=100  &&  height<=48 )
 		{
 			m_sCDTitleFile = arrayImages[i];
 			continue;
