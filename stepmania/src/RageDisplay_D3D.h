@@ -1,6 +1,9 @@
 #ifndef RAGEDISPLAY_D3D_H
 #define RAGEDISPLAY_D3D_H
 
+class RageException_D3DNotInstalled: public exception { };
+class RageException_D3DNoAcceleration: public exception { };
+
 class RageDisplay_D3D: public RageDisplay
 {
 public:

@@ -23,13 +23,6 @@
 #include "RageException.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
-#if defined(WIN32)
-#include "RageDisplay_D3D.h"
-#endif
-
-#if !defined(_XBOX)
-#include "RageDisplay_OGL.h"
-#endif
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
@@ -212,43 +205,123 @@ static void BoostAppPri()
 #endif
 }
 
+#if defined(WIN32)
+#include "RageDisplay_D3D.h"
+#endif
+
+#if !defined(_XBOX)
+#include "RageDisplay_OGL.h"
+#endif
+
+/* XXX: Passing all of the SetVideoMode arguments to the ctor is cumbersome. */
+#if !defined(_XBOX)
+static RageDisplay *CreateDisplay_OGL()
+{
+	return new RageDisplay_OGL(
+		PREFSMAN->m_bWindowed, 
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
+}
+#endif
+
+#if defined(WIN32)
+static RageDisplay *CreateDisplay_D3D()
+{
+	return new RageDisplay_D3D(
+		PREFSMAN->m_bWindowed, 
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
+}
+#endif
+
+#if defined(_XBOX)
+RageDisplay *CreateDisplay() { return CreateDisplay_D3D(); }
+#elif !defined(WIN32)
+RageDisplay *CreateDisplay() { return CreateDisplay_OGL(); }
+#else
+
+#include "archutils/Win32/VideoDriverInfo.h"
+#include "Regex.h"
 RageDisplay *CreateDisplay()
 {
-	/* XXX: Passing all of the SetVideoMode arguments to the ctor is cumbersome. */
-#if defined(_XBOX)
-	RageDisplay *ret = new RageDisplay_D3D(
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
-#elif !defined(WIN32)
-	RageDisplay *ret = new RageDisplay_OGL(
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
-#else
-	/* Windows; we have both D3D and OGL available.  XXX: do something smart. */
-	RageDisplay *ret = new RageDisplay_OGL(
-		PREFSMAN->m_bWindowed, 
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync,
-		THEME->GetMetric("Common","WindowTitle"),
-		THEME->GetPathToG("Common window icon") );
-	return ret;
-#endif
+	/* We never want to bother users with having to decide which API to use.
+	 *
+	 * Some cards simply are too troublesome with OpenGL to ever use it, eg. Voodoos.
+	 * If D3D8 isn't installed on those, complain and refuse to run (by default).
+	 * For others, always use OpenGL.  Allow forcing to D3D as an advanced option.
+	 *
+	 * If we're missing acceleration when we load D3D8 due to a card being in the
+	 * D3D list, it means we need drivers and that they do exist.
+	 *
+	 * If we try to load OpenGL and we're missing acceleration, it may mean:
+	 *  1. We're missing drivers, and they just need upgrading.
+	 *  2. The card doesn't have drivers, and it should be using D3D8.  In other words,
+	 *     it needs an entry in this table.
+	 *  3. The card doesn't have drivers for either.  (Sorry, no S3 868s.)  Can't play.
+	 * 
+	 * In this case, fail to load; don't silently fall back on D3D.  We don't want
+	 * people unknowingly using D3D8 with old drivers (and reporting obscure bugs
+	 * due to driver problems).  We'll probably get bug reports for all three types.
+	 * #2 is the only case that's actually a bug.
+	 *
+	 * If a system is listed as needing D3D, it's important--don't silently fall
+	 * back on OpenGL if it's missing.  (If that would work, we wouldn't use D3D
+	 * on that system to begin with.)
+	 *
+	 * This should probably be exported into an INI.
+	 */
+	vector<Regex> Cards;
+	Cards.push_back(Regex(".*Voodoo.*"));
+//	Cards.push_back(Regex(".*nVidia.*")); // testing
+
+	/* We can't too reliably get driver information before we set up the window. Ask
+	 * VideoDriverInfo; it'll usually give us a name we can match.  XXX: If we're on
+	 * an old system with more than one card, we won't know which to match. */
+	VideoDriverInfo info;
+	GetPrimaryVideoDriverInfo(info);
+	const CString &desc = info.sDescription;
+	
+	bool NeedsD3D = false;
+	for(unsigned i = 0; i < Cards.size(); ++i)
+		if(Cards[i].Compare(desc)) NeedsD3D = true;
+
+	/* XXX: Handle AllowSoftwareRenderer.  Be careful not to fall back from D3D to
+	 * OpenGL because of it, and ending up with an accelerated but broken driver! */
+	if( NeedsD3D )
+	{
+		/* We require D3D.  Try to start it.  */
+		CString error = "There was an error while initializing your video card.\n\n"
+			"Your display adapter, \"" + desc + "\", requires Direct3D 8 (or "
+			"higher), but ";
+
+		try {
+			return CreateDisplay_D3D();
+		} catch(RageException_D3DNotInstalled e) {
+			error += 
+				"it is not installed.  You can download it from: URL";
+		} catch(RageException_D3DNoAcceleration e) {
+			error += 
+				"your system is reporting that hardware acceleration is not available.  "
+				"You can download an updated driver from your card's manufacturer.";
+		};
+
+		RageException::Throw( error );
+	}
+
+	return CreateDisplay_OGL();
 }
+
+#endif
 
 static void RestoreAppPri()
 {
