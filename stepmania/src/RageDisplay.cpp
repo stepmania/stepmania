@@ -247,24 +247,17 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 #endif
 
 	bool NewOpenGLContext = false;
-#ifdef SDL_HAS_CHANGEVIDEOMODE
-	if(g_screen)
-	{
-		/* We can change the video mode without nuking the GL context. */
-		NewOpenGLContext = !!SDL_SM_ChangeVideoMode_OpenGL(&g_screen, width, height, bpp, g_flags);
-		ASSERT(g_screen);
-	}
-	else
-#endif
-	{
-		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
-		if(!g_screen)
-			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 
-		NewOpenGLContext = true;
-	}
+	g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
+	if(!g_screen)
+		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 
-	if(NewOpenGLContext)
+	/* XXX: This event only exists in the SDL tree, and is only needed in
+	 * Windows.  Eventually, it'll probably get upstreamed, and once it's
+	 * in the real branch we can remove this #if. */
+#if defined(WIN32)
+	SDL_Event e;
+	if(SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_OPENGLRESETMASK))
 	{
 		LOG->Trace("New OpenGL context");
 
@@ -276,7 +269,10 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		SetupOpenGL();
 
 		SDL_WM_SetCaption("StepMania", "StepMania");
+
+		NewOpenGLContext = true;
 	}
+#endif
 
 	DumpOpenGLDebugInfo();
 
