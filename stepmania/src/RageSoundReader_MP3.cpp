@@ -377,7 +377,12 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 					continue;
 				}
 
-				/* We've decoded the first frame of data. */
+				/* We've decoded the first frame of data. 
+				 *
+				 * We want mad->Timer to represent the timestamp of the first sample of the
+				 * currently decoded frame.  Don't increment mad->Timer on the first frame,
+				 * or it'll be the time of the *next* frame.  (All frames have the same
+				 * duration.) */
 				mad->first_frame = false;
 				mad->Timer = mad_timer_zero;
 				mad->header_bytes = get_this_frame_byte(mad);
@@ -830,8 +835,13 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	mad_stream_init(&mad->Stream);
 	mad_stream_buffer(&mad->Stream, NULL, 0);
 	mad->inbuf_filepos = 0;
+
+	/* Be careful.  We need to leave header_bytes alone, so if we try to SetPosition_estimate
+	 * immediately after this, we still know the header size.  However, we need to set first_frame
+	 * to true, since the first frame is handled specially in do_mad_frame_decode; if we don't
+	 * set it, then we'll be desynced by a frame after an accurate seek. */
 //	mad->header_bytes = 0;
-//	mad->first_frame = true;
+	mad->first_frame = true;
     mad->Stream.this_frame = NULL;
 
 	return true;
