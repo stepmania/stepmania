@@ -201,7 +201,7 @@ try_element_again:
 			static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
 				{ "", NULL },
 				{ "ini", NULL },
-				{ "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", NULL},
+				{ "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "png", NULL },
 				{ "mp3", "ogg", "wav", NULL },
 				{ "sm", NULL },
@@ -215,6 +215,10 @@ try_element_again:
 
 			for( int i = 0; asset_masks[i]; ++i )
 			{
+				/* No extension means directories. */
+				if( asset_masks[i][0] == 0 && !IsADirectory(asPaths[p]) )
+					continue;
+
 				if( ext == asset_masks[i] )
 				{
 					asElementPaths.push_back( asPaths[p] );
