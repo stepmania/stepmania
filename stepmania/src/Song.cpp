@@ -993,7 +993,10 @@ int Song::GetNumTimesPlayed() const
  
 CString Song::GetMusicPath() const
 {
-	if(m_sSongDir != "" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
+	// Glenn, did you mean this?  m_DWIPath is empty in my ini, so
+	// the old if statement thinks every song is being loaded from DWIPath.
+	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
+//	if(m_sSongDir != "" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
 		return PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
 
 	return m_sMusicFile.Left(2) == ".\\"? m_sMusicFile : m_sSongDir+m_sMusicFile;

@@ -109,7 +109,6 @@ void Background::LoadFromSong( Song* pSong )
 
 	const float fXZoom = RECTWIDTH(RECT_BACKGROUND) / (float)SCREEN_WIDTH;
 	const float fYZoom = RECTHEIGHT(RECT_BACKGROUND) / (float)SCREEN_HEIGHT;
-	const float fZoom = max(fXZoom,fYZoom);
 
 
 	//
@@ -354,12 +353,13 @@ void Background::LoadFromSong( Song* pSong )
 	for( int i=0; i<m_BackgroundAnimations.GetSize(); i++ )
 	{
 		m_BackgroundAnimations[i]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-		m_BackgroundAnimations[i]->SetZoom( fZoom );
+		m_BackgroundAnimations[i]->SetZoomX( fXZoom );
+		m_BackgroundAnimations[i]->SetZoomY( fYZoom );
 	}
 		
 	m_BGADanger.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-	m_BGADanger.SetZoom( fZoom );
-	
+	m_BGADanger.SetZoomX( fXZoom );
+	m_BGADanger.SetZoomY( fYZoom );	
 }
 
 
