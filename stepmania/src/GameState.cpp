@@ -1091,6 +1091,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 	if( !IsHumanPlayer(pn) )
 		return;
 
+	Profile *pProf = PROFILEMAN->GetProfile(pn);
+
 	CHECKPOINT_M(ssprintf("PlayMode %i",this->m_PlayMode));
 	switch( this->m_PlayMode )
 	{
@@ -1157,10 +1159,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				}
 		
 				// Find Personal Records
-				Profile *prof = PROFILEMAN->GetProfile(pn);
-				if( prof )
+				if( pProf )
 				{
-					HighScoreList &hsl = prof->GetStepsHighScoreList(pSteps);
+					HighScoreList &hsl = pProf->GetStepsHighScoreList(pSteps);
 					for( j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
@@ -1219,21 +1220,24 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
 				RankingCategory rc = (RankingCategory)i;
-				HighScoreList &hsl = PROFILEMAN->GetProfile(pn)->GetCategoryHighScoreList( nt, rc );
-				for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
+				if( pProf )
 				{
-					HighScore &hs = hsl.vHighScores[j];
-					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
-						continue;
+					HighScoreList &hsl = pProf->GetCategoryHighScoreList( nt, rc );
+					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
+					{
+						HighScore &hs = hsl.vHighScores[j];
+						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+							continue;
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::CATEGORY;
-					feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
-					feat.pStringToFill = &hs.sName;
-					feat.grade = GRADE_NO_DATA;
-					feat.iScore = (int) hs.iScore;
-					feat.fPercentDP = (float) hs.fPercentDP;
-					asFeatsOut.push_back( feat );
+						RankingFeats feat;
+						feat.Type = RankingFeats::CATEGORY;
+						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+						feat.pStringToFill = &hs.sName;
+						feat.grade = GRADE_NO_DATA;
+						feat.iScore = (int) hs.iScore;
+						feat.fPercentDP = (float) hs.fPercentDP;
+						asFeatsOut.push_back( feat );
+					}
 				}
 			}
 		}
@@ -1276,8 +1280,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			// Find Personal Records
 			if( PROFILEMAN->IsUsingProfile( pn ) )
 			{
-				Profile* pProfile = PROFILEMAN->GetProfile( pn );
-				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, nt );
+				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, nt );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
 					HighScore& hs = hsl.vHighScores[i];
