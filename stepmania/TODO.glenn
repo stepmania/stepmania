@@ -7,6 +7,42 @@ low-pri to bother bringing up on the list.
 
 ********
 
+Don't unload textures when they reach 0 refs.  Keep them around for a while.
+They're the place we're spending all of our time loading, and sometimes we
+reload them in odd places; for example, Player reloads arrow graphics
+between songs in courses.  (Don't special case that; it'd just make Player
+ugly.  It's TextureManager's job.)
+
+Ideally, we should only unload a texture when we *need* the memory.  That's
+very tricky to get right, though; we don't really know how much memory
+we can use.  (We have system memory to work with, as textures will get
+swapped out for us, and we don't know how much system memory to use.) We
+could just make it a config parameter, but that sucks.
+
+Also, don't use a FIFO.  That tends to make the whole cache die when the
+textures you need are at the beginning of the queue.  (Each load causes you
+to unload a texture that you'll be loading soon, so nothing ever actually
+comes out of the queue.)
+
+(Not sure how to do this.)
+
+********
+
+Stuff in the song cache never dies unless the version changes.  We don't
+want to erase songs we didn't load; I frequently move song paths out of
+the search path while debugging (for fast loads) and I don't want that
+to lose cache.  Hmm.  Access time?
+
+(Not sure how to do this either.)
+
+********
+
+Triple-buffering.
+
+(Wait for OpenGL.)
+
+********
+
 It'd be nice if we could go straight from one screen to another, tweening
 one off and the other on simultaneously (with a delay so it doesn't
 look like a jumble, but in parallel).
