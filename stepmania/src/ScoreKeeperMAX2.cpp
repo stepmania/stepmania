@@ -65,7 +65,6 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber p
 	m_iScore = 0;
 	m_iCurToastyCombo = 0; 
 	m_iMaxScoreSoFar = 0;
-	m_iMaxPossiblePoints = 0;
 	m_iPointBonus = 0;
 	m_iNumTapsAndHolds = 0;
 	m_bIsLastSongInCourse = false;
@@ -95,6 +94,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 
 	int sum = (N * (N + 1)) / 2;
 
+	int iMaxPossiblePoints = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
 		const int numSongsInCourse = apNotes.size();
@@ -103,18 +103,18 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 		if ( iSongInCourseIndex == numSongsInCourse - 1 )
 			m_bIsLastSongInCourse = true;
 
-		m_iMaxPossiblePoints = (10000000 * (iSongInCourseIndex+1)) / courseMult;
-		m_iMaxScoreSoFar += m_iMaxPossiblePoints;
+		iMaxPossiblePoints = (10000000 * (iSongInCourseIndex+1)) / courseMult;
+		m_iMaxScoreSoFar += iMaxPossiblePoints;
 	}
 	else
 	{
 		int iMeter = pNotes->GetMeter();
 		CLAMP( iMeter, 1, 10 );
-		m_iMaxPossiblePoints = iMeter * 1000000;
+		iMaxPossiblePoints = iMeter * 1000000;
 	}
 
-	m_iScoreMultiplier = m_iMaxPossiblePoints / sum;
-	m_iPointBonus = (m_iMaxPossiblePoints * 10) - (sum * 10 * m_iScoreMultiplier);
+	m_iScoreMultiplier = iMaxPossiblePoints / sum;
+	m_iPointBonus = (iMaxPossiblePoints * 10) - (sum * 10 * m_iScoreMultiplier);
 
 	ASSERT( m_iScoreMultiplier >= 0 );
 	ASSERT( m_iPointBonus >= 0 );

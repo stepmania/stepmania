@@ -25,7 +25,6 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	int				m_iNumTapsAndHolds;
 	int			    m_iMaxScoreSoFar; // for nonstop scoring
 	int				m_iPointBonus; // the difference to award at the end
-	int				m_iMaxPossiblePoints;	
  	int				m_iCurToastyCombo;
 	bool			m_bIsLastSongInCourse;
 
