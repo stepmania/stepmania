@@ -66,7 +66,7 @@ void RageBitmapTexture::Create()
 	RageTextureID actualID = GetID();
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
-	/* Load the image into an SDL surface. */
+	/* Load the image into a RageSurface. */
 	CString error;
 	RageSurface *img = RageSurfaceUtils::LoadFile( actualID.filename, error );
 
