@@ -15,6 +15,7 @@ struct UsbStorageDevice
 		sScsiDevice = "";
 		sSerial = "";
 		sOsMountDir = "";
+		sName = "";
 	};
 	int iBus;
 	int iPort;
@@ -30,13 +31,14 @@ struct UsbStorageDevice
 
 	bool operator==(const UsbStorageDevice& other) const
 	{
-	  if( (iBus!=-1 || other.iBus!=-1) && iBus != other.iBus )
-	      return false;
-	  if( (iPort!=-1 || other.iPort!=-1) && iPort != other.iPort )
-	      return false;
-	  if( (iLevel!=-1 || other.iLevel!=-1) && iLevel != other.iLevel )
-	      return false;
-	  return sOsMountDir==other.sOsMountDir;  // every time a device is plugged in, it gets a unique device number
+#define COMPARE(x) if( x != other.x ) return false;
+		COMPARE( iBus );
+		COMPARE( iPort );
+		COMPARE( iLevel );
+		COMPARE( sName );
+		COMPARE( sOsMountDir );
+		return true;
+#undef COMPARE
 	}
   bool operator!=(const UsbStorageDevice& other) const
   {

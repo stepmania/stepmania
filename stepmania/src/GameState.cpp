@@ -368,11 +368,9 @@ void GameState::EndGame()
 		PROFILEMAN->UnloadProfile( pn );
 	}
 
-	MEMCARDMAN->RefreshNames();
-
 	// Reset the USB storage device numbers -after- saving
 	CHECKPOINT;
-	MEMCARDMAN->FlushAllDisks();
+	MEMCARDMAN->FlushAndReset();
 	CHECKPOINT;
 
 	SONGMAN->FreeAllLoadedFromProfiles();

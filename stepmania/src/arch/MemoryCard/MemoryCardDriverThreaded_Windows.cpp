@@ -14,6 +14,8 @@ const CString TEMP_MOUNT_POINT = "@mctemp/";
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
+	m_bReset = false;
+
 	StartThread();
 }
 
@@ -59,6 +61,12 @@ void MemoryCardDriverThreaded_Windows::MountThreadMain()
 	
 	while( !m_bShutdown )
 	{
+		if( m_bReset )
+		{
+			dwLastLogicalDrives = 0;
+			m_bReset = false;
+		}
+
 		DWORD dwNewLogicalDrives = ::GetLogicalDrives();
 		if( dwNewLogicalDrives != dwLastLogicalDrives )
 		{
@@ -139,6 +147,11 @@ void MemoryCardDriverThreaded_Windows::Flush( UsbStorageDevice* pDevice )
 	// Do we need anything here?  I don't lose data if ejecting 
 	// soon after a write.  From the activity LED, it looks like 
 	// Windows flushes automatically every ~2 seconds. -Chris
+}
+
+void MemoryCardDriverThreaded_Windows::ResetUsbStorage()
+{
+	m_bReset = true;
 }
 
 /*

@@ -176,8 +176,8 @@ void MemoryCardManager::AssignUnassignedCards()
 				continue;
 
 			vector<UsbStorageDevice>::iterator it = find(vUnassignedDevices.begin(),vUnassignedDevices.end(),m_Device[p]);
-			ASSERT( it != vUnassignedDevices.end() )	// the assigned card better be connected!
-			vUnassignedDevices.erase( it );
+			if( it != vUnassignedDevices.end() )
+				vUnassignedDevices.erase( it );
 		}
 	}
 
@@ -259,7 +259,7 @@ match:
 	}
 }
 
-void MemoryCardManager::FlushAllDisks()
+void MemoryCardManager::FlushAndReset()
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -270,7 +270,7 @@ void MemoryCardManager::FlushAllDisks()
 		m_pDriver->Flush(&m_Device[p]);
 	}
 
-	m_pDriver->ResetUsbStorage();
+	m_pDriver->ResetUsbStorage();	// forces cards to be re-detected
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
@@ -284,23 +284,4 @@ bool MemoryCardManager::PathIsMemCard( CString sDir ) const
 CString MemoryCardManager::GetName( PlayerNumber pn ) const
 {
 	return m_Device[pn].sName;
-}
-
-void MemoryCardManager::RefreshNames()
-{
-	// HACK: UsbStorageDevice::sName is only read when the device is connected.
-	// If the player leaves their memory card in after the game ends and they
-	// immediate start another game, then sName isn't re-read automatically.
-	// It's much harder to add logic to read the name again to MemoryCardDriver
-	// than to add a small hack here.
-
-	FOREACH_PlayerNumber( p )
-	{
-		if( m_Device[p].IsBlank() )	// no card assigned
-			continue;	// skip
-		if( m_bWriteError[p] || m_bTooLate[p] )
-			continue;	// skip
-		CString sProfileDir = MEM_CARD_MOUNT_POINT[p] + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-		m_Device[p].sName = Profile::GetProfileDisplayNameFromDir( sProfileDir );
-	}
 }

@@ -10,10 +10,12 @@ public:
 
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint );
 	virtual void Flush( UsbStorageDevice* pDevice );
-	virtual void ResetUsbStorage() {}
+	virtual void ResetUsbStorage();
 protected:
 	virtual void MountThreadMain();
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint );
+
+	bool m_bReset;
 };
 
 #endif
