@@ -1,5 +1,4 @@
 #include "global.h"
-#include "StepMania.h"
 #include "RageFileManager.h"
 #include "RageFileDriver.h"
 #include "RageUtil.h"
@@ -10,6 +9,10 @@
 #include <cerrno>
 #if defined(LINUX)
 #include <sys/stat.h>
+#endif
+
+#if defined(_WIN32)
+#include <windows.h>
 #endif
 
 RageFileManager *FILEMAN = NULL;
