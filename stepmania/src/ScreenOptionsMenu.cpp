@@ -107,8 +107,7 @@ void ScreenOptionsMenu::GoToNextState()
 		case OM_MACHINE:		SCREENMAN->SetNewScreen("ScreenMachineOptions");	break;
 //		case OM_SOUND:			SCREENMAN->SetNewScreen("ScreenSoundOptions");		break;
 		case OM_RELOAD:
-			SONGMAN->ReloadSongs();
-			SONGMAN->ReloadCourses();
+			SONGMAN->Reload();
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		default:	// Exit

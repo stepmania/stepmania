@@ -34,13 +34,13 @@ public:
 
 	void InitSongsFromDisk( LoadingWindow *ld );
 	void FreeSongs();
-	void ReloadSongs();
 	void CompressSongs();
 
 	void InitCoursesFromDisk( LoadingWindow *ld );
 	void InitAutogenCourses();
 	void FreeCourses();
-	void ReloadCourses();
+
+	void Reload();	// songs, courses, groups - everything.
 
 
 	CString GetGroupBannerPath( CString sGroupName );
@@ -124,8 +124,8 @@ protected:
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs;
-	CStringArray		m_arrayGroupNames;
-	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
+	CStringArray		m_sGroupNames;
+	CStringArray		m_sGroupBannerPaths; // each song group may have a banner associated with it
 	vector<Course*> m_pCourses;
 };
 

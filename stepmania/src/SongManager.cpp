@@ -95,20 +95,21 @@ SongManager::~SongManager()
 }
 
 
-void SongManager::ReloadSongs()
+void SongManager::Reload()
 {
 	FlushDirCache();
-	FreeSongs();
-	InitSongsFromDisk(NULL);
-}
 
-void SongManager::ReloadCourses()
-{
-	FlushDirCache();
+	FreeSongs();
 	FreeCourses();
+
+	m_sGroupNames.clear();
+	m_sGroupBannerPaths.clear();
+
+	InitSongsFromDisk(NULL);
 	InitCoursesFromDisk(NULL);
 	InitAutogenCourses();
 }
+
 
 void SongManager::SaveMachineScoresToDisk()
 {
@@ -155,10 +156,10 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 {
 	unsigned j;
-	for(j = 0; j < m_arrayGroupNames.size(); ++j)
-		if( sGroupDirName == m_arrayGroupNames[j] ) break;
+	for(j = 0; j < m_sGroupNames.size(); ++j)
+		if( sGroupDirName == m_sGroupNames[j] ) break;
 
-	if( j != m_arrayGroupNames.size() )
+	if( j != m_sGroupNames.size() )
 		return; /* the group is already added */
 
 	// Look for a group banner in this group folder
@@ -184,8 +185,8 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 
 	if( sBannerPath != "" )
 		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), sBannerPath.c_str() );
-	m_arrayGroupNames.push_back( sGroupDirName );
-	m_GroupBannerPaths.push_back(sBannerPath);
+	m_sGroupNames.push_back( sGroupDirName );
+	m_sGroupBannerPaths.push_back(sBannerPath);
 }
 
 void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
@@ -263,7 +264,7 @@ void SongManager::FreeSongs()
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.clear();
 
-	m_GroupBannerPaths.clear();
+	m_sGroupBannerPaths.clear();
 }
 
 
@@ -608,23 +609,23 @@ void SongManager::SaveCourseScoresToFile( CString fn, int c )
 CString SongManager::GetGroupBannerPath( CString sGroupName )
 {
 	unsigned i;
-	for(i = 0; i < m_arrayGroupNames.size(); ++i)
-		if( sGroupName == m_arrayGroupNames[i] ) break;
+	for(i = 0; i < m_sGroupNames.size(); ++i)
+		if( sGroupName == m_sGroupNames[i] ) break;
 
-	if( i == m_arrayGroupNames.size() )
+	if( i == m_sGroupNames.size() )
 		return "";
 
-	return m_GroupBannerPaths[i];
+	return m_sGroupBannerPaths[i];
 }
 
 void SongManager::GetGroupNames( CStringArray &AddTo )
 {
-	AddTo.insert(AddTo.end(), m_arrayGroupNames.begin(), m_arrayGroupNames.end() );
+	AddTo.insert(AddTo.end(), m_sGroupNames.begin(), m_sGroupNames.end() );
 }
 
 bool SongManager::DoesGroupExist( CString sGroupName )
 {
-	return find( m_arrayGroupNames.begin(), m_arrayGroupNames.end(), sGroupName ) != m_arrayGroupNames.end();
+	return find( m_sGroupNames.begin(), m_sGroupNames.end(), sGroupName ) != m_sGroupNames.end();
 }
 
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
@@ -633,12 +634,12 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 
 	// search for the group index
 	unsigned i;
-	for( i=0; i<m_arrayGroupNames.size(); i++ )
+	for( i=0; i<m_sGroupNames.size(); i++ )
 	{
-		if( m_arrayGroupNames[i] == sGroupName )
+		if( m_sGroupNames[i] == sGroupName )
 			break;
 	}
-	ASSERT( i != m_arrayGroupNames.size() );	// this is not a valid group
+	ASSERT( i != m_sGroupNames.size() );	// this is not a valid group
 
 	return g_vGroupColors[i%g_vGroupColors.size()];
 }
@@ -707,7 +708,7 @@ int SongManager::GetNumSongs() const
 
 int SongManager::GetNumGroups() const
 {
-	return m_arrayGroupNames.size();
+	return m_sGroupNames.size();
 }
 
 int SongManager::GetNumCourses() const
