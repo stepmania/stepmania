@@ -299,8 +299,6 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
 	bool ReachedEOF = false;
-				if( !sounds[i].buffer.num_writable() )
-
 	while( !ReachedEOF && s.buffer.num_writable() )
 	{
 //		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.snd );
