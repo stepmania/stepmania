@@ -6,8 +6,8 @@
 
 
 static const CString SIGNATURE_APPEND = ".sig.rsa";
-static const CString PRIVATE_KEY_PATH = "private.key.rsa";
-static const CString PUBLIC_KEY_PATH = "public.key.rsa";
+static const CString PRIVATE_KEY_PATH = "Data/private.key.rsa";
+static const CString PUBLIC_KEY_PATH = "Data/public.key.rsa";
 static const int KEY_LENGTH = 1024;
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
