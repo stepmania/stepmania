@@ -119,10 +119,13 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 float UnlockSystem::NumPointsUntilNextUnlock()
 {
 	float fSmallestPoints;
-	fSmallestPoints = m_SongEntries[0].m_fDancePointsRequired;
+	fSmallestPoints = 4000000000;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_SongEntries.size(); a++ )
 	{
-		if( m_SongEntries[a].m_fDancePointsRequired >= fSmallestPoints )
+		// old line:	if( m_SongEntries[a].m_fDancePointsRequired >= fSmallestPoints )
+		// new: it makes sure the number of points to the song is positive, AND it is less than
+		//      the currently smallest one. (cure)
+		if( m_SongEntries[a].m_fDancePointsRequired < fSmallestPoints && m_SongEntries[a].m_fDancePointsRequired > PREFSMAN->m_fDancePointsAccumulated)
 		{
 			fSmallestPoints = m_SongEntries[a].m_fDancePointsRequired;
 		}
