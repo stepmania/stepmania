@@ -108,7 +108,6 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	/* Set SDL window title, icon and cursor -before- creating the window */
 	SDL_WM_SetCaption( p.sWindowTitle, "");
 	mySDL_WM_SetIcon( p.sIconFile );
-	SDL_ShowCursor( false );		// Cursor off by default
 
 	int flags = SDL_RESIZABLE | SDL_OPENGL;
 	if( !p.windowed )
