@@ -41,7 +41,7 @@ public:
 	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	void TransitionFromRecordToEdit();
-
+	void TransitionToEdit();
 
 protected:
 	void OnSnapModeChange();

@@ -347,13 +347,10 @@ void ScreenEdit::Update( float fDeltaTime )
 			}
 			else if( m_EditMode == MODE_PLAYING )
 			{
-				m_soundMusic.Stop();
-				m_EditMode = MODE_EDITING;
+				TransitionToEdit();
 			}
+			/* XXX: EndMarker may be -1! */
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 		}
 	}
 
@@ -1256,10 +1253,7 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 		break;
 	case DIK_RETURN:
 	case DIK_ESCAPE:
-		m_EditMode = MODE_EDITING;
-		m_rectRecordBack.StopTweening();
-		m_rectRecordBack.BeginTweening( 0.5f );
-		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+		TransitionToEdit();
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		if( DeviceI.button == DIK_RETURN )
 		{
@@ -1272,10 +1266,7 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 		// On recognized keys, behave as on the top level
 		for(int i=0; i<NUM_ACTION_MENU_ITEMS; i++) {
 			if( DeviceI.button == ACTION_MENU_ITEM_KEY[i] ) {
-				m_EditMode = MODE_EDITING;
-				m_rectRecordBack.StopTweening();
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+				TransitionToEdit();
 				MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 
 				SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
@@ -1302,10 +1293,7 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 	case DIK_A:
 	case DIK_ESCAPE:
 	case DIK_RETURN:
-		m_EditMode = MODE_EDITING;
-		m_rectRecordBack.StopTweening();
-		m_rectRecordBack.BeginTweening( 0.5f );
-		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+		TransitionToEdit();
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
 	}
@@ -1366,11 +1354,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		switch( DeviceI.button )
 		{
 		case DIK_ESCAPE:
-			m_EditMode = MODE_EDITING;
-			m_soundMusic.Stop();
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+			TransitionToEdit();
 
 			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 			break;
@@ -1406,10 +1390,19 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 }
 
 
-void ScreenEdit::TransitionFromRecordToEdit()
+/* Switch to editing. */
+void ScreenEdit::TransitionToEdit()
 {
 	m_EditMode = MODE_EDITING;
 	m_soundMusic.Stop();
+	m_rectRecordBack.StopTweening();
+	m_rectRecordBack.BeginTweening( 0.5f );
+	m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+}
+
+void ScreenEdit::TransitionFromRecordToEdit()
+{
+	TransitionToEdit();
 
 	int iNoteIndexBegin = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
 	int iNoteIndexEnd = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
