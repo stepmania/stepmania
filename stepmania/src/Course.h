@@ -17,7 +17,7 @@
 struct PlayerOptions;
 struct SongOptions;
 class Song;
-class Notes;
+class Steps;
 
 class Course
 {
@@ -66,7 +66,7 @@ public:
 	{
 		Info(): pSong(NULL), pNotes(NULL), Random(false), Difficult(false) { }
 		Song*	pSong;
-		Notes*	pNotes;
+		Steps*	pNotes;
 		CString	Modifiers;
 		bool	Random;
 		bool	Mystery;
@@ -75,7 +75,7 @@ public:
 		int		CourseIndex;
 	};
 
-	// Dereferences course_entries and returns only the playable Songs and Notes
+	// Dereferences course_entries and returns only the playable Songs and Steps
 	void GetCourseInfo( NotesType nt, vector<Info> &ci, int Difficult = -1 ) const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }

@@ -20,7 +20,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "SongManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "NoteSkinManager.h"
 #include "ModeChoice.h"
 #include "NoteFieldPositioning.h"
@@ -453,7 +453,7 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	statsOut = StageStats();
 
 	// Show stats only for the latest 3 normal songs + passed extra stages
-	int iNumPassedExtraStages = GAMESTATE->IsExtraStage ? 1 : (GAMESTATE->IsExtraStage2 ? 2 : 0);
+	int iNumPassedExtraStages = GAMESTATE->IsExtraStage() ? 1 : (GAMESTATE->IsExtraStage2() ? 2 : 0);
 	int iNumPassedRegularSongs = GAMESTATE->m_vPassedStageStats.size() - iNumPassedExtraStages;
 	int iNumSongsToShow = iNumPassedExtraStages + min( iNumPassedRegularSongs, 3 );
 	int iNumSongsToThrowAway = GAMESTATE->m_vPassedStageStats.size() - iNumSongsToShow;

@@ -1,6 +1,6 @@
 #include "global.h"
 #include "NotesWriterSM.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "RageUtil.h"
 #include "GameManager.h"
 #include "RageLog.h"
@@ -92,7 +92,7 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 
 }
 
-void NotesWriterSM::WriteSMNotesTag( const Notes &in, FILE* fp )
+void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
 {
 	fprintf( fp, "\n//---------------%s - %s----------------\n",
 		GameManager::NotesTypeToString(in.m_NotesType).c_str(), in.GetDescription().c_str() );
@@ -128,11 +128,11 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	}
 
 	//
-	// Save all Notes for this file
+	// Save all Steps for this file
 	//
 	for( i=0; i<out.m_apNotes.size(); i++ ) 
 	{
-		Notes* pNotes = out.m_apNotes[i];
+		Steps* pNotes = out.m_apNotes[i];
 		if( pNotes->IsAutogen() )
 			continue; /* don't write autogen notes */
 

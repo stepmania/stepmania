@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------
  Class: EditMenu
 
- Desc: UI on Edit Menu screen.  Create Notes, delete Notes, or launch Notes 
+ Desc: UI on Edit Menu screen.  Create Steps, delete Steps, or launch Steps 
 	in editor.
  
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
@@ -96,8 +96,8 @@ public:
 	Difficulty	GetSelectedSourceDifficulty()	{ return (Difficulty)m_iSelection[ROW_SOURCE_DIFFICULTY]; }
 	Action		GetSelectedAction()				{ return m_Actions[m_iSelection[ROW_ACTION]]; }
 
-	Notes*		GetSelectedNotes();
-	Notes*		GetSelectedSourceNotes();
+	Steps*		GetSelectedNotes();
+	Steps*		GetSelectedSourceNotes();
 
 private:
 	Sprite	m_sprArrows[2];

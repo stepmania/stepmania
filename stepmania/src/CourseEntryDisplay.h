@@ -19,7 +19,7 @@
 #include "GameConstantsAndTypes.h"
 class Course;
 class Song;
-class Notes;
+class Steps;
 
 
 class CourseEntryDisplay : public ActorFrame
@@ -27,7 +27,7 @@ class CourseEntryDisplay : public ActorFrame
 public:
 	CourseEntryDisplay();
 
-	void LoadFromSongAndNotes( int iNum, Song* pSong, Notes* pNotes, CString sModifiers );
+	void LoadFromSongAndNotes( int iNum, Song* pSong, Steps* pNotes, CString sModifiers );
 	void LoadFromDifficulty( int iNum, Difficulty dc, CString sModifiers );
 	void LoadFromMeterRange( int iNum, int iLow, int iHigh, CString sModifiers );
 

@@ -61,9 +61,9 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 }
 #endif
 
-bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out, const Song &song )
+bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &song )
 {
-	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath.c_str() );
+	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
@@ -335,10 +335,10 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	if(!LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out))
 		return false;
 
-	// load the Notes from the rest of the KSF files
+	// load the Steps from the rest of the KSF files
 	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
-		Notes* pNewNotes = new Notes;
+		Steps* pNewNotes = new Steps;
 		if(!LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out ))
 		{
 			delete pNewNotes;

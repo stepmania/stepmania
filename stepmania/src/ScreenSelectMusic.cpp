@@ -29,7 +29,7 @@
 #include <math.h>
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "ActorUtil.h"
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
@@ -743,7 +743,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	}
 
 
-	// this needs to check whether valid Notes are selected!
+	// this needs to check whether valid Steps are selected!
 	bool bResult = m_MusicWheel.Select();
 
 	/* If false, we don't have a selection just yet. */
@@ -835,7 +835,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	{
 		/* Check if user selected the real extra stage. */
 		Song* pSong;
-		Notes* pNotes;
+		Steps* pNotes;
 		PlayerOptions po;
 		SongOptions so;
 		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
@@ -864,7 +864,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	
 	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes.size()-1) );	// bounds clamping
 
-	Notes* pNotes = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
+	Steps* pNotes = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
 
 	GAMESTATE->m_pCurNotes[pn] = pNotes;
 

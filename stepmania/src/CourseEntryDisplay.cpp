@@ -20,7 +20,7 @@
 #include "SongManager.h"
 #include <math.h>
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "GameState.h"
 #include "StyleDef.h"
 
@@ -76,7 +76,7 @@ CourseEntryDisplay::CourseEntryDisplay()
 }
 
 
-void CourseEntryDisplay::LoadFromSongAndNotes( int iNum, Song* pSong, Notes* pNotes, CString sModifiers )
+void CourseEntryDisplay::LoadFromSongAndNotes( int iNum, Song* pSong, Steps* pNotes, CString sModifiers )
 {
 	m_textNumber.SetText( ssprintf("%d", iNum) );
 

@@ -651,12 +651,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NoteTypes.h">
 			</File>
 			<File
-				RelativePath="Notes.cpp">
-			</File>
-			<File
-				RelativePath="Notes.h">
-			</File>
-			<File
 				RelativePath="NotesLoader.cpp">
 			</File>
 			<File
@@ -763,6 +757,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="StageStats.h">
+			</File>
+			<File
+				RelativePath="Steps.cpp">
+			</File>
+			<File
+				RelativePath="Steps.h">
 			</File>
 			<File
 				RelativePath="Style.h">

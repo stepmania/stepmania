@@ -20,7 +20,7 @@
 #include "StageStats.h"
 
 class Song;
-class Notes;
+class Steps;
 class Course;
 class GameDef;
 class StyleDef;
@@ -131,7 +131,7 @@ public:
 	// State Info used during gameplay
 	//
 	Song*		m_pCurSong;
-	Notes*		m_pCurNotes[NUM_PLAYERS];
+	Steps*		m_pCurNotes[NUM_PLAYERS];
 	Course*		m_pCurCourse;
 
 

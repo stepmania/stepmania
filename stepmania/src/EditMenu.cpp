@@ -16,7 +16,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "song.h"
 
 //
@@ -312,12 +312,12 @@ void EditMenu::OnRowValueChanged( Row row )
 	}
 }
 
-Notes* EditMenu::GetSelectedNotes()
+Steps* EditMenu::GetSelectedNotes()
 {
 	return GetSelectedSong()->GetNotes(GetSelectedNotesType(),GetSelectedDifficulty(), false);
 }
 
-Notes* EditMenu::GetSelectedSourceNotes()
+Steps* EditMenu::GetSelectedSourceNotes()
 {
 	return GetSelectedSong()->GetNotes(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
 }

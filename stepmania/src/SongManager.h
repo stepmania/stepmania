@@ -4,8 +4,8 @@
 -----------------------------------------------------------------------------
  Class: SongManager
 
- Desc: Holder for all Songs and Notes.  Also keeps track of the current 
-	Song and Notes, and loads/saves statistics.
+ Desc: Holder for all Songs and Steps.  Also keeps track of the current 
+	Song and Steps, and loads/saves statistics.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -17,7 +17,7 @@ class LoadingWindow;
 class Song;
 class StyleDef;
 class Course;
-class Notes;
+class Steps;
 struct PlayerOptions;
 
 #include "RageTypes.h"
@@ -81,7 +81,7 @@ public:
 	void GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if set to REPEAT.
 
 	void GetExtraStageInfo( bool bExtra2, const StyleDef *s, 
-		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
+		Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
 	Song* GetSongFromDir( CString sDir );
 	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
@@ -112,7 +112,7 @@ protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
-					   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
+					   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 

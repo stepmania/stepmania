@@ -326,7 +326,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 {
-	// this needs to check whether valid Notes are selected!
+	// this needs to check whether valid Steps are selected!
 	m_MusicWheel.Select();
 
 	switch( m_MusicWheel.GetSelectedType() )
@@ -376,7 +376,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		// by the course.
 		//
 		//Song* pSong;
-		//Notes* pNotes;
+		//Steps* pNotes;
 		//CString sModifiers;
 		//pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 		//for( int p=0; p<NUM_PLAYERS; p++ )

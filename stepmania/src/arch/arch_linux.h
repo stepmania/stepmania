@@ -11,6 +11,8 @@
 
 #ifdef HAVE_GTK
 #include "LoadingWindow/LoadingWindow_Gtk.h"
+#elif
+#include "LoadingWindow/LoadingWindow_SDL.h"
 #endif
 
 #include "ArchHooks/ArchHooks_Unix.h"

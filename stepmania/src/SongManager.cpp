@@ -295,7 +295,7 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 			CString sDescription;
 			getline(f, sDescription);
 
-			Notes* pNotes = NULL;
+			Steps* pNotes = NULL;
 			if( pSong )
 			{
 				if( dc==DIFFICULTY_INVALID )
@@ -523,7 +523,7 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 				Song* pSong = m_pSongs[s];
 				ASSERT(pSong);
 
-				vector<Notes*> vNotes = pSong->m_apNotes;
+				vector<Steps*> vNotes = pSong->m_apNotes;
 /* This prevents the play count from being saved for songs that havn't
  * been passed.  Though, it seems we only increment this when it's
  * passed, anyway ...
@@ -542,7 +542,7 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 
 				for( unsigned i=0; i<vNotes.size(); i++ )
 				{
-					Notes* pNotes = vNotes[i];
+					Steps* pNotes = vNotes[i];
 					ASSERT(pNotes);
 
 					fprintf(fp, "%d %d\n%s\n", 
@@ -653,7 +653,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 //	const NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
-		const Notes* pNotes = pSong->m_apNotes[i];
+		const Steps* pNotes = pSong->m_apNotes[i];
 		if( pNotes->GetDifficulty() == DIFFICULTY_CHALLENGE )
 			continue;
 
@@ -831,7 +831,7 @@ void SongManager::CleanData()
 		Song* pSong = m_pSongs[i];
 		for( unsigned n=0; n<pSong->m_apNotes.size(); n++ )
 		{
-			Notes* pNotes = pSong->m_apNotes[n];
+			Steps* pNotes = pSong->m_apNotes[n];
 			pNotes->Compress();
 		}
 	}
@@ -870,7 +870,7 @@ void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutoge
 
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
-								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
+								   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	const CString sCourseSuffix = sPreferredGroup + SLASH + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	CString sCoursePath = SONGS_DIR + sCourseSuffix;
@@ -909,7 +909,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 }
 
 /* Return true if n1 < n2. */
-bool CompareNotesPointersForExtra(const Notes *n1, const Notes *n2)
+bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 {
 	/* Equate CHALLENGE to HARD. */
 	Difficulty d1 = min(n1->GetDifficulty(), DIFFICULTY_HARD);
@@ -927,7 +927,7 @@ bool CompareNotesPointersForExtra(const Notes *n1, const Notes *n2)
 }
 
 void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd, 
-								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
+								   Song*& pSongOut, Steps*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString sGroup = GAMESTATE->m_sPreferredGroup;
 	if(sGroup == GROUP_ALL_MUSIC)
@@ -950,10 +950,10 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		return;
 	
 	// Choose a hard song for the extra stage
-	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Notes.  Use this for extra stage 1.
-	Notes*	pExtra1Notes = NULL;
-	Song*	pExtra2Song = NULL;		// a medium-hard Song and Notes.  Use this for extra stage 2.
-	Notes*	pExtra2Notes = NULL;
+	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
+	Steps*	pExtra1Notes = NULL;
+	Song*	pExtra2Song = NULL;		// a medium-hard Song and Steps.  Use this for extra stage 2.
+	Steps*	pExtra2Notes = NULL;
 	
 	vector<Song*> apSongs;
 	SONGMAN->GetSongs( apSongs, sGroup );
@@ -961,11 +961,11 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 	{
 		Song* pSong = apSongs[s];
 
-		vector<Notes*> apNotes;
+		vector<Steps*> apNotes;
 		pSong->GetNotes( apNotes, sd->m_NotesType );
-		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Notes
+		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Steps
 		{
-			Notes* pNotes = apNotes[n];
+			Steps* pNotes = apNotes[n];
 
 			if( pExtra1Notes == NULL || CompareNotesPointersForExtra(pExtra1Notes,pNotes) )	// pNotes is harder than pHardestNotes
 			{
@@ -973,7 +973,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 				pExtra1Notes = pNotes;
 			}
 
-			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Notes with meter > 8
+			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Steps with meter > 8
 			if(	bExtra2  &&  pNotes->GetMeter() > 8 )	
 				continue;	// skip
 			if( pExtra2Notes == NULL  ||  CompareNotesPointersForExtra(pExtra2Notes,pNotes) )	// pNotes is harder than pHardestNotes
@@ -991,7 +991,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 	}
 
 	// If there are any notes at all that match this NotesType, everything should be filled out.
-	// Also, it's guaranteed that there is at least one Notes that matches the NotesType because the player
+	// Also, it's guaranteed that there is at least one Steps that matches the NotesType because the player
 	// had to play something before reaching the extra stage!
 	ASSERT( pExtra2Song && pExtra1Song && pExtra2Notes && pExtra1Notes );
 

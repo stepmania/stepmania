@@ -22,7 +22,7 @@
 #include "StyleDef.h"
 #include "InputMapper.h"
 #include "CodeDetector.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "RageTimer.h"
 #include "ActorUtil.h"
 #include "RageTextureManager.h"
@@ -641,7 +641,7 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()-1) );	// bounds clamping
 
-	Notes* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
+	Steps* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
 	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
@@ -655,7 +655,7 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 //	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
-//	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
+//	Steps* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 
 //	m_FootMeter[pn].SetFromNotes( pNotes );
 }

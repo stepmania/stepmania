@@ -2,12 +2,12 @@
 #define NOTES_LOADER_DWI_H
 
 #include "song.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "GameInput.h"
 #include "NotesLoader.h"
 
 #include "song.h"
-#include "Notes.h"
+#include "Steps.h"
 
 /* Return NA if no files in the directory can be loaded by
  * this loader, OK on success, ERROR if an applicable file was found
@@ -21,7 +21,7 @@ class DWILoader: public NotesLoader {
 	bool LoadFromDWITokens( 
 		CString sMode, CString sDescription, CString sNumFeet, CString sStepData1, 
 		CString sStepData2,
-		Notes &out );
+		Steps &out );
 
 	bool LoadFromDWIFile( CString sPath, Song &out );
 

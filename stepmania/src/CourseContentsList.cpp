@@ -20,7 +20,7 @@
 #include "SongManager.h"
 #include <math.h>
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "GameState.h"
 #include "StyleDef.h"
 

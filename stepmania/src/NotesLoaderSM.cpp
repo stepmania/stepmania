@@ -14,7 +14,7 @@ void SMLoader::LoadFromSMTokens(
 	CString sMeter,
 	CString sRadarValues,
 	CString sNoteData,
-	Notes &out
+	Steps &out
 )
 {
 	TrimLeft(sNotesType); 
@@ -25,7 +25,7 @@ void SMLoader::LoadFromSMTokens(
 	TrimRight(sDifficulty); 
 
 
-//	LOG->Trace( "Notes::LoadFromSMTokens()" );
+//	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
 	out.m_NotesType = GameManager::StringToNotesType(sNotesType);
 	out.SetDescription(sDescription);
@@ -273,7 +273,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"NOTES") )
 		{
-			Notes* pNewNotes = new Notes;
+			Steps* pNewNotes = new Steps;
 			ASSERT( pNewNotes );
 			out.m_apNotes.push_back( pNewNotes );
 

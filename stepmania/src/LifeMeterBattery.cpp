@@ -14,7 +14,7 @@
 #include "PrefsManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 
 
 const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };

@@ -34,7 +34,7 @@ bool ScreenJukebox::SetSong()
 		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredGroup );
 
 	//
-	// Search for a Song and Notes to play during the demo
+	// Search for a Song and Steps to play during the demo
 	//
 	for( int i=0; i<600; i++ )
 	{
@@ -47,12 +47,12 @@ bool ScreenJukebox::SetSong()
 			continue;	// skip
 
 		Difficulty dc = GAMESTATE->m_PreferredDifficulty[PLAYER_1];
-		Notes* pNotes = NULL;
+		Steps* pNotes = NULL;
 		if( dc != DIFFICULTY_INVALID )
 			pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
 		else	// "all difficulties"
 		{
-			vector<Notes*> vNotes;
+			vector<Steps*> vNotes;
 			pSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 			if( vNotes.size() > 0 )
 				pNotes = vNotes[rand()%vNotes.size()];

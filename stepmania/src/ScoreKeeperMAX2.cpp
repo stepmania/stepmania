@@ -12,7 +12,7 @@
 #include "ScoreKeeperMAX2.h"
 #include "GameState.h"
 #include "PrefsManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
@@ -23,7 +23,7 @@
 #include "SongManager.h"
 
 
-ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber pn_ ):
+ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, PlayerNumber pn_ ):
 	ScoreKeeper(pn_), apNotes(apNotes_)
 {
 	//
@@ -38,7 +38,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber p
 	case PLAY_MODE_RAVE:
 		{
 			ASSERT( !apNotes.empty() );
-			Notes* pNotes = apNotes[0];
+			Steps* pNotes = apNotes[0];
 			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 			GAMESTATE->m_CurStageStats.iMeter[pn_] = pNotes->GetMeter();
 			pNotes->GetNoteData( &notedata );
@@ -74,7 +74,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber p
 	m_bIsLastSongInCourse = false;
 }
 
-void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes, NoteData* pNoteData )
+void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData )
 {
 /*
   http://www.aaroninjapan.com/ddr2.html

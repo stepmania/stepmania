@@ -21,7 +21,7 @@
 #include "GameState.h"
 #include "RageSounds.h"
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 
 
 //
@@ -118,7 +118,7 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 void DeleteCurNotes()
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	Notes* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Steps* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
 	pSong->RemoveNotes( pNotesToDelete );
 	pSong->Save();
 }
@@ -131,10 +131,10 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	Song* pSong					= m_Selector.GetSelectedSong();
 	NotesType nt				= m_Selector.GetSelectedNotesType();
 	Difficulty dc				= m_Selector.GetSelectedDifficulty();
-	Notes* pNotes				= m_Selector.GetSelectedNotes();
+	Steps* pNotes				= m_Selector.GetSelectedNotes();
 //	NotesType soureNT			= m_Selector.GetSelectedSourceNotesType();
 //	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
-	Notes* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
+	Steps* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
 	EditMenu::Action action		= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong = pSong;
@@ -170,13 +170,13 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		ASSERT( pSourceNotes );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
-			// Song allocates all of the other Notes.
-			Notes* pNewNotes = new Notes;
+			// Song allocates all of the other Steps.
+			Steps* pNewNotes = new Steps;
 			pNewNotes->CopyFrom( pSourceNotes, nt );
 			pNewNotes->SetDifficulty( dc );
 			pSong->AddNotes( pNewNotes );
 		
-			SCREENMAN->SystemMessage( "Notes created from copy." );
+			SCREENMAN->SystemMessage( "Steps created from copy." );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
@@ -187,14 +187,14 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		ASSERT( pSourceNotes );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
-			// Song allocates all of the other Notes.
-			Notes* pNewNotes = new Notes;
+			// Song allocates all of the other Steps.
+			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom( pSourceNotes, nt );
 			pNewNotes->DeAutogen();
 			pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
 			pSong->AddNotes( pNewNotes );
 		
-			SCREENMAN->SystemMessage( "Notes created from AutoGen." );
+			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
@@ -204,14 +204,14 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		ASSERT( !pNotes );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
-			// Song allocates all of the other Notes.
-			Notes* pNewNotes = new Notes;
+			// Song allocates all of the other Steps.
+			Steps* pNewNotes = new Steps;
 			pNewNotes->CreateBlank( nt );
 			pNewNotes->SetDifficulty( dc );
 			pNewNotes->SetMeter( 1 );
 			pSong->AddNotes( pNewNotes );
 		
-			SCREENMAN->SystemMessage( "Blank Notes created." );
+			SCREENMAN->SystemMessage( "Blank Steps created." );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();

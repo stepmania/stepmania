@@ -52,7 +52,7 @@ protected:
 	EditMode m_EditMode;
 
 	Song*			m_pSong;
-	Notes*			m_pNotes;
+	Steps*			m_pNotes;
 
 	BGAnimation		m_BGAnimation;
 

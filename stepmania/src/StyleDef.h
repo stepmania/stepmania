@@ -43,8 +43,8 @@ public:
 	/* The name of the style.  (This is currently unused.) */
 	char		m_szName[60];
 	
-	/* Notes format used for each player.  For example, "dance versus" reads
-	 * the Notes with the tag "dance-single". */
+	/* Steps format used for each player.  For example, "dance versus" reads
+	 * the Steps with the tag "dance-single". */
 	NotesType	m_NotesType;
 									
 	enum StyleType

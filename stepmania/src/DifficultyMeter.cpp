@@ -16,7 +16,7 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "Course.h"
 #include "SongManager.h"
 
@@ -37,7 +37,7 @@ DifficultyMeter::DifficultyMeter()
 	Unset();
 }
 
-void DifficultyMeter::SetFromNotes( Notes* pNotes )
+void DifficultyMeter::SetFromNotes( Steps* pNotes )
 {
 	if( pNotes == NULL )
 	{

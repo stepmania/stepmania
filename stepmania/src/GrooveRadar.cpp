@@ -16,7 +16,7 @@
 #include "RageBitmapTexture.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "RageDisplay.h"
 #include "RageMath.h"
 #include <math.h>
@@ -93,7 +93,7 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	}
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Notes* pNotes )		// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Steps* pNotes )		// NULL means no song
 {
 	if(DISABLE_RADAR == 1) // if the theme says not to disable it
 		return;

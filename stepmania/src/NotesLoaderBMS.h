@@ -2,11 +2,11 @@
 #define NOTES_LOADER_BMS_H
 
 #include "song.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "NotesLoader.h"
 
 class BMSLoader: public NotesLoader {
-	bool LoadFromBMSFile( const CString &sPath, Notes &out1 );
+	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
 	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
 
 public:

@@ -19,7 +19,7 @@
 #include "CourseEntryDisplay.h"
 class Course;
 class Song;
-class Notes;
+class Steps;
 
 
 const int MAX_VISIBLE_CONTENTS = 5;

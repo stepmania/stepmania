@@ -22,7 +22,7 @@
 #include "NoteFieldPositioning.h"
 #include "ScreenSongOptions.h"
 #include "Character.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "Course.h"
 
 #define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -114,7 +114,7 @@ void ScreenPlayerOptions::ImportOptions()
 	}
 	else
 	{
-		vector<Notes*> vNotes;
+		vector<Steps*> vNotes;
 		GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 		SortNotesArrayByDifficulty( vNotes );
 		for( unsigned i=0; i<vNotes.size(); i++ )
@@ -225,7 +225,7 @@ void ScreenPlayerOptions::ImportOptions()
 		}
 		else
 		{
-			vector<Notes*> vNotes;
+			vector<Steps*> vNotes;
 			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 			SortNotesArrayByDifficulty( vNotes );
 			for( unsigned i=0; i<vNotes.size(); i++ )
@@ -337,7 +337,7 @@ void ScreenPlayerOptions::ExportOptions()
 		}
 		else
 		{
-			vector<Notes*> vNotes;
+			vector<Steps*> vNotes;
 			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 			SortNotesArrayByDifficulty( vNotes );
 			GAMESTATE->m_pCurNotes[p] = vNotes[ m_iSelectedOption[p][PO_STEP] ];

@@ -29,7 +29,7 @@
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "Banner.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "UnlockSystem.h"
 #include "ModeChoice.h"
 
@@ -45,7 +45,6 @@ CachedThemeMetricF ITEM_CURVE_X		("MusicWheel","ItemCurveX");
 CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
-#define DEFAULT_SCROLL_DIRECTION	THEME->GetMetricI("Notes","DefaultScrollDirection")
 #define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
@@ -132,7 +131,7 @@ MusicWheel::MusicWheel()
 		}
 
 		Song* pSong;
-		Notes* pNotes;
+		Steps* pNotes;
 		PlayerOptions po;
 		SongOptions so;
 		SONGMAN->GetExtraStageInfo(
@@ -308,7 +307,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
 	SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
 
-	// copy only songs that have at least one Notes for the current GameMode
+	// copy only songs that have at least one Steps for the current GameMode
 	for( unsigned i=0; i<apAllSongs.size(); i++ )
 	{
 		Song* pSong = apAllSongs[i];
@@ -329,7 +328,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 		if( so!=SORT_ROULETTE && GAMESTATE->m_pUnlockingSys->SongIsLocked(pSong) )
 			continue;
 
-		vector<Notes*> arraySteps;
+		vector<Steps*> arraySteps;
 		pSong->GetNotes( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_NotesType, DIFFICULTY_INVALID, -1, -1, "", PREFSMAN->m_bAutogenMissingTypes );
 
 		if( !arraySteps.empty() )
@@ -532,7 +531,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		{
 			Song* pSong;
-			Notes* pNotes;
+			Steps* pNotes;
 			PlayerOptions po;
 			SongOptions so;
 			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
@@ -1423,21 +1422,21 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 		}
 	case SORT_EASY_METER:
 		{
-			Notes* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_EASY);
+			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_EASY);
 			if( pNotes )	
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
 		}
 	case SORT_MEDIUM_METER:
 		{
-			Notes* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_MEDIUM);
+			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_MEDIUM);
 			if( pNotes )	
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
 		}
 	case SORT_HARD_METER:
 		{
-			Notes* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_HARD);
+			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_HARD);
 			if( pNotes )	
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";

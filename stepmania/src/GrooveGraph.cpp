@@ -16,7 +16,7 @@
 #include "RageBitmapTexture.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "RageDisplay.h"
 #include "song.h"
 #include "GameState.h"
@@ -65,7 +65,7 @@ void GrooveGraph::SetFromSong( Song* pSong )
 	{
 		for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		{
-			Notes* pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, (Difficulty)i );
+			Steps* pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, (Difficulty)i );
 			const float* fRadarValues = pNotes ? pNotes->GetRadarValues() : NULL;
 			for( int j=0; j<NUM_RADAR_CATEGORIES; j++ )
 				fValues[j][i] = fRadarValues ? fRadarValues[j] : 0;

@@ -28,7 +28,7 @@
 #include "SDL_keysym.h"		// for SDLKeys
 #include "ScreenMiniMenu.h"
 #include "NoteSkinManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include <utility>
 #include "NoteFieldPositioning.h"
 #include "arch/arch.h"
@@ -128,7 +128,7 @@ Menu g_KeyboardShortcuts
 Menu g_MainMenu
 (
 	"Main Menu",
-	MenuRow( "Edit Notes Statistics",		true ),
+	MenuRow( "Edit Steps Statistics",		true ),
 	MenuRow( "Play Whole Song",				true ),
 	MenuRow( "Play Current Beat To End",	true ),
 	MenuRow( "Save",						true ),
@@ -167,8 +167,8 @@ Menu g_EditNotesStatistics
 	MenuRow( "Difficulty",	true, 0, "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE" ),
 	MenuRow( "Meter",		true, 0, "1","2","3","4","5","6","7","8","9","10","11" ),
 	MenuRow( "Description",	true ),
-	MenuRow( "Tap Notes",	false ),
-	MenuRow( "Hold Notes",	false ),
+	MenuRow( "Tap Steps",	false ),
+	MenuRow( "Hold Steps",	false ),
 	MenuRow( "Stream",		false ),
 	MenuRow( "Voltage",		false ),
 	MenuRow( "Air",			false ),
@@ -498,8 +498,8 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).c_str() );
 	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().c_str() : "no description" );
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
-	sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
-	sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
+	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapNotes );
+	sText += ssprintf( "Hold Steps:\n     %d\n",			iNumHoldNotes );
 	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
 	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
 	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
@@ -1155,7 +1155,7 @@ void ScreenEdit::OnSnapModeChange()
 
 void ChangeDescription( CString sNew )
 {
-	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 	pNotes->SetDescription(sNew);
 }
 
@@ -1212,7 +1212,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 	{
 		case edit_notes_statistics:
 			{
-				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+				Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
 				g_EditNotesStatistics.rows[difficulty].defaultChoice = pNotes->GetDifficulty();
@@ -1244,8 +1244,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			break;
 		case save:
 			{
-				// copy edit into current Notes
-				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+				// copy edit into current Steps
+				Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 				ASSERT( pNotes );
 
 				pNotes->SetNoteData( &m_NoteFieldEdit );
@@ -1544,7 +1544,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers )
 {
-	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
 	pNotes->SetDifficulty( dc );
 	int iMeter = iAnswers[meter]+1;

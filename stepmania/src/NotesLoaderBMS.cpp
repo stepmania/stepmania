@@ -58,9 +58,9 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 	}
 }
 
-bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
+bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 {
-	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath.c_str() );
+	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
 	out.m_NotesType = NOTES_TYPE_INVALID;
 
@@ -126,7 +126,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 		{
 			value_data.MakeLower();
 			
-			// extract the Notes description (looks like 'Music <BASIC>')
+			// extract the Steps description (looks like 'Music <BASIC>')
 			int iPosOpenBracket = value_data.Find( "<" );
 			if( iPosOpenBracket == -1 )
 				iPosOpenBracket = value_data.Find( "(" );
@@ -136,7 +136,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
 				value_data = value_data.substr( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
-			LOG->Trace( "Notes description found to be '%s'", value_data.c_str() );
+			LOG->Trace( "Steps description found to be '%s'", value_data.c_str() );
 
 			out.SetDescription(value_data);
 
@@ -269,11 +269,11 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	 * called to begin with. */
 	ASSERT( arrayBMSFileNames.size() );
 
-	// load the Notes from the rest of the BMS files
+	// load the Steps from the rest of the BMS files
 	unsigned i;
 	for( i=0; i<arrayBMSFileNames.size(); i++ ) 
 	{
-		Notes* pNewNotes = new Notes;
+		Steps* pNewNotes = new Steps;
 
 		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], *pNewNotes );
 		if( ok )
@@ -325,7 +325,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		// handle the data
 		if( value_name == "#title" ) 
 		{
-			// strip Notes type out of description leaving only song title - looks like 'B4U <BASIC>'
+			// strip Steps type out of description leaving only song title - looks like 'B4U <BASIC>'
 			unsigned iIndex = value_data.find_last_of('<');
 			if( iIndex == value_data.npos )
 				iIndex = value_data.find_last_of('(');

@@ -88,12 +88,14 @@ void ScreenSelect::Update( float fDelta )
 	}
 
 	Screen::Update( fDelta );
-	m_BGAnimations[ this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber) ].Update( fDelta );
+	int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+	m_BGAnimations[iSelection].Update( fDelta );
 }
 
 void ScreenSelect::DrawPrimitives()
 {
-	m_BGAnimations[ this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber) ].Draw();
+	int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+	m_BGAnimations[iSelection].Draw();
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();

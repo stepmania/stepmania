@@ -584,7 +584,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
-	//LOG->Trace( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
 	bool bFreeze;
 	float fMissIfOlderThanThisBeat;

@@ -23,7 +23,7 @@
 #include "GameState.h"
 #include <math.h>
 #include "ThemeManager.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "song.h"
 #include "Course.h"
 

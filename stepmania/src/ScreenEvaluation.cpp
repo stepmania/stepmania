@@ -16,7 +16,7 @@
 #include "GameManager.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"

@@ -13,7 +13,7 @@
 
 #include "Sprite.h"
 #include "PlayerNumber.h"
-class Notes;
+class Steps;
 
 
 class DifficultyIcon : public Sprite
@@ -21,7 +21,7 @@ class DifficultyIcon : public Sprite
 public:
 	bool Load( CString sFilePath );
 
-	void SetFromNotes( PlayerNumber pn, Notes* pNotes );
+	void SetFromNotes( PlayerNumber pn, Steps* pNotes );
 };
 
 #endif

@@ -177,7 +177,7 @@ CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
 		return ssprintf( "<%s>", ret.c_str() );
 }
 
-void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
+void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 {
 	NoteData notedata;
 	out.GetNoteData( &notedata );
@@ -293,9 +293,9 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 	}
 }
 
-bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
+bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
 {
-	LOG->Trace( "Notes::WriteDWINotesTag" );
+	LOG->Trace( "Steps::WriteDWINotesTag" );
 
 	switch( out.m_NotesType )
 	{

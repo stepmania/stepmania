@@ -2,7 +2,7 @@
 #define NOTES_LOADER_SM_H
 
 #include "song.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "NotesLoader.h"
 
 class SMLoader: public NotesLoader  {
@@ -13,7 +13,7 @@ class SMLoader: public NotesLoader  {
 		CString sMeter,
 		CString sRadarValues,
 		CString sNoteData,		
-		Notes &out);
+		Steps &out);
 
 	bool FromCache;
 

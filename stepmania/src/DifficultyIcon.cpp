@@ -15,7 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "GameState.h"
 #include "RageDisplay.h"
 #include "arch/ArchHooks/ArchHooks.h"
@@ -31,7 +31,7 @@ bool DifficultyIcon::Load( CString sPath )
 	return true;
 }
 
-void DifficultyIcon::SetFromNotes( PlayerNumber pn, Notes* pNotes )
+void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pNotes )
 {
 	if( pNotes == NULL )
 	{

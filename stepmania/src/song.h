@@ -14,7 +14,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-class Notes;
+class Steps;
 class StyleDef;
 class NotesLoader;
 class LyricsLoader;
@@ -95,7 +95,7 @@ public:
 	CString GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
-	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Notes of type ntTo from Notes of type ntFrom
+	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
 	void RemoveAutoGenNotes();
 
 	/* Directory this song data came from: */
@@ -240,17 +240,17 @@ public:
 	
 	
 	
-	vector<Notes*> m_apNotes;
+	vector<Steps*> m_apNotes;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
-	void GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
-	Notes* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	Notes* GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
-	Notes* GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
-	Notes* GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	void GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
+	void GetNotes( vector<Steps*>& arrayAddTo, NotesType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
+	Steps* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	Steps* GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
+	Steps* GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
+	Steps* GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	void GetEdits( vector<Steps*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
@@ -260,8 +260,8 @@ public:
 	bool RouletteDisplayed() const;
 	int	GetNumNotesWithGrade( Grade g ) const;
 
-	void AddNotes( Notes* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
-	void RemoveNotes( Notes* pNotes );
+	void AddNotes( Steps* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
+	void RemoveNotes( Steps* pNotes );
 };
 
 CString MakeSortString( CString s );

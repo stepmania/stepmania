@@ -22,7 +22,7 @@
 #include "SongOptions.h"
 #include "RageUtil.h"
 #include "TitleSubstitution.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "GameState.h"
 #include "BannerCache.h"
 #include "RageFile.h"
@@ -488,7 +488,7 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 		const Entry &e = entries[i];
 
 		Song* pSong = NULL;	// fill this in
-		Notes* pNotes = NULL;	// fill this in
+		Steps* pNotes = NULL;	// fill this in
 
 		/* This applies difficult mode for meter ranges.  (If it's a difficulty
 		 * class, we'll do it below.) */
@@ -581,7 +581,7 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 			if(dc < DIFFICULTY_CHALLENGE)
 			{
 				dc  = Difficulty(dc + 1);
-				Notes* pNewNotes = pSong->GetNotes( nt, dc, PREFSMAN->m_bAutogenMissingTypes );
+				Steps* pNewNotes = pSong->GetNotes( nt, dc, PREFSMAN->m_bAutogenMissingTypes );
 				if(pNewNotes)
 					pNotes = pNewNotes;
 			}

@@ -14,7 +14,7 @@
 
 
 #include "NoteDisplay.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "PrefsManager.h"
 #include "GameState.h"
 #include "NoteSkinManager.h"

@@ -14,7 +14,7 @@
 
 #include "ScoreKeeper.h"
 #include "NoteDataWithScoring.h"
-class Notes;
+class Steps;
 
 class ScoreKeeperMAX2: public ScoreKeeper
 {
@@ -28,15 +28,15 @@ class ScoreKeeperMAX2: public ScoreKeeper
  	int				m_iCurToastyCombo;
 	bool			m_bIsLastSongInCourse;
 
-	const vector<Notes*>& apNotes;
+	const vector<Steps*>& apNotes;
 
 	void AddScore( TapNoteScore score );
 
 public:
-	ScoreKeeperMAX2( const vector<Notes*>& apNotes, PlayerNumber pn);
+	ScoreKeeperMAX2( const vector<Steps*>& apNotes, PlayerNumber pn);
 
 	// before a song plays (called multiple times if course)
-	void OnNextSong( int iSongInCourseIndex, Notes* pNotes, NoteData* pNoteData );
+	void OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData );
 
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );

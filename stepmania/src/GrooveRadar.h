@@ -15,7 +15,7 @@
 #include "Sprite.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
-class Notes;
+class Steps;
 
 
 class GrooveRadar : public ActorFrame
@@ -23,7 +23,7 @@ class GrooveRadar : public ActorFrame
 public:
 	GrooveRadar();
 
-	void SetFromNotes( PlayerNumber pn, Notes* pNotes )	// NULL means no Song
+	void SetFromNotes( PlayerNumber pn, Steps* pNotes )	// NULL means no Song
 	{
 		m_GrooveRadarValueMap.SetFromNotes( pn, pNotes );
 	}
@@ -42,7 +42,7 @@ protected:
 		virtual void Update( float fDeltaTime );
 		virtual void DrawPrimitives();
 
-		void SetFromNotes( PlayerNumber pn, Notes* pNotes );	// NULL means no Song
+		void SetFromNotes( PlayerNumber pn, Steps* pNotes );	// NULL means no Song
 
 		void TweenOnScreen();
 		void TweenOffScreen();

@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
  Class: ScreenSelectMusic
 
- Desc: The screen in PLAY_MODE_ARCADE where you choose a Song and Notes.
+ Desc: The screen in PLAY_MODE_ARCADE where you choose a Song and Steps.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -66,7 +66,7 @@ protected:
 
 	void UpdateOptionsDisplays();
 
-	vector<Notes*> m_arrayNotes;
+	vector<Steps*> m_arrayNotes;
 	int					m_iSelection[NUM_PLAYERS];
 
 	MenuElements		m_Menu;

@@ -12,7 +12,7 @@
 */
 
 #include "song.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "IniFile.h"
@@ -48,7 +48,7 @@
 
 #define CACHE_DIR BASE_PATH "Cache" SLASH
 
-const int FILE_CACHE_VERSION = 127;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 127;	// increment this when Song or Steps changes to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -795,7 +795,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	//
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
-		Notes* pNotes = m_apNotes[i];
+		Steps* pNotes = m_apNotes[i];
 		NoteData tempNoteData;
 		pNotes->GetNoteData( &tempNoteData );
 
@@ -829,9 +829,9 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc, int iMeterLow, int iMeterHigh, CString sDescription, bool bIncludeAutoGen ) const
+void Song::GetNotes( vector<Steps*>& arrayAddTo, NotesType nt, Difficulty dc, int iMeterLow, int iMeterHigh, CString sDescription, bool bIncludeAutoGen ) const
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
+	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Steps
 	{
 		if( m_apNotes[i]->m_NotesType != nt ) continue;
 		if( dc != DIFFICULTY_INVALID && dc != m_apNotes[i]->GetDifficulty() )
@@ -848,9 +848,9 @@ void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc, in
 	}
 }
 
-Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Steps* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
-	vector<Notes*> vNotes;
+	vector<Steps*> vNotes;
 	GetNotes( vNotes, nt, dc, -1, -1, "", bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
@@ -858,9 +858,9 @@ Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 		return vNotes[0];
 }
 
-Notes* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen ) const
+Steps* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen ) const
 {
-	vector<Notes*> vNotes;
+	vector<Steps*> vNotes;
 	GetNotes( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
@@ -868,9 +868,9 @@ Notes* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bInclud
 		return vNotes[0];
 }
 
-Notes* Song::GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen ) const
+Steps* Song::GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen ) const
 {
-	vector<Notes*> vNotes;
+	vector<Steps*> vNotes;
 	GetNotes( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription, bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
@@ -879,10 +879,10 @@ Notes* Song::GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen 
 }
 
 
-Notes* Song::GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Steps* Song::GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	Difficulty newDC = dc;
-	Notes* pNotes;
+	Steps* pNotes;
 	pNotes = GetNotes( nt, newDC, bIncludeAutoGen );
 	if( pNotes )
 		return pNotes;
@@ -907,7 +907,7 @@ Notes* Song::GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen 
 	return pNotes;
 }
 
-void Song::GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const
+void Song::GetEdits( vector<Steps*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const
 {
 }
 
@@ -922,7 +922,7 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 
 bool Song::SongHasNotesType( NotesType nt ) const
 {
-	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Notes
+	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
 		if( m_apNotes[i]->m_NotesType == nt )
 			return true;
 	return false;
@@ -930,7 +930,7 @@ bool Song::SongHasNotesType( NotesType nt ) const
 
 bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const
 {
-	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Notes
+	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
 		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->GetDifficulty() == dc )
 			return true;
 	return false;
@@ -1006,7 +1006,7 @@ void Song::AddAutoGenNotes()
 			continue;
 
 
-		// missing Notes of this type
+		// missing Steps of this type
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
 
 		// look for closest match
@@ -1015,7 +1015,7 @@ void Song::AddAutoGenNotes()
 
 		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 		{
-			vector<Notes*> apNotes;
+			vector<Steps*> apNotes;
 			this->GetNotes( apNotes, nt );
 
 			if(apNotes.empty() || apNotes[0]->IsAutogen())
@@ -1041,10 +1041,10 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 
 	for( unsigned int j=0; j<m_apNotes.size(); j++ )
 	{
-		Notes* pOriginalNotes = m_apNotes[j];
+		Steps* pOriginalNotes = m_apNotes[j];
 		if( pOriginalNotes->m_NotesType == ntFrom )
 		{
-			Notes* pNewNotes = new Notes;
+			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom(pOriginalNotes, ntTo);
 			this->m_apNotes.push_back( pNewNotes );
 		}
@@ -1067,7 +1067,7 @@ void Song::RemoveAutoGenNotes()
 Grade Song::GetGradeForDifficulty( const StyleDef *st, PlayerNumber pn, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
-	vector<Notes*> aNotes;
+	vector<Steps*> aNotes;
 	this->GetNotes( aNotes, st->m_NotesType );
 	SortNotesArrayByDifficulty( aNotes );
 
@@ -1075,7 +1075,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, PlayerNumber pn, Difficul
 
 	for( unsigned i=0; i<aNotes.size(); i++ )
 	{
-		const Notes* pNotes = aNotes[i];
+		const Steps* pNotes = aNotes[i];
 		if( pNotes->GetDifficulty() == dc )
 			grade = max( grade, pNotes->m_MemCardScores[pn].grade );
 	}
@@ -1090,9 +1090,9 @@ bool Song::IsNew() const
 
 bool Song::IsEasy( NotesType nt ) const
 {
-	Notes* pBeginnerNotes = GetNotes( nt, DIFFICULTY_BEGINNER );
-	Notes* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
-	Notes* pHardNotes = GetNotes( nt, DIFFICULTY_HARD );
+	Steps* pBeginnerNotes = GetNotes( nt, DIFFICULTY_BEGINNER );
+	Steps* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
+	Steps* pHardNotes = GetNotes( nt, DIFFICULTY_HARD );
 
 	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
 	if( pHardNotes && pHardNotes->GetMeter() > 9 )
@@ -1125,7 +1125,7 @@ bool Song::IsEasy( NotesType nt ) const
 
 bool Song::HasEdits( NotesType nt ) const
 {
-	vector<Notes*> vpNotes;
+	vector<Steps*> vpNotes;
 	this->GetEdits( vpNotes, nt );
 	return vpNotes.size() > 0;
 }
@@ -1181,7 +1181,7 @@ void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
 
 static int GetSongSortDifficulty(const Song *pSong)
 {
-	vector<Notes*> aNotes;
+	vector<Steps*> aNotes;
 	pSong->GetNotes( aNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
 	// sort by anything but beginner
@@ -1390,8 +1390,8 @@ struct CompareSongByMeter
 	CompareSongByMeter(Difficulty d): dc(d) { }
 	bool operator() (const Song* pSong1, const Song* pSong2)
 	{
-		Notes* pNotes1 = pSong1->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
-		Notes* pNotes2 = pSong2->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
+		Steps* pNotes1 = pSong1->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
+		Steps* pNotes2 = pSong2->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
 
 		const int iMeter1 = pNotes1 ? pNotes1->GetMeter() : 0;
 		const int iMeter2 = pNotes2 ? pNotes2->GetMeter() : 0;
@@ -1545,14 +1545,14 @@ CString Song::GetFullTranslitTitle() const
 	return Title;
 }
 
-void Song::AddNotes( Notes* pNotes )
+void Song::AddNotes( Steps* pNotes )
 {
 	m_apNotes.push_back( pNotes );
 }
 
-void Song::RemoveNotes( Notes* pNotes )
+void Song::RemoveNotes( Steps* pNotes )
 {
-	// Avoid any stale Note::parent pointers by removing all AutoGen'd Notes,
+	// Avoid any stale Note::parent pointers by removing all AutoGen'd Steps,
 	// then adding them again.
 
 	RemoveAutoGenNotes();
@@ -1573,7 +1573,7 @@ void Song::RemoveNotes( Notes* pNotes )
 int	Song::GetNumNotesWithGrade( Grade g ) const
 {
 	int iCount = 0;
-	vector<Notes*> vNotes;
+	vector<Steps*> vNotes;
 	this->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 	for( unsigned j=0; j<vNotes.size(); j++ )
 		if( vNotes[j]->m_MemCardScores[MEMORY_CARD_MACHINE].grade == g )

@@ -30,7 +30,7 @@ ScoreKeeperRave::ScoreKeeperRave(PlayerNumber pn) : ScoreKeeper(pn)
 	m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("ScoreKeeperRave attack end p%d",pn+1)) );
 }
 
-void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, Notes* pNotes, NoteData* pNoteData )
+void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData )
 {
 	
 }

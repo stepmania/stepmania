@@ -11,7 +11,7 @@
 */
 
 #include "ArrowEffects.h"
-#include "Notes.h"
+#include "Steps.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
 #include "GameState.h"

@@ -102,9 +102,9 @@ bool DWILoader::LoadFromDWITokens(
 	CString sNumFeet,
 	CString sStepData1, 
 	CString sStepData2,
-	Notes &out)
+	Steps &out)
 {
-	LOG->Trace( "Notes::LoadFromDWITokens()" );
+	LOG->Trace( "Steps::LoadFromDWITokens()" );
 
 	out.m_NotesType = NOTES_TYPE_INVALID;
 
@@ -448,7 +448,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				 0==stricmp(sValueName,"COUPLE")  || 
 				 0==stricmp(sValueName,"SOLO"))
 		{
-			Notes* pNewNotes = new Notes;
+			Steps* pNewNotes = new Steps;
 			LoadFromDWITokens( 
 				sParams[0], 
 				sParams[1], 

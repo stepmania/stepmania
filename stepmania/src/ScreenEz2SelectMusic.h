@@ -77,7 +77,7 @@ protected:
 	MenuElements		m_Menu;
 	DifficultyRating	m_DifficultyRating;
 //	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
-	vector<Notes*>		m_arrayNotes[NUM_PLAYERS];
+	vector<Steps*>		m_arrayNotes[NUM_PLAYERS];
 
 	int					m_iSelection[NUM_PLAYERS];
 	bool m_bGoToOptions;
