@@ -18,13 +18,16 @@
 
 #define MAX_TILES_WIDE (SCREEN_WIDTH/32+2)
 #define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
-#define MAX_SPRITES  (MAX_TILES_WIDE*MAX_TILES_HIGH)
+#define MAX_SPRITES  16
+// (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
 class BGAnimationLayer
 {
 public:
 	BGAnimationLayer();
+	~BGAnimationLayer();
 	void Init();
+	void Unload();
 
 	void LoadFromStaticGraphic( CString sPath );
 	void LoadFromAniLayerFile( CString sPath );
@@ -41,9 +44,8 @@ public:
 	void LosingFocus();
 
 protected:
-	Sprite		m_Sprites[MAX_SPRITES];
+	vector<Sprite *> m_Sprites;
 	RageVector3 m_vParticleVelocity[MAX_SPRITES];
-	unsigned	m_iNumSprites;
 
 	enum Effect {
 		EFFECT_CENTER,
