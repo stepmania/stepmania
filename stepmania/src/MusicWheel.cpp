@@ -114,7 +114,10 @@ MusicWheel::MusicWheel()
 	{
 		// make the preferred group the group of the last song played.
 		if( GAMESTATE->m_sPreferredGroup==GROUP_ALL_MUSIC && !PREFSMAN->m_bPickExtraStage )
+		{
+			ASSERT(GAMESTATE->m_pCurSong);
 			GAMESTATE->m_sPreferredGroup = GAMESTATE->m_pCurSong->m_sGroupName;
+		}
 
 		Song* pSong;
 		Notes* pNotes;
