@@ -34,8 +34,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 
-	m_sName = sClassName;
-
 	//
 	// Load choices
 	//
