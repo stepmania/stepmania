@@ -114,8 +114,6 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	if( !p.windowed )
 		flags |= SDL_FULLSCREEN;
 
-	SDL_ShowCursor( p.windowed );
-
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
 	switch( p.bpp )
 	{
@@ -157,6 +155,8 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		LOG->Trace( "SDL_SetVideoMode failed: %s", mySDL_GetError().c_str() );
 		return mySDL_GetError();	// failed to set mode
 	}
+	
+	SDL_ShowCursor( p.windowed );
 
 	bNewDeviceOut = true;	// always a new context because we're resetting SDL_Video
 
