@@ -999,6 +999,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\GotoURL.h">
 				</File>
 				<File
+					RelativePath="archutils\Win32\RestartProgram.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\RestartProgram.h">
+				</File>
+				<File
 					RelativePath=".\StepMania.ICO">
 				</File>
 				<File
