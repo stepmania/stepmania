@@ -1121,6 +1121,7 @@ creates your home directory and is required for things to start working.
 ************************************************************
 
 ------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  Support for #DIFFICULTY in KSF.
 CHANGE:  Allow starting without a keyboard or mouse.
 NEW FEATURE:  Support for "artist - title - difficulty" titles in KSF.
 BUG FIX:  Fix repeating announcer when you get a 100*n combo and break it
