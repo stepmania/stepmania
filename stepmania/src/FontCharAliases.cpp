@@ -296,8 +296,9 @@ static void InitCharAliases()
 		{ "menuleft",	0xE006 },
 		{ "menuright",	0xE007 },
 		{ "start",		0xE008 },
-		{ "ok",			0xE009 },
-		{ "nextrow",	0xE00A },
+		{ "back",		0xE009 },
+		{ "ok",			0xE00A },
+		{ "nextrow",	0xE00B },
 		{ NULL, 	0 }
 	};
 
