@@ -25,12 +25,12 @@ class LanPlayer {
 		int projgrade;
 		int combo;
 		int currstep;
-		int steps[8];
+		int steps[9];
 		int maxCombo;
 		int Grade;
 		int offset;
 		int PlayerID;
-		char diff;
+		int diff;
 		LanPlayer();
 	private:
 };

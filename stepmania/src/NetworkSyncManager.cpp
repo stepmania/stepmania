@@ -526,18 +526,7 @@ void NetworkSyncManager::ProcessInput()
 				for (int i=0;i<PlayersInPack; i++)
 					for (int j=0;j<NETNUMTAPSCORES;j++) {
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
-					//	m_EvalPlayerData[i].tapScores[0] = 0;
-					//	m_EvalPlayerData[i].tapScores[1] = 1;
-					//	m_EvalPlayerData[i].tapScores[2] = 2;
-					//	m_EvalPlayerData[i].tapScores[3] = 3;
-					//	m_EvalPlayerData[i].tapScores[4] = 4;
-					//	m_EvalPlayerData[i].tapScores[5] = 5;
-					//	m_EvalPlayerData[i].tapScores[6] = 6;
-					//	m_EvalPlayerData[i].tapScores[7] = 7;
 					}
-			
-			
-			
 			}
 			break;
 		case 5: //Scoreboard Update

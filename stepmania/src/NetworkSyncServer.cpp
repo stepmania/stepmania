@@ -2,6 +2,7 @@
  */
 
 #include "NetworkSyncServer.h"
+#include "RageLog.h"
 
 LanPlayer::LanPlayer() {
 	score = 0;
@@ -240,24 +241,31 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 		Reply.ClearPacket();
 		Reply.Write1( 4+128 );
 		Reply.Write1(numPlayers);
+		//I can't get the following area to work with out the {}.
 		for (int x = 0; x < numPlayers; x++) {
 			Reply.Write4(playersPtr[x]->score);
+//			LOG->Info("SCORE: %d", playersPtr[x]->score);
 		}
 		for (int x = 0; x < numPlayers; x++) {
 			Reply.Write1(playersPtr[x]->projgrade);
+//			LOG->Info("Grade: %d", playersPtr[x]->projgrade);
 		}
 		for (int x = 0; x < numPlayers; x++) {
 			Reply.Write1(playersPtr[x]->diff);
+//			LOG->Info("Diff: %d", playersPtr[x]->diff);
 		}
 		for (int x = 0; x < numPlayers; x++) {
-			for (int y = 6; y >= 0; y--) {
+			for (int y = 6; y >= 1; y--) {
 				//Dont send NoGoods
 				//Send in reverse
 				Reply.Write2(playersPtr[x]->steps[y]);
+//				LOG->Info("step %d: %d", y, playersPtr[x]->steps[y]);
 			}
+			Reply.Write2(playersPtr[x]->steps[8]);  //Tack on OK
 		}
 		for (int x = 0; x < numPlayers; x++) {
 			Reply.Write2(playersPtr[x]->maxCombo);
+//			LOG->Info("MaxCombo: %d", playersPtr[x]->maxCombo);
 		}
 		SendNetPacket(clientNum, (char*)Reply.Data, Reply.Position);
 	}
