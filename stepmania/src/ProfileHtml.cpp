@@ -954,6 +954,24 @@ bool PrintRecentScores( RageFile &f, const Profile *pProfile, CString sTitle, ve
 	return true;
 }
 
+/* (experimental) Short-term internal cache timer. */
+struct CacheTimer
+{
+	float fExpiration, fDuration;
+	CacheTimer( float duration = 1 ) { fExpiration = -999; fDuration = duration; }
+	
+	/* Return true if the timer has expired (fDuration has elapsed since the last
+	 * true IsExpired call) or if this is the first call. */
+	bool IsExpired()
+	{
+		float fNow = RageTimer::GetTimeSinceStart();
+		if( fNow < fExpiration )
+			return false;
+		fExpiration = fNow + fDuration;
+		return true;
+	}
+};
+
 bool PrintCatalogForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
 	if( pSong->NeverDisplayed() || UNLOCKMAN->SongIsLocked(pSong) )
@@ -961,12 +979,17 @@ bool PrintCatalogForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 
 	vector<Steps*> vpSteps = pSong->GetAllSteps();
 
-	bool bShowRadarCategory[NUM_RADAR_CATEGORIES];
-	CString sThemedRadarCategory[NUM_RADAR_CATEGORIES];
-	FOREACH_RadarCategory(rc)
+	static bool bShowRadarCategory[NUM_RADAR_CATEGORIES];
+	static CString sThemedRadarCategory[NUM_RADAR_CATEGORIES];
+
+	static CacheTimer timer;
+	if( timer.IsExpired() )
 	{
-		bShowRadarCategory[rc] = SHOW_RADAR_CATEGORY(rc);
-		sThemedRadarCategory[rc] = RadarCategoryToThemedString(rc);
+		FOREACH_RadarCategory(rc)
+		{
+			bShowRadarCategory[rc] = SHOW_RADAR_CATEGORY(rc);
+			sThemedRadarCategory[rc] = RadarCategoryToThemedString(rc);
+		}
 	}
 
 	PRINT_OPEN(f, pSong->GetFullDisplayTitle() );
