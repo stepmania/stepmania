@@ -33,6 +33,14 @@ public:
 		ThemeManager::Subscribe( this );
 	}
 
+	ThemeMetric( const ThemeMetric<T> &cpy ):
+		m_sGroup( cpy.m_sGroup ),
+		m_sName( cpy.m_sName ),
+		m_currentValue( cpy.m_currentValue )
+	{
+		ThemeManager::Subscribe( this );
+	}
+	
 	~ThemeMetric()
 	{
 		ThemeManager::Unsubscribe( this );
