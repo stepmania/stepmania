@@ -1147,20 +1147,14 @@ public:
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
-		glDrawElements( 
+		GLExt::glDrawRangeElements( 
 			GL_TRIANGLES, 
-			meshInfo.iTriangleCount*3, 
-			GL_UNSIGNED_SHORT, 
+			meshInfo.iVertexStart,	// minimum array index contained in indices
+			meshInfo.iVertexStart+meshInfo.iVertexCount-1,
+						// maximum array index contained in indices
+			meshInfo.iTriangleCount*3,	// number of elements to be rendered
+			GL_UNSIGNED_SHORT,
 			BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
-
-//		GLExt::glDrawRangeElements( 
-//			GL_TRIANGLES, 
-//			meshInfo.iVertexStart,	// minimum array index contained in indices
-//			meshInfo.iVertexStart+meshInfo.iVertexCount-1,
-//						// maximum array index contained in indices
-//			meshInfo.iTriangleCount*3,	// number of elements to be rendered
-//			GL_UNSIGNED_SHORT,
-//			BUFFER_OFFSET(0) );
 		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
