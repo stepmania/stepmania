@@ -109,7 +109,7 @@ void RageTextureManager::RegisterTexture( RageTextureID ID, RageTexture *pTextur
 // Load and unload textures from disk.
 RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 {
-	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
+	CHECKPOINT_M( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
 
 	AdjustTextureID(ID);
 
