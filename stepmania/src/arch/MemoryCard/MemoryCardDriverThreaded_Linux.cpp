@@ -11,7 +11,6 @@
 #include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
-#include <linux/types.h>
 #include <fstream>
 #include <dirent.h>
 #include <sys/types.h>
