@@ -1,3 +1,4 @@
+NEW FEATURE:  Song list can handle any number of groups.
 BUG FIX:  Fix joystick Y axis.
 NEW FEATURE:  Add level 8 judge difficulty.
 CHANGE:  While AutoPlay is on, life, score, and dance points will not 
