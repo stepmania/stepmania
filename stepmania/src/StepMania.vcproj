@@ -121,9 +121,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;
-/FIXED:no
-"
+				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
