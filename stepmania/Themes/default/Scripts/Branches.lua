@@ -40,3 +40,38 @@ function SelectEndingScreen()
 	return "ScreenCredits"
 end	
 
+function IsEventMode()
+	return GetPreference( "EventMode" )
+end
+
+-- For "EvalOnFail", do:
+-- function GetGameplayNextScreen() return SelectEvaluationScreen() end
+
+function GetGameplayNextScreen()
+	Trace( "GetGameplayNextScreen: " )
+	if( Passed ) then
+		Trace( "Passed" )
+	else
+		Trace( "Failed" )
+	end
+	if IsCourseMode() then Trace( "Course mode " ) end
+	if IsExtraStage() then Trace( "Ex1" ) end
+	if IsExtraStage2() then Trace( "Ex2" ) end
+	if IsEventMode() then Trace( "Event mode" ) end
+	if Passed or IsCourseMode() or
+		IsExtraStage() or IsExtraStage2()
+	then
+		Trace( "Go to evaluation screen" )
+		return SelectEvaluationScreen()
+	end
+
+	if IsEventMode() then
+		Trace( "Go to song selection screen" )
+		-- DeletePreparedScreens()
+		return SongSelectionScreen()
+	end
+
+	Trace( "ScreenGameOver" )
+	return "ScreenGameOver"
+end
+
