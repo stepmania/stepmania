@@ -15,6 +15,8 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(X_CFLAGS)
 
+LDADD = $(SDL_LIBS)
+
 $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && sh ./configure && make
 
