@@ -100,6 +100,7 @@ public:
 
 			if(		 sName == "together" )			defOut.bOneChoiceForAllPlayers = true;
 			else if( sName == "selectmultiple" )	defOut.selectType = SELECT_MULTIPLE;
+			else if( sName == "selectone" )			defOut.selectType = SELECT_ONE;
 			else if( sName == "selectnone" )		defOut.selectType = SELECT_NONE;
 			else if( sName == "showoneinrow" )		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 			else if( sName == "reloadrowmessages" )
