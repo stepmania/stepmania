@@ -306,7 +306,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		 * are run. */
 #define SET_ON( actor ) \
 	SET_XY_AND_ON_COMMAND( actor ); \
-	if( i != 0 ) \
+	if( m_FeatDisplay[p].size()>1 ) \
 	{ \
 		COMMAND( actor, "On" ); \
 		actor.FinishTweening(); \
@@ -331,6 +331,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				continue;	// skip
 
 			m_FeatDisplay[p].resize( m_FeatDisplay[p].size()+1 );
+			FeatDisplay &display = m_FeatDisplay[p].back();
 
 			const HighScoreList& hsl = 
 				GAMESTATE->IsCourseMode() ?
@@ -349,10 +350,10 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				}
 			}
 
- 			m_FeatDisplay[p][i].m_Wheel.SetName( ssprintf("WheelP%i",p+1) );
-			m_FeatDisplay[p][i].m_Wheel.Load( hsl, iHighScoreIndex );
-			SET_ON( m_FeatDisplay[p][i].m_Wheel );
-			this->AddChild( &m_FeatDisplay[p][i].m_Wheel );
+ 			display.m_Wheel.SetName( ssprintf("WheelP%i",p+1) );
+			display.m_Wheel.Load( hsl, iHighScoreIndex );
+			SET_ON( display.m_Wheel );
+			this->AddChild( &display.m_Wheel );
 
 			CString sBanner;
 			if( GAMESTATE->IsCourseMode() )
@@ -361,51 +362,51 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				sBanner = pSong->GetBannerPath();
 			if( !sBanner.empty() )
 			{
-				m_FeatDisplay[p][i].m_sprBanner.SetName( ssprintf("BannerP%i",p+1) );
-				m_FeatDisplay[p][i].m_sprBanner.Load( sBanner );
-				SET_ON( m_FeatDisplay[p][i].m_sprBanner );
-				this->AddChild( &m_FeatDisplay[p][i].m_sprBanner );
+				display.m_sprBanner.SetName( ssprintf("BannerP%i",p+1) );
+				display.m_sprBanner.Load( sBanner );
+				SET_ON( display.m_sprBanner );
+				this->AddChild( &display.m_sprBanner );
 			}
 
 			if( grade != GRADE_NO_DATA )
 			{
-				m_FeatDisplay[p][i].m_Grade.SetName( ssprintf("GradeP%i",p+1) );
-				m_FeatDisplay[p][i].m_Grade.Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
-				m_FeatDisplay[p][i].m_Grade.SetGrade( (PlayerNumber)p, grade );
-				SET_ON( m_FeatDisplay[p][i].m_Grade );
-				this->AddChild( &m_FeatDisplay[p][i].m_Grade );
+				display.m_Grade.SetName( ssprintf("GradeP%i",p+1) );
+				display.m_Grade.Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
+				display.m_Grade.SetGrade( (PlayerNumber)p, grade );
+				SET_ON( display.m_Grade );
+				this->AddChild( &display.m_Grade );
 			}
 
-			m_FeatDisplay[p][i].m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
-			m_FeatDisplay[p][i].m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
+			display.m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
+			display.m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
 			if( GAMESTATE->IsCourseMode() )
-				m_FeatDisplay[p][i].m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
+				display.m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
 			else
-				m_FeatDisplay[p][i].m_Difficulty.SetFromNotes( (PlayerNumber)p, pSteps );
-			SET_ON( m_FeatDisplay[p][i].m_Difficulty );
-			this->AddChild( &m_FeatDisplay[p][i].m_Difficulty );
+				display.m_Difficulty.SetFromNotes( (PlayerNumber)p, pSteps );
+			SET_ON( display.m_Difficulty );
+			this->AddChild( &display.m_Difficulty );
 
-			m_FeatDisplay[p][i].m_textScore.SetName( "ScreenNameEntryTraditional Percent" );
-			m_FeatDisplay[p][i].m_textScore.Load( (PlayerNumber)p, &ss, false );
-			m_FeatDisplay[p][i].m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
-			SET_ON( m_FeatDisplay[p][i].m_textScore );
-			this->AddChild( &m_FeatDisplay[p][i].m_textScore );
+			display.m_textScore.SetName( "ScreenNameEntryTraditional Percent" );
+			display.m_textScore.Load( (PlayerNumber)p, &ss, false );
+			display.m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
+			SET_ON( display.m_textScore );
+			this->AddChild( &display.m_textScore );
 
 //			if( feat.Feat != "" )
 //			{
-//				m_FeatDisplay[p][i].m_textCategory.SetName( ssprintf("CategoryP%i", p+1) );
-//				m_FeatDisplay[p][i].m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
-//				m_FeatDisplay[p][i].m_textCategory.SetText( feat.Feat );
-//				SET_ON( m_FeatDisplay[p][i].m_textCategory );
-//				this->AddChild( &m_FeatDisplay[p][i].m_textCategory );
+//				display.m_textCategory.SetName( ssprintf("CategoryP%i", p+1) );
+//				display.m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
+//				display.m_textCategory.SetText( feat.Feat );
+//				SET_ON( display.m_textCategory );
+//				this->AddChild( &display.m_textCategory );
 //			}
 
 			/* We always show the banner frame (if any), because fading from a graphic to
 			 * itself is ugly. */
-			m_FeatDisplay[p][i].m_sprBannerFrame.SetName( ssprintf("BannerFrameP%i",p+1) );
-			m_FeatDisplay[p][i].m_sprBannerFrame.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
-			SET_XY_AND_ON_COMMAND( m_FeatDisplay[p][i].m_sprBannerFrame );
-			this->AddChild( &m_FeatDisplay[p][i].m_sprBannerFrame );
+			display.m_sprBannerFrame.SetName( ssprintf("BannerFrameP%i",p+1) );
+			display.m_sprBannerFrame.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
+			SET_XY_AND_ON_COMMAND( display.m_sprBannerFrame );
+			this->AddChild( &display.m_sprBannerFrame );
 		}
 #undef SET_ON
 	}
