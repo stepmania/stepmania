@@ -33,7 +33,9 @@ Command::Arg Command::GetArg( unsigned index ) const
 
 Command::Arg::operator CString ()
 {
-	return s;
+	CString sValue = s;
+	LUA->RunAtExpression( sValue );
+	return sValue;
 }
 
 Command::Arg::operator float ()

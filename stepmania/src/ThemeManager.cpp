@@ -294,9 +294,9 @@ void ThemeManager::UpdateLuaGlobals()
 	/* Run all script files in Lua for all themes.  Start from the deepest fallback
 	 * theme and work outwards. */
 	deque<Theme>::const_iterator iter = g_vThemes.end();
-	--iter;
 	do
 	{
+		--iter;
 		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
 		CStringArray asElementPaths;
 		GetDirListing( sThemeDir + "Scripts/*.lua", asElementPaths, false, true );
@@ -669,16 +669,8 @@ void ThemeManager::EvaluateString( CString &sText )
 {
 	/* If the string begins with an @, treat it as a raw Lua expression, and don't do any
 	 * other filtering.  (XXX: maybe we should still do font aliases) */
-	if( sText.size() >= 1 && sText[0] == '@' )
-	{
-		/* Erase "@". */
-		sText.erase( 0, 1 );
-
-		CString sOut;
-		LUA->RunExpressionS( sText, sOut );
-		sText = sOut;
+	if( LUA->RunAtExpression( sText ) )
 		return;
-	}
 
 	// "::" means newline since you can't use line breaks in an ini file.
 	// XXX: this makes it impossible to put a colon at the end of a line, eg: "Color:\nRed"

@@ -23,6 +23,9 @@ public:
 	float RunExpressionF( const CString &str );
 	bool RunExpressionS( const CString &str, CString &sOut );
 
+	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
+	bool RunAtExpression( CString &sStr );
+
 	void Fail( const CString &err );
 
 	void SetGlobal( const CString &sName, int val ) { PushStack(val); SetGlobal( sName ); }
