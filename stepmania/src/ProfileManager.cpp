@@ -970,6 +970,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 #define PRINT_LINE_B(szName,bVal) 				f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",szName,(bVal)?"yes":"no") )
 #define PRINT_LINE_I(szName,iVal) 				f.Write( ssprintf("<p>%s = <b>%d</b></p>\n",szName,iVal) )
 #define PRINT_LINE_RANK(iRank,sName,iVal)		f.Write( ssprintf("<p><b>%d</b> - %s (%d)</p>\n",iRank,sName.c_str(),iVal) )
+#define PRINT_LINE_RANK_LINK(iRank,sName,szLink,iVal)		f.Write( ssprintf("<p><b>%d</b> - <a href='%s'>%s</a> (%d)</p>\n",iRank,szLink,sName.c_str(),iVal) )
 
 	//
 	// Print table of contents
@@ -1072,7 +1073,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
 				Song* pSong = vpSongs[i];
-				PRINT_LINE_RANK( i+1, pSong->GetFullDisplayTitle(), pSong->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, pSong->GetFullDisplayTitle(), ssprintf("#%u",pSong).c_str(), pSong->GetNumTimesPlayed(mc) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1093,7 +1094,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 				s += " ";
 				s += DifficultyToString(pSteps->GetDifficulty());
-				PRINT_LINE_RANK( i+1, s, pSteps->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, s, ssprintf("#%u",pSteps).c_str(), pSteps->GetNumTimesPlayed(mc) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1107,7 +1108,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
 				Course* pCourse = vpCourses[i];
-				PRINT_LINE_RANK( i+1, pCourse->m_sName, pCourse->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, pCourse->m_sName, ssprintf("#%u",pCourse).c_str(), pCourse->GetNumTimesPlayed(mc) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1215,6 +1216,15 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 					DifficultyToString(pSteps->GetDifficulty());
 				PRINT_DIV2_START_ANCHOR( /*Steps primary key*/pSteps, s.c_str() );	// use pointer value as the hash
 				PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[mc].iNumTimesPlayed );
+				
+				vector<Steps::MemCardData::HighScore>& vHighScores = pSteps->m_MemCardDatas[mc].vHighScores;
+				for( int i=0; i<vHighScores.size(); i++ )
+				{
+					Steps::MemCardData::HighScore &hs = vHighScores[i];
+					CString sName = ssprintf("#%d",i+1);
+					CString sValue = ssprintf("%s, %s, %i, %.2f%%", hs.sName.c_str(), GradeToString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);
+					PRINT_LINE_S( sName.c_str(), sValue );
+				}
 				f.PutLine( "</div>\n" );
 				PRINT_DIV2_END;
 			}

@@ -1123,18 +1123,18 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	name.MakeUpper();
 	RageFile file(NAMES_BLACKLIST_FILE);
 		
-		if (file.IsOpen())
+	if (file.IsOpen())
+	{
+		CString line;
+		
+		while (!file.AtEOF())
 		{
-			CString line;
-			
-			while (!file.AtEOF())
-			{
-				line = file.GetLine();
-				line.MakeUpper();
-				if (name.Find(line) != -1)
-					name = "";
-			}
+			line = file.GetLine();
+			line.MakeUpper();
+			if( !line.empty() && name.Find(line) != -1 )	// name contains a bad word
+				name = "";
 		}
+	}
 
 	vector<RankingFeats> aFeats;
 	GetRankingFeats( pn, aFeats );
