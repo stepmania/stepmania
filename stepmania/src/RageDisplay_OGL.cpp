@@ -31,18 +31,24 @@ typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 
 /* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,
  * so they can be called like regular functions. */
-namespace GLExt {
-	extern PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
-	extern PFNGLCOLORTABLEPROC glColorTableEXT;
-	extern PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
-	extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-	extern PFNGLGENBUFFERSARBPROC glGenBuffersARB;
-	extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
-	extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
-	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
-	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
-	extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
-};
+static struct
+{
+	PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+	PFNGLCOLORTABLEPROC glColorTableEXT;
+	PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
+	PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+	PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+	PFNGLBINDBUFFERARBPROC glBindBufferARB;
+	PFNGLBUFFERDATAARBPROC glBufferDataARB;
+	PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
+	PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+	PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
+	
+	void Reset()
+	{
+		memset( this, 0, sizeof(*this) );
+	}
+} GLExt;
 
 #if defined(DARWIN)
 #include "archutils/Darwin/Vsync.h"
@@ -75,16 +81,6 @@ namespace GLExt {
 // Globals
 //
 
-PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT = NULL;
-PFNGLCOLORTABLEPROC GLExt::glColorTableEXT = NULL;
-PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
-PFNGLACTIVETEXTUREARBPROC GLExt::glActiveTextureARB = NULL;
-PFNGLGENBUFFERSARBPROC GLExt::glGenBuffersARB = NULL;
-PFNGLBINDBUFFERARBPROC GLExt::glBindBufferARB = NULL;
-PFNGLBUFFERDATAARBPROC GLExt::glBufferDataARB = NULL;
-PFNGLBUFFERSUBDATAARBPROC GLExt::glBufferSubDataARB = NULL;
-PFNGLDELETEBUFFERSARBPROC GLExt::glDeleteBuffersARB = NULL;
-PFNGLDRAWRANGEELEMENTSPROC GLExt::glDrawRangeElements = NULL;
 static bool g_bEXT_texture_env_combine = true;
 static bool g_bGL_EXT_bgra = true;
 
@@ -317,10 +313,10 @@ static void FlushGLErrors()
 
 static void TurnOffHardwareVBO()
 {
-	if( GLExt::glBindBufferARB )
+	if( GLExt.glBindBufferARB )
 	{
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
+		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 }
 
@@ -515,13 +511,13 @@ static void CheckPalettedTextures()
 			break;
 		}
 
-		if( GLExt::glColorTableEXT == NULL )
+		if( GLExt.glColorTableEXT == NULL )
 		{
 			error = "glColorTableEXT missing";
 			break;
 		}
 
-		if( GLExt::glGetColorTableParameterivEXT == NULL )
+		if( GLExt.glGetColorTableParameterivEXT == NULL )
 		{
 			error = "glGetColorTableParameterivEXT missing";
 			break;
@@ -563,7 +559,7 @@ static void CheckPalettedTextures()
 
 		GLubyte palette[256*4];
 		memset(palette, 0, sizeof(palette));
-		GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+		GLExt.glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 		GL_CHECK_ERROR( "glColorTableEXT" );
 
 		GLint size = 0;
@@ -576,7 +572,7 @@ static void CheckPalettedTextures()
 		}
 
 		GLint RealWidth = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH, &RealWidth);
+		GLExt.glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH, &RealWidth);
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH)" );
 		if( RealWidth != 1 << bits )
 		{
@@ -585,7 +581,7 @@ static void CheckPalettedTextures()
 		}
 
 		GLint RealFormat = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
+		GLExt.glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_FORMAT)" );
 		if( RealFormat != GL_RGBA8 )
 		{
@@ -600,8 +596,8 @@ static void CheckPalettedTextures()
 
 	/* If 8-bit palettes don't work, disable them entirely--don't trust 4-bit
 	 * palettes if it can't even get 8-bit ones right. */
-	GLExt::glColorTableEXT = NULL;
-	GLExt::glGetColorTableParameterivEXT = NULL;
+	GLExt.glColorTableEXT = NULL;
+	GLExt.glGetColorTableParameterivEXT = NULL;
 	LOG->Info("Paletted textures disabled: %s.", error.c_str());
 }
 
@@ -634,21 +630,23 @@ void SetupExtensions()
 	const float fGLUVersion = (float) atof( (const char *) gluGetString(GLU_VERSION) );
 	g_gluVersion = int(roundf(fGLUVersion * 10));
 
-	/* Find extension functions and reset broken flags */
+	/* Find extension functions. */
+	GLExt.Reset();
+	
 #if !defined(DARWIN)
-	GLExt::wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
+	GLExt.wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
 #else
-    GLExt::wglSwapIntervalEXT = wglSwapIntervalEXT;
+    GLExt.wglSwapIntervalEXT = wglSwapIntervalEXT;
 #endif
-	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
-	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
-	GLExt::glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
-	GLExt::glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
-	GLExt::glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
-	GLExt::glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
-	GLExt::glBufferSubDataARB = (PFNGLBUFFERSUBDATAARBPROC) wind->GetProcAddress("glBufferSubDataARB");
-	GLExt::glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
-	GLExt::glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
+	GLExt.glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
+	GLExt.glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
+	GLExt.glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
+	GLExt.glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
+	GLExt.glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
+	GLExt.glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
+	GLExt.glBufferSubDataARB = (PFNGLBUFFERSUBDATAARBPROC) wind->GetProcAddress("glBufferSubDataARB");
+	GLExt.glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
+	GLExt.glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures();
@@ -774,8 +772,8 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
-	if( GLExt::wglSwapIntervalEXT )
-	    GLExt::wglSwapIntervalEXT(p.vsync);
+	if( GLExt.wglSwapIntervalEXT )
+	    GLExt.wglSwapIntervalEXT(p.vsync);
 	
 	ResolutionChanged();
 
@@ -1013,13 +1011,13 @@ RageCompiledGeometryHWOGL::~RageCompiledGeometryHWOGL()
 	g_GeometryList.erase( this );
 	FlushGLErrors();
 
-	GLExt::glDeleteBuffersARB( 1, &m_nPositions );
+	GLExt.glDeleteBuffersARB( 1, &m_nPositions );
 	AssertNoGLError();
-	GLExt::glDeleteBuffersARB( 1, &m_nTextureCoords );
+	GLExt.glDeleteBuffersARB( 1, &m_nTextureCoords );
 	AssertNoGLError();
-	GLExt::glDeleteBuffersARB( 1, &m_nNormals );
+	GLExt.glDeleteBuffersARB( 1, &m_nNormals );
 	AssertNoGLError();
-	GLExt::glDeleteBuffersARB( 1, &m_nTriangles );
+	GLExt.glDeleteBuffersARB( 1, &m_nTriangles );
 	AssertNoGLError();
 }
 
@@ -1029,57 +1027,57 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 
 	if( !m_nPositions )
 	{
-		GLExt::glGenBuffersARB( 1, &m_nPositions );
+		GLExt.glGenBuffersARB( 1, &m_nPositions );
 		AssertNoGLError();
 	}
 
 	if( !m_nTextureCoords )
 	{
-		GLExt::glGenBuffersARB( 1, &m_nTextureCoords );
+		GLExt.glGenBuffersARB( 1, &m_nTextureCoords );
 		AssertNoGLError();
 	}
 
 	if( !m_nNormals )
 	{
-		GLExt::glGenBuffersARB( 1, &m_nNormals );
+		GLExt.glGenBuffersARB( 1, &m_nNormals );
 		AssertNoGLError();
 	}
 
 	if( !m_nTriangles )
 	{
-		GLExt::glGenBuffersARB( 1, &m_nTriangles );
+		GLExt.glGenBuffersARB( 1, &m_nTriangles );
 		AssertNoGLError();
 	}
 }
 
 void RageCompiledGeometryHWOGL::UploadData()
 {
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		&m_vPosition[0], 
 		GL_STATIC_DRAW_ARB );
 //		AssertNoGLError();
 
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
 		&m_vTexture[0], 
 		GL_STATIC_DRAW_ARB );
 //		AssertNoGLError();
 
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		&m_vNormal[0], 
 		GL_STATIC_DRAW_ARB );
 //		AssertNoGLError();
 
-	GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	GLExt.glBufferDataARB( 
 		GL_ELEMENT_ARRAY_BUFFER_ARB, 
 		GetTotalTriangles()*sizeof(msTriangle), 
 		&m_vTriangles[0], 
@@ -1099,32 +1097,32 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
 	
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
 	AssertNoGLError();
 
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
 	AssertNoGLError();
 
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
 	AssertNoGLError();
 
-	GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	GLExt::glBufferDataARB( 
+	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	GLExt.glBufferDataARB( 
 		GL_ELEMENT_ARRAY_BUFFER_ARB, 
 		GetTotalTriangles()*sizeof(msTriangle), 
 		NULL, 
@@ -1148,7 +1146,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		return;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	AssertNoGLError();
 	glVertexPointer(3, GL_FLOAT, 0, NULL );
 	AssertNoGLError();
@@ -1156,7 +1154,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	glDisableClientState(GL_COLOR_ARRAY);
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 	AssertNoGLError();
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 	AssertNoGLError();
@@ -1172,7 +1170,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	if( bLighting || bTextureGenS || bTextureGenT )
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 		AssertNoGLError();
 		glNormalPointer(GL_FLOAT, 0, NULL);
 		AssertNoGLError();
@@ -1182,13 +1180,13 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		glDisableClientState(GL_NORMAL_ARRAY);
 	}
 
-	GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
 	AssertNoGLError();
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
-	ASSERT( GLExt::glDrawRangeElements);
-	GLExt::glDrawRangeElements( 
+	ASSERT( GLExt.glDrawRangeElements);
+	GLExt.glDrawRangeElements( 
 		GL_TRIANGLES, 
 		meshInfo.iVertexStart,	// minimum array index contained in indices
 		meshInfo.iVertexStart+meshInfo.iVertexCount-1,
@@ -1201,7 +1199,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 RageCompiledGeometry* RageDisplay_OGL::CreateCompiledGeometry()
 {
-	if( GLExt::glGenBuffersARB )
+	if( GLExt.glGenBuffersARB )
 		return new RageCompiledGeometryHWOGL;
 	else
 		return new RageCompiledGeometrySWOGL;
@@ -1343,13 +1341,13 @@ void RageDisplay_OGL::ClearAllTextures()
 
 	// HACK:  Reset the active texture to 0.
 	// TODO:  Change all texture functions to take a stage number.
-	if( GLExt::glActiveTextureARB )
-		GLExt::glActiveTextureARB(GL_TEXTURE0_ARB);
+	if( GLExt.glActiveTextureARB )
+		GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 
 void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 {
-	if( GLExt::glActiveTextureARB == NULL )
+	if( GLExt.glActiveTextureARB == NULL )
 	{
 		// multitexture isn't supported.  Ignore all textures except for 0.
 		if( iTextureUnitIndex != 0 )
@@ -1360,10 +1358,10 @@ void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 		switch( iTextureUnitIndex )
 		{
 		case 0:
-			GLExt::glActiveTextureARB(GL_TEXTURE0_ARB);
+			GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
 			break;
 		case 1:
-			GLExt::glActiveTextureARB(GL_TEXTURE1_ARB);
+			GLExt.glActiveTextureARB(GL_TEXTURE1_ARB);
 			break;
 		default:
 			ASSERT(0);
@@ -1716,10 +1714,10 @@ unsigned RageDisplay_OGL::CreateTexture(
 		}
 
 		/* Set the palette. */
-		GLExt::glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+		GLExt.glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 
 		GLint RealFormat = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
+		GLExt.glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
 		ASSERT( RealFormat == GL_RGBA8);	/* This is a case I don't expect to happen. */
 	}
 
@@ -1880,7 +1878,7 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 	switch( GL_PIXFMT_INFO[pixfmt].format )
 	{
 	case GL_COLOR_INDEX:
-		return GLExt::glColorTableEXT && GLExt::glGetColorTableParameterivEXT;
+		return GLExt.glColorTableEXT && GLExt.glGetColorTableParameterivEXT;
 	case GL_BGR:
 	case GL_BGRA:
 		return g_bGL_EXT_bgra;
