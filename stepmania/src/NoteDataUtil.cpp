@@ -171,7 +171,11 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 					}
 				}
 
-				out.SetTapNote( iTrack, iIndex, tn );
+				/* Optimization: if we pass TAP_EMPTY, NoteData will do a search
+				 * to remove anything in this position.  We know that there's nothing
+				 * there, so avoid the search. */
+				if( tn.type != TapNote::empty )
+					out.SetTapNote( iTrack, iIndex, tn );
 
 				iTrack++;
 			}
