@@ -98,9 +98,6 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"CDTITLE") )
 			out.m_sCDTitleFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"MOVIEBACKGROUND") )
-			out.m_sMovieBackgroundFile = sParams[1];
-
 		else if( 0==stricmp(sValueName,"MUSIC") )
 			out.m_sMusicFile = sParams[1];
 
@@ -179,7 +176,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"BGCHANGES") )
+		else if( 0==stricmp(sValueName,"BGCHANGES") || 0==stricmp(sValueName,"ANIMATIONS") )
 		{
 			CStringArray aBGChangeExpressions;
 			split( sParams[1], ",", aBGChangeExpressions );

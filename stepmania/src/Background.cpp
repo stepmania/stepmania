@@ -110,22 +110,6 @@ void Background::LoadFromSong( Song* pSong )
 	const float fXZoom = RECTWIDTH(RECT_BACKGROUND) / (float)SCREEN_WIDTH;
 	const float fYZoom = RECTHEIGHT(RECT_BACKGROUND) / (float)SCREEN_HEIGHT;
 
-
-	//
-	// figure out what BackgroundMode to use
-	//
-	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
-		m_BackgroundMode = MODE_STATIC_BG;
-	else if( pSong->HasMovieBackground() )
-		m_BackgroundMode = MODE_MOVIE_BG;
-	else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_MOVIEVIS )
-		m_BackgroundMode = MODE_MOVIE_VIS;
-	else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_RANDOMMOVIES )
-		m_BackgroundMode = MODE_RANDOMMOVIES;
-	else
-		m_BackgroundMode = MODE_ANIMATIONS;
-
-
 	const CString sSongBackgroundPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background");
 
 	//
@@ -165,9 +149,9 @@ void Background::LoadFromSong( Song* pSong )
 			CStringArray asFiles;
 
 			// Look for movies in the song dir
-			GetDirListing( pSong->m_sSongDir+"movies\\"+aniseg.m_sBGName+".avi", asFiles, false, true );
-			GetDirListing( pSong->m_sSongDir+"movies\\"+aniseg.m_sBGName+".mpg", asFiles, false, true );
-			GetDirListing( pSong->m_sSongDir+"movies\\"+aniseg.m_sBGName+".mpeg", asFiles, false, true );
+			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName+".avi", asFiles, false, true );
+			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName+".mpg", asFiles, false, true );
+			GetDirListing( pSong->m_sSongDir+aniseg.m_sBGName+".mpeg", asFiles, false, true );
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BGAnimation;
@@ -227,18 +211,24 @@ void Background::LoadFromSong( Song* pSong )
 	else	// pSong doesn't have an animation plan
 	{
 		//
+		// figure out what BackgroundMode to use
+		//
+		if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
+			m_BackgroundMode = MODE_STATIC_BG;
+		else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_MOVIEVIS )
+			m_BackgroundMode = MODE_MOVIE_VIS;
+		else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_RANDOMMOVIES )
+			m_BackgroundMode = MODE_RANDOMMOVIES;
+		else
+			m_BackgroundMode = MODE_ANIMATIONS;
+
+
+		//
 		// Load animations that will play while notes are active
 		//
 		switch( m_BackgroundMode )
 		{
 		case MODE_STATIC_BG:
-			break;
-		case MODE_MOVIE_BG:
-			{
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromMovie( pSong->GetMovieBackgroundPath(), false, true, true, sSongBackgroundPath );
-				m_BGAnimations.Add( pTempBGA );
-			}
 			break;
 		case MODE_MOVIE_VIS:
 			{
@@ -310,10 +300,7 @@ void Background::LoadFromSong( Song* pSong )
 		/* If we have only 2, only generate a single animation segment for for the
 		 * whole song.  Otherwise, if it's a movie., it'll loop every four bars; we
 		 * want it to play continuously. */
-		float fMusicStartBeat, fBPS;
-		bool bFreeze;
-		pSong->GetBeatAndBPSFromElapsedTime( -pSong->m_fBeat0OffsetInSeconds, fMusicStartBeat, fBPS, bFreeze );
-		const float fFirstBeat = (m_BackgroundMode==MODE_MOVIE_BG) ? fMusicStartBeat : pSong->m_fFirstBeat;
+		const float fFirstBeat = pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
 		if( m_BGAnimations.GetSize() == 2) {

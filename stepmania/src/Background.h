@@ -53,7 +53,7 @@ public:
 protected:
 	bool DangerVisible();
 
-	enum BackgroundMode { MODE_STATIC_BG, MODE_MOVIE_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
+	enum BackgroundMode { MODE_STATIC_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
 	BackgroundMode		m_BackgroundMode;
 		
 	BGAnimation		m_BGADanger;

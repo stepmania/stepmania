@@ -122,13 +122,11 @@ public:
 	CString	m_sBannerFile;
 	CString	m_sBackgroundFile;
 	CString	m_sCDTitleFile;
-	CString	m_sMovieBackgroundFile;
 
 	CString GetMusicPath() const;
 	CString GetBannerPath() const;
 	CString GetBackgroundPath() const;
 	CString GetCDTitlePath() const;
-	CString GetMovieBackgroundPath() const;
 
 
 	bool HasMusic() const;

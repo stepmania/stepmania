@@ -385,7 +385,7 @@ void Song::TidyUpData()
 
 		if( arrayPossibleMusic.GetSize() > 0 )		// we found a match
 			m_sMusicFile = arrayPossibleMusic[0];
-		// Chris:  Don't throw on missing music
+//		Don't throw on missing music.  -Chris
 //		else
 //			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
 	}
@@ -507,8 +507,9 @@ void Song::TidyUpData()
 	}
 
 
-
-	if( !HasMovieBackground() )
+	// If no BGChanges are specified and there are movies in the song directory, then assume
+	// they are DWI style where the movie begins at beat 0.
+	if( !HasBGChanges() )
 	{
 		CStringArray arrayPossibleMovies;
 		GetDirListing( m_sSongDir + CString("*movie*.avi"), arrayPossibleMovies );
@@ -518,7 +519,20 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
 		if( arrayPossibleMovies.GetSize() > 0 )
-			m_sMovieBackgroundFile = arrayPossibleMovies[0];
+		{
+			CString sBGMovieFile = arrayPossibleMovies[0];
+			
+			// strip off extension from file name
+			CString sDir, sFName, sExt;
+			splitrelpath( sBGMovieFile, sDir, sFName, sExt );
+
+			// calculate start beat of music
+			float fMusicStartBeat, fBPS;
+			bool bFreeze;
+			this->GetBeatAndBPSFromElapsedTime( -this->m_fBeat0OffsetInSeconds, fMusicStartBeat, fBPS, bFreeze );
+
+			this->AddBackgroundChange( BackgroundChange(fMusicStartBeat,sFName) );
+		}
 	}
 
 	//
@@ -655,7 +669,6 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile );
 	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile );
 	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile );
-	fprintf( fp, "#MOVIEBACKGROUND:%s;\n", m_sMovieBackgroundFile );
 	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile );
 	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
 	fprintf( fp, "#MUSICLENGTH:%.2f;\n", m_fMusicLengthSeconds );
@@ -983,7 +996,6 @@ bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPa
 bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); };
 bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
-bool Song::HasMovieBackground() const {return m_sMovieBackgroundFile != ""&&  IsAFile(GetMovieBackgroundPath()); };
 bool Song::HasBGChanges() const 	{return m_BackgroundChanges.GetSize() > 0; };
 
 int Song::GetNumTimesPlayed() const
@@ -1045,10 +1057,6 @@ CString Song::GetBannerPath() const
 	return m_sSongDir+m_sBannerFile;
 }
 
-CString Song::GetBackgroundPath() const
-{
-	return m_sSongDir+m_sBackgroundFile;
-}
 CString Song::GetCDTitlePath() const
 {
 	if( m_sCDTitleFile.Find('\\') == -1)
@@ -1060,7 +1068,7 @@ CString Song::GetCDTitlePath() const
 	return m_sCDTitleFile;
 }
 
-CString Song::GetMovieBackgroundPath() const
+CString Song::GetBackgroundPath() const
 {
-	return m_sSongDir+m_sMovieBackgroundFile;
+	return m_sSongDir+m_sBackgroundFile;
 }
