@@ -279,8 +279,32 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 		(*p)->Read();
 }
 
+void ThemeManager::RunLuaScripts( const CString &sMask )
+{
+	/* Run all script files with the given mask in Lua for all themes.  Start
+	 * from the deepest fallback theme and work outwards. */
+	deque<Theme>::const_iterator iter = g_vThemes.end();
+	do
+	{
+		--iter;
+		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
+		CStringArray asElementPaths;
+		GetDirListing( sThemeDir + "Scripts/" + sMask, asElementPaths, false, true );
+		for( unsigned i = 0; i < asElementPaths.size(); ++i )
+		{
+			const CString &sPath = asElementPaths[i];
+			LOG->Trace( "Loading \"%s\" ...", sPath.c_str() );
+			LUA->RunScriptFile( sPath );
+		}
+	}
+	while( iter != g_vThemes.begin() );
+}
+
 void ThemeManager::UpdateLuaGlobals()
 {
+	/* Ugly: we need Serialize.lua to be loaded in order to be able to ResetState,
+	 * but everything else should be able to depend on globals being set. */
+	RunLuaScripts( "Serialize.lua" );
 	LUA->ResetState();
 
 	/* Important: explicitly refresh cached metrics that we use. */
@@ -296,23 +320,7 @@ void ThemeManager::UpdateLuaGlobals()
 	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
 
-	/* Run all script files in Lua for all themes.  Start from the deepest fallback
-	 * theme and work outwards. */
-	deque<Theme>::const_iterator iter = g_vThemes.end();
-	do
-	{
-		--iter;
-		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
-		CStringArray asElementPaths;
-		GetDirListing( sThemeDir + "Scripts/*.lua", asElementPaths, false, true );
-		for( unsigned i = 0; i < asElementPaths.size(); ++i )
-		{
-			const CString &sPath = asElementPaths[i];
-			LOG->Trace( "Loading \"%s\" ...", sPath.c_str() );
-			LUA->RunScriptFile( sPath );
-		}
-	}
-	while( iter != g_vThemes.begin() );
+	RunLuaScripts( "*.lua" );
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
