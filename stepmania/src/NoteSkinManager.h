@@ -32,7 +32,7 @@ public:
 
 	CString GetPathTo( PlayerNumber pn, int col, CString sFileName );
 	CString GetPathTo( PlayerNumber pn, CString sButtonName, CString sFileName );
-	CString GetPathTo( CString sSkinName, CString sButtonName, CString sFileName );
+	CString GetPathTo( CString sSkinName, CString sButtonName, CString sFileName, bool bGlobalDefault = false );
 
 	CString		GetMetric( PlayerNumber pn, CString sButtonName, CString sValueName );
 	int			GetMetricI( PlayerNumber pn, CString sButtonName, CString sValueName );
@@ -40,7 +40,7 @@ public:
 	bool		GetMetricB( PlayerNumber pn, CString sButtonName, CString sValueName );
 	RageColor	GetMetricC( PlayerNumber pn, CString sButtonName, CString sValueName );
 
-	static CString NoteSkinManager::ColToButtonName(int col);
+	static CString ColToButtonName(int col);
 
 	CString GetNoteSkinDir( CString sSkinName );
 

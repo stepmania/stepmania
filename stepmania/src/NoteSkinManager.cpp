@@ -25,8 +25,9 @@
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
 
 
-const CString BASE_NOTESKIN_NAME = "default";
 const CString NOTESKINS_DIR = BASE_PATH "NoteSkins" SLASH;
+const CString GAME_BASE_NOTESKIN_NAME = "default";
+const CString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common" SLASH "default" SLASH;
 
 NoteSkinManager::NoteSkinManager()
 {
@@ -64,15 +65,29 @@ void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& dat
 	data_out.sName = sNoteSkinName;
 	data_out.metrics.Reset();
 
-	/* Read only the default keys from the default noteskin. */
-	IniFile defaults;
-	defaults.SetPath( GetNoteSkinDir(BASE_NOTESKIN_NAME)+"metrics.ini" );
-	defaults.ReadFile();
-	const IniFile::key *def = defaults.GetKey("NoteDisplay");
-	if(def)
-		data_out.metrics.SetValue("NoteDisplay", *def);
+	///* Read only the default keys from the default noteskin. */
+	//IniFile defaults;
+	//defaults.SetPath( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
+	//defaults.ReadFile();
+	//defaults.SetPath( GetNoteSkinDir(BASE_NOTESKIN_NAME)+"metrics.ini" );
+	//defaults.ReadFile();
 
-	/* Read the active theme. */
+	// Why only use NoteDisplay?  Now, a few different classes take 
+	// metrics from the NoteSkin.  -Chris
+	//const IniFile::key *def = defaults.GetKey("NoteDisplay");
+	//if(def)
+	//	data_out.metrics.SetValue("NoteDisplay", *def);
+
+
+	/* Load global NoteSkin defaults */
+	data_out.metrics.SetPath( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
+	data_out.metrics.ReadFile();
+
+	/* Load game NoteSkin defaults */
+	data_out.metrics.SetPath( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME)+"metrics.ini" );
+	data_out.metrics.ReadFile();
+
+	/* Read the active NoteSkin */
 	data_out.metrics.SetPath( GetNoteSkinDir(sNoteSkinName)+"metrics.ini" );
 	data_out.metrics.ReadFile();	
 }
@@ -111,9 +126,9 @@ bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName )
 
 CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 {
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	CString sGame = GAMESTATE->GetCurrentGameDef()->m_szName;
 
-	return NOTESKINS_DIR + pGameDef->m_szName + SLASH + sSkinName + SLASH;
+	return NOTESKINS_DIR + sGame + SLASH + sSkinName + SLASH;
 }
 
 CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style
@@ -180,26 +195,36 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName 
 
 CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CString sFileName )	// looks in GAMESTATE for the current Style
 {
+	// search active NoteSkin
 	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
 	sNoteSkinName.MakeLower();
 
 	CString ret = GetPathTo( sNoteSkinName, sButtonName, sFileName );
 	if( !ret.empty() )	// we found something
 		return ret;
-	ret = GetPathTo( BASE_NOTESKIN_NAME, sButtonName, sFileName);
 
-	if( ret.empty() )
-		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s' or '%s'.", 
+	// Search game default NoteSkin
+	ret = GetPathTo( GAME_BASE_NOTESKIN_NAME, sButtonName, sFileName);
+	if( !ret.empty() )	// we found something
+		return ret;
+
+	// Search global default NoteSkin
+	ret = GetPathTo( GAME_BASE_NOTESKIN_NAME, "Fallback", sFileName, true );
+	if( !ret.empty() )	// we found something
+		return ret;
+
+	RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
 		sButtonName.c_str(), sFileName.c_str(), 
 		GetNoteSkinDir(sNoteSkinName).c_str(),
-		GetNoteSkinDir(BASE_NOTESKIN_NAME).c_str() );
+		GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
+		GAME_BASE_NOTESKIN_NAME.c_str() );
 
 	return ret;
 }
 
-CString NoteSkinManager::GetPathTo( CString sSkinName, CString sButtonName, CString sElementName )	// looks in GAMESTATE for the current Style
+CString NoteSkinManager::GetPathTo( CString sSkinName, CString sButtonName, CString sElementName, bool bGlobalDefault )	// looks in GAMESTATE for the current Style
 {
-	const CString sDir = GetNoteSkinDir( sSkinName );
+	const CString sDir = bGlobalDefault ? GLOBAL_BASE_NOTESKIN_DIR : GetNoteSkinDir( sSkinName );
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
 
