@@ -117,13 +117,13 @@ PrefsManager::PrefsManager()
 	m_iGradeWeightNG = 0;
 	m_iNumGradeTiersUsed = 7;
 	for( int i=0; i<NUM_GRADE_TIERS; i++ )
-		m_fGradePercentTier[i] = 0;
-	m_fGradePercentTier[GRADE_TIER_1] = 1.0f;
-	m_fGradePercentTier[GRADE_TIER_2] = 1.0f;
-	m_fGradePercentTier[GRADE_TIER_3] = 0.93f;	// AA
-	m_fGradePercentTier[GRADE_TIER_4] = 0.80f;	// A
-	m_fGradePercentTier[GRADE_TIER_5] = 0.65f;	// B
-	m_fGradePercentTier[GRADE_TIER_6] = 0.45f;	// C
+		m_fGradePercent[i] = 0;
+	m_fGradePercent[GRADE_TIER_1] = 1.0f;
+	m_fGradePercent[GRADE_TIER_2] = 1.0f;
+	m_fGradePercent[GRADE_TIER_3] = 0.93f;	// AA
+	m_fGradePercent[GRADE_TIER_4] = 0.80f;	// A
+	m_fGradePercent[GRADE_TIER_5] = 0.65f;	// B
+	m_fGradePercent[GRADE_TIER_6] = 0.45f;	// C
 	m_bGradeTier02IsAllPerfects = true;
 	
 	m_fSuperMeterPercentChangeMarvelous =	+0.05f;
@@ -385,7 +385,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	{
 		Grade grade = (Grade)g;
 		CString s = GradeToString( grade );
-		ini.GetValue( "Options", "GradePercentTier"+s,			m_fGradePercentTier[g] );
+		ini.GetValue( "Options", "GradePercent"+s,				m_fGradePercent[g] );
 	}
 	ini.GetValue( "Options", "GradeTier02IsAllPerfects",		m_bGradeTier02IsAllPerfects );
 
@@ -600,7 +600,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	{
 		Grade grade = (Grade)g;
 		CString s = GradeToString( grade );
-		ini.SetValue( "Options", "GradePercentTier"+s,			m_fGradePercentTier[g] );
+		ini.SetValue( "Options", "GradePercentTier"+s,			m_fGradePercent[g] );
 	}
 	ini.SetValue( "Options", "GradeTier02IsAllPerfects",		m_bGradeTier02IsAllPerfects );
 

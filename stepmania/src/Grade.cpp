@@ -74,7 +74,7 @@ Grade StringToGrade( const CString &sGrade )
 	else if( s == "NODATA" )	return GRADE_NO_DATA;
 
 	int iTier;
-	if( sscanf(sGrade.c_str(),"TIER%02d",&iTier) == 1 )	// if it's a two digit number...
+	if( sscanf(sGrade.c_str(),"TIER%02d",&iTier) == 1 )
 		return (Grade)(iTier-1);
 
 	ASSERT(0);

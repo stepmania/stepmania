@@ -190,7 +190,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 
 	for( int g=0; g<NUM_GRADE_TIERS; g++ )
 	{
-		if( fPercent >= PREFSMAN->m_fGradePercentTier[g]-ROUNDING_ERROR )
+		if( fPercent >= PREFSMAN->m_fGradePercent[g]-ROUNDING_ERROR )
 		{
 			grade = (Grade)g;
 			break;
