@@ -202,7 +202,7 @@ void RageLog::Write( int where, CString str)
 #ifdef DEBUG
 	Flush();
 #else
-	if(where & WRITE_TO_INFO)
+	if( (PREFSMAN && PREFSMAN->m_bDebugMode) || (where & WRITE_TO_INFO) )
 		Flush();
 #endif
 }
