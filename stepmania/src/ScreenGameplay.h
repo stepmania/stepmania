@@ -124,7 +124,7 @@ protected:
 	BitmapText			m_textDebug;
 
 	RageTimer			m_GiveUpTimer;
-	void AbortGiveUp();
+	void AbortGiveUp( bool bShowText );
 
 	BitmapText			m_textAutoPlay;	// for AutoPlay, AutoAdjust
 	void	UpdateAutoPlayText();

@@ -1722,6 +1722,7 @@ void ScreenGameplay::UpdateLights()
 void ScreenGameplay::BackOutFromGameplay()
 {
 	m_DancingState = STATE_OUTRO;
+	AbortGiveUp( false );
 	SCREENMAN->PlayBackSound();
 	
 	m_pSoundMusic->StopPlaying();
@@ -1731,13 +1732,16 @@ void ScreenGameplay::BackOutFromGameplay()
 	m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
 }
 
-void ScreenGameplay::AbortGiveUp()
+void ScreenGameplay::AbortGiveUp( bool bShowText )
 {
 	if( m_GiveUpTimer.IsZero() )
 		return;
 
 	m_textDebug.StopTweening();
-	m_textDebug.SetText( GIVE_UP_ABORTED_TEXT );
+	if( bShowText )
+		m_textDebug.SetText( GIVE_UP_ABORTED_TEXT );
+	// otherwise tween out the text that's there
+
 	m_textDebug.BeginTweening( 1/2.f );
 	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 	m_GiveUpTimer.SetZero();
@@ -1777,7 +1781,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
 			if( type==IET_RELEASE )
-				AbortGiveUp();
+				AbortGiveUp( true );
 			else if( type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
 				m_textDebug.SetText( GIVE_UP_TEXT );
@@ -1936,7 +1940,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		StyleI.IsValid() &&
 		GAMESTATE->IsHumanPlayer( StyleI.player ) )
 	{
-		AbortGiveUp();
+		AbortGiveUp( true );
 		
 		if( !PREFSMAN->m_bAutoPlay )
 			m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
@@ -2216,6 +2220,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
 				return;		// ignore
 			m_DancingState = STATE_OUTRO;
+			AbortGiveUp( false );
 
 			GAMESTATE->RemoveAllActiveAttacks();
 			FOREACH_EnabledPlayer( p )
@@ -2390,6 +2395,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
+		AbortGiveUp( false );
 		m_pSoundMusic->StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
