@@ -780,7 +780,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					feat.pStringToFill = &vHighScores[j].sName;
 					feat.g = vHighScores[j].grade;
 					feat.Score = vHighScores[j].fScore;
-					feat.Banner = pSong->GetBannerPath();
+					if( pSong->HasBanner() )
+						feat.Banner = pSong->GetBannerPath();
 
 					asFeatsOut.push_back( feat );
 				}
@@ -831,6 +832,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				feat.pStringToFill = &vHighScores[i].sName;
 				feat.g = GRADE_NO_DATA;
 				feat.Score = (float) vHighScores[i].iScore;
+				if( pCourse->HasBanner() )
+					feat.Banner = pCourse->m_sBannerPath;
 				asFeatsOut.push_back( feat );
 			}
 		}
