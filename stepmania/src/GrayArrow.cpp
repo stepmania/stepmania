@@ -41,13 +41,12 @@ void GrayArrow::Update( float fDeltaTime )
 
 	/* XXX: get rid of this once we update the note skins */
 	int IdleState = (GetNumStates() == 3)? 0: 1;
-	int OffState = (GetNumStates() == 3)? 1: 0;
-	int OnState = (GetNumStates() == 3)? 2: 1;
+	int OnState = (GetNumStates() == 3)? 1: 0;
+	int OffState = (GetNumStates() == 3)? 2: 1;
 	
 	if( !GAMESTATE->m_bPastHereWeGo )
 	{
 		SetState( IdleState );
-		SetState( 0 );
 		return;
 	}
 
@@ -68,7 +67,7 @@ void GrayArrow::Update( float fDeltaTime )
 
 	cur_beat -= flash_offset;
 	float fPercentIntoBeat = fmodf(cur_beat, 1);
-	SetState( (fPercentIntoBeat<flash_length)? OffState : OnState );
+	SetState( (fPercentIntoBeat<flash_length)? OnState : OffState );
 }
 
 void GrayArrow::Step()
