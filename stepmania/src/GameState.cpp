@@ -105,6 +105,14 @@ void GameState::ResetMusicStatistics()
 	m_bPastHereWeGo = false;
 }
 
+void GameState::UpdateSongPosition(float fPositionSeconds)
+{
+	ASSERT(m_pCurSong);
+
+	m_fMusicSeconds = fPositionSeconds;
+	m_pCurSong->GetBeatAndBPSFromElapsedTime( m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
+}
+
 int GameState::GetStageIndex()
 {
 	return m_iCurrentStageIndex;

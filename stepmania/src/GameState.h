@@ -96,7 +96,8 @@ public:
 	bool		m_bPastHereWeGo;
 
 	void ResetMusicStatistics();		// Call this when it's time to play a new song.  Clears the values above.
-	
+	void UpdateSongPosition(float fPositionSeconds);
+
 	//
 	// Stage Statistics: 
 	// Arcade:	for the current stage (one song).  
