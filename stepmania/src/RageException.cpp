@@ -19,17 +19,9 @@
 #include "windows.h"
 #endif
 
-RageException::RageException( const char *fmt, ...)
+RageException::RageException( const CString &str ):
+	m_sError(str)
 {
-    va_list	va;
-    va_start(va, fmt);
-    m_sError = vssprintf( fmt, va );
-    va_end(va);
-}
-
-RageException::RageException( const char *fmt, va_list va)
-{
-    m_sError = vssprintf( fmt, va );
 }
 
 const char* RageException::what() const throw ()
@@ -67,19 +59,21 @@ void RageException::Throw(const char *fmt, ...)
 	DebugBreak();
 #endif
 
-	throw RageException("%s", error.c_str());
+	throw RageException( error );
 }
 
 void RageException::ThrowNonfatal(const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
+    CString error = vssprintf( fmt, va );
+    va_end(va);
 
 	if(LOG)
 	{
-		LOG->Trace("Nonfatal exception thrown: %s", vssprintf( fmt, va ).c_str());
+		LOG->Trace("Nonfatal exception thrown: %s", error.c_str());
 		LOG->Flush();
 	}
 	
-	throw RageException(fmt, va);
+	throw RageException( error );
 }
