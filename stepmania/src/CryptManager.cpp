@@ -88,6 +88,9 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFilename )
 
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFilename )
 {
+	if( !IsAFile(sPath) )
+		return false;
+
 	if( sSignatureFilename == "" )
 		sSignatureFilename = sPath + SIGNATURE_APPEND;
 
@@ -147,6 +150,9 @@ CString CryptManager::Sign( CString sPath )
 
 bool CryptManager::Verify( CString sPath, CString sSignature )
 {
+	if( !IsAFile(sPath) )
+		return false;
+
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	CString sPubFilename = PUBLIC_KEY_PATH;
