@@ -187,11 +187,12 @@ bool RageSound::Load( CString sSoundFilePath, int precache )
 		pSound = new RageSoundReader_Silence;
 	}
 
-	/* Try to precache. */
-	if( precache )
-		RageSoundReader_Preload::PreloadSound( pSound );
-
 	LoadSoundReader( pSound );
+
+	/* Try to precache.  Do this after calling LoadSoundReader() to put the
+	 * sound in this->Sample, so we preload after resampling. */
+	if( precache )
+		RageSoundReader_Preload::PreloadSound( Sample );
 
 	m_sFilePath = sSoundFilePath;
 
