@@ -325,7 +325,8 @@ void Player::DrawPrimitives()
 	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();
 
-	if (m_bShowJudgment) { m_Judgment.Draw(); }
+	if (m_bShowJudgment)
+		m_Judgment.Draw();
 
 	for( int c=0; c<GetNumTracks(); c++ )
 		m_HoldJudgment[c].Draw();
