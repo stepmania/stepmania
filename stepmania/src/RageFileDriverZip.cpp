@@ -72,6 +72,12 @@ freely, subject to the following restrictions:
 
 #define INBUFSIZE 1024*4
 
+static struct FileDriverEntry_ZIP: public FileDriverEntry
+{
+	FileDriverEntry_ZIP(): FileDriverEntry( "ZIP" ) { }
+	RageFileDriver *Create( CString Root ) const { return new RageFileDriverZip( Root ); }
+} const g_RegisterDriver;
+
 struct FileInfo
 {
 	CString fn;

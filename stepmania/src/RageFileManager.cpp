@@ -68,6 +68,11 @@ RageFileManager::RageFileManager()
 	ld.MountPoint = "";
 	g_Drivers.push_back( ld );
 
+	MountInitialFilesystems();
+}
+
+void RageFileManager::MountInitialFilesystems()
+{
 	/* Add file search paths, higher priority first. */
 #if defined(XBOX)
 	RageFileManager::Mount( "dir", SYS_BASE_PATH, "" );
@@ -208,17 +213,6 @@ bool RageFileManager::Remove( const CString &sPath )
 	}
 
 	return Deleted;
-}
-
-#include "RageFileDriverDirect.h"
-#include "RageFileDriverZip.h"
-RageFileDriver *MakeFileDriver( CString Type, CString Root )
-{
-	if( !Type.CompareNoCase("DIR") )
-		return new RageFileDriverDirect( Root );
-	if( !Type.CompareNoCase("ZIP") )
-		return new RageFileDriverZip( Root );
-	return NULL;
 }
 
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )

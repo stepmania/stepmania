@@ -52,5 +52,17 @@ public:
 	virtual RageFileObj *Copy( RageFile &p ) const = 0;
 };
 
+/* This is used to register the driver, so RageFileManager can see it. */
+struct FileDriverEntry
+{
+	FileDriverEntry( CString Type );
+	virtual ~FileDriverEntry();
+	virtual RageFileDriver *Create( CString Root ) const = 0;
+
+	CString m_Type;
+	const FileDriverEntry *m_Link;
+};
+RageFileDriver *MakeFileDriver( CString Type, CString Root );
+
 #endif
 

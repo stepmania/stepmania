@@ -36,6 +36,7 @@ public:
 
 private:
 	RageFileObj *OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err );
+	void MountInitialFilesystems();
 };
 
 extern RageFileManager *FILEMAN;

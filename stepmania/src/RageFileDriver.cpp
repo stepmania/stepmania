@@ -124,6 +124,30 @@ void RageFileDriver::FlushDirCache( const CString &sPath )
 	FDB->FlushDirCache();
 }
 
+
+const struct FileDriverEntry *g_FileDriverList = NULL;
+
+FileDriverEntry::FileDriverEntry( CString Type )
+{
+	m_Link = g_FileDriverList;
+	g_FileDriverList = this;
+	m_Type = Type;
+}
+
+FileDriverEntry::~FileDriverEntry()
+{
+	g_FileDriverList = NULL; /* invalidate */
+}
+
+RageFileDriver *MakeFileDriver( CString Type, CString Root )
+{
+	for( const FileDriverEntry *p = g_FileDriverList; p; p = p->m_Link )
+		if( !p->m_Type.CompareNoCase(Type) )
+			return p->Create( Root );
+	return NULL;
+}
+
+
 /*
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
  *   Glenn Maynard

@@ -20,6 +20,12 @@
 #include <io.h>
 #endif
 
+static struct FileDriverEntry_DIR: public FileDriverEntry
+{
+	FileDriverEntry_DIR(): FileDriverEntry( "DIR" ) { }
+	RageFileDriver *Create( CString Root ) const { return new RageFileDriverDirect( Root ); }
+} const g_RegisterDriver;
+
 /* This driver handles direct file access. */
 class DirectFilenameDB: public FilenameDB
 {
