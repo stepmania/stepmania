@@ -17,11 +17,14 @@
 const unsigned channels = 2;
 const unsigned samplerate = 44100;
 const unsigned samplesize = channels*2;
-const unsigned buffersize_frames = 1024; /* in samples */
+const unsigned buffersize_frames = 512; /* in samples */
 const unsigned buffersize = buffersize_frames * samplesize;
+const float proportion = .75; /* Make the current data 3 times the weight of the previous */
 
 RageSound_SDL::RageSound_SDL() {
-  last_cursor_pos = 0;
+  last_cursor_pos = -1 * buffersize_frames;
+  last_time = 0;
+  time_between = 0;
   /* Do we need to init SDL_Audio? */
   initedSDL_Audio = SDL_WasInit(SDL_INIT_AUDIO) != SDL_INIT_AUDIO;
 
@@ -79,6 +82,16 @@ void RageSound_SDL::GetData(void *userdata, Uint8 *stream, int len) {
     if (P->sounds[i]->stopping)
       continue;
 
+    unsigned time = SDL_GetTicks();
+    if (P->last_time) {
+      if (P->time_between) {
+        P->time_between = static_cast<unsigned>(P->time_between * (1 - proportion) + (time - P->last_time) * proportion);
+      } else {
+        P->time_between = time - P->last_time;
+      }
+    }
+    P->last_time = time;
+    P->last_cursor_pos += buffersize_frames;
     int got = P->sounds[i]->snd->GetPCM(reinterpret_cast<char *>(buf), len, P->last_cursor_pos);
 
     mix.write(buf, got/2);
@@ -91,7 +104,6 @@ void RageSound_SDL::GetData(void *userdata, Uint8 *stream, int len) {
   mix.read(buf); 
 
   memcpy(stream, buf, len);
-  P->last_cursor_pos += buffersize_frames;
 }
 
 void RageSound_SDL::StartMixing(RageSound *snd) {
@@ -132,14 +144,14 @@ void RageSound_SDL::Update(float delta) {
   }
 }
 
-/* What is this parameter for?
- * This returns the same as is passed to RageSound::GetPCM
- * as required by RageSoundDriver. I suppose I don't really
- * understand the purpose of this method.
+/* Not a solution, rather a temp. hack.
+ * The solution is, of course, another driver.
  * --Steve
  */
 int RageSound_SDL::GetPosition(const RageSound *snd) const {
-  return last_cursor_pos;
+  unsigned time = SDL_GetTicks();
+  
+  return static_cast<int>(last_cursor_pos + (time - last_time) / time_between * buffersize_frames);
 }
 
 float RageSound_SDL::GetPlayLatency() const {

@@ -28,6 +28,8 @@ private:
   SDL_AudioSpec *specs;
   bool initedSDL_Audio;
   int last_cursor_pos;
+  unsigned time_between;
+  unsigned last_time;
   
 protected:
   virtual void StartMixing(RageSound *snd);
