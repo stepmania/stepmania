@@ -19,6 +19,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "InputMapper.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
@@ -547,6 +548,19 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 	 * when we're transitioning out. */
 	if( m_Menu.m_Back.IsTransitioning() || m_Menu.m_Out.IsTransitioning() )
 		return;
+
+	// if we are in dedicated menubutton input and arcade navigation
+	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
+	if( (MenuI.IsValid()) && (MenuI.button == MENU_BUTTON_START) &&
+		(PREFSMAN->m_bArcadeOptionsNavigation) &&
+		(PREFSMAN->m_bOnlyDedicatedMenuButtons) &&
+		(GAMESTATE->m_CurStyle != STYLE_INVALID) &&
+		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) ) &&
+		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) ) )
+	{
+		((Screen*)this)->MenuUp( MenuI.player, type );
+		return;
+	}
 
 	// default input handler
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
