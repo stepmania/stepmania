@@ -68,7 +68,7 @@
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
 CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
 CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
-CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
+CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",p+1); }
 CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
 
 
