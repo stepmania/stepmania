@@ -509,6 +509,8 @@ void NetworkSyncManager::ProcessInput()
 	{
 		SCREENMAN->SystemMessageNoAnimate("Connection to server dropped.");
 		useSMserver=false;
+		isSMOnline = false;
+		isSMOLoggedIn = false;
 		return;
 	}
 
