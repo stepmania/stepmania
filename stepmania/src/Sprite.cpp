@@ -305,6 +305,9 @@ void Sprite::Update( float fDelta )
 	m_fSecsIntoState += fTimePassed;
 	UpdateAnimationState();
 
+	/* If the texture is a movie, decode frames. */
+	m_pTexture->DecodeSeconds( fTimePassed );
+
 	//
 	// update scrolling
 	//
