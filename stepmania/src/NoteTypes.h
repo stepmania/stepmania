@@ -73,10 +73,6 @@ enum
 	TRACK_15,
 	TRACK_16,
 	// MD 10/26/03 end
-	// HACK: Toss in an extra note track just to be safe. I've had
-	// segfaults on some BMSes from not having enough tracks. Are autoplay
-	// notes being seen as normal tap notes?
-	TRACK_17,
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
