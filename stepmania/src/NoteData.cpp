@@ -812,31 +812,6 @@ bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 	}
 }
 
-void NoteData::InsertHoldTails()
-{
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		iterator begin = this->begin(t), end = this->end(t);
-
-		for( ; begin != end; ++begin )
-		{
-			int iRow = begin->first;
-			const TapNote &tn = begin->second;
-			if( tn.type != TapNote::hold_head )
-				continue;
-
-			TapNote tail = tn;
-			tail.type = TapNote::hold_tail;
-
-			/* If iDuration is 0, we'd end up overwriting the head with the tail
-			 * (and invalidating our iterator).  Empty hold notes aren't valid. */
-			ASSERT( tn.iDuration != 0 );
-
-			SetTapNote( t, iRow + tn.iDuration, tail );
-		}
-	}
-}
-
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
