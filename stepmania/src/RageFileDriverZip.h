@@ -4,6 +4,7 @@
 #define RAGE_FILE_DRIVER_ZIP_H
 
 #include "RageFileDriver.h"
+#include "RageThreads.h"
 
 struct FileInfo;
 struct end_central_dir_record;
@@ -19,6 +20,10 @@ public:
 private:
 	RageFile zip;
 	vector<FileInfo *> Files;
+
+	/* Open() must be threadsafe.  Mutex access to "zip", since we seek
+	 * around in it when reading files. */
+	RageMutex m_Mutex;
 
 	void ParseZipfile();
 	static void ReadEndCentralRecord( RageFile &zip, end_central_dir_record &ec );

@@ -52,7 +52,8 @@ struct end_central_dir_record
 #define DEFLATED	8
 
 RageFileDriverZip::RageFileDriverZip( CString path ):
-	RageFileDriver( new NullFilenameDB )
+	RageFileDriver( new NullFilenameDB ),
+	m_Mutex( ssprintf("RageFileDriverZip(%s)", path.c_str()) )
 {
 	if( !zip.Open(path) )
 		RageException::Throw( "Couldn't open %s: %s", path.c_str(), zip.GetError().c_str() );
@@ -333,6 +334,8 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 		return NULL;
 	}
 
+	m_Mutex.Lock();
+
 	/* If we havn't figured out the offset to the real data yet, do so now. */
 	if( info->data_offset == -1 )
 	{
@@ -364,7 +367,9 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 		info->data_offset = zip.Tell() + filename_length + extra_field_length;
 	}
 
-	zip.Seek( info->data_offset );
+	/* We won't do any further access to zip, except to copy it (which is
+	 * threadsafe), so we can unlock now. */
+	m_Mutex.Unlock();
 
 	RageFileDriverSlice *pFile = new RageFileDriverSlice( zip.Copy(), info->data_offset, info->compr_size );
 	pFile->DeleteFileWhenFinished();
