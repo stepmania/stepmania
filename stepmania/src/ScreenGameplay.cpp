@@ -1225,7 +1225,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		 * triggered.  Doing this is treated as failing the song, unlike BACK, since
 		 * it's always available. */
 
-		if(	MenuI.button == MENU_BUTTON_START )
+		/* However, if this is also a style button, don't do this. (pump center = start) */
+		if( MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() )
 		{
 			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
 			if( type==IET_RELEASE )
