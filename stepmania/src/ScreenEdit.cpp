@@ -383,11 +383,6 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	m_NoteFieldEdit.Update( fDeltaTime );
 
-	int iIndexNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );	
-
-
-
-
 	// 
 	// play assist ticks
 	//
@@ -649,7 +644,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_W:
 		{
 			// copy edit into current Notes
-			Song* pSong = GAMESTATE->m_pCurSong;
+//			Song* pSong = GAMESTATE->m_pCurSong;
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 			
 			// strip out the autogen marker if any.  The autogen marker would have caused these Notes not to be saved to disk.
@@ -1002,7 +997,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case DIK_F7:	fDeltaBPM = - 0.020f;		break;
 			case DIK_F8:	fDeltaBPM = + 0.020f;		break;
-			default:	ASSERT(0);
+			default:	ASSERT(0);						return;
 			}
 			switch( type )
 			{
@@ -1037,7 +1032,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case DIK_F9:	fStopDelta = -0.020f;		break;
 			case DIK_F10:	fStopDelta = +0.020f;		break;
-			default:	ASSERT(0);
+			default:	ASSERT(0);						return;
 			}
 			switch( type )
 			{
@@ -1073,7 +1068,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case DIK_F11:	fOffsetDelta = -0.020f;		break;
 			case DIK_F12:	fOffsetDelta = +0.020f;		break;
-			default:	ASSERT(0);
+			default:	ASSERT(0);						return;
 			}
 			switch( type )
 			{
@@ -1096,7 +1091,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case DIK_LBRACKET:		fDelta = -0.025f;	break;
 			case DIK_RBRACKET:		fDelta = +0.025f;	break;
-			default:	ASSERT(0);
+			default:	ASSERT(0);						return;
 			}
 			switch( type )
 			{
