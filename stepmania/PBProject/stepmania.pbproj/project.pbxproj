@@ -16475,7 +16475,7 @@
 			usesTabs = 1;
 		};
 		AAEF3D0D04B533CC00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
+			explicitFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
