@@ -183,7 +183,7 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 	s.buffer.get_write_pointers( p, psize );
 
 	/* If we have no open buffer slot, we have a buffer overflow. */
-	RAGE_ASSERT_M( psize[0] > 0, ssprintf("%i", s.frames_buffered()) );
+	RAGE_ASSERT_M( psize[0] > 0, ssprintf("%i", (int)s.frames_buffered()) );
 
 	sound_block *b = p[0];
 	bool eof = !s.snd->GetDataToPlay( b->buf, ARRAYSIZE(b->buf), b->position, b->frames_in_buffer );
