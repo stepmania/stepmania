@@ -12,8 +12,7 @@
 #include "Font.h"
 #include "FontCharAliases.h"
 #include "RageDisplay.h"
-#include "arch/ArchHooks/ArchHooks.h"
-#include "arch/arch.h"
+#include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #include "ScreenManager.h"
 #include "StepMania.h"
@@ -308,16 +307,16 @@ try_element_again:
 			"'%s/%s/%s %s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), sClassName.c_str(), sElement.c_str() );
 
-		switch( HOOKS->MessageBoxAbortRetryIgnore(message) )
+		switch( Dialog::AbortRetryIgnore(message) )
 		{
-		case ArchHooks::abort:
+		case Dialog::abort:
 			RageException::Throw( message ); 
 			break;
-		case ArchHooks::retry:
+		case Dialog::retry:
 			FlushDirCache();
 			ReloadMetrics();
 			goto try_element_again;
-		case ArchHooks::ignore:
+		case Dialog::ignore:
 			break;
 		}
 	}
@@ -360,7 +359,7 @@ try_element_again:
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());
 
-			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 			{
 				FlushDirCache();
 				ReloadMetrics();
@@ -414,18 +413,18 @@ try_element_again:
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
 	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
-	ArchHooks::MessageBoxResult res;
+	Dialog::Result res;
 	if( category != Other )
-		res = HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement");
+		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
 	else
-		res = HOOKS->MessageBoxRetryCancel(sMessage, "MissingThemeElement");
+		res = Dialog::RetryCancel(sMessage, "MissingThemeElement");
 	switch( res )
 	{
-	case ArchHooks::retry:
+	case Dialog::retry:
 		FlushDirCache();
 		ReloadMetrics();
 		goto try_element_again;
-	case ArchHooks::ignore:
+	case Dialog::ignore:
 		LOG->Warn( 
 			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
@@ -440,8 +439,8 @@ try_element_again:
 		Cache[sFileName] = GetPath( category, "", "_missing" );
 		return Cache[sFileName];
 	/* XXX: "abort" and "cancel" are synonyms; merge */
-	case ArchHooks::abort:
-	case ArchHooks::cancel:
+	case Dialog::abort:
+	case Dialog::cancel:
 		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
@@ -530,15 +529,15 @@ try_metric_again:
 
 
 	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
-	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
+	switch( Dialog::AbortRetryIgnore(sMessage) )
 	{
-	case ArchHooks::abort:
+	case Dialog::abort:
 		break;	// fall through
-	case ArchHooks::retry:
+	case Dialog::retry:
 		FlushDirCache();
 		ReloadMetrics();
 		goto try_metric_again;
-	case ArchHooks::ignore:
+	case Dialog::ignore:
 		return "";
 	default:
 		ASSERT(0);

@@ -14,7 +14,7 @@
 #include "Steps.h"
 #include "GameState.h"
 #include "RageDisplay.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 #include "Trail.h"
 
 DifficultyIcon::DifficultyIcon()
@@ -34,7 +34,7 @@ bool DifficultyIcon::Load( CString sPath )
 			NUM_DIFFICULTIES,
 			NUM_DIFFICULTIES*2,
 			iStates );
-		HOOKS->MessageBoxOK( sError );
+		Dialog::OK( sError );
 	}
 	StopAnimating();
 	return true;

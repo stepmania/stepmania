@@ -2,14 +2,14 @@
 #include "ActorCommands.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 
 void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxIndexAccessed )
 {
 	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %u.",
 		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.vTokens.size()) );
 	LOG->Warn( sError );
-	HOOKS->MessageBoxOK( sError );
+	Dialog::OK( sError );
 }
 
 void ParsedCommandToken::Set( const CString &sToken )

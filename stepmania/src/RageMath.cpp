@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
 {
@@ -258,7 +258,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		{
 			CString sError = ssprintf( "MatrixCommand:  Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
-			HOOKS->MessageBoxOK( sError );
+			Dialog::OK( sError );
 			continue;
 		}
 
@@ -267,7 +267,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		{
 			CString sError = ssprintf( "MatrixCommand:  Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
 			LOG->Warn( sError );
-			HOOKS->MessageBoxOK( sError );
+			Dialog::OK( sError );
 			continue;
 		}
 

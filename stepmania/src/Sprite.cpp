@@ -11,7 +11,7 @@
 #include "RageTexture.h"
 #include "SDL_utils.h"
 #include "ActorUtil.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 
 Sprite::Sprite()
 {
@@ -124,13 +124,13 @@ retry:
 		if(asElementPaths.size() == 0)
 		{
 			CString sMessage = ssprintf( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
-			switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
+			switch( Dialog::AbortRetryIgnore(sMessage) )
 			{
-			case ArchHooks::abort:	
+			case Dialog::abort:	
 				RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
-			case ArchHooks::retry:	
+			case Dialog::retry:	
 				goto retry;
-			case ArchHooks::ignore:
+			case Dialog::ignore:
 				return false;
 			default:
 				ASSERT(0);
@@ -616,7 +616,7 @@ void Sprite::SetState( int iNewState )
 		else
 			sError = ssprintf("A Sprite (\"%s\") tried to set state index %d but no texture is loaded.", 
 				this->m_sName.c_str(), iNewState );
-		HOOKS->MessageBoxOK( sError );
+		Dialog::OK( sError );
 	}
 
 	CLAMP(iNewState, 0, (int)m_States.size()-1);

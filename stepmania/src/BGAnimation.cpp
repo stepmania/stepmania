@@ -10,7 +10,7 @@
 #include "RageFile.h"
 #include "ActorUtil.h"
 #include "LuaHelpers.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 
 const int MAX_LAYERS = 1000;
 
@@ -133,7 +133,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			
 #define REQUIRED_GET_VALUE( szName, valueOut ) \
 	if( !ini.GetValue( "Scroller", szName, valueOut ) ) \
-		HOOKS->MessageBoxOK( ssprintf("File '%s' is missing the value Scroller::%s", sPathToIni.c_str(), szName) );
+		Dialog::OK( ssprintf("File '%s' is missing the value Scroller::%s", sPathToIni.c_str(), szName) );
 
 			float fSecondsPerItem = 1;
 			int iNumItemsToDraw = 7;

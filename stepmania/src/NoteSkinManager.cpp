@@ -10,7 +10,7 @@
 #include "GameManager.h"
 #include "arch/arch.h"
 #include "RageDisplay.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
 
 
@@ -258,7 +258,7 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());
 
-			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 			{
 				FlushDirCache();
 				g_PathCache.clear();
@@ -297,7 +297,7 @@ CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName )
 	if( matches.size() > 1 )
 	{
 		CString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
-		HOOKS->MessageBoxOK( sError );
+		Dialog::OK( sError );
 	}
 	
 	return matches[0];

@@ -6,7 +6,7 @@
 #include "RageException.h"
 #include "RageDisplay.h"
 #include "RageTypes.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
 
 #include "SDL.h"
@@ -288,7 +288,7 @@ void RageBitmapTexture::Create()
 				fBetterSourceWidth, fBetterSourceHeight,
 				fBetterFrameWidth, fBetterFrameHeight );
 			LOG->Warn( sWarning );
-			HOOKS->MessageBoxOK( sWarning, "FRAME_DIMENSIONS_WARNING" );
+			Dialog::OK( sWarning, "FRAME_DIMENSIONS_WARNING" );
 		}
 	}
 

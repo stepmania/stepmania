@@ -6,7 +6,7 @@
 #include "RageMath.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
-#include "arch/ArchHooks/ArchHooks.h"
+#include "arch/Dialog/Dialog.h"
 
 #include "GameState.h" /* XXX: ugly dependency */
 
@@ -745,7 +745,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
 		LOG->Warn( sError );
-		HOOKS->MessageBoxOK( sError );
+		Dialog::OK( sError );
 	}
 
 	CheckHandledParams;
