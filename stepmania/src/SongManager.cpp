@@ -100,9 +100,12 @@ SongManager::~SongManager()
 	FreeCourses();
 }
 
-void SongManager::Reload()
+void SongManager::Reload( LoadingWindow *ld )
 {
 	FlushDirCache();
+
+	if( ld )
+		ld->SetText( "Reloading ..." );
 
 	// save scores before unloading songs, of the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
@@ -117,8 +120,8 @@ void SongManager::Reload()
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad = false;
 
-	InitSongsFromDisk(NULL);
-	InitCoursesFromDisk(NULL);
+	InitSongsFromDisk( ld );
+	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
 
 	// reload scores afterward
