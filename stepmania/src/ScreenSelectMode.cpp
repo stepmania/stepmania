@@ -126,7 +126,7 @@ ScreenSelectMode::ScreenSelectMode()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
 
 	RefreshModeChoices();
 

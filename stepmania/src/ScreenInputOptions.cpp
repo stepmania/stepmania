@@ -67,7 +67,7 @@ ScreenInputOptions::ScreenInputOptions() :
 		false );
 	m_Menu.StopTimer();
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","input options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","input options music") );
 }
 
 void ScreenInputOptions::ImportOptions()

@@ -70,7 +70,7 @@ ScreenMachineOptions::ScreenMachineOptions() :
 		false );
 	m_Menu.StopTimer();
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","machine options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","machine options music") );
 }
 
 void ScreenMachineOptions::ImportOptions()

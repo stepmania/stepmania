@@ -84,7 +84,7 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 	UpdateRefreshRates();
 	m_Menu.StopTimer();
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","graphic options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","graphic options music") );
 }
 
 

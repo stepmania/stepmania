@@ -102,7 +102,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select player music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select player music") );
 
 	TweenOnScreen();
 	m_Menu.TweenOnScreenFromBlack( SM_None );

@@ -78,7 +78,7 @@ MUSIC->Stop();
 //s[0].s.SetStartSeconds(45);
 //s[0].s.SetPositionSeconds();
 // s[4].s.SetLengthSeconds(1);
-//s[0].s.SetPlaybackRate(.9);
+s[0].s.SetPlaybackRate(1.20);
 //s[0].s.SetStopMode(RageSound::M_LOOP);
 //s[0].s.Play();
 

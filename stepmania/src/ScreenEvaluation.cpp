@@ -625,7 +625,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	else
 		m_Menu.TweenOnScreenFromBlack( SM_None );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","evaluation music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","evaluation music") );
 }
 
 

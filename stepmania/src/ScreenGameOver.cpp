@@ -36,7 +36,7 @@ ScreenGameOver::ScreenGameOver()
 	m_Fade.OpenWipingRight( SM_None );
 	this->AddChild( &m_Fade );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","game over music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","game over music") );
 
 	this->SendScreenMessage( SM_PlayAnnouncer, 0.5 );
 	this->SendScreenMessage( SM_StartFadingOut, 5 );

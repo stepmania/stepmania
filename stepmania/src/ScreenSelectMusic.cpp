@@ -807,7 +807,7 @@ void ScreenSelectMusic::PlayMusicSample()
 			pSong->m_fMusicSampleLengthSeconds);
 	}
 //	else
-//		MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select music music") );
+//		SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select music music") );
 }
 
 void ScreenSelectMusic::UpdateOptionsDisplays()

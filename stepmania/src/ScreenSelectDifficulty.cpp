@@ -176,7 +176,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select difficulty music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select difficulty music") );
 
 	m_fLockInputTime = LOCK_INPUT_TIME;
 }

@@ -49,7 +49,7 @@ ScreenCaution::ScreenCaution()
 
 	this->SendScreenMessage( SM_StartClosing, 3 );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","caution music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","caution music") );
 }
 
 

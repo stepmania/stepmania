@@ -62,7 +62,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
  
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select course music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select course music") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -132,7 +132,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select course music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select course music") );
 
 	UpdateOptionsDisplays();
 

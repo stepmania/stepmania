@@ -91,7 +91,7 @@ ScreenNetworkWaiting::ScreenNetworkWaiting()
 	m_textPlayerList.SetXY( PLAYER_LIST_X, PLAYER_LIST_Y );
 	this->AddChild( &m_textPlayerList );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","network waiting music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","network waiting music") );
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 

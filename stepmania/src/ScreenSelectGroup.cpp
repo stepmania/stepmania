@@ -167,7 +167,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select group music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select group music") );
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();

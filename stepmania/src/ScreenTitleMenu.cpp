@@ -170,7 +170,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		LoseFocus( i );
 	GainFocus( m_TitleMenuChoice );
 	
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","title menu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 
 	this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
 	this->SendScreenMessage( SM_FadeToDemonstration, SECONDS_BEFORE_DEMONSTRATION );

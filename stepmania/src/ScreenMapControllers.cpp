@@ -102,7 +102,7 @@ ScreenMapControllers::ScreenMapControllers()
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 	this->AddChild( &m_Menu );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","map controllers music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","map controllers music") );
 
 	Refresh();
 }

@@ -188,7 +188,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("music scroll") );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","music scroll music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","music scroll music") );
 
 	m_Fade.OpenWipingRight();
 }

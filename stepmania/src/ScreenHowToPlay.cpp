@@ -77,7 +77,7 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_BIAS_BEGIN );
 	m_sprHowToPlay.SetTweenX( CENTER_X );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","how to play music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","how to play music") );
 }
 
 ScreenHowToPlay::~ScreenHowToPlay()

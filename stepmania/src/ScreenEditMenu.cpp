@@ -62,7 +62,7 @@ ScreenEditMenu::ScreenEditMenu()
 	m_Fade.SetOpened();
 	this->AddChild( &m_Fade);
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","edit menu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","edit menu music") );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 

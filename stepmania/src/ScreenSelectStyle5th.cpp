@@ -178,7 +178,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
 
 	m_soundChange.PlayRandom();
 	TweenOnScreen();
