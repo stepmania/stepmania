@@ -23,7 +23,7 @@ AC_PROG_CXX
 AM_PATH_SDL
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
-AC_CHECK_FUNCS([powf sqrtf sinf cosf acosf])
+AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf])
 AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 [#if !defined(HAVE_POWF)
 #define NEED_POWF
@@ -36,6 +36,9 @@ AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 #endif
 #if !defined(HAVE_COSF)
 #define NEED_COSF
+#endif
+#if !defined(HAVE_TANF)
+#define NEED_TANF
 #endif
 #if !defined(HAVE_ACOSF)
 #define NEED_ACOSF
