@@ -200,6 +200,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenUnlock.h"
 #include "ScreenDemonstration.h"
 #include "ScreenInstructions.h"
+#include "ScreenNameEntry.h"
+
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
 
@@ -249,6 +251,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenUnlock") )			ret = new ScreenUnlock;
 	else if( 0==stricmp(sClassName, "ScreenDemonstration") )	ret = (ScreenGameplay*)new ScreenDemonstration;
 	else if( 0==stricmp(sClassName, "ScreenInstructions") )		ret = new ScreenInstructions;
+	else if( 0==stricmp(sClassName, "ScreenNameEntry") )		ret = new ScreenNameEntry;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 

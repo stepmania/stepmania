@@ -916,6 +916,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DifficultyIcon.h">
 			</File>
 			<File
+				RelativePath="DifficultyRating.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyRating.h">
+			</File>
+			<File
 				RelativePath="FadingBanner.cpp">
 			</File>
 			<File

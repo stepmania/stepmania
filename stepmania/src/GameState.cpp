@@ -80,6 +80,12 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PlayerOptions[p] = PlayerOptions();
 	m_SongOptions = SongOptions();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_LastHighScoreCategory[p] = (HighScoreCategory)-1;
+		m_iLastHighScoreIndex[p] = -1;
+	}
 }
 
 void GameState::ResetMusicStatistics()

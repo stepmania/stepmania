@@ -39,31 +39,30 @@ void GrayArrow::Update( float fDeltaTime )
 
 	Sprite::Update( fDeltaTime );
 
-	if( GAMESTATE->m_fMusicSeconds <= 0 )	// music isn't playing
+	if( !GAMESTATE->m_bPastHereWeGo )
 	{
 		SetState( 0 );
+		return;
 	}
-	else
-	{
-		/* These could be metrics or configurable.  I'd prefer the flash to
-		* start on the beat, I think ... -glenn */
 
-		/* Start flashing 10% of a beat before the beat starts. */
-		const float flash_offset = -0.1f;
+	/* These could be metrics or configurable.  I'd prefer the flash to
+	* start on the beat, I think ... -glenn */
 
-		/* Flash for 20% of a beat. */
-		const float flash_length = 0.2f;
+	/* Start flashing 10% of a beat before the beat starts. */
+	const float flash_offset = -0.1f;
 
-		float cur_beat = GAMESTATE->m_fSongBeat;
+	/* Flash for 20% of a beat. */
+	const float flash_length = 0.2f;
 
-		/* Beats can start in very negative territory (many BMR songs, Drop Out 
-		 * -Remix-). */
-		cur_beat += 100.0f;
+	float cur_beat = GAMESTATE->m_fSongBeat;
 
-		cur_beat -= flash_offset;
-		float fPercentIntoBeat = fmodf(cur_beat, 1);
-		SetState( (fPercentIntoBeat<flash_length)? 1 : 2 );
-	}
+	/* Beats can start in very negative territory (many BMR songs, Drop Out 
+		* -Remix-). */
+	cur_beat += 100.0f;
+
+	cur_beat -= flash_offset;
+	float fPercentIntoBeat = fmodf(cur_beat, 1);
+	SetState( (fPercentIntoBeat<flash_length)? 1 : 2 );
 }
 
 void GrayArrow::Step()
