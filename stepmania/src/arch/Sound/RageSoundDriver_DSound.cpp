@@ -22,10 +22,11 @@ RageSoundManager *SOUNDMAN = NULL;
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
-/* With this driver, we want a large buffer size.  Since latency is detached
- * from write-ahead, this won't cause lag.  Since we're filling every playing
- * sound buffer separately, a larger buffer here means less overhead. */
-const int buffersize_frames = 1024*16;	/* in frames */
+
+/* The total write-ahead.  Don't make this *too* high; we fill the entire
+ * buffer when we start playing, so it can cause frame skips.  This should be
+ * high enough that sound cards won't skip. */
+const int buffersize_frames = 1024*4;	/* in frames */
 const int buffersize = buffersize_frames * samplesize; /* in bytes */
 
 const int num_chunks = 8;
