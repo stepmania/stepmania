@@ -912,6 +912,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath=".\StepMania.RC">
 				</File>
 				<File
+					RelativePath="archutils\Win32\USB.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\USB.h">
+				</File>
+				<File
 					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
