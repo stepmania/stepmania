@@ -470,7 +470,7 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
 
-	if( PREFSMAN->m_bShowConsole )
+	if( PREFSMAN->m_bDebugMode )
 		LOG->ShowConsole();
 
 	CheckSettings();

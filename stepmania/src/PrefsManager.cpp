@@ -98,7 +98,7 @@ PrefsManager::PrefsManager()
 	m_bFirstRun = true;
 	m_bAutoMapJoysticks = true;
 	m_fGlobalOffsetSeconds = 0;
-	m_bShowConsole = false;
+	m_bDebugMode = false;
 
 	m_bTenFooterInRed = true;
 
@@ -224,7 +224,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 #endif
 	ini.GetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.GetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
-	ini.GetValueB( "Options", "ShowConsole",				m_bShowConsole );
+	ini.GetValueB( "Options", "DebugMode",					m_bDebugMode );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -320,7 +320,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 #endif
 	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.SetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
-	ini.SetValueB( "Options", "ShowConsole",				m_bShowConsole );
+	ini.SetValueB( "Options", "DebugMode",					m_bDebugMode );
 
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 
