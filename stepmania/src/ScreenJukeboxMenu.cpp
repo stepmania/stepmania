@@ -15,7 +15,6 @@
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
-#include "PrefsManager.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
@@ -27,10 +26,7 @@
 //
 // Defines specific to ScreenJukeboxMenu
 //
-#define EXPLANATION_X				THEME->GetMetricF("ScreenJukeboxMenu","ExplanationX")
-#define EXPLANATION_Y				THEME->GetMetricF("ScreenJukeboxMenu","ExplanationY")
 #define EXPLANATION_TEXT			THEME->GetMetric("ScreenJukeboxMenu","ExplanationText")
-#define HELP_TEXT					THEME->GetMetric("ScreenJukeboxMenu","HelpText")
 
 
 ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -47,10 +43,10 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_Selector );
 
 
+	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
-	m_textExplanation.SetZoom( 0.7f );
+	SET_XY_AND_ON_COMMAND( m_textExplanation );
 	this->AddChild( &m_textExplanation );
 
 	this->SortByDrawOrder();
@@ -64,11 +60,6 @@ ScreenJukeboxMenu::~ScreenJukeboxMenu()
 	LOG->Trace( "ScreenJukeboxMenu::~ScreenJukeboxMenu()" );
 }
 
-void ScreenJukeboxMenu::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenJukeboxMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenJukeboxMenu::Input()" );
@@ -79,19 +70,6 @@ void ScreenJukeboxMenu::Input( const DeviceInput& DeviceI, const InputEventType 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
-void ScreenJukeboxMenu::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		break;
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenJukebox" );
-		break;
-	}
-}
-	
 void ScreenJukeboxMenu::MenuUp( PlayerNumber pn )
 {
 	m_Selector.Up();
