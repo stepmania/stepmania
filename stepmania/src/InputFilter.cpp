@@ -24,13 +24,8 @@ InputFilter::InputFilter()
 
 void InputFilter::Reset()
 {
-	memset(m_BeingHeld, 0, sizeof(m_BeingHeld));
-
 	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
-	{
-		for( int j=0; j<NUM_DEVICE_BUTTONS; j++ )
-			m_fSecsHeld[i][j] = 0;
-	}
+		ResetDevice( InputDevice(i) );
 }
 
 void InputFilter::ButtonPressed( DeviceInput di, bool Down )
