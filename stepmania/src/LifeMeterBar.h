@@ -24,8 +24,8 @@ public:
 	virtual void DrawPrimitives();
 
 	virtual void ChangeLife( TapNoteScore score );
-	virtual bool IsDoingGreat();
-	virtual bool IsAboutToFail();
+	virtual bool IsInDanger();
+	virtual bool IsHot();
 	virtual bool HasFailed();
 
 private:

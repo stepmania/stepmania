@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Grade.cpp
+ Class: GradeDisplay
 
- Desc: A graphic displayed in the Grade during Dancing.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -25,7 +26,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 GradeDisplay::GradeDisplay()
 {
-	Load( THEME->GetPathTo(GRAPHIC_RESULTS_GRADES) );
+	Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADES) );
 	StopAnimating();
 
 	m_fTimeLeftInScroll = 0;

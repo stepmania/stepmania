@@ -21,33 +21,7 @@
 // ... for future expansion
 
 
-enum TapNoteScore { 
-	TNS_NONE, 
-	TNS_MISS,
-	TNS_BOO,
-	TNS_GOOD,
-	TNS_GREAT,
-	TNS_PERFECT, 
-};
 
-inline int TapNoteScoreToDancePoints( TapNoteScore tns )
-{
-	switch( tns )
-	{
-	case TNS_PERFECT:	return +2;
-	case TNS_GREAT:		return +1;
-	case TNS_GOOD:		return +0;
-	case TNS_BOO:		return -4;
-	case TNS_MISS:		return +8;
-	default:			return 0;
-	}
-}
-
-//enum TapNoteTiming { 
-//	TNT_NONE, 
-//	TNT_EARLY, 
-//	TNT_LATE 
-//};
 
 
 struct HoldNote
@@ -57,28 +31,10 @@ struct HoldNote
 	int m_iEndIndex;
 };
 
-enum HoldNoteScore 
-{ 
-	HNS_NONE,	// this HoldNote has not been scored yet
-	HNS_OK,		// the HoldNote has passed and was successfully held all the way through
-	HNS_NG		// the HoldNote has passed and they missed it
-};
-
-
-inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
-{
-	switch( hns )
-	{
-	case HNS_OK:	return +6;
-	case HNS_NG:	return +0;
-	default:	ASSERT(0);	return 0;
-	}
-}
-
 
 inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
-inline int   BeatToNoteIndexNotRounded( float fBeatNum ){ return (int)( fBeatNum * ELEMENTS_PER_BEAT ); };
-inline float NoteRowToBeat( float fNoteIndex )		{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
+inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ELEMENTS_PER_BEAT ); };
+inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
 inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };
 
 
@@ -88,6 +44,7 @@ class NoteData
 {
 public:
 	NoteData();
+	void Init();
 	~NoteData();
 
 	// used for loading
@@ -109,7 +66,7 @@ public:
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
 	void CopyRange( NoteData* pFrom, int iNoteIndexBegin, int iNoteIndexEnd );
-	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
+	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; m_iNumHoldNotes = 0; CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
 
 	inline bool IsRowEmpty( int index )
 	{
@@ -124,6 +81,7 @@ public:
 	void RemoveHoldNote( int index );
 
 	// statistics
+	bool IsThereANoteAtRow( int iRow );
 	float GetLastBeat();	// return the beat number of the last note
 	int GetLastRow();
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
@@ -140,16 +98,16 @@ public:
 		case RADAR_STREAM:	return GetStreamRadarValue( fSongSeconds );		break;
 		case RADAR_VOLTAGE:	return GetVoltageRadarValue( fSongSeconds );	break;
 		case RADAR_AIR:		return GetAirRadarValue( fSongSeconds );		break;
-		case RADAR_CHAOS:	return GetChaosRadarValue( fSongSeconds );		break;
 		case RADAR_FREEZE:	return GetFreezeRadarValue( fSongSeconds );		break;
+		case RADAR_CHAOS:	return GetChaosRadarValue( fSongSeconds );		break;
 		default:	ASSERT(0);  return 0;
 		}
 	};
 	float GetStreamRadarValue( float fSongSeconds );
 	float GetVoltageRadarValue( float fSongSeconds );
 	float GetAirRadarValue( float fSongSeconds );
-	float GetChaosRadarValue( float fSongSeconds );
 	float GetFreezeRadarValue( float fSongSeconds );
+	float GetChaosRadarValue( float fSongSeconds );
 
 	// Transformations
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNewToOriginalTrack[] );
@@ -167,3 +125,4 @@ public:
 	void ConvertHoldNotesTo2sAnd3s();
 
 };
+

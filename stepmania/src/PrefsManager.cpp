@@ -25,16 +25,17 @@ PrefsManager::PrefsManager()
 	m_bHighTextureDetail = true;
 	m_bIgnoreJoyAxes = false;
 	m_bShowFPS = false;
-	m_bUseRandomVis = false;
+	m_visMode = VIS_MODE_ANIMATION;
 	m_bAnnouncer = true;
 	m_bEventMode = true;
 	m_iNumArcadeStages = 3;
-	m_iDifficulty = 4;
+	m_bAutoPlay = false;
+	m_fJudgeWindow = 0.10f;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficultyClass[p] = CLASS_EASY;
 	m_SongSortOrder = SORT_GROUP;
-	m_PlayMode = PLAY_MODE_ARCADE;
+	m_PlayMode = PLAY_MODE_INVALID;
 	m_iCurrentStageIndex = 0;
 
 	ReadPrefsFromDisk();
@@ -57,11 +58,12 @@ void PrefsManager::ReadPrefsFromDisk()
 	ini.GetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "ShowFPS",			m_bShowFPS );
-	ini.GetValueB( "Options", "UseRandomVis",		m_bUseRandomVis );
+	ini.GetValueI( "Options", "VisMode",			m_visMode );
 	ini.GetValueB( "Options", "Announcer",			m_bAnnouncer );
 	ini.GetValueB( "Options", "EventMode",			m_bEventMode );
 	ini.GetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
-	ini.GetValueI( "Options", "Difficulty",			m_iDifficulty );
+	ini.GetValueB( "Options", "AutoPlay",			m_bAutoPlay );
+	ini.GetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
 }
 
 
@@ -75,11 +77,12 @@ void PrefsManager::SavePrefsToDisk()
 	ini.GetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
 	ini.SetValueB( "Options", "ShowFPS",			m_bShowFPS );
-	ini.SetValueB( "Options", "UseRandomVis",		m_bUseRandomVis );
+	ini.SetValueI( "Options", "VisMode",			m_visMode );
 	ini.SetValueB( "Options", "Announcer",			m_bAnnouncer );
 	ini.SetValueB( "Options", "EventMode",			m_bEventMode );
 	ini.SetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
-	ini.SetValueI( "Options", "Difficulty",			m_iDifficulty );
+	ini.SetValueB( "Options", "AutoPlay",			m_bAutoPlay );
+	ini.SetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
 
 	ini.WriteFile();
 }
@@ -89,20 +92,30 @@ int PrefsManager::GetStageIndex()
 	return m_iCurrentStageIndex;
 }
 
-int PrefsManager::GetStageNumber()
-{
-	return m_iCurrentStageIndex+1;
-}
-
 bool PrefsManager::IsFinalStage()
 {
 	return m_iCurrentStageIndex == m_iNumArcadeStages-1;
 }
 
+bool PrefsManager::IsExtraStage()
+{
+	return m_iCurrentStageIndex == m_iNumArcadeStages;
+}
+
+bool PrefsManager::IsExtraStage2()
+{
+	return m_iCurrentStageIndex == m_iNumArcadeStages+1;
+}
+
 CString PrefsManager::GetStageText()
 {
-	if( m_iCurrentStageIndex == m_iNumArcadeStages-1 )
+	if( IsFinalStage() )
 		return "Final";
+	else if( IsExtraStage() )
+		return "Extra";
+	else if( IsExtraStage2() )
+		return "Extra 2";
+
 
 	int iStageNo = m_iCurrentStageIndex+1;
 
@@ -122,6 +135,16 @@ CString PrefsManager::GetStageText()
 		default:sNumberSuffix = "th";	break;
 		}
 	}
-	return ssprintf( "%d%s", this->GetStageNumber(), sNumberSuffix );
+	return ssprintf( "%d%s", iStageNo, sNumberSuffix );
+}
+
+D3DXCOLOR PrefsManager::GetStageColor()
+{
+	if( IsFinalStage() )
+		return D3DXCOLOR(1,0.1f,0.1f,1);	// red
+	else if( IsExtraStage() || IsExtraStage2() )
+		return D3DXCOLOR(1,1,0.3f,1);		// yellow
+	else
+		return D3DXCOLOR(0.3f,1,0.3f,1);	// green
 }
 

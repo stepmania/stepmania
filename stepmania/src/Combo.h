@@ -24,7 +24,7 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void ContinueCombo( const int iNumNotesHit );
+	void ContinueCombo();
 	void EndCombo();
 
 	int GetCurrentCombo();

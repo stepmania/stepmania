@@ -217,7 +217,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->WriteLine( "ScreenSelectMusic::Input()" );
 
-	if( MenuI.player == PLAYER_NONE )
+	if( MenuI.player == PLAYER_INVALID )
 		return;
 
 	if( m_Menu.IsClosing() )
@@ -323,7 +323,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		{
 			MUSIC->Stop();
 
-			SCREENMAN->SetNewScreen( new ScreenStage(false) );
+			SCREENMAN->SetNewScreen( new ScreenStage );
 		}
 		break;
 	case SM_PlaySongSample:
@@ -350,64 +350,69 @@ void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType ty
 void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 {
 	// this needs to check whether valid Notes are selected!
-	m_MusicWheel.Select();
+	bool bResult = m_MusicWheel.Select();
 
-	switch( m_MusicWheel.GetSelectedType() )
+	if( bResult )
 	{
-	case TYPE_SONG:
+		// a song was selected
+		switch( m_MusicWheel.GetSelectedType() )
 		{
-			if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
+		case TYPE_SONG:
 			{
-				SCREENMAN->AddScreenToTop( new ScreenPrompt( "ERROR:\n \nThis song does not have a music file\n and cannot be played.", PROMPT_OK) );
-				return;
+				if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
+				{
+					SCREENMAN->AddScreenToTop( new ScreenPrompt( "ERROR:\n \nThis song does not have a music file\n and cannot be played.", PROMPT_OK) );
+					return;
+				}
+
+				bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
+				bool bIsHard = false;
+				for( int p=0; p<NUM_PLAYERS; p++ )
+				{
+					if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+						continue;	// skip
+					if( SONGMAN->GetCurrentNotes((PlayerNumber)p)  &&  SONGMAN->GetCurrentNotes((PlayerNumber)p)->m_iMeter >= 9 )
+						bIsHard = true;
+				}
+
+				if( bIsNew )
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_NEW) );
+				else if( bIsHard )
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_HARD) );
+				else
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
+
+
+				TweenOffScreen();
+
+				m_bMadeChoice = true;
+
+				m_soundSelect.PlayRandom();
+
+				// show "hold START for options"
+				m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+				m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
+				m_textHoldForOptions.SetTweenZoomY( 1 );
+				m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+				m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
+				m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
+				m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+				m_textHoldForOptions.SetTweenZoomY( 0 );
+
+				m_Menu.TweenOffScreenToBlack( SM_None, false );
+
+				this->SendScreenMessage( SM_GoToNextState, 2.5f );
 			}
+			break;
+		case TYPE_SECTION:
+			
+			break;
+		case TYPE_ROULETTE:
 
-			bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
-			bool bIsHard = false;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
-					continue;	// skip
-				if( SONGMAN->GetCurrentNotes((PlayerNumber)p)  &&  SONGMAN->GetCurrentNotes((PlayerNumber)p)->m_iMeter >= 9 )
-					bIsHard = true;
-			}
-
-			if( bIsNew )
-				SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_NEW) );
-			else if( bIsHard )
-				SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_HARD) );
-			else
-				SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
-
-
-			TweenOffScreen();
-
-			m_bMadeChoice = true;
-
-			m_soundSelect.PlayRandom();
-
-			// show "hold START for options"
-			m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
-			m_textHoldForOptions.SetTweenZoomY( 1 );
-			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
-			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
-			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
-			m_textHoldForOptions.SetTweenZoomY( 0 );
-
-			m_Menu.TweenOffScreenToBlack( SM_None, false );
-
-			this->SendScreenMessage( SM_GoToNextState, 2.5f );
+			break;
 		}
-		break;
-	case TYPE_SECTION:
-		
-		break;
-	case TYPE_ROULETTE:
-
-		break;
 	}
+
 }
 
 

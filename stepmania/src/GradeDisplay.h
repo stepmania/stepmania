@@ -1,11 +1,12 @@
 #pragma once
 /*
 -----------------------------------------------------------------------------
- File: GradeDisplay.h
+ Class: GradeDisplay
 
- Desc: A graphic displayed in the GradeDisplay during Dancing.
+ Desc: The grade shows on ScreenEvaluation
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 

@@ -38,9 +38,9 @@ Combo::Combo()
 }
 
 
-void Combo::ContinueCombo( const int iNumNotesHit )
+void Combo::ContinueCombo()
 {
-	m_iCurCombo += iNumNotesHit;
+	m_iCurCombo++;
 
 	// new max combo
 	if( m_iCurCombo > m_iMaxCombo )

@@ -15,7 +15,7 @@
 #include "ScreenManager.h"
 
 #include "ScreenSelectMusic.h"
-#include "ScreenResults.h"
+#include "ScreenEvaluation.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
@@ -43,7 +43,8 @@ const float PLAYER_OPTIONS_LOCAL_Y[NUM_PLAYERS]	= { -10, +10 };
 const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+60, SCREEN_RIGHT-60 };
 const float DIFFICULTY_Y[NUM_PLAYERS]	= { SCREEN_BOTTOM-70, SCREEN_BOTTOM-70 };
 
-const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.25f;
+const float DEBUG_X	= CENTER_X;
+const float DEBUG_Y	= CENTER_Y-70;
 
 const float TIME_BETWEEN_DANCING_COMMENTS	=	15;
 
@@ -150,12 +151,8 @@ ScreenGameplay::ScreenGameplay()
 	m_textStageNumber.Load( THEME->GetPathTo(FONT_HEADER2) );
 	m_textStageNumber.TurnShadowOff();
 	m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCAL_Y );
-	CString sStageText = PREFSMAN->GetStageText();
-	m_textStageNumber.SetText( sStageText );
-	if( stricmp(sStageText, "Final") == 0 )
-		m_textStageNumber.SetDiffuseColor( D3DXCOLOR(1,0.1f,0.1f,1) );	// red
-	else
-		m_textStageNumber.SetDiffuseColor( D3DXCOLOR(0.3f,1,0.3f,1) );	// green
+	m_textStageNumber.SetText( PREFSMAN->GetStageText() );
+	m_textStageNumber.SetDiffuseColor( PREFSMAN->GetStageColor() );
 	m_frameTop.AddActor( &m_textStageNumber );
 
 
@@ -178,6 +175,7 @@ ScreenGameplay::ScreenGameplay()
 
 		m_ScoreDisplay[p].SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
 		m_ScoreDisplay[p].SetZoom( 0.8f );
+		m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
 		m_frameBottom.AddActor( &m_ScoreDisplay[p] );
 
 		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
@@ -207,9 +205,13 @@ ScreenGameplay::ScreenGameplay()
 	}
 
 
+	m_textDebug.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
+	m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	this->AddActor( &m_textDebug );
 
 	
-
+	
 
 
 	m_StarWipe.SetClosed();
@@ -240,8 +242,9 @@ ScreenGameplay::ScreenGameplay()
 	m_soundFail.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_FAILED) );
 	m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
 	m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_NORMAL) );
+	m_announcerDanger.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_DANGER) );
 	m_announcerGood.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_GOOD) );
-	m_announcerBad.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_BAD) );
+	m_announcerHot.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_HOT) );
 	m_announcerCleared.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
 	m_announcerFailComment.Load(ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
 
@@ -262,9 +265,30 @@ ScreenGameplay::~ScreenGameplay()
 }
 
 
+void ScreenGameplay::SaveSummary()
+{
+	// save score summaries
+	if( m_pCurSong != NULL )
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
+				continue;		// skip
+
+			SONGMAN->m_aGameplayStatistics[p].Add( m_Player[p].GetGameplayStatistics() );
+		}
+
+		m_pCurSong = NULL;
+	}
+}
+
+
 void ScreenGameplay::LoadNextSong()
 {
 	int p;
+
+
+	SaveSummary();
 
 	m_pCurSong = m_apSongQueue[m_apSongQueue.GetSize()-1];
 	m_apSongQueue.RemoveAt(m_apSongQueue.GetSize()-1);
@@ -291,7 +315,7 @@ void ScreenGameplay::LoadNextSong()
 		NoteData* pOriginalNoteData = pNotes[p]->GetNoteData();
 		
 		NoteData newNoteData;
-		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );
+		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, &newNoteData );
 
 		m_Player[p].Load( 
 			(PlayerNumber)p,
@@ -299,11 +323,13 @@ void ScreenGameplay::LoadNextSong()
 			&newNoteData, 
 			PREFSMAN->m_PlayerOptions[p],
 			&m_LifeMeter[p],
-			&m_ScoreDisplay[p]
+			&m_ScoreDisplay[p],
+			pNotes[p]->GetNoteData()->GetNumTapNotes() + pNotes[p]->GetNoteData()->GetNumHoldNotes()
 		);
 	}
 
 	m_soundMusic.Load( m_pCurSong->GetMusicPath() );
+	m_soundMusic.SetPlaybackRate( PREFSMAN->m_SongOptions.m_fMusicRate );
 	
 	m_Background.LoadFromSong( m_pCurSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
@@ -318,17 +344,22 @@ void ScreenGameplay::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 
 
+	if( m_pCurSong == NULL )
+		return;
+
+
 	float fSongBeat, fBPS;
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
 	
 	m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
 
 	
+	m_Background.SetSongBeat( fSongBeat );
 
 	
 	//LOG->WriteLine( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
-	float fMaxBeatDifference = fBPS*MAX_SECONDS_CAN_BE_OFF_BY;
+	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow * PREFSMAN->m_SongOptions.m_fMusicRate;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -348,26 +379,22 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		{
 		// check for both players fail
-		bool bAllAboutToFail = true;
+		bool bAllInDanger = true;
 		bool bAllFailed = true;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 				continue;
 
-			if( !m_LifeMeter[p].IsAboutToFail() )
-			{
-				bAllAboutToFail = false;
+			if( !m_LifeMeter[p].IsInDanger() )
+				bAllInDanger = false;
+
+			if( !m_LifeMeter[p].HasFailed() )
 				bAllFailed = false;
-			}
-			else if( !m_LifeMeter[p].HasFailed() )
-			{
-				bAllFailed = false;
-			}
-			break;
 		}
-		if( bAllAboutToFail )	m_Background.TurnDangerOn();
-		else					m_Background.TurnDangerOff();
+
+		if( bAllInDanger )	m_Background.TurnDangerOn();
+		else				m_Background.TurnDangerOff();
 
 		if( bAllFailed )
 		{
@@ -398,8 +425,20 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;	// reset for the next comment
 
-				if( m_Background.IsDangerOn() )
-					m_announcerBad.PlayRandom();
+				bool bAllInDanger = true;
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( !m_LifeMeter[p].IsInDanger() )
+						bAllInDanger = false;
+
+				bool bOneIsHot = false;
+				for( p=0; p<NUM_PLAYERS; p++ )
+					if( m_LifeMeter[p].IsHot() )
+						bOneIsHot = true;
+
+				if( bOneIsHot )
+					m_announcerHot.PlayRandom();
+				else if( bAllInDanger )
+					m_announcerDanger.PlayRandom();
 				else
 					m_announcerGood.PlayRandom();
 			}
@@ -408,31 +447,52 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 
 
+	//
+	// Send crossed row messages to Player
+	//
+	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+	static int iRowLastCrossed = 0;
 
+	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;		// skip
+
+			m_Player[p].CrossedRow( r, fSongBeat, fMaxBeatDifference );
+		}
+	}
+
+	iRowLastCrossed = iRowNow;
+
+
+
+	// 
+	// play assist ticks
+	//
+	// Sound cards have a latency between when a sample is Play()ed and when the sound
+	// will start coming out the speaker.  Compensate for this by boosting
+	// fPositionSeconds ahead
 	if( PREFSMAN->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
-		// 
-		// play assist ticks
-		//
-		// Sound cards have a latency between when a sample is Play()ed and when the sound
-		// will start coming out the speaker.  Compensate for this by boosting
-		// fPositionSeconds ahead
 		fPositionSeconds += (SOUND->GetPlayLatency()+0.06f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.06 seconds to make them play a tiny bit earlier
 		m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
 
-		int iIndexNow = BeatToNoteIndexNotRounded( fSongBeat );
-		static int iIndexLastCrossed = 0;
+		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		static int iRowLastCrossed = 0;
 
 		bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
 
-		for( int i=iIndexLastCrossed+1; i<=iIndexNow; i++ )  // for each index we crossed since the last update
+		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;		// skip
 
-				bAnyoneHasANote |= m_Player[p].IsThereANoteAtIndex( i );
+				m_Player[p].CrossedRow( r, fSongBeat, fMaxBeatDifference );
+				bAnyoneHasANote |= m_Player[p].IsThereANoteAtRow( r );
 				break;	// this will only play the tick for the first player that is joined
 			}
 		}
@@ -441,7 +501,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_soundAssistTick.PlayRandom();
 
 
-		iIndexLastCrossed = iIndexNow;
+		iRowLastCrossed = iRowNow;
 	}
 
 }
@@ -459,6 +519,44 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	float fSongBeat, fBPS;
 	m_pCurSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS );
+
+
+	// Handle special keys to adjust the offset
+	if( type == IET_FIRST_PRESS  &&  DeviceI.device == DEVICE_KEYBOARD )
+	{
+		switch( DeviceI.button )
+		{
+		case DIK_F9:
+			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()-0.01f );
+			break;
+		case DIK_F10:
+			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()+0.01f );
+			break;
+		case DIK_F11:
+			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()-(1/fBPS) );
+			break;
+		case DIK_F12:
+			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()+(1/fBPS) );
+			break;
+		}
+
+		switch( DeviceI.button )
+		{
+		case DIK_F9:
+		case DIK_F10:
+		case DIK_F11:
+		case DIK_F12:
+			m_textDebug.SetText( ssprintf("Offset = %f.", m_pCurSong->GetBeatOffsetInSeconds()) );
+			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			m_textDebug.StopTweening();
+			m_textDebug.BeginTweeningQueued( 3 );		// sleep
+			m_textDebug.BeginTweeningQueued( 0.5f );	// fade out
+			m_textDebug.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			break;
+		}
+
+	}
+
 
 	
 	if( MenuI.IsValid() )
@@ -478,14 +576,14 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 	}
 
-	float fMaxBeatsCanBeOffBy = MAX_SECONDS_CAN_BE_OFF_BY * fBPS;
+	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow * PREFSMAN->m_SongOptions.m_fMusicRate;
 
 	if( type == IET_FIRST_PRESS )
 	{
 		if( StyleI.IsValid() )
 		{
 			if( GAMEMAN->IsPlayerEnabled( StyleI.player ) )
-				m_Player[StyleI.player].HandlePlayerStep( fSongBeat, StyleI.col, fMaxBeatsCanBeOffBy ); 
+				m_Player[StyleI.player].HandlePlayerStep( fSongBeat, StyleI.col, fMaxBeatDifference ); 
 		}
 	}
 }
@@ -562,16 +660,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_GoToResults, 1 );
 		break;
 	case SM_GoToResults:
-		{
-			// send score summaries to the PREFSMAN object so ScreenResults can grab it.
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
-					continue;		// skip
-				m_Player[p].GetGameplayStatistics( SONGMAN->m_GameplayStatistics[PREFSMAN->m_iNumArcadeStages-1][p] );
-			}
-			SCREENMAN->SetNewScreen( new ScreenResults(false) );
-		}
+		SaveSummary();
+		SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
 		break;
 
 

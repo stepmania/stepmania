@@ -456,7 +456,7 @@ void DWIcharToNote( char c, InstrumentNumber i, DanceNote &note1Out, DanceNote &
 
 bool Notes::LoadFromDWITokens( 
 	const CString &sMode, const CString &sDescription,
-	const CString &sNumFeet,
+	const int &iNumFeet,
 	const CString &sStepData1, const CString &sStepData2 )
 {
 	LOG->WriteLine( "Notes::LoadFromDWITokens()" );
@@ -501,7 +501,7 @@ bool Notes::LoadFromDWITokens(
 
 	m_sDescription = sDescription;
 
-	m_iMeter = atoi( sNumFeet );
+	m_iMeter = iNumFeet;
 
 	if( m_sDescription == "BASIC" )			m_DifficultyClass = CLASS_EASY;
 	else if( m_sDescription == "ANOTHER" )	m_DifficultyClass = CLASS_MEDIUM;
@@ -644,6 +644,17 @@ bool Notes::LoadFromNotesFile( const CString &sPath )
 		sFileText += buffer + "\n";
 	file.Close();
 
+	// strip comments out of sFileText
+	while( sFileText.Find("//") != -1 )
+	{
+		int iIndexCommentStart = sFileText.Find("//");
+		int iIndexCommentEnd = sFileText.Find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+			sFileText.Delete( iIndexCommentStart, 2 );
+		else
+			sFileText.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+	}
+
 	// split sFileText into strings containing each value expression
 	CStringArray arrayValueStrings;
 	split( sFileText, ";", arrayValueStrings );
@@ -682,17 +693,31 @@ bool Notes::LoadFromNotesFile( const CString &sPath )
 		{
 			arrayValueTokens.RemoveAt( 0 );
 
-			ASSERT( m_pNoteData == NULL );	// if not, then we're loading this Notes twice
+			ASSERT( m_pNoteData == NULL );	// if not, then we're loading this NoteData twice
 			m_pNoteData = new NoteData;
-
-			CString sFirstMeasure = arrayValueTokens[0];
-			int result = sFirstMeasure.Find( '\n' );
 
 			m_pNoteData->SetFromMeasureStrings( arrayValueTokens );
 		}
 
 		else
 			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
+	}
+
+	
+	if     ( stricmp(m_sDescription, "BASIC") == 0 )	m_DifficultyClass = CLASS_EASY;
+	else if( stricmp(m_sDescription, "TRICK") == 0 )	m_DifficultyClass = CLASS_MEDIUM;
+	else if( stricmp(m_sDescription, "STANDARD") == 0 )	m_DifficultyClass = CLASS_MEDIUM;
+	else if( stricmp(m_sDescription, "ANOTHER") == 0 )	m_DifficultyClass = CLASS_MEDIUM;
+	else if( stricmp(m_sDescription, "SSR") == 0 )		m_DifficultyClass = CLASS_HARD;
+	else if( stricmp(m_sDescription, "MANIAC") == 0 )	m_DifficultyClass = CLASS_HARD;
+	else if( stricmp(m_sDescription, "HEAVY") == 0 )	m_DifficultyClass = CLASS_HARD;
+	else if( stricmp(m_sDescription, "SMANIAC") == 0 )	m_DifficultyClass = CLASS_HARD;
+	else
+	{
+		// guess difficulty class from m_iMeter
+		if(		 m_iMeter <= 3 )	m_DifficultyClass = CLASS_EASY;
+		else if( m_iMeter <= 6 )	m_DifficultyClass = CLASS_MEDIUM;
+		else						m_DifficultyClass = CLASS_HARD;
 	}
 
 	return true;
@@ -704,8 +729,6 @@ void Notes::SaveToSMDir( CString sSongDir )
 {
 	LOG->WriteLine( "Notes::Save( '%s' )", sSongDir );
 
-	int i;
-
 	CString sNewNotesFilePath = sSongDir + ssprintf("%s-%s.notes", NotesTypeToString(m_NotesType), m_sDescription);
 
 	CStdioFile file;	
@@ -714,18 +737,14 @@ void Notes::SaveToSMDir( CString sSongDir )
 
 	file.WriteString( ssprintf("#TYPE:%s;\n", NotesTypeToString(m_NotesType)) );
 	file.WriteString( ssprintf("#DESCRIPTION:%s;\n", m_sDescription) );
-	file.WriteString( ssprintf("#CREDIT:%s;\n", m_sCredit) );
 	file.WriteString( ssprintf("#METER:%d;\n", m_iMeter) );
+	file.WriteString( ssprintf("#CREDIT:%s;\n", m_sCredit) );
 
 
-	file.WriteString( "#NOTES\n" );
+	file.WriteString( "#NOTES:\n" );
 	CStringArray sMeasureStrings;
 	GetNoteData()->GetMeasureStrings( sMeasureStrings );
-	for( i=0; i<sMeasureStrings.GetSize(); i++ )
-	{
-		file.WriteString( ":\n" );
-		file.WriteString( sMeasureStrings[i] );	// this should already have a trailing '\n'
-	}
+	file.WriteString( join(":\n", sMeasureStrings) );
 	file.WriteString( ";" );
 
 	

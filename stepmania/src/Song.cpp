@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Song.h
+ Class: Song
 
  Desc: Holds metadata for a song and the song's step data.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -82,6 +83,20 @@ Song::~Song()
 		SAFE_DELETE( m_arrayNotes[i] );
 
 	m_arrayNotes.RemoveAll();
+}
+
+
+void Song::AddBPMSegment( BPMSegment seg )
+{
+	m_BPMSegments.Add( seg );
+	SortBPMSegmentsArray( m_BPMSegments );
+}
+
+
+void Song::AddFreezeSegment( FreezeSegment seg )
+{
+	m_FreezeSegments.Add( seg );
+	SortFreezeSegmentsArray( m_FreezeSegments );
 }
 
 
@@ -184,14 +199,15 @@ float Song::GetElapsedTimeFromBeat( float fBeat )
 
 void Song::GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
 {
-	char szSeps[] = { '-', '~' };
-	for( int i=0; i<sizeof(szSeps); i++ )
+	char sLeftSeps[]  = { '-', '~', '(', '[' };
+	char sRightSeps[] = { '-', '~', ')', ']' };
+	ASSERT( sizeof(sLeftSeps) == sizeof(sRightSeps) );
+	for( int i=0; i<sizeof(sLeftSeps); i++ )
 	{
-		const char c = szSeps[i];
-		int iBeginIndex = sFullTitle.Find( c );
+		int iBeginIndex = sFullTitle.Find( sLeftSeps[i] );
 		if( iBeginIndex == -1 )
 			continue;
-		int iEndIndex = sFullTitle.Find( c, iBeginIndex+1 );	
+		int iEndIndex = sFullTitle.Find( sRightSeps[i], iBeginIndex+1 );	
 		if( iEndIndex == -1 )
 			continue;
 		sMainTitleOut = sFullTitle.Left( iBeginIndex-1 );
@@ -469,7 +485,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 	CStdioFile file;	
 	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
+		throw RageException( "Error opening DWI file '%s'.", GetSongFilePath() );
 
 
 	// read the whole file into a sFileText
@@ -478,6 +494,18 @@ bool Song::LoadFromDWIFile( CString sPath )
 	while( file.ReadString(buffer) )
 		sFileText += buffer;
 	file.Close();
+
+	// strip comments out of sFileText
+	while( sFileText.Find("//") != -1 )
+	{
+		int iIndexCommentStart = sFileText.Find("//");
+		int iIndexCommentEnd = sFileText.Find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+			sFileText.Delete( iIndexCommentStart, 2 );
+		else
+			sFileText.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+	}
+
 
 	// split sFileText into strings containing each value expression
 	CStringArray arrayValueStrings;
@@ -541,15 +569,8 @@ bool Song::LoadFromDWIFile( CString sPath )
 				float fFreezeBeat = NoteRowToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
-				FreezeSegment new_seg;
-				new_seg.m_fStartBeat = fFreezeBeat;
-				new_seg.m_fFreezeSeconds = fFreezeSeconds;
-
-				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
-
-				m_FreezeSegments.Add( new_seg );	// add to back for now (we'll sort later)
-				SortFreezeSegmentsArray( m_FreezeSegments );
-
+				AddFreezeSegment( FreezeSegment(fFreezeBeat, fFreezeSeconds) );
+				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
 
@@ -566,13 +587,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 				float fBeat = NoteRowToBeat( fIndex );
 				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
 				
-				BPMSegment new_seg;
-				new_seg.m_fStartBeat = fBeat;
-				new_seg.m_fBPM = fNewBPM;
-				
-				// add and sort
-				m_BPMSegments.Add( new_seg );
-				SortBPMSegmentsArray( m_BPMSegments );
+				AddBPMSegment( BPMSegment(fBeat, fNewBPM) );
 			}
 		}
 
@@ -582,7 +597,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 			pNewNotes->LoadFromDWITokens( 
 				arrayValueTokens[0], 
 				arrayValueTokens[1], 
-				arrayValueTokens[2], 
+				atoi(arrayValueTokens[2]), 
 				arrayValueTokens[3], 
 				arrayValueTokens.GetSize() == 5 ? arrayValueTokens[4] : "" 
 				);
@@ -651,6 +666,17 @@ bool Song::LoadFromSMDir( CString sDir )
 	while( file.ReadString(buffer) )
 		sFileText += buffer;
 	file.Close();
+
+	// strip comments out of sFileText
+	while( sFileText.Find("//") != -1 )
+	{
+		int iIndexCommentStart = sFileText.Find("//");
+		int iIndexCommentEnd = sFileText.Find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+			sFileText.Delete( iIndexCommentStart, 2 );
+		else
+			sFileText.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+	}
 
 	// split sFileText into strings containing each value expression
 	CStringArray arrayValueStrings;
@@ -890,8 +916,8 @@ void Song::TidyUpData()
 		pNM->m_fRadarValues[RADAR_STREAM]	= pNM->GetNoteData()->GetStreamRadarValue( fMusicLength );
 		pNM->m_fRadarValues[RADAR_VOLTAGE]	= pNM->GetNoteData()->GetVoltageRadarValue( fMusicLength );
 		pNM->m_fRadarValues[RADAR_AIR]		= pNM->GetNoteData()->GetAirRadarValue( fMusicLength );
-		pNM->m_fRadarValues[RADAR_CHAOS]	= pNM->GetNoteData()->GetChaosRadarValue( fMusicLength );
 		pNM->m_fRadarValues[RADAR_FREEZE]	= pNM->GetNoteData()->GetFreezeRadarValue( fMusicLength );
+		pNM->m_fRadarValues[RADAR_CHAOS]	= pNM->GetNoteData()->GetChaosRadarValue( fMusicLength );
 	}
 }
 
@@ -1138,7 +1164,7 @@ void Song::SaveToSMDir()
 	file.Close();
 			
 	//
-	// Save all Notess for this file
+	// Save all Notes for this file
 	//
 	for( i=0; i<m_arrayNotes.GetSize(); i++ ) 
 	{

@@ -20,7 +20,7 @@
 
 BannerWithFrame::BannerWithFrame()
 {
-	m_sprBannerFrame.Load( THEME->GetPathTo(GRAPHIC_RESULTS_BANNER_FRAME) );
+	m_sprBannerFrame.Load( THEME->GetPathTo(GRAPHIC_EVALUATION_BANNER_FRAME) );
 	m_Banner.SetCroppedSize( m_sprBannerFrame.GetUnzoomedWidth()-6, m_sprBannerFrame.GetUnzoomedHeight()-6 );
 
 	this->AddActor( &m_Banner );

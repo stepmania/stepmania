@@ -21,6 +21,7 @@ Andrew Livy
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
+#include "GameConstantsAndTypes.h"
 
 /* Constants */
 
@@ -192,7 +193,7 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_NONE);
+		MenuStart(PLAYER_INVALID);
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();

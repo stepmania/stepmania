@@ -134,7 +134,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 	if( m_Menu.IsClosing() )
 		return;		// ignore
 
-	if( MenuI.player == PLAYER_NONE )
+	if( MenuI.player == PLAYER_INVALID )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -174,7 +174,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 		{
 			MUSIC->Stop();
 
-			SCREENMAN->SetNewScreen( new ScreenStage(false) );
+			SCREENMAN->SetNewScreen( new ScreenStage );
 		}
 		break;
 	}

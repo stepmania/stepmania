@@ -14,6 +14,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
+#include "RageLog.h"
 
 
 const float SCORE_TWEEN_TIME = 0.5f;
@@ -33,11 +34,11 @@ ScoreDisplayRolling::ScoreDisplayRolling()
 }
 
 
-void ScoreDisplayRolling::Init( PlayerNumber pn, PlayerOptions po, int iTotalTapNotes, int iNotesMeter )
+void ScoreDisplayRolling::Init( PlayerNumber pn, PlayerOptions po, int iOriginalNumNotes, int iNotesMeter )
 {
 	m_PlayerNumber = pn;
 	m_PlayerOptions = po;
-	m_iTotalTapNotes = iTotalTapNotes;
+	m_iTotalNotes = iOriginalNumNotes;
 	m_iNotesMeter = iNotesMeter;
 }
 
@@ -90,7 +91,6 @@ void ScoreDisplayRolling::Draw()
 }
 
 
-
 void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 {
 //A single step's points are calculated as follows: 
@@ -120,6 +120,11 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 //
 //Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible score for any song is the number of feet difficulty X 10,000,000. 
 
+	static int iNumTimesCalled = 0;
+	iNumTimesCalled ++;
+	LOG->WriteLine("Called %d times.",iNumTimesCalled);
+
+
 	int p;	// score multiplier 
 	switch( score )
 	{
@@ -128,12 +133,16 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 	default:			p = 0;		break;
 	}
 	
-	int N = m_iTotalTapNotes;
-	int n = iCurCombo;
+	int N = m_iTotalNotes;
+	int n = iCurCombo+1;
 	int B = m_iNotesMeter * 1000000;
-	int S = (1+N)*N/2;
+	float S = (1+N)*N/2.0f;
 
-	int one_step_score = p * (B/S) * n;
+	int one_step_score = roundf( p * (B/S) * n );
+
+	// HACK:  The total score is off by a factor of 0.5.  For now, multiply by two...
+	one_step_score *= 2;
+
 
 	m_iScore += one_step_score;
 	ASSERT( m_iScore >= 0 );

@@ -74,18 +74,18 @@ CString vssprintf( LPCTSTR fmt, va_list argList)
 // Name: join()
 // Desc:
 //-----------------------------------------------------------------------------
-CString join(CString Deliminator, CStringArray& Source)
+CString join( const CString &Deliminator, const CStringArray& Source)
 {
 	CString csReturn;
 	CString csTmp;
 
 	// Loop through the Array and Append the Deliminator
-	for( int iNum = 0; iNum < Source.GetSize(); iNum++ ) {
+	for( int iNum = 0; iNum < Source.GetSize()-1; iNum++ ) {
 		csTmp += Source.GetAt(iNum);
 		csTmp += Deliminator;
 	}
-	csReturn = csTmp.Left(csTmp.GetLength() - 1);
-	return csReturn;
+	csTmp += Source.GetAt( Source.GetSize()-1 );
+	return csTmp;
 }
 
 

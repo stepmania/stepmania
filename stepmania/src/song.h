@@ -23,6 +23,7 @@
 struct BPMSegment 
 {
 	BPMSegment() { m_fStartBeat = m_fBPM = -1; };
+	BPMSegment( float s, float b ) { m_fStartBeat = s; m_fBPM = b; };
 	float m_fStartBeat;
 	float m_fBPM;
 };
@@ -30,6 +31,7 @@ struct BPMSegment
 struct FreezeSegment 
 {
 	FreezeSegment() { m_fStartBeat = m_fFreezeSeconds = -1; };
+	FreezeSegment( float s, float f ) { m_fStartBeat = s; m_fFreezeSeconds = f; };
 	float m_fStartBeat;
 	float m_fFreezeSeconds;
 };
@@ -86,7 +88,7 @@ public:
 	CString GetArtist()				{return m_sArtist; };
 	CString GetCredit()				{return m_sCredit; };
 	float GetBeatOffsetInSeconds()	{return m_fOffsetInSeconds; };
-	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; };
+	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; SetChangedSinceLastSave(); };
 	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM )
 	{
 		fMaxBPM = 0;
@@ -114,12 +116,13 @@ public:
 	bool IsNew() { return GetNumTimesPlayed()==0; };
 
 	bool HasChangedSinceLastSave()	{ return m_bChangedSinceSave;	}
-	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
 
 	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc );
 
 
 private:
+	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
+
 	CString m_sSongFilePath;
 	CString m_sSongDir;
 	CString m_sGroupName;
@@ -139,6 +142,9 @@ private:
 	CString	m_sBackgroundPath;
 	CString	m_sBackgroundMoviePath;
 	CString	m_sCDTitlePath;
+
+	void AddBPMSegment( BPMSegment seg );
+	void AddFreezeSegment( FreezeSegment seg );
 
 	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
 	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before gameplay

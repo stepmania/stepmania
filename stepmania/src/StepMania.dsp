@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-debug.exe" /pdbtype:sept
+# ADD LINK32 /nologo /subsystem:windows /profile /debug /machine:I386 /out:"../StepMania-debug.exe"
 
 !ENDIF 
 
@@ -260,6 +260,14 @@ SOURCE=.\NoteData.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\NoteDataWithScoring.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteDataWithScoring.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Notes.cpp
 # End Source File
 # Begin Source File
@@ -329,6 +337,14 @@ SOURCE=.\IniFile.cpp
 # Begin Source File
 
 SOURCE=.\IniFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MSDScanner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MSDScanner.h
 # End Source File
 # End Group
 # Begin Group "System"
@@ -676,6 +692,14 @@ SOURCE=.\Background.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BackgroundAnimation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BackgroundAnimation.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorNote.cpp
 # End Source File
 # Begin Source File
@@ -848,6 +872,14 @@ SOURCE=.\ScreenEditMenu.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenEvaluation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEvaluation.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenEz2SelectPlayer.cpp
 # End Source File
 # Begin Source File
@@ -937,14 +969,6 @@ SOURCE=.\ScreenPrompt.cpp
 # Begin Source File
 
 SOURCE=.\ScreenPrompt.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenResults.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenResults.h
 # End Source File
 # Begin Source File
 

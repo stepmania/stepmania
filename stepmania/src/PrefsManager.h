@@ -17,6 +17,14 @@
 
 const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input
 
+
+enum VisualizationMode {
+	VIS_MODE_NONE = 0,
+	VIS_MODE_ANIMATION,
+	VIS_MODE_MOVIE,
+};
+
+
 class PrefsManager
 {
 public:
@@ -29,11 +37,12 @@ public:
 	bool	m_bHighTextureDetail;
 	bool	m_bIgnoreJoyAxes;
 	bool	m_bShowFPS;
-	bool	m_bUseRandomVis;
+	int		m_visMode;
 	bool	m_bAnnouncer;
 	bool	m_bEventMode;
 	int		m_iNumArcadeStages;
-	int		m_iDifficulty;
+	bool	m_bAutoPlay;
+	float	m_fJudgeWindow;
 
 	void ReadPrefsFromDisk();
 	void SavePrefsToDisk();
@@ -46,9 +55,11 @@ public:
 	int				m_iCurrentStageIndex;		// starts at 0, and is incremented with each Stage Clear
 
 	int				GetStageIndex();
-	int				GetStageNumber();
 	bool			IsFinalStage();
+	bool			IsExtraStage();
+	bool			IsExtraStage2();
 	CString			GetStageText();
+	D3DXCOLOR		GetStageColor();
 
 
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];

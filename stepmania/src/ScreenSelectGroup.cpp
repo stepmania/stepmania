@@ -215,7 +215,7 @@ void ScreenSelectGroup::AfterChange()
 				if( j == NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 )
 					sText += ssprintf( "(%d more).....", arraySongs.GetSize() - NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 2 );
 				else
-					sText += arraySongs[j]->GetMainTitle() + "\n";
+					sText += arraySongs[j]->GetFullTitle() + "\n";
 			}
 		}
 		m_textContents[i].SetText( sText );

@@ -22,7 +22,7 @@ enum MenuButton
 	MENU_BUTTON_START,
 	MENU_BUTTON_BACK,
 	NUM_MENU_BUTTONS,		// leave this at the end
-	MENU_BUTTON_NONE
+	MENU_BUTTON_INVALID
 };
 
 
@@ -37,9 +37,9 @@ struct MenuInput
 
 	bool operator==( const MenuInput &other ) { return player == other.player && button == other.button; };
 
-	inline bool IsBlank() const { return player == PLAYER_NONE; };
+	inline bool IsBlank() const { return player == PLAYER_INVALID; };
 	inline bool IsValid() const { return !IsBlank(); };
-	inline void MakeBlank() { player = PLAYER_NONE; button = MENU_BUTTON_NONE; };
+	inline void MakeBlank() { player = PLAYER_INVALID; button = MENU_BUTTON_INVALID; };
 	
 };
 

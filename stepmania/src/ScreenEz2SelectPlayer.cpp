@@ -229,7 +229,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_NONE);
+		MenuStart(PLAYER_INVALID);
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();

@@ -17,7 +17,7 @@
 #include "IniFile.h"
 
 
-void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData &newNoteData )
+void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut )
 {
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
@@ -28,5 +28,5 @@ void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOrigin
 		iNewToOriginalTrack[col] = originalTrack;
 	}
 	
-	newNoteData.LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
+	pNoteDataOut->LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
 }

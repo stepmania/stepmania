@@ -167,6 +167,24 @@
 				RelativePath="ScreenEditMenu.h">
 			</File>
 			<File
+				RelativePath="ScreenEvaluation.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEvaluation.h">
+			</File>
+			<File
+				RelativePath="ScreenEz2SelectPlayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEz2SelectPlayer.h">
+			</File>
+			<File
+				RelativePath="ScreenEz2SelectStyle.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEz2SelectStyle.h">
+			</File>
+			<File
 				RelativePath="ScreenGameOptions.cpp">
 			</File>
 			<File
@@ -222,12 +240,6 @@
 			</File>
 			<File
 				RelativePath="ScreenPrompt.h">
-			</File>
-			<File
-				RelativePath="ScreenResults.cpp">
-			</File>
-			<File
-				RelativePath="ScreenResults.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">
@@ -360,6 +372,12 @@
 				RelativePath="NoteData.h">
 			</File>
 			<File
+				RelativePath="NoteDataWithScoring.cpp">
+			</File>
+			<File
+				RelativePath="NoteDataWithScoring.h">
+			</File>
+			<File
 				RelativePath="Notes.cpp">
 			</File>
 			<File
@@ -407,6 +425,12 @@
 			</File>
 			<File
 				RelativePath=".\IniFile.h">
+			</File>
+			<File
+				RelativePath="MSDScanner.cpp">
+			</File>
+			<File
+				RelativePath="MSDScanner.h">
 			</File>
 		</Filter>
 		<Filter
@@ -535,12 +559,6 @@
 				RelativePath="CroppedSprite.h">
 			</File>
 			<File
-				RelativePath="DifficultyBanner.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyBanner.h">
-			</File>
-			<File
 				RelativePath=".\DifficultyIcon.cpp">
 			</File>
 			<File
@@ -647,6 +665,12 @@
 				RelativePath=".\Background.h">
 			</File>
 			<File
+				RelativePath="BackgroundAnimation.cpp">
+			</File>
+			<File
+				RelativePath="BackgroundAnimation.h">
+			</File>
+			<File
 				RelativePath="ColorNote.cpp">
 			</File>
 			<File
@@ -657,6 +681,12 @@
 			</File>
 			<File
 				RelativePath=".\Combo.h">
+			</File>
+			<File
+				RelativePath="DifficultyBanner.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyBanner.h">
 			</File>
 			<File
 				RelativePath=".\FocusingSprite.cpp">

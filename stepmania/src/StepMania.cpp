@@ -42,7 +42,7 @@
 
 
 #include "ScreenSandbox.h"
-#include "ScreenResults.h"
+#include "ScreenEvaluation.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenPlayerOptions.h"
 #include "ScreenMusicScroll.h"
@@ -223,6 +223,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			}
 		}	// end  while( WM_QUIT != msg.message  )
 
+		LOG->WriteLine( "Recieved WM_QUIT message.  Shutting down..." );
 
 		// clean up after a normal exit 
 		DestroyObjects();			// deallocate our game objects and leave fullscreen
@@ -236,7 +237,29 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	}
 	catch( ... )
 	{
-		g_sErrorString = "access violation or other run-time error.";
+		switch( GetExceptionCode() )
+		{
+		case EXCEPTION_ACCESS_VIOLATION:		g_sErrorString = "EXCEPTION_ACCESS_VIOLATION";		break;
+		case EXCEPTION_BREAKPOINT:				g_sErrorString = "EXCEPTION_BREAKPOINT";			break;
+		case EXCEPTION_DATATYPE_MISALIGNMENT:	g_sErrorString = "EXCEPTION_DATATYPE_MISALIGNMENT";	break;
+		case EXCEPTION_SINGLE_STEP:				g_sErrorString = "EXCEPTION_SINGLE_STEP";			break;
+		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	g_sErrorString = "EXCEPTION_ARRAY_BOUNDS_EXCEEDED";	break;
+		case EXCEPTION_FLT_DENORMAL_OPERAND:	g_sErrorString = "EXCEPTION_FLT_DENORMAL_OPERAND";	break;
+		case EXCEPTION_FLT_DIVIDE_BY_ZERO:		g_sErrorString = "EXCEPTION_FLT_DIVIDE_BY_ZERO";	break;
+		case EXCEPTION_FLT_INEXACT_RESULT:		g_sErrorString = "EXCEPTION_FLT_INEXACT_RESULT";	break;
+		case EXCEPTION_FLT_INVALID_OPERATION:	g_sErrorString = "EXCEPTION_FLT_INVALID_OPERATION";	break;
+		case EXCEPTION_FLT_OVERFLOW:			g_sErrorString = "EXCEPTION_FLT_OVERFLOW";			break;
+		case EXCEPTION_FLT_STACK_CHECK:			g_sErrorString = "EXCEPTION_FLT_STACK_CHECK";		break;
+		case EXCEPTION_FLT_UNDERFLOW:			g_sErrorString = "EXCEPTION_FLT_UNDERFLOW";			break;
+		case EXCEPTION_INT_DIVIDE_BY_ZERO:		g_sErrorString = "EXCEPTION_INT_DIVIDE_BY_ZERO";	break;
+		case EXCEPTION_INT_OVERFLOW:			g_sErrorString = "EXCEPTION_INT_OVERFLOW";			break;
+		case EXCEPTION_PRIV_INSTRUCTION:		g_sErrorString = "EXCEPTION_PRIV_INSTRUCTION";		break;
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION:g_sErrorString = "EXCEPTION_NONCONTINUABLE_EXCEPTION";	break;
+		case EXCEPTION_ACCESS_VIOLATION:		g_sErrorString = "EXCEPTION_ACCESS_VIOLATION";		break;
+		case EXCEPTION_ACCESS_VIOLATION:		g_sErrorString = "EXCEPTION_ACCESS_VIOLATION";		break;
+		default:								g_sErrorString = "Unknown exception.";				break;
+		}
+		
 	}
 
 	if( g_sErrorString != "" )
@@ -510,12 +533,12 @@ HRESULT CreateObjects( HWND hWnd )
 
 
 
+	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 	//SCREENMAN->SetNewScreen( new ScreenLoading );
 	//SCREENMAN->SetNewScreen( new ScreenSandbox );
-	//SCREENMAN->SetNewScreen( new ScreenResults(false) );
+	//SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
 	//SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
 	//SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 	//SCREENMAN->SetNewScreen( new ScreenGameplay );
 	//SCREENMAN->SetNewScreen( new ScreenMusicScroll );
 	//SCREENMAN->SetNewScreen( new ScreenSelectMusic );

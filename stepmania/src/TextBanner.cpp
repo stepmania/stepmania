@@ -68,8 +68,8 @@ bool TextBanner::LoadFromSong( Song* pSong )
 	}
 	else
 	{
-		fTitleZoom = 0.8f;
-		fSubTitleZoom = 0.6f;
+		fTitleZoom = 1.0f;
+		fSubTitleZoom = 0.5f;
 		fArtistZoom = 0.6f;
 	}
 
@@ -94,9 +94,9 @@ bool TextBanner::LoadFromSong( Song* pSong )
 
 	if( sSubTitle == "" )
 	{
-		m_textTitle.SetY( -7 );
+		m_textTitle.SetY( -8 );
 		m_textSubTitle.SetY( 0 );
-		m_textArtist.SetY( 9 );
+		m_textArtist.SetY( 8 );
 	}
 	else
 	{

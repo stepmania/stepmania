@@ -29,41 +29,48 @@ const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 3);
 
 
-ScreenStage::ScreenStage( bool bTryExtraStage )
+ScreenStage::ScreenStage()
 {
-	m_bTryExtraStage = false;
-
 	m_textStage.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textStage.TurnShadowOff();
-	if( bTryExtraStage )
+
+	if( PREFSMAN->IsExtraStage() )
 	{
-		m_textStage.SetText( "Try Extra Stage!" );
+		m_textStage.SetText( "Extra Stage" );
+		m_textStage.SetDiffuseColor( D3DXCOLOR(1,0.1f,0.1f,1) );	// red
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_EXTRA) );
+	}
+	else if( PREFSMAN->IsExtraStage2() )
+	{
+		m_textStage.SetText( "Extra Stage 2" );	// red
 		m_textStage.SetDiffuseColor( D3DXCOLOR(1,0.1f,0.1f,1) );
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_EXTRA) );
 	}
-	else // !bTryExtraStage
+	else if( PREFSMAN->IsFinalStage() )
 	{
-		int iStageNo = PREFSMAN->GetStageNumber();
-		bool bFinal = PREFSMAN->IsFinalStage();
-
-		CString sStagePrefix = PREFSMAN->GetStageText();
-		m_textStage.SetText( sStagePrefix + " Stage" );
+		m_textStage.SetText( "Final Stage" );
+		m_textStage.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_FINAL) );
+	}
+	else
+	{
+		m_textStage.SetText( PREFSMAN->GetStageText() + " Stage" );
 		m_textStage.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
-		if( bFinal )
-			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_FINAL) );
-		else
+		const int iStageNo = PREFSMAN->GetStageIndex()+1;
+		switch( iStageNo )
 		{
-			switch( iStageNo )
-			{
-			case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_1) );	break;
-			case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_2) );	break;
-			case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_3) );	break;
-			case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_4) );	break;
-			case 5:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_5) );	break;
-			}
+		case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_1) );	break;
+		case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_2) );	break;
+		case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_3) );	break;
+		case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_4) );	break;
+		case 5:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_5) );	break;
+		default:	;	break;	// play nothing
 		}
+		
 	}
+
+
 	m_textStage.SetXY( CENTER_X, CENTER_Y );
 	m_textStage.SetZoomX( 2 );
 	m_textStage.SetZoomY( 0 );

@@ -31,11 +31,12 @@
 #include "NoteField.h"
 #include "GrayArrowRow.h"
 #include "GhostArrowRow.h"
+#include "NoteDataWithScoring.h"
 
 
 struct GameplayStatistics;
 
-class Player : public NoteData, public ActorFrame
+class Player : public NoteDataWithScoring, public ActorFrame
 {
 public:
 	Player();
@@ -43,33 +44,27 @@ public:
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore );
-	void CrossedIndex( int iIndex );
+	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes );
+	void CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff );
 	void HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff );
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 
-	void GetGameplayStatistics( GameplayStatistics& GSout );
+	GameplayStatistics GetGameplayStatistics();
 
-	bool IsThereANoteAtIndex( int iIndex );
 
 protected:
-	void CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff );
 	void OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iStepIndex );
 
 	float			m_fSongBeat;
 	PlayerNumber	m_PlayerNumber;
 	PlayerOptions	m_PlayerOptions;
 
-	// maintain this extra data in addition to the NoteData
-	TapNote			m_TapNotesOriginal[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];	// the original Notes that were loaded into player
-	TapNoteScore	m_TapNoteScores[MAX_TAP_NOTE_ROWS];
 	float			m_fHoldNoteLife[MAX_TAP_NOTE_ROWS];	// 1.0 means this HoldNote has full life.
 														// 0.0 means this HoldNote is dead
 														// When this value hits 0.0 for the first time, 
 														// m_HoldScore becomes HSS_NG.
 														// If the life is > 0.0 when the HoldNote ends, then
 														// m_HoldScore becomes HSS_OK.
-	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTE_ELEMENTS];
 
 
 	GrayArrowRow		m_GrayArrowRow;

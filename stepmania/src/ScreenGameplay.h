@@ -47,6 +47,7 @@ public:
 private:
 	void TweenOnScreen();
 	void TweenOffScreen();
+	void SaveSummary();
 	void LoadNextSong();
 
 
@@ -62,18 +63,18 @@ private:
 
 	Background				m_Background;
 
-
 	ActorFrame				m_frameTop;
 	Sprite					m_sprTopFrame;
 	Quad					m_quadLifeMeterBG[NUM_PLAYERS];	// just a black quad to fill in hole for the life meter
 	LifeMeterBar			m_LifeMeter[NUM_PLAYERS];
 	BitmapText				m_textStageNumber;
 
-
 	ActorFrame				m_frameBottom;
 	Sprite					m_sprBottomFrame;
 	ScoreDisplayRolling		m_ScoreDisplay[NUM_PLAYERS];
 	BitmapText				m_textPlayerOptions[NUM_PLAYERS];
+
+	BitmapText				m_textDebug;
 
 
 	TransitionStarWipe	m_StarWipe;
@@ -90,8 +91,9 @@ private:
 	RandomSample	m_soundFail;
 	RandomSample	m_announcerReady;
 	RandomSample	m_announcerHereWeGo;
-	RandomSample	m_announcerGood;		// these are samples because we play them often
-	RandomSample	m_announcerBad;			// these are samples because we play them often
+	RandomSample	m_announcerDanger;
+	RandomSample	m_announcerGood;
+	RandomSample	m_announcerHot;
 	RandomStream	m_announcerCleared;
 	RandomStream	m_announcerFailComment;
 	RandomStream	m_announcerGameOver;
@@ -99,7 +101,6 @@ private:
 	RandomSample	m_soundAssistTick;
 
 	RageSoundStream		m_soundMusic;
-
 
 };
 

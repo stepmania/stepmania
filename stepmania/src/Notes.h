@@ -27,7 +27,7 @@ public:
 	bool LoadFromNotesFile( const CString &sPath );
 	bool LoadFromBMSFile( const CString &sPath );
 	bool LoadFromDWITokens( const CString &sMode, const CString &sDescription,
-							const CString &sNumFeet,
+							const int &iNumFeet,
 							const CString &sStepData1, const CString &sStepData2 );
 	void ReadFromCacheFile( FILE* file, bool bReadNoteData );
 

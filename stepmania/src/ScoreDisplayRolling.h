@@ -24,7 +24,7 @@ class ScoreDisplayRolling : public BitmapText
 public:
 	ScoreDisplayRolling();
 
-	void Init( PlayerNumber pn, PlayerOptions po, int iTotalTapNotes, int iNotesMeter );
+	void Init( PlayerNumber pn, PlayerOptions po, int iOriginalNumNotes, int iNotesMeter );
 
 	void SetScore( int iNewScore );
 	int GetScore();
@@ -36,7 +36,7 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;
 	PlayerOptions m_PlayerOptions;
-	int m_iTotalTapNotes;
+	int m_iTotalNotes;
 	int m_iNotesMeter;
 
 	int m_iScore;

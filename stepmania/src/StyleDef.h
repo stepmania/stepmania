@@ -79,7 +79,7 @@ public:
 		return StyleInput();	// Didn't find a match.  Return blank.
 	}
 
-	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData &newNoteData );
+	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut );
 
 };
 

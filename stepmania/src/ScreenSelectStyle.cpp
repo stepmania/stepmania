@@ -47,6 +47,11 @@ ScreenSelectStyle::ScreenSelectStyle()
 {
 	LOG->WriteLine( "ScreenSelectStyle::ScreenSelectStyle()" );
 
+
+	// Reset the current style and game
+	GAMEMAN->m_CurStyle = STYLE_NONE;
+
+
 	for( int s=0; s<NUM_STYLES; s++ )
 	{
 		Style style = (Style)s;
@@ -131,7 +136,7 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_NONE);
+		MenuStart(PLAYER_INVALID);
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
@@ -210,7 +215,7 @@ void ScreenSelectStyle::MenuRight( const PlayerNumber p )
 
 void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 {
-	if( p != PLAYER_NONE )
+	if( p != PLAYER_INVALID )
 		GAMEMAN->m_sMasterPlayerNumber = p;
 	GAMEMAN->m_CurStyle = GetSelectedStyle();
 

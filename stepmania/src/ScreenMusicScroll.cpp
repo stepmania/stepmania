@@ -108,10 +108,8 @@ const CString CREDIT_LINES[] =
 	"",
 	"",
 	"If your name is missing from this list,",
-	"",
-	"                I apologize!",
-	"",
-	"                      -Chris"
+	"                      send me an e-mail!",
+	"                                -Chris"
 };
 const int NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
@@ -156,12 +154,12 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		m_textLines[i].SetZoom( 0.7f );
 		m_textLines[i].SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
-		m_textLines[i].BeginTweeningQueued( 0.20f * i );
-		m_textLines[i].BeginTweeningQueued( 2.0f );
+		m_textLines[i].BeginTweeningQueued( 0.30f * i );
+		m_textLines[i].BeginTweeningQueued( 3.0f );
 		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
-	this->SendScreenMessage( SM_StartFadingOut, 0.20f * i + 3.0f );
+	this->SendScreenMessage( SM_StartFadingOut, 0.3f * i + 3.0f );
 
 	this->AddActor( &m_Fade );
 

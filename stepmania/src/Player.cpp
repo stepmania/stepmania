@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: Notes
+ Class: Player
 
  Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -29,28 +30,27 @@ const float COMBO_Y_OFFSET		= +26;
 const float ARROWS_Y			= SCREEN_TOP + ARROW_SIZE * 1.5f;
 const float HOLD_JUDGEMENT_Y	= ARROWS_Y + 80;
 
-const float HOLD_ARROW_NG_TIME	=	0.27f;
+const float HOLD_ARROW_NG_TIME	=	0.18f;
 
 
 Player::Player()
 {
 
 	m_fSongBeat = 0;
-	m_PlayerNumber = PLAYER_NONE;
+	m_PlayerNumber = PLAYER_INVALID;
 
 	// init step elements
-	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
+	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 	{
-		for( int c=0; c<MAX_NOTE_TRACKS; c++ )
+		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 		{
-			m_TapNotesOriginal[c][i] = '0';
-			m_TapNotes[c][i] = '0';
+			m_TapNotes[t][i] = '0';
+			m_TapNoteScores[t][i] = TNS_NONE;
 		}
-		m_TapNoteScores[i] = TNS_NONE;
 	}
 
 	m_iNumHoldNotes = 0;
-	for( i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
+	for( int i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
 	{
 		m_HoldNoteScores[i] = HNS_NONE;
 		m_fHoldNoteLife[i] = 1.0f;
@@ -72,7 +72,7 @@ Player::Player()
 }
 
 
-void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore )
+void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes )
 {
 	//LOG->WriteLine( "Player::Load()", );
 	this->CopyAll( pNoteData );
@@ -83,7 +83,7 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
 	if( m_pScore )
-		m_pScore->Init( player_no, m_PlayerOptions, pNoteData->GetNumTapNotes(), SONGMAN->GetCurrentNotes(player_no)->m_iMeter );
+		m_pScore->Init( player_no, m_PlayerOptions, iOriginalNumNotes, SONGMAN->GetCurrentNotes(player_no)->m_iMeter );
 
 	if( !po.m_bHoldNotes )
 		this->RemoveHoldNotes();
@@ -95,12 +95,6 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 
 	m_NoteField.Load( (NoteData*)this, player_no, pStyleDef, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
 	
-	for( int t=0; t<pNoteData->m_iNumTracks; t++ )
-	{
-		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
-			m_TapNotesOriginal[t][r] = pNoteData->m_TapNotes[t][r];
-	}
-
 	m_GrayArrowRow.Load( player_no, pStyleDef, po );
 	m_GhostArrowRow.Load( player_no, pStyleDef, po );
 
@@ -108,8 +102,10 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	m_Combo.SetY( po.m_bReverseScroll ?  -COMBO_Y_OFFSET : COMBO_Y_OFFSET );
 	m_Judgement.SetY( po.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
 
-	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
+	for( int c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 		m_HoldJudgement[c].SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - HOLD_JUDGEMENT_Y : HOLD_JUDGEMENT_Y );
+	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
+		m_HoldJudgement[c].SetX( (float)pStyleDef->m_ColumnInfo[player_no][c].fXOffset );
 
 	m_NoteField.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GrayArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
@@ -142,7 +138,6 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fStartBeat = NoteRowToBeat( (float)hn.m_iStartIndex );
 		float fEndBeat = NoteRowToBeat( (float)hn.m_iEndIndex );
 
-		const int iCol = hn.m_iTrack;
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
 		const GameInput GameI = GAMEMAN->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
@@ -150,9 +145,9 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
-			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay;
 			// if they got a bad score or haven't stepped on the corresponding tap yet
-			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iStartIndex] >= TNS_GREAT;
+			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] >= TNS_GREAT;
 
 
 			if( bIsHoldingButton && bSteppedOnTapNote )
@@ -163,7 +158,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 				m_NoteField.m_HoldNotes[i].m_iStartIndex = BeatToNoteRow( m_fSongBeat );	// move the start of this Hold
 
-				m_GhostArrowRow.HoldNote( iCol );		// update the "electric ghost" effect
+				m_GhostArrowRow.HoldNote( hn.m_iTrack );		// update the "electric ghost" effect
 			}
 			else	// !bIsHoldingButton
 			{
@@ -181,7 +176,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		if( fLife == 0 )	// the player has not pressed the button for a long time!
 		{
 			hns = HNS_NG;
-			m_HoldJudgement[iCol].SetHoldJudgement( HNS_NG );
+			m_Combo.EndCombo();
+			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
 		}
 
 		// check for OK
@@ -190,7 +186,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 			// At this point fLife > 0, or else we would have marked it NG above
 			fLife = 1;
 			hns = HNS_OK;
-			m_HoldJudgement[iCol].SetHoldJudgement( HNS_OK );
+			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
 			m_NoteField.SetHoldNoteLife( i, fLife );	// update the NoteField display
 		}
 	}
@@ -260,26 +256,6 @@ void Player::DrawPrimitives()
 		m_HoldJudgement[c].Draw();
 }
 
-bool Player::IsThereANoteAtIndex( int iIndex )
-{
-	for( int t=0; t<m_iNumTracks; t++ )
-	{
-		if( m_TapNotesOriginal[t][iIndex] != '0' )
-			return true;
-	}
-
-	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
-	{
-		if( m_HoldNotes[i].m_iStartIndex == iIndex )
-			return true;
-	}
-
-	return false;
-}
-
-
-
-
 void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 {
 	//LOG->WriteLine( "Player::HandlePlayerStep()" );
@@ -288,13 +264,6 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 
 	m_GrayArrowRow.Step( col );
 
-	CheckForCompleteRow( fSongBeat, col, fMaxBeatDiff );
-}
-
-
-void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
-{
-	//LOG->WriteLine( "Player::CheckForCompleteRow()" );
 
 	// look for the closest matching step
 	int iIndexStartLookingAt = BeatToNoteRow( fSongBeat );
@@ -304,7 +273,7 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 
 	int iIndexOverlappingNote = -1;		// leave as -1 if we don't find any
 
-	// Start at iIndexStartLookingAt and search outward.  The first one that overlaps the player's step is the closest match.
+	// Start at iIndexStartLookingAt and search outward.  The first one note overlaps the player's hit (this is the closest match).
 	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
 	{
 		int iCurrentIndexEarlier = iIndexStartLookingAt - delta;
@@ -318,7 +287,8 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
 		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexEarlier );
-		if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )	// these Notes overlap
+		if( m_TapNotes[col][iCurrentIndexEarlier] != '0'  &&	// there is a note here
+			m_TapNoteScores[col][iCurrentIndexEarlier] == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexEarlier;
 			break;
@@ -329,7 +299,8 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
 		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexLater );
-		if( m_TapNotes[col][iCurrentIndexLater] != '0' )	// these Notes overlap
+		if( m_TapNotes[col][iCurrentIndexLater] != '0'  &&	// there is a note here
+			m_TapNoteScores[col][iCurrentIndexLater] == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexLater;
 			break;
@@ -338,13 +309,28 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 
 	if( iIndexOverlappingNote != -1 )
 	{
-		m_TapNotes[col][iIndexOverlappingNote] = '0';	// mark hit
-		
+		// compute the score for this hit
+		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
+		const float fBeatsUntilStep = fStepBeat - fSongBeat;
+		const float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
+
+		TapNoteScore &score = m_TapNoteScores[col][iIndexOverlappingNote];
+
+		if(		 fPercentFromPerfect < 0.35f )	score = TNS_PERFECT;
+		else if( fPercentFromPerfect < 0.6f )	score = TNS_GREAT;
+		else if( fPercentFromPerfect < 0.8f )	score = TNS_GOOD;
+		else									score = TNS_BOO;
+
+
 		bool bRowDestroyed = true;
 		for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
 		{
-			if( m_TapNotes[t][iIndexOverlappingNote] != '0' )
+			if( m_TapNotes[t][iIndexOverlappingNote] != '0'  &&			// there is a note here
+				m_TapNoteScores[t][iIndexOverlappingNote] == TNS_NONE )	// and it doesn't have a score
+			{
 				bRowDestroyed = false;
+				break;	// stop searching
+			}
 		}
 		if( bRowDestroyed )
 			OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iIndexOverlappingNote );
@@ -353,26 +339,17 @@ void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 
 void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
 {
-	float fStepBeat = NoteRowToBeat( (float)iIndexThatWasSteppedOn );
-
- 
-	float fBeatsUntilStep = fStepBeat - fSongBeat;
-	float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
-
 	//LOG->WriteLine( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
 	//		 fBeatsUntilStep, fPercentFromPerfect );
-
-	// compute what the score should be for the note we stepped on
-	TapNoteScore &score = m_TapNoteScores[iIndexThatWasSteppedOn];
-
-	if(		 fPercentFromPerfect < 0.25f )	score = TNS_PERFECT;
-	else if( fPercentFromPerfect < 0.50f )	score = TNS_GREAT;
-	else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
-	else									score = TNS_BOO;
+	
+	// find the minimum score of the row
+	TapNoteScore score = TNS_PERFECT;
+	for( int t=0; t<m_iNumTracks; t++ )
+		if( m_TapNoteScores[t][iIndexThatWasSteppedOn] >= TNS_BOO )
+			score = min( score, m_TapNoteScores[t][iIndexThatWasSteppedOn] );
 
 	// update the judgement, score, and life
 	m_Judgement.SetJudgement( score );
-	m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );
 	m_pLifeMeter->ChangeLife( score );
 
 
@@ -380,31 +357,27 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 	if ( ( score == TNS_PERFECT ) || ( score == TNS_GREAT ) )
 		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
-	// show ghost arrows
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
 	{
-		if( m_TapNotesOriginal[c][iIndexThatWasSteppedOn] != '0' )	// if there is an original note note in this column
+		if( m_TapNotes[c][iIndexThatWasSteppedOn] != '0' )	// if there is a note in this col
+		{
 			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
-	}
+			
+			m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );	// update score - called once per note in this row
 
-	int iNumNotesDestroyed = 0;
-	for( c=0; c<m_iNumTracks; c++ )	// for each column
-	{
-		if( m_TapNotesOriginal[c][iIndexThatWasSteppedOn] != '0' )	// if there is an original note note in this column
-			iNumNotesDestroyed++;
-	}
-
-	// update the combo display
-	switch( score )
-	{
-	case TNS_PERFECT:
-	case TNS_GREAT:
-		m_Combo.ContinueCombo( iNumNotesDestroyed );
-		break;
-	case TNS_GOOD:
-	case TNS_BOO:
-		m_Combo.EndCombo();
-		break;
+			// update combo - called once per note in this row
+			switch( score )
+			{
+			case TNS_PERFECT:
+			case TNS_GREAT:
+				m_Combo.ContinueCombo();
+				break;
+			case TNS_GOOD:
+			case TNS_BOO:
+				m_Combo.EndCombo();
+				break;
+			}
+		}
 	}
 
 	// zoom the judgement and combo like a heart beat
@@ -422,54 +395,6 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 }
 
 
-void Player::GetGameplayStatistics( GameplayStatistics& GSout )
-{
-	GSout.pSong = SONGMAN->GetCurrentSong();
-	Notes* pNotes = SONGMAN->GetCurrentNotes(m_PlayerNumber);
-	GSout.dc = pNotes->m_DifficultyClass;
-	GSout.meter = pNotes->m_iMeter;
-	GSout.iPossibleDancePoints = ((NoteData*)this)->GetPossibleDancePoints();
-	GSout.iActualDancePoints = 0;
-
-	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
-	{
-		switch( m_TapNoteScores[i] )
-		{
-		case TNS_PERFECT:	GSout.perfect++;	break;
-		case TNS_GREAT:		GSout.great++;		break;
-		case TNS_GOOD:		GSout.good++;		break;
-		case TNS_BOO:		GSout.boo++;		break;
-		case TNS_MISS:		GSout.miss++;		break;
-		case TNS_NONE:							break;
-		default:		ASSERT( false );
-		}
-		GSout.iActualDancePoints += TapNoteScoreToDancePoints( m_TapNoteScores[i] );
-	}
-	for( i=0; i<m_iNumHoldNotes; i++ ) 
-	{
-		switch( m_HoldNoteScores[i] )
-		{
-		case HNS_NG:		GSout.ng++;		break;
-		case HNS_OK:		GSout.ok++;		break;
-		case HNS_NONE:						break;
-		default:		ASSERT( false );
-		}
-		GSout.iActualDancePoints += HoldNoteScoreToDancePoints( m_HoldNoteScores[i] );
-	}
-	GSout.max_combo = m_Combo.GetMaxCombo();
-	GSout.score = m_pScore ? m_pScore->GetScore() : 0;
-
-	GSout.failed = this->m_pLifeMeter->HasFailed();
-
-
-	for( int r=0; r<NUM_RADAR_VALUES; r++ )
-	{
-		GSout.fRadarPossible[r] = this->GetRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->GetMusicLengthSeconds() );
-		GSout.fRadarActual[r] = randomf(0, GSout.fRadarPossible[r]);
-	}
-}
-
-
 int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
 	//LOG->WriteLine( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
@@ -482,17 +407,19 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
 	//LOG->WriteLine( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
-	for( int i=iStartCheckingAt; i<iMissIfOlderThanThisIndex; i++ )
+	for( int t=0; t<m_iNumTracks; t++ )
 	{
-		if( m_TapNoteScores[i] != TNS_NONE )	// this index already has a score
-			continue;
-
-		// look for any track at this index that still has data
-		if( !this->IsRowEmpty( i ) )
+		for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
 		{
-			m_TapNoteScores[i] = TNS_MISS;
-			iNumMissesFound++;
-			m_pLifeMeter->ChangeLife( TNS_MISS );
+			bool bFoundAMissInThisRow = false;
+			if( m_TapNotes[t][r] != '0'  &&  m_TapNoteScores[t][r] == TNS_NONE )
+			{
+				m_TapNoteScores[t][r] = TNS_MISS;
+				iNumMissesFound++;
+				bFoundAMissInThisRow = true;
+			}
+			if( bFoundAMissInThisRow )
+				m_pLifeMeter->ChangeLife( TNS_MISS );
 		}
 	}
 
@@ -506,8 +433,77 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 }
 
 
+void Player::CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff )
+{
+	if( PREFSMAN->m_bAutoPlay )
+	{
+		// check to see if there's at the crossed row
+		for( int t=0; t<m_iNumTracks; t++ )
+		{
+			if( m_TapNotes[t][iNoteRow] != '0' )
+				this->HandlePlayerStep( fSongBeat, t, fMaxBeatDiff );
+		}
+	}
+}
 
 
 
+GameplayStatistics Player::GetGameplayStatistics()
+{
+	GameplayStatistics GSreturn;
+
+	GSreturn.pSong = SONGMAN->GetCurrentSong();
+	Notes* pNotes = SONGMAN->GetCurrentNotes(m_PlayerNumber);
+	GSreturn.dc = pNotes->m_DifficultyClass;
+	GSreturn.meter = pNotes->m_iMeter;
+	GSreturn.iPossibleDancePoints = ((NoteData*)this)->GetPossibleDancePoints();
+	GSreturn.iActualDancePoints = 0;
+
+	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
+	{
+		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 
+		{
+			if( m_TapNotes[t][r] == '0' )
+				continue;	// no note here
+
+			switch( m_TapNoteScores[t][r] )
+			{
+			case TNS_PERFECT:	GSreturn.perfect++;	break;
+			case TNS_GREAT:		GSreturn.great++;	break;
+			case TNS_GOOD:		GSreturn.good++;	break;
+			case TNS_BOO:		GSreturn.boo++;		break;
+			case TNS_MISS:		GSreturn.miss++;	break;
+			case TNS_NONE:							break;
+			default:		ASSERT( false );
+			}
+			GSreturn.iActualDancePoints += TapNoteScoreToDancePoints( m_TapNoteScores[t][r] );
+		}
+	}
+	for( int i=0; i<m_iNumHoldNotes; i++ ) 
+	{
+		switch( m_HoldNoteScores[i] )
+		{
+		case HNS_NG:	GSreturn.ng++;	break;
+		case HNS_OK:	GSreturn.ok++;	break;
+		case HNS_NONE:					break;
+		default:		ASSERT( false );
+		}
+		GSreturn.iActualDancePoints += HoldNoteScoreToDancePoints( m_HoldNoteScores[i] );
+	}
+	GSreturn.max_combo = m_Combo.GetMaxCombo();
+	GSreturn.score = m_pScore ? m_pScore->GetScore() : 0;
+
+	GSreturn.failed = this->m_pLifeMeter->HasFailed();
 
 
+	for( int r=0; r<NUM_RADAR_VALUES; r++ )
+	{
+		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->GetMusicLengthSeconds() );
+		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->GetMusicLengthSeconds() );
+
+		GSreturn.fRadarPossible[r] = clamp( GSreturn.fRadarPossible[r], 0, 1 );
+		GSreturn.fRadarActual[r] = clamp( GSreturn.fRadarActual[r], 0, 1 );
+	}
+
+	return GSreturn;
+}
