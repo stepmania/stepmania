@@ -1056,20 +1056,20 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 }
  
 
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot slot )
+void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, ProfileSlot slot, bool bDescending )
 {
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	if( pProfile == NULL )
 		return;	// nothing to do since we don't have data
-	SortCoursePointerArrayByMostPlayed( arrayCoursePointers, pProfile );
+	SortCoursePointerArrayByNumPlays( arrayCoursePointers, pProfile, bDescending );
 }
 
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, const Profile* pProfile )
+void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, const Profile* pProfile, bool bDescending )
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
 		course_sort_val[arrayCoursePointers[i]] = (float) pProfile->GetCourseNumTimesPlayed(arrayCoursePointers[i]);
-	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortValueDescending );
+	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
 	course_sort_val.clear();
 }
 

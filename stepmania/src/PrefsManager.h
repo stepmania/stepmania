@@ -227,6 +227,7 @@ public:
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;
 	bool			m_bScreenTestMode;
+	CString			m_sMachineName;
 
 	CString			m_sIgnoredMessageWindows;
 

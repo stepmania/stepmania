@@ -121,3 +121,8 @@ void CryptManager::DigestFile(const char *filename)
 //	cout << "\nMD5: ";
 //	md5Filter.TransferTo(encoder);
 }
+
+CString CryptManager::GetPublicKeyFileName()
+{
+	return PUBLIC_KEY_PATH;
+}

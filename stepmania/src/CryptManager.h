@@ -13,6 +13,8 @@ public:
 	static bool VerifyFile( CString sPath );
 
 	static void DigestFile(const char *filename);
+
+	static CString GetPublicKeyFileName();
 };
 
 extern CryptManager*	CRYPTMAN;	// global and accessable from anywhere in our program

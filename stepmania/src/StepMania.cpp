@@ -1191,7 +1191,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		// HACK: Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
 		BOOKKEEPER->WriteToDisk();
-		PROFILEMAN->SaveMachineScoresToDisk();
+		PROFILEMAN->SaveMachineProfile();
 
 		/* If we're in screen test mode, reload the screen. */
 		if( PREFSMAN->m_bScreenTestMode )

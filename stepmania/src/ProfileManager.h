@@ -38,6 +38,10 @@ public:
 	bool SaveProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 
+	//
+	// High scores
+	//
+	void LoadMachineProfile();
 	void SaveMachineProfile();
 
 	bool IsUsingProfile( PlayerNumber pn ) { return !m_sProfileDir[pn].empty(); }
@@ -67,11 +71,6 @@ public:
 	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn );
 
 
-	//
-	// High scores
-	//
-	void InitMachineScoresFromDisk();
-	void SaveMachineScoresToDisk() const;
 
 	//
 	// Song stats

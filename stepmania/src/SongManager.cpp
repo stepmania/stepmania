@@ -104,7 +104,9 @@ void SongManager::Reload()
 {
 	FlushDirCache();
 
-	PROFILEMAN->SaveMachineScoresToDisk();
+	// save scores before unloading songs, of the scores will be lost
+	PROFILEMAN->SaveMachineProfile();
+
 	FreeSongs();
 	FreeCourses();
 
@@ -118,7 +120,9 @@ void SongManager::Reload()
 	InitSongsFromDisk(NULL);
 	InitCoursesFromDisk(NULL);
 	InitAutogenCourses();
-	PROFILEMAN->InitMachineScoresFromDisk();
+
+	// reload scores afterward
+	PROFILEMAN->LoadMachineProfile();
 
 	PREFSMAN->m_bFastLoad = OldVal;
 }
@@ -870,10 +874,10 @@ void SongManager::UpdateBestAndShuffled()
 	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
 	{
 		m_pBestSongs[i] = m_pSongs;
-		SortSongPointerArrayByMostPlayed( m_pBestSongs[i], (ProfileSlot) i );
+		SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
 
 		m_pBestCourses[i] = m_pCourses;
-		SortCoursePointerArrayByMostPlayed( m_pBestCourses[i], (ProfileSlot) i );
+		SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
 	}
 
 	// update shuffled

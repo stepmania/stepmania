@@ -328,20 +328,20 @@ bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps
 	return steps_sort_val[pSteps1] > steps_sort_val[pSteps2];
 }
 
-void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileSlot slot )
+void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, ProfileSlot slot, bool bDescending )
 {
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	if( pProfile == NULL )
 		return;	// nothing to do since we don't have data
-	SortStepsPointerArrayByMostPlayed( vStepsPointers, pProfile );
+	SortStepsPointerArrayByNumPlays( vStepsPointers, pProfile, bDescending );
 }
 
-void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, const Profile* pProfile )
+void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, const Profile* pProfile, bool bDecending )
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(vStepsPointers[i]));
-	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), CompareStepsPointersBySortValueDescending );
+	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), bDecending ? CompareStepsPointersBySortValueDescending : CompareStepsPointersBySortValueAscending );
 	steps_sort_val.clear();
 }
 

@@ -66,6 +66,7 @@ void Profile::InitGeneralData()
 	m_iCurrentCombo = 0;
 	m_fWeightPounds = 0;
 	m_fCaloriesBurned = 0;
+	m_sLastMachinePlayed = "";
 
 	int i;
 	for( i=0; i<NUM_PLAY_MODES; i++ )
@@ -95,14 +96,14 @@ void Profile::InitCategoryScores()
 			m_CategoryHighScores[st][rc].Init();
 }
 
-CString Profile::GetDisplayName()
+CString Profile::GetDisplayName() const
 {
 	if( !m_sName.empty() )
 		return m_sName;
 	else if( !m_sLastUsedHighScoreName.empty() )
 		return m_sLastUsedHighScoreName;
 	else
-		return "NO NAME";
+		return "NoName";
 }
 
 CString Profile::GetDisplayCaloriesBurned()
@@ -172,16 +173,9 @@ int Profile::GetStepsNumTimesPlayed( const Steps* pSteps ) const
 {
 	std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.find( pSteps );
 	if( iter == m_StepsHighScores.end() )
-	{
 		return 0;
-	}
 	else
-	{
-		int iTotalNumTimesPlayed = 0;
-		for( unsigned st = 0; st < NUM_STEPS_TYPES; ++st )
-			iTotalNumTimesPlayed += iter->second.hs.iNumTimesPlayed;
-		return iTotalNumTimesPlayed;
-	}
+		return iter->second.hs.iNumTimesPlayed;
 }
 
 void Profile::IncrementStepsPlayCount( const Steps* pSteps )
@@ -294,6 +288,8 @@ bool Profile::LoadAllFromDir( CString sDir )
 
 bool Profile::SaveAllToDir( CString sDir ) const
 {
+	m_sLastMachinePlayed = PREFSMAN->m_sMachineName;
+
 	// Delete old files after saving new ones so we don't try to load old
 	// and make duplicate records. 
 	// If the save fails, the delete will fail too... probably :-)
@@ -305,6 +301,7 @@ bool Profile::SaveAllToDir( CString sDir ) const
 	SaveCategoryScoresToDir( sDir );
 	DeleteCategoryScoresFromDirSM390a12( sDir );
 	SaveStatsWebPageToDir( sDir );
+	SaveMachinePublicKeyToDir( sDir );
 	return bResult;
 }
 
@@ -342,6 +339,9 @@ bool Profile::LoadGeneralDataFromDir( CString sDir )
 	ini.GetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.GetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	ini.GetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
+	ini.GetValue( "Profile", "WeightPounds",					m_fWeightPounds );
+	ini.GetValue( "Profile", "CaloriesBurned",					m_fCaloriesBurned );
+	ini.GetValue( "Profile", "LastMachinePlayed",				m_sLastMachinePlayed );
 
 	unsigned i;
 	for( i=0; i<NUM_PLAY_MODES; i++ )
@@ -369,6 +369,9 @@ bool Profile::SaveGeneralDataToDir( CString sDir ) const
 	ini.SetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.SetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	ini.SetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
+	ini.SetValue( "Profile", "WeightPounds",					m_fWeightPounds );
+	ini.SetValue( "Profile", "CaloriesBurned",					m_fCaloriesBurned );
+	ini.SetValue( "Profile", "LastMachinePlayed",				m_sLastMachinePlayed );
 
 	unsigned i;
 	for( i=0; i<NUM_PLAY_MODES; i++ )
@@ -986,13 +989,21 @@ void Profile::DeleteCategoryScoresFromDirSM390a12( CString sDir ) const
 
 void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
-	if( m_bIsMachineProfile )
+	// UGLY...
+	bool bThisIsMachineProfile = this == PROFILEMAN->GetMachineProfile();
+
+	if( bThisIsMachineProfile )
 	{
 		SaveMachineHtmlToDir( sDir, this );
-//		SavePlayerHtmlToDir( sDir, this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
+		SavePlayerHtmlToDir( sDir+"temp/", this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
 	}
 	else
 	{
 		SavePlayerHtmlToDir( sDir, this, PROFILEMAN->GetMachineProfile() );
 	}
+}
+
+void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
+{
+	FileCopy( CRYPTMAN->GetPublicKeyFileName(), "public.key.rsa" );
 }

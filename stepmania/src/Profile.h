@@ -34,7 +34,7 @@ public:
 	//
 	// smart accessors
 	//
-	CString GetDisplayName();
+	CString GetDisplayName() const;
 	CString GetDisplayCaloriesBurned();
 	int GetTotalNumSongsPlayed();
 	static CString GetProfileDisplayNameFromDir( CString sDir );
@@ -43,7 +43,6 @@ public:
 	//
 	// General data
 	//
-	bool m_bIsMachineProfile;
 	CString m_sName;
 	CString m_sLastUsedHighScoreName;
 	bool m_bUsingProfileDefaultModifiers;
@@ -54,6 +53,7 @@ public:
 	int m_iCurrentCombo;
 	float m_fWeightPounds;
 	int m_fCaloriesBurned;
+	mutable CString m_sLastMachinePlayed;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPlayedByStyle[NUM_STYLES];
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
@@ -146,6 +146,8 @@ public:
 	void DeleteCategoryScoresFromDirSM390a12( CString sDir ) const;
 
 	void SaveStatsWebPageToDir( CString sDir ) const;
+
+	void SaveMachinePublicKeyToDir( CString sDir ) const;
 };
 
 

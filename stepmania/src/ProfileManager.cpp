@@ -56,12 +56,12 @@ ProfileManager::ProfileManager()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_bWasLoadedFromMemoryCard[p] = false;
 
-	InitMachineScoresFromDisk();
+	LoadMachineProfile();
 }
 
 ProfileManager::~ProfileManager()
 {
-	SaveMachineScoresToDisk();
+	SaveMachineProfile();
 }
 
 void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut )
@@ -290,15 +290,20 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	return FILEMAN->Remove( sProfileDir );
 }
 
-void ProfileManager::SaveMachineScoresToDisk() const
+void ProfileManager::SaveMachineProfile()
 {
+	// If the machine name has changed, make sure we use the new name.
+	// It's important that this name be applied before the Player profiles 
+	// are saved, so that the Player's profiles show the right machine name.
+	m_MachineProfile.m_sName = PREFSMAN->m_sMachineName;
+
 	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR );
 }
 
 
 
 
-void ProfileManager::InitMachineScoresFromDisk()
+void ProfileManager::LoadMachineProfile()
 {
 	// read old style notes scores
 //	ReadSM300NoteScores();
@@ -308,6 +313,9 @@ void ProfileManager::InitMachineScoresFromDisk()
 		CreateProfile(MACHINE_PROFILE_DIR, "Machine");
 		m_MachineProfile.LoadAllFromDir( MACHINE_PROFILE_DIR );
 	}
+
+	// If the machine name has changed, make sure we use the new name
+	m_MachineProfile.m_sName = PREFSMAN->m_sMachineName;
 }
 
 /*

@@ -266,7 +266,7 @@ void GameState::EndGame()
 	CHECKPOINT;
 
 	BOOKKEEPER->WriteToDisk();
-	PROFILEMAN->SaveMachineScoresToDisk();
+	PROFILEMAN->SaveMachineProfile();
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{

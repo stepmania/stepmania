@@ -27,6 +27,7 @@
 #define STYLE_CSS			"style.css"
 
 #define STATS_TITLE			THEME->GetMetric("ProfileManager","StatsTitle")
+#define STATS_FOOTER		THEME->GetMetric("ProfileManager","StatsFooter")
 
 
 static int g_Level = 1;
@@ -141,6 +142,8 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			TABLE_LINE2( "TotalPlaySeconds",				pProfile->m_iTotalPlaySeconds );
 			TABLE_LINE2( "TotalGameplaySeconds",			pProfile->m_iTotalGameplaySeconds );
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
+			TABLE_LINE2( "CaloriesBurned",					pProfile->m_fCaloriesBurned );
+			TABLE_LINE2( "LastMachinePlayed",				pProfile->m_sLastMachinePlayed );
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -201,35 +204,63 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 {
 	PRINT_OPEN(f, sTitle );
 	{
-		// Songs by popularity
-		{
-			unsigned uNumToShow = min( vpSongs.size(), (unsigned)100 );
+		SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
+		Song* pSongPopularThreshold = vpSongs[ vpSongs.size()*2/3 ];
+		int iPopularNumPlaysThreshold = pProfile->GetSongNumTimesPlayed(pSongPopularThreshold);
+		
+		// unplayed songs are always considered unpopular
+		if( iPopularNumPlaysThreshold == 0 )
+			iPopularNumPlaysThreshold = 1;
 
-			SortSongPointerArrayByMostPlayed( vpSongs, pProfile );
-			PRINT_OPEN(f, "Songs by Popularity" );
+		unsigned uMaxToShow = min( vpSongs.size(), (unsigned)100 );
+
+		{
+			PRINT_OPEN(f, "Most Popular Songs" );
 			{
 				BEGIN_TABLE(1);
-				for( unsigned i=0; i<uNumToShow; i++ )
+				for( unsigned i=0; i<uMaxToShow; i++ )
 				{
 					Song* pSong = vpSongs[i];
-					TABLE_LINE3(i+1, pSong->GetFullDisplayTitle(), pProfile->GetSongNumTimesPlayed(pSong) );
+					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
+					if( iNumTimesPlayed == 0 || iNumTimesPlayed < iPopularNumPlaysThreshold )	// not popular
+						break;	// done searching
+					TABLE_LINE3(i+1, pSong->GetFullDisplayTitle(), iNumTimesPlayed );
 				}
 				END_TABLE;
 			}
 			PRINT_CLOSE(f);
 		}
 
-		// Steps by popularity
+		{
+			SortSongPointerArrayByNumPlays( vpSongs, pProfile, false );
+			PRINT_OPEN(f, "Least Popular Songs" );
+			{
+				BEGIN_TABLE(1);
+				for( unsigned i=0; i<uMaxToShow; i++ )
+				{
+					Song* pSong = vpSongs[i];
+					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
+					if( iNumTimesPlayed >= iPopularNumPlaysThreshold )	// not unpopular
+						break;	// done searching
+					TABLE_LINE3(i+1, pSong->GetFullDisplayTitle(), iNumTimesPlayed );
+				}
+				END_TABLE;
+			}
+			PRINT_CLOSE(f);
+		}
+
 		{
 			unsigned uNumToShow = min( vpAllSteps.size(), (unsigned)100 );
 
-			SortStepsPointerArrayByMostPlayed( vpAllSteps, pProfile );
-			PRINT_OPEN(f, "Steps by Popularity" );
+			SortStepsPointerArrayByNumPlays( vpAllSteps, pProfile, true );
+			PRINT_OPEN(f, "Most Popular Steps" );
 			{
 				BEGIN_TABLE(1);
 				for( unsigned i=0; i<uNumToShow; i++ )
 				{
 					Steps* pSteps = vpAllSteps[i];
+					if( pProfile->GetStepsNumTimesPlayed(pSteps)==0 )
+						continue;	// skip
 					Song* pSong = mapStepsToSong[pSteps];
 					CString s;
 					s += pSong->GetFullDisplayTitle();
@@ -244,12 +275,11 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			PRINT_CLOSE(f);
 		}
 
-		// Course by popularity
 		{
 			unsigned uNumToShow = min( vpCourses.size(), (unsigned)100 );
 
-			SortCoursePointerArrayByMostPlayed( vpCourses, pProfile );
-			PRINT_OPEN(f, "Courses by Popularity" );
+			SortCoursePointerArrayByNumPlays( vpCourses, pProfile, true );
+			PRINT_OPEN(f, "Most Popular Courses" );
 			{
 				BEGIN_TABLE(2);
 				for( unsigned i=0; i<uNumToShow; i++ )
@@ -321,19 +351,16 @@ void PrintStepsTypes( RageFile &f, const Profile *pProfile, CString sTitle, vect
 
 void PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
+	int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
+	if( iNumTimesPlayed == 0 )
+		return;	// skip
+
 	vector<Steps*> vpSteps = pSong->GetAllSteps();
 
-	/* XXX: We can't call pSong->HasBanner on every song; it'll effectively re-traverse the estire
-	 * song directory tree checking if each banner file really exists.
-	 *
-	 * (Note for testing this: remember that we'll cache directories for a time; this is only slow if
-	 * the directory cache expires before we get here.) */
-	/* Don't prist the song banner anyway since this is going on the memory card. -Chris */
-	//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
 	PRINT_OPEN(f, pSong->GetFullDisplayTitle() );
 	{
 		BEGIN_TABLE(2);
-		TABLE_LINE2( "NumTimesPlayed", pProfile->GetSongNumTimesPlayed(pSong) );
+		TABLE_LINE2( "NumTimesPlayed", iNumTimesPlayed );
 		END_TABLE;
 
 		//
@@ -344,6 +371,9 @@ void PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 			Steps* pSteps = vpSteps[j];
 			if( pSteps->IsAutogen() )
 				continue;	// skip autogen
+			if( pProfile->GetStepsNumTimesPlayed(pSteps)==0 )
+				continue;	// skip
+
 			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
 			CString s = 
 				GAMEMAN->NotesTypeToString(pSteps->m_StepsType) + 
@@ -692,6 +722,13 @@ function expandIt(whichEl)\n\
 STATS_TITLE.c_str(), STYLE_CSS ) );
 	}
 
+	CString sType;
+	switch( saveType )
+	{
+	case SAVE_TYPE_PLAYER:	sType = "Player: ";		break;
+	case SAVE_TYPE_MACHINE:	sType = "Machine: ";	break;
+	}
+
 	CString sName = 
 		pProfile->m_sLastUsedHighScoreName.empty() ? 
 		pProfile->m_sName :
@@ -700,18 +737,20 @@ STATS_TITLE.c_str(), STYLE_CSS ) );
 	CString sTime = ctime( &ltime );
 
 	f.Write( ssprintf(
-		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>for %s<br>%s</td></tr></table>\n",
-		STATS_TITLE.c_str(), sName.c_str(), sTime.c_str() ) );
+		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>%s %s<br>%s</td></tr></table>\n",
+		STATS_TITLE.c_str(), sType.c_str(), sName.c_str(), sTime.c_str() ) );
 
+	CString sPlayerName = pProfile->GetDisplayName();
+	CString sMachineName = pProfileMachine->GetDisplayName();
 
 	switch( saveType )
 	{
 	case SAVE_TYPE_PLAYER:
-		PrintStatistics(		f, pProfile,		"Personal Statistics",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfile,		"Personal Popularity",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintHighScores(		f, pProfile,		"Personal High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfileMachine, "Last Machine Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintHighScores(		f, pProfileMachine, "Last Machine High Scores", vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintStatistics(		f, pProfile,		sPlayerName+"'s Statistics",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(		f, pProfile,		sPlayerName+"'s Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintHighScores(		f, pProfile,		sPlayerName+"'s High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(		f, pProfileMachine, sMachineName+"'s Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintHighScores(		f, pProfileMachine, sMachineName+"'s High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		break;
 	case SAVE_TYPE_MACHINE:
 		PrintStatistics(		f, pProfile,		"Statistics",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
@@ -724,6 +763,8 @@ STATS_TITLE.c_str(), STYLE_CSS ) );
 	default:
 		ASSERT(0);
 	}
+
+	f.PutLine( ssprintf("<p class='footer'>%s</p>\n", STATS_FOOTER.c_str()) );
 
 	f.PutLine( "</body>" );
 	f.PutLine( "</html>" );
