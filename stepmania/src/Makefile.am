@@ -228,9 +228,9 @@ RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisp
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
 RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundManager.cpp RageSoundManager.h \
-RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
-RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
-RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
+RageSoundMixBuffer.cpp RageSoundMixBuffer.h RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h \
+RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
+RageSoundReader_Resample.cpp RageSoundReader_Resample.h RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundResampler.cpp RageSoundResampler.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
