@@ -95,11 +95,10 @@ bool RageSound_DSound_Software::GetData()
 		{
 			/* If the sound is supposed to start at a time past this buffer, insert silence. */
 			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
-
 			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
 			const int iFramesBeforeStart = int(fSecondsBeforeStart * samplerate);
-			const int iSilentFramesInThisBuffer = max( 0, iFramesBeforeStart-iFramesUntilThisBuffer );
-			const int iSilentBytesInThisBuffer = min( iSilentFramesInThisBuffer * bytes_per_frame, bytes_left );
+			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
 
 			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;

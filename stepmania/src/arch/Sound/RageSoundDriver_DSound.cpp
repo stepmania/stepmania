@@ -105,7 +105,7 @@ bool RageSound_DSound::stream::GetData(bool init)
 
 	char *locked_buf;
 	unsigned len;
-	int play_pos = str_ds->GetOutputPosition();
+	const int play_pos = str_ds->GetOutputPosition();
 	const int cur_play_pos = str_ds->GetPosition();
 
 	if(init) {
@@ -133,8 +133,8 @@ bool RageSound_DSound::stream::GetData(bool init)
 			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
 			const float fSecondsBeforeStart = -start_time.Ago();
 			const int iFramesBeforeStart = int(fSecondsBeforeStart * str_ds->GetSampleRate());
-			const int iSilentFramesInThisBuffer = max( 0, iFramesBeforeStart-iFramesUntilThisBuffer );
-			const int iSilentBytesInThisBuffer = min( iSilentFramesInThisBuffer * bytes_per_frame, bytes_left );
+			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
 
 			memset( locked_buf, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
@@ -156,7 +156,7 @@ bool RageSound_DSound::stream::GetData(bool init)
 			 * buffers have been flushed. */
 			state = STOPPING;
 
-			/* Flush two buffers worth of data. */
+			/* Keep playing until the data we currently have locked has played. */
 			flush_pos = str_ds->GetOutputPosition();
 		}
 	} else {
