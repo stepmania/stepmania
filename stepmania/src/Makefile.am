@@ -1,7 +1,12 @@
 bin_PROGRAMS = stepmania
 
-# This is a little hacky; we use our own version of SDL_sound, and I don't
-# want to have to integrate its entire build system.
+# This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
+# want to have to integrate their entire build systems.
+SDL-1.2.5/src/.libs/libSDL.a:
+	cd SDL-1.2.5 && ./configure \
+		--disable-nasm --enable-static --disable-shared --enable-debug
+	make -C SDL-1.2.5
+
 SDL_sound-1.0.0/.libs/libSDL_sound.a:
 	cd SDL_sound-1.0.0 && ./configure \
 		--enable-wav \
@@ -42,7 +47,7 @@ NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoa
 NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h NoteTypes.cpp NoteTypes.h Player.cpp Player.h \
 PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.h StyleInput.h \
-TitleSubstitution.cpp TitleSubstitution.h
+TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
 
@@ -52,7 +57,7 @@ Transitions = \
 Transition.cpp Transition.h TransitionFade.cpp TransitionFade.h TransitionFadeWipe.cpp TransitionFadeWipe.h \
 TransitionInvisible.cpp TransitionInvisible.h TransitionKeepAlive.cpp TransitionKeepAlive.h \
 TransitionOniFade.cpp TransitionOniFade.h TransitionRectWipe.cpp TransitionRectWipe.h \
-TransitionStarWipe.cpp TransitionStarWipe.h
+TransitionStarWipe.cpp TransitionStarWipe.h TransitionBGAnimation.cpp TransitionBGAnimation.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h Sample3dObject.cpp Sample3dObject.h \
@@ -78,7 +83,8 @@ GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment
 Judgment.cpp Judgment.h LifeMeter.cpp LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp \
 LifeMeterBattery.h MotionBlurSprite.cpp MotionBlurSprite.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
-ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h
+ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
+ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
@@ -94,13 +100,15 @@ ScreenManager.h ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard
 ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsMenu.cpp ScreenOptionsMenu.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenPrompt.cpp \
 ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h ScreenSandbox.cpp ScreenSandbox.h ScreenSelectCourse.cpp \
-ScreenSelectCourse.h ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGame.cpp \
+ScreenSelect.cpp ScreenSelect.h ScreenSelectCourse.h ScreenSelectGame.cpp \
 ScreenSelectGame.h ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMode.cpp ScreenSelectMode.h \
-ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSelectStyle5th.cpp \
+ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle5th.cpp \
 ScreenSelectStyle5th.h ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp ScreenStage.h \
 ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
 ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
-ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h
+ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
+ScreenSelectMaxType1.cpp ScreenSelectMaxType1.h ScreenSelectMaxType2.cpp ScreenSelectMaxType2.h \
+ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
@@ -116,6 +124,15 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    arch/MovieTexture/MovieTexture.cpp \
 		    arch/Sound/RageSoundDriver_Null.cpp
 
-stepmania_LDADD = $(SDL_LIBS) $(GL_LIBS) SDL_sound-1.0.0/.libs/libSDL_sound.a
+# Note that we still end up linking dynamically to the shared system library
+# for SDL_image.  This is annoying, but it's not a major problem.  The
+# "fix" would be to statically link SDL_image, but that would mean
+# dealing with its build and libjpeg, png, etc--not worth it.
+stepmania_LDADD = \
+		  $(GL_LIBS) \
+		  SDL_sound-1.0.0/.libs/libSDL_sound.a \
+		  SDL-1.2.5/src/.libs/libSDL.a \
+		  $(SDL_LIBS)
+
 INCLUDES = $(SDL_CFLAGS) -O0 -g
 
