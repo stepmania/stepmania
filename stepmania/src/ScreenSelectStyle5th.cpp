@@ -39,7 +39,7 @@ const CString DANCE_STYLES[NUM_DANCE_STYLES] = {
 	"couple",
 	"solo",
 };
-
+/*
 const float PAD_X[NUM_STYLE_PADS] = {
 	CENTER_X-250,
 	CENTER_X-125,
@@ -54,6 +54,7 @@ const float PAD_Y[NUM_STYLE_PADS] = {
 	CENTER_Y-30,
 	CENTER_Y+60,
 };
+
 const float DANCER_X[NUM_STYLE_DANCERS] = {
 	PAD_X[0],
 	PAD_X[1]-35,
@@ -63,6 +64,7 @@ const float DANCER_X[NUM_STYLE_DANCERS] = {
 	PAD_X[3]+35,
 	PAD_X[4],
 };
+
 const float DANCER_Y[NUM_STYLE_DANCERS] = {
 	PAD_Y[0],
 	PAD_Y[1]+20,
@@ -72,7 +74,7 @@ const float DANCER_Y[NUM_STYLE_DANCERS] = {
 	PAD_Y[3]-20,
 	PAD_Y[4],
 };
-
+*/
 CString TEXT_EXPLANATION1[NUM_DANCE_STYLES] = {
 	"1 Player",
 	"2 Players",
@@ -115,6 +117,12 @@ const RageColor COLOR_P2_NOT_SELECTED = COLOR_P2_SELECTED*0.5f + RageColor(0,0,0
 const ScreenMessage SM_UpdateAnimations		=	ScreenMessage(SM_User + 3);
 const ScreenMessage SM_TweenExplanation2	=	ScreenMessage(SM_User + 4);
 
+#define PAD_X( p )	THEME->GetMetricF("ScreenSelectStyle5th",ssprintf("PadX%d",p+1))
+#define PAD_Y( p )	THEME->GetMetricF("ScreenSelectStyle5th",ssprintf("PadY%d",p+1))
+#define PAD_ZOOM( p )	THEME->GetMetricF("ScreenSelectStyle5th",ssprintf("PadZoom%d",p+1))
+#define DANCER_X( p )	THEME->GetMetricF("ScreenSelectStyle5th",ssprintf("DancerX%d",p+1))
+#define DANCER_Y( p )	THEME->GetMetricF("ScreenSelectStyle5th",ssprintf("DancerY%d",p+1))
+#define DANCER_ZOOM( p )	THEME->GetMetricF("ScreenSelectStyle5th",ssprintf("DancerZoom%d",p+1))
 
 ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 {
@@ -128,6 +136,8 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 		m_sprPad[i].Load( THEME->GetPathToG(ssprintf("select style pad game %d style %d",GAMESTATE->m_CurGame,i)) );
 //		m_sprPad[i].SetXY( PAD_X[i], PAD_Y[i] );
 //		m_sprPad[i].SetZoom( 1 );
+		m_sprPad[i].SetXY( PAD_X(i), PAD_Y(i));
+		m_sprPad[i].SetZoom( PAD_ZOOM(i));
 		this->AddChild( &m_sprPad[i] );
 	}
 
@@ -136,6 +146,8 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 	{
 		m_sprDancer[i].Load( THEME->GetPathToG(ssprintf("select style player game %d style %d",GAMESTATE->m_CurGame,i)) );
 		m_sprDancer[i].SetVertAlign( Actor::align_top );
+		m_sprDancer[i].SetXY( DANCER_X(i), DANCER_Y(i));
+		m_sprDancer[i].SetZoom( DANCER_ZOOM(i));
 //		m_sprDancer[i].SetXY( DANCER_X[i], DANCER_Y[i] );
 //		m_sprDancer[i].SetZoom( 2 );
 		m_sprDancer[i].StopAnimating();
