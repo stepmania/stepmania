@@ -33,6 +33,9 @@ Banner::Banner()
 
 bool Banner::Load( RageTextureID ID )
 {
+	if( ID.filename == "" )
+		ID = THEME->GetPathToG("Common fallback banner");
+
 	ID = SongBannerTexture(ID);
 
 	m_fPercentScrolling = 0;
