@@ -266,6 +266,12 @@ void ScreenGameplay::Init()
 	m_Foreground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
 	this->AddChild( &m_Foreground );
 
+	if( PREFSMAN->m_bShowBeginnerHelper )
+	{
+		m_BeginnerHelper.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+		m_BeginnerHelper.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
+		this->AddChild( &m_BeginnerHelper );
+	}
 	
 	m_sprStaticBackground.SetName( "StaticBG" );
 	m_sprStaticBackground.Load( THEME->GetPathG(m_sName,"Static Background") );
@@ -1031,17 +1037,15 @@ void ScreenGameplay::LoadNextSong()
 		}
 	}
 
-	if( m_BeginnerHelper.Initialize( 2 ) )	// Init for doubles
+	m_Background.Unload();
+
+	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Initialize(2) )
 	{
-		m_Background.Unload();	// BeginnerHelper has its own BG control.
-		m_Background.StopAnimating();
-		m_BeginnerHelper.SetX( SCREEN_CENTER_X );
-		m_BeginnerHelper.SetY( SCREEN_CENTER_Y );
-	}
-	else
-	{
-		/* BeginnerHelper disabled/failed to load. */
+		m_BeginnerHelper.SetHidden( true );
+
+		/* BeginnerHelper disabled, or failed to load. */
 		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+
 		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			/* This will fade from a preset brightness to the actual brightness (based
@@ -1053,6 +1057,8 @@ void ScreenGameplay::LoadNextSong()
 			m_Background.FadeToActualBrightness();
 		}
 	}
+	else
+		m_BeginnerHelper.SetHidden( false );
 
 	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
 
@@ -1297,8 +1303,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
-	m_BeginnerHelper.Update(fDeltaTime);
-	
 	m_AutoKeysounds.Update(fDeltaTime);
 
 	//
@@ -1696,12 +1700,6 @@ void ScreenGameplay::AbortGiveUp()
 	m_textDebug.BeginTweening( 1/2.f );
 	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 	m_GiveUpTimer.SetZero();
-}
-
-void ScreenGameplay::DrawPrimitives()
-{
-	m_BeginnerHelper.DrawPrimitives();
-	Screen::DrawPrimitives();
 }
 
 
