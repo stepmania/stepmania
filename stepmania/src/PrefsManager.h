@@ -199,7 +199,7 @@ public:
 	bool			m_bHideDefaultNoteSkin;
 	int				m_iMaxHighScoresPerListForMachine;
 	int				m_iMaxHighScoresPerListForPlayer;
-	bool			m_bCelShadeDancers;
+	bool			m_bCelShadeModels;
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.

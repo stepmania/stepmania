@@ -11,6 +11,7 @@
 #include "ActorUtil.h"
 #include <cerrno>
 #include "ModelManager.h"
+#include "SDL_opengl.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -421,6 +422,18 @@ bool Model::EarlyAbortDraw()
 	return m_pGeometry == NULL || m_pGeometry->m_Meshes.empty();
 }
 
+void Model::DrawCelShaded()
+{
+	this->SetGlow(RageColor(0,0,0,1));
+	glPolygonMode (GL_BACK, GL_LINE);
+	glLineWidth(4.0f);
+	this->Draw();
+	DISPLAY->ClearZBuffer();
+	this->SetGlow(RageColor(1,1,1,0));
+	glPolygonMode(GL_BACK, GL_FILL);
+	this->Draw();
+}
+
 void Model::DrawPrimitives()
 {
 	/* Don't if we're fully transparent */
@@ -430,7 +443,6 @@ void Model::DrawPrimitives()
 	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
-
 
 	//////////////////////
 	// render the diffuse pass
@@ -444,11 +456,20 @@ void Model::DrawPrimitives()
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 			const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
 
+			// apply mesh-specific bone (if any)
+			if( pMesh->nBoneIndex != -1 )
+			{
+				DISPLAY->PushMatrix();
+
+				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
+				DISPLAY->PreMultMatrix( mat );
+			}
+
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
 			// apply material
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-
+				
 				RageColor Emissive = mat.Emissive;
 				RageColor Ambient = mat.Ambient;
 				RageColor Diffuse = mat.Diffuse;
@@ -457,18 +478,11 @@ void Model::DrawPrimitives()
 				Ambient *= m_pTempState->diffuse[0];
 				Diffuse *= m_pTempState->diffuse[0];
 
-				DISPLAY->SetMaterial( 
-					Emissive,
-					Ambient,
-					Diffuse,
-					mat.Specular,
-					mat.fShininess );
+				DISPLAY->SetMaterial( Emissive, Ambient, Diffuse, mat.Specular, mat.fShininess );
 
 				// render the first pass with texture 1
 				DISPLAY->SetTexture( 0, mat.diffuse.ani.GetCurrentTexture() );
 				DISPLAY->SetSphereEnironmentMapping( mat.diffuse.bSphereMapped );
-				// UGLY:  This overrides the Actor's BlendMode
-//				DISPLAY->SetBlendMode( mat.diffuse.blendMode );
 
 				// render the second pass with texture 2
 				if( mat.alpha.ani.GetCurrentTexture() )
@@ -487,25 +501,12 @@ void Model::DrawPrimitives()
 				static const RageColor diffuse( 0.7f,0.7f,0.7f,1 );
 				static const RageColor specular( 0.2f,0.2f,0.2f,1 );
 				static const float shininess = 1;
-				DISPLAY->SetMaterial(
-					emissive,
-					ambient,
-					diffuse,
-					specular,
-					shininess );
+				DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 				DISPLAY->ClearAllTextures();
 				DISPLAY->SetSphereEnironmentMapping( false );
 			}
-
-			// apply mesh-specific bone (if any)
-			if( pMesh->nBoneIndex != -1 )
-			{
-				DISPLAY->PushMatrix();
-
-				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
-				DISPLAY->PreMultMatrix( mat );
-			}
-
+			
+			// Draw it
 			DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
 			DISPLAY->SetSphereEnironmentMapping( false );
 
@@ -530,9 +531,9 @@ void Model::DrawPrimitives()
 
 			// apply material
 			RageColor emissive = m_pTempState->glow;
-			RageColor ambient = RageColor(0,0,0,0);
-			RageColor diffuse = RageColor(0,0,0,0);
-			RageColor specular = RageColor(0,0,0,0);
+			RageColor ambient = RageColor(0,0,0,1);
+			RageColor diffuse = RageColor(0,0,0,1);
+			RageColor specular = RageColor(0,0,0,1);
 			float shininess = 1;
 
 			DISPLAY->SetMaterial( 

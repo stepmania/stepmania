@@ -35,6 +35,7 @@ public:
 	virtual void	DrawPrimitives();
 
 	void	AdvanceFrame (float dt);
+	void	DrawCelShaded();
 
 	virtual void SetState( int iNewState );
 	float GetCurFrame();

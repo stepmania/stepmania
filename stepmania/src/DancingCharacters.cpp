@@ -8,6 +8,8 @@
 #include "song.h"
 #include "Character.h"
 #include "StageStats.h"
+#include "PrefsManager.h"
+#include "SDL_opengl.h"
 
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
@@ -127,10 +129,12 @@ DancingCharacters::DancingCharacters()
 		if( pChar->GetModelPath().empty() )
 			continue;
 		
-		if( GAMESTATE->GetNumPlayersEnabled()==2 )
+		if( GAMESTATE->GetNumPlayersEnabled()==2 ) {
 			m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
-		else
+		}
+		else {
 			m_Character[p].SetX( MODEL_X_ONE_PLAYER );
+		}
 
 		switch( GAMESTATE->m_PlayMode )
 		{
@@ -168,7 +172,6 @@ void DancingCharacters::LoadNextSong()
 			m_Character[p].PlayAnimation( "rest" );
 }
 
-
 int Neg1OrPos1() { return rand()%2 ? -1 : +1; }
 
 void DancingCharacters::Update( float fDelta )
@@ -176,8 +179,8 @@ void DancingCharacters::Update( float fDelta )
 	if( GAMESTATE->m_bFreeze )
 	{
 		// spin the camera Matrix style
-		m_CameraPanYStart += fDelta*40;
-		m_CameraPanYEnd += fDelta*40;
+		//m_CameraPanYStart += fDelta*40;
+		//m_CameraPanYEnd += fDelta*40;
 	}
 	else
 	{
@@ -192,8 +195,9 @@ void DancingCharacters::Update( float fDelta )
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( GAMESTATE->IsPlayerEnabled(p) )
+			if( GAMESTATE->IsPlayerEnabled(p) ) {
 				m_Character[p].Update( fDelta*fUpdateScale );
+			}
 		}
 	}
 
@@ -328,25 +332,22 @@ void DancingCharacters::DrawPrimitives()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		bool bFailed = g_CurStageStats.bFailed[p];
-		bool bDanger = m_bDrawDangerLight;
-
-		DISPLAY->SetLighting( true );
-		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
-		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
-
-		DISPLAY->SetLightDirectional( 
-			0, 
-			ambient, 
-			diffuse,
-			specular,
-			RageVector3(+1, 0, +1) );
-
-		m_Character[p].Draw();
-
-		DISPLAY->SetLightOff( 0 );
-		DISPLAY->SetLighting( false );
+		if(!PREFSMAN->m_bCelShadeModels) {
+			bool bFailed = g_CurStageStats.bFailed[p];
+			bool bDanger = m_bDrawDangerLight;
+			DISPLAY->SetLighting( true );
+			RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
+			RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
+			RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
+			DISPLAY->SetLightDirectional( 
+				0,
+				ambient, 
+				diffuse,
+				specular,
+				RageVector3(+1, 0, +1) );
+			m_Character[p].Draw();
+		}
+		else {m_Character[p].DrawCelShaded();}
 	}
 
 
