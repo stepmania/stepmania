@@ -18,7 +18,6 @@
 (c)2001-2002, StepMania team
 http://www.stepmania.com
 
-
 ************************************************************
 Readme Table of Contents
 ************************************************************
@@ -36,6 +35,7 @@ Readme Table of Contents
 11. Song and Notes File Formats 
 12. Game and Style File Formats
 13. Building StepMania from Source Code
+14. Version History
 
 ************************************************************
 1. About StepMania
@@ -43,7 +43,7 @@ Readme Table of Contents
 
 StepMania is a music/rhythm game.  The goal of the game is to play the notes on the screen in time with the music.
 
-StepMania game system is capable of playing games similar to the popular arcade dance and music games, such as Dance Dance Revolution, Pump It Up, BeatMania, Guitar Freaks, Drum Manaia, Para Para Paradise, EZ 2 Dancer, and more.
+StepMania game system is capable of playing many game types.  Currently, it supports games Dance Dance Revolution, Pump It Up, BeatMania, Guitar Freaks, Drum Manaia, Para Para Paradise, EZ 2 Dancer, and more.
 
 ************************************************************
 2. Minimum Requirements
@@ -282,11 +282,10 @@ Analysis of DWI:
 
 
 ************************************************************
-12. Game and Style File Formats
+12. .SM File Format
 ************************************************************
 
-Separating the game from the code
-To come...
+
 
 ************************************************************
 13. Building StepMania from Source Code
@@ -334,6 +333,254 @@ If you need more help, a HOWTO is available here.
 * DONE! Enjoy staying on the bleeding edge of StepMania releases!
 
 If you're interested in helping in any capacity, please join the StepMania developers mailing list.
+
+
+************************************************************
+14. Version History
+************************************************************
+
+------------------------Version 3.00 beta 1------------------
+NEW FEATURE:  Roulette
+NEW FEATURE:  Read Delight BMS 0.5 (hold notes, freezes, and new BPM changes supported)
+NEW FEATURE:  Editor - edit, record, playback, and synchronize from one screen
+NEW FEATURE:  Oni Nonstop Challenge (not finished)
+NEW FEATURE:  "Judge Window" option to adjust difficulty of step judging
+
+------------------------Version 2.90-------------------------
+CHANGE:  Ogg Vorbis music support re-enabled
+NEW FEATURE:  Game skins (selectable from Player Options screen)
+
+------------------------Version 2.50-------------------------
+NEW FEATURE:  New multi game compatible .sm file format.
+CHANGE:  "Graphic Detail" presets
+BUG FIX:  Installer DirectX check now works
+NEW FEATURE:  Aracde and Free Play game modes
+
+------------------------Version 1.90-------------------------
+OPTIMIZATION:  Major speedup to BitmapText loading
+CHANGE:  Menus changes to accomodate MAX-style menus
+CHANGE:  Now compiles in Visual C++.Net
+OPTIMIZATION:  Max texture size and texture color options are now supported.
+BUG FIX: Scaled sprite alignment (no more transparent strip along the edge of "danger" static)
+NEW FEATURE:  Repeating input
+NEW FEATURE:  Select Group menu
+NEW FEATURE:  Edit / Record / Playback
+NEW FEATURE:  Support for DWI solo notes in DWI reader
+
+
+------------------------Version 1.65-------------------------
+BUG FIX:  Statistics now save and load correctly
+BUG FIX:  Less jitter while dancing on slower computers
+
+------------------------Version 1.64-------------------------
+NEW FEATURE:  Group banners on Select Music screen.  Just put a banner in the group folder.
+BUG FIX:  Hacked around a Savage texture loading bug.
+CHANGE:  Added "hold NEXT for options" after choosing a song.  Most people don't know about this feature!
+CHANGE:  Faster song loading
+CHANGE:  more accurate synching at song rates other than 100%
+CHANGE:  Assist tick calibrated automatically by detecting sound card play latency
+CHANGE:  Lowered wait time between menus
+CHANGE:  Improved loading time of sounds
+BUG FIX:  Improved quality of sounds while dancing
+BUG FIX:  Fixed DWI parsing error that often caused the last note to not appear
+NEW FEATURE:  More resolution presets in GameOptions menu
+
+------------------------Version 1.63-------------------------
+NEW FEATURE:  Effects "drunk", "dizzy", "space"
+CHANGE:  Song sort by group now has collapsible sections
+BUG FIX:  Prefs, songs, and default mappings now load if StepMania.ini doesn't exist
+BUG FIX:  Pad 2 can now be used to navigate the title screen
+BUG FIX:  Crash if change sort while a section item was selected
+BUG FIX:  BPM changes to 0 when section is selected
+BUG FIX:  Pixel/Texel alignment bug causing a strip of color along right and bottom edges moving between menus.
+BUG FIX:  Graphical glitches on Results screen
+BUG FIX:  Hold Steps now look better when Scroll Speed is > 1
+BUG FIX:  Wrong Ghost Arrow graphic being used
+BUG FIX:  Boost/Scroll Speed interaction is now like MAX
+BUG FIX:  DWI's with newlines before semicolon are no longer corrupt when saving using Synchronize
+BUG FIX:  #516498 - Installing Stepmania Deletes records
+BUG FIX:  #517003 - Joystick mappings not flushed
+BUG FIX:  Multiple NEXT presses not allowed on Caution screen
+NEW FEATURE:  Skip Caution toggle
+NEW FEATURE:  Announcer toggle
+BUG FIX:  Arrows no longer jump back to time = 0 on fail or cleared
+BUG FIX:  #523621 - Turning on effects in Double (1.62)
+BUG FIX:  #521941 - Using pad to select songs acts weird
+
+------------------------Version 1.62-------------------------
+CHANGE:  Can now press NEXT to skip Caution screen.
+BUG FIX:  Crash at "No music" prompt.
+NEW FEATURE:  Synchronize while dancing with '+', '-', "PgUp", "pgDn"
+BUG FIX:  DWI parsing no longer crashes on line with only a space
+
+------------------------Version 1.61-------------------------
+BUG FIX:  Players' Best crowns not displaying.
+BUG FIX:  #506751 - "Assist" Ticks off-beat
+BUG FIX:  Crash switching sort
+NEW FEATURE:  Synchronize mode!  Can write BMS and DWI formats.
+
+------------------------Version 1.60-------------------------
+BUG FIX:  Inefficient use of memory in Select Music screen
+OPTIMIZATION:  No noticable loading time in Select Music
+CHANGE:  New grade graphics (thanks Parasyte!)
+BUG FIX: 511184 - Battle mode not working
+BUG FIX: 510557 - Result *** overlays result letter
+BUG FIX: 510556 - Sound stops at Options Screen
+BUG FIX: NG percentage is "-1%" if no Hold Steps
+BUG FIX: #507861 - Multiple Enter on Song Wheel
+BUG FIX: #507391 - Song Options menu fade errors
+BUG FIX: #506820 - Select Style Versus Images
+BUG FIX: #506746 - Difficulty Mix-Ups in Song Select
+BUG FIX: #506597 - Empty Sort Crash
+BUG FIX: #511543/#511186 - Visualizations not shown correctly
+
+------------------------Version 1.59-------------------------
+NEW FEATURE: More texture loading hints (DITHER, NO_MIP_MAPS) for increased quality and faster loading time.
+BUG FIX: #506274 Crash changing song after sorting.
+BUG FIX: #506343 TextureColor=32 Auto-Reset
+CHANGE: SMLauncher integrated with the main StepMania executable.  Now the pretty error screen will appear automatically.
+NEW FEATURE:  Added Low-Medium-High detail prompt to installer.
+NEW FEATURE: Song sort order is now rememebered.
+OPTIMIZATION:  Instantaneous Song Sort Order switch.
+OPTIMIZATION:  Instantaneous Song Group expand/collapse.
+CHANGE: Song Sort groups that begin with a number now appear under the "NUM" group.
+BUG FIX: "Player's Best" is now sorted by num times played decending
+BUG FIX: #506835 - PREV from Song Select Fade Glitch
+BUG FIX: #506827 - Song Selected Graphic Errors
+
+------------------------Version 1.58-------------------------
+NEW FEATURE: SMLauncher generates friendly error messages.
+CHAGNE: Removed "NG" from Results screen.
+BUG FIX: Statistics are now working, honest!
+BUG FIX: 511544 - Grade Results Sometimes pops up NO DATA
+OPTIMIZATION: Improved animation of and optimized drawing of rolling score display.
+OPTIMIZATION: Toned down motion blur effect in "Failed" for increased performance.
+BUG FIX: Fixed matrix stack bug that caused some shadows not to draw
+OPTIMIZATION: Major optimization of BitmapText.  Now about 2x faster.
+NEW FEATURE: F4-F8: Toggle Fullscreen, Change Resolution, Change Display Color, Change Texture Color, Toggle Statistics
+NEW FEATURE: Remebers last selected Steps
+NEW FEATURE: Stage number saved to .ini file.
+BUG FIX: Default key buttons don't work if .ini file not present on startup
+CHANGE: Hold Arrows are now drawn last to first, like in DDR MAX.
+NEW FEATURE: Hold Arrows allow you to not hold the button for a second without NG'ing them.
+CHANGE: Regular Arrows on the same line as a Hold Arrow now appear green.
+NEW FEATURE: Hold Arrows now turn gray player doesn't hold the button.
+BUG FIX: #510980 Danger is a static box, not text
+
+------------------------Version 1.57-------------------------
+NEW FEATURE: smzip package installer and manager
+CHANGE: Installer now uninstalls previous version.
+BUG FIX: Package Manager now converts all non-HTTP-friendly characters to '_' when exporting.
+CHANGE: Much better texture loading algorithm.  Texture quality and loading time of non-power of 2 texture improved greatly.
+CHANGE: New 5th Mix theme graphics.  Thanks thingmabobr!
+BUG FIX: #507170 Speed Problem (Got rid of "pauses" caused by buffered writing to log)
+BUG FIX: #506309 Installer doesn't overwrite files
+BUG FIX: #511187 old banners are shown diagonal
+
+------------------------Version 1.56-------------------------
+BUG FIX: 506314 Fixed "Hall of mirrors" on nVidia cards (actually, just a work around for a driver bug)
+CHANGE: Couple and Solo now appear in Select Style
+CHANGE: New Title Menu options (but you can choose them yet :-)
+BUG FIX: Fixed jibberish at the top of Arial Bold font by shifting all letters up one pixel
+BUG FIX: 505896 Menu Problems [unreadable/illegible font?]
+BUG FIX: Ugly textures with Voodoo3
+BUG FIX: Ignore Joystick D-pad now works again.
+BUG FIX: Installer-created icon "Open Songs Folder" now fixed for OSes that had problems.
+BUG FIX: BMS parse crash fixed.
+BUG FIX: Player2 couldn't press up to select different steps
+BUG FIX: Player2's side in StepsSelector no longer has multiple bouncing difficulty icons
+BUG FIX: 507380 Multiple FAILED with Esc presses
+BUG FIX: 507860 - Esc in No Fail Mode = lock up
+CHANGE: Improved response time to user input when change sort in SelectMusic
+BUG FIX: Announcer no longer makes dancing comments while FAILED is showing.
+OPTIMIZATION: Added texture alpha hints - significantly improved texture quality for 16-bit textures.
+
+------------------------Version 1.55-------------------------
+BUG FIX: "4nd Stage" is now "4th Stage"
+BUG FIX: 496315 ragescreen.cpp error for 16bit-only cards
+BUG FIX: 500342 - wave volume changes to 100% on startup
+BUG FIX: Fixed "visualization movie files go here" trying to be loaded as a texture
+BUG FIX: Mini banner now tweens on and off screen
+BUG FIX: MusicWheel now tweens off screen and Music comment plays
+BUG FIX: Stage count not incremented until song is passed
+CHANGE: Added longer delay before song start
+CHANGE: Assist tick now louder and timing improved
+CHANGE: cleaned up debug messages
+OPTIMIZATION: Improved texture loading time
+CHANGE: Maximize button no longer toggles fullscreen.
+CHANGE: MusicWheel response to user input is improved
+OPTIMIZATION: Preview in SelectMusic now uses banner instead of background for faster loading
+NEW FEATURE: Change resolution, display color depth, texture color depth, and toggle texture filtering
+NEW FEATURE: Check at startup time that all required theme elements are present
+NEW FEATURE: installer
+NEW FEATURE: motion blur "Failed" effect
+NEW FEATURE: MusicWheel remembers previously selected song.
+BUG FIX: Back from Result screen no longer leads to black screen
+CHANGE: All documentation is now in "Docs" folder
+CHANGE: New "Danger" animation
+
+------------------------Version 1.50-------------------------
+Bug fix: No longer crashes on foreign chars in BMS files. Please report all songs that still cause a crash. 
+Change: Added sepatate background movie property to Song. Now status backgrounds will display in SelectMusic if the Song has a movie background. 
+Change: Asset directory structure has completely changed in preparation for theme support. 
+Optimization: BitmapText is now ~80% faster. 
+New Feature: 5th Mix style SelectMusic and auto-generated text banners. Loads 100x faster than the previous SelectSong screen. 
+Change: Error messages in Release builds no longer show source file line and number. 
+Bug Fix: Fade transition now fades all the way to black (doesn't leave a "hazy" screen). 
+Bug Fix: Multiple joysticks now work again. 
+
+-------------------------Version 0.97-------------------------
+Bug fix: Songs with same title no longer change positions while scrolling.
+Bug fix: Wrong group name for DWI files in the Songs folder.
+Bug fix: Fixed a problem that caused the music to become out of sync if many sound effect are played.  This was causing the song to become out of sync near the end.  Note that this change makes the music much more accurate, and some BMS files may be out of sync if they appeared in sync before.
+Bug fix: Dancing waits 2 seconds before starting music playback.  This allows some slower systems to catch up.
+Bug fix: Little now works correctly.  It is accessible from the PlayerOptions menu.
+Optimization: Lower priority for movie decoding, which is a major speed boost on slower computers.
+Change: Freeze arrow scoring now matches DDR MAX.  The start of a freeze arrow is judged as other steps are (perfect, great, good, etc).  Missing the start of a freeze will should break your combo, but NG'ing the freeze arrow will not. 
+New feature: Basic song statistics tracking.  Times played, top score, top combo, and top grade are shown on SelectSong screen.
+New feature: Assist tick, accessible from the SongOptions menu. 
+New feature: Music Rate, accessible from the SongOptions menu.  You can speed up or slow down the rate of music playback.  Great for practicing hard step patterns.
+New feature: Freeze arrow scores are now shown on the Results screen.
+Change: Arrow ghost now appear different depending on the combo length (roughly matches DDR MAX).
+Change: Added some animation to the Results screen.
+Change: Revamped input mapping to allow assignment and clearing of specific slots.
+
+-------------------------Version 0.96b-------------------------
+Change: Removed background movies showing in SelectSong (this was causing crashes).
+Bug fix: No longer crashes when loading Max300 from DWI support directory.
+Bug fix: Timing is now correct for freeze in Max300.
+Bug fix: Freeze arrows now are correct in Mirror/Left/Right/Shuffle.
+
+-------------------------Version 0.96-------------------------
+Merry Christmas!
+Changed the song directory structure to be backward compatible with 0.90 and 0.91.
+
+-------------------------Version 0.95-------------------------
+Bug fix: Sounds files with commas now load
+Bug fix: Freezes in Telephone Operator are now correct
+Bug fix: Nonsense help messages fixed
+Bug fix: D3D init failure now opens browser to correct troubleshooting page
+Optimization:  Drawing of freeze arrows is much more efficient
+Optimization:  In SelectSong, only one preview graphic is drawn.  This saves fill rate and leaves room for group/sort/BPM text.
+Change: DWI files now use the DWI directory structure.  StepMania also automatically crop and rotate the song banner.  BMS files still reside in the Songs folder.
+Change: Now hold Next to get to PlayerOptions and SongOptions menus  (Previously, you would hold Next to bypass these menus).
+New feautre: FPS counter.  Can toggle from GameOptions.
+New feature: Disable joystick d-pad (for DirectPad Pro and NTPad).
+New Feature: Song background movies
+New Feature: random visualization movies
+New feature: song groups by folder
+New feature: song sorting by Title, BPM, and Artist
+New: Caution screen to hide texture load time
+New: Logo appears between screens as a keepalive indicator
+
+-------------------------Version 0.91-------------------------
+Bug fix: Good and Boo arrows not being drawn.
+
+
+-------------------------Version 0.90-------------------------
+
+
+-------------------------Version 0.50-------------------------
 
 ************************************************************
 End of document
