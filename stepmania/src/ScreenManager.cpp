@@ -45,6 +45,7 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_TEXT_HOME				THEME->GetMetric ("ScreenSystemLayer","CreditsTextHome")
 #define CREDITS_TEXT_FREE_PLAY			THEME->GetMetric ("ScreenSystemLayer","CreditsTextFreePlay")
 #define CREDITS_TEXT_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsTextCredits")
+#define CREDITS_JOIN_ONLY				THEME->GetMetric ("ScreenSystemLayer","CreditsJoinOnly")
 
 const int NUM_SKIPS = 5;
 
@@ -187,6 +188,8 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	default:
 		ASSERT(0);
 	}
+	if( CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
+		sCredits = "";
 	m_textCredits.SetText( sCredits );
 
 
