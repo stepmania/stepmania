@@ -170,9 +170,6 @@ public:
 	float GetBeatFromElapsedTime( float fElapsedTime ) const { return m_Timing.GetBeatFromElapsedTime( fElapsedTime ); }
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
 	bool HasSignificantBpmChangesOrStops() const;
-	
-	
-	vector<Steps*> m_vpSteps;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool HasStepsType( StepsType st ) const;
@@ -201,7 +198,8 @@ public:
 private:
 	void AdjustDuplicateSteps(); // part of TidyUpData
 	void DeleteDuplicateSteps( vector<Steps*> &vSteps );
-	CString GetUniqueSongDescription( StepsType st );
+
+	vector<Steps*> m_vpSteps;
 };
 
 #endif
