@@ -21,11 +21,12 @@ class Song;
 struct StageStats
 {
 	StageStats();
-	void operator+=( const StageStats& other );		// accumulate
+	void AddStats( const StageStats& other );		// accumulate
 	Grade GetGrade( PlayerNumber pn );
 	bool OnePassed() const;
 
 	Song*	pSong;
+	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 	int		iMeter[NUM_PLAYERS];
 	float	fAliveSeconds[NUM_PLAYERS];				// how far into the music did they last before failing?  Updated by Gameplay.
 	bool	bFailed[NUM_PLAYERS];					// true if they have failed at any point during the song

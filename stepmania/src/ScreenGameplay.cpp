@@ -189,6 +189,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		GAMESTATE->m_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
 	}
 
+	if( GAMESTATE->IsExtraStage() )
+		GAMESTATE->m_CurStageStats.StageType = StageStats::STAGE_EXTRA;
+	else if( GAMESTATE->IsExtraStage2() )
+		GAMESTATE->m_CurStageStats.StageType = StageStats::STAGE_EXTRA2;
+	else
+		GAMESTATE->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;
+	
 	//
 	// Init ScoreKeepers
 	//

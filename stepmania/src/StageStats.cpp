@@ -21,9 +21,10 @@ StageStats::StageStats()
 	memset( this, 0, sizeof(StageStats) );
 }
 
-void StageStats::operator+=( const StageStats& other )
+void StageStats::AddStats( const StageStats& other )
 {
 	pSong = NULL;		// meaningless
+	StageType = STAGE_INVALID; // meaningless
 	memset( fAliveSeconds, 0, sizeof(fAliveSeconds) );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )

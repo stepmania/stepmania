@@ -446,23 +446,31 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	statsOut = StageStats();
 
 	// Show stats only for the latest 3 normal songs + passed extra stages
-	int iNumPassedExtraStages = GAMESTATE->IsExtraStage() ? 1 : (GAMESTATE->IsExtraStage2() ? 2 : 0);
-	int iNumPassedRegularSongs = GAMESTATE->m_vPassedStageStats.size() - iNumPassedExtraStages;
-	int iNumSongsToShow = iNumPassedExtraStages + min( iNumPassedRegularSongs, 3 );
-	int iNumSongsToThrowAway = GAMESTATE->m_vPassedStageStats.size() - iNumSongsToShow;
-	ASSERT( iNumSongsToThrowAway >= 0 );
-
-	for( int i=iNumSongsToThrowAway; i<(int)GAMESTATE->m_vPassedStageStats.size(); i++ )
+	int PassedRegularSongsLeft = 3;
+	for( int i = (int)GAMESTATE->m_vPassedStageStats.size()-1; i >= 0; --i )
 	{
-		// weight long and marathon songs
-		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_vPassedStageStats[i].pSong );
+		const StageStats &s = GAMESTATE->m_vPassedStageStats[i];
 
-		statsOut += GAMESTATE->m_vPassedStageStats[i];
+		if( !s.OnePassed() )
+			continue;
+
+		if( s.StageType == StageStats::STAGE_NORMAL )
+		{
+			if( PassedRegularSongsLeft == 0 )
+				break;
+
+			--PassedRegularSongsLeft;
+		}
+
+		// weight long and marathon songs
+		int iLengthMultiplier = SongManager::GetNumStagesForSong( s.pSong );
+
+		statsOut.AddStats( s );
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			if( IsPlayerEnabled(p) )
-				statsOut.iMeter[p] += GAMESTATE->m_vPassedStageStats[i].iMeter[p] * (iLengthMultiplier-1);
+				statsOut.iMeter[p] += s.iMeter[p] * (iLengthMultiplier-1);
 
-		vSongsOut.push_back( GAMESTATE->m_vPassedStageStats[i].pSong );
+		vSongsOut.insert( vSongsOut.begin(), s.pSong );
 	}
 
 	if(!vSongsOut.size()) return;

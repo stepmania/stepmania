@@ -982,9 +982,8 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		iNumStagesOfLastSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
 		GAMESTATE->m_iCurrentStageIndex += iNumStagesOfLastSong;
 
-		// add current stage stats to accumulated total only if this song was passed
-		if( GAMESTATE->m_CurStageStats.OnePassed() )
-			GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
+		// save current stage stats
+		GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
 		break;
 	}
 }
