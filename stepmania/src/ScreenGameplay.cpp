@@ -1566,6 +1566,10 @@ void ScreenGameplay::UpdateLights()
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
 			}
+		}
+
+		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+		{
 			FOREACH_EnabledPlayer( pn )
 			{
 				for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
