@@ -270,6 +270,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "blind" )		m_fBlind = level;
 		else if( sBit == "timingassist")m_bTimingAssist = on;
 		else if( sBit == "protiming")	m_bProTiming = on;
+		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0; }
 		else if( sBit == "incoming" )	{ m_fSkew = 1; m_fPerspectiveTilt = -1; }
 		else if( sBit == "space" )		{ m_fSkew = 1; m_fPerspectiveTilt = +1; }
 		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -1; }
