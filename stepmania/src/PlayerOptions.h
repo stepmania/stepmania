@@ -58,7 +58,8 @@ struct PlayerOptions
 		NUM_TURNS 
 	};
 	enum Transform {
-		TRANSFORM_NONE=0,
+		TRANSFORM_NOHOLDS,
+		TRANSFORM_NOMINES,
 		TRANSFORM_LITTLE,
 		TRANSFORM_WIDE,
 		TRANSFORM_BIG,
@@ -68,6 +69,7 @@ struct PlayerOptions
 		TRANSFORM_ECHO,
 		TRANSFORM_PLANTED,
 		TRANSFORM_STOMP,
+		TRANSFORM_TWISTER,
 		NUM_TRANSFORMS
 	};
 	enum Scroll {
@@ -99,9 +101,7 @@ struct PlayerOptions
 	float		m_fPassmark,			m_SpeedfPassmark;
 
 	Turn		m_Turn;
-	Transform	m_Transform;
-	bool		m_bHoldNotes;
-	bool		m_bMines;
+	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bTimingAssist;
 	bool		m_bProTiming;
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */

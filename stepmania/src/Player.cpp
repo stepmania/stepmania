@@ -349,8 +349,10 @@ void PlayerMinus::Update( float fDeltaTime )
 		 * they won't align with this->m_HoldNoteScores. */
 		if( po.m_Turn != PlayerOptions::TURN_NONE )
 			RageException::Throw("Can't use turns as battle attacks");
-		if( !po.m_bHoldNotes )
+		if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )
 			RageException::Throw("Can't use NoHolds as a battle attack");
+		if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )
+			RageException::Throw("Can't use NoMines as a battle attack");
 
 		float fStartBeat, fEndBeat;
 		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_PlayerNumber, fStartBeat, fEndBeat );

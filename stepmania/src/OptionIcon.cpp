@@ -49,7 +49,8 @@ void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 		"1X",
 		"HOLDS",
 		"DEFAULT",
-		"OVERHEAD" };
+		"OVERHEAD"
+	};
 	
 	for( unsigned i=0; i<ARRAYSIZE(sStopWords); i++ )
 		if( 0==stricmp(sText,sStopWords[i]) )

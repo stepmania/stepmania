@@ -39,8 +39,8 @@ namespace NoteDataUtil
 	// radar values - return between 0.0 and 1.2
 	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
 
-	void RemoveHoldNotes( NoteData &in );
-	void RemoveMines( NoteData &in );
+	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	void Turn( NoteData &in, StepsType st, TurnType tt );
 	void Little( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
@@ -49,10 +49,12 @@ namespace NoteDataUtil
 	void Quick( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Skippy( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, float fInsertOffsetBeats, float fWindowStrideBeats, bool bSkippy, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Mines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void AddMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Echo( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Stomp( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Twister( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat = 0, float fEndBeat = 99999 );
 	void SuperShuffleTaps( NoteData &in );
 
 	// change all TAP_ADDITIONs to TAP_TAPs

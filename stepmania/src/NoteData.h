@@ -87,15 +87,21 @@ public:
 	{
 		int iNum = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
-			if( GetTapNote(t, index) == TAP_TAP )
+		{
+			TapNote tn = GetTapNote(t, index);
+			if( tn == TAP_TAP || tn == TAP_HOLD_HEAD )
 				iNum++;
+		}
 		return iNum;
 	}
 	inline int GetFirstTrackWithTap( int index ) const
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
-			if( GetTapNote(t, index) == TAP_TAP )
+		{
+			TapNote tn = GetTapNote(t, index);
+			if( tn == TAP_TAP || tn == TAP_HOLD_HEAD )
 				return t;
+		}
 		return -1;
 	}
 	inline bool IsThereATapAtRow( int index ) const

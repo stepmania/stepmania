@@ -260,33 +260,34 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 	return min( fReturn, 1.0f );
 }
 
-void NoteDataUtil::RemoveHoldNotes(NoteData &in)
+void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBeat)
 {
-	vector<int> tracks, rows;
-
 	// turn all the HoldNotes into TapNotes
-	for( int i=0; i<in.GetNumHoldNotes(); i++ )
+	for( int i=in.GetNumHoldNotes()-1; i>=0; i++ )	// iterate backwards so we can delete
 	{
-		const HoldNote &hn = in.GetHoldNote(i);
+		const HoldNote hn = in.GetHoldNote(i);
 		
-		tracks.push_back(hn.iTrack);
-		rows.push_back(BeatToNoteRow(hn.fStartBeat));
+		bool bHoldInRange = 
+			(hn.fStartBeat <= fStartBeat && hn.fEndBeat >= fEndBeat)  ||
+			(hn.fStartBeat >= fStartBeat && hn.fStartBeat <= fEndBeat)  ||
+			(hn.fEndBeat >= fStartBeat && hn.fEndBeat <= fEndBeat);
+		
+		if( !bHoldInRange )
+			continue;	// skip
+
+		in.RemoveHoldNote( i );
+		
+		in.SetTapNote(hn.iTrack, BeatToNoteRow(hn.fStartBeat), TAP_TAP);
 	}
-
-	// Remove all HoldNotes
-	while(in.GetNumHoldNotes())
-		in.RemoveHoldNote(in.GetNumHoldNotes()-1);
-
-	for(unsigned j = 0; j < tracks.size(); ++j)
-		in.SetTapNote(tracks[j], rows[j], TAP_TAP);
 }
 
 
-void NoteDataUtil::RemoveMines(NoteData &in)
+void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 {
-	int max_row = in.GetLastRow();
+	int iRowStart = BeatToNoteRow(fStartBeat);
+	int iRowEnd = BeatToNoteRow(fEndBeat);
 	for( int t=0; t<in.GetNumTracks(); t++ )
-		for( int r=0; r<=max_row; r++ ) 
+		for( int r=iRowStart; r<=iRowEnd; r++ ) 
 			if( in.GetTapNote(t,r)==TAP_MINE )
 				in.SetTapNote(t,r,TAP_EMPTY);
 }
@@ -650,7 +651,7 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, 
 	in.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
+void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 {
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
@@ -737,20 +738,6 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 		if( bTapInMiddle )
 			continue;
 
-		// don't insert a new note if there's already a hold headwithin this interval
-		// TODO:  Why is this necessary?  Isn't there a TAP_TAP at the HoldNote head spot?
-		for( int i=0; i<in.GetNumHoldNotes(); i++ )
-		{
-			int iHoldHeadRow = BeatToNoteRow(in.GetHoldNote(i).fStartBeat);
-			if( iHoldHeadRow >= iRowWindowBegin+1 && iHoldHeadRow <= iRowWindowEnd-1 )
-			{
-				bTapInMiddle = true;
-				break;
-			}
-		}
-		if( bTapInMiddle )
-			continue;
-
 		if( iEchoTrack==-1 )
 			continue;
 
@@ -764,6 +751,14 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 
 void NoteDataUtil::Planted( NoteData &in, float fStartBeat, float fEndBeat )
 {
+	ConvertTapsToHolds( in, 1, fStartBeat, fEndBeat );
+}
+void NoteDataUtil::Twister( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	ConvertTapsToHolds( in, 2, fStartBeat, fEndBeat );
+}
+void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat, float fEndBeat )
+{
 	// Convert all taps to freezes.
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
@@ -774,6 +769,7 @@ void NoteDataUtil::Planted( NoteData &in, float fStartBeat, float fEndBeat )
 			if( in.GetTapNote(t,r) == TAP_TAP )
 			{
 				// search for row of next TAP_TAP
+				int iTapsLeft = iSimultaneousHolds;
 				for( int r2=r+1; r2<=last_row; r2++ )
 				{
 					if( in.IsThereATapAtRow(r2) )
@@ -782,7 +778,9 @@ void NoteDataUtil::Planted( NoteData &in, float fStartBeat, float fEndBeat )
 						// don't convert the earlier one to a hold.
 						if( in.GetFirstTrackWithTap(r2) == t )
 							goto dont_add_hold;
-						break;	// stop searching
+						iTapsLeft--;
+						if( iTapsLeft == 0 )
+							break;	// stop searching
 					}
 				}
 				float fStartBeat = NoteRowToBeat(r);
@@ -1114,11 +1112,6 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat, float fEndBeat )
 {
-	if( !po.m_bHoldNotes )
-		RemoveHoldNotes( nd );
-
-	if( !po.m_bMines )
-		RemoveMines( nd );
 
 	switch( po.m_Turn )
 	{
@@ -1131,20 +1124,18 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	default:		ASSERT(0);
 	}
 
-	switch( po.m_Transform )
-	{
-	case PlayerOptions::TRANSFORM_NONE:																break;
-	case PlayerOptions::TRANSFORM_LITTLE:		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_WIDE:			NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_BIG:			NoteDataUtil::Big(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_ECHO:			NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);		break;
-	case PlayerOptions::TRANSFORM_PLANTED:		NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);	break;
-	case PlayerOptions::TRANSFORM_STOMP:		NoteDataUtil::Stomp(nd, fStartBeat, fEndBeat);		break;
-	default:		ASSERT(0);
-	}
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
 }
 
 void NoteDataUtil::Scale( NoteData &nd, float fScale )

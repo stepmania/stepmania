@@ -36,8 +36,7 @@ void PlayerOptions::Init()
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
 	m_Turn = TURN_NONE;
-	m_Transform = TRANSFORM_NONE;
-	m_bHoldNotes = true;
+	ZERO( m_bTransforms );
 	m_bTimingAssist = false;
 	m_bProTiming = false;
 	m_sPositioning = "";	// "null"
@@ -145,23 +144,19 @@ CString PlayerOptions::GetString() const
 	default:	ASSERT(0);	// invalid
 	}
 
-	switch( m_Transform )
-	{
-	case TRANSFORM_NONE:							break;
-	case TRANSFORM_LITTLE:	sReturn += "Little, ";	break;
-	case TRANSFORM_WIDE:	sReturn += "Wide, ";	break;
-	case TRANSFORM_BIG:		sReturn += "Big, ";		break;
-	case TRANSFORM_QUICK:	sReturn += "Quick, ";	break;
-	case TRANSFORM_SKIPPY:	sReturn += "Skippy, ";	break;
-	case TRANSFORM_MINES:	sReturn += "Mines, ";	break;
-	case TRANSFORM_ECHO:	sReturn += "Echo, ";	break;
-	case TRANSFORM_PLANTED:	sReturn += "Planted, ";	break;
-	case TRANSFORM_STOMP:	sReturn += "Stomp, ";	break;
-	default:	ASSERT(0);	// invalid
-	}
+	if( m_bTransforms[TRANSFORM_NOHOLDS] )	sReturn += "NoHolds, ";
+	if( m_bTransforms[TRANSFORM_NOMINES] )	sReturn += "NoMines, ";
+	if( m_bTransforms[TRANSFORM_LITTLE] )	sReturn += "Little, ";
+	if( m_bTransforms[TRANSFORM_WIDE] )		sReturn += "Wide, ";
+	if( m_bTransforms[TRANSFORM_BIG] )		sReturn += "Big, ";
+	if( m_bTransforms[TRANSFORM_QUICK] )	sReturn += "Quick, ";
+	if( m_bTransforms[TRANSFORM_SKIPPY] )	sReturn += "Skippy, ";
+	if( m_bTransforms[TRANSFORM_MINES] )	sReturn += "Mines, ";
+	if( m_bTransforms[TRANSFORM_ECHO] )		sReturn += "Echo, ";
+	if( m_bTransforms[TRANSFORM_PLANTED] )	sReturn += "Planted, ";
+	if( m_bTransforms[TRANSFORM_STOMP] )	sReturn += "Stomp, ";
+	if( m_bTransforms[TRANSFORM_TWISTER] )	sReturn += "Twister, ";
 
-	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
-	if( !m_bMines )			sReturn += "NoMines, ";
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 	if( m_bProTiming )		sReturn += "ProTiming, ";
 
@@ -277,22 +272,21 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "right" )		m_Turn = TURN_RIGHT;
 		else if( sBit == "shuffle" )	m_Turn = TURN_SHUFFLE;
 		else if( sBit == "supershuffle" )m_Turn = TURN_SUPER_SHUFFLE;
-		else if( sBit == "transform" && !on )	m_Transform = TRANSFORM_NONE; /* "no transform" */
-		else if( sBit == "little" )		m_Transform = TRANSFORM_LITTLE;
-		else if( sBit == "wide" )		m_Transform = TRANSFORM_WIDE;
-		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
-		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
-		else if( sBit == "skippy" )		m_Transform = TRANSFORM_SKIPPY;
-		else if( sBit == "mines" )		m_Transform = TRANSFORM_MINES;
-		else if( sBit == "echo" )		m_Transform = TRANSFORM_ECHO;
-		else if( sBit == "planted" )	m_Transform = TRANSFORM_PLANTED;
-		else if( sBit == "stomp" )		m_Transform = TRANSFORM_STOMP;
+		else if( sBit == "little" )		m_bTransforms[TRANSFORM_LITTLE] = on;
+		else if( sBit == "wide" )		m_bTransforms[TRANSFORM_WIDE] = on;
+		else if( sBit == "big" )		m_bTransforms[TRANSFORM_BIG] = on;
+		else if( sBit == "quick" )		m_bTransforms[TRANSFORM_QUICK] = on;
+		else if( sBit == "skippy" )		m_bTransforms[TRANSFORM_SKIPPY] = on;
+		else if( sBit == "mines" )		m_bTransforms[TRANSFORM_MINES] = on;
+		else if( sBit == "echo" )		m_bTransforms[TRANSFORM_ECHO] = on;
+		else if( sBit == "planted" )	m_bTransforms[TRANSFORM_PLANTED] = on;
+		else if( sBit == "stomp" )		m_bTransforms[TRANSFORM_STOMP] = on;
+		else if( sBit == "twister" )	m_bTransforms[TRANSFORM_TWISTER] = on;
 		else if( sBit == "reverse" )	SET_FLOAT( fScrolls[SCROLL_REVERSE] )
 		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
-		else if( sBit == "noholds" )	m_bHoldNotes = !on;
-		else if( sBit == "nofreeze" )	m_bHoldNotes = !on;
-		else if( sBit == "nomines" )	m_bMines = !on;
+		else if( sBit == "noholds" || sBit == "nofreeze" )	m_bTransforms[TRANSFORM_NOHOLDS] = on;
+		else if( sBit == "nomines" )	m_bTransforms[TRANSFORM_NOMINES] = on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
 		else if( sBit == "passmark" )	SET_FLOAT( fPassmark )
@@ -359,7 +353,8 @@ void PlayerOptions::NextTurn()
 
 void PlayerOptions::NextTransform()
 {
-	m_Transform = (Transform) ((m_Transform+1)%NUM_TRANSFORMS);
+	// It's dumb to use a code to change transforms because there are so many of them. -Chris
+	//m_Transforms = (Transform) ((m_Transform+1)%NUM_TRANSFORMS);
 }
 
 void PlayerOptions::NextScroll()
@@ -478,9 +473,6 @@ bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 )
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_Turn);
-	COMPARE(m_Transform);
-	COMPARE(m_bHoldNotes);
-	COMPARE(m_bMines);
 	COMPARE(m_bTimingAssist);
 	COMPARE(m_bProTiming);
 	COMPARE(m_fPerspectiveTilt);
@@ -496,6 +488,8 @@ bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 )
 		COMPARE(m_fAppearances[i]);
 	for( i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
 		COMPARE(m_fScrolls[i]);
+	for( i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
+		COMPARE(m_bTransforms[i]);
 #undef COMPARE
 
 	return true;
