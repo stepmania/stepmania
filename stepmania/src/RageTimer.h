@@ -30,7 +30,8 @@ public:
 
 	/* Time ago this RageTimer represents. */
 	float Ago() const;
-	inline void Touch();
+//	inline void Touch();
+	void Touch();
 	inline bool IsZero() const { return m_secs == 0 && m_us == 0; }
 	inline void SetZero() { m_secs = m_us = 0; }
 
