@@ -38,12 +38,6 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 // Defines specific to ScreenEdit
 //
 
-#define HELP_TEXT_X		(SCREEN_LEFT + 4)
-#define HELP_TEXT_Y		(40)
-
-#define INFO_TEXT_X		(SCREEN_RIGHT - 114)
-#define INFO_TEXT_Y		(40)
-
 #define EDIT_X			(SCREEN_CENTER_X)
 
 #define PLAYER_X			(SCREEN_CENTER_X)
@@ -563,14 +557,14 @@ void ScreenEdit::Init()
 
 	this->AddChild( &m_Foreground );
 
-	m_textInputTips.LoadFromFont( THEME->GetPathF("ScreenEdit","InputTips") );
 	m_textInputTips.SetName( "InputTips" );
+	m_textInputTips.LoadFromFont( THEME->GetPathF("ScreenEdit","InputTips") );
 	m_textInputTips.SetText( INPUT_TIPS_TEXT );
 	SET_XY_AND_ON_COMMAND( m_textInputTips );
 	this->AddChild( &m_textInputTips );
 
-	m_textInfo.LoadFromFont( THEME->GetPathF("ScreenEdit","Info") );
 	m_textInfo.SetName( "Info" );
+	m_textInfo.LoadFromFont( THEME->GetPathF("ScreenEdit","Info") );
 	SET_XY_AND_ON_COMMAND( m_textInfo );
 	this->AddChild( &m_textInfo );
 
