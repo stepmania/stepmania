@@ -433,8 +433,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	if( type == IET_RELEASE )	return;		// don't care
 
-	if( m_Menu.IsClosing() )	return;		// ignore
-
 	if( !GameI.IsValid() )		return;		// don't care
 
 	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
@@ -445,6 +443,8 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		return;
 	}
 	
+	if( m_Menu.IsClosing() )	return;		// ignore
+
 	if( m_bMadeChoice )
 		return;
 

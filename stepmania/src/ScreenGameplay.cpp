@@ -1147,17 +1147,23 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{
 			m_StarWipe.OpenWipingRight(SM_None);
 
+			/* It may just be me, but having Here We Go start so late into the song
+			 * ruins the rhythm of the announcer.  MAX/EX starts Here We Go
+			 * a fixed amount of time after Are You Ready.  However, 1-5th
+			 * start HWG a certain amount of time before the notes.
+			 * We may want to metric this, but for now, leave it like MAX/EX. -Chris */
+
 			/*
 			 * Start the music going now, but don't actually make any noise for
 			 * at least 2.5 seconds.  (This is so we scroll on screen smoothly.)
 			 *
 			 * Further, don't actually reach any notes for at least 5 seconds,
 			 * so we have time for the "Ready, Here We Go" sequence. */
-			float delay = StartPlayingSong( 5.0f, 2.5f );
+			float delay = StartPlayingSong( 3.0f, 1.5f );
 
 			/* Start the Here We Go sequence 2.5 seconds before notes, so we
 			 * have time to fade in and fade out. */
-			this->SendScreenMessage( SM_StartHereWeGo, delay - 2.5f );
+			this->SendScreenMessage( SM_StartHereWeGo, 3.0f );
 		}
 		break;
 	case SM_User+1:
