@@ -96,7 +96,7 @@ static void *StartThread( void *pData )
 	*pThis->m_piThreadID = pThis->GetThreadId();
 	
 	/* Tell MakeThread that we've set m_piThreadID, so it's safe to return. */
-	sem_post( &pThis->m_StartFinishedSem );
+	pThis->m_StartFinishedSem->Post();
 
 	return (void *) pThis->m_pFunc( pThis->m_pData );
 }
@@ -107,17 +107,16 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 	thread->m_piThreadID = piThreadID;
-	sem_init( &thread->m_StartFinishedSem, 0, 0 );
+
+	thread->m_StartFinishedSem = new SemaImpl_Pthreads( 0 );
 
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
 	if( ret )
 		FAIL_M( ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	/* Don't return until StartThread sets m_piThreadID. */
-	ret = sem_wait( &thread->m_StartFinishedSem );
-	if( ret )
-		FAIL_M( ssprintf( "MakeThread: sem_wait: %s", strerror(errno)) );
-	sem_destroy( &thread->m_StartFinishedSem );
+	thread->m_StartFinishedSem->Wait();
+	delete thread->m_StartFinishedSem;
 	
 	return thread;
 }

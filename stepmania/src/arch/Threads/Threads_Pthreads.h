@@ -30,7 +30,7 @@ public:
 	int (*m_pFunc)( void *pData );
 	void *m_pData;
 	uint64_t *m_piThreadID;
-	sem_t m_StartFinishedSem;
+	SemaImpl *m_StartFinishedSem;
 
 	void Halt( bool Kill );
 	void Resume();
