@@ -235,13 +235,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 #endif
 	ini.GetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.GetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
-	ini.GetValueF( "Options", "ArcadePointsAccumulated",	m_fArcadePointsAccumulated );
-	ini.GetValueF( "Options", "SongPointsAccumulated",		m_fSongPointsAccumulated );
-	ini.GetValueF( "Options", "ExtraStagesCleared",			m_fExtraStagesCleared );
-	ini.GetValueF( "Options", "ExtraStagesFailed",			m_fExtraStagesFailed );
-	ini.GetValueF( "Options", "TotalStagesCleared",			m_fTotalStagesCleared );
-	ini.GetValueF( "Options", "TotalToastysSeen",			m_fTotalToastysSeen );
-	ini.GetValue ( "Options", "RouletteSeeds",				m_RouletteSeeds );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
