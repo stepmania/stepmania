@@ -715,7 +715,11 @@ void SongManager::GetGroupNames( CStringArray &AddTo )
 
 bool SongManager::DoesGroupExist( CString sGroupName )
 {
-	return find( m_sGroupNames.begin(), m_sGroupNames.end(), sGroupName ) != m_sGroupNames.end();
+	for( unsigned i = 0; i < m_sGroupNames.size(); ++i )
+		if( !m_sGroupNames[i].CompareNoCase(sGroupName) )
+			return true;
+
+	return false;
 }
 
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
