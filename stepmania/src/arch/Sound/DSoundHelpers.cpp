@@ -2,6 +2,7 @@
 #include "DSoundHelpers.h"
 #include "../../RageUtil.h"
 #include "../../RageLog.h"
+#include "archutils/Win32/GetFileInformation.h"
 
 #if defined(_WINDOWS)
 #include <mmsystem.h>
@@ -9,13 +10,27 @@
 #define DIRECTSOUND_VERSION 0x0700
 #include <dsound.h>
 
-#include <math.h>
-
 #pragma comment(lib, "dsound.lib")
 
 BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext )
 {
-	LOG->Info( "DirectSound Driver: %s (%s)", lpcstrDescription, lpcstrModule );
+	CString sLine = ssprintf( "DirectSound Driver: %s", lpcstrDescription );
+	if( lpcstrModule[0] )
+	{
+		sLine += ssprintf( " (%s", lpcstrModule );
+
+		CString sPath = FindSystemFile( lpcstrModule );
+		if( sPath != "" )
+		{
+			CString ver;
+			if( GetFileVersion( sPath, ver ) )
+				sLine += ssprintf(" %s", ver.c_str());
+		}
+
+		sLine += ")";
+	}
+
+	LOG->Info( "%s", sLine.c_str() );
 	if(lpGuid)
 		LOG->Info( "    ID: {%8.8x-%4.4x-%4.4x-%6.6x}", lpGuid->Data1, lpGuid->Data2, lpGuid->Data3, lpGuid->Data4 );
 
