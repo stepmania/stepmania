@@ -33,7 +33,6 @@ public:
 	virtual void DrawPrimitives();
 	
 	void Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw );
-	void ReloadNoteSkin();
 	void RemoveTapNoteRow( int iIndex );
 
 	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
@@ -43,6 +42,7 @@ public:
 	void FadeToFail();
 
 protected:
+	void ReloadNoteSkin();
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( const float fBeat );
 	void DrawAreaHighlight( const float fStartBeat, const float fEndBeat );
@@ -65,6 +65,7 @@ protected:
 	BitmapText		m_textMeasureNumber;
 	Quad			m_rectMarkerBar;
 	Quad			m_rectAreaHighlight;
+	CString			m_sLastSeenNoteSkin;
 };
 
 #endif

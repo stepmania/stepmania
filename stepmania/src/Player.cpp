@@ -280,11 +280,12 @@ void Player::Update( float fDeltaTime )
 		SetHoldNoteScore(i, hns);
 	}
 
-	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
+/* Is there a reason this wasn't done within NoteField to begin with? */
+/*	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
 	{
 		m_NoteField.ReloadNoteSkin();
 		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
-	}
+	} */
 
 	ActorFrame::Update( fDeltaTime );
 }
