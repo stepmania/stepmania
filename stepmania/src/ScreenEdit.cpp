@@ -505,7 +505,7 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
 	sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
 	sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
-	sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
+	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
 	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
 	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
 
@@ -898,7 +898,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case SDLK_F12:	fOffsetDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
-			switch( type )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+				fOffsetDelta /= 20; /* 1ms */
+			else switch( type )
 			{
 			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
@@ -1045,7 +1048,11 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 				case SDLK_F12:	fOffsetDelta = +0.020f;		break;
 				default:	ASSERT(0);						return;
 				}
-				switch( type )
+
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+					fOffsetDelta /= 20; /* 1ms */
+				else switch( type )
 				{
 				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
 				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
