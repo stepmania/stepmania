@@ -37,9 +37,9 @@
 CString GetStatsLineTitle( PlayerNumber pn, int iLine )
 {
 	static const CString s[NUM_ENDING_STATS_LINES] = {
-		"%s Percent Complete",
+		"%s %% Complete",
 		"Total Calories",
-		"Total Songs Played",
+		"Total Played",
 		"Current Combo",
 	};
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
