@@ -6,7 +6,7 @@
 #include "NotesLoader.h"
 
 class SMLoader: public NotesLoader  {
-	void LoadFromSMTokens( 
+	static void LoadFromSMTokens( 
 		CString sNotesType, 
 		CString sDescription,
 		CString sDifficulty,
