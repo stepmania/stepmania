@@ -7,6 +7,18 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE(StepMania, 3.001)
 AM_CONFIG_HEADER(src/config.h)
 
+# We don't want PROG_CC/CXX default settings, but don't ignore explicit settings.
+test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
+test -z "$CXXFLAGS"  && DEFAULT_CXXFLAGS=yes
+test -z "$LDFLAGS"   && DEFAULT_LDFLAGS=yes
+
+AC_PROG_CC
+AC_PROG_CXX
+
+test "$DEFAULT_CFLAGS" = "yes" && CFLAGS=""
+test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS=""
+test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
+
 MDL_HAVE_OPENGL
 
 AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
@@ -16,9 +28,6 @@ AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_vorbis=yes,  have_vorbis=no)
 AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_ogg=yes,  have_ogg=no)
 AC_SEARCH_LIBS(ov_open, [vorbisfile], have_vorbisfile=yes,  have_vorbisfile=no)
 AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
-
-AC_PROG_CC
-AC_PROG_CXX
 
 AM_PATH_SDL
 
