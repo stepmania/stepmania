@@ -111,6 +111,11 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 		LOG->Info("Packed pixel formats are known to cause problems with this driver.");
 }
 
+void RageDisplay::Update(float fDeltaTime)
+{
+	wind->Update(fDeltaTime);
+}
+
 bool RageDisplay::IsSoftwareRenderer()
 {
 	return 
@@ -231,15 +236,10 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
-	if(m_oglspecs->WGL_EXT_swap_control) {
+	if(m_oglspecs->WGL_EXT_swap_control)
 	    GLExt::wglSwapIntervalEXT(vsync);
-	}
 	
-	SetViewport(0,0);
-
-	/* Clear any junk that's in the framebuffer. */
-	Clear();
-	Flip();
+	ResolutionChanged();
 
 	return NewOpenGLContext;
 }
@@ -308,10 +308,8 @@ void RageDisplay::DumpOpenGLDebugInfo()
 #endif
 }
 
-void RageDisplay::ResolutionChanged(int width, int height)
+void RageDisplay::ResolutionChanged()
 {
-	wind->ResolutionChanged(width, height);
-
 	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */

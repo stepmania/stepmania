@@ -28,13 +28,14 @@ class RageDisplay
 public:
 	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 	~RageDisplay();
+	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
 
 	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 
 	/* Call this when the resolution has been changed externally: */
-	void ResolutionChanged(int width, int height);
+	void ResolutionChanged();
 
 	void Clear();
 	void Flip();
