@@ -47,6 +47,11 @@
 
 using namespace std;
 
+#ifdef ASSERT
+#undef ASSERT
+#endif
+
+#if defined(WIN32)
 /* Assertion that sets an optional message and brings up the crash handler, so
  * we get a backtrace.  This should probably be used instead of throwing an
  * exception in most cases we expect never to happen (but not in cases that
@@ -56,10 +61,12 @@ using namespace std;
 #define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion failure")
 
 /* Make this the default assert handler. */
-#ifdef ASSERT
-#undef ASSERT
-#endif
 #define ASSERT RAGE_ASSERT
+#else
+#include <assert.h>
+/* TODO: define RAGE_ASSERT* (nothing actually uses those right now) */
+#define ASSERT assert
+#endif
 
 #if 1
 
@@ -126,6 +133,11 @@ class StdCArray: public std::vector<Type> {};
  * used.  (This file is a dependency of most everything anyway,
  * so there's no real problem putting it here.) */
 #include "RageException.h"
+
+/* Platform-specific fixes. */
+#if defined(WIN32)
+#include "archutils/Win32/arch_setup.h"
+#endif
 
 /* Don't include our own headers here, since they tend to change
  * often. */

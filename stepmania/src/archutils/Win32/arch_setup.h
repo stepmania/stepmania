@@ -1,0 +1,7 @@
+#ifndef ARCH_SETUP_WINDOWS_H
+#define ARCH_SETUP_WINDOWS_H
+
+#define PATH_MAX _MAX_PATH
+
+#endif
+
