@@ -159,8 +159,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		}
 	}
 
+	// loaded in AfterMusicChange
 	m_sprStage.SetName( "Stage" );
-	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 	SET_XY( m_sprStage );
 	this->AddChild( &m_sprStage );
 
@@ -1178,9 +1178,6 @@ void ScreenSelectMusic::AfterMusicChange()
 				OFF_COMMAND( m_sprBalloon );
 			}
 
-			// update stage counter display (long versions/marathons)
-			m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
-
 			m_Artists.push_back( pSong->GetDisplayArtist() );
 			m_AltArtists.push_back( pSong->GetTranslitArtist() );
 		}
@@ -1259,6 +1256,9 @@ void ScreenSelectMusic::AfterMusicChange()
 	default:
 		ASSERT(0);
 	}
+
+	// update stage counter display (long versions/marathons)
+	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 
 	// Don't stop music if it's already playing the right file.
 	if( SampleMusicToPlay == "" )
