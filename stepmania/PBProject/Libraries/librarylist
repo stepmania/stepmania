@@ -1,7 +1,3 @@
-extra:
-dlcompat from:
-http://www.opendarwin.org/projects/dlcompat/
-
 SDL-1.2.7
 ffmpeg-0.4.8
 jpeg-6b
@@ -12,19 +8,9 @@ libvorbis-1.0.1
 lua-5.0
 
 Directions:
-0. Make and install dlcompat using
-	autoreconf && ./configure && make && make install
 1. Decompress all of those in the Libraries directory.
 2. Some of these need to have ./configure run before they will build. I know
-that ffmpeg does. Others might as well.
+that ffmpeg does. Others might as well. ffmpeg's configure needs to be run as
+./configure --disable-vhook
 3. Build frameworks from those libraries using xcode.
 4. Hope I haven't missed anything else...
-
-
-TODO:
-Get prebinding to work correctly with all of these. dlcompat is not built
-prebound by default so ffmpeg cannot be prebound so StepMania cannot be
-prebound. Furthermore, libvorbis depends on libogg (or is it the other way
-around) and some a symlink needs to be made. I made some script for this, but
-for some reason that I do not recall, nor do I care to look into at this time,
-it did not work correctly.

@@ -3598,7 +3598,7 @@
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "-DHAVE_AV_CONFIG_H -D_FILE_OFFSET_BITS=64 -no-cpp-precomp -pipe -fomit-frame-pointer -force_cpusubtype_ALL -faltivec -D_LARGEFILE_SOURCE -D_GNU_SOURCE";
-				OTHER_LDFLAGS = "-seg1addr 0x2F600000 -lz -L/usr/local/lib -ldl";
+				OTHER_LDFLAGS = "-seg1addr 0x2F600000 -lz";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ffmpeg;
 				REZ_EXECUTABLE = NO;
