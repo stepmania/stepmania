@@ -320,14 +320,7 @@ void UtilSetXY( Actor& actor, const CString &sScreenName )
 
 void UtilCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName )
 {
-	// If Actor is hidden, it won't get updated or drawn, so don't bother tweening.
-	/* ... but we might be unhiding it, or setting state for when we unhide it later */
-//	if( actor.GetHidden() )
-//		return 0;
-
-	Command ac;
-	ac.Load("playcommand,"+sCommandName);
-	actor.HandleCommand( ac );
+	actor.PlayCommand( sCommandName );
 
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
