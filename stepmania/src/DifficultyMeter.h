@@ -13,22 +13,25 @@
 
 #include "BitmapText.h"
 #include "PlayerNumber.h"
+#include "ActorFrame.h"
+
 class Steps;
 class Course;
 
 
-class DifficultyMeter : public BitmapText
+class DifficultyMeter: public ActorFrame
 {
 public:
 	DifficultyMeter();
 
 	void SetFromGameState( PlayerNumber pn );
-	void SetFromNotes( Steps* pNotes );
-	void SetFromCourse( Course* pCourse );
+	void SetFromNotes( const Steps* pNotes );
+	void SetFromCourse( const Course* pCourse );
 	void Unset();
 
 private:
 	void SetMeter( int iMeter );
+	BitmapText m_Text;
 };
 
 #endif

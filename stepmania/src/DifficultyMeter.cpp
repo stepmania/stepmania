@@ -32,12 +32,13 @@
 
 DifficultyMeter::DifficultyMeter()
 {
-	BitmapText::LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
+	m_Text.LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
+	this->AddChild( &m_Text );
 
 	Unset();
 }
 
-void DifficultyMeter::SetFromNotes( Steps* pNotes )
+void DifficultyMeter::SetFromNotes( const Steps* pNotes )
 {
 	if( pNotes == NULL )
 	{
@@ -46,10 +47,10 @@ void DifficultyMeter::SetFromNotes( Steps* pNotes )
 	}
 
 	SetMeter( pNotes->GetMeter() );
-	SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
+	m_Text.SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
 }
 
-void DifficultyMeter::SetFromCourse( Course* pCourse )
+void DifficultyMeter::SetFromCourse( const Course* pCourse )
 {
 	if( pCourse == NULL )
 	{
@@ -57,26 +58,28 @@ void DifficultyMeter::SetFromCourse( Course* pCourse )
 		return;
 	}
 
-	int meter = (int) roundf(pCourse->GetMeter());
+	const int meter = (int) roundf(pCourse->GetMeter());
 	SetMeter( meter );
 	
 	// XXX
-	if(meter <= 1 )
-		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_BEGINNER) );
-	else if(meter <= 2 )
-		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_EASY) );
-	else if(meter <= 5 )
-		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_MEDIUM) );
-	else if(meter <= 7 )
-		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_HARD) );
+	RageColor c;
+	if( meter <= 1 )
+		c = SONGMAN->GetDifficultyColor( DIFFICULTY_BEGINNER );
+	else if( meter <= 2 )
+		c = SONGMAN->GetDifficultyColor( DIFFICULTY_EASY );
+	else if( meter <= 5 )
+		c = SONGMAN->GetDifficultyColor( DIFFICULTY_MEDIUM );
+	else if( meter <= 7 )
+		c = SONGMAN->GetDifficultyColor( DIFFICULTY_HARD );
 	else
-		SetDiffuse( SONGMAN->GetDifficultyColor(DIFFICULTY_CHALLENGE) );
+		c = SONGMAN->GetDifficultyColor( DIFFICULTY_CHALLENGE );
+	m_Text.SetDiffuse( c );
 }
 
 void DifficultyMeter::Unset()
 {
-	this->SetEffectNone();
-	SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	m_Text.SetEffectNone();
+	m_Text.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetMeter( 0 );
 }
 
@@ -100,10 +103,10 @@ void DifficultyMeter::SetMeter( int iMeter )
 		if( f<iMeter )
 			sNewText += "1";
 
-	SetText( sNewText );
+	m_Text.SetText( sNewText );
 
 	if( iMeter > GLOW_IF_METER_GREATER_THAN )
-		this->SetEffectGlowShift();
+		m_Text.SetEffectGlowShift();
 	else
-		this->SetEffectNone();
+		m_Text.SetEffectNone();
 }
