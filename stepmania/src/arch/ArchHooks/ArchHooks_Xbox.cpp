@@ -19,7 +19,14 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	if( !g_bTimerInitialized )
 		InitTimer();
 
-	return (timeGetTime() - g_iStartTime) * 1000;
+	int64_t ret = (timeGetTime() - g_iStartTime) * int64_t(1000);
+	if( bAccurate )
+	{
+		ret = FixupTimeIfLooped( ret );
+		ret = FixupTimeIfBackwards( ret );
+	}
+	
+	return ret;
 }
 
 ArchHooks_Xbox::ArchHooks_Xbox()

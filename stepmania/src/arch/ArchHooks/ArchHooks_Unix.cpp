@@ -143,7 +143,10 @@ static int64_t GetMicrosecondsSinceEpoch()
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	static int64_t iStartTime = GetMicrosecondsSinceEpoch();
-	return GetMicrosecondsSinceEpoch() - iStartTime;
+	int64_t ret = GetMicrosecondsSinceEpoch() - iStartTime;
+	if( bAccurate )
+		ret = FixupTimeIfBackwards( ret );
+	return ret;
 }
 
 /*
