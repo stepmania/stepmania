@@ -562,7 +562,7 @@ bool PlayerOptions::IsHandicapForCourse( Course* pCourse )
 	for( unsigned i=0; i<pCourse->m_entries.size(); i++ )
 	{
 		const CourseEntry& ce = pCourse->m_entries[i];
-		if( IsHandicapForSong(ce.pSong) )
+		if( ce.pSong && IsHandicapForSong(ce.pSong) )
 			return true;
 	}
 	return false;
