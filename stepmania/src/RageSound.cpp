@@ -383,8 +383,8 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			FillBuf( size );
 
 		/* Get a block of data. */
-		int got = GetData( (char *) buffer, size ) * framesize;
-		if( !got )
+		int got_frames = GetData( (char *) buffer, size );
+		if( !got_frames )
 		{
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
 			if( GetStopMode() == RageSoundParams::M_LOOP )
@@ -429,12 +429,10 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			/* We're out of data, but we're not going to stop, so fill in the
 			 * rest with silence. */
 			memset( buffer, 0, size*framesize );
-			got = size*framesize;
+			got_frames = size;
 		}
 
 		/* This block goes from position to position+got_frames. */
-		int got_frames = got / framesize;  /* bytes -> frames */
-		RAGE_ASSERT_M( (got % framesize) == 0, ssprintf("%i isn't divisible by %i", got, framesize) );
 
 		/* We want to fade when there's FADE_TIME seconds left, but if
 		 * m_LengthFrames is -1, we don't know the length we're playing.
