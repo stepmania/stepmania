@@ -574,6 +574,23 @@ variables take effect.
 16. Version History
 ************************************************************
 
+------------------------CVS after 3.00 beta 4----------------
+
+Additions by drokulix: (Edit this line out for production version)
+BUG FIX:  Old hashing algorithm caused some songs to have the same cache
+     filename, causing at least one broken duplicate of a song in the game and
+     at least one inaccessible song. New hashing algorithm is stronger and far
+     less likely to do this.
+BUG FIX:  "Select Group" screen now only displays songs and groups available in
+     the current style (instead of all songs).
+BUG FIX:  Opening a "(NEW)" sequence in Edit/Record/Synch mode with a style
+     over 4 panels (such as dance-solo or ez2-single) incorrectly initialized
+     the sequence as 4-column. This caused the problems (1) only the leftmost
+     4 panels in the sequence could be edited, and (2) sequences saved in this
+     way would cause an error such as "Actual number of note columns (6) is
+     different from the NotesType (4)." either when selected from the song
+     wheel or when starting the program again. This has been fixed.
+
 ------------------------Version 3.00 beta 4------------------
 BUG FIX:  Fixed crash entering Config Joy/Key (duh!)
 BUG FIX:  Smarter bannner/backgroung/cdtitle discovery
