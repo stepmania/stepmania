@@ -172,8 +172,6 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
 			m_sFilePath.c_str(), error.c_str());
 
-	/* SOUNDMAN->GetDriverSampleRate() returns a sample rate, -1 meaning "any",
-	 * or 0 meaning "ask". */
 	const int NeededRate = SOUNDMAN->GetDriverSampleRate( Sample->GetSampleRate() );
 	if( NeededRate != Sample->GetSampleRate() )
 	{
