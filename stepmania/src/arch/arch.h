@@ -7,10 +7,12 @@ class LoadingWindow;
 class RageSoundDriver;
 class ArchHooks;
 class InputHandler;
+class LowLevelWindow;
 
 ErrorDialog *MakeErrorDialog();
 LoadingWindow *MakeLoadingWindow();
 ArchHooks *MakeArchHooks();
+LowLevelWindow *MakeLowLevelWindow();
 
 void MakeInputHandlers(vector<InputHandler *> &Add);
 RageSoundDriver *MakeRageSoundDriver(CString drivers);

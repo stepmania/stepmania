@@ -24,6 +24,9 @@
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 
+#include "arch/arch.h"
+#include "arch/LowLevelWindow/LowLevelWindow.h"
+
 #include <math.h>
 
 RageDisplay*		DISPLAY	= NULL;
@@ -31,15 +34,12 @@ RageDisplay*		DISPLAY	= NULL;
 ////////////
 // Globals
 ////////////
-bool				g_Windowed;
-GLenum				g_vertMode = GL_TRIANGLES;
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
 int					g_iFPS, g_iVPF, g_iCFPS;
 
 int					g_PerspectiveMode = 0;
 
-int					g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
 int					g_ModelMatrixCnt=0;
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
@@ -58,6 +58,9 @@ PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT;
  * no GL_T2F_C4F_V3F. */
 const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
 
+
+LowLevelWindow *wind;
+
 void GetGLExtensions(set<string> &ext)
 {
     const char *buf = (const char *)glGetString(GL_EXTENSIONS);
@@ -74,7 +77,9 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	LOG->Trace( "RageDisplay::RageDisplay()" );
 
 	m_oglspecs = new oglspecs_t;
-	
+
+	wind = MakeLowLevelWindow();
+
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
 
 	// Log driver details
@@ -158,7 +163,7 @@ void RageDisplay::SetupOpenGL()
 
 RageDisplay::~RageDisplay()
 {
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	delete wind;
 	delete m_oglspecs;
 }
 
@@ -179,9 +184,9 @@ void RageDisplay::SetupExtensions()
 	m_oglspecs->EXT_paletted_texture = HasExtension("GL_EXT_paletted_texture");
 
 	/* Find extension functions. */
-	GLExt::wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
-	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) SDL_GL_GetProcAddress("glColorTableEXT");
-	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) SDL_GL_GetProcAddress("glGetColorTableParameterivEXT");
+	GLExt::wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
+	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
+	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
 
 	/* Make sure we have all components for detected extensions. */
 	if(m_oglspecs->WGL_EXT_swap_control)
@@ -207,82 +212,14 @@ void RageDisplay::SetupExtensions()
 bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
 //	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
-    if(!SDL_WasInit(SDL_INIT_VIDEO))
-        SDL_InitSubSystem(SDL_INIT_VIDEO);
+	bool NewOpenGLContext = wind->SetVideoMode( windowed, width, height, bpp, rate, vsync );
 
-	int flags = 0;
-	if( !windowed )
-		flags |= SDL_FULLSCREEN;
-	flags |= SDL_DOUBLEBUF;
-	flags |= SDL_RESIZABLE;
-	flags |= SDL_OPENGL;
-
-	g_Windowed = windowed;
-	SDL_ShowCursor( g_Windowed );
-
-	ASSERT( bpp == 16 || bpp == 32 );
-	switch( bpp )
+	if(NewOpenGLContext)
 	{
-	case 16:
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-		break;
-	case 32:
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	}
-
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
-
-#ifdef SDL_HAS_REFRESH_RATE
-	if(rate == REFRESH_DEFAULT)
-		SDL_SM_SetRefreshRate(0);
-	else
-		SDL_SM_SetRefreshRate(rate);
-#endif
-
-	bool NewOpenGLContext = false;
-
-	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
-	if(!screen)
-		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
-
-	/* XXX: This event only exists in the SDL tree, and is only needed in
-	 * Windows.  Eventually, it'll probably get upstreamed, and once it's
-	 * in the real branch we can remove this #if. */
-#if defined(WIN32)
-	SDL_Event e;
-	if(SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_OPENGLRESETMASK))
-	{
-		LOG->Trace("New OpenGL context");
-
 		/* We have a new OpenGL context, so we have to tell our textures that
 		 * their OpenGL texture number is invalid. */
 		if(TEXTUREMAN)
 			TEXTUREMAN->InvalidateTextures();
-
-		SDL_WM_SetCaption("StepMania", "StepMania");
-
-		NewOpenGLContext = true;
-	}
-#endif
-
-	{
-		/* Find out what we really got. */
-		int r,g,b,a, colorbits, depth, stencil;
-		
-		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &r);
-		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &g);
-		SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &b);
-		SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &a);
-		SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &colorbits);
-		SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depth);
-		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &stencil);
-		LOG->Info("Got %i bpp (%i%i%i%i), %i depth, %i stencil",
-			colorbits, r, g, b, a, depth, stencil);
 	}
 
 	SetupOpenGL();
@@ -298,10 +235,6 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	    GLExt::wglSwapIntervalEXT(vsync);
 	}
 	
-	g_CurrentWidth = screen->w;
-	g_CurrentHeight = screen->h;
-	g_CurrentBPP = bpp;
-
 	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */
@@ -377,8 +310,7 @@ void RageDisplay::DumpOpenGLDebugInfo()
 
 void RageDisplay::ResolutionChanged(int width, int height)
 {
-	g_CurrentWidth = width;
-	g_CurrentHeight = height;
+	wind->ResolutionChanged(width, height);
 
 	SetViewport(0,0);
 
@@ -391,10 +323,10 @@ void RageDisplay::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(g_CurrentWidth) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(g_CurrentWidth) / SCREEN_WIDTH );
+	shift_left = int( shift_left * float(wind->GetWidth()) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(wind->GetWidth()) / SCREEN_WIDTH );
 
-	glViewport(shift_left, -shift_down, g_CurrentWidth, g_CurrentHeight);
+	glViewport(shift_left, -shift_down, wind->GetWidth(), wind->GetHeight());
 }
 
 int RageDisplay::GetMaxTextureSize() const
@@ -412,7 +344,7 @@ void RageDisplay::Clear()
 
 void RageDisplay::Flip()
 {
-	SDL_GL_SwapBuffers();
+	wind->SwapBuffers();
 	g_iFramesRenderedSinceLastCheck++;
 	g_iFramesRenderedSinceLastReset++;
 
@@ -454,21 +386,21 @@ void RageDisplay::SaveScreenshot( CString sPath )
 	ASSERT( sPath.Right(3).CompareNoCase("bmp") == 0 );	// we can only save bitmaps
 
 	SDL_Surface *image = SDL_CreateRGBSurface(
-		SDL_SWSURFACE, g_CurrentWidth, g_CurrentHeight,
+		SDL_SWSURFACE, wind->GetWidth(), wind->GetHeight(),
         24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
 	SDL_Surface *temp = SDL_CreateRGBSurface(
-		SDL_SWSURFACE, g_CurrentWidth, g_CurrentHeight,
+		SDL_SWSURFACE, wind->GetWidth(), wind->GetHeight(),
 		24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
 
-	glReadPixels(0, 0, g_CurrentWidth, g_CurrentHeight, GL_RGB,
+	glReadPixels(0, 0, wind->GetWidth(), wind->GetHeight(), GL_RGB,
 	             GL_UNSIGNED_BYTE, image->pixels);
 
 	// flip vertically
-	for( int y=0; y<g_CurrentHeight; y++ )
+	for( int y=0; y<wind->GetHeight(); y++ )
 		memcpy( 
-			(char *)temp->pixels + 3 * g_CurrentWidth * y,
-			(char *)image->pixels + 3 * g_CurrentWidth * (g_CurrentHeight-1-y),
-			3*g_CurrentWidth );
+			(char *)temp->pixels + 3 * wind->GetWidth() * y,
+			(char *)image->pixels + 3 * wind->GetWidth() * (wind->GetHeight()-1-y),
+			3*wind->GetWidth() );
 
 	SDL_SaveBMP( temp, sPath );
 
@@ -479,7 +411,7 @@ void RageDisplay::SaveScreenshot( CString sPath )
 
 bool RageDisplay::IsWindowed() const 
 {
-	return g_Windowed;
+	return wind->IsWindowed();
 }
 
 void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-right, lower-left
@@ -582,8 +514,8 @@ void RageDisplay::DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, 
 	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
 	 * but these width functions actually want raster sizes (that is, actual pixels).
 	 * Scale the line width and point size by the average ratio of the scale. */
-	float WidthVal = float(g_CurrentWidth) / SCREEN_WIDTH;
-	float HeightVal = float(g_CurrentHeight) / SCREEN_HEIGHT;
+	float WidthVal = float(wind->GetWidth()) / SCREEN_WIDTH;
+	float HeightVal = float(wind->GetHeight()) / SCREEN_HEIGHT;
 	LineWidth *= (WidthVal + HeightVal) / 2;
 
 	/* Clamp the width to the hardware max for both lines and points (whichever

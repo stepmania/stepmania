@@ -6,9 +6,11 @@
 
 /* Load default fallback drivers; some of these may be overridden by arch-specific drivers. */
 #include "LoadingWindow/LoadingWindow_SDL.h"
+/* XXX: null, none, Null--pick one */
 #include "ErrorDialog/ErrorDialog_null.h"
 #include "ArchHooks/ArchHooks_none.h"
 #include "Sound/RageSoundDriver_Null.h"
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
 
 #endif
 
