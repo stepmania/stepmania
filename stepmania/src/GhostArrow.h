@@ -15,12 +15,10 @@ public:
 	GhostArrow();
 
 	void Load( CString sNoteSkin, CString sButton, CString sFile );
-	virtual void Init( PlayerNumber pn );
 
 	void Step( TapNoteScore score );
 
 protected:
-	PlayerNumber m_PlayerNumber;
 	Sprite	m_spr[NUM_TAP_NOTE_SCORES];
 	apActorCommands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
 };

@@ -36,11 +36,6 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 	}
 }
 
-void GhostArrow::Init( PlayerNumber pn )
-{
-	m_PlayerNumber = pn;
-}
-
 void GhostArrow::Step( TapNoteScore score )
 {
 	FOREACH_TapNoteScore( i )

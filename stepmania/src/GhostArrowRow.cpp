@@ -32,8 +32,6 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, flo
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		// TODO: Remove indexing by PlayerNumber;
-		PlayerNumber pn = pPlayerState->m_PlayerNumber;
 		CString Button = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
 
 		m_GhostDim.push_back( new GhostArrow );
@@ -44,10 +42,6 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, flo
 		m_GhostBright[c]->SetName( "GhostArrowBright" );
 		m_HoldGhost[c]->SetName( "HoldGhostArrow" );
 		
-		m_GhostDim[c]->Init( pn );
-		m_GhostBright[c]->Init( pn );
-		//m_HoldGhost[c]->Init( pn );
-
 		m_GhostDim[c]->Load( NoteSkin, Button, "tap explosion dim" );
 		m_GhostBright[c]->Load( NoteSkin, Button, "tap explosion bright" );
 		m_HoldGhost[c]->Load( NoteSkin, Button, "hold explosion" );
