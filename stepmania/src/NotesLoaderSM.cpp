@@ -470,6 +470,49 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 	
 }
 
+void SMLoader::TidyUpData( Song &song, bool cache )
+{
+	/*
+	 * Hack: if the song has any changes at all (so it won't use a random BGA)
+	 * and doesn't end with "-nosongbg-", add a song background BGC.  Remove
+	 * "-nosongbg-" if it exists.
+	 *
+	 * This way, songs that were created earlier, when we added the song BG
+	 * at the end by default, will still behave as expected; all new songs will
+	 * have to add an explicit song BG tag if they want it.  This is really a
+	 * formatting hack only; nothing outside of SMLoader ever sees "-nosongbg-".
+	 */
+	vector<BackgroundChange> &bg = song.m_BackgroundChanges;
+	if( !bg.empty() )
+	{
+		/* BGChanges have been sorted.  On the odd chance that a BGChange exists
+		* with a very high beat, search the whole list. */
+		bool bHasNoSongBgTag = false;
+
+		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
+		{
+			if( !bg[i].m_sBGName.CompareNoCase("-nosongbg-") )
+			{
+				bg.erase( bg.begin()+i );
+				bHasNoSongBgTag = true;
+			}
+		}
+
+		/*
+		 * If we're loading cache, -nosongbg- should always be in there.  We must
+		 * not call IsAFile(song.GetBackgroundPath()) when loading cache.
+		 *
+		 * If BGChanges already exist after the last beat, don't add the background
+		 * in the middle.
+		 */
+		if( !cache &&
+		    bg.back().m_fStartBeat-0.0001f < song.m_fLastBeat &&
+			!bHasNoSongBgTag &&
+			IsAFile( song.GetBackgroundPath() ) )
+			bg.push_back( BackgroundChange(song.m_fLastBeat,song.m_sBackgroundFile) );
+	}
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

@@ -18,6 +18,7 @@ public:
 	const set<istring> &GetBlacklistedImages() const { return BlacklistedImages; }
 	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;
+	virtual void TidyUpData( Song &song, bool cache ) { }
 	bool Loadable( CString sPath );
 };
 
