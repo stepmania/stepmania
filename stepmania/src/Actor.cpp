@@ -690,6 +690,13 @@ void Actor::Command( CString sCommandString )
 		/* Add left/right/top/bottom for alpha if needed. */
 		else if( sName=="diffusealpha" )	{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = fParam(1); SetDiffuses( i, c ); } }
 		else if( sName=="glow" )			SetGlow( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="glowmode" ) {
+			if(!sParam(1).CompareNoCase("whiten"))
+				SetGlowMode( GLOW_WHITEN );
+			else if(!sParam(1).CompareNoCase("brighten"))
+				SetGlowMode( GLOW_BRIGHTEN );
+			else ASSERT(0);
+		}
 		else if( sName=="rotationx" )		SetRotationX( fParam(1) );
 		else if( sName=="rotationy" )		SetRotationY( fParam(1) );
 		else if( sName=="rotationz" )		SetRotationZ( fParam(1) );
@@ -770,6 +777,7 @@ void Actor::TweenState::Init()
 	for(int i=0; i<4; i++) 
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
+	glowmode = GLOW_WHITEN;
 }
 
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )

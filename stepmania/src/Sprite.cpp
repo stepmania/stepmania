@@ -321,7 +321,7 @@ void Sprite::DrawPrimitives()
 	//////////////////////
 	if( m_temp.glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureModeGlow();
+		DISPLAY->SetTextureModeGlow(m_temp.glowmode);
 		v[0].c = v[1].c = v[2].c = v[3].c = m_temp.glow;
 		DISPLAY->DrawQuad( v );
 	}

@@ -61,7 +61,7 @@ public:
 	void SetTexture( RageTexture* pTexture );
 
 	void SetTextureModeModulate();
-	void SetTextureModeGlow();
+	void SetTextureModeGlow(GlowMode m = GLOW_WHITEN );
 	void SetBlendModeNormal();
 	void SetBlendModeAdd();
 	bool ZBufferEnabled() const;

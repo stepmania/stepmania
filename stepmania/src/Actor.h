@@ -46,6 +46,7 @@ public:
 		RageVector3 scale;
 		RageColor   diffuse[4];
 		RageColor   glow;
+		GlowMode	glowmode;
 
 		void Init();
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
@@ -132,6 +133,8 @@ public:
 	virtual RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
 	virtual void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
 	virtual RageColor GetGlow()							{ return DestTweenState().glow; };
+	virtual void SetGlowMode( GlowMode m )				{ DestTweenState().glowmode = m; };
+	virtual GlowMode GetGlowMode()						{ return DestTweenState().glowmode; };
 
 
 	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
