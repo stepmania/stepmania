@@ -965,6 +965,9 @@ void MusicWheel::ChangeMusic(int dist)
 
 bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change successful
 {
+	if( GAMESTATE->m_SongSortOrder == new_so )
+		return false;
+
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
