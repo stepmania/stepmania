@@ -398,6 +398,7 @@ int RageFileObjDirect::Flush()
 	}
 
 	write_buf.erase();
+	write_buf.reserve( BUFSIZE );
 	return ret;
 }
 
@@ -407,10 +408,24 @@ int RageFileObjDirect::Write( const void *buf, size_t bytes )
 	{
 		if( Flush() == -1 )
 			return -1;
+		ASSERT(	!write_buf.size() );
+
+		/* The buffer is cleared.  If we still don't have space, it's bigger than
+		 * the buffer size, so just write it directly. */
+		if( bytes >= BUFSIZE )
+		{
+			int ret = write( fd, buf, bytes );
+			if( ret == -1 )
+			{
+				LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
+				SetError( strerror(errno) );
+				return -1;
+			}
+			return bytes;
+		}
 	}
 
 	write_buf.append( (const char *)buf, (const char *)buf+bytes );
-
 	return bytes;
 }
 
