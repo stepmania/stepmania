@@ -310,6 +310,12 @@ static bool ChangeAppPri()
 	}
 #endif
 
+	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
+#ifdef DEBUG
+	if( PREFSMAN->m_iBoostAppPriority == -1 )
+		return false;
+#endif
+
 	return true;
 }
 
