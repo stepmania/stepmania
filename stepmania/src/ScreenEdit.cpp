@@ -209,7 +209,7 @@ static Menu g_EditSongInfo( "Edit Song Info", g_EditSongInfoItems );
 
 static const MenuRow g_BGChangeItems[] =
 {
-	{ "Rate (applies to new adds)",			true, 15, { "-100%","-80%","-60%","-40%","-20%","0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" } },
+	{ "Rate (applies to new adds)",			true, 10, { "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" } },
 	{ "Fade Last (applies to new adds)",	true, 0, { "NO","YES" } },
 	{ "Rewind Movie (applies to new adds)",	true, 0, { "NO","YES" } },
 	{ "Loop (applies to new adds)",			true, 1, { "NO","YES" } },
@@ -2148,13 +2148,25 @@ void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
 
 void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 {
-	BackgroundChange change;
-	change.m_fStartBeat = GAMESTATE->m_fSongBeat;
+	BackgroundChange newChange;
+
+	FOREACH( BackgroundChange, m_pSong->m_BackgroundChanges, iter )
+	{
+		if( iter->m_fStartBeat == GAMESTATE->m_fSongBeat )
+		{
+			newChange = *iter;
+			// delete the old change.  We'll add a new one below.
+			m_pSong->m_BackgroundChanges.erase( iter );
+			break;
+		}
+	}
+
+	newChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
 
 	switch( c )
 	{
 	case add_random:
-		change.m_sBGName = "-random-";
+		newChange.m_sBGName = "-random-";
 		break;
 	case add_song_bganimation:
 	case add_song_movie:
@@ -2162,32 +2174,22 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 	case add_global_random_movie:
 	case add_global_bganimation:
 	case add_global_visualization:
-		change.m_sBGName = g_BGChange.rows[c].choices[iAnswers[c]];
+		newChange.m_sBGName = g_BGChange.rows[c].choices[iAnswers[c]];
 		break;
 	case delete_change:
-		change.m_sBGName = "";
+		newChange.m_sBGName = "";
 		break;
 	default:
-		SCREENMAN->PlayInvalidSound();
+		break;
 	};
 
-	change.m_fRate = strtof( g_BGChange.rows[rate].choices[iAnswers[rate]], NULL )/100.f;
-	change.m_bFadeLast = !!iAnswers[fade_last];
-	change.m_bRewindMovie = !!iAnswers[rewind_movie];
-	change.m_bLoop = !!iAnswers[loop];
+	newChange.m_fRate = strtof( g_BGChange.rows[rate].choices[iAnswers[rate]], NULL )/100.f;
+	newChange.m_bFadeLast = !!iAnswers[fade_last];
+	newChange.m_bRewindMovie = !!iAnswers[rewind_movie];
+	newChange.m_bLoop = !!iAnswers[loop];
 
-	unsigned i;
-	for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
-		if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-			break;
-
-	if( i != m_pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
-		m_pSong->m_BackgroundChanges.erase( m_pSong->m_BackgroundChanges.begin()+i,
-										  m_pSong->m_BackgroundChanges.begin()+i+1);
-
-	// create a new BGChange
-	if( change.m_sBGName != "" )
-		m_pSong->AddBackgroundChange( change );
+	if( newChange.m_sBGName != "" )
+		m_pSong->AddBackgroundChange( newChange );
 }
 
 void ScreenEdit::SetupCourseAttacks()
