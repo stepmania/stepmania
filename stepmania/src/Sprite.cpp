@@ -137,7 +137,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, RageTexturePrefs prefs )
 
 	m_sTexturePath = sTexturePath;
 
-	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath, prefs );
 	assert( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled

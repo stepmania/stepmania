@@ -47,7 +47,7 @@ RageTextureManager::~RageTextureManager()
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk
 //-----------------------------------------------------------------------------
-RageTexture* RageTextureManager::LoadTexture( CString sTexturePath )
+RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, RageTexturePrefs prefs )
 {
 	sTexturePath.MakeLower();
 
@@ -77,7 +77,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath )
 //		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 //			pTexture = new RageMovieTexture( sTexturePath );
 //		else
-			pTexture = new RageBitmapTexture( sTexturePath, RageTexturePrefs() );
+			pTexture = new RageBitmapTexture( sTexturePath, prefs );
 
 		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath.GetString() );
 

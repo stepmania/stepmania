@@ -24,7 +24,7 @@ public:
 	RageTextureManager( int iTextureColorDepth, int iSecsBeforeUnload );
 	~RageTextureManager();
 
-	RageTexture* LoadTexture( CString sTexturePath );
+	RageTexture* LoadTexture( CString sTexturePath, RageTexturePrefs prefs );
 	bool IsTextureLoaded( CString sTexturePath );
 	void UnloadTexture( CString sTexturePath );
 	void ReloadAll();
