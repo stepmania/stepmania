@@ -53,6 +53,7 @@ public:
 	~LightsManager();
 	
 	void Update( float fDeltaTime );
+	bool IsEnabled() const { return m_pDriver != NULL; }
 
 	void BlinkCabinetLight( CabinetLight cl );
 	void BlinkGameButton( GameInput gi );

@@ -54,6 +54,9 @@ LightsManager::~LightsManager()
 
 void LightsManager::Update( float fDeltaTime )
 {
+	if( !IsEnabled() )
+		return;
+
 	// update lights falloff
 	{
 		FOREACH_CabinetLight( cl )

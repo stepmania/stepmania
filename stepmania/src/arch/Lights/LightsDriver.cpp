@@ -19,12 +19,9 @@ LightsDriver *MakeLightsDriver(CString driver)
 	if( !driver.CompareNoCase("WeedTech") ) ret = new LightsDriver_LinuxWeedTech;
 	if( !driver.CompareNoCase("LinuxParallel") ) ret = new LightsDriver_LinuxParallel;
 #endif
-	if( !driver.CompareNoCase("Null") || ret == NULL )
-	{
-		if( driver.CompareNoCase("Null") )
-			LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
-		ret = new LightsDriver_Null;
-	}
+
+	if( ret == NULL && driver.CompareNoCase("Null") )
+		LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
 	
 	return ret;
 }
