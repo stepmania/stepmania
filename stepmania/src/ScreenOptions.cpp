@@ -75,13 +75,13 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
 
-void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bLoadExplanations )
+void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLines, bool bLoadExplanations )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 
 	m_InputMode = im;
-	m_OptionRow = OptionRow;
+	m_OptionRow = OptionRows;
 	m_iNumOptionRows = iNumOptionLines;
 	m_bLoadExplanations = bLoadExplanations;
 
@@ -121,7 +121,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 		}
 	}
 
-	// init text
+	// init m_textItems from optionLines
 	int r;
 	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
 	{
@@ -129,19 +129,77 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 
 		m_framePage.AddChild( &m_textTitles[r] );		
 
-		for( unsigned c=0; c<m_OptionRow[r].choices.size(); c++ )
+		const OptionRow &optline = m_OptionRow[r];
+
+		float fX = ITEMS_START_X;	// indent 70 pixels
+		for( unsigned c=0; c<optline.choices.size(); c++ )
 		{
 			BitmapText *bt = new BitmapText;
 			m_textItems[r].push_back( bt );
 
-			m_framePage.AddChild( bt );
+			bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+			bt->SetText( optline.choices[c] );
+			bt->SetZoom( ITEMS_ZOOM );
+			bt->EnableShadow( false );
+
+			// set the X position of each item in the line
+			float fItemWidth = bt->GetWidestLineWidthInSourcePixels() * bt->GetZoomX();
+			fX += fItemWidth/2;
+			bt->SetX( fX );
+			fX += fItemWidth/2 + ITEMS_GAP_X;
 		}
+
+		if( fX > SCREEN_RIGHT-40 )
+		{
+			// It goes off the edge of the screen.  Re-init with the "long row" style.
+			m_bRowIsLong[r] = true;
+			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
+				delete m_textItems[r][j];
+			m_textItems[r].clear();
+
+			for( unsigned p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMESTATE->IsHumanPlayer(p) )
+					continue;
+
+				BitmapText *bt = new BitmapText;
+				m_textItems[r].push_back( bt );
+
+				const int iChoiceInRow = m_iSelectedOption[p][r];
+
+				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+				bt->SetText( m_OptionRow[r].choices[iChoiceInRow] );
+				bt->SetZoom( ITEMS_ZOOM );
+				bt->EnableShadow( false );
+
+				/* if choices are locked together, center the item. */
+				if( optline.bOneChoiceForAllPlayers )
+					bt->SetX( (ITEM_X[0]+ITEM_X[1])/2 );
+				else
+					bt->SetX( ITEM_X[p] );
+
+				UpdateText( (PlayerNumber)p, j );
+			}
+		}
+
+		for( unsigned c=0; c<m_textItems[r].size(); c++ )
+			m_framePage.AddChild( m_textItems[r][c] );
 	}
+
+	InitOptionsText();
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	{
 		BitmapText *bt = new BitmapText;
 		m_textItems[r].push_back( bt );
+
+		bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+		bt->SetText( "EXIT" );
+		bt->SetZoom( ITEMS_ZOOM );
+		bt->SetShadowLength( 0 );
+		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*m_iNumOptionRows;
+		bt->SetXY( CENTER_X, fY );
+
 		m_framePage.AddChild( bt );
 	}
 
@@ -153,7 +211,6 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	m_framePage.AddChild( &m_textExplanation );
 
 
-	InitOptionsText();
 	PositionItems();
 	PositionUnderlines();
 	PositionIcons();
@@ -216,11 +273,9 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 
 void ScreenOptions::InitOptionsText()
 {
-	// init m_textItems from optionLines
-	int i;
-	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+	for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 	{
-		OptionRow &optline = m_OptionRow[i];
+		const OptionRow &optline = m_OptionRow[i];
 
 		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
 
@@ -236,82 +291,14 @@ void ScreenOptions::InitOptionsText()
 		title.SetVertAlign( Actor::align_middle );		
 		title.EnableShadow( false );		
 
-
 		Sprite &bullet = m_sprBullets[i];
 		bullet.Load( THEME->GetPathToG("ScreenOptions bullet") );
 		bullet.SetXY( ARROWS_X, fY );
-
-
-		// init all text in this line and count the width of the line
-		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
-		{
-			ASSERT( j < m_textItems[i].size() );
-			BitmapText &option = *m_textItems[i][j];
-
-			option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-			option.SetText( optline.choices[j] );
-			option.SetZoom( ITEMS_ZOOM );
-			option.EnableShadow( false );
-
-			// set the XY position of each item in the line
-			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
-			fX += fItemWidth/2;
-			option.SetXY( fX, fY );
-			fX += fItemWidth/2 + ITEMS_GAP_X;
-		}
-
-		m_bRowIsLong[i] = fX > SCREEN_RIGHT-40;	// goes off edge of screen
-
-		if( m_bRowIsLong[i] )
-		{
-			// re-init with "long row" style
-			unsigned j;
-			for( j=0; j<optline.choices.size(); j++ )	// for each option on this line
-				m_textItems[i][j]->SetText( "" );
-
-			for( unsigned p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsHumanPlayer(p) )
-					continue;
-
-				if( p >= m_textItems[i].size() )
-				{
-					BitmapText *bt = new BitmapText;
-					m_textItems[i].push_back( bt );
-
-					m_framePage.AddChild( bt );
-				}
-
-				BitmapText &option = *m_textItems[i][p];
-
-				const int iChoiceInRow = m_iSelectedOption[p][i];
-
-				option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-				option.SetText( m_OptionRow[i].choices[iChoiceInRow] );
-				option.SetZoom( ITEMS_ZOOM );
-				option.EnableShadow( false );
-
-				option.SetY( fY );
-				
-				/* if choices are locked together, center the item. */
-				if( optline.bOneChoiceForAllPlayers )
-					option.SetX( (ITEM_X[0]+ITEM_X[1])/2 );
-				else
-					option.SetX( ITEM_X[p] );
-
-				UpdateText( (PlayerNumber)p, j );
-			}
-		}
+		
+		// set the Y position of each item in the line
+		for( unsigned c=0; c<m_textItems[i].size(); c++ )
+			m_textItems[i][c]->SetY( fY );
 	}
-
-	BitmapText &option = *m_textItems[i][0];
-	option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-	option.SetText( "EXIT" );
-	option.SetZoom( ITEMS_ZOOM );
-	option.SetShadowLength( 0 );
-	float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
-	option.SetXY( CENTER_X, fY );
 }
 
 void ScreenOptions::PositionUnderlines()
@@ -450,15 +437,13 @@ void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 {
 	int iChoiceInRow = m_iSelectedOption[player_no][iRow];
 
-	bool bLotsOfOptions = m_bRowIsLong[iRow];
+	if( !m_bRowIsLong[iRow] )
+		return;
 
-	OptionRow &row = m_OptionRow[iRow];
+	const OptionRow &row = m_OptionRow[iRow];
 
-	if( bLotsOfOptions )
-	{
-		unsigned item_no = row.bOneChoiceForAllPlayers?0:player_no;
-		m_textItems[iRow][item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
-	}
+	unsigned item_no = row.bOneChoiceForAllPlayers?0:player_no;
+	m_textItems[iRow][item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -479,12 +464,8 @@ void ScreenOptions::UpdateEnabledDisabled()
 		m_sprBullets[i].SetGlobalDiffuseColor( color );
 		m_textTitles[i].SetGlobalDiffuseColor( color );
 
-		if( m_bRowIsLong[i] )
-			for( unsigned j=0; j<NUM_PLAYERS; j++ )
-				m_textItems[i][j]->SetGlobalDiffuseColor( color );
-		else
-			for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-				m_textItems[i][j]->SetGlobalDiffuseColor( color );
+		for( unsigned j=0; j<m_textItems[i].size(); j++ )
+			m_textItems[i][j]->SetGlobalDiffuseColor( color );
 
 		if( m_sprBullets[i].GetDestY() != m_fRowY[i] )
 		{
@@ -499,24 +480,13 @@ void ScreenOptions::UpdateEnabledDisabled()
 			m_sprBullets[i].SetY( m_fRowY[i] );
 			m_textTitles[i].SetY( m_fRowY[i] );
 
-			/* XXX: If we're long, then remove the old choices when we switch to long so we don't
-			 * need a special case here. */
-			if( m_bRowIsLong[i] )
-				for( unsigned j=0; j<NUM_PLAYERS; j++ )
-				{
-					m_textItems[i][j]->StopTweening();
-					m_textItems[i][j]->BeginTweening( 0.3f );
-					m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-					m_textItems[i][j]->SetY( m_fRowY[i] );
-				}
-			else
-				for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-				{
-					m_textItems[i][j]->StopTweening();
-					m_textItems[i][j]->BeginTweening( 0.3f );
-					m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-					m_textItems[i][j]->SetY( m_fRowY[i] );
-				}
+			for( unsigned j=0; j<m_textItems[i].size(); j++ )
+			{
+				m_textItems[i][j]->StopTweening();
+				m_textItems[i][j]->BeginTweening( 0.3f );
+				m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+				m_textItems[i][j]->SetY( m_fRowY[i] );
+			}
 		}
 
 		/* Hide the text of all but the first active player, so we don't overdraw. */
