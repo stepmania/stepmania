@@ -27,7 +27,9 @@
 #define SOURCE_METER_X			THEME->GetMetricF("EditMenu","SourceMeterX")
 #define SOURCE_METER_Y			THEME->GetMetricF("EditMenu","SourceMeterY")
 #define ROW_LABELS_X			THEME->GetMetricF("EditMenu","RowLabelsX")
+#define ROW_LABEL_ON_COMMAND	THEME->GetMetricA("EditMenu","RowLabelOnCommand")
 #define ROW_VALUE_X( i )		THEME->GetMetricF("EditMenu",ssprintf("RowValue%dX",i+1))
+#define ROW_VALUE_ON_COMMAND	THEME->GetMetricA("EditMenu","RowValueOnCommand")
 #define ROW_Y( i )				THEME->GetMetricF("EditMenu",ssprintf("Row%dY",i+1))
 
 
@@ -58,14 +60,14 @@ EditMenu::EditMenu()
 		m_textLabel[i].LoadFromFont( THEME->GetPathF("EditMenu","title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
 		m_textLabel[i].SetText( RowToString((Row)i) );
-		m_textLabel[i].SetZoom( 0.8f );
+		m_textLabel[i].RunCommands( ROW_LABEL_ON_COMMAND );
 		m_textLabel[i].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[i] );
 
 		m_textValue[i].LoadFromFont( THEME->GetPathF("EditMenu","value") );
 		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
 		m_textValue[i].SetText( "blah" );
-		m_textValue[i].SetZoom( 0.8f );
+		m_textValue[i].RunCommands( ROW_VALUE_ON_COMMAND );
 		this->AddChild( &m_textValue[i] );
 	}
 
