@@ -32,26 +32,32 @@ LoadingWindow *MakeLoadingWindow()
 
 	for(unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i)
 	{
-		try {
-			Driver = DriversToTry[i];
+		Driver = DriversToTry[i];
 
 #ifdef HAVE_LOADING_WINDOW_WIN32
-			if(!DriversToTry[i].CompareNoCase("Win32")) ret = new LoadingWindow_Win32;
+		if(!DriversToTry[i].CompareNoCase("Win32")) ret = new LoadingWindow_Win32;
 #endif
 #ifdef HAVE_LOADING_WINDOW_GTK
-			if(!DriversToTry[i].CompareNoCase("Gtk")) ret = new LoadingWindow_Gtk;
+		if(!DriversToTry[i].CompareNoCase("Gtk")) ret = new LoadingWindow_Gtk;
 #endif
 #ifdef HAVE_LOADING_WINDOW_COCOA
-			if(!DriversToTry[i].CompareNoCase("Cocoa")) ret = new LoadingWindow_Cocoa;
+		if(!DriversToTry[i].CompareNoCase("Cocoa")) ret = new LoadingWindow_Cocoa;
 #endif
 #ifdef HAVE_LOADING_WINDOW_SDL
-			if(!DriversToTry[i].CompareNoCase("SDL")) ret = new LoadingWindow_SDL;
+		if(!DriversToTry[i].CompareNoCase("SDL")) ret = new LoadingWindow_SDL;
 #endif
 #ifdef HAVE_LOADING_WINDOW_NULL
-			if(!DriversToTry[i].CompareNoCase("Null")) ret = new LoadingWindow_Null;
+		if(!DriversToTry[i].CompareNoCase("Null")) ret = new LoadingWindow_Null;
 #endif
-		} catch(const RageException &e) {
-			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
+			
+		if( ret == NULL )
+			continue;
+
+		CString sError = ret->Init();
+		if( sError != "" )
+		{
+			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str());
+			SAFE_DELETE( ret );
 		}
 	}
 	

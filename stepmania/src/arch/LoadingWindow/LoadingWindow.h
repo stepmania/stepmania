@@ -6,6 +6,7 @@
 class LoadingWindow
 {
 public:
+	virtual CString Init() { return ""; }
 	virtual ~LoadingWindow() { }
 
 	virtual void Paint() = 0;

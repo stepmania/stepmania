@@ -9,6 +9,7 @@ class LoadingWindow_Gtk: public LoadingWindow
 {
 public:
 	LoadingWindow_Gtk();
+	CString Init();
 	~LoadingWindow_Gtk();
 
 	void SetText(CString str);
