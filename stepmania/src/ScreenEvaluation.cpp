@@ -808,7 +808,8 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 	if( !GAMESTATE->m_SongOptions.m_bSaveScore )
 		return;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
