@@ -120,11 +120,29 @@ ScreenStage::ScreenStage()
 		ASSERT(0);
 	}
 
+	int ez2Final=0; // if we're 0 it's not a final stage. if we're 1 it is.
+	// why do this? Ez2dancer uses NORMAL for it's final stage but just re-arranges
+	// the elements. so the following takes us into NORMAL and just re-arranges stuff
+	// the ez2Final is so that when we're in normal we can go and see if we're really
+	// FINAL or not. at the end of normal, if we WERE FINAL, we set it back to final
+	// hacky or what? =)
+	if ( STAGE_SCREEN_TYPE == SCREENTYPE_EZ2 && stage_type == TYPE_FINAL )
+	{
+		for( int i=0; i<4; i++ )
+		{
+			m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers final") );
+			m_sprNumbers[i].StopAnimating();
+		}
+		ez2Final=1;
+		stage_type = TYPE_NORMAL;
+	}
+
 	switch( stage_type )
 	{
 	case TYPE_NORMAL:
 		{
 			const int iStageNo = GAMESTATE->GetStageIndex()+1;
+
 			CString sStageNo = ssprintf("%d", iStageNo);
 
 			// Set frame of numbers
@@ -171,6 +189,12 @@ ScreenStage::ScreenStage()
 
 			if ( STAGE_SCREEN_TYPE == SCREENTYPE_EZ2) // Initialize and manipulate existing graphics for Ez2dancer Screen Type
 			{
+				for( i=0; i<iNumChars; i++ )
+				{
+					float fOffsetX = SCALE(i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
+					m_sprNumbers[i].SetX( fCharsCenterX + fOffsetX + (150 * i) );
+				}
+
 
 				for( i=0; i<iNumChars; i++ ) // redefine the size of the numbers
 				{
@@ -189,55 +213,56 @@ ScreenStage::ScreenStage()
 					m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
 				}
 			
-				// scroll in the name of the game (ez2dancer ukmove) across the top of the screen
-
-				for (i=0; i<2; i++) // specify the font file.
-				{
-					m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
-					m_ez2ukm[i].TurnShadowOff();
-				}
-
-				m_ez2ukm[0].SetXY( fStageCenterX-400, 0-220 ); // set the intiial UKMOVE positions
-				m_ez2ukm[1].SetXY( fStageCenterX+400, 0+220 ); 
 			
-				for (i=0; i<2; i++) // initialize the UK MOVE text and positions
-				{
-					m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" );
-					m_ez2ukm[i].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-					m_ez2ukm[i].BeginTweening(0.5f);
-				}
-				
-				m_ez2ukm[0].SetTweenX(fStageCenterX+90); // set their new locations
-				m_ez2ukm[1].SetTweenX(fStageCenterX-170);
-				for (i=0; i<2; i++)
-				{
-					m_frameStage.AddSubActor( &m_ez2ukm[i] );
-				}
-				
 				// Background Blocks rotate their way in
+
+				int bg_modeoffset=0;
+				float element_y_offsets=0.0f;
+				if (ez2Final == 1)
+				{
+					element_y_offsets = 25.0f;
+					bg_modeoffset = 4; // shuffle graphics +4 in the elements file for FINAL graphics.
+				}
 
 				for (i=0; i<3; i++)
 				{
 					m_sprbg[i].Load( THEME->GetPathTo("Graphics","stage elements") );
 				    m_sprbg[i].StopAnimating();
-					m_sprbg[i].SetState( i );
+					m_sprbg[i].SetState( i+bg_modeoffset );
+				}
+				if (ez2Final == 1)
+				{
+					m_sprbgxtra.Load( THEME->GetPathTo("Graphics","stage elements") );
+					m_sprbgxtra.StopAnimating();
+					m_sprbgxtra.SetState( bg_modeoffset );
+			  		m_sprbgxtra.SetXY( fStageCenterX-30, 0+180);
+					m_sprbgxtra.SetHeight( 30 );
+					m_sprbgxtra.SetWidth( SCREEN_WIDTH + 50 );
+					m_sprbgxtra.SetRotation( -20 );
+					m_sprbgxtra.BeginTweening(0.3f);
+					m_sprbgxtra.SetTweenRotationZ( 0 );
 				}
 
+
 				m_sprbg[0].SetXY( fStageCenterX-30, 0+150);
+				if (ez2Final == 1)
+					m_sprbg[0].SetXY( fStageCenterX-30, 0-160);
 				m_sprbg[0].SetHeight( 100 );
+				if (ez2Final == 1)
+					m_sprbg[0].SetHeight( 30 );
 				m_sprbg[0].SetWidth( SCREEN_WIDTH + 50 );
 				m_sprbg[0].SetRotation( -20 );
 				m_sprbg[0].BeginTweening(0.3f);
 				m_sprbg[0].SetTweenRotationZ( 0 );
 				
-				m_sprbg[1].SetXY( fStageCenterX-(SCREEN_WIDTH/2)-20, 0);
+				m_sprbg[1].SetXY( fStageCenterX-(SCREEN_WIDTH/2)-20, 0+element_y_offsets);
 				m_sprbg[1].SetHeight( SCREEN_HEIGHT - 140 );
 				m_sprbg[1].SetWidth( 130 );
 				m_sprbg[1].SetRotation( -20 );
 				m_sprbg[1].BeginTweening(0.3f);
 				m_sprbg[1].SetTweenRotationZ( 0 );
 
-				m_sprbg[2].SetXY( fStageCenterX+430, 0);
+				m_sprbg[2].SetXY( fStageCenterX+430, 0+element_y_offsets);
 				m_sprbg[2].SetHeight( SCREEN_HEIGHT - 140 );
 				m_sprbg[2].SetWidth( SCREEN_WIDTH + 50 );
 				m_sprbg[2].SetRotation( -20 );
@@ -249,6 +274,63 @@ ScreenStage::ScreenStage()
 				{
 					m_frameStage.AddSubActor( &m_sprbg[i] );
 				}
+				if (ez2Final == 1)
+				{
+					m_frameStage.AddSubActor( &m_sprbgxtra );
+				}
+
+				// scroll in the name of the game (ez2dancer ukmove) across the top of the screen
+
+				for (i=0; i<2; i++) // specify the font file.
+				{
+					m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+					m_ez2ukm[i].TurnShadowOff();
+					m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+					m_stagedesc[i].TurnShadowOff();
+				}
+
+				m_ez2ukm[0].SetXY( fStageCenterX-400, 0-220 ); // set the intiial UKMOVE positions
+				m_ez2ukm[1].SetXY( fStageCenterX+400, 0+220 ); 
+				m_stagedesc[0].SetXY( fStageCenterX-400, 0-150+element_y_offsets ); // set the intiial desc positions
+				m_stagedesc[1].SetXY( fStageCenterX+400, 0+70+element_y_offsets ); 
+				
+				if (ez2Final == 1)
+				{
+					m_stagedesc[1].SetY( 140.0f );
+				}
+				
+				for (i=0; i<2; i++) // initialize the UK MOVE text and positions
+				{
+					m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" );
+					m_ez2ukm[i].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+					m_ez2ukm[i].BeginTweening(0.5f);
+					if (ez2Final == 1)
+					{
+						m_stagedesc[i].SetText( "FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL" );
+						m_stagedesc[i].SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) );
+					}
+					else
+					{
+						m_stagedesc[i].SetText( "NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT" );
+						m_stagedesc[i].SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) );
+					}
+					m_stagedesc[i].BeginTweening(0.5f);
+
+				}
+				
+				m_ez2ukm[0].SetTweenX(fStageCenterX+90); // set their new locations
+				m_ez2ukm[1].SetTweenX(fStageCenterX-170);
+				m_stagedesc[0].SetTweenX(fStageCenterX+10); // set their new locations
+				m_stagedesc[1].SetTweenX(fStageCenterX-100);
+
+				for (i=0; i<2; i++)
+				{
+					m_frameStage.AddSubActor( &m_ez2ukm[i] );
+					m_frameStage.AddSubActor( &m_stagedesc[i] );
+				}
+
+
+
 
 				// 20 Scrolling Blobs come in one at a time from either side at the bottom in the following code:
 				for( int j=0; j<2; j++)
@@ -257,7 +339,7 @@ ScreenStage::ScreenStage()
 					{
 						m_sprScrollingBlobs[j][i].Load( THEME->GetPathTo("Graphics","stage elements") );
 						m_sprScrollingBlobs[j][i].StopAnimating();
-						m_sprScrollingBlobs[j][i].SetState( 3 );
+						m_sprScrollingBlobs[j][i].SetState( 3+bg_modeoffset );
 					}
 				}
 
@@ -266,9 +348,21 @@ ScreenStage::ScreenStage()
 					for (i=0; i<20; i++)
 					{
 						if (j == 0)
+						{
 							m_sprScrollingBlobs[j][i].SetXY( fStageCenterX-(SCREEN_WIDTH/2)-500-((i*i)*4), 135 );
+							if (ez2Final == 1)
+							{
+								m_sprScrollingBlobs[j][i].SetY( 0-160);
+							}
+						}
 						else
+						{
 							m_sprScrollingBlobs[j][i].SetXY( fStageCenterX+(SCREEN_WIDTH/2)+500-((i*i)*4), 170 );
+							if (ez2Final == 1)
+							{
+								m_sprScrollingBlobs[j][i].SetY( 180 );
+							}
+						}
 					}
 				}
 
@@ -290,7 +384,7 @@ ScreenStage::ScreenStage()
 				m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","stage") );
 				m_stagename.TurnShadowOff();
 
-				m_stagename.SetXY( fStageCenterX+400, 0+20 ); 			
+				m_stagename.SetXY( fStageCenterX+400, 0-30+element_y_offsets ); 			
 
 				switch (iStageNo)
 				{
@@ -305,11 +399,26 @@ ScreenStage::ScreenStage()
 					default: m_stagename.SetText("THE NEXT STAGE"); break;
 				}
 
+				if (iStageNo > 9) // if we're in two digits or more
+				{
+					m_stagename.SetText( "" ); // make this text disappear.
+				}
+
 				m_stagename.SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) );
+
+				if (ez2Final == 1)
+				{
+					m_stagename.SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) );
+					m_stagename.SetText( "THE FINAL STAGE" );
+					stage_type = TYPE_FINAL; // set back to final again.
+					ez2Final = 0;
+				}
+
 				m_stagename.BeginTweening(0.5f);
 				
 				m_stagename.SetTweenX(fStageCenterX+70); // set their new locations
 				m_frameStage.AddSubActor( &m_stagename );
+
 			}
 			
 			////////////////////////////

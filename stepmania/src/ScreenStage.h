@@ -35,9 +35,11 @@ private:
 	// Ez2 Elements
 
 	Sprite			m_sprbg[3];
+	Sprite			m_sprbgxtra;
 	Sprite			m_sprScrollingBlobs[2][20];
 	BitmapText		m_ez2ukm[2];
 	BitmapText		m_stagename;
+	BitmapText		m_stagedesc[2];
 
 	// Pump Elements
 
