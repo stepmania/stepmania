@@ -45,7 +45,12 @@ bool Banner::Load( RageTextureID ID )
 	m_bScrolling = false;
 
 	TEXTUREMAN->VolatileTexture( ID );
-	return Sprite::Load( ID );
+
+	TEXTUREMAN->DisableOddDimensionWarning();
+	bool ret = Sprite::Load( ID );
+	TEXTUREMAN->EnableOddDimensionWarning();
+
+	return ret;
 };
 
 void Banner::Update( float fDeltaTime )
@@ -83,11 +88,9 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
 	Sprite::EnableShadow( false );
 
-	TEXTUREMAN->DisableOddDimensionWarning();
 	if( pSong == NULL )					LoadFallback();
 	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
 	else								LoadFallback();
-	TEXTUREMAN->EnableOddDimensionWarning();
 
 	m_bScrolling = false;
 }
