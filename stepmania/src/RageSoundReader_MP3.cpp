@@ -440,6 +440,8 @@ int RageSoundReader_MP3::do_mad_frame_decode()
  * so we can emulate that sync offset. */
 int RageSoundReader_MP3::FindOffsetFix()
 {
+	int i;
+
 	/* Do a fake rewind. */
 	if( fseek(this->rw, 0, SEEK_SET) == -1 )
 	{
@@ -460,7 +462,7 @@ int RageSoundReader_MP3::FindOffsetFix()
 	mad->finished_header = false;
 
 	/* Read a couple frames, to make sure we're synced. */
-	for( int i = 0; i < 5; ++i )
+	for( i = 0; i < 5; ++i )
 	{
 		int ret = do_mad_frame_decode();
 		if( ret == 0 )
@@ -476,7 +478,7 @@ int RageSoundReader_MP3::FindOffsetFix()
 	}
 
 	/* Clear the TOC cache.  We might have cached bogus values. */
-	for(int i = 0; i < 200; ++i)
+	for( i = 0; i < 200; ++i)
 		mad->toc[i] = -1;
 
 	/* Save the current timestamp.  This is the time we thought we were at when
@@ -494,7 +496,7 @@ int RageSoundReader_MP3::FindOffsetFix()
 	/* Search for the frame we just saved. */
 	mad_timer_t Actual = mad_timer_zero;
 	bool found = false;
-	for( int i = 0; i < 10; ++i )
+	for( i = 0; i < 10; ++i )
 	{
 		int ret = do_mad_frame_decode();
 		if( ret == 0 )
