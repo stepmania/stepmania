@@ -695,19 +695,18 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	mad->outpos = 0;
 
 	ret = do_mad_frame_decode();
-	if( ret == 0 )
+	switch(ret)
 	{
+	case 0:
 		SetError( "Failed to read any data at all" );
 		return OPEN_NO_MATCH;
-	}
-	if( ret == -1 )
-	{
-		SetError( ssprintf("%s (not an MP3 stream?)", GetError().c_str()) );
+	case -1:
+		SetError( GetError() + " (not an MP3 stream?)" );
 		return OPEN_NO_MATCH;
 	}
 
 	/* Store the bitrate of the frame we just got. */
-	if(mad->bitrate == -1)
+	if( mad->bitrate == -1 ) /* might have been set by a Xing tag */
 		mad->bitrate = mad->Frame.header.bitrate;
 
 	SampleRate = mad->Frame.header.samplerate;
