@@ -176,10 +176,10 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 		}
 	} else {
 		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, cinfo.output_width, cinfo.output_height, 24,
-				mySDL_SwapBE24( 0xFF0000 ),
-				mySDL_SwapBE24( 0x00FF00 ),
-				mySDL_SwapBE24( 0x0000FF ),
-				mySDL_SwapBE24( 0x000000 ) );
+				Swap24BE( 0xFF0000 ),
+				Swap24BE( 0x00FF00 ),
+				Swap24BE( 0x0000FF ),
+				Swap24BE( 0x000000 ) );
 	}
 
 	while( cinfo.output_scanline < cinfo.output_height )
