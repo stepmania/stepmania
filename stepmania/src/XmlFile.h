@@ -110,7 +110,7 @@ struct XAttr
 	
 	XNode*	parent;
 
-	CString GetXML( LPDISP_OPT opt = &optDefault );
+	void GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
 };
 typedef XAttr* LPXAttr;
 
@@ -134,7 +134,7 @@ struct XNode
 	// Load/Save XML
 	char*	Load( const char* pszXml, LPPARSEINFO pi = &piDefault );
 	char*	LoadAttributes( const char* pszAttrs, LPPARSEINFO pi = &piDefault );
-	CString GetXML( LPDISP_OPT opt = &optDefault );
+	void GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
 
 	bool LoadFromFile( CString sFile, LPPARSEINFO pi = &piDefault );
 	bool SaveToFile( CString sFile, LPDISP_OPT opt = &optDefault );

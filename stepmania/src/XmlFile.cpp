@@ -552,13 +552,9 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-CString XAttr::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
+void XAttr::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 {
-	std::ostringstream os;
-	//os << (const char*)name << "='" << (const char*)value << "' ";
-	os << (const char*)name << "='"
-		<< (const char*)(opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) << "' ";
-	return os.str().c_str();
+	f.Write(name + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) + "' ");
 }
 
 //========================================================
@@ -570,45 +566,44 @@ CString XAttr::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-CString XNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
+void XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 {
-	std::ostringstream os;
 
 	// tab
 	if( opt && opt->newline )
 	{
 		if( opt && opt->newline )
-			os << "\r\n";
+			f.Write("\r\n");
 		for( int i = 0 ; i < opt->tab_base ; i++)
-			os << '\t';
+			f.Write("\t");
 	}
 
 	// <TAG
-	os << '<' << (const char*)name;
+	f.Write("<" + name);
 
 	// <TAG Attr1="Val1" 
-	if( attrs.empty() == false ) os << ' ';
+	if( attrs.empty() == false ) f.Write(" "); //os << ' ';
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
-		os << (const char*)attrs[i]->GetXML(opt);
+		attrs[i]->GetXML(f, opt);
 	}
 	
 	if( childs.empty() && value.empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
-		os << "/>";	
+		f.Write("/>");
 	}
 	else
 	{
 		// <TAG Attr1="Val1"> and get child
-		os << '>';
+		f.Write(">");
 		if( opt && opt->newline && !childs.empty() )
 		{
 			opt->tab_base++;
 		}
 
 		for( unsigned i = 0 ; i < childs.size(); i++ )
-			os << (const char*)childs[i]->GetXML( opt );
+			childs[i]->GetXML( f, opt );
 		
 		// Text Value
 		if( value != ("") )
@@ -616,21 +611,21 @@ CString XNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 			if( opt && opt->newline && !childs.empty() )
 			{
 				if( opt && opt->newline )
-					os << "\r\n";
+					f.Write("\r\n");
 				for( int i = 0 ; i < opt->tab_base ; i++)
-					os << '\t';
+					f.Write("\t");
 			}
-			os << (const char*)(opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value);
+			f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value));
 		}
 
 		// </TAG> CloseTag
 		if( opt && opt->newline && !childs.empty() )
 		{
-			os << "\r\n";
+			f.Write("\r\n");
 			for( int i = 0 ; i < opt->tab_base-1 ; i++)
-				os << '\t';
+				f.Write("\t");
 		}
-		os << "</" << (const char*)name << '>';
+		f.Write("</" + name + ">");
 
 		if( opt && opt->newline )
 		{
@@ -638,8 +633,6 @@ CString XNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 				opt->tab_base--;
 		}
 	}
-	
-	return os.str().c_str();
 }
 
 //========================================================
@@ -1247,6 +1240,6 @@ bool XNode::SaveToFile( CString sFile, LPDISP_OPT opt )
 		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
-	f.Write( this->GetXML(opt) );
+	this->GetXML(f, opt);
 	return true;
 }
