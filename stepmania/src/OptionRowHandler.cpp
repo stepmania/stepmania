@@ -199,7 +199,7 @@ public:
 
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{
-			CString s = GAMEMAN->StepsTypeToString( *st );
+			CString s = GAMEMAN->StepsTypeToThemedString( *st );
 			defOut.choices.push_back( s );
 		}
 
