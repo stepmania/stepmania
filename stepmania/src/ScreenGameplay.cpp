@@ -204,11 +204,12 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		switch( PREFSMAN->m_iScoringType )
 		{
 		case PrefsManager::SCORING_MAX2:
+		case PrefsManager::SCORING_5TH:
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
 			break;
-		case PrefsManager::SCORING_5TH:
-			m_pPrimaryScoreKeeper[p] = new ScoreKeeper5th( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
-			break;
+//		case PrefsManager::SCORING_5TH:
+//			m_pPrimaryScoreKeeper[p] = new ScoreKeeper5th( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
+//			break;
 		default: ASSERT(0);
 		}
 
