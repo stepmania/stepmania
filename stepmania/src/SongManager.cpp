@@ -468,11 +468,12 @@ CString SongManager::ShortenGroupName( CString sLongGroupName )
 	sLongGroupName.Replace( "para para paradise", "PPP" );
 	sLongGroupName.Replace( "PARA PARA PARADISE", "PPP" );
 	sLongGroupName.Replace( "Dancing Stage", "DS" );
-	sLongGroupName.Replace( "Dancing Stage", "DS" );
-	sLongGroupName.Replace( "Dancing Stage", "DS" );
+	sLongGroupName.Replace( "dancing stage", "DS" );
+	sLongGroupName.Replace( "DANCING STAGE", "DS" );
 	sLongGroupName.Replace( "Ez2dancer", "EZ2" );
 	sLongGroupName.Replace( "Ez 2 Dancer", "EZ2");
 	sLongGroupName.Replace( "Technomotion", "TM");
+	sLongGroupName.Replace( "Techno Motion", "TM");
 	sLongGroupName.Replace( "Dance Station 3DDX", "3DDX");
 	sLongGroupName.Replace( "DS3DDX", "3DDX");
 	sLongGroupName.Replace( "BeatMania", "BM");
