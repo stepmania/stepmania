@@ -54,6 +54,7 @@
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
 #define STATICBG_X THEME->GetMetricI ("ScreenGameplay","StaticBGX")
 #define STATICBG_Y THEME->GetMetricI ("ScreenGameplay","StaticBGY")
+#define EVAL_ON_FAIL THEME->GetMetricB ("ScreenGameplay", "ShowEvaluationOnFail")
 
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -1094,7 +1095,22 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// check for fail
 		//
 		UpdateCheckFail();
-		
+	
+		//
+		// update 2d dancing characters
+		//
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			if(m_Background.GetDancingCharacters() != NULL)
+			{
+				if(m_Player[p].GetDancingCharacterState() != AS2D_IGNORE) // grab the state of play from player and update the character
+					m_Background.GetDancingCharacters()->Change2DAnimState(p,m_Player[p].GetDancingCharacterState());
+				m_Player[p].SetCharacterState(AS2D_IGNORE); // set to ignore as we've already grabbed the latest change
+			}
+		}
+
 		//
 		// Check for enemy death in enemy battle
 		//
@@ -1662,6 +1678,21 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
 				return;
 			}
+			
+			// update dancing characters for win / lose
+			for(p=0; p<NUM_PLAYERS;p++)
+			{
+				if( GAMESTATE->IsPlayerEnabled(p) && GAMESTATE->m_CurStageStats.bFailed[p] )
+					m_Background.GetDancingCharacters()->Change2DAnimState(p,AS2D_FAIL); // fail anim
+				else
+				{
+					if(m_pLifeMeter[p]->GetLife() == 1.0f) // full life
+						m_Background.GetDancingCharacters()->Change2DAnimState(p,AS2D_WINFEVER); // full life pass anim
+					else
+						m_Background.GetDancingCharacters()->Change2DAnimState(p,AS2D_WIN); // pass anim
+				}
+
+			}
 
 			/* End round. */
 			if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
@@ -1712,6 +1743,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 			}
 		}
+
 		break;
 
 	case SM_LoadNextSong:
@@ -1945,11 +1977,29 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			if( PREFSMAN->m_bEventMode )
-				HandleScreenMessage( SM_GoToScreenAfterBack );
+			{
+				if(EVAL_ON_FAIL) // go to the eval screen if we fail
+				{
+					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
+				}
+				else // the theme says just fail and go back to the song select for event mode
+				{
+					HandleScreenMessage( SM_GoToScreenAfterBack );
+				}
+			}
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
 			else
-				SCREENMAN->SetNewScreen( "ScreenGameOver" );
+			{
+				if(EVAL_ON_FAIL) // go to the eval screen if we fail
+				{
+					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
+				}
+				else // if not just game over now
+				{
+					SCREENMAN->SetNewScreen( "ScreenGameOver" );
+				}
+			}
 			break;
 		case PLAY_MODE_NONSTOP:
 			SCREENMAN->SetNewScreen( "ScreenEvaluationNonstop" );

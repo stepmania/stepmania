@@ -27,6 +27,7 @@
 #include "RageTimer.h"
 #include "ProTimingDisplay.h"
 #include "RageSound.h"
+#include "DancingCharacters.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -51,7 +52,8 @@ public:
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
-	
+	int GetDancingCharacterState() { return m_iDCState; };
+	void SetCharacterState(int iDCState) { m_iDCState = iDCState; };
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowCompletelyJudged( int iStepIndex );
@@ -79,6 +81,8 @@ protected:
 	
 	Combo			m_Combo;
 
+	int m_iDCState;
+//	DancingCharacters* m_pDancingCharacters; // used to adjust the 2D anims dancing states
 	LifeMeter*		m_pLifeMeter;
 	CombinedLifeMeter*		m_pCombinedLifeMeter;
 	ScoreDisplay*	m_pScore;

@@ -92,6 +92,7 @@ PlayerMinus::~PlayerMinus()
 
 void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
 {
+	m_iDCState = AS2D_IDLE;
 	//LOG->Trace( "PlayerMinus::Load()", );
 
 	GAMESTATE->ResetNoteSkinsForPlayer( pn );
@@ -530,7 +531,33 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		{
 		case PC_HUMAN: {
 
+			if(GAMESTATE->m_CurGame == GAME_EZ2)
+			{
+				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+				/* Ez2 is only perfect / good / miss */
+				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
+				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+				else	score = TNS_NONE;
+			}
+			else if(GAMESTATE->m_CurGame == GAME_PNM)
+			{
+				/* PNM Goods = Great / Boo = Miss */
+				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
+				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS; 
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GREAT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+				else	score = TNS_NONE;
+			}
+
+
 			if( tn == TAP_MINE )
+
 			{
 				// stepped too close to mine?
 				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
@@ -581,6 +608,17 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				if(score == TNS_BOO)
 					score = TNS_MISS;
 			}
+			if ( GAMESTATE->m_CurGame == GAME_PNM ) // a boo is really miss on pnm, a good is really a great!
+			{
+				if(score == TNS_MARVELOUS) // in demo mode PC shouldnt hit marvelous
+					score = TNS_PERFECT;
+
+				if(score == TNS_GOOD)
+					score = TNS_GREAT;
+				
+				if(score == TNS_BOO)
+					score = TNS_MISS;
+			}
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
@@ -598,7 +636,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			}
 			break;
 		case PC_AUTOPLAY:
-			if(GAMESTATE->m_CurGame == GAME_EZ2)
+			if(GAMESTATE->m_CurGame == GAME_EZ2 || GAMESTATE->m_CurGame == GAME_PNM) // these gametypes never hit marvelous on autoplay
 			{
 				score = TNS_PERFECT;
 			}
@@ -615,7 +653,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			score = TNS_NONE;
 			break;
 		}
-
+		
 
 		if( score != TNS_NONE && score != TNS_MISS )
 		{
@@ -645,7 +683,26 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 		if( IsRowCompletelyJudged(iIndexOverlappingNote) )
 			OnRowCompletelyJudged( iIndexOverlappingNote );
+
+		if( score == TNS_MISS || score == TNS_BOO )
+		{
+			m_iDCState = AS2D_MISS;
+		}
+		if( score == TNS_GOOD || score == TNS_GREAT )
+		{
+			m_iDCState = AS2D_GOOD;
+		}
+		if( score == TNS_PERFECT || score == TNS_MARVELOUS )
+		{
+			m_iDCState = AS2D_GREAT;
+			if(m_pLifeMeter->GetLife() == 1.0f) // full life
+			{
+				m_iDCState = AS2D_FEVER; // super celebrate time :)
+			}
+		}
 	}
+
+
 
 	if( bGrayArrowStep )
 		m_pNoteField->Step( col );
@@ -896,7 +953,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 
 	case TNS_MISS:
 		++GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber];
-
+		m_iDCState = AS2D_MISS; // update dancing 2d characters that may have missed a note
 	case TNS_GOOD:
 	case TNS_BOO:
 		if( iCurCombo > 50 )

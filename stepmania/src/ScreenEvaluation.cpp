@@ -45,6 +45,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 // #define JUDGE_SOUND_TIME( name )	THEME->GetMetricF( m_sName, ssprintf("JudgeSoundTime%s", name) );
 // #define SOUND_ON_FULL_ALPHA			THEME->GetMetricB( m_sName, "JudgeSoundIfJudgeGraphicsFullAlpha" )
 // metrics that are specific to classes derived from ScreenEvaluation
+#define FAILED_SCREEN						THEME->GetMetric (m_sName, "FailedScreen")
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
 #define END_SCREEN							THEME->GetMetric (m_sName,"EndScreen")
 #define SHOW_BANNER_AREA					THEME->GetMetricB(m_sName,"ShowBannerArea")
@@ -91,6 +92,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
+	m_bFailed = false; // the evaluation is not showing failed results by default
+
 	m_sName = sClassName;
 	if( !TYPE.CompareNoCase("stage") )
 		m_Type = stage;
@@ -107,6 +110,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	// Figure out which statistics and songs we're going to display
 	//
 	StageStats stageStats;
+
+	if(stageStats.AllFailed() ) // if everyone failed
+		m_bFailed = true; // flag it for this screen
+
 	vector<Song*> vSongsToShow;
 	switch( m_Type )
 	{
@@ -189,6 +196,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			continue;	// skip
 		if( !GAMESTATE->m_SongOptions.m_bSaveScore )
 			continue;	// skip
+		if( m_bFailed )
+			continue; // skip
 
 		switch( m_Type )
 		{
@@ -274,7 +283,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		}
 	}
 
-
 	// If both players get a machine high score, a player
 	// whose score is added later may bump the players who were
 	// added earlier.  Adjust for this.
@@ -284,6 +292,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			continue;	// skip
 		if( iMachineHighScoreIndex[p] == -1 )	// no record
 			continue;	// skip
+		if( m_bFailed ) // both players failed
+			continue; // skip
+
 		for( int p2=0; p2<p; p2++ )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p2) )
@@ -321,8 +332,16 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	m_Menu.Load( m_sName );
 	this->AddChild( &m_Menu );
 
-
-
+	if(m_bFailed && m_Type==stage)
+	{
+		m_bgFailedBack.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Failed Background") );
+		m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Failed Overlay") );
+	}
+	else if( m_Type == stage )
+	{
+		// the themer can use the regular background for passed background
+		m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenEvaluationStage Passed Overlay") );
+	}
 	//
 	// init banner area
 	//
@@ -971,6 +990,14 @@ void ScreenEvaluation::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
+	if(m_bFailed && m_Type == stage)
+	{
+		m_bgFailedBack.Update( fDeltaTime );
+		m_bgFailedOverlay.Update( fDeltaTime );
+	}
+	else if (m_Type == stage)
+		m_bgPassedOverlay.Update( fDeltaTime );
+
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
 		if (GAMESTATE->m_CurStageStats.iBonus[p] == 0)
@@ -1021,7 +1048,19 @@ void ScreenEvaluation::Update( float fDeltaTime )
 void ScreenEvaluation::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
+
+	// draw the failed background here if the player(s) failed
+	if(m_bFailed && m_Type == stage)
+		m_bgFailedBack.Draw();
+
 	Screen::DrawPrimitives();
+	
+	// draw the pass / failed overlays here respectively
+	if(m_bFailed && m_Type == stage)
+		m_bgFailedOverlay.Draw();
+	else if (m_Type == stage)
+		m_bgPassedOverlay.Draw();
+
 	m_Menu.DrawTopLayer();
 }
 
@@ -1043,13 +1082,19 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart( PLAYER_INVALID );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		if(m_bFailed && !PREFSMAN->m_bEventMode) // if failed and not in event mode go to gameover screen
+			SCREENMAN->SetNewScreen( FAILED_SCREEN );
+		else
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_GoToSelectCourse:
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 		break;
 	case SM_GoToEndScreen:
-		SCREENMAN->SetNewScreen( END_SCREEN );
+		if(m_bFailed && !PREFSMAN->m_bEventMode) // if failed and not in event mode go to gameover screen
+			SCREENMAN->SetNewScreen( FAILED_SCREEN );
+		else
+			SCREENMAN->SetNewScreen( END_SCREEN );
 		break;
 //	case SM_GoToEvaluationSummary:
 //		SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );

@@ -41,6 +41,8 @@ public:
 
 	virtual bool IsInDanger()		{ return m_bInDanger; };
 
+	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
+
 protected:
 	bool IsDangerVisible();
 	void UpdateCurBGChange();

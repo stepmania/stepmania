@@ -19,6 +19,8 @@
 #include "song.h"
 #include "Character.h"
 
+#define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
+#define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
 
 const float CAMERA_REST_DISTANCE = 32.f;
 const float CAMERA_REST_LOOK_AT_HEIGHT = -9.f;
@@ -44,15 +46,86 @@ const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 DancingCharacters::DancingCharacters()
 {
 	m_bDrawDangerLight = false;
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_2DIdleTimer[p].SetZero();
+		m_i2DAnimState[p] = AS2D_IDLE; // start on idle state
+		m_bHasIdleAnim[p] = m_bHas2DElements[p] = false;
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
 		Character* pChar = GAMESTATE->m_pCurCharacters[p];
 		if( !pChar )
 			continue;
-		
+
+		// load in any potential 2D stuff
+		CString sCharacterDirectory = pChar->m_sCharDir;
+		CString sCurrentAnim;
+		sCurrentAnim = sCharacterDirectory + "2DIdle";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasIdleAnim[p] = m_bHas2DElements[p] = true;
+			m_bgIdle[p].LoadFromAniDir( sCurrentAnim );
+			m_bgIdle[p].SetXY(DC_X(p),DC_Y(p));
+		}	
+
+		sCurrentAnim = sCharacterDirectory + "2DMiss";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasMissAnim[p] = m_bHas2DElements[p] = true;
+			m_bgMiss[p].LoadFromAniDir( sCurrentAnim );
+			m_bgMiss[p].SetXY(DC_X(p),DC_Y(p));
+		}	
+
+		sCurrentAnim = sCharacterDirectory + "2DGood";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasGoodAnim[p] = m_bHas2DElements[p] = true;
+			m_bgGood[p].LoadFromAniDir( sCurrentAnim );
+			m_bgGood[p].SetXY(DC_X(p),DC_Y(p));
+		}	
+
+		sCurrentAnim = sCharacterDirectory + "2DGreat";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasGreatAnim[p] = m_bHas2DElements[p] = true;
+			m_bgGreat[p].LoadFromAniDir( sCurrentAnim );
+			m_bgGreat[p].SetXY(DC_X(p),DC_Y(p));
+		}	
+
+		sCurrentAnim = sCharacterDirectory + "2DFever";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasFeverAnim[p] = m_bHas2DElements[p] = true;
+			m_bgFever[p].LoadFromAniDir( sCurrentAnim );
+			m_bgFever[p].SetXY(DC_X(p),DC_Y(p));
+		}
+
+		sCurrentAnim = sCharacterDirectory + "2DFail";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasFailAnim[p] = m_bHas2DElements[p] = true;
+			m_bgFail[p].LoadFromAniDir( sCurrentAnim );
+			m_bgFail[p].SetXY(DC_X(p),DC_Y(p));
+		}
+
+		sCurrentAnim = sCharacterDirectory + "2DWin";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasWinAnim[p] = m_bHas2DElements[p] = true;
+			m_bgWin[p].LoadFromAniDir( sCurrentAnim );
+			m_bgWin[p].SetXY(DC_X(p),DC_Y(p));
+		}
+
+		sCurrentAnim = sCharacterDirectory + "2DWinFever";
+		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		{
+			m_bHasWinFeverAnim[p] = m_bHas2DElements[p] = true;
+			m_bgWinFever[p].LoadFromAniDir( sCurrentAnim );
+			m_bgWinFever[p].SetXY(DC_X(p),DC_Y(p));
+		}
+
 		if( pChar->GetModelPath().empty() )
 			continue;
 		
@@ -182,6 +255,53 @@ void DancingCharacters::Update( float fDelta )
 		m_fThisCameraStartBeat = (float) iCurBeat;
 		m_fThisCameraEndBeat = float(iCurBeat + 8);
 	}
+
+	// update any 2D stuff
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if(m_bHasIdleAnim[p])
+		{
+			if(m_bHasIdleAnim[p] && m_i2DAnimState[p] == AS2D_IDLE)
+				m_bgIdle[p].Update(fDelta);
+			if(m_bHasMissAnim[p] && m_i2DAnimState[p] == AS2D_MISS)
+				m_bgMiss[p].Update(fDelta);
+			if(m_bHasGoodAnim[p] && m_i2DAnimState[p] == AS2D_GOOD)
+				m_bgGood[p].Update(fDelta);
+			if(m_bHasGreatAnim[p] && m_i2DAnimState[p] == AS2D_GREAT)
+				m_bgGreat[p].Update(fDelta);
+			if(m_bHasFeverAnim[p] && m_i2DAnimState[p] == AS2D_FEVER)
+				m_bgFever[p].Update(fDelta);
+			if(m_bHasFailAnim[p] && m_i2DAnimState[p] == AS2D_FAIL)
+				m_bgFail[p].Update(fDelta);
+			if(m_bHasWinAnim[p] && m_i2DAnimState[p] == AS2D_WIN)
+				m_bgWin[p].Update(fDelta);
+			if(m_bHasWinFeverAnim[p] && m_i2DAnimState[p] == AS2D_WINFEVER)
+				m_bgWinFever[p].Update(fDelta);
+
+			if(m_i2DAnimState[p] != AS2D_IDLE) // if we're not in idle state, start a timer to return us to idle
+			{
+				// never return to idle state if we have failed / passed (i.e. completed) the song
+				if(m_i2DAnimState[p] != AS2D_WINFEVER && m_i2DAnimState[p] != AS2D_FAIL && m_i2DAnimState[p] != AS2D_WIN)
+				{
+					if(m_2DIdleTimer[p].IsZero())
+						m_2DIdleTimer[p].Touch();			
+					if(!m_2DIdleTimer[p].IsZero() && m_2DIdleTimer[p].Ago() > 1.0f)
+					{
+						m_2DIdleTimer[p].SetZero();
+						m_i2DAnimState[p] = AS2D_IDLE;
+					}
+				}
+			}
+		}
+	}
+}
+
+void DancingCharacters::Change2DAnimState(int iPlayerNum, int iState)
+{
+	if(iPlayerNum >= NUM_PLAYERS) { ASSERT(0); } // player out of bounds?
+	if(iState >= AS2D_MAXSTATES) { ASSERT(0); } // invalid state?
+	
+	m_i2DAnimState[iPlayerNum] = iState;
 }
 
 void DancingCharacters::DrawPrimitives()
@@ -235,4 +355,24 @@ void DancingCharacters::DrawPrimitives()
 
 
 	DISPLAY->CameraPopMatrix();
+	// now draw any potential 2D stuff
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if(m_bHasIdleAnim[p] && m_i2DAnimState[p] == AS2D_IDLE)
+			m_bgIdle[p].Draw();
+		if(m_bHasMissAnim[p] && m_i2DAnimState[p] == AS2D_MISS)
+			m_bgMiss[p].Draw();
+		if(m_bHasGoodAnim[p] && m_i2DAnimState[p] == AS2D_GOOD)
+			m_bgGood[p].Draw();
+		if(m_bHasGreatAnim[p] && m_i2DAnimState[p] == AS2D_GREAT)
+			m_bgGreat[p].Draw();
+		if(m_bHasFeverAnim[p] && m_i2DAnimState[p] == AS2D_FEVER)
+			m_bgFever[p].Draw();
+		if(m_bHasWinFeverAnim[p] && m_i2DAnimState[p] == AS2D_WINFEVER)
+			m_bgWinFever[p].Draw();
+		if(m_bHasWinAnim[p] && m_i2DAnimState[p] == AS2D_WIN)
+			m_bgWin[p].Draw();
+		if(m_bHasFailAnim[p] && m_i2DAnimState[p] == AS2D_FAIL)
+			m_bgFail[p].Draw();
+	}
 }

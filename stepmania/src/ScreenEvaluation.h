@@ -56,7 +56,11 @@ protected:
 	Type				m_Type;
 
 	float m_fScreenCreateTime;
-	
+
+	BGAnimation m_bgFailedBack;
+	BGAnimation m_bgFailedOverlay;
+	BGAnimation m_bgPassedOverlay;
+
 	MenuElements		m_Menu;
 
 	// banner area
@@ -115,6 +119,7 @@ protected:
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
 	AutoActor			m_FullCombo[NUM_PLAYERS];
+	bool m_bFailed;
 };
 
 #endif
