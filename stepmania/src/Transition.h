@@ -38,6 +38,7 @@ protected:
 
 
 	BGAnimation	m_BGAnimation;
+	float	m_fLengthSeconds;
 	RandomSample	m_sound;
 
 	ScreenMessage	m_MessageToSendWhenDone;

@@ -17,7 +17,6 @@ BGAnimation::BGAnimation( bool Generic )
 {
 	/* See BGAnimationLayer::BGAnimationLayer for explanation. */
 	m_bGeneric = Generic;
-	m_fLengthSeconds = 10;
 }
 
 BGAnimation::~BGAnimation()
@@ -242,12 +241,15 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 	if( !m_bGeneric )
 		PlayCommand( "On" );
 
-
-	if( !node.GetAttrValue( "LengthSeconds", m_fLengthSeconds ) )
+	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
+	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */
+	float fLengthSeconds = 0;
+	if( node.GetAttrValue( "LengthSeconds", fLengthSeconds ) )
 	{
-		/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
-		 * so at this point GetMaxTweenTimeLeft is probably 0 */
-		m_fLengthSeconds = this->GetTweenTimeLeft();
+		Actor *pActor = new Actor;
+		pActor->SetHidden( true );
+		pActor->BeginTweening( fLengthSeconds );
+		AddChild( pActor );
 	}
 }
 

@@ -122,11 +122,11 @@ void ScreenAttract::Update( float fDelta )
 		// The shared background isn't loaded until the screen is actually 
 		// showing.  The background is loaded by the time of the first update.
 		BGAnimation &background = *SCREENMAN->m_pSharedBGA;
-		float fTimeUntilBeginFadingOut = background.GetLengthSeconds() - m_Out.GetLengthSeconds();
+		float fTimeUntilBeginFadingOut = background.GetTweenTimeLeft() - m_Out.GetTweenTimeLeft();
 		if( fTimeUntilBeginFadingOut < 0 )
 		{
 			LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
-				m_sName.c_str(), m_Out.GetLengthSeconds(), background.GetLengthSeconds() );
+				m_sName.c_str(), m_Out.GetTweenTimeLeft(), background.GetTweenTimeLeft() );
 			fTimeUntilBeginFadingOut = 0;
 		}
 		this->PostScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );

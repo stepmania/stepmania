@@ -18,6 +18,7 @@ void Transition::Load( CString sBGAniDir )
 		sBGAniDir += "/";
 
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
+	m_fLengthSeconds = m_BGAnimation.GetTweenTimeLeft();
 
 	m_State = waiting;
 	m_fSecsIntoTransition = 0.0f;
@@ -58,7 +59,7 @@ void Transition::Update( float fDeltaTime )
 		}
 
 		m_BGAnimation.Update( fDeltaTime );
-		if( m_fSecsIntoTransition > m_BGAnimation.GetLengthSeconds() )	// over
+		if( m_fSecsIntoTransition > m_fLengthSeconds )	// over
 		{
 			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 			m_fSecsIntoTransition = 0.0;
@@ -91,7 +92,7 @@ void Transition::StartTransitioning( ScreenMessage send_when_done )
 
 float Transition::GetLengthSeconds() const
 {
-	return m_BGAnimation.GetLengthSeconds();
+	return m_fLengthSeconds;
 }
 
 float Transition::GetTweenTimeLeft() const

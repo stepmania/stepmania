@@ -260,11 +260,11 @@ void ScreenEnding::Update( float fDeltaTime )
 	if( IsFirstUpdate() )
 	{
 		BGAnimation &background = *SCREENMAN->m_pSharedBGA;
-		float fSecsUntilBeginFadingOut = background.GetLengthSeconds() - m_Out.GetLengthSeconds();
+		float fSecsUntilBeginFadingOut = background.GetTweenTimeLeft() - m_Out.GetTweenTimeLeft();
 		if( fSecsUntilBeginFadingOut < 0 )
 		{
 			LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
-				m_sName.c_str(), m_Out.GetLengthSeconds(), background.GetLengthSeconds() );
+				m_sName.c_str(), m_Out.GetTweenTimeLeft(), background.GetTweenTimeLeft() );
 			fSecsUntilBeginFadingOut = 0;
 		}
 		this->PostScreenMessage( SM_BeginFadingOut, fSecsUntilBeginFadingOut );

@@ -43,7 +43,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		bga.m_fStartBeat = change.m_fStartBeat;
 
 		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-		const float fStopSecond = fStartSecond + bga.m_bga->GetLengthSeconds();
+		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
 		bga.m_fStopBeat = pSong->m_Timing.GetBeatFromElapsedTime( fStopSecond );
 
 		bga.m_bga->SetHidden( true );

@@ -53,7 +53,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	this->AddChild( &m_Back );
 
 	/* Prep the new screen once m_In is complete. */ 	 
-	this->PostScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
+	this->PostScreenMessage( SM_PrepScreen, m_Background.GetTweenTimeLeft() );
 
 	FOREACH_PlayerNumber(p)
 	{

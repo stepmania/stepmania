@@ -23,10 +23,7 @@ public:
 	void LoadFromVisualization( const CString &sMoviePath );
 	void LoadFromNode( const CString &sDir, const XNode& node );
 
-	float GetLengthSeconds() const { return m_fLengthSeconds; }
-
 protected:
-	float	m_fLengthSeconds;
 	bool	m_bGeneric;
 };
 
