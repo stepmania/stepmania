@@ -300,6 +300,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 {
+	if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
 	switch( SM )
 	{
 	case SM_BeginFadingOut: // when the user accepts the page of options
