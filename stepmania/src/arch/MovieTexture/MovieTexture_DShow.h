@@ -36,7 +36,6 @@ typedef char TCHAR, *PTCHAR;
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageThreads.h"
-struct SDL_Surface;
 
 
 //-----------------------------------------------------------------------------
@@ -66,8 +65,6 @@ public:
 private:
 	const char *buffer;
 	SDL_sem *buffer_lock, *buffer_finished;
-	SDL_Surface* m_img;	// last frame in PixelFormat that is being used by graphics card
-	PixelFormat	m_PixelFormat;	// format being used by graphics card
 
 	void Create();
 

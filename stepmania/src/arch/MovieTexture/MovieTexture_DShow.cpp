@@ -47,7 +47,6 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	buffer = NULL;
 	buffer_lock = SDL_CreateSemaphore(1);
 	buffer_finished = SDL_CreateSemaphore(0);
-	m_img = NULL;
 
 	Create();
 	CreateFrameRects();
@@ -100,7 +99,6 @@ MovieTexture_DShow::~MovieTexture_DShow()
 	LOG->Flush();
 	if(m_uTexHandle)
 		DISPLAY->DeleteTexture( m_uTexHandle );
-	SDL_FreeSurface( m_img );
 
 	SDL_DestroySemaphore(buffer_lock);
 	SDL_DestroySemaphore(buffer_finished);
@@ -118,8 +116,6 @@ void MovieTexture_DShow::CheckFrame()
 	if(buffer == NULL)
 		return;
 
-	ASSERT( m_img );
-
 	VDCHECKPOINT;
 
 	/* Just in case we were invalidated: */
@@ -135,29 +131,22 @@ void MovieTexture_DShow::CheckFrame()
 		0x0000FF,
 		0x000000 );
 
-	/* We don't want to actually blend the alpha channel over the destination converted
-	 * surface; we want to simply blit it, so make sure SDL_SRCALPHA is not on. */
-	SDL_SetAlpha( fromDShow, 0, SDL_ALPHA_OPAQUE );
-
-	SDL_Rect area;
-	area.x = area.y = 0;
-	area.w = short(fromDShow->w);
-	area.h = short(fromDShow->h);
-
-	/* XXX: For high-resolution movies, it's much faster to convert a BGR8 surface
-	 * to RGB8 in place than to blit it to another surface, since it's much easier
-	 * on the cache.  It'd be even faster to try as hard as we can to not do a
-	 * conversion at all; both OpenGL and D3D have BGR texture modes. */
-	SDL_BlitSurface(fromDShow, &area, m_img, &area);
-
+	/* Optimization notes:
+	 *
+	 * With D3D, this surface can be anything; it'll convert it on the fly.  If
+	 * it happens to exactly match the texture, it'll copy a little faster.
+	 *
+	 * With OpenGL, it's best that this be a real, supported texture format, though
+	 * it doesn't need to be that of the actual texture.  If it isn't, it'll have
+	 * to do a very slow conversion.  Both RGB8 and BGR8 are both (usually) valid
+	 * formats.
+	 */
 	VDCHECKPOINT;
 	DISPLAY->UpdateTexture(
 		m_uTexHandle, 
-		m_PixelFormat,
-		m_img,
+		fromDShow,
 		0, 0,
 		m_iImageWidth, m_iImageHeight );
-//		min(m_iSourceWidth,m_iTextureWidth), min(m_iSourceHeight,m_iTextureHeight) );
 	VDCHECKPOINT;
 
 	SDL_FreeSurface( fromDShow );
@@ -330,43 +319,37 @@ void MovieTexture_DShow::CreateTexture()
 	 * Some way to figure this out dynamically would be nice, but it's probably
 	 * impossible.  (For example, 24-bit textures may even be cheaper on pure
 	 * AGP cards; 16-bit requires a conversion.) */
+	PixelFormat pixfmt;
 	switch( TEXTUREMAN->GetTextureColorDepth() )
 	{
 	default:
 		ASSERT(0);
 	case 16:
 		if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
-			m_PixelFormat = FMT_RGB5;
+			pixfmt = FMT_RGB5;
 		else
-			m_PixelFormat = FMT_RGBA4;	// everything supports RGBA4
+			pixfmt = FMT_RGBA4;	// everything supports RGBA4
 		break;
 	case 32:
 		if( DISPLAY->SupportsTextureFormat(FMT_RGB8) )
-			m_PixelFormat = FMT_RGB8;
+			pixfmt = FMT_RGB8;
 		else if( DISPLAY->SupportsTextureFormat(FMT_RGBA8) )
-			m_PixelFormat = FMT_RGBA8;
+			pixfmt = FMT_RGBA8;
 		else if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
-			m_PixelFormat = FMT_RGB5;
+			pixfmt = FMT_RGB5;
 		else
-			m_PixelFormat = FMT_RGBA4;	// everything supports RGBA4
+			pixfmt = FMT_RGBA4;	// everything supports RGBA4
 		break;
 	}
 
 
-	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(m_PixelFormat);
+	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 	SDL_Surface *img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 
-	m_uTexHandle = DISPLAY->CreateTexture( m_PixelFormat, img );
+	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img );
 
 	SDL_FreeSurface( img );
-
-	/* Have to free our frame holder because we might need a different 
-	 * PixelFormat than before. */
-	if( m_img )
-		SDL_FreeSurface( m_img );
-	m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iImageWidth, m_iImageHeight,
-		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 }
 
 bool MovieTexture_DShow::PlayMovie()
