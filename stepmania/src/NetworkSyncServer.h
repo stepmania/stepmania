@@ -1,129 +1,124 @@
 #ifndef NetworkSyncServer_H
 #define NetworkSyncServer_H
 
-#include "global.h"
 #include "ezsockets.h"
 #include "NetworkSyncManager.h"
-
-#include <time.h>
-
-#include "StdString.h"
-
-using namespace std;
 
 typedef unsigned char Uint8;
 
 #define NETMAXBUFFERSIZE 1020
 #define NUMBERCLIENTS 16
 
-class LanPlayer {
-	public:
-		string name;
-		long score;
-		int health;
-		int feet;
-		int projgrade;
-		int combo;
-		int currstep;
-		int steps[9];
-		int maxCombo;
-		int Grade;
-		int offset;
-		int PlayerID;
-		int diff;
-		string options;
-		LanPlayer();
-	private:
+class LanPlayer
+{
+public:
+	string name;
+	long score;
+	int health;
+	int feet;
+	int projgrade;
+	int combo;
+	int currstep;
+	int steps[9];
+	int maxCombo;
+	int Grade;
+	int offset;
+	int PlayerID;
+	int diff;
+	string options;
+	LanPlayer();
 };
 
-class GameInfo {
-	public:
-		CString title;
-		CString subtitle;
-		CString artist;
-		CString course;
-	private:
+class GameInfo
+{
+public:
+	CString title;
+	CString subtitle;
+	CString artist;
+	CString course;
 };
 
-class GameClient {
-	public:
-		bool GotStartRequest;
-		EzSockets clientSocket;
-		bool Used;
-		void UpdateStats(PacketFunctions &Packet);
-		void SetClientVersion(int ver, CString b);
-		void StartRequest(PacketFunctions &Packet);
-		int GetData(PacketFunctions &Packet);
-		GameClient();
-		LanPlayer Player[2];
-		void CheckConnection();
-		bool IsPlaying(int Player);
-		void StyleUpdate(PacketFunctions &Packet);
-		bool InGame;
-		int twoPlayers;
-		bool hasSong;
-		bool inNetMusicSelect;
-		int startPosition;
-		bool isStarting;
-		bool wasIngame;
-
-	private:
-		string build;
-		GameInfo gameInfo;
-		int version;
+class GameClient
+{
+public:
+	bool GotStartRequest;
+	EzSockets clientSocket;
+	bool Used;
+	void UpdateStats(PacketFunctions &Packet);
+	void SetClientVersion(int ver, const CString& b);
+	void StartRequest(PacketFunctions &Packet);
+	int GetData(PacketFunctions &Packet);
+	GameClient();
+	LanPlayer Player[2];
+	void CheckConnection();
+	bool IsPlaying(int Player);
+	void StyleUpdate(PacketFunctions &Packet);
+	bool InGame;
+	int twoPlayers;
+	bool hasSong;
+	bool inNetMusicSelect;
+	int startPosition;
+	bool isStarting;
+	bool wasIngame;
+	
+private:
+	string build;
+	GameInfo gameInfo;
+	int version;
 };
 
-class StepManiaLanServer {
-	public:
-		bool ServerStart();
-		void ServerStop();
-		void ServerUpdate();
-		StepManiaLanServer();
-		~StepManiaLanServer();
-		CString servername;
-		CString lastError;
-		int lastErrorCode;
-	private:
-		bool stop;
-		PacketFunctions Packet;
-		PacketFunctions Reply;
-		GameClient Client[NUMBERCLIENTS];
-		int CurrentEmptyClient; 
-		EzSockets server;
-		int ClientHost;
-		LanPlayer *playersPtr[NUMBERCLIENTS*2];
-		time_t statsTime;
-		GameInfo CurrentSongInfo;
-		GameInfo LastSongInfo;
-		bool StatsNameChange;
-		bool SecondSameSelect;
-		int numPlayers;
+class StepManiaLanServer
+{
+public:
+	bool ServerStart();
+	void ServerStop();
+	void ServerUpdate();
+	StepManiaLanServer();
+	~StepManiaLanServer();
+	CString servername;
+	CString lastError;
+	int lastErrorCode;
+private:
+	bool stop;
+	PacketFunctions Packet;
+	PacketFunctions Reply;
+	GameClient Client[NUMBERCLIENTS];
+	int CurrentEmptyClient; 
+	EzSockets server;
+	int ClientHost;
+	LanPlayer *playersPtr[NUMBERCLIENTS*2];
+	time_t statsTime;
+	GameInfo CurrentSongInfo;
+	GameInfo LastSongInfo;
+	bool StatsNameChange;
+	bool SecondSameSelect;
+	int numPlayers;
 
-		void Hello(PacketFunctions&Packet, int clientNum);
-		void UpdateClients();
-		int FindEmptyClient();
-		void NewClientCheck();
-		void ParseData(PacketFunctions &Packet, int clientNum);
-		void SendValue(Uint8 value, int clientNum);
-		void CheckReady();
-		void MoveClientToHost();
-		void StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[],
-		int numPlayers);
-		void SendStatsToClients();
-		void StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers);
-		void StatsNameColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers);
-		void SendNetPacket(int client, PacketFunctions &Packet);
-		int SortStats(LanPlayer *playersPtr[]);
-		void RelayChat(PacketFunctions &Packet, int clientNum);
-		void SelectSong(PacketFunctions &Packet, int clientNum);
-		void ServerChat(CString message);
-		void SendToAllClients(PacketFunctions &Packet);
-		bool CheckHasSongState();
-		void ClearHasSong();
-		void AssignPlayerIDs();
-		void SendUserList();
-		void GameOver(PacketFunctions &Packet, int clientNum);
-		void ScreenNetMusicSelectStatus(PacketFunctions &Packet, int clientNum);
+	void Hello(PacketFunctions& Packet, int clientNum);
+	void UpdateClients();
+	int FindEmptyClient();
+	void NewClientCheck();
+	void ParseData(PacketFunctions& Packet, int clientNum);
+	void SendValue(Uint8 value, int clientNum);
+	void CheckReady();
+	void MoveClientToHost();
+	void StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[],
+						  int numPlayers);
+	void SendStatsToClients();
+	void StatsProjgradeColumn(PacketFunctions& data, LanPlayer *playersPtr[], int numPlayers);
+	void StatsNameColumn(PacketFunctions& data, LanPlayer *playersPtr[], int numPlayers);
+	void SendNetPacket(int client, PacketFunctions &Packet);
+	int SortStats(LanPlayer *playersPtr[]);
+	void RelayChat(PacketFunctions& Packet, int clientNum);
+	void SelectSong(PacketFunctions& Packet, int clientNum);
+	void ServerChat(const CString& message);
+	void SendToAllClients(PacketFunctions& Packet);
+	bool CheckHasSongState();
+	void ClearHasSong();
+	void AssignPlayerIDs();
+	void SendUserList();
+	void GameOver(PacketFunctions& Packet, int clientNum);
+	void ScreenNetMusicSelectStatus(PacketFunctions& Packet, int clientNum);
 };
 
 #endif
