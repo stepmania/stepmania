@@ -290,10 +290,13 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	if ( SCREENMAN != NULL )
 		SCREENMAN->ThemeChanged();
 
+	/* Lua globals can use metrics which are cached, and vice versa.  Update Lua
+	 * globals first; it's Lua's job to explicitly update cached metrics that it
+	 * uses. */
+	Lua::UpdateGlobals();
+
 	// reload subscribers
 	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
-
-	Lua::UpdateGlobals();
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
