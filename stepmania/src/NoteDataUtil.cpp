@@ -1434,20 +1434,20 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 #endif
 
 // added to fix things in the editor
-void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, float fEndBeat) {
+void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, float fEndBeat)
+{
 	ASSERT( fScale > 0 );
 
 	NoteData temp1, temp2;
 	temp1.Config( nd );
 	temp2.Config( nd );
 
-	int iFirstRowAtEndOfRegion = (nd.GetLastRow() > (fEndBeat * ROWS_PER_BEAT)) ?
-								  nd.GetLastRow() :
-								  fEndBeat * ROWS_PER_BEAT;
+	/* XXX: should these be BeatToNoteRow or BeatToNoteRowNotRounded? */
+	const int iFirstRowAtEndOfRegion = min( nd.GetLastRow(), BeatToNoteRowNotRounded(fEndBeat) );
 
-	temp1.CopyRange( &nd, 0, fStartBeat * ROWS_PER_BEAT );
-	temp1.CopyRange( &nd, (fEndBeat - fStartBeat) * fScale * ROWS_PER_BEAT, nd.GetLastRow(), iFirstRowAtEndOfRegion);
-	temp2.CopyRange( &nd, fStartBeat * ROWS_PER_BEAT, fEndBeat * ROWS_PER_BEAT );
+	temp1.CopyRange( &nd, 0, BeatToNoteRowNotRounded(fStartBeat) );
+	temp1.CopyRange( &nd, BeatToNoteRowNotRounded((fEndBeat - fStartBeat) * fScale), nd.GetLastRow(), iFirstRowAtEndOfRegion);
+	temp2.CopyRange( &nd, BeatToNoteRowNotRounded(fStartBeat), BeatToNoteRowNotRounded(fEndBeat) );
 	nd.ClearAll();
 
 	for( int r=0; r<=temp2.GetLastRow(); r++ )
