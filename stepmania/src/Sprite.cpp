@@ -248,11 +248,11 @@ void Sprite::DrawPrimitives()
 
 	// This is causing terrible movie performance on an Athlon 1.3+Voodoo3.
 	// With the default delay of 2ms, the frame rate of demonstration dives
-	// from 110fps to 84.  SDL_Delay must behave differently than Win32's
-	// Sleep().  Leave this commented for now, and uncomment if we hear
-	// about problems with dropped movie frames.  -Chris
-	//if( m_pTexture  &&  m_pTexture->IsAMovie()  &&  m_pTexture->IsPlaying() )
-	//      SDL_Delay( PREFSMAN->m_iMovieDecodeMS );        // let the movie decode a frame
+	// from 110fps to 84. SDL_Delay must behave differently than Win32's
+	// Sleep(). Leave this commented for now, and uncomment if we hear
+	// about problems with dropped movie frames. -Chris
+//	if( m_pTexture && m_pTexture->IsAMovie() && m_pTexture->IsPlaying() )
+//		SDL_Delay( PREFSMAN->m_iMovieDecodeMS );         // let the movie decode a frame
 
 	// use m_temp_* variables to draw the object
 	RectF quadVerticies;
