@@ -32,6 +32,7 @@
 #include "MessageManager.h"
 #include "CommonMetrics.h"
 #include "Foreach.h"
+#include "LuaReference.h"
 
 #include <ctime>
 #include <set>
@@ -73,6 +74,7 @@ GameState::GameState() :
 		m_pPlayerState[p]->m_PlayerNumber = p;
 	}
 
+	m_Environment = new LuaTable;
 
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
@@ -86,6 +88,8 @@ GameState::~GameState()
 
 	FOREACH_PlayerNumber( p )
 		SAFE_DELETE( m_pPlayerState[p] );
+
+	delete m_Environment;
 }
 
 void GameState::ApplyGameCommand( const CString &sCommand, PlayerNumber pn )
@@ -1832,6 +1836,7 @@ public:
 		return 0;
 	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
+	static int Env( T* p, lua_State *L )	{ p->m_Environment->PushSelf(L); return 1; }
 	static int SetEnv( T* p, lua_State *L )	{ p->m_mapEnv[SArg(1)] = SArg(2); return 0; }
 	static int GetEnv( T* p, lua_State *L )
 	{
@@ -1865,6 +1870,7 @@ public:
 		ADD_METHOD( GetCurrentCourse )
 		ADD_METHOD( SetCurrentCourse )
 		ADD_METHOD( SetTemporaryEventMode )
+		ADD_METHOD( Env )
 		ADD_METHOD( SetEnv )
 		ADD_METHOD( GetEnv )
 		ADD_METHOD( GetEditSourceSteps )
