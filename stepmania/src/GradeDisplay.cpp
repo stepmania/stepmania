@@ -19,14 +19,16 @@
 
 const float SCROLL_TIME = 5.0f;
 const float QUICK_SCROLL_TIME = .25f;
-const int NUM_GRADE_FRAMES = 7;
+const int NUM_GRADE_FRAMES = 8;
 const float GRADE_FRAME_HEIGHT = 1/(float)NUM_GRADE_FRAMES;
 const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 
 GradeDisplay::GradeDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","evaluation grades 1x8") );
+	RageTextureID id( THEME->GetPathTo("Graphics",ssprintf("evaluation grades 1x%d",NUM_GRADE_FRAMES)) );
+	id.bStretch = true;
+	Load( id );
 	StopAnimating();
 
 	m_fTimeLeftInScroll = 0;

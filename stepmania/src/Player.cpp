@@ -400,9 +400,8 @@ void Player::Step( int col )
 		// compute the score for this hit
 		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
 		const float fBeatsUntilStep = fStepBeat - fSongBeat;
-		const float fSecondsFromPerfect = fabsf( fBeatsUntilStep / GAMESTATE->m_fCurBPS );
-//		const float fPercentFromPerfect = fabsf( fBeatsUntilStep / GetMaxBeatDifference() );
 		const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS; //the offset from the actual step in seconds
+		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
 
 		TapNoteScore score;
@@ -412,8 +411,7 @@ void Player::Step( int col )
 		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
 		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
 		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-		//we have to mark boo's as better than MISS's now that the window is expanded
-		else if( fSecondsFromPerfect <= 1.0f )										score = TNS_BOO;
+		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
 		else																		score = TNS_NONE;
 
 		if( !GAMESTATE->m_bEditing && (GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay) )

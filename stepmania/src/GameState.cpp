@@ -343,8 +343,16 @@ Grade GameState::GetCurrentGrade( PlayerNumber pn )
 	LOG->Trace( "iPossibleDancePoints: %i", m_iPossibleDancePoints[pn] );
 	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
 
-	if     ( fPercentDancePoints >= 1+1/3.0f )	return GRADE_AAAA;
-	if     ( fPercentDancePoints >= 1.00 )		return GRADE_AAA;
+	// check for "AAAA"
+	if( m_TapNoteScores[pn][TNS_MARVELOUS] > 0 &&
+		m_TapNoteScores[pn][TNS_PERFECT] == 0 &&
+		m_TapNoteScores[pn][TNS_GREAT] == 0 &&
+		m_TapNoteScores[pn][TNS_GOOD] == 0 &&
+		m_TapNoteScores[pn][TNS_BOO] == 0 &&
+		m_TapNoteScores[pn][TNS_MISS] == 0 )
+		return GRADE_AAAA;
+
+	if     ( fPercentDancePoints == 1.00 )		return GRADE_AAA;
 	else if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
 	else if( fPercentDancePoints >= 0.80 )		return GRADE_A;
 	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;

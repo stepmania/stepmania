@@ -132,7 +132,7 @@ inline int TapNoteScoreToDancePoints( TapNoteScore tns )
 {
 	switch( tns )
 	{
-	case TNS_MARVELOUS:	return +3;
+	case TNS_MARVELOUS:	return +2;		// this should be +3, but only in Oni.  Figure out how to support this later
 	case TNS_PERFECT:	return +2;
 	case TNS_GREAT:		return +1;
 	case TNS_GOOD:		return +0;
