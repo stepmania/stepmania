@@ -74,6 +74,7 @@ Background::Background()
 Background::~Background()
 {
 	Unload();
+	delete m_pDancingCharacters;
 }
 
 void Background::Unload()
