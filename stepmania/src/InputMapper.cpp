@@ -219,7 +219,7 @@ void InputMapper::UpdateTempDItoGI()
 bool InputMapper::DeviceToGame( DeviceInput DeviceI, GameInput& GameI ) // return true if there is a mapping from device to pad
 {
 	GameI = m_tempDItoGI[DeviceI.device][DeviceI.button];
-	return GameI.controller != PLAYER_INVALID;
+	return GameI.controller != GAME_CONTROLLER_INVALID;
 }
 
 bool InputMapper::GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
