@@ -444,7 +444,8 @@ void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4
 
 	// calculate coefficients
 	float scale0, scale1;
-	if ( 1.0f - cosom > 0 ) {
+	if ( cosom < 0.9999f )
+	{
 		// standard case (slerp)
 		float omega = acosf(cosom);
 		float sinom = sinf(omega);
