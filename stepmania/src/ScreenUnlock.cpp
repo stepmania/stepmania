@@ -51,8 +51,7 @@ void ScreenUnlock::Init()
 	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
-		if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
-			SongTitle = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
+		CString SongTitle = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
 		
 		const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry( SongTitle );
@@ -102,8 +101,7 @@ void ScreenUnlock::Init()
 
 		for(unsigned i = 1; i <= NumUnlocks; i++)
 		{
-			if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
-				DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
+			CString DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 			
 			DisplayedSong.MakeUpper();
 			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
@@ -234,8 +232,7 @@ void ScreenUnlock::Init()
 
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
-			if (NextIcon <= UNLOCKMAN->m_SongEntries.size() )
-				DisplayedSong = UNLOCKMAN->m_SongEntries[NextIcon-1].m_sSongName;
+			CString DisplayedSong = UNLOCKMAN->m_SongEntries[NextIcon-1].m_sSongName;
 
 			DisplayedSong.MakeUpper();
 			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
