@@ -121,7 +121,9 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
 	cmd.cmd = bufferCmd;
 	cmd.param1 = 0;
 	cmd.param2 = reinterpret_cast<long>(&header);
-	SndDoCommand(chan, &cmd, 0);
+	OSErr err = SndDoCommand(chan, &cmd, 0);
+	if (err != noErr)
+        goto bail;
 
 	/* Clear the fill buffer */
 	memset(buffer[fill_me], 0, buffersize);
@@ -142,7 +144,14 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
 
 	cmd.cmd = callBackCmd;
 	cmd.param2 = play_me;
-	SndDoCommand(chan, &cmd, 0);
+	err = SndDoCommand(chan, &cmd, 0);
+	if (err != noErr)
+		goto bail;
+	return;
+
+bail:
+    RageException::Throw("SndDoCommand failed with error %d", err);
+	
 }
 
 void RageSound_QT1::StartMixing(RageSound *snd) {
