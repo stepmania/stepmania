@@ -171,12 +171,15 @@ bool CreateDirectories( CString Path )
 
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
-		curpath += parts[i] + "/";
+		if( i )
+			curpath += "/";
+		curpath += parts[i];
 
 #if defined(WIN32)
-		if( i == 0 && curpath.size() > 1 && curpath[1] == ':' )
+		if( (curpath.size() == 2 && curpath[1] == ':') || /* C: */
+			(curpath.size() == 3 && curpath[1] == ':' && curpath[2] == '/') ) /* C:/ */
 		{
-			/* Don't try to create the drive letter alone. */
+			/* Don't try to create the drive letter alone, or the root directory. */
 			continue;
 		}
 #endif
