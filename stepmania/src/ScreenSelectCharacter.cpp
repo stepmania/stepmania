@@ -67,9 +67,9 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 	//
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		SCREENMAN->Prompt( SM_GoToPrevScreen, "No characters are installed.\n\nAt least one character must be installed\nto play this mode." );
+		if(	GAMESTATE->m_pCharacters.empty() )
+			SCREENMAN->Prompt( SM_GoToPrevScreen, "No characters are installed.\n\nAt least one character must be installed\nto play this mode." );
 		break;
-		
 	default:
 		//
 		//
