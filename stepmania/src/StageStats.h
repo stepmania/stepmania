@@ -58,17 +58,16 @@ struct StageStats
 	int		iTotalError[NUM_PLAYERS];
 
 	map<float,float>	fLifeRecord[NUM_PLAYERS];
-	void	SetLifeRecord( PlayerNumber pn, float life, float pos );
-	void	GetLifeRecord( PlayerNumber pn, float *life, int nout ) const;
-	float	GetLifeRecordAt( PlayerNumber pn, float pos ) const;
-	float	GetLifeRecordLerpAt( PlayerNumber pn, float pos ) const;
+	void	SetLifeRecordAt( PlayerNumber pn, float fLife, float fSecond );
+	void	GetLifeRecord( PlayerNumber pn, float *fLifeOut, int iNumSamples ) const;
+	float	GetLifeRecordAt( PlayerNumber pn, float fSecond ) const;
+	float	GetLifeRecordLerpAt( PlayerNumber pn, float fSecond ) const;
 
-	/* pos,combo */
 	struct Combo_t
 	{
 		/* Start and size of this combo, in the same scale as the combo list mapping and
 		 * the life record. */
-		float start, size;
+		float fStartSecond, fSizeSeconds;
 
 		/* Combo size, in steps. */
 		int cnt;
@@ -80,11 +79,11 @@ struct StageStats
 		/* Get the size of the combo that came from this song. */
 		int GetStageCnt() const { return cnt - rollover; }
 
-		Combo_t(): start(0), size(0), cnt(0), rollover(0) { }
-		bool IsZero() const { return start < 0; }
+		Combo_t(): fStartSecond(0), fSizeSeconds(0), cnt(0), rollover(0) { }
+		bool IsZero() const { return fStartSecond < 0; }
 	};
 	vector<Combo_t> ComboList[NUM_PLAYERS];
-	float fFirstPos[NUM_PLAYERS], fLastPos[NUM_PLAYERS];
+	float fFirstSecond[NUM_PLAYERS], fLastSecond[NUM_PLAYERS];
 
 	int		GetComboAtStartOfStage( PlayerNumber pn ) const;
 	bool	FullComboOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const;
@@ -93,7 +92,7 @@ struct StageStats
 	bool	OneOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const;
 	int		GetTotalTaps( PlayerNumber pn ) const;
 	float	GetPercentageOfTaps( PlayerNumber pn, TapNoteScore tns ) const;
-	void	UpdateComboList( PlayerNumber pn, float pos, bool rollover );
+	void	UpdateComboList( PlayerNumber pn, float fSecond, bool rollover );
 	Combo_t GetMaxCombo( PlayerNumber pn ) const;
 };
 

@@ -27,14 +27,14 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 
 		const bool IsMax = (combo.GetStageCnt() == MaxComboSize);
 
-		LOG->Trace("combo %i is %f+%f", i, combo.start, combo.size);
+		LOG->Trace("combo %i is %f+%f", i, combo.fStartSecond, combo.fSizeSeconds);
 		Sprite *sprite = new Sprite;
 		sprite->SetName( "ComboBar" );
 		const CString path = ssprintf( "%s %s", Path.c_str(), IsMax? "max":"normal" );
 		sprite->Load( THEME->GetPathToG(path) );
 
-		const float start = SCALE( combo.start, s.fFirstPos[pn], s.fLastPos[pn], 0.0f, 1.0f );
-		const float size = SCALE( combo.size, 0, s.fLastPos[pn]-s.fFirstPos[pn], 0.0f, 1.0f );
+		const float start = SCALE( combo.fStartSecond, s.fFirstSecond[pn], s.fLastSecond[pn], 0.0f, 1.0f );
+		const float size = SCALE( combo.fSizeSeconds, 0, s.fLastSecond[pn]-s.fFirstSecond[pn], 0.0f, 1.0f );
 		sprite->SetCropLeft ( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
 		sprite->SetCropRight( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
 
@@ -66,8 +66,8 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		text->SetName( "ComboMaxNumber" );
 		text->LoadFromFont( THEME->GetPathToF(Path) );
 
-		const float start = SCALE( combo.start, s.fFirstPos[pn], s.fLastPos[pn], 0.0f, 1.0f );
-		const float size = SCALE( combo.size, 0, s.fLastPos[pn]-s.fFirstPos[pn], 0.0f, 1.0f );
+		const float start = SCALE( combo.fStartSecond, s.fFirstSecond[pn], s.fLastSecond[pn], 0.0f, 1.0f );
+		const float size = SCALE( combo.fSizeSeconds, 0, s.fLastSecond[pn]-s.fFirstSecond[pn], 0.0f, 1.0f );
 
 		const float CenterPercent = start + size/2;
 		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -width/2.0f, width/2.0f );

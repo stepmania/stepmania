@@ -120,8 +120,8 @@ void ScreenEvaluation::Init()
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
 			float fP1 = fmodf(f/100*4+.3f,1);
-			g_CurStageStats.SetLifeRecord( PLAYER_1, fP1, f );
-			g_CurStageStats.SetLifeRecord( PLAYER_2, 1-fP1, f );
+			g_CurStageStats.SetLifeRecordAt( PLAYER_1, fP1, f );
+			g_CurStageStats.SetLifeRecordAt( PLAYER_2, 1-fP1, f );
 		}
 	
 		g_CurStageStats.iActualDancePoints[PLAYER_1] = rand()%3;

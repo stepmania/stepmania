@@ -28,15 +28,14 @@ void StageStats::Init()
 		fSecondsBeforeFail[p] = 0;
 		iSongsPassed[p] = iSongsPlayed[p] = 0;
 		iTotalError[p] = 0;
-		fFirstPos[p] = fLastPos[p] = 0;
 
 		memset( iTapNoteScores[p], 0, sizeof(iTapNoteScores[p]) );
 		memset( iHoldNoteScores[p], 0, sizeof(iHoldNoteScores[p]) );
 		radarPossible[p].Init();
 		radarActual[p].Init();
 
-		fFirstPos[p] = 999999;
-		fLastPos[p] = 0;
+		fFirstSecond[p] = 999999;
+		fLastSecond[p] = 0;
 	}
 }
 
@@ -77,15 +76,16 @@ void StageStats::AddStats( const StageStats& other )
 		iSongsPlayed[p] += other.iSongsPlayed[p];
 		iTotalError[p] += other.iTotalError[p];
 
-		const float fOtherFirst = other.fFirstPos[p] + fLastPos[p];
-		const float fOtherLast = other.fLastPos[p] + fLastPos[p];
+		const float fOtherFirstSecond = other.fFirstSecond[p] + fLastSecond[p];
+		const float fOtherLastSecond = other.fLastSecond[p] + fLastSecond[p];
+		fLastSecond[p] = fOtherLastSecond;
 
 		map<float,float>::const_iterator it;
 		for( it = other.fLifeRecord[p].begin(); it != other.fLifeRecord[p].end(); ++it )
 		{
 			const float pos = it->first;
 			const float life = it->second;
-			fLifeRecord[p][fOtherFirst+pos] = life;
+			fLifeRecord[p][fOtherFirstSecond+pos] = life;
 		}
 
 		unsigned i;
@@ -94,7 +94,7 @@ void StageStats::AddStats( const StageStats& other )
 			const Combo_t &combo = other.ComboList[p][i];
 
 			Combo_t newcombo(combo);
-			newcombo.start += fOtherFirst;
+			newcombo.fStartSecond += fOtherFirstSecond;
 			ComboList[p].push_back( newcombo );
 		}
 
@@ -104,19 +104,17 @@ void StageStats::AddStats( const StageStats& other )
 		{
 			Combo_t &prevcombo = ComboList[p][i-1];
 			Combo_t &combo = ComboList[p][i];
-			const float PrevComboEnd = prevcombo.start + prevcombo.size;
-			const float ThisComboStart = combo.start;
+			const float PrevComboEnd = prevcombo.fStartSecond + prevcombo.fSizeSeconds;
+			const float ThisComboStart = combo.fStartSecond;
 			if( fabsf(PrevComboEnd - ThisComboStart) > 0.001 )
 				continue;
 
 			/* These are really the same combo. */
-			prevcombo.size += combo.size;
+			prevcombo.fSizeSeconds += combo.fSizeSeconds;
 			prevcombo.cnt += combo.cnt;
 			ComboList[p].erase( ComboList[p].begin()+i );
 			--i;
 		}
-		
-		fLastPos[p] = fOtherLast;
 	}
 }
 
@@ -248,28 +246,29 @@ float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 	return fPercentDancePoints;
 }
 
-void StageStats::SetLifeRecord( PlayerNumber pn, float life, float pos )
+void StageStats::SetLifeRecordAt( PlayerNumber pn, float fLife, float fSecond )
 {
-	if( pos < 0 )
+	if( fSecond < 0 )
 		return;
 
-	fFirstPos[pn] = min( pos, fFirstPos[pn] );
-	fLastPos[pn] = max( pos, fLastPos[pn] );
+	fFirstSecond[pn] = min( fSecond, fFirstSecond[pn] );
+	fLastSecond[pn] = max( fSecond, fLastSecond[pn] );
+	LOG->Trace( "fLastSecond = %f", fLastSecond[pn] );
 
 	if( !fLifeRecord[pn].empty() )
 	{
-		const float old = GetLifeRecordAt( pn, pos );
-		if( fabsf(old-pos) < 0.001f )
+		const float old = GetLifeRecordAt( pn, fSecond );
+		if( fabsf(old-fSecond) < 0.001f )
 			return; /* no change */
 	}
 
-	fLifeRecord[pn][pos] = life;
+	fLifeRecord[pn][fSecond] = fLife;
 }
 
-float	StageStats::GetLifeRecordAt( PlayerNumber pn, float pos ) const
+float	StageStats::GetLifeRecordAt( PlayerNumber pn, float fSecond ) const
 {
 	/* Find the first element whose key is not less than k. */
-	map<float,float>::const_iterator it = fLifeRecord[pn].lower_bound( pos );
+	map<float,float>::const_iterator it = fLifeRecord[pn].lower_bound( fSecond );
 
 	/* Find the first element whose key is less than k. */
 	if( it != fLifeRecord[pn].begin() )
@@ -279,10 +278,10 @@ float	StageStats::GetLifeRecordAt( PlayerNumber pn, float pos ) const
 
 }
 
-float StageStats::GetLifeRecordLerpAt( PlayerNumber pn, float pos ) const
+float StageStats::GetLifeRecordLerpAt( PlayerNumber pn, float fSecond ) const
 {
 	/* Find the first element whose key is not less than k. */
-	map<float,float>::const_iterator later = fLifeRecord[pn].lower_bound( pos );
+	map<float,float>::const_iterator later = fLifeRecord[pn].lower_bound( fSecond );
 
 	/* Find the first element whose key is less than k. */
 	map<float,float>::const_iterator earlier = later;
@@ -293,31 +292,32 @@ float StageStats::GetLifeRecordLerpAt( PlayerNumber pn, float pos ) const
 		return earlier->second;
 
 	/* earlier <= pos <= later */
-	const float f = SCALE( pos, earlier->first, later->first, 1, 0 );
+	const float f = SCALE( fSecond, earlier->first, later->first, 1, 0 );
 	return earlier->second * f + later->second * (1-f);
 }
 
 
-void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
+void StageStats::GetLifeRecord( PlayerNumber pn, float *fLifeOut, int iNumSamples ) const
 {
-	for( int i = 0; i < nout; ++i )
+	for( int i = 0; i < iNumSamples; ++i )
 	{
-		float from = SCALE( i, 0, (float)nout, fFirstPos[pn], fLastPos[pn] );
-		life[i] = GetLifeRecordLerpAt( (PlayerNumber)pn, from );
+		float from = SCALE( i, 0, (float)iNumSamples, fFirstSecond[pn], fLastSecond[pn] );
+		fLifeOut[i] = GetLifeRecordLerpAt( pn, from );
 	}
 }
 
 /* If "rollover" is true, we're being called before gameplay begins, so we can record
  * the amount of the first combo that comes from the previous song. */
-void StageStats::UpdateComboList( PlayerNumber pn, float pos, bool rollover )
+void StageStats::UpdateComboList( PlayerNumber pn, float fSecond, bool rollover )
 {
-	if( pos < 0 )
+	if( fSecond < 0 )
 		return;
 
 	if( !rollover )
 	{
-		fFirstPos[pn] = min( pos, fFirstPos[pn] );
-		fLastPos[pn] = max( pos, fLastPos[pn] );
+		fFirstSecond[pn] = min( fSecond, fFirstSecond[pn] );
+		fLastSecond[pn] = max( fSecond, fLastSecond[pn] );
+		LOG->Trace( "fLastSecond = %f", fLastSecond[pn] );
 	}
 
 	int cnt = iCurCombo[pn];
@@ -328,7 +328,7 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos, bool rollover )
 	{
 		/* If the previous combo (if any) starts on -9999, then we rolled over some
 		 * combo, but missed the first step.  Remove it. */
-		if( ComboList[pn].size() && ComboList[pn].back().start == -9999 )
+		if( ComboList[pn].size() && ComboList[pn].back().fStartSecond == -9999 )
 			ComboList[pn].erase( ComboList[pn].begin()+ComboList[pn].size()-1, ComboList[pn].end() );
 
 		/* This is a new combo. */
@@ -338,17 +338,17 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos, bool rollover )
 		 * a placeholder in and set it on the next call.  (Otherwise, start will be less
 		 * than fFirstPos.) */
 		if( rollover )
-			NewCombo.start = -9999;
+			NewCombo.fStartSecond = -9999;
 		else
-			NewCombo.start = pos;
+			NewCombo.fStartSecond = fSecond;
 		ComboList[pn].push_back( NewCombo );
 	}
 
 	Combo_t &combo = ComboList[pn].back();
-	combo.size = pos - combo.start;
+	combo.fSizeSeconds = fSecond - combo.fStartSecond;
 	combo.cnt = cnt;
-	if( !rollover && combo.start == -9999 )
-		combo.start = pos;
+	if( !rollover && combo.fStartSecond == -9999 )
+		combo.fStartSecond = fSecond;
 
 	if( rollover )
 		combo.rollover = cnt;
