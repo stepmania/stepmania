@@ -36,11 +36,34 @@ struct OptionRowDefinition
 {
 	CString name;
 	bool bOneChoiceForAllPlayers;
-	enum SelectType selectType;
-	enum LayoutType layoutType;
+	SelectType selectType;
+	LayoutType layoutType;
 	vector<CString> choices;
+	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 
-	OptionRowDefinition(): name(""), bOneChoiceForAllPlayers(false), selectType(SELECT_ONE), layoutType(LAYOUT_SHOW_ALL_IN_ROW) { }
+	void UpdateEnabledForPlayers( 
+		set<PlayerNumber> vEnabledForPlayers,
+		bool bThisRowIsSelected, 
+		bool bThisRowIsSelectedByAll, 
+		const RageColor &colorSelected, 
+		const RageColor &colorNotSelected, 
+		const RageColor &colorDisabled, 
+		float fTweenSeconds 
+		);
+	bool EnabledForPlayer( PlayerNumber pn ) { return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); }
+
+	OptionRowDefinition() { Init(); }
+	void Init()
+	{
+		name = "";
+		bOneChoiceForAllPlayers = false;
+		selectType = SELECT_ONE;
+		layoutType = LAYOUT_SHOW_ALL_IN_ROW;
+		choices.clear();
+		m_vEnabledForPlayers.clear();
+		FOREACH_PlayerNumber( pn )
+			m_vEnabledForPlayers.insert( pn );
+	}
 
 	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL ) :
 		name(n), bOneChoiceForAllPlayers(b), selectType(SELECT_ONE), layoutType(LAYOUT_SHOW_ALL_IN_ROW)
@@ -89,10 +112,10 @@ public:
 	void PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenSeconds );
 	void UpdateText( bool bCapitalizeAllOptionNames );
 	void UpdateEnabledDisabled( 
-		bool bThisRowIsSelected, 
-		bool bThisRowIsSelectedByAll, 
-		const RageColor &colorSelected, 
-		const RageColor &colorNotSelected, 
+		bool bThisRowHasFocus[NUM_PLAYERS], 
+		const RageColor &colorFocus, 
+		const RageColor &colorNoFocus, 
+		const RageColor &colorDisabled, 
 		float fTweenSeconds );
 
 	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
@@ -105,16 +128,22 @@ public:
 	// Only one will true at a time if m_RowDef.bMultiSelect
 	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
 
-	enum RowType { ROW_NORMAL, ROW_EXIT };
+	enum RowType
+	{
+		ROW_NORMAL,
+		ROW_EXIT
+	};
 	RowType GetRowType() const { return m_RowType; }
 	const OptionRowDefinition &GetRowDef() const { return m_RowDef; }
+	OptionRowDefinition &GetRowDef() { return m_RowDef; }
 
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow );
 	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 
-	void SetRowY( float fRowY ) { m_fY = fRowY; }
-	void SetRowHidden( bool bRowHidden ) { m_bHidden = bRowHidden; }
-	bool GetRowHidden() { return m_bHidden; }
+	void SetRowY( float fRowY )				{ m_fY = fRowY; }
+	float GetRowY()							{ return m_fY; }
+	void SetRowHidden( bool bRowHidden )	{ m_bHidden = bRowHidden; }
+	bool GetRowHidden()						{ return m_bHidden; }
 	unsigned GetTextItemsSize() { return m_textItems.size(); }
 
 	void SetExitText( CString sExitText );

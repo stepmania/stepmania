@@ -30,11 +30,16 @@ OptionRow::OptionRow()
 
 OptionRow::~OptionRow()
 {
+	ActorFrame::RemoveAllChildren();
 	for( unsigned i = 0; i < m_textItems.size(); ++i )
 		SAFE_DELETE( m_textItems[i] );
+	m_textItems.clear();
 	FOREACH_PlayerNumber( p )
+	{
 		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
 			SAFE_DELETE( m_Underline[p][i] );
+		m_Underline[p].clear();
+	}
 }
 
 
@@ -341,57 +346,101 @@ void OptionRow::PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenS
 
 void OptionRow::UpdateText( bool bCapitalizeAllOptionNames )
 {
-	if( m_RowDef.layoutType != LAYOUT_SHOW_ONE_IN_ROW )
-		return;
-
-	FOREACH_HumanPlayer( pn )
+	switch( m_RowDef.layoutType )
 	{
-		int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
-		unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
+	case LAYOUT_SHOW_ONE_IN_ROW:
+		FOREACH_HumanPlayer( pn )
+		{
+			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
+			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
 
-		/* If player_no is 2 and there is no player 1: */
-		item_no = min( item_no, m_textItems.size()-1 );
+			/* If player_no is 2 and there is no player 1: */
+			item_no = min( item_no, m_textItems.size()-1 );
 
-		CString sText = m_RowDef.choices[iChoiceWithFocus];
-		if( bCapitalizeAllOptionNames )
-			sText.MakeUpper();
-		m_textItems[item_no]->SetText( sText );
+			CString sText = m_RowDef.choices[iChoiceWithFocus];
+			if( bCapitalizeAllOptionNames )
+				sText.MakeUpper();
+			m_textItems[item_no]->SetText( sText );
+		}
+		break;
 	}
 }
 
 void OptionRow::UpdateEnabledDisabled( 
-	bool bThisRowIsSelected, 
-	bool bThisRowIsSelectedByAll, 
-	const RageColor &colorSelected, 
-	const RageColor &colorNotSelected, 
+	bool bThisRowHasFocus[NUM_PLAYERS], 
+	const RageColor &colorFocus, 
+	const RageColor &colorNoFocus, 
+	const RageColor &colorDisabled, 
 	float fTweenSeconds )
 {
+	bool bThisRowHasFocusByAny = false;
+	FOREACH_HumanPlayer( p )
+		bThisRowHasFocusByAny |= bThisRowHasFocus[p];
+
+	bool bThisRowHasFocusByAll = true;
+	FOREACH_HumanPlayer( p )
+		bThisRowHasFocusByAll &= bThisRowHasFocus[p];
+	
 	const float DiffuseAlpha = m_bHidden? 0.0f:1.0f;
 
 	/* Don't tween selection colors at all. */
-	const RageColor color = bThisRowIsSelected? colorSelected:colorNotSelected;
+	RageColor color = bThisRowHasFocusByAny ? colorFocus:colorNoFocus;
 	m_sprBullet.SetGlobalDiffuseColor( color );
 	m_textTitle.SetGlobalDiffuseColor( color );
 
-	for( unsigned j=0; j<m_textItems.size(); j++ ) 	 
-		m_textItems[j]->SetGlobalDiffuseColor( color ); 	 
-
-	for( unsigned j=0; j<m_textItems.size(); j++ )
+	switch( m_RowDef.layoutType )
 	{
-		if( m_textItems[j]->GetDestY() == m_fY && 	 
-			m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha ) 	 
-			continue;
+	case LAYOUT_SHOW_ALL_IN_ROW:
+		for( unsigned j=0; j<m_textItems.size(); j++ ) 	 
+			m_textItems[j]->SetGlobalDiffuseColor( color ); 	 
+		for( unsigned j=0; j<m_textItems.size(); j++ )
+		{
+			if( m_textItems[j]->GetDestY() == m_fY && 	 
+				m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha ) 	 
+				continue;
 
-		m_textItems[j]->StopTweening();
-		m_textItems[j]->BeginTweening( fTweenSeconds );
-		m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
-		m_textItems[j]->SetY( m_fY );
+			m_textItems[j]->StopTweening();
+			m_textItems[j]->BeginTweening( fTweenSeconds );
+			m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
+			m_textItems[j]->SetY( m_fY );
+		}
+		break;
+	case LAYOUT_SHOW_ONE_IN_ROW:
+		FOREACH_HumanPlayer( pn )
+		{
+			bool bEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
+			
+			if( bThisRowHasFocus[pn] )
+				color = colorFocus;
+			else if( bEnabled )
+				color = colorNoFocus;
+			else
+				color = colorDisabled;
+
+			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
+
+			// If player_no is 2 and there is no player 1:
+			item_no = min( item_no, m_textItems.size()-1 );
+
+			BitmapText &bt = *m_textItems[item_no];
+
+			if( bt.GetDestY() != m_fY  ||  bt.DestTweenState().diffuse[0] != color )
+			{
+				bt.StopTweening();
+				bt.BeginTweening( fTweenSeconds );
+				bt.SetDiffuse( color );
+				bt.SetY( m_fY );
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	if( m_RowType == OptionRow::ROW_EXIT )
 	{
-		if( bThisRowIsSelectedByAll )
-			m_textItems[0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
+		if( bThisRowHasFocusByAll )
+			m_textItems[0]->SetEffectDiffuseShift( 1.0f, colorFocus, colorNoFocus );
 		else
 			m_textItems[0]->SetEffectNone();
 	}

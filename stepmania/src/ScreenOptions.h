@@ -45,7 +45,9 @@ protected:
 	void TweenCursor( PlayerNumber pn );
 	void UpdateText( int row );
 	void UpdateEnabledDisabled();
+	void UpdateEnabledDisabled( int row );
 	virtual void OnChange( PlayerNumber pn );
+	void RefreshRowChoices( int row, const OptionRowDefinition &def );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
@@ -55,12 +57,13 @@ protected:
 	virtual void GoToNextScreen() = 0;
 	virtual void GoToPrevScreen() = 0;
 
-	void MenuLeft( PlayerNumber pn, const InputEventType type ) { ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }
-	void MenuRight( PlayerNumber pn, const InputEventType type ) { ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
-	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
-	void MenuUp( PlayerNumber pn, const InputEventType type ) { MoveRow( pn, -1, type != IET_FIRST_PRESS ); }
-	void MenuDown( PlayerNumber pn, const InputEventType type ) { MoveRow( pn, +1, type != IET_FIRST_PRESS ); }
+	virtual void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
 	void MoveRow( PlayerNumber pn, int dir, bool Repeat );
+
+	void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }
+	void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
+	void MenuUp( PlayerNumber pn, const InputEventType type );
+	void MenuDown( PlayerNumber pn, const InputEventType type );
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
@@ -140,6 +143,7 @@ protected:
 	ThemeMetric<float>				EXPLANATION_ZOOM;
 	ThemeMetric<RageColor>			COLOR_SELECTED;
 	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
+	ThemeMetric<RageColor>			COLOR_DISABLED;
 	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;

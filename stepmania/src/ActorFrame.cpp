@@ -64,6 +64,11 @@ void ActorFrame::RemoveChild( Actor* pActor )
 		m_SubActors.erase( iter );
 }
 
+void ActorFrame::RemoveAllChildren()
+{
+	m_SubActors.clear();
+}
+
 void ActorFrame::MoveToTail( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );

@@ -7,6 +7,14 @@
 
 struct ConfOption;
 
+enum OptionRowHandlerType
+{
+	ROW_LIST, /* list of custom settings */
+	ROW_LUA, /* lua tells us what to do */
+	ROW_CONFIG,	/* global pref */
+	NUM_OPTION_ROW_TYPES
+};
+
 class ScreenOptionsMaster: public ScreenOptions
 {
 public:
@@ -16,19 +24,25 @@ public:
 
 private:
 
-	enum OptionRowType
-	{
-		ROW_LIST, /* list of custom settings */
-		ROW_LUA, /* lua tells us what to do */
-		ROW_CONFIG,	/* global pref */
-		NUM_OPTION_ROW_TYPES
-	};
-
 	struct OptionRowHandler
 	{
-		OptionRowHandler() { opt = NULL; m_bUseModNameForIcon = false; }
+		OptionRowHandler() { m_pLuaTable=NULL; Init(); }
+		void Init()
+		{
+			type = ROW_LIST;
+			m_sName = "";
+			m_vsRefreshRowNames.clear();
+			ListEntries.clear();
+			Default.Init();
+			m_bUseModNameForIcon = false;
+			delete m_pLuaTable;
+			m_pLuaTable = new LuaExpression;
+			opt = NULL;
+		}
 
-		OptionRowType type;
+		OptionRowHandlerType type;
+		CString m_sName;
+		vector<CString> m_vsRefreshRowNames;	// refresh these rows when the value of this row changes
 
 		/* ROW_LIST: */
 		vector<GameCommand> ListEntries;
@@ -36,7 +50,7 @@ private:
 		bool m_bUseModNameForIcon;
 
 		/* ROW_LUA: */
-		LuaExpression m_LuaTable;
+		LuaExpression *m_pLuaTable;
 
 		/* ROW_CONFIG: */
 		const ConfOption *opt;
@@ -47,20 +61,22 @@ private:
 	vector<OptionRowHandler> OptionRowHandlers;
 	OptionRowDefinition *m_OptionRowAlloc;
 
-	int ExportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
-	void ImportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
+	int ExportOption( const OptionRowDefinition &def, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
+	void ImportOption( const OptionRowDefinition &def, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
 	int ExportOptionForAllPlayers( int iRow );
 	
-	static void SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
-	static void SetLua( OptionRowDefinition &row, OptionRowHandler &hand, const CString &sLuaFunction );
-	static void SetSteps( OptionRowDefinition &row, OptionRowHandler &hand );
-	static void SetConf( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
-	static void SetCharacters( OptionRowDefinition &row, OptionRowHandler &hand );
-	static void SetStyles( OptionRowDefinition &row, OptionRowHandler &hand );
-	static void SetGroups( OptionRowDefinition &row, OptionRowHandler &hand );
-	static void SetDifficulties( OptionRowDefinition &row, OptionRowHandler &hand );
+	static void SetList( OptionRowDefinition &def, OptionRowHandler &hand, CString param );
+	static void SetLua( OptionRowDefinition &def, OptionRowHandler &hand, const CString &sLuaFunction );
+	static void SetSteps( OptionRowDefinition &def, OptionRowHandler &hand );
+	static void SetConf( OptionRowDefinition &def, OptionRowHandler &hand, CString param );
+	static void SetCharacters( OptionRowDefinition &def, OptionRowHandler &hand );
+	static void SetStyles( OptionRowDefinition &def, OptionRowHandler &hand );
+	static void SetGroups( OptionRowDefinition &def, OptionRowHandler &hand );
+	static void SetDifficulties( OptionRowDefinition &def, OptionRowHandler &hand );
 
 protected:
+	virtual void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
+
 	virtual void ImportOptions();
 	virtual void ExportOptions();
 	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions

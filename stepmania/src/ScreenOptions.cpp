@@ -104,6 +104,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
 	COLOR_SELECTED					(m_sName,"ColorSelected"),
 	COLOR_NOT_SELECTED				(m_sName,"ColorNotSelected"),
+	COLOR_DISABLED					(m_sName,"ColorDisabled"),
 	SHOW_BPM_IN_SPEED_TITLE			(m_sName,"ShowBpmInSpeedTitle"),
 	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
 	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
@@ -191,11 +192,6 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 			fY,
 			LABELS_ON_COMMAND
 			);
-			
-
-
-
-
 
 		//
 		// HACK: Set focus to one item in the row, which is "go down"
@@ -503,32 +499,26 @@ void ScreenOptions::UpdateText( int iRow )
 	row.UpdateText( CAPITALIZE_ALL_OPTION_NAMES );
 }
 
+void ScreenOptions::UpdateEnabledDisabled( int r )
+{
+	OptionRow &row = *m_Rows[r];
+
+	bool bRowHasFocus[NUM_PLAYERS];
+	FOREACH_PlayerNumber( pn )
+		bRowHasFocus[pn] = GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r;
+
+	row.UpdateEnabledDisabled( 
+		bRowHasFocus, 
+		COLOR_SELECTED, 
+		COLOR_NOT_SELECTED, 
+		COLOR_DISABLED, 
+		TWEEN_SECONDS );
+}
+
 void ScreenOptions::UpdateEnabledDisabled()
 {
-	const RageColor colorSelected = COLOR_SELECTED, colorNotSelected = COLOR_NOT_SELECTED;
-
-	// init text
-	for( unsigned i=0; i<m_Rows.size(); i++ )		// foreach line
-	{
-		OptionRow &row = *m_Rows[i];
-
-		bool bThisRowIsSelected = false;
-		FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsHumanPlayer(p) && m_iCurrentRow[p] == (int) i )
-				bThisRowIsSelected = true;
-
-		bool bThisRowIsSelectedByAll = true;
-		FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != (int) i )
-				bThisRowIsSelectedByAll = false;
-
-		row.UpdateEnabledDisabled( 
-			bThisRowIsSelected, 
-			bThisRowIsSelectedByAll, 
-			colorSelected, 
-			colorNotSelected, 
-			TWEEN_SECONDS );
-	}
+	for( unsigned r=0; r<m_Rows.size(); r++ )
+		UpdateEnabledDisabled( r );
 }
 
 void ScreenOptions::Update( float fDeltaTime )
@@ -1100,6 +1090,41 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 	}
 }
 
+void ScreenOptions::MenuUp( PlayerNumber pn, const InputEventType type )
+{
+	int r;
+	bool bFoundDest = false;
+	for( r=m_iCurrentRow[pn]-1; r>=0; r-- )
+	{
+		OptionRow &row = *m_Rows[r];
+		if( row.GetRowDef().EnabledForPlayer(pn) )
+		{
+			bFoundDest = true;
+			break;
+		}
+	}
+	int iDelta = bFoundDest ? r-m_iCurrentRow[pn] : -1;
+	MoveRow( pn, iDelta, type != IET_FIRST_PRESS );
+}
+
+void ScreenOptions::MenuDown( PlayerNumber pn, const InputEventType type )
+{
+	int r;
+	bool bFoundDest = false;
+	for( r=m_iCurrentRow[pn]+1; r<m_Rows.size(); r++ )
+	{
+		OptionRow &row = *m_Rows[r];
+		if( row.GetRowDef().EnabledForPlayer(pn) )
+		{
+			bFoundDest = true;
+			break;
+		}
+	}
+	int iDelta = bFoundDest ? r-m_iCurrentRow[pn] : +1;
+	MoveRow( pn, iDelta, type != IET_FIRST_PRESS );
+}
+
+
 int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 {
 	const int r = m_iCurrentRow[pn];
@@ -1108,6 +1133,58 @@ int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 	if( row.GetRowType() != OptionRow::ROW_NORMAL )
 		return -1;
 	return r;
+}
+
+void ScreenOptions::RefreshRowChoices( int r, const OptionRowDefinition &newdef )
+{
+	OptionRow &row = *m_Rows[r];
+
+	// For now, update only m_vEnabledForPlayers
+	row.GetRowDef().m_vEnabledForPlayers = newdef.m_vEnabledForPlayers;
+	
+	UpdateEnabledDisabled( r );
+
+
+	/*
+	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
+
+	OptionRow &row = *m_Rows[r];
+	OptionRow::RowType rt = row.GetRowType();
+	row.Clear();
+	switch( rt )
+	{
+	case OptionRow::ROW_NORMAL:
+		row.LoadNormal( def );
+		row.AfterImportOptions( 
+			pFont, 
+			ITEMS_START_X, 
+			ITEMS_GAP_X, 
+			ITEMS_END_X, 
+			ITEMS_LONG_ROW_SHARED_X,
+			ITEMS_LONG_ROW_X,
+			ITEMS_ZOOM, 
+			CAPITALIZE_ALL_OPTION_NAMES,
+			THEME->GetPathF(m_sName,"item"),
+			THEME->GetPathF(m_sName,"title"),
+			GetExplanationTitle( r ),
+			THEME->GetPathG(m_sName,"bullet"),
+			LABELS_X,
+			ARROWS_X,
+			row.GetRowY(),
+			LABELS_ON_COMMAND
+			);
+
+		break;
+	case OptionRow::ROW_EXIT:
+		// nothing to do
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	FONT->UnloadFont( pFont );
+	pFont = NULL;
+	*/
 }
 
 /*

@@ -30,6 +30,7 @@ public:
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
+	void RemoveAllChildren();
 	void MoveToTail( Actor* pActor );
 	void MoveToHead( Actor* pActor );
 	void SortByDrawOrder();

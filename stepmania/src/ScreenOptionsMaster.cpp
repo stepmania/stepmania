@@ -25,23 +25,29 @@
 #include "GameManager.h"
 #include "Foreach.h"
 
-#define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
-#define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
-#define LINE(sLineName)			THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
+#define LINE_NAMES					THEME->GetMetric (m_sName,"LineNames")
+#define OPTION_MENU_FLAGS			THEME->GetMetric (m_sName,"OptionMenuFlags")
+#define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 
-#define ENTRY(s)				THEME->GetMetric ("ScreenOptionsMaster",s)
-#define ENTRY_NAME(s)			THEME->GetMetric ("OptionNames", s)
-#define ENTRY_MODE(s,i)			THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
-#define ENTRY_DEFAULT(s)		THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
-#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
+#define ENTRY(s)					THEME->GetMetric ("ScreenOptionsMaster",s)
+#define ENTRY_NAME(s)				THEME->GetMetric ("OptionNames", s)
+#define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
+#define ENTRY_DEFAULT(s)			THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
+#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
 
 /* Add the list named "ListName" to the given row/handler. */
-void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString ListName )
+void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString _ListName )
 {
-	hand.type = ROW_LIST;
-	hand.m_bUseModNameForIcon = true;
+	CString ListName = _ListName;
 
+	row.Init();
+	hand.Init();
+
+	hand.type = ROW_LIST;
+	hand.m_sName = ListName;
+	hand.m_bUseModNameForIcon = true;
+		
 	row.name = ListName;
 	if( !ListName.CompareNoCase("noteskins") )
 	{
@@ -65,23 +71,37 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 	hand.Default.Load( -1, ParseCommands(ENTRY_DEFAULT(ListName)) );
 
 	/* Parse the basic configuration metric. */
-	CStringArray asParts;
-	split( ENTRY(ListName), ",", asParts );
-	if( asParts.size() < 1 )
+	Commands cmds = ParseCommands( ENTRY(ListName) );
+	if( cmds.v.size() < 1 )
 		RageException::Throw( "Parse error in ScreenOptionsMasterEntries::ListName%s", ListName.c_str() );
 
 	row.bOneChoiceForAllPlayers = false;
-	const int NumCols = atoi( asParts[0] );
-	for( unsigned i=0; i<asParts.size(); i++ )
+	const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );
+	for( unsigned i=1; i<cmds.v.size(); i++ )
 	{
-		if( asParts[i].CompareNoCase("together") == 0 )
-			row.bOneChoiceForAllPlayers = true;
-		if( asParts[i].CompareNoCase("SelectMultiple") == 0 )
-			row.selectType = SELECT_MULTIPLE;
-		if( asParts[i].CompareNoCase("SelectNone") == 0 )
-			row.selectType = SELECT_NONE;
-		if( asParts[i].CompareNoCase("ShowOneInRow") == 0 )
-			row.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		const Command &cmd = cmds.v[i];
+		CString sName = cmd.GetName();
+
+		if(		 sName == "together" )			row.bOneChoiceForAllPlayers = true;
+		else if( sName == "selectmultiple" )	row.selectType = SELECT_MULTIPLE;
+		else if( sName == "selectnone" )		row.selectType = SELECT_NONE;
+		else if( sName == "showoneinrow" )		row.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		else if( sName == "reloadrownames" )
+		{
+			for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
+				hand.m_vsRefreshRowNames.push_back( cmd.m_vsArgs[a] );
+		}
+		else if( sName == "enabledforplayers" )
+		{
+			row.m_vEnabledForPlayers.clear();
+			for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
+			{
+				CString sArg = cmd.m_vsArgs[a];
+				PlayerNumber pn = (PlayerNumber)(atoi(sArg)-1);
+				ASSERT( pn >= 0 && pn < NUM_PLAYERS );
+				row.m_vEnabledForPlayers.insert( pn );
+			}
+		}
 	}
 
 	for( int col = 0; col < NumCols; ++col )
@@ -102,19 +122,25 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 	}
 }
 
-void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &hand, const CString &sLuaFunction )
+void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &hand, const CString &_sLuaFunction )
 {
+	CString sLuaFunction = _sLuaFunction;
+
+	row.Init();
+	hand.Init();
+
 	hand.type = ROW_LUA;
+	hand.m_sName = sLuaFunction;
 	hand.m_bUseModNameForIcon = true;
 
 	/* Run the Lua expression.  It should return a table. */
-	hand.m_LuaTable.SetFromExpression( sLuaFunction );
+	hand.m_pLuaTable->SetFromExpression( sLuaFunction );
 
-	if( hand.m_LuaTable.GetLuaType() != LUA_TTABLE )
+	if( hand.m_pLuaTable->GetLuaType() != LUA_TTABLE )
 		RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
 
 	{
-		hand.m_LuaTable.PushSelf( LUA->L );
+		hand.m_pLuaTable->PushSelf( LUA->L );
 
 		lua_pushstring( LUA->L, "Name" );
 		lua_gettable( LUA->L, -2 );
@@ -140,6 +166,7 @@ void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &ha
 		ASSERT( row.layoutType != LAYOUT_INVALID );
 		lua_pop( LUA->L, 1 );
 
+
 		lua_pushstring( LUA->L, "SelectType" );
 		lua_gettable( LUA->L, -2 );
 		pStr = lua_tostring( LUA->L, -1 );
@@ -148,6 +175,7 @@ void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &ha
 		row.selectType = StringToSelectType( pStr );
 		ASSERT( row.selectType != SELECT_INVALID );
 		lua_pop( LUA->L, 1 );
+
 
 		/* Iterate over the "Choices" table. */
 		lua_pushstring( LUA->L, "Choices" );
@@ -171,6 +199,31 @@ void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &ha
 
 		lua_pop( LUA->L, 1 ); /* pop choices table */
 
+
+		/* Iterate over the "EnabledForPlayers" table. */
+		lua_pushstring( LUA->L, "EnabledForPlayers" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
+			if( !lua_istable( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
+
+			row.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
+
+			lua_pushnil( LUA->L );
+			while( lua_next(LUA->L, -2) != 0 )
+			{
+				/* `key' is at index -2 and `value' at index -1 */
+				PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
+
+				row.m_vEnabledForPlayers.insert( pn );
+
+				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+			}
+		}
+		lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
+
+		
 		lua_pop( LUA->L, 1 ); /* pop main table */
 		ASSERT( lua_gettop(LUA->L) == 0 );
 	}
@@ -416,22 +469,22 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
 
 		OptionRowHandler hand;
-		for( unsigned part = 0; part < vCommands.v.size(); ++part)
+		for( unsigned c=0; c<vCommands.v.size(); ++c )
 		{
-			Command& command = vCommands.v[part];
+			Command& command = vCommands.v[c];
 
 			BeginHandleArgs;
 
 			const CString &name = command.GetName();
 
-			if( !name.CompareNoCase("list") )				SetList( row, hand, sArg(1) );
-			else if( !name.CompareNoCase("lua") )			SetLua( row, hand, sArg(1) );
-			else if( !name.CompareNoCase("steps") )			SetSteps( row, hand );
-			else if( !name.CompareNoCase("conf") )			SetConf( row, hand, sArg(1) );
-			else if( !name.CompareNoCase("characters") )	SetCharacters( row, hand );
-			else if( !name.CompareNoCase("styles") )		SetStyles( row, hand );
-			else if( !name.CompareNoCase("groups") )		SetGroups( row, hand );
-			else if( !name.CompareNoCase("difficulties") )	SetDifficulties( row, hand );
+			if(		 name == "list" )			{ hand.m_sName = sArg(1); SetList( row, hand, hand.m_sName ); }
+			else if( name == "lua" )			{ hand.m_sName = sArg(1); SetLua( row, hand, hand.m_sName ); }
+			else if( name == "steps" )			SetSteps( row, hand );
+			else if( name == "conf" )			{ hand.m_sName = sArg(1); SetConf( row, hand, hand.m_sName ); }
+			else if( name == "characters" )		SetCharacters( row, hand );
+			else if( name == "styles" )			SetStyles( row, hand );
+			else if( name == "groups" )			SetGroups( row, hand );
+			else if( name == "difficulties" )	SetDifficulties( row, hand );
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
 
@@ -563,7 +616,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call from m_LuaTable. */
-			hand.m_LuaTable.PushSelf( LUA->L );
+			hand.m_pLuaTable->PushSelf( LUA->L );
 			ASSERT( lua_istable( LUA->L, -1 ) );
 
 			lua_pushstring( LUA->L, "LoadSelections" );
@@ -572,7 +625,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", row.name.c_str() );
 
 			/* Argument 1 (self): */
-			hand.m_LuaTable.PushSelf( LUA->L );
+			hand.m_pLuaTable->PushSelf( LUA->L );
 
 			/* Argument 2 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
@@ -627,18 +680,18 @@ void ScreenOptionsMaster::ImportOptions()
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowDefinition &data = m_OptionRowAlloc[i];
+		const OptionRowDefinition &def = m_OptionRowAlloc[i];
 		OptionRow &row = *m_Rows[i];
 
-		if( data.bOneChoiceForAllPlayers )
+		if( def.bOneChoiceForAllPlayers )
 		{
-			ImportOption(data, hand, PLAYER_1, i, row.m_vbSelected[0] );
+			ImportOption(def, hand, PLAYER_1, i, row.m_vbSelected[0] );
 		}
 		else
 		{
 			FOREACH_HumanPlayer( p )
 			{
-				ImportOption( data, hand, p, i, row.m_vbSelected[p] );
+				ImportOption( def, hand, p, i, row.m_vbSelected[p] );
 			}
 		}
 	}
@@ -653,12 +706,12 @@ void ScreenOptionsMaster::ImportOptionsForPlayer( PlayerNumber pn )
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowDefinition &data = m_OptionRowAlloc[i];
+		const OptionRowDefinition &def = m_OptionRowAlloc[i];
 		OptionRow &row = *m_Rows[i];
 
-		if( data.bOneChoiceForAllPlayers )
+		if( def.bOneChoiceForAllPlayers )
 			continue;
-		ImportOption( data, hand, pn, i, row.m_vbSelected[pn] );
+		ImportOption( def, hand, pn, i, row.m_vbSelected[pn] );
 	}
 }
 
@@ -702,7 +755,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call. */
-			hand.m_LuaTable.PushSelf( LUA->L );
+			hand.m_pLuaTable->PushSelf( LUA->L );
 			ASSERT( lua_istable( LUA->L, -1 ) );
 
 			lua_pushstring( LUA->L, "SaveSelections" );
@@ -711,7 +764,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", row.name.c_str() );
 
 			/* Argument 1 (self): */
-			hand.m_LuaTable.PushSelf( LUA->L );
+			hand.m_pLuaTable->PushSelf( LUA->L );
 
 			/* Argument 2 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
@@ -765,13 +818,13 @@ int ScreenOptionsMaster::ExportOptionForAllPlayers( int iRow )
 {
 	int iChangeMask = 0;
 	const OptionRowHandler &hand = OptionRowHandlers[iRow];
-	const OptionRowDefinition &data = m_OptionRowAlloc[iRow];
+	const OptionRowDefinition &def = m_OptionRowAlloc[iRow];
 	OptionRow &row = *m_Rows[iRow];
 	FOREACH_HumanPlayer( pn )
 	{
 		vector<bool> &vbSelected = row.m_vbSelected[pn];
 
-		iChangeMask |= ExportOption( data, hand, pn, vbSelected );
+		iChangeMask |= ExportOption( def, hand, pn, vbSelected );
 	}
 	return iChangeMask;
 }
@@ -791,8 +844,8 @@ void ScreenOptionsMaster::ExportOptions()
 		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
 		
 		/* If SELECT_NONE, only apply it if it's the selected option. */
-		const OptionRowDefinition &data = m_OptionRowAlloc[i];
-		if( data.selectType == SELECT_NONE && i != row )
+		const OptionRowDefinition &def = m_OptionRowAlloc[i];
+		if( def.selectType == SELECT_NONE && i != row )
 			continue;
 
 		OptionRowHandler &hand = OptionRowHandlers[i];
@@ -893,7 +946,7 @@ void ScreenOptionsMaster::RefreshIcons()
 				continue;	// skip
 
 			OptionRow &row = *m_Rows[i];
-			const OptionRowDefinition &data = row.GetRowDef();
+			const OptionRowDefinition &def = row.GetRowDef();
 
 			// find first selection and whether multiple are selected
 			int iFirstSelection = row.GetOneSelection( p, true );
@@ -913,7 +966,7 @@ void ScreenOptionsMaster::RefreshIcons()
 				case ROW_LIST:
 					sIcon = handler.m_bUseModNameForIcon ?
 						handler.ListEntries[iFirstSelection].m_sModifiers :
-						data.choices[iFirstSelection];
+						def.choices[iFirstSelection];
 					break;
 				case ROW_CONFIG:
 					break;
@@ -922,13 +975,59 @@ void ScreenOptionsMaster::RefreshIcons()
 			
 
 			/* XXX: hack to not display text in the song options menu */
-			if( data.bOneChoiceForAllPlayers )
+			if( def.bOneChoiceForAllPlayers )
 				sIcon = "";
 
 			LoadOptionIcon( p, i, sIcon );
 		}
 	}
 }
+
+void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
+{
+	ScreenOptions::ChangeValueInRow( pn, iDelta, Repeat );
+
+	int iRow = m_iCurrentRow[pn];
+
+	const OptionRowHandler &hand = OptionRowHandlers[iRow];
+
+	FOREACH_CONST( CString, hand.m_vsRefreshRowNames, sRowToRefreshName )
+	{
+		for( unsigned r=0; r<m_Rows.size(); r++ )
+		{
+			OptionRow &rowOther = *m_Rows[r];
+
+			if( rowOther.GetRowType() == OptionRow::ROW_EXIT )
+				continue;
+
+			OptionRowHandler &handOther = OptionRowHandlers[r];
+			OptionRowDefinition &defOther = m_OptionRowAlloc[r];
+
+			bool bExported = false;
+
+			if( *sRowToRefreshName == handOther.m_sName )
+			{
+				if( !bExported )
+				{
+					ExportOptionForAllPlayers( iRow );
+					bExported = true; 
+				}
+
+				switch( handOther.type )
+				{
+				case ROW_LIST:
+					SetList( defOther, handOther, handOther.m_sName );
+					break;
+				case ROW_LUA:
+					SetLua( defOther, handOther, handOther.m_sName );
+					break;
+				}
+				ScreenOptions::RefreshRowChoices( r, defOther );
+			}
+		}
+	}
+}
+
 
 /*
  * (c) 2003-2004 Glenn Maynard

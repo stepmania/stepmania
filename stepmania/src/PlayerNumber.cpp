@@ -50,6 +50,7 @@ void LuaPlayerNumber(lua_State* L)
 {
 	FOREACH_PlayerNumber( pn )
 		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
+	LUA->SetGlobal( "NUM_PLAYERS", NUM_PLAYERS );
 }
 REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
 
