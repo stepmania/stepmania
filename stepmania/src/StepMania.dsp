@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\Program Files\GNU\WinCvs 1.2\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                          	cl                                                           /Zl                                                           /nologo                                                           /c                                                           verstub.cpp                                                           /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                            	cl                                                             /Zl                                                             /nologo                                                             /c                                                             verstub.cpp                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\Program Files\GNU\WinCvs 1.2\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                          	cl                                                           /Zl                                                           /nologo                                                           /c                                                           verstub.cpp                                                           /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                            	cl                                                             /Zl                                                             /nologo                                                             /c                                                             verstub.cpp                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -976,6 +976,14 @@ SOURCE=.\DifficultyRating.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\EditMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EditMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FadingBanner.cpp
 # End Source File
 # Begin Source File
@@ -1013,6 +1021,14 @@ SOURCE=.\GroupList.cpp
 # Begin Source File
 
 SOURCE=.\GroupList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\JukeboxMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\JukeboxMenu.h
 # End Source File
 # Begin Source File
 
@@ -1133,14 +1149,6 @@ SOURCE=.\SnapDisplay.cpp
 # Begin Source File
 
 SOURCE=.\SnapDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\SongSelector.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SongSelector.h
 # End Source File
 # Begin Source File
 
@@ -1534,6 +1542,14 @@ SOURCE=.\ScreenJukebox.cpp
 # Begin Source File
 
 SOURCE=.\ScreenJukebox.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenJukeboxMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenJukeboxMenu.h
 # End Source File
 # Begin Source File
 

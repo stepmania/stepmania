@@ -404,6 +404,42 @@ static void HandleInputEvents(float fDeltaTime)
 		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
 			continue;	// skip
 
+		
+						
+		/* Global operator key.. like arcade, allows quick immediate access
+		   to the adminstrative options panel. A global boolean has been
+		   added to not allow this to function on system option screens,
+		   or in the step editor. This will save the hassle of an "accidental
+		   keystroke, and your edit is gone".  -- Miryokuteki
+		*/
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_LCTRL  && type == IET_FIRST_PRESS )
+		{
+			if( !GAMESTATE->m_bIsOnSystemMenu )
+			{
+			SCREENMAN->SystemMessage("OPERATOR");
+			SCREENMAN->SetNewScreen("ScreenOptionsMenu");
+			}
+		}
+		
+		// Global credit key.. accepts a credit anywhere, like the arcade -- Mirykouteki
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F1 && type == IET_FIRST_PRESS )
+		{
+			switch( PREFSMAN->m_CoinMode )
+			{
+				case PrefsManager::COIN_FREE:
+				case PrefsManager::COIN_HOME:
+				case PrefsManager::COIN_PAY:
+					GAMESTATE->m_iCoins++;
+					SCREENMAN->RefreshCreditsMessages();
+					SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+					break;
+				default:
+					ASSERT(0);
+			}
+		}
+
+
+
 		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 		{
 			if(type != IET_FIRST_PRESS) continue;

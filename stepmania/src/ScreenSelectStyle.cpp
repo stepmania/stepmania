@@ -25,19 +25,21 @@
 #include "ThemeManager.h"
 
 
-#define ICONS_START_X		THEME->GetMetricF("ScreenSelectStyle","IconsStartX")
-#define ICONS_SPACING_X		THEME->GetMetricF("ScreenSelectStyle","IconsSpacingX")
-#define ICONS_START_Y		THEME->GetMetricF("ScreenSelectStyle","IconsStartY")
-#define ICONS_SPACING_Y		THEME->GetMetricF("ScreenSelectStyle","IconsSpacingY")
-#define EXPLANATION_X		THEME->GetMetricF("ScreenSelectStyle","ExplanationX")
-#define EXPLANATION_Y		THEME->GetMetricF("ScreenSelectStyle","ExplanationY")
-#define INFO_X				THEME->GetMetricF("ScreenSelectStyle","InfoX")
-#define INFO_Y				THEME->GetMetricF("ScreenSelectStyle","InfoY")
-#define PREVIEW_X			THEME->GetMetricF("ScreenSelectStyle","PreviewX")
-#define PREVIEW_Y			THEME->GetMetricF("ScreenSelectStyle","PreviewY")
-#define HELP_TEXT			THEME->GetMetric("ScreenSelectStyle","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle","TimerSeconds")
-#define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle","NextScreen")
+#define JOINT_PREMIUM_BANNER_X	THEME->GetMetricF("ScreenSelectStyle","JointPremiumBannerX")
+#define JOINT_PREMIUM_BANNER_Y	THEME->GetMetricF("ScreenSelectStyle","JointPremiumBannerY")
+#define ICONS_START_X			THEME->GetMetricF("ScreenSelectStyle","IconsStartX")
+#define ICONS_SPACING_X			THEME->GetMetricF("ScreenSelectStyle","IconsSpacingX")
+#define ICONS_START_Y			THEME->GetMetricF("ScreenSelectStyle","IconsStartY")
+#define ICONS_SPACING_Y			THEME->GetMetricF("ScreenSelectStyle","IconsSpacingY")
+#define EXPLANATION_X			THEME->GetMetricF("ScreenSelectStyle","ExplanationX")
+#define EXPLANATION_Y			THEME->GetMetricF("ScreenSelectStyle","ExplanationY")
+#define INFO_X					THEME->GetMetricF("ScreenSelectStyle","InfoX")
+#define INFO_Y					THEME->GetMetricF("ScreenSelectStyle","InfoY")
+#define PREVIEW_X				THEME->GetMetricF("ScreenSelectStyle","PreviewX")
+#define PREVIEW_Y				THEME->GetMetricF("ScreenSelectStyle","PreviewY")
+#define HELP_TEXT				THEME->GetMetric("ScreenSelectStyle","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectStyle","TimerSeconds")
+#define NEXT_SCREEN				THEME->GetMetric("ScreenSelectStyle","NextScreen")
 
 
 
@@ -93,6 +95,12 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
 	this->AddChild( &m_sprInfo );
 	
+	if( PREFSMAN->m_bJointPremium )
+	{
+		m_sprJointPremium.Load( THEME->GetPathTo("Graphics","select style joint premium banner") );
+		m_sprJointPremium.SetXY( JOINT_PREMIUM_BANNER_X, JOINT_PREMIUM_BANNER_Y );
+		this->AddChild( &m_sprJointPremium );
+	}
 
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
@@ -259,12 +267,30 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
 	if( pn!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[pn] )
 	{
+		if ( PREFSMAN->m_CoinMode == PrefsManager::COIN_HOME || PREFSMAN->m_CoinMode == PrefsManager::COIN_FREE )
+		{ /* Home and free do not require credits..fall thru */
+		}
+		else if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+		{
+			if( !PREFSMAN->m_bJointPremium && GAMESTATE->m_iCoins >= PREFSMAN->m_iCoinsPerCredit )
+			{ /* Joint Premium is NOT enabled, but we have enough credits. Pay up! */
+				GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
+			}
+			else if( !PREFSMAN->m_bJointPremium && GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+			{	/* Joint Premium is NOT enabled, and we do not enough credits */
+				return;
+			}
+			
+		}
+	/* If credits had to be used, it's already taken care of.. add the player */
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SCREENMAN->RefreshCreditsMessages();
 		UpdateEnabledDisabled();
-		return;	// don't fall through
+		return;
 	}
+
+
 
 	GAMESTATE->m_CurStyle = GetSelectedStyle();
 
@@ -305,6 +331,7 @@ void ScreenSelectStyle::TweenOnScreen()
 		m_sprIcon[i]->FadeOn( (m_aPossibleStyles.size()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprExplanation.FadeOn( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprJointPremium.FadeOn( 0, "FadeIn", MENU_ELEMENTS_TWEEN_TIME );
 
 	// let AfterChange tween Preview and Info
 }
@@ -319,6 +346,8 @@ void ScreenSelectStyle::TweenOffScreen()
 	m_sprPreview.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprInfo.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
+
+	m_sprJointPremium.FadeOff( 0, "FadeOut", MENU_ELEMENTS_TWEEN_TIME );
 }
 
 

@@ -101,19 +101,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 
 void Screen::MenuCoin( PlayerNumber pn )
 {
-	switch( PREFSMAN->m_CoinMode )
-	{
-	case PrefsManager::COIN_PAY:
-		GAMESTATE->m_iCoins++;
-		SCREENMAN->RefreshCreditsMessages();
-		// fall through
-	case PrefsManager::COIN_HOME:
-	case PrefsManager::COIN_FREE:
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-		break;
-	default:
-		ASSERT(0);
-	}
+	// This is now handled globally by Stepmania.cpp  --  Miryokuteki
 }
 
 void Screen::SendScreenMessage( const ScreenMessage SM, float fDelay )

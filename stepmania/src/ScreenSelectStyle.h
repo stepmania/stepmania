@@ -51,6 +51,7 @@ private:
 	Sprite	m_sprExplanation;
 	Sprite	m_sprPreview;
 	Sprite	m_sprInfo;
+	Sprite	m_sprJointPremium;
 
 	// Sprites that are never drawn.  They exist to keep the style textures in memory
 	Sprite	m_sprDummyPreview[NUM_STYLES];

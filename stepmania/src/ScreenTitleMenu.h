@@ -74,8 +74,11 @@ private:
 	RandomSample	m_soundChange;
 	RandomSample	m_soundSelect;
 	RandomSample	m_soundInvalid;
+	
+	Sprite			m_sprJointPremiumMsg;
 
 	RageTimer		TimeToDemonstration;
+	RageTimer		TimeToJPScroll;
 };
 
 

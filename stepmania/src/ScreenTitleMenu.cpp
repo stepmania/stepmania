@@ -27,31 +27,38 @@
 #include "RageSoundManager.h"
 
 
-#define HELP_X							THEME->GetMetricF("ScreenTitleMenu","HelpX")
-#define HELP_Y							THEME->GetMetricF("ScreenTitleMenu","HelpY")
-#define CHOICES_X						THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
-#define CHOICES_START_Y					THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
-#define CHOICES_SPACING_Y				THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
-#define CHOICES_SHADOW_LENGTH			THEME->GetMetricF("ScreenTitleMenu","ChoicesShadowLength")
-#define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
-#define COLOR_SELECTED					THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
-#define ZOOM_NOT_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
-#define ZOOM_SELECTED					THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
-#define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
-#define SECONDS_BEFORE_ATTRACT			THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
-#define HELP_TEXT_HOME					THEME->GetMetric("ScreenTitleMenu","HelpTextHome")
-#define HELP_TEXT_PAY					THEME->GetMetric("ScreenTitleMenu","HelpTextPay")
-#define HELP_TEXT_FREE					THEME->GetMetric("ScreenTitleMenu","HelpTextFree")
-#define NEXT_SCREEN						THEME->GetMetric("ScreenTitleMenu","NextScreen")
+#define HELP_X									THEME->GetMetricF("ScreenTitleMenu","HelpX")
+#define HELP_Y									THEME->GetMetricF("ScreenTitleMenu","HelpY")
+#define CHOICES_X								THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
+#define CHOICES_START_Y							THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
+#define CHOICES_SPACING_Y						THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
+#define CHOICES_SHADOW_LENGTH					THEME->GetMetricF("ScreenTitleMenu","ChoicesShadowLength")
+#define COLOR_NOT_SELECTED						THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
+#define COLOR_SELECTED							THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
+#define ZOOM_NOT_SELECTED						THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
+#define ZOOM_SELECTED							THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
+#define SECONDS_BETWEEN_COMMENTS				THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
+#define SECONDS_BETWEEN_JOINT_PREMIUM_SCROLL	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenJointPremiumScroll")
+#define SECONDS_BEFORE_ATTRACT					THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
+#define HELP_TEXT_HOME							THEME->GetMetric("ScreenTitleMenu","HelpTextHome")
+#define HELP_TEXT_PAY							THEME->GetMetric("ScreenTitleMenu","HelpTextPay")
+#define HELP_TEXT_FREE							THEME->GetMetric("ScreenTitleMenu","HelpTextFree")
+#define NEXT_SCREEN								THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
-
+const ScreenMessage SM_ScrollJointPremium	=	ScreenMessage(SM_User+14);
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
-
+	if( PREFSMAN->m_bJointPremium )
+	{
+		m_sprJointPremiumMsg.Load( THEME->GetPathTo("Graphics","joint premium scroll message") );
+		this->AddChild( &m_sprJointPremiumMsg );
+		m_sprJointPremiumMsg.SetX( SCREEN_RIGHT+m_sprJointPremiumMsg.GetUnzoomedWidth()/2 );
+		m_sprJointPremiumMsg.SetY( SCREEN_BOTTOM/2 );
+	}
 
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","help") );
 	CString sHelpText;
@@ -110,6 +117,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 
 	this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
+	this->SendScreenMessage( SM_ScrollJointPremium, 1);
 
 	this->MoveToTail( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
 }
@@ -129,16 +137,11 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
+		/* Coin mode changed.. since this effects how this screen appears, the screen
+		   is reloaded */
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		ResetGame();
-		CString sMessage = "Coin Mode: ";
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
-		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
-		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
-		}
-		SCREENMAN->SystemMessage( sMessage );
+		SCREENMAN->RefreshCreditsMessages();
+		SCREENMAN->SetNewScreen("ScreenTitleMenu");
 		return;
 	}
 
@@ -201,6 +204,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 				break;	// not enough coins
 			else
 				GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
+				SCREENMAN->RefreshCreditsMessages();
 			// fall through
 		case PrefsManager::COIN_HOME:
 		case PrefsManager::COIN_FREE:
@@ -258,7 +262,11 @@ void ScreenTitleMenu::Update( float fDelta )
 		this->SendScreenMessage( SM_GoToAttractLoop, 0 );
 		TimeToDemonstration.GetDeltaTime();
 	}
-
+	if( PREFSMAN->m_bJointPremium && TimeToJPScroll.PeekDeltaTime() >= SECONDS_BETWEEN_JOINT_PREMIUM_SCROLL )
+	{
+		this->SendScreenMessage( SM_ScrollJointPremium, 0 );
+		TimeToJPScroll.GetDeltaTime();
+	}
 	Screen::Update(fDelta);
 }
 
@@ -267,6 +275,19 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_ScrollJointPremium:
+		if( PREFSMAN->m_bJointPremium )
+		{
+			m_sprJointPremiumMsg.StopTweening();
+			m_sprJointPremiumMsg.SetDiffuse( RageColor(1,1,1,1) );
+			
+			m_sprJointPremiumMsg.SetX( SCREEN_RIGHT+m_sprJointPremiumMsg.GetUnzoomedWidth()/2 );
+			m_sprJointPremiumMsg.SetY( SCREEN_BOTTOM/2 );
+			
+			m_sprJointPremiumMsg.BeginTweening( 13.0f, Actor::TWEEN_BIAS_BEGIN ); // slide on
+			m_sprJointPremiumMsg.SetTweenX( SCREEN_LEFT-m_sprJointPremiumMsg.GetUnzoomedWidth()*2 );
+		}
+		break;
 	case SM_PlayComment:
 		m_soundAttract.PlayRandom();
 		this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );

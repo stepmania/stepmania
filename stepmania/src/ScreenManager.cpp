@@ -195,6 +195,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenRanking.h"
 #include "ScreenMemoryCard.h"
 #include "ScreenCompany.h"
+#include "ScreenIntroMovie.h"
 #include "ScreenAlbums.h"
 #include "ScreenLogo.h"
 #include "ScreenUnlock.h"
@@ -251,6 +252,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenRanking") )			ret = new ScreenRanking;
 	else if( 0==stricmp(sClassName, "ScreenMemoryCard") )		ret = new ScreenMemoryCard;
 	else if( 0==stricmp(sClassName, "ScreenCompany") )			ret = new ScreenCompany;
+	else if( 0==stricmp(sClassName, "ScreenIntroMovie") )		ret = new ScreenIntroMovie;
 	else if( 0==stricmp(sClassName, "ScreenAlbums") )			ret = new ScreenAlbums;
 	else if( 0==stricmp(sClassName, "ScreenLogo") )				ret = new ScreenLogo;
 	else if( 0==stricmp(sClassName, "ScreenUnlock") )			ret = new ScreenUnlock;
@@ -325,6 +327,15 @@ void ScreenManager::SetNewScreen( CString sClassName )
 	LOG->Trace( "Loaded %s in %f", sClassName.GetString(), t.GetDeltaTime());
 
 	SetNewScreen( pNewScreen );
+
+	// If this is a system menu, don't let the global operator key touch it! -- Miryokuteki
+	if(	sClassName == "ScreenOptionsMenu" || sClassName == "ScreenMachineOptions" || 
+		 sClassName == "ScreenOptions" || sClassName == "ScreenInputOptions" || 
+		 sClassName == "ScreenGraphicOptions" || sClassName == "ScreenGameplayOptions" || 
+		 sClassName == "ScreenMapControllers" || sClassName == "ScreenPlayerOptions" || 
+		 sClassName == "ScreenAppearanceOptions" || sClassName == "ScreenEdit" || 
+		 sClassName == "ScreenEditMenu" ) GAMESTATE->m_bIsOnSystemMenu = true;
+	else GAMESTATE->m_bIsOnSystemMenu = false;
 }
 
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
@@ -387,7 +398,21 @@ void ScreenManager::RefreshCreditsMessages()
 		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
 		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+		
 
+		int _c = GAMESTATE->m_iCoins;
+		int _x = PREFSMAN->m_iCoinsPerCredit;
+		LOG->Trace("Actual coins: %d",GAMESTATE->m_iCoins);
+
+		unsigned int _r = 0;
+				
+		while (_c >= _x) {
+			_c -= _x;
+			_r++;
+
+		}
+		
+	
 		switch( PREFSMAN->m_CoinMode )
 		{
 		case PrefsManager::COIN_HOME:
@@ -399,7 +424,8 @@ void ScreenManager::RefreshCreditsMessages()
 				m_textCreditInfo[p].SetText( "NOT PRESENT" );
 			break;
 		case PrefsManager::COIN_PAY:
-			m_textCreditInfo[p].SetText( ssprintf("CREDIT(S) %d / %d", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit ) );
+			if (_c == 0) m_textCreditInfo[p].SetText( ssprintf("CREDIT(S) %d ",_r) );
+			else m_textCreditInfo[p].SetText( ssprintf("CREDIT(S) %d (%d / %d)",_r,_c,_x ) );
 			break;
 		case PrefsManager::COIN_FREE:
 			m_textCreditInfo[p].SetText( "FREE PLAY" );

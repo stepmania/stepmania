@@ -144,6 +144,19 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if( m_bWaitingForPress )	// we're going to map an input
 	{	
+		//MAKE SURE F1 AND LCTRL CANNOT BE USED! THESE ARE PREDEFINED IN STEPMANIA.CPP
+		if ( DeviceI.button == SDLK_LCTRL || DeviceI.button == SDLK_F1 )
+		{
+			m_textError.SetText( "F1 & Left-Control are system keys, and cannot be mapped." );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo( "sounds","menu invalid" ) );
+			m_textError.StopTweening();
+			m_textError.SetDiffuse( RageColor(0,1,0,1) );
+			m_textError.BeginTweening( 3 );
+			m_textError.BeginTweening( 1 );
+			m_textError.SetTweenDiffuse( RageColor(0,1,0,0) );
+			return;
+		}
+
 		// ignore joystick D-Pad presses if the user has set their pref.
 		if( PREFSMAN->m_bIgnoreJoyAxes  &&
 			DEVICE_JOY1 <= DeviceI.device  &&  DeviceI.device <= DEVICE_JOY4  &&

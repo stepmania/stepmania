@@ -951,8 +951,10 @@ void MusicWheel::StartRandom()
 	m_Moving = -1;
 	m_TimeBeforeMovingBegins = 0;
 	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-	m_SpinSpeed *= 2.0f; /* faster! */
+	m_SpinSpeed *= 20.0f; /* faster! */
 	m_WheelState = STATE_RANDOM_SPINNING;
+
+	this->Select();
 	RebuildWheelItemDisplays();
 }
 
