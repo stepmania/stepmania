@@ -22,7 +22,8 @@ public:
 		: modulus(modulus), result((word)0, modulus.reg.size()) {}
 
 	ModularArithmetic(const ModularArithmetic &ma)
-		: modulus(ma.modulus), result((word)0, modulus.reg.size()) {}
+		: AbstractRing<Integer>(ma),
+		  modulus(ma.modulus), result((word)0, modulus.reg.size()) {}
 
 	ModularArithmetic(BufferedTransformation &bt);	// construct from BER encoded parameters
 

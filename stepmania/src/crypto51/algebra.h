@@ -47,7 +47,7 @@ public:
 	typedef T Element;
 
 	AbstractRing() {m_mg.m_pRing = this;}
-	AbstractRing(const AbstractRing &source) {m_mg.m_pRing = this;}
+	AbstractRing(const AbstractRing &source): AbstractGroup<T>(source) {m_mg.m_pRing = this;}
 	AbstractRing& operator=(const AbstractRing &source) {return *this;}
 
 	virtual bool IsUnit(const Element &a) const =0;
