@@ -379,6 +379,30 @@ TitleTo: 미쳐
 TitleFrom: (Tell Me)|(Mal Hae)
 TitleTo: 마해
 *
+TitleFrom: Dal Ah Dal Ah
+TitleTo: 달아달아
+*
+TitleFrom: Hanabi
+TitleTo: 花火
+*
+TitleFrom: Hanabi\(Lange Remix\)
+TitleTo: 花火
+TitleTransTo: Hanabi
+SubtitleTo: Lange Remix
+*
+TitleFrom: Heaven of Hoodlums
+TitleTo: 깡패천국
+*
+TitleFrom: Haruka Kanata
+TitleTo: 遥か彼方
+*
+TitleFrom: hyakugojyuuichi
+TitleTo: 百五十一
+*
+TitleFrom: Midsummers Night Midsummers Dream
+TitleTo: 真夏の花・真夏の夢
+TitleTransTo: Midsummer's Night Midsummer's Dream
+*
 TitleFrom: Deluxe
 ArtistFrom: Key-a-Kiss
 TitleTo: デラックス
@@ -391,6 +415,9 @@ ArtistTo: 郑秀文
 *
 ArtistFrom: (Wong Faye)|(Faye Wong)
 ArtistTo: 王菲
+*
+ArtistFrom: (Namie Amuro)|(Amuro Namie)
+ArtistTo: あむろなみえ
 *
 TitleFrom: This Is Unmei
 TitleTo: This is 運命
