@@ -23,7 +23,7 @@
 #define NEXT_SCREEN				THEME->GetMetric("ScreenDemonstration","NextScreen")
 
 
-const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+101);	// MUST be same as in ScreenGameplay
+const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
 bool PrepareForDemonstration()		// always return true.

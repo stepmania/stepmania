@@ -20,7 +20,7 @@
 
 
 
-const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+101);	// MUST be same as in ScreenGameplay
+const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
 bool PrepareForJukebox()		// always return true.
@@ -155,6 +155,8 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 {
 	//LOG->Trace( "ScreenJukebox::Input()" );
 
+	if( type != IET_FIRST_PRESS )
+		return; /* ignore */
 
 	if( MenuI.IsValid() )
 	{
@@ -196,8 +198,8 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_NotesEnded:
-		if( m_Out.IsTransitioning() )
-			return;	// ignore - we're already fading
+		if( m_Out.IsTransitioning() || m_Out.IsFinished() )
+			return;	// ignore - we're already fading or faded
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
