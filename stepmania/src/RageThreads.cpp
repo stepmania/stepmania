@@ -445,8 +445,7 @@ void RageMutex::MarkLockedMutex()
 	vector<const RageMutex *> before;
 
 	/* Iterate over all locked mutexes that are locked by this thread. */
-	unsigned i;
-	for( i = 0; i < g_MutexList->size(); ++i )
+	for( unsigned i = 0; i < g_MutexList->size(); ++i )
 	{
 		const RageMutex *mutex = (*g_MutexList)[i];
 		

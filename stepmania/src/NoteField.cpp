@@ -443,8 +443,6 @@ void NoteField::DrawPrimitives()
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 
-		unsigned i;
-
 		//
 		// Draw beat bars
 		//
@@ -458,7 +456,7 @@ void NoteField::DrawPrimitives()
 		// BPM text
 		//
 		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
-		for( i=0; i<aBPMSegments.size(); i++ )
+		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
 			if(aBPMSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
 			   aBPMSegments[i].m_fStartBeat <= fLastBeatToDraw)
@@ -468,7 +466,7 @@ void NoteField::DrawPrimitives()
 		// Freeze text
 		//
 		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
-		for( i=0; i<aStopSegments.size(); i++ )
+		for( unsigned i=0; i<aStopSegments.size(); i++ )
 		{
 			if(aStopSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
 			   aStopSegments[i].m_fStartBeat <= fLastBeatToDraw)
@@ -479,7 +477,7 @@ void NoteField::DrawPrimitives()
 		// BGChange text
 		//
 		vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
-		for( i=0; i<aBackgroundChanges.size(); i++ )
+		for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
 		{
 			if(aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
 			   aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw)
@@ -524,13 +522,11 @@ void NoteField::DrawPrimitives()
 
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
-		//
-		int i;
-
+		//	
 		NDMap::iterator CurDisplay = m_BeatToNoteDisplays.begin();
 		ASSERT( CurDisplay != m_BeatToNoteDisplays.end() );
 		NDMap::iterator NextDisplay = CurDisplay; ++NextDisplay;
-		for( i=0; i < GetNumHoldNotes(); i++ )
+		for( int i=0; i < GetNumHoldNotes(); i++ )
 		{
 			const HoldNote &hn = GetHoldNote(i);
 			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
@@ -580,7 +576,7 @@ void NoteField::DrawPrimitives()
 		NextDisplay = CurDisplay; ++NextDisplay;
 
 		// draw notes from furthest to closest
-		for( i=iLastIndexToDraw; i>=iFirstIndexToDraw; --i )	//	 for each row
+		for( int i=iLastIndexToDraw; i>=iFirstIndexToDraw; --i )	//	 for each row
 		{	
 			TapNote tn = GetTapNote(c, i);
 			if( tn.type == TapNote::empty )	// no note here

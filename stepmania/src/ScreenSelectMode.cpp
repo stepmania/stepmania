@@ -51,8 +51,8 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 	m_soundModeChange.Load( THEME->GetPathToS("ScreenSelectMode modechange"));
 	m_soundConfirm.Load( THEME->GetPathToS("ScreenSelectMode modeconfirm"));
 	m_soundStart.Load( THEME->GetPathToS("ScreenSelectMode menustart"));
-		unsigned i;
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	
+	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		const ModeChoice& mc = m_aModeChoices[i];
 

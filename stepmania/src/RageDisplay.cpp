@@ -141,12 +141,11 @@ void RageDisplay::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVer
 	/* Draw a line strip with rounded corners using polys.  This is used on
 	 * cards that have strange allergic reactions to antialiased points and
 	 * lines. */
-	int i;
-	for(i = 0; i < iNumVerts-1; ++i)
+	for( int i = 0; i < iNumVerts-1; ++i )
 		DrawPolyLine(v[i], v[i+1], LineWidth);
 
 	/* Join the lines with circles so we get rounded corners. */
-	for(i = 0; i < iNumVerts; ++i)
+	for( int i = 0; i < iNumVerts; ++i )
 		DrawCircle( v[i], LineWidth/2 );
 }
 

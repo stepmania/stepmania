@@ -52,10 +52,9 @@ void PlayerAI::InitFromDisk()
 		ini.GetValue ( sKey, "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
 		
 		float fSum = 0;
-		int j;
-		for( j=0; j<NUM_TAP_NOTE_SCORES; j++ )
+		for( int j=0; j<NUM_TAP_NOTE_SCORES; j++ )
 			fSum += dist.fPercent[j];
-		for( j=0; j<NUM_TAP_NOTE_SCORES; j++ )
+		for( int j=0; j<NUM_TAP_NOTE_SCORES; j++ )
 			dist.fPercent[j] /= fSum;
 	}
 }

@@ -64,8 +64,7 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 		}
 	}
 
-	int i;
-	for( i=0; i<MAX_LAYERS; i++ )
+	for( int i=0; i<MAX_LAYERS; i++ )
 	{
 		CString sLayer = ssprintf("Layer%d",i+1);
 		const IniFile::key* pKey = ini.GetKey( sLayer );

@@ -71,11 +71,10 @@ void GraphDisplay::UpdateVerts()
 
 	int NumSlices = VALUE_RESOLUTION-1;
 
-	int i;
-	for( i = 0; i < 4*NumSlices; ++i )
+	for( int i = 0; i < 4*NumSlices; ++i )
 		Slices[i].c = RageColor(1,1,1,1);
 
-	for( i = 0; i < NumSlices; ++i )
+	for( int i = 0; i < NumSlices; ++i )
 	{
 		const float Left = SCALE( float(i), 0.0f, float(NumSlices), quadVertices.left, quadVertices.right );
 		const float Right = SCALE( float(i+1), 0.0f, float(NumSlices), quadVertices.left, quadVertices.right );
@@ -94,7 +93,7 @@ void GraphDisplay::UpdateVerts()
 	}
 
 	const RectF *tex = m_pTexture->GetTextureCoordRect( 0 );
-	for( i = 0; i < NumSlices; ++i )
+	for( int i = 0; i < NumSlices; ++i )
 	{
 		const float Left = SCALE( float(i), 0.0f, float(NumSlices), tex->left, tex->right );
 		const float Right = SCALE( float(i+1), 0.0f, float(NumSlices), tex->left, tex->right );

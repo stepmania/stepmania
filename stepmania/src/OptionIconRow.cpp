@@ -92,8 +92,7 @@ void OptionIconRow::Refresh()
 	ASSERT( m_PlayerNumber != NUM_PLAYERS );
 	
 	// init
-	unsigned i;
-	for( i=0; i<NUM_OPTION_COLS; i++ )
+	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 		m_OptionIcon[i].Load( m_PlayerNumber, "", i==0 );		
 
 	CString sOptions = GAMESTATE->m_PlayerOptions[m_PlayerNumber].GetString();
@@ -104,7 +103,7 @@ void OptionIconRow::Refresh()
 	CString asTabs[NUM_OPTION_COLS-1];	// fill these with what will be displayed on the tabs
 	
 	// for each option, look for the best column to place it in
-	for( i=0; i<asOptions.size(); i++ )
+	for( unsigned i=0; i<asOptions.size(); i++ )
 	{
 		CString sOption = asOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
@@ -125,7 +124,7 @@ void OptionIconRow::Refresh()
 		}
 	}
 
-	for( i=0; i<NUM_OPTION_COLS-1; i++ )
+	for( unsigned i=0; i<NUM_OPTION_COLS-1; i++ )
 		m_OptionIcon[i+1].Load( m_PlayerNumber, asTabs[i], false );		
 }
 

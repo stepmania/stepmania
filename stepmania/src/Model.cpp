@@ -154,10 +154,9 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
         {
             m_Materials.resize( nNumMaterials );
       
-			int i;
             char szName[256];
 
-            for (i = 0; i < nNumMaterials; i++)
+            for (int i = 0; i < nNumMaterials; i++)
             {
 				msMaterial& Material = m_Materials[i];
 

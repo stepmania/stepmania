@@ -662,15 +662,14 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	
-	unsigned i;
-	for( i=0; i<m_SubActors.size(); i++ )
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Update( fDeltaTime );
 
 
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
-		for( i=0; i<m_SubActors.size(); i++ )
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
 			if( m_fTexCoordVelocityX || m_fTexCoordVelocityY )
 			{
@@ -714,7 +713,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		break;
 */
 	case TYPE_PARTICLES:
-		for( i=0; i<m_SubActors.size(); i++ )
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
 			Actor* pActor = m_SubActors[i];
 			RageVector3 &vel = m_vParticleVelocity[i];
@@ -809,7 +808,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		}
 		break;
 	case EFFECT_TILE_PULSE:
-		for( i=0; i<m_SubActors.size(); i++ )
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->SetZoom( sinf( fSongBeat*PI/2 ) );
 
 		break;
@@ -1023,9 +1022,7 @@ void BGAnimationLayer::LoseFocus()
 
 void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 {
-	unsigned i;
-
-	for( i=0; i<m_SubActors.size(); i++ )
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Command( ssprintf("playcommand,%s", sCommandName.c_str()) );
 
 	CString sKey = sCommandName;
@@ -1035,7 +1032,7 @@ void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 	if( it == m_asCommands.end() )
 		return;
 
-	for( i=0; i<m_SubActors.size(); i++ )
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Command( it->second );
 }
 

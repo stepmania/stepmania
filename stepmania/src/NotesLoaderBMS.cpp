@@ -321,8 +321,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	int iNumNewTracks = GameManager::StepsTypeToNumTracks( out.m_StepsType );
 	int iTransformNewToOld[MAX_NOTE_TRACKS];
 
-	int i;
-	for( i = 0; i < MAX_NOTE_TRACKS; ++i)
+	for( int i = 0; i < MAX_NOTE_TRACKS; ++i)
 		iTransformNewToOld[i] = -1;
 
 	switch( out.m_StepsType )
@@ -452,8 +451,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	ASSERT( arrayBMSFileNames.size() );
 
 	// load the Steps from the rest of the BMS files
-	unsigned i;
-	for( i=0; i<arrayBMSFileNames.size(); i++ )
+	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
 		Steps* pNewNotes = new Steps;
 
@@ -739,7 +737,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		}
 	}
 
-	for( i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
 		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d",
 					out.m_Timing.m_BPMSegments[i].m_fStartBeat, out.m_Timing.m_BPMSegments[i].m_fBPM, i );
 

@@ -70,11 +70,9 @@ GameState::~GameState()
 
 void GameState::ApplyCmdline()
 {
-	int i;
-
 	/* We need to join players before we can set the style. */
 	CString sPlayer;
-	for( i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
+	for( int i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
 	{
 		int pn = atoi( sPlayer )-1;
 		if( !IsAnInt( sPlayer ) || pn < 0 || pn >= NUM_PLAYERS )
@@ -84,7 +82,7 @@ void GameState::ApplyCmdline()
 	}
 
 	CString sMode;
-	for( i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
+	for( int i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
 	{
 		ModeChoice m;
 		m.Load( 0, sMode );
@@ -441,10 +439,8 @@ void GameState::Update( float fDelta )
 
 void GameState::ReloadCharacters()
 {
-	unsigned i;
-
-	for( i=0; i<m_pCharacters.size(); i++ )
-		delete m_pCharacters[i];
+	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+		SAFE_DELETE( m_pCharacters[i] );
 	m_pCharacters.clear();
 
 	FOREACH_PlayerNumber( p )
@@ -453,7 +449,7 @@ void GameState::ReloadCharacters()
 	CStringArray as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	bool FoundDefault = false;
-	for( i=0; i<as.size(); i++ )
+	for( unsigned i=0; i<as.size(); i++ )
 	{
 		CString sCharName, sDummy;
 		splitpath(as[i], sDummy, sCharName, sDummy);

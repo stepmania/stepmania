@@ -119,19 +119,17 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			ssprintf("%f, %f", fPercentBetweenColors, fPercentThroughEffect) );
 		float fOriginalAlpha = m_tempState.diffuse[0].a;
 
-		int i;
-
 		switch( m_Effect )
 		{
 		case diffuse_blink:
 			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
-			for(i=0; i<4; i++)
+			for(int i=0; i<4; i++)
 				m_tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 			break;
 		case diffuse_shift:
-			for(i=0; i<4; i++)
+			for(int i=0; i<4; i++)
 				m_tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 			break;
 		case glow_blink:
@@ -148,7 +146,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 				cosf( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
 				cosf( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				fOriginalAlpha );
-			for( i=1; i<4; i++ )
+			for( int i=1; i<4; i++ )
 				m_tempState.diffuse[i] = m_tempState.diffuse[0];
 			break;
 		case wag:

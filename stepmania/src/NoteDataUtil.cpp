@@ -845,16 +845,14 @@ void NoteDataUtil::SwapSides( NoteData &in )
 
 void NoteDataUtil::Little(NoteData &in, float fStartBeat, float fEndBeat)
 {
-	int i;
-
 	// filter out all non-quarter notes
 	int max_row = in.GetLastRow();
-	for( i=0; i<=max_row; i+=1 ) 
+	for( int i=0; i<=max_row; i+=1 ) 
 		if( i % ROWS_PER_BEAT != 0 )
 			for( int c=0; c<in.GetNumTracks(); c++ ) 
 				in.SetTapNote( c, i, TAP_EMPTY );
 
-	for( i=in.GetNumHoldNotes()-1; i>=0; i-- )
+	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )
 		if( fmodf(in.GetHoldNote(i).GetStartBeat(),1) != 0 )	// doesn't start on a beat
 			in.RemoveHoldNote( i );
 }

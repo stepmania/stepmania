@@ -1072,10 +1072,8 @@ void Course::UpdateCourseStats( StepsType st )
 {
 	m_SortOrder_TotalDifficulty = 0;
 
-	unsigned i;
-
 	// courses with random/players best-worst songs should go at the end
-	for(i = 0; i < m_entries.size(); i++)
+	for(unsigned i = 0; i < m_entries.size(); i++)
 	{
 		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
 			continue;

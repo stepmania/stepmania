@@ -281,8 +281,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			UpdateSelectionText( p );
 
 			/* Don't tween to the initial position. */
-			unsigned i;
-			for( i = 0; i < m_textAlphabet[p].size(); ++i )
+			for( unsigned i = 0; i < m_textAlphabet[p].size(); ++i )
 				m_textAlphabet[p][i]->FinishTweening();
 		}
 	}

@@ -154,25 +154,15 @@ XNode::~XNode()
 
 void XNode::Close()
 {
-    unsigned i;
-
-	for( i = 0 ; i < childs.size(); i ++)
+    for( unsigned i = 0 ; i < childs.size(); i ++)
 	{
-		XNode *p = childs[i];
-		if( p )
-		{
-			delete p; childs[i] = NULL;
-		}
+		SAFE_DELETE( childs[i] );
 	}
 	childs.clear();
 	
-	for( i = 0 ; i < attrs.size(); i ++)
+	for( unsigned i = 0 ; i < attrs.size(); i ++)
 	{
-		XAttr *p = attrs[i];
-		if( p )
-		{
-			delete p; attrs[i] = NULL;
-		}
+		SAFE_DELETE( attrs[i] );
 	}
 	attrs.clear();
 }

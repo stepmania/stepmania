@@ -37,14 +37,13 @@ void FontPage::Load( FontPageSettings cfg )
 
 	// load character widths
 	vector<int> FrameWidths;
-	int i;
 
 	int default_width = m_pTexture->GetSourceFrameWidth();
 	if(cfg.DefaultWidth != -1)
 		default_width = cfg.DefaultWidth;
 
 	// Assume each character is the width of the frame by default.
-	for( i=0; i<m_pTexture->GetNumFrames(); i++ )
+	for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
 	{
 		map<int,int>::const_iterator it = cfg.GlyphWidths.find(i);
 		if(it != cfg.GlyphWidths.end())
@@ -219,9 +218,7 @@ Font::~Font()
 
 void Font::Unload()
 {
-	unsigned i;
-
-	for(i = 0; i < pages.size(); ++i)
+	for(unsigned i = 0; i < pages.size(); ++i)
 		delete pages[i];
 	pages.clear();
 	

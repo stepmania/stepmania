@@ -34,14 +34,11 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 	}
 
 
-	unsigned i;
-	int j;
-	
 	vector<Song*> aAllSongs;
 	SONGMAN->GetSongs( aAllSongs );
 
 	// Filter out Songs that can't be played by the current Style
-	for( j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front
+	for( int j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front
 	{
 		bool DisplaySong = aAllSongs[j]->NormallyDisplayed();
 		
@@ -57,7 +54,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 
 	// Add all group names to a map.
 	map<CString, CString> mapGroupNames;
-	for( i=0; i<aAllSongs.size(); i++ )
+	for( unsigned i=0; i<aAllSongs.size(); i++ )
 	{
 		const CString& sGroupName = aAllSongs[i]->m_sGroupName;
 		mapGroupNames[ sGroupName ] = "";	// group name maps to nothing
@@ -75,7 +72,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 	{
 		vector<Song*> aSongsInGroup;
 		/* find all songs */
-		for( i=0; i<aAllSongs.size(); i++ )		// foreach Song
+		for( unsigned i=0; i<aAllSongs.size(); i++ )		// foreach Song
 		{
 			/* group 0 gets all songs */
 			if( g != 0 && aAllSongs[i]->m_sGroupName != asGroupNames[g] )

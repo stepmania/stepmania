@@ -555,22 +555,22 @@ void NetworkSyncManager::ProcessInput()
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
 				CString ColumnData;
-				int i;
+
 				switch (ColumnNumber)
 				{
 				case NSSB_NAMES:
 					ColumnData = "Names\n";
-					for (i=0; i<NumberPlayers; ++i)
+					for (int i=0; i<NumberPlayers; ++i)
 						ColumnData += m_PlayerNames[m_packet.Read1()] + "\n";
 					break;
 				case NSSB_COMBO:
 					ColumnData = "Combo\n";
-					for (i=0; i<NumberPlayers; ++i)
+					for (int i=0; i<NumberPlayers; ++i)
 						ColumnData += ssprintf("%d\n",m_packet.Read2());
 					break;
 				case NSSB_GRADE:
 					ColumnData = "Grade\n";
-					for (i=0;i<NumberPlayers;i++)
+					for (int i=0;i<NumberPlayers;i++)
 						switch (m_packet.Read1())
 						{
 						case 0:

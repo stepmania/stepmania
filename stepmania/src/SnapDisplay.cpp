@@ -9,8 +9,7 @@
 
 SnapDisplay::SnapDisplay()
 {
-	int i;
-	for( i=0; i<2; i++ )
+	for( int i=0; i<2; i++ )
 	{
 		m_sprIndicators[i].Load( THEME->GetPathToG("SnapDisplay icon 8x1") );
 		// MD 11/12/03 - this assert doesn't allow us to set the editor's maximum

@@ -45,14 +45,13 @@ MenuInput Game::GameInputToMenuInput( GameInput GameI ) const
 		ASSERT(0);	return MenuInput(); // invalid m_StyleType
 	};
 	
-	int i;
-	for( i=0; i<NUM_MENU_BUTTONS; i++ )
+	for( int i=0; i<NUM_MENU_BUTTONS; i++ )
 		if( m_DedicatedMenuButton[i] == GameI.button )
 			return MenuInput( pn, (MenuButton)i );
 
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 	{
-		for( i=0; i<NUM_MENU_BUTTONS; i++ )
+		for( int i=0; i<NUM_MENU_BUTTONS; i++ )
 			if( m_SecondaryMenuButton[i] == GameI.button )
 				return MenuInput( pn, (MenuButton)i );
 	}

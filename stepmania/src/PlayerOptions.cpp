@@ -41,14 +41,13 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 #define APP( opt ) \
 	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
 
-	int i;
-	for( i=0; i<NUM_ACCELS; i++ )
+	for( int i=0; i<NUM_ACCELS; i++ )
 		APP( fAccels[i] );
-	for( i=0; i<NUM_EFFECTS; i++ )
+	for( int i=0; i<NUM_EFFECTS; i++ )
 		APP( fEffects[i] );
-	for( i=0; i<NUM_APPEARANCES; i++ )
+	for( int i=0; i<NUM_APPEARANCES; i++ )
 		APP( fAppearances[i] );
-	for( i=0; i<NUM_SCROLLS; i++ )
+	for( int i=0; i<NUM_SCROLLS; i++ )
 		APP( fScrolls[i] );
 	APP( fTimeSpacing );
 	APP( fScrollSpeed );
@@ -316,8 +315,7 @@ void PlayerOptions::FromString( CString sOptions )
 void NextFloat( float fValues[], int size )
 {
 	int index = -1;
-	int i;
-	for( i=0; i<size; i++ )
+	for( int i=0; i<size; i++ )
 	{
 		if( fValues[i] == 1 )
 		{
@@ -326,7 +324,7 @@ void NextFloat( float fValues[], int size )
 		}
 	}
 
-	for( i=0; i<size; i++ )
+	for( int i=0; i<size; i++ )
 		fValues[i] = 0;
 
 	if( index == size-1 )	// if true, then the last float in the list was selected
@@ -338,8 +336,7 @@ void NextFloat( float fValues[], int size )
 void NextBool( bool bValues[], int size )
 {
 	int index = -1;
-	int i;
-	for( i=0; i<size; i++ )
+	for( int i=0; i<size; i++ )
 	{
 		if( bValues[i] )
 		{
@@ -348,7 +345,7 @@ void NextBool( bool bValues[], int size )
 		}
 	}
 
-	for( i=0; i<size; i++ )
+	for( int i=0; i<size; i++ )
 		bValues[i] = false;
 
 	if( index == size-1 )	// if true, then the last float in the list was selected
@@ -520,18 +517,17 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fSkew);
 	COMPARE(m_sPositioning);
 	COMPARE(m_sNoteSkin);
-	int i;
-	for( i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
+	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
-	for( i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
+	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
 		COMPARE(m_fEffects[i]);
-	for( i = 0; i < PlayerOptions::NUM_APPEARANCES; ++i )
+	for( int i = 0; i < PlayerOptions::NUM_APPEARANCES; ++i )
 		COMPARE(m_fAppearances[i]);
-	for( i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
+	for( int i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
 		COMPARE(m_fScrolls[i]);
-	for( i = 0; i < PlayerOptions::NUM_TURNS; ++i )
+	for( int i = 0; i < PlayerOptions::NUM_TURNS; ++i )
 		COMPARE(m_bTurns[i]);
-	for( i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
+	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
 #undef COMPARE
 	return true;

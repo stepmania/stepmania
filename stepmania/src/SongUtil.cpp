@@ -145,8 +145,7 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 	vector<val> vals;
 	vals.reserve( arraySongPointers.size() );
 
-	unsigned i;
-	for( i = 0; i < arraySongPointers.size(); ++i )
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
 	{
 		Song *pSong = arraySongPointers[i];
 
@@ -162,7 +161,7 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 
 	sort( vals.begin(), vals.end(), CompDescending );
 
-	for( i = 0; i < arraySongPointers.size(); ++i )
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
 		arraySongPointers[i] = vals[i].first;
 }
 

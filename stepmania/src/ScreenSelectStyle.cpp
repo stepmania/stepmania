@@ -24,8 +24,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
-	unsigned i;
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		const ModeChoice& mc = m_aModeChoices[i];
 
@@ -92,9 +91,9 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 
 	// fix Z ordering of Picture and Info so that they draw on top
-	for( i=0; i<this->m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<this->m_aModeChoices.size(); i++ )
 		this->MoveToTail( &m_sprPicture[i] );
-	for( i=0; i<this->m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<this->m_aModeChoices.size(); i++ )
 		this->MoveToTail( &m_sprInfo[i] );
 
 
@@ -121,7 +120,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 	//
 	// TweenOnScreen
 	//
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		SET_XY_AND_ON_COMMAND( m_textIcon[i] );
 		SET_XY_AND_ON_COMMAND( m_sprIcon[i] );

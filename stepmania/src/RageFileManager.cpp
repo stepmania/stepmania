@@ -627,8 +627,7 @@ RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile 
 	NormalizePath( sPath );
 
 	vector< pair<int,int> > Values;
-	unsigned i;
-	for( i = 0; i < g_Drivers.size(); ++i )
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		LoadedDriver &ld = g_Drivers[i];
 		const CString path = ld.GetPath( sPath );
@@ -645,7 +644,7 @@ RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile 
 	stable_sort( Values.begin(), Values.end(), SortBySecond );
 
 	err = 0;
-	for( i = 0; i < Values.size(); ++i )
+	for( unsigned i = 0; i < Values.size(); ++i )
 	{
 		const int driver = Values[i].first;
 		LoadedDriver &ld = g_Drivers[driver];

@@ -87,9 +87,8 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	const vector<float> &BPMS = bpms.vfBpms;
 
-	unsigned i;
 	bool AllIdentical = true;
-	for( i = 0; i < BPMS.size(); ++i )
+	for( unsigned i = 0; i < BPMS.size(); ++i )
 	{
 		if( i > 0 && BPMS[i] != BPMS[i-1] )
 			AllIdentical = false;
@@ -99,7 +98,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	{
 		int MinBPM=99999999;
 		int MaxBPM=-99999999;
-		for( i = 0; i < BPMS.size(); ++i )
+		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
 			MinBPM = min( MinBPM, (int) roundf(BPMS[i]) );
 			MaxBPM = max( MaxBPM, (int) roundf(BPMS[i]) );
@@ -115,7 +114,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.c_str(), MaxBPM) );
 	} else {
 		m_BPMS.clear();
-		for( i = 0; i < BPMS.size(); ++i )
+		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
 			m_BPMS.push_back(BPMS[i]);
 			if( BPMS[i] != -1 )

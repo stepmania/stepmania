@@ -243,12 +243,10 @@ void NoteData::AddHoldNote( HoldNote add )
 {
 	ASSERT( add.iStartRow>=0 && add.iEndRow>=0 );
 
-	int i;
-
 	// look for other hold notes that overlap and merge them
 	// XXX: this is done implicitly with 4s, but 4s uses this function.
 	// Rework this later.
-	for( i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
+	for( int i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
 	{
 		HoldNote &other = GetHoldNote(i);
 		if( add.iTrack == other.iTrack  &&		// the tracks correspond
@@ -267,7 +265,7 @@ void NoteData::AddHoldNote( HoldNote add )
 	int iAddEndIndex = add.iEndRow;
 
 	// delete TapNotes under this HoldNote
-	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
+	for( int i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
 		SetTapNote( add.iTrack, i, TAP_EMPTY );
 
 	// add a tap note at the start of this hold
@@ -369,9 +367,7 @@ int NoteData::GetFirstRow() const
 { 
 	int iEarliestRowFoundSoFar = -1;
 	
-	int i;
-
-	for( i=0; i < int(m_TapNotes[0].size()); i++ )
+	for( int i=0; i < int(m_TapNotes[0].size()); i++ )
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -380,7 +376,7 @@ int NoteData::GetFirstRow() const
 		}
 	}
 
-	for( i=0; i<GetNumHoldNotes(); i++ )
+	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		if( iEarliestRowFoundSoFar == -1 ||
 			GetHoldNote(i).iStartRow < iEarliestRowFoundSoFar )
@@ -402,9 +398,7 @@ int NoteData::GetLastRow() const
 { 
 	int iOldestRowFoundSoFar = 0;
 	
-	int i;
-
-	for( i = int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
+	for( int i = int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -413,7 +407,7 @@ int NoteData::GetLastRow() const
 		}
 	}
 
-	for( i=0; i<GetNumHoldNotes(); i++ )
+	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		if( GetHoldNote(i).iEndRow > iOldestRowFoundSoFar )
 			iOldestRowFoundSoFar = GetHoldNote(i).iEndRow;

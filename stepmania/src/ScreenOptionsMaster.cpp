@@ -217,8 +217,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	InputMode im = INPUTMODE_INDIVIDUAL;
 	bool Explanations = false;
 	
-	unsigned i;
-	for( i = 0; i < Flags.size(); ++i )
+	for( unsigned i = 0; i < Flags.size(); ++i )
 	{
 		Flags[i].MakeLower();
 
@@ -239,7 +238,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	}
 
 	m_OptionRowAlloc = new OptionRowData[asLineNames.size()];
-	for( i = 0; i < asLineNames.size(); ++i )
+	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
 
@@ -494,8 +493,7 @@ void ScreenOptionsMaster::ExportOptions()
 	int ChangeMask = 0;
 
 	CHECKPOINT;
-	unsigned i;
-	for( i = 0; i < OptionRowHandlers.size(); ++i )
+	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
 		

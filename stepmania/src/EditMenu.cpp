@@ -35,9 +35,7 @@ EditMenu::EditMenu()
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
-	int i;
-
-	for( i=0; i<2; i++ )
+	for( int i=0; i<2; i++ )
 	{
 		m_sprArrows[i].Load( THEME->GetPathToG(ssprintf("EditMenu %s",(i==0?"left":"right"))) );
 		m_sprArrows[i].SetX( ARROWS_X(i) );
@@ -55,7 +53,7 @@ EditMenu::EditMenu()
 
 
 
-	for( i=0; i<NUM_ROWS; i++ )
+	for( int i=0; i<NUM_ROWS; i++ )
 	{
 		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
@@ -106,14 +104,12 @@ EditMenu::EditMenu()
 	// Select the current song if any
 	if( GAMESTATE->m_pCurSong )
 	{
-		unsigned i;
-
-		for( i=0; i<m_sGroups.size(); i++ )
+		for( unsigned i=0; i<m_sGroups.size(); i++ )
 			if( GAMESTATE->m_pCurSong->m_sGroupName == m_sGroups[i] )
 				m_iSelection[ROW_GROUP] = i;
 		OnRowValueChanged( ROW_GROUP );
 
-		for( i=0; i<m_pSongs.size(); i++ )
+		for( unsigned i=0; i<m_pSongs.size(); i++ )
 			if( GAMESTATE->m_pCurSong == m_pSongs[i] )
 				m_iSelection[ROW_SONG] = i;
 		OnRowValueChanged( ROW_SONG );
@@ -121,7 +117,7 @@ EditMenu::EditMenu()
 		// Select the current StepsType and difficulty if any
 		if( GAMESTATE->m_pCurSteps[PLAYER_1] )
 		{
-			for( i=0; i<m_StepsTypes.size(); i++ )
+			for( unsigned i=0; i<m_StepsTypes.size(); i++ )
 			{
 				if( m_StepsTypes[i] == GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType )
 				{

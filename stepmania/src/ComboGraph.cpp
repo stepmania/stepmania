@@ -14,12 +14,11 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 
 	/* Find the largest combo. */
 	int MaxComboSize = 0;
-	unsigned i;
-	for( i = 0; i < s.ComboList[pn].size(); ++i )
+	for( unsigned i = 0; i < s.ComboList[pn].size(); ++i )
 		MaxComboSize = max( MaxComboSize, s.ComboList[pn][i].GetStageCnt() );
 
 	float width = -1;
-	for( i = 0; i < s.ComboList[pn].size(); ++i )
+	for( unsigned i = 0; i < s.ComboList[pn].size(); ++i )
 	{
 		const StageStats::Combo_t &combo = s.ComboList[pn][i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
@@ -49,7 +48,7 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		this->AddChild( sprite );
 	}
 
-	for( i = 0; i < s.ComboList[pn].size(); ++i )
+	for( unsigned i = 0; i < s.ComboList[pn].size(); ++i )
 	{
 		const StageStats::Combo_t &combo = s.ComboList[pn][i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )

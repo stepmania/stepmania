@@ -416,8 +416,6 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 
 void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SortOrder so )
 {
-	unsigned i;
-
 	switch( so )
 	{
 	case SORT_SORT_MENU:
@@ -432,7 +430,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		if( Names.size() != Actions.size() )
 			RageException::Throw("MusicWheel::MenuNames and MusicWheel::MenuActions must have the same number of components");
 
-		for( i=0; i<Names.size(); ++i )
+		for( unsigned i=0; i<Names.size(); ++i )
 		{
 			/* Look for sort names. */
 			vector<CString> parts;
@@ -702,7 +700,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	}
 
 	// init music status icons
-	for( i=0; i<arrayWheelItemDatas.size(); i++ )
+	for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
 	{
 		Song* pSong = arrayWheelItemDatas[i].m_pSong;
 		if( pSong == NULL )
@@ -718,7 +716,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	if( so == SORT_MOST_PLAYED )
 	{
 		// init crown icons 
-		for( i=0; i< min(3u,arrayWheelItemDatas.size()); i++ )
+		for( unsigned i=0; i< min(3u,arrayWheelItemDatas.size()); i++ )
 		{
 			WheelItemData& WID = arrayWheelItemDatas[i];
 			WID.m_Flags.iPlayersBestNumber = i+1;
@@ -833,10 +831,9 @@ void MusicWheel::DrawPrimitives()
 	}
 
 	// draw outside->inside
-	int i;
-	for( i=0; i<NUM_WHEEL_ITEMS/2; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS/2; i++ )
 		DrawItem( i );
-	for( i=NUM_WHEEL_ITEMS-1; i>=NUM_WHEEL_ITEMS/2; i-- )
+	for( int i=NUM_WHEEL_ITEMS-1; i>=NUM_WHEEL_ITEMS/2; i-- )
 		DrawItem( i );
 
 
@@ -910,8 +907,7 @@ void MusicWheel::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	unsigned i;
-	for( i=0; i<unsigned(NUM_WHEEL_ITEMS); i++ )
+	for( unsigned i=0; i<unsigned(NUM_WHEEL_ITEMS); i++ )
 	{
 		MusicWheelItem& display = m_MusicWheelItems[i];
 

@@ -241,12 +241,11 @@ void ScreenMiniMenu::AfterAnswerChanged()
 
 int ScreenMiniMenu::GetGoUpSpot()
 {
-	int i;
-	for( i=m_iCurLine-1; i>=0; i-- )
+	for( int i=m_iCurLine-1; i>=0; i-- )
 		if( m_Def.rows[i].enabled )
 			return i;
 	// wrap
-	for( i=m_Def.rows.size()-1; i>=0; i-- )
+	for( int i=m_Def.rows.size()-1; i>=0; i-- )
 		if( m_Def.rows[i].enabled )
 			return i;
 	return -1;
@@ -254,12 +253,11 @@ int ScreenMiniMenu::GetGoUpSpot()
 
 int ScreenMiniMenu::GetGoDownSpot()
 {
-	unsigned i;
-	for( i=m_iCurLine+1; i<m_Def.rows.size(); i++ )
+	for( unsigned i=m_iCurLine+1; i<m_Def.rows.size(); i++ )
 		if( m_Def.rows[i].enabled )
 			return i;
 	// wrap
-	for( i=0; i<m_Def.rows.size(); i++ )
+	for( unsigned i=0; i<m_Def.rows.size(); i++ )
 		if( m_Def.rows[i].enabled )
 			return i;
 	return -1;

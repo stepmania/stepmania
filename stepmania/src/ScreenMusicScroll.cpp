@@ -27,8 +27,7 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 	
-	unsigned i;
-	for( i=0; i < arraySongs.size(); i++ )
+	for( unsigned i=0; i < arraySongs.size(); i++ )
 	{
 		BitmapText *bt = new BitmapText;
 		m_textLines.push_back(bt);
@@ -51,7 +50,7 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 //		m_iNumLines++;
 //	}
 
-	for( i=0; i<m_textLines.size(); i++ )
+	for( unsigned i=0; i<m_textLines.size(); i++ )
 	{
 		m_textLines[i]->SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
 		m_textLines[i]->BeginTweening( SCROLL_DELAY * i );
@@ -63,7 +62,7 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
-	this->PostScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );
+	this->PostScreenMessage( SM_BeginFadingOut, 0.2f * m_textLines.size() + 3.0f );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
 }

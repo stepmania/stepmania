@@ -369,7 +369,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			UpdateSongsList();
 			
 			unsigned i;
-
 			for ( i = 0; i < m_vSongs.size(); ++i)
 				if ( ( !m_vSongs[i]->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					 ( !m_vSongs[i]->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
@@ -419,7 +418,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	int i;
 	m_soundChangeOpt.Play();
 	switch (m_SelectMode)
 	{
@@ -442,6 +440,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 				m_DC[pn] = NUM_DIFFICULTIES;
 			else
 			{
+				int i;
 				for ( i=0; i<(int)MultiSteps.size(); ++i )
 					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 						break;
@@ -467,7 +466,6 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 
 void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	int i;
 	m_soundChangeOpt.Play();
 	switch (m_SelectMode)
 	{
@@ -490,6 +488,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 				m_DC[pn] = NUM_DIFFICULTIES;
 			else
 			{
+				int i;
 				for ( i=0; i<(int)MultiSteps.size(); ++i )
 					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 						break;

@@ -620,8 +620,7 @@ void Song::TidyUpData()
 	CStringArray arrayImages;
 	GetImageDirListing( m_sSongDir + "*", arrayImages );
 
-	unsigned i;
-	for( i=0; i<arrayImages.size(); i++ )	// foreach image
+	for( unsigned i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
 		if( HasBanner() && HasCDTitle() && HasBackground() )
 			break; /* done */

@@ -44,9 +44,8 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
-	unsigned i;
 	CString IconCommand = ICON_COMMAND;
-	for(i=1; i <= NumUnlocks; i++)
+	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
 		CString SongTitle = DISPLAYED_SONG(i);
@@ -100,7 +99,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		else
 			SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumUnlocks + 4);
 
-		for(i = 1; i <= NumUnlocks; i++)
+		for(unsigned i = 1; i <= NumUnlocks; i++)
 		{
 			CString DisplayedSong = DISPLAYED_SONG(i);
 			if (USE_UNLOCKS_DAT == 1)
@@ -221,7 +220,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		float SecondsToScroll = TIME_TO_DISPLAY - 1;
 		float SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumUnlocks + 4);
 
-		for(i=1; i <= UNLOCK_TEXT_SCROLL_ROWS; i++)
+		for(unsigned i=1; i <= UNLOCK_TEXT_SCROLL_ROWS; i++)
 		{
 			if (i > LastUnlocks.size())
 				continue;
@@ -284,10 +283,10 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	// which is still greater than 0.  By typecasting it as
 	// an integer, you can achieve -1, which exits the loop.
 
-	for(i = item.size() - 1; (int)i >= 0; i--)
+	for(int i = item.size() - 1; (int)i >= 0; i--)
 		this->AddChild(item[i]);
 
-	for(i = ItemIcons.size() - 1; (int)i >= 0; i--)
+	for(int i = ItemIcons.size() - 1; (int)i >= 0; i--)
 		this->AddChild(ItemIcons[i]);
 
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );

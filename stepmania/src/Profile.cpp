@@ -97,13 +97,12 @@ void Profile::InitGeneralData()
 	m_iTotalMines = 0;
 	m_iTotalHands = 0;
 
-	int i;
-	for( i=0; i<NUM_PLAY_MODES; i++ )
+	for( int i=0; i<NUM_PLAY_MODES; i++ )
 		m_iNumSongsPlayedByPlayMode[i] = 0;
 	m_iNumSongsPlayedByStyle.clear();
-	for( i=0; i<NUM_DIFFICULTIES; i++ )
+	for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		m_iNumSongsPlayedByDifficulty[i] = 0;
-	for( i=0; i<MAX_METER+1; i++ )
+	for( int i=0; i<MAX_METER+1; i++ )
 		m_iNumSongsPlayedByMeter[i] = 0;
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );

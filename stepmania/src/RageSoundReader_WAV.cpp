@@ -208,17 +208,16 @@ bool RageSoundReader_WAV::read_adpcm_block_headers( adpcm_t &out ) const
 {
     ADPCMBLOCKHEADER *headers = out.blockheaders;
 
-    int i;
-    for (i = 0; i < fmt.wChannels; i++)
+    for (int i = 0; i < fmt.wChannels; i++)
         RETURN_IF_MACRO(!read_uint8(rw, &headers[i].bPredictor), false);
 
-    for (i = 0; i < fmt.wChannels; i++)
+    for (int i = 0; i < fmt.wChannels; i++)
         RETURN_IF_MACRO(!read_le16(rw, &headers[i].iDelta), false);
 
-    for (i = 0; i < fmt.wChannels; i++)
+    for (int i = 0; i < fmt.wChannels; i++)
         RETURN_IF_MACRO(!read_le16(rw, &headers[i].iSamp[0]), false);
 
-    for (i = 0; i < fmt.wChannels; i++)
+    for (int i = 0; i < fmt.wChannels; i++)
         RETURN_IF_MACRO(!read_le16(rw, &headers[i].iSamp[1]), false);
 
     out.samples_left_in_block = out.wSamplesPerBlock;

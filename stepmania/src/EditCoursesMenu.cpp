@@ -82,9 +82,7 @@ EditCoursesMenu::EditCoursesMenu()
 
 	m_bInSongMenu = false;
 
-	int i;
-
-	for( i=0; i<2; i++ )
+	for( int i=0; i<2; i++ )
 	{
 		m_sprArrows[i].Load( THEME->GetPathToG(ssprintf("EditCoursesMenu %s",(i==0?"left":"right"))) );
 		m_sprArrows[i].SetX( ARROWS_X(i) );
@@ -96,7 +94,7 @@ EditCoursesMenu::EditCoursesMenu()
 	ZERO( m_iSelection );
 
 
-	for( i=0; i<NUM_ROWS; i++ )
+	for( int i=0; i<NUM_ROWS; i++ )
 	{
 		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );

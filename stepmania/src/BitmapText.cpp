@@ -127,7 +127,6 @@ void BitmapText::BuildChars()
 	if(m_wTextLines.empty()) return;
 
 	m_size.y = float(m_pFont->GetHeight() * m_wTextLines.size());
-	unsigned i;
 	int MinSpacing = 0;
 
 	/* The height (from the origin to the baseline): */
@@ -145,7 +144,7 @@ void BitmapText::BuildChars()
 	default:			ASSERT( false );		return;
 	}
 
-	for( i=0; i<m_wTextLines.size(); i++ )		// foreach line
+	for( unsigned i=0; i<m_wTextLines.size(); i++ )		// foreach line
 	{
 		iY += m_pFont->GetHeight();
 		const wstring &szLine = m_wTextLines[i];

@@ -296,8 +296,7 @@ void SongManager::PreloadSongImages()
 		return;
 
 	const vector<Song*> &songs = SONGMAN->GetAllSongs();
-	unsigned i;
-	for( i = 0; i < songs.size(); ++i )
+	for( unsigned i = 0; i < songs.size(); ++i )
 	{
 		if( !songs[i]->HasBanner() )
 			continue;
@@ -308,7 +307,7 @@ void SongManager::PreloadSongImages()
 
 	vector<Course*> courses;
 	SONGMAN->GetAllCourses( courses, false );
-	for( i = 0; i < courses.size(); ++i )
+	for( unsigned i = 0; i < courses.size(); ++i )
 	{
 		if( !courses[i]->HasBanner() )
 			continue;
@@ -506,8 +505,6 @@ int SongManager::GetNumStagesForSong( const Song* pSong )
 
 void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
-	unsigned i;
-
 	LOG->Trace( "Loading courses." );
 
 	//
@@ -515,7 +512,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	//
 	CStringArray saCourseFiles;
 	GetDirListing( COURSES_DIR "*.crs", saCourseFiles, false, true );
-	for( i=0; i<saCourseFiles.size(); i++ )
+	for( unsigned i=0; i<saCourseFiles.size(); i++ )
 	{
 		Course* pCourse = new Course;
 		pCourse->LoadFromCRSFile( saCourseFiles[i] );
@@ -537,7 +534,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	GetDirListing( COURSES_DIR "*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
 	
-	for( i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Courses/
+	for( unsigned i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Courses/
 	{
 		CString sGroupDirName = arrayGroupDirs[i];
 

@@ -406,8 +406,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			/* This player is currently on a choice that is no longer available due to
 			 * the selection just made. */
 			int iSwitchToIndex = -1;
-			int i;
-			for( i=m_iChoiceOnPage[p]+1; iSwitchToIndex == -1 && i < (int) m_ModeChoices[m_CurrentPage].size(); ++i )
+			for( int i=m_iChoiceOnPage[p]+1; iSwitchToIndex == -1 && i < (int) m_ModeChoices[m_CurrentPage].size(); ++i )
 			{
 				const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
 				if( mc.IsPlayable() && !BothPlayersModeChoice(mc) )
@@ -415,7 +414,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			}
 			if( iSwitchToIndex == -1 ) /* couldn't find a spot looking up; look down */
 			{
-				for( i=m_iChoiceOnPage[p]-1; iSwitchToIndex == -1 && i >= 0; --i )
+				for( int i=m_iChoiceOnPage[p]-1; iSwitchToIndex == -1 && i >= 0; --i )
 				{
 					const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
 					if( mc.IsPlayable() && !BothPlayersModeChoice(mc) )

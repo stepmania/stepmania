@@ -49,8 +49,7 @@ void Screen::Update( float fDeltaTime )
 	 * This might clear previous messages on the queue.  So, first apply time to
 	 * everything. */
 	
-	unsigned i;
-	for( i=0; i<m_QueuedMessages.size(); i++ )
+	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
 	{
 		/* Hack:
 		 *
@@ -78,7 +77,7 @@ void Screen::Update( float fDeltaTime )
 	 * within HandleScreenMessage, someone cleared messages on the queue.  This
 	 * means we have no idea where 'i' is, so start over. Since we applied time
 	 * already, this won't cause messages to be mistimed. */
-	for( i=0; i<m_QueuedMessages.size(); i++ )
+	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
 	{
 		if( m_QueuedMessages[i].fDelayRemaining > 0.0f )
 			continue; /* not yet */

@@ -192,17 +192,15 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int coins[HOURS_IN_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
 
-			int i;
-
 			CString sTitle1, sData1;
-			for( i=0; i<HOURS_IN_DAY/2; i++ )
+			for( int i=0; i<HOURS_IN_DAY/2; i++ )
 			{
 				sTitle1 += HourInDayToString(i) + "\n";
 				sData1 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
 			CString sTitle2, sData2;
-			for( i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
+			for( int i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
 			{
 				sTitle2 += HourInDayToString(i) + "\n";
 				sData2 += ssprintf("%d",coins[i]) + "\n";

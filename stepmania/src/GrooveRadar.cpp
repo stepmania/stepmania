@@ -144,9 +144,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		v[0].p = RageVector3( 0, 0, 0 );
 		v[0].c = color;
 
-		int i;
-
-		for( i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
+		for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
 		{
 			const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
@@ -164,7 +162,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a line loop to draw the thick line
 		//
-		for( i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
+		for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 		{
 			const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
 			const float fDistFromCenter = 

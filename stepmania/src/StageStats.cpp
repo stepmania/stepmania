@@ -121,8 +121,7 @@ void StageStats::AddStats( const StageStats& other )
 			fLifeRecord[p][fOtherFirstSecond+pos] = life;
 		}
 
-		unsigned i;
-		for( i=0; i<other.ComboList[p].size(); ++i )
+		for( unsigned i=0; i<other.ComboList[p].size(); ++i )
 		{
 			const Combo_t &combo = other.ComboList[p][i];
 
@@ -133,7 +132,7 @@ void StageStats::AddStats( const StageStats& other )
 
 		/* Merge identical combos.  This normally only happens in course mode, when a combo
 		 * continues between songs. */
-		for( i=1; i<ComboList[p].size(); ++i )
+		for( unsigned i=1; i<ComboList[p].size(); ++i )
 		{
 			Combo_t &prevcombo = ComboList[p][i-1];
 			Combo_t &combo = ComboList[p][i];

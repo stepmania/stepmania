@@ -1112,12 +1112,10 @@ int xing_parse(struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen)
 
 	if (xing->flags & XING_TOC)
 	{
-		int i;
-
 		if (bitlen < 800)
 			goto fail;
 
-		for (i = 0; i < 100; ++i)
+		for (int i = 0; i < 100; ++i)
 			xing->toc[i] = (unsigned char) mad_bit_read(&ptr, 8);
 
 		bitlen -= 800;

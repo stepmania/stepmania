@@ -250,9 +250,7 @@ bool UnlockSystem::Load()
 		return false;
 	}
 
-	unsigned i;
-
-	for( i=0; i<msd.GetNumValues(); i++ )
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
@@ -313,7 +311,7 @@ bool UnlockSystem::Load()
 
 	UpdateSongs();
 
-	for(i=0; i < m_SongEntries.size(); i++)
+	for(unsigned i=0; i < m_SongEntries.size(); i++)
 	{
 		CString str = ssprintf( "Unlock: %s; ", m_SongEntries[i].m_sSongName.c_str() );
 		for( int j = 0; j < NUM_UNLOCK_TYPES; ++j )

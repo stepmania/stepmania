@@ -58,8 +58,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 
 
 	f.Write( "#BPMS:" );
-	unsigned i;
-	for( i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
 	{
 		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
 
@@ -70,7 +69,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 
 	f.Write( "#STOPS:" );
-	for( i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
+	for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
 	{
 		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
 
@@ -81,7 +80,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 	
 	f.Write( "#BGCHANGES:" );
-	for( i=0; i<out.m_BackgroundChanges.size(); i++ )
+	for( unsigned i=0; i<out.m_BackgroundChanges.size(); i++ )
 	{
 		const BackgroundChange &seg = out.m_BackgroundChanges[i];
 
@@ -98,7 +97,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	if( out.m_ForegroundChanges.size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		for( i=0; i<out.m_ForegroundChanges.size(); i++ )
+		for( unsigned i=0; i<out.m_ForegroundChanges.size(); i++ )
 		{
 			const BackgroundChange &seg = out.m_ForegroundChanges[i];
 
@@ -176,8 +175,6 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
 
-	unsigned i;
-
 	int flags = RageFile::WRITE;
 
 	/* If we're not saving cache, we're saving real data, so enable SLOW_FLUSH
@@ -210,7 +207,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	// Save all Steps for this file
 	//
 	const vector<Steps*>& vpSteps = out.GetAllSteps();
-	for( i=0; i<vpSteps.size(); i++ ) 
+	for( unsigned i=0; i<vpSteps.size(); i++ ) 
 	{
 		const Steps* pSteps = vpSteps[i];
 		if( pSteps->IsAutogen() )
