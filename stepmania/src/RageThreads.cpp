@@ -253,6 +253,7 @@ int RageThread::Wait()
 
 	int ret;
 	SDL_WaitThread(thr, &ret);
+	thr = NULL;
 	return ret;
 }
 
