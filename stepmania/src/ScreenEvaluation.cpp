@@ -443,13 +443,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 			{
-				m_sprPossibleBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bars possible p%d",p+1)) );
+				m_sprPossibleBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar possible p%d",p+1)) );
 				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarPossible[p][r] );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				UtilSetXYAndOnCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
-				m_sprActualBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bars actual p%d",p+1)) );
+				m_sprActualBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar actual p%d",p+1)) );
 				m_sprActualBar[p][r].SetWidth( m_sprActualBar[p][r].GetUnzoomedWidth() * stageStats.fRadarActual[p][r] );
 				m_sprActualBar[p][r].SetName( ssprintf("BarActual%dP%d",r+1,p+1) );
 				UtilSetXYAndOnCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
