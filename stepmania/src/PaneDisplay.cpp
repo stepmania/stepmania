@@ -11,6 +11,8 @@
 
 #define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))
+#define NUM_ITEM_COLORS(s)	THEME->GetMetricI(m_sName, ssprintf("%sNumLevels",s))
+#define ITEM_COLOR(s,n)		THEME->GetMetric (m_sName, ssprintf("%sLevel%i",s,n+1))
 
 enum { NEED_NOTES=1, NEED_COURSE=2, NEED_PROFILE=4 };
 struct Content_t
@@ -260,11 +262,23 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	m_textContents[c].SetText( str );
 
+	const unsigned num = NUM_ITEM_COLORS( g_Contents[c].name );
+	for( unsigned p = 0; p < num; ++p )
+	{
+		const CString metric = ITEM_COLOR(g_Contents[c].name, p);
+		CStringArray spec;
+		split( metric, ";", spec );
+	LOG->Trace("%i/%i, '%s', %i, max '%s'", p, num, metric.c_str(), spec.size(), spec[0].c_str() );
+		if( spec.size() < 2 )
+			RageException::Throw( "Metric '%s' malformed", metric.c_str() );
+		const float n = (float) atof( spec[0] );
+		if( val >= n )
+			continue;
+		spec.erase( spec.begin(), spec.begin()+1 );
 
-//#define ITEM_COLOR			THEME->GetMetricC(m_sName,"FOVCenterY")
-// "0-3.5=1,0,0,1:  3.5-6.5=0,1,0,1:   6.5-1000=0,0,1,1"
-	RageColor color(1,0,1,1);
-	m_textContents[c].SetDiffuse( color );
+		m_textContents[c].Command( join(";", spec) );
+		break;
+	}
 }
 
 void PaneDisplay::SetFromGameState()
