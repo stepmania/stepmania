@@ -247,7 +247,8 @@ bool ProfileManager::CreateMachineProfile( CString sName )
 	//
 	CString sProfileID, sProfileDir;
 	const int MAX_TRIES = 1000;
-	for( int i=0; i<MAX_TRIES; i++ )
+        int i;
+	for( i=0; i<MAX_TRIES; i++ )
 	{
 		sProfileID = ssprintf("%08d",i);
 		sProfileDir = PROFILES_DIR + sProfileID;
