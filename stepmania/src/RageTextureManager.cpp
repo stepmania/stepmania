@@ -86,6 +86,7 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 
 	CString sDir, sFName, sExt;
 	splitpath( ID.filename, sDir, sFName, sExt );
+	sExt.MakeLower();
 
 	RageTexture* pTexture;
 	if( sExt == ".avi" || sExt == ".mpg" || sExt == ".mpeg" )
