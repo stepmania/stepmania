@@ -72,9 +72,8 @@ void FileSet::LoadFromDir(const CString &dir)
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
 #else
-	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != NULL;
-	ASSERT(ret);
+	CString OldDir = GetCwd();
+
 	if( chdir(dir.c_str()) == -1 )
 	{
 		/* Only log once per dir. */
@@ -111,7 +110,7 @@ void FileSet::LoadFromDir(const CString &dir)
 	}
 	       
 	closedir(d);
-	chdir(buf);
+	chdir( OldDir );
 #endif
 }
 
