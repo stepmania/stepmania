@@ -152,14 +152,20 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 
 static bool ValidateCurrentStepsDescription( CString s, CString &sErrorOut )
 {
-	if( GAMESTATE->m_pCurSteps[0]->GetDifficulty() == DIFFICULTY_EDIT )
+	ASSERT( GAMESTATE->m_pCurSteps[0]->GetDifficulty() == DIFFICULTY_EDIT );
+
+	if( s.empty() )
 	{
-		if( !GAMESTATE->m_pCurSong->IsEditDescriptionUnique(GAMESTATE->m_pCurSteps[0]->m_StepsType, s, GAMESTATE->m_pCurSteps[0]) )
-		{
-			sErrorOut = "The supplied name supplied conflicts with another edit.\n\nPlease use a different name.";
-			return false;
-		}
+		sErrorOut = "You must supply a name for your new edit.";
+		return false;
 	}
+
+	if( !GAMESTATE->m_pCurSong->IsEditDescriptionUnique(GAMESTATE->m_pCurSteps[0]->m_StepsType, s, GAMESTATE->m_pCurSteps[0]) )
+	{
+		sErrorOut = "The supplied name supplied conflicts with another edit.\n\nPlease use a different name.";
+		return false;
+	}
+
 	return true;
 }
 	
@@ -236,7 +242,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			CString sEditName;
 			if( pSourceSteps )
 			{
-				pSteps->CopyFrom( pSourceSteps, st );
+				pSteps->CopyFrom( pSourceSteps, st, pSong->m_fMusicLengthSeconds );
 				sEditName = GetCopyDescription(pSourceSteps);
 			}
 			else
