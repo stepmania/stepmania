@@ -40,7 +40,8 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
-				CourseDifficulty cd = (CourseDifficulty)line;
+				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
+				ASSERT( cd >= 0 && cd < NUM_COURSE_DIFFICULTIES );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
 					return "";
 				CString sDifficulty = CourseDifficultyToThemedString(cd);
@@ -48,7 +49,8 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 			}
 			else
 			{
-				Difficulty dc = (Difficulty)line;
+				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
+				ASSERT( dc >= 0 && dc < NUM_DIFFICULTIES );
 				CString sDifficulty = DifficultyToThemedString(dc);
 				return ssprintf( "%s %% Complete", sStepsType.c_str() );
 			}
@@ -76,7 +78,8 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
-				CourseDifficulty cd = (CourseDifficulty)line;
+				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
+				ASSERT( cd >= 0 && cd < NUM_COURSE_DIFFICULTIES );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
 					return "";
 				CString sDifficulty = CourseDifficultyToThemedString(cd);
@@ -84,7 +87,8 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 			}
 			else
 			{
-				Difficulty dc = (Difficulty)line;
+				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
+				ASSERT( dc >= 0 && dc < NUM_DIFFICULTIES );
 				CString sDifficulty = DifficultyToThemedString(dc);
 				return ssprintf( "%06.3f%%", pProfile->GetSongsPercentComplete(st,dc)*100 );
 			}
@@ -98,8 +102,8 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 {
 	if( PREFSMAN->m_bScreenTestMode )
 	{
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1, false);
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(), "versus" );

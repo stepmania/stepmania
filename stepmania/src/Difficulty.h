@@ -24,6 +24,7 @@ Difficulty StringToDifficulty( const CString& sDC );
 
 
 typedef Difficulty CourseDifficulty;
+#define NUM_COURSE_DIFFICULTIES NUM_DIFFICULTIES
 #define FOREACH_CourseDifficulty FOREACH_Difficulty
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=DIFFICULTY_INVALID; cd=GetNextShownCourseDifficulty(cd) )
 
