@@ -427,26 +427,20 @@ void ScreenGameplay::Init()
 	m_ShowScoreboard = false;
 
 	//the following is only used in SMLAN/SMOnline
-	if (NSMAN->useSMserver) 
+	if( NSMAN->useSMserver )
 	{
-		int i=-1;
-		FOREACH_PlayerNumber(p)
-			if (!GAMESTATE->IsPlayerEnabled(p))
-				i=p;
-		m_ShowScoreboard=false;
-		if (i!=-1)
+		PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+
+		FOREACH_NSScoreBoardColumn( i2 )
 		{
-			FOREACH_NSScoreBoardColumn (i2)
-			{
-				m_Scoreboard[i2].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
-				m_Scoreboard[i2].SetShadowLength( 0 );
-				m_Scoreboard[i2].SetName( ssprintf("ScoreboardC%iP%i",i2+1,i+1) );
-				SET_XY( m_Scoreboard[i2] );
-				this->AddChild( &m_Scoreboard[i2] );
-				m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
-				m_Scoreboard[i2].SetVertAlign(align_top);
-				m_ShowScoreboard=true;
-			}
+			m_Scoreboard[i2].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
+			m_Scoreboard[i2].SetShadowLength( 0 );
+			m_Scoreboard[i2].SetName( ssprintf("ScoreboardC%iP%i",i2+1,pn+1) );
+			SET_XY( m_Scoreboard[i2] );
+			this->AddChild( &m_Scoreboard[i2] );
+			m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
+			m_Scoreboard[i2].SetVertAlign(align_top);
+			m_ShowScoreboard = true;
 		}
 	}
 
@@ -2324,12 +2318,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_soundMusic.Stop();
 		break;
 	case SM_NET_UpdateScoreboard:
-		if (!NSMAN->useSMserver)
-			break;
-		if (m_ShowScoreboard)
-			FOREACH_NSScoreBoardColumn (cn)
-				if (NSMAN->ChangedScoreboard(cn))
-					m_Scoreboard[cn].SetText(NSMAN->m_Scoreboard[cn]);
+		if( m_ShowScoreboard )
+			FOREACH_NSScoreBoardColumn(cn)
+				if( NSMAN->ChangedScoreboard(cn) )
+					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 		break;
 	}
 }
