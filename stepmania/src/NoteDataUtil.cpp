@@ -109,7 +109,9 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				case '1': t = TAP_TAP; break;
 				case '2': t = TAP_HOLD_HEAD; break;
 				case '3': t = TAP_HOLD_TAIL; break;
-				case 'm':
+//				case 'm':
+				// Don't be loose with the definition.  Use only 'M' since
+				// that's what we've been writing to disk.  -Chris
 				case 'M': t = TAP_MINE; break;
 				
 				default: 
