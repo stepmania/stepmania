@@ -560,15 +560,18 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 			if( !lua_isfunction( LUA->L, -1 ) )
 				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", row.name.c_str() );
 
-			/* Argument 1 (vbSelectedOut): */
+			/* Argument 1 (self): */
+			hand.m_LuaTable.PushSelf( LUA->L );
+
+			/* Argument 2 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
 
-			/* Argument 2 (pn): */
+			/* Argument 3 (pn): */
 			LUA->PushStack( (int) pn );
 
-			ASSERT( lua_gettop(LUA->L) == 5 ); /* vbSelectedOut, m_iLuaTable, function, arg, arg */
+			ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 
-			lua_call( LUA->L, 2, 0 ); // call function with 2 arguments and 0 results
+			lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
 			ASSERT( lua_gettop(LUA->L) == 2 );
 
 			lua_pop( LUA->L, 1 ); /* pop option table */
@@ -696,15 +699,18 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 			if( !lua_isfunction( LUA->L, -1 ) )
 				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", row.name.c_str() );
 
-			/* Argument 1 (vbSelectedOut): */
+			/* Argument 1 (self): */
+			hand.m_LuaTable.PushSelf( LUA->L );
+
+			/* Argument 2 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
 
-			/* Argument 2 (pn): */
+			/* Argument 3 (pn): */
 			LUA->PushStack( (int) pn );
 
-			ASSERT( lua_gettop(LUA->L) == 5 ); /* vbSelectedOut, m_iLuaTable, function, arg, arg */
+			ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 
-			lua_call( LUA->L, 2, 0 ); // call function with 2 arguments and 0 results
+			lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
 			ASSERT( lua_gettop(LUA->L) == 2 );
 
 			lua_pop( LUA->L, 1 ); /* pop option table */
