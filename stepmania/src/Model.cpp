@@ -532,10 +532,10 @@ void Model::DrawPrimitives()
 			const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
 
 			// apply material
-			RageColor emissive = m_pTempState->glow;
-			RageColor ambient = RageColor(0,0,0,1);
-			RageColor diffuse = RageColor(0,0,0,1);
-			RageColor specular = RageColor(0,0,0,1);
+			RageColor emissive = RageColor(0,0,0,0);
+			RageColor ambient = m_pTempState->glow;
+			RageColor diffuse = RageColor(0,0,0,0);
+			RageColor specular = RageColor(0,0,0,0);
 			float shininess = 1;
 
 			DISPLAY->SetMaterial( 
