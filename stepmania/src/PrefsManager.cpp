@@ -62,6 +62,10 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowBooSeconds = 0.180f;
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
 	m_fLifeDifficultyScale = 1.0f;
+	m_iRegenComboAfterFail = 10; // cumulative
+	m_iRegenComboAfterMiss = 5; // cumulative
+	m_iMaxRegenComboAfterFail = 10;
+	m_iMaxRegenComboAfterMiss = 10;
 	m_bDelayedEscape = true;
 	m_bInstructions = true;
 	m_bShowDontDie = true;
@@ -217,6 +221,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.GetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
 	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
+	ini.GetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
+	ini.GetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
+	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
+	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.GetValue( "Options", "Vsync",							m_bVsync );
@@ -340,6 +348,10 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.SetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
 	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
+	ini.SetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
+	ini.SetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
+	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
+	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );

@@ -55,6 +55,10 @@ public:
 	float			m_fJudgeWindowGoodSeconds;
 	float			m_fJudgeWindowBooSeconds;
 	float			m_fJudgeWindowOKSeconds;
+	int				m_iRegenComboAfterFail;
+	int				m_iRegenComboAfterMiss;
+	int				m_iMaxRegenComboAfterFail;
+	int				m_iMaxRegenComboAfterMiss;
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
