@@ -551,6 +551,8 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
 	
 	Trail trail;
+	trail.m_StepsType = nt;
+	trail.m_CourseDifficulty = cd;
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{

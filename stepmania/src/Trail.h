@@ -1,5 +1,15 @@
 #ifndef Trail_H
 #define Trail_H
+/*
+-----------------------------------------------------------------------------
+ Class: TrialUtil
+
+ Desc: 
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
 
 #include "Attack.h"
 
@@ -30,14 +40,14 @@ struct TrailEntry
 class Trail
 {
 public:
-	StepsType			m_st;
-	CourseDifficulty	m_cd;
+	StepsType			m_StepsType;
+	CourseDifficulty	m_CourseDifficulty;
 	vector<TrailEntry>  m_vEntries;
 
 	Trail()
 	{
-		m_st = STEPS_TYPE_INVALID;
-		m_cd = COURSE_DIFFICULTY_INVALID;
+		m_StepsType = STEPS_TYPE_INVALID;
+		m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
 	}
 
 	RadarValues GetRadarValues() const;

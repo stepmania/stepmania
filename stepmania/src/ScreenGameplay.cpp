@@ -188,8 +188,14 @@ void ScreenGameplay::Init()
 
 		/* Increment the play count. */
 		if( !m_bDemonstration )
+		{
 			FOREACH_EnabledPlayer(p)
-                PROFILEMAN->IncrementCoursePlayCount( pCourse, st, GAMESTATE->m_PreferredCourseDifficulty[p], (PlayerNumber)p );
+			{
+				CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
+				Trail* pTrail = pCourse->GetTrail( st, cd );
+				PROFILEMAN->IncrementCoursePlayCount( pCourse, pTrail, p );
+			}
+		}
 
 		m_apSongsQueue.clear();
 		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;

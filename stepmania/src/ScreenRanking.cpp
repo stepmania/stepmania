@@ -721,7 +721,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 			m_Banner.LoadFromCourse( pts.pCourse );
 			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
-			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.nt, pts.cd );
+			Trail *pTrail = pts.pCourse->GetTrail( pts.nt, pts.cd );
+			ASSERT( pTrail );
+			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pTrail );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				HighScore hs;
@@ -823,7 +825,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
 				FOREACH_ShownCourseDifficulty( cd )
 				{
-					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pts.nt, cd );
+					Trail *pTrail = pCourse->GetTrail( pts.nt, cd );
+					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pTrail );
 					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[cd];
 
 					HighScore hs;

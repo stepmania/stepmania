@@ -946,15 +946,17 @@ void ScreenEvaluation::CommitScores(
 			case course:
 				{
 					Course* pCourse = GAMESTATE->m_pCurCourse;
-					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
 					ASSERT( pCourse );
+					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
+					StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+					Trail* pTrail = pCourse->GetTrail( st, cd );
 
 					// don't save scores for a failed Nonstop
 					// DO save scores for a failed Oni/Endless
 					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
 						continue;
 
-					PROFILEMAN->AddCourseScore( pCourse, nt, cd, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
 			default:
@@ -976,7 +978,7 @@ void ScreenEvaluation::CommitScores(
 
 			HighScore &hs = m_HighScore[p];
 			Profile* pProfile = PROFILEMAN->GetMachineProfile();
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 			const HighScoreList *pHSL = NULL;
 			switch( m_Type )
@@ -990,15 +992,17 @@ void ScreenEvaluation::CommitScores(
 				break;
 			case summary:
 				{
-					pHSL = &pProfile->GetCategoryHighScoreList( nt, rcOut[p] );
+					pHSL = &pProfile->GetCategoryHighScoreList( st, rcOut[p] );
 				}
 				break;
 			case course:
 				{
 					Course* pCourse = GAMESTATE->m_pCurCourse;
 					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
+					Trail *pTrail = pCourse->GetTrail( st, cd );
 					ASSERT( pCourse );
-					pHSL = &pProfile->GetCourseHighScoreList( pCourse, nt, cd );
+					ASSERT( pTrail );
+					pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
 				}
 				break;
 			default:

@@ -416,7 +416,8 @@ void ScreenSelectCourse::AfterCourseChange()
 				 * have an opinion on which should be used here for
 				 * each of oni, endless, nonstop --
 				 * should this choice be an option or a metric? */
-				const HighScoreList& hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
+				Trail *pTrail = pCourse->GetTrail( st, cd );
+				const HighScoreList& hsl = pProfile->GetCourseHighScoreList( pCourse, pTrail );
 				if ( pCourse->IsOni() || pCourse->IsEndless() )
 				{
 					/* use survive time */

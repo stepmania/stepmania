@@ -322,6 +322,10 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			Song* pSong = ss.pSong;
 			Steps* pSteps = ss.pSteps[p];
 			Course* pCourse = GAMESTATE->m_pCurCourse;
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
+			Trail* pTrail = pCourse->GetTrail( st, cd );
+
 			int iHighScoreIndex = -1;	// -1 means "out of ranking"
 			Grade grade = ss.GetGrade( p );
 			int iScore = ss.iScore[p];
@@ -337,7 +341,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 			const HighScoreList& hsl = 
 				GAMESTATE->IsCourseMode() ?
-				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredCourseDifficulty[p]) :
+				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
 				PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
 
 			for( unsigned h=0; h<hsl.vHighScores.size(); h++ )

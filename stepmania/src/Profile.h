@@ -22,6 +22,7 @@
 #include "SongUtil.h"	// for SongID
 #include "StepsUtil.h"	// for StepsID
 #include "CourseUtil.h"	// for CourseID
+#include "TrailUtil.h"	// for TrailID
 
 struct XNode;
 
@@ -150,18 +151,22 @@ public:
 	//
 	// struct was a typedef'd array of HighScores, but VC6 freaks out 
 	// in processing the templates for map::operator[].
+	struct HighScoresForATrail
+	{
+		HighScoreList hs;
+	};
 	struct HighScoresForACourse	
 	{
-		HighScoreList hs[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
+		std::map<TrailID,HighScoresForATrail>	m_TrailHighScores;
 	};
 	std::map<CourseID,HighScoresForACourse>	m_CourseHighScores;
 
-	void AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs, int &iIndexOut );
-	HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd );
-	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd ) const;
+	void AddCourseHighScore( const Course* pCourse, const Trail* pTrail, HighScore hs, int &iIndexOut );
+	HighScoreList& GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail );
+	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail ) const;
 	int GetCourseNumTimesPlayed( const Course* pCourse ) const;
 	int GetCourseNumTimesPlayed( const CourseID& courseID ) const;
-	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd );
+	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail );
 
 
 	//
@@ -267,6 +272,7 @@ public:
 	struct HighScoreForACourse
 	{
 		CourseID courseID;
+		TrailID	trailID;
 		HighScore hs;
 
 		HighScoreForACourse() { Unset(); }
@@ -276,7 +282,7 @@ public:
 		void LoadFromNode( const XNode* pNode );
 	};
 	vector<HighScoreForACourse> m_vRecentCourseScores;
-	void AddCourseRecentScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs );
+	void AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
 
 	//
 	// Init'ing
@@ -311,11 +317,6 @@ public:
 	bool LoadAllFromDir( CString sDir, bool bRequireSignature );	// return false on error
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
-	void LoadProfileDataFromDirSM390a12( CString sDir );
-	void LoadSongScoresFromDirSM390a12( CString sDir );
-	void LoadCourseScoresFromDirSM390a12( CString sDir );
-	void LoadCategoryScoresFromDirSM390a12( CString sDir );
-	
 	void LoadEditableDataFromDir( CString sDir );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
@@ -338,16 +339,12 @@ public:
 	XNode* SaveRecentSongScoresCreateNode() const;
 	XNode* SaveRecentCourseScoresCreateNode() const;
 
-	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
-	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;
-	void DeleteCourseScoresFromDirSM390a12( CString sDir ) const;
-	void DeleteCategoryScoresFromDirSM390a12( CString sDir ) const;
-
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 
 private:
 	const HighScoresForASong *GetHighScoresForASong( const SongID& songID ) const;
+	const HighScoresForACourse *GetHighScoresForACourse( const CourseID& courseID ) const;
 };
 
 

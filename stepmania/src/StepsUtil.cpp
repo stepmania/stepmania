@@ -123,6 +123,7 @@ void StepsUtil::SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers 
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByTypeAndDifficulty );
 }
 
+
 void StepsID::FromSteps( const Steps *p )
 {
 	if( p == NULL )

@@ -498,29 +498,29 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 // Course stats
 //
-void ProfileManager::AddCourseScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	// Don't use a minimum percentage for Course scores
 //	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 		if( PROFILEMAN->IsUsingProfile(pn) )
-			PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, st, cd, hs, iPersonalIndexOut );
+			PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
 		else
 			iPersonalIndexOut = -1;
-		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, st, cd, hs, iMachineIndexOut );
+		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
 	}
 
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCourseRecentScore( pCourse, st, cd, hs );
-	PROFILEMAN->GetMachineProfile()->AddCourseRecentScore( pCourse, st, cd, hs );
+		PROFILEMAN->GetProfile(pn)->AddCourseRecentScore( pCourse, pTrail, hs );
+	PROFILEMAN->GetMachineProfile()->AddCourseRecentScore( pCourse, pTrail, hs );
 }
 
-void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn )
+void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn )
 {
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->IncrementCoursePlayCount( pCourse, st, cd );
-	PROFILEMAN->GetMachineProfile()->IncrementCoursePlayCount( pCourse, st, cd );
+		PROFILEMAN->GetProfile(pn)->IncrementCoursePlayCount( pCourse, pTrail );
+	PROFILEMAN->GetMachineProfile()->IncrementCoursePlayCount( pCourse, pTrail );
 }
 
 

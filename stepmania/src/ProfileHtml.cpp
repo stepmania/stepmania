@@ -737,7 +737,11 @@ bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCo
 	{
 		FOREACH_ShownCourseDifficulty( cd )
 		{
-			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
+			Trail *pTrail = pCourse->GetTrail( st, cd );
+			if( pTrail == NULL )
+				 continue;
+
+			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, pTrail );
 			if( hsl.vHighScores.empty() )
 				continue;
 
@@ -886,7 +890,8 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 
 				FOREACH_ShownCourseDifficulty( cd )
 				{
-					if( pCourse->HasCourseDifficulty(st,cd) )
+					Trail *pTrail = pCourse->GetTrail( st, cd );
+					if( pTrail )
 					{
 						TranslatedWrite(f,"<td>");
 						/* HACK: Course::GetMeter() requires that a style be set, since
@@ -896,7 +901,7 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 							GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 						float fMeter = pCourse->GetMeter(st,cd);
 						TranslatedWrite(f, ssprintf("(%.2f)",fMeter) );
-						HighScore hs = pProfile->GetCourseHighScoreList(pCourse, st, cd).GetTopScore();
+						HighScore hs = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore();
 						Grade grade = hs.grade;
 						if( grade != GRADE_NO_DATA )
 						{
