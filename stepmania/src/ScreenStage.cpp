@@ -251,7 +251,7 @@ ScreenStage::ScreenStage()
 			}
 			
 			m_sprNumbers[i].SetXY( CENTER_X - 170 + (90 * i), CENTER_Y );
-			m_sprNumbers[i].SetY(  );
+			m_sprNumbers[i].SetY( CENTER_Y );
 			m_sprNumbers[i].ZoomToWidth( 200.0f ); // make the numbers that appear really big
 			m_sprNumbers[i].ZoomToHeight( 200.0f); // so they can 'shrink' onto the screen
 			m_sprNumbers[i].SetZoom( 20.0f ); // make it really really big on-screen
