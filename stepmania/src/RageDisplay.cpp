@@ -626,7 +626,7 @@ void RageDisplay::PopMatrix()
 	m_MatrixStack.RemoveAt( m_MatrixStack.GetSize()-1 ); 
 }
 
-void RageDisplay::Translate( const float x, const float y, const float z )
+void RageDisplay::Translate( float x, float y, float z )
 {
 	D3DXMATRIX matTemp;
 	D3DXMatrixTranslation( &matTemp, x, y, z );
@@ -634,7 +634,7 @@ void RageDisplay::Translate( const float x, const float y, const float z )
 	matTop = matTemp * matTop;
 }
 
-void RageDisplay::TranslateLocal( const float x, const float y, const float z )
+void RageDisplay::TranslateLocal( float x, float y, float z )
 {
 	D3DXMATRIX matTemp;
 	D3DXMatrixTranslation( &matTemp, x, y, z );
@@ -642,7 +642,7 @@ void RageDisplay::TranslateLocal( const float x, const float y, const float z )
 	matTop = matTop * matTemp;
 }
 
-void RageDisplay::Scale( const float x, const float y, const float z )
+void RageDisplay::Scale( float x, float y, float z )
 {
 	D3DXMATRIX matTemp;
 	D3DXMatrixScaling( &matTemp, x, y, z );
@@ -650,7 +650,7 @@ void RageDisplay::Scale( const float x, const float y, const float z )
 	matTop = matTemp * matTop;
 }
 
-void RageDisplay::RotateX( const float r )
+void RageDisplay::RotateX( float r )
 {
 	D3DXMATRIX matTemp;
 	D3DXMatrixRotationX( &matTemp, r );
@@ -658,7 +658,7 @@ void RageDisplay::RotateX( const float r )
 	matTop = matTemp * matTop;
 }
 
-void RageDisplay::RotateY( const float r )
+void RageDisplay::RotateY( float r )
 {
 	D3DXMATRIX matTemp;
 	D3DXMatrixRotationY( &matTemp, r );
@@ -666,7 +666,7 @@ void RageDisplay::RotateY( const float r )
 	matTop = matTemp * matTop;
 }
 
-void RageDisplay::RotateZ( const float r )
+void RageDisplay::RotateZ( float r )
 {
 	D3DXMATRIX matTemp;
 	D3DXMatrixRotationZ( &matTemp, r );

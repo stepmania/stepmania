@@ -55,7 +55,7 @@ public:
 
 //	LPDIRECT3D8 GetD3D()					{ return m_pd3d; };
 //	inline LPDIRECT3DDEVICE8 GetDevice()	{ return m_pd3dDevice; };
-	const D3DCAPS8& GetDeviceCaps()			{ return m_DeviceCaps; };
+	const D3DCAPS8& GetDeviceCaps() const { return m_DeviceCaps; };
 
 	HRESULT Reset();
 	HRESULT BeginFrame();
@@ -80,17 +80,17 @@ public:
 	void ResetMatrixStack();
 	void PushMatrix();
 	void PopMatrix();
-	void Translate( const float x, const float y, const float z );
-	void TranslateLocal( const float x, const float y, const float z );
-	void Scale( const float x, const float y, const float z );
-	void RotateX( const float r );
-	void RotateY( const float r );
-	void RotateZ( const float r );
+	void Translate( float x, float y, float z );
+	void TranslateLocal( float x, float y, float z );
+	void Scale( float x, float y, float z );
+	void RotateX( float r );
+	void RotateY( float r );
+	void RotateZ( float r );
 //	void RotateYawPitchRoll( const float x, const float y, const float z );
 
-	int GetFPS() { return m_iFPS; };
-	int GetTPF() { return m_iTPF; };
-	int GetDPF() { return m_iDPF; };
+	int GetFPS() const { return m_iFPS; };
+	int GetTPF() const { return m_iTPF; };
+	int GetDPF() const { return m_iDPF; };
 
 	void GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const;
 
@@ -123,9 +123,7 @@ private:
 	int		m_iFramesRenderedSinceLastCheck;
 	int		m_iTrianglesRenderedSinceLastCheck;
 	int		m_iDrawsSinceLastCheck;
-	int		m_iFPS;
-	int		m_iTPF;
-	int		m_iDPF;
+	int		m_iFPS, m_iTPF, m_iDPF;
 
 
 	//
