@@ -69,7 +69,7 @@ RageLog::RageLog()
     GetLocalTime( &st );
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 					 st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-	this->Trace( "\n" );
+	this->Trace( "" );
 
 	ShowConsole();
 }

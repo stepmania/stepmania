@@ -354,7 +354,7 @@ RageInput::RageInput()
 	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
 	{
 		if(m_Pumps[pumpNo].init(pumpNo))
-			LOG->Info("Found Pump pad %i\n", pumpNo);
+			LOG->Info("Found Pump pad %i", pumpNo);
 	}
 }
 
