@@ -14,7 +14,6 @@
 #include "RageUtil.h"
 #include "Game.h"
 
-#include <map>
 class Font;
 
 //-----------------------------------------------------------------------------
@@ -38,10 +37,6 @@ public:
 
 	static longchar MakeGameGlyph(wchar_t c, Game g);
 	static bool ExtractGameGlyph(longchar ch, wchar_t &c, Game &g);
-
-protected:
-	// map from file name to a texture holder
-	map<CString, Font*> m_mapPathToFont;
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

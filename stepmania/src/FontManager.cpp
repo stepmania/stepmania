@@ -17,8 +17,13 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
+#include <map>
 
 FontManager*	FONT	= NULL;
+
+// map from file name to a texture holder
+typedef pair<CString,CString> FontName;
+static map<FontName, Font*> g_mapPathToFont;
 
 FontManager::FontManager()
 {
@@ -26,11 +31,12 @@ FontManager::FontManager()
 
 FontManager::~FontManager()
 {
-	for( std::map<CString, Font*>::iterator i = m_mapPathToFont.begin();
-		i != m_mapPathToFont.end(); ++i)
+	for( std::map<FontName, Font*>::iterator i = g_mapPathToFont.begin();
+		i != g_mapPathToFont.end(); ++i)
 	{
+		const FontName &fn = i->first;
 		Font* pFont = i->second;
-		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", i->first.c_str(), pFont->m_iRefCount );
+		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", fn.first.c_str(), pFont->m_iRefCount );
 		delete pFont;
 	}
 }
@@ -56,8 +62,8 @@ bool FontManager::ExtractGameGlyph(longchar ch, wchar_t &c, Game &g)
 
 void FontManager::ReloadFonts()
 {
-	for(map<CString, Font*>::iterator i = m_mapPathToFont.begin();
-		i != m_mapPathToFont.end(); ++i)
+	for(map<FontName, Font*>::iterator i = g_mapPathToFont.begin();
+		i != g_mapPathToFont.end(); ++i)
 	{
 		i->second->Reload();
 	}
@@ -70,19 +76,19 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 	// of the same bitmap if there are equivalent but different paths
 	// (e.g. "graphics\blah.png" and "..\stepmania\graphics\blah.png" ).
 
-	map<CString, Font*>::iterator p = m_mapPathToFont.find(sFontOrTextureFilePath);
-	if(p != m_mapPathToFont.end()) {
+	CHECKPOINT_M( ssprintf("FontManager::LoadFont(%s).", sFontOrTextureFilePath.c_str()) );
+	const FontName NewName( sFontOrTextureFilePath, sChars );
+	map<FontName, Font*>::iterator p = g_mapPathToFont.find( NewName );
+	if( p != g_mapPathToFont.end() )
+	{
 		Font *pFont=p->second;
-//		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontOrTextureFilePath.c_str(), pFont->m_iRefCount) );
 		pFont->m_iRefCount++;
 		return pFont;
 	}
 
-	/* XXX: This will mismatch cached fonts if we load the same font with two
-	 * different sChars. */
 	Font *f = new Font;
 	f->Load(sFontOrTextureFilePath, sChars);
-	m_mapPathToFont[sFontOrTextureFilePath] = f;
+	g_mapPathToFont[NewName] = f;
 	return f;
 }
 
@@ -91,22 +97,20 @@ void FontManager::UnloadFont( Font *fp )
 {
 	CHECKPOINT_M( ssprintf("FontManager::UnloadFont(%s).", fp->path.c_str()) );
 
-	for( std::map<CString, Font*>::iterator i = m_mapPathToFont.begin();
-		i != m_mapPathToFont.end(); ++i)
+	for( std::map<FontName, Font*>::iterator i = g_mapPathToFont.begin();
+		i != g_mapPathToFont.end(); ++i)
 	{
-		if(i->second == fp)
-		{
-			i->second->m_iRefCount--;
-	
-			if( fp->m_iRefCount == 0 )
-			{
-				delete i->second;		// free the texture
-				m_mapPathToFont.erase( i );	// and remove the key in the map
-			}
-//	LOG->Trace( "FontManager: '%s' will be deleted.  It has %d references.", sFontFilePath.c_str(), pFont->m_iRefCount );
-			return;
-		}
+		if(i->second != fp)
+			continue;
 
+		i->second->m_iRefCount--;
+
+		if( fp->m_iRefCount == 0 )
+		{
+			delete i->second;		// free the texture
+			g_mapPathToFont.erase( i );	// and remove the key in the map
+		}
+		return;
 	}
 	
 	RageException::Throw( "Unloaded an unknown font (%p)", fp );
