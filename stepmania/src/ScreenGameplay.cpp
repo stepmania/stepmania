@@ -543,8 +543,10 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	m_Background.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath(), true );	// enable accurate sync
-	float fStartSeconds = min( 0, -4+GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(GAMESTATE->m_pCurSong->m_fFirstBeat) );
-	m_soundMusic.SetPositionSeconds( fStartSeconds );
+	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
+	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
+	const float fStartSecond = min( 0, fFirstSecond-4 );
+	m_soundMusic.SetPositionSeconds( fStartSecond );
 	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 	if( !bFirstLoad )
 		m_soundMusic.Play();
@@ -608,16 +610,26 @@ void ScreenGameplay::Update( float fDeltaTime )
 	GAMESTATE->m_fSongBeat = fSongBeat;
 	GAMESTATE->m_fCurBPS = fBPS;
 	GAMESTATE->m_bFreeze = bFreeze;
+	
+//	printf( "m_fSongBeat = %f\n", GAMESTATE->m_fSongBeat );
 
-	/* Before the music starts, we have no song position, so set it toto
+/*
+	 * Before the music starts, we have no song position, so set it toto
 	 * -1; if we leave it alone we'll get 0, which will cause movies to start
 	 * playing before the music starts.
 	 *
 	 * We really should be setting the beat to negative numbers before the song
 	 * starts, leading up to 0, but we need a separate time source to do that.
-	 * XXX: do this once we have a new sound infrastructure. */
+	 * XXX: do this once we have a new sound infrastructure. 
 	if(!m_soundMusic.IsPlaying())
 		GAMESTATE->m_fSongBeat = -1;
+
+
+	Chris:  Actually, RageSoundStream has a "fake" second counter built into
+	it.  If you set its position to a negative second and call Update() on it,
+	it will count up as if was playing music.
+	
+*/
 
 //	LOG->Trace( "GAMESTATE->m_fMusicSeconds = %f", GAMESTATE->m_fMusicSeconds );
 	

@@ -349,59 +349,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_bTryExtraStage = false;
 
 
-	//////////////////////////
-	// Init non-ResultMode specific displays 
-	//////////////////////////
-	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
-	{
-		// EZ2 should hide these things by placing them off screen with theme metrics
-		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels") );
-		m_sprJudgeLabels[l].StopAnimating();
-		m_sprJudgeLabels[l].SetState( l );
-		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
-		m_sprJudgeLabels[l].SetZoom( 1.0f );
-		this->AddChild( &m_sprJudgeLabels[l] );
-	}
-
-	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
-	m_sprScoreLabel.SetState( m_ResultMode==RM_ONI ? 1 : 0 );
-	m_sprScoreLabel.StopAnimating();
-	m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
-	m_sprScoreLabel.SetZoom( 1.0f );
-	this->AddChild( &m_sprScoreLabel );
-
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-			continue;	// skip
-
-		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
-		{
-			m_textJudgeNumbers[l][p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation score numbers 7x2"), "01234 :56789%." );
-			m_textJudgeNumbers[l][p].TurnShadowOff();
-			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(p,l), JUDGE_Y(l) );
-			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
-			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
-			this->AddChild( &m_textJudgeNumbers[l][p] );
-		}
-
-		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
-		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
-		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
-		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
-		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
-		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
-		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
-
-
-		if( m_ResultMode==RM_ONI )
-			m_ScoreDisplay[p].SetText( SecondsToTime(GAMESTATE->GetPlayerSurviveTime( (PlayerNumber)p )) );
-		else
-			m_ScoreDisplay[p].SetScore( fScore[p] );
-	}
-
-
 	/////////////////////////////////
 	// Init ResultMode-specific displays
 	/////////////////////////////////
@@ -531,6 +478,61 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		}
 	}
 		
+	//////////////////////////
+	// Init non-ResultMode specific displays.
+	// Do this after Result-specific displays so that the text will draw on top of 
+	// the bonus frame.
+	//////////////////////////
+	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+	{
+		// EZ2 should hide these things by placing them off screen with theme metrics
+		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels") );
+		m_sprJudgeLabels[l].StopAnimating();
+		m_sprJudgeLabels[l].SetState( l );
+		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
+		m_sprJudgeLabels[l].SetZoom( 1.0f );
+		this->AddChild( &m_sprJudgeLabels[l] );
+	}
+
+	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
+	m_sprScoreLabel.SetState( m_ResultMode==RM_ONI ? 1 : 0 );
+	m_sprScoreLabel.StopAnimating();
+	m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
+	m_sprScoreLabel.SetZoom( 1.0f );
+	this->AddChild( &m_sprScoreLabel );
+
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+			continue;	// skip
+
+		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+		{
+			m_textJudgeNumbers[l][p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation score numbers 7x2"), "01234 :56789%." );
+			m_textJudgeNumbers[l][p].TurnShadowOff();
+			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(p,l), JUDGE_Y(l) );
+			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
+			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
+			this->AddChild( &m_textJudgeNumbers[l][p] );
+		}
+
+		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
+		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
+		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
+		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
+		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
+		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
+		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
+
+
+		if( m_ResultMode==RM_ONI )
+			m_ScoreDisplay[p].SetText( SecondsToTime(GAMESTATE->GetPlayerSurviveTime( (PlayerNumber)p )) );
+		else
+			m_ScoreDisplay[p].SetScore( fScore[p] );
+	}
+
+
 
 	bool bOneHasNewRecord = false;
 	for( p=0; p<NUM_PLAYERS; p++ )

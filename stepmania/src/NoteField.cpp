@@ -20,6 +20,7 @@
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "RageLog.h"
 
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;
@@ -150,16 +151,16 @@ void NoteField::DrawPrimitives()
 {
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
-	float fSongBeat = max( 0, GAMESTATE->m_fSongBeat );
+	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	
 	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
 	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
 	const float fFirstBeatToDraw = max( 0, fSongBeat - fBeatsToDrawBehind );
-	const float fLastBeatToDraw  = fSongBeat + fBeatsToDrawAhead;
+	const float fLastBeatToDraw  = max( 0, fSongBeat + fBeatsToDrawAhead );
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
 
-	//LOG->Trace( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
+	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
 
 	if( GAMESTATE->m_bEditing )
 	{

@@ -305,7 +305,10 @@ void Background::LoadFromSong( Song* pSong )
 		/* If we have only 2, only generate a single animation segment for for the
 		 * whole song.  Otherwise, if it's a movie., it'll loop every four bars; we
 		 * want it to play continuously. */
-		const float fFirstBeat = (m_BackgroundMode==MODE_MOVIE_BG) ? 0 : pSong->m_fFirstBeat;
+		float fMusicStartBeat, fBPS;
+		bool bFreeze;
+		pSong->GetBeatAndBPSFromElapsedTime( -pSong->m_fBeat0OffsetInSeconds, fMusicStartBeat, fBPS, bFreeze );
+		const float fFirstBeat = (m_BackgroundMode==MODE_MOVIE_BG) ? fMusicStartBeat : pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
 		if( m_BackgroundAnimations.GetSize() == 2) {

@@ -303,11 +303,11 @@ void ScreenSelectMusic::TweenOffScreen()
 {
 	int i;
 
-	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME );
-	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME );
-	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME );
-	m_textStage.FadeOff( 0, "bounce left", TWEEN_TIME );
-	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME );
+	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
+	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
+	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
+	m_textStage.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
+	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
