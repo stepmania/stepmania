@@ -133,30 +133,31 @@ void ScreenEnding::Update( float fDeltaTime )
 {
 	ScreenAttract::Update( fDeltaTime );
 
-	bool bRemovedOneOrMore = false;
-	bool bAllRemoved = true;
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( m_bWaitingForRemoveCard[p] )
-		{
-			m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
-			if( m_bWaitingForRemoveCard[p] )
-			{
-				bAllRemoved = false;
-			}
-			else
-			{
-				m_sprRemoveMemoryCard[p].SetHidden( true );
-				bRemovedOneOrMore = true;
-			}
-		}
-	}
-
 	m_fTimeUntilBeginFadingOut = max( 0, m_fTimeUntilBeginFadingOut-fDeltaTime );
 
-	if( bRemovedOneOrMore && bAllRemoved )
-		this->PostScreenMessage( SM_BeginFadingOut, m_fTimeUntilBeginFadingOut );
+	if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
+	{
+		bool bAllRemoved = true;
+
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( m_bWaitingForRemoveCard[p] )
+			{
+				m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
+				if( m_bWaitingForRemoveCard[p] )
+				{
+					bAllRemoved = false;
+				}
+				else
+				{
+					m_sprRemoveMemoryCard[p].SetHidden( true );
+				}
+			}
+		}
+
+		if( bAllRemoved )
+			this->PostScreenMessage( SM_BeginFadingOut, m_fTimeUntilBeginFadingOut );
+	}
 }	
 
 void ScreenEnding::HandleScreenMessage( const ScreenMessage SM )
