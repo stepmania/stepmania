@@ -10,8 +10,8 @@
 -----------------------------------------------------------------------------
 */
 
-#include "MenuInput.h"
 #include "GameConstantsAndTypes.h"
+#include "GameInput.h"
 
 const int MAX_INPUT_QUEUE_LENGTH = 8;
 
@@ -20,19 +20,19 @@ class InputQueue
 public:
 	InputQueue();
 
-	void HandleInput( const PlayerNumber p, const MenuButton b );
-	bool MatchesPattern( const PlayerNumber p, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 );
+	void RememberInput( GameInput );
+	bool MatchesPattern( const GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 );
 
 
 protected:
-	struct MenuButtonAndTime
+	struct GameButtonAndTime
 	{
-		MenuButtonAndTime() {}
-		MenuButtonAndTime( MenuButton b, float t ) { button = b; fTime = t; };
-		MenuButton	button;
+		GameButtonAndTime() {}
+		GameButtonAndTime( GameButton b, float t ) { button = b; fTime = t; };
+		GameButton	button;
 		float		fTime;
 	};
-	CArray<MenuButtonAndTime,MenuButtonAndTime> m_aQueue[NUM_PLAYERS];
+	CArray<GameButtonAndTime,GameButtonAndTime> m_aQueue[MAX_GAME_CONTROLLERS];
 };
 
 

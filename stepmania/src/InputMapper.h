@@ -32,23 +32,26 @@ public:
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 
+	void ClearAllMappings();
+	void ClearDefaultMappings();
 
-	// input mapping stuff
-	void SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex, bool bOverrideHardCoded = false );
+	void SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex );
 	void ClearFromInputMap( DeviceInput DeviceI );
 	void ClearFromInputMap( GameInput GameI, int iSlotIndex );
+
+	void AddDefaultMappingsForCurrentGame();
+
+	bool IsMapped( DeviceInput DeviceI );
+	bool IsMapped( GameInput GameI );
 	
 	bool DeviceToGame( DeviceInput DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
 	bool GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
-
-	MenuInput DeviceToMenu( DeviceInput DeviceI );
-	DeviceInput MenuToDevice( MenuInput MenuI );
 
 	void GameToStyle( GameInput GameI, StyleInput &StyleI );
 	void StyleToGame( StyleInput StyleI, GameInput &GameI );
 
 	void GameToMenu( GameInput GameI, MenuInput &MenuI );
-	void MenuToGame( MenuInput MenuI, GameInput &GameI );
+	void MenuToGame( MenuInput MenuI, GameInput GameIout[4] );
 
 	bool IsButtonDown( GameInput GameI );
 	bool IsButtonDown( MenuInput MenuI );
@@ -67,3 +70,4 @@ protected:
 
 
 extern InputMapper*	INPUTMAPPER;	// global and accessable from anywhere in our program
+

@@ -187,6 +187,7 @@ CString DeviceInput::GetDescription()
 		case DIK_LWIN:		sReturn += "Left Win";	break;
 		case DIK_RWIN:		sReturn += "Right Win";	break;
 		case DIK_APPS:		sReturn += "App Menu";	break;
+		case DIK_NUMPADENTER:	sReturn += "NumPadEnter";	break;
 
 		default:			sReturn += "Unknown Key"; break;
 		}
@@ -284,7 +285,7 @@ BOOL CALLBACK	EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 
 RageInput::RageInput( HWND hWnd )
 {
-	LOG->WriteLine( "RageInput::RageInput()" );
+	LOG->Trace( "RageInput::RageInput()" );
 
 	int i;
 

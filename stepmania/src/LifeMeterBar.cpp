@@ -104,15 +104,19 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		{
 		case TNS_PERFECT:	fDeltaLife = +0;	break;
 		case TNS_GREAT:		fDeltaLife = +0;	break;
-		case TNS_GOOD:		fDeltaLife = -1;	break;
-		case TNS_BOO:		fDeltaLife = -1;	break;
-		case TNS_MISS:		fDeltaLife = -1;	break;
+		case TNS_GOOD:		fDeltaLife = -100;	break;
+		case TNS_BOO:		fDeltaLife = -100;	break;
+		case TNS_MISS:		fDeltaLife = -100;	break;
 		}
 		break;
 	default:
 		ASSERT(0);
 	}
 
+	if( fDeltaLife > 0 )
+		fDeltaLife *= PREFSMAN->m_fLifeDifficultyScale;
+	else
+		fDeltaLife /= PREFSMAN->m_fLifeDifficultyScale;
 
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );

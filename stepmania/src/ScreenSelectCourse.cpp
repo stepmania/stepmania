@@ -52,7 +52,7 @@ const ScreenMessage SM_ConfirmChange		=	ScreenMessage(SM_User+3);
 
 ScreenSelectCourse::ScreenSelectCourse()
 {
-	LOG->WriteLine( "ScreenSelectCourse::ScreenSelectCourse()" );
+	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -97,7 +97,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 ScreenSelectCourse::~ScreenSelectCourse()
 {
-	LOG->WriteLine( "ScreenSelectCourse::~ScreenSelectCourse()" );
+	LOG->Trace( "ScreenSelectCourse::~ScreenSelectCourse()" );
 
 }
 
@@ -135,7 +135,7 @@ void ScreenSelectCourse::TweenOffScreen()
 
 void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenSelectCourse::Input()" );
+	LOG->Trace( "ScreenSelectCourse::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;		// ignore

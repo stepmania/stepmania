@@ -187,7 +187,7 @@ void NoteField::DrawFreezeText( const int iIndex, const float fSecs )
 
 void NoteField::DrawPrimitives()
 {
-	//LOG->WriteLine( "NoteField::DrawPrimitives()" );
+	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	float fSongBeat = max( 0, GAMESTATE->m_fSongBeat );
 
@@ -198,7 +198,7 @@ void NoteField::DrawPrimitives()
 	const int iIndexFirstArrowToDraw = max( 0, BeatToNoteRow( fSongBeat - fBeatsToDrawBehind ) );
 	const int iIndexLastArrowToDraw  = BeatToNoteRow( fSongBeat + fBeatsToDrawAhead );
 
-	//LOG->WriteLine( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
+	//LOG->Trace( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
 	if( GAMESTATE->m_bEditing )
 	{

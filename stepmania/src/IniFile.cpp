@@ -233,7 +233,7 @@ bool IniFile::SetValueI(CString keyname, CString valuename, int value, bool crea
 bool IniFile::SetValueF(CString keyname, CString valuename, float value, bool create)
 {
 	CString temp;
-	temp.Format("%e",value);
+	temp.Format("%f",value);
 	return SetValue(keyname, valuename, temp, create);
 }
 

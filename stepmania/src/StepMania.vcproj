@@ -1003,6 +1003,9 @@
 			RelativePath=".\error.bmp">
 		</File>
 		<File
+			RelativePath="loading.bmp">
+		</File>
+		<File
 			RelativePath=".\splash.bmp">
 		</File>
 	</Files>

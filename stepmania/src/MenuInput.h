@@ -28,19 +28,17 @@ enum MenuButton
 
 struct MenuInput
 {
-	MenuInput() { MakeBlank(); };
+	MenuInput() { MakeInvalid(); };
 	MenuInput( PlayerNumber p, MenuButton b ) { player = p; button = b; };
-
 
 	PlayerNumber	player;
 	MenuButton		button;
 
-	bool operator==( const MenuInput &other ) { return player == other.player && button == other.button; };
+//	bool operator==( const MenuInput &other ) { return player == other.player && button == other.button; };
 
-	inline bool IsBlank() const { return player == PLAYER_INVALID; };
-	inline bool IsValid() const { return !IsBlank(); };
-	inline void MakeBlank() { player = PLAYER_INVALID; button = MENU_BUTTON_INVALID; };
-	
+	inline bool IsValid() const { return player != PLAYER_INVALID; };
+	inline void MakeInvalid() { player = PLAYER_INVALID; button = MENU_BUTTON_INVALID; };
 };
+
 
 

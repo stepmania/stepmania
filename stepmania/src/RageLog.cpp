@@ -38,10 +38,10 @@ RageLog::RageLog()
 	SYSTEMTIME st;
     GetLocalTime( &st );
 
-	this->WriteLine( "Last compiled on %s.", __TIMESTAMP__ );
-	this->WriteLine( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+	this->Trace( "Last compiled on %s.", __TIMESTAMP__ );
+	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 					 st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-	this->WriteLine( "\n" );
+	this->Trace( "\n" );
 }
 
 RageLog::~RageLog()
@@ -64,7 +64,7 @@ void RageLog::HideConsole()
 	FreeConsole();
 }
 
-void RageLog::WriteLine( LPCTSTR fmt, ...)
+void RageLog::Trace( LPCTSTR fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
@@ -80,13 +80,26 @@ void RageLog::WriteLine( LPCTSTR fmt, ...)
 #endif
 }
 
-void RageLog::WriteLineHr( HRESULT hr, LPCTSTR fmt, ...)
+void RageLog::Trace( HRESULT hr, LPCTSTR fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
     CString s = vssprintf( fmt, va );
 	s += ssprintf( "(%s)", DXGetErrorString8(hr) );
-	this->WriteLine( s );
+	this->Trace( s );
+}
+
+void RageLog::Warn( LPCTSTR fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+
+    CString sBuff = vssprintf( fmt, va );
+
+	Trace(  "/////////////////////////////////////////\n"
+			"WARNING:  %s\n"
+			"/////////////////////////////////////////",
+			sBuff ); 
 }
 
 void RageLog::Flush()

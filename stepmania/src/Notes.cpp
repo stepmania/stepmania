@@ -18,9 +18,9 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"
-
 #include "GameInput.h"
 #include "RageException.h"
+#include "MsdFile.h"
 
 
 typedef int DanceNote;
@@ -113,7 +113,7 @@ void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOu
 
 bool Notes::LoadFromBMSFile( const CString &sPath )
 {
-	LOG->WriteLine( "Notes::LoadFromBMSFile( '%s' )", sPath );
+	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
 	NoteData* pNoteData = new NoteData;
 	pNoteData->m_iNumTracks = MAX_NOTE_TRACKS;
@@ -186,7 +186,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
 				m_sDescription = m_sDescription.Mid( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
 			m_sDescription.MakeLower();
-			LOG->WriteLine( "Notes description found to be '%s'", m_sDescription );
+			LOG->Trace( "Notes description found to be '%s'", m_sDescription );
 
 			// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 			if( m_sDescription.Find("6") != -1 )
@@ -214,7 +214,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 			}
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
-			//LOG->WriteLine( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
+			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
 			//	valuename, sNoteData, iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
@@ -354,11 +354,13 @@ void DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &no
 
 
 bool Notes::LoadFromDWITokens( 
-	CString sMode, CString sDescription,
-	int iNumFeet,
-	CString sStepData1, CString sStepData2 )
+	CString sMode, 
+	CString sDescription,
+	CString sNumFeet,
+	CString sStepData1, 
+	CString sStepData2 )
 {
-	LOG->WriteLine( "Notes::LoadFromDWITokens()" );
+	LOG->Trace( "Notes::LoadFromDWITokens()" );
 
 	sStepData1.Replace( "\n", "" );
 	sStepData1.Replace( " ", "" );
@@ -407,7 +409,7 @@ bool Notes::LoadFromDWITokens(
 
 	m_sDescription = sDescription;
 
-	m_iMeter = iNumFeet;
+	m_iMeter = atoi( sNumFeet );
 
 	//m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
@@ -544,7 +546,7 @@ void Notes::LoadFromSMTokens(
 	sDifficultyClass.TrimRight(); 
 
 
-//	LOG->WriteLine( "Notes::LoadFromSMTokens()" );
+//	LOG->Trace( "Notes::LoadFromSMTokens()" );
 
 	m_NotesType = StringToNotesType(sNotesType);
 	m_sDescription = sDescription;
@@ -607,6 +609,105 @@ void Notes::TidyUpData()
 	}
 }
 
+bool Notes::LoadFromKSFFile( const CString &sPath )
+{
+	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath );
+
+	MsdFile msd;
+	bool bResult = msd.ReadFile( sPath );
+	if( !bResult )
+		throw RageException( "Error opening file '%s'.", sPath );
+
+	int iTickCount = -1;	// this is the value we read for TICKCOUNT
+
+	for( int i=0; i<msd.m_iNumValues; i++ )
+	{
+		int iNumParams = msd.m_iNumParams[i];
+		CString* sParams = msd.m_sValuesAndParams[i];
+		CString sValueName = sParams[0];
+
+		// handle the data
+		if( 0==stricmp(sValueName,"TICKCOUNT") )
+			iTickCount = atoi(sParams[1]);		
+
+		else if( 0==stricmp(sValueName,"STEP") )
+		{
+			if( iTickCount == -1 )
+			{
+				LOG->Warn( "In KSF file '%s', STEP was read before TICKCOUNT", sPath );
+				iTickCount = 2;
+			}
+
+			NoteData notedata;	// read it into here
+
+			CStringArray asRows;
+			sParams[1].TrimLeft();
+			split( sParams[1], "\n", asRows, true );
+			for( int r=0; r<asRows.GetSize(); r++ )
+			{
+				CString& sRowString = asRows[r];
+				ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
+				if( sRowString == "2222222222222" )
+					break;
+				float fBeatThisRow = r/(float)iTickCount;	// the length of a note in a row depends on TICKCOUNT
+				int row = BeatToNoteRow(fBeatThisRow);
+				for( int t=0; t<13; t++ )
+				{
+					char c = sRowString[t];
+					if( c != '0' )
+						int kdsjf = 0;
+					notedata.m_TapNotes[t][row] = sRowString[t];
+				}
+			}
+
+			CString sDir, sFName, sExt;
+			splitrelpath( sPath, sDir, sFName, sExt );
+			sFName.MakeLower();
+			
+			m_sDescription = sFName;
+			if( sFName.Find("crazy")!=-1 )
+			{
+				m_DifficultyClass = CLASS_HARD;
+				m_iMeter = 8;
+			}
+			else if( sFName.Find("hard")!=-1 )
+			{
+				m_DifficultyClass = CLASS_MEDIUM;
+				m_iMeter = 5;
+			}
+			else if( sFName.Find("easy")!=-1 )
+			{
+				m_DifficultyClass = CLASS_EASY;
+				m_iMeter = 2;
+			}
+			else
+			{
+				m_DifficultyClass = CLASS_MEDIUM;
+				m_iMeter = 5;
+			}
+
+			if( sFName.Find("double") != -1 )
+			{
+				notedata.m_iNumTracks = 10;
+				m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
+			}
+			else
+			{
+				notedata.m_iNumTracks = 5;
+				m_NotesType = NOTES_TYPE_PUMP_SINGLE;
+			}
+
+			m_sSMNoteData = notedata.GetSMNoteDataString();
+		}
+
+		else
+			LOG->Trace( "Unexpected value named '%s'", sValueName );
+	}
+
+	return true;
+}
+
+
 DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter )
 {
 	sDescription.MakeLower();
@@ -617,7 +718,7 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescript
 			"easy",
 			"basic",
             "light",
-			"SDFKSJDKFJS",
+			"GARBAGE",	// but don't worry - this will never match because the compare string is all lowercase
 		},
 		{
 			"medium",

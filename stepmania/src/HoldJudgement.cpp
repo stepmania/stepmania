@@ -46,7 +46,7 @@ void HoldJudgement::DrawPrimitives()
 
 void HoldJudgement::SetHoldJudgement( HoldNoteScore hns )
 {
-	//LOG->WriteLine( "Judgement::SetJudgement()" );
+	//LOG->Trace( "Judgement::SetJudgement()" );
 
 	switch( hns )
 	{

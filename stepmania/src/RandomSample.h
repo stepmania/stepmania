@@ -1,16 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: RandomSample.h
+ Class: RandomSample
 
  Desc: Holds multiple sounds samples and can play a random sound easily.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _RandomSample_H_
-#define _RandomSample_H_
-
 
 #include "RageSound.h"
 #include "RageSoundSample.h"
@@ -46,7 +44,3 @@ private:
 	int m_iIndexLastPlayed;
 };
 
-
-
-
-#endif

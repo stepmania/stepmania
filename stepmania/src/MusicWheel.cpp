@@ -294,7 +294,7 @@ void WheelItemDisplay::DrawPrimitives()
 
 MusicWheel::MusicWheel() 
 { 
-	LOG->WriteLine( "MusicWheel::MusicWheel()" );
+	LOG->Trace( "MusicWheel::MusicWheel()" );
 
 	
 	// for debugging
@@ -897,7 +897,7 @@ void MusicWheel::Update( float fDeltaTime )
 				default:	ASSERT(0);
 				}
 				
-				LOG->WriteLine( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
+				LOG->Trace( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
 
 				if( m_iSwitchesLeftInSpinDown < 2 )
 					randomf(0,1) >= 0.5f ? NextMusic() : PrevMusic();
@@ -1027,7 +1027,7 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 	case STATE_ROULETTE_SLOWING_DOWN:
 		break;	// fall through
 	default:
-		LOG->WriteLine( "NextMusic() ignored" );
+		LOG->Trace( "NextMusic() ignored" );
 		return;	// don't continue
 	}
 
@@ -1081,7 +1081,7 @@ void MusicWheel::NextSort()
 
 bool MusicWheel::Select()	// return true of a playable item was chosen
 {
-	LOG->WriteLine( "MusicWheel::Select()" );
+	LOG->Trace( "MusicWheel::Select()" );
 
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{

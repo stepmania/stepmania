@@ -31,7 +31,7 @@ RageTexture::RageTexture(
 	bool bDither,
 	bool bStretch )
 {
-//	LOG->WriteLine( "RageTexture::RageTexture()" );
+//	LOG->Trace( "RageTexture::RageTexture()" );
 
 	// save a pointer to the D3D device
 	m_pd3dDevice = pScreen->GetDevice();
@@ -74,7 +74,7 @@ void RageTexture::CreateFrameRects()
 						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
 			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_iFramesWide)
 			
-			//LOG->WriteLine( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
+			//LOG->Trace( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}
 	}
 }

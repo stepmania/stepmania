@@ -1213,6 +1213,10 @@ SOURCE=.\error.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\loading.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\splash.bmp
 # End Source File
 # End Target

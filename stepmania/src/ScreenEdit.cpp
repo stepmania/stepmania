@@ -87,7 +87,7 @@ const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
 
 ScreenEdit::ScreenEdit()
 {
-	LOG->WriteLine( "ScreenEdit::ScreenEdit()" );
+	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 
 	m_pSong = GAMESTATE->m_pCurSong;
 
@@ -193,7 +193,7 @@ ScreenEdit::ScreenEdit()
 
 ScreenEdit::~ScreenEdit()
 {
-	LOG->WriteLine( "ScreenEdit::~ScreenEdit()" );
+	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.Stop();
 }
 
@@ -247,7 +247,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		m_Player.Update( fDeltaTime );
 	}
 
-	//LOG->WriteLine( "ScreenEdit::Update(%f)", fDeltaTime );
+	//LOG->Trace( "ScreenEdit::Update(%f)", fDeltaTime );
 	Screen::Update( fDeltaTime );
 
 
@@ -277,7 +277,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 //	fPositionSeconds += 0.08f;	// HACK:  The assist ticks are playing too late, so make them play a tiny bit earlier
 //	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
-//	LOG->WriteLine( "fPositionSeconds = %f, fSongBeat = %f, fBPS = %f", fPositionSeconds, fSongBeat, fBPS );
+//	LOG->Trace( "fPositionSeconds = %f, fSongBeat = %f, fBPS = %f", fPositionSeconds, fSongBeat, fBPS );
 
 
 	m_NoteFieldEdit.Update( fDeltaTime );
@@ -357,7 +357,7 @@ void ScreenEdit::DrawPrimitives()
 
 void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	//LOG->WriteLine( "ScreenEdit::Input()" );
+	//LOG->Trace( "ScreenEdit::Input()" );
 
 	switch( m_EditMode )
 	{

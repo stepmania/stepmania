@@ -254,7 +254,7 @@ RageMovieTexture::RageMovieTexture(
 	bool bStretch ) :
   RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch )
 {
-	LOG->WriteLine( "RageBitmapTexture::RageBitmapTexture()" );
+	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
 	m_pd3dTexture[0] = m_pd3dTexture[1] = NULL;
 	m_iIndexActiveTexture = 0;
@@ -299,7 +299,7 @@ LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
 	// time for it to catch up and copy all the frames it fell behind on.
 //	while( m_pCTR->IsLocked() ) {
 //		::Sleep(1);
-//		LOG->WriteLine( "Sleeping waiting for unlock..." );
+//		LOG->Trace( "Sleeping waiting for unlock..." );
 //	}
 
 	// restart the movie if we reach the end

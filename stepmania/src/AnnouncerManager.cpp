@@ -23,7 +23,7 @@ const CString ANNOUNCER_BASE_DIR  = "Announcers\\";
 
 AnnouncerManager::AnnouncerManager()
 {
-	LOG->WriteLine("AnnouncerManager::AnnouncerManager()");
+	LOG->Trace("AnnouncerManager::AnnouncerManager()");
 
 	CStringArray arrayAnnouncerNames;
 	GetAnnouncerNames( arrayAnnouncerNames );

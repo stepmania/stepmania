@@ -28,7 +28,7 @@ const int MAX_OPTIONS_PER_LINE = 20;
 struct OptionLineData {
 	char szTitle[30];
 	int iNumOptions;
-	char szOptionsText[MAX_OPTIONS_PER_LINE][30];
+	char szOptionsText[MAX_OPTIONS_PER_LINE][60];
 };
 
 enum InputMode { INPUTMODE_P1_ONLY, INPUTMODE_2PLAYERS, INPUTMODE_BOTH };	// both means both players control the same cursor

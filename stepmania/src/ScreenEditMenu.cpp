@@ -56,7 +56,7 @@ const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
 
 ScreenEditMenu::ScreenEditMenu()
 {
-	LOG->WriteLine( "ScreenEditMenu::ScreenEditMenu()" );
+	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
 
 	// data structures
@@ -136,7 +136,7 @@ ScreenEditMenu::ScreenEditMenu()
 
 ScreenEditMenu::~ScreenEditMenu()
 {
-	LOG->WriteLine( "ScreenEditMenu::~ScreenEditMenu()" );
+	LOG->Trace( "ScreenEditMenu::~ScreenEditMenu()" );
 }
 
 void ScreenEditMenu::DrawPrimitives()
@@ -148,7 +148,7 @@ void ScreenEditMenu::DrawPrimitives()
 
 void ScreenEditMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenEditMenu::Input()" );
+	LOG->Trace( "ScreenEditMenu::Input()" );
 
 	
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );

@@ -23,7 +23,7 @@ const float SCORE_TWEEN_TIME = 0.5f;
 
 ScoreDisplayNormal::ScoreDisplayNormal()
 {
-	LOG->WriteLine( "ScoreDisplayNormal::ScoreDisplayNormal()" );
+	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
 	// init the text
 	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );

@@ -59,7 +59,7 @@ const ScreenMessage SM_GoToMusicScroll		=	ScreenMessage(SM_User+4);
 
 ScreenEvaluation::ScreenEvaluation( bool bSummary )
 {
-	LOG->WriteLine( "ScreenEvaluation::ScreenEvaluation()" );
+	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 	
 	int l, p;	// for counting
 
@@ -706,7 +706,7 @@ void ScreenEvaluation::DrawPrimitives()
 
 void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenEvaluation::Input()" );
+	LOG->Trace( "ScreenEvaluation::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;

@@ -32,6 +32,7 @@ public:
 	int		m_iTextureResolution;
 	int		m_iRefreshRate;		// 0 means 'default'
 	bool	m_bIgnoreJoyAxes;
+	bool	m_bOnlyDedicatedMenuButtons;
 	bool	m_bShowFPS;
 	BackgroundMode	m_BackgroundMode;
 	float	m_fBGBrightness;
@@ -40,6 +41,7 @@ public:
 	int		m_iNumArcadeStages;
 	bool	m_bAutoPlay;
 	float	m_fJudgeWindow;
+	float	m_fLifeDifficultyScale;
 
 	CStringArray m_asSongFolders;
 

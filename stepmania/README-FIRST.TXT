@@ -100,8 +100,11 @@ In menus:
   * Enter = Start, Escape = Back
 
 In gameplay:
-  * F11 = decrease offset
-  * F12 = increase offset
+  * F8  = toggle AutoPlay
+  * F9  = decrease offset
+  * F10 = increase offset
+  * F11 = decrease BPM of current segment
+  * F12 = increase BPM of current segment
   * Hold Escape = abort playing
 
 ************************************************************
@@ -217,17 +220,21 @@ upgrade to the latest drivers, which will hopefully fix the errors.
 
 You need to download DirectX 8.1.  http://www.microsoft.com/directx
 
+* StepMania reports "Direct3DCreate failed".
+
+You need to download DirectX 8.1.  http://www.microsoft.com/directx
+
+* StepMania reports "Direct3DCreateDevice failed".
+
+This error means that your video card or drivers do not support Direct3D 8.  
+Download the latest drivers for your video card.  If your video card is older 
+than 2 or 3 years, Direct3D 8 drivers may not be available.  Sorry.
+
 * Music rates of over 100% do not work on my computer. Why?
 
 Some very old sound cards do not support sound playback rates that are greater 
 than the original sample rate.  This problem is likely to be corrected by newer 
 sound card drivers.
-
-* StepMania reports "Direct3D Create Device failed".
-
-This error means that your video card or drivers do not support Direct3D 8.  
-Download the latest drivers for your video card.  If your video card is older 
-than 2 or 3 years, Direct3D 8 drivers may not be available.  Sorry.
 
 * I’m looking to purchase a video card.  What works well with StepMania?
 
@@ -239,6 +246,18 @@ GeForce chip or an ATI Radeon chip.
 
 1. Install the latest drivers for your video card.
 2. Press F5 in the game to toggle between high detail and low detail modes.
+3. Tweak the Display Resolution and Texture Resolution setting in the GameOptions 
+   screen.
+
+* Chris, will you tell me when the next version will be released?
+
+I'd rather not going to say.  Sorry.  It's gotten me in trouble before.
+
+* Why won't you tell me?  I promise I won't tell anyone else.
+
+The reason I won't tell is because I don't know yet and I don't want to make 
+anyone angry if it takes longer than I expect (it usually does).
+
 
 ************************************************************
 10. StepMania Packages - .smzip
@@ -614,32 +633,57 @@ variables take effect.
 ************************************************************
 
 ------------------------CVS after 3.00 beta 5----------------
-BUG FIX:  Old hashing algorithm caused some songs to have the same cache
-     filename, causing at least one broken duplicate of a song in the game and
-     at least one inaccessible song. New hashing algorithm is stronger and far
-     less likely to do this.
+BUG FIX:  New hashing algorithm prevents multiple songs from hashing to the same 
+     cache file.
 BUG FIX:  "Select Group" screen now only displays songs and groups available in
      the current style (instead of all songs).
 BUG FIX:  Opening a "(NEW)" sequence in Edit/Record/Synch mode with a style
-     over 4 panels (such as dance-solo or ez2-single) incorrectly initialized
-     the sequence as 4-column. This caused the problems (1) only the leftmost
-     4 panels in the sequence could be edited, and (2) sequences saved in this
-     way would cause an error such as "Actual number of note columns (6) is
-     different from the NotesType (4)." either when selected from the song
-     wheel or when starting the program again. This has been fixed.
-OPTIMIZATION:  Faster song loading.
-BUG FIX:  Oni life meter now works correctly.
+     over 4 panels (such as dance-solo or ez2-single) now works.
+BUG FIX:  Oni life meter finished.
 NEW FEATURE:  Theme support.  See readme for more info.
-
-------------------------Version 3.00 beta 4------------------
+BUG FIX:  Stop times now read correctly again in BMSs.
+BUG FIX:  #SOLO steps in DWIs now read correctly.
 OPTIMIZATION:  Startup time greatly reduced thanks to hiding the log window and
      SM parsing optimizations
 CHANGE:  Display resolution and max texture size sliders re-enabled
 NEW FEATURE:  Refresh rate slider
 NEW FEATURE:  0.5x, 0.75x scroll speed
+NEW FEATURE:  Song rates up to 1.5X
+NEW FEATURE:  Effect Mini
 CHANGE:  Now hold L&R while pressing start to change sort on Select Music
 CHANGE:  Combo display now draws behind notes
 BUG FIX:  Stage counter reset after fail (thanks Andy)
+BUG FIX:  Roulette chooses from only last preferred group
+BUG FIX:  Fail End of Song setting doesn't get stuck at end of song.
+CHANGE:  Back button must now be held for 1/2 a second to prevent accidental presses.
+BUG FIX:  No more slowdown when song background showing song background (I think).
+BUG FIX:  Fixed clipping problems related to scroll speed
+BUG FIX:  Hold notes no longer jitter at certain scroll speeds
+NEW FEATURE:  During gameplay:  F8 = toggle AutoPlay
+NEW FEATURE:  During gameplay:  F9 = decrease offset, F10 = increase offset, 
+NEW FEATURE:  During gameplay:  F11 = decrease BPM of current segment, F12 = 
+	 increase BPM of current segment.
+CHANGE:  Life meters graphics are now part of the theme system
+CHANGE:	 New Song Option:  Choose Oni life battery or normal life meter
+BUG FIX:  Life Bar no-recover and sudden death options now work.
+BUG FIX:  Select Difficulty arrow no longer messed up on early input
+BUG FIX:  Fixed scoring inaccuracies in Oni
+NEW FEATURE:  Endless, next to Oni Nonstop
+BUG FIX:  Inaccurate earned Chaos radar values fixed
+BUG FIX:  Score multiplier now based on note number and not current combo size.
+	This change causes higher, but MAX2-accurate scores.
+NEW FEATURE:  KSF file reading.  Just drop the KSF folders into a group folder.
+NEW FEATURE:  Pump It Up support
+NEW FEATURE:  Life Difficulty option - this option determines how much the life 
+    meter changes when steps are judged.  This option corresponds to Difficulty in 
+	DDR Arcade machines.
+CHANGE:  Old difficulty option renamed to Judge Difficulty.
+NEW FEATURE:  MenuInput option.  Setting this option to "USE ONLY DEDICATED MENU 
+	BUTTONS" will allow the menus to be controlled only by the buttons mapped to
+	MenuLeft, MenuRight, etc.  This is useful if you have a controller with 
+	buttons that can be dedicated to controlling the menus (like a DDR arcade
+	cabinet).  Also, using only dedicated menu buttons will allow you to enter
+	codes at the Select Music screen using the dance panels.
 
 ------------------------Version 3.00 beta 4------------------
 BUG FIX:  Fixed crash entering Config Joy/Key (duh!)

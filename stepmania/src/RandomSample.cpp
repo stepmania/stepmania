@@ -51,7 +51,7 @@ bool RandomSample::LoadSoundDir( CString sDir )
 	
 bool RandomSample::LoadSound( CString sSoundFilePath )
 {
-	LOG->WriteLine( "RandomSample::LoadSound( %s )", sSoundFilePath );
+	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath );
 
 	RageSoundSample* pSS = new RageSoundSample;
 	pSS->Load( sSoundFilePath );
@@ -67,7 +67,7 @@ void RandomSample::PlayRandom()
 	// play one of the samples
 	if( m_pSamples.GetSize() == 0 )
 	{
-		LOG->WriteLine( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
+		LOG->Trace( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
 	}
 	else
 	{

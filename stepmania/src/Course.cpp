@@ -87,7 +87,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 		}
 
 		else
-			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
+			LOG->Trace( "Unexpected value named '%s'", sValueName );
 	}
 }
 

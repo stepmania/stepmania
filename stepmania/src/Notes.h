@@ -26,11 +26,12 @@ public:
 	// Loading
 	bool LoadFromNotesFile( const CString &sPath );
 	bool LoadFromBMSFile( const CString &sPath );
+	bool LoadFromKSFFile( const CString &sPath );
 	bool LoadFromDWITokens( 
 		CString sMode,
 		CString sDescription,
-		int iNumFeet,
-		CString sStepData1, const CString sStepData2 
+		CString sNumFeet,
+		CString sStepData1, CString sStepData2 
 		);
 	void LoadFromSMTokens( 
 		CString sNotesType, 

@@ -26,7 +26,7 @@ bool GameInput::fromString( CString s )
 	split( s, "-", a);
 
 	if( a.GetSize() != 2 ) {
-		MakeBlank();
+		MakeInvalid();
 		return false;
 	}
 

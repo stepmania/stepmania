@@ -61,7 +61,7 @@ Player::Player()
 
 void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore )
 {
-	//LOG->WriteLine( "Player::Load()", );
+	//LOG->Trace( "Player::Load()", );
 
 	m_PlayerNumber = pn;
 	m_pLifeMeter = pLM;
@@ -131,7 +131,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 void Player::Update( float fDeltaTime )
 {
-	//LOG->WriteLine( "Player::Update(%f)", fDeltaTime );
+	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
@@ -218,6 +218,8 @@ void Player::Update( float fDeltaTime )
 
 void Player::DrawPrimitives()
 {
+	m_frameCombo.Draw();	// draw this below everything else
+
 	D3DXMATRIX matOldView, matOldProj;
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_EffectType == PlayerOptions::EFFECT_SPACE )
@@ -251,8 +253,6 @@ void Player::DrawPrimitives()
 		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
 	}
 
-	m_frameCombo.Draw();
-
 	m_GrayArrowRow.Draw();
 	m_NoteField.Draw();
 	m_GhostArrowRow.Draw();
@@ -272,7 +272,7 @@ void Player::DrawPrimitives()
 
 void Player::Step( int col )
 {
-	//LOG->WriteLine( "Player::HandlePlayerStep()" );
+	//LOG->Trace( "Player::HandlePlayerStep()" );
 
 	ASSERT( col >= 0  &&  col <= m_iNumTracks );
 
@@ -282,7 +282,7 @@ void Player::Step( int col )
 	int iIndexStartLookingAt = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 	int iNumElementsToExamine = BeatToNoteRow( GetMaxBeatDifference() );	// number of elements to examine on either end of iIndexStartLookingAt
 	
-	//LOG->WriteLine( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
+	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
 	int iIndexOverlappingNote = -1;		// leave as -1 if we don't find any
 
@@ -299,7 +299,7 @@ void Player::Step( int col )
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
-		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexEarlier );
+		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexEarlier );
 		if( m_TapNotes[col][iCurrentIndexEarlier] != '0'  &&	// there is a note here
 			m_TapNoteScores[col][iCurrentIndexEarlier] == TNS_NONE )	// this note doesn't have a score
 		{
@@ -311,7 +311,7 @@ void Player::Step( int col )
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
-		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexLater );
+		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexLater );
 		if( m_TapNotes[col][iCurrentIndexLater] != '0'  &&	// there is a note here
 			m_TapNoteScores[col][iCurrentIndexLater] == TNS_NONE )	// this note doesn't have a score
 		{
@@ -359,7 +359,7 @@ void Player::Step( int col )
 
 void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 {
-	//LOG->WriteLine( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
+	//LOG->Trace( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
 	//		 fBeatsUntilStep, fPercentFromPerfect );
 	
 	// find the minimum score of the row
@@ -422,7 +422,7 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 
 int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
-	//LOG->WriteLine( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//LOG->Trace( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 
 	int iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
 
@@ -431,7 +431,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 	// Instead, only check 10 elements back.  Even 10 is overkill.
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
-	//LOG->WriteLine( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
+	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )

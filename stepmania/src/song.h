@@ -52,6 +52,7 @@ public:
 	bool LoadFromDWIFile( CString sPath );
 	bool LoadFromBMSDir( CString sDir );
 	bool LoadFromSMFile( CString sPath );
+	bool LoadFromKSFDir( CString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 
@@ -90,7 +91,7 @@ public:
 	CString	m_sCDTitleFile;
 	CString	m_sMovieBackgroundFile;
 
-	CString GetMusicPath()			{return m_sSongDir+m_sMusicFile; };
+	CString GetMusicPath()			{return m_sMusicFile.Find('.')==0 ? m_sMusicFile : m_sSongDir+m_sMusicFile; };
 	CString GetBannerPath()			{return m_sSongDir+m_sBannerFile; };
 	CString GetBackgroundPath()		{return m_sSongDir+m_sBackgroundFile; };
 	CString GetCDTitlePath()		{return m_sCDTitleFile.Find('.')==0 ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile; };

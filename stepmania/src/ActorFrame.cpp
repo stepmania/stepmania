@@ -30,7 +30,7 @@ void ActorFrame::DrawPrimitives()
 
 void ActorFrame::Update( float fDeltaTime )
 {
-//	LOG->WriteLine( "ActorFrame::Update( %f )", fDeltaTime );
+//	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
 
 	Actor::Update( fDeltaTime );
 

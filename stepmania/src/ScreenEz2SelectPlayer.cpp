@@ -58,7 +58,7 @@ Desc: Sets up the screen display
 
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
-	LOG->WriteLine( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
+	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 	ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 	ez2_lasttimercheck[1] = 0.0f;
 	m_iSelectedStyle=3; // by bbf: frieza, was this supposed to be 3 ?
@@ -124,7 +124,7 @@ is terminated.
 ************************************/
 ScreenEz2SelectPlayer::~ScreenEz2SelectPlayer()
 {
-	LOG->WriteLine( "ScreenEz2SelectPlayer::~ScreenEz2SelectPlayer()" );
+	LOG->Trace( "ScreenEz2SelectPlayer::~ScreenEz2SelectPlayer()" );
 }
 
 
@@ -215,7 +215,7 @@ Desc: Handles player input.
 ************************************/
 void ScreenEz2SelectPlayer::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenEz2SelectPlayer::Input()" );
+	LOG->Trace( "ScreenEz2SelectPlayer::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;

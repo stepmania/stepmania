@@ -11,49 +11,83 @@
 */
 enum GameController
 {
-	GAME_CONTROLLER_1 = 0,
-	GAME_CONTROLLER_2,
+	GAME_CONTROLLER_1 = 0,	// left controller
+	GAME_CONTROLLER_2,		// right controller
 	MAX_GAME_CONTROLLERS,	// leave this at the end
-	GAME_CONTROLLER_NONE,
+	GAME_CONTROLLER_INVALID,
 };
 
-enum GameButton
+typedef int GameButton;
+
+enum	// DanceButtons
 {
-	GAME_BUTTON_1 = 0,
-	GAME_BUTTON_2,
-	GAME_BUTTON_3,
-	GAME_BUTTON_4,
-	GAME_BUTTON_5,
-	GAME_BUTTON_6,
-	GAME_BUTTON_7,
-	GAME_BUTTON_8,
-	GAME_BUTTON_9,
-	GAME_BUTTON_10,
-	GAME_BUTTON_11,
-	GAME_BUTTON_12,
-	GAME_BUTTON_13,
-	GAME_BUTTON_14,
-	GAME_BUTTON_15,
-	GAME_BUTTON_16,
-	MAX_GAME_BUTTONS,		// leave this at the end
-	GAME_BUTTON_NONE
+	DANCE_BUTTON_LEFT,
+	DANCE_BUTTON_RIGHT,
+	DANCE_BUTTON_UP,
+	DANCE_BUTTON_DOWN,
+	DANCE_BUTTON_UPLEFT,
+	DANCE_BUTTON_UPRIGHT,
+	DANCE_BUTTON_START,
+	DANCE_BUTTON_BACK,
+	DANCE_BUTTON_MENULEFT,
+	DANCE_BUTTON_MENURIGHT,
+	DANCE_BUTTON_MENUUP,
+	DANCE_BUTTON_MENUDOWN,
+	NUM_DANCE_BUTTONS,		// leave this at the end
 };
+
+enum	// PumpButtons
+{
+	PUMP_BUTTON_UPLEFT,
+	PUMP_BUTTON_UPRIGHT,
+	PUMP_BUTTON_CENTER,
+	PUMP_BUTTON_DOWNLEFT,
+	PUMP_BUTTON_DOWNRIGHT,
+	PUMP_BUTTON_START,
+	PUMP_BUTTON_BACK,
+	PUMP_BUTTON_MENULEFT,
+	PUMP_BUTTON_MENURIGHT,
+	PUMP_BUTTON_MENUUP,
+	PUMP_BUTTON_MENUDOWN,
+	NUM_PUMP_BUTTONS,		// leave this at the end
+};
+
+enum	// EZ2Buttons
+{
+	EZ2_BUTTON_FOOTUPLEFT,
+	EZ2_BUTTON_FOOTUPRIGHT,
+	EZ2_BUTTON_FOOTDOWN,
+	EZ2_BUTTON_HANDUPLEFT,
+	EZ2_BUTTON_HANDUPRIGHT,
+	EZ2_BUTTON_HANDLRLEFT,
+	EZ2_BUTTON_HANDLRRIGHT,
+	EZ2_BUTTON_START,
+	EZ2_BUTTON_BACK,
+	EZ2_BUTTON_MENULEFT,
+	EZ2_BUTTON_MENURIGHT,
+	EZ2_BUTTON_MENUUP,
+	EZ2_BUTTON_MENUDOWN,
+	NUM_EZ2_BUTTONS,		// leave this at the end
+};
+
+
+const GameButton MAX_GAME_BUTTONS = 14;
+const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
+
 
 
 struct GameInput
 {
-	GameInput() { MakeBlank(); };
+	GameInput() { MakeInvalid(); };
 	GameInput( GameController c, GameButton b ) { controller = c; button = b; };
 
-
-	GameController	controller;	// 
-	GameButton		button;	// instrument button
+	GameController	controller;
+	GameButton		button;
 
 	bool operator==( const GameInput &other ) { return controller == other.controller && button == other.button; };
 
-	inline bool IsBlank() const { return controller == GAME_CONTROLLER_NONE; };
-	inline bool IsValid() const { return !IsBlank(); };
-	inline void MakeBlank() { controller = GAME_CONTROLLER_NONE; button = GAME_BUTTON_NONE; };
+	inline bool IsValid() const { return controller != GAME_CONTROLLER_INVALID; };
+	inline void MakeInvalid() { controller = GAME_CONTROLLER_INVALID; button = GAME_BUTTON_INVALID; };
 
 	CString toString();
 	bool fromString( CString s );

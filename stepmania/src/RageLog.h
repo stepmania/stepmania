@@ -17,8 +17,9 @@ public:
 	RageLog();
 	~RageLog();
 
-	void WriteLine( LPCTSTR fmt, ...);
-	void WriteLineHr( HRESULT hr, LPCTSTR fmt, ...);
+	void Trace( LPCTSTR fmt, ...);
+	void Trace( HRESULT hr, LPCTSTR fmt, ...);
+	void Warn( LPCTSTR fmt, ...);
 	void Flush();
 
 	void ShowConsole();

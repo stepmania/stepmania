@@ -41,7 +41,7 @@ ScreenManager::ScreenManager()
 
 ScreenManager::~ScreenManager()
 {
-	LOG->WriteLine( "ScreenManager::~ScreenManager()" );
+	LOG->Trace( "ScreenManager::~ScreenManager()" );
 
 	// delete current states
 	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
@@ -104,7 +104,7 @@ void ScreenManager::Draw()
 
 void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
+	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
 		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// pass input only to topmost state
@@ -158,7 +158,7 @@ void ScreenManager::SystemMessage( CString sMessage )
 	m_textSystemMessage.BeginTweeningQueued( 1 );
 	m_textSystemMessage.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-	LOG->WriteLine( "WARNING:  Didn't find an empty system messages slot." );
+	LOG->Trace( "WARNING:  Didn't find an empty system messages slot." );
 }
 
 

@@ -13,10 +13,12 @@
 #include "GameDef.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-
 #include "IniFile.h"
 #include "StyleDef.h"
 #include "RageException.h"
+#include "GameState.h"
+#include "InputMapper.h"
+#include "PrefsManager.h"
 
 
 CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) 
@@ -129,4 +131,73 @@ void GameDef::AssertSkinIsComplete( CString sSkin )
 		if( !DoesFileExist(sPathToGraphic) )
 			throw RageException( "Game button graphic at %s is missing.", sPathToGraphic );
 	}		
+}
+
+MenuInput GameDef::GameInputToMenuInput( GameInput GameI )
+{
+	PlayerNumber pn;
+
+	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_USE_TWO_SIDES;
+	if( GAMESTATE->m_CurStyle != STYLE_NONE )
+		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
+	switch( type )
+	{
+	case StyleDef::ONE_PLAYER_USES_ONE_SIDE:
+	case StyleDef::TWO_PLAYERS_USE_TWO_SIDES:
+		pn = (PlayerNumber)GameI.controller;
+		break;
+	case StyleDef::ONE_PLAYER_USES_TWO_SIDES:
+		pn = GAMESTATE->m_MasterPlayerNumber;
+		break;
+	default:
+		ASSERT(0);	// invalid m_StyleType
+	};
+
+	for( int i=0; i<NUM_MENU_BUTTONS; i++ )
+		if( m_DedicatedMenuButton[i] == GameI.button )
+			return MenuInput( pn, (MenuButton)i );
+
+	for( i=0; i<NUM_MENU_BUTTONS; i++ )
+		if( m_SecondaryMenuButton[i] == GameI.button )
+			return MenuInput( pn, (MenuButton)i );
+
+	return MenuInput();	// invalid GameInput
+}
+
+void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] )
+{
+	ASSERT( MenuI.IsValid() );
+
+	GameIout[0].MakeInvalid();	// initialize
+	GameIout[1].MakeInvalid();	
+	GameIout[2].MakeInvalid();	
+	GameIout[3].MakeInvalid();	
+
+	GameController controller[2];
+	int iNumSidesUsing = 1;
+	switch( GAMESTATE->GetCurrentStyleDef()->m_StyleType )
+	{
+	case StyleDef::ONE_PLAYER_USES_ONE_SIDE:
+	case StyleDef::TWO_PLAYERS_USE_TWO_SIDES:
+		controller[0] = (GameController)MenuI.player;
+		iNumSidesUsing = 1;
+		break;
+	case StyleDef::ONE_PLAYER_USES_TWO_SIDES:
+		controller[0] = GAME_CONTROLLER_1;
+		controller[1] = GAME_CONTROLLER_2;
+		iNumSidesUsing = 2;
+		break;
+	default:
+		ASSERT(0);	// invalid m_StyleType
+	};
+
+	GameButton button[2] = { m_DedicatedMenuButton[MenuI.button], m_SecondaryMenuButton[MenuI.button] };
+	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
+
+	for( int i=0; i<iNumSidesUsing; i++ )
+	{
+		for( int j=0; j<iNumButtonsUsing; j++ )
+		GameIout[i*2+j].controller = controller[i];
+		GameIout[i*2+j].button = button[j];
+	}
 }

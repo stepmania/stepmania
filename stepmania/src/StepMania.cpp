@@ -76,14 +76,12 @@
 const CString g_sAppName		= "StepMania";
 const CString g_sAppClassName	= "StepMania Class";
 
-HWND		g_hWndMain;		// Main Window Handle
 HINSTANCE	g_hInstance;	// The Handle to Window Instance
+HWND		g_hWndMain;		// Main Window Handle
+HWND		g_hWndLoading;	// Loading Window Handle
 HANDLE		g_hMutex;		// Used to check if an instance of our app is already
-const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
-
-
-BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
-
+const DWORD g_dwWindowStyle = WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
+BOOL		g_bIsActive		= FALSE;	// Whether the focus is on our app
 
 
 //-----------------------------------------------------------------------------
@@ -92,6 +90,7 @@ BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
 // Main game functions
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+BOOL CALLBACK LoadingWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow );	// windows entry point
 void MainLoop();		// put everything in here so we can wrap it in a try...catch block
@@ -104,6 +103,10 @@ HRESULT		CreateObjects( HWND hWnd );	// allocate and initialize game objects
 HRESULT		InvalidateObjects();		// invalidate game objects before a display mode change
 HRESULT		RestoreObjects();			// restore game objects after a display mode change
 VOID		DestroyObjects();			// deallocate game objects when we're done with them
+
+void CreateLoadingWindow();
+void PaintLoadingWindow();
+void DestroyLoadingWindow();
 
 void ApplyGraphicOptions();	// Set the display mode according to the user's preferences
 
@@ -143,10 +146,15 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
 	_set_se_translator( StructuredExceptionHandler );
 
+	g_hInstance = hInstance;
+
 #ifndef _DEBUG
 	try
 	{
 #endif
+
+		CreateLoadingWindow();
+		
 		//
 		// Check to see if the app is already running.
 		//
@@ -243,7 +251,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
  		if( NULL == g_hWndMain )
 			exit(1);
 
-		//ShowWindow( g_hWndMain, SW_HIDE );
+		ShowWindow( g_hWndMain, SW_HIDE );
 
 
 		// Load keyboard accelerators
@@ -252,7 +260,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		// run the game
 		CreateObjects( g_hWndMain );	// Create the game objects
 
-		//ShowWindow( g_hWndMain, SW_SHOW );
 
 		// Now we're ready to recieve and process Windows messages.
 		MSG msg;
@@ -277,16 +284,17 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			{
 				Update();
 				Render();
-				if( DISPLAY  &&  DISPLAY->IsWindowed() )
+				if( !g_bIsActive  &&  DISPLAY  &&  DISPLAY->IsWindowed() )
 					::Sleep( 0 );	// give some time to other processes
 			}
 		}	// end  while( WM_QUIT != msg.message  )
 
-		LOG->WriteLine( "Recieved WM_QUIT message.  Shutting down..." );
+		LOG->Trace( "Recieved WM_QUIT message.  Shutting down..." );
 
 		// clean up after a normal exit 
 		DestroyObjects();			// deallocate our game objects and leave fullscreen
 		ShowWindow( g_hWndMain, SW_HIDE );
+
 
 #ifndef _DEBUG
 	}
@@ -305,8 +313,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 	if( g_sErrorString != "" )
 	{
+
 		if( LOG )
-			LOG->WriteLine( 
+		{
+			LOG->Flush();
+
+			LOG->Trace( 
 				"\n"
 				"//////////////////////////////////////////////////////\n"
 				"Exception: %s\n"
@@ -317,11 +329,14 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 		// throw up a pretty error dialog
 		DialogBox(
-			hInstance,
+			g_hInstance,
 			MAKEINTRESOURCE(IDD_ERROR_DIALOG),
 			NULL,
 			ErrorWndProc
 			);
+
+		}
+
 	}
 #endif
 
@@ -331,6 +346,78 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	CloseHandle( g_hMutex );
 
 	return 0L;
+}
+
+
+void CreateLoadingWindow()
+{
+	// throw up a pretty error dialog
+	g_hWndLoading = CreateDialog(
+		g_hInstance,
+		MAKEINTRESOURCE(IDD_LOADING_DIALOG),
+		NULL,
+		LoadingWndProc
+		);
+}
+
+void PaintLoadingWindow()
+{
+	SendMessage( g_hWndLoading, WM_PAINT, 0, 0 );
+}
+
+void DestroyLoadingWindow()
+{
+	EndDialog( g_hWndLoading, 0 );
+}
+
+//-----------------------------------------------------------------------------
+// Name: LoadingWndProc()
+// Desc: Callback for all Windows messages
+//-----------------------------------------------------------------------------
+BOOL CALLBACK LoadingWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	switch( msg )
+	{
+	case WM_INITDIALOG:
+		{
+		}
+		break;
+	case WM_COMMAND:
+		break;
+	case WM_PAINT:
+		{
+			CStringArray asMessageLines;
+			if( GAMESTATE )
+				split( GAMESTATE->m_sLoadingMessage, "\n", asMessageLines, false );
+			else
+				asMessageLines.Add( "Initializing hardware" );
+
+			SendDlgItemMessage( 
+				hWnd, 
+				IDC_STATIC_MESSAGE1, 
+				WM_SETTEXT, 
+				0, 
+				(LPARAM)(LPCTSTR)asMessageLines[0]
+			);
+			SendDlgItemMessage( 
+				hWnd, 
+				IDC_STATIC_MESSAGE2, 
+				WM_SETTEXT, 
+				0, 
+				(LPARAM)(LPCTSTR)(asMessageLines.GetSize()>=2 ? asMessageLines[1] : "")
+			);
+			SendDlgItemMessage( 
+				hWnd, 
+				IDC_STATIC_MESSAGE3, 
+				WM_SETTEXT, 
+				0, 
+				(LPARAM)(LPCTSTR)(asMessageLines.GetSize()>=3 ? asMessageLines[2] : "")
+			);
+		}
+		break;
+
+	}
+	return FALSE;
 }
 
 
@@ -344,8 +431,6 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 	case WM_INITDIALOG:
 		{
-			LOG->Flush();
-
 			CString sMessage = g_sErrorString;
 
 			sMessage.Replace( "\n", "\r\n" );
@@ -526,17 +611,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 }
 
 
-
 //-----------------------------------------------------------------------------
 // Name: CreateObjects()
 // Desc:
 //-----------------------------------------------------------------------------
 HRESULT CreateObjects( HWND hWnd )
 {
+
+	/*
 	//
 	// Draw a splash bitmap so the user isn't looking at a black Window
 	//
-/*	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
+	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
 		GetModuleHandle( NULL ),
 		TEXT("BITMAP_SPLASH"), 
 		IMAGE_BITMAP,
@@ -554,10 +640,11 @@ HRESULT CreateObjects( HWND hWnd )
                 hDCImage, 0, 0,
                 bmp.bmWidth, bmp.bmHeight, SRCCOPY );
     DeleteDC( hDCImage );
-    ReleaseDC( hWnd, hDCWindow );
 	
 	// Delete the bitmap
 	DeleteObject( hSplashBitmap );
+
+    ReleaseDC( hWnd, hDCWindow );
 */
 
 
@@ -568,7 +655,7 @@ HRESULT CreateObjects( HWND hWnd )
 	
 	LOG			= new RageLog();
 #ifdef _DEBUG
-		LOG->ShowConsole();
+	LOG->ShowConsole();
 #endif
 	TIMER		= new RageTimer;
 	GAMESTATE	= new GameState;
@@ -582,7 +669,12 @@ HRESULT CreateObjects( HWND hWnd )
 	INPUTFILTER	= new InputFilter();
 	INPUTMAPPER	= new InputMapper();
 	INPUTQUEUE	= new InputQueue();
+	SONGMAN		= new SongManager( PaintLoadingWindow );		// this takes a long time to load
 	DISPLAY		= new RageDisplay( hWnd );
+
+	DestroyLoadingWindow();
+
+	ShowWindow( g_hWndMain, SW_SHOW );	// show the window
 
 	// We can't do any texture loading unless the D3D device is created.  
 	// Set the display mode to make sure the D3D device is created.
@@ -596,16 +688,8 @@ HRESULT CreateObjects( HWND hWnd )
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
 
-	SCREENMAN->SetNewScreen( new ScreenLoading );
-	Update();
-	Render();
-	::Sleep( 10000 );
-
-	SONGMAN		= new SongManager( Render );		// this takes a long time to load
-
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
-
 
 	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 	//SCREENMAN->SetNewScreen( new ScreenLoading );
@@ -738,27 +822,23 @@ void Update()
 	ieArray.SetSize( 0, 20 );	// zero the array
 	INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
 
-	DeviceInput DeviceI;
-	InputEventType type;
-	GameInput GameI;
-	MenuInput MenuI;
-	StyleInput StyleI;
-
 	for( int i=0; i<ieArray.GetSize(); i++ )
 	{
-		DeviceI = (DeviceInput)ieArray[i];
-		type = ieArray[i].type;
+		DeviceInput DeviceI = (DeviceInput)ieArray[i];
+		InputEventType type = ieArray[i].type;
+		GameInput GameI;
+		MenuInput MenuI;
+		StyleInput StyleI;
 
 		INPUTMAPPER->DeviceToGame( DeviceI, GameI );
 		
-		INPUTMAPPER->GameToMenu( GameI, MenuI );
-		if( !MenuI.IsValid() )	// try again
-			MenuI = INPUTMAPPER->DeviceToMenu( DeviceI );
-		
-		if( MenuI.IsValid()  &&  type == IET_FIRST_PRESS )
-			INPUTQUEUE->HandleInput( MenuI.player, MenuI.button );
-
-		INPUTMAPPER->GameToStyle( GameI, StyleI );
+		if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
+			INPUTQUEUE->RememberInput( GameI );
+		if( GameI.IsValid() )
+		{
+			INPUTMAPPER->GameToMenu( GameI, MenuI );
+			INPUTMAPPER->GameToStyle( GameI, StyleI );
+		}
 
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}

@@ -75,7 +75,7 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 			m_arrayGroupNames.Add( sGroupName );
 	}
 
-	LOG->WriteLine( "Found %d Songs.", m_pSongs.GetSize() );
+	LOG->Trace( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
 void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
@@ -118,7 +118,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		if( arrayGroupBanners.GetSize() > 0 )
 		{
 			m_mapGroupToBannerPath[sGroupDirName] = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
-			LOG->WriteLine( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
+			LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
 		}
 
 		// Find all Song folders in this group directory
@@ -226,7 +226,7 @@ void SongManager::ReadStatisticsFromDisk()
 	IniFile ini;
 	ini.SetPath( g_sStatisticsFileName );
 	if( !ini.ReadFile() ) {
-		LOG->WriteLine( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
+		LOG->Trace( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
 		return;		// load nothing
 	}
 

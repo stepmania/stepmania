@@ -123,30 +123,22 @@ Desc: Sets up the screen display
 
 ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 {
-	LOG->WriteLine( "ScreenEz2SelectStyle::ScreenEz2SelectStyle()" );
+	LOG->Trace( "ScreenEz2SelectStyle::ScreenEz2SelectStyle()" );
 
 	m_iSelectedStyle=0;
 	ez2p_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 // Load in the sprites we will be working with.
 	for( int i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
 	{
-		CString sPadGraphicPath;
+		ThemeElement te;
 		switch( i )
-		{
-		case 0:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_1);	//HACK! Would LIKE to have own filename :)
-			break;
-		case 1:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_2);	
-			break;
-		case 2:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_3);	
-			break;
-		case 3:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0);	
-			break;
+		{		//HACK! Would LIKE to have own filename :)
+		case 0:	te = GRAPHIC_SELECT_STYLE_PREVIEW_1;	break;
+		case 1:	te = GRAPHIC_SELECT_STYLE_PREVIEW_2;	break;	
+		case 2:	te = GRAPHIC_SELECT_STYLE_PREVIEW_3;	break;	
+		case 3:	te = GRAPHIC_SELECT_STYLE_PREVIEW_0;	break;
 		}
-		m_sprBackground[i].Load( sPadGraphicPath );
+		m_sprBackground[i].Load( THEME->GetPathTo(te) );
 		m_sprBackground[i].SetXY( CENTER_X, CENTER_Y );
 		m_sprBackground[i].SetZoom( 1 );
 		this->AddSubActor( &m_sprBackground[i] );
@@ -154,23 +146,15 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	for( i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
 	{
-		CString sPadGraphicPath;
+		ThemeElement te;
 		switch( i )
 		{
-		case 0:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_3);	//HACK! Would LIKE to have own filename :)
-			break;
-		case 1:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_0);	
-			break;
-		case 2:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_1);	
-			break;
-		case 3:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_2);	
-			break;
+		case 0:	te = GRAPHIC_SELECT_STYLE_INFO_3;	break;
+		case 1:	te = GRAPHIC_SELECT_STYLE_INFO_0;	break;
+		case 2:	te = GRAPHIC_SELECT_STYLE_INFO_1;	break;
+		case 3:	te = GRAPHIC_SELECT_STYLE_INFO_2;	break;
 		}
-		m_sprOpt[i].Load( sPadGraphicPath );
+		m_sprOpt[i].Load( THEME->GetPathTo(te) );
 		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
 		m_sprOpt[i].SetZoom( 1 );
 		this->AddSubActor( &m_sprOpt[i] );
@@ -272,7 +256,7 @@ is terminated.
 ************************************/
 ScreenEz2SelectStyle::~ScreenEz2SelectStyle()
 {
-	LOG->WriteLine( "ScreenEz2SelectStyle::~ScreenEz2SelectStyle()" );
+	LOG->Trace( "ScreenEz2SelectStyle::~ScreenEz2SelectStyle()" );
 }
 
 
@@ -299,7 +283,7 @@ Desc: Handles player input.
 ************************************/
 void ScreenEz2SelectStyle::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenEz2SelectStyle::Input()" );
+	LOG->Trace( "ScreenEz2SelectStyle::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;

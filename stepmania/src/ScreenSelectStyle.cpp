@@ -47,7 +47,7 @@ const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
 
 ScreenSelectStyle::ScreenSelectStyle()
 {
-	LOG->WriteLine( "ScreenSelectStyle::ScreenSelectStyle()" );
+	LOG->Trace( "ScreenSelectStyle::ScreenSelectStyle()" );
 
 
 	// Reset the current style and game
@@ -68,7 +68,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 		Style style = m_aPossibleStyles[i];
 		m_sprIcon[i].Load( THEME->GetPathTo(GRAPHIC_SELECT_STYLE_ICONS) );
 		m_sprIcon[i].StopAnimating();
-		m_sprIcon[i].SetState( style );
+		m_sprIcon[i].SetState( i );
 		m_sprIcon[i].SetXY( ICONS_START_X + ICONS_SPACING_X*i, ICON_Y );
 		this->AddSubActor( &m_sprIcon[i] );
 	}
@@ -89,10 +89,10 @@ ScreenSelectStyle::ScreenSelectStyle()
 	{
 		ThemeElement te;
 
-		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0+m_aPossibleStyles[i]);
+		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_0+i);
 		m_sprDummyPreview[i].Load( THEME->GetPathTo(te) );
 
-		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_0+m_aPossibleStyles[i]);
+		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_0+i);
 		m_sprDummyInfo[i].Load( THEME->GetPathTo(te) );
 	}
 
@@ -126,7 +126,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 
 ScreenSelectStyle::~ScreenSelectStyle()
 {
-	LOG->WriteLine( "ScreenSelectStyle::~ScreenSelectStyle()" );
+	LOG->Trace( "ScreenSelectStyle::~ScreenSelectStyle()" );
 }
 
 void ScreenSelectStyle::DrawPrimitives()
@@ -138,7 +138,7 @@ void ScreenSelectStyle::DrawPrimitives()
 
 void ScreenSelectStyle::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenSelectStyle::Input()" );
+	LOG->Trace( "ScreenSelectStyle::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;
@@ -177,7 +177,7 @@ void ScreenSelectStyle::AfterChange()
 	ThemeElement te;
 
 	// Tween Preview
-	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0+GetSelectedStyle());
+	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_0+m_iSelection);
 	m_sprPreview.Load( THEME->GetPathTo(te) );
 
 	m_sprPreview.StopTweening();
@@ -199,7 +199,7 @@ void ScreenSelectStyle::AfterChange()
 
 
 	// Tween Info
-	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_0+GetSelectedStyle());
+	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_0+m_iSelection);
 	m_sprInfo.Load( THEME->GetPathTo(te) );
 	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );

@@ -43,7 +43,7 @@ RageBitmapTexture::RageBitmapTexture(
 	) :
 	RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch )
 {
-//	LOG->WriteLine( "RageBitmapTexture::RageBitmapTexture()" );
+//	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
 	m_pd3dTexture = NULL;
 
@@ -169,7 +169,7 @@ void RageBitmapTexture::Create(
 		{
 			if( i==0 )
 			{
-				LOG->WriteLine( "WARNING! D3DXCreateTextureFromFileEx failed.  Sleep and try one more time..." );
+				LOG->Trace( "WARNING! D3DXCreateTextureFromFileEx failed.  Sleep and try one more time..." );
 				::Sleep( 10 );
 				continue;
 			}
@@ -206,7 +206,7 @@ void RageBitmapTexture::Create(
 		m_iImageHeight	= m_iSourceHeight;
 	}
 
-	LOG->WriteLine( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bStretch = %d, source %d,%d;  image %d,%d.", 
+	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bStretch = %d, source %d,%d;  image %d,%d.", 
 		m_sFilePath, 
 		GetTextureWidth(), 
 		GetTextureHeight(),

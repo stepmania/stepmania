@@ -789,7 +789,7 @@ float NoteData::GetChaosRadarValue( float fSongSeconds )
 	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
 	{
 		if( !IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_12TH )
-		iNumChaosNotes++;
+			iNumChaosNotes++;
 	}
 
 	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;

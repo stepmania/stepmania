@@ -105,6 +105,11 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		m_iTrailingLivesLeft = m_iLivesLeft;
 		m_iLivesLeft--;
 		m_soundLoseLife.Play();
+
+		m_textNumLives.SetZoom( 1.5f );
+		m_textNumLives.BeginTweening( 0.15f );
+		m_textNumLives.SetTweenZoom( 1.1f );
+
 		Refresh();
 		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
 		break;
@@ -159,9 +164,6 @@ void LifeMeterBattery::Refresh()
 	else
 	{
 		m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft) );
-		m_textNumLives.SetZoom( 1.5f );
-		m_textNumLives.BeginTweening( 0.15f );
-		m_textNumLives.SetTweenZoom( 1.1f );
 		m_sprBattery.SetState( 3 );
 	}
 }

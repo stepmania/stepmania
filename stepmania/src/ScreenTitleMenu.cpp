@@ -67,7 +67,7 @@ const ScreenMessage SM_GoToEz2				=	ScreenMessage(SM_User+12);
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
-	LOG->WriteLine( "ScreenTitleMenu::ScreenTitleMenu()" );
+	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
 
 	// reset game info
@@ -216,13 +216,13 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 ScreenTitleMenu::~ScreenTitleMenu()
 {
-	LOG->WriteLine( "ScreenTitleMenu::~ScreenTitleMenu()" );
+	LOG->Trace( "ScreenTitleMenu::~ScreenTitleMenu()" );
 }
 
 
 void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenTitleMenu::Input()" );
+	LOG->Trace( "ScreenTitleMenu::Input()" );
 
 	if( m_Fade.IsClosing() )
 		return;

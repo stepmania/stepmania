@@ -61,7 +61,7 @@ BitmapText::~BitmapText()
 
 bool BitmapText::Load( const CString &sFontFilePath )
 {
-	LOG->WriteLine( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
+	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
 
 	// load font
 	m_pFont = FONT->LoadFont( sFontFilePath );
@@ -74,7 +74,7 @@ bool BitmapText::Load( const CString &sFontFilePath )
 
 void BitmapText::SetText( CString sText )
 {
-	//LOG->WriteLine( "BitmapText::SetText()" );
+	//LOG->Trace( "BitmapText::SetText()" );
 
 	if( m_pFont->m_bCapitalsOnly )
 		sText.MakeUpper();

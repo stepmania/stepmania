@@ -48,18 +48,18 @@ void Screen::Update( float fDeltaTime )
 
 void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
+	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )	// don't make user hold back button if they're pressing escape
+	{
+		this->MenuBack( MenuI.player );
+		return;
+	}
+
 	// default input handler used by most menus
 	if( !MenuI.IsValid() )
 		return;
 
 	if( !GAMESTATE->IsPlayerEnabled(MenuI.player) )
 		return;
-
-	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )	// don't make user hold back button if they're pressing escape
-	{
-		this->MenuBack( MenuI.player );
-		return;
-	}
 
 	switch( MenuI.button )
 	{

@@ -72,8 +72,6 @@ struct DeviceInput
 public:
 	InputDevice device;
 	int button;
-	enum EventType { EVENT_PRESS, EVENT_REPEAT };	// maybe add EVENT_RELEASE later?
-	float fTimeHeld;	// only relevant for EVENT_REPEAT 
 
 	DeviceInput() { device=DEVICE_NONE; };
 	DeviceInput( InputDevice d, int b ) { device=d; button=b; };
@@ -88,8 +86,8 @@ public:
 	CString toString();
 	bool fromString( const CString &s );
 
-	bool IsBlank() const { return device == DEVICE_NONE; };
-	void MakeBlank() { device = DEVICE_NONE; };
+	bool IsValid() const { return device != DEVICE_NONE; };
+	void MakeInvalid() { device = DEVICE_NONE; };
 };
 
 

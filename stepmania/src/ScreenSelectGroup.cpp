@@ -49,7 +49,7 @@ const ScreenMessage SM_StartFadingOut		 =	ScreenMessage(SM_User + 3);
 ScreenSelectGroup::ScreenSelectGroup()
 {
 	
-	LOG->WriteLine( "ScreenSelectGroup::ScreenSelectGroup()" );	
+	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 
 
 	int i;
@@ -344,14 +344,14 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 ScreenSelectGroup::~ScreenSelectGroup()
 {
-	LOG->WriteLine( "ScreenSelectGroup::~ScreenSelectGroup()" );
+	LOG->Trace( "ScreenSelectGroup::~ScreenSelectGroup()" );
 
 }
 
 
 void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenSelectGroup::Input()" );
+	LOG->Trace( "ScreenSelectGroup::Input()" );
 
 	if( m_Menu.IsClosing()  ||  m_bChosen )
 		return;

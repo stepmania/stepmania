@@ -48,7 +48,7 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
 		)
 {
-	LOG->WriteLine( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
+	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
 
 	Init( 
 		INPUTMODE_BOTH, 
@@ -90,7 +90,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	// fill in theme names
 	//
 	CStringArray arrayThemeNames;
-	THEME->GetThemeNames( arrayThemeNames );
+	THEME->GetThemeNamesForCurGame( arrayThemeNames );
 
 	m_OptionLineData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize() + 1; 
 	

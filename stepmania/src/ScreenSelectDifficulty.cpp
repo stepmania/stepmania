@@ -76,7 +76,7 @@ const ScreenMessage SM_StartFadingOut		 =	ScreenMessage(SM_User + 4);
 
 ScreenSelectDifficulty::ScreenSelectDifficulty()
 {
-	LOG->WriteLine( "ScreenSelectDifficulty::ScreenSelectDifficulty()" );
+	LOG->Trace( "ScreenSelectDifficulty::ScreenSelectDifficulty()" );
 
 	// Reset the current PlayMode
 	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
@@ -184,14 +184,14 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 ScreenSelectDifficulty::~ScreenSelectDifficulty()
 {
-	LOG->WriteLine( "ScreenSelectDifficulty::~ScreenSelectDifficulty()" );
+	LOG->Trace( "ScreenSelectDifficulty::~ScreenSelectDifficulty()" );
 
 }
 
 
 void ScreenSelectDifficulty::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenSelectDifficulty::Input()" );
+	LOG->Trace( "ScreenSelectDifficulty::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;

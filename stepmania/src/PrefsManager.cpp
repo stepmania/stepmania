@@ -27,6 +27,7 @@ PrefsManager::PrefsManager()
 	m_iTextureResolution = 512;
 	m_iRefreshRate = 0;
 	m_bIgnoreJoyAxes = false;
+	m_bOnlyDedicatedMenuButtons = false;
 	m_bShowFPS = false;
 	m_BackgroundMode = BGMODE_ANIMATIONS;
 	m_fBGBrightness = 0.8f;
@@ -35,6 +36,7 @@ PrefsManager::PrefsManager()
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
 	m_fJudgeWindow = 0.18f;
+	m_fLifeDifficultyScale = 1.0f;
 
 	ReadGlobalPrefsFromDisk( true );
 }
@@ -52,19 +54,21 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	if( !ini.ReadFile() )
 		return;		// could not read config file, load nothing
 
-	ini.GetValueB( "Options", "Windowed",			m_bWindowed );
-	ini.GetValueI( "Options", "DisplayResolution",	m_iDisplayResolution );
-	ini.GetValueI( "Options", "TextureResolution",	m_iTextureResolution );
-	ini.GetValueI( "Options", "RefreshRate",		m_iRefreshRate );
-	ini.GetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
-	ini.GetValueB( "Options", "ShowFPS",			m_bShowFPS );
-	ini.GetValueI( "Options", "BackgroundMode",		(int&)m_BackgroundMode );
-	ini.GetValueF( "Options", "BGBrightness",		m_fBGBrightness );
-	ini.GetValueB( "Options", "MenuTimer",			m_bMenuTimer );
-	ini.GetValueB( "Options", "EventMode",			m_bEventMode );
-	ini.GetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
-	ini.GetValueB( "Options", "AutoPlay",			m_bAutoPlay );
-	ini.GetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
+	ini.GetValueB( "Options", "Windowed",				m_bWindowed );
+	ini.GetValueI( "Options", "DisplayResolution",		m_iDisplayResolution );
+	ini.GetValueI( "Options", "TextureResolution",		m_iTextureResolution );
+	ini.GetValueI( "Options", "RefreshRate",			m_iRefreshRate );
+	ini.GetValueB( "Options", "IgnoreJoyAxes",			m_bIgnoreJoyAxes );
+	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
+	ini.GetValueB( "Options", "ShowFPS",				m_bShowFPS );
+	ini.GetValueI( "Options", "BackgroundMode",			(int&)m_BackgroundMode );
+	ini.GetValueF( "Options", "BGBrightness",			m_fBGBrightness );
+	ini.GetValueB( "Options", "MenuTimer",				m_bMenuTimer );
+	ini.GetValueB( "Options", "EventMode",				m_bEventMode );
+	ini.GetValueI( "Options", "NumArcadeStages",		m_iNumArcadeStages );
+	ini.GetValueB( "Options", "AutoPlay",				m_bAutoPlay );
+	ini.GetValueF( "Options", "JudgeWindow",			m_fJudgeWindow );
+	ini.GetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
 
 	CString sAdditionalSongFolders;
 	ini.GetValue( "Options", "SongFolders", sAdditionalSongFolders );
@@ -84,19 +88,21 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	IniFile ini;
 	ini.SetPath( "StepMania.ini" );
 
-	ini.SetValueB( "Options", "Windowed",			m_bWindowed );
-	ini.SetValueI( "Options", "DisplayResolution",	m_iDisplayResolution );
-	ini.SetValueI( "Options", "TextureResolution",	m_iTextureResolution );
-	ini.SetValueI( "Options", "RefreshRate",		m_iRefreshRate );
-	ini.SetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
-	ini.SetValueB( "Options", "ShowFPS",			m_bShowFPS );
-	ini.SetValueI( "Options", "BackgroundMode",		m_BackgroundMode);
-	ini.SetValueF( "Options", "BGBrightness",		m_fBGBrightness );
-	ini.SetValueB( "Options", "EventMode",			m_bEventMode );
-	ini.SetValueB( "Options", "MenuTimer",			m_bMenuTimer );
-	ini.SetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
-	ini.SetValueB( "Options", "AutoPlay",			m_bAutoPlay );
-	ini.SetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
+	ini.SetValueB( "Options", "Windowed",				m_bWindowed );
+	ini.SetValueI( "Options", "DisplayResolution",		m_iDisplayResolution );
+	ini.SetValueI( "Options", "TextureResolution",		m_iTextureResolution );
+	ini.SetValueI( "Options", "RefreshRate",			m_iRefreshRate );
+	ini.SetValueB( "Options", "IgnoreJoyAxes",			m_bIgnoreJoyAxes );
+	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
+	ini.SetValueB( "Options", "ShowFPS",				m_bShowFPS );
+	ini.SetValueI( "Options", "BackgroundMode",			m_BackgroundMode);
+	ini.SetValueF( "Options", "BGBrightness",			m_fBGBrightness );
+	ini.SetValueB( "Options", "EventMode",				m_bEventMode );
+	ini.SetValueB( "Options", "MenuTimer",				m_bMenuTimer );
+	ini.SetValueI( "Options", "NumArcadeStages",		m_iNumArcadeStages );
+	ini.SetValueB( "Options", "AutoPlay",				m_bAutoPlay );
+	ini.SetValueF( "Options", "JudgeWindow",			m_fJudgeWindow );
+	ini.GetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
 
 	ini.SetValue( "Options", "SongFolders", join(",", m_asSongFolders) );
 

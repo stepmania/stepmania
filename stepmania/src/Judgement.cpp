@@ -48,7 +48,7 @@ void Judgement::DrawPrimitives()
 
 void Judgement::SetJudgement( TapNoteScore score )
 {
-	//LOG->WriteLine( "Judgement::SetJudgement()" );
+	//LOG->Trace( "Judgement::SetJudgement()" );
 
 	switch( score )
 	{

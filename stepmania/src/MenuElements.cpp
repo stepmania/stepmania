@@ -65,7 +65,7 @@ MenuElements::MenuElements()
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds )
 {
-	LOG->WriteLine( "MenuElements::MenuElements()" );
+	LOG->Trace( "MenuElements::MenuElements()" );
 
 
 	m_sprBG.Load( sBackgroundPath );

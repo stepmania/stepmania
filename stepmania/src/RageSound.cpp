@@ -26,7 +26,7 @@ RageSound*		SOUND	= NULL;
 
 RageSound::RageSound( HWND hWnd )
 {
-	LOG->WriteLine( "RageSound::RageSound()" );
+	LOG->Trace( "RageSound::RageSound()" );
 
 	// save the HWND
 	if( !hWnd )
@@ -54,7 +54,7 @@ RageSound::RageSound( HWND hWnd )
 	BASS_GetInfo( &m_info );
 
 
-	LOG->WriteLine( 
+	LOG->Trace( 
 		"Sound card info:\n"
 		" - play latency is %u ms\n"
 		" - total device hardware memory is %u bytes\n"
@@ -75,7 +75,7 @@ RageSound::RageSound( HWND hWnd )
 
 RageSound::~RageSound()
 {
-	LOG->WriteLine( "RageSound::~RageSound()" );
+	LOG->Trace( "RageSound::~RageSound()" );
 
 	BASS_Stop();
 	BASS_Free();

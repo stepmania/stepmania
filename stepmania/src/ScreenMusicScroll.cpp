@@ -104,6 +104,7 @@ const CString CREDIT_LINES[] =
 	"Segapark - Bournemouth, UK",
 	"Pier Amusements - Bournemouth, UK",
 	"Westcliff Amusements - Bournemouth, UK",
+	"SailorBob",
 	"Naoki",
 	"Konami Computer Entertainment Japan",
 	"",
@@ -121,7 +122,7 @@ const int NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
 ScreenMusicScroll::ScreenMusicScroll()
 {
-	LOG->WriteLine( "ScreenMusicScroll::ScreenMusicScroll()" );
+	LOG->Trace( "ScreenMusicScroll::ScreenMusicScroll()" );
 
 	 int i;
 
@@ -218,7 +219,7 @@ void ScreenMusicScroll::DrawPrimitives()
 
 void ScreenMusicScroll::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->WriteLine( "ScreenMusicScroll::Input()" );
+	LOG->Trace( "ScreenMusicScroll::Input()" );
 
 	if( m_Fade.IsClosing() )
 		return;

@@ -33,7 +33,7 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
-//	LOG->WriteLine( "Sprite Destructor" );
+//	LOG->Trace( "Sprite Destructor" );
 
 	TEXTUREMAN->UnloadTexture( m_sTexturePath ); 
 }
@@ -41,7 +41,7 @@ Sprite::~Sprite()
 
 bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
-	LOG->WriteLine( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
+	LOG->Trace( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
 
 	//Init();
 	return LoadTexture( sTexturePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
@@ -57,7 +57,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipM
 // Delay0000=2.0
 bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
-	LOG->WriteLine( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
+	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
 
 	//Init();
 

@@ -23,7 +23,7 @@ const float SCORE_TWEEN_TIME = 0.5f;
 
 ScoreDisplayOni::ScoreDisplayOni()
 {
-	LOG->WriteLine( "ScoreDisplayOni::ScoreDisplayOni()" );
+	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
 	// init the text
 	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );

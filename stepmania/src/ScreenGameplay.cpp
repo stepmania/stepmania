@@ -81,7 +81,7 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+125);
 
 ScreenGameplay::ScreenGameplay()
 {
-	LOG->WriteLine( "ScreenGameplay::ScreenGameplay()" );
+	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
 
 	GAMESTATE->ResetStageStatistics();	// clear values
@@ -373,7 +373,7 @@ ScreenGameplay::ScreenGameplay()
 
 ScreenGameplay::~ScreenGameplay()
 {
-	LOG->WriteLine( "ScreenGameplay::~ScreenGameplay()" );
+	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -518,7 +518,7 @@ bool ScreenGameplay::AllFailedEarlier()
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
-	//LOG->WriteLine( "ScreenGameplay::Update(%f)", fDeltaTime );
+	//LOG->Trace( "ScreenGameplay::Update(%f)", fDeltaTime );
 	Screen::Update( fDeltaTime );
 
 	m_soundMusic.Update( fDeltaTime );
@@ -542,7 +542,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	m_Background.SetSongBeat( fSongBeat, bFreeze, fPositionSeconds );
 
-	//LOG->WriteLine( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
+	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 
 	switch( m_DancingState )
@@ -662,7 +662,7 @@ void ScreenGameplay::DrawPrimitives()
 
 void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	//LOG->WriteLine( "ScreenGameplay::Input()" );
+	//LOG->Trace( "ScreenGameplay::Input()" );
 
 	float fSongBeat, fBPS;
 	bool bFreeze;
@@ -697,7 +697,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				default:	ASSERT(0);
 				}
 				if( type == IET_FAST_REPEAT )
-					fOffsetDelta *= 40;
+					fOffsetDelta *= 10;
 				BPMSegment& seg = GAMESTATE->m_pCurSong->GetBPMSegmentAtBeat( fSongBeat );
 
 				seg.m_fBPM += fOffsetDelta;
@@ -723,7 +723,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				default:	ASSERT(0);
 				}
 				if( type == IET_FAST_REPEAT )
-					fOffsetDelta *= 40;
+					fOffsetDelta *= 10;
 
 				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 

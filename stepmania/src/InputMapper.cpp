@@ -14,6 +14,7 @@
 #include "IniFile.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "RageLog.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
@@ -26,45 +27,81 @@ InputMapper::InputMapper()
 
 InputMapper::~InputMapper()
 {
-	// don't worry about releasing the Song array.  Let the OS do it :-)
 	SaveMappingsToDisk();
 }
 
+void InputMapper::ClearAllMappings()
+{
+	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
+		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+			for( int k=0; k<NUM_GAME_TO_DEVICE_SLOTS; k++ )
+				m_GItoDI[i][j][k].MakeInvalid();
+}
+
+void InputMapper::ClearDefaultMappings()
+{
+	// default mappings are in the third slot
+	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
+		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+			m_GItoDI[i][j][2].MakeInvalid();
+}
+
+void InputMapper::AddDefaultMappingsForCurrentGame()
+{
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	for( int c=0; c<MAX_GAME_CONTROLLERS; c++ )
+	{
+		for( int b=0; b<pGameDef->m_iButtonsPerController; b++ )
+		{
+			int key = pGameDef->m_iDefaultKeyboardKey[c][b];
+			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
+			GameInput GameI( (GameController)c, (GameButton)b );
+			if( key != -1  &&  !IsMapped(DeviceI) )
+				SetInputMap( DeviceI, GameI, 2 );   
+		}
+	}
+}
 
 void InputMapper::ReadMappingsFromDisk()
 {
 	ASSERT( GAMEMAN != NULL );
 
+	ClearAllMappings();
+
+	CString sPath = GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini");
 	IniFile ini;
-	ini.SetPath( GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini") );
+	ini.SetPath( sPath );
 	if( !ini.ReadFile() ) {
-		return;		// load nothing
-		//throw RageException( "could not read config file" );
+		LOG->Warn( "could not input mapping file '%s'.", sPath );
 	}
 
 	IniFile::key* pKey = ini.GetKey( "Input" );
 
-	if( pKey == NULL )
-		return;
-	for( int i=0; i<pKey->names.GetSize(); i++ )
+	if( pKey != NULL )
 	{
-		CString name = pKey->names[i];
-		CString value = pKey->values[i];
-
-		GameInput GameI;
-		GameI.fromString( name );
-
-		CStringArray sDeviceInputStrings;
-		split( value, ",", sDeviceInputStrings, false );
-
-		for( int i=0; i<sDeviceInputStrings.GetSize() && i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+		for( int i=0; i<pKey->names.GetSize(); i++ )
 		{
-			DeviceInput DeviceI;
-			DeviceI.fromString( sDeviceInputStrings[i] );
-			if( !DeviceI.IsBlank() )
-				SetInputMap( DeviceI, GameI, i );
+			CString name = pKey->names[i];
+			CString value = pKey->values[i];
+
+			GameInput GameI;
+			GameI.fromString( name );
+
+			CStringArray sDeviceInputStrings;
+			split( value, ",", sDeviceInputStrings, false );
+
+			for( int i=0; i<sDeviceInputStrings.GetSize() && i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+			{
+				DeviceInput DeviceI;
+				DeviceI.fromString( sDeviceInputStrings[i] );
+				if( DeviceI.IsValid() )
+					SetInputMap( DeviceI, GameI, i );
+			}
 		}
 	}
+
+	ClearDefaultMappings();
+	AddDefaultMappingsForCurrentGame();
 }
 
 
@@ -95,11 +132,7 @@ void InputMapper::SaveMappingsToDisk()
 }
 
 
-///////////////////////////////////////
-// Input mapping stuff
-///////////////////////////////////////
-
-void InputMapper::SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex, bool bOverrideHardCoded )
+void InputMapper::SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex )
 {
 	// remove the old input
 	ClearFromInputMap( DeviceI );
@@ -122,7 +155,7 @@ void InputMapper::ClearFromInputMap( DeviceInput DeviceI )
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
 				if( m_GItoDI[p][b][s] == DeviceI )
-					m_GItoDI[p][b][s].MakeBlank();
+					m_GItoDI[p][b][s].MakeInvalid();
 			}
 		}
 	}
@@ -132,13 +165,28 @@ void InputMapper::ClearFromInputMap( DeviceInput DeviceI )
 
 void InputMapper::ClearFromInputMap( GameInput GameI, int iSlotIndex )
 {
-	if( GameI.IsBlank() )
+	if( !GameI.IsValid() )
 		return;
 
-	m_GItoDI[GameI.controller][GameI.button][iSlotIndex].MakeBlank();
+	m_GItoDI[GameI.controller][GameI.button][iSlotIndex].MakeInvalid();
 
 	UpdateTempDItoGI();
 }
+
+bool InputMapper::IsMapped( DeviceInput DeviceI )
+{
+	return m_tempDItoGI[DeviceI.device][DeviceI.button].IsValid();
+}
+
+bool InputMapper::IsMapped( GameInput GameI )
+{
+	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+		if( m_GItoDI[GameI.controller][GameI.button][i].IsValid() )
+			return true;
+
+	return false;
+}
+
 
 void InputMapper::UpdateTempDItoGI()
 {
@@ -147,7 +195,7 @@ void InputMapper::UpdateTempDItoGI()
 	{
 		for( int b=0; b<NUM_DEVICE_BUTTONS; b++ )
 		{
-			m_tempDItoGI[d][b].MakeBlank();
+			m_tempDItoGI[d][b].MakeInvalid();
 		}
 	}
 
@@ -162,10 +210,8 @@ void InputMapper::UpdateTempDItoGI()
 				GameInput GameI( (GameController)n, (GameButton)b );
 				DeviceInput DeviceI = m_GItoDI[n][b][s];
 
-				if( DeviceI.IsBlank() )
-					continue;
-
-				m_tempDItoGI[DeviceI.device][DeviceI.button] = GameI;
+				if( DeviceI.IsValid() )
+					m_tempDItoGI[DeviceI.device][DeviceI.button] = GameI;
 			}
 		}
 	}
@@ -183,58 +229,11 @@ bool InputMapper::GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& Devi
 	return DeviceI.device != DEVICE_NONE;
 }
 
-struct HardCodedMenuKey
-{
-	InputDevice device;
-	int device_button;
-	PlayerNumber player_no;
-	MenuButton menu_button;
-};
-
-const HardCodedMenuKey g_HardCodedMenuKeys[] =
-{
-	{ DEVICE_KEYBOARD,	DIK_UP,		PLAYER_1, MENU_BUTTON_UP },
-	{ DEVICE_KEYBOARD,	DIK_DOWN,	PLAYER_1, MENU_BUTTON_DOWN },
-	{ DEVICE_KEYBOARD,	DIK_LEFT,	PLAYER_1, MENU_BUTTON_LEFT },
-	{ DEVICE_KEYBOARD,	DIK_RIGHT,	PLAYER_1, MENU_BUTTON_RIGHT },
-	{ DEVICE_KEYBOARD,	DIK_RETURN,	PLAYER_1, MENU_BUTTON_START },
-	{ DEVICE_KEYBOARD,	DIK_ESCAPE,	PLAYER_1, MENU_BUTTON_BACK },
-};
-const int NUM_HARD_CODED_MENU_KEYS = sizeof(g_HardCodedMenuKeys) / sizeof(HardCodedMenuKey);
-
-MenuInput InputMapper::DeviceToMenu( DeviceInput DeviceI )
-{
-	for( int i=0; i<NUM_HARD_CODED_MENU_KEYS; i++ )
-	{
-		if( g_HardCodedMenuKeys[i].device == DeviceI.device  &&
-			g_HardCodedMenuKeys[i].device_button == DeviceI.button )
-		{
-			return MenuInput( g_HardCodedMenuKeys[i].player_no, g_HardCodedMenuKeys[i].menu_button );
-		}
-	}
-
-	return MenuInput( PLAYER_INVALID, MENU_BUTTON_INVALID );
-}
-
-DeviceInput InputMapper::MenuToDevice( MenuInput MenuI )
-{
-	for( int i=0; i<NUM_HARD_CODED_MENU_KEYS; i++ )
-	{
-		if( g_HardCodedMenuKeys[i].player_no == MenuI.player  &&
-			g_HardCodedMenuKeys[i].menu_button == MenuI.button )
-		{
-			return DeviceInput( g_HardCodedMenuKeys[i].device, g_HardCodedMenuKeys[i].device_button );
-		}
-	}
-
-	return DeviceInput( DEVICE_NONE, -1 );
-}
-
 void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 {
 	if( GAMESTATE->m_CurStyle == STYLE_NONE )
 	{
-		StyleI.MakeBlank();
+		StyleI.MakeInvalid();
 		return;
 	}
 
@@ -254,11 +253,13 @@ void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
 	GameI = pStyleDef->StyleInputToGameInput( StyleI );
 }
 
-void InputMapper::MenuToGame( MenuInput MenuI, GameInput &GameI )
+
+void InputMapper::MenuToGame( MenuInput MenuI, GameInput GameIout[4] )
 {
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	GameI = pGameDef->MenuInputToGameInput( MenuI );
+	pGameDef->MenuInputToGameInput( MenuI, GameIout );
 }
+
 
 bool InputMapper::IsButtonDown( GameInput GameI )
 {
@@ -278,9 +279,13 @@ bool InputMapper::IsButtonDown( GameInput GameI )
 
 bool InputMapper::IsButtonDown( MenuInput MenuI )
 {
-	GameInput GameI;
+	GameInput GameI[4];
 	MenuToGame( MenuI, GameI );
-	return IsButtonDown( GameI );
+	for( int i=0; i<4; i++ )
+		if( GameI[i].IsValid()  &&  IsButtonDown(GameI[i]) )
+			return true;
+
+	return false;
 }
 
 
@@ -290,6 +295,3 @@ bool InputMapper::IsButtonDown( StyleInput StyleI )
 	StyleToGame( StyleI, GameI );
 	return IsButtonDown( GameI );
 }
-
-
-

@@ -30,3 +30,29 @@ void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOrigin
 	
 	pNoteDataOut->LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
 }
+
+
+GameInput StyleDef::StyleInputToGameInput( const StyleInput StyleI )
+{
+	GameController c = m_ColumnInfo[StyleI.player][StyleI.col].controller;
+	GameButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
+	return GameInput( c, b );
+};
+
+StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI )
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		for( int t=0; t<MAX_NOTE_TRACKS; t++ )
+		{
+			if( m_ColumnInfo[p][t].controller == GameI.controller  &&
+				m_ColumnInfo[p][t].button == GameI.button )
+			{
+				return StyleInput( (PlayerNumber)p, t );
+			}
+		}
+	}
+	return StyleInput();	// Didn't find a match.  Return invalid.
+}
+
+

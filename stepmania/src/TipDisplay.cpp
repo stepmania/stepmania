@@ -21,7 +21,7 @@ const float TIP_SHOW_TIME	=	3.5f;
 
 TipDisplay::TipDisplay()
 {
-	LOG->WriteLine( "TipDisplay::TipDisplay()" );
+	LOG->Trace( "TipDisplay::TipDisplay()" );
 
 	m_textTip.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textTip.SetEffectBlinking();

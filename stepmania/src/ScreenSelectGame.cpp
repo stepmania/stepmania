@@ -46,7 +46,7 @@ ScreenSelectGame::ScreenSelectGame() :
 		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
 		)
 {
-	LOG->WriteLine( "ScreenSelectGame::ScreenSelectGame()" );
+	LOG->Trace( "ScreenSelectGame::ScreenSelectGame()" );
 
 
 	// populate g_SelectGameLines
@@ -72,7 +72,7 @@ void ScreenSelectGame::ImportOptions()
 
 void ScreenSelectGame::ExportOptions()
 {
-	LOG->WriteLine("ScreenSelectGame::ExportOptions()");
+	LOG->Trace("ScreenSelectGame::ExportOptions()");
 
 	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 	PREFSMAN->SaveGamePrefsToDisk();

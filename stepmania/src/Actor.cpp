@@ -153,7 +153,7 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 
 void Actor::Update( float fDeltaTime )
 {
-//	LOG->WriteLine( "Actor::Update( %f )", fDeltaTime );
+//	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
 
 	// update effect
 	switch( m_Effect )
@@ -178,7 +178,7 @@ void Actor::Update( float fDeltaTime )
 				m_bTweeningTowardEndColor = TRUE;
 			}
 		}
-		//LOG->WriteLine( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
+		//LOG->Trace( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
 		break;
 	case wagging:
 		m_fWagTimer += fDeltaTime;

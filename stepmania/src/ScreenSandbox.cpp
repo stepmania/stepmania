@@ -70,12 +70,6 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 			break;
 		case MENU_BUTTON_RIGHT:
 			break;
-		case MENU_BUTTON_UP:
-	//		m_BlurTest.StartFocusing();
-			break;
-		case MENU_BUTTON_DOWN:
-	//		m_BlurTest.StartBlurring();
-			break;
 		case MENU_BUTTON_BACK:
 			//SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 			return;

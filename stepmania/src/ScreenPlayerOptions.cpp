@@ -56,7 +56,7 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
 		)
 {
-	LOG->WriteLine( "ScreenPlayerOptions::ScreenPlayerOptions()" );
+	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
 	
 	Init( 
 		INPUTMODE_2PLAYERS, 

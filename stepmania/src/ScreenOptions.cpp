@@ -41,7 +41,7 @@ const ScreenMessage SM_GoToNextState		= ScreenMessage(SM_User-6);
 
 ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 {
-	LOG->WriteLine( "ScreenOptions::ScreenOptions()" );
+	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
 	m_SoundChangeCol.Load( THEME->GetPathTo(SOUND_OPTION_CHANGE_COL) );
 	m_SoundChangeRow.Load( THEME->GetPathTo(SOUND_OPTION_CHANGE_ROW) );
@@ -92,7 +92,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 
 void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines )
 {
-	LOG->WriteLine( "ScreenOptions::Set()" );
+	LOG->Trace( "ScreenOptions::Set()" );
 
 
 	m_InputMode = im;
@@ -108,7 +108,7 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 
 ScreenOptions::~ScreenOptions()
 {
-	LOG->WriteLine( "ScreenOptions::~ScreenOptions()" );
+	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
 
 }
 
@@ -253,7 +253,7 @@ void ScreenOptions::TweenHighlight( PlayerNumber player_no )
 
 void ScreenOptions::Update( float fDeltaTime )
 {
-	//LOG->WriteLine( "ScreenOptions::Update(%f)", fDeltaTime );
+	//LOG->Trace( "ScreenOptions::Update(%f)", fDeltaTime );
 
 	Screen::Update( fDeltaTime );
 }

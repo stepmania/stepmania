@@ -23,7 +23,7 @@ RageDisplay*		DISPLAY	= NULL;
 
 RageDisplay::RageDisplay( HWND hWnd )
 {
-	LOG->WriteLine( "RageDisplay::RageDisplay()" );
+	LOG->Trace( "RageDisplay::RageDisplay()" );
 
 	// Save the window handle
 	m_hWnd = hWnd;
@@ -61,7 +61,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 		);
 	}
 
-	LOG->WriteLine( 
+	LOG->Trace( 
 		"Video card info:\n"
 		" - max texture width is %d\n"
 		" - max texture height is %d\n"
@@ -76,13 +76,13 @@ RageDisplay::RageDisplay( HWND hWnd )
 
 
 	// Enumerate possible display modes
-	LOG->WriteLine( "This display adaptor supports the following modes:" );
+	LOG->Trace( "This display adaptor supports the following modes:" );
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
 	{
 		D3DDISPLAYMODE mode;
 		if( SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
 		{
-			//LOG->WriteLine( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
+			//LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
 		}
 	}
 
@@ -107,7 +107,7 @@ RageDisplay::~RageDisplay()
 bool RageDisplay::SwitchDisplayMode( 
 	const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz )
 {
-	LOG->WriteLine( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz );
+	LOG->Trace( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz );
 
 	if( !bWindowed )
 		SetCursor( NULL );
@@ -166,7 +166,7 @@ bool RageDisplay::SwitchDisplayMode(
 			fmtDisplay = fmtBackBuffer = arrayBackBufferFormats[i];
 		}
 
-		LOG->WriteLine( "Testing format: display %d, back buffer %d, windowed %d...", fmtDisplay, fmtBackBuffer, bWindowed );
+		LOG->Trace( "Testing format: display %d, back buffer %d, windowed %d...", fmtDisplay, fmtBackBuffer, bWindowed );
 
 		hr = m_pd3d->CheckDeviceType( 
 			D3DADAPTER_DEFAULT, 
@@ -178,18 +178,18 @@ bool RageDisplay::SwitchDisplayMode(
 
 		if( SUCCEEDED(hr) )
 		{
-			LOG->WriteLine( "This will work." );
+			LOG->Trace( "This will work." );
 			break;	// done searching
 		}
 		else
 		{
-			LOG->WriteLine( "This won't work.  Keep searching." );
+			LOG->Trace( "This won't work.  Keep searching." );
 		}
 	}
 
 	if( i == arrayBackBufferFormats.GetSize() )		// we didn't find an appropriate format
 	{
-		LOG->WriteLineHr( hr, "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
+		LOG->Trace( hr, "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 		return false;
 	}
 
@@ -212,7 +212,7 @@ bool RageDisplay::SwitchDisplayMode(
 	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed ? D3DPRESENT_RATE_DEFAULT : iFullScreenHz;
 	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
-	LOG->WriteLine( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
+	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
 		m_d3dpp.BackBufferWidth,
 		m_d3dpp.BackBufferHeight,
 		m_d3dpp.BackBufferFormat,
@@ -235,11 +235,11 @@ bool RageDisplay::SwitchDisplayMode(
 		D3DADAPTER_IDENTIFIER8	identifier;
 		if( FAILED( hr = m_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier ) ) )
 		{
-			LOG->WriteLineHr( hr, "GetAdapterIdentifier failed" );
+			LOG->Trace( hr, "GetAdapterIdentifier failed" );
 			return false;
 		}
 
-		LOG->WriteLine( "Driver: %s.  Description: %s.", 
+		LOG->Trace( "Driver: %s.  Description: %s.", 
 			identifier.Driver, 
 			identifier.Description 
 			);
@@ -250,10 +250,10 @@ bool RageDisplay::SwitchDisplayMode(
 											D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 											&m_d3dpp, &m_pd3dDevice) ) )
 		{
-			LOG->WriteLineHr( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
+			LOG->Trace( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 			return false;
 		}
-		LOG->WriteLine( 
+		LOG->Trace( 
 			"Video card info:\n"
 			" - available texture mem is %u\n",
 			m_pd3dDevice->GetAvailableTextureMem()
@@ -266,12 +266,12 @@ bool RageDisplay::SwitchDisplayMode(
 		// device is already created.  Just reset it.
 		if( FAILED( hr = m_pd3dDevice->Reset( &m_d3dpp ) ) )
 		{
-			LOG->WriteLineHr( hr, "failed to reset device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
+			LOG->Trace( hr, "failed to reset device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
 			return false;
 		}
 	}
 
-	LOG->WriteLine( "Mode change was successful." );
+	LOG->Trace( "Mode change was successful." );
 
 	// Clear the back buffer and present it so we don't show the gibberish that was
 	// in video memory from the last app.
@@ -378,7 +378,7 @@ HRESULT RageDisplay::EndFrame()
 		m_iFramesRenderedSinceLastCheck = 0;
 		m_fLastUpdateTime = fTimeNow;
 
-		LOG->WriteLine( "FPS: %.0f", m_fFPS );
+		LOG->Trace( "FPS: %.0f", m_fFPS );
 	}
 
 

@@ -24,6 +24,7 @@
 #include "NoteData.h"
 #include "StyleInput.h"
 #include "GameInput.h"
+#include "MenuInput.h"
 
 
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
@@ -48,38 +49,17 @@ public:
 	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	struct ColumnInfo 
 	{ 
-		int track;					// take note data from this track
-		GameController number;	// use this instrument to hit a note on this track
-		GameButton button;	// use this button to hit a note on this track
-		float	fXOffset;			// x position of the column relative to player center
+		int				track;		// take note data from this track
+		GameController	controller;	// use this instrument to hit a note on this track
+		GameButton		button;		// use this button to hit a note on this track
+		float			fXOffset;	// x position of the column relative to player center
 	};
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 
-	inline GameInput StyleInputToGameInput( const StyleInput StyleI )
-	{
-		GameController n = m_ColumnInfo[StyleI.player][StyleI.col].number;
-		GameButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
-		return GameInput( n, b );
-	};
-
-	inline StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI )
-	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-			{
-				if( m_ColumnInfo[p][t].number == GameI.controller  &&
-					m_ColumnInfo[p][t].button == GameI.button )
-				{
-					return StyleInput( (PlayerNumber)p, t );
-				}
-			}
-		}
-		return StyleInput();	// Didn't find a match.  Return blank.
-	}
+	GameInput StyleInputToGameInput( const StyleInput StyleI );
+	StyleInput GameInputToStyleInput( const GameInput &GameI );
 
 	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut );
-
 };
 

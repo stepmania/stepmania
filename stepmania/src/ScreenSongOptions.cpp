@@ -25,7 +25,7 @@
 
 
 OptionLineData g_SongOptionsLines[] = {
-	{ "Life",		2, {"BAR","BATTERY"} },	
+	{ "Life Type",	2, {"BAR","BATTERY"} },	
 	{ "Bar Drain",	3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
 	{ "Bat.Lives",	10, {"1","2","3","4","5","6","7","8","9","10"} },	
 	{ "Fail",		3, {"ARCADE","END OF SONG","OFF"} },	
@@ -53,7 +53,7 @@ ScreenSongOptions::ScreenSongOptions() :
 		THEME->GetPathTo(GRAPHIC_SONG_OPTIONS_TOP_EDGE)
 		)
 {
-	LOG->WriteLine( "ScreenSongOptions::ScreenSongOptions()" );
+	LOG->Trace( "ScreenSongOptions::ScreenSongOptions()" );
 
 	Init( INPUTMODE_BOTH, 
 		g_SongOptionsLines, 

@@ -55,3 +55,4 @@ public:
 
 extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
 
+
