@@ -26,11 +26,17 @@ void LyricDisplay::Init()
 	/* Update global cache: */
 	g_TweenInTime = Actor::GetCommandLength(IN_COMMAND);
 	g_TweenOutTime = Actor::GetCommandLength(OUT_COMMAND);
+	m_fLastSecond = -500;
 }
 
 void LyricDisplay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
+
+	/* If the song has changed (in a course), reset. */
+	if( GAMESTATE->m_fMusicSeconds < m_fLastSecond )
+		Init();
+	m_fLastSecond = GAMESTATE->m_fMusicSeconds;
 
 	// Make sure we don't go over the array's boundry
 	if( m_iCurLyricNumber >= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
@@ -46,21 +52,24 @@ void LyricDisplay::Update( float fDeltaTime )
 
 	float fShowLength = MaxDisplayTime;
 
+	/* Clamp this lyric to the beginning of the next, the end of the music,
+	 * or 5 seconds. */
+	float EndTime;
 	if(m_iCurLyricNumber+1 < GAMESTATE->m_pCurSong->m_LyricSegments.size())
-	{
-		/* Clamp this lyric to the beginning of the next. */
-		const float Distance = 
-			song->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime -
-			song->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
-		const float TweenBufferTime = g_TweenInTime + g_TweenOutTime;
+		EndTime = song->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime;
+	else
+		EndTime = song->GetElapsedTimeFromBeat( song->m_fLastBeat );
 
-		fShowLength = min(fShowLength, Distance - TweenBufferTime);
+	const float Distance = EndTime - song->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
+	const float TweenBufferTime = g_TweenInTime + g_TweenOutTime;
 
-		/* If it's negative, two lyrics are so close together that there's no time
-		 * to tween properly.  Lyrics should never be this brief, anyway, so just
-		 * skip it. */
-		fShowLength = max(fShowLength, 0);
-	}
+	fShowLength = min(fShowLength, Distance - TweenBufferTime);
+	fShowLength = min(fShowLength, 5);
+
+	/* If it's negative, two lyrics are so close together that there's no time
+	 * to tween properly.  Lyrics should never be this brief, anyway, so just
+	 * skip it. */
+	fShowLength = max(fShowLength, 0);
 
 	m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
 

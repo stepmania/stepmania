@@ -16,6 +16,7 @@ public:
 private:
 	BitmapText m_textLyrics;
 	unsigned m_iCurLyricNumber;
+	float m_fLastSecond;
 };
 
 #endif
