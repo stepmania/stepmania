@@ -19,6 +19,8 @@
 
 #include "ArchHooks/ArchHooks_Unix.h"
 
+#include "Lights/LightsDriver_Win32Parallel.h"
+
 #endif
 /*
  * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
