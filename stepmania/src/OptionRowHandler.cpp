@@ -54,8 +54,9 @@ public:
 		Default.Init();
 		m_bUseModNameForIcon = false;
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
+	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const;
+	virtual void Reload( OptionRowDefinition &defOut );
 	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const
 	{
 		return m_bUseModNameForIcon ?
@@ -79,6 +80,7 @@ public:
 	}
 
 	void FillList( OptionRowDefinition &defOut, CString param );
+	void FillNoteSkins( OptionRowDefinition &defOut );
 	void FillSteps( OptionRowDefinition &defOut );
 	void FillCharacters( OptionRowDefinition &defOut );
 	void FillStyles( OptionRowDefinition &defOut );
@@ -98,7 +100,7 @@ public:
 		delete m_pLuaTable;
 		m_pLuaTable = new LuaExpression;
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
+	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const;
 	virtual void Reload( OptionRowDefinition &defOut );
 
@@ -123,7 +125,7 @@ public:
 };
 
 
-void OptionRowHandlerList::ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+void OptionRowHandlerList::ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 {
 	int FallbackOption = -1;
 	bool UseFallbackOption = true;
@@ -139,17 +141,17 @@ void OptionRowHandlerList::ImportOption( const OptionRowDefinition &row, PlayerN
 			/* The entry has no effect.  This is usually a default "none of the
 				* above" entry.  It will always return true for DescribesCurrentMode().
 				* It's only the selected choice if nothing else matches. */
-			if( row.selectType != SELECT_MULTIPLE )
+			if( def.selectType != SELECT_MULTIPLE )
 				FallbackOption = e;
 			continue;
 		}
 
-		if( row.bOneChoiceForAllPlayers )
+		if( def.bOneChoiceForAllPlayers )
 		{
 			if( mc.DescribesCurrentModeForAllPlayers() )
 			{
 				UseFallbackOption = false;
-				if( row.selectType != SELECT_MULTIPLE )
+				if( def.selectType != SELECT_MULTIPLE )
 					SelectExactlyOne( e, vbSelectedOut );
 				else
 					vbSelectedOut[e] = true;
@@ -160,7 +162,7 @@ void OptionRowHandlerList::ImportOption( const OptionRowDefinition &row, PlayerN
 			if( mc.DescribesCurrentMode(  pn) )
 			{
 				UseFallbackOption = false;
-				if( row.selectType != SELECT_MULTIPLE )
+				if( def.selectType != SELECT_MULTIPLE )
 					SelectExactlyOne( e, vbSelectedOut );
 				else
 					vbSelectedOut[e] = true;
@@ -168,7 +170,7 @@ void OptionRowHandlerList::ImportOption( const OptionRowDefinition &row, PlayerN
 		}
 	}
 
-	if( row.selectType == SELECT_ONE && 
+	if( def.selectType == SELECT_ONE && 
 		UseFallbackOption && 
 		FallbackOption != -1 )
 	{
@@ -185,8 +187,13 @@ int OptionRowHandlerList::ExportOption( const OptionRowDefinition &def, PlayerNu
 	return 0;
 }
 
+void OptionRowHandlerList::Reload( OptionRowDefinition &defOut )
+{
+	FillList( defOut, m_sName );
+}
 
-void OptionRowHandlerLua::ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+
+void OptionRowHandlerLua::ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 {
 	ASSERT( lua_gettop(LUA->L) == 0 );
 
@@ -208,7 +215,7 @@ void OptionRowHandlerLua::ImportOption( const OptionRowDefinition &row, PlayerNu
 	lua_pushstring( LUA->L, "LoadSelections" );
 	lua_gettable( LUA->L, -2 );
 	if( !lua_isfunction( LUA->L, -1 ) )
-		RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", row.name.c_str() );
+		RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.name.c_str() );
 
 	/* Argument 1 (self): */
 	m_pLuaTable->PushSelf( LUA->L );
@@ -284,7 +291,7 @@ void OptionRowHandlerLua::Reload( OptionRowDefinition &defOut )
 }
 
 
-void OptionRowHandlerConfig::ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+void OptionRowHandlerConfig::ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 {
 	int iSelection = opt->Get();
 	SelectExactlyOne( iSelection, vbSelectedOut );
@@ -314,33 +321,22 @@ int OptionRowHandlerConfig::ExportOption( const OptionRowDefinition &def, Player
 
 
 /* Add the list named "ListName" to the given row/handler. */
-void OptionRowHandlerList::FillList( OptionRowDefinition &row, CString sListName )
+void OptionRowHandlerList::FillList( OptionRowDefinition &defOut, CString sListName )
 {
+	if(		 m_sName == "noteskins" )		{ FillNoteSkins( defOut );		return; }
+	else if( m_sName == "steps" )			{ FillSteps( defOut );			return; }
+	else if( m_sName == "characters" )		{ FillCharacters( defOut );		return; }
+	else if( m_sName == "styles" )			{ FillStyles( defOut );			return; }
+	else if( m_sName == "groups" )			{ FillGroups( defOut );			return; }
+	else if( m_sName == "difficulties" )	{ FillDifficulties( defOut );	return; }
+
 	Init();
-	row.Init();
+	defOut.Init();
 
 	m_sName = sListName;
 	m_bUseModNameForIcon = true;
 		
-	row.name = sListName;
-	if( !sListName.CompareNoCase("noteskins") )
-	{
-		Default.Init(); /* none */
-		row.bOneChoiceForAllPlayers = false;
-
-		CStringArray arraySkinNames;
-		NOTESKIN->GetNoteSkinNames( arraySkinNames );
-		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
-		{
-			arraySkinNames[skin].MakeUpper();
-
-			GameCommand mc;
-			mc.m_sModifiers = arraySkinNames[skin];
-			ListEntries.push_back( mc );
-			row.choices.push_back( arraySkinNames[skin] );
-		}
-		return;
-	}
+	defOut.name = sListName;
 
 	Default.Load( -1, ParseCommands(ENTRY_DEFAULT(sListName)) );
 
@@ -349,17 +345,17 @@ void OptionRowHandlerList::FillList( OptionRowDefinition &row, CString sListName
 	if( cmds.v.size() < 1 )
 		RageException::Throw( "Parse error in OptionRowHandlerUtilEntries::ListName%s", sListName.c_str() );
 
-	row.bOneChoiceForAllPlayers = false;
+	defOut.bOneChoiceForAllPlayers = false;
 	const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );
 	for( unsigned i=1; i<cmds.v.size(); i++ )
 	{
 		const Command &cmd = cmds.v[i];
 		CString sName = cmd.GetName();
 
-		if(		 sName == "together" )			row.bOneChoiceForAllPlayers = true;
-		else if( sName == "selectmultiple" )	row.selectType = SELECT_MULTIPLE;
-		else if( sName == "selectnone" )		row.selectType = SELECT_NONE;
-		else if( sName == "showoneinrow" )		row.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		if(		 sName == "together" )			defOut.bOneChoiceForAllPlayers = true;
+		else if( sName == "selectmultiple" )	defOut.selectType = SELECT_MULTIPLE;
+		else if( sName == "selectnone" )		defOut.selectType = SELECT_NONE;
+		else if( sName == "showoneinrow" )		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		else if( sName == "reloadrownames" )
 		{
 			for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
@@ -367,13 +363,13 @@ void OptionRowHandlerList::FillList( OptionRowDefinition &row, CString sListName
 		}
 		else if( sName == "enabledforplayers" )
 		{
-			row.m_vEnabledForPlayers.clear();
+			defOut.m_vEnabledForPlayers.clear();
 			for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
 			{
 				CString sArg = cmd.m_vsArgs[a];
 				PlayerNumber pn = (PlayerNumber)(atoi(sArg)-1);
 				ASSERT( pn >= 0 && pn < NUM_PLAYERS );
-				row.m_vEnabledForPlayers.insert( pn );
+				defOut.m_vEnabledForPlayers.insert( pn );
 			}
 		}
 		else if( sName == "exportonchange" )	m_bExportOnChange = true;
@@ -394,14 +390,14 @@ void OptionRowHandlerList::FillList( OptionRowDefinition &row, CString sListName
 
 		CString sName = mc.m_sName;
 		CString sChoice = ENTRY_NAME(mc.m_sName);
-		row.choices.push_back( sChoice );
+		defOut.choices.push_back( sChoice );
 	}
 }
 
-void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunction )
+void OptionRowHandlerLua::FillLua( OptionRowDefinition &defOut, CString sLuaFunction )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
 	m_sName = sLuaFunction;
 //	m_bUseModNameForIcon = true;
@@ -420,13 +416,13 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 		const char *pStr = lua_tostring( LUA->L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
-		row.name = pStr;
+		defOut.name = pStr;
 		lua_pop( LUA->L, 1 );
 
 
 		lua_pushstring( LUA->L, "OneChoiceForAllPlayers" );
 		lua_gettable( LUA->L, -2 );
-		row.bOneChoiceForAllPlayers = !!lua_toboolean( LUA->L, -1 );
+		defOut.bOneChoiceForAllPlayers = !!lua_toboolean( LUA->L, -1 );
 		lua_pop( LUA->L, 1 );
 
 
@@ -435,8 +431,8 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 		pStr = lua_tostring( LUA->L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
-		row.layoutType = StringToLayoutType( pStr );
-		ASSERT( row.layoutType != LAYOUT_INVALID );
+		defOut.layoutType = StringToLayoutType( pStr );
+		ASSERT( defOut.layoutType != LAYOUT_INVALID );
 		lua_pop( LUA->L, 1 );
 
 
@@ -445,8 +441,8 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 		pStr = lua_tostring( LUA->L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
-		row.selectType = StringToSelectType( pStr );
-		ASSERT( row.selectType != SELECT_INVALID );
+		defOut.selectType = StringToSelectType( pStr );
+		ASSERT( defOut.selectType != SELECT_INVALID );
 		lua_pop( LUA->L, 1 );
 
 
@@ -465,7 +461,7 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 				RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
 			LOG->Trace( "'%s'", pValue);
 
-			row.choices.push_back( pValue );
+			defOut.choices.push_back( pValue );
 
 			lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
 		}
@@ -481,7 +477,7 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 			if( !lua_istable( LUA->L, -1 ) )
 				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
 
-			row.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
+			defOut.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
 			lua_pushnil( LUA->L );
 			while( lua_next(LUA->L, -2) != 0 )
@@ -489,7 +485,7 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 				/* `key' is at index -2 and `value' at index -1 */
 				PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
 
-				row.m_vEnabledForPlayers.insert( pn );
+				defOut.m_vEnabledForPlayers.insert( pn );
 
 				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
 			}
@@ -539,25 +535,45 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &row, CString sLuaFunctio
 	}
 }
 
-
-/* Add a list of difficulties/edits to the given row/handler. */
-void OptionRowHandlerList::FillSteps( OptionRowDefinition &row )
+void OptionRowHandlerList::FillNoteSkins( OptionRowDefinition &defOut )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
-	row.name = "Steps";
-	row.bOneChoiceForAllPlayers = false;
+	defOut.name = "NoteSkins";
+	defOut.bOneChoiceForAllPlayers = false;
+
+	CStringArray arraySkinNames;
+	NOTESKIN->GetNoteSkinNames( arraySkinNames );
+	for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
+	{
+		arraySkinNames[skin].MakeUpper();
+
+		GameCommand mc;
+		mc.m_sModifiers = arraySkinNames[skin];
+		ListEntries.push_back( mc );
+		defOut.choices.push_back( arraySkinNames[skin] );
+	}
+}
+
+/* Add a list of difficulties/edits to the given row/handler. */
+void OptionRowHandlerList::FillSteps( OptionRowDefinition &defOut )
+{
+	Init();
+	defOut.Init();
+
+	defOut.name = "Steps";
+	defOut.bOneChoiceForAllPlayers = false;
 
 	// fill in difficulty names
 	if( GAMESTATE->m_bEditing )
 	{
-		row.choices.push_back( "" );
+		defOut.choices.push_back( "" );
 		ListEntries.push_back( GameCommand() );
 	}
 	else if( GAMESTATE->IsCourseMode() )   // playing a course
 	{
-		row.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
+		defOut.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
 
 		vector<Trail*> vTrails;
 		GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
@@ -566,7 +582,7 @@ void OptionRowHandlerList::FillSteps( OptionRowDefinition &row )
 			Trail* pTrail = vTrails[i];
 
 			CString s = CourseDifficultyToThemedString( pTrail->m_CourseDifficulty );
-			row.choices.push_back( s );
+			defOut.choices.push_back( s );
 			GameCommand mc;
 			mc.m_pTrail = pTrail;
 			ListEntries.push_back( mc );
@@ -588,7 +604,7 @@ void OptionRowHandlerList::FillSteps( OptionRowDefinition &row )
 				s = DifficultyToThemedString( pSteps->GetDifficulty() );
 			s += ssprintf( " (%d)", pSteps->GetMeter() );
 
-			row.choices.push_back( s );
+			defOut.choices.push_back( s );
 			GameCommand mc;
 			mc.m_pSteps = pSteps;
 			mc.m_dc = pSteps->GetDifficulty();
@@ -599,13 +615,13 @@ void OptionRowHandlerList::FillSteps( OptionRowDefinition &row )
 
 
 /* Add the given configuration value to the given row/handler. */
-void OptionRowHandlerConfig::FillConfig( OptionRowDefinition &row, CString param )
+void OptionRowHandlerConfig::FillConfig( OptionRowDefinition &defOut, CString param )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
 	/* Configuration values are never per-player. */
-	row.bOneChoiceForAllPlayers = true;
+	defOut.bOneChoiceForAllPlayers = true;
 
 	ConfOption *pConfOption = ConfOption::Find( param );
 	if( pConfOption == NULL )
@@ -614,23 +630,23 @@ void OptionRowHandlerConfig::FillConfig( OptionRowDefinition &row, CString param
 	pConfOption->UpdateAvailableOptions();
 
 	opt = pConfOption;
-	opt->MakeOptionsList( row.choices );
+	opt->MakeOptionsList( defOut.choices );
 
-	row.name = opt->name;
+	defOut.name = opt->name;
 }
 
 /* Add a list of available characters to the given row/handler. */
-void OptionRowHandlerList::FillCharacters( OptionRowDefinition &row )
+void OptionRowHandlerList::FillCharacters( OptionRowDefinition &defOut )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
-	row.bOneChoiceForAllPlayers = false;
-	row.name = "Characters";
+	defOut.bOneChoiceForAllPlayers = false;
+	defOut.name = "Characters";
 	Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
 
 	{
-		row.choices.push_back( ENTRY_NAME("Off") );
+		defOut.choices.push_back( ENTRY_NAME("Off") );
 		GameCommand mc;
 		mc.m_pCharacter = NULL;
 		ListEntries.push_back( mc );
@@ -644,7 +660,7 @@ void OptionRowHandlerList::FillCharacters( OptionRowDefinition &row )
 		CString s = pCharacter->m_sName;
 		s.MakeUpper();
 
-		row.choices.push_back( s ); 
+		defOut.choices.push_back( s ); 
 		GameCommand mc;
 		mc.m_pCharacter = pCharacter;
 		ListEntries.push_back( mc );
@@ -652,21 +668,21 @@ void OptionRowHandlerList::FillCharacters( OptionRowDefinition &row )
 }
 
 /* Add a list of available styles to the given row/handler. */
-void OptionRowHandlerList::FillStyles( OptionRowDefinition &row )
+void OptionRowHandlerList::FillStyles( OptionRowDefinition &defOut )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
-	row.bOneChoiceForAllPlayers = true;
-	row.name = "Style";
-	row.bOneChoiceForAllPlayers = true;
+	defOut.bOneChoiceForAllPlayers = true;
+	defOut.name = "Style";
+	defOut.bOneChoiceForAllPlayers = true;
 
 	vector<const Style*> vStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 	ASSERT( vStyles.size() );
 	FOREACH_CONST( const Style*, vStyles, s )
 	{
-		row.choices.push_back( GAMEMAN->StyleToThemedString(*s) ); 
+		defOut.choices.push_back( GAMEMAN->StyleToThemedString(*s) ); 
 		GameCommand mc;
 		mc.m_pStyle = *s;
 		ListEntries.push_back( mc );
@@ -676,13 +692,13 @@ void OptionRowHandlerList::FillStyles( OptionRowDefinition &row )
 }
 
 /* Add a list of available song groups to the given row/handler. */
-void OptionRowHandlerList::FillGroups( OptionRowDefinition &row )
+void OptionRowHandlerList::FillGroups( OptionRowDefinition &defOut )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
-	row.bOneChoiceForAllPlayers = true;
-	row.name = "Group";
+	defOut.bOneChoiceForAllPlayers = true;
+	defOut.name = "Group";
 	Default.m_sSongGroup = GROUP_ALL_MUSIC;
 
 	vector<CString> vGroups;
@@ -690,7 +706,7 @@ void OptionRowHandlerList::FillGroups( OptionRowDefinition &row )
 	ASSERT( vGroups.size() );
 
 	{
-		row.choices.push_back( ENTRY_NAME("AllGroups") );
+		defOut.choices.push_back( ENTRY_NAME("AllGroups") );
 		GameCommand mc;
 		mc.m_sSongGroup = GROUP_ALL_MUSIC;
 		ListEntries.push_back( mc );
@@ -698,7 +714,7 @@ void OptionRowHandlerList::FillGroups( OptionRowDefinition &row )
 
 	FOREACH_CONST( CString, vGroups, g )
 	{
-		row.choices.push_back( *g ); 
+		defOut.choices.push_back( *g ); 
 		GameCommand mc;
 		mc.m_sSongGroup = *g;
 		ListEntries.push_back( mc );
@@ -706,20 +722,20 @@ void OptionRowHandlerList::FillGroups( OptionRowDefinition &row )
 }
 
 /* Add a list of available difficulties to the given row/handler. */
-void OptionRowHandlerList::FillDifficulties( OptionRowDefinition &row )
+void OptionRowHandlerList::FillDifficulties( OptionRowDefinition &defOut )
 {
 	Init();
-	row.Init();
+	defOut.Init();
 
 	set<Difficulty> vDifficulties;
 	GAMESTATE->GetDifficultiesToShow( vDifficulties );
 
-	row.bOneChoiceForAllPlayers = true;
-	row.name = "Difficulty";
+	defOut.bOneChoiceForAllPlayers = true;
+	defOut.name = "Difficulty";
 	Default.m_dc = DIFFICULTY_INVALID;
 
 	{
-		row.choices.push_back( ENTRY_NAME("AllDifficulties") );
+		defOut.choices.push_back( ENTRY_NAME("AllDifficulties") );
 		GameCommand mc;
 		mc.m_dc = DIFFICULTY_INVALID;
 		ListEntries.push_back( mc );
@@ -729,7 +745,7 @@ void OptionRowHandlerList::FillDifficulties( OptionRowDefinition &row )
 	{
 		CString s = DifficultyToThemedString( *d );
 
-		row.choices.push_back( s ); 
+		defOut.choices.push_back( s ); 
 		GameCommand mc;
 		mc.m_dc = *d;
 		ListEntries.push_back( mc );
@@ -747,12 +763,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Command &command, OptionRowD
 
 	if(		 name == "list" )			{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillList( defOut, sArg(1) );		pHand = p; }
 	else if( name == "lua" )			{ OptionRowHandlerLua *p = new OptionRowHandlerLua;			p->FillLua( defOut, sArg(1) );		pHand = p; }
-	else if( name == "steps" )			{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillSteps( defOut );				pHand = p; }
 	else if( name == "conf" )			{ OptionRowHandlerConfig *p = new OptionRowHandlerConfig;	p->FillConfig( defOut, sArg(1) );	pHand = p; }
-	else if( name == "characters" )		{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillCharacters( defOut );		pHand = p; }
-	else if( name == "styles" )			{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillStyles( defOut );			pHand = p; }
-	else if( name == "groups" )			{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillGroups( defOut );			pHand = p; }
-	else if( name == "difficulties" )	{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillDifficulties( defOut );		pHand = p; }
 
 	EndHandleArgs;
 
