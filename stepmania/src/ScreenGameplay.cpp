@@ -782,19 +782,19 @@ void ScreenGameplay::UpdateLyrics( float fDeltaTime )
 	if( !m_bHasLyrics )
 		return;
 
-	m_fLyricsTime += fDeltaTime;
+//	m_fLyricsTime += fDeltaTime;
 	float	fStartTime = (GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime);
 
 	// Make sure we don't go over the array's boundry
 	if( m_iCurLyricNumber <= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 	{
 		// Check if it's time to animate the old lyrics to off-screen
-		if( (fStartTime - m_fLyricsTime) <= .30 || (fStartTime - m_fLyricsTime) <= -.30f)
+		if( (fStartTime - GAMESTATE->m_fMusicSeconds) <= .30 || (fStartTime - GAMESTATE->m_fMusicSeconds) <= -.30f)
 		{
 			m_textLyrics.FadeOff( 0, "foldy", .20f);
 		}
 
-		if( m_fLyricsTime >= fStartTime )
+		if( GAMESTATE->m_fMusicSeconds >= fStartTime )
 		{
 			/*I figure for longer lines of text, the Lyric display object should
 				be scaled down, if needed, by the .ScaleTo() function. But somehow
