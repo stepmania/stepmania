@@ -1,16 +1,24 @@
-#include <global.h>
-#include "RageSoundReader_MP3.h"
-
-
 /* MAD is available from: http://www.mars.org/home/rob/proj/mpeg/ */
 
-#include <errno.h>
-#include <stdio.h>
+#include "global.h"
+#include "RageSoundReader_MP3.h"
 #include "RageLog.h"
-
 #include "SDL_utils.h"
-#include "SDL_sound-1.0.0/decoders/mad-0.14.2b/msvc++/libmad/mad.h" // XXX
 
+#include <stdio.h>
+#include <errno.h>
+
+#ifdef _WIN32
+#include "mad-0.15.0b/mad.h"
+#ifdef _XBOX
+// not set up
+// #pragma comment(lib, "mad-0.15.0b/msvc++/Xbox_Release/libmad.lib")
+#else
+#pragma comment(lib, "mad-0.15.0b/msvc++/Release/libmad.lib")
+#endif
+#else
+#include <mad.h>
+#endif
 
 /* ID3 code from libid3: */
 enum tagtype {
@@ -19,10 +27,6 @@ enum tagtype {
   TAGTYPE_ID3V2,
   TAGTYPE_ID3V2_FOOTER
 };
-
-#ifdef _WIN32
-	#pragma comment(lib, "mad-0.15.0b/msvc++/Release/libmad.lib")
-#endif
 
 typedef unsigned long id3_length_t;
 static const int ID3_TAG_FLAG_FOOTERPRESENT = 0x10;
