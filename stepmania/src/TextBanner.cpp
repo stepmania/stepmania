@@ -26,24 +26,25 @@ void TextBanner::Init()
 
 	ASSERT( m_sName != "" );
 
-	m_textTitle.SetName( "Title" );
-	m_textTitle.LoadFromFont( THEME->GetPathF("TextBanner","text") );
 	SET_XY_AND_ON_COMMAND( m_textTitle );
-	this->AddChild( &m_textTitle );
-
-	m_textSubTitle.SetName( "Subtitle" );
-	m_textSubTitle.LoadFromFont( THEME->GetPathF("TextBanner","text") );
 	SET_XY_AND_ON_COMMAND( m_textSubTitle );
-	this->AddChild( &m_textSubTitle );
-
-	m_textArtist.SetName( "Artist" );
-	m_textArtist.LoadFromFont( THEME->GetPathF("TextBanner","text") );
 	SET_XY_AND_ON_COMMAND( m_textArtist );
-	this->AddChild( &m_textArtist );
 }
 
 TextBanner::TextBanner()
 {
+	m_textTitle.SetName( "Title" );
+	m_textTitle.LoadFromFont( THEME->GetPathF("TextBanner","text") );
+	this->AddChild( &m_textTitle );
+
+	m_textSubTitle.SetName( "Subtitle" );
+	m_textSubTitle.LoadFromFont( THEME->GetPathF("TextBanner","text") );
+	this->AddChild( &m_textSubTitle );
+
+	m_textArtist.SetName( "Artist" );
+	m_textArtist.LoadFromFont( THEME->GetPathF("TextBanner","text") );
+	this->AddChild( &m_textArtist );
+
 	m_bInitted = false;
 }
 
