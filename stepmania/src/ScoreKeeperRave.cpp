@@ -77,6 +77,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
 		default:	ASSERT(0);
 		}
+		CLAMP( fLifePercentage, 0.f, 1.f );
 		if( fUnscaledPercentChange > 0 )
 			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 		else	// fUnscaledPercentChange <= 0
