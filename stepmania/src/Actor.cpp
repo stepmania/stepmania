@@ -265,12 +265,12 @@ void Actor::Update( float fDeltaTime )
 		break;
 	case spin:
 		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
-		if( m_current.rotation.x > PI*2 )	m_current.rotation.x -= PI*2;
-		if( m_current.rotation.y > PI*2 )	m_current.rotation.y -= PI*2;
-		if( m_current.rotation.z > PI*2 )	m_current.rotation.z -= PI*2;
-		if( m_current.rotation.x < -PI*2 )	m_current.rotation.x += PI*2;
-		if( m_current.rotation.y < -PI*2 )	m_current.rotation.y += PI*2;
-		if( m_current.rotation.z < -PI*2 )	m_current.rotation.z += PI*2;
+		if( m_current.rotation.x > 360 )	m_current.rotation.x -= 360;
+		if( m_current.rotation.y > 360 )	m_current.rotation.y -= 360;
+		if( m_current.rotation.z > 360 )	m_current.rotation.z -= 360;
+		if( m_current.rotation.x < -360 )	m_current.rotation.x += 360;
+		if( m_current.rotation.y < -360 )	m_current.rotation.y += 360;
+		if( m_current.rotation.z < -360 )	m_current.rotation.z += 360;
 		break;
 	case vibrate:
 		break;
@@ -550,9 +550,9 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	mod.pos.x		+= fDeltaX;
 	mod.pos.y		+= fDeltaY;
 	mod.pos.z		+= fDeltaZ;
-	mod.rotation.x	+= (CONTAINS("spinx")?-PI*2:0);
-	mod.rotation.y	+= (CONTAINS("spiny")?-PI*2:0);
-	mod.rotation.z	+= (CONTAINS("spinz")?-PI*2:0);
+	mod.rotation.x	+= (CONTAINS("spinx")?-360:0);
+	mod.rotation.y	+= (CONTAINS("spiny")?-360:0);
+	mod.rotation.z	+= (CONTAINS("spinz")?-360:0);
 	mod.scale.x		*= (CONTAINS("foldx")?0:1) * (CONTAINS("zoomx")||CONTAINS("zoom")?3:1);
 	mod.scale.y		*= (CONTAINS("foldy")?0:1) * (CONTAINS("zoomy")||CONTAINS("zoom")?3:1);
 	for( int i=0; i<4; i++ )
