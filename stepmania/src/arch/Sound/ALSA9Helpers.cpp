@@ -228,9 +228,9 @@ Alsa9Buf::~Alsa9Buf()
 }
 
 
-/* Don't fill the buffer any more than than "writeahead".  Don't write any
- * more than "chunksize" at a time.  (These numbers are hints; if the hardware
- * parameters require it, they can be ignored.) */
+/* Don't fill the buffer any more than than "writeahead" frames.  Prefer to
+ * write "chunksize" frames at a time.  (These numbers are hints; if the
+ * hardware parameters require it, they can be ignored.) */
 int Alsa9Buf::GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_t chunksize )
 {
 	/* We have to write at least xfer_align bytes. */
@@ -240,7 +240,7 @@ int Alsa9Buf::GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_
 	 * fill one chunk ahead, and underrun. */
 	writeahead = max( writeahead, chunksize*2 );
 
-    snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
+	snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
 	
 	if( avail_frames > total_frames )
 	{
@@ -270,11 +270,21 @@ int Alsa9Buf::GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_
 		return 0;
 	}
 
+	/* Number of frames that have data: */
 	const snd_pcm_sframes_t filled_frames = max( 0l, total_frames - avail_frames );
 
-	snd_pcm_sframes_t frames_to_fill = clamp( writeahead - filled_frames, 0l, (snd_pcm_sframes_t)writeahead );
-	frames_to_fill = min( frames_to_fill, chunksize );
-	
+	/* Number of frames that don't have data, that are within the writeahead: */
+	snd_pcm_sframes_t unfilled_frames = clamp( writeahead - filled_frames, 0l, (snd_pcm_sframes_t)writeahead );
+
+	/* If we have less than a chunk empty, don't fill at all.  Otherwise, we'll
+	 * spend a lot of CPU filling in partial chunks, instead of waiting for some
+	 * sound to play and then filling a whole chunk at once. */
+	if( unfilled_frames < chunksize )
+		return 0;
+
+	/* We must always return a multiple of xfer_align.  This might cause less than chunksize
+	 * to be returned; that's OK. */
+	snd_pcm_sframes_t frames_to_fill = chunksize;
 	frames_to_fill -= frames_to_fill % xfer_align;
 
 	return frames_to_fill;
