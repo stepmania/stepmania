@@ -31,6 +31,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "MessageManager.h"
+#include "CommonMetrics.h"
 
 #include <ctime>
 #include <set>
@@ -1658,37 +1659,9 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 	return true;
 }
 
-void GameState::GetDifficultiesToShow( set<Difficulty> &ret )
-{
-	static float fExpiration = -999;
-	static set<Difficulty> cache;
-	if( RageTimer::GetTimeSinceStart() < fExpiration )
-	{
-		ret = cache;
-		return;
-	}
-
-	CStringArray asDiff;
-	split( DIFFICULTIES_TO_SHOW, ",", asDiff );
-	ASSERT( asDiff.size() > 0 );
-
-	cache.clear();
-	for( unsigned i = 0; i < asDiff.size(); ++i )
-	{
-		Difficulty d = StringToDifficulty(asDiff[i]);
-		if( d == DIFFICULTY_INVALID )
-			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
-		cache.insert( d );
-	}
-
-	fExpiration = RageTimer::GetTimeSinceStart()+1;
-	ret = cache;
-}
-
 bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 {
-	set<Difficulty> asDiff;
-	GetDifficultiesToShow( asDiff );
+	const set<Difficulty> &asDiff = CommonMetrics::GetDifficultiesToShow();
 
 	Difficulty d = m_PreferredDifficulty[pn];
 	while( 1 )
@@ -1701,33 +1674,6 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 	}
 
 	return ChangePreferredDifficulty( pn, d );
-}
-
-void GameState::GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
-{
-	static float fExpiration = -999;
-	static set<CourseDifficulty> cache;
-	if( RageTimer::GetTimeSinceStart() < fExpiration )
-	{
-		ret = cache;
-		return;
-	}
-
-	CStringArray asDiff;
-	split( COURSE_DIFFICULTIES_TO_SHOW, ",", asDiff );
-	ASSERT( asDiff.size() > 0 );
-
-	cache.clear();
-	for( unsigned i = 0; i < asDiff.size(); ++i )
-	{
-		CourseDifficulty cd = StringToCourseDifficulty(asDiff[i]);
-		if( cd == DIFFICULTY_INVALID )
-			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
-		cache.insert( cd );
-	}
-
-	fExpiration = RageTimer::GetTimeSinceStart()+1;
-	ret = cache;
 }
 
 bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )
@@ -1747,8 +1693,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	/* If we have a course selected, only choose among difficulties available in the course. */
 	const Course *pCourse = this->m_pCurCourse;
 
-	set<CourseDifficulty> asDiff;
-	GetCourseDifficultiesToShow( asDiff );
+	const set<CourseDifficulty> &asDiff = CommonMetrics::GetCourseDifficultiesToShow();
 
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
 	while( 1 )
@@ -1767,8 +1712,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 
 bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 {
-	set<CourseDifficulty> asDiff;
-	GetCourseDifficultiesToShow( asDiff );
+	const set<CourseDifficulty> &asDiff = CommonMetrics::GetCourseDifficultiesToShow();
 	return asDiff.find(cd) != asDiff.end();
 }
 

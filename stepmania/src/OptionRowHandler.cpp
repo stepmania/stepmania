@@ -18,6 +18,7 @@
 #include "Foreach.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
+#include "CommonMetrics.h"
 
 #define ENTRY(s)					THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
@@ -451,8 +452,7 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		set<Difficulty> vDifficulties;
-		GAMESTATE->GetDifficultiesToShow( vDifficulties );
+		const set<Difficulty> &vDifficulties = CommonMetrics::GetDifficultiesToShow();
 
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.name = "Difficulty";

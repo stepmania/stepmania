@@ -262,12 +262,6 @@ public:
 	bool IsTimeToPlayAttractSounds();
 
 	//
-	// DifficultiesToShow stuff
-	//
-	void GetDifficultiesToShow( set<Difficulty> &AddTo );
-	void GetCourseDifficultiesToShow( set<CourseDifficulty> &AddTo );
-
-	//
 	// PlayerState
 	//
 	PlayerState* m_pPlayerState[NUM_PLAYERS];

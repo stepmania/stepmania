@@ -18,6 +18,7 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "Style.h"
+#include "CommonMetrics.h"
 
 #define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
@@ -63,8 +64,7 @@ void SaveCatalogXml()
 			pSongNode->AppendChild( "MainTitle", pSong->GetDisplayMainTitle() );
 			pSongNode->AppendChild( "SubTitle", pSong->GetDisplaySubTitle() );
 
-			set<Difficulty> vDiffs;
-			GAMESTATE->GetDifficultiesToShow( vDiffs );
+			const set<Difficulty> &vDiffs = CommonMetrics::GetDifficultiesToShow();
 
 			FOREACH_StepsType( st )
 			{
@@ -111,8 +111,7 @@ void SaveCatalogXml()
 			pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
 			pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
 
-			set<CourseDifficulty> vDiffs;
-			GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
+			const set<CourseDifficulty> &vDiffs = CommonMetrics::GetCourseDifficultiesToShow();
 
 			FOREACH_StepsType( st )
 			{
@@ -144,9 +143,8 @@ void SaveCatalogXml()
 		XNode* pNode = xml.AppendChild( "Types" );
 
 		{
-			set<Difficulty> vDiffs;
-			GAMESTATE->GetDifficultiesToShow( vDiffs );
-			for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+			const set<Difficulty> &vDiffs = CommonMetrics::GetDifficultiesToShow();
+			FOREACHS_CONST( Difficulty, vDiffs, iter )
 			{
 				XNode* pNode2 = pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
 				pNode2->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
@@ -154,9 +152,8 @@ void SaveCatalogXml()
 		}
 
 		{
-			set<CourseDifficulty> vDiffs;
-			GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
-			for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+			const set<CourseDifficulty> &vDiffs = CommonMetrics::GetCourseDifficultiesToShow();
+			FOREACHS_CONST( CourseDifficulty, vDiffs, iter )
 			{
 				XNode* pNode2 = pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
 				pNode2->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );

@@ -12,6 +12,7 @@
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
 #include "Command.h"
+#include "Foreach.h"
 
 #define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG
 
@@ -283,27 +284,25 @@ void DifficultyList::SetFromGameState()
 			// FIXME: This clamps to between the min and the max difficulty, but
 			// it really should round to the nearest difficulty that's in 
 			// DIFFICULTIES_TO_SHOW.
-			CStringArray asDiff;
-			split( DIFFICULTIES_TO_SHOW.GetValue(), ",", asDiff );
-			for( unsigned i=0; i<asDiff.size(); i++ )
+			const set<Difficulty> &diffs = CommonMetrics::GetDifficultiesToShow();
+			unsigned i=0;
+			FOREACHS_CONST( Difficulty, diffs, d )
 			{
-				Difficulty d = StringToDifficulty( asDiff[i] );
-				if( d == DIFFICULTY_INVALID )
-					continue;
-
 				m_Rows.resize( m_Rows.size()+1 );
 
 				Row &row = m_Rows.back();
 
-				row.m_dc = d;
+				row.m_dc = *d;
 
-				m_Lines[i].m_Meter.SetFromMeterAndDifficulty( 3*(d), d );
+				m_Lines[i].m_Meter.SetFromMeterAndDifficulty( 3*(*d), *d );
 
-				m_Lines[i].m_Description.SetText( GetDifficultyString(d) );
-				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(d) );
+				m_Lines[i].m_Description.SetText( GetDifficultyString(*d) );
+				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(*d) );
 
-				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(d) );
+				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(*d) );
 				m_Lines[i].m_Number.SetText( "?" );
+
+				i++;
 			}
 		}
 		else

@@ -18,12 +18,13 @@
 #include "StatsManager.h"
 #include "PlayerState.h"
 #include "BGAnimation.h"
+#include "CommonMetrics.h"
+#include "Foreach.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
 #define SCROLL_SPEED		THEME->GetMetricF("ScreenEnding","ScrollSpeed")
 #define TEXT_ZOOM			THEME->GetMetricF("ScreenEnding","TextZoom")
-
 
 
 CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
@@ -83,9 +84,8 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 
 			if( GAMESTATE->IsCourseMode() )
 			{
-				set<CourseDifficulty> vDiffs;
-				GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
-				for( set<CourseDifficulty>::iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				const set<CourseDifficulty> &vDiffs = CommonMetrics::GetCourseDifficultiesToShow();
+				FOREACHS_CONST( CourseDifficulty, vDiffs, iter )
 				{
 					fActual += pProfile->GetCoursesActual(st,*iter);
 					fPossible += pProfile->GetCoursesPossible(st,*iter);
@@ -93,9 +93,8 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 			}
 			else
 			{
-				set<Difficulty> vDiffs;
-				GAMESTATE->GetDifficultiesToShow( vDiffs );
-				for( set<Difficulty>::iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				const set<Difficulty> &vDiffs = CommonMetrics::GetDifficultiesToShow();
+				FOREACHS_CONST( Difficulty, vDiffs, iter )
 				{
 					fActual += pProfile->GetSongsActual(st,*iter);
 					fPossible += pProfile->GetSongsPossible(st,*iter);

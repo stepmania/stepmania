@@ -5,19 +5,23 @@
 
 #include "ThemeMetric.h"
 #include "PlayerNumber.h"
+#include "Difficulty.h"
 
-extern ThemeMetric<CString>		DIFFICULTIES_TO_SHOW;
 extern ThemeMetric<CString>		INITIAL_SCREEN;
 extern ThemeMetric<CString>		FIRST_RUN_INITIAL_SCREEN;
 extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
 extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
-extern ThemeMetric<CString>		COURSE_DIFFICULTIES_TO_SHOW;
 extern ThemeMetric1D<RageColor> PLAYER_COLOR;
 extern ThemeMetric<float>		JOIN_PAUSE_SECONDS;
 extern ThemeMetric<CString>		WINDOW_TITLE;
 extern ThemeMetric<bool>		HOME_EDIT_MODE;
 extern ThemeMetric<int>			MAX_STEPS_LOADED_FROM_PROFILE;
 
+namespace CommonMetrics
+{
+	const set<Difficulty>& GetDifficultiesToShow();
+	const set<CourseDifficulty>& GetCourseDifficultiesToShow();
+}
 
 #endif
 

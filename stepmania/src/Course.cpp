@@ -275,7 +275,9 @@ void Course::LoadFromCRSFile( CString sPath )
 			m_RadarCache[CacheEntry(st, cd)] = rv;
 		}
 		else
+		{
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+		}
 	}
 	static TitleSubst tsub("courses");
 

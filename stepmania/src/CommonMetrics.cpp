@@ -1,21 +1,79 @@
 #include "global.h"
 #include "CommonMetrics.h"
 #include "RageUtil.h"
+#include "Foreach.h"
 
 
 CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",p+1); }
 
-ThemeMetric<CString>	DIFFICULTIES_TO_SHOW			("Common","DifficultiesToShow");
 ThemeMetric<CString>	INITIAL_SCREEN					("Common","InitialScreen");
 ThemeMetric<CString>	FIRST_RUN_INITIAL_SCREEN		("Common","FirstRunInitialScreen");
 ThemeMetric<CString>	DEFAULT_MODIFIERS				("Common","DefaultModifiers" );
 ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS			("Common","DefaultCpuModifiers" );
-ThemeMetric<CString>	COURSE_DIFFICULTIES_TO_SHOW		("Common","CourseDifficultiesToShow");
 ThemeMetric1D<RageColor> PLAYER_COLOR					("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 ThemeMetric<float>		JOIN_PAUSE_SECONDS				("Common","JoinPauseSeconds");
 ThemeMetric<CString>	WINDOW_TITLE					("Common","WindowTitle");
 ThemeMetric<bool>		HOME_EDIT_MODE					("Common","HomeEditMode");
 ThemeMetric<int>		MAX_STEPS_LOADED_FROM_PROFILE	("Common","MaxStepsLoadedFromProfile");
+
+
+class ThemeMetricDifficultiesToShow : ThemeMetric<CString>
+{
+public:
+	set<Difficulty> m_v;
+
+	ThemeMetricDifficultiesToShow() : ThemeMetric<CString>("Common","DifficultiesToShow") {}
+	void Read()
+	{
+		ThemeMetric<CString>::Read();
+
+		m_v.clear();
+
+		CStringArray v;
+		split( GetValue(), ",", v );
+		ASSERT( v.size() > 0 );
+
+		FOREACH_CONST( CString, v, i )
+		{
+			Difficulty d = StringToDifficulty( *i );
+			if( d == DIFFICULTY_INVALID )
+				RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
+			m_v.insert( d );
+		}
+	}
+};
+ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
+const set<Difficulty>& CommonMetrics::GetDifficultiesToShow() { return DIFFICULTIES_TO_SHOW.m_v; }
+
+
+class ThemeMetricCourseDifficultiesToShow : ThemeMetric<CString>
+{
+public:
+	set<CourseDifficulty> m_v;
+
+	ThemeMetricCourseDifficultiesToShow() : ThemeMetric<CString>("Common","CourseDifficultiesToShow") {}
+	void Read()
+	{
+		ThemeMetric<CString>::Read();
+
+		m_v.clear();
+
+		CStringArray v;
+		split( GetValue(), ",", v );
+		ASSERT( v.size() > 0 );
+
+		FOREACH_CONST( CString, v, i )
+		{
+			CourseDifficulty d = StringToCourseDifficulty( *i );
+			if( d == DIFFICULTY_INVALID )
+				RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
+			m_v.insert( d );
+		}
+	}
+};
+ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
+const set<CourseDifficulty>& CommonMetrics::GetCourseDifficultiesToShow() { return COURSE_DIFFICULTIES_TO_SHOW.m_v; }
+
 
 
 /*
