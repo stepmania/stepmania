@@ -290,10 +290,10 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	if ( SCREENMAN != NULL )
 		SCREENMAN->ThemeChanged();
 
-	Lua::UpdateGlobals();
-
 	// reload subscribers
 	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
+
+	Lua::UpdateGlobals();
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
