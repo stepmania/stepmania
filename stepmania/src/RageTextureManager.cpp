@@ -63,36 +63,43 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 
 	LOG->Trace( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() );
 
-	// holder for the new texture
-	RageTexture* pTexture;
 
 	// Convert the path to lowercase so that we don't load duplicates.
 	// Really, this does not solve the duplicate problem.  We could have to copies
 	// of the same bitmap if there are equivalent but different paths
 	// (e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp" ).
 
+	/* This will return a texture that is equivalent to ID; here, that means it
+	 * has the same filename.  (see RageTextureID::operator<).  Once we have that,
+	 * we need to search through textures that are equivalent, looking for one
+	 * that's equal. */
 	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
-	if(p != m_mapPathToTexture.end()) {
-		pTexture = p->second;
-
-		pTexture->m_iRefCount++;
-
-//		LOG->Trace( "RageTextureManager: '%s' now has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
-	}
-	else	// the texture is not already loaded
+	while(p != m_mapPathToTexture.end())
 	{
-		CString sDrive, sDir, sFName, sExt;
-		splitpath( false, ID.filename, sDrive, sDir, sFName, sExt );
+		if(p->first.equal(ID)) {
+			/* Found the texture.  Just increase the refcount and return it. */
+			p->second->m_iRefCount++;
+			return p->second;
+		}
 
-		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-			pTexture = new RageMovieTexture( ID );
-		else
-			pTexture = new RageBitmapTexture( ID );
-
-		LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
-
-		m_mapPathToTexture[ID] = pTexture;
+		/* short circuit */
+		if(p->first.filename > ID.filename) break;
+		p++;
 	}
+
+	// the texture is not already loaded
+	CString sDrive, sDir, sFName, sExt;
+	splitpath( false, ID.filename, sDrive, sDir, sFName, sExt );
+
+	RageTexture* pTexture;
+	if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
+		pTexture = new RageMovieTexture( ID );
+	else
+		pTexture = new RageBitmapTexture( ID );
+
+	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
+
+	m_mapPathToTexture[ID] = pTexture;
 
 //	LOG->Trace( "Display: %.2f KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem()/1000000.0f );
 
