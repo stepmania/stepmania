@@ -1,5 +1,7 @@
 /* RageThreads helpers for threads in Linux, which are based on PIDs and TIDs. */
 
+#define _XOPEN_SOURCE /* may be needed for confstr */
+
 #include "global.h"
 #include "LinuxThreadHelpers.h"
 #include "RageUtil.h"
