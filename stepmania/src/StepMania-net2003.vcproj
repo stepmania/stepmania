@@ -382,7 +382,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenNetEvaluation.h">
 			</File>
 			<File
-				RelativePath="ScreenNetSelectMusic.cpp">
+				RelativePath="ScreenNetRoom.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetRoom.h">
 			</File>
 			<File
 				RelativePath="ScreenNetSelectBase.cpp">
@@ -391,10 +394,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenNetSelectBase.h">
 			</File>
 			<File
-				RelativePath="ScreenNetRoom.cpp">
-			</File>
-			<File
-				RelativePath="ScreenNetRoom.h">
+				RelativePath="ScreenNetSelectMusic.cpp">
 			</File>
 			<File
 				RelativePath="ScreenNetSelectMusic.h">
@@ -542,6 +542,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenStyleSplash.h">
+			</File>
+			<File
+				RelativePath=".\ScreenSystemLayer.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenSystemLayer.h">
 			</File>
 			<File
 				RelativePath="ScreenTest.cpp">
