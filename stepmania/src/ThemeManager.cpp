@@ -252,8 +252,9 @@ try_element_again:
 	else if( bOptional )
 		return "";
 
-#if defined(DEBUG) && defined(WIN32)
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
+
+#if defined(DEBUG) && defined(WIN32)
 	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sCategory.GetString(),sFileName.GetString());
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
