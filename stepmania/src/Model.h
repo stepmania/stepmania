@@ -13,6 +13,7 @@
 
 #include "Actor.h"
 #include "RageTypes.h"
+#include <vector>
 
 struct msModel;
 
@@ -34,7 +35,8 @@ public:
 
 public:
 	void	Clear ();
-	bool	Load( CString sPath );
+	bool	LoadMilkshapeAscii( CString sPath );
+	bool	LoadMilkshapeAsciiBones( CString sPath );
 
 	virtual void	Update( float fDelta );
 	virtual void	DrawPrimitives();
@@ -47,6 +49,8 @@ private:
 	msModel		*m_pModel;
 	RageVector3	m_vMins, m_vMaxs;
 	myBone_t	*m_pBones;
+	typedef vector<RageVertex> RageVertexVector;
+	vector<RageVertexVector>	m_vTempVerticesByBone;
 	float		m_fCurrFrame;
 };
 

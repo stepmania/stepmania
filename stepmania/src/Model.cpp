@@ -17,6 +17,8 @@
 #include "RageTextureManager.h"
 
 
+const float FRAMES_PER_SECOND = 30;
+
 Model::Model ()
 {
 	m_pModel = NULL;
@@ -30,21 +32,14 @@ Model::~Model ()
 
 void Model::Clear ()
 {
-	if (m_pBones)
-	{
-		delete m_pBones;
-		m_pBones = 0;
-	}
+	delete[] m_pBones;
+	m_pBones = NULL;
 
-	if (m_pModel)
-	{
-//		msModel_Destroy (m_pModel);	// not necessary since conversion to std::vector
-		delete m_pModel;
-		m_pModel = 0;
-	}
+	delete m_pModel;
+	m_pModel = NULL;
 }
 
-bool Model::Load( CString sPath )
+bool Model::LoadMilkshapeAscii( CString sPath )
 {
 	CString sDir, sThrowAway;
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
@@ -83,10 +78,11 @@ bool Model::Load( CString sPath )
         int nNumMeshes = 0;
         if (sscanf (szLine, "Meshes: %d", &nNumMeshes) == 1)
         {
+            m_pModel->Meshes.resize( nNumMeshes );
+
             for (i = 0; i < nNumMeshes && !bError; i++)
             {
-                m_pModel->Meshes.resize( m_pModel->Meshes.size()+1 );
-				msMesh& mesh = m_pModel->Meshes.back();
+				msMesh& mesh = m_pModel->Meshes[i];
 
                 if (!fgets (szLine, 256, file))
                 {
@@ -121,6 +117,8 @@ bool Model::Load( CString sPath )
                     break;
                 }
 
+				mesh.Vertices.resize( nNumVertices );
+
                 for (j = 0; j < nNumVertices; j++)
                 {
                     if (!fgets (szLine, 256, file))
@@ -142,14 +140,15 @@ bool Model::Load( CString sPath )
                         break;
                     }
 
-					mesh.Vertices.resize( mesh.Vertices.size()+1 );
-					msVertex& vertex = mesh.Vertices.back();
-                    vertex.nFlags = nFlags;
+					msVertex& vertex = mesh.Vertices[j];
+//                  vertex.nFlags = nFlags;
                     memcpy( vertex.Vertex, Vertex, sizeof(vertex.Vertex) );
                     memcpy( vertex.uv, uv, sizeof(vertex.uv) );
                     vertex.nBoneIndex = nIndex;
 					AddPointToBounds (Vertex, m_vMins, m_vMaxs);
                 }
+
+
 
                 //
                 // normals
@@ -166,7 +165,9 @@ bool Model::Load( CString sPath )
                     bError = true;
                     break;
                 }
-
+                
+				vector<msVec3> Normals;
+				Normals.resize( nNumNormals );
                 for (j = 0; j < nNumNormals; j++)
                 {
                     if (!fgets (szLine, 256, file))
@@ -183,8 +184,11 @@ bool Model::Load( CString sPath )
                     }
 
 					VectorNormalize (Normal);
-                    mesh.Normals.push_back( Normal );
+                    Normals[j] = Normal;
                 }
+
+
+
                 //
                 // triangles
                 //
@@ -200,6 +204,8 @@ bool Model::Load( CString sPath )
                     bError = true;
                     break;
                 }
+
+				mesh.Triangles.resize( nNumTriangles );
 
                 for (j = 0; j < nNumTriangles; j++)
                 {
@@ -222,26 +228,19 @@ bool Model::Load( CString sPath )
                         break;
                     }
 
-					mesh.Triangles.resize( mesh.Triangles.size()+1 );
-					msTriangle& Triangle = mesh.Triangles.back();
-                    Triangle.nFlags = nFlags;
-                    memcpy( &Triangle.nVertexIndices, nIndices, sizeof(Triangle.nVertexIndices) );
-                    memcpy( &Triangle.nNormalIndices, nNormalIndices, sizeof(Triangle.nNormalIndices) );
-                    Triangle.nSmoothingGroup = nIndex;
+					// deflate the normals into vertices
+					for( int k=0; k<3; k++ )
+					{
 
-					//
-					// calculate triangle normals
-					//
-					vec3_t v1, v2;
-					msVertex *pVertices[3];
-					pVertices[0] = &mesh.Vertices[ nIndices[0] ];
-					pVertices[1] = &mesh.Vertices[ nIndices[1] ];
-					pVertices[2] = &mesh.Vertices[ nIndices[2] ];
-					VectorSubtract (pVertices[0]->Vertex, pVertices[1]->Vertex, v1);
-					VectorSubtract (pVertices[2]->Vertex, pVertices[1]->Vertex, v2);
-					CrossProduct (v1, v2, Triangle.Normal);
-					VectorNormalize (Triangle.Normal);
-					VectorScale (Triangle.Normal, -1, Triangle.Normal);
+						msVertex& Vertex = mesh.Vertices[ nIndices[k] ];
+						msVec3& Normal = Normals[ nNormalIndices[k] ];
+						Vertex.Normal = Normal;
+					}
+
+					msTriangle& Triangle = mesh.Triangles[j];
+//                  Triangle.nFlags = nFlags;
+                    memcpy( &Triangle.nVertexIndices, nIndices, sizeof(Triangle.nVertexIndices) );
+//                  Triangle.nSmoothingGroup = nIndex;
                 }
             }
         }
@@ -252,13 +251,14 @@ bool Model::Load( CString sPath )
         int nNumMaterials = 0;
         if (sscanf (szLine, "Materials: %d", &nNumMaterials) == 1)
         {
-            int i;
+            m_pModel->Materials.resize( nNumMaterials );
+      
+			int i;
             char szName[MS_MAX_NAME];
 
             for (i = 0; i < nNumMaterials && !bError; i++)
             {
-                m_pModel->Materials.resize( m_pModel->Materials.size()+1 );
-				msMaterial& Material = m_pModel->Materials.back();
+				msMaterial& Material = m_pModel->Materials[i];
 
                 // name
                 if (!fgets (szLine, 256, file))
@@ -355,7 +355,7 @@ bool Model::Load( CString sPath )
                     bError = true;
                     break;
                 }
-                Material.fTransparency = 1.0f;
+                Material.fTransparency = fTransparency;
 
                 // diffuse texture
                 if (!fgets (szLine, 256, file))
@@ -398,10 +398,11 @@ bool Model::Load( CString sPath )
             int i;
             char szName[MS_MAX_NAME];
 
+            m_pModel->Bones.resize( nNumBones );
+
             for (i = 0; i < nNumBones && !bError; i++)
             {
-                m_pModel->Bones.resize( m_pModel->Bones.size()+1 );
-				msBone& Bone = m_pModel->Bones.back();
+				msBone& Bone = m_pModel->Bones[i];
 
                 // name
                 if (!fgets (szLine, 256, file))
@@ -416,7 +417,7 @@ bool Model::Load( CString sPath )
                 }
                 strcpy( Bone.szName, szName );
 
-                // alpha texture
+                // parent
                 if (!fgets (szLine, 256, file))
                 {
                     bError = true;
@@ -461,6 +462,8 @@ bool Model::Load( CString sPath )
                     break;
                 }
 
+                Bone.PositionKeys.resize( nNumPositionKeys );
+
                 for (j = 0; j < nNumPositionKeys; j++)
                 {
                     if (!fgets (szLine, 256, file))
@@ -475,7 +478,7 @@ bool Model::Load( CString sPath )
                     }
 
 					msPositionKey key = { fTime, { Position[0], Position[1], Position[2] } };
-                    Bone.PositionKeys.push_back( key );
+					Bone.PositionKeys[j] = key;
                 }
 
                 // rotation key count
@@ -491,6 +494,8 @@ bool Model::Load( CString sPath )
                     break;
                 }
 
+                Bone.RotationKeys.resize( nNumRotationKeys );
+
                 for (j = 0; j < nNumRotationKeys; j++)
                 {
                     if (!fgets (szLine, 256, file))
@@ -505,13 +510,183 @@ bool Model::Load( CString sPath )
                     }
 
 					msRotationKey key = { fTime, { Rotation[0], Rotation[1], Rotation[2] } };
-                    Bone.RotationKeys.push_back( key );
+                    Bone.RotationKeys[j] = key;
                 }
             }
         }
     }
 
 	fclose (file);
+
+	LoadMilkshapeAsciiBones( sPath );
+
+    // Setup temp vertices
+	m_vTempVerticesByBone.resize( m_pModel->Meshes.size() );
+	for (i = 0; i < m_pModel->Meshes.size(); i++)
+    {
+		msMesh& Mesh = m_pModel->Meshes[i];
+		m_vTempVerticesByBone[i].resize( Mesh.Vertices.size() );
+	}	
+
+	return true;
+}
+
+bool Model::LoadMilkshapeAsciiBones( CString sPath )
+{
+	CString sDir, sThrowAway;
+	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+
+	FILE *file = fopen (sPath, "rt");
+	if (!file)
+		return false;
+
+    bool bError = false;
+    char szLine[256];
+    int nFlags, j;
+
+    while (fgets (szLine, 256, file) != NULL  && !bError)
+    {
+        if (!strncmp (szLine, "//", 2))
+            continue;
+
+        //
+        // bones
+        //
+        int nNumBones = 0;
+        if (sscanf (szLine, "Bones: %d", &nNumBones) == 1)
+        {
+            int i;
+            char szName[MS_MAX_NAME];
+
+            m_pModel->Bones.resize( nNumBones );
+
+            for (i = 0; i < nNumBones && !bError; i++)
+            {
+				msBone& Bone = m_pModel->Bones[i];
+
+                // name
+                if (!fgets (szLine, 256, file))
+                {
+                    bError = true;
+                    break;
+                }
+                if (sscanf (szLine, "\"%[^\"]\"", szName) != 1)
+                {
+                    bError = true;
+                    break;
+                }
+                strcpy( Bone.szName, szName );
+
+                // parent
+                if (!fgets (szLine, 256, file))
+                {
+                    bError = true;
+                    break;
+                }
+                strcpy (szName, "");
+                sscanf (szLine, "\"%[^\"]\"", szName);
+
+                strcpy( Bone.szParentName, szName );
+
+                // flags, position, rotation
+                msVec3 Position, Rotation;
+                if (!fgets (szLine, 256, file))
+                {
+                    bError = true;
+                    break;
+                }
+                if (sscanf (szLine, "%d %f %f %f %f %f %f",
+                    &nFlags,
+                    &Position.v[0], &Position.v[1], &Position.v[2],
+                    &Rotation.v[0], &Rotation.v[1], &Rotation.v[2]) != 7)
+                {
+                    bError = true;
+                    break;
+                }
+                Bone.nFlags = nFlags;
+                memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
+                memcpy( &Bone.Rotation, &Rotation, sizeof(Bone.Rotation) );
+
+                float fTime;
+
+                // position key count
+                if (!fgets (szLine, 256, file))
+                {
+                    bError = true;
+                    break;
+                }
+                int nNumPositionKeys = 0;
+                if (sscanf (szLine, "%d", &nNumPositionKeys) != 1)
+                {
+                    bError = true;
+                    break;
+                }
+
+                Bone.PositionKeys.resize( nNumPositionKeys );
+
+                for (j = 0; j < nNumPositionKeys; j++)
+                {
+                    if (!fgets (szLine, 256, file))
+                    {
+                        bError = true;
+                        break;
+                    }
+                    if (sscanf (szLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
+                    {
+                        bError = true;
+                        break;
+                    }
+
+					msPositionKey key = { fTime, { Position[0], Position[1], Position[2] } };
+					Bone.PositionKeys[j] = key;
+                }
+
+                // rotation key count
+                if (!fgets (szLine, 256, file))
+                {
+                    bError = true;
+                    break;
+                }
+                int nNumRotationKeys = 0;
+                if (sscanf (szLine, "%d", &nNumRotationKeys) != 1)
+                {
+                    bError = true;
+                    break;
+                }
+
+                Bone.RotationKeys.resize( nNumRotationKeys );
+
+                for (j = 0; j < nNumRotationKeys; j++)
+                {
+                    if (!fgets (szLine, 256, file))
+                    {
+                        bError = true;
+                        break;
+                    }
+                    if (sscanf (szLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
+                    {
+                        bError = true;
+                        break;
+                    }
+
+					msRotationKey key = { fTime, { Rotation[0], Rotation[1], Rotation[2] } };
+                    Bone.RotationKeys[j] = key;
+                }
+            }
+		}
+	}
+
+	// ignore "Frames:" in file
+	m_pModel->nTotalFrames = 0;
+    for (int i = 0; i < m_pModel->Bones.size(); i++)
+    {
+		msBone& Bone = m_pModel->Bones[i];
+		for( int j=0; j<Bone.PositionKeys.size(); j++ )
+		{
+			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, Bone.PositionKeys[j].fTime );
+			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, Bone.RotationKeys[j].fTime );
+		}
+	}
 
 	SetupBones ();
 
@@ -532,9 +707,9 @@ void Model::DrawPrimitives()
 	DISPLAY->SetLightDirectional( 
 		0, 
 		RageColor(0.2f,0.2f,0.2f,1), 
-		RageColor(1,1,1,1),
-		RageColor(1,1,1,1),
-		RageVector3(0, 0, +1) );
+		RageColor(0.8f,0.8f,0.8f,0.8f),
+		RageColor(0.8f,0.8f,0.8f,0.8f),
+		RageVector3(+1, 0, +1) );
 
 
 	for (int i = 0; i < (int)m_pModel->Meshes.size(); i++)
@@ -576,36 +751,34 @@ void Model::DrawPrimitives()
 			RageVertex verts[3];
 
 			msTriangle *pTriangle = &pMesh->Triangles[j];
-			word nIndices[3], nNormalIndices[3];
+			word nIndices[3];//, nNormalIndices[3];
 			memcpy( nIndices, pTriangle->nVertexIndices, sizeof(nIndices) );
-			memcpy( nNormalIndices, pTriangle->nNormalIndices, sizeof(nNormalIndices) );
+//			memcpy( nNormalIndices, pTriangle->nNormalIndices, sizeof(nNormalIndices) );
 			for (int k = 0; k < 3; k++)
 			{
 				RageVertex& v = verts[k];
 
-				msVec3 *normal = &pMesh->Normals[ nNormalIndices[k] ];
-				v.n.x = normal->v[0];
-				v.n.y = normal->v[1];
-				v.n.z = normal->v[2];
-
-				glNormal3fv( normal->v );
-
 				msVertex *pVertex = &pMesh->Vertices[ nIndices[k] ];
+
 				v.c = RageColor(1,1,1,1);
-				v.t.x = pVertex->uv[0];
-				v.t.y = pVertex->uv[1];
-
-				glTexCoord2f( pVertex->uv[0], pVertex->uv[1] );
-
 				float white[4] = {1,1,0,1};
 				glColor4fv( white );
+
+				v.t.x = pVertex->uv[0];
+				v.t.y = pVertex->uv[1];
+				glTexCoord2f( pVertex->uv[0], pVertex->uv[1] );
+
+				v.n.x = pVertex->Normal[0];
+				v.n.y = pVertex->Normal[1];
+				v.n.z = pVertex->Normal[2];
+				glNormal3fv( pVertex->Normal );
 
 				if (pVertex->nBoneIndex == -1)
 				{
 					v.p.x = pVertex->Vertex[0];
 					v.p.y = pVertex->Vertex[1];
 					v.p.z = pVertex->Vertex[2];
-					glVertex3fv( pVertex->Vertex );
+					glVertex3fv( &v.p.x );
 				}
 				else
 				{
@@ -708,7 +881,7 @@ Model::AdvanceFrame (float dt)
 	if (!m_pModel)
 		return;
 
-	m_fCurrFrame += dt;
+	m_fCurrFrame += FRAMES_PER_SECOND * dt;
 	if (m_fCurrFrame > (float) m_pModel->nTotalFrames)
 		m_fCurrFrame = 0.0f;
 

@@ -62,20 +62,21 @@ typedef enum {
 /* msVertex */
 typedef struct msVertex
 {
-    byte        nFlags;
+//  byte        nFlags;
     msVec3      Vertex;
     msVec2      uv;
+    msVec3      Normal;
     char        nBoneIndex;
 } msVertex;
 
 /* msTriangle */
 typedef struct
 {
-    word        nFlags;
+//  word        nFlags;
     word        nVertexIndices[3];
-    word        nNormalIndices[3];
-    msVec3      Normal;
-    byte        nSmoothingGroup;
+//  word        nNormalIndices[3];
+//    msVec3      Normal;
+//  byte        nSmoothingGroup;
 } msTriangle;
 
 /* msMesh */
@@ -87,7 +88,7 @@ typedef struct msMesh
     
     vector<msVertex>   Vertices;
 
-    vector<msVec3>     Normals;
+//    vector<msVec3>     Normals;
 
     vector<msTriangle> Triangles;
 } msMesh;

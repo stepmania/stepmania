@@ -23,17 +23,21 @@
 ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 {
 	m_quad.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_quad.SetDiffuse( RageColor(1,1,1,1) );
-//	this->AddChild( &m_quad );
+	m_quad.SetDiffuse( RageColor(0,0,1,1) );
+	m_quad.SetZ( -100 );
+	this->AddChild( &m_quad );
 
 //	m_sprite.Load( "C:\\stepmania\\stepmania\\RandomMovies\\cm301[1].avi" );
 //	m_sprite.SetXY( CENTER_X, CENTER_Y );
 //	this->AddChild( &m_sprite );
 
 	m_model.SetXY(CENTER_X, CENTER_Y);
-	m_model.SetZoomX(5);
-	m_model.SetZoomY(5);
-	m_model.Load( "bend.txt" );
+	m_model.SetZoomX(12);
+	m_model.SetZoomY(-12);
+//	m_model.SetY(0);
+//	m_model.LoadMilkshapeAscii( "bend.txt" );
+	m_model.LoadMilkshapeAscii( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0000\\model.txt" );
+	m_model.LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\howtoplay.bones.txt" );
 	this->AddChild(&m_model);
 	m_model.SetEffectSpin( RageVector3(0,90,0) );
 
