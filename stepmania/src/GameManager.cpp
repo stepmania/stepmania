@@ -2779,7 +2779,7 @@ GameDef* GameManager::GetGameDefForGame( Game g )
 
 void GameManager::GetStylesForGame( Game game, vector<const StyleDef*>& aStylesAddTo, bool editor )
 {
-	for( int s=0; s<NUM_STYLES; s++ ) 
+	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const StyleDef* style = &g_StyleDefs[s];
 		if( style->m_Game != game)
@@ -2795,7 +2795,7 @@ void GameManager::GetStylesForGame( Game game, vector<const StyleDef*>& aStylesA
 
 const StyleDef* GameManager::GetEditorStyleForNotesType( StepsType st )
 {
-	for( int s=0; s<NUM_STYLES; s++ ) 
+	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const StyleDef* style = &g_StyleDefs[s];
 		if( style->m_StepsType == st && style->m_bUsedForEdit )
@@ -2812,7 +2812,7 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 	FOREACH_StepsType( st )
 	{
 		bool found = false;
-		for( int s=0; !found && s<NUM_STYLES; s++ )
+		for( unsigned s=0; !found && s<NUM_STYLES; s++ )
 		{
 			const StyleDef* style = &g_StyleDefs[s];
 			if( style->m_Game != game )
@@ -2832,7 +2832,7 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 
 const StyleDef* GameManager::GetDemonstrationStyleForGame( Game game )
 {
-	for( int s=0; s<NUM_STYLES; s++ ) 
+	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const StyleDef* style = &g_StyleDefs[s];
 		if( style->m_Game == game && style->m_bUsedForDemonstration )
@@ -2845,7 +2845,7 @@ const StyleDef* GameManager::GetDemonstrationStyleForGame( Game game )
 
 const StyleDef* GameManager::GetHowToPlayStyleForGame( Game game )
 {
-	for( int s=0; s<NUM_STYLES; s++ ) 
+	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const StyleDef* style = &g_StyleDefs[s];
 		if( style->m_Game == game && style->m_bUsedForHowToPlay )
@@ -2952,7 +2952,7 @@ Game GameManager::StringToGameType( CString sGameType )
 
 const StyleDef* GameManager::GameAndStringToStyle( Game game, CString sStyle )
 {
-	for( int s=0; s<NUM_STYLES; s++ ) 
+	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const StyleDef* style = &g_StyleDefs[s];
 		if( style->m_Game != game )
