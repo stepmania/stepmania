@@ -935,6 +935,7 @@ int main(int argc, char* argv[])
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
 	MEMCARDMAN	= new MemoryCardManager;
 	PROFILEMAN	= new ProfileManager;	// must load after SONGMAN
+	UNLOCKSYS	= new UnlockSystem;
 	delete loading_window;		// destroy this before init'ing Display
 
 	DISPLAY = CreateDisplay();
@@ -1010,6 +1011,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
+	SAFE_DELETE( UNLOCKSYS );
 	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
 	SAFE_DELETE( MEMCARDMAN );
 	SAFE_DELETE( SONGMAN );
