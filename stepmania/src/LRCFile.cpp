@@ -18,11 +18,13 @@
 #if defined(WIN32)
 #include <io.h>
 #endif
+#include <sstream>
 #include "RageUtil.h"
+#include "Regex.h"
 
-void LRCFile::AddParam( char *buf, int len )
+void LRCFile::AddParam( const CString &buf )
 {
-	values.back().params.push_back(CString(buf, len));
+	values.back().params.push_back(buf);
 }
 
 void LRCFile::AddValue() /* (no extra charge) */
@@ -32,97 +34,26 @@ void LRCFile::AddValue() /* (no extra charge) */
 
 void LRCFile::ReadBuf( char *buf, int len )
 {
-	int value_start = -1;
+	stringstream input(CString(buf, len));
+	string line;
 
-	bool ReadingValue=false;
-	int i = 0;
-	while(i < len)
+	while(getline(input, line))
 	{
-		if(!strncmp(buf+i, "//", 2))
-		{
-			/* //; erase with spaces until newline */
-			do {
-				buf[i] = ' ';
-				i++;
-			} while(i < len && buf[i] != '\n');
-
+		if(!line.compare(0, 2, "//"))
 			continue;
-		}
 
-		if(ReadingValue && buf[i] == '[') {
-			/* If we get a [ when we thought we were inside a value, start a new
-			    one. Back up and end the value. */
-			/* Make sure this [ is the first non-whitespace character on the line. */
-			bool FirstChar = true;
-			int j;
-			for(j = i-1; j >= 0 && !strchr("\r\n", buf[j]); --j)
-			{
-				if(buf[j] == ' ' || buf[j] == '\t')
-					continue;
-
-				FirstChar = false;
-				break;
-			}
-
-			if(!FirstChar) {
-				/* Oops, we're not; handle this like a regular character. */
-				i++;
-				continue;
-			}
-
-			AddParam(buf+value_start, j - value_start);
-			ReadingValue=false;
-		}
-
-		/* # starts a new value. */
-		if(!ReadingValue && buf[i] == '[') {
-			AddValue();
-			ReadingValue=true;
-		}
-
-		if(!ReadingValue)
-		{
-			i++;
-			continue; /* nothing else is meaningful outside of a value */
-		}
-
-		/* ']' ends the current value bracket */
-		if(buf[i] == ']')
-		{
-			AddParam( buf+value_start, i - value_start );
-			i++;
-			// START TO READ IN LYRICS HERE
-			value_start = i;
-			// The next value cannot be a '['.. This WILL cause problems if it is.
-			// ** NOTE: I will add error-checking here soon. -- Miryokuteki
+		/* "[data1] data2".  Ignore whitespace at the beginning of the line. */
+		static Regex x("^ *\\[([^]]+)\\] *(.*)$");
+		
+		vector<CString> matches;
+		if(!x.Compare(line, matches))
 			continue;
-		}
 
+		StripCrnl(matches[1]);
 
-		/* [ begins a new param. */
-		if(buf[i] == '[' )
-		{
-			i++; /* Start AFTER the bracket */
-			value_start = i;
-			continue;
-		}
-
-
-		/* ; ends the current value/lyric. */
-		if(buf[i] == '\n' || buf[i] == '\r\n')
-		{
-			// Lyric line ends at a line break. Add the param
-			AddParam(buf+value_start, i - value_start);
-			ReadingValue=false;
-		}
-
-		i++; 
-	}
-	
-	/* Add any unterminated value at the very end. */
-	if(ReadingValue)
-	{
-		AddParam(buf+value_start, i - value_start);
+		AddValue();
+		AddParam(matches[0]);
+		AddParam(matches[1]);
 	}
 }
 

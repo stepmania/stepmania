@@ -37,7 +37,7 @@ public:
 
 private:
 	void ReadBuf( char *buf, int len );
-	void AddParam( char *buf, int len );
+	void AddParam( const CString &buf );
 	void AddValue();
 
 	vector<value_t> values;
