@@ -244,7 +244,7 @@ void EditCoursesMenu::Start()
 	case ROW_ENTRY_OPTIONS:	
 		{
 			// update enabled/disabled lines
-			for( int i=0; i<g_CourseEntryOptionsMenu.rows.size(); i++ )
+			for( unsigned i=0; i<g_CourseEntryOptionsMenu.rows.size(); i++ )
 				g_CourseEntryOptionsMenu.rows[i].enabled = false;
 			switch( GetSelectedEntry()->type )
 			{
@@ -412,7 +412,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 CourseEntry* EditCoursesMenu::GetSelectedEntry()
 {
 	Course* pCourse = GetSelectedCourse();
-	if( m_iSelection[ROW_ENTRY] < pCourse->m_entries.size() )
+	if( m_iSelection[ROW_ENTRY] < int(pCourse->m_entries.size()) )
 		return &pCourse->m_entries[m_iSelection[ROW_ENTRY]];
 	else
 		return NULL;
