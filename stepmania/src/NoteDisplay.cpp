@@ -129,7 +129,7 @@ static NoteResource *MakeNoteResource( const CString &sPath, bool bSpriteOnly )
 		}
 		else
 		{
-			pRes->m_pActor = MakeActor( sPath );
+			pRes->m_pActor = ActorUtil::MakeActor( sPath );
 			ASSERT( pRes->m_pActor );
 		}
 

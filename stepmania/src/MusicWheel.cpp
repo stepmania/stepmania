@@ -99,7 +99,7 @@ void MusicWheel::Load()
 	m_sprHighlight.Load( THEME->GetPathToG("MusicWheel highlight") );
 	m_sprHighlight->SetName( "Highlight" );
 	this->AddChild( m_sprHighlight );
-	UtilOnCommand( m_sprHighlight, "MusicWheel" );
+	ActorUtil::OnCommand( m_sprHighlight, "MusicWheel" );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 

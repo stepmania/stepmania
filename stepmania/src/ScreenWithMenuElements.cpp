@@ -126,15 +126,15 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	{
 		m_MenuTimer->SetSeconds( 0 );
 		m_MenuTimer->Stop();
-		UtilOffCommand( m_MenuTimer, m_sName );
+		ActorUtil::OffCommand( m_MenuTimer, m_sName );
 	}
 
-	UtilOffCommand( m_autoHeader, m_sName );
-	UtilOffCommand( m_sprStyleIcon, m_sName );
+	ActorUtil::OffCommand( m_autoHeader, m_sName );
+	ActorUtil::OffCommand( m_sprStyleIcon, m_sName );
 	FOREACH_PlayerNumber( p )
-		UtilOffCommand( m_MemoryCardDisplay[p], m_sName );
-	UtilOffCommand( m_autoFooter, m_sName );
-	UtilOffCommand( m_textHelp, m_sName );
+		ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
+	ActorUtil::OffCommand( m_autoFooter, m_sName );
+	ActorUtil::OffCommand( m_textHelp, m_sName );
 	OFF_COMMAND( m_sprOverlay );
 
 	SCREENMAN->PlaySharedBackgroundOffCommand();

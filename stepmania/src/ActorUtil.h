@@ -6,36 +6,37 @@
 
 struct XNode;
 
-#define SET_XY( actor )			UtilSetXY( actor, m_sName )
-#define ON_COMMAND( actor )		UtilOnCommand( actor, m_sName )
-#define OFF_COMMAND( actor )	UtilOffCommand( actor, m_sName )
-#define SET_XY_AND_ON_COMMAND( actor )		UtilSetXYAndOnCommand( actor, m_sName )
-#define COMMAND( actor, command_name )		UtilCommand( actor, m_sName, command_name )
+#define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
+#define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
+#define OFF_COMMAND( actor )	ActorUtil::OffCommand( actor, m_sName )
+#define SET_XY_AND_ON_COMMAND( actor )		ActorUtil::SetXYAndOnCommand( actor, m_sName )
+#define COMMAND( actor, command_name )		ActorUtil::Command( actor, m_sName, command_name )
 
-void UtilSetXY( Actor& actor, const CString &sScreenName );
-inline void UtilSetXY( Actor* pActor, const CString &sScreenName ) { UtilSetXY( *pActor, sScreenName ); }
-
-
-void UtilCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName );
-
-inline void UtilOnCommand( Actor& actor, const CString &sScreenName ) { UtilCommand( actor, sScreenName, "On" ); }
-inline void UtilOffCommand( Actor& actor, const CString &sScreenName ) { UtilCommand( actor, sScreenName, "Off" ); }
-inline void UtilSetXYAndOnCommand( Actor& actor, const CString &sScreenName )
+namespace ActorUtil
 {
-	UtilSetXY( actor, sScreenName );
-	UtilOnCommand( actor, sScreenName );
-}
+	void SetXY( Actor& actor, const CString &sScreenName );
+	inline void SetXY( Actor* pActor, const CString &sScreenName ) { SetXY( *pActor, sScreenName ); }
 
-/* convenience */
-inline void UtilCommand( Actor* pActor, const CString &sScreenName, const CString &sCommandName ) { if(pActor) UtilCommand( *pActor, sScreenName, sCommandName ); }
-inline void UtilOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilOnCommand( *pActor, sScreenName ); }
-inline void UtilOffCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilOffCommand( *pActor, sScreenName ); }
-inline void UtilSetXYAndOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sScreenName ); }
+	void Command( Actor& actor, const CString &sScreenName, const CString &sCommandName );
 
-// Return a Sprite, BitmapText, or Model depending on the file type
-Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode );
-Actor* MakeActor( const RageTextureID &ID );
+	inline void OnCommand( Actor& actor, const CString &sScreenName ) { Command( actor, sScreenName, "On" ); }
+	inline void OffCommand( Actor& actor, const CString &sScreenName ) { Command( actor, sScreenName, "Off" ); }
+	inline void SetXYAndOnCommand( Actor& actor, const CString &sScreenName )
+	{
+		SetXY( actor, sScreenName );
+		OnCommand( actor, sScreenName );
+	}
 
+	/* convenience */
+	inline void Command( Actor* pActor, const CString &sScreenName, const CString &sCommandName ) { if(pActor) Command( *pActor, sScreenName, sCommandName ); }
+	inline void OnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) OnCommand( *pActor, sScreenName ); }
+	inline void OffCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) OffCommand( *pActor, sScreenName ); }
+	inline void SetXYAndOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) SetXYAndOnCommand( *pActor, sScreenName ); }
+
+	// Return a Sprite, BitmapText, or Model depending on the file type
+	Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode );
+	Actor* MakeActor( const RageTextureID &ID );
+};
 
 // creates the appropriate Actor derivitive on load and
 // automatically deletes Actor on deconstruction.

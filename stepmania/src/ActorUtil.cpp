@@ -19,7 +19,7 @@
 #include "arch/Dialog/Dialog.h"
 
 
-Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode )
+Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode )
 {
 	ASSERT( pNode );
 
@@ -246,7 +246,7 @@ retry:
 
 		sNewPath = DerefRedir( sNewPath );
 
-		pActor = MakeActor( sNewPath );
+		pActor = ActorUtil::MakeActor( sNewPath );
 		if( pActor == NULL )
 			return NULL;
 	}
@@ -259,7 +259,7 @@ retry:
 	return pActor;
 }
 
-Actor* MakeActor( const RageTextureID &ID )
+Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 {
 	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
@@ -335,13 +335,13 @@ Actor* MakeActor( const RageTextureID &ID )
 	}
 }
 
-void UtilSetXY( Actor& actor, const CString &sScreenName )
+void ActorUtil::SetXY( Actor& actor, const CString &sScreenName )
 {
 	ASSERT( !actor.GetID().empty() );
 	actor.SetXY( THEME->GetMetricF(sScreenName,actor.GetID()+"X"), THEME->GetMetricF(sScreenName,actor.GetID()+"Y") );
 }
 
-void UtilCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName )
+void ActorUtil::Command( Actor& actor, const CString &sScreenName, const CString &sCommandName )
 {
 	actor.PlayCommand( sCommandName );
 
@@ -366,7 +366,7 @@ void UtilCommand( Actor& actor, const CString &sScreenName, const CString &sComm
 void AutoActor::Load( const CString &sPath )
 {
 	Unload();
-	m_pActor = MakeActor( sPath );
+	m_pActor = ActorUtil::MakeActor( sPath );
 }
 
 void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActorName )

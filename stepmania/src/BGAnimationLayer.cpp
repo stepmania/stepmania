@@ -469,7 +469,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = LoadFromActorFile( sAniDir, pNode );
+			Actor* pActor = ActorUtil::LoadFromActorFile( sAniDir, pNode );
 			this->AddChild( pActor );
 			if( bStretch )
 				pActor->StretchTo( FullScreenRectF );
@@ -494,7 +494,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 			for( int i=0; i<iNumParticles; i++ )
 			{
-				Actor* pActor = MakeActor( sPath );
+				Actor* pActor = ActorUtil::MakeActor( sPath );
 				if( pActor == NULL )
 					continue;
 				this->AddChild( pActor );
