@@ -565,6 +565,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="dxutil.h">
 			</File>
 			<File
+				RelativePath="mycarray.h">
+			</File>
+			<File
 				RelativePath=".\resource.h">
 			</File>
 		</Filter>

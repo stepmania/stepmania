@@ -18,9 +18,13 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff
 
+#if defined(_MSC_VER) && (_MSC_VER > 1100)
+#pragma warning (disable : 4786) // turn off broken debugger warning
+#endif
+
 #include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-#include <afxtempl.h>		// MFC templated collections
+
+#include "STDCarray.h"
 
 /* Don't include our own headers here, since they tend to change
  * often. */
