@@ -523,6 +523,26 @@ HR	{
 		</xsl:if>
 	</xsl:template>
 
+	<xsl:template match="//*[contains(name(),'Seconds')]">
+		<xsl:call-template name="PrintSeconds">
+			<xsl:with-param name="cals" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template name="PrintSeconds">
+		<xsl:param name="cals" />
+		
+		<xsl:variable name="seconds" select="floor($cals mod 60)" />
+		<xsl:variable name="minutes" select="floor(($cals div 60) mod 60)" />
+		<xsl:variable name="hours"  select="floor(($cals div 3600))" />
+		
+		<xsl:value-of select="format-number($hours,'#,##0')" />
+		<xsl:text>:</xsl:text>
+		<xsl:value-of select="format-number($minutes,'00')" />
+		<xsl:text>:</xsl:text>
+		<xsl:value-of select="format-number($seconds,'00')" />
+	</xsl:template>
+
 	
 	
 	
