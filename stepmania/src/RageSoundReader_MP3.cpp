@@ -631,7 +631,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	if( !file.Open( filename ) )
 	{
 		SetError( ssprintf("Couldn't open file: %s", file.GetError().c_str()) );
-		return OPEN_NO_MATCH;
+		return OPEN_FATAL_ERROR;
 	}
 
 	mad->filesize = file.GetFileSize();
@@ -645,10 +645,10 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	{
 	case 0:
 		SetError( "Failed to read any data at all" );
-		return OPEN_NO_MATCH;
+		return OPEN_UNKNOWN_FILE_FORMAT;
 	case -1:
 		SetError( GetError() + " (not an MP3 stream?)" );
-		return OPEN_NO_MATCH;
+		return OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
 	/* Store the bitrate of the frame we just got. */
