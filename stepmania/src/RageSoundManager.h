@@ -31,6 +31,8 @@ class RageSoundManager
 
 	RageSoundDriver *driver;
 
+	RageSound *music;
+
 public:
 	RageMutex lock;
 
@@ -54,6 +56,7 @@ public:
 	 * itself to this. */
 	set<RageSound *> all_sounds;
 
+	void PlayMusic(CString file, bool loop = true, float start_sec = -1, float length_sec = -1);
 	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
 };
 

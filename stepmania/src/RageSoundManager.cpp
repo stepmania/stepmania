@@ -19,6 +19,8 @@ RageSoundManager::RageSoundManager(CString drivers)
 	driver = MakeRageSoundDriver(drivers);
 	if(!driver)
 		RageException::Throw("Couldn't find a sound driver that works");
+
+	music = new RageSound;
 }
 
 RageSoundManager::~RageSoundManager()
@@ -29,6 +31,7 @@ RageSoundManager::~RageSoundManager()
 		delete *(j++);
 
 	delete driver;
+	delete music;
 }
 
 void RageSoundManager::StartMixing(RageSound *snd)
@@ -231,6 +234,31 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 		src++;
 		dst++;
 	}
+}
+
+void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float length_sec)
+{
+	if( music->GetLoadedFilePath() == file && music->IsPlaying() )
+		return;		// do nothing
+
+	if(music->IsPlaying())
+		music->StopPlaying();
+	music->Load( file );
+
+	music->SetStopMode(loop? RageSound::M_LOOP:RageSound::M_STOP);
+
+	if(start_sec == -1)
+		music->SetStartSeconds();
+	else
+		music->SetStartSeconds(start_sec);
+
+	if(length_sec == -1)
+		music->SetLengthSeconds();
+	else
+		music->SetLengthSeconds(length_sec);
+	
+	music->SetPositionSeconds();
+	music->StartPlaying();
 }
 
 SoundMixBuffer::SoundMixBuffer()
