@@ -86,9 +86,20 @@ RageSound_CA::RageSound_CA()
     {
         RageException::ThrowNonfatal("Couldn't create default output device.");
     }
+    AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
+    CAAudioHardwareStream stream( sID );
     try
     {
         UInt32 frames = mOutputDevice->GetLatency(kAudioDeviceSectionOutput);
+        if (stream.HasProperty(0, kAudioDevicePropertyLatency))
+        {
+            UInt32 t, size = 4;
+            
+            stream.GetPropertyData(0, kAudioDevicePropertyLatency, size, &t);
+            frames += t;
+        }
+        else
+            LOG->Warn("Stream reports no latency.");
         mLatency = frames / 44100.0;
         LOG->Info("Frames of latency:  %lu\n"
                   "Seconds of latency: %f", frames, mLatency);
@@ -98,9 +109,27 @@ RageSound_CA::RageSound_CA()
         delete mOutputDevice;
         RageException::ThrowNonfatal("Couldn't get Latency.");
     }
+    try
+    {
+        UInt32 bufferSize = mOutputDevice->GetIOBufferSize();
+        LOG->Info("I/O Buffer size: %lu", bufferSize);
+    }
+    catch (const CAException& e)
+    {
+        LOG->Warn("Could not determine buffer size.");
+    }
+    try
+    {
+        mOutputDevice->AddPropertyListener(kAudioPropertyWildcardChannel,
+                                           kAudioPropertyWildcardSection,
+                                           kAudioDeviceProcessorOverload,
+                                           OverloadListener, this);
+    }
+    catch (const CAException& e)
+    {
+        LOG->Warn("Could not install the overload listener.");
+    }
     
-    AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
-    CAAudioHardwareStream stream( sID );
 
     vector<Desc> physicalFormats;
     GetPhysicalFormats( sID, physicalFormats );
@@ -186,6 +215,16 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
     
     This->mDecodePos = int64_t(inOutputTime->mSampleTime);
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
+    return noErr;
+}
+
+OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
+                                        UInt32 inChannel,
+                                        Boolean isInput,
+                                        AudioDevicePropertyID inPropertyID,
+                                        void *inData)
+{
+    LOG->Warn("Audio device overload.");
     return noErr;
 }
 

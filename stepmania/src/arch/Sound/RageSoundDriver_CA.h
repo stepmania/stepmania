@@ -7,6 +7,8 @@ struct AudioTimeStamp;
 struct AudioBufferList;
 typedef unsigned long UInt32;
 typedef UInt32 AudioDeviceID;
+typedef UInt32 AudioDevicePropertyID;
+typedef unsigned char Boolean;
 typedef long OSStatus;
 class CAAudioHardwareDevice;
 class RageSoundBase;
@@ -25,7 +27,12 @@ private:
                             AudioBufferList *outOutputData,
                             const AudioTimeStamp *inOutputTime,
                             void *inClientData);
-
+    static OSStatus OverloadListener(AudioDeviceID inDevice,
+                                     UInt32 inChannel,
+                                     Boolean isInput,
+                                     AudioDevicePropertyID inPropertyID,
+                                     void *inData);
+                              
 public:
     void FillConverter(void *data, UInt32 dataByteSize);
     RageSound_CA();
