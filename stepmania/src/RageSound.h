@@ -3,22 +3,7 @@
 
 #include <deque>
 #include "RageTimer.h"
-
-class CircBuf
-{
-	string buf;
-	unsigned cnt, start;
-	
-public:
-
-	CircBuf() { clear(); }
-	unsigned size() const { return cnt; }
-	unsigned capacity() const { return buf.size(); }
-	void reserve(unsigned n);
-	void clear();
-	void write(const char *buf, unsigned size);
-	void read(char *buf, unsigned size);
-};
+#include "RageUtil_CircularBuffer.h"
 
 class SoundReader;
 
@@ -40,7 +25,7 @@ public:
 	/* If cache == true (1), we'll preload the entire file into memory if
 	 * it's small enough.  If this is done, a large number of copies of the
 	 * sound can be played without much performance penalty.  This is useful
-	 * for BM (keyed sounds), and for rapidly-repeating  sound effects, such
+	 * for BM (keyed sounds), and for rapidly-repeating sound effects, such
 	 * as the music wheel.
 	 *
 	 * If cache == false (0), we'll never preload the file (always stream
@@ -90,7 +75,7 @@ private:
 	RageSound *original;
 
 	SoundReader *Sample;
-	CircBuf databuf;
+	CircBuf<char> databuf;
 	int FillBuf(int bytes);
 
 	/* Sound blocks we've sent out recently through GetPCM.  We keep track

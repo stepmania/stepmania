@@ -744,56 +744,6 @@ void RageSound::SetFadeLength( float fSeconds )
 	fade_length = fSeconds;
 }
 
-void CircBuf::reserve(unsigned n)
-{
-	clear();
-	buf.erase();
-	buf.insert(buf.end(), n, 0);
-}
-
-void CircBuf::clear()
-{
-	cnt = start = 0;
-}
-
-void CircBuf::write(const char *buffer, unsigned buffer_size)
-{
-	ASSERT(size() + buffer_size <= capacity()); /* overflow */
-
-	while(buffer_size)
-	{
-		unsigned write_pos = start + size();
-		if(write_pos >= buf.size()) write_pos -= buf.size();
-		
-		int cpy = int(min(buffer_size, buf.size() - write_pos));
-		buf.replace(write_pos, cpy, buffer, cpy);
-
-		cnt += cpy;
-
-		buffer += cpy;
-		buffer_size -= cpy;
-	}
-}
-
-void CircBuf::read(char *buffer, unsigned buffer_size)
-{
-	ASSERT(size() >= buffer_size); /* underflow */
-	
-	while(buffer_size)
-	{
-		unsigned total = static_cast<unsigned>(min(buf.size() - start, size()));
-		unsigned cpy = min(buffer_size, total);
-		buf.copy(buffer, cpy, start);
-
-		start += cpy;
-		if(start == buf.size()) start = 0;
-		cnt -= cpy;
-
-		buffer += cpy;
-		buffer_size -= cpy;
-	}
-}
-
 /*
 -----------------------------------------------------------------------------
  Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
