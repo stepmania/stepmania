@@ -629,6 +629,12 @@
 				RelativePath="GrooveRadar.h">
 			</File>
 			<File
+				RelativePath="GroupList.cpp">
+			</File>
+			<File
+				RelativePath="GroupList.h">
+			</File>
+			<File
 				RelativePath="GroupInfoFrame.cpp">
 			</File>
 			<File

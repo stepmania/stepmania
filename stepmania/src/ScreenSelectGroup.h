@@ -12,14 +12,11 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "RandomSample.h"
-#include "Screen.h"
-#include "Quad.h"
 #include "MenuElements.h"
 #include "FadingBanner.h"
 #include "MusicList.h"
+#include "GroupList.h"
 
-
-const int MAX_GROUPS = 15;
 
 class ScreenSelectGroup : public Screen
 {
@@ -31,7 +28,6 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void BeforeChange();
 	void AfterChange();
 
 	void MenuLeft( const PlayerNumber p );
@@ -52,16 +48,14 @@ private:
 	Sprite			m_sprFrame;
 	FadingBanner	m_Banner;
 	BitmapText		m_textNumber;
-	Sprite			m_sprButton[MAX_GROUPS];
-	BitmapText		m_textLabel[MAX_GROUPS];
 	Sprite			m_sprContents;
+	
 	MusicList		m_MusicList;
+	GroupList		m_GroupList;
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;
 
-	CStringArray m_asGroupNames;
-	int m_iSelection;
 	bool m_bChosen;
 };
 

@@ -1,0 +1,38 @@
+#ifndef GROUPLIST_H
+#define GROUPLIST_H
+
+#include "ActorFrame.h"
+#include "Sprite.h"
+#include "BitmapText.h"
+
+const int MAX_GROUPS_ONSCREEN = 8;
+
+class GroupList: public ActorFrame {
+	Sprite			m_sprButton[MAX_GROUPS_ONSCREEN];
+	BitmapText		m_screenLabels[MAX_GROUPS_ONSCREEN];
+	CArray<CString,CString> m_textLabels;
+
+	/* Currently selected label. */
+	int m_iSelection;
+	/* Label that's currently at the top of the screen. */
+	int m_iTop;
+
+	void BeforeChange();
+	void AfterChange();
+	void SetLabels();
+
+public:
+	GroupList();
+
+	void SetSelection(int sel);
+	int GetSelection() const { return m_iSelection; }
+	CString GetSelectionName() const { return m_textLabels[m_iSelection]; }
+	void Up();
+	void Down();
+	void AddGroup(CString name);
+	void DoneAddingGroups();
+	void TweenOffScreen();
+	void TweenOnScreen();
+};
+
+#endif

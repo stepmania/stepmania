@@ -34,10 +34,6 @@
 #define NUMBER_Y			THEME->GetMetricF("SelectGroup","NumberY")
 #define EXPLANATION_X		THEME->GetMetricF("SelectGroup","ExplanationX")
 #define EXPLANATION_Y		THEME->GetMetricF("SelectGroup","ExplanationY")
-#define BUTTON_X			THEME->GetMetricF("SelectGroup","ButtonX")
-#define BUTTON_SELECTED_X	THEME->GetMetricF("SelectGroup","ButtonSelectedX")
-#define BUTTON_START_Y		THEME->GetMetricF("SelectGroup","ButtonStartY")
-#define BUTTON_SPACING_Y	THEME->GetMetricF("SelectGroup","ButtonSpacingY")
 #define CONTENTS_X			THEME->GetMetricF("SelectGroup","ContentsX")
 #define CONTENTS_Y			THEME->GetMetricF("SelectGroup","ContentsY")
 
@@ -89,27 +85,27 @@ ScreenSelectGroup::ScreenSelectGroup()
 	for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
 		mapGroupToNothing[ aAllSongs[i]->m_sGroupName ] = "";			
 
-	// Read group names back out into an m_asGroupNames
-	m_asGroupNames.Add( "ALL MUSIC" );
+	CStringArray asGroupNames;
+	
+	// Read group names back out into asGroupNames
 	for( POSITION pos = mapGroupToNothing.GetStartPosition(); pos != NULL; )
 	{
 		CString sGroupName, sValue;
 		mapGroupToNothing.GetNextAssoc( pos, sGroupName, sValue );
-		m_asGroupNames.Add( sGroupName );
-
-		if( m_asGroupNames.GetSize() == MAX_GROUPS-1 )
-			break;	// stop adding
+		asGroupNames.Add( sGroupName );
 	}
-	SortCStringArray( m_asGroupNames, true );
+	SortCStringArray( asGroupNames, true );
+	asGroupNames.InsertAt(0, "ALL MUSIC" );
 
 	// Add songs to the MusicList.
-	for( int j=0; j<min(m_asGroupNames.GetSize(), MAX_GROUPS); j++ ) /* for each group */
+	for( int j=0; j < asGroupNames.GetSize(); j++ ) /* for each group */
 	{
 		CArray<Song*,Song*> aSongsInGroup;
 		/* find all songs */
 		for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
 		{
-			if( j != 0 && aAllSongs[i]->m_sGroupName != m_asGroupNames[j] )
+			/* group 0 gets all songs */
+			if( j != 0 && aAllSongs[i]->m_sGroupName != asGroupNames[j] )
 				continue;
 
 			aSongsInGroup.Add( aAllSongs[i] );
@@ -121,7 +117,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 		m_MusicList.AddSongsToGroup(aSongsInGroup);
 	}
 
-	m_iSelection = 0;
 	m_bChosen = false;
 
 	m_Menu.Load(
@@ -156,26 +151,12 @@ ScreenSelectGroup::ScreenSelectGroup()
 	this->AddSubActor( &m_sprContents );
 
 	this->AddSubActor( &m_MusicList );
+	
+	for( i=0; i < asGroupNames.GetSize(); ++i )
+		m_GroupList.AddGroup( asGroupNames[i] );
+	m_GroupList.DoneAddingGroups();
+	this->AddSubActor( &m_GroupList );
 
-	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
-	{
-		CString sGroupName = m_asGroupNames[i];
-
-		m_sprButton[i].Load( THEME->GetPathTo("Graphics","select group button") );
-		m_sprButton[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
-		this->AddSubActor( &m_sprButton[i] );
-
-		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textLabel[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
-		m_textLabel[i].SetText( SONGMAN->ShortenGroupName( sGroupName ) );
-		m_textLabel[i].SetZoom( 0.8f );
-		m_textLabel[i].SetShadowLength( 2 );
-
-		if( i == 0 )	m_textLabel[i].TurnRainbowOn();
-		else			m_textLabel[i].SetDiffuseColor( SONGMAN->GetGroupColor(sGroupName) );
-
-		this->AddSubActor( &m_textLabel[i] );
-	}
 
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
@@ -192,6 +173,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 	AfterChange();
+	m_GroupList.SetSelection(0);
 }
 
 
@@ -238,34 +220,12 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectGroup::BeforeChange()
-{
-	int iSel = m_iSelection;
-
-	m_sprButton[iSel].BeginTweening( 0.2f );
-	m_sprButton[iSel].SetTweenX( BUTTON_X );
-	m_sprButton[iSel].SetEffectNone();
-
-	m_textLabel[iSel].BeginTweening( 0.2f );
-	m_textLabel[iSel].SetTweenX( BUTTON_X );
-	m_textLabel[iSel].SetEffectNone();
-}
-
 void ScreenSelectGroup::AfterChange()
 {
-	int iSel = m_iSelection;
+	int sel = m_GroupList.GetSelection();
+	m_MusicList.SetGroupNo(sel);
 
-	m_sprButton[iSel].BeginTweening( 0.2f );
-	m_sprButton[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_sprButton[iSel].SetEffectGlowing();
-
-	m_textLabel[iSel].BeginTweening( 0.2f );
-	m_textLabel[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_textLabel[iSel].SetEffectGlowing();
-
-	m_MusicList.SetGroupNo(m_iSelection);
-
-	CString sSelectedGroupName = m_asGroupNames[m_iSelection];
+	CString sSelectedGroupName = m_GroupList.GetSelectionName();
 
 	CString sGroupBannerPath;
 	if( 0 == stricmp(sSelectedGroupName, "ALL MUSIC") )
@@ -297,11 +257,7 @@ void ScreenSelectGroup::MenuUp( const PlayerNumber p )
 	if( m_bChosen )
 		return;
 
-	BeforeChange();
-
-	m_iSelection = m_iSelection-1 % m_asGroupNames.GetSize();
-	if( m_iSelection < 0 )
-		m_iSelection += min( m_asGroupNames.GetSize(), MAX_GROUPS );
+	m_GroupList.Up();
 
 	AfterChange();
 
@@ -314,9 +270,7 @@ void ScreenSelectGroup::MenuDown( const PlayerNumber p )
 	if( m_bChosen )
 		return;
 
-	BeforeChange();
-
-	m_iSelection = (m_iSelection+1) % min( m_asGroupNames.GetSize(), MAX_GROUPS );
+	m_GroupList.Down();
 	
 	AfterChange();
 
@@ -329,7 +283,7 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;
-	GAMESTATE->m_sPreferredGroup = m_asGroupNames[m_iSelection];
+	GAMESTATE->m_sPreferredGroup = m_GroupList.GetSelectionName();
 
 	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
         SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_COMMENT_ALL_MUSIC) );
@@ -366,26 +320,9 @@ void ScreenSelectGroup::TweenOffScreen()
 	m_sprContents.BeginTweeningQueued( 0.7f );
 	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
 	m_sprContents.SetTweenY( CONTENTS_Y+400 );
-
 	
 	m_MusicList.TweenOffScreen();
-
-	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
-	{
-		if( i == m_iSelection )
-			m_sprButton[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
-		else
-			m_sprButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_BEGIN );
-		m_sprButton[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_sprButton[i].SetTweenX( BUTTON_X+400 );
-
-		if( i == m_iSelection )
-			m_textLabel[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
-		else
-			m_textLabel[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_BEGIN );
-		m_textLabel[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_textLabel[i].SetTweenX( BUTTON_X+400 );
-	}
+	m_GroupList.TweenOffScreen();
 }
 
 void ScreenSelectGroup::TweenOnScreen() 
@@ -410,17 +347,5 @@ void ScreenSelectGroup::TweenOnScreen()
 	m_sprContents.SetTweenY( CONTENTS_Y );
 
 	m_MusicList.TweenOnScreen();
-
-	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
-	{
-		m_sprButton[i].SetX( BUTTON_X+400 );
-		m_sprButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );
-		m_sprButton[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_END );
-		m_sprButton[i].SetTweenX( BUTTON_X );
-
-		m_textLabel[i].SetX( BUTTON_X+400 );
-		m_textLabel[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );
-		m_textLabel[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_END );
-		m_textLabel[i].SetTweenX( BUTTON_X );
-	}
+	m_GroupList.TweenOnScreen();
 }

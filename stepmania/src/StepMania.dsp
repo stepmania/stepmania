@@ -636,6 +636,14 @@ SOURCE=.\GroupInfoFrame.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GroupList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GroupList.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\MenuElements.cpp
 # End Source File
 # Begin Source File
