@@ -282,7 +282,16 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		close( OldDir );
 		return;
 	}
+
 	DIR *d = opendir(".");
+	if( d == NULL )
+	{
+		LOG->MapLog("opendir " + root+"/"+sPath, "Couldn't opendir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
+		if( fchdir( OldDir ) == -1 )
+			RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
+		close( OldDir );
+		return;
+	}
 
 	while(struct dirent *ent = readdir(d))
 	{
