@@ -577,9 +577,9 @@ void Player::HandleTapRowScore( unsigned row )
 	ASSERT(iNumTapsInRow > 0);
 
 	bool NoCheating = true;
-#ifdef DEBUG
+/*#ifdef DEBUG
 	bool NoCheating = false;
-#endif //DEBUG
+#endif //DEBUG*/
 
 	if(GAMESTATE->m_bDemonstrationOrJukebox)
 		NoCheating = false;
@@ -603,10 +603,10 @@ void Player::HandleTapRowScore( unsigned row )
 void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 	bool NoCheating = true;
-#ifdef DEBUG
+/*#ifdef DEBUG
 	bool NoCheating = false;
 #endif //DEBUG
-
+*/
 	if(GAMESTATE->m_bDemonstrationOrJukebox)
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.

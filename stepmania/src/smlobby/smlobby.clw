@@ -17,7 +17,7 @@ Class5=CSmlobbyApp
 Class6=CAboutDlg
 Class7=CSmlobbyDlg
 
-ResourceCount=56
+ResourceCount=57
 Resource1=IDD_CONNECT (Unknown language: 0xD
 Resource2=IDD_CONNECT (Unknown language: 0xD
 Resource3=IDD_CONNECT (Unknown language: 0xD
@@ -74,6 +74,7 @@ Resource53=IDD_ABOUTBOX
 Resource54=IDD_SMLOBBY_DIALOG
 Resource55=IDD_FILEXFER
 Resource56=IDD_CONNECT (Unknown language: 0xD, 0x1)
+Resource57=IDD_CONNECT (Unknown language: 0xD, 0x1)
 
 [CLS:CConnectDlg]
 Type=0
