@@ -40,6 +40,7 @@
 #include "archutils/Win32/crash.h"
 #endif
 
+/* XXX: char*GetLockedMutexesForThisThread? */
 #define MAX_THREADS 128
 static vector<RageMutex*> *g_MutexList = NULL; /* watch out for static initialization order problems */
 
@@ -571,7 +572,8 @@ bool RageMutexImpl::IsLockedByThisThread() const
 	return LockedBy == GetCurrentThreadId();
 }
 
-#elif defined(HAVE_LIBPTHREAD)
+#else
+
 #include <sys/time.h>
 struct RageMutexImpl
 {
@@ -700,68 +702,6 @@ bool RageMutexImpl::IsLockedByThisThread() const
 {
 	return LockedBy == SDL_ThreadID();
 }
-
-#else
-/* SDL implementation. */
-struct RageMutexImpl
-{
-	unsigned LockedBy;
-	volatile int LockCnt;
-
-	SDL_mutex *mutex;
-	RageMutex *m_Parent;
-
-	RageMutexImpl( RageMutex *parent );
-	~RageMutexImpl();
-
-	void Lock();
-	void Unlock();
-	bool IsLockedByThisThread() const;
-};
-
-RageMutexImpl::RageMutexImpl( RageMutex *parent )
-{
-	mutex = SDL_CreateMutex();
-	LockedBy = 0;
-	LockCnt = 0;
-	m_Parent = parent;
-}
-
-RageMutexImpl::~RageMutexImpl()
-{
-	SDL_DestroyMutex(mutex);
-}
-
-
-void RageMutexImpl::Lock()
-{
-	if( LockedBy == SDL_ThreadID() )
-	{
-		++LockCnt;
-		return;
-	}
-
-	SDL_LockMutex( mutex );
-	LockedBy = SDL_ThreadID();
-}
-
-void RageMutexImpl::Unlock()
-{
-	if( LockCnt )
-	{
-		--LockCnt;
-		return;
-	}
-
-	LockedBy = 0;
-	SDL_UnlockMutex( mutex );
-}
-
-bool RageMutexImpl::IsLockedByThisThread() const
-{
-	return LockedBy == SDL_ThreadID();
-}
-
 #endif
 
 static const int MAX_MUTEXES = 256;
