@@ -43,7 +43,7 @@ unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned
 	if (m_waiting)
 		goto output;
 	
-	while( size && m_file.IsGood() )
+	while( size && !m_file.AtEOF() )
 	{
 		{
 			unsigned int spaceSize = 1024;
@@ -51,7 +51,7 @@ unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned
 			
 			m_len = m_file.Read( (char *)m_space, STDMIN(size, (unsigned long)spaceSize));
 			if( m_len == -1 )
-				throw ReadErr();
+				throw ReadErr( m_file );
 		}
 		unsigned int blockedBytes;
 output:
@@ -62,9 +62,6 @@ output:
 		size -= m_len;
 		transferBytes += m_len;
 	}
-	
-	if (!m_file.IsGood() && !m_file.AtEOF())
-		throw ReadErr();
 	
 	return 0;
 }

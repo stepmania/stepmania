@@ -20,7 +20,7 @@ public:
 		Err(const std::string &s) : Exception(IO_ERROR, s) {}
 	};
 	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileStore: error opening file for reading: " + filename) {}};
-	class ReadErr : public Err {public: ReadErr() : Err("FileStore: error reading file") {}};
+	struct ReadErr : public Err { ReadErr(const RageFile &f) : Err("RageFileStore(" + f.GetPath() + "): read error: " + f.GetError() ) {}};
 
 	RageFileStore() {}
 	RageFileStore(const char *filename)
