@@ -736,6 +736,14 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 			pNotes->SetRadarValue(r, NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds ));
 		}
 
+		/* Many songs have stray, empty song patterns.  Ignore them, so
+		 * they don't force the first beat of the whole song to 0.  XXX Should
+		 * we just delete them, now that new patterns can be created quickly
+		 * in the editor? */
+		
+		if(tempNoteData.GetLastRow() == 0)
+			continue;
+
 		float fFirstBeat = tempNoteData.GetFirstBeat();
 		float fLastBeat = tempNoteData.GetLastBeat();
 		if( m_fFirstBeat == -1 )
