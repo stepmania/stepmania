@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2"
+				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2,vorbis"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2"
+				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2,vorbis"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -1607,6 +1607,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageSoundReader_SDL_Sound.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Vorbisfile.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Vorbisfile.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_WAV.cpp">
