@@ -64,7 +64,8 @@ bool LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNe
 		EventEnabled[i] = mySDL_EventState( (Uint8) i, SDL_QUERY );
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	SDL_InitSubSystem(SDL_INIT_VIDEO);
+	if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
+		RageException::Throw( "SDL_INIT_VIDEO failed: %s", SDL_GetError() );
 
 	/* Put them back. */
 	for( i = 0; i < SDL_NUMEVENTS; ++i)

@@ -235,7 +235,10 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 	 * as possible, because if we have to shut it down again we'll flash a window
 	 * briefly. */
     if(!SDL_WasInit(SDL_INIT_VIDEO))
-		SDL_InitSubSystem(SDL_INIT_VIDEO);
+	{
+		if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
+			RageException::Throw( "SDL_INIT_VIDEO failed: %s", SDL_GetError() );
+	}
 
 	/* By default, ignore all SDL events.  We'll enable them as we need them.
 	 * We must not enable any events we don't actually want, since we won't
