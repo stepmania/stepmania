@@ -10,30 +10,53 @@ static const CString PrefsGroupNames[NUM_PREFS_GROUPS] = {
 };
 XToString( PrefsGroup );
 
-void SubscribePreference( IPreference *p )
+IPreference::IPreference( PrefsGroup PrefsGroup, const CString& sName ):
+	m_PrefsGroup( PrefsGroup ),
+	m_sName( sName )
 {
-	PrefsManager::Subscribe( p );
+	PrefsManager::Subscribe( this );
 }
 
-void UnsubscribePreference( IPreference *p )
+IPreference::~IPreference()
 {
-	PrefsManager::Unsubscribe( p );
+	PrefsManager::Unsubscribe( this );
+}
+
+void Preference<CString>::FromString( const CString &s )
+{
+	m_currentValue = s;
+}
+
+CString Preference<CString>::ToString() const
+{
+	return m_currentValue;
 }
 
 #define READFROM_AND_WRITETO( type ) \
-	void Preference<type>::ReadFrom( const IniFile &ini ) \
+	void Preference<type>::FromString( const CString &s ) \
 	{ \
-		ini.GetValue( PrefsGroupToString(m_PrefsGroup), m_sName, m_currentValue ); \
+		::FromString( s, m_currentValue ); \
 	} \
-	void Preference<type>::WriteTo( IniFile &ini ) const \
+	CString Preference<type>::ToString() const \
 	{ \
-		ini.SetValue( PrefsGroupToString(m_PrefsGroup), m_sName, m_currentValue ); \
+		return ::ToString( m_currentValue ); \
 	} \
 
-READFROM_AND_WRITETO( CString )
 READFROM_AND_WRITETO( int )
 READFROM_AND_WRITETO( float )
 READFROM_AND_WRITETO( bool )
+
+void IPreference::ReadFrom( const IniFile &ini )
+{
+	CString sVal;
+	if( ini.GetValue( PrefsGroupToString(m_PrefsGroup), m_sName, sVal ) )
+		FromString( sVal );
+}
+
+void IPreference::WriteTo( IniFile &ini ) const
+{
+	ini.SetValue( PrefsGroupToString(m_PrefsGroup), m_sName, ToString() );
+}
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez

@@ -19,14 +19,23 @@ const CString& PrefsGroupToString( PrefsGroup pg );
 class IPreference
 {
 public:
-	virtual ~IPreference() { }
-	virtual void LoadDefault() = 0;
-	virtual void ReadFrom( const IniFile &ini ) = 0;
-	virtual void WriteTo( IniFile &ini ) const = 0;
-};
+	IPreference( PrefsGroup PrefsGroup, const CString& sName );
+	virtual ~IPreference();
 
-void SubscribePreference( IPreference *p );
-void UnsubscribePreference( IPreference *p );
+	virtual void LoadDefault() = 0;
+	virtual void ReadFrom( const IniFile &ini );
+	virtual void WriteTo( IniFile &ini ) const;
+
+	virtual CString ToString() const = 0;
+	virtual void FromString( const CString &s ) = 0;
+
+	PrefsGroup GetPrefsGroup() const { return m_PrefsGroup; }
+	const CString &GetName() const { return m_sName; }
+
+protected:
+	PrefsGroup	m_PrefsGroup;
+	CString		m_sName;
+};
 
 template <class T>
 class Preference : public IPreference
@@ -35,36 +44,24 @@ private:
 	// Make currentValue first in the list so that we can pass this object
 	// as an argument in a var_arg function as in printf.
 	T			m_currentValue;
-	PrefsGroup	m_PrefsGroup;
-	CString		m_sName;
 	T			m_defaultValue;
 	
-	CString ToString();
-	void FromString( const CString &s );
-
 public:
 	Preference( PrefsGroup PrefsGroup, const CString& sName, const T& defaultValue ):
+		IPreference( PrefsGroup, sName ),
 		m_currentValue( defaultValue ),
-		m_PrefsGroup( PrefsGroup ),
-		m_sName( sName ),
 		m_defaultValue( defaultValue )
 	{
-		SubscribePreference( this );
 		LoadDefault();
 	}
 
-	~Preference()
-	{
-		UnsubscribePreference( this );
-	}
+	CString ToString() const;
+	void FromString( const CString &s );
 
 	void LoadDefault()
 	{
 		m_currentValue = m_defaultValue;
 	}
-
-	void ReadFrom( const IniFile &ini );
-	void WriteTo( IniFile &ini ) const;
 
 	operator T () const
 	{
