@@ -752,20 +752,22 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( !pSong || !pSteps )
 			continue;	// this song entry isn't playable.  Skip.
 
+		Difficulty dc = pSteps->GetDifficulty();
 		if( entry_difficulty != COURSE_DIFFICULTY_REGULAR )
 		{
 			/* See if we can find a NoteData after adjusting the difficulty by COURSE_DIFFICULTY_CLASS_CHANGE.
 			 * If we can't, just use the one we already have. */
-			Difficulty original_dc = pSteps->GetDifficulty();
-			Difficulty dc = Difficulty( original_dc + COURSE_DIFFICULTY_CLASS_CHANGE[entry_difficulty] );
-			dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+			Difficulty new_dc = Difficulty( dc + COURSE_DIFFICULTY_CLASS_CHANGE[entry_difficulty] );
+			new_dc = clamp( new_dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+
 			bool bChangedDifficulty = false;
-			if( dc != original_dc )
+			if( new_dc != dc )
 			{
-				Steps* pNewNotes = pSong->GetStepsByDifficulty( st, dc );
-				if( pNewNotes )
+				Steps* pNewSteps = pSong->GetStepsByDifficulty( st, new_dc );
+				if( pNewSteps )
 				{
-					pSteps = pNewNotes;
+					dc = new_dc;
+					pSteps = pNewSteps;
 					bChangedDifficulty = true;
 				}
 			}
@@ -807,7 +809,7 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.bMystery = e.mystery;
 		te.iLowMeter = low_meter;
 		te.iHighMeter = high_meter;
-		te.dc = e.difficulty;
+		te.dc = dc;
 		trail.m_vEntries.push_back( te ); 
 	}
 }
