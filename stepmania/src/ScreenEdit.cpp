@@ -801,9 +801,6 @@ void ScreenEdit::DrawPrimitives()
 			GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
 			m_NoteFieldEdit.Draw();
 			GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
-
-			m_In.Draw();
-			m_Out.Draw();
 		}
 		break;
 	case MODE_RECORDING:
@@ -829,6 +826,9 @@ void ScreenEdit::DrawPrimitives()
 	default:
 		ASSERT(0);
 	}
+
+	m_In.Draw();
+	m_Out.Draw();
 
 	Screen::DrawPrimitives();
 }
