@@ -66,6 +66,7 @@ void HoldJudgement::SetHoldJudgement( HoldNoteScore hns )
 	if( hns == HNS_NG ) 
 	{
 		// falling down
+		m_sprJudgement.StopTweening();
 		m_sprJudgement.SetY( -10 );
 		m_sprJudgement.SetZoom( 1.0f );
 		m_sprJudgement.BeginTweening( m_fDisplayTime );
@@ -74,6 +75,7 @@ void HoldJudgement::SetHoldJudgement( HoldNoteScore hns )
 	else // hns == HNS_OK
 	{		
 		// zooming out
+		m_sprJudgement.StopTweening();
 		m_sprJudgement.SetZoom( 1.5f );
 		m_sprJudgement.BeginTweening( m_fDisplayTime/3.0f );
 		m_sprJudgement.SetTweenZoom( 1.0f );
