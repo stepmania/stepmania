@@ -905,8 +905,9 @@ int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 
 			do
 			{
-				if( do_mad_frame_decode() <= 0 ) /* XXX eof */
-					return -1; /* it set the error */
+				int ret = do_mad_frame_decode();
+				if( ret <= 0 )
+					return ret; /* it set the error */
 			} while( get_this_frame_byte(mad) < bytepos );
 			synth_output();
 
