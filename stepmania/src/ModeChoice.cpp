@@ -7,6 +7,9 @@
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
+#include "StepMania.h"
+#include "ScreenManager.h"
+#include "SongManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 void ModeChoice::Init()
@@ -18,7 +21,9 @@ void ModeChoice::Init()
 	m_dc = DIFFICULTY_INVALID;
 	m_sAnnouncer = "";
 	m_sName = "";
+	m_sScreen = "";
 	m_bInvalid = true;
+	m_sInvalidReason = "";
 }
 
 bool ModeChoice::DescribesCurrentMode() const
@@ -110,10 +115,40 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 			m_sAnnouncer = sValue;
 		}
 
+		/* Hmm.  I feel like I'm overloading ModeChoice here; this makes it
+		 * a generic menu choice. */
 		if( sName == "name" )
 		{
 			m_sName = sValue;
 		}
+
+		if( sName == "screen" )
+		{
+			m_sScreen = sValue;
+/* XXX: do this in GameState::IsPlayable, but move GameState::IsPlayable to ModeChoice::IsPlayable */
+/*			if( m_sScreen == "ScreenEditCoursesMenu" )
+			{
+				vector<Course*> vCourses;
+				SONGMAN->GetAllCourses( vCourses, false );
+
+				if( vCourses.size() == 0 )
+				{
+					m_bInvalid = true;
+					m_sInvalidReason = "No courses are installed";
+				}
+			}
+
+			if( m_sScreen == "ScreenJukeboxMenu" ||
+				m_sScreen == "ScreenEditMenu" ||
+				m_sScreen == "ScreenEditCoursesMenu" )
+			{
+				if( SONGMAN->GetNumSongs() == 0 )
+				{
+					m_bInvalid = true;
+					m_sInvalidReason = "No songs are installed";
+				}
+			}
+*/		}
 	}
 }
 
@@ -122,6 +157,9 @@ void ModeChoice::ApplyToAllPlayers()
 	for( int pn=0; pn<NUM_PLAYERS; pn++ )
 		if( GAMESTATE->IsHumanPlayer(pn) )
 			Apply((PlayerNumber) pn);
+
+	if( m_sScreen != "" )
+		SCREENMAN->SetNewScreen( m_sScreen );
 }
 
 void ModeChoice::Apply( PlayerNumber pn )
