@@ -113,7 +113,12 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	m_sprFooter.Command( FOOTER_OFF_COMMAND );
 	m_textHelp.Command( HELP_OFF_COMMAND );
 
-	m_Out.StartTransitioning( smSendWhenDone );
+	m_Out.StartTransitioning();
+
+	/* This includes all of the actors: */
+	float TimeUntilFinished = GetTweenTimeLeft();
+	TimeUntilFinished = max(TimeUntilFinished, m_Out.GetLengthSeconds());
+	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
 }
 
 void MenuElements::Back( ScreenMessage smSendWhenDone )
