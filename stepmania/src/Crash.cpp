@@ -490,8 +490,9 @@ static void ReportCrashData(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCE
 			for(int i=0; i<CHECKPOINT_COUNT; ++i) {
 				const VirtualDubCheckpoint& cp = pState->cp[(pState->nNextCP+i) & (CHECKPOINT_COUNT-1)];
 
-				if (cp.file)
-					Report(NULL, hFile, "\t%s(%d)", cp.file, cp.line);
+				if (cp.file) {
+					Report(NULL, hFile, "\t%s:%d %s", cp.file, cp.line, cp.message? cp.message:"");
+				}
 			}
 		}
 	} catch(...) {
@@ -1350,6 +1351,33 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	CloseHandle(hFile);
 }
 
+void ViewWithNotepad(const char *str)
+{
+	char buf[256] = "";
+	strcat(buf, "notepad.exe  ");
+	strcat(buf, str);
+
+	char cwd[MAX_PATH];
+	SpliceProgramPath(cwd, MAX_PATH, "");
+
+	PROCESS_INFORMATION pi;
+	STARTUPINFO	si;
+	ZeroMemory( &si, sizeof(si) );
+
+	CreateProcess(
+		NULL,		// pointer to name of executable module
+		buf,		// pointer to command line string
+		NULL,  // process security attributes
+		NULL,   // thread security attributes
+		false,  // handle inheritance flag
+		0, // creation flags
+		NULL,  // pointer to new environment block
+		cwd,   // pointer to current directory name
+		&si,  // pointer to STARTUPINFO
+		&pi  // pointer to PROCESS_INFORMATION
+	);
+}
+
 BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static const EXCEPTION_POINTERS *s_pExc;
 	static bool s_bHaveCallstack;
@@ -1387,6 +1415,9 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			case IDOK:
 				EndDialog(hDlg, TRUE);
 				return TRUE;
+			case IDC_VIEW_LOG:
+				ViewWithNotepad("log.txt");
+				break;
 			case IDC_CRASH_SAVE:
 				if (!s_bHaveCallstack)
 					if (IDOK != MessageBox(hDlg,
@@ -1398,27 +1429,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 				DoSave(s_pExc);
 
-				{
-					char cwd[MAX_PATH];
-					SpliceProgramPath(cwd, MAX_PATH, "");
-
-					PROCESS_INFORMATION pi;
-					STARTUPINFO	si;
-					ZeroMemory( &si, sizeof(si) );
-
-					CreateProcess(
-						NULL,		// pointer to name of executable module
-						"notepad.exe crashinfo.txt",		// pointer to command line string
-						NULL,  // process security attributes
-						NULL,   // thread security attributes
-						false,  // handle inheritance flag
-						0, // creation flags
-						NULL,  // pointer to new environment block
-						cwd,   // pointer to current directory name
-						&si,  // pointer to STARTUPINFO
-						&pi  // pointer to PROCESS_INFORMATION
-					);
-				}
+				ViewWithNotepad("crashinfo.txt");
 				return TRUE;
 			case IDC_BUTTON_RESTART:
 				{
