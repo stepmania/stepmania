@@ -497,7 +497,7 @@ bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString
 {
 	CString sFallback;
 
-	// TODO:  Add recursion checking
+	// TODO:  Add infinite recursion checking
 
 	if( m_pIniCurMetrics->GetValue(sClassName,sValueName,ret) )
 		return true;
