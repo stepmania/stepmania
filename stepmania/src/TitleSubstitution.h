@@ -13,6 +13,8 @@ public:
 	TitleSubst();
 	~TitleSubst();
 
+	void Load(const CString &filename);
+
 	void Subst(CString &title, CString &sub, CString &artist,
 					   CString &ttitle, CString &tsub, CString &tartist);
 };

@@ -4,6 +4,8 @@
 #include "RageUtil.h"
 #include "FontCharAliases.h"
 
+#include <fstream>
+
 struct TitleTrans
 {
 	Regex TitleFrom, SubFrom, ArtistFrom;
@@ -66,126 +68,62 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 
 TitleSubst::TitleSubst()
 {
-	/* Ambiguous, so check artist.  Do this early; Riyu will be replaced later: */
-	AddTrans("^Candy$", "", "^Luv.*", "CANDY &whitestar;", "", "");
-	AddTrans("^Candy$", "", ".*Riyu.*", "CANDY &whiteheart;", "", "");
+	Load("Translation.dat");
+}
 
-	/* Make sure this appears after the above "Riyu" match, so it doesn't
-		* break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
-		* correct, but handle both. */
-	AddTrans("", "", "Riyu Kosak[au]", "", "", "&kosaka1;&kosaka2;&hri;&hyu;");
-	AddTrans("", "", "Kosak[au] Riyu", "", "", "&kosaka1;&kosaka2;&hri;&hyu;");
+void TitleSubst::Load(const CString &filename)
+{
+	ifstream f;
+	f.open(filename);
+	if(!f.good()) return;
+	while(!f.eof())
+	{
+		CString TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo;
 
-	/* Matsuri Japan is often just "Japan".  There may be other songs by
-		* this name, too, so match the artist, too. */
-	AddTrans("^Japan$", "", "(Re-Venge)|(RevenG)", "&matsuri; JAPAN", "", "");
+		while(!f.eof())
+		{
+			CString line;
+			if(!getline(f, line)) continue;
 
-	/* Fix up hacked titles: */
-	AddTrans("^Max 300$", "", "%", "", "", "&omega;");
-	AddTrans("^Bre=kdown$", "", "", "Bre&flipped-a;kdown", "", "");
-	AddTrans("^Candy #$", "", "", "Candy &whitestar;", "", "");
-	AddTrans("^Candy \\$$", "", "", "Candy &whiteheart;", "", "");
-	AddTrans("^} JAPAN$", "", "", "&matsuri; JAPAN", "", "");
-	AddTrans("^\\+\\{$", "", "", "&kakumei1;&kakumei2;", "", "");
-	AddTrans("^Sweet Sweet \\$ Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "");
+			if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)
+			{
+				/* Annoying header that Windows puts on UTF-8 plaintext
+				 * files; remove it. */
+				line.erase(0, utf8_get_char_len(line.c_str()));
+			}
 
-	/* Special stuff is done.  Titles: */
-	AddTrans("^Matsuri Japan$", "", "", "&matsuri; JAPAN", "", "");
-	AddTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "");
-	AddTrans("^Sweet Sweet (Love )?Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "");
-	AddTrans("^Break ?Down!?$", "", "", "BRE&flipped-a;K DOWN!", "", "");
-	/* サナ・モレッテ・ネ・エンテ 
-		* People can't decide how they want to spell this, so cope with
-		* both l or r, and one or two l/r and t. */
-	AddTrans("^Sana Mo((ll?)|(rr?))et(t?)e Ne Ente", "", "", 
-		"&ksa;&kna;&kdot;&kmo;&kre;&kq;&kte;&kdot;&kne;&kdot;&ke;&kn;&kte;", "", "");
-	AddTrans("^Freckles$", "", "", "&hso;&hba;&hka;&hsu;", "", "");
-	AddTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "");
+			TrimLeft(line);
+			TrimRight(line);
 
-	AddTrans("^Hypnotic Crisis$", "", "", "HYPN&x00D8;OTIC CRISIS", "", "");
+			if(line.size() == 0) continue; /* blank */
+			if(line[0] == '#') continue; /* comment */
 
-	/* 夜空のムコウ */
-	AddTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;&ku;", "", "");
+			if(line[0] == '*') break;
 
-	/* 17才 */
-	AddTrans("^17 ?(Sai)?$", "", "", "17&sai;", "", "");
+			/* x: y */
 
-	/* Handle "Mobo Moga", "Mobo * Moga"; spaces optional. */
-	AddTrans("^Mobo ?\\*? ?Moga$", "", "", "MOBO&whitestar;MOGA", "", "");
+			unsigned pos = line.find_first_of(':');
+			if(pos == string::npos) continue;
+			CString id = line.substr(0, pos);
+			CString txt = line.substr(pos+1);
+			TrimLeft(txt);
 
-	AddTrans("^Love (Love )?Shine$", "", "", "LOVE &whiteheart; SHINE", "", "");
+			if(!id.CompareNoCase("TitleFrom")) TitleFrom = txt;
+			else if(!id.CompareNoCase("ArtistFrom")) ArtistFrom = txt;
+			else if(!id.CompareNoCase("SubtitleFrom")) SubtitleFrom = txt;
+			else if(!id.CompareNoCase("TitleTo")) TitleTo = txt;
+			else if(!id.CompareNoCase("ArtistTo")) ArtistTo = txt;
+			else if(!id.CompareNoCase("SubtitleTo")) SubtitleTo = txt;
+		}
 
-	/* ロマンスの神様 */
-	AddTrans("^God of Romance$", "", "", "&kro;&kma;&kn;&ksu;&hno;&kami;&sama;", "", "");
+		/* Surround each regex with ^(...)$, to force all comparisons to default
+		 * to being a full-line match.  (Add ".*" manually if htis isn't wanted.) */
+		if(TitleFrom.size()) TitleFrom = "^(" + TitleFrom + ")$";
+		if(ArtistFrom.size()) ArtistFrom = "^(" + ArtistFrom + ")$";
+		if(SubtitleFrom.size()) SubtitleFrom = "^(" + SubtitleFrom + ")$";
 
-	/* おどるポンポコリン */
-	AddTrans("^Dancing Pompokolin$", "", "", "&ho;&hdo;&hru;&kpo;&kn;&kpo;&kko;&kri;&kn;", "", "");
-
-	/* 青い振動 */
-	AddTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "");
-	AddTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "");
-	/* Handle a typo: */
-	AddTrans("^Aio Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "");
-
-	/* 大見解 */
-	AddTrans("^Daikenkai$", "", "", "&ookii;&kenkai1;&kenkai2;", "", "");
-
-	/* ♡LOVE²シュガ→♡ */
-	AddTrans("^Love Love Sugar$", "", "", "&whiteheart;LOVE&squared; &ksi;&kyus;&kga;&rightarrow;&whiteheart;", "", "");
-
-	/* 三毛猫ロック */
-	AddTrans("^Mikeneko Rock$", "", "", "&num-san;&hair;&neko;&kro;&kq;&kku;", "", "");
-	
-	/* 桜 */
-	AddTrans("^Sakura$", "", "", "&sakura;", "", "");
-
-	/* 魔法の扉, スペース☆マコのテーマ  (handle Door and Doors) */
-    AddTrans("^(Doors? of Magic)|(Mahou no Tobira)$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "&ksu;&kpe;&kdash;&ksu;&whitestar;&kma;&kko;&hno;&kti;&kdash;&kmu;", ""); 
-
-    AddTrans("^Senorita$", "", "", "Se&x00F1;orita", "", ""); 
-    AddTrans("^Senorita\\(Speedy Mix\\)$", "", "", "Se&x00F1;orita", "Speedy Mix", ""); 
-    AddTrans("^La Senorita$", "", "", "La Se&x00F1;orita", "", ""); 
-    AddTrans("^La Senorita Virtual$", "", "", "La Se&x00F1;orita Virtual", "", ""); 
-	
-	/* Subtitles: */
-	/* それぞれの明日 (title is Graduation) */
-	AddTrans("", "^Each Tomorrow$", "", "", "&hso;&hre;&hzo;&hre;&hno;&aka;&nichi;", "");
-
-	/* Artists: */
-	AddTrans("", "", "^Omega$", "", "", "&omega;");
-	AddTrans("", "", "^ZZ$", "", "", "&doublezeta;");
-
-	/* 亜熱帯マジ-SKA爆弾 (serious tropical ska bomb? ruh roh) */
-	AddTrans("", "", "^Anettai Maji.*Ska (Bakudan|Bukuden)", "", "", "&anettai1;&anettai2;&anettai3;&kma;&kji;-SKA&bakudan1;&bakudan2;");
-
-	/* メキシコ民謡 */
-	AddTrans("", "", "^Spanish Folk Music$", "", "", "&kme;&kki;&ksi;&kko;&minyou1;&minyou2;");
-
-	/* 新谷さなえ (Sanae or incorrect Sana) */
-	AddTrans("", "", "Sanae? Shintani", "", "", "&shintani1;&shintani2;&hsa;&hna;&he;");
-
-	AddTrans("", "", "dj TAKA feat. ?Noria", "", "", "dj TAKA feat. &hno;&hri;&ha;");
-
-	/* くにたけみゆき */
-	AddTrans("", "", "Miyuki Kunitake", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;");
-	AddTrans("", "", "Kunitake Miyuki", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;");
-
-	/* Courses: */
-	AddTrans("^Kidou$", "", "", "&oni;&michi;", "", "");
-	AddTrans("^Demon Road$", "", "", "&oni;&michi;", "", "");
-	AddTrans("^Kidou 2$", "", "", "&oni;&michi;&futatsu;", "", "");
-	AddTrans("^Demon Road 2$", "", "", "&oni;&michi;&futatsu;", "", "");
-	AddTrans("^Love$", "", "", "Love &whiteheart;", "", "");
-	AddTrans("^Love Love$", "", "", "Love &whiteheart;", "", "");
-	AddTrans("^2 ?MB$", "", "", "2MB&oni;", "", "");
-	AddTrans("^Dancemania( Oni)?$", "", "", "Dancemania &oni;", "", "");
-	AddTrans("^TaQ( Oni)?$", "", "", "TaQ &oni;", "", "");
-	/* 伝説道 */
-	AddTrans("^Legend Road$", "", "", "&tsutau;&setsu;&michi;", "", "");
-	/* 鬼の遅道 */
-	AddTrans("^Slow Demon Road$", "", "", "&oni;&hno;&osoi;&michi;", "", "");
-	/* 真鬼道 */
-	AddTrans("^True Demon Road$", "", "", "&true;&oni;&michi;", "", "");
+		AddTrans(TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo);
+	}
 }
 
 TitleSubst::~TitleSubst()
