@@ -32,7 +32,7 @@ struct VirtualDubCheckpoint {
 	inline void set(const char *f, int l, const char *m=NULL) { file=f; line=l; message=m; }
 };
 
-#define CHECKPOINT_COUNT		(4)
+#define CHECKPOINT_COUNT		(2)
 
 struct VirtualDubThreadState {
 	const char				*pszThreadName;
