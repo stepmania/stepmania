@@ -80,12 +80,13 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
 	// Unjoin the players, then let them join back in on this screen
 	GAMESTATE->m_bPlayersCanJoin = true;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_bSideIsJoined[p] = false;
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_sprControllers[p].Load( THEME->GetPathTo("Graphics","select player controller") );
 		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
@@ -241,8 +242,8 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	m_sprControllers[p].SetTweenZoomY( 0 );
 
 	bool bBothSidesJoined = true;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( !GAMESTATE->m_bSideIsJoined[p] )
+	for( int pn=0; p<NUM_PLAYERS; pn++ )
+		if( !GAMESTATE->m_bSideIsJoined[pn] )
 			bBothSidesJoined = false;
 
 	if( bBothSidesJoined )
