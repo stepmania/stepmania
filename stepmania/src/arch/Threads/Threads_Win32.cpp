@@ -282,7 +282,8 @@ EventImpl_Win32::~EventImpl_Win32()
 static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex, unsigned iMilliseconds = INFINITE )
 {
 	static bool bSignalObjectAndWaitUnavailable = false;
-	if( !bSignalObjectAndWaitUnavailable )
+	/* Watch out: SignalObjectAndWait doesn't work when iMilliseconds is zero. */
+	if( !bSignalObjectAndWaitUnavailable && iMilliseconds != 0 )
 	{
 		DWORD ret = SignalObjectAndWait( hObjectToSignal, hObjectToWaitOn, iMilliseconds, false );
 		switch( ret )
@@ -358,6 +359,14 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	bool bSuccess = PortableSignalObjectAndWait( m_pParent->mutex, m_WakeupSema, true, iMilliseconds );
 
 	EnterCriticalSection( &m_iNumWaitingLock );
+	if( !bSuccess )
+	{
+		/* Avoid a race condition: someone may have signalled the object between PortableSignalObjectAndWait
+		 * and EnterCriticalSection.  While we hold m_iNumWaitingLock, poll (with a zero timeout) the
+		 * object one last time. */
+		if( WaitForSingleObject( m_WakeupSema, 0 ) == WAIT_OBJECT_0 )
+			bSuccess = true;
+	}
 	--m_iNumWaiting;
 	bool bLastWaiting = m_iNumWaiting == 0;
 	LeaveCriticalSection( &m_iNumWaitingLock );
