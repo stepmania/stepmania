@@ -128,8 +128,7 @@ public:
 	int				m_iCenterImageTranslateY;
 	float			m_fCenterImageScaleX;
 	float			m_fCenterImageScaleY;
-	bool			m_bAttractSound;
-	bool			m_bDemonstrationSound;
+	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
 
 	// course ranking

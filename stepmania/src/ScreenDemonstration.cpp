@@ -73,7 +73,7 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 	m_DancingState = STATE_DANCING;
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
 
-	if( !PREFSMAN->m_bDemonstrationSound )
+	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 		SOUNDMAN->SetPrefs( 0 );	// slient
 }
 
@@ -103,7 +103,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 					break;	// don't fall through
 
 			m_soundMusic.Stop();
-			if( !PREFSMAN->m_bDemonstrationSound )
+			if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 				SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 
 			break;
@@ -124,7 +124,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		return;
 	case SM_GoToNextScreen:
 		m_soundMusic.Stop();
-		if( !PREFSMAN->m_bDemonstrationSound )
+		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 			SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 
 		GAMESTATE->Reset();

@@ -254,6 +254,12 @@ public:
 	// Arrow positioning
 	//
 	NoteFieldPositioning *m_pPosition;
+
+	//
+	// Attract stuff
+	//
+	int m_iNumTimesThroughAttract;
+	bool IsTimeToPlayAttractSounds();
 };
 
 

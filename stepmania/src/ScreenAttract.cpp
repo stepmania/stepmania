@@ -26,12 +26,17 @@
 #include "SDL_utils.h"
 #include "RageSounds.h"
 
-#define NEXT_SCREEN						THEME->GetMetric(m_sName,"NextScreen")
+#define NEXT_SCREEN				THEME->GetMetric(m_sName,"NextScreen")
+#define INITIAL_SCREEN			THEME->GetMetric("Common","InitialScreen")
 
 
 ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", sClassName.c_str() );
+
+	// increment times through attract count
+	if( sClassName == INITIAL_SCREEN )
+		GAMESTATE->m_iNumTimesThroughAttract++;
 
 	GAMESTATE->Reset();
 
@@ -51,7 +56,7 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 
 	m_soundStart.Load( THEME->GetPathToS("Common start") );
 
-	if( PREFSMAN->m_bAttractSound )
+	if( GAMESTATE->IsTimeToPlayAttractSounds() )
 		SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
 	else
 		SOUND->PlayMusic( "" );	// stop music

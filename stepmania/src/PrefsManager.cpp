@@ -155,8 +155,7 @@ PrefsManager::PrefsManager()
 	m_fCenterImageScaleX = 1;
 	m_fCenterImageScaleY = 1;
 
-	m_bAttractSound = true;
-	m_bDemonstrationSound = true;
+	m_iAttractSoundFrequency = 4;
 	m_bAllowExtraStage = true;
 	g_bAutoRestart = false;
 
@@ -376,8 +375,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
 	ini.GetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
-	ini.GetValue( "Options", "AttractSound",					m_bAttractSound );
-	ini.GetValue( "Options", "DemonstrationSound",				m_bDemonstrationSound );
+	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 
@@ -534,8 +532,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
 	ini.SetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
-	ini.SetValue( "Options", "AttractSound",					m_bAttractSound );
-	ini.SetValue( "Options", "DemonstrationSound",				m_bDemonstrationSound );
+	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );

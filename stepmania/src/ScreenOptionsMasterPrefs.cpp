@@ -391,8 +391,7 @@ static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 /* Sound options */
 MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
-MOVE( AttractSound,			PREFSMAN->m_bAttractSound );
-MOVE( DemonstrationSound,	PREFSMAN->m_bDemonstrationSound );
+MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
 
 static void SoundVolume( int &sel, bool ToSel, const CStringArray &choices )
 {
@@ -484,8 +483,7 @@ static const ConfOption g_ConfOptions[] =
 	/* Sound options */
 	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
 	ConfOption( "Resampling\nQuality",	ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ),
-	ConfOption( "Attract\nSound",		AttractSound,		"OFF","ON" ),
-	ConfOption( "Demonstration\nSound",	DemonstrationSound,	"OFF","ON" ),
+	ConfOption( "Attract\nSound Frequency",	AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ),
 	ConfOption( "Sound\nVolume",		SoundVolume,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","10%" ),
 	ConfOption( "", NULL )	// end marker
 };

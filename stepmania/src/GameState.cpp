@@ -56,6 +56,8 @@ GameState::GameState()
 
 	m_pUnlockingSys = new UnlockSystem;
 	ReloadCharacters();
+
+	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
 }
 
 GameState::~GameState()
@@ -161,6 +163,8 @@ void GameState::BeginGame()
 	m_timeGameStarted = time(NULL);
 
 	m_vpsNamesThatWereFilled.clear();
+
+	m_iNumTimesThroughAttract = 0;
 }
 
 void GameState::EndGame()
@@ -1209,4 +1213,12 @@ bool GameState::OneIsHot() const
 			if( m_HealthState[p] == HOT )
 				return true;
 	return false;
+}
+
+bool GameState::IsTimeToPlayAttractSounds()
+{
+	if( PREFSMAN->m_iAttractSoundFrequency == 0 )	// never
+		return false;
+	m_iNumTimesThroughAttract %= PREFSMAN->m_iAttractSoundFrequency;
+	return m_iNumTimesThroughAttract==0;
 }
