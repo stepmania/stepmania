@@ -46,7 +46,7 @@ protected:
 
 	float GetCursorX( PlayerNumber pn );
 	float GetCursorY( PlayerNumber pn );
-	void ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages );
+	bool ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages );
 	void ChangePage( Page newPage );
 
 	ActorFrame	m_framePages;	// to hold the 2 pages
@@ -65,8 +65,6 @@ protected:
 	RandomSample m_soundDifficult;
 
 	vector<ModeChoice> m_ModeChoices[NUM_PAGES];
-
-	vector<int> m_iaChoicesToIgnore;
 
 	Page m_CurrentPage;
 	int m_iChoiceOnPage[NUM_PLAYERS];

@@ -189,6 +189,20 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	//	}
 }
 
+static BothPlayersModeChoice( const ModeChoice &mc )
+{
+	switch( mc.m_pm )
+	{
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ENDLESS:
+	case PLAY_MODE_RAVE:
+		return true;
+	}
+
+	return false;
+}
+
 void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 {
 //	if( m_fLockInputTime > 0 )
@@ -196,20 +210,18 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 	if( m_bChosen[pn] )
 		return;
 
-	unsigned c; // GCC is bitching again.
-	for( c=0; c<m_iaChoicesToIgnore.size(); c++ )
-	{
-		if(m_iChoiceOnPage[pn]-1 == m_iaChoicesToIgnore[c])
-		{
-			return; // disallow to change to ignored details
-		}
-	}	
-
+	bool AnotherPlayerSelected = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( p != pn && m_bChosen[p] )
+			AnotherPlayerSelected = true;
 
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]-1; i>=0; i-- )
 	{
-		if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
+		const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
+		if( AnotherPlayerSelected && BothPlayersModeChoice(mc) )
+			continue;
+		if( mc.IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -222,7 +234,8 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 			ChangePage( (Page)(m_CurrentPage-1) );
 		return;
 	}
-	ChangeWithinPage( pn, iSwitchToIndex, false );
+	if( ChangeWithinPage( pn, iSwitchToIndex, false ) )
+		m_soundChange.Play();
 }
 
 
@@ -233,20 +246,18 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 	if( m_bChosen[pn] )
 		return;
 
-	unsigned c; // GCC is bitching again.
-	for( c=0; c<m_iaChoicesToIgnore.size(); c++ )
-	{
-		if(m_iChoiceOnPage[pn]+1 == m_iaChoicesToIgnore[c])
-		{
-			return; // disallow to change to ignored details
-		}
-	}	
-	
+	bool AnotherPlayerSelected = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( p != pn && m_bChosen[p] )
+			AnotherPlayerSelected = true;
 
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]+1; i<(int) m_ModeChoices[m_CurrentPage].size(); i++ )
 	{
-		if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
+		const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
+		if( AnotherPlayerSelected && BothPlayersModeChoice(mc) )
+			continue;
+		if( mc.IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -263,7 +274,8 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 		return;
 	}
 
-	ChangeWithinPage( pn, iSwitchToIndex, false );
+	if( ChangeWithinPage( pn, iSwitchToIndex, false ) )
+		m_soundChange.Play();
 }
 
 void ScreenSelectDifficulty::ChangePage( Page newPage )
@@ -319,8 +331,9 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 	m_framePages.SetX( (float)newPage*-SCREEN_WIDTH );
 }
 
-void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
+bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
+	bool bAnyChanged = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -328,7 +341,10 @@ void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 
 		if( p!=pn && m_CurrentPage==PAGE_1 )
 			continue;	// skip
+		if( m_iChoiceOnPage[p] == iNewChoice )
+			continue;	// skip
 
+		bAnyChanged = true;
 		m_iChoiceOnPage[p] = iNewChoice;
 
 		float fCursorX = GetCursorX( (PlayerNumber)p );
@@ -345,10 +361,7 @@ void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 		m_sprShadow[p].SetY( fCursorY + SHADOW_LENGTH_Y );
 	}
 
-	/* If we're changing pages, it's ChangePage's responsibility to play this
-	 * (so we don't play it more than once). */
-	if(!bChangingPages)
-		m_soundChange.Play();
+	return bAnyChanged;
 }
 
 void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
@@ -363,83 +376,86 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		OFF_COMMAND( m_sprMore[page] );
 
 	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
-	/* Don't play sound if we're on the second page and another player
-	 * has already selected, since it just played. */
-	bool AnotherPlayerSelected = false;
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
-		if(p != pn && m_bChosen[p])
-			AnotherPlayerSelected = true;
 
-	if(m_CurrentPage != PAGE_2 || !AnotherPlayerSelected)
+	/* Don't play sound if we're recursive, since it just played. */
+	static bool bPlaySelect = true;
+	if( bPlaySelect )
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str())) );
 		m_soundSelect.Play();
 	}
 
+	int p;
+
 	// courses should be selected for both players at all times
-	if( mc.m_pm == PLAY_MODE_ONI || mc.m_pm == PLAY_MODE_NONSTOP || mc.m_pm == PLAY_MODE_ENDLESS)
+	if( BothPlayersModeChoice(mc) )
 	{
-		float fCursorX = GetCursorX( (PlayerNumber)pn );
-		float fCursorY = GetCursorY( (PlayerNumber)pn );
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
-			if(p != pn)
-			{
-				m_iChoiceOnPage[p] = m_iChoiceOnPage[pn]; // have all players agree to the option
-		
-				// move all cursors to the oni/nonstop selection so it graphically looks as if all players selected the same option.
-				m_sprCursor[p].StopTweening();
-				m_sprCursor[p].SetX( fCursorX );
-				m_sprCursor[p].SetY( fCursorY );
-
-				m_sprShadow[p].StopTweening();
-				m_sprShadow[p].SetX( fCursorX + SHADOW_LENGTH_X );
-				m_sprShadow[p].SetY( fCursorY + SHADOW_LENGTH_Y );			
-				MenuStart( (PlayerNumber)p ); // agree everyone
-			}	
+			if( m_bChosen[p] || !GAMESTATE->IsHumanPlayer((PlayerNumber)p) || p == pn )
+				continue;
+	
+			// move all cursors to the oni/nonstop selection so it graphically looks as if all players selected the same option.
+			ChangeWithinPage( (PlayerNumber)p, m_iChoiceOnPage[pn], false );
+			bPlaySelect = false;
+			MenuStart( (PlayerNumber)p ); // agree everyone
+			bPlaySelect = true;
 		}
 	}
 	else // someone must have chosen arcade style play so oni/nonstop/endless must be disabled
 	{
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
-			if(p != pn && !m_bChosen[p]) // if theyve not chosen
+			if( m_bChosen[p] || !GAMESTATE->IsHumanPlayer((PlayerNumber)p) || p == pn )
+				continue;
+
+			if( !BothPlayersModeChoice(m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[p]]) )
+				continue;
+
+			/* This player is currently on a choice that is no longer available due to
+			 * the selection just made. */
+			int iSwitchToIndex = -1;
+			for( int i=m_iChoiceOnPage[p]+1; iSwitchToIndex == -1 && i < (int) m_ModeChoices[m_CurrentPage].size(); ++i )
+				if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
+					iSwitchToIndex = i;
+			if( iSwitchToIndex == -1 )
 			{
-				PlayMode iPlaymode = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[p]].m_pm;
-				// if they're currently highlighting an option that is a nonstop
-				if( iPlaymode == PLAY_MODE_ONI || iPlaymode == PLAY_MODE_NONSTOP || iPlaymode == PLAY_MODE_ENDLESS)
-				{
-					m_iChoiceOnPage[p] = 0;
-
-
-					// move the cursor
-					float fCursorX = GetCursorX( (PlayerNumber)p );
-					float fCursorY = GetCursorY( (PlayerNumber)p );
-
-					m_sprCursor[p].StopTweening();
-					m_sprCursor[p].SetX( fCursorX );
-					m_sprCursor[p].SetY( fCursorY );
-
-					m_sprShadow[p].StopTweening();
-					m_sprShadow[p].SetX( fCursorX + SHADOW_LENGTH_X );
-					m_sprShadow[p].SetY( fCursorY + SHADOW_LENGTH_Y );			
-				}
+				for( i=m_iChoiceOnPage[p]-1; iSwitchToIndex == -1 && i >= 0; --i )
+					if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
+						iSwitchToIndex = i;
 			}
+			/* We should always find a place to go--we should at least be able to choose
+			 * the same thing pn picked. */
+			ASSERT( iSwitchToIndex != -1 );
+
+			// move the cursor
+			ChangeWithinPage( (PlayerNumber) p, iSwitchToIndex, false );
 		}
-		unsigned c; // GCC is bitching again.
-		for( c=0; c<m_ModeChoices[PAGE_1].size(); c++ )
-		{
-			ModeChoice mc = m_ModeChoices[PAGE_1][c];
-			if(mc.m_pm == PLAY_MODE_ONI || mc.m_pm == PLAY_MODE_NONSTOP || mc.m_pm == PLAY_MODE_ENDLESS)
-			{
-				m_iaChoicesToIgnore.push_back(c);
-				m_sprPicture[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
-				m_sprInfo[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
 
-			//	IGNORED_ELEMENT_COMMAND
+		/* If the other player is active and hasn't yet chosen, gray out unselectable options.
+		 * Otherwise, don't do this, so we don't gray out stuff when nothing else can be selected
+		 * anyway. */
+		bool bAnyPlayersLeft = false;
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) || m_bChosen[p] || p == pn )
+				continue;
+			bAnyPlayersLeft = true;
+		}
+
+		if( bAnyPlayersLeft )
+		{
+			for( unsigned c=0; c<m_ModeChoices[PAGE_1].size(); c++ )
+			{
+				if( BothPlayersModeChoice(m_ModeChoices[PAGE_1][c]) )
+				{
+					m_sprPicture[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
+					m_sprInfo[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
+
+				//	IGNORED_ELEMENT_COMMAND
+				}
+			//	m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
 			}
-		//	m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
 		}
 	}
 
@@ -451,13 +467,15 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			if( m_bChosen[p] )
 				continue;
 		
+			bPlaySelect = false;
 			MenuStart( (PlayerNumber)p );
+			bPlaySelect = true;
 		}
 	}
 
 
 	m_sprCursor[pn].Command( CURSOR_CHOOSE_COMMAND );
-	m_sprOK[pn].SetXY( m_sprShadow[pn].GetX(), m_sprShadow[pn].GetY() );
+	m_sprOK[pn].SetXY( m_sprShadow[pn].GetDestX(), m_sprShadow[pn].GetDestY() );
 	m_sprOK[pn].Command( OK_CHOOSE_COMMAND );
 	m_sprShadow[pn].Command( SHADOW_CHOOSE_COMMAND );
 
