@@ -95,6 +95,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
 	ini.GetValueB( "Options", "Vsync",					m_bVsync );
 	ini.GetValueB( "Options", "HowToPlay",				m_bHowToPlay );
+	ini.GetValue ( "Options", "DWIPath",				m_DWIPath );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -137,6 +138,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",					m_bVsync );
 	ini.SetValueB( "Options", "HowToPlay",				m_bHowToPlay );
+	ini.SetValue ( "Options", "DWIPath",				m_DWIPath );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 

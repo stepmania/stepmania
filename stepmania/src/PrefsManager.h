@@ -52,6 +52,7 @@ public:
 	bool	m_bHowToPlay;
 	
 	CStringArray m_asAdditionalSongFolders;
+	CString m_DWIPath;
 
 	int GetDisplayHeight();
 
