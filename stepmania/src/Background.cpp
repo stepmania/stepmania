@@ -207,16 +207,11 @@ CString Background::CreateRandomBGA()
 	default:
 		FAIL_M( ssprintf("Invalid BackgroundMode: %i", PREFSMAN->m_BackgroundMode) );
 		break;
+
 	case PrefsManager::BGMODE_ANIMATIONS:
-		{
-			GetDirListing( BG_ANIMS_DIR+"*", arrayPaths, true, true );
-			// strip out "cvs" and "danger
-			int i;
-			for( i=arrayPaths.size()-1; i>=0; i-- )
-				if( 0==stricmp(arrayPaths[i].Right(3),"cvs") || 0==stricmp(arrayPaths[i].Right(3),"danger") )
-					arrayPaths.erase(arrayPaths.begin()+i, arrayPaths.begin()+i+1);
-			break;
-		}
+		GetDirListing( BG_ANIMS_DIR+"*", arrayPaths, true, true );
+		break;
+
 	case PrefsManager::BGMODE_MOVIEVIS:
 		GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPaths, false, true );
 		GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPaths, false, true );
@@ -229,6 +224,11 @@ CString Background::CreateRandomBGA()
 		GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPaths, false, true );
 		break;
 	}
+
+	// strip out "cvs"
+	for( int j=arrayPaths.size()-1; j>=0; j-- )
+		if( !Basename(arrayPaths[j]).CompareNoCase("cvs") )
+			arrayPaths.erase( arrayPaths.begin()+j, arrayPaths.begin()+j+1 );
 
 	if( arrayPaths.empty() )
 		return "";
