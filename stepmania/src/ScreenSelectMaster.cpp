@@ -259,7 +259,10 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	this->UpdateSelectableChoices();
 
 	TweenOnScreen();
-	m_fLockInputSecs = this->GetTweenTimeLeft();
+	m_fLockInputSecs = 
+		THEME->HasMetric(m_sName,"LockInputSeconds") ?
+		THEME->GetMetricF(m_sName,"LockInputSeconds") : 
+		this->GetTweenTimeLeft();
 }
 
 void ScreenSelectMaster::Update( float fDelta )
