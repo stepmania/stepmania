@@ -209,21 +209,26 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 
 
 template <class S>
-void do_split( const S &Source, const S &Deliminator, vector<S> &AddIt, const bool bIgnoreEmpty )
+void do_split( const S &Source, const S &Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
 {
 	unsigned startpos = 0;
 
 	do {
-		unsigned pos = Source.find(Deliminator, startpos);
-		if ( pos == Source.npos ) pos=Source.size();
-
-		S AddCString = Source.substr(startpos, pos-startpos);
-		if( AddCString.empty() && bIgnoreEmpty )
-			; // do nothing
+		unsigned pos;
+		if( Delimitor.size() == 1 )
+			pos = Source.find( Delimitor[0], startpos );
 		else
-			AddIt.push_back(AddCString);
+			pos = Source.find( Delimitor, startpos );
+		if( pos == Source.npos )
+			pos = Source.size();
 
-		startpos=pos+Deliminator.size();
+		if( pos-startpos > 0 || !bIgnoreEmpty )
+		{
+			const S AddCString = Source.substr(startpos, pos-startpos);
+			AddIt.push_back(AddCString);
+		}
+
+		startpos = pos+Delimitor.size();
 	} while ( startpos <= Source.size() );
 }
 
