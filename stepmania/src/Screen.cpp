@@ -270,6 +270,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenOptionsMenu.h"
 #include "ScreenGameplayOptions.h"
 #include "ScreenStyleSplash.h"
+#include "ScreenAutogenOptions.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -301,7 +302,7 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )			ret = new ScreenSelectGroup;
 	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )			ret = new ScreenSelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )		ret = new ScreenSelectStyle5th;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		ret = new ScreenSelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )			ret = new ScreenSelectStyle;
 	else if( 0==stricmp(sClassName, "ScreenSongOptions") )			ret = new ScreenSongOptions;
 	else if( 0==stricmp(sClassName, "ScreenStage") )				ret = new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTest") )					ret = new ScreenTest;
@@ -326,6 +327,7 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenSoundOptions") )			ret = new ScreenSoundOptions;
 	else if( 0==stricmp(sClassName, "ScreenGameplayOptions") )		ret = new ScreenGameplayOptions;
 	else if( 0==stricmp(sClassName, "ScreenStyleSplash") )			ret = new ScreenStyleSplash;
+	else if( 0==stricmp(sClassName, "ScreenAutogenOptions") )		ret = new ScreenAutogenOptions;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 	return ret;

@@ -64,9 +64,10 @@ SongManager::SongManager( LoadingWindow *ld )
 		g_ExtraColor = EXTRA_COLOR;
 
 		InitSongArrayFromDisk( ld );
+		InitCoursesFromDisk();
+		InitAutogenCourses();
 		InitMachineScoresFromDisk();
 
-		InitCoursesFromDisk();
 	} catch(...) {
 		SONGMAN = NULL;
 		throw;
@@ -418,7 +419,7 @@ void SongManager::SaveMachineScoresToDisk()
 				Course* pCourse = m_pCourses[c];
 				ASSERT(pCourse);
 
-				if( pCourse->m_bIsAutoGen )
+				if( pCourse->m_bIsAutogen )
 					fprintf(fp, "%s\n", pCourse->m_sName.c_str());
 				else
 					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
@@ -504,7 +505,7 @@ void SongManager::SaveMachineScoresToDisk()
 					Course* pCourse = m_pCourses[i];
 					ASSERT(pCourse);
 
-					if( pCourse->m_bIsAutoGen )
+					if( pCourse->m_bIsAutogen )
 						fprintf(fp, "%s\n", pCourse->m_sName.c_str());
 					else
 						fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
@@ -654,7 +655,10 @@ void SongManager::InitCoursesFromDisk()
 		pCourse->LoadFromCRSFile( saCourseFiles[i] );
 		m_pCourses.push_back( pCourse );
 	}
+}
 	
+void SongManager::InitAutogenCourses()
+{
 	//
 	// Create group courses for Endless and Nonstop
 	//
@@ -667,15 +671,18 @@ void SongManager::InitCoursesFromDisk()
 		vector<Song*> apGroupSongs;
 		GetSongs( apGroupSongs, sGroupName );
 
-		for( Difficulty dc=DIFFICULTY_EASY; dc<=DIFFICULTY_HARD; dc=Difficulty(dc+1) )	// foreach Difficulty
-		{
-			Course* pCourse = new Course;
-			pCourse->AutoGenEndlessFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
+		Course* pCourse;
 
-			m_pCourses.push_back( pCourse );
-		}
+		pCourse = new Course;
+		pCourse->AutogenEndlessFromGroup( sGroupName, apGroupSongs );
+		m_pCourses.push_back( pCourse );
+
+		pCourse = new Course;
+		pCourse->AutogenNonstopFromGroup( sGroupName, apGroupSongs );
+		m_pCourses.push_back( pCourse );
 	}
 }
+
 
 void SongManager::FreeCourses()
 {
@@ -697,31 +704,28 @@ void SongManager::CleanData()
 	}
 }
 
-void SongManager::GetNonstopCourses( vector<Course*> &AddTo )
+void SongManager::GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-	{
 		if( !m_pCourses[i]->m_bRepeat && m_pCourses[i]->m_iLives <= 0 )	// use bar life meter
-			AddTo.push_back( m_pCourses[i] );
-	}
+			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
+				AddTo.push_back( m_pCourses[i] );
 }
 
-void SongManager::GetOniCourses( vector<Course*> &AddTo )
+void SongManager::GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-	{
 		if( !m_pCourses[i]->m_bRepeat && m_pCourses[i]->m_iLives > 0 )	// use battery life meter
-			AddTo.push_back( m_pCourses[i] );
-	}
+			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
+				AddTo.push_back( m_pCourses[i] );
 }
 
-void SongManager::GetEndlessCourses( vector<Course*> &AddTo )
+void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-	{
 		if( m_pCourses[i]->m_bRepeat )
-			AddTo.push_back( m_pCourses[i] );
-	}	
+			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
+				AddTo.push_back( m_pCourses[i] );
 }
 
 

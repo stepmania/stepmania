@@ -1,3 +1,5 @@
+#ifndef SCREENMACHINEOPTIONS_H
+#define SCREENMACHINEOPTIONS_H
 /*
 -----------------------------------------------------------------------------
  File: ScreenMachineOptions
@@ -8,8 +10,6 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-#ifndef SCREEN_MACHINE_OPTIONS_H
-#define SCREEN_MACHINE_OPTIONS_H
 
 #include "ScreenOptions.h"
 

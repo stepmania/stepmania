@@ -265,7 +265,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, bool bRoulette )
 		}
 
 		vector<Notes*> arraySteps;
-		pSong->GetNotes( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+		pSong->GetNotes( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_NotesType, DIFFICULTY_INVALID, -1, -1, "", PREFSMAN->m_bAutogenMissingTypes );
 
 		if( !arraySteps.empty() )
 			arraySongs.push_back( pSong );
@@ -453,9 +453,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			vector<Course*> apCourses;
 			switch( GAMESTATE->m_PlayMode )
 			{
-			case PLAY_MODE_NONSTOP:	SONGMAN->GetNonstopCourses( apCourses );	break;
-			case PLAY_MODE_ONI:		SONGMAN->GetOniCourses( apCourses );		break;
-			case PLAY_MODE_ENDLESS:	SONGMAN->GetEndlessCourses( apCourses );	break;
+			case PLAY_MODE_NONSTOP:	SONGMAN->GetNonstopCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
+			case PLAY_MODE_ONI:		SONGMAN->GetOniCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );		break;
+			case PLAY_MODE_ENDLESS:	SONGMAN->GetEndlessCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
 			default:	ASSERT(0);
 			}
 

@@ -36,8 +36,7 @@ enum {
 	MO_SHOW_SONG_OPTIONS,
 	NUM_MACHINE_OPTIONS_LINES
 };
-/* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
- * preferably alongside button configuration. */
+
 OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
 	OptionRow( "Arcade\nStages",		"1","2","3","4","5","6","7","UNLIMITED" ),

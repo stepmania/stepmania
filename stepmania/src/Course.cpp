@@ -26,7 +26,7 @@
 
 Course::Course()
 {
-	m_bIsAutoGen = false;
+	m_bIsAutogen = false;
 	m_bRepeat = false;
 	m_bRandomize = false;
 	m_bDifficult = false;
@@ -240,9 +240,9 @@ void Course::LoadFromCRSFile( CString sPath )
 }
 
 
-void Course::AutoGenEndlessFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup )
+void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup )
 {
-	m_bIsAutoGen = true;
+	m_bIsAutogen = true;
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
@@ -255,31 +255,35 @@ void Course::AutoGenEndlessFromGroupAndDifficulty( CString sGroupName, Difficult
 	if( !asPossibleBannerPaths.empty() )
 		m_sBannerPath = asPossibleBannerPaths[0];
 
-	CString sShortGroupName = SONGMAN->ShortenGroupName( sGroupName );	
+	m_sName = SONGMAN->ShortenGroupName( sGroupName );	
 
-	m_sName = sShortGroupName + " ";
-	switch( dc )
-	{
-	case DIFFICULTY_EASY:	m_sName += "Easy";		break;
-	case DIFFICULTY_MEDIUM:	m_sName += "Medium";	break;
-	case DIFFICULTY_HARD:	m_sName += "Hard";		break;
-	default:
-		ASSERT(0);
-	}
-
-	// only need one song because it repeats
 	// We want multiple songs, so we can try to prevent repeats during
 	// gameplay. (We might still get a repeat at the repeat boundary,
 	// but that'd be rare.) -glenn
 	Entry e;
 	e.type = Entry::random_within_group;
 	e.group_name = sGroupName;
-	e.difficulty = dc;
+	e.difficulty = DIFFICULTY_MEDIUM;
 
 	vector<Song*> vSongs;
 	SONGMAN->GetSongs( vSongs, e.group_name );
 	for( unsigned i = 0; i < vSongs.size(); ++i)
 		m_entries.push_back( e );
+}
+
+void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup )
+{
+	AutogenEndlessFromGroup( sGroupName, apSongsInGroup );
+
+	m_bRepeat = false;
+
+	m_sName += " Random";	
+
+	// resize to 4
+	while( m_entries.size() < 4 )
+		m_entries.push_back( m_entries[0] );
+	while( m_entries.size() > 4 )
+		m_entries.pop_back();
 }
 
 
@@ -644,6 +648,35 @@ bool Course::MakeDifficult()
 //
 // Sorting stuff
 //
+static bool CompareCoursePointersByName(const Course* pCourse1, const Course* pCourse2)
+{
+	// HACK:  strcmp and other string comparators appear to eat whitespace.
+	// For example, the string "Players Best 13-16" is sorted between 
+	// "Players Best  1-4" and "Players Best  5-8".  Replace the string "  "
+	// with " 0" for comparison only.
+
+	// XXX: That doesn't happen to me, and it shouldn't (strcmp is strictly
+	// a byte sort, though CompareNoCase doesn't use strcmp).  Are you sure
+	// you didn't have only one space before? -glenn
+	CString sName1 = pCourse1->m_sName;
+	CString sName2 = pCourse2->m_sName;
+	sName1.Replace( "  " , " 0" );
+	sName2.Replace( "  " , " 0" );
+	return sName1.CompareNoCase( sName2 ) == -1;
+}
+
+static bool CompareCoursePointersByAutogen(const Course* pCourse1, const Course* pCourse2)
+{
+	int b1 = pCourse1->m_bIsAutogen;
+	int b2 = pCourse2->m_bIsAutogen;
+	if( b1 < b2 )
+		return true;
+	else if( b1 > b2 )
+		return false;
+	else
+		return CompareCoursePointersByName(pCourse1,pCourse2);
+}
+
 static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
 	int iNum1 = pCourse1->GetEstimatedNumStages();
@@ -653,21 +686,7 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 	else if( iNum1 > iNum2 )
 		return false;
 	else // iNum1 == iNum2
-	{
-		// HACK:  strcmp and other string comparators appear to eat whitespace.
-		// For example, the string "Players Best 13-16" is sorted between 
-		// "Players Best  1-4" and "Players Best  5-8".  Replace the string "  "
-		// with " 0" for comparison only.
-
-		// XXX: That doesn't happen to me, and it shouldn't (strcmp is strictly
-		// a byte sort, though CompareNoCase doesn't use strcmp).  Are you sure
-		// you didn't have only one space before? -glenn
-		CString sName1 = pCourse1->m_sName;
-		CString sName2 = pCourse2->m_sName;
-		sName1.Replace( "  " , " 0" );
-		sName2.Replace( "  " , " 0" );
-		return sName1.CompareNoCase( sName2 ) == -1;
-	}
+		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
 }
 
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )

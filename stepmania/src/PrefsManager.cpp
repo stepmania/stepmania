@@ -89,6 +89,8 @@ PrefsManager::PrefsManager()
 	m_bDancePointsForOni = false; //DDR-Extreme style dance points instead of max2 percent
 	m_bTimestamping = false;
 	m_bShowLyrics = true;
+	m_bAutogenMissingTypes = true;
+	m_bAutogenGroupCourses = true;
 
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -183,8 +185,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 	ini.GetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
+	ini.GetValueB( "Options", "AutogenMissingTypes",		m_bAutogenMissingTypes );
+	ini.GetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.GetValueB( "Options", "Timestamping",			m_bTimestamping );
-
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -261,6 +264,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 	ini.SetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
+	ini.SetValueB( "Options", "AutogenMissingTypes",		m_bAutogenMissingTypes );
+	ini.SetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
 
 

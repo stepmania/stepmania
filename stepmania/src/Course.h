@@ -44,7 +44,7 @@ class Course
 public:
 	Course();
 
-	bool		m_bIsAutoGen;	// was this created by AutoGen?
+	bool		m_bIsAutogen;	// was this created by AutoGen?
 	CString		m_sPath;
 	CString		m_sName;
 	CString		m_sBannerPath;
@@ -81,7 +81,8 @@ public:
 
 
 	void LoadFromCRSFile( CString sPath );
-	void AutoGenEndlessFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup );
+	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
+	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 
 
 	// Statistics
