@@ -8,12 +8,12 @@
  */
 
 #include "global.h"
-#include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include <Carbon/Carbon.h>
+#include <signal.h>
 
 /* You would think that these would be defined somewhere. */
 enum {
@@ -22,7 +22,6 @@ enum {
 };
 
 OSStatus HandleException(ExceptionInformation *theException);
-void HandleQTMovieError(OSErr err, long refcon);
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
@@ -213,9 +212,9 @@ void ArchHooks_darwin::DumpDebugInfo()
 
     /* Send all of the information to the log */
     LOG->Info(machine.c_str());
-    LOG->Info("Processor: %s (%d)", processor.c_str(), numProcessors);
+    LOG->Info("Processor: %s (%ld)", processor.c_str(), numProcessors);
     LOG->Info("%s", systemVersion.c_str());
-    LOG->Info("Memory: %d MB total, %d MB swap", ram, vRam);
+    LOG->Info("Memory: %ld MB total, %ld MB swap", ram, vRam);
     LOG->Info("Primary display driver: %s\n"
               "Video Driver Information:\n"
               "Provider       :\t%s\n"
