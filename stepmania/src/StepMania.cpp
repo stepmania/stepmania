@@ -277,6 +277,8 @@ static bool CardRequiresD3D()
 	return false;
 }
 
+static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_BestBets&siteid=us&target=http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
+
 RageDisplay *CreateDisplay()
 {
 	/* We never want to bother users with having to decide which API to use.
@@ -334,7 +336,8 @@ RageDisplay *CreateDisplay()
 			return CreateDisplay_D3D();
 		} catch(RageException_D3DNotInstalled e) {
 			error += 
-				"it is not installed.  You can download it from: URL";
+				"it is not installed.  You can download it from:\n" +
+				D3DURL;
 		} catch(RageException_D3DNoAcceleration e) {
 			error += 
 				"your system is reporting that hardware acceleration is not available.  "
@@ -351,7 +354,7 @@ RageDisplay *CreateDisplay()
 	 * SDL may throw, but that only happens with broken driver installations, and
 	 * we probably don't want to fall back on D3D in that case anyway.) */
 	RageDisplay *ret = CreateDisplay_OGL();
-
+	
 	if( PREFSMAN->m_bAllowUnacceleratedRenderer || !ret->IsSoftwareRenderer() )
 		return ret;
 
@@ -364,7 +367,8 @@ RageDisplay *CreateDisplay()
 		/* Eek.  We don't know if we need newer drivers, D3D8 or both. */
 		error += 
 			"OpenGL hardware acceleration is not available on your system, and "
-			"Direct3D 8 (or higher) is not installed.  You can download it from: URL"
+			"Direct3D 8 (or higher) is not installed.  You can download it from:\n" +
+			D3DURL + "\n\n"
 			"You may also need updated drivers from your card's manufacturer.";
 	} catch(RageException_D3DNoAcceleration e) {
 		error += 
