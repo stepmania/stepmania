@@ -176,6 +176,9 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		return;
 	}
 
+	//
+	// Do work
+	//
 	switch( action )
 	{
 	case EDIT_MENU_ACTION_EDIT:
@@ -258,6 +261,10 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	
 	pSteps = m_Selector.GetSelectedSteps();
 
+
+	//
+	// Go to the next screen.
+	//
 	switch( action )
 	{
 	case EDIT_MENU_ACTION_EDIT:
