@@ -326,6 +326,8 @@ LuaFunction_NoArgs( Year, GetLocalTime().tm_year+1900 );
 LuaFunction_NoArgs( Weekday, GetLocalTime().tm_wday );
 LuaFunction_NoArgs( DayOfYear, GetLocalTime().tm_yday );
 
+LuaFunction_Str( Trace, (LOG->Trace("%s", str.c_str()),true) );
+
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
