@@ -54,6 +54,11 @@ BOOL CSmpackageApp::InitInstance()
 	LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
 	*pLastBackslash = '\0';	// terminate the string
 
+	/* If "Program" is the top-level directory, strip it off. */
+	pLastBackslash = strrchr( szFullAppPath, '\\' );
+	if( pLastBackslash && !stricmp(pLastBackslash, "\\Program") )
+		*pLastBackslash = '\0';
+
 	SetCurrentDirectory(szFullAppPath);
 
 	if( DoesFileExist("Songs") )	// this is a SM or DWI program directory
