@@ -133,14 +133,11 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		/* Look at the def of the screen we're going to; if it has a music theme element
 		 * and it's the same as the one we're playing now, don't stop.  However, if we're
 		 * going to interrupt it when we fade in, stop the old music before we fade out. */
-		/* GetPath optional because this screen and the next screen may not have music -
-		 * if PLAY_MUSIC == 0.  We can't access PLAY_MUSIC from here. */
-		CString sThisMusic = THEME->GetPathS( NEXT_SCREEN, "music", true );
-		CString sNextMusic = THEME->GetPathS( m_sName, "music", true );
-		bool bGoingToPlayTheSameMusic = sThisMusic == sNextMusic;
-		if( bGoingToPlayTheSameMusic )
-			; // do nothing
-		else
+		bool bMusicChanging = false;
+		if( PLAY_MUSIC )
+			bMusicChanging = THEME->GetPathS(NEXT_SCREEN,"music") != THEME->GetPathS(m_sName,"music",true);	// GetPath optional on the next screen because it may not have music.
+
+		if( bMusicChanging )
 			SOUND->PlayMusic( "" );	// stop the music
 
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );

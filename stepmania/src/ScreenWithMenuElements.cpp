@@ -16,7 +16,6 @@
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 #define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
-#define PLAY_MUSIC				THEME->GetMetricB(m_sName,"PlayMusic")
 #define STOP_MUSIC_ON_BACK		THEME->GetMetricB(m_sName,"StopMusicOnBack")
 
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
@@ -32,7 +31,8 @@ void ScreenWithMenuElements::Init()
 
 	Screen::Init();
 
-	m_FirstUpdateCommand.Load( m_sName, "FirstUpdateCommand" );
+	FIRST_UPDATE_COMMAND.Load( m_sName, "FirstUpdateCommand" );
+	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Init twice!
 
@@ -133,7 +133,7 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 			SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 
 		/* Evaluate FirstUpdateCommand. */
-		this->RunCommands( m_FirstUpdateCommand );
+		this->RunCommands( FIRST_UPDATE_COMMAND );
 	}
 
 	Screen::Update( fDeltaTime );

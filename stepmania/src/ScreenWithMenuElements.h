@@ -37,11 +37,13 @@ protected:
 	AutoActor			m_autoFooter;
 	HelpDisplay			*m_textHelp;
 	AutoActor			m_sprOverlay;
-	ThemeMetric<LuaExpression> m_FirstUpdateCommand;
 
 	Transition	m_In;
 	Transition	m_Out;
 	Transition	m_Cancel;
+
+	ThemeMetric<LuaExpression>	FIRST_UPDATE_COMMAND;
+	ThemeMetric<bool>			PLAY_MUSIC;
 };
 
 #endif
