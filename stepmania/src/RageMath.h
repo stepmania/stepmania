@@ -46,36 +46,3 @@ RageMatrix RageLookAt(
 	float upx, float upy, float upz );
 
 #endif
-
-// Fix for platforms that don't have these in math.h
-#ifndef HAVE_POWF
-#define powf(x,y) (float)pow((float)(x), (float)(y))
-#endif
-  
-#ifndef HAVE_SQRTF
-#define sqrtf(x) (float)sqrt((float)(x))
-#endif
-
-#ifndef HAVE_COSF
-#define cosf(x) (float)cos((float)(x))
-#endif
-
-#ifndef HAVE_SINF
-#define sinf(x) (float)sin((float)(x))
-#endif
-
-#ifndef HAVE_TANF
-#define tanf(x) (float)tan((float)(x))
-#endif
-
-#ifndef HAVE_ACOSF
-#define acosf(x) (float)acosh((float)(x))
-#endif
-
-#ifndef HAVE_ASINF
-#define asinf(x) (float)acosh((float)(x))
-#endif
-
-#ifndef HAVE_ATANF
-#define atanf(x) (float)atanh((float)(x))
-#endif
