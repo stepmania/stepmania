@@ -20,6 +20,7 @@
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 
 #define STEPMANIA_INI_PATH BASE_PATH "Data" SLASH "StepMania.ini"
+#define STATIC_INI_PATH BASE_PATH "Data" SLASH "Static.ini"
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -295,6 +296,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame, CStrin
 void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	ReadGlobalPrefsFromDisk( bSwitchToLastPlayedGame, STEPMANIA_INI_PATH );
+
+	/* Load this on top of the regular INI; if it exists, any settings listed
+	 * in it will override user settings. */
+	ReadGlobalPrefsFromDisk( bSwitchToLastPlayedGame, STATIC_INI_PATH );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
