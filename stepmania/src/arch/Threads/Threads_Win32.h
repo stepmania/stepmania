@@ -57,7 +57,6 @@ private:
 	CRITICAL_SECTION m_iNumWaitingLock;
 	HANDLE m_WakeupSema;
 	HANDLE m_WaitersDone;
-	bool m_bNeedSignal;
 };
 
 class SemaImpl_Win32: public SemaImpl

@@ -259,7 +259,6 @@ EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
 {
 	m_pParent = pParent;
 	m_iNumWaiting = 0;
-	m_bNeedSignal = false;
 	m_WakeupSema = CreateSemaphore( NULL, 0, 0x7fffffff, NULL );
 	InitializeCriticalSection( &m_iNumWaitingLock );
 	m_WaitersDone = CreateEvent( NULL, FALSE, FALSE, NULL );
@@ -334,11 +333,10 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 
 	EnterCriticalSection( &m_iNumWaitingLock );
 	--m_iNumWaiting;
-	bool bLastWaiting = m_bNeedSignal && m_iNumWaiting == 0;
+	bool bLastWaiting = m_iNumWaiting == 0;
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* If m_bNeedSignal is set, and we're the last waiter to wake up, signal the
-	 * broadcaster. */
+	/* If we're the last waiter to wake up, wake up the signaller. */
 	if( bLastWaiting )
 		PortableSignalObjectAndWait( m_WaitersDone, m_pParent->mutex, false );
 	else
@@ -354,7 +352,12 @@ void EventImpl_Win32::Signal()
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
 	if( bHaveWaiters )
+	{
 		ReleaseSemaphore( m_WakeupSema, 1, 0 );
+
+		/* The waiter will touch m_WaitersDone. */
+		WaitForSingleObject( m_WaitersDone, INFINITE );
+	}
 }
 
 void EventImpl_Win32::Broadcast()
@@ -367,19 +370,13 @@ void EventImpl_Win32::Broadcast()
 		return;
 	}
 
-	/* Since we're broadcasting, we need to wait for all waiters to wake up and
-	 * start waiting for the mutex before returning. */
-	m_bNeedSignal = true;
-
 	ReleaseSemaphore( m_WakeupSema, m_iNumWaiting, 0 );
 
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* We set m_bNeedSignal; the last waiter will touch m_WaitersDone.  Note that
-	 * we still hold the parent mutex, so no other thread is currently broadcasting;
-	 * we don't have to worry about m_bNeedSignal being set to false on us. */
+	/* The last waiter will touch m_WaitersDone, so we wait for all waiters to wake up and
+	 * start waiting for the mutex before returning. */
 	WaitForSingleObject( m_WaitersDone, INFINITE );
-	m_bNeedSignal = false;
 }
 
 EventImpl *MakeEvent( MutexImpl *pMutex )
