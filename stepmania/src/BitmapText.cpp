@@ -208,16 +208,91 @@ void BitmapText::BuildChars()
 
 void BitmapText::DrawChars()
 {
-	unsigned uNumGlyphs = tex.size();
-	unsigned uStartGlyph = (unsigned) SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) uNumGlyphs );
-	unsigned uEndGlyph = (unsigned) SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) uNumGlyphs, 0 );
+	// bail if cropped all the way 
+    if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
+		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
+		return; 
 
-	ASSERT( uStartGlyph <= uNumGlyphs );
-	ASSERT( uEndGlyph <= uNumGlyphs );
-	for(unsigned start = uStartGlyph; start < uEndGlyph; )
+	const int iNumGlyphs = tex.size();
+	int iStartGlyph = (int) roundf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
+	int iEndGlyph = (int) roundf( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
+	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
+	iEndGlyph = clamp( iEndGlyph, 0, iNumGlyphs );
+
+	if( m_pTempState->fade.top > 0 ||
+		m_pTempState->fade.bottom > 0 ||
+		m_pTempState->fade.left > 0 ||
+		m_pTempState->fade.right > 0 )
 	{
-		unsigned end = start;
-		while(end < uEndGlyph && tex[end] == tex[start])
+		/* Handle fading by tweaking the alpha values of the verteces. */
+
+		/* Actual size of the fade on each side: */
+		const RectF &FadeDist = m_pTempState->fade;
+		RectF FadeSize = FadeDist;
+
+		/* If the cropped size is less than the fade distance, clamp. */
+		const float HorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
+		if( FadeDist.left+FadeDist.right > 0 &&
+			HorizRemaining < FadeDist.left+FadeDist.right )
+		{
+			const float LeftPercent = FadeDist.left/(FadeDist.left+FadeDist.right);
+			FadeSize.left = LeftPercent * HorizRemaining;
+			FadeSize.right = (1.0f-LeftPercent) * HorizRemaining;
+		}
+
+		const RageColor &FadeColor = m_pTempState->fadecolor;
+
+		/* We fade from 0 to LeftColor, then from RightColor to 0.  (We won't fade all the way to
+		 * 0 if the crop is beyond the outer edge.) */
+		const RageColor RightColor  = scale( FadeSize.right,  FadeDist.right,  0, RageColor(1,1,1,1), FadeColor );
+		const RageColor LeftColor   = scale( FadeSize.left,   FadeDist.left,   0, RageColor(1,1,1,1), FadeColor );
+
+		const float StartFadeLeftPercent = m_pTempState->crop.left;
+		const float StopFadeLeftPercent = m_pTempState->crop.left + FadeSize.left;
+		const float fLeftFadeStartGlyph = SCALE( StartFadeLeftPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+		const float fLeftFadeStopGlyph = SCALE( StopFadeLeftPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+
+		const float StartFadeRightPercent = 1-(m_pTempState->crop.right + FadeSize.right);
+		const float StopFadeRightPercent = 1-(m_pTempState->crop.right);
+		const float fRightFadeStartGlyph = SCALE( StartFadeRightPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+		const float fRightFadeStopGlyph = SCALE( StopFadeRightPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+
+		for( int start = iStartGlyph; start < iEndGlyph; ++start )
+		{
+			int i = start*4;
+
+			if( FadeSize.left > 0.001f )
+			{
+				/* Add .5, so we fade wrt. the center of the vert, not the left side.
+				 * TODO: fade all channels, not just alpha */
+				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
+				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				fPercent *= LeftColor.a;
+
+				verts[i+0].c.a = unsigned char( verts[i+0].c.a * fPercent ); // top left
+				verts[i+1].c.a = unsigned char( verts[i+1].c.a * fPercent ); // bottom left
+				verts[i+2].c.a = unsigned char( verts[i+2].c.a * fPercent ); // bottom right
+				verts[i+3].c.a = unsigned char( verts[i+3].c.a * fPercent ); // top right
+			}
+
+			if( FadeSize.right > 0.001f )
+			{
+				float fPercent = SCALE( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
+				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				fPercent *= RightColor.a;
+
+				verts[i+0].c.a = unsigned char( verts[i+0].c.a * fPercent ); // top left
+				verts[i+1].c.a = unsigned char( verts[i+1].c.a * fPercent ); // bottom left
+				verts[i+2].c.a = unsigned char( verts[i+2].c.a * fPercent ); // bottom right
+				verts[i+3].c.a = unsigned char( verts[i+3].c.a * fPercent ); // top right
+			}
+		}
+	}
+
+	for( int start = iStartGlyph; start < iEndGlyph; )
+	{
+		int end = start;
+		while( end < iEndGlyph && tex[end] == tex[start] )
 			end++;
 		DISPLAY->ClearAllTextures();
 		DISPLAY->SetTexture( 0, tex[start] );
