@@ -76,6 +76,12 @@ Song::Song()
 	m_fOffsetInSeconds = 0;
 
 	m_iNumTimesPlayed = 0;
+	for( int i=0; i<6; i++ )
+	{
+		m_iMaxCombo[i] = 0;
+		m_iTopScore[i] = 0;
+		m_TopGrade[i].FromString( "N" );
+	}
 }
 
 

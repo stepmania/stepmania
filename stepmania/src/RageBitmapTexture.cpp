@@ -23,6 +23,7 @@
 #include "dxerr8.h"
 #include "DXUtil.h"
 #include "RageUtil.h"
+#include "GameInfo.h"
 
 //#include <stdio.h>
 #include <assert.h>
@@ -61,6 +62,21 @@ void RageBitmapTexture::Create()
 {
 	HRESULT hr;
 
+	D3DFORMAT fmtTexture;
+	if( !GAMEINFO )
+	{
+		fmtTexture = D3DFMT_A4R4G4B4;
+	}
+	else
+	{
+		switch(	GAMEINFO->m_GameOptions.m_iTextureColor )
+		{
+		case 16:	fmtTexture = D3DFMT_A4R4G4B4;	break;
+		case 32:	fmtTexture = D3DFMT_A8R8G8B8;	break;
+		default:	ASSERT( true );		// invalid iTextureColor value
+		}
+	}
+
 	D3DXIMAGE_INFO ddii;
 
 	// load texture
@@ -68,9 +84,9 @@ void RageBitmapTexture::Create()
 		m_pd3dDevice,				// device
 		m_sFilePath,				// soure file
 		D3DX_DEFAULT, D3DX_DEFAULT,	// width, height 
-		D3DX_DEFAULT,				// mip map levels
+		3,				// mip map levels
 		0,							// usage (is a render target?)
-		D3DFMT_A4R4G4B4,			// our preferred texture format
+		fmtTexture,			// our preferred texture format
 		D3DPOOL_MANAGED,			// which memory pool
 		D3DX_FILTER_BOX | D3DX_FILTER_DITHER,			// filter
 		D3DX_FILTER_BOX | D3DX_FILTER_DITHER,			// mip filter

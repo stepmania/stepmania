@@ -460,6 +460,10 @@ SOURCE=.\StepMania.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\StepMania.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StepMania.ICO
 # End Source File
 # Begin Source File

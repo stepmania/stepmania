@@ -314,7 +314,7 @@ void MusicWheel::RebuildWheelItems()
 
 float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 {
-	return roundf( (fPosOffsetsFromMiddle)*43.2f );
+	return fPosOffsetsFromMiddle*43.2f;
 }
 
 float MusicWheel::GetBannerBrightness( float fPosOffsetsFromMiddle )
@@ -370,7 +370,7 @@ float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 	}
 
 
-	return roundf( fX );
+	return fX;
 }
 
 
@@ -490,11 +490,13 @@ void MusicWheel::Update( float fDeltaTime )
 
 	// "rotate" wheel toward selected song
 
-	if( fabs(m_fPositionOffsetFromSelection) < 0.05f )
+	if( fabs(m_fPositionOffsetFromSelection) < 0.02f )
 		m_fPositionOffsetFromSelection = 0;
 	else
 	{
-		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;
+		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;	// linear
+		float fSign = m_fPositionOffsetFromSelection / fabs(m_fPositionOffsetFromSelection);
+		m_fPositionOffsetFromSelection -= fDeltaTime * fSign;	// constant
 	}
 }
 

@@ -27,6 +27,14 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
+	virtual void SetDiffuseColor( D3DXCOLOR c )
+	{
+		m_sprVisualizationOverlay.SetDiffuseColor( c );
+		m_sprSongBackground.SetDiffuseColor( c );
+		m_sprDanger.SetDiffuseColor( c );
+		m_sprDangerBackground.SetDiffuseColor( c );
+	};
+	
 	virtual void TurnDangerOn()		{ m_bShowDanger = true; };
 	virtual void TurnDangerOff()	{ m_bShowDanger = false; };
 

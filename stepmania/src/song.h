@@ -90,6 +90,11 @@ public:
 public:
 	int m_iNumTimesPlayed;
 
+	// statistics for single-basic, single-another... double-basic... double-maniac:
+	Grade m_TopGrade[6];
+	int m_iTopScore[6];
+	int m_iMaxCombo[6];
+
 
 private:
 	CString m_sSongFilePath;

@@ -18,11 +18,11 @@
 
 
 
-const float LIFE_PERFECT	=	 0.015f;
-const float LIFE_GREAT		=	 0.008f;
+const float LIFE_PERFECT	=	 0.010f;
+const float LIFE_GREAT		=	 0.005f;
 const float LIFE_GOOD		=	 0.000f;
-const float LIFE_BOO		=	-0.015f;
-const float LIFE_MISS		=	-0.030f;
+const float LIFE_BOO		=	-0.010f;
+const float LIFE_MISS		=	-0.020f;
 
 const int ARROW_SIZE	=	 64;
 

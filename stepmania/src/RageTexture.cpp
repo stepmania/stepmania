@@ -78,8 +78,6 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesW
 	*puFramesWide = *puFramesHigh = 1;	// initialize in case we don't find dimensions in the file name
 
 	sPath.MakeLower();
-	if( sPath.Find("max300.png") != -1 )
-		int kljds = 3;
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt);
@@ -109,47 +107,4 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesW
 		return;
 	}
 
-
-	/*
-	//////////////////////////////////////////////////
-	// Parse m_sFilePath for the frame dimensions
-	//
-	// The file name must look like "name 4x15.gif".  The the space is required.
-	//////////////////////////////////////////////////
-	CString sDimensionsString = sPath;	// we will chop this down to the "4x15" part.  Need regular... expressions... choke :-)
-
-	// chop off the extension
-	int index_of_last_period = sDimensionsString.ReverseFind( '.' );
-	if( index_of_last_period == -1 )	// this file name has no extension, but it the texture was loaded.  I doubt this code will ever execute :-)
-	{
-		*puFramesWide = *puFramesHigh = 1;  
-		return;
-	}
-	sDimensionsString = sDimensionsString.Left(index_of_last_period);
-
-	// chop off everything before and including the last space
-	int index_of_last_space = sDimensionsString.ReverseFind( ' ' );
-	if( index_of_last_space == -1 )	// this file name has space, so the dimensions tag cannot be read
-	{
-		*puFramesWide = *puFramesHigh = 1;  
-		return;
-	}
-	sDimensionsString.Delete( 0, index_of_last_space+1 );
-
-	// now we are left with "4x15"
-	int index_of_x = sDimensionsString.Find( 'x' );
-	if( index_of_x == -1 )	// this file name doesn't have an x in the last token.  So, this probably isn't a dimension tag.
-	{
-		*puFramesWide = *puFramesHigh = 1;  
-		return;
-	}
-	*puFramesWide = (UINT) atoi( sDimensionsString.Left( index_of_x ) );
-
-	// chop off the frames wide part and read in the frames high
-	sDimensionsString.Delete( 0, index_of_x+1 );
-	*puFramesHigh = (UINT) atoi( sDimensionsString );
-	
-	if( *puFramesWide == 0 )	*puFramesWide = 1;
-	if( *puFramesHigh == 0 )	*puFramesHigh = 1;
-	*/
 }
