@@ -145,7 +145,10 @@ int RageFileObj::Read( void *buffer, size_t bytes, int nmemb )
 
 int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 {
-	return WriteInternal( pBuffer, iBytes );
+	int iRet = WriteInternal( pBuffer, iBytes );
+	if( iRet != -1 )
+		m_iFilePos += iRet;
+	return iRet;
 }
 
 int RageFileObj::Write( const void *buffer, size_t bytes, int nmemb )
