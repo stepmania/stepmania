@@ -9,7 +9,7 @@
 class LoadingWindow_Win32: public LoadingWindow {
 	AppInstance handle;
 	HWND hwnd;
-	CString text;
+	CString text[3];
 
 	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
@@ -27,7 +27,7 @@ public:
 #endif
 
 /*
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  */

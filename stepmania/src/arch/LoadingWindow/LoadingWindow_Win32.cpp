@@ -43,7 +43,8 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
 	hwnd = CreateDialog(handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
-
+	for( unsigned i = 0; i < 3; ++i )
+		text[i] = "XXX"; /* always set on first call */
 	SetText("Initializing hardware...");
 	Paint();
 }
@@ -71,17 +72,23 @@ void LoadingWindow_Win32::SetText(CString str)
 {
 	CStringArray asMessageLines;
 	split( str, "\n", asMessageLines, false );
+	while( asMessageLines.size() < 3 )
+		asMessageLines.push_back( "" );
+	
+	const int msgs[] = { IDC_STATIC_MESSAGE1, IDC_STATIC_MESSAGE2, IDC_STATIC_MESSAGE3 };
+	for( unsigned i = 0; i < 3; ++i )
+	{
+		if( text[i] == asMessageLines[i] )
+			continue;
+		text[i] = asMessageLines[i];
 
-	SendDlgItemMessage( hwnd, IDC_STATIC_MESSAGE1, WM_SETTEXT, 0, 
-		(LPARAM)(LPCTSTR)asMessageLines[0]);
-	SendDlgItemMessage( hwnd, IDC_STATIC_MESSAGE2, WM_SETTEXT, 0, 
-		(LPARAM)(LPCTSTR)(asMessageLines.size()>=2 ? asMessageLines[1] : ""));
-	SendDlgItemMessage( hwnd, IDC_STATIC_MESSAGE3, WM_SETTEXT, 0, 
-		(LPARAM)(LPCTSTR)(asMessageLines.size()>=3 ? asMessageLines[2] : ""));
+		SendDlgItemMessage( hwnd, msgs[i], WM_SETTEXT, 0, 
+			(LPARAM)asMessageLines[i].c_str());
+	}
 }
 
 /*
- * Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
  *
  * Chris Danford
  * Glenn Maynard
