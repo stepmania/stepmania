@@ -101,7 +101,7 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
 
-	if(TEXTUREMAN->SetPrefs( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds ))
+	if(TEXTUREMAN->SetPrefs( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds, PREFSMAN->m_iMaxTextureResolution ))
 		ReloadTextures = true;
 
 	if(ReloadTextures)
@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_iDisplayColorDepth, 
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync );
-	TEXTUREMAN	= new RageTextureManager( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds );
+	TEXTUREMAN	= new RageTextureManager( PREFSMAN->m_iTextureColorDepth, PREFSMAN->m_iUnloadTextureDelaySeconds, PREFSMAN->m_iMaxTextureResolution );
 
 	/* Grab the window manager specific information */
 	SDL_SysWMinfo info;

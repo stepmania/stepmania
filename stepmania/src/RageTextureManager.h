@@ -21,7 +21,7 @@
 class RageTextureManager
 {
 public:
-	RageTextureManager( int iTextureColorDepth, int iSecsBeforeUnload );
+	RageTextureManager( int iTextureColorDepth, int iSecsBeforeUnload, int iMaxTextureResolution );
 	virtual void Update( float fDeltaTime );
 	~RageTextureManager();
 
@@ -31,8 +31,9 @@ public:
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
-	bool SetPrefs( int iTextureColorDepth, int iSecsBeforeUnload );
+	bool SetPrefs( int iTextureColorDepth, int iSecsBeforeUnload, int iMaxTextureResolution );
 	int GetTextureColorDepth() { return m_iTextureColorDepth; };
+	int GetMaxTextureResolution() { return m_iMaxTextureResolution; };
 	int GetSecsBeforeUnload() { return m_iSecondsBeforeUnload; };
 
 	void InvalidateTextures();
@@ -42,6 +43,7 @@ protected:
 
 	int m_iTextureColorDepth;
 	int m_iSecondsBeforeUnload;
+	int m_iMaxTextureResolution;
 
 	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
 };

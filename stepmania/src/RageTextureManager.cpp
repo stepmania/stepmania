@@ -27,9 +27,9 @@ RageTextureManager*		TEXTUREMAN		= NULL;
 //-----------------------------------------------------------------------------
 // constructor/destructor
 //-----------------------------------------------------------------------------
-RageTextureManager::RageTextureManager( int iTextureColorDepth, int iSecondsBeforeUnload )
+RageTextureManager::RageTextureManager( int iTextureColorDepth, int iSecondsBeforeUnload, int iMaxTextureResolution )
 {
-	SetPrefs( iTextureColorDepth, iSecondsBeforeUnload );
+	SetPrefs( iTextureColorDepth, iSecondsBeforeUnload, iMaxTextureResolution );
 }
 
 RageTextureManager::~RageTextureManager()
@@ -87,7 +87,10 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 		p++;
 	}
 
-	// the texture is not already loaded
+	// the texture is not already loaded.  Load it.
+	ID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
+	ID.iMaxSize = TEXTUREMAN->GetMaxTextureResolution();
+
 	CString sDrive, sDir, sFName, sExt;
 	splitpath( false, ID.filename, sDrive, sDir, sFName, sExt );
 
@@ -212,6 +215,7 @@ void RageTextureManager::ReloadAll()
 		/* Update the settings that are based on preferences. */
 		RageTextureID ID = i->first;
 		ID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
+		ID.iMaxSize = TEXTUREMAN->GetMaxTextureResolution();
 
 		pTexture->Reload( ID );
 	}
@@ -233,15 +237,17 @@ void RageTextureManager::InvalidateTextures()
 	}
 }
 
-bool RageTextureManager::SetPrefs( int iTextureColorDepth, int iSecondsBeforeUnload )
+bool RageTextureManager::SetPrefs( int iTextureColorDepth, int iSecondsBeforeUnload, int iMaxTextureResolution )
 {
 	bool need_reload = false;
 	if(m_iSecondsBeforeUnload != iSecondsBeforeUnload ||
-		m_iTextureColorDepth != iTextureColorDepth)
+		m_iTextureColorDepth != iTextureColorDepth ||
+		m_iMaxTextureResolution != iMaxTextureResolution )
 		need_reload = true;
 
 	m_iSecondsBeforeUnload = iSecondsBeforeUnload;
 	m_iTextureColorDepth = iTextureColorDepth;
+	m_iMaxTextureResolution = iMaxTextureResolution;
 	
 	ASSERT( m_iTextureColorDepth==16 || m_iTextureColorDepth==32 );
 	return need_reload;

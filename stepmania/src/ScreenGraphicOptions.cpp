@@ -27,6 +27,7 @@ enum {
 	GO_WINDOWED = 0,
 	GO_DISPLAY_RESOLUTION,
 	GO_DISPLAY_COLOR_DEPTH,
+	GO_MAX_TEXTURE_RESOLUTION,
 	GO_TEXTURE_COLOR_DEPTH,
 	GO_REFRESH_RATE,
 	GO_BGMODE,
@@ -40,6 +41,7 @@ OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Display\nMode",			2,  {"FULLSCREEN", "WINDOWED"} },
 	{ "Display\nResolution",	7,  {"320","400","512","640","800","1024","1280"} },
 	{ "Display\nColor",			2,  {"16BIT","32BIT"} },
+	{ "Max Texture\nResolution",4,  {"256","512","1024","2048"} },
 	{ "Texture\nColor",			2,  {"16BIT","32BIT"} },
 	{ "Refresh\nRate",			11, {"DEFAULT","60","70","72","75","80","85","90","100","120","150"} },
 	{ "Background\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
@@ -54,6 +56,9 @@ static const int HorizRes[] = {
 };
 static const int VertRes[] = {
 	240, 300, 384, 480, 600, 768, 1024
+};
+static const int TextureRes[] = {
+	256, 512, 1024, 2048
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
@@ -124,6 +129,15 @@ void ScreenGraphicOptions::ImportOptions()
 	case 32:	m_iSelectedOption[0][GO_DISPLAY_COLOR_DEPTH] = 1;	break;
 	}
 
+	switch( PREFSMAN->m_iMaxTextureResolution )
+	{
+	case 256:	m_iSelectedOption[0][GO_MAX_TEXTURE_RESOLUTION] = 0;	break;
+	case 512:	m_iSelectedOption[0][GO_MAX_TEXTURE_RESOLUTION] = 1;	break;
+	case 1024:	m_iSelectedOption[0][GO_MAX_TEXTURE_RESOLUTION] = 2;	break;
+	case 2048:	m_iSelectedOption[0][GO_MAX_TEXTURE_RESOLUTION] = 3;	break;
+	default:	m_iSelectedOption[0][GO_MAX_TEXTURE_RESOLUTION] = 3;	break;
+	}
+		
 	switch( PREFSMAN->m_iTextureColorDepth )
 	{
 	case 16:	m_iSelectedOption[0][GO_TEXTURE_COLOR_DEPTH] = 0;	break;
@@ -166,6 +180,8 @@ void ScreenGraphicOptions::ExportOptions()
 	default:	ASSERT(0);	PREFSMAN->m_iDisplayColorDepth = 16;	break;
 	}
 	
+	PREFSMAN->m_iMaxTextureResolution = TextureRes[m_iSelectedOption[0][GO_MAX_TEXTURE_RESOLUTION]];
+
 	switch( m_iSelectedOption[0][GO_TEXTURE_COLOR_DEPTH] )
 	{
 	case 0:	PREFSMAN->m_iTextureColorDepth = 16;	break;

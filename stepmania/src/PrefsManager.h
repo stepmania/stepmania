@@ -26,6 +26,7 @@ public:
 	int				m_iDisplayHeight;
 	int				m_iDisplayColorDepth;
 	int				m_iTextureColorDepth;
+	int				m_iMaxTextureResolution;
 	int				m_iRefreshRate;
 	bool			m_bShowStats;
 	BackgroundMode	m_BackgroundMode;
