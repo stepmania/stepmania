@@ -842,6 +842,17 @@ static void WriteLogHeader()
 	LOG->Trace( " " );
 }
 
+static void ApplyLogPreferences()
+{
+	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
+	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
+	LOG->SetInfoToDisk( true );
+	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
+	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
+	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
+}
+
+
 int main(int argc, char* argv[])
 {
 #ifdef _XBOX
@@ -888,12 +899,7 @@ int main(int argc, char* argv[])
 	//
 	PREFSMAN	= new PrefsManager;
 
-	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
-	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
-	LOG->SetInfoToDisk( true );
-	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
-	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
-	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
+	ApplyLogPreferences();
 
 	WriteLogHeader();
 
@@ -914,6 +920,11 @@ int main(int argc, char* argv[])
 	}
 	MountTreeOfZips( ZIPS_DIR );
 
+	/* One of the above filesystems might contain files that affect preferences, eg Data/Static.ini.
+	 * Re-read preferences. */
+	PREFSMAN->ReadGlobalPrefsFromDisk();
+	ApplyLogPreferences();
+	
 	atexit(SDL_Quit);   /* Clean up on exit */
 
 	/* Fire up the SDL, but don't actually start any subsystems.
