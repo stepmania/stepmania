@@ -347,7 +347,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		else	//	!g_bHoldTailIsWavy
 		{
 			// draw with normal Sprite
-			const float fY				= fYHead;
+			const float fY				= fYTail;
 			const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
 			const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
 			const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
