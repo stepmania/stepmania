@@ -26,8 +26,9 @@
 #include "SDL_utils.h"
 #include "RageSounds.h"
 
-#define NEXT_SCREEN				THEME->GetMetric(m_sName,"NextScreen")
-#define INITIAL_SCREEN			THEME->GetMetric("Common","InitialScreen")
+#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+#define INITIAL_SCREEN			THEME->GetMetric ("Common","InitialScreen")
+#define JOIN_PAUSE_SECONDS		THEME->GetMetricF("Common","JoinPauseSeconds")
 
 
 ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sName )
@@ -114,7 +115,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				/* We already played the coin sound.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
 					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
-				SDL_Delay( 800 );	// do a little pause, like the arcade does
+				SDL_Delay( (int)(JOIN_PAUSE_SECONDS*1000) );	// do a little pause, like the arcade does
 				LOG->Trace("ScreenAttract::AttractInput: go to ScreenTitleMenu" );
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;

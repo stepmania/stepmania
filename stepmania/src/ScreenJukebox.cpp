@@ -20,6 +20,7 @@
 #include "ScreenManager.h"
 #include "RageSounds.h"
 #include "Steps.h"
+#include "ScreenAttract.h"
 
 
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
@@ -182,32 +183,11 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
 			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-			break;
-		/* XXX: this is a copy-and-paste from ScreenAttract */
-		case MENU_BUTTON_START:
-		case MENU_BUTTON_BACK:
-		case MENU_BUTTON_COIN:
-			switch( PREFSMAN->m_iCoinMode )
-			{
-			case COIN_PAY:
-				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-					break;	// don't fall through
-				// fall through
-			case COIN_HOME:
-			case COIN_FREE:
-				SOUND->StopMusic();
-				/* We already played the it was a coin was inserted.  Don't play it again. */
-				if( MenuI.button != MENU_BUTTON_COIN )
-					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
-				SDL_Delay( 800 );	// do a little pause, like the arcade does
-				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-				break;
-			default:
-				ASSERT(0);
-			}
-			break;
+			return;
 		}
 	}
+
+	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_Out.IsTransitioning() );
 }
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
