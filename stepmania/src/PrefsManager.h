@@ -133,14 +133,15 @@ public:
 
 	bool			m_bAutoPlay;
 	bool			m_bDelayedBack;
-	bool			m_bShowInstructions, m_bShowCaution, m_bShowSelectGroup;
+	bool			m_bShowInstructions, m_bShowSelectGroup;
+	Preference<bool>	m_bShowCaution;
 	bool			m_bShowNativeLanguage;
 	bool			m_bArcadeOptionsNavigation;
 	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bEasterEggs;
 	int 			m_iMarvelousTiming;
-	bool			m_bEventMode;
+	Preference<bool>	m_bEventMode;
 	int				m_iCoinsPerCredit;
 	int				m_iNumArcadeStages;
 

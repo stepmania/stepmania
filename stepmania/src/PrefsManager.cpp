@@ -124,7 +124,9 @@ PrefsManager::PrefsManager() :
 	m_fLifeDeltaPercentChangeMiss		( Options, "LifeDeltaPercentChangeMiss",			-0.080f ),
 	m_fLifeDeltaPercentChangeHitMine	( Options, "LifeDeltaPercentChangeHitMine",		-0.160f ),
 	m_fLifeDeltaPercentChangeOK			( Options, "LifeDeltaPercentChangeOK",			+0.008f ),
-	m_fLifeDeltaPercentChangeNG			( Options, "LifeDeltaPercentChangeNG",			-0.080f )
+	m_fLifeDeltaPercentChangeNG			( Options, "LifeDeltaPercentChangeNG",			-0.080f ),
+	m_bShowCaution						( Options, "ShowCaution", true ),
+	m_bEventMode						( Options, "EventMode", false )
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -137,7 +139,6 @@ void PrefsManager::Init()
 	m_bShowDanger = true;
 	m_bMenuTimer = true;
 	m_iNumArcadeStages = 3;
-	m_bEventMode = false;
 	m_bAutoPlay = false;
 
 	m_fTugMeterPercentChangeMarvelous =		+0.010f;
@@ -201,7 +202,6 @@ void PrefsManager::Init()
 
 	m_bDelayedBack = true;
 	m_bShowInstructions = true;
-	m_bShowCaution = true;
 	m_bShowSelectGroup = true;
 	m_bShowNativeLanguage = true;
 	m_bArcadeOptionsNavigation = false;
@@ -384,7 +384,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	ini.GetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
-	ini.GetValue( "Options", "EventMode",						m_bEventMode );
 	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.GetValue( "Options", "TugMeterPercentChangeMarvelous",	m_fTugMeterPercentChangeMarvelous );
 	ini.GetValue( "Options", "TugMeterPercentChangePerfect",	m_fTugMeterPercentChangePerfect );
@@ -444,7 +443,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedBack );
 	ini.GetValue( "Options", "ShowInstructions",				m_bShowInstructions );
-	ini.GetValue( "Options", "ShowCaution",						m_bShowCaution );
 	ini.GetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
 	ini.GetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
 	ini.GetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
@@ -593,7 +591,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
 	ini.SetValue( "Options", "MenuTimer",						m_bMenuTimer );
 	ini.SetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
-	ini.SetValue( "Options", "EventMode",						m_bEventMode );
 	ini.SetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
 	ini.SetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
@@ -677,7 +674,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "Interlaced",						m_bInterlaced );
 	ini.SetValue( "Options", "PAL",								m_bPAL );
 	ini.SetValue( "Options", "ShowInstructions",				m_bShowInstructions );
-	ini.SetValue( "Options", "ShowCaution",						m_bShowCaution );
 	ini.SetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
 	ini.SetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
 	ini.SetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
