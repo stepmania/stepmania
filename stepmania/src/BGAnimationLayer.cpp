@@ -564,6 +564,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	{
 		const IniFile::key *key = ini.GetKey( sLayer );
+		if( key )
 		for( IniFile::key::const_iterator i = key->begin();
 			 i != key->end(); ++i)
 		{
