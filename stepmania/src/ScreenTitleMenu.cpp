@@ -119,7 +119,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
 			m_textChoice[i].EnableShadow( true );
-			m_textChoice[i].Command( MENU_ITEM_CREATE );
+//			m_textChoice[i].Command( MENU_ITEM_CREATE );
 			this->AddChild( &m_textChoice[i] );
 		}	
 		break;
