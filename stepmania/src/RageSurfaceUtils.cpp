@@ -718,8 +718,11 @@ bool RageSurfaceUtils::SaveSurface( const RageSurface *img, CString file )
 
 	f.Write( &h, sizeof(h) );
 
-	if(h.bpp == 8)
-		f.Write( img->format->palette->colors, 256 * sizeof(RageSurfaceColor) );
+	if( h.bpp == 8 )
+	{
+		f.Write( &img->format->palette->ncolors, sizeof(img->format->palette->ncolors) );
+		f.Write( img->format->palette->colors, img->format->palette->ncolors * sizeof(RageSurfaceColor) );
+	}
 
 	f.Write( img->pixels, img->h * img->pitch );
 	
@@ -736,10 +739,15 @@ RageSurface *RageSurfaceUtils::LoadSurface( CString file )
 	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
 		return NULL;
 	
-	RageSurfaceColor palette[256];
-	if(h.bpp == 8)
-		if( f.Read( palette, 256 * sizeof(RageSurfaceColor) != 256 * sizeof(RageSurfaceColor) ) )
+	RageSurfacePalette palette;
+	if( h.bpp == 8 )
+	{
+		if( f.Read( &palette.ncolors, sizeof(palette.ncolors) ) != sizeof(palette.ncolors) )
 			return NULL;
+		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
+		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
+			return NULL;
+	}
 
 	/* Create the surface. */
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
@@ -755,7 +763,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( CString file )
 
 	/* Set the palette. */
 	if( h.bpp == 8 )
-		memcpy( img->fmt.palette->colors, palette, 256*sizeof(RageSurfaceColor) );
+		*img->fmt.palette = palette;
 
 	return img;
 }
