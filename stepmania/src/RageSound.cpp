@@ -326,18 +326,18 @@ int RageSound::FillBuf( int frames )
 		if(cnt == 0)
 			return got_something; /* EOF */
 
-		if( Sample->GetNumChannels() == 1 )
-		{
-			RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) inbuf, cnt / sizeof(int16_t) );
-			cnt *= 2;
-		}
-
 		if(cnt == -1)
 		{
 			Fail(Sample->GetError());
 
 			/* Pretend we got EOF. */
 			return 0;
+		}
+
+		if( Sample->GetNumChannels() == 1 )
+		{
+			RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) inbuf, cnt / sizeof(int16_t) );
+			cnt *= 2;
 		}
 
 		RateChange( inbuf, cnt, m_Param.speed_input_samples, m_Param.speed_output_samples, channels );
