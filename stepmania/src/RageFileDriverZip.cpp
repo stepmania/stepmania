@@ -62,10 +62,12 @@ freely, subject to the following restrictions:
 #include "RageUtil_FileDB.h"
 
 #include <errno.h>
-#include <zlib/zlib.h>
 
 #if defined(_WINDOWS)
+	#include "zlib/zlib.h"
 	#pragma comment(lib, "zlib/zdll.lib")
+#else
+	#include <zlib.h>
 #endif
 
 #define INBUFSIZE 1024*4
@@ -407,7 +409,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 		RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
 	if( got != info.filename_length )
 	{
-		LOG->Warn( "%s: bad filename length %i", zip.GetPath().c_str(), info.filename_length );
+		LOG->Warn( "%s: bad filename length %li", zip.GetPath().c_str(), info.filename_length );
 		return 0;
 	}
 
@@ -501,8 +503,8 @@ void RageFileDriverZip::FlushDirCache( const CString &sPath )
  * this way, we don't have to keep seeking around. */
 RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInfo &info_, RageFile &p ):
 	RageFileObj( p ),
-	zip( f ),
-	info(info_)
+	info(info_),
+	zip( f )
 {
 	decomp_buf_avail = 0;
 
@@ -521,8 +523,8 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 
 RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy, RageFile &p ):
 	RageFileObj( p ),
-	zip( cpy.zip ),
-	info( cpy.info )
+	info( cpy.info ),
+	zip( cpy.zip )
 {
 	/* XXX completely untested */
 	/* Copy the entire decode state. */
@@ -630,8 +632,8 @@ int RageFileObjZipDeflated::Seek( int offset )
 
 RageFileObjZipStored::RageFileObjZipStored( const RageFile &f, const FileInfo &info_, RageFile &p ):
 	RageFileObj( p ),
-	zip( f ),
-	info(info_)
+	info(info_),
+	zip( f )
 {
 	FilePos = 0;
 }
