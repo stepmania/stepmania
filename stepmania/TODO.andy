@@ -8,7 +8,7 @@ H denotes task on hold.
 
 TODO As of: 11:42:PM 05/09/02
 
-Fix the Bug on ScreenStage that reports the current stage number for final stage as being 00 in Ez2 
+* Fix the Bug on ScreenStage that reports the current stage number for final stage as being 00 in Ez2 
 
 TODO As of: 01:29:AM 04/09/02
 

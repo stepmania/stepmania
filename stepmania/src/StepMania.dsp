@@ -56,10 +56,10 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386
 # Begin Special Build Tool
 IntDir=.\../Release
-TargetDir=\stepmania\stepmania
+TargetDir=\Stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc     	cl      /Zl      /nologo      /c      verstub.cpp      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc      	cl       /Zl       /nologo       /c       verstub.cpp       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug
-TargetDir=\stepmania\stepmania
+TargetDir=\Stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc     	cl      /Zl      /nologo      /c      verstub.cpp      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc      	cl       /Zl       /nologo       /c       verstub.cpp       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1053,6 +1053,14 @@ SOURCE=.\ScreenEvaluation.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenEz2SelectMusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEz2SelectMusic.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenEz2SelectPlayer.cpp
 # End Source File
 # Begin Source File
@@ -1066,14 +1074,6 @@ SOURCE=.\ScreenEz2SelectStyle.cpp
 # Begin Source File
 
 SOURCE=.\ScreenEz2SelectStyle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEz2Stage.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEz2Stage.h
 # End Source File
 # Begin Source File
 

@@ -202,6 +202,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenSongOptions.h"
 #include "ScreenStage.h"
 #include "ScreenTitleMenu.h"
+#include "ScreenEz2SelectMusic.h"
 
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
@@ -235,6 +236,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		return new ScreenSongOptions;
 	else if( 0==stricmp(sClassName, "ScreenStage") )			return new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		return new ScreenTitleMenu;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	return new ScreenEz2SelectMusic;
 	else
 		throw RageException( "Invalid Screen class name '%s'", sClassName );
 }
