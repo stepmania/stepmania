@@ -135,7 +135,7 @@ void ScreenSystemLayer::ReloadCreditsText()
 	m_textMessage.SetName( "Message" );
 	SET_XY_AND_ON_COMMAND( m_textMessage ); 
 
-	m_textStats.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer stats") );
+ 	m_textStats.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer stats") );
 	m_textStats.SetName( "Stats" );
 	SET_XY_AND_ON_COMMAND( m_textStats ); 
 

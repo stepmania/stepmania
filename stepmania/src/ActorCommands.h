@@ -7,19 +7,19 @@
 
 struct ParsedCommandToken
 {
-	void Set( const CString &sToken );	// fill in all the different types
+	void Set( const CString &sParam );	// fill in all the different types
 
 	CString s;
 	float f;
-	int i;
-	bool b;
 	RageColor c;	// HTML-type color which is packed into one parameter
-	bool bColorIsValid;	// true if c is a valid HTML-type color
+	// true if c is a valid HTML-type color.  Otherwise, this value is the red component
+	// and the next 3 params are the other components.
+	bool bColorIsValid;
 
 	operator const CString () const		{ return s; };
 	operator const float () const		{ return f; };
-	operator const int () const			{ return i; };
-	operator const bool () const		{ return b; };
+	operator const int () const			{ return (int)f; };
+	operator const bool () const		{ return ((int)f)!=0; };
 	operator const RageColor () const	{ return c; };
 };
 

@@ -3,6 +3,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
+#include "LuaHelpers.h"
+
 
 void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxIndexAccessed )
 {
@@ -12,13 +14,11 @@ void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxInde
 	Dialog::OK( sError );
 }
 
-void ParsedCommandToken::Set( const CString &sToken )
+void ParsedCommandToken::Set( const CString &sParam )
 {
-	s = sToken;
-	f = strtof( sToken, NULL );
-	i = atoi( sToken );
-	b = i != 0;
-	bColorIsValid = c.FromString( sToken );
+	s = sParam;
+	f = Lua::RunExpressionF( sParam );
+	bColorIsValid = c.FromString( sParam );
 }
 
 void ParsedCommand::Set( const CString &sCommand )

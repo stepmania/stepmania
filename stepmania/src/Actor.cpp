@@ -624,7 +624,7 @@ void Actor::Command( CString sCommands )
 	sCommands.MakeLower();
 
 	vector<ParsedCommand> vCommands;
-	ParseCommands( sCommands, vCommands );
+ 	ParseCommands( sCommands, vCommands );
 
 	for( unsigned i=0; i<vCommands.size(); i++ )
 		this->HandleCommand( vCommands[i] );
