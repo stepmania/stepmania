@@ -151,7 +151,8 @@ static void CheckCodecVersion( CString codec, CString desc )
 		Regex GetDivXVersion;
 
 		int major, minor, rev;
-		if( sscanf( desc, "DivX %i.%i.%i", &major, &minor, &rev ) != 3 )
+		if( sscanf( desc, "DivX %i.%i.%i", &major, &minor, &rev ) != 3 &&
+			sscanf( desc, "DivX Pro %i.%i.%i", &major, &minor, &rev ) != 3 )
 		{
 			LOG->Warn( "Couldn't parse DivX version \"%s\"", desc.c_str() );
 			return;
