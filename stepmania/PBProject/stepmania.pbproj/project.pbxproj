@@ -129,6 +129,7 @@
 		};
 		29B97314FDCFA39411CA2CEA = {
 			children = (
+				AA52E9BD04DBBCF400D02EE9,
 				AA6E00FE047711FF005F316C,
 				AA6EFF7404770F8B005F316C,
 				AA6EFE6D04770D3E005F316C,
@@ -197,6 +198,7 @@
 		};
 		29B97326FDCFA39411CA2CEA = {
 			buildPhases = (
+				AA52E9BF04DBBD2C00D02EE9,
 				AADB4F0B04D5CD5900D02EE9,
 				29B97327FDCFA39411CA2CEA,
 				29B97328FDCFA39411CA2CEA,
@@ -771,6 +773,7 @@
 				AA76D15604D9D2D200D02EE9,
 				AA76D15704D9D2D200D02EE9,
 				AA0E393504DA8EE700D02EE9,
+				AA52E9BE04DBBCF400D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1202,6 +1205,31 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		AA52E9BD04DBBCF400D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ver.cpp;
+			refType = 4;
+		};
+		AA52E9BE04DBBCF400D02EE9 = {
+			fileRef = AA52E9BD04DBBCF400D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA52E9BF04DBBD2C00D02EE9 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = scripts/increment_version.sh;
 		};
 		AA6E000004770FFD005F316C = {
 			fileRef = AA6EFFBB04770FFD005F316C;
@@ -8496,6 +8524,13 @@
 			settings = {
 			};
 		};
+		AA76432A04DBC4BF00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = arch_setup.h;
+			path = Win32/arch_setup.h;
+			refType = 4;
+		};
 		AA76D15404D9D2D200D02EE9 = {
 			fileEncoding = 30;
 			indentWidth = 4;
@@ -9219,6 +9254,7 @@
 			children = (
 				AADB4E8204D4FF9B00D02EE9,
 				AADB4E8304D4FF9B00D02EE9,
+				AA76432A04DBC4BF00D02EE9,
 			);
 			isa = PBXGroup;
 			name = Win32;
@@ -9226,9 +9262,9 @@
 		};
 		AADB4E8E04D5263200D02EE9 = {
 			children = (
-				AADB4E8F04D5263200D02EE9,
 				AADB4F5904D9220700D02EE9,
 				AADB4F5A04D9220700D02EE9,
+				AADB4E8F04D5263200D02EE9,
 			);
 			isa = PBXGroup;
 			path = Darwin;
