@@ -26,6 +26,8 @@
 
 #include "glext.h"
 
+#include "RageFile.h"
+
 /* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
 #ifndef GL_TEXTURE_INDEX_SIZE_EXT
 #define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
