@@ -20,6 +20,7 @@
 #include "Course.h"
 #include "UnlockSystem.h"
 #include "SDL_utils.h"
+#include "SongManager.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes_, PlayerNumber pn_ ):
@@ -123,8 +124,11 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes, NoteDat
 	}
 	else
 	{
-		const int iMeter = clamp(pNotes->GetMeter(), 1, 10);
-		m_iMaxPossiblePoints = iMeter * 10000000;
+		const int iMeter = clamp( pNotes->GetMeter(), 1, 10 );
+
+		// long ver and marathon ver songs have higher max possible scores
+		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+		m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
 	}
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;

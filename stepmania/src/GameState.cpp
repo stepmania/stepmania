@@ -453,10 +453,22 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	statsOut = StageStats();
 
 	// Show stats only for the latest 3 normal songs + passed extra stages
-	int iNumSongsToThrowAway = max( 0, PREFSMAN->m_iNumArcadeStages-3 );
-	for( unsigned i=iNumSongsToThrowAway; i<GAMESTATE->m_vPassedStageStats.size(); i++ )
+	int iNumPassedExtraStages = GAMESTATE->IsExtraStage ? 1 : (GAMESTATE->IsExtraStage2 ? 2 : 0);
+	int iNumPassedRegularSongs = GAMESTATE->m_vPassedStageStats.size() - iNumPassedExtraStages;
+	int iNumSongsToShow = iNumPassedExtraStages + min( iNumPassedRegularSongs, 3 );
+	int iNumSongsToThrowAway = GAMESTATE->m_vPassedStageStats.size() - iNumSongsToShow;
+	ASSERT( iNumSongsToThrowAway >= 0 );
+
+	for( int i=iNumSongsToThrowAway; i<(int)GAMESTATE->m_vPassedStageStats.size(); i++ )
 	{
+		// weight long and marathon songs
+		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_vPassedStageStats[i].pSong );
+
 		statsOut += GAMESTATE->m_vPassedStageStats[i];
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( IsPlayerEnabled(p) )
+				statsOut.iMeter[p] += GAMESTATE->m_vPassedStageStats[i].iMeter[p] * (iLengthMultiplier-1);
+
 		vSongsOut.push_back( GAMESTATE->m_vPassedStageStats[i].pSong );
 	}
 
