@@ -447,7 +447,7 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Trace( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 
@@ -562,7 +562,7 @@ void ProfileManager::ReadCategoryScoresFromDir( CString sDir, MemoryCard mc )
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Trace( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 	
@@ -611,7 +611,7 @@ void ProfileManager::ReadCourseScoresFromDir( CString sDir, MemoryCard mc )
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Trace( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 	
@@ -786,7 +786,7 @@ void ProfileManager::SaveCategoryScoresToDir( CString sDir, MemoryCard mc )
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 
@@ -821,7 +821,7 @@ void ProfileManager::SaveCourseScoresToDir( CString sDir, MemoryCard mc )
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 	
@@ -883,7 +883,7 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 	

@@ -82,7 +82,7 @@ void Bookkeeper::ReadFromDisk()
     RageFile f;
 	if( !f.Open(COINS_DAT, RageFile::READ) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", COINS_DAT.c_str() );
+		LOG->Trace( "Couldn't open file \"%s\": %s", COINS_DAT.c_str(), f.GetError().c_str() );
 		return;
 	}
 
@@ -114,7 +114,7 @@ void Bookkeeper::WriteToDisk()
     RageFile f;
 	if( !f.Open(COINS_DAT, RageFile::WRITE) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", COINS_DAT.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", COINS_DAT.c_str(), f.GetError().c_str() );
 		return;
 	}
     

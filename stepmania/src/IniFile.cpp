@@ -41,7 +41,7 @@ bool IniFile::ReadFile()
 	if( !f.Open( path ) )
 	{
 		LOG->Trace( "Reading '%s' failed: %s", path.c_str(), f.GetError().c_str() );
-		error = ssprintf("Unable to open ini file: %s", f.GetError().c_str() );
+		error = f.GetError();
 		return 0;
 	}
 
@@ -91,7 +91,7 @@ void IniFile::WriteFile()
 	if( !f.Open( path, RageFile::WRITE ) )
 	{
 		LOG->Trace( "Writing '%s' failed: %s", path.c_str(), f.GetError().c_str() );
-		error = ssprintf("Unable to open ini file for writing: %s", f.GetError().c_str() );
+		error = f.GetError();
 		return;
 	}
 
