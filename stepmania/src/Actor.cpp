@@ -146,7 +146,7 @@ void Actor::EndDraw()
 void Actor::UpdateTweening( float fDeltaTime )
 {
 	// update tweening
-	if( m_iNumTweenStates == 0 )
+	if( m_iNumTweenStates == 0 || fDeltaTime == 0 )
 		return;
 
 	// we are performing a tween
