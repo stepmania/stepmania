@@ -124,16 +124,13 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )
 	
 	// XXX metrics
 	Difficulty FakeDifficulty;
-	if( meter <= 1 )
-		FakeDifficulty = DIFFICULTY_BEGINNER;
-	else if( meter <= 3 )
-		FakeDifficulty = DIFFICULTY_EASY;
-	else if( meter <= 6 )
-		FakeDifficulty = DIFFICULTY_MEDIUM;
-	else if( meter <= 9 )
-		FakeDifficulty = DIFFICULTY_HARD;
-	else
-		FakeDifficulty = DIFFICULTY_CHALLENGE;
+	switch( cd )
+	{
+	case COURSE_DIFFICULTY_EASY:		FakeDifficulty = DIFFICULTY_EASY;	break;
+	case COURSE_DIFFICULTY_REGULAR:		FakeDifficulty = DIFFICULTY_MEDIUM;	break;
+	case COURSE_DIFFICULTY_DIFFICULT:	FakeDifficulty = DIFFICULTY_HARD;	break;
+	default:	ASSERT(0);
+	}
 
 	SetFromMeterAndDifficulty( meter, FakeDifficulty );
 	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
