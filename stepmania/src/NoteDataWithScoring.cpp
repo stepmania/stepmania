@@ -180,10 +180,9 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	TapNoteScore score = TNS_MARVELOUS;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		/* Don't coun, or else the score 
-		 * will always be TNS_NONE. */
+		/* Ignore mines, or the score will always be TNS_NONE. */
 		const TapNote &tn = in.GetTapNote(t, row);
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine) 
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine )
 			continue;
 		score = min( score, tn.result.tns );
 	}
