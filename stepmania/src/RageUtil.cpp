@@ -953,7 +953,7 @@ bool utf8_is_valid( const CString &s )
 	return true;
 }
 
-const wchar_t INVALID_CHAR = 0xFFFF;
+const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring CStringToWstring( const CString &s )
 {
