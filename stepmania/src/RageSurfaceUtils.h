@@ -26,7 +26,7 @@ namespace RageSurfaceUtils
 	/* Get the number of bits representing each color channel in fmt. */
 	void GetBitsPerChannel( const RageSurfaceFormat *fmt, uint32_t bits[4] );
 
-	void CopySurface( RageSurface *src, RageSurface *dest );
+	void CopySurface( const RageSurface *src, RageSurface *dest );
 	bool ConvertSurface( RageSurface *src, RageSurface *&dst,
 		int width, int height, int bpp, uint32_t R, uint32_t G, uint32_t B, uint32_t A );
 	void ConvertSurface( RageSurface *&image,
@@ -47,7 +47,7 @@ namespace RageSurfaceUtils
 	void BlitTransform( const RageSurface *src, RageSurface *dst, 
 					const float fCoords[8] /* TL, BR, BL, TR */ );
 
-	void Blit( RageSurface *src, RageSurface *dst, int width, int height );
+	void Blit( const RageSurface *src, RageSurface *dst, int width, int height );
 
 	bool SaveSurface( RageSurface *img, CString file );
 	RageSurface *LoadSurface( CString file );

@@ -132,7 +132,7 @@ void RageSurfaceUtils::GetBitsPerChannel( const RageSurfaceFormat *fmt, uint32_t
 	bits[3] = 8 - fmt->Aloss;
 }
 
-void RageSurfaceUtils::CopySurface( RageSurface *src, RageSurface *dest )
+void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 {
 	/* Copy the palette, if we have one. */
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
@@ -455,10 +455,10 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
  * No general blitting rects.
  */
 
-static void blit_same_type( RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
+static void blit_same_type( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
-	const char *src = (const char *) src_surf->pixels;
-	char *dst = (char *) dst_surf->pixels;
+	const uint8_t *src = src_surf->pixels;
+	uint8_t *dst = dst_surf->pixels;
 
 	/* If possible, memcpy the whole thing. */
 	if( src_surf->w == width && dst_surf->w == width && src_surf->pitch == dst_surf->pitch )
@@ -478,10 +478,10 @@ static void blit_same_type( RageSurface *src_surf, const RageSurface *dst_surf, 
 
 /* Rescaling blit with no ckey.  This is used to update movies in
  * D3D, so optimization is very important. */
-static void blit_rgba_to_rgba( RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
+static void blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
-	const char *src = (const char *) src_surf->pixels;
-	const char *dst = (const char *) dst_surf->pixels;
+	const uint8_t *src = src_surf->pixels;
+	uint8_t *dst = dst_surf->pixels;
 
 	/* Bytes to skip at the end of a line. */
 	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
@@ -520,7 +520,7 @@ static void blit_rgba_to_rgba( RageSurface *src_surf, const RageSurface *dst_sur
 		int x = 0;
 		while( x++ < width )
 		{
-			unsigned int pixel = RageSurfaceUtils::decodepixel((uint8_t *) src, src_surf->format->BytesPerPixel);
+			unsigned int pixel = RageSurfaceUtils::decodepixel( src, src_surf->format->BytesPerPixel );
 
 			/* Convert pixel to the destination RGBA. */
 			unsigned int opixel = 0;
@@ -533,7 +533,7 @@ static void blit_rgba_to_rgba( RageSurface *src_surf, const RageSurface *dst_sur
 			opixel |= ormask;
 
 			/* Store it. */
-			RageSurfaceUtils::encodepixel((uint8_t *) dst, dst_surf->format->BytesPerPixel, opixel);
+			RageSurfaceUtils::encodepixel( dst, dst_surf->format->BytesPerPixel, opixel );
 
 			src += src_surf->format->BytesPerPixel;
 			dst += dst_surf->format->BytesPerPixel;
@@ -544,10 +544,10 @@ static void blit_rgba_to_rgba( RageSurface *src_surf, const RageSurface *dst_sur
 	}
 }
 
-static void blit_generic( RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
+static void blit_generic( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
-	const char *src = (const char *) src_surf->pixels;
-	const char *dst = (const char *) dst_surf->pixels;
+	const uint8_t *src = src_surf->pixels;
+	uint8_t *dst = dst_surf->pixels;
 
 	/* Bytes to skip at the end of a line. */
 	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
@@ -558,7 +558,7 @@ static void blit_generic( RageSurface *src_surf, const RageSurface *dst_surf, in
 		int x = 0;
 		while( x++ < width )
 		{
-			unsigned int pixel = RageSurfaceUtils::decodepixel((uint8_t *) src, src_surf->format->BytesPerPixel);
+			unsigned int pixel = RageSurfaceUtils::decodepixel( src, src_surf->format->BytesPerPixel );
 
 			uint8_t colors[4];
 				/* Convert pixel to the destination RGBA. */
@@ -569,7 +569,7 @@ static void blit_generic( RageSurface *src_surf, const RageSurface *dst_surf, in
 			pixel = RageSurfaceUtils::SetRGBAV(dst_surf->format, colors);
 
 			/* Store it. */
-			RageSurfaceUtils::encodepixel((uint8_t *) dst, dst_surf->format->BytesPerPixel, pixel);
+			RageSurfaceUtils::encodepixel( dst, dst_surf->format->BytesPerPixel, pixel );
 
 			src += src_surf->format->BytesPerPixel;
 			dst += dst_surf->format->BytesPerPixel;
@@ -582,7 +582,7 @@ static void blit_generic( RageSurface *src_surf, const RageSurface *dst_surf, in
 }
 
 /* Blit src onto dst. */
-void RageSurfaceUtils::Blit( RageSurface *src, RageSurface *dst, int width, int height )
+void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width, int height )
 {
 	if(width == -1)
 		width = src->w;
