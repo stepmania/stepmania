@@ -167,11 +167,12 @@ void ScreenEvaluation::Init()
 	ZERO( m_bSavedScreenshot );
 
 
-	if( !TYPE.CompareNoCase("stage") )
+	CString sType = TYPE;
+	if( !sType.CompareNoCase("stage") )
 		m_Type = stage;
-	else if( !TYPE.CompareNoCase("summary") )
+	else if( !sType.CompareNoCase("summary") )
 		m_Type = summary;
-	else if( !TYPE.CompareNoCase("course") )
+	else if( !sType.CompareNoCase("course") )
 		m_Type = course;
 	else
 		RageException::Throw("Unknown evaluation type \"%s\"", TYPE.c_str() );
@@ -317,34 +318,6 @@ void ScreenEvaluation::Init()
 				m_sprStage.SetName( "Stage" );
 				SET_XY_AND_ON_COMMAND( m_sprStage );
 				this->AddChild( &m_sprStage );
-
-				for( int p=0; p<NUM_PLAYERS; p++ )
-				{
-					if( !GAMESTATE->IsPlayerEnabled(p) )
-						continue;	// skip
-
-					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation difficulty icons 1x%d",NUM_DIFFICULTIES)) );
-					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
-					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
-					this->AddChild( &m_DifficultyIcon[p] );
-					
-					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
-					CString sPO = GAMESTATE->m_PlayerOptions[p].GetString();
-					sPO.Replace( ", ", PLAYER_OPTIONS_SEPARATOR );
-					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
-					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
-					m_textPlayerOptions[p].SetText( sPO );
-					this->AddChild( &m_textPlayerOptions[p] );
-
-					if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
-					{
-						m_sprDisqualified[p].Load( THEME->GetPathToG("ScreenEvaluation disqualified") );
-						m_sprDisqualified[p]->SetName( ssprintf("DisqualifiedP%d",p+1) );
-						SET_XY_AND_ON_COMMAND( m_sprDisqualified[p] );
-						this->AddChild( m_sprDisqualified[p] );
-					}
-				}
 			}
 			break;
 		case summary:
@@ -377,6 +350,54 @@ void ScreenEvaluation::Init()
 				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( &m_sprLargeBannerFrame );
 			}
+			break;
+		default:
+			ASSERT(0);
+		}
+
+
+		switch( m_Type )
+		{
+		case stage:
+		case course:
+			{
+				FOREACH_EnabledPlayer( p )
+				{
+					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation difficulty icons 1x%d",NUM_DIFFICULTIES)) );
+					switch( m_Type )
+					{
+					case stage:
+						m_DifficultyIcon[p].SetFromNotes( p, GAMESTATE->m_pCurNotes[p] );
+						break;
+					case course:
+						m_DifficultyIcon[p].SetFromCourseDifficulty( p, GAMESTATE->m_PreferredCourseDifficulty[p] );
+						break;
+					default:
+						ASSERT(0);
+					}
+					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
+					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
+					this->AddChild( &m_DifficultyIcon[p] );
+					
+					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
+					CString sPO = GAMESTATE->m_PlayerOptions[p].GetString();
+					sPO.Replace( ", ", PLAYER_OPTIONS_SEPARATOR );
+					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
+					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
+					m_textPlayerOptions[p].SetText( sPO );
+					this->AddChild( &m_textPlayerOptions[p] );
+
+					if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
+					{
+						m_sprDisqualified[p].Load( THEME->GetPathToG("ScreenEvaluation disqualified") );
+						m_sprDisqualified[p]->SetName( ssprintf("DisqualifiedP%d",p+1) );
+						SET_XY_AND_ON_COMMAND( m_sprDisqualified[p] );
+						this->AddChild( m_sprDisqualified[p] );
+					}
+				}
+			}
+			break;
+		case summary:
 			break;
 		default:
 			ASSERT(0);
@@ -864,11 +885,6 @@ void ScreenEvaluation::CommitScores(
 	{
 		iPersonalHighScoreIndexOut[pn] = -1;
 		iMachineHighScoreIndexOut[pn] = -1;
-		if( PREFSMAN->m_bScreenTestMode )
-		{
-			iPersonalHighScoreIndexOut[pn] = 0;
-			iMachineHighScoreIndexOut[pn] = 0;
-		}
 		rcOut[pn] = RANKING_INVALID;
 		pdaToShowOut[pn] = PER_DIFFICULTY_AWARD_INVALID;
 		pcaToShowOut[pn] = PEAK_COMBO_AWARD_INVALID;
@@ -879,6 +895,15 @@ void ScreenEvaluation::CommitScores(
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		return; /* don't save scores in battle */
+	}
+
+	if( PREFSMAN->m_bScreenTestMode )
+	{
+		FOREACH_PlayerNumber( pn )
+		{
+			iPersonalHighScoreIndexOut[pn] = 0;
+			iMachineHighScoreIndexOut[pn] = 0;
+		}
 	}
 
 	// don't save scores if the player chose not to
