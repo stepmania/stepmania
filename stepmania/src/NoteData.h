@@ -27,8 +27,14 @@ class NoteData
 {
 	/* Keep this aligned, so that they all have the same size. */
 	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
+	int TapRowDivisor;
+	void SetDivisor(int div);
 
 	vector<HoldNote>	m_HoldNotes;
+
+	/* Set up to hold the data in From; same number of tracks, same
+	 * divisor.  Doesn't allocate or copy anything. */
+	void Config( const NoteData &From );
 
 public:
 	NoteData();
@@ -37,13 +43,19 @@ public:
 
 	int			m_iNumTracks;
 
+	void Compress();
+	void Decompress();
+
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
 	inline TapNote GetTapNote(unsigned track, unsigned row) const
 	{
+		if((row % TapRowDivisor) != 0) return TapNote(TAP_EMPTY);
+		row /= TapRowDivisor;
 		if(row < 0 || row >= m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
 		return m_TapNotes[track][row];
 	}
+	int GetTapNoteIncrement() const { return TapRowDivisor; }
 	void MoveTapNoteTrack(int dest, int src);
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
@@ -55,8 +67,8 @@ public:
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
 	void CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
-	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; m_HoldNotes.clear(); CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
-
+	void CopyAll( NoteData* pFrom );
+	
 	inline bool IsRowEmpty( int index )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )

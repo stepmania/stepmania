@@ -31,6 +31,7 @@ NoteData::NoteData()
 void NoteData::Init()
 {
 	m_iNumTracks = 0;
+	TapRowDivisor = 1;
 }
 
 NoteData::~NoteData()
@@ -101,6 +102,8 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 		}
 	}
 	this->Convert2sAnd3sToHoldNotes();
+
+	Compress();
 }
 
 CString NoteData::GetSMNoteDataString()
@@ -193,6 +196,19 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 
 	pFrom->Convert4sToHoldNotes();
 	this->Convert4sToHoldNotes();
+}
+
+void NoteData::Config( const NoteData &From )
+{
+	m_iNumTracks = From.m_iNumTracks;
+	TapRowDivisor = From.TapRowDivisor;
+}
+
+void NoteData::CopyAll( NoteData* pFrom )
+{
+	Config(*pFrom);
+	m_HoldNotes.clear();
+	CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS );
 }
 
 void NoteData::AddHoldNote( HoldNote add )
@@ -312,7 +328,7 @@ float NoteData::GetLastBeat()
 	
 	int i;
 
-	for( i = int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
+	for( i = TapRowDivisor * int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -589,7 +605,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	}
 
 	NoteData tempNoteData;	// write into here as we tranform
-	tempNoteData.m_iNumTracks = m_iNumTracks;
+	tempNoteData.Config(*this);
 
 	this->ConvertHoldNotesTo2sAnd3s();
 
@@ -613,7 +629,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 
 		// clear tempNoteData because we're going to use it as a scratch buffer again
 		tempNoteData.Init();
-		tempNoteData.m_iNumTracks = this->m_iNumTracks;
+		tempNoteData.Config(*this);
 
 		// copy all HoldNotes before copying taps
 		for( int i=0; i<this->GetNumHoldNotes(); i++ )
@@ -899,6 +915,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 	
 	pOriginal->ConvertHoldNotesTo4s();
 
+	Config(*pOriginal);
 	m_iNumTracks = iNewNumTracks;
 
 	// copy tracks
@@ -921,6 +938,7 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	Init();
 
 	pOriginal->ConvertHoldNotesTo4s();
+	Config(*pOriginal);
 	m_iNumTracks = iNewNumTracks;
 
 	int iCurTrackOffset = 0;
@@ -1044,6 +1062,85 @@ void NoteData::MoveTapNoteTrack(int dest, int src)
 void NoteData::SetTapNote(int track, int row, TapNote t)
 {
 	if(row < 0) return;
+
+	Decompress();
+
 	PadTapNotes(row);
 	m_TapNotes[track][row]=t;
+}
+
+void NoteData::SetDivisor(int div)
+{
+	if(div == TapRowDivisor)
+		return;
+
+	int src_step = div,
+		dst_step = TapRowDivisor;
+
+	/* I think this should work to go from one divisor to another, but
+	 * I havn't tested it and don't see a need. */
+	ASSERT(src_step == 1 || dst_step == 1);
+
+	for(int t=0; t < m_iNumTracks; t++)
+	{
+		vector<TapNote> TapNotes = m_TapNotes[t];
+		/* Try to make sure the memory is actually released. */
+		int dst_size = m_TapNotes[0].size() * dst_step / src_step;
+		m_TapNotes[t].clear();
+		m_TapNotes[t] = vector<TapNote>(dst_size, TAP_EMPTY);
+
+		unsigned src_row = 0, dst_row = 0;
+		while(src_row < TapNotes.size() && dst_row < m_TapNotes[t].size())
+		{
+			m_TapNotes[t][dst_row] = TapNotes[src_row];
+			dst_row += dst_step;
+			src_row += src_step;
+		}
+	}
+
+	TapRowDivisor = div;
+}
+
+void NoteData::Compress()
+{
+	/* We could optimize a little by being able to compress compressed data,
+	 * but let's not bother for now. */
+	Decompress();
+
+	/* Find the largest divisor; the largest D such that all notes M such that
+	 * (M%D) != 0 are empty. */
+	const int max_divisor = 64;
+	bool *ok = new bool[max_divisor];
+	memset(ok, 1, sizeof(ok));
+
+	int t, row, rows = GetLastRow();
+	
+	for(t=0; t < m_iNumTracks; t++)
+	{
+		for(row = 0; row < rows; ++row)
+		{
+			/* If there's nothing here, then it doesn't make any divisors invalid. */
+			if(GetTapNote(t, row) == TAP_EMPTY)
+				continue;
+
+			for(int div = 2; div < max_divisor; ++div)
+			{
+				if((row % div) != 0) ok[div] = false;
+			}
+		}
+	}
+
+	ASSERT(ok[1]);
+	int best_div = max_divisor-1;
+	while(!ok[best_div])
+		best_div--;
+
+	delete [] ok;
+
+	SetDivisor(best_div);
+}
+
+void NoteData::Decompress()
+{
+	SetDivisor(1);
 }
