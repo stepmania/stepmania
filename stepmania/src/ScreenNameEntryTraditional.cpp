@@ -101,7 +101,7 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 	m_Items.resize( PREFSMAN->m_iMaxHighScoresPerList );
 	for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerList; i++ )
 	{
-		if( i < hsl.vHighScores.size() )
+		if( unsigned(i) < hsl.vHighScores.size() )
 			m_Items[i].Load( i, hsl.vHighScores[i] );
 		else
 			m_Items[i].LoadBlank( i );
@@ -109,7 +109,7 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 	}
 	m_iIndexToFocus = iIndexToFocus;
 
-	if( m_iIndexToFocus >= 0  &&  m_iIndexToFocus < hsl.vHighScores.size() )
+	if( m_iIndexToFocus >= 0  &&  m_iIndexToFocus < int(hsl.vHighScores.size()) )
 		m_Items[m_iIndexToFocus].ShowFocus();
 
 	ActorScroller::Load( 
@@ -309,7 +309,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	}
 
 		m_FeatDisplay[p].resize( m_NumFeats[p] );
-		for( i = 0; i < m_NumFeats[p]; ++i )
+		for( i = 0; int(i) < m_NumFeats[p]; ++i )
 		{
 			StageStats &ss = g_vPlayedStageStats[i];
 			Song* pSong = ss.pSong;
@@ -325,7 +325,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_CourseDifficulty[p]) :
 				PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps);
 
-			for( int h=0; h<hsl.vHighScores.size(); h++ )
+			for( unsigned h=0; h<hsl.vHighScores.size(); h++ )
 			{
 				const HighScore &hs = hsl.vHighScores[h];
 				if( hs.sName == RANKING_TO_FILL_IN_MARKER[p]  &&
@@ -509,6 +509,9 @@ void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_textCategory, "Hide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_textCategory, "Unhide" );
 
+        /* fSecUntilDoneScrolling isn't used for anything. Is there any reason
+         * for it to be a variable? -Steve
+         */
 		float fSecUntilDoneScrolling = m_FeatDisplay[pn][NewFeat].m_Wheel.Scroll();
 	}
 }
