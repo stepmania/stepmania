@@ -440,6 +440,7 @@ void DSoundBuf::Stop()
 	buf->Stop();
 	buf->SetCurrentPosition(0);
 	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
+	LastPosition = 0;
 }
 
 /*
