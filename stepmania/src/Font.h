@@ -56,10 +56,10 @@ struct FontPageSettings
 		DrawExtraPixelsLeft(0), DrawExtraPixelsRight(0),
 		AddToAllWidths(0), 
 		LineSpacing(-1),
-		ScaleAllWidthsBy(1),
 		Top(-1),
 		Baseline(-1),
-		DefaultWidth(-1)
+		DefaultWidth(-1),
+		ScaleAllWidthsBy(1)
 	{ }
 
 	/* Map a range from a character map to glyphs.  If cnt is -1, map the
