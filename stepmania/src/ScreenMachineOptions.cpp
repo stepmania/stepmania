@@ -45,17 +45,17 @@ enum {
 OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
 	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
-	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","EVENT MODE" ),
+	OptionRow( "Songs Per\nPlay",			"1","2","3","4","5","6","7","EVENT MODE" ),
 	OptionRow( "Scoring\nType",			"MAX2","5TH" ),
-	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8","JUSTICE" ),
-	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
-	OptionRow( "Progressive\nLifebar",	"OFF","1","2","3","4","5","6","7","8"),
-	OptionRow( "Progressive\nStage Lifebar", "OFF","1","2","3","4","5","6","7","8","INSANITY"),
+	OptionRow( "Judge\nDifficulty",			"1","2","3","4","5","6","7","8","JUSTICE" ),
+	OptionRow( "Life\nDifficulty",			"1","2","3","4","5","6","7" ),
+	OptionRow( "Progressive\nLifebar",		"OFF","1","2","3","4","5","6","7","8"),
+	OptionRow( "Progressive\nStage Lifebar",	"OFF","1","2","3","4","5","6","7","8","INSANITY"),
 	OptionRow( "Progressive\nNonstop Lifebar",	"OFF","1","2","3","4","5","6","7","8","INSANITY"),
-	OptionRow( "Default\nFail Type",	"ARCADE","END OF SONG","OFF" ),	
+	OptionRow( "Default\nFail Type",		"ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Show\nStats",			"OFF","ON" ),
-	OptionRow( "Coins Per\nCredit",		"1","2","3","4","5","6","7","8" ),
-	OptionRow( "Joint\nPremium",		"OFF","ON" ),
+	OptionRow( "Coins Per\nCredit",			"1","2","3","4","5","6","7","8" ),
+	OptionRow( "Joint\nPremium",			"OFF","ON" ),
 	OptionRow( "Song\nOptions",			"HIDE","SHOW","ASK" ),
 };
 
@@ -114,11 +114,11 @@ void ScreenMachineOptions::ImportOptions()
 	so.FromString( PREFSMAN->m_sDefaultModifiers );
 	m_iSelectedOption[0][MO_PROGRESSIVE_LIFEBAR]	= PREFSMAN->m_iProgressiveLifebar;
 	m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR]	= PREFSMAN->m_iProgressiveNonstopLifebar;
-	m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR]		= PREFSMAN->m_iProgressiveStageLifebar;
-	m_iSelectedOption[0][MO_FAIL]					= so.m_FailType;
-	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
-	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
-	m_iSelectedOption[0][MO_JOINT_PREMIUM]			= PREFSMAN->m_bJointPremium ? 1:0;
+	m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR]	= PREFSMAN->m_iProgressiveStageLifebar;
+	m_iSelectedOption[0][MO_FAIL]			= so.m_FailType;
+	m_iSelectedOption[0][MO_SHOWSTATS]		= PREFSMAN->m_bShowStats ? 1:0;
+	m_iSelectedOption[0][MO_COINS_PER_CREDIT]	= PREFSMAN->m_iCoinsPerCredit - 1;
+	m_iSelectedOption[0][MO_JOINT_PREMIUM]		= PREFSMAN->m_bJointPremium ? 1:0;
 	switch(PREFSMAN->m_ShowSongOptions)
 	{
 	case PrefsManager::YES: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 1; break;
@@ -130,14 +130,14 @@ void ScreenMachineOptions::ImportOptions()
 
 void ScreenMachineOptions::ExportOptions()
 {
-	PREFSMAN->m_iCoinMode					= m_iSelectedOption[0][MO_COIN_MODE];
-	PREFSMAN->m_bMenuTimer					= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
-	PREFSMAN->m_iNumArcadeStages			= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
-	PREFSMAN->m_bEventMode					= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
+	PREFSMAN->m_iCoinMode			= m_iSelectedOption[0][MO_COIN_MODE];
+	PREFSMAN->m_bMenuTimer			= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
+	PREFSMAN->m_iNumArcadeStages		= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
+	PREFSMAN->m_bEventMode			= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
 	PREFSMAN->m_iProgressiveNonstopLifebar	= m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR];
 	PREFSMAN->m_iProgressiveStageLifebar	= m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR];
 
-	(int&)PREFSMAN->m_iScoringType				= m_iSelectedOption[0][MO_SCORING_TYPE];
+	(int&)PREFSMAN->m_iScoringType		= m_iSelectedOption[0][MO_SCORING_TYPE];
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
@@ -185,7 +185,7 @@ void ScreenMachineOptions::ExportOptions()
 		as.push_back( po.GetString() );
 	if( so.GetString() != "" )
 		as.push_back( so.GetString() );
-	PREFSMAN->m_sDefaultModifiers		= join(", ",as);
+	PREFSMAN->m_sDefaultModifiers			= join(", ",as);
 	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 	PREFSMAN->m_iCoinsPerCredit			= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
 	PREFSMAN->m_bJointPremium			= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;
