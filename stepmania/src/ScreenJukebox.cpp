@@ -6,7 +6,6 @@
 #include "GameState.h"
 #include "SongManager.h"
 #include "StepMania.h"
-#include "SDL_utils.h"
 #include "ScreenManager.h"
 #include "RageSounds.h"
 #include "Steps.h"
