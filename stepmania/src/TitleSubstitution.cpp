@@ -178,9 +178,14 @@ TitleSubst::TitleSubst()
 	AddTrans("^Love$", "", "", "Love &whiteheart;", "", "");
 	AddTrans("^Love Love$", "", "", "Love &whiteheart;", "", "");
 	AddTrans("^2 ?MB$", "", "", "2MB&oni;", "", "");
-	AddTrans("^Dancemania$", "", "", "Dancemania &oni;", "", "");
-	AddTrans("^TaQ$", "", "", "TaQ &oni;", "", "");
-	
+	AddTrans("^Dancemania( Oni)?$", "", "", "Dancemania &oni;", "", "");
+	AddTrans("^TaQ( Oni)?$", "", "", "TaQ &oni;", "", "");
+	/* 伝説道 */
+	AddTrans("^Legend Road$", "", "", "&tsutau;&setsu;&michi;", "", "");
+	/* 鬼の遅道 */
+	AddTrans("^Slow Demon Road$", "", "", "&oni;&hno;&osoi;&michi;", "", "");
+	/* 真鬼道 */
+	AddTrans("^True Demon Road$", "", "", "&true;&oni;&michi;", "", "");
 }
 
 TitleSubst::~TitleSubst()
