@@ -396,7 +396,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					break;
 				}
 			}
-			
+
+			// XXX this is where we can make the EX1 stage that will lead to
+			// EX2 a different color
 			if( !bFoundExtraSong )
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
 		}
