@@ -28,6 +28,7 @@
 #define LIFEBARONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","LifeMeterBarOnCommand")
 #define USECHARACTER						THEME->GetMetricB("ScreenHowToPlay","UseCharacter")
 #define CHARACTERONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","CharacterOnCommand")
+#define USEPAD								THEME->GetMetricB("ScreenHowToPlay","UsePad")
 #define PADONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PadOnCommand")
 #define PLAYERX								THEME->GetMetricI("ScreenHowToPlay","PlayerX")
 
@@ -61,9 +62,12 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_LifeMeterBar.Command( LIFEBARONCOMMAND );
 	m_LifeMeterBar.FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 
-	m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
-	m_mDancePad.SetRotationX( 35 );
-	m_mDancePad.Command( PADONCOMMAND );
+	if( USEPAD )
+	{
+		m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
+		m_mDancePad.SetRotationX( 35 );
+		m_mDancePad.Command( PADONCOMMAND );
+	}
 
 	// Display random character+pad
 	if( USECHARACTER && GAMESTATE->m_pCharacters.size() )
