@@ -349,7 +349,7 @@ void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect )
 	TexCoordArrayFromRect(m_CustomTexCoords, new_texcoord_frect);
 }
 
-void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left, top left, bottom right, top right
+void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: top left, bottom left, bottom right, top right
 { 
 	m_bUsingCustomTexCoords = true;
 	m_bTextureWrapping = true;
@@ -357,7 +357,7 @@ void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left
 		m_CustomTexCoords[i] = fTexCoords[i]; 
 }
 
-void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) const // order: bottom left, top left, bottom right, top right
+void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) const // order: top left, bottom left, bottom right, top right
 { 
 	for( int i=0; i<8; i++ )
 		fTexCoordsOut[i] = m_CustomTexCoords[i]; 
@@ -375,7 +375,7 @@ void Sprite::SetCustomImageRect( RectF rectImageCoords )
 	SetCustomTextureRect( rectImageCoords );
 }
 
-void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: bottom left, top left, bottom right, top right
+void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, bottom left, bottom right, top right
 {
 	// convert image coords to texture coords in place
 	for( int i=0; i<8; i+=2 )
