@@ -59,6 +59,9 @@ struct WheelItemData
 	WheelItemData() {}
 	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color );
 
+	bool HasBanner() const;
+	CString GetBanner() const;
+
 	WheelItemType	m_Type;
 	CString			m_sSectionName;
 	Course*			m_pCourse;

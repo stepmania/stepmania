@@ -269,3 +269,43 @@ void MusicWheelItem::DrawPrimitives()
 		bar->SetGlow( RageColor(0,0,0,0) );
 	}
 }
+
+bool WheelItemData::HasBanner() const
+{
+	switch( m_Type )
+	{
+	case TYPE_SONG:
+		return m_pSong->HasBanner();
+	case TYPE_COURSE:
+		return m_pCourse->HasBanner();
+	case TYPE_SECTION:
+		return SONGMAN->GetGroupBannerPath( m_sSectionName ).size() != 0;
+	/* XXX: These are special cases. */
+	case TYPE_ROULETTE:
+	case TYPE_RANDOM:
+		return false;
+		
+	default: ASSERT(0); return false; // "";
+	}
+}
+
+CString WheelItemData::GetBanner() const
+{
+	switch( m_Type )
+	{
+	case TYPE_SONG:
+		return m_pSong->GetBannerPath();
+	case TYPE_COURSE:
+		return m_pCourse->m_sBannerPath;
+	case TYPE_SECTION:
+		return SONGMAN->GetGroupBannerPath( m_sSectionName );
+
+	case TYPE_ROULETTE:
+		return THEME->GetPathToG("Banner random");
+
+	case TYPE_RANDOM:
+		return THEME->GetPathToG("Banner roulette");
+		
+	default: ASSERT(0); return "";
+	}
+}
