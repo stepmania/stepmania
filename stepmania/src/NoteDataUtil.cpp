@@ -1156,9 +1156,13 @@ void NoteDataUtil::Planted( NoteData &in, float fStartBeat, float fEndBeat )
 {
 	ConvertTapsToHolds( in, 1, fStartBeat, fEndBeat );
 }
-void NoteDataUtil::Twister( NoteData &in, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Floored( NoteData &in, float fStartBeat, float fEndBeat )
 {
 	ConvertTapsToHolds( in, 2, fStartBeat, fEndBeat );
+}
+void NoteDataUtil::Twister( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	ConvertTapsToHolds( in, 3, fStartBeat, fEndBeat );
 }
 void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat, float fEndBeat )
 {
@@ -1599,6 +1603,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	// transforms wouldn't do anything because tap-adding transforms skip areas 
 	// where there's a hold.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] )	NoteDataUtil::Floored(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
 
 	// Apply turns and shuffles last to that they affect inserts.

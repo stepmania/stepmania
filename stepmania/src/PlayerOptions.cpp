@@ -147,8 +147,9 @@ CString PlayerOptions::GetString() const
 	if( m_bTransforms[TRANSFORM_SKIPPY] )	sReturn += "Skippy, ";
 	if( m_bTransforms[TRANSFORM_MINES] )	sReturn += "Mines, ";
 	if( m_bTransforms[TRANSFORM_ECHO] )		sReturn += "Echo, ";
-	if( m_bTransforms[TRANSFORM_PLANTED] )	sReturn += "Planted, ";
 	if( m_bTransforms[TRANSFORM_STOMP] )	sReturn += "Stomp, ";
+	if( m_bTransforms[TRANSFORM_PLANTED] )	sReturn += "Planted, ";
+	if( m_bTransforms[TRANSFORM_FLOORED] )	sReturn += "Floored, ";
 	if( m_bTransforms[TRANSFORM_TWISTER] )	sReturn += "Twister, ";
 	if( m_bTransforms[TRANSFORM_NOJUMPS] )	sReturn += "NoJumps, ";
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	sReturn += "NoHands, ";
@@ -275,8 +276,9 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "skippy" )		m_bTransforms[TRANSFORM_SKIPPY] = on;
 		else if( sBit == "mines" )		m_bTransforms[TRANSFORM_MINES] = on;
 		else if( sBit == "echo" )		m_bTransforms[TRANSFORM_ECHO] = on;
-		else if( sBit == "planted" )	m_bTransforms[TRANSFORM_PLANTED] = on;
 		else if( sBit == "stomp" )		m_bTransforms[TRANSFORM_STOMP] = on;
+		else if( sBit == "planted" )	m_bTransforms[TRANSFORM_PLANTED] = on;
+		else if( sBit == "floored" )	m_bTransforms[TRANSFORM_FLOORED] = on;
 		else if( sBit == "twister" )	m_bTransforms[TRANSFORM_TWISTER] = on;
 		else if( sBit == "nojumps" )	m_bTransforms[TRANSFORM_NOJUMPS] = on;
 		else if( sBit == "nohands" )	m_bTransforms[TRANSFORM_NOHANDS] = on;
@@ -553,6 +555,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 	// Inserted holds can be really easy on some songs, and scores will be 
 	// highly hold-weighted, and very little tap score weighted.
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
+	if( m_bTransforms[TRANSFORM_FLOORED] )	return true;
 	if( m_bTransforms[TRANSFORM_TWISTER] )	return true;
 
 	// This makes songs with sparse notes easier.

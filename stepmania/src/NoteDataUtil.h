@@ -56,8 +56,9 @@ namespace NoteDataUtil
 		float fEndBeat = 99999 );
 	void AddMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Echo( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Stomp( NoteData &in, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Floored( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Twister( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat = 0, float fEndBeat = 99999 );
 
