@@ -6,8 +6,13 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <RageLog.h>
 
-#if defined(WIN32)
+#if !defined(WIN32)
+#include <dirent.h>
+#include <fcntl.h>
+#else
+#include <windows.h>
 #include <io.h>
 #endif
 
@@ -15,10 +20,101 @@
 #define O_BINARY 0
 #endif
 
-/* XXX: Drop FileDB and cache/resolve in here. */
 #include "RageUtil_FileDB.h"
 
 /* This driver handles direct file access. */
+class DirectFilenameDB: public FilenameDB
+{
+protected:
+	virtual void PopulateFileSet( FileSet &fs, const CString &sPath );
+public:
+	DirectFilenameDB() { ExpireSeconds = 30; }
+};
+
+void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
+{
+	CString sPath = path;
+
+	/* Resolve path cases (path/Path -> PATH/path). */
+	ResolvePath( sPath );
+
+	fs.age.GetDeltaTime(); /* reset */
+	fs.files.clear();
+
+#if defined(WIN32)
+	WIN32_FIND_DATA fd;
+
+	if ( sPath.size() > 0  && sPath.Right(1) == SLASH )
+		sPath.erase( sPath.size() - 1 );
+
+	HANDLE hFind = FindFirstFile( sPath+SLASH "*", &fd );
+
+	if( hFind == INVALID_HANDLE_VALUE )
+		return;
+
+	do {
+		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
+			continue;
+
+		File f;
+		f.SetName( fd.cFileName );
+		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+		f.size = fd.nFileSizeLow;
+		f.mtime = fd.ftLastWriteTime.dwLowDateTime;
+
+		fs.files.insert(f);
+	} while( FindNextFile( hFind, &fd ) );
+	FindClose(hFind);
+#else
+	int OldDir = open(".", O_RDONLY);
+	if( OldDir == -1 )
+		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
+
+	if( chdir(sPath) == -1 )
+	{
+		/* Only log once per dir. */
+		if( LOG )
+			LOG->MapLog("chdir " + sPath, "Couldn't chdir(%s): %s", sPath.c_str(), strerror(errno) );
+		close( OldDir );
+		return;
+	}
+	DIR *d = opendir(".");
+
+	while(struct dirent *ent = readdir(d))
+	{
+		if(!strcmp(ent->d_name, ".")) continue;
+		if(!strcmp(ent->d_name, "..")) continue;
+		
+		File f;
+		f.SetName( ent->d_name );
+		
+		struct stat st;
+		if( stat(ent->d_name, &st) == -1 )
+		{
+			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
+			if( lstat(ent->d_name, &st) == 0 )
+				continue;
+			
+			/* Huh? */
+			if(LOG)
+				LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
+					ent->d_name, sPath.c_str(), strerror(errno));
+			continue;
+		} else {
+			f.dir = (st.st_mode & S_IFDIR);
+			f.size = st.st_size;
+			f.mtime = st.st_mtime;
+		}
+
+		fs.files.insert(f);
+	}
+	       
+	closedir(d);
+	if( fchdir( OldDir ) == -1 )
+		RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
+	close( OldDir );
+#endif
+}
 
 class RageFileObjDirect: public RageFileObj
 {
@@ -40,16 +136,21 @@ public:
 RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
 	root(root_)
 {
+	FDB = new DirectFilenameDB;
+
 	if( root.Right(1) != "/" )
 		root += '/';
 }
 
-void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+RageFileDriverDirect::~RageFileDriverDirect()
+{
+	delete FDB;
+}
 
 void RageFileDriverDirect::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	const unsigned OldStart = AddTo.size();
-	FDB_GetDirListing( root+sPath, AddTo, bOnlyDirs, bReturnPathToo );
+	FDB->GetDirListing( root+sPath, AddTo, bOnlyDirs, bReturnPathToo );
 
 	if( bReturnPathToo )
 	{
@@ -59,15 +160,70 @@ void RageFileDriverDirect::GetDirListing( CString sPath, CStringArray &AddTo, bo
 	}
 }
 
+/* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
+static bool CreateDirectories( CString Path )
+{
+	CStringArray parts;
+	CString curpath;
+	split(Path, SLASH, parts);
+
+	for(unsigned i = 0; i < parts.size(); ++i)
+	{
+		curpath += parts[i] + SLASH;
+		if( mkdir(curpath, 0755) == 0 )
+			continue;
+
+		if(errno == EEXIST)
+			continue;		// we expect to see this error
+
+		// Log the error, but continue on.
+		/* When creating a directory that already exists over Samba, Windows is
+		 * returning ENOENT instead of EEXIST. */
+		/* On Win32 when Path is only a drive letter (e.g. "i:\"), the result is 
+		 * EINVAL. */
+		if( LOG )
+			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+
+		/* Make sure it's a directory. */
+		FlushDirCache();
+		if( !IsADirectory(curpath) )
+		{
+			if( LOG )
+				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
+			
+			// HACK: IsADirectory doesn't work if Path contains a drive letter.
+			// So, ignore IsADirectory's result and continue trying to create
+			// directories anyway.  This shouldn't change behavior, but 
+			// is inefficient because we don't bail early on an error.
+			//return false;
+		}
+	}
+	
+	return true;
+}
+
 RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
 	sPath = root + sPath;
-	ResolvePath( sPath );
+	/* XXX: make sure this will partially resolve.  eg. if "abc/def" exists,
+	 * and we're opening "ABC/DEF/GHI/jkl/mno", make sure this will resolve
+	 * to "abc/def/GHI/jkl/mno"; we'll create the missing ones later. */
+	FDB->ResolvePath( sPath );
+
 	int flags = O_BINARY;
 	if( mode == RageFile::READ )
 		flags |= O_RDONLY;
 	else
+	{
+		CString dir = Dirname(sPath);
+		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
+			CreateDirectories( dir );
 		flags |= O_WRONLY|O_CREAT|O_TRUNC;
+	}
+
+#if defined(XBOX)
+	sPath.Replace( "/", "\\" );
+#endif
 
 	int fd = open( sPath, flags, 0644 );
 	if( fd == -1 )
@@ -79,48 +235,20 @@ RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode,
 	return new RageFileObjDirect( fd, p );
 }
 
-static bool DoStat(CString sPath, struct stat *st)
-{
-	TrimRight(sPath, "/\\");
-	return stat(sPath.c_str(), st) != -1;
-}
-
 RageFileManager::FileType RageFileDriverDirect::GetFileType( CString sPath )
 {
-	sPath = root + sPath;
-
-	ResolvePath( sPath );
-
-	struct stat st;
-	if( !DoStat(sPath, &st) )
-		return RageFileManager::TYPE_NONE;
-
-	if( st.st_mode & S_IFDIR )
-		return RageFileManager::TYPE_DIR;
-
-	return RageFileManager::TYPE_FILE;
+	/* XXX */
+	return (RageFileManager::FileType) FDB->GetFileType( root + sPath );
 }
 
 int RageFileDriverDirect::GetFileSizeInBytes( CString sPath )
 {
-	sPath = root + sPath;
-
-	struct stat st;
-	if( !DoStat(sPath, &st) )
-		return -1;
-
-	return st.st_size;
+	return FDB->GetFileSize( root + sPath );
 }
 
 int RageFileDriverDirect::GetFileModTime( CString sPath )
 {
-	sPath = root + sPath;
-
-	struct stat st;
-	if( !DoStat(sPath, &st) )
-		return -1;
-
-	return st.st_mtime;
+	return FDB->GetFileModTime( root + sPath );
 }
 
 #ifdef _WINDOWS
@@ -172,6 +300,12 @@ bool RageFileDriverDirect::Ready()
 	return true;
 #endif
 }
+
+void RageFileDriverDirect::FlushDirCache( const CString &sPath )
+{
+	FDB->FlushDirCache();
+}
+
 
 RageFileObjDirect::RageFileObjDirect( int fd_, RageFile &p ):
 	RageFileObj( p )

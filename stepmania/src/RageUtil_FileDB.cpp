@@ -2,160 +2,8 @@
 
 #include "RageUtil_FileDB.h"
 #include "RageUtil.h"
-#include "RageTimer.h"
 #include "RageLog.h"
-#include <map>
-#include <set>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <errno.h>
-#include "RageFile.h"
 #include "arch/arch.h"
-
-#if !defined(WIN32)
-#include <dirent.h>
-#include <fcntl.h>
-#else
-#include "windows.h"
-#endif
-
-enum FileType { TTYPE_FILE, TTYPE_DIR, TTYPE_NONE };
-
-struct File
-{
-	CString name;
-	CString lname;
-
-	void SetName( const CString &fn )
-	{
-		name = fn;
-                lname = name;
-		lname.MakeLower();
-	}
-	
-	bool dir;
-	int size;
-	/* Modification time of the file.  The contents of this is undefined, except that
-	 * when the file has been modified, this value will change. */
-	int mtime;
-
-	File() { dir=false; size=-1; mtime=-1; }
-	File( const CString &fn )
-	{
-		SetName( fn );
-		dir=false; size=-1; mtime=-1;
-	}
-	
-	bool operator== (const File &rhs) const { return lname==rhs.lname; }
-	bool operator< (const File &rhs) const { return lname<rhs.lname; }
-
-	bool equal(const File &rhs) const { return lname == rhs.lname; }
-	bool equal(const CString &rhs) const
-	{
-		CString l = rhs;
-		l.MakeLower();
-		return lname == l;
-	}
-};
-
-/* This represents a directory. */
-struct FileSet
-{
-	set<File> files;
-	RageTimer age;
-	void LoadFromDir(const CString &dir);
-	void GetFilesMatching(
-		const CString &beginning, const CString &containing, const CString &ending,
-		vector<CString> &out, bool bOnlyDirs) const;
-	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
-
-	FileType GetFileType( const CString &path ) const;
-	int GetFileSize(const CString &path) const;
-	int GetFileModTime(const CString &path) const;
-};
-
-void FileSet::LoadFromDir(const CString &dir)
-{
-	age.GetDeltaTime(); /* reset */
-	files.clear();
-
-#if defined(WIN32)
-	WIN32_FIND_DATA fd;
-	CString dirHolder = dir ;
-
-	if ( dirHolder.size() > 0  && dirHolder.Right(1) == SLASH )
-	{
-		dirHolder.erase( dirHolder.size() - 1 ) ;
-	}
-
-	HANDLE hFind = FindFirstFile( dirHolder+SLASH "*", &fd );
-
-	if( hFind == INVALID_HANDLE_VALUE )
-		return;
-
-	do {
-		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
-			continue;
-
-		File f;
-		f.SetName( fd.cFileName );
-		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
-		f.size = fd.nFileSizeLow;
-		f.mtime = fd.ftLastWriteTime.dwLowDateTime;
-
-		files.insert(f);
-	} while( FindNextFile( hFind, &fd ) );
-	FindClose(hFind);
-#else
-	int OldDir = open(".", O_RDONLY);
-	if( OldDir == -1 )
-		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
-
-	if( chdir(dir) == -1 )
-	{
-		/* Only log once per dir. */
-		if( LOG )
-			LOG->MapLog("chdir " + dir, "Couldn't chdir(%s): %s", dir.c_str(), strerror(errno) );
-		close( OldDir );
-		return;
-	}
-	DIR *d = opendir(".");
-
-	while(struct dirent *ent = readdir(d))
-	{
-		if(!strcmp(ent->d_name, ".")) continue;
-		if(!strcmp(ent->d_name, "..")) continue;
-		
-		File f;
-		f.SetName( ent->d_name );
-		
-		struct stat st;
-		if( stat(ent->d_name, &st) == -1 )
-		{
-			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
-			if( lstat(ent->d_name, &st) == 0 )
-				continue;
-			
-			/* Huh? */
-			if(LOG)
-				LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
-					ent->d_name, dir.c_str(), strerror(errno));
-			continue;
-		} else {
-			f.dir = (st.st_mode & S_IFDIR);
-			f.size = st.st_size;
-			f.mtime = st.st_mtime;
-		}
-
-		files.insert(f);
-	}
-	       
-	closedir(d);
-	if( fchdir( OldDir ) == -1 )
-		RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
-	close( OldDir );
-#endif
-}
 
 /* Search for "beginning*containing*ending". */
 void FileSet::GetFilesMatching(const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs) const
@@ -236,11 +84,7 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 	if( Path.size() > 0 && Path.Right(1) == SLASH )
 		Path.erase( Path.size()-1 );
 
-#ifdef _XBOX
-	static Regex split("(.*\\\\)([^\\\\]+)");
-#else
 	static Regex split("(.*/)([^/]+)");
-#endif
 
 	CStringArray match;
 	if(split.Compare(Path, match)) {
@@ -249,45 +93,11 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 		Name = match[1];
 	} else {
 		/* No slash. */
-#ifdef _XBOX
-		Dir = "D:\\" ;
-		Name = "" ;
-#else
 		Dir = "." SLASH;
 		Name = Path;
-#endif
 	}
 }
 
-
-
-class FilenameDB
-{
-	FileSet &GetFileSet( CString dir );
-
-	/* Directories we have cached: */
-	map<CString, FileSet *> dirs;
-
-	void GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
-	void GetFilesMatching(const CString &dir, 
-		const CString &beginning, const CString &containing, const CString &ending, 
-		vector<CString> &out, bool bOnlyDirs);
-
-public:
-	/* This handles at most one * wildcard.  If we need anything more complicated,
-	 * we'll need to use fnmatch or regex. */
-	void GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
-
-	/* Search for "path" case-insensitively and replace it with the correct
-	 * case.  If "path" doesn't exist at all, return false and don't change it. */
-	bool ResolvePath(CString &path);
-
-	FileType GetFileType( const CString &path );
-	int GetFileSize(const CString &path);
-	int GetFileModTime( const CString &sFilePath );
-
-	void FlushDirCache();
-};
 
 
 FileType FilenameDB::GetFileType( const CString &sPath )
@@ -399,57 +209,43 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 {
 	/* Normalize the path. */
 	dir.Replace("\\", SLASH); /* foo\bar -> foo/bar */
-	dir.Replace("/", SLASH); /* foo//bar -> foo/bar */
 	dir.Replace("//", SLASH); /* foo//bar -> foo/bar */
+
 	CString lower = dir;
 	lower.MakeLower();
 
-	FileSet *ret;
 	map<CString, FileSet *>::iterator i = dirs.find( lower );
-	bool reload = false;
-	if(i == dirs.end())
+	if( ExpireSeconds != -1 && i != dirs.end() && i->second->age.PeekDeltaTime() >= ExpireSeconds )
 	{
-		ret = new FileSet;
-		dirs[lower] = ret;
-		reload = true;
-	}
-	else
-	{
-		ret = i->second;
-		if(ret->age.PeekDeltaTime() > 30)
-			reload = true;
+		delete i->second;
+		i = dirs.end();
 	}
 
-	if(reload)
-	{
-		CString RealDir = dir;
+	if( i != dirs.end() )
+		return *i->second;
 
-		/* Resolve path cases (path/Path -> PATH/path). */
-		ResolvePath( RealDir );
-
-		ret->LoadFromDir(RealDir);
-	}
+	FileSet *ret = new FileSet;
+	PopulateFileSet( *ret, dir );
+	AddFileSet( dir, ret );
 	return *ret;
+}
+
+void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
+{
+	sPath.MakeLower();
+	dirs[sPath] = fs;
 }
 
 void FilenameDB::FlushDirCache()
 {
-	set<FileSet *> freed;
 	for( map<CString, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
-	{
-		if( freed.find(i->second) != freed.end() )
-			continue;
-
 		delete i->second;
-		freed.insert( i->second );
-	}
 	dirs.clear();
 }
 
 
-FilenameDB FDB;
 
-void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );
 
@@ -475,11 +271,11 @@ void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool
 		fn = "*";
 
 	unsigned start = AddTo.size();
-	FDB.GetFilesSimpleMatch(sPath, fn, AddTo, bOnlyDirs);
+	GetFilesSimpleMatch(sPath, fn, AddTo, bOnlyDirs);
 
 	if(bReturnPathToo && start < AddTo.size())
 	{
-		FDB.ResolvePath(sPath);
+		ResolvePath(sPath);
 		while(start < AddTo.size())
 		{
 			AddTo[start] = sPath + AddTo[start];
@@ -488,12 +284,7 @@ void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool
 	}
 }
 
-bool ResolvePath(CString &path) { return FDB.ResolvePath(path); }
-
-void FlushDirCache()
-{
-	FDB.FlushDirCache();
-}
+bool ResolvePath(CString &path) { return true; } // XXX
 
 
 #if 0
@@ -511,83 +302,6 @@ unsigned GetFileSizeInBytes( const CString &sPath )
 }
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
-	FDB_GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
-}
-#elif 0
-static bool DoStat(CString sPath, struct stat *st)
-{
-	TrimRight(sPath, "/\\");
-    return stat(sPath, st) != -1;
-}
-bool DoesFileExist( const CString &sPath )
-{
-	if(sPath.empty()) return false;
-	struct stat st;
-    return DoStat(sPath, &st);
-}
-
-bool IsAFile( const CString &sPath )
-{
-    return DoesFileExist(sPath) && !IsADirectory(sPath);
-}
-
-bool IsADirectory( const CString &sPath )
-{
-	if(sPath.empty()) return false;
-	struct stat st;
-    if (!DoStat(sPath, &st))
-		return false;
-
-	return !!(st.st_mode & S_IFDIR);
-}
-
-unsigned GetFileSizeInBytes( const CString &sFilePath )
-{
-	struct stat st;
-	if(!DoStat(sFilePath, &st))
-		return 0;
-	
-	return st.st_size;
-}
-
-int GetFileModTime( const CString &sPath )
-{
-	struct stat st;
-	if(!DoStat(sFilePath, &st))
-		return -1;
-	
-	return st.st_mtime;
-}
-#else
-#include "RageFileManager.h"
-
-bool DoesFileExist( const CString &sPath )
-{
-	return FILEMAN->DoesFileExist( sPath );
-}
-
-bool IsAFile( const CString &sPath )
-{
-	return FILEMAN->IsAFile( sPath );
-}
-
-bool IsADirectory( const CString &sPath )
-{
-	return FILEMAN->IsADirectory( sPath );
-}
-
-unsigned GetFileSizeInBytes( const CString &sPath )
-{
-	return FILEMAN->GetFileSizeInBytes( sPath );
-}
-
-int GetFileModTime( const CString &sPath )
-{
-	return FILEMAN->GetFileModTime( sPath );
-}
-
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
-{
-	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
+	FDB.GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 #endif
