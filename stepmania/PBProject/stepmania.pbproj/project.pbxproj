@@ -1322,6 +1322,7 @@
 				AA0A3DE9060513A00044E6B1,
 				AAE7804C060814AC0034E65F,
 				AAE7808806081A000034E65F,
+				AAE7812E0608249E0034E65F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3255,6 +3256,7 @@
 				AA0A3DE8060513A00044E6B1,
 				AAE7804B060814AC0034E65F,
 				AAE7808706081A000034E65F,
+				AAE7812D0608249E0034E65F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9017,6 +9019,8 @@
 		};
 		AA6EFDC804770AF1005F316C = {
 			children = (
+				AAE7812B0608249E0034E65F,
+				AAE7812C0608249E0034E65F,
 				AAE7808506081A000034E65F,
 				AAE7808606081A000034E65F,
 				AABBD80605D8E9FC00B44FC2,
@@ -14863,7 +14867,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
-			path = NetworkSyncManager.cpp;
+			name = NetworkSyncManager.cpp;
+			path = ../src/NetworkSyncManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -14871,7 +14876,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			path = NetworkSyncManager.h;
+			name = NetworkSyncManager.h;
+			path = ../src/NetworkSyncManager.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -14891,7 +14897,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
-			path = ezsockets.cpp;
+			name = ezsockets.cpp;
+			path = ../src/ezsockets.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -14899,7 +14906,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			path = ezsockets.h;
+			name = ezsockets.h;
+			path = ../src/ezsockets.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -14911,6 +14919,36 @@
 		};
 		AAE7808806081A000034E65F = {
 			fileRef = AAE7808606081A000034E65F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAE7812B0608249E0034E65F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ActiveAttackList.cpp;
+			path = ../src/ActiveAttackList.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAE7812C0608249E0034E65F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ActiveAttackList.h;
+			path = ../src/ActiveAttackList.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAE7812D0608249E0034E65F = {
+			fileRef = AAE7812B0608249E0034E65F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAE7812E0608249E0034E65F = {
+			fileRef = AAE7812C0608249E0034E65F;
 			isa = PBXBuildFile;
 			settings = {
 			};
