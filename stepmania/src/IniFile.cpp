@@ -13,6 +13,7 @@
 
 #include "IniFile.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include <fstream>
 using namespace std;
 
@@ -38,10 +39,12 @@ void IniFile::SetPath(CString newpath)
 // returns true if successful, false otherwise
 bool IniFile::ReadFile()
 {
+LOG->Trace("INI: Reading '%s'",path.c_str() );
 	ifstream file(path);
 
 	if (!file.is_open())
 	{
+LOG->Trace("INI: FAILED");
 		error = "Unable to open ini file.";
 		return 0;
 	}
@@ -49,6 +52,7 @@ bool IniFile::ReadFile()
 	CString line, keyname;
 	while (getline(file, line))
 	{
+LOG->Trace("Read line '%s'", line.c_str());
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
 			line[1] == '\xbb' &&
@@ -63,25 +67,32 @@ bool IniFile::ReadFile()
 			continue;
 
 		StripCrnl(line);
+LOG->Trace("Stripped: '%s'", line.c_str());
 
 		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
 			continue; /* comment */
+LOG->Trace("Not a comment");
 
 		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 		{
 			keyname = line.substr(1, line.size()-2);
+LOG->Trace("Key name '%s'", keyname.c_str());
 		}
 		else //if a value
 		{
 			int iEqualIndex = line.Find("=");
+LOG->Trace("Val, %i", iEqualIndex );
 			if( iEqualIndex != -1 )
 			{
 				CString valuename = line.Left(iEqualIndex);
 				CString value = line.Right(line.GetLength()-valuename.GetLength()-1);
+LOG->Trace("'%s' '%s' (key '%s')", valuename.c_str(), value.c_str(), keyname.c_str() );
 				SetValue(keyname,valuename,value);
 			}
 		}
 	}
+	LOG->Trace("INI: done");
+	
 	return 1;
 }
 

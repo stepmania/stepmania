@@ -15,6 +15,7 @@
 #include "RageUtil.h"
 #include "RageTexture.h"
 #include "RageTextureManager.h"
+#include "RageLog.h"
 
 AnimatedTexture::AnimatedTexture()
 {
@@ -29,17 +30,21 @@ AnimatedTexture::~AnimatedTexture()
 
 void AnimatedTexture::Load( CString sTexOrIniPath )
 {
+LOG->Trace("AnimatedTexture::Load(%s)", sTexOrIniPath.c_str());
 	ASSERT( vFrames.empty() );	// don't load more than once
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sTexOrIniPath, sDir, sFName, sExt );
 
 	bool bIsIni = sTexOrIniPath.Right(3).CompareNoCase("ini")== 0;
+LOG->Trace("sTexOrIniPath: is ini: %i", bIsIni);
 	if( bIsIni )
 	{
 		IniFile ini;
 		ini.SetPath( sTexOrIniPath );
-		ini.ReadFile();
+		if( !ini.ReadFile() )
+			RageException::Throw( "Error reading %s: %s", sTexOrIniPath.c_str(), ini.error.c_str() );
+
 		if( !ini.GetKey("AnimatedTexture") )
 			RageException::Throw( "The animated texture file '%s' doesn't contain a section called 'AnimatedTexture'.", sTexOrIniPath.c_str() );
 		for( int i=0; i<1000; i++ )
