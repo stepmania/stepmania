@@ -5,6 +5,7 @@
 #include "RageDisplay.h"
 #include "IniFile.h"
 #include "arch/Dialog/Dialog.h"
+#include "RageLog.h"
 
 ActorScroller::ActorScroller()
 {
@@ -43,9 +44,14 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
-#define REQUIRED_GET_VALUE( szName, valueOut ) \
+	bool bUseScroller = false;
+	pNode->GetAttrValue( "UseScroller", bUseScroller );
+	if( !bUseScroller )
+		return;
+
+#define GET_VALUE( szName, valueOut ) \
 	if( !pNode->GetAttrValue( szName, valueOut ) ) \
-		Dialog::OK( ssprintf("Animation in '%s' is missing the value Scroller::%s", sDir.c_str(), szName) );
+		LOG->Warn( ssprintf("Animation in '%s' is missing the value Scroller::%s", sDir.c_str(), szName) );
 
 	float fSecondsPerItem = 1;
 	float fNumItemsToDraw = 7;
@@ -56,23 +62,23 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	float fItemPaddingStart = 0;
 	float fItemPaddingEnd = 0;
 
-	REQUIRED_GET_VALUE( "SecondsPerItem", fSecondsPerItem );
-	REQUIRED_GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
-	REQUIRED_GET_VALUE( "RotationDegreesX", vRotationDegrees[0] );
-	REQUIRED_GET_VALUE( "RotationDegreesY", vRotationDegrees[1] );
-	REQUIRED_GET_VALUE( "RotationDegreesZ", vRotationDegrees[2] );
-	REQUIRED_GET_VALUE( "TranslateTerm0X", vTranslateTerm0[0] );
-	REQUIRED_GET_VALUE( "TranslateTerm0Y", vTranslateTerm0[1] );
-	REQUIRED_GET_VALUE( "TranslateTerm0Z", vTranslateTerm0[2] );
-	REQUIRED_GET_VALUE( "TranslateTerm1X", vTranslateTerm1[0] );
-	REQUIRED_GET_VALUE( "TranslateTerm1Y", vTranslateTerm1[1] );
-	REQUIRED_GET_VALUE( "TranslateTerm1Z", vTranslateTerm1[2] );
-	REQUIRED_GET_VALUE( "TranslateTerm2X", vTranslateTerm2[0] );
-	REQUIRED_GET_VALUE( "TranslateTerm2Y", vTranslateTerm2[1] );
-	REQUIRED_GET_VALUE( "TranslateTerm2Z", vTranslateTerm2[2] );
-	REQUIRED_GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
-	REQUIRED_GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
-#undef REQUIRED_GET_VALUE
+	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
+	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
+	GET_VALUE( "RotationDegreesX", vRotationDegrees[0] );
+	GET_VALUE( "RotationDegreesY", vRotationDegrees[1] );
+	GET_VALUE( "RotationDegreesZ", vRotationDegrees[2] );
+	GET_VALUE( "TranslateTerm0X", vTranslateTerm0[0] );
+	GET_VALUE( "TranslateTerm0Y", vTranslateTerm0[1] );
+	GET_VALUE( "TranslateTerm0Z", vTranslateTerm0[2] );
+	GET_VALUE( "TranslateTerm1X", vTranslateTerm1[0] );
+	GET_VALUE( "TranslateTerm1Y", vTranslateTerm1[1] );
+	GET_VALUE( "TranslateTerm1Z", vTranslateTerm1[2] );
+	GET_VALUE( "TranslateTerm2X", vTranslateTerm2[0] );
+	GET_VALUE( "TranslateTerm2Y", vTranslateTerm2[1] );
+	GET_VALUE( "TranslateTerm2Z", vTranslateTerm2[2] );
+	GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
+	GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
+#undef GET_VALUE
 
 	Load( 
 		fSecondsPerItem,

@@ -89,6 +89,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &
 				// import a whole BGAnimation
 				sImportDir = sAniDir + sImportDir;
 				CollapsePath( sImportDir );
+
 				AddLayersFromAniDir( sImportDir, layersAddTo, bGeneric );
 			}
 			else
@@ -120,21 +121,32 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
-		AddLayersFromAniDir( sAniDir, m_SubActors, bGeneric );	// TODO: Check for circular load
 
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
 
-		const XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
+		AddLayersFromAniDir( sAniDir, m_SubActors, bGeneric );	// TODO: Check for circular load
+
+		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 		XNode dummy;
 		dummy.m_sName = "BGAnimation";
 		if( pBGAnimation == NULL )
 			pBGAnimation = &dummy;
+
+		// Ugly: Scroller attributes in BGAnimation.ini files are in an element called 
+		// "Scroller", and not in the "BGAnimation" element.  Move the attributes from 
+		// Scroller to BGAnimation.
+		XNode* pScrollerNode = ini.GetChild( "Scroller" );
+		if( pScrollerNode )
+		{
+			FOREACH_Attr( pScrollerNode, pAttr )
+				pBGAnimation->m_attrs.insert( pair<CString,XAttr*>(pAttr->m_sName, pAttr) );
+			// Clear the copies in the Scroller node so that we don't double-delete.
+			pScrollerNode->m_attrs.clear();	
+		}
+
 		LoadFromNode( sAniDir, *pBGAnimation );
 
-		const XNode* pScrollerNode = ini.GetChild( "Scroller" );
-		if( pScrollerNode != NULL )
-			ActorScroller::LoadFromNode( ini.GetPath(), pScrollerNode );
 	}
 	else
 	{
@@ -179,7 +191,7 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 		this->RunCommands( ParseCommands(sInitCommand) );
 	}
 
-	ActorFrame::LoadFromNode( sDir, &node );
+	ActorScroller::LoadFromNode( sDir, &node );
 
 	Command cmd;
 	cmd.Load( "PlayCommand,Init" );
