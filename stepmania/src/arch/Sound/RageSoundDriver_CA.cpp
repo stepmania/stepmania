@@ -3,6 +3,7 @@
 #include "RageSoundDriver_CA.h"
 #include "CAHelpers.h"
 #include "RageLog.h"
+#include "RageTimer.h"
 
 #include "CAAudioHardwareSystem.h"
 #include "CAAudioHardwareDevice.h"
@@ -15,6 +16,10 @@
 #include <mach/mach_error.h>
 
 static AudioConverter *gConverter;
+
+/* temporary hack: */
+static float g_fIOProcTime = 0;
+static float g_iIOProcTimeSamples = 0;
 
 static CString FormatToString( int fmt )
 {
@@ -219,6 +224,9 @@ RageSound_CA::~RageSound_CA()
     mOutputDevice->StopIOProc(GetData);
     delete gConverter;
     delete mOutputDevice;
+
+	LOG->Info( "IOProc time: %f in %i calls, %f per call",
+		g_fIOProcTime, g_iIOProcTimeSamples, g_fIOProcTime/g_iIOProcTimeSamples );
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
@@ -243,6 +251,8 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
                                const AudioTimeStamp *inOutputTime,
                                void *inClientData)
 {
+	RageTimer tm;
+
     RageSound_CA *This = (RageSound_CA *)inClientData;
     UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
     
@@ -250,7 +260,11 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
     
     This->mDecodePos = int64_t(inOutputTime->mSampleTime);
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
-    return noErr;
+
+	g_fIOProcTime += tm.GetDeltaTime();
+	++g_iIOProcTimeSamples;
+
+	return noErr;
 }
 
 OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
