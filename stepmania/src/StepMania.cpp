@@ -1135,7 +1135,10 @@ int main(int argc, char* argv[])
 
 	// UGLY: Now that all global singletons are constructed so that they, let them
 	// all register with Lua.
-	LUA->RegisterTypes();
+	//
+	// ResetState wipes out method tables.   We need to call UpdateLuaGlobals, so
+	// we re-run scripts that may add to them.
+	THEME->UpdateLuaGlobals();
 
 	/* People may want to do something else while songs are loading, so do
 	 * this after loading songs. */
