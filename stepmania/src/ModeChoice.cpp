@@ -38,7 +38,7 @@ bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 
 bool ModeChoice::DescribesCurrentModeForAllPlayers() const
 {
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_PlayerNumber( pn )
 		if( !DescribesCurrentMode( (PlayerNumber) pn) )
 			return false;
 
@@ -59,7 +59,7 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_pSteps == NULL  &&  m_dc != DIFFICULTY_INVALID )
 	{
 		// Why is this checking for all players?
-		for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		FOREACH_PlayerNumber( pn )
 			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
 				return false;
 	}
@@ -360,7 +360,7 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 void ModeChoice::ApplyToAllPlayers() const
 {
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_PlayerNumber( pn )
 		if( GAMESTATE->IsHumanPlayer(pn) )
 			Apply((PlayerNumber) pn);
 

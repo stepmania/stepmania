@@ -290,7 +290,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			else
 			{
 				for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-					for( int p=0; p<NUM_PLAYERS; p++ )
+					FOREACH_PlayerNumber( p )
 						if( GAMESTATE->IsPlayerEnabled(p) )
 						{
 							m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
@@ -306,7 +306,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			else
 			{
 				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-					for( int p=0; p<NUM_PLAYERS; p++ )
+					FOREACH_PlayerNumber( p )
 						if( GAMESTATE->IsPlayerEnabled(p) )
 							COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PostSwitchPage" );
 			}
@@ -340,7 +340,7 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 			COMMAND( m_sprIcon[i][c], m_aModeChoices[c].IsPlayable()? "Enabled":"Disabled" );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
@@ -419,7 +419,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	else
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					COMMAND( m_sprCursor[i][p], "PreSwitchPage" );
 	}
@@ -438,7 +438,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	else
 	{
 		for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PreSwitchPage" );
 	}
@@ -480,7 +480,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 
 	bool bMoveAll = SHARED_PREVIEW_AND_CURSOR || GetCurrentPage()!=PAGE_1;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		const int iOldChoice = m_iChoice[p];
 
@@ -609,7 +609,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	if( SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
 		/* Only one player has to pick.  Choose this for all the other players, too. */
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
 				ASSERT( !m_bChosen[p] );
@@ -620,7 +620,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	{
 		fSecs = max( fSecs, DoMenuStart(pn) );
 		// check to see if everyone has chosen
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 				bAllDone &= m_bChosen[p];
 	}
@@ -664,7 +664,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		}
 		else
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 					{
@@ -687,7 +687,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	else
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{
 					m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
@@ -705,7 +705,7 @@ void ScreenSelectMaster::TweenOnScreen()
 				COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" );
 		}
 		else
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{
 					m_Scroller[p].SetCurrentAndDestinationItem( m_iChoice[p] );
@@ -731,7 +731,7 @@ void ScreenSelectMaster::TweenOffScreen()
 	else
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					OFF_COMMAND( m_sprCursor[i][p] );
 	}
@@ -748,7 +748,7 @@ void ScreenSelectMaster::TweenOffScreen()
 				SelectedByEitherPlayer = true;
 		}
 		else
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsPlayerEnabled(p) && m_iChoice[p] == (int)c )
 					SelectedByEitherPlayer = true;
 
@@ -770,7 +770,7 @@ void ScreenSelectMaster::TweenOffScreen()
 		else
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-				for( int p=0; p<NUM_PLAYERS; p++ )
+				FOREACH_PlayerNumber( p )
 					if( GAMESTATE->IsPlayerEnabled(p) )
 					{
 						OFF_COMMAND( m_sprPreview[i][c][p] );
@@ -784,7 +784,7 @@ void ScreenSelectMaster::TweenOffScreen()
 		if( SHARED_PREVIEW_AND_CURSOR )
 			OFF_COMMAND( m_Scroller[0] );
 		else
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				OFF_COMMAND( m_Scroller[p] );
 	}
 

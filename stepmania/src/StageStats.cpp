@@ -29,7 +29,7 @@ StageStats::StageStats()
 	StageType = STAGE_INVALID;
 	fGameplaySeconds = 0;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		pSteps[p] = NULL;
 		iMeter[p] = 0;
@@ -64,7 +64,7 @@ void StageStats::AddStats( const StageStats& other )
 
 	fGameplaySeconds += other.fGameplaySeconds;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		pSteps[p] = NULL;
 		iMeter[p] += other.iMeter[p] * iLengthMultiplier;
@@ -224,7 +224,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 
 bool StageStats::OnePassed() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsHumanPlayer(p) && !bFailed[p] )
 			return true;
 	return false;
@@ -232,7 +232,7 @@ bool StageStats::OnePassed() const
 
 bool StageStats::AllFailed() const
 {
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_PlayerNumber( pn )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(pn)) )
 			if( !bFailed[pn] )
 				return false;
@@ -241,7 +241,7 @@ bool StageStats::AllFailed() const
 
 bool StageStats::AllFailedEarlier() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) && !bFailedEarlier[p] )
 			return false;
 	return true;
@@ -525,7 +525,7 @@ Grade GetBestFinalGrade()
 	vector<Song*> vSongs;
 	StageStats stats;
 	GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsHumanPlayer(p) )
 			top_grade = min( top_grade, stats.GetGrade((PlayerNumber)p) );
 	return top_grade;

@@ -409,7 +409,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 
 void GameState::Update( float fDelta )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
@@ -463,7 +463,7 @@ void GameState::ReloadCharacters()
 		delete m_pCharacters[i];
 	m_pCharacters.clear();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_pCurCharacters[p] = NULL;
 
 	CStringArray as;
@@ -515,7 +515,7 @@ void GameState::ResetStageStatistics()
 	{
 		if( GetStageIndex() == 0 )
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 			{
 				Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
 				if( pProfile )
@@ -532,7 +532,7 @@ void GameState::ResetStageStatistics()
 	RemoveAllInventory();
 	m_fOpponentHealthPercent = 1;
 	m_fTugLifePercentP1 = 0.5f;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_fSuperMeter[p] = 0;
 		m_HealthState[p] = ALIVE;
@@ -543,7 +543,7 @@ void GameState::ResetStageStatistics()
 
 
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			m_vLastPerDifficultyAwards[p].clear();
 			m_vLastPeakComboAwards[p].clear();
@@ -722,7 +722,7 @@ int GameState::GetCourseSongIndex() const
 {
 	int iSongIndex = 0;
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( IsPlayerEnabled(p) )
 			iSongIndex = max( iSongIndex, g_CurStageStats.iSongsPlayed[p]-1 );
 	return iSongIndex;
@@ -803,7 +803,7 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 int	GameState::GetNumPlayersEnabled() const
 {
 	int count = 0;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( IsPlayerEnabled(p) )
 			count++;
 	return count;
@@ -838,7 +838,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 int GameState::GetNumHumanPlayers() const
 {
 	int count = 0;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( IsHumanPlayer(p) )
 			count++;
 	return count;
@@ -846,7 +846,7 @@ int GameState::GetNumHumanPlayers() const
 
 PlayerNumber GameState::GetFirstHumanPlayer() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( IsHumanPlayer(p) )
 			return (PlayerNumber)p;
 	ASSERT(0);	// there must be at least 1 human player
@@ -860,7 +860,7 @@ bool GameState::IsCpuPlayer( PlayerNumber pn ) const
 
 bool GameState::AnyPlayersAreCpu() const
 { 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( IsCpuPlayer(p) )
 			return true;
 	return false;
@@ -904,7 +904,7 @@ bool GameState::HasEarnedExtraStage() const
 
 	if( (this->IsFinalStage() || this->IsExtraStage()) )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !this->IsPlayerEnabled(p) )
 				continue;	// skip
@@ -1033,7 +1033,7 @@ void GameState::StoreSelectedOptions()
  * at the end of gameplay to restore options. */
 void GameState::RestoreSelectedOptions()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		this->m_PlayerOptions[p] = this->m_StoredPlayerOptions[p];
 	m_SongOptions = m_StoredSongOptions;
 }
@@ -1178,7 +1178,7 @@ void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 
 void GameState::RemoveAllInventory()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
 			m_Inventory[p][s].fSecsRemaining = 0;
@@ -1214,7 +1214,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 
 void GameState::RemoveAllActiveAttacks()	// called on end of song
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		RemoveActiveAttacksForPlayer( (PlayerNumber)p );
 }
 
@@ -1591,7 +1591,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 
 bool GameState::AllAreInDangerOrWorse() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( this->IsPlayerEnabled(p) )
 			if( m_HealthState[p] < DANGER )
 				return false;
@@ -1600,7 +1600,7 @@ bool GameState::AllAreInDangerOrWorse() const
 
 bool GameState::AllAreDead() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( this->IsPlayerEnabled(p) )
 			if( m_HealthState[p] < DEAD )
 				return false;
@@ -1609,7 +1609,7 @@ bool GameState::AllAreDead() const
 
 bool GameState::OneIsHot() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( this->IsPlayerEnabled(PlayerNumber(p)) )
 			if( m_HealthState[p] == HOT )
 				return true;

@@ -186,7 +186,7 @@ void ScreenSelect::FinalizeChoices()
 	 * invalidate the choice we've already made.  Hack: apply the style.
 	 * (Applying the style may have other side-effects, so it'll be re-applied
 	 * in SM_GoToNextScreen.) */
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
 			const int sel = GetSelectionIndex( (PlayerNumber)p );
@@ -217,7 +217,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
 			 * long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
 			 * off-screen. */
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
 

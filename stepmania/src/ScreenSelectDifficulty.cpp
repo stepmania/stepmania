@@ -182,7 +182,7 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	// I'm not sure why this was here -- but there seem no ill effects
 	// of it's removal.
 	//
-	//for( int p=0; p<NUM_PLAYERS; p++ )
+	//FOREACH_PlayerNumber( p )
 	//	if( GAMESTATE->IsHumanPlayer(p) )
 	//	{
 	//		MenuRight( (PlayerNumber)p );
@@ -212,7 +212,7 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 		return;
 
 	bool AnotherPlayerSelected = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( p != pn && m_bChosen[p] )
 			AnotherPlayerSelected = true;
 
@@ -248,7 +248,7 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 		return;
 
 	bool AnotherPlayerSelected = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( p != pn && m_bChosen[p] )
 			AnotherPlayerSelected = true;
 
@@ -335,7 +335,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
 	bool bAnyChanged = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -536,7 +536,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 	OFF_COMMAND( m_sprExplanation[page] );
 	OFF_COMMAND( m_sprMore[page] );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;

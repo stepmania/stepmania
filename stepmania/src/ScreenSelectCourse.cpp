@@ -101,7 +101,7 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : ScreenWithMenuEle
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
 	this->AddChild( &m_MusicWheel );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 			continue;	// skip
@@ -173,7 +173,7 @@ void ScreenSelectCourse::TweenOnScreen()
 	m_textNumSongs.Command(		"AddX,-640;BounceEnd,0.5;AddX,640" );
 	m_textTime.Command(			"AddX,-640;BounceEnd,0.5;AddX,640" );
 	m_CourseContentsFrame.Command( "ZoomY,0;BounceEnd,0.5;ZoomY,1" );
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_sprHighScoreFrame[p].Command( "AddX,640;BounceEnd,0.5;AddX,-640" );
 		m_HighScore[p].Command( "AddX,640;BounceEnd,0.5;AddX,-640" );
@@ -189,7 +189,7 @@ void ScreenSelectCourse::TweenOffScreen()
 	m_textNumSongs.Command( "BounceBegin,0.5;AddX,-640" );
 	m_textTime.Command( "BounceBegin,0.5;AddX,-640" );
 	m_CourseContentsFrame.Command( "Linear,0.5;ZoomY,0" );
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_sprHighScoreFrame[p].Command( "BounceBegin,0.5;AddX,640" );
 		m_HighScore[p].Command( "BounceBegin,0.5;AddX,640" );
@@ -400,7 +400,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			m_CourseContentsFrame.TweenInAfterChangedCourse();
 
 			ASSERT(pCourse);
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 			{
 				CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
 
@@ -461,7 +461,7 @@ void ScreenSelectCourse::AfterCourseChange()
 
 void ScreenSelectCourse::UpdateOptionsDisplays()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{

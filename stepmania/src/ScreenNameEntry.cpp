@@ -129,7 +129,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	// reset Player and Song Options
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
 		GAMESTATE->m_SongOptions = SongOptions();
 	}
@@ -274,7 +274,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 bool ScreenNameEntry::AnyStillEntering() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( m_bStillEnteringName[p] )
 			return true;
 	return false;
@@ -308,7 +308,7 @@ void ScreenNameEntry::DrawPrimitives()
 
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !m_bStillEnteringName[p] )
 			continue;	// don't draw scrolling arrows
@@ -387,7 +387,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		if( !m_Out.IsTransitioning() )
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				this->MenuStart( (PlayerNumber)p );
 		}
 		break;

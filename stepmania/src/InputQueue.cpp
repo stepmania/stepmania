@@ -23,7 +23,7 @@ InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our pro
 
 InputQueue::InputQueue()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_aQueue[p].insert(m_aQueue[p].begin(), MAX_INPUT_QUEUE_LENGTH, GameButtonAndTime() );
 }
 

@@ -33,7 +33,7 @@ SongCreditDisplay::SongCreditDisplay()
 
 	// use a vector and not a set so that ordering is maintained
 	vector<Steps*> vpStepsToShow;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip

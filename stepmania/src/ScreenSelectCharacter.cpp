@@ -364,7 +364,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 
 	if( AllAreFinishedChoosing() )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			vector<Character*> apCharacters;
 			GAMESTATE->GetCharacters( apCharacters );
@@ -385,7 +385,7 @@ void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
 
 void ScreenSelectCharacter::TweenOffScreen()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_sprCard[p].Command( CARD_OFF_COMMAND(p) );
 		m_sprTitle[p].Command( TITLE_OFF_COMMAND(p) );

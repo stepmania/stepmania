@@ -60,7 +60,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	
 	if( MEMORY_CARD_ICONS )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			m_MemoryCardDisplay[p].Load( (PlayerNumber)p );
 			m_MemoryCardDisplay[p].SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
@@ -139,7 +139,7 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 
 	UtilOffCommand( m_autoHeader, m_sName );
 	UtilOffCommand( m_sprStyleIcon, m_sName );
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		UtilOffCommand( m_MemoryCardDisplay[p], m_sName );
 	UtilOffCommand( m_autoFooter, m_sName );
 	UtilOffCommand( m_textHelp, m_sName );

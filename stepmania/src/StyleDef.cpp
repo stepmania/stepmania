@@ -47,7 +47,7 @@ StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI ) const
 {
 	StyleInput SI;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		for( int t=0; t<m_iColsPerPlayer; t++ )
 		{

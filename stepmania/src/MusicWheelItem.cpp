@@ -90,7 +90,7 @@ MusicWheelItem::MusicWheelItem()
 	m_textRoulette.SetXY( ROULETTE_X, 0 );
 	m_All.AddChild( &m_textRoulette );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_GradeDisplay[p].Load( THEME->GetPathToG("MusicWheelItem grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
@@ -193,7 +193,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 void MusicWheelItem::RefreshGrades()
 {
 	// Refresh Grades
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !data->m_pSong  ||	// this isn't a song display
 			!GAMESTATE->IsHumanPlayer(p) )
@@ -240,7 +240,7 @@ void MusicWheelItem::Update( float fDeltaTime )
 			m_sprSongBar.Update( fDeltaTime );
 			m_WheelNotifyIcon.Update( fDeltaTime );
 			m_TextBanner.Update( fDeltaTime );
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				m_GradeDisplay[p].Update( fDeltaTime );
 		}
 		break;

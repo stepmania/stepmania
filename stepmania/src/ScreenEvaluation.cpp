@@ -204,7 +204,7 @@ void ScreenEvaluation::Init()
 	// Debugging
 	//
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )	// foreach line
+		FOREACH_PlayerNumber( p )	// foreach line
 			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				stageStats.fRadarPossible[p][r] = 0.5f + r/10.0f;
@@ -1483,7 +1483,7 @@ void ScreenEvaluation::EndScreen()
 {
 	TweenOffScreen();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
 
 	GAMESTATE->m_iRoundSeed = rand();

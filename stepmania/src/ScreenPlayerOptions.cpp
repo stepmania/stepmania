@@ -176,7 +176,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 	// save current player options 
 	PlayerOptions po[2];
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			po[p] = GAMESTATE->m_PlayerOptions[p];
 		}
@@ -186,7 +186,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 	ScreenOptionsMaster::ExportOptions();
 
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			bool bIsHandicap = GAMESTATE->IsDisqualified((PlayerNumber)p);
 			

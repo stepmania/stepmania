@@ -463,7 +463,7 @@ void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 
 bool ScreenNameEntryTraditional::AnyStillEntering() const
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( m_bStillEnteringName[p] )
 			return true;
 	return false;
@@ -548,7 +548,7 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		if( !m_Out.IsTransitioning() )
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				Finish( (PlayerNumber)p );
 			MenuStart( PLAYER_INVALID, IET_FIRST_PRESS );
 		}

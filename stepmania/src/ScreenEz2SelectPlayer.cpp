@@ -219,7 +219,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	}
 
 	bool bBothSidesJoined = true;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( !GAMESTATE->m_bSideIsJoined[p] )
 			bBothSidesJoined = false;
 
@@ -239,7 +239,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 
 void ScreenEz2SelectPlayer::TweenOnScreen()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH/2 : +SCREEN_WIDTH/2 );
 
@@ -259,7 +259,7 @@ void ScreenEz2SelectPlayer::TweenOnScreen()
 
 void ScreenEz2SelectPlayer::TweenOffScreen()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
 

@@ -189,7 +189,7 @@ int ScreenSelectDifficultyEX::GetSelectionIndex( PlayerNumber pn )
 
 void ScreenSelectDifficultyEX::UpdateSelectableChoices()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		/* XXX: If a player joins during the tween-in, this diffuse change
 		 * will be undone by the tween.  Hmm. */
@@ -243,7 +243,7 @@ bool ScreenSelectDifficultyEX::IsACourse( int mIndex )
 
 void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitchingModes )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_iChoice[p] = iChoice;
 		if( bSwitchingModes && ANIMATE_MODE_SWITCH )
@@ -279,7 +279,7 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 
 void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) ) { continue; }
 		if( p!=pn && m_CurrentPage==PAGE_1 ) { continue; }
@@ -454,7 +454,7 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 
 void ScreenSelectDifficultyEX::TweenOffScreen()
 {	
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) ) { continue; }
 

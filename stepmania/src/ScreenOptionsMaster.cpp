@@ -229,7 +229,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			Explanations = true;
 		if( Flags[i] == "forceallplayers" )
 		{
-			for( int pn=0; pn<NUM_PLAYERS; pn++ )
+			FOREACH_PlayerNumber( pn )
 				GAMESTATE->m_bSideIsJoined[pn] = true;
 			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
 		}
@@ -410,7 +410,7 @@ void ScreenOptionsMaster::ImportOptions()
 		}
 		else
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 			{
 				if( !GAMESTATE->IsHumanPlayer(p) )
 					continue;	// skip
@@ -506,7 +506,7 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowData &data = m_OptionRowAlloc[i];
 		Row &row = *m_Rows[i];
 
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;
@@ -587,7 +587,7 @@ void ScreenOptionsMaster::GoToPrevState()
 
 void ScreenOptionsMaster::RefreshIcons()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+	FOREACH_PlayerNumber( p )	// foreach player
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;

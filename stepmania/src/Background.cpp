@@ -422,7 +422,7 @@ void Background::LoadFromSong( const Song* pSong )
 	m_DangerAll.SetZoomX( fXZoom );
 	m_DangerAll.SetZoomY( fYZoom );	
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_DangerPlayer[p].SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 		m_DangerPlayer[p].SetZoomX( fXZoom );
@@ -540,7 +540,7 @@ void Background::Update( float fDeltaTime )
 		m_DangerAll.Update( fDeltaTime );
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( IsDangerPlayerVisible((PlayerNumber)p) )
 			m_DangerPlayer[p].Update( fDeltaTime );
@@ -591,7 +591,7 @@ void Background::DrawPrimitives()
 		if( m_pFadingBGA )
 			m_pFadingBGA->Draw();
 
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( IsDangerPlayerVisible((PlayerNumber)p) )
 				m_DangerPlayer[p].Draw();

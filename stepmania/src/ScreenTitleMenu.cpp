@@ -349,7 +349,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		if( m_Choice == 0 )
 		{
 			// apply default options
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				GAMESTATE->m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
 			GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		}

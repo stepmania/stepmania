@@ -201,7 +201,7 @@ void ResetGame( bool ReturnToFirstScreen )
 
 	/*
 	GameState::Reset() will switch the NoteSkin
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		PlayerNumber pn = (PlayerNumber)p;
 		if( !NOTESKIN->DoesNoteSkinExist( NOTESKIN->GetCurNoteSkinName(pn) ) )
@@ -1300,7 +1300,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			// so we don't have to play through a whole song to get new output.
 			BOOKKEEPER->WriteToDisk();
 			PROFILEMAN->SaveMachineProfile();
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
 					PROFILEMAN->SaveProfile( (PlayerNumber)p );
 			SCREENMAN->SystemMessage( "Stats saved" );

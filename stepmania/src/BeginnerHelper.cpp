@@ -253,7 +253,7 @@ void BeginnerHelper::DrawPrimitives()
 	for( int scd=0; scd<NUM_PLAYERS*2; scd++ )
 		m_sStepCircle[scd].Draw();		// Should be drawn before the dancer, but after the pad, so it is drawn over the pad and under the dancer.
 	
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )	// Draw each dancer
+	FOREACH_PlayerNumber( pn )	// Draw each dancer
 		if( GAMESTATE->IsHumanPlayer(pn) )
 			m_mDancer[pn].Draw();
 

@@ -28,7 +28,7 @@ MemoryCardManager::MemoryCardManager()
 {
 	m_pDriver = MakeMemoryCardDriver();
 	m_bCardsLocked = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_bTooLate[p] = false;
 		m_bWriteError[p] = false;
@@ -89,7 +89,7 @@ void MemoryCardManager::Update( float fDelta )
 
 		// unassign cards that were disconnected
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 			{
 				if( m_Device[p].IsBlank() )	// not assigned a card
 					continue;
@@ -158,7 +158,7 @@ void MemoryCardManager::LockCards( bool bLock )
 	if( !bLock )
 	{
 		// clear too late flag
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			m_bTooLate[p] = false;
 	}
 }
@@ -172,7 +172,7 @@ void MemoryCardManager::AssignUnassignedCards()
 
 	// remove cards that are already assigned
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( m_Device[p].IsBlank() )	// no card assigned to this player
 				continue;
@@ -185,7 +185,7 @@ void MemoryCardManager::AssignUnassignedCards()
 
 	// try to assign each device to a player
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			LOG->Trace( "Looking for a card for Player %d", p+1 );
 

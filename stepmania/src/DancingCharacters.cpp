@@ -56,7 +56,7 @@ DancingCharacters::DancingCharacters()
 	memset( m_bHasWinAnim, 0, sizeof(m_bHasWinAnim) );
 	memset( m_bHasFailAnim, 0, sizeof(m_bHasFailAnim) );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_2DIdleTimer[p].SetZero();
 		m_i2DAnimState[p] = AS2D_IDLE; // start on idle state
@@ -174,7 +174,7 @@ void DancingCharacters::LoadNextSong()
 	ASSERT( GAMESTATE->m_pCurSong );
 	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			m_Character[p].PlayAnimation( "rest" );
 }
@@ -201,7 +201,7 @@ void DancingCharacters::Update( float fDelta )
 		 * at a very low music rate. */
 		fUpdateScale *= GAMESTATE->m_SongOptions.m_fMusicRate;
 
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( GAMESTATE->IsPlayerEnabled(p) )
 				m_Character[p].Update( fDelta*fUpdateScale );
@@ -212,7 +212,7 @@ void DancingCharacters::Update( float fDelta )
 	bool bIsHereWeGo = GAMESTATE->m_bPastHereWeGo;
 	if( !bWasHereWeGo && bIsHereWeGo )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsPlayerEnabled(p) )
 				m_Character[p].PlayAnimation( "warmup" );
 	}
@@ -224,7 +224,7 @@ void DancingCharacters::Update( float fDelta )
 	if( fLastBeat < GAMESTATE->m_pCurSong->m_fFirstBeat &&
 		fThisBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			m_Character[p].PlayAnimation( "dance" );
 	}
 	fLastBeat = fThisBeat;
@@ -267,7 +267,7 @@ void DancingCharacters::Update( float fDelta )
 	}
 
 	// update any 2D stuff
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if(m_bHasIdleAnim[p])
 		{

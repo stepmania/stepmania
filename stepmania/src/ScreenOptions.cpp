@@ -109,7 +109,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	this->AddChild( &m_framePage );
 
 	m_bMoreShown = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_iCurrentRow[p] = 0;
 		m_bWasOnExit[p] = false;
@@ -141,7 +141,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
 					m_sName.c_str(), OptionRows[r].name.c_str() );
 
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 			{
 				vector<bool> &vbSelected = Row.m_vbSelected[p];
 				vbSelected.resize( Row.m_RowDef.choices.size() );
@@ -168,7 +168,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
 
 			CHECKPOINT_M( ssprintf("row %i: %s", r, Row.m_RowDef.name.c_str()) );
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 					Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
 				else
@@ -197,7 +197,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	// init line highlights
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;	// skip
@@ -212,7 +212,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	
 	// init highlights
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;	// skip
@@ -224,7 +224,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	
 	// init row icons
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;	// skip
@@ -271,7 +271,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				bt->SetX( fX );
 
 				// init underlines
-				for( int p=0; p<NUM_PLAYERS; p++ )
+				FOREACH_PlayerNumber( p )
 				{
 					if( !GAMESTATE->IsHumanPlayer(p) )
 						continue;
@@ -292,7 +292,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					for( unsigned j=0; j<textItems.size(); j++ )	// for each option on this row
 						delete textItems[j];
 					textItems.clear();
-					for( int p=0; p<NUM_PLAYERS; p++ )
+					FOREACH_PlayerNumber( p )
 					{
 						for( unsigned j=0; j<row.m_Underline[p].size(); j++ )	// for each option on this row
 							delete row.m_Underline[p][j];
@@ -354,7 +354,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			{
 				for( unsigned c=0; c<textItems.size(); c++ )
 					m_framePage.AddChild( textItems[c] );
-				for( int p=0; p<NUM_PLAYERS; p++ )
+				FOREACH_PlayerNumber( p )
 					for( unsigned c=0; c<row.m_Underline[p].size(); c++ )
 						m_framePage.AddChild( row.m_Underline[p][c] );
 			}
@@ -383,7 +383,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	// add explanation here so it appears on top
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
 			m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
@@ -396,7 +396,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
 	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
@@ -411,7 +411,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		m_ScrollBar.SetName( "DualScrollBar", "ScrollBar" );
 		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			m_ScrollBar.EnablePlayer( (PlayerNumber)p, GAMESTATE->IsHumanPlayer(p) );
 		m_ScrollBar.Load();
 		UtilSetXY( m_ScrollBar, "ScreenOptions" );
@@ -428,7 +428,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	{
 	case INPUTMODE_INDIVIDUAL:
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
 		}
 		break;
@@ -439,7 +439,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		ASSERT(0);
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathToG( "ScreenOptions disqualify") );
 		m_sprDisqualify[p]->SetName( "ScreenOptions", ssprintf("DisqualifyP%i",p+1) );
@@ -470,7 +470,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	PositionCursors();
 	UpdateEnabledDisabled();
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			OnChange( (PlayerNumber)p );
 	}
 
@@ -487,7 +487,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 		for( unsigned c=0; c<row.m_textItems.size(); c++ )
 			row.m_textItems[c]->FinishTweening();
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			for( unsigned c=0; c<row.m_Underline[p].size(); c++ )
 				row.m_Underline[p][c]->FinishTweening();
@@ -642,7 +642,7 @@ void ScreenOptions::PositionUnderlines()
 		if( row.Type == Row::ROW_EXIT )
 			continue;
 
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;	// skip
@@ -686,7 +686,7 @@ void ScreenOptions::PositionUnderlines()
 
 void ScreenOptions::PositionIcons()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+	FOREACH_PlayerNumber( p )	// foreach player
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
@@ -728,7 +728,7 @@ void ScreenOptions::PositionCursors()
 {
 	// Set the position of the highlight showing the current option the user is changing.
 	// Set the position of the underscores showing the current choice for each option line.
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )	// foreach player
+	FOREACH_PlayerNumber( pn )	// foreach player
 	{
 		if( !GAMESTATE->IsHumanPlayer(pn) )
 			continue;
@@ -811,7 +811,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 		Row &row = *m_Rows[i];
 
 		bool bThisRowIsSelected = false;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsHumanPlayer(p) && m_iCurrentRow[p] == (int) i )
 				bThisRowIsSelected = true;
 
@@ -843,7 +843,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 		if( row.Type == Row::ROW_EXIT )
 		{
 			bool bExitRowIsSelectedByBoth = true;
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != (int) i )
 					bExitRowIsSelectedByBoth = false;
 
@@ -1078,7 +1078,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	}
 
 	/* Update all players, since changing one player can move both cursors. */
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 			TweenCursor( (PlayerNumber) p );
@@ -1180,7 +1180,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	if( row.Type == Row::ROW_EXIT )
 	{
 		bool bAllOnExit = true;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
 				bAllOnExit = false;
 
@@ -1308,7 +1308,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 				row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
 		}
 
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 			{
@@ -1363,7 +1363,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
 	bool changed = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
 			continue;	// skip
@@ -1404,7 +1404,7 @@ ScreenOptions::Row::~Row()
 {
 	for( unsigned i = 0; i < m_textItems.size(); ++i )
 		delete m_textItems[i];
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
 			delete m_Underline[p][i];
 }

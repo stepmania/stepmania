@@ -95,7 +95,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 
 		// Found something we can use!
 		GAMESTATE->m_pCurSong = pSong;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_pCurNotes[p] = pSteps;
 		
 		return true;	// done looking
@@ -122,7 +122,7 @@ bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return t
 	{
 		/* Note that you also need to make sure you benchmark with the
 		 * same notes.  I use a copy of MaxU with only heavy notes included. */
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
@@ -138,7 +138,7 @@ bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return t
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;

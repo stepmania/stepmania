@@ -161,7 +161,7 @@ void MusicWheel::Load()
 			po,
 			so );
 		GAMESTATE->m_pCurSong = pSong;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
@@ -947,7 +947,7 @@ void MusicWheel::Update( float fDeltaTime )
 				}
 				if( dc != DIFFICULTY_INVALID )
 				{
-					for( int p=0; p<NUM_PLAYERS; p++ )
+					FOREACH_PlayerNumber( p )
 						if( GAMESTATE->IsPlayerEnabled(p) )
 							GAMESTATE->m_PreferredDifficulty[p] = dc;
 				}

@@ -33,7 +33,7 @@ ScreenAward::ScreenAward( CString sName ) : ScreenWithMenuElements( sName )
 	bool bEitherPlayerHasAward = false;
 	ZERO( m_bSavedScreenshot );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
@@ -145,7 +145,7 @@ void ScreenAward::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		// TRICKY: Keep looping on this screen until all awards are shown
 		bool bMoreAwardsLeft = false;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;
@@ -166,7 +166,7 @@ void ScreenAward::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenAward::MenuStart( PlayerNumber pn )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;

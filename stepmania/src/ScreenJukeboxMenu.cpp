@@ -39,7 +39,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuEleme
 
 	GAMESTATE->m_CurStyle = STYLE_INVALID;
 
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 
 	m_Selector.SetXY( 0, 0 );
@@ -122,7 +122,7 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_CurStyle = style;
 	GAMESTATE->m_sPreferredGroup = (sGroup=="ALL MUSIC") ? GROUP_ALL_MUSIC : sGroup;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_PreferredDifficulty[p] = dc;
 	GAMESTATE->m_bJukeboxUsesModifiers = bModifiers;
 

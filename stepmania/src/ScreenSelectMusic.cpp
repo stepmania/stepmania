@@ -478,7 +478,7 @@ void ScreenSelectMusic::SkipSongPartTweens()
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.FinishTweening();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -537,7 +537,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MachineRank );
 	ON_COMMAND( m_Overlay );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -594,7 +594,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_MachineRank );
 	OFF_COMMAND( m_Overlay );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -647,7 +647,7 @@ void ScreenSelectMusic::SwitchDisplayMode( DisplayMode dm )
 
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
@@ -1068,7 +1068,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	case TYPE_SONG: {
 		const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
 		bool bIsHard = false;
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( !GAMESTATE->IsHumanPlayer( (PlayerNumber)p ) )
 				continue;	// skip
@@ -1231,7 +1231,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 
 void ScreenSelectMusic::SwitchToPreferredDifficulty()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
 			continue;
@@ -1318,7 +1318,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SORT:
 		{	
 			CString sGroup = m_MusicWheel.GetSelectedSection();
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				m_iSelection[p] = -1;
 
 			m_BPMDisplay.NoBPM();
@@ -1573,7 +1573,7 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 //	m_PlayerOptionIcons.Refresh();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{

@@ -145,7 +145,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_1;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 			SCREENMAN->SendMessageToTopScreen( SM_BattleTrickLevel1 );
@@ -157,7 +157,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_2;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 			SCREENMAN->SendMessageToTopScreen( SM_BattleTrickLevel2 );
@@ -169,7 +169,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_3;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
 			SCREENMAN->SendMessageToTopScreen( SM_BattleTrickLevel3 );

@@ -78,7 +78,7 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	m_sprRadarBase.Load( THEME->GetPathToG("GrooveRadar base") );
 	this->AddChild( &m_sprRadarBase );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_bValuesVisible[p] = false;
 		m_PercentTowardNew[p] = 0;
@@ -123,7 +123,7 @@ void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
 
 	if(DISABLE_RADAR != 1)
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			m_PercentTowardNew[p] = min( m_PercentTowardNew[p]+4.0f*fDeltaTime, 1 );
 		}
@@ -143,7 +143,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	DISPLAY->SetTextureModeModulate();
 	RageSpriteVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !m_bValuesVisible[p] )
 			continue;

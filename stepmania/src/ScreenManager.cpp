@@ -97,7 +97,7 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 	this->AddChild(&m_textMessage);
 	this->AddChild(&m_textStats);
 	this->AddChild(&m_textTime);
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		this->AddChild(&m_textCredits[p]);
 
 
@@ -150,7 +150,7 @@ void ScreenSystemLayer::ReloadCreditsText()
 	m_textTime.SetName( "Time" );
 	SET_XY_AND_ON_COMMAND( m_textTime ); 
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_textCredits[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
 		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
@@ -185,7 +185,7 @@ void ScreenSystemLayer::SystemMessageNoAnimate( CString sMessage )
 void ScreenSystemLayer::RefreshCreditsMessages()
 {
 	// update joined
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		CString sCredits;
 

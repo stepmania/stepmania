@@ -46,7 +46,7 @@ ProfileManager::ProfileManager()
 
 	try
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			m_bWasLoadedFromMemoryCard[p] = false;
 
 		LoadMachineProfile();
