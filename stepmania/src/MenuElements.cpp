@@ -32,6 +32,7 @@
 #define TIMER_OFF_COMMAND		THEME->GetMetric("MenuElements","TimerOffCommand")
 #define HELP_ON_COMMAND			THEME->GetMetric("MenuElements","HelpOnCommand")
 #define HELP_OFF_COMMAND		THEME->GetMetric("MenuElements","HelpOffCommand")
+#define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 
 
 MenuElements::MenuElements()
@@ -62,12 +63,21 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
-	m_MenuTimer.Command( TIMER_ON_COMMAND );
-	if( bEnableTimer  &&  PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
-		m_MenuTimer.SetSeconds( THEME->GetMetricI(m_sName,"TimerSeconds") );
-	else
-		m_MenuTimer.Disable();
-	this->AddChild( &m_MenuTimer );
+	/* XXX: If bEnableTimer is false, it means the timer is shown but disabled.
+	 * If TIMER_SECONDS is -1, then the timer isn't shown at all.  bTimerEnabled == 0
+	 * is the same as !bTimerEnabled.  Phase out bTimerEnabled and just set no timer
+	 * in the theme. */
+	m_bTimerEnabled = (TIMER_SECONDS != -1);
+
+	if( m_bTimerEnabled )
+	{
+		m_MenuTimer.Command( TIMER_ON_COMMAND );
+		if( bEnableTimer && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
+			m_MenuTimer.SetSeconds( TIMER_SECONDS );
+		else
+			m_MenuTimer.Disable();
+		this->AddChild( &m_MenuTimer );
+	}
 
 	m_sprFooter.Load( THEME->GetPathToG(m_sName+" footer") );
 	m_sprFooter.Command( FOOTER_ON_COMMAND );
@@ -102,12 +112,15 @@ void MenuElements::Update( float fDeltaTime )
 
 void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 {
-	m_MenuTimer.SetSeconds( 0 );
-	m_MenuTimer.Stop();
+	if( m_bTimerEnabled )
+	{
+		m_MenuTimer.SetSeconds( 0 );
+		m_MenuTimer.Stop();
+		m_MenuTimer.Command( TIMER_OFF_COMMAND );
+	}
 
 	m_sprHeader.Command( HEADER_OFF_COMMAND );
 	m_sprStyleIcon.Command( STYLE_ICON_OFF_COMMAND );
-	m_MenuTimer.Command( TIMER_OFF_COMMAND );
 	m_sprFooter.Command( FOOTER_OFF_COMMAND );
 	m_textHelp.Command( HELP_OFF_COMMAND );
 
@@ -149,7 +162,8 @@ void MenuElements::DrawTopLayer()
 
 	m_sprHeader.Draw();
 	m_sprStyleIcon.Draw();
-	m_MenuTimer.Draw();
+	if( m_bTimerEnabled )
+		m_MenuTimer.Draw();
 	m_sprFooter.Draw();
 	m_textHelp.Draw();
 	m_In.Draw();

@@ -36,6 +36,7 @@ public:
 	void Back( ScreenMessage smSendWhenDone );
 	void Update( float fDeltaTime );
 	bool IsTransitioning();
+	bool m_bTimerEnabled;
 
 public:	// let owner tinker with these objects
 
