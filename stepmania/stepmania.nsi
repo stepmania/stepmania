@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030211.exe"
+OutFile "StepMania-CVS-20030212.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -195,6 +195,7 @@ File "NEWS"
 File "stepmania.exe"
 File "stepmania.vdi"
 File "smpackage.exe"
+File "Translation.dat"
 
 ; What to do here?  Better to just delete an existing INI than to
 ; drop the local one in ... -glenn
@@ -308,6 +309,7 @@ Delete "$INSTDIR\NEWS"
 Delete "$INSTDIR\stepmania.exe"
 Delete "$INSTDIR\stepmania.ini"
 Delete "$INSTDIR\smpackage.exe"
+Delete "$INSTDIR\Translation.dat"
 Delete "$INSTDIR\StepMania.vdi"
 Delete "$INSTDIR\log.txt"
 Delete "$INSTDIR\info.txt"
