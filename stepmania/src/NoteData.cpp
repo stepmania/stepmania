@@ -347,20 +347,12 @@ int NoteData::GetLastRow() const
 	return iOldestRowFoundSoFar;
 }
 
-int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 {
-	if( fEndBeat == -1 )
-		fEndBeat = 999999;
+	if( iEndIndex == -1 )
+		iEndIndex = 999999;
 
 	int iNumNotes = 0;
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	/* Clamp to known-good ranges. */
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
-	
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
@@ -374,16 +366,12 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 	return iNumNotes;
 }
 
-int NoteData::GetNumRowsWithTap( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 {
-	if( fEndBeat == -1 ) 
-		fEndBeat = GetLastBeat();
+	if( iEndIndex == -1 )
+		iEndIndex = 999999;
 
 	int iNumNotes = 0;
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-	
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 		if( IsThereATapAtRow(r) )
 			iNumNotes++;
@@ -391,20 +379,13 @@ int NoteData::GetNumRowsWithTap( float fStartBeat, float fEndBeat ) const
 	return iNumNotes;
 }
 
-int NoteData::GetNumMines( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumMines( int iStartIndex, int iEndIndex ) const
 {
-	if( fEndBeat == -1 )
-		fEndBeat = 999999;
+	if( iEndIndex == -1 )
+		iEndIndex = 999999;
 
 	int iNumMines = 0;
 
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	/* Clamp to known-good ranges. */
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
-	
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
@@ -415,16 +396,12 @@ int NoteData::GetNumMines( float fStartBeat, float fEndBeat ) const
 	return iNumMines;
 }
 
-int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) const
 {
-	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
+	if( iEndIndex == -1 )
+		iEndIndex = 999999;
 
 	int iNumNotes = 0;
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-	
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 		if( IsThereATapOrHoldHeadAtRow(r) )
 			iNumNotes++;
@@ -466,22 +443,15 @@ int NoteData::RowNeedsHands( const int row ) const
 	return iNumNotesThisIndex >= 3;
 }
 
-int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumHands( int iStartIndex, int iEndIndex ) const
 {
 	/* Count the number of times you have to use your hands.  This includes
 	 * three taps at the same time, a tap while two hold notes are being held,
 	 * etc.  Only count rows that have at least one tap note (hold heads count).
 	 * Otherwise, every row of hold notes counts, so three simultaneous hold
 	 * notes will count as hundreds of "hands". */
-	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	/* Clamp to known-good ranges. */
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
+	if( iEndIndex == -1 )
+		iEndIndex = 999999;
 
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
@@ -495,17 +465,10 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	return iNum;
 }
 
-int NoteData::GetNumN( int iMinTaps, float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumN( int iMinTaps, int iStartIndex, int iEndIndex ) const
 {
-	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	/* Clamp to known-good ranges. */
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
+	if( iEndIndex == -1 )
+		iEndIndex = 999999;
 
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
@@ -524,13 +487,10 @@ int NoteData::GetNumN( int iMinTaps, float fStartBeat, float fEndBeat ) const
 	return iNum;
 }
 
-int NoteData::GetNumHoldNotes( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 {
-	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
+	if( iEndIndex == -1 )
+		iEndIndex = GetLastRow();
 
 	int iNumHolds = 0;
 	for( int i=0; i<GetNumHoldNotes(); i++ )

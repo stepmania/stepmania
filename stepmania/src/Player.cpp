@@ -498,7 +498,7 @@ void Player::ApplyWaitingTransforms()
 		if( po.m_sNoteSkin != "" )
 			GAMESTATE->SetNoteSkinForBeatRange( m_pPlayerState, po.m_sNoteSkin, fStartBeat, fEndBeat );
 
-		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, fStartBeat, fEndBeat );
+		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 	}
 	m_pPlayerState->m_ModsToApply.clear();
 }

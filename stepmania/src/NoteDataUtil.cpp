@@ -463,12 +463,13 @@ float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds
 	// peak density of steps
 	float fMaxDensitySoFar = 0;
 
-	const int BEAT_WINDOW = 8;
+	const float BEAT_WINDOW = 8;
+	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
 
-	for( int i=0; i<=int(fLastBeat); i+=BEAT_WINDOW )
+	for( int i=0; i<=int(fLastBeat); i+=BEAT_WINDOW_ROWS )
 	{
-		int iNumNotesThisWindow = in.GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
-		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
+		int iNumNotesThisWindow = in.GetNumTapNotes( i, i+BEAT_WINDOW_ROWS ) + in.GetNumHoldNotes( i, i+BEAT_WINDOW_ROWS );
+		float fDensityThisWindow = iNumNotesThisWindow / BEAT_WINDOW;
 		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
 
@@ -512,11 +513,8 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 	return min( fReturn, 1.0f );
 }
 
-void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBeat)
+void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex )
 {
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
 	// turn all the HoldNotes into TapNotes
 	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )	// iterate backwards so we can delete
 	{
@@ -530,11 +528,8 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBea
 }
 
 
-void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, float fStartBeat, float fEndBeat)
+void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
 {
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
 	// turn all the HoldNotes into TapNotes
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
@@ -568,27 +563,25 @@ void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, f
 	}
 }
 
-void NoteDataUtil::RemoveJumps( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::RemoveJumps( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSimultaneousNotes(inout,1);
+	RemoveSimultaneousNotes( inout, 1, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveHands( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::RemoveHands( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSimultaneousNotes(inout,2);
+	RemoveSimultaneousNotes( inout, 2, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveQuads( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::RemoveQuads( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSimultaneousNotes(inout,3);
+	RemoveSimultaneousNotes( inout, 3, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveMines(NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	int iRowStart = BeatToNoteRow(fStartBeat);
-	int iRowEnd = BeatToNoteRow(fEndBeat);
 	for( int t=0; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iRowStart, iRowEnd ) 
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
 			if( inout.GetTapNote(t,r).type == TapNote::mine )
 				inout.SetTapNote( t, r, TAP_EMPTY );
 }
@@ -787,20 +780,10 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 }
 
 
-void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, int iStartIndex, int iEndIndex )
 {
 	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
 	GetTrackMapping( st, tt, inout.GetNumTracks(), iTakeFromTrack );
-
-	if( fEndBeat == -1 )
-		fEndBeat = inout.GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	/* Clamp to known-good ranges. */
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 
 	NoteData tempNoteData;
 	tempNoteData.LoadTransformed( inout, inout.GetNumTracks(), iTakeFromTrack );
@@ -858,15 +841,8 @@ void NoteDataUtil::SwapSides( NoteData &inout )
 	inout.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::Little(NoteData &inout, float fStartBeat, float fEndBeat)
+void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	if( fEndBeat == -1 )
-		fEndBeat = inout.GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-
 	// filter out all non-quarter notes
 	for( int t=0; t<inout.GetNumTracks(); t++ ) 
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, i, iStartIndex, iEndIndex )
@@ -878,19 +854,17 @@ void NoteDataUtil::Little(NoteData &inout, float fStartBeat, float fEndBeat)
 			inout.RemoveHoldNote( i );
 }
 
-void NoteDataUtil::Wide( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// Make all all quarter notes into jumps.
-
 	inout.ConvertHoldNotesTo4s();
 
 	/* Start on an even beat. */
-	fStartBeat = Quantize( fStartBeat, 2.0f );
+	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(2.0f) );
 
-	const int first_row = BeatToNoteRow( fStartBeat );
-	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
+	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 
-	for( int i=first_row; i<last_row; i+=ROWS_PER_BEAT*2 ) // every even beat
+	for( int i=iStartIndex; i<iEndIndex; i+=ROWS_PER_BEAT*2 ) // every even beat
 	{
 		if( inout.GetNumTapNonEmptyTracks(i) != 1 )
 			continue;	// skip.  Don't place during holds
@@ -931,27 +905,30 @@ void NoteDataUtil::Wide( NoteData &inout, float fStartBeat, float fEndBeat )
 	inout.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::Big( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Big( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	InsertIntelligentTaps(inout,1.0f,0.5f,1.0f,false,fStartBeat,fEndBeat);	// add 8ths between 4ths
+	// add 8ths between 4ths
+	InsertIntelligentTaps( inout,1.0f,0.5f,1.0f,false,iStartIndex,iEndIndex );
 }
 
-void NoteDataUtil::Quick( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Quick( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	InsertIntelligentTaps(inout,0.5f,0.25f,1.0f,false,fStartBeat,fEndBeat);	// add 16ths between 8ths
+	// add 16ths between 8ths
+	InsertIntelligentTaps( inout,0.5f,0.25f,1.0f,false,iStartIndex,iEndIndex );
 }
 
 // Due to popular request by people annoyed with the "new" implementation of Quick, we now have
 // this BMR-izer for your steps.  Use with caution.
-void NoteDataUtil::BMRize( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::BMRize( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	Big( inout, fStartBeat, fEndBeat );
-	Quick( inout, fStartBeat, fEndBeat );
+	Big( inout, iStartIndex, iEndIndex );
+	Quick( inout, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::Skippy( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Skippy( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	InsertIntelligentTaps(inout,1.0f,0.75f,1.0f,true,fStartBeat,fEndBeat);	// add 16ths between 4ths
+	// add 16ths between 4ths
+	InsertIntelligentTaps( inout,1.0f,0.75f,1.0f,true,iStartIndex,iEndIndex );
 }
 
 void NoteDataUtil::InsertIntelligentTaps( 
@@ -960,28 +937,26 @@ void NoteDataUtil::InsertIntelligentTaps(
 	float fInsertOffsetBeats, 
 	float fWindowStrideBeats, 
 	bool bSkippy, 
-	float fStartBeat, 
-	float fEndBeat )
+	int iStartIndex,
+	int iEndIndex )
 {
 	ASSERT( fInsertOffsetBeats <= fWindowSizeBeats );
 	ASSERT( fWindowSizeBeats <= fWindowStrideBeats );
+
 	inout.ConvertHoldNotesTo4s();
 
 	bool bRequireNoteAtBeginningOfWindow = !bSkippy;
 	bool bRequireNoteAtEndOfWindow = true;
 
 	/* Start on a multiple of fBeatInterval. */
-	fStartBeat = Quantize( fStartBeat, fWindowStrideBeats );
+	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(fWindowStrideBeats) );
 
 	// Insert a beat in the middle of every fBeatInterval.
-	const int first_row = BeatToNoteRow( fStartBeat );
-	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
-
 	const int rows_per_window = BeatToNoteRow( fWindowSizeBeats );
 	const int rows_per_stride = BeatToNoteRow( fWindowStrideBeats );
 	const int insert_row_offset = BeatToNoteRow( fInsertOffsetBeats );
 
-	for( int i=first_row; i<last_row; i+=rows_per_stride ) 
+	for( int i=iStartIndex; i<iEndIndex; i+=rows_per_stride ) 
 	{
 		int iRowEarlier = i;
 		int iRowLater = i + rows_per_window;
@@ -1048,11 +1023,8 @@ done_looking_for_track_to_add:
 	inout.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::AddMines( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	const int first_row = BeatToNoteRow( fStartBeat );
-	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
-
 	//
 	// Change whole rows at a time to be tap notes.  Otherwise, it causes
 	// major problems for our scoring system. -Chris
@@ -1060,7 +1032,7 @@ void NoteDataUtil::AddMines( NoteData &inout, float fStartBeat, float fEndBeat )
 
 	int iRowCount = 0;
 	int iPlaceEveryRows = 6;
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, first_row, last_row )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		iRowCount++;
 
@@ -1089,7 +1061,7 @@ void NoteDataUtil::AddMines( NoteData &inout, float fStartBeat, float fEndBeat )
 		float fMineBeat = fHoldEndBeat+0.5f;
 		int iMineRow = BeatToNoteRow( fMineBeat );
 
-		if( iMineRow < first_row || iMineRow > last_row )
+		if( iMineRow < iStartIndex || iMineRow > iEndIndex )
 			continue;
 
 		// Only place a mines if there's not another step nearby
@@ -1110,19 +1082,18 @@ void NoteDataUtil::AddMines( NoteData &inout, float fStartBeat, float fEndBeat )
 	}
 }
 
-void NoteDataUtil::Echo( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// add 8th note tap "echos" after all taps
 	int iEchoTrack = -1;
 
-	fStartBeat = Quantize( fStartBeat, 0.5 );
+	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(0.5f) );
 
-	const int first_row = BeatToNoteRow( fStartBeat );
-	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
-	const int rows_per_interval = BeatToNoteRow( 0.5 );
+	iEndIndex = min( iEndIndex, inout.GetLastRow() );
+	const int rows_per_interval = BeatToNoteRow( 0.5f );
 
 	// window is one beat wide and slides 1/2 a beat at a time
-	for( int r=first_row; r<last_row; r+=rows_per_interval ) 
+	for( int r=iStartIndex; r<iEndIndex; r+=rows_per_interval ) 
 	{
 		const int iRowWindowBegin = r;
 		const int iRowWindowEnd = r + rows_per_interval*2;
@@ -1160,24 +1131,23 @@ void NoteDataUtil::Echo( NoteData &inout, float fStartBeat, float fEndBeat )
 	}
 }
 
-void NoteDataUtil::Planted( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Planted( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	ConvertTapsToHolds( inout, 1, fStartBeat, fEndBeat );
+	ConvertTapsToHolds( inout, 1, iStartIndex, iEndIndex );
 }
-void NoteDataUtil::Floored( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Floored( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	ConvertTapsToHolds( inout, 2, fStartBeat, fEndBeat );
+	ConvertTapsToHolds( inout, 2, iStartIndex, iEndIndex );
 }
-void NoteDataUtil::Twister( NoteData &inout, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Twister( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	ConvertTapsToHolds( inout, 3, fStartBeat, fEndBeat );
+	ConvertTapsToHolds( inout, 3, iStartIndex, iEndIndex );
 }
-void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, float fStartBeat, float fEndBeat )
+void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, int iStartIndex, int iEndIndex )
 {
 	// Convert all taps to freezes.
-	const int first_row = BeatToNoteRow( fStartBeat );
-	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, first_row, last_row )
+	iEndIndex = min( iEndIndex, inout.GetLastRow() );
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		int iTrackAddedThisRow = 0;
 		for( int t=0; t<inout.GetNumTracks(); t++ )
@@ -1191,7 +1161,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 				int iTapsLeft = iSimultaneousHolds;
 
 				int r2 = r+1;
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, next_row, r+1, last_row )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, next_row, r+1, iEndIndex )
 				{
 					r2 = next_row;
 
@@ -1227,17 +1197,17 @@ dont_add_hold:
 
 }
 
-void NoteDataUtil::Stomp( NoteData &inout, StepsType st, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Make all non jumps with ample space around them into jumps.
 
-	const int first_row = BeatToNoteRow( fStartBeat );
-	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
+
+	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 
 	int iTrackMapping[MAX_NOTE_TRACKS];
 	GetTrackMapping( st, stomp, inout.GetNumTracks(), iTrackMapping );
 
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, first_row, last_row )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		if( inout.GetNumTracksWithTap(r) != 1 )
 			continue;	// skip
@@ -1252,7 +1222,7 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, float fStartBeat, float
 				int iRowWindowEnd = r + BeatToNoteRow(0.5);
 
 				bool bTapInMiddle = false;
-				for( int r2=iRowWindowBegin+1; r2<=iRowWindowEnd-1; r2++ )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r2, iRowWindowBegin+1, iRowWindowEnd-1 )
 					if( inout.IsThereATapAtRow(r2) && r2 != r )	// don't count the note we're looking around
 					{
 						bTapInMiddle = true;
@@ -1273,54 +1243,25 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, float fStartBeat, float
 	}		
 }
 
-void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat )
+void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, int iStartIndex, int iEndIndex )
 {
 	// nt2 is optional and should be NOTE_TYPE_INVALID if it is not used
 
-	float fSnapInterval1, fSnapInterval2;
-	switch( nt1 )
-	{
-		case NOTE_TYPE_4TH:		fSnapInterval1 = 1/1.0f;	break;
-		case NOTE_TYPE_8TH:		fSnapInterval1 = 1/2.0f;	break;
-		case NOTE_TYPE_12TH:	fSnapInterval1 = 1/3.0f;	break;
-		case NOTE_TYPE_16TH:	fSnapInterval1 = 1/4.0f;	break;
-		case NOTE_TYPE_24TH:	fSnapInterval1 = 1/6.0f;	break;
-		case NOTE_TYPE_32ND:	fSnapInterval1 = 1/8.0f;	break;
-		case NOTE_TYPE_48TH:	fSnapInterval1 = 1/12.0f;	break;
-		case NOTE_TYPE_64TH:	fSnapInterval1 = 1/16.0f;	break;
-		default:	ASSERT( false );						return;
-	}
-
-	switch( nt2 )
-	{
-		case NOTE_TYPE_4TH:		fSnapInterval2 = 1/1.0f;	break;
-		case NOTE_TYPE_8TH:		fSnapInterval2 = 1/2.0f;	break;
-		case NOTE_TYPE_12TH:	fSnapInterval2 = 1/3.0f;	break;
-		case NOTE_TYPE_16TH:	fSnapInterval2 = 1/4.0f;	break;
-		case NOTE_TYPE_24TH:	fSnapInterval2 = 1/6.0f;	break;
-		case NOTE_TYPE_32ND:	fSnapInterval2 = 1/8.0f;	break;
-		case NOTE_TYPE_48TH:	fSnapInterval2 = 1/12.0f;	break;
-		case NOTE_TYPE_64TH:	fSnapInterval2 = 1/16.0f;	break;
-		case NOTE_TYPE_INVALID:	fSnapInterval2 = 10000;	break;	// nothing will ever snap to this.  That's what we want!
-		default:	ASSERT( false );						return;
-	}
-
-	int rowBegin = BeatToNoteRow( fBeginBeat );
-	int rowEnd = BeatToNoteRow( fEndBeat );
+	float fSnapInterval1 = NoteTypeToBeat( nt1 );
+	float fSnapInterval2 = 10000; // nothing will ever snap to this.  That's what we want!
+	if( nt2 != NOTE_TYPE_INVALID )
+		fSnapInterval2 = NoteTypeToBeat( nt2 );
 
 	inout.ConvertHoldNotesTo2sAnd3s();
 
 	// iterate over all TapNotes in the interval and snap them
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, i, rowBegin, rowEnd )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, iOldIndex, iStartIndex, iEndIndex )
 	{
-		int iOldIndex = i;
-		float fOldBeat = NoteRowToBeat( iOldIndex );
-		float fNewBeat1 = Quantize( fOldBeat, fSnapInterval1 );
-		float fNewBeat2 = Quantize( fOldBeat, fSnapInterval2 );
+		int iNewIndex1 = Quantize( iOldIndex, BeatToNoteRow(fSnapInterval1) );
+		int iNewIndex2 = Quantize( iOldIndex, BeatToNoteRow(fSnapInterval2) );
 
-		bool bNewBeat1IsCloser = fabsf(fNewBeat1-fOldBeat) < fabsf(fNewBeat2-fOldBeat);
-		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;
-		int iNewIndex = BeatToNoteRow( fNewBeat );
+		bool bNewBeat1IsCloser = abs(iNewIndex1-iOldIndex) < abs(iNewIndex2-iOldIndex);
+		int iNewIndex = bNewBeat1IsCloser? iNewIndex1 : iNewIndex2;
 
 		for( int c=0; c<inout.GetNumTracks(); c++ )
 		{
@@ -1567,52 +1508,52 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, Steps
 			float fStartBeat, fEndBeat;
 			a->GetAttackBeats( pSong, NULL, fStartBeat, fEndBeat );
 
-			NoteDataUtil::TransformNoteData( nd, po, st, fStartBeat, fEndBeat );
+			NoteDataUtil::TransformNoteData( nd, po, st, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 		}
 	}
 }
 
-void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat, float fEndBeat )
+void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Apply remove transforms before others so that we don't go removing
 	// notes we just inserted.
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads( nd, iStartIndex, iEndIndex );
 
 	// Apply inserts.
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] )		NoteDataUtil::BMRize(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )		NoteDataUtil::Quick( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] )		NoteDataUtil::BMRize( nd, iStartIndex, iEndIndex );
 
 	// Skippy will still add taps to places that the other 
 	// AddIntelligentTaps above won't.
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )		NoteDataUtil::Skippy( nd, iStartIndex, iEndIndex );
 
 	// These aren't affects by the above inserts very much.
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo( nd, iStartIndex, iEndIndex );
 
 	// Jump-adding transforms aren't much affected by additional taps.
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, st, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp( nd, st, iStartIndex, iEndIndex );
 
 	// Transforms that add holds go last.  If they went first, most tap-adding 
 	// transforms wouldn't do anything because tap-adding transforms skip areas 
 	// where there's a hold.
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] )	NoteDataUtil::Floored(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] )	NoteDataUtil::Floored( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister( nd, iStartIndex, iEndIndex );
 
 	// Apply turns and shuffles last to that they affect inserts.
-	if( po.m_bTurns[PlayerOptions::TURN_MIRROR] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, fStartBeat, fEndBeat );
-	if( po.m_bTurns[PlayerOptions::TURN_LEFT] )				NoteDataUtil::Turn( nd, st, NoteDataUtil::left, fStartBeat, fEndBeat );
-	if( po.m_bTurns[PlayerOptions::TURN_RIGHT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::right, fStartBeat, fEndBeat );
-	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, fStartBeat, fEndBeat );
-	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, fStartBeat, fEndBeat );
+	if( po.m_bTurns[PlayerOptions::TURN_MIRROR] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_LEFT] )				NoteDataUtil::Turn( nd, st, NoteDataUtil::left, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_RIGHT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::right, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )

@@ -1943,7 +1943,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		case quantize:
 			{
 				NoteType nt = (NoteType)iAnswers[c];
-				NoteDataUtil::SnapToNearestNoteType( m_NoteDataEdit, nt, nt, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+				NoteDataUtil::SnapToNearestNoteType( m_NoteDataEdit, nt, nt, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(m_NoteFieldEdit.m_fEndMarker) );
 			}
 			break;
 		case turn:
@@ -1969,29 +1969,30 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case transform:
 			{
-				float fBeginBeat = m_NoteFieldEdit.m_fBeginMarker;
-				float fEndBeat = m_NoteFieldEdit.m_fEndMarker;
+				int iBeginRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
+				int iEndRow = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
 				TransformType tt = (TransformType)iAnswers[c];
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
 				switch( tt )
 				{
-				case noholds:	NoteDataUtil::RemoveHoldNotes( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case nomines:	NoteDataUtil::RemoveMines( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case little:	NoteDataUtil::Little( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case big:		NoteDataUtil::Big( m_NoteDataEdit, fBeginBeat, fEndBeat );		break;
-				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case bmrize:	NoteDataUtil::BMRize( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case skippy:	NoteDataUtil::Skippy( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case mines:		NoteDataUtil::AddMines( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, fBeginBeat, fEndBeat );	break;
-				case planted:	NoteDataUtil::Planted( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case floored:	NoteDataUtil::Floored( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case twister:	NoteDataUtil::Twister( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case nojumps:	NoteDataUtil::RemoveJumps( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case nohands:	NoteDataUtil::RemoveHands( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
-				case noquads:	NoteDataUtil::RemoveQuads( m_NoteDataEdit, fBeginBeat, fEndBeat );	break;
+				case noholds:	NoteDataUtil::RemoveHoldNotes( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nomines:	NoteDataUtil::RemoveMines( m_NoteDataEdit, iBeginRow, iBeginRow );	break;
+				case little:	NoteDataUtil::Little( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case big:		NoteDataUtil::Big( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case bmrize:	NoteDataUtil::BMRize( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case skippy:	NoteDataUtil::Skippy( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case mines:		NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, iBeginRow, iEndRow );	break;
+				case planted:	NoteDataUtil::Planted( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case floored:	NoteDataUtil::Floored( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case twister:	NoteDataUtil::Twister( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nojumps:	NoteDataUtil::RemoveJumps( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nohands:	NoteDataUtil::RemoveHands( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case noquads:	NoteDataUtil::RemoveQuads( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				default:		ASSERT(0);
 				}
 
