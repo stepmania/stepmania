@@ -502,7 +502,6 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 					if( pNotes )	// found a match
 					{
 						LOG->Trace("Accessing caprice at %d", pSong);
-						m_CapriceEntries.push_back(pSong);	// cache it for later
 						LOG->Trace("Song title: %s", pSong->GetFullTranslitTitle().c_str() );
 						break;						// stop searching
 					}
@@ -582,6 +581,14 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 
 		if( !pSong || !pNotes )
 			continue;	// this song entry isn't playable.  Skip.
+
+		m_CapriceEntries.push_back(pSong);	// cache it for random caprice
+		               // NOTE: it must be done for all songs because
+		               // above it searches the entire array; for example
+		               // if a song is defined for songs 1 and 2 and caprice
+		               // is 3, it'll only have pushed one song if it was in
+		               // the old location.  Thus, here it'll make sure
+		               // the indice exists.
 
 		/* If e.difficulty == DIFFICULTY_INVALID, then we already increased difficulty
 		 * based on meter. */
