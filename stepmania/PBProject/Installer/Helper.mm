@@ -30,6 +30,8 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
     NSString *filePath = [NSString stringWithCString:dir];
 
     filePath = [filePath stringByAppendingFormat:@"%s%s", (dir == "/" ? "" : "/"), file.c_str()];
+    if (!overwrite && DoesFileExist([filePath cString]))
+        return;
     [c postMessage:filePath];
     /* This is rediculus */
     char f[file.length() + 1];
@@ -60,7 +62,7 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
         status = AuthorizationExecuteWithPrivileges(auth, path, kAuthorizationFlagDefaults, arguments+1, NULL);
         if (status != errAuthorizationSuccess)
             [c postMessage:@"failed"];
-        wait(&status);
+        wait(&int(status));
     }
     else
     {

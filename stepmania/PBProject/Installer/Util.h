@@ -14,7 +14,8 @@ using namespace std;
 
 void split(const CString& Source, const CString& Deliminator, vector<CString>& AddIt);
 bool IsADirectory(const CString& path);
-CString LastPathComponent(const CString& path);
+bool DoesFileExist(const CString& path);
+inline CString LastPathComponent(const CString& path);
 void FileListingForDirectoryWithIgnore(const CString& path, CStringArray& list, CStringArray& dirs,
                                        const set<CString>& ignore, bool ignoreDot = true);
 int mkdir_p(const CString& path);

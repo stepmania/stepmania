@@ -38,6 +38,12 @@ inline bool IsADirectory(const CString& path)
     return s.st_mode & S_IFDIR;
 }
 
+bool DoesFileExist(const CString& path)
+{
+    struct stat s;
+    return !stat(path, &s);
+}
+
 inline CString LastPathComponent(const CString& path)
 {
     unsigned pos = path.rfind('/');
