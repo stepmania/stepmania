@@ -228,135 +228,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			}
 		}
 	}
+
 	//
 	// update persistent statistics
 	//
 	int iPersonalHighScoreIndex[NUM_PLAYERS] = { -1, -1 };
 	int iMachineHighScoreIndex[NUM_PLAYERS] = { -1, -1 };
 	RankingCategory rc[NUM_PLAYERS] = { NUM_RANKING_CATEGORIES, NUM_RANKING_CATEGORIES };
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		// only save scores for human players ;)
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;
-
-		// don't save scores if the player chose not to
-		if( !GAMESTATE->m_SongOptions.m_bSaveScore )
-			continue;
-
-		// whether or not to save scores when the stage was failed
-		// depends on if this is a course or not ... it's handled
-		// below in the switch
-
-		switch( m_Type )
-		{
-		case stage:
-			{
-				// don't save scores for a failed song
-				if( m_bFailed ) continue;
-
-				ASSERT( GAMESTATE->m_pCurNotes[p] );
-
-				switch( GAMESTATE->m_PlayMode )
-				{
-				case PLAY_MODE_BATTLE:
-				case PLAY_MODE_RAVE:
-					break; /* don't save scores in battle */
-
-				default:
-					Steps::MemCardData::HighScore hs;
-					hs.grade = grade[p];
-					hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
-					hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
-				}
-			}
-			break;
-		case summary:
-			{
-				// don't save scores for a failed game
-				// (I'm not sure if this is a case that can actally
-				// happen -avh4)
-				if( m_bFailed ) continue;
-
-				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-
-				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
-				rc[p] = AverageMeterToRankingCategory( fAverageMeter );
-
-				ProfileManager::CategoryData::HighScore hs;
-				hs.iScore = stageStats.iScore[p];
-				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
-			}
-			break;
-		case course:
-			{
-				Course* pCourse = GAMESTATE->m_pCurCourse;
-				if( pCourse )
-				{
-					// don't save scores for a failed Nonstop (is this
-					// correct? -avh4)
-					// DO save scores for a failed Oni/Endless
-					if( m_bFailed && pCourse->IsNonstop() ) continue;
-
-					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-					Course::MemCardData::HighScore hs;
-					hs.iScore = stageStats.iScore[p];
-					hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-					hs.fSurviveTime = stageStats.fAliveSeconds[p];
-					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
-				}
-			}
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-
-	// If both players get a machine high score, a player
-	// whose score is added later may bump the players who were
-	// added earlier.  Adjust for this.
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-		if( iMachineHighScoreIndex[p] == -1 )	// no record
-			continue;	// skip
-		if( m_bFailed ) // both players failed
-			continue; // skip
-
-		for( int p2=0; p2<p; p2++ )
-		{
-			if( !GAMESTATE->IsHumanPlayer(p2) )
-				continue;	// skip
-			if( iMachineHighScoreIndex[p2] == -1 )	// no record
-				continue;	// skip
-			bool bPlayedSameSteps;
-			switch( m_Type )
-			{
-			case stage:
-				bPlayedSameSteps = GAMESTATE->m_pCurNotes[p]==GAMESTATE->m_pCurNotes[p2];
-				break;
-			case summary:
-				bPlayedSameSteps = rc[p] == rc[p2];
-				break;
-			case course:
-				bPlayedSameSteps = true;
-				break;
-			}
-			if( iMachineHighScoreIndex[p] >= iMachineHighScoreIndex[p2] )
-			{
-				iMachineHighScoreIndex[p2]++;
-				if( iMachineHighScoreIndex[p2] >= NUM_RANKING_LINES )
-					iMachineHighScoreIndex[p2] = -1;
-			}
-		}
-	}
+	CommitScores( stageStats, iPersonalHighScoreIndex, iMachineHighScoreIndex, rc );
 
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
@@ -913,6 +792,132 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
 	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
+}
+
+
+void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonalHighScoreIndex[NUM_PLAYERS], int iMachineHighScoreIndex[NUM_PLAYERS], RankingCategory rc[NUM_PLAYERS] )
+{
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		return; /* don't save scores in battle */
+	}
+
+	// don't save scores if the player chose not to
+	if( !GAMESTATE->m_SongOptions.m_bSaveScore )
+		return;
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
+		// whether or not to save scores when the stage was failed
+		// depends on if this is a course or not ... it's handled
+		// below in the switch
+
+		switch( m_Type )
+		{
+		case stage:
+			{
+				// don't save scores for a failed song
+				if( m_bFailed ) continue;
+
+				ASSERT( GAMESTATE->m_pCurNotes[p] );
+
+				Steps::MemCardData::HighScore hs;
+				hs.grade = stageStats.GetGrade( (PlayerNumber)p );
+				hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
+				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+					GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+			}
+			break;
+
+		case summary:
+			{
+				// don't save scores for a failed game
+				// (I'm not sure if this is a case that can actally
+				// happen -avh4)
+				if( m_bFailed ) continue;
+
+				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
+				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
+				rc[p] = AverageMeterToRankingCategory( fAverageMeter );
+
+				ProfileManager::CategoryData::HighScore hs;
+				hs.iScore = stageStats.iScore[p];
+				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
+			}
+			break;
+
+		case course:
+			{
+				Course* pCourse = GAMESTATE->m_pCurCourse;
+				if( pCourse )
+				{
+					// don't save scores for a failed Nonstop (is this
+					// correct? -avh4)
+					// DO save scores for a failed Oni/Endless
+					if( m_bFailed && pCourse->IsNonstop() ) continue;
+
+					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+					Course::MemCardData::HighScore hs;
+					hs.iScore = stageStats.iScore[p];
+					hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+					hs.fSurviveTime = stageStats.fAliveSeconds[p];
+					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+						pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+				}
+			}
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+
+	// If both players get a machine high score, a player whose score is added later 
+	// may bump the players who were added earlier.  Adjust for this.
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+		if( iMachineHighScoreIndex[p] == -1 )	// no record
+			continue;	// skip
+		if( m_bFailed ) // both players failed
+			continue; // skip
+
+		for( int p2=0; p2<p; p2++ )
+		{
+			if( !GAMESTATE->IsHumanPlayer(p2) )
+				continue;	// skip
+			if( iMachineHighScoreIndex[p2] == -1 )	// no record
+				continue;	// skip
+			bool bPlayedSameSteps;
+			switch( m_Type )
+			{
+			case stage:
+				bPlayedSameSteps = GAMESTATE->m_pCurNotes[p]==GAMESTATE->m_pCurNotes[p2];
+				break;
+			case summary:
+				bPlayedSameSteps = rc[p] == rc[p2];
+				break;
+			case course:
+				bPlayedSameSteps = true;
+				break;
+			}
+			if( iMachineHighScoreIndex[p] >= iMachineHighScoreIndex[p2] )
+			{
+				iMachineHighScoreIndex[p2]++;
+				if( iMachineHighScoreIndex[p2] >= NUM_RANKING_LINES )
+					iMachineHighScoreIndex[p2] = -1;
+			}
+		}
+	}
 }
 
 

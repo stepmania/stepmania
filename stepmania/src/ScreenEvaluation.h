@@ -58,6 +58,8 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 protected:
+	void CommitScores( const StageStats &stageStats, int iPersonalHighScoreIndex[NUM_PLAYERS], int iMachineHighScoreIndex[NUM_PLAYERS], RankingCategory rc[NUM_PLAYERS] );
+
 	CString				m_sName;
 	Type				m_Type;
 
