@@ -61,6 +61,11 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			m_iLives = atoi( sParams[1] );
 		}
 
+		else if( 0 == stricmp(sValueName, "EXTRA") )
+		{
+			m_iExtra = atoi( sParams[1] );
+		}
+
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
 			CString sSongDir = "Songs\\" + sParams[1] + "\\";

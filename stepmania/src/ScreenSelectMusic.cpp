@@ -226,6 +226,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 	if( m_Menu.IsClosing() )
 		return;		// ignore
 
+	if( ! GAMESTATE->IsExtraStage() &&  ! GAMESTATE->IsExtraStage2() )
 	if( m_bMadeChoice && !m_bGoToOptions && MenuI.button == MENU_BUTTON_START )
 	{
 		m_bGoToOptions = true;
@@ -239,11 +240,13 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 
 	if( INPUTQUEUE->MatchesPattern(MenuI.player, EASIER_DIFFICULTY_PATTERN, EASIER_DIFFICULTY_PATTERN_SIZE) )
 	{
+		if( ! GAMESTATE->IsExtraStage() &&  ! GAMESTATE->IsExtraStage2() )
 		EasierDifficulty( MenuI.player );
 		return;
 	}
 	if( INPUTQUEUE->MatchesPattern(MenuI.player, HARDER_DIFFICULTY_PATTERN, HARDER_DIFFICULTY_PATTERN_SIZE) )
 	{
+		if( ! GAMESTATE->IsExtraStage() &&  ! GAMESTATE->IsExtraStage2() )
 		HarderDifficulty( MenuI.player );
 		return;
 	}
@@ -313,9 +316,10 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				bIsHoldingNext = true;
 		}
 
-		if( bIsHoldingNext || m_bGoToOptions )
+		if( ! GAMESTATE->IsExtraStage() &&  ! GAMESTATE->IsExtraStage2() &&
+			( bIsHoldingNext || m_bGoToOptions ) )
 		{
-			SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
+				SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
 		}
 		else
 		{
@@ -338,6 +342,7 @@ void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType typ
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
 		return;		// ignore
 	
+	if( ! m_MusicWheel.WheelIsLocked() )
 	MUSIC->Stop();
 
 	m_MusicWheel.PrevMusic();
@@ -349,6 +354,7 @@ void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType ty
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) ) )
 		return;		// ignore
 
+	if( ! m_MusicWheel.WheelIsLocked() )
 	MUSIC->Stop();
 
 	m_MusicWheel.NextMusic();
@@ -359,7 +365,8 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 	if( INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) )  &&
 		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
 	{
-		m_MusicWheel.NextSort();
+		if( ! GAMESTATE->IsExtraStage() &&  ! GAMESTATE->IsExtraStage2() )
+			m_MusicWheel.NextSort();
 		return;
 	}
 

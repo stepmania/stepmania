@@ -118,6 +118,7 @@ public:
 	Course*			GetSelectedCourse()	{ return GetCurWheelItemDatas()[m_iSelection].m_pCourse; };
 	CString			GetSelectedSection(){ return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
 
+	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 
 protected:
 	void BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItems, SongSortOrder so, bool bRoulette = false );
@@ -166,6 +167,7 @@ protected:
 	float				m_fTimeLeftInState;
 	float				m_fPositionOffsetFromSelection;
 
+	bool				m_bUseRandomExtra;
 
 	// having sounds here causes a crash in Bass.  What the heck!?!?!
 	RageSoundSample m_soundChangeMusic;

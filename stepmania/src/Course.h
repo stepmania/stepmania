@@ -17,7 +17,8 @@ class Song;
 struct Notes;
 
 
-const int MAX_COURSE_STAGES = 100;
+const int MAX_COURSE_STAGES = 300; // Increased since the user can place all Bemani songs in a single folder
+
 
 class Course
 {
@@ -28,6 +29,7 @@ public:
 		m_bRepeat = false;
 		m_bRandomize = false;
 		m_iLives = 4;
+		m_iExtra = 0;
 		for( int i=0; i<MAX_COURSE_STAGES; i++ )
 			m_apSongs[i] = NULL;
 	}
@@ -43,6 +45,7 @@ public:
 	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
 	CString		m_sModifiers;	// contains player options and song options
+	int			m_iExtra;	// extra stage number...
 
 	void GetPlayerOptions( PlayerOptions* pPO_out );
 	void GetSongOptions( SongOptions* pSO_out);
@@ -52,7 +55,7 @@ public:
 
 	void AddStage( Song* pSong, CString sDescription )
 	{
-		ASSERT( m_iStages <= MAX_COURSE_STAGES );
+		ASSERT( m_iStages <= MAX_COURSE_STAGES - 1 );
 		m_apSongs[m_iStages] = pSong;
 		m_asDescriptions[m_iStages] = sDescription;
 		m_iStages++;

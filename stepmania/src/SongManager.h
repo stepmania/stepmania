@@ -44,10 +44,13 @@ public:
 
 
 	// for Oni
-	CArray<Course, Course>	m_aOniCourses;
+	CArray<Course, Course> m_aOniCourses;
+
+	// for Extra Stages
+	CArray<Course, Course> m_aExtraCourses;
 	
 	// for Endless
-	CArray<Course, Course>	m_aEndlessCourses;
+	CArray<Course, Course> m_aEndlessCourses;
 
 	void InitCoursesFromDisk();
 	void ReloadCourses();

@@ -376,14 +376,35 @@ MusicWheel::MusicWheel()
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
+	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	{
+		m_bUseRandomExtra = true;
+		Course cCourse;
+		for( int i=0; i< SONGMAN->m_aExtraCourses.GetSize(); i++ )
+		{
+			cCourse	= SONGMAN->m_aExtraCourses[i];	
+			if(	cCourse.m_sName	== GAMESTATE->m_sPreferredGroup	)
+			{
+				if(	( GAMESTATE->IsExtraStage()	&& cCourse.m_iExtra	== 1 ) ||
+					( GAMESTATE->IsExtraStage2() &&	cCourse.m_iExtra ==	2 )	|| 1 ) // force	extra whatever
+				{
+					GAMESTATE->m_pCurSong =	SONGMAN->m_aExtraCourses[i].m_apSongs[0];
+					m_bUseRandomExtra = false;
+					break;
+				}
+			}
+		}
+	}
+
 	// select a song if none are selected
 	if( GAMESTATE->m_pCurSong == NULL && 	// if there is no currently selected song
 		SONGMAN->m_pSongs.GetSize() > 0 )		// and there is at least one song
 	{
 		CArray<Song*, Song*> arraySongs;
 		SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, arraySongs );
-	
-		if( arraySongs.GetSize() > 0 )
+		// even tho separating these loops makes more code, in the end it'll be executed faster...
+	    //else 
+		if( arraySongs.GetSize() > 0 && GAMESTATE->m_pCurSong == NULL) // still nothing selected
 			GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
 	}
 
@@ -816,8 +837,31 @@ void MusicWheel::Update( float fDeltaTime )
 			break;
 		case STATE_TWEENING_ON_SCREEN:
 			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
-			m_WheelState = STATE_SELECTING_MUSIC;
 			m_fTimeLeftInState = 0;
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			{
+				if ( m_bUseRandomExtra )
+				{
+					MUSIC->Stop;
+					m_soundExpand.Play();
+					m_WheelState = STATE_ROULETTE_SPINNING;
+					m_SortOrder = SORT_GROUP;
+					m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+					m_MusicSortDisplay.SetEffectNone();
+					BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
+				}
+				else
+				{
+					m_WheelState = STATE_LOCKED;
+					m_soundStart.Play();
+					m_fLockedWheelVelocity = 0;
+				}
+			}
+			else
+			{
+				m_WheelState = STATE_SELECTING_MUSIC;
+
+			}
 			break;
 		case STATE_TWEENING_OFF_SCREEN:
 			m_WheelState = STATE_WAITING_OFF_SCREEN;

@@ -398,8 +398,7 @@ void SongManager::InitCoursesFromDisk()
 		if( course.m_iStages > 0 )
 			m_aOniCourses.Add( course );
 	}
-
-
+	
 	//
 	// Create endless courses
 	//
@@ -420,6 +419,28 @@ void SongManager::InitCoursesFromDisk()
 				m_aEndlessCourses.Add( course );
 		}
 	}
+
+
+	//
+	// Load extra stages
+	//
+	for( int g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
+	{
+		CString sGroupName = saGroupNames[g];
+		CStringArray saCourseFiles;
+		GetDirListing( "Songs\\" + sGroupName + "\\*.crs", saCourseFiles );
+		for( int i=0; i<saCourseFiles.GetSize(); i++ )
+		{
+			Course course;
+			course.LoadFromCRSFile( "Songs\\" + sGroupName + "\\" + saCourseFiles[i], m_pSongs );
+			if( course.m_iStages > 0 )
+				m_aExtraCourses.Add( course );
+		}
+
+	}
+
+
+
 }
 
 void SongManager::ReloadCourses()
