@@ -1,5 +1,5 @@
-#ifndef LOW_LEVEL_WINDOW_SDL_H
-#define LOW_LEVEL_WINDOW_SDL_H
+#ifndef LOW_LEVEL_WINDOW_NULL_H
+#define LOW_LEVEL_WINDOW_NULL_H
 
 #include "LowLevelWindow.h"
 
