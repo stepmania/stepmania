@@ -81,6 +81,7 @@ void RaveHelper::LaunchAttack( AttackLevel al )
   	PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 
 	GameState::ActiveAttack aa;
+	aa.level = al;
 	aa.fSecsRemaining = ATTACK_DURATION_SECONDS;
 	aa.sModifier = sAttackToGive;
 

@@ -17,16 +17,18 @@
 #include "RageTimer.h"
 
 
-#define NUM_ITEM_TYPES				THEME->GetMetricF("Inventory","NumItemTypes")
-#define ITEM_DURATION_SECONDS		THEME->GetMetricF("Inventory","ItemDurationSeconds")
-#define ITEM_COMBO( i )				THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
-#define ITEM_EFFECT( i )			THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
+#define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
+#define ITEM_DURATION_SECONDS	THEME->GetMetricF("Inventory","ItemDurationSeconds")
+#define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
+#define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
+#define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dLevel",i+1))
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 
 struct Item
 {
+	AttackLevel level;
 	int iCombo;
 	CString sModifier;
 };
@@ -38,6 +40,7 @@ void ReloadItems()
 	for( int i=0; i<NUM_ITEM_TYPES; i++ )
 	{
 		Item item;
+		item.level = (AttackLevel)(ITEM_LEVEL(i)-1);
 		item.iCombo = ITEM_COMBO(i);
 		item.sModifier = ITEM_EFFECT(i);
 		g_Items.push_back( item );
@@ -151,10 +154,20 @@ void Inventory::UseItem( int iSlot )
 		return;
 
     PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
-
 	GameState::ActiveAttack aa;
-	aa.fSecsRemaining = ITEM_DURATION_SECONDS;
 	aa.sModifier = asInventory[iSlot];
+	aa.fSecsRemaining = ITEM_DURATION_SECONDS;
+	aa.level = ATTACK_LEVEL_1;
+
+	// UGLY:  Search through g_Items and find out what the attack level for this item is.
+	for( unsigned i=0; i<g_Items.size(); i++ )
+	{
+		if( aa.sModifier == g_Items[i].sModifier )
+		{
+			aa.level = g_Items[i].level;
+			break;
+		}
+	}
 
 	GAMESTATE->LaunchAttack( pnToAttack, aa );
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );

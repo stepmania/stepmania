@@ -672,6 +672,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NotesWriterSM.h">
 			</File>
 			<File
+				RelativePath="PlayerAI.cpp">
+			</File>
+			<File
+				RelativePath="PlayerAI.h">
+			</File>
+			<File
 				RelativePath="PlayerNumber.cpp">
 			</File>
 			<File

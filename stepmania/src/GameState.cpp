@@ -414,3 +414,15 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 	}
 	GAMESTATE->m_PlayerOptions[pn] = po;
 }
+
+int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
+{
+	int iSum = 0;
+
+	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 )
+			iSum += m_ActiveAttacks[pn][s].level;
+
+	return iSum;
+}
+

@@ -164,6 +164,7 @@ public:
 	// used in PLAY_MODE_RAVE and PLAY_MODE_BATTLE
 	struct ActiveAttack
 	{
+		AttackLevel	level;
 		float fSecsRemaining;
 		CString sModifier;
 	};
@@ -172,7 +173,7 @@ public:
 	void LaunchAttack( PlayerNumber target, ActiveAttack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
-
+	int GetSumOfActiveAttackLevels( PlayerNumber pn );
 
 
 	bool HasEarnedExtraStage();

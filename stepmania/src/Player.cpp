@@ -29,6 +29,7 @@
 #include "Combo.h"
 #include "ScoreDisplay.h"
 #include "LifeMeter.h"
+#include "PlayerAI.h"
 
 #define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
 #define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
@@ -39,75 +40,10 @@ CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboTh
 #define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
 
 /* Distance to search for a note in Step(). */
+/* Units? */
 static const float StepSearchDistanceBackwards = 1.0f;
 static const float StepSearchDistanceForwards = 1.0f;
 
-struct TapScoreDistribution
-{
-	float fCumulativeProbability[NUM_TAP_NOTE_SCORES];
-	TapNoteScore GetTapNoteScore()
-	{
-		float fRand = randomf(0,1);
-		for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
-			if( fRand <= fCumulativeProbability[i] )
-				return (TapNoteScore)i;
-		ASSERT(0);	// the last probability must be 1.0, so we should never get here!
-		return TNS_MARVELOUS;
-	}
-};
-TapScoreDistribution TAP_SCORE_DISTRIBUTIONS[NUM_PLAYER_CONTROLLERS] = 
-{
-	// HUMAN
-	{
-		0.00f,	// TNS_NONE 
-		1.00f,	// TNS_MISS	// don't ever hit automatically when human
-		0.00f,	// TNS_BOO 
-		0.00f,	// TNS_GOOD 
-		0.00f,	// TNS_GREAT 
-		0.00f,	// TNS_PERFECT 
-		0.00f,	// TNS_MARVELOUS 
-	},
-	// CPU_EASY
-	{
-		0.00f,	// TNS_NONE 
-		0.02f,	// TNS_MISS
-		0.06f,	// TNS_BOO 
-		0.10f,	// TNS_GOOD 
-		0.55f,	// TNS_GREAT 
-		0.80f,	// TNS_PERFECT 
-		1.00f,	// TNS_MARVELOUS 
-	},
-	// CPU_MEDIUM
-	{
-		0.00f,	// TNS_NONE 
-		0.01f,	// TNS_MISS
-		0.02f,	// TNS_BOO 
-		0.05f,	// TNS_GOOD 
-		0.45f,	// TNS_GREAT 
-		0.70f,	// TNS_PERFECT 
-		1.00f,	// TNS_MARVELOUS 
-	},
-	// CPU_HARD
-	{
-		0.00f,	// TNS_NONE 
-		0.005f,	// TNS_MISS
-		0.010f,	// TNS_BOO 
-		0.02f,	// TNS_GOOD 
-		0.10f,	// TNS_GREAT 
-		0.50f,	// TNS_PERFECT 
-		1.00f,	// TNS_MARVELOUS 
-	},
-	// CPU_AUTOPLAY
-	{
-		0.00f,	// TNS_NONE 
-		0.00f,	// TNS_MISS
-		0.00f,	// TNS_BOO 
-		0.00f,	// TNS_GOOD 
-		0.00f,	// TNS_GREAT 
-		0.00f,	// TNS_PERFECT 
-		1.00f,	// TNS_MARVELOUS 
-	},
-};
 
 
 Player::Player()
@@ -439,7 +375,7 @@ void Player::Step( int col )
 		}
 		else
 		{
-			score = TAP_SCORE_DISTRIBUTIONS[GAMESTATE->m_PlayerController[m_PlayerNumber]].GetTapNoteScore();
+			score = PlayerAI::GetTapNoteScore( GAMESTATE->m_PlayerController[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
 		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
@@ -582,7 +518,7 @@ void Player::CrossedRow( int iNoteRow )
 	{
 		if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
 		{
-			TapNoteScore tns = TAP_SCORE_DISTRIBUTIONS[ GAMESTATE->m_PlayerController[m_PlayerNumber] ].GetTapNoteScore();
+			TapNoteScore tns  = PlayerAI::GetTapNoteScore( GAMESTATE->m_PlayerController[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
 			if( tns!=TNS_MISS )
 				this->Step( t );
 		}
