@@ -78,8 +78,11 @@ class MusicWheel : public ActorFrame
 public:
 	MusicWheel();
 
-	void Update( float fDeltaTime );
-	void RenderPrimitives();
+	virtual void Update( float fDeltaTime );
+	virtual void RenderPrimitives();
+
+	virtual void TweenOnScreen()		{ m_WheelState = STATE_TWEENING_ON_SCREEN;		m_fTimeLeftInState = FADE_TIME; };
+	virtual void TweenOffScreen()		{ m_WheelState = STATE_TWEENING_OFF_SCREEN; 	m_fTimeLeftInState = FADE_TIME; };
 
 	void PrevMusic();
 	void NextMusic();
@@ -114,7 +117,16 @@ protected:
 	CString m_sExpandedSectionName;
 
 
-	enum WheelState { STATE_IDLE, STATE_SWITCHING_TO_PREV_MUSIC, STATE_SWITCHING_TO_NEXT_MUSIC, STATE_FADING_OFF, STATE_FADING_ON };
+	enum WheelState { 
+		STATE_IDLE, 
+		STATE_SWITCHING_TO_PREV_MUSIC, 
+		STATE_SWITCHING_TO_NEXT_MUSIC, 
+		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
+		STATE_FLYING_ON_AFTER_NEXT_SORT, 
+		STATE_TWEENING_ON_SCREEN, 
+		STATE_TWEENING_OFF_SCREEN, 
+		STATE_WAITING_OFF_SCREEN
+	};
 	WheelState m_WheelState;
 	float m_fTimeLeftInState;
 

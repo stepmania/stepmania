@@ -189,7 +189,7 @@ MusicWheel::MusicWheel()
 
 	
 	// fade the wheel in
-	m_WheelState = STATE_FADING_ON;
+	m_WheelState = STATE_IDLE;
 	m_fTimeLeftInState = FADE_TIME;
 
 
@@ -316,19 +316,32 @@ float MusicWheel::GetBannerBrightness( float fPosOffsetsFromMiddle )
 
 float MusicWheel::GetBannerAlpha( float fPosOffsetsFromMiddle )
 {
-	if( m_WheelState == STATE_FADING_OFF )
+	if( m_WheelState == STATE_FLYING_OFF_BEFORE_NEXT_SORT 
+	 || m_WheelState == STATE_TWEENING_OFF_SCREEN  )
+	{
 		return m_fTimeLeftInState / FADE_TIME;
-	else if( m_WheelState == STATE_FADING_ON )
+	}
+	else if( m_WheelState == STATE_FLYING_ON_AFTER_NEXT_SORT
+		  || m_WheelState == STATE_TWEENING_ON_SCREEN )
+	{
 		return 1 - (m_fTimeLeftInState / FADE_TIME);
+	}
+	else if( m_WheelState == STATE_WAITING_OFF_SCREEN )
+	{
+		return 0;
+	}
 	else
+	{
 		return 1;
+	}
 }
 
 float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 {	
 	float fX = (1-cos((fPosOffsetsFromMiddle)/3))*95.0f;
 
-	if( m_WheelState == STATE_FADING_OFF )
+	if( m_WheelState == STATE_FLYING_OFF_BEFORE_NEXT_SORT 
+	 || m_WheelState == STATE_TWEENING_OFF_SCREEN  )
 	{
 		float fDistFromCenter = fabs( fPosOffsetsFromMiddle );
 		float fPercentOffScreen = 1- (m_fTimeLeftInState / FADE_TIME);
@@ -337,7 +350,8 @@ float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 		float fXPixelOffset = fXLogicalOffset * 600;
 		fX += fXPixelOffset;
 	}
-	else if( m_WheelState == STATE_FADING_ON )
+	else if( m_WheelState == STATE_FLYING_ON_AFTER_NEXT_SORT
+		  || m_WheelState == STATE_TWEENING_ON_SCREEN )
 	{
 		float fDistFromCenter = fabs( fPosOffsetsFromMiddle );
 		float fPercentOffScreen = m_fTimeLeftInState / FADE_TIME;
@@ -427,9 +441,9 @@ void MusicWheel::Update( float fDeltaTime )
 			m_WheelState = STATE_IDLE;	// now, wait for input
 			PlayMusicSample();
 			break;
-		case STATE_FADING_OFF:
+		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
-			m_WheelState = STATE_FADING_ON;
+			m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 			m_fTimeLeftInState = FADE_TIME;
 
 			Song* pPrevSelectedSong = m_WheelItems[m_iSelection].m_pSong;
@@ -454,9 +468,18 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 			}
 			break;
-		case STATE_FADING_ON:
+		case STATE_FLYING_ON_AFTER_NEXT_SORT:
 			PlayMusicSample();
 			m_WheelState = STATE_IDLE;	// now, wait for input
+			break;
+		case STATE_TWEENING_ON_SCREEN:
+			PlayMusicSample();
+			m_WheelState = STATE_IDLE;
+			m_fTimeLeftInState = 0;
+			break;
+		case STATE_TWEENING_OFF_SCREEN:
+			m_WheelState = STATE_WAITING_OFF_SCREEN;
+			m_fTimeLeftInState = 0;
 			break;
 		case STATE_IDLE:
 			m_fTimeLeftInState = 0;
@@ -510,7 +533,7 @@ void MusicWheel::NextSort()
 	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );
 	m_MusicSortDisplay.SetTweenXY( SORT_ICON_OFF_SCREEN_X, SORT_ICON_OFF_SCREEN_Y );
 
-	m_WheelState = STATE_FADING_OFF;
+	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	m_fTimeLeftInState = FADE_TIME;
 }
 

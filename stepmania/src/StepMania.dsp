@@ -564,14 +564,6 @@ SOURCE=.\BitmapText.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\BlurredSprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BlurredSprite.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\BPMDisplay.cpp
 # End Source File
 # Begin Source File
@@ -585,6 +577,14 @@ SOURCE=.\ColorArrow.cpp
 # Begin Source File
 
 SOURCE=.\ColorArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FocusingSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FocusingSprite.h
 # End Source File
 # Begin Source File
 
@@ -633,6 +633,14 @@ SOURCE=.\MiniBackground.cpp
 # Begin Source File
 
 SOURCE=.\MiniBackground.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MotionBlurSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MotionBlurSprite.h
 # End Source File
 # Begin Source File
 
