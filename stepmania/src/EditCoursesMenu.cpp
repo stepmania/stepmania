@@ -468,6 +468,8 @@ void EditCoursesMenu::ChangeToRow( Row newRow )
 
 void EditCoursesMenu::OnRowValueChanged( Row row )
 {
+	LOG->Trace( "EditCoursesMenu::OnRowValueChanged(%i)", row );
+
 	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprArrows[0].EnableAnimation( CanGoLeft() );
@@ -487,12 +489,14 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	switch( row )
 	{
 	case ROW_COURSE:
+		CHECKPOINT;
 		m_textValue[ROW_COURSE].SetText( pCourse->m_sName );
 		m_CourseBanner.LoadFromCourse( pCourse );
 		m_CourseBanner.ScaleToClipped( COURSE_BANNER_WIDTH, COURSE_BANNER_HEIGHT );
 		m_iSelection[ROW_ENTRY] = 0;
 		// fall through
 	case ROW_COURSE_OPTIONS:
+		CHECKPOINT;
 		m_textValue[ROW_COURSE_OPTIONS].SetText( 
 			ssprintf(
 				"(START)  %s, %s, ",
@@ -503,16 +507,20 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 				pCourse->m_iLives ) );
 		// fall through
 	case ROW_ACTION:
+		CHECKPOINT;
 		m_textValue[ROW_ACTION].SetText( "(START) " + ActionToString(GetSelectedAction()) );
 		// fall through
 	case ROW_ENTRY:
+		CHECKPOINT;
 		m_textValue[ROW_ENTRY].SetText( ssprintf("%d of %d",m_iSelection[ROW_ENTRY]+1, (int)GetSelectedCourse()->m_entries.size()) );
 		m_iSelection[ROW_ENTRY_TYPE] = pEntry->type;
 		// fall through
 	case ROW_ENTRY_TYPE:
+		CHECKPOINT;
 		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : "(none)" );
 		// fall through
 	case ROW_ENTRY_OPTIONS:
+		CHECKPOINT;
 		{
 			CStringArray as;
 			const bool *bShow = g_bRowEnabledForType[GetSelectedEntry()->type];
@@ -538,6 +546,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		}
 		// fall through
 	case ROW_ENTRY_PLAYER_OPTIONS:
+		CHECKPOINT;
 		{
 			CString s = "(START) ";
 		
@@ -552,6 +561,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		}
 		// fall through
 	case ROW_ENTRY_SONG_OPTIONS:
+		CHECKPOINT;
 		{
 			CString s = "(START) ";
 
