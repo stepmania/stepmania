@@ -43,7 +43,12 @@ ActorCommands &ActorCommands::operator=( const ActorCommands& cpy )
 	if( this == &cpy )
 		return *this;
 
-	*this = cpy;
+	Unregister();
+
+	/* Make a new reference. */
+	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iLuaFunction );
+	m_iLuaFunction = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+
 	return *this;
 }
 
