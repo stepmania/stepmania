@@ -472,7 +472,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			{
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
-			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup != "ALL MUSIC";	break;
+			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == "ALL MUSIC";	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			default:		ASSERT( false );
 			}
@@ -491,7 +491,10 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					Song* pSong = arraySongs[i];
 					CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
 					int iSectionColorIndex = 0;
-					if( sThisSection != sLastSection )	// new section, make a section item
+
+					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
+							continue;
+					if( sThisSection != sLastSection)	// new section, make a section item
 					{
 						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS[iSectionColorIndex];
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
@@ -507,7 +510,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				for( int i=0; i<arraySongs.GetSize(); i++ )
 				{
 					Song* pSong = arraySongs[i];
-					if( bRoulette  &&  GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
+					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
 						continue;	// skip
 					arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName)) );
 				}
