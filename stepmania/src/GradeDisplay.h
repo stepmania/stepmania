@@ -21,17 +21,21 @@ class GradeDisplay : public Sprite
 {
 public:
 	GradeDisplay();
-	
+	virtual bool Load( RageTextureID ID );
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	void SetGrade( PlayerNumber pn, Grade g );
-	void SpinAndSettleOn( Grade g );
+	void Spin();
 	void SettleImmediately();
 	void SettleQuickly();
 
 protected:
 	
+	int GetFrameNo( PlayerNumber pn, Grade g );
+
+	PlayerNumber m_PlayerNumber;
 	Grade m_Grade;
 
 	// for scrolling; 0 = no, 1 = normal, 2 = quick

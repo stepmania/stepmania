@@ -11,6 +11,8 @@
 -----------------------------------------------------------------------------
 */
 
+#include "GradeDisplay.h"
+
 
 enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE };
 
@@ -52,9 +54,9 @@ public:
 
 	// for a TYPE_MUSIC
 	Sprite				m_sprSongBar;
-	WheelNotifyIcon	m_WheelNotifyIcon;
+	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
-	SmallGradeDisplay	m_GradeDisplay[NUM_PLAYERS];
+	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
 
 	// for TYPE_COURSE
 	BitmapText			m_textCourse;

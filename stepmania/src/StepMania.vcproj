@@ -1156,12 +1156,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScrollingList.h">
 			</File>
 			<File
-				RelativePath="SmallGradeDisplay.cpp">
-			</File>
-			<File
-				RelativePath="SmallGradeDisplay.h">
-			</File>
-			<File
 				RelativePath="SnapDisplay.cpp">
 			</File>
 			<File

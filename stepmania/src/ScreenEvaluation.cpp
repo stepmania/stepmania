@@ -335,10 +335,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 			m_sprGradeFrame[p].Command( GRADE_FRAME_ON_COMMAND(p) );
 			this->AddChild( &m_sprGradeFrame[p] );
 
+			m_Grades[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation grades") );
+			m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
 			if( SPIN_GRADES )
-				m_Grades[p].SpinAndSettleOn( grade[p] );
+				m_Grades[p].Spin();
 			else
-				m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
 			m_Grades[p].Command( GRADE_ON_COMMAND(p) );
 			this->AddChild( &m_Grades[p] );
 		}

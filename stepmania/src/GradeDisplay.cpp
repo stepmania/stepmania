@@ -26,15 +26,21 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 GradeDisplay::GradeDisplay()
 {
-	RageTextureID id( THEME->GetPathTo("Graphics",ssprintf("GradeDisplay grades 1x%d",NUM_GRADE_FRAMES)) );
-	id.bStretch = true;
-	Load( id );
-	StopAnimating();
-
 	m_fTimeLeftInScroll = 0;
 	m_bDoScrolling = 0;
 
 	SetGrade( PLAYER_1, GRADE_NO_DATA );
+}
+
+bool GradeDisplay::Load( RageTextureID ID )
+{
+	ID.bStretch = true;
+	Sprite::Load( ID );
+	Sprite::StopAnimating();
+
+	if( Sprite::GetNumStates() != 8  ||  Sprite::GetNumStates() != 16 )
+		RageException::Throw( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.GetString() );
+	return true;
 }
 
 void GradeDisplay::Update( float fDeltaTime )
@@ -74,55 +80,42 @@ void GradeDisplay::DrawPrimitives()
 	Sprite::DrawPrimitives();
 }
 
+int GradeDisplay::GetFrameNo( PlayerNumber pn, Grade g )
+{
+	// either 8, or 16 states
+	int iNumCols = Sprite::GetNumStates()==8 ? 1 : 2;
+	switch( g )
+	{
+	case GRADE_AAAA:	return 0*iNumCols+pn;	break;
+	case GRADE_AAA:		return 1*iNumCols+pn;	break;
+	case GRADE_AA:		return 2*iNumCols+pn;	break;
+	case GRADE_A:		return 3*iNumCols+pn;	break;
+	case GRADE_B:		return 4*iNumCols+pn;	break;
+	case GRADE_C:		return 5*iNumCols+pn;	break;
+	case GRADE_D:		return 6*iNumCols+pn;	break;
+	case GRADE_E:		return 7*iNumCols+pn;	break;
+	case GRADE_NO_DATA:	return 0;				break;
+	default:			ASSERT(0);	return 0;
+	}
+}
+
 void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 {
+	m_PlayerNumber = pn;
 	m_Grade = g;
 
 	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
-	SetDiffuse( RageColor(1,1,1,1) );
+	SetState( GetFrameNo(pn,g) );
+	Sprite::SetDiffuse( RageColor(1,1,1,g==GRADE_NO_DATA ? 0 : 1) );
+}
 
-	// Ugly...  This has to handle cases where the sprite has 7, 8, 14, or 16 states
-	int iNumCols = (this->GetNumStates()>8) ? 2 : 1;
-	switch( g )
-	{
-	case GRADE_AAAA:	SetState( 0*iNumCols+pn );	break;
-	case GRADE_AAA:		SetState( 1*iNumCols+pn );	break;
-	case GRADE_AA:		SetState( 2*iNumCols+pn );	break;
-	case GRADE_A:		SetState( 3*iNumCols+pn );	break;
-	case GRADE_B:		SetState( 4*iNumCols+pn );	break;
-	case GRADE_C:		SetState( 5*iNumCols+pn );	break;
-	case GRADE_D:		SetState( 6*iNumCols+pn );	break;
-	case GRADE_E:		SetState( 7*iNumCols+pn );	break;
-	case GRADE_NO_DATA:	SetDiffuse( RageColor(1,1,1,0) );	break;
-	default:			ASSERT(0);
-	}
-};
-
-void GradeDisplay::SpinAndSettleOn( Grade g )
+void GradeDisplay::Spin()
 {
-	ASSERT( g != GRADE_NO_DATA );
-	m_Grade = g;
-
 	m_bDoScrolling = true;
 
-
-	SetDiffuse( RageColor(1,1,1,1) );
-
-	int iFrameNo=0;
-	switch( g )
-	{
-	case GRADE_AAAA:	iFrameNo = 0;	break;
-	case GRADE_AAA:		iFrameNo = 1;	break;
-	case GRADE_AA:		iFrameNo = 2;	break;
-	case GRADE_A:		iFrameNo = 3;	break;
-	case GRADE_B:		iFrameNo = 4;	break;
-	case GRADE_C:		iFrameNo = 5;	break;
-	case GRADE_D:		iFrameNo = 6;	break;
-	case GRADE_E:		iFrameNo = 7;	break;
-	default:	ASSERT(0);
-	}
+	int iFrameNo = GetFrameNo( m_PlayerNumber, m_Grade );
 
 	m_frectDestTexCoords = *m_pTexture->GetTextureCoordRect( iFrameNo );
 	m_frectStartTexCoords = m_frectDestTexCoords;

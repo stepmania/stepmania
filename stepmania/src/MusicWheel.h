@@ -18,7 +18,6 @@
 #include "Quad.h"
 #include "TextBanner.h"
 #include "RandomSample.h"
-#include "SmallGradeDisplay.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
 #include "WheelNotifyIcon.h"
