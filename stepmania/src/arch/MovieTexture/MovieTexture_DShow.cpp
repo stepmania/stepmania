@@ -65,7 +65,7 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 void MovieTexture_DShow::SkipUpdates()
 {
 	while(SDL_SemTryWait(buffer_lock))
-		Update(0);
+		CheckFrame();
 }
 
 void MovieTexture_DShow::StopSkippingUpdates()
@@ -111,26 +111,16 @@ void MovieTexture_DShow::Reload()
 	// do nothing
 }
 
-
-void MovieTexture_DShow::Update(float fDeltaTime)
+/* If there's a frame waiting in the buffer, then the decoding thread put it there
+ * and is waiting for us to do something with it. */
+void MovieTexture_DShow::CheckFrame()
 {
-	VDCHECKPOINT;
-
-	// restart the movie if we reach the end
-	if(m_bLoop)
-	{
-		// Check for completion events
-		CComPtr<IMediaEvent>    pME;
-		m_pGB.QueryInterface(&pME);
-
-		long lEventCode, lParam1, lParam2;
-		pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
-		if( lEventCode == EC_COMPLETE )
-			SetPosition(0);
-	}
-
 	if(buffer == NULL)
 		return;
+
+	ASSERT( m_img );
+
+	VDCHECKPOINT;
 
 	/* Just in case we were invalidated: */
 	CreateTexture();
@@ -154,14 +144,20 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	area.w = short(fromDShow->w);
 	area.h = short(fromDShow->h);
 
+	/* XXX: For high-resolution movies, it's much faster to convert a BGR8 surface
+	 * to RGB8 in place than to blit it to another surface, since it's much easier
+	 * on the cache.  It'd be even faster to try as hard as we can to not do a
+	 * conversion at all; both OpenGL and D3D have BGR texture modes. */
 	SDL_BlitSurface(fromDShow, &area, m_img, &area);
 
+	VDCHECKPOINT;
 	DISPLAY->UpdateTexture(
 		m_uTexHandle, 
 		m_PixelFormat,
 		m_img,
 		0, 0,
 		min(m_iSourceWidth,m_iTextureWidth), min(m_iSourceHeight,m_iTextureHeight) );
+	VDCHECKPOINT;
 
 	SDL_FreeSurface( fromDShow );
 
@@ -169,10 +165,30 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 
 	VDCHECKPOINT;
 
-	LOG->Trace("processed, signalling");
-
 	/* Start the decoding thread again. */
 	SDL_SemPost(buffer_finished);
+
+	VDCHECKPOINT;
+}
+
+void MovieTexture_DShow::Update(float fDeltaTime)
+{
+	VDCHECKPOINT;
+
+	// restart the movie if we reach the end
+	if(m_bLoop)
+	{
+		// Check for completion events
+		CComPtr<IMediaEvent>    pME;
+		m_pGB.QueryInterface(&pME);
+
+		long lEventCode, lParam1, lParam2;
+		pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
+		if( lEventCode == EC_COMPLETE )
+			SetPosition(0);
+	}
+
+	CheckFrame();
 }
 
 void PrintCodecError(HRESULT hr, CString s)

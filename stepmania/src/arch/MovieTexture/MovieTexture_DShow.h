@@ -75,6 +75,7 @@ private:
 	bool PlayMovie();
 	void SkipUpdates();
 	void StopSkippingUpdates();
+	void CheckFrame();
 
 	unsigned GetTexHandle() { return m_uTexHandle; }
 	unsigned m_uTexHandle;
