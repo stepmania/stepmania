@@ -37,8 +37,8 @@ class DSoundBuf
 	int bytes_per_frame() const { return channels*samplebits/8; }
 
 	int write_cursor, buffer_bytes_filled; /* bytes */
-	int last_cursor_pos; /* frames */
-	mutable int LastPosition;
+	int64_t last_cursor_pos; /* frames */
+	mutable int64_t LastPosition;
 
 	bool buffer_locked;
 	char *locked_buf;
@@ -56,7 +56,6 @@ public:
 	bool get_output_buf(char **buffer, unsigned *bufsiz, int chunksize);
 	void release_output_buf(char *buffer, unsigned bufsiz);
 
-	void Reset();
 	void Play();
 	void Stop();
 	void SetVolume(float vol);
@@ -64,8 +63,8 @@ public:
 	int GetSampleRate() { return samplerate; }
 
 	~DSoundBuf();
-	int GetPosition() const;
-	int GetOutputPosition() const { return last_cursor_pos; }
+	int64_t GetPosition() const;
+	int64_t GetOutputPosition() const { return last_cursor_pos; }
 };
 
 #endif

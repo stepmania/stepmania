@@ -136,7 +136,8 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	samplebits = samplebits_;
 	writeahead = writeahead_;
 	buffer_locked = false;
-	last_cursor_pos = write_cursor = LastPosition = buffer_bytes_filled = 0;
+	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
+	LastPosition = 0;
 
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
@@ -395,7 +396,6 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
 	last_cursor_pos += num_bytes_empty / bytes_per_frame();
-
 	buffer_locked = true;
 
 	return true;
@@ -407,7 +407,7 @@ void DSoundBuf::release_output_buf(char *buffer, unsigned bufsiz)
 	buffer_locked = false;
 }
 
-int DSoundBuf::GetPosition() const
+int64_t DSoundBuf::GetPosition() const
 {
 	DWORD cursor, junk;
 	buf->GetCurrentPosition(&cursor, &junk);
@@ -415,10 +415,12 @@ int DSoundBuf::GetPosition() const
 	int write_cursor_frames = write_cursor  / bytes_per_frame();
 
 	int frames_behind = write_cursor_frames - cursor_frames;
-	if(frames_behind <= 0)
+	/* frames_behind will be 0 if we're called before the buffer starts playing:
+	 * both write_cursor_frames and cursor_frames will be 0. */
+	if( frames_behind < 0 )
 		frames_behind += buffersize_frames(); /* unwrap */
 
-	int ret = last_cursor_pos - frames_behind;
+	int64_t ret = last_cursor_pos - frames_behind;
 
 	/* Failsafe: never return a value smaller than we've already returned.
 	 * This can happen once in a while in underrun conditions. */
@@ -437,15 +439,7 @@ void DSoundBuf::Stop()
 {
 	buf->Stop();
 	buf->SetCurrentPosition(0);
-	last_cursor_pos = LastPosition = write_cursor = buffer_bytes_filled = 0;
-}
-
-
-void DSoundBuf::Reset()
-{
-	/* Nothing is playing.  Reset the sample count; this is just to
-     * prevent eventual overflow. */
-	last_cursor_pos = LastPosition = 0;
+	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 }
 
 /*

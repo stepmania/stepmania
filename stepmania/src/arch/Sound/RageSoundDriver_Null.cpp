@@ -131,9 +131,9 @@ void RageSound_Null::StopMixing( RageSoundBase *snd )
 	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
 }
 
-int RageSound_Null::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const
 {
-	return int(RageTimer::GetTimeSinceStart() * samplerate);
+	return int64_t(RageTimer::GetTimeSinceStart() * samplerate);
 }
 
 RageSound_Null::RageSound_Null()

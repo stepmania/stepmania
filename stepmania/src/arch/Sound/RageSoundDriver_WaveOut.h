@@ -12,10 +12,8 @@ class RageSound_WaveOut: public RageSoundDriver
 	struct sound {
 	    RageSoundBase *snd;
 		RageTimer start_time;
-
 		bool stopping;
-
-		int flush_pos; /* state == STOPPING only */
+		int64_t flush_pos; /* state == STOPPING only */
 
 	    sound() { snd = NULL; stopping=false; }
 	};
@@ -39,7 +37,7 @@ class RageSound_WaveOut: public RageSoundDriver
 	/* virtuals: */
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
-	int GetPosition( const RageSoundBase *snd ) const;
+	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
 
 public:

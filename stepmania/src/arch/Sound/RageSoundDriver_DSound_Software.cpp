@@ -63,12 +63,11 @@ bool RageSound_DSound_Software::GetData()
 
 	char *locked_buf;
 	unsigned len;
-	const int play_pos = pcm->GetOutputPosition();
-    const int cur_play_pos = pcm->GetPosition();
+	const int64_t play_pos = pcm->GetOutputPosition();
+    int64_t cur_play_pos = -1;
 
 	if(!pcm->get_output_buf(&locked_buf, &len, chunksize))
 		return false;
-
 	/* Silence the buffer. */
 	memset(locked_buf, 0, len);
 
@@ -94,11 +93,13 @@ bool RageSound_DSound_Software::GetData()
 		if( !sounds[i]->start_time.IsZero() )
 		{
 			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			if( cur_play_pos == -1 )
+				cur_play_pos = pcm->GetPosition();
+			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
 			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
-			const int iFramesBeforeStart = int(fSecondsBeforeStart * samplerate);
-			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
+			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * samplerate);
+			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
 
 			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
@@ -177,14 +178,9 @@ void RageSound_DSound_Software::StopMixing( RageSoundBase *snd )
 
 	delete sounds[i];
 	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
-
-	/* If nothing is playing, reset the frame count; this is just to
-     * prevent eventual overflow. */
-	if(sounds.empty())
-		pcm->Reset();
 }
 
-int RageSound_DSound_Software::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSound_DSound_Software::GetPosition( const RageSoundBase *snd ) const
 {
 	LockMut(SOUNDMAN->lock);
 	return pcm->GetPosition();

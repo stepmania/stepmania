@@ -82,7 +82,7 @@ void RageSound_DSound::Update(float delta)
 	{
 		if(str[i]->state != str[i]->STOPPING) continue;
 
-		int ps = str[i]->pcm->GetPosition();
+		const int64_t ps = str[i]->pcm->GetPosition();
 		if(ps < str[i]->flush_pos)
 			continue; /* stopping but still flushing */
 
@@ -105,8 +105,8 @@ bool RageSound_DSound::stream::GetData(bool init)
 
 	char *locked_buf;
 	unsigned len;
-	const int play_pos = pcm->GetOutputPosition();
-	const int cur_play_pos = pcm->GetPosition();
+	const int64_t play_pos = pcm->GetOutputPosition();
+	const int64_t cur_play_pos = pcm->GetPosition();
 
 	if(init) {
 		/* We're initializing; fill the entire buffer. The buffer is supposed to
@@ -130,17 +130,18 @@ bool RageSound_DSound::stream::GetData(bool init)
 		if( !start_time.IsZero() )
 		{
 			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
 			const float fSecondsBeforeStart = -start_time.Ago();
-			const int iFramesBeforeStart = int(fSecondsBeforeStart * pcm->GetSampleRate());
-			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
+			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * pcm->GetSampleRate());
+			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
 
 			memset( locked_buf, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
 			bytes_left -= iSilentBytesInThisBuffer;
 
-			if( !iSilentBytesInThisBuffer )
+			/* If we didn't completely fill the buffer, then we've written all of the silence. */
+			if( bytes_left )
 				start_time.SetZero();
 		}
 
@@ -314,7 +315,7 @@ void RageSound_DSound::StopMixing( RageSoundBase *snd )
 	stream_pool[i]->snd = NULL;
 }
 
-int RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
 {
 	LockMutex L(SOUNDMAN->lock);
 

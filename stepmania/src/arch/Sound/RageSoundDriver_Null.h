@@ -39,7 +39,7 @@ protected:
 	/* virtuals: */
 	virtual void StartMixing( RageSoundBase *snd );
 	virtual void StopMixing( RageSoundBase *snd );
-	virtual int GetPosition( const RageSoundBase *snd ) const;
+	virtual int64_t GetPosition( const RageSoundBase *snd ) const;
 	virtual float GetPlayLatency() const;
 	virtual void Update(float delta);
     virtual bool GetData();

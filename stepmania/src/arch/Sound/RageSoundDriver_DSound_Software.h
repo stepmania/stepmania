@@ -15,7 +15,7 @@ class RageSound_DSound_Software: public RageSoundDriver
 	    RageSoundBase *snd;
 		RageTimer start_time;
 		bool stopping;
-		int flush_pos; /* when stopping only */
+		int64_t flush_pos; /* when stopping only */
 
 	    sound() { snd = NULL; stopping=false; }
 	};
@@ -38,7 +38,7 @@ class RageSound_DSound_Software: public RageSoundDriver
 	/* virtuals: */
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
-	int GetPosition( const RageSoundBase *snd ) const;
+	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
 	int GetSampleRate( int rate ) const;
 
