@@ -76,11 +76,11 @@ ScreenAutoGraphicDetail::ScreenAutoGraphicDetail() : Screen("ScreenAutoGraphicDe
 
 	float fSongBPM = SONG_BPM;
 	float fSongBPS = fSongBPM / 60.f;
-	int iBeatsToPlay = fSongBPS * SECONDS_TO_SHOW;
+	int iBeatsToPlay = int(fSongBPS * SECONDS_TO_SHOW);
 
 	for( int i=0; i<iBeatsToPlay; i++ )
 	{
-		float fBeat = i+2;
+		float fBeat = float(i)+2;
 		int iTrack = i % iNumOfTracks;
 		bool bIsHold = ((i / iNumOfTracks) % 2) == 1;
 		if( bIsHold )
@@ -105,7 +105,7 @@ ScreenAutoGraphicDetail::ScreenAutoGraphicDetail() : Screen("ScreenAutoGraphicDe
 
 		GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;
 		m_Player[p].Load( (PlayerNumber)p, pND, NULL, NULL, NULL, NULL );
-		m_Player[p].SetX( GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
+		m_Player[p].SetX( (float) GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		this->AddChild( &m_Player[p] );
 	}
 

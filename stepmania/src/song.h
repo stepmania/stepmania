@@ -142,8 +142,8 @@ public:
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;
-	int		m_fDisplayBPMMin;
-	int		m_fDisplayBPMMax;	// if a range, then Min != Max
+	float		m_fDisplayBPMMin;
+	float		m_fDisplayBPMMax;	// if a range, then Min != Max
 
 	float GetMusicStartBeat() const;
 
