@@ -206,7 +206,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	this->AddChild( &m_ScrollerTexts );
 	
 	{
-		for( int i=0; i<ARRAYSIZE(CREDIT_LINES); i++ )
+		for( unsigned i=0; i<ARRAYSIZE(CREDIT_LINES); i++ )
 		{
 			BitmapText* pText = new BitmapText;
 			pText->LoadFromFont( THEME->GetPathToF("ScreenCredits titles") );
