@@ -936,9 +936,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		// calculate first/last beat
 		//
 		/* Many songs have stray, empty song patterns.  Ignore them, so
-		 * they don't force the first beat of the whole song to 0.  XXX Should
-		 * we just delete them, now that new patterns can be created quickly
-		 * in the editor? */
+		 * they don't force the first beat of the whole song to 0. */
 		
 		if(tempNoteData.GetLastRow() == 0)
 			continue;

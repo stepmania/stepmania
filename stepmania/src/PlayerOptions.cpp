@@ -297,10 +297,6 @@ void PlayerOptions::FromString( CString sOptions )
 			m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 			m_sNoteSkin = "default";
-
-		// XXX: this warns about song options
-		//else
-		//	LOG->Warn( "Modifier '%s' not recognized.", sBit.c_str() );
 	}
 }
 

@@ -631,7 +631,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( iCol >= m_NoteFieldEdit.GetNumTracks() )	// this button is not in the range of columns for this StyleDef
 				break;
 
-			/* XXX: easier to do with 4s */
 			// check for to see if the user intended to remove a HoldNote
 			bool bRemovedAHoldNote = false;
 			for( int i=0; i<m_NoteFieldEdit.GetNumHoldNotes(); i++ )	// for each HoldNote
