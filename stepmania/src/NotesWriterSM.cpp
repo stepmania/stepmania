@@ -122,17 +122,15 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 
 static CString JoinLineList( vector<CString> &lines )
 {
-	bool bSkipLeadingBlankLines = true;
-
 	for( unsigned i = 0; i < lines.size(); ++i )
 		TrimRight( lines[i] );
 
 	/* Skip leading blanks. */
-	unsigned i = 0;
-	while( i < lines.size() && lines.size() == 0 )
-		++i;
+	unsigned j = 0;
+	while( j < lines.size() && lines.size() == 0 )
+		++j;
 
-	return join( "\n", lines.begin()+i, lines.end() );
+	return join( "\n", lines.begin()+j, lines.end() );
 }
 
 CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
