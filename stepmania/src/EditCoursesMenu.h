@@ -19,7 +19,7 @@
 #include "RageSound.h"
 #include "Course.h"
 #include "ScreenMessage.h"
-
+#include "EditCoursesSongMenu.h"
 
 class EditCoursesMenu: public ActorFrame 
 {
@@ -27,6 +27,7 @@ public:
 	EditCoursesMenu();
 	~EditCoursesMenu();
 	virtual void DrawPrimitives();
+	virtual void Update( float fDeltaTime );
 
 	bool CanGoUp();
 	bool CanGoDown();
@@ -110,6 +111,9 @@ private:
 	RageSound	m_soundChangeRow;
 	RageSound	m_soundChangeValue;
 	RageSound	m_soundSave;
+
+	EditCoursesSongMenu m_SongMenu;
+	bool m_bInSongMenu;
 };
 
 #endif

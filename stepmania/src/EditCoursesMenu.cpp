@@ -43,7 +43,6 @@
 #define ROW_Y( i )				THEME->GetMetricF("EditCoursesMenu",ssprintf("Row%dY",i+1))
 
 const ScreenMessage SM_BackFromCourseOptionsMenu		= (ScreenMessage)(SM_User+1);
-const ScreenMessage SM_BackFromCourseEntryOptionsMenu	= (ScreenMessage)(SM_User+2);
 const ScreenMessage SM_BackFromPlayerOptions			= (ScreenMessage)(SM_User+3);
 const ScreenMessage SM_BackFromSongOptions				= (ScreenMessage)(SM_User+4);
 							  
@@ -74,17 +73,6 @@ enum CourseOptionsMenuRow
 	NUM_ENTRY_OPTIONS_MENU_ROWS
 };
 
-static const MenuRow g_CourseEntryMenuItems[] =
-{
-	{ "Song",			true, 0, { NULL } },
-	{ "Group",			true, 0, { NULL } },
-	{ "Difficulty",		true, 0, { NULL } },
-	{ "Low Meter",		true, 0, { NULL } },
-	{ "High Meter",		true, 0, { NULL } },
-	{ "Best/Worst value",true, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
-};
-static Menu g_CourseEntryMenu( "Course Entry Options", g_CourseEntryMenuItems );
 
 
 const bool g_bRowEnabledForType[NUM_COURSE_ENTRY_TYPES][NUM_ENTRY_OPTIONS_MENU_ROWS] = 
@@ -103,6 +91,8 @@ EditCoursesMenu::EditCoursesMenu()
 
 	GAMESTATE->m_bEditing = true;
 
+	m_bInSongMenu = false;
+
 	int i;
 
 	for( i=0; i<2; i++ )
@@ -115,7 +105,6 @@ EditCoursesMenu::EditCoursesMenu()
 	m_SelectedRow = (Row)0;
 
 	ZERO( m_iSelection );
-
 
 
 	for( i=0; i<NUM_ROWS; i++ )
@@ -164,7 +153,18 @@ EditCoursesMenu::~EditCoursesMenu()
 
 void EditCoursesMenu::DrawPrimitives()
 {
-	ActorFrame::DrawPrimitives();
+	if( m_bInSongMenu )
+		m_SongMenu.Draw();
+	else
+		ActorFrame::DrawPrimitives();
+}
+
+void EditCoursesMenu::Update( float fDeltaTime )
+{
+	if( m_bInSongMenu )
+		m_SongMenu.Update( fDeltaTime );
+	else
+		ActorFrame::Update( fDeltaTime );
 }
 
 bool EditCoursesMenu::CanGoUp()
@@ -201,6 +201,12 @@ bool EditCoursesMenu::CanGoRight()
 
 void EditCoursesMenu::Up()
 {
+	if( m_bInSongMenu )
+	{
+		m_SongMenu.Up();
+		return;
+	}
+
 	if( CanGoUp() )
 	{
 		ChangeToRow( Row(m_SelectedRow-1) );
@@ -210,6 +216,12 @@ void EditCoursesMenu::Up()
 
 void EditCoursesMenu::Down()
 {
+	if( m_bInSongMenu )
+	{
+		m_SongMenu.Down();
+		return;
+	}
+
 	if( CanGoDown() )
 	{
 		ChangeToRow( Row(m_SelectedRow+1) );
@@ -219,6 +231,12 @@ void EditCoursesMenu::Down()
 
 void EditCoursesMenu::Left()
 {
+	if( m_bInSongMenu )
+	{
+		m_SongMenu.Left();
+		return;
+	}
+
 	if( CanGoLeft() )
 	{
 		m_iSelection[m_SelectedRow]--;
@@ -237,6 +255,12 @@ void EditCoursesMenu::Left()
 
 void EditCoursesMenu::Right()
 {
+	if( m_bInSongMenu )
+	{
+		m_SongMenu.Right();
+		return;
+	}
+
 	if( CanGoRight() )
 	{
 		m_iSelection[m_SelectedRow]++;
@@ -255,6 +279,14 @@ void EditCoursesMenu::Right()
 
 void EditCoursesMenu::Start()
 {
+	if( m_bInSongMenu )
+	{
+		m_SongMenu.SaveToCourseEntry( GetSelectedEntry() );
+		m_bInSongMenu = false;
+		OnRowValueChanged( ROW_ENTRY );
+		return;
+	}
+
 	Course* pCourse = GetSelectedCourse();
 	CourseEntry* pEntry = GetSelectedEntry();
 
@@ -301,92 +333,8 @@ void EditCoursesMenu::Start()
 		OnRowValueChanged( ROW_ENTRY );		
 		break;
 	case ROW_ENTRY_OPTIONS:	
-		{
-			unsigned i;
-
-			//
-			// populate songs list
-			//
-			g_CourseEntryMenu.rows[song].choices.clear();
-			g_CourseEntryMenu.rows[song].defaultChoice = 0;
-
-			vector<Song*> vSongs = SONGMAN->GetAllSongs();
-			for( i=0; i<vSongs.size(); i++ )
-			{
-				g_CourseEntryMenu.rows[song].choices.push_back( vSongs[i]->m_sGroupName + " - " + vSongs[i]->GetTranslitMainTitle() );
-				if( pEntry->pSong == vSongs[i] )
-					g_CourseEntryMenu.rows[song].defaultChoice = i;
-			}
-
-			//
-			// populate group list
-			//
-			g_CourseEntryMenu.rows[group].choices.clear();
-			g_CourseEntryMenu.rows[group].defaultChoice = 0;
-
-			CStringArray vGroups;
-			SONGMAN->GetGroupNames( vGroups );
-			for( i=0; i<vGroups.size(); i++ )
-			{
-				g_CourseEntryMenu.rows[group].choices.push_back( vGroups[i] );
-				if( pEntry->group_name == vGroups[i] )
-					g_CourseEntryMenu.rows[group].defaultChoice = i;
-			}
-
-			//
-			// populate difficulty list
-			//
-			g_CourseEntryMenu.rows[difficulty].choices.clear();
-			g_CourseEntryMenu.rows[difficulty].defaultChoice = NUM_DIFFICULTIES;
-
-			for( i=0; i<=NUM_DIFFICULTIES; i++ )
-			{
-				CString sDifficulty = (i==NUM_DIFFICULTIES) ? "Don't care" : DifficultyToString((Difficulty)i);
-				g_CourseEntryMenu.rows[difficulty].choices.push_back( sDifficulty );
-				if( pEntry->difficulty == (int) i )
-					g_CourseEntryMenu.rows[difficulty].defaultChoice = i;
-			}
-
-			//
-			// populate difficulty list
-			//
-			g_CourseEntryMenu.rows[low_meter].choices.clear();
-			g_CourseEntryMenu.rows[low_meter].defaultChoice = 0;
-			g_CourseEntryMenu.rows[high_meter].choices.clear();
-			g_CourseEntryMenu.rows[high_meter].defaultChoice = 0;
-
-			for( i=0; i<=(int)MAX_METER; i++ )
-			{
-				CString sMeter = (i==0) ? "Don't care" : ssprintf("%d", i);
-				g_CourseEntryMenu.rows[low_meter].choices.push_back( sMeter );
-				g_CourseEntryMenu.rows[high_meter].choices.push_back( sMeter );
-				if( pEntry->low_meter == (int) i )
-					g_CourseEntryMenu.rows[low_meter].defaultChoice = i;
-				if( pEntry->high_meter == (int) i )
-					g_CourseEntryMenu.rows[high_meter].defaultChoice = i;
-			}
-
-			//
-			// populate best/worst list
-			//
-			g_CourseEntryMenu.rows[best_worst_value].choices.clear();
-			g_CourseEntryMenu.rows[best_worst_value].defaultChoice = 0;
-
-			for( i=1; i<=40; i++ )
-			{
-				CString sNum = ssprintf("%d", i);
-				g_CourseEntryMenu.rows[best_worst_value].choices.push_back( sNum );
-				if( pEntry->players_index == (int) i )
-					g_CourseEntryMenu.rows[best_worst_value].defaultChoice = i;
-			}
-
-
-			// update enabled/disabled lines
-			for( i=0; i<g_CourseEntryMenu.rows.size(); i++ )
-				g_CourseEntryMenu.rows[i].enabled = g_bRowEnabledForType[pEntry->type][i];
-
-			SCREENMAN->MiniMenu( &g_CourseEntryMenu, SM_BackFromCourseEntryOptionsMenu );
-		}
+		m_SongMenu.LoadFromCourseEntry( GetSelectedEntry() );
+		m_bInSongMenu = true;
 		break;
 	case ROW_ENTRY_PLAYER_OPTIONS:
 		SCREENMAN->PlayStartSound();
@@ -426,28 +374,6 @@ void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 			pCourse->m_iLives = -1;
 		
 		OnRowValueChanged( ROW_COURSE_OPTIONS );
-		break;
-	case SM_BackFromCourseEntryOptionsMenu:
-		{
-			vector<Song*> vSongs = SONGMAN->GetAllSongs();
-			CStringArray vGroups;
-			SONGMAN->GetGroupNames( vGroups );
-
-			pEntry->pSong = vSongs[ ScreenMiniMenu::s_iLastAnswers[song] ];
-			pEntry->group_name = vGroups[ ScreenMiniMenu::s_iLastAnswers[group] ];
-			pEntry->difficulty = (Difficulty)ScreenMiniMenu::s_iLastAnswers[difficulty];
-			if( pEntry->difficulty == NUM_DIFFICULTIES )
-				pEntry->difficulty = DIFFICULTY_INVALID;
-			pEntry->low_meter = ScreenMiniMenu::s_iLastAnswers[low_meter];
-			if( pEntry->low_meter == 0 )
-				pEntry->low_meter = -1;
-			pEntry->high_meter = ScreenMiniMenu::s_iLastAnswers[high_meter];
-			if( pEntry->high_meter == 0 )
-				pEntry->high_meter = -1;
-			pEntry->players_index = ScreenMiniMenu::s_iLastAnswers[best_worst_value];
-			
-			OnRowValueChanged( ROW_ENTRY_OPTIONS );
-		}
 		break;
 	case SM_BackFromPlayerOptions:
 	case SM_BackFromSongOptions:
