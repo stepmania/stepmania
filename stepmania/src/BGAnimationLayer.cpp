@@ -187,7 +187,7 @@ found_effect:
 			RageTexturePrefs prefs;
 			prefs.bStretch = true;
 			m_Sprites[0].Load( sPath, prefs );
-			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,0,SCREEN_RIGHT,m_Sprites[0].GetUnzoomedHeight()) );
+			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,0,SCREEN_RIGHT, int(m_Sprites[0].GetUnzoomedHeight())) );
 			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
 			m_vTexCoordVelocity = RageVector2(+0.5f,0);
 			m_Sprites[0].SetY(m_fStretchScrollH_Y);
