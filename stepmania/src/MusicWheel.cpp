@@ -1112,7 +1112,7 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 //				sTemp = "NUM";
 //			return sTemp;
 	case SORT_TITLE:
-		sTemp = pSong->GetTranslitSubTitle();
+		sTemp = pSong->GetTranslitMainTitle();
 		sTemp.MakeUpper();
 		if(sTemp.empty()) return "";
 
