@@ -221,7 +221,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	GAMESTATE->m_bSideIsJoined[pn] = true;
 	SCREENMAN->RefreshCreditsMessages();
 	m_soundSelect.Play();
-	m_sprJoinMessage[pn].SetState( p+NUM_PLAYERS );
+	m_sprJoinMessage[pn].SetState( pn+NUM_PLAYERS );
 
 	if( FOLD_ON_JOIN )
 	{
