@@ -7,7 +7,6 @@
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
-	Tim Hentenaar
 	Glenn Maynard
 -----------------------------------------------------------------------------
 */
