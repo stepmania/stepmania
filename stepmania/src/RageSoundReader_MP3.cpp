@@ -878,11 +878,18 @@ int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 	if(percent >= 0)
 	{
 		int bytepos = -1;
-		if( Xing && percent < 100 )
+		if( Xing )
 		{
-			int jump = mad->xingtag.toc[percent];
-			bytepos = mad->filesize * jump / 256;
-		} else if(percent < 200) {
+			if( percent < 100 )
+			{
+				int jump = mad->xingtag.toc[percent];
+				bytepos = mad->filesize * jump / 256;
+			}
+			else
+				bytepos = 2000000000; /* force EOF */
+		}
+		else if( percent < 200 )
+		{
 			/* Find the last entry <= percent that we actually have an entry for;
 			 * this will get us as close as possible. */
 			while( percent >= 0 && mad->toc[percent] == -1 )
@@ -1026,17 +1033,10 @@ int RageSoundReader_MP3::SetPosition_Accurate( int ms )
 	/* Seek using our own internal (accurate) TOC. */
 	int ret = SetPosition_toc( ms, false );
 	if( ret <= 0 )
-	{
-		MADLIB_rewind();
 		return ret; /* it set the error */
-	}
 	
 	/* Align exactly. */
-	ret = SetPosition_hard( ms );
-	if( ret <= 0 )
-		MADLIB_rewind();
-
-	return ret;
+	return SetPosition_hard( ms );
 }
 
 int RageSoundReader_MP3::SetPosition_Fast( int ms )
@@ -1050,19 +1050,11 @@ int RageSoundReader_MP3::SetPosition_Fast( int ms )
 
 	/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
 	if( mad->has_xing )
-	{
-		int ret = SetPosition_toc( ms, true );
-		if( ret <= 0 )
-			MADLIB_rewind();
-		return ret;
-	}
+		return SetPosition_toc( ms, true );
 
 	/* Guess.  This is only remotely accurate when we're not VBR, but also
 	 * do it if we have no Xing tag. */
-	int ret = SetPosition_estimate( ms );
-	if( ret <= 0 )
-		MADLIB_rewind();
-	return ret;
+	return SetPosition_estimate( ms );
 }
 
 int RageSoundReader_MP3::GetLengthInternal( bool fast )

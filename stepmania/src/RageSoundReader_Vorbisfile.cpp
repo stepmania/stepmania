@@ -88,6 +88,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 	}
 
 	avail = 0;
+	eof = false;
 
     return OPEN_OK;
 }
@@ -113,16 +114,19 @@ int RageSoundReader_Vorbisfile::GetLength_Fast() const
 int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 {
 	avail = 0;
+	eof = false;
 
-#if defined(INTEGER_OGG)
-	const int to = ms;
-#else
-	const float to = ms/1000.0f;
-#endif
+	const ogg_int64_t sample = ogg_int64_t(ms) * GetSampleRate() / 1000;
 
-	int ret = ov_time_seek( vf, to );
+	int ret = ov_pcm_seek( vf, sample );
 	if(ret < 0)
 	{
+		/* Returns OV_EINVAL on EOF. */
+		if( ret == OV_EINVAL )
+		{
+			eof = true;
+			return 0;
+		}
 		SetError( ov_ssprintf(ret, "ogg: SetPosition failed") );
 		return -1;
 	}
@@ -132,6 +136,9 @@ int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 
 int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 {
+	if( eof )
+		return 0;
+
 	int bytes_read = 0;
 	while(len)
 	{

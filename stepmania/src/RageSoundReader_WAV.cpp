@@ -188,6 +188,10 @@ int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
 	int rc = fseek( this->rw, pos, SEEK_SET );
 	BAIL_IF_MACRO(rc == -1, strerror(errno), -1);
 
+	/* If we seek past end of ifle, leave the cursor there, so subsequent reads will return EOF. */
+	if( pos >= (int) GetFileSizeInBytes( filename ) )
+		return 0;
+
     return ms;
 }
 
@@ -343,8 +347,13 @@ Uint32 RageSoundReader_WAV::read_sample_fmt_adpcm(char *buf, unsigned len)
 		bw += this->fmt.adpcm_sample_frame_size;
 
 		if( !first_sample_in_block && adpcm.samples_left_in_block )
+		{
 			if (!decode_adpcm_sample_frame())
+			{
+				adpcm.samples_left_in_block = 0;
 				return bw;
+			}
+		}
     }
 
 	return bw;
@@ -364,15 +373,13 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 
 	/* The offset we need is in this block, so we need to decode to there. */
 	rc = offset % bpb;  /* bytes into this block we need to decode */
+	adpcm.samples_left_in_block = 0;
+
 	if( rc == 0 )
-	{
-		adpcm.samples_left_in_block = 0;
 		return ms;
-	}
 
 	if (!read_adpcm_block_headers(adpcm))
 	{
-		fseek(this->rw, fmt.data_starting_offset, SEEK_SET);
 		adpcm.samples_left_in_block = 0;
 		return 0;
 	}
@@ -387,7 +394,6 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 
 		if (!decode_adpcm_sample_frame())
 		{
-			fseek(this->rw, fmt.data_starting_offset, SEEK_SET);
 			adpcm.samples_left_in_block = 0;
 			return 0;
 		}
