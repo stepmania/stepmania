@@ -234,8 +234,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		}
 		if( Flags[i] == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );
-		if( Flags[i] == "firstchoicegoesdown" )
-			SetNavigation( NAV_FIRST_CHOICE_GOES_DOWN );
+		if( Flags[i] == "toggle" || Flags[i] == "firstchoicegoesdown" )
+			SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
 	}
 
 	m_OptionRowAlloc = new OptionRowData[asLineNames.size()];
@@ -287,7 +287,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		}
 
 		// TRICKY:  Insert a down arrow as the first choice in the row.
-		if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 		{
 			row.choices.insert( row.choices.begin(), ENTRY_NAME("NextRow") );
 			hand.ListEntries.insert( hand.ListEntries.begin(), ModeChoice() );
@@ -373,7 +373,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 	case ROW_CONFIG:
 		{
 			int iSelection = hand.opt->Get( row.choices );
-			SelectExactlyOne( iSelection+(m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
+			SelectExactlyOne( iSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?1:0), vbSelectedOut );
 			return;
 		}
 
@@ -463,7 +463,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 
 	case ROW_CONFIG:
 		{
-			int sel = GetOneSelection(vbSelected) - (m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0);
+			int sel = GetOneSelection(vbSelected) - (m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?1:0);
 
 			/* Get the original choice. */
 			int Original = hand.opt->Get( row.choices );

@@ -49,11 +49,11 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define CAPITALIZE_ALL_OPTION_NAMES		THEME->GetMetricB(m_sName,"CapitalizeAllOptionNames")
 
 /*
- * Three navigation types are provided:
+ * These navigation types are provided:
  *
  * NAV_THREE_KEY:
  *  left, right -> change option
- *  up, down -> don't matter (change row)
+ *  up, down -> change row
  *  start -> move to next row
  *  left+right+start -> move to prev row
  *  (next screen via "exit" entry)
@@ -64,6 +64,20 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  *  up, down -> change row
  *  start -> next screen
  * This is a much more convenient navigation, requiring five keys.
+ *
+ * NAV_TOGGLE_THREE_KEY:
+ *  left, right -> change option
+ *  up, down -> change row
+ *  start -> on first choice, move down; otherewise toggle option and move to first choice
+ *
+ * NAV_TOGGLE_FIVE_KEY:
+ *  left, right -> change option
+ *  up, down -> change row
+ *  start -> toggle option
+ *
+ * Regular modes and toggle modes must be enabled by the theme.  We could simply
+ * automatically switch to toggle mode for multiselect rows, but that would be strange
+ * for non-multiselect rows (eg. scroll speed).
  *
  * NAV_THREE_KEY_MENU:
  *  left, right -> change row
@@ -76,11 +90,6 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  * We don't want to simply allow left/right to move up and down on single-entry
  * rows when in NAV_THREE_KEY, becasue left and right shouldn't exit the "exit" row
  * in player options menus, but it should in the options menu.
- *
- * NAV_FIRST_CHOICE_GOES_DOWN:
- *  left, right -> change option
- *  up, down -> change row
- *  start -> toggle option
  */
 
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
@@ -102,6 +111,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	FOREACH_PlayerNumber( p )
 	{
 		m_iCurrentRow[p] = 0;
+		m_iFocusX[p] = 0;
 		m_bWasOnExit[p] = false;
 		m_bGotAtLeastOneStartPressed[p] = false;
 	}
@@ -159,7 +169,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		CHECKPOINT_M( ssprintf("row %i: %s", r, Row.m_RowDef.name.c_str()) );
 		FOREACH_PlayerNumber( p )
 		{
-			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
+			if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
 				Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
 			else
 			{
@@ -1149,7 +1159,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	switch( m_OptionsNavigation )
 	{
 	case NAV_THREE_KEY:
-	case NAV_FIRST_CHOICE_GOES_DOWN:
+	case NAV_TOGGLE_THREE_KEY:
 		{
 			bool bHoldingLeftAndRight = 
 				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) &&
@@ -1178,8 +1188,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	}
 
 
-	
-	if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 	{
 		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
 		if( iChoiceInRow == 0 )
@@ -1190,7 +1199,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	}
 	
 	// If this is a bFirstChoiceGoesDown, then  if this is a multiselect row.
-	// Is this the right thing to do for five key navigation?
 	if( data.bMultiSelect )
 	{
 		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
@@ -1202,7 +1210,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		PositionUnderlines();
 		RefreshIcons();
 
-		if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 			ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
 	}
 	else
@@ -1210,33 +1218,51 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		switch( m_OptionsNavigation )
 		{
 		case NAV_THREE_KEY:
-		case NAV_FIRST_CHOICE_GOES_DOWN:
+			MenuDown( pn, type );
+			break;
+		case NAV_TOGGLE_THREE_KEY:
+		case NAV_TOGGLE_FIVE_KEY:
+			if( !data.bMultiSelect )
 			{
-				if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
-				{
-					if( !data.bMultiSelect )
-					{
-						int iChoiceInRow = row.m_iChoiceWithFocus[pn];
-						if( row.m_RowDef.bOneChoiceForAllPlayers )
-							row.SetOneSharedSelection( iChoiceInRow );
-						else
-							row.SetOneSelection( pn, iChoiceInRow );
-					}
-						
-					ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
-				}
+				int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+				if( row.m_RowDef.bOneChoiceForAllPlayers )
+					row.SetOneSharedSelection( iChoiceInRow );
 				else
-					MenuDown( pn, type );
+					row.SetOneSelection( pn, iChoiceInRow );
 			}
+			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+				ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
+			else
+				ChangeValueInRow( pn, 0, type != IET_FIRST_PRESS );
+//				m_SoundChangeCol.Play();
 			break;
 		case NAV_THREE_KEY_MENU:
-		case NAV_FIVE_KEY:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
-			if( type == IET_FIRST_PRESS && !IsTransitioning() )	// m_SMOptionsNavigation
+			if( type == IET_FIRST_PRESS && !IsTransitioning() )
 				StartGoToNextState();
+			break;
+		case NAV_FIVE_KEY:
+			/* Jump to the exit row. */
+			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
 			break;
 		}
 	}
+}
+
+void ScreenOptions::StoreFocus( PlayerNumber pn )
+{
+	if( m_OptionsNavigation != NAV_TOGGLE_FIVE_KEY )
+		return;
+
+	/* Long rows always put us in the center, so don't update the focus. */
+	const Row &Row = *m_Rows[m_iCurrentRow[pn]];
+	if( Row.m_bRowIsLong )
+		return;
+
+	int iWidth, iY;
+	GetWidthXY( pn, m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceWithFocus[pn], iWidth, m_iFocusX[pn], iY );
+	LOG->Trace("cur selection %ix%i @ %i", m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceWithFocus[pn],
+		m_iFocusX[pn]);
 }
 
 /* Left/right */
@@ -1274,15 +1300,17 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
 		bOneChanged = true;
 
+	row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
+	StoreFocus( pn );
+
 	if( optrow.bOneChoiceForAllPlayers )
 	{
-		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
-
 		/* If this row is bOneChoiceForAllPlayers, then lock the cursors together
-		 * for this row.  Don't do this in NAV_FIRST_CHOICE_GOES_DOWN, since the
-		 * current selection and the current focus are detached in that mode. */
+		 * for this row.  Don't do this in toggle modes, since the current selection
+		 * and the current focus are detached. */
 		bool bForceFocusedChoiceTogether = false;
-		if( m_OptionsNavigation!=NAV_FIRST_CHOICE_GOES_DOWN &&
+		if( m_OptionsNavigation!=NAV_TOGGLE_THREE_KEY &&
+			m_OptionsNavigation!=NAV_TOGGLE_FIVE_KEY &&
 			optrow.bOneChoiceForAllPlayers )
 			bForceFocusedChoiceTogether = true;
 
@@ -1294,12 +1322,15 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		{
 			// lock focus together
 			FOREACH_HumanPlayer( p )
+			{
 				row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
+				StoreFocus( pn );
+			}
 		}
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
+			if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
 			{
 				;	// do nothing
 			}
@@ -1314,9 +1345,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	}
 	else
 	{
-		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
-
-		if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
+		if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
 		{
 			;	// do nothing
 		}
@@ -1341,7 +1370,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 /* Up/down */
 void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat ) 
 {
-	if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
+	if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY )
 	{
 		// If moving from a bFirstChoiceGoesDown row, put focus back on 
 		// the first choice before moving.
@@ -1362,7 +1391,27 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 			continue; // don't wrap while repeating
 
 		wrap( row, m_Rows.size() );
+
+		const unsigned iOldSelection = m_Rows[m_iCurrentRow[p]]->m_iChoiceWithFocus[p];
+
 		m_iCurrentRow[p] = row;
+
+		if( m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY && !m_Rows[row]->m_bRowIsLong )
+		{
+			int iSelectionDist = -1;
+			for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
+			{
+				int iWidth, iX, iY;
+				GetWidthXY( p, m_iCurrentRow[p], i, iWidth, iX, iY );
+				const int iDist = abs( iX-m_iFocusX[p] );
+				if( iSelectionDist == -1 || iDist < iSelectionDist )
+				{
+					iSelectionDist = iDist;
+					m_Rows[row]->m_iChoiceWithFocus[p] = i;
+				}
+			}
+			m_Rows[row]->m_iChoiceWithFocus[p] = min( iOldSelection, m_Rows[row]->m_textItems.size()-1 );
+		}
 
 		OnChange( (PlayerNumber)p );
 		changed = true;
