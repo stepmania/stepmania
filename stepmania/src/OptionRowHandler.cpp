@@ -16,6 +16,8 @@
 #include "StepsUtil.h"
 #include "GameManager.h"
 #include "Foreach.h"
+#include "ScreenManager.h"
+#include "GameSoundManager.h"
 
 #define ENTRY(s)					THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
@@ -285,8 +287,6 @@ public:
 					s = pSteps->GetDescription();
 				else
 					s = DifficultyToThemedString( pSteps->GetDifficulty() );
-				s += ssprintf( " (%d)", pSteps->GetMeter() );
-
 				defOut.choices.push_back( s );
 				GameCommand mc;
 				mc.m_pSteps = pSteps;
@@ -319,8 +319,6 @@ public:
 			FOREACH_CONST( Steps*, vSteps, p )
 			{
 				CString s = (*p)->GetDescription();
-				s += ssprintf( " (%d)", (*p)->GetMeter() );
-
 				defOut.choices.push_back( s );
 				GameCommand mc;
 				mc.m_pSteps = *p;
@@ -816,12 +814,22 @@ public:
 		defOut.Init();
 
 		if( sParam == "EditStepsType" )
+		{
 			m_pstToFill = &GAMESTATE->m_stEdit;
+		}
 		else if( sParam == "EditSourceStepsType" )
+		{
 			m_pstToFill = &GAMESTATE->m_stEditSource;
+			m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_STEPS_P1_CHANGED) );
+			m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_STEPS_TYPE_CHANGED) );
+			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+				defOut.m_vEnabledForPlayers.clear();	// hide row
+		}
 		else
+		{
 			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
-		
+		}
+
 		m_sName = sParam;
 		defOut.name = sParam;
 		defOut.bOneChoiceForAllPlayers = true;
@@ -882,15 +890,19 @@ class OptionRowHandlerSteps : public OptionRowHandler
 {
 public:
 	BroadcastOnChangePtr<Steps> *m_ppStepsToFill;
+	BroadcastOnChange<Difficulty> *m_pDifficultyToFill;
 	const BroadcastOnChange<StepsType> *m_pst;
 	vector<Steps*> m_vSteps;
+	vector<Difficulty> m_vDifficulties;
 
 	OptionRowHandlerSteps::OptionRowHandlerSteps() { Init(); }
 	void Init()
 	{
 		OptionRowHandler::Init();
 		m_ppStepsToFill = NULL;
+		m_pDifficultyToFill = NULL;
 		m_vSteps.clear();
+		m_vDifficulties.clear();
 	}
 
 	virtual void Load( OptionRowDefinition &defOut, CString sParam )
@@ -903,6 +915,7 @@ public:
 		if( sParam == "EditSteps" )
 		{
 			m_ppStepsToFill = &GAMESTATE->m_pCurSteps[0];
+			m_pDifficultyToFill = &GAMESTATE->m_PreferredDifficulty[0];
 			m_pst = &GAMESTATE->m_stEdit;
 			m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_STEPS_TYPE_CHANGED) );
 		}
@@ -911,6 +924,8 @@ public:
 			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
 			m_pst = &GAMESTATE->m_stEditSource;
 			m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED) );
+			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+				defOut.m_vEnabledForPlayers.clear();	// hide row
 		}
 		else
 		{
@@ -926,21 +941,66 @@ public:
 
 		if( GAMESTATE->m_pCurSong )
 		{
-			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst );
-			StepsUtil::SortNotesArrayByDifficulty( m_vSteps );
+			if( sParam == "EditSteps" )
+			{
+				FOREACH_Difficulty( dc )
+				{
+					if( dc == DIFFICULTY_EDIT )
+						continue;
+					m_vDifficulties.push_back( dc );
+					Steps* pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( *m_pst, dc );
+					m_vSteps.push_back( pSteps );
+				}
+				GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
+				m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
+
+				m_vSteps.push_back( NULL );
+				m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			}
+			else if( sParam == "EditSourceSteps" )
+			{
+				GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst );
+				FOREACH( Steps*, m_vSteps, p )
+					m_vDifficulties.push_back( (*p)->GetDifficulty() );
+				StepsUtil::SortNotesArrayByDifficulty( m_vSteps );
+			}
+			else
+			{
+				ASSERT(0);
+			}
+
 			for( unsigned i=0; i<m_vSteps.size(); i++ )
 			{
 				Steps* pSteps = m_vSteps[i];
+				Difficulty dc = m_vDifficulties[i];
 
 				CString s;
-				if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
-					s = pSteps->GetDescription();
+				if( dc == DIFFICULTY_EDIT )
+				{
+					if( pSteps )
+						s = pSteps->GetDescription();
+					else
+						s = ENTRY_NAME("NewEdit");
+				}
 				else
-					s = DifficultyToThemedString( pSteps->GetDifficulty() );
-				s += ssprintf( " (%d)", pSteps->GetMeter() );
-
+				{
+					s = DifficultyToThemedString( dc );
+				}
 				defOut.choices.push_back( s );
 			}
+		}
+		else
+		{
+			m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			m_vSteps.push_back( NULL );
+			defOut.choices.push_back( "none" );
+		}
+
+		if( m_ppStepsToFill->Get() == NULL )
+		{
+			if( m_pDifficultyToFill )
+				m_pDifficultyToFill->Set( m_vDifficulties[0] );
+			m_ppStepsToFill->Set( m_vSteps[0] );
 		}
 	}
 	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
@@ -956,12 +1016,18 @@ public:
 			return;
 		}
 		// look for matching difficulty
-		FOREACH_CONST( Steps*, m_vSteps, s )
+		if( m_pDifficultyToFill )
 		{
-			unsigned i = s - m_vSteps.begin();
-			vbSelectedOut[i] = true;
-			ExportOption( def, pn, vbSelectedOut );	// current steps changed
-			return;
+			FOREACH_CONST( Difficulty, m_vDifficulties, d )
+			{
+				unsigned i = d - m_vDifficulties.begin();
+				if( *d == GAMESTATE->m_PreferredDifficulty[0] )
+				{
+					vbSelectedOut[i] = true;
+					ExportOption( def, pn, vbSelectedOut );	// current steps changed
+					return;
+				}
+			}
 		}
 		// default to 1st
 		vbSelectedOut[0] = true;
@@ -969,10 +1035,27 @@ public:
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
 	{
 		int index = GetOneSelection( vbSelected );
-		m_ppStepsToFill->Set( m_vSteps[index] );
+		Difficulty dc = m_vDifficulties[index];
+		Steps *pSteps = m_vSteps[index];
+		if( m_pDifficultyToFill )
+			m_pDifficultyToFill->Set( dc );
+		m_ppStepsToFill->Set( pSteps );
 		return 0;
 	}
 };
+
+// helpers for MenuStart() below
+static void DeleteCurNotes( void* pThrowAway )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
+	pSong->RemoveSteps( pStepsToDelete );
+	pSong->Save();
+
+	// refresh the list
+	MESSAGEMAN->Broadcast( MESSAGE_CURRENT_SONG_CHANGED );
+}
+
 
 class OptionRowHandlerEditMenuAction : public OptionRowHandler
 {
@@ -1031,7 +1114,80 @@ public:
 	}
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
 	{
-		// TODO: Do actions.
+		Song* pSong = GAMESTATE->m_pCurSong;
+		Steps *pSteps = GAMESTATE->m_pCurSteps[0];
+		Difficulty dc = GAMESTATE->m_PreferredDifficulty[0];
+		StepsType st = GAMESTATE->m_stEdit;
+		Steps *pSourceNotes = GAMESTATE->m_pEditSourceSteps;
+
+		int iSel = GetOneSelection(vbSelected);
+		EditMenuAction ema = m_vEditMenuActions[ iSel ];
+		switch( ema )
+		{
+		case EDIT_MENU_ACTION_EDIT:
+			// Prepare prepare for ScreenEdit
+			ASSERT( pSteps );
+			break;
+		case EDIT_MENU_ACTION_DELETE:
+			ASSERT( pSteps );
+			SCREENMAN->Prompt( SM_None, "These notes will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurNotes );
+			break;
+		case EDIT_MENU_ACTION_COPY:
+			ASSERT( !pSteps );
+			ASSERT( pSourceNotes );
+			{
+				// Yuck.  Doing the memory allocation doesn't seem right since
+				// Song allocates all of the other Steps.
+				Steps* pNewSteps = new Steps;
+				pNewSteps->CopyFrom( pSourceNotes, st );
+				pNewSteps->SetDifficulty( dc );
+				pSong->AddSteps( pNewSteps );
+			
+				SCREENMAN->SystemMessage( "Steps created from copy." );
+				SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
+				pSong->Save();
+			}
+			break;
+		case EDIT_MENU_ACTION_AUTOGEN:
+			ASSERT( !pSteps );
+			ASSERT( pSourceNotes );
+			{
+				// Yuck.  Doing the memory allocation doesn't seem right since
+				// Song allocates all of the other Steps.
+				Steps* pNewNotes = new Steps;
+				pNewNotes->AutogenFrom( pSourceNotes, st );
+				pNewNotes->DeAutogen();
+				pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
+				pSong->AddSteps( pNewNotes );
+			
+				SCREENMAN->SystemMessage( "Steps created from AutoGen." );
+				SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
+				pSong->Save();
+			}
+			break;
+		case EDIT_MENU_ACTION_BLANK:
+			ASSERT( !pSteps );
+			{
+				// Yuck.  Doing the memory allocation doesn't seem right since
+				// Song allocates all of the other Steps.
+				Steps* pNewNotes = new Steps;
+				pNewNotes->CreateBlank( st );
+				pNewNotes->SetDifficulty( dc );
+				pNewNotes->SetMeter( 1 );
+				pSong->AddSteps( pNewNotes );
+			
+				SCREENMAN->SystemMessage( "Blank Steps created." );
+				SOUND->PlayOnce( THEME->GetPathS("ScreenEditMenu","create") );
+				pSong->Save();
+			}
+			break;
+		default:
+			ASSERT(0);
+		}
+		
+		// refresh the list
+		MESSAGEMAN->Broadcast( MESSAGE_CURRENT_SONG_CHANGED );
+
 		return 0;
 	}
 	virtual CString GetAndEraseScreen( int iChoice )
