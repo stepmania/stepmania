@@ -39,16 +39,6 @@ static Actor* LoadActor( CString sPath )
 	
 	CString sDir = Dirname( sPath );
 
-	CStringArray asFiles;
-	GetDirListing( sDir + sFileName + "*", asFiles );
-
-	if( asFiles.empty() )
-		RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sFileName.c_str() );
-	else if( asFiles.size() > 1 )
-		RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sPath.c_str(), sFileName.c_str() );
-
-	CString sNewPath = DerefRedir( sDir + asFiles[0] );
-
 	/* XXX: How to handle translations?  Maybe we should have one metrics section,
 	 * "Text", eg:
 	 *
@@ -79,6 +69,16 @@ static Actor* LoadActor( CString sPath )
 	}
 	else
 	{
+		CStringArray asFiles;
+		GetDirListing( sDir + sFileName + "*", asFiles );
+
+		if( asFiles.empty() )
+			RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sFileName.c_str() );
+		else if( asFiles.size() > 1 )
+			RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sPath.c_str(), sFileName.c_str() );
+
+		CString sNewPath = DerefRedir( sDir + asFiles[0] );
+
 		pActor = MakeActor( sNewPath );
 	}
 
