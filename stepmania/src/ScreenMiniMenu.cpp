@@ -8,6 +8,7 @@
 #include "ThemeManager.h"
 #include "Foreach.h"
 #include "ScreenDimensions.h"
+#include "CommonMetrics.h"
 
 
 const float LABEL_X		=	200;
@@ -29,7 +30,7 @@ int	ScreenMiniMenu::s_iLastAnswers[MAX_MENU_ROWS];
 
 
 //REGISTER_SCREEN_CLASS( ScreenMiniMenu );
-ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel ) :
+ScreenMiniMenu::ScreenMiniMenu( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel ) :
   Screen("ScreenMiniMenu")
 {
 	m_bIsTransparent = true;	// draw screens below us
@@ -39,6 +40,15 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 	m_Def = *pDef;
 	ASSERT( m_Def.rows.size() <= MAX_MENU_ROWS );
 
+	// Remove rows that aren't applicable to HomeEditMode.
+	if( HOME_EDIT_MODE )
+	{
+		for( int i=((int)m_Def.rows.size())-1; i>=0; i-- )
+		{
+			if( !m_Def.rows[i].bShowInHomeEditMode )
+				m_Def.rows.erase( m_Def.rows.begin()+i );
+		}
+	}
 
 	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenMiniMenu","background") );
 	m_Background.PlayCommand("On");
@@ -297,6 +307,7 @@ MenuRowInternal::MenuRowInternal( const MenuRow &r )
 	name = r.name;
 	enabled = r.enabled;
 	defaultChoice = r.defaultChoice;
+	bShowInHomeEditMode = r.bShowInHomeEditMode;
 #define PUSH( c )   if(c!=NULL) choices.push_back(c);
 	for( unsigned i = 0; i < ARRAYSIZE(r.choices); ++i )
 		PUSH( r.choices[i] );

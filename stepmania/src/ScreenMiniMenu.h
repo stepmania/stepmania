@@ -17,6 +17,7 @@ struct MenuRow
 {
 	const char *name;
 	bool	enabled;
+	bool	bShowInHomeEditMode;
 	int		defaultChoice;
 	const char *choices[32];
 };
@@ -26,12 +27,14 @@ struct MenuRowInternal
 {
 	CString name;
 	bool    enabled;
+	bool	bShowInHomeEditMode;
 	int		defaultChoice;
 	vector<CString> choices;
 
 	MenuRowInternal()
 	{
 		enabled = true;
+		bShowInHomeEditMode = true;
 		defaultChoice = 0;
 	}
 
@@ -55,7 +58,7 @@ class ScreenMiniMenu : public Screen
 {
 public:
 	ScreenMiniMenu( CString sName );
-	ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
+	ScreenMiniMenu( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
