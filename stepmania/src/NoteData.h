@@ -22,8 +22,6 @@ class NoteData
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
 
-	void LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks );
-
 public:
 
 	/* Set up to hold the data in From; same number of tracks, same
@@ -126,7 +124,6 @@ public:
 
 	// Transformations
 	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
-	void LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNewNumTracks );	// used by autogen
 
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();

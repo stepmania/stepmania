@@ -253,6 +253,134 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 	}
 }
 
+void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &out, int iNewNumTracks )
+{
+	// reset all notes
+	out.Init();
+
+	if( in.GetNumTracks() > iNewNumTracks )
+	{
+		/* Use a different algorithm for reducing tracks. */
+		LoadOverlapped( in, out, iNewNumTracks );
+		return;
+	}
+
+	NoteData Original;
+	Original.To4s( in );
+
+	out.Config( in );
+	out.SetNumTracks( iNewNumTracks );
+
+
+	int iCurTrackOffset = 0;
+	int iTrackOffsetMin = 0;
+	int iTrackOffsetMax = abs( iNewNumTracks - Original.GetNumTracks() );
+	int bOffsetIncreasing = true;
+
+	int iLastRow = Original.GetLastRow();
+	for( int r=0; r<=iLastRow; )
+	{
+		// copy notes in this measure
+		for( int t=0; t<Original.GetNumTracks(); t++ )
+		{
+			int iOldTrack = t;
+			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
+			out.SetTapNote(iNewTrack, r, Original.GetTapNote(iOldTrack, r));
+		}
+		r++;
+
+		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
+		{
+			// See if there is a hold crossing the beginning of this measure
+			bool bHoldCrossesThisMeasure = false;
+
+			if( r )
+			for( int t=0; t<=Original.GetNumTracks(); t++ )
+			{
+				if( Original.GetTapNote(t, r) == TAP_HOLD &&
+					Original.GetTapNote(t, r-1) == TAP_HOLD)
+				{
+					bHoldCrossesThisMeasure = true;
+					break;
+				}
+			}
+
+			// adjust offset
+			if( !bHoldCrossesThisMeasure )
+			{
+				iCurTrackOffset += bOffsetIncreasing ? 1 : -1;
+				if( iCurTrackOffset == iTrackOffsetMin  ||  iCurTrackOffset == iTrackOffsetMax )
+					bOffsetIncreasing ^= true;
+				CLAMP( iCurTrackOffset, iTrackOffsetMin, iTrackOffsetMax );
+			}
+		}
+	}
+
+	out.Convert4sToHoldNotes();
+
+	out.GetAttackMap() = Original.GetAttackMap();
+}
+
+void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNewNumTracks )
+{
+	out.SetNumTracks( iNewNumTracks );
+
+	NoteData in;
+	in.To4s( input );
+
+	/* Keep track of the last source track that put a tap into each destination track,
+	 * and the row of that tap.  Then, if two rows are trying to put taps into the
+	 * same row within the shift threshold, shift the newcomer source row. */
+	int LastSourceTrack[MAX_NOTE_TRACKS];
+	int LastSourceRow[MAX_NOTE_TRACKS];
+	int DestRow[MAX_NOTE_TRACKS];
+	
+	for( unsigned tr = 0; tr < MAX_NOTE_TRACKS; ++tr )
+	{
+		LastSourceTrack[tr] = -1;
+		LastSourceRow[tr] = -9999;
+		DestRow[tr] = tr;
+		wrap( DestRow[tr], iNewNumTracks );
+	}
+
+	const int ShiftThreshold = BeatToNoteRow(1);
+
+	const int iLastRow = in.GetMaxRow();
+	for( int row = 0; row < iLastRow; ++row )
+	{
+		for ( int i = 0; i < in.GetNumTracks(); i++ )
+		{
+			const int iTrackFrom = i;
+			int &iTrackTo = DestRow[i];
+
+			const TapNote iStepFrom = in.GetTapNote( iTrackFrom, row );
+			if( iStepFrom == TAP_EMPTY )
+				continue;
+
+			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
+				row - LastSourceRow[iTrackTo] < ShiftThreshold )
+			{
+				/* This destination track is in use by a different source track.  Use the
+				 * least-recently-used track. */
+				for( int DestTrack = 0; DestTrack < iNewNumTracks; ++DestTrack )
+					if( LastSourceRow[DestTrack] < LastSourceRow[iTrackTo] )
+						iTrackTo = DestTrack;
+			}
+
+			/* If it's still in use, then we just don't have an available track. */
+			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
+				row - LastSourceRow[iTrackTo] < ShiftThreshold )
+				continue;
+
+			LastSourceTrack[iTrackTo] = iTrackFrom;
+			LastSourceRow[iTrackTo] = row;
+			out.SetTapNote( iTrackTo, row, iStepFrom );
+		}
+	}
+
+	out.Convert4sToHoldNotes();
+}
+
 void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
 	// reset all notes

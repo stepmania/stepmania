@@ -179,7 +179,7 @@ void Steps::Decompress() const
 		{
 			NoteDataUtil::LoadTransformedLights( pdata, *notes, iNewTracks );
 		} else {
-			notes->LoadTransformedSlidingWindow( &pdata, iNewTracks );
+			NoteDataUtil::LoadTransformedSlidingWindow( pdata, *notes, iNewTracks );
 
 			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
 		}
