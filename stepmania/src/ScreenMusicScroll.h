@@ -11,7 +11,7 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "RageSoundManager.h"
 #include "MenuElements.h"
 
@@ -42,8 +42,8 @@ private:
 	unsigned 		m_iNumLines;
 	float			m_fTimeLeftInScreen;
 
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Out;
+	Transition	m_In;
+	Transition	m_Out;
 };
 
 

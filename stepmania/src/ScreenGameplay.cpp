@@ -828,9 +828,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
 	if( m_bZeroDeltaOnNextUpdate )
-		int sdkjfskdf = 0;
-
-	if( m_bZeroDeltaOnNextUpdate )
 	{
 		Screen::Update( 0 );
 		m_bZeroDeltaOnNextUpdate = false;

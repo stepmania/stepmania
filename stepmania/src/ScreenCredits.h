@@ -10,7 +10,7 @@
 */
 
 #include "Screen.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "ActorScroller.h"
 
 
@@ -44,8 +44,8 @@ private:
 
 	BGAnimation				m_Overlay;
 
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Out;
+	Transition	m_In;
+	Transition	m_Out;
 };
 
 

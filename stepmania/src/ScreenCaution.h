@@ -16,7 +16,7 @@
 #include "Screen.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 
 
 class ScreenCaution : public Screen
@@ -31,9 +31,9 @@ protected:
 	void MenuStart( PlayerNumber pn );
 	void MenuBack(	PlayerNumber pn );
 	BGAnimation m_Background;
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Out;
-	TransitionBGAnimation	m_Back;
+	Transition	m_In;
+	Transition	m_Out;
+	Transition	m_Back;
 };
 
 #endif

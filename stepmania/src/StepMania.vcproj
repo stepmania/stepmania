@@ -1036,10 +1036,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="CroppedSprite.h">
 			</File>
 			<File
-				RelativePath="TransitionBGAnimation.cpp">
+				RelativePath="Transition.cpp">
 			</File>
 			<File
-				RelativePath="TransitionBGAnimation.h">
+				RelativePath="Transition.h">
 			</File>
 		</Filter>
 		<Filter

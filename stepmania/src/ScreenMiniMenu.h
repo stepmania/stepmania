@@ -12,7 +12,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "Quad.h"
 #include "RandomSample.h"
 
@@ -100,8 +100,8 @@ protected:
 	int					m_iCurLine;
 	int					m_iCurAnswers[MAX_MENU_ROWS];
 	ScreenMessage		m_SMSendOnOK, m_SMSendOnCancel;
-	TransitionBGAnimation		m_In;
-	TransitionBGAnimation		m_Out;
+	Transition		m_In;
+	Transition		m_Out;
 
 public:
 	static int	s_iLastLine;

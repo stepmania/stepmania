@@ -12,16 +12,12 @@
 -----------------------------------------------------------------------------
 */
 
-
 #include "Screen.h"
 #include "Sprite.h"
 #include "MenuTimer.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "HelpDisplay.h"
 #include "BGAnimation.h"
-
-
-const float MENU_ELEMENTS_TWEEN_TIME	=	0.5f;
 
 
 class MenuElements : public ActorFrame
@@ -53,9 +49,9 @@ public:	// let owner tinker with these objects
 	Sprite				m_sprFooter;
 	HelpDisplay			m_textHelp;
 
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Out;
-	TransitionBGAnimation	m_Back;
+	Transition	m_In;
+	Transition	m_Out;
+	Transition	m_Back;
 
 	RageSound m_soundBack;
 

@@ -12,7 +12,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "Quad.h"
 #include "RandomSample.h"
 
@@ -46,7 +46,7 @@ protected:
 	void(*m_pOnOK)( CString sAnswer );
 	void(*m_pOnCancel)();
 	bool			m_bCancelled;
-	TransitionBGAnimation		m_In;
-	TransitionBGAnimation		m_Out;
+	Transition		m_In;
+	Transition		m_Out;
 };
 

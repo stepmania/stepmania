@@ -13,7 +13,7 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "BitmapText.h"
 #include "Player.h"
 #include "RandomSample.h"
@@ -97,8 +97,8 @@ protected:
 
 	Background			m_Background;
 
-	TransitionBGAnimation	m_NextSongIn;	// shows between songs in a course
-	TransitionBGAnimation	m_NextSongOut;	// shows between songs in a course
+	Transition	m_NextSongIn;	// shows between songs in a course
+	Transition	m_NextSongOut;	// shows between songs in a course
 
 	Sprite				m_sprLifeFrame;
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
@@ -120,14 +120,14 @@ protected:
 	
 	BitmapText			m_MaxCombo;
 
-	TransitionBGAnimation	m_Ready;
-	TransitionBGAnimation	m_Go;
-	TransitionBGAnimation	m_Cleared;
-	TransitionBGAnimation	m_Failed;
-	TransitionBGAnimation	m_Extra;
-	TransitionBGAnimation	m_Toasty;	// easter egg
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Back;
+	Transition	m_Ready;
+	Transition	m_Go;
+	Transition	m_Cleared;
+	Transition	m_Failed;
+	Transition	m_Extra;
+	Transition	m_Toasty;	// easter egg
+	Transition	m_In;
+	Transition	m_Back;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 	BitmapText			m_textSongTitle;

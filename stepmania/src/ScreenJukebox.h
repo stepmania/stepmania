@@ -29,8 +29,8 @@ public:
 	static bool SetSong();
 
 protected:
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Out;
+	Transition	m_In;
+	Transition	m_Out;
 
 	static bool PrepareForJukebox();
 };

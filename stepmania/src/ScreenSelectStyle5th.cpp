@@ -24,6 +24,8 @@
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 
+const float MENU_ELEMENTS_TWEEN_TIME = 0.5;
+
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectStyle5th","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle5th","TimerSeconds")
 #define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle5th","NextScreen")

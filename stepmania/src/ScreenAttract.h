@@ -15,7 +15,7 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
 #include "RageTimer.h"
@@ -36,8 +36,8 @@ public:
 protected:
 
 	BGAnimation				m_Background;
-	TransitionBGAnimation	m_In;
-	TransitionBGAnimation	m_Out;
+	Transition	m_In;
+	Transition	m_Out;
 	RandomSample			m_soundStart;
 };
 

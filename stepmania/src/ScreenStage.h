@@ -10,7 +10,7 @@
 */
 
 #include "Screen.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 
 class ScreenStage : public Screen
 {
@@ -51,7 +51,7 @@ private:
 
 	Quad			m_quadMask;		// write this into ZBuffer as a mask
 */
-	TransitionBGAnimation	m_In, m_Out, m_Back;
+	Transition	m_In, m_Out, m_Back;
 	BGAnimation				m_Background;
 
 protected:

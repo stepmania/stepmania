@@ -12,7 +12,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "Quad.h"
 #include "RandomSample.h"
 
@@ -44,7 +44,7 @@ protected:
 	ScreenMessage	m_SMSendWhenDone;
 	void(*m_pOnYes)();
 	void(*m_pOnNo)();
-	TransitionBGAnimation		m_In;
-	TransitionBGAnimation		m_Out;
+	Transition		m_In;
+	Transition		m_Out;
 };
 
