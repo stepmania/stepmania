@@ -280,39 +280,6 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 	}
 }
 
-void ScrollingList::AddElementAt(int loc, CString sGraphicPath)
-{
-	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
-	{
-		Sprite* pNewSprite = new Sprite;
-		pNewSprite->Load( sGraphicPath );
-//		m_apSprites.push_back( pNewSprite );
-		m_apSprites.insert(m_apSprites.begin()+loc, pNewSprite);
-	}
-	else
-	{
-		CroppedSprite* pNewCSprite = new CroppedSprite;
-		if(m_iBannerPrefs == BANNERPREFS_DDRFLAT)
-		{
-			pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-		}
-		else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
-		{
-			pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-			pNewCSprite->SetRotation( DDRROT_ROTATION );
-		}
-		else if(m_iBannerPrefs == BANNERPREFS_EZ2)
-		{
-			pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2 );
-		}
-
-			pNewCSprite->Load( sGraphicPath );
-	//		m_apCSprites.push_back( pNewCSprite );
-			m_apSprites.insert(m_apSprites.begin()+loc, pNewCSprite);
-	}
-
-}
-
 /********************************
 DrawPrimitives
 

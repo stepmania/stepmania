@@ -29,7 +29,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void Replace(CString sGraphicPath, int ElementNumber);
-	void AddElementAt(int loc, CString sGraphicPath);
+
 	void SetSelection( int iIndex );	
 	int GetSelection();
 	void SetNumberVisible( int iNumVisibleElements );
