@@ -72,11 +72,6 @@ public:
 
 	CString GetCurrentSystemMessage() const { return m_sSystemMessage; }
 
-	/* Overlay screens can grab input focus.  Only one screen may grab at a time;
-	 * if another screen has already taken focus, this returns false. */
-	bool GrabInputFocus( const Screen *pScreen );
-	void ReleaseInputFocus( const Screen *pScreen );
-
 	Screen *GetTopScreen();
 
 	/* Return true if the given screen is in the main screen stack, but not the bottommost

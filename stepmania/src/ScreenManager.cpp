@@ -54,7 +54,6 @@ void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
 ScreenManager::ScreenManager()
 {
 	m_pSharedBGA = new Actor;
-	m_pInputFocus = NULL;
 
 	m_MessageSendOnPop = SM_None;
 
@@ -249,8 +248,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// pass input only to topmost state
-	Screen *pInputFocus = m_pInputFocus;
-	if( pInputFocus == NULL && !m_ScreenStack.empty() )
+	Screen *pInputFocus = NULL;
+	if( !m_ScreenStack.empty() )
 		pInputFocus = m_ScreenStack.back();
 
 	if( pInputFocus != NULL )
@@ -564,30 +563,6 @@ void ScreenManager::SystemMessageNoAnimate( const CString &sMessage )
 //	LOG->Trace( "%s", sMessage.c_str() );	// don't log because the caller is likely calling us every frame
 	m_sSystemMessage = sMessage;
 	MESSAGEMAN->Broadcast( "SystemMessageNoAnimate" );
-}
-
-bool ScreenManager::GrabInputFocus( const Screen *pScreen )
-{
-	if( m_pInputFocus != NULL )
-		return false;
-
-	/* Sanity check: make sure that the screen is in m_OverlayScreens. */
-	for( unsigned i = 0; i < m_OverlayScreens.size(); ++i )
-	{
-		if( m_OverlayScreens[i] == pScreen )
-		{
-			m_pInputFocus = m_OverlayScreens[i];
-			return true;
-		}
-	}
-
-	FAIL_M( "GrabInputFocus: unknown screen" );
-}
-
-void ScreenManager::ReleaseInputFocus( const Screen *pScreen )
-{
-	ASSERT( m_pInputFocus == pScreen );
-	m_pInputFocus = NULL;
 }
 
 
