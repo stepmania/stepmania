@@ -65,6 +65,7 @@ void SongCacheIndex::ReadCacheIndex()
 	EmptyDir( CACHE_DIR );
 	EmptyDir( CACHE_DIR "Banners/" );
 	EmptyDir( CACHE_DIR "Songs/" );
+	EmptyDir( CACHE_DIR "Courses/" );
 
 	CacheIndex.Clear();
 }

@@ -40,6 +40,26 @@ bool TrailEntry::ContainsTransformOrTurn() const
 	return false;
 }
 
+/* Return true if GetRadarValues may be very slow (reads, decodes and
+ * transforms the Steps), in which case it's worth caching it in Course. */
+bool Trail::SlowGetRadarValues() const
+{
+	FOREACH_CONST( TrailEntry, m_vEntries, e )
+	{
+		const Steps *pSteps = e->pSteps;
+		if( !pSteps->IsAutogen() && e->ContainsTransformOrTurn() )
+			return true;
+	}
+
+	return false;
+}
+
+void Trail::SetRadarValues( const RadarValues &rv )
+{
+	m_CachedRadarValues = rv;
+	m_bRadarValuesCached = true;
+}
+
 RadarValues Trail::GetRadarValues() const
 {
 	if( IsMystery() )
@@ -55,8 +75,8 @@ RadarValues Trail::GetRadarValues() const
 	}
 	else
 	{
-		m_bRadarValuesCached = true;
-		m_CachedRadarValues.Zero();
+		RadarValues rv;
+		rv.Zero();
 
 		FOREACH_CONST( TrailEntry, m_vEntries, e )
 		{
@@ -75,15 +95,20 @@ RadarValues Trail::GetRadarValues() const
 				if( po.ContainsTransformOrTurn() )
 					NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
 				NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
-				RadarValues rv;
-				NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv );
-				m_CachedRadarValues += rv;
+				RadarValues transformed_rv;
+				NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, transformed_rv );
+				rv += transformed_rv;
 			}
 			else
 			{
-				m_CachedRadarValues += pSteps->GetRadarValues();			
+				rv += pSteps->GetRadarValues();			
 			}
 		}
+
+		/* Hack: SetRadarValues is non-const (a const setter doesn't
+		 * make sense), but it only modifies a mutable value.  Just
+		 * cast away const. */
+		const_cast<Trail*>(this)->SetRadarValues( rv );
 
 		return m_CachedRadarValues;
 	}

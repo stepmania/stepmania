@@ -10,6 +10,7 @@
 #include "MsdFile.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "SongCacheIndex.h"
 #include "RageUtil.h"
 #include "TitleSubstitution.h"
 #include "Steps.h"
@@ -47,12 +48,33 @@ PlayMode Course::GetPlayMode() const
 
 void Course::LoadFromCRSFile( CString sPath )
 {
-	LOG->Trace( "Course::LoadFromCRSFile( '%s' )", sPath.c_str() );
-
 	Init();
 
 	m_sPath = sPath;	// save path
 
+	bool bUseCache = true;
+	{
+		/* First look in the cache for this course.  Don't bother
+		 * honoring FastLoad for checking the course hash, since
+		 * courses are normally grouped into a few directories, not
+		 * one directory per course. XXX: if !FastLoad, regen
+		 * cache if the used songs have changed */
+		unsigned uHash = SONGINDEX->GetCacheHash( m_sPath );
+		if( !DoesFileExist(GetCacheFilePath()) )
+			bUseCache = false;
+		if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sPath) != uHash )
+			bUseCache = false; // this cache is out of date 
+	}
+
+	if( bUseCache )
+	{
+		CString sCacheFile = GetCacheFilePath();
+		LOG->Trace( "Course::LoadFromCRSFile(\"%s\") (\"%s\")", sPath.c_str(), sCacheFile.c_str() );
+		sPath = sCacheFile.c_str();
+	}
+	else
+		LOG->Trace( "Course::LoadFromCRSFile(\"%s\")", sPath.c_str() );
+	
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
 		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
@@ -243,7 +265,15 @@ void Course::LoadFromCRSFile( CString sPath )
 			
 			m_entries.push_back( new_entry );
 		}
+		else if( bUseCache && !stricmp(sValueName, "RADAR") )
+		{
+			StepsType st = (StepsType) atoi(sParams[1]);
+			CourseDifficulty cd = (CourseDifficulty) atoi(sParams[2]);
 
+			RadarValues rv;
+			rv.FromString( sParams[3] );
+			m_RadarCache[CacheEntry(st, cd)] = rv;
+		}
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
@@ -260,6 +290,33 @@ void Course::LoadFromCRSFile( CString sPath )
 	 * song was found in the course. */
 	if( m_sBannerPath != "" && !m_entries.empty() )
 		BANNERCACHE->CacheBanner( m_sBannerPath );
+
+	/* Cache each trail RadarValues that's slow to load, so we
+	 * don't have to do it at runtime. */
+	if( !bUseCache )
+	{
+		FOREACH_StepsType( st )
+		{
+			FOREACH_CourseDifficulty( cd )
+			{
+				Trail *pTrail = GetTrail( st, cd );
+				if( pTrail == NULL || !pTrail->SlowGetRadarValues() )
+					continue;
+
+				RadarValues rv = pTrail->GetRadarValues();
+				m_RadarCache[CacheEntry(st, cd)] = rv;
+			}
+		}
+
+		/* If we have any cache data, write the cache file. */
+		if( m_RadarCache.size() )
+		{
+			CString sCachePath = GetCacheFilePath();
+			Save( sCachePath, true );
+
+			SONGINDEX->AddCacheIndex( m_sPath, GetHashForFile(m_sPath) );
+		}
+	}
 }
 
 void Course::RevertFromDisk()
@@ -268,6 +325,11 @@ void Course::RevertFromDisk()
 	ASSERT( !m_sPath.empty() );
 
 	LoadFromCRSFile( m_sPath );
+}
+
+CString Course::GetCacheFilePath() const
+{
+	return SongCacheIndex::GetCacheFilePath( "Courses", m_sPath );
 }
 
 void Course::Init()
@@ -291,14 +353,18 @@ void Course::Init()
 	m_iTrailCacheSeed = 0;
 }
 
-void Course::Save()
+void Course::Save( CString sPath, bool bSavingCache )
 {
 	ASSERT( !m_bIsAutogen );
 
+	/* By default, save to the file we loaded from. */
+	if( sPath == "" )
+		sPath = m_sPath;
+
 	RageFile f;
-	if( !f.Open( m_sPath, RageFile::WRITE ) )
+	if( !f.Open( sPath, RageFile::WRITE ) )
 	{
-		LOG->Warn( "Could not write course file '%s': %s", m_sPath.c_str(), f.GetError().c_str() );
+		LOG->Warn( "Could not write course file '%s': %s", sPath.c_str(), f.GetError().c_str() );
 		return;
 	}
 
@@ -314,6 +380,29 @@ void Course::Save()
 		if( m_iCustomMeter[cd] == -1 )
 			continue;
 		f.PutLine( ssprintf("#METER:%s:%i;", CourseDifficultyToString(cd).c_str(), m_iCustomMeter[cd]) );
+	}
+
+	if( bSavingCache )
+	{
+		f.PutLine( "// cache tags:" );
+
+		RadarCache_t::const_iterator it;
+		for( it = m_RadarCache.begin(); it != m_RadarCache.end(); ++it )
+		{
+			// #RADAR:type:difficulty:value,value,value...;
+			const CacheEntry &entry = it->first;
+			StepsType st = entry.first;
+			CourseDifficulty cd = entry.second;
+
+			CStringArray asRadarValues;
+			const RadarValues &rv = it->second;
+			for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
+				asRadarValues.push_back( ssprintf("%.3f", rv[r]) );
+			CString sLine = ssprintf( "#RADAR:%i:%i:", st, cd );
+			sLine += join( ",", asRadarValues ) + ";";
+			f.PutLine( sLine );
+		}
+		f.PutLine( "// end cache tags" );
 	}
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
@@ -608,13 +697,15 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	//
 	// Look in the Trail cache
 	//
-	TrailCache_t::iterator it = m_TrailCache.find( CacheEntry(st, cd) );
-	if( it != m_TrailCache.end() )
 	{
-		CacheData &cache = it->second;
-		if( cache.null )
-			return NULL;
-		return &cache.trail;
+		TrailCache_t::iterator it = m_TrailCache.find( CacheEntry(st, cd) );
+		if( it != m_TrailCache.end() )
+		{
+			CacheData &cache = it->second;
+			if( cache.null )
+				return NULL;
+			return &cache.trail;
+		}
 	}
 
 	//
@@ -628,6 +719,18 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		/* This course difficulty doesn't exist. */
 		cache.null = true;
 		return NULL;
+	}
+
+	//
+	// If we have cached RadarValues for this trail, insert them.
+	//
+	{
+		RadarCache_t::const_iterator it = m_RadarCache.find( CacheEntry( st, cd ) );
+		if( it != m_RadarCache.end() )
+		{
+			const RadarValues &rv = it->second;
+			trail.SetRadarValues(rv);
+		}
 	}
 
 	cache.null = false;

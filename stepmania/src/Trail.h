@@ -62,7 +62,9 @@ public:
 		m_bRadarValuesCached = false;
 	}
 
+	bool SlowGetRadarValues() const;
 	RadarValues GetRadarValues() const;
+	void SetRadarValues( const RadarValues &rv ); // for pre-populating cache
 	int GetMeter() const;
 	int GetTotalMeter() const;
 	float GetLengthSeconds() const;

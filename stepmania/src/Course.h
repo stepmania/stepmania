@@ -132,7 +132,7 @@ public:
 	void LoadFromCRSFile( CString sPath );
 	void RevertFromDisk();
 	void Init();
-	void Save();
+	void Save( CString sPath = "", bool bSavingCache=false ); /* default is source file */
 	void AutogenEndlessFromGroup( CString sGroupName, Difficulty dc );
 	void AutogenNonstopFromGroup( CString sGroupName, Difficulty dc );
 	void AutogenOniFromArtist( CString sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc );
@@ -151,6 +151,7 @@ public:
 	void Invalidate( Song *pStaleSong );
 
 	void GetAllCachedTrails( vector<Trail *> &out );
+	CString GetCacheFilePath() const;
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
 
@@ -170,6 +171,9 @@ private:
 	typedef map<CacheEntry, CacheData> TrailCache_t;
 	mutable TrailCache_t m_TrailCache;
 	mutable int m_iTrailCacheSeed;
+
+	typedef map<CacheEntry, RadarValues> RadarCache_t;
+	RadarCache_t m_RadarCache;
 };
 
 #endif

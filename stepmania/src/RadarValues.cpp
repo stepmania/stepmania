@@ -58,6 +58,37 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 		pNode->GetChildValue( RadarCategoryToString(rc),	m_fValues[rc] );
 }
 
+/* iMaxValues is only used for writing compatibility fields in non-cache
+ * SM files; they're never actually read. */
+CString RadarValues::ToString( int iMaxValues ) const
+{
+	if( iMaxValues == -1 )
+		iMaxValues = NUM_RADAR_CATEGORIES;
+	iMaxValues = min( iMaxValues, (int)NUM_RADAR_CATEGORIES );
+
+	CStringArray asRadarValues;
+	for( int r=0; r < iMaxValues; r++ )
+		asRadarValues.push_back( ssprintf("%.3f", m_fValues[r]) );
+
+	return join( ",",asRadarValues );
+}
+
+void RadarValues::FromString( CString sRadarValues )
+{
+	CStringArray saValues;
+	split( sRadarValues, ",", saValues, true );
+
+	if( saValues.size() != NUM_RADAR_CATEGORIES )
+	{
+		MakeUnknown();
+		return;
+	}
+
+	FOREACH_RadarCategory(rc)
+		m_fValues[rc] = strtof( saValues[rc], NULL );
+    
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

@@ -43,6 +43,9 @@ struct RadarValues
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+
+	CString ToString( int iMaxValues = -1 ) const; // default = all
+	void FromString( CString sValues );
 };
 
 
