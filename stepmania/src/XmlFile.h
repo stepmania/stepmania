@@ -144,7 +144,7 @@ struct XAttr
 	void GetValue(unsigned &out) const;
 	void GetValue(DateTime &out) const;
 	
-	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
+	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault ) const;
 };
 
 // XMLNode structure
@@ -171,12 +171,12 @@ struct XNode
 	// Load/Save XML
 	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
 	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi = &piDefault );
-	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
+	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault ) const;
 
 	bool LoadFromFile( const CString &sFile, PARSEINFO *pi = &piDefault );
 	bool LoadFromFile( RageFileBasic &f, PARSEINFO *pi = &piDefault );
-	bool SaveToFile( const CString &sFile, DISP_OPT *opt = &optDefault );
-	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt = &optDefault );
+	bool SaveToFile( const CString &sFile, DISP_OPT *opt = &optDefault ) const;
+	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt = &optDefault ) const;
 
 	// in own attribute list
 	const XAttr *GetAttr( const char* attrname ) const; 

@@ -477,7 +477,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
+bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ ) const
 {
 	return f.Write(m_sName + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(m_sValue):m_sValue) + "' ") != -1;
 }
@@ -491,7 +491,7 @@ bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
+bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ ) const
 {
 	// tab
 	if( opt && opt->newline )
@@ -513,7 +513,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 	if( !m_attrs.empty() )
 		if( f.Write(" ") == -1 )
 			return false;
-	FOREACH_Attr( this, p )
+	FOREACH_CONST_Attr( this, p )
 		if( !p->GetXML(f, opt) )
 			return false;
 	
@@ -534,7 +534,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 			opt->tab_base++;
 		}
 
-		FOREACH_Child( this, p )
+		FOREACH_CONST_Child( this, p )
 			if( !p->GetXML( f, opt ) )
 				return false;
 		
@@ -1032,7 +1032,7 @@ bool XNode::LoadFromFile( RageFileBasic &f, PARSEINFO *pi )
 	return true;
 }
 
-bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt )
+bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const
 {
 	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
 	if( !opt->stylesheet.empty() )
@@ -1044,7 +1044,7 @@ bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt )
 	return true;
 }
 
-bool XNode::SaveToFile( const CString &sFile, DISP_OPT *opt )
+bool XNode::SaveToFile( const CString &sFile, DISP_OPT *opt ) const
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
