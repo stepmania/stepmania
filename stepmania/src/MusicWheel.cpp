@@ -326,7 +326,8 @@ MusicWheel::MusicWheel()
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
 	
-	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music") );
+	/* We play a lot of this one, so precache it. */
+	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music"), true );
 	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","select music change sort") );
 	m_soundExpand.Load(			THEME->GetPathTo("Sounds","select music section expand") );
 	m_soundStart.Load(			THEME->GetPathTo("Sounds","menu start") );
@@ -894,7 +895,7 @@ void MusicWheel::Update( float fDeltaTime )
 			{
 //				if ( m_bUseRandomExtra )
 //				{
-//					SOUNDMAN->music->StopPlaying();
+//					SOUNDMAN->StopMusic();
 //					m_soundExpand.Play();
 //					m_WheelState = STATE_ROULETTE_SPINNING;
 //					m_SortOrder = SORT_GROUP;
