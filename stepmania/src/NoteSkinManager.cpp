@@ -30,6 +30,7 @@ NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in t
 const CString NOTESKINS_DIR = "NoteSkins/";
 const CString GAME_BASE_NOTESKIN_NAME = "default";
 const CString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
+static map<CString,CString> g_PathCache;
 
 NoteSkinManager::NoteSkinManager()
 {
@@ -47,6 +48,9 @@ void NoteSkinManager::RefreshNoteSkinData( Game game )
 	m_CurGame = GAMESTATE->m_CurGame;
 
 	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
+
+	// clear path cache
+	g_PathCache.clear();
 
 	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
 	CStringArray asNoteSkinNames;
@@ -245,11 +249,17 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButtonInternal( CString NoteSki
 
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
+	const CString CacheString = NoteSkin + "/" + sButtonName + "/" + sElement;
+	map<CString,CString>::iterator it = g_PathCache.find( CacheString );
+	if( it != g_PathCache.end() )
+		return it->second;
+
 	CString sPath = GetPathToFromNoteSkinAndButtonInternal( NoteSkin, sButtonName, sElement );
 	if( sPath == "" )
 	{
 		if( bOptional )
 		{
+			g_PathCache[CacheString] = sPath;
 			return sPath;
 		}
 
@@ -281,6 +291,8 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
 			{
 				FlushDirCache();
+				g_PathCache.clear();
+
 				continue;
 			}
 
@@ -290,6 +302,7 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 		sPath = sRealPath;
 	}
 
+	g_PathCache[CacheString] = sPath;
 	return sPath;
 }
 
