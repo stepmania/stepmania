@@ -31,7 +31,7 @@
 #include "PrefsManager.h"
 #include "NotesLoaderSM.h"
 
-const int MAX_DESCRIPTION_LENGTH = 20;
+const int MAX_DESCRIPTION_LENGTH = 12;
 
 Steps::Steps()
 {
@@ -147,9 +147,6 @@ void Steps::TidyUpData()
 
 	if( GetMeter() < 1) // meter is invalid
 		SetMeter( int(PredictMeter()) );
-
-	if( int(m_sDescription.size()) > MAX_DESCRIPTION_LENGTH )
-		m_sDescription = m_sDescription.Left( MAX_DESCRIPTION_LENGTH );
 }
 
 void Steps::Decompress() const
@@ -270,7 +267,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) ); 
 	this->SetNoteData( noteData );
-	this->SetDescription( "Copied from "+pSource->GetDescription() );
+	this->SetDescription( "From " + pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
 	this->SetMeter( pSource->GetMeter() );
 	this->SetRadarValues( pSource->GetRadarValues() );
@@ -306,6 +303,8 @@ void Steps::SetDescription(CString desc)
 {
 	DeAutogen();
 	m_sDescription = desc;
+	if( int(m_sDescription.size()) > MAX_DESCRIPTION_LENGTH )
+		m_sDescription = m_sDescription.Left( MAX_DESCRIPTION_LENGTH );
 }
 
 void Steps::SetDifficulty(Difficulty d)

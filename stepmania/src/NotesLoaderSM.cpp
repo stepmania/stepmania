@@ -496,7 +496,9 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, Profi
 			return true;	// Only allow one Steps per edit file!
 		}
 		else
+		{
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+		}
 	}
 
 	return true;

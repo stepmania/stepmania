@@ -280,8 +280,8 @@ void EditMenu::OnRowValueChanged( Row row )
 		{
 			CString s = DifficultyToThemedString(GetSelectedDifficulty());
 			Steps *pSteps = GetSelectedSteps();
-			if( GetSelectedDifficulty() == DIFFICULTY_EDIT )
-				s += " - " + (pSteps ? pSteps->GetDescription() : "New" );
+			if( pSteps  &&  GetSelectedDifficulty() == DIFFICULTY_EDIT )
+				s += " - " pSteps->GetDescription();
 			m_textValue[ROW_STEPS].SetText( s );
 			m_Meter.SetFromSteps( GetSelectedSteps() );
 		}
