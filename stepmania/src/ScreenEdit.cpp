@@ -1433,6 +1433,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				default:		ASSERT(0);
 				}
 
+				// bake in the additions
+				NoteDataUtil::ConvertAdditionsToRegular( m_Clipboard );
+
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 			}
 			break;

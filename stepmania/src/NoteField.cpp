@@ -412,17 +412,18 @@ void NoteField::DrawPrimitives()
 */		
 		for( i=first; i <= last; i+=increment )	//	 for each row
 		{	
-			if( GetTapNote(c, i) == TAP_EMPTY )	// no note here
+			TapNote tn = GetTapNote(c, i);
+			if( tn == TAP_EMPTY )	// no note here
 				continue;	// skip
 			
-			if( GetTapNote(c, i) == TAP_HOLD_HEAD )	// this is a HoldNote begin marker.  Grade it, but don't draw
+			if( tn == TAP_HOLD_HEAD )	// this is a HoldNote begin marker.  Grade it, but don't draw
 				continue;	// skip
 
 			// See if there is a hold step that begins on this index.
 			bool bHoldNoteBeginsOnThisBeat = false;
 			for( int c2=0; c2<GetNumTracks(); c2++ )
 			{
-				if( GetTapNote(c2, i) == TAP_HOLD_HEAD )
+				if( tn == TAP_HOLD_HEAD )
 				{
 					bHoldNoteBeginsOnThisBeat = true;
 					break;
@@ -435,7 +436,10 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(i);
 				bIsInSelectionRange = m_fBeginMarker<=fBeat && fBeat<=m_fEndMarker;
 			}
-			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
+
+			bool bIsAddition = (tn == TAP_ADDITION);
+
+			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
 		}
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);

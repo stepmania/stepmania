@@ -29,12 +29,13 @@ public:
 
 	void Load( int iColNum, PlayerNumber pn );
 
-	void DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail, const float fLife = 1 );
+	void DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const bool bIsAddition, const float fPercentFadeToFail, const float fLife = 1 );
 	void DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly = false );
 
 protected:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );
 	Actor *GetTapNoteActor( float fNoteBeat );
+	Actor *GetTapAdditionActor( float fNoteBeat );
 	Actor *GetHoldHeadActor( float fNoteBeat, bool bActive );
 	Actor* GetHoldTailActor( float fNoteBeat, bool bActive );
 	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bActive );
@@ -54,6 +55,7 @@ protected:
 #define NOTE_COLOR_IMAGES 6
 
 	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
+	Actor*		m_pTapAddition;
 	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldTopCapActive[NOTE_COLOR_IMAGES];

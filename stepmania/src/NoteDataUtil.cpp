@@ -539,7 +539,7 @@ void NoteDataUtil::Wide( NoteData &in )
 		{
 			iTrackToAdd = (iTrackToAdd+1) % in.GetNumTracks();
 		}
-		in.SetTapNote(iTrackToAdd, i, TAP_TAP);
+		in.SetTapNote(iTrackToAdd, i, TAP_ADDITION);
 	}
 
 	in.Convert4sToHoldNotes();
@@ -618,7 +618,7 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 			}
 		}
 
-		in.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_TAP);
+		in.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION);
 	}
 
 	in.Convert4sToHoldNotes();
@@ -866,4 +866,13 @@ void NoteDataUtil::EliminateNonPassingTaps( NoteData &in, int row, const bool bV
 	for( int t=0; t<in.GetNumTracks(); t++ )
 		if( !bValidMask[t] && in.GetTapNote(t,row) != TAP_EMPTY )
 			in.SetTapNote(t,row,TAP_EMPTY);
+}
+
+
+void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
+{
+	for( int r=0; r<=in.GetLastRow(); r++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
+			if( in.GetTapNote(t,r) == TAP_ADDITION )
+				in.SetTapNote(t,r,TAP_TAP);
 }

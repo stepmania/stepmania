@@ -49,6 +49,9 @@ namespace NoteDataUtil
 	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning );
 	void SuperShuffleTaps( NoteData &in );
 
+	// change all TAP_ADDITIONs to TAP_TAPs
+	void ConvertAdditionsToRegular( NoteData &in );
+
 	void Backwards( NoteData &in );
 	void SwapSides( NoteData &in );
 	void CopyLeftToRight( NoteData &in );
