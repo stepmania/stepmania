@@ -41,6 +41,26 @@ RageLog* LOG;		// global and accessable from anywhere in the program
  *
  */
 
+/* Map data names to logged data.
+ *
+ * This lets us keep individual bits of changing information to be present
+ * in crash logs.  For example, we want to know which file was being processed
+ * if we crash during a texture load.  However, we don't want to log every
+ * load, since there are a huge number, even for log.txt.  We only want to
+ * know the current one, if any.
+ *
+ * So, when a texture begins loading, we do:
+ * LOG->MapLog("TextureManager::Load", "Loading foo.png");
+ * and when it finishes loading without crashing,
+ * LOG->UnmapLog("TextureManager::Load");
+ *
+ * Each time a mapped log changes, we update a block of static text to be put
+ * in info.txt, so we see "Loading foo.png".
+ *
+ * The identifier is never displayed, so we can use a simple local object to
+ * map/unmap, using any mechanism to generate unique IDs. */
+map<CString, CString> LogMaps;
+
 // constants
 #define LOG_FILE_NAME "log.txt"
 #define INFO_FILE_NAME "info.txt"
@@ -89,6 +109,12 @@ RageLog::RageLog()
 
 RageLog::~RageLog()
 {
+	/* Add the mapped log data to info.txt. */
+	CString str;
+	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
+		str += ssprintf("%s\n", i->second.c_str());
+	fprintf( m_fileInfo, "%s", str.c_str() );
+
 	Flush();
 	HideConsole();
 	if(m_fileLog) fclose( m_fileLog );
@@ -184,4 +210,26 @@ void RageLog::Flush()
 {
 	fflush( m_fileLog );
 	fflush( m_fileInfo );
+}
+
+void RageLog::UpdateMappedLog()
+{
+	CString str;
+	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
+		str += ssprintf("%s\n", i->second.c_str());
+
+	HOOKS->AdditionalLog(str);
+}
+
+void RageLog::MapLog(const CString &key, const char *fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+	LogMaps[key] = vssprintf( fmt, va );
+    va_end(va);
+}
+
+void RageLog::UnmapLog(const CString &key)
+{
+	LogMaps.erase(key);
 }

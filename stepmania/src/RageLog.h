@@ -28,9 +28,13 @@ public:
 	void ShowConsole();
 	void HideConsole();
 
+	void MapLog(const CString &key, const char *fmt, ...);
+	void UnmapLog(const CString &key);
+
 private:
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
+	void UpdateMappedLog();
 };
 
 extern RageLog*	LOG;	// global and accessable from anywhere in our program
