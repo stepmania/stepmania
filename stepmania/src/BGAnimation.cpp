@@ -80,7 +80,7 @@ void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddT
 		{
 			// import a whole BGAnimation
 #ifdef _XBOX
-			sImportDir.Replace("/","\\");
+			sImportDir.Replace( "/", SLASH );
 #endif
 			sImportDir = sAniDir + sImportDir;
 			CollapsePath( sImportDir );
