@@ -708,7 +708,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_textCourseTitle.SetText( pts.pCourse->m_sName );
 			m_Banner.LoadFromCourse( pts.pCourse );
-			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
+			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
 			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.nt, pts.cd );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -757,7 +757,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PageToShow::TYPE_ALL_STEPS:
 		{
-			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
+			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
 			for( unsigned s=0; s<m_vpStepsScoreRowItem.size(); s++ )
 			{
