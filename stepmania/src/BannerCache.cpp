@@ -321,6 +321,9 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 		 * This also makes the banner take less memory, though that could also be
 		 * done by RLEing the surface.
 		 */
+		int color = mySDL_MapRGBExact(img->format, 0xFF, 0, 0xFF);
+		if( color != -1 )
+			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color );
 		ConvertSDLSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		
 		SDL_Surface *dst = SDL_CreateRGBSurface(
