@@ -309,9 +309,6 @@ void ProfileManager::SaveMachineProfile()
 
 void ProfileManager::LoadMachineProfile()
 {
-	// read old style notes scores
-//	ReadSM300NoteScores();
-
 	if( !m_MachineProfile.LoadAllFromDir(MACHINE_PROFILE_DIR, false) )
 	{
 		CreateProfile(MACHINE_PROFILE_DIR, "Machine");
@@ -321,76 +318,6 @@ void ProfileManager::LoadMachineProfile()
 	// If the machine name has changed, make sure we use the new name
 	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
 }
-
-/*
-void ProfileManager::ReadSM300NoteScores()
-{
-	if( !DoesFileExist(SM_300_STATISTICS_FILE) )
-		return;
-
-	IniFile ini;
-	ini.SetPath( SM_300_STATISTICS_FILE );
-
-	// load song statistics
-	const IniFile::key* pKey = ini.GetKey( "Statistics" );
-	if( pKey )
-	{
-		for( IniFile::key::const_iterator iter = pKey->begin();
-			iter != pKey->end();
-			iter++ )
-		{
-			CString name = iter->first;
-			CString value = iter->second;
-
-			// Each value has the format "SongName::StepsType::StepsDescription=TimesPlayed::TopGrade::TopScore::MaxCombo".
-			char szSongDir[256];
-			char szStepsType[256];
-			char szStepsDescription[256];
-			int iRetVal;
-
-			// Parse for Song name and Notes name
-			iRetVal = sscanf( name, "%[^:]::%[^:]::%[^:]", szSongDir, szStepsType, szStepsDescription );
-			if( iRetVal != 3 )
-				continue;	// this line doesn't match what is expected
-	
-			CString sSongDir = FixSlashes( szSongDir );
-			
-			// Search for the corresponding Song poister.
-			Song* pSong = SONGMAN->GetSongFromDir( sSongDir );
-			if( pSong == NULL )	// didn't find a match
-				continue;	// skip this estry
-
-			StepsType st = GAMEMAN->StringToNotesType( szStepsType );
-			Difficulty dc = StringToDifficulty( szStepsDescription );
-
-			// Search for the corresponding Notes poister.
-			Steps* pSteps = pSong->GetStepsByDifficulty( st, dc );
-			if( pSteps == NULL )	// didn't find a match
-				continue;	// skip this estry
-
-
-			// Parse the Notes statistics.
-			char szGradeLetters[10];	// longest possible string is "AAA"
-			int iMaxCombo;	// throw away
-
-			pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.resize(1);
-
-			iRetVal = sscanf( 
-				value, 
-				"%d::%[^:]::%d::%d", 
-				&pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].iNumTimesPlayed,
-				szGradeLetters,
-				&pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].iScore,
-				&iMaxCombo
-			);
-			if( iRetVal != 4 )
-				continue;
-
-			pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].grade = StringToGrade( szGradeLetters );
-		}
-	}
-}
-*/
 
 bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
 {
@@ -455,6 +382,8 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 
 void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	hs.fPercentDP = max( 0, hs.fPercentDP );	// bump up negative scores
+
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
 
@@ -518,6 +447,8 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	hs.fPercentDP = max( 0, hs.fPercentDP );	// bump up negative scores
+
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
 
