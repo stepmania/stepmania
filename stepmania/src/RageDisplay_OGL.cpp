@@ -513,6 +513,12 @@ static void CheckPalettedTextures( bool LowColor )
 	CString error;
 	do
 	{
+		if( !HasExtension("GL_EXT_paletted_texture") )
+		{
+			error = "GL_EXT_paletted_texture missing";
+			break;
+		}
+
 		if( GLExt::glColorTableEXT == NULL )
 		{
 			error = "glColorTableEXT missing";
