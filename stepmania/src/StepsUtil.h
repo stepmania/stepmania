@@ -44,10 +44,7 @@ public:
 	void Unset() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
-	bool operator<( const StepsID &other ) const
-	{
-		return st < other.st || dc < other.dc || sDescription < other.sDescription || uHash < other.uHash;
-	}
+	bool operator<( const StepsID &rhs ) const;
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );

@@ -205,3 +205,13 @@ bool StepsID::IsValid() const
 	return st != STEPS_TYPE_INVALID && dc != DIFFICULTY_INVALID;
 }
 
+bool StepsID::operator<( const StepsID &rhs ) const
+{
+#define COMP(a) if(a<rhs.a) return true; if(a>rhs.a) return false;
+	COMP(st);
+	COMP(dc);
+	COMP(sDescription);
+	COMP(uHash);
+#undef COMP
+	return false;
+}
