@@ -164,6 +164,9 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		Command cmd;
 		cmd.Load( "PlayCommand,Init" );
 		this->RunCommandOnChildren( cmd );
+
+		if( !m_bGeneric )
+			PlayCommand( "On" );
 	}
 	else
 	{

@@ -589,9 +589,6 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->SetState( rand()%m_SubActors[i]->GetNumStates() );
 	}
-
-	if( !m_bGeneric )
-		PlayCommand( "On" );
 }
 
 void BGAnimationLayer::Update( float fDeltaTime )
