@@ -282,8 +282,8 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_iMaxTextureResolution );
 
 	/* Now that we've started DISPLAY, we can set up event masks. */
-	SDL_EventState(SDL_QUIT, SDL_ENABLE);
-	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
+	mySDL_EventState(SDL_QUIT, SDL_ENABLE);
+	mySDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
 
 	/* Grab the window manager specific information */
 	SDL_SysWMinfo info;
