@@ -1255,7 +1255,13 @@ void SongManager::WriteStatsWebPage()
 	{
 		Song* pSong = m_pSongs[i];
 		fprintf( fp, "<tr>" );
-		CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
+		/* XXX: We can't call pSong->HasBanner on every song; it'll effectively re-traverse the entire
+		 * song directory tree checking if each banner file really exists.
+		 *
+		 * (Note for testing this: remember that we'll cache directories for a time; this is only slow if
+		 * the directory cache expires before we get here.) */
+		//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
+		CString sImagePath = pSong->GetBannerPath();
 		if( sImagePath.empty() )
 			fprintf( fp, "<td> </td>" );
 		else
