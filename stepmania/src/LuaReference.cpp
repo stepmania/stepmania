@@ -114,7 +114,7 @@ void LuaExpression::SetFromExpression( const CString &sExpression )
 
 void LuaExpression::Register()
 {
-	LUA->RunScript( "return " + m_sExpression, 1 );
+	LUA->RunExpression( m_sExpression );
 
 	/* Store the result. */
 	this->SetFromStack();

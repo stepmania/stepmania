@@ -22,7 +22,7 @@ public:
 	void ResetState();
 
 	/* Run a complete script in the global environment, which returns no value. */
-	bool RunScript( const CString &sScript, int iReturnValues = 0 );
+	bool RunScript( const CString &sScript, const CString &sName, int iReturnValues = 0 );
 
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );

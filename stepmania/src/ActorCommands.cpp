@@ -71,7 +71,7 @@ void ActorCommands::Register()
 
 
 	CString s2 = s.str();
-	LUA->RunScript( s2, 1 );
+	LUA->RunScript( s2, "in", 1 );
 
 	/* The function is now on the stack. */
 	this->SetFromStack();

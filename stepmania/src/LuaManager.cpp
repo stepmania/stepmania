@@ -261,16 +261,16 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 		return false;
 	}
 
-	return RunScript( sScript );
+	return RunScript( sScript, sFile );
 }
 
-bool LuaManager::RunScript( const CString &sScript, int iReturnValues )
+bool LuaManager::RunScript( const CString &sScript, const CString &sName, int iReturnValues )
 {
 	// load string
 	{
 		ChunkReaderData data;
 		data.buf = &sScript;
-		int ret = lua_load( L, ChunkReaderString, &data, "in" );
+		int ret = lua_load( L, ChunkReaderString, &data, sName );
 
 		if( ret )
 		{
@@ -303,15 +303,8 @@ bool LuaManager::RunScript( const CString &sScript, int iReturnValues )
 
 bool LuaManager::RunExpression( const CString &sExpression )
 {
-	if( !RunScript( "return " + sExpression, 1 ) )
+	if( !RunScript( "return " + sExpression, "in", 1 ) )
 		return false;
-
-	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
-
-	/* Don't accept a function as a return value; if you really want to use a function
-	 * as a boolean, convert it before returning. */
-	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	return true;
 }
@@ -320,6 +313,10 @@ bool LuaManager::RunExpressionB( const CString &str )
 {
 	if( !RunExpression( str ) )
 		return false;
+
+	/* Don't accept a function as a return value. */
+	if( lua_isfunction( L, -1 ) )
+		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	bool result = !!lua_toboolean( L, -1 );
 	lua_pop( L, -1 );
@@ -332,6 +329,10 @@ float LuaManager::RunExpressionF( const CString &str )
 	if( !RunExpression( str ) )
 		return 0;
 
+	/* Don't accept a function as a return value. */
+	if( lua_isfunction( L, -1 ) )
+		RageException::Throw( "result is a function; did you forget \"()\"?" );
+
 	float result = (float) lua_tonumber( L, -1 );
 	lua_pop( L, -1 );
 
@@ -343,7 +344,9 @@ bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 	if( !RunExpression( str ) )
 		return false;
 
-	ASSERT( lua_gettop(L) > 0 );
+	/* Don't accept a function as a return value. */
+	if( lua_isfunction( L, -1 ) )
+		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	sOut = lua_tostring( L, -1 );
 	lua_pop( L, -1 );
