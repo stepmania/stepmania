@@ -80,7 +80,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 	CString sText = 
 		GAMESTATE->GetEventMode() ?
 		CString("event mode") :
-		ssprintf( "%d %s%s max", PREFSMAN->m_iNumArcadeStages, MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iNumArcadeStages>1)?"s":"" );
+		ssprintf( "%d %s%s max", PREFSMAN->m_iNumArcadeStages.Value(), MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iNumArcadeStages>1)?"s":"" );
 	m_textMaxStages.SetText( sText );
 	this->AddChild( &m_textMaxStages );
 	SET_XY_AND_ON_COMMAND( m_textMaxStages );
