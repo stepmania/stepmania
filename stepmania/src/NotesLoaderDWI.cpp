@@ -318,9 +318,9 @@ float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg
 	{
 		/* If the value contains a period, treat it as seconds; otherwise ms. */
 		if(arg1.find_first_of(".") != arg1.npos)
-			return (float)atof(arg1.c_str());
+			return strtof( arg1, NULL );
 		else
-			return float(atof(arg1.c_str())) / 1000.f;
+			return strtof( arg1, NULL ) / 1000.f;
 	}
 
 	/* 2+ args */
@@ -376,7 +376,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_sCDTitleFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );		
+			out.AddBPMSegment( BPMSegment(0, strtof(sParams[1], NULL)) );		
 
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
@@ -426,9 +426,9 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 					LOG->Warn( "Invalid FREEZE in '%s': '%s'", m_sLoadingFile.c_str(), arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
-				float fIndex = (float)atof( arrayFreezeValues[0] ) * ROWS_PER_BEAT / 4.0f;
+				float fIndex = strtof( arrayFreezeValues[0],NULL ) * ROWS_PER_BEAT / 4.0f;
 				float fFreezeBeat = NoteRowToBeat( fIndex );
-				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
+				float fFreezeSeconds = strtof( arrayFreezeValues[1], NULL ) / 1000.0f;
 				
 				out.AddStopSegment( StopSegment(fFreezeBeat, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
@@ -449,9 +449,9 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 					LOG->Warn( "Invalid CHANGEBPM in '%s': '%s'", m_sLoadingFile.c_str(), arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
-				float fIndex = (float)atof( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
+				float fIndex = strtof( arrayBPMChangeValues[0], NULL ) * ROWS_PER_BEAT / 4.0f;
 				float fBeat = NoteRowToBeat( fIndex );
-				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
+				float fNewBPM = strtof( arrayBPMChangeValues[1], NULL );
 				
 				out.AddBPMSegment( BPMSegment(fBeat, fNewBPM) );
 			}

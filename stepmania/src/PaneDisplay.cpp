@@ -306,7 +306,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		if( spec.size() < 2 )
 			RageException::Throw( "Metric '%s' malformed", metric.c_str() );
 
-		const float n = (float) atof( spec[0] );
+		const float n = strtof( spec[0], NULL );
 		if( val >= n )
 			continue;
 		spec.erase( spec.begin(), spec.begin()+1 );

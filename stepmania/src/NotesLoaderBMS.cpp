@@ -533,7 +533,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		}
 		else if( value_name == "#bpm" )
 		{
-			BPMSegment newSeg( 0, (float)atof(value_data) );
+			BPMSegment newSeg( 0, strtof(value_data, NULL) );
 			out.AddBPMSegment( newSeg );
 
 			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
@@ -640,7 +640,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 						if( 0==stricmp(value_name, sTagToLookFor) )
 						{
-							fBPM = (float)atof( value_data );
+							fBPM = strtof( value_data, NULL );
 							break;
 						}
 					}
@@ -716,7 +716,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 							if( fBPM == -1 )
 								fBPM = out.m_Timing.m_BPMSegments[out.m_Timing.m_BPMSegments.size()-1].m_fBPM;
 
-							fFreezeSecs = (float)atof(value_data)/(fBPM*0.81f);	// I have no idea what units these are in, so I experimented until finding this factor.
+							fFreezeSecs = strtof(value_data,NULL)/(fBPM*0.81f);	// I have no idea what units these are in, so I experimented until finding this factor.
 							break;
 						}
 					}

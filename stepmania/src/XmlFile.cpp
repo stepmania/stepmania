@@ -596,14 +596,14 @@ bool XNode::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
 //========================================================
 void XNode::GetValue(CString &out) const	{ out = value; }
 void XNode::GetValue(int &out) const		{ out = atoi(value); }
-void XNode::GetValue(float &out) const		{ out = (float) atof(value); }
+void XNode::GetValue(float &out) const		{ out = strtof(value, NULL); }
 void XNode::GetValue(bool &out) const		{ out = atoi(value) != 0; }
 void XNode::GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
 void XNode::GetValue(DateTime &out) const	{ out.FromString( value ); }
 
 void XAttr::GetValue(CString &out) const	{ out = value; }
 void XAttr::GetValue(int &out) const		{ out = atoi(value); }
-void XAttr::GetValue(float &out) const		{ out = (float) atof(value); }
+void XAttr::GetValue(float &out) const		{ out = strtof(value, NULL); }
 void XAttr::GetValue(bool &out) const		{ out = atoi(value) != 0; }
 void XAttr::GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
 void XAttr::GetValue(DateTime &out) const	{ out.FromString( value ); }

@@ -160,7 +160,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 			attack.level = ATTACK_LEVEL_1;
 			attack.sModifier = asBits[1];
 			attack.sModifier.Replace( '.', ',' );	// we couldn't use comma here because the map item separator is a comma
-			attack.fSecsRemaining = (float) atof( asBits[2] );
+			attack.fSecsRemaining = strtof( asBits[2], NULL );
 			
 			out.GetAttackMap()[tn] = attack;
 		}

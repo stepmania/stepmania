@@ -617,11 +617,11 @@ static void CheckReversePackedPixels()
 
 void SetupExtensions()
 {
-	const float fGLVersion = (float) atof( (const char *) glGetString(GL_VERSION) );
+	const float fGLVersion = strtof( (const char *) glGetString(GL_VERSION), NULL );
 	g_glVersion = int(roundf(fGLVersion * 10));
 	GetGLExtensions(g_glExts);
 
-	const float fGLUVersion = (float) atof( (const char *) gluGetString(GLU_VERSION) );
+	const float fGLUVersion = strtof( (const char *) gluGetString(GLU_VERSION), NULL );
 	g_gluVersion = int(roundf(fGLUVersion * 10));
 
 	/* Reset extensions. */

@@ -236,7 +236,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		int iMaxIndexAccessed = 0;
 
 #define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
-#define fParam(i) ((float)atof(sParam(i)))
+#define fParam(i) (strtof(sParam(i),NULL))
 #define iParam(i) (atoi(sParam(i)))
 #define bParam(i) (iParam(i)!=0)
 

@@ -564,7 +564,7 @@ int ThemeManager::GetMetricI( CString sClassName, CString sValueName )
 
 float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 {
-	return (float)atof( GetMetricRaw(sClassName,sValueName) );
+	return strtof( GetMetricRaw(sClassName,sValueName), NULL );
 }
 
 // #include "LuaHelpers.h"

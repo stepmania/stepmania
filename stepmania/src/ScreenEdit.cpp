@@ -1380,7 +1380,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromInsertAttack:
 		{
 			int iDurationChoice = ScreenMiniMenu::s_iLastAnswers[0];
-			g_fLastInsertAttackDurationSeconds = (float) atof( g_InsertAttackItems[0].choices[iDurationChoice] );
+			g_fLastInsertAttackDurationSeconds = strtof( g_InsertAttackItems[0].choices[iDurationChoice], NULL );
 			GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
 		}
@@ -2142,7 +2142,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 		SCREENMAN->PlayInvalidSound();
 	};
 
-	change.m_fRate = (float)atof( g_BGChange.rows[rate].choices[iAnswers[rate]] )/100.f;
+	change.m_fRate = strtof( g_BGChange.rows[rate].choices[iAnswers[rate]], NULL )/100.f;
 	change.m_bFadeLast = !!iAnswers[fade_last];
 	change.m_bRewindMovie = !!iAnswers[rewind_movie];
 	change.m_bLoop = !!iAnswers[loop];

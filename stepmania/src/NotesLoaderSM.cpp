@@ -51,7 +51,7 @@ void SMLoader::LoadFromSMTokens(
 	{
 		RadarValues v;
 		FOREACH_RadarCategory(rc)
-			v[rc] = (float)atof(saValues[rc]);
+			v[rc] = strtof( saValues[rc], NULL );
 		out.SetRadarValues( v ); 
 	}
     
@@ -91,7 +91,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 		const CString sValueName = sParams[0];
 
 		if( 0==stricmp(sValueName,"OFFSET") )
-			out.m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
+			out.m_fBeat0OffsetInSeconds = strtof( sParams[1], NULL );
 		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
 		{
 			CStringArray arrayFreezeExpressions;
@@ -110,8 +110,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					continue;
 				}
 
-				const float fFreezeBeat = (float)atof( arrayFreezeValues[0] );
-				const float fFreezeSeconds = (float)atof( arrayFreezeValues[1] );
+				const float fFreezeBeat = strtof( arrayFreezeValues[0], NULL );
+				const float fFreezeSeconds = strtof( arrayFreezeValues[1], NULL );
 				
 				StopSegment new_seg;
 				new_seg.m_fStartBeat = fFreezeBeat;
@@ -141,8 +141,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					continue;
 				}
 
-				const float fBeat = (float)atof( arrayBPMChangeValues[0] );
-				const float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
+				const float fBeat = strtof( arrayBPMChangeValues[0], NULL );
+				const float fNewBPM = strtof( arrayBPMChangeValues[1], NULL );
 				
 				BPMSegment new_seg;
 				new_seg.m_fStartBeat = fBeat;
@@ -162,13 +162,13 @@ bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChange
 	switch( aBGChangeValues.size() )
 	{
 	case 6:
-		change.m_fRate = (float)atof( aBGChangeValues[2] );
+		change.m_fRate = strtof( aBGChangeValues[2], NULL );
 		change.m_bFadeLast = atoi( aBGChangeValues[3] ) != 0;
 		change.m_bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
 		change.m_bLoop = atoi( aBGChangeValues[5] ) != 0;
 		// fall through
 	case 2:
-		change.m_fStartBeat = (float)atof( aBGChangeValues[0] );
+		change.m_fStartBeat = strtof( aBGChangeValues[0], NULL );
 		change.m_sBGName = aBGChangeValues[1];
 		return true;
 	default:
@@ -238,7 +238,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		{
 			if(!FromCache)
 				continue;
-			out.m_fMusicLengthSeconds = (float)atof( sParams[1] );
+			out.m_fMusicLengthSeconds = strtof( sParams[1], NULL );
 		}
 
 		else if( 0==stricmp(sValueName,"MUSICBYTES") )
@@ -250,14 +250,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		{
 			if(!FromCache)
 				continue;
-			out.m_fFirstBeat = (float)atof( sParams[1] );
+			out.m_fFirstBeat = strtof( sParams[1], NULL );
 		}
 
 		else if( 0==stricmp(sValueName,"LASTBEAT") )
 		{
 			if(!FromCache)
 				LOG->Trace("Ignored #LASTBEAT (cache only)");
-			out.m_fLastBeat = (float)atof( sParams[1] );
+			out.m_fLastBeat = strtof( sParams[1], NULL );
 		}
 		else if( 0==stricmp(sValueName,"SONGFILENAME") )
 		{
@@ -289,11 +289,11 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			else 
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
-				out.m_fSpecifiedBPMMin = (float)atof( sParams[1] );
+				out.m_fSpecifiedBPMMin = strtof( sParams[1], NULL );
 				if( sParams[2].empty() )
 					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
 				else
-					out.m_fSpecifiedBPMMax = (float)atof( sParams[2] );
+					out.m_fSpecifiedBPMMax = strtof( sParams[2], NULL );
 			}
 		}
 

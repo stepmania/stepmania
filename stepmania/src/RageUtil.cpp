@@ -94,7 +94,7 @@ float HHMMSSToSeconds( const CString &sHHMMSS )
 	float fSeconds = 0;
 	fSeconds += atoi( arrayBits[0] ) * 60 * 60;
 	fSeconds += atoi( arrayBits[1] ) * 60;
-	fSeconds += (float)atof( arrayBits[2] );
+	fSeconds += strtof( arrayBits[2], NULL );
 
 	return fSeconds;
 }
@@ -1232,7 +1232,7 @@ bool FileRead(RageFile& f, float& fOut)
 	CString s;
 	if (!FileRead(f, s))
 		return false;
-	fOut = (float)atof(s);
+	fOut = strtof( s, NULL );
 	return true;
 }
 

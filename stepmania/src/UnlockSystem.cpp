@@ -293,7 +293,7 @@ bool UnlockSystem::Load()
 
 			LOG->Trace("UnlockTypes line: %s", UnlockTypes[j].c_str() );
 
-			const float fVal = (float) atof( readparam[1] );
+			const float fVal = strtof( readparam[1], NULL );
 			const int iVal = atoi( readparam[1] );
 
 			const UnlockType ut = StringToUnlockType( unlock_type );

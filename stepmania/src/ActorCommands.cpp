@@ -15,7 +15,7 @@ void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxInde
 void ParsedCommandToken::Set( const CString &sToken )
 {
 	s = sToken;
-	f = (float) atof( sToken );
+	f = strtof( sToken, NULL );
 	i = atoi( sToken );
 	b = i != 0;
 	bColorIsValid = c.FromString( sToken );

@@ -119,11 +119,11 @@ void Course::LoadFromCRSFile( CString sPath )
 				TrimLeft( sBits[0] );
 				TrimRight( sBits[0] );
 				if( !sBits[0].CompareNoCase("TIME") )
-					attack.fStartSecond = (float) atof( sBits[1] );
+					attack.fStartSecond = strtof( sBits[1], NULL );
 				else if( !sBits[0].CompareNoCase("LEN") )
-					attack.fSecsRemaining = (float) atof( sBits[1] );
+					attack.fSecsRemaining = strtof( sBits[1], NULL );
 				else if( !sBits[0].CompareNoCase("END") )
-					end = (float) atof( sBits[1] );
+					end = strtof( sBits[1], NULL );
 				else if( !sBits[0].CompareNoCase("MODS") )
 				{
 					if( end != -9999 )

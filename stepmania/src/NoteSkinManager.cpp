@@ -183,7 +183,7 @@ int NoteSkinManager::GetMetricI( CString sNoteSkinName, CString sButtonName, CSt
 
 float NoteSkinManager::GetMetricF( CString sNoteSkinName, CString sButtonName, CString sValueName )
 {
-	return (float)atof( GetMetric(sNoteSkinName,sButtonName,sValueName) );
+	return strtof( GetMetric(sNoteSkinName,sButtonName,sValueName), NULL );
 }
 
 bool NoteSkinManager::GetMetricB( CString sNoteSkinName, CString sButtonName, CString sValueName )
