@@ -523,11 +523,13 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowHandler &hand = OptionRowHandlers[row];
 		if( hand.type == ROW_LIST )
 		{
-			const int choice = m_Rows[row]->m_iChoiceInRowWithFocus[0];
+			const int choice = m_Rows[row]->m_iChoiceInRowWithFocus[GAMESTATE->m_MasterPlayerNumber];
 			const GameCommand &mc = hand.ListEntries[choice];
 			if( mc.m_sScreen != "" )
 				m_sNextScreen = mc.m_sScreen;
-			mc.Apply( GAMESTATE->m_MasterPlayerNumber );
+			// Why were we re-applying his here?  ExportOption() is where options
+			// are applied.
+			// mc.Apply( GAMESTATE->m_MasterPlayerNumber );
 		}
 	}
 	CHECKPOINT;
