@@ -22,7 +22,7 @@
 
 const float LABEL_X		=	200;
 const float ANSWER_X	=	440;
-const float SPACING_Y	=	26;
+const float SPACING_Y	=	24;
 
 const float ZOOM_SELECTED = 0.7f;
 const float ZOOM_NOT_SELECTED = 0.5f;

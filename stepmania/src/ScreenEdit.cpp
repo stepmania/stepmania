@@ -112,6 +112,7 @@ Menu g_KeyboardShortcuts
 	MenuRow( "Shift + P: Play current beat to end",				false ),
 	MenuRow( "Ctrl + R: Record",								false ),
 	MenuRow( "F4: Toggle assist tick",							false ),
+	MenuRow( "F5/F6: Next/prev steps of same StepsType",		false ),
 	MenuRow( "F7/F8: Decrease/increase BPM at cur beat",		false ),
 	MenuRow( "F9/F10: Decrease/increase stop at cur beat",		false ),
 	MenuRow( "F11/F12: Decrease/increase music offset",			false ),
@@ -136,8 +137,6 @@ Menu g_MainMenu
 	MenuRow( "Player Options",				true ),
 	MenuRow( "Song Options",				true ),
 	MenuRow( "Edit Song Info",				true ),
-	MenuRow( "Add/Edit BPM Change",			true ),
-	MenuRow( "Add/Edit Stop",				true ),
 	MenuRow( "Add/Edit BG Change",			true ),
 	MenuRow( "Play preview music",			true ),
 	MenuRow( "Exit (discards changes since last save)",true )
@@ -809,6 +808,55 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	case SDLK_F4:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
+		break;
+	case SDLK_F5:
+	case SDLK_F6:
+		{
+			// save current steps
+			Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+			ASSERT( pNotes );
+			pNotes->SetNoteData( &m_NoteFieldEdit );
+
+			// Get all Steps of this StepsType
+			StepsType st = pNotes->m_StepsType;
+			vector<Steps*> vSteps;
+			GAMESTATE->m_pCurSong->GetSteps( vSteps, st );
+
+			// Find out what index the current Steps are
+			vector<Steps*>::iterator it = find( vSteps.begin(), vSteps.end(), pNotes );
+			ASSERT( it != vSteps.end() );
+
+			switch( DeviceI.button )
+			{
+			case SDLK_F5:	
+				if( it==vSteps.begin() )
+				{
+					SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+					return;
+				}
+				it--;
+				break;
+			case SDLK_F6:
+				it++;
+				if( it==vSteps.end() )
+				{
+					SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+					return;
+				}
+				break;
+			default:	ASSERT(0);	return;
+			}
+
+			pNotes = *it;
+			GAMESTATE->m_pCurNotes[PLAYER_1] = pNotes;
+			pNotes->GetNoteData( &m_NoteFieldEdit );
+			SCREENMAN->SystemMessage( ssprintf(
+				"Switched to %s %s '%s'",
+				GAMEMAN->NotesTypeToString( pNotes->m_StepsType ).c_str(),
+				DifficultyToString( pNotes->GetDifficulty() ).c_str(),
+				pNotes->GetDescription().c_str() ) );
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit switch") );
+		}
 		break;
 	case SDLK_F7:
 	case SDLK_F8:
