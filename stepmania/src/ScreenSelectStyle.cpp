@@ -84,7 +84,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	
 
 	// Load dummy Sprites
-	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		ThemeElement te;
 

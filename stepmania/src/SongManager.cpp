@@ -94,7 +94,7 @@ void SongManager::InitSongArrayFromDisk()
 	arraySongs.Copy( m_pSongs );
 	SortSongPointerArrayByGroup( arraySongs );
 
-	for( int i=0; i<m_pSongs.GetSize(); i++ )
+	for( i=0; i<m_pSongs.GetSize(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
 		const CString sGroupName = m_pSongs[i]->GetGroupName();

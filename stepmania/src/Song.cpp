@@ -373,7 +373,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 				iIndex = value_data.ReverseFind('(');
 			if( iIndex != -1 )
 			{
-				value_data.Delete( iIndex, 10000 );
+				value_data = value_data.Left( iIndex );
 				GetMainAndSubTitlesFromFullTitle( value_data, m_sMainTitle, m_sSubTitle );
 			}
 			else
