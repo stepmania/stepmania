@@ -119,7 +119,7 @@ void ScreenGameplay::Init()
 	m_pCombinedLifeMeter = NULL;
 
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
-		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
+		return;	// ScreenDemonstration will move us to the next screen.  We just need to survive for one update without crashing.
 
 	/* This is usually done already, but we might have come here without going through
 	 * ScreenSelectMusic or the options menus at all. */
@@ -153,6 +153,8 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_RAVE:
 		{
 			// cache NoteSkin graphics
+			/* XXX: is this still needed?  We explicitly preload noteskins that can be
+			 * used as attacks (GameState::GetAllUsedNoteSkins). */
 			CStringArray asNames;
 			NOTESKIN->GetNoteSkinNames( asNames );
 			for( unsigned i=0; i<asNames.size(); i++ )
