@@ -225,41 +225,48 @@ void RageLog::Warn( const char *fmt, ...)
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
 
-	Write(WRITE_TO_INFO | WRITE_LOUD, ssprintf("WARNING: %s", sBuff.c_str()));
+	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
 }
 
-void RageLog::Write( int where, CString str)
+void RageLog::Write( int where, CString line )
 {
-	if( m_bTimestamping )
-		str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
-
-	if( where&WRITE_TO_INFO && g_fileInfo.IsOpen() )
-		g_fileInfo.PutLine( str );
-
-	if( HOOKS )
-		HOOKS->Log( str, where & WRITE_TO_INFO );
-
-	if( where & WRITE_TO_INFO )
-		AddToInfo( str );
-	AddToRecentLogs( str );
-	
-	/* Only do this for log.txt and stdout.  The other outputs are
-	 * fairly quiet anyway, so the prepended "WARNING" makes them stand
-	 * out well enough and this is just clutter. */
+	vector<CString> lines;
+	split( line, "\n", lines, false );
+	if( g_fileLog.IsOpen() && (where & WRITE_LOUD) )
+		g_fileLog.PutLine( "/////////////////////////////////////////" );
 	if( where & WRITE_LOUD )
+		printf( "/////////////////////////////////////////\n" );
+
+	for( unsigned i = 0; i < lines.size(); ++i )
 	{
-		str = ssprintf(
-			  "/////////////////////////////////////////\n"
-			  "%s\n"
-			  "/////////////////////////////////////////",
-			  str.c_str());
+		CString &str = lines[i];
+
+		if( where & WRITE_LOUD )
+			str = "WARNING: " + str;
+		if( m_bTimestamping )
+			str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
+
+		if( where&WRITE_TO_INFO && g_fileInfo.IsOpen() )
+			g_fileInfo.PutLine( str );
+
+		if( HOOKS )
+			HOOKS->Log( str, where & WRITE_TO_INFO );
+
+		if( where & WRITE_TO_INFO )
+			AddToInfo( str );
+		AddToRecentLogs( str );
+		
+		if( g_fileLog.IsOpen() )
+			g_fileLog.PutLine( str );
+
+		if( m_bShowLogOutput || where != 0 )
+			printf("%s\n", str.c_str() );
 	}
 
-	if( g_fileLog.IsOpen() )
-		g_fileLog.PutLine( str );
-
-	if( m_bShowLogOutput || where != 0 )
-		printf("%s\n", str.c_str() );
+	if( g_fileLog.IsOpen() && (where & WRITE_LOUD) )
+		g_fileLog.PutLine( "/////////////////////////////////////////" );
+	if( where & WRITE_LOUD )
+		printf( "/////////////////////////////////////////\n" );
 
 	if( m_bFlush || (where & WRITE_TO_INFO) )
 		Flush();
