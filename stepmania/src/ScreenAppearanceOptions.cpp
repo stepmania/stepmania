@@ -34,6 +34,7 @@ enum {
 	AO_CAUTION,
 	AO_SELECT_GROUP,
 	AO_WHEEL_SECTIONS,
+	AO_SHOW_TRANSLATIONS,
 	NUM_APPEARANCE_OPTIONS_LINES
 };
 
@@ -45,6 +46,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Caution",		2, {"SKIP","SHOW"} },
 	{ "Song\nGroup",	2, {"ALL MUSIC","CHOOSE"} },
 	{ "Wheel\nSections",3, {"NEVER","ALWAYS", "ABC ONLY"} },
+	{ "Translations",	2, {"NATIVE","TRANSLITERATE"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -154,10 +156,11 @@ void ScreenAppearanceOptions::ImportOptions()
 	if( m_iSelectedOption[0][AO_SKIN] == -1 )
 		m_iSelectedOption[0][AO_SKIN] = 0;
 
-	m_iSelectedOption[0][AO_INSTRUCTIONS]					= PREFSMAN->m_bInstructions? 1:0;
+	m_iSelectedOption[0][AO_INSTRUCTIONS]				= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
+	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowTranslations;
 }
 
 void ScreenAppearanceOptions::ExportOptions()
@@ -183,6 +186,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bShowDontDie			= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup		= !!m_iSelectedOption[0][AO_SELECT_GROUP];
 	(int&)PREFSMAN->m_MusicWheelUsesSections	= m_iSelectedOption[0][AO_WHEEL_SECTIONS];
+	PREFSMAN->m_bShowTranslations		= !!m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();
