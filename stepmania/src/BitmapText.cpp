@@ -104,6 +104,7 @@ void BitmapText::SetText( CString sText )
 	/* Break the string into lines. */
 	m_szTextLines.clear();
 	m_iLineWidths.clear();
+	m_iLineHeights.clear();
 
 	split(m_szText, "\n", m_szTextLines, false);
 	
@@ -113,6 +114,7 @@ void BitmapText::SetText( CString sText )
 	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
+		m_iLineHeights.push_back(m_pFont->GetLineHeightInSourcePixels( m_szTextLines[l] ));
 		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
 	}
 }
@@ -157,30 +159,31 @@ void BitmapText::DrawPrimitives()
 
 	int iNumV = 0;	// the current vertex number
 
-	// make the object in logical units centered at the origin
-	const int iHeight = pTexture->GetSourceFrameHeight();	// height of a character
-	const int iLineSpacing = m_pFont->m_iLineSpacing;			// spacing between lines
+	float TotalHeight = 0;
+	unsigned i;
+	for(i = 0; i < m_szTextLines.size(); ++i)
+		TotalHeight += m_iLineHeights[i];
 
-	int iY;	//	 the center position of the first row of characters
+	float iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_bottom:	iY = -(int(m_szTextLines.size()))	 * iLineSpacing		+ iLineSpacing/2;	break;
-	case align_middle:	iY = -(int(m_szTextLines.size())-1)	 * iLineSpacing/2;					break;
-	case align_top:		iY =						 	     + iLineSpacing/2;	break;
-	default:		ASSERT( false );	return;
+	case align_top:		iY = 0;						break;
+	case align_middle:	iY = -TotalHeight/2.0f;		break;
+	case align_bottom:	iY = -TotalHeight;			break;
+	default:			ASSERT( false );			return;
 	}
 
-	for( unsigned i=0; i<m_szTextLines.size(); i++ )		// foreach line
+	for( i=0; i<m_szTextLines.size(); i++ )		// foreach line
 	{
 		const CString &szLine = m_szTextLines[i];
-		const int iLineWidth = m_iLineWidths[i];
+		const float fLineWidth = float(m_iLineWidths[i]);
 		
-		int iX;
+		float iX;
 		switch( m_HorizAlign )
 		{
 		case align_left:	iX = 0;					break;
-		case align_center:	iX = -(iLineWidth/2);	break;
-		case align_right:	iX = -iLineWidth;		break;
+		case align_center:	iX = -fLineWidth/2.0f;	break;
+		case align_right:	iX = -fLineWidth;		break;
 		default:			ASSERT( false );		return;
 		}
 
@@ -195,24 +198,24 @@ void BitmapText::DrawPrimitives()
 			const glyph &g = m_pFont->GetGlyph(iFrameNo);
 
 			/* set vertex positions */
-			v[iNumV++].p = RageVector3( (float)iX-g.left,	iY-iHeight/2.0f, 0 );	// top left
-			v[iNumV++].p = RageVector3( (float)iX-g.left,	iY+iHeight/2.0f, 0 );	// bottom left
-			v[iNumV++].p = RageVector3( (float)iX+g.right,	iY+iHeight/2.0f, 0 );	// bottom right
-			v[iNumV++].p = RageVector3( (float)iX+g.right,	iY-iHeight/2.0f, 0 );	// top right
+			v[iNumV++].p = RageVector3( (float)iX+g.hshift,			iY+g.vshift,		  0 );	// top left
+			v[iNumV++].p = RageVector3( (float)iX+g.hshift,			iY+g.vshift+g.height, 0 );	// bottom left
+			v[iNumV++].p = RageVector3( (float)iX+g.hshift+g.width,	iY+g.vshift+g.height, 0 );	// bottom right
+			v[iNumV++].p = RageVector3( (float)iX+g.hshift+g.width,	iY+g.vshift,		  0 );	// top right
 
 			/* Advance the cursor. */
-			iX += g.width;
+			iX += g.advance;
 
 			/* set texture coordinates */
 			iNumV -= 4;
 
-			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.top );		// top left
-			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.bottom );	// bottom left
-			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.bottom );	// bottom right
-			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.top );		// top right
+			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.top );
+			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.bottom );
+			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.bottom );
+			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.top );
 		}
 
-		iY += iLineSpacing;
+		iY += m_iLineHeights[i];
 	}
 
 

@@ -63,6 +63,25 @@ void Font::Load( const CString &TexturePath, IniFile &ini )
 					FrameWidths[atoi(val)] = atoi(data);
 					continue;
 				}
+
+				/* "map XXXX=frame" maps a char to a frame. */
+				if(val.substr(0, 4) == "map ")
+				{
+					val = val.substr(4); /* "XXXX" */
+
+					/* XXXX can be "U+HEX". */
+				
+					int c = -1;
+
+					if(val.substr(0, 2) == "U+" && IsHexVal(val.substr(2)))
+						sscanf(val.substr(2).c_str(), "%x", &c);
+
+					if(c == -1)
+						RageException::Throw( "The font '%s' has an invalid INI value '%s'.",
+							m_sTexturePath.GetString(), val.GetString() );
+
+					m_iCharToFrameNo[i] = atoi(data);
+				}
 			}
 		}
 	}
@@ -144,35 +163,45 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 
 void Font::SetTextureCoords(const vector<int> &widths)
 {
-	// force widths to even number
-	// Why do this?  It seems to just artificially widen some characters a little and
-	// make it look a little worse in 640x480 ...
-/*	for( i=0; i<256; i++ )
-		if( m_iFrameNoToWidth[i]%2 == 1 )
-			m_iFrameNoToWidth[i]++;
-*/
-
 	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
 	{
 		glyph g;
-		g.left = g.right = 0;
 
 		/* Make a copy of each texture rect, reducing each to the actual dimensions
 		 * of the character (most characters don't take a full block). */
 		g.rect = *m_pTexture->GetTextureCoordRect(i);;
 
-		float fPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - (float)widths[i];
-		float fTexCoordsToChopOff = fPixelsToChopOff / m_pTexture->GetSourceWidth();
-		
-		g.rect.left  += fTexCoordsToChopOff/2;
-		g.rect.right -= fTexCoordsToChopOff/2;
+		/* Set the width and height to the width and line spacing, respectively. */
+		g.width = float(widths[i]);
+		g.height = float(m_pTexture->GetSourceFrameHeight());
 
-		/* Add normal widths. */
-		g.left = 0;
-		g.right = g.width = widths[i];
+		/* Shift the character up so the top of the rendered quad is at the top
+		 * of the character. */
+		g.vshift = -(m_pTexture->GetSourceFrameHeight() - m_iLineSpacing)/2.0f;
 
+		/* Do the same thing with X.  Do this by changing the actual rendered
+		 * rect, instead of shifting it, so we don't render more than we need to. */
+		g.hshift = 0;
+		{
+			int iPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
+			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
+			
+			g.rect.left  += fTexCoordsToChopOff/2;
+			g.rect.right -= fTexCoordsToChopOff/2;
+		}
+
+		/* By default, advance one pixel more than the width.  (This could be
+		 * an option.) */
+		g.advance = g.width + 1;
 		glyphs.push_back(g);
 	}
+
+	// force widths to even number
+	// Why do this?  It seems to just artificially widen some characters a little and
+	// make it look a little worse in 640x480 ...
+//	for( i=0; i<int(glyphs.size()); i++ )
+//		if( glyphs[i].width %2 == 1 )
+//			glyphs[i].width++;
 }
 
 void Font::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
@@ -181,17 +210,18 @@ void Font::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 	for(unsigned i = 0; i < glyphs.size(); ++i)
 	{
 		int iFrameWidth = m_pTexture->GetSourceFrameWidth();
-		int iCharWidth = glyphs[i].width;
+		float iCharWidth = glyphs[i].advance;
 
 		/* Extra pixels to draw to the left and right. */
-		int ExtraLeft = min( DrawExtraPixelsLeft, (iFrameWidth-iCharWidth)/2 );
-		int ExtraRight = min( DrawExtraPixelsRight, (iFrameWidth-iCharWidth)/2 ) + ExtraLeft;
+		float ExtraLeft = min( float(DrawExtraPixelsLeft), (iFrameWidth-iCharWidth)/2.0f );
+		float ExtraRight = min( float(DrawExtraPixelsRight), (iFrameWidth-iCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		glyphs[i].rect.left -= float(ExtraLeft) / m_pTexture->GetSourceWidth();
-		glyphs[i].rect.right += float(ExtraRight) / m_pTexture->GetSourceWidth();
-		glyphs[i].left += ExtraLeft;
-		glyphs[i].right += ExtraRight;
+		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetSourceWidth();
+		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
+		glyphs[i].hshift -= ExtraLeft;
+		glyphs[i].width += ExtraLeft + ExtraRight;
+//		glyphs[i].advance += ExtraLeft + ExtraRight;
 	}
 }
 
@@ -204,19 +234,23 @@ Font::~Font()
 
 int Font::GetLineWidthInSourcePixels( const CString &szLine )
 {
-	int iLineWidth = 0;
+	float LineWidth = 0;
 	
 	for( unsigned i=0; i<szLine.size(); i++ )
 	{
 		const char c = szLine[i];
-		const int iFrameNo = m_iCharToFrameNo[ (unsigned char)c ];
-		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
+		if(m_iCharToFrameNo.find(c) == m_iCharToFrameNo.end())
 			RageException::Throw( "The font '%s' does not implement the character '%c'", m_sTexturePath.GetString(), c );
 
-		iLineWidth += glyphs[iFrameNo].width;
+		const int iFrameNo = m_iCharToFrameNo[ (unsigned char)c ];
+		LineWidth += glyphs[iFrameNo].advance;
 	}
 
-	return iLineWidth;
+	return int(LineWidth);
 }
 
+int Font::GetLineHeightInSourcePixels( const CString &szLine )
+{
+	return m_iLineSpacing;
+}
 

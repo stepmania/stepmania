@@ -15,9 +15,14 @@
 #include "IniFile.h"
 
 struct glyph {
-	int width;
-	/* X coordinates to be rendered for this character are X-left and X+right. */
-	int left, right;
+	/* Number of pixels to advance horizontally after drawing this character. */
+	float advance;
+
+	/* Size of the actual rendered character. */
+	float width, height;
+
+	/* Number of pixels to offset this character when rendering. */
+	float hshift, vshift;
 
 	/* Texture coordinate rect. */
 	RectF rect;
@@ -32,6 +37,7 @@ public:
 	void Init();
 
 	int GetLineWidthInSourcePixels( const CString &szLine );
+	int GetLineHeightInSourcePixels( const CString &szLine );
 
 	int m_iRefCount;
 
