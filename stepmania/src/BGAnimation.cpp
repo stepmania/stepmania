@@ -178,15 +178,6 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 	}
 }
 
-void BGAnimation::LoadFromMovie( const CString &sMoviePath )
-{
-	Unload();
-
-	BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
-	pLayer->LoadFromMovie( sMoviePath );
-	AddChild( pLayer );
-}
-
 void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 {
 	DEBUG_ASSERT( node.m_sName == "BGAnimation" );

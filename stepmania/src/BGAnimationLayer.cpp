@@ -98,17 +98,6 @@ void BGAnimationLayer::LoadFromStaticGraphic( const CString& sPath )
 	this->AddChild( pSprite );
 }
 
-void BGAnimationLayer::LoadFromMovie( const CString& sMoviePath )
-{
-	Init();
-	Sprite* pSprite = new Sprite;
-	pSprite->LoadBG( sMoviePath );
-	pSprite->StretchTo( FullScreenRectF );
-	pSprite->EnableAnimation( false );
-	this->AddChild( pSprite );
-}
-
-
 void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 

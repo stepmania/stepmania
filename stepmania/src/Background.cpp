@@ -136,6 +136,15 @@ Actor *MakeVisualization( const CString &sVisPath )
 	return pFrame;
 }
 
+Actor *MakeMovie( const CString &sMoviePath )
+{
+	Sprite *pSprite = new Sprite;
+	pSprite->LoadBG( sMoviePath );
+	pSprite->StretchTo( FullScreenRectF );
+	pSprite->EnableAnimation( false );
+	return pSprite;
+}
+
 Actor *Background::CreateSongBGA( CString sBGName ) const
 {
 	BGAnimation *pTempBGA;
@@ -162,19 +171,18 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 		if( sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
 			sExt.CompareNoCase("mpeg")==0 )
-			pTempBGA->LoadFromMovie( asFiles[0] );
+			return MakeMovie( asFiles[0] );
 		else
+		{
+			pTempBGA = new BGAnimation;
 			pTempBGA->LoadFromStaticGraphic( asFiles[0] );
-		return pTempBGA;
+			return pTempBGA;
+		}
 	}
 	// Look for movies in the RandomMovies dir
 	GetDirListing( RANDOMMOVIES_DIR+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
-	{
-		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromMovie( asFiles[0] );
-		return pTempBGA;
-	}
+		return MakeMovie( asFiles[0] );
 
 	// Look for BGAnims in the BGAnims dir
 	GetDirListing( BG_ANIMS_DIR+sBGName, asFiles, true, true );
@@ -272,13 +280,7 @@ CString Background::CreateRandomBGA()
 		break;
 	}
 	case PrefsManager::BGMODE_MOVIEVIS:		ret = MakeVisualization( file ); break;
-	case PrefsManager::BGMODE_RANDOMMOVIES:
-	{
-		BGAnimation *p = new BGAnimation;
-		p->LoadFromMovie( file );
-		ret = p;
-		break;
-	}
+	case PrefsManager::BGMODE_RANDOMMOVIES: ret = MakeMovie( file ); break;
 	default: FAIL_M( ssprintf("%i", PREFSMAN->m_iBackgroundMode) );
 	}
 	ret->PlayCommand( "On" );
