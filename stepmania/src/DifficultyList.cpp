@@ -286,9 +286,8 @@ void DifficultyList::SetFromGameState()
 			// FIXME: This clamps to between the min and the max difficulty, but
 			// it really should round to the nearest difficulty that's in 
 			// DIFFICULTIES_TO_SHOW.
-			const set<Difficulty> &diffs = CommonMetrics::GetDifficultiesToShow();
 			unsigned i=0;
-			FOREACHS_CONST( Difficulty, diffs, d )
+			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 			{
 				m_Rows.resize( m_Rows.size()+1 );
 

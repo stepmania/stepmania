@@ -10,6 +10,7 @@
 #include "ActorUtil.h"
 #include "Difficulty.h"
 #include "ThemeMetric.h"
+#include "CommonMetrics.h"
 
 class Course;
 class Song;
@@ -102,14 +103,15 @@ protected:
 	ListDisplay m_ListCourseRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
-	vector<Difficulty>  m_vDiffsToShow;
 
+	// Don't use the version in CommonMetrics because we may have multiple 
+	// ranking screens that want to show different types and difficulties.
+	ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
+	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
 
-	ThemeMetric<CString>		STEPS_TYPES_TO_HIDE;
 	ThemeMetric<bool>			SHOW_CATEGORIES;
 	ThemeMetric<bool>			SHOW_ALL_STEPS_SCORES;
 	ThemeMetric<bool>			SHOW_ALL_COURSE_SCORES;
-	ThemeMetric<CString>		DIFFICULTIES_TO_SHOW;
 	ThemeMetric<float>			SECONDS_PER_PAGE;
 	ThemeMetric<float>			PAGE_FADE_SECONDS;
 	ThemeMetric<int>			PERCENT_DECIMAL_PLACES;

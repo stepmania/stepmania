@@ -24,8 +24,6 @@
 #define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)			THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
-#define STEPS_TYPES_TO_HIDE			THEME->GetMetric ("OptionRowHandler","StepsTypesToHide")
-
 static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
 	for( int i=0; i<(int)vbSelectedOut.size(); i++ )
@@ -429,8 +427,6 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		const set<Difficulty> &vDifficulties = CommonMetrics::GetDifficultiesToShow();
-
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.name = "Difficulty";
 		Default.m_dc = DIFFICULTY_INVALID;
@@ -443,7 +439,7 @@ public:
 			ListEntries.push_back( mc );
 		}
 
-		FOREACHS_CONST( Difficulty, vDifficulties, d )
+		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
 			CString s = DifficultyToThemedString( *d );
 
@@ -864,21 +860,7 @@ public:
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// calculate which StepsTypes to show
-		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_vStepsTypesToShow );
-
-		// subtract hidden StepsTypes
-		vector<CString> vsStepsTypesToHide;
-		split( STEPS_TYPES_TO_HIDE, ",", vsStepsTypesToHide, true );
-		for( unsigned i=0; i<vsStepsTypesToHide.size(); i++ )
-		{
-			StepsType st = GameManager::StringToStepsType(vsStepsTypesToHide[i]);
-			if( st != STEPS_TYPE_INVALID )
-			{
-				const vector<StepsType>::iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
-				if( iter != m_vStepsTypesToShow.end() )
-					m_vStepsTypesToShow.erase( iter );
-			}
-		}
+		m_vStepsTypesToShow = STEPS_TYPES_TO_SHOW.GetValue();
 
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{

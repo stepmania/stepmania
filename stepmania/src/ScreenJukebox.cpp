@@ -18,11 +18,10 @@
 #include "PlayerState.h"
 #include "ProfileManager.h"
 #include "StatsManager.h"
-
-// HACK: This belongs in ScreenDemonstration
-#define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenDemonstration","DifficultiesToShow")
+#include "CommonMetrics.h"
 
 #define SHOW_COURSE_MODIFIERS		THEME->GetMetricB("ScreenJukebox","ShowCourseModifiers")
+static ThemeMetricDifficultiesToShow DIFFICULTIES_TO_SHOW_HERE("ScreenDemonstration","DifficultiesToShow");
 
 
 REGISTER_SCREEN_CLASS( ScreenJukebox );
@@ -41,20 +40,15 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	if ( vSongs.size() == 0 )
 		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredSongGroup );
 
+
 	//
 	// Calculate what difficulties to show
 	//
-	CStringArray asBits;
 	vector<Difficulty> vDifficultiesToShow;
 	if( bDemonstration )
 	{
-		split( DIFFICULTIES_TO_SHOW, ",", asBits );
-		for( unsigned i=0; i<asBits.size(); i++ )
-		{
-			Difficulty dc = StringToDifficulty( asBits[i] );
-			if( dc != DIFFICULTY_INVALID )
-				vDifficultiesToShow.push_back( dc );
-		}
+		// HACK: This belongs in ScreenDemonstration
+		vDifficultiesToShow = DIFFICULTIES_TO_SHOW_HERE.GetValue();
 	}
 	else
 	{
@@ -69,8 +63,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 		}
 	}
 
-	if( vDifficultiesToShow.empty() )
-		vDifficultiesToShow.push_back( DIFFICULTY_EASY );
+	ASSERT( !vDifficultiesToShow.empty() )
 
 	//
 	// Search for a Song and Steps to play during the demo

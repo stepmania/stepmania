@@ -2,6 +2,9 @@
 #include "CommonMetrics.h"
 #include "RageUtil.h"
 #include "Foreach.h"
+#include "GameManager.h"
+#include "RageLog.h"
+#include "GameState.h"
 
 
 CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",int(p+1)); }
@@ -16,64 +19,97 @@ ThemeMetric<CString>	WINDOW_TITLE						("Common","WindowTitle");
 ThemeMetric<bool>		HOME_EDIT_MODE						("Common","HomeEditMode");
 ThemeMetric<int>		MAX_COURSE_ENTRIES_BEFORE_VARIOUS	("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>		TICK_EARLY_SECONDS					("ScreenGameplay","TickEarlySeconds");
+ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
+ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
+ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW			("Common","StepsTypesToHide");
 
 
-class ThemeMetricDifficultiesToShow : ThemeMetric<CString>
+ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const CString& sGroup, const CString& sName ) : 
+	ThemeMetric<CString>(sGroup,sName)
 {
-public:
-	set<Difficulty> m_v;
-
-	ThemeMetricDifficultiesToShow() : ThemeMetric<CString>("Common","DifficultiesToShow") {}
-	void Read()
-	{
-		ThemeMetric<CString>::Read();
-
-		m_v.clear();
-
-		CStringArray v;
-		split( GetValue(), ",", v );
-		ASSERT( v.size() > 0 );
-
-		FOREACH_CONST( CString, v, i )
-		{
-			Difficulty d = StringToDifficulty( *i );
-			if( d == DIFFICULTY_INVALID )
-				RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
-			m_v.insert( d );
-		}
-	}
-};
-ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
-const set<Difficulty>& CommonMetrics::GetDifficultiesToShow() { return DIFFICULTIES_TO_SHOW.m_v; }
-
-
-class ThemeMetricCourseDifficultiesToShow : ThemeMetric<CString>
+	ASSERT( sName.Right(6) == "ToShow" );
+}
+void ThemeMetricDifficultiesToShow::Read()
 {
-public:
-	set<CourseDifficulty> m_v;
+	ThemeMetric<CString>::Read();
 
-	ThemeMetricCourseDifficultiesToShow() : ThemeMetric<CString>("Common","CourseDifficultiesToShow") {}
-	void Read()
+	m_v.clear();
+
+	CStringArray v;
+	split( ThemeMetric<CString>::GetValue(), ",", v );
+	ASSERT( v.size() > 0 );
+
+	FOREACH_CONST( CString, v, i )
 	{
-		ThemeMetric<CString>::Read();
-
-		m_v.clear();
-
-		CStringArray v;
-		split( GetValue(), ",", v );
-		ASSERT( v.size() > 0 );
-
-		FOREACH_CONST( CString, v, i )
-		{
-			CourseDifficulty d = StringToCourseDifficulty( *i );
-			if( d == DIFFICULTY_INVALID )
-				RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
-			m_v.insert( d );
-		}
+		Difficulty d = StringToDifficulty( *i );
+		if( d == DIFFICULTY_INVALID )
+			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
+		m_v.push_back( d );
 	}
-};
-ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
-const set<CourseDifficulty>& CommonMetrics::GetCourseDifficultiesToShow() { return COURSE_DIFFICULTIES_TO_SHOW.m_v; }
+}
+const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() { return m_v; }
+
+
+ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const CString& sGroup, const CString& sName ) : 
+	ThemeMetric<CString>(sGroup,sName)
+{
+	ASSERT( sName.Right(6) == "ToShow" );
+}
+void ThemeMetricCourseDifficultiesToShow::Read()
+{
+	ThemeMetric<CString>::Read();
+
+	m_v.clear();
+
+	CStringArray v;
+	split( ThemeMetric<CString>::GetValue(), ",", v );
+	ASSERT( v.size() > 0 );
+
+	FOREACH_CONST( CString, v, i )
+	{
+		CourseDifficulty d = StringToCourseDifficulty( *i );
+		if( d == DIFFICULTY_INVALID )
+			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
+		m_v.push_back( d );
+	}
+}
+const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() { return m_v; }
+
+
+static void RemoveStepsTypes( vector<StepsType>& inout, CString sStepsTypesToRemove )
+{
+	CStringArray v;
+	split( sStepsTypesToRemove, ",", v );
+	ASSERT( v.size() > 0 );
+
+	// subtract StepsTypes
+	FOREACH_CONST( CString, v, i )
+	{
+		StepsType st = GameManager::StringToStepsType(*i);
+		if( st == STEPS_TYPE_INVALID )
+			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
+
+		const vector<StepsType>::iterator iter = find( inout.begin(), inout.end(), st );
+		if( iter != inout.end() )
+			inout.erase( iter );
+	}
+}
+ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const CString& sGroup, const CString& sName ) : 
+	ThemeMetric<CString>(sGroup,sName)
+{
+	ASSERT( sName.Right(6) == "ToHide" );
+}
+void ThemeMetricStepsTypesToShow::Read()
+{
+	ThemeMetric<CString>::Read();
+
+	m_v.clear();
+	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
+
+	RemoveStepsTypes( m_v, ThemeMetric<CString>::GetValue() );
+}
+const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() { return m_v; }
+
 
 CString THEME_OPTION_ITEM( CString s, bool bOptional )
 {

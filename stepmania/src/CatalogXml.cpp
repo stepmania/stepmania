@@ -22,7 +22,6 @@
 
 #define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
-#define SHOW_STEPS_TYPE(st)				THEME->GetMetricB("CatalogXml",ssprintf("ShowStepsType%s",Capitalize(GAMEMAN->StepsTypeToString(st)).c_str()))
 #define INTERNET_RANKING_HOME_URL		THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
 #define INTERNET_RANKING_UPLOAD_URL		THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
 #define INTERNET_RANKING_VIEW_GUID_URL	THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
@@ -39,11 +38,9 @@ void SaveCatalogXml()
 	XNode xml;
 	xml.m_sName = "Catalog";
 
-	{
-		bool ShowStepsType[NUM_STEPS_TYPES];
-		FOREACH_StepsType( st )
-			ShowStepsType[st] = SHOW_STEPS_TYPE( st );
+	const vector<StepsType> &vStepsTypesToShow = STEPS_TYPES_TO_SHOW.GetValue();
 	
+	{
 		XNode* pNode = xml.AppendChild( "Songs" );
 
 		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
@@ -64,16 +61,11 @@ void SaveCatalogXml()
 			pSongNode->AppendChild( "MainTitle", pSong->GetDisplayMainTitle() );
 			pSongNode->AppendChild( "SubTitle", pSong->GetDisplaySubTitle() );
 
-			const set<Difficulty> &vDiffs = CommonMetrics::GetDifficultiesToShow();
-
-			FOREACH_StepsType( st )
+			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
-				if( !ShowStepsType[st] )
-					continue;	// skip
-
-				for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
 				{
-					Steps* pSteps = pSong->GetStepsByDifficulty( st, *iter, false );	// no autogen
+					Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
 					if( pSteps == NULL )
 						continue;	// skip
 
@@ -111,16 +103,13 @@ void SaveCatalogXml()
 			pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
 			pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
 
-			const set<CourseDifficulty> &vDiffs = CommonMetrics::GetCourseDifficultiesToShow();
+			const vector<CourseDifficulty> &vDiffs = DIFFICULTIES_TO_SHOW.GetValue();
 
-			FOREACH_StepsType( st )
+			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
-				if( !SHOW_STEPS_TYPE(st) )
-					continue;	// skip
-
-				for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				FOREACH_CONST( CourseDifficulty, vDiffs, dc )
 				{
-					Trail *pTrail = pCourse->GetTrail( st, *iter );
+					Trail *pTrail = pCourse->GetTrail( *st, *dc );
 					if( pTrail == NULL )
 						continue;
 					if( !pTrail->m_vEntries.size() )
@@ -143,8 +132,7 @@ void SaveCatalogXml()
 		XNode* pNode = xml.AppendChild( "Types" );
 
 		{
-			const set<Difficulty> &vDiffs = CommonMetrics::GetDifficultiesToShow();
-			FOREACHS_CONST( Difficulty, vDiffs, iter )
+			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				XNode* pNode2 = pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
 				pNode2->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
@@ -152,8 +140,7 @@ void SaveCatalogXml()
 		}
 
 		{
-			const set<CourseDifficulty> &vDiffs = CommonMetrics::GetCourseDifficultiesToShow();
-			FOREACHS_CONST( CourseDifficulty, vDiffs, iter )
+			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				XNode* pNode2 = pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
 				pNode2->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );
@@ -161,12 +148,10 @@ void SaveCatalogXml()
 		}
 
 		{
-			vector<StepsType> vStepsTypes;
-			GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypes );
-			FOREACH_CONST( StepsType, vStepsTypes, iter )
+			vector<StepsType> vStepsTypesToShow;
+			GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypesToShow );
+			FOREACH_CONST( StepsType, vStepsTypesToShow, iter )
 			{
-				if( !SHOW_STEPS_TYPE(*iter) )
-					continue;
 				XNode* pNode2 = pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
 				pNode2->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToThemedString(*iter) );
 			}

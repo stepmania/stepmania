@@ -121,7 +121,7 @@ EditMenu::EditMenu()
 
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_StepsTypes );
+	m_StepsTypes = STEPS_TYPES_TO_SHOW.GetValue();
 	if( HOME_EDIT_MODE )
 	{
 		m_vDifficulties.push_back( DIFFICULTY_EDIT );

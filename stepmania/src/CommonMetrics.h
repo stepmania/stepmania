@@ -6,7 +6,44 @@
 #include "ThemeMetric.h"
 #include "PlayerNumber.h"
 #include "Difficulty.h"
+#include "GameConstantsAndTypes.h"
 
+
+//
+// Types
+//
+class ThemeMetricDifficultiesToShow : ThemeMetric<CString>
+{
+public:
+	ThemeMetricDifficultiesToShow( const CString& sGroup, const CString& sName );
+	void Read();
+	const vector<Difficulty> &GetValue();
+private:
+	vector<Difficulty> m_v;
+};
+class ThemeMetricCourseDifficultiesToShow : ThemeMetric<CString>
+{
+public:
+	ThemeMetricCourseDifficultiesToShow( const CString& sGroup, const CString& sName );
+	void Read();
+	const vector<CourseDifficulty> &GetValue();
+private:
+	vector<CourseDifficulty> m_v;
+};
+class ThemeMetricStepsTypesToShow : ThemeMetric<CString>
+{
+public:
+	ThemeMetricStepsTypesToShow( const CString& sGroup, const CString& sName );
+	void Read();
+	const vector<StepsType> &GetValue();
+private:
+	vector<StepsType> m_v;
+};
+
+
+//
+// Metrics
+//
 extern ThemeMetric<CString>		INITIAL_SCREEN;
 extern ThemeMetric<CString>		FIRST_RUN_INITIAL_SCREEN;
 extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
@@ -17,14 +54,12 @@ extern ThemeMetric<CString>		WINDOW_TITLE;
 extern ThemeMetric<bool>		HOME_EDIT_MODE;
 extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 extern ThemeMetric<float>		TICK_EARLY_SECONDS;
+extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
+extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
+extern ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 
 CString THEME_OPTION_ITEM( CString s, bool bOptional );
 
-namespace CommonMetrics
-{
-	const set<Difficulty>& GetDifficultiesToShow();
-	const set<CourseDifficulty>& GetCourseDifficultiesToShow();
-}
 
 #endif
 

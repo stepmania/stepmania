@@ -33,6 +33,7 @@
 #include "CommonMetrics.h"
 #include "Foreach.h"
 #include "LuaReference.h"
+#include "CommonMetrics.h"
 
 #include <ctime>
 #include <set>
@@ -1702,7 +1703,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 
 bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 {
-	const set<Difficulty> &asDiff = CommonMetrics::GetDifficultiesToShow();
+	const vector<Difficulty> &v = DIFFICULTIES_TO_SHOW.GetValue();
 
 	Difficulty d = m_PreferredDifficulty[pn];
 	while( 1 )
@@ -1710,7 +1711,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 		d = (Difficulty)(d+dir);
 		if( d < 0 || d >= NUM_DIFFICULTIES )
 			return false;
-		if( asDiff.find(d) == asDiff.end() )
+		if( find(v.begin(), v.end(), d) == v.end() )
 			continue; /* not available */
 	}
 
@@ -1734,7 +1735,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	/* If we have a course selected, only choose among difficulties available in the course. */
 	const Course *pCourse = this->m_pCurCourse;
 
-	const set<CourseDifficulty> &asDiff = CommonMetrics::GetCourseDifficultiesToShow();
+	const vector<CourseDifficulty> &v = COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
 	while( 1 )
@@ -1742,7 +1743,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 		cd = (CourseDifficulty)(cd+dir);
 		if( cd < 0 || cd >= NUM_DIFFICULTIES )
 			return false;
-		if( asDiff.find(cd) == asDiff.end() )
+		if( find(v.begin(),v.end(),cd) == v.end() )
 			continue; /* not available */
 		if( !pCourse || pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, cd ) )
 			break;
@@ -1753,8 +1754,8 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 
 bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 {
-	const set<CourseDifficulty> &asDiff = CommonMetrics::GetCourseDifficultiesToShow();
-	return asDiff.find(cd) != asDiff.end();
+	const vector<CourseDifficulty> &v = COURSE_DIFFICULTIES_TO_SHOW.GetValue();
+	return find(v.begin(), v.end(), cd) != v.end();
 }
 
 Difficulty GameState::GetEasiestNotesDifficulty() const
