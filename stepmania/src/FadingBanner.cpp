@@ -9,12 +9,12 @@
 #include "ThemeManager.h"
 #include "SongManager.h"
 #include "ThemeMetric.h"
+#include "ActorUtil.h"
 
 // lua start
 LUA_REGISTER_CLASS( FadingBanner )
 // lua end
 REGISTER_ACTOR_CLASS( FadingBanner );
-
 
 static ThemeMetric<float> FADE_SECONDS			("FadingBanner","FadeSeconds");
 
