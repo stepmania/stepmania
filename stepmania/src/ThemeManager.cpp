@@ -259,7 +259,7 @@ try_metric_again:
 	}
 
 #ifdef _DEBUG
-	if( IDRETRY == MessageBox(NULL,"ThemeManager",ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()), MB_RETRYCANCEL ) )
+	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
 
