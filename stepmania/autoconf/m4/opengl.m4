@@ -22,17 +22,17 @@ AC_DEFUN(SM_X_WITH_OPENGL,
 		AC_MSG_RESULT(no)],
 		[AC_MSG_RESULT(yes)])
 	fi
+
+	# Check for libXtst.
+	AC_CHECK_LIB(Xtst, XTestQueryExtension, 
+	    XLIBS="$XLIBS -lXtst"
+	    [AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
+	    ,
+	    [$XLIBS])
     fi
 
     AC_SUBST(XCFLAGS)
     AC_SUBST(XLIBS)
-
-    # Check for libXtst.
-    AC_CHECK_LIB(Xtst, XTestQueryExtension, 
-	XLIBS="$XLIBS -lXtst"
-	[AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
-	,
-	[$XLIBS])
 
     # Check for libGL and libGLU.
     AC_CHECK_LIB(GL, glPushMatrix, XLIBS="$XLIBS -lGL",
