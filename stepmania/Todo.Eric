@@ -9,3 +9,15 @@ Low Pri:
  - up-right should be synonymous with start.
  - other things that PSX DDR games do to be more pad-friendly
 
+
+
+? Option system reengineering  
+ - dynamically create option menus based on categorized options.
+ - provide properties to options for later use in network SM
+
+? Input mapping reengineering 
+ - Chording
+
+Niggling:
+ - VSync option mentions tearing.
+ - Ignore axes - add warning that having this on can cause input problems.
