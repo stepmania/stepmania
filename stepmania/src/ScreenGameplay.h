@@ -116,7 +116,8 @@ protected:
 	BPMDisplay			m_BPMDisplay;
 
 	Sprite				m_sprScoreFrame;
-	ScoreDisplay*		m_pScoreDisplay[NUM_PLAYERS];
+	ScoreDisplay*		m_pPrimaryScoreDisplay[NUM_PLAYERS];
+	ScoreDisplay*		m_pSecondaryScoreDisplay[NUM_PLAYERS];
 	ScoreKeeper*		m_pPrimaryScoreKeeper[NUM_PLAYERS];
 	ScoreKeeper*		m_pSecondaryScoreKeeper[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];

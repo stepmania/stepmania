@@ -250,13 +250,21 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 	int iSwitchToStyleIndex = -1;	// -1 means none found
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
-		if( m_aModeChoices[i].IsPlayable() )
+		const ModeChoice& mc = m_aModeChoices[i];
+		if( mc.IsPlayable() )
 		{
 			iSwitchToStyleIndex = i;
 			break;
 		}
 	}
-	ASSERT( iSwitchToStyleIndex != -1 );	// no styles are enabled.  We're stuck!  This should never happen
+	if( iSwitchToStyleIndex == -1 )// no styles are enabled.  We're stuck!
+	{
+		DEBUG_ASSERT(0);
+		SCREENMAN->SystemMessage( "No Styles are selectable." );
+		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+		return;
+	}
+	
 
 	m_iSelection = iSwitchToStyleIndex;
 	AfterChange();

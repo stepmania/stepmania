@@ -105,7 +105,8 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_pLifeMeter[p] = NULL;
-		m_pScoreDisplay[p] = NULL;
+		m_pPrimaryScoreDisplay[p] = NULL;
+		m_pSecondaryScoreDisplay[p] = NULL;
 		m_pPrimaryScoreKeeper[p] = NULL;
 		m_pSecondaryScoreKeeper[p] = NULL;
 		m_pInventory[p] = NULL ;
@@ -449,31 +450,51 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
+		//
+		// primary score display
+		//
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
 			if( PREFSMAN->m_bPercentageScoring )
-				m_pScoreDisplay[p] = new ScoreDisplayPercentage;
+				m_pPrimaryScoreDisplay[p] = new ScoreDisplayPercentage;
 			else
-				m_pScoreDisplay[p] = new ScoreDisplayNormal;
+				m_pPrimaryScoreDisplay[p] = new ScoreDisplayNormal;
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			m_pScoreDisplay[p] = new ScoreDisplayOni;
-			break;
-		case PLAY_MODE_RAVE:
-			m_pScoreDisplay[p] = new ScoreDisplayRave;
+			m_pPrimaryScoreDisplay[p] = new ScoreDisplayOni;
 			break;
 		default:
 			ASSERT(0);
 		}
 
-		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
-		m_pScoreDisplay[p]->SetName( ssprintf("ScoreP%d%s",p+1,bExtra?"Extra":"") );
-		SET_XY( *m_pScoreDisplay[p] );
-		this->AddChild( m_pScoreDisplay[p] );
+		m_pPrimaryScoreDisplay[p]->Init( (PlayerNumber)p );
+		m_pPrimaryScoreDisplay[p]->SetName( ssprintf("ScoreP%d%s",p+1,bExtra?"Extra":"") );
+		SET_XY( *m_pPrimaryScoreDisplay[p] );
+		this->AddChild( m_pPrimaryScoreDisplay[p] );
+
+	
+		//
+		// secondary score display
+		//
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_RAVE:
+			m_pSecondaryScoreDisplay[p] = new ScoreDisplayRave;
+			break;
+		}
+
+		if( m_pSecondaryScoreDisplay[p] )
+		{
+			m_pSecondaryScoreDisplay[p]->Init( (PlayerNumber)p );
+			m_pSecondaryScoreDisplay[p]->SetName( ssprintf("SecondaryScoreP%d%s",p+1,bExtra?"Extra":"") );
+			SET_XY( *m_pSecondaryScoreDisplay[p] );
+			this->AddChild( m_pSecondaryScoreDisplay[p] );
+		}
 	}
 	
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -668,7 +689,9 @@ ScreenGameplay::~ScreenGameplay()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		SAFE_DELETE( m_pLifeMeter[p] );
-		SAFE_DELETE( m_pScoreDisplay[p] );
+		SAFE_DELETE( m_pPrimaryScoreDisplay[p] );
+		SAFE_DELETE( m_pSecondaryScoreDisplay[p] );
+		SAFE_DELETE( m_pSecondaryScoreDisplay[p] );
 		SAFE_DELETE( m_pPrimaryScoreKeeper[p] );
 		SAFE_DELETE( m_pSecondaryScoreKeeper[p] );
 		SAFE_DELETE( m_pInventory[p] );
@@ -771,7 +794,7 @@ void ScreenGameplay::LoadNextSong()
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
@@ -2071,8 +2094,10 @@ void ScreenGameplay::TweenOnScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		ON_COMMAND( m_textCourseSongNumber[p] );
-		if( m_pScoreDisplay[p] )
-			ON_COMMAND( *m_pScoreDisplay[p] );
+		if( m_pPrimaryScoreDisplay[p] )
+			ON_COMMAND( *m_pPrimaryScoreDisplay[p] );
+		if( m_pSecondaryScoreDisplay[p] )
+			ON_COMMAND( *m_pSecondaryScoreDisplay[p] );
 		ON_COMMAND( m_textPlayerOptions[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 	}
@@ -2094,8 +2119,10 @@ void ScreenGameplay::TweenOffScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		OFF_COMMAND( m_textCourseSongNumber[p] );
-		if( m_pScoreDisplay[p] )
-			OFF_COMMAND( *m_pScoreDisplay[p] );
+		if( m_pPrimaryScoreDisplay[p] )
+			OFF_COMMAND( *m_pPrimaryScoreDisplay[p] );
+		if( m_pSecondaryScoreDisplay[p] )
+			OFF_COMMAND( *m_pSecondaryScoreDisplay[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}

@@ -304,7 +304,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "default";	// change noteskin back to default before loading player
 	GAMESTATE->ResetNoteSkins();
 
-	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL );
+	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 	m_Player.SetX( PLAYER_X );
 	/* Why was this here?  Nothing ever sets Player Y values; this was causing
@@ -1678,7 +1678,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				 * where we're starting. */
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;
 
-				m_Player.Load( PLAYER_1, &m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL );
+				m_Player.Load( PLAYER_1, &m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
 				m_rectRecordBack.StopTweening();

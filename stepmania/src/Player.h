@@ -47,7 +47,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField );
+	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField );
 	void CrossedRow( int iNoteRow );
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
@@ -87,7 +87,8 @@ protected:
 //	DancingCharacters* m_pDancingCharacters; // used to adjust the 2D anims dancing states
 	LifeMeter*		m_pLifeMeter;
 	CombinedLifeMeter*		m_pCombinedLifeMeter;
-	ScoreDisplay*	m_pScore;
+	ScoreDisplay*	m_pScoreDisplay;
+	ScoreDisplay*	m_pSecondaryScoreDisplay;
 	ScoreKeeper*	m_pPrimaryScoreKeeper;
 	ScoreKeeper*	m_pSecondaryScoreKeeper;
 	Inventory*		m_pInventory;
@@ -102,7 +103,7 @@ protected:
 class Player : public PlayerMinus
 {
 public:
-	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
+	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
 
 protected:
 	NoteFieldPlus	m_NoteField;

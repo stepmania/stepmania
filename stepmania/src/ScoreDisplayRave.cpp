@@ -17,11 +17,14 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "ActorUtil.h"
 
 
 ScoreDisplayRave::ScoreDisplayRave()
 {
 	LOG->Trace( "ScoreDisplayRave::ScoreDisplayRave()" );
+	
+	this->SetName( "ScoreDisplayRave" );
 
 	m_lastLevelSeen = ATTACK_LEVEL_1;
 
@@ -43,11 +46,16 @@ void ScoreDisplayRave::Init( PlayerNumber pn )
 {
 	ScoreDisplay::Init( pn );
 
-	if( pn == PLAYER_2 )
-		for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
-			m_sprMeter[i].SetZoomX( -1 );
-
 	m_sprFrame.Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave frame p%d",pn+1)) );
+
+	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )	
+	{
+		m_sprMeter[i].SetName( ssprintf("MeterP%d",pn+1) );
+		ON_COMMAND( m_sprMeter[i] );
+	}
+		
+	m_textLevel.SetName( ssprintf("LevelP%d",pn+1) );
+	ON_COMMAND( m_textLevel );
 }
 
 void ScoreDisplayRave::Update( float fDelta )

@@ -73,7 +73,8 @@ PlayerMinus::PlayerMinus()
 
 	m_pLifeMeter = NULL;
 	m_pCombinedLifeMeter = NULL;
-	m_pScore = NULL;
+	m_pScoreDisplay = NULL;
+	m_pSecondaryScoreDisplay = NULL;
 	m_pPrimaryScoreKeeper = NULL;
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
@@ -95,7 +96,7 @@ PlayerMinus::~PlayerMinus()
 {
 }
 
-void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
+void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
 {
 	m_iDCState = AS2D_IDLE;
 	//LOG->Trace( "PlayerMinus::Load()", );
@@ -105,7 +106,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_PlayerNumber = pn;
 	m_pLifeMeter = pLM;
 	m_pCombinedLifeMeter = pCombinedLM;
-	m_pScore = pScore;
+	m_pScoreDisplay = pScoreDisplay;
+	m_pSecondaryScoreDisplay = pSecondaryScoreDisplay;
 	m_pInventory = pInventory;
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
@@ -144,6 +146,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
+		case PLAY_MODE_RAVE:
 		case PLAY_MODE_BATTLE:
 			{
 				// ugly, ugly, ugly.  Works only w/ dance.
@@ -167,9 +170,6 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 				}
 				count++;
 				count %= 4;
-
-				// HACK: Autogen in attacks for battle
-				NoteDataUtil::AddTapAttacks( *this, GAMESTATE->m_pCurSong );
 			}
 			break;
 	}
@@ -1152,8 +1152,10 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	if( life != -1 )
 		GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->GetSongPercent(beat) );
 
-	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+	if (m_pScoreDisplay)
+		m_pScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+	if (m_pSecondaryScoreDisplay)
+		m_pSecondaryScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
@@ -1184,8 +1186,10 @@ void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScor
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
 
-	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+	if (m_pScoreDisplay)
+		m_pScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+	if (m_pSecondaryScoreDisplay)
+		m_pSecondaryScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );
@@ -1207,7 +1211,7 @@ void PlayerMinus::FadeToFail()
 	m_pNoteField->FadeToFail();
 }
 
-void Player::Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper )
+void Player::Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper )
 {
-	PlayerMinus::Load( player_no, pNoteData, pLM, pCombinedLM, pScore, pInventory, pPrimaryScoreKeeper, pSecondaryScoreKeeper, &m_NoteField );
+	PlayerMinus::Load( player_no, pNoteData, pLM, pCombinedLM, pScoreDisplay, pSecondaryScoreDisplay, pInventory, pPrimaryScoreKeeper, pSecondaryScoreKeeper, &m_NoteField );
 }

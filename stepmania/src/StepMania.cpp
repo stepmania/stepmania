@@ -1018,6 +1018,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
+		SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
 		return true;
 	}
 #ifndef DARWIN
@@ -1071,7 +1072,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 				break;
 		}
 		DISPLAY->SaveScreenshot( sPath );
-		SCREENMAN->SystemMessage( "Saved screenshot: " + sPath );
+		SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit save") );	// FIXME
 		return true;
 	}
 
