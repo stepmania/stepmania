@@ -85,12 +85,15 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,275,215,50,15
     PUSHBUTTON      "< Back",IDC_BUTTON_BACK,145,215,55,15,WS_DISABLED
     CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,0,0,258,37
-    EDITTEXT        IDC_EDIT_MESSAGE3,5,180,320,30,ES_MULTILINE | 
+    EDITTEXT        IDC_EDIT_MESSAGE3,5,180,320,13,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
                     WS_TABSTOP
     EDITTEXT        IDC_EDIT_MESSAGE2,5,90,320,87,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | NOT 
                     WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DIR,22,195,204,105,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,59,14
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 332, 234
@@ -123,6 +126,26 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,204,24,50,14
     LTEXT           "NOTE: (leave off the "".smzip"" extension)",IDC_STATIC,
                     18,38,179,12
+END
+
+IDD_EDIT_INSTALLATIONS DIALOG DISCARDABLE  0, 0, 233, 220
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Installations"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,198,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,175,198,50,14
+    LISTBOX         IDC_LIST,17,21,136,89,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+    EDITTEXT        IDC_EDIT,19,168,136,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADD,165,168,50,14
+    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,164,42,50,15
+    PUSHBUTTON      "Make Default",IDC_BUTTON_MAKE_DEFAULT,164,72,50,15
+    GROUPBOX        "Add New Installation",IDC_STATIC,7,130,218,59
+    GROUPBOX        "Current Installations (the top installation is the default)",
+                    IDC_STATIC,7,7,218,114
+    LTEXT           "Enter the complete path to a StepMania or DWI installation\r\ne.g. ""C:\\Program Files\\StepMania""",
+                    IDC_STATIC,18,144,196,17
 END
 
 
@@ -199,6 +222,14 @@ BEGIN
         RIGHTMARGIN, 254
         TOPMARGIN, 7
         BOTTOMMARGIN, 51
+    END
+
+    IDD_EDIT_INSTALLATIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 225
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 212
     END
 END
 #endif    // APSTUDIO_INVOKED

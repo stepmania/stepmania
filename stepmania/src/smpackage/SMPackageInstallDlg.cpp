@@ -5,6 +5,8 @@
 #include "smpackage.h"
 #include "SMPackageInstallDlg.h"
 #include "RageUtil.h"
+#include "smpackageUtil.h"
+#include "EditInsallations.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,7 +35,8 @@ void CSMPackageInstallDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSMPackageInstallDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	DDX_Control(pDX, IDC_BUTTON_EDIT, m_buttonEdit);
+	DDX_Control(pDX, IDC_COMBO_DIR, m_comboDir);
 	//}}AFX_DATA_MAP
 }
 
@@ -41,8 +44,10 @@ void CSMPackageInstallDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CSMPackageInstallDlg, CDialog)
 	//{{AFX_MSG_MAP(CSMPackageInstallDlg)
 	ON_WM_PAINT()
+	ON_BN_CLICKED(IDC_BUTTON_EDIT, OnButtonEdit)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg message handlers
@@ -58,6 +63,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
+	int i;
 
 	//
 	// Set the text of the first Edit box
@@ -89,7 +95,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 		exit( 1 );
 	}
 
-	for( int i=0; i<m_zip.GetCount(); i++ )
+	for( i=0; i<m_zip.GetCount(); i++ )
 	{
 		CZipFileHeader fh;
 		m_zip.GetFileInfo(fh, (WORD)i);
@@ -106,19 +112,20 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	// Set the text of the third Edit box
 	//
-	TCHAR szCurrentDirectory[MAX_PATH];
-	GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
-	CString sMessage3 = ssprintf(
-		"The package will be installed in the Stepmania program folder:\r\n"
-		"\r\n"
-		"\t%s",
-		szCurrentDirectory
-	);
+	CString sMessage3 = "The package will be installed in the following Stepmania program folder:\r\n";
 
 	// Set the message
 	CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
 	pEdit3->SetWindowText( sMessage3 );
 
+
+
+	TCHAR szCurrentDirectory[MAX_PATH];
+	GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
+	AddStepManiaInstallDir( szCurrentDirectory );
+
+
+	RefreshInstallationList();
 
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -160,9 +167,12 @@ void CSMPackageInstallDlg::OnOK()
 {
 	// TODO: Add extra validation here
 
-	TCHAR szCurrentDirectory[MAX_PATH];
-	GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
+	m_comboDir.EnableWindow( FALSE );
+	m_buttonEdit.EnableWindow( FALSE );
 
+	CString sInstallDir;
+	m_comboDir.GetWindowText( sInstallDir );
+	
 	// Unzip the SMzip package into the Stepmania installation folder
 	for( int i=0; i<m_zip.GetCount(); i++ )
 	{
@@ -180,7 +190,7 @@ void CSMPackageInstallDlg::OnOK()
 		// Extract the files
 		try
 		{	
-			m_zip.ExtractFile( (WORD)i, szCurrentDirectory, true );	// extract file to current directory
+			m_zip.ExtractFile( (WORD)i, sInstallDir, true );	// extract file to current directory
 		}
 		catch (CException* e)
 		{
@@ -195,3 +205,31 @@ void CSMPackageInstallDlg::OnOK()
 	// close the dialog
 	CDialog::OnOK();
 }
+
+
+void CSMPackageInstallDlg::OnButtonEdit() 
+{
+	// TODO: Add your control notification handler code here
+	EditInsallations dlg;
+	int nResponse = dlg.DoModal();
+	if( nResponse == IDOK )
+	{
+		WriteStepManiaInstallDirs( dlg.m_asReturnedInstallDirs );
+		RefreshInstallationList();
+	}
+}
+
+
+void CSMPackageInstallDlg::RefreshInstallationList() 
+{
+	m_comboDir.ResetContent();
+
+	CStringArray asInstallDirs;
+	GetStepManiaInstallDirs( asInstallDirs );
+	for( int i=0; i<asInstallDirs.GetSize(); i++ )
+	{
+		m_comboDir.AddString( asInstallDirs[i] );
+	}
+	m_comboDir.SetCurSel( 0 );	// guaranteed to be at least one item
+}
+

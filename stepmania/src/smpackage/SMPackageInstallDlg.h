@@ -22,7 +22,8 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSMPackageInstallDlg)
 	enum { IDD = IDD_INSTALL };
-		// NOTE: the ClassWizard will add data members here
+	CButton	m_buttonEdit;
+	CComboBox	m_comboDir;
 	//}}AFX_DATA
 
 
@@ -35,6 +36,8 @@ public:
 
 // Implementation
 protected:
+	void RefreshInstallationList();
+
 	HICON m_hIcon;
 	CString m_sPackagePath;
 	CZipArchive m_zip;
@@ -44,6 +47,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
 	afx_msg void OnPaint();
+	afx_msg void OnButtonEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

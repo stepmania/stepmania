@@ -88,6 +88,14 @@ LINK32=link.exe
 # Name "smpackage - Win32 Debug"
 # Begin Source File
 
+SOURCE=.\EditInsallations.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EditInsallations.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EnterName.cpp
 # End Source File
 # Begin Source File
@@ -113,6 +121,14 @@ SOURCE=.\RageUtil.h
 # Begin Source File
 
 SOURCE=.\ReadMe.txt
+# End Source File
+# Begin Source File
+
+SOURCE=.\Registry.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Registry.h
 # End Source File
 # Begin Source File
 
@@ -157,6 +173,10 @@ SOURCE=.\SMPackageInstallDlg.cpp
 # Begin Source File
 
 SOURCE=.\SMPackageInstallDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\smpackageUtil.h
 # End Source File
 # Begin Source File
 

@@ -10,6 +10,7 @@
 #define INSTALL                         133
 #define MANAGE                          135
 #define IDD_DIALOG_NAME                 137
+#define IDD_EDIT_INSTALLATIONS          138
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -22,14 +23,19 @@
 #define IDC_EDIT_MESSAGE2               1007
 #define IDC_TREE                        1011
 #define IDC_EDIT                        1012
+#define IDC_COMBO_DIR                   1013
+#define IDC_BUTTON_EDIT                 1014
+#define IDC_BUTTON_ADD                  1018
+#define IDC_BUTTON_REMOVE               1019
+#define IDC_BUTTON_MAKE_DEFAULT         1020
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_RESOURCE_VALUE        139
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
