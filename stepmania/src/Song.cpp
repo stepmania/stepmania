@@ -810,9 +810,10 @@ int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
 	int iEasiestMeter1 = 1000;	// infinity
 	int iEasiestMeter2 = 1000;	// infinity
 
-	for( int i=0; i<aNotes1.GetSize(); i++ )
+	int i;
+	for( i=0; i<aNotes1.GetSize(); i++ )
 		iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->m_iMeter );
-	for( int i=0; i<aNotes2.GetSize(); i++ )
+	for( i=0; i<aNotes2.GetSize(); i++ )
 		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->m_iMeter );
 
 	if( iEasiestMeter1 < iEasiestMeter2 )

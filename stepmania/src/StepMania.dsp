@@ -59,7 +59,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc             	cl              /Zl              /nologo              /c              verstub.cpp              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc              	cl               /Zl               /nologo               /c               verstub.cpp               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -94,7 +94,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc             	cl              /Zl              /nologo              /c              verstub.cpp              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc              	cl               /Zl               /nologo               /c               verstub.cpp               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -883,11 +883,19 @@ SOURCE=.\Background.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\BackgroundAnimation.cpp
+SOURCE=.\BGAnimation.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\BackgroundAnimation.h
+SOURCE=.\BGAnimation.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BGAnimationLayer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BGAnimationLayer.h
 # End Source File
 # Begin Source File
 
@@ -1128,14 +1136,6 @@ SOURCE=.\ScreenEz2SelectPlayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenEz2SelectStyle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEz2SelectStyle.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenGameOver.cpp
 # End Source File
 # Begin Source File
@@ -1273,6 +1273,14 @@ SOURCE=.\ScreenSelectGroup.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectGroup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMode.h
 # End Source File
 # Begin Source File
 
