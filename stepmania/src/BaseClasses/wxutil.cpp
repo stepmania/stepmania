@@ -989,7 +989,7 @@ BOOL WINAPI CritCheckOut(const CCritSec * pcCrit) {
 }
 #endif
 
-
+/*
 STDAPI WriteBSTR(BSTR *pstrDest, LPCWSTR szSrc) {
     *pstrDest = SysAllocString(szSrc);
     if(!(*pstrDest)) return E_OUTOFMEMORY;
@@ -1002,7 +1002,7 @@ STDAPI FreeBSTR(BSTR* pstr) {
     SysFreeString(*pstr);
     return NOERROR;
 }
-
+*/
 
 // Return a wide string - allocating memory for it
 // Returns:
