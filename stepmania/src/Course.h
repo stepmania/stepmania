@@ -108,6 +108,7 @@ public:
 	int GetEstimatedNumStages() const { return m_entries.size(); }
 	bool HasDifficult( StepsType nt ) const;
 	bool IsPlayableIn( StepsType nt ) const;
+	bool CourseHasBestOrWorst() const;
 	RageColor GetColor() const;
 	Difficulty GetDifficulty( const Info &stage ) const;
 	void GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const;

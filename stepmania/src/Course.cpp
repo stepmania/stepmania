@@ -870,6 +870,36 @@ static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
 }
 
+bool Course::CourseHasBestOrWorst() const
+{
+	for(unsigned i = 0; i < m_entries.size(); i++)
+	{
+		switch( m_entries[i].type )
+		{
+		case COURSE_ENTRY_BEST:
+		case COURSE_ENTRY_WORST:
+			return true;
+		}
+
+	}
+
+	return false;
+}
+
+static bool MovePlayersBestToEnd( const Course* pCourse1, const Course* pCourse2 )
+{
+	bool C1HasBest = pCourse1->CourseHasBestOrWorst();
+	bool C2HasBest = pCourse2->CourseHasBestOrWorst();
+	if( !C1HasBest && !C2HasBest )
+		return false;
+	if( C1HasBest && !C2HasBest )
+		return false;
+	if( !C1HasBest && C2HasBest )
+		return true;
+
+	return pCourse1->m_sName < pCourse2->m_sName;
+}
+
 static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
 {
 	int iNum1 = pCourse1->SortOrder_Ranking;
@@ -898,6 +928,7 @@ void SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
 void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 {
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByAvgDifficulty );
+	stable_sort( apCourses.begin(), apCourses.end(), MovePlayersBestToEnd );
 }
 
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
