@@ -53,6 +53,8 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuEleme
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
+	this->SortByDrawOrder();
+
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenJukeboxMenu music") );
 }
 
