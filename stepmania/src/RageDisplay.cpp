@@ -18,14 +18,20 @@
 #include "RageException.h"
 #include "RageTexture.h"
 #include "RageMath.h"
-#include "SDL.h"
-#include "SDL_opengl.h"
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
 
+#include <set>
+
+#include "SDL.h"
+/* ours is more up-to-date */
+#define NO_SDL_GLEXT
+#include "SDL_opengl.h"
+
+#include "glext.h"
+PFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
 
 RageDisplay*		DISPLAY	= NULL;
-
 
 ////////////
 // Globals
@@ -51,6 +57,20 @@ int RageDisplay::GetDPF() const { return g_iDPF; }
 static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
 					g_iDrawsSinceLastCheck;
+set<string> g_glExts;
+static bool g_GL_EXT_texture_env_combine;
+
+void GetGLExtensions(set<string> &ext)
+{
+    const char *buf = (const char *)glGetString(GL_EXTENSIONS);
+
+	vector<CString> lst;
+	split(buf, " ", lst);
+
+	for(unsigned i = 0; i < lst.size(); ++i)
+		ext.insert(lst[i]);
+    LOG->Trace("OpenGL extensions: %s", buf);
+}
 
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync )
 {
@@ -59,13 +79,14 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, Refresh
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
 	
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
+
+	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
 }
 
 RageDisplay::~RageDisplay()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
-
 
 //-----------------------------------------------------------------------------
 // Name: SwitchDisplayMode()
@@ -115,6 +136,9 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 
 	g_glVersion = int(roundf(atof((const char *) glGetString(GL_VERSION)) * 10));
 	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
+	GetGLExtensions(g_glExts);
+	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
+		g_GL_EXT_texture_env_combine = true;
 
 	/*
 	 * Set up OpenGL for 2D rendering.
@@ -360,38 +384,49 @@ void RageDisplay::SetTextureModeModulate()
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
+/* Set the blend mode for both texture and alpha.  This is all that's
+ * available pre-OpenGL 1.4. */
+void RageDisplay::SetBlendMode(int src, int dst)
+{
+	int a, b;
+	glGetIntegerv( GL_BLEND_SRC, &a );
+	glGetIntegerv( GL_BLEND_DST, &b );
+
+	if( a!=src || b!=dst )
+		FlushQueue();
+
+	glBlendFunc( src, dst );
+}
+
 void RageDisplay::SetTextureModeGlow()
 {
-	int a, b;
-	glGetIntegerv( GL_BLEND_SRC, &a );
-	glGetIntegerv( GL_BLEND_DST, &b );
+	if(!g_GL_EXT_texture_env_combine) {
+		SetBlendMode( GL_SRC_ALPHA, GL_ONE );
+		return;
+	}
 
-	if( a!=GL_SRC_ALPHA || b!=GL_ONE )
-		FlushQueue();
+	FlushQueue();
 
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+	/* Source color is the diffuse color only: */
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_EXT, GL_PRIMARY_COLOR_EXT);
+
+	/* Source alpha is texture alpha * diffuse alpha: */
+	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_EXT, GL_MODULATE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA_EXT, GL_SRC_ALPHA);
+	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_EXT, GL_PRIMARY_COLOR_EXT);
+	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA_EXT, GL_SRC_ALPHA);
+	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_EXT, GL_TEXTURE);
 }
+
 void RageDisplay::SetBlendModeNormal()
 {
-	int a, b;
-	glGetIntegerv( GL_BLEND_SRC, &a );
-	glGetIntegerv( GL_BLEND_DST, &b );
-
-	if( a!=GL_SRC_ALPHA || b!=GL_ONE_MINUS_SRC_ALPHA )
-		FlushQueue();
-
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	SetBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 void RageDisplay::SetBlendModeAdd()
 {
-	int a, b;
-	glGetIntegerv( GL_BLEND_SRC, &a );
-	glGetIntegerv( GL_BLEND_DST, &b );
-
-	if( a!=GL_ONE || b!=GL_ONE )
-		FlushQueue();
-
-	glBlendFunc( GL_ONE, GL_ONE );
+	SetBlendMode( GL_ONE, GL_ONE );
 }
 void RageDisplay::EnableZBuffer()
 {

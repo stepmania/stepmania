@@ -53,6 +53,7 @@ public:
 	void RotateZ( float r );
 
 	void SetTexture( RageTexture* pTexture );
+
 	void SetTextureModeModulate();
 	void SetTextureModeGlow();
 	void SetBlendModeNormal();
@@ -78,6 +79,7 @@ public:
 
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
+	void SetBlendMode(int src, int dst);
 };
 
 
