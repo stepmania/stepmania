@@ -167,6 +167,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	
 	if( m_bForceRedetect )
 	{
+	  m_bForceRedetect = false;
 		// fall through
 	}
 	else
