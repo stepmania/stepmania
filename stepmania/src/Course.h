@@ -64,18 +64,15 @@ public:
 		int iDancePoints;
 		float fSurviveTime;
 		CString	sName;
-	} m_MachineScores[NUM_NOTES_TYPES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
-
-	bool IsNewMachineRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime ) const;	// return true if this is would be a new machine record
-	void AddMachineRecord( int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
+	} m_MachineScores[NUM_NOTES_TYPES][NUM_RANKING_LINES];	// sorted highest to lowest by iDancePoints
+	void AddMachineRecords( NotesType nt, int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iLineIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
 
 	struct MemCardScore
 	{
 		int iDancePoints;
 		float fSurviveTime;
 	} m_MemCardScores[NUM_NOTES_TYPES][NUM_PLAYERS];
-
-	bool AddMemCardRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime );	// return true if this is a new record
+	bool AddMemCardRecord( PlayerNumber pn, NotesType nt, int iDancePoints, float fSurviveTime );	// return true if this is a new record
 
 
 private:

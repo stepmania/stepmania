@@ -78,8 +78,6 @@ protected:
 
 	Sprite				m_sprNewRecord[NUM_PLAYERS];
 
-	bool				m_bGoToNameEntry;
-
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
 };

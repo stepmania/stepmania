@@ -16,7 +16,6 @@
 #include "RandomSample.h"
 #include "GrayArrowRow.h"
 
-const int MAX_COLS_IN_NAME_ENTRY = 12;
 
 class ScreenNameEntry : public Screen
 {
@@ -29,13 +28,15 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	virtual void MenuStart( PlayerNumber pn );
+
 private:
 
 	BGAnimation		m_Background;
 
 	GrayArrowRow	m_GrayArrowRow[NUM_PLAYERS];
-	BitmapText		m_textSelectedChars[NUM_PLAYERS][MAX_COLS_IN_NAME_ENTRY];
-	BitmapText		m_textScrollingChars[NUM_PLAYERS][MAX_COLS_IN_NAME_ENTRY];
+	BitmapText		m_textSelectedChars[NUM_PLAYERS][MAX_RANKING_NAME_LENGTH];
+	BitmapText		m_textScrollingChars[NUM_PLAYERS][MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textCategory[NUM_PLAYERS];
 	MenuTimer		m_Timer;
 
@@ -44,7 +45,8 @@ private:
 	RageSound		m_soundStep;
 
 	float			m_fFakeBeat;
-	bool			m_bConfirmedName[NUM_PLAYERS];
+	CString			m_sSelectedName[NUM_PLAYERS];
+	bool			m_bStillEnteringName[NUM_PLAYERS];
 };
 
 

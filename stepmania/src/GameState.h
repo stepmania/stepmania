@@ -105,6 +105,7 @@ public:
 	vector<StageStats>	m_vPassedStageStats;	// Only useful in Arcade for final evaluation
 												// A song is only inserted here if at least one player passed.
 												// StageStats are added by the Evaluation screen
+	void	GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
 	Grade	GetCurrentGrade( PlayerNumber pn );		// grade so far
 
 
@@ -117,10 +118,11 @@ public:
 	bool HasEarnedExtraStage();
 
 
-	// High score stuff.
-	// These should be set by final evaluation, and used by ScreenNameEntry and ScreenRanking
-	RankingCategory	m_LastRankingCategory[NUM_PLAYERS];	// meaningless if a course was played
-	int					m_iLastHighScoreIndex[NUM_PLAYERS];		// -1 if no new high score
+	// Filled in by ScreenNameEntry and used by ScreenRanking to flash the recent high scores
+	NotesType			m_LastRankingNotesType;	// meaningless if a course was played
+	RankingCategory		m_LastRankingCategory[NUM_PLAYERS];	// meaningless if a course was played
+	Course*				m_pLastPlayedCourse;		// meaningless if arcade was played
+	int					m_iLastRankingIndex[NUM_PLAYERS];		// -1 if no new high score
 };
 
 

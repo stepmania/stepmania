@@ -210,7 +210,7 @@ void SongManager::InitMachineScoresFromDisk()
 	{
 		for( int i=0; i<NUM_NOTES_TYPES; i++ )
 			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
-				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+				for( int k=0; k<NUM_RANKING_LINES; k++ )
 				{
 					m_MachineScores[i][j][k].fScore = 573000;
 					m_MachineScores[i][j][k].sName = "STEP";
@@ -228,7 +228,7 @@ void SongManager::InitMachineScoresFromDisk()
 			{			
 				for( int i=0; i<NUM_NOTES_TYPES; i++ )
 					for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
-						for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+						for( int k=0; k<NUM_RANKING_LINES; k++ )
 							if( fp && !feof(fp) )
 							{
 								char szName[256];
@@ -257,7 +257,7 @@ void SongManager::InitMachineScoresFromDisk()
 						Course* pCourse = GetCourseFromPath( szPath );
 						
 						for( int i=0; i<NUM_NOTES_TYPES; i++ )
-							for( int j=0; j<NUM_HIGH_SCORE_LINES; j++ )
+							for( int j=0; j<NUM_RANKING_LINES; j++ )
 								if( fp && !feof(fp) )
 								{
 									int iDancePoints;
@@ -288,7 +288,7 @@ void SongManager::SaveMachineScoresToDisk()
 			fprintf(fp,"%d",CATEGORY_TOP_SCORE_VERSION);
 			for( int i=0; i<NUM_NOTES_TYPES; i++ )
 				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
-					for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+					for( int k=0; k<NUM_RANKING_LINES; k++ )
 						if( fp )
 							fprintf(fp, "%f %s\n", m_MachineScores[i][j][k].fScore, m_MachineScores[i][j][k].sName.c_str());
 			fclose(fp);
@@ -309,7 +309,7 @@ void SongManager::SaveMachineScoresToDisk()
 				fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 				
 				for( int i=0; i<NUM_NOTES_TYPES; i++ )
-					for( int j=0; j<NUM_HIGH_SCORE_LINES; j++ )
+					for( int j=0; j<NUM_RANKING_LINES; j++ )
 						fprintf(fp, "%d %f %s\n", 
 							pCourse->m_MachineScores[i][j].iDancePoints, 
 							pCourse->m_MachineScores[i][j].fSurviveTime, 
@@ -630,36 +630,27 @@ bool SongManager::IsUsingMemoryCard( PlayerNumber pn )
 }
 
 
-bool SongManager::IsNewMachineRecord( RankingCategory hsc, float fScore ) const	// return true if this is would be a new machine record
-{
-	for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
-	{
-		const MachineScore& hs = m_MachineScores[GAMESTATE->m_CurStyle][hsc][i];
-		if( fScore > hs.fScore )
-			return true;
-	}
-	return false;
-}
-
-struct MachineScoreAndPlayerNumber : public SongManager::MachineScore
+struct CategoryScoreToInsert
 {
 	PlayerNumber pn;
+	RankingCategory cat;
+	float fScore;
 
-	static int CompareDescending( const MachineScoreAndPlayerNumber &hs1, const MachineScoreAndPlayerNumber &hs2 )
+	static int CompareDescending( const CategoryScoreToInsert &hs1, const CategoryScoreToInsert &hs2 )
 	{
 		if( hs1.fScore > hs2.fScore )		return -1;
 		else if( hs1.fScore == hs2.fScore )	return 0;
 		else								return +1;
 	}
-	static void SortDescending( vector<MachineScoreAndPlayerNumber>& vHSout )
+	static void SortDescending( vector<CategoryScoreToInsert>& vHSout )
 	{ 
 		sort( vHSout.begin(), vHSout.end(), CompareDescending ); 
 	}
 };
 
-void SongManager::AddMachineRecord( RankingCategory hsc, float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+void SongManager::AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
 {
-	vector<MachineScoreAndPlayerNumber> vHS;
+	vector<CategoryScoreToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		iNewRecordIndexOut[p] = -1;
@@ -667,31 +658,33 @@ void SongManager::AddMachineRecord( RankingCategory hsc, float fScore[NUM_PLAYER
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
 
-		MachineScoreAndPlayerNumber hs;
-		hs.fScore = fScore[p];
-		hs.sName = "";		// this must be filled in later!
+		CategoryScoreToInsert hs;
 		hs.pn = (PlayerNumber)p;
+		hs.cat = hsc[p];
+		hs.fScore = fScore[p];
 		vHS.push_back( hs );
 	}
 
 	// Sort descending before inserting.
 	// This guarantees that a high score will not switch poitions on us when we later insert scores for the other player
-	MachineScoreAndPlayerNumber::SortDescending( vHS );
+	CategoryScoreToInsert::SortDescending( vHS );
 
 	for( unsigned i=0; i<vHS.size(); i++ )
 	{
-		MachineScoreAndPlayerNumber& newHS = vHS[i];
-		MachineScore* machineScores = m_MachineScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[newHS.pn]];
-		for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
+		CategoryScoreToInsert& newHS = vHS[i];
+		MachineScore* machineScores = m_MachineScores[nt][newHS.cat];
+		for( int i=0; i<NUM_RANKING_LINES; i++ )
 		{
 			if( newHS.fScore > machineScores[i].fScore )
 			{
 				// We found the insert point.  Shift down.
-				for( int j=i+1; j<NUM_HIGH_SCORE_LINES; j++ )
+				for( int j=i+1; j<NUM_RANKING_LINES; j++ )
 					machineScores[j] = machineScores[j-1];
 				// insert
-				machineScores[i] = newHS;
+				machineScores[i].fScore = newHS.fScore;
+				machineScores[i].sName = "STEP";
 				iNewRecordIndexOut[newHS.pn] = i;
+				break;
 			}
 		}
 	}

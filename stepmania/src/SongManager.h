@@ -84,10 +84,8 @@ public:
 	{
 		float fScore;
 		CString	sName;
-	} m_MachineScores[NUM_NOTES_TYPES][NUM_RANKING_CATEGORIES][NUM_HIGH_SCORE_LINES];
-
-	bool IsNewMachineRecord( RankingCategory hsc, float fScore ) const;	// return true if this is would be a new machine record
-	void AddMachineRecord( RankingCategory hsc, float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
+	} m_MachineScores[NUM_NOTES_TYPES][NUM_RANKING_CATEGORIES][NUM_RANKING_LINES];
+	void AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );

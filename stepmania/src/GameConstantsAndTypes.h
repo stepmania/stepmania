@@ -174,7 +174,7 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 
 
 //
-// High Score stuff
+// Ranking stuff
 //
 enum RankingCategory
 {
@@ -187,6 +187,7 @@ enum RankingCategory
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 
-const int NUM_HIGH_SCORE_LINES	= 5;
+const int NUM_RANKING_LINES	= 5;
+const int MAX_RANKING_NAME_LENGTH	= 4;
 
 #endif

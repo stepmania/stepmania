@@ -105,10 +105,10 @@ float JUDGE_Y( int l ) {
 }
 
 const ScreenMessage SM_GoToSelectMusic		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToSelectCourse		=	ScreenMessage(SM_User+2);
-const ScreenMessage SM_GoToFinalEvaluation	=	ScreenMessage(SM_User+3);
-const ScreenMessage SM_GoToMusicScroll		=	ScreenMessage(SM_User+4);
-const ScreenMessage SM_PlayCheer			=	ScreenMessage(SM_User+5);
+const ScreenMessage SM_GoToSelectCourse		=	ScreenMessage(SM_User+3);
+const ScreenMessage SM_GoToFinalEvaluation	=	ScreenMessage(SM_User+4);
+const ScreenMessage SM_GoToGameFinished		=	ScreenMessage(SM_User+5);
+const ScreenMessage SM_PlayCheer			=	ScreenMessage(SM_User+6);
 
 
 ScreenEvaluation::ScreenEvaluation( bool bSummary )
@@ -140,15 +140,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_SUMMARY:
-		{
-			// Show stats only for the latest 3 normal songs + passed extra stages
-			int iNumSongsToThrowAway = max( 0, PREFSMAN->m_iNumArcadeStages-3 );
-			for( unsigned i=iNumSongsToThrowAway; i<GAMESTATE->m_vPassedStageStats.size(); i++ )
-			{
-				stageStats += GAMESTATE->m_vPassedStageStats[i];
-				vSongsToShow.push_back( GAMESTATE->m_vPassedStageStats[i].pSong );
-			}
-		}
+		GAMESTATE->GetFinalEvalStatsAndSongs( stageStats, vSongsToShow );
 		break;
 	case RM_ARCADE_STAGE:
 	case RM_COURSE:
@@ -256,7 +248,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	//
 	bool bNewRecord[NUM_PLAYERS];
 	memset( bNewRecord, 0, sizeof(bNewRecord) );
-	m_bGoToNameEntry = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) || grade[p] == GRADE_E )
@@ -273,16 +264,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			break;
 		case RM_ARCADE_SUMMARY:
 			{
-				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;	// intentional: doesn't count extra stage
-				RankingCategory hsc = AverageMeterToRankingCategory( fAverageMeter );
-				m_bGoToNameEntry |= SONGMAN->IsNewMachineRecord( hsc, stageStats.fScore[p] );
 			}
 			break;
 		case RM_COURSE:
 			{
 				Course* pCourse = GAMESTATE->m_pCurCourse;
-				pCourse->IsNewMachineRecord( (PlayerNumber)p, stageStats.iActualDancePoints[p], stageStats.fAliveSeconds[p] );
-				m_bGoToNameEntry |= true;
+				NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+				pCourse->AddMemCardRecord( (PlayerNumber)p, nt, stageStats.iActualDancePoints[p], stageStats.fAliveSeconds[p] );
 			}
 			break;
 		default:
@@ -758,8 +746,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToSelectCourse:
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 		break;
-	case SM_GoToMusicScroll:
-		SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
+	case SM_GoToGameFinished:
+		SCREENMAN->SetNewScreen( "ScreenNameEntry" );
 		break;
 	case SM_GoToFinalEvaluation:
 		SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
@@ -830,7 +818,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex < PREFSMAN->m_iNumArcadeStages-1  )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else
-			m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
+			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
 	}
 
 	GAMESTATE->m_iCurrentStageIndex++;		// Increment the stage counter.

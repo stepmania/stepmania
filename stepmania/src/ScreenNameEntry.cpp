@@ -90,6 +90,8 @@ ScreenNameEntry::ScreenNameEntry()
 {
 	LOG->Trace( "ScreenNameEntry::ScreenNameEntry()" );
 
+
+	
 	// update cache
 	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
 	g_fCharsZoomLarge = CHARS_ZOOM_LARGE;
@@ -102,19 +104,80 @@ ScreenNameEntry::ScreenNameEntry()
 	g_fFakeBeatsPerSec = FAKE_BEATS_PER_SEC;
 
 
-	
-	// DEBUGGING STUFF
+
+
+		// DEBUGGING STUFF
 //	GAMESTATE->m_CurGame = GAME_DANCE;
 //	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 //	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 //	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 //	GAMESTATE->m_LastRankingCategory[PLAYER_1] = RANKING_A;
-//	GAMESTATE->m_iLastHighScoreIndex[PLAYER_1] = 0;
+//	GAMESTATE->m_iLastRankingIndex[PLAYER_1] = 0;
 
 
 
 
+
+
+	// Find out if any of the players deserve to enter their name
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		{
+			StageStats stageStats;
+			vector<Song*> vSongs;
+			GAMESTATE->GetFinalEvalStatsAndSongs( stageStats, vSongs );
+			
+			float fAverageMeter[NUM_PLAYERS];
+			RankingCategory cat[NUM_PLAYERS];
+			float fScore[NUM_PLAYERS];
+			int iRankingIndex[NUM_PLAYERS];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				fAverageMeter[p] = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
+				cat[p] = AverageMeterToRankingCategory( fAverageMeter[p] );
+				fScore[p] = stageStats.fScore[p];
+			}
+
+			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			SONGMAN->AddMachineRecords( nt, cat, fScore, iRankingIndex );
+
+			GAMESTATE->m_LastRankingNotesType = nt;
+			COPY( GAMESTATE->m_LastRankingCategory, cat );
+			COPY( GAMESTATE->m_iLastRankingIndex, iRankingIndex );
+		}
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			StageStats stageStats;
+			vector<Song*> vSongs;
+			GAMESTATE->GetFinalEvalStatsAndSongs( stageStats, vSongs );
+	
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+		
+			int iDancePoints[NUM_PLAYERS];
+			float fAliveSeconds[NUM_PLAYERS];
+			int iRankingIndex[NUM_PLAYERS];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				iDancePoints[p] = stageStats.iActualDancePoints[p];
+				fAliveSeconds[p] = stageStats.fAliveSeconds[p];
+			}
+
+			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			pCourse->AddMachineRecords( nt, iDancePoints, fAliveSeconds, iRankingIndex );
+	
+			GAMESTATE->m_LastRankingNotesType = nt;
+			GAMESTATE->m_pLastPlayedCourse = pCourse;
+			COPY( GAMESTATE->m_iLastRankingIndex, iRankingIndex );
+		}
+		break;
+	}
+
+	
 	GAMESTATE->m_bPastHereWeGo = true;	// enable the gray arrows
 
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","name entry") );
@@ -122,8 +185,10 @@ ScreenNameEntry::ScreenNameEntry()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		bool bNewHighScore = GAMESTATE->m_iLastHighScoreIndex[p] != -1;
-		m_bConfirmedName[p] = !bNewHighScore;	// false if they made a new high score
+		bool bNewHighScore = GAMESTATE->m_iLastRankingIndex[p] != -1;
+		m_bStillEnteringName[p] = bNewHighScore;	// false if they made a new high score
+		for( int i=0; i<MAX_RANKING_NAME_LENGTH; i++ )
+			m_sSelectedName[p] += ' ';
 
 		if( !bNewHighScore )
 			continue;	// skip
@@ -158,7 +223,7 @@ ScreenNameEntry::ScreenNameEntry()
 		m_textCategory[p].LoadFromFont( THEME->GetPathTo("Fonts","header2") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
-		CString sCategoryText = ssprintf("No. %d", GAMESTATE->m_iLastHighScoreIndex[p]+1);
+		CString sCategoryText = ssprintf("No. %d", GAMESTATE->m_iLastRankingIndex[p]+1);
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
@@ -175,6 +240,19 @@ ScreenNameEntry::ScreenNameEntry()
 		m_textCategory[p].SetText( sCategoryText );
 		this->AddChild( &m_textCategory[p] );
 	}
+
+
+	bool bAnyStillEntering = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		bAnyStillEntering |= m_bStillEnteringName[p];
+	if( !bAnyStillEntering )
+	{
+		this->SendScreenMessage( SM_GoToNextScreen, 0 );
+		return;
+	}
+
+
+
 
 	m_Timer.SetTimer(TIMER_SECONDS);
 	m_Timer.SetXY( TIMER_X, TIMER_Y );
@@ -217,8 +295,8 @@ void ScreenNameEntry::DrawPrimitives()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_bConfirmedName[p] )
-			continue;	// don't draw scrolling arrows.  They already confirmed.
+		if( !m_bStillEnteringName[p] )
+			continue;	// don't draw scrolling arrows
 
 		float fY = GRAY_ARROWS_Y + GetClosestCharYPos(m_fFakeBeat) - g_iNumCharsToDrawBehind*g_fCharsSpacingY;
 		int iCharIndex = iStartDrawingIndex % NUM_NAME_CHARS;
@@ -268,28 +346,13 @@ void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( StyleI.IsValid() )
 	{
-		m_GrayArrowRow[StyleI.player].Step( StyleI.col );
-		m_soundStep.Play();
-		char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
-		m_textSelectedChars[StyleI.player][StyleI.col].SetText( ssprintf("%c",c) );
-	}
-
-	if( MenuI.IsValid() )
-	{
-		if( MenuI.button == MENU_BUTTON_START )
+		if( StyleI.col < MAX_RANKING_NAME_LENGTH )
 		{
+			m_GrayArrowRow[StyleI.player].Step( StyleI.col );
 			m_soundStep.Play();
-
-			m_bConfirmedName[MenuI.player] = true;
-
-			bool bAllConfirmed = true;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				bAllConfirmed &= m_bConfirmedName[p];
-			if( bAllConfirmed )
-			{
-				if( !m_Fade.IsClosing() )
-					m_Fade.CloseWipingRight( SM_GoToNextScreen );
-			}
+			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
+			m_textSelectedChars[StyleI.player][StyleI.col].SetText( ssprintf("%c",c) );
+			m_sSelectedName[StyleI.player][StyleI.col] = c;
 		}
 	}
 
@@ -302,10 +365,52 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_MenuTimer:
 		if( !m_Fade.IsClosing() )
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				this->MenuStart( (PlayerNumber)p );
 			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+		}
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
 		break;
+	}
+}
+
+
+void ScreenNameEntry::MenuStart( PlayerNumber pn )
+{
+	if( m_bStillEnteringName[pn] )
+	{
+		m_soundStep.Play();
+
+		m_bStillEnteringName[pn] = false;
+
+		TrimRight( m_sSelectedName[pn], " " );
+		TrimLeft( m_sSelectedName[pn], " " );
+
+		if( m_sSelectedName[pn] == "" )
+			m_sSelectedName[pn] = "STEP";
+
+		
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+			SONGMAN->m_MachineScores[GAMESTATE->m_LastRankingNotesType][GAMESTATE->m_LastRankingCategory[pn]][GAMESTATE->m_iLastRankingIndex[pn]].sName = m_sSelectedName[pn];
+			break;
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			GAMESTATE->m_pLastPlayedCourse->m_MachineScores[GAMESTATE->m_LastRankingNotesType][GAMESTATE->m_iLastRankingIndex[pn]].sName = m_sSelectedName[pn];
+			break;
+		default:
+			ASSERT(0);
+		}
+
+		bool bAnyStillEntering = false;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			bAnyStillEntering |= m_bStillEnteringName[p];
+		if( !bAnyStillEntering && !m_Fade.IsClosing() )
+			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 	}
 }

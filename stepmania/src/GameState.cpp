@@ -84,7 +84,7 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_LastRankingCategory[p] = (RankingCategory)-1;
-		m_iLastHighScoreIndex[p] = -1;
+		m_iLastRankingIndex[p] = -1;
 	}
 }
 
@@ -249,4 +249,17 @@ bool GameState::HasEarnedExtraStage()
 		}
 	}
 	return false;
+}
+
+void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut )
+{
+	statsOut = StageStats();
+
+	// Show stats only for the latest 3 normal songs + passed extra stages
+	int iNumSongsToThrowAway = max( 0, PREFSMAN->m_iNumArcadeStages-3 );
+	for( unsigned i=iNumSongsToThrowAway; i<GAMESTATE->m_vPassedStageStats.size(); i++ )
+	{
+		statsOut += GAMESTATE->m_vPassedStageStats[i];
+		vSongsOut.push_back( GAMESTATE->m_vPassedStageStats[i].pSong );
+	}
 }
