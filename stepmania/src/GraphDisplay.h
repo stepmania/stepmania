@@ -2,19 +2,19 @@
 #define GRAPH_DISPLAY_H
 
 #include "ActorFrame.h"
-#include "PlayerNumber.h"
 #include "RageTexture.h"
 
-struct StageStats;
+struct PlayerStageStats;
+
 class GraphDisplay: public ActorFrame
 {
 public:
 	GraphDisplay();
 	~GraphDisplay() { Unload(); }
-	void Load( CString TexturePath, float height );
+	void Load( const CString &TexturePath, float height );
 	void Unload();
 
-	void LoadFromStageStats( const StageStats &s, PlayerNumber pn );
+	void LoadFromStageStats( const PlayerStageStats &s );
 	void Update( float fDeltaTime );
 	void DrawPrimitives();
 

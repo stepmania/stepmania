@@ -14,7 +14,7 @@ GraphDisplay::GraphDisplay()
 }
 
 
-void GraphDisplay::Load( CString TexturePath, float height )
+void GraphDisplay::Load( const CString &TexturePath, float height )
 {
 	m_Position = 1;
 	memset( m_CurValues, 0, sizeof(m_CurValues) );
@@ -39,11 +39,11 @@ void GraphDisplay::Unload()
 	m_pTexture = NULL;
 }
 
-void GraphDisplay::LoadFromStageStats( const StageStats &s, PlayerNumber pn )
+void GraphDisplay::LoadFromStageStats( const PlayerStageStats &s )
 {
 	memcpy( m_LastValues, m_CurValues, sizeof(m_CurValues) );
 	m_Position = 0;
-	s.m_player[pn].GetLifeRecord( m_DestValues, VALUE_RESOLUTION );
+	s.GetLifeRecord( m_DestValues, VALUE_RESOLUTION );
 	for( unsigned i=0; i<ARRAYSIZE(m_DestValues); i++ )
 		CLAMP( m_DestValues[i], 0.f, 1.f );
 	UpdateVerts();

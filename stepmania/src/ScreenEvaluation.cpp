@@ -119,6 +119,10 @@ void ScreenEvaluation::Init()
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.ChooseRandomMofifiers();
 		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.ChooseRandomMofifiers();
+		if( rand() % 2 )
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = true;	// show "disqualified"
+		if( rand() % 2 )
+			GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = true;	// show "disqualified"
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
@@ -449,7 +453,7 @@ void ScreenEvaluation::Init()
 
 			m_Graph[p].SetName( ssprintf("GraphP%i",p+1) );
 			m_Graph[p].Load( THEME->GetPathToG(ssprintf("%s graph p%i",m_sName.c_str(), p+1)), GRAPH_START_HEIGHT );
-			m_Graph[p].LoadFromStageStats( stageStats, (PlayerNumber)p );
+			m_Graph[p].LoadFromStageStats( stageStats.m_player[p] );
 			SET_XY_AND_ON_COMMAND( m_Graph[p] );
 			this->AddChild( &m_Graph[p] );
 		}
@@ -460,7 +464,7 @@ void ScreenEvaluation::Init()
 		FOREACH_EnabledPlayer( p )
 		{
 			m_Combo[p].SetName( m_sName, ssprintf("ComboP%i",p+1) );
-			m_Combo[p].Load( ssprintf("ScreenEvaluationStage combo p%i", p+1), stageStats, (PlayerNumber)p );
+			m_Combo[p].Load( ssprintf("ScreenEvaluationStage combo p%i", p+1), stageStats, p );
 			SET_XY_AND_ON_COMMAND( m_Combo[p] );
 
 			this->AddChild( &m_Combo[p] );
