@@ -113,15 +113,15 @@ void ScreenProfileOptions::ExportOptions()
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = "";
 }
 
-void ScreenProfileOptions::GoToPrevState()
+void ScreenProfileOptions::GoToPrevScreen()
 {
 	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
-void ScreenProfileOptions::GoToNextState()
+void ScreenProfileOptions::GoToNextScreen()
 {
 	PREFSMAN->SaveGlobalPrefsToDisk();
-	GoToPrevState();
+	GoToPrevScreen();
 }
 
 void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )

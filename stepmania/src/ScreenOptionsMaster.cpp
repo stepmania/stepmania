@@ -571,7 +571,7 @@ void ScreenOptionsMaster::ExportOptions()
 	CHECKPOINT;
 }
 
-void ScreenOptionsMaster::GoToNextState()
+void ScreenOptionsMaster::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
@@ -579,7 +579,7 @@ void ScreenOptionsMaster::GoToNextState()
 		SCREENMAN->SetNewScreen( m_sNextScreen );
 }
 
-void ScreenOptionsMaster::GoToPrevState()
+void ScreenOptionsMaster::GoToPrevScreen()
 {
 	/* XXX: A better way to handle this would be to check if we're a pushed screen. */
 	if( GAMESTATE->m_bEditing )

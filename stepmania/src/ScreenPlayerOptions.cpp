@@ -57,7 +57,7 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 }
 
 
-void ScreenPlayerOptions::GoToPrevState()
+void ScreenPlayerOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
@@ -65,7 +65,7 @@ void ScreenPlayerOptions::GoToPrevState()
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 }
 
-void ScreenPlayerOptions::GoToNextState()
+void ScreenPlayerOptions::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();

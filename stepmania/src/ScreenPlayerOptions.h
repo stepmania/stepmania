@@ -14,8 +14,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	void GoToNextState();
-	void GoToPrevState();
+	void GoToNextScreen();
+	void GoToPrevScreen();
 
 	void UpdateDisqualified();
 

@@ -58,14 +58,14 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 }
 
 
-void ScreenNetworkOptions::GoToPrevState()
+void ScreenNetworkOptions::GoToPrevScreen()
 {
 	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
-void ScreenNetworkOptions::GoToNextState()
+void ScreenNetworkOptions::GoToNextScreen()
 {
-	GoToPrevState();
+	GoToPrevScreen();
 }
 
 void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )

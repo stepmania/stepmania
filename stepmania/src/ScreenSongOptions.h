@@ -10,8 +10,8 @@ public:
 	static CString GetNextScreen();
 
 private:
-	void GoToNextState();
-	void GoToPrevState();
+	void GoToNextScreen();
+	void GoToPrevScreen();
 };
 
 #endif

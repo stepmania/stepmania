@@ -899,15 +899,15 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		StartGoToNextState();
+		StartGoToNextScreen();
 		break;
 	case SM_GoToPrevScreen:
 //		this->ExportOptions();	// Don't save options if we're going back!
-		this->GoToPrevState();
+		this->GoToPrevScreen();
 		break;
 	case SM_GoToNextScreen:
 		this->ExportOptions();
-		this->GoToNextState();
+		this->GoToNextScreen();
 		break;
 	case SM_BeginFadingOut:
 		if(IsTransitioning())
@@ -1118,7 +1118,7 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 	Back( SM_GoToPrevScreen );
 }
 
-void ScreenOptions::StartGoToNextState()
+void ScreenOptions::StartGoToNextScreen()
 {
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
@@ -1174,7 +1174,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	{
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
 		if( AllAreOnExit()  &&  type == IET_FIRST_PRESS && !IsTransitioning() )
-			StartGoToNextState();
+			StartGoToNextScreen();
 		return;
 	}
 
@@ -1232,7 +1232,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		case NAV_THREE_KEY_MENU:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
 			if( type == IET_FIRST_PRESS && !IsTransitioning() )
-				StartGoToNextState();
+				StartGoToNextScreen();
 			break;
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then

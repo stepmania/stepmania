@@ -16,8 +16,8 @@ private:
 	void ImportOptions();
 	void ExportOptions();
 
-	void GoToNextState();
-	void GoToPrevState();
+	void GoToNextScreen();
+	void GoToPrevScreen();
 
 	void UpdateConnectStatus();
 

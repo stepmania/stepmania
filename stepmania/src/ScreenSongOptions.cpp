@@ -29,7 +29,7 @@ ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 	}
 }
 
-void ScreenSongOptions::GoToPrevState()
+void ScreenSongOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen( SM_None );
@@ -37,7 +37,7 @@ void ScreenSongOptions::GoToPrevState()
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 }
 
-void ScreenSongOptions::GoToNextState()
+void ScreenSongOptions::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();

@@ -70,10 +70,10 @@ protected:
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
-	void StartGoToNextState();
+	void StartGoToNextScreen();
 
-	virtual void GoToNextState() = 0;
-	virtual void GoToPrevState() = 0;
+	virtual void GoToNextScreen() = 0;
+	virtual void GoToPrevScreen() = 0;
 
 	void MenuLeft( PlayerNumber pn, const InputEventType type ) { ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }
 	void MenuRight( PlayerNumber pn, const InputEventType type ) { ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }

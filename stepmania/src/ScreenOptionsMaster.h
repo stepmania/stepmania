@@ -54,8 +54,8 @@ protected:
 	virtual void ExportOptions();
 	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions
 
-	virtual void GoToNextState();
-	virtual void GoToPrevState();
+	virtual void GoToNextScreen();
+	virtual void GoToPrevScreen();
 
 	virtual void RefreshIcons();
 };
