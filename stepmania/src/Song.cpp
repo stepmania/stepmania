@@ -38,8 +38,8 @@ const int FILE_CACHE_VERSION = 70;	// increment this when Song or Notes changes 
 int CompareBPMSegments(const void *arg1, const void *arg2)
 {
 	// arg1 and arg2 are of type Step**
-	BPMSegment* seg1 = (BPMSegment*)arg1;
-	BPMSegment* seg2 = (BPMSegment*)arg2;
+	const BPMSegment* seg1 = (const BPMSegment*)arg1;
+	const BPMSegment* seg2 = (const BPMSegment*)arg2;
 
 	float score1 = seg1->m_fStartBeat;
 	float score2 = seg2->m_fStartBeat;
@@ -60,8 +60,8 @@ void SortBPMSegmentsArray( CArray<BPMSegment,BPMSegment&> &arrayBPMSegments )
 int CompareStopSegments(const void *arg1, const void *arg2)
 {
 	// arg1 and arg2 are of type Step**
-	StopSegment* seg1 = (StopSegment*)arg1;
-	StopSegment* seg2 = (StopSegment*)arg2;
+	const StopSegment* seg1 = (const StopSegment*)arg1;
+	const StopSegment* seg2 = (const StopSegment*)arg2;
 
 	float score1 = seg1->m_fStartBeat;
 	float score2 = seg2->m_fStartBeat;
