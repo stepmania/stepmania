@@ -297,9 +297,7 @@ REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
 static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
 	"Edit",
 	"Delete",
-	"Copy",
-	"Autogen",
-	"Blank"
+	"Create",
 };
 XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );

@@ -418,15 +418,9 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
 			m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
 		}
-		else if( GetSelectedSourceSteps() )
-		{
-			m_Actions.push_back( EDIT_MENU_ACTION_COPY );
-			m_Actions.push_back( EDIT_MENU_ACTION_AUTOGEN );
-			m_Actions.push_back( EDIT_MENU_ACTION_BLANK );
-		}
 		else
 		{
-			m_Actions.push_back( EDIT_MENU_ACTION_BLANK );
+			m_Actions.push_back( EDIT_MENU_ACTION_CREATE );
 		}
 		m_iSelection[ROW_ACTION] = 0;
 		// fall through

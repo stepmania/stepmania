@@ -227,36 +227,25 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
 		}
 		break;
-	case EDIT_MENU_ACTION_COPY:
-	case EDIT_MENU_ACTION_AUTOGEN:
-	case EDIT_MENU_ACTION_BLANK:
+	case EDIT_MENU_ACTION_CREATE:
 		ASSERT( !pSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			pSteps = new Steps;
 			CString sEditName;
-			switch( action )
+			if( pSourceSteps )
 			{
-				case EDIT_MENU_ACTION_COPY:
-					ASSERT( pSourceSteps );
-					pSteps->CopyFrom( pSourceSteps, st );
-					sEditName = GetCopyDescription(pSourceSteps);
-					break;
-				case EDIT_MENU_ACTION_AUTOGEN:
-					ASSERT( pSourceSteps );
-					pSteps->AutogenFrom( pSourceSteps, st );
-					pSteps->DeAutogen();
-					sEditName = GetCopyDescription(pSourceSteps);
-					break;
-				case EDIT_MENU_ACTION_BLANK:
-					pSteps->CreateBlank( st );
-					pSteps->SetMeter( 1 );
-					sEditName = "Blank";
-					break;
-				default:
-					ASSERT(0);
+				pSteps->CopyFrom( pSourceSteps, st );
+				sEditName = GetCopyDescription(pSourceSteps);
 			}
+			else
+			{
+				pSteps->CreateBlank( st );
+				pSteps->SetMeter( 1 );
+				sEditName = "Blank";
+			}
+
 			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
 			pSong->MakeUniqueEditDescription( st, sEditName ); 
 			pSteps->SetDescription( sEditName );
@@ -279,9 +268,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	switch( action )
 	{
 	case EDIT_MENU_ACTION_EDIT:
-	case EDIT_MENU_ACTION_COPY:
-	case EDIT_MENU_ACTION_AUTOGEN:
-	case EDIT_MENU_ACTION_BLANK:
+	case EDIT_MENU_ACTION_CREATE:
 		{
 			// Prepare prepare for ScreenEdit
 			ASSERT( pSteps );
