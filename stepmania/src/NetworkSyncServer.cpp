@@ -267,7 +267,7 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 			Reply.Write2(playersPtr[x]->maxCombo);
 //			LOG->Info("MaxCombo: %d", playersPtr[x]->maxCombo);
 		}
-		SendNetPacket(clientNum, (char*)Reply.Data, Reply.Position);
+		SendToAllClients(Reply);
 	}
 }
 
