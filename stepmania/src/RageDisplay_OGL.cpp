@@ -90,6 +90,7 @@ static bool g_bEXT_texture_env_combine = true;
 static bool g_bGL_EXT_bgra = true;
 
 static bool g_bReversePackedPixelsWorks = true;
+static bool g_bColorIndexTableWorks = true;
 
 /* OpenGL system information that generally doesn't change at runtime. */
 
@@ -671,6 +672,21 @@ void SetupExtensions()
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures();
 	CheckReversePackedPixels();
+
+	{
+		GLint iMaxTableSize = 0;
+		glGetIntegerv( GL_MAX_PIXEL_MAP_TABLE, &iMaxTableSize );
+		if( iMaxTableSize < 256 )
+		{
+			/* The minimum GL_MAX_PIXEL_MAP_TABLE is 32; if it's not at least 256,
+			 * we can't fit a palette in it, so we can't send paletted data as input
+			 * for a non-paletted texture. */
+			LOG->Info( "GL_MAX_PIXEL_MAP_TABLE is only %i", iMaxTableSize );
+			g_bColorIndexTableWorks = false;
+		}
+		else
+			g_bColorIndexTableWorks = true;
+	}
 }
 
 void DumpOpenGLDebugInfo()
@@ -1589,11 +1605,20 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 }
 
 
-RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height )
+RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture )
 {
 	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	
+	/* If img is paletted, we're setting up a non-paletted texture, and color indexes
+	 * are too small, depalettize. */
+	bool bSupported = true;
+	if( !bPalettedTexture && img->fmt.BytesPerPixel == 1 && !g_bColorIndexTableWorks )
+		bSupported = false;
+
 	if( pixfmt == NUM_PIX_FORMATS || !SupportsSurfaceFormat(pixfmt) )
+		bSupported = false;
+
+	if( !bSupported )
 	{
 		/* The source isn't in a supported, known pixel format.  We need to convert
 		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
@@ -1616,6 +1641,36 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, 
 	return pixfmt;
 }
 
+/* If we're sending a paletted surface to a non-paletted texture, set the palette. */
+void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfacePalette *palette )
+{
+	if( glImageFormat != GL_COLOR_INDEX || glTexFormat == GL_COLOR_INDEX8_EXT )
+	{
+		glPixelTransferi( GL_MAP_COLOR, FALSE );
+		return;
+	}
+
+	GLushort buf[4][256];
+	memset( buf, 0, sizeof(buf) );
+
+	for( int i = 0; i < palette->ncolors; ++i )
+	{
+		buf[0][i] = SCALE( palette->colors[i].r, 0, 255, 0, 65535 );
+		buf[1][i] = SCALE( palette->colors[i].g, 0, 255, 0, 65535 );
+		buf[2][i] = SCALE( palette->colors[i].b, 0, 255, 0, 65535 );
+		buf[3][i] = SCALE( palette->colors[i].a, 0, 255, 0, 65535 );
+	}
+
+	FlushGLErrors();
+	glPixelMapusv( GL_PIXEL_MAP_I_TO_R, 256, buf[0] );
+	glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
+	glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
+	glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
+	glPixelTransferi( GL_MAP_COLOR, TRUE );
+	GLenum error = glGetError();
+	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
+}
+
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
 	RageSurface* img,
@@ -1627,11 +1682,15 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	/* Find the pixel format of the image we've been given. */
 	bool FreeImg;
-	PixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h );
+	PixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h, pixfmt == FMT_PAL );
 
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
+
+	/* If the image is paletted, but we're not sending it to a paletted image,
+	 * set up glPixelMap. */
+	SetPixelMapForSurface( glImageFormat, glTexFormat, img->format->palette );
 
 	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
 	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
@@ -1765,7 +1824,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 	return uTexHandle;
 }
 
-
+/* This doesn't support img being paletted if the surface itself isn't paletted.
+ * This is only used for movies anyway, which are never paletted. */
 void RageDisplay_OGL::UpdateTexture( 
 	unsigned uTexHandle, 
 	RageSurface* img,
@@ -1774,7 +1834,7 @@ void RageDisplay_OGL::UpdateTexture(
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 
 	bool FreeImg;
-	PixelFormat pixfmt = GetImgPixelFormat( img, FreeImg, width, height );
+	PixelFormat pixfmt = GetImgPixelFormat( img, FreeImg, width, height, false );
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 

@@ -84,7 +84,7 @@ protected:
 	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height );
+	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
 	bool SupportsSurfaceFormat( PixelFormat pixfmt );
 	
 	void SendCurrentMatrices();
