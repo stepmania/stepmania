@@ -2,11 +2,7 @@
 #define SCREEN_CENTER_IMAGE_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
 #include "BitmapText.h"
-#include "PrefsManager.h"
-#include "InputMapper.h"
-#include "RageInputDevice.h"
 
 
 class ScreenCenterImage : public ScreenWithMenuElements
