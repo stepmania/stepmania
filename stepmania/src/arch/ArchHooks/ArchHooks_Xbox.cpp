@@ -3,6 +3,8 @@
 #include "dsound.h"	// for timeGetTime
 #include "archutils/Xbox/custom_launch_params.h" // for XGetCustomLaunchData
 
+#include <xtl.h> // for XNetStartup
+
 typedef struct _UNICODE_STRING {unsigned short Length; unsigned short MaximumLength; PSTR Buffer;} UNICODE_STRING,*PUNICODE_STRING;
 extern "C" XBOXAPI DWORD WINAPI IoCreateSymbolicLink(IN PUNICODE_STRING SymbolicLinkName,IN PUNICODE_STRING DeviceName);
 
@@ -72,12 +74,30 @@ void MountDrives()
 	MountDriveLetter('G', "Harddisk0\\Partition7", "\\");
 }
 
+bool SetupNetwork()
+{
+#if !defined(WITHOUT_NETWORKING)
+	XNetStartupParams xnsp;
+	memset(&xnsp, 0, sizeof(xnsp));
+	xnsp.cfgSizeOfStruct = sizeof(XNetStartupParams);
+	xnsp.cfgFlags = XNET_STARTUP_BYPASS_SECURITY;
+
+	INT err = XNetStartup(&xnsp);
+
+	return err == 0;
+#else
+	return true;
+#endif
+}
+
 ArchHooks_Xbox::ArchHooks_Xbox()
 {
 	XGetCustomLaunchData();
 
 	// mount A to DVD, C, E, F, G, X, and Y to the harddisk
 	MountDrives();
+
+	SetupNetwork();
 }
 
 ArchHooks_Xbox::~ArchHooks_Xbox()
