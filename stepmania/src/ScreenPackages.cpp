@@ -581,26 +581,26 @@ void ScreenPackages::HTTPUpdate()
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
 	int Size = 1; 
-	while ( Size > 0 )
+	while( Size > 0 )
 	{
 		char Buffer[1024];
 		Size = m_wSocket.ReadData( Buffer, 1024 );
 		m_sBUFFER.append( Buffer, Size );
 		BytesGot += Size;
 	}
-	if (!m_bGotHeader)
+	if( !m_bGotHeader )
 	{
 		m_sStatus = "Waiting for header.";
 		//We don't know if we are using unix-style or dos-style
 		int HeaderEnd = m_sBUFFER.find("\n\n");
-		if ( HeaderEnd < 0 )
+		if( HeaderEnd < 0 )
 			HeaderEnd = m_sBUFFER.find("\r\n\r\n");
-		if ( HeaderEnd >= 0 )
+		if( HeaderEnd >= 0 )
 		{
 			int i = m_sBUFFER.find(" ");
 			int j = m_sBUFFER.find(" ",i+1);
 			int k = m_sBUFFER.Find("\n",j+1);
-			if ( (i<0) || (j<0) || (k<0) )
+			if ( i < 0 || j < 0 || k < 0 )
 			{
 				m_iResponceCode = -100;
 				m_iResponceName = "Malformed responce.";
@@ -611,7 +611,7 @@ void ScreenPackages::HTTPUpdate()
 			i = m_sBUFFER.find("Content-Length:");
 			j = m_sBUFFER.find("\n", i+1 );
 
-			if ( i > 0 )
+			if( i > 0 )
 				m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
 			else
 				m_iTotalBytes = -1;	//We don't know, so go until disconnect
@@ -622,7 +622,7 @@ void ScreenPackages::HTTPUpdate()
 	}
 	else
 	{
-		if ( m_bIsPackage )
+		if( m_bIsPackage )
 		{
 			m_iDownloaded += m_sBUFFER.length();
 			m_fOutputFile.Write( m_sBUFFER );
@@ -646,18 +646,18 @@ void ScreenPackages::HTTPUpdate()
 			m_bGotHeader=false;
 			m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
 
-			if ( ( m_iResponceCode < 200 ) || ( m_iResponceCode >= 400 ) )
+			if( m_iResponceCode < 200 || m_iResponceCode >= 400 )
 			{
 				m_sStatus = ssprintf( "%d", m_iResponceCode ) + m_iResponceName;
 			}
 			else
 			{
-				if ( m_bIsPackage && ( m_iResponceCode < 300 ) )
+				if( m_bIsPackage && m_iResponceCode < 300 )
 				{
-					m_fOutputFile.Flush( );
-					m_fOutputFile.Close( );
-					FlushDirCache( );
-					RefreshPackages( );
+					m_fOutputFile.Flush();
+					m_fOutputFile.Close();
+					FlushDirCache();
+					RefreshPackages();
 					m_iDownloaded = 0;
 				}
 				else
