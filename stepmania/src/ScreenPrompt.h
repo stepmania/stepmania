@@ -69,6 +69,8 @@ protected:
 	void* m_pCallbackData;
 	Transition		m_In;
 	Transition		m_Out;
+
+	RageSound		m_sndChange;
 };
 
 #endif

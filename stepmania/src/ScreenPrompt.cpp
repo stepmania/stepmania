@@ -95,6 +95,8 @@ void ScreenPrompt::Init()
 	
 	m_Out.Load( THEME->GetPathB("ScreenPrompt","out") );
 	this->AddChild( &m_Out );
+
+	m_sndChange.Load( THEME->GetPathS("ScreenPrompt","change"), true );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -161,7 +163,7 @@ void ScreenPrompt::Change( int dir )
 	m_rectAnswerBox.SetXY( m_textAnswer[m_Answer].GetX(), m_textAnswer[m_Answer].GetY() );
 	m_rectAnswerBox.SetZoomX( m_textAnswer[m_Answer].GetUnzoomedWidth()+10.0f );
 
-	SOUND->PlayOnce( THEME->GetPathS("ScreenPrompt","change") );
+	m_sndChange.Play();
 }
 
 void ScreenPrompt::MenuLeft( PlayerNumber pn )
