@@ -92,8 +92,8 @@ void BeginnerHelper::Initialize( int iDancePadType )
 	switch(iDancePadType)
 	{
 		case 0: break; // No pad
-		case 1:m_mDancePad.LoadMilkshapeAscii("Characters\\DancePad-DDR.bones.txt"); break;
-		case 2:m_mDancePad.LoadMilkshapeAscii("Characters\\DancePads-DDR.bones.txt"); break;
+		case 1:m_mDancePad.LoadMilkshapeAscii("Characters\\DancePad-DDR.txt"); break;
+		case 2:m_mDancePad.LoadMilkshapeAscii("Characters\\DancePads-DDR.txt"); break;
 	}
 	this->AddChild( &m_mDancePad );
 

@@ -60,7 +60,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		if( iRnd != 0 )
 		{
 			m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
-			m_mDancePad.LoadMilkshapeAscii("Characters\\DancePad-DDR.bones.txt");
+			m_mDancePad.LoadMilkshapeAscii("Characters\\DancePad-DDR.txt");
 			m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
 			
 			m_mCharacter.SetRotationX( 40 );
