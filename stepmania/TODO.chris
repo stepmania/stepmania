@@ -2,6 +2,12 @@
 Fix
 /////////////////////////
 
+default difficulty goofed
+
+- ez2dancer missing graphic
+
+- fade between random movies
+
 - After getting an "A" or less on Extra Stage 1, SM should display the total results screen for all 4 songs instead of cutting to credits. Clearing both extra stages should display all 5 stages on results screen. This could/should apply to if 5 arcade songs is selected in Machine Options. 
 
 - Also, this may be more cosmetic but worth the shot. The ordering on final results is backwards, is it possible if you could display the songs FINAL, 2nd, 1st Stage, but in the reverse order? Like... SM has them being tiled wrong. Here's an example of what I mean right HERE (Taken from AaronInJapan.com) 
