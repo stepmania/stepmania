@@ -48,12 +48,14 @@ Combo::Combo()
 
 void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 {
+#ifndef DEBUG
 	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstration )	// cheaters never prosper
 	{
 		m_iCurCombo = 0;
 		m_iCurComboOfPerfects = 0;
 		return;
 	}
+#endif //DEBUG
 
 	// combo of marvelous/perfect
 	switch( score )
