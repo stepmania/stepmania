@@ -569,7 +569,7 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
-	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
+	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 #endif //DEBUG
 
@@ -590,7 +590,7 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 {
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
-	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
+	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 #endif //DEBUG
 
