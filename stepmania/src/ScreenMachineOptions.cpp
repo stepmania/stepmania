@@ -125,9 +125,9 @@ void ScreenMachineOptions::ExportOptions()
 	case 2:	PREFSMAN->m_fJudgeWindowSeconds = 0.21f;	break;
 	case 3:	PREFSMAN->m_fJudgeWindowSeconds = 0.18f;	break;
 	case 4:	PREFSMAN->m_fJudgeWindowSeconds = 0.15f;	break;
-	case 5:	PREFSMAN->m_fJudgeWindowSeconds = 0.10f;	break;
-	case 6:	PREFSMAN->m_fJudgeWindowSeconds = 0.07f;	break;
-	case 7:	PREFSMAN->m_fJudgeWindowSeconds = 0.04f;	break;
+	case 5:	PREFSMAN->m_fJudgeWindowSeconds = 0.12f;	break;
+	case 6:	PREFSMAN->m_fJudgeWindowSeconds = 0.09f;	break;
+	case 7:	PREFSMAN->m_fJudgeWindowSeconds = 0.06f;	break;
 	default:	ASSERT(0);
 	}
 
