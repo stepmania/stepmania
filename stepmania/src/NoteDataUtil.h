@@ -73,7 +73,7 @@ namespace NoteDataUtil
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
 
-	void TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st );
+	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat = -1, float fEndBeat = -1 );
 
 	void Scale( NoteData &nd, float fScale );
 

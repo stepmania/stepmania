@@ -974,7 +974,7 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 				in.SetTapNote(t,r,TAP_TAP);
 }
 
-void NoteDataUtil::TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st )
+void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat, float fEndBeat )
 {
 	if( !po.m_bHoldNotes )
 		RemoveHoldNotes( nd );
@@ -992,13 +992,13 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType
 
 	switch( po.m_Transform )
 	{
-	case PlayerOptions::TRANSFORM_NONE:											break;
-	case PlayerOptions::TRANSFORM_LITTLE:		NoteDataUtil::Little(nd);	break;
-	case PlayerOptions::TRANSFORM_WIDE:			NoteDataUtil::Wide(nd);		break;
-	case PlayerOptions::TRANSFORM_BIG:			NoteDataUtil::Big(nd);		break;
-	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(nd);		break;
-	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(nd);	break;
-	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(nd);		break;
+	case PlayerOptions::TRANSFORM_NONE:																break;
+	case PlayerOptions::TRANSFORM_LITTLE:		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_WIDE:			NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_BIG:			NoteDataUtil::Big(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);		break;
+	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(nd, fStartBeat, fEndBeat);		break;
 	default:		ASSERT(0);
 	}
 }
