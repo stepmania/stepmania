@@ -104,8 +104,8 @@ MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp 
 MusicSortDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
 OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h ScrollingList.cpp \
 ScrollingList.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h DifficultyDisplay.cpp DifficultyDisplay.h\
-HelpDisplay.cpp HelpDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h GrooveGraph.cpp GrooveGraph.h EnemyFace.cpp \
-EnemyFace.h EnemyHealth.cpp EnemyHealth.h MeterDisplay.cpp MeterDisplay.h
+HelpDisplay.cpp HelpDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h GrooveGraph.cpp GrooveGraph.h \
+MeterDisplay.cpp MeterDisplay.h
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp \
@@ -117,7 +117,8 @@ LifeMeterBattery.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
 ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
-TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingCharacters.cpp DancingCharacters.h
+TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingCharacters.cpp DancingCharacters.h \
+EnemyFace.cpp EnemyFace.h EnemyHealth.cpp EnemyHealth.h 
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
