@@ -855,10 +855,12 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 	if( !IsHumanPlayer(pn) )
 		return;
 
+	CHECKPOINT_M(ssprintf("PlayMode %i",GAMESTATE->m_PlayMode));
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 		{
+			CHECKPOINT;
 			unsigned i, j;
 
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
@@ -885,6 +887,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
+			CHECKPOINT;
 			for( i=0; i<vSongAndSteps.size(); i++ )
 			{
 				Song* pSong = vSongAndSteps[i].pSong;
@@ -937,6 +940,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				}
 			}
 
+			CHECKPOINT;
 			StageStats stats;
 			vector<Song*> vSongs;
 			GetFinalEvalStatsAndSongs( stats, vSongs );
@@ -968,8 +972,10 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
+			CHECKPOINT;
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = GAMESTATE->m_pCurCourse;
+			ASSERT( pCourse );
 			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
 			for( unsigned i=0; i<vHighScores.size(); i++ )
 			{
