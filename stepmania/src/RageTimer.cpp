@@ -13,42 +13,41 @@
 
 #include "RageTimer.h"
 #include "RageLog.h"
-#include "DXUtil.h"
 
+#include "SDL-1.2.5/include/SDL.h"
+#include "SDL-1.2.5/include/SDL_timer.h"
  
-
 RageTimer*		TIMER	= NULL;
-
 
 const float SECS_IN_DAY	=	60*60*24;
 
+/* XXX: SDL_GetTicks() wraps every month or so.  Handle it. */
 RageTimer::RageTimer()
 {
-	m_fTimeSinceStart = m_fLastDeltaTime = 0;
-	DXUtil_Timer( TIMER_START );    // Start the accurate timer	
-}
-
-RageTimer::~RageTimer()
-{
-	DXUtil_Timer( TIMER_STOP );
+	static bool SDL_Initialized = false;
+	if(!SDL_Initialized) {
+		SDL_InitSubSystem(SDL_INIT_TIMER);
+		SDL_Initialized = true;
+	}
+	GetDeltaTime(); /* so the next call to GetDeltaTime is from the construction of this object */
 }
 
 float RageTimer::GetDeltaTime()
 {
-	m_fLastDeltaTime = DXUtil_Timer( TIMER_GETELAPSEDTIME );
-	m_fTimeSinceStart += m_fLastDeltaTime;
-	if( m_fTimeSinceStart > SECS_IN_DAY )
-		m_fTimeSinceStart = SECS_IN_DAY; 
-	return m_fLastDeltaTime;
+	/* Store the LDT in integral milliseconds, to avoid rounding error. */
+	int now = SDL_GetTicks();
+	int ret = now - m_iLastDeltaTime;
+	m_iLastDeltaTime = now;
+	return ret / 1000.f;
 }
 
-float RageTimer::PeekDeltaTime()
+float RageTimer::PeekDeltaTime() const
 {
-	return m_fLastDeltaTime;
+	return (SDL_GetTicks() - m_iLastDeltaTime) / 1000.f;
 }
 
-float RageTimer::GetTimeSinceStart()
+float RageTimer::GetTimeSinceStart() const
 {
-	return m_fTimeSinceStart;
+	return SDL_GetTicks() / 1000.f;
 }
 

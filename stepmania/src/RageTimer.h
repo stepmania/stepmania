@@ -16,14 +16,12 @@ class RageTimer
 {
 public:
 	RageTimer();
-	~RageTimer();
 	float GetDeltaTime();	// time between last call to GetDeltaTime()
-	float PeekDeltaTime();
-	float GetTimeSinceStart();	// seconds since the program was started
+	float PeekDeltaTime() const;
+	float GetTimeSinceStart() const;	// seconds since the program was started
 
 private:
-	float m_fLastDeltaTime;
-	float m_fTimeSinceStart;	// seconds since the program was started
+	int m_iLastDeltaTime;
 };
 
 
