@@ -1177,17 +1177,20 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case SDLK_F9:	fOffsetDelta = -0.025f;		break;
-				case SDLK_F10:	fOffsetDelta = +0.025f;		break;
+				case SDLK_F9:	fOffsetDelta = -0.020f;		break;
+				case SDLK_F10:	fOffsetDelta = +0.020f;		break;
 				default:	ASSERT(0);						return;
 				}
-				if( type == IET_FAST_REPEAT )
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+					fOffsetDelta /= 2; /* .010 */
+				else if( type == IET_FAST_REPEAT )
 					fOffsetDelta *= 10;
 				BPMSegment& seg = GAMESTATE->m_pCurSong->GetBPMSegmentAtBeat( GAMESTATE->m_fSongBeat );
 
 				seg.m_fBPM += fOffsetDelta;
 
-				m_textDebug.SetText( ssprintf("Cur BPM = %f", seg.m_fBPM) );
+				m_textDebug.SetText( ssprintf("Cur BPM = %.2f", seg.m_fBPM) );
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 3 );		// sleep

@@ -823,7 +823,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case SDLK_F8:	fDeltaBPM = + 0.020f;		break;
 			default:	ASSERT(0);						return;
 			}
-			switch( type )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+				fDeltaBPM /= 2; /* .010 */
+			else switch( type )
 			{
 			case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
 			case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
@@ -842,7 +845,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			else	// BPMSegment being modified is m_BPMSegments[i]
 			{
-				if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.025f )
+				if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.009f )
 					m_pSong->m_BPMSegments.erase( m_pSong->m_BPMSegments.begin()+i,
 												  m_pSong->m_BPMSegments.begin()+i+1);
 				else
