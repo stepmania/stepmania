@@ -47,8 +47,8 @@ ThemeMetric<float>	CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
 #define SHOW_PORTAL					THEME->GetMetricB("MusicWheel","ShowPortal")
 ThemeMetric<bool>	USE_3D			("MusicWheel","Use3D");
-ThemeMetric<int>	NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
-#define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
+ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW	("MusicWheel","NumWheelItems");
+#define NUM_WHEEL_ITEMS				((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 #define MOST_PLAYED_SONGS_TO_SHOW	THEME->GetMetricI("MusicWheel","MostPlayedSongsToShow")
 #define SORT_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","SortMenuChoiceNames")
 #define MODE_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","ModeMenuChoiceNames")
@@ -821,6 +821,10 @@ void MusicWheel::DrawItem( int i )
 {
 	MusicWheelItem& display = m_MusicWheelItems[i];
 
+	const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
+	if( fabsf(fThisBannerPositionOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
+		return;
+
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
@@ -829,7 +833,6 @@ void MusicWheel::DrawItem( int i )
 	case STATE_RANDOM_SPINNING:
 	case STATE_LOCKED:
 		{
-			const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 			SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
 		}
 		break;
