@@ -1316,6 +1316,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LifeMeterBattery.h">
 			</File>
 			<File
+				RelativePath="LyricDisplay.cpp">
+			</File>
+			<File
+				RelativePath="LyricDisplay.h">
+			</File>
+			<File
 				RelativePath=".\MotionBlurSprite.cpp">
 			</File>
 			<File
