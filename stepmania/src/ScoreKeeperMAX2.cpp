@@ -29,7 +29,6 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, PlayerNumber p
 	//
 	// Fill in m_CurStageStats, calculate multiplier
 	//
-	NoteData notedata;
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -37,12 +36,18 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, PlayerNumber p
 	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
+			NoteData notedata;
 			ASSERT( !apNotes.empty() );
 			Steps* pNotes = apNotes[0];
 			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 			GAMESTATE->m_CurStageStats.iMeter[pn_] = pNotes->GetMeter();
+
 			pNotes->GetNoteData( &notedata );
-			GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = this->GetPossibleDancePoints( &notedata );
+			const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+			NoteData playerNoteData;
+			pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
+
+			GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = this->GetPossibleDancePoints( &playerNoteData );
 		}
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -52,7 +57,14 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, PlayerNumber p
 			int iTotalPossibleDancePoints = 0;
 			for( unsigned i=0; i<apNotes.size(); i++ )
 			{
+				NoteData notedata;
 				apNotes[i]->GetNoteData( &notedata );
+
+				const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+				NoteData playerNoteData;
+				pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
+
+				apNotes[i]->GetNoteData( &playerNoteData );
 				iTotalPossibleDancePoints += this->GetPossibleDancePoints( &notedata );
 			}
 
