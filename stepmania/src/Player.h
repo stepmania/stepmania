@@ -60,12 +60,6 @@ protected:
 
 	PlayerNumber	m_PlayerNumber;
 
-	float			m_fHoldNoteLife[MAX_TAP_NOTE_ROWS];	// 1.0 means this HoldNote has full life.
-														// 0.0 means this HoldNote is dead
-														// When this value hits 0.0 for the first time, 
-														// m_HoldScore becomes HSS_NG.
-														// If the life is > 0.0 when the HoldNote ends, then
-														// m_HoldScore becomes HSS_OK.
 	int				m_iNumTapNotes;	// num of TapNotes for the current notes needed by scoring
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 	int				m_iMeter;		// meter of current steps, needed by scoring

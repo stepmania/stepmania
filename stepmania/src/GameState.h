@@ -48,7 +48,7 @@ public:
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	PlayMode		m_PlayMode;
 	bool			m_bEditing;
-	int				m_iCurrentStageIndex;	// incremented after a song ends
+	int				m_iCurrentStageIndex;	// incremented on Eval screen
 
 	int				GetStageIndex();
 	bool			IsFinalStage();
@@ -79,11 +79,13 @@ public:
 											// and used to calculate the time into a course
 	float	GetElapsedSeconds();			// Arcade: time into current song.  Oni/Endless: time into current course
 
+	int	m_iSongsIntoCourse;					// In Arcade, this value is meaningless.
+											// In Oni and Endless, this is the number of songs played in the current course.
+	int	m_iSongsBeforeFail[NUM_PLAYERS];	// In Arcade, this value is meaningless.
+											// In Oni and Endless, this is the number of songs played before failing.
 	float m_fSecondsBeforeFail[NUM_PLAYERS];// -1 means not yet failed
 											// In Arcade, is the time into the current stage before failing.
 											// In Oni and Endless this is the time into the current course before failing
-	int	m_iStagesIntoCourse[NUM_PLAYERS];	// In Arcade, this value is meaningless.
-											// In Oni and Endless, this is the number of songs played before failing.
 	bool m_bUsedAutoPlayer;					// Used autoplayer at any time during any stage/course/song
 
 	float	GetPlayerSurviveTime( PlayerNumber p );

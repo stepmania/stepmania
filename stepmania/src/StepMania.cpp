@@ -286,6 +286,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 				Render();
 				if( !g_bIsActive  &&  DISPLAY  &&  DISPLAY->IsWindowed() )
 					::Sleep( 0 );	// give some time to other processes
+#ifdef _DEBUG
+				::Sleep( 1 );
+#endif
 			}
 		}	// end  while( WM_QUIT != msg.message  )
 
@@ -387,10 +390,10 @@ BOOL CALLBACK LoadingWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam 
 	case WM_PAINT:
 		{
 			CStringArray asMessageLines;
-			if( GAMESTATE )
+			if( GAMESTATE  &&  GAMESTATE->m_sLoadingMessage != "" )
 				split( GAMESTATE->m_sLoadingMessage, "\n", asMessageLines, false );
 			else
-				asMessageLines.Add( "Initializing hardware" );
+				asMessageLines.Add( "Initializing hardware..." );
 
 			SendDlgItemMessage( 
 				hWnd, 

@@ -26,7 +26,10 @@ void NoteDataWithScoring::Init()
 			m_TapNoteScores[t][i] = TNS_NONE;
 
 	for( int i=0; i<MAX_HOLD_NOTES; i++ )
+	{
 		m_HoldNoteScores[i] = HNS_NONE;
+		m_fHoldNoteLife[i] = 1.0f;
+	}
 }
 
 

@@ -696,32 +696,32 @@ bool Song::LoadFromDWIFile( CString sPath )
 		CString sValueName = sParams[0];
 
 		// handle the data
-		if( 0==stricmp(sValueName,"#FILE") )
+		if( 0==stricmp(sValueName,"FILE") )
 			m_sMusicFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#TITLE") )
+		else if( 0==stricmp(sValueName,"TITLE") )
 			GetMainAndSubTitlesFromFullTitle( sParams[1], m_sMainTitle, m_sSubTitle );
 
-		else if( 0==stricmp(sValueName,"#ARTIST") )
+		else if( 0==stricmp(sValueName,"ARTIST") )
 			m_sArtist = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#CDTITLE") )
+		else if( 0==stricmp(sValueName,"CDTITLE") )
 			m_sCDTitleFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"#BPM") )
+		else if( 0==stricmp(sValueName,"BPM") )
 			AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );		
 
-		else if( 0==stricmp(sValueName,"#GAP") )
+		else if( 0==stricmp(sValueName,"GAP") )
 			// the units of GAP is 1/1000 second
 			m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
 
-		else if( 0==stricmp(sValueName,"#SAMPLESTART") )
+		else if( 0==stricmp(sValueName,"SAMPLESTART") )
 			m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#SAMPLELENGTH") )
+		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
 			m_fMusicSampleLengthSeconds = TimeToSeconds(  sParams[1] );
 
-		else if( 0==stricmp(sValueName,"#FREEZE") )
+		else if( 0==stricmp(sValueName,"FREEZE") )
 		{
 			CStringArray arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
@@ -739,7 +739,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"#CHANGEBPM")  || 0==stricmp(sValueName,"#BPMCHANGE") )
+		else if( 0==stricmp(sValueName,"CHANGEBPM")  || 0==stricmp(sValueName,"BPMCHANGE") )
 		{
 			CStringArray arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
@@ -756,10 +756,10 @@ bool Song::LoadFromDWIFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"#SINGLE")  || 
-			     0==stricmp(sValueName,"#DOUBLE")  ||
-				 0==stricmp(sValueName,"#COUPLE")  || 
-				 0==stricmp(sValueName,"#SOLO"))
+		else if( 0==stricmp(sValueName,"SINGLE")  || 
+			     0==stricmp(sValueName,"DOUBLE")  ||
+				 0==stricmp(sValueName,"COUPLE")  || 
+				 0==stricmp(sValueName,"SOLO"))
 		{
 			Notes* pNewNotes = new Notes;
 			pNewNotes->LoadFromDWITokens( 

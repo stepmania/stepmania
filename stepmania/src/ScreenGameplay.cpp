@@ -42,6 +42,10 @@ const float STAGE_NUMBER_LOCAL_X = 0;
 const float STAGE_NUMBER_LOCAL_Y = +20;
 const float STAGE_NUMBER_LOCALEZ2_Y = -30;
 
+const float SONG_NUMBER_LOCAL_X[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_X-16, STAGE_NUMBER_LOCAL_X+16 };
+const float SONG_NUMBER_LOCAL_Y[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_Y, STAGE_NUMBER_LOCAL_Y };
+
+
 const float SCORE_LOCAL_X[NUM_PLAYERS] = { -214, +214 };
 const float SCORE_LOCAL_Y[NUM_PLAYERS] = { -6, -6 };
 
@@ -61,7 +65,8 @@ const float TIME_BETWEEN_DANCING_COMMENTS	=	13;
 
 
 // received while STATE_DANCING
-const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+102);
+const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+101);
+const ScreenMessage	SM_BeginLoadingNextSong	= ScreenMessage(SM_User+102);
 const ScreenMessage	SM_LastNotesEnded		= ScreenMessage(SM_User+103);
 
 
@@ -134,6 +139,9 @@ ScreenGameplay::ScreenGameplay()
 	this->AddSubActor( &m_Background );
 
 
+	m_OniFade.SetOpened();
+	this->AddSubActor( &m_OniFade );
+
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -191,6 +199,15 @@ ScreenGameplay::ScreenGameplay()
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuseColor( GAMESTATE->GetStageColor() );
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textCourseSongNumber[p].Load( THEME->GetPathTo(FONT_HEADER2) );
+		m_textCourseSongNumber[p].TurnShadowOff();
+		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_LOCAL_X[p], SONG_NUMBER_LOCAL_Y[p] );
+		m_textCourseSongNumber[p].SetText( "" );
+		m_textCourseSongNumber[p].SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,1,1) );	// light blue
+	}
+
 	if( GAMESTATE->m_CurGame == GAME_EZ2 )
 	{
 		m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCALEZ2_Y );
@@ -202,7 +219,19 @@ ScreenGameplay::ScreenGameplay()
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuseColor( GAMESTATE->GetStageColor() );
 
-	m_frameTop.AddSubActor( &m_textStageNumber );
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+		m_frameTop.AddSubActor( &m_textStageNumber );
+		break;
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			m_frameTop.AddSubActor( &m_textCourseSongNumber[p] );
+		break;
+	default:
+		ASSERT(0);	// invalid GameMode
+	}
 
 
 	//////////////////////////////////
@@ -402,7 +431,7 @@ bool ScreenGameplay::IsLastSong()
 			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes );
 
-			return GAMESTATE->m_iCurrentStageIndex >= apSongs.GetSize();	// there are no more songs left
+			return GAMESTATE->m_iSongsIntoCourse >= apSongs.GetSize();	// there are no more songs left
 		}
 		break;
 	default:
@@ -431,7 +460,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 			if( pCourse->m_bRandomize )
 				iPlaySongIndex = rand() % apSongs.GetSize();
 			else
-				iPlaySongIndex = GAMESTATE->m_iCurrentStageIndex;
+				iPlaySongIndex = GAMESTATE->m_iSongsIntoCourse;
 
 			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
 			for( int p=0; p<NUM_PLAYERS; p++ )
@@ -553,8 +582,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// Check for end of song
 		//
 		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+4 )
+		{
+			GAMESTATE->m_fSongBeat = 0;
+			m_soundMusic.Stop();
 			this->SendScreenMessage( SM_NotesEnded, 0 );
-	
+		}
+
 		//
 		// check for fail
 		//
@@ -902,8 +935,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			{
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{
-					m_pLifeMeter[p]->SongEnded();	// let the oni life meter give them back a life
-					
 					for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 					{
 						RadarCategory rc = (RadarCategory)r;
@@ -914,12 +945,21 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 
 			GAMESTATE->m_apSongsPlayed.Add( GAMESTATE->m_pCurSong );
+			GAMESTATE->m_iSongsIntoCourse++;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					if( !m_pLifeMeter[p]->FailedEarlier() )
+						GAMESTATE->m_iSongsBeforeFail[p]++;
 
-			GAMESTATE->m_iCurrentStageIndex++;
 
 			if( !IsLastSong() )
 			{
-				LoadNextSong( false );
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( GAMESTATE->IsPlayerEnabled(p) )
+						if( !m_pLifeMeter[p]->FailedEarlier() )
+							m_pLifeMeter[p]->SongEnded();	// let the oni life meter give them back a life
+
+				m_OniFade.CloseWipingRight( SM_BeginLoadingNextSong );
 			}
 			else	// IsLastSong
 			{
@@ -941,6 +981,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				}
 			}
 		}
+		break;
+
+	case SM_BeginLoadingNextSong:
+		LoadNextSong( false );
+		m_OniFade.OpenWipingRight( SM_None );
 		break;
 
 	case SM_100Combo:

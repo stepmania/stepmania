@@ -21,6 +21,12 @@ struct NoteDataWithScoring : public NoteData
 	// maintain this extra data in addition to the NoteData
 	TapNoteScore	m_TapNoteScores[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
 	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTES];
+	float			m_fHoldNoteLife[MAX_TAP_NOTE_ROWS];	// 1.0 means this HoldNote has full life.
+														// 0.0 means this HoldNote is dead
+														// When this value hits 0.0 for the first time, 
+														// m_HoldScore becomes HSS_NG.
+														// If the life is > 0.0 when the HoldNote ends, then
+														// m_HoldScore becomes HSS_OK.
 
 
 	// statistics

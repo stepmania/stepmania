@@ -36,7 +36,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, Prompt
 	m_bAnswer = bDefaultAnswer;
 
 	m_Fade.SetTransitionTime( 0.5f );
-	m_Fade.SetColor( D3DXCOLOR(0,0,0,0.7f) );
+	m_Fade.SetDiffuseColor( D3DXCOLOR(0,0,0,0.7f) );
 	m_Fade.SetOpened();
 	m_Fade.CloseWipingRight();
 	this->AddSubActor( &m_Fade );

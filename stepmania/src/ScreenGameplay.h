@@ -25,6 +25,7 @@
 #include "ScoreDisplay.h"
 #include "DifficultyBanner.h"
 #include "TransitionFadeWipe.h"
+#include "TransitionOniFade.h"
 
 
 // messages sent by Combo
@@ -78,10 +79,13 @@ private:
 
 	Background				m_Background;
 
+	TransitionOniFade		m_OniFade;	// shows between songs in a course
+
 	ActorFrame				m_frameTop;
 	Sprite					m_sprTopFrame;
 	LifeMeter*				m_pLifeMeter[NUM_PLAYERS];
 	BitmapText				m_textStageNumber;
+	BitmapText				m_textCourseSongNumber[NUM_PLAYERS];
 
 	ActorFrame				m_frameBottom;
 	Sprite					m_sprBottomFrame;

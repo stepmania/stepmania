@@ -367,12 +367,15 @@ bool Notes::LoadFromDWITokens(
 	sStepData2.Replace( "\n", "" );
 	sStepData2.Replace( " ", "" );
 
-	if(		 sMode == "#SINGLE" )	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
-	else if( sMode == "#DOUBLE" )	m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
-	else if( sMode == "#COUPLE" )	m_NotesType = NOTES_TYPE_DANCE_COUPLE;
-	else if( sMode == "#SOLO" )		m_NotesType = NOTES_TYPE_DANCE_SOLO;
-	else	throw RageException( "Unrecognized DWI mode '%s'", sMode );
-
+	if(		 sMode == "SINGLE" )	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+	else if( sMode == "DOUBLE" )	m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
+	else if( sMode == "COUPLE" )	m_NotesType = NOTES_TYPE_DANCE_COUPLE;
+	else if( sMode == "SOLO" )		m_NotesType = NOTES_TYPE_DANCE_SOLO;
+	else	
+	{
+		ASSERT(0);	// Unrecognized DWI notes format
+		m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+	}
 
 
 	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;

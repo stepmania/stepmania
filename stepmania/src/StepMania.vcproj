@@ -517,6 +517,12 @@
 				RelativePath="TransitionKeepAlive.h">
 			</File>
 			<File
+				RelativePath="TransitionOniFade.cpp">
+			</File>
+			<File
+				RelativePath="TransitionOniFade.h">
+			</File>
+			<File
 				RelativePath=".\TransitionRectWipe.cpp">
 			</File>
 			<File

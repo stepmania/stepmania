@@ -105,6 +105,8 @@ float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
 	if (blinktimer == 0)
 		blinktimer = TIMER->GetTimeSinceStart();
 	
+	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
+
 	static int blinkstate=2;
 	switch( GAMESTATE->m_PlayerOptions[pn].m_AppearanceType )
 	{ 
@@ -112,10 +114,10 @@ float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
 		fAlpha = 1;
 		break;
 	case PlayerOptions::APPEARANCE_HIDDEN:
-		fAlpha = (fYPos-100)/200;
+		fAlpha = ((bReverse?-fYPos:fYPos)-100)/200;
 		break;
 	case PlayerOptions::APPEARANCE_SUDDEN:
-		fAlpha = ((SCREEN_HEIGHT-fYPos)-260)/200;
+		fAlpha = ((SCREEN_HEIGHT-(bReverse?-fYPos:fYPos))-260)/200;
 		break;
 	case PlayerOptions::APPEARANCE_STEALTH:
 		fAlpha = 0;
@@ -160,7 +162,9 @@ float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
 		ASSERT( false );
 		fAlpha = 0;
 	};
-	if( fYPos < 0 )
+	if( !bReverse  &&  fYPos < 0 )
+		fAlpha = 1;
+	else if( bReverse  &&  fYPos > 0 )
 		fAlpha = 1;
 
 	return fAlpha;

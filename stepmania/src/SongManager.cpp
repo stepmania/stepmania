@@ -134,7 +134,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
-			GAMESTATE->m_sLoadingMessage = ssprintf("Loading songs...\n%s\n\n%s", sGroupDirName, sSongDirName);
+			GAMESTATE->m_sLoadingMessage = ssprintf("Loading songs...\n%s\n%s", sGroupDirName, sSongDirName);
 			if( callback )
 				callback();
 			Song* pNewSong = new Song;

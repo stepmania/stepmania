@@ -21,11 +21,10 @@
 #include "BitmapText.h"
 #include "Quad.h"
 #include "ArrowEffects.h"
+#include "NoteDataWithScoring.h"
 
 
-
-
-class NoteField : public NoteData, public ActorFrame
+class NoteField : public NoteDataWithScoring, public ActorFrame
 {
 public:
 	NoteField();
@@ -34,9 +33,8 @@ public:
 	
 	void Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBehind, int iPixelsToDrawAhead );
 	void RemoveTapNoteRow( int iIndex );
-	void SetHoldNoteLife( int iIndex, float fLife );
 
-	float	m_HoldNoteLife[MAX_HOLD_NOTES];		// 1.0 = full life, 0 = dead
+	bool m_bIsHoldingHoldNote[MAX_HOLD_NOTES];	// hack:  Need this to prevent hold note jitter
 
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 

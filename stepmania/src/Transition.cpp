@@ -20,7 +20,6 @@ Transition::Transition()
 	m_TransitionState = closed,
 	m_fTransitionTime = DEFAULT_TRANSITION_TIME;
 	m_fPercentThroughTransition = 0.0f;
-	m_Color = D3DXCOLOR(0,0,0,1);
 }
 
 Transition::~Transition()

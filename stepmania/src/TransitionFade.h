@@ -1,16 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: TransitionFade.cpp
+ Class: TransitionFade
 
- Desc: Fades out or in.
+ Desc: Fades whole screen to color.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _TransitionFade_H_
-#define _TransitionFade_H_
 
 
 #include "Transition.h"
@@ -31,7 +29,3 @@ protected:
 	Quad m_rect;
 };
 
-
-
-
-#endif

@@ -24,7 +24,6 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 GameState::GameState()
 {
 	m_CurGame = GAME_DANCE;
-	m_sLoadingMessage = "Initializing hardware...";
 	m_CurGame = GAME_DANCE;
 	Reset();
 }
@@ -62,10 +61,11 @@ void GameState::Reset()
 
 	m_apSongsPlayed.RemoveAll();
 	
+	m_iSongsIntoCourse = 0;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_fSecondsBeforeFail[p] = -1;
-		m_iStagesIntoCourse[p] = 0;
+		m_iSongsBeforeFail[p] = 0;
 	}
 	m_bUsedAutoPlayer = false;
 
@@ -195,29 +195,6 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
-	switch( m_PlayMode )
-	{
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			CString sText;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( this->IsPlayerEnabled(p) )
-					sText += ssprintf("%d   ", m_iStagesIntoCourse[p]);
-				else
-					sText += "a     ";
-			}
-			sText.TrimRight();
-			sText.Replace('a',' ');
-			return sText;
-		}
-		break;
-	default:
-		;	// fall through
-	}
-
-
 	if( IsFinalStage() )
 		return "Final";
 	else if( IsExtraStage() )

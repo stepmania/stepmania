@@ -48,6 +48,11 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 	m_iPixelsToDrawBehind = iPixelsToDrawBehind;
 	m_iPixelsToDrawAhead = iPixelsToDrawAhead;
 
+	NoteDataWithScoring::Init();
+
+	for( int i=0; i<MAX_HOLD_NOTES; i++ )
+		m_bIsHoldingHoldNote[i] = false;
+
 	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	this->CopyAll( pNoteData );
@@ -63,7 +68,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 
 
 	for( int i=0; i<MAX_HOLD_NOTES; i++ )
-		m_HoldNoteLife[i] = 1;		// start with full life
+		m_fHoldNoteLife[i] = 1;		// start with full life
 
 
 	ASSERT( m_iNumTracks == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
@@ -266,7 +271,12 @@ void NoteField::DrawPrimitives()
 		for( int i=0; i<m_iNumHoldNotes; i++ )
 		{
 			HoldNote &hn = m_HoldNotes[i];
-			const float fLife = m_HoldNoteLife[i];
+			HoldNoteScore &hns = m_HoldNoteScores[i];
+			
+			if( hns == HNS_OK )	// if this HoldNote was completed
+				continue;	// don't draw anything
+
+			const float fLife = m_fHoldNoteLife[i];
 
 			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
@@ -281,13 +291,13 @@ void NoteField::DrawPrimitives()
 
 
 			// If this note was in the past and has life > 0, then it was completed and don't draw it!
-			if( hn.m_iEndIndex < BeatToNoteRow(fSongBeat)  &&  fLife > 0 )
+			if( hn.m_iEndIndex < BeatToNoteRow(fSongBeat)  &&  fLife > 0  &&  m_bIsHoldingHoldNote[i] )
 				continue;	// skip
 
 
 			const int iCol = hn.m_iTrack;
-			const float fHoldNoteLife = m_HoldNoteLife[i];
-			const bool bActive = NoteRowToBeat(hn.m_iStartIndex-1) <= fSongBeat  &&  fSongBeat <= NoteRowToBeat(hn.m_iEndIndex);	// hack: added -1 because hn.m_iStartIndex changes as note is held
+			const float fHoldNoteLife = m_fHoldNoteLife[i];
+			const bool bActive = m_bIsHoldingHoldNote[i];	// hack: added -1 because hn.m_iStartIndex changes as note is held
 
 			// parts of the hold
 			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed );
@@ -299,7 +309,7 @@ void NoteField::DrawPrimitives()
 				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
 					continue;	// skip this arrow
 
-				if( fLife > 0  &&  NoteRowToBeat(j) < fSongBeat )
+				if( bActive  &&  NoteRowToBeat(j) < fSongBeat )
 					continue;
 
 				CreateHoldNoteInstance( instances[iCount++], bActive, (float)j, hn, fHoldNoteLife );
@@ -325,17 +335,25 @@ void NoteField::DrawPrimitives()
 			
 			// See if there is a hold step that begins on this beat.
 			bool bHoldNoteOnThisBeat = false;
+			float fHoldLife = -1;
 			for( int j=0; j<m_iNumHoldNotes; j++ )
 			{
 				if( m_HoldNotes[j].m_iStartIndex == i )
 				{
 					bHoldNoteOnThisBeat = true;
+					fHoldLife = m_fHoldNoteLife[j];
 					break;
 				}
 			}
 
 			if( bHoldNoteOnThisBeat )
-				CreateTapNoteInstance( instances[iCount++], c, (float)i, D3DXCOLOR(0,1,0,1) );
+			{
+				D3DXCOLOR color(0,1,0,1);
+				color.r *= fHoldLife;
+				color.g *= fHoldLife;
+				color.b *= fHoldLife;
+				CreateTapNoteInstance( instances[iCount++], c, (float)i, color );
+			}
 			else
 				CreateTapNoteInstance( instances[iCount++], c, (float)i );
 		}
@@ -355,7 +373,3 @@ void NoteField::RemoveTapNoteRow( int iIndex )
 		m_TapNotes[c][iIndex] = '0';
 }
 
-void NoteField::SetHoldNoteLife( int iIndex, float fLife )
-{
-	m_HoldNoteLife[iIndex] = fLife;
-}

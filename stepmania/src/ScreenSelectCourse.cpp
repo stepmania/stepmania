@@ -29,6 +29,7 @@
 #include "ScreenStage.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "RageMusic.h"
 
 
 const float COURSE_INFO_FRAME_X	= 160;
@@ -53,6 +54,12 @@ const ScreenMessage SM_ConfirmChange		=	ScreenMessage(SM_User+3);
 ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
+
+	if( !MUSIC->IsPlaying() )
+	{
+		MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
+		MUSIC->Play(true);
+	}
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;

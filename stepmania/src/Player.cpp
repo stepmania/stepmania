@@ -79,8 +79,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	// init scoring
 	NoteDataWithScoring::Init();
-	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
-		m_fHoldNoteLife[i] = 1.0f;
 
 
 	if( m_pScore )
@@ -165,8 +163,10 @@ void Player::Update( float fDeltaTime )
 		{
 			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay;
 			// if they got a bad score or haven't stepped on the corresponding tap yet
-			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] >= TNS_GREAT;
+			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] != TNS_NONE  &&
+										   m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] != TNS_MISS; 
 
+			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;
 
 			if( bIsHoldingButton && bSteppedOnTapNote )
 			{
@@ -178,7 +178,7 @@ void Player::Update( float fDeltaTime )
 
 				m_GhostArrowRow.HoldNote( hn.m_iTrack );		// update the "electric ghost" effect
 			}
-			else	// !bIsHoldingButton
+			else
 			{
 				if( fSongBeat-fStartBeat > GetMaxBeatDifference() )
 				{
@@ -187,7 +187,7 @@ void Player::Update( float fDeltaTime )
 					fLife = max( fLife, 0 );	// clamp
 				}
 			}
-			m_NoteField.SetHoldNoteLife( i, fLife );	// update the NoteField display
+			m_NoteField.m_fHoldNoteLife[i] = fLife;	// update the NoteField display
 		}
 
 		// check for NG
@@ -197,6 +197,7 @@ void Player::Update( float fDeltaTime )
 			HandleNoteScore( hns );
 			m_Combo.EndCombo();
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
+			m_NoteField.m_HoldNoteScores[i] = HNS_NG;	// update the NoteField display
 		}
 
 		// check for OK
@@ -207,7 +208,8 @@ void Player::Update( float fDeltaTime )
 			hns = HNS_OK;
 			HandleNoteScore( hns );
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
-			m_NoteField.SetHoldNoteLife( i, fLife );	// update the NoteField display
+			m_NoteField.m_fHoldNoteLife[i] = fLife;		// update the NoteField display
+			m_NoteField.m_HoldNoteScores[i] = HNS_OK;	// update the NoteField display
 		}
 	}
 
@@ -369,7 +371,18 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 			score = min( score, m_TapNoteScores[t][iIndexThatWasSteppedOn] );
 
 	// remove this row from the NoteField
-	if ( ( score == TNS_PERFECT ) || ( score == TNS_GREAT ) )
+	bool bHoldNoteOnThisBeat = false;
+	for( int j=0; j<m_iNumHoldNotes; j++ )
+	{
+		if( m_HoldNotes[j].m_iStartIndex == iIndexThatWasSteppedOn )
+		{
+			bHoldNoteOnThisBeat = true;
+			break;
+		}
+	}
+
+
+	if ( score==TNS_PERFECT  ||  score == TNS_GREAT  ||  bHoldNoteOnThisBeat  )
 		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column

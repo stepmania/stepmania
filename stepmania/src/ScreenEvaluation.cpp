@@ -340,7 +340,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		}
 
 		m_BonusInfoFrame[p].SetBonusInfo( (PlayerNumber)p, fPossibleRadarValues[p], fActualRadarValues[p], iMaxCombo[p] );
-		m_StageBox[p].SetStageInfo( (PlayerNumber)p, GAMESTATE->m_iStagesIntoCourse[p] );
+		m_StageBox[p].SetStageInfo( (PlayerNumber)p, GAMESTATE->m_iSongsBeforeFail[p] );
 	}
 
 

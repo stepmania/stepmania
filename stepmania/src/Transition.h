@@ -53,8 +53,6 @@ public:
 
 	void SetTransitionTime( float fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
 
-	void SetColor( D3DXCOLOR new_color ) { m_Color = new_color; };
-
 protected:
 
 	enum TransitionState { opened,		  closed, 
@@ -64,7 +62,7 @@ protected:
 	TransitionState	m_TransitionState;
 	float			m_fTransitionTime;
 	float			m_fPercentThroughTransition;
-	float GetPercentageOpen()
+	float	GetPercentageOpen()
 	{
 		switch( m_TransitionState )
 		{
@@ -83,11 +81,10 @@ protected:
 			return 0;
 		}
 	};
+	float	GetPercentageClosed() { return 1-GetPercentageOpen(); };
 
 
 	ScreenMessage	m_MessageToSendWhenDone;
-
-	D3DXCOLOR m_Color;
 };
 
 
