@@ -27,7 +27,6 @@ public:
 	Background();
 	~Background();
 
-	virtual void LoadFromAniDir( CString sAniDir );
 	virtual void LoadFromSong( Song *pSong );
 	virtual void Unload();
 
@@ -40,6 +39,7 @@ public:
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
 protected:
+	void LoadFromAniDir( CString sAniDir );
 	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing );
 
 	bool IsDangerPlayerVisible( PlayerNumber pn );
