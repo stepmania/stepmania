@@ -191,7 +191,6 @@ void PlayerOptions::FromString( CString sOptions )
 	CStringArray asBits;
 	split( sOptions, ",", asBits, true );
 
-	LOG->Trace("parse %s", sOptions.c_str());
 	for( unsigned i=0; i<asBits.size(); i++ )
 	{
 		CString& sBit = asBits[i];
