@@ -1570,7 +1570,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				pNotes->SetNoteData( &m_NoteFieldEdit );
 				GAMESTATE->m_pCurSong->Save();
 
-				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+				// we shouldn't say we're saving a DWI if we're on any game besides
+				// dance, it just looks tacky and people may be wondering where the
+				// DWI file is :-)
+				if ((int)pNotes->m_StepsType <= (int)STEPS_TYPE_DANCE_SOLO) 
+					SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+				else
+					SCREENMAN->SystemMessage( "Saved as SM." );
 				SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit save") );
 			}
 			break;
@@ -1803,6 +1809,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case tempo:
 			{
+				// This affects ALL SETS OF STEPS; fun.
 				HandleAreaMenuChoice( cut, NULL );
 				
 				AlterType at = (AlterType)iAnswers[c];
@@ -1818,6 +1825,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				default:		ASSERT(0);
 				}
 
+				m_Clipboard.ConvertHoldNotesTo2sAnd3s();
+
 				switch( at )
 				{
 				case compress_2x:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
@@ -1829,12 +1838,36 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				default:		ASSERT(0);
 				}
 
+				m_Clipboard.Convert2sAnd3sToHoldNotes();
+
 //				float fOldClipboardEndBeat = m_NoteFieldEdit.m_fEndMarker;
 				float fOldClipboardBeats = m_NoteFieldEdit.m_fEndMarker - m_NoteFieldEdit.m_fBeginMarker;
 				float fNewClipboardBeats = fOldClipboardBeats * fScale;
 				float fDeltaBeats = fNewClipboardBeats - fOldClipboardBeats;
 				float fNewClipboardEndBeat = m_NoteFieldEdit.m_fBeginMarker + fNewClipboardBeats;
 				NoteDataUtil::ShiftRows( m_NoteFieldEdit, m_NoteFieldEdit.m_fBeginMarker, fDeltaBeats );
+				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+
+				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+
+				const vector<Steps*> sIter = m_pSong->GetAllSteps();
+				NoteData ndTemp;
+				CString sTempStyle, sTempDiff;
+				for (int i = 0; i < sIter.size(); i++) {
+					if (sIter[i]->IsAutogen()) {
+						continue;
+					}
+					if ((sIter[i]->m_StepsType == GAMESTATE->m_pCurNotes[PLAYER_1]->m_StepsType) &&
+						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty())) {
+						continue;
+					}
+
+					sIter[i]->GetNoteData( &ndTemp );
+					ndTemp.ConvertHoldNotesTo2sAnd3s();
+					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+					ndTemp.Convert2sAnd3sToHoldNotes();
+					sIter[i]->SetNoteData( &ndTemp );
+				}
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 
@@ -1926,9 +1959,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case insert_and_shift:
 			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, 1 );
+			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, 1 );
 			break;
 		case delete_and_shift:
 			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, -1 );
+			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, -1 );
 			break;
 		// MD 11/02/03 - Converting selected region to a pause of the same length.
 		case convert_beat_to_pause:
@@ -1944,6 +1979,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 										 m_NoteFieldEdit.m_fBeginMarker + 0.003f,
 										 (-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
 									   );
+				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_fBeginMarker + 0.003f,
+										     (-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
+										   );
 				unsigned i;
 				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
@@ -1969,6 +2007,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		//    wants to rewrite this to fix that behavior is welcome to - I'm
 		//    not sure how exactly to do it without making this a lot longer
 		//    than it is.
+		// NOTE: Fixed this so that holds aren't broken by it.  Working in 2s and
+		// 3s makes this work better, too. :-)  It sorta makes you wonder WHY we
+		// don't bring it into 2s and 3s when we bring up the editor.
 		case convert_pause_to_beat:
 			{
 				float fBPMatPause = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
@@ -1989,7 +2030,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					fStopLength *= fBPMatPause;
 					fStopLength /= 60;
 					// don't move the step from where it is, just move everything later
+					m_NoteFieldEdit.ConvertHoldNotesTo2sAnd3s();
 					NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
+					m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
+					m_NoteFieldEdit.Convert2sAnd3sToHoldNotes();
+
 				}
 			// Hello and welcome to I FEEL STUPID :-)
 			break;
