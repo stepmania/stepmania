@@ -80,19 +80,12 @@ void ScreenPlayerOptions::ImportOptions()
 		else if( po.m_fArrowScrollSpeed == 8.0f )	m_iSelectedOption[p][PO_SPEED] = 8;
 		else										m_iSelectedOption[p][PO_SPEED] = 2;
 
-		m_iSelectedOption[p][PO_BOOST]      = po.m_EffectType & PlayerOptions::EFFECT_BOOST;
+		m_iSelectedOption[p][PO_BOOST]      = po.m_bBoost ? 1 : 0;
 
-		switch(po.m_EffectType & ~PlayerOptions::EFFECT_BOOST) 
+		for( int i=0; i<PlayerOptions::NUM_EFFECT_TYPES; i++ ) 
 		{
-		case PlayerOptions::EFFECT_NONE:	m_iSelectedOption[p][PO_EFFECT]=0; break;
-		case PlayerOptions::EFFECT_WAVE:	m_iSelectedOption[p][PO_EFFECT]=1; break;
-		case PlayerOptions::EFFECT_DRUNK:	m_iSelectedOption[p][PO_EFFECT]=2; break;
-		case PlayerOptions::EFFECT_DIZZY:	m_iSelectedOption[p][PO_EFFECT]=3; break;
-		case PlayerOptions::EFFECT_SPACE:	m_iSelectedOption[p][PO_EFFECT]=4; break;
-		case PlayerOptions::EFFECT_MINI:	m_iSelectedOption[p][PO_EFFECT]=5; break;
-		case PlayerOptions::EFFECT_FLIP:    m_iSelectedOption[p][PO_EFFECT]=6; break;
-		case PlayerOptions::EFFECT_TORNADO: m_iSelectedOption[p][PO_EFFECT]=7; break;
-		default:			; break;
+			if( po.m_bEffects[i] )
+				m_iSelectedOption[p][PO_EFFECT] = i-1;
 		}
 
 		m_iSelectedOption[p][PO_APPEAR]		= po.m_AppearanceType;
@@ -124,21 +117,11 @@ void ScreenPlayerOptions::ExportOptions()
 		case 8:	po.m_fArrowScrollSpeed = 8.0f;	break;
 		}
 
-		po.m_EffectType = (m_iSelectedOption[p][PO_BOOST] == 1)?
-			PlayerOptions::EFFECT_BOOST:
-			PlayerOptions::EFFECT_NONE;
+		po.m_bBoost = (m_iSelectedOption[p][PO_BOOST] == 1);
 
-		switch(m_iSelectedOption[p][PO_EFFECT])
-		{
-		//case 0: po.m_EffectType |= PlayerOptions::EFFECT_NONE; break;
-		case 1: po.m_EffectType |= PlayerOptions::EFFECT_WAVE; break;
-		case 2: po.m_EffectType |= PlayerOptions::EFFECT_DRUNK; break;
-		case 3: po.m_EffectType |= PlayerOptions::EFFECT_DIZZY; break;
-		case 4: po.m_EffectType |= PlayerOptions::EFFECT_SPACE; break;
-		case 5: po.m_EffectType |= PlayerOptions::EFFECT_MINI; break;
-		case 6: po.m_EffectType |= PlayerOptions::EFFECT_FLIP; break;
-		case 7: po.m_EffectType |= PlayerOptions::EFFECT_TORNADO; break;
-		}
+		ZERO( po.m_bEffects );
+		if( m_iSelectedOption[p][PO_EFFECT] > 0 )
+			po.m_bEffects[ m_iSelectedOption[p][PO_EFFECT]-1 ] = true;
 
 		po.m_AppearanceType	= (PlayerOptions::AppearanceType)m_iSelectedOption[p][PO_APPEAR];
 		po.m_TurnType		= (PlayerOptions::TurnType)m_iSelectedOption[p][PO_TURN];

@@ -47,7 +47,7 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 	{"4X",		0},
 	{"5X",		0},
 	{"8X",		0},
-	{"Boost",	1},
+	{"Boost",	0},
 	{"Wave",	1},
 	{"Drunk",	1},
 	{"Dizzy",	1},

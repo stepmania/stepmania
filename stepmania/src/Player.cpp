@@ -142,12 +142,12 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	int iPixelsToDrawAfter = 384;
 
 	// If both options are on, we *do* need to multiply it twice.
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_MINI)
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )
 	{
 		iPixelsToDrawBefore *= 2;
 		iPixelsToDrawAfter *= 2;
 	}
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_SPACE)
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
 		iPixelsToDrawBefore *= 2;
 		iPixelsToDrawAfter *= 2;
@@ -172,7 +172,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_GrayArrowRow.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GhostArrowRow.SetY( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_MINI )
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )
 	{
 		m_NoteField.SetZoom( 0.5f );
 		m_GrayArrowRow.SetZoom( 0.5f );
@@ -279,7 +279,7 @@ void Player::DrawPrimitives()
 
 	D3DXMATRIX matOldView, matOldProj;
 
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_EffectType & PlayerOptions::EFFECT_SPACE )
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
 		// save old view and projection
 		DISPLAY->GetViewTransform( &matOldView );
@@ -313,7 +313,7 @@ void Player::DrawPrimitives()
 	m_NoteField.Draw();
 	m_GhostArrowRow.Draw();
 
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_EffectType & PlayerOptions::EFFECT_SPACE )
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
 		// restire old view and projection
 		DISPLAY->SetViewTransform( &matOldView );

@@ -13,6 +13,42 @@
 #include "PlayerOptions.h"
 #include "RageUtil.h"
 
+void PlayerOptions::NextEffect()
+{
+	if( m_bEffects[NUM_EFFECT_TYPES-1] )
+	{
+		ZERO( m_bEffects );
+		return;
+	}
+
+	for( int i=0; i<NUM_EFFECT_TYPES-1; i++ )
+	{
+		if( m_bEffects[i] )
+		{
+			ZERO( m_bEffects );
+			m_bEffects[i+1] = true;
+			return;
+		}
+	}
+
+	ZERO( m_bEffects );
+	m_bEffects[0] = true;
+}
+
+void PlayerOptions::Init()
+{
+	m_fArrowScrollSpeed = 1.0f;
+	m_bBoost = false;
+	ZERO( m_bEffects );
+	m_AppearanceType = APPEARANCE_VISIBLE;
+	m_TurnType = TURN_NONE;
+	m_bLittle = false;
+	m_bReverseScroll = false;
+	m_ColorType = COLOR_VIVID;
+	m_bHoldNotes = true;
+	m_bDark = false;
+}
+
 
 CString PlayerOptions::GetString()
 {
@@ -26,14 +62,15 @@ CString PlayerOptions::GetString()
 		sReturn += s + "X, ";
 	}
 
-	if( m_EffectType & EFFECT_BOOST ) sReturn += "Boost, ";
-	if( m_EffectType & EFFECT_WAVE ) sReturn += "Wave, ";
-	if( m_EffectType & EFFECT_DRUNK ) sReturn += "Drunk, ";
-	if( m_EffectType & EFFECT_DIZZY ) sReturn += "Dizzy, ";
-	if( m_EffectType & EFFECT_SPACE ) sReturn += "Space, ";
-	if( m_EffectType & EFFECT_MINI ) sReturn += "Mini, ";
-	if( m_EffectType & EFFECT_FLIP ) sReturn += "Flip, ";
-	if( m_EffectType & EFFECT_TORNADO ) sReturn += "Tornado, ";
+	if( m_bBoost )				sReturn += "Boost, ";
+
+	if( m_bEffects[EFFECT_WAVE] ) sReturn += "Wave, ";
+	if( m_bEffects[EFFECT_DRUNK] ) sReturn += "Drunk, ";
+	if( m_bEffects[EFFECT_DIZZY] ) sReturn += "Dizzy, ";
+	if( m_bEffects[EFFECT_SPACE] ) sReturn += "Space, ";
+	if( m_bEffects[EFFECT_MINI] ) sReturn += "Mini, ";
+	if( m_bEffects[EFFECT_FLIP] ) sReturn += "Flip, ";
+	if( m_bEffects[EFFECT_TORNADO] ) sReturn += "Tornado, ";
 
 	switch( m_AppearanceType )
 	{
@@ -103,14 +140,14 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "4.0x" )		m_fArrowScrollSpeed = 4.0f;
 		else if( sBit == "5.0x" )		m_fArrowScrollSpeed = 5.0f;
 		else if( sBit == "8.0x" )		m_fArrowScrollSpeed = 8.0f;
-		else if( sBit == "boost" )		m_EffectType |= EFFECT_BOOST;
-		else if( sBit == "wave" )		m_EffectType |= EFFECT_WAVE;
-		else if( sBit == "drunk" )		m_EffectType |= EFFECT_DRUNK;
-		else if( sBit == "dizzy" )		m_EffectType |= EFFECT_DIZZY;
-		else if( sBit == "space" )		m_EffectType |= EFFECT_SPACE;
-		else if( sBit == "mini" )		m_EffectType |= EFFECT_MINI;
-		else if( sBit == "flip" )		m_EffectType |= EFFECT_FLIP;
-		else if( sBit == "tornado" )	m_EffectType |= EFFECT_TORNADO;
+		else if( sBit == "boost" )		m_bBoost = true;
+		else if( sBit == "wave" )		m_bEffects[EFFECT_WAVE] = true;
+		else if( sBit == "drunk" )		m_bEffects[EFFECT_DRUNK] = true;
+		else if( sBit == "dizzy" )		m_bEffects[EFFECT_DIZZY] = true;
+		else if( sBit == "space" )		m_bEffects[EFFECT_SPACE] = true;
+		else if( sBit == "mini" )		m_bEffects[EFFECT_MINI] = true;
+		else if( sBit == "flip" )		m_bEffects[EFFECT_FLIP] = true;
+		else if( sBit == "tornado" )	m_bEffects[EFFECT_TORNADO] = true;
 		else if( sBit == "hidden" )		m_AppearanceType = APPEARANCE_HIDDEN;
 		else if( sBit == "sudden" )		m_AppearanceType = APPEARANCE_SUDDEN;
 		else if( sBit == "stealth" )	m_AppearanceType = APPEARANCE_STEALTH;

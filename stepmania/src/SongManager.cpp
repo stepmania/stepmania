@@ -414,7 +414,6 @@ void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*
 		if( sGroupName == m_pSongs[i]->m_sGroupName )
 			AddTo.Add( pSong );
 	}
-//	SortSongPointerArrayByGroup( AddTo );
 }
 
 CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
@@ -580,12 +579,12 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	int iSongHash = GetHashForString( pSongOut->m_sSongDir );
 	switch( ((UINT)iSongHash) % 6 )
 	{
-	case 0:	po_out.m_EffectType = PlayerOptions::EFFECT_DIZZY;	break;
-	case 1:	po_out.m_bDark = true;								break;
-	case 2:	po_out.m_EffectType = PlayerOptions::EFFECT_DRUNK;	break;
-	case 3:	po_out.m_EffectType = PlayerOptions::EFFECT_MINI;	break;
-	case 4:	po_out.m_EffectType = PlayerOptions::EFFECT_SPACE;	break;
-	case 5:	po_out.m_EffectType = PlayerOptions::EFFECT_WAVE;	break;
+	case 0:	po_out.m_bEffects[PlayerOptions::EFFECT_DIZZY] = true;	break;
+	case 1:	po_out.m_bDark = true;									break;
+	case 2:	po_out.m_bEffects[PlayerOptions::EFFECT_DRUNK] = true;	break;
+	case 3:	po_out.m_bEffects[PlayerOptions::EFFECT_MINI] = true;	break;
+	case 4:	po_out.m_bEffects[PlayerOptions::EFFECT_SPACE] = true;	break;
+	case 5:	po_out.m_bEffects[PlayerOptions::EFFECT_WAVE] = true;	break;
 	default:	ASSERT(0);
 	}
 }

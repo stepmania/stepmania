@@ -15,18 +15,19 @@ const int NUM_EFFECT_TYPES = 9;
 struct PlayerOptions
 {
 	float m_fArrowScrollSpeed;
+	bool m_bBoost;
 	enum EffectType	{
-		EFFECT_NONE		=0, 
-		EFFECT_BOOST	=1<<0,
-		EFFECT_WAVE		=1<<1,
-		EFFECT_DRUNK	=1<<2,
-		EFFECT_DIZZY	=1<<3,
-		EFFECT_SPACE	=1<<4,
-		EFFECT_MINI		=1<<5,
-		EFFECT_FLIP		=1<<6,
-		EFFECT_TORNADO  =1<<7
+		EFFECT_WAVE,
+		EFFECT_DRUNK,
+		EFFECT_DIZZY,
+		EFFECT_SPACE,
+		EFFECT_MINI,
+		EFFECT_FLIP,
+		EFFECT_TORNADO,
+		NUM_EFFECT_TYPES
 	};
-	int m_EffectType;
+	bool m_bEffects[NUM_EFFECT_TYPES];
+	void NextEffect();
 	enum AppearanceType	{ APPEARANCE_VISIBLE=0, APPEARANCE_HIDDEN, APPEARANCE_SUDDEN, APPEARANCE_STEALTH, APPEARANCE_BLINK, NUM_APPEARANCE_TYPES };
 	AppearanceType m_AppearanceType;
 	enum TurnType { TURN_NONE=0, TURN_MIRROR, TURN_LEFT, TURN_RIGHT, TURN_SHUFFLE, TURN_SUPER_SHUFFLE, NUM_TURN_TYPES };
@@ -39,18 +40,7 @@ struct PlayerOptions
 	bool m_bDark;
 
 	PlayerOptions() { Init(); };
-	void Init()
-	{
-		m_fArrowScrollSpeed = 1.0f;
-		m_EffectType = EFFECT_NONE;
-		m_AppearanceType = APPEARANCE_VISIBLE;
-		m_TurnType = TURN_NONE;
-		m_bLittle = false;
-		m_bReverseScroll = false;
-		m_ColorType = COLOR_VIVID;
-		m_bHoldNotes = true;
-		m_bDark = false;
-	};
+	void Init();
 	CString GetString();
 	void FromString( CString sOptions );
 };

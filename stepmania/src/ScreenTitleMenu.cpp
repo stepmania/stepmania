@@ -269,8 +269,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 				 * 
 				 * It's simple, but it's a hack.  FIXME -glenn */
 
-				GAMESTATE->m_PlayerOptions[p].m_EffectType = 
-						1 << (rand()%NUM_EFFECT_TYPES) ;
+				GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%NUM_EFFECT_TYPES ] = true;
 				if( RandomFloat(0,1)>0.9f )
 					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
 				if( RandomFloat(0,1)>0.9f )

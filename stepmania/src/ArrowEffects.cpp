@@ -27,7 +27,7 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
 
 	/* With both boost and wave enabled, the effect is that the
-	 * notes "bufferr" at the bottom of the screen and shoot out
+	 * notes "buffer" at the bottom of the screen and shoot out
 	 * at high speed.
 	 *
 	 * With wave first, the boost appears halfway down the screen.
@@ -35,10 +35,9 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	 *
 	 * I'm not sure which is better. - glenn
 	 */
-	int EffectType = GAMESTATE->m_PlayerOptions[pn].m_EffectType;
-	if ( EffectType & PlayerOptions::EFFECT_BOOST )
+	if( GAMESTATE->m_PlayerOptions[pn].m_bBoost )
 		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
-	if ( EffectType & PlayerOptions::EFFECT_WAVE )
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_WAVE] )
 		fYOffset += 15.0f*sinf( fYOffset/38.0f ); 
 
 	return fYOffset;
@@ -48,11 +47,11 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 {
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 	
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_DRUNK )
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_DRUNK] )
 		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_FLIP )
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_FLIP] )
 		fPixelOffsetFromCenter = -fPixelOffsetFromCenter; 
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_TORNADO )
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_TORNADO] )
 	{
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		float fMaxX = -100000, fMinX = +100000;
@@ -76,7 +75,7 @@ float ArrowGetRotation( PlayerNumber pn, int iColNum, float fYOffset )
 {
 	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 
-	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_DIZZY)
+	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_DIZZY] )
 		fRotation += fYOffset/SCREEN_HEIGHT*6; 
 	
 	return fRotation;

@@ -172,8 +172,8 @@ bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
 			case CODE_LITTLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bLittle, true, false );				break;
 			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed );	break;
-			case CODE_BOOST:			/* what goes here? */															break;
-			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].m_EffectType		= PlayerOptions::EffectType(	(GAMESTATE->m_PlayerOptions[pn].m_EffectType+1)		%NUM_EFFECT_TYPES );		break;
+			case CODE_BOOST:			GAMESTATE->m_PlayerOptions[pn].m_bBoost	^= true;									break;
+			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
 			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].m_AppearanceType = PlayerOptions::AppearanceType((GAMESTATE->m_PlayerOptions[pn].m_AppearanceType+1)	%PlayerOptions::NUM_APPEARANCE_TYPES );	break;
 			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].m_TurnType		= PlayerOptions::TurnType(		(GAMESTATE->m_PlayerOptions[pn].m_TurnType+1)		%PlayerOptions::NUM_TURN_TYPES );		break;
 			case CODE_REVERSE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll, true, false );			break;
