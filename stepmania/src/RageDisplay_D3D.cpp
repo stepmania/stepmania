@@ -498,14 +498,14 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		
 		//set pal60 if available.
 		if(videoFlags & XC_VIDEO_FLAGS_PAL_60Hz)
-			g_d3dpp.FullScreen_RefreshRateInHz = 60 ;
+			g_d3dpp.FullScreen_RefreshRateInHz = 60;
 		else
-			g_d3dpp.FullScreen_RefreshRateInHz = 50 ;
+			g_d3dpp.FullScreen_RefreshRateInHz = 50;
 	}
 	else
-		g_d3dpp.FullScreen_RefreshRateInHz = 60 ;
+		g_d3dpp.FullScreen_RefreshRateInHz = 60;
 
-	g_d3dpp.Flags					=	0 ;
+	g_d3dpp.Flags					=	0;
 #endif
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
@@ -519,7 +519,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 #ifdef _XBOX
 	if ( D3D__pDevice )
-		g_pd3dDevice = D3D__pDevice ;
+		g_pd3dDevice = D3D__pDevice;
 #endif
 
 	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
@@ -588,8 +588,8 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 void RageDisplay_D3D::ResolutionChanged()
 {
 #ifdef _XBOX
-	g_CurrentParams.width = PREFSMAN->m_fScreenWidth ;
-	g_CurrentParams.height = PREFSMAN->m_fScreenHeight ;
+	g_CurrentParams.width = PREFSMAN->m_fScreenWidth;
+	g_CurrentParams.height = PREFSMAN->m_fScreenHeight;
 	D3DVIEWPORT8 viewData2 = { 0,0,640,480, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData2 );
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
