@@ -244,7 +244,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) )
+	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) && (type != IET_FAST_REPEAT ) )
 		return;
 
 	bool bHoldingShift = 
