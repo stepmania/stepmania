@@ -37,7 +37,7 @@ SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 #  exit 0;
 #fi
 
-AC_ARG_WITH(ogg, AC_HELP_STRING([--without-vorbis], [Disable Vorbis support]), with_vorbis=$enableval, with_vorbis=yes)
+AC_ARG_WITH(vorbis, AC_HELP_STRING([--without-vorbis], [Disable Vorbis support]), with_vorbis=$enableval, with_vorbis=yes)
 
 # This is used to force the integer decoder, on systems that prefer it.
 AC_ARG_WITH(integer-vorbis, AC_HELP_STRING([--with-integer-vorbis], [Integer vorbis decoding only]), with_int_vorbis=$withval, with_int_vorbis=no)
@@ -68,6 +68,13 @@ if test "$with_vorbis" = "yes" -a "$have_vorbis" = "no"; then
 fi
 
 if test "$have_vorbis" = "no"; then
+	if test "$with_vorbis" = "yes"; then
+		AC_MSG_ERROR(
+			 [A working installation of Ogg Vorbis could not be found.  Vorbis
+support is strongly recommended.  If you really want to compile without it, pass
+the "--without-vorbis" flag to configure.])
+	fi
+
 	AC_DEFINE(NO_VORBIS_SUPPORT, 1, [Vorbis support not available])
 fi
 
