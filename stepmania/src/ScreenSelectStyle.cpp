@@ -189,7 +189,7 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
 	m_soundSelect.Play();
-	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
+	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );
 
 	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(),mc.m_sName.c_str())) );
