@@ -7,6 +7,7 @@
 #include "StageStats.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
+#include "StatsManager.h"
 
 // lua start
 LUA_REGISTER_CLASS( ScoreDisplayCalories )
