@@ -368,6 +368,7 @@ void GameState::EndGame()
 	MEMCARDMAN->FlushAndReset();
 	CHECKPOINT;
 
+	MEMCARDMAN->UnPauseMountingThread();
 
 	SONGMAN->FreeAllLoadedFromProfiles();
 
