@@ -70,6 +70,7 @@ ThemeManager::ThemeManager()
 {
 	m_pIniCurMetrics = new IniFile;
 	m_pIniBaseMetrics = new IniFile;
+	m_pIniFallbackMetrics = new IniFile;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
 	
@@ -154,12 +155,14 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniBaseMetrics->Reset();
-	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(FALLBACK_THEME_NAME) );
 	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(BASE_THEME_NAME) );
-	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
 	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
 	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
+
+	m_pIniFallbackMetrics->Reset();
+	m_pIniFallbackMetrics->ReadFile( GetMetricsIniPath(FALLBACK_THEME_NAME) );
+	m_pIniFallbackMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniFallbackMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
 
 	/* Don't bother loading m_pIniCurMetrics if it'll be the same data as BASE_THEME_NAME. */
 	m_pIniCurMetrics->Reset();
@@ -492,6 +495,14 @@ bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString
 			return true;
 	}
 
+	if( m_pIniFallbackMetrics->GetValue(sClassName,sValueName,ret) )
+		return true;
+	if( m_pIniFallbackMetrics->GetValue(sClassName,"Fallback",sFallback) )
+	{
+		if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
+			return true;
+	}
+
 	return false;
 }
 
@@ -622,6 +633,7 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 {
 	const IniFile::key *cur = m_pIniCurMetrics->GetKey( "OptionNames" );
 	const IniFile::key *base = m_pIniBaseMetrics->GetKey( "OptionNames" );
+	const IniFile::key *fallback = m_pIniFallbackMetrics->GetKey( "OptionNames" );
 
 	if( cur )
 		for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); ++iter )
@@ -629,6 +641,10 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 
 	if( base )
 		for( IniFile::key::const_iterator iter = base->begin(); iter != base->end(); ++iter )
+			AddTo.insert( iter->first );
+	
+	if( fallback )
+		for( IniFile::key::const_iterator iter = fallback->begin(); iter != fallback->end(); ++iter )
 			AddTo.insert( iter->first );
 }
 

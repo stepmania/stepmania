@@ -72,6 +72,7 @@ protected:
 
 	IniFile* m_pIniCurMetrics;	// make this a pointer so we don't have to include IniFile here
 	IniFile* m_pIniBaseMetrics;	// make this a pointer so we don't have to include IniFile here
+	IniFile* m_pIniFallbackMetrics;	// make this a pointer so we don't have to include IniFile here
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
