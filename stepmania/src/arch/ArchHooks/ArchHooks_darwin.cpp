@@ -41,23 +41,8 @@ SInt16 ShowAlert(int type, CFStringRef message, CFStringRef OK, CFStringRef canc
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
-    CrashHandlerHandleArgs( g_argc, g_argv );
-    
-    long response;
-    CString error = "";
-    OSErr err = Gestalt(gestaltSystemVersion, &response);
-    
-    if (err != noErr)
-        error = "Gestalt call failed.";
-    else if (response < kMacOSX_10_2)
-        error = "StepMania is not supported on any version of Mac OS X "
-            "other than OS X 10.2.x. This is not a bug.";
-    if (error != "")
-	{
-        MessageBoxOK(error, "");
-        exit(0);
-    }
-    InstallExceptionHandler( CrashExceptionHandler );
+    CrashHandlerHandleArgs(g_argc, g_argv);
+    InstallExceptionHandler(CrashExceptionHandler);
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break
@@ -72,12 +57,6 @@ void ArchHooks_darwin::DumpDebugInfo()
     CString processor;
     long numProcessors;
     CString machine;
-    CString primaryDisplayDriver = "unknown";
-    CString dProvider = "";
-    CString dDescription = "";
-    CString dVersion = "";
-    CString dDate = "";
-    CString dDeviceID = "";
     char *temp;
 
     OSErr err = noErr;
@@ -224,22 +203,11 @@ void ArchHooks_darwin::DumpDebugInfo()
     else
         machine = "unknown machine";
     
-    /* Get primary display driver */
-    /* TODO */
-
     /* Send all of the information to the log */
     LOG->Info(machine.c_str());
     LOG->Info("Processor: %s (%ld)", processor.c_str(), numProcessors);
     LOG->Info("%s", systemVersion.c_str());
     LOG->Info("Memory: %ld MB total, %ld MB swap", ram, vRam);
-    LOG->Info("Primary display driver: %s\n"
-              "Video Driver Information:\n"
-              "Provider       :\t%s\n"
-              "Description    :\t%s\n"
-              "Version        :\t%s\n"
-              "Date           :\t%s\n"
-              "DeviceID       :\t%s\n", primaryDisplayDriver.c_str(), dProvider.c_str(),
-              dDescription.c_str(), dVersion.c_str(), dDate.c_str(), dDeviceID.c_str());
 }
 
 void ArchHooks_darwin::MessageBoxOKPrivate(CString sMessage, CString ID)
