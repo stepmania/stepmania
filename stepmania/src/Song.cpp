@@ -263,14 +263,11 @@ CString Song::GetCacheFilePath() const
 	return ssprintf( "Cache\\%u", (UINT)GetHashForString(m_sSongDir) );
 }
 
-CString Song::GetSongFilePath() const
+/* Get a path to the SM containing data for this song.  It might
+ * be a cache file. */
+const CString &Song::GetSongFilePath() const
 {
-	CStringArray asFileNames;
-	GetDirListing( m_sSongDir+"*.sm", asFileNames );
-	if( asFileNames.GetSize() > 0 )
-		return m_sSongDir + asFileNames[0];
-	else
-		return m_sSongDir + GetFullTitle() + ".sm";
+	return m_sSongFileName;
 }
 
 bool Song::LoadFromSongDir( CString sDir )
@@ -289,6 +286,17 @@ bool Song::LoadFromSongDir( CString sDir )
 	split( m_sSongDir, "\\", sDirectoryParts, false );
 	m_sGroupName = sDirectoryParts[sDirectoryParts.GetSize()-3];	// second from last item
 
+	{
+		/* Generated filename; this doesn't always point to a loadable file,
+		 * but instead points to the place we should write changed files to.
+		 * If we have an SM file in the directory, this should aways point to it. */
+		CStringArray asFileNames;
+		GetDirListing( m_sSongDir+"*.sm", asFileNames );
+		if( asFileNames.GetSize() > 0 )
+			m_sSongFileName = m_sSongDir + asFileNames[0];
+		else
+			m_sSongFileName = m_sSongDir + GetFullTitle() + ".sm";
+	}
 
 	//
 	// First look in the cache for this song (without loading NoteData)
@@ -345,8 +353,9 @@ load_without_cache:
 	}
 
 	TidyUpData();
-
-	SaveToCacheFile();	// save a cahce file so we don't have to parse it all over again next time
+	
+	// save a cache file so we don't have to parse it all over again next time
+	SaveToCacheFile();
 
 	return true;
 }
@@ -1410,16 +1419,12 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	const Song* pSong1 = *(const Song**)arg1;
 	const Song* pSong2 = *(const Song**)arg2;
 	
-	CString sTitle1 = pSong1->GetFullTitle();
-	CString sTitle2 = pSong2->GetFullTitle();
+	int ret = pSong1->GetFullTitle().CompareNoCase(pSong2->GetFullTitle());
+	if(ret != 0) return ret;
 
-	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
-	CString sFilePath2 = pSong2->GetSongFilePath();
-
-	CString sCompareString1 = sTitle1 + sFilePath1;
-	CString sCompareString2 = sTitle2 + sFilePath2;
-
-	return CompareCStringsAsc( (void*)&sCompareString1, (void*)&sCompareString2 );
+	/* The titles are the same.  Ensure we get a consistent ordering
+	 * by comparing the unique SongFilePaths. */
+	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath());
 }
 
 void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
@@ -1479,15 +1484,16 @@ int CompareSongPointersByGroup(const void *arg1, const void *arg2)
 	const Song* pSong1 = *(const Song**)arg1;
 	const Song* pSong2 = *(const Song**)arg2;
 		
-	CString sGroup1 = pSong1->m_sGroupName;
-	CString sGroup2 = pSong2->m_sGroupName;
+	const CString &sGroup1 = pSong1->m_sGroupName;
+	const CString &sGroup2 = pSong2->m_sGroupName;
 
 	if( sGroup1 < sGroup2 )
 		return -1;
-	else if( sGroup1 == sGroup2 )
-		return CompareSongPointersByTitle( arg1, arg2 );
-	else
+	else if( sGroup1 > sGroup2 )
 		return 1;
+
+	/* Same group; compare by title. */
+	return CompareSongPointersByTitle( arg1, arg2 );
 }
 
 void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )

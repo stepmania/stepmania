@@ -61,11 +61,19 @@ public:
 	void SaveToSMAndDWIFile();	// saves SM, then saves DWI so that the SM is the master copy and NoteTypes not supported by DWI are not lost
 	void SaveToCacheFile();
 
-	CString GetSongFilePath() const;
+	const CString &GetSongFilePath() const;
 	CString GetCacheFilePath() const;
 
 public:
+	/* Directory this song data came from: */
 	CString m_sSongDir;
+
+	/* Filename associated with this file.  This will always have
+	 * an .SM extension.  If we loaded an .SM, this will point to 
+	 * it, but if we loaded any other type, this will point to a
+	 * generated .SM filename. */
+	CString m_sSongFileName;
+
 	CString m_sGroupName;
 
 
