@@ -60,11 +60,6 @@ public:
 	 * itself to this. */
 	set<RageSound *> all_sounds;
 
-	/* stubs for music */
-	void PlayMusic(CString file, bool force_loop = false, float start_sec = -1, float length_sec = -1, float fade_len = 0);
-	void StopMusic();
-	CString GetMusicPath() const;
-
 	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
 };
 
