@@ -84,6 +84,31 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 	return fYOffset + fYAdjust;
 }
 
+float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset )
+{
+	float fYPos = fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+	return fYPos;
+}
+
+float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
+{
+	float f = ArrowGetYPosWithoutReverse(pn,iCol,fYOffset);
+	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
+
+	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
+	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fZoom = 1 - fMiniPercent*0.5f;
+
+	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+
+	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
+		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
+	return f;
+}
+
+
 float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
 {
 	float fPixelOffsetFromCenter = 0;
@@ -174,30 +199,6 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 	}
 	else
 		return 0;
-}
-
-float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset )
-{
-	float fYPos = fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	return fYPos;
-}
-
-float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
-{
-	float f = ArrowGetYPosWithoutReverse(pn,iCol,fYOffset);
-	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
-
-	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
-	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fZoom = 1 - fMiniPercent*0.5f;
-
-	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
-
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
-
-	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
-		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
-	return f;
 }
 
 
