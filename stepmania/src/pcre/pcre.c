@@ -40,10 +40,10 @@ restrictions:
 inline, and there are *still* stupid compilers about that don't like indented
 pre-processor statements. I suppose it's only been 10 years... */
 
+#undef DEBUG // don't do any debug printing. -Chris
+
 #ifdef DEBUG
-// disable debug printing. -Chris
-//#define DPRINTF(p) printf p
-#define DPRINTF(p) /*nothing*/
+#define DPRINTF(p) printf p
 #else
 #define DPRINTF(p) /*nothing*/
 #endif
