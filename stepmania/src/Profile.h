@@ -122,10 +122,14 @@ public:
 	set<int> m_UnlockedSongs;
 	mutable CString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	mutable DateTime m_LastPlayedDate;
+	/* These stats count twice in the machine profile if two players are playing;
+	 * that's the only approach that makes sense for ByDifficulty and ByMeter. */
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
+	/* This stat counts once per song, even if two players are active. */
+	int m_iNumSingleSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumStagesPassedByGrade[NUM_GRADES];
 

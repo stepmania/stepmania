@@ -142,6 +142,7 @@ void StatsManager::CommitStatsToProfiles()
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iCurrentCombo = 0;
+	pMachineProfile->m_iNumSingleSongsPlayed += m_CurStageStats.vpSongs.size();
 
 	CHECKPOINT;
 	FOREACH_HumanPlayer( pn )
@@ -156,13 +157,13 @@ void StatsManager::CommitStatsToProfiles()
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
 				m_CurStageStats.m_player[pn].iCurCombo : 
 				0;
+			pPlayerProfile->m_iNumSingleSongsPlayed += m_CurStageStats.vpSongs.size();
 		}
 
-		const StageStats& ss = m_CurStageStats;
-		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
+		AddPlayerStatsToProfile( pMachineProfile, m_CurStageStats, pn );
 
 		if( pPlayerProfile )
-			AddPlayerStatsToProfile( pPlayerProfile, ss, pn );
+			AddPlayerStatsToProfile( pPlayerProfile, m_CurStageStats, pn );
 
 		CHECKPOINT;
 	}

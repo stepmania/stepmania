@@ -102,6 +102,7 @@ void Profile::InitGeneralData()
 		m_iNumSongsPlayedByDifficulty[i] = 0;
 	for( int i=0; i<MAX_METER+1; i++ )
 		m_iNumSongsPlayedByMeter[i] = 0;
+	m_iNumSingleSongsPlayed = 0;
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
 
@@ -885,6 +886,8 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		}
 	}
 
+	pGeneralDataNode->AppendChild( "NumSingleSongsPlayed", m_iNumSingleSongsPlayed );
+
 	{
 		XNode* pNumStagesPassedByPlayMode = pGeneralDataNode->AppendChild("NumStagesPassedByPlayMode");
 		FOREACH_PlayMode( pm )
@@ -1052,6 +1055,8 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 			for( int i=0; i<MAX_METER+1; i++ )
 				pNumSongsPlayedByMeter->GetChildValue( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
 	}
+
+	pNode->GetChildValue("NumSingleSongsPlayed", m_iNumSingleSongsPlayed );
 
 	{
 		const XNode* pNumStagesPassedByGrade = pNode->GetChild("NumStagesPassedByGrade");
