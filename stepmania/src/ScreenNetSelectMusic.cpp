@@ -17,7 +17,6 @@
 #include "NetworkSyncManager.h"
 #include "StepsUtil.h"
 #include "RageUtil.h"
-#include "RageLog.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxHeight")
@@ -498,15 +497,20 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 			else
 			{
 				int i;
-				for ( i=0; i<(int)MultiSteps.size(); ++i )
-					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
-						break;
+				bool dcs[NUM_DIFFICULTIES];
 
-				if ( i == (int)MultiSteps.size() )
-					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
-				else
-					if (i > 0)	//If we are at the easiest difficulty, do nothign
-						m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+				for ( i=0; i<NUM_DIFFICULTIES; ++i )
+					dcs[i] = false;
+
+				for ( i=0; i<(int)MultiSteps.size(); ++i )
+					dcs[MultiSteps[i]->GetDifficulty()] = true;
+
+				for ( i=NUM_DIFFICULTIES-1; i>=0; --i )
+					if ( (dcs[i]) && (i < m_DC[pn]) )
+					{
+						m_DC[pn] = (Difficulty)i;
+						break;
+					}
 			}
 			UpdateDifficulties( pn );
 			GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
@@ -546,15 +550,25 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 			else
 			{
 				int i;
-				for ( i=0; i<(int)MultiSteps.size(); ++i )
-					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
-						break;
 
-				if ( i == (int)MultiSteps.size() )
-					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
-				else
-					if (i < (int)MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
-						m_DC[pn] = MultiSteps[i+1]->GetDifficulty();
+				bool dcs[NUM_DIFFICULTIES];
+
+				for ( i=0; i<NUM_DIFFICULTIES; ++i )
+					dcs[i] = false;
+
+				for ( i=0; i<(int)MultiSteps.size(); ++i )
+					dcs[MultiSteps[i]->GetDifficulty()] = true;
+
+				for ( i=0; i<NUM_DIFFICULTIES; ++i )
+				{
+					if ( (dcs[i]) && (i > m_DC[pn]) )
+					{
+						m_DC[pn] = (Difficulty)i;
+						break;
+					}
+				}
+
+				
 			}
 			UpdateDifficulties( pn );
 			GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
@@ -728,14 +742,30 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
 		{
-			for ( i=0; i<(int)MultiSteps.size(); ++i )
-				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
-					break;
+			int i;
+			Difficulty Target;
 
-			if ( i == (int)MultiSteps.size() )
-				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
-			else
-				m_DC[pn] = MultiSteps[i]->GetDifficulty();
+			bool dcs[NUM_DIFFICULTIES];
+
+			for ( i=0; i<NUM_DIFFICULTIES; ++i )
+				dcs[i] = false;
+
+			for ( i=0; i<(int)MultiSteps.size(); ++i )
+				dcs[MultiSteps[i]->GetDifficulty()] = true;
+
+			for ( i=0; i<NUM_DIFFICULTIES; ++i )
+				if ( dcs[i] )
+				{
+					Target = (Difficulty)i;
+					if ( i >= m_DC[pn] )
+					{
+						m_DC[pn] = (Difficulty)i;
+						break;
+					}
+				}
+
+			if ( i == NUM_DIFFICULTIES )
+				m_DC[pn] = Target;
 		}
 		UpdateDifficulties( pn );
 	}
