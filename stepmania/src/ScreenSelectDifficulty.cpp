@@ -45,7 +45,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDi
 		m_bChosen[p] = false;
 	}
 
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	unsigned c; // GCC is bitching again.
+        for( c=0; c<m_aModeChoices.size(); c++ )
 	{
 		if( (int)c < NUM_CHOICES_ON_PAGE_1 )
 			m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
