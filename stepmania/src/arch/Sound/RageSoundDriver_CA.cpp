@@ -242,7 +242,7 @@ int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
 void RageSound_CA::FillConverter(void *data, UInt32 dataByteSize)
 {
 	int frames = dataByteSize / gConverter->GetInputFormat().mBytesPerPacket;
-	this->Mix((int16_t *)data, frames, mDecodePos, GetPosition(NULL));
+	this->Mix((int16_t *)data, frames, mDecodePos, int64_t(mNow->mSampleTime));
 }
 
 OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
@@ -261,6 +261,7 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
 	dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
    
 	This->mDecodePos = int64_t(inOutputTime->mSampleTime);
+	This->mNow = inNow;
 	gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
 
 	g_fLastIOProcTime = tm.GetDeltaTime();
