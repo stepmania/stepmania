@@ -46,6 +46,8 @@ const CString CREDIT_LINES[] =
 	"SPiGuMuS",
 	"DJ McFox (Ryan McKanna)",
 	"Cloud34 (Lamden Travis)",
+	"Redcrusher (Michael Curry)",
+	"spds (James Sanders)",
 	"",
 	"",
 	"",
