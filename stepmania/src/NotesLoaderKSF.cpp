@@ -190,6 +190,8 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
+	float BPMPos2 = -1, BPM2 = -1;
+
 	for( i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
@@ -252,8 +254,11 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 		}
 
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );		
-
+			out.AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );
+		else if( 0==stricmp(sValueName,"BPM2") )
+			BPM2 = float(atof(sParams[1]));
+		else if( 0==stricmp(sValueName,"BUNKI") )
+			BPMPos2 = float(atof(sParams[1])) / 100.0f;
 		else if( 0==stricmp(sValueName,"STARTTIME") )
 			out.m_fBeat0OffsetInSeconds = -(float)atof(sParams[1])/100;		
 		else if( 0==stricmp(sValueName,"TICKCOUNT") ||
@@ -262,6 +267,17 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 			; /* Handled in LoadFromKSFFile; don't warn. */
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+	}
+
+	/* This doesn't work yet: we also need to move the data around, I think, and
+	 * we should handle more than one BPM change. */
+	if( BPM2 > 0 && BPMPos2 > 0 )
+	{
+		const float BeatsPerSecond = out.GetBPMAtBeat(0) / 60.0f;
+		const float beat = BPMPos2 * BeatsPerSecond;
+		LOG->Trace("BPM %f, BPS %f, BPMPos2 %f, beat %f",
+			out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos2, beat);
+		out.AddBPMSegment( BPMSegment(beat, BPM2) );
 	}
 
 	// search for music with song in the file name
