@@ -36,6 +36,17 @@ static const CString PlayModeNames[NUM_PLAY_MODES] = {
 XToString( PlayMode );
 XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
+void LuaPlayMode(lua_State* L)
+{
+	FOREACH_PlayMode( pm )
+	{
+		CString s = PlayModeNames[pm];
+		s.MakeUpper();
+		LUA->SetGlobal( "PLAY_MODE_"+s, pm );
+	}
+	LUA->SetGlobal( "NUM_PLAY_MODES", NUM_PLAY_MODES );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaPlayMode );
 
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
