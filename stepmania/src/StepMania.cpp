@@ -767,7 +767,7 @@ int main(int argc, char* argv[])
 	LoadingWindow *loading_window = MakeLoadingWindow();
 	if( loading_window == NULL )
 	{
-		LOG->Trace("Couldn't open any loading windows.\n");
+		LOG->Trace("Couldn't open any loading windows.");
 		exit(1);
 	}
 
