@@ -345,8 +345,6 @@ void Player::Step( int col )
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
-	bool bDestroyedNote = false;
-
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
@@ -369,12 +367,7 @@ void Player::Step( int col )
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
-			else	
-			{
-				// if this step is worse than Boo, we shouldn't be here in the first place.
-				ASSERT(0);	
-				return;	
-			}
+			else	score = TNS_NONE;
 		}
 		else
 		{
@@ -391,24 +384,23 @@ void Player::Step( int col )
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
 			score = TNS_PERFECT;
 
-		bDestroyedNote = (score >= TNS_GOOD);
+		if( score >= TNS_GOOD )
+			m_GrayArrowRow.Step( col );
 
 		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
+		
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
-		SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
+
+		if( score != TNS_NONE )
+			SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
 		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == HUMAN  && 
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
-		ASSERT( score != TNS_NONE );
-
 		if( IsRowCompletelyJudged(iIndexOverlappingNote) )
 			OnRowCompletelyJudged( iIndexOverlappingNote );
 	}
-
-	if( !bDestroyedNote )
-		m_GrayArrowRow.Step( col );
 }
 
 void Player::HandleAutosync(float fNoteOffset)

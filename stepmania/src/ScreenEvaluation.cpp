@@ -455,6 +455,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	int l;
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
+		if( l == 0  &&  !PREFSMAN->m_bMarvelousTiming )
+			continue;	// skip
+
 		if( SHOW_JUDGMENT(l) )
 		{
 			m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","ScreenEvaluation judge labels 1x8") );

@@ -39,7 +39,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 {
 	m_CurrentPage = PAGE_1;
 	int p;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iChoice[p] = 0;
 		m_bChosen[p] = false;
