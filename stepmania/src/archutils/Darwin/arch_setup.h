@@ -10,4 +10,7 @@
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
 #define _BSD_WCHAR_T_DEFINED_
-extern long long llabs(long long i);
+extern "C"
+{
+    extern long long llabs(long long i);
+}
