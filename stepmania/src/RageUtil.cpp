@@ -184,69 +184,29 @@ void split( const lstring &Source, const lstring &Deliminator, vector<lstring> &
 }
 
 
-void splitpath( bool UsingDirsOnly, const CString &Path, CString& Drive, CString& Dir, CString& FName, CString& Ext )
+/*
+ * foo\fum\          -> "foo\fum\", "", ""
+ * c:\foo\bar.txt    -> "c:\foo\", "bar", ".txt"
+ * \\foo\fum         -> "\\foo\", "fum", ""
+ */
+void splitpath( CString Path, CString& Dir, CString& Filename, CString& Ext )
 {
-	int nSecond;
+	Dir = Filename = Ext = "";
 
-	// Look for a UNC filename.
-	if (Path.Left(2) == "\\\\") 
+	CStringArray mat;
+
+	/* One level of escapes for the regex, one for C. Ew. */
+	ASSERT(regex("^(.*[\\\\/])?(.*)$", Path, mat));
+
+	Dir = mat[0];
+	Path = mat[1];
+
+	if(regex("^(.*)(\\....)$", Path, mat))
 	{
-		int nFirst = Path.Find("\\",3);
-		nSecond = Path.Find("\\",nFirst + 1);
-		if (nSecond == -1) {
-			Drive = Path;
-			Dir = "";
-			FName = "";
-			Ext = "";
-		}
-		else if (nSecond > nFirst)
-			Drive = Path.Left(nSecond);
-	}
-	else if (Path[1] == ':' )		// drive letter
-	{
-		nSecond = 2;
-		Drive = Path.Left(2);
-	}
-	else	// no UNC or drive letter
-	{
-		nSecond = -1;
-	}
-	
-
-	if (UsingDirsOnly) {
-		Dir = Path.Right((Path.GetLength() - nSecond) - 1);
-		FName = "";
-		Ext = "";
-	}
-	else {
-		int nDirEnd = Path.ReverseFind('\\');
-		if (nDirEnd == Path.GetLength()) {
-			Dir = "";
-			FName = "";
-			Ext = "";
-		}
-		else {
-
-			Dir = Path.substr(nSecond + 1, (nDirEnd - nSecond) - 1);
-
-			int nFileEnd = Path.ReverseFind('.');
-			if (nFileEnd != -1) {
-				
-				if (nDirEnd > nFileEnd) {
-					FName = Path.Right(Path.GetLength() - nDirEnd);
-					Ext = "";
-				}
-				else {
-					FName = Path.substr(nDirEnd + 1, (nFileEnd - nDirEnd) - 1);
-					Ext = Path.Right((Path.GetLength() - nFileEnd) - 1);
-				}
-			}
-			else {
-				FName = Path.Right((Path.GetLength() - nDirEnd) - 1);
-				Ext = "";
-			}
-		}
-	}
+		Filename = mat[0];
+		Ext = mat[1];
+	} else
+		Filename = Path;
 }
 
 void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& Ext )

@@ -128,17 +128,12 @@ CString werr_ssprintf( int err, const char *fmt, ...);
 #endif
 
 // Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
-// param1: Whether the Supplied Path (PARAM2) contains a directory name only
-//            or a file name (Reason: some directories will end with "aaa.bbb"
-//            which is like a file name).
-// We should just make sure all pathnames end with a slash, not special case it here.
-// -glenn
+/* If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
+ * element will end up in Dir, not FName: "c:\games\stepmania\". */
 void splitpath( 
-	bool UsingDirsOnly, 
-	const CString &Path, 
-	CString &Drive, 
-	CString &Dir, 
-	CString &FName, 
+	CString Path, 
+	CString &Dir,
+	CString &Filename,
 	CString &Ext
 );
 

@@ -278,6 +278,13 @@ void Font::AddPage(FontPage *fp)
 
 void Font::MergeFont(Font &f)
 {
+	/* If we don't have a font page yet, and f does, grab the default font
+	 * page.  It'll usually be overridden later on by one of our own font
+	 * pages; this will be used only if we don't have any font pages at
+	 * all. */
+	if(def == NULL)
+		def = f.def;
+
 	for(map<longchar,glyph*>::iterator it = f.m_iCharToGlyph.begin();
 		it != f.m_iCharToGlyph.end(); ++it)
 	{
@@ -358,42 +365,79 @@ bool Font::MatchesFont(CString FontName, CString FileName)
 	return regex("^( \\[|\\.| [0-9]+x[0-9]+)", FileName);
 }
 
-void Font::GetFontPaths(const CString &sFontOrTextureFilePath, 
+CString GetFontName(CString FileName)
+{
+	CString orig = FileName;
+
+	/* If it ends in an extension, remove it. */
+	if(regex("\\....", FileName))
+		FileName.erase(FileName.size()-4);
+
+	/* If it ends in a dimension spec, remove it. */
+	CStringArray mat;
+	if(regex("( [0-9]+x[0-9]+)$", FileName, mat))
+		FileName.erase(FileName.size()-mat[0].size());
+
+	/* If it ends in a page name, remove it. */
+	if(regex("( \\[.+\\])$", FileName, mat))
+		FileName.erase(FileName.size()-mat[0].size());
+
+	TrimRight(FileName);
+
+	if(FileName.empty())
+		RageException::Throw("Can't parse font filename \"%s\"", orig.GetString());
+
+	return FileName;
+}
+
+/* Given a file in a font, find all of the files for the font.
+ * 
+ * Possibilities:
+ *
+ * Normal 16x16.png
+ * Normal [other] 16x16.png
+ * Normal [more] 8x8.png
+ * Normal 16x16.ini
+ * Normal.ini
+ *
+ * Any of the above should find all of the above.  Allow the
+ * extension to be omitted. */
+void Font::GetFontPaths(const CString &sFontOrTextureFilePath,
 							   CStringArray &TexturePaths, CString &IniPath)
 {
-	CString sDrive, sDir, sFName, sExt;
-	splitpath( false, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
+	CString sDir, sFName, sExt;
+	splitpath( sFontOrTextureFilePath, sDir, sFName, sExt );
 
-	ASSERT(sExt.CompareNoCase("ini")); /* don't give us an INI! */
-	ASSERT(sExt.CompareNoCase("redir")); /* don't give us a redir! */
+	/* Don't give us a redir; resolve those before sending them here. */
+	ASSERT(sExt.CompareNoCase("redir"));
 
-	if(!sExt.empty())
+	/* sFName can't be empty, or we don't know what to search for. */
+	ASSERT(!sFName.empty());
+
+	CString FontName = GetFontName(sFName);
+
+	CStringArray Files;
+	GetDirListing( sDir+"/"+FontName + "*", Files, false, false );
+
+	for(unsigned i = 0; i < Files.size(); ++i)
 	{
-		TexturePaths.push_back(sFontOrTextureFilePath);
-		return;
+		/* We now have a list of possibilities, but it may include false positives,
+		 * such as "Normal2" when the font name is "Normal".  Weed them. */
+		if(GetFontName(Files[i]).CompareNoCase(FontName))
+			continue;
+
+		/* If it's an INI, and we don't already have an INI, use it. */
+		if(!Files[i].Right(4).CompareNoCase(".ini")) 
+		{
+			if(!IniPath.empty())
+				RageException::Throw("More than one INI found\n%s\n%s", IniPath.GetString(), Files[i].GetString());
+			
+			IniPath = sDir+"/"+Files[i];
+			continue;
+		}
+
+		TexturePaths.push_back(sDir+"/"+Files[i]);
 	}
-
-	/* If we have no extension, we need to search. */
-	GetDirListing( sFontOrTextureFilePath + "*.png", TexturePaths, false, true );
-
-	CStringArray IniPaths;
-	GetDirListing( sFontOrTextureFilePath + "*.ini", IniPaths, false, true );
-
-	/* Filter out texture files that aren't actually for this font. */
-	unsigned i = 0;
-	while(i < TexturePaths.size())
-	{
-		if(!MatchesFont(sFontOrTextureFilePath, TexturePaths[i]))
-			TexturePaths.erase(TexturePaths.begin()+i);
-		else
-			i++;
-	}
-
-	for(i = 0; i < IniPaths.size(); ++i)
-		if(MatchesFont(sFontOrTextureFilePath, IniPaths[i])) break;
-	if(i < IniPaths.size()) IniPath = IniPaths[i];
-
-	ASSERT(!TexturePaths.empty()); /* ThemeManager should have checked this */
 }
 
 CString Font::GetPageNameFromFileName(const CString &fn)
@@ -666,7 +710,11 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 	CStringArray TexturePaths;
 	CString IniPath;
 	GetFontPaths(sFontOrTextureFilePath, TexturePaths, IniPath);
-	
+
+	/* If we don't have at least one INI or at least one texture path,
+	 * we have nothing at all. */
+	ASSERT(!IniPath.empty() || TexturePaths.size());
+
 	bool CapitalsOnly = false;
 
 	/* If we have an INI, load it. */

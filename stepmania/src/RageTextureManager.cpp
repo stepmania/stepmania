@@ -91,8 +91,8 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	ID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
 	ID.iMaxSize = TEXTUREMAN->GetMaxTextureResolution();
 
-	CString sDrive, sDir, sFName, sExt;
-	splitpath( false, ID.filename, sDrive, sDir, sFName, sExt );
+	CString sDir, sFName, sExt;
+	splitpath( ID.filename, sDir, sFName, sExt );
 
 	RageTexture* pTexture;
 	if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
