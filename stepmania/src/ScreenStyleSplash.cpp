@@ -13,9 +13,8 @@
 #include "ScreenStyleSplash.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "AnnouncerManager.h"
-#include "GameState.h"
 #include "RageSoundManager.h"
+#include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "GameManager.h"
@@ -44,11 +43,8 @@ ScreenStyleSplash::ScreenStyleSplash()
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.GetString(),sStyleName.GetString(),iDifficulty) ) );
 	this->AddChild( &m_Background );
 	
-	m_Wipe.OpenWipingRight( SM_DoneOpening );
-	this->AddChild( &m_Wipe );
-
-//	m_FadeWipe.SetOpened();
-//	this->AddChild( &m_FadeWipe );
+	m_Menu.Load( "ScreenStyleSplash" );
+	this->AddChild( &m_Menu );
 
 	this->SendScreenMessage( SM_StartClosing, 2 );
 }
@@ -56,7 +52,7 @@ ScreenStyleSplash::ScreenStyleSplash()
 
 void ScreenStyleSplash::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Wipe.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
@@ -68,8 +64,8 @@ void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartClosing:
-		if( !m_Wipe.IsClosing() )
-			m_Wipe.CloseWipingRight( SM_GoToNextScreen );
+		if( !m_Menu.IsTransitioning() )
+			m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_DoneOpening:
 	
@@ -85,15 +81,22 @@ void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenStyleSplash::MenuStart( PlayerNumber pn )
 {
-		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenStyleSplash::MenuBack( PlayerNumber pn )
 {
-	if(m_FadeWipe.IsClosing())
+	if(m_Menu.IsTransitioning())
 		return;
 	this->ClearMessageQueue();
-	m_FadeWipe.CloseWipingLeft( SM_GoToPrevScreen );
+	m_Menu.Back( SM_GoToPrevScreen );
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
+}
+
+void ScreenStyleSplash::DrawPrimitives()
+{
+	m_Menu.DrawBottomLayer();
+	Screen::DrawPrimitives();
+	m_Menu.DrawTopLayer();
 }
 

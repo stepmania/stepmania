@@ -14,10 +14,8 @@
 
 
 #include "Screen.h"
-#include "TransitionFade.h"
-#include "TransitionFadeWipe.h"
-#include "RandomSample.h"
 #include "BGAnimation.h"
+#include "MenuElements.h"
 
 
 class ScreenStyleSplash : public Screen
@@ -27,13 +25,14 @@ public:
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void DrawPrimitives();
 
 protected:
 	void MenuStart( PlayerNumber pn );
 	void MenuBack(	PlayerNumber pn );
+
+	MenuElements m_Menu;
 	BGAnimation m_Background;
-	TransitionFade		m_Wipe;
-	TransitionFadeWipe	m_FadeWipe;
 };
 
 #endif
