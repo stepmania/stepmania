@@ -58,8 +58,13 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	FOREACH_PlayerNumber(p)
 	{
-		Character* pChar = GAMESTATE->m_pCurCharacters[p];
 		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
+
+		const Character *pChar = GAMESTATE->m_pCurCharacters[p];
+		CString sPath = pChar->GetStageIconPath();
+		if( sPath == "" )
+			continue;
+
 		m_sprCharacterIcon[p].Load( pChar->GetStageIconPath() );
 		SET_XY_AND_ON_COMMAND( m_sprCharacterIcon[p] );
 		this->AddChild( &m_sprCharacterIcon[p] );
