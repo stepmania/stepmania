@@ -33,7 +33,8 @@ MenuTimer::MenuTimer()
 	m_textDigit1.TurnShadowOff();
 	m_textDigit2.TurnShadowOff();
 
-	float fCharWidth = (float)m_textDigit1.m_pFont->m_pTexture->GetSourceFrameWidth();
+	const glyph &g = m_textDigit1.m_pFont->GetGlyph('0');
+	float fCharWidth = (float)g.Texture->GetSourceFrameWidth();
 
 	m_textDigit1.SetXY( -fCharWidth/2, 0 );
 	m_textDigit2.SetXY( +fCharWidth/2, 0 );

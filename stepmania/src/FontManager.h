@@ -25,12 +25,11 @@ public:
 	~FontManager();
 
 	Font* LoadFont( CString sFontOrTextureFilePath, CString sChars = "" );
-	bool IsFontLoaded( CString sFontPath );
-	void UnloadFont( CString sFontPath );
+	void UnloadFont( Font *fp );
 
 protected:
 	// map from file name to a texture holder
-	std::map<CString, Font*> m_mapPathToFont;
+	map<CString, Font*> m_mapPathToFont;
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

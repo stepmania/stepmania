@@ -15,8 +15,10 @@
 #include "IniFile.h"
 
 struct glyph {
+	RageTexture *Texture;
+
 	/* Number of pixels to advance horizontally after drawing this character. */
-	float advance;
+	float hadvance, vadvance;
 
 	/* Size of the actual rendered character. */
 	float width, height;
@@ -28,35 +30,55 @@ struct glyph {
 	RectF rect;
 };
 
-class Font
+class FontPage
 {
 public:
-	Font( const CString &sASCIITexturePath );
-	Font( const CString &sTexturePath, const CString& sChars );
-	~Font();
-	void Init();
+	RageTexture* m_pTexture;
+
+	CString m_sTexturePath;
+
+	/* All glyphs in this list will point to m_pTexture. */
+	vector<glyph> glyphs;
+
+	map<int,int> m_iCharToGlyphNo;
+
+	FontPage();
+	~FontPage();
 
 	int GetLineWidthInSourcePixels( const CString &szLine );
 	int GetLineHeightInSourcePixels( const CString &szLine );
 
-	int m_iRefCount;
-
-	CString m_sTexturePath;
-
-	vector<glyph> glyphs;
-
-	RageTexture* m_pTexture;
-	bool m_bCapitalsOnly;
-	int m_iLineSpacing;
-
-	map<int,int> m_iCharToFrameNo;
-
-	const glyph &GetGlyph( int frameNo ) const { return glyphs[frameNo]; }
+	void Load( const CString &sASCIITexturePath, IniFile &ini );
 
 private:
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
-	void SetTextureCoords(const vector<int> &widths);
-	void Load( const CString &sASCIITexturePath, IniFile &ini );
+	void SetTextureCoords(const vector<int> &widths, int LineSpacing);
+};
+
+class Font
+{
+public:
+	int m_iRefCount;
+	CString path;
+	map<int,glyph*> m_iCharToGlyph;
+
+	Font();
+
+	RageTexture *GetGlyphTexture( int c );
+	const glyph &GetGlyph( int c ) const;
+
+	int GetLineWidthInSourcePixels( const CString &szLine );
+	int GetLineHeightInSourcePixels( const CString &szLine );
+
+	/* Add a FontPage to this font. */
+	void AddPage(FontPage *fp);
+
+	/* Load font-wide settings. */
+	void LoadINI(IniFile &ini);
+
+private:
+	vector<FontPage *> pages;
+
 };
 
 #endif

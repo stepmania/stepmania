@@ -57,67 +57,89 @@ Font* FontManager::LoadFont( CString sFontOrTextureFilePath, CString sChars )
 	// of the same bitmap if there are equivalent but different paths
 	// (e.g. "graphics\blah.png" and "..\stepmania\graphics\blah.png" ).
 
-	Font* pFont = NULL;
-
-	std::map<CString, Font*>::iterator p = m_mapPathToFont.find(sFontOrTextureFilePath);
+	map<CString, Font*>::iterator p = m_mapPathToFont.find(sFontOrTextureFilePath);
 	if(p != m_mapPathToFont.end()) {
 //		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontFilePath.GetString(), pFont->m_iRefCount) );
-		pFont=p->second;
+		Font *pFont=p->second;
 		pFont->m_iRefCount++;
+		return pFont;
 	}
-	else	// the texture is not already loaded
-	{
-		CString sDrive, sDir, sFName, sExt;
-		splitpath( false, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
+	
+	// the texture is not already loaded
+	CString sDrive, sDir, sFName, sExt;
+	splitpath( false, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
 
-		if( sChars == "" )
-			pFont = (Font*) new Font( sFontOrTextureFilePath );
-		else
-			pFont = (Font*) new Font( sFontOrTextureFilePath, sChars );
+	Font* pFont = new Font;
+
+
+	FontPage *fp = new FontPage;
+	IniFile ini;
+
+	int expect;
+	if( sChars == "" )
+	{
+		/* Default to 0..255. */
+		for( int i=0; i<256; i++ )
+			fp->m_iCharToGlyphNo[i] = i;
+
+		// Find .ini widths path from texture path
+		CString sDir, sFileName, sExtension;
+		splitrelpath( sFontOrTextureFilePath, sDir, sFileName, sExtension );
+		const CString sIniPath = sDir + sFileName + ".ini";
+
+		ini.SetPath( sIniPath );
+		ini.ReadFile();
+		ini.RenameKey("Char Widths", "main");
+		expect = 256;
+	}
+	else
+	{
+		/* Map characters to frames; we don't actually have an INI. */
+		for( int i=0; i<sChars.GetLength(); i++ )
+		{
+			char c = sChars[i];
+			fp->m_iCharToGlyphNo[c] = i;
+		}
+		expect = sChars.GetLength();
+	}
+
+	fp->Load(sFontOrTextureFilePath, ini);
+	if( fp->m_pTexture->GetNumFrames() != expect )
+		RageException::Throw( "The font '%s' has %d frames; expected %i frames.",
+			fp->m_pTexture->GetNumFrames(), expect );
 
 //		LOG->Trace( "FontManager: Loading '%s' from disk.", sFontFilePath.GetString());
 
-		m_mapPathToFont[sFontOrTextureFilePath] = pFont;
-	}
+	pFont->AddPage(fp);
+	m_mapPathToFont[sFontOrTextureFilePath] = pFont;
+
+	pFont->LoadINI(ini);
 
 	return pFont;
 }
 
 
-bool FontManager::IsFontLoaded( CString sFontFilePath )
+void FontManager::UnloadFont( Font *fp )
 {
-	sFontFilePath.MakeLower();
-
-	return m_mapPathToFont.find(sFontFilePath) != m_mapPathToFont.end();
-}	
-
-void FontManager::UnloadFont( CString sFontFilePath )
-{
-	sFontFilePath.MakeLower();
-
 //	LOG->Trace( "FontManager::UnloadTexture(%s).", sFontFilePath.GetString() );
 
-	if( sFontFilePath == "" )
+	for( std::map<CString, Font*>::iterator i = m_mapPathToFont.begin();
+		i != m_mapPathToFont.end(); ++i)
 	{
-//		LOG->Trace( "FontManager::UnloadTexture(): tried to Unload a blank" );
-		return;
-	}
+		if(i->second == fp)
+		{
+			i->second->m_iRefCount--;
 	
-	Font* pFont;
-	std::map<CString, Font*>::iterator p = m_mapPathToFont.find(sFontFilePath);
-	if(p == m_mapPathToFont.end())
-		RageException::Throw( "Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath.GetString() );
-
-	pFont=p->second;
-	pFont->m_iRefCount--;
-	if( pFont->m_iRefCount != 0 )
-	{
-//		LOG->Trace( "FontManager: '%s' will not be deleted.  It still has %d references.", sFontFilePath.GetString(), pFont->m_iRefCount );
-		return;
-	}
-	
-	// There are no more references to this texture.
+			if( fp->m_iRefCount == 0 )
+			{
+				delete i->second;		// free the texture
+				m_mapPathToFont.erase( i );	// and remove the key in the map
+			}
 //	LOG->Trace( "FontManager: '%s' will be deleted.  It has %d references.", sFontFilePath.GetString(), pFont->m_iRefCount );
-	SAFE_DELETE( pFont );		// free the texture
-	m_mapPathToFont.erase( p );	// and remove the key in the map
+			return;
+		}
+
+	}
+	
+	RageException::Throw( "Unloaded an unknown font (%p)", fp );
 }
