@@ -208,12 +208,19 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	++InHere;
 
 	/* Now things get more risky.  If we're fullscreen, the window will obscure the
-	 * crash dialog.  Try to hide the window.  We stopped threads above; we need to
-	 * resume them now, or ShowWindow will deadlock.  Things might blow up here;
-	 * do this after DoSave, so we always write a crash dump. */
-	RageThread::ResumeAllThreads();
-	ShowWindow( g_hWndMain, SW_HIDE );
-	RageThread::HaltAllThreads( false );
+	 * crash dialog.  Try to hide the window.  Things might blow up here; do this
+	 * after DoSave, so we always write a crash dump. */
+	if( GetWindowThreadProcessId( g_hWndMain, NULL ) == GetCurrentThreadId() )
+	{
+		/* The thread that crashed was the thread that created the main window.  Hide
+		 * the window.  This will also restore the video mode, if necessary. */
+		ShowWindow( g_hWndMain, SW_HIDE );
+	} else {
+		/* A different thread crashed.  Simply kill all other windows.  We can't safely
+		 * call ShowWindow; the main thread might be deadlocked. */
+		RageThread::HaltAllThreads( true );
+		ChangeDisplaySettings(NULL, 0);
+	}
 
 	if( g_bAutoRestart )
 		Win32RestartProgram();
