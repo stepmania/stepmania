@@ -1085,7 +1085,7 @@ Course *SongManager::FindCourse( CString sName )
 {
 	for( unsigned i = 0; i < m_pCourses.size(); i++ )
 	{
-		if( sName.CompareNoCase(m_pCourses[i]->m_sName) )
+		if( !sName.CompareNoCase(m_pCourses[i]->m_sName) )
 			return m_pCourses[i];
 	}
 
