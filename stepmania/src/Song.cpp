@@ -50,7 +50,7 @@
 
 #define CACHE_DIR "Cache/"
 
-const int FILE_CACHE_VERSION = 132;	// increment this when Song or Steps changes to invalidate cache
+const int FILE_CACHE_VERSION = 133;	// increment this when Song or Steps changes to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -83,6 +83,8 @@ Song::Song()
 	m_fSpecifiedBPMMin = 0;
 	m_fSpecifiedBPMMax = 0;
 	m_bIsSymLink = false;
+	m_bHasMusic = false;
+	m_bHasBanner = false;
 }
 
 Song::~Song()
@@ -246,13 +248,13 @@ bool Song::LoadFromSongDir( CString sDir, bool bAllowCache )
 	}
 
 	/* Load the cached banners, if it's not loaded already. */
-	if( HasBanner() )
+	if( m_bHasBanner )
 		BANNERCACHE->LoadBanner( GetBannerPath() );
 
 	/* Add AutoGen pointers.  (These aren't cached.) */
 	AddAutoGenNotes();
 
-	if( !HasMusic() )
+	if( !m_bHasMusic )
 		return false;	// don't load this song
 	else
 		return true;	// do load this song
@@ -538,6 +540,8 @@ void Song::TidyUpData()
 	//
 	if( !HasBanner() )
 	{
+		/* If a nonexistant banner file is specified, and we can't find a replacement,
+		 * don't wipe out the old value. */
 //		m_sBannerFile = "";
 
 		// find an image with "banner" in the file name
@@ -671,6 +675,10 @@ void Song::TidyUpData()
 			continue;
 		}
 	}
+
+	/* These will be written to cache, for Song::LoadFromSongDir to use later. */
+	m_bHasMusic = HasMusic();
+	m_bHasBanner = HasBanner();
 
 	if( HasBanner() )
 		BANNERCACHE->CacheBanner( GetBannerPath() );

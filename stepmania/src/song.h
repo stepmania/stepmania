@@ -140,6 +140,8 @@ public:
 	CString GetBackgroundPath() const;
 	CString GetCDTitlePath() const;
 
+	/* For loading only: */
+	bool m_bHasMusic, m_bHasBanner;
 
 	bool HasMusic() const;
 	bool HasBanner() const;

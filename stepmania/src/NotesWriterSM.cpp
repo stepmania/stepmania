@@ -172,6 +172,8 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		f.PutLine( ssprintf( "#FIRSTBEAT:%.3f;\n", out.m_fFirstBeat ) );
 		f.PutLine( ssprintf( "#LASTBEAT:%.3f;\n", out.m_fLastBeat ) );
 		f.PutLine( ssprintf( "#SONGFILENAME:%s;\n", out.m_sSongFileName.c_str() ) );
+		f.PutLine( ssprintf( "#HASMUSIC:%i;\n", out.m_bHasMusic ) );
+		f.PutLine( ssprintf( "#HASBANNER:%i;\n", out.m_bHasBanner ) );
 	}
 
 	//

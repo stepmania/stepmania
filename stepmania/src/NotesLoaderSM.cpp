@@ -216,14 +216,20 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		}
 		else if( 0==stricmp(sValueName,"SONGFILENAME") )
 		{
-			if(!FromCache)
-			{
-				LOG->Trace("Ignored #SONGFILENAME (cache only)");
-				continue;
-			}
-			out.m_sSongFileName = sParams[1];
+			if( FromCache )
+				out.m_sSongFileName = sParams[1];
 		}
-		
+		else if( 0==stricmp(sValueName,"HASMUSIC") )
+		{
+			if( FromCache )
+				out.m_bHasMusic = atoi( sParams[1] ) != 0;
+		}
+		else if( 0==stricmp(sValueName,"HASBANNER") )
+		{
+			if( FromCache )
+				out.m_bHasBanner = atoi( sParams[1] ) != 0;
+		}
+
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
 
