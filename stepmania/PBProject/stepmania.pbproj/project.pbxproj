@@ -1364,6 +1364,10 @@
 				AA34ECFD0611C9B8003E5955,
 				AA34ECFF0611C9C7003E5955,
 				AA34ED000611D8C2003E5955,
+				AA34ED210611FB83003E5955,
+				AA34ED220611FB83003E5955,
+				AA34ED290611FE33003E5955,
+				AA34ED2A0611FE33003E5955,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4942,6 +4946,62 @@
 		};
 		AA34ED000611D8C2003E5955 = {
 			fileRef = AAF744DA06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ED1F0611FB83003E5955 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAConditionalMacros.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA34ED200611FB83003E5955 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = FormatConverterClient.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA34ED210611FB83003E5955 = {
+			fileRef = AA34ED1F0611FB83003E5955;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ED220611FB83003E5955 = {
+			fileRef = AA34ED200611FB83003E5955;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ED270611FE33003E5955 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAAutoDisposer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA34ED280611FE33003E5955 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CADebugMacros.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA34ED290611FE33003E5955 = {
+			fileRef = AA34ED270611FE33003E5955;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ED2A0611FE33003E5955 = {
+			fileRef = AA34ED280611FE33003E5955;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -15457,6 +15517,10 @@
 		};
 		AAF744A306116B0500B19AD1 = {
 			children = (
+				AA34ED270611FE33003E5955,
+				AA34ED280611FE33003E5955,
+				AA34ED1F0611FB83003E5955,
+				AA34ED200611FB83003E5955,
 				AAF744B006116B0500B19AD1,
 				AAF744B106116B0500B19AD1,
 				AAF744B206116B0500B19AD1,
