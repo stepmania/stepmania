@@ -73,13 +73,14 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  * allow screens that use rows to select other screens to work with only three
  * buttons.  (It's also used when in five-key mode.)
  *
+ * We don't want to simply allow left/right to move up and down on single-entry
+ * rows when in NAV_THREE_KEY, becasue left and right shouldn't exit the "exit" row
+ * in player options menus, but it should in the options menu.
+ *
  * NAV_FIRST_CHOICE_GOES_DOWN:
- *  left, right -> change row
+ *  left, right -> change option
  *  up, down -> change row
- *  start -> next screen
- * This is a specialized navigation for ScreenOptionsMenu.  It must be enabled to
- * allow screens that use rows to select other screens to work with only three
- * buttons.  (It's also used when in five-key mode.)
+ *  start -> toggle option
  */
 
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
