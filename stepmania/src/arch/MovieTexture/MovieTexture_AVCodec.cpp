@@ -389,10 +389,10 @@ void MovieTexture_AVCodec::DecoderThread()
 		{
 			if ( GetNextTimestamp )
 			{
-				int64_t ts = pkt.pts;
-				if (ts == AV_NOPTS_VALUE)
-					ts = 0;
-				CurrentTimestamp = (float)ts * m_fctx->pts_num / m_fctx->pts_den;
+				if (pkt.pts == AV_NOPTS_VALUE)
+					CurrentTimestamp = 0;
+				else
+					CurrentTimestamp = (float)pkt.pts * m_fctx->pts_num / m_fctx->pts_den;
 				if( CurrentTimestamp != 0 )
 					LastGoodTimestamp = CurrentTimestamp;
 				GetNextTimestamp = false;
