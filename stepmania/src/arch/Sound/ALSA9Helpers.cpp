@@ -57,7 +57,7 @@ bool Alsa9Buf::SetHWParams()
 	if( (int) rate != samplerate )
 		LOG->Warn("Alsa9Buf::SetHWParams: Couldn't get %ihz (got %ihz instead)", samplerate, rate);
 
-	snd_pcm_uframes_t buffersize = 1024*32;
+	snd_pcm_uframes_t buffersize = 1024*8;
 	err = dsnd_pcm_hw_params_set_buffer_size_near( pcm, hwparams, &buffersize );
 	ALSA_CHECK("dsnd_pcm_hw_params_set_buffer_size_near");
 
