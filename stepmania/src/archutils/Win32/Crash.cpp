@@ -791,7 +791,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				EndDialog(hDlg, FALSE);
 				return TRUE;
 			case IDOK:
-				EndDialog(hDlg, TRUE);
+				// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
 				return TRUE;
 			case IDC_VIEW_LOG:
 				ViewWithNotepad("../log.txt");
