@@ -198,7 +198,7 @@ Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.h Bookkeeper.cpp FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
-LightsManager.cpp LightsManager.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
+LightsManager.cpp LightsManager.h MemoryCardManager.cpp MemoryCardManager.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
 ProfileManager.cpp ProfileManager.h ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
 UnlockSystem.cpp UnlockSystem.h
 

@@ -41,6 +41,7 @@
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
+#include "MemoryCardManager.h"
 #include "ScreenManager.h"
 #include "GameManager.h"
 #include "FontManager.h"
@@ -896,6 +897,7 @@ int main(int argc, char* argv[])
 	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
+	MEMCARDMAN	= new MemoryCardManager;
 	PROFILEMAN	= new ProfileManager;	// must load after SONGMAN
 	delete loading_window;		// destroy this before init'ing Display
 
@@ -992,6 +994,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
 	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
+	SAFE_DELETE( MEMCARDMAN );
 	SAFE_DELETE( SONGMAN );
 	SAFE_DELETE( BANNERCACHE );
 	SAFE_DELETE( SONGINDEX );
@@ -1263,6 +1266,7 @@ static void GameLoop()
 		GAMESTATE->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
+		MEMCARDMAN->Update( fDeltaTime );
 
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );

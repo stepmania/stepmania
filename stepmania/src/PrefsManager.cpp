@@ -208,6 +208,12 @@ PrefsManager::PrefsManager()
 	m_bTimestamping = false;
 	m_bLogCheckpoints = false;
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_iMemoryCardUsbBus[p] = -1;
+		m_iMemoryCardUsbPort[p] = -1;
+	}
+
 	ReadGlobalPrefsFromDisk();
 }
 
@@ -358,7 +364,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
 		FixSlashesInPlace( m_sMemoryCardDir[p] );
-		ini.GetValue( "Options", ssprintf("MemoryCardMountCommandP%d",p+1),		m_sMemoryCardMountCommand[p] );
+		ini.GetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
+		ini.GetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
 	}
 
 	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
@@ -514,7 +521,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	{
 		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
-		ini.SetValue( "Options", ssprintf("MemoryCardMountCommandP%d",p+1),		m_sMemoryCardMountCommand[p] );
+		ini.SetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
+		ini.SetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
 	}
 
 	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );

@@ -121,8 +121,9 @@ public:
 	int				m_iEndlessBreakLength;
 	CString			m_sLanguage;
 	CString			m_sDefaultLocalProfileID[NUM_PLAYERS];
-	CString			m_sMemoryCardDir[NUM_PLAYERS];
-	CString			m_sMemoryCardMountCommand[NUM_PLAYERS];
+	CString			m_sMemoryCardDir[NUM_PLAYERS];		// always use this dir for the memory card
+	int				m_iMemoryCardUsbBus[NUM_PLAYERS];	// take the first storage device on this usb bus
+	int				m_iMemoryCardUsbPort[NUM_PLAYERS];	// take the first storage device on this usb bus
 	int				m_iCenterImageTranslateX;
 	int				m_iCenterImageTranslateY;
 	float			m_fCenterImageScaleX;

@@ -181,8 +181,8 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
 #ifndef _XBOX
 	// mount card
-	if( !PREFSMAN->m_sMemoryCardMountCommand[pn].empty() )
-		system( PREFSMAN->m_sMemoryCardMountCommand[pn] );
+//	if( !PREFSMAN->m_sMemoryCardMountCommand[pn].empty() )
+//		system( PREFSMAN->m_sMemoryCardMountCommand[pn] );
 
 	if( IsMemoryCardInserted(pn) )
 	{
