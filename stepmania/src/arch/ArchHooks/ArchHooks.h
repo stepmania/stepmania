@@ -17,10 +17,11 @@
  */
 class ArchHooks
 {
-public:
+protected:
     bool MessageIsIgnored( CString ID );
     void IgnoreMessage( CString ID );
 	
+public:
 	/* This receives all logs.  'important' is set for Warn and Info. */
 	virtual void Log(CString str, bool important) { }
 
