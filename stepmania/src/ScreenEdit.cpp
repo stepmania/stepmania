@@ -426,7 +426,7 @@ void ScreenEdit::PlayTicks()
 void ScreenEdit::PlayPreviewMusic()
 {
 	SOUND->PlayMusic("");
-	SOUND->PlayMusic( m_pSong->GetMusicPath(), true,
+	SOUND->PlayMusic( m_pSong->GetMusicPath(), false,
 		m_pSong->m_fMusicSampleStartSeconds,
 		m_pSong->m_fMusicSampleLengthSeconds,
 		1.5f );
