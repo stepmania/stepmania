@@ -366,10 +366,9 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 				}
 			}
 
-			if( row.type != OptionRowData::SELECT_NONE && 
+			if( row.type == OptionRowData::SELECT_ONE && 
 				UseFallbackOption && 
-				FallbackOption != -1 && 
-				row.type != OptionRowData::SELECT_MULTIPLE )
+				FallbackOption != -1 )
 			{
 				SelectExactlyOne( FallbackOption, vbSelectedOut );
 			}
