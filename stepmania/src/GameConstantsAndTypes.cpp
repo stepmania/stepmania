@@ -301,6 +301,7 @@ static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
 	"Blank"
 };
 XToString( EditMenuAction );
+XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 StringToX( EditMenuAction );
 static void LuaEditMenuAction(lua_State* L)
 {
