@@ -580,8 +580,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
-	bool bReceptorArrowStep = true;
-
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
@@ -824,8 +822,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
 			score = TNS_PERFECT;
 
-		bReceptorArrowStep = score < TNS_GOOD;
-
 //		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
@@ -868,9 +864,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 
 
-	if( bReceptorArrowStep )
-		m_pNoteField->Step( col );
-
+	m_pNoteField->Step( col );
 }
 
 void PlayerMinus::HandleAutosync(float fNoteOffset)
