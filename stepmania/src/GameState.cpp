@@ -913,11 +913,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					else
 						feat.Score = (float) vMachineHighScores[j].iScore;
 
-					// XXX: temporary hack
-					if( pSong->HasBackground() )
-						feat.Banner = pSong->GetBackgroundPath();
-//					if( pSong->HasBanner() )
-//						feat.Banner = pSong->GetBannerPath();
+					if( pSong->HasBanner() )
+						feat.Banner = pSong->GetBannerPath();
 
 					asFeatsOut.push_back( feat );
 				}
