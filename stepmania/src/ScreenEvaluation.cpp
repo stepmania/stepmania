@@ -477,7 +477,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			m_textSurvivedNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation stage") );
 			m_textSurvivedNumber[p].EnableShadow( false );
-			m_textSurvivedNumber[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p]) );
+			// curewater: edited the "# stages cleared" text so it deducts one if you failed.
+			// Should be accurate, but I'm not sure if its "standard" that (bool)true = 1.  (assumption)
+			m_textSurvivedNumber[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p] - (int)stageStats.bFailed[p]) );
 			m_textSurvivedNumber[p].SetName( ssprintf("SurvivedNumberP%d",p+1) );
 			UtilSetXYAndOnCommand( m_textSurvivedNumber[p], "ScreenEvaluation" );
 			this->AddChild( &m_textSurvivedNumber[p] );
