@@ -2347,6 +2347,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="MemoryCardManager.h">
 			</File>
 			<File
+				RelativePath="MessageManager.cpp">
+			</File>
+			<File
+				RelativePath="MessageManager.h">
+			</File>
+			<File
 				RelativePath="NetworkSyncManager.cpp">
 			</File>
 			<File

@@ -62,6 +62,7 @@
 #include "ModelManager.h"
 #include "CryptManager.h"
 #include "NetworkSyncManager.h"
+#include "MessageManager.h"
 
 #if defined(XBOX)
 #include "Archutils/Xbox/VirtualMemory.h"
@@ -177,7 +178,8 @@ void ShutdownGame()
 		SOUNDMAN->Shutdown();
 
 	SAFE_DELETE( SCREENMAN );
-    SAFE_DELETE( NSMAN );
+	SAFE_DELETE( MESSAGEMAN );
+	SAFE_DELETE( NSMAN );
 	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
 	 * driver may try to send a message to INPUTFILTER after we delete it. */
 	SAFE_DELETE( INPUTMAN );
@@ -1084,9 +1086,10 @@ int main(int argc, char* argv[])
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockSystem;
-    NSMAN       = new NetworkSyncManager( loading_window ); 
+	NSMAN 		= new NetworkSyncManager( loading_window ); 
+	MESSAGEMAN	= new MessageManager;
 
-	delete loading_window;		// destroy this before init'ing Display
+	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
     
 	DISPLAY = CreateDisplay();
 

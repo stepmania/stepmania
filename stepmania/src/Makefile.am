@@ -275,7 +275,8 @@ FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h GameManage
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h \
 InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
 LuaManager.cpp LuaManager.h LightsManager.cpp LightsManager.h \
-MemoryCardManager.cpp MemoryCardManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
+MemoryCardManager.cpp MemoryCardManager.h \
+MessageManager.cpp MessageManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
 NetworkSyncServer.cpp NetworkSyncServer.h NoteSkinManager.cpp NoteSkinManager.h \
 PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManager.cpp \
 ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
