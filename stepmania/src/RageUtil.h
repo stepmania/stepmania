@@ -120,12 +120,12 @@ inline float froundf( const float f, const float fRoundInterval )
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }
 
-bool IsAnInt( LPCTSTR s );
+bool IsAnInt( const char *s );
 float TimeToSeconds( CString sHMS );
 CString SecondsToTime( float fSecs );
 
-CString ssprintf( LPCTSTR fmt, ...);
-CString vssprintf( LPCTSTR fmt, va_list argList );
+CString ssprintf( const char *fmt, ...);
+CString vssprintf( const char *fmt, va_list argList );
 
 
 // Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
@@ -163,6 +163,7 @@ CString join(
 );
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+bool GetFnmDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... );
 unsigned int GetHashForString( CString s );
 unsigned int GetHashForFile( CString sPath );
 unsigned int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
@@ -177,8 +178,8 @@ int CompareCStringsDesc(const void *arg1, const void *arg2);
 void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
 
 
-LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
-HINSTANCE GotoURL(LPCTSTR url);
+LONG GetRegKey(HKEY key, const char *subkey, LPTSTR retdata);
+HINSTANCE GotoURL(const char *url);
 
 void WriteStringToFile( FILE* file, CString s );
 void ReadStringFromFile( FILE* file, CString& s );
@@ -188,5 +189,14 @@ void WriteFloatToFile( FILE* file, float f );
 void ReadFloatFromFile( FILE* file, float& f );
 void WriteUlongToFile( FILE* file, ULONG u );
 void ReadUlongFromFile( FILE* file, ULONG& u );
+
+/* Fix Windows breakage ... */
+#ifdef WINDOWS
+#define getcwd _getcwd
+#define wgetcwd _wgetcwd
+#define chdir _chdir
+#define wchdir _wchdir
+#define alloca _alloca
+#endif
 
 #endif

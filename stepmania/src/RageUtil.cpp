@@ -12,11 +12,13 @@
 */
 
 #include "RageUtil.h"
+#include "fnmatch.h"
 
 ULONG		randseed = time(NULL);
 
+#include <direct.h>
 
-bool IsAnInt( LPCTSTR s )
+bool IsAnInt( const char *s )
 {
 	if( s[0] == '\0' )
 		return false;
@@ -56,7 +58,7 @@ CString SecondsToTime( float fSecs )
 // Name: ssprintf()
 // Desc:
 //-----------------------------------------------------------------------------
-CString ssprintf( LPCTSTR fmt, ...)
+CString ssprintf( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
@@ -68,7 +70,7 @@ CString ssprintf( LPCTSTR fmt, ...)
 // Name: vssprintf()
 // Desc:
 //-----------------------------------------------------------------------------
-CString vssprintf( LPCTSTR fmt, va_list argList)
+CString vssprintf( const char *fmt, va_list argList)
 {
 	CString str;
 	str.FormatV(fmt, argList);
@@ -291,6 +293,66 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	} while( ::FindNextFile( hFind, &fd ) );
 	::FindClose( hFind );
 }
+
+void GetCwd(CString &s)
+{
+	char buf[_MAX_PATH];
+	bool ret = getcwd(buf, _MAX_PATH) != NULL;
+	ASSERT(ret);
+
+	s = buf;
+}
+
+/* Get files in a directory that match any number of masks, without
+ * having to scan the whole directory multiple times.
+ */
+#if 0
+bool GetFnmDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... )
+{
+	const char *masks[32];
+	int nmasks = 0;
+    va_list	va;
+	
+    va_start(va, bReturnPathToo);
+	while(const char *next = va_arg(va, const char *))
+		masks[nmasks++] = next;
+    va_end(va);
+
+	CString oldpath;
+	GetCwd(oldpath);
+	if(chdir(sPath) == -1) return false;
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = ::FindFirstFile( ".", &fd );
+
+	if( hFind != INVALID_HANDLE_VALUE )
+	do
+	{
+		if( bOnlyDirs  &&  !(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+			continue;	// skip
+
+		if(!strcmp(fd.cFileName, ".") || 
+		   !strcmp(fd.cFileName, ".."))
+			continue;
+
+		bool matched = false;
+		for(int i = 0; !matched && i < nmasks; ++i)
+			if(!fnmatch(masks[i], fd.cFileName, FNM_CASEFOLD))
+				matched = true;
+		
+		if(!matched) continue;
+
+		if( bReturnPathToo )
+			AddTo.Add( sPath + fd.cFileName );
+		else
+			AddTo.Add( fd.cFileName );
+	} while( ::FindNextFile( hFind, &fd ) );
+	::FindClose( hFind );
+
+	chdir(oldpath);
+	return true;
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Name: GetHashForString( CString s )
@@ -525,7 +587,7 @@ void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAcsending )
 
 
 
-LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata)
+LONG GetRegKey(HKEY key, const char *subkey, LPTSTR retdata)
 {
 	HKEY hkey;
     LONG retval = RegOpenKeyEx(key, subkey, 0, KEY_QUERY_VALUE, &hkey);
@@ -541,7 +603,7 @@ LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata)
     return retval;
 }
 
-HINSTANCE GotoURL(LPCTSTR url)
+HINSTANCE GotoURL(const char *url)
 {
 	TCHAR key[MAX_PATH + MAX_PATH];
 
