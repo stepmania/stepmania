@@ -975,7 +975,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-			pSong->GetNotes( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+			pSong->GetSteps( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			SortNotesArrayByDifficulty( m_arrayNotes );
 
 			m_Banner.LoadFromSong( pSong );

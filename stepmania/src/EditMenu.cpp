@@ -314,10 +314,10 @@ void EditMenu::OnRowValueChanged( Row row )
 
 Steps* EditMenu::GetSelectedNotes()
 {
-	return GetSelectedSong()->GetNotes(GetSelectedNotesType(),GetSelectedDifficulty(), false);
+	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedNotesType(),GetSelectedDifficulty(), false);
 }
 
 Steps* EditMenu::GetSelectedSourceNotes()
 {
-	return GetSelectedSong()->GetNotes(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
+	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
 }

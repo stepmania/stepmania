@@ -243,10 +243,10 @@ public:
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( StepsType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const;
-	void GetNotes( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
-	Steps* GetNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	Steps* GetNotes( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
-	Steps* GetNotes( StepsType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
+	void GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
+	Steps* GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	Steps* GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
+	Steps* GetStepsByDescription( StepsType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
 	Steps* GetClosestNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;

@@ -305,9 +305,9 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 			if( pSong )
 			{
 				if( dc==DIFFICULTY_INVALID )
-					pNotes = pSong->GetNotes( nt, sDescription );
+					pNotes = pSong->GetStepsByDescription( nt, sDescription );
 				else
-					pNotes = pSong->GetNotes( nt, dc );
+					pNotes = pSong->GetStepsByDifficulty( nt, dc );
 			}
 			
 			getline(f, line);
@@ -985,7 +985,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		Song* pSong = apSongs[s];
 
 		vector<Steps*> apNotes;
-		pSong->GetNotes( apNotes, sd->m_StepsType );
+		pSong->GetSteps( apNotes, sd->m_StepsType );
 		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Steps
 		{
 			Steps* pNotes = apNotes[n];
