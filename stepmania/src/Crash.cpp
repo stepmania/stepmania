@@ -1483,9 +1483,9 @@ void CrashLog(const char *str)
 	backlog[backlog_start] [ sizeof(backlog[backlog_start])-1 ] = 0;
 
 	backlog_start++;
-	backlog_start %= BACKLOG_LINES;
 	if(backlog_start > backlog_cnt)
 		backlog_cnt=backlog_start;
+	backlog_start %= BACKLOG_LINES;
 }
 
 static void ReportCrashLog(HWND hwnd, HANDLE hFile)
