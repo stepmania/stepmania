@@ -193,6 +193,7 @@ try_element_again:
 			{ "*.model", "*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif","*.avi", "*.mpg", "*.mpeg", NULL},
 			{ "*.png", NULL },
 			{ ".set", "*.mp3", "*.ogg", "*.wav", NULL },
+			{ "*.sm", NULL },
 		};		
 		const char **asset_masks = masks[category];
 

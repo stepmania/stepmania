@@ -17,7 +17,7 @@
 
 class IniFile;
 
-enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, NUM_ELEMENT_CATEGORIES };
+enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, SMFiles, NUM_ELEMENT_CATEGORIES };
 
 class ThemeManager
 {
@@ -41,6 +41,7 @@ public:
 	CString GetPathToG( CString sFileName, bool bOptional=false ) { return GetPathTo(Graphics,sFileName,bOptional); };
 	CString GetPathToN( CString sFileName, bool bOptional=false ) { return GetPathTo(Numbers,sFileName,bOptional); };
 	CString GetPathToS( CString sFileName, bool bOptional=false ) { return GetPathTo(Sounds,sFileName,bOptional); };
+	CString GetPathToSM( CString sFileName, bool bOptional=false ) { return GetPathTo(SMFiles,sFileName,bOptional); };
 
 	bool		HasMetric( CString sClassName, CString sValueName );
 	CString		GetMetricRaw( CString sClassName, CString sValueName );
