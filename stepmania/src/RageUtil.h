@@ -258,13 +258,13 @@ struct char_traits_char_nocase: public char_traits<char>
     static char uptab[256];
 
 	static inline bool eq( char c1, char c2 )
-	{ return uptab[c1] == uptab[c2]; }
+	{ return uptab[(unsigned char)c1] == uptab[(unsigned char)c2]; }
 
 	static inline bool ne( char c1, char c2 )
-	{ return uptab[c1] != uptab[c2]; }
+	{ return uptab[(unsigned char)c1] != uptab[(unsigned char)c2]; }
 
 	static inline bool lt( char c1, char c2 )
-	{ return uptab[c1] < uptab[c2]; }
+	{ return uptab[(unsigned char)c1] < uptab[(unsigned char)c2]; }
 
     static int compare( const char* s1, const char* s2, size_t n )
 	{
@@ -280,9 +280,7 @@ struct char_traits_char_nocase: public char_traits<char>
 
 	static inline char fasttoupper(char a)
 	{
-		if(a < 'a' || a > 'z')
-			return a;
-		return a+('A'-'a');
+		return uptab[(unsigned char)a];
 	}
 	
     static const char *find( const char* s, int n, char a )
