@@ -37,16 +37,20 @@
 #include "GameSoundManager.h"
 #include "Style.h"
 
+CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
+CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
+CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
+
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
-#define JUDGMENT_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? CString("JudgmentXOffsetBothSides") : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
-ThemeMetric<float> JUDGMENT_Y				("Player","JudgmentY");
+ThemeMetric2D<float,NUM_PLAYERS,2> JUDGMENT_X	("Player",JUDGMENT_X_NAME,NUM_PLAYERS,2);
+ThemeMetric<float> JUDGMENT_Y					("Player","JudgmentY");
 ThemeMetric<float> JUDGMENT_Y_REVERSE			("Player","JudgmentYReverse");
-#define COMBO_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? CString("ComboXOffsetBothSides") : ssprintf("ComboXOffsetOneSideP%d",p+1))
-ThemeMetric<float> COMBO_Y				("Player","ComboY");
-ThemeMetric<float> COMBO_Y_REVERSE			("Player","ComboYReverse");
-#define ATTACK_DISPLAY_X( p, both_sides )		THEME->GetMetricF("Player",both_sides ? CString("AttackDisplayXOffsetBothSides") : ssprintf("AttackDisplayXOffsetOneSideP%d",p+1))
-ThemeMetric<float> ATTACK_DISPLAY_Y			("Player","AttackDisplayY");
+ThemeMetric2D<float,NUM_PLAYERS,2> COMBO_X		("Player",COMBO_X_NAME,NUM_PLAYERS,2);
+ThemeMetric<float> COMBO_Y						("Player","ComboY");
+ThemeMetric<float> COMBO_Y_REVERSE				("Player","ComboYReverse");
+ThemeMetric2D<float,NUM_PLAYERS,2> ATTACK_DISPLAY_X		("Player",ATTACK_DISPLAY_X_NAME,NUM_PLAYERS,2);
+ThemeMetric<float> ATTACK_DISPLAY_Y				("Player","AttackDisplayY");
 ThemeMetric<float> ATTACK_DISPLAY_Y_REVERSE		("Player","AttackDisplayYReverse");
 ThemeMetric<float> HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
 ThemeMetric<float> HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
@@ -226,11 +230,11 @@ void Player::Load( const NoteData& noteData )
 
 	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
-	m_Combo.SetX( COMBO_X(pn,bPlayerUsingBothSides) );
+	m_Combo.SetX( COMBO_X.GetValue(pn,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
-	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(pn,bPlayerUsingBothSides) - 40 );
+	m_AttackDisplay.SetX( ATTACK_DISPLAY_X.GetValue(pn,bPlayerUsingBothSides) - 40 );
 	m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
-	m_Judgment.SetX( JUDGMENT_X(pn,bPlayerUsingBothSides) );
+	m_Judgment.SetX( JUDGMENT_X.GetValue(pn,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
 
 	// Need to set Y positions of all these elements in Update since
