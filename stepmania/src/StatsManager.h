@@ -13,8 +13,20 @@ public:
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
 	vector<StageStats>	m_vPlayedStageStats;
 
+	// Only the latest 3 normal songs + passed extra stages.
+	void GetFinalEvalStageStats( StageStats& statsOut ) const;
+
+	// All stages played.  Returns a ref to the private member so that
+	// the object will remain alive while Lua is operating on it.
+	void CalcAccumStageStats();
+	StageStats& GetAccumStageStats() { return m_AccumStageStats; }
+
 	// Lua
 	void PushSelf( lua_State *L );
+
+private:
+	StageStats m_AccumStageStats;
+	StageStats m_FinalEvalStageStats;
 };
 
 

@@ -186,7 +186,6 @@ public:
 	StageResult GetStageResult( PlayerNumber pn ) const;
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
-	void GetFinalEvalStats( StageStats& statsOut ) const;	// shown on final evaluation
 
 
 	//

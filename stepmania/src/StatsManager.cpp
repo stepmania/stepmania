@@ -1,6 +1,7 @@
 #include "global.h"
 #include "StatsManager.h"
 #include "GameState.h"
+#include "Foreach.h"
 
 StatsManager*	STATSMAN = NULL;	// global object accessable from anywhere in the program
 
@@ -8,6 +9,69 @@ StatsManager*	STATSMAN = NULL;	// global object accessable from anywhere in the 
 StatsManager::StatsManager()
 {
 }
+
+StageStats AccumStageStats( const vector<StageStats>& vss )
+{
+	StageStats ssreturn;
+
+	FOREACH_CONST( StageStats, vss, ss )
+		ssreturn.AddStats( *ss );
+
+	unsigned uNumSongs = ssreturn.vpSongs.size();
+
+	if( uNumSongs == 0 ) return ssreturn;	// don't divide by 0 below
+
+	/* Scale radar percentages back down to roughly 0..1.  Don't scale RADAR_NUM_TAPS_AND_HOLDS
+	 * and the rest, which are counters. */
+	// FIXME: Weight each song by the number of stages it took to account for 
+	// long, marathon.
+	FOREACH_EnabledPlayer( pn )
+	{
+		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
+		{
+			ssreturn.m_player[pn].radarPossible[r] /= uNumSongs;
+			ssreturn.m_player[pn].radarActual[r] /= uNumSongs;
+		}
+	}
+
+	return ssreturn;
+}
+
+void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
+{
+	statsOut.Init();
+
+	vector<StageStats> vssToCount;
+
+	// Show stats only for the latest 3 normal songs + passed extra stages
+	int PassedRegularSongsLeft = 3;
+	for( int i = (int)m_vPlayedStageStats.size()-1; i >= 0; --i )
+	{
+		const StageStats &ss = m_vPlayedStageStats[i];
+
+		if( !ss.OnePassed() )
+			continue;
+
+		if( ss.StageType == StageStats::STAGE_NORMAL )
+		{
+			if( PassedRegularSongsLeft == 0 )
+				break;
+
+			--PassedRegularSongsLeft;
+		}
+
+		vssToCount.push_back( ss );
+	}
+
+	statsOut = AccumStageStats( vssToCount );
+}
+
+
+void StatsManager::CalcAccumStageStats()
+{
+	m_AccumStageStats = AccumStageStats( m_vPlayedStageStats );
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -19,10 +83,12 @@ public:
 	LunaStatsManager() { LUA->Register( Register ); }
 
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
+	static int GetAccumStageStats( T* p, lua_State *L )	{ p->GetAccumStageStats().PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCurStageStats )
+		ADD_METHOD( GetAccumStageStats )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
@@ -109,7 +175,7 @@ Grade GetFinalGrade( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return GRADE_NO_DATA;
 	StageStats stats;
-	GAMESTATE->GetFinalEvalStats( stats );
+	STATSMAN->GetFinalEvalStageStats( stats );
 	return stats.m_player[pn].GetGrade();
 }
 LuaFunction_PlayerNumber( GetFinalGrade, GetFinalGrade(pn) );
@@ -118,7 +184,7 @@ Grade GetBestFinalGrade()
 {
 	Grade top_grade = GRADE_FAILED;
 	StageStats stats;
-	GAMESTATE->GetFinalEvalStats( stats );
+	STATSMAN->GetFinalEvalStageStats( stats );
 	FOREACH_HumanPlayer( p )
 		top_grade = min( top_grade, stats.m_player[p].GetGrade() );
 	return top_grade;

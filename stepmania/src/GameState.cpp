@@ -1032,45 +1032,6 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 	return win;
 }
 
-void GameState::GetFinalEvalStats( StageStats& statsOut ) const
-{
-	statsOut.Init();
-
-	// Show stats only for the latest 3 normal songs + passed extra stages
-	int PassedRegularSongsLeft = 3;
-	for( int i = (int)STATSMAN->m_vPlayedStageStats.size()-1; i >= 0; --i )
-	{
-		const StageStats &s = STATSMAN->m_vPlayedStageStats[i];
-
-		if( !s.OnePassed() )
-			continue;
-
-		if( s.StageType == StageStats::STAGE_NORMAL )
-		{
-			if( PassedRegularSongsLeft == 0 )
-				break;
-
-			--PassedRegularSongsLeft;
-		}
-
-		statsOut.AddStats( s );
-	}
-
-	if( statsOut.vpSongs.empty() ) return;	// don't divide by 0 below
-
-	/* Scale radar percentages back down to roughly 0..1.  Don't scale RADAR_NUM_TAPS_AND_HOLDS
-	 * and the rest, which are counters. */
-	// FIXME: Weight each song by the number of stages it took to account for 
-	// long, marathon.
-	FOREACH_EnabledPlayer( pn )
-	{
-		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
-		{
-			statsOut.m_player[pn].radarPossible[r] /= statsOut.vpSongs.size();
-			statsOut.m_player[pn].radarActual[r] /= statsOut.vpSongs.size();
-		}
-	}
-}
 
 
 void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
@@ -1503,7 +1464,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 			CHECKPOINT;
 			StageStats stats;
-			GetFinalEvalStats( stats );
+			STATSMAN->GetFinalEvalStageStats( stats );
 
 
 			// Find Machine Category Records

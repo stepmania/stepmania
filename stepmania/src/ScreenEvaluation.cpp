@@ -202,11 +202,13 @@ void ScreenEvaluation::Init()
 	//
 	// Figure out which statistics and songs we're going to display
 	//
+	STATSMAN->CalcAccumStageStats();
+
 	StageStats stageStats;
 	switch( m_Type )
 	{
 	case summary:
-		GAMESTATE->GetFinalEvalStats( stageStats );
+		STATSMAN->GetFinalEvalStageStats( stageStats );
 		break;
 	case stage:
 	case course:
