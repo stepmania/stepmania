@@ -940,6 +940,19 @@ public:
 	/*! \note This function can be used to create a public key from a private key. */
 	virtual void AssignFrom(const NameValuePairs &source) =0;
 
+	//! check this object for errors
+	/*! \param level denotes the level of thoroughness:
+		0 - using this object won't cause a crash or exception (rng is ignored)
+		1 - this object will probably function (encrypt, sign, etc.) correctly (but may not check for weak keys and such)
+		2 - make sure this object will function correctly, and do reasonable security checks
+		3 - do checks that may take a long time
+		\return true if the tests pass */
+	virtual bool Validate(RandomNumberGenerator &rng, unsigned int level) const =0;
+
+	//! throws InvalidMaterial if this object fails Validate() test
+	virtual void ThrowIfInvalid(RandomNumberGenerator &rng, unsigned int level) const
+		{if (!Validate(rng, level)) throw InvalidMaterial("CryptoMaterial: this object contains invalid values");}
+
 //	virtual std::vector<std::string> GetSupportedFormats(bool includeSaveOnly=false, bool includeLoadOnly=false);
 
 	//! save key into a BufferedTransformation
@@ -967,6 +980,9 @@ public:
 	//! save precomputation for later use
 	virtual void SavePrecomputation(BufferedTransformation &storedPrecomputation) const
 		{assert(!SupportsPrecomputation()); throw NotImplemented("CryptoMaterial: this object does not support precomputation");}
+
+	// for internal library use
+	void DoQuickSanityCheck() const	{ThrowIfInvalid(NullRNG(), 0);}
 };
 
 //! interface for generatable crypto material, such as private keys and crypto parameters
@@ -1043,18 +1059,6 @@ public:
 
 	virtual PrivateKey & AccessPrivateKey() =0;
 	virtual const PrivateKey & GetPrivateKey() const {return const_cast<PrivateKeyAlgorithm *>(this)->AccessPrivateKey();}
-};
-
-//! interface for key agreement algorithms
-
-class KeyAgreementAlgorithm : public AsymmetricAlgorithm
-{
-public:
-	CryptoMaterial & AccessMaterial() {return AccessCryptoParameters();}
-	const CryptoMaterial & GetMaterial() const {return GetCryptoParameters();}
-
-	virtual CryptoParameters & AccessCryptoParameters() =0;
-	virtual const CryptoParameters & GetCryptoParameters() const {return const_cast<KeyAgreementAlgorithm *>(this)->AccessCryptoParameters();}
 };
 
 //! interface for public-key encryptors and decryptors
@@ -1313,205 +1317,7 @@ public:
 		const byte *signature, unsigned int signatureLength) const;
 };
 
-//! interface for domains of simple key agreement protocols
-
-/*! A key agreement domain is a set of parameters that must be shared
-	by two parties in a key agreement protocol, along with the algorithms
-	for generating key pairs and deriving agreed values.
-*/
-class SimpleKeyAgreementDomain : public KeyAgreementAlgorithm
-{
-public:
-	//! return length of agreed value produced
-	virtual unsigned int AgreedValueLength() const =0;
-	//! return length of private keys in this domain
-	virtual unsigned int PrivateKeyLength() const =0;
-	//! return length of public keys in this domain
-	virtual unsigned int PublicKeyLength() const =0;
-	//! generate private key
-	/*! \pre size of privateKey == PrivateKeyLength() */
-	virtual void GeneratePrivateKey(RandomNumberGenerator &rng, byte *privateKey) const =0;
-	//! generate public key
-	/*!	\pre size of publicKey == PublicKeyLength() */
-	virtual void GeneratePublicKey(RandomNumberGenerator &rng, const byte *privateKey, byte *publicKey) const =0;
-	//! generate private/public key pair
-	/*! \note equivalent to calling GeneratePrivateKey() and then GeneratePublicKey() */
-	virtual void GenerateKeyPair(RandomNumberGenerator &rng, byte *privateKey, byte *publicKey) const;
-	//! derive agreed value from your private key and couterparty's public key, return false in case of failure
-	/*! \note If you have previously validated the public key, use validateOtherPublicKey=false to save time.
-	    \pre size of agreedValue == AgreedValueLength()
-		\pre length of privateKey == PrivateKeyLength()
-		\pre length of otherPublicKey == PublicKeyLength()
-	*/
-	virtual bool Agree(byte *agreedValue, const byte *privateKey, const byte *otherPublicKey, bool validateOtherPublicKey=true) const =0;
-
-#ifdef CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
-	bool ValidateDomainParameters(RandomNumberGenerator &rng) const
-		{return GetCryptoParameters().Validate(rng, 2);}
-#endif
-};
-
 //! interface for domains of authenticated key agreement protocols
-
-/*! In an authenticated key agreement protocol, each party has two
-	key pairs. The long-lived key pair is called the static key pair,
-	and the short-lived key pair is called the ephemeral key pair.
-*/
-class AuthenticatedKeyAgreementDomain : public KeyAgreementAlgorithm
-{
-public:
-	//! return length of agreed value produced
-	virtual unsigned int AgreedValueLength() const =0;
-
-	//! return length of static private keys in this domain
-	virtual unsigned int StaticPrivateKeyLength() const =0;
-	//! return length of static public keys in this domain
-	virtual unsigned int StaticPublicKeyLength() const =0;
-	//! generate static private key
-	/*! \pre size of privateKey == PrivateStaticKeyLength() */
-	virtual void GenerateStaticPrivateKey(RandomNumberGenerator &rng, byte *privateKey) const =0;
-	//! generate static public key
-	/*!	\pre size of publicKey == PublicStaticKeyLength() */
-	virtual void GenerateStaticPublicKey(RandomNumberGenerator &rng, const byte *privateKey, byte *publicKey) const =0;
-	//! generate private/public key pair
-	/*! \note equivalent to calling GenerateStaticPrivateKey() and then GenerateStaticPublicKey() */
-	virtual void GenerateStaticKeyPair(RandomNumberGenerator &rng, byte *privateKey, byte *publicKey) const;
-
-	//! return length of ephemeral private keys in this domain
-	virtual unsigned int EphemeralPrivateKeyLength() const =0;
-	//! return length of ephemeral public keys in this domain
-	virtual unsigned int EphemeralPublicKeyLength() const =0;
-	//! generate ephemeral private key
-	/*! \pre size of privateKey == PrivateEphemeralKeyLength() */
-	virtual void GenerateEphemeralPrivateKey(RandomNumberGenerator &rng, byte *privateKey) const =0;
-	//! generate ephemeral public key
-	/*!	\pre size of publicKey == PublicEphemeralKeyLength() */
-	virtual void GenerateEphemeralPublicKey(RandomNumberGenerator &rng, const byte *privateKey, byte *publicKey) const =0;
-	//! generate private/public key pair
-	/*! \note equivalent to calling GenerateEphemeralPrivateKey() and then GenerateEphemeralPublicKey() */
-	virtual void GenerateEphemeralKeyPair(RandomNumberGenerator &rng, byte *privateKey, byte *publicKey) const;
-
-	//! derive agreed value from your private keys and couterparty's public keys, return false in case of failure
-	/*! \note The ephemeral public key will always be validated.
-		      If you have previously validated the static public key, use validateStaticOtherPublicKey=false to save time.
-		\pre size of agreedValue == AgreedValueLength()
-		\pre length of staticPrivateKey == StaticPrivateKeyLength()
-		\pre length of ephemeralPrivateKey == EphemeralPrivateKeyLength()
-		\pre length of staticOtherPublicKey == StaticPublicKeyLength()
-		\pre length of ephemeralOtherPublicKey == EphemeralPublicKeyLength()
-	*/
-	virtual bool Agree(byte *agreedValue,
-		const byte *staticPrivateKey, const byte *ephemeralPrivateKey,
-		const byte *staticOtherPublicKey, const byte *ephemeralOtherPublicKey,
-		bool validateStaticOtherPublicKey=true) const =0;
-
-#ifdef CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
-	bool ValidateDomainParameters(RandomNumberGenerator &rng) const
-		{return GetCryptoParameters().Validate(rng, 2);}
-#endif
-};
-
-// interface for password authenticated key agreement protocols, not implemented yet
-#if 0
-//! interface for protocol sessions
-/*! The methods should be called in the following order:
-
-	InitializeSession(rng, parameters);	// or call initialize method in derived class
-	while (true)
-	{
-		if (OutgoingMessageAvailable())
-		{
-			length = GetOutgoingMessageLength();
-			GetOutgoingMessage(message);
-			; // send outgoing message
-		}
-
-		if (LastMessageProcessed())
-			break;
-
-		; // receive incoming message
-		ProcessIncomingMessage(message);
-	}
-	; // call methods in derived class to obtain result of protocol session
-*/
-class ProtocolSession
-{
-public:
-	//! exception thrown when an invalid protocol message is processed
-	class ProtocolError : public Exception
-	{
-	public:
-		ProtocolError(ErrorType errorType, const std::string &s) : Exception(errorType, s) {}
-	};
-
-	//! exception thrown when a function is called unexpectedly
-	/*! for example calling ProcessIncomingMessage() when ProcessedLastMessage() == true */
-	class UnexpectedMethodCall : public Exception
-	{
-	public:
-		UnexpectedMethodCall(const std::string &s) : Exception(OTHER_ERROR, s) {}
-	};
-
-	ProtocolSession() : m_rng(NULL), m_throwOnProtocolError(true), m_validState(false) {}
-	virtual ~ProtocolSession() {}
-
-	virtual void InitializeSession(RandomNumberGenerator &rng, const NameValuePairs &parameters) =0;
-
-	bool GetThrowOnProtocolError() const {return m_throwOnProtocolError;}
-	void SetThrowOnProtocolError(bool throwOnProtocolError) {m_throwOnProtocolError = throwOnProtocolError;}
-
-	bool HasValidState() const {return m_validState;}
-
-	virtual bool OutgoingMessageAvailable() const =0;
-	virtual unsigned int GetOutgoingMessageLength() const =0;
-	virtual void GetOutgoingMessage(byte *message) =0;
-
-	virtual bool LastMessageProcessed() const =0;
-	virtual void ProcessIncomingMessage(const byte *message, unsigned int messageLength) =0;
-
-protected:
-	void HandleProtocolError(Exception::ErrorType errorType, const std::string &s) const;
-	void CheckAndHandleInvalidState() const;
-	void SetValidState(bool valid) {m_validState = valid;}
-
-	RandomNumberGenerator *m_rng;
-
-private:
-	bool m_throwOnProtocolError, m_validState;
-};
-
-class KeyAgreementSession : public ProtocolSession
-{
-public:
-	virtual unsigned int GetAgreedValueLength() const =0;
-	virtual void GetAgreedValue(byte *agreedValue) const =0;
-};
-
-class PasswordAuthenticatedKeyAgreementSession : public KeyAgreementSession
-{
-public:
-	void InitializePasswordAuthenticatedKeyAgreementSession(RandomNumberGenerator &rng, 
-		const byte *myId, unsigned int myIdLength, 
-		const byte *counterPartyId, unsigned int counterPartyIdLength, 
-		const byte *passwordOrVerifier, unsigned int passwordOrVerifierLength);
-};
-
-class PasswordAuthenticatedKeyAgreementDomain : public KeyAgreementAlgorithm
-{
-public:
-	//! return whether the domain parameters stored in this object are valid
-	virtual bool ValidateDomainParameters(RandomNumberGenerator &rng) const
-		{return GetCryptoParameters().Validate(rng, 2);}
-
-	virtual unsigned int GetPasswordVerifierLength(const byte *password, unsigned int passwordLength) const =0;
-	virtual void GeneratePasswordVerifier(RandomNumberGenerator &rng, const byte *userId, unsigned int userIdLength, const byte *password, unsigned int passwordLength, byte *verifier) const =0;
-
-	enum RoleFlags {CLIENT=1, SERVER=2, INITIATOR=4, RESPONDER=8};
-
-	virtual bool IsValidRole(unsigned int role) =0;
-	virtual PasswordAuthenticatedKeyAgreementSession * CreateProtocolSession(unsigned int role) const =0;
-};
-#endif
 
 //! BER Decode Exception Class, may be thrown during an ASN1 BER decode operation
 class BERDecodeErr : public InvalidArgument
@@ -1534,14 +1340,6 @@ public:
 	/*! this may be useful if DEREncode() would be too inefficient */
 	virtual void BEREncode(BufferedTransformation &bt) const {DEREncode(bt);}
 };
-
-#ifdef CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
-typedef PK_SignatureScheme PK_SignatureSystem
-typedef PK_SignatureSchemeWithRecovery PK_SignatureSystemWithRecovery
-typedef SimpleKeyAgreementDomain PK_SimpleKeyAgreementDomain
-typedef AuthenticatedKeyAgreementDomain PK_AuthenticatedKeyAgreementDomain
-typedef WithPrecomputation PK_WithPrecomputation
-#endif
 
 NAMESPACE_END
 

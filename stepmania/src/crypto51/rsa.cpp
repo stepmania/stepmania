@@ -39,7 +39,16 @@ void RSAFunction::DEREncodeKey(BufferedTransformation &bt) const
 
 Integer RSAFunction::ApplyFunction(const Integer &x) const
 {
+	DoQuickSanityCheck();
 	return a_exp_b_mod_c(x, m_e, m_n);
+}
+
+bool RSAFunction::Validate(RandomNumberGenerator &rng, unsigned int level) const
+{
+	bool pass = true;
+	pass = pass && m_n > Integer::One() && m_n.IsOdd();
+	pass = pass && m_e > Integer::One() && m_e.IsOdd() && m_e < m_n;
+	return pass;
 }
 
 bool RSAFunction::GetVoidValue(const char *name, const std::type_info &valueType, void *pValue) const
@@ -168,6 +177,7 @@ void InvertibleRSAFunction::DEREncodeKey(BufferedTransformation &bt) const
 
 Integer InvertibleRSAFunction::CalculateInverse(RandomNumberGenerator &rng, const Integer &x) const 
 {
+	DoQuickSanityCheck();
 	ModularArithmetic modn(m_n);
 	Integer r(rng, Integer::One(), m_n - Integer::One());
 	Integer re = modn.Exponentiate(r, m_e);
@@ -179,6 +189,27 @@ Integer InvertibleRSAFunction::CalculateInverse(RandomNumberGenerator &rng, cons
 	if (modn.Exponentiate(y, m_e) != x)		// check
 		throw Exception(Exception::OTHER_ERROR, "InvertibleRSAFunction: computational error during private key operation");
 	return y;
+}
+
+bool InvertibleRSAFunction::Validate(RandomNumberGenerator &rng, unsigned int level) const
+{
+	bool pass = RSAFunction::Validate(rng, level);
+	pass = pass && m_p > Integer::One() && m_p.IsOdd() && m_p < m_n;
+	pass = pass && m_q > Integer::One() && m_q.IsOdd() && m_q < m_n;
+	pass = pass && m_d > Integer::One() && m_d.IsOdd() && m_d < m_n;
+	pass = pass && m_dp > Integer::One() && m_dp.IsOdd() && m_dp < m_p;
+	pass = pass && m_dq > Integer::One() && m_dq.IsOdd() && m_dq < m_q;
+	pass = pass && m_u.IsPositive() && m_u < m_p;
+	if (level >= 1)
+	{
+		pass = pass && m_p * m_q == m_n;
+		pass = pass && m_e*m_d % LCM(m_p-1, m_q-1) == 1;
+		pass = pass && m_dp == m_d%(m_p-1) && m_dq == m_d%(m_q-1);
+		pass = pass && m_u * m_q % m_p == 1;
+	}
+	if (level >= 2)
+		pass = pass && VerifyPrime(rng, m_p, level-2) && VerifyPrime(rng, m_q, level-2);
+	return pass;
 }
 
 bool InvertibleRSAFunction::GetVoidValue(const char *name, const std::type_info &valueType, void *pValue) const
