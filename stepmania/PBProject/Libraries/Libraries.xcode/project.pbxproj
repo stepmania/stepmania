@@ -3316,6 +3316,7 @@
 				AA4B41F405733B55005FB5DB,
 				AA4B45A905738890005FB5DB,
 				AA4B59D30573A994005FB5DB,
+				AA7B2C1E0659FDEE00A0F53D,
 			);
 			isa = PBXAggregateTarget;
 			name = All;
@@ -6422,6 +6423,18 @@
 			isa = PBXTargetDependency;
 			target = AA4B47C005739866005FB5DB;
 			targetProxy = AA4B59D20573A994005FB5DB;
+		};
+		AA7B2C1D0659FDEE00A0F53D = {
+			containerPortal = 0867D690FE84028FC02AAC07;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = AABD0A1905DF0D30004F7929;
+			remoteInfo = lua;
+		};
+		AA7B2C1E0659FDEE00A0F53D = {
+			isa = PBXTargetDependency;
+			target = AABD0A1905DF0D30004F7929;
+			targetProxy = AA7B2C1D0659FDEE00A0F53D;
 		};
 		AAA71D8205EDD1ED00D2E8FF = {
 			children = (
