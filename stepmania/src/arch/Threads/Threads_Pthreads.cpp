@@ -20,8 +20,7 @@
 
 void ThreadImpl_Pthreads::Halt( bool Kill )
 {
-#if defined(PID_BASED_THREADS)
-	/*
+	/* Linux:
 	 * Send a SIGSTOP to the thread.  If we send a SIGKILL, pthreads will
 	 * "helpfully" propagate it to the other threads, and we'll get killed, too.
 	 *
@@ -29,29 +28,18 @@ void ThreadImpl_Pthreads::Halt( bool Kill )
 	 * the shell is concerned, so the shell prompt can display before the crash
 	 * handler actually displays a message.
 	 */
-	SuspendThread( pid );
-#elif defined(DARWIN)
-	SuspendThread( MachThreadHandle );
-#endif
+	SuspendThread( threadHandle );
 }
 
 void ThreadImpl_Pthreads::Resume()
 {
-#if defined(PID_BASED_THREADS)
-	/* Send a SIGCONT to the thread. */
-	ResumeThread( pid );
-#elif defined(DARWIN)
-	ResumeThread( MachThreadHandle );
-#endif
+	/* Linux: Send a SIGCONT to the thread. */
+	ResumeThread( threadHandle );
 }
 
 uint64_t ThreadImpl_Pthreads::GetThreadId() const
 {
-#if defined(PID_BASED_THREADS)
-	return (uint64_t) pid;
-#elif defined(DARWIN)
-	return MachThreadHandle;
-#endif
+	return threadHandle;
 }
 
 int ThreadImpl_Pthreads::Wait()
@@ -69,14 +57,7 @@ ThreadImpl *MakeThisThread()
 	ThreadImpl_Pthreads *thread = new ThreadImpl_Pthreads;
 
 	thread->thread = pthread_self();
-
-#if defined(PID_BASED_THREADS)
-	thread->pid = GetCurrentThreadId(); /* in LinuxThreadHelpers.cpp */
-#endif
-
-#if defined(DARWIN)
-	thread->MachThreadHandle = GetCurrentThreadId();
-#endif
+	thread->threadHandle = GetCurrentThreadId();
 
 	return thread;
 }
@@ -85,15 +66,8 @@ static void *StartThread( void *pData )
 {
 	ThreadImpl_Pthreads *pThis = (ThreadImpl_Pthreads *) pData;
 
-#if defined(PID_BASED_THREADS)
-	pThis->pid = GetCurrentThreadId(); /* in LinuxThreadHelpers.cpp */
-#endif
-
-#if defined(DARWIN)
-	pThis->MachThreadHandle = GetCurrentThreadId();
-#endif
-
-	*pThis->m_piThreadID = pThis->GetThreadId();
+	pThis->threadHandle = GetCurrentThreadId();
+	*pThis->m_piThreadID = pThis->threadHandle;
 	
 	/* Tell MakeThread that we've set m_piThreadID, so it's safe to return. */
 	pThis->m_StartFinishedSem->Post();

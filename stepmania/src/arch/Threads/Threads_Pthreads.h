@@ -3,10 +3,6 @@
 
 #include "Threads.h"
 
-#if defined(LINUX)
-#define PID_BASED_THREADS
-#endif
-
 #include <pthread.h>
 #include <semaphore.h>
 
@@ -15,16 +11,12 @@ class ThreadImpl_Pthreads: public ThreadImpl
 public:
 	pthread_t thread;
 
-#if defined(PID_BASED_THREADS)
-	/* Keep a list of child PIDs, so we can send them SIGKILL.  This has an
+	/* Linux:
+	 * Keep a list of child PIDs, so we can send them SIGKILL.  This has an
 	 * added bonus: if this is corrupted, we'll just send signals and they'll
-	 * fail; we won't blow up (unless we're root). */
-	int pid;
-#endif
-
-#if defined(DARWIN)
-	uint64_t MachThreadHandle;
-#endif
+	 * fail; we won't blow up (unless we're root).
+	 */
+	uint64_t threadHandle;
 
 	/* These are only used during initialization. */
 	int (*m_pFunc)( void *pData );
