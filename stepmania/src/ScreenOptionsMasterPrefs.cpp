@@ -513,7 +513,6 @@ int ConfOption::GetEffects() const
 		{ DisplayColor,			OPT_APPLY_GRAPHICS },
 		{ TextureResolution,	OPT_APPLY_GRAPHICS },
 		{ KeepTexturesInMemory,	OPT_APPLY_GRAPHICS },
-		{ CelShadeModels,	OPT_APPLY_GRAPHICS },
 		{ SmoothLines,			OPT_APPLY_GRAPHICS },
 		{ RefreshRate,			OPT_APPLY_GRAPHICS },
 		{ WaitForVsync,			OPT_APPLY_GRAPHICS },
