@@ -472,13 +472,16 @@ void ScreenOptionsMaster::ExportOptions()
 	m_NextScreen = "";
 
 	const int row = this->GetCurrentRow();
-	const OptionRowHandler &hand = OptionRowHandlers[row];
-	if( hand.type == ROW_LIST )
+	if( row < (int) OptionRowHandlers.size() ) /* might be on "exit" */
 	{
-		const int sel = m_iSelectedOption[0][row];
-		const ModeChoice &mc = hand.ListEntries[sel];
-		if( mc.m_sScreen != "" )
-			m_NextScreen = mc.m_sScreen;
+		const OptionRowHandler &hand = OptionRowHandlers[row];
+		if( hand.type == ROW_LIST )
+		{
+			const int sel = m_iSelectedOption[0][row];
+			const ModeChoice &mc = hand.ListEntries[sel];
+			if( mc.m_sScreen != "" )
+				m_NextScreen = mc.m_sScreen;
+		}
 	}
 
 	// NEXT_SCREEN(GAMESTATE->m_PlayMode) );
