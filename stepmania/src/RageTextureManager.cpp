@@ -52,6 +52,10 @@ RageTextureManager*		TEXTUREMAN		= NULL;
 RageTextureManager::RageTextureManager()
 {
 	m_iNoWarnAboutOddDimensions = 0;
+	m_bDelayedDelete = false;
+	m_iMovieColorDepth = 16;
+	m_iTextureColorDepth = 16;
+	m_iMaxTextureResolution = 1024;
 }
 
 RageTextureManager::~RageTextureManager()
