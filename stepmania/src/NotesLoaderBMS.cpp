@@ -124,7 +124,7 @@ static CString FindLargestInitialSubstring( CString string1, CString string2 )
 	// First see if the whole first string matches an appropriately-sized
 	// substring of the second, then keep chopping off the last character of
 	// each until they match.
-	int i;
+	unsigned i;
 	for( i = 0; i < string1.size() && i < string2.size(); ++i )
 		if( string1[i] != string2[i] )
 			break;
@@ -621,7 +621,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
 		out.m_vsKeysoundFile.push_back( sData );
 		m_mapWavIdToKeysoundIndex[ sWavID ] = out.m_vsKeysoundFile.size()-1;
-		LOG->Trace( "Inserting keysound index %lu '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
+		LOG->Trace( "Inserting keysound index %u '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
 	}
 
 	/* Time signature tags affect all other global timing tags, so read them first. */
