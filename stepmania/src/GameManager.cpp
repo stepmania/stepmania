@@ -23,24 +23,15 @@ GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our progr
 
 const int DANCE_COL_SPACING = 64;
 const int DANCE_6PANEL_VERSUS_COL_SPACING = 54;
-
-
-// <<<<<<< GameManager.cpp
-// const int PUMP_COL_SPACING = 60;
+const int PUMP_COL_SPACING = 50;
 const int EZ2_COL_SPACING = 46; 
 const int EZ2_DOUBLE_ADJUST = 150;
 
 
-// =======
-const int PUMP_COL_SPACING = 50;
-//const int EZ2_COL_SPACING = 50;
 
 //
 // Important:  Every game must define the buttons: "Start", "Back", "MenuLeft", and "MenuRight"
 //
-
-// >>>>>>> 1.24
-
 GameDef g_GameDefs[NUM_GAMES] = 
 {
 	{	// GAME_DANCE
@@ -289,12 +280,14 @@ GameDef g_GameDefs[NUM_GAMES] =
 StyleDef g_StyleDefs[NUM_STYLES] = 
 {
 	{	// STYLE_DANCE_SINGLE
-		GAME_DANCE,							// m_Game
-		"dance-single",						// m_szName
-		NOTES_TYPE_DANCE_SINGLE,			// m_NotesType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
-		{ 160, 480 },						// m_iCenterX
-		4,									// m_iColsPerPlayer
+		GAME_DANCE,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"dance-single",							// m_szName
+		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
 				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
@@ -314,12 +307,14 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 	},
 	{	// STYLE_DANCE_VERSUS
-		GAME_DANCE,							// m_Game
-		"dance-versus",						// m_szName
-		NOTES_TYPE_DANCE_SINGLE,			// m_NotesType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
-		{ 160, 480 },						// m_iCenterX
-		4,									// m_iColsPerPlayer
+		GAME_DANCE,								// m_Game
+		true,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
+		"dance-versus",							// m_szName
+		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
 				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
@@ -339,12 +334,14 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 	},
 	{	// STYLE_DANCE_DOUBLE
-		GAME_DANCE,							// m_Game
-		"dance-double",						// m_szName
-		NOTES_TYPE_DANCE_DOUBLE,			// m_NotesType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
-		{ 320, 320 },						// m_iCenterX
-		8,									// m_iColsPerPlayer
+		GAME_DANCE,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"dance-double",							// m_szName
+		NOTES_TYPE_DANCE_DOUBLE,				// m_NotesType
+		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
 				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*3.5f },
@@ -373,6 +370,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// StyleDef
 		GAME_DANCE,							// m_Game
+		true,								// m_bUsedForGameplay
+		false,								// m_bUsedForEdit
 		"dance-couple",						// m_szName
 		NOTES_TYPE_DANCE_COUPLE,			// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -386,10 +385,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
 			},
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
@@ -398,6 +397,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// STYLE_DANCE_SOLO
 		GAME_DANCE,							// m_Game
+		true,								// m_bUsedForGameplay
+		true,								// m_bUsedForEdit
 		"dance-solo",						// m_szName
 		NOTES_TYPE_DANCE_SOLO,				// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -423,6 +424,41 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5
+		},
+	},
+	{	// STYLE_DANCE_DOUBLE
+		GAME_DANCE,								// m_Game
+		false,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"dance-edit-couple",					// m_szName
+		NOTES_TYPE_DANCE_COUPLE,				// m_NotesType
+		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	DANCE_BUTTON_UP,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*3.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	DANCE_BUTTON_UP,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*3.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
 		},
 	},
 /*	{	// STYLE_DANCE_SOLO_VERSUS 
@@ -452,9 +488,11 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,5,1,4,2,3		// outside in
 		},
-	},
-*/	{	// PUMP_STYLE_SINGLE
+	},	*/
+	{	// PUMP_STYLE_SINGLE
 		GAME_PUMP,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"pump-single",							// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -482,6 +520,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// PUMP_STYLE_VERSUS
 		GAME_PUMP,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"pump-versus",							// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -509,6 +549,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// PUMP_STYLE_DOUBLE
 		GAME_PUMP,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"pump-double",							// m_szName
 		NOTES_TYPE_PUMP_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
@@ -548,6 +590,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 
 	{	// EZ2_STYLE_SINGLE
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-single",							// m_szName
 		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -575,6 +619,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_SINGLE_HARD
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-single-hard",							// m_szName
 		NOTES_TYPE_EZ2_SINGLE_HARD,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -602,6 +648,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_DOUBLE
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-double",							// m_szName
 		NOTES_TYPE_EZ2_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
@@ -639,6 +687,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_REAL
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-real",							// m_szName
 		NOTES_TYPE_EZ2_REAL,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -670,6 +720,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_SINGLE_VERSUS
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-single-versus",					// m_szName
 		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -697,6 +749,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_SINGLE_VERSUS
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-single-hard-versus",				// m_szName
 		NOTES_TYPE_EZ2_SINGLE_HARD,				// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -722,9 +776,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
-
 	{	// EZ2_STYLE_REAL_VERSUS
 		GAME_EZ2,								// m_Game
+		false,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
 		"ez2-real-versus",						// m_szName
 		NOTES_TYPE_EZ2_REAL,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -774,19 +829,19 @@ StyleDef* GameManager::GetStyleDefForStyle( Style s )
 	return &g_StyleDefs[ s ];
 }
 
-Style GameManager::GetStyleThatPlaysNotesType( NotesType nt )
+Style GameManager::GetEditStyleThatPlaysNotesType( NotesType nt )
 {
 	for( int i=0; i<NUM_STYLES; i++ )
-		if( g_StyleDefs[i].m_NotesType == nt )
+		if( g_StyleDefs[i].m_NotesType == nt  &&  g_StyleDefs[i].m_bUsedForEdit )
 			return (Style)i;
 
 	return STYLE_NONE;
 }
 
-void GameManager::GetStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo )
+void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo )
 {
 	for( int s=0; s<NUM_STYLES; s++ )
-		if( g_StyleDefs[s].m_Game == game )	
+		if( g_StyleDefs[s].m_Game == game  &&  g_StyleDefs[s].m_bUsedForGameplay )	
 			aStylesAddTo.Add( (Style)s );
 }
 

@@ -179,7 +179,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		//  Set the current Style, then let ScreenEdit infer the desired
 		//  NotesType from that Style.
 		NotesType nt = GetSelectedNotesType();
-		Style style = GAMEMAN->GetStyleThatPlaysNotesType( nt );
+		Style style = GAMEMAN->GetEditStyleThatPlaysNotesType( nt );
 		GAMESTATE->m_CurStyle = style;
 		GAMESTATE->m_CurGame = GAMEMAN->GetStyleDefForStyle(style)->m_Game;
 
@@ -358,7 +358,7 @@ void ScreenEditMenu::MenuStart( const PlayerNumber p )
 
 	// find the first style that matches this notes type
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	GAMESTATE->m_CurStyle = GAMEMAN->GetStyleThatPlaysNotesType( GetSelectedNotesType() );
+	GAMESTATE->m_CurStyle = GAMEMAN->GetEditStyleThatPlaysNotesType( GetSelectedNotesType() );
 	GAMESTATE->m_pCurNotes[PLAYER_1] = GetSelectedNotes();
 
 	m_soundSelect.PlayRandom();

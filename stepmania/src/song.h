@@ -57,6 +57,7 @@ public:
 	void TidyUpData();	// call after loading to clean up invalid data
 
 	void SaveToSMFile( CString sPath = "" );	// no path means save to SongFilePath
+	void SaveToSMAndDWIFile();	// saves SM, then saves DWI so that the SM is the master copy and NoteTypes not supported by DWI are not lost
 	void SaveToCacheFile();
 
 	CString GetSongFilePath();

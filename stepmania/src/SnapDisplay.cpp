@@ -36,7 +36,7 @@ SnapDisplay::SnapDisplay()
 	m_iNumCols = 0;
 }
 
-void SnapDisplay::Load()
+void SnapDisplay::Load( PlayerNumber pn )
 {
 	m_iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
 

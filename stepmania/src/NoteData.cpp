@@ -259,7 +259,7 @@ void NoteData::AddHoldNote( HoldNote add )
 
 void NoteData::RemoveHoldNote( int iHoldIndex )
 {
-	ASSERT( iHoldIndex > 0  &&  iHoldIndex < m_iNumHoldNotes );
+	ASSERT( iHoldIndex >= 0  &&  iHoldIndex < m_iNumHoldNotes );
 
 	HoldNote& hn = m_HoldNotes[iHoldIndex];
 

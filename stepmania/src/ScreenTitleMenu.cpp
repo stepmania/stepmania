@@ -16,7 +16,6 @@
 #include "ScreenMapInstruments.h"
 #include "ScreenGraphicOptions.h"
 #include "ScreenGameOptions.h"
-#include "ScreenEdit.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "StepMania.h"
@@ -91,10 +90,19 @@ ScreenTitleMenu::ScreenTitleMenu()
 	}
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
-		CStringArray asThemeNames;
-		THEME->GetThemeNamesForCurGame( asThemeNames );
-		THEME->SwitchTheme( asThemeNames[0] );
+		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+		if( THEME->DoesThemeExist( sGameName ) )
+		{
+			THEME->SwitchTheme( sGameName );
+		}
+		else
+		{
+			CStringArray asThemeNames;
+			THEME->GetThemeNamesForCurGame( asThemeNames );
+			THEME->SwitchTheme( asThemeNames[0] );
+		}
 	}
+
 
 
 	m_sprBG.Load( THEME->GetPathTo("Graphics","title menu background") );

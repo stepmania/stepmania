@@ -302,15 +302,12 @@ void Player::Step( int col )
 		int iCurrentIndexEarlier = iIndexStartLookingAt - delta;
 		int iCurrentIndexLater   = iIndexStartLookingAt + delta;
 
-		// silly check to make sure we don't go out of bounds
-		iCurrentIndexEarlier	= clamp( iCurrentIndexEarlier, 0, MAX_TAP_NOTE_ROWS-1 );
-		iCurrentIndexLater		= clamp( iCurrentIndexLater,   0, MAX_TAP_NOTE_ROWS-1 );
-
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
 		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexEarlier );
-		if( m_TapNotes[col][iCurrentIndexEarlier] != '0'  &&	// there is a note here
+		if( iCurrentIndexEarlier >= 0  &&
+			m_TapNotes[col][iCurrentIndexEarlier] != '0'  &&	// there is a note here
 			m_TapNoteScores[col][iCurrentIndexEarlier] == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexEarlier;
@@ -322,7 +319,8 @@ void Player::Step( int col )
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
 		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexLater );
-		if( m_TapNotes[col][iCurrentIndexLater] != '0'  &&	// there is a note here
+		if( iCurrentIndexLater >= 0  &&
+			m_TapNotes[col][iCurrentIndexLater] != '0'  &&	// there is a note here
 			m_TapNoteScores[col][iCurrentIndexLater] == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexLater;

@@ -585,6 +585,124 @@ void Notes::WriteSMNotesTag( FILE* fp )
 	fprintf( fp, "%s;\n", m_sSMNoteData );
 }
 
+struct DWICharLookup {
+	char c;
+	bool bCol[6];	
+};
+
+char NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4, bool bCol5, bool bCol6 )
+{
+	const DWICharLookup lookup[] = {
+		{ '0', 0, 0, 0, 0, 0, 0 },
+		{ '1', 0, 1, 1, 0, 0, 0 },
+		{ '2', 0, 0, 1, 0, 0, 0 },
+		{ '3', 0, 0, 1, 0, 1, 0 },
+		{ '4', 0, 1, 0, 0, 0, 0 },
+		{ '6', 0, 0, 0, 0, 1, 0 },
+		{ '7', 0, 1, 0, 1, 0, 0 },
+		{ '8', 0, 0, 0, 1, 0, 0 },
+		{ '9', 0, 0, 0, 1, 1, 0 },
+		{ 'A', 0, 0, 1, 1, 0, 0 },
+		{ 'B', 0, 1, 0, 0, 1, 0 },
+		{ 'C', 0, 1, 0, 0, 0, 0 },
+		{ 'D', 0, 0, 0, 0, 1, 0 },
+		{ 'E', 1, 1, 0, 0, 0, 0 },
+		{ 'F', 0, 1, 1, 0, 0, 0 },
+		{ 'G', 0, 1, 0, 1, 0, 0 },
+		{ 'H', 0, 1, 0, 0, 0, 1 },
+		{ 'I', 1, 0, 0, 0, 1, 0 },
+		{ 'J', 0, 0, 1, 0, 1, 0 },
+		{ 'K', 0, 0, 0, 1, 1, 0 },
+		{ 'L', 0, 0, 0, 0, 1, 1 },
+		{ 'M', 0, 1, 0, 0, 1, 0 },
+	};
+	const int iNumLookups = sizeof(lookup) / sizeof(DWICharLookup);
+
+	for( int i=0; i<iNumLookups; i++ )
+	{
+		const DWICharLookup& l = lookup[i];
+		if( l.bCol[0] && bCol1, l.bCol[1] && bCol2, l.bCol[2] && bCol3, l.bCol[3] && bCol4, l.bCol[4] && bCol5, l.bCol[5] && bCol6 )
+			return l.c;
+	}
+	ASSERT(0);
+	return '0';
+}
+
+char NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4 )
+{
+	return NotesToDWIChar( 0, bCol1, bCol2, bCol3, bCol4, 0 );
+}
+
+CString NotesToDWIString( int iNoteCol1, int iNoteCol2, int iNoteCol3, int iNoteCol4, int iNoteCol5, int iNoteCol6 )
+{
+	char cShow = NotesToDWIChar( iNoteCol1!=0, iNoteCol2!=0, iNoteCol3!=0, iNoteCol4!=0, iNoteCol5!=0, iNoteCol6!=0 );
+	char cHold = NotesToDWIChar( iNoteCol1==2, iNoteCol2==2, iNoteCol3==2, iNoteCol4==2, iNoteCol5==2, iNoteCol6==2 );
+	
+	if( cHold != '0' )
+		return ssprintf( "%c!%c", cShow, cHold );
+	else
+		return cShow;
+}
+
+CString NotesToDWIString( int iNoteCol1, int iNoteCol2, int iNoteCol3, int iNoteCol4 )
+{
+	return NotesToDWIString( 0, iNoteCol1, iNoteCol2, iNoteCol3, iNoteCol4, 0 );
+}
+
+void Notes::WriteDWINotesTag( FILE* fp )
+{
+	switch( m_NotesType )
+	{
+	case NOTES_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
+	case NOTES_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
+	case NOTES_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
+	case NOTES_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
+	default:	return;	// not a type supported by DWI
+	}
+
+	switch( m_DifficultyClass )
+	{
+	case CLASS_EASY:	fprintf( fp, "BASIC:" );	break;
+	case CLASS_MEDIUM:	fprintf( fp, "ANOTHER:" );	break;
+	case CLASS_HARD:	fprintf( fp, "MANIAC:" );	break;
+	default:	ASSERT(0);	return;
+	}
+
+	fprintf( fp, "%d:\n", m_iMeter );
+
+	NoteData notedata;
+	this->GetNoteData( &notedata );
+	notedata.ConvertHoldNotesTo2sAnd3s();
+
+	fprintf( fp, "<" );		// begin a 48th note series
+	for( int r=0; r<notedata.GetLastRow(); r++ )
+	{
+		switch( m_NotesType )
+		{
+		case NOTES_TYPE_DANCE_SINGLE:
+		case NOTES_TYPE_DANCE_COUPLE:
+		case NOTES_TYPE_DANCE_DOUBLE:
+			fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][r], notedata.m_TapNotes[1][r], notedata.m_TapNotes[2][r], notedata.m_TapNotes[3][r] ) );
+			break;
+		case NOTES_TYPE_DANCE_SOLO:
+			fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][r], notedata.m_TapNotes[1][r], notedata.m_TapNotes[2][r], notedata.m_TapNotes[3][r], notedata.m_TapNotes[4][r], notedata.m_TapNotes[5][r] ) );
+			break;
+		default:	return;	// not a type supported by DWI
+		}
+	}
+	fprintf( fp, "<" );		// end a 48th note series
+
+	if( m_NotesType == NOTES_TYPE_DANCE_COUPLE  ||  m_NotesType == NOTES_TYPE_DANCE_DOUBLE )
+	{
+		fprintf( fp, ":" );
+		fprintf( fp, "<" );		// begin a 48th note series
+		for( int r=0; r<notedata.GetLastRow(); r++ )
+			fprintf( fp, NotesToDWIString( notedata.m_TapNotes[4][r], notedata.m_TapNotes[5][r], notedata.m_TapNotes[6][r], notedata.m_TapNotes[7][r] ) );
+	}
+
+	fprintf( fp, ">" );	// end series
+}
+
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->m_iNumTracks == NotesTypeToNumTracks(m_NotesType) );

@@ -53,7 +53,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	GAMESTATE->m_CurStyle = STYLE_NONE;
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
+	GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
 	m_iSelection = 0;
 
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )

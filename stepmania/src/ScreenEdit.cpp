@@ -23,45 +23,54 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "GameState.h"
 
 
 //
 // Defines specific to GameScreenTitleMenu
 //
 
-
 const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.20f;
-const float GRAY_ARROW_Y					= ARROW_SIZE * 1.5;
+const float GRAY_ARROW_Y				= ARROW_SIZE * 1.5;
 
-const float DEBUG_X			=	SCREEN_LEFT + 10;
-const float DEBUG_Y			=	CENTER_Y-100;
+const float DEBUG_X			= SCREEN_LEFT + 10;
+const float DEBUG_Y			= CENTER_Y-100;
 
-const float HELP_X	= SCREEN_LEFT + 10;
-const float HELP_Y	= CENTER_Y;	// top aligned
+const float HELP_X			= SCREEN_LEFT + 10;
+const float HELP_Y			= SCREEN_BOTTOM - 10;
 
-const float INFO_X	= SCREEN_RIGHT - 10 ;
-const float INFO_Y	= SCREEN_BOTTOM - 10;		// bottom aligned
+const float SHORTCUTS_X		= SCREEN_LEFT + 10;
+const float SHORTCUTS_Y		= SCREEN_TOP + 8;
+
+const float INFO_X			= SCREEN_RIGHT - 10 ;
+const float INFO_Y			= SCREEN_BOTTOM - 10;
 
 const float MENU_WIDTH		=	110;
-const float EDIT_X			=	CENTER_X + 100;
-const float EDIT_GRAY_Y		=	CENTER_Y - 2.0f * (float)ARROW_SIZE;
+const float EDIT_X			=	CENTER_X;
+const float EDIT_GRAY_Y		=	GRAY_ARROW_Y;
 
 const float PLAYER_X		=	EDIT_X;
 const float PLAYER_Y		=	SCREEN_TOP;
 
+const float MENU_ITEM_X			=	CENTER_X-200;
+const float MENU_ITEM_START_Y	=	SCREEN_TOP + 30;
+const float MENU_ITEM_SPACING_Y	=	24;
+
 const CString HELP_TEXT = 
-	"Esc: exit\n"
-	"S: save changes\n"
+	"Esc: show menu\n"
+	"Hold F1 to show keyboard shortcuts\n"
 	"Up/Down: change beat\n"
 	"Left/Right: change snap\n"
 	"PgUp/PgDn: jump 1 measure\n"
 	"Home/End: jump to first/last beat\n"
 	"Number keys: add or remove tap note\n"
 	"To create a hold note, hold a number key\n" 
-	"      while changing the beat pressing Up/Down\n"
+	"      while changing the beat pressing Up/Down\n";
+
+const CString SHORTCUT_TEXT = 
+	"S: save changes\n"
+	"I: save as SM and DWI (lossy)\n"
 	"Enter/Space: set begin/end selection markers\n"
-	"G/H/J/K/L: Snap selected notes to nearest\n"
+	"G/H/J/K/L: Snap selection to nearest\n"
 	"      4th / 8th / 12th / 16th / 12th or 16th\n"
 	"P: Play selected area\n"
 	"R: Record in selected area\n"
@@ -72,15 +81,56 @@ const CString HELP_TEXT =
 	"D: Toggle difficulty\n"
 	"Ins: Insert blank beat\n"
 	"Del: Delete current beat and shift\n"
-	"       Hold F keys for faster change:\n"
 	"F7/F8: Decrease/increase BPM at cur beat\n"
 	"F9/F10: Dec/inc freeze secs at cur beat\n"
 	"F11/F12: Decrease/increase music offset\n"
 	"F1/F2 : Dec/inc sample music start\n"
+	"       Hold F keys for faster change:\n"
 	"NumPad -/+: Dec/inc sample music length\n"
 	"M: Play sample music\n";
 
-
+const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
+	"Set begin marker (Enter)",
+	"Set end marker (Space)",
+	"Snap selection to nearest quarter note (G)",
+	"Snap selection to nearest eighth note (H)",
+	"Snap selection to nearest triplet (J)",
+	"Snap selection to nearest sixteenth note (K)",
+	"Snap selection to nearest triplet or sixteenth note (L)",
+	"(P)lay selection",
+	"(R)ecord in selection",
+	"(T)oggle Play/Record rate",
+	"Cut selection (X)",
+	"Copy selection (C)",
+	"Paste clipboard at current beat (V)",
+	"Toggle (D)ifficulty",
+	"(Ins)ert blank beat and shift down",
+	"(Del)ete blank beat and shift up",
+	"Play sample (M)usic",
+	"(S)ave changes",
+	"(Q)uit"
+};
+int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
+	DIK_RETURN,
+	DIK_SPACE,
+	DIK_G,
+	DIK_H,
+	DIK_J,
+	DIK_K,
+	DIK_L,
+	DIK_P,
+	DIK_R,
+	DIK_T,
+	DIK_X,
+	DIK_C,
+	DIK_V,
+	DIK_D,
+	DIK_INSERT,
+	DIK_DELETE,
+	DIK_M,
+	DIK_S,
+	DIK_Q,
+};
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
@@ -89,6 +139,14 @@ const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
 ScreenEdit::ScreenEdit()
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
+
+	// set both players to joined so the credit message doesn't show
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		GAMESTATE->m_bIsJoined[p] = true;
+	}
+	SCREENMAN->RefreshCreditsMessages();
+
 
 	m_pSong = GAMESTATE->m_pCurSong;
 
@@ -138,7 +196,7 @@ ScreenEdit::ScreenEdit()
 
 
 	m_SnapDisplay.SetXY( EDIT_X, EDIT_GRAY_Y );
-	m_SnapDisplay.Load();
+	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 
 	m_GrayArrowRowEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
@@ -178,9 +236,18 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetHorizAlign( Actor::align_left );
+	m_textHelp.SetVertAlign( Actor::align_top );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( HELP_TEXT );
+
+	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
+	m_textShortcuts.SetHorizAlign( Actor::align_left );
+	m_textShortcuts.SetVertAlign( Actor::align_bottom );
+	m_textShortcuts.SetZoom( 0.5f );
+	m_textShortcuts.SetShadowLength( 2 );
+	m_textShortcuts.SetText( SHORTCUT_TEXT );
 
 
 	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","edit change line"), 10 );
@@ -191,6 +258,16 @@ ScreenEdit::ScreenEdit()
 
 	m_soundMusic.Load( m_pSong->GetMusicPath(), true );	// enable accurate sync
 
+	for( int i=0; i<NUM_MENU_ITEMS; i++ )
+	{
+		m_textMenu[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textMenu[i].SetXY( MENU_ITEM_X, MENU_ITEM_START_Y + MENU_ITEM_SPACING_Y*i );
+		m_textMenu[i].SetHorizAlign( Actor::align_left );
+		m_textMenu[i].SetZoom( 0.5f );
+		m_textMenu[i].SetShadowLength( 2 );
+		m_textMenu[i].SetText( MENU_ITEM_TEXT[i] );
+	}
+	m_iMenuSelection = 0;
 
 	m_Fade.OpenWipingRight();
 }
@@ -221,16 +298,22 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		GAMESTATE->m_fSongBeat = fSongBeat;
 
-		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
+		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker + 4 )		// give a one measure lead out
 		{
 			if( m_EditMode == MODE_RECORDING )
 			{
 				TransitionToEditFromRecord();
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
+				m_rectRecordBack.BeginTweening( 0.5f );
+				m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 			}
 			else if( m_EditMode == MODE_PLAYING )
 			{
 				m_soundMusic.Stop();
 				m_EditMode = MODE_EDITING;
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
+				m_rectRecordBack.BeginTweening( 0.5f );
+				m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 			}
 		}
 	}
@@ -242,11 +325,9 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_Fade.Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
 	m_textInfo.Update( fDeltaTime );
+	m_textShortcuts.Update( fDeltaTime );
 
-	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
-	{
-		m_rectRecordBack.Update( fDeltaTime );
-	}
+	m_rectRecordBack.Update( fDeltaTime );
 
 	if( m_EditMode == MODE_RECORDING )
 	{
@@ -290,6 +371,11 @@ void ScreenEdit::Update( float fDeltaTime )
 //	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
 //	LOG->Trace( "fPositionSeconds = %f, fSongBeat = %f, fBPS = %f", fPositionSeconds, fSongBeat, fBPS );
 
+	if( m_EditMode == MODE_MENU )
+	{
+		for( int i=0; i<NUM_MENU_ITEMS; i++ )
+			m_textMenu[i].Update( fDeltaTime );
+	}
 
 	m_NoteFieldEdit.Update( fDeltaTime );
 
@@ -344,7 +430,6 @@ void ScreenEdit::DrawPrimitives()
 	m_sprBackground.Draw();
 	m_SnapDisplay.Draw();
 	m_GrayArrowRowEdit.Draw();
-	m_textHelp.Draw();
 
 	// HACK:  Make NoteFieldEdit draw using the trailing beat
 	float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
@@ -352,13 +437,13 @@ void ScreenEdit::DrawPrimitives()
 	m_NoteFieldEdit.Draw();
 	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 
+	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
+		m_textShortcuts.Draw();
+	m_textHelp.Draw();
 	m_textInfo.Draw();
 	m_Fade.Draw();
 
-	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
-	{
-		m_rectRecordBack.Draw();
-	}
+	m_rectRecordBack.Draw();
 
 	if( m_EditMode == MODE_RECORDING )
 	{
@@ -387,6 +472,12 @@ void ScreenEdit::DrawPrimitives()
 		*/
 	}
 
+	if( m_EditMode == MODE_MENU )
+	{
+		for( int i=0; i<NUM_MENU_ITEMS; i++ )
+			m_textMenu[i].Draw();
+	}
+
 	Screen::DrawPrimitives();
 }
 
@@ -397,467 +488,473 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	switch( m_EditMode )
 	{
 	case MODE_EDITING:		InputEdit( DeviceI, type, GameI, MenuI, StyleI );	break;
+	case MODE_MENU:			InputMenu( DeviceI, type, GameI, MenuI, StyleI );	break;
 	case MODE_RECORDING:	InputRecord( DeviceI, type, GameI, MenuI, StyleI );	break;
 	case MODE_PLAYING:		InputPlay( DeviceI, type, GameI, MenuI, StyleI );	break;
+	default:	ASSERT(0);
 	}
 }
 
 void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	///////////////////////////
-	// handle pad inputs
-	///////////////////////////
+	if( DeviceI.device != DEVICE_KEYBOARD )
+		return;
 
-	if( DeviceI.device == DEVICE_KEYBOARD )
+	switch( DeviceI.button )
 	{
-		switch( DeviceI.button )
+	case DIK_1:
+	case DIK_2:
+	case DIK_3:
+	case DIK_4:
+	case DIK_5:
+	case DIK_6:
+	case DIK_7:
+	case DIK_8:
+	case DIK_9:
+	case DIK_0:
 		{
-		case DIK_1:
-		case DIK_2:
-		case DIK_3:
-		case DIK_4:
-		case DIK_5:
-		case DIK_6:
-		case DIK_7:
-		case DIK_8:
-		case DIK_9:
-		case DIK_0:
-			{
-				if( type != IET_FIRST_PRESS )
-					break;	// We only care about first presses
+			if( type != IET_FIRST_PRESS )
+				break;	// We only care about first presses
 
-				int iCol = DeviceI.button - DIK_1;
-				const float fSongBeat = GAMESTATE->m_fSongBeat;
-				const int iSongIndex = BeatToNoteRow( fSongBeat );
+			int iCol = DeviceI.button - DIK_1;
+			const float fSongBeat = GAMESTATE->m_fSongBeat;
+			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
-				if( iCol >= m_NoteFieldEdit.m_iNumTracks )	// this button is not in the range of columns for this StyleDef
-					break;
-
-				// check for to see if the user intended to remove a HoldNote
-				bool bRemovedAHoldNote = false;
-				for( int i=0; i<m_NoteFieldEdit.m_iNumHoldNotes; i++ )	// for each HoldNote
-				{
-					HoldNote &hn = m_NoteFieldEdit.m_HoldNotes[i];
-					if( iCol == hn.m_iTrack  &&		// the notes correspond
-						fSongBeat >= hn.m_fStartBeat  &&  fSongBeat <= hn.m_fEndBeat )	// the cursor lies within this HoldNote
-					{
-						m_NoteFieldEdit.RemoveHoldNote( i );
-						bRemovedAHoldNote = true;
-						break;	// stop iterating over all HoldNotes
-					}
-				}
-
-				if( !bRemovedAHoldNote )
-				{
-					// We didn't remove a HoldNote, so the user wants to add or delete a TapNote
-					if( m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] == '0' )
-						m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] = '1';
-					else
-						m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] = '0';
-				}
-			}
-			break;
-		case DIK_ESCAPE:
-			SCREENMAN->SetNewScreen( new ScreenEditMenu );
-			break;
-		case DIK_S:
-			{
-				// copy edit into current Notes
-				Song* pSong = GAMESTATE->m_pCurSong;
-				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
-
-				if( pNotes == NULL )
-				{
-					// allocate a new Notes
-					pNotes = new Notes;
-					pSong->m_apNotes.Add( pNotes );
-					pNotes->m_NotesType = GAMEMAN->GetStyleDefForStyle( GAMESTATE->m_CurStyle )->m_NotesType;
-					pNotes->m_sDescription = "Untitled";
-					pNotes->m_iMeter = 1;
-				}
-
-				pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
-				GAMESTATE->m_pCurSong->SaveToSMFile();
-				SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
-			}
-			break;
-		case DIK_UP:
-		case DIK_DOWN:
-		case DIK_PGUP:
-		case DIK_PGDN:
-			{
-				float fBeatsToMove;
-				switch( DeviceI.button )
-				{
-				case DIK_UP:
-				case DIK_DOWN:
-					fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetSnapMode() );
-					if( DeviceI.button == DIK_UP )	
-						fBeatsToMove *= -1;
+			if( iCol >= m_NoteFieldEdit.m_iNumTracks )	// this button is not in the range of columns for this StyleDef
 				break;
-				case DIK_PGUP:
-				case DIK_PGDN:
-					fBeatsToMove = BEATS_PER_MEASURE;
-					if( DeviceI.button == DIK_PGUP )	
-						fBeatsToMove *= -1;
-				}
 
-				const float fStartBeat = GAMESTATE->m_fSongBeat;
-				const float fEndBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
-
-				// check to see if they're holding a button
-				for( int col=0; col<m_NoteFieldEdit.m_iNumTracks && col<=10; col++ )
+			// check for to see if the user intended to remove a HoldNote
+			bool bRemovedAHoldNote = false;
+			for( int i=0; i<m_NoteFieldEdit.m_iNumHoldNotes; i++ )	// for each HoldNote
+			{
+				HoldNote &hn = m_NoteFieldEdit.m_HoldNotes[i];
+				if( iCol == hn.m_iTrack  &&		// the notes correspond
+					fSongBeat >= hn.m_fStartBeat  &&  fSongBeat <= hn.m_fEndBeat )	// the cursor lies within this HoldNote
 				{
-					const DeviceInput di(DEVICE_KEYBOARD, DIK_1+col);
-					BOOL bIsBeingHeld = INPUTMAN->IsBeingPressed(di);
-
-					if( bIsBeingHeld )
-					{
-						// create a new hold note
-						HoldNote newHN;
-						newHN.m_iTrack = col;
-						newHN.m_fStartBeat = min(fStartBeat, fEndBeat);
-						newHN.m_fEndBeat = max(fStartBeat, fEndBeat);
-						m_NoteFieldEdit.AddHoldNote( newHN );
-					}
+					m_NoteFieldEdit.RemoveHoldNote( i );
+					bRemovedAHoldNote = true;
+					break;	// stop iterating over all HoldNotes
 				}
+			}
 
-				GAMESTATE->m_fSongBeat += fBeatsToMove;
-				GAMESTATE->m_fSongBeat = clamp( GAMESTATE->m_fSongBeat, 0, MAX_BEATS-1 );
-				GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
-				m_soundChangeLine.Play();
-			}
-			break;
-		case DIK_HOME:
-			GAMESTATE->m_fSongBeat = 0;
-			m_soundChangeLine.Play();
-			break;
-		case DIK_END:
-			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.GetLastBeat();
-			m_soundChangeLine.Play();
-			break;
-		case DIK_RIGHT:
-			m_SnapDisplay.PrevSnapMode();
-			OnSnapModeChange();
-			break;
-		case DIK_LEFT:
-			m_SnapDisplay.NextSnapMode();
-			OnSnapModeChange();
-			break;
-		case DIK_RETURN:
-			if( m_NoteFieldEdit.m_fEndMarker != -1  &&  GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
+			if( !bRemovedAHoldNote )
 			{
-				// invalid!  The begin maker must be placed before the end marker
-				m_soundInvalid.Play();
-			}
-			else
-			{
-				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-				m_soundMarker.Play();
-			}
-			break;
-		case DIK_SPACE:
-			if( m_NoteFieldEdit.m_fBeginMarker != -1  &&  GAMESTATE->m_fSongBeat < m_NoteFieldEdit.m_fBeginMarker )
-			{
-				// invalid!  The end maker must be placed after the begin marker
-				m_soundInvalid.Play();
-			}
-			else
-			{
-				m_NoteFieldEdit.m_fEndMarker = GAMESTATE->m_fSongBeat;
-				m_soundMarker.Play();
-			}
-			break;
-		case DIK_G:
-		case DIK_H:
-		case DIK_J:
-		case DIK_K:
-		case DIK_L:
-			{
-				if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-				{
-					m_soundInvalid.Play();
-				}
+				// We didn't remove a HoldNote, so the user wants to add or delete a TapNote
+				if( m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] == '0' )
+					m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] = '1';
 				else
-				{
-					NoteType noteType1;
-					NoteType noteType2;
-					switch( DeviceI.button )
-					{
-						case DIK_G:	noteType1 = NOTE_4TH;	noteType2 = NOTE_4TH;	break;
-						case DIK_H:	noteType1 = NOTE_8TH;	noteType2 = NOTE_8TH;	break;
-						case DIK_J:	noteType1 = NOTE_12TH;	noteType2 = NOTE_12TH;	break;
-						case DIK_K:	noteType1 = NOTE_16TH;	noteType2 = NOTE_16TH;	break;
-						case DIK_L:	noteType1 = NOTE_12TH;	noteType2 = NOTE_16TH;	break;
-						default:	ASSERT( false );
-					}
-
-					m_NoteFieldEdit.SnapToNearestNoteType( noteType1, noteType2, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
-				}
+					m_NoteFieldEdit.m_TapNotes[iCol][iSongIndex] = '0';
 			}
-			break;
-		case DIK_P:
-			{
-				if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-				{
-					m_soundInvalid.Play();
-					break;
-				}
-
-				m_EditMode = MODE_PLAYING;
-
-				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
-
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
-
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker;
-				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
-				m_soundMusic.SetPositionSeconds( fElapsedSeconds );
-				m_soundMusic.Play();
-				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-			}
-			break;
-		case DIK_R:
-			{
-				if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-				{
-					m_soundInvalid.Play();
-					break;
-				}
-
-				// initialize m_NoteFieldRecord
-				m_NoteFieldRecord.ClearAll();
-				m_NoteFieldRecord.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
-				m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
-				m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
-
-
-				m_EditMode = MODE_RECORDING;
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
-
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker;
-				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
-				m_soundMusic.SetPositionSeconds( fElapsedSeconds );
-				m_soundMusic.Play();
-				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-				for( int i=0; i<MAX_NOTE_TRACKS; i++ )
-					m_bLayingAHold[i] = false;
-			}
-			break;
-		case DIK_T:
-			if(     GAMESTATE->m_SongOptions.m_fMusicRate == 1.0f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.9f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.9f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.8f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.8f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.7f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.7f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.5f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.5f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.4f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.4f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.3f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.3f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.2f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.2f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.1f;
-			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.1f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
-			break;
-		case DIK_INSERT:
-		case DIK_DELETE:
-			{
-				NoteData temp;
-				temp.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
-				int iTakeFromRow;
-				int iPasteAtRow;
-				switch( DeviceI.button )
-				{
-				case DIK_INSERT:
-					iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-					iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
-					break;
-				case DIK_DELETE:
-					iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
-					iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-					break;
-				}
-				temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, MAX_TAP_NOTE_ROWS );
-				m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), MAX_TAP_NOTE_ROWS  );
-				m_NoteFieldEdit.CopyRange( &temp, 0, MAX_TAP_NOTE_ROWS-iTakeFromRow, iPasteAtRow );
-			}
-			break;
-		case DIK_X:
-			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-			{
-				m_soundInvalid.Play();
-			}
-			else
-			{
-				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
-
-				m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
-				m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow  );
-			}
-			break;
-		case DIK_C:
-			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-			{
-				m_soundInvalid.Play();
-			}
-			else
-			{
-				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
-
-				m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
-			}
-			break;
-		case DIK_V:
-			{
-				int iSrcFirstRow = 0;
-				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
-				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-
-				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
-			}
-			break;
-
-		case DIK_D:
-			{
-				DifficultyClass &dc = m_pNotes->m_DifficultyClass;
-				dc = DifficultyClass( (dc+1)%NUM_DIFFICULTY_CLASSES );
-			}
-			break;
-
-		case DIK_F7:
-		case DIK_F8:
-			{
-				float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
-				float fDeltaBPM;
-				switch( DeviceI.button )
-				{
-				case DIK_F7:	fDeltaBPM = - 0.020f;		break;
-				case DIK_F8:	fDeltaBPM = + 0.020f;		break;
-				default:	ASSERT(0);
-				}
-				switch( type )
-				{
-				case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
-				case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
-				}
-				float fNewBPM = fBPM + fDeltaBPM;
-
-				for( int i=0; i<m_pSong->m_BPMSegments.GetSize(); i++ )
-					if( m_pSong->m_BPMSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-						break;
-
-				if( i == m_pSong->m_BPMSegments.GetSize() )	// there is no BPMSegment at the current beat
-				{
-					// create a new BPMSegment
-					m_pSong->AddBPMSegment( BPMSegment(GAMESTATE->m_fSongBeat, fNewBPM) );
-				}
-				else	// BPMSegment being modified is m_BPMSegments[i]
-				{
-					if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.025f )
-						m_pSong->m_BPMSegments.RemoveAt( i );
-					else
-						m_pSong->m_BPMSegments[i].m_fBPM = fNewBPM;
-				}
-			}
-			break;
-		case DIK_F9:
-		case DIK_F10:
-			{
-				float fFreezeDelta;
-				switch( DeviceI.button )
-				{
-				case DIK_F9:	fFreezeDelta = -0.020f;		break;
-				case DIK_F10:	fFreezeDelta = +0.020f;		break;
-				default:	ASSERT(0);
-				}
-				switch( type )
-				{
-				case IET_SLOW_REPEAT:	fFreezeDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fFreezeDelta *= 40;	break;
-				}
-
-				for( int i=0; i<m_pSong->m_StopSegments.GetSize(); i++ )
-				{
-					if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-						break;
-				}
-
-				if( i == m_pSong->m_StopSegments.GetSize() )	// there is no BPMSegment at the current beat
-				{
-					// create a new StopSegment
-					if( fFreezeDelta > 0 )
-						m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fFreezeDelta) );
-				}
-				else	// StopSegment being modified is m_StopSegments[i]
-				{
-					m_pSong->m_StopSegments[i].m_fStopSeconds += fFreezeDelta;
-					if( m_pSong->m_StopSegments[i].m_fStopSeconds <= 0 )
-						m_pSong->m_StopSegments.RemoveAt( i );
-				}
-			}
-			break;
-		case DIK_F11:
-		case DIK_F12:
-			{
-				float fOffsetDelta;
-				switch( DeviceI.button )
-				{
-				case DIK_F11:	fOffsetDelta = -0.020f;		break;
-				case DIK_F12:	fOffsetDelta = +0.020f;		break;
-				default:	ASSERT(0);
-				}
-				switch( type )
-				{
-				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
-				}
-
-				m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
-			}
-			break;
-		case DIK_M:
-			MUSIC->Load( m_pSong->GetMusicPath() );
-			MUSIC->Play( false, m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds );
-			break;
-		case DIK_F1:
-		case DIK_F2:
-			{
-				float fOffsetDelta;
-				switch( DeviceI.button )
-				{
-				case DIK_F1:	fOffsetDelta = -0.025f;		break;
-				case DIK_F2:	fOffsetDelta = +0.025f;		break;
-				default:	ASSERT(0);
-				}
-				switch( type )
-				{
-				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
-				}
-
-				m_pSong->m_fMusicSampleStartSeconds += fOffsetDelta;
-			}
-			break;
-		case DIK_SUBTRACT:
-		case DIK_ADD:
-			{
-				float fDelta;
-				switch( DeviceI.button )
-				{
-				case DIK_SUBTRACT:	fDelta = -0.025f;		break;
-				case DIK_ADD:		fDelta = +0.025f;		break;
-				default:	ASSERT(0);
-				}
-				switch( type )
-				{
-				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fDelta *= 40;	break;
-				}
-
-				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
-			}
-			break;
 		}
+		break;
+	case DIK_Q:
+		SCREENMAN->SetNewScreen( new ScreenEditMenu );
+		break;
+	case DIK_S:
+		{
+			// copy edit into current Notes
+			Song* pSong = GAMESTATE->m_pCurSong;
+			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+
+			if( pNotes == NULL )
+			{
+				// allocate a new Notes
+				pNotes = new Notes;
+				pSong->m_apNotes.Add( pNotes );
+				pNotes->m_NotesType = GAMEMAN->GetStyleDefForStyle( GAMESTATE->m_CurStyle )->m_NotesType;
+				pNotes->m_sDescription = "Untitled";
+				pNotes->m_iMeter = 1;
+			}
+
+			pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
+			GAMESTATE->m_pCurSong->SaveToSMFile();
+			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
+		}
+		break;
+	case DIK_UP:
+	case DIK_DOWN:
+	case DIK_PGUP:
+	case DIK_PGDN:
+		{
+			float fBeatsToMove;
+			switch( DeviceI.button )
+			{
+			case DIK_UP:
+			case DIK_DOWN:
+				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetSnapMode() );
+				if( DeviceI.button == DIK_UP )	
+					fBeatsToMove *= -1;
+			break;
+			case DIK_PGUP:
+			case DIK_PGDN:
+				fBeatsToMove = BEATS_PER_MEASURE;
+				if( DeviceI.button == DIK_PGUP )	
+					fBeatsToMove *= -1;
+			}
+
+			const float fStartBeat = GAMESTATE->m_fSongBeat;
+			const float fEndBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
+
+			// check to see if they're holding a button
+			for( int col=0; col<m_NoteFieldEdit.m_iNumTracks && col<=10; col++ )
+			{
+				const DeviceInput di(DEVICE_KEYBOARD, DIK_1+col);
+				BOOL bIsBeingHeld = INPUTMAN->IsBeingPressed(di);
+
+				if( bIsBeingHeld )
+				{
+					// create a new hold note
+					HoldNote newHN;
+					newHN.m_iTrack = col;
+					newHN.m_fStartBeat = min(fStartBeat, fEndBeat);
+					newHN.m_fEndBeat = max(fStartBeat, fEndBeat);
+					m_NoteFieldEdit.AddHoldNote( newHN );
+				}
+			}
+
+			GAMESTATE->m_fSongBeat += fBeatsToMove;
+			GAMESTATE->m_fSongBeat = clamp( GAMESTATE->m_fSongBeat, 0, MAX_BEATS-1 );
+			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
+			m_soundChangeLine.Play();
+		}
+		break;
+	case DIK_HOME:
+		GAMESTATE->m_fSongBeat = 0;
+		m_soundChangeLine.Play();
+		break;
+	case DIK_END:
+		GAMESTATE->m_fSongBeat = m_NoteFieldEdit.GetLastBeat();
+		m_soundChangeLine.Play();
+		break;
+	case DIK_RIGHT:
+		m_SnapDisplay.PrevSnapMode();
+		OnSnapModeChange();
+		break;
+	case DIK_LEFT:
+		m_SnapDisplay.NextSnapMode();
+		OnSnapModeChange();
+		break;
+	case DIK_RETURN:
+		if( m_NoteFieldEdit.m_fEndMarker != -1  &&  GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
+		{
+			// invalid!  The begin maker must be placed before the end marker
+			m_soundInvalid.Play();
+		}
+		else
+		{
+			m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
+			m_soundMarker.Play();
+		}
+		break;
+	case DIK_SPACE:
+		if( m_NoteFieldEdit.m_fBeginMarker != -1  &&  GAMESTATE->m_fSongBeat < m_NoteFieldEdit.m_fBeginMarker )
+		{
+			// invalid!  The end maker must be placed after the begin marker
+			m_soundInvalid.Play();
+		}
+		else
+		{
+			m_NoteFieldEdit.m_fEndMarker = GAMESTATE->m_fSongBeat;
+			m_soundMarker.Play();
+		}
+		break;
+	case DIK_G:
+	case DIK_H:
+	case DIK_J:
+	case DIK_K:
+	case DIK_L:
+		{
+			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
+			{
+				m_soundInvalid.Play();
+			}
+			else
+			{
+				NoteType noteType1;
+				NoteType noteType2;
+				switch( DeviceI.button )
+				{
+					case DIK_G:	noteType1 = NOTE_4TH;	noteType2 = NOTE_4TH;	break;
+					case DIK_H:	noteType1 = NOTE_8TH;	noteType2 = NOTE_8TH;	break;
+					case DIK_J:	noteType1 = NOTE_12TH;	noteType2 = NOTE_12TH;	break;
+					case DIK_K:	noteType1 = NOTE_16TH;	noteType2 = NOTE_16TH;	break;
+					case DIK_L:	noteType1 = NOTE_12TH;	noteType2 = NOTE_16TH;	break;
+					default:	ASSERT( false );
+				}
+
+				m_NoteFieldEdit.SnapToNearestNoteType( noteType1, noteType2, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+			}
+		}
+		break;
+	case DIK_ESCAPE:
+		{
+			m_EditMode = MODE_MENU;
+			m_iMenuSelection = 0;
+			MenuItemGainFocus( m_iMenuSelection );
+
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+		}
+		break;
+	case DIK_P:
+		{
+			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
+			{
+				m_soundInvalid.Play();
+				break;
+			}
+
+			m_EditMode = MODE_PLAYING;
+
+			m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
+
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+
+			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
+			float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
+			m_soundMusic.SetPositionSeconds( fElapsedSeconds );
+			m_soundMusic.Play();
+			m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+		}
+		break;
+	case DIK_R:
+		{
+			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
+			{
+				m_soundInvalid.Play();
+				break;
+			}
+
+			// initialize m_NoteFieldRecord
+			m_NoteFieldRecord.ClearAll();
+			m_NoteFieldRecord.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+			m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
+			m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
+
+
+			m_EditMode = MODE_RECORDING;
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+
+			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
+			float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
+			m_soundMusic.SetPositionSeconds( fElapsedSeconds );
+			m_soundMusic.Play();
+			m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+		}
+		break;
+	case DIK_T:
+		if(     GAMESTATE->m_SongOptions.m_fMusicRate == 1.0f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.9f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.9f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.8f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.8f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.7f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.7f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.5f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.5f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.4f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.4f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.3f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.3f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.2f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.2f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.1f;
+		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.1f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
+		break;
+	case DIK_INSERT:
+	case DIK_DELETE:
+		{
+			NoteData temp;
+			temp.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+			int iTakeFromRow;
+			int iPasteAtRow;
+			switch( DeviceI.button )
+			{
+			case DIK_INSERT:
+				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
+				break;
+			case DIK_DELETE:
+				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
+				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+				break;
+			}
+			temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, MAX_TAP_NOTE_ROWS );
+			m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), MAX_TAP_NOTE_ROWS  );
+			m_NoteFieldEdit.CopyRange( &temp, 0, MAX_TAP_NOTE_ROWS-iTakeFromRow, iPasteAtRow );
+		}
+		break;
+	case DIK_X:
+		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
+		{
+			m_soundInvalid.Play();
+		}
+		else
+		{
+			int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
+			int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+
+			m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
+			m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow  );
+		}
+		break;
+	case DIK_C:
+		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
+		{
+			m_soundInvalid.Play();
+		}
+		else
+		{
+			int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
+			int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+
+			m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
+		}
+		break;
+	case DIK_V:
+		{
+			int iSrcFirstRow = 0;
+			int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
+			int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+
+			m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
+		}
+		break;
+
+	case DIK_D:
+		{
+			DifficultyClass &dc = m_pNotes->m_DifficultyClass;
+			dc = DifficultyClass( (dc+1)%NUM_DIFFICULTY_CLASSES );
+		}
+		break;
+
+	case DIK_F7:
+	case DIK_F8:
+		{
+			float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
+			float fDeltaBPM;
+			switch( DeviceI.button )
+			{
+			case DIK_F7:	fDeltaBPM = - 0.020f;		break;
+			case DIK_F8:	fDeltaBPM = + 0.020f;		break;
+			default:	ASSERT(0);
+			}
+			switch( type )
+			{
+			case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
+			case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
+			}
+			float fNewBPM = fBPM + fDeltaBPM;
+
+			for( int i=0; i<m_pSong->m_BPMSegments.GetSize(); i++ )
+				if( m_pSong->m_BPMSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					break;
+
+			if( i == m_pSong->m_BPMSegments.GetSize() )	// there is no BPMSegment at the current beat
+			{
+				// create a new BPMSegment
+				m_pSong->AddBPMSegment( BPMSegment(GAMESTATE->m_fSongBeat, fNewBPM) );
+			}
+			else	// BPMSegment being modified is m_BPMSegments[i]
+			{
+				if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.025f )
+					m_pSong->m_BPMSegments.RemoveAt( i );
+				else
+					m_pSong->m_BPMSegments[i].m_fBPM = fNewBPM;
+			}
+		}
+		break;
+	case DIK_F9:
+	case DIK_F10:
+		{
+			float fFreezeDelta;
+			switch( DeviceI.button )
+			{
+			case DIK_F9:	fFreezeDelta = -0.020f;		break;
+			case DIK_F10:	fFreezeDelta = +0.020f;		break;
+			default:	ASSERT(0);
+			}
+			switch( type )
+			{
+			case IET_SLOW_REPEAT:	fFreezeDelta *= 10;	break;
+			case IET_FAST_REPEAT:	fFreezeDelta *= 40;	break;
+			}
+
+			for( int i=0; i<m_pSong->m_StopSegments.GetSize(); i++ )
+			{
+				if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					break;
+			}
+
+			if( i == m_pSong->m_StopSegments.GetSize() )	// there is no BPMSegment at the current beat
+			{
+				// create a new StopSegment
+				if( fFreezeDelta > 0 )
+					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fFreezeDelta) );
+			}
+			else	// StopSegment being modified is m_StopSegments[i]
+			{
+				m_pSong->m_StopSegments[i].m_fStopSeconds += fFreezeDelta;
+				if( m_pSong->m_StopSegments[i].m_fStopSeconds <= 0 )
+					m_pSong->m_StopSegments.RemoveAt( i );
+			}
+		}
+		break;
+	case DIK_F11:
+	case DIK_F12:
+		{
+			float fOffsetDelta;
+			switch( DeviceI.button )
+			{
+			case DIK_F11:	fOffsetDelta = -0.020f;		break;
+			case DIK_F12:	fOffsetDelta = +0.020f;		break;
+			default:	ASSERT(0);
+			}
+			switch( type )
+			{
+			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+			}
+
+			m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
+		}
+		break;
+	case DIK_M:
+		MUSIC->Load( m_pSong->GetMusicPath() );
+		MUSIC->Play( false, m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds );
+		break;
+	case DIK_F1:
+	case DIK_F2:
+		{
+			float fOffsetDelta;
+			switch( DeviceI.button )
+			{
+			case DIK_F1:	fOffsetDelta = -0.025f;		break;
+			case DIK_F2:	fOffsetDelta = +0.025f;		break;
+			default:	ASSERT(0);
+			}
+			switch( type )
+			{
+			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+			}
+
+			m_pSong->m_fMusicSampleStartSeconds += fOffsetDelta;
+		}
+		break;
+	case DIK_SUBTRACT:
+	case DIK_ADD:
+		{
+			float fDelta;
+			switch( DeviceI.button )
+			{
+			case DIK_SUBTRACT:	fDelta = -0.025f;		break;
+			case DIK_ADD:		fDelta = +0.025f;		break;
+			default:	ASSERT(0);
+			}
+			switch( type )
+			{
+			case IET_SLOW_REPEAT:	fDelta *= 10;	break;
+			case IET_FAST_REPEAT:	fDelta *= 40;	break;
+			}
+
+			m_pSong->m_fMusicSampleLengthSeconds += fDelta;
+		}
+		break;
 	}
 }
 
@@ -907,6 +1004,41 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,GAMESTATE->m_fSongBeat-2), GAMESTATE->m_fSongBeat+2);
 			}
 			break;
+	}
+}
+
+void ScreenEdit::InputMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	if( DeviceI.device != DEVICE_KEYBOARD )
+		return;
+
+	switch( DeviceI.button )
+	{
+	case DIK_UP:
+		MenuItemLoseFocus( m_iMenuSelection );
+		m_iMenuSelection = (m_iMenuSelection-1+NUM_MENU_ITEMS) % NUM_MENU_ITEMS;
+		printf( "%d\n", m_iMenuSelection );
+		MenuItemGainFocus( m_iMenuSelection );
+		break;
+	case DIK_DOWN:
+		MenuItemLoseFocus( m_iMenuSelection );
+		m_iMenuSelection = (m_iMenuSelection+1) % NUM_MENU_ITEMS;
+		printf( "%d\n", m_iMenuSelection );
+		MenuItemGainFocus( m_iMenuSelection );
+		break;
+	case DIK_RETURN:
+	case DIK_ESCAPE:
+		m_EditMode = MODE_EDITING;
+		m_rectRecordBack.BeginTweening( 0.5f );
+		m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+		MenuItemLoseFocus( m_iMenuSelection );
+		if( DeviceI.button == DIK_RETURN )
+		{
+			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+			int iMenuKey = MENU_ITEM_KEY[m_iMenuSelection];
+			InputEdit( DeviceInput(DEVICE_KEYBOARD,iMenuKey), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
+		}
+		break;
 	}
 }
 
@@ -979,4 +1111,17 @@ void ScreenEdit::OnSnapModeChange()
 	int iElementsPerNoteType = BeatToNoteRow( NoteTypeToBeat(nt) );
 	int iStepIndexHangover = iStepIndex % iElementsPerNoteType;
 	GAMESTATE->m_fSongBeat -= NoteRowToBeat( iStepIndexHangover );
+}
+
+void ScreenEdit::MenuItemGainFocus( int iItemIndex )
+{
+	m_textMenu[iItemIndex].SetEffectCamelion( 2.5, D3DXCOLOR(1,1,1,1), D3DXCOLOR(0,1,0,1) );
+	m_textMenu[iItemIndex].SetZoom( 0.7f );
+	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit menu change") );
+}
+
+void ScreenEdit::MenuItemLoseFocus( int iItemIndex )
+{
+	m_textMenu[iItemIndex].SetEffectNone();
+	m_textMenu[iItemIndex].SetZoom( 0.5f );
 }

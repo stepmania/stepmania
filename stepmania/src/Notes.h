@@ -42,6 +42,7 @@ public:
 		CString sNoteDataOut
 		);
 	void WriteSMNotesTag( FILE* fp );
+	void WriteDWINotesTag( FILE* fp );
 
 public:
 	NotesType		m_NotesType;

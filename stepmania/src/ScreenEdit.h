@@ -22,6 +22,9 @@
 #include "SnapDisplay.h"
 
 
+const int NUM_MENU_ITEMS = 19;
+
+
 class ScreenEdit : public Screen
 {
 public:
@@ -31,6 +34,7 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void InputMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -39,9 +43,10 @@ public:
 
 protected:
 	void OnSnapModeChange();
+	void MenuItemGainFocus( int iItemIndex );
+	void MenuItemLoseFocus( int iItemIndex );
 
-
-	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING };
+	enum EditMode { MODE_EDITING, MODE_MENU, MODE_RECORDING, MODE_PLAYING };
 	EditMode m_EditMode;
 
 	Song*			m_pSong;
@@ -55,6 +60,7 @@ protected:
 
 	BitmapText				m_textInfo;		// status information that changes
 	BitmapText				m_textHelp;
+	BitmapText				m_textShortcuts;
 
 	// keep track of where we are and what we're doing
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
@@ -71,7 +77,6 @@ protected:
 
 // for MODE_RECORD
 
-	Quad			m_rectRecordBack;
 	NoteField		m_NoteFieldRecord;
 	GrayArrowRow	m_GrayArrowRowRecord;
 
@@ -81,8 +86,11 @@ protected:
 
 // for MODE_RECORD and MODE_PLAY
 
+	Quad			m_rectRecordBack;
 	RageSoundStream	m_soundMusic;
-	bool	m_bLayingAHold[MAX_NOTE_TRACKS];
+
+	int				m_iMenuSelection;
+	BitmapText		m_textMenu[NUM_MENU_ITEMS];
 };
 
 

@@ -24,10 +24,9 @@ public:
 	GameDef*	GetGameDefForGame( Game g );
 	StyleDef*	GetStyleDefForStyle( Style s );
 
-	Style		GetStyleThatPlaysNotesType( NotesType nt );
-
-	void		GetStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo );
-	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );
+	void		GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo );					// do not include edit-specific
+	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
+	Style		GetEditStyleThatPlaysNotesType( NotesType nt );
 
 //	void GetGameNames( CStringArray &AddTo );
 //	bool DoesGameExist( CString sGameName );

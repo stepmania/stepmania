@@ -22,9 +22,13 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 PrefsManager::PrefsManager()
 {
+#ifdef _DEBUG
+	m_bWindowed = true;
+#else
 	m_bWindowed = false;
+#endif
 	m_iDisplayResolution = 640;
-	m_iTextureResolution = 512;
+	m_iTextureResolution = 1024;
 	m_iRefreshRate = 0;
 	m_bIgnoreJoyAxes = false;
 	m_bOnlyDedicatedMenuButtons = false;

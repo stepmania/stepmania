@@ -35,10 +35,12 @@ class GameDef;
 class StyleDef
 {
 public:
-	Game		m_Game;			// Game this style is active under
+	Game		m_Game;				// Which Game is this Style used with?
+	bool		m_bUsedForGameplay;	// Can be used only for gameplay?
+	bool		m_bUsedForEdit;		// Can be used for editing?
 	char		m_szName[60];
-	NotesType	m_NotesType;	// the notes format that this style reads.  
-								// For example, the "dance versus" reads the Notes with the tag "dance-single".
+	NotesType	m_NotesType;		// the notes format that this style reads.  
+									// For example, the "dance versus" reads the Notes with the tag "dance-single".
 	enum StyleType
 	{
 		ONE_PLAYER_ONE_CREDIT,	// e.g. single
