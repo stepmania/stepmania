@@ -313,9 +313,11 @@ static void StartQueuedSounds()
 
 void GameSoundManager::Flush()
 {
-	/* XXX: This is ugly; it'll wait a while, even if there's nothing to flush. */
 	g_Mutex->Lock();
 	g_bFlushing = true;
+
+	g_Mutex->Broadcast();
+
 	while( g_bFlushing )
 		g_Mutex->Wait();
 	g_Mutex->Unlock();
@@ -330,7 +332,9 @@ int MusicThread_start( void *p )
 {
 	while( !g_Shutdown )
 	{
-		usleep( 10000 );
+		g_Mutex->Lock();
+		g_Mutex->Wait();
+		g_Mutex->Unlock();
 
 		/* This is a little hack: we want to make sure that we go through
 		 * StartQueuedSounds after Flush() is called, to be sure we're flushed,
@@ -376,8 +380,11 @@ GameSoundManager::GameSoundManager()
 GameSoundManager::~GameSoundManager()
 {
 	/* Signal the mixing thread to quit. */
-	g_Shutdown = true;
 	LOG->Trace("Shutting down music start thread ...");
+	g_Mutex->Lock();
+	g_Shutdown = true;
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
 	MusicThread.Wait();
 	LOG->Trace("Music start thread shut down.");
 
@@ -526,6 +533,10 @@ void GameSoundManager::PlayMusic( const CString &file, const CString &timing_fil
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
 		delete ToPlay;
+
+	g_Mutex->Lock();
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
 }
 
 void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
@@ -551,6 +562,10 @@ void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
 		delete ToPlay;
+
+	g_Mutex->Lock();
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
 }
 
 void GameSoundManager::HandleSongTimer( bool on )
@@ -565,6 +580,10 @@ void GameSoundManager::PlayOnce( CString sPath )
 	CString *p = new CString( sPath );
 	if( !g_SoundsToPlayOnce.write( &p, 1 ) )
 		delete p;
+
+	g_Mutex->Lock();
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
 }
 
 void GameSoundManager::PlayOnceFromDir( CString PlayOnceFromDir )
@@ -573,6 +592,10 @@ void GameSoundManager::PlayOnceFromDir( CString PlayOnceFromDir )
 	CString *p = new CString( PlayOnceFromDir );
 	if( !g_SoundsToPlayOnceFromDir.write( &p, 1 ) )
 		delete p;
+
+	g_Mutex->Lock();
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
 }
 
 void GameSoundManager::PlayOnceFromAnnouncer( CString sFolderName )
@@ -581,6 +604,10 @@ void GameSoundManager::PlayOnceFromAnnouncer( CString sFolderName )
 	CString *p = new CString( sFolderName );
 	if( !g_SoundsToPlayOnceFromAnnouncer.write( &p, 1 ) )
 		delete p;
+
+	g_Mutex->Lock();
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
 }
 
 float GameSoundManager::GetPlayLatency() const
