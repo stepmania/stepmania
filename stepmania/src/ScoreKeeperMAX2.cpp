@@ -233,8 +233,10 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 		iScore += p;
 		// make score evenly divisible by 5
 		// only update this on the next step, to make it less *obvious*
+		/* Round to the nearest 5, instead of always rounding down, so a base score
+		 * of 9 will round to 10, not 5. */
 		if (p > 0)
-			iScore -= (iScore % 5);
+			iScore = ((iScore+2) / 5) * 5;
 	}
 	else
 	{
