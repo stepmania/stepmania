@@ -696,6 +696,14 @@ SOURCE=.\TipDisplay.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\ArrowEffects.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ArrowEffects.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Background.cpp
 # End Source File
 # Begin Source File

@@ -6,6 +6,7 @@
 #include "smpackageDlg.h"
 #include "../RageUtil.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -190,7 +191,7 @@ void CSmpackageDlg::OnButtonExport()
 	//MessageBox( ssprintf("sZipFilePath is '%s'", sZipFilePath), "", MB_OK );
 	try
 	{
-		m_zip.Open( sZipFilePath, CZipArchive::create );
+		m_zip.Open( sZipFilePath, CZipArchive::zipCreate );
 	}
 	catch( CException* e )
 	{

@@ -58,19 +58,29 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	CString sMessage;
-	sMessage += ssprintf(
+
+	//
+	// Set the text of the first Edit box
+	//
+	CString sMessage1 = ssprintf(
 		"You have chosen to install the Stepmania package:\r\n"
+		"\r\n"
 		"\t%s\r\n"
 		"\r\n"
 		"This package contains the following files:\r\n",
 		m_sPackagePath
 	);
+	CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
+	pEdit1->SetWindowText( sMessage1 );
 
-	// add all the files in the zip to the message
+
+	//
+	// Set the text of the second Edit box
+	//
+	CString sMessage2;
 	try
 	{	
-		m_zip.Open( m_sPackagePath );
+		m_zip.Open( m_sPackagePath, CZipArchive::zipOpenReadOnly );
 	}
 	catch (CException* e)
 	{
@@ -79,28 +89,35 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 		exit( 1 );
 	}
 
-	for( int i=0; i<m_zip.GetNoEntries(); i++ )
+	for( int i=0; i<m_zip.GetCount(); i++ )
 	{
-		if( m_zip.IsFileDirectory((WORD)i) )
-			continue;
-
 		CZipFileHeader fh;
 		m_zip.GetFileInfo(fh, (WORD)i);
-		sMessage += ssprintf( "\to %s\r\n", fh.GetFileName() );
-	}
 
+		if( fh.IsDirectory() )
+			continue;
+
+		sMessage2 += ssprintf( "\t%s\r\n", fh.GetFileName() );
+	}
+	CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
+	pEdit2->SetWindowText( sMessage2 );
+
+
+	//
+	// Set the text of the third Edit box
+	//
 	TCHAR szCurrentDirectory[MAX_PATH];
 	GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
-	sMessage += ssprintf(
-		"\r\n"
+	CString sMessage3 = ssprintf(
 		"The package will be installed in the Stepmania program folder:\r\n"
+		"\r\n"
 		"\t%s",
 		szCurrentDirectory
 	);
 
 	// Set the message
-	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE);
-	pEdit->SetWindowText( sMessage );
+	CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
+	pEdit3->SetWindowText( sMessage3 );
 
 
 	
@@ -147,7 +164,7 @@ void CSMPackageInstallDlg::OnOK()
 	GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
 
 	// Unzip the SMzip package into the Stepmania installation folder
-	for( int i=0; i<m_zip.GetNoEntries(); i++ )
+	for( int i=0; i<m_zip.GetCount(); i++ )
 	{
 		CZipFileHeader fh;
 		m_zip.GetFileInfo(fh, (WORD)i);

@@ -1,4 +1,6 @@
-Revised: 03/01/1999
+File:    APPNOTE.TXT - .ZIP File Format Specification
+Version: 4.0
+Revised: 11/01/2000
 
 Disclaimer
 ----------
@@ -18,16 +20,25 @@ and/or the file formats created or accessed by the subject
 programs and/or the algorithms used by the subject programs is
 subject to change without notice.
 
-General Format of a ZIP file
-----------------------------
+General Format of a .ZIP file
+-----------------------------
 
-  Files stored in arbitrary order.  Large zipfiles can span multiple
-  diskette media.
+  Files stored in arbitrary order.  Large .ZIP files can span multiple
+  diskette media or be split into user-defined segment sizes.  The
+  minimum user-defined segment size for a split .ZIP file is 64K.
 
-  Overall zipfile format:
+  Overall .ZIP file format:
 
-    [local file header + file data + data_descriptor] . . .
-    [central directory] end of central directory record
+    [local file header 1]
+    [file data 1]
+    [data descriptor 1]
+    . 
+    .
+    .
+    [local file header n]
+    [file data n]
+    [data descriptor n]
+    [central directory] 
 
 
   A.  Local file header:
@@ -47,7 +58,14 @@ General Format of a ZIP file
         filename (variable size)
         extra field (variable size)
 
-  B.  Data descriptor:
+  B.  File data
+
+      Immediately following the local header for a file
+      is the compressed or stored data for the file. 
+      The series of [local file header][file data][data
+      descriptor] repeats for each file in the .ZIP archive. 
+
+  C.  Data descriptor:
 
         crc-32                          4 bytes
         compressed size                 4 bytes
@@ -57,12 +75,18 @@ General Format of a ZIP file
       purpose bit flag is set (see below).  It is byte aligned
       and immediately follows the last byte of compressed data.
       This descriptor is used only when it was not possible to
-      seek in the output zip file, e.g., when the output zip file
+      seek in the output .ZIP file, e.g., when the output .ZIP file
       was standard output or a non seekable device.
 
-  C.  Central directory structure:
+  D.  Central directory structure:
 
-      [file header] . . .  end of central dir record
+      [file header 1]
+      .
+      .
+      . 
+      [file header n]
+      [digital signature] 
+      [end of central directory record]
 
       File header:
 
@@ -88,7 +112,13 @@ General Format of a ZIP file
         extra field (variable size)
         file comment (variable size)
 
-      End of central dir record:
+      Digital signature:
+
+        header signature                4 bytes  (0x05054b50)
+        size of data                    2 bytes
+        signature data (variable size)
+        
+      End of central directory record:
 
         end of central dir signature    4 bytes  (0x06054b50)
         number of this disk             2 bytes
@@ -102,10 +132,10 @@ General Format of a ZIP file
         offset of start of central
         directory with respect to
         the starting disk number        4 bytes
-        zipfile comment length          2 bytes
-        zipfile comment (variable size)
+        .ZIP file comment length        2 bytes
+        .ZIP file comment       (variable size)
 
-  D.  Explanation of fields:
+  E.  Explanation of fields:
 
       version made by (2 bytes)
 
@@ -120,7 +150,7 @@ General Format of a ZIP file
           mappings are:
 
           0 - MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems)
-          1 - Amiga                     2 - VAX/VMS
+          1 - Amiga                     2 - OpenVMS
           3 - Unix                      4 - VM/CMS
           5 - Atari ST                  6 - OS/2 H.P.F.S.
           7 - Macintosh                 8 - Z-System
@@ -152,10 +182,10 @@ General Format of a ZIP file
                  sliding dictionary output.  If clear, then 2
                  Shannon-Fano trees were used.
 
-          (For Method 8 - Deflating)
+          (For Methods 8 and 9 - Deflating)
           Bit 2  Bit 1
             0      0    Normal (-en) compression option was used.
-            0      1    Maximum (-ex) compression option was used.
+            0      1    Maximum (-exx/-ex) compression option was used.
             1      0    Fast (-ef) compression option was used.
             1      1    Super Fast (-es) compression option was used.
 
@@ -212,7 +242,7 @@ General Format of a ZIP file
           6 - The file is Imploded
           7 - Reserved for Tokenizing compression algorithm
           8 - The file is Deflated
-          9 - Reserved for enhanced Deflating
+          9 - Enhanced Deflating using Deflate64(tm)
          10 - PKWARE Date Compression Library Imploding
 
       date and time fields: (2 bytes each)
@@ -295,11 +325,12 @@ General Format of a ZIP file
 
       extra field: (Variable)
 
-          This is for future expansion.  If additional information
-          needs to be stored in the future, it should be stored
-          here.  Earlier versions of the software can then safely
-          skip this file, and find the next file or header.  This
-          field will be 0 length in version 1.0.
+          This is for expansion.  If additional information
+          needs to be stored for special needs or for specific 
+          platforms, it should be stored here.  Earlier versions 
+          of the software can then safely skip this file, and 
+          find the next file or header.  This field will be 0 
+          length in version 1.0.
 
           In order to allow different programs and different types
           of information to be stored in the 'extra' field in .ZIP
@@ -327,9 +358,13 @@ General Format of a ZIP file
           0x0007        AV Info
           0x0009        OS/2
           0x000a        NTFS 
-          0x000c        VAX/VMS
+          0x000c        OpenVMS
           0x000d        Unix
           0x000f        Patch Descriptor
+          0x0014        PKCS#7 Store for X.509 Certificates
+          0x0015        X.509 Certificate ID and Signature for 
+                        individual file
+          0x0016        X.509 Certificate ID for Central Directory
 
           Several third party mappings commonly used are:
 
@@ -340,7 +375,7 @@ General Format of a ZIP file
           0x4704        VM/CMS
           0x470f        MVS
           0x4c41        OS/2 access control list (text ACL)
-          0x4d49        Info-ZIP VMS (VAX or Alpha)
+          0x4d49        Info-ZIP OpenVMS
           0x5455        extended timestamp
           0x5855        Info-ZIP Unix (original, also OS/2, NT, etc)
           0x6542        BeOS/BeBox
@@ -382,10 +417,10 @@ General Format of a ZIP file
           EACRC       4 bytes       CRC value for uncompress block
           (var)       variable      Compressed block
 
-        The OS/2 extended attribute structure (FEA2LIST) is 
-        compressed and then stored in it's entirety within this 
-        structure.  There will only ever be one "block" of data in 
-        VarFields[].
+          The OS/2 extended attribute structure (FEA2LIST) is 
+          compressed and then stored in it's entirety within this 
+          structure.  There will only ever be one "block" of data in 
+          VarFields[].
 
          -UNIX Extra Field:
 
@@ -406,11 +441,21 @@ General Format of a ZIP file
           The variable length data field will contain file type 
           specific data.  Currently the only values allowed are
           the original "linked to" file names for hard or symbolic 
-          links.
+          links, and the major and minor device node numbers for
+          character and block device nodes.  Since device nodes
+          cannot be either symbolic or hard links, only one set of
+          variable length data is stored.  Link files will have the
+          name of the original file stored.  This name is NOT NULL
+          terminated.  Its size can be determined by checking TSize -
+          12.  Device entries will have eight bytes stored as two 4
+          byte entries (in little endian format).  The first entry
+          will be the major device number, and the second the minor
+          device number.
 
-         -VAX/VMS Extra Field:
 
-          The following is the layout of the VAX/VMS attributes 
+         -OpenVMS Extra Field:
+
+          The following is the layout of the OpenVMS attributes 
           "extra" block.
 
           Note: all fields stored in Intel low-byte/high-byte order.
@@ -420,13 +465,13 @@ General Format of a ZIP file
   (VMS)   0x000c     2 bytes    Tag for this "extra" block type
           TSize      2 bytes    Size of the total "extra" block
           CRC        4 bytes    32-bit CRC for remainder of the block
-          Tag1       2 bytes    VMS attribute tag value #1
+          Tag1       2 bytes    OpenVMS attribute tag value #1
           Size1      2 bytes    Size of attribute #1, in bytes
           (var.)     Size1      Attribute #1 data
           .
           .
           .
-          TagN       2 bytes    VMS attribute tage value #N
+          TagN       2 bytes    OpenVMS attribute tage value #N
           SizeN      2 bytes    Size of attribute #N, in bytes
           (var.)     SizeN      Attribute #N data
 
@@ -436,11 +481,11 @@ General Format of a ZIP file
              will each be preceded by the above TagX & SizeX values.  
              These values are identical to the ATR$C_XXXX and 
              ATR$S_XXXX constants which are defined in ATR.H under 
-             VMS C.  Neither of these values will ever be zero.
+             OpenVMS C.  Neither of these values will ever be zero.
 
           2. No word alignment or padding is performed.
 
-          3. A well-behaved PKZIP/VMS program should never produce
+          3. A well-behaved PKZIP/OpenVMS program should never produce
              more than one sub-block with the same TagX value.  Also,
              there will never be more than one "extra" block of type
              0x000c in a particular directory record.
@@ -448,7 +493,8 @@ General Format of a ZIP file
          -NTFS Extra Field:
 
           The following is the layout of the NTFS attributes 
-          "extra" block.
+          "extra" block. (Note: At this time the Mtime, Atime
+          and Ctime values may be used on any WIN32 system.)  
 
           Note: all fields stored in Intel low-byte/high-byte order.
 
@@ -529,6 +575,107 @@ General Format of a ZIP file
           ignore       2
           fail         3
 
+         -PKCS#7 Store for X.509 Certificates
+
+          This field is contains the information about each
+          certificate a file is signed with.  This field should only
+          appear in the first central directory record, and will be
+          ignored in any other record.
+
+          Note: all fields stored in Intel low-byte/high-byte order.
+
+          Value     Size     Description
+          -----     ----     -----------
+  (Store) 0x0014    2 bytes  Tag for this "extra" block type
+          SSize     2 bytes  Size of the store data
+          SData   (variable) Data about the store
+
+          SData
+          Value     Size     Description
+          -----     ----     -----------
+          Version   2 bytes  Version number, 0x0001 for now
+          StoreD  (variable) Actual store data
+
+          The StoreD member is suitable for passing as the pbData
+          member of a CRYPT_DATA_BLOB to the CertOpenStore() function
+          in Microsoft's CryptoAPI.  The SSize member above will be
+          cbData + 6, where cbData is the cbData member of the same
+          CRYPT_DATA_BLOB.  The encoding type to pass to
+          CertOpenStore() should be
+          PKCS_7_ANS_ENCODING | X509_ASN_ENCODING.
+
+          -X.509 Certificate ID and Signature for individual file
+
+          This field contains the information about which certificate
+          in the PKCS#7 Store was used to sign the particular file.
+          It also contains the signature data.  This field can appear
+          multiple times, but can only appear once per certificate.
+
+          Note: all fields stored in Intel low-byte/high-byte order.
+
+          Value     Size     Description
+          -----     ----     -----------
+  (CID)   0x0015    2 bytes  Tag for this "extra" block type
+          CSize     2 bytes  Size of Method
+          Method  (variable)
+
+          Method
+          Value     Size     Description
+          -----     ----     -----------
+          Version   2 bytes  Version number, for now 0x0001
+          AlgID     2 bytes  Algorithm ID used for signing
+          IDSize    2 bytes  Size of Certificate ID data
+          CertID  (variable) Certificate ID data
+          SigSize   2 bytes  Size of Signature data
+          Sig     (variable) Signature data
+
+          CertID
+          Value     Size     Description
+          -----     ----     -----------
+          Size1     4 bytes  Size of CertID, should be (IDSize - 4)
+          Size1     4 bytes  A bug in version one causes this value
+                             to appear twice.
+          IssSize   4 bytes  Issuer data size
+          Issuer  (variable) Issuer data
+          SerSize   4 bytes  Serial Number size
+          Serial  (variable) Serial Number data
+
+          The Issuer and IssSize members are suitable for creating a
+          CRYPT_DATA_BLOB to be the Issuer member of a CERT_INFO
+          struct. The Serial and SerSize members would be the
+          SerialNumber member of the same CERT_INFO struct.  This
+          struct would be used to find the certificate in the store
+          the file was signed with.  Those structures are from the MS
+          CryptoAPI.
+
+          Sig and SigSize are the actual signature data and size
+          generated by signing the file with the MS CryptoAPI using a
+          hash created with the given AlgID.
+
+          -X.509 Certificate ID and Signature for central directory
+
+          This field contains the information about which certificate
+          in the PKCS#7 Store was used to sign the central directory.
+          It should only appear with the first central directory
+          record, along with the store.  The data structure is the
+          same as the CID, except that SigSize will be 0, and there
+          will be no Sig member.
+
+          This field is also kept after the last central directory
+          record, as the signature data (ID 0x05054b50, it looks like
+          a central directory record of a different type).  This
+          second copy of the data is the Signature Data member of the
+          record, and will have a SigSize that is non-zero, and will
+          have Sig data.
+
+          Note: all fields stored in Intel low-byte/high-byte order.
+
+          Value     Size     Description
+          -----     ----     -----------
+  (CDID)  0x0016    2 bytes  Tag for this "extra" block type
+          CSize     2 bytes  Size of Method
+          Method  (variable)
+
           - FWKCS MD5 Extra Field:
 
           The FWKCS Contents_Signature System, used in
@@ -542,14 +689,14 @@ General Format of a ZIP file
               followed by 16 bytes containing the uncompressed file's
               128_bit MD5 hash(1), low byte first.
 
-          When FWKCS revises a zipfile central directory to add
+          When FWKCS revises a .ZIP file central directory to add
           this extra field for a file, it also replaces the
           central directory entry for that file's uncompressed
           filelength with a measured value.
 
           FWKCS provides an option to strip this extra field, if
-          present, from a zipfile central directory. In adding
-          this extra field, FWKCS preserves Zipfile Authenticity
+          present, from a .ZIP file central directory. In adding
+          this extra field, FWKCS preserves .ZIP file Authenticity
           Verification; if stripping this extra field, FWKCS
           preserves all versions of AV through PKZIP version 2.04g.
 
@@ -584,7 +731,7 @@ General Format of a ZIP file
 
       total number of entries in the central dir: (2 bytes)
 
-          The total number of files in the zipfile.
+          The total number of files in the .ZIP file.
 
       size of the central directory: (4 bytes)
 
@@ -596,15 +743,15 @@ General Format of a ZIP file
           Offset of the start of the central directory on the
           disk on which the central directory starts.
 
-      zipfile comment length: (2 bytes)
+      .ZIP file comment length: (2 bytes)
 
-          The length of the comment for this zipfile.
+          The length of the comment for this .ZIP file.
 
-      zipfile comment: (Variable)
+      .ZIP file comment: (Variable)
 
-          The comment for this zipfile.
+          The comment for this .ZIP file.
 
-  D.  General notes:
+  F.  General notes:
 
       1)  All fields unless otherwise noted are unsigned and stored
           in Intel low-byte:high-byte, low-word:high-word order.
@@ -618,7 +765,19 @@ General Format of a ZIP file
           across disks.
 
       4)  The entries in the central directory may not necessarily
-          be in the same order that files appear in the zipfile.
+          be in the same order that files appear in the .ZIP file.
+
+      5)  Spanned/Split archives created using PKZIP for Windows
+          (V2.50 or greater), PKZIP Command Line (V2.50 or greater),
+          or PKZIP Explorer will include a special spanning 
+          signature as the first 4 bytes of the first segment of
+          the archive.  This signature (0x08074b50) will be 
+          followed immediately by the local header signature for
+          the first file in the archive.  Spanned archives
+          created with this special signature are compatible with
+          all versions of PKZIP from PKWARE.  Split archives can
+          only be uncompressed by other versions of PKZIP that
+          know how to create a split archive.
 
 UnShrinking - Method 1
 ----------------------

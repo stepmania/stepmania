@@ -1,20 +1,32 @@
-// ZipFileHeader.cpp: implementation of the CZipFileHeader class.
+////////////////////////////////////////////////////////////////////////////////
+// $Workfile: ZipFileHeader.cpp $
+// $Archive: /ZipArchive/ZipFileHeader.cpp $
+// $Date$ $Author$
+////////////////////////////////////////////////////////////////////////////////
+// This source file is part of the ZipArchive library source distribution and
+// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+// 
+// For the licensing details see the file License.txt
 ////////////////////////////////////////////////////////////////////////////////
-//  Copyright (C) 2000 Tadeusz Dracz.
-//  For conditions of distribution and use, see copyright notice in ZipArchive.h
-////////////////////////////////////////////////////////////////////////////////
+
 
 #include "stdafx.h"
+#include "zlib/zlib.h"
 #include "ZipFileHeader.h"
-#include "zlib.h"
 #include "ZipAutoBuffer.h"
 #include "ZipArchive.h"
+#include "ZipPlatform.h"
+#include "ZipCompatibility.h"
+#include <time.h>
 
-#define ZipFileHeaderSIZE	46
-#define LOCALZipFileHeaderSIZE	30
-#define VERSIONMADEBY 20
-#define ENCR_HEADER_LEN 12
+#define FILEHEADERSIZE	46
+#define LOCALFILEHEADERSIZE	30
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -22,9 +34,10 @@ char CZipFileHeader::m_gszSignature[] = {0x50, 0x4b, 0x01, 0x02};
 char CZipFileHeader::m_gszLocalSignature[] = {0x50, 0x4b, 0x03, 0x04};
 CZipFileHeader::CZipFileHeader()
 {
-	m_uExternalAttr = FILE_ATTRIBUTE_ARCHIVE;
-	m_uModDate = m_uModTime = m_uInternalAttr = 0;
+	m_uExternalAttr = 0;//ZipPlatform::GetDefaultAttributes();
+	m_uModDate = m_uModTime = 0;
 	m_uMethod = Z_DEFLATED;
+// 	SetSystemCompatibility(ZipPlatform::m_sSystemID);
 }
 
 CZipFileHeader::~CZipFileHeader()
@@ -39,8 +52,8 @@ bool CZipFileHeader::Read(CZipStorage *pStorage)
 // 	m_pszComment.Release();
 // 	m_pszFileName.Release();
 	WORD uFileNameSize, uCommentSize, uExtraFieldSize;
-	CZipAutoBuffer buf(ZipFileHeaderSIZE);
-	pStorage->Read(buf, ZipFileHeaderSIZE, true);		
+	CZipAutoBuffer buf(FILEHEADERSIZE);
+	pStorage->Read(buf, FILEHEADERSIZE, true);		
 	memcpy(&m_szSignature,		buf, 4);
 	memcpy(&m_uVersionMadeBy,	buf + 4, 2);
 	memcpy(&m_uVersionNeeded,	buf + 6, 2);
@@ -65,26 +78,34 @@ bool CZipFileHeader::Read(CZipStorage *pStorage)
 
 	int iCurDsk = pStorage->GetCurrentDisk();
 	m_pszFileName.Allocate(uFileNameSize); // don't add NULL at the end
-	pStorage->m_pFile->Read(m_pszFileName, uFileNameSize);
+	pStorage->Read(m_pszFileName, uFileNameSize, true);
 	if (uExtraFieldSize)
 	{
 		ASSERT(!m_pExtraField.IsAllocated());
 		m_pExtraField.Allocate(uExtraFieldSize);
-		pStorage->m_pFile->Read(m_pExtraField, uExtraFieldSize);
+		pStorage->Read(m_pExtraField, uExtraFieldSize, true);
 	}
 	if (uCommentSize)
 	{
 		m_pszComment.Allocate(uCommentSize);
-		pStorage->m_pFile->Read(m_pszComment, uCommentSize);
+		pStorage->Read(m_pszComment, uCommentSize, true);
 	}
-
-	return pStorage->GetCurrentDisk() == iCurDsk; // check that the while header is on the one disk
+	
+	return pStorage->GetCurrentDisk() == iCurDsk; // check that the whole header is on the one disk
 }
 
-// return CTime representation of m_uModDate, m_uModTime
-CTime CZipFileHeader::GetTime()
+time_t CZipFileHeader::GetTime()const
 {
-	return CTime(m_uModDate, m_uModTime);
+	struct tm atm;
+	atm.tm_sec = (m_uModTime & ~0xFFE0) << 1;
+	atm.tm_min = (m_uModTime & ~0xF800) >> 5;
+	atm.tm_hour = m_uModTime >> 11;
+
+	atm.tm_mday = m_uModDate & ~0xFFE0;
+	atm.tm_mon = ((m_uModDate & ~0xFE00) >> 5) - 1;
+	atm.tm_year = (m_uModDate >> 9) + 80;
+	atm.tm_isdst = -1;
+	return mktime(&atm);
 }
 
 // write the header to the central dir
@@ -92,7 +113,7 @@ DWORD CZipFileHeader::Write(CZipStorage *pStorage)
 {
 	WORD uFileNameSize = GetFileNameSize(), uCommentSize = GetCommentSize(),
 		uExtraFieldSize = GetExtraFieldSize();
-	DWORD iSize = GetSize();
+	DWORD iSize = FILEHEADERSIZE + uFileNameSize + uCommentSize + uExtraFieldSize;
 	CZipAutoBuffer buf(iSize);
 	memcpy(buf, &m_szSignature, 4);
 	memcpy(buf + 4, &m_uVersionMadeBy, 2);
@@ -124,11 +145,10 @@ DWORD CZipFileHeader::Write(CZipStorage *pStorage)
 	return iSize;
 }
 
-// read local header
 bool CZipFileHeader::ReadLocal(CZipStorage *pStorage, WORD& iLocExtrFieldSize)
 {
-	char buf[LOCALZipFileHeaderSIZE];
-	pStorage->Read(buf, LOCALZipFileHeaderSIZE, true);
+	char buf[LOCALFILEHEADERSIZE];
+	pStorage->Read(buf, LOCALFILEHEADERSIZE, true);
 	if (memcmp(buf, m_gszLocalSignature, 4) != 0)
 		return false;
 
@@ -148,26 +168,26 @@ bool CZipFileHeader::ReadLocal(CZipStorage *pStorage, WORD& iLocExtrFieldSize)
 			return false;
 
 	memcpy(&iLocExtrFieldSize, buf + 28, 2);
-	pStorage->m_pFile->Seek(uFileNameSize, CFile::current);
+	pStorage->m_pFile->Seek(uFileNameSize, CZipAbstractFile::current);
 
 	return true;
 }
 
-// set the m_uModDate, m_uModTime values using CTime object
-void CZipFileHeader::SetTime(const CTime &time)
+void CZipFileHeader::SetTime(const time_t & ttime)
 {
-    WORD year = (WORD)time.GetYear();
+	tm* gt = localtime(&ttime);
+    WORD year = (WORD)(gt->tm_year + 1900);
     if (year <= 1980)
 		year = 0;
 	else
 		year -= 1980;
-    m_uModDate = (WORD) (time.GetDay() + (time.GetMonth() << 5) + (year << 9));
-    m_uModTime = (WORD) ((time.GetSecond() >> 1) + (time.GetMinute() << 5) + 
-		(time.GetHour() << 11));
+    m_uModDate = (WORD) (gt->tm_mday + ((gt->tm_mon + 1)<< 5) + (year << 9));
+    m_uModTime = (WORD) ((gt->tm_sec >> 1) + (gt->tm_min << 5) + 
+		(gt->tm_hour << 11));
 }
 //	the buffer contains crc32, compressed and uncompressed sizes to be compared 
 //	with the actual values
-bool CZipFileHeader::CheckCrcAndSizes(char *pBuf)
+bool CZipFileHeader::CheckCrcAndSizes(char *pBuf) const
 {
 	return (memcmp(pBuf, &m_uCrc32, 4) == 0) && (memcmp(pBuf + 4, &m_uComprSize, 4) == 0)
 		&& (memcmp(pBuf + 8, &m_uUncomprSize, 4) == 0);
@@ -178,7 +198,7 @@ void CZipFileHeader::WriteLocal(CZipStorage& storage)
 {
 	// extra field is local by now
 	WORD uFileNameSize = GetFileNameSize(),	uExtraFieldSize = GetExtraFieldSize();
-	DWORD iLocalSize = LOCALZipFileHeaderSIZE + uExtraFieldSize + uFileNameSize;
+	DWORD iLocalSize = LOCALFILEHEADERSIZE + uExtraFieldSize + uFileNameSize;
 	CZipAutoBuffer buf(iLocalSize);
 	memcpy(buf, m_gszLocalSignature, 4);
 	memcpy(buf + 4, &m_uVersionNeeded, 2);
@@ -194,7 +214,7 @@ void CZipFileHeader::WriteLocal(CZipStorage& storage)
 	memcpy(buf + 30, m_pszFileName, uFileNameSize);
 	memcpy(buf + 30 + uFileNameSize, m_pExtraField, uExtraFieldSize);
 
-	// possible disk change before writting to the file in the disk spanning mode
+	// possible disk change before writing to the file in the disk spanning mode
 	// so write the local header first 
 	storage.Write(buf, iLocalSize, true);
 	// it was only local information, use CZipArchive::SetExtraField to set the file extra field in the central directory
@@ -209,8 +229,8 @@ bool CZipFileHeader::PrepareData(int iLevel, bool bExtraHeader, bool bEncrypted)
 {
 	memcpy(m_szSignature, m_gszSignature, 4);
 	m_uInternalAttr = 0;
-	m_uVersionMadeBy = VERSIONMADEBY;
-	m_uVersionNeeded = 20;
+	m_uVersionNeeded = IsDirectory() ? 0xa : 0x14; // 1.0 or 2.0
+	SetVersion((WORD)(0x14)); 
 
 	m_uCrc32 = 0;
 	m_uComprSize = 0;
@@ -242,7 +262,7 @@ bool CZipFileHeader::PrepareData(int iLevel, bool bExtraHeader, bool bEncrypted)
 
 	if (bEncrypted)
 	{
-		m_uComprSize = ENCR_HEADER_LEN;	// encrypted header
+		m_uComprSize = ZIPARCHIVE_ENCR_HEADER_LEN;	// encrypted header
 		m_uFlag  |= 9;		// encrypted file
 	}
 
@@ -250,38 +270,30 @@ bool CZipFileHeader::PrepareData(int iLevel, bool bExtraHeader, bool bEncrypted)
 		|| m_pExtraField.GetSize() > USHRT_MAX);
 }
 
-// fill the buffer with the current values
-void CZipFileHeader::GetCrcAndSizes(char * pBuffer)
+void CZipFileHeader::GetCrcAndSizes(char * pBuffer)const
 {
 	memcpy(pBuffer, &m_uCrc32, 4);
 	memcpy(pBuffer + 4, &m_uComprSize, 4);
 	memcpy(pBuffer + 8, &m_uUncomprSize, 4);
 }
 
-DWORD CZipFileHeader::GetSize()
+DWORD CZipFileHeader::GetSize(bool bLocal)const
 {
-	return ZipFileHeaderSIZE + GetExtraFieldSize() + GetFileNameSize() + GetCommentSize();
+	if (bLocal)
+		return LOCALFILEHEADERSIZE + GetExtraFieldSize() + GetFileNameSize();
+	else
+		return FILEHEADERSIZE + GetExtraFieldSize() + GetFileNameSize() + GetCommentSize();
 }
 
-
-bool CZipFileHeader::IsEncrypted()
-{
-	return (m_uFlag & (WORD) 1) != 0;
-}
-
-bool CZipFileHeader::IsDataDescr()
-{
-	return (m_uFlag & (WORD) 8) != 0;
-}
 
 bool CZipFileHeader::SetComment(LPCTSTR lpszComment)
 {
 	return CZipArchive::WideToSingle(lpszComment, m_pszComment)	!= -1;
 }
 
-CString CZipFileHeader::GetComment()
+CZipString CZipFileHeader::GetComment() const
 {
-	CString temp;
+	CZipString temp;
 	CZipArchive::SingleToWide(m_pszComment, temp);
 	return temp;
 
@@ -289,41 +301,38 @@ CString CZipFileHeader::GetComment()
 
 bool CZipFileHeader::SetFileName(LPCTSTR lpszFileName)
 {
+
 	return CZipArchive::WideToSingle(lpszFileName, m_pszFileName) != -1;
 }
 
-CString CZipFileHeader::GetFileName()
+CZipString CZipFileHeader::GetFileName()const
 {
-	CString temp;
+	CZipString temp;
 	CZipArchive::SingleToWide(m_pszFileName, temp);
 	return temp;
 }
 
-
-void CZipFileHeader::SlashChange(bool bWindowsStyle)
+bool CZipFileHeader::IsDirectory()const
 {
-	char t1 = '\\', t2 = '/', c1, c2;
-	if (bWindowsStyle)
-	{
-		c1 = t1;
-		c2 = t2;
-	}
-	else
-	{
-		c1 = t2;
-		c2 = t1;
-	}
-	for (DWORD i = 0; i < m_pszFileName.GetSize(); i++)
-	{
-		if (m_pszFileName[i] == c2)
-			m_pszFileName[i] = c1;
-	}
+	return ZipPlatform::IsDirectory(GetSystemAttr());
 }
 
-void CZipFileHeader::AnsiOem(bool bAnsiToOem)
+DWORD CZipFileHeader::GetSystemAttr()const
 {
-	if (bAnsiToOem)
-		CharToOemBuffA(m_pszFileName, m_pszFileName, m_pszFileName.GetSize());
+	int iSystemComp = GetSystemCompatibility();
+	if (ZipCompatibility::IsPlatformSupported(iSystemComp))
+	{
+		if (!m_uExternalAttr && CZipPathComponent::HasEndingSeparator(GetFileName()))
+			return ZipPlatform::GetDefaultDirAttributes(); // can happen
+		else
+			return ZipCompatibility::ConvertToSystem(m_uExternalAttr, iSystemComp, ZipPlatform::GetSystemID());
+	}
 	else
-		OemToCharBuffA(m_pszFileName, m_pszFileName, m_pszFileName.GetSize());
+		return CZipPathComponent::HasEndingSeparator(GetFileName()) ? ZipPlatform::GetDefaultDirAttributes() : ZipPlatform::GetDefaultAttributes();
+}
+
+
+void CZipFileHeader::SetSystemAttr(DWORD uAttr)
+{
+	m_uExternalAttr = ZipCompatibility::ConvertToSystem(uAttr, ZipPlatform::GetSystemID(), GetSystemCompatibility());
 }

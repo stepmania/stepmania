@@ -1,0 +1,211 @@
+/*
+
+For conditions of distribution and use, see the copyright notice in License.txt.
+Please read the documentation instead of this document 
+(it may be difficult to read it due to formatting tags for an automatic documentation generation).
+If you do not have it, please download it from http://www.artpol-software.com/
+
+*/
+
+/** \page pageFaq FAQ
+
+
+<A HREF="#q1">	
+Q: I experience linking problems. What to do?
+</A>
+
+<A HREF="#q13">	
+Q: When do I need to purchase the commercial license?
+</A>
+
+
+<A HREF="#q2">	
+Q: When I open a multi-disk archive (Pkzip mode) and the last disk is not in 
+	the drive, I receive the CZipException::cdirNotFound exception. How to detect 
+	whether the last disk is in the drive?
+</A>
+
+<A HREF="#q3">	
+Q: Of what size should be a single volume in a multi-disk archive created in
+the TD span mode ?
+</A>
+
+
+<A HREF="#q5">	
+Q: How can I detect the disk spanning mode of an archive?
+</A>
+
+<A HREF="#q7">	
+Q: How to integrate the library with the sample application?
+</A>
+
+<A HREF="#q8">	
+Q: Why the library doesn't want to extract archives (mostly old)?
+</A>
+
+<A HREF="#q9">	
+Q: In CZipArchive::AddNewFile and CZipArchive::ExtractFile I want to use partial
+path for the filename inside the archive.
+</A>
+
+<A HREF="#q10">	
+Q: I want to create an archive that will be readable under Unix/Linux.
+</A>
+
+<A HREF="#q11">	
+Q: How can I use UNC path with CZipArchive::ExtractFile function ?
+</A>
+
+<A HREF="#q12">	
+Q: How to create a zip archive in memory and then write it to disk or 
+read the archive from the disk and extract from memory ?
+</A>
+
+<A HREF="#q14">	
+Q: How can I extract or delete files that matches a specified wildcard pattern ?
+</A>
+
+<HR>
+*****************************************************************************
+\anchor q1
+<B>
+Q: I experience linking problems. What to do?
+</B>
+
+A: 
+\par If you get mostly LNK2005 : 
+ You need to make sure that
+ the library and your program are both using single-threaded or both
+ multithreaded (or multithreaded DLL) run-time library. The option <EM> Project->Settings-> c/c++ ->Code Generation->Use run-time library </EM> 
+ should be set to the same value in the ZipArchive library and the program 
+ project options. Make sure that you link appropriate configurations (Release against Release, Debug against Debug...)
+ and that you're using MFC library in the same way (shared, static or not using) in those configurations.
+\par If you get LNK1104 (e.g. cannot open file "mfc42u.lib")
+ You're trying to compile the Unicode version but you haven't installed the necessary libraries.
+When installing Visual C++ Professional for example, you need to check the boxes "Static Libraries for Unicode" and
+"Shared Libraries for Unicode". They are in "VC++ MFC and Template libraries\MS Foundation Class Libraries".
+You don't need to reinstall the Visual Studio to add them.
+
+
+
+
+\anchor q13
+<B>
+Q: When do I need to purchase the commercial license?
+</B>
+
+A: The ZipArchive library is distributed under GNU GPL which implies that it can only be used 
+with software that is licensed under conditions compliant with the GPL. It means that
+you need to provide a customer with the source code of your software that uses the library.
+The commercial license removes this obligation. You can find out more at \ref s1.
+
+\anchor q2
+<B>
+Q: When I open a multi-disk archive (Pkzip mode) and the last disk is not in 
+	the drive, I receive the CZipException::cdirNotFound exception. How to detect 
+	whether the last disk is in the drive?
+</B>
+
+A: The last disk can not be detected before opening an archive. The only way to 
+prevent the program from failing when an incorrect disk is inserted is to 
+catch the CZipException::cdirNotFound exception while opening the archive and keep prompting the user to insert the last disk into the drive. Please see the sample application on how 
+it can be done in details.
+
+\anchor q3
+<B>
+Q: Of what size should be a single volume in a multi-disk archive created in
+the TD span mode ?
+</B>
+
+A: The size of the volume may be from 1 byte to the maximum integer value, and the bigger - the
+ faster is creation and extraction (no file changes meantime), but the size 
+ of the whole archive is the same. The optimal solution is to set it to about 
+ the size of the diskette (a little less to be comfortable when there are bad sectors found on the disk) to allow the future conversion to PKZIP span mode.
+
+\anchor q5
+<B>
+Q: How can I detect the disk spanning mode of an archive?
+</B>
+
+A: You need to open the archive and the call CZipArchive::GetSpanMode. When opening the archive in tdSpan mode on a removable device, you should set \e iVolumeSize to a non-zero value while opening the archive (with CZipArchive::Open). There is no universal way to distinguish a PKSpan archive from a TDSpan archive on a removable device, because they have identical internal structure.
+
+
+\anchor q7
+<B>
+Q: How to integrate the library with the sample application?
+</B>
+
+A:The usual way is to put ZipArchive library at the same directory level what your
+project is, and then use one of the \ref sectVisual "integration methods".
+Make a directory structure like this: <BR>
+\htmlonly
+--- <BR>
+&nbsp &nbsp |-ZipArc &nbsp &nbsp &nbsp &nbsp &nbsp // the application project <BR>
+&nbsp &nbsp |-ZipArchive &nbsp // the ZipArchive library <BR>
+\endhtmlonly
+
+You can now follow the integration method 1 or 2 (the easier one).
+
+\anchor q8
+<B>
+Q: Why the library doesn't want to extract archives (mostly old)?
+</B>
+
+A: The common reason is that the data is compressed using \e imploded method (usually with old archivers).
+The only methods supported by the zlib library are \e deflation which is the most commonly used by archivers and \e storing which is in fact not a compression method. You can use a compiled ZipArc application to find out what method the file was compressed with (View->File Info)
+
+
+\anchor q9
+<B>
+Q: In CZipArchive::AddNewFile and CZipArchive::ExtractFile I want to use partial
+path for the filename inside the archive. For example:<BR>
+When I compress some directory, like this:
+<em> c:\program files\example</em> (full directory path: <em>c:\program files\example\text\txt</em>)
+ it comes with the whole path. I would like that the zip only get the <em>EXAMPLE\text\txt path</em>.
+
+</B>
+
+A: You can set \e bFullPath argument to \c false in these functions and set 
+the beginning part of the path that you commonly want to eliminate with 
+CZipArchive::SetRootPath function. In the example above you'd set it to 
+<em>c:\program files\ </em> (the path separator at the end is added automatically).
+
+\anchor q10
+<B>
+Q: I want to create an archive that will be readable under Unix/Linux.
+</B>
+
+A: Inside the archive there is an information stored about the system it was
+created under. It helps converting the file attributes that are stored inside
+the archive to file attributes that are used on the system on which the file is extracted.
+Some Unix archivers cannot convert Windows attributes to Unix, so that it is needed
+to create the archive with the Unix attributes already (and the internal info about the
+system set to a Unix value). To achieve that, simply call CZipArchive::SetSystemCompatibility
+with the argument set to ZipCompatibility::zcUnix after creating the archive.
+
+\anchor q11
+<B>
+Q: How can I use UNC path with CZipArchive::ExtractFile function ?
+</B>
+
+A: You need to replace \\\\ at the beginning of the UNC path with \\\\?\UNC\ .
+
+\anchor q12
+<B>
+Q: How to create a zip archive in memory and then write it to a disk or 
+read the archive from the disk and extract from memory ?
+</B>
+
+A: See \ref sectMemory
+
+\anchor q14
+<B>
+Q: How can I extract or delete files that matches a specified wildcard pattern ?
+</B>
+
+A: You need to build a CZipWordArray with CZipArchive::FindMatches and then:
+- to delete: use the array as an argument to CZipArchive::DeleteFiles
+- to extract: the array stores the indexes of the files to extract; you need to 
+enumerate the array and pass the indexes one-by-one to CZipArchive::ExtractFile function
+
+*/

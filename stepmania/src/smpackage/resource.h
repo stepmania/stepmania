@@ -12,7 +12,9 @@
 #define IDC_BUTTON_PLAY                 1001
 #define IDC_BUTTON_EXPORT               1002
 #define IDC_BUTTON_BACK                 1003
-#define IDC_EDIT_MESSAGE                1005
+#define IDC_EDIT_MESSAGE1               1005
+#define IDC_EDIT_MESSAGE3               1006
+#define IDC_EDIT_MESSAGE2               1007
 
 // Next default values for new objects
 // 

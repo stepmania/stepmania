@@ -1,0 +1,256 @@
+/** \page pageHist Revision history
+
+<B> ver 2.2b <SMALL>(01-2002)</SMALL></B>
+
+<B>  Bugs fixed: </B>
+	- while a file recompression (smartness level included CZipArchive::zipsmCheckForEff) if the
+	AutoFlush feature was enabled, there were redundant bytes added to the archive (thanks to Roman Scherzer)
+
+<B> ver 2.2a <SMALL>(11-2001)</SMALL></B>
+
+<B>  Bugs fixed: </B>
+	- aborting extraction of multi-disk archive caused errors (thanks to Sabina Terenzi)
+
+
+<B> ver 2.2 <SMALL>(10-2001)</SMALL></B> <EM>Time for global changes</EM>
+
+<B> Features added: </B>
+	- deleting multiple files from the archive is now way faster - the files are not
+	deleted separately as it was so far, but the library creates a map of holes and continuous areas and moves the data to remain in file over the holes; it means that the data is copied
+	only once and not for every file to delete.
+	- callback functions has been replaced by functional objects to make the code cleaner and to make it possible to pass more information during a callback call (see: CZipArchive::SetCallback). The same application written using the library with callback functions
+	and then with functional objects as callbacks (slightly modified) has proven to be circa 15% faster in the latter case (that's why it's in \e features), i.a. because only data that changes is passed to the callback method, method derived from CZipCallback::Callback can be inlined if defined inside the class declaration). Important issues:
+		- it affects the following functions parameters:
+			- CZipArchive::AddNewFile, 
+			- CZipArchive::ExtractFile, 
+			- CZipArchive::TestFile,
+			- CZipArchive::SetSpanCallback
+		- the meaning of the parameters passed to a callback functor is different from that what has so far been passed to the callback functions
+		(see CZipCallback)
+		- see \ref sectCallb if you're not sure how to use functors
+	- added callback feature when deleting files
+	- added callback feature when saving central directory
+	- added possibility to extract or delete files which filenames match the specified wildcard pattern (see CZipArchive::FindMatches)
+	- iterating the central directory elements speeded up (hence all the operations that iterate the central directory were speeded up, especially sorting, multiple adding, extracting, testing)
+	- the library now doesn't throw an exception if the platform the archive was created under is not supported, but it tries to distinguish files from directories
+	- CZipArchive::Flush can be called now for a disk-spanning archive in creation finalizing it then, and yet allows extracting or testing (see the function description for more)
+	- function CZipArchive::CloseNewFile can be called after an exception to allow to repair the archive later
+	- adding files with one of CZipArchive::AddNewFile functions can be safely aborted in a non-disk-spanning archive (the added data is removed from the archive)
+	- added function CZipException::GetErrorMessage for compatibility with MFC \c CException::GetErrorMessage
+	- added parameter \e bForce to CZipArchive::SetTempPath that creates the directory if it doesn't exists
+	- the archive created with the library under Windows can be now correctly extracted under Linux and vice versa without the need for setting the system compatibility of the files
+	- function CZipArchive::SetIgnoreCRC added to make possible working with the Java <sup><small>TM</small></sup> Archives (jar)
+	- function CZipArchive::GetFindFastIndex added
+	- function CZipArchive::GetCentralDirInfo added
+	- function CZipArchive::GetCentralDirSize added
+	- function CZipArchive::GetCurrentDisk added
+	- function CZipArchive::IsReadOnly added
+	- function CZipFileHeader::CompressionEfficient added
+	- function CZipFileHeader::GetCompressionRatio added
+	- \c const keywords added to functions
+	- TRACE messages are now easier to locate in MSVC++ (double clicking gets you directly to the code now)
+	
+
+
+<B> Changes: </B>
+	- if the callback functor's method \c Callback returns \c false,
+	a CZipException is thrown with code CZipException::abortedAction or CZipException::abortedSafely;
+	- function CZipArchive::DeleteFiles(const CZipStringArray) uses now FindFast array; added \e bFileNameOnly parameter
+	- function CZipArchive::GetNoEntries renamed to GetCount (more standard, easier to type and easier to find at the beginning)
+	- the encrypted file is not recompressed again if the difference in sizes before and after compression is the
+	length of the encryption header
+	- function CZipArchive::OpenFile throws exception CZipException::badPassword if the password
+	was not set for the encrypted file instead of returning \c false;
+	- versioning shortened
+
+
+<B>  Bugs fixed: </B>
+	- CZipStorage::Flush doesn't call now m_pFile->Flush() (it has proven to slow 
+	down the archive creation speed significantly) - it is called in different places instead 
+	- CZipArchive::TestFile sometimes was not detecting wrong password set
+	- filenames in zip are now correctly converted after calling CZipArchive::Flush
+	- fixed value of CZipArchive::zipsmCheckForEffInMem; the bug cause the temporary file to be always created in memory
+	- ZipPlatform::GetDeviceFreeSpace was not working on Windows with other devices than removable (in spite of what is written in MSDN
+	it is sometimes needed to add slash when passing drive name to \c GetDiskFreeSpace and sometimes not).
+	I'm not sure if this bug concerned all Windows platforms (it was detected on Windows 2000)
+	- crash eliminated when the file modification time could not be retrieved (in case of an impossible value e.g. a year is 28980)
+	- Unix attributes corrected
+	- CZipArchive::ExtractFile had wrong value passed to the callback function
+
+<B> ver 2.1.1 <SMALL>(10-2001)</SMALL></B>
+
+	<B> Features added: </B>
+
+		- Linux version at the beta stage (thanks to Luiz Rafael Culik for help)
+		- smart and efficient compression added to CZipArchive::AddNewFile <BR>
+		i.a. optional compression to a temporary file first or to memory, in a disk spanning mode,
+		to see whether the file	is smaller after compression and if it is not 
+		then add it without the compression	(see also CZipArchive::Smartness)
+		- integration of the help system with MSDN made possible (see: \ref sectHelp)
+		- adding a file with the user-specified filename in zip (<CODE> CZipArchive::AddNewFile(LPCTSTR , LPCTSTR , int , int , unsigned long ) </CODE>)
+		- adding files from memory and extracting files to memory 
+		(<CODE>	CZipArchive::AddNewFile(CZipMemFile&, LPCTSTR, int, int, unsigned long) </CODE> and 
+		<CODE>CZipArchive::ExtractFile(WORD, CZipMemFile&, DWORD)</CODE>)
+		- function CZipArchive::Flush added - increases the safety when working with zip archives (thanks to Brad Kremer for the idea)
+		- function CZipArchive::SetCaseSensitivity added (see the function description which functions it affects)
+		- function CZipArchive::PredictFileNameInZip added
+		- function CZipArchive::PredictExtractedFileName added
+		- function CZipArchive::FindFile speeded up again, the case-sensitivity parameter meaning changed, added possibility to find a filename only without a path (see the function description)
+		- function CZipArchive::TrimRootPath function improved		
+		- function CZipArchive::Close allows now to write the central directory to the archive even after exception, which lets you e.g. repair the archive later
+		- obtaining error descriptions (English only) - see CZipException::GetErrorDescription()
+		- STL sample application added (a command line archiver which works for both Windows and Linux; located in \e stl/zippie)
+		- in TestZipDlg sample application added switch in options to allow an effective compression
+		- several minor enhancements 
+
+	<B> Changes: </B>
+
+		- CZipPathComponent functions renamed : <CODE> GetFullFileName -> GetFileName, GetFileName -> GetFileTitle, SetFileName -> SetFileTitle </CODE>
+		- file \e __[...].zcfg is created depending on the current configuration when using scripts to copy files (see a note at \ref secCompil)
+
+	<B>  Bugs fixed: </B>
+
+		- when performing a non-case-sensitive search with CZipArchive::FindFile (thanks to Kenny Prole)
+		- in CZipString (STL) when using a different locale than English and 
+		non-English characters (see \ref stlNotes for info on how to set your locale in the program)
+		- CZipStorage::Flush call now m_pFile->Flush() as well (it might have caused a zip creation problems sometimes)
+
+<B> ver 1.6.6 <SMALL>(08-2001)</SMALL></B>
+	
+<B> Features added: </B>
+
+	- CZipPathComponent understands now a UNC path, so it is possible to
+	extract files over a network (other operations over a network were
+	already possible)
+	- sample application updated to reflect previous (ver 1.6.5) and 
+	current changes (necessary prefix added to a UNC path following 
+	the Windows File Name Conventions : see \ref q11 "FAQ")
+
+
+<B> ver 1.6.5 <SMALL>(07-2001)</SMALL></B>
+	
+<B> Features added: </B>
+
+	- added function CZipArchive::SetRootPath that allows more flexible path 
+	manipulations when using CZipArchive::AddNewFile and CZipArchive::ExtractFile
+	- ability to set the archive system compatibility to a value different
+	than the current system ID with the function CZipArchive::SetSystemCompatibility()
+
+<B>  Bugs fixed: </B>
+
+	- bug which caused not updating the time stamp of an extracted file
+	and an exception being thrown, if the file had the read-only attribute set
+	(thanks to Arnon Meydav)
+	- bugs in conversion of Unix attributes
+	- directories inside the archive are now recognized properly by Unix archivers
+	if the archive was created for Unix platform
+
+
+<B> ver 1.6.4 <SMALL>(06-2001)</SMALL></B>
+	
+	- fixed errors that made impossible using CZipMemFile class and 
+	creation of the	archives in memory
+
+
+
+<B> ver 1.6.3 <SMALL>(05-2001)</SMALL></B>
+	
+	- zlib library sources incorporated into ZipArchive library projects
+(eliminates most often link errors)
+
+
+<B> ver 1.6.2 <SMALL>(04-2001)</SMALL></B>
+
+	- ZipPlatform::SetVolLabel() appends now a directory separator to the drive name (lack of it caused errors sometimes)
+	- added a simple protection against compiling MFC or STL version without copying the proper files first
+	- added several preprocessor directives for Borland compilers
+
+
+<B> ver 1.6.1 <SMALL>(03-2001)</SMALL></B>
+
+<B> Features added: </B>
+
+	- non MFC dependent version (STL)
+	- porting to different platforms made easier
+	- possibility to read zip files created on other platforms than Windows
+		(correct interpretation of file/directory attributes)
+	- documentation generated (using 
+	\htmlonly
+	<A HREF="http://www.stack.nl/~dimitri/doxygen/" target="_blank">Doxygen </A> 
+	\endhtmlonly
+	)
+
+<B>  Changes: </B>
+
+	- LICENSING CHANGED
+	- overall tuning
+	- sample application updated
+
+<B> ver 1.5.1 <SMALL>(02-2001)</SMALL></B>
+
+
+<B>  Features added:  </B>
+
+	- ability to reuse the archive after an exception thrown during extraction
+	- added progress control possibilities to CZipArchive::AddNewFile, CZipArchive::ExtractFile, CZipArchive::TestFile
+	- when the central directory was not located, the library throws CZipException::cdirNotFound, which allows distinguish from other exceptions (useful when we want to keep prompting the user to insert the last disk in a multi-disk spanning archive).
+
+
+<B>  Changes: </B>
+
+	- CZipArchive::FindFile operation boosted ( thanks to Darin Warling)
+	- library name changed to ZipArchive
+	- the sample application updated
+
+<B>  Bugs fixed: </B>
+
+	- removed bug during extracting an encrypted file with 0 size
+	- fixed bug when extracting a file with an extra field in a local file header (CFileHeader::ReadLocal)
+
+<B> ver 1.4.1 <SMALL>(01-2001)</SMALL></B>
+		- Disk numbering in a disk spanning archive begins now from PKBACK# 001 not PKBACK# 000
+		- Adding and extracting without a full path possible in CZipArchive::AddNewFile and CZipArchive::ExtractFile.
+		- Several minor changes and enhancements
+		- Changed names for several classes.
+
+<B> ver 1.3.1 <SMALL>(11-2000)</SMALL></B>
+ 		- Added support for password encryption and decryption.
+			The encryption used in PKZIP was generously supplied by Roger
+			Schlafly.  
+		- Testing the archive made easier
+		- Unicode support added
+
+<B> ver 1.2.2 <SMALL>(08-2000)</SMALL></B>
+		- Bugs fixed
+
+<B> ver 1.2.1 <SMALL>(06-2000)</SMALL></B>
+\par
+		the code has been completely rewritten from the very beginning;
+		the main improvements are:
+		- multi-disk archive support
+		- creation of the disk spanning archives with the user-defined volume size
+		- ability to modify existing archives (add, delete files)
+		- modification self-extracting archives
+		- write buffer used for faster disk write operations 
+		- one class for zip and unzip functions
+		- fast adding, deleting and extracting files with a single function call
+ 
+<B> ver 1.1.2 <SMALL>(03-2001)</SMALL></B>
+		- international characters in filenames inside archive are now
+			converted in a compatible way with other archiving programs (they are stored
+		converted to OEM inside archive).
+
+<B> ver 1.1.1 <SMALL>(01-2000)</SMALL></B>
+\par
+		the first version; it is just modified code from zip.c and unzip.c files
+			written by Gilles Vollant and distributed with zlib library; 
+			the modifications are as follows:
+		- added class' wrappers
+		- several bugs fixed
+		- several enhancements added
+		- MFC support added
+		- memory leaks eliminated when write error occurred
+		- automatically free used memory on destruction or exception
+		- modern error notification using exceptions
+
+*/

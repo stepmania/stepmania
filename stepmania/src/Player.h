@@ -42,7 +42,8 @@ class Player : public ActorFrame
 public:
 	Player();
 
-	virtual void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
+	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
+	void RenderPrimitives();
 
 	void Load( const Style& style, PlayerNumber player_no, const Steps& steps, const PlayerOptions& po );
 	void CrossedIndex( int iIndex );

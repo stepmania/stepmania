@@ -15,6 +15,8 @@
 #include "Player.h"
 #include "RageUtil.h"
 #include "ThemeManager.h"
+#include "GameTypes.h"
+#include "ArrowEffects.h"
 
 
 const float JUDGEMENT_Y			= CENTER_Y;
@@ -65,6 +67,7 @@ void Player::Load( const Style& style, PlayerNumber player_no, const Steps& step
 
 	m_Style = style;
 	m_PlayerNumber = player_no;
+	m_PlayerOptions = po;
 
 	Steps steps2 = steps;
 
@@ -77,8 +80,8 @@ void Player::Load( const Style& style, PlayerNumber player_no, const Steps& step
 		steps2.MakeLittle();
 
 	m_ColorArrowField.Load( style, steps2, po, 2, 10 );
-	m_GrayArrows.Load( style );
-	m_GhostArrows.Load( style );
+	m_GrayArrows.Load( po, style );
+	m_GhostArrows.Load( po, style );
 
 	// load step elements
 	for( int i=0; i<MAX_TAP_STEP_ELEMENTS; i++ )
@@ -191,6 +194,60 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	m_GhostArrows.Update( fDeltaTime, fSongBeat );
 
 	m_fSongBeat = fSongBeat;	// save song beat
+
+}
+
+void Player::RenderPrimitives()
+{
+	D3DXMATRIX matOldView, matOldProj;
+
+	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_STARS )
+	{
+		// turn off Z Buffering
+		SCREEN->GetDevice()->SetRenderState( D3DRS_ZENABLE,      FALSE );
+		SCREEN->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+
+		// save old view and projection
+		SCREEN->GetDevice()->GetTransform( D3DTS_VIEW, &matOldView );
+		SCREEN->GetDevice()->GetTransform( D3DTS_PROJECTION, &matOldProj );
+
+
+		// construct view and project matrix
+		D3DXMATRIX matNewView;
+		D3DXMatrixLookAtLH( &matNewView, &D3DXVECTOR3( CENTER_X, GetY()+800.0f, 300.0f ), 
+										 &D3DXVECTOR3( CENTER_X
+										 , GetY()+400.0f,   0.0f ), 
+										 &D3DXVECTOR3(          0.0f,         -1.0f,   0.0f ) );
+		SCREEN->GetDevice()->SetTransform( D3DTS_VIEW, &matNewView );
+
+		D3DXMATRIX matNewProj;
+		D3DXMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
+		SCREEN->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
+	}
+
+	m_GrayArrows.Draw();
+	m_ColorArrowField.Draw();
+	m_GhostArrows.Draw();
+
+	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_STARS )
+	{
+		// restire old view and projection
+		SCREEN->GetDevice()->SetTransform( D3DTS_VIEW, &matOldView );
+		SCREEN->GetDevice()->SetTransform( D3DTS_PROJECTION, &matOldProj );
+
+		// turn Z Buffering back on
+		SCREEN->GetDevice()->SetRenderState( D3DRS_ZENABLE,      TRUE );
+		SCREEN->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+	}
+
+
+	m_Judgement.Draw();
+	for( int c=0; c<m_Style.m_iNumColumns; c++ )
+		m_HoldJudgement[c].Draw();
+	m_Combo.Draw();
+	m_LifeMeter.Draw();
+	m_Score.Draw();
+
 
 }
 
