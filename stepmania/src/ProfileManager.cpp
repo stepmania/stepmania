@@ -53,6 +53,8 @@ static const char *MEM_CARD_DIR[NUM_PLAYERS] =
 
 ProfileManager::ProfileManager()
 {
+	PROFILEMAN = this;
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_bWasLoadedFromMemoryCard[p] = false;
 
