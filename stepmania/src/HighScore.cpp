@@ -61,7 +61,7 @@ void HighScore::LoadFromNode( XNode* pNode )
 {
 	ASSERT( pNode->name == "HighScore" );
 	XNodes childs = pNode->GetChilds();
-	for( int i = 0 ; i < childs.size(); i++)
+	for( unsigned i = 0 ; i < childs.size(); i++)
 	{
 		XNode* pChild = childs[i];
 		if( pChild->name == "Name" )				pChild->GetValue( sName );
@@ -118,7 +118,7 @@ XNode* HighScoreList::CreateNode() const
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
 
-	for( int i=0; i<vHighScores.size(); i++ )
+	for( unsigned i=0; i<vHighScores.size(); i++ )
 	{
 		const HighScore &hs = vHighScores[i];
 		pNode->AppendChild( hs.CreateNode() );
