@@ -646,7 +646,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
 			RageModelVertex *pVertex = &pMesh->Vertices[j];
-			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : pVertex->boneIndex;
+//			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : pVertex->boneIndex;
 			if (pVertex->boneIndex != -1)
 			{
 				pVertex->p[0] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][0];

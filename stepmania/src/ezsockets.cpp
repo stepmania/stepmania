@@ -142,7 +142,8 @@ int EzSockets::receive(char *data, int MAXlength)
 	//YES! I know this is a crappy way to do it, but 
 	//until someone tells me better... DON'T COMPLAIN
 
-	while ((outData.length()<x) && (desc>0)) {
+	while( (int) outData.length()<x && desc>0 )
+	{
 		desc = ::recv( sock, buf, 1 , 0 );
 		if (desc!=0)
 			outData+=buf[0];
