@@ -388,6 +388,50 @@ void Background::LoadFromSong( Song* pSong )
 		m_pDancingCharacters->LoadNextSong();
 }
 
+void Background::UpdateCurBGChange()
+{
+	if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
+		return; /* hasn't been updated yet */
+
+	if( m_aBGChanges.size() == 0 )
+		return;
+
+	/* Only update BGAnimations if we're not in the middle of a stop. */
+	if( GAMESTATE->m_bFreeze )
+		return;
+
+	// Find the BGSegment we're in
+	int i;
+	int size = (int)(m_aBGChanges.size()) - 1;
+	for( i=0; i<size; i++ )
+		if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
+			break;
+
+	if( i == m_iCurBGChangeIndex )
+		return; /* OK */
+
+	LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+
+	m_iCurBGChangeIndex = i;
+
+	const BackgroundChange& change = m_aBGChanges[i];
+
+	BGAnimation* pOld = m_pCurrentBGA;
+
+	if( change.m_bFadeLast )
+		m_pFadingBGA = m_pCurrentBGA;
+	else
+		m_pFadingBGA = NULL;
+
+	m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
+
+	if( pOld )
+		pOld->LosingFocus();
+	if( m_pCurrentBGA )
+		m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+
+	m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
+}
 
 void Background::Update( float fDeltaTime )
 {
@@ -397,63 +441,25 @@ void Background::Update( float fDeltaTime )
 	{
 		m_BGADanger.Update( fDeltaTime );
 	}
-	else
-	{
-		if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
-			return; /* hasn't been updated yet */
 
-		if( m_aBGChanges.size() == 0 )
-			return;
-
-		/* Only update BGAnimations if we're not in the middle of a stop. */
-		if( !GAMESTATE->m_bFreeze )
-		{
-			// Find the BGSegment we're in
-			int i;
-			int size = (int)(m_aBGChanges.size()) - 1;
-			for( i=0; i<size; i++ )
-				if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
-					break;
-
-			if( i != m_iCurBGChangeIndex )
-			{
-				LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
-
-				m_iCurBGChangeIndex = i;
-
-				const BackgroundChange& change = m_aBGChanges[i];
-
-				BGAnimation* pOld = m_pCurrentBGA;
-
-				if( change.m_bFadeLast )
-					m_pFadingBGA = m_pCurrentBGA;
-				else
-					m_pFadingBGA = NULL;
-
-				m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
-
-				if( pOld )
-					pOld->LosingFocus();
-				if( m_pCurrentBGA )
-					m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
-
-				m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
-			}
-
-			if( m_pCurrentBGA )
-				m_pCurrentBGA->Update( fDeltaTime );
-			if( m_pFadingBGA )
-			{
-				m_pFadingBGA->Update( fDeltaTime );
-				m_fSecsLeftInFade -= fDeltaTime;
-				float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
-				m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
-				if( fPercentOpaque <= 0 )
-					m_pFadingBGA = NULL;
-			}
-		}
-	}
+	/* Always update the current background, even when m_BGADanger is being displayed.
+	 * Otherwise, we'll stop updating movies during danger (which may stop them from
+	 * playing), and we won't start clips at the right time, which will throw backgrounds
+	 * off sync. */
+	UpdateCurBGChange();
 	
+	if( m_pCurrentBGA )
+		m_pCurrentBGA->Update( fDeltaTime );
+	if( m_pFadingBGA )
+	{
+		m_pFadingBGA->Update( fDeltaTime );
+		m_fSecsLeftInFade -= fDeltaTime;
+		float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
+		m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
+		if( fPercentOpaque <= 0 )
+			m_pFadingBGA = NULL;
+	}
+
 	if( m_pDancingCharacters )
 		m_pDancingCharacters->Update( fDeltaTime );
 

@@ -43,6 +43,7 @@ public:
 
 protected:
 	bool IsDangerVisible();
+	void UpdateCurBGChange();
 		
 	DancingCharacters*	m_pDancingCharacters;
 
