@@ -969,7 +969,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			
 			f.Write( ssprintf("<td><a href='#%u'>%s</a></td>", 
 				pSong,	// use pointer value as the hash
-				pSong->GetTranslitMainTitle().c_str()) );
+				pSong->GetFullDisplayTitle().c_str()) );
 
 			for( Difficulty dc=(Difficulty)0; dc<NUM_DIFFICULTIES; dc=(Difficulty)(dc+1) )
 			{
