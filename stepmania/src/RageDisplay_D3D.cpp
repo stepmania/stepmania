@@ -35,12 +35,11 @@
 #include "arch/arch.h"
 
 // Static libraries
-#ifdef _XBOX
-#pragma comment(lib, "D3d8.lib")
-#endif
 // load Windows D3D8 dynamically
-#pragma comment(lib, "D3dx8.lib")
-//#pragma comment(lib, "Dxerr8.lib")
+#if defined(_WINDOWS)
+	#pragma comment(lib, "D3dx8.lib")
+	//#pragma comment(lib, "Dxerr8.lib")
+#endif
 
 #include <math.h>
 #include <list>
