@@ -551,6 +551,12 @@ public:
 			lua_pop( LUA->L, 1 );
 
 
+			lua_pushstring( LUA->L, "ExportOnChange" );
+			lua_gettable( LUA->L, -2 );
+			defOut.m_bExportOnChange = !!lua_toboolean( LUA->L, -1 );
+			lua_pop( LUA->L, 1 );
+
+
 			lua_pushstring( LUA->L, "LayoutType" );
 			lua_gettable( LUA->L, -2 );
 			pStr = lua_tostring( LUA->L, -1 );
