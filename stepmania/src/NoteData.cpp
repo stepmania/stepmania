@@ -598,17 +598,23 @@ void NoteData::EliminateAllButOneTap(int row)
 	}
 }
 
-int NoteData::GetNumTracksHeldAtRow( int row )
+void NoteData::GetTracksHeldAtRow( int row, vector<int>& viTracksOut )
 {
-	// Optimization opportunity: 
-	// Search more efficiently knowing that m_HoldNotes is sorted.
 	int iNumTracksHeld = 0;
 	float fBeat = NoteRowToBeat(row);
 	for( unsigned i=0; i<m_HoldNotes.size(); i++ )
 	{
 		const HoldNote& hn = m_HoldNotes[i];
+		
 		if( fBeat >= hn.fStartBeat && fBeat <= hn.fEndBeat )
-			iNumTracksHeld++;
+			viTracksOut.push_back( hn.iTrack );
 	}
-	return iNumTracksHeld;
+}
+
+int NoteData::GetNumTracksHeldAtRow( int row )
+{
+	static vector<int> viTracks;
+	viTracks.clear();
+	GetTracksHeldAtRow( row, viTracks );
+	return viTracks.size();
 }

@@ -16,10 +16,6 @@
 
 #include "NoteTypes.h"
 
-// '1' = tap note
-// '2' = hold note begin
-// '3' = hold note end  ('1' can also end a HoldNote) ('3' without a matching '2' is ignored
-// ... for future expansion
 
 class NoteData
 {
@@ -89,12 +85,33 @@ public:
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			TapNote tn = GetTapNote(t, index);
+			if( tn == TAP_TAP )
+				iNum++;
+		}
+		return iNum;
+	}
+	inline int GetNumTracksWithTapOrHoldHead( int index ) const
+	{
+		int iNum = 0;
+		for( int t=0; t<m_iNumTracks; t++ )
+		{
+			TapNote tn = GetTapNote(t, index);
 			if( tn == TAP_TAP || tn == TAP_HOLD_HEAD )
 				iNum++;
 		}
 		return iNum;
 	}
 	inline int GetFirstTrackWithTap( int index ) const
+	{
+		for( int t=0; t<m_iNumTracks; t++ )
+		{
+			TapNote tn = GetTapNote(t, index);
+			if( tn == TAP_TAP )
+				return t;
+		}
+		return -1;
+	}
+	inline int GetFirstTrackWithTapOrHoldHead( int index ) const
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
@@ -108,6 +125,11 @@ public:
 	{
 		return GetFirstTrackWithTap( index ) != -1;
 	}
+	inline bool IsThereATapOrHoldHeadAtRow( int index ) const
+	{
+		return GetFirstTrackWithTapOrHoldHead( index ) != -1;
+	}
+	void GetTracksHeldAtRow( int row, vector<int>& viTracksOut );
 	int GetNumTracksHeldAtRow( int row );
 
 	// used in edit/record

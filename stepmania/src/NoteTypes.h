@@ -23,7 +23,7 @@ typedef unsigned char TapNote;
 
 static const TapNote TAP_EMPTY		= '0';
 static const TapNote TAP_TAP		= '1'; /* impatient? */
-static const TapNote TAP_HOLD_HEAD	= '2';
+static const TapNote TAP_HOLD_HEAD	= '2';	// graded liuke a TA_TAP
 
 /* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
 static const TapNote TAP_HOLD_TAIL	= '3';

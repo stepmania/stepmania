@@ -726,24 +726,33 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 		{
 			iEchoTrack = iFirstTapInRow;
 		}
+		if( iEchoTrack==-1 )
+			continue;	// don't lay
 
 		// don't insert a new note if there's already a tap within this interval
 		bool bTapInMiddle = false;
 		for( int r2=iRowWindowBegin+1; r2<=iRowWindowEnd-1; r2++ )
-			if( in.IsThereATapAtRow(r2) )
+			if( in.IsThereATapOrHoldHeadAtRow(r2) )
 			{
 				bTapInMiddle = true;
 				break;
 			}
 		if( bTapInMiddle )
-			continue;
+			continue;	// don't lay
 
-		if( iEchoTrack==-1 )
-			continue;
 
-		int iNumTracksHeld = in.GetNumTracksHeldAtRow(iRowEcho);
-		if( iNumTracksHeld >= 2 )
-			continue;
+		{
+			vector<int> viTracks;
+			in.GetTracksHeldAtRow( iRowEcho, viTracks );
+
+			// don't lay if holding 2 already
+			if( viTracks.size() >= 2 )
+				continue;	// don't lay
+			
+			// don't lay echos on top of a HoldNote
+			if( find(viTracks.begin(),viTracks.end(),iEchoTrack) != viTracks.end() )
+				continue;	// don't lay
+		}
 
 		in.SetTapNote( iEchoTrack, iRowEcho, TAP_ADDITION );
 	}
@@ -776,7 +785,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 					{
 						// If there are two taps in a row on the same track, 
 						// don't convert the earlier one to a hold.
-						if( in.GetFirstTrackWithTap(r2) == t )
+						if( in.GetFirstTrackWithTapOrHoldHead(r2) == t )
 							goto dont_add_hold;
 						iTapsLeft--;
 						if( iTapsLeft == 0 )
