@@ -133,5 +133,10 @@ void ModeChoice::Apply( PlayerNumber pn )
 	if( dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
 		GAMESTATE->m_PreferredDifficulty[pn] = dc;
 	if( sAnnouncer != "" )
-		ANNOUNCER->SwitchAnnouncer( sAnnouncer );	
+		ANNOUNCER->SwitchAnnouncer( sAnnouncer );
+
+	// HACK:  Set life type to BATTERY just once here so we don't 
+	// override the user's changes if they back out.
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )
+		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 }

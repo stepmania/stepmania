@@ -272,18 +272,6 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
-/* Adjust game options.  These settings may be overridden again later by the
- * SongOptions menu. */
-void ScreenSelectCourse::AdjustOptions()
-{
-	if(GAMESTATE->m_pCurCourse->m_iLives != -1)
-	{
-		/* oni */
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-		GAMESTATE->m_SongOptions.m_iBatteryLives = GAMESTATE->m_pCurCourse->m_iLives;
-	}
-}
-
 void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 {
 	Screen::HandleScreenMessage( SM );
@@ -363,12 +351,6 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
-		// apply #LIVES
-		if( pCourse->m_iLives != -1 )
-		{
-			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-			GAMESTATE->m_SongOptions.m_iBatteryLives = pCourse->m_iLives;
-		}
 
 		//
 		// Do NOT apply the first song's modifiers before going to the options screen.
@@ -383,7 +365,12 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		//	GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
 		//GAMESTATE->m_SongOptions.FromString( sModifiers );
 
-		AdjustOptions();
+
+		// Apply number of lives without turning on LIFE_BATTERY.
+		// Don't turn on LIFE_BATTERY because it will override
+		// the user's choice if they Back out of gameplay or are in 
+		// event mode.
+		GAMESTATE->m_SongOptions.m_iBatteryLives = GAMESTATE->m_pCurCourse->m_iLives;
 
 		break;
 	}
