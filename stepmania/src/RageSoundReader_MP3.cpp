@@ -319,8 +319,11 @@ int RageSoundReader_MP3::fill_buffer()
 	}
 
 	int rc = file.Read( mad->inbuf + mad->inbytes, sizeof (mad->inbuf)-mad->inbytes );
-	if ( rc <= 0 )
-		return rc;
+	if( rc < 0 )
+	{
+		SetError( file.GetError() );
+		return -1;
+	}
 	if ( rc == 0 )
 		return 0;
 
