@@ -275,8 +275,7 @@ void ScreenPackages::TweenOffScreen( )
 	OFF_COMMAND( m_sprDLBG );
 	OFF_COMMAND( m_textStatus );
 
-	if ( m_fOutputFile.IsOpen() )
-		m_fOutputFile.Close();
+	m_fOutputFile.Close();
 }
 
 void ScreenPackages::RefreshPackages()
