@@ -537,7 +537,14 @@ void ScreenEdit::Update( float fDeltaTime )
 		m_fTrailingBeat += fMoveDelta;
 
 		if( fabsf(fDelta) > 10 )
-			m_fTrailingBeat += fDelta * fDeltaTime*5;
+		{
+			/* We're far off; move faster.  Be sure to not overshoot. */
+			fMoveDelta = fDelta * fDeltaTime*5;
+			float fNewDelta = GAMESTATE->m_fSongBeat - m_fTrailingBeat;
+			if( fabsf(fMoveDelta) > fabsf(fNewDelta) )
+				fMoveDelta = fNewDelta;
+			m_fTrailingBeat += fMoveDelta;
+		}
 	}
 
 	m_NoteFieldEdit.Update( fDeltaTime );
