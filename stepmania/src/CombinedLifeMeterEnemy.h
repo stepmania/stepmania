@@ -12,7 +12,7 @@
 */
 
 
-#include "LifeMeter.h"
+#include "CombinedLifeMeter.h"
 #include "Sprite.h"
 
 
