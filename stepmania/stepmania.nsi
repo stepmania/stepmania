@@ -24,6 +24,7 @@
 !system "utils\upx avcodec.dll" ignore
 !system "utils\upx avformat.dll" ignore
 !system "utils\upx resample.dll" ignore
+!system "utils\upx dbghelp.dll" ignore
 
 Name "${PRODUCT_NAME_VER}"
 OutFile "${PRODUCT_NAME_VER}.exe"
@@ -127,9 +128,10 @@ CreateDirectory "$INSTDIR\CDTitles"
 SetOutPath "$INSTDIR\CDTitles"
 File "CDTitles\Instructions.txt"
 
-#CreateDirectory "$INSTDIR\Characters"
-#SetOutPath "$INSTDIR\Characters"
-#File "Characters\instructions.txt"
+RMDir /r "$INSTDIR\Characters\default"
+SetOutPath "$INSTDIR\Characters"
+File /r "Characters\default"
+# File "Characters\instructions.txt"
 
 CreateDirectory "$INSTDIR\Courses"
 SetOutPath "$INSTDIR\Courses"
@@ -205,6 +207,7 @@ File "SDL_image.dll"
 File "avcodec.dll"
 File "avformat.dll"
 File "resample.dll"
+File "dbghelp.dll"
 ; File "SDL_net.dll"
 
 File "COPYING.txt"
@@ -348,6 +351,7 @@ Delete "$INSTDIR\SDL_image.dll"
 Delete "$INSTDIR\avcodec.dll"
 Delete "$INSTDIR\avformat.dll"
 Delete "$INSTDIR\resample.dll"
+Delete "$INSTDIR\dbghelp.dll"
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.html"
 Delete "$INSTDIR\NEWS"
