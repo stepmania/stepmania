@@ -72,6 +72,8 @@
 #define PLAYER_OPTIONS_P2_Y	THEME->GetMetricF("SelectMusic","PlayerOptionsP2Y")
 #define SONG_OPTIONS_X		THEME->GetMetricF("SelectMusic","SongOptionsX")
 #define SONG_OPTIONS_Y		THEME->GetMetricF("SelectMusic","SongOptionsY")
+#define HELP_TEXT			THEME->GetMetric("SelectMusic","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("SelectMusic","TimerSeconds")
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -146,9 +148,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select music background"), 
 		THEME->GetPathTo("Graphics","select music top edge"),
-		ssprintf("%c or %c change music     Hold %c and %c then press START to change sort\n%c%c easier difficulty     %c%c harder difficulty", 
-		char(1), char(2), char(1), char(2), char(3), char(3), char(4), char(4) ),
-		false, true, 60 
+		HELP_TEXT, false, true, TIMER_SECONDS 
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -248,7 +248,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	}	
 
 	m_MusicSortDisplay.SetXY( SORT_ICON_X, SORT_ICON_Y );
-	m_MusicSortDisplay.SetEffectGlowing( 1.0f );
+	//m_MusicSortDisplay.SetEffectGlowing( 1.0f );
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 	this->AddSubActor( &m_MusicSortDisplay );
 
@@ -388,7 +388,6 @@ void ScreenSelectMusic::TweenOffScreen()
 		m_FootMeter[p].SetTweenZoomY( 0 );
 	}
 
-	m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_MusicSortDisplay.SetEffectNone();
 	m_MusicSortDisplay.BeginTweening( TWEEN_TIME );
 	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
@@ -428,6 +427,9 @@ const int MENU_EASIER_DIFFICULTY_PATTERN_SIZE = sizeof(MENU_EASIER_DIFFICULTY_PA
 
 const MenuButton MENU_HARDER_DIFFICULTY_PATTERN[] = { MENU_BUTTON_DOWN, MENU_BUTTON_DOWN };
 const int MENU_HARDER_DIFFICULTY_PATTERN_SIZE = sizeof(MENU_HARDER_DIFFICULTY_PATTERN) / sizeof(MenuButton);
+
+const MenuButton MENU_NEXT_SORT_PATTERN[] = { MENU_BUTTON_UP, MENU_BUTTON_DOWN, MENU_BUTTON_UP, MENU_BUTTON_DOWN };
+const int MENU_NEXT_SORT_PATTERN_SIZE = sizeof(MENU_NEXT_SORT_PATTERN) / sizeof(MenuButton);
 
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
@@ -488,6 +490,21 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 			HarderDifficulty( MenuI.player );
 		return;
 	}
+	if( INPUTQUEUE->MatchesPattern(GameI.controller, MENU_NEXT_SORT_PATTERN, MENU_NEXT_SORT_PATTERN_SIZE) )
+	{
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			m_soundLocked.Play();
+		else
+			if( m_MusicWheel.NextSort() )
+			{
+				MUSIC->Stop();
+				// tween music sort off screen
+				//m_MusicSortDisplay.SetEffectNone();
+				m_MusicSortDisplay.BeginTweening( 0.3f );
+				m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			}
+		return;
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
@@ -541,7 +558,20 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_1);
+		if( m_MusicWheel.IsRouletting() )
+		{
+			MenuStart(PLAYER_INVALID);
+			m_Menu.SetTimer( 15 );
+		}
+		else if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+		{
+			m_MusicWheel.StartRoulette();
+			m_Menu.SetTimer( 15 );
+		}
+		else
+		{
+			MenuStart(PLAYER_INVALID);
+		}
 		break;
 	case SM_GoToPrevState:
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
@@ -563,6 +593,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_SongChanged:
 		AfterMusicChange();
 		break;
+	case SM_SortOrderChanged:
+		SortOrderChanged();
+		break;
 	}
 }
 
@@ -572,7 +605,7 @@ void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType typ
 			return;		// ignore
 	
 	if( ! m_MusicWheel.WheelIsLocked() )
-	MUSIC->Stop();
+		MUSIC->Stop();
 
 	m_MusicWheel.PrevMusic();
 }
@@ -584,27 +617,30 @@ void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType ty
 		return;		// ignore
 
 	if( ! m_MusicWheel.WheelIsLocked() )
-	MUSIC->Stop();
+		MUSIC->Stop();
 
 	m_MusicWheel.NextMusic();
 }
 
 void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 {
-	if( INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) )  &&
+	if( p != PLAYER_INVALID  &&
+		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) )  &&
 		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
 	{
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
 		{
-			m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-			m_MusicSortDisplay.SetState( GAMESTATE->m_SongSortOrder );
-			m_MusicSortDisplay.BeginTweening( 0.3f );	// sleep
-			m_MusicSortDisplay.BeginTweeningQueued( 0.3f );	// fade in
-			m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			if( m_MusicWheel.NextSort() )
+			{
+				MUSIC->Stop();
 
-			m_MusicWheel.NextSort();
+				// tween music sort off screen
+				//m_MusicSortDisplay.SetEffectNone();
+				m_MusicSortDisplay.BeginTweening( 0.3f );
+				m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			}
 		}
 		return;
 	}
@@ -613,7 +649,12 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 	// this needs to check whether valid Notes are selected!
 	bool bResult = m_MusicWheel.Select();
 
-	if( bResult )
+	if( !bResult )
+	{
+		if( p != PLAYER_INVALID )
+			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
+	}
+	else	// if !bResult
 	{
 		// a song was selected
 		switch( m_MusicWheel.GetSelectedType() )
@@ -664,6 +705,8 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 				}
 
 				m_Menu.TweenOffScreenToBlack( SM_None, false );
+
+				m_Menu.StopTimer();
 
 				this->SendScreenMessage( SM_GoToNextState, 2.5f );
 			}
@@ -717,6 +760,8 @@ void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 
 void ScreenSelectMusic::AfterMusicChange()
 {
+	m_Menu.StallTimer();
+
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
 
@@ -814,4 +859,13 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 	m_textSongOptions.SetText( s );
 }
 
+void ScreenSelectMusic::SortOrderChanged()
+{
+	m_MusicSortDisplay.SetState( GAMESTATE->m_SongSortOrder );
+
+	// tween music sort on screen
+//	m_MusicSortDisplay.SetEffectGlowing();
+	m_MusicSortDisplay.BeginTweening( 0.3f );
+	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );		
+}
 

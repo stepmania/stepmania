@@ -38,7 +38,8 @@ void GameState::Reset()
 	m_CurStyle = STYLE_NONE;
 	m_bPlayersCanJoin = false;
 	for( int i=0; i<2; i++ )
-		m_bIsJoined[i] = false;
+		m_bSideIsJoined[i] = false;
+	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= "";
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficultyClass[p] = CLASS_INVALID;
@@ -272,9 +273,9 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 		return true;
 	case StyleDef::ONE_PLAYER_ONE_CREDIT:
 	case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		return m_bIsJoined[pn];
+		return pn == m_MasterPlayerNumber;
 	default:
-		ASSERT(0);	
+		ASSERT(0);		// invalid style type
 		return false;
 	}
 }

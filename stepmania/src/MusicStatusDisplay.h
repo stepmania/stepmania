@@ -14,19 +14,18 @@
 #include "Sprite.h"
 
 
-enum MusicStatusDisplayType { TYPE_NEW, TYPE_NONE, TYPE_CROWN1, TYPE_CROWN2, TYPE_CROWN3 };
 
 class MusicStatusDisplay : public Sprite
 {
 public:
 	MusicStatusDisplay();
 
-	void SetType( MusicStatusDisplayType msdt );
+	enum IconType { none, easy, crown1, crown2, crown3 };
+	void SetType( IconType type );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 protected:
-
-	enum MusicStatusDisplayType m_MusicStatusDisplayType;
+	IconType m_type;
 };

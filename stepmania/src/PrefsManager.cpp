@@ -47,6 +47,7 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindow = 0.18f;
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
+	m_bUseBGIfNoBanner = false;
 
 	ReadGlobalPrefsFromDisk( true );
 }
@@ -81,6 +82,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "JudgeWindow",			m_fJudgeWindow );
 	ini.GetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
 	ini.GetValueI( "Options", "MovieDecodeMS",			m_iMovieDecodeMS );
+	ini.GetValueB( "Options", "UseBGIfNoBanner",		m_bUseBGIfNoBanner );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -106,7 +108,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "TextureResolution",		m_iTextureResolution );
 	ini.SetValueI( "Options", "RefreshRate",			m_iRefreshRate );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",			m_bIgnoreJoyAxes );
-	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
+	ini.SetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
 	ini.SetValueB( "Options", "ShowStats",				m_bShowStats );
 	ini.SetValueI( "Options", "BackgroundMode",			m_BackgroundMode);
 	ini.SetValueB( "Options", "ShowDanger",				m_bShowDanger );
@@ -118,6 +120,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "JudgeWindow",			m_fJudgeWindow );
 	ini.SetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
 	ini.SetValueI( "Options", "MovieDecodeMS",			m_iMovieDecodeMS );
+	ini.SetValueB( "Options", "UseBGIfNoBanner",		m_bUseBGIfNoBanner );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 

@@ -213,7 +213,7 @@ void ScreenManager::RefreshCreditsMessages()
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if(      GAMESTATE->m_bIsJoined[p] )	m_textCreditInfo[p].SetText( "" );
+		if(      GAMESTATE->m_bSideIsJoined[p] )	m_textCreditInfo[p].SetText( "" );
 		else if( GAMESTATE->m_bPlayersCanJoin )	m_textCreditInfo[p].SetText( "PRESS START" );
 		else									m_textCreditInfo[p].SetText( "CREDIT(s) 0 / 0" );
 	}

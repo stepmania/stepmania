@@ -143,7 +143,7 @@ ScreenEdit::ScreenEdit()
 	// set both players to joined so the credit message doesn't show
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		GAMESTATE->m_bIsJoined[p] = true;
+		GAMESTATE->m_bSideIsJoined[p] = true;
 	}
 	SCREENMAN->RefreshCreditsMessages();
 

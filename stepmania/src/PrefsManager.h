@@ -44,6 +44,7 @@ public:
 	float	m_fJudgeWindow;
 	float	m_fLifeDifficultyScale;
 	int 	m_iMovieDecodeMS;
+	bool	m_bUseBGIfNoBanner;
 
 	CStringArray m_asAdditionalSongFolders;
 

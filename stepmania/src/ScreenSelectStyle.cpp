@@ -38,6 +38,8 @@
 #define INFO_Y				THEME->GetMetricF("SelectStyle","InfoY")
 #define PREVIEW_X			THEME->GetMetricF("SelectStyle","PreviewX")
 #define PREVIEW_Y			THEME->GetMetricF("SelectStyle","PreviewY")
+#define HELP_TEXT			THEME->GetMetric("SelectStyle","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("SelectStyle","TimerSeconds")
 
 #define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("General","SkipSelectDifficulty")
 
@@ -91,8 +93,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
-		false, true, 40 
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -244,10 +245,10 @@ void ScreenSelectStyle::MenuRight( const PlayerNumber p )
 
 void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 {
-	if( p!=PLAYER_INVALID  && !GAMESTATE->m_bIsJoined[p] )
+	if( p!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[p] )
 	{
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
-		GAMESTATE->m_bIsJoined[p] = true;
+		GAMESTATE->m_bSideIsJoined[p] = true;
 		SCREENMAN->RefreshCreditsMessages();
 		UpdateEnabledDisabled();
 		return;	// don't fall through
@@ -272,6 +273,8 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 
 	m_soundSelect.PlayRandom();
+
+	m_Menu.StopTimer();
 
 	TweenOffScreen();
 }
@@ -345,7 +348,7 @@ bool ScreenSelectStyle::IsEnabled( int iStyleIndex )
 
 	int iNumSidesJoined = 0;
 	for( int c=0; c<2; c++ )
-		if( GAMESTATE->m_bIsJoined[c] )
+		if( GAMESTATE->m_bSideIsJoined[c] )
 			iNumSidesJoined++;	// left side, and right side
 
 	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )

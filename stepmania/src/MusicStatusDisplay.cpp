@@ -21,67 +21,62 @@
 
 MusicStatusDisplay::MusicStatusDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music status icons") );
+	Load( THEME->GetPathTo("Graphics","music status icons 1x4") );
 	StopAnimating();
 
-	SetType( TYPE_NONE );
-};
+	SetType( none );
+}
 
-void MusicStatusDisplay::SetType( MusicStatusDisplayType msdt )
+void MusicStatusDisplay::SetType( IconType type )
 {
-	m_MusicStatusDisplayType = msdt;
+	m_type = type;
 
-	switch( m_MusicStatusDisplayType )
+	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+
+	switch( type )
 	{
-	case TYPE_NEW:
-		m_MusicStatusDisplayType = TYPE_NEW;	
+	case none:
+		SetEffectNone();
+		SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		break;
+	case easy:
+		SetEffectNone();
 		SetState( 0 );	
-		SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		break;
-	case TYPE_CROWN1:
-		m_MusicStatusDisplayType = TYPE_CROWN1;	
+	case crown1:
 		SetState( 1 );	
-		SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	
 		break;
-	case TYPE_CROWN2:
-		m_MusicStatusDisplayType = TYPE_CROWN2;	
+	case crown2:
 		SetState( 2 );	
-		SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	
 		break;
-	case TYPE_CROWN3:
-		m_MusicStatusDisplayType = TYPE_CROWN3;	
+	case crown3:
 		SetState( 3 );	
-		SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	
 		break;
-	case TYPE_NONE:
 	default:
-		m_MusicStatusDisplayType = TYPE_NONE;	
-		SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
-		break;
+		ASSERT(0);
 	}
-};
+}
 
 void MusicStatusDisplay::Update( float fDeltaTime )
 {
 	Sprite::Update( fDeltaTime );
-
-};
+}
 
 void MusicStatusDisplay::DrawPrimitives()
 {
-	switch( m_MusicStatusDisplayType )
+	switch( m_type )
 	{
-	case TYPE_CROWN1:
-	case TYPE_CROWN2:
-	case TYPE_CROWN3:
-		// blink
-		if( (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) > 0.5f )		// show the new icon
-			return;
+	case none:
+	case easy:
 		break;
-	case TYPE_NONE:
-		return;
+	case crown1:
+	case crown2:
+	case crown3:
+		if( fmodf(TIMER->GetTimeSinceStart(), 1) > 0.5f )
+			return;	// blink
 		break;
+	default:
+		ASSERT(0);
 	}
-
 	Sprite::DrawPrimitives();
 }

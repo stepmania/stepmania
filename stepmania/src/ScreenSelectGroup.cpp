@@ -46,6 +46,8 @@
 #define TITLES_START_Y		THEME->GetMetricF("SelectGroup","TitlesStartY")
 #define TITLES_COLUMNS		THEME->GetMetricI("SelectGroup","TitlesColumns")
 #define TITLES_ROWS			THEME->GetMetricI("SelectGroup","TitlesRows")
+#define HELP_TEXT			THEME->GetMetric("SelectGroup","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("SelectGroup","TimerSeconds")
 
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
@@ -131,8 +133,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select group background") , 
 		THEME->GetPathTo("Graphics","select group top edge"),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
-		false, true, 40 
+		HELP_TEXT,
+		false, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -392,6 +394,7 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 
 
 	TweenOffScreen();
+	m_Menu.StopTimer();
 
 	this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 }

@@ -301,7 +301,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 //       characters in the CString are recast as unsigned char and that the
 //       unsigned int result from the hash is recast as a signed int).
 //-----------------------------------------------------------------------------
-int GetHashForString ( CString string )
+unsigned int GetHashForString ( CString string )
 {
 /*
  *	RageCRC32.cpp
@@ -436,9 +436,9 @@ static const unsigned int crc32_tab[] = {
 //}
 }
 
-int GetHashForFile( CString sPath )
+unsigned int GetHashForFile( CString sPath )
 {
-	int hash = 0;
+	unsigned int hash = 0;
 
 	hash += GetHashForString( sPath );
 
@@ -448,12 +448,12 @@ int GetHashForFile( CString sPath )
 	if( CFile::GetStatus(sPath, status) )
 		hash += status.m_mtime.GetHour() * 3600 + status.m_mtime.GetMinute() * 60 + status.m_mtime.GetSecond();
 
-	return abs(hash);
+	return hash;
 }
 
-int GetHashForDirectory( CString sDir )
+unsigned int GetHashForDirectory( CString sDir )
 {
-	int hash = 0;
+	unsigned int hash = 0;
 
 	hash += GetHashForFile( sDir );
 
@@ -465,7 +465,7 @@ int GetHashForDirectory( CString sDir )
 		hash += GetHashForFile( sFilePath );
 	}
 
-	return abs(hash); 
+	return hash; 
 }
 
 DWORD GetFileSizeInBytes( const CString &sFilePath )

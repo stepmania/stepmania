@@ -167,7 +167,8 @@ public:
 		}
 		return iTotalNumTimesPlayed;
 	}
-	bool IsNew() { return GetNumTimesPlayed()==0; };
+	bool IsNew();
+	bool IsEasy( NotesType nt );
 	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc );
 };
 

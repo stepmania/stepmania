@@ -37,7 +37,8 @@ public:
 	Game			m_CurGame;
 	Style			m_CurStyle;
 	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join
-	bool			m_bIsJoined[2];	// left side, and right side
+	bool			m_bSideIsJoined[2];	// left side, right side
+	PlayerNumber	m_MasterPlayerNumber;
 
 	GameDef*	GetCurrentGameDef();
 	StyleDef*	GetCurrentStyleDef();

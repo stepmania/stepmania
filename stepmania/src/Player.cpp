@@ -206,7 +206,7 @@ void Player::Update( float fDeltaTime )
 		}
 
 		// check for OK
-		if( fSongBeat > hn.m_fEndBeat )	// if this HoldNote is in the past
+		if( fSongBeat >= hn.m_fEndBeat )	// if this HoldNote is in the past
 		{
 			// At this point fLife > 0, or else we would have marked it NG above
 			fLife = 1;

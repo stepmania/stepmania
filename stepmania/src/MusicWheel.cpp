@@ -77,6 +77,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSe
 	m_sSectionName = sSectionName;
 	m_pCourse = pCourse;
 	m_color = color;
+	m_IconType = MusicStatusDisplay::none;
 }
 
 WheelItemDisplay::WheelItemDisplay()
@@ -110,7 +111,7 @@ WheelItemDisplay::WheelItemDisplay()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 1x7") );
+		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 1x8") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( p==PLAYER_1 ? GRADE_P1_X : GRADE_P2_X, 0 );
 	}
@@ -134,6 +135,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	this->m_pCourse			= pWID->m_pCourse;
 	this->m_pSong			= pWID->m_pSong;
 	this->m_color			= pWID->m_color;
+	this->m_IconType		= pWID->m_IconType;
 
 
 	// init type specific stuff
@@ -162,7 +164,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 			color.g += 0.15f;
 			color.b += 0.15f;
 			m_TextBanner.SetDiffuseColor( color );
-			m_MusicStatusDisplay.SetType( m_MusicStatusDisplayType );
+			m_MusicStatusDisplay.SetType( m_IconType );
 			RefreshGrades();
 		}
 		break;
@@ -253,90 +255,35 @@ void WheelItemDisplay::DrawPrimitives()
 	{
 	case TYPE_SECTION:
 		m_sprSectionBar.Draw();
-		break;
-	case TYPE_ROULETTE:
-		m_sprSectionBar.Draw();
-		break;
-	case TYPE_SONG:		
-		m_sprSongBar.Draw();
-		break;
-	case TYPE_COURSE:
-		m_sprSongBar.Draw();
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	switch( m_WheelItemType )
-	{
-	case TYPE_SECTION:
 		m_textSectionName.Draw();
 		break;
 	case TYPE_ROULETTE:
+		m_sprSectionBar.Draw();
 		m_textRoulette.Draw();
 		break;
-	case TYPE_SONG:
+	case TYPE_SONG:		
+		m_sprSongBar.Draw();
 		m_TextBanner.Draw();
+		m_MusicStatusDisplay.Draw();
+		int p;
+		for( p=0; p<NUM_PLAYERS; p++ )
+			m_GradeDisplay[p].Draw();
+		if( m_fPercentGray > 0 )
+		{
+			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
+			m_sprSongBar.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+			m_sprSongBar.Draw();
+			m_sprSongBar.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,0) );
+		}
 		break;
 	case TYPE_COURSE:
+		m_sprSongBar.Draw();
 		m_textCourse.Draw();
 		break;
 	default:
 		ASSERT(0);
 	}
-
-	switch( m_WheelItemType )
-	{
-	case TYPE_SECTION:
-		break;
-	case TYPE_ROULETTE:
-		break;
-	case TYPE_SONG:
-		m_MusicStatusDisplay.Draw();
-		break;
-	case TYPE_COURSE:
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	switch( m_WheelItemType )
-	{
-	case TYPE_SECTION:
-		break;
-	case TYPE_ROULETTE:
-		break;
-	case TYPE_SONG:
-		int p;
-		for( p=0; p<NUM_PLAYERS; p++ )
-			m_GradeDisplay[p].Draw();
-		break;
-	case TYPE_COURSE:
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	switch( m_WheelItemType )
-	{
-	case TYPE_SECTION:
-		break;
-	case TYPE_ROULETTE:
-		break;
-	case TYPE_SONG:
-		if( m_fPercentGray > 0 )
-		{
-			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
-			m_sprSongBar.Draw();
-			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,0) );
-		}
-		break;
-	case TYPE_COURSE:
-		break;
-	default:
-		ASSERT(0);
-	}
-
 }
 
 MusicWheel::MusicWheel() 
@@ -517,7 +464,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				SortSongPointerArrayByMostPlayed( arraySongs );
 				break;
 			default:
-				ASSERT( false );	// unhandled SORT_ORDER
+				ASSERT(0);	// unhandled SortOrder
 			}
 
 
@@ -619,18 +566,21 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	for( i=0; i<arrayWheelItemDatas.GetSize(); i++ )
 	{
 		Song* pSong = arrayWheelItemDatas[i].m_pSong;
-		if( pSong != NULL )
-		{
-			arrayWheelItemDatas[i].m_MusicStatusDisplayType = (pSong->GetNumTimesPlayed()==0) ? TYPE_NEW : TYPE_NONE;
-		}		
+		if( pSong == NULL )
+			continue;
+
+		WheelItemData& WID = arrayWheelItemDatas[i];
+		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesType ); 
+		WID.m_IconType = bIsEasy ? MusicStatusDisplay::easy : MusicStatusDisplay::none;
 	}
 
 	if( so == SORT_MOST_PLAYED )
 	{
 		// init crown icons 
-		for( int i=0; i<arrayWheelItemDatas.GetSize() && i<3; i++ )
+		for( int i=0; i< min(3,arrayWheelItemDatas.GetSize()); i++ )
 		{
-			arrayWheelItemDatas[i].m_MusicStatusDisplayType = MusicStatusDisplayType(TYPE_CROWN1 + i);
+			WheelItemData& WID = arrayWheelItemDatas[i];
+			WID.m_IconType = MusicStatusDisplay::IconType(MusicStatusDisplay::crown1 + i);
 		}
 	}
 
@@ -830,6 +780,7 @@ void MusicWheel::Update( float fDeltaTime )
 
 				// change the sort order
 				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS );
+				SCREENMAN->SendMessageToTopScreen( SM_SortOrderChanged, 0 );
 				m_sExpandedSectionName = GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder );
 				//RebuildWheelItems();
 
@@ -1087,12 +1038,12 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 }
 
-void MusicWheel::PrevSort()
+bool MusicWheel::PrevSort()
 {
-	NextSort();
+	return NextSort();
 }
 
-void MusicWheel::NextSort()
+bool MusicWheel::NextSort()
 {
 	switch( m_WheelState )
 	{
@@ -1100,7 +1051,7 @@ void MusicWheel::NextSort()
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
 		break;	// fall through
 	default:
-		return;	// don't continue
+		return false;	// don't continue
 	}
 
 	m_soundChangeSort.Play();
@@ -1109,6 +1060,7 @@ void MusicWheel::NextSort()
 
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	m_fTimeLeftInState = FADE_SECONDS;
+	return true;
 }
 
 bool MusicWheel::Select()	// return true of a playable item was chosen
@@ -1155,10 +1107,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		}
 		return false;
 	case TYPE_ROULETTE:
-		m_soundExpand.Play();
-		m_WheelState = STATE_ROULETTE_SPINNING;
-		GAMESTATE->m_SongSortOrder = SORT_GROUP;
-        BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
+		StartRoulette();
 		return false;
 
 	case TYPE_SONG:
@@ -1166,6 +1115,18 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		
 		return true;
 	}
+}
+
+void MusicWheel::StartRoulette() 
+{
+	m_WheelState = STATE_ROULETTE_SPINNING;
+	GAMESTATE->m_SongSortOrder = SORT_GROUP;
+    BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
+}
+
+bool MusicWheel::IsRouletting() 
+{
+	return m_WheelState == STATE_ROULETTE_SPINNING;
 }
 
 void MusicWheel::TweenOnScreen() 

@@ -1,17 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: TipDisplay.h
+ Class: TipDisplay
 
- Desc: A graphic displayed in the TipDisplay during Dancing.
+ Desc: A BitmapText that cycles through messages.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _TipDisplay_H_
-#define _TipDisplay_H_
-
 
 #include "Sprite.h"
 #include "Song.h"
@@ -35,5 +32,3 @@ protected:
 	
 	float m_fSecsUntilSwitch;
 };
-
-#endif

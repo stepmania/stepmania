@@ -527,7 +527,7 @@ load_from_course_failed:
 
 	// should we do something fancy here, like turn on different effects?
 	int iSongHash = GetHashForString( pSongOut->m_sSongDir );
-	switch( iSongHash % 6 )
+	switch( ((UINT)iSongHash) % 6 )
 	{
 	case 0:	po_out.m_EffectType = PlayerOptions::EFFECT_DIZZY;	break;
 	case 1:	po_out.m_bDark = true;								break;

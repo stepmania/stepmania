@@ -1,9 +1,9 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: TipDisplay.h
+ Class: TipDisplay
 
- Desc: A BitmapText that .
+ Desc: See header
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -23,7 +23,7 @@ TipDisplay::TipDisplay()
 {
 	LOG->Trace( "TipDisplay::TipDisplay()" );
 
-	m_textTip.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textTip.LoadFromFont( THEME->GetPathTo("Fonts","help") );
 	m_textTip.SetEffectBlinking();
 	m_textTip.TurnShadowOff();
 	this->AddSubActor( &m_textTip );

@@ -59,6 +59,7 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 #define COLOR_SELECTED					THEME->GetMetricC("TitleMenu","ColorSelected")
 #define SECONDS_BEFORE_DEMONSTRATION	THEME->GetMetricF("TitleMenu","SecondsBeforeDemonstration")
 #define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("TitleMenu","SecondsBetweenAttract")
+#define HELP_TEXT						THEME->GetMetric("TitleMenu","HelpText")
 
 #define USE_CAUTION_OR_SELECT_PLAYER	THEME->GetMetricB("General","UseCautionOrSelectPlayer")
 
@@ -119,8 +120,8 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_sprLogo.SetTweenZoom( 1 );
 	this->AddSubActor( &m_sprLogo );
 
-	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textHelp.SetText( ssprintf("Use %c %c to select, then press START", char(3), char(4)) );
+	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","help") );
+	m_textHelp.SetText( HELP_TEXT );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();
@@ -345,7 +346,8 @@ void ScreenTitleMenu::MenuDown( const PlayerNumber p )
 
 void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 {	
-	GAMESTATE->m_bIsJoined[p] = true;
+	GAMESTATE->m_bSideIsJoined[p] = true;
+	GAMESTATE->m_MasterPlayerNumber = p;
 
 	GAMESTATE->m_bPlayersCanJoin = false;
 

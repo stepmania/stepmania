@@ -1172,6 +1172,26 @@ CHANGE:  Last edited song is selected upon entering Edit Menu.
 BUG FIX:  "Indirect BPM changes" (track 08) work again.  This was causing 
 	"0 BPM" segments to be added to songs like MAX300.
 BUG FIX:  Fixed life meter stream alignment (I hope!)
+NEW FEATURE:  Graphic option "UseBGIfNoBanner" causes the song background to be 
+	used if the banner is missing.  Turning this option ON may results in short
+	freezes when switching music on the SelectMusic screen.
+BUG FIX:  Music no longer cuts off if notes end before music.
+BUG FIX:  "100 Combo" no longer repeats if combo breaks on 100.
+BUG FIX:  "Japanese driver in training sign" next to song title now only shown
+	if song has notes with meter <= 2.
+BUG FIX:  Sort order icon on Select Music screen now accurately displays the 
+	sort.
+BUG FIX:  "Best" sort now correctly sorts the songs in decending order by the
+	number of times played.
+CHANGE:  Music sort change can now be done with L+R+Start, or U,D,U,D (for 
+	people with soft pads that find L+R+Start to be difficult)
+BUG FIX:  Player2 can now navigate menus when playing Double.
+BUG FIX:  Fixed glitches caused by timer expiring after selection was made.
+BUG FIX:  Timer expiration while group is in focus will start roulette.
+BUG FIX:  Timer expiration while in Roulette spinning now resets the timer to
+	force a selection.
+BUG FIX:  OnlyDedicatedMenuButtons option now correctly saves on exit.
+BUG FIX:  Announcer now says "danger comments" at the appropriate time.
 
 ------------------------CVS after 3.00 beta 5----------------
 OPTIMIZATION:  Much faster song loading.

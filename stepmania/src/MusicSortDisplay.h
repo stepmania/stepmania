@@ -1,18 +1,16 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: MusicSortDisplay.h
+ Class: MusicSortDisplay
 
  Desc: A graphic displayed in the MusicSortDisplay during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 class MusicSortDisplay;
-
-
-#ifndef _MusicSortDisplay_H_
-#define _MusicSortDisplay_H_
 
 
 #include "Sprite.h"
@@ -29,6 +27,3 @@ public:
 protected:
 
 };
-
-
-#endif

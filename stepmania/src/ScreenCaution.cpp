@@ -83,9 +83,9 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenCaution::MenuStart( const PlayerNumber p )
 {
-	if( p != PLAYER_INVALID  &&  !GAMESTATE->m_bIsJoined[p] )
+	if( p != PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[p] )
 	{
-		GAMESTATE->m_bIsJoined[p] = true;
+		GAMESTATE->m_bSideIsJoined[p] = true;
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 		SCREENMAN->RefreshCreditsMessages();
 		return;	// don't fall though

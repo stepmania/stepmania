@@ -49,7 +49,7 @@ void Combo::ContinueCombo()
 	if( m_iCurCombo > m_iMaxCombo )
 		m_iMaxCombo = m_iCurCombo;
 
-	switch( m_iMaxCombo )
+	switch( m_iCurCombo )
 	{
 	case 100: 		SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );	break;
 	case 200: 		SCREENMAN->SendMessageToTopScreen( SM_200Combo, 0 );	break;

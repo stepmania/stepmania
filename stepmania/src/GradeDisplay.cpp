@@ -62,9 +62,6 @@ void GradeDisplay::Update( float fDeltaTime )
 
 void GradeDisplay::DrawPrimitives()
 {
-	if( m_Grade == GRADE_NO_DATA )
-		return;
-	
 	Sprite::DrawPrimitives();
 }
 
@@ -75,6 +72,8 @@ void GradeDisplay::SetGrade( Grade g )
 	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
+	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+
 	switch( g )
 	{
 	case GRADE_AAA:		SetState(0);	break;
@@ -84,7 +83,12 @@ void GradeDisplay::SetGrade( Grade g )
 	case GRADE_C:		SetState(4);	break;
 	case GRADE_D:		SetState(5);	break;
 	case GRADE_E:		SetState(6);	break;
-	case GRADE_NO_DATA:		break;	// don't draw at all if grade = GRADE_NO_DATA
+	case GRADE_NO_DATA:	
+		if( this->GetNumStates() == 8 )
+			SetState(7);
+		else
+			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// don't show anything
+		break;
 	default:			ASSERT( false );
 	}
 };

@@ -51,6 +51,7 @@ protected:
 	void AfterNotesChange( const PlayerNumber p );
 	void AfterMusicChange();
 	void PlayMusicSample();
+	void SortOrderChanged();
 
 	void UpdateOptionsDisplays();
 

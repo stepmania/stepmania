@@ -50,6 +50,7 @@
 #define NEW_RECORD_Y			THEME->GetMetricF("Evaluation","NewRecordY")
 #define TRY_EXTRA_STAGE_X		THEME->GetMetricF("Evaluation","TryExtraStageX")
 #define TRY_EXTRA_STAGE_Y		THEME->GetMetricF("Evaluation","TryExtraStageY")
+#define HELP_TEXT				THEME->GetMetric("Evaluation","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("Evaluation","TimerSeconds")
 
 float GRADE_X( int p ) {
@@ -235,7 +236,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","evaluation background"), 
 		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
-		"Press START to continue",
+		HELP_TEXT,
 		false, true, TIMER_SECONDS 
 		);
 	this->AddSubActor( &m_Menu );
@@ -441,7 +442,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			break;
 		}
 	}
-	
+	SONGMAN->SaveStatisticsToDisk();
 
 
 	
@@ -847,6 +848,8 @@ void ScreenEvaluation::MenuBack( const PlayerNumber p )
 void ScreenEvaluation::MenuStart( const PlayerNumber p )
 {
 	TweenOffScreen();
+
+	m_Menu.StopTimer();
 
 	if( PREFSMAN->m_bEventMode )
 	{

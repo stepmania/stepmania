@@ -187,7 +187,7 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI )
 		pn = (PlayerNumber)GameI.controller;
 		break;
 	case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		pn = GAMESTATE->m_bIsJoined[PLAYER_1] ? PLAYER_1 : PLAYER_2;
+		pn = GAMESTATE->m_MasterPlayerNumber;
 		break;
 	default:
 		ASSERT(0);	// invalid m_StyleType
@@ -197,9 +197,12 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI )
 		if( m_DedicatedMenuButton[i] == GameI.button )
 			return MenuInput( pn, (MenuButton)i );
 
-	for( i=0; i<NUM_MENU_BUTTONS; i++ )
-		if( m_SecondaryMenuButton[i] == GameI.button )
-			return MenuInput( pn, (MenuButton)i );
+	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
+	{
+		for( i=0; i<NUM_MENU_BUTTONS; i++ )
+			if( m_SecondaryMenuButton[i] == GameI.button )
+				return MenuInput( pn, (MenuButton)i );
+	}
 
 	return MenuInput();	// invalid GameInput
 }

@@ -35,6 +35,7 @@ enum {
 	GO_BGMODE,
 	GO_BGBRIGHTNESS,
 	GO_MOVIEDECODEMS,
+	GO_BGIFNOBANNER,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
@@ -46,6 +47,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
 	{ "BG Brightness",	5,  {"20%","40%","60%","80%","100%"} },
 	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
+	{ "BG For Banner",	2,  {"NO", "YES (slow)"} },
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
@@ -115,6 +117,7 @@ void ScreenGraphicOptions::ImportOptions()
 	else											m_iSelectedOption[0][GO_BGBRIGHTNESS] = 2;
 	
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
+	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
 }
 
 void ScreenGraphicOptions::ExportOptions()
@@ -170,6 +173,7 @@ void ScreenGraphicOptions::ExportOptions()
 	}
 
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
+	PREFSMAN->m_bUseBGIfNoBanner		= m_iSelectedOption[0][GO_BGIFNOBANNER] == 1;
 }
 
 void ScreenGraphicOptions::GoToPrevState()

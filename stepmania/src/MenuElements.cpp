@@ -99,11 +99,9 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprBottomEdge.TurnShadowOff();
 
 	m_textHelp.SetXY( HELP_X, HELP_Y );
-//	m_textHelp.SetZ( -1 );
 	CStringArray asHelpTips;
-	split( sHelpText, "\n", asHelpTips );
+	split( sHelpText, "::", asHelpTips );
 	m_textHelp.SetTips( asHelpTips );
-	//m_textHelp.SetText( sHelpText );
 	m_textHelp.SetZoom( 0.5f );
 
 
@@ -226,5 +224,15 @@ void MenuElements::DrawBottomLayer()
 void MenuElements::StopTimer()
 {
 	m_MenuTimer.StopTimer();
+}
+
+void MenuElements::SetTimer( int iTimerSeconds )
+{
+	m_MenuTimer.SetTimer( iTimerSeconds );
+}
+
+void MenuElements::StallTimer()
+{
+	m_MenuTimer.StallTimer();
 }
 

@@ -710,7 +710,7 @@ bool ScreenGameplay::OneIsHot()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( !m_pLifeMeter[p]->IsHot() )
+			if( m_pLifeMeter[p]->IsHot() )
 				return true;
 	return false;
 }
@@ -778,10 +778,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check for end of song
 		//
-		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+4 )
+		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+4  &&  !m_soundMusic.IsPlaying() )
 		{
 			GAMESTATE->m_fSongBeat = 0;
-			m_soundMusic.Pause();
+			m_soundMusic.Stop();
 			this->SendScreenMessage( SM_NotesEnded, 0 );
 		}
 
@@ -834,17 +834,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_fTimeLeftBeforeDancingComment -= fDeltaTime;
 			if( m_fTimeLeftBeforeDancingComment <= 0 )
 			{
-				m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
-
-
-
 				if( OneIsHot() )
 					m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )
 					m_announcerDanger.PlayRandom();
 				else
 					m_announcerGood.PlayRandom();
+
+				m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
 			}
+
 		}
 	}
 
@@ -968,7 +967,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 				seg.m_fBPM += fOffsetDelta;
 
-				m_textDebug.SetText( ssprintf("Cur BPM = %f.", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
+				m_textDebug.SetText( ssprintf("Cur BPM = %f.", seg.m_fBPM) );
 				m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweeningQueued( 3 );		// sleep

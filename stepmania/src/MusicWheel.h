@@ -33,6 +33,7 @@ const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
 const ScreenMessage SM_PlaySongSample	=	ScreenMessage(SM_User+48);	
+const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+49);	
 
 
 enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_COURSE };
@@ -49,7 +50,7 @@ public:
 	Course*			m_pCourse;
 	Song*			m_pSong;
 	D3DXCOLOR		m_color;	// either text color or section background color
-	MusicStatusDisplayType m_MusicStatusDisplayType;
+	MusicStatusDisplay::IconType  m_IconType;
 };
 
 
@@ -103,8 +104,10 @@ public:
 
 	void PrevMusic( bool bSendSongChangedMessage = true );
 	void NextMusic( bool bSendSongChangedMessage = true );
-	void PrevSort();
-	void NextSort();
+	bool PrevSort();
+	bool NextSort();
+	void StartRoulette();
+	bool IsRouletting();
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	float GetBannerX( float fPosOffsetsFromMiddle );

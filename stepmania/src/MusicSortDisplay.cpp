@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: MusicSortDisplay.h
+ Class: MusicSortDisplay
 
  Desc: A graphic displayed in the MusicSortDisplay during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -16,37 +17,23 @@
 #include "MusicSortDisplay.h"
 
 
-
-
-
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music sort icons") );
+	Load( THEME->GetPathTo("Graphics","music sort icons 1x4") );
 	StopAnimating();
-	TurnShadowOff();
-	//SetXY( ON_SCREEN_X, ON_SCREEN_Y );
 }
-
 
 void MusicSortDisplay::Set( SongSortOrder so ) 
 { 
-
 	switch( so )
 	{
 	case SORT_GROUP:
-		SetState( 0 );
-		break;
 	case SORT_TITLE:
-		SetState( 1 );
-		break;
 	case SORT_BPM:
-		SetState( 2 );
-		break;
 	case SORT_MOST_PLAYED:
-		SetState( 3 );
+		SetState( so );
 		break;
 	default:
-		ASSERT( false );		// unimplemented MusicSortOrder
+		ASSERT(0);		// unimplemented MusicSortOrder
 	}
 }
-

@@ -108,11 +108,16 @@ void MenuTimer::StopTimer()
 
 void MenuTimer::StallTimer()
 {
-	m_fStallSeconds = 1;
+	m_fStallSeconds = 0.5f;
 }
 
 void MenuTimer::SetTimer( int iSeconds )
 {
 	m_fSecondsLeft = (float)iSeconds;
 	CLAMP( m_fSecondsLeft, 0, 99 );
+
+	m_textDigit1.SetZoomX( 1 ); 
+	m_textDigit2.SetZoomX( 1 ); 
+	m_textDigit1.SetEffectNone();
+	m_textDigit2.SetEffectNone();
 }

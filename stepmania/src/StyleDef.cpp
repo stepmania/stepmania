@@ -15,6 +15,7 @@
 #include "RageUtil.h"
 #include "GameDef.h"
 #include "IniFile.h"
+#include "GameState.h"
 
 
 void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut )
@@ -41,6 +42,8 @@ GameInput StyleDef::StyleInputToGameInput( const StyleInput StyleI )
 
 StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI )
 {
+	StyleInput SI;
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		for( int t=0; t<MAX_NOTE_TRACKS; t++ )
@@ -48,11 +51,18 @@ StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI )
 			if( m_ColumnInfo[p][t].controller == GameI.controller  &&
 				m_ColumnInfo[p][t].button == GameI.button )
 			{
-				return StyleInput( (PlayerNumber)p, t );
+				SI = StyleInput( (PlayerNumber)p, t );
+
+				// HACK:  Looking up the player number using m_ColumnInfo 
+				// returns the wrong answer for ONE_PLAYER_TWO_CREDITS styles
+				if( m_StyleType == ONE_PLAYER_TWO_CREDITS )
+					SI.player = GAMESTATE->m_MasterPlayerNumber;
+				
+				return SI;
 			}
 		}
 	}
-	return StyleInput();	// Didn't find a match.  Return invalid.
+	return SI;	// Didn't find a match.  Return invalid.
 }
 
 

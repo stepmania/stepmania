@@ -1394,6 +1394,23 @@ Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 }
 
 
+bool Song::IsNew()
+{
+	return GetNumTimesPlayed()==0;
+}
+
+bool Song::IsEasy( NotesType nt )
+{
+	for( int i=0; i<m_apNotes.GetSize(); i++ )
+	{
+		Notes* pNotes = m_apNotes[i];
+		if( pNotes->m_NotesType != nt )
+			continue;
+		if( pNotes->m_iMeter <= 2 )
+			return true;
+	}
+	return false;
+}
 
 /////////////////////////////////////
 // Sorting
@@ -1497,7 +1514,7 @@ int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
 	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();
 
-	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
+	if( iNumTimesPlayed1 > iNumTimesPlayed2 )
 		return -1;
 	else if( iNumTimesPlayed1 == iNumTimesPlayed2 )
 		return CompareSongPointersByTitle( arg1, arg2 );

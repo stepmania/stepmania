@@ -50,6 +50,8 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define ARROW_OFFSET_P2_Y	THEME->GetMetricF("SelectDifficulty","ArrowOffsetP2Y")
 #define ARROW_SHADOW_LENGTH_X		THEME->GetMetricF("SelectDifficulty","ArrowShadowLengthX")
 #define ARROW_SHADOW_LENGTH_Y		THEME->GetMetricF("SelectDifficulty","ArrowShadowLengthY")
+#define HELP_TEXT			THEME->GetMetric("SelectDifficulty","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("SelectDifficulty","TimerSeconds")
 
 
 float MORE_X( int iIndex ) {
@@ -136,8 +138,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select difficulty background"), 
 		THEME->GetPathTo("Graphics","select difficulty top edge"),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
-		false, true, 40 
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -270,7 +271,8 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				MenuStart( (PlayerNumber)p );
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					MenuStart( (PlayerNumber)p );
 		}
 		break;
 	case SM_GoToPrevState:
@@ -467,6 +469,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
+	m_Menu.StopTimer();
 	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
 }
 

@@ -191,7 +191,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	TODO:  Get all the EZ2 specific stuff out of here
 	*/
 
-	if ( GAMESTATE->m_bIsJoined[PLAYER_1] && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p1 already selected hide graphic.
+	if ( GAMESTATE->m_bSideIsJoined[PLAYER_1] && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p1 already selected hide graphic.
 	{
 		m_iSelectedPlayer = 0;
 		m_sprPly[1].BeginTweening( 0 );
@@ -199,7 +199,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprPly[2].BeginTweening( 0 );
 		m_sprPly[2].SetTweenZoomY( 0 );
 	}
-	else if ( GAMESTATE->m_bIsJoined[PLAYER_2] && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p2 already selected hide graphic.
+	else if ( GAMESTATE->m_bSideIsJoined[PLAYER_2] && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p2 already selected hide graphic.
 	{
 		m_iSelectedPlayer = 1;
 		m_sprPly[3].BeginTweening( 0 );
