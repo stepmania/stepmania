@@ -653,6 +653,19 @@ RageSoundReader_MP3::RageSoundReader_MP3()
 	mad_stream_init( &mad->Stream );
 	mad_frame_init( &mad->Frame );
 	mad_synth_init( &mad->Synth );
+
+	mad_frame_mute( &mad->Frame );
+	mad_timer_reset( &mad->Timer );
+	mad->length = -1;
+	mad->inbuf_filepos = 0;
+	mad->header_bytes = 0;
+	mad->has_xing = false;
+	mad->timer_accurate = 1;
+	mad->bitrate = -1;
+	mad->first_frame = true;
+
+	for(int i = 0; i < 200; ++i)
+		mad->toc[i] = -1;
 }
 
 RageSoundReader_MP3::~RageSoundReader_MP3()
@@ -671,19 +684,6 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	filename = filename_;
     rw = fopen(filename, "rb");
 	ASSERT( rw );
-
-	mad_frame_mute( &mad->Frame );
-	mad_timer_reset( &mad->Timer );
-	mad->length = -1;
-	mad->inbuf_filepos = 0;
-	mad->header_bytes = 0;
-	mad->has_xing = false;
-	mad->timer_accurate = 1;
-	mad->bitrate = -1;
-	mad->first_frame = true;
-
-	for(int i = 0; i < 200; ++i)
-		mad->toc[i] = -1;
 
 	int ret = fseek( this->rw, 0, SEEK_END );
 	ASSERT( ret != -1 );
@@ -730,6 +730,15 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 
 	return OPEN_OK;
 }
+
+
+SoundReader *RageSoundReader_MP3::Copy() const
+{
+	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
+	ret->Open( filename );
+	return ret;
+}
+
 
 /* dst and src are buffers of 16-bit samples.  len is the number of bytes
  * to copy from src.  len must be even. */
@@ -1074,13 +1083,6 @@ int RageSoundReader_MP3::GetLengthConst( bool fast ) const
 
 	delete cpy;
 	return length;
-}
-
-SoundReader *RageSoundReader_MP3::Copy() const
-{
-	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
-	ret->Open( filename );
-	return ret;
 }
 
 
