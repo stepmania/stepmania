@@ -98,12 +98,6 @@ fi
 SM_X_WITH_OPENGL
 
 AM_PATH_SDL(1.2.6,have_sdl=yes,have_sdl=no)
-if test "$have_sdl" = "no"; then
-  echo
-  echo "*** SDL 1.2.6 or greater is required to build StepMania; please"
-  echo "*** make sure that it is installed to continue the build process."
-  exit 1
-fi
 AM_CONDITIONAL(HAVE_SDL, test "$have_sdl" = "yes")
 if test "$have_sdl" = "yes"; then
 	AC_DEFINE(HAVE_SDL, 1, [SDL is available])
