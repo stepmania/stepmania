@@ -54,6 +54,9 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;	// the only mode you can select on this screen
+
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ez2 select style") );
+	this->AddChild( &m_Background ); // animated background =)
 	
 	/*********** TODO: MAKE THIS WORK FOR ALL GAME STYLES! *************/
 	for (int i=0; i<=3; i++)
@@ -64,6 +67,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	}
 	m_BGAnim[0].SetZoom(1.0f);
 
+
 	m_ScrollingList.SetXY( CENTER_X, SCROLLING_LIST_Y );
 	m_ScrollingList.SetSpacing( SCROLLING_ELEMENT_SPACING );
 	m_ScrollingList.SetNumberVisible( 9 );
@@ -72,12 +76,15 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		// add the controllers, change their graphic if the player is not selected later
+		m_sprControllers[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller selected p%d", p+1)) );
+		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
+		this->AddChild( &m_sprControllers[p] );
+		
 		if( GAMESTATE->m_bSideIsJoined[p] )	// if side is already joined
 			continue;	// don't show bobbing join and blob
 
-		m_sprControllers[p].Load( THEME->GetPathTo("Graphics","select player controller") );
-		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
-		this->AddChild( &m_sprControllers[p] );
+		m_sprControllers[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller p%d", p+1)) );
 
 		m_sprCursors[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player cursor p%d",p+1)) );
 		m_sprCursors[p].SetXY( CURSOR_X(p), CURSOR_Y(p) );
@@ -331,8 +338,11 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 		m_soundSelect.Play();
 		m_sprCursors[pn].BeginTweening( 0.25f );
 		m_sprCursors[pn].SetTweenZoomY( 0 );
-		m_sprControllers[pn].BeginTweening( 0.25f );
-		m_sprControllers[pn].SetTweenZoomY( 0 );
+		//m_sprControllers[pn].BeginTweening( 0.25f );
+		//m_sprControllers[pn].SetTweenZoomY( 0 );
+		// NOW replace with the new controller!
+		m_sprControllers[pn].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller selected p%d", pn+1)) );		
+
 		if (USE_METRIC_FOR_MENU == 1) // get it from the metrics
 		{		
 			RefreshStylesAndListFromMetrics();

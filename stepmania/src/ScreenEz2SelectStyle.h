@@ -62,4 +62,6 @@ protected:
 
 	RageSoundSample m_soundSelect;	
 	RageSoundSample m_soundChange;	
+
+	BackgroundAnimation	m_Background;	
 };
