@@ -310,8 +310,13 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 				{
 					float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
 
-					const int row = (int) ( (iMeasureNo + fPercentThroughMeasure)
-									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
+					int row = (int) ( (iMeasureNo + fPercentThroughMeasure)
+						* BEATS_PER_MEASURE * ROWS_PER_BEAT );
+
+					// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
+					// Try to correct for this by quantizing.
+					row = froundf( row, ROWS_PER_MEASURE/64 );
+						
 					BmsTrack bmsTrack;
 					bool bIsHold;
 					if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )

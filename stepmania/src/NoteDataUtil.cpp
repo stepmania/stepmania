@@ -1290,7 +1290,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 		case NOTE_TYPE_32ND:	fSnapInterval2 = 1/8.0f;	break;
 		case NOTE_TYPE_48TH:	fSnapInterval2 = 1/12.0f;	break;
 		case NOTE_TYPE_64TH:	fSnapInterval2 = 1/16.0f;	break;
-		case -1:				fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That's what we want!
+		case NOTE_TYPE_INVALID:	fSnapInterval2 = 10000;	break;	// nothing will ever snap to this.  That's what we want!
 		default:	ASSERT( false );						return;
 	}
 

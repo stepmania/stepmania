@@ -78,7 +78,10 @@ namespace NoteDataUtil
 
 	void SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 
-	inline void SnapToNearestNoteType( NoteData &inout, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( inout, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
+	inline void SnapToNearestNoteType( NoteData &inout, NoteType nt, float fBeginBeat, float fEndBeat )
+	{
+		SnapToNearestNoteType( inout, nt, NOTE_TYPE_INVALID, fBeginBeat, fEndBeat );
+	}
 
 	void FixImpossibleRows( NoteData &inout, StepsType st );
 
