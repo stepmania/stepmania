@@ -264,45 +264,28 @@ void GameState::Update( float fDelta )
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		unsigned s;
-
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
 		bool bRebuildPlayerOptions = false;
-
-		/* See if any delayed attacks are starting. */
-		for( s=0; s<m_ActiveAttacks[p].size(); s++ )
-		{
-			if( m_ActiveAttacks[p][s].fStartSecond < 0 )
-				continue; /* already started */
-			if( m_ActiveAttacks[p][s].fStartSecond > this->m_fMusicSeconds )
-				continue; /* not yet */
-
-			m_ActiveAttacks[p][s].fStartSecond = -1;
-
-			bRebuildPlayerOptions = true;
-		}
-
-		/* See if any attacks are ending. */
 		m_bAttackEndedThisUpdate[p] = false;
 
-		for( s=0; s<m_ActiveAttacks[p].size(); s++ )
+		/* See if any delayed attacks are starting or ending. */
+		for( unsigned s=0; s<m_ActiveAttacks[p].size(); s++ )
 		{
-			if( m_ActiveAttacks[p][s].fStartSecond >= 0 )
-				continue; /* hasn't started yet */
+			Attack &attack = m_ActiveAttacks[p][s];
+			const bool bCurrentlyEnabled =
+				(attack.fStartSecond < this->m_fMusicSeconds &&
+				m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining);
 
-			if( m_ActiveAttacks[p][s].fSecsRemaining <= 0 )
-				continue; /* ended already */
+			if( m_ActiveAttacks[p][s].bOn == bCurrentlyEnabled )
+				continue; /* OK */
 
-			m_ActiveAttacks[p][s].fSecsRemaining -= fDelta;
+			if( !m_ActiveAttacks[p][s].bOn && bCurrentlyEnabled )
+				m_bAttackEndedThisUpdate[p] = true;
 
-			if( m_ActiveAttacks[p][s].fSecsRemaining > 0 )
-				continue; /* continuing */
-
-			/* ending */
-			m_ActiveAttacks[p].erase( m_ActiveAttacks[p].begin()+s, m_ActiveAttacks[p].begin()+s+1 );
-			m_bAttackEndedThisUpdate[p] = true;
 			bRebuildPlayerOptions = true;
+
+			m_ActiveAttacks[p][s].bOn = bCurrentlyEnabled;
 		}
 
 		if( bRebuildPlayerOptions )
@@ -937,7 +920,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 	PlayerOptions po = m_StoredPlayerOptions[pn];
 	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
 	{
-		if( m_ActiveAttacks[pn][s].fStartSecond >= 0 )
+		if( !m_ActiveAttacks[pn][s].bOn )
 			continue; /* hasn't started yet */
 		po.FromString( m_ActiveAttacks[pn][s].sModifier );
 	}

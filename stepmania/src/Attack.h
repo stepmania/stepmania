@@ -11,11 +11,12 @@ struct Attack
 	float fStartSecond; // -1 = now
 	float fSecsRemaining;
 	CString sModifier;
+	bool bOn; // for GAMESTATE
 
 	void GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const;
 	bool IsBlank() { return sModifier.empty(); }
 	void MakeBlank() { sModifier=""; }
-	Attack() { fStartSecond = -1; }
+	Attack() { fStartSecond = -1; bOn = false; }
 };
 typedef vector<Attack> AttackArray;
 
