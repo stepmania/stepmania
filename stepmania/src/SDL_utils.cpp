@@ -276,6 +276,8 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 
 static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool reverse)
 {
+	r = g = b = 0;
+	
 	/* If we have no alpha or no color key, there's no alpha color. */
 	if(img->format->BitsPerPixel == 8 && !(img->flags & SDL_SRCCOLORKEY))
 		return;
