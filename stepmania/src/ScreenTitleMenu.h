@@ -12,7 +12,6 @@
 #include "ScreenLogo.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
 #include "RageSound.h"
 #include "BGAnimation.h"
 #include "RageTimer.h"

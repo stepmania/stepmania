@@ -15,9 +15,6 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "BitmapText.h"
-#include "RandomSample.h"
-#include "TransitionFade.h"
 #include "MenuTimer.h"
 #include "TransitionBGAnimation.h"
 #include "TipDisplay.h"
