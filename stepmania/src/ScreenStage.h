@@ -8,7 +8,7 @@
 #include "Sprite.h"
 #include "Character.h"
 #include "BitmapText.h"
-#include "BGAnimation.h"
+#include "ActorUtil.h"
 
 class ScreenStage : public Screen
 {
@@ -21,8 +21,7 @@ public:
 
 private:
 	Transition		m_In, m_Out, m_Back;
-	BGAnimation		m_Background;
-	BGAnimation		m_Overlay; // overlays all elements except bitmaptexts
+	AutoActor		m_Overlay; // overlays all elements except bitmaptexts
 	BitmapText		m_SongTitle;
 	BitmapText		m_Artist;
 

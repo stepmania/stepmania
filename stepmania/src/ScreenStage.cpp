@@ -30,31 +30,26 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
 
-	m_Background.LoadFromAniDir( THEME->GetPathB(m_sName,GAMESTATE->GetStageText()) ); 	 
-	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING ); 	 
-	m_Background.PlayCommand( "On" );
-	this->AddChild( &m_Background );
-
-	m_Overlay.SetName( "Overlay" );
-	m_Overlay.LoadFromAniDir( THEME->GetPathToB(m_sName + " overlay"));
+	m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
+	m_Overlay->SetName( "Overlay" );
 	ON_COMMAND( m_Overlay );
-	this->AddChild( &m_Overlay );
+	this->AddChild( m_Overlay );
 
-	m_In.Load( THEME->GetPathToB(m_sName + " in") );
+	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB(m_sName + " out") );
+	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathToB("Common back") );
+	m_Back.Load( THEME->GetPathB("Common","back") );
 	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Back );
 
 	/* Prep the new screen once m_In is complete. */ 	 
-	this->PostScreenMessage( SM_PrepScreen, m_Background.GetTweenTimeLeft() );
+	this->PostScreenMessage( SM_PrepScreen, m_Overlay->GetTweenTimeLeft() );
 
 	FOREACH_PlayerNumber(p)
 	{
@@ -72,8 +67,8 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	m_SongTitle.SetName( "SongTitle");
 	m_Artist.SetName( "Artist" );
-	m_SongTitle.LoadFromFont( THEME->GetPathToF("ScreenStage Title") );
-	m_Artist.LoadFromFont( THEME->GetPathToF("ScreenStage Artist") );
+	m_SongTitle.LoadFromFont( THEME->GetPathF(m_sName,"Title") );
+	m_Artist.LoadFromFont( THEME->GetPathF(m_sName,"Artist") );
 
 	this->AddChild( &m_SongTitle );
 	this->AddChild( &m_Artist );
@@ -116,7 +111,6 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 			OFF_COMMAND( m_sprCharacterIcon[p] );
 		OFF_COMMAND( m_SongTitle );
 		OFF_COMMAND( m_Artist );
-		OFF_COMMAND( m_Background );
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 		
 		break;
@@ -148,7 +142,7 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
-	SOUND->PlayOnce( THEME->GetPathToS("Common back") );
+	SOUND->PlayOnce( THEME->GetPathS("Common","back") );
 
 	/* If a Back is buffered while we're prepping the screen (very common), we'll
 	 * get it right after the prep finishes.  However, the next update will contain
