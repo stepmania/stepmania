@@ -135,46 +135,80 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 }
 
 
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
+static bool UseTimedlock()
+{
+#if defined(CPU_X86) && defined(__GNUC__)
+	/* Valgrind crashes and burns on pthread_mutex_timedlock. */
+        static int under_valgrind = -1;
+	if( under_valgrind == -1 )
+	{
+		unsigned int magic[8] = { 0x00001001, 0, 0, 0, 0, 0, 0, 0 };
+		asm(
+			"mov %1, %%eax\n"
+			"mov $0, %%edx\n"
+			"rol $29, %%eax\n"
+			"rol $3, %%eax\n"
+			"ror $27, %%eax\n"
+			"ror $5, %%eax\n"
+			"rol $13, %%eax\n"
+			"rol $19, %%eax\n"
+			"mov %%edx, %0\t"
+			: "=r" (under_valgrind): "r" (magic): "eax", "edx" );
+	}
+	
+	if( under_valgrind )
+		return false;
+#endif
+
+	return true;
+}
+#endif
+
 bool MutexImpl_Pthreads::Lock()
 {
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
-	int len = 10; /* seconds */
-	int tries = 2;
-
-	while( tries-- )
+	if( UseTimedlock() )
 	{
-		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
-		timeval tv;
-		gettimeofday( &tv, NULL );
+		int len = 10; /* seconds */
+		int tries = 2;
 
-		timespec ts;
-		ts.tv_sec = tv.tv_sec + len;
-		ts.tv_nsec = tv.tv_usec * 1000;
-		int ret = pthread_mutex_timedlock( &mutex, &ts );
-		switch( ret )
+		while( tries-- )
 		{
-		case 0:
-			return true;
+			/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
+			timeval tv;
+			gettimeofday( &tv, NULL );
 
-		case EINTR:
-			/* Ignore it. */
-			++tries;
-			continue;
+			timespec ts;
+			ts.tv_sec = tv.tv_sec + len;
+			ts.tv_nsec = tv.tv_usec * 1000;
+			int ret = pthread_mutex_timedlock( &mutex, &ts );
+			switch( ret )
+			{
+			case 0:
+				return true;
 
-		case ETIMEDOUT:
-			/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
-			 * timeout, just in case we're debugging and happened to stop while waiting
-			 * on the mutex. */
-			len = 1;
-			break;
+			case EINTR:
+				/* Ignore it. */
+				++tries;
+				continue;
 
-		default:
-			FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+			case ETIMEDOUT:
+				/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
+				 * timeout, just in case we're debugging and happened to stop while waiting
+				 * on the mutex. */
+				len = 1;
+				break;
+
+			default:
+				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+			}
 		}
-	}
 
-	return false;
-#else
+		return false;
+	}
+#endif
+
 	int ret;
 	do
 	{
@@ -185,7 +219,6 @@ bool MutexImpl_Pthreads::Lock()
 	ASSERT_M( ret == 0, ssprintf("pthread_mutex_lock: %s", strerror(errno)) );
 
 	return true;
-#endif
 }
 
 bool MutexImpl_Pthreads::TryLock()
