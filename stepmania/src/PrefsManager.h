@@ -281,8 +281,6 @@ public:
 	void ReadGlobalPrefsFromDisk();
 	void SaveGlobalPrefsToDisk() const;
 
-	void ReadStaticPrefsFromDisk();
-
 	void ResetToFactoryDefaults();
 
 protected:

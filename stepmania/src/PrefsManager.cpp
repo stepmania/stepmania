@@ -10,8 +10,9 @@
 #include "ProductInfo.h"
 #include "GameConstantsAndTypes.h"
 
-#define STEPMANIA_INI_PATH "Data/StepMania.ini"
-#define STATIC_INI_PATH "Data/Static.ini"
+#define DEFAULTS_INI_PATH	"Data/Defaults.ini"		// these can be overridden
+#define STEPMANIA_INI_PATH	"Data/StepMania.ini"	// overlay on Defaults.ini, contains the user's choices
+#define STATIC_INI_PATH		"Data/Static.ini"		// overlay on the 2 above, can't be overridden
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -303,23 +304,26 @@ PrefsManager::~PrefsManager()
 
 void PrefsManager::ReadGlobalPrefsFromDisk()
 {
+	ReadPrefsFromFile( DEFAULTS_INI_PATH );
 	ReadPrefsFromFile( STEPMANIA_INI_PATH );
-
-	/* Static preferences always override StepMania.ini. */
-	ReadStaticPrefsFromDisk();
+	ReadPrefsFromFile( STATIC_INI_PATH );
 }
 
-void PrefsManager::ReadStaticPrefsFromDisk()
+void PrefsManager::ResetToFactoryDefaults()
 {
-	/* Load this on top of the regular INI; if it exists, any settings listed
-	 * in it will override user settings. */
-	ReadPrefsFromFile( STATIC_INI_PATH );
+	// clobber the users prefs by initing then applying defaults
+	Init();
+	m_bFirstRun = false;
+	ReadPrefsFromFile( DEFAULTS_INI_PATH );
+	
+	SaveGlobalPrefsToDisk();
 }
 
 void PrefsManager::ReadPrefsFromFile( CString sIni )
 {
 	IniFile ini;
-	ini.ReadFile( sIni );
+	if( !ini.ReadFile(sIni) )
+		return;
 
 	ini.GetValue( "Options", "Windowed",						m_bWindowed );
 	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
@@ -804,14 +808,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
 
 	ini.WriteFile( STEPMANIA_INI_PATH );
-}
-
-void PrefsManager::ResetToFactoryDefaults()
-{
-	Init();
-	ReadStaticPrefsFromDisk();	
-	SaveGlobalPrefsToDisk();
-	m_bFirstRun = false;
 }
 
 int PrefsManager::GetCoinMode()
