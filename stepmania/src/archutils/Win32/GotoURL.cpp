@@ -3,7 +3,9 @@
 #include "windows.h"
 #include "shellapi.h"
 
-LONG GetRegKey(HKEY key, CString subkey, LPTSTR retdata)
+/* This is called from the crash handler; don't use RegistryAccess, since it's
+ * not crash-conditions safe. */
+static LONG GetRegKey(HKEY key, CString subkey, LPTSTR retdata)
 {
 	HKEY hkey;
     LONG retval = RegOpenKeyEx(key, subkey, 0, KEY_QUERY_VALUE, &hkey);

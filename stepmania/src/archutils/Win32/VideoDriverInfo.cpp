@@ -3,39 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "windows.h"
-
-static void GetRegSubKeys( HKEY hKey, vector<CString> &lst )
-{
-	char szBuffer[MAX_PATH];
-	FILETIME ft;
-
-	for( int index = 0; ; ++index )
-	{
-		DWORD nSize = sizeof(szBuffer)-1;
-		LONG ret = RegEnumKeyEx( hKey, index, szBuffer, &nSize, NULL, NULL, NULL, &ft);
-		if( ret == ERROR_NO_MORE_ITEMS )
-			return;
-
-		if( ret != ERROR_SUCCESS && ret != ERROR_MORE_DATA )
-		{
-			LOG->Warn( werr_ssprintf(ret, "GetRegSubKeys(%p,%i) error", hKey, index) );
-			return;
-		}
-
-		lst.push_back( szBuffer );
-	}
-}
-
-static CString GetRegValue( HKEY hKey, CString sName )
-{
-	char    szBuffer[MAX_PATH];
-	DWORD   nSize = sizeof(szBuffer)-1;
-	if( RegQueryValueEx(hKey, sName, NULL, NULL, (LPBYTE)szBuffer, &nSize) == ERROR_SUCCESS ) 
-		return szBuffer;
-	else
-		return "";
-}
-
+#include "RegistryAccess.h"
 
 // this will not work on 95 and NT b/c of EnumDisplayDevices
 CString GetPrimaryVideoName()
@@ -105,19 +73,10 @@ bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info)
 		Initialized = true;
 
 		const CString TopKey = bIsWin9x?
-			"SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
-			"SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
+			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
+			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
 
-		HKEY hkey;
-		int ret = RegOpenKey(HKEY_LOCAL_MACHINE, TopKey, &hkey);
-		if ( ret != ERROR_SUCCESS )
-		{
-			LOG->Warn( werr_ssprintf(ret, "RegOpenKey(%s) error", TopKey.c_str()) );
-			return false;
-		}
-
-		GetRegSubKeys( hkey, lst );
-		RegCloseKey( hkey );
+		GetRegSubKeys( TopKey, lst, ".*", false );
 
 		for( int i = lst.size()-1; i >= 0; --i )
 		{
@@ -141,23 +100,19 @@ bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info)
 	while( cardno < (int)lst.size() )
 	{
 		const CString sKey = lst[cardno];
-		HKEY hkey;
-		int ret = RegOpenKey(HKEY_LOCAL_MACHINE, sKey, &hkey);
-		if ( ret != ERROR_SUCCESS )
+
+		if( !GetRegValue( sKey, "DriverDesc", info.sDescription ) )
 		{
 			/* Remove this one from the list and ignore it, */
-			LOG->Warn( werr_ssprintf(ret, "RegOpenKey(%s) error", sKey.c_str()) );
 			lst.erase( lst.begin()+cardno );
 			continue;
 		}
 
-		info.sDate =			GetRegValue( hkey, "DriverDate");
-		info.sDescription =		GetRegValue( hkey, "DriverDesc");
-		info.sDeviceID =		GetRegValue( hkey, "MatchingDeviceId");
-		info.sProvider =		GetRegValue( hkey, "ProviderName");
-		info.sVersion =			GetRegValue( hkey, bIsWin9x? "Ver":"DriverVersion");
+		GetRegValue( sKey, "DriverDate", info.sDate );
+		GetRegValue( sKey, "MatchingDeviceId", info.sDeviceID );
+		GetRegValue( sKey, "ProviderName", info.sProvider );
+		GetRegValue( sKey, bIsWin9x? "Ver":"DriverVersion", info.sVersion );
 
-		RegCloseKey(hkey);
 		return true;
 	}
 

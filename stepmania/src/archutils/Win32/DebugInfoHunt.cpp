@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
+#include "RegistryAccess.h"
 #include "windows.h"
 #include <mmsystem.h>
 
@@ -38,7 +39,7 @@ static void GetDisplayDriverDebugInfo()
 		VideoDriverInfo info;
 		if( !GetVideoDriverInfo(i, info) )
 			break;
-		
+
 		if( sPrimaryDeviceName == "" )	// failed to get primary display name (NT4)
 		{
 			LogVideoDriverInfo( info );
@@ -78,6 +79,115 @@ static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
     va_end(va);
 
 	return s += ssprintf( "(%s)", buf );
+}
+
+static void GetDriveDebugInfo9x()
+{
+
+	/*
+	 * HKEY_LOCAL_MACHINE\Enum\ESDI
+	 *  *\  (disk id)
+	 *   *\  (eg. MF&CHILD0000&PCI&VEN_8086&DEV_7111&SUBSYS_197615AD&REV_01&BUS_00&DEV_07&FUNC_0100)
+	 *    DMACurrentlyUsed  0 or 1
+	 *    DeviceDesc        "GENERIC IDE  DISK TYPE01"
+	 */
+	vector<CString> Drives;
+	if( !GetRegSubKeys( "HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives ) )
+		return;
+
+	for( unsigned drive = 0; drive < Drives.size(); ++drive )
+	{
+		vector<CString> IDs;
+		if( !GetRegSubKeys( Drives[drive], IDs ) )
+			continue;
+
+		for( unsigned id = 0; id < IDs.size(); ++id )
+		{
+			CString DeviceDesc;
+
+			GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
+			TrimRight( DeviceDesc );
+
+			int DMACurrentlyUsed = -1;
+			GetRegValue( IDs[id], "DMACurrentlyUsed", DMACurrentlyUsed );
+
+			LOG->Info( "Drive: \"%s\" DMA: %s",
+				DeviceDesc.c_str(), DMACurrentlyUsed? "yes":"NO" );
+		}
+	}
+}
+
+static void GetDriveDebugInfoNT()
+{
+	/*
+	 * HKEY_LOCAL_MACHINE\HARDWARE\DEVICEMAP\Scsi\
+	 *    Scsi Port *\
+	 *      DMAEnabled  0 or 1
+	 *      Driver      "Ultra", "atapi", etc
+	 *      Scsi Bus *\
+	 *	     Target Id *\
+	 *	 	   Logical Unit Id *\
+	 *		     Identifier  "WDC WD1200JB-75CRA0"
+	 *			 Type        "DiskPeripheral"
+	 */
+	vector<CString> Ports;
+	if( !GetRegSubKeys( "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\Scsi", Ports ) )
+		return;
+
+	for( unsigned i = 0; i < Ports.size(); ++i )
+	{
+		int DMAEnabled = -1;
+		GetRegValue( Ports[i], "DMAEnabled", DMAEnabled );
+
+		CString Driver;
+		GetRegValue( Ports[i], "Driver", Driver );
+
+		vector<CString> Busses;
+		if( !GetRegSubKeys( Ports[i], Busses, "Scsi Bus .*" ) )
+			continue;
+
+		for( unsigned bus = 0; bus < Busses.size(); ++bus )
+		{
+			vector<CString> TargetIDs;
+			if( !GetRegSubKeys( Busses[bus], TargetIDs, "Target Id .*" ) )
+				continue;
+
+			for( unsigned tid = 0; tid < TargetIDs.size(); ++tid )
+			{
+				vector<CString> LUIDs;
+				if( !GetRegSubKeys( TargetIDs[tid], LUIDs, "Logical Unit Id .*" ) )
+					continue;
+
+				for( unsigned luid = 0; luid < LUIDs.size(); ++luid )
+				{
+					CString Identifier;
+					GetRegValue( LUIDs[luid], "Identifier", Identifier );
+					TrimRight( Identifier );
+					LOG->Info( "Drive: \"%s\" Driver: %s DMA: %s",
+						Identifier.c_str(), Driver.c_str(), DMAEnabled == 1? "yes":DMAEnabled == -1? "N/A":"NO" );
+				}
+			}
+		}
+	}
+}
+
+static void GetDriveDebugInfo()
+{
+	OSVERSIONINFO ovi;
+	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	if( !GetVersionEx(&ovi) )
+	{
+		LOG->Info("GetVersionEx failed!");
+		return;
+	}
+
+	switch( ovi.dwPlatformId )
+	{
+	case VER_PLATFORM_WIN32_WINDOWS:
+		GetDriveDebugInfo9x(); break;
+	case VER_PLATFORM_WIN32_NT:
+		GetDriveDebugInfoNT(); break;
+	}
 }
 
 static void GetWindowsVersionDebugInfo()
@@ -147,6 +257,7 @@ void SearchForDebugInfo()
 	GetWindowsVersionDebugInfo();
 	GetMemoryDebugInfo();
 	GetDisplayDriverDebugInfo();
+	GetDriveDebugInfo();
 	GetSoundDriverDebugInfo();
 }
 
