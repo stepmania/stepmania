@@ -202,6 +202,7 @@ enum RankingCategory
 
 #define DEFAULT_RANKING_NAME CString("")
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
+inline bool IsRankingToFillIn( CString sName ) { return !sName.empty() && sName[0]=='#'; }
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 

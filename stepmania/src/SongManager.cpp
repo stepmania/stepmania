@@ -662,6 +662,10 @@ void SongManager::SaveCategoryRankingsToFile( CString fn )
 			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				// tricky:  wipe out "name to fill in" markers
+				if( IsRankingToFillIn(m_CategoryDatas[st][rc].vHighScores[l].sName) )
+					m_CategoryDatas[st][rc].vHighScores[l].sName = "";
+
 				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].sName );
 				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].iScore );
 			}
@@ -709,6 +713,10 @@ void SongManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 			pCourse->m_MemCardDatas[st][mc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				// tricky:  wipe out "name to fill in" markers
+				if( IsRankingToFillIn(pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName) )
+					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = "";
+
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName );
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore );
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime );
@@ -766,6 +774,10 @@ void SongManager::SaveStepsMemCardDataToFile( CString fn, int mc )
 			pNotes->m_MemCardDatas[mc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				// tricky:  wipe out "name to fill in" markers
+				if( IsRankingToFillIn(pNotes->m_MemCardDatas[mc].vHighScores[l].sName) )
+					pNotes->m_MemCardDatas[mc].vHighScores[l].sName = "";
+
 				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].sName );
 				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].grade );
 				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].iScore );

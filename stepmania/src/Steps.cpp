@@ -340,6 +340,11 @@ void Steps::MemCardData::AddHighScore( Steps::MemCardData::HighScore hs, int &iI
 	int i;
 	for( i=0; i<(int)vHighScores.size(); i++ )
 	{
+		ASSERT( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[0] );
+	}
+
+	for( i=0; i<(int)vHighScores.size(); i++ )
+	{
 		if( hs >= vHighScores[i] )	// tie goes to new score
 			break;
 	}
