@@ -84,6 +84,8 @@ protected:
     GrooveRadar			m_GrooveRadar;
     GrooveGraph			m_GrooveGraph;
 	BitmapText			m_textSongOptions;
+	BitmapText			m_textNumSongs;
+	BitmapText			m_textTotalTime;
 	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
 	Sprite				m_sprMeterFrame[NUM_PLAYERS];
 	Sprite				m_sprNonPresence[NUM_PLAYERS];

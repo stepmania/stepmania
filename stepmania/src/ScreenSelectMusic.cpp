@@ -205,6 +205,16 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SET_XY( m_textSongOptions );
 	this->AddChild( &m_textSongOptions );
 
+	m_textNumSongs.SetName( "NumSongs" );
+	m_textNumSongs.LoadFromNumbers( THEME->GetPathN(m_sName,"num songs") );
+	SET_XY( m_textNumSongs );
+	this->AddChild( &m_textNumSongs );
+
+	m_textTotalTime.SetName( "TotalTime" );
+	m_textTotalTime.LoadFromNumbers( THEME->GetPathN(m_sName,"total time") );
+	SET_XY( m_textTotalTime );
+	this->AddChild( &m_textTotalTime );
+
 	m_CourseContentsFrame.SetName( "CourseContents" );
 	SET_XY( m_CourseContentsFrame );
 	this->AddChild( &m_CourseContentsFrame );
@@ -519,6 +529,8 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_GrooveRadar );
 	ON_COMMAND( m_GrooveGraph );
 	ON_COMMAND( m_textSongOptions );
+	ON_COMMAND( m_textNumSongs );
+	ON_COMMAND( m_textTotalTime );
 	ON_COMMAND( m_MusicSortDisplay );
 	ON_COMMAND( m_MusicWheelUnder );
 	m_MusicWheel.TweenOnScreen();
@@ -572,6 +584,8 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_GrooveRadar );
 	OFF_COMMAND( m_GrooveGraph );
 	OFF_COMMAND( m_textSongOptions );
+	OFF_COMMAND( m_textNumSongs );
+	OFF_COMMAND( m_textTotalTime );
 	OFF_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOffScreen();
 	OFF_COMMAND( m_MusicWheelUnder );
@@ -1310,6 +1324,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_fSampleStartSeconds = 0;
 			m_fSampleLengthSeconds = -1;
+
+			m_textNumSongs.SetText( "" );
+			m_textTotalTime.SetText( "" );
+			
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
@@ -1345,6 +1363,9 @@ void ScreenSelectMusic::AfterMusicChange()
 			SampleMusicTimingData = pSong->GetCacheFilePath();
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+
+			m_textNumSongs.SetText( ssprintf("%d", SongManager::GetNumStagesForSong(pSong) ) );
+			m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 
 			pSong->GetSteps( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			StepsUtil::SortNotesArrayByDifficulty( m_arrayNotes );
@@ -1426,6 +1447,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
+
+		m_textNumSongs.SetText( "" );
+		m_textTotalTime.SetText( "" );
+
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:
@@ -1456,12 +1481,12 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-//		m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
-//		float fTotalSeconds;
-//		if( pCourse->GetTotalSeconds(fTotalSeconds) )
-//			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
-//		else
-//			m_textTime.SetText( "xx:xx:xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
+		m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
+		float fTotalSeconds;
+		if( pCourse->GetTotalSeconds(fTotalSeconds) )
+			m_textTotalTime.SetText( SecondsToMMSSMsMs(fTotalSeconds) );
+		else
+			m_textTotalTime.SetText( "xx:xx.xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
 
 		m_Banner.LoadFromCourse( pCourse );
 		m_BPMDisplay.SetBPM( pCourse );
