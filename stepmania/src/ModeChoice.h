@@ -22,9 +22,10 @@ struct ModeChoice		// used in SelectMode
 	void Init();
 
 	void Load( int iIndex, CString str );
-	void ApplyToAllPlayers();
-	void Apply( PlayerNumber pn );
-	bool DescribesCurrentMode() const;
+	void ApplyToAllPlayers() const;
+	void Apply( PlayerNumber pn ) const;
+	bool DescribesCurrentMode( PlayerNumber pn ) const;
+	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( CString *why = NULL ) const;
 
 	bool		m_bInvalid;

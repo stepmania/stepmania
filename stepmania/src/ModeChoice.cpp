@@ -26,7 +26,19 @@ void ModeChoice::Init()
 	m_bInvalid = true;
 }
 
-bool ModeChoice::DescribesCurrentMode() const
+bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 );
+bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
+
+bool ModeChoice::DescribesCurrentModeForAllPlayers() const
+{
+	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		if( !DescribesCurrentMode( (PlayerNumber) pn) )
+			return false;
+
+	return true;
+}
+
+bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 {
 	if( m_game != GAME_INVALID && m_game != GAMESTATE->m_CurGame )
 		return false;
@@ -43,7 +55,31 @@ bool ModeChoice::DescribesCurrentMode() const
 		
 	if( m_sAnnouncer != "" && m_sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
 		return false;
-	
+
+	if( m_sModifiers != "" )
+	{
+		/* Save the current modifiers. */
+		const PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
+		const SongOptions so = GAMESTATE->m_SongOptions;
+
+		/* Apply modifiers. */
+		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
+
+		/* Did anything change? */
+		bool Changed = false;
+		if( !ComparePlayerOptions(po, GAMESTATE->m_PlayerOptions[pn]) )
+			Changed = true;
+		if( !CompareSongOptions(so, GAMESTATE->m_SongOptions) )
+			Changed = true;
+
+		/* Restore modifiers. */
+		GAMESTATE->m_PlayerOptions[pn] = po;
+		GAMESTATE->m_SongOptions = so;
+
+		if( Changed )
+			return false;
+	}
+
 	return true;
 }
 
@@ -182,7 +218,7 @@ bool ModeChoice::IsPlayable( CString *why ) const
 	return true;
 }
 
-void ModeChoice::ApplyToAllPlayers()
+void ModeChoice::ApplyToAllPlayers() const
 {
 	for( int pn=0; pn<NUM_PLAYERS; pn++ )
 		if( GAMESTATE->IsHumanPlayer(pn) )
@@ -192,7 +228,7 @@ void ModeChoice::ApplyToAllPlayers()
 		SCREENMAN->SetNewScreen( m_sScreen );
 }
 
-void ModeChoice::Apply( PlayerNumber pn )
+void ModeChoice::Apply( PlayerNumber pn ) const
 {
 	if( m_game != GAME_INVALID )
 		GAMESTATE->m_CurGame = m_game;
@@ -205,8 +241,7 @@ void ModeChoice::Apply( PlayerNumber pn )
 	if( m_sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 	if( m_sModifiers != "" )
-		for( int pn=0; pn<NUM_PLAYERS; pn++ )
-			GAMESTATE->ApplyModifiers( (PlayerNumber)pn, m_sModifiers );
+		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
