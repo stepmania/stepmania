@@ -135,8 +135,14 @@ void StepsID::FromSteps( const Steps *p )
 	{
 		st = p->m_StepsType;
 		dc = p->GetDifficulty();
-		sDescription = p->GetDescription();
-		uHash = p->GetHash();
+		if( dc == DIFFICULTY_EDIT )
+		{
+			sDescription = p->GetDescription();
+			uHash = p->GetHash();
+		} else {
+			sDescription = "";
+			uHash = 0;
+		}
 	}
 }
 
@@ -197,6 +203,9 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	{
 		pNode->GetAttrValue("Description", sDescription);
 		pNode->GetAttrValue("Hash", uHash);
+	} else {
+		sDescription = "";
+		uHash = 0;
 	}
 }
 
