@@ -132,6 +132,22 @@ void InputHandler_SDL::Update(float fDeltaTime)
 	}
 }
 
+
+void InputHandler_SDL::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+{
+	vDevicesOut.push_back( DEVICE_KEYBOARD );
+	vDescriptionsOut.push_back( "Keyboard" );
+
+	for( int i=0; i<SDL_NumJoysticks(); i++ )
+	{
+		if( SDL_JoystickOpened(i) )
+		{
+			vDevicesOut.push_back( InputDevice(DEVICE_JOY1+i) );
+			vDescriptionsOut.push_back( SDL_JoystickName(i) );
+		}
+	}
+}
+
 /*
 -----------------------------------------------------------------------------
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.

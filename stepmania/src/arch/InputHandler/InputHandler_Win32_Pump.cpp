@@ -46,6 +46,18 @@ void InputHandler_Win32_Pump::Update(float fDeltaTime)
 	}
 }
 
+void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+{
+	for(int i = 0; i < NUM_PUMPS; ++i)
+	{
+		if( dev[i].IsOpen() )
+		{
+			vDevicesOut.push_back( InputDevice(DEVICE_PUMP1+i) );
+			vDescriptionsOut.push_back( "Pump USB" );
+		}
+	}
+}
+
 /*
 -----------------------------------------------------------------------------
  Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.

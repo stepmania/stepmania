@@ -44,3 +44,8 @@ void RageInput::Update( float fDeltaTime )
 		Devices[i]->Update(fDeltaTime);
 }
 
+void RageInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+{
+	for(unsigned i = 0; i < Devices.size(); ++i)
+		Devices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
+}

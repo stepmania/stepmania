@@ -14,6 +14,7 @@ public:
 	void Update(float fDeltaTime);
 	InputHandler_SDL();
 	~InputHandler_SDL();
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 };
 
 

@@ -17,6 +17,8 @@
 #include "RageLog.h"
 #include "InputFilter.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
+#include "RageInput.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
@@ -59,6 +61,113 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 			GameInput GameI( (GameController)c, (GameButton)b );
 			if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
 				SetInputMap( DeviceI, GameI, 2 );   
+		}
+	}
+}
+
+struct AutoJoyMapping
+{
+	Game game;
+	char sDeviceDescription[64];
+	bool bIgnoreAxes;
+	int numMappings;
+	struct {
+		int deviceButton;
+		GameButton gb;
+	} mapping[32];
+};
+const AutoJoyMapping g_AutoJoyMappings[] = 
+{
+	{
+		GAME_DANCE,
+		"GIC USB Joystick",
+		false,
+		4,
+		{
+			{ JOY_16, DANCE_BUTTON_LEFT },
+			{ JOY_14, DANCE_BUTTON_RIGHT },
+			{ JOY_13, DANCE_BUTTON_UP },
+			{ JOY_15, DANCE_BUTTON_DOWN },
+		}
+	},
+	{
+		GAME_DANCE,
+		"4 axis 16 button joystick",	// likely a PC Magic Box
+		false,
+		4,
+		{
+			{ JOY_16, DANCE_BUTTON_LEFT },
+			{ JOY_14, DANCE_BUTTON_RIGHT },
+			{ JOY_13, DANCE_BUTTON_UP },
+			{ JOY_15, DANCE_BUTTON_DOWN },
+		}
+	},
+	{
+		GAME_DANCE,
+		"GamePad Pro USB ",	// yes, there is a space at the end
+		false,
+		12,
+		{
+			{ JOY_LEFT,		DANCE_BUTTON_LEFT },
+			{ JOY_RIGHT,	DANCE_BUTTON_RIGHT },
+			{ JOY_UP,		DANCE_BUTTON_UP },
+			{ JOY_DOWN,		DANCE_BUTTON_DOWN },
+			{ JOY_1,		DANCE_BUTTON_LEFT },
+			{ JOY_3,		DANCE_BUTTON_RIGHT },
+			{ JOY_4,		DANCE_BUTTON_UP },
+			{ JOY_2,		DANCE_BUTTON_DOWN },
+			{ JOY_5,		DANCE_BUTTON_UPLEFT },
+			{ JOY_6,		DANCE_BUTTON_UPRIGHT },
+			{ JOY_9,		DANCE_BUTTON_BACK },
+			{ JOY_10,		DANCE_BUTTON_START },
+		}
+	},
+};
+const int NUM_AUTO_JOY_MAPPINGS = sizeof(g_AutoJoyMappings) / sizeof(g_AutoJoyMappings[0]);
+
+void InputMapper::AutoMapJoysticksForCurrentGame()
+{
+	vector<InputDevice> vDevices;
+	vector<CString> vDescriptions;
+	PREFSMAN->m_bIgnoreJoyAxes = false;
+	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+	for( unsigned i=0; i<vDevices.size(); i++ )
+	{
+		InputDevice device = vDevices[i];
+		CString sDescription = vDescriptions[i];
+		for( unsigned j=0; j<NUM_AUTO_JOY_MAPPINGS; j++ )
+		{
+			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
+
+			if( sDescription == mapping.sDeviceDescription )
+			{
+				PREFSMAN->m_bIgnoreJoyAxes |= mapping.bIgnoreAxes;
+
+				GameController gc = GAME_CONTROLLER_INVALID;
+				switch( device )
+				{
+				case DEVICE_JOY1:
+				case DEVICE_JOY3:
+				case DEVICE_PUMP1:
+					gc = GAME_CONTROLLER_1;	
+					break;
+				case DEVICE_JOY2:
+				case DEVICE_JOY4:
+				case DEVICE_PUMP2:
+					gc = GAME_CONTROLLER_2;	
+					break;
+				}
+				if( gc == GAME_CONTROLLER_INVALID )
+					continue;
+
+				for( unsigned k=0; k<mapping.numMappings; k++ )
+				{
+					DeviceInput di( device, mapping.mapping[k].deviceButton );
+					GameInput gi( gc, mapping.mapping[k].gb );
+					SetInputMap( di, gi, 1 );
+				}
+				break;
+			}
 		}
 	}
 }

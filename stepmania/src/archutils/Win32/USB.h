@@ -8,6 +8,7 @@ public:
 	~USBDevice();
 	int GetPadEvent();
 	bool Open(int VID, int PID, int num);
+	bool IsOpen();
 
 private:
 	HANDLE h;

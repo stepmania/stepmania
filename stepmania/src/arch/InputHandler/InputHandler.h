@@ -22,12 +22,14 @@
  * input for the same device; we have no method to allocate device numbers.
  * We don't need this now; I'll write it if it becomes needed.)
  */
+#include "RageInputDevice.h"	// for InputDevice
 
 class InputHandler
 {
 public:
 	virtual void Update(float fDeltaTime) { }
 	virtual ~InputHandler() { }
+	virtual void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut) = 0;
 };
 
 #endif

@@ -153,6 +153,9 @@ void ResetGame()
 	else
 		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 	PREFSMAN->m_bFirstRun = false;
+
+	if( PREFSMAN->m_bAutoMapJoysticks )
+		INPUTMAPPER->AutoMapJoysticksForCurrentGame();
 }
 
 static void GameLoop();
@@ -402,7 +405,6 @@ int main(int argc, char* argv[])
 	SONGINDEX	= new SongCacheIndex;
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
-
 	delete loading_window;		// destroy this before init'ing Display
 
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );

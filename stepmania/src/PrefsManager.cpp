@@ -96,6 +96,7 @@ PrefsManager::PrefsManager()
 	m_fDancePointsAccumulated = 0;
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
+	m_bAutoMapJoysticks = true;
 	
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -205,6 +206,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.GetValueB( "Options", "FirstRun",					m_bFirstRun );
+	ini.GetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -291,6 +293,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.SetValueB( "Options", "FirstRun",					m_bFirstRun );
+	ini.SetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

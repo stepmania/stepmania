@@ -24,7 +24,8 @@
 
 
 enum {
-	IO_IGNORE_AXES = 0,
+	IO_AUTO_MAP_JOYSTICKS = 0,
+	IO_IGNORE_AXES,
 	IO_DEDICATED_MENU_BUTTONS,
 	IO_AUTOPLAY,
 	IO_DELAYED_ESCAPE,
@@ -36,6 +37,7 @@ enum {
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "key/joy config",
  * preferably alongside button configuration. */
 OptionRow g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
+	OptionRow( "Auto Map\nJoysticks",	"OFF","ON (recommended)" ),
 	OptionRow( "Ignore\nJoy Axes",		"OFF","ON (for NTPad or DirectPad)" ),
 	OptionRow( "Menu\nButtons",			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
 	OptionRow( "AutoPlay",				"OFF","ON" ),
@@ -61,6 +63,7 @@ ScreenInputOptions::ScreenInputOptions() :
 
 void ScreenInputOptions::ImportOptions()
 {
+	m_iSelectedOption[0][IO_AUTO_MAP_JOYSTICKS]		= PREFSMAN->m_bAutoMapJoysticks ? 1:0;
 	m_iSelectedOption[0][IO_IGNORE_AXES]			= PREFSMAN->m_bIgnoreJoyAxes ? 1:0;
 	m_iSelectedOption[0][IO_DEDICATED_MENU_BUTTONS]	= PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1:0;
 	m_iSelectedOption[0][IO_AUTOPLAY]				= PREFSMAN->m_bAutoPlay;
@@ -74,6 +77,7 @@ void ScreenInputOptions::ImportOptions()
 
 void ScreenInputOptions::ExportOptions()
 {
+	PREFSMAN->m_bAutoMapJoysticks		= m_iSelectedOption[0][IO_AUTO_MAP_JOYSTICKS] == 1;
 	PREFSMAN->m_bIgnoreJoyAxes			= m_iSelectedOption[0][IO_IGNORE_AXES] == 1;
 	PREFSMAN->m_bOnlyDedicatedMenuButtons= m_iSelectedOption[0][IO_DEDICATED_MENU_BUTTONS] == 1;
 	PREFSMAN->m_bDelayedEscape			= m_iSelectedOption[0][IO_DELAYED_ESCAPE] == 1;

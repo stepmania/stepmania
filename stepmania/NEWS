@@ -48,6 +48,9 @@ NEW FEATURE:  New parameters for background changes: rate, fade old, loop,
 	rewind.
 CHANGE:  Background playback speed scaled by song rate, so movies stay in 
 	sync (although syncing isn't very accurate at some song rates).
+NEW FEATURE:  Automatic mapping of joysticks.
+NEW FEATURE:  Automatically adujst graphic detail on first run.
+NEW FEATURE:  #DISPLAYBPM tag for SM and DWI files.
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

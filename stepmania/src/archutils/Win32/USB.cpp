@@ -108,6 +108,11 @@ bool USBDevice::Open(int VID, int PID, int num)
 	return h != INVALID_HANDLE_VALUE;
 }
 
+bool USBDevice::IsOpen()
+{
+	return h != INVALID_HANDLE_VALUE;
+}
+
 int USBDevice::GetPadEvent()
 {
 	if(h == INVALID_HANDLE_VALUE)

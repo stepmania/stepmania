@@ -12,6 +12,7 @@ public:
 	void Update(float fDeltaTime);
 	InputHandler_Win32_Pump();
 	~InputHandler_Win32_Pump();
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 };
 
 #endif

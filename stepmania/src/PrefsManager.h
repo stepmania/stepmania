@@ -79,6 +79,7 @@ public:
 	float			m_fDancePointsAccumulated;
 	bool			m_bUseUnlockSystem;
 	bool			m_bFirstRun;
+	bool			m_bAutoMapJoysticks;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;

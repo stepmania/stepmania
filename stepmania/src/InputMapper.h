@@ -40,6 +40,7 @@ public:
 	void ClearFromInputMap( GameInput GameI, int iSlotIndex );
 
 	void AddDefaultMappingsForCurrentGameIfUnmapped();
+	void AutoMapJoysticksForCurrentGame();
 
 	bool IsMapped( DeviceInput DeviceI );
 	bool IsMapped( GameInput GameI );
