@@ -498,6 +498,8 @@ void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool
 		ToPlay->HasTiming = true;
 		ToPlay->timing_data = *pTiming;
 	}
+	else
+		ToPlay->timing_file = SetExtension( file, "sm" );
 
 	ToPlay->force_loop = force_loop;
 	ToPlay->start_sec = start_sec;
