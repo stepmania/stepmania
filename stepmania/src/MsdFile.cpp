@@ -145,7 +145,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 		return false;
 	}
 
-	int iBufferSize = GetFileSizeInBytes(sNewPath) + 1000; // +1000 because sometimes the bytes read is > filelength.  Why?
+	int iBufferSize = GetFileSizeInBytes(sNewPath);
 
 	// allocate a string to hold the file
 	char* szFileString = new char[iBufferSize];
@@ -154,7 +154,6 @@ bool MsdFile::ReadFile( CString sNewPath )
 	close( fd );
 
 	ASSERT( iBufferSize > iBytesRead );
-	szFileString[iBytesRead] = '\0';
 
 	ReadBuf(szFileString, iBytesRead);
 
