@@ -113,7 +113,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			{
 				CStringArray sBits;
 				split( sParams[j], "=", sBits, false );
-				if( sBits.size() == 0 )
+				if( sBits.size() < 2 )
 					continue;
 
 				TrimLeft( sBits[0] );
