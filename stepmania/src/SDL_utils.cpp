@@ -14,6 +14,7 @@
 #include "SDL_endian.h"
 #include "SDL_image.h"
 #include "RageFile.h"
+#include "RageLog.h"
 
 /* Pull in all of our SDL libraries here. */
 #ifdef _XBOX
@@ -512,6 +513,8 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	}
 
 	SDL_Surface *srf = SDL_LoadImage(sIconFile);
+	if( srf == NULL )
+		return;
 
 	// Why is this needed?  It's goofing up paletted images 
 	// that use a color key other than pink. -Chris
@@ -1130,6 +1133,7 @@ SDL_Surface *SDL_LoadImage( const CString &sPath )
 	RageFile *f = new RageFile;
 	if( !f->Open(sPath) )
 	{
+		LOG->Trace("Couldn't open %s: %s", sPath.c_str(), f->GetError().c_str() );
 		delete f;
 		return NULL;
 	}
