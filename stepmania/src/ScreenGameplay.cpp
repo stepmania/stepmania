@@ -1579,7 +1579,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( m_fLastBPS != GAMESTATE->m_fCurBPS && !m_BPMDisplay.GetHidden() )
 	{
 		m_fLastBPS = GAMESTATE->m_fCurBPS;
-		m_BPMDisplay.SetBPM( GAMESTATE->m_fCurBPS * 60.0f );
+		m_BPMDisplay.SetConstantBpm( GAMESTATE->m_fCurBPS * 60.0f );
 	}
 
 	//

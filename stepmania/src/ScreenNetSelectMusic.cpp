@@ -485,7 +485,7 @@ void ScreenNetSelectMusic::MusicChanged()
 			UpdateDifficulties( pn );
 		return;
 	} 
-	m_BPMDisplay.SetBPM( GAMESTATE->m_pCurSong );
+	m_BPMDisplay.SetBpmFromSong( GAMESTATE->m_pCurSong );
 
 	FOREACH_EnabledPlayer (pn)
 	{

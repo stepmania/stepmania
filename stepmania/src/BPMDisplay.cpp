@@ -92,13 +92,6 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	const vector<float> &BPMS = bpms.vfBpms;
 
-	if( (int) BPMS.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
-	{
-		m_BPMS.push_back( -1 );
-		m_textBPM.SetText( "Various" );
-		return;
-	}
-
 	bool AllIdentical = true;
 	for( unsigned i = 0; i < BPMS.size(); ++i )
 	{
@@ -181,7 +174,7 @@ void BPMDisplay::NoBPM()
 	m_sprLabel->SetDiffuse( NORMAL_COLOR );
 }
 
-void BPMDisplay::SetBPM( const Song* pSong )
+void BPMDisplay::SetBpmFromSong( const Song* pSong )
 {
 	ASSERT( pSong );
 	switch( pSong->m_DisplayBPMType )
@@ -203,7 +196,7 @@ void BPMDisplay::SetBPM( const Song* pSong )
 	}
 }
 
-void BPMDisplay::SetBPM( const Course* pCourse )
+void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
 	ASSERT( pCourse );
 
@@ -218,11 +211,18 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 	m_fCycleTime = 0.2f;
 }
 
-void BPMDisplay::SetBPM( float fBPM )
+void BPMDisplay::SetConstantBpm( float fBPM )
 {
 	DisplayBpms bpms;
 	bpms.Add( fBPM );
 	SetBPMRange( bpms );
+}
+
+void BPMDisplay::SetVarious()
+{
+	m_BPMS.clear();
+	m_BPMS.push_back( -1 );
+	m_textBPM.SetText( "Various" );
 }
 
 void BPMDisplay::DrawPrimitives()

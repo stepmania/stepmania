@@ -20,11 +20,12 @@ public:
 	void Load();
 	virtual void Update( float fDeltaTime ); 
 	virtual void DrawPrimitives(); 
-	void SetBPM( const Song* pSong );
-	void SetBPM( const Course* pCourse );
-	void SetBPM( float fBPM );
+	void SetBpmFromSong( const Song* pSong );
+	void SetBpmFromCourse( const Course* pCourse );
+	void SetConstantBpm( float fBPM );
 	void CycleRandomly();
 	void NoBPM();
+	void SetVarious();
 
 protected:
 	float GetActiveBPM() const;

@@ -1510,7 +1510,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 			else
 			{
-				m_BPMDisplay.SetBPM( pSong );
+				m_BPMDisplay.SetBpmFromSong( pSong );
 			}
 
 			g_sCDTitlePath = pSong->GetCDTitlePath();
@@ -1636,7 +1636,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
 
-		m_BPMDisplay.SetBPM( pCourse );
+		if( (int)pTrail->m_vEntries.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+			m_BPMDisplay.SetVarious();
+		else
+			m_BPMDisplay.SetBpmFromCourse( pCourse );
 
 		m_DifficultyDisplay.UnsetDifficulties();
 

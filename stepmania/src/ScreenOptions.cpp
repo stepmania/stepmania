@@ -324,7 +324,17 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
 	{
-		if( SHOW_BPM_IN_SPEED_TITLE )
+		bool bShowBpmInSpeedTitle = SHOW_BPM_IN_SPEED_TITLE;
+
+		if( GAMESTATE->m_pCurCourse )
+		{
+			Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			const int iNumCourseEntries = pTrail->m_vEntries.size();
+			if( iNumCourseEntries > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+				bShowBpmInSpeedTitle = false;
+		}
+
+		if( bShowBpmInSpeedTitle )
 		{
 			DisplayBpms bpms;
 			if( GAMESTATE->m_pCurSong )
@@ -341,9 +351,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 				pTrail->GetDisplayBpms( bpms );
 			}
 
-			if( (int) bpms.vfBpms.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
-			{}	// add nothing
-			else if( bpms.IsSecret() )
+			if( bpms.IsSecret() )
 				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
 			else if( bpms.BpmIsConstant() )
 				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );
