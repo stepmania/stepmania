@@ -2426,8 +2426,8 @@ extern "C" {
 
 /*************************************************************/
 
-#ifndef GL_VERSION_1_2
-#define GL_VERSION_1_2 1
+// #ifndef GL_VERSION_1_2
+// #define GL_VERSION_1_2 1
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glBlendColor (GLclampf, GLclampf, GLclampf, GLclampf);
 GLAPI void APIENTRY glBlendEquation (GLenum);
@@ -2506,10 +2506,10 @@ typedef void (APIENTRY * PFNGLRESETMINMAXPROC) (GLenum target);
 typedef void (APIENTRY * PFNGLTEXIMAGE3DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
 typedef void (APIENTRY * PFNGLTEXSUBIMAGE3DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
 typedef void (APIENTRY * PFNGLCOPYTEXSUBIMAGE3DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-#endif
+// #endif
 
-#ifndef GL_VERSION_1_3
-#define GL_VERSION_1_3 1
+// #ifndef GL_VERSION_1_3
+// #define GL_VERSION_1_3 1
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glActiveTexture (GLenum);
 GLAPI void APIENTRY glClientActiveTexture (GLenum);
@@ -2604,10 +2604,10 @@ typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC) (GLenum target, GLint
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC) (GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data);
 typedef void (APIENTRY * PFNGLGETCOMPRESSEDTEXIMAGEPROC) (GLenum target, GLint level, void *img);
-#endif
+// #endif
 
-#ifndef GL_VERSION_1_4
-#define GL_VERSION_1_4 1
+// #ifndef GL_VERSION_1_4
+// #define GL_VERSION_1_4 1
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glBlendFuncSeparate (GLenum, GLenum, GLenum, GLenum);
 GLAPI void APIENTRY glFogCoordf (GLfloat);
@@ -2700,7 +2700,7 @@ typedef void (APIENTRY * PFNGLWINDOWPOS3IPROC) (GLint x, GLint y, GLint z);
 typedef void (APIENTRY * PFNGLWINDOWPOS3IVPROC) (const GLint *v);
 typedef void (APIENTRY * PFNGLWINDOWPOS3SPROC) (GLshort x, GLshort y, GLshort z);
 typedef void (APIENTRY * PFNGLWINDOWPOS3SVPROC) (const GLshort *v);
-#endif
+// #endif
 
 #ifndef GL_ARB_multitexture
 #define GL_ARB_multitexture 1
