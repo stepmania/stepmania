@@ -34,7 +34,8 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 		{
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
-			return ssprintf( "%s %% Complete", sStepsType.c_str() );
+			CString sType = GAMESTATE->IsCourseMode() ? "Courses" : "Songs";
+			return ssprintf( "%s %s %%", sStepsType.c_str(), sType.c_str() );
 		}
 	case PERCENT_COMPLETE_EASY:
 	case PERCENT_COMPLETE_MEDIUM:
