@@ -18,7 +18,7 @@ void OptionsCursor::Load( CString sType, Element elem )
 	this->AddChild( &m_sprLeft );
 	this->AddChild( &m_sprRight );
 
-	CString sPath = THEME->GetPathG(sType,elem==cursor?"cursor":"underline");
+	CString sPath = THEME->GetPathG( sType, ssprintf("%s 3x2",elem==cursor?"cursor":"underline") );
 
 	m_sprLeft.Load( sPath );
 	m_sprMiddle.Load( sPath );
