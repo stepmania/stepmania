@@ -92,6 +92,23 @@ static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const float *ma
 	}
 }
 
+static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
+{
+	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
+	ASSERT_M( pPref != NULL, pConfOption->name );
+
+	if( bToSel )
+	{
+		const CString sVal = pPref->ToString();
+		iSel = atoi( sVal );
+	}
+	else
+	{
+		const CString sVal = ToString(iSel);
+		pPref->FromString( sVal );
+	}
+}
+
 /* "sel" is the selection in the menu. */
 static void MoveData( int &sel, int &opt, bool ToSel )
 {
@@ -249,26 +266,8 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
-static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
-{
-	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
-	ASSERT_M( pPref != NULL, pConfOption->name );
-
-	if( bToSel )
-	{
-		const CString sVal = pPref->ToString();
-		iSel = atoi( sVal );
-	}
-	else
-	{
-		const CString sVal = ToString(iSel);
-		pPref->FromString( sVal );
-	}
-}
-
 /* Appearance options */
 MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
-MOVE( Caution,				PREFSMAN->m_bShowCaution );
 MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
 MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 MOVE( WheelSections,		(int &) PREFSMAN->m_MusicWheelUsesSections );
@@ -531,7 +530,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "Announcer",				Announcer, AnnouncerChoices ) );
 	ADD( ConfOption( "Default\nNoteSkin",		DefaultNoteSkin, DefaultNoteSkinChoices ) );
 	ADD( ConfOption( "Instructions",			Instructions,		"SKIP","SHOW") );
-	ADD( ConfOption( "Caution",					Caution,			"SKIP","SHOW") );
+	ADD( ConfOption( "ShowCaution",				MovePref,			"SKIP","SHOW") );
 	ADD( ConfOption( "Oni Score\nDisplay",		OniScoreDisplay,	"PERCENT","DANCE POINTS") );
 	ADD( ConfOption( "Song\nGroup",				SongGroup,			"ALL MUSIC","CHOOSE") );
 	ADD( ConfOption( "Wheel\nSections",			WheelSections,		"NEVER","ALWAYS", "ABC ONLY") );
