@@ -21,7 +21,6 @@ struct RageTexturePrefs
 {
 	bool bForceReload;
 	int iMaxSize;
-	int iTextureColorDepth;
 	int iMipMaps;
 	int iAlphaBits;
 	bool bDither;
@@ -31,7 +30,6 @@ struct RageTexturePrefs
 	{
 		bForceReload = false;
 		iMaxSize = 2048;
-		iTextureColorDepth = 16;
 		iMipMaps = 4;
 		iAlphaBits = 4;
 		bDither = false;
