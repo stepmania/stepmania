@@ -168,6 +168,14 @@ void GameState::BeginGame()
 	m_iNumTimesThroughAttract = 0;
 }
 
+void CheckStageStats( const StageStats &ss, int p )
+{
+	RAGE_ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("%i", ss.playMode) );
+	RAGE_ASSERT_M( ss.style < NUM_STYLES, ssprintf("%i", ss.style) );
+	RAGE_ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("%i", ss.pSteps[p]->GetDifficulty()) );
+	RAGE_ASSERT_M( ss.iMeter[p] < MAX_METER+1, ssprintf("%i", ss.iMeter[p]) );
+}
+
 void GameState::EndGame()
 {
 	// Update profile stats
@@ -188,19 +196,25 @@ void GameState::EndGame()
 	pMachineProfile->m_iTotalPlays++;
 	pMachineProfile->m_iCurrentCombo = 0;
 
+	CHECKPOINT;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !IsHumanPlayer(p) )
 			continue;
 
+		CHECKPOINT;
 		unsigned i;
 		for( i=0; i<g_vPlayedStageStats.size(); i++ )
 		{
 			const StageStats& ss = g_vPlayedStageStats[i];
+			CheckStageStats( ss, p );
+			CHECKPOINT;
+
 			pMachineProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
 			pMachineProfile->m_iNumSongsPlayedByStyle[ss.style]++;
 			pMachineProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-			pMachineProfile->m_iNumSongsPlayedByMeter[ss.iMeter[p]]++;
+			int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
+			pMachineProfile->m_iNumSongsPlayedByMeter[ iMeter ]++;
 		}
 
 		Profile* pPlayerProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
@@ -217,15 +231,21 @@ void GameState::EndGame()
 			for( i=0; i<g_vPlayedStageStats.size(); i++ )
 			{
 				const StageStats& ss = g_vPlayedStageStats[i];
+				CheckStageStats( ss, p );
+				CHECKPOINT;
+
 				pPlayerProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
 				pPlayerProfile->m_iNumSongsPlayedByStyle[ss.style]++;
 				pPlayerProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-				pPlayerProfile->m_iNumSongsPlayedByMeter[ss.iMeter[p]]++;
+				int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
+				pPlayerProfile->m_iNumSongsPlayedByMeter[iMeter]++;
 			}
 		}
 
+		CHECKPOINT;
 		MEMCARDMAN->FlushAllDisks();
 	}
+	CHECKPOINT;
 
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineScoresToDisk();
