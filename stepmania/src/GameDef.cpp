@@ -20,7 +20,9 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
-#define NOTESKIN_DIR "NoteSkins\\"
+
+const CString NOTESKIN_DIR  = "NoteSkins\\";
+
 
 CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) const
 {
@@ -44,7 +46,7 @@ CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) const
 
 CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) const
 {
-	const CString sSkinDir	= ssprintf(NOTESKIN_DIR "%s\\%s\\", m_szName, sSkinName);
+	const CString sSkinDir	= NOTESKIN_DIR + ssprintf("%s\\%s\\", m_szName, sSkinName);
 	const CString sGraphicSuffix = ElementToGraphicSuffix( gbg );
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
@@ -64,8 +66,7 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButto
 
 void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapColorsOut ) const
 {
-	const CString sSkinDir	= ssprintf(NOTESKIN_DIR "%s\\%s\\", m_szName, sSkinName);
-
+	const CString sSkinDir	= NOTESKIN_DIR + ssprintf("%s\\%s\\", m_szName, sSkinName);
 	const CString sColorsFilePath = sSkinDir + sButtonName + " Tap.colors";
 
 	FILE* fp = fopen( sColorsFilePath, "r" );
@@ -97,7 +98,7 @@ void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonN
 
 void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldColorsOut ) const
 {
-	const CString sSkinDir	= ssprintf(NOTESKIN_DIR "%s\\%s\\", m_szName, sSkinName);
+	const CString sSkinDir	= NOTESKIN_DIR + ssprintf("%s\\%s\\", m_szName, sSkinName);
 
 	const CString sColorsFilePath = sSkinDir + sButtonName + " Hold.colors";
 

@@ -46,8 +46,8 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 
 	sPath = GAMEMAN->GetPathTo(iColNum, GRAPHIC_HOLD_PARTS);
 	m_sprHoldParts.Load( sPath );
-	if( m_sprHoldParts.GetNumStates() != 16 )
-		throw RageException( "Hold Parts '%s' must have 16 frames.", sPath );
+	if( m_sprHoldParts.GetTexture()->GetFramesWide() != 4  ||  m_sprHoldParts.GetTexture()->GetFramesHigh() != 2 )
+		throw RageException( "Hold Parts '%s' must have 4x2 frames.", sPath );
 
 	m_sprTapParts.StopAnimating();
 	m_sprTapParts.TurnShadowOff();
@@ -506,7 +506,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// draw from bottom to top
 	const float fFrameWidth = m_sprHoldParts.GetUnzoomedWidth();
 	const float fFrameHeight = m_sprHoldParts.GetUnzoomedHeight();
-	const float fBodyHeight = fFrameHeight*4;
+	const float fBodyHeight = fFrameHeight*2;
 
 	const float fYHead = min(fStartYPos, fEndYPos);		// stop drawing here
 	const float fYTail = max(fStartYPos, fEndYPos);		// the center the tail
@@ -540,8 +540,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fXBottomRight	= fXBottom + fFrameWidth/2;
 		const float fTopDistFromTailTop		= fYTop - fYTailTop;
 		const float fBottomDistFromTailTop	= fYBottom - fYTailTop;
-		const float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fFrameHeight, 0.25f, 0.5f );
-		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fFrameHeight, 0.25f, 0.5f );
+		const float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fFrameHeight, 0.5f, 1.0f );
+		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fFrameHeight, 0.5f, 1.0f );
 		const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
 		const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
 		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );
