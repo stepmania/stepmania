@@ -52,7 +52,7 @@ void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 
 			if( c == NUM_COLUMNS-1 && r == NUM_ROWS-1 && Songs.size() != unsigned(NUM_COLUMNS*NUM_ROWS) )
 			{
-				sText += ssprintf( "%lu more.....", Songs.size() - NUM_COLUMNS * NUM_ROWS + 1 );
+				sText += ssprintf( "%i more.....", int(Songs.size() - NUM_COLUMNS * NUM_ROWS + 1) );
 				continue;
 			}
 
