@@ -1506,27 +1506,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			return;
 		}
 
-		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
-		{
-			m_textDebug.SetText( "Continue holding BACK to quit" );
-			m_textDebug.StopTweening();
-			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			m_textDebug.BeginTweening( 1/8.f );
-			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-			return;
-		}
-		
-		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_RELEASE )
-		{
-			m_textDebug.StopTweening();
-			m_textDebug.BeginTweening( 1/8.f );
-			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			return;
-		}
-		
 		if( MenuI.button == MENU_BUTTON_BACK && 
 			((!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
-			(DeviceI.device==DEVICE_KEYBOARD && (type==IET_SLOW_REPEAT||type==IET_FAST_REPEAT))  ||
+			DeviceI.device==DEVICE_KEYBOARD  ||
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
 		{
 			m_DancingState = STATE_OUTRO;
@@ -1548,6 +1530,24 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 			this->ClearMessageQueue();
 			m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
+			return;
+		}
+
+		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
+		{
+			m_textDebug.SetText( "Continue holding BACK to quit" );
+			m_textDebug.StopTweening();
+			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+			m_textDebug.BeginTweening( 1/8.f );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+			return;
+		}
+		
+		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_RELEASE )
+		{
+			m_textDebug.StopTweening();
+			m_textDebug.BeginTweening( 1/8.f );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			return;
 		}
 	}
