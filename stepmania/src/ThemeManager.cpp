@@ -236,7 +236,7 @@ try_element_again:
 	ret = GetPathTo( BASE_THEME_NAME, category, sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
-  else if( bOptional )
+	else if( bOptional )
 		return "";
 
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
