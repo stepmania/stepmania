@@ -436,49 +436,66 @@ int RageFile::Seek( int offset, int whence )
 	return Seek( (int) offset );
 }
 
-void FileReading::ReadBytes( RageFile &f, void *buf, int size )
+void FileReading::ReadBytes( RageFile &f, void *buf, int size, CString &sError )
 {
+	if( sError.size() != 0 )
+		return;
+
 	int ret = f.Read( buf, size );
 	if( ret == -1 )
-		throw FatalError( f.GetError() );
-
-	if( ret < size )
-		throw UnexpectedEOF();
+		sError = f.GetError();
+	else if( ret < size )
+		sError = "Unexpected end of file";
 }
 
-uint8_t FileReading::read_8( RageFile &f )
+uint8_t FileReading::read_8( RageFile &f, CString &sError )
 {
 	uint8_t val;
-	ReadBytes( f, &val, sizeof(uint8_t) );
-	return val;
+	ReadBytes( f, &val, sizeof(uint8_t), sError );
+	if( sError.size() == 0 )
+		return val;
+	else
+		return 0;
 }
 
-uint16_t FileReading::read_u16_le( RageFile &f )
+uint16_t FileReading::read_u16_le( RageFile &f, CString &sError )
 {
 	uint16_t val;
-	ReadBytes( f, &val, sizeof(uint16_t) );
-	return Swap16LE( val );
+	ReadBytes( f, &val, sizeof(uint16_t), sError );
+	if( sError.size() == 0 )
+		return Swap16LE( val );
+	else
+		return 0;
 }
 
-int16_t FileReading::read_16_le( RageFile &f )
+int16_t FileReading::read_16_le( RageFile &f, CString &sError )
 {
 	int16_t val;
-	ReadBytes( f, &val, sizeof(int16_t) );
-	return Swap16LE( val );
+	ReadBytes( f, &val, sizeof(int16_t), sError );
+	if( sError.size() == 0 )
+		return Swap16LE( val );
+	else
+		return 0;
 }
 
-uint32_t FileReading::read_u32_le( RageFile &f )
+uint32_t FileReading::read_u32_le( RageFile &f, CString &sError )
 {
 	uint32_t val;
-	ReadBytes( f, &val, sizeof(uint32_t) );
-	return Swap32LE( val );
+	ReadBytes( f, &val, sizeof(uint32_t), sError );
+	if( sError.size() == 0 )
+		return Swap32LE( val );
+	else
+		return 0;
 }
 
-int32_t FileReading::read_32_le( RageFile &f )
+int32_t FileReading::read_32_le( RageFile &f, CString &sError )
 {
 	int32_t val;
-	ReadBytes( f, &val, sizeof(int32_t) );
-	return Swap32LE( val );
+	ReadBytes( f, &val, sizeof(int32_t), sError );
+	if( sError.size() == 0 )
+		return Swap32LE( val );
+	else
+		return 0;
 }
 
 /*

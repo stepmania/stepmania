@@ -37,7 +37,6 @@ private:
 
 	WavReader *m_pImpl;
 
-	void OpenInternal();
 	int SetPosition( int ms );
 };
 

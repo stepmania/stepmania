@@ -16,56 +16,68 @@ enum
 	COMP_BI_BITFIELDS
 };
 
-struct NotBMP: public RageException  { NotBMP(): RageException("not a BMP") { } };
 
-static RageSurface *LoadBMP( RageFile &f, RageSurface *&ret )
+/* When returning error, the first error encountered takes priority. */
+#define FATAL_ERROR(s) \
+{ \
+	if( sError.size() == 0 ) sError = (s); \
+	return RageSurfaceUtils::OPEN_FATAL_ERROR; \
+}
+
+static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, CString &sError )
 {
 	char magic[2];
-	ReadBytes( f, magic, 2 );
+	ReadBytes( f, magic, 2, sError );
 	if( magic[0] != 'B' || magic[1] != 'M' )
-		throw NotBMP();
+	{
+		sError = "not a BMP";
+		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
+	}
 
-	read_u32_le( f ); /* file size */
-	read_u32_le( f ); /* unused */
-	uint32_t iDataOffset = read_u32_le( f );
-	uint32_t iHeaderSize = read_u32_le( f );
+	img = NULL;
+
+	read_u32_le( f, sError ); /* file size */
+	read_u32_le( f, sError ); /* unused */
+	uint32_t iDataOffset = read_u32_le( f, sError );
+	uint32_t iHeaderSize = read_u32_le( f, sError );
+
 
 	uint32_t iWidth, iHeight, iPlanes, iBPP, iCompression = COMP_BI_RGB, iColors = 0;
 	if( iHeaderSize == 12 )
 	{
 		/* OS/2 format */
-		iWidth = read_u16_le( f );
-		iHeight = read_u16_le( f );
-		iPlanes = read_u16_le( f );
-		iBPP = read_u16_le( f );
+		iWidth = read_u16_le( f, sError );
+		iHeight = read_u16_le( f, sError );
+		iPlanes = read_u16_le( f, sError );
+		iBPP = read_u16_le( f, sError );
 	}
 	else if( iHeaderSize == 40 )
 	{
-		iWidth = read_u32_le( f );
-		iHeight = read_u32_le( f );
-		iPlanes = read_u16_le( f );
-		iBPP = read_u16_le( f );
-		iCompression = read_u32_le( f );
-		read_u32_le( f ); /* bitmap size */
-		read_u32_le( f ); /* horiz resolution */
-		read_u32_le( f ); /* vert resolution */
-		iColors = read_u32_le( f );
-		read_u32_le( f ); /* "important" colors */
+		iWidth = read_u32_le( f, sError );
+		iHeight = read_u32_le( f, sError );
+		iPlanes = read_u16_le( f, sError );
+		iBPP = read_u16_le( f, sError );
+		iCompression = read_u32_le( f, sError );
+		read_u32_le( f, sError ); /* bitmap size */
+		read_u32_le( f, sError ); /* horiz resolution */
+		read_u32_le( f, sError ); /* vert resolution */
+		iColors = read_u32_le( f, sError );
+		read_u32_le( f, sError ); /* "important" colors */
 	}
 	else
-		throw FatalError( ssprintf( "expected header size of 40, got %u", iHeaderSize ) );
+		FATAL_ERROR( ssprintf( "expected header size of 40, got %u", iHeaderSize ) );
 
 	if( iBPP <= 8 && iColors == 0 )
 		iColors = 1 << iBPP;
 	if( iPlanes != 1 )
-		throw FatalError( ssprintf( "expected one plane, got %u", iPlanes ) );
+		FATAL_ERROR( ssprintf( "expected one plane, got %u", iPlanes ) );
 	if( iBPP != 1 && iBPP != 4 && iBPP != 8 && iBPP != 16 && iBPP != 24 && iBPP != 32 )
-		throw FatalError( ssprintf( "unsupported bpp %u", iBPP ) );
+		FATAL_ERROR( ssprintf( "unsupported bpp %u", iBPP ) );
 	if( iCompression != COMP_BI_RGB && iCompression != COMP_BI_BITFIELDS )
-		throw FatalError( ssprintf( "unsupported compression %u", iCompression ) );
+		FATAL_ERROR( ssprintf( "unsupported compression %u", iCompression ) );
 
 	if( iCompression == COMP_BI_BITFIELDS && iBPP <= 8 )
-		throw FatalError( ssprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
+		FATAL_ERROR( ssprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
 
 	int iFileBPP = iBPP;
 	iBPP = max( iBPP, 8u );
@@ -92,35 +104,42 @@ static RageSurface *LoadBMP( RageFile &f, RageSurface *&ret )
 
 	if( iCompression == COMP_BI_BITFIELDS )
 	{
-		Rmask = read_u32_le( f );
-		Gmask = read_u32_le( f );
-		Bmask = read_u32_le( f );
+		Rmask = read_u32_le( f, sError );
+		Gmask = read_u32_le( f, sError );
+		Bmask = read_u32_le( f, sError );
 	}
 
-	RageSurface *img = CreateSurface( iWidth, iHeight, iBPP, Rmask, Gmask, Bmask, Amask );
+	/* Stop on error before we use any of the values we just read. */
+	if( sError.size() != 0 )
+		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 
-try { /* file reading may throw */
+	img = CreateSurface( iWidth, iHeight, iBPP, Rmask, Gmask, Bmask, Amask );
+
 	if( iBPP == 8 )
 	{
 		RageSurfaceColor Palette[256];
 		ZERO( Palette );
 
 		if( iColors > 256 )
-			throw FatalError( ssprintf( "unexpected colors %i", iColors ) );
+			FATAL_ERROR( ssprintf( "unexpected colors %i", iColors ) );
 
 		for( unsigned i = 0; i < iColors; ++i )
 		{
-			Palette[i].b = read_8( f );
-			Palette[i].g = read_8( f );
-			Palette[i].r = read_8( f );
+			Palette[i].b = read_8( f, sError );
+			Palette[i].g = read_8( f, sError );
+			Palette[i].r = read_8( f, sError );
 			Palette[i].a = 0xFF;
 			/* Windows BMP palettes are padded to 32bpp.  */
 			if( iHeaderSize == 40 )
-				read_8( f );
+				read_8( f, sError );
 		}
 
 		memcpy( img->fmt.palette->colors, Palette, sizeof(Palette) );
 	}
+
+	/* Stop on error before we seek, so we don't return the wrong error message. */
+	if( sError.size() != 0 )
+		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 
 	int iFilePitch = iFileBPP * iWidth; // in bits
 	iFilePitch = (iFilePitch+7) / 8; // in bytes: round up
@@ -129,9 +148,9 @@ try { /* file reading may throw */
 	{
 		int ret = f.Seek( iDataOffset );
 		if( ret == -1 )
-			throw FatalError( f.GetError() );
+			FATAL_ERROR( f.GetError() );
 		if( ret != (int) iDataOffset )
-			throw UnexpectedEOF();
+			FATAL_ERROR( "Unexpected end of file" );
 	}
 
 	for( int y = (int) iHeight-1; y >= 0; --y )
@@ -165,15 +184,11 @@ try { /* file reading may throw */
 		else
 			memcpy( pRow, buf.data(), img->pitch );
 	}
-} catch(...) {
-	delete img;
-	throw;
+
+	return sError.size() != 0? RageSurfaceUtils::OPEN_FATAL_ERROR: RageSurfaceUtils::OPEN_OK;
 }
 
-	return img;
-}
-
-RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSurface *&img, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 
@@ -183,17 +198,17 @@ RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSur
 		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 	}
 
-	try {
-		ret = LoadBMP( f, ret );
-	} catch( const NotBMP & ) {
-		error = "not a BMP";
-		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
-	} catch( const FatalError &err ) {
-		error = err.what();
-		return RageSurfaceUtils::OPEN_FATAL_ERROR;
+	RageSurfaceUtils::OpenResult ret;
+	img = NULL;
+	ret = LoadBMP( f, img, error );
+
+	if( ret != RageSurfaceUtils::OPEN_OK && img != NULL )
+	{
+		delete img;
+		img = NULL;
 	}
 
-	return RageSurfaceUtils::OPEN_OK;
+	return ret;
 }
 
 /*
