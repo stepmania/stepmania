@@ -228,7 +228,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG";
-				OTHER_LDFLAGS = "-lSDLmain -lpng -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = NO;
@@ -839,6 +838,12 @@
 				AA14ED180509F98600E3FAD7,
 				AA14ED190509F98600E3FAD7,
 				AA14ED1B0509FA1F00E3FAD7,
+				AA25D88B051B121C00D02EE9,
+				AA25D89A051B13C000D02EE9,
+				AA25D89B051B13C000D02EE9,
+				AA25D89C051B13C000D02EE9,
+				AA25D89D051B13C100D02EE9,
+				AA25D89E051B13C200D02EE9,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -954,9 +959,14 @@
 		};
 		AA14ED150509F94C00E3FAD7 = {
 			children = (
-				AA1C654B050D212D0073A143,
+				AA25D887051B121C00D02EE9,
 				AA14ED160509F98600E3FAD7,
 				AA14ED170509F98600E3FAD7,
+				AA25D882051B114700D02EE9,
+				AA25D884051B11C700D02EE9,
+				AA25D886051B121C00D02EE9,
+				AA25D888051B121C00D02EE9,
+				AA25D889051B121C00D02EE9,
 				AA14ED1A0509FA1F00E3FAD7,
 			);
 			isa = PBXGroup;
@@ -1585,6 +1595,78 @@
 			settings = {
 			};
 		};
+		AA25D882051B114700D02EE9 = {
+			isa = PBXFileReference;
+			name = libmad.dylib;
+			path = /usr/local/lib/libmad.dylib;
+			refType = 0;
+		};
+		AA25D884051B11C700D02EE9 = {
+			isa = PBXFileReference;
+			name = libogg.dylib;
+			path = /usr/local/lib/libogg.dylib;
+			refType = 0;
+		};
+		AA25D886051B121C00D02EE9 = {
+			isa = PBXFileReference;
+			name = libpng.3.1.2.5.dylib;
+			path = /usr/local/lib/libpng.3.1.2.5.dylib;
+			refType = 0;
+		};
+		AA25D887051B121C00D02EE9 = {
+			isa = PBXFileReference;
+			name = libSDLmain.a;
+			path = /usr/local/lib/libSDLmain.a;
+			refType = 0;
+		};
+		AA25D888051B121C00D02EE9 = {
+			isa = PBXFileReference;
+			name = libvorbis.dylib;
+			path = /usr/local/lib/libvorbis.dylib;
+			refType = 0;
+		};
+		AA25D889051B121C00D02EE9 = {
+			isa = PBXFileReference;
+			name = libvorbisfile.dylib;
+			path = /usr/local/lib/libvorbisfile.dylib;
+			refType = 0;
+		};
+		AA25D88B051B121C00D02EE9 = {
+			fileRef = AA25D887051B121C00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA25D89A051B13C000D02EE9 = {
+			fileRef = AA25D882051B114700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA25D89B051B13C000D02EE9 = {
+			fileRef = AA25D884051B11C700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA25D89C051B13C000D02EE9 = {
+			fileRef = AA25D886051B121C00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA25D89D051B13C100D02EE9 = {
+			fileRef = AA25D888051B121C00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA25D89E051B13C200D02EE9 = {
+			fileRef = AA25D889051B121C00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA272BF704C7B37A00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1797,6 +1879,7 @@
 				AA1C653A050C00CF0073A143,
 				AA157B32051677F000D02EE9,
 				AA157B31051677F000D02EE9,
+				AA1C654B050D212D0073A143,
 			);
 			isa = PBXGroup;
 			name = Installer;
