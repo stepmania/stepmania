@@ -22,7 +22,6 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 
 const CString BASE_THEME_NAME = "default";
-const CString FALLBACK_THEME_NAME = "fallback";
 const CString LANGUAGES_SUBDIR = "Languages/";
 const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = "Themes/";
@@ -36,6 +35,16 @@ const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 	"Sounds",
 	"Other"
 };
+
+
+struct Theme
+{
+	CString sThemeName;
+	IniFile iniMetrics;	// make this a pointer so we don't have to include IniFile here
+};
+// When looking for a metric or an element, search these from head to tail.
+deque<Theme> g_vThemes;
+
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
 static map<CString, CString> g_ThemePathCache[NUM_ELEMENT_CATEGORIES];
@@ -65,13 +74,8 @@ CString ClassAndElementToFileName( const CString &sClassName, const CString &sEl
 		return sClassName + " " + sElement;
 }
 
-
 ThemeManager::ThemeManager()
 {
-	m_pIniCurMetrics = new IniFile;
-	m_pIniBaseMetrics = new IniFile;
-	m_pIniFallbackMetrics = new IniFile;
-
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
 	
 	CStringArray arrayThemeNames;
@@ -80,8 +84,6 @@ ThemeManager::ThemeManager()
 
 ThemeManager::~ThemeManager()
 {
-	delete m_pIniCurMetrics;
-	delete m_pIniBaseMetrics;
 }
 
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
@@ -136,6 +138,29 @@ bool ThemeManager::DoesLanguageExist( CString sLanguage )
 	return false;
 }
 
+void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, CString sThemeName )
+{
+	static int depth = 0;
+	depth++;
+	ASSERT_M( depth < 20, "Circular NoteSkin fallback references detected." );
+
+	Theme t;
+	t.sThemeName = sThemeName;
+	t.iniMetrics.ReadFile( GetMetricsIniPath(sThemeName) );
+	t.iniMetrics.ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
+	if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
+		t.iniMetrics.ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
+
+	// read global fallback the current NoteSkin (if any)
+	CString sFallback;
+	if( t.iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
+		LoadThemeRecursive( theme, sFallback );
+
+	g_vThemes.push_front( t );
+	
+	depth--;
+}
+
 void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage )
 {
 	if( !DoesThemeExist(sThemeName) )
@@ -153,25 +178,16 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	for( i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
 		g_ThemePathCache[i].clear();
 
-	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
-	m_pIniBaseMetrics->Reset();
-	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(BASE_THEME_NAME) );
-	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
+	g_vThemes.clear();
 
-	m_pIniFallbackMetrics->Reset();
-	m_pIniFallbackMetrics->ReadFile( GetMetricsIniPath(FALLBACK_THEME_NAME) );
-	m_pIniFallbackMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniFallbackMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
+	// load base theme
+	LoadThemeRecursive( g_vThemes, BASE_THEME_NAME );
 
+	// load current theme
 	/* Don't bother loading m_pIniCurMetrics if it'll be the same data as BASE_THEME_NAME. */
-	m_pIniCurMetrics->Reset();
 	if( m_sCurThemeName.CompareNoCase(BASE_THEME_NAME) )
-	{
-		m_pIniCurMetrics->ReadFile( GetMetricsIniPath(m_sCurThemeName) );
-		m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
-		m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
-	}
+		LoadThemeRecursive( g_vThemes, m_sCurThemeName );
+
 
 	CString sMetric;
 	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
@@ -184,7 +200,7 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 		if( !re.Compare( sMetric, sBits ) )
 			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
 
-		m_pIniCurMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
+		g_vThemes.front().iniMetrics.SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 	
 	LOG->MapLog("theme", "Theme: %s", sThemeName.c_str());
@@ -379,24 +395,20 @@ CString ThemeManager::GetPath( ElementCategory category, CString sClassName, CSt
 	}
 	
 try_element_again:
-
-
-	// search the current theme
-	CString ret = GetPathToAndFallback( m_sCurThemeName, category, sClassName, sElement);
-	if( !ret.empty() )	// we found something
-	{
-		Cache[sFileName] = ret;
-		return ret;
-	}
-
-	// search the base theme
-	ret = GetPathToAndFallback( BASE_THEME_NAME, category, sClassName, sElement);
-	if( !ret.empty() )	// we found something
-	{
-		Cache[sFileName] = ret;
-		return ret;
-	}
 	
+	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
+		iter != g_vThemes.end();
+		iter++ )
+	{
+		// search the current theme
+		CString ret = GetPathToAndFallback( iter->sThemeName, category, sClassName, sElement );
+		if( !ret.empty() )	// we found something
+		{
+			Cache[sFileName] = ret;
+			return ret;
+		}
+	}
+
 	if( bOptional )
 	{
 		Cache[sFileName] = "";
@@ -479,28 +491,17 @@ bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString
 
 	CString sFallback;
 
-	if( m_pIniCurMetrics->GetValue(sClassName,sValueName,ret) )
-		return true;
-	if( m_pIniCurMetrics->GetValue(sClassName,"Fallback",sFallback) )
+	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
+		iter != g_vThemes.end();
+		iter++ )
 	{
-		if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
+		if( iter->iniMetrics.GetValue(sClassName,sValueName,ret) )
 			return true;
-	}
-
-	if( m_pIniBaseMetrics->GetValue(sClassName,sValueName,ret) )
-		return true;
-	if( m_pIniBaseMetrics->GetValue(sClassName,"Fallback",sFallback) )
-	{
-		if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
-			return true;
-	}
-
-	if( m_pIniFallbackMetrics->GetValue(sClassName,sValueName,ret) )
-		return true;
-	if( m_pIniFallbackMetrics->GetValue(sClassName,"Fallback",sFallback) )
-	{
-		if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
-			return true;
+		if( iter->iniMetrics.GetValue(sClassName,"Fallback",sFallback) )
+		{
+			if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
+				return true;
+		}
 	}
 
 	return false;
@@ -630,21 +631,14 @@ CString ThemeManager::GetPathToO( CString sFileName, bool bOptional ) { CString 
 
 void ThemeManager::GetModifierNames( set<CString>& AddTo )
 {
-	const IniFile::key *cur = m_pIniCurMetrics->GetKey( "OptionNames" );
-	const IniFile::key *base = m_pIniBaseMetrics->GetKey( "OptionNames" );
-	const IniFile::key *fallback = m_pIniFallbackMetrics->GetKey( "OptionNames" );
-
-	if( cur )
+	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
+		iter != g_vThemes.end();
+		iter++ )
+	{
+		const IniFile::key *cur = iter->iniMetrics.GetKey( "OptionNames" );
 		for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); ++iter )
 			AddTo.insert( iter->first );
-
-	if( base )
-		for( IniFile::key::const_iterator iter = base->begin(); iter != base->end(); ++iter )
-			AddTo.insert( iter->first );
-	
-	if( fallback )
-		for( IniFile::key::const_iterator iter = fallback->begin(); iter != fallback->end(); ++iter )
-			AddTo.insert( iter->first );
+	}
 }
 
 /*

@@ -6,10 +6,13 @@
 #include "RageTypes.h"
 #include "RageTimer.h"
 #include <set>
+#include <deque>
 
 class IniFile;
 
 enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, Other, NUM_ELEMENT_CATEGORIES };
+
+struct Theme;
 
 class ThemeManager
 {
@@ -56,6 +59,7 @@ public:
 	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 protected:
+	void LoadThemeRecursive( deque<Theme> &theme, CString sThemeName );
 	bool GetMetricRaw( CString sClassName, CString sValueName, CString &ret, int level=0 );
 	CString GetPathToAndFallback( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
 	CString GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
@@ -67,10 +71,6 @@ protected:
 
 	CString m_sCurThemeName;
 	CString m_sCurLanguage;
-
-	IniFile* m_pIniCurMetrics;	// make this a pointer so we don't have to include IniFile here
-	IniFile* m_pIniBaseMetrics;	// make this a pointer so we don't have to include IniFile here
-	IniFile* m_pIniFallbackMetrics;	// make this a pointer so we don't have to include IniFile here
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
