@@ -231,7 +231,7 @@ CString LoadedDriver::GetPath( const CString &path )
 static void NormalizePath( CString &sPath )
 {
 	FixSlashesInPlace( sPath );
-	CollapsePath( sPath );
+	CollapsePath( sPath, true );
 }
 
 bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; }
