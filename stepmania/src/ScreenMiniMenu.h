@@ -41,7 +41,7 @@ struct MenuRow
 #define PUSH( c )	if(c!=NULL) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);
 #undef PUSH
-		printf( "choices.size = %u", choices.size() );
+//		printf( "choices.size = %u", choices.size() );
 	}
 };
 
