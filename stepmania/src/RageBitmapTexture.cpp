@@ -142,6 +142,7 @@ void RageBitmapTexture::Create(
 			break;
 		default:
 			ASSERT(0);	// invalid iAlphaBits value
+			fmtTexture = D3DFMT_A4R4G4B4;	break;
 		}
 
 		break;
