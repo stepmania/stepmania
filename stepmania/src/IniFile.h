@@ -48,6 +48,7 @@ public:
 
 	//sets path of ini file to read and write from
 	void SetPath(CString newpath);
+	CString GetPath() const { return path; }
 
 	//reads ini file specified using IniFile::SetPath()
 	//returns true if successful, false otherwise
