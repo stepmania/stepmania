@@ -88,7 +88,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
-		NoteType nt = notedata.GetSmallestNoteTypeForMeasure( m );
+		NoteType nt = NoteDataUtil::GetSmallestNoteTypeForMeasure( notedata, m );
 
 		double fCurrentIncrementer;
 		switch( nt )
