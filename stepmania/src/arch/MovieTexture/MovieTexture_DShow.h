@@ -77,7 +77,7 @@ private:
 	void StopSkippingUpdates();
 	void CheckFrame();
 
-	unsigned GetTexHandle() { return m_uTexHandle; }
+	unsigned GetTexHandle() const { return m_uTexHandle; }
 	unsigned m_uTexHandle;
 
 	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
