@@ -590,7 +590,7 @@ void RageDisplay_D3D::ResolutionChanged()
 {
 #ifdef _XBOX
 	D3DVIEWPORT8 viewData = { 0,0,640,480, 0.f, 1.f };
-	g_pd3dDevice->SetViewport( &viewData0 );
+	g_pd3dDevice->SetViewport( &viewData );
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 #endif
