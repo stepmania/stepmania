@@ -198,15 +198,18 @@ void GameState::PlayersFinalized()
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
 	{
-		if( PROFILEMAN->IsUsingProfile(pn) )
+		if( !PROFILEMAN->IsUsingProfile(pn) )
+			continue;	// skip
+
+		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+
+		if( pProfile->m_bUsingProfileDefaultModifiers )
 		{
-			Profile* pProfile = PROFILEMAN->GetProfile(pn);
-			if( pProfile->m_bUsingProfileDefaultModifiers )
-			{
-				GAMESTATE->m_PlayerOptions[pn].Init();
-				GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
-			}
+			GAMESTATE->m_PlayerOptions[pn].Init();
+			GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
 		}
+		if( pProfile->m_PreferredDifficulty != DIFFICULTY_INVALID )
+			GAMESTATE->m_PreferredDifficulty[pn] = pProfile->m_PreferredDifficulty;
 	}
 
 
@@ -288,18 +291,27 @@ void GameState::EndGame()
 
 		CHECKPOINT;
 	}
-	CHECKPOINT;
-	MEMCARDMAN->FlushAllDisks();
-	CHECKPOINT;
-
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineProfile();
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_HumanPlayer( pn )
 	{
-		PROFILEMAN->SaveProfile( (PlayerNumber)p );
-		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
+		if( !PROFILEMAN->IsUsingProfile(pn) )
+			continue;
+
+		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+
+		// persist current settings
+		pProfile->m_PreferredDifficulty = m_PreferredDifficulty[pn];
+
+		PROFILEMAN->SaveProfile( pn );
+		PROFILEMAN->UnloadProfile( pn );
 	}
+
+	// Reset the USB storage device numbers -after- saving
+	CHECKPOINT;
+	MEMCARDMAN->FlushAllDisks();
+	CHECKPOINT;
 
 	SONGMAN->FreeAllLoadedFromProfiles();
 }
