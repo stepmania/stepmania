@@ -494,6 +494,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 
+	PREV_SCREEN.Load( sName, "PrevScreen" );
+	
 	ASSERT( GAMESTATE->m_pCurSong );
 	ASSERT( GAMESTATE->m_pCurSteps[0] );
 }
@@ -1506,7 +1508,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		GAMESTATE->m_bEditing = false;
 		break;
 	case SM_BackFromMainMenu:

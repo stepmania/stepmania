@@ -16,6 +16,7 @@
 #include "NoteField.h"
 #include "song.h"
 #include "Steps.h"
+#include "ThemeMetric.h"
 
 const int NUM_ACTION_MENU_ITEMS = 23;
 const int NUM_NAMING_MENU_ITEMS = 6;
@@ -136,6 +137,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	ThemeMetric<CString> PREV_SCREEN;
+	
 	void TransitionFromRecordToEdit();
 	void TransitionToEdit();
 	void PlayTicks();
