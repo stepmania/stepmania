@@ -481,10 +481,10 @@ cl                                                                              
 				RelativePath="ScreenNameEntryTraditional.h">
 			</File>
 			<File
-				RelativePath="ScreenNetworkOptions.cpp">
+				RelativePath="ScreenNetEvaluation.cpp">
 			</File>
 			<File
-				RelativePath="ScreenNetworkOptions.h">
+				RelativePath="ScreenNetEvaluation.h">
 			</File>
 			<File
 				RelativePath="ScreenNetSelectMusic.cpp">
@@ -493,10 +493,10 @@ cl                                                                              
 				RelativePath="ScreenNetSelectMusic.h">
 			</File>
 			<File
-				RelativePath="ScreenNetEvaluation.cpp">
+				RelativePath="ScreenNetworkOptions.cpp">
 			</File>
 			<File
-				RelativePath="ScreenNetEvaluation.h">
+				RelativePath="ScreenNetworkOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenOptions.cpp">
@@ -1102,10 +1102,10 @@ cl                                                                              
 						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
 					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
+						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
 					</File>
 					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
+						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1954,7 +1954,6 @@ cl                                                                              
 			<File
 				RelativePath="RageSurfaceUtils_Palettize.h">
 			</File>
-
 			<File
 				RelativePath="RageSurface_Load.cpp">
 			</File>
@@ -2035,6 +2034,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath=".\RageUtil.h">
+			</File>
+			<File
+				RelativePath="RageUtil_BackgroundLoader.cpp">
+			</File>
+			<File
+				RelativePath="RageUtil_BackgroundLoader.h">
 			</File>
 			<File
 				RelativePath="RageUtil_CharConversions.cpp">
