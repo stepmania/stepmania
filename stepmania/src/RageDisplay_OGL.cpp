@@ -1199,7 +1199,11 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	// will save some effort transforming these values.
 	GLboolean bLighting;
 	glGetBooleanv( GL_LIGHTING, &bLighting );
-	if( bLighting )
+	GLboolean bTextureGenS;
+	glGetBooleanv( GL_TEXTURE_GEN_S, &bLighting );
+	GLboolean bTextureGenT;
+	glGetBooleanv( GL_TEXTURE_GEN_T, &bLighting );
+	if( bLighting || bTextureGenS || bTextureGenT )
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
