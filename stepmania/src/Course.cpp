@@ -301,7 +301,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			FOREACH_CourseDifficulty( cd )
 			{
 				Trail *pTrail = GetTrail( st, cd );
-				if( pTrail == NULL || !pTrail->SlowGetRadarValues() )
+				if( pTrail == NULL )
 					continue;
 
 				RadarValues rv = pTrail->GetRadarValues();

@@ -40,20 +40,6 @@ bool TrailEntry::ContainsTransformOrTurn() const
 	return false;
 }
 
-/* Return true if GetRadarValues may be very slow (reads, decodes and
- * transforms the Steps), in which case it's worth caching it in Course. */
-bool Trail::SlowGetRadarValues() const
-{
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
-	{
-		const Steps *pSteps = e->pSteps;
-		if( !pSteps->IsAutogen() && e->ContainsTransformOrTurn() )
-			return true;
-	}
-
-	return false;
-}
-
 void Trail::SetRadarValues( const RadarValues &rv )
 {
 	m_CachedRadarValues = rv;
