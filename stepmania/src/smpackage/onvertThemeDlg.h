@@ -19,6 +19,8 @@ public:
 // Dialog Data
 	//{{AFX_DATA(ConvertThemeDlg)
 	enum { IDD = IDD_CONVERT_THEME };
+	CButton	m_buttonAnalyzeMetrics;
+	CButton	m_buttonEditMetrics;
 	CButton	m_buttonAnalyze;
 	CButton	m_buttonConvert;
 	CListBox	m_listThemes;
@@ -41,6 +43,8 @@ protected:
 	afx_msg void OnButtonConvert();
 	afx_msg void OnSelchangeListThemes();
 	afx_msg void OnButtonAnalyze();
+	afx_msg void OnButtonEditMetrics();
+	afx_msg void OnButtonAnalyzeMetrics();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

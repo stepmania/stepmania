@@ -15,6 +15,8 @@
 #define MENU                            140
 #define IDD_CONVERT_THEME               142
 #define CONVERTTHEME                    144
+#define IDD_EDIT_METRICS                145
+#define EDIT_METRICS                    146
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -38,16 +40,21 @@
 #define IDC_ANALYZE_ELEMENTS            1023
 #define IDC_EDIT_INSTALLATIONS          1024
 #define IDC_BUTTON_CONVERT              1024
-#define IDC_EDIT_METRICS                1025
 #define IDC_BUTTON_ANALYZE              1025
+#define IDC_BUTTON_EDIT_METRICS         1026
+#define IDC_LIST_CLASS                  1026
+#define IDC_LIST_NAME                   1027
+#define IDC_BUTTON_ANALYZE_METRICS      1027
+#define IDC_EDIT_VALUE                  1028
+#define IDC_EDIT_DEFAULT                1029
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1026
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

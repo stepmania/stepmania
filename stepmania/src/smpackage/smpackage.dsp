@@ -88,6 +88,18 @@ LINK32=link.exe
 # Name "smpackage - Win32 Debug"
 # Begin Source File
 
+SOURCE=.\ColorListBox.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorListBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\converttheme.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\EditInsallations.cpp
 # End Source File
 # Begin Source File
@@ -96,11 +108,31 @@ SOURCE=.\EditInsallations.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\editmetrics.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EditMetricsDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EditMetricsDlg.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EnterName.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\EnterName.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\IniFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\IniFile.h
 # End Source File
 # Begin Source File
 

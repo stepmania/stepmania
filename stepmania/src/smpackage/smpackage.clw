@@ -7,24 +7,26 @@ LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"
 
-ClassCount=8
+ClassCount=9
 Class1=CSmpackageApp
 Class2=CSmpackageDlg
 
-ResourceCount=7
+ResourceCount=8
 Resource1=IDR_MAINFRAME
-Resource2=IDD_MENU
+Resource2=IDD_EDIT_INSTALLATIONS
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_EDIT_INSTALLATIONS
+Resource3=IDD_INSTALL
 Class5=EnterName
-Resource4=IDD_DIALOG_NAME
+Resource4=IDD_CONVERT_THEME
 Class6=EditInsallations
-Resource5=IDD_EXPORTER
+Resource5=IDD_DIALOG_NAME
 Class7=MainMenuDlg
-Resource6=IDD_INSTALL
+Resource6=IDD_MENU
 Class8=ConvertThemeDlg
-Resource7=IDD_CONVERT_THEME
+Resource7=IDD_EXPORTER
+Class9=EditMetricsDlg
+Resource8=IDD_EDIT_METRICS
 
 [CLS:CSmpackageApp]
 Type=0
@@ -139,7 +141,7 @@ LastObject=EditInsallations
 [DLG:IDD_MENU]
 Type=1
 Class=MainMenuDlg
-ControlCount=13
+ControlCount=11
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
 Control3=IDC_EXPORT_PACKAGES,button,1342242816
@@ -150,9 +152,7 @@ Control7=IDC_ANALYZE_ELEMENTS,button,1342242816
 Control8=IDC_EDIT_INSTALLATIONS,button,1342242816
 Control9=IDC_STATIC,static,1342308352
 Control10=IDC_STATIC,button,1342177287
-Control11=IDC_EDIT_METRICS,button,1342242816
-Control12=IDC_STATIC,static,1342308352
-Control13=IDC_STATIC,static,1342308352
+Control11=IDC_STATIC,static,1342308352
 
 [CLS:MainMenuDlg]
 Type=0
@@ -166,7 +166,7 @@ LastObject=IDC_CONVERT_THEME
 [DLG:IDD_CONVERT_THEME]
 Type=1
 Class=ConvertThemeDlg
-ControlCount=10
+ControlCount=14
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
 Control3=IDC_LIST_THEMES,listbox,1352728835
@@ -174,9 +174,13 @@ Control4=IDC_BUTTON_CONVERT,button,1476460544
 Control5=IDC_STATIC,static,1342308352
 Control6=IDC_STATIC,static,1342308352
 Control7=IDC_STATIC,button,1342177287
-Control8=IDC_STATIC,button,1342177287
-Control9=IDC_STATIC,static,1342308352
-Control10=IDC_BUTTON_ANALYZE,button,1476460544
+Control8=IDC_STATIC,static,1342308352
+Control9=IDC_BUTTON_ANALYZE,button,1476460544
+Control10=IDC_STATIC,button,1342177287
+Control11=IDC_STATIC,static,1342308352
+Control12=IDC_BUTTON_EDIT_METRICS,button,1476460544
+Control13=IDC_STATIC,static,1342308352
+Control14=IDC_BUTTON_ANALYZE_METRICS,button,1476460544
 
 [CLS:ConvertThemeDlg]
 Type=0
@@ -184,6 +188,29 @@ HeaderFile=onvertThemeDlg.h
 ImplementationFile=onvertThemeDlg.cpp
 BaseClass=CDialog
 Filter=D
-LastObject=ConvertThemeDlg
+LastObject=IDC_LIST_THEMES
+VirtualFilter=dWC
+
+[DLG:IDD_EDIT_METRICS]
+Type=1
+Class=EditMetricsDlg
+ControlCount=10
+Control1=IDOK,button,1342242817
+Control2=IDC_STATIC,static,1342177294
+Control3=IDC_LIST_CLASS,listbox,1352728835
+Control4=IDC_STATIC,static,1342308352
+Control5=IDC_LIST_NAME,listbox,1352728835
+Control6=IDC_STATIC,static,1342308352
+Control7=IDC_EDIT_VALUE,edit,1350631552
+Control8=IDC_STATIC,static,1342308352
+Control9=IDC_EDIT_DEFAULT,edit,1350633600
+Control10=IDC_STATIC,static,1342308352
+
+[CLS:EditMetricsDlg]
+Type=0
+HeaderFile=EditMetricsDlg.h
+ImplementationFile=EditMetricsDlg.cpp
+BaseClass=CDialog
+Filter=D
 VirtualFilter=dWC
 

@@ -5,6 +5,9 @@
 #include "smpackage.h"
 #include "onvertThemeDlg.h"
 #include "smpackageUtil.h"	
+#include "EditMetricsDlg.h"	
+#include "EditMetricsDlg.h"	
+#include "IniFile.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,6 +32,8 @@ void ConvertThemeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ConvertThemeDlg)
+	DDX_Control(pDX, IDC_BUTTON_ANALYZE_METRICS, m_buttonAnalyzeMetrics);
+	DDX_Control(pDX, IDC_BUTTON_EDIT_METRICS, m_buttonEditMetrics);
 	DDX_Control(pDX, IDC_BUTTON_ANALYZE, m_buttonAnalyze);
 	DDX_Control(pDX, IDC_BUTTON_CONVERT, m_buttonConvert);
 	DDX_Control(pDX, IDC_LIST_THEMES, m_listThemes);
@@ -41,6 +46,8 @@ BEGIN_MESSAGE_MAP(ConvertThemeDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_CONVERT, OnButtonConvert)
 	ON_LBN_SELCHANGE(IDC_LIST_THEMES, OnSelchangeListThemes)
 	ON_BN_CLICKED(IDC_BUTTON_ANALYZE, OnButtonAnalyze)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT_METRICS, OnButtonEditMetrics)
+	ON_BN_CLICKED(IDC_BUTTON_ANALYZE_METRICS, OnButtonAnalyzeMetrics)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -192,6 +199,8 @@ void ConvertThemeDlg::OnSelchangeListThemes()
 	BOOL bSomethingSelected = m_listThemes.GetCurSel() != LB_ERR;
 	m_buttonConvert.EnableWindow( bSomethingSelected );
 	m_buttonAnalyze.EnableWindow( bSomethingSelected );
+	m_buttonEditMetrics.EnableWindow( bSomethingSelected );
+	m_buttonAnalyzeMetrics.EnableWindow( bSomethingSelected );
 }
 
 bool FilesAreIdentical( CString sPath1, CString sPath2 )
@@ -225,6 +234,28 @@ CString StripExtension( CString sPath )
 	return sDir + sFName;
 }
 
+void LaunchNotepad( CString sPathToOpen )
+{
+	PROCESS_INFORMATION pi;
+	STARTUPINFO	si;
+	ZeroMemory( &si, sizeof(si) );
+
+	char szCommand[MAX_PATH] = "notepad.exe ";
+	strcat( szCommand, sPathToOpen );
+	CreateProcess(
+		NULL,		// pointer to name of executable module
+		szCommand,		// pointer to command line string
+		NULL,  // process security attributes
+		NULL,   // thread security attributes
+		false,  // handle inheritance flag
+		0, // creation flags
+		NULL,  // pointer to new environment block
+		NULL,   // pointer to current directory name
+		&si,  // pointer to STARTUPINFO
+		&pi  // pointer to PROCESS_INFORMATION
+	);
+}
+
 void ConvertThemeDlg::OnButtonAnalyze() 
 {
 	// TODO: Add your control notification handler code here
@@ -232,9 +263,9 @@ void ConvertThemeDlg::OnButtonAnalyze()
 
 	CString sBaseDir = "Themes\\default\\";
 	int iSel = m_listThemes.GetCurSel();
-	CString sThemeDir;
-	m_listThemes.GetText( iSel, sThemeDir );
-	sThemeDir = "Themes\\"+sThemeDir+"\\";
+	CString sThemeName;
+	m_listThemes.GetText( iSel, sThemeName );
+	CString sThemeDir = "Themes\\"+sThemeName+"\\";
 
 	CStringArray asBaseFilePaths;
 	GetDirListing( sBaseDir+"BGAnimations\\*.*", asBaseFilePaths, false, true );
@@ -250,15 +281,14 @@ void ConvertThemeDlg::OnButtonAnalyze()
 	GetDirListing( sThemeDir+"Numbers\\*.*", asThemeFilePaths, false, true );
 	GetDirListing( sThemeDir+"Sounds\\*.*", asThemeFilePaths, false, true );
 
-	FILE* fp = fopen( "theme_report.txt", "w" );
-	ASSERT( fp );
-	CStringArray asRedundantPaths;
-	CStringArray asWarningPaths;
+	CStringArray asRedundant;
+	CStringArray asWarning;
 	for( i=0; i<asThemeFilePaths.GetSize(); i++ )
 	{
 		CString sThemeElement = asThemeFilePaths[i];
 		sThemeElement.Replace( sThemeDir, "" );
 		sThemeElement = StripExtension( sThemeElement );
+		bool bFoundMatch = false;
 
 		for( int j=0; j<asBaseFilePaths.GetSize(); j++ )
 		{
@@ -269,48 +299,135 @@ void ConvertThemeDlg::OnButtonAnalyze()
 			if( sThemeElement.CompareNoCase(sBaseElement)==0 )	// file names match
 			{
 				if( FilesAreIdentical( asThemeFilePaths[i], asBaseFilePaths[j] ) )
-				{
-					asRedundantPaths.Add( asThemeFilePaths[i] );
-					break;
-				}
-				else	// files are not identical
-				{
-					break;	// skip to next file in asThemeFilePaths
-				}
+					asRedundant.Add( asThemeFilePaths[i] );
+				break;	// skip to next file in asThemeFilePaths
 			}
 		}
-		if( j == asBaseFilePaths.GetSize() )
-			asWarningPaths.Add( asThemeFilePaths[i] );
+		if( !bFoundMatch )
+			asWarning.Add( asThemeFilePaths[i] );
 	}
+
+	SortCStringArray( asRedundant );
+	SortCStringArray( asWarning );
+
+	FILE* fp = fopen( "elements_report.txt", "w" );
+	ASSERT( fp );
+	fprintf( fp, "Theme elements report for '"+sThemeName+"'.\n\n" );
 	fprintf( fp, "The following elements are REDUNDANT.\n"
 		"    (These elements are identical to the elements in the base theme.\n"
 		"    They are unnecessary and should be deleted.)\n" );
-	for( i=0; i<asRedundantPaths.GetSize(); i++ )
-		fprintf( fp, asRedundantPaths[i] + "\n" );
+	for( i=0; i<asRedundant.GetSize(); i++ )
+		fprintf( fp, asRedundant[i] + "\n" );
 	fprintf( fp, "\n" );
 	fprintf( fp, "The following elements are possibly MISNAMED.\n"
 		"    (These files do not have a corresponding element in\n"
 		"    the base theme.  This likely means that there is an error in the file name.)\n" );
-	for( i=0; i<asWarningPaths.GetSize(); i++ )
-		fprintf( fp, asWarningPaths[i] + "\n" );
+	for( i=0; i<asWarning.GetSize(); i++ )
+		fprintf( fp, asWarning[i] + "\n" );
 	fclose( fp );
 
-	// launch notepad
-	PROCESS_INFORMATION pi;
-	STARTUPINFO	si;
-	ZeroMemory( &si, sizeof(si) );
+	LaunchNotepad( "elements_report.txt" );
+}
 
-	CreateProcess(
-		NULL,		// pointer to name of executable module
-		"notepad.exe theme_report.txt",		// pointer to command line string
-		NULL,  // process security attributes
-		NULL,   // thread security attributes
-		false,  // handle inheritance flag
-		0, // creation flags
-		NULL,  // pointer to new environment block
-		NULL,   // pointer to current directory name
-		&si,  // pointer to STARTUPINFO
-		&pi  // pointer to PROCESS_INFORMATION
-	);
+void ConvertThemeDlg::OnButtonEditMetrics() 
+{
+	// TODO: Add your control notification handler code here
+	EditMetricsDlg dlg;
+	int iSel = m_listThemes.GetCurSel();
+	CString sThemeName;
+	m_listThemes.GetText( iSel, sThemeName );
+	dlg.m_sTheme = sThemeName;
+	int nResponse = dlg.DoModal();	
+	
+}
 
+void ConvertThemeDlg::OnButtonAnalyzeMetrics() 
+{
+	// TODO: Add your control notification handler code here
+	int i;
+
+	int iSel = m_listThemes.GetCurSel();
+	CString sThemeName;
+	m_listThemes.GetText( iSel, sThemeName );
+
+	IniFile iniBase;
+	iniBase.SetPath( "Themes\\default\\metrics.ini" );
+	iniBase.ReadFile();
+
+	IniFile iniTheme;
+	iniTheme.SetPath( "Themes\\"+sThemeName+"\\metrics.ini" );
+	iniTheme.ReadFile();
+
+	CMapStringToString mapBaseClassPlusNameToValue;
+	for( i=0; i<iniBase.names.GetSize(); i++ )
+	{
+		CString sKey = iniBase.names[i];
+		IniFile::key& Key = iniBase.keys[i];
+		for( POSITION pos=Key.GetStartPosition(); pos!=NULL; )
+		{
+			CString sName, sValue;
+			Key.GetNextAssoc( pos, sName, sValue );
+			mapBaseClassPlusNameToValue[sKey+"-"+sName] = sValue;
+		}
+	}
+
+	CMapStringToString mapThemeClassPlusNameToValue;
+	for( i=0; i<iniTheme.names.GetSize(); i++ )
+	{
+		CString sKey = iniTheme.names[i];
+		IniFile::key& Key = iniTheme.keys[i];
+		for( POSITION pos=Key.GetStartPosition(); pos!=NULL; )
+		{
+			CString sName, sValue;
+			Key.GetNextAssoc( pos, sName, sValue );
+			mapThemeClassPlusNameToValue[sKey+"-"+sName] = sValue;
+		}
+	}
+
+
+	CStringArray asRedundant;
+	CStringArray asWarning;
+	for( POSITION pos1=mapThemeClassPlusNameToValue.GetStartPosition(); pos1!=NULL; )
+	{
+		CString sThemeKey, sThemeValue;
+		mapThemeClassPlusNameToValue.GetNextAssoc( pos1, sThemeKey, sThemeValue );
+		bool bFoundMatch = false;
+
+		for( POSITION pos2=mapBaseClassPlusNameToValue.GetStartPosition(); pos2!=NULL; )
+		{
+			CString sBaseKey, sBaseValue;
+			mapBaseClassPlusNameToValue.GetNextAssoc( pos2, sBaseKey, sBaseValue );
+
+			if( sThemeKey == sBaseKey )	// match
+			{
+				bFoundMatch = true;
+				if( sThemeValue == sBaseValue )
+					asRedundant.Add( sThemeKey );
+				break;	// skip to next file in asThemeFilePaths
+			}
+		}
+		if( !bFoundMatch )
+			asWarning.Add( sThemeKey );
+	}
+
+	SortCStringArray( asRedundant );
+	SortCStringArray( asWarning );
+
+	FILE* fp = fopen( "metrics_report.txt", "w" );
+	ASSERT( fp );
+	fprintf( fp, "Theme metrics report for '"+sThemeName+"'.\n\n" );
+	fprintf( fp, "The following metrics are REDUNDANT.\n"
+		"    (These metrics are identical to the metrics in the base theme.\n"
+		"    They are unnecessary and should be deleted.)\n" );
+	for( i=0; i<asRedundant.GetSize(); i++ )
+		fprintf( fp, asRedundant[i] + "\n" );
+	fprintf( fp, "\n" );
+	fprintf( fp, "The following elements are possibly MISNAMED.\n"
+		"    (These metrics do not have a corresponding metric in\n"
+		"    the base theme.  This likely means that there is an error in the metric name.)\n" );
+	for( i=0; i<asWarning.GetSize(); i++ )
+		fprintf( fp, asWarning[i] + "\n" );
+	fclose( fp );
+
+	LaunchNotepad( "metrics_report.txt" );	
 }
