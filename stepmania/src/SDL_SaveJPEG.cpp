@@ -158,11 +158,9 @@ void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest, bool bHighQual )
    */
   jpeg::jpeg_set_defaults(&cinfo);
   if( bHighQual )
-  {
 	jpeg::jpeg_set_quality( &cinfo, 150, TRUE );
-  } else {
-	jpeg::jpeg_set_quality( &cinfo, 50, TRUE );
-  }
+  else
+	jpeg::jpeg_set_quality( &cinfo, 40, TRUE );
 
   /* Step 4: Start compressor */
 
