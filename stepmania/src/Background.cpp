@@ -453,7 +453,7 @@ void Background::DrawPrimitives()
 
 bool Background::DangerVisible()
 {
-	return m_bInDanger  &&  PREFSMAN->m_bShowDanger  &&  (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) < 0.5f;
+	return m_bInDanger  &&  PREFSMAN->m_bShowDanger  &&  (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
 }
 
 

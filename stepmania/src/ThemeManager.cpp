@@ -242,9 +242,9 @@ try_metric_again:
 
 	// Is our metric cache out of date?
 	// XXX: GTSS wraps every ~40 days.  Need a better way to handler timers like this.
-	if (TIMER->GetTimeSinceStart() >= m_fNextReloadTicks)
+	if (RageTimer::GetTimeSinceStart() >= m_fNextReloadTicks)
 	{
-		m_fNextReloadTicks = TIMER->GetTimeSinceStart()+1.0f;
+		m_fNextReloadTicks = RageTimer::GetTimeSinceStart()+1.0f;
 		if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{

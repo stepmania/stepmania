@@ -73,7 +73,7 @@ void MusicStatusDisplay::DrawPrimitives()
 	case crown1:
 	case crown2:
 	case crown3:
-		if( fmodf(TIMER->GetTimeSinceStart(), 1) > 0.5f )
+		if( fmodf(RageTimer::GetTimeSinceStart(), 1) > 0.5f )
 			return;	// blink
 		break;
 	default:

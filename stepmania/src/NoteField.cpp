@@ -114,7 +114,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 60, fYPos );
 	m_textMeasureNumber.Draw();
@@ -126,7 +126,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 10, fYPos );
 	m_textMeasureNumber.Draw();
@@ -138,7 +138,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( sNewBGName );
 	m_textMeasureNumber.SetXY( +m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
 	m_textMeasureNumber.Draw();

@@ -33,7 +33,7 @@ void InputQueue::RememberInput( const GameInput GameI )
 	/* XXX: this should be a deque, and just pop_back */
 	if( m_aQueue[c].size() >= MAX_INPUT_QUEUE_LENGTH )	// full
 		m_aQueue[c].erase( m_aQueue[c].begin(), m_aQueue[c].begin() + (m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1) );
-	m_aQueue[c].push_back( GameButtonAndTime(GameI.button,TIMER->GetTimeSinceStart()) );
+	m_aQueue[c].push_back( GameButtonAndTime(GameI.button,RageTimer::GetTimeSinceStart()) );
 }
 
 bool InputQueue::MatchesPattern( const GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
@@ -41,7 +41,7 @@ bool InputQueue::MatchesPattern( const GameController c, const MenuButton* butto
 	if( fMaxSecondsBack == -1 )
 		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
 
-	float fOldestTimeAllowed = TIMER->GetTimeSinceStart() - fMaxSecondsBack;
+	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
@@ -70,7 +70,7 @@ bool InputQueue::MatchesPattern( const GameController c, const GameButton* butto
 	if( fMaxSecondsBack == -1 )
 		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
 
-	float fOldestTimeAllowed = TIMER->GetTimeSinceStart() - fMaxSecondsBack;
+	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest

@@ -394,7 +394,7 @@ void LifeMeterBar::DrawPrimitives()
 	rectSize.right	= -m_iMeterWidth/2 + int(roundf(m_iMeterWidth*m_fTrailingLifePercentage));
 	rectSize.bottom	= +m_iMeterHeight/2;
 
-	float fPrecentOffset = TIMER->GetTimeSinceStart();
+	float fPrecentOffset = RageTimer::GetTimeSinceStart();
 	fPrecentOffset -= (int)fPrecentOffset;
 
 	RectF frectCustomTexCoords(
@@ -415,7 +415,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fPercent = m_fTrailingLifePercentage;
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
-	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*PI*4 )/2+0.5f : 0;
+	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( RageTimer::GetTimeSinceStart()*PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
 
 	ActorFrame::DrawPrimitives();
@@ -473,7 +473,7 @@ void LifeStream::DrawPrimitives()
 
 	int iNumV = 0;
 
-	float fPercentIntoSection = (TIMER->GetTimeSinceStart()/0.3f* (m_bIsHot ? 2 : 1) )*LIFE_STREAM_SECTION_WIDTH;
+	float fPercentIntoSection = (RageTimer::GetTimeSinceStart()/0.3f* (m_bIsHot ? 2 : 1) )*LIFE_STREAM_SECTION_WIDTH;
 	fPercentIntoSection -= (int)fPercentIntoSection;
 	fPercentIntoSection = 1-fPercentIntoSection;
 	fPercentIntoSection -= (int)fPercentIntoSection;

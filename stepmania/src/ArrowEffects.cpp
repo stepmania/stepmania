@@ -49,7 +49,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 	
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_DRUNK] )
-		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
+		fPixelOffsetFromCenter += cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_FLIP] )
 		fPixelOffsetFromCenter = -fPixelOffsetFromCenter; 
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_TORNADO] )
@@ -114,7 +114,7 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 		fAlpha = 0;
 		break;
 	case PlayerOptions::APPEARANCE_BLINK: // this is an Ez2dancer Appearance Mode
-		fAlpha = sinf( TIMER->GetTimeSinceStart()*12 );
+		fAlpha = sinf( RageTimer::GetTimeSinceStart()*12 );
 		fAlpha = froundf( fAlpha, 0.3333f );
 		break;
 	default:
