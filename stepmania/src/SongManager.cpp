@@ -600,11 +600,15 @@ bool SongManager::ChooseRandomSong()
 	for( i=0; i<600; i++ )	// try 600 times
 	{
 		Song* pSong = m_pSongs[ rand()%m_pSongs.GetSize() ];
+
+		if( pSong->m_apNotes.GetSize() == 0 )
+			continue;	// skip
+		
+		if( !pSong->HasMusic() )
+			continue;	// skip
+
 		for( int j=0; j<3; j++ )	// try 3 times
 		{
-			if( pSong->m_apNotes.GetSize() == 0 )
-				continue;
-
 			/* XXX: This assumes we're set to a style that doesn't use separate
 			 * notes for each player, such as VERSUS. */
 			Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];

@@ -137,9 +137,17 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
+	GAMESTATE->m_pCurSong = Selector.GetSelectedSong();
+
+	if( !GAMESTATE->m_pCurSong->HasMusic() )
+	{
+		SCREENMAN->SystemMessage( "This song is missing a music file and cannot be edited" );
+		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu invalid") );
+		return;
+	}
+
 	MUSIC->Stop();
 
-	GAMESTATE->m_pCurSong = Selector.GetSelectedSong();
 
 	// get the style
 	GAMESTATE->m_CurStyle = Selector.GetSelectedStyle();

@@ -384,13 +384,21 @@ void Song::TidyUpData()
 
 		if( arrayPossibleMusic.GetSize() > 0 )		// we found a match
 			m_sMusicFile = arrayPossibleMusic[0];
-		else
-			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
+		// Chris:  Don't throw on missing music
+//		else
+//			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
 	}
 
-	RageSoundStream sound;
-	sound.Load( GetMusicPath() );
-	m_fMusicLengthSeconds = sound.GetLengthSeconds();
+	if( HasMusic() )
+	{
+		RageSoundStream sound;
+		sound.Load( GetMusicPath() );
+		m_fMusicLengthSeconds = sound.GetLengthSeconds();
+	}
+	else	// ! HasMusic()
+	{
+		m_fMusicLengthSeconds = 100;		// guess
+	}
 
 
 	// We're going to try and do something intelligent here...

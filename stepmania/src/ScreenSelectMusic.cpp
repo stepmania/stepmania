@@ -771,7 +771,7 @@ void ScreenSelectMusic::PlayMusicSample()
 	//LOG->Trace( "ScreenSelectSong::PlaySONGample()" );
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	if( pSong )
+	if( pSong  &&  pSong->HasMusic() )
 	{
 		MUSIC->Stop();
 		MUSIC->Load( pSong->GetMusicPath() );

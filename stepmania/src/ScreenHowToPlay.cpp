@@ -142,6 +142,7 @@ void ScreenHowToPlay::MenuStart( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 
+	m_sprHowToPlay.StopTweening();
 	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );
 	m_sprHowToPlay.SetTweenX( SCREEN_RIGHT+m_sprHowToPlay.GetUnzoomedWidth()/2 );
 }

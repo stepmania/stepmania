@@ -69,7 +69,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Failed to open %s.", sPath );
+		throw RageException( "Failed to open %s for reading.", sPath );
 
 	CString line;
 	while( file.ReadString(line) )	// foreach line
@@ -115,6 +115,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 			case 3:		// double
 				out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
 				break;
+			default:
+				throw RageException( "Invalid value '%d' for '#player'", atoi(value_data) );
 			}
 		}
 		if( -1 != value_name.Find("#title") )
@@ -285,7 +287,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Failed to open %s.", sPath );
+		throw RageException( "Failed to open %s for reading.", sPath );
 
 	CString line;
 	while( file.ReadString(line) )	// foreach line
@@ -422,7 +424,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					CStdioFile file;	
 					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-						throw RageException( "Failed to open %s.", sPath );
+						throw RageException( "Failed to open %s for reading.", sPath );
 
 					CString line;
 					while( file.ReadString(line) )	// foreach line
@@ -484,7 +486,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					CStdioFile file;	
 					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-						throw RageException( "Failed to open %s.", sPath );
+						throw RageException( "Failed to open %s for reading.", sPath );
 
 					CString line;
 					while( file.ReadString(line) )	// foreach line

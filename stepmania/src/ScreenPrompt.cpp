@@ -157,9 +157,11 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 
 	if( m_bAnswer )
-		m_pOnYes();
+		if( m_pOnYes )
+			m_pOnYes();
 	else
-		m_pOnNo();
+		if( m_pOnNo )
+			m_pOnNo();
 }
 
 void ScreenPrompt::MenuBack( PlayerNumber pn )

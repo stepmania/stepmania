@@ -250,7 +250,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath );
+		throw RageException( "Error opening file '%s' for reading.", sPath );
 
 	for( int i=0; i<msd.m_iNumValues; i++ )
 	{
