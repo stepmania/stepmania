@@ -70,10 +70,13 @@ bool RageSound_ALSA9_Software::GetData()
 	 */
     static Sint16 *buf = NULL;
 	if (!buf)
-		buf = new Sint16[max_writeahead*samples_per_frame*4];
+		buf = new Sint16[max_writeahead*samples_per_frame];
 
     static SoundMixBuffer mix;
 	mix.SetVolume( SOUNDMAN->GetMixVolume() );
+
+	const int play_pos = pcm->GetPlayPos();
+	const int cur_play_pos = pcm->GetPosition();
 
 	LockMutex L(SOUNDMAN->lock);
 	for(unsigned i = 0; i < sounds.size(); ++i)
@@ -81,25 +84,47 @@ bool RageSound_ALSA9_Software::GetData()
 		if(sounds[i]->stopping)
 			continue;
 
+		int bytes_read = 0;
+		int bytes_left = frames_to_fill*bytes_per_frame;
+
+		/* Does the sound have a start time? */
+		if( !sounds[i]->start_time.IsZero() )
+		{
+			/* If the sound is supposed to start at a time past this buffer, insert silence. */
+			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
+			const int iFramesBeforeStart = int( fSecondsBeforeStart * samplerate );
+			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
+
+			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
+			bytes_read += iSilentBytesInThisBuffer;
+			bytes_left -= iSilentBytesInThisBuffer;
+
+			if( !iSilentBytesInThisBuffer )
+				sounds[i]->start_time.SetZero();
+		}
+
 		/* Call the callback.
 		 * Get the units straight,
 		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
 		 */
-		const int got_bytes = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, pcm->GetPlayPos() );
-		const int got_samples = got_bytes / sizeof(Sint16);
-		const int got_frames = got_bytes / bytes_per_frame;
-		mix.write((Sint16 *) buf, got_samples );
+		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, play_pos+bytes_read/bytes_per_frame );
+		bytes_read += got;
+		bytes_left -= got;
 
-		if( got_frames < frames_to_fill )
+		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16) );
+
+		if( bytes_left > 0 )
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = pcm->GetPlayPos() + got_frames;
+			sounds[i]->flush_pos = pcm->GetPlayPos() + (bytes_read / bytes_per_frame);
 		}
     }
 	L.Unlock();
 
-    memset( buf, 0, sizeof(Sint16) * frames_to_fill * samples_per_frame );
+    memset( buf, 0, frames_to_fill * bytes_per_frame );
 	mix.read( buf );
 
 	pcm->Write( buf, frames_to_fill );
@@ -111,6 +136,7 @@ void RageSound_ALSA9_Software::StartMixing(RageSound *snd)
 {
 	sound *s = new sound;
 	s->snd = snd;
+	s->start_time = snd->GetStartTime();
 
 	LockMutex L(SOUNDMAN->lock);
 	sounds.push_back(s);
@@ -223,7 +249,7 @@ int RageSound_ALSA9_Software::GetSampleRate( int rate ) const
 }
 		
 /*
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
  *
- * Glenn Maynard (RageSoundDriver_WaveOut)
+ * Glenn Maynard
  */
