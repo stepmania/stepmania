@@ -210,6 +210,10 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 				if( usbd.iUsbStorageIndex == iUsbStorageIndex )	// found our match
 				{
 					usbd.sOsMountDir = sMountPoint;
+
+					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d, sOsMountDir: %s",
+						usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub, usbd.sOsMountDir.c_str() );
+
 					break;	// stop looking for a match
 				}
 			}
