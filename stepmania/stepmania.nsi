@@ -21,6 +21,11 @@
 !system "echo This may take a moment ..." ignore
 !system "utils\upx StepMania.exe" ignore
 !system "utils\upx smpackage.exe" ignore
+!system "utils\upx msvcr70.dll" ignore
+!system "utils\upx msvcp70.dll" ignore
+!system "utils\upx jpeg.dll" ignore
+!system "utils\upx SDL.dll" ignore
+!system "utils\upx SDL_image.dll" ignore
 
 Name "${PRODUCT_NAME}"
 OutFile "StepMania-CVS-20030422.exe"
