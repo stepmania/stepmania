@@ -49,15 +49,5 @@ private:
 	void AddToRecentLogs( CString buf );
 };
 
-/* Mapped log entry that's deleted on dtor.  Note that this isn't extremely
- * fast (like VDCHECKPOINT); don't use it in inner loops. */
-struct Checkpoint_
-{
-	CString key;
-	Checkpoint_(CString key, int n, const char *fmt, ...);
-	~Checkpoint_();
-};
-#define Checkpoint(t) Checkpoint_ CP_( __FILE__, __LINE__, t )
-
 extern RageLog*	LOG;	// global and accessable from anywhere in our program
 #endif
