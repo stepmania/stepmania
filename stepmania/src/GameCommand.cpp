@@ -610,12 +610,22 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 
 void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 {
-	FOREACH_CONST( Command, m_Commands.v, cmd )
+	if( m_Commands.v.size() )
 	{
-		GameCommand gc;
-		gc.m_bInvalid = false;
-		gc.LoadOne( *cmd );
-		gc.ApplySelf( vpns );
+		// We were filled using a GameCommand from metrics.  Apply the options in order.
+		FOREACH_CONST( Command, m_Commands.v, cmd )
+		{
+			GameCommand gc;
+			gc.m_bInvalid = false;
+			gc.LoadOne( *cmd );
+			gc.ApplySelf( vpns );
+		}
+	}
+	else
+	{
+		// We were filled by an OptionRowHandler in code.  GameCommand isn't filled,
+		// so just apply the values that are already set in this.
+		this->ApplySelf( vpns );
 	}
 }
 
