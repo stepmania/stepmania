@@ -676,7 +676,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 
 	if( g_bBannerWaiting )
 	{
-		float HighQualTime = THEME->GetMetricF("FadingBanner","FadeSeconds");
+		float HighQualTime = m_Banner.GetFadeSeconds();
 
 		CString sPath;
 		if( g_StartedLoadingAt.Ago() >= HighQualTime && m_BackgroundLoader.IsCacheFileFinished(g_sBannerPath, sPath) )
