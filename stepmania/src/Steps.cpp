@@ -46,7 +46,7 @@ Steps::Steps()
 	{
 		m_MemCardScores[m].iNumTimesPlayed = 0;
 		m_MemCardScores[m].grade = GRADE_NO_DATA;
-		m_MemCardScores[m].iScore = 0;
+		m_MemCardScores[m].fScore = 0;
 	}
 }
 
@@ -298,32 +298,32 @@ void Steps::SetRadarValue(int r, float val)
  * XXX: Isn't it possible to beat the grade but not beat the score, since
  * grading and scores are on completely different systems?  Should we be
  * checking for these completely separately? */
-bool Steps::MemCardScore::HigherScore( int vsScore, Grade vsGrade ) const
+bool Steps::MemCardScore::HigherScore( float vsScore, Grade vsGrade ) const
 {
-	if( vsScore > this->iScore )
+	if( vsScore > this->fScore )
 		return true;
-	if( vsScore < this->iScore )
+	if( vsScore < this->fScore )
 		return false;
 	return vsGrade > this->grade;
 }
 
-void Steps::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut )
+void Steps::AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut )
 {
 	bNewRecordOut = false;
 
 	m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed++;
 	m_MemCardScores[pn].iNumTimesPlayed++;
 
-	if( m_MemCardScores[pn].HigherScore(iScore, grade) && iScore > 0)
+	if( m_MemCardScores[pn].HigherScore(fScore, grade) && fScore > 0)
 	{
-		m_MemCardScores[pn].iScore = iScore;
+		m_MemCardScores[pn].fScore = fScore;
 		m_MemCardScores[pn].grade = grade;
 		bNewRecordOut = true;
 	}
 
-	if( m_MemCardScores[MEMORY_CARD_MACHINE].HigherScore(iScore, grade) )
+	if( m_MemCardScores[MEMORY_CARD_MACHINE].HigherScore(fScore, grade) )
 	{
-		m_MemCardScores[MEMORY_CARD_MACHINE].iScore = iScore;
+		m_MemCardScores[MEMORY_CARD_MACHINE].fScore = fScore;
 		m_MemCardScores[MEMORY_CARD_MACHINE].grade = grade;
 	}
 }

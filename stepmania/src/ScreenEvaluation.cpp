@@ -178,7 +178,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				if( GAMESTATE->IsHumanPlayer(p) && GAMESTATE->m_SongOptions.m_bSaveScore )
 				{
 					if( GAMESTATE->m_pCurNotes[p] )
-						GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p] + stageStats.iBonus[p], bNewRecord[p] );
+					{
+						float score;
+						if( PREFSMAN->m_bPercentageScoring )
+							score = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+						else
+							score = float(stageStats.iScore[p] + stageStats.iBonus[p]);
+						GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], score, bNewRecord[p] );
+					}
 					
 					// update unlock data if unlocks are on
 					if ( PREFSMAN->m_bUseUnlockSystem )

@@ -358,14 +358,14 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 			
 			int iNumTimesPlayed;
 			Grade grade;
-			int iScore;
-			if( sscanf(line.c_str(), "%d %d %i\n", &iNumTimesPlayed, (int *)&grade, &iScore) != 3 )
+			float fScore;
+			if( sscanf(line.c_str(), "%d %d %f\n", &iNumTimesPlayed, (int *)&grade, &fScore) != 3 )
 				break;
 			if( pNotes )
 			{
 				pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
 				pNotes->m_MemCardScores[c].grade = grade;
-				pNotes->m_MemCardScores[c].iScore = iScore;
+				pNotes->m_MemCardScores[c].fScore = fScore;
 			}
 		}
 	}
@@ -550,10 +550,10 @@ void SongManager::ReadSM300NoteScores()
 
 			iRetVal = sscanf( 
 				value, 
-				"%d::%[^:]::%d::%d", 
+				"%d::%[^:]::%f::%d", 
 				&pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed,
 				szGradeLetters,
-				&pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].iScore,
+				&pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].fScore,
 				&iMaxCombo
 			);
 			if( iRetVal != 4 )
@@ -661,10 +661,10 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 						pNotes->GetDifficulty(),
 						pNotes->GetDescription().c_str() );
 
-					fprintf(fp, "%d %d %i\n", 
+					fprintf(fp, "%d %d %f\n", 
 						pNotes->m_MemCardScores[c].iNumTimesPlayed,
 						pNotes->m_MemCardScores[c].grade,
-						pNotes->m_MemCardScores[c].iScore);
+						pNotes->m_MemCardScores[c].fScore);
 				}
 			}
 

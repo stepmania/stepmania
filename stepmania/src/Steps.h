@@ -58,11 +58,11 @@ public:
 	{
 		int iNumTimesPlayed;
 		Grade grade;
-		int iScore;
-		bool HigherScore( int iScore, Grade grade ) const;
+		float fScore;
+		bool HigherScore( float fScore, Grade grade ) const;
 	} m_MemCardScores[NUM_MEMORY_CARDS];
 
-	void AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut );
+	void AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut );
 
 
 	void TidyUpData();

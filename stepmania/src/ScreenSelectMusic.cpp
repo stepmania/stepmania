@@ -900,12 +900,12 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	if( pNotes )
 	{
-		int iScore;
+		float fScore;
 		if( PROFILEMAN->IsUsingProfile(pn) )
-			iScore = pNotes->m_MemCardScores[pn].iScore;
+			fScore = pNotes->m_MemCardScores[pn].fScore;
 		else
-			iScore = pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].iScore;
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+			fScore = pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].fScore;
+		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, (int) fScore) );
 	}
 	else
 	{
