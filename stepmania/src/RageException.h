@@ -12,7 +12,7 @@
 
 #include <exception>
 
-class RageException : exception
+class RageException : public exception
 {
 public:
 	RageException( const char *fmt, ...);
