@@ -71,7 +71,7 @@ RageSound::RageSound()
 	if(!initialized)
 	{
 		if(!Sound_Init())
-			throw RageException( "RageSoundManager::RageSoundManager: error initializing sound loader: %s", Sound_GetError());
+			RageException::Throw( "RageSoundManager::RageSoundManager: error initializing sound loader: %s", Sound_GetError());
 		initialized = true;
 	}
 
@@ -159,7 +159,7 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
                     &sound_desired, read_block_size);
 
 	if( NewSample == NULL )
-		throw RageException( "RageSound::LoadSound: error loading %s: %s",
+		RageException::Throw( "RageSound::LoadSound: error loading %s: %s",
 		sSoundFilePath.GetString(), Sound_GetError() );
 
 	/* Try to decode into full_buf. */
@@ -189,7 +189,7 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 		int cnt = Sound_Decode(NewSample);
 
 		if(cnt < 0)
-			throw RageException("Read error on %s: %s", 
+			RageException::Throw("Read error on %s: %s", 
 				sSoundFilePath.GetString(), Sound_GetError() ); /* XXX (see other error-handling XXX) */
 
 		/* Add the buffer. */
@@ -281,7 +281,7 @@ int RageSound::stream_t::FillBuf(int bytes)
 			 * periodically and do something more intelligent when we
 			 * fail (so we don't play out the rest of the song in
 			 * silence) ... */
-			throw RageException("Read error: %s",
+			RageException::Throw("Read error: %s",
 					Sound_GetError() );
 		}
 

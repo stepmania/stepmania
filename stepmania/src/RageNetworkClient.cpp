@@ -108,7 +108,7 @@ void RageNetworkClient::Update( float fDeltaTime )
 	int numready = SDLNet_CheckSockets(m_priSockSet, 0);
 	if(numready==-1) 
 	{
-		LOG->Warn("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
+//		LOG->Warn("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
 	}
 	else if( numready )
 	{

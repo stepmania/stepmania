@@ -377,7 +377,7 @@ void Song::TidyUpData()
 			m_sMusicFile = arrayPossibleMusic[0];
 //		Don't throw on missing music.  -Chris
 //		else
-//			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
+//			RageException::Throw( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
 	}
 
 	/* This must be done before radar calculation. */
@@ -416,7 +416,7 @@ void Song::TidyUpData()
 	TrimRight(m_sSubTitle);
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.empty() )
-		throw RageException( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
+		RageException::Throw( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
 
 	// We're going to try and do something intelligent here...
 	// The MusicSampleStart always seems to be about 100-120 beats into 

@@ -64,16 +64,16 @@ RageNetworkServer::RageNetworkServer()
 	// SDL_Init(0);	// this may have already been init'd somewhere else
 
 	if( SDLNet_Init() < 0 )
-		throw RageException("SDLNet_Init: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_Init: %s\n", SDLNet_GetError());
 	
 	// allocate socket sets
 	m_listenSockSet = SDLNet_AllocSocketSet(1);
 	if(!m_listenSockSet)
-		throw RageException("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
 
 	m_clientSocksSet = SDLNet_AllocSocketSet(MAX_CLIENTS);
 	if(!m_clientSocksSet)
-		throw RageException("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
 }
 
 RageNetworkServer::~RageNetworkServer()
@@ -114,11 +114,11 @@ void RageNetworkServer::Listen(unsigned short port)
 
 	IPaddress ip;
 	if( SDLNet_ResolveHost(&ip,NULL,port)==-1 )
-		throw RageException("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 
 	m_listenSock=SDLNet_TCP_Open(&ip);
 	if( !m_listenSock ) 
-		throw RageException("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
 
 	SDLNet_TCP_AddSocket( m_listenSockSet, m_listenSock );
 }
@@ -146,7 +146,8 @@ void RageNetworkServer::Update( float fDeltaTime )
 		int numready = SDLNet_CheckSockets(m_clientSocksSet, 0);
 		if(numready==-1) 
 		{
-			LOG->Warn("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
+			// XXX sorry, this was really noisy ... - glenn
+//			LOG->Warn("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
 		}
 		else if( numready > 0 )
 		{
