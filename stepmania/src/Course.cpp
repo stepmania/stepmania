@@ -638,13 +638,13 @@ RageColor Course::GetColor() const
 		break;
 
 	case PrefsManager::COURSE_SORT_METER:
-		if (SortOrder_AvgDifficulty > 100)
+		if (GetMeter() > 100)
 			return RageColor(0,0,1,1);  // blue
-		if (SortOrder_AvgDifficulty > 8.5)
+		if (GetMeter() > 8.5)
 			return RageColor(1,0,0,1);  // red
-		if (SortOrder_AvgDifficulty >= 7)
+		if (GetMeter() >= 7)
 			return RageColor(1,0.5f,0,1); // orange
-		if (SortOrder_AvgDifficulty >= 5)
+		if (GetMeter() >= 5)
 			return RageColor(1,1,0,1);  // yellow
 		return RageColor(0,1,0,1); // green
 
@@ -956,7 +956,6 @@ bool Course::HasBanner() const
 
 void Course::UpdateCourseStats()
 {
-	SortOrder_AvgDifficulty = 0;
 	SortOrder_TotalDifficulty = 0;
 
 	unsigned i;
@@ -967,7 +966,6 @@ void Course::UpdateCourseStats()
 		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
 			continue;
 
-		SortOrder_AvgDifficulty = 9999999; // large number
 		if ( SortOrder_Ranking == 2 )
 			SortOrder_Ranking = 3;
 		SortOrder_TotalDifficulty = 999999;     // large number
@@ -980,14 +978,11 @@ void Course::UpdateCourseStats()
 	for( i = 0; i < ci.size(); i++ )
 		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();
 
-	SortOrder_AvgDifficulty = (float)SortOrder_TotalDifficulty/GetEstimatedNumStages();
-
 	// OPTIMIZATION: Ranking info isn't dependant on style, so
 	// call it sparingly.  Its handled on startup and when
 	// themes change..
 	
 	LOG->Trace("%s: Total feet: %d, Average Difficulty: %f",
 		this->m_sName.c_str(),
-		SortOrder_TotalDifficulty,
-		SortOrder_AvgDifficulty);
+		SortOrder_TotalDifficulty );
 }

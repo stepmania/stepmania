@@ -145,7 +145,6 @@ public:
 
 	// sorting values
 	int		SortOrder_TotalDifficulty;
-	float	SortOrder_AvgDifficulty;
 	int		SortOrder_Ranking;
 
 	void UpdateCourseStats();
