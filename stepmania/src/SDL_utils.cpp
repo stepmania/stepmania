@@ -275,8 +275,7 @@ static void FindAlphaRGB(SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool re
 		}
 	}
 
-	/* XXX The image has alpha set, but never uses it.  We should drop the alpha
-	 * channel. */
+	/* Huh?  The image is completely transparent. */
 	r = g = b = 0;
 }
 
