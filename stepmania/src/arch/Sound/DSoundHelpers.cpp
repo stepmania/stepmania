@@ -285,9 +285,6 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 	ASSERT(!buffer_locked);
 
 	DWORD cursorstart, cursorend;
-#if !defined(_XBOX)
-	DWORD junk;
-#endif
 
 	HRESULT result;
 
@@ -353,7 +350,6 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 			LOG->Trace("underrun %p: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
 				this, first_byte_filled, write_cursor, cursorstart, cursorend,
 				missed_by, buffer_bytes_filled, buffersize);
-//				(cursorend - first_byte_filled + buffersize) % buffersize);
 
 			/* Pretend the space between the play and write cursor is filled
 			 * with data, and continue filling from there. */
@@ -395,6 +391,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 #ifdef _XBOX
 	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, NULL, 0);
 #else
+	DWORD junk;
 	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
 #endif
 

@@ -88,6 +88,14 @@ bool Alsa9Buf::SetSWParams()
 	int err = dsnd_pcm_sw_params_get_xfer_align( swparams, &xfer_align );
 	ALSA_ASSERT("dsnd_pcm_sw_params_get_xfer_align");
 
+	snd_pcm_uframes_t avail_min;
+	err = dsnd_pcm_sw_params_get_avail_min( swparams, &avail_min );
+	ALSA_ASSERT("dsnd_pcm_sw_params_get_avail_min");
+
+	/* So far, I havn't seen a case where avail_min > xfer_align.  If that happens,
+	 * the GetNumFramesToFill will need updating. */
+	ASSERT( avail_min <= xfer_align );
+
 	/* If this fails, we might have bound dsnd_pcm_sw_params_get_xfer_align to
 	 * the old SW API. */
 	ASSERT( err <= 0 );

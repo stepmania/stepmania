@@ -50,4 +50,5 @@ FUNC(int, snd_pcm_sw_params_current, (snd_pcm_t *pcm, snd_pcm_sw_params_t *param
 FUNC(int, snd_pcm_sw_params_get_boundary, (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val));
 FUNC(int, snd_pcm_sw_params_get_xfer_align, (const snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val));
 FUNC(int, snd_pcm_sw_params_set_stop_threshold, (snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val));
+FUNC(int, snd_pcm_sw_params_get_avail_min, (snd_pcm_sw_params_t *params, snd_pcm_uframes_t *val));
 
