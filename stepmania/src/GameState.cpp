@@ -321,5 +321,10 @@ void GameState::RestoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
-	GAMESTATE->m_SongOptions.Init();
+	/* Oops.  We can't do this; it'll reset lives back to 4, and we need it
+	 * to stick around for the length of the course (for regaining).  Let's
+	 * just reset the options that can actually be set per-song. XXX */
+//	GAMESTATE->m_SongOptions.Init();
+	GAMESTATE->m_SongOptions.m_DrainType = SongOptions::DRAIN_NORMAL;
+	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
 }
