@@ -12,6 +12,7 @@
 
 #include "Sprite.h"
 #include "RageTextureManager.h"
+#include "GameInfo.h"
 #include "IniFile.h"
 #include <assert.h>
 #include <math.h>
@@ -43,7 +44,10 @@ void Sprite::Init()
 	m_fVibrationDistance =  5.0f ;
 	m_bVisibleThisFrame =  FALSE;
 
-	m_bHasShadow = true;
+	if( GAMEINFO )
+		m_bHasShadow = GAMEINFO->m_GameOptions.m_bShadows;
+	else
+		m_bHasShadow = true;
 }
 
 Sprite::~Sprite()
