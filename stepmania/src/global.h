@@ -86,13 +86,7 @@ namespace Checkpoints
 #define NORETURN
 #endif
 
-/* The infinite loop isn't actually reached; it's just there to shut up a warning. */
-#ifdef _WINDOWS
-	#include "windows.h"
-	static inline void NORETURN sm_crash() { DebugBreak(); }	// throws an exception that gets caught by the exception handler
-#else
-	static inline void NORETURN sm_crash() { *(char*)0=0; while(1); }
-#endif 
+void NORETURN sm_crash();
 
 /* Assertion that sets an optional message and brings up the crash handler, so
  * we get a backtrace.  This should probably be used instead of throwing an
