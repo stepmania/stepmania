@@ -202,7 +202,7 @@ void BitmapText::DrawPrimitives()
 	case align_bottom:	iY = -(m_iNumLines)	  * iLineSpacing		+ iLineSpacing/2;	break;
 	case align_middle:	iY = -(m_iNumLines-1) * iLineSpacing/2;					break;
 	case align_top:		iY =								+ iLineSpacing/2;	break;
-	default:		ASSERT( false );
+	default:		ASSERT( false );	return;
 	}
 
 
@@ -218,7 +218,7 @@ void BitmapText::DrawPrimitives()
 		case align_left:	iX = 0;					break;
 		case align_center:	iX = -(iLineWidth/2);	break;
 		case align_right:	iX = -iLineWidth;		break;
-		default:			ASSERT( false );
+		default:			ASSERT( false );		return;
 		}
 
 		for( int j=0; j<iLineLength; j++ )	// for each character in the line
