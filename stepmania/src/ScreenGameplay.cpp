@@ -74,7 +74,7 @@
 #define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenGameplay","SecondsBetweenComments")
 #define TICK_EARLY_SECONDS				THEME->GetMetricF("ScreenGameplay","TickEarlySeconds")
 
-float g_fTickEarlySecondsCache = 0;		// reading directly out of theme metrics is slow
+static float g_fTickEarlySecondsCache = 0;		// reading directly out of theme metrics is slow
 
 
 // received while STATE_DANCING
