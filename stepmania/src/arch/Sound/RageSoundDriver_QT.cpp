@@ -48,16 +48,11 @@ static void CallBack(QTCallBack cb, long refCon);
 static inline void GetData(soundInfoPtr s);
 
 static vector<soundInfoHdl> sounds;
-static MovieImportComponent miComponent;
 
 RageSound_QT::RageSound_QT() {
-#if 0
+#if 1
     RageException::ThrowNonfatal("Class not finished!");
 #endif
-    if (EnterMovies() != noErr)
-        RageException::ThrowNonfatal("Could not start movies. Falling back.");
-    miComponent = OpenDefaultComponent(MovieImportType, kQTFileTypeWave);
-    ASSERT(miComponent);
 }
 
 RageSound_QT::~RageSound_QT() {
@@ -84,8 +79,6 @@ RageSound_QT::~RageSound_QT() {
         TEST_ERR(err, DisposeHandle);
         sounds.pop_back();
     }
-    if (miComponent)
-        CloseComponent(miComponent);
 }
 
 void RageSound_QT::StartMixing(RageSound *snd) {
@@ -233,48 +226,6 @@ void CallBack(QTCallBack cb, long refCon) {
 
 inline void GetData(soundInfoPtr s) {
     LOG->Trace("GetData");
-    /* attempt one failed! */
-#if 0
-    Handle hdl, dataRef = NULL;
-    Track targetTrack = NULL;
-    TimeValue addedDuration = 0;
-    long outFlags = 0;
-    OSErr err;
-    ComponentResult result;    
-    Movie &movie = s->movie[s->fillme];
-    char buffer[buffersize];
-    unsigned got = s->snd->GetPCM(buffer, buffersize, s->lastPos);
-
-    if (got < buffersize) {
-        s->stopPos = got / samplesize + s->lastPos;
-        if (got == 0)
-            return;
-    }
-    s->lastPos += samples;
-
-    /* I really don't understand this part. Oh well. */
-    hdl = NewHandleClear(got);
-    HLock(hdl);
-    BlockMove(buffer, *hdl, got);
-    err = PtrToHand(&hdl, &dataRef, sizeof(Handle)); /* um... */
-    ASSERT(err == noErr);
-    HUnlock(hdl);
-    /* end unknown section. */
-
-    if (movie)
-        DisposeMovie(movie);
-    
-    movie = NewMovie(0);
-    SetMovieTimeScale(movie, freq);
-    if (GetMoviesError() != noErr)
-        RageException::Throw("Couldn't create new movie");
-    result = MovieImportDataRef(miComponent, dataRef, HandleDataHandlerSubType,
-                                movie, NULL, &targetTrack, NULL, &addedDuration,
-                                movieImportCreateTrack, &outFlags);
-    TEST_ERR(result, MovieImportDataRef);
-    DisposeHandle(dataRef);
-    s->fillme = !s->fillme;
-#else
     char buffer[buffersize];
     unsigned got = s->snd->GetPCM(buffer, buffersize, s->lastPos);
 
@@ -346,6 +297,5 @@ inline void GetData(soundInfoPtr s) {
     if (sndDescHdl)
         DisposeHandle(Handle(sndDescHdl));
     s->fillme = !s->fillme;
-#endif
 }
 

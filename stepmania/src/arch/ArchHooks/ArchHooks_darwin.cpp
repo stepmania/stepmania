@@ -44,6 +44,8 @@ ArchHooks_darwin::ArchHooks_darwin()
         exit(0);
     }
     InstallExceptionHandler(HandleException);
+    err = EnterMovies();
+    ASSERT(err == noErr);
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break
