@@ -1,7 +1,9 @@
-﻿------------------------CVS after 3.00 beta 6----------------
+------------------------CVS after 3.00 beta 6----------------
+CHANGE:  While AutoPlay is on, life, score, and dance points will not 
+	accumulate.
+NEW FEATURE:  Editor can edit BackgroundChanges.  Use the 'B' key.
 NEW FEATURE:  Delayed escape/back key is now optional.
-CHANGE:  Slow-motion is now on ~ instead of shift, since we use shift
-	elsewhere now.
+CHANGE:  Slow-motion is now ~ instead of LShift.
 BUG FIX:  Fix pump doubles offset.
 NEW FEATURE:  Support for #DIFFICULTY in KSF.
 CHANGE:  Allow starting without a keyboard or mouse.
