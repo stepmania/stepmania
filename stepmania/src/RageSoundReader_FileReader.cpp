@@ -63,7 +63,7 @@ SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( CString filename, C
 	 * error", "permission denied"), in which case all other readers will probably fail,
 	 * too.  The returned error is used, and no other formats will be tried.
 	 */
-	bKeepTrying = (ret == OPEN_MATCH_BUT_FAIL);
+	bKeepTrying = (ret != OPEN_FATAL_ERROR);
 	switch( ret )
 	{
 	case OPEN_UNKNOWN_FILE_FORMAT:
