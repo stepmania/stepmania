@@ -368,7 +368,10 @@ int EzSockets::pUpdateRead() {
 
   if(bytes>0)
 	inBuffer.append(tempData,bytes);
-  else if(bytes<0)
+  else if(bytes<=0)
+	/* To get her I think CanRead was called at least once.
+	So if length equals 0 and can read says there is data than 
+	the socket was closed.*/
 	state = skERROR;
   return bytes;
 }
