@@ -331,15 +331,29 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos, bool rollover )
 
 	if( ComboList[pn].size() == 0 || ComboList[pn].back().cnt >= cnt )
 	{
+		/* If the previous combo (if any) starts on -9999, then we rolled over some
+		 * combo, but missed the first step.  Remove it. */
+		if( ComboList[pn].size() && ComboList[pn].back().start == -9999 )
+			ComboList[pn].erase( ComboList[pn].begin()+ComboList[pn].size()-1, ComboList[pn].end() );
+
 		/* This is a new combo. */
 		Combo_t NewCombo;
-		NewCombo.start = pos;
+		/* "start" is the position that the combo started within this song.  If we're
+		 * recording rollover, the combo hasn't started yet (within this song), so put
+		 * a placeholder in and set it on the next call.  (Otherwise, start will be less
+		 * than fFirstPos.) */
+		if( rollover )
+			NewCombo.start = -9999;
+		else
+			NewCombo.start = pos;
 		ComboList[pn].push_back( NewCombo );
 	}
 
 	Combo_t &combo = ComboList[pn].back();
 	combo.size = pos - combo.start;
 	combo.cnt = cnt;
+	if( !rollover && combo.start == -9999 )
+		combo.start = pos;
 
 	if( rollover )
 		combo.rollover = cnt;
