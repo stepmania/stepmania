@@ -154,7 +154,7 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
 	 * If we add it here, then every time we write unmodified data we'll add an extra
 	 * newline and they'll accumulate. */
-	sRet += ssprintf( "     %s:\n", join(",",asRadarValues).c_str() );
+	sRet += ssprintf( "     %s:", join(",",asRadarValues).c_str() );
 
 	CString sNoteData;
 	in.GetSMNoteData( sNoteData );
@@ -226,13 +226,11 @@ void NotesWriterSM::GetEditFile( const Song *pSong, const Steps *pSteps, CString
 	sOut = "";
 	CString sDir = pSong->GetSongDir();
 	
-	LOG->Trace( "xxx dir from '%s'", sDir.c_str());
 	/* "Songs/foo/bar"; strip off "Songs/". */
 	vector<CString> asParts;
 	split( sDir, "/", asParts );
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
-	LOG->Trace( "dir to '%s'", sDir.c_str());
 	sOut += ssprintf( "#SONG:%s;\n", sDir.c_str() );
 	sOut += GetSMNotesTag( *pSong, *pSteps, false );
 }
