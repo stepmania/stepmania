@@ -164,20 +164,13 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 
 	// If solo-single is enabled..
+	/* XXX: Maybe this should be enabled for all ONE_PLAYER_ONE_CREDIT modes.
+	 * I don't feel like testing that right now, though. */
 	if( PREFSMAN->m_bSoloSingle && 
 		GAMESTATE->GetCurrentStyleDef()->m_NotesType == STYLE_DANCE_SINGLE &&
-		GAMESTATE->GetNumSidesJoined() == 1 &&
-		GAMESTATE->IsPlayerEnabled(0) )
+		GAMESTATE->GetNumSidesJoined() == 1 )
 	{
-		m_GhostArrowRow.SetX( 165 );
-		m_GrayArrowRow.SetX( 165 );
-		m_NoteField.SetX( 165 );
-		m_Combo.SetX( 165 );
-
-		for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
-			m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset + m_GhostArrowRow.GetX());
-
-		m_Judgment.SetX( 165 );
+		SetX(SCREEN_WIDTH/2);
 	}
 
 
