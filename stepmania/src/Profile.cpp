@@ -1682,6 +1682,8 @@ class LunaProfile : public Luna<T>
 public:
 	LunaProfile() { LUA->Register( Register ); }
 
+	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
+	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = FArg(1); return 0; }
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
 	static int GetGoalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iGoalSeconds ); return 1; }
@@ -1690,7 +1692,11 @@ public:
 
 	static void Register(lua_State *L)
 	{
+		ADD_METHOD( GetWeightPounds )
+		ADD_METHOD( SetWeightPounds )
+		ADD_METHOD( GetGoalType )
 		ADD_METHOD( GetGoalCalories )
+		ADD_METHOD( GetGoalSeconds )
 		ADD_METHOD( GetCaloriesBurnedToday )
 		ADD_METHOD( GetSaved )
 		Luna<T>::Register( L );
