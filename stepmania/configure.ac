@@ -6,6 +6,7 @@ AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE(StepMania, 3.001)
 AM_CONFIG_HEADER(src/config.h)
+AM_MAINTAINER_MODE
 
 # We don't want PROG_CC/CXX default settings, but don't ignore explicit settings.
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
