@@ -602,12 +602,12 @@ void Song::TidyUpData()
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100;		// guess
-		LOG->Warn("This song has no music file; guessing at %f seconds", m_fMusicLengthSeconds);
+		LOG->Warn("Song \"%s\" has no music file; guessing at %f seconds", this->GetSongDir().c_str(), m_fMusicLengthSeconds);
 	}
 
 	if(m_fMusicLengthSeconds < 0)
 	{
-		LOG->Warn("File %i has negative length? (%i)", GetMusicPath().c_str(), m_fMusicLengthSeconds);
+		LOG->Warn( "File %s has negative length? (%f)", GetMusicPath().c_str(), m_fMusicLengthSeconds );
 		m_fMusicLengthSeconds = 0;
 	}
 
