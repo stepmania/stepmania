@@ -16,6 +16,7 @@ static ThemeMetric<float> METER_HEIGHT		("LifeMeterBar","MeterHeight");
 static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
 static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterBar","NumChambers");
 static ThemeMetric<int> NUM_STRIPS		("LifeMeterBar","NumStrips");
+static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
 
 
 const float FAIL_THRESHOLD = 0;
@@ -222,9 +223,14 @@ LifeMeterBar::LifeMeterBar()
 
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
-	case SongOptions::DRAIN_NORMAL:			m_fLifePercentage = 0.5f;	break;
-	case SongOptions::DRAIN_NO_RECOVER:		m_fLifePercentage = 1.0f;	break;
-	case SongOptions::DRAIN_SUDDEN_DEATH:	m_fLifePercentage = 1.0f;	break;
+	case SongOptions::DRAIN_NORMAL:
+		m_fLifePercentage = INITIAL_VALUE;
+		break;
+
+	/* These types only go down, so they always start at full. */
+	case SongOptions::DRAIN_NO_RECOVER:
+	case SongOptions::DRAIN_SUDDEN_DEATH:
+		m_fLifePercentage = 1.0f;	break;
 	default:	ASSERT(0);
 	}
 
