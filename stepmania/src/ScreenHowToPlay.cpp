@@ -213,6 +213,13 @@ void ScreenHowToPlay::Update( float fDelta )
 
 		if(( iCurNoteRow != iLastNoteRowCounted ) &&(m_NoteData.IsThereATapAtRow( iCurNoteRow )))
 		{
+			if( m_pLifeMeterBar && !m_pPlayer )
+			{
+				if ( m_iPerfects < m_iNumPerfects )
+					m_pLifeMeterBar->ChangeLife(TNS_PERFECT);
+				else
+					m_pLifeMeterBar->ChangeLife(TNS_MISS);
+			}
 			m_iPerfects++;
 			iLastNoteRowCounted = iCurNoteRow;
 		}
