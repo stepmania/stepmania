@@ -74,6 +74,10 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 		ctxt = glXCreateContext(X11Helper::Dpy(), xvi, NULL, True);
 
+		glXMakeCurrent(X11Helper::Dpy(), X11Helper::Win(), ctxt);
+
+		XMapWindow(X11Helper::Dpy(), X11Helper::Win() );
+
 		// HACK: Wait for the MapNotify event, without spinning and
 		// eating CPU unnecessarily, and without smothering other
 		// events. Do this by grabbing all events, remembering
@@ -93,8 +97,6 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		}
 
 		X11Helper::CloseMask(StructureNotifyMask);
-
-		glXMakeCurrent(X11Helper::Dpy(), X11Helper::Win(), ctxt);
 
 		windowIsOpen = true;
 	} else { bNewDeviceOut = false; }
