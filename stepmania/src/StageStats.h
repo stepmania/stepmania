@@ -62,6 +62,25 @@ struct StageStats
 	float	fLifeRecord[NUM_PLAYERS][LIFE_RECORD_RESOLUTION];
 	void	SetLifeRecord( PlayerNumber pn, float life, float pos );
 	void	GetLifeRecord( PlayerNumber pn, float *life, int nout ) const;
+
+	/* pos,combo */
+	struct Combo_t
+	{
+		/* Start and size of this combo, in the same scale as the combo list mapping and
+		 * the life record. */
+		float start, size;
+
+		/* Combo size, in steps. */
+		int cnt;
+
+		Combo_t(): start(-1), size(-1), cnt(-1) { }
+		bool IsZero() const { return start < 0; }
+	};
+
+	void	UpdateComboList( PlayerNumber pn, float pos );
+
+	void	Finish();
+	vector<Combo_t> ComboList[NUM_PLAYERS];
 };
 
 

@@ -155,6 +155,8 @@ float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 
 void StageStats::SetLifeRecord( PlayerNumber pn, float life, float pos )
 {
+	pos = clamp( pos, 0, 1 );
+
 	int offset = (int) roundf( pos * LIFE_RECORD_RESOLUTION );
 	for( int i = 0; i <= offset; ++i )
 		if( fLifeRecord[pn][i] < 0 )
@@ -169,3 +171,61 @@ void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
 		life[i] = fLifeRecord[pn][from];
 	}
 }
+
+void StageStats::UpdateComboList( PlayerNumber pn, float pos )
+{
+	pos = clamp( pos, 0, 1 );
+	const int cnt = iCurCombo[pn];
+	if( !cnt )
+		return; /* no combo */
+
+	if( ComboList[pn].size() == 0 || ComboList[pn].back().cnt >= cnt )
+	{
+		LOG->Trace("new combo, start %f", pos);
+		/* This is a new combo. */
+		Combo_t NewCombo;
+		NewCombo.start = pos;
+		ComboList[pn].push_back( NewCombo );
+	}
+
+	Combo_t &combo = ComboList[pn].back();
+	combo.size = pos - combo.start;
+	combo.cnt = cnt;
+		LOG->Trace("combo pos %f, size %f, %i", pos, combo.size, combo.cnt );
+}
+
+/* SetLifeRecord and UpdateComboList take a percentage (0..1) in pos, but the values
+ * will actually be somewhat off as they're based on Song::m_fFirstBeat and m_fLastBeat,
+ * which are per-song, not per-Steps.  Scale and shift our records so that they're
+ * really 0..1. */
+void StageStats::Finish()
+{
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	{
+		if( ComboList[pn].size() == 0 )
+			continue;
+
+		const float First = ComboList[pn].front().start;
+		const float Last = ComboList[pn].back().start + ComboList[pn].back().size;
+		if( fabsf(First-Last) < 0.0001f )
+			continue;
+
+		LOG->Trace("xxx %f ... %f", First, Last );//, Scale);
+		unsigned i;
+		for( i = 0; i < ComboList[pn].size(); ++i )
+		{
+			ComboList[pn][i].start = SCALE( ComboList[pn][i].start, First, Last, 0.0f, 1.0f );
+			ComboList[pn][i].size /= Last - First;
+		}
+
+		float NewLifeRecord[LIFE_RECORD_RESOLUTION];
+		for( i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
+		{
+			int from = (int) roundf( SCALE( i, 0.0f, 1.0f, First, Last ) );
+			from = clamp( from, 0, LIFE_RECORD_RESOLUTION-1 );
+			NewLifeRecord[i] = fLifeRecord[pn][from];
+		}
+		memcpy( fLifeRecord[pn], NewLifeRecord, sizeof(fLifeRecord[pn]) );
+	}
+}
+
