@@ -14,6 +14,25 @@ class LunaSprite : public LunaActor<T>
 public:
 	LunaSprite() { LUA->Register( Register ); }
 
+	static int Load( T* p, lua_State *L )
+	{
+		RageTextureID ID( SArg(1) );
+		lua_pushboolean( LUA->L, p->Load(ID) );
+		return 1;
+	}
+	static int LoadBackground( T* p, lua_State *L )
+	{
+		RageTextureID ID( SArg(1) );
+		lua_pushboolean( LUA->L, p->Load(Sprite::SongBGTexture(ID)) );
+		return 1;
+	}
+	static int LoadBanner( T* p, lua_State *L )
+	{
+		RageTextureID ID( SArg(1) );
+		lua_pushboolean( LUA->L, p->Load(Sprite::SongBannerTexture(ID)) );
+		return 1;
+	}
+
 	/* Commands that go in the tweening queue: 
 	 * Commands that take effect immediately (ignoring the tweening queue): */
 	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
@@ -30,6 +49,9 @@ public:
 	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; }
 
 	static void Register(lua_State *L) {
+		ADD_METHOD( Load )
+		ADD_METHOD( LoadBanner )
+		ADD_METHOD( LoadBackground )
 		ADD_METHOD( customtexturerect )
 		ADD_METHOD( texcoordvelocity )
 		ADD_METHOD( scaletoclipped )
