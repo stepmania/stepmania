@@ -18,7 +18,8 @@ extern "C" int sigaltstack( const struct sigaltstack *ss, struct sigaltstack *os
 static vector<SignalHandler::handler> handlers;
 SaveSignals *saved_sigs;
 
-static int signals[] = {
+static int signals[] =
+{
 	SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL, SIGINT, SIGABRT,
 	SIGQUIT, SIGSEGV, SIGTRAP, SIGTERM, SIGVTALRM, SIGXCPU, SIGXFSZ,
 #if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
@@ -166,6 +167,18 @@ void SignalHandler::OnClose(handler h)
 	handlers.push_back(h);
 }
 
+/* Revert to the default signal handler.  This is called */
+void SignalHandler::ResetSignalHandlers()
+{
+	struct sigaction sa;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+
+	/* Set up the default signal handler. */
+	sa.sa_handler = SIG_DFL;
+	for(int i = 0; signals[i] != -1; ++i)
+		sigaction( signals[i], &sa, NULL );
+}
 
 /* Written by Glenn Maynard.  Public domain, copyrighting a simple signal handler
  * is dumb. */
