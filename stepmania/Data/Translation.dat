@@ -656,6 +656,16 @@ ArtistTo: 이박사
 ArtistFrom: (Naofumi Hataya)|(Hataya Naofumi)
 ArtistTo: 幡谷尚史
 *
+# Note: while this name is Chinese, we're displaying it with a Japanese
+# font page.  We don't have any way to tag text language.  This isn't
+# really a problem: I think Japanese and Chinese people prefer seeing
+# characters in their own language's font, anyway, so let's just leave
+# it up to the theme to pick which font style to use.
+TitleFrom: Red Sun
+ArtistFrom: Alan Tam / Hacken Lee
+TitleTo: 紅日
+ArtistTo: 譚詠麟／李克勤
+*
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
