@@ -501,6 +501,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
+	ZERO( m_pInventory );
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		switch( GAMESTATE->m_PlayMode )
