@@ -66,8 +66,6 @@ LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
 #if 0
     LOG->Info("  new line=%02x", my_termios.c_line);
 #endif
-
-    WriteString( "Yo", strlen("Yo") );
 }
 
 LightsDriver_LinuxSerial::~LightsDriver_LinuxSerial()
@@ -93,7 +91,9 @@ void LightsDriver_LinuxSerial::SetLight( Light light, bool bOn )
 
 void LightsDriver_LinuxSerial::Flush()
 {
-  // flip bits so that 0=on, 1=off.
+    WriteString( "Yo", strlen("Yo") );
+
+	// flip bits so that 0=on, 1=off.
   char temp_data[2];
   for( int i=0; i<2; i++ )
     temp_data[i] = ~g_data[i];
