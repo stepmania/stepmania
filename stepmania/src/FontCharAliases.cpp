@@ -113,7 +113,11 @@ static void InitCharAliases()
 	CharAliases["yozora1"]		= 0x7A7A; /* 夜 */
 	CharAliases["yozora2"]		= 0x6249; /* 空 */
 	CharAliases["sai"]			= 0x624D; /* 才 */
-	
+	CharAliases["osoi"]			= 0x9045; /* 遅 */
+	CharAliases["tsutau"]		= 0x4F1D; /* 伝 */
+	CharAliases["setsu"]		= 0x8AAC; /* 説 */
+	CharAliases["true"]			= 0x771F; /* 真 */
+
 	CharAliases["num-ichi"]		= 0x4E00; /* 一 */
 	CharAliases["num-ni"]		= 0x4E01; /* 二 */
 	CharAliases["num-san"]		= 0x4E02; /* 三 */

@@ -173,10 +173,14 @@ TitleSubst::TitleSubst()
 	/* Courses: */
 	AddTrans("^Kidou$", "", "", "&oni;&michi;", "", "");
 	AddTrans("^Demon Road$", "", "", "&oni;&michi;", "", "");
-	AddTrans("^Kidou 2$", "", "", "&oni;&michi; 2", "", "");
-	AddTrans("^Demon Road 2$", "", "", "&oni;&michi; 2", "", "");
+	AddTrans("^Kidou 2$", "", "", "&oni;&michi;&futatsu;", "", "");
+	AddTrans("^Demon Road 2$", "", "", "&oni;&michi;&futatsu;", "", "");
 	AddTrans("^Love$", "", "", "Love &whiteheart;", "", "");
 	AddTrans("^Love Love$", "", "", "Love &whiteheart;", "", "");
+	AddTrans("^2 ?MB$", "", "", "2MB&oni;", "", "");
+	AddTrans("^Dancemania$", "", "", "Dancemania &oni;", "", "");
+	AddTrans("^TaQ$", "", "", "TaQ &oni;", "", "");
+	
 }
 
 TitleSubst::~TitleSubst()
