@@ -176,6 +176,11 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 
 void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
+	/* Stop all tweens where they are, since we might have selected before
+	 * we finished tweening in. */
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->StopTweening();
+
 	SCREENMAN->PlayStartSound();
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );
 
