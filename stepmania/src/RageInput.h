@@ -9,9 +9,8 @@
 */
 
 #include "RageInputDevice.h"
-#include "SDL_utils.h"
-#include "arch/arch.h"
 
+class InputHandler;
 class RageInput
 {
 	vector<InputHandler *> Devices;
