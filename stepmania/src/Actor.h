@@ -18,7 +18,8 @@ public:
 	virtual ~Actor() {}
 	virtual void Reset();
 
-	static void SetBGMTime( float fTime );
+	static void SetBGMTime( float fTime ) { g_fCurrentBGMTime = fTime; }
+	static float GetBGMTime() { return g_fCurrentBGMTime; }
 
 	enum TweenType { 
 		TWEEN_LINEAR, 
@@ -391,6 +392,11 @@ protected:
 	ZTestMode	m_ZTestMode;
 	bool		m_bZWrite;
 	CullMode	m_CullMode;
+
+	//
+	// global state
+	///
+	static float g_fCurrentBGMTime;
 };
 
 #endif

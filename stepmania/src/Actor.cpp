@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 
-static float g_fCurrentBGMTime = 0;
+float Actor::g_fCurrentBGMTime = 0;
 
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */
@@ -57,11 +57,6 @@ Actor::Actor()
 	m_size = RageVector2( 1, 1 );
 	Reset();
 	m_bFirstUpdate = true;
-}
-
-void Actor::SetBGMTime( float fTime )
-{
-	g_fCurrentBGMTime = fTime;
 }
 
 void Actor::Draw()
