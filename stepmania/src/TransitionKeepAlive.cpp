@@ -17,7 +17,7 @@
 #include "PrefsManager.h"
 #include "RageMusic.h"
 #include "ThemeManager.h"
-
+#include "RageLog.h"
 
 #define STOP_MUSIC_ON_NEXT		THEME->GetMetricB("TransitionKeepAlive","StopMusicOnNext")
 #define KEEP_ALIVE_TYPE			THEME->GetMetricI("TransitionKeepAlive","KeepAliveType")
@@ -25,6 +25,7 @@ enum KeepAliveType		// for use with the metric above
 {
 	KEEP_ALIVE_TYPE_MAX = 0,
 	KEEP_ALIVE_TYPE_5TH,
+	KEEP_ALIVE_TYPE_HIDDEN, //disable drawing of the keep alive transition (for transitioning to the summary score screen)
 };
 
 
@@ -43,6 +44,11 @@ TransitionKeepAlive::TransitionKeepAlive()
 	m_sprLogo.SetXY( CENTER_X, CENTER_Y );
 }
 
+void TransitionKeepAlive::SetHidden()
+{
+	g_KeepAliveType = (KeepAliveType)KEEP_ALIVE_TYPE_HIDDEN;
+}
+
 void TransitionKeepAlive::Update( float fDeltaTime )
 {
 	// hack:  Smooth out the big hickups.
@@ -57,6 +63,8 @@ void TransitionKeepAlive::DrawPrimitives()
 	// draw keep alive graphic
 	switch( g_KeepAliveType )
 	{
+	case KEEP_ALIVE_TYPE_HIDDEN: //draw nothing
+		break;					 //for last transition (to final score summary screen)
 	case KEEP_ALIVE_TYPE_MAX:
 		{
 			float fPercentClosed = 1 - this->GetPercentageOpen();

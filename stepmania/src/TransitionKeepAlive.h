@@ -28,6 +28,7 @@ public:
 	virtual void OpenWipingLeft(  ScreenMessage send_when_done = SM_None );
 	virtual void CloseWipingRight(ScreenMessage send_when_done = SM_None );
 	virtual void CloseWipingLeft( ScreenMessage send_when_done = SM_None );
+	virtual void SetHidden();
 
 protected:
 	Sprite m_sprLogo;

@@ -864,7 +864,11 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		if( m_bTryExtraStage )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1  )
+		{
+			//Disable "Lets Move On Graphic"
+			m_Menu.m_KeepAlive.SetHidden();
 			m_Menu.TweenOffScreenToMenu( SM_GoToFinalEvaluation );
+		}
 		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex < PREFSMAN->m_iNumArcadeStages-1  )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else
