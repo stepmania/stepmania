@@ -146,6 +146,7 @@ PrefsManager::PrefsManager()
 	m_fCenterImageScaleY = 1;
 
 	m_bAttractSound = true;
+	m_bAllowExtraStage = true;
 	g_bAutoRestart = false;
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
@@ -312,6 +313,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.GetValue( "Options", "AttractSound",					m_bAttractSound );
+	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 
 	CString sAdditionalSongFolders;
@@ -440,6 +442,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.SetValue( "Options", "AttractSound",					m_bAttractSound );
+	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
