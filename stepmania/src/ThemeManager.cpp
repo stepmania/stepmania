@@ -882,11 +882,15 @@ public:
 		ADD_METHOD( GetPath )
 		Luna<T>::Register( L );
 
-		// add global singleton
-		ASSERT( THEME );
-		lua_pushstring(L, "THEME");
-		THEME->PushSelf( LUA->L );
-		lua_settable(L, LUA_GLOBALSINDEX);
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( THEME )
+		{
+			lua_pushstring(L, "THEME");
+			THEME->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
 	}
 };
 
