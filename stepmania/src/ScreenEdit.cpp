@@ -136,14 +136,15 @@ MiniMenuDefinition g_AreaMenu =
 	"Area Menu",
 	ScreenEdit::NUM_AREA_MENU_CHOICES,
 	{
-		{ "Cut",				true, 1, 0, {""} },
-		{ "Copy",				true, 1, 0, {""} },
-		{ "Paste",				true, 1, 0, {""} },
-		{ "Clear",				true, 1, 0, {""} },
-		{ "Quantize",			true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
-		{ "Transform",			true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
-		{ "Play selection",		true, 1, 0, {""} },
-		{ "Record in selection",true, 1, 0, {""} },
+		{ "Cut",					true, 1, 0, {""} },
+		{ "Copy",					true, 1, 0, {""} },
+		{ "Paste at current beat",	true, 1, 0, {""} },
+		{ "Paste at begin marker",	true, 1, 0, {""} },
+		{ "Clear",					true, 1, 0, {""} },
+		{ "Quantize",				true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
+		{ "Transform",				true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
+		{ "Play selection",			true, 1, 0, {""} },
+		{ "Record in selection",	true, 1, 0, {""} },
 		{ "Insert blank beat and shift down", true, 1, 0, {""} },
 		{ "Delete blank beat and shift up", true, 1, 0, {""} },
 	}
@@ -755,7 +756,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			bool bAreaSelected = m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1;
 			g_AreaMenu.lines[cut].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[copy].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[paste].bEnabled = this->m_Clipboard.GetLastBeat() != 0;
+			g_AreaMenu.lines[paste_at_current_beat].bEnabled = this->m_Clipboard.GetLastBeat() != 0;
+			g_AreaMenu.lines[paste_at_begin_marker].bEnabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_fBeginMarker!=-1;
 			g_AreaMenu.lines[clear].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[quantize].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[transform].bEnabled = bAreaSelected;
@@ -1224,8 +1226,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 	{
 		case cut:
 			{
-				HandleAreaMenuChoice( copy, iAnswers );
-				HandleAreaMenuChoice( clear, iAnswers );
+				HandleAreaMenuChoice( copy, NULL );
+				HandleAreaMenuChoice( clear, NULL );
 			}
 			break;
 		case copy:
@@ -1237,11 +1239,20 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
 			}
 			break;
-		case paste:
+		case paste_at_current_beat:
 			{
 				int iSrcFirstRow = 0;
 				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
 				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
+			}
+			break;
+		case paste_at_begin_marker:
+			{
+				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 );
+				int iSrcFirstRow = 0;
+				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
+				int iDestFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
 				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
 			}
 			break;
@@ -1261,8 +1272,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case transform:
 			{
-				HandleAreaMenuChoice( cut, iAnswers );
-
+				HandleAreaMenuChoice( cut, NULL );
+				
 				TransformType tt = (TransformType)iAnswers[c];
 				switch( tt )
 				{
@@ -1280,7 +1291,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				default:		ASSERT(0);
 				}
 
-				HandleAreaMenuChoice( paste, iAnswers );
+				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 			}
 			break;
 		case play:

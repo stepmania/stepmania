@@ -123,7 +123,8 @@ public:
 	enum AreaMenuChoice {
 		cut,
 		copy,
-		paste,
+		paste_at_current_beat,
+		paste_at_begin_marker,
 		clear,
 		quantize,
 		transform,

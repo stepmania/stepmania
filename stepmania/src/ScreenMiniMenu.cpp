@@ -250,7 +250,12 @@ void ScreenMiniMenu::AfterAnswerChanged()
 
 int ScreenMiniMenu::GetGoUpSpot()
 {
-	for( int i=m_iCurLine-1; i>=0; i-- )
+	int i;
+	for( i=m_iCurLine-1; i>=0; i-- )
+		if( m_Def.lines[i].bEnabled )
+			return i;
+	// wrap
+	for( i=m_Def.iNumLines-1; i>=0; i-- )
 		if( m_Def.lines[i].bEnabled )
 			return i;
 	return -1;
@@ -258,7 +263,12 @@ int ScreenMiniMenu::GetGoUpSpot()
 
 int ScreenMiniMenu::GetGoDownSpot()
 {
-	for( int i=m_iCurLine+1; i<m_Def.iNumLines; i++ )
+	int i;
+	for( i=m_iCurLine+1; i<m_Def.iNumLines; i++ )
+		if( m_Def.lines[i].bEnabled )
+			return i;
+	// wrap
+	for( i=0; i<m_Def.iNumLines; i++ )
 		if( m_Def.lines[i].bEnabled )
 			return i;
 	return -1;
