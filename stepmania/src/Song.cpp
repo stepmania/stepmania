@@ -442,9 +442,15 @@ void Song::TidyUpData()
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	TranslateTitles();
 
-	/* XXX don't throw due to broken songs */
 	if( m_BPMSegments.empty() )
-		RageException::Throw( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
+	{
+		/* XXX: Once we have a way to display warnings that the user actually
+		 * cares about (unlike most warnings), this should be one of them. */
+		LOG->Warn( "No BPM segments specified in '%s%s', default provided.",
+			m_sSongDir.GetString(), m_sSongFileName.GetString() );
+
+		AddBPMSegment( BPMSegment(0, 60) );
+	}
 
 	// We're going to try and do something intelligent here...
 	// The MusicSampleStart always seems to be about 100-120 beats into 
