@@ -740,85 +740,233 @@ bool Regex::Compare(const CString &str, vector<CString> &matches)
 }
 #endif
 
-/* UTF-8 decoding code from glib. */
-char *utf8_find_next_char (const char *p, const char *end)
+
+
+
+/* Given a UTF-8 byte, return the length of the codepoint (if a start code)
+ * or 0 if it's a continuation byte. */
+int utf8_get_char_len( char p )
 {
-	if (end)
-		for (++p; p < end && (*p & 0xc0) == 0x80; ++p)
-			;
-	else if (*p) {
-		for (++p; (*p & 0xc0) == 0x80; ++p)
-			;
-	}
-	return (p == end) ? NULL : (char *)p;
+	if( !(p & 0x80) ) return 1; /* 0xxxxxxx - 1 */
+	if( !(p & 0x40) ) return 1; /* 10xxxxxx - continuation */
+	if( !(p & 0x20) ) return 2; /* 110xxxxx */
+	if( !(p & 0x10) ) return 3; /* 1110xxxx */
+	if( !(p & 0x08) ) return 4; /* 11110xxx */
+	if( !(p & 0x04) ) return 5; /* 111110xx */
+	if( !(p & 0x02) ) return 6; /* 1111110x */
+	return 1; /* 1111111x */
 }
 
-int masks[7] = { 0, 0x7f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
-
-int utf8_get_char_len (const char *pp)
+static inline bool is_utf8_continuation_byte( char c )
 {
-	const unsigned char *p = (const unsigned char *) pp;
-	if (*p < 128)					 return 1;
-	else if ((*p & 0xe0) == 0xc0)  return 2;
-	else if ((*p & 0xf0) == 0xe0)  return 3;
-	else if ((*p & 0xf8) == 0xf0)  return 4;
-	else if ((*p & 0xfc) == 0xf8)  return 5;
-	else if ((*p & 0xfe) == 0xfc)  return 6;
-	return -1;
+	return (c & 0xC0) == 0x80;
 }
 
-bool utf8_is_valid(const CString &str)
+/* Decode one codepoint at start; advance start and place the result in ch.  If
+ * the encoded string is invalid, false is returned. */
+bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch )
 {
-	unsigned pos = 0;
-	while(pos < str.size())
+	if( start >= s.size() )
+		return false;
+
+	if( is_utf8_continuation_byte( s[start] ) || /* misplaced continuation byte */
+	    (s[start] & 0xFE) == 0xFE ) /* 0xFE, 0xFF */
 	{
-		int len = utf8_get_char_len(str.c_str() + pos);
-		if(len == -1)
-			return false;
-		if( utf8_get_char( str.c_str() + pos ) == INVALID_CHAR )
-			return false;
-
-		pos += len;
+		start += 1;
+		return false;
 	}
 
+	int len = utf8_get_char_len( s[start] );
+
+	const int first_byte_mask[] = { -1, 0x7F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
+
+	ch = s[start] & first_byte_mask[len];
+
+	for( int i = 1; i < len; ++i )
+	{
+		if( start+i >= s.size() )
+		{
+			/* We expected a continuation byte, but didn't get one.  Return error, and point
+			 * start at the unexpected byte; it's probably a new sequence. */
+			start += i;
+			return false;
+		}
+
+		int byte = s[start+i];
+		if( !is_utf8_continuation_byte(byte) )
+		{
+			/* We expected a continuation byte, but didn't get one.  Return error, and point
+			 * start at the unexpected byte; it's probably a new sequence. */
+			start += i;
+			return false;
+		}
+		ch = (ch << 6) | byte & 0x3F;
+	}
+
+	bool bValid = true;
+	{
+		unsigned c1 = (unsigned) s[start] & 0xFF;
+		unsigned c2 = (unsigned) s[start+1] & 0xFF;
+		int c = (c1 << 8) + c2;
+		if( (c & 0xFE00) == 0xC000 ||
+		    (c & 0xFFE0) == 0xE080 ||
+		    (c & 0xFFF0) == 0xF080 ||
+		    (c & 0xFFF8) == 0xF880 ||
+		    (c & 0xFFFC) == 0xFC80 )
+	    {
+		    bValid = false;
+	    }
+	}
+
+	if( ch == 0xFFFE || ch == 0xFFFF )
+		bValid = false;
+
+	start += len;
+	return bValid;
+}
+
+/* Like utf8_to_wchar_ec, but only does enough error checking to prevent crashing. */
+bool utf8_to_wchar( const CString &s, unsigned &start, wchar_t &ch )
+{
+	if( start >= s.size() )
+		return false;
+
+	int len = utf8_get_char_len( s[start] );
+
+	if( start+len > s.size() )
+	{
+		/* We don't have room for enough continuation bytes.  Return error. */
+		start += len;
+		ch = L'?';
+		return false;
+	}
+
+	switch( len )
+	{
+	case 1:
+		ch = (s[start+0] & 0x7F);
+		break;
+	case 2:
+		ch = ( (s[start+0] & 0x1F) << 6 ) |
+		       (s[start+1] & 0x3F);
+		break;
+	case 3:
+		ch = ( (s[start+0] & 0x0F) << 12 ) |
+		     ( (s[start+1] & 0x3F) << 6 ) |
+		       (s[start+2] & 0x3F);
+		break;
+	case 4:
+		ch = ( (s[start+0] & 0x07) << 18 ) |
+		     ( (s[start+1] & 0x3F) << 12 ) |
+		     ( (s[start+2] & 0x3F) << 6 ) |
+		     (s[start+3] & 0x3F);
+		break;
+	case 5:
+		ch = ( (s[start+0] & 0x03) << 24 ) |
+		     ( (s[start+1] & 0x3F) << 18 ) |
+		     ( (s[start+2] & 0x3F) << 12 ) |
+		     ( (s[start+3] & 0x3F) << 6 ) |
+		     (s[start+4] & 0x3F);
+		break;
+
+	case 6:
+		ch = ( (s[start+0] & 0x01) << 30 ) |
+		     ( (s[start+1] & 0x3F) << 24 ) |
+		     ( (s[start+2] & 0x3F) << 18 ) |
+		     ( (s[start+3] & 0x3F) << 12) |
+		     ( (s[start+4] & 0x3F) << 6 ) |
+		     (s[start+5] & 0x3F);
+		break;
+
+	}
+
+	start += len;
 	return true;
 }
 
-wchar_t utf8_get_char (const char *p)
+
+/* UTF-8 encode ch and append to out. */
+void wchar_to_utf8( wchar_t ch, CString &out )
 {
-  int len = utf8_get_char_len(p);
-  if(len == -1)
-	  return INVALID_CHAR;
+	if( ch < 0x80 ) { out.append( 1, (char) ch ); return; }
 
-  int mask = masks[len];
-  wchar_t result = wchar_t(p[0] & mask);
-  for (int i = 1; i < len; ++i) {
-      if ((p[i] & 0xc0) != 0x80)
-          return INVALID_CHAR;
+	int cbytes = 0;
+	if( ch < 0x800 ) cbytes = 1;
+	else if( ch < 0x10000 )    cbytes = 2;
+	else if( ch < 0x200000 )   cbytes = 3;
+	else if( ch < 0x4000000 )  cbytes = 4;
+	else cbytes = 5;
 
-	  result <<= 6;
-      result |= p[i] & 0x3f;
-  }
+	{
+		int shift = cbytes*6;
+		const int init_masks[] = { 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+		out.append( 1, (char) (init_masks[cbytes-1] | (ch>>shift)) );
+	}
 
-  return result;
+	for( int i = 0; i < cbytes; ++i )
+	{
+		int shift = (cbytes-i-1)*6;
+		out.append( 1, (char) (0x80 | ((ch>>shift)&0x3F)) );
+	}
+}
+
+
+wchar_t utf8_get_char( const CString &s )
+{
+	unsigned start = 0;
+	wchar_t ret;
+	if( !utf8_to_wchar_ec( s, start, ret ) )
+		return INVALID_CHAR;
+	return ret;
+}
+
+
+
+/* Replace invalid sequences in s. */
+void utf8_sanitize( CString &s )
+{
+	CString ret;
+	for( unsigned start = 0; start < s.size(); )
+	{
+		wchar_t ch;
+		if( !utf8_to_wchar_ec( s, start, ch ) )
+		{
+			ret += INVALID_CHAR;
+			continue;
+		}
+
+		wchar_to_utf8( ch, ret );
+	}
+
+	s = ret;
+}
+
+
+bool utf8_is_valid( const CString &s )
+{
+	for( unsigned start = 0; start < s.size(); )
+	{
+		wchar_t ch;
+		if( !utf8_to_wchar_ec( s, start, ch ) )
+			return false;
+	}
+	return true;
 }
 
 const wchar_t INVALID_CHAR = 0xFFFF;
 
-wstring CStringToWstring(const CString &str)
+wstring CStringToWstring( const CString &s )
 {
-	const char *ptr = str.c_str(), *end = str.c_str()+str.size();
-
 	wstring ret;
-
-	while(ptr && ptr != end)
+	for( unsigned start = 0; start < s.size(); )
 	{
-		wchar_t c = utf8_get_char (ptr);
-		if(c == -1)
+		wchar_t ch;
+		if( !utf8_to_wchar_ec( s, start, ch ) )
+		{
 			ret += INVALID_CHAR;
+		}
 		else
-			ret += c;
-		ptr = utf8_find_next_char (ptr, end);
+			ret += ch;
 	}
 
 	return ret;
@@ -829,54 +977,17 @@ CString WStringToCString(const wstring &str)
 	CString ret;
 
 	for(unsigned i = 0; i < str.size(); ++i)
-		ret.append(WcharToUTF8(str[i]));
+		wchar_to_utf8( str[i], ret );
 
 	return ret;
 }
 
-static int unichar_to_utf8 (wchar_t c, char *outbuf)
-{
-	unsigned int len = 0;
-	int first;
-
-	if (c < 0x80) {
-		first = 0;
-		len = 1;
-	} else if (c < 0x800) {
-		first = 0xc0;
-		len = 2;
-	} else if (c < 0x10000) {
-		first = 0xe0;
-		len = 3;
-	} else if (c < 0x200000) {
-		first = 0xf0;
-		len = 4;
-	} else if (c < 0x4000000) {
-		first = 0xf8;
-		len = 5;
-	} else {
-		first = 0xfc;
-		len = 6;
-	}
-
-	if (outbuf)
-	{
-		for (int i = len - 1; i > 0; --i)
-		{
-			outbuf[i] = char((c & 0x3f) | 0x80);
-			c >>= 6;
-		}
-		outbuf[0] = char(c | first);
-	}
-
-	return len;
-}
 
 CString WcharToUTF8( wchar_t c )
 {
-	char buf[6];
-	int cnt = unichar_to_utf8(c, buf);
-	return CString(buf, cnt);
+	CString ret;
+	wchar_to_utf8( c, ret );
+	return ret;
 }
 
 

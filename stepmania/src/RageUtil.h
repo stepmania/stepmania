@@ -160,12 +160,16 @@ CString GetExtension( const CString &sPath );
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;
 
+int utf8_get_char_len( char p );
+bool utf8_to_wchar( const CString &s, unsigned &start, wchar_t &ch );
+bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch );
+void wchar_to_utf8( wchar_t ch, CString &out );
+wchar_t utf8_get_char( const CString &s );
+bool utf8_is_valid( const CString &s );
+
 CString WStringToCString(const wstring &str);
 CString WcharToUTF8( wchar_t c );
 wstring CStringToWstring(const CString &str);
-wchar_t utf8_get_char (const char *p);
-int utf8_get_char_len (const char *p);
-bool utf8_is_valid(const CString &str);
 
 // Splits a CString into an CStringArray according the Delimitor.
 void split( const CString &Source, const CString &Delimitor, CStringArray& AddIt, const bool bIgnoreEmpty = true );

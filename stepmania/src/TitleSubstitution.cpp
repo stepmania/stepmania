@@ -126,8 +126,8 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 		if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)
 		{
 			/* Annoying header that Windows puts on UTF-8 plaintext
-				* files; remove it. */
-			line.erase(0, utf8_get_char_len(line.c_str()));
+			 * files; remove it. */
+			line.erase(0, utf8_get_char_len(line[0]));
 		}
 
 		TrimLeft(line);

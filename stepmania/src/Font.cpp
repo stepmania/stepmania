@@ -545,7 +545,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
 			else if(codepoint.size() > 0 &&
-					utf8_get_char_len(codepoint.c_str()) == int(codepoint.size()))
+					utf8_get_char_len(codepoint[0]) == int(codepoint.size()))
 			{
 				c = utf8_get_char(codepoint.c_str());
 				if(c == wchar_t(-1))
