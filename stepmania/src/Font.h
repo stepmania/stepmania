@@ -104,7 +104,6 @@ public:
 	Font();
 	~Font();
 
-	RageTexture *GetGlyphTexture( longchar c );
 	const glyph &GetGlyph( longchar c ) const;
 
 	int GetLineWidthInSourcePixels( const lstring &szLine ) const;

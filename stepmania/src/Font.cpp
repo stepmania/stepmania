@@ -312,12 +312,6 @@ const glyph &Font::GetGlyph( longchar c ) const
 	return *it->second;
 }
 
-RageTexture *Font::GetGlyphTexture( longchar c )
-{
-	glyph &g = const_cast<glyph &> (GetGlyph(c));
-	return g.Texture;
-}
-
 void Font::CapsOnly()
 {
 	/* For each uppercase character that we have a mapping for, add
