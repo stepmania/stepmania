@@ -98,7 +98,6 @@ void SongManager::InitAll( LoadingWindow *ld )
 	if( ld )
 		ld->SetText( "Saving Catalog.xml ..." );
 	SaveCatalogXml();
-	SaveCatalogXml();
 }
 
 void SongManager::Reload( LoadingWindow *ld )
