@@ -11,6 +11,12 @@ struct IDirectSoundBuffer;
 
 class RageSound_DSound: public RageSoundDriver
 {
+public:
+	RageSound_DSound();
+	~RageSound_DSound();
+	CString Init();
+
+private:
 	/* The only place that takes sounds out of INACTIVE is StartMixing; this mutex
 	 * serializes inactive sounds. */
 	RageMutex m_InactiveSoundMutex;
@@ -59,11 +65,6 @@ class RageSound_DSound: public RageSoundDriver
 	void Update(float delta);
 
 	int GetSampleRate( int rate ) const { return rate; }
-
-public:
-	RageSound_DSound();
-	~RageSound_DSound();
-	CString Init();
 };
 
 #endif
