@@ -493,7 +493,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip
 
 	if( preserve_loc )
 	{
-		RageMatrix matTop = *g_ModelViewStack.GetTop();
+		//RageMatrix matTop = *g_ModelViewStack.GetTop();
 		/* TODO: Come up with a more general way to handle this.  
 		 * It looks kind of hacky. -Chris */
 	//	{
