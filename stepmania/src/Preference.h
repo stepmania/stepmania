@@ -63,7 +63,12 @@ public:
 		m_currentValue = m_defaultValue;
 	}
 
-	operator T () const
+	operator T& ()
+	{
+		return m_currentValue;
+	}
+	
+	operator const T () const
 	{
 		return m_currentValue;
 	}
