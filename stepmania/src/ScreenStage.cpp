@@ -439,9 +439,9 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 //		for (i=0; i<2; i++) // specify the font file.
 //		{
 //			m_ez2ukm[i].LoadFromFont( THEME->GetPathToF("Stage ez2") );
-//			m_ez2ukm[i].EnableShadow( false );
+//			m_ez2ukm[i].SetShadowLength( 0 );
 //			m_stagedesc[i].LoadFromFont( THEME->GetPathToF("Stage ez2") );
-//			m_stagedesc[i].EnableShadow( false );
+//			m_stagedesc[i].SetShadowLength( 0 );
 //		}
 //
 //		m_ez2ukm[0].SetXY( CENTER_X-400, CENTER_Y-220 ); // set the intiial UKMOVE positions
@@ -555,7 +555,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 //
 //		// write the stage name
 //		m_stagename.LoadFromFont( THEME->GetPathToF("Stage ez2") );
-//		m_stagename.EnableShadow( false );
+//		m_stagename.SetShadowLength( 0 );
 //
 //		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
 //

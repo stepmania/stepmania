@@ -59,7 +59,7 @@ Combo::Combo()
 	FULL_COMBO_BROKEN_COMMAND.Refresh();
 
 	m_sprCombo.Load( THEME->GetPathToG( "Combo label") );
-	m_sprCombo.EnableShadow( true );
+	m_sprCombo.SetShadowLength( 4 );
 	m_sprCombo.StopAnimating();
 	m_sprCombo.SetXY( LABEL_X, LABEL_Y );
 	m_sprCombo.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
@@ -68,7 +68,7 @@ Combo::Combo()
 	this->AddChild( &m_sprCombo );
 
 	m_textComboNumber.LoadFromNumbers( THEME->GetPathToN("Combo") );
-	m_textComboNumber.EnableShadow( true );
+	m_textComboNumber.SetShadowLength( 4 );
 	m_textComboNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textComboNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
 	m_textComboNumber.SetVertAlign( (Actor::VertAlign)(int)NUMBER_VERT_ALIGN );

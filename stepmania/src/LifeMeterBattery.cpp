@@ -53,7 +53,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	m_textNumLives.LoadFromNumbers( THEME->GetPathToN("LifeMeterBattery lives") );
 	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
-	m_textNumLives.EnableShadow( false );
+	m_textNumLives.SetShadowLength( 0 );
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 

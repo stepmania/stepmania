@@ -68,17 +68,14 @@ BitmapText::BitmapText()
 	}
 	iReloadCounter++;
 
-	m_HorizAlign = align_center;
-	m_VertAlign = align_middle;
-
 	m_pFont = NULL;
-
-	m_bShadow = true;
 
 	m_bRainbow = false;
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
+
+	SetShadowLength( 4 );
 }
 
 BitmapText::~BitmapText()
@@ -458,7 +455,7 @@ void BitmapText::DrawPrimitives()
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bShadow )
+		if( m_fShadowLength != 0 )
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units

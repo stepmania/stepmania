@@ -31,7 +31,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 
 	// init the text
 	m_text.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayNormal") );
-	m_text.EnableShadow( false );
+	m_text.SetShadowLength( 0 );
 
 	m_iScore = 0;
 	m_iTrailingScore = 0;

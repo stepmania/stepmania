@@ -52,8 +52,7 @@ void Actor::Reset()
 	m_effectColor2 = RageColor(1,1,1,1);
 
 	m_bHidden = false;
-	m_bShadow = false;
-	m_fShadowLength = 4;
+	m_fShadowLength = 0;
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
 
@@ -601,13 +600,7 @@ void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 
 void Actor::SetShadowLength( float fLength )
 {
-	if( fLength==0 )
-		m_bShadow = false;
-	else
-	{
-		m_fShadowLength = fLength;
-		m_bShadow = true;
-	}
+	m_fShadowLength = fLength;
 }
 
 void Actor::AddRotationH( float rot )

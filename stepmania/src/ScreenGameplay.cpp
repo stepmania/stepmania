@@ -432,7 +432,7 @@ void ScreenGameplay::Init()
 
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenGameplay song title") );
-	m_textSongTitle.EnableShadow( false );
+	m_textSongTitle.SetShadowLength( 0 );
 	m_textSongTitle.SetName( "SongTitle" );
 	SET_XY( m_textSongTitle );
 	this->AddChild( &m_textSongTitle );
@@ -515,7 +515,7 @@ void ScreenGameplay::Init()
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
-		m_textCourseSongNumber[p].EnableShadow( false );
+		m_textCourseSongNumber[p].SetShadowLength( 0 );
 		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d%s",p+1,bExtra?"Extra":"") );
 		SET_XY( m_textCourseSongNumber[p] );
 		m_textCourseSongNumber[p].SetText( "" );
@@ -580,14 +580,14 @@ void ScreenGameplay::Init()
 			continue;
 
 		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay player options") );
-		m_textPlayerOptions[p].EnableShadow( false );
+		m_textPlayerOptions[p].SetShadowLength( 0 );
 		m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d%s",p+1,bExtra?"Extra":"") );
 		SET_XY( m_textPlayerOptions[p] );
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathToF("ScreenGameplay song options") );
-	m_textSongOptions.EnableShadow( false );
+	m_textSongOptions.SetShadowLength( 0 );
 	m_textSongOptions.SetName( ssprintf("SongOptions%s",bExtra?"Extra":"") );
 	SET_XY( m_textSongOptions );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
@@ -710,7 +710,7 @@ void ScreenGameplay::Init()
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
 			m_textSurviveTime.LoadFromFont( THEME->GetPathToF("ScreenGameplay survive time") );
-			m_textSurviveTime.EnableShadow( false );
+			m_textSurviveTime.SetShadowLength( 0 );
 			m_textSurviveTime.SetName( "SurviveTime" );
 			SET_XY( m_textSurviveTime );
 			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );

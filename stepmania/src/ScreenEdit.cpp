@@ -354,7 +354,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_textHelp.SetVertAlign( Actor::align_top );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetText( HELP_TEXT );
-	m_textHelp.EnableShadow( false );
+	m_textHelp.SetShadowLength( 0 );
 
 	m_sprInfo.Load( THEME->GetPathToG("ScreenEdit Info") );
 	m_sprInfo.SetHorizAlign( Actor::align_right );
@@ -365,7 +365,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_textInfo.SetHorizAlign( Actor::align_left );
 	m_textInfo.SetVertAlign( Actor::align_top );
 	m_textInfo.SetZoom( 0.5f );
-	m_textInfo.EnableShadow( false );
+	m_textInfo.SetShadowLength( 0 );
 	//m_textInfo.SetText();	// set this below every frame
 
 	m_soundChangeLine.Load( THEME->GetPathToS("ScreenEdit line") );

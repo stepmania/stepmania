@@ -396,7 +396,7 @@ void Sprite::DrawTexture( const TweenState *state )
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bShadow )
+		if( m_fShadowLength != 0 )
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units

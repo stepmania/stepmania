@@ -32,7 +32,7 @@ NoteField::NoteField()
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 
-	m_rectMarkerBar.EnableShadow( false );
+	m_rectMarkerBar.SetShadowLength( 0 );
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
 	m_sprBars.Load( THEME->GetPathToG("NoteField bars") );

@@ -78,13 +78,13 @@ void PercentageDisplay::Refresh()
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);
 			int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
-			sNumToDisplay = ssprintf( "%02d", iPercentWhole );
+			sNumToDisplay = ssprintf( "%2d", iPercentWhole );
 			m_textPercentRemainder.SetText( ssprintf(".%01d%%", iPercentRemainder) );
 		}
 		else
 		{
 			float fNumToDisplay = fPercentDancePoints*100;
-			sNumToDisplay = ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, fNumToDisplay );
+			sNumToDisplay = ssprintf( "%*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, fNumToDisplay );
 			
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');

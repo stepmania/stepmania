@@ -263,7 +263,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 				bt->SetText( optline.choices[c] );
 				bt->SetZoom( ITEMS_ZOOM );
-				bt->EnableShadow( false );
+				bt->SetShadowLength( 0 );
 
 				// set the X position of each item in the line
 				float fItemWidth = bt->GetZoomedWidth();
@@ -318,7 +318,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 					bt->SetText( optline.choices[iChoiceWithFocus] );
 					bt->SetZoom( ITEMS_ZOOM );
-					bt->EnableShadow( false );
+					bt->SetShadowLength( 0 );
 
 					if( optline.bOneChoiceForAllPlayers )
 					{
@@ -373,7 +373,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 		bt->SetText( THEME->GetMetric("OptionNames","Exit") );
 		bt->SetZoom( ITEMS_ZOOM );
-		bt->EnableShadow( false );
+		bt->SetShadowLength( 0 );
 		bt->SetX( CENTER_X );
 
 		m_framePage.AddChild( bt );
@@ -646,7 +646,7 @@ void ScreenOptions::InitOptionsText()
 		title.SetZoom( LABELS_ZOOM );
 		title.SetHorizAlign( (Actor::HorizAlign)LABELS_H_ALIGN );
 		title.SetVertAlign( Actor::align_middle );		
-		title.EnableShadow( false );		
+		title.SetShadowLength( 0 );		
 
 		Sprite &bullet = row.m_sprBullet;
 		bullet.Load( THEME->GetPathToG("ScreenOptions bullet") );

@@ -105,7 +105,7 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 		m_textSkips[i].SetVertAlign( Actor::align_top );
 		m_textSkips[i].SetZoom( 0.5f );
 		m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
-		m_textSkips[i].EnableShadow(false);
+		m_textSkips[i].SetShadowLength( 0 );
 		this->AddChild(&m_textSkips[i]);
 	}
 

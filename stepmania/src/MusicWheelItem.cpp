@@ -77,7 +77,7 @@ MusicWheelItem::MusicWheelItem()
 	m_All.AddChild( &m_sprSectionBar );
 
 	m_textSectionName.LoadFromFont( THEME->GetPathToF("MusicWheelItem section") );
-	m_textSectionName.EnableShadow( false );
+	m_textSectionName.SetShadowLength( 0 );
 	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
 	m_textSectionName.SetZoom( SECTION_ZOOM );
@@ -85,7 +85,7 @@ MusicWheelItem::MusicWheelItem()
 
 
 	m_textRoulette.LoadFromFont( THEME->GetPathToF("MusicWheelItem roulette") );
-	m_textRoulette.EnableShadow( false );
+	m_textRoulette.SetShadowLength( 0 );
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetZoom( ROULETTE_ZOOM );
 	m_textRoulette.SetXY( ROULETTE_X, 0 );

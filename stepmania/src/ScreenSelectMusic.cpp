@@ -152,7 +152,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	this->AddChild( &m_BPMDisplay );
 
 	m_DifficultyDisplay.SetName( "DifficultyDisplay" );
-	m_DifficultyDisplay.EnableShadow( false );
+	m_DifficultyDisplay.SetShadowLength( 0 );
 	SET_XY( m_DifficultyDisplay );
 	this->AddChild( &m_DifficultyDisplay );
 
@@ -281,7 +281,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenSelectMusic score") );
-		m_textHighScore[p].EnableShadow( false );
+		m_textHighScore[p].SetShadowLength( 0 );
 		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
 		SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );

@@ -105,19 +105,19 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 		m_textCategory.SetName( "Category" );
 		m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking category") );
-		m_textCategory.EnableShadow( false );
+		m_textCategory.SetShadowLength( 0 );
 		m_textCategory.SetHidden( true );
 		this->AddChild( &m_textCategory );
 
 		m_textCourseTitle.SetName( "CourseTitle" );
 		m_textCourseTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking course title") );
-		m_textCourseTitle.EnableShadow( false );
+		m_textCourseTitle.SetShadowLength( 0 );
 		m_textCourseTitle.SetHidden( true );
 		this->AddChild( &m_textCourseTitle );
 
 		m_textStepsType.SetName( "StepsType" );
 		m_textStepsType.LoadFromFont( THEME->GetPathToF("ScreenRanking steps type") );
-		m_textStepsType.EnableShadow( false );
+		m_textStepsType.SetShadowLength( 0 );
 		m_textStepsType.SetHidden( true );
 		this->AddChild( &m_textStepsType );
 

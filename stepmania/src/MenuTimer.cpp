@@ -146,6 +146,8 @@ void MenuTimer::SetSeconds( int iSeconds )
 
 	m_textDigit1.Command( ON_COMMAND );
 	m_textDigit2.Command( ON_COMMAND );
+	m_textDigit1.SetShadowLength( 4 );
+	m_textDigit2.SetShadowLength( 4 );
 
 	SetText( iSeconds );
 }

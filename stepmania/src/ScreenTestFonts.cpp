@@ -49,7 +49,7 @@ ScreenTestFonts::ScreenTestFonts( CString sClassName ) : Screen( sClassName )
 
 void ScreenTestFonts::SetText(CString text)
 {
-	txt.EnableShadow( false );
+	txt.SetShadowLength( 0 );
 	txt.SetText(""); /* force it */
 	txt.SetText(text);
 	curtext = text;

@@ -123,7 +123,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectDiffuseBlink();
-	m_textHelp.EnableShadow( true );
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
 
@@ -140,7 +139,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 				m_textChoice[i].SetText( NAME(mc.m_sName) );
 				m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 				m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
-				m_textChoice[i].EnableShadow( true );
+				m_textChoice[i].SetShadowLength( 4 );
 				this->AddChild( &m_textChoice[i] );
 			}	
 		}

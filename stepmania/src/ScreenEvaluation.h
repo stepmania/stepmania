@@ -139,8 +139,8 @@ protected:
 	BitmapText			m_textTime[NUM_PLAYERS];
 
 	// extra area
-	Sprite				m_sprMachineRecord[NUM_PLAYERS];
-	Sprite				m_sprPersonalRecord[NUM_PLAYERS];
+	AutoActor			m_sprMachineRecord[NUM_PLAYERS];
+	AutoActor			m_sprPersonalRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
 	AutoActor			m_PerDifficultyAward[NUM_PLAYERS];

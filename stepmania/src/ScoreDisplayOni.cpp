@@ -29,7 +29,7 @@ ScoreDisplayOni::ScoreDisplayOni()
 
 	// init the text
 	m_text.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayOni") );
-	m_text.EnableShadow( false );
+	m_text.SetShadowLength( 0 );
 	this->AddChild( &m_text );
 }
 
