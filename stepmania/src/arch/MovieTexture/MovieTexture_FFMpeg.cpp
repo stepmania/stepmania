@@ -272,29 +272,17 @@ int FFMpeg_Helper::ReadPacket()
 			avcodec::av_free_packet( &pkt );
 		}
 
-		int ret = avcodec::av_read_packet(m_fctx, &pkt);
+		int ret = avcodec::av_read_frame( m_fctx, &pkt );
 		/* XXX: why is avformat returning AVERROR_NOMEM on EOF? */
 		if( ret < 0 )
-//		if( ret == -1 )
 		{
 			/* EOF. */
 			eof = 1;
 			pkt.size = 0;
-			current_packet_offset = 0;
 			
 			return 0;
 		}
 
-#if 0
-		if( ret < 0 )
-		{
-			/* XXX ? */
-//			LOG->Warn("AVCodec: Error decoding %s: %i",
-//					GetID().filename.c_str(), ret );
-			return -1;
-		}
-#endif
-		
 		if( pkt.stream_index == m_stream->index )
 		{
 			current_packet_offset = 0;
@@ -319,13 +307,13 @@ int FFMpeg_Helper::DecodePacket()
 		if ( GetNextTimestamp )
 		{
 			if (pkt.pts != int64_t(AV_NOPTS_VALUE))
-				pts = (float)pkt.pts * m_fctx->pts_num / m_fctx->pts_den;
+				pts = (float)pkt.pts / AV_TIME_BASE;
 			else
 				pts = -1;
 			GetNextTimestamp = false;
 		}
 
-		/* If we have no data on the first frame, just reutrn EOF; passing an empty packet
+		/* If we have no data on the first frame, just return EOF; passing an empty packet
 		 * to avcodec_decode_video in this case is crashing it.  However, passing an empty
 		 * packet is normal with B-frames, to flush.  This may be unnecessary in newer
 		 * versions of avcodec, but I'm waiting until a new stable release to upgrade. */
@@ -337,8 +325,7 @@ int FFMpeg_Helper::DecodePacket()
 		int len = avcodec::avcodec_decode_video(
 				&m_stream->codec, 
 				&frame, &got_frame,
-				pkt.data + current_packet_offset,
-				pkt.size - current_packet_offset );
+				pkt.data, pkt.size );
 		CHECKPOINT;
 
 		if (len < 0)
