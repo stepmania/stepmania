@@ -4,7 +4,7 @@
 NetworkSyncManager *NSMAN;
 
 #if defined(WITHOUT_NETWORKING)
-NetworkSyncManager::NetworkSyncManager() { useSMServer=false }
+NetworkSyncManager::NetworkSyncManager() { useSMserver=false; }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
@@ -16,7 +16,7 @@ void NetworkSyncManager::ReportStyle() {}
 void NetworkSyncManager::StartRequest(short position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
-bool NetworkSyncManager::ChangedScoreboard() {}
+bool NetworkSyncManager::ChangedScoreboard(int Column)  { }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
