@@ -568,8 +568,10 @@ void RageSound::StartPlaying()
 	 * if m_LengthSamples is 1000, then we'll decode a full buffer (which may be
 	 * a second or more), queue up 1000 samples, then seek and redecode the whole
 	 * full buffer of data and start again.  This only happens due to bogus SAMPLELENGTH
-	 * values, so throw a warning and set a more reasonable value. */
-	if(m_LengthSamples < samplerate*2)
+	 * values, so throw a warning and set a more reasonable value. 
+	 * XXX we'll do this if m_LengthSamples == -1 and the file is very small 
+	 */
+	if(StopMode == M_LOOP && m_LengthSamples != -1 && m_LengthSamples < samplerate*2)
 	{
 		LOG->Warn("Looping sound \"%s\" for too small a period (%f seconds)",
 			GetLoadedFilePath().GetString(), float(m_LengthSamples) / samplerate);
