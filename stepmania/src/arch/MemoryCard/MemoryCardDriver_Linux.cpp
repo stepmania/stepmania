@@ -51,6 +51,8 @@ bool MemoryCardDriver_Linux::StorageDevicesChanged()
 
 void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
+  sleep(1);
+
 	/* If we couldn't open it before, we probably can't open it now; don't
 	 * output more errors. */
 	if( m_fds == -1 )
