@@ -106,6 +106,22 @@ public:
 // ********************************************************
 
 //! .
+class PK_EncryptionMessageEncodingMethod
+{
+public:
+	virtual ~PK_EncryptionMessageEncodingMethod() {}
+
+	//! max size of unpadded message in bytes, given max size of padded message in bits (1 less than size of modulus)
+	virtual unsigned int MaxUnpaddedLength(unsigned int paddedLength) const =0;
+
+	virtual void Pad(RandomNumberGenerator &rng, const byte *raw, unsigned int inputLength, byte *padded, unsigned int paddedBitLength) const =0;
+
+	virtual DecodingResult Unpad(const byte *padded, unsigned int paddedBitLength, byte *raw) const =0;
+};
+
+// ********************************************************
+
+//! .
 template <class TFI, class MEI>
 class TF_Base
 {
@@ -568,6 +584,9 @@ public:
 
 #endif
 };
+
+//! Base class for public key encryption standard classes. These classes are used to select from variants of algorithms. Note that not all standards apply to all algorithms.
+struct EncryptionStandard {};
 
 //! Base class for public key signature standard classes. These classes are used to select from variants of algorithms. Note that not all standards apply to all algorithms.
 struct SignatureStandard {};
