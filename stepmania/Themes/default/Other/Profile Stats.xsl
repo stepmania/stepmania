@@ -125,7 +125,7 @@
 								<xsl:with-param name="text">
 									Digital signatures are used to verify that your data hasn't been modified outside of the game. This prevents cheaters from changing their score data and passing it off as real.
 									<br />
-									If any of Stats.xml, Stats.xml.sig, or DontShare.sig have been modified outside of the game, your memory card data will be ignores and overridden after the next save.  It's important that you don't modify any of these three files because doing so will render your data permanently unusable.
+									If any of Stats.xml, Stats.xml.sig, or DontShare.sig have been modified outside of the game, your memory card data will be ignored and overridden after the next save.  It's important that you don't modify any of these three files because doing so will render your data permanently unusable.
 								</xsl:with-param>
 							</xsl:call-template>
 						</td>
