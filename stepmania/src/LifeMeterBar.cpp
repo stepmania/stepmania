@@ -486,7 +486,7 @@ void LifeMeterBar::DrawPrimitives()
 
 	ActorFrame::DrawPrimitives();
 }
-
+#include "RageLog.h"
 void LifeMeterBar::UpdateNonstopLifebar(const int cleared, 
 		const int total, int ProgressiveLifebarDifficulty)
 {
@@ -505,11 +505,13 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 
 	// should be checked before calling function, but in case
 	// it isn't, do so here
-	if (PREFSMAN->m_bEventMode)
+	/* No, wait: if we're playing nonstop, event mode just means that we can play another
+	 * nonstop course later, so it shouldn't affect life difficulty. */
+/*	if (PREFSMAN->m_bEventMode)
 	{
 		m_fLifeDifficulty = m_fBaseLifeDifficulty;
 		return;
-	}
+	} */
 
 	if (total > 1)
 		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
