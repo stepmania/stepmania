@@ -17,8 +17,7 @@
 #endif
 
 
-int64_t ArchHooks_Unix::iStartTime = 0;
-bool ArchHooks_Unix::bTimerInitialized = false;
+int64_t ArchHooks_Unix::m_iStartTime = 0;
 
 static bool IsFatalSignal( int signal )
 {
@@ -108,11 +107,10 @@ static int64_t GetMicrosecondsSinceEpoch()
 
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
-	if (!ArchHooks_Unix::bTimerInitialized) {
-		ArchHooks_Unix::bTimerInitialized = true;
-    	        ArchHooks_Unix::iStartTime = GetMicrosecondsSinceEpoch();
-	}
-	int64_t ret = GetMicrosecondsSinceEpoch() - ArchHooks_Unix::iStartTime;
+	if( ArchHooks_Unix::m_iStartTime == 0 )
+    	        ArchHooks_Unix::m_iStartTime = GetMicrosecondsSinceEpoch();
+
+	int64_t ret = GetMicrosecondsSinceEpoch() - ArchHooks_Unix::m_iStartTime;
 	if( bAccurate )
 		ret = FixupTimeIfBackwards( ret );
 	return ret;
