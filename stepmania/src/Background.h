@@ -22,17 +22,17 @@ class DancingCharacters;
 
 class BrightnessOverlay: public ActorFrame
 {
-	Quad m_quadBGBrightness[NUM_PLAYERS];
-	Quad m_quadBGBrightnessFade;
-	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
-	void SetBackgrounds();
-
 public:
 	BrightnessOverlay();
 	void Update( float fDeltaTime );
 
 	void FadeToActualBrightness();
+	void SetActualBrightness();
 	void Set( float fBrightness );
+
+private:
+	Quad m_quadBGBrightness[NUM_PLAYERS];
+	Quad m_quadBGBrightnessFade;
 };
 
 class Background : public ActorFrame
@@ -81,6 +81,7 @@ protected:
 	BGAnimation* m_pFadingBGA;
 	float m_fSecsLeftInFade;
 	float m_fLastMusicSeconds;
+	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
 
 	BrightnessOverlay m_Brightness;
 };

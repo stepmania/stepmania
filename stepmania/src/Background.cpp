@@ -39,7 +39,7 @@ const float FADE_SECONDS = 1.0f;
 #define BOTTOM_EDGE			THEME->GetMetricF("Background","BottomEdge")
 CachedThemeMetricB BLINK_DANGER_ALL("Background","BlinkDangerAll");
 CachedThemeMetricB DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
-
+#define BRIGHTNESS_FADE_COMMAND THEME->GetMetric("Background","BrightnessFadeCommand")
 #define RECT_BACKGROUND RectF(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
 static float g_fBackgroundCenterWidth = 40;
@@ -81,6 +81,20 @@ Background::Background()
 		m_pDancingCharacters = new DancingCharacters;
 	else
 		m_pDancingCharacters = NULL;
+
+	m_quadBorder[0].StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
+	m_quadBorder[1].StretchTo( RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
+	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
+	m_quadBorder[2].StretchTo( RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
+	m_quadBorder[3].StretchTo( RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
+
+	this->AddChild( &m_quadBorder[0] );
+	this->AddChild( &m_quadBorder[1] );
+	this->AddChild( &m_quadBorder[2] );
+	this->AddChild( &m_quadBorder[3] );
 
 	this->AddChild( &m_Brightness );
 }
@@ -639,25 +653,11 @@ BrightnessOverlay::BrightnessOverlay()
 	m_quadBGBrightnessFade.StretchTo( RectF(LEFT_EDGE+fQuadWidth,TOP_EDGE,RIGHT_EDGE-fQuadWidth,BOTTOM_EDGE) );
 	m_quadBGBrightness[1].StretchTo( RectF(RIGHT_EDGE-fQuadWidth,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE) );
 
-	m_quadBorder[0].StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[1].StretchTo( RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
-	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[2].StretchTo( RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[3].StretchTo( RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
-
 	this->AddChild( &m_quadBGBrightness[0] );
 	this->AddChild( &m_quadBGBrightness[1] );
 	this->AddChild( &m_quadBGBrightnessFade );
 
-	this->AddChild( &m_quadBorder[0] );
-	this->AddChild( &m_quadBorder[1] );
-	this->AddChild( &m_quadBorder[2] );
-	this->AddChild( &m_quadBorder[3] );
-
-	SetBackgrounds();
+	SetActualBrightness();
 }
 
 void BrightnessOverlay::Update( float fDeltaTime )
@@ -666,10 +666,10 @@ void BrightnessOverlay::Update( float fDeltaTime )
 	/* If we're actually playing, then we're past fades, etc; update the background
 	 * brightness to follow Cover. */
 	if( GAMESTATE->m_bPastHereWeGo )
-		SetBackgrounds();
+		SetActualBrightness();
 }
 
-void BrightnessOverlay::SetBackgrounds()
+void BrightnessOverlay::SetActualBrightness()
 {
 	float fLeftBrightness = 1-GAMESTATE->m_PlayerOptions[PLAYER_1].m_fCover;
 	float fRightBrightness = 1-GAMESTATE->m_PlayerOptions[PLAYER_2].m_fCover;
@@ -700,8 +700,6 @@ void BrightnessOverlay::Set( float fBrightness )
 
 void BrightnessOverlay::FadeToActualBrightness()
 {
-	FOREACH_PlayerNumber(pn)
-		m_quadBGBrightness[pn].BeginTweening( 0.5f );
-	m_quadBGBrightnessFade.BeginTweening( 0.5f );
-	SetBackgrounds();
+	this->RunCommandOnChildren( BRIGHTNESS_FADE_COMMAND );
+	SetActualBrightness();
 }

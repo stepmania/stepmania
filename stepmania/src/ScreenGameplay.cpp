@@ -1027,7 +1027,16 @@ void ScreenGameplay::LoadNextSong()
 	{
 		/* BeginnerHelper disabled/failed to load. */
 		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
-		m_Background.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS(GAMESTATE->m_PlayMode) );
+		if( !m_bDemonstration )
+		{
+			/* This will fade from a preset brightness to the actual brightness (based
+			 * on prefs and "cover").  The preset brightness may be 0 (to fade from
+			 * black), or it might be 1, if the stage screen has the song BG and we're
+			 * coming from it (like Pump).  This used to be done in SM_PlayReady, but
+			 * that means it's impossible to snap to the new brightness immediately. */
+			m_Background.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS(GAMESTATE->m_PlayMode) );
+			m_Background.FadeToActualBrightness();
+		}
 	}
 
 	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
@@ -1900,7 +1909,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PlayReady:
-		m_Background.FadeToActualBrightness();
 		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
 		m_Ready.StartTransitioning( SM_PlayGo );
 		break;
