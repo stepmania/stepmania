@@ -1,7 +1,0 @@
-1. Create a new group by creating a new folder (optional)
-2. In the group folder, create a folder for your song
-3. Copy all the files for your song into the song folder
- - background (optional)
- - banner (optional)
- - music (required)
- - BMS files or DWI file (required)

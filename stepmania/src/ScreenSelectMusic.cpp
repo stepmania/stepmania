@@ -30,7 +30,7 @@
 #include "AnnouncerManager.h"
 #include "InputMapper.h"
 #include "GameState.h"
-#include "ScreenEz2Stage.h"
+
 
 const float SONG_INFO_FRAME_X	= 160;
 const float SONG_INFO_FRAME_Y	= SCREEN_TOP+118;
@@ -324,14 +324,8 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		else
 		{
 			MUSIC->Stop();
-			if (GAMESTATE->m_CurGame != GAME_EZ2)
-			{
-				SCREENMAN->SetNewScreen( new ScreenStage );
-			}
-			else
-			{
-				SCREENMAN->SetNewScreen( new ScreenEz2Stage );
-			}
+
+			SCREENMAN->SetNewScreen( new ScreenStage );
 		}
 		break;
 	case SM_PlaySongSample:
