@@ -9,9 +9,9 @@
 ********************************************/
 
 // We need the WinSock32 Library on Windows
-
-#include "global.h"
+//This order needed to avoid Linux lib conflicts
 #include "ezsockets.h"
+#include "global.h"
 
 #if defined(WIN32)
 #pragma comment(lib,"wsock32.lib")
