@@ -10,8 +10,8 @@
 class SoundReader_FileReader: public SoundReader
 {
 public:
-	/* Return OPEN_OK if the file is open and ready to go.  Return OPEN_NO_MATCH
-	 * if the file appears to be of a different type.  Return OPEN_MATCH_BUT_FAIL if
+	/* Return OPEN_OK if the file is open and ready to go.  Return OPEN_UNKNOWN_FILE_FORMAT
+	 * if the file appears to be of a different type.  Return OPEN_FATAL_ERROR if
 	 * the file appears to be the correct type, but there was an error initializing
 	 * the file.
 	 *
@@ -20,9 +20,7 @@ public:
 	{
 		OPEN_OK,
 		OPEN_UNKNOWN_FILE_FORMAT=1,
-		OPEN_NO_MATCH=1, // deprecated
 		OPEN_FATAL_ERROR=2,
-		OPEN_MATCH_BUT_FAIL=2, // deprecated
 	};
 	virtual OpenResult Open(CString filename) = 0;
 
