@@ -1,7 +1,7 @@
 #ifndef LUA_FUNCTIONS_H
 #define LUA_FUNCTIONS_H
 
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 #include "RageUtil.h" /* for ssprintf */
 
 extern "C"

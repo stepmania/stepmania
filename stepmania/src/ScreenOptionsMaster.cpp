@@ -21,7 +21,7 @@
 #include "RageSoundManager.h"
 #include "ProfileManager.h"
 #include "StepsUtil.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 
 #define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")

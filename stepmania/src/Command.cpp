@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 
 
 void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )

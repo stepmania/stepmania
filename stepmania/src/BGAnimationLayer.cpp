@@ -10,7 +10,7 @@
 #include "RageDisplay.h"
 #include "ActorUtil.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 
 
 const float PARTICLE_SPEED = 300;

@@ -8,6 +8,14 @@
 
 class RageTexture;
 
+/*
+#define LUA_Sprite_METHODS( T ) \
+	LUA_Actor_METHODS( T ) \
+
+#define LUA_Sprite_METHODS_MAP( T ) \
+	LUA_Actor_METHODS_MAP( T ) \
+*/
+
 class Sprite: public Actor
 {
 public:

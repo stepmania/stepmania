@@ -9,6 +9,14 @@
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
 #include "XmlFile.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
+
+
+// lua start
+//LUA_REGISTER_CLASS( Actor, null )
+// lua end
+
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 

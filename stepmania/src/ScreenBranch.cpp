@@ -3,7 +3,7 @@
 #include "RageLog.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 #include "GameCommand.h"
 #include "RageUtil.h"
 

@@ -14,7 +14,7 @@
 #include "Course.h"
 #include "XmlFile.h"
 #include "FontCharAliases.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 
 #include "arch/Dialog/Dialog.h"
 

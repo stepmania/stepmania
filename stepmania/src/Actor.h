@@ -13,6 +13,16 @@ struct XNode;
 #define DRAW_ORDER_TRANSITIONS			100
 #define DRAW_ORDER_AFTER_EVERYTHING		200
 
+/*
+#define LUA_Actor_METHODS( T ) \
+	static int GetX( T* p, lua_State *L ) { lua_pushnumber(L, p->GetX()); return 1; } \
+	static int SetX( T* p, lua_State *L ) { p->SetX(luaL_checknumber(L, 1)); return 0; } \
+
+#define LUA_Actor_METHODS_MAP( T ) \
+	LUA_METHOD_MAP( T, GetX ) \
+	LUA_METHOD_MAP( T, SetX ) \
+*/
+
 class Actor
 {
 public:

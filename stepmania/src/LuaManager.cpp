@@ -1,5 +1,5 @@
 #include "global.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 #include "LuaFunctions.h"
 #include "RageUtil.h"
 #include "RageLog.h"

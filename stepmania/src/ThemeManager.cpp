@@ -17,7 +17,7 @@
 #include "StepMania.h"
 #include "Foreach.h"
 #include "ThemeMetric.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 #include "ScreenDimensions.h"
 
 
@@ -715,7 +715,7 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 	return LUA->RunExpressionF( sValue );
 }
 
-// #include "LuaHelpers.h"
+// #include "LuaManager.h"
 bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueName )
 {
 	CString sValue = GetMetricRaw( sClassName,sValueName );

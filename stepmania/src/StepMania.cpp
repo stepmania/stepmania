@@ -44,7 +44,7 @@
 #include "ProfileManager.h"
 #include "MemoryCardManager.h"
 #include "ScreenManager.h"
-#include "LuaHelpers.h"
+#include "LuaManager.h"
 #include "GameManager.h"
 #include "FontManager.h"
 #include "InputFilter.h"

@@ -12,6 +12,13 @@
 #include "ActorUtil.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
+
+// lua start
+//LUA_REGISTER_CLASS( Sprite, Actor )
+// lua end
+
 
 Sprite::Sprite()
 {
