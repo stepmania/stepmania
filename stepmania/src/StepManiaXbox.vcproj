@@ -513,10 +513,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenNetEvaluation.h">
 			</File>
 			<File
-				RelativePath="ScreenNetSelectMusic.cpp">
+				RelativePath="ScreenNetRoom.cpp">
 			</File>
 			<File
-				RelativePath="ScreenNetSelectMusic.h">
+				RelativePath="ScreenNetRoom.h">
 			</File>
 			<File
 				RelativePath="ScreenNetSelectBase.cpp">
@@ -525,10 +525,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenNetSelectBase.h">
 			</File>
 			<File
-				RelativePath="ScreenNetRoom.cpp">
+				RelativePath="ScreenNetSelectMusic.cpp">
 			</File>
 			<File
-				RelativePath="ScreenNetRoom.h">
+				RelativePath="ScreenNetSelectMusic.h">
 			</File>
 			<File
 				RelativePath="ScreenNetworkOptions.cpp">
@@ -673,6 +673,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenStyleSplash.h">
+			</File>
+			<File
+				RelativePath=".\ScreenSystemLayer.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenSystemLayer.h">
 			</File>
 			<File
 				RelativePath="ScreenTest.cpp">
@@ -1338,12 +1344,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				</File>
 				<File
 					RelativePath="archutils\Xbox\GraphicsWindow.h">
-				</File>
-				<File
-					RelativePath=".\archutils\Xbox\VirtualKeyboard.cpp">
-				</File>
-				<File
-					RelativePath=".\archutils\Xbox\VirtualKeyboard.h">
 				</File>
 				<File
 					RelativePath=".\archutils\Xbox\VirtualMemory.cpp">
@@ -2415,6 +2415,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="UnlockSystem.h">
+			</File>
+			<File
+				RelativePath=".\VirtualKeyboard.cpp">
+			</File>
+			<File
+				RelativePath=".\VirtualKeyboard.h">
 			</File>
 		</Filter>
 		<Filter

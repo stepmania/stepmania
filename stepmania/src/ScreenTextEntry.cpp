@@ -9,10 +9,7 @@
 #include "ThemeManager.h"
 #include "FontCharAliases.h"
 #include "ScreenDimensions.h"
-
-#if defined(XBOX)
-#include "archutils/Xbox/VirtualKeyboard.h"
-#endif
+#include "VirtualKeyboard.h"
 
 #define QUESTION_X		(SCREEN_CENTER_X)
 #define QUESTION_Y		(SCREEN_CENTER_Y - 60)
@@ -100,27 +97,29 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	int button = DeviceI.button;
 
-#if defined(XBOX)
-	bool nextChar = false;
-
-	int toAdd = XBOX_VKB.Translate(button, m_sAnswer, &nextChar);
-
-	if( toAdd != 0 && toAdd != KEY_BACK && toAdd != KEY_ESC && toAdd != KEY_ENTER )
+	if(PREFSMAN->m_bEnableVirtualKeyboard)
 	{
-		if(!nextChar)
+		bool nextChar = false;
+
+		int toAdd = VIRTUALKB.Translate(DeviceI, MenuI, m_sAnswer, &nextChar);
+
+		if( toAdd != 0 && toAdd != KEY_BACK && toAdd != KEY_ESC && toAdd != KEY_ENTER )
 		{
-			if(!m_sAnswer.empty())
-				m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
+			if(!nextChar)
+			{
+				if(!m_sAnswer.empty())
+					m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
+			}
+
+			m_sAnswer += toAdd;
+
+			UpdateText();
+			return;
 		}
 
-		m_sAnswer += toAdd;
-
-		UpdateText();
-		return;
+		button = toAdd;
 	}
 
-	button = toAdd;
-#endif
 
 	switch( button )
 	{

@@ -278,6 +278,9 @@ public:
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
 
+	// Virtual keyboard
+	bool			m_bEnableVirtualKeyboard;
+
 #if defined(XBOX)
 	// Virtual memory preferences
 	bool			m_bEnableVirtualMemory;

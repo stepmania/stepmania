@@ -11,10 +11,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "NetworkSyncServer.h"
-
-#if defined(XBOX)
-#include "archutils/Xbox/VirtualKeyboard.h"
-#endif
+#include "VirtualKeyboard.h"
 
 enum {
 	PO_CONNECTION,
@@ -117,11 +114,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	case PO_CONNECTION:
 		if ( !NSMAN->useSMserver )
 		{
-
-#if defined(XBOX)
-			XBOX_VKB.Reset(VKMODE_IP);
-#endif
-
+			VIRTUALKB.Reset(VKMODE_IP);
 			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", PREFSMAN->m_sLastServer );
 		}
 		else {
@@ -136,10 +129,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
 			{
-#if defined(XBOX)
-				XBOX_VKB.Reset(VKMODE_PROFILE);
-#endif
-
+				VIRTUALKB.Reset(VKMODE_PROFILE);
 				SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
 			}
 			break;

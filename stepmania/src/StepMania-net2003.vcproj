@@ -2411,6 +2411,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="UnlockSystem.h">
 			</File>
+			<File
+				RelativePath=".\VirtualKeyboard.cpp">
+			</File>
+			<File
+				RelativePath=".\VirtualKeyboard.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Crypto"
