@@ -39,16 +39,16 @@ void SongCacheIndex::ReadCacheIndex()
 	CacheIndex.Reset();
 }
 
-void SongCacheIndex::AddCacheIndex(const CString &path, int hash)
+void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
 {
 	CacheIndex.SetValueI( "Cache", "CacheVersion", FILE_CACHE_VERSION );
-	CacheIndex.SetValueI( "Cache", path, hash );
+	CacheIndex.SetValueU( "Cache", path, hash );
 	CacheIndex.WriteFile();
 }
 
-int SongCacheIndex::GetCacheHash( const CString &path )
+unsigned SongCacheIndex::GetCacheHash( const CString &path ) const
 {
-	int iDirHash;
-	CacheIndex.GetValueI( "Cache", path, iDirHash );
+	unsigned iDirHash;
+	CacheIndex.GetValueU( "Cache", path, iDirHash );
 	return iDirHash;
 }

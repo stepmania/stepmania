@@ -10,8 +10,8 @@ public:
 	~SongCacheIndex();
 
 	void ReadCacheIndex();
-	void AddCacheIndex( const CString &path, int hash );
-	int GetCacheHash( const CString &path );
+	void AddCacheIndex( const CString &path, unsigned hash );
+	unsigned GetCacheHash( const CString &path ) const;
 };
 
 extern SongCacheIndex *SONGINDEX;	// global and accessable from anywhere in our program
