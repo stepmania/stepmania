@@ -96,21 +96,22 @@ public:
 class RageFileObjZipStored: public RageFileObj
 {
 private:
-	RageFile zip;
+	RageFileBasic *m_pFile;
 	int m_iFilePos;
 	int m_iOffset, m_iFileSize;
 
 public:
-	RageFileObjZipStored( const RageFile &f, int iOffset, int iFileSize );
+	RageFileObjZipStored( RageFileBasic *pFile, int iOffset, int iFileSize );
+	~RageFileObjZipStored();
+
 	int ReadInternal( void *pBuffer, size_t iBytes );
 	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
-
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return m_iFileSize; }
 
 	RageFileBasic *Copy() const
 	{
-		RageFileObjZipStored *pRet = new RageFileObjZipStored( zip, m_iOffset, m_iFileSize );
+		RageFileObjZipStored *pRet = new RageFileObjZipStored( m_pFile->Copy(), m_iOffset, m_iFileSize );
 		pRet->m_iFilePos = m_iFilePos;
 		return pRet;
 	}
@@ -434,7 +435,7 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 	switch( info->compression_method )
 	{
 	case STORED:
-		return new RageFileObjZipStored( zip, info->data_offset, info->uncompr_size );
+		return new RageFileObjZipStored( zip.Copy(), info->data_offset, info->uncompr_size );
 	case DEFLATED:
 		return new RageFileObjZipDeflated( zip, *info );
 	default:
@@ -592,7 +593,6 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 	char buf[1024*4];
 	while( iOffset )
 	{
-		/* Must call parent.Read: */
 		int got = ReadInternal( buf, min( (int) sizeof(buf), iOffset ) );
 		if( got == -1 )
 			return -1;
@@ -605,21 +605,30 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 	return UFilePos;
 }
 
-RageFileObjZipStored::RageFileObjZipStored( const RageFile &f, int iOffset, int iFileSize ):
-	zip( f )
+RageFileObjZipStored::RageFileObjZipStored( RageFileBasic *pFile, int iOffset, int iFileSize )
 {
+	m_pFile = pFile;
 	m_iOffset = iOffset;
 	m_iFileSize = iFileSize;
 	m_iFilePos = 0;
 }
 
+RageFileObjZipStored::~RageFileObjZipStored()
+{
+	delete m_pFile;
+}
+
 int RageFileObjZipStored::ReadInternal( void *buf, size_t bytes )
 {
-	const int bytes_left = m_iFileSize-(this->m_iFilePos-m_iOffset);
-	const int got = zip.Read( buf, min( (int) bytes, bytes_left ) );
+	/* Make sure we're reading from the right place.  We might have been constructed
+	 * with a file not pointing to iOffset. */
+	m_pFile->Seek( m_iFilePos+m_iOffset );
+
+	const int bytes_left = m_iFileSize-this->m_iFilePos;
+	const int got = m_pFile->Read( buf, min( (int) bytes, bytes_left ) );
 	if( got == -1 )
 	{
-		SetError( zip.GetError() );
+		SetError( m_pFile->GetError() );
 		return -1;
 	}
 
@@ -634,10 +643,10 @@ int RageFileObjZipStored::SeekInternal( int offset )
 	ASSERT( offset >= 0 );
 	offset = min( offset, m_iFileSize );
 
-	int ret = zip.Seek( m_iOffset + offset );
+	int ret = m_pFile->Seek( m_iOffset + offset );
 	if( ret == -1 )
 	{
-		SetError( zip.GetError() );
+		SetError( m_pFile->GetError() );
 		return -1;
 	}
 	ret -= m_iOffset;
