@@ -244,6 +244,7 @@ long CrashSymLookup(VDDisassemblyContext *pctx, unsigned long virtAddr, char *bu
 	return VDDebugInfoLookupRVA(&g_debugInfo, virtAddr, buf, buf_len);
 }
 
+#include "bass/bass.h"
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	SetUnhandledExceptionFilter(NULL);
 	/////////////////////////
@@ -319,6 +320,15 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	 * FALSE if we should just die. */
 	VDDebugInfoDeinit(&g_debugInfo);
 
+	/* Major hack:
+	 * Bass crashes if we close without freeing it, even if it's by
+	 * crashing ourselves.  Now, it's far from safe to call these functions
+	 * after a crash, but if we don't it'll crash anyway, so we have
+	 * nothing to lose. */
+	  
+	BASS_Stop();
+	BASS_Free();
+
 	if(ret)
 		UnhandledExceptionFilter(pExc);
 
@@ -343,7 +353,6 @@ static void Report(HWND hwndList, HANDLE hFile, const char *format, ...) {
 		buf[ch] = '\r';
 		buf[ch+1] = '\n';
 		WriteFile(hFile, buf, ch+2, &dwActual, NULL);
-		FlushFileBuffers(hFile);
 	}
 }
 
@@ -1251,6 +1260,7 @@ void DoSave(const EXCEPTION_POINTERS *pExc) {
 	while(idx = g_pcdw->getInstruction(tbuf, idx)) {
 		Report(NULL, hFile, "%s", tbuf);
 	}
+	FlushFileBuffers(hFile);
 
 	Report(NULL, hFile, "");
 
@@ -1338,6 +1348,9 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				DoSave(s_pExc);
 
 				{
+					char cwd[MAX_PATH];
+					SpliceProgramPath(cwd, MAX_PATH, "");
+
 					PROCESS_INFORMATION pi;
 					STARTUPINFO	si;
 					ZeroMemory( &si, sizeof(si) );
@@ -1350,7 +1363,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 						false,  // handle inheritance flag
 						0, // creation flags
 						NULL,  // pointer to new environment block
-						NULL,   // pointer to current directory name
+						cwd,   // pointer to current directory name
 						&si,  // pointer to STARTUPINFO
 						&pi  // pointer to PROCESS_INFORMATION
 					);
@@ -1358,6 +1371,9 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				return TRUE;
 			case IDC_BUTTON_RESTART:
 				{
+					char cwd[MAX_PATH];
+					SpliceProgramPath(cwd, MAX_PATH, "");
+
 					// Launch StepMania
 					PROCESS_INFORMATION pi;
 					STARTUPINFO	si;
@@ -1371,7 +1387,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 						false,  // handle inheritance flag
 						0, // creation flags
 						NULL,  // pointer to new environment block
-						NULL,   // pointer to current directory name
+						cwd,   // pointer to current directory name
 						&si,  // pointer to STARTUPINFO
 						&pi  // pointer to PROCESS_INFORMATION
 					);
