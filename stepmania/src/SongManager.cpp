@@ -628,7 +628,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 //		if(pNotes->m_NotesType != nt)
 //			continue;
 
-		if( pNotes->GetMeter() >= 10 )
+		if( pNotes->GetMeter() >= 10 && PREFSMAN->m_bTenFooterInRed )
 			return EXTRA_COLOR;
 	}
 

@@ -99,6 +99,8 @@ PrefsManager::PrefsManager()
 	m_bAutoMapJoysticks = true;
 	m_fGlobalOffsetSeconds = 0;
 
+	m_bTenFooterInRed = true;
+
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
 	 * stage CRS files) don't get it changed around on them. */
@@ -208,6 +210,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
+	ini.GetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
+
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 
 	ini.GetValueB( "Options", "FirstRun",					m_bFirstRun );
@@ -313,6 +317,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 #endif
 	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.SetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
+
+	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
+
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

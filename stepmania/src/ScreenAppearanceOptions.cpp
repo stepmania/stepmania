@@ -35,6 +35,7 @@ enum {
 	AO_DANCE_POINTS_FOR_ONI,
 	AO_SELECT_GROUP,
 	AO_WHEEL_SECTIONS,
+	AO_TEN_FOOT_RED,
 	AO_SHOW_TRANSLATIONS,
 	AO_SHOW_LYRICS,
 	NUM_APPEARANCE_OPTIONS_LINES
@@ -50,6 +51,7 @@ OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	OptionRow( "Oni Score\nDisplay","PERCENT","DANCE POINTS"),
 	OptionRow( "Song\nGroup",		"ALL MUSIC","CHOOSE"),
 	OptionRow( "Wheel\nSections",	"NEVER","ALWAYS", "ABC ONLY"),
+	OptionRow( "10+ foot\nIn Red",	"NO", "YES"),
 	OptionRow( "Translations",		"NATIVE","TRANSLITERATE"),
 	OptionRow( "Lyrics",			"HIDE","SHOW"),
 };
@@ -141,6 +143,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI]		= PREFSMAN->m_bDancePointsForOni? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
+	m_iSelectedOption[0][AO_TEN_FOOT_RED]				= PREFSMAN->m_bTenFooterInRed? 1:0;
 	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowNative? 0:1;
 	m_iSelectedOption[0][AO_SHOW_LYRICS]				= PREFSMAN->m_bShowLyrics;
 }
@@ -188,6 +191,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bShowNative						=  !m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
 	PREFSMAN->m_bShowLyrics						= !!m_iSelectedOption[0][AO_SHOW_LYRICS];
 	PREFSMAN->m_bDancePointsForOni				= !!m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI];
+	PREFSMAN->m_bTenFooterInRed					= !!m_iSelectedOption[0][AO_TEN_FOOT_RED];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();
