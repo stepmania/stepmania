@@ -105,6 +105,23 @@ int PixFmtMaskNo(GLenum fmt)
 	}
 }
 
+static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
+{
+	/* Match:
+	 *  Foo [res 512x128].png
+	 * 
+	 * This leaves us room syntactically to do other things later, if we need to.
+	 * Be careful that this doesn't get mixed up with frame dimensions. */
+	Regex re("\\[res ([0-9]+)x([0-9]+)\\]");
+
+	vector<CString> matches;
+	if(!re.Compare(sPath, matches))
+		return;
+
+	Width = atoi(matches[0].c_str());
+	Height = atoi(matches[1].c_str());
+}
+
 //-----------------------------------------------------------------------------
 // RageBitmapTexture constructor
 //-----------------------------------------------------------------------------
@@ -277,6 +294,8 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
 
+	/* See if the apparent "size" is being overridden. */
+	GetResolutionFromFileName(m_ActualID.filename, m_iSourceWidth, m_iSourceHeight);
 	return img;
 }
 
