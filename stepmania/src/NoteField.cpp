@@ -548,12 +548,8 @@ void NoteField::DrawPrimitives()
 				continue;	// don't draw anything
 
 			// If no part of this HoldNote is on the screen, skip it
-			if( !( iFirstIndexToDraw <= hn.iEndRow && hn.iEndRow <= iLastIndexToDraw  ||
-				iFirstIndexToDraw <= hn.iStartRow  && hn.iStartRow <= iLastIndexToDraw  ||
-				hn.iStartRow < iFirstIndexToDraw   && hn.iEndRow > iLastIndexToDraw ) )
-			{
+			if( !hn.RangeOverlaps(iFirstIndexToDraw, iLastIndexToDraw) )
 				continue;	// skip
-			}
 
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
