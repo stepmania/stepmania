@@ -58,7 +58,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 		return;
 	}
 
-	hand.Default.Load( -1, ParseActorCommands(ENTRY_DEFAULT(ListName)) );
+	hand.Default.Load( -1, ParseCommands(ENTRY_DEFAULT(ListName)) );
 
 	/* Parse the basic configuration metric. */
 	CStringArray asParts;
@@ -79,7 +79,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 	for( int col = 0; col < NumCols; ++col )
 	{
 		GameCommand mc;
-		mc.Load( 0, ParseActorCommands(ENTRY_MODE(ListName, col)) );
+		mc.Load( 0, ParseCommands(ENTRY_MODE(ListName, col)) );
 		if( mc.m_sName == "" )
 			RageException::Throw( "List \"%s\", col %i has no name", ListName.c_str(), col );
 
@@ -247,8 +247,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		
 		CString sRowCommands = LINE(sLineName);
 		
-		ActorCommands vCommands;
-		ParseActorCommands( sRowCommands, vCommands );
+		Commands vCommands;
+		ParseCommands( sRowCommands, vCommands );
 		
 		if( vCommands.v.size() < 1 )
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
@@ -256,15 +256,15 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		OptionRowHandler hand;
 		for( unsigned part = 0; part < vCommands.v.size(); ++part)
 		{
-			ActorCommand& command = vCommands.v[part];
+			Command& command = vCommands.v[part];
 
-			BeginHandleParams;
+			BeginHandleArgs;
 
-			const CString name = sParam(0);
+			const CString &name = command.GetName();
 
 			if( !name.CompareNoCase("list") )
 			{
-				SetList( row, hand, sParam(1), row.name );
+				SetList( row, hand, sArg(1), row.name );
 			}
 			else if( !name.CompareNoCase("steps") )
 			{
@@ -273,7 +273,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			}
 			else if( !name.CompareNoCase("conf") )
 			{
-				SetConf( row, hand, sParam(1), row.name );
+				SetConf( row, hand, sArg(1), row.name );
 			}
 			else if( !name.CompareNoCase("characters") )
 			{
@@ -283,7 +283,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
 
-			EndHandleParams;
+			EndHandleArgs;
 		}
 
 		// TRICKY:  Insert a down arrow as the first choice in the row.

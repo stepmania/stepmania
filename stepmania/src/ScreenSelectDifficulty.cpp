@@ -447,8 +447,8 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			{
 				if( BothPlayersGameCommand(m_GameCommands[PAGE_1][c]) )
 				{
-					m_sprPicture[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
-					m_sprInfo[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
+					m_sprPicture[PAGE_1][c].RunCommands( IGNORED_ELEMENT_COMMAND );
+					m_sprInfo[PAGE_1][c].RunCommands( IGNORED_ELEMENT_COMMAND );
 
 				//	IGNORED_ELEMENT_COMMAND
 				}
@@ -472,10 +472,10 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	}
 
 
-	m_sprCursor[pn].Command( CURSOR_CHOOSE_COMMAND );
+	m_sprCursor[pn].RunCommands( CURSOR_CHOOSE_COMMAND );
 	m_sprOK[pn].SetXY( m_sprShadow[pn].GetDestX(), m_sprShadow[pn].GetDestY() );
-	m_sprOK[pn].Command( OK_CHOOSE_COMMAND );
-	m_sprShadow[pn].Command( SHADOW_CHOOSE_COMMAND );
+	m_sprOK[pn].RunCommands( OK_CHOOSE_COMMAND );
+	m_sprShadow[pn].RunCommands( SHADOW_CHOOSE_COMMAND );
 
 
 	// check to see if everyone has chosen

@@ -43,7 +43,7 @@ public:
 	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;
 
-	virtual void HandleCommand( const ActorCommand &command );
+	virtual void HandleCommand( const Command &command );
 
 private:
     RageModelGeometry	*m_pGeometry;

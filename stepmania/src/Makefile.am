@@ -54,7 +54,8 @@ ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h ScreenWith
 DataStructures = \
 Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
 Character.cpp Character.h CharacterHead.cpp CharacterHead.h \
-CodeDetector.cpp CodeDetector.h Difficulty.cpp Difficulty.h EnumHelper.cpp EnumHelper.h Course.cpp Course.h \
+CodeDetector.cpp CodeDetector.h 
+Command.cpp Command.h Difficulty.cpp Difficulty.h EnumHelper.cpp EnumHelper.h Course.cpp Course.h \
 CourseUtil.cpp CourseUtil.h DateTime.cpp DateTime.h Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
@@ -251,7 +252,7 @@ RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConve
 RageUtil_BackgroundLoader.cpp RageUtil_BackgroundLoader.h RageUtil_FileDB.cpp RageUtil_FileDB.h RageUtil_CircularBuffer.h
 
 Actors = \
-Actor.cpp Actor.h ActorCollision.h ActorCommands.cpp ActorCommands.h ActorFrame.cpp ActorFrame.h \
+Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h \
 ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Model.cpp Model.h \
 ModelManager.cpp ModelManager.h ModelTypes.cpp ModelTypes.h Quad.h Sprite.cpp Sprite.h
 

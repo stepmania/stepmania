@@ -12,13 +12,13 @@ static const ThemeMetric<float>			START_X						("GroupList","StartX");
 static const ThemeMetric<float>			START_Y						("GroupList","StartY");
 static const ThemeMetric<float>			SPACING_X					("GroupList","SpacingX");
 static const ThemeMetric<float>			SPACING_Y					("GroupList","SpacingY");
-static const ThemeMetric<ActorCommands>	SCROLL_TWEEN_COMMAND		("GroupList","ScrollTweenCommand");
-static const ThemeMetric<ActorCommands>	GAIN_FOCUS_ITEM_COMMAND		("GroupList","GainFocusItemCommand");
-static const ThemeMetric<ActorCommands>	LOSE_FOCUS_ITEM_COMMAND		("GroupList","LoseFocusItemCommand");
-static const ThemeMetric<ActorCommands>	GAIN_FOCUS_GROUP_COMMAND	("GroupList","GainFocusGroupCommand");
-static const ThemeMetric<ActorCommands>	LOSE_FOCUS_GROUP_COMMAND	("GroupList","LoseFocusGroupCommand");
-static const ThemeMetric<ActorCommands>	HIDE_ITEM_COMMAND			("GroupList","HideItemCommand");
-static const ThemeMetric<ActorCommands>	SHOW_ITEM_COMMAND			("GroupList","ShowItemCommand");
+static const ThemeMetric<Commands>	SCROLL_TWEEN_COMMAND		("GroupList","ScrollTweenCommand");
+static const ThemeMetric<Commands>	GAIN_FOCUS_ITEM_COMMAND		("GroupList","GainFocusItemCommand");
+static const ThemeMetric<Commands>	LOSE_FOCUS_ITEM_COMMAND		("GroupList","LoseFocusItemCommand");
+static const ThemeMetric<Commands>	GAIN_FOCUS_GROUP_COMMAND	("GroupList","GainFocusGroupCommand");
+static const ThemeMetric<Commands>	LOSE_FOCUS_GROUP_COMMAND	("GroupList","LoseFocusGroupCommand");
+static const ThemeMetric<Commands>	HIDE_ITEM_COMMAND			("GroupList","HideItemCommand");
+static const ThemeMetric<Commands>	SHOW_ITEM_COMMAND			("GroupList","ShowItemCommand");
 
 const int MAX_GROUPS_ONSCREEN = 7;
 
@@ -105,16 +105,16 @@ void GroupList::ResetTextSize( int i )
 
 void GroupList::BeforeChange()
 {
-	m_sprButtons[m_iSelection]->Command( LOSE_FOCUS_ITEM_COMMAND );
-	m_textLabels[m_iSelection]->Command( LOSE_FOCUS_ITEM_COMMAND );
-	m_ButtonFrames[m_iSelection]->Command( LOSE_FOCUS_GROUP_COMMAND );
+	m_sprButtons[m_iSelection]->RunCommands( LOSE_FOCUS_ITEM_COMMAND );
+	m_textLabels[m_iSelection]->RunCommands( LOSE_FOCUS_ITEM_COMMAND );
+	m_ButtonFrames[m_iSelection]->RunCommands( LOSE_FOCUS_GROUP_COMMAND );
 }
 
 
 void GroupList::AfterChange()
 {
 	m_Frame.StopTweening();
-	m_Frame.Command( SCROLL_TWEEN_COMMAND );
+	m_Frame.RunCommands( SCROLL_TWEEN_COMMAND );
 	m_Frame.SetY( -m_iTop*SPACING_Y );
 
 	for( int i=0; i < (int) m_asLabels.size(); i++ )
@@ -124,22 +124,22 @@ void GroupList::AfterChange()
 
 		if( IsHidden && !WasHidden )
 		{
-			m_sprButtons[i]->Command( HIDE_ITEM_COMMAND );
-			m_textLabels[i]->Command( HIDE_ITEM_COMMAND );
+			m_sprButtons[i]->RunCommands( HIDE_ITEM_COMMAND );
+			m_textLabels[i]->RunCommands( HIDE_ITEM_COMMAND );
 		}
 		else if( !IsHidden && WasHidden )
 		{
-			m_sprButtons[i]->Command( SHOW_ITEM_COMMAND );
-			m_textLabels[i]->Command( SHOW_ITEM_COMMAND );
+			m_sprButtons[i]->RunCommands( SHOW_ITEM_COMMAND );
+			m_textLabels[i]->RunCommands( SHOW_ITEM_COMMAND );
 			ResetTextSize( i );
 		}
 
 		m_bHidden[i] = IsHidden;
 	}
 
-	m_sprButtons[m_iSelection]->Command( GAIN_FOCUS_ITEM_COMMAND );
-	m_textLabels[m_iSelection]->Command( GAIN_FOCUS_ITEM_COMMAND );
-	m_ButtonFrames[m_iSelection]->Command( GAIN_FOCUS_GROUP_COMMAND );
+	m_sprButtons[m_iSelection]->RunCommands( GAIN_FOCUS_ITEM_COMMAND );
+	m_textLabels[m_iSelection]->RunCommands( GAIN_FOCUS_ITEM_COMMAND );
+	m_ButtonFrames[m_iSelection]->RunCommands( GAIN_FOCUS_GROUP_COMMAND );
 }
 
 void GroupList::Up()
@@ -206,8 +206,8 @@ void GroupList::TweenOnScreen()
 		/* If this item isn't visible, hide it and skip tweens. */
 		if( !ItemIsOnScreen(i) )
 		{
-			m_sprButtons[i]->Command( HIDE_ITEM_COMMAND );
-			m_textLabels[i]->Command( HIDE_ITEM_COMMAND );
+			m_sprButtons[i]->RunCommands( HIDE_ITEM_COMMAND );
+			m_textLabels[i]->RunCommands( HIDE_ITEM_COMMAND );
 			
 			m_sprButtons[i]->FinishTweening();
 			m_textLabels[i]->FinishTweening();

@@ -437,7 +437,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR, so );
 			wid.m_sLabel = Names[i];
-			wid.m_Action.Load( i, ParseActorCommands(Actions[i]) );
+			wid.m_Action.Load( i, ParseCommands(Actions[i]) );
 
 			switch( so )
 			{

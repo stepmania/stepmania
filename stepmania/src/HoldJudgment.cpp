@@ -6,12 +6,12 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<ActorCommands>	OK_COMMAND	("HoldJudgment","OKCommand");
-ThemeMetric<ActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
-ThemeMetric<ActorCommands>	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
-ThemeMetric<ActorCommands>	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
-ThemeMetric<ActorCommands>	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
-ThemeMetric<ActorCommands>	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
+ThemeMetric<Commands>	OK_COMMAND	("HoldJudgment","OKCommand");
+ThemeMetric<Commands>	NG_COMMAND	("HoldJudgment","NGCommand");
+ThemeMetric<Commands>	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
+ThemeMetric<Commands>	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
+ThemeMetric<Commands>	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
+ThemeMetric<Commands>	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
 
 
 HoldJudgment::HoldJudgment()
@@ -54,13 +54,13 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		ASSERT(0);
 	case HNS_OK:
 		m_sprJudgment.SetState( 0 );
-		m_sprJudgment.Command( (m_iCount%2) ? OK_ODD_COMMAND : OK_EVEN_COMMAND );
-		m_sprJudgment.Command( OK_COMMAND );
+		m_sprJudgment.RunCommands( (m_iCount%2) ? OK_ODD_COMMAND : OK_EVEN_COMMAND );
+		m_sprJudgment.RunCommands( OK_COMMAND );
 		break;
 	case HNS_NG:
 		m_sprJudgment.SetState( 1 );
-		m_sprJudgment.Command( (m_iCount%2) ? NG_ODD_COMMAND : NG_EVEN_COMMAND );
-		m_sprJudgment.Command( NG_COMMAND );
+		m_sprJudgment.RunCommands( (m_iCount%2) ? NG_ODD_COMMAND : NG_EVEN_COMMAND );
+		m_sprJudgment.RunCommands( NG_COMMAND );
 		break;
 	default:
 		ASSERT(0);

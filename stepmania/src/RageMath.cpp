@@ -235,25 +235,25 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 
 		int iMaxIndexAccessed = 0;
 
-#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
-#define fParam(i) (strtof(sParam(i),NULL))
-#define iParam(i) (atoi(sParam(i)))
-#define bParam(i) (iParam(i)!=0)
+#define sArg(i) (GetParam(asTokens,i,iMaxIndexAccessed))
+#define fArg(i) (strtof(sArg(i),NULL))
+#define iArg(i) (atoi(sArg(i)))
+#define bArg(i) (iArg(i)!=0)
 
 		CString& sName = asTokens[0];
 		sName.MakeLower();
 
 		RageMatrix b;
 		// Act on command
-		if( sName=="x" )					RageMatrixTranslation( &b, fParam(1),0,0 );
-		else if( sName=="y" )				RageMatrixTranslation( &b, 0,fParam(1),0 );
-		else if( sName=="z" )				RageMatrixTranslation( &b, 0,0,fParam(1) );
-		else if( sName=="zoomx" )			RageMatrixScaling(&b, fParam(1),1,1 );
-		else if( sName=="zoomy" )			RageMatrixScaling(&b, 1,fParam(1),1 );
-		else if( sName=="zoomz" )			RageMatrixScaling(&b, 1,1,fParam(1) );
-		else if( sName=="rotationx" )		RageMatrixRotationX( &b, fParam(1) );
-		else if( sName=="rotationy" )		RageMatrixRotationY( &b, fParam(1) );
-		else if( sName=="rotationz" )		RageMatrixRotationZ( &b, fParam(1) );
+		if( sName=="x" )					RageMatrixTranslation( &b, fArg(1),0,0 );
+		else if( sName=="y" )				RageMatrixTranslation( &b, 0,fArg(1),0 );
+		else if( sName=="z" )				RageMatrixTranslation( &b, 0,0,fArg(1) );
+		else if( sName=="zoomx" )			RageMatrixScaling(&b, fArg(1),1,1 );
+		else if( sName=="zoomy" )			RageMatrixScaling(&b, 1,fArg(1),1 );
+		else if( sName=="zoomz" )			RageMatrixScaling(&b, 1,1,fArg(1) );
+		else if( sName=="rotationx" )		RageMatrixRotationX( &b, fArg(1) );
+		else if( sName=="rotationy" )		RageMatrixRotationY( &b, fArg(1) );
+		else if( sName=="rotationz" )		RageMatrixRotationZ( &b, fArg(1) );
 		else
 		{
 			CString sError = ssprintf( "MatrixCommand:  Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );

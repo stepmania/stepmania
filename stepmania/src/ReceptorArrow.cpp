@@ -38,9 +38,9 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
 
-	m_pReceptorWaiting->Command(	ParseActorCommands("effectclock,beat") );
-	m_pReceptorGo->Command(			ParseActorCommands("effectclock,beat") );
-	m_pPressBlock->Command(			ParseActorCommands("effectclock,beat") );
+	m_pReceptorWaiting->RunCommands(	ParseCommands("effectclock,beat") );
+	m_pReceptorGo->RunCommands(			ParseCommands("effectclock,beat") );
+	m_pPressBlock->RunCommands(			ParseCommands("effectclock,beat") );
 
 	// draw pressblock before receptors
 	this->AddChild( m_pPressBlock );
@@ -73,8 +73,8 @@ void ReceptorArrow::Step( TapNoteScore score )
 {
 	m_pReceptorGo->FinishTweening();
 	m_pReceptorWaiting->FinishTweening();
-	m_pReceptorGo->Command( m_sScoreCommand[score] );
-	m_pReceptorWaiting->Command( m_sScoreCommand[score] );
+	m_pReceptorGo->RunCommands( m_sScoreCommand[score] );
+	m_pReceptorWaiting->RunCommands( m_sScoreCommand[score] );
 }
 
 /*

@@ -78,7 +78,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 
 	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGame()->m_szName) );
-	m_sprLogo.Command( PREFSMAN->GetCoinMode()==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
+	m_sprLogo.RunCommands( PREFSMAN->GetCoinMode()==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
 	this->AddChild( &m_sprLogo );
 
 	if( PREFSMAN->GetCoinMode() != COIN_HOME )
@@ -97,13 +97,13 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	}
 
 	m_textVersion.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textVersion.Command( VERSION_ON_COMMAND );
+	m_textVersion.RunCommands( VERSION_ON_COMMAND );
 	m_textVersion.SetText( PRODUCT_VER );
 	this->AddChild( &m_textVersion );
 
 
 	m_textSongs.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textSongs.Command( SONGS_ON_COMMAND );
+	m_textSongs.RunCommands( SONGS_ON_COMMAND );
 	CString text = ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses() );
 	if( PREFSMAN->m_bUseUnlockSystem )
 		text += ssprintf(", %d unlocks", UNLOCKMAN->GetNumUnlocks() );
@@ -111,7 +111,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	this->AddChild( &m_textSongs );
 
 	m_textMaxStages.LoadFromFont( THEME->GetPathF(m_sName,"MaxStages") );
-	m_textMaxStages.Command( MAX_STAGES_ON_COMMAND );
+	m_textMaxStages.RunCommands( MAX_STAGES_ON_COMMAND );
 	CString sText = 
 		PREFSMAN->m_bEventMode ?
 		CString("event mode") :
@@ -120,7 +120,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	this->AddChild( &m_textMaxStages );
 
 	m_textLifeDifficulty.LoadFromFont( THEME->GetPathF(m_sName,"LifeDifficulty") );
-	m_textLifeDifficulty.Command( LIFE_DIFFICULTY_ON_COMMAND );
+	m_textLifeDifficulty.RunCommands( LIFE_DIFFICULTY_ON_COMMAND );
 	int iLifeDifficulty;
 	const CStringArray dummy;
 	LifeDifficulty( iLifeDifficulty, true, dummy );	
@@ -184,7 +184,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 		if( i != m_Choice )
 		{
 			m_textChoice[i].SetZoom( ZOOM_NOT_SELECTED );
-			m_textChoice[i].Command( MENU_ITEM_CREATE );
+			m_textChoice[i].RunCommands( MENU_ITEM_CREATE );
 		}
 		else
 			GainFocus( m_Choice );

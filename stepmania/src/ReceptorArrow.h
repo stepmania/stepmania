@@ -25,7 +25,7 @@ private:
 
 	AutoActor m_pReceptorWaiting;
 	AutoActor m_pReceptorGo;
-	ActorCommands m_sScoreCommand[NUM_TAP_NOTE_SCORES];
+	Commands m_sScoreCommand[NUM_TAP_NOTE_SCORES];
 	
 	AutoActor m_pPressBlock;
 	bool m_bIsPressed;

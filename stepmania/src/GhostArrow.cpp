@@ -53,7 +53,7 @@ void GhostArrow::Step( TapNoteScore score )
 
 	m_spr[score].SetHidden( false );
 	m_spr[score].StopTweening();
-	m_spr[score].Command( m_acScoreCommand[score] );
+	m_spr[score].RunCommands( m_acScoreCommand[score] );
 }
 
 /*

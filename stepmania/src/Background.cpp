@@ -28,7 +28,7 @@ ThemeMetric<float> BOTTOM_EDGE						("Background","BottomEdge");
 #define RECT_BACKGROUND RectF						(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 ThemeMetric<bool> BLINK_DANGER_ALL					("Background","BlinkDangerAll");
 ThemeMetric<bool> DANGER_ALL_IS_OPAQUE				("Background","DangerAllIsOpaque");
-ThemeMetric<ActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
+ThemeMetric<Commands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
 
 static float g_fBackgroundCenterWidth = 40;
 const CString STATIC_BACKGROUND = "static background";
@@ -435,9 +435,9 @@ void Background::LoadFromSong( const Song* pSong )
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
 		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
 		 * BGAnimationLayer, Sprite". */
-		pBGA->Command( ParseActorCommands("propagate,1") );
-		pBGA->Command( ParseActorCommands("effectclock,music") );
-		pBGA->Command( ParseActorCommands("propagate,0") );
+		pBGA->RunCommands( ParseCommands("propagate,1") );
+		pBGA->RunCommands( ParseCommands("effectclock,music") );
+		pBGA->RunCommands( ParseCommands("propagate,0") );
 	}
 }
 

@@ -197,9 +197,9 @@ RageColor NoteSkinManager::GetMetricC( const CString &sNoteSkinName, const CStri
 	return c;
 }
 
-ActorCommands NoteSkinManager::GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
+Commands NoteSkinManager::GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
 {
-	return ParseActorCommands( GetMetric(sNoteSkinName,sButtonName,sValueName) );
+	return ParseCommands( GetMetric(sNoteSkinName,sButtonName,sValueName) );
 }
 
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( const CString &NoteSkin, const CString &sButtonName, const CString &sElement, bool bOptional )

@@ -10,12 +10,12 @@
 #include "ThemeMetric.h"
 
 ThemeMetric<CString>		ARTIST_PREPEND_STRING		("TextBanner","ArtistPrependString");
-ThemeMetric<ActorCommands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
-ThemeMetric<ActorCommands> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
-ThemeMetric<ActorCommands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
-ThemeMetric<ActorCommands> THREE_LINES_TITLE_COMMAND	("TextBanner","ThreeLinesTitleCommand");
-ThemeMetric<ActorCommands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
-ThemeMetric<ActorCommands> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
+ThemeMetric<Commands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
+ThemeMetric<Commands> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
+ThemeMetric<Commands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
+ThemeMetric<Commands> THREE_LINES_TITLE_COMMAND	("TextBanner","ThreeLinesTitleCommand");
+ThemeMetric<Commands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
+ThemeMetric<Commands> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
 
 void TextBanner::Init()
 {
@@ -58,15 +58,15 @@ void TextBanner::LoadFromString(
 
 	if( bTwoLines )
 	{
-		m_textTitle.Command( TWO_LINES_TITLE_COMMAND );
-		m_textSubTitle.Command( TWO_LINES_SUBTITLE_COMMAND );
-		m_textArtist.Command( TWO_LINES_ARTIST_COMMAND );
+		m_textTitle.RunCommands( TWO_LINES_TITLE_COMMAND );
+		m_textSubTitle.RunCommands( TWO_LINES_SUBTITLE_COMMAND );
+		m_textArtist.RunCommands( TWO_LINES_ARTIST_COMMAND );
 	}
 	else
 	{
-		m_textTitle.Command( THREE_LINES_TITLE_COMMAND );
-		m_textSubTitle.Command( THREE_LINES_SUBTITLE_COMMAND );
-		m_textArtist.Command( THREE_LINES_ARTIST_COMMAND );
+		m_textTitle.RunCommands( THREE_LINES_TITLE_COMMAND );
+		m_textSubTitle.RunCommands( THREE_LINES_SUBTITLE_COMMAND );
+		m_textArtist.RunCommands( THREE_LINES_ARTIST_COMMAND );
 	}
 
 	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );

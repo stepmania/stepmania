@@ -1,77 +1,88 @@
 #include "global.h"	// testing updates
-#include "ActorCommands.h"
+#include "Command.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 #include "LuaHelpers.h"
 
 
-void IncorrectActorParametersWarning( const ActorCommand &command, int iMaxIndexAccessed )
+void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )
 {
-	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %u.",
-		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.vTokens.size()) );
+	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of arguments in command '%s'.  Expected %d but there are %u.",
+		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.m_vsArgs.size()) );
 	LOG->Warn( sError );
 	Dialog::OK( sError );
 }
 
-void ActorCommandToken::Set( const CString &sParam )
+CString Command::GetName() const 
 {
-	s = sParam;
-	CString s = sParam;
+	if( m_vsArgs.empty() )
+		return "";
+	CString s = m_vsArgs[0];
+	s.MakeLower();
+	return s;
+}
+
+Command::Arg Command::GetArg( unsigned index ) const
+{
+	Arg a;
+	if( index < m_vsArgs.size() )
+		a.s = m_vsArgs[index];
+	return a;
+}
+
+Command::Arg::operator CString ()
+{
+	return s;
+}
+
+Command::Arg::operator float ()
+{
 	Lua::PrepareExpression( s );	// strip invalid chars
-	f = Lua::RunExpressionF( s );
-	bColorIsValid = c.FromString( sParam );
+	return Lua::RunExpressionF( s );
 }
 
-void ActorCommand::Set( const CString &sCommand )
+Command::Arg::operator int ()
 {
-	CStringArray vsTokens;
-	split( sCommand, ",", vsTokens, false );	// don't ignore empty
-
-	vTokens.resize( vsTokens.size() );
-
-	for( unsigned i=0; i<vsTokens.size(); i++ )
-	{
-		CString &sToken = vsTokens[i];
-
-		// TRICKY: The first parameter is the command name.  This is case 
-		// insensitive.  Convert it to lowercase now so that we can do 
-		// case sensitive compares later.
-		if( i == 0 )
-			sToken.MakeLower();
-
-		vTokens[i].Set( sToken );
-	}
+	Lua::PrepareExpression( s );	// strip invalid chars
+	return (int)Lua::RunExpressionF( s );
 }
 
-CString ActorCommand::GetOriginalCommandString() const
+Command::Arg::operator bool ()
 {
-	CStringArray asTokens;
-	for( unsigned i=0; i<vTokens.size(); i++ )
-		asTokens.push_back( vTokens[i].s );
-	return join( ",", asTokens );
+	Lua::PrepareExpression( s );	// strip invalid chars
+	return Lua::RunExpressionF( s ) != 0.0f;
 }
 
-void ParseActorCommands( const CString &sCommands, ActorCommands &vCommandsOut )
+void Command::Load( const CString &sCommand )
 {
-	vCommandsOut.v.clear();
+	m_vsArgs.clear();
+	split( sCommand, ",", m_vsArgs, false );	// don't ignore empty
+}
+
+CString Command::GetOriginalCommandString() const
+{
+	return join( ",", m_vsArgs );
+}
+
+void ParseCommands( const CString &sCommands, Commands &vCommandsOut )
+{
 	CStringArray vsCommands;
 	split( sCommands, ";", vsCommands, true );	// do ignore empty
 	
 	vCommandsOut.v.resize( vsCommands.size() );
-	
+
 	for( unsigned i=0; i<vsCommands.size(); i++ )
 	{
-		const CString &sCommand = vsCommands[i];
-		ActorCommand &pc = vCommandsOut.v[i];
-		pc.Set( sCommand );
+		Command &cmd = vCommandsOut.v[i];
+		cmd.Load( vsCommands[i] );
 	}
 }
 
-ActorCommands ParseActorCommands( const CString &sCommands )
+Commands ParseCommands( const CString &sCommands )
 {
-	ActorCommands vCommands;
-	ParseActorCommands( sCommands, vCommands );
+	Commands vCommands;
+	ParseCommands( sCommands, vCommands );
 	return vCommands;
 }
 

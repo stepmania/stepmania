@@ -252,8 +252,8 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_start = m_current;		// set the start position
 
 			// Execute the command in this tween (if any).
-			const ActorCommand &command = TS.command;
-			if( !command.vTokens.empty() )
+			const Command &command = TS.command;
+			if( command.m_vsArgs.size() )
 				this->HandleCommand( command );
 		}
 
@@ -617,22 +617,22 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::Command( const ActorCommands &vCommands )
+void Actor::RunCommands( const Commands &vCommands )
 {
-	FOREACH_CONST( ActorCommand, vCommands.v, c )
+	FOREACH_CONST( Command, vCommands.v, c )
 		this->HandleCommand( *c );
 }
 
-void Actor::HandleCommand( const ActorCommand &command )
+void Actor::HandleCommand( const Command &command )
 {
-	BeginHandleParams;
+	BeginHandleArgs;
 
-	const CString& sName = sParam(0);
+	const CString &sName = command.GetName();
 
 #if defined(DEBUG)
 	if( sName == "x" || sName == "y" )	// an absolute X or Y position
 	{
-		if( isdigit(sParam(1)[0]) && sParam(1).Find('-') == -1 && sParam(1).Find('+') == -1 )
+		if( isdigit(sArg(1)[0]) && sArg(1).Find('-') == -1 && sArg(1).Find('+') == -1 )
 		{
 			LOG->Warn( "Command '%s' should contain a SCREEN_* constant", command.GetOriginalCommandString().c_str() );
 		}
@@ -640,63 +640,63 @@ void Actor::HandleCommand( const ActorCommand &command )
 #endif
 
 	// Commands that go in the tweening queue:
-	if     ( sName=="sleep" )			Sleep( fParam(1) );
-	else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
-	else if( sName=="accelerate" )		BeginTweening( fParam(1), TWEEN_ACCELERATE );
-	else if( sName=="decelerate" )		BeginTweening( fParam(1), TWEEN_DECELERATE );
-	else if( sName=="bouncebegin" )		BeginTweening( fParam(1), TWEEN_BOUNCE_BEGIN );
-	else if( sName=="bounceend" )		BeginTweening( fParam(1), TWEEN_BOUNCE_END );
-	else if( sName=="spring" )			BeginTweening( fParam(1), TWEEN_SPRING );
+	if     ( sName=="sleep" )			Sleep( fArg(1) );
+	else if( sName=="linear" )			BeginTweening( fArg(1), TWEEN_LINEAR );
+	else if( sName=="accelerate" )		BeginTweening( fArg(1), TWEEN_ACCELERATE );
+	else if( sName=="decelerate" )		BeginTweening( fArg(1), TWEEN_DECELERATE );
+	else if( sName=="bouncebegin" )		BeginTweening( fArg(1), TWEEN_BOUNCE_BEGIN );
+	else if( sName=="bounceend" )		BeginTweening( fArg(1), TWEEN_BOUNCE_END );
+	else if( sName=="spring" )			BeginTweening( fArg(1), TWEEN_SPRING );
 	else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }	// Why BeginT again? -Chris
 	else if( sName=="finishtweening" )	FinishTweening();
-	else if( sName=="hurrytweening" )	HurryTweening( fParam(1) );
-	else if( sName=="x" )				SetX( fParam(1) );
-	else if( sName=="y" )				SetY( fParam(1) );
-	else if( sName=="z" )				SetZ( fParam(1) );
-	else if( sName=="addx" )			AddX( fParam(1) );
-	else if( sName=="addy" )			AddY( fParam(1) );
-	else if( sName=="addz" )			AddZ( fParam(1) );
-	else if( sName=="zoom" )			SetZoom( fParam(1) );
-	else if( sName=="zoomx" )			SetZoomX( fParam(1) );
-	else if( sName=="zoomy" )			SetZoomY( fParam(1) );
-	else if( sName=="zoomz" )			SetZoomZ( fParam(1) );
-	else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(1) );
-	else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(1) );
-	else if( sName=="stretchto" )		StretchTo( RectF( fParam(1), fParam(2), fParam(3), fParam(4) ) );
-	else if( sName=="cropleft" )		SetCropLeft( fParam(1) );
-	else if( sName=="croptop" )			SetCropTop( fParam(1) );
-	else if( sName=="cropright" )		SetCropRight( fParam(1) );
-	else if( sName=="cropbottom" )		SetCropBottom( fParam(1) );
-	else if( sName=="fadeleft" )		SetFadeLeft( fParam(1) );
-	else if( sName=="fadetop" )			SetFadeTop( fParam(1) );
-	else if( sName=="faderight" )		SetFadeRight( fParam(1) );
-	else if( sName=="fadebottom" )		SetFadeBottom( fParam(1) );
-	else if( sName=="fadecolor" )		SetFadeDiffuseColor( cParam(1) );
-	else if( sName=="diffuse" )			SetDiffuse( cParam(1) );
-	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( cParam(1) );
-	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( cParam(1) );
-	else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( cParam(1) );
-	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( cParam(1) );
+	else if( sName=="hurrytweening" )	HurryTweening( fArg(1) );
+	else if( sName=="x" )				SetX( fArg(1) );
+	else if( sName=="y" )				SetY( fArg(1) );
+	else if( sName=="z" )				SetZ( fArg(1) );
+	else if( sName=="addx" )			AddX( fArg(1) );
+	else if( sName=="addy" )			AddY( fArg(1) );
+	else if( sName=="addz" )			AddZ( fArg(1) );
+	else if( sName=="zoom" )			SetZoom( fArg(1) );
+	else if( sName=="zoomx" )			SetZoomX( fArg(1) );
+	else if( sName=="zoomy" )			SetZoomY( fArg(1) );
+	else if( sName=="zoomz" )			SetZoomZ( fArg(1) );
+	else if( sName=="zoomtowidth" )		ZoomToWidth( fArg(1) );
+	else if( sName=="zoomtoheight" )	ZoomToHeight( fArg(1) );
+	else if( sName=="stretchto" )		StretchTo( RectF( fArg(1), fArg(2), fArg(3), fArg(4) ) );
+	else if( sName=="cropleft" )		SetCropLeft( fArg(1) );
+	else if( sName=="croptop" )			SetCropTop( fArg(1) );
+	else if( sName=="cropright" )		SetCropRight( fArg(1) );
+	else if( sName=="cropbottom" )		SetCropBottom( fArg(1) );
+	else if( sName=="fadeleft" )		SetFadeLeft( fArg(1) );
+	else if( sName=="fadetop" )			SetFadeTop( fArg(1) );
+	else if( sName=="faderight" )		SetFadeRight( fArg(1) );
+	else if( sName=="fadebottom" )		SetFadeBottom( fArg(1) );
+	else if( sName=="fadecolor" )		SetFadeDiffuseColor( cArg(1) );
+	else if( sName=="diffuse" )			SetDiffuse( cArg(1) );
+	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( cArg(1) );
+	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( cArg(1) );
+	else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( cArg(1) );
+	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( cArg(1) );
 	/* Add left/right/top/bottom for alpha if needed. */
-	else if( sName=="diffusealpha" )	SetDiffuseAlpha( fParam(1) );
-	else if( sName=="diffusecolor" )	SetDiffuseColor( cParam(1) );
-	else if( sName=="glow" )			SetGlow( cParam(1) );
+	else if( sName=="diffusealpha" )	SetDiffuseAlpha( fArg(1) );
+	else if( sName=="diffusecolor" )	SetDiffuseColor( cArg(1) );
+	else if( sName=="glow" )			SetGlow( cArg(1) );
 	else if( sName=="glowmode" ) {
-		if(!sParam(1).CompareNoCase("whiten"))
+		if(!sArg(1).CompareNoCase("whiten"))
 			SetGlowMode( GLOW_WHITEN );
-		else if(!sParam(1).CompareNoCase("brighten"))
+		else if(!sArg(1).CompareNoCase("brighten"))
 			SetGlowMode( GLOW_BRIGHTEN );
 		else ASSERT(0);
 	}
-	else if( sName=="rotationx" )		SetRotationX( fParam(1) );
-	else if( sName=="rotationy" )		SetRotationY( fParam(1) );
-	else if( sName=="rotationz" )		SetRotationZ( fParam(1) );
-	else if( sName=="heading" )			AddRotationH( fParam(1) );
-	else if( sName=="pitch" )			AddRotationP( fParam(1) );
-	else if( sName=="roll" ) 			AddRotationR( fParam(1) );
-	else if( sName=="shadowlength" )	SetShadowLength( fParam(1) );
-	else if( sName=="horizalign" )		SetHorizAlign( sParam(1) );
-	else if( sName=="vertalign" )		SetVertAlign( sParam(1) );
+	else if( sName=="rotationx" )		SetRotationX( fArg(1) );
+	else if( sName=="rotationy" )		SetRotationY( fArg(1) );
+	else if( sName=="rotationz" )		SetRotationZ( fArg(1) );
+	else if( sName=="heading" )			AddRotationH( fArg(1) );
+	else if( sName=="pitch" )			AddRotationP( fArg(1) );
+	else if( sName=="roll" ) 			AddRotationR( fArg(1) );
+	else if( sName=="shadowlength" )	SetShadowLength( fArg(1) );
+	else if( sName=="horizalign" )		SetHorizAlign( sArg(1) );
+	else if( sName=="vertalign" )		SetVertAlign( sArg(1) );
 	else if( sName=="diffuseblink" )	SetEffectDiffuseBlink();
 	else if( sName=="diffuseshift" )	SetEffectDiffuseShift();
 	else if( sName=="glowblink" )		SetEffectGlowBlink();
@@ -709,45 +709,45 @@ void Actor::HandleCommand( const ActorCommand &command )
 	else if( sName=="spin" )			SetEffectSpin();
 	else if( sName=="vibrate" )			SetEffectVibrate();
 	else if( sName=="stopeffect" )		SetEffectNone();
-	else if( sName=="effectcolor1" )	SetEffectColor1( cParam(1) );
-	else if( sName=="effectcolor2" )	SetEffectColor2( cParam(1) );
-	else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
-	else if( sName=="effectoffset" )	SetEffectOffset( fParam(1) );
-	else if( sName=="effectdelay" )		SetEffectDelay( fParam(1) );
-	else if( sName=="effectclock" )		SetEffectClock( sParam(1) );
-	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
-	else if( sName=="scaletocover" )	{ RectF R(fParam(1), fParam(2), fParam(3), fParam(4));  ScaleToCover(R); }
-	else if( sName=="scaletofit" )		{ RectF R(fParam(1), fParam(2), fParam(3), fParam(4));  ScaleToFitInside(R); }
+	else if( sName=="effectcolor1" )	SetEffectColor1( cArg(1) );
+	else if( sName=="effectcolor2" )	SetEffectColor2( cArg(1) );
+	else if( sName=="effectperiod" )	SetEffectPeriod( fArg(1) );
+	else if( sName=="effectoffset" )	SetEffectOffset( fArg(1) );
+	else if( sName=="effectdelay" )		SetEffectDelay( fArg(1) );
+	else if( sName=="effectclock" )		SetEffectClock( sArg(1) );
+	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fArg(1),fArg(2),fArg(3)) );
+	else if( sName=="scaletocover" )	{ RectF R(fArg(1), fArg(2), fArg(3), fArg(4));  ScaleToCover(R); }
+	else if( sName=="scaletofit" )		{ RectF R(fArg(1), fArg(2), fArg(3), fArg(4));  ScaleToFitInside(R); }
 	// Commands that take effect immediately (ignoring the tweening queue):
-	else if( sName=="animate" )			EnableAnimation( bParam(1) );
+	else if( sName=="animate" )			EnableAnimation( bArg(1) );
 	else if( sName=="play" )			EnableAnimation( true );
 	else if( sName=="pause" )			EnableAnimation( false );
-	else if( sName=="setstate" )		SetState( iParam(1) );
-	else if( sName=="texturewrapping" )	SetTextureWrapping( bParam(1) );
-	else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
-	else if( sName=="blend" )			SetBlendMode( sParam(1) );
-	else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
-	else if( sName=="ztest" )			SetZTestMode( bParam(1)?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
-	else if( sName=="ztestmode" )		SetZTestMode( sParam(1) );
-	else if( sName=="zwrite" )			SetZWrite( bParam(1) );
-	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
-	else if( sName=="backfacecull" )	SetCullMode( bParam(1) ? CULL_BACK : CULL_NONE );
-	else if( sName=="cullmode" )		SetCullMode( sParam(1) );
-	else if( sName=="hidden" )			SetHidden( bParam(1) );
-	else if( sName=="hibernate" )		SetHibernate( fParam(1) );
-	else if( sName=="draworder" )		SetDrawOrder( iParam(1) );
-	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
+	else if( sName=="setstate" )		SetState( iArg(1) );
+	else if( sName=="texturewrapping" )	SetTextureWrapping( bArg(1) );
+	else if( sName=="additiveblend" )	SetBlendMode( bArg(1) ? BLEND_ADD : BLEND_NORMAL );
+	else if( sName=="blend" )			SetBlendMode( sArg(1) );
+	else if( sName=="zbuffer" )			SetUseZBuffer( bArg(1) );
+	else if( sName=="ztest" )			SetZTestMode( bArg(1)?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
+	else if( sName=="ztestmode" )		SetZTestMode( sArg(1) );
+	else if( sName=="zwrite" )			SetZWrite( bArg(1) );
+	else if( sName=="clearzbuffer" )	SetClearZBuffer( bArg(1) );
+	else if( sName=="backfacecull" )	SetCullMode( bArg(1) ? CULL_BACK : CULL_NONE );
+	else if( sName=="cullmode" )		SetCullMode( sArg(1) );
+	else if( sName=="hidden" )			SetHidden( bArg(1) );
+	else if( sName=="hibernate" )		SetHibernate( fArg(1) );
+	else if( sName=="draworder" )		SetDrawOrder( iArg(1) );
+	else if( sName=="playcommand" )		PlayCommand( sArg(1) );
 	else if( sName=="queuecommand" )	
 	{
-		ActorCommand newcommand = command;
-		newcommand.vTokens.erase( newcommand.vTokens.begin() );
+		Command newcommand = command;
+		newcommand.m_vsArgs.erase( newcommand.m_vsArgs.begin() );
 		QueueCommand( newcommand );
-		return;	// don't do parameter number checking
+		return;	// don't do argument count checking
 	}
 
 	/* These are commands intended for a Sprite commands, but they will get 
 	 * sent to all sub-actors (which aren't necessarily Sprites) on 
-	 * GainFocus and LoseFocus.  So, don't run EndHandleParams 
+	 * GainFocus and LoseFocus.  So, don't run EndHandleArgs 
 	 * on these commands. */
 	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
 		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" ||
@@ -760,13 +760,13 @@ void Actor::HandleCommand( const ActorCommand &command )
 		Dialog::OK( sError );
 	}
 
-	EndHandleParams;
+	EndHandleArgs;
 }
 
-float Actor::GetCommandsLengthSeconds( const ActorCommands &vCommands )
+float Actor::GetCommandsLengthSeconds( const Commands &vCommands )
 {
 	Actor temp;
-	temp.Command(vCommands);
+	temp.RunCommands(vCommands);
 
 	return temp.GetTweenTimeLeft();
 }
@@ -785,7 +785,7 @@ float Actor::GetTweenTimeLeft() const
 
 /* This is a hack to change all tween states while leaving existing tweens alone.
  *
- * Perhaps the regular Set methods should also take an optional parameter, eg.
+ * Perhaps the regular Set methods should also take an optional argument, eg.
  * "SET_TWEEN" (normal behavior) or "SET_GLOBAL" to set regardless of tweens.
  * That might be ugly, too.
  */
@@ -904,7 +904,7 @@ void Actor::Sleep( float time )
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
 
-void Actor::QueueCommand( ActorCommand command )
+void Actor::QueueCommand( Command command )
 {
 	BeginTweening( 0, TWEEN_LINEAR ); 
 	DestTweenState().command = command; 

@@ -178,7 +178,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
 			 * modify draw order between BGAs in a Foreground.  Most things should be done
 			 * in metrics.ini commands, not here. */
-			this->Command( ParseActorCommands(sInitCommand) );
+			this->RunCommands( ParseCommands(sInitCommand) );
 		}
 	}
 	else

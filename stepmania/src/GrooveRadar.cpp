@@ -11,9 +11,9 @@
 
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
-static const ThemeMetric<ActorCommands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
+static const ThemeMetric<Commands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
-static const ThemeMetric<ActorCommands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
+static const ThemeMetric<Commands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
 static const ThemeMetric<bool>			DISABLE_RADAR				("GrooveRadar","DisableRadar");
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
@@ -40,9 +40,9 @@ void GrooveRadar::TweenOnScreen()
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
-		m_sprRadarLabels[c].Command( LABEL_ON_COMMAND );
+		m_sprRadarLabels[c].RunCommands( LABEL_ON_COMMAND );
 		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c );	// sleep
-		m_sprRadarLabels[c].Command( LABEL_ON_COMMAND_POST_DELAY );
+		m_sprRadarLabels[c].RunCommands( LABEL_ON_COMMAND_POST_DELAY );
 	}
 	m_GrooveRadarValueMap.TweenOnScreen();
 }

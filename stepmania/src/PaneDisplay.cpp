@@ -322,7 +322,7 @@ done:
 			continue;
 		spec.erase( spec.begin(), spec.begin()+1 );
 
-		m_textContents[c].Command( ParseActorCommands(join(";", spec)) );
+		m_textContents[c].RunCommands( ParseCommands(join(";", spec)) );
 		break;
 	}
 }

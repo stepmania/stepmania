@@ -290,8 +290,8 @@ void UtilCommand( Actor& actor, const CString &sClassName, const CString &sComma
 //	if( actor.GetHidden() )
 //		return 0;
 
-	ActorCommand ac;
-	ac.Set("playcommand,"+sCommandName);
+	Command ac;
+	ac.Load("playcommand,"+sCommandName);
 	actor.HandleCommand( ac );
 
 	// HACK:  It's very often that we command things to TweenOffScreen 
@@ -309,7 +309,7 @@ void UtilCommand( Actor& actor, const CString &sClassName, const CString &sComma
 												   sClassName.c_str(), sCommandName.c_str()) );
 	}
 
-	actor.Command( THEME->GetMetricA(sClassName,actor.GetID()+sCommandName+"Command") );
+	actor.RunCommands( THEME->GetMetricA(sClassName,actor.GetID()+sCommandName+"Command") );
 }
 
 void AutoActor::Load( const CString &sPath )

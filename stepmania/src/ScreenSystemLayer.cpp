@@ -97,8 +97,8 @@ void ScreenSystemLayer::ReloadCreditsText()
 void ScreenSystemLayer::SystemMessage( const CString &sMessage )
 {
 	m_textMessage.SetText( sMessage );
-	static const ActorCommands cmds = ParseActorCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0");
-	m_textMessage.Command( cmds );
+	static const Commands cmds = ParseCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0");
+	m_textMessage.RunCommands( cmds );
 }
 
 void ScreenSystemLayer::SystemMessageNoAnimate( const CString &sMessage )

@@ -121,7 +121,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
-	m_framePage.Command( FRAME_ON_COMMAND );
+	m_framePage.RunCommands( FRAME_ON_COMMAND );
 }
 
 void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
@@ -921,7 +921,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->PlayStartSound();
 
-		m_framePage.Command( FRAME_OFF_COMMAND );
+		m_framePage.RunCommands( FRAME_OFF_COMMAND );
 		break;
 	case SM_GainFocus:
 		INPUTFILTER->SetRepeatRate( 0.25f, 12, 0.25f, 12 );
@@ -1099,7 +1099,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( pText->GetText() != text )
 		{
 			pText->FinishTweening();
-			pText->Command( EXPLANATION_ON_COMMAND(pn) );
+			pText->RunCommands( EXPLANATION_ON_COMMAND(pn) );
 			pText->SetText( text );
 		}
 		break;
@@ -1108,7 +1108,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( pText->GetText() != text )
 		{
 			pText->FinishTweening();
-			pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
+			pText->RunCommands( EXPLANATION_TOGETHER_ON_COMMAND );
 			pText->SetText( text );
 		}
 		break;

@@ -262,8 +262,8 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 void ScreenSelectStyle::BeforeChange()
 {
 	// dim/hide old selection
-	m_sprIcon[m_iSelection].Command( ICON_LOSE_FOCUS_COMMAND );
-	m_textIcon[m_iSelection].Command( ICON_LOSE_FOCUS_COMMAND );
+	m_sprIcon[m_iSelection].RunCommands( ICON_LOSE_FOCUS_COMMAND );
+	m_textIcon[m_iSelection].RunCommands( ICON_LOSE_FOCUS_COMMAND );
 	m_sprPicture[m_iSelection].StopTweening();
 	m_sprInfo[m_iSelection].StopTweening();
 	m_sprPicture[m_iSelection].SetDiffuse( RageColor(1,1,1,0) );
@@ -274,8 +274,8 @@ void ScreenSelectStyle::BeforeChange()
 
 void ScreenSelectStyle::AfterChange()
 {
-	m_sprIcon[m_iSelection].Command( ICON_GAIN_FOCUS_COMMAND );
-	m_textIcon[m_iSelection].Command( ICON_GAIN_FOCUS_COMMAND );
+	m_sprIcon[m_iSelection].RunCommands( ICON_GAIN_FOCUS_COMMAND );
+	m_textIcon[m_iSelection].RunCommands( ICON_GAIN_FOCUS_COMMAND );
 	m_sprPicture[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprInfo[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprPicture[m_iSelection].SetZoom( 1 );

@@ -216,10 +216,10 @@ void DifficultyList::PositionItems()
 		if( m_Lines[m].m_Number.GetDestY() != row.m_fY ||
 			m_Lines[m].m_Number.DestTweenState().diffuse[0][3] != DiffuseAlpha )
 		{
-			m_Lines[m].m_Description.Command( MOVE_COMMAND );
-			m_Lines[m].m_Meter.Command( MOVE_COMMAND );
+			m_Lines[m].m_Description.RunCommands( MOVE_COMMAND );
+			m_Lines[m].m_Meter.RunCommands( MOVE_COMMAND );
 			m_Lines[m].m_Meter.RunCommandOnChildren( MOVE_COMMAND );
-			m_Lines[m].m_Number.Command( MOVE_COMMAND );
+			m_Lines[m].m_Number.RunCommands( MOVE_COMMAND );
 		}
 
 		m_Lines[m].m_Description.SetY( row.m_fY );
@@ -233,10 +233,10 @@ void DifficultyList::PositionItems()
 		if( m_bShown && m < (int)m_Rows.size() )
 			bHidden = m_Rows[m].m_bHidden;
 
-		const ActorCommands cmds = ParseActorCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) );
-		m_Lines[m].m_Description.Command( cmds );
+		const Commands cmds = ParseCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) );
+		m_Lines[m].m_Description.RunCommands( cmds );
 		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
-		m_Lines[m].m_Number.Command( cmds );
+		m_Lines[m].m_Number.RunCommands( cmds );
 	}
 
 
@@ -356,10 +356,10 @@ void DifficultyList::HideRows()
 {
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		static const ActorCommands cmds = ParseActorCommands( "finishtweening;diffusealpha,0" );
-		m_Lines[m].m_Description.Command( cmds );
+		static const Commands cmds = ParseCommands( "finishtweening;diffusealpha,0" );
+		m_Lines[m].m_Description.RunCommands( cmds );
 		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
-		m_Lines[m].m_Number.Command( cmds );
+		m_Lines[m].m_Number.RunCommands( cmds );
 	}
 }
 
@@ -369,10 +369,10 @@ void DifficultyList::TweenOnScreen()
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		static const ActorCommands cmds = ParseActorCommands( "finishtweening" );
-		m_Lines[m].m_Description.Command( cmds );
+		static const Commands cmds = ParseCommands( "finishtweening" );
+		m_Lines[m].m_Description.RunCommands( cmds );
 		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
-		m_Lines[m].m_Number.Command( cmds );
+		m_Lines[m].m_Number.RunCommands( cmds );
 	}
 
 //	PositionItems();

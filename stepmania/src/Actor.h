@@ -4,7 +4,7 @@
 #define ACTOR_H
 
 #include "RageTypes.h"
-#include "ActorCommands.h"	// for ActorCommand
+#include "Command.h"
 #include <deque>
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-100
@@ -49,7 +49,7 @@ public:
 		RageColor   diffuse[4];
 		RageColor   glow;
 		GlowMode	glowmode;
-		ActorCommand	command;	// command to execute when this 
+		Command	command;	// command to execute when this 
 
 		void Init();
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
@@ -186,7 +186,7 @@ public:
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
 	void Sleep( float time );
-	void QueueCommand( ActorCommand command );
+	void QueueCommand( Command command );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
@@ -305,9 +305,9 @@ public:
 	//
 	// Commands
 	//
-	void Command( const ActorCommands &vCommands );
-	virtual void HandleCommand( const ActorCommand &command );	// derivable
-	static float GetCommandsLengthSeconds( const ActorCommands &vCommands );
+	void RunCommands( const Commands &vCommands );
+	virtual void HandleCommand( const Command &command );	// derivable
+	static float GetCommandsLengthSeconds( const Commands &vCommands );
 
 	//
 	// Animation

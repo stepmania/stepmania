@@ -63,7 +63,7 @@ private:
 	
 	vector<Row>		m_Rows;
 
-	ThemeMetric<ActorCommands>  MOVE_COMMAND;
+	ThemeMetric<Commands>  MOVE_COMMAND;
 };
 
 #endif

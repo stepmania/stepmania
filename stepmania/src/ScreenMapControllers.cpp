@@ -15,10 +15,10 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 
-static const ThemeMetric<ActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
-static const ThemeMetric<ActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
-static const ThemeMetric<ActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
-static const ThemeMetric<ActorCommands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
+static const ThemeMetric<Commands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
+static const ThemeMetric<Commands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
+static const ThemeMetric<Commands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
+static const ThemeMetric<Commands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
 
 const int FramesToWaitForInput = 2;
 
@@ -79,7 +79,7 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
 		this->AddChild( &m_Line[b] );
 
-		m_Line[b].Command( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
+		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
 	}	
 
 	m_textError.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -298,7 +298,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				SCREENMAN->PlayStartSound();
 				StartTransitioning( SM_GoToNextScreen );		
 				for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
-					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
+					m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}
 			break;
 		case KEY_ENTER: /* Change the selection. */

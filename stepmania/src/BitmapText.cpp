@@ -9,7 +9,7 @@
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
-#include "ActorUtil.h"	// for BeginHandleParams
+#include "ActorUtil.h"	// for BeginHandleArgs
 
 /* XXX:
  * We need some kind of font modifier string for metrics.  For example,
@@ -514,23 +514,23 @@ void BitmapText::SetVertAlign( VertAlign va )
 	BuildChars();
 }
 
-void BitmapText::HandleCommand( const ActorCommand &command )
+void BitmapText::HandleCommand( const Command &command )
 {
-	BeginHandleParams;
+	BeginHandleArgs;
 
-	const CString& sName = sParam(0);
+	const CString& sName = command.GetName();
 
 	// Commands that go in the tweening queue:
 	// Commands that take effect immediately (ignoring the tweening queue):
-	if( sName=="wrapwidthpixels" )		SetWrapWidthPixels( iParam(1) );
-	else if( sName=="maxwidth" )		SetMaxWidth( fParam(1) );
+	if( sName=="wrapwidthpixels" )		SetWrapWidthPixels( iArg(1) );
+	else if( sName=="maxwidth" )		SetMaxWidth( fArg(1) );
 	else
 	{
 		Actor::HandleCommand( command );
 		return;
 	}
 
-	EndHandleParams;
+	EndHandleArgs;
 }
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )

@@ -37,7 +37,7 @@ public:
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate(CString sText, CString sAlternateText) const;
 
-	virtual void HandleCommand( const ActorCommand &command );
+	virtual void HandleCommand( const Command &command );
 
 public:
 	Font* m_pFont;

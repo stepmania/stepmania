@@ -703,9 +703,9 @@ RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sV
 	return ret;
 }
 
-ActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
+Commands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
 {
-	return ParseActorCommands( GetMetricRaw(sClassName,sValueName) );
+	return ParseCommands( GetMetricRaw(sClassName,sValueName) );
 }
 
 void ThemeManager::NextTheme()
@@ -765,7 +765,7 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 	}
 }
 
-void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, ActorCommands &valueOut )
+void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, Commands &valueOut )
 {
 	valueOut = GetMetricA( sClassName, sValueName ); 
 }

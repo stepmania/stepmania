@@ -21,7 +21,7 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;
 	Sprite	m_spr[NUM_TAP_NOTE_SCORES];
-	ActorCommands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
+	Commands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
 };
 
 

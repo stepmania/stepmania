@@ -719,20 +719,22 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 	}
 }
 
-void Model::HandleCommand( const ActorCommand &command )
+void Model::HandleCommand( const Command &command )
 {
-	BeginHandleParams;
+	BeginHandleArgs;
 
-	const CString& sName = sParam(0);
+	const CString& sName = command.GetName();
 	if( sName=="play" )
-		PlayAnimation( sParam(1),fParam(2) );
+	{
+		PlayAnimation( sArg(1),fArg(2) );
+	}
 	else
 	{
 		Actor::HandleCommand( command );
 		return;
 	}
 
-	EndHandleParams;
+	EndHandleArgs;
 }
 
 /*

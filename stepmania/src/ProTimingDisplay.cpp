@@ -4,15 +4,15 @@
 #include "RageUtil.h"
 #include "ThemeMetric.h"
 
-static const ThemeMetric<ActorCommands>	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
-static const ThemeMetric<ActorCommands>	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
-static const ThemeMetric<ActorCommands>	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
-static const ThemeMetric<ActorCommands>	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
-static const ThemeMetric<ActorCommands>	BOO_COMMAND			("ProTimingDisplay","BooCommand");
-static const ThemeMetric<ActorCommands>	MISS_COMMAND		("ProTimingDisplay","MissCommand");
-static const ThemeMetric<ActorCommands>	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
+static const ThemeMetric<Commands>	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
+static const ThemeMetric<Commands>	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
+static const ThemeMetric<Commands>	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
+static const ThemeMetric<Commands>	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
+static const ThemeMetric<Commands>	BOO_COMMAND			("ProTimingDisplay","BooCommand");
+static const ThemeMetric<Commands>	MISS_COMMAND		("ProTimingDisplay","MissCommand");
+static const ThemeMetric<Commands>	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
 
-static const ThemeMetric<ActorCommands> *g_Commands[NUM_TAP_NOTE_SCORES] =
+static const ThemeMetric<Commands> *g_Commands[NUM_TAP_NOTE_SCORES] =
 {
 	NULL, /* no TNS_NONE */
 	&HIT_MINE_COMMAND, 
@@ -50,7 +50,7 @@ void ProTimingDisplay::SetJudgment( int ms, TapNoteScore score )
 	ASSERT( score != TNS_NONE );
 	ASSERT( score < NUM_TAP_NOTE_SCORES );
 
-	m_Judgment.Command( *g_Commands[score] );
+	m_Judgment.RunCommands( *g_Commands[score] );
 }
 
 /*

@@ -51,7 +51,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 
 			GameCommand mc;
 			mc.m_sName = sChoiceName;
-			mc.Load( c, ParseActorCommands(sChoice) );
+			mc.Load( c, ParseCommands(sChoice) );
 			m_aGameCommands.push_back( mc );
 		
 			CString sBGAnimationDir = THEME->GetPath(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
@@ -74,7 +74,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 		m_aCodes.push_back( code );
 		m_aCodeActions.push_back( CODE_ACTION(c) );
 		GameCommand mc;
-		mc.Load( c, ParseActorCommands(CODE_ACTION(c)) );
+		mc.Load( c, ParseCommands(CODE_ACTION(c)) );
 		m_aCodeChoices.push_back( mc );
 	}
 

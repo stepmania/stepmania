@@ -100,7 +100,7 @@ void AttackDisplay::SetAttack( const CString &sText )
 	m_sprAttack.SetDiffuseAlpha( 1 );
 	m_sprAttack.Load( path );
 	const CString sName = ssprintf( "%sP%i", sText.c_str(), m_PlayerNumber+1 );
-	m_sprAttack.Command( THEME->GetMetricA("AttackDisplay", sName + "OnCommand" ) );
+	m_sprAttack.RunCommands( THEME->GetMetricA("AttackDisplay", sName + "OnCommand" ) );
 }
 
 /*

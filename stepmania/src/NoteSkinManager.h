@@ -1,7 +1,7 @@
 #ifndef NoteSkinMANAGER_H
 #define NoteSkinMANAGER_H
 
-#include "ActorCommands.h"
+#include "Command.h"
 #include "RageTypes.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"
@@ -28,7 +28,7 @@ public:
 	float		GetMetricF( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
 	bool		GetMetricB( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
 	RageColor	GetMetricC( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
-	ActorCommands   GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
+	Commands   GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
 
 	CString GetNoteSkinDir( const CString &sSkinName );
 

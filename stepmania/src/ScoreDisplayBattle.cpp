@@ -51,14 +51,14 @@ void ScoreDisplayBattle::Update( float fDelta )
 
 			if( sNewModifier == "" )
 			{
-				m_ItemIcon[s].Command( ParseActorCommands("linear,0.25;zoom,0") );
+				m_ItemIcon[s].RunCommands( ParseCommands("linear,0.25;zoom,0") );
 			}
 			else
 			{
 				// TODO:  Cache all of the icon graphics so we don't load them dynamically from disk.
 				m_ItemIcon[s].Load( THEME->GetPathToG("ScoreDisplayBattle icon "+sNewModifier) );
 				m_ItemIcon[s].StopTweening();
-				m_ItemIcon[s].Command( ParseActorCommands(
+				m_ItemIcon[s].RunCommands( ParseCommands(
 					"diffuse,1,1,1,1;zoom,1;"
 					"sleep,0.1;linear,0;diffusealpha,0;"
 					"sleep,0.1;linear,0;diffusealpha,1;"

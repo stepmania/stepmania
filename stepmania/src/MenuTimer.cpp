@@ -13,7 +13,7 @@
 static const ThemeMetric<int>	WARNING_START		("MenuTimer","WarningStart");
 static const ThemeMetric<int>	WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
 #define		WARNING_COMMAND(i)	THEME->GetMetricA	("MenuTimer", ssprintf("WarningCommand%i",i))
-static const ThemeMetric<ActorCommands> ON_COMMAND	("MenuTimer","OnCommand");
+static const ThemeMetric<Commands> ON_COMMAND	("MenuTimer","OnCommand");
 
 static const int TIMER_SECONDS = 99;
 static const int MAX_STALL_SECONDS = 30;
@@ -81,8 +81,8 @@ void MenuTimer::Update( float fDeltaTime )
 
 	if( iNewDisplay <= WARNING_START )
 	{
-		m_textDigit1.Command( WARNING_COMMAND(iNewDisplay) );
-		m_textDigit2.Command( WARNING_COMMAND(iNewDisplay) );
+		m_textDigit1.RunCommands( WARNING_COMMAND(iNewDisplay) );
+		m_textDigit2.RunCommands( WARNING_COMMAND(iNewDisplay) );
 	}
 	
 	if( iNewDisplay == 0 )
@@ -134,8 +134,8 @@ void MenuTimer::SetSeconds( int iSeconds )
 	m_fSecondsLeft = (float)iSeconds;
 	CLAMP( m_fSecondsLeft, 0, 99 );
 
-	m_textDigit1.Command( ON_COMMAND );
-	m_textDigit2.Command( ON_COMMAND );
+	m_textDigit1.RunCommands( ON_COMMAND );
+	m_textDigit2.RunCommands( ON_COMMAND );
 
 	SetText( iSeconds );
 }

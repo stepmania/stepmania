@@ -12,7 +12,7 @@ static const ThemeMetric<float>			START_X			("MusicList","StartX");
 static const ThemeMetric<float>			START_Y			("MusicList","StartY");
 static const ThemeMetric<float>			SPACING_X		("MusicList","SpacingX");
 static const ThemeMetric<float>			CROP_WIDTH		("MusicList","CropWidth");
-static const ThemeMetric<ActorCommands> INIT_COMMAND	("MusicList","InitCommand");
+static const ThemeMetric<Commands> INIT_COMMAND	("MusicList","InitCommand");
 
 MusicList::MusicList()
 {
@@ -25,7 +25,7 @@ void MusicList::Load()
 	{
 		m_textTitles[i].LoadFromFont( THEME->GetPathToF("MusicList titles") );
 		m_textTitles[i].SetXY( START_X + i*SPACING_X, START_Y );
-		m_textTitles[i].Command( INIT_COMMAND );
+		m_textTitles[i].RunCommands( INIT_COMMAND );
 		this->AddChild( &m_textTitles[i] );
 	}
 }

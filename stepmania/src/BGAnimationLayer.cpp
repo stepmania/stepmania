@@ -991,10 +991,10 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 	// TODO: Don't special case subActor[0].  The movie layer should be set up with
 	// a LoseFocusCommand that pauses, and a GainFocusCommand that plays.
 	if( bRewindMovie )
-		RunCommandOnChildren( ParseActorCommands("position,0") );
-	RunCommandOnChildren( ParseActorCommands(ssprintf("loop,%i",bLoop)) );
-	RunCommandOnChildren( ParseActorCommands("play") );
-	RunCommandOnChildren( ParseActorCommands(ssprintf("rate,%f",fRate)) );
+		RunCommandOnChildren( ParseCommands("position,0") );
+	RunCommandOnChildren( ParseCommands(ssprintf("loop,%i",bLoop)) );
+	RunCommandOnChildren( ParseCommands("play") );
+	RunCommandOnChildren( ParseCommands(ssprintf("rate,%f",fRate)) );
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
 	{
@@ -1003,7 +1003,7 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 		 * should run OnCommand when they're actually displayed, when GainFocus
 		 * gets called.  We've already run OnCommand; abort it so we don't run tweens
 		 * twice. */
-		RunCommandOnChildren( ParseActorCommands("stoptweening") );
+		RunCommandOnChildren( ParseCommands("stoptweening") );
 		PlayCommand( "On" );
 	}
 
@@ -1017,7 +1017,7 @@ void BGAnimationLayer::LoseFocus()
 	if( !m_SubActors.size() )
 		return;
 
-	RunCommandOnChildren( ParseActorCommands("pause") );
+	RunCommandOnChildren( ParseCommands("pause") );
 
 	PlayCommand( "LoseFocus" );
 }
@@ -1025,7 +1025,7 @@ void BGAnimationLayer::LoseFocus()
 void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Command( ParseActorCommands("playcommand,"+sCommandName) );
+		m_SubActors[i]->RunCommands( ParseCommands("playcommand,"+sCommandName) );
 
 	CString sKey = sCommandName;
 	sKey.MakeLower();
@@ -1035,7 +1035,7 @@ void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 		return;
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Command( ParseActorCommands(it->second) );
+		m_SubActors[i]->RunCommands( ParseCommands(it->second) );
 }
 
 /*

@@ -45,7 +45,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
-	const ActorCommands IconCommand = ICON_COMMAND;
+	const Commands IconCommand = ICON_COMMAND;
 	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
@@ -72,7 +72,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		entry->SetName( ssprintf("Unlock%d",i) );
 		SET_XY( *entry );
 
-		entry->Command(IconCommand);
+		entry->RunCommands(IconCommand);
 		Unlocks.push_back(entry);
 
 		if ( !pSong->IsLocked() )
@@ -166,12 +166,12 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 				LOG->Trace("Target Row: %f", TargetRow);
 				LOG->Trace("command for icon %d: %s", i, ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
-				text->Command( ParseActorCommands(sCommand) );
+				text->RunCommands( ParseCommands(sCommand) );
 			}
 			else
 			{
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
-				text->Command( ParseActorCommands(sCommand) );
+				text->RunCommands( ParseCommands(sCommand) );
 			}
 
 			item.push_back(text);
@@ -198,12 +198,12 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 					LOG->Trace("Target Row: %f", TargetRow);
 					LOG->Trace("command for icon %d: %s", i, ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
 					CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
-					IconCount->Command( ParseActorCommands(sCommand) );
+					IconCount->RunCommands( ParseCommands(sCommand) );
 				}
 				else
 				{
 					CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
-					IconCount->Command( ParseActorCommands(sCommand) );
+					IconCount->RunCommands( ParseCommands(sCommand) );
 				}
 
 				ItemIcons.push_back(IconCount);
@@ -269,7 +269,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
 			{
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
-				NewText->Command( ParseActorCommands(sCommand) );
+				NewText->RunCommands( ParseCommands(sCommand) );
 			}
 
 			// new unlock graphic
@@ -280,7 +280,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			{
 				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
-				NewIcon->Command( ParseActorCommands(sCommand) );
+				NewIcon->RunCommands( ParseCommands(sCommand) );
 			}
 
 			ItemIcons.push_back(NewIcon);

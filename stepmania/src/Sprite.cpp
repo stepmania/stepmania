@@ -888,33 +888,33 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
-void Sprite::HandleCommand( const ActorCommand &command )
+void Sprite::HandleCommand( const Command &command )
 {
-	BeginHandleParams;
+	BeginHandleArgs;
 
-	const CString& sName = sParam(0);
+	const CString& sName = command.GetName();
 
 	// Commands that go in the tweening queue:
 	// Commands that take effect immediately (ignoring the tweening queue):
-	if( sName=="customtexturerect" )	SetCustomTextureRect( RectF(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="texcoordvelocity" )	SetTexCoordVelocity( fParam(1),fParam(2) );
-	else if( sName=="scaletoclipped" )	ScaleToClipped( fParam(1),fParam(2) );
-	else if( sName=="stretchtexcoords" )	StretchTexCoords( fParam(1),fParam(2) );
+	if( sName=="customtexturerect" )	SetCustomTextureRect( RectF(fArg(1),fArg(2),fArg(3),fArg(4)) );
+	else if( sName=="texcoordvelocity" )	SetTexCoordVelocity( fArg(1),fArg(2) );
+	else if( sName=="scaletoclipped" )	ScaleToClipped( fArg(1),fArg(2) );
+	else if( sName=="stretchtexcoords" )	StretchTexCoords( fArg(1),fArg(2) );
 
 	/* Texture commands; these could be moved to RageTexture* (even though that's
 	 * not an Actor) if these are needed for other things that use textures.
 	 * We'd need to break the command helpers into a separate function; RageTexture
 	 * shouldn't depend on Actor. */
-	else if( sName=="position" )		GetTexture()->SetPosition( fParam(1) );
-	else if( sName=="loop" )			GetTexture()->SetLooping( bParam(1) );
-	else if( sName=="rate" )			GetTexture()->SetPlaybackRate( fParam(1) );
+	else if( sName=="position" )		GetTexture()->SetPosition( fArg(1) );
+	else if( sName=="loop" )			GetTexture()->SetLooping( bArg(1) );
+	else if( sName=="rate" )			GetTexture()->SetPlaybackRate( fArg(1) );
 	else
 	{
 		Actor::HandleCommand( command );
 		return;
 	}
 
-	EndHandleParams;
+	EndHandleArgs;
 }
 
 /*

@@ -630,6 +630,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CodeDetector.h">
 			</File>
 			<File
+				RelativePath="Command.cpp">
+			</File>
+			<File
+				RelativePath="Command.h">
+			</File>
+			<File
 				RelativePath="Course.cpp">
 			</File>
 			<File
@@ -2215,12 +2221,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ActorCollision.h">
-			</File>
-			<File
-				RelativePath="ActorCommands.cpp">
-			</File>
-			<File
-				RelativePath="ActorCommands.h">
 			</File>
 			<File
 				RelativePath=".\ActorFrame.cpp">

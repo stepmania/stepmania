@@ -21,10 +21,10 @@ ThemeMetric<float>	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
 ThemeMetric<float>	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
 ThemeMetric<float>	PULSE_ZOOM			("Combo","PulseZoom");
 ThemeMetric<float>	C_TWEEN_SECONDS		("Combo","TweenSeconds");
-ThemeMetric<ActorCommands>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
-ThemeMetric<ActorCommands>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
-ThemeMetric<ActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
-ThemeMetric<ActorCommands>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
+ThemeMetric<Commands>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
+ThemeMetric<Commands>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
+ThemeMetric<Commands>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
+ThemeMetric<Commands>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
 ThemeMetric<bool>	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
 
 
@@ -102,29 +102,29 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	{
 		if( g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_MARVELOUS) )
 		{
-			sprLabel.Command( FULL_COMBO_MARVELOUSES_COMMAND );
-			m_textNumber.Command( FULL_COMBO_MARVELOUSES_COMMAND );
+			sprLabel.RunCommands( FULL_COMBO_MARVELOUSES_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_MARVELOUSES_COMMAND );
 		}
 		else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_PERFECT) )
 		{
-			sprLabel.Command( FULL_COMBO_PERFECTS_COMMAND );
-			m_textNumber.Command( FULL_COMBO_PERFECTS_COMMAND );
+			sprLabel.RunCommands( FULL_COMBO_PERFECTS_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_PERFECTS_COMMAND );
 		}
 		else if( bPastMidpoint && g_CurStageStats.FullComboOfScore(m_PlayerNumber,TNS_GREAT) )
 		{
-			sprLabel.Command( FULL_COMBO_GREATS_COMMAND );
-			m_textNumber.Command( FULL_COMBO_GREATS_COMMAND );
+			sprLabel.RunCommands( FULL_COMBO_GREATS_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_GREATS_COMMAND );
 		}
 		else
 		{
-			sprLabel.Command( FULL_COMBO_BROKEN_COMMAND );
-			m_textNumber.Command( FULL_COMBO_BROKEN_COMMAND );
+			sprLabel.RunCommands( FULL_COMBO_BROKEN_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_BROKEN_COMMAND );
 		}
 	}
 	else
 	{
-		sprLabel.Command( FULL_COMBO_BROKEN_COMMAND );
-		m_textNumber.Command( FULL_COMBO_BROKEN_COMMAND );
+		sprLabel.RunCommands( FULL_COMBO_BROKEN_COMMAND );
+		m_textNumber.RunCommands( FULL_COMBO_BROKEN_COMMAND );
 	}
 }
 

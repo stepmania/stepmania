@@ -67,13 +67,13 @@ void ActorFrame::DrawPrimitives()
 		m_SubActors[i]->Draw();
 }
 
-void ActorFrame::RunCommandOnChildren( const ActorCommands &cmd )
+void ActorFrame::RunCommandOnChildren( const Commands &cmd )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Command( cmd );
+		m_SubActors[i]->RunCommands( cmd );
 }
 
-void ActorFrame::RunCommandOnChildren( const ActorCommand &cmd )
+void ActorFrame::RunCommandOnChildren( const Command &cmd )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->HandleCommand( cmd );
@@ -155,16 +155,16 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
-void ActorFrame::HandleCommand( const ActorCommand &command )
+void ActorFrame::HandleCommand( const Command &command )
 {
-	BeginHandleParams;
+	BeginHandleArgs;
 
-	const CString& sName = sParam(0);
+	const CString& sName = command.GetName();
 	do
 	{
 		if( sName=="propagate" )
 		{
-			m_bPropagateCommands = bParam(1);
+			m_bPropagateCommands = bArg(1);
 			RunCommandOnChildren( command );
 		}
 		else
@@ -172,7 +172,7 @@ void ActorFrame::HandleCommand( const ActorCommand &command )
 			Actor::HandleCommand( command );
 			break;
 		}
-		EndHandleParams;
+		EndHandleArgs;
 	} while(0);
 
 	/* By default, don't propograte most commands to children; it makes no sense

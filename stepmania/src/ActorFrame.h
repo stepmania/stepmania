@@ -19,9 +19,9 @@ public:
 	
 	void DeleteAllChildren();
 
-	virtual void RunCommandOnChildren( const ActorCommands &cmds ); /* but not on self */
-	virtual void RunCommandOnChildren( const ActorCommand &cmd ); /* but not on self */
-	virtual void HandleCommand( const ActorCommand &command );	// derivable
+	virtual void RunCommandOnChildren( const Commands &cmds ); /* but not on self */
+	virtual void RunCommandOnChildren( const Command &cmd ); /* but not on self */
+	virtual void HandleCommand( const Command &command );	// derivable
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

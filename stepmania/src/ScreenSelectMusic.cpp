@@ -527,7 +527,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	}
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		m_textSongOptions.Command( SONG_OPTIONS_EXTRA_COMMAND );
+		m_textSongOptions.RunCommands( SONG_OPTIONS_EXTRA_COMMAND );
 }
 
 void ScreenSelectMusic::TweenOffScreen()
@@ -623,8 +623,8 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
-		m_textHighScore[p].Command( SCORE_SORT_CHANGE_COMMAND(p) );
-		m_sprHighScoreFrame[p].Command( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
+		m_textHighScore[p].RunCommands( SCORE_SORT_CHANGE_COMMAND(p) );
+		m_sprHighScoreFrame[p].RunCommands( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
 	}
 
 	switch( GAMESTATE->m_SortOrder )

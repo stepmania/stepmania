@@ -412,28 +412,28 @@ void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::TweenOffScreen()
 {
-	static const ActorCommands cmds = ParseActorCommands("linear,0.5;zoomy,0");
-	m_MusicBannerWheel.Command(		 cmds );
+	static const Commands cmds = ParseCommands("linear,0.5;zoomy,0");
+	m_MusicBannerWheel.RunCommands(		 cmds );
 
-	static const ActorCommands cmds2 = ParseActorCommands("Linear,1;DiffuseAlpha,0");
-	m_PumpDifficultyCircle.Command( cmds2 );
-	m_Guide.Command(				cmds2 );
-	m_PumpDifficultyRating.Command( cmds2 );
-	m_Guide.Command(				cmds2 );
-	m_ChoiceListFrame.Command(		cmds2 );
-	m_ChoiceListHighlight.Command(	cmds2 );
-	m_CurrentGroup.Command(			cmds2 );
-	m_CurrentTitle.Command(			cmds2 );
-	m_CurrentArtist.Command(		cmds2 );
+	static const Commands cmds2 = ParseCommands("Linear,1;DiffuseAlpha,0");
+	m_PumpDifficultyCircle.RunCommands( cmds2 );
+	m_Guide.RunCommands(				cmds2 );
+	m_PumpDifficultyRating.RunCommands( cmds2 );
+	m_Guide.RunCommands(				cmds2 );
+	m_ChoiceListFrame.RunCommands(		cmds2 );
+	m_ChoiceListHighlight.RunCommands(	cmds2 );
+	m_CurrentGroup.RunCommands(			cmds2 );
+	m_CurrentTitle.RunCommands(			cmds2 );
+	m_CurrentArtist.RunCommands(		cmds2 );
 	//This should be fixed and changed to OFF_COMMAND
 
 	for(int i=0; i<NUM_PLAYERS; i++)
 	{
-		m_SpeedIcon[i].Command(		cmds2 );
-		m_MirrorIcon[i].Command(	cmds2 );
-		m_ShuffleIcon[i].Command(	cmds2 );
-		m_HiddenIcon[i].Command(	cmds2 );
-		m_VanishIcon[i].Command(	cmds2 );
+		m_SpeedIcon[i].RunCommands(		cmds2 );
+		m_MirrorIcon[i].RunCommands(	cmds2 );
+		m_ShuffleIcon[i].RunCommands(	cmds2 );
+		m_HiddenIcon[i].RunCommands(	cmds2 );
+		m_VanishIcon[i].RunCommands(	cmds2 );
 	}
 }
 

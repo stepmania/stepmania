@@ -76,8 +76,8 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 	GetValue( ini, pn, id, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
 
 	CString s;
-	if( GetValue( ini, pn, id, "Judgment",			s ) )	m_JudgmentCmd = ParseActorCommands(s);
-	if( GetValue( ini, pn, id, "Combo",				s ) )	m_ComboCmd = ParseActorCommands(s);
+	if( GetValue( ini, pn, id, "Judgment",			s ) )	m_JudgmentCmd = ParseCommands(s);
+	if( GetValue( ini, pn, id, "Combo",				s ) )	m_ComboCmd = ParseCommands(s);
 
 	/* Load per-track data: */
 	int t;
@@ -92,8 +92,8 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 		GetValue( ini, pn, id, ssprintf("GhostButton"), GhostButtonNames[t] );
 		GetValue( ini, pn, id, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
 
-		if( GetValue( ini, pn, id, ssprintf("HoldJudgment"),       s ) )	m_HoldJudgmentCmd[t] = ParseActorCommands(s);
-		if( GetValue( ini, pn, id, ssprintf("HoldJudgment%i",t+1), s ) )	m_HoldJudgmentCmd[t] = ParseActorCommands(s);
+		if( GetValue( ini, pn, id, ssprintf("HoldJudgment"),       s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
+		if( GetValue( ini, pn, id, ssprintf("HoldJudgment%i",t+1), s ) )	m_HoldJudgmentCmd[t] = ParseCommands(s);
 	}
 }
 

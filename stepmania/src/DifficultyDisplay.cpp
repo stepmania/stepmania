@@ -3,8 +3,8 @@
 #include "song.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<ActorCommands>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
-ThemeMetric<ActorCommands>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
+ThemeMetric<Commands>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
+ThemeMetric<Commands>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
 
 DifficultyDisplay::DifficultyDisplay()
 {
@@ -34,16 +34,16 @@ void DifficultyDisplay::SetDifficulties( const Song* pSong, StepsType curType )
 	for( int diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
 	{
 		if( pSong->HasStepsTypeAndDifficulty( curType, Difficulty(diff) ) )
-			m_difficulty[diff].Command( ICONONCOMMAND );
+			m_difficulty[diff].RunCommands( ICONONCOMMAND );
 		else
-			m_difficulty[diff].Command( ICONOFFCOMMAND );
+			m_difficulty[diff].RunCommands( ICONOFFCOMMAND );
 	}
 }
 
 void DifficultyDisplay::UnsetDifficulties()
 {
 	for( int diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
-		m_difficulty[diff].Command( ICONOFFCOMMAND );
+		m_difficulty[diff].RunCommands( ICONOFFCOMMAND );
 }
 
 /*

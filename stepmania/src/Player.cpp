@@ -201,15 +201,15 @@ void PlayerMinus::Load(
 	m_ProTimingDisplay.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
 	/* These commands add to the above positioning, and are usually empty. */
-	m_Judgment.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
-	m_ProTimingDisplay.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
-	m_Combo.Command( g_NoteFieldMode[pn].m_ComboCmd );
-	m_AttackDisplay.Command( g_NoteFieldMode[pn].m_AttackDisplayCmd );
+	m_Judgment.RunCommands( g_NoteFieldMode[pn].m_JudgmentCmd );
+	m_ProTimingDisplay.RunCommands( g_NoteFieldMode[pn].m_JudgmentCmd );
+	m_Combo.RunCommands( g_NoteFieldMode[pn].m_ComboCmd );
+	m_AttackDisplay.RunCommands( g_NoteFieldMode[pn].m_AttackDisplayCmd );
 
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ )
 	{
 		NoteFieldMode &mode = g_NoteFieldMode[pn];
-		m_HoldJudgment[c].Command( mode.m_HoldJudgmentCmd[c] );
+		m_HoldJudgment[c].RunCommands( mode.m_HoldJudgmentCmd[c] );
 	}
 
 	// Need to set Y positions of all these elements in Update since

@@ -94,15 +94,15 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 		m_sprTitle[p].Load( THEME->GetPathToG("ScreenSelectCharacter title 2x2") );
 		m_sprTitle[p].SetState( GAMESTATE->IsHumanPlayer(p) ? p : 2+p );
 		m_sprTitle[p].StopAnimating();
-		m_sprTitle[p].Command( TITLE_ON_COMMAND(p) );
+		m_sprTitle[p].RunCommands( TITLE_ON_COMMAND(p) );
 
 		this->AddChild( &m_sprTitle[p] );
 
-		m_sprCard[p].Command( CARD_ON_COMMAND(p) );
+		m_sprCard[p].RunCommands( CARD_ON_COMMAND(p) );
 		this->AddChild( &m_sprCard[p] );
 
 		m_sprCardArrows[p].Load( THEME->GetPathToG("ScreenSelectCharacter card arrows") );
-		m_sprCardArrows[p].Command( CARD_ARROWS_ON_COMMAND(p) );
+		m_sprCardArrows[p].RunCommands( CARD_ARROWS_ON_COMMAND(p) );
 		this->AddChild( &m_sprCardArrows[p] );
 
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
@@ -116,7 +116,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 			m_sprAttackFrame[p].Load( THEME->GetPathToG("ScreenSelectCharacter attack frame 1x2") );
 			m_sprAttackFrame[p].StopAnimating();
 			m_sprAttackFrame[p].SetState( p );
-			m_sprAttackFrame[p].Command( ATTACK_FRAME_ON_COMMAND(p) );
+			m_sprAttackFrame[p].RunCommands( ATTACK_FRAME_ON_COMMAND(p) );
 			this->AddChild( &m_sprAttackFrame[p] );
 
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
@@ -125,14 +125,14 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 					float fX = ATTACK_ICONS_START_X(p) + ATTACK_ICONS_SPACING_X*j; 
 					float fY = ATTACK_ICONS_START_Y(p) + ATTACK_ICONS_SPACING_Y*i; 
 					m_AttackIcons[p][i][j].SetXY( fX, fY );
-					m_AttackIcons[p][i][j].Command( ATTACK_ICONS_ON_COMMAND(p) );
+					m_AttackIcons[p][i][j].RunCommands( ATTACK_ICONS_ON_COMMAND(p) );
 					this->AddChild( &m_AttackIcons[p][i][j] );
 				}
 		}
 	}
 
 	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCharacter explanation") );
-	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
+	m_sprExplanation.RunCommands( EXPLANATION_ON_COMMAND );
 	this->AddChild( &m_sprExplanation );
 
 
@@ -151,7 +151,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 		}
 
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
-			m_sprIcons[p][i].Command( ICONS_ON_COMMAND(p) );
+			m_sprIcons[p][i].RunCommands( ICONS_ON_COMMAND(p) );
 	}
 	TweenOnScreen();
 
@@ -374,20 +374,20 @@ void ScreenSelectCharacter::TweenOffScreen()
 {
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprCard[p].Command( CARD_OFF_COMMAND(p) );
-		m_sprTitle[p].Command( TITLE_OFF_COMMAND(p) );
-		m_sprCardArrows[p].Command( CARD_ARROWS_OFF_COMMAND(p) );
+		m_sprCard[p].RunCommands( CARD_OFF_COMMAND(p) );
+		m_sprTitle[p].RunCommands( TITLE_OFF_COMMAND(p) );
+		m_sprCardArrows[p].RunCommands( CARD_ARROWS_OFF_COMMAND(p) );
 		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
 		{
-			m_sprAttackFrame[p].Command( ATTACK_FRAME_OFF_COMMAND(p) );
+			m_sprAttackFrame[p].RunCommands( ATTACK_FRAME_OFF_COMMAND(p) );
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
-					m_AttackIcons[p][i][j].Command( ATTACK_ICONS_OFF_COMMAND(p) );
+					m_AttackIcons[p][i][j].RunCommands( ATTACK_ICONS_OFF_COMMAND(p) );
 		}
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
-			m_sprIcons[p][i].Command( ICONS_OFF_COMMAND(p) );
+			m_sprIcons[p][i].RunCommands( ICONS_OFF_COMMAND(p) );
 	}
-	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
+	m_sprExplanation.RunCommands( EXPLANATION_OFF_COMMAND );
 }
 
 void ScreenSelectCharacter::TweenOnScreen() 

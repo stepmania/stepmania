@@ -515,7 +515,7 @@ void ScreenEvaluation::Init()
 			m_Percent[p].Load( p, &g_CurStageStats, true );
 			m_Percent[p].SetXY( THEME->GetMetricF(m_sName, ssprintf("PercentP%dX",p+1)),
 				THEME->GetMetricF(m_sName,ssprintf("PercentP%dY",p+1)) );
-			m_Percent[p].Command( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOnCommand",p+1)) );
+			m_Percent[p].RunCommands( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOnCommand",p+1)) );
 			this->AddChild( &m_Percent[p] );
 		}
 	}
@@ -552,7 +552,7 @@ void ScreenEvaluation::Init()
 				
 				// .99999 is fairly close to 1.00, so we use that 
 				if( stageStats.radarActual[p][r] > 0.99999f )
-					m_sprActualBar[p][r].Command( BAR_ACTUAL_MAX_COMMAND );
+					m_sprActualBar[p][r].RunCommands( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
 			}
 		}
@@ -1176,7 +1176,7 @@ void ScreenEvaluation::TweenOffScreen()
 		FOREACH_EnabledPlayer( p ) 
 		{
 			OFF_COMMAND( m_sprPercentFrame[p] );
-			m_Percent[p].Command( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
+			m_Percent[p].RunCommands( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
 			m_Percent[p].TweenOffScreen();
 		}
 	}
