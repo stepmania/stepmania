@@ -1,6 +1,84 @@
 #include "global.h"
-#include "TimeConstants.h"
+#include "DateTime.h"
 #include "RageUtil.h"
+
+
+DateTime DateTime::GetNowDateTime()
+{
+	time_t now = time(NULL);
+    DateTime tNow;
+	localtime_r( &now, &tNow );
+	return tNow;
+}
+
+DateTime DateTime::GetNowDate()
+{
+    DateTime tNow = GetNowDateTime();
+	tNow.StripTime();
+	return tNow;
+}
+
+void DateTime::StripTime()
+{
+	tm_hour = 0;
+	tm_min = 0;
+	tm_sec = 0;
+}
+
+//
+// Common SQL/XML format: "YYYY-MM-DD HH:MM:SS"
+//
+CString DateTime::GetString() const
+{
+	return ssprintf( "%d-%02d-%02d %02d:%02d:%02d",
+		tm_year+1900,
+		tm_mon+1,
+		tm_mday,
+		tm_hour,
+		tm_min,
+		tm_sec );
+}
+
+CString DateTime::GetDateString() const
+{
+	return ssprintf( "%d-%02d-%02d",
+		tm_year+1900,
+		tm_mon+1,
+		tm_mday );
+}
+
+bool DateTime::FromString( const CString sDateTime )
+{
+	int ret;
+
+	ZERO( *this );
+
+	ret = sscanf( sDateTime, "%d-%d-%d %d:%d:%d", 
+		&tm_year,
+		&tm_mon,
+		&tm_mday,
+		&tm_hour,
+		&tm_min,
+		&tm_sec );
+	if( ret == 6 )
+		goto success;
+
+	ret = sscanf( sDateTime, "%d-%d-%d", 
+		&tm_year,
+		&tm_mon,
+		&tm_mday );
+	if( ret == 3 )
+		goto success;
+
+	return false;
+
+success:
+	tm_year -= 1900;
+	tm_mon -= 1;
+	return true;
+}
+
+
 
 CString DayInYearToString( int iDayInYear )
 {
@@ -148,8 +226,9 @@ tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 	return when;
 }
 
+
 /*
- * (c) 2004 Chris Danford
+ * (c) 2001-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

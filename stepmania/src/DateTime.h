@@ -1,7 +1,5 @@
-/* Time helpers. */
-
-#ifndef TimeConstants_H
-#define TimeConstants_H
+#ifndef DATE_TIME_H
+#define DATE_TIME_H
 
 #include <ctime>
 
@@ -26,10 +24,37 @@ tm GetNextSunday( tm start );
 
 tm GetDayInYearAndYear( int iDayInYearIndex, int iYear );
 
+
+struct DateTime : public tm
+{
+	bool operator<( const DateTime& other ) const
+	{
+	#define COMPARE( v ) if(v!=other.v) return v<other.v;
+		COMPARE( tm_year );
+		COMPARE( tm_mon );
+		COMPARE( tm_mday );
+		COMPARE( tm_hour );
+		COMPARE( tm_min );
+		COMPARE( tm_sec );
+	#undef COMPARE
+		// they're equal
+		return true;
+	}
+	static DateTime GetNowDateTime();
+	static DateTime GetNowDate();	// GetNowDateTime() with time chopped off
+	
+	void StripTime();
+
+	CString GetString() const;
+	CString GetDateString() const;
+	bool FromString( const CString sDateTime );
+};
+
+
 #endif
 
 /*
- * (c) 2004 Chris Danford
+ * (c) 2001-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

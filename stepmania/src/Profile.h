@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 #include "HighScore.h"
-#include "TimeConstants.h"
+#include "DateTime.h"
 #include "SongUtil.h"	// for SongID
 #include "StepsUtil.h"	// for StepsID
 #include "CourseUtil.h"	// for CourseID
@@ -186,23 +186,8 @@ public:
 	// a mis-set clock could wipe out all your past data.  With this scheme, 
 	// the worst that could happen is that playing on a mis-set machine will 
 	// insert some garbage entries into the map.
-	struct Day
-	{
-		int iDayInYear;	// 0-365
-		int iYear;		// e.g. 2004
-		bool operator==( const Day& other ) const { return iDayInYear==other.iDayInYear && iYear==other.iYear; }
-		bool operator<( const Day& other ) const 
-		{
-			if(iYear<other.iYear) 
-				return true; 
-			if( iYear>other.iYear) 
-				return false;
-			else
-				return iDayInYear<other.iDayInYear;
-		}
-	};
-	map<Day,float> m_mapDayToCaloriesBurned;
-	float GetCaloriesBurnedForDay( Day day ) const;
+	map<DateTime,float> m_mapDayToCaloriesBurned;
+	float GetCaloriesBurnedForDay( DateTime day ) const;
 	
 	//
 	// Awards

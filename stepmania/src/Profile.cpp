@@ -11,7 +11,6 @@
 #include "SongManager.h"
 #include "Steps.h"
 #include "Course.h"
-#include <ctime>
 #include "ThemeManager.h"
 #include "CryptManager.h"
 #include "ProfileManager.h"
@@ -184,11 +183,8 @@ CString Profile::GetDisplayTotalCaloriesBurned() const
 
 CString Profile::GetDisplayTotalCaloriesBurnedToday() const
 {
-	time_t now = time(NULL);
-    tm tNow;
-	localtime_r( &now, &tNow );
-	Day today = { tNow.tm_yday, tNow.tm_year+1900 };
-	float fCals = GetCaloriesBurnedForDay(today);
+	DateTime now = DateTime::GetNowDate();
+	float fCals = GetCaloriesBurnedForDay(now);
 	if( m_iWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
@@ -991,9 +987,8 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 			SCALE( m_iWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iTotalHands;
 		m_fTotalCaloriesBurned += fCals;
 
-		tm cur_tm = GetLocalTime();
-		Day day = { cur_tm.tm_yday, cur_tm.tm_year+1900 };
-		m_mapDayToCaloriesBurned[day] += fCals;
+		DateTime date = DateTime::GetNowDate();
+		m_mapDayToCaloriesBurned[date] += fCals;
 	}
 }
 
@@ -1301,25 +1296,23 @@ void Profile::LoadCalorieDataFromNode( const XNode* pNode )
 	CHECKPOINT;
 
 	ASSERT( pNode->name == "CalorieData" );
-	FOREACH_CONST( XNode*, pNode->childs, pDay )
+	FOREACH_CONST( XNode*, pNode->childs, pCaloriesBurned )
 	{
-		if( (*pDay)->name != "Day" )
+		if( (*pCaloriesBurned)->name != "CaloriesBurned" )
 			WARN_AND_CONTINUE;
 
-		Day day;
-		
-		if( !(*pDay)->GetAttrValue("DayInYear",day.iDayInYear) )
+		CString sDate;
+		if( !(*pCaloriesBurned)->GetAttrValue("Date",sDate) )
 			WARN_AND_CONTINUE;
-
-		if( !(*pDay)->GetAttrValue("Year",day.iYear) )
+		DateTime date;
+		if( !date.FromString(sDate) )
 			WARN_AND_CONTINUE;
 
 		float fCaloriesBurned = 0;
 
-		if( !(*pDay)->GetChildValue("CaloriesBurned",fCaloriesBurned) )
-			WARN_AND_CONTINUE;
+		(*pCaloriesBurned)->GetValue(fCaloriesBurned);
 
-		m_mapDayToCaloriesBurned[day] = fCaloriesBurned;
+		m_mapDayToCaloriesBurned[date] = fCaloriesBurned;
 	}	
 }
 
@@ -1333,24 +1326,22 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "CalorieData";
 
-	for( map<Day,float>::const_iterator i = m_mapDayToCaloriesBurned.begin();
+	for( map<DateTime,float>::const_iterator i = m_mapDayToCaloriesBurned.begin();
 		i != m_mapDayToCaloriesBurned.end();
 		i++ )
 	{
-		XNode* pDay = pNode->AppendChild( "Day" );
+		XNode* pCaloriesBurned = pNode->AppendChild( "CaloriesBurned", i->second );
 
-		pDay->AppendAttr( "DayInYear", i->first.iDayInYear );
-		pDay->AppendAttr( "Year", i->first.iYear );
-
-		pDay->AppendChild( "CaloriesBurned", i->second );
+		pCaloriesBurned->AppendAttr( "Date", i->first.GetDateString() );
 	}
 
 	return pNode;
 }
 
-float Profile::GetCaloriesBurnedForDay( Day day ) const
+float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 {
-	map<Day,float>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
+	day.StripTime();
+	map<DateTime,float>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
 	if( i == m_mapDayToCaloriesBurned.end() )
 		return 0;
 	else

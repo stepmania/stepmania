@@ -632,6 +632,14 @@ SOURCE=.\CourseUtil.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DateTime.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DateTime.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Difficulty.cpp
 # End Source File
 # Begin Source File
@@ -985,14 +993,6 @@ SOURCE=.\Style.h
 # Begin Source File
 
 SOURCE=.\StyleInput.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TimeConstants.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TimeConstants.h
 # End Source File
 # Begin Source File
 

@@ -606,6 +606,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CourseUtil.h">
 			</File>
 			<File
+				RelativePath="DateTime.cpp">
+			</File>
+			<File
+				RelativePath="DateTime.h">
+			</File>
+			<File
 				RelativePath="Difficulty.cpp">
 			</File>
 			<File
