@@ -386,15 +386,17 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 	/* Strip off the last path element and use it as a mask. */
 	unsigned pos = sPath.find_last_of( '/' );
 	CString fn;
-	if(pos != sPath.npos)
+	if( pos == sPath.npos )
 	{
+		fn = sPath;
+		sPath = "";
+	} else {
 		fn = sPath.substr(pos+1);
 		sPath = sPath.substr(0, pos+1);
 	}
 
-	/* If there was only one path element, or if the last element was empty,
-	 * use "*". */
-	if(fn.size() == 0)
+	/* If the last element was empty, use "*". */
+	if( fn.size() == 0 )
 		fn = "*";
 
 	unsigned start = AddTo.size();
