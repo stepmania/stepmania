@@ -851,7 +851,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		{
 		case NAV_THREE_KEY:
 			// don't wrap
-			if( iCurRow == m_Rows.size()-1 )
+			if( iCurRow == (int)m_Rows.size()-1 )
 				return;
 			MenuDown( pn, type );
 			break;
