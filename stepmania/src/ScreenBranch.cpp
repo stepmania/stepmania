@@ -56,7 +56,7 @@ void ScreenBranch::HandleScreenMessage( const ScreenMessage SM )
 			mc.Load( 0, sNextScreen );
 			if( mc.m_sScreen == "" )
 				RageException::Throw("Metric %s::%s must set \"screen\"",
-					m_sName, ("NextScreen"+m_sChoice).c_str() );
+					m_sName.c_str(), ("NextScreen"+m_sChoice).c_str() );
 			mc.ApplyToAllPlayers();
 		}
 		break;
