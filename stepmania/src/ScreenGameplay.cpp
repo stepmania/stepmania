@@ -1419,7 +1419,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		bCrossedABeat = fBeatLast != fBeatNow;
 
-		const int iSongRow = BeatToNoteRow( fSongBeat );
+//		const int iSongRow = BeatToNoteRow( fSongBeat );
 
 		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
