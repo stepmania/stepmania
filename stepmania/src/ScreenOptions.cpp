@@ -408,7 +408,8 @@ void ScreenOptions::UpdateEnabledDisabled()
 	RageColor colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
-	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	int i; // We use it outside for loop; doing that without declaring it outside it violates ISO C++
+	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
 		bool bThisRowIsSelected = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
