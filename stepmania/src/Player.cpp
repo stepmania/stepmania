@@ -608,40 +608,43 @@ void Player::DrawHoldJudgments()
 	}
 }
 
-int Player::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const
+int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool bAllowGraded, bool bForward ) const
 {
-	/* Be sure to check iStartRow itself, too. */
-	int iRow = iStartRow;
-	while( abs(iStartRow-iRow) <= iMaxRowsAhead )
+	NoteData::const_iterator begin, end;
+	m_NoteData.GetTapNoteRange( col, iStartRow, iEndRow, begin, end );
+
+	if( !bForward )
+		swap( begin, end );
+
+	while( begin != end )
 	{
-		/* Is iRow the row we want? */
-		do
-		{
-			TapNote tn = m_NoteData.GetTapNote(col, iRow);
+		if( !bForward )
+			--begin;
+
+		/* Is this the row we want? */
+		do {
+			const TapNote &tn = begin->second;
 			if( tn.type == TapNote::empty )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_NONE )
 				break;
-			return iRow;
+
+			return begin->first;
 		} while(0);
 
-		if( bForward && !m_NoteData.GetNextTapNoteRowForTrack( col, iRow ) )
-			return -1;
-		if( !bForward && !m_NoteData.GetPrevTapNoteRowForTrack( col, iRow ) )
-			return -1;
+		if( bForward )
+			++begin;
 	}
+
 	return -1;
 }
 
 /* Find the closest note to fBeat. */
-int Player::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const
+int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const
 {
-	// look for the closest matching step
-	const int iRow = BeatToNoteRow( fBeat );
-
 	// Start at iIndexStartLookingAt and search outward.
-	int iNextIndex = GetClosestNoteDirectional( col, iRow, BeatToNoteRow(fMaxBeatsAhead), bAllowGraded, true );
-	int iPrevIndex = GetClosestNoteDirectional( col, iRow, BeatToNoteRow(fMaxBeatsBehind), bAllowGraded, false );
+	int iNextIndex = GetClosestNoteDirectional( col, iNoteRow, iNoteRow+iMaxRowsAhead, bAllowGraded, true );
+	int iPrevIndex = GetClosestNoteDirectional( col, iNoteRow-iMaxRowsBehind, iNoteRow, bAllowGraded, false );
 
 	if( iNextIndex == -1 && iPrevIndex == -1 )
 		return -1;
@@ -651,12 +654,10 @@ int Player::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fM
 		return iNextIndex;
 
 	/* Figure out which row is closer. */
-	const float DistToFwd = fabsf( fBeat-NoteRowToBeat(iNextIndex) );
-	const float DistToBack = fabsf( fBeat-NoteRowToBeat(iPrevIndex) );
-	
-	if( DistToFwd > DistToBack )
+	if( abs(iNoteRow-iNextIndex) > abs(iNoteRow-iPrevIndex) )
 		return iPrevIndex;
-	return iNextIndex;
+	else
+		return iNextIndex;
 }
 
 
@@ -681,10 +682,9 @@ void Player::Step( int col, const RageTimer &tm )
 	//
 	// Check for step on a TapNote
 	//
-	int iIndexOverlappingNote = GetClosestNote( col, fSongBeat, 
-						   StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   false );
+	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
+	int iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat), 
+						   iStepSearchRows, iStepSearchRows, false );
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
@@ -945,26 +945,20 @@ void Player::Step( int col, const RageTimer &tm )
 		{
 		case TapNote::tap:
 		case TapNote::hold_head:
-			// don't the row if this note is a mine or tap attack
+			// don't judge the row if this note is a mine or tap attack
 			if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
 				OnRowCompletelyJudged( iIndexOverlappingNote );
 		}
 
 		if( score == TNS_MISS || score == TNS_BOO )
-		{
 			m_iDCState = AS2D_MISS;
-		}
-		if( score == TNS_GOOD || score == TNS_GREAT )
-		{
+		else if( score == TNS_GOOD || score == TNS_GREAT )
 			m_iDCState = AS2D_GOOD;
-		}
-		if( score == TNS_PERFECT || score == TNS_MARVELOUS )
+		else if( score == TNS_PERFECT || score == TNS_MARVELOUS )
 		{
 			m_iDCState = AS2D_GREAT;
 			if( m_pLifeMeter && m_pLifeMeter->GetLife() == 1.0f) // full life
-			{
 				m_iDCState = AS2D_FEVER; // super celebrate time :)
-			}
 		}
 		if( m_pNoteField )
 			m_pNoteField->Step( col, score );
@@ -977,9 +971,9 @@ void Player::Step( int col, const RageTimer &tm )
 
 	/* Search for keyed sounds separately.  If we can't find a nearby note, search
 	 * backwards indefinitely, and ignore grading. */
-	iIndexOverlappingNote = GetClosestNote( col, fSongBeat, 
-						   999999.f,
-						   StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+	iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
+						   MAX_NOTE_ROW,
+						   iStepSearchRows,
 						   true );
 	if( iIndexOverlappingNote != -1 )
 	{

@@ -68,7 +68,7 @@ protected:
 	void DrawHoldJudgments();
 
 	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
-	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const;
+	int GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 
 	PlayerState*	m_pPlayerState;
 	PlayerStageStats*	m_pPlayerStageStats;
