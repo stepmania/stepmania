@@ -1430,55 +1430,53 @@ static void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByTypeAndDifficulty );
 }
 
-static void HTMLWritePerGameHeader( FILE* fp, Game game )
+static void HTMLWritePerGameHeader( RageFile &f, Game game )
 {
 	const GameDef* pGameDef = GAMEMAN->GetGameDefForGame(game);
 
 	vector<StepsType> aStepsTypes;
 	GAMEMAN->GetNotesTypesForGame( game, aStepsTypes );
 
-	fprintf( fp, "<h1>%s</h1>\n", pGameDef->m_szName );
+	f.PutLine( ssprintf("<h1>%s</h1>", pGameDef->m_szName) );
 
-	fprintf( fp, "<table border='1'>\n" );
-	fprintf( fp, "<tr><td>title</td>" );
+	f.PutLine( "<table border='1'>" );
+	f.Write( "<tr><td>title</td>" );
 
 	unsigned j;
 	for( j=0; j<aStepsTypes.size(); j++ )
 	{
 		StepsType st = aStepsTypes[j];
 
-		fprintf( fp, "<td colspan='%d'>%s</td>\n", NUM_DIFFICULTIES, GAMEMAN->NotesTypeToString(st).c_str() );
+		f.PutLine( ssprintf("<td colspan='%d'>%s</td>", NUM_DIFFICULTIES, GAMEMAN->NotesTypeToString(st).c_str()) );
 	}
-	fprintf( fp, "</tr>\n" );
+	f.PutLine( "</tr>" );
 
-	fprintf( fp, "<tr><td>&nbsp;</td>" );
+	f.Write( "<tr><td>&nbsp;</td>" );
 	for( j=0; j<aStepsTypes.size(); j++ )
 	{
 		for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
 		{
 			Difficulty d = (Difficulty)k;
-			fprintf( fp, "<td>%s</td>\n", Capitalize(DifficultyToString(d).Left(3)).c_str() );
+			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(d).Left(3)).c_str()) );
 		}
 	}
 
-	fprintf( fp, "</tr>\n" );
+	f.PutLine( "</tr>" );
 }
 
 // TODO: Move this to a different file.  No need to clutter SongManager.
 void SongManager::WriteStatsWebPage()
 {
-	FILE* fp = fopen( STATS_PATH, "w" );
-	if( fp == NULL )
+	RageFile f;
+	if( !f.Open( STATS_PATH, RageFile::WRITE ) )
 		return;
 
-	fprintf( fp, 
-		"<html>\n"
-		"<head>\n"
-		"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n"
-		"<title>%s</title>\n"
-		"</head>\n"
-		"<body>\n",
-		PRODUCT_NAME_VER );
+	f.PutLine( "<html>" );
+	f.PutLine( "<head>" );
+	f.PutLine( "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" );
+	f.PutLine( ssprintf("<title>%s</title>", PRODUCT_NAME_VER) );
+	f.PutLine( "</head>" );
+	f.PutLine( "<body>" );
 
 	vector<Song*> vSongs = m_pSongs;
 	SortSongPointerArrayByGroupAndTitle( vSongs );
@@ -1486,11 +1484,11 @@ void SongManager::WriteStatsWebPage()
 	//
 	// Print song list
 	//
-	fprintf( fp, "<table border='1'>\n" );
+	f.PutLine( "<table border='1'>" );
 	for( unsigned i=0; i<vSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		fprintf( fp, "<tr>" );
+		f.Write( "<tr>" );
 		/* XXX: We can't call pSong->HasBanner on every song; it'll effectively re-traverse the entire
 		 * song directory tree checking if each banner file really exists.
 		 *
@@ -1499,17 +1497,16 @@ void SongManager::WriteStatsWebPage()
 		//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
 		CString sImagePath = pSong->GetBannerPath();
 		if( sImagePath.empty() )
-			fprintf( fp, "<td> </td>" );
+			f.Write( "<td> </td>" );
 		else
-			fprintf( fp, "<td><img src=\"%s\" width='120'></td>", HTMLQuoteDoubleQuotes(sImagePath).c_str() );
+			f.Write( ssprintf("<td><img src=\"%s\" width='120'></td>", HTMLQuoteDoubleQuotes(sImagePath).c_str()) );
 		
-		fprintf( fp, "<td>%s<br>", pSong->GetTranslitMainTitle().c_str() );
-		fprintf( fp, "<font size='-1'>%s</font><br>", pSong->GetTranslitSubTitle().c_str() );
-		fprintf( fp, "<font size='-1'><i>%s</i></font></td>", pSong->GetTranslitArtist().c_str() );
-		fprintf( fp, "</tr>\n" );
-
+		f.Write( ssprintf("<td>%s<br>", pSong->GetTranslitMainTitle().c_str()) );
+		f.Write( ssprintf("<font size='-1'>%s</font><br>", pSong->GetTranslitSubTitle().c_str()) );
+		f.Write( ssprintf("<font size='-1'><i>%s</i></font></td>", pSong->GetTranslitArtist().c_str()) );
+		f.PutLine( "</tr>" );
 	}
-	fprintf( fp, "</table>\n<br>\n" );
+	f.PutLine( "</table>\n<br>" );
 
 
 	//
@@ -1541,14 +1538,14 @@ void SongManager::WriteStatsWebPage()
 			/* We have some steps for this game.  Make sure we've written the game header. */
 			if( !WroteHeader )
 			{
-				HTMLWritePerGameHeader( fp, game );
+				HTMLWritePerGameHeader( f, game );
 				WroteHeader = true;
 			}
 
 
-			fprintf( fp, "<tr>\n" );
+			f.PutLine( "<tr>" );
 			
-			fprintf( fp, "<td>%s</td>", pSong->GetTranslitMainTitle().c_str() );
+			f.Write( ssprintf("<td>%s</td>", pSong->GetTranslitMainTitle().c_str()) );
 
 			SortStepsByTypeAndDifficulty( Steps );
 
@@ -1561,24 +1558,20 @@ void SongManager::WriteStatsWebPage()
 						Steps[CurSteps]->m_StepsType == aStepsTypes[j] &&
 						Steps[CurSteps]->GetDifficulty() == k )
 					{
-						fprintf( fp, "<td>%d</td>\n", Steps[CurSteps]->GetMeter() );
+						f.PutLine( ssprintf("<td>%d</td>", Steps[CurSteps]->GetMeter()) );
 						++CurSteps;
 					}
 					else
-						fprintf( fp, "<td>&nbsp;</td>\n" );
+						f.PutLine( "<td>&nbsp;</td>" );
 				}
 			}
 
-			fprintf( fp, "</tr>" );
+			f.Write( "</tr>" );
 		}
 		if( WroteHeader )
-			fprintf( fp, "</table>\n<br>\n" ); // footer
+			f.PutLine( "</table>\n<br>" ); // footer
 	}
 
-	fprintf( fp, 
-		"</body>\n"
-		"</html>\n"
-		);
-
-	fclose( fp );
+	f.PutLine( "</body>" );
+	f.PutLine( "</html>" );
 }
