@@ -679,9 +679,11 @@ Model::AdvanceFrame (float dt)
 	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
 	if (m_fCurrFrame >= (float)m_pCurAnimation->nTotalFrames)
 	{
-		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") )
+		if( m_bRevertToDefaultAnimation && m_sDefaultAnimation != "" )
 		{
 			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimationRate );
+			/* XXX: add to m_fCurrFrame the wrapover from the previous
+			 * m_fCurrFrame-m_pCurAnimation->nTotalFrames, so it doesn't skip */
 		}
 		else
 		{
