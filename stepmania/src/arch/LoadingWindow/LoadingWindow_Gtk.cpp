@@ -1,4 +1,5 @@
 #include "global.h"
+#include "StepMania.h"
 #include <gtk/gtk.h>
 #include "loading.xpm"
 
@@ -10,12 +11,8 @@ void CreateGtkLoadingWindow()
 	GdkPixmap *loadmap;
 	GtkWidget *vbox;
 	GtkWidget *loadimage;
-	char **argv;
-	int argc;
 
-	argc = 1;
-	argv[0] = "stepmania";
-	gtk_init(&argc,&argv);
+	gtk_init(&g_argc,&g_argv);
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(window);
 	loadmap = gdk_pixmap_create_from_xpm_d(window->window,NULL,NULL,loading);
