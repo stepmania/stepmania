@@ -81,22 +81,23 @@ public:
 
 typedef CString (*MetricName1D)(size_t N);
 
-template <class T, size_t N>
+template <class T>
 class ThemeMetric1D : public IThemeMetric
 {
-	ThemeMetric<T> m_metric[N];
+	typedef ThemeMetric<T> ThemeMetricT;
+	vector<ThemeMetricT> m_metric;
 
 public:
-	ThemeMetric1D( const CString& sGroup, MetricName1D pfn, size_t nToInit )
+	ThemeMetric1D( const CString& sGroup, MetricName1D pfn, size_t N )
 	{
-		ASSERT( nToInit <= N );
-		for( unsigned i=0; i<nToInit; i++ )
+		m_metric.resize( N );
+		for( unsigned i=0; i<N; i++ )
 			m_metric[i].Load( sGroup, pfn(i) );
 
 	}
 	void Read()
 	{
-		for( unsigned i=0; i<N; i++ )
+		for( unsigned i=0; i<m_metric.size(); i++ )
 			m_metric[i].Read();
 	}
 	const T& GetValue( size_t i ) const
@@ -107,25 +108,29 @@ public:
 
 typedef CString (*MetricName2D)(size_t N, size_t M);
 
-template <class T, size_t N, size_t M>
+template <class T>
 class ThemeMetric2D : public IThemeMetric
 {
-	ThemeMetric<T> m_metric[N][M];
+	typedef ThemeMetric<T> ThemeMetricT;
+	typedef vector<ThemeMetricT> ThemeMetricTVector;
+	vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const CString& sGroup, MetricName2D pfn, size_t nToInit, size_t mToInit )
+	ThemeMetric2D( const CString& sGroup, MetricName2D pfn, size_t N, size_t M )
 	{
-		ASSERT( nToInit <= N );
-		ASSERT( mToInit <= M );
-		for( unsigned i=0; i<nToInit; i++ )
-			for( unsigned j=0; j<mToInit; j++ )
+		m_metric.resize( N );
+		for( unsigned i=0; i<N; i++ )
+		{
+			m_metric[i].resize( M );
+			for( unsigned j=0; j<M; j++ )
 				m_metric[i][j].Load( sGroup, pfn(i,j) );
+		}
 
 	}
 	void Read()
 	{
-		for( unsigned i=0; i<N; i++ )
-			for( unsigned j=0; j<M; j++ )
+		for( unsigned i=0; i<m_metric.size(); i++ )
+			for( unsigned j=0; j<m_metric[i].size(); j++ )
 				m_metric[i][j].Read();
 	}
 	const T& GetValue( size_t i, size_t j ) const

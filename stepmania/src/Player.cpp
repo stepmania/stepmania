@@ -41,25 +41,25 @@ CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffse
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
 CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
 
-ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
-ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
-ThemeMetric2D<float,NUM_PLAYERS,2> JUDGMENT_X	("Player",JUDGMENT_X_NAME,NUM_PLAYERS,2);
-ThemeMetric<float> JUDGMENT_Y					("Player","JudgmentY");
-ThemeMetric<float> JUDGMENT_Y_REVERSE			("Player","JudgmentYReverse");
-ThemeMetric2D<float,NUM_PLAYERS,2> COMBO_X		("Player",COMBO_X_NAME,NUM_PLAYERS,2);
-ThemeMetric<float> COMBO_Y						("Player","ComboY");
-ThemeMetric<float> COMBO_Y_REVERSE				("Player","ComboYReverse");
-ThemeMetric2D<float,NUM_PLAYERS,2> ATTACK_DISPLAY_X		("Player",ATTACK_DISPLAY_X_NAME,NUM_PLAYERS,2);
-ThemeMetric<float> ATTACK_DISPLAY_Y				("Player","AttackDisplayY");
-ThemeMetric<float> ATTACK_DISPLAY_Y_REVERSE		("Player","AttackDisplayYReverse");
-ThemeMetric<float> HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
-ThemeMetric<float> HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
-ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
-ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
-ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
-ThemeMetric<int> START_DRAWING_AT_PIXELS		("Player","StartDrawingAtPixels");
-ThemeMetric<int> STOP_DRAWING_AT_PIXELS			("Player","StopDrawingAtPixels");
-ThemeMetric<int> MAX_PRO_TIMING_ERROR			("Player","MaxProTimingError");
+ThemeMetric<float>		GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
+ThemeMetric<float>		GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
+ThemeMetric2D<float>	JUDGMENT_X					("Player",JUDGMENT_X_NAME,NUM_PLAYERS,2);
+ThemeMetric<float>		JUDGMENT_Y					("Player","JudgmentY");
+ThemeMetric<float>		JUDGMENT_Y_REVERSE			("Player","JudgmentYReverse");
+ThemeMetric2D<float>	COMBO_X						("Player",COMBO_X_NAME,NUM_PLAYERS,2);
+ThemeMetric<float>		COMBO_Y						("Player","ComboY");
+ThemeMetric<float>		COMBO_Y_REVERSE				("Player","ComboYReverse");
+ThemeMetric2D<float>	ATTACK_DISPLAY_X			("Player",ATTACK_DISPLAY_X_NAME,NUM_PLAYERS,2);
+ThemeMetric<float>		ATTACK_DISPLAY_Y			("Player","AttackDisplayY");
+ThemeMetric<float>		ATTACK_DISPLAY_Y_REVERSE	("Player","AttackDisplayYReverse");
+ThemeMetric<float>		HOLD_JUDGMENT_Y_STANDARD	("Player","HoldJudgmentYStandard");
+ThemeMetric<float>		HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
+ThemeMetric<int>		BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+ThemeMetric<bool>		TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
+ThemeMetric<bool>		HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
+ThemeMetric<int>		START_DRAWING_AT_PIXELS		("Player","StartDrawingAtPixels");
+ThemeMetric<int>		STOP_DRAWING_AT_PIXELS		("Player","StopDrawingAtPixels");
+ThemeMetric<int>		MAX_PRO_TIMING_ERROR		("Player","MaxProTimingError");
 
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;

@@ -11,7 +11,7 @@ ThemeMetric<CString>	FIRST_RUN_INITIAL_SCREEN	("Common","FirstRunInitialScreen")
 ThemeMetric<CString>	DEFAULT_MODIFIERS			("Common","DefaultModifiers" );
 ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS		("Common","DefaultCpuModifiers" );
 ThemeMetric<CString>	COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
-ThemeMetric1D<RageColor,NUM_PLAYERS> PLAYER_COLOR	("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
+ThemeMetric1D<RageColor> PLAYER_COLOR				("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 ThemeMetric<float>		JOIN_PAUSE_SECONDS			("Common","JoinPauseSeconds");
 ThemeMetric<CString>	WINDOW_TITLE				("Common","WindowTitle");
 

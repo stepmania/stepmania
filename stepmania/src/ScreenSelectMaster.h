@@ -36,24 +36,24 @@ protected:
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 
-	ThemeMetric<int> NUM_ICON_PARTS;
-	ThemeMetric<int> NUM_PREVIEW_PARTS;
-	ThemeMetric<int> NUM_CURSOR_PARTS;
-	ThemeMetric<bool> SHARED_PREVIEW_AND_CURSOR;
-	ThemeMetric<int> NUM_CHOICES_ON_PAGE_1;
-	ThemeMetric2D<float,NUM_PLAYERS,MAX_CURSOR_PARTS> CURSOR_OFFSET_X_FROM_ICON;
-	ThemeMetric2D<float,NUM_PLAYERS,MAX_CURSOR_PARTS> CURSOR_OFFSET_Y_FROM_ICON;
-	ThemeMetric<float> PRE_SWITCH_PAGE_SECONDS;
-	ThemeMetric<float> POST_SWITCH_PAGE_SECONDS;
-	ThemeMetric<float> EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
-	ThemeMetric1D<CString,NUM_MENU_DIRS> OPTION_ORDER;
-	ThemeMetric<bool> WRAP_CURSOR;
-	ThemeMetric<bool> SHOW_SCROLLER;
-	ThemeMetric<float> SCROLLER_SECONDS_PER_ITEM;
-	ThemeMetric<float> SCROLLER_NUM_ITEMS_TO_DRAW;
-	ThemeMetric<float> SCROLLER_SPACING_X;
-	ThemeMetric<float> SCROLLER_SPACING_Y;
-	ThemeMetric<CString> DEFAULT_CHOICE;
+	ThemeMetric<int>		NUM_ICON_PARTS;
+	ThemeMetric<int>		NUM_PREVIEW_PARTS;
+	ThemeMetric<int>		NUM_CURSOR_PARTS;
+	ThemeMetric<bool>		SHARED_PREVIEW_AND_CURSOR;
+	ThemeMetric<int>		NUM_CHOICES_ON_PAGE_1;
+	ThemeMetric2D<float>	CURSOR_OFFSET_X_FROM_ICON;
+	ThemeMetric2D<float>	CURSOR_OFFSET_Y_FROM_ICON;
+	ThemeMetric<float>		PRE_SWITCH_PAGE_SECONDS;
+	ThemeMetric<float>		POST_SWITCH_PAGE_SECONDS;
+	ThemeMetric<float>		EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
+	ThemeMetric1D<CString>	OPTION_ORDER;
+	ThemeMetric<bool>		WRAP_CURSOR;
+	ThemeMetric<bool>		SHOW_SCROLLER;
+	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;
+	ThemeMetric<float>		SCROLLER_NUM_ITEMS_TO_DRAW;
+	ThemeMetric<float>		SCROLLER_SPACING_X;
+	ThemeMetric<float>		SCROLLER_SPACING_Y;
+	ThemeMetric<CString>	DEFAULT_CHOICE;
 
 	int m_Next[NUM_MENU_DIRS][MAX_CHOICES];
 

@@ -12,7 +12,7 @@ extern ThemeMetric<CString>		FIRST_RUN_INITIAL_SCREEN;
 extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
 extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
 extern ThemeMetric<CString>		COURSE_DIFFICULTIES_TO_SHOW;
-extern ThemeMetric1D<RageColor,NUM_PLAYERS> PLAYER_COLOR;
+extern ThemeMetric1D<RageColor> PLAYER_COLOR;
 extern ThemeMetric<float>		JOIN_PAUSE_SECONDS;
 extern ThemeMetric<CString>		WINDOW_TITLE;
 
