@@ -1121,8 +1121,6 @@ void SongManager::LoadAllFromProfiles()
 		{
 			CString sEditsDir = sProfileDir+"Edits/";
 
-			FILEMAN->FlushDirCache( sEditsDir );
-
 			CStringArray asEditsFilesWithPath;
 			GetDirListing( sEditsDir+"*.sm", asEditsFilesWithPath, false, true );
 

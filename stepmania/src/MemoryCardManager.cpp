@@ -112,24 +112,9 @@ MemoryCardState MemoryCardManager::GetCardState( PlayerNumber pn )
 		return MEMORY_CARD_STATE_READY;
 }
 
-/*
-CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
-{
-	if( m_Device[pn].IsBlank() )
-		return "";
-	else
-	{
-		CString sDir = m_Device[pn].sOsMountDir;
-		FixSlashesInPlace( sDir );
-		if( !sDir.empty() && sDir.Right(1)!="/" )
-			sDir += '/';
-		return sDir;
-	}
-}
-*/
-
 void MemoryCardManager::LockCards( bool bLock )
 {
+	bool bWasLocked = m_bCardsLocked;
 	m_bCardsLocked = bLock;
 
 	if( !bLock )
@@ -139,7 +124,24 @@ void MemoryCardManager::LockCards( bool bLock )
 			m_bTooLate[p] = false;
 	}
 
-	if( m_bCardsLocked )
+	if( !bWasLocked && bLock )
+	{
+		LOG->Trace( "do the final mount" );
+
+		FOREACH_EnabledPlayer( p )
+		{
+			if( m_Device[p].IsBlank() )	// they don't have an assigned card
+				continue;
+
+			if( !m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]) )
+			{
+				m_bWriteError[p] = true;
+			}
+		}
+	}
+
+
+	if( !bWasLocked && bLock )
 		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_dont_mount );
 	else
 		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
@@ -231,13 +233,6 @@ match:
 			vUnassignedDevices.erase( vUnassignedDevices.begin()+i );	// remove the device so we don't match it for another player
 			m_bTooLate[p] = m_bCardsLocked;
 			m_bWriteError[p] = false;
-			if( !m_bCardsLocked )
-			{
-				if( !m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]) )
-				{
-					m_bWriteError[p] = true;
-				}
-			}
 
 			if( !m_bDontPlaySoundsOnce )
 			{

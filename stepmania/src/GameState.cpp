@@ -40,6 +40,7 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 GameState::GameState()
 {
 	m_pPosition = NULL;
+	m_pCurStyle = NULL;
 
 	m_pCurGame = NULL;
 	m_iCoins = 0;
@@ -243,7 +244,6 @@ void GameState::PlayersFinalized()
 	m_bPlayersFinalized = true;
 
 	MEMCARDMAN->LockCards( true );
-	SONGMAN->LoadAllFromProfiles();
 
 
 	// apply saved default modifiers if any
@@ -273,6 +273,8 @@ void GameState::PlayersFinalized()
 		if( m_pPreferredCourse == NULL )
 			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
 	}
+
+	SONGMAN->LoadAllFromProfiles();
 
 	FOREACH_PlayerNumber( pn )
 	{
