@@ -225,7 +225,6 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 };
-const int NUM_AUTO_JOY_MAPPINGS = ARRAYSIZE(g_AutoJoyMappings);
 
 void InputMapper::AutoMapJoysticksForCurrentGame()
 {
@@ -240,7 +239,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	{
 		InputDevice device = vDevices[i];
 		CString sDescription = vDescriptions[i];
-		for( int j=0; j<NUM_AUTO_JOY_MAPPINGS; j++ )
+		for( int j=0; j<ARRAYSIZE(g_AutoJoyMappings); j++ )
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 

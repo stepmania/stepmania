@@ -68,7 +68,6 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 
 	{"TimingAssist",-1},
 };
-const int NUM_OPTION_COL_ENTRIES = sizeof(g_OptionColumnEntries)/sizeof(OptionColumnEntry);
 
 int OptionToPreferredColumn( CString sOptionText )
 {
@@ -79,7 +78,7 @@ int OptionToPreferredColumn( CString sOptionText )
 			return 0;
 	}
 
-	for( int i=0; i<NUM_OPTION_COL_ENTRIES; i++ )
+	for( int i=0; i<ARRAYSIZE(g_OptionColumnEntries); i++ )
 		if( g_OptionColumnEntries[i].szString == sOptionText )
 			return g_OptionColumnEntries[i].iSlotIndex;
 

@@ -13,8 +13,8 @@ bool NotesLoader::Loadable( CString sPath )
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
 {
 	const CString sLeftSeps[]  = { " -", " ~", " (", " [" };
-	int iNumSeps = sizeof(sLeftSeps)/sizeof(CString);
-	for( int i=0; i<iNumSeps; i++ )
+
+	for( int i=0; i<ARRAYSIZE(sLeftSeps); i++ )
 	{
 		int iBeginIndex = sFullTitle.Find( sLeftSeps[i] );
 		if( iBeginIndex == -1 )
