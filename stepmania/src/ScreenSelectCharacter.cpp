@@ -21,18 +21,21 @@
 #include "GameState.h"
 #include "Character.h"
 #include "PrefsManager.h"
+#include "RageTextureManager.h"
 
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
 #define TITLE_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("TitleP%dOffCommand",p+1))
-#define CHARACTER_ON_COMMAND( p )			THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CharacterP%dOnCommand",p+1))
-#define CHARACTER_OFF_COMMAND( p )			THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CharacterP%dOffCommand",p+1))
-#define CHARACTER_ARROWS_ON_COMMAND( p )	THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CharacterArrowsP%dOnCommand",p+1))
-#define CHARACTER_ARROWS_OFF_COMMAND( p )	THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CharacterArrowsP%dOffCommand",p+1))
+#define CARD_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CardP%dOnCommand",p+1))
+#define CARD_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CardP%dOffCommand",p+1))
+#define CARD_ARROWS_ON_COMMAND( p )			THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CardArrowsP%dOnCommand",p+1))
+#define CARD_ARROWS_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("CardArrowsP%dOffCommand",p+1))
 #define EXPLANATION_ON_COMMAND				THEME->GetMetric ("ScreenSelectCharacter","ExplanationOnCommand")
 #define EXPLANATION_OFF_COMMAND				THEME->GetMetric ("ScreenSelectCharacter","ExplanationOffCommand")
 #define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("AttackFrameP%dOnCommand",p+1))
 #define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("AttackFrameP%dOffCommand",p+1))
+#define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
+#define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
 #define ICONS_START_X( p )					THEME->GetMetricF("ScreenSelectCharacter",ssprintf("IconsP%dStartX",p+1))
 #define ICONS_START_Y( p )					THEME->GetMetricF("ScreenSelectCharacter",ssprintf("IconsP%dStartY",p+1))
 #define ICONS_SPACING_X						THEME->GetMetricF("ScreenSelectCharacter","IconsSpacingX")
@@ -89,12 +92,18 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 
 		this->AddChild( &m_sprTitle[p] );
 
-		m_sprCharacter[p].Command( CHARACTER_ON_COMMAND(p) );
-		this->AddChild( &m_sprCharacter[p] );
+		m_sprCard[p].Command( CARD_ON_COMMAND(p) );
+		this->AddChild( &m_sprCard[p] );
 
-		m_sprCharacterArrows[p].Load( THEME->GetPathToG("ScreenSelectCharacter character arrows") );
-		m_sprCharacterArrows[p].Command( CHARACTER_ARROWS_ON_COMMAND(p) );
-		this->AddChild( &m_sprCharacterArrows[p] );
+		m_sprCardArrows[p].Load( THEME->GetPathToG("ScreenSelectCharacter card arrows") );
+		m_sprCardArrows[p].Command( CARD_ARROWS_ON_COMMAND(p) );
+		this->AddChild( &m_sprCardArrows[p] );
+
+		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
+		{
+			m_sprIcons[p][i].ScaleToClipped( ICON_WIDTH, ICON_HEIGHT );
+			this->AddChild( &m_sprIcons[p][i] );
+		}
 
 		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
 		{
@@ -207,7 +216,7 @@ void ScreenSelectCharacter::BeforeRowChange( PlayerNumber pn )
 	{
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
-		m_sprCharacterArrows[pnAffected].SetEffectNone();
+		m_sprCardArrows[pnAffected].SetEffectNone();
 		break;
 	}
 }
@@ -219,7 +228,7 @@ void ScreenSelectCharacter::AfterRowChange( PlayerNumber pn )
 	{
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
-		m_sprCharacterArrows[pnAffected].SetEffectGlowShift();
+		m_sprCardArrows[pnAffected].SetEffectGlowShift();
 		break;
 	}
 }
@@ -233,13 +242,28 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 	case CHOOSING_HUMAN_CHARACTER:
 		{
 			Character* pChar = GAMESTATE->m_pCharacters[ m_iSelectedCharacter[pnAffected] ];
-			m_sprCharacter[pnAffected].UnloadTexture();
-			m_sprCharacter[pnAffected].Load( pChar->GetCardPath() );
+			m_sprCard[pnAffected].UnloadTexture();
+			m_sprCard[pnAffected].Load( pChar->GetCardPath() );
 
 			if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
 				for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 					for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 						m_AttackIcons[pnAffected][i][j].Load( pnAffected, pChar->m_sAttacks[i][j] );
+
+			unsigned c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
+			WRAP( c, GAMESTATE->m_pCharacters.size() );
+
+			for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
+			{
+				c++;
+				WRAP( c, GAMESTATE->m_pCharacters.size() );
+				Character* pCharacter = GAMESTATE->m_pCharacters[c];
+				Banner &banner = m_sprIcons[pnAffected][i];
+				banner.LoadIconFromCharacter( pCharacter );
+				float fX = (pnAffected==PLAYER_1) ? 320-ICON_WIDTH : 320+ICON_WIDTH;
+				float fY = SCALE( i, 0.f, MAX_CHAR_ICONS_TO_SHOW-1.f, 240-(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT), 240+(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT));
+				banner.SetXY( fX, fY );
+			}
 		}
 		break;
 	case FINISHED_CHOOSING:
@@ -336,9 +360,9 @@ void ScreenSelectCharacter::TweenOffScreen()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprCharacter[p].Command( CHARACTER_OFF_COMMAND(p) );
+		m_sprCard[p].Command( CARD_OFF_COMMAND(p) );
 		m_sprTitle[p].Command( TITLE_OFF_COMMAND(p) );
-		m_sprCharacterArrows[p].Command( CHARACTER_ARROWS_OFF_COMMAND(p) );
+		m_sprCardArrows[p].Command( CARD_ARROWS_OFF_COMMAND(p) );
 		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
 		{
 			m_sprAttackFrame[p].Command( ATTACK_FRAME_OFF_COMMAND(p) );

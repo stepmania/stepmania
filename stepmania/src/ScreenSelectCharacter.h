@@ -14,7 +14,10 @@
 #include "RandomSample.h"
 #include "MenuElements.h"
 #include "OptionIcon.h"
+#include "Banner.h"
 
+
+#define MAX_CHAR_ICONS_TO_SHOW 11
 
 class ScreenSelectCharacter : public Screen
 {
@@ -58,8 +61,10 @@ private:
 
 	Sprite			m_sprTitle[NUM_PLAYERS];
 
-	Sprite			m_sprCharacter[NUM_PLAYERS];
-	Sprite			m_sprCharacterArrows[NUM_PLAYERS];
+	Banner			m_sprIcons[NUM_PLAYERS][MAX_CHAR_ICONS_TO_SHOW];
+
+	Sprite			m_sprCard[NUM_PLAYERS];
+	Sprite			m_sprCardArrows[NUM_PLAYERS];
 	
 	Sprite			m_sprAttackFrame[NUM_PLAYERS];
 	OptionIcon		m_AttackIcons[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
