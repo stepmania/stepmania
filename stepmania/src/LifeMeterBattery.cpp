@@ -33,7 +33,7 @@ LifeMeterBattery::LifeMeterBattery()
 
 	
 	m_soundGainLife.Load( THEME->GetPathToS("LifeMeterBattery gain") );
-	m_soundLoseLife.Load( THEME->GetPathToS("LifeMeterBattery lose") );
+	m_soundLoseLife.Load( THEME->GetPathToS("LifeMeterBattery lose"),true );
 }
 
 void LifeMeterBattery::Load( PlayerNumber pn )
