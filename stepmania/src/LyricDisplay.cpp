@@ -62,9 +62,16 @@ void LyricDisplay::Update( float fDeltaTime )
 	}
 
 	m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
-	// m_textLyrics.SetDiffuse(COLOR);
 
+	/*
+	 * This really needs a way to define a custom theme command here, so themes
+	 * can do things like:
+	 * 
+	 * "Diffuse=1,1,1,0;linear,.2;Diffuse=1,1,1,1;linear,.2;LyricDiffuse"
+	 */
+	
 	m_textLyrics.StopTweening();
+	m_textLyrics.SetDiffuse(GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color);
 	m_textLyrics.Command(IN_COMMAND);
 	m_textLyrics.BeginTweening( fShowLength ); /* sleep */
 	m_textLyrics.Command(OUT_COMMAND);
