@@ -292,7 +292,7 @@ static void JudgeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
 	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
+void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
 	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );

@@ -22,6 +22,7 @@
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
 #include "Game.h"
+#include "ScreenOptionsMasterPrefs.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -30,6 +31,7 @@
 #define SONGS_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","SongsOnCommand")
 #define MAX_STAGES_ON_COMMAND		THEME->GetMetric("ScreenTitleMenu","MaxStagesOnCommand")
 #define MAX_STAGES_TEXT				THEME->GetMetric("ScreenTitleMenu","MaxStagesText")
+#define LIFE_DIFFICULTY_ON_COMMAND	THEME->GetMetric("ScreenTitleMenu","LifeDifficultyOnCommand")
 #define HELP_X						THEME->GetMetricF("ScreenTitleMenu","HelpX")
 #define HELP_Y						THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define CHOICES_X					THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
@@ -115,6 +117,15 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 		ssprintf( "%d %s%s max", PREFSMAN->m_iNumArcadeStages, MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iNumArcadeStages>1)?"s":"" );
 	m_textMaxStages.SetText( sText );
 	this->AddChild( &m_textMaxStages );
+
+	m_textLifeDifficulty.LoadFromFont( THEME->GetPathF(m_sName,"LifeDifficulty") );
+	m_textLifeDifficulty.Command( LIFE_DIFFICULTY_ON_COMMAND );
+	int iLifeDifficulty;
+	const CStringArray dummy;
+	LifeDifficulty( iLifeDifficulty, true, dummy );	
+	iLifeDifficulty++;	// LifeDifficulty returns an index
+	m_textLifeDifficulty.SetText( ssprintf( "life difficulty %d", iLifeDifficulty ) );
+	this->AddChild( &m_textLifeDifficulty );
 
 	CString sCoinMode = CoinModeToString((CoinMode)PREFSMAN->GetCoinMode());
 	m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu "+sCoinMode) );

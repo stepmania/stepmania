@@ -37,6 +37,7 @@ private:
 	BitmapText		m_textVersion;
 	BitmapText		m_textSongs;
 	BitmapText		m_textMaxStages;
+	BitmapText		m_textLifeDifficulty;
 	BitmapText		m_textHelp;
 	BitmapText		m_textChoice[MAX_MODE_CHOICES];
 
