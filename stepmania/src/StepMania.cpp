@@ -126,15 +126,6 @@ void ApplyGraphicOptions()
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
-
-	// Input events are lost while the graphics window is 
-	// destroyed and re-created.  Reset all held keys so that
-	// keys don't appear to be stuck down - particularly
-	// Alt after Alt+Enter.  This would make more sense in
-	// InputHandler::WindowReset(), but I figure that it's 
-	// something that every InputHandler would need to do 
-	// anyway.  -Chris
-	INPUTFILTER->Reset();
 }
 
 void ExitGame()
