@@ -96,7 +96,7 @@ public:
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP || tn == TAP_HOLD_HEAD )
+			if( tn == TAP_TAP || tn == TAP_ADDITION || tn == TAP_HOLD_HEAD )
 				iNum++;
 		}
 		return iNum;
@@ -106,7 +106,7 @@ public:
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP )
+			if( tn == TAP_TAP || tn == TAP_ADDITION )
 				return t;
 		}
 		return -1;
@@ -116,7 +116,7 @@ public:
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			TapNote tn = GetTapNote(t, index);
-			if( tn == TAP_TAP || tn == TAP_HOLD_HEAD )
+			if( tn == TAP_TAP || tn == TAP_ADDITION || tn == TAP_HOLD_HEAD )
 				return t;
 		}
 		return -1;
