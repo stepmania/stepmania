@@ -77,6 +77,7 @@ ScreenSetTime::ScreenSetTime( CString sClassName ) : ScreenWithMenuElements( sCl
 		this->AddChild( &value );
 	}
 
+	m_TimeOffset = 0;
 	m_Selection = (SetTimeSelection)0;
 	ChangeSelection( 0 );
 
@@ -89,7 +90,12 @@ void ScreenSetTime::Update( float fDelta )
 {
 	Screen::Update( fDelta );
 
-	tm now = GetLocalTime();
+	time_t iNow = time(NULL);
+	iNow += m_TimeOffset;
+
+	tm now;
+	localtime_r( &iNow, &now );
+	
 	m_textValue[hour].SetText(	ssprintf("%02d",now.tm_hour) );
 	m_textValue[minute].SetText( ssprintf("%02d",now.tm_min) );
 	m_textValue[second].SetText( ssprintf("%02d",now.tm_sec) );
@@ -127,19 +133,28 @@ void ScreenSetTime::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSetTime::ChangeValue( int iDirection )
 {
-	tm now = GetLocalTime();
+	time_t iNow = time(NULL);
+	time_t iAdjusted = iNow + m_TimeOffset;
+
+	tm adjusted;
+	localtime_r( &iAdjusted, &adjusted );
+	
+	//tm now = GetLocalTime();
 	switch( m_Selection )
 	{
-	case hour:		now.tm_hour += iDirection;	break;
-	case minute:	now.tm_min += iDirection;	break;
-	case second:	now.tm_sec += iDirection;	break;
-	case year:		now.tm_year += iDirection;	break;
-	case month:		now.tm_mon += iDirection;	break;
-	case day:		now.tm_mday += iDirection;	break;
+	case hour:		adjusted.tm_hour += iDirection;	break;
+	case minute:	adjusted.tm_min += iDirection;	break;
+	case second:	adjusted.tm_sec += iDirection;	break;
+	case year:		adjusted.tm_year += iDirection;	break;
+	case month:		adjusted.tm_mon += iDirection;	break;
+	case day:		adjusted.tm_mday += iDirection;	break;
 	default:		ASSERT(0);
 	}
 
-	HOOKS->SetTime( now );
+	/* Normalize: */
+	iAdjusted = mktime( &adjusted );
+
+	m_TimeOffset = iAdjusted - iNow;
 
 	SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeValue") );
 }
@@ -190,6 +205,19 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 		ChangeSelection( -1 );
 	else if( m_Selection == NUM_SET_TIME_SELECTIONS -1 )	// last row
 	{
+		/* Save the new time. */
+		time_t iNow = time(NULL);
+		time_t iAdjusted = iNow + m_TimeOffset;
+
+		tm adjusted;
+		localtime_r( &iAdjusted, &adjusted );
+
+		HOOKS->SetTime( adjusted );
+
+		/* We're going to draw a little more while we transition out.  We've already
+		 * set the new time; don't over-adjust visually. */
+		m_TimeOffset = 0;
+
 		SOUND->PlayOnce( THEME->GetPathS("Common","start") );
 		StartTransitioning( SM_GoToNextScreen );
 	}
