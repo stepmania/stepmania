@@ -42,6 +42,10 @@ void RageSound_DSound::MixerThread()
 	while(!shutdown) {
 		Sleep(10);
 
+		/* SOUNDMAN will be set once RageSoundManager's ctor returns and
+		 * assigns it; we might get here before that happens, though. */
+		if(!SOUNDMAN) continue;
+
 		LockMutex L(SOUNDMAN->lock);
 		for(unsigned i = 0; i < stream_pool.size(); ++i)
 		{
@@ -93,7 +97,6 @@ void RageSound_DSound::stream::GetPCM(bool init)
 		last_cursor_pos = 0;
 	} else {
 		result = str_ds->GetCurrentPosition(&cursor, &junk);
-		int playcursor = cursor;
 		if ( result == DSERR_BUFFERLOST ) {
 			str_ds->Restore();
 			result = str_ds->GetCurrentPosition(&cursor, &junk);
