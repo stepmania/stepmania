@@ -218,7 +218,6 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	HoldNote& hn = m_HoldNotes[iHoldIndex];
 
 	int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
-	int iHoldEndIndex = BeatToNoteRow(hn.m_fEndBeat);
 
 	// delete a tap note at the start of this hold
 	m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '0';
@@ -730,7 +729,7 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 		case NOTE_TYPE_8TH:		fSnapInterval1 = 1/2.0f;	break;
 		case NOTE_TYPE_12TH:	fSnapInterval1 = 1/3.0f;	break;
 		case NOTE_TYPE_16TH:	fSnapInterval1 = 1/4.0f;	break;
-		default:	ASSERT( false );
+		default:	ASSERT( false );						return;
 	}
 
 	switch( nt2 )
@@ -740,7 +739,7 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 		case NOTE_TYPE_12TH:	fSnapInterval2 = 1/3.0f;	break;
 		case NOTE_TYPE_16TH:	fSnapInterval2 = 1/4.0f;	break;
 		case -1:				fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That's what we want!
-		default:	ASSERT( false );
+		default:	ASSERT( false );						return;
 	}
 
 	int iNoteIndexBegin = BeatToNoteRow( fBeginBeat );

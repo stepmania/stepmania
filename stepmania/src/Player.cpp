@@ -191,8 +191,6 @@ void Player::Update( float fDeltaTime )
 	// Check for TapNote misses
 	//
 	int iNumMisses = UpdateTapNotesMissedOlderThan( GAMESTATE->m_fSongBeat - GetMaxBeatDifference() );
-	if( iNumMisses > 0 )
-		int kjsdfsd = 0;
 
 	//
 	// update HoldNotes logic
@@ -203,7 +201,6 @@ void Player::Update( float fDeltaTime )
 		HoldNoteScore &hns = m_HoldNoteScores[i];
 		float &fLife = m_fHoldNoteLife[i];
 		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
-		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
 
 		m_NoteField.m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
 
@@ -463,7 +460,7 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 	m_Judgement.SetJudgement( score );
 
 	// zoom the judgement and combo like a heart beat
-	float fStartZoomX, fStartZoomY;
+	float fStartZoomX=0.f, fStartZoomY=0.f;
 	switch( score )
 	{
 	case TNS_PERFECT:	fStartZoomX = g_fJudgePerfectZoomX;	fStartZoomY = g_fJudgePerfectZoomY;	break;

@@ -70,10 +70,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-	{
 		throw RageException( "Failed to open %s.", sPath );
-		return false;
-	}
 
 	CString line;
 	while( file.ReadString(line) )	// foreach line
@@ -308,10 +305,7 @@ bool BMSLoader::LoadFromBMSDir( CString sDir, Song &out )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-	{
 		throw RageException( "Failed to open %s.", sPath );
-		return false;
-	}
 
 	CString line;
 	while( file.ReadString(line) )	// foreach line
@@ -448,10 +442,7 @@ bool BMSLoader::LoadFromBMSDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					CStdioFile file;	
 					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-					{
 						throw RageException( "Failed to open %s.", sPath );
-						return false;
-					}
 
 					CString line;
 					while( file.ReadString(line) )	// foreach line
