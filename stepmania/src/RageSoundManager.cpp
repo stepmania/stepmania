@@ -108,10 +108,6 @@ void RageSoundManager::Update(float delta)
 		delete *it;
 	g_DeletionMutex.Unlock();
 
-//	for(set<RageSound *>::iterator i = all_sounds.begin();
-//		i != all_sounds.end(); ++i)
-//		(*i)->Update(delta);
-
 	driver->Update(delta);
 }
 

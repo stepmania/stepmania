@@ -70,7 +70,7 @@ RageSound::RageSound():
 	playing_thread = 0;
 	databuf.reserve(internal_buffer_size);
 
-	/* Register ourself, so we have a unique ID and receive Update()s. */
+	/* Register ourself. */
 	ID = SOUNDMAN->RegisterSound( this );
 }
 
@@ -97,8 +97,7 @@ RageSound::RageSound(const RageSound &cpy):
 
 	*this = cpy;
 
-	/* Register ourself, so we receive Update()s.  We have a different ID than
-	 * our parent. */
+	/* Register ourself.  We have a different ID than our parent. */
 	ID = SOUNDMAN->RegisterSound( this );
 }
 
@@ -191,12 +190,6 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	m_Mutex.SetName( ssprintf("RageSound (%s)", Basename(sSoundFilePath).c_str() ) );
 
 	return true;
-}
-
-void RageSound::Update(float delta)
-{
-	/* Erase old pos_map data. */
-//	CleanPosMap( pos_map );
 }
 
 /* Return the number of bytes available in the input buffer. */

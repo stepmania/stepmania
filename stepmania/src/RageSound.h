@@ -182,7 +182,6 @@ public:
 	int GetPCM( char *buffer, int size, int64_t frameno );
 	bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes );
 	void CommitPlayingPosition( int64_t frameno, int pos, int got_bytes );
-	void Update(float delta);
 };
 
 #endif
