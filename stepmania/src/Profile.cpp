@@ -1842,11 +1842,11 @@ void Profile::HighScoreForASongAndSteps::LoadFromNode( const XNode* pNode )
 
 	ASSERT( pNode->name == "HighScoreForASongAndSteps" );
 	XNode* p;
-	if( p = pNode->GetChild("Song") )
+	if( (p = pNode->GetChild("Song")) )
 		songID.LoadFromNode( p );
-	if( p = pNode->GetChild("Steps") )
+	if( (p = pNode->GetChild("Steps")) )
 		stepsID.LoadFromNode( p );
-	if( p = pNode->GetChild("HighScore") )
+	if( (p = pNode->GetChild("HighScore")) )
 		hs.LoadFromNode( p );
 }
 
@@ -1918,9 +1918,9 @@ void Profile::HighScoreForACourse::LoadFromNode( const XNode* pNode )
 
 	ASSERT( pNode->name == "HighScoreForACourse" );
 	XNode* p;
-	if( p = pNode->GetChild("Course") )
+	if( (p = pNode->GetChild("Course")) )
 		courseID.LoadFromNode( p );
-	if( p = pNode->GetChild("HighScore") )
+	if( (p = pNode->GetChild("HighScore")) )
 		hs.LoadFromNode( p );
 }
 
