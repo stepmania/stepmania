@@ -42,7 +42,7 @@ void ActiveAttackList::Update( float fDelta )
 		const AttackArray& attacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
 		
 		// clear all lines, then add all active attacks
-		for( int i=0; i<attacks.size(); i++ )
+		for( unsigned i=0; i<attacks.size(); i++ )
 		{
 			const Attack& attack = attacks[i];
 
