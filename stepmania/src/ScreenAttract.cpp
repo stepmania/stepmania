@@ -24,7 +24,7 @@
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "SDL_utils.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 
 #define NEXT_SCREEN						THEME->GetMetric(m_sName,"NextScreen")
 
@@ -47,11 +47,11 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 	m_Out.Load( THEME->GetPathToB("ScreenAttract out") );
 	this->AddChild( &m_Out );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
 
 	m_soundStart.Load( THEME->GetPathToS("Common start") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS(m_sName + " music") );	// DO loop.  -Chris
+	SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
@@ -96,10 +96,10 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				// fall through
 			case COIN_HOME:
 			case COIN_FREE:
-				SOUNDMAN->StopMusic();
+				SOUND->StopMusic();
 				/* We already played the it was a coin was inserted.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
-					SOUNDMAN->PlayOnce( THEME->GetPathToS("Common coin") );
+					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
@@ -152,7 +152,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		/* But if you don't stop it, for screens that have their own unique
 		 * music, it will constantly loop even after the screen has gone on
 		 * to the next attract screen. -- Miryokuteki */
-		SOUNDMAN->PlayMusic( "" );
+		SOUND->PlayMusic( "" );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}

@@ -14,7 +14,7 @@
 #include "ScreenEz2SelectMusic.h"
 #include <math.h>
 #include "ScreenManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
@@ -84,7 +84,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 	if(PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3)
 	{
 		if(PREVIEWMUSICMODE == 1)
-			SOUNDMAN->StopMusic();
+			SOUND->StopMusic();
 		iConfirmSelection = 0;
 	}
 
@@ -206,7 +206,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 
 		MusicChanged();
 	}
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 }
 
 void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -224,7 +224,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START )
 	{
-		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 	}
@@ -356,7 +356,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			SOUNDMAN->StopMusic();
+			SOUND->StopMusic();
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
 		break;
@@ -379,7 +379,7 @@ void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 
 void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	m_Menu.Back( SM_GoToPrevScreen );
 }
@@ -491,7 +491,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 		m_ModeSwitcher.PrevMode(pn);
 		MusicChanged();
 		m_MusicBannerWheel.StopBouncing();
-		SOUNDMAN->StopMusic();
+		SOUND->StopMusic();
 		return;
 	}
 
@@ -507,7 +507,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 		iConfirmSelection = 0;
 		m_MusicBannerWheel.StopBouncing();
 		if(PREVIEWMUSICMODE == 1)
-			SOUNDMAN->StopMusic();
+			SOUND->StopMusic();
 	}
 
 	m_iSelection[pn]--;
@@ -528,7 +528,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 		m_ModeSwitcher.NextMode(pn);
 		MusicChanged();
 		m_MusicBannerWheel.StopBouncing();
-		SOUNDMAN->StopMusic();
+		SOUND->StopMusic();
 		return;
 	}
 
@@ -552,7 +552,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 
 		m_MusicBannerWheel.StopBouncing();
 		if(PREVIEWMUSICMODE == 1)
-			SOUNDMAN->StopMusic();
+			SOUND->StopMusic();
 	}
 
 	m_iSelection[pn]++;
@@ -600,7 +600,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 	{
 		iConfirmSelection = 0;
 		if(PREVIEWMUSICMODE == 1)
-			SOUNDMAN->StopMusic();
+			SOUND->StopMusic();
 	}
 
 	int pn;

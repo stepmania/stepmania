@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 #include "Notes.h"
 
@@ -54,7 +54,7 @@ ScreenEditMenu::ScreenEditMenu() : Screen("ScreenEditMenu")
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenEditMenu music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenEditMenu music") );
 }
 
 
@@ -156,8 +156,8 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	case EditMenu::ACTION_EDIT:
 		// Prepare prepare for ScreenEdit
 		ASSERT( pNotes );
-		SOUNDMAN->StopMusic();
-		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+		SOUND->StopMusic();
+		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case EditMenu::ACTION_DELETE:
@@ -177,7 +177,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from copy." );
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -195,7 +195,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from AutoGen." );
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -212,7 +212,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Blank Notes created." );
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -226,5 +226,5 @@ void ScreenEditMenu::MenuBack( PlayerNumber pn )
 {	
 	m_Menu.Back( SM_GoToPrevScreen );
 
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 }

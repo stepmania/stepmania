@@ -11,7 +11,7 @@ Andrew Livy
 #include "ScreenEz2SelectPlayer.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
@@ -94,9 +94,9 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer() : Screen("ScreenEz2SelectPlayer")
 
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectPlayer music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectPlayer music") );
 
 	TweenOnScreen();
 }
@@ -167,7 +167,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
-		SOUNDMAN->StopMusic();
+		SOUND->StopMusic();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
@@ -185,7 +185,7 @@ presses the button bound to back
 
 void ScreenEz2SelectPlayer::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->StopMusic();
+	SOUND->StopMusic();
 
 	m_Menu.Back( SM_GoToPrevScreen );
 }

@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "GameState.h"
 #include "InputMapper.h"
 #include "RageLog.h"
@@ -335,7 +335,7 @@ bool ScreenEdit::PlayTicks() const
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
 
 	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+(float)TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
+	fPositionSeconds += (SOUND->GetPlayLatency()+(float)TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
 	float fSongBeat=GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -354,8 +354,8 @@ bool ScreenEdit::PlayTicks() const
 
 void ScreenEdit::PlayPreviewMusic()
 {
-	SOUNDMAN->PlayMusic("");
-	SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
+	SOUND->PlayMusic("");
+	SOUND->PlayMusic( m_pSong->GetMusicPath(), false,
 		m_pSong->m_fMusicSampleStartSeconds,
 		m_pSong->m_fMusicSampleLengthSeconds,
 		1.5f );
@@ -1252,7 +1252,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				GAMESTATE->m_pCurSong->Save();
 
 				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-				SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEdit save") );
+				SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit save") );
 			}
 			break;
 		case player_options:
@@ -1459,7 +1459,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			{
 				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
 
-				SOUNDMAN->PlayMusic("");
+				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_PLAYING;
 
@@ -1484,7 +1484,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			{
 				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
 
-				SOUNDMAN->PlayMusic("");
+				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_RECORDING;
 
@@ -1612,7 +1612,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 		change.m_sBGName = "";
 		break;
 	default:
-		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common invalid") );
+		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
 	};
 
 	change.m_fRate = (float)atof( g_BGChange.rows[rate].choices[iAnswers[rate]] )/100.f;

@@ -23,7 +23,7 @@
 #include "GameState.h"
 #include "GrooveRadar.h"
 #include "ThemeManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ActorUtil.h"
 #include "RageTimer.h"
 #include "UnlockSystem.h"
@@ -681,13 +681,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		this->AddChild( &m_sprTryExtraStage );
 
 		if( GAMESTATE->IsExtraStage() )
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra2") );
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra2") );
 		else
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra1") );
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra1") );
 	}
 	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}
 	else
 	{	
@@ -701,19 +701,19 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				{
 					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
 					if( bWon )
-						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
+						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
 					else
-						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation lose") );
+						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation lose") );
 				}
 				break;
 			default:
-				SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(max_grade)) );
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(max_grade)) );
 				break;
 			}
 			break;
 		case course:
 		case summary:
-			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToString(max_grade)) );
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToString(max_grade)) );
 			break;
 		default:
 			ASSERT(0);
@@ -730,7 +730,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	}
 
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
 	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
 }
 
@@ -915,7 +915,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
 		break;
 	case SM_PlayCheer:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 		break;
 	}
 }

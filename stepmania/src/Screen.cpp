@@ -17,7 +17,7 @@
 #include "RageSound.h"
 #include "ThemeManager.h"
 #include "ScreenManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 
 Screen::Screen( CString sName )
 {
@@ -204,7 +204,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 
 		SCREENMAN->RefreshCreditsMessages();
 
-		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 
 		return true;
 	}

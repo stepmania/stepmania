@@ -16,7 +16,7 @@
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 
 
@@ -52,7 +52,7 @@ ScreenCaution::ScreenCaution() : Screen( "ScreenCaution" )
 
 	this->PostScreenMessage( SM_StartClosing, m_Background.GetLengthSeconds()-m_Out.GetLengthSeconds() );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenCaution music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenCaution music") );
 }
 
 
@@ -77,7 +77,7 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_DoneOpening:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("caution") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("caution") );
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -103,6 +103,6 @@ void ScreenCaution::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common back") );
+	SOUND->PlayOnce( THEME->GetPathToS("Common back") );
 }
 

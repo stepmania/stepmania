@@ -13,7 +13,7 @@
 
 #include "ScreenCredits.h"
 #include "ScreenManager.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
@@ -238,9 +238,9 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 
 	this->PostScreenMessage( SM_BeginFadingOut, m_ScrollerTexts.GetTotalSecsToScroll() );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenCredits music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenCredits music") );
 }
 
 ScreenCredits::~ScreenCredits()

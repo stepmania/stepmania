@@ -12,7 +12,7 @@
 
 #include "ScreenAutogenOptions.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -45,7 +45,7 @@ ScreenAutogenOptions::ScreenAutogenOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenAutogenOptions music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenAutogenOptions music") );
 }
 
 void ScreenAutogenOptions::ImportOptions()

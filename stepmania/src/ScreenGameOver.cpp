@@ -14,7 +14,7 @@
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageSoundManager.h"
+#include "RageSounds.h"
 #include "ThemeManager.h"
 
 
@@ -38,7 +38,7 @@ ScreenGameOver::ScreenGameOver() : Screen("ScreenGameOver")
 	m_Out.Load( THEME->GetPathToB("ScreenGameOver out") );
 	this->AddChild( &m_Out );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenGameOver music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenGameOver music") );
 
 	m_In.StartTransitioning( SM_PlayAnnouncer );
 	this->PostScreenMessage( SM_StartFadingOut, m_Background.GetLengthSeconds() );
@@ -50,7 +50,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PlayAnnouncer:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("game over") );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("game over") );
 		break;
 	case SM_StartFadingOut:
 		m_Out.StartTransitioning( SM_GoToNextScreen );
