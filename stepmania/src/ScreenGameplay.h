@@ -155,7 +155,6 @@ private:
 
 
 	RageSoundStream	m_soundMusic;
-
 };
 
 
