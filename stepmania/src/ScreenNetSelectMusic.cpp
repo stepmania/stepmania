@@ -632,7 +632,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_sprSelOptions );
 
-	for ( int i=0; i<m_textUsers.size(); i++ )
+	for( unsigned i=0; i<m_textUsers.size(); i++ )
 		OFF_COMMAND( m_textUsers[i] );
 
 	OFF_COMMAND( m_rectUsersBG );
@@ -789,14 +789,14 @@ void ScreenNetSelectMusic::UpdateUsers()
 	float tX = USERS_X - USERSDELT_X;
 	float tY = USERS_Y;
 
-	for ( int i=0; i< m_textUsers.size(); i++)
+	for( unsigned i=0; i< m_textUsers.size(); i++)
 		this->RemoveChild( &m_textUsers[i] );
 
 	m_textUsers.clear();
 
 	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
 
-	for ( int i=0; i < NSMAN->m_ActivePlayer.size(); i++)
+	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
 	{
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 		m_textUsers[i].SetHorizAlign( align_center );
