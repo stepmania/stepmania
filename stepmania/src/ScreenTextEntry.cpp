@@ -40,12 +40,11 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  * Handle UTF-8.  Right now, we need to at least be able to backspace
  * a whole UTF-8 character.  Better would be to operate in longchars.
  */
-ScreenTextEntry::ScreenTextEntry( CString sClassName, ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
+ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
   Screen( sClassName )
 {
 	m_bIsTransparent = true;	// draw screens below us
 
-	m_SMSendWhenDone = SM_SendWhenDone;
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;
 
@@ -179,7 +178,7 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneOpeningWipingLeft:
 		break;
 	case SM_DoneOpeningWipingRight:
-		SCREENMAN->PopTopScreen( m_SMSendWhenDone );
+		SCREENMAN->PopTopScreen();
 		break;
 	}
 }

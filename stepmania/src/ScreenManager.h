@@ -67,7 +67,7 @@ private:
 	ScreenSystemLayer *m_SystemLayer;
 
 	Screen* MakeNewScreen( CString sClassName );
-	void SetNewScreen( Screen *pNewScreen );
+	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
 	CString m_DelayedScreen;
 };
 

@@ -371,21 +371,6 @@ void ScreenManager::EmptyDeleteQueue()
 	TEXTUREMAN->DiagnosticOutput();
 }
 
-/* XXX: Big hack:
- * All screens must receive at least one update before they draw.
- * However, no screen should ever receive an update until it's ready
- * to be drawn; otherwise Gameplay will queue music to start even though
- * Stage might still be delaying for a while, throwing off timing.
- *
- * This is tricky with prepped screens.  We can't do an Update(0) in 
- * LoadPreppedScreen, since that'll cause the delete queue to be cleared
- * while the screen is on the stack, and possibly other odd things.
- * So, update before we draw, which is also a hack (rendering shouldn't
- * change state!).  Only do this when we have to, so we don't double
- * the number of updates. */
-static bool g_TopNeedsNeedsNullUpdate = false;
-static bool g_SkipRendering = false;
-
 void ScreenManager::Update( float fDeltaTime )
 {
 	// Only update the topmost screen on the stack.
@@ -402,9 +387,6 @@ void ScreenManager::Update( float fDeltaTime )
 	 * to load the new screen will come after 4 seconds plus the load time.
 	 *
 	 * So, let's just zero the first update for every screen.
-	 *
-	 * XXX:  If a new Screen is set during this Update, that new screen is Drawn
-	 * before its first Update.
 	 */
 	ASSERT( !m_ScreenStack.empty() || m_DelayedScreen != "" );	// Why play the game if there is nothing showing?
 
@@ -434,31 +416,20 @@ void ScreenManager::Update( float fDeltaTime )
 		TEXTUREMAN->DiagnosticOutput();
 
 		LoadDelayedScreen();
-
-		/* Ack.  We can't Update(0), since we want to skip the *next* update
-		 * (which is the one that will have all this load time in it).  We
-		 * can't draw it until we've updated it.  Let's simply not render
-		 * the next frame, so we'll come around quickly and handle it correctly. */
-		g_SkipRendering = true;
 	}
 }
 
 
 void ScreenManager::Draw()
 {
-	DISPLAY->BeginFrame();
-
-	if(g_SkipRendering)
-	{
-		/* Leave the frame there (if any). */
-		g_SkipRendering = false;
+	/* If it hasn't been updated yet, skip the render.  We can't call Update(0), since
+	 * that'll confuse the "zero out the next update after loading a screen logic.
+	 * If we don't render, don't call BeginFrame or EndFrame.  That way, we won't
+	 * clear the buffer, and we won't wait for vsync. */
+	if( m_ScreenStack.back()->IsFirstUpdate() )
 		return;
-	}
-	if(g_TopNeedsNeedsNullUpdate)
-	{
-		g_TopNeedsNeedsNullUpdate = false;
-		m_ScreenStack.back()->Update( 0 );
-	}
+
+	DISPLAY->BeginFrame();
 
 	if( !m_ScreenStack.empty() && !m_ScreenStack.back()->IsTransparent() )	// top screen isn't transparent
 		m_ScreenStack.back()->Draw();
@@ -485,7 +456,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
 	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
-	 * screens turn this off in their ctor if they handle timers themselves (gameplay, edit). */
+	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). */
 	SOUND->HandleSongTimer( true );
 
 	/* Cleanup song data.  This can free up a fair bit of memory, so do it before
@@ -512,11 +483,7 @@ void ScreenManager::PrepNewScreen( CString sClassName )
 void ScreenManager::LoadPreppedScreen()
 {
 	ASSERT( m_ScreenBuffered != NULL);
-	SetNewScreen( m_ScreenBuffered  );
-	
-	// Need to update the new screen once, or else it will be 
-	// drawn before ever being Update()d.
-	g_TopNeedsNeedsNullUpdate = true;
+	SetFromNewScreen( m_ScreenBuffered, false  );
 	
 	m_ScreenBuffered = NULL;
 }
@@ -527,20 +494,22 @@ void ScreenManager::DeletePreppedScreen()
 	TEXTUREMAN->DeleteCachedTextures();
 }
 
-void ScreenManager::SetNewScreen( Screen *pNewScreen )
+/* Add a screen to m_ScreenStack.  If Stack is true, it's added to the stack; otherwise any
+ * current screens are removed.  This is the only function that adds to m_ScreenStack. */
+void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 {
 	RefreshCreditsMessages();
 	THEME->ReloadMetricsIfNecessary();
 
-	// move current screen(s) to ScreenToDelete
-	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
-	m_ScreenStack.clear();
+	if( !Stack )
+	{
+		// move current screen(s) to ScreenToDelete
+		m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
+		m_ScreenStack.clear();
+	}
 
 	m_ScreenStack.push_back( pNewScreen );
 	
-	/* Make sure we always send at least one update before drawing. */
-	pNewScreen->Update( 0 );
-
 	PostMessageToTopScreen( SM_GainFocus, 0 );
 }
 
@@ -608,7 +577,8 @@ retry:
 	else 
 		GAMESTATE->m_bIsOnSystemMenu = false;
 
-	SetNewScreen( pNewScreen );
+	LOG->Trace("... SetFromNewScreen");
+	SetFromNewScreen( pNewScreen, false );
 }
 
 void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop )
@@ -619,7 +589,7 @@ void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage message
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	Screen* pNewScreen = MakeNewScreen(sClassName);
-	m_ScreenStack.push_back( pNewScreen );
+	SetFromNewScreen( pNewScreen, true );
 	m_MessageSendOnPop = messageSendOnPop;
 }
 
@@ -633,16 +603,22 @@ void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	m_ScreenStack.push_back( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo, pCallbackData) );
+	Screen *pNewScreen = new ScreenPrompt( sText, bYesNo, bDefaultAnswer, OnYes, OnNo, pCallbackData);
+	SetFromNewScreen( pNewScreen, true );
+
+	m_MessageSendOnPop = SM_SendWhenDone;
 }
 
-void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
+void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() )
 {	
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	m_ScreenStack.push_back( new ScreenTextEntry("ScreenTextEntry", SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
+	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, OnOK, OnCancel );
+	SetFromNewScreen( pNewScreen, true );
+
+	m_MessageSendOnPop = SM_SendWhenDone;
 }
 
 void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
@@ -651,7 +627,8 @@ void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessa
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	m_ScreenStack.push_back( new ScreenMiniMenu(pDef, SM_SendOnOK, SM_SendOnCancel) );
+	Screen *pNewScreen = new ScreenMiniMenu( pDef, SM_SendOnOK, SM_SendOnCancel );
+	SetFromNewScreen( pNewScreen, true );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )

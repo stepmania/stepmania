@@ -22,7 +22,7 @@
 class ScreenTextEntry : public Screen
 {
 public:
-	ScreenTextEntry( CString sName, ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
+	ScreenTextEntry( CString sName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -45,7 +45,6 @@ protected:
 	Quad			m_rectAnswerBox;
 	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
-	ScreenMessage	m_SMSendWhenDone;
 	void(*m_pOnOK)( CString sAnswer );
 	void(*m_pOnCancel)();
 	bool			m_bCancelled;

@@ -27,12 +27,11 @@ const float PROMPT_Y	=	CENTER_Y + 120;
 
 bool ScreenPrompt::s_bLastAnswer = false;
 
-ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData ) :
+ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData ) :
   Screen("ScreenPrompt")
 {
 	m_bIsTransparent = true;	// draw screens below us
 
-	m_SMSendWhenDone = SM_SendWhenDone;
 	m_bYesNoPrompt = bYesNoPrompt;
 	m_bAnswer = bDefaultAnswer;
 	m_pOnYes = OnYes;
@@ -128,7 +127,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneOpeningWipingLeft:
 		break;
 	case SM_DoneOpeningWipingRight:
-		SCREENMAN->PopTopScreen( m_SMSendWhenDone );
+		SCREENMAN->PopTopScreen();
 		break;
 	}
 }
