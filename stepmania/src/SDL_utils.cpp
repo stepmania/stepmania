@@ -499,7 +499,7 @@ bool SDL_GetEvent(SDL_Event &event, int mask)
 	{
 	case 1: return true;
 	case 0: return false;
-	case -1: RageException::Throw("SDL_PeepEvents returned unexpected error: %s", SDL_GetError());
+	default: RageException::Throw("SDL_PeepEvents returned unexpected error: %s", SDL_GetError());
 	}
 }
 
