@@ -667,6 +667,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		 * both l or r, and one or two l/r and t. */
 		ttab.push_back(TitleTrans("^Sana Mo((ll?)|(rr?))et(t?)e Ne Ente", "", "", 
 			"&ksa;&kna;&kdot;&kmo;&kre;&kq;&kte;&kdot;&kne;&kdot;&ke;&kn;&kte;", "", ""));
+		ttab.push_back(TitleTrans("^Freckles$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 		ttab.push_back(TitleTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 
 		/* 夜空ノムコウ */
@@ -679,7 +680,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		ttab.push_back(TitleTrans("^Mobo Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
 
 		/* XXX whiteheart or blackheart? Is this supposed to be capped? */
-		ttab.push_back(TitleTrans("^Love Shine$", "", "", "Love &whiteheart; Shine", "", "") );
+		ttab.push_back(TitleTrans("^Love (Love )?Shine$", "", "", "Love &whiteheart; Shine", "", "") );
 
 		/* ロマンスの神様 */
 		ttab.push_back(TitleTrans("^God of Romance$", "", "", "&kro;&kma;&kn;&ksu;&hno;&kami;&sama;", "", "") );
