@@ -1,5 +1,5 @@
 BUILD
-The build process has been revised again.
+The build process has been revised yet again.
 1. Download StepMania from sourceforge.
 2. Install StepMania and the libraries using the included installer
 3. Install ffmpeg by running the following commands from the terminal:
@@ -19,7 +19,7 @@ libavcodec/common.h libavformat/rtp.h libavformat/rtsp.h \
 libavformat/rtspcodes.h /usr/local/include/ffmpeg
 exit
 4. Cd to the PBProject directory enter: $ touch ver.cpp
-5. Build StepMania by running `pbxbuild' in the PBProject directory.
+5. Build StepMania by running `xcodebuild' in the PBProject directory.
 
 Steve Checkoway
 steve@cs.washington.edu
