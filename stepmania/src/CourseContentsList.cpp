@@ -46,7 +46,11 @@ CourseContentsList::CourseContentsList()
 
 void CourseContentsList::SetFromCourse( Course* pCourse )
 {
-	ASSERT( pCourse != NULL );
+	if( pCourse == NULL )
+	{
+		m_iNumContents = 0;
+		return;
+	}
 
 	m_iNumContents = 0; 
 
