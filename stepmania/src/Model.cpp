@@ -51,6 +51,8 @@ void Model::Clear ()
 	m_pCurAnimation = NULL;
 }
 
+#define THROW RageException::Throw( "Parse at line %d: '%s'", sLine.c_str() );
+
 bool Model::LoadMilkshapeAscii( CString sPath )
 {
 	FixSlashesInPlace(sPath);
@@ -62,51 +64,47 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 	Clear ();
 
-    bool bError = false;
-	CString szLine;
+	CString sLine;
+	int iLineNum = 0;
     char szName[MS_MAX_NAME];
     int nFlags, nIndex, i, j;
 
 	RageVec3ClearBounds( m_vMins, m_vMaxs );
 
-    while( f.GetLine( szLine ) > 0 && !bError )
+    while( f.GetLine( sLine ) > 0 )
     {
-        if (!strncmp (szLine, "//", 2))
+		iLineNum++;
+
+        if (!strncmp (sLine, "//", 2))
             continue;
 
         int nFrame;
-        if (sscanf (szLine, "Frames: %d", &nFrame) == 1)
+        if (sscanf (sLine, "Frames: %d", &nFrame) == 1)
         {
 			// ignore
 			// m_pModel->nTotalFrames = nFrame;
         }
-        if (sscanf (szLine, "Frame: %d", &nFrame) == 1)
+        if (sscanf (sLine, "Frame: %d", &nFrame) == 1)
         {
 			// ignore
 			// m_pModel->nFrame = nFrame;
         }
 
         int nNumMeshes = 0;
-        if (sscanf (szLine, "Meshes: %d", &nNumMeshes) == 1)
+        if (sscanf (sLine, "Meshes: %d", &nNumMeshes) == 1)
         {
             m_Meshes.resize( nNumMeshes );
 
-            for (i = 0; i < nNumMeshes && !bError; i++)
+            for (i = 0; i < nNumMeshes; i++)
             {
 				msMesh& mesh = m_Meshes[i];
 
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
 
                 // mesh: name, flags, material index
-                if (sscanf (szLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3)
+					THROW
 
                 strcpy( mesh.szName, szName );
 //                mesh.nFlags = nFlags;
@@ -115,40 +113,30 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 //
                 // vertices
                 //
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
 
                 int nNumVertices = 0;
-                if (sscanf (szLine, "%d", &nNumVertices) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%d", &nNumVertices) != 1)
+					THROW
 
 				mesh.Vertices.resize( nNumVertices );
 
                 for (j = 0; j < nNumVertices; j++)
                 {
-				    if( f.GetLine( szLine ) <= 0 )
-                    {
-                        bError = true;
-                        break;
-                    }
+				    if( f.GetLine( sLine ) <= 0 )
+						THROW
 
                     RageVector3 Vertex;
                     RageVector2 uv;
-                    if (sscanf (szLine, "%d %f %f %f %f %f %d",
+                    if (sscanf (sLine, "%d %f %f %f %f %f %d",
                         &nFlags,
                         &Vertex[0], &Vertex[1], &Vertex[2],
                         &uv[0], &uv[1],
                         &nIndex
                         ) != 7)
                     {
-                        bError = true;
-                        break;
+						THROW
                     }
 
 					msVertex& vertex = mesh.Vertices[j];
@@ -164,35 +152,23 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 //
                 // normals
                 //
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
 
                 int nNumNormals = 0;
-                if (sscanf (szLine, "%d", &nNumNormals) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%d", &nNumNormals) != 1)
+					THROW
                 
 				vector<RageVector3> Normals;
 				Normals.resize( nNumNormals );
                 for (j = 0; j < nNumNormals; j++)
                 {
-				    if( f.GetLine( szLine ) <= 0 )
-                    {
-                        bError = true;
-                        break;
-                    }
+				    if( f.GetLine( sLine ) <= 0 )
+						THROW
 
                     RageVector3 Normal;
-                    if (sscanf (szLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3)
-                    {
-                        bError = true;
-                        break;
-                    }
+                    if (sscanf (sLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3)
+						THROW
 
 					RageVec3Normalize( (RageVector3*)&Normal, (RageVector3*)&Normal );
                     Normals[j] = Normal;
@@ -203,40 +179,30 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 //
                 // triangles
                 //
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
 
                 int nNumTriangles = 0;
-                if (sscanf (szLine, "%d", &nNumTriangles) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%d", &nNumTriangles) != 1)
+					THROW
 
 				mesh.Triangles.resize( nNumTriangles );
 
                 for (j = 0; j < nNumTriangles; j++)
                 {
-				    if( f.GetLine( szLine ) <= 0 )
-                    {
-                        bError = true;
-                        break;
-                    }
+				    if( f.GetLine( sLine ) <= 0 )
+						THROW
 
                     word nIndices[3];
                     word nNormalIndices[3];
-                    if (sscanf (szLine, "%d %hd %hd %hd %hd %hd %hd %d",
+                    if (sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
                         &nFlags,
                         &nIndices[0], &nIndices[1], &nIndices[2],
                         &nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
                         &nIndex
                         ) != 8)
                     {
-                        bError = true;
-                        break;
+						THROW
                     }
 
 					// deflate the normals into vertices
@@ -260,124 +226,79 @@ bool Model::LoadMilkshapeAscii( CString sPath )
         // materials
         //
         int nNumMaterials = 0;
-        if (sscanf (szLine, "Materials: %d", &nNumMaterials) == 1)
+        if (sscanf (sLine, "Materials: %d", &nNumMaterials) == 1)
         {
             m_Materials.resize( nNumMaterials );
       
 			int i;
             char szName[256];
 
-            for (i = 0; i < nNumMaterials && !bError; i++)
+            for (i = 0; i < nNumMaterials; i++)
             {
 				msMaterial& Material = m_Materials[i];
 
                 // name
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
-                if (sscanf (szLine, "\"%[^\"]\"", szName) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
+                if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
+					THROW
                 strcpy( Material.szName, szName );
 
 				Material.bSphereMapped = ((CString)Material.szName).Find("sphere") != -1;
 
                 // ambient
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 RageVector4 Ambient;
-                if (sscanf (szLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4)
+					THROW
                 memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
                 // diffuse
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 RageVector4 Diffuse;
-                if (sscanf (szLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4)
+					THROW
                 memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
                 // specular
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 RageVector4 Specular;
-                if (sscanf (szLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4)
+					THROW
                 memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
                 // emissive
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 RageVector4 Emissive;
-                if (sscanf (szLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4)
+					THROW
                 memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
                 // shininess
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 float fShininess;
-                if (sscanf (szLine, "%f", &fShininess) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%f", &fShininess) != 1)
+					THROW
                 Material.fShininess = fShininess;
 
                 // transparency
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 float fTransparency;
-                if (sscanf (szLine, "%f", &fTransparency) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%f", &fTransparency) != 1)
+					THROW
                 Material.fTransparency = fTransparency;
 
                 // diffuse texture
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 strcpy (szName, "");
-                sscanf (szLine, "\"%[^\"]\"", szName);
+                sscanf (sLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szDiffuseTexture, szName );
 
 				if( strcmp(Material.szDiffuseTexture, "")!=0 )
@@ -395,13 +316,10 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 				}
 
                 // alpha texture
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW
                 strcpy (szName, "");
-                sscanf (szLine, "\"%[^\"]\"", szName);
+                sscanf (sLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szAlphaTexture, szName );
             }
         }
@@ -431,20 +349,22 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	if ( !f.Open(sPath) )
 		RageException::Throw( "Model:: Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-    bool bError = false;
-	CString szLine;
+	CString sLine;
+	int iLineNum = 0;
     int nFlags, j;
 
-    while( f.GetLine( szLine ) > 0 && !bError )
+    while( f.GetLine( sLine ) > 0 )
     {
-        if (!strncmp (szLine, "//", 2))
+		iLineNum++;
+
+        if (!strncmp (sLine, "//", 2))
             continue;
 
         //
         // bones
         //
         int nNumBones = 0;
-        if (sscanf (szLine, "Bones: %d", &nNumBones) == 1)
+        if (sscanf (sLine, "Bones: %d", &nNumBones) == 1)
         {
 			m_mapNameToAnimation[sAniName] = msAnimation();
 			msAnimation &Animation = m_mapNameToAnimation[sAniName];
@@ -454,48 +374,41 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
             Animation.Bones.resize( nNumBones );
 
-            for (i = 0; i < nNumBones && !bError; i++)
+            for (i = 0; i < nNumBones; i++)
             {
 				msBone& Bone = Animation.Bones[i];
 
                 // name
-			    if( f.GetLine( szLine ) <= 0 )
+			    if( f.GetLine( sLine ) <= 0 )
                 {
-                    bError = true;
-                    break;
+					THROW;
                 }
-                if (sscanf (szLine, "\"%[^\"]\"", szName) != 1)
+                if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
                 {
-                    bError = true;
-                    break;
+					THROW;
                 }
                 strcpy( Bone.szName, szName );
 
                 // parent
-			    if( f.GetLine( szLine ) <= 0 )
+			    if( f.GetLine( sLine ) <= 0 )
                 {
-                    bError = true;
-                    break;
+					THROW;
                 }
                 strcpy (szName, "");
-                sscanf (szLine, "\"%[^\"]\"", szName);
+                sscanf (sLine, "\"%[^\"]\"", szName);
 
                 strcpy( Bone.szParentName, szName );
 
                 // flags, position, rotation
                 RageVector3 Position, Rotation;
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
-                if (sscanf (szLine, "%d %f %f %f %f %f %f",
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW;
+                if (sscanf (sLine, "%d %f %f %f %f %f %f",
                     &nFlags,
                     &Position[0], &Position[1], &Position[2],
                     &Rotation[0], &Rotation[1], &Rotation[2]) != 7)
                 {
-                    bError = true;
-                    break;
+					THROW;
                 }
                 Bone.nFlags = nFlags;
                 memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
@@ -504,32 +417,20 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 float fTime;
 
                 // position key count
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW;
                 int nNumPositionKeys = 0;
-                if (sscanf (szLine, "%d", &nNumPositionKeys) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%d", &nNumPositionKeys) != 1)
+					THROW;
 
                 Bone.PositionKeys.resize( nNumPositionKeys );
 
                 for (j = 0; j < nNumPositionKeys; j++)
                 {
-				    if( f.GetLine( szLine ) <= 0 )
-                    {
-                        bError = true;
-                        break;
-                    }
-                    if (sscanf (szLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
-                    {
-                        bError = true;
-                        break;
-                    }
+				    if( f.GetLine( sLine ) <= 0 )
+						THROW;
+                    if (sscanf (sLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
+						THROW;
 
 					msPositionKey key;
 					key.fTime = fTime;
@@ -538,32 +439,20 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 }
 
                 // rotation key count
-			    if( f.GetLine( szLine ) <= 0 )
-                {
-                    bError = true;
-                    break;
-                }
+			    if( f.GetLine( sLine ) <= 0 )
+					THROW;
                 int nNumRotationKeys = 0;
-                if (sscanf (szLine, "%d", &nNumRotationKeys) != 1)
-                {
-                    bError = true;
-                    break;
-                }
+                if (sscanf (sLine, "%d", &nNumRotationKeys) != 1)
+					THROW;
 
                 Bone.RotationKeys.resize( nNumRotationKeys );
 
                 for (j = 0; j < nNumRotationKeys; j++)
                 {
-				    if( f.GetLine( szLine ) <= 0 )
-                    {
-                        bError = true;
-                        break;
-                    }
-                    if (sscanf (szLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
-                    {
-                        bError = true;
-                        break;
-                    }
+				    if( f.GetLine( sLine ) <= 0 )
+						THROW;
+                    if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
+						THROW;
 
 					msRotationKey key;
 					key.fTime = fTime;
