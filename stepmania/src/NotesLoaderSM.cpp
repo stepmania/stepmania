@@ -428,6 +428,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath )
 			LoadFromSMTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
 				*pNewNotes);
+			/* XXX: set m_LoadedFromProfile, force m_Difficulty == DIFFICULTY_EDIT */
 		}
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
