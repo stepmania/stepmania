@@ -61,31 +61,6 @@ private:
 };
 
 
-//! A filter that checks messages on two channels for equality
-class EqualityComparisonFilter : public Unflushable<Multichannel<Filter> >
-{
-public:
-	struct MismatchDetected : public Exception {MismatchDetected() : Exception(DATA_INTEGRITY_CHECK_FAILED, "EqualityComparisonFilter: did not receive the same data on two channels") {}};
-
-	/*! if throwIfNotEqual is false, this filter will output a '\0' byte when it detects a mismatch, '\1' otherwise */
-	EqualityComparisonFilter(BufferedTransformation *attachment=NULL, bool throwIfNotEqual=true, const std::string &firstChannel="0", const std::string &secondChannel="1")
-		: Unflushable<Multichannel<Filter> >(attachment), m_throwIfNotEqual(throwIfNotEqual), m_mismatchDetected(false)
-		, m_firstChannel(firstChannel), m_secondChannel(secondChannel) {}
-
-	unsigned int ChannelPut2(const std::string &channel, const byte *begin, unsigned int length, int messageEnd, bool blocking);
-
-	void ChannelInitialize(const std::string &channel, const NameValuePairs &parameters=g_nullNameValuePairs, int propagation=-1);
-	bool ChannelMessageSeriesEnd(const std::string &channel, int propagation=-1, bool blocking=true);
-
-private:
-	unsigned int MapChannel(const std::string &channel) const;
-	bool HandleMismatchDetected(bool blocking);
-
-	bool m_throwIfNotEqual, m_mismatchDetected;
-	std::string m_firstChannel, m_secondChannel;
-	MessageQueue m_q[2];
-};
-
 NAMESPACE_END
 
 NAMESPACE_BEGIN(std)
