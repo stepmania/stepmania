@@ -74,7 +74,6 @@ private:
 
 	Screen* MakeNewScreen( const CString &sName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
-	CString m_DelayedScreen;
 	void ClearScreenStack();
 	void EmptyDeleteQueue();
 	void LoadDelayedScreen();

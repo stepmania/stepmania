@@ -137,7 +137,7 @@ void ScreenManager::Update( float fDeltaTime )
 	 *
 	 * So, let's just zero the first update for every screen.
 	 */
-	ASSERT( !m_ScreenStack.empty() || m_DelayedScreen != "" );	// Why play the game if there is nothing showing?
+	ASSERT( !m_ScreenStack.empty() || m_sDelayedScreen != "" );	// Why play the game if there is nothing showing?
 
 	m_pSharedBGA->Update( fDeltaTime );
 
@@ -154,7 +154,7 @@ void ScreenManager::Update( float fDeltaTime )
 	
 	EmptyDeleteQueue();
 
-	if(m_DelayedScreen.size() != 0)
+	if(m_sDelayedScreen.size() != 0)
 	{
 		/* We have a screen to display.  Delete the current screens and load it. */
 		ClearScreenStack();
@@ -346,7 +346,7 @@ retry:
 		return;
 	}
 
-	if( PREFSMAN->m_bDelayedScreenLoad && m_DelayedScreen != "" )
+	if( PREFSMAN->m_bDelayedScreenLoad && m_sDelayedScreen != "" )
 	{
 		/* Same deal: the ctor called SetNewScreen again.  Delete the screen
 		 * we just made, but don't delay again. */
