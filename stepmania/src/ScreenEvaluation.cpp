@@ -850,6 +850,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		break;
 	}
 
+	this->SortByZ();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
 	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
