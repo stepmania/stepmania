@@ -129,7 +129,7 @@ CString SecondsToMMSSMsMs( float fSecs )
 
 CString PrettyPercent( float fNumerator, float fDenominator)
 {
-	return ssprintf("%0.2f%%",(float)fNumerator/(float)fDenominator*100);
+	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
 }
 
 CString Commify( int iNum ) 

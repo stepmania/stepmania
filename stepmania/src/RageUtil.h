@@ -141,6 +141,7 @@ float HHMMSSToSeconds( const CString &sHMS );
 CString SecondsToHHMMSS( float fSecs );
 CString SecondsToMMSSMsMs( float fSecs );
 CString PrettyPercent( float fNumerator, float fDenominator );
+CString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
 CString Commify( int iNum );
 
 
