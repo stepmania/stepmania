@@ -9,7 +9,7 @@
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
-#include "ActorUtil.h"	// for HandleParams
+#include "ActorUtil.h"	// for BeginHandleParams
 
 /* XXX:
  * We need some kind of font modifier string for metrics.  For example,
@@ -516,7 +516,7 @@ void BitmapText::SetVertAlign( VertAlign va )
 
 void BitmapText::HandleCommand( const ParsedCommand &command )
 {
-	HandleParams;
+	BeginHandleParams;
 
 	const CString& sName = sParam(0);
 
@@ -530,7 +530,7 @@ void BitmapText::HandleCommand( const ParsedCommand &command )
 		return;
 	}
 
-	CheckHandledParams;
+	EndHandleParams;
 }
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )

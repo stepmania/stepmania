@@ -257,7 +257,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		{
 			ParsedCommand& command = vCommands[part];
 
-			HandleParams;
+			BeginHandleParams;
 
 			const CString name = sParam(0);
 
@@ -282,7 +282,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
 
-			CheckHandledParams;
+			EndHandleParams;
 		}
 
 		// TRICKY:  Insert a down arrow as the first choice in the row.

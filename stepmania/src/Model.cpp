@@ -721,7 +721,7 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 
 void Model::HandleCommand( const ParsedCommand &command )
 {
-	HandleParams;
+	BeginHandleParams;
 
 	const CString& sName = sParam(0);
 	if( sName=="play" )
@@ -732,7 +732,7 @@ void Model::HandleCommand( const ParsedCommand &command )
 		return;
 	}
 
-	CheckHandledParams;
+	EndHandleParams;
 }
 
 /*

@@ -632,7 +632,7 @@ void Actor::Command( const CString &sCommands )
 
 void Actor::HandleCommand( const ParsedCommand &command )
 {
-	HandleParams;
+	BeginHandleParams;
 
 	const CString& sName = sParam(0);
 
@@ -744,7 +744,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 
 	/* These are commands intended for a Sprite commands, but they will get 
 	 * sent to all sub-actors (which aren't necessarily Sprites) on 
-	 * GainFocus and LoseFocus.  So, don't run CheckHandledParams 
+	 * GainFocus and LoseFocus.  So, don't run EndHandleParams 
 	 * on these commands. */
 	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
 		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" ||
@@ -757,7 +757,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 		Dialog::OK( sError );
 	}
 
-	CheckHandledParams;
+	EndHandleParams;
 }
 
 float Actor::GetCommandLengthSeconds( const CString &sCommands )

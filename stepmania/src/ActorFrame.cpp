@@ -157,7 +157,7 @@ void ActorFrame::DeleteAllChildren()
 
 void ActorFrame::HandleCommand( const ParsedCommand &command )
 {
-	HandleParams;
+	BeginHandleParams;
 
 	const CString& sName = sParam(0);
 	do
@@ -172,7 +172,7 @@ void ActorFrame::HandleCommand( const ParsedCommand &command )
 			Actor::HandleCommand( command );
 			break;
 		}
-		CheckHandledParams;
+		EndHandleParams;
 	} while(0);
 
 	/* By default, don't propograte most commands to children; it makes no sense

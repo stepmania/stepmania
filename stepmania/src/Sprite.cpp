@@ -890,7 +890,7 @@ void Sprite::StretchTexCoords( float fX, float fY )
 
 void Sprite::HandleCommand( const ParsedCommand &command )
 {
-	HandleParams;
+	BeginHandleParams;
 
 	const CString& sName = sParam(0);
 
@@ -914,7 +914,7 @@ void Sprite::HandleCommand( const ParsedCommand &command )
 		return;
 	}
 
-	CheckHandledParams;
+	EndHandleParams;
 }
 
 /*

@@ -298,9 +298,12 @@ void UtilCommand( Actor& actor, const CString &sClassName, const CString &sComma
 	{
 		if( actor.GetID().empty() )
 			return;
-	} else
+	}
+	else
+	{
 		ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')",
 												   sClassName.c_str(), sCommandName.c_str()) );
+	}
 
 	actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") );
 }

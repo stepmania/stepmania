@@ -37,13 +37,13 @@ struct ParsedCommand
 void ParseCommands( const CString &sCommands, vector<ParsedCommand> &vCommandsOut );
 
 
-#define HandleParams int iMaxIndexAccessed = 0;
+#define BeginHandleParams int iMaxIndexAccessed = 0;
 #define sParam(i) (GetParam<CString>(command,i,iMaxIndexAccessed))
 #define fParam(i) (GetParam<float>(command,i,iMaxIndexAccessed))
 #define iParam(i) (GetParam<int>(command,i,iMaxIndexAccessed))
 #define bParam(i) (GetParam<bool>(command,i,iMaxIndexAccessed))
 #define cParam(i) (ColorParam(command,i,iMaxIndexAccessed))
-#define CheckHandledParams if( iMaxIndexAccessed != (int)command.vTokens.size()-1 ) { IncorrectActorParametersWarning( command, iMaxIndexAccessed ); }
+#define EndHandleParams if( iMaxIndexAccessed != (int)command.vTokens.size()-1 ) { IncorrectActorParametersWarning( command, iMaxIndexAccessed ); }
 void IncorrectActorParametersWarning( const ParsedCommand& command, int iMaxIndexAccessed );
 
 template<class T>
