@@ -58,7 +58,8 @@ void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 	sText.Replace( " ", "\n" );
 
 	bool bVacant = (sText=="");
-	m_spr.SetState( pn*3 + (bHeader?0:(bVacant?1:2)) );
+	int iState = pn*3 + (bHeader?0:(bVacant?1:2));
+	m_spr.SetState( iState );
 
 	m_text.SetText( bHeader ? "" : sText );
 	m_text.SetZoom( TEXT_ZOOM );

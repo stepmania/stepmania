@@ -1113,6 +1113,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 			m_SoundToggleOn.Play();
 		else
 			m_SoundToggleOff.Play();
+		PositionUnderlines();
+		RefreshIcons();
 	}
 	else
 	{

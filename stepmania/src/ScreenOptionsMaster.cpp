@@ -598,35 +598,45 @@ void ScreenOptionsMaster::RefreshIcons()
 			Row &row = *m_Rows[i];
 			const OptionRowData &data = row.m_RowDef;
 
-			int iSelection = row.GetOneSelection((PlayerNumber)p);
-			if( iSelection >= (int)data.choices.size() )
+			// find first selection and whether multiple are selected
+			int iFirstSelection = -1;
+			bool bMultipleSelected = false;
+			for( int j=0; j<row.m_vbSelected[p].size(); j++ )
 			{
-				/* Invalid selection.  Send debug output, to aid debugging. */
-				CString error = ssprintf("Option row with name '%s' selects item %i, but there are only %i items:\n",
-					data.name.c_str(),
-					iSelection, (int) data.choices.size() );
+				if( row.m_vbSelected[p][j] )
+				{
+					if( iFirstSelection != -1 )
+						bMultipleSelected = true;
+					else
+						iFirstSelection = j;
+				}
 
-				for( unsigned j = 0; j < data.choices.size(); ++j )
-					error += ssprintf("    %s\n", data.choices[j].c_str());
-
-				RageException::Throw( "%s", error.c_str() );
 			}
 
 			// set icon name
 			CString sIcon;
-			const OptionRowHandler &handler = OptionRowHandlers[i];
-			switch( handler.type )
+
+			if( bMultipleSelected )
 			{
-			case ROW_LIST:
-				sIcon = handler.ListEntries[iSelection].m_sModifiers;
-				break;
-			case ROW_STEP:
-			case ROW_CHARACTER:
-				sIcon = data.choices[iSelection];
-				break;
-			case ROW_CONFIG:
-				break;
+				sIcon = "Multiple";
 			}
+			else if( iFirstSelection != -1 )
+			{
+				const OptionRowHandler &handler = OptionRowHandlers[i];
+				switch( handler.type )
+				{
+				case ROW_LIST:
+					sIcon = handler.ListEntries[iFirstSelection].m_sModifiers;
+					break;
+				case ROW_STEP:
+				case ROW_CHARACTER:
+					sIcon = data.choices[iFirstSelection];
+					break;
+				case ROW_CONFIG:
+					break;
+				}
+			}
+			
 
 			/* XXX: hack to not display text in the song options menu */
 			if( data.bOneChoiceForAllPlayers )
