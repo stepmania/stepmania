@@ -31,8 +31,9 @@ public:
 	enum Effect { no_effect,
 				diffuse_blink,	diffuse_shift,
 				glow_blink,		glow_shift,
-				wag,	bounce,		bob,
-				spin,	vibrate,	
+				rainbow,
+				wag,	bounce,		bob,	pulse,
+				spin,	vibrate
 				};
 
 	struct TweenState
@@ -224,6 +225,8 @@ public:
 		float fEffectPeriodSeconds = 1.0f,
 		RageColor c1 = RageColor(1,1,1,0.2f),
 		RageColor c2 = RageColor(1,1,1,0.8f) );
+	void SetEffectRainbow( 
+		float fEffectPeriodSeconds = 2.0f );
 	void SetEffectWag( 
 		float fPeriod = 2.f, 
 		RageVector3 vect = RageVector3(0,0,0.2f) );
@@ -233,6 +236,10 @@ public:
 	void SetEffectBob( 
 		float fPeriod = 2.f, 
 		RageVector3 vect = RageVector3(0,0,20) );
+	void SetEffectPulse( 
+		float fPeriod = 2.f,
+		float fMinZoom = 0.5f,
+		float fMaxZoom = 1.f );
 	void SetEffectSpin( 
 		RageVector3 vect = RageVector3(0,0,1) );
 	void SetEffectVibrate( 
@@ -252,11 +259,14 @@ public:
 			m_bShadow = true;
 		}
 	}
-	void EnableShadow( bool b )	{ m_bShadow = b; };
+	void EnableShadow( bool b )	{ m_bShadow = b; }
 
 
-	void EnableAdditiveBlend( bool b ) 		{ m_bBlendAdd = b; }; 
-
+	virtual void EnableAdditiveBlend( bool b ) 		{ m_bBlendAdd = b; } 
+	
+	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }
+	virtual void StartAnimating()	{ this->EnableAnimation(true); };
+	virtual void StopAnimating()	{ this->EnableAnimation(false); };
 
 	//
 	// fade command
@@ -330,6 +340,7 @@ protected:
 	//
 	bool	m_bShadow;
 	float	m_fShadowLength;
+	bool	m_bIsAnimating;
 	bool	m_bBlendAdd;
 
 };

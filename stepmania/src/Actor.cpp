@@ -42,7 +42,7 @@ Actor::Actor()
 
 	m_bShadow = false;
 	m_fShadowLength = 4;
-
+	m_bIsAnimating = true;
 	m_bBlendAdd = false;
 }
 
@@ -92,6 +92,15 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_temp.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 		break;
+	case rainbow:
+		m_temp.diffuse[0] = RageColor(
+			cosf( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
+			cosf( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
+			cosf( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
+			fOriginalAlpha );
+		for( i=1; i<4; i++ )
+			m_temp.diffuse[i] = m_temp.diffuse[0];
+		break;
 	case wag:
 		m_temp.rotation = m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
 		break;
@@ -119,7 +128,16 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			m_temp.pos.x = roundf( m_temp.pos.x );
 			m_temp.pos.y = roundf( m_temp.pos.y );
 			m_temp.pos.z = roundf( m_temp.pos.z );
-	}
+		}
+		break;
+	case pulse:
+		{
+			float fMinZoom = m_vEffectMagnitude[0];
+			float fMaxZoom = m_vEffectMagnitude[1];
+			float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
+			float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
+			m_temp.scale = RageVector3( fZoom, fZoom, fZoom );
+		}
 		break;
 	default:
 		ASSERT(0);	// invalid Effect
@@ -216,15 +234,17 @@ void Actor::Update( float fDeltaTime )
 	case diffuse_shift:
 	case glow_blink:
 	case glow_shift:
+	case rainbow:
 	case wag:
 	case bounce:
 	case bob:
+	case pulse:
 		m_fSecsIntoEffect += fDeltaTime;
 		while( m_fSecsIntoEffect >= m_fEffectPeriodSeconds )
 			m_fSecsIntoEffect -= m_fEffectPeriodSeconds;
 		break;
 	case spin:
-		m_current.rotation += m_vEffectMagnitude;
+		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
 		if( m_current.rotation.x > PI*2 )	m_current.rotation.x -= PI*2;
 		if( m_current.rotation.y > PI*2 )	m_current.rotation.y -= PI*2;
 		if( m_current.rotation.z > PI*2 )	m_current.rotation.z -= PI*2;
@@ -382,6 +402,13 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_fSecsIntoEffect = 0;
 }
 
+void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
+{
+	m_Effect = rainbow;
+	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+	m_fSecsIntoEffect = 0;
+}
+
 void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
 	m_Effect = wag;
@@ -416,6 +443,14 @@ void Actor::SetEffectVibrate( RageVector3 vect )
 {
 	m_Effect = vibrate;
 	m_vEffectMagnitude = vect;
+}
+
+void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
+{
+	m_Effect = pulse;
+	m_fEffectPeriodSeconds = fPeriod;
+	m_vEffectMagnitude[0] = fMinZoom;
+	m_vEffectMagnitude[1] = fMaxZoom;
 }
 
 
@@ -564,9 +599,11 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="diffuseshift" )	SetEffectDiffuseShift();
 		else if( sName=="glowblink" )		SetEffectGlowBlink();
 		else if( sName=="glowshift" )		SetEffectGlowShift();
+		else if( sName=="rainbow" )			SetEffectRainbow();
 		else if( sName=="wag" )				SetEffectWag();
 		else if( sName=="bounce" )			SetEffectBounce();
 		else if( sName=="bob" )				SetEffectBob();
+		else if( sName=="pulse" )			SetEffectPulse();
 		else if( sName=="spin" )			SetEffectSpin();
 		else if( sName=="vibrate" )			SetEffectVibrate();
 		else if( sName=="stopeffect" )		SetEffectNone();
@@ -574,6 +611,8 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
 		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(0) );
 		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(0),fParam(1),fParam(2)) );
+		else if( sName=="startanimating" )	this->StartAnimating();
+		else if( sName=="stopanimating" )	this->StopAnimating();
 		else if( sName=="additiveblend" )	EnableAdditiveBlend( iParam(0)!=0 );
 		else
 		{

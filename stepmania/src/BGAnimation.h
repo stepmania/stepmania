@@ -43,7 +43,7 @@ public:
 
 protected:
 	vector<BGAnimationLayer*> m_Layers;
-	float	m_fFadeSeconds;
+	float	m_fLengthSeconds;
 };
 
 

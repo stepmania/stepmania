@@ -12,39 +12,38 @@
 -----------------------------------------------------------------------------
 */
 
+#include "RageTypes.h"
 #include "Sprite.h"
+#include "GameConstantsAndTypes.h"
 
-const int MAX_TILES_WIDE = 11;
-const int MAX_TILES_HIGH = 8;
-const int MAX_SPRITES = MAX_TILES_WIDE*MAX_TILES_HIGH;
-
+#define MAX_TILES_WIDE (SCREEN_WIDTH/32+2)
+#define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
+#define MAX_SPRITES  (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
 class BGAnimationLayer
 {
 public:
 	BGAnimationLayer();
-	virtual ~BGAnimationLayer() { }
+	void Init();
 
 	void LoadFromStaticGraphic( CString sPath );
 	void LoadFromAniLayerFile( CString sPath, CString sSongBGPath );
 	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
 	void LoadFromVisualization( CString sMoviePath );
+	void LoadFromIni( CString sDir, CString sLayer, CString sSongBGPath );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
 
-	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<m_iNumSprites; i++) m_Sprites[i].SetDiffuse(c); }
+	virtual void SetDiffuse( RageColor c );
 
 	void GainingFocus();
 	void LosingFocus();
 
 protected:
-	Sprite m_Sprites[MAX_SPRITES];
-	int m_iNumSprites;
-
-	bool m_bCycleColor;
-	bool m_bCycleAlpha;
-	bool m_bRewindMovie;
+	Sprite		m_Sprites[MAX_SPRITES];
+	RageVector3 m_vParticleVelocity[MAX_SPRITES];
+	int			m_iNumSprites;
 
 	enum Effect {
 		EFFECT_CENTER,
@@ -72,31 +71,56 @@ protected:
 		EFFECT_TILE_FLIP_X,
 		EFFECT_TILE_FLIP_Y,
 		EFFECT_TILE_PULSE,
-		EFFECT_STRETCH_SCROLL_H,
-		NUM_EFFECTS		// leave this at the end
+		NUM_EFFECTS,		// leave this at the end
+		EFFECT_INVALID
 	};
-	Effect	m_Effect;
 
-	RageVector2 m_vHeadings[MAX_SPRITES];	// only used in EFFECT_PARTICLES_BOUNCE
+	enum Type
+	{
+		TYPE_SPRITE,
+		TYPE_STRETCH,
+		TYPE_PARTICLES,
+		TYPE_TILES,
+		NUM_TYPES,
+		TYPE_INVALID
+	} m_Type;
 
-	RageVector2 m_vTexCoordVelocity;
-	float m_PosX;
-	float m_PosY;
-	float m_Zoom;
-	float m_Rot;
-	float m_fRotationalVelocity;
-	float m_fStretchScrollH_Y;
-	float m_ShowTime;
-	float m_HideTime;
 
-	float m_TweenStartTime;
-	float m_TweenX;
-	float m_TweenY;
-	float m_TweenSpeed;
 
-	int m_TweenState;
-	int m_TweenPassedX;
-	int m_TweenPassedY;
+	//
+	// loaded prefs
+	//
+	
+	// common stuff
+	CString m_sCommand;
+
+	// stretch stuff
+	float m_fStretchTexCoordVelocityX;
+	float m_fStretchTexCoordVelocityY;
+
+	// particle and tile stuff
+	bool m_bRewindMovie;
+	float m_fZoomMin, m_fZoomMax;
+	float m_fVelocityXMin, m_fVelocityXMax;
+	float m_fVelocityYMin, m_fVelocityYMax;
+	float m_fVelocityZMin, m_fVelocityZMax;
+	float m_fOverrideSpeed;		// 0 means don't override speed
+
+	// particles stuff
+	int m_iNumParticles;
+	bool  m_bParticlesBounce;
+
+	// tiles stuff
+	int m_iNumTilesWide;
+	int m_iNumTilesHigh;
+	float m_fTilesStartX;
+	float m_fTilesStartY;
+	float m_fTilesSpacingX;
+	float m_fTilesSpacingY;
+	float m_fTileVelocityX;
+	float m_fTileVelocityY;
+
+
 };
 
 #endif

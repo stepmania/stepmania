@@ -16,11 +16,12 @@
 #include "GameState.h"
 #include "IniFile.h"
 #include "BGAnimationLayer.h"
+#include "RageUtil.h"
 
 
 BGAnimation::BGAnimation()
 {
-	m_fFadeSeconds = 0;
+	m_fLengthSeconds = 10;
 }
 
 BGAnimation::~BGAnimation()
@@ -42,8 +43,6 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
 	pLayer->LoadFromStaticGraphic( sPath );
 	m_Layers.push_back( pLayer );
-
-	m_fFadeSeconds = 0.5f;
 }
 
 void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
@@ -53,33 +52,59 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
-	// loading a directory of layers
-	CStringArray asImagePaths;
-	ASSERT( sAniDir != "" );
+	ASSERT( IsADirectory(sAniDir) );
 
-	GetDirListing( sAniDir+"*.png", asImagePaths, false, true );
-	GetDirListing( sAniDir+"*.jpg", asImagePaths, false, true );
-	GetDirListing( sAniDir+"*.gif", asImagePaths, false, true );
-	GetDirListing( sAniDir+"*.avi", asImagePaths, false, true );
-	GetDirListing( sAniDir+"*.mpg", asImagePaths, false, true );
-	GetDirListing( sAniDir+"*.mpeg", asImagePaths, false, true );
-	GetDirListing( sAniDir+"*.sprite", asImagePaths, false, true );
+	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
-	SortCStringArray( asImagePaths );
-
-	for( unsigned i=0; i<asImagePaths.size(); i++ )
+	if( DoesFileExist(sPathToIni) )
 	{
-		const CString sPath = asImagePaths[i];
-		CString sDir, sFName, sExt;
-		splitrelpath( sPath, sDir, sFName, sExt );
-		if( sFName.Left(1) == "_" )
-			continue;	// don't directly load files starting with an underscore
-		BGAnimationLayer* pLayer = new BGAnimationLayer;
-		pLayer->LoadFromAniLayerFile( asImagePaths[i], sSongBGPath );
-		m_Layers.push_back( pLayer );
-	}
+		// This is a new style BGAnimation (using .ini)
+		IniFile ini(sPathToIni);
+		ini.ReadFile();
 
-	m_fFadeSeconds = 0;
+		ini.GetValueF( "BGAnimation", "LengthSeconds", m_fLengthSeconds );
+		
+		for( int i=0; true; i++ )
+		{
+			CString sLayer = ssprintf("Layer%d",i+1);
+			const IniFile::key* pKey = ini.GetKey( sLayer );
+			if( pKey == NULL )
+				break;
+			BGAnimationLayer* pLayer = new BGAnimationLayer;
+			pLayer->LoadFromIni( sAniDir, sLayer, sSongBGPath );
+			m_Layers.push_back( pLayer );
+		}
+	}
+	else
+	{
+		// This is an old style BGAnimation (not using .ini)
+
+		// loading a directory of layers
+		CStringArray asImagePaths;
+		ASSERT( sAniDir != "" );
+
+		GetDirListing( sAniDir+"*.png", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.jpg", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.gif", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.avi", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.mpg", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.mpeg", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.sprite", asImagePaths, false, true );
+
+		SortCStringArray( asImagePaths );
+
+		for( unsigned i=0; i<asImagePaths.size(); i++ )
+		{
+			const CString sPath = asImagePaths[i];
+			CString sDir, sFName, sExt;
+			splitrelpath( sPath, sDir, sFName, sExt );
+			if( sFName.Left(1) == "_" )
+				continue;	// don't directly load files starting with an underscore
+			BGAnimationLayer* pLayer = new BGAnimationLayer;
+			pLayer->LoadFromAniLayerFile( asImagePaths[i], sSongBGPath );
+			m_Layers.push_back( pLayer );
+		}
+	}
 }
 
 void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
@@ -89,8 +114,6 @@ void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
 	pLayer->LoadFromMovie( sMoviePath, bLoop, bRewind );
 	m_Layers.push_back( pLayer );
-
-	m_fFadeSeconds = 0.5f;
 }
 
 void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
@@ -105,8 +128,6 @@ void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
 	pLayer = new BGAnimationLayer;
 	pLayer->LoadFromVisualization( sVisPath );
 	m_Layers.push_back( pLayer );	
-
-	m_fFadeSeconds = 0.5f;
 }
 
 

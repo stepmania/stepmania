@@ -31,7 +31,6 @@ Sprite::Sprite()
 	m_bDrawIfTextureNull = false;
 	m_iNumStates = 0;
 	m_iCurState = 0;
-	m_bIsAnimating = true;
 	m_fSecsIntoState = 0.0;
 	m_bUsingCustomTexCoords = false;
 }

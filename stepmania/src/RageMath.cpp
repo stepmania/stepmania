@@ -22,6 +22,14 @@ void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
 	pOut->y = pV->y * scale;
 }
 
+void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV )
+{
+	float scale = 1.0f / sqrtf( pV->x*pV->x + pV->y*pV->y + pV->z*pV->z );
+	pOut->x = pV->x * scale;
+	pOut->y = pV->y * scale;
+	pOut->z = pV->z * scale;
+}
+
 void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM )
 {
 	RageVector4 temp( pV->x, pV->y, pV->z, 1.0f );

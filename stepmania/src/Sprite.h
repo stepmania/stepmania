@@ -53,12 +53,10 @@ public:
 
 	virtual void EnableAnimation( bool bEnable )
 	{ 
-		m_bIsAnimating = bEnable; 
+		Actor::EnableAnimation( bEnable ); 
 		if(m_pTexture) 
 			bEnable ? m_pTexture->Play() : m_pTexture->Pause(); 
 	};
-	virtual void StartAnimating()	{ EnableAnimation(true); };
-	virtual void StopAnimating()	{ EnableAnimation(false); };
 	virtual void SetState( int iNewState );
 	
 	int		GetNumStates()		{ return m_iNumStates; };
@@ -86,7 +84,6 @@ protected:
 	float	m_fDelay[MAX_SPRITE_STATES];
 	int		m_iNumStates;
 	int		m_iCurState;
-	bool	m_bIsAnimating;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
 	bool m_bUsingCustomTexCoords;

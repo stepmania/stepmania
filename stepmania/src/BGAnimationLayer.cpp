@@ -18,6 +18,8 @@
 #include "RageMath.h"
 #include "SDL_utils.h"
 #include <math.h>
+#include "RageTimer.h"
+#include "RageLog.h"
 
 
 inline float GetOffScreenLeft(  Actor* pActor ) { return SCREEN_LEFT  - pActor->GetZoomedWidth()/2; }
@@ -42,7 +44,7 @@ inline bool HitGuardRailTop(   Actor* pActor ) { return pActor->GetY() < GetGuar
 inline bool HitGuardRailBottom(Actor* pActor ) { return pActor->GetY() > GetGuardRailBottom(pActor); }
 
 
-const float PARTICLE_VELOCITY = 300;
+const float PARTICLE_SPEED = 300;
 
 const float SPIRAL_MAX_ZOOM = 2;
 const float SPIRAL_MIN_ZOOM = 0.3f;
@@ -51,14 +53,48 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 
 BGAnimationLayer::BGAnimationLayer()
 {
-	m_iNumSprites = 0;
-	m_bCycleColor = false;
-	m_bCycleAlpha = false;
-	m_Effect = EFFECT_STRETCH_STILL;
+	Init();
+}
+
+void BGAnimationLayer::Init()
+{
+//	m_bCycleColor = false;
+//	m_bCycleAlpha = false;
+//	m_Effect = EFFECT_STRETCH_STILL;
+
+	for( int i=0; i<MAX_SPRITES; i++ )
+		m_vParticleVelocity[i] = RageVector3( 0, 0, 0 );
+
+	m_Type = TYPE_SPRITE;
+
+	m_fStretchTexCoordVelocityX = 0;
+	m_fStretchTexCoordVelocityY = 0;
+	m_bRewindMovie = false;
+	m_fZoomMin = 1;
+	m_fZoomMax = 1;
+	m_fVelocityXMin = 10;
+	m_fVelocityXMax = 10;
+	m_fVelocityYMin = 0;
+	m_fVelocityYMax = 0;
+	m_fVelocityZMin = 0;
+	m_fVelocityZMax = 0;
+	m_fOverrideSpeed = 0;
+	m_iNumParticles = 10;
+	m_bParticlesBounce = false;
+	m_iNumTilesWide = 10;
+	m_iNumTilesHigh = 8;
+	m_fTilesStartX = 0;
+	m_fTilesStartY = 0;
+	m_fTilesSpacingX = 64;
+	m_fTilesSpacingY = 64;
+	m_fTileVelocityX = 0;
+	m_fTileVelocityY = 0;
+
 
 	/* Why doesn't this use the existing tweening mechanism? I can't make
 	 * sense of what this code is doing; all I can tell is that it's duplicating
 	 * stuff we already have. -glenn */
+	/*
 	m_PosX = m_PosY = 0;
 	m_Zoom = 0;
 	m_Rot = 0;
@@ -69,6 +105,7 @@ BGAnimationLayer::BGAnimationLayer()
 	m_TweenSpeed = 0;
 	m_TweenState = 0;
 	m_TweenPassedX = m_TweenPassedY = 0;
+	*/
 }
 
 /* Static background layers are simple, uncomposited background images with nothing
@@ -76,15 +113,17 @@ BGAnimationLayer::BGAnimationLayer()
  * so turn that off. */
 void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 {
+	Init();
+	m_iNumSprites = 1;
 	RageTextureID ID(sPath);
 	ID.iAlphaBits = 0;
-	m_iNumSprites = 1;
 	m_Sprites[0].LoadBG( ID );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 }
 
 void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 {
+	Init();
 	m_iNumSprites = 1;
 	m_Sprites[0].LoadBG( sMoviePath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
@@ -98,14 +137,17 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewi
 
 void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 {
+	Init();
 	m_iNumSprites = 1;
 	m_Sprites[0].LoadBG( sMoviePath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].EnableAdditiveBlend( true );
 }
 
+
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath )
 {
+	Init();
 	CString lcPath = sPath;
 	lcPath.MakeLower();
 
@@ -141,36 +183,23 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 		"tileflipx",
 		"tileflipy",
 		"tilepulse",
-		"stretchscrollhorizontal"
 	};
 
-	for( int i=0; i<NUM_EFFECTS; i++ )
-	{
-		if( lcPath.Find(EFFECT_STRING[i]) != -1 )
-		{
-			m_Effect = (Effect)i;
-			goto found_effect;
-		}
-	}
-	// If we get here, we didn't find an effect string in the file name.  Use the defualt effect (StretchStill)
-	
-found_effect:
+	Effect effect = EFFECT_CENTER;
 
-	//////////////////////
-	// init
-	//////////////////////
-	switch( m_Effect )
+	for( int i=0; i<NUM_EFFECTS; i++ )
+		if( lcPath.Find(EFFECT_STRING[i]) != -1 )
+			effect = (Effect)i;
+
+	switch( effect )
 	{
 	case EFFECT_CENTER:
+		m_Type = TYPE_SPRITE;
 		m_iNumSprites = 1;
-		m_Sprites[0].LoadBG( sPath );
+		m_Sprites[0].Load( sPath );
 		m_Sprites[0].SetXY( CENTER_X, CENTER_Y );
 		break;
 	case EFFECT_STRETCH_STILL:
-		m_iNumSprites = 1;
-		m_Sprites[0].LoadBG( sPath );
-		m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-		break;
 	case EFFECT_STRETCH_SCROLL_LEFT:
 	case EFFECT_STRETCH_SCROLL_RIGHT:
 	case EFFECT_STRETCH_SCROLL_UP:
@@ -179,6 +208,7 @@ found_effect:
 	case EFFECT_STRETCH_BUBBLE:
 	case EFFECT_STRETCH_TWIST:
 		{
+			m_Type = TYPE_STRETCH;
 			m_iNumSprites = 1;
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
@@ -186,77 +216,85 @@ found_effect:
 			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
 
-			switch( m_Effect )
+			switch( effect )
 			{
-			case EFFECT_STRETCH_SCROLL_LEFT:	m_vTexCoordVelocity = RageVector2(+0.5f,0);	break;
-			case EFFECT_STRETCH_SCROLL_RIGHT:	m_vTexCoordVelocity = RageVector2(-0.5f,0);	break;
-			case EFFECT_STRETCH_SCROLL_UP:		m_vTexCoordVelocity = RageVector2(0,+0.5f);	break;
-			case EFFECT_STRETCH_SCROLL_DOWN:	m_vTexCoordVelocity = RageVector2(0,-0.5f);	break;
-			case EFFECT_STRETCH_WATER:
-			case EFFECT_STRETCH_BUBBLE:
-			case EFFECT_STRETCH_TWIST:
-				m_vTexCoordVelocity = RageVector2(-0.0f,0);	
+			case EFFECT_STRETCH_SCROLL_LEFT:	m_fStretchTexCoordVelocityX = +0.5f; m_fStretchTexCoordVelocityY = 0;	break;
+			case EFFECT_STRETCH_SCROLL_RIGHT:	m_fStretchTexCoordVelocityX = -0.5f; m_fStretchTexCoordVelocityY = 0;	break;
+			case EFFECT_STRETCH_SCROLL_UP:		m_fStretchTexCoordVelocityX = 0; m_fStretchTexCoordVelocityY = +0.5f;	break;
+			case EFFECT_STRETCH_SCROLL_DOWN:	m_fStretchTexCoordVelocityX = 0; m_fStretchTexCoordVelocityY = -0.5f;	break;
 				break;
-			default:
-				ASSERT(0);
 			}
 		}
 		break;
-	case EFFECT_STRETCH_SCROLL_H:
-		{
-			m_iNumSprites = 1;
-			RageTextureID ID(sPath);
-			ID.bStretch = true;
-			m_Sprites[0].LoadBG( ID );
-			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,0,SCREEN_RIGHT, int(m_Sprites[0].GetUnzoomedHeight())) );
-			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
-			m_vTexCoordVelocity = RageVector2(+0.5f,0);
-			m_Sprites[0].SetY(m_fStretchScrollH_Y);
-		}
-		break;
 	case EFFECT_STRETCH_SPIN:
-		m_iNumSprites = 1;
-		m_Sprites[0].LoadBG( sPath );
-		m_Sprites[0].ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
-		m_fRotationalVelocity = 1;
+		{
+			m_Type = TYPE_STRETCH;
+			m_iNumSprites = 1;
+			m_Sprites[0].LoadBG( sPath );
+			m_Sprites[0].ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
+			m_Sprites[0].SetEffectSpin( RageVector3(0,0,1) );
+		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
 	case EFFECT_PARTICLES_SPIRAL_IN:
-		{
-			m_Sprites[0].LoadBG( sPath );
+/*		{
+			m_Type = TYPE_PARTICLES;
+			m_Sprites[0].Load( sPath );
 			int iSpriteArea = int( m_Sprites[0].GetUnzoomedWidth()*m_Sprites[0].GetUnzoomedHeight() );
 			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
-			m_iNumSprites = min( iMaxArea / iSpriteArea,  MAX_SPRITES );
-			for( int i=0; i<m_iNumSprites; i++ )
+			m_iNumSprites = m_iNumParticles = iMaxArea / iSpriteArea;
+			m_iNumSprites = m_iNumParticles = min( m_iNumSprites, MAX_SPRITES );
+			for( unsigned i=0; i<m_iNumSprites; i++ )
 			{
-				m_Sprites[i].LoadBG( sPath );
+				m_Sprites[i].Load( sPath );
 				m_Sprites[i].SetZoom( randomf(0.2f,2) );
 				m_Sprites[i].SetRotationZ( randomf(0,PI*2) );
 			}
 		}
 		break;
-	case EFFECT_PARTICLES_FLOAT_UP:
+*/	case EFFECT_PARTICLES_FLOAT_UP:
 	case EFFECT_PARTICLES_FLOAT_DOWN:
 	case EFFECT_PARTICLES_FLOAT_LEFT:
 	case EFFECT_PARTICLES_FLOAT_RIGHT:
 	case EFFECT_PARTICLES_BOUNCE:
 		{
-			m_Sprites[0].LoadBG( sPath );
+			m_Type = TYPE_PARTICLES;
+			m_Sprites[0].Load( sPath );
 			int iSpriteArea = int( m_Sprites[0].GetUnzoomedWidth()*m_Sprites[0].GetUnzoomedHeight() );
 			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
-			m_iNumSprites = min( iMaxArea / iSpriteArea,  MAX_SPRITES );
-			for( int i=0; i<m_iNumSprites; i++ )
+			m_iNumSprites = m_iNumParticles = iMaxArea / iSpriteArea;
+			m_iNumSprites = m_iNumParticles = min( m_iNumSprites, MAX_SPRITES );
+			for( unsigned i=0; i<m_iNumSprites; i++ )
 			{
-				m_Sprites[i].LoadBG( sPath );
+				m_Sprites[i].Load( sPath );
 				m_Sprites[i].SetZoom( 0.7f + 0.6f*i/(float)m_iNumSprites );
 				m_Sprites[i].SetX( randomf( GetGuardRailLeft(&m_Sprites[i]), GetGuardRailRight(&m_Sprites[i]) ) );
 				m_Sprites[i].SetY( randomf( GetGuardRailTop(&m_Sprites[i]), GetGuardRailBottom(&m_Sprites[i]) ) );
 
-				if( m_Effect == EFFECT_PARTICLES_BOUNCE )
+				switch( effect )
 				{
+				case EFFECT_PARTICLES_FLOAT_UP:
+				case EFFECT_PARTICLES_SPIRAL_OUT:
+					m_vParticleVelocity[i] = RageVector3( 0, -PARTICLE_SPEED*m_Sprites[i].GetZoom(), 0 );
+					break;
+				case EFFECT_PARTICLES_FLOAT_DOWN:
+				case EFFECT_PARTICLES_SPIRAL_IN:
+					m_vParticleVelocity[i] = RageVector3( 0, PARTICLE_SPEED*m_Sprites[i].GetZoom(), 0 );
+					break;
+				case EFFECT_PARTICLES_FLOAT_LEFT:
+					m_vParticleVelocity[i] = RageVector3( -PARTICLE_SPEED*m_Sprites[i].GetZoom(), 0, 0 );
+					break;
+				case EFFECT_PARTICLES_FLOAT_RIGHT:
+					m_vParticleVelocity[i] = RageVector3( +PARTICLE_SPEED*m_Sprites[i].GetZoom(), 0, 0 );
+					break;
+				case EFFECT_PARTICLES_BOUNCE:
+					m_bParticlesBounce = true;
 					m_Sprites[i].SetZoom( 1 );
-					m_vHeadings[i] = RageVector2( randomf(), randomf() );
-					RageVec2Normalize( &m_vHeadings[i], &m_vHeadings[i] );
+					m_vParticleVelocity[i] = RageVector3( randomf(), randomf(), 0 );
+					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
+					break;
+				default:
+					ASSERT(0);
 				}
 			}
 		}
@@ -270,31 +308,57 @@ found_effect:
 	case EFFECT_TILE_FLIP_Y:
 	case EFFECT_TILE_PULSE:
 		{
-			m_Sprites[0].LoadBG( sPath );
-			int iNumTilesWide = 1+int(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth());
-			int iNumTilesHigh = 1+int(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight());
-			if( m_Effect == EFFECT_TILE_SCROLL_LEFT ||
-				m_Effect == EFFECT_TILE_SCROLL_RIGHT ) {
-				iNumTilesWide++;
-			}
-			if( m_Effect == EFFECT_TILE_SCROLL_UP ||
-				m_Effect == EFFECT_TILE_SCROLL_DOWN ) {
-				iNumTilesHigh++;
-			}
-
-			iNumTilesWide = min( iNumTilesWide, MAX_TILES_WIDE );
-			iNumTilesHigh = min( iNumTilesHigh, MAX_TILES_HIGH );
-
-			m_iNumSprites = min( iNumTilesWide * iNumTilesHigh,  MAX_SPRITES );
-
-			for( int x=0; x<iNumTilesWide; x++ )
+			m_Type = TYPE_TILES;
+			RageTextureID ID(sPath);
+			ID.bStretch = true;
+			m_Sprites[0].Load( ID );
+			m_iNumTilesWide = 2+int(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth());
+			m_iNumTilesWide = min( m_iNumTilesWide, MAX_TILES_WIDE );
+			m_iNumTilesHigh = 2+int(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight());
+			m_iNumTilesHigh = min( m_iNumTilesHigh, MAX_TILES_HIGH );
+			m_iNumSprites = m_iNumTilesWide * m_iNumTilesHigh;
+			m_fTilesStartX = m_Sprites[0].GetUnzoomedWidth() / 2;
+			m_fTilesStartY = m_Sprites[0].GetUnzoomedHeight() / 2;
+			m_fTilesSpacingX = m_Sprites[0].GetUnzoomedWidth();
+			m_fTilesSpacingY = m_Sprites[0].GetUnzoomedHeight();
+			// HACK:  fix cracks in tiles
+			m_fTilesSpacingX -= 1;
+			m_fTilesSpacingY -= 1;
+			for( int x=0; x<m_iNumTilesWide; x++ )
 			{
-				for( int y=0; y<iNumTilesHigh; y++ )
+				for( int y=0; y<m_iNumTilesHigh; y++ )
 				{
-					int i = x+y*iNumTilesWide;
-					m_Sprites[i].LoadBG( sPath );
-					m_Sprites[i].SetX( (x+0.5f)*m_Sprites[i].GetUnzoomedWidth() );
-					m_Sprites[i].SetY( (y+0.5f)*m_Sprites[i].GetUnzoomedHeight() );
+					int i = y*m_iNumTilesWide + x;
+					m_Sprites[i].Load( ID );
+
+					switch( effect )
+					{
+					case EFFECT_TILE_STILL:
+						break;
+					case EFFECT_TILE_SCROLL_LEFT:
+						m_fTileVelocityX = -PARTICLE_SPEED;
+						break;
+					case EFFECT_TILE_SCROLL_RIGHT:
+						m_fTileVelocityX = +PARTICLE_SPEED;
+						break;
+					case EFFECT_TILE_SCROLL_UP:
+						m_fTileVelocityY = -PARTICLE_SPEED;
+						break;
+					case EFFECT_TILE_SCROLL_DOWN:
+						m_fTileVelocityY = +PARTICLE_SPEED;
+						break;
+					case EFFECT_TILE_FLIP_X:
+						m_Sprites[i].SetEffectSpin( RageVector3(2,0,0) );
+						break;
+					case EFFECT_TILE_FLIP_Y:
+						m_Sprites[i].SetEffectSpin( RageVector3(0,2,0) );
+						break;
+					case EFFECT_TILE_PULSE:
+						m_Sprites[i].SetEffectPulse( 1, 0.3f, 1.f );
+						break;
+					default:
+						ASSERT(0);
+					}
 				}
 			}
 		}
@@ -304,21 +368,29 @@ found_effect:
 	}
 
 
-	m_bCycleColor  = sPath.Find("cyclecolor") != -1;
-	m_bCycleAlpha  = sPath.Find("cyclealpha") != -1;
+	sPath.MakeLower();
+
+	if( sPath.Find("cyclecolor") != -1 )
+		for( unsigned i=0; i<m_iNumSprites; i++ )
+			m_Sprites[i].SetEffectRainbow( 5 );
+
+	if( sPath.Find("cyclealpha") != -1 )
+		for( unsigned i=0; i<m_iNumSprites; i++ )
+			m_Sprites[i].SetEffectDiffuseShift( 2, RageColor(1,1,1,1), RageColor(1,1,1,0) );
 
 	if( sPath.Find("startonrandomframe") != -1 )
-		for( int i=0; i<m_iNumSprites; i++ )
+		for( unsigned i=0; i<m_iNumSprites; i++ )
 			m_Sprites[i].SetState( rand()%m_Sprites[i].GetNumStates() );
 
 	if( sPath.Find("dontanimate") != -1 )
-		for( int i=0; i<m_iNumSprites; i++ )
+		for( unsigned i=0; i<m_iNumSprites; i++ )
 			m_Sprites[i].StopAnimating();
 
 	if( sPath.Find("add") != -1 )
-		for( int i=0; i<m_iNumSprites; i++ )
+		for( unsigned i=0; i<m_iNumSprites; i++ )
 			m_Sprites[i].EnableAdditiveBlend( true );
 
+	/*
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
 	CString sIniPath = sDir+"/"+sFName+".ini";
@@ -362,75 +434,161 @@ found_effect:
 	{
 		m_Sprites[0].SetRotationZ(m_Rot);
 	}
+	*/
 }
 
-void BGAnimationLayer::Update( float fDeltaTime  )
+
+void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer, CString sSongBGPath )
 {
-	int i;
+	Init();
+	if( sAniDir.Right(1) != "/" )
+		sAniDir += "/";
 
+	ASSERT( IsADirectory(sAniDir) );
+
+	CString sPathToIni = sAniDir + "BGAnimation.ini";
+
+	IniFile ini(sPathToIni);
+	ini.ReadFile();
+
+	CString sFile;
+	ini.GetValue( sLayer, "File", sFile );
+
+	bool bUseSongBG = false;
+	ini.GetValueB( sLayer, "UseSongBG", bUseSongBG );
+	if( bUseSongBG )
+		sFile = sSongBGPath;
+
+	if( sFile == "" )
+		RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.GetString(), sLayer.GetString() );
+
+	CString sPath = sAniDir+sFile;
+	if( !DoesFileExist(sPath) )
+		RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.GetString(), sFile.GetString() );
+
+	ini.GetValueI( sLayer, "Type", (int&)m_Type );
+	ini.GetValue ( sLayer, "Command", m_sCommand );
+	ini.GetValueF( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
+	ini.GetValueF( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
+	ini.GetValueB( sLayer, "RewindMovie", m_bRewindMovie );
+	ini.GetValueF( sLayer, "ZoomMin", m_fZoomMin );
+	ini.GetValueF( sLayer, "ZoomMax", m_fZoomMax );
+	ini.GetValueF( sLayer, "VelocityXMin", m_fVelocityXMin );
+	ini.GetValueF( sLayer, "VelocityXMax", m_fVelocityXMax );
+	ini.GetValueF( sLayer, "VelocityYMin", m_fVelocityYMin );
+	ini.GetValueF( sLayer, "VelocityYMax", m_fVelocityYMax );
+	ini.GetValueF( sLayer, "VelocityZMin", m_fVelocityZMin );
+	ini.GetValueF( sLayer, "VelocityZMax", m_fVelocityZMax );
+	ini.GetValueF( sLayer, "OverrideSpeed", m_fOverrideSpeed );
+	ini.GetValueI( sLayer, "NumParticles", m_iNumParticles );
+	ini.GetValueB( sLayer, "ParticlesBounce", m_bParticlesBounce );
+	ini.GetValueI( sLayer, "NumTilesWide", m_iNumTilesWide );
+	ini.GetValueI( sLayer, "NumTilesHigh", m_iNumTilesHigh );
+	ini.GetValueF( sLayer, "TilesStartX", m_fTilesStartX );
+	ini.GetValueF( sLayer, "TilesStartY", m_fTilesStartY );
+	ini.GetValueF( sLayer, "TilesSpacingX", m_fTilesSpacingX );
+	ini.GetValueF( sLayer, "TilesSpacingY", m_fTilesSpacingY );
+	ini.GetValueF( sLayer, "TileVelocityX", m_fTileVelocityX );
+	ini.GetValueF( sLayer, "TileVelocityY", m_fTileVelocityY );
+
+
+	switch( m_Type )
+	{
+	case TYPE_SPRITE:
+		m_iNumSprites = 1;
+		m_Sprites[0].Load( sPath );
+		m_Sprites[0].SetXY( CENTER_X, CENTER_Y );
+		break;
+	case TYPE_STRETCH:
+		{
+			m_iNumSprites = 1;
+			RageTextureID ID(sPath);
+			ID.bStretch = true;
+			m_Sprites[0].LoadBG( ID );
+			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
+		}
+		break;
+	case TYPE_PARTICLES:
+		{
+			m_iNumSprites = m_iNumParticles;
+			for( unsigned i=0; i<m_iNumSprites; i++ )
+			{
+				m_Sprites[i].Load( sPath );
+				m_Sprites[i].SetXY( randomf(SCREEN_LEFT,SCREEN_RIGHT), randomf(SCREEN_TOP,SCREEN_BOTTOM) );
+				m_Sprites[i].SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
+				m_vParticleVelocity[i] = RageVector3( 
+					randomf(m_fVelocityXMin,m_fVelocityXMax),
+					randomf(m_fVelocityYMin,m_fVelocityYMax),
+					randomf(m_fVelocityZMin,m_fVelocityZMax) );
+				if( m_fOverrideSpeed != 0 )
+				{
+					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
+					m_vParticleVelocity[i] *= m_fOverrideSpeed;
+				}
+			}
+		}
+		break;
+	case TYPE_TILES:
+		{
+			m_iNumTilesWide = 2+(int)(SCREEN_WIDTH /m_fTilesSpacingX);
+			m_iNumTilesHigh = 2+(int)(SCREEN_HEIGHT/m_fTilesSpacingY);
+			m_iNumSprites = m_iNumTilesWide * m_iNumTilesHigh;
+			for( unsigned i=0; i<m_iNumSprites; i++ )
+			{
+				m_Sprites[i].Load( sPath );
+				//m_Sprites[i].SetXY( );	// let Update set X and Y
+				m_Sprites[i].SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	bool bStartOnRandomFrame = false;
+	ini.GetValueB( sLayer, "StartOnRandomFrame", bStartOnRandomFrame );
+	if( bStartOnRandomFrame )
+	{
+		for( unsigned i=0; i<m_iNumSprites; i++ )
+			m_Sprites[i].SetState( rand()%m_Sprites[i].GetNumStates() );
+	}
+
+	if( m_sCommand != "" )
+	{
+		for( unsigned i=0; i<m_iNumSprites; i++ )
+			m_Sprites[i].Command( m_sCommand );
+	}
+}
+
+void BGAnimationLayer::Update( float fDeltaTime )
+{
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
-	if( m_bCycleColor )
-	{
-		for( int i=0; i<m_iNumSprites; i++ )
-		{
-			RageColor color = RageColor(
-				cosf( fSongBeat+i ) * 0.5f + 0.5f,
-				cosf( fSongBeat+i + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
-				cosf( fSongBeat+i + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
-				1.0f
-				);
-			m_Sprites[i].SetDiffuse( color );
-		}
-	}
-	if( m_bCycleAlpha )
-	{
-		for( int i=0; i<m_iNumSprites; i++ )
-		{
-			RageColor color = m_Sprites[i].GetDiffuse();
-			color.a = cosf( fSongBeat/2 ) * 0.5f + 0.5f;
-			m_Sprites[i].SetDiffuse( color );
-		}
-	}
-
 	
 	
-	for( i=0; i<m_iNumSprites; i++ )
-	{
+	for( unsigned i=0; i<m_iNumSprites; i++ )
 		m_Sprites[i].Update( fDeltaTime );
-	}
 
-	if(m_Effect == EFFECT_STRETCH_SCROLL_H)
-		m_Sprites[0].SetY(m_fStretchScrollH_Y);
 
-	switch( m_Effect )
+	switch( m_Type )
 	{
-	case EFFECT_CENTER:
-	case EFFECT_STRETCH_STILL:
+	case TYPE_SPRITE:
 		break;
-	case EFFECT_STRETCH_SCROLL_LEFT:
-	case EFFECT_STRETCH_SCROLL_RIGHT:
-	case EFFECT_STRETCH_SCROLL_UP:
-	case EFFECT_STRETCH_SCROLL_DOWN:
-	case EFFECT_STRETCH_SCROLL_H:
-		float fTexCoords[8];
-		m_Sprites[0].GetCustomTextureCoords( fTexCoords );
-
-		for( i=0; i<8; i+=2 )
+	case TYPE_STRETCH:
 		{
-			fTexCoords[i  ] += fDeltaTime*m_vTexCoordVelocity.x;
-			fTexCoords[i+1] += fDeltaTime*m_vTexCoordVelocity.y;
-		}
+			float fTexCoords[8];
+			m_Sprites[0].GetCustomTextureCoords( fTexCoords );
 
-		m_Sprites[0].SetCustomTextureCoords( fTexCoords );
-		
+			for( i=0; i<8; i+=2 )
+			{
+				fTexCoords[i  ] += fDeltaTime*m_fStretchTexCoordVelocityX;
+				fTexCoords[i+1] += fDeltaTime*m_fStretchTexCoordVelocityY;
+			}
+
+			m_Sprites[0].SetCustomTextureCoords( fTexCoords );
+		}
 		break;
-	case EFFECT_STRETCH_SPIN:
-		m_Sprites[0].SetRotationZ( m_Sprites[0].GetRotationZ() + fDeltaTime*m_fRotationalVelocity );
-	case EFFECT_STRETCH_WATER:
-	case EFFECT_STRETCH_BUBBLE:
-	case EFFECT_STRETCH_TWIST:
-		break;
-	case EFFECT_PARTICLES_SPIRAL_OUT:
+/*	case EFFECT_PARTICLES_SPIRAL_OUT:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
 			m_Sprites[i].SetZoom( m_Sprites[i].GetZoom() + fDeltaTime );
@@ -462,109 +620,101 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotationZ())*fRadius );
 		}
 		break;
-	case EFFECT_PARTICLES_FLOAT_UP:
+*/
+	case TYPE_PARTICLES:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetY( m_Sprites[i].GetY() - fDeltaTime * PARTICLE_VELOCITY * m_Sprites[i].GetZoom() );
-			if( IsOffScreenTop(&m_Sprites[i]) )
-				m_Sprites[i].SetY( GetOffScreenBottom(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_PARTICLES_FLOAT_DOWN:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime * PARTICLE_VELOCITY * m_Sprites[i].GetZoom() );
-			if( IsOffScreenBottom(&m_Sprites[i]) )
-				m_Sprites[i].SetY( GetOffScreenTop(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_PARTICLES_FLOAT_LEFT:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() - fDeltaTime * PARTICLE_VELOCITY * m_Sprites[i].GetZoom() );
-			if( IsOffScreenLeft(&m_Sprites[i]) )
-				m_Sprites[i].SetX( GetOffScreenRight(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_PARTICLES_FLOAT_RIGHT:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime * PARTICLE_VELOCITY * m_Sprites[i].GetZoom() );
-			if( IsOffScreenRight(&m_Sprites[i]) )
-				m_Sprites[i].SetX( GetOffScreenLeft(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_PARTICLES_BOUNCE:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime * PARTICLE_VELOCITY * m_vHeadings[i].x );
-			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime * PARTICLE_VELOCITY * m_vHeadings[i].y );
-			if( HitGuardRailLeft(&m_Sprites[i]) )	
+			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime*m_vParticleVelocity[i].x  );
+			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
+			m_Sprites[i].SetZ( m_Sprites[i].GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
+			if( m_bParticlesBounce )
 			{
-				m_vHeadings[i].x *= -1;
-				m_Sprites[i].SetX( GetGuardRailLeft(&m_Sprites[i]) );
+				if( HitGuardRailLeft(&m_Sprites[i]) )	
+				{
+					m_vParticleVelocity[i].x *= -1;
+					m_Sprites[i].SetX( GetGuardRailLeft(&m_Sprites[i]) );
+				}
+				if( HitGuardRailRight(&m_Sprites[i]) )	
+				{
+					m_vParticleVelocity[i].x *= -1;
+					m_Sprites[i].SetX( GetGuardRailRight(&m_Sprites[i]) );
+				}
+				if( HitGuardRailTop(&m_Sprites[i]) )	
+				{
+					m_vParticleVelocity[i].y *= -1;
+					m_Sprites[i].SetY( GetGuardRailTop(&m_Sprites[i]) );
+				}
+				if( HitGuardRailBottom(&m_Sprites[i]) )	
+				{
+					m_vParticleVelocity[i].y *= -1;
+					m_Sprites[i].SetY( GetGuardRailBottom(&m_Sprites[i]) );
+				}
 			}
-			if( HitGuardRailRight(&m_Sprites[i]) )	
+			else // !m_bParticlesBounce 
 			{
-				m_vHeadings[i].x *= -1;
-				m_Sprites[i].SetX( GetGuardRailRight(&m_Sprites[i]) );
-			}
-			if( HitGuardRailTop(&m_Sprites[i]) )	
-			{
-				m_vHeadings[i].y *= -1;
-				m_Sprites[i].SetY( GetGuardRailTop(&m_Sprites[i]) );
-			}
-			if( HitGuardRailBottom(&m_Sprites[i]) )	
-			{
-				m_vHeadings[i].y *= -1;
-				m_Sprites[i].SetY( GetGuardRailBottom(&m_Sprites[i]) );
+				if( m_vParticleVelocity[i].x<0  &&  IsOffScreenLeft(&m_Sprites[i]) )
+					m_Sprites[i].SetX( GetOffScreenRight(&m_Sprites[i]) );
+				if( m_vParticleVelocity[i].x>0  &&  IsOffScreenRight(&m_Sprites[i]) )
+					m_Sprites[i].SetX( GetOffScreenLeft(&m_Sprites[i]) );
+				if( m_vParticleVelocity[i].y<0  &&  IsOffScreenTop(&m_Sprites[i]) )
+					m_Sprites[i].SetY( GetOffScreenBottom(&m_Sprites[i]) );
+				if( m_vParticleVelocity[i].y>0  &&  IsOffScreenBottom(&m_Sprites[i]) )
+					m_Sprites[i].SetY( GetOffScreenTop(&m_Sprites[i]) );
 			}
 		}
 		break;
-	case EFFECT_TILE_STILL:
-		break;
-	case EFFECT_TILE_SCROLL_LEFT:
+	case TYPE_TILES:
+		{
+			float fSecs = RageTimer::GetTimeSinceStart();
+			float fTotalWidth = m_iNumTilesWide * m_fTilesSpacingX;
+			float fTotalHeight = m_iNumTilesHigh * m_fTilesSpacingY;
+			
+			ASSERT( m_iNumSprites == m_iNumTilesWide * m_iNumTilesHigh );
+
+			for( int x=0; x<m_iNumTilesWide; x++ )
+			{
+				printf( "fY: " );
+				for( int y=0; y<m_iNumTilesHigh; y++ )
+				{
+					int i = y*m_iNumTilesWide + x;
+
+					float fX = m_fTilesStartX + m_fTilesSpacingX * x + fSecs * m_fTileVelocityX;
+					float fY = m_fTilesStartY + m_fTilesSpacingY * y + fSecs * m_fTileVelocityY;
+
+					fX += m_fTilesSpacingX/2;
+					fY += m_fTilesSpacingY/2;
+
+					fX = fmodf( fX, fTotalWidth );
+					fY = fmodf( fY, fTotalHeight );
+
+					if( fX < 0 )	fX += fTotalWidth;
+					if( fY < 0 )	fY += fTotalHeight;
+
+					fX -= m_fTilesSpacingX/2;
+					fY -= m_fTilesSpacingY/2;
+					
+					printf( "%f, ", fY );
+
+					m_Sprites[i].SetX( fX );
+					m_Sprites[i].SetY( fY );
+				}
+				printf( "\n" );
+			}
+/*			
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() - fDeltaTime * PARTICLE_VELOCITY * (1 + m_vTexCoordVelocity.x) ); // metricable speed :)
+			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime*  );
+			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
+			m_Sprites[i].SetZ( m_Sprites[i].GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
 			if( IsOffScreenLeft(&m_Sprites[i]) )
 				m_Sprites[i].SetX( m_Sprites[i].GetX()-GetOffScreenLeft(&m_Sprites[i]) + GetOffScreenRight(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_TILE_SCROLL_RIGHT:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime * PARTICLE_VELOCITY * (1 + m_vTexCoordVelocity.x)  );
 			if( IsOffScreenRight(&m_Sprites[i]) )
 				m_Sprites[i].SetX( m_Sprites[i].GetX()-GetOffScreenRight(&m_Sprites[i]) + GetOffScreenLeft(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_TILE_SCROLL_UP:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetY( m_Sprites[i].GetY() - fDeltaTime * PARTICLE_VELOCITY );
 			if( IsOffScreenTop(&m_Sprites[i]) )
 				m_Sprites[i].SetY( m_Sprites[i].GetY()-GetOffScreenTop(&m_Sprites[i]) + GetOffScreenBottom(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_TILE_SCROLL_DOWN:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime * PARTICLE_VELOCITY );
 			if( IsOffScreenBottom(&m_Sprites[i]) )
 				m_Sprites[i].SetY( m_Sprites[i].GetY()-GetOffScreenBottom(&m_Sprites[i]) + GetOffScreenTop(&m_Sprites[i]) );
-		}
-		break;
-	case EFFECT_TILE_FLIP_X:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetRotationX( m_Sprites[i].GetRotationX() + fDeltaTime * PI );
-		}
-		break;
-	case EFFECT_TILE_FLIP_Y:
-		for( i=0; i<m_iNumSprites; i++ )
-		{
-			m_Sprites[i].SetRotationY( m_Sprites[i].GetRotationY() + fDeltaTime * PI );
+				*/
 		}
 		break;
 	case EFFECT_TILE_PULSE:
@@ -577,6 +727,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		ASSERT(0);
 	}
 
+	/*
 	if(m_TweenStartTime != 0 && !(m_TweenStartTime < 0))
 	{
 		m_TweenStartTime -= fDeltaTime;
@@ -675,14 +826,19 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		}
 		
 	}
+	*/
 }
 
 void BGAnimationLayer::Draw()
 {
-	for( int i=0; i<m_iNumSprites; i++ )
-	{
+	for( unsigned i=0; i<m_iNumSprites; i++ )
 		m_Sprites[i].Draw();
-	}
+}
+
+void BGAnimationLayer::SetDiffuse( RageColor c )
+{
+	for(unsigned i=0; i<m_iNumSprites; i++) 
+		m_Sprites[i].SetDiffuse(c);
 }
 
 void BGAnimationLayer::GainingFocus()
@@ -691,6 +847,9 @@ void BGAnimationLayer::GainingFocus()
 		m_Sprites[0].GetTexture()->SetPosition( 0 );
 	// if movie texture, pause and play movie so we don't waste CPU cycles decoding frames that won't be shown
 	m_Sprites[0].GetTexture()->Play();
+
+	for( int i=0; i<m_iNumSprites; i++ )
+		m_Sprites[i].Command( m_sCommand );
 }
 
 void BGAnimationLayer::LosingFocus()
