@@ -10,6 +10,7 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
+#include "SDL_utils.h"
 
 RageSounds *SOUND = NULL;
 
@@ -262,7 +263,7 @@ int MusicThread_start( void *p )
 {
 	while( !g_Shutdown )
 	{
-        usleep(10000);
+		SDL_Delay( 10 );
 
 		StartQueuedSounds();
 	}
