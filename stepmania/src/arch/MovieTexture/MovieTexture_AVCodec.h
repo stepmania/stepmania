@@ -12,8 +12,7 @@
 
 namespace avcodec
 {
-#include "ffmpeg/common.h"
-#include "ffmpeg/avformat.h"
+#include <ffmpeg/avformat.h>
 };
 
 
