@@ -999,7 +999,11 @@ struct CategoryScoreToInsert
 	}
 };
 
-void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+// set iNewRecordIndex = -1 if not a new record
+void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
+							RankingCategory hsc[NUM_PLAYERS],
+							float fScore[NUM_PLAYERS],
+							int iNewRecordIndexOut[NUM_PLAYERS] )
 {
 	vector<CategoryScoreToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )
