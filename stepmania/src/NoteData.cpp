@@ -33,18 +33,6 @@ NoteData::NoteData(const NoteData &cpy)
 	*this = cpy;
 }
 
-NoteData &NoteData::operator= (const NoteData &cpy)
-{
-	Init();
-
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
-		m_TapNotes[t] = cpy.m_TapNotes[t];
-
-	m_iNumTracks = cpy.m_iNumTracks;
-	m_HoldNotes = cpy.m_HoldNotes;
-	return *this;
-}
-
 void NoteData::Init()
 {
 	m_iNumTracks = 0;

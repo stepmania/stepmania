@@ -27,16 +27,15 @@ class NoteData
 	/* Keep this aligned, so that they all have the same size. */
 	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
 
+	vector<HoldNote>	m_HoldNotes;
+
 public:
 	NoteData();
 	~NoteData();
 	NoteData(const NoteData &cpy);
 	void Init();
-	NoteData &operator=(const NoteData &cpy);
 
 	int			m_iNumTracks;
-
-	vector<HoldNote>	m_HoldNotes;
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
