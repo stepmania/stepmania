@@ -665,6 +665,8 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYT
 	//
 	Actor* pSprTail = GetHoldTailActor( hn.GetStartBeat(), bIsBeingHeld );
 
+	pSprTail->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+
 	const float fY				= fYTail;
 	const float fYOffset		= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
 	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
@@ -714,6 +716,8 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bIsBeingHeld, float fYH
 	// Draw the head
 	//
 	Actor* pActor = GetHoldHeadActor( hn.GetStartBeat(), bIsBeingHeld );
+
+	pActor->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
 
 	// draw with normal Sprite
 	const float fY				= fYHead;
