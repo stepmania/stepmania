@@ -152,6 +152,12 @@ apply_color_key:
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
 
+	/* No iGrayscaleBits for images that are already paletted.  We don't support
+	 * that; and that hint is intended for use on images that are already grayscale,
+	 * it's not intended to change a color image into a grayscale image. */
+	if( actualID.iGrayscaleBits != -1 && img->format->BitsPerPixel == 8 )
+		actualID.iGrayscaleBits = -1;
+
 	/* Cap the max texture size to the hardware max. */
 	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
@@ -196,7 +202,15 @@ apply_color_key:
 	// Format of the image that we will pass to OpenGL and that we want OpenGL to use
 	RageDisplay::PixelFormat pixfmt;
 
-	if( img->format->BitsPerPixel == 8 )
+	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
+	{
+		SDL_Surface *dst = mySDL_Palettize( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
+
+		SDL_FreeSurface(img);
+		img = dst;
+	}
+	
+	if( img->format->BitsPerPixel == 8 && actualID.iGrayscaleBits == -1 )
 	{
 		/* Unless we set up the palette ourself, assume the "unused" bit is undefined,
 		 * and set it to 255.  We use it for alpha. */
