@@ -19,8 +19,6 @@
 
 #include "ArchHooks/ArchHooks_Unix.h"
 
-#include "Lights/LightsDriver_LinuxSerial.h"
-
 #include "MemoryCard/MemoryCardDriver_Linux.h"
 
 #endif
