@@ -24,7 +24,7 @@ RageSounds *SOUND = NULL;
  * on the same fractional beat when we loop.  (XXX: should we increase fade_len, too?
  * That would cause the extra pad time to be silence.)
  */
-/* Lock this before touching any of these globals. */
+/* Lock this before touching g_UpdatingTimer or g_Playing. */
 static RageMutex *g_Mutex;
 static bool g_UpdatingTimer;
 static bool g_ThreadedMusicStart = true;
@@ -56,100 +56,31 @@ struct MusicPlaying
 	}
 };
 
+static MusicPlaying *g_Playing;
+
+static RageThread MusicThread;
+
+/* These buffers can be accessed without locking. */
+#include "RageUtil_CircularBuffer.h"
+CircBuf<CString *> g_SoundsToPlayOnce;
+CircBuf<CString *> g_SoundsToPlayOnceFromDir;
+
 struct MusicToPlay
 {
 	CString file, timing_file;
 	bool HasTiming;
 	bool force_loop;
 	float start_sec, length_sec, fade_len;
-	bool pending;
-	MusicToPlay() { pending=false; }
+	bool align_beat;
 };
+CircBuf<MusicToPlay *> g_MusicsToPlay;
 
-static MusicToPlay g_MusicToPlay;
-static MusicPlaying *g_Playing;
-static RageThread MusicThread;
-
-static vector<CString> g_SoundsToPlayOnce, g_SoundsToPlayOnceFromDir;
-void StartQueuedSounds()
-{
-	/* Don't hold the mutex if we don't have to. */
-	while( 1 )
-	{
-		CString sPath;
-
-		g_Mutex->Lock();
-		if( g_SoundsToPlayOnce.size() )
-		{
-			sPath = g_SoundsToPlayOnce.back();
-			g_SoundsToPlayOnce.erase( g_SoundsToPlayOnce.begin()+g_SoundsToPlayOnce.size()-1, g_SoundsToPlayOnce.end() );
-		}
-		g_Mutex->Unlock();
-
-		if( sPath != "" )
-			SOUNDMAN->PlayOnce( sPath );
-		else
-			break;
-	}
-
-	while( 1 )
-	{
-		CString sPath;
-
-		g_Mutex->Lock();
-		if( g_SoundsToPlayOnceFromDir.size() )
-		{
-			sPath = g_SoundsToPlayOnceFromDir.back();
-			g_SoundsToPlayOnceFromDir.erase( g_SoundsToPlayOnceFromDir.begin()+g_SoundsToPlayOnceFromDir.size()-1, g_SoundsToPlayOnceFromDir.end() );
-		}
-		g_Mutex->Unlock();
-
-		if( sPath != "" )
-		{
-			// make sure there's a slash at the end of this path
-			if( sPath.Right(1) != "/" )
-				sPath += "/";
-
-			CStringArray arraySoundFiles;
-			GetDirListing( sPath + "*.mp3", arraySoundFiles );
-			GetDirListing( sPath + "*.wav", arraySoundFiles );
-			GetDirListing( sPath + "*.ogg", arraySoundFiles );
-
-			if( arraySoundFiles.empty() )
-				return;
-
-			int index = rand() % arraySoundFiles.size();
-			SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
-		}
-		else
-			break;
-	}
-
-}
-
-void StartPlayingMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicPlaying &Playing )
-{
-	Playing.m_HasTiming = ToPlay.HasTiming;
-	Playing.m_TimingDelayed = true;
-
-	Playing.m_Music->Load( ToPlay.file, false );
-
-	RageSoundParams p;
-	p.m_StartSecond = ToPlay.start_sec;
-	p.m_LengthSeconds = ToPlay.length_sec;
-	p.m_FadeLength = ToPlay.fade_len;
-	p.StartTime = when;
-	if( ToPlay.force_loop )
-		p.StopMode = RageSoundParams::M_LOOP;
-	Playing.m_Music->SetParams( p );
-
-	Playing.m_Music->SetPositionSeconds( p.m_StartSecond );
-	Playing.m_Music->StartPlaying();
-}
-
-void StartMusic( MusicToPlay &ToPlay )
+static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
+
+	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(ToPlay.file) )
+		return;
 
 	if( ToPlay.file.empty() )
 	{
@@ -172,7 +103,7 @@ void StartMusic( MusicToPlay &ToPlay )
 			ToPlay.HasTiming = true;
 	}
 
-	if( ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
+	if( ToPlay.align_beat && ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
 	{
 		/* Extend the loop period so it always starts and ends on the same fractional
 		 * beat.  That is, if it starts on beat 1.5, and ends on beat 10.2, extend it
@@ -215,6 +146,8 @@ void StartMusic( MusicToPlay &ToPlay )
 	 * start now. */
 	if( !g_Playing->m_HasTiming && !g_UpdatingTimer )
 		StartImmediately = true;
+	if( !ToPlay.align_beat )
+		StartImmediately = true;
 
 	RageTimer when; /* zero */
 	if( !StartImmediately )
@@ -241,14 +174,73 @@ void StartMusic( MusicToPlay &ToPlay )
 		when = GAMESTATE->m_LastBeatUpdate + PresumedLatency + fDistance;
 	}
 
-	/* Important: don't hold the mutex while we load the actual sound. */
+	/* Important: don't hold the mutex while we load and seek the actual sound. */
 	L.Unlock();
+	{
+		NewMusic->m_HasTiming = ToPlay.HasTiming;
+		NewMusic->m_TimingDelayed = true;
+		NewMusic->m_Music->Load( ToPlay.file, false );
 
-	StartPlayingMusic( when, ToPlay, *NewMusic );
+		RageSoundParams p;
+		p.m_StartSecond = ToPlay.start_sec;
+		p.m_LengthSeconds = ToPlay.length_sec;
+		p.m_FadeLength = ToPlay.fade_len;
+		p.StartTime = when;
+		if( ToPlay.force_loop )
+			p.StopMode = RageSoundParams::M_LOOP;
+		NewMusic->m_Music->SetParams( p );
+
+		NewMusic->m_Music->SetPositionSeconds( p.m_StartSecond );
+		NewMusic->m_Music->StartPlaying();
+	}
 
 	LockMut( *g_Mutex );
 	delete g_Playing;
 	g_Playing = NewMusic;
+}
+
+static void StartQueuedSounds()
+{
+	CString *p;
+	while( g_SoundsToPlayOnce.read( &p, 1 ) )
+	{
+		if( *p != "" )
+			SOUNDMAN->PlayOnce( *p );
+		delete p;
+	}
+
+	while( g_SoundsToPlayOnceFromDir.read( &p, 1 ) )
+	{
+		CString sPath( *p );
+		if( sPath != "" )
+		{
+			// make sure there's a slash at the end of this path
+			if( sPath.Right(1) != "/" )
+				sPath += "/";
+
+			CStringArray arraySoundFiles;
+			GetDirListing( sPath + "*.mp3", arraySoundFiles );
+			GetDirListing( sPath + "*.wav", arraySoundFiles );
+			GetDirListing( sPath + "*.ogg", arraySoundFiles );
+
+			if( arraySoundFiles.empty() )
+				return;
+
+			int index = rand() % arraySoundFiles.size();
+			SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
+		}
+
+		delete p;
+	}
+
+	MusicToPlay *pMusic;
+	while( g_MusicsToPlay.read( &pMusic, 1 ) )
+	{
+		/* Don't bother starting this music if there's another one in the queue after it. */
+		if( !g_MusicsToPlay.num_readable() )
+			StartMusic( *pMusic );
+		delete pMusic;
+	}
 }
 
 int MusicThread_start( void *p )
@@ -258,19 +250,6 @@ int MusicThread_start( void *p )
 		SDL_Delay( 10 );
 
 		StartQueuedSounds();
-
-		LockMutex L( *g_Mutex );
-		if( !g_MusicToPlay.pending )
-			continue;
-
-		/* We have a sound to start.  Don't keep the lock while we do this; if another
-		 * music tries to start in the meantime, it'll cause a skip. */
-		MusicToPlay ToPlay = g_MusicToPlay;
-		g_MusicToPlay.pending = false;
-
-		L.Unlock();
-
-		StartMusic( ToPlay );
 	}
 
 	return 0;
@@ -280,6 +259,10 @@ RageSounds::RageSounds()
 {
 	/* Init RageSoundMan first: */
 	ASSERT( SOUNDMAN );
+
+	g_SoundsToPlayOnce.reserve( 16 );
+	g_SoundsToPlayOnceFromDir.reserve( 16 );
+	g_MusicsToPlay.reserve( 16 );
 
 	g_Mutex = new RageMutex("RageSounds");
 	g_Playing = new MusicPlaying( new RageSound );
@@ -307,6 +290,17 @@ RageSounds::~RageSounds()
 
 	delete g_Playing;
 	delete g_Mutex;
+
+	CString *p;
+	while( g_SoundsToPlayOnce.read( &p, 1 ) )
+		delete p;
+
+	while( g_SoundsToPlayOnceFromDir.read( &p, 1 ) )
+		delete p;
+
+	MusicToPlay *pMusic;
+	while( g_MusicsToPlay.read( &pMusic, 1 ) )
+		delete pMusic;
 }
 
 static float GetFrameTimingAdjustment( float fDeltaTime )
@@ -414,34 +408,31 @@ CString RageSounds::GetMusicPath() const
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
-/* This function should not touch the disk at all. */
-void RageSounds::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len )
+/* If g_ThreadedMusicStart, this function should not touch the disk at all. */
+void RageSounds::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
 {
-	LockMut( *g_Mutex );
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
-	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(file) )
-		return;		// do nothing
 
-	MusicToPlay ToPlay;
+	MusicToPlay *ToPlay = new MusicToPlay;
 
-	ToPlay.file = file;
-	ToPlay.force_loop = force_loop;
-	ToPlay.start_sec = start_sec;
-	ToPlay.length_sec = length_sec;
-	ToPlay.fade_len = fade_len;
-	ToPlay.timing_file = timing_file;
-	ToPlay.pending = true;
+	ToPlay->file = file;
+	ToPlay->force_loop = force_loop;
+	ToPlay->start_sec = start_sec;
+	ToPlay->length_sec = length_sec;
+	ToPlay->fade_len = fade_len;
+	ToPlay->timing_file = timing_file;
+	ToPlay->align_beat = align_beat;
 
 	/* If no timing file was specified, look for one in the same place as the music file. */
-	if( ToPlay.timing_file == "" )
-		ToPlay.timing_file = SetExtension( file, "sm" );
+	if( ToPlay->timing_file == "" )
+		ToPlay->timing_file = SetExtension( file, "sm" );
 
-	if( g_ThreadedMusicStart )
-	{
-		g_MusicToPlay = ToPlay;
-	}
-	else
-		StartMusic( ToPlay );
+	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
+	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
+		delete ToPlay;
+
+	if( !g_ThreadedMusicStart )
+		StartQueuedSounds();
 }
 
 void RageSounds::HandleSongTimer( bool on )
@@ -452,9 +443,10 @@ void RageSounds::HandleSongTimer( bool on )
 
 void RageSounds::PlayOnce( CString sPath )
 {
-	g_Mutex->Lock();
-	g_SoundsToPlayOnce.push_back( sPath );
-	g_Mutex->Unlock();
+	/* Add the sound to the g_SoundsToPlayOnce queue. */
+	CString *p = new CString( sPath );
+	if( !g_SoundsToPlayOnce.write( &p, 1 ) )
+		delete p;
 
 	if( !g_ThreadedMusicStart )
 		StartQueuedSounds();
@@ -462,9 +454,10 @@ void RageSounds::PlayOnce( CString sPath )
 
 void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
 {
-	g_Mutex->Lock();
-	g_SoundsToPlayOnceFromDir.push_back( PlayOnceFromDir );
-	g_Mutex->Unlock();
+	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
+	CString *p = new CString( PlayOnceFromDir );
+	if( !g_SoundsToPlayOnceFromDir.write( &p, 1 ) )
+		delete p;
 
 	if( !g_ThreadedMusicStart )
 		StartQueuedSounds();

@@ -58,6 +58,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 #define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB("ScreenSelectMusic","DoRouletteOnMenuTimer")
+#define ALIGN_MUSIC_BEATS					THEME->GetMetricB("ScreenSelectMusic","AlignMusicBeat")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -676,7 +677,8 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 					true,
 					m_fSampleStartSeconds,
 					m_fSampleLengthSeconds,
-					1.5f); /* fade out for 1.5 seconds */
+					1.5f, /* fade out for 1.5 seconds */
+					ALIGN_MUSIC_BEATS );
 			}
 		}
 	}
