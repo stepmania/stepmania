@@ -62,7 +62,7 @@ InputHandler_SDL::InputHandler_SDL()
 
 	for(i = 0; Handled_SDL_Events[i] != -1; ++i)
 	{
-		SDL_EventState(Handled_SDL_Events[i], SDL_ENABLE);
+		mySDL_EventState(Handled_SDL_Events[i], SDL_ENABLE);
 		SDL_EventMask |= SDL_EVENTMASK(Handled_SDL_Events[i]);
 	}
 }
@@ -76,7 +76,7 @@ InputHandler_SDL::~InputHandler_SDL()
 	SDL_QuitSubSystem( SDL_INIT_JOYSTICK );
 
 	for(i = 0; Handled_SDL_Events[i] != -1; ++i)
-		SDL_EventState(Handled_SDL_Events[i], SDL_IGNORE);
+		mySDL_EventState(Handled_SDL_Events[i], SDL_IGNORE);
 }
 
 void InputHandler_SDL::Update(float fDeltaTime)
@@ -89,6 +89,7 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			{
+			LOG->Trace("key %i, %i", event.key.state, event.key.keysym.sym);
 			DeviceInput di(DEVICE_KEYBOARD, event.key.keysym.sym);
 			INPUTFILTER->ButtonPressed(di, event.key.state == SDL_PRESSED);
 			}
