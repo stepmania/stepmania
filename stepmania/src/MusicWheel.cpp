@@ -1227,7 +1227,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_COURSE:
 		return true;
 	case TYPE_SORT:
-		LOG->Trace("New sort order selected: %s - %d", 
+		LOG->Trace("New sort order selected: %s - %s", 
 			m_CurWheelItemData[m_iSelection]->m_sLabel.c_str(), 
 			SortOrderToString(m_CurWheelItemData[m_iSelection]->m_Action.m_SortOrder).c_str() );
 		ChangeSort( m_CurWheelItemData[m_iSelection]->m_Action.m_SortOrder );
