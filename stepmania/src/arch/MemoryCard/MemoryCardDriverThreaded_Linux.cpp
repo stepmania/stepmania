@@ -133,23 +133,32 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
       LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
       return;
     }
-  
+
   vector<UsbStorageDeviceEx> vDevicesLastSeen;
   
   while( !m_bShutdown )
     {      
-      pollfd pfd = { fd, POLLIN, 0 };
-      int ret = poll( &pfd, 1, 100 );
-      switch( ret )
+      if( m_bReset )
 	{
-	case 1:
-	  // file changed.  Fall through.
-	  break;
-	case 0: // no change.  Poll again.
-	  continue;
-	case -1:
-	  LOG->Warn( "Error polling" );
-	  continue;
+	  // force all to be re-detected
+	  vDevicesLastSeen.clear();
+	  m_bReset = false;
+	}
+      else
+	{
+	  pollfd pfd = { fd, POLLIN, 0 };
+	  int ret = poll( &pfd, 1, 100 );
+	  switch( ret )
+	    {
+	    case 1:
+	      // file changed.  Fall through.
+	      break;
+	    case 0: // no change.  Poll again.
+	      continue;
+	    case -1:
+	      LOG->Warn( "Error polling" );
+	      continue;
+	    }
 	}
 
       // TRICKY: We're waiting for a change in the USB device list, but 
@@ -245,6 +254,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 
 MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 {
+  m_bReset = false;
   this->StartThread();
 }
 
@@ -649,6 +659,8 @@ void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 
   ExecuteCommand( "rmmod usb-storage" );
   ExecuteCommand( "modprobe usb-storage" );
+
+  m_bReset = true;
 
   // let the mounting thread re-mount everything
 }

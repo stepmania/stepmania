@@ -14,6 +14,8 @@ public:
 protected:
 	virtual void MountThreadMain();
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint );
+
+	bool m_bReset;
 };
 
 #endif
