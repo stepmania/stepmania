@@ -104,7 +104,12 @@ public:
 	void RemoveHoldNote( int index );
 	HoldNote &GetHoldNote( int index ) { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
-	bool IsHoldNoteAtBeat( int iTrack, int iRow ) const; /* must be in 2sAnd3s */
+
+	/* Determine if a given spot is within a hold note (being on the tail doesn't count).
+	 * Return true if so.  If pHeadRow is non-NULL, return the row of the head.  If pTailRow is
+	 * non-NULL, return the row of the tail.  This function is faster if pTailRow is NULL.
+	 * Must be in 2sAnd3s. */
+	bool IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow = NULL, int *pTailRow = NULL ) const;
 
 	//
 	// statistics

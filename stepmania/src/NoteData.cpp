@@ -375,37 +375,101 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 }
 
 /* Return true if a hold note lies on the given spot.  Must be in 2sAnd3s. */
-bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow ) const
+bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow, int *pTailRow ) const
 {
-	/* Starting at iRow, search upwards.  If we find a TapNote::hold_head, we're within
-	 * a hold.  If we find a tap, mine or attack, we're not--those never lie within hold
-	 * notes.  Ignore autoKeysound. */
-	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, 0, iRow )
-	{
-		const TapNote &tn = GetTapNote( iTrack, r );
-		switch( tn.type )
-		{
-		case TapNote::hold_head:
-			return true;
+	/* If neither the actual head nor tail row were requested, search for the head to
+	 * determine the return value. */
+	int iDummy;
+	if( pHeadRow == NULL )
+		pHeadRow = &iDummy;
 
-		case TapNote::tap:
-		case TapNote::mine:
-		case TapNote::attack:
-		case TapNote::hold_tail:
-			return false;
-		case TapNote::empty:
-		case TapNote::autoKeysound:
-			/* ignore */
-			continue;
-		case TapNote::hold:
-			/* Don't call this function when in 4s mode! */
-			FAIL_M("hold");
-		default:
-			FAIL_M( ssprintf("%i", tn.type) );
+	bool bFoundHead = false;
+	if( pHeadRow != NULL )
+	{
+		/* Starting at iRow, search upwards.  If we find a TapNote::hold_head, we're within
+		 * a hold.  If we find a tap, mine or attack, we're not--those never lie within hold
+		 * notes.  Ignore autoKeysound. */
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, 0, iRow )
+		{
+			const TapNote &tn = GetTapNote( iTrack, r );
+			switch( tn.type )
+			{
+			case TapNote::hold_head:
+				*pHeadRow = r;
+				bFoundHead = true;
+				break;
+
+			case TapNote::tap:
+			case TapNote::mine:
+			case TapNote::attack:
+			case TapNote::hold_tail:
+				return false;
+			case TapNote::empty:
+			case TapNote::autoKeysound:
+				/* ignore */
+				continue;
+			case TapNote::hold:
+				/* Don't call this function when in 4s mode! */
+				FAIL_M("hold");
+			default:
+				FAIL_M( ssprintf("%i", tn.type) );
+			}
+
+			if( bFoundHead )
+				break;
 		}
+
+		/* If we didn't find a matching head, we're not within a hold note, so don't bother
+		 * searching for a tail. */
+		if( !bFoundHead )
+			return false;
 	}
 
-	return false;
+	bool bFoundTail = false;
+	if( pTailRow != NULL )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, iTrack, r, iRow, MAX_NOTE_ROW )
+		{
+			const TapNote &tn = GetTapNote( iTrack, r );
+
+			switch( tn.type )
+			{
+			case TapNote::hold_tail:
+				*pTailRow = r;
+				bFoundTail = true;
+				break;
+			case TapNote::tap:
+			case TapNote::mine:
+			case TapNote::attack:
+				return false;
+			case TapNote::hold_head:
+				/* If iRow is a hold head, we're within a hold note, and need to continue searching;
+				 * if any row after that is a head, we're not in it, so stop.  This is different
+				 * than above, since holds are [head,tail); the row of the tail isn't actually
+				 * part of the hold. */
+				if( r == iRow )
+					continue;
+
+				return false;
+
+			case TapNote::empty:
+			case TapNote::autoKeysound:
+				/* ignore */
+				continue;
+			case TapNote::hold:
+				/* Don't call this function when in 4s mode! */
+				FAIL_M("hold");
+			default:
+				FAIL_M( ssprintf("%i", tn.type) );
+			}
+			
+			if( bFoundTail )
+				break;
+			return true;
+		}
+	}
+			
+	return bFoundHead || bFoundTail;
 }
 
 int NoteData::GetFirstRow() const

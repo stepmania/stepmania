@@ -381,6 +381,21 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 	out.Convert4sToHoldNotes();
 }
 
+int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
+{
+	int iMaxTailRow = -1;
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		int iTailRow;
+		if( !in.IsHoldNoteAtBeat( t, iRow, NULL, &iTailRow ) )
+			continue;
+
+		iMaxTailRow = max( iMaxTailRow, iTailRow );
+	}
+
+	return iMaxTailRow;
+}
+
 void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
 	// reset all notes
@@ -393,26 +408,38 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
+		/* If any row starts a hold note, find the end of the hold note, and keep searching
+		 * until we've extended to the end of the latest overlapping hold note. */
+		int iHoldStart = r;
+		int iHoldEnd = -1;
+		while(1)
+		{
+			int iMaxTailRow = FindLongestOverlappingHoldNoteForAnyTrack( Original, r );
+			if( iMaxTailRow == -1 )
+				break;
+			iHoldEnd = iMaxTailRow;
+			r = iMaxTailRow;
+		}
+
+		if( iHoldEnd != -1 )
+		{
+			/* If we found a hold note, add it to all tracks. */
+			HoldNote hn( 0, iHoldStart, iHoldEnd );
+			for( int t=0; t<Original.GetNumTracks(); t++ )
+			{
+				hn.iTrack = t;
+				out.AddHoldNote( hn );
+			}
+			continue;
+		}
+
 		if( Original.IsRowEmpty( r ) )
 			continue;
 
-		/* Enable every track in the output.  If there are any hold notes in the source
-		 * on this row, output hold notes; otherwise tap notes.  This is to 1: prevent
-		 * converting everything to hold notes, and 2: so if it's written to an SM, we
-		 * don't write huge streams of tap notes. */
-		bool bHoldNoteOnThisRow = false;
-		for( int t=0; t<Original.GetNumTracks(); t++ )
-			if( Original.IsHoldNoteAtBeat(t,r) )
-				bHoldNoteOnThisRow = true;
-
+		/* Enable every track in the output. */
 		for( int t=0; t<out.GetNumTracks(); t++ )
-		{
-			TapNote tn = bHoldNoteOnThisRow ? TAP_ORIGINAL_HOLD : TAP_ORIGINAL_TAP;
-			out.SetTapNote( t, r, tn );
-		}
+			out.SetTapNote( t, r, TAP_ORIGINAL_TAP );
 	}
-
-	out.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
