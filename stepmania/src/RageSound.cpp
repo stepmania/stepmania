@@ -57,10 +57,10 @@ RageSoundParams::RageSoundParams():
 	StopMode = M_AUTO;
 }
 
-RageSound::RageSound()
+RageSound::RageSound():
+	m_Mutex( "RageSound" )
 {
 	ASSERT(SOUNDMAN);
-	LockMut(SOUNDMAN->lock);
 
 	original = this;
 	Sample = NULL;
@@ -88,12 +88,23 @@ RageSound::~RageSound()
 }
 
 RageSound::RageSound(const RageSound &cpy):
-	RageSoundBase( cpy )
+	RageSoundBase( cpy ),
+	m_Mutex( "RageSound" )
 {
 	ASSERT(SOUNDMAN);
-	LockMut(SOUNDMAN->lock);
 
 	Sample = NULL;
+
+	*this = cpy;
+
+	/* Register ourself, so we receive Update()s.  We have a different ID than
+	 * our parent. */
+	ID = SOUNDMAN->RegisterSound( this );
+}
+
+RageSound &RageSound::operator=( const RageSound &cpy )
+{
+	LockMut(cpy.m_Mutex);
 
 	original = cpy.original;
 	m_Param = cpy.m_Param;
@@ -103,19 +114,20 @@ RageSound::RageSound(const RageSound &cpy):
 	playing_thread = 0;
 
 	databuf.reserve(internal_buffer_size);
+	delete Sample;
 	Sample = cpy.Sample->Copy();
 
 	/* Load() won't work on a copy if m_sFilePath is already set, so
 	 * copy this down here. */
 	m_sFilePath = cpy.m_sFilePath;
 
-	/* Register ourself, so we receive Update()s.  We have a different ID than
-	 * our parent. */
-	ID = SOUNDMAN->RegisterSound( this );
+	return *this;
 }
 
 void RageSound::Unload()
 {
+	LockMut(m_Mutex);
+
 	if(IsPlaying())
 		StopPlaying();
 
@@ -181,17 +193,8 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	return true;
 }
 
-/* Read data at the rate we're playing it.  We only do this to smooth out the rate
- * we read data; the sound thread will always read more if it's needed. 
- *
- * Actually, this isn't a good idea.  The sound driver will read in small chunks,
- * interleaving between files.  For example, if four files are playing, and each
- * is two chunks behind, it'll read a chunk from each file twice, instead of reading
- * two chunks for each file at a time, which reduces the chance of underrun. */
 void RageSound::Update(float delta)
 {
-	LockMut(SOUNDMAN->lock);
-
 	/* Erase old pos_map data. */
 //	CleanPosMap( pos_map );
 }
@@ -265,8 +268,6 @@ void RageSound::RateChange(char *buf, int &cnt,
  * actually read; 0 = EOF. */
 int RageSound::FillBuf( int frames )
 {
-	LockMut(SOUNDMAN->lock);
-
 	ASSERT(Sample);
 
 	bool got_something = false;
@@ -401,6 +402,13 @@ void FadeSound( Sint16 *buffer, int frames, float fStartVolume, float fEndVolume
 	}
 }
 
+/* RageSound::GetDataToPlay and RageSound::FillBuf are the main threaded API.  These
+ * need to execute without blocking other threads from calling eg. GetPositionSeconds,
+ * since they may take some time to run.
+ Sample (r), databuf (r)
+ decode_position (r), databuf (r)
+ * 
+ */
 /* Retrieve audio data, for mixing.  At the time of this call, the frameno at which the
  * sound will be played doesn't have to be known.  Once committed, and the frameno
  * is known, call CommitPCMData.  size is in bytes.
@@ -414,9 +422,10 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 {
 	int NumRewindsThisCall = 0;
 
-	LockMut(SOUNDMAN->lock);
+	/* We only update decode_position; only take a shared lock, so we don't block the main thread. */
+//	LockMut(m_Mutex);
 
-	ASSERT(playing);
+	ASSERT_M( playing, ssprintf("%p", this) );
 
 	frames_stored = 0;
 	sound_frame = decode_position;
@@ -455,7 +464,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 					return false;
 				}
 
-				/* Rewind and start over. */
+				/* Rewind and start over.  XXX: this will take an exclusive lock */
 				SetPositionSeconds( m_Param.m_StartSecond );
 
 				/* Make sure we can get some data.  If we can't, then we'll have
@@ -517,8 +526,6 @@ void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int got_frames 
  * Be careful; this is called in a separate thread. */
 int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 {
-	LockMut(SOUNDMAN->lock);
-
 	ASSERT(playing);
 
 	/*
@@ -553,8 +560,6 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
  * playing, Stop is called. */
 void RageSound::StartPlaying()
 {
-	LockMut(SOUNDMAN->lock);
-
 	// If no volume is set, use the default.
 	if( m_Param.m_Volume == -1 )
 		m_Param.m_Volume = SOUNDMAN->GetMixVolume();
@@ -568,11 +573,16 @@ void RageSound::StartPlaying()
 			GetLoadedFilePath().c_str(), m_Param.StartTime.Ago() );
 
 	/* Tell the sound manager to start mixing us. */
+//	LOG->Trace("set playing true for %p (StartPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
+
 	playing = true;
 	playing_thread = RageThread::GetCurrentThreadID();
 
 	SOUNDMAN->StartMixing(this);
-	SOUNDMAN->playing_sounds.insert( this );
+
+	SOUNDMAN->RegisterPlayingSound( this );
+
+//	LOG->Trace("StartPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 }
 
 void RageSound::StopPlaying()
@@ -585,35 +595,47 @@ void RageSound::StopPlaying()
 	/* Tell the sound driver to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 
-	SOUNDMAN->lock.Lock();
-	SOUNDMAN->playing_sounds.erase( this );
-	SOUNDMAN->lock.Unlock();
+	SOUNDMAN->UnregisterPlayingSound( this );
 
+	/* Lock the mutex after calling UnregisterPlayingSound.  We must not make driver
+	 * calls with our mutex locked (driver mutex < sound mutex).  Nobody else will
+	 * see our sound as not playing until we set playing = false. */
+	m_Mutex.Lock();
+
+//	LOG->Trace("set playing false for %p (StopPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	playing = false;
 	playing_thread = 0;
 
 	pos_map.Clear();
+//	LOG->Trace("StopPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
+
+	m_Mutex.Unlock();
 }
 
 /* This is similar to StopPlaying, except it's called by sound drivers when we're done
  * playing, rather than by users to as us to stop.  (The only difference is that this
  * doesn't call SOUNDMAN->StopMixing; there's no reason to tell the sound driver to
- * stop mixing, since they're the one telling us we're done.) */
+ * stop mixing, since they're the one telling us we're done.)
+ *
+ * This is only called from the main thread. */
 void RageSound::SoundIsFinishedPlaying()
 {
 	if(!playing)
 		return;
+	m_Mutex.Lock();
 
 	stopped_position = (int) GetPositionSecondsInternal();
 
-	SOUNDMAN->lock.Lock();
-	SOUNDMAN->playing_sounds.erase( this );
-	SOUNDMAN->lock.Unlock();
+	SOUNDMAN->UnregisterPlayingSound( this );
 
+//	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	playing = false;
 	playing_thread = 0;
 
 	pos_map.Clear();
+//	LOG->Trace("SoundIsFinishedPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
+
+	m_Mutex.Unlock();
 }
 
 RageSound *RageSound::Play( const RageSoundParams *params )
@@ -645,7 +667,7 @@ float RageSound::GetLengthSeconds()
 /* Get the position in frames. */
 int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 {
-	LockMut(SOUNDMAN->lock);
+	LockMut(m_Mutex);
 
 	if( approximate )
 		*approximate = false;
@@ -667,9 +689,6 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	/* Get our current hardware position. */
 	int64_t cur_frame = SOUNDMAN->GetPosition(this);
 
-	/* Before using pos_map, flush any incoming positions. */
-	SOUNDMAN->FlushPosMapQueue();
-
 	return pos_map.Search( cur_frame, approximate );
 }
 
@@ -684,7 +703,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 
 float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) const
 {
-	LockMut(SOUNDMAN->lock);
+	LockMut(m_Mutex);
 
 	if( Timestamp )
 	{
@@ -715,10 +734,7 @@ int RageSound::GetSampleRate() const
 
 bool RageSound::SetPositionFrames( int frames )
 {
-	/* This can take a while.  Only lock the sound buffer if we're actually playing. */
-	LockMutex L(SOUNDMAN->lock);
-	if(!playing)
-		L.Unlock();
+	LockMut(m_Mutex);
 
 	{
 		/* "decode_position" records the number of frames we've output to the
@@ -786,6 +802,16 @@ void RageSoundParams::SetPlaybackRate( float NewSpeed )
 float RageSound::GetVolume() const
 {
 	return m_Param.m_Volume;
+}
+
+void RageSound::LockSound()
+{
+	m_Mutex.Lock();
+}
+
+void RageSound::UnlockSound()
+{
+	m_Mutex.Unlock();
 }
 
 float RageSound::GetPlaybackRate() const

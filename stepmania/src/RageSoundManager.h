@@ -4,7 +4,6 @@
 #include <set>
 #include <map>
 #include "SDL_utils.h"
-#include "RageThreads.h"
 #include "RageUtil_CircularBuffer.h"
 
 class RageSound;
@@ -17,7 +16,11 @@ class RageSoundManager
 	/* Set of sounds that we've taken over (and are responsible for deleting
 	 * when they're finished playing): */
 	set<RageSound *> owned_sounds;
+	set<RageSound *> playing_sounds;
 
+	/* A list of all sounds that currently exist. */
+	set<RageSound *> all_sounds;
+	
 	RageSoundDriver *driver;
 
 	/* Prefs: */
@@ -31,8 +34,6 @@ class RageSoundManager
 	CircBuf<queued_pos_map_t> pos_map_queue;
 
 public:
-	RageMutex lock;
-
 	RageSoundManager(CString drivers);
 	~RageSoundManager();
 
@@ -45,11 +46,12 @@ public:
 	int64_t GetPosition( const RageSoundBase *snd ) const;	/* used by RageSound */
 	int RegisterSound( RageSound *p );		/* used by RageSound */
 	void UnregisterSound( RageSound *p );	/* used by RageSound */
+	void RegisterPlayingSound( RageSound *p );	/* used by RageSound */
+	void UnregisterPlayingSound( RageSound *p );	/* used by RageSound */
 	void CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_bytes );	/* used by drivers */
-	void FlushPosMapQueue();				/* used by RageSound */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
-	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }
+	set<RageSound *> GetPlayingSounds() const;
 
 	void PlayOnce( CString sPath );
 
@@ -60,15 +62,13 @@ public:
 	 * before exiting a thread. */
 	void StopPlayingSoundsForThisThread();
 
-	/* A list of all sounds that currently exist.  RageSound adds and removes
-	 * itself to this. */
-	set<RageSound *> all_sounds;
-	
-	/* RageSound adds and removes itself to this. */
-	set<RageSound *> playing_sounds;
-	void GetCopies(RageSound &snd, vector<RageSound *> &snds);
+	void GetCopies( RageSound &snd, vector<RageSound *> &snds, bool bLockSounds=false );
 
 	static void AttenuateBuf( Sint16 *buf, int samples, float vol );
+
+private:
+	void FlushPosMapQueue();
+	RageSound *GetSoundByID( int ID );
 };
 
 /* This inputs and outputs 16-bit 44khz stereo input. */

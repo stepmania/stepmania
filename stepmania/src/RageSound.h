@@ -70,6 +70,7 @@ public:
 	RageSound();
 	~RageSound();
 	RageSound(const RageSound &cpy);
+	RageSound &operator=( const RageSound &cpy );
 
 	/* If cache == true (1), we'll preload the entire file into memory if
 	 * it's small enough.  If this is done, a large number of copies of the
@@ -107,6 +108,10 @@ public:
 	bool IsPlaying() const { return playing; }
 	unsigned GetPlayingThread() const { return playing_thread; }
 
+	/* Lock and unlock this sound. */
+	void LockSound();
+	void UnlockSound();
+
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
 	float GetVolume() const;
@@ -118,6 +123,8 @@ private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
 	 * this is ourself. */
 	RageSound *original;
+
+	mutable RageMutex m_Mutex;
 
 	SoundReader *Sample;
 	CircBuf<char> databuf;
