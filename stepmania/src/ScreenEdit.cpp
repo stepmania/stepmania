@@ -1853,14 +1853,15 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				const vector<Steps*> sIter = m_pSong->GetAllSteps();
 				NoteData ndTemp;
 				CString sTempStyle, sTempDiff;
-				for (int i = 0; i < sIter.size(); i++) {
-					if (sIter[i]->IsAutogen()) {
+				for( unsigned i = 0; i < sIter.size(); i++ )
+				{
+					if( sIter[i]->IsAutogen() )
 						continue;
-					}
-					if ((sIter[i]->m_StepsType == GAMESTATE->m_pCurNotes[PLAYER_1]->m_StepsType) &&
-						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty())) {
+
+					/* XXX: Edits are distinguished by description.  Compare vs m_pNotes. */
+					if( (sIter[i]->m_StepsType == GAMESTATE->m_pCurNotes[PLAYER_1]->m_StepsType) &&
+						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty()) )
 						continue;
-					}
 
 					sIter[i]->GetNoteData( &ndTemp );
 					ndTemp.ConvertHoldNotesTo2sAnd3s();
