@@ -600,9 +600,9 @@ void Song::TranslateTitles()
 		ttab.push_back(TitleTrans("", "", "Riyu Kosak[au]", "", "", "&kosaka1;&kosaka2;&hri;&hyu;") );
 		ttab.push_back(TitleTrans("", "", "Kosak[au] Riyu", "", "", "&kosaka1;&kosaka2;&hri;&hyu;") );
 
-		/* This is fuzzy, so check the artist, too. */
-		ttab.push_back(TitleTrans(".*Japan.*", "", "(Re-Venge)|(RevenG)", "&matsuri; Japan", "", "") );
-
+		/* Matsuri Japan is often just "Japan".  There may be other songs by
+		 * this name, too, so match the artist, too. */
+		ttab.push_back(TitleTrans("^Japan$", "", "(Re-Venge)|(RevenG)", "&matsuri; Japan", "", "") );
 
 		/* Fix up hacked titles: */
 		ttab.push_back(TitleTrans("^Max 300$", "", "%", "", "", "&omega;") );
