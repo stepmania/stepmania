@@ -133,7 +133,6 @@ bool LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNe
 //		NewOpenGLContext = true;
 //	}
 
-	SDL_WM_SetCaption("StepMania", "StepMania");
 	
 //	mySDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
 #endif

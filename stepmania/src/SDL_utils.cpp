@@ -588,7 +588,10 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	}
 
 	SDL_Surface *srf = IMG_Load(sIconFile);
-	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
+
+	// Why is this needed?  It's goofing up paletted images 
+	// that use a color key other than pink. -Chris
+	//	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
 
 	/* Windows icons are 32x32 and SDL can't resize them for us, which
 	 * causes mask corruption.  (Actually, the above icon *is* 32x32;

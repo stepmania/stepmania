@@ -14,7 +14,7 @@ LoadingWindow_SDL::LoadingWindow_SDL()
         RageException::Throw( "Couldn't initialize SDL: %s\n", SDL_GetError() );
 
 	/* Set window title and icon */
-	SDL_WM_SetCaption("StepMania", "StepMania");
+	SDL_WM_SetCaption("Loading StepMania", "");
 
 	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
 	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
