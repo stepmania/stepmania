@@ -120,15 +120,16 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		if(!out.m_iMeter) out.m_iMeter = 5;
 	}
 
+	notedata.m_iNumTracks = 5;
+	out.m_NotesType = NOTES_TYPE_PUMP_SINGLE;
+
 	if( sFName.Find("double") != -1 )
 	{
 		notedata.m_iNumTracks = 10;
 		out.m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
-	}
-	else
-	{
-		notedata.m_iNumTracks = 5;
-		out.m_NotesType = NOTES_TYPE_PUMP_SINGLE;
+	} else if( sFName.Find("_2") != -1 ) {
+		/* XXX: insert note about pump couples here */
+		out.m_NotesType = NOTES_TYPE_PUMP_COUPLE_2;
 	}
 
 	out.m_sSMNoteData = notedata.GetSMNoteDataString();
@@ -150,8 +151,6 @@ bool KSFLoader::LoadFromKSFDir( CString sDir, Song &out )
 	// load the Notes from the rest of the KSF files
 	for( int i=0; i<arrayKSFFileNames.GetSize(); i++ ) 
 	{
-		if( arrayKSFFileNames[i].Find("_2") != -1 )
-			continue;	// any "right-side" files should be loaded by Notes
 		Notes* pNewNotes = new Notes;
 		LoadFromKSFFile( out.m_sSongDir + arrayKSFFileNames[i], *pNewNotes );
 		out.m_apNotes.Add( pNewNotes );
