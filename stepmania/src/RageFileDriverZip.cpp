@@ -55,9 +55,27 @@ RageFileDriverZip::RageFileDriverZip( CString path ):
 	RageFileDriver( new NullFilenameDB ),
 	m_Mutex( ssprintf("RageFileDriverZip(%s)", path.c_str()) )
 {
-	if( !zip.Open(path) )
-		RageException::Throw( "Couldn't open %s: %s", path.c_str(), zip.GetError().c_str() );
+	m_bFileOwned = true;
+	m_sPath = path;
 
+	RageFile *pFile = new RageFile;
+	m_pZip = pFile;
+
+	if( !pFile->Open(path) )
+		RageException::Throw( "Couldn't open %s: %s", path.c_str(), pFile->GetError().c_str() );
+
+	ParseZipfile();
+}
+
+RageFileDriverZip::RageFileDriverZip( RageFileBasic *pFile ):
+	RageFileDriver( new NullFilenameDB ),
+	m_Mutex( ssprintf("RageFileDriverZip(%p)", pFile) )
+{
+	m_sPath = ssprintf("%p", pFile);
+
+	m_bFileOwned = false;
+	m_pZip = pFile;
+	
 	ParseZipfile();
 }
 
@@ -83,9 +101,9 @@ static unsigned long makelong(const unsigned char *sig)
 		+  ((unsigned long)sig[0]);
 }
 
-void RageFileDriverZip::ReadEndCentralRecord( RageFile &zip, end_central_dir_record &ec )
+void RageFileDriverZip::ReadEndCentralRecord( end_central_dir_record &ec )
 {
-	const int OrigPos = zip.Tell();
+	const int OrigPos = m_pZip->Tell();
 	typedef unsigned char ec_byte_rec[ ECREC_SIZE+4 ];
 #define NUMBER_THIS_DISK                  4
 #define NUM_DISK_WITH_START_CENTRAL_DIR   6
@@ -96,11 +114,11 @@ void RageFileDriverZip::ReadEndCentralRecord( RageFile &zip, end_central_dir_rec
 #define ZIPFILE_COMMENT_LENGTH            20
 
 	ec_byte_rec byterec;
-	const int got = zip.Read( byterec, ECREC_SIZE+4 );
+	const int got = m_pZip->Read( byterec, ECREC_SIZE+4 );
 	if( got == -1 )
-		RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
+		RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 	if ( got != ECREC_SIZE+4 )
-		RageException::Throw( "%s: unexpected EOF", zip.GetPath().c_str() );
+		RageException::Throw( "%s: unexpected EOF", m_sPath.c_str() );
 
 	ec.number_this_disk = makeword(&byterec[NUMBER_THIS_DISK]);
 	ec.num_disk_start_cdir = makeword(&byterec[NUM_DISK_WITH_START_CENTRAL_DIR]);
@@ -112,19 +130,19 @@ void RageFileDriverZip::ReadEndCentralRecord( RageFile &zip, end_central_dir_rec
 
 	const int expect_ecrec_offset = ec.offset_start_central_directory + ec.size_central_directory;
 	if( expect_ecrec_offset > OrigPos  )
-		RageException::Throw( "Couldn't open %s: missing %ld bytes in zipfile", zip.GetPath().c_str(),
+		RageException::Throw( "Couldn't open %s: missing %ld bytes in zipfile", m_sPath.c_str(),
 				expect_ecrec_offset - OrigPos  );
 }
 
 void RageFileDriverZip::ParseZipfile()
 {
 	/* Look for the end-central record. */
-	const int searchlen = min( zip.GetFileSize(), 66000 );
-	const int Size = zip.GetFileSize();
+	const int searchlen = min( m_pZip->GetFileSize(), 66000 );
+	const int Size = m_pZip->GetFileSize();
 	int realpos = Size;
 
 	/* Loop through blocks of data, starting at the end.  In general, need not
-	 * check whole zipfile for signature, but may want to do so if testing. */
+	 * check whole zim_pZip for signature, but may want to do so if testing. */
 
 	int real_ecrec_offset = -1;
 
@@ -134,15 +152,15 @@ void RageFileDriverZip::ParseZipfile()
 	{
 		realpos -= INBUFSIZE;
 		realpos = max( 0, realpos );
-		zip.Seek( realpos );
-		int got = zip.Read( tmp+tmp_used, sizeof(tmp)-tmp_used );
+		m_pZip->Seek( realpos );
+		int got = m_pZip->Read( tmp+tmp_used, sizeof(tmp)-tmp_used );
 		if( got == -1 )
-			RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
+			RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 		if( got == 0 )
 			break;          /* fall through and fail */
 		got += tmp_used;
 
-		/* 'P' must be at least (ECREC_SIZE+4) bytes from end of zipfile */
+		/* 'P' must be at least (ECREC_SIZE+4) bytes from end of zim_pZip */
 		for( int pos = got-(ECREC_SIZE+4); real_ecrec_offset == -1 && pos >= 0; --pos )
 		{
 			const char *p = tmp+pos;
@@ -160,34 +178,34 @@ void RageFileDriverZip::ParseZipfile()
 	}
 
 	if( real_ecrec_offset == -1 )
-		RageException::Throw( "Couldn't open %s: End-of-central-directory signature not found", zip.GetPath().c_str() );
+		RageException::Throw( "Couldn't open %s: End-of-central-directory signature not found", m_sPath.c_str() );
 
-	zip.Seek( real_ecrec_offset );
+	m_pZip->Seek( real_ecrec_offset );
 
 	/* Get the end-central data. */
 	end_central_dir_record ec;
-	ReadEndCentralRecord( zip, ec );
+	ReadEndCentralRecord( ec );
 
 	bool something = ec.number_this_disk == 1 && ec.num_disk_start_cdir == 1;
 	if (!something && ec.number_this_disk != 0)
-		RageException::Throw( "Couldn't open %s: zipfile is part of multi-disk archive", zip.GetPath().c_str() );
+		RageException::Throw( "Couldn't open %s: zipfile is part of multi-disk archive", m_sPath.c_str() );
 
 	/* Seek to where the start of central directory should be, and make
 	 * sure it's there. */
-	zip.Seek( ec.offset_start_central_directory );
+	m_pZip->Seek( ec.offset_start_central_directory );
 
 	CString sig;
-	int got = zip.Read( sig, 4 );
+	int got = m_pZip->Read( sig, 4 );
 	if( got != 4 || sig != central_hdr_sig )
-		RageException::Throw( "Couldn't open %s: start of central directory not found; zipfile corrupt", zip.GetPath().c_str() );
+		RageException::Throw( "Couldn't open %s: start of central directory not found; zipfile corrupt", m_sPath.c_str() );
 
-	zip.Seek( ec.offset_start_central_directory );
+	m_pZip->Seek( ec.offset_start_central_directory );
 
 	/* Loop through files in central directory. */
 	while(1)
 	{
 		CString sig;
-		if ( zip.Read( sig, 4 ) != 4 )
+		if ( m_pZip->Read( sig, 4 ) != 4 )
 			break;
 
 		/* Is it a new entry? */
@@ -199,22 +217,22 @@ void RageFileDriverZip::ParseZipfile()
 			{
 				/* Are we at the end_central record? */
 				if( sig != end_central_sig )
-					LOG->Warn( "%s: expected end central file header signature not found", zip.GetPath().c_str() );
+					LOG->Warn( "%s: expected end central file header signature not found", m_sPath.c_str() );
 			} else {
-				LOG->Warn( "%s: expected central file header signature not found", zip.GetPath().c_str() );
+				LOG->Warn( "%s: expected central file header signature not found", m_sPath.c_str() );
 			}
 			break;
 		}
 
 		FileInfo info;
 		info.data_offset = -1;
-		int got = ProcessCdirFileHdr(zip, info);
+		int got = ProcessCdirFileHdr( info );
 		if( got == -1 ) /* error */
 			break;
 		if( got == 0 ) /* skip */
 			continue;
 
-		zip.Seek( zip.Tell() + info.extra_field_length );
+		m_pZip->Seek( m_pZip->Tell() + info.extra_field_length );
 
 		FileInfo *pInfo = new FileInfo(info);
 		Files.push_back( pInfo );
@@ -241,19 +259,19 @@ typedef unsigned char cdir_byte_hdr[ CREC_SIZE ];
 #define C_INTERNAL_FILE_ATTRIBUTES        32
 #define C_EXTERNAL_FILE_ATTRIBUTES        34
 #define C_RELATIVE_OFFSET_LOCAL_HEADER    38
-int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
+int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 {
 	/* Read the next central directory entry and do any necessary machine-type
 	 * conversions (byte ordering, structure padding compensation--do so by
 	 * copying the data from the array into which it was read (byterec) to the
 	 * usable struct. */
 	cdir_byte_hdr byterec;
-	int got = zip.Read( (char *)byterec, CREC_SIZE );
+	int got = m_pZip->Read( (char *)byterec, CREC_SIZE );
 	if ( got == -1 )
-		RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
+		RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 	if ( got != CREC_SIZE )
 	{
-		LOG->Warn( "%s: unexpected EOF", zip.GetPath().c_str() );
+		LOG->Warn( "%s: unexpected EOF", m_sPath.c_str() );
 		return -1;
 	}
 
@@ -263,7 +281,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 	if( version_needed_to_extract > 20 ) /* compatible with PKUNZIP 2.0 */
 	{
 		LOG->Warn( "File \"%s\" in \"%s\" uses unsupported ZIP version %i.%i",
-			info.fn.c_str(), zip.GetRealPath().c_str(), 
+			info.fn.c_str(), m_sPath.c_str(), 
 			version_needed_to_extract / 10, version_needed_to_extract % 10 );
 		return 0;
 	}
@@ -271,8 +289,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 	const int general_purpose_bit_flag = makeword(&byterec[C_GENERAL_PURPOSE_BIT_FLAG]);
 	if( general_purpose_bit_flag & 1 )
 	{
-		LOG->Warn( "Skipped encrypted \"%s\" in \"%s\"",
-			info.fn.c_str(), zip.GetRealPath().c_str() );
+		LOG->Warn( "Skipped encrypted \"%s\" in \"%s\"", info.fn.c_str(), m_sPath.c_str() );
 		return 0;
 	}
 
@@ -293,19 +310,19 @@ int RageFileDriverZip::ProcessCdirFileHdr( RageFile &zip, FileInfo &info )
 	if( external_file_attributes & 0x08 )
 		return 0;
 
-	got = zip.Read( info.fn, info.filename_length );
+	got = m_pZip->Read( info.fn, info.filename_length );
 	if( got == -1 )
-		RageException::Throw( "Couldn't open %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
+		RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 	if( got != info.filename_length )
 	{
-		LOG->Warn( "%s: bad filename length %li", zip.GetPath().c_str(), info.filename_length );
+		LOG->Warn( "%s: bad filename length %li", m_sPath.c_str(), info.filename_length );
 		return 0;
 	}
 
 	if( info.compression_method != STORED && info.compression_method != DEFLATED )
 	{
 		LOG->Warn( "File \"%s\" in \"%s\" uses unsupported compression method %i",
-			info.fn.c_str(), zip.GetRealPath().c_str(), info.compression_method );
+			info.fn.c_str(), m_sPath.c_str(), info.compression_method );
 
 		return 0;
 	}
@@ -317,6 +334,9 @@ RageFileDriverZip::~RageFileDriverZip()
 {
 	for( unsigned i = 0; i < Files.size(); ++i )
 		delete Files[i];
+
+	if( m_bFileOwned )
+		delete m_pZip;
 }
 
 RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err )
@@ -339,48 +359,48 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 	/* If we havn't figured out the offset to the real data yet, do so now. */
 	if( info->data_offset == -1 )
 	{
-		zip.Seek( info->offset );
+		m_pZip->Seek( info->offset );
 
 		/* Should be in proper position now, so check for sig. */
 		CString sig;
-		int got = zip.Read( sig, 4 );
+		int got = m_pZip->Read( sig, 4 );
 		if( got == -1 )
-			RageException::Throw( "Read error in %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
+			RageException::Throw( "Read error in %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 		if( got != 4 )
-			RageException::Throw( "%s: unexpected EOF", zip.GetPath().c_str() );
+			RageException::Throw( "%s: unexpected EOF", m_sPath.c_str() );
 
 		if( sig != local_hdr_sig )
-			RageException::Throw( "%s: bad zipfile offset", zip.GetPath().c_str() );
+			RageException::Throw( "%s: bad zipfile offset", m_sPath.c_str() );
 
 #define LREC_SIZE   26   /* lengths of local file headers, central */
 #define L_FILENAME_LENGTH                 22
 #define L_EXTRA_FIELD_LENGTH              24
 		unsigned char byterec[LREC_SIZE];
-		got = zip.Read( (char *)byterec, LREC_SIZE );
+		got = m_pZip->Read( (char *)byterec, LREC_SIZE );
 		if( got == -1 )
-			RageException::Throw( "Read error in %s: %s", zip.GetPath().c_str(), zip.GetError().c_str() );
+			RageException::Throw( "Read error in %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 		if( got != LREC_SIZE )
-			RageException::Throw( "%s: unexpected EOF", zip.GetPath().c_str() );
+			RageException::Throw( "%s: unexpected EOF", m_sPath.c_str() );
 
 		const int filename_length = makeword(&byterec[L_FILENAME_LENGTH]);
 		const int extra_field_length = makeword(&byterec[L_EXTRA_FIELD_LENGTH]);
-		info->data_offset = zip.Tell() + filename_length + extra_field_length;
+		info->data_offset = m_pZip->Tell() + filename_length + extra_field_length;
 	}
 
 	/* We won't do any further access to zip, except to copy it (which is
 	 * threadsafe), so we can unlock now. */
 	m_Mutex.Unlock();
 
-	RageFileDriverSlice *pFile = new RageFileDriverSlice( zip.Copy(), info->data_offset, info->compr_size );
-	pFile->DeleteFileWhenFinished();
+	RageFileDriverSlice *pSlice = new RageFileDriverSlice( m_pZip->Copy(), info->data_offset, info->compr_size );
+	pSlice->DeleteFileWhenFinished();
 	
 	switch( info->compression_method )
 	{
 	case STORED:
-		return pFile;
+		return pSlice;
 	case DEFLATED:
 	{
-		RageFileObjInflate *pInflate = new RageFileObjInflate( pFile, info->uncompr_size );
+		RageFileObjInflate *pInflate = new RageFileObjInflate( pSlice, info->uncompr_size );
 		pInflate->DeleteFileWhenFinished();
 		return pInflate;
 	}

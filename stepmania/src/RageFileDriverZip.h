@@ -12,22 +12,29 @@ class RageFileDriverZip: public RageFileDriver
 {
 public:
 	RageFileDriverZip( CString path );
+	RageFileDriverZip( RageFileBasic *pFile );
 	virtual ~RageFileDriverZip();
 
 	RageFileBasic *Open( const CString &path, int mode, int &err );
 	void FlushDirCache( const CString &sPath );
 
+	void DeleteFileWhenFinished() { m_bFileOwned = true; }
+
 private:
-	RageFile zip;
+	bool m_bFileOwned;
+
+	RageFileBasic *m_pZip;
 	vector<FileInfo *> Files;
+
+	CString m_sPath;
 
 	/* Open() must be threadsafe.  Mutex access to "zip", since we seek
 	 * around in it when reading files. */
 	RageMutex m_Mutex;
 
 	void ParseZipfile();
-	static void ReadEndCentralRecord( RageFile &zip, end_central_dir_record &ec );
-	static int ProcessCdirFileHdr( RageFile &zip, FileInfo &info );
+	void ReadEndCentralRecord( end_central_dir_record &ec );
+	int ProcessCdirFileHdr( FileInfo &info );
 };
 
 #endif
