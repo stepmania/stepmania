@@ -22,16 +22,6 @@
 #include "ThemeManager.h"
 
 
-#define HEADER_ON_COMMAND		THEME->GetMetric("MenuElements","HeaderOnCommand")
-#define HEADER_OFF_COMMAND		THEME->GetMetric("MenuElements","HeaderOffCommand")
-#define FOOTER_ON_COMMAND		THEME->GetMetric("MenuElements","FooterOnCommand")
-#define FOOTER_OFF_COMMAND		THEME->GetMetric("MenuElements","FooterOffCommand")
-#define STYLE_ICON_ON_COMMAND	THEME->GetMetric("MenuElements","StyleIconOnCommand")
-#define STYLE_ICON_OFF_COMMAND	THEME->GetMetric("MenuElements","StyleIconOffCommand")
-#define TIMER_ON_COMMAND		THEME->GetMetric("MenuElements","TimerOnCommand")
-#define TIMER_OFF_COMMAND		THEME->GetMetric("MenuElements","TimerOffCommand")
-#define HELP_ON_COMMAND			THEME->GetMetric("MenuElements","HelpOnCommand")
-#define HELP_OFF_COMMAND		THEME->GetMetric("MenuElements","HelpOffCommand")
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 
@@ -51,23 +41,26 @@ void MenuElements::Load( CString sClassName )
 	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
 	this->AddChild( &m_Background );
 
-	m_sprHeader.Load( THEME->GetPathToG(m_sName+" header") );
-	m_sprHeader.Command( HEADER_ON_COMMAND );
-	this->AddChild( &m_sprHeader );
+	m_autoHeader.Load( THEME->GetPathToG(m_sName+" header") );
+	m_autoHeader->SetName("Header");
+	UtilOnCommand( m_autoHeader, "MenuElements" );
+	this->AddChild( m_autoHeader );
 
 	if( STYLE_ICON && GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
 		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyleDef()->m_szName );
+		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();
-		m_sprStyleIcon.Command( STYLE_ICON_ON_COMMAND );
+		UtilOnCommand( m_sprStyleIcon, "MenuElements" );
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
 	m_bTimerEnabled = (TIMER_SECONDS != -1);
 	if( m_bTimerEnabled )
 	{
-		m_MenuTimer.Command( TIMER_ON_COMMAND );
+		m_MenuTimer.SetName( "Timer" );
+		UtilOnCommand( m_MenuTimer, "MenuElements" );
 		if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
 			m_MenuTimer.SetSeconds( TIMER_SECONDS );
 		else
@@ -75,11 +68,13 @@ void MenuElements::Load( CString sClassName )
 		this->AddChild( &m_MenuTimer );
 	}
 
-	m_sprFooter.Load( THEME->GetPathToG(m_sName+" footer") );
-	m_sprFooter.Command( FOOTER_ON_COMMAND );
-	this->AddChild( &m_sprFooter );
+	m_autoFooter.Load( THEME->GetPathToG(m_sName+" footer") );
+	m_autoFooter->SetName("Footer");
+	UtilOnCommand( m_autoFooter, "MenuElements" );
+	this->AddChild( m_autoFooter );
 
-	m_textHelp.Command( HELP_ON_COMMAND );
+	m_textHelp.SetName( "Help" );
+	UtilOnCommand( m_textHelp, "MenuElements" );
 	CStringArray asHelpTips;
 	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
 	m_textHelp.SetTips( asHelpTips );
@@ -112,13 +107,13 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	{
 		m_MenuTimer.SetSeconds( 0 );
 		m_MenuTimer.Stop();
-		m_MenuTimer.Command( TIMER_OFF_COMMAND );
+		UtilOffCommand( m_MenuTimer, "MenuElements" );
 	}
 
-	m_sprHeader.Command( HEADER_OFF_COMMAND );
-	m_sprStyleIcon.Command( STYLE_ICON_OFF_COMMAND );
-	m_sprFooter.Command( FOOTER_OFF_COMMAND );
-	m_textHelp.Command( HELP_OFF_COMMAND );
+	UtilOffCommand( m_autoHeader, "MenuElements" );
+	UtilOffCommand( m_sprStyleIcon, "MenuElements" );
+	UtilOffCommand( m_autoFooter, "MenuElements" );
+	UtilOffCommand( m_textHelp, "MenuElements" );
 
 	m_Background.PlayOffCommand();
 
@@ -156,11 +151,11 @@ void MenuElements::DrawTopLayer()
 {
 	BeginDraw();
 
-	m_sprHeader.Draw();
+	m_autoHeader->Draw();
 	m_sprStyleIcon.Draw();
 	if( m_bTimerEnabled )
 		m_MenuTimer.Draw();
-	m_sprFooter.Draw();
+	m_autoFooter->Draw();
 	m_textHelp.Draw();
 	m_In.Draw();
 	m_Out.Draw();

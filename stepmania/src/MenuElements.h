@@ -18,6 +18,7 @@
 #include "Transition.h"
 #include "HelpDisplay.h"
 #include "BGAnimation.h"
+#include "ActorUtil.h"
 
 
 class MenuElements : public ActorFrame
@@ -44,10 +45,10 @@ public:	// let owner tinker with these objects
 
 	BGAnimation			m_Background;
 
-	Sprite				m_sprHeader;
+	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
 	MenuTimer			m_MenuTimer;
-	Sprite				m_sprFooter;
+	AutoActor			m_autoFooter;
 	HelpDisplay			m_textHelp;
 
 	Transition	m_In;
