@@ -37,6 +37,7 @@ protected:
 		StepsType		nt;
 		RankingCategory	category;
 		Course*			pCourse;
+		CourseDifficulty	cd;
 		PageToShow(): pCourse(NULL) { }
 	};
 

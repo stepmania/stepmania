@@ -117,15 +117,15 @@ public:
 	// in processing the templates for map::operator[].
 	struct HighScoresForACourse	
 	{
-		HighScoreList hs[NUM_STEPS_TYPES];
+		HighScoreList hs[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
 	};
 	std::map<const Course*,HighScoresForACourse>	m_CourseHighScores;
 
-	void AddCourseHighScore( const Course* pCourse, StepsType st, HighScore hs, int &iIndexOut );
-	HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st );
-	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st ) const;
+	void AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs, int &iIndexOut );
+	HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd );
+	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd ) const;
 	int GetCourseNumTimesPlayed( const Course* pCourse ) const;
-	void IncrementCoursePlayCount( const Course* pCourse, StepsType st );
+	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd );
 
 
 	//

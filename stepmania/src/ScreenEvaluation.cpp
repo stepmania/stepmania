@@ -949,6 +949,7 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		case course:
 			{
 				Course* pCourse = GAMESTATE->m_pCurCourse;
+				CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[p];
 				if( pCourse )
 				{
 					// don't save scores for a failed Nonstop
@@ -957,7 +958,7 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 						continue;
 
 					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						PROFILEMAN->AddCourseHighScore( pCourse, nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+						PROFILEMAN->AddCourseHighScore( pCourse, nt, cd, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 				}
 			}
 			break;

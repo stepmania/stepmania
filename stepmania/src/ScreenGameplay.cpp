@@ -176,7 +176,7 @@ void ScreenGameplay::Init()
 		if( !m_bDemonstration )
 			for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
-					PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, st, (PlayerNumber)p );
+					PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, st, GAMESTATE->m_CourseDifficulty[p], (PlayerNumber)p );
 
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{

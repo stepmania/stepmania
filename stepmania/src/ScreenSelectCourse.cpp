@@ -398,6 +398,7 @@ void ScreenSelectCourse::AfterCourseChange()
 	case TYPE_COURSE:
 		{
 			Course* pCourse = m_MusicWheel.GetSelectedCourse();
+			const StepsType &st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 			m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
 			float fTotalSeconds;
@@ -414,7 +415,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			ASSERT(pCourse);
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				const StepsType &st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+				CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[p];
 
 				Profile* pProfile;
 				if( PROFILEMAN->IsUsingProfile( (PlayerNumber)p ) )
@@ -428,7 +429,7 @@ void ScreenSelectCourse::AfterCourseChange()
 				 * have an opinion on which should be used here for
 				 * each of oni, endless, nonstop --
 				 * should this choice be an option or a metric? */
-				const HighScoreList& hsl = pProfile->GetCourseHighScoreList( pCourse, st );
+				const HighScoreList& hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
 				if ( pCourse->IsOni() || pCourse->IsEndless() )
 				{
 					/* use survive time */

@@ -1249,11 +1249,12 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			StepsType nt = this->GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = this->m_pCurCourse;
 			ASSERT( pCourse );
+			CourseDifficulty cd = this->m_CourseDifficulty[pn];
 
 			// Find Machine Records
 			{
 				Profile* pProfile = PROFILEMAN->GetMachineProfile();
-				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, nt );
+				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, nt, cd );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
 					HighScore &hs = hsl.vHighScores[i];
@@ -1276,7 +1277,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			// Find Personal Records
 			if( PROFILEMAN->IsUsingProfile( pn ) )
 			{
-				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, nt );
+				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, nt, cd );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
 					HighScore& hs = hsl.vHighScores[i];

@@ -318,6 +318,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 				pts.colorIndex = i;
 				pts.nt = aStepsTypesToShow[i];
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
+				pts.cd = COURSE_DIFFICULTY_REGULAR;
 				if( pts.pCourse )
 					m_vPagesToShow.push_back( pts );
 			}
@@ -712,7 +713,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			m_Banner.LoadFromCourse( pts.pCourse );
 			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
 
-			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.nt );
+			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.nt, pts.cd );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				HighScore hs;
@@ -817,13 +818,10 @@ float ScreenRanking::SetPage( PageToShow pts )
 				const Course* pCourse = pCourseScoreRowItem->m_pCourse;
 
 				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
-				const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pts.nt );
-				for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+				FOREACH_CourseDifficulty( cd )
 				{
-					//
-					// FIXME: have separate high scores for each difficulty
-					//
-					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[d];
+					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pts.nt, cd );
+					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[cd];
 
 					HighScore hs;
 					bool bRecentHighScore = false;

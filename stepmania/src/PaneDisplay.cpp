@@ -174,6 +174,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Steps *pSteps = GAMESTATE->m_pCurNotes[m_PlayerNumber];
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
+	const CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[m_PlayerNumber];
 
 	float val = 0;
 	CString str;
@@ -225,7 +226,7 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	case COURSE_MACHINE_HIGH_NAME: /* set val for color */
 	case COURSE_MACHINE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,st).GetTopScore().fPercentDP;
+		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,st,cd).GetTopScore().fPercentDP;
 		break;
 
 	case COURSE_MACHINE_NUM_PLAYS:
@@ -241,7 +242,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		break;
 
 	case COURSE_PROFILE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,st).GetTopScore().fPercentDP;
+		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,st,cd).GetTopScore().fPercentDP;
 		break;
 	case COURSE_PROFILE_NUM_PLAYS:
 		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseNumTimesPlayed( pCourse );
@@ -274,7 +275,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().sName;
 		break;
 	case COURSE_MACHINE_HIGH_NAME:
-		str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, st).GetTopScore().sName;
+		str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,st,cd).GetTopScore().sName;
 		break;
 
 	case SONG_MACHINE_HIGH_SCORE:

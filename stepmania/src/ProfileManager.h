@@ -84,8 +84,8 @@ public:
 	//
 	// Course stats
 	//
-	void AddCourseHighScore( const Course* pCourse, StepsType st, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
-	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, PlayerNumber pn );
+	void AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn );
 
 	//
 	// Category stats

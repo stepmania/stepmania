@@ -187,27 +187,27 @@ void Profile::IncrementStepsPlayCount( const Steps* pSteps )
 //
 // Course high scores
 //
-void Profile::AddCourseHighScore( const Course* pCourse, StepsType st, HighScore hs, int &iIndexOut )
+void Profile::AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs, int &iIndexOut )
 {
 	std::map<const Course*,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( pCourse );
 	if( iter == m_CourseHighScores.end() )
-		m_CourseHighScores[pCourse].hs[st].AddHighScore( hs, iIndexOut );	// operator[] inserts into map
+		m_CourseHighScores[pCourse].hs[st][cd].AddHighScore( hs, iIndexOut );	// operator[] inserts into map
 	else
-		iter->second.hs[st].AddHighScore( hs, iIndexOut );
+		iter->second.hs[st][cd].AddHighScore( hs, iIndexOut );
 }
 
-const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st ) const
+const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd ) const
 {
-	return ((Profile *)this)->m_CourseHighScores[pCourse].hs[st];
+	return ((Profile *)this)->m_CourseHighScores[pCourse].hs[st][cd];
 }
 
-HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st )
+HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd )
 {
 	std::map<const Course*,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( pCourse );
 	if( iter == m_CourseHighScores.end() )
-		return m_CourseHighScores[pCourse].hs[st];	// operator[] inserts into map
+		return m_CourseHighScores[pCourse].hs[st][cd];	// operator[] inserts into map
 	else
-		return iter->second.hs[st];
+		return iter->second.hs[st][cd];
 }
 
 int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
@@ -221,14 +221,15 @@ int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
 	{
 		int iTotalNumTimesPlayed = 0;
 		for( unsigned st = 0; st < NUM_STEPS_TYPES; ++st )
-			iTotalNumTimesPlayed += iter->second.hs[st].iNumTimesPlayed;
+			FOREACH_CourseDifficulty( cd )
+				iTotalNumTimesPlayed += iter->second.hs[st][cd].iNumTimesPlayed;
 		return iTotalNumTimesPlayed;
 	}
 }
 
-void Profile::IncrementCoursePlayCount( const Course* pCourse, StepsType st )
+void Profile::IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd )
 {
-	GetCourseHighScoreList(pCourse,st).iNumTimesPlayed++;
+	GetCourseHighScoreList(pCourse,st,cd).iNumTimesPlayed++;
 }
 
 //
@@ -960,7 +961,7 @@ void Profile::LoadCourseScoresFromDirSM390a12( CString sDir )
 			if( !FileRead(f, iNumTimesPlayed) )
 				WARN_AND_RETURN;
 
-			HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, (StepsType)st );
+			HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, (StepsType)st, COURSE_DIFFICULTY_REGULAR );
 
 			if( pCourse )
 				hsl.iNumTimesPlayed = iNumTimesPlayed;
@@ -1029,16 +1030,28 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 
 		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; ((int&)st)++ )
 		{
-			// skip course/steps types that have never been played
-			if( pProfile->GetCourseHighScoreList(pCourse, st).iNumTimesPlayed == 0 )
-				continue;
-
-			LPXNode pStepsTypeNode = pCourseNode->AppendChild( "StepsType" );
+			// TRICKY:  Only append this node if one we have at least one child.
+			// There's no point to saving a bunch of empty StepsType nodes.
+			LPXNode pStepsTypeNode = new XNode;
+			pStepsTypeNode->name = "StepsType";
 			pStepsTypeNode->AppendAttr( "Type", GameManager::NotesTypeToString(st) );
-
-			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st );
 			
-			pStepsTypeNode->AppendChild( hsl.CreateNode() );
+			FOREACH_CourseDifficulty( cd )
+			{
+				// skip course/steps types that have never been played
+				if( pProfile->GetCourseHighScoreList(pCourse, st, cd).iNumTimesPlayed == 0 )
+					continue;
+
+				LPXNode pCourseDifficultyNode = pStepsTypeNode->AppendChild( "CourseDifficulty" );
+				pCourseDifficultyNode->AppendAttr( "Type", CourseDifficultyToString(cd) );
+
+				const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
+				
+				pCourseDifficultyNode->AppendChild( hsl.CreateNode() );
+			}
+
+			if( !pStepsTypeNode->childs.empty() )
+				pCourseNode->AppendChild( pStepsTypeNode );
 		}
 	}
 
@@ -1082,12 +1095,25 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 			if( st == STEPS_TYPE_INVALID )
 				WARN_AND_CONTINUE;
 
-			XNode *pHighScoreListNode = (*stepsType)->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
-				WARN_AND_CONTINUE;
-			
-			HighScoreList &hsl = this->GetCourseHighScoreList( pCourse, st );
-			hsl.LoadFromNode( pHighScoreListNode );
+			for( XNodes::iterator courseDifficulty = (*stepsType)->childs.begin(); 
+				courseDifficulty != (*stepsType)->childs.end(); 
+				courseDifficulty++ )
+			{
+
+				const LPXAttr TypeAttr = (*courseDifficulty)->GetAttr( "Type" );
+				if( TypeAttr == NULL )
+					WARN_AND_CONTINUE;
+				CourseDifficulty cd = StringToCourseDifficulty( TypeAttr->value );
+				if( cd == COURSE_DIFFICULTY_INVALID )
+					WARN_AND_CONTINUE;
+
+				XNode *pHighScoreListNode = (*courseDifficulty)->GetChild("HighScoreList");
+				if( pHighScoreListNode == NULL )
+					WARN_AND_CONTINUE;
+				
+				HighScoreList &hsl = this->GetCourseHighScoreList( pCourse, st, cd );
+				hsl.LoadFromNode( pHighScoreListNode );
+			}
 		}
 	}
 }

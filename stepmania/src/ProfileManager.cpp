@@ -471,21 +471,21 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 // Course stats
 //
-void ProfileManager::AddCourseHighScore( const Course* pCourse, StepsType st, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, st, hs, iPersonalIndexOut );
+		PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, st, cd, hs, iPersonalIndexOut );
 	else
 		iPersonalIndexOut = -1;
-	PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, st, hs, iMachineIndexOut );
+	PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, st, cd, hs, iMachineIndexOut );
 }
 
-void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, StepsType st, PlayerNumber pn )
+void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn )
 {
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->IncrementCoursePlayCount( pCourse, st );
-	PROFILEMAN->GetMachineProfile()->IncrementCoursePlayCount( pCourse, st );
+		PROFILEMAN->GetProfile(pn)->IncrementCoursePlayCount( pCourse, st, cd );
+	PROFILEMAN->GetMachineProfile()->IncrementCoursePlayCount( pCourse, st, cd );
 }
 
 
