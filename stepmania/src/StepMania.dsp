@@ -57,7 +57,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                  	cl                                                                                   /Zl                                                                                   /nologo                                                                                   /c                                                                                   verstub.cpp                                                                                   /Fo$(IntDir)\ 
@@ -92,7 +92,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                  	cl                                                                                   /Zl                                                                                   /nologo                                                                                   /c                                                                                   verstub.cpp                                                                                   /Fo$(IntDir)\ 
@@ -1301,14 +1301,6 @@ SOURCE=.\Combo.cpp
 # Begin Source File
 
 SOURCE=.\Combo.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FocusingSprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FocusingSprite.h
 # End Source File
 # Begin Source File
 

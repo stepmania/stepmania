@@ -1249,12 +1249,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\Combo.h">
 			</File>
 			<File
-				RelativePath=".\FocusingSprite.cpp">
-			</File>
-			<File
-				RelativePath=".\FocusingSprite.h">
-			</File>
-			<File
 				RelativePath=".\GhostArrow.cpp">
 			</File>
 			<File

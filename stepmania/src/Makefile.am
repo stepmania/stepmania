@@ -77,7 +77,7 @@ TipDisplay.cpp TipDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp \
-BGAnimationLayer.h Combo.cpp Combo.h FocusingSprite.cpp FocusingSprite.h GhostArrow.cpp GhostArrow.h \
+BGAnimationLayer.h Combo.cpp Combo.h GhostArrow.cpp GhostArrow.h \
 GhostArrowBright.cpp GhostArrowBright.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
 GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
 Judgment.cpp Judgment.h LifeMeter.cpp LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp \
