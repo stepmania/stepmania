@@ -281,6 +281,7 @@ void ScreenPlayerOptions::ExportOptions()
 		default:	ASSERT(0);
 		}
 
+		ZERO( po.m_fAccels );
 		if( m_iSelectedOption[p][PO_ACCEL] != 0 )
 			po.SetOneAccel( (PlayerOptions::Accel)(m_iSelectedOption[p][PO_ACCEL]-1) );
 
@@ -293,6 +294,7 @@ void ScreenPlayerOptions::ExportOptions()
 			po.m_fEffects[e] = on? 1.0f:0.0f;
 		}
 
+		ZERO( po.m_fAppearances );
 		if( m_iSelectedOption[p][PO_APPEAR] != 0 )
 			po.SetOneAppearance( (PlayerOptions::Appearance)(m_iSelectedOption[p][PO_APPEAR]-1) );
 
