@@ -20,13 +20,8 @@
 #define OPTION_MENU_FLAGS			THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 
-// keep this in sync with OptionRowHandler.cpp
-#define ENTRY_NAME(s)				THEME->GetMetric ("OptionNames", s)
-
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
-
-const CString NEXT_ROW_NAME = "NextRow";
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
@@ -96,11 +91,6 @@ void ScreenOptionsMaster::Init()
 		pHand = OptionRowHandlerUtil::Make( command, def );
 		if( pHand == NULL )
             RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", command.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
-
-
-		// TRICKY:  Insert a down arrow as the first choice in the row.
-		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-			def.choices.insert( def.choices.begin(), ENTRY_NAME(NEXT_ROW_NAME) );
 	}
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
@@ -110,6 +100,8 @@ void ScreenOptionsMaster::Init()
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
 {
+	FOREACH( OptionRow*, m_Rows, r )
+		(*r)->DetachHandler();
 	FOREACH( OptionRowHandler*, OptionRowHandlers, h )
 		SAFE_DELETE( *h );
 	OptionRowHandlers.clear();
@@ -133,50 +125,10 @@ void ScreenOptionsMaster::Update( float fDelta )
 	ScreenOptions::Update( fDelta );
 }
 
-//if( row.selectType != SELECT_MULTIPLE )
-//{
-//	// The first row ("go down") should not be selected.
-//	ASSERT( !vbSelectedOut[0] );
-
-//	// there should be exactly one option selected
-//	int iNumSelected = 0;
-//	for( unsigned e = 1; e < pHand->ListEntries.size(); ++e )
-//		if( vbSelectedOut[e] )
-//			iNumSelected++;
-//	ASSERT( iNumSelected == 1 );
-//}
-
-/* Hack: the NextRow entry is never set, and should be transparent.  Remove
- * it, and readd it below. */
-#define ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
-	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY ) \
-		vbSelected.erase( vbSelected.begin() );
-#define INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
-	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY ) \
-		vbSelected.insert( vbSelected.begin(), false );
-
-
 void ScreenOptionsMaster::ImportOptions( int r )
 {
-	const OptionRowHandler *pHand = OptionRowHandlers[r];
-	const OptionRowDefinition &def = m_OptionRowAlloc[r];
 	OptionRow &row = *m_Rows[r];
-
-	if( def.bOneChoiceForAllPlayers )
-	{
-		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
-		pHand->ImportOption(def, PLAYER_1, row.m_vbSelected[0] );
-		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
-			pHand->ImportOption( def, p, row.m_vbSelected[p] );
-			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
-		}
-	}
+	row.ImportOptions();
 }
 
 /* Import only settings specific to the given player. */
@@ -197,27 +149,10 @@ void ScreenOptionsMaster::ImportOptionsForPlayer( PlayerNumber pn )
 	}
 }
 
-void ScreenOptionsMaster::ExportOptions( int iRow )
+void ScreenOptionsMaster::ExportOptions( int r )
 {
-	const OptionRowHandler *pHand = OptionRowHandlers[iRow];
-	const OptionRowDefinition &def = m_OptionRowAlloc[iRow];
-	OptionRow &row = *m_Rows[iRow];
-
-	if( def.bOneChoiceForAllPlayers )
-	{
-		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
-		m_iChangeMask |= pHand->ExportOption( def, PLAYER_1, row.m_vbSelected[0] );
-		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
-			m_iChangeMask |= pHand->ExportOption( def, p, row.m_vbSelected[p] );
-			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
-		}
-	}
+	OptionRow &row = *m_Rows[r];
+	m_iChangeMask |= row.ExportOptions();
 }
 
 void ScreenOptionsMaster::GoToNextScreen()

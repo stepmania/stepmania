@@ -84,7 +84,7 @@ public:
 	~OptionRow();
 
 	void Clear();
-	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand );
+	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit(
 		const CString &sFontPath,
 		const CString &sExitText,
@@ -92,6 +92,9 @@ public:
 		float fItemZoom
 		);
 	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
+
+	void ImportOptions();
+	int ExportOptions();
 
 	void AfterImportOptions( 
 		Font* pFont, 
@@ -111,6 +114,7 @@ public:
 		float fY,
 		const ThemeMetric<apActorCommands> &cmdLabelOn
 		);
+	void DetachHandler() { m_pHand = NULL; }
 
 	void PositionUnderlines( bool bShowUnderlines, float fTweenSeconds );
 	void PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenSeconds );
@@ -150,6 +154,7 @@ public:
 	void SetRowHidden( bool bRowHidden )	{ m_bHidden = bRowHidden; }
 	bool GetRowHidden()						{ return m_bHidden; }
 	unsigned GetTextItemsSize() { return m_textItems.size(); }
+	bool GetFirstItemGoesDown() { return m_bFirstItemGoesDown; }
 
 	void SetExitText( CString sExitText );
 
@@ -169,6 +174,7 @@ protected:
 	Sprite					m_sprBullet;
 	BitmapText				m_textTitle;
 	OptionIcon				m_OptionIcons[NUM_PLAYERS];
+	bool					m_bFirstItemGoesDown;
 
 	float m_fY;
 	bool m_bHidden; // currently off screen

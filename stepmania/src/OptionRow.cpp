@@ -22,6 +22,9 @@ XToString( LayoutType );
 StringToX( LayoutType );
 
 
+const CString NEXT_ROW_NAME = "NextRow";
+
+
 OptionRow::OptionRow()
 {
 	FOREACH_PlayerNumber( p )
@@ -61,13 +64,16 @@ void OptionRow::Clear()
 	}
 
 	m_pHand = NULL;
+
+	m_bFirstItemGoesDown = false;
 }
 
-void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand )
+void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
 {
 	m_RowDef = def;
 	m_RowType = OptionRow::ROW_NORMAL;
 	m_pHand = pHand;
+	m_bFirstItemGoesDown = bFirstItemGoesDown;
 
 	if( m_pHand )
 	{
@@ -91,6 +97,13 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 			vbSelected[0] = true;
 	}
 
+	// TRICKY:  Insert a down arrow as the first choice in the row.
+	if( m_bFirstItemGoesDown )
+	{
+		m_RowDef.choices.insert( m_RowDef.choices.begin(), ENTRY_NAME(NEXT_ROW_NAME) );
+		FOREACH_PlayerNumber( p )
+			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
+	}
 }
 
 void OptionRow::AfterImportOptions( 
@@ -281,6 +294,13 @@ void OptionRow::AfterImportOptions(
 	// set the Y position of each item in the line
 	for( unsigned c=0; c<m_textItems.size(); c++ )
 		m_textItems[c]->SetY( fY );
+
+	//
+	// HACK: Set focus to one item in the row, which is "go down"
+	//
+	if( m_bFirstItemGoesDown )
+		FOREACH_PlayerNumber( p )
+			m_iChoiceInRowWithFocus[p] = 0;	
 }
 
 void OptionRow::LoadExit(
@@ -330,6 +350,8 @@ void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
 			GetWidthXY( p, iChoiceWithFocus, iWidth, iX, iY );
 			ul.SetGlobalX( (float)iX );
 			ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
+
+			ASSERT( m_vbSelected[p].size() == m_RowDef.choices.size() );
 
 			bool bSelected = m_vbSelected[p][ iChoiceWithFocus ];
 			bool bHidden = !bSelected || m_bHidden;
@@ -584,6 +606,8 @@ void OptionRow::Reload()
 	if( m_pHand == NULL )
 		return;
 
+	ExportOptions();
+
 	OptionRowDefinition def;
 	m_pHand->Reload( def );
 
@@ -602,11 +626,81 @@ void OptionRow::Reload()
 	default:
 		ASSERT(0);
 	}
+
+	ImportOptions();
 }
 
 void OptionRow::HandleMessage( const CString& sMessage )
 {
 	Reload();
+}
+
+
+/* Hack: the NextRow entry is never set, and should be transparent.  Remove
+ * it, and readd it below. */
+#define ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
+	if( GetFirstItemGoesDown() ) \
+		vbSelected.erase( vbSelected.begin() );
+#define INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
+	if( GetFirstItemGoesDown() ) \
+		vbSelected.insert( vbSelected.begin(), false );
+#define VERIFY_SELECTED( vbSelected ) if( m_RowDef.selectType == SELECT_ONE ) VerifyOneSelected(vbSelected);
+static void VerifyOneSelected( const vector<bool> vbSelected )
+{
+	int iNumSelected = 0;
+	for( unsigned e = 0; e < vbSelected.size(); ++e )
+		if( vbSelected[e] )
+			iNumSelected++;
+	ASSERT( iNumSelected == 1 );
+}
+
+void OptionRow::ImportOptions()
+{
+	if( m_pHand == NULL )
+		return;
+
+	if( m_RowDef.bOneChoiceForAllPlayers )
+	{
+		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
+		m_pHand->ImportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
+		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
+		VERIFY_SELECTED( m_vbSelected[0] );
+	}
+	else
+	{
+		FOREACH_HumanPlayer( p )
+		{
+			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
+			m_pHand->ImportOption( m_RowDef, p, m_vbSelected[p] );
+			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
+			VERIFY_SELECTED( m_vbSelected[p] );
+		}
+	}
+}
+
+int OptionRow::ExportOptions()
+{
+	if( m_pHand == NULL )
+		return 0;
+
+	int iChangeMask = 0;
+
+	if( m_RowDef.bOneChoiceForAllPlayers )
+	{
+		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
+		iChangeMask |= m_pHand->ExportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
+		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
+	}
+	else
+	{
+		FOREACH_HumanPlayer( p )
+		{
+			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
+			iChangeMask |= m_pHand->ExportOption( m_RowDef, p, m_vbSelected[p] );
+			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
+		}
+	}
+	return iChangeMask;
 }
 
 

@@ -167,7 +167,9 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
 		
-		row.LoadNormal( vDefs[r], vHands[r] );
+		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
+
+		row.LoadNormal( vDefs[r], vHands[r], bFirstRowGoesDown );
 
 		this->ImportOptions( r );
 	
@@ -195,13 +197,6 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 			fY,
 			LABELS_ON_COMMAND
 			);
-
-		//
-		// HACK: Set focus to one item in the row, which is "go down"
-		//
-		if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
-			FOREACH_PlayerNumber( p )
-				row.m_iChoiceInRowWithFocus[p] = 0;	
 	}
 
 	FONT->UnloadFont( pFont );
@@ -338,7 +333,7 @@ ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
 	for( unsigned i=0; i<m_Rows.size(); i++ )
-		delete m_Rows[i];
+		SAFE_DELETE( m_Rows[i] );
 }
 
 CString ScreenOptions::GetExplanationText( int iRow ) const
@@ -847,7 +842,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 	}
 
 
-	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+	if( row.GetFirstItemGoesDown() )
 	{
 		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		if( iChoiceInRow == 0 )
@@ -857,7 +852,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		}
 	}
 	
-	// If this is a bFirstChoiceGoesDown, then if this is a multiselect row.
 	if( row.GetRowDef().selectType == SELECT_MULTIPLE )
 	{
 		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
@@ -869,7 +863,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		PositionUnderlines();
 		RefreshIcons();
 
-		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+		if( row.GetFirstItemGoesDown() )
 		{
 			// move to the first choice in the row
 			ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], selectType != IET_FIRST_PRESS );
@@ -892,7 +886,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 				else
 					row.SetOneSelection( pn, iChoiceInRow );
 			}
-			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
+			if( row.GetFirstItemGoesDown() )
 				ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], selectType != IET_FIRST_PRESS );	// move to the first choice
 			else
 				ChangeValueInRow( pn, 0, selectType != IET_FIRST_PRESS );
@@ -1034,12 +1028,13 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 /* Up/down */
 void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat ) 
 {
-	if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY )
+	const int iCurrentRow = m_iCurrentRow[pn];
+	OptionRow &row = *m_Rows[iCurrentRow];
+
+	if( row.GetFirstItemGoesDown() )
 	{
 		// If moving from a bFirstChoiceGoesDown row, put focus back on 
 		// the first choice before moving.
-		const int iCurrentRow = m_iCurrentRow[pn];
-		OptionRow &row = *m_Rows[iCurrentRow];
 		row.m_iChoiceInRowWithFocus[pn] = 0;
 	}
 
