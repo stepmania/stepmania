@@ -503,8 +503,16 @@ int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags )
 	}
 	filename += 7;
 
+	int mode = 0;
+	switch( flags )
+	{
+	case URL_RDONLY: mode = RageFile::READ; break;
+	case URL_WRONLY: mode = RageFile::WRITE | RageFile::STREAMED; break;
+	case URL_RDWR: FAIL_M( "O_RDWR unsupported" );
+	}
+
 	RageFile *f = new RageFile;
-	if( !f->Open(filename) )
+	if( !f->Open(filename, mode) )
 	{
 		LOG->Trace("Error opening \"%s\": %s", filename, f->GetError().c_str() );
 		delete f;
@@ -520,6 +528,12 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 {
 	RageFile *f = (RageFile *) h->priv_data;
 	return f->Read( buf, size );
+}
+
+int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
+{
+	RageFile *f = (RageFile *) h->priv_data;
+	return f->Write( buf, size );
 }
 
 avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
@@ -540,7 +554,7 @@ static avcodec::URLProtocol RageProtocol =
 	"rage",
 	URLRageFile_open,
 	URLRageFile_read,
-	NULL,
+	URLRageFile_write,
 	URLRageFile_seek,
 	URLRageFile_close,
 	NULL
