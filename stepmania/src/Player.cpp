@@ -731,23 +731,7 @@ void Player::Step( int col, const RageTimer &tm )
 			case TapNote::mine:
 				// stepped too close to mine?
 				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Mine) )
-				{
-					m_soundMine.Play();
 					score = TNS_HIT_MINE;
-
-					if( m_pLifeMeter )
-						m_pLifeMeter->ChangeLifeMine();
-
-					// TODO: Remove use of PlayerNumber.
-					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-					if( m_pCombinedLifeMeter )
-						m_pCombinedLifeMeter->ChangeLifeMine( pn );
-					tn.result.bHidden = true;
-					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-					if( m_pNoteField )
-						m_pNoteField->DidTapNote( col, score, false );
-				}
 				break;
 
 			case TapNote::attack:
@@ -825,28 +809,43 @@ void Player::Step( int col, const RageTimer &tm )
 				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_GREAT : TNS_GOOD;
 
 				if( score >= get_to_avoid )
-				{
 					return;	// avoided
-				}
 				else
-				{
 					score = TNS_HIT_MINE;
-					m_soundMine.Play();
-					if( m_pLifeMeter )
-						m_pLifeMeter->ChangeLifeMine();
-					
-					// Remove use of PlayerNumber.
-					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-					if( m_pCombinedLifeMeter )
-						m_pCombinedLifeMeter->ChangeLifeMine( pn );
-					tn.result.bHidden = true;
-					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-					if( m_pNoteField )
-						m_pNoteField->DidTapNote( col, score, false );
-				}
 			}
+			break;
 
+		default:
+			ASSERT(0);
+			score = TNS_NONE;
+			break;
+		}
+
+		if( score == TNS_HIT_MINE )
+		{
+			m_soundMine.Play();
+
+			if( m_pLifeMeter )
+				m_pLifeMeter->ChangeLifeMine();
+
+			// TODO: Remove use of PlayerNumber
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			if( m_pCombinedLifeMeter )
+				m_pCombinedLifeMeter->ChangeLifeMine( pn );
+			tn.result.bHidden = true;
+			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
+			if( m_pNoteField )
+				m_pNoteField->DidTapNote( col, score, false );
+		}
+
+		switch( m_pPlayerState->m_PlayerController )
+		{
+		case PC_HUMAN:
+			break;
+		
+		case PC_CPU:
+		case PC_AUTOPLAY:
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
 			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
@@ -887,11 +886,6 @@ void Player::Step( int col, const RageTimer &tm )
 				}
 			}
 
-			break;
-
-		default:
-			ASSERT(0);
-			score = TNS_NONE;
 			break;
 		}
 		
