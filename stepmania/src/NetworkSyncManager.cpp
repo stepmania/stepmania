@@ -4,7 +4,7 @@
 NetworkSyncManager *NSMAN;
 
 #if defined(WITHOUT_NETWORKING)
-NetworkSyncManager::NetworkSyncManager(LoadingWindow * ld) { useSMServer=false }
+NetworkSyncManager::NetworkSyncManager(LoadingWindow * ld) { useSMserver=false; }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
