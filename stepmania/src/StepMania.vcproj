@@ -1416,6 +1416,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="DancingCharacters.h">
 			</File>
 			<File
+				RelativePath="Foreground.cpp">
+			</File>
+			<File
+				RelativePath="Foreground.h">
+			</File>
+			<File
 				RelativePath=".\GhostArrow.cpp">
 			</File>
 			<File

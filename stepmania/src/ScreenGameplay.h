@@ -19,6 +19,7 @@
 #include "RandomSample.h"
 #include "RageSound.h"
 #include "Background.h"
+#include "Foreground.h"
 #include "LifeMeter.h"
 #include "ScoreDisplay.h"
 #include "DifficultyIcon.h"
@@ -102,6 +103,7 @@ protected:
 	TimingAssist		m_TimingAssist;
 
 	Background			m_Background;
+	Foreground			m_Foreground;
 
 	Transition	m_NextSongIn;	// shows between songs in a course
 	Transition	m_NextSongOut;	// shows between songs in a course

@@ -155,11 +155,13 @@ public:
 
 	TimingData					m_Timing;
 	vector<BackgroundChange>	m_BackgroundChanges;	// this must be sorted before gameplay
-	vector<LyricSegment>		m_LyricSegments;	// same
+	vector<BackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
+	vector<LyricSegment>		m_LyricSegments;		// this must be sorted before gameplay
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
 	void AddBackgroundChange( BackgroundChange seg );
+	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
 
 	void GetDisplayBPM( float &fMinBPMOut, float &fMaxBPMOut ) const;

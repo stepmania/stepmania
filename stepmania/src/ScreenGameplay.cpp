@@ -273,6 +273,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	m_Background.SetZ( 2 );	// behind everything else
 	this->AddChild( &m_Background );
+
+	m_Foreground.SetZ( -1 );	// on top of everything else except transitions
+	this->AddChild( &m_Foreground );
+
 	
 	m_sprStaticBackground.SetName( "StaticBG" );
 	m_sprStaticBackground.Load( THEME->GetPathToG("ScreenGameplay Static Background"));
@@ -317,8 +321,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 	this->AddChild(&m_TimingAssist);
 
+	m_NextSongIn.SetZ( -2 ); // on top of everything else
 	this->AddChild( &m_NextSongIn );
 
+	m_NextSongOut.SetZ( -2 ); // on top of everything else
 	this->AddChild( &m_NextSongOut );
 
 
@@ -611,9 +617,11 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		this->AddChild( &m_Go );
 
 		m_Cleared.Load( THEME->GetPathToB("ScreenGameplay cleared") );
+		m_Cleared.SetZ( -2 ); // on top of everything else
 		this->AddChild( &m_Cleared );
 
 		m_Failed.Load( THEME->GetPathToB("ScreenGameplay failed") );
+		m_Failed.SetZ( -2 ); // on top of everything else
 		this->AddChild( &m_Failed );
 
 		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsFinalStage() )	// only load if we're going to use it
@@ -638,6 +646,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		}
 
 		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
+		m_In.SetZ( -2 ); // on top of everything else
 		this->AddChild( &m_In );
 
 
@@ -648,6 +657,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 
 		m_Back.Load( THEME->GetPathToB("Common back") );
+		m_Back.SetZ( -2 ); // on top of everything else
 		this->AddChild( &m_Back );
 
 
@@ -661,7 +671,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			this->AddChild( &m_textSurviveTime );
 		}
 	}
-
 
 
 	/* LoadNextSong first, since that positions some elements which need to be
@@ -980,6 +989,7 @@ void ScreenGameplay::LoadNextSong()
 	m_Background.BeginTweening( 2 );
 	m_Background.SetDiffuse( RageColor(1,1,1,1) );
 
+	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
 
 	m_fTimeLeftBeforeDancingComment = GAMESTATE->m_pCurSong->m_fFirstBeat + SECONDS_BETWEEN_COMMENTS;
 

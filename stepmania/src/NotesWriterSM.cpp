@@ -89,6 +89,17 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
+
+	f.Write( "#FGCHANGES:" );
+	for( i=0; i<out.m_ForegroundChanges.size(); i++ )
+	{
+		const BackgroundChange &seg = out.m_ForegroundChanges[i];
+
+		f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d", seg.m_fStartBeat, seg.m_sBGName.c_str(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop ) );
+		if( i != out.m_ForegroundChanges.size()-1 )
+			f.Write( "," );
+	}
+	f.PutLine( ";" );
 }
 
 static void WriteLineList( RageFile &f, vector<CString> &lines, bool SkipLeadingBlankLines, bool OmitLastNewline )

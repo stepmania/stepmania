@@ -132,6 +132,29 @@ void SMLoader::LoadTimingFromSMFile( MsdFile &msd, TimingData &out )
 	}
 }
 
+bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChangeExpression )
+{
+	CStringArray aBGChangeValues;
+	split( sBGChangeExpression, "=", aBGChangeValues );
+
+	switch( aBGChangeValues.size() )
+	{
+	case 6:
+		change.m_fRate = (float)atof( aBGChangeValues[2] );
+		change.m_bFadeLast = atoi( aBGChangeValues[3] ) != 0;
+		change.m_bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+		change.m_bLoop = atoi( aBGChangeValues[5] ) != 0;
+		// fall through
+	case 2:
+		change.m_fStartBeat = (float)atof( aBGChangeValues[0] );
+		change.m_sBGName = aBGChangeValues[1];
+		return true;
+	default:
+		LOG->Warn("Invalid #BGCHANGES value \"%s\" was ignored", sBGChangeExpression.c_str());
+		return false;
+	}
+}
+
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
@@ -271,30 +294,22 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 			for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
 			{
-				CStringArray aBGChangeValues;
-				split( aBGChangeExpressions[b], "=", aBGChangeValues );
-				/* XXX: Once we have a way to display warnings that the user actually
-				 * cares about (unlike most warnings), this should be one of them. */
-
 				BackgroundChange change;
-				switch( aBGChangeValues.size() )
-				{
-				case 6:
-					change.m_fRate = (float)atof( aBGChangeValues[2] );
-					change.m_bFadeLast = atoi( aBGChangeValues[3] ) != 0;
-					change.m_bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
-					change.m_bLoop = atoi( aBGChangeValues[5] ) != 0;
-					// fall through
-				case 2:
-					change.m_fStartBeat = (float)atof( aBGChangeValues[0] );
-					change.m_sBGName = aBGChangeValues[1];
+				if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
 					out.AddBackgroundChange( change );
-					break;
-				default:
-					LOG->Warn("Invalid #%s value \"%s\" was ignored",
-						sValueName.c_str(), aBGChangeExpressions[b].c_str());
-					break;
-				}
+			}
+		}
+
+		else if( 0==stricmp(sValueName,"FGCHANGES") )
+		{
+			CStringArray aFGChangeExpressions;
+			split( sParams[1], ",", aFGChangeExpressions );
+
+			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
+			{
+				BackgroundChange change;
+				if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
+					out.AddForegroundChange( change );
 			}
 		}
 
