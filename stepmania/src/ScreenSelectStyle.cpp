@@ -196,14 +196,13 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	//
 	// TweenOffScreen
 	//
-	unsigned i;
 
 	/* Stop all tweens where they are, since we might have selected before
 	 * we finished tweening in. */
-	for( i=0; i<m_SubActors.size(); i++ )
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->StopTweening();
 
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		OFF_COMMAND( m_sprIcon[i] );
 		OFF_COMMAND( m_textIcon[i] );
@@ -222,13 +221,7 @@ int ScreenSelectStyle::GetSelectionIndex( PlayerNumber pn )
 
 void ScreenSelectStyle::UpdateSelectableChoices()
 {
-	unsigned i;
-	/* If a player joins during the tween-in, this diffuse change
-	 * will be undone by the tween.  Hmm. 
-	 *
-	 * This is fixed now, since SetDiffuse() will affect the latest
-	 * tween, if we're currently tweening. */
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		/* If the icon is text, use a dimmer diffuse, or we won't be
 		 * able to see the glow. */
@@ -244,11 +237,11 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 		}
 	}
 
-	// Select first enabled choie
+	// Select the first enabled choice.
 	BeforeChange();
 
 	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 	{
 		const ModeChoice& mc = m_aModeChoices[i];
 		if( mc.IsPlayable() )
@@ -257,6 +250,7 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 			break;
 		}
 	}
+
 	if( iSwitchToStyleIndex == -1 )// no styles are enabled.  We're stuck!
 	{
 		DEBUG_ASSERT(0);
