@@ -40,15 +40,26 @@ void InformUserOfCrash()
                                                   "\n"
                                                   "    http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366",
                                                   kCFStringEncodingASCII);
-    CFStringRef OK = CFStringCreateWithCString(NULL, "OK", kCFStringEncodingASCII);
-    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, NULL, NULL,
-        kAlertStdAlertOKButton, NULL, kWindowAlertPositionParentWindowScreen, NULL};
+    CFStringRef OK = CFStringCreateWithCString(NULL, "Open crashinfo", kCFStringEncodingASCII);
+    CFStringRef Cancel = CFStringCreateWithCString(NULL, "Cancel", kCFStringEncodingASCII);
+    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, Cancel, NULL,
+        kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, NULL};
     DialogRef dialog;
-    SInt16 unused;
+    SInt16 button;
 
     CreateStandardAlert(kAlertStopAlert, error, NULL, &params, &dialog);
     AutoSizeDialog(dialog);
-    RunStandardAlert(dialog, NULL, &unused);
+    RunStandardAlert(dialog, NULL, &button);
+    switch (button)
+    {
+        case kAlertStdAlertOKButton:
+            if (system(NULL))
+                system("open /tmp/crashinfo.txt");
+            else
+                SysBeep(30);
+            break;
+    }
     CFRelease(OK);
+    CFRelease(Cancel);
     CFRelease(error);
 }
