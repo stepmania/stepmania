@@ -64,6 +64,7 @@ public:
 	void DeleteRageModelVertexArray( RageModelVertexArray* p );
 
 	void DrawQuads( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts ) { }
 	void DrawFan( const RageSpriteVertex v[], int iNumVerts ) { }
 	void DrawStrip( const RageSpriteVertex v[], int iNumVerts ) { }
 	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts ) { }

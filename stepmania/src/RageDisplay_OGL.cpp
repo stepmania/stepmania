@@ -1150,6 +1150,21 @@ void RageDisplay_OGL::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
+void RageDisplay_OGL::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( (iNumVerts%2) == 0 );
+
+	if(iNumVerts < 4)
+		return;
+
+	SendCurrentMatrices();
+
+	SetupVertices( v, iNumVerts );
+	glDrawArrays( GL_QUAD_STRIP, 0, iNumVerts );
+
+	StatsAddVerts( iNumVerts );
+}
+
 void RageDisplay_OGL::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );

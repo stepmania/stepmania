@@ -211,6 +211,7 @@ public:
 
 	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
 	virtual void DrawQuads( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawFan( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawStrip( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawTriangles( const RageSpriteVertex v[], int iNumVerts ) = 0;

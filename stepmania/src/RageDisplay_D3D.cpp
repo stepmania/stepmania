@@ -868,6 +868,50 @@ void RageDisplay_D3D::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 
 	StatsAddVerts( iNumVerts );
 }
+
+void RageDisplay_D3D::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( (iNumVerts%2) == 0 );
+
+	if(iNumVerts < 4)
+		return;
+
+	// there isn't a quad strip primitive in D3D, so we have to fake it with indexed triangles
+	int iNumQuads = (iNumVerts-2)/2;
+	int iNumTriangles = iNumQuads*2;
+	int iNumIndices = iNumTriangles*3;
+
+	// make a temporary index buffer
+	static vector<Uint16> vIndices;
+	unsigned uOldSize = vIndices.size();
+	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
+	vIndices.resize( uNewSize );
+	for( Uint16 i=(Uint16)uOldSize/6; i<(Uint16)iNumQuads; i++ )
+	{
+		vIndices[i*6+0] = i*2+0;
+		vIndices[i*6+1] = i*2+1;
+		vIndices[i*6+2] = i*2+2;
+		vIndices[i*6+3] = i*2+1;
+		vIndices[i*6+4] = i*2+2;
+		vIndices[i*6+5] = i*2+3;
+	}
+
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	SEND_CURRENT_MATRICES;
+	g_pd3dDevice->DrawIndexedPrimitiveUP(
+		D3DPT_TRIANGLELIST, // PrimitiveType
+		0, // MinIndex
+		iNumVerts, // NumVertices
+		iNumTriangles, // PrimitiveCount,
+		&vIndices[0], // pIndexData,
+		D3DFMT_INDEX16, // IndexDataFormat,
+		v, // pVertexStreamZeroData,
+		sizeof(RageSpriteVertex) // VertexStreamZeroStride
+	);
+
+	StatsAddVerts( iNumVerts );
+}
+
 void RageDisplay_D3D::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
