@@ -559,7 +559,7 @@ void ScreenSelectMusic::AdjustOptions()
 
 	/* In event mode, switch to fail-end-of-stage if either chose beginner or easy. */
 	if(PREFSMAN->m_bEventMode && dc <= DIFFICULTY_EASY)
-		PREFSMAN->m_FailType = PrefsManager::FAIL_END_OF_SONG;
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
 	
 	/* Otherwise, if either chose beginner's steps, and this is the first stage,
 	 * turn off failure completely (always give a second shot). */
@@ -567,13 +567,13 @@ void ScreenSelectMusic::AdjustOptions()
 	{
 		/* Beginners get a freebie and then end-of-song. */
 		if(GAMESTATE->m_iCurrentStageIndex == 0)
-			PREFSMAN->m_FailType = PrefsManager::FAIL_OFF;
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 		else if(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
-			PREFSMAN->m_FailType = PrefsManager::FAIL_END_OF_SONG;
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
 	}
 	/* Easy is always end-of-song. */
 	else if(dc == DIFFICULTY_EASY && !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
-		PREFSMAN->m_FailType = PrefsManager::FAIL_END_OF_SONG;
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
 }
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )

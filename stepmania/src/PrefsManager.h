@@ -11,7 +11,7 @@
 	Chris Gomez
 -----------------------------------------------------------------------------
 */
-
+#include "SongOptions.h"
 
 class PrefsManager
 {
@@ -68,7 +68,7 @@ public:
 	float			m_fLongVerSongSeconds;
 	float			m_fMarathonVerSongSeconds;
 	bool			m_bShowSongOptions;
-	enum { FAIL_ARCADE=0, FAIL_END_OF_SONG, FAIL_OFF } m_FailType;
+	SongOptions::FailType m_DefaultFailType;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;

@@ -84,7 +84,7 @@ PrefsManager::PrefsManager()
 	m_iBoostAppPriority = -1;
 	m_iPolygonRadar = -1;
 	m_bShowSongOptions = true;
-	m_FailType = FAIL_ARCADE;
+	m_DefaultFailType = SongOptions::FAIL_ARCADE;
 	
 	/* DDR Extreme-style extra stage support.									*
 	 * Default off so people used to the current behavior (or those with extra  *
@@ -170,7 +170,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
-	ini.GetValueI( "Options", "FailType",					(int&)m_FailType );
+	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -243,7 +243,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
-	ini.SetValueI( "Options", "FailType",					(int&)m_FailType );
+	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

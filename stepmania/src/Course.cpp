@@ -39,8 +39,8 @@ Course::Course()
 	for( i=0; i<NUM_NOTES_TYPES; i++ )
 		for( j=0; j<NUM_RANKING_LINES; j++ )
 		{
-			m_MachineScores[i][j].iDancePoints = 0;
-			m_MachineScores[i][j].fSurviveTime = 0;
+			m_MachineScores[i][j].iDancePoints = 573;
+			m_MachineScores[i][j].fSurviveTime = 57.3f;
 			m_MachineScores[i][j].sName = "STEP";
 		}
 

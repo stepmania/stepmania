@@ -87,6 +87,8 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PlayerOptions[p] = PlayerOptions();
 	m_SongOptions = SongOptions();
+	if( PREFSMAN )
+		m_SongOptions.m_FailType = PREFSMAN->m_DefaultFailType;
 }
 
 void GameState::ResetLastRanking()
