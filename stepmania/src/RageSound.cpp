@@ -356,6 +356,55 @@ int RageSound::GetData( char *buffer, int frames )
 	return got;
 }
 
+/* Adjust the balance of buffer; fBalance is -1...+1. */
+void AdjustBalance( Sint16 *buffer, int frames, float fBalance )
+{
+	if( fBalance == 0 )
+		return; /* no change */
+
+	bool bSwap = fBalance < 0;
+	if( bSwap )
+		fBalance = -fBalance;
+
+	float fLeftFactors[2] ={ 1-fBalance, 0 };
+	float fRightFactors[2] =
+	{
+		SCALE( fBalance, 0, 1, 0.5f, 0 ),
+		SCALE( fBalance, 0, 1, 0.5f, 1 )
+	};
+
+	if( bSwap )
+	{
+		swap( fLeftFactors[0], fRightFactors[0] );
+		swap( fLeftFactors[1], fRightFactors[1] );
+	}
+
+	RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
+	for( int samp = 0; samp < frames; ++samp )
+	{
+		Sint16 l = Sint16(buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1]);
+		Sint16 r = Sint16(buffer[0]*fRightFactors[0] + buffer[1]*fRightFactors[1]);
+		buffer[0] = l;
+		buffer[1] = r;
+		buffer += 2;
+	}
+}
+
+void FadeSound( Sint16 *buffer, int frames, float fStartVolume, float fEndVolume  )
+{
+	for( int samp = 0; samp < frames; ++samp )
+	{
+		float fVolPercent = SCALE( samp, 0, frames, fStartVolume, fEndVolume );
+
+		fVolPercent = clamp( fVolPercent, 0.f, 1.f );
+		for(int i = 0; i < channels; ++i)
+		{
+			*buffer = short(*buffer * fVolPercent);
+			buffer++;
+		}
+	}
+}
+
 /* Retrieve audio data, for mixing.  At the time of this call, the frameno at which the
  * sound will be played doesn't have to be known.  Once committed, and the frameno
  * is known, call CommitPCMData.  size is in bytes.
@@ -446,56 +495,13 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		 * source.)  If we don't know the length, don't fade. */
 		if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
 		{
-			Sint16 *p = (Sint16 *) buffer;
-			int this_position = position;
-
-			for(int samp = 0; samp < got_frames; ++samp)
-			{
-				const float fLastSecond = m_Param.m_StartSecond+m_Param.m_LengthSeconds;
-				const float fSecsUntilSilent = fLastSecond - float(this_position) / samplerate();
-				float fVolPercent = fSecsUntilSilent / m_Param.m_FadeLength;
-
-				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
-				for(int i = 0; i < channels; ++i) {
-					*p = short(*p * fVolPercent);
-					p++;
-				}
-				this_position++;
-			}
+			const float fLastSecond = m_Param.m_StartSecond+m_Param.m_LengthSeconds;
+			const float fStartVolume = fLastSecond - float(position) / samplerate();
+			const float fEndVolume = fLastSecond - float(position+got_frames) / samplerate();
+			FadeSound( (Sint16 *) buffer, got_frames, fStartVolume, fEndVolume );
 		}
 
-		if( m_Param.m_Balance != 0 )
-		{
-			Sint16 *p = (Sint16 *) buffer;
-
-			float fBalance = m_Param.m_Balance;
-			bool bSwap = fBalance < 0;
-			if( bSwap )
-				fBalance = -fBalance;
-
-			float fLeftFactors[2] ={ 1-fBalance, 0 };
-			float fRightFactors[2] =
-			{
-				SCALE( fBalance, 0, 1, 0.5f, 0 ),
-				SCALE( fBalance, 0, 1, 0.5f, 1 )
-			};
-
-			if( bSwap )
-			{
-				swap( fLeftFactors[0], fRightFactors[0] );
-				swap( fLeftFactors[1], fRightFactors[1] );
-			}
-
-			RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
-			for( int samp = 0; samp < got_frames; ++samp )
-			{
-				Sint16 l = Sint16(p[0]*fLeftFactors[0] + p[1]*fLeftFactors[1]);
-				Sint16 r = Sint16(p[0]*fRightFactors[0] + p[1]*fRightFactors[1]);
-				p[0] = l;
-				p[1] = r;
-				p+=2;
-			}
-		}
+		AdjustBalance( (Sint16 *) buffer, got_frames, m_Param.m_Balance );
 
 		sound_frame = position;
 
