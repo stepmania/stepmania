@@ -31,6 +31,7 @@ Andrew Livy
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_PlayersChosen		=	ScreenMessage(SM_User + 3);
 
 #define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
 
@@ -53,7 +54,6 @@ const float OPT_Y[NUM_EZ2_GRAPHICS] = {
 
 
 
-float ez2_lasttimercheck;
 float ez2_bounce=0.f; // used for the bouncing of the '1p' and '2p' images
 
 /************************************
@@ -64,7 +64,6 @@ Desc: Sets up the screen display
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-	ez2_lasttimercheck = 0.0f;
 	m_iSelectedStyle=3; // by bbf: frieza, was this supposed to be 3 ?
 	GAMESTATE->m_CurStyle = STYLE_NONE;
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
@@ -155,37 +154,6 @@ void ScreenEz2SelectPlayer::DrawPrimitives()
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
-	
-	// wait for a bit incase another player wants to join before moving on.
-	if (ez2_lasttimercheck != 0.0f && TIMER->GetTimeSinceStart() > ez2_lasttimercheck + 1)
-	{
-		ez2_lasttimercheck = 0.0f;
-		
-		if (m_iSelectedStyle == 0) // only the left pad was selected
-		{
-//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
-		}
-		else if (m_iSelectedStyle == 1) // only the right pad was selected
-		{
-//			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
-			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
-		}
-		else // they both selected
-		{
-//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
-		}
-
-		MUSIC->Stop();
-		
-		this->ClearMessageQueue();
-
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
-
-		TweenOffScreen();	
-	}
-
 }
 
 /************************************
@@ -216,6 +184,30 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1); // Automatically Choose Player 1
 		break;
+	case SM_PlayersChosen:
+		if (m_iSelectedStyle == 0) // only the left pad was selected
+		{
+//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
+		}
+		else if (m_iSelectedStyle == 1) // only the right pad was selected
+		{
+//			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
+			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
+		}
+		else // they both selected
+		{
+//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
+		}
+
+		MUSIC->Stop();
+		
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+
+		TweenOffScreen();	
+		break;
+
 	case SM_GoToPrevState:
 		MUSIC->Stop();
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
@@ -288,7 +280,10 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 //			GAMESTATE->m_bIsJoined[PLAYER_2] = true;
 		}
 		m_soundSelect.PlayRandom();
-		ez2_lasttimercheck = TIMER->GetTimeSinceStart(); // start the timer for going to next state
+			
+		// wait for a bit incase another player wants to join before moving on.
+		this->ClearMessageQueue();
+		SCREENMAN->SendMessageToTopScreen( SM_PlayersChosen, 1.f );
 	}
 	else
 	{
