@@ -97,6 +97,8 @@ CString LoadedDriver::GetPath( CString path )
 	return path.Right( path.size() - MountPoint.size() );
 }
 
+bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; }
+bool ieq( const CString &a, const CString &b ) { return a.CompareNoCase(b) == 0; }
 void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
@@ -116,6 +118,11 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 				AddTo[j] = ld.MountPoint + AddTo[j];
 	}
 
+	/* More than one driver might return the same file.  Remove duplicates (case-
+	 * insensitively). */
+	sort( AddTo.begin(), AddTo.end(), ilt );
+	CStringArray::iterator it = unique( AddTo.begin(), AddTo.end(), ieq );
+	AddTo.erase(it, AddTo.end());
 }
 
 #include "RageFileDriverDirect.h"
