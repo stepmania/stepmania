@@ -69,10 +69,10 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 		{			
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathToF("Common normal") );
+				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathToF("ScreenMapControllers entry") );
 				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], LINE_START_Y + b*LINE_GAP_Y );
 				m_textMappedTo[p][b][s].SetZoom( 0.5f );
-				m_textMappedTo[p][b][s].SetShadowLength( 2 );
+				m_textMappedTo[p][b][s].SetShadowLength( 0 );
 				this->AddChild( &m_textMappedTo[p][b][s] );
 			}
 		}
