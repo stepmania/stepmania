@@ -730,6 +730,27 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					score = TNS_MISS;
 			}
 
+			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
+			// as "mine was hit" and everything else as "mine was avoided"
+			if( tn == TAP_MINE )
+			{
+				if( score > TNS_GOOD )
+				{
+					return;	// avoided
+				}
+				else
+				{
+					score = TNS_HIT_MINE;
+					m_soundMine.Play();
+					if( m_pLifeMeter )
+						m_pLifeMeter->ChangeLifeMine();
+					if( m_pCombinedLifeMeter )
+						m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
+					m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+					m_pNoteField->DidTapNote( col, score, false );
+				}
+			}
+
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
 			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
@@ -737,18 +758,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			if( score == TNS_MISS )
 				return;
 
-			// Unless the computer made a very good step, they were fooled by the mine
-			if( tn == TAP_MINE  &&  score <= TNS_GOOD )
-			{
-				score = TNS_HIT_MINE;
-				m_soundMine.Play();
-				if( m_pLifeMeter )
-					m_pLifeMeter->ChangeLifeMine();
-				if( m_pCombinedLifeMeter )
-					m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
-				m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-				m_pNoteField->DidTapNote( col, score, false );
-			}
+
 			if( IsTapAttack(tn)  &&  score > TNS_GOOD )
 			{
 				m_soundAttackLaunch.Play();
