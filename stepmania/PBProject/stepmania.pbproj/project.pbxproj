@@ -166,7 +166,6 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
-				AAF7435D06110EC300B19AD1,
 				AA996D9605E9ED34008CA159,
 				AA996D9705E9ED34008CA159,
 				AAEA090605E23DF900D38622,
@@ -641,7 +640,6 @@
 			fileRef = AA1CD941060AE571003702C4;
 			isa = PBXBuildFile;
 			settings = {
-				COMPILER_FLAGS = "-g2 -O0";
 			};
 		};
 		AA1CD944060AE571003702C4 = {
@@ -1354,7 +1352,6 @@
 				AAE7812E0608249E0034E65F,
 				AA1CD944060AE571003702C4,
 				AAF7435C06110E8D00B19AD1,
-				AAF7435E06110EC300B19AD1,
 				AAF74591061181F700B19AD1,
 				AA34EC7A0611A500003E5955,
 				AA34ECF70611C9A7003E5955,
@@ -13764,8 +13761,6 @@
 				AAC6DCEF0567663800B5D56F,
 				AAC6DCF00567663800B5D56F,
 				AAC6DCF10567663800B5D56F,
-				AAC6DCFC056846E600B5D56F,
-				AAC6DCFD056846E600B5D56F,
 				AAB691F205704FA50078BED4,
 				AAB691F305704FA50078BED4,
 			);
@@ -13825,26 +13820,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		AAC6DCFC056846E600B5D56F = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = LightsDriver_LinuxSerial.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AAC6DCFD056846E600B5D56F = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = LightsDriver_LinuxSerial.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
 		};
 		AAC6DDDE0569C71000B5D56F = {
 			fileEncoding = 30;
@@ -15263,7 +15238,6 @@
 			fileRef = AAED6F280601C528002D2DEE;
 			isa = PBXBuildFile;
 			settings = {
-				COMPILER_FLAGS = "-g3";
 			};
 		};
 		AAED6F2D0601C528002D2DEE = {
@@ -15457,20 +15431,6 @@
 		};
 		AAF7435C06110E8D00B19AD1 = {
 			fileRef = AAF7435A06110E8D00B19AD1;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAF7435D06110EC300B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = ForeachEnum.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF7435E06110EC300B19AD1 = {
-			fileRef = AAF7435D06110EC300B19AD1;
 			isa = PBXBuildFile;
 			settings = {
 			};
