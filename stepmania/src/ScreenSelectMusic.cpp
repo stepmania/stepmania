@@ -342,7 +342,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 		ON_COMMAND( m_sprMeterFrame[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_AutoGenIcon[p] );
-		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 }
 
@@ -370,7 +369,6 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 		OFF_COMMAND( m_sprMeterFrame[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_AutoGenIcon[p] );
-		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
 }
 
@@ -420,7 +418,6 @@ void ScreenSelectMusic::SkipSongPartTweens()
 		m_sprMeterFrame[p].FinishTweening();
 		m_DifficultyIcon[p].FinishTweening();
 		m_AutoGenIcon[p].FinishTweening();
-		m_DifficultyMeter[p].FinishTweening();
 	}
 }
 
@@ -476,6 +473,7 @@ void ScreenSelectMusic::TweenOnScreen()
 		ON_COMMAND( m_textHighScore[p] );
 		if( SHOW_PANES )
 			ON_COMMAND( m_PaneDisplay[p] );
+		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -525,6 +523,7 @@ void ScreenSelectMusic::TweenOffScreen()
 		OFF_COMMAND( m_textHighScore[p] );
 		if( SHOW_PANES )
 			OFF_COMMAND( m_PaneDisplay[p] );
+		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
 }
 
