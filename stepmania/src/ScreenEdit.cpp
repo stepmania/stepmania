@@ -1025,8 +1025,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			float fStopDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_F9:	fStopDelta = -0.020f;		break;
-			case DIK_F10:	fStopDelta = +0.020f;		break;
+			case DIK_F9:	fStopDelta = -0.02f;		break;
+			case DIK_F10:	fStopDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1061,8 +1061,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			float fOffsetDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_F11:	fOffsetDelta = -0.020f;		break;
-			case DIK_F12:	fOffsetDelta = +0.020f;		break;
+			case DIK_F11:	fOffsetDelta = -0.02f;		break;
+			case DIK_F12:	fOffsetDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1084,8 +1084,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			float fDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_LBRACKET:		fDelta = -0.025f;	break;
-			case DIK_RBRACKET:		fDelta = +0.025f;	break;
+			case DIK_LBRACKET:		fDelta = -0.02f;	break;
+			case DIK_RBRACKET:		fDelta = +0.02f;	break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )

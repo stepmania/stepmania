@@ -45,7 +45,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 66;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 67;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -123,7 +123,7 @@ Song::Song()
 	m_bChangedSinceSave = false;
 	m_fBeat0OffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = 0;
-	m_fMusicSampleLengthSeconds = 16;	// start fading out at m_fMusicSampleLengthSeconds-1 seconds
+	m_fMusicSampleLengthSeconds = 12.0f;	// start fading out at m_fMusicSampleLengthSeconds-1 seconds
 	m_iMusicBytes = 0;
 	m_fMusicLengthSeconds = 0;
 	m_fFirstBeat = -1;
