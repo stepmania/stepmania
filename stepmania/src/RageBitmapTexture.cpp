@@ -17,6 +17,7 @@
 #include "RageException.h"
 #include "RageDisplay.h"
 #include "RageTypes.h"
+#include "StepMania.h"	// yuck.  Needed for HOOKS.
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -295,9 +296,34 @@ apply_color_key:
 	
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img );
 
-	SDL_FreeSurface( img );
-
 	CreateFrameRects();
+
+	/* Make sure the image has even dimensions.  Otherwise, 
+	 * pixel/texel alignment will be off. 
+	 * TODO:  Enforce frames in the image have even dimensions. */
+	float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();
+	float fFrameHeight = this->GetSourceHeight() / (float)this->GetFramesHigh();
+	float fBetterFrameWidth = roundf((fFrameWidth+0.99f)/2)*2;
+	float fBetterFrameHeight = roundf((fFrameHeight+0.99f)/2)*2;
+	float fBetterSourceWidth = this->GetFramesWide() * fBetterFrameWidth;
+	float fBetterSourceHeight = this->GetFramesWide() * fBetterFrameHeight;
+	if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
+	{
+		CString sWarning = ssprintf(
+			"The graphic '%s' has frame dimensions that aren't even numbers.\n\n"
+			"The entire image is %dx%d and frame size is %.1fx%.1f.\n\n"
+			"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.", 
+			actualID.filename.c_str(), 
+			this->GetSourceWidth(), this->GetSourceHeight(), 
+			fFrameWidth, fFrameHeight,
+			fBetterSourceWidth, fBetterSourceHeight,
+			fBetterFrameWidth, fBetterFrameHeight );
+		LOG->Warn( sWarning );
+		if( DISPLAY->IsWindowed() )
+			HOOKS->MessageBoxOK( sWarning );
+	}
+
+	SDL_FreeSurface( img );
 
 	/* See if the apparent "size" is being overridden. */
 	GetResolutionFromFileName(actualID.filename, m_iSourceWidth, m_iSourceHeight);
