@@ -283,7 +283,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 		if( 0==stricmp(sValueName,"TITLE") )
 			LoadTags(sParams[1], out);
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, strtof(sParams[1], NULL)) );
+			out.AddBPMSegment( BPMSegment(0, BeatToNoteRow(strtof(sParams[1], NULL))) );
 		else if( 0==stricmp(sValueName,"BPM2") )
 			BPM2 = strtof( sParams[1], NULL );
 		else if( 0==stricmp(sValueName,"BPM3") )
@@ -310,7 +310,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 		const float beat = BPMPos2 * BeatsPerSecond;
 		LOG->Trace("BPM %f, BPS %f, BPMPos2 %f, beat %f",
 			out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos2, beat);
-		out.AddBPMSegment( BPMSegment(beat, BPM2) );
+		out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BeatToNoteRow(BPM2)) );
 	}
 
 	if( BPM3 > 0 && BPMPos3 > 0 )
@@ -319,7 +319,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 		const float beat = BPMPos3 * BeatsPerSecond;
 		LOG->Trace("BPM %f, BPS %f, BPMPos3 %f, beat %f",
 			out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos3, beat);
-		out.AddBPMSegment( BPMSegment(beat, BPM3) );
+		out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BeatToNoteRow(BPM3)) );
 	}
 
 	/* Try to fill in missing bits of information from the pathname. */
