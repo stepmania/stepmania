@@ -219,7 +219,7 @@ void ScreenSelectStyle5th::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart(PLAYER_1);
 		break;
 	case SM_GoToPrevScreen:
-		MUSIC->Stop();
+		SOUNDMAN->music->StopPlaying();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
@@ -291,7 +291,7 @@ void ScreenSelectStyle5th::MenuStart( PlayerNumber pn )
 
 void ScreenSelectStyle5th::MenuBack( PlayerNumber pn )
 {
-	MUSIC->Stop();
+	SOUNDMAN->music->StopPlaying();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

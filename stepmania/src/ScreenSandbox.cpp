@@ -32,7 +32,7 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
-MUSIC->Stop();
+SOUNDMAN->music->StopPlaying();
 //	m_quad.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 //	m_quad.SetDiffuse( RageColor(1,1,1,1) );
 //	this->AddChild( &m_quad );

@@ -317,7 +317,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 void ScreenSelectCourse::MenuBack( PlayerNumber pn )
 {
-	MUSIC->Stop();
+	SOUNDMAN->music->StopPlaying();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

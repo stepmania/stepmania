@@ -168,7 +168,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			MUSIC->Stop();
+			SOUNDMAN->music->StopPlaying();
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
 		break;
@@ -188,7 +188,7 @@ void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 
 void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 {
-	MUSIC->Stop();
+	SOUNDMAN->music->StopPlaying();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

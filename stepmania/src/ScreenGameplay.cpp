@@ -113,7 +113,7 @@ ScreenGameplay::ScreenGameplay()
 	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
 
 
-	MUSIC->Stop();
+	SOUNDMAN->music->StopPlaying();
 
 	GAMESTATE->ResetStageStatistics();	// clear values
 

@@ -112,7 +112,7 @@ void ScreenSongOptions::GoToPrevState()
 
 void ScreenSongOptions::GoToNextState()
 {
-	MUSIC->Stop();
+	SOUNDMAN->music->StopPlaying();
 
 	SCREENMAN->SetNewScreen( "ScreenStage" );
 }

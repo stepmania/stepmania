@@ -462,7 +462,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		else
 			if( m_MusicWheel.NextSort() )
 			{
-				MUSIC->Stop();
+				SOUNDMAN->music->StopPlaying();
 
 //				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 
@@ -554,7 +554,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			MUSIC->Stop();
+			SOUNDMAN->music->StopPlaying();
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
 		break;
@@ -579,7 +579,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		{
 			if( m_MusicWheel.NextSort() )
 			{
-				MUSIC->Stop();
+				SOUNDMAN->music->StopPlaying();
 
 //				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 
@@ -668,7 +668,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
-	MUSIC->Stop();
+	SOUNDMAN->music->StopPlaying();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
@@ -740,7 +740,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
-			MUSIC->Stop();
+			SOUNDMAN->music->StopPlaying();
 			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
