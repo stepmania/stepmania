@@ -16,6 +16,7 @@ public:
 	virtual int GetPCM( char *buffer, int size, int64_t sampleno ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
+	virtual float GetVolume() const = 0;
 	virtual CString GetLoadedFilePath() const = 0;
 };
 
@@ -75,6 +76,8 @@ public:
 	void SetPlaybackRate( float fScale );
 	void SetFadeLength( float fSeconds );
 	void SetNoFade() { SetFadeLength(0); }
+	void SetVolume( float fVolume ) { m_Volume = fVolume; }
+	float GetVolume() const { return m_Volume; }
 	float GetPlaybackRate() const { return float(speed_input_samples) / speed_output_samples; }
 	bool IsPlaying() const { return playing; }
 	CString GetLoadedFilePath() const { return m_sFilePath; }
@@ -119,6 +122,8 @@ private:
 
 	/* Amount of time to fade out at the end. */
 	float fade_length;
+
+	float m_Volume;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position

@@ -77,6 +77,7 @@ RageSound::RageSound():
 	databuf.reserve(internal_buffer_size);
 	m_StartSample = 0;
 	m_LengthSamples = -1;
+	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
 	AccurateSync = false;
 	fade_length = 0;
 	/* Register ourselves, so we receive Update()s. */
@@ -109,6 +110,7 @@ RageSound::RageSound(const RageSound &cpy):
 	original = cpy.original;
 	m_StartSample = cpy.m_StartSample;
 	m_LengthSamples = cpy.m_LengthSamples;
+	m_Volume = cpy.m_Volume;
 	StopMode = cpy.StopMode;
 	position = cpy.position;
 	playing = false;
@@ -513,6 +515,11 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 void RageSound::StartPlaying()
 {
 	LockMut(SOUNDMAN->lock);
+
+	// If no volume is set, use the default.
+	if( GetVolume() == -1 )
+		SetVolume( SOUNDMAN->GetMixVolume() );
+
 	stopped_position = -1;
 
 	ASSERT(!playing);
