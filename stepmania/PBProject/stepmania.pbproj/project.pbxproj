@@ -274,6 +274,7 @@
 			path = ../src/ProTimingDisplay.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA0E393404DA8EE700D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -283,6 +284,7 @@
 			path = ../src/ProTimingDisplay.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA14ED0F0509F40000E3FAD7 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -292,6 +294,7 @@
 			path = MovieTexture/MovieTexture_FFMpeg.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA14ED100509F40000E3FAD7 = {
 			expectedFileType = sourcecode.c.h;
@@ -301,6 +304,7 @@
 			path = MovieTexture/MovieTexture_FFMpeg.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA14ED150509F94C00E3FAD7 = {
 			children = (
@@ -346,6 +350,7 @@
 			path = Installer/Util.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA157B32051677F000D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -355,6 +360,7 @@
 			path = Installer/Util.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA170C39055481660068A894 = {
 			containerPortal = 29B97313FDCFA39411CA2CEA;
@@ -395,6 +401,7 @@
 			path = Installer/Processor.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C653B050C00CF0073A143 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -404,6 +411,7 @@
 			path = Installer/Processor.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C654B050D212D0073A143 = {
 			expectedFileType = sourcecode.c.c;
@@ -413,6 +421,7 @@
 			path = Installer/main.c;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C654F050D21AB0073A143 = {
 			children = (
@@ -440,6 +449,7 @@
 			path = ../src/ScreenProfileOptions.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C6553050D23200073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -449,6 +459,7 @@
 			path = ../src/ScreenProfileOptions.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C6556050D234B0073A143 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -458,6 +469,7 @@
 			path = ../src/ProfileManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C6557050D234B0073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -467,6 +479,7 @@
 			path = ../src/ProfileManager.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C655F050D2ABC0073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -476,6 +489,7 @@
 			path = Installer/InstallerWindowController.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C6560050D2ABC0073A143 = {
 			expectedFileType = sourcecode.c.objc;
@@ -485,6 +499,7 @@
 			path = Installer/InstallerWindowController.m;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C6565050D2D0D0073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -494,6 +509,7 @@
 			path = Installer/Helper.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C6566050D2D0D0073A143 = {
 			expectedFileType = sourcecode.cpp.objcpp;
@@ -503,6 +519,7 @@
 			path = Installer/Helper.mm;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C659C050FD1E00073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -512,6 +529,7 @@
 			path = ../src/NetGameState.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C659D050FD1E00073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -521,6 +539,7 @@
 			path = ../src/NetworkInput.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C659E050FD1E00073A143 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -530,6 +549,7 @@
 			path = ../src/NetworkManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C659F050FD1E00073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -539,6 +559,7 @@
 			path = ../src/NetworkManager.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C65A4050FD21F0073A143 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -548,6 +569,7 @@
 			path = ../src/RageSoundReader_Vorbisfile.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C65A5050FD21F0073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -557,6 +579,7 @@
 			path = ../src/RageSoundReader_Vorbisfile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C65A6050FD21F0073A143 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -566,6 +589,7 @@
 			path = ../src/RageSoundReader_WAV.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1C65A7050FD21F0073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -575,6 +599,7 @@
 			path = ../src/RageSoundReader_WAV.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1DC47204A485E900D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -725,6 +750,7 @@
 			path = InputHandler_DirectInput.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA272BF804C7B37A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -733,6 +759,7 @@
 			path = InputHandler_DirectInput.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA272BF904C7B37A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -741,6 +768,7 @@
 			path = InputHandler_DirectInputHelper.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA272BFA04C7B37A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -749,6 +777,7 @@
 			path = InputHandler_DirectInputHelper.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA272BFB04CB779F00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -757,6 +786,7 @@
 			path = ModeChoice.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA272C3004CD757100D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -766,6 +796,7 @@
 			path = ../src/RageFile.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA272C3104CD757100D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -775,6 +806,7 @@
 			path = ../src/RageFile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA29CC240558741A00961A51 = {
 			buildPhases = (
@@ -4711,6 +4743,7 @@
 			path = ../src/NoteDataUtil.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA4F38C104E2D0B700D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -4720,6 +4753,7 @@
 			path = ../src/NoteDataUtil.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA505F40050A87E400F96139 = {
 			expectedFileType = image.bmp;
@@ -4728,6 +4762,7 @@
 			path = ../Data/splash.bmp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA507E4F050BA1A000F96139 = {
 			children = (
@@ -4757,6 +4792,7 @@
 			path = Installer/InstallerFile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA507E65050BA55B00F96139 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -4766,6 +4802,7 @@
 			path = Installer/InstallerFile.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA507E68050BC69000F96139 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -4783,6 +4820,7 @@
 			path = ver.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA53D28405277DAF00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -4792,6 +4830,7 @@
 			path = ../src/ScreenOptionsMaster.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA53D28505277DAF00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -4801,6 +4840,7 @@
 			path = ../src/ScreenOptionsMaster.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA53D28605277DAF00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -4810,6 +4850,7 @@
 			path = ../src/ScreenOptionsMasterPrefs.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA53D28705277DAF00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -4819,6 +4860,7 @@
 			path = ../src/ScreenOptionsMasterPrefs.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA53D28805277DAF00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -4828,6 +4870,7 @@
 			path = ../src/ScreenReloadSongs.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA53D28905277DAF00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -4837,6 +4880,7 @@
 			path = ../src/ScreenReloadSongs.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA590A380541CD2A00D02EE9 = {
 			buildActionMask = 2147483647;
@@ -5755,6 +5799,7 @@
 			path = ../src/ScoreDisplayPercentage.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA6DAF0905300B3D00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -5764,6 +5809,7 @@
 			path = ../src/ScoreDisplayPercentage.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA6E00090477103E005F316C = {
 			children = (
@@ -11150,6 +11196,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AA76D15504D9D2D200D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11160,6 +11207,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AA7D404604FC3C270020E02B = {
 			expectedFileType = sourcecode.c.h;
@@ -11170,6 +11218,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AA7D404704FC3C270020E02B = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11180,6 +11229,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AA7D404A04FC3E180020E02B = {
 			expectedFileType = wrapper.framework;
@@ -11331,12 +11381,11 @@
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = RageSoundDriver_QT.cpp;
-			path = ../src/arch/Sound/RageSoundDriver_QT.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
+			path = RageSoundDriver_QT.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA98E298049ACE39005F316C = {
 			expectedFileType = sourcecode.c.h;
@@ -11354,9 +11403,10 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CombinedLifeMeter.h;
-			path = /Users/steve/stepmania/src/CombinedLifeMeter.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/CombinedLifeMeter.h;
+			refType = 4;
+			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA9D236D0561B6CF00FC7F14 = {
 			fileRef = AA9D236C0561B6CE00FC7F14;
@@ -11369,18 +11419,20 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageTextureID.cpp;
-			path = /Users/steve/stepmania/src/RageTextureID.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/RageTextureID.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA9EC2F1055F5126007E5098 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageTextureID.h;
-			path = /Users/steve/stepmania/src/RageTextureID.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/RageTextureID.h;
+			refType = 4;
+			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA9EC2F2055F5126007E5098 = {
 			fileRef = AA9EC2F0055F5126007E5098;
@@ -11438,6 +11490,7 @@
 			path = ../src/ModelOrSprite.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAABAD3904F0E12B00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11447,6 +11500,7 @@
 			path = ../src/NoteFieldPlus.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAABAD3A04F0E12B00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11456,6 +11510,7 @@
 			path = ../src/NoteFieldPlus.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAADA4AE04E5F3DE00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11464,6 +11519,7 @@
 			path = ProductInfo.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAADA51604E75DD300D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11473,6 +11529,7 @@
 			path = ../src/ScreenEditCoursesMenu.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAADA51704E75DD300D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11482,6 +11539,7 @@
 			path = ../src/ScreenEditCoursesMenu.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAADA51A04E7609A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11491,6 +11549,7 @@
 			path = ../src/EditCoursesMenu.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAADA51B04E7609A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11500,28 +11559,29 @@
 			path = ../src/EditCoursesMenu.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAADA51E04E77F4400D02EE9 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = RageSoundDriver_QT1.h;
-			path = ../src/arch/Sound/RageSoundDriver_QT1.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
+			path = RageSoundDriver_QT1.h;
+			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAADA51F04E77F4400D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = RageSoundDriver_QT1.cpp;
-			path = ../src/arch/Sound/RageSoundDriver_QT1.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
+			path = RageSoundDriver_QT1.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAAE28D60522523F00D02EE9 = {
 			children = (
@@ -11542,6 +11602,7 @@
 			path = include/resample.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28DB052252A500D02EE9 = {
 			expectedFileType = sourcecode.c.c;
@@ -11551,6 +11612,7 @@
 			path = src/filterkit.c;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28DC052252A500D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11560,6 +11622,7 @@
 			path = src/filterkit.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28DD052252A500D02EE9 = {
 			expectedFileType = sourcecode.c.c;
@@ -11569,6 +11632,7 @@
 			path = src/hackedresamplesubs.c;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28DE052252A500D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11578,6 +11642,7 @@
 			path = src/resample_defs.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28DF052252A500D02EE9 = {
 			expectedFileType = sourcecode.c.c;
@@ -11587,6 +11652,7 @@
 			path = src/resample.c;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28E0052252A500D02EE9 = {
 			expectedFileType = sourcecode.c.c;
@@ -11596,6 +11662,7 @@
 			path = src/resamplesubs.c;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28F2052254A900D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11605,6 +11672,7 @@
 			path = ../src/RageSoundReader_Resample_Fast.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28F3052254A900D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11614,6 +11682,7 @@
 			path = ../src/RageSoundReader_Resample_Fast.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28F4052254A900D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11623,6 +11692,7 @@
 			path = ../src/RageSoundReader_Resample_Good.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28F5052254A900D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11632,6 +11702,7 @@
 			path = ../src/RageSoundReader_Resample_Good.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAAE28FA0522550400D02EE9 = {
 			children = (
@@ -11663,6 +11734,7 @@
 			path = InputHandler.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAB3B36C04C38B4600D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11671,6 +11743,7 @@
 			path = InputHandler.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAB3B37704C38BF600D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11680,6 +11753,7 @@
 			path = MovieTexture/MovieTexture.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAB3B37F04C3F48700D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11713,6 +11787,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAB3B38604C5701D00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11724,6 +11799,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAB3B38704C5701D00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11735,6 +11811,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAB3B38804C5701D00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11746,6 +11823,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAB3B39004C5921800D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11757,6 +11835,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AAB3B39104C5921800D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11766,6 +11845,7 @@
 			path = MovieTexture/MovieTexture_Null.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAB895E504A9057100D02EE9 = {
 			expectedFileType = image.icns;
@@ -11915,6 +11995,7 @@
 			path = Vsync.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABE7D3F051F07E900D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11923,6 +12004,7 @@
 			path = Vsync.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABEB521051F163A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -11931,6 +12013,7 @@
 			path = InputHandler_Carbon.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABEB522051F163A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -11939,6 +12022,7 @@
 			path = InputHandler_Carbon.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC23F7C0485E68D005F316C = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12014,6 +12098,7 @@
 			path = ../src/ScreenCenterImage.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC622F905389A0500D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12023,6 +12108,7 @@
 			path = ../src/ScreenCenterImage.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC622FA05389A0500D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12032,6 +12118,7 @@
 			path = ../src/ScreenTestInput.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC622FB05389A0500D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12041,6 +12128,7 @@
 			path = ../src/ScreenTestInput.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC6230005389A3C00D02EE9 = {
 			children = (
@@ -12068,6 +12156,7 @@
 			path = test_audio_readers.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD620190528FA5E00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12077,6 +12166,7 @@
 			path = ../src/CharacterHead.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6201A0528FA5E00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12086,6 +12176,7 @@
 			path = ../src/CharacterHead.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6201D0528FAAB00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12095,6 +12186,7 @@
 			path = ../src/ScreenEndlessBreak.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6201E0528FAAB00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12104,6 +12196,7 @@
 			path = ../src/ScreenEndlessBreak.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD620A5052EC78B00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12113,6 +12206,7 @@
 			path = ../src/PercentageDisplay.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD620A6052EC78B00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12122,6 +12216,7 @@
 			path = ../src/PercentageDisplay.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E7A04D4FE5D00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12131,6 +12226,7 @@
 			path = ../src/RageSoundReader_FileReader.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E7B04D4FE5D00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12140,6 +12236,7 @@
 			path = ../src/RageSounds.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E7C04D4FE5D00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12149,6 +12246,7 @@
 			path = ../src/RageSounds.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E8004D4FEC400D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12176,6 +12274,7 @@
 			path = Win32/Crash.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E8304D4FF9B00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12185,6 +12284,7 @@
 			path = Win32/Crash.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E8604D50FB900D02EE9 = {
 			children = (
@@ -12209,6 +12309,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AADB4E8A04D50FB900D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12219,6 +12320,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AADB4E8B04D50FB900D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12227,6 +12329,7 @@
 			path = SignalHandler.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E8C04D50FB900D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12235,6 +12338,7 @@
 			path = SignalHandler.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADB4E8D04D5261C00D02EE9 = {
 			children = (
@@ -12295,6 +12399,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AADB4F5A04D9220700D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12305,6 +12410,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 1;
 		};
 		AADBE360053D5F8A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12314,6 +12420,7 @@
 			path = ../src/ScreenBookkeeping.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADBE361053D5F8A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12323,6 +12430,7 @@
 			path = ../src/ScreenBookkeeping.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADBE362053D5F8A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12332,6 +12440,7 @@
 			path = ../src/ScreenNameEntryTraditional.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADBE363053D5F8A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12341,6 +12450,7 @@
 			path = ../src/ScreenNameEntryTraditional.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADBE368053DA38C00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12443,6 +12553,7 @@
 			path = ../src/ScreenExit.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAECF8C005265DB600D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12452,6 +12563,7 @@
 			path = ../src/ScreenExit.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAEF3D0C04B533CC00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12482,6 +12594,7 @@
 			path = LoadingWindow.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF33F2A04FF213100F93C24 = {
 			expectedFileType = wrapper.framework;
@@ -12500,6 +12613,7 @@
 			path = ../src/Steps.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF430FE04DC98BC00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12509,6 +12623,7 @@
 			path = ../src/Steps.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF580A704B3E2DC00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12542,6 +12657,7 @@
 			path = ../src/RageSoundReader_FileReader.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC7FF10513A67700D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12551,6 +12667,7 @@
 			path = ../src/RageSoundReader_MP3.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC7FF20513A67700D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12560,6 +12677,7 @@
 			path = ../src/RageSoundReader_MP3.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC803F0513A6EB00D02EE9 = {
 			children = (
@@ -12589,6 +12707,7 @@
 			path = ogg.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC80420513A6EB00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12597,6 +12716,7 @@
 			path = os_types.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC80430513A6EB00D02EE9 = {
 			children = (
@@ -12616,6 +12736,7 @@
 			path = codec.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC80450513A6EB00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12624,6 +12745,7 @@
 			path = vorbisenc.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFC80460513A6EB00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12632,6 +12754,7 @@
 			path = vorbisfile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFF551D0549F39700D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12641,6 +12764,7 @@
 			path = ../src/GraphDisplay.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFF551E0549F39700D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12650,6 +12774,7 @@
 			path = ../src/GraphDisplay.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFF55210549F43A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12659,6 +12784,7 @@
 			path = ../src/ComboGraph.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFF55220549F43A00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
@@ -12668,6 +12794,7 @@
 			path = ../src/ComboGraph.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAFF5541054E736D00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
