@@ -721,7 +721,7 @@ bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCo
 
 	for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
 	{
-		FOREACH_CourseDifficulty( cd )
+		FOREACH_ShownCourseDifficulty( cd )
 		{
 			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
 			if( hsl.vHighScores.empty() )
@@ -843,7 +843,7 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 
 			// table header row
 			TranslatedWrite(f, "<tr><td>&nbsp;</td>" );
-			FOREACH_CourseDifficulty( cd )
+			FOREACH_ShownCourseDifficulty( cd )
 			{
 				TranslatedWrite(f, ssprintf("<td>%s</td>", CourseDifficultyToThemedString(cd).c_str()) );
 			}
@@ -863,7 +863,7 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 				TranslatedWrite(f, ssprintf("<p class='songtitle'>%s</p>", pCourse->m_sName.c_str()) );
 				TranslatedWrite(f, "</td>" );
 
-				FOREACH_CourseDifficulty( cd )
+				FOREACH_ShownCourseDifficulty( cd )
 				{
 					if( pCourse->HasCourseDifficulty(st,cd) )
 					{

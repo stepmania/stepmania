@@ -225,7 +225,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 	{
 		// for all_courses:
-		FOREACH_CourseDifficulty(d)
+		FOREACH_ShownCourseDifficulty(d)
 		{
 			CString cd = CourseDifficultyToString(d);
 			m_sprCourseDifficulty[d].SetName( ssprintf("CourseDifficulty%s",cd.c_str()) );
@@ -255,7 +255,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			pCourseScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking course list title") );
 			pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_textSongTitle );
 
-			for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+			FOREACH_ShownCourseDifficulty(d)
 			{
 				pCourseScoreRowItem->m_textStepsScore[d].SetName( "CourseListScore" );
 				pCourseScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathToF("ScreenRanking course list score") );
@@ -621,7 +621,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	}
 
 	{
-		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+		FOREACH_ShownCourseDifficulty(d)
 		{
 			m_sprCourseDifficulty[d].SetHidden( !bShowCourseDifficulty );
 			if( bShowCourseDifficulty )
@@ -656,7 +656,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				pCourseScoreRowItem->m_textSongTitle.SetUseZBuffer( true );
 				ON_COMMAND( pCourseScoreRowItem->m_textSongTitle );
 
-				for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+				FOREACH_ShownCourseDifficulty(d)
 				{
 					pCourseScoreRowItem->m_textStepsScore[d].Reset();
 					pCourseScoreRowItem->m_textStepsScore[d].SetXY( COURSE_SCORE_OFFSET_X(d), COURSE_SCORE_OFFSET_Y );
@@ -821,7 +821,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				const Course* pCourse = pCourseScoreRowItem->m_pCourse;
 
 				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
-				FOREACH_CourseDifficulty( cd )
+				FOREACH_ShownCourseDifficulty( cd )
 				{
 					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pts.nt, cd );
 					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[cd];
@@ -875,7 +875,7 @@ void ScreenRanking::TweenPageOffScreen()
 		if( !m_sprDifficulty[*dc_iter].GetHidden() )
 			OFF_COMMAND( m_sprDifficulty[*dc_iter] );
 	}
-	for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+	FOREACH_ShownCourseDifficulty(d)
 	{
 		if( !m_sprCourseDifficulty[d].GetHidden() )
 			OFF_COMMAND( m_sprCourseDifficulty[d] );

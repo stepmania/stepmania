@@ -301,7 +301,7 @@ int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
 			if( !pCourse->AllSongsAreFixed() )
 				continue;
 
-			FOREACH_CourseDifficulty( cd )
+			FOREACH_ShownCourseDifficulty( cd )
 			{
 				if( !pCourse->HasCourseDifficulty(st,cd) )
 					continue;
@@ -338,7 +338,7 @@ int Profile::GetActualCourseDancePointsForStepsType( StepsType st ) const
 				continue;
 
 			const HighScoresForACourse& h = i->second;
-			FOREACH_CourseDifficulty( cd )
+			FOREACH_ShownCourseDifficulty( cd )
 			{
 				const HighScoreList& hs = h.hs[st][cd];
 				const RadarValues& fRadars = pCourse->GetRadarValues(st,cd);

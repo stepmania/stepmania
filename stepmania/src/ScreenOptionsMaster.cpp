@@ -112,9 +112,8 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 
 		Course* pCourse = GAMESTATE->m_pCurCourse;
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+		FOREACH_ShownCourseDifficulty(cd)
 		{
-			CourseDifficulty cd = (CourseDifficulty)d;
 			if( !pCourse->HasCourseDifficulty(st,cd) )
 				continue;	// skip
 
