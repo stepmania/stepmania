@@ -42,9 +42,14 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 
 	Unregister();
 
-	/* Make a new reference. */
-	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iReference );
-	m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+	if( cpy.m_iReference == LUA_NOREF )
+		m_iReference = LUA_NOREF;
+	else
+	{
+		/* Make a new reference. */
+		lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iReference );
+		m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+	}
 
 	return *this;
 }
@@ -70,6 +75,11 @@ void LuaReference::PushSelf( lua_State *L ) const
 bool LuaReference::IsSet() const
 {
 	return m_iReference != LUA_NOREF;
+}
+
+bool LuaReference::IsNil() const
+{
+	return m_iReference == LUA_REFNIL;
 }
 
 int LuaReference::GetLuaType() const

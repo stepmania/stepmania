@@ -25,6 +25,7 @@ public:
 
 	/* Return true if set.  (SetFromNil() counts as being set.) */
 	bool IsSet() const;
+	bool IsNil() const;
 	void Unset() { Unregister(); }
 
 	/* Return the referenced type, or LUA_TNONE if not set. */
