@@ -141,6 +141,8 @@ void RageSound::Fail(CString reason)
 	delete stream.Sample;
 	stream.Sample = NULL;
 
+	LOG->Warn("sound error %s", reason.c_str());
+	/* XXX: we can't do this anymore, and it was a hack anyway */
 	/* XXX 
 	 * full_buf.append(0, 1024); should be OK, but VC6 is broken ... */
 	basic_string<char> empty(1024, 0);
