@@ -132,21 +132,35 @@ NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int iNoteIndex, NoteType t );
 CString NoteTypeToString( NoteType nt );
 
-
-
-struct HoldNote
-{
-	HoldNote( int t, float s, float e ) { iTrack=t; fStartBeat=s; fEndBeat=e; }
-	int		iTrack;	
-	float	fStartBeat;
-	float	fEndBeat;
-};
-
-
 inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ROWS_PER_BEAT + 0.5f); };	// round
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); };
 inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ROWS_PER_BEAT;	 };
 inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };
+
+
+
+struct HoldNote
+{
+	HoldNote( int t, int s, int e ) { iTrack=t; iStartRow=s; iEndRow=e; }
+	bool RowIsInRange( int row ) const { return iStartRow <= row && row <= iEndRow; }
+	bool RangeOverlaps( int start, int end ) const
+	{
+		return
+			( iStartRow >= start && end >= iEndRow ) ||		// other consumes us
+			( iStartRow <= start && end <= iEndRow ) ||		// other inside us
+			( iStartRow <= start && start <= iEndRow ) ||	// other overlaps us
+			( iStartRow <= end   && end <= iEndRow );			// other overlaps us
+	}
+	bool RangeOverlaps( const HoldNote &hn ) const { return RangeOverlaps(hn.iStartRow, hn.iEndRow); }
+	bool RangeInside( int start, int end ) const { return iStartRow <= start && end <= iEndRow; }
+
+	float GetStartBeat() const { return NoteRowToBeat( iStartRow ); }
+	float GetEndBeat() const { return NoteRowToBeat( iEndRow ); }
+	int		iTrack;	
+	int		iStartRow;
+	int		iEndRow;
+};
+
 
 
 

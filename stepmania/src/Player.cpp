@@ -238,6 +238,7 @@ void PlayerMinus::Update( float fDeltaTime )
 
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
+	const int iSongRow = BeatToNoteRow( fSongBeat );
 
 	m_pNoteField->Update( fDeltaTime );
 
@@ -282,7 +283,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		const HoldNote &hn = GetHoldNote(i);
 		HoldNoteScore hns = GetHoldNoteScore(i);
 		float fLife = GetHoldNoteLife(i);
-		int iHoldStartIndex = BeatToNoteRow(hn.fStartBeat);
+		int iHoldStartIndex = hn.iStartRow;
 
 		m_pNoteField->m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
 
@@ -297,7 +298,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
 		// If the song beat is in the range of this hold:
-		if( hn.fStartBeat <= fSongBeat && fSongBeat <= hn.fEndBeat )
+		if( hn.iStartRow <= iSongRow && iSongRow <= hn.iEndRow )
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 			
@@ -316,7 +317,7 @@ void PlayerMinus::Update( float fDeltaTime )
 				// its HoldNote::fEndBeat.  Otherwise, when HoldNotes are converted to the 
 				// 4s representation, it disappears, which causes problems for the way we 
 				// store HoldNote life (by index of the hold).
-				m_pNoteField->GetHoldNote(i).fStartBeat = min( fSongBeat, m_pNoteField->GetHoldNote(i).fEndBeat	-NoteRowToBeat(1) );
+				m_pNoteField->GetHoldNote(i).iStartRow = min( iSongRow, m_pNoteField->GetHoldNote(i).iEndRow-1 );
 			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
@@ -347,7 +348,7 @@ void PlayerMinus::Update( float fDeltaTime )
 			hns = HNS_NG;
 
 		// check for OK
-		if( fSongBeat >= hn.fEndBeat && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
+		if( iSongRow >= hn.iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
 		{
 			fLife = 1;
 			hns = HNS_OK;

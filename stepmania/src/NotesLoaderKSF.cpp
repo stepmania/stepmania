@@ -184,8 +184,8 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 			{
 				HoldNote hn (
 					t, /* button */
-					iHoldStartRow[t]/(float)iTickCount, /* start */
-					(r-1)/(float)iTickCount /* end */
+					BeatToNoteRow(iHoldStartRow[t]/(float)iTickCount), /* start */
+					BeatToNoteRow((r-1)/(float)iTickCount) /* end */
 				);
 				notedata.AddHoldNote( hn );
 				iHoldStartRow[t] = -1;

@@ -92,12 +92,15 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	int iNumSuccessfulHolds = 0;
 
 	if(fEndBeat == -1)
-		fEndBeat = GetMaxBeat()+1;
+		fEndBeat = GetMaxBeat();
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		if( fStartBeat <= hn.fStartBeat  &&  hn.fEndBeat <= fEndBeat  &&  m_HoldNoteScores[i] == hns )
+		if( iStartIndex <= hn.iStartRow &&  hn.iEndRow <= iEndIndex  &&  m_HoldNoteScores[i] == hns )
 			iNumSuccessfulHolds++;
 	}
 	return iNumSuccessfulHolds;
@@ -125,6 +128,13 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 	}
 	
 	return iNumSuccessfulMinesNotes;
+}
+
+/* See NoteData::GetNumHands for the maximum calculation.  We need to line up to that.
+ * A "hands" */
+int NoteDataWithScoring::GetSuccessfulHands( const float fStartBeat, const float fEndBeat ) const
+{
+	return 0;
 }
 
 /* Return the minimum tap score of a row.  If the row isn't complete (not all
@@ -211,8 +221,7 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber p
 	case RADAR_NUM_JUMPS: return (float) GetNumNWithScore( TNS_GOOD, 2 );
 	case RADAR_NUM_HOLDS: return (float) GetNumHoldNotesWithScore( HNS_OK );
 	case RADAR_NUM_MINES: return (float) GetSuccessfulMines();
-	/* XXX: TODO */
-	case RADAR_NUM_HANDS: return 0;
+	case RADAR_NUM_HANDS: return (float) GetSuccessfulHands();
 	default: ASSERT(0);   return 0;
 	}
 }

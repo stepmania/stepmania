@@ -353,22 +353,21 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 
 void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBeat)
 {
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
 	// turn all the HoldNotes into TapNotes
 	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )	// iterate backwards so we can delete
 	{
-		const HoldNote hn = in.GetHoldNote(i);
-		
-		bool bHoldInRange = 
-			(hn.fStartBeat <= fStartBeat && hn.fEndBeat >= fEndBeat)  ||
-			(hn.fStartBeat >= fStartBeat && hn.fStartBeat <= fEndBeat)  ||
-			(hn.fEndBeat >= fStartBeat && hn.fEndBeat <= fEndBeat);
-		
-		if( !bHoldInRange )
+		const HoldNote &hn = in.GetHoldNote(i);
+		if( !hn.RangeInside( iStartIndex, iEndIndex ) )
 			continue;	// skip
+
+		const int iStartRow = hn.iStartRow;
 
 		in.RemoveHoldNote( i );
 		
-		in.SetTapNote(hn.iTrack, BeatToNoteRow(hn.fStartBeat), TAP_TAP);
+		in.SetTapNote(hn.iTrack, iStartRow, TAP_TAP);
 	}
 }
 
@@ -599,7 +598,7 @@ void NoteDataUtil::Little(NoteData &in, float fStartBeat, float fEndBeat)
 				in.SetTapNote(c, i, TAP_EMPTY);
 
 	for( i=in.GetNumHoldNotes()-1; i>=0; i-- )
-		if( fmodf(in.GetHoldNote(i).fStartBeat,1) != 0 )	// doesn't start on a beat
+		if( fmodf(in.GetHoldNote(i).GetStartBeat(),1) != 0 )	// doesn't start on a beat
 			in.RemoveHoldNote( i );
 }
 
@@ -775,7 +774,7 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 	for( int i=0; i<in.GetNumHoldNotes(); i++ )
 	{
 		HoldNote &hn = in.GetHoldNote(i);
-		float fHoldEndBeat = hn.fEndBeat;
+		float fHoldEndBeat = hn.GetEndBeat();
 		int iMineRow = BeatToNoteRow( fHoldEndBeat+0.5f );
 		if( iMineRow < first_row || iMineRow > last_row )
 			continue;
@@ -887,7 +886,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 				// to a hold that lasts for at least one beat.
 				if( r2==r+1 )
 					fEndBeat = fStartBeat+1;
-				in.AddHoldNote( HoldNote(t,fStartBeat,fEndBeat) );
+				in.AddHoldNote( HoldNote(t,BeatToNoteRow(fStartBeat),BeatToNoteRow(fEndBeat)) );
 			}
 dont_add_hold:
 			;

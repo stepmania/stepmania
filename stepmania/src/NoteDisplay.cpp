@@ -453,7 +453,7 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bActive, float 
 	//
 	const int size = 4096;
 	static RageSpriteVertex queue[size];
-	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.fStartBeat, bActive );
+	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.GetStartBeat(), bActive );
 
 	// draw manually in small segments
 	RageSpriteVertex *v = &queue[0];
@@ -524,7 +524,7 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bActive, float fY
 	const int size = 4096;
 	static RageSpriteVertex queue[size];
 
-	Sprite* pSprBody = GetHoldBodySprite( hn.fStartBeat, bActive );
+	Sprite* pSprBody = GetHoldBodySprite( hn.GetStartBeat(), bActive );
 
 	// draw manually in small segments
 	RageSpriteVertex *v = &queue[0];
@@ -609,7 +609,7 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bActive, flo
 	const int size = 4096;
 	static RageSpriteVertex queue[size];
 
-	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.fStartBeat, bActive );
+	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.GetStartBeat(), bActive );
 
 	// draw manually in small segments
 	RageSpriteVertex *v = &queue[0];
@@ -678,7 +678,7 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, 
 	//
 	// Draw the tail
 	//
-	Actor* pSprTail = GetHoldTailActor( hn.fStartBeat, bActive );
+	Actor* pSprTail = GetHoldTailActor( hn.GetStartBeat(), bActive );
 
 	const float fY				= fYTail;
 	const float fYOffset		= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
@@ -728,7 +728,7 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, 
 	//
 	// Draw the head
 	//
-	Actor* pActor = GetHoldHeadActor( hn.fStartBeat, bActive );
+	Actor* pActor = GetHoldHeadActor( hn.GetStartBeat(), bActive );
 
 	// draw with normal Sprite
 	const float fY				= fYHead;
@@ -780,9 +780,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	const int	iCol			= hn.iTrack;
 	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
-	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, iCol, hn.fStartBeat );
+	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, iCol, hn.GetStartBeat() );
 	const float fStartYPos		= ArrowGetYPos(	   m_PlayerNumber, iCol, fStartYOffset, fReverseOffsetPixels );
-	const float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, iCol, hn.fEndBeat );
+	const float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, iCol, hn.GetEndBeat() );
 	const float fEndYPos		= ArrowGetYPos(	   m_PlayerNumber, iCol, fEndYOffset, fReverseOffsetPixels );
 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head

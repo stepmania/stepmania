@@ -224,7 +224,7 @@ int NoteData::GetFirstTrackWithTapOrHoldHead( int index ) const
 
 void NoteData::AddHoldNote( HoldNote add )
 {
-	ASSERT( add.fStartBeat>=0 && add.fEndBeat>=0 );
+	ASSERT( add.iStartRow>=0 && add.iEndRow>=0 );
 
 	int i;
 
@@ -235,17 +235,10 @@ void NoteData::AddHoldNote( HoldNote add )
 	{
 		HoldNote &other = GetHoldNote(i);
 		if( add.iTrack == other.iTrack  &&		// the tracks correspond
-			// they overlap
-			(
-				( other.fStartBeat <= add.fStartBeat && other.fEndBeat >= add.fEndBeat ) ||		// other consumes add
-				( other.fStartBeat >= add.fStartBeat && other.fEndBeat <= add.fEndBeat ) ||		// other inside add
-				( add.fStartBeat <= other.fStartBeat && other.fStartBeat <= add.fEndBeat ) ||	// other overlaps add
-				( add.fStartBeat <= other.fEndBeat && other.fEndBeat <= add.fEndBeat )			// other overlaps add
-			)
-			)
+			add.RangeOverlaps(other) ) // they overlap
 		{
-			add.fStartBeat = min(add.fStartBeat, other.fStartBeat);
-			add.fEndBeat   = max(add.fEndBeat, other.fEndBeat);
+			add.iStartRow = min(add.iStartRow, other.iStartRow);
+			add.iEndRow = max(add.iEndRow, other.iEndRow);
 
 			// delete this HoldNote
 			RemoveHoldNote( i );
@@ -253,8 +246,8 @@ void NoteData::AddHoldNote( HoldNote add )
 		}
 	}
 
-	int iAddStartIndex = BeatToNoteRow(add.fStartBeat);
-	int iAddEndIndex = BeatToNoteRow(add.fEndBeat);
+	int iAddStartIndex = add.iStartRow;
+	int iAddEndIndex = add.iEndRow;
 
 	// delete TapNotes under this HoldNote
 	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
@@ -272,7 +265,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 
 	HoldNote& hn = GetHoldNote(iHoldIndex);
 
-	int iHoldStartIndex = BeatToNoteRow(hn.fStartBeat);
+	const int iHoldStartIndex = hn.iStartRow;
 
 	// delete a tap note at the start of this hold
 	SetTapNote(hn.iTrack, iHoldStartIndex, TAP_EMPTY);
@@ -344,45 +337,40 @@ const Attack& NoteData::GetAttackAt( int track, int row )
 
 int NoteData::GetFirstRow() const
 { 
-	return BeatToNoteRow( GetFirstBeat() );
-}
-
-float NoteData::GetFirstBeat() const		
-{ 
-	float fEarliestBeatFoundSoFar = -1;
+	int iEarliestRowFoundSoFar = -1;
 	
 	int i;
 
-	for( i=0; i <= int(m_TapNotes[0].size()); i++ )
+	for( i=0; i < int(m_TapNotes[0].size()); i++ )
 	{
 		if( !IsRowEmpty(i) )
 		{
-			fEarliestBeatFoundSoFar = NoteRowToBeat(i);
+			iEarliestRowFoundSoFar = i;
 			break;
 		}
 	}
 
 	for( i=0; i<GetNumHoldNotes(); i++ )
 	{
-		if( fEarliestBeatFoundSoFar == -1 ||
-			GetHoldNote(i).fStartBeat < fEarliestBeatFoundSoFar )
-			fEarliestBeatFoundSoFar = GetHoldNote(i).fStartBeat;
+		if( iEarliestRowFoundSoFar == -1 ||
+			GetHoldNote(i).iStartRow < iEarliestRowFoundSoFar )
+			iEarliestRowFoundSoFar = GetHoldNote(i).iStartRow;
 	}
 
-	if( fEarliestBeatFoundSoFar == -1 )	// there are no notes
+	if( iEarliestRowFoundSoFar == -1 )	// there are no notes
 		return 0;
 
-	return fEarliestBeatFoundSoFar;
+	return iEarliestRowFoundSoFar;
+}
+
+float NoteData::GetFirstBeat() const		
+{ 
+	return NoteRowToBeat( GetFirstRow() );
 }
 
 int NoteData::GetLastRow() const
 { 
-	return BeatToNoteRow( GetLastBeat() );
-}
-
-float NoteData::GetLastBeat() const
-{ 
-	float fOldestBeatFoundSoFar = 0;
+	int iOldestRowFoundSoFar = 0;
 	
 	int i;
 
@@ -390,18 +378,23 @@ float NoteData::GetLastBeat() const
 	{
 		if( !IsRowEmpty(i) )
 		{
-			fOldestBeatFoundSoFar = NoteRowToBeat(i);
+			iOldestRowFoundSoFar = i;
 			break;
 		}
 	}
 
 	for( i=0; i<GetNumHoldNotes(); i++ )
 	{
-		if( GetHoldNote(i).fEndBeat > fOldestBeatFoundSoFar )
-			fOldestBeatFoundSoFar = GetHoldNote(i).fEndBeat;
+		if( GetHoldNote(i).iEndRow > iOldestRowFoundSoFar )
+			iOldestRowFoundSoFar = GetHoldNote(i).iEndRow;
 	}
 
-	return fOldestBeatFoundSoFar;
+	return iOldestRowFoundSoFar;
+}
+
+float NoteData::GetLastBeat() const
+{ 
+	return NoteRowToBeat( GetLastRow() );
 }
 
 int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
@@ -487,13 +480,13 @@ int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) co
 
 int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 {
-	/* We want to count both three taps at the same time, a tap while two
-	 * hold notes are being held, etc. */
-	NoteData temp;
-	temp.To4s( *this );
-
+	/* Count the number of times you have to use your hands.  This includes
+	 * three taps at the same time, a tap while two hold notes are being held,
+	 * etc.  Only count rows that have at least one tap note (hold heads count).
+	 * Otherwise, every row of hold notes counts, so three simultaneous hold
+	 * notes will count as hundreds of "hands". */
 	if( fEndBeat == -1 )
-		fEndBeat = temp.GetMaxBeat();
+		fEndBeat = GetMaxBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
@@ -502,20 +495,46 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	iStartIndex = max( iStartIndex, 0 );
 	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
 
+//	vector<int> HoldsAtRow;
+//	HoldsAtRow.insert( HoldsAtRow.begin(), iEndIndex-iStartIndex+1, 0 );
+	int i;
+//	for( i=0; i<GetNumHoldNotes(); i++ )
+//	{
+//		/* Skip the first row of each hold, since there's also a TAP_HOLD_HEAD there. */
+//		const HoldNote &hn = GetHoldNote(i);
+//		for( int row = hn.iStartRow+1; row < hn.iEndRow; ++row )
+//			++HoldsAtRow[row-iStartIndex];
+//	}
+
 	int iNum = 0;
-	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	for( i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			TapNote tn = temp.GetTapNoteX(t, i);
+			TapNote tn = GetTapNoteX(t, i);
 			if( tn != TAP_MINE && tn != TAP_EMPTY ) // mines don't count
 				iNumNotesThisIndex++;
 		}
+		/* We must have at least one non-hold-body at this row to count it. */
+		if( !iNumNotesThisIndex )
+			continue;
+		if( iNumNotesThisIndex < 3 )
+		{
+			/* We have at least one, but not enough.  Count holds. */
+			for( int j=0; j<GetNumHoldNotes(); j++ )
+			{
+				const HoldNote &hn = GetHoldNote(j);
+				if( hn.iStartRow+1 <= j && j <= hn.iEndRow )
+					iNumNotesThisIndex++;
+			}
+		}
+
+//		iNumNotesThisIndex += HoldsAtRow[i-iStartIndex];
 		if( iNumNotesThisIndex >= 3 )
 			iNum++;
 	}
-	
+LOG->Trace("xxxxxx %i", iNum);
 	return iNum;
 }
 
@@ -550,13 +569,16 @@ int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 
 int NoteData::GetNumHoldNotes( float fStartBeat, float fEndBeat ) const
 {
-	int iNumHolds = 0;
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
 
-	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
+	int iNumHolds = 0;
 	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		if( fStartBeat <= hn.fStartBeat  &&  hn.fEndBeat <= fEndBeat )
+		if( iStartIndex <= hn.iStartRow &&  hn.iEndRow <= iEndIndex )
 			iNumHolds++;
 	}
 	return iNumHolds;
@@ -584,7 +606,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 
 				SetTapNote(col, j, TAP_EMPTY);
 
-				AddHoldNote( HoldNote(col, NoteRowToBeat(i), NoteRowToBeat(j)) );
+				AddHoldNote( HoldNote(col, i, j) );
 				break;
 			}
 		}
@@ -600,13 +622,12 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 	for( int i=0; i<GetNumHoldNotes(); i++ ) 
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		int iHoldStartIndex = max(BeatToNoteRow(hn.fStartBeat), 0);
-		int iHoldEndIndex   = max(BeatToNoteRow(hn.fEndBeat), 0);
 		
 		/* If they're the same, then they got clamped together, so just ignore it. */
-		if(iHoldStartIndex != iHoldEndIndex) {
-			SetTapNote(hn.iTrack, iHoldStartIndex, TAP_HOLD_HEAD);
-			SetTapNote(hn.iTrack, iHoldEndIndex, TAP_HOLD_TAIL);
+		if( hn.iStartRow != hn.iEndRow )
+		{
+			SetTapNote( hn.iTrack, hn.iStartRow, TAP_HOLD_HEAD );
+			SetTapNote( hn.iTrack, hn.iEndRow, TAP_HOLD_TAIL );
 		}
 	}
 	m_HoldNotes.clear();
@@ -653,7 +674,7 @@ void NoteData::Convert4sToHoldNotes()
 			if( GetTapNote(col, i) != TAP_HOLD )	// this is a HoldNote body
 				continue;
 
-			HoldNote hn( col, NoteRowToBeat(i), 0 );
+			HoldNote hn( col, i, 0 );
 			// search for end of HoldNote
 			do {
 				SetTapNote(col, i, TAP_EMPTY);
@@ -661,7 +682,7 @@ void NoteData::Convert4sToHoldNotes()
 			} while( GetTapNote(col, i) == TAP_HOLD);
 			SetTapNote(col, i, TAP_EMPTY);
 
-			hn.fEndBeat = NoteRowToBeat(i);
+			hn.iEndRow = i;
 			AddHoldNote( hn );
 		}
 	}
@@ -673,10 +694,8 @@ void NoteData::ConvertHoldNotesTo4s()
 	for( int i=0; i<GetNumHoldNotes(); i++ ) 
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		int iHoldStartIndex = max(BeatToNoteRow(hn.fStartBeat), 0);
-		int iHoldEndIndex   = max(BeatToNoteRow(hn.fEndBeat), 0);
 
-		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
+		for( int j = hn.iStartRow; j < hn.iEndRow; ++j)
 			SetTapNote(hn.iTrack, j, TAP_HOLD);
 	}
 	m_HoldNotes.clear();
@@ -896,12 +915,11 @@ void NoteData::EliminateAllButOneTap(int row)
 
 void NoteData::GetTracksHeldAtRow( int row, vector<int>& viTracksOut )
 {
-	float fBeat = NoteRowToBeat(row);
 	for( unsigned i=0; i<m_HoldNotes.size(); i++ )
 	{
 		const HoldNote& hn = m_HoldNotes[i];
 		
-		if( fBeat >= hn.fStartBeat && fBeat <= hn.fEndBeat )
+		if( hn.RowIsInRange(row) )
 			viTracksOut.push_back( hn.iTrack );
 	}
 }

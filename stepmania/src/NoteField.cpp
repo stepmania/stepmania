@@ -529,18 +529,22 @@ void NoteField::DrawPrimitives()
 				continue;
 
 			// If no part of this HoldNote is on the screen, skip it
-			if( !( fFirstBeatToDraw <= hn.fEndBeat && hn.fEndBeat <= fLastBeatToDraw  ||
-				fFirstBeatToDraw <= hn.fStartBeat  && hn.fStartBeat <= fLastBeatToDraw  ||
-				hn.fStartBeat < fFirstBeatToDraw   && hn.fEndBeat > fLastBeatToDraw ) )
+			if( !( iFirstIndexToDraw <= hn.iEndRow && hn.iEndRow <= iLastIndexToDraw  ||
+				iFirstIndexToDraw <= hn.iStartRow  && hn.iStartRow <= iLastIndexToDraw  ||
+				hn.iStartRow < iFirstIndexToDraw   && hn.iEndRow > iLastIndexToDraw ) )
 			{
 				continue;	// skip
 			}
 
-			SearchForBeat( CurDisplay, NextDisplay, hn.fStartBeat );
+			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
 
 			bool bIsInSelectionRange = false;
 			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
-				bIsInSelectionRange = m_fBeginMarker<=hn.fStartBeat && hn.fStartBeat<=m_fEndMarker && m_fBeginMarker<=hn.fEndBeat && hn.fEndBeat<=m_fEndMarker;
+				bIsInSelectionRange =
+					m_fBeginMarker <= hn.GetStartBeat() &&
+					hn.GetStartBeat() <= m_fEndMarker &&
+					m_fBeginMarker <= hn.GetEndBeat() && 
+					hn.GetEndBeat() <= m_fEndMarker;
 
 			NoteDisplayCols *nd = CurDisplay->second;
 

@@ -416,7 +416,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				fEndBeat = froundf( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 				// create a new hold note
-				HoldNote newHN( t, fStartBeat, fEndBeat );
+				HoldNote newHN( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 				m_NoteFieldRecord.AddHoldNote( newHN );
 			}
 		}
@@ -656,7 +656,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				const HoldNote &hn = m_NoteFieldEdit.GetHoldNote(i);
 				if( iCol == hn.iTrack  &&		// the notes correspond
-					fSongBeat >= hn.fStartBeat  &&  fSongBeat <= hn.fEndBeat )	// the cursor lies within this HoldNote
+					hn.RowIsInRange(iSongIndex) )	// the cursor lies within this HoldNote
 				{
 					m_NoteFieldEdit.RemoveHoldNote( i );
 					return;
@@ -764,10 +764,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					continue;
 
 				// create a new hold note
-				HoldNote newHN( iCol, min(fStartBeat, fEndBeat), max(fStartBeat, fEndBeat) );
+				HoldNote newHN( iCol, BeatToNoteRow(min(fStartBeat, fEndBeat)), BeatToNoteRow(max(fStartBeat, fEndBeat)) );
 
-				newHN.fStartBeat = max(newHN.fStartBeat, 0);
-				newHN.fEndBeat = max(newHN.fEndBeat, 0);
+				newHN.iStartRow = max(newHN.iStartRow, 0);
+				newHN.iEndRow = max(newHN.iEndRow, 0);
 
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}
