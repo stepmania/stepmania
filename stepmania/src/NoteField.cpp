@@ -156,7 +156,9 @@ void NoteField::DrawPrimitives()
 	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
 	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
 	const float fFirstBeatToDraw = max( 0, fSongBeat - fBeatsToDrawBehind );
-	const float fLastBeatToDraw  = max( 0, fSongBeat + fBeatsToDrawAhead );
+	/* We actually want to draw up to the last row, which is after MAX_BEATS-1 but
+	 * before MAX_BEATS.  Rely on GetTapNote to cap it for us correctly. */
+	const float fLastBeatToDraw  = min( MAX_BEATS, fSongBeat + fBeatsToDrawAhead );
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
 
@@ -248,17 +250,17 @@ void NoteField::DrawPrimitives()
 		///////////////////////////////////
 		for( i=iFirstIndexToDraw; i<=iLastIndexToDraw; i++ )	//	 for each row
 		{	
-			if( m_TapNotes[c][i] == '0' )	// no note here
+			if( GetTapNote(c, i) == '0' )	// no note here
 				continue;	// skip
 			
-			if( m_TapNotes[c][i] == '2' )	// this is a HoldNote begin marker.  Grade it, but don't draw
+			if( GetTapNote(c, i) == '2' )	// this is a HoldNote begin marker.  Grade it, but don't draw
 				continue;	// skip
 
 			// See if there is a hold step that begins on this index.
 			bool bHoldNoteBeginsOnThisBeat = false;
 			for( int c2=0; c2<m_iNumTracks; c2++ )
 			{
-				if( m_TapNotes[c2][i] == '2' )
+				if( GetTapNote(c2, i) == '2' )
 				{
 					bHoldNoteBeginsOnThisBeat = true;
 					break;
