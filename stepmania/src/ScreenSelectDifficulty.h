@@ -1,3 +1,5 @@
+/* ScreenSelectDifficulty - Deprecated. Replaced by ScreenSelectMaster. */
+
 #ifndef ScreenSelectDifficulty_H
 #define ScreenSelectDifficulty_H
 

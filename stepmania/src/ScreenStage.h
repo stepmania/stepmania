@@ -1,7 +1,7 @@
-/* ScreenStage - Shows the stage number. */
+/* ScreenStage - Shows the stage number. Deprecated. Replaced by ScreenSplash */
 
-#ifndef SCREEN_STAGE_H
-#define SCREEN_STAGE_H
+#ifndef ScreenStage_H
+#define ScreenStage_H
 
 #include "Screen.h"
 #include "Transition.h"

@@ -1,4 +1,4 @@
-/* ScreenSelectGroup - Set the current song group from a list. */
+/* ScreenSelectGroup - Set the current song group from a list. Deprecated. Replaced by ScreenSelectMaster. */
 
 #ifndef SCREEN_SELECT_GROUP_H
 #define SCREEN_SELECT_GROUP_H

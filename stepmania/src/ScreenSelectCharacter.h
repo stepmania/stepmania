@@ -1,3 +1,5 @@
+/* ScreenSelectCharacter - Deprecated. Replaced by ScreenSelectMaster. */
+
 #ifndef SCREEN_SELECT_CHARACTER_H
 #define SCREEN_SELECT_CHARACTER_H
 

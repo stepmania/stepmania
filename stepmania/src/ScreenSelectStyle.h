@@ -1,3 +1,5 @@
+/* ScreenSelectStyle - Deprecated. Replaced by ScreenSelectMaster. */
+
 #ifndef ScreenSelectStyle_H
 #define ScreenSelectStyle_H
 
