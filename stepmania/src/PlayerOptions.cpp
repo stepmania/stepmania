@@ -162,6 +162,7 @@ void PlayerOptions::FromString( CString sOptions )
 		if(	     sBit == "0.25x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 0.25f;	}
 		else if( sBit == "0.5x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 0.50f;	}
 		else if( sBit == "0.75x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 0.75f;	}
+		else if( sBit == "1.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 1.00f;	}
 		else if( sBit == "1.5x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 1.50f;	}
 		else if( sBit == "2.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 2.00f;	}
 		else if( sBit == "3.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 3.00f;	}
