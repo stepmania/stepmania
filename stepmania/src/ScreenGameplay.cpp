@@ -90,6 +90,9 @@ REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 {
 	PLAYER_TYPE.Load( sName, "PlayerType" );
+	START_GIVES_UP.Load( sName, "StartGivesUp" );
+	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
+	GIVING_UP_FAILS.Load( sName, "GivingUpFails" );
 }
 
 void ScreenGameplay::Init()
@@ -1505,17 +1508,24 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 4.0f )
 	{
 		m_GiveUpTimer.SetZero();
-		/* Unless we're in FailOff, giving up means failing the song. */
-		switch( GAMESTATE->m_SongOptions.m_FailType )
-		{
-		case SongOptions::FAIL_IMMEDIATE:
-		case SongOptions::FAIL_COMBO_OF_30_MISSES:
-		case SongOptions::FAIL_END_OF_SONG:
-            FOREACH_EnabledPlayer(pn)
-				STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
-		}
 
-		this->PostScreenMessage( SM_NotesEnded, 0 );
+		if( GIVING_UP_FAILS )
+		{
+			/* Unless we're in FailOff, giving up means failing the song. */
+			switch( GAMESTATE->m_SongOptions.m_FailType )
+			{
+			case SongOptions::FAIL_IMMEDIATE:
+			case SongOptions::FAIL_COMBO_OF_30_MISSES:
+			case SongOptions::FAIL_END_OF_SONG:
+				FOREACH_EnabledPlayer(pn)
+					STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
+			}
+
+			this->PostScreenMessage( SM_NotesEnded, 0 );
+		} else {
+			BackOutFromGameplay();
+			return;
+		}
 	}
 
 	//
@@ -1664,6 +1674,18 @@ void ScreenGameplay::UpdateLights()
 	}
 }
 
+void ScreenGameplay::BackOutFromGameplay()
+{
+	m_DancingState = STATE_OUTRO;
+	SCREENMAN->PlayBackSound();
+	
+	m_pSoundMusic->StopPlaying();
+	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+
+	this->ClearMessageQueue();
+	m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
+}
+
 void ScreenGameplay::AbortGiveUp()
 {
 	if( m_GiveUpTimer.IsZero() )
@@ -1699,7 +1721,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		 * treated as failing the song, unlike BACK, since it's always available.
 		 *
 		 * However, if this is also a style button, don't do this. (pump center = start) */
-		if( MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() )
+		bool bHoldingGiveUp = false;
+		bHoldingGiveUp |= (MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() && START_GIVES_UP);
+		bHoldingGiveUp |= (MenuI.button == MENU_BUTTON_BACK && !StyleI.IsValid() && BACK_GIVES_UP);
+		
+		if( bHoldingGiveUp )
 		{
 			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
 			if( type==IET_RELEASE )
@@ -1717,51 +1743,32 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			return;
 		}
 
-		if( MenuI.button == MENU_BUTTON_BACK && 
-			((!PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS) ||
-			(DeviceI.device==DEVICE_KEYBOARD && (type==IET_SLOW_REPEAT||type==IET_FAST_REPEAT)) ||
-			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
+		/* Only handle MENU_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
+		 * disabled. */
+		if( MenuI.button == MENU_BUTTON_BACK && !BACK_GIVES_UP )
 		{
-			/* I had battle mode back out on me mysteriously once. -glenn */
-			LOG->Trace("Player %i went back", MenuI.player+1);
+			if( ((!PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS) ||
+				(DeviceI.device==DEVICE_KEYBOARD && (type==IET_SLOW_REPEAT||type==IET_FAST_REPEAT)) ||
+				(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
+			{
+				LOG->Trace("Player %i went back", MenuI.player+1);
+				BackOutFromGameplay();
+			}
+			else if( PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS )
+			{
+				m_textDebug.SetText( "Continue holding BACK to quit" );
+				m_textDebug.StopTweening();
+				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.BeginTweening( 1/8.f );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+			}
+			else if( PREFSMAN->m_bDelayedBack && type==IET_RELEASE )
+			{
+				m_textDebug.StopTweening();
+				m_textDebug.BeginTweening( 1/8.f );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+			}
 
-			m_DancingState = STATE_OUTRO;
-			SCREENMAN->PlayBackSound();
-			/* Hmm.  There are a bunch of subtly different ways we can
-			 * tween out: 
-			 *   1. Keep rendering the song, and keep it moving.  This might
-			 *      cause problems if the cancel and the end of the song overlap.
-			 *   2. Stop the song completely, so all song motion under the tween
-			 *      ceases.
-			 *   3. Stop the song, but keep effects (eg. Drunk) running.
-			 *   4. Don't display the song at all.
-			 *
-			 * We're doing #3.  I'm not sure which is best.
-			 */
-			
-			m_pSoundMusic->StopPlaying();
-			m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
-
-			this->ClearMessageQueue();
-			m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
-			return;
-		}
-
-		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS)
-		{
-			m_textDebug.SetText( "Continue holding BACK to quit" );
-			m_textDebug.StopTweening();
-			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			m_textDebug.BeginTweening( 1/8.f );
-			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-			return;
-		}
-		
-		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedBack && type==IET_RELEASE )
-		{
-			m_textDebug.StopTweening();
-			m_textDebug.BeginTweening( 1/8.f );
-			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			return;
 		}
 	}

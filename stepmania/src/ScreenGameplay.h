@@ -25,6 +25,7 @@ class Inventory;
 #include "ActiveAttackList.h"
 #include "NetworkSyncManager.h"
 #include "AutoKeysounds.h"
+#include "ThemeMetric.h"
 
 class LyricsLoader;
 class ScreenGameplay : public Screen
@@ -42,6 +43,10 @@ public:
 	virtual bool UsesBackground() const { return false; }
 
 protected:
+	ThemeMetric<bool> START_GIVES_UP;
+	ThemeMetric<bool> BACK_GIVES_UP;
+	ThemeMetric<bool> GIVING_UP_FAILS;
+
 	void TweenOnScreen();
 	void TweenOffScreen();
 
@@ -53,6 +58,7 @@ protected:
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
 	void UpdateLights();
+	void BackOutFromGameplay();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );
