@@ -34,6 +34,7 @@
 #include "ModeChoice.h"
 
 
+#define DEFAULT_SORT				THEME->GetMetric("MusicWheel","DefaultSort")
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 #define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
@@ -387,6 +388,11 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			SongSortOrder so = SORT_INVALID;
 			for( unsigned j = 0; so == SORT_INVALID && j < parts.size(); ++j )
 				so = StringToSongSortOrder( parts[j] );
+
+			// If we have a valid default sort in metrics, select it.
+				so = StringToSongSortOrder(DEFAULT_SORT);
+				if( so != SORT_INVALID )
+					GAMESTATE->m_SongSortOrder = so;
 
 			if( so == SORT_INVALID )
 				so = SORT_GROUP;
