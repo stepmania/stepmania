@@ -57,7 +57,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                              	cl                                                                               /Zl                                                                               /nologo                                                                               /c                                                                               verstub.cpp                                                                               /Fo$(IntDir)\ 
@@ -92,7 +92,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                              	cl                                                                               /Zl                                                                               /nologo                                                                               /c                                                                               verstub.cpp                                                                               /Fo$(IntDir)\ 
@@ -371,6 +371,14 @@ SOURCE=.\Inventory.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\LyricsLoader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LyricsLoader.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ModeChoice.h
 # End Source File
 # Begin Source File
@@ -548,6 +556,14 @@ SOURCE=.\IniFile.cpp
 # Begin Source File
 
 SOURCE=.\IniFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LRCFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LRCFile.h
 # End Source File
 # Begin Source File
 

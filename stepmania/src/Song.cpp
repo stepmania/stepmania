@@ -25,7 +25,6 @@
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "StyleDef.h"
-#include "Notes.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
@@ -36,6 +35,8 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
+
+#include "LyricsLoader.h"
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -74,6 +75,16 @@ int CompareBackgroundChanges(const BackgroundChange &seg1, const BackgroundChang
 void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges )
 {
 	sort( arrayBackgroundChanges.begin(), arrayBackgroundChanges.end(), CompareBackgroundChanges );
+}
+
+static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &seg2)
+{
+	return seg1.m_fStartTime < seg2.m_fStartTime;
+}
+
+void SortLyricSegmentsArray( vector<LyricSegment> &arrayLyricSegments )
+{
+	sort( arrayLyricSegments.begin(), arrayLyricSegments.end(), CompareLyricSegments );
 }
 
 
@@ -121,6 +132,14 @@ void Song::AddBackgroundChange( BackgroundChange seg )
 	m_BackgroundChanges.push_back( seg );
 	SortBackgroundChangesArray( m_BackgroundChanges );
 }
+
+
+void Song::AddLyricSegment( LyricSegment seg )
+{
+	m_LyricSegments.push_back( seg );
+	SortLyricSegmentsArray( m_LyricSegments );
+}
+
 
 float Song::GetMusicStartBeat() const
 {
@@ -289,6 +308,16 @@ bool Song::LoadWithoutCache( CString sDir )
 
 	bool success = ld->LoadFromDir( sDir, *this );
 	delete ld;
+
+	LOG->Trace("\n\n\n SONG NAME:: %s", this->GetDisplayMainTitle().GetBuffer() );
+	if( this->GetDisplayMainTitle().GetBuffer() == "Future Girls" )
+	{
+		LOG->Trace("AAA");
+	}
+	if( HasLyrics() )
+	{
+		LOG->Trace("\n\n\n LOAD LYRICS HERE!! \n\n\n");	
+	}
 
 	if(!success)
 		return false;
@@ -490,6 +519,7 @@ void Song::TidyUpData()
 			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
+	
 
 	/* Some DWIs have lengths in ms when they meant seconds, eg. #SAMPLELENGTH:10;.
 	 * If the sample length is way too short, change it. */
@@ -551,6 +581,26 @@ void Song::TidyUpData()
 		if( !arrayPossibleCDTitles.empty() )
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
 	}
+
+
+
+
+	LOG->Trace("Looking for lyrics..");
+	//if( HasLyrics() )
+	//{
+		//Check if there is a lyric file in here
+		CStringArray arrayLyricFiles;
+		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
+		if(	!arrayLyricFiles.empty() )
+		{
+			m_sLyricsFile = m_sSongDir+arrayLyricFiles[0];
+			LyricsLoader	ll;
+			ll.LoadFromLRCFile(m_sLyricsFile.GetBuffer(), *GAMESTATE->m_pCurSong);
+		}
+	//}
+
+
+
 
 
 	//
@@ -1126,6 +1176,7 @@ bool Song::RouletteDisplayed() const
 
 bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); }
 bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); }
+bool Song::HasLyrics() const		{return m_sLyricsFile != ""			&&	IsAFile(GetLyricsPath()); }
 bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); }
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
@@ -1187,6 +1238,12 @@ CString Song::GetMusicPath() const
 CString Song::GetBannerPath() const
 {
 	return m_sSongDir+m_sBannerFile;
+}
+
+CString Song::GetLyricsPath() const
+{
+	LOG->Trace("\n\n\n TRYING TO GET LYRICS FROM:: %s", m_sSongDir+m_sBannerFile);
+	return m_sSongDir+m_sLyricsFile;
 }
 
 CString Song::GetCDTitlePath() const

@@ -106,6 +106,12 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
+	
+	m_textLyrics.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textLyrics.SetXY( 100,100 );
+	m_textLyrics.SetDiffuse( RageColor(1,1,1,1) );
+
+
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
 
@@ -183,18 +189,23 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	
 
-	// If this is beginner mode, show the helper
-	/* !! Working on this.. having probs loading the BG sequences -- Miryokuteki
-	
-		m_sprBH.Load( THEME->GetPathTo("BGAnimations","beginner helper up") );
-		this->AddChild( &m_sprBH );
-		m_sprBH.SetXY( 100,100 );
-		m_sprBH.StartAnimating();
-		this->AddChild( &m_bgaBeginnerHelper );
-		m_bgaBH.SetXY( 100,100 );
-		m_Background.AddChild(&m_bgaBH);
 
-	*/
+
+
+	// If this is beginner mode, show the helper
+	/* !! Working on this.. having probs loading the BG sequences -- Miryokuteki */
+		
+		//this->AddChild( &m_bhDancer );
+		//m_bhDancer.Load( THEME->GetPathTo("Graphics", "select difficulty ex picture easy") );
+			//m_bhDancer.SetXY( -100,-100 );  //<-- causing entire screen to offset!
+		//m_bhDancer.SetDiffuse( RageColor(1,1,1,1) );
+		//m_bhDancer.SetEffectGlowShift( 0.5f );
+		//m_bhDancer.BeginDraw();
+
+	/* */
+
+
+
 
 
 
@@ -391,6 +402,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
 	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild( &m_textDebug );
+	this->AddChild( &m_textLyrics );
 	
 
 	for( int s=0; s<NUM_STATUS_ICONS; s++ )
@@ -776,6 +788,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
+		
+		//
+		// Check if we should show lyrics now
+		//
+			m_fLyricsTime += fDeltaTime;
+			m_textLyrics.SetText( SecondsToTime( m_fLyricsTime ) );
 		
 		//
 		// Update players' alive time

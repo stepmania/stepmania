@@ -329,9 +329,9 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 
 
 	// check to see if everyone has chosen
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( int pl=0; pl<NUM_PLAYERS; pl++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
+		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)pl)  &&  m_bChosen[pl] == false )
 			return;
 	}
 	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on

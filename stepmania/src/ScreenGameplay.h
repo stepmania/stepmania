@@ -32,6 +32,8 @@
 #include "Inventory.h"
 #include "ActiveItemList.h"
 
+#include "BeginnerHelper.h"
+
 
 // messages sent by Combo
 const ScreenMessage SM_BeginToasty			= ScreenMessage(SM_User+104);
@@ -48,7 +50,7 @@ const ScreenMessage	SM_900Combo					= ScreenMessage(SM_User+208);
 const ScreenMessage	SM_1000Combo				= ScreenMessage(SM_User+209);
 const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
 
-
+class LyricsLoader;
 class ScreenGameplay : public Screen
 {
 public:
@@ -62,6 +64,9 @@ public:
 
 
 protected:
+	//BeginnerHelper	m_bhDancer; // The model for training
+	Sprite	m_bhDancer;
+
 	void TweenOnScreen();
 	void TweenOffScreen();
 
@@ -88,6 +93,7 @@ protected:
 	bool				m_bChangedOffsetOrBPM;
 
 	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
+	float				m_fLyricsTime;
 
 
 	Background			m_Background;
@@ -108,6 +114,7 @@ protected:
 	BitmapText			m_textSongOptions;
 
 	BitmapText			m_textDebug;
+	BitmapText			m_textLyrics;
 
 #define NUM_STATUS_ICONS	2
 	Sprite				m_sprStatusIcons[NUM_STATUS_ICONS];	// shows whether these options are on.

@@ -17,6 +17,7 @@
 struct Notes;
 class StyleDef;
 class NotesLoader;
+class LyricsLoader;
 
 
 extern const int FILE_CACHE_VERSION;
@@ -44,6 +45,15 @@ struct BackgroundChange
 	BackgroundChange( float s, CString sBGName ) { m_fStartBeat = s; m_sBGName = sBGName; };
 	float m_fStartBeat;
 	CString m_sBGName;
+};
+
+struct LyricSegment
+{
+	LyricSegment() { m_fStartTime = -1; };
+	LyricSegment( float a, CString m_sLyric, CString m_sStartTime ) { m_fStartTime = a, m_sLyric = m_sLyric, m_sStartTime = m_sStartTime; };
+	float	m_fStartTime; // For the sorting routine
+	CString m_sLyric;
+	CString m_sStartTime;
 };
 
 
@@ -131,11 +141,13 @@ public:
 	float GetMusicStartBeat() const;
 
 	CString	m_sBannerFile;
+	CString m_sLyricsFile;
 	CString	m_sBackgroundFile;
 	CString	m_sCDTitleFile;
 
 	CString GetMusicPath() const;
 	CString GetBannerPath() const;
+	CString	GetLyricsPath() const;
 	CString GetBackgroundPath() const;
 	CString GetCDTitlePath() const;
 
@@ -146,14 +158,17 @@ public:
 	bool HasCDTitle() const;
 	bool HasMovieBackground() const;
 	bool HasBGChanges() const;
+	bool HasLyrics() const;
 
-	vector<BPMSegment> m_BPMSegments;	// this must be sorted before gameplay
-	vector<StopSegment> m_StopSegments;	// this must be sorted before gameplay
-	vector<BackgroundChange> m_BackgroundChanges;	// this must be sorted before gameplay
+	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
+	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
+	vector<BackgroundChange>	m_BackgroundChanges;	// this must be sorted before gameplay
+	vector<LyricSegment>		m_LyricSegments;	// same
 
 	void AddBPMSegment( BPMSegment seg );
 	void AddStopSegment( StopSegment seg );
 	void AddBackgroundChange( BackgroundChange seg );
+	void AddLyricSegment( LyricSegment seg );
 
 	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM ) const
 	{

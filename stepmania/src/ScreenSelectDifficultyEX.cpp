@@ -45,8 +45,8 @@ const CString CHOICE_TEXT[ScreenSelectDifficultyEX::NUM_CHOICES_EX] =
 	"hard",
 	"nonstop",
 	"oni",
-	"endless",
-	"battle"
+	"endless"/*,
+	"battle"*/
 };
 
 
@@ -186,7 +186,7 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 			case CHOICE_EX_BEGINNER:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_BEGINNER;	break;
 			case CHOICE_EX_EASY:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;		break;
 			case CHOICE_EX_NONSTOP:	// need to set preferred difficulty even for courses
-			case CHOICE_EX_BATTLE:
+			//case CHOICE_EX_BATTLE:
 			case CHOICE_EX_ONI:
 			case CHOICE_EX_ENDLESS:
 			case CHOICE_EX_MEDIUM:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;	break;
@@ -204,7 +204,7 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_EX_NONSTOP:		GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;	break;
 		case CHOICE_EX_ONI:			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;		break;
 		case CHOICE_EX_ENDLESS:		GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;	break;
-		case CHOICE_EX_BATTLE:		GAMESTATE->m_PlayMode = PLAY_MODE_BATTLE;	break;
+		//case CHOICE_EX_BATTLE:		GAMESTATE->m_PlayMode = PLAY_MODE_BATTLE;	break;
 		default:	ASSERT(0);	// bad selection
 		}
 
@@ -259,7 +259,7 @@ bool ScreenSelectDifficultyEX::AnyPlayerIsOnCourse()
 		{
 			case CHOICE_EX_NONSTOP:
 			case CHOICE_EX_ONI:
-			case CHOICE_EX_BATTLE:
+			//case CHOICE_EX_BATTLE:
 			case CHOICE_EX_ENDLESS: return true; break;
 		}
 	}
@@ -273,7 +273,7 @@ bool ScreenSelectDifficultyEX::PlayerIsOnCourse( PlayerNumber pl )
 	{
 		case CHOICE_EX_NONSTOP:
 		case CHOICE_EX_ONI:
-		case CHOICE_EX_BATTLE:
+		//case CHOICE_EX_BATTLE:
 		case CHOICE_EX_ENDLESS: return true; break;
 	}
 	return false;
