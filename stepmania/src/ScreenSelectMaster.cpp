@@ -255,7 +255,8 @@ void ScreenSelectMaster::MenuRight( PlayerNumber pn )
 void ScreenSelectMaster::ChangePage( Page newPage )
 {
 	// If anyone has already chosen, don't allow changing of pages
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsHumanPlayer(p) && m_bChosen[p] )
 			return;
 
