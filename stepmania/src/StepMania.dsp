@@ -1290,11 +1290,11 @@ SOURCE=.\arch\LowLevelWindow\LowLevelWindow_Null.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\LowLevelWindow\LowLevelWindow_SDL.cpp
+SOURCE=.\arch\LowLevelWindow\LowLevelWindow_Win32.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\LowLevelWindow\LowLevelWindow_SDL.h
+SOURCE=.\arch\LowLevelWindow\LowLevelWindow_Win32.h
 # End Source File
 # End Group
 # Begin Group "Lights"
@@ -1475,6 +1475,14 @@ SOURCE=.\archutils\Win32\GotoURL.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\archutils\Win32\GraphicsWindow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\GraphicsWindow.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\archutils\Win32\RegistryAccess.cpp
 # End Source File
 # Begin Source File
@@ -1508,6 +1516,14 @@ SOURCE=.\archutils\Win32\VideoDriverInfo.cpp
 # Begin Source File
 
 SOURCE=.\archutils\Win32\VideoDriverInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\WindowIcon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\WindowIcon.h
 # End Source File
 # Begin Source File
 
