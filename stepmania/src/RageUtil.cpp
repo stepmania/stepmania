@@ -462,7 +462,7 @@ void TrimRight(CString &str, const char *s)
 
 void StripCrnl(CString &s)
 {
-	while(s.size() && s[s.size()-1] == '\r' || s[s.size()-1] == '\n')
+	while( s.size() && (s[s.size()-1] == '\r' || s[s.size()-1] == '\n') )
 		s.erase(s.size()-1);
 }
 
