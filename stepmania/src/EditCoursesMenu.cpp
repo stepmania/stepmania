@@ -147,8 +147,6 @@ EditCoursesMenu::EditCoursesMenu()
 
 	m_soundChangeRow.Load( THEME->GetPathToS("EditCoursesMenu row") );
 	m_soundChangeValue.Load( THEME->GetPathToS("EditCoursesMenu value") );
-	m_soundStart.Load( THEME->GetPathToS("Common start") );
-	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 	m_soundSave.Load( THEME->GetPathToS("EditCoursesMenu save") );
 
 
@@ -279,19 +277,19 @@ void EditCoursesMenu::Start()
 			SCREENMAN->SystemMessage( "Course saved." );
 			break;
 		case add_entry:
-			m_soundStart.Play();
+			SCREENMAN->PlayStartSound();
 			pCourse->m_entries.insert( pCourse->m_entries.begin()+m_iSelection[ROW_ENTRY], pCourse->m_entries[m_iSelection[ROW_ENTRY]] );
 			OnRowValueChanged( ROW_ENTRY );
 			break;
 		case delete_selected_entry:
 			if( pCourse->m_entries.size() == 1 )
 			{
-				m_soundInvalid.Play();
+				SCREENMAN->PlayInvalidSound();
 				SCREENMAN->SystemMessage( "Cannot delete the last entry from a course" );
 				break;
 			}
 
-			m_soundStart.Play();
+			SCREENMAN->PlayStartSound();
 			pCourse->m_entries.erase( pCourse->m_entries.begin()+m_iSelection[ROW_ENTRY] );
 			CLAMP( m_iSelection[ROW_ENTRY], 0, (int) pCourse->m_entries.size()-1 );
 			OnRowValueChanged( ROW_ENTRY );
@@ -391,7 +389,7 @@ void EditCoursesMenu::Start()
 		}
 		break;
 	case ROW_ENTRY_PLAYER_OPTIONS:
-		m_soundStart.Play();
+		SCREENMAN->PlayStartSound();
 			
 		GAMESTATE->m_PlayerOptions[PLAYER_1] = PlayerOptions();
 		GAMESTATE->m_PlayerOptions[PLAYER_1].FromString( pEntry->modifiers );
@@ -399,7 +397,7 @@ void EditCoursesMenu::Start()
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 		break;
 	case ROW_ENTRY_SONG_OPTIONS:	
-		m_soundStart.Play();
+		SCREENMAN->PlayStartSound();
 
 		GAMESTATE->m_SongOptions = SongOptions();
 		GAMESTATE->m_SongOptions.FromString( pEntry->modifiers );
@@ -407,7 +405,7 @@ void EditCoursesMenu::Start()
 		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions", SM_BackFromSongOptions );
 		break;
 	default:
-		m_soundInvalid.Play();
+		SCREENMAN->PlayInvalidSound();
 		return;
 	}
 }

@@ -206,7 +206,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	m_textAnswer.BeginTweening( 0.2f );
 	m_textAnswer.SetDiffuse( RageColor(1,1,1,0) );
 
-	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+	SCREENMAN->PlayStartSound();
 
 	if( m_bCancelled )
 	{

@@ -53,8 +53,6 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuEleme
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
-	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
-
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenJukeboxMenu music") );
 }
 
@@ -132,14 +130,14 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 	{
 		/* No songs are available for the selected style, group, and difficulty. */
 
-		m_soundInvalid.Play();
+		SCREENMAN->PlayInvalidSound();
 		SCREENMAN->SystemMessage( "No songs available with these settings" );
 		return;
 	}
 
 
 	SOUND->StopMusic();
-	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+	SCREENMAN->PlayStartSound();
 	StartTransitioning( SM_GoToNextScreen );
 }
 

@@ -228,7 +228,7 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn, const InputEventType type )
 
 	m_Out.StartTransitioning( SM_GoToOK );
 
-	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+	SCREENMAN->PlayStartSound();
 
 	s_iLastLine = m_iCurLine;
 	COPY( s_iLastAnswers, m_iCurAnswers );

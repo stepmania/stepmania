@@ -130,7 +130,6 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : ScreenWithMenuEle
 //	this->AddChild( &m_sprOptionsMessage );	// draw and update manually
 
 
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectCourse options") );
 	m_soundChangeNotes.Load( THEME->GetPathToS("ScreenSelectCourse difficulty") );
 
@@ -248,7 +247,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		m_soundSelect.Play();
+		SCREENMAN->PlayStartSound();
 		return;
 	}
 	
@@ -338,7 +337,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 	
 		TweenOffScreen();
 
-		m_soundSelect.Play();
+		SCREENMAN->PlayStartSound();
 
 		m_bMadeChoice = true;
 

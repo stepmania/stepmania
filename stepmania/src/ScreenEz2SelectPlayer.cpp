@@ -90,8 +90,6 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 		}
 	}
 
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
-
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectPlayer music") );
@@ -209,7 +207,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_bSideIsJoined[pn] = true;
 	SCREENMAN->RefreshCreditsMessages();
-	m_soundSelect.Play();
+	SCREENMAN->PlayStartSound();
 	m_sprJoinMessage[pn].SetState( pn+NUM_PLAYERS );
 
 	if( FOLD_ON_JOIN )

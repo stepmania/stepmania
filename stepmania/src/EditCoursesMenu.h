@@ -109,8 +109,6 @@ private:
 
 	RageSound	m_soundChangeRow;
 	RageSound	m_soundChangeValue;
-	RageSound	m_soundStart;
-	RageSound	m_soundInvalid;
 	RageSound	m_soundSave;
 };
 

@@ -34,7 +34,6 @@ protected:
 	BGAnimation		m_Background;
 	Transition		m_In;
 	Transition		m_Out;
-	RandomSample	m_soundStart;
 };
 
 

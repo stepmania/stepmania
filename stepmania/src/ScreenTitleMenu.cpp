@@ -173,8 +173,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 
 	m_soundChange.Load( THEME->GetPathToS("ScreenTitleMenu change"),true );	
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
-	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 
 	m_Choice = 0;
 
@@ -261,7 +259,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		CString why;
 		if( !mc.IsPlayable( &why ) )
 		{
-			m_soundInvalid.Play();
+			SCREENMAN->PlayInvalidSound();
 			if( why != "" )
 				SCREENMAN->SystemMessage( why );
 			return;

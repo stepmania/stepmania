@@ -33,6 +33,5 @@ private:
 	Sprite	m_sprJoinMessage[NUM_PLAYERS];
 	Sprite	m_sprJoinFrame[NUM_PLAYERS];
 
-	RageSound	m_soundSelect;	
 	BGAnimation	m_Background;	
 };

@@ -46,7 +46,6 @@ protected:
 	Sprite		m_sprPremium;
 	
 	RageSound m_soundChange;
-	RageSound m_soundSelect;
 
 	int m_iSelection;
 };

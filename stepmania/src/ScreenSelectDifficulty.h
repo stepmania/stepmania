@@ -61,7 +61,6 @@ protected:
 	Sprite	m_sprOK[NUM_PLAYERS];
 
 	RageSound	m_soundChange;
-	RageSound	m_soundSelect;
 	RandomSample m_soundDifficult;
 
 	vector<ModeChoice> m_ModeChoices[NUM_PAGES];

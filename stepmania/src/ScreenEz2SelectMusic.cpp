@@ -104,7 +104,6 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 	m_soundButtonPress.Load( THEME->GetPathToS("ScreenEz2SelectMusic buttonpress"));
 	m_soundMusicChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic change"));
 	m_soundMusicCycle.Load( THEME->GetPathToS("ScreenEz2SelectMusic cycle"));
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenEz2SelectMusic list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
@@ -252,7 +251,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START )
 	{
-		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+		SCREENMAN->PlayStartSound();
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 	}
@@ -459,7 +458,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 		return;
 	}
 
-	m_soundSelect.Play();
+	SCREENMAN->PlayStartSound();
 
 	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 0)
 	{

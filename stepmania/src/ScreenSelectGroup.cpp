@@ -135,7 +135,6 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 
 
 	m_soundChange.Load( THEME->GetPathToS("ScreenSelectGroup change") );
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	SOUND->PlayOnceFromAnnouncer( "select group intro" );
 
@@ -246,7 +245,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	if( m_bChosen )
 		return;
 
-	m_soundSelect.PlayRandom();
+	SCREENMAN->PlayStartSound();
 	m_MenuTimer->Stop();
 	m_bChosen = true;
 

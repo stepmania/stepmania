@@ -94,9 +94,6 @@ protected:
 	#endif
 
 	int iConfirmSelection;
-
-
-	RageSound			m_soundSelect;
 };
 
 

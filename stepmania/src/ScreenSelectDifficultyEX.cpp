@@ -149,7 +149,6 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : Scree
 
 	this->AddChild( &m_framePages );
 	m_soundChange.Load( THEME->GetPathToS( "ScreenSelectDifficulty change") );
-	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
 	TweenOnScreen();
@@ -393,7 +392,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 			}
 		}
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str())) );
-		m_soundSelect.Play();
+		SCREENMAN->PlayStartSound();
 	}
 
 	if( IsACourse( m_iChoice[pn] ) )

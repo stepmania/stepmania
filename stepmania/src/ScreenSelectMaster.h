@@ -81,7 +81,6 @@ protected:
 	ActorScroller	m_Scroller[NUM_PLAYERS];
 
 	RageSound	m_soundChange;
-	RageSound	m_soundSelect;
 	RandomSample m_soundDifficult;
 
 	int m_iChoice[NUM_PLAYERS];

@@ -102,7 +102,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change"), true );
 	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next"), true );
 	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev"), true );
-	m_SoundStart.Load( THEME->GetPathToS("Common start") );
 	m_SoundToggleOn.Load( THEME->GetPathToS("ScreenOptions toggle on") );
 	m_SoundToggleOff.Load( THEME->GetPathToS("ScreenOptions toggle off") );
 
@@ -957,7 +956,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 			return; /* already transitioning */
 		StartTransitioning( SM_GoToNextScreen );
 
-		m_SoundStart.Play();
+		SCREENMAN->PlayStartSound();
 
 		m_framePage.Command( FRAME_OFF_COMMAND );
 		break;

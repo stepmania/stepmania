@@ -116,7 +116,6 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 	this->AddChild( &m_framePages );
 	
 	m_soundChange.Load( THEME->GetPathToS( m_sName + " change") );
-	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
@@ -384,7 +383,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	if( bPlaySelect )
 	{
 		SOUND->PlayOnceFromAnnouncer( ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str()) );
-		m_soundSelect.Play();
+		SCREENMAN->PlayStartSound();
 	}
 
 	int p;

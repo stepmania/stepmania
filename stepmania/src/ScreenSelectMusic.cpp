@@ -321,7 +321,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	m_bgNoOptionsOut.Load( THEME->GetPathToB(m_sName+" no options out") );
 //	this->AddChild( &m_bgNoOptionsOut ); // drawn on top
 
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 	m_soundDifficultyEasier.Load( THEME->GetPathToS("ScreenSelectMusic difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathToS("ScreenSelectMusic difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectMusic options") );
@@ -1104,7 +1103,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	if( m_bMadeChoice )
 	{
 		TweenOffScreen();
-		m_soundSelect.Play();
+		SCREENMAN->PlayStartSound();
 
 		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 		{

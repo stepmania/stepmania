@@ -150,7 +150,6 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 
 
 	m_soundChange.Load( THEME->GetPathToS("ScreenSelectCharacter change") );
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
@@ -356,7 +355,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	}
 	AfterRowChange(pn);
 	AfterValueChange(pn);
-	m_soundSelect.PlayRandom();
+	SCREENMAN->PlayStartSound();
 
 	bool bAllAreFinished = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )

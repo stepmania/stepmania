@@ -133,7 +133,7 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	case SDLK_KP_ENTER:
 		if(!IsTransitioning())
 		{
-			SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+			SCREENMAN->PlayStartSound();
 			StartTransitioning( SM_GoToNextScreen );		
 		}
 	}

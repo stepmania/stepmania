@@ -125,7 +125,6 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 
 	m_soundChange.Load( THEME->GetPathToS(m_sName + " change") );
-	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 
 	//
@@ -188,7 +187,7 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 
 void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
-	m_soundSelect.Play();
+	SCREENMAN->PlayStartSound();
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );
 
 	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];

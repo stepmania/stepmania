@@ -127,7 +127,6 @@ void MusicWheel::Load()
 	m_soundChangeMusic.Load(	THEME->GetPathToS("MusicWheel change"), true );
 	m_soundChangeSort.Load(		THEME->GetPathToS("MusicWheel sort") );
 	m_soundExpand.Load(			THEME->GetPathToS("MusicWheel expand") );
-	m_soundStart.Load(			THEME->GetPathToS("Common start") );
 	m_soundLocked.Load(			THEME->GetPathToS("MusicWheel locked"), true );
 
 	
@@ -1002,7 +1001,7 @@ void MusicWheel::Update( float fDeltaTime )
 			if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
 			{
 				m_WheelState = STATE_LOCKED;
-				m_soundStart.Play();
+				SCREENMAN->PlayStartSound();
 				m_fLockedWheelVelocity = 0;
 			}
 			else
@@ -1029,7 +1028,7 @@ void MusicWheel::Update( float fDeltaTime )
 			{
 				m_WheelState = STATE_LOCKED;
 				m_fTimeLeftInState = 0;
-				m_soundStart.Play();
+				SCREENMAN->PlayStartSound();
 				m_fLockedWheelVelocity = 0;
 
 				/* Send this again so the screen starts sample music. */
@@ -1236,7 +1235,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	{
 		m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
 		m_WheelState = STATE_LOCKED;
-		m_soundStart.Play();
+		SCREENMAN->PlayStartSound();
 		m_fLockedWheelVelocity = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 		return false;
@@ -1324,7 +1323,7 @@ void MusicWheel::StartLeap()
 	m_iSelection = rand() % m_CurWheelItemData.size();
 	m_fPositionOffsetFromSelection = 0;
 	m_WheelState = STATE_SELECTING_MUSIC;
-	m_soundStart.Play();
+	SCREENMAN->PlayStartSound();
 	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	RebuildMusicWheelItems();
 }

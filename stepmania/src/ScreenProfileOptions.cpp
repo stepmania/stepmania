@@ -193,7 +193,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		const CString sName = GetSelectedProfileName();
 
 		if( sProfileID=="" )
-			SOUND->PlayOnce( THEME->GetPathToS("common invalid") );
+			SCREENMAN->PlayInvalidSound();
 		else
 			SCREENMAN->Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), true );
 		break;
@@ -204,7 +204,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		const CString sName = GetSelectedProfileName();
 
 		if( sProfileID=="" )
-			SOUND->PlayOnce( THEME->GetPathToS("common invalid") );
+			SCREENMAN->PlayInvalidSound();
 		else
 			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, NULL );
 		break;

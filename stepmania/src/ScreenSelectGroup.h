@@ -51,7 +51,6 @@ private:
 	GroupList		m_GroupList;
 
 	RandomSample m_soundChange;
-	RandomSample m_soundSelect;
 
 	bool m_bChosen;
 };

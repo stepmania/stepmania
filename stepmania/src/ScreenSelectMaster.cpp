@@ -201,7 +201,6 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	}
 	
 	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())), true );
-	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	// init m_Next order info
@@ -600,7 +599,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	ModeChoice &mc = m_aModeChoices[m_iChoice[pn]];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
-	m_soundSelect.Play();
+	SCREENMAN->PlayStartSound();
 
 	float fSecs = 0;
 	bool bAllDone = true;

@@ -36,8 +36,6 @@ private:
 	JukeboxMenu		m_Selector;
 
 	BitmapText		m_textExplanation;
-
-	RageSound		m_soundInvalid;
 };
 
 

@@ -115,7 +115,6 @@ protected:
 	Transition			m_bgOptionsOut;
 	Transition			m_bgNoOptionsOut;
 
-	RageSound			m_soundSelect;
 	RageSound			m_soundDifficultyEasier;
 	RageSound			m_soundDifficultyHarder;
 	RageSound			m_soundOptionsChange;

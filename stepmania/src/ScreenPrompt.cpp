@@ -174,7 +174,7 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_textAnswer[1].BeginTweening( 0.2f );
 	m_textAnswer[1].SetDiffuse( RageColor(1,1,1,0) );
 
-	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+	SCREENMAN->PlayStartSound();
 
 	if( m_bAnswer )
 	{

@@ -70,7 +70,6 @@ private:
 	Sprite			m_sprExplanation;
 
 	RandomSample	m_soundChange;
-	RandomSample	m_soundSelect;
 };
 
 

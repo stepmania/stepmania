@@ -47,8 +47,6 @@ private:
 	BitmapText		m_textChoice[MAX_MODE_CHOICES];
 
 	RageSound		m_soundChange;
-	RageSound		m_soundSelect;
-	RageSound		m_soundInvalid;
 	
 	RageTimer		TimeToDemonstration;
 

@@ -192,7 +192,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= SDLK_F1 && DeviceI.button <= SDLK_F12) )
 		{
 			m_textError.SetText( "That key can not be mapped." );
-			SOUND->PlayOnce( THEME->GetPathToS("Common invalid" ) );
+			SCREENMAN->PlayInvalidSound();
 			m_textError.StopTweening();
 			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
@@ -263,7 +263,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		case SDLK_ESCAPE: /* Quit the screen. */
 			if(!IsTransitioning())
 			{
-				SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+				SCREENMAN->PlayStartSound();
 				StartTransitioning( SM_GoToNextScreen );		
 				for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
 					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );

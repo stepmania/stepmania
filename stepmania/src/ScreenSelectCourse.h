@@ -57,7 +57,6 @@ protected:
 	bool				m_bGoToOptions, m_bAllowOptionsMenuRepeat;
 	Sprite				m_sprOptionsMessage;
 
-	RageSound			m_soundSelect;
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundChangeNotes;
 };

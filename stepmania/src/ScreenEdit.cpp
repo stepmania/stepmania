@@ -960,7 +960,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case SDLK_F5:	
 				if( it==vSteps.begin() )
 				{
-					SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+					SCREENMAN->PlayInvalidSound();
 					return;
 				}
 				it--;
@@ -969,7 +969,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				it++;
 				if( it==vSteps.end() )
 				{
-					SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+					SCREENMAN->PlayInvalidSound();
 					return;
 				}
 				break;
@@ -2144,7 +2144,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 		change.m_sBGName = "";
 		break;
 	default:
-		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+		SCREENMAN->PlayInvalidSound();
 	};
 
 	change.m_fRate = (float)atof( g_BGChange.rows[rate].choices[iAnswers[rate]] )/100.f;
