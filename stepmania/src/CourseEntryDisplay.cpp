@@ -25,7 +25,7 @@
 #include "ActorUtil.h"
 #include <math.h>
 
-#define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCouresMeters")
+#define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCourseMeters")
 
 void CourseEntryDisplay::Load()
 {
