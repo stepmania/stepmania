@@ -1072,8 +1072,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 	}
 	if(m_Type == stage) // stage eval ... pass / fail / whatever
 	{
-		int snd = 0;
-		for(snd=0;snd<m_SoundSequences.size();snd++)
+		for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
 		{
 			if(m_SoundSequences[snd].fTime != -1) // already played? skip...
 			{
