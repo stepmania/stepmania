@@ -70,8 +70,11 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartClosing:
-		if( !m_Out.IsTransitioning() )
+		if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
+		{
+			m_Background.PlayOffCommand();
 			m_Out.StartTransitioning( SM_GoToNextScreen );
+		}
 		break;
 	case SM_DoneOpening:
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("caution") );
@@ -87,8 +90,11 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenCaution::MenuStart( PlayerNumber pn )
 {
-	if( !m_Out.IsTransitioning() )
+	if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
+	{
+		m_Background.PlayOffCommand();
 		m_Out.StartTransitioning( SM_GoToNextScreen );
+	}
 }
 
 void ScreenCaution::MenuBack( PlayerNumber pn )

@@ -42,6 +42,8 @@ public:
 
 	float GetLengthSeconds() { return m_fLengthSeconds; }
 
+	void PlayOffCommand();
+
 protected:
 	vector<BGAnimationLayer*> m_Layers;
 	float	m_fLengthSeconds;

@@ -173,4 +173,10 @@ void BGAnimation::SetDiffuse( const RageColor &c )
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ ) 
 		m_Layers[i]->SetDiffuse(c);
- }
+}
+
+void BGAnimation::PlayOffCommand()
+{
+	for( unsigned i=0; i<m_Layers.size(); i++ ) 
+		m_Layers[i]->PlayOffCommand();
+}

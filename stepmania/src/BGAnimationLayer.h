@@ -44,6 +44,8 @@ public:
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 
+	void PlayOffCommand();
+
 protected:
 	vector<Actor*> m_pActors;
 	RageVector3 m_vParticleVelocity[MAX_SPRITES];
@@ -95,7 +97,8 @@ protected:
 	//
 	
 	// common stuff
-	CString m_sCommand;
+	CString m_sOnCommand;
+	CString m_sOffCommand;
 	float m_fUpdateRate;	// get by GainingFocus
 	float m_fFOV;	// -1 = no change
 	bool m_bLighting;

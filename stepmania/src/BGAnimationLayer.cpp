@@ -522,7 +522,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
-	ini.GetValue ( sLayer, "Command", m_sCommand );
+	ini.GetValue ( sLayer, "Command", m_sOnCommand );
+	ini.GetValue ( sLayer, "OffCommand", m_sOffCommand );
 	ini.GetValueF( sLayer, "FOV", m_fFOV );
 	ini.GetValueB( sLayer, "Lighting", m_bLighting );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
@@ -627,10 +628,10 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			m_pActors[i]->SetState( rand()%m_pActors[i]->GetNumStates() );
 	}
 
-	if( m_sCommand != "" )
+	if( m_sOnCommand != "" )
 	{
 		for( unsigned i=0; i<m_pActors.size(); i++ )
-			m_pActors[i]->Command( m_sCommand );
+			m_pActors[i]->Command( m_sOnCommand );
 	}
 }
 
@@ -962,7 +963,7 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	pSprite->GetTexture()->Play();
 
 	for( unsigned i=0; i<m_pActors.size(); i++ )
-		m_pActors[i]->Command( m_sCommand );
+		m_pActors[i]->Command( m_sOnCommand );
 }
 
 void BGAnimationLayer::LosingFocus()
@@ -971,4 +972,14 @@ void BGAnimationLayer::LosingFocus()
 	Sprite* pSprite = (Sprite*)m_pActors[0];
 
 	pSprite->GetTexture()->Pause();
+}
+
+
+void BGAnimationLayer::PlayOffCommand()
+{
+	if( m_sOffCommand != "" )
+	{
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->Command( m_sOffCommand );
+	}
 }

@@ -112,6 +112,8 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	m_sprFooter.Command( FOOTER_OFF_COMMAND );
 	m_textHelp.Command( HELP_OFF_COMMAND );
 
+	m_Background.PlayOffCommand();
+
 	m_Out.StartTransitioning(smSendWhenDone);
 
 	/* Ack.  If the transition finishes transparent (eg. _options to options),
