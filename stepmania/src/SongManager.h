@@ -29,7 +29,7 @@ struct PlayerOptions;
 class SongManager
 {
 public:
-	SongManager( LoadingWindow *ld );
+	SongManager();
 	~SongManager();
 
 	void InitSongsFromDisk( LoadingWindow *ld );
@@ -45,6 +45,7 @@ public:
 	void InitAutogenCourses();
 	void FreeCourses();
 
+	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
 	void Reload( LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 

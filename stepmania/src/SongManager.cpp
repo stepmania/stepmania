@@ -38,11 +38,13 @@
 #include "CourseUtil.h"
 #include "RageFileManager.h"
 #include "UnlockSystem.h"
+#include "CatalogXml.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 #define SONGS_DIR				"Songs/"
 #define COURSES_DIR				"Courses/"
+#define DATA_DIR				"Data/"
 
 #define MAX_EDITS_PER_PROFILE	200
 
@@ -80,30 +82,24 @@ static void UpdateMetrics()
 	EXTRA_COLOR_METER.Refresh();
 }
 
-SongManager::SongManager( LoadingWindow *ld )
+SongManager::SongManager()
 {
 	g_LastMetricUpdate.SetZero();
 	UpdateMetrics();
-
-	/* We initialize things that assume they can get at SONGMAN; we only
-	 * init one of these, so hook us up to it immediately. */
-	SONGMAN = this;
-	try
-	{
-		InitSongsFromDisk( ld );
-		InitCoursesFromDisk( ld );
-		InitAutogenCourses();
-
-	} catch(...) {
-		SONGMAN = NULL;
-		throw;
-	}
 }
 
 SongManager::~SongManager()
 {
 	FreeSongs();
 	FreeCourses();
+}
+
+void SongManager::InitAll( LoadingWindow *ld )
+{
+	InitSongsFromDisk( ld );
+	InitCoursesFromDisk( ld );
+	InitAutogenCourses();
+	SaveCatalogXml( DATA_DIR );
 }
 
 void SongManager::Reload( LoadingWindow *ld )
@@ -126,9 +122,7 @@ void SongManager::Reload( LoadingWindow *ld )
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad = false;
 
-	InitSongsFromDisk( ld );
-	InitCoursesFromDisk( ld );
-	InitAutogenCourses();
+	InitAll( ld );
 
 	// reload scores afterward
 	PROFILEMAN->LoadMachineProfile();

@@ -42,23 +42,19 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 ProfileManager::ProfileManager()
 {
-	PROFILEMAN = this;
-
-	try
-	{
-		FOREACH_PlayerNumber( p )
-			m_bWasLoadedFromMemoryCard[p] = false;
-
-		LoadMachineProfile();
-	} catch(...) {
-		PROFILEMAN = NULL;
-		throw;
-	}
 }
 
 ProfileManager::~ProfileManager()
 {
 	SaveMachineProfile();
+}
+
+void ProfileManager::Init()
+{
+	FOREACH_PlayerNumber( p )
+		m_bWasLoadedFromMemoryCard[p] = false;
+
+	LoadMachineProfile();
 }
 
 void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const
@@ -76,7 +72,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 		CString sProfileID = vsProfileIDs[i];
 		CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
 		CString sDisplayName = Profile::GetProfileDisplayNameFromDir( sProfileDir );
-	LOG->Trace(" '%s'", sDisplayName.c_str());
+		LOG->Trace(" '%s'", sDisplayName.c_str());
 		asNamesOut.push_back( sDisplayName );
 	}
 }

@@ -1052,10 +1052,12 @@ int main(int argc, char* argv[])
 	BANNERCACHE = new BannerCache;
 	
 	/* depends on SONGINDEX: */
-	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
+	SONGMAN		= new SongManager();
+	SONGMAN->InitAll( loading_window );		// this takes a long time
 	CRYPTMAN	= new CryptManager;	// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
-	PROFILEMAN	= new ProfileManager;	// must load after SONGMAN
+	PROFILEMAN	= new ProfileManager;
+	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockSystem;
 	MODELMAN	= new ModelManager;
 	delete loading_window;		// destroy this before init'ing Display

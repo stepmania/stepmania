@@ -26,6 +26,8 @@ public:
 	ProfileManager();
 	~ProfileManager();
 
+	void Init();
+
 	bool CreateLocalProfile( CString sName );
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );

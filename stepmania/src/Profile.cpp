@@ -31,7 +31,6 @@
 #include "ScoreKeeperMAX2.h"
 #include "crypto/CryptRand.h"
 #include "UnlockSystem.h"
-#include "CatalogXml.h"
 #include "XmlFile.h"
 #include "Foreach.h"
 
@@ -1257,8 +1256,6 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 		PROFILEMAN->GetMachineProfile(),
 		bThisIsMachineProfile ? HTML_TYPE_MACHINE : HTML_TYPE_PLAYER
 		);
-	if( bThisIsMachineProfile )
-		SaveCatalogXml( sDir );
 }
 
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
