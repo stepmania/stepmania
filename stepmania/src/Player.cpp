@@ -678,7 +678,7 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 		// If the score is great or better, remove the note from the screen to 
 		// indicate success.  (Or always if blind is on.)
-	if( score >= TNS_GREAT || GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
+		if( score >= TNS_GREAT || GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind )
 			m_pNoteField->SetTapNote(c, iIndexThatWasSteppedOn, TAP_EMPTY);
 
 		// show the ghost arrow for this column
