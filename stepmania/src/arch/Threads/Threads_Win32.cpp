@@ -66,7 +66,7 @@ ThreadImpl *MakeThisThread()
 	return thread;
 }
 
-ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData )
+ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThreadID )
 {
 	ThreadImpl_Win32 *thread = new ThreadImpl_Win32;
 	thread->m_pFunc = pFunc;

@@ -124,6 +124,7 @@ static int FindEmptyThreadSlot()
 		if( g_ThreadSlots[entry].used )
 			continue;
 
+		g_ThreadSlots[entry].used = true;
 		return entry;
 	}
 			
@@ -154,7 +155,6 @@ static void InitThreads()
 	strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
 	g_ThreadSlots[slot].id = GetInvalidThreadId();
 	sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
-	g_ThreadSlots[slot].used = true;
 	g_pUnknownThreadSlot = &g_ThreadSlots[slot];
 
 	g_ThreadSlotsLock.Unlock();
@@ -227,14 +227,12 @@ void RageThread::Create( int (*fn)(void *), void *data )
 		strcpy( m_pSlot->name, name.c_str() );
 	}
 
-	/* Start a thread using our own startup function. */
-	m_pSlot->pImpl = MakeThread( fn, data );
-	m_pSlot->id = m_pSlot->pImpl->GetThreadId();
 	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
 
-	/* Only after everything in the slot is valid, mark the slot used, so all
-	 * "used" slots have a valid pImpl. */
-	g_ThreadSlots[slotno].used = true;
+	/* Start a thread using our own startup function.  We pass the id to fill in,
+	 * to make sure it's set before the thread actually starts.  (Otherwise, early
+	 * checkpoints might not have a completely set-up thread slot.) */
+	m_pSlot->pImpl = MakeThread( fn, data, &m_pSlot->id );
 }
 
 /* On startup, register the main thread's slot.  We do this in a static constructor,
@@ -249,7 +247,6 @@ static struct SetupMainThread
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Thread: %s", g_ThreadSlots[slot].name );
 		g_ThreadSlots[slot].pImpl = MakeThisThread();
 		g_ThreadSlots[slot].id = RageThread::GetCurrentThreadID();
-		g_ThreadSlots[slot].used = true;
 	}
 } SetupMainThreadObj;
 
@@ -552,7 +549,7 @@ void RageMutex::Lock()
 #if defined(CRASH_HANDLER) && !defined(DARWIN)
 		/* Don't leave g_ThreadSlotsLock when we call ForceCrashHandlerDeadlock. */
 		g_ThreadSlotsLock.Lock();
-		uint64_t CrashHandle = OtherSlot? OtherSlot->pImpl->GetCrashHandle():0;
+		uint64_t CrashHandle = OtherSlot && OtherSlot->pImpl? OtherSlot->pImpl->GetCrashHandle():0;
 		g_ThreadSlotsLock.Unlock();
 
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */

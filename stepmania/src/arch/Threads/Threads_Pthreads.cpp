@@ -93,20 +93,32 @@ static void *StartThread( void *pData )
 	pThis->MachThreadHandle = mach_thread_self();
 #endif
 
+	*pThis->m_piThreadID = pThis->GetThreadId();
+	
+	fprintf(stderr, "set %i\n", (int) pThis->GetThreadId() );
+	/* Tell MakeThread that we've set m_piThreadID, so it's safe to return. */
+	sem_post( &pThis->m_StartFinishedSem );
+
 	return (void *) pThis->m_pFunc( pThis->m_pData );
 }
 
-ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData )
+ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThreadID )
 {
 	ThreadImpl_Pthreads *thread = new ThreadImpl_Pthreads;
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
+	thread->m_piThreadID = piThreadID;
+	sem_init( &thread->m_StartFinishedSem, 0, 0 );
 
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
 	if( ret )
 		RageException::Throw( "pthread_create: %s", strerror(ret) );
 
-	/* XXX: don't return until StartThread sets pid, etc */
+	/* Don't return until StartThread sets m_piThreadID. */
+	ret = sem_wait( &thread->m_StartFinishedSem );
+	if( ret )
+		RageException::Throw( "MakeThread(): sem_wait: %s", strerror(ret) );
+	sem_destroy( &thread->m_StartFinishedSem );
 	
 	return thread;
 }
@@ -168,7 +180,6 @@ bool MutexImpl_Pthreads::Lock()
 	int ret;
 	do
 	{
-		CHECKPOINT;
 		ret = pthread_mutex_lock( &mutex );
 	}
 	while( ret == -1 && ret == EINTR );
@@ -240,7 +251,6 @@ bool SemaImpl_Pthreads::Wait()
 	int ret;
 	do
 	{
-		CHECKPOINT;
 		ret = sem_wait( &sem );
 	}
 	while( ret == -1 && errno == EINTR );

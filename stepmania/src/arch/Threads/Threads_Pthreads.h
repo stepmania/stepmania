@@ -26,8 +26,11 @@ public:
 	thread_act_t MachThreadHandle;
 #endif
 
+	/* These are only used during initialization. */
 	int (*m_pFunc)( void *pData );
 	void *m_pData;
+	uint64_t *m_piThreadID;
+	sem_t m_StartFinishedSem;
 
 	void Halt( bool Kill );
 	void Resume();

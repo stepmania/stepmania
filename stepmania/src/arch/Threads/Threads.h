@@ -55,7 +55,7 @@ public:
 };
 
 /* These functions must be implemented by the thread implementation. */
-ThreadImpl *MakeThread( int (*fn)(void *), void *data );
+ThreadImpl *MakeThread( int (*fn)(void *), void *data, uint64_t *piThreadID );
 ThreadImpl *MakeThisThread();
 MutexImpl *MakeMutex( RageMutex *pParent );
 SemaImpl *MakeSemaphore( int iInitialValue );
