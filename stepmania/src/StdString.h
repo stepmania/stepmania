@@ -309,7 +309,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 			typedef const char*		PCSTR;
 			typedef char*			PSTR;
 			typedef const wchar_t*	PCWSTR;
-			typedef wchar_t*		PWSTR;
 			#ifdef UNICODE
 				typedef wchar_t		TCHAR;
 			#else
@@ -485,20 +484,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 
 	#ifdef SS_NOLOCALE
 
-		inline PWSTR StdCodeCvt(PWSTR pW, PCSTR pA, int nChars)
-		{
-			ASSERT(0 != pA);
-			ASSERT(0 != pW);
-			pW[0] = '\0';
-			int nCvt	= mbstowcs(pW, pA, nChars);
-			ASSERT(nCvt >=0);
-			return pW;
-		}
-		inline PWSTR StdCodeCvt(PWSTR pW, PCUSTR pA, int nChars)
-		{
-			return StdCodeCvt(pW, (PCSTR)pA, nChars);
-		}
-
 		inline PSTR StdCodeCvt(PSTR pA, PCWSTR pW, int nChars)
 		{
 			ASSERT(0 != pA);
@@ -520,29 +505,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 		// StdCodeCvt - made to look like Win32 functions WideCharToMultiByte
 		//				and MultiByteToWideChar but uses locales in SS_ANSI
 		//				builds
-		inline PWSTR StdCodeCvt(PWSTR pW, PCSTR pA, int nChars,
-			const std::locale& loc=std::locale())
-		{
-			ASSERT(0 != pA);
-			ASSERT(0 != pW);
-			pW[0] = '\0';
-			PCSTR pBadA				= 0;
-			PWSTR pBadW				= 0;
-			SSCodeCvt::result res	= SSCodeCvt::ok;
-			const SSCodeCvt& conv	= SS_USE_FACET(loc, SSCodeCvt);
-			SSCodeCvt::state_type st= { 0 };
-			res						= conv.in(st,
-											  pA, pA + nChars, pBadA,
-											  pW, pW + nChars, pBadW);
-			ASSERT(SSCodeCvt::ok == res);
-			return pW;
-		}
-		inline PWSTR StdCodeCvt(PWSTR pW, PCUSTR pA, int nChars,
-			const std::locale& loc=std::locale())
-		{
-			return StdCodeCvt(pW, (PCSTR)pA, nChars, loc);
-		}
-
 		inline PSTR StdCodeCvt(PSTR pA, PCWSTR pW, int nChars,
 			const std::locale& loc=std::locale())
 		{
@@ -570,19 +532,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 #else   // ...or are we doing things assuming win32 and Visual C++?
 
 	#include <malloc.h>	// needed for _alloca
-
-	inline PWSTR StdCodeCvt(PWSTR pW, PCSTR pA, int nChars, UINT acp=CP_ACP)
-	{
-		ASSERT(0 != pA);
-		ASSERT(0 != pW);
-		pW[0] = '\0';
-		MultiByteToWideChar(acp, 0, pA, -1, pW, nChars);
-		return pW;
-	}
-	inline PWSTR StdCodeCvt(PWSTR pW, PCUSTR pA, int nChars, UINT acp=CP_ACP)
-	{
-		return StdCodeCvt(pW, (PCSTR)pA, nChars, acp);
-	}
 
 	inline PSTR StdCodeCvt(PSTR pA, PCWSTR pW, int nChars, UINT acp=CP_ACP)
 	{
@@ -620,21 +569,6 @@ inline PUSTR StdCodeCvt(PUSTR pDst, PCSTR pSrc, int nChars)
 {
 	return (PUSTR)StdCodeCvt((PSTR)pDst, pSrc, nChars);
 }
-
-inline PWSTR StdCodeCvt(PWSTR pDst, PCWSTR pSrc, int nChars)
-{
-	if ( nChars > 0 )
-	{
-		pDst[0]				= '\0';
-		std::basic_string<wchar_t>::traits_type::copy(pDst, pSrc, nChars);
-//		std::char_traits<wchar_t>::copy(pDst, pSrc, nChars);
-		if ( nChars > 0 )
-			pDst[nChars]	= '\0';
-	}
-
-	return pDst;
-}
-
 
 // Define tstring -- generic name for std::basic_string<TCHAR>
 
@@ -688,10 +622,6 @@ inline SS_NOTHROW int sslen(const std::string& s)
 {
 	return s.length();
 }
-inline SS_NOTHROW int sslen(const std::wstring& s)
-{
-	return s.length();
-}
 
 // -----------------------------------------------------------------------------
 // sstolower/sstoupper -- convert characters to upper/lower case
@@ -719,8 +649,6 @@ inline SS_NOTHROW int sslen(const std::wstring& s)
 // -----------------------------------------------------------------------------
 typedef std::string::size_type		SS_SIZETYPE; // just for shorthand, really
 typedef std::string::pointer		SS_PTRTYPE;  
-typedef std::wstring::size_type		SW_SIZETYPE;
-typedef std::wstring::pointer		SW_PTRTYPE;  
 
 inline void	ssasn(std::string& sDst, const std::string& sSrc)
 {
@@ -756,13 +684,6 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		sDst.assign(pA);
 	}
 }
-inline void	ssasn(std::string& sDst, const std::wstring& sSrc)
-{
-	int nLen	= sSrc.size();
-	sDst.resize(nLen * 2 + 1);
-	StdCodeCvt(const_cast<SS_PTRTYPE>(sDst.data()), sSrc.c_str(), nLen);
-	sDst.resize(nLen);
-}
 inline void	ssasn(std::string& sDst, PCWSTR pW)
 {
 	int nLen	= sslen(pW);
@@ -776,75 +697,12 @@ inline void ssasn(std::string& sDst, const int nNull)
 	ASSERT(nNull==0);
 	sDst.assign("");
 }	
-inline void	ssasn(std::wstring& sDst, const std::wstring& sSrc)
-{
-	if ( sDst.c_str() != sSrc.c_str() )
-	{
-		sDst.erase();
-		sDst.assign(sSrc);
-	}
-}
-inline void	ssasn(std::wstring& sDst, PCWSTR pW)
-{
-	// Watch out for NULLs, as always.
-
-	if ( 0 == pW )
-	{
-		sDst.erase();
-	}
-
-	// If pW actually points to part of sDst, we must NOT erase(), but
-	// rather take a substring
-
-	else if ( pW >= sDst.c_str() && pW <= sDst.c_str() + sDst.size() )
-	{
-		sDst = sDst.substr(static_cast<SW_SIZETYPE>(pW-sDst.c_str()));
-	}
-
-	// Otherwise (most cases) apply the assignment bug fix, if applicable
-	// and do the assignment
-
-	else
-	{
-		Q172398(sDst);
-		sDst.assign(pW);
-	}
-}
 #undef StrSizeType
-inline void	ssasn(std::wstring& sDst, const std::string& sSrc)
-{
-	int nLen	= sSrc.size();
-	sDst.resize(nLen+1);
-	StdCodeCvt(const_cast<SW_PTRTYPE>(sDst.data()), sSrc.c_str(), nLen+1);
-	sDst.resize(wcslen(sDst.data()));
-}
-inline void	ssasn(std::wstring& sDst, PCSTR pA)
-{
-	int nLen	= sslen(pA);
-	sDst.resize(nLen+1);
-	StdCodeCvt(const_cast<SW_PTRTYPE>(sDst.data()), pA, nLen+1);
-	sDst.resize(wcslen(sDst.data()));
-}
-inline void ssasn(std::wstring& sDst, const int nNull)
-{
-	UNUSED(nNull);
-	ASSERT(nNull==0);
-	sDst.assign(L"");
-}
 
 
 // -----------------------------------------------------------------------------
 // ssadd: string object concatenation -- add second argument to first
 // -----------------------------------------------------------------------------
-inline void	ssadd(std::string& sDst, const std::wstring& sSrc)
-{
-	int nSrcLen	= sSrc.size();
-	int nDstLen	= sDst.size();
-	int nEndLen	= nSrcLen + nDstLen;
-	sDst.resize(nEndLen + 1);
-	StdCodeCvt(const_cast<SS_PTRTYPE>(sDst.data()+nDstLen), sSrc.c_str(), nSrcLen);
-	sDst.resize(nEndLen);
-}
 inline void	ssadd(std::string& sDst, const std::string& sSrc)
 {
 	if ( &sDst == &sSrc )
@@ -883,54 +741,6 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 		}
 	}
 }
-inline void	ssadd(std::wstring& sDst, const std::wstring& sSrc)
-{
-	if ( &sDst == &sSrc )
-		sDst.reserve(2*sDst.size());
-
-	sDst.append(sSrc.c_str());
-}
-inline void	ssadd(std::wstring& sDst, const std::string& sSrc)
-{
-	int nSrcLen	= sSrc.size();
-	int nDstLen	= sDst.size();
-	int nEndLen	= nSrcLen + nDstLen;
-	sDst.resize(nEndLen+1);
-	StdCodeCvt(const_cast<SW_PTRTYPE>(sDst.data()+nDstLen), sSrc.c_str(), nSrcLen+1);
-	sDst.resize(nEndLen);
-}
-inline void	ssadd(std::wstring& sDst, PCSTR pA)
-{
-	int nSrcLen	= sslen(pA);
-	int nDstLen	= sDst.size();
-	int nEndLen	= nSrcLen + nDstLen;
-	sDst.resize(nEndLen + 1);
-	StdCodeCvt(const_cast<SW_PTRTYPE>(sDst.data()+nDstLen), pA, nSrcLen+1);
-	sDst.resize(nEndLen);
-}
-inline void	ssadd(std::wstring& sDst, PCWSTR pW)
-{
-	if ( pW )
-	{
-		// If the string being added is our internal string or a part of our
-		// internal string, then we must NOT do any reallocation without
-		// first copying that string to another object (since we're using a
-		// direct pointer)
-
-		if ( pW >= sDst.c_str() && pW <= sDst.c_str()+sDst.length())
-		{
-			if ( sDst.capacity() <= sDst.size()+sslen(pW) )
-				sDst.append(std::wstring(pW));
-			else
-				sDst.append(pW);
-		}
-		else
-		{
-			sDst.append(pW);
-		}
-	}
-}
-
 
 // -----------------------------------------------------------------------------
 // ssicmp: comparison (case insensitive )
@@ -1048,14 +858,6 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 			_strlwr(pA);
 		}
 	#endif
-	inline void	ssupr(PWSTR pW, size_t /*nLen*/)	
-	{
-		_wcsupr(pW);
-	}
-	inline void	sslwr(PWSTR pW, size_t /*nLen*/)	
-	{
-		_wcslwr(pW);
-	}
 #endif // #ifdef SS_ANSI
 
 // -----------------------------------------------------------------------------
@@ -1067,31 +869,10 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 	{
 		return vsnprintf(pA, nCount, pFmtA, vl);
 	}
-	inline int ssvsprintf(PWSTR pW, size_t nCount, PCWSTR pFmtW, va_list vl)
-	{
-		// JMO: It is beginning to seem like Microsoft Visual C++ is the only
-		// CRT distribution whose version of vswprintf takes THREE arguments.
-		// All others seem to take FOUR arguments.  Therefore instead of 
-		// checking for every possible distro here, I'll assume that unless
-		// I am running with Microsoft's CRT, then vswprintf takes four
-		// arguments.  If you get a compilation error here, then you can just
-		// change this code to call the three-argument version.
-//	#if !defined(__MWERKS__) && !defined(__SUNPRO_CC_COMPAT) && !defined(__SUNPRO_CC)
-	#ifndef _WIN32
-		return vswprintf(pW, nCount, pFmtW, vl);
-	#else
-		nCount;
-		return vswprintf(pW, pFmtW, vl);
-	#endif
-	}
 #else
 	inline int	ssnprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)
 	{ 
 		return _vsnprintf(pA, nCount, pFmtA, vl);
-	}
-	inline int	ssnprintf(PWSTR pW, size_t nCount, PCWSTR pFmtW, va_list vl)
-	{
-		return _vsnwprintf(pW, nCount, pFmtW, vl);
 	}
 #endif
 
@@ -1107,10 +888,6 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 	{
 		return ::LoadStringA(hInst, uId, pBuf, nMax);
 	}
-	inline int ssload(HMODULE hInst, UINT uId, PWSTR pBuf, int nMax)
-	{
-		return ::LoadStringW(hInst, uId, pBuf, nMax);
-	}
 #endif
 
 
@@ -1121,8 +898,6 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 //		inline int sscpy(PSTR pDst, PCSTR pSrc, int nMax=-1);
 //		inline int sscpy(PUSTR pDst,  PCSTR pSrc, int nMax=-1)
 //		inline int sscpy(PSTR pDst, PCWSTR pSrc, int nMax=-1);
-//		inline int sscpy(PWSTR pDst, PCWSTR pSrc, int nMax=-1);
-//		inline int sscpy(PWSTR pDst, PCSTR pSrc, int nMax=-1);
 //
 // DESCRIPTION:
 //		This function is very much (but not exactly) like strcpy.  These
@@ -1257,7 +1032,7 @@ class CStdStr : public std::basic_string<CT>
 	typedef typename std::basic_string<CT>		MYBASE;	 // my base class
 	typedef CStdStr<CT>							MYTYPE;	 // myself
 	typedef typename MYBASE::const_pointer		PCMYSTR; // PCSTR or PCWSTR 
-	typedef typename MYBASE::pointer			PMYSTR;	 // PSTR or PWSTR
+	typedef typename MYBASE::pointer			PMYSTR;	 // PSTR
 	typedef typename MYBASE::iterator			MYITER;  // my iterator type
 	typedef typename MYBASE::const_iterator		MYCITER; // you get the idea...
 	typedef typename MYBASE::reverse_iterator	MYRITER;
@@ -1280,11 +1055,6 @@ public:
 	}
 
 	CStdStr(const std::string& str)
-	{
-		ssasn(*this, str);
-	}
-
-	CStdStr(const std::wstring& str)
 	{
 		ssasn(*this, str);
 	}
@@ -1330,12 +1100,6 @@ public:
 	}
 
 	MYTYPE& operator=(const std::string& str)
-	{
-		ssasn(*this, str);
-		return *this;
-	}
-
-	MYTYPE& operator=(const std::wstring& str)
 	{
 		ssasn(*this, str);
 		return *this;
@@ -1490,12 +1254,6 @@ public:
 	{
 		ssadd(*this, str);
 		return *this; 
-	}
-
-	MYTYPE& operator+=(const std::wstring& str)
-	{
-		ssadd(*this, str);
-		return *this;
 	}
 
 	MYTYPE& operator+=(PCSTR pA)
@@ -2169,7 +1927,6 @@ CStdStr<char> operator+(PCWSTR pW, const CStdStr<char>& str)
 //	Now typedef our class names based upon this humongous template
 
 typedef CStdStr<char>		CStdStringA;	// a better std::string
-typedef CStdStr<wchar_t>	CStdStringW;	// a better std::wstring
 
 
 #ifndef SS_ANSI
@@ -2217,11 +1974,6 @@ typedef CStdStr<wchar_t>	CStdStringW;	// a better std::wstring
 		CString strTemp	= strA;
 		return ar << strTemp;
 	}
-	inline CArchive& AFXAPI operator<<(CArchive& ar, const CStdStringW& strW)
-	{
-		CString strTemp	= strW;
-		return ar << strTemp;
-	}
 
 	inline CArchive& AFXAPI operator>>(CArchive& ar, CStdStringA& strA)
 	{
@@ -2230,22 +1982,11 @@ typedef CStdStr<wchar_t>	CStdStringW;	// a better std::wstring
 		strA = strTemp;
 		return ar;
 	}
-	inline CArchive& AFXAPI operator>>(CArchive& ar, CStdStringW& strW)
-	{
-		CString strTemp;
-		ar >> strTemp;
-		strW = strTemp;
-		return ar;
-	}
 #endif	// #ifdef _MFC_VER -- (i.e. is this MFC?)
 
 // Define TCHAR based friendly names for some of these functions
 
-#ifdef UNICODE
-	#define CStdString				CStdStringW
-#else
 	#define CStdString				CStdStringA
-#endif
 
 // ...and some shorter names for the space-efficient
 
@@ -2276,20 +2017,6 @@ typedef CStdStr<wchar_t>	CStdStringW;	// a better std::wstring
 	#define StdStringEqualsNoCase	SSENCA		
 #endif
 
-struct StdStringLessNoCaseW
-	: std::binary_function<CStdStringW, CStdStringW, bool>
-{
-	inline
-	bool operator()(const CStdStringW& sLeft, const CStdStringW& sRight) const
-	{ return ssicmp(sLeft.c_str(), sRight.c_str()) < 0; }
-};
-struct StdStringEqualsNoCaseW
-	: std::binary_function<CStdStringW, CStdStringW, bool>
-{
-	inline
-	bool operator()(const CStdStringW& sLeft, const CStdStringW& sRight) const
-	{ return ssicmp(sLeft.c_str(), sRight.c_str()) == 0; }
-};
 struct StdStringLessNoCaseA
 	: std::binary_function<CStdStringA, CStdStringA, bool>
 {
@@ -2318,11 +2045,6 @@ struct StdStringEqualsNoCaseA
 //namespace std
 //{
 //	inline void swap(CStdStringA& s1, CStdStringA& s2) throw()
-//	{
-//		s1.swap(s2);
-//	}
-//	template<>
-//	inline void swap(CStdStringW& s1, CStdStringW& s2) throw()
 //	{
 //		s1.swap(s2);
 //	}
