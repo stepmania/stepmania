@@ -33,10 +33,6 @@ byte buttonMasks[] = { XINPUT_GAMEPAD_DPAD_LEFT,
  * A, B, X, Y, BLACK, WHITE, Left trigger, right trigger
  */
 
-/* XXX: For some reason, with this input handler the input isn't handled on the gameplay screen!
- * All other menus work, and the screen itself sees the input and bounces the arrow, but no step
- * is actually registered. */
-
 InputHandler_Xbox::InputHandler_Xbox()
 {
 	//
@@ -44,13 +40,14 @@ InputHandler_Xbox::InputHandler_Xbox()
 	//
 	XDEVICE_PREALLOC_TYPE xdpt[] = {{XDEVICE_TYPE_GAMEPAD, 4}};
 	XInitDevices( sizeof(xdpt) / sizeof(XDEVICE_PREALLOC_TYPE), xdpt );
-	
-	getHandles();	
+	ZeroMemory( joysticks, sizeof(joysticks) );
+
+	getHandles();
 }
 
 InputHandler_Xbox::~InputHandler_Xbox()
 {
-	for(unsigned i = 0; i < NUM_PLAYERS; i++)
+	for(unsigned i = 0; i < NUM_JOYSTICKS; i++)
 	{
 		if(joysticks[i] != 0)
 			XInputClose(joysticks[i]);
@@ -88,7 +85,7 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 		return;
 	}
 
-	for(unsigned i = 0; i < NUM_PLAYERS; i++)
+	for(unsigned i = 0; i < NUM_JOYSTICKS; i++)
 	{
 		if(joysticks[i] == 0)
 		{
@@ -159,11 +156,13 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 
 		memcpy(&lastState[i], &xis.Gamepad, sizeof(XINPUT_GAMEPAD));
 	}
+
+	InputHandler::UpdateTimer();
 }
 
 void InputHandler_Xbox::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
 {
-	for( int i=0; i<NUM_PLAYERS; i++ )
+	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
 		if( joysticks[i] != 0 )
 		{
@@ -175,6 +174,12 @@ void InputHandler_Xbox::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesO
 
 void InputHandler_Xbox::getHandles()
 {
+	for(unsigned i = 0; i < NUM_JOYSTICKS; i++)
+	{
+		if(joysticks[i] != 0)
+			XInputClose(joysticks[i]);
+	}
+
 	ZeroMemory( joysticks, sizeof(joysticks) );
 	ZeroMemory( lastState, sizeof(lastState) );
 
@@ -190,7 +195,7 @@ void InputHandler_Xbox::getHandles()
     {
         if( devices.dwState & 1 << i)
 		{
-			if(playersAllocated < NUM_PLAYERS)
+			if(playersAllocated < NUM_JOYSTICKS)
 			{
 				XINPUT_POLLING_PARAMETERS pollingParameters = {TRUE, TRUE, 0, 8, 8, 0,};
 				joysticks[playersAllocated] = XInputOpen(XDEVICE_TYPE_GAMEPAD, (DWORD)i, XDEVICE_NO_SLOT, &pollingParameters);
