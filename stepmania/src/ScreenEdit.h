@@ -17,7 +17,6 @@
 #include "RageSound.h"
 #include "BGAnimation.h"
 #include "SnapDisplay.h"
-#include "GrayArrowRow.h"
 
 
 const int NUM_ACTION_MENU_ITEMS = 23;
@@ -59,7 +58,6 @@ protected:
 
 	NoteField		m_NoteFieldEdit;
 	SnapDisplay		m_SnapDisplay;
-	GrayArrowRow	m_GrayArrowRowEdit;
 
 	Sprite			m_sprHelp;
 	BitmapText		m_textHelp;
@@ -85,7 +83,6 @@ protected:
 // for MODE_RECORD
 
 	NoteField		m_NoteFieldRecord;
-	GrayArrowRow	m_GrayArrowRowRecord;
 
 // for MODE_PLAY
 

@@ -97,6 +97,9 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	this->CopyAll( pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 
+	m_GrayArrowRow.Load( pn, m_fYReverseOffsetPixels );
+	m_GhostArrowRow.Load( pn, m_fYReverseOffsetPixels );
+
 	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
 }
@@ -142,6 +145,8 @@ void NoteField::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	m_rectMarkerBar.Update( fDeltaTime );
+	m_GrayArrowRow.Update( fDeltaTime );
+	m_GhostArrowRow.Update( fDeltaTime );
 
 	if( m_fPercentFadeToFail >= 0 )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
@@ -353,6 +358,8 @@ void NoteField::DrawPrimitives()
 
 	/* This should be filled in on the first update. */
 	ASSERT( !m_BeatToNoteDisplays.empty() );
+
+	m_GrayArrowRow.Draw();
 
 	//
 	// Adjust draw range depending on some effects
@@ -567,6 +574,7 @@ void NoteField::DrawPrimitives()
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
 	}
 
+	m_GhostArrowRow.Draw();
 }
 
 void NoteField::RemoveTapNoteRow( int iIndex )

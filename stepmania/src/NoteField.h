@@ -22,6 +22,8 @@
 #include "NoteDataWithScoring.h"
 #include "NoteDisplay.h"
 #include "ArrowBackdrop.h"
+#include "GrayArrowRow.h"
+#include "GhostArrowRow.h"
 
 class Song;
 
@@ -44,6 +46,12 @@ public:
 	void FadeToFail();
 	void CacheAllUsedNoteSkins();
 	void CacheNoteSkin( CString skin );
+
+	void Step( int iCol ) { m_GrayArrowRow.Step( iCol ); }
+	void UpdateBars( int iCol ) { m_GrayArrowRow.UpdateBars( iCol ); }
+	void DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
+	void DidHoldNote( int iCol ) { m_GhostArrowRow.DidHoldNote( iCol ); }
+	void DidTapMine( int iCol, TapNoteScore score ) { m_GhostArrowRow.DidTapMine( iCol, score ); }
 
 
 protected:
@@ -78,6 +86,9 @@ protected:
 	typedef map<float, NoteDisplayCols *> NDMap;
 	void SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat );
 	NDMap m_BeatToNoteDisplays;
+
+	GrayArrowRow	m_GrayArrowRow;
+	GhostArrowRow	m_GhostArrowRow;
 
 	// used in MODE_EDIT
 	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th

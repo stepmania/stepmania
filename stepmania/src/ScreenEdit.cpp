@@ -278,20 +278,12 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 
-	m_GrayArrowRowEdit.SetXY( EDIT_X, PLAYER_Y );
-	m_GrayArrowRowEdit.Load( PLAYER_1, PLAYER_HEIGHT*2 );
-	m_GrayArrowRowEdit.SetZoom( 0.5f );
-
 	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
 	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -240, 800, PLAYER_HEIGHT*2 );
 
 	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
-
-	m_GrayArrowRowRecord.SetXY( EDIT_X, PLAYER_Y_STANDARD );
-	m_GrayArrowRowRecord.Load( PLAYER_1, PLAYER_HEIGHT*2 );
-	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
@@ -450,7 +442,6 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	m_BGAnimation.Update( fDeltaTime );
 	m_SnapDisplay.Update( fDeltaTime );
-	m_GrayArrowRowEdit.Update( fDeltaTime );
 	m_NoteFieldEdit.Update( fDeltaTime );
 	m_In.Update( fDeltaTime );
 	m_Out.Update( fDeltaTime );
@@ -462,10 +453,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_rectRecordBack.Update( fDeltaTime );
 
 	if( m_EditMode == MODE_RECORDING )
-	{
-		m_GrayArrowRowRecord.Update( fDeltaTime );
 		m_NoteFieldRecord.Update( fDeltaTime );
-	}
 
 	if( m_EditMode == MODE_PLAYING )
 	{
@@ -568,7 +556,6 @@ void ScreenEdit::DrawPrimitives()
 			m_sprInfo.Draw();
 			m_textInfo.Draw();
 			m_SnapDisplay.Draw();
-			m_GrayArrowRowEdit.Draw();
 
 			// HACK:  Make NoteFieldEdit draw using the trailing beat
 			float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
@@ -582,7 +569,6 @@ void ScreenEdit::DrawPrimitives()
 		break;
 	case MODE_RECORDING:
 		m_BGAnimation.Draw();
-		m_GrayArrowRowRecord.Draw();
 		m_NoteFieldRecord.Draw();
 		break;
 	case MODE_PLAYING:
@@ -1129,7 +1115,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 				break;
 
 			m_NoteFieldRecord.SetTapNote(iCol, iRow, TAP_TAP);
-			m_GrayArrowRowRecord.Step( iCol );
+			m_NoteFieldRecord.Step( iCol );
 		}
 		break;
 	case IET_SLOW_REPEAT:
