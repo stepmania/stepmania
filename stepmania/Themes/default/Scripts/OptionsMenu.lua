@@ -19,6 +19,7 @@ function OptionsRowTest()
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectMultiple",
 		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
 		
 		-- Choices are not resolved as metrics, since they might
 		-- be dynamic.  Add THEME Lua hooks if we want to translate
