@@ -30,16 +30,7 @@
 #include "MsdFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-
-#include <fcntl.h>
-#if defined(WIN32)
-#include <io.h>
-#endif
-#if !defined(O_BINARY)
-#define O_BINARY 0
-#endif
-#include <string.h>
-#include <errno.h>
+#include "RageFile.h"
 
 void MsdFile::AddParam( char *buf, int len )
 {
@@ -143,22 +134,22 @@ void MsdFile::ReadBuf( char *buf, int len )
 bool MsdFile::ReadFile( CString sNewPath )
 {
 	error = "";
-	int fd;
 
+	RageFile f;
 	/* Open a file. */
-	if( (fd = open(sNewPath, O_RDONLY|O_BINARY, 0)) == -1 )
+	if( !f.Open( sNewPath ) )
 	{
-		error = strerror(errno);
+		error = f.GetError();
 		return false;
 	}
 
+	/* XXX: f.GetFileSizeInBytes() */
 	int iBufferSize = GetFileSizeInBytes(sNewPath);
 
 	// allocate a string to hold the file
 	char* szFileString = new char[iBufferSize];
 
-	int iBytesRead = read( fd, szFileString, iBufferSize );
-	close( fd );
+	int iBytesRead = f.Read( szFileString, iBufferSize );
 
 	ASSERT( iBufferSize >= iBytesRead );
 

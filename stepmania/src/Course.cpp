@@ -308,20 +308,20 @@ void Course::Save()
 {
 	ASSERT( !m_bIsAutogen );
 
-	FILE* fp = fopen( m_sPath, "w" );
-	if( fp == NULL )
+	RageFile f;
+	if( !f.Open( m_sPath, RageFile::WRITE ) )
 	{
-		LOG->Warn( "Could not write course file '%s'.", m_sPath.c_str() );
+		LOG->Warn( "Could not write course file '%s': %s", m_sPath.c_str(), f.GetError().c_str() );
 		return;
 	}
 
-	fprintf( fp, "#COURSE:%s;\n", m_sName.c_str() );
+	f.PutLine( ssprintf("#COURSE:%s;", m_sName.c_str()) );
 	if( m_bRepeat )
-		fprintf( fp, "#REPEAT:YES;\n" );
+		f.PutLine( "#REPEAT:YES;" );
 	if( m_iLives != -1 )
-		fprintf( fp, "#LIVES:%i;\n", m_iLives );
+		f.PutLine( ssprintf("#LIVES:%i;", m_iLives) );
 	if( m_iMeter != -1 )
-		fprintf( fp, "#METER:%i;\n", m_iMeter );
+		f.PutLine( ssprintf("#METER:%i;", m_iMeter) );
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
@@ -330,19 +330,21 @@ void Course::Save()
 		for( unsigned j = 0; j < entry.attacks.size(); ++j )
 		{
 			if( j == 0 )
-				fprintf( fp, "#MODS:\n" );
+				f.PutLine( "#MODS:" );
 
+			CString line;
 			const Attack &a = entry.attacks[j];
-			fprintf( fp, "  TIME=%.2f:LEN=%.2f:MODS=%s",
+			line += ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
 				a.fStartSecond, a.fSecsRemaining, a.sModifier.c_str() );
 
 			if( j+1 < entry.attacks.size() )
-				fprintf( fp, ":" );
+				line += ":";
 			else
-				fprintf( fp, ";" );
-			fprintf( fp, "\n" );
+				line += ";";
+			f.PutLine( line );
 		}
 
+		CString line;
 		switch( entry.type )
 		{
 		case COURSE_ENTRY_FIXED:
@@ -353,44 +355,43 @@ void Course::Save()
 				ASSERT( !as.empty() );
 				CString sGroup = as[ as.size()-2 ];
 				CString sSong = as[ as.size()-1 ];
-				fprintf( fp, "#SONG:" + sGroup + SLASH + sSong );
+				line += "#SONG:" + sGroup + '/' + sSong;
 			}
 			break;
 		case COURSE_ENTRY_RANDOM:
-			fprintf( fp, "#SONG:*" );
+			line += "#SONG:*";
 			break;
 		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
-			fprintf( fp, "#SONG:%s/*", entry.group_name.c_str() );
+			line += ssprintf( "#SONG:%s/*", entry.group_name.c_str() );
 			break;
 		case COURSE_ENTRY_BEST:
-			fprintf( fp, "#SONG:BEST%d", entry.players_index+1 );
+			line += ssprintf( "#SONG:BEST%d", entry.players_index+1 );
 			break;
 		case COURSE_ENTRY_WORST:
-			fprintf( fp, "#SONG:WORST%d", entry.players_index+1 );
+			line += ssprintf( "#SONG:WORST%d", entry.players_index+1 );
 			break;
 		default:
 			ASSERT(0);
 		}
 
-		fprintf( fp, ":" );
+		line += ":";
 		if( entry.difficulty != DIFFICULTY_INVALID )
-			fprintf( fp, "%s", DifficultyToString(entry.difficulty).c_str() );
+			line += DifficultyToString(entry.difficulty);
 		else if( entry.low_meter != -1  &&  entry.high_meter != -1 )
-			fprintf( fp, "%d..%d", entry.low_meter, entry.high_meter );
-		fprintf( fp, ":%s", entry.modifiers.c_str() );
+			line += ssprintf( "%d..%d", entry.low_meter, entry.high_meter );
+		line += ssprintf( ":%s", entry.modifiers.c_str() );
 
 		bool default_mystery = (entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
 		if( default_mystery != entry.mystery )
 		{
 			if( entry.modifiers != "" )
-				fprintf( fp, "," );
-			fprintf( fp, entry.mystery? "noshowcourse":"showcourse" );
+				line += ",";
+			line += entry.mystery? "noshowcourse":"showcourse";
 		}
 
-		fprintf( fp, ";\n" );
+		line += ";";
+		f.PutLine( line );
 	}
-
-	fclose( fp );
 }
 
 
