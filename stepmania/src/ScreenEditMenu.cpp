@@ -27,31 +27,6 @@
 //
 // Defines specific to ScreenEditMenu
 //
-const float GROUP_X				=	CENTER_X;
-const float GROUP_Y				=	CENTER_Y - 160;
-
-const float SONG_BANNER_X		=	CENTER_X;
-const float SONG_BANNER_Y		=	CENTER_Y - 80;
-
-const float SONG_BANNER_WIDTH	=	286;
-const float SONG_BANNER_HEIGHT	=	92;
-
-const float ARROWS_X[2]			=	{ SONG_BANNER_X - 200, SONG_BANNER_X + 200 };
-const float ARROWS_Y[2]			=	{ SONG_BANNER_Y,       SONG_BANNER_Y };
-
-const float SONG_TEXT_BANNER_X	=	CENTER_X;
-const float SONG_TEXT_BANNER_Y	=	CENTER_Y - 10;
-
-const float GAME_STYLE_X		=	CENTER_X;
-const float GAME_STYLE_Y		=	CENTER_Y + 40;
-
-const float STEPS_X				=	CENTER_X;
-const float STEPS_Y				=	CENTER_Y + 90;
-
-
-
-
-
 
 const float EXPLANATION_X		=	CENTER_X;
 const float EXPLANATION_Y		=	SCREEN_BOTTOM - 70;
