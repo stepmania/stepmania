@@ -13,6 +13,7 @@ void NORETURN sm_crash()
 }
 #elif defined(LINUX) || defined(DARWIN)
 #include "archutils/Unix/CrashHandler.h"
+#include <unistd.h>
 void NORETURN sm_crash()
 {
 	ForceCrashHandler( "Internal error" );
