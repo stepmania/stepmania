@@ -101,7 +101,7 @@ static int PtraceDetach( int ThreadID )
 
 CString ThreadsVersion()
 {
-	char buf[1024];
+	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
 	if( ret == -1 )
 		return "(unknown)";

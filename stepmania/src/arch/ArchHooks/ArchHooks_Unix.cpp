@@ -80,7 +80,7 @@ ArchHooks_Unix::ArchHooks_Unix()
 
 static CString LibcVersion()
 {	
-	char buf[1024];
+	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
 	if( ret == -1 )
 		return "(unknown)";
