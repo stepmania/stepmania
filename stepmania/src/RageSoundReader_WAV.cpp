@@ -29,6 +29,7 @@
 #include "RageUtil.h"
 
 #include <stdio.h>
+#include <errno.h>
 #include <SDL_endian.h>
 
 #define BAIL_IF_MACRO(c, e, r) if (c) { SetError(e); return r; }
@@ -562,7 +563,7 @@ int RageSoundReader_WAV::Read(char *buf, unsigned len)
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		const int cnt = len / sizeof(Sint16);
 		Sint16 *tbuf = (Sint16 *) buf;
-		for( int i = 0; i < cnt; ++cnt )
+		for( int i = 0; i < cnt; ++i )
 			tbuf[i] = SDL_Swap16( tbuf[i] );
 #endif
 	}
