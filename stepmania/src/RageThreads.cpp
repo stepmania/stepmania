@@ -17,6 +17,10 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
+#ifdef _WINDOWS
+#include "archutils/win32/tls.h"
+#endif
+
 #include "SDL_utils.h"
 
 #include <signal.h>
@@ -110,6 +114,11 @@ void ThreadSlot::SetupThisThread()
 #if defined(PID_BASED_THREADS)
 	pid = getpid();
 #endif
+
+#ifdef _WINDOWS
+	InitThreadData( name );
+#endif
+
 	threadid = SDL_ThreadID();
 }
 
@@ -165,6 +174,7 @@ struct SetupMainThread
 	SetupMainThread()
 	{
 		int slot = FindEmptyThreadSlot();
+		strcpy( g_ThreadSlots[slot].name, "main thread" );
 		g_ThreadSlots[slot].SetupThisThread();
 	}
 } SetupMainThreadObj;
