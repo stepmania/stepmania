@@ -114,7 +114,7 @@ void GetFilePaths( CString sDirOrFile, 	vector<CString> &asPathToFilesOut )
 	{
 		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asPathToFilesOut, false, true );
 		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asDirectoriesToExplore, true, true );
-		asDirectoriesToExplore.erase( 0 );
+		asDirectoriesToExplore.erase( asDirectoriesToExplore.begin() );
 	}
 }
 
