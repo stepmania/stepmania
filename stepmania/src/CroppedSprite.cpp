@@ -77,7 +77,21 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 		}
 		SetZoom( 1 );
 	}
-	else if( m_fCropWidth != -1 && m_fCropHeight != -1)
+	else if( m_pTexture->GetID().filename.find( "(was rotated)" ) != m_pTexture->GetID().filename.npos && 
+			 m_fCropWidth != -1 && m_fCropHeight != -1 )
+	{
+		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,
+		 * which are stretched.  Low-res versions of banners need to do the same
+		 * thing as their full resolution counterpart, so the crossfade looks right.
+		 * However, low-res diagonal banners are un-rotated, to save space.  BannerCache
+		 * drops the above text into the "filename" (which is otherwise unused for
+		 * these banners) to tell us this.
+		 */
+		Sprite::StopUsingCustomCoords();
+		m_size = RageVector2( m_fCropWidth, m_fCropHeight );
+		SetZoom( 1 );
+	}
+	else if( m_fCropWidth != -1 && m_fCropHeight != -1 )
 	{
 		// this is probably a background graphic or something not intended to be a CroppedSprite
 		Sprite::StopUsingCustomCoords();
