@@ -316,7 +316,15 @@ void Course::Save()
 		switch( entry.type )
 		{
 		case COURSE_ENTRY_FIXED:
-			fprintf( fp, "#SONG:%s", entry.pSong->GetSongDir().c_str() );
+			{
+				// strip off everything but the group name and song dir
+				CStringArray as;
+				split( entry.pSong->GetSongDir(), SLASH, as );
+				ASSERT( !as.empty() );
+				CString sGroup = as[ as.size()-2 ];
+				CString sSong = as[ as.size()-1 ];
+				fprintf( fp, "#SONG:" + sGroup + SLASH + sSong );
+			}
 			break;
 		case COURSE_ENTRY_RANDOM:
 			fprintf( fp, "#SONG:*" );
