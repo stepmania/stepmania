@@ -45,6 +45,10 @@ namespace GLExt {
 	extern PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
 };
 
+#if defined(DARWIN)
+#include "archutils/Darwin/Vsync.h"
+#endif
+
 #include "RageDisplay.h"
 #include "RageDisplay_OGL.h"
 #include "RageUtil.h"
@@ -447,7 +451,11 @@ void SetupExtensions()
 	GetGLExtensions(g_glExts);
 
 	/* Find extension functions and reset broken flags */
+#if !defined(DARWIN)
 	GLExt::wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
+#else
+    GLExt::wglSwapIntervalEXT = wglSwapIntervalEXT;
+#endif
 	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
