@@ -139,6 +139,9 @@ public:
 	void From4s( const NoteData &out );
 
 	void EliminateAllButOneTap( int row ); 
+
+	// MD 10/29/03 - Join two tracks together.
+	void CombineTracks( int iTrackTo, int iTrackFrom );
 };
 
 

@@ -159,16 +159,42 @@ void Steps::Decompress() const
 		parent->GetNoteData(&pdata);
 
 		notes = new NoteData;
+		// MD 10/29/03 - add track-combining logic
+		int iNewTracks = GameManager::NotesTypeToNumTracks(m_StepsType);
+		// ...if we don't set it to SOMETHING, we get no steps.
+		// This breaks autogen dead. :->
+		notes->SetNumTracks( pdata.GetNumTracks() );
+		notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
+		if( pdata.GetNumTracks() > iNewTracks)
+		{
+			int iOriginalTracks = pdata.GetNumTracks();
+			int iUnevenTracks = iOriginalTracks % iNewTracks;
+			int iTracksToOverlap = iOriginalTracks / iNewTracks;
+			if( iTracksToOverlap ) {
+				// if we have at least as many tracks in the old mode
+				// as we do in the mode we're going to
+				for (int ix = 0; ix < iNewTracks; ix++)
+				{
+					for (int iy = 0; iy < iTracksToOverlap; iy++)
+					{
+						notes->CombineTracks(ix, (ix + iy * iNewTracks));
+					}
+				}
+				if( iUnevenTracks ) {
+					for (int ix = iOriginalTracks - iUnevenTracks;
+						 ix < iOriginalTracks;
+						 ix++)
+						 {
+							 // spread out the remaining tracks evenly
+							 notes->CombineTracks((ix * iOriginalTracks) % iNewTracks, ix);
+						 }
+				}
+			}
+		} else
+			notes->LoadTransformedSlidingWindow( &pdata, iNewTracks );
 		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
-		if(pdata.GetNumTracks() == notes->GetNumTracks())
-		{
-			notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
-		}
-		else
-		{
-			notes->LoadTransformedSlidingWindow( &pdata, notes->GetNumTracks() );
-			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
-		}
+		// end MD 10/29/03
+		NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
 	}
 	else if(!notes_comp)
 	{
