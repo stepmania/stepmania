@@ -310,7 +310,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			{
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				float fIndex = atoi( arrayFreezeValues[0] ) * ROWS_PER_BEAT / 4.0f;
+				float fIndex = (float)atof( arrayFreezeValues[0] ) * ROWS_PER_BEAT / 4.0f;
 				float fFreezeBeat = NoteRowToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
@@ -332,7 +332,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 					LOG->Warn( "Invalid CHANGEBPM: \"%s\"", arrayBPMChangeExpressions[b]);
 					continue;
 				}
-				float fIndex = atoi( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
+				float fIndex = (float)atof( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
 				float fBeat = NoteRowToBeat( fIndex );
 				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
 				
