@@ -87,13 +87,13 @@ const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
-  LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );
-	Init(); // work around horrible gcc bug 3187
-	LOG->Trace( "exiting ScreenEvaluation::ScreenEvalaution" );
+	LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );
 }
 
 void ScreenEvaluation::Init()
 {
+	Screen::Init();
+
 	//
 	// debugging
 	//

@@ -56,7 +56,7 @@ class ScreenGameplay : public Screen
 {
 public:
 	ScreenGameplay( CString sName, bool bDemonstration = false );
-	void Init();
+	virtual void Init();
 	virtual ~ScreenGameplay();
 
 	virtual void Update( float fDeltaTime );

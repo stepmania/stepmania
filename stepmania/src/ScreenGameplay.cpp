@@ -89,11 +89,12 @@ REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sName)
 {
 	m_bDemonstration = bDemonstration;
-	Init(); // work around horrible gcc bug 3187
 }
 
 void ScreenGameplay::Init()
 {
+	Screen::Init();
+
 	if( m_bDemonstration )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
 	else

@@ -167,6 +167,11 @@ bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return t
 ScreenJukebox::ScreenJukebox( CString sName, bool bDemonstration ) : ScreenGameplay( "ScreenGameplay", PrepareForJukebox(bDemonstration) )	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
+}
+
+void ScreenJukebox::Init()
+{
+	ScreenGameplay::Init();
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
 	{

@@ -8,6 +8,7 @@ class ScreenDemonstration : public ScreenJukebox
 {
 public:
 	ScreenDemonstration( CString sName );
+	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

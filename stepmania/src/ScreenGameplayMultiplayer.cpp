@@ -39,11 +39,12 @@ const ScreenMessage	SM_GoToScreenAfterBack = ScreenMessage(SM_User+23);
 REGISTER_SCREEN_CLASS( ScreenGameplayMultiplayer );
 ScreenGameplayMultiplayer::ScreenGameplayMultiplayer( CString sName, bool bDemonstration ) : Screen(sName)
 {
-	Init(); // work around horrible gcc bug 3187
 }
 
 void ScreenGameplayMultiplayer::Init()
 {
+	Screen::Init();
+
 	m_pSoundMusic = NULL;
 
 	/* We do this ourself. */

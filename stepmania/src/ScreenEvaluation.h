@@ -50,7 +50,7 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 protected:
-	void Init();
+	virtual void Init();
 	void CommitScores( 
 		const StageStats &stageStats, 
 		int iPersonalHighScoreIndexOut[NUM_PLAYERS], 
