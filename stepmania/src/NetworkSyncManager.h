@@ -15,9 +15,6 @@
 
 #include "PlayerNumber.h"
 
-void NSSendSongs();
-void ArgStartCourse(CString CourseName);
-
 class EzSockets;
 
 class NetworkSyncManager 
@@ -34,11 +31,15 @@ public:
 	void SendSongs();  //Send song list to server (And exit) 
 
 	void PostStartUp(CString ServerIP);
+
 	void CloseConnection();
 
 	void DisplayStartupStatus();	//Used to note user if connect attempt was sucessful or not.
 
 	int m_playerLife[NUM_PLAYERS];	//Life
+
+
+	void Update(float fDeltaTime);
 
 private:
 

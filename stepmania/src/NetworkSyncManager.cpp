@@ -34,9 +34,6 @@
 #include "Steps.h"
 
 
-#define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectMusic","NextScreen")
-	//Used for advancing to gameplay screen
-
 NetworkSyncManager::NetworkSyncManager()
 {
     NetPlayerClient = new EzSockets;
@@ -91,11 +88,14 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	useSMserver = true;
 
 	m_startupStatus = 1;	//Connection attepmpt sucessful
-
+	LOG->Info("CNConnected!");
 	int ClientCommand=3;
-	NetPlayerClient->send((char*) &ClientCommand, 4);
+	NetPlayerClient->SendPack((char*) &ClientCommand, 4);
+	LOG->Info("CNCHECKPOINT");
 
-	NetPlayerClient->receive(m_ServerVersion);
+	NetPlayerClient->ReadData((char*)&m_ServerVersion,4);
+	LOG->Info("CNCHECKPOINT:%d",NetPlayerClient->inBuffer.length());
+
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with
 	vector <CString> ProfileNames;
@@ -109,7 +109,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		for( i=0; i < strlen(ProfileNames[0]); i++ )
 			PlayerName.m_data[i] = ProfileNames[0][i];
 		PlayerName.m_data[i] = 0;
-		NetPlayerClient->send((char*) &PlayerName,20);
+		NetPlayerClient->SendPack((char*) &PlayerName,20);
 	}
 	if( ProfileNames.size() > 1 )
 	{
@@ -118,7 +118,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		for( i=0; i < strlen(ProfileNames[1]); i++ )
 			PlayerName.m_data[i] = ProfileNames[1][i];
 		PlayerName.m_data[i] = 0;
-		NetPlayerClient->send( (char*) &PlayerName,20 );
+		NetPlayerClient->SendPack( (char*) &PlayerName,20 );
 	}
 
 	LOG->Info("Server Version: %d",m_ServerVersion);
@@ -150,12 +150,6 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 	//It is this way now for protocol's purpose.
 	//If there is a new protocol developed down the road
 
-	//Since under non-lan conditions, the client
-	//will be connecting to localhost, this port does not matter.
-    /* What do you mean it doesn't matter if you are connecting to localhost?
-     * Also, when does it ever connect to localhost?
-     * -- Steve
-     */
     NetPlayerClient->create(); // Initilize Socket
     useSMserver = NetPlayerClient->connect(addy, port);
     
@@ -215,7 +209,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
  	SendNetPack.m_life=m_playerLife[playerID] + CurGrade*65536;
 
     //Send packet to server
-	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
 
 }
 	
@@ -236,7 +230,7 @@ void NetworkSyncManager::ReportSongOver()
 	SendNetPack.m_life=0;
 	
 
-	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
 	return;
 }
 
@@ -251,7 +245,7 @@ void NetworkSyncManager::StartRequest()
 		return ;
 
 
-	vector <char> tmp;	//Temporary vector used by receive function when waiting
+	char tmp[4];	//Temporary vector used by receive function when waiting
 
 	LOG->Trace("Requesting Start from Server.");
 
@@ -278,12 +272,12 @@ void NetworkSyncManager::StartRequest()
 	SendNetPack.m_life=0;
 	SendNetPack.m_combo=0;
 
-	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
 	
 	LOG->Trace("Waiting for RECV");
 
 	//Block until go is recieved.
-	NetPlayerClient->receive(tmp);	
+	NetPlayerClient->ReadData((char *)tmp, 4);	
 
 	LOG->Trace("Starting Game.");
 }
@@ -322,10 +316,10 @@ void NetworkSyncManager::SendSongs()
 		toSend[2]=char(0);
 		toSend[3]=char(0);
 
-		NetPlayerClient->send (toSend,SongInfo.length()+4);
+		NetPlayerClient->SendPack (toSend,SongInfo.length()+4);
 	}
 	toSend[0]=char(36);
-	NetPlayerClient->send (toSend,4);
+	NetPlayerClient->SendPack (toSend,4);
 
 	//Exit because this is ONLY for use with SMOnline
 	//If admins feel strongly, this can be exported
@@ -358,6 +352,10 @@ void NetworkSyncManager::DisplayStartupStatus()
 	SCREENMAN->SystemMessage(sMessage);
 }
 
+void NetworkSyncManager::Update(float fDeltaTime)
+{
+	
+}
 
 //Global and accessable from anywhere
 NetworkSyncManager *NSMAN;

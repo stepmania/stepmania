@@ -1,24 +1,26 @@
 /*******************************************
-  ezsockets.h -- Header for sockets.cpp
-   Designed by Josh Allen and Charles
-   Lohr. Socket programming methods based
-   on Charles Lohr's EZW progam.
-   You may freely destribute this code
-   if this message is retained.
-   This code is distributed on an as-is
-   basis with no gaurentees whatsoever.
+ EzSockets - a multiplatform generic 
+ sockets class (Version 2)
+ Original code by Josh Allen
+ Modified by Charles Lohr
 
-  Modified by Charles Lohr for use on
-   windows and Unix.
-  Modified by Charles Lohr for use with
-   Macromedia Flash.
+  All contents of this file Copyright 
+  2003-2004 Charles Lohr 
+			Joshua Allen
+
+  This file may be used under what
+  license the StepMania project is using.
+	
 ********************************************/
-
+ 
 #ifndef __EZSOCKETS_H
 #define __EZSOCKETS_H
 
+#include <sstream>
 #include <string>
 #include <vector>
+#include <fcntl.h>
+#include <ctype.h>
 
 #if defined(WIN32)
 #include <winsock2.h>
@@ -36,58 +38,112 @@
 using namespace std;
 
 class EzSockets {
- private:
+public:
 
-  #if defined(WIN32)
-	 WSADATA wsda;
-  #endif
+	EzSockets();
+	~EzSockets();
+
+	//Crate the socket
+	int create();
+
+	//Bind Socket to local port
+	bool bind(unsigned short port);
+
+	//Listen with socket
+	bool listen();
+
+	//Accept incomming socket
+	bool accept(EzSockets &socket);
+
+	//Connect
+	bool connect(const std::string& host, unsigned short port);
+
+	//Kill socket
+	void close();
+
+	//see if socket has been created
+	bool check();
+
+	long uAddr();
+
+	bool CanRead();
+	bool IsError();
+	bool CanWrite();
+	
+	void update();
+
+	//Raw data system 
+	void SendData(string & outData);
+	void SendData(const char *data, unsigned int bytes);
+	int ReadData(char *data, unsigned int bytes);
+	int PeekData(char *data, unsigned int bytes);
+
+	//Packet system (for structures and classes)
+	void SendPack(char * data, unsigned int bytes); 
+	int ReadPack(char * data, unsigned int max);
+	int PeekPack(char * data, unsigned int max);
+
+	//String (Flash) system / Null-terminated strings
+	void SendStr(string & data, char delim = '\0');
+	int ReadStr(string & data, char delim = '\0');
+	int PeekStr(string & data, char delim = '\0');
 
 
-  int MAXCON;
-  int sock;
-  struct sockaddr_in addr;
+	//Operators
+	char operator[] (int i); //Access buffer
+	friend istream& operator >>(istream &is,EzSockets &obj);
+	friend ostream& operator <<(ostream &os,const EzSockets &obj);
 
-  bool sendData(char data[1024], int size = 1024);
-  bool sendLength(int length);
-  bool receiveLength(int &length);
- public:
 
-  EzSockets();
-  ~EzSockets();
-  //Check to see if Socket is active
-  bool check();	
-  //Crate the socket
-  int create();
-  //Bind Socket to local port
-  bool bind(unsigned short port);
-  //Listen with socket
-  bool listen();
-  //Accept incomming socket
-  bool accept(EzSockets &socket);
-  //Receive raw data
-  bool receive(std::vector<char> &data);
-  //Receive structure
-  bool receive(int &x);
-  //Receive Structure (or other data)
-  int receive(char *data, int MAXlength);
-  //Send string
-  bool send(const std::string& data);
-  //Send Structure (or other data)
-  bool send(char *data, int length);
-  //Send Integer
-  bool send(int x);
-  //Connect to remote host
-  //NOTE: YOU MUST PUT IN IP, NOT NAME
-  bool connect(const std::string& host, unsigned short port);
+	bool blocking;
 
-  //Used for sending and receiving functions from flash
-  bool sendFlash (const std::string & inData);
-  
-  std::string recvFlash ();
 
-  long uAddr(); 
-  //Kill socket
-  void close();
+	//The following possibly should be private.
+	string inBuffer;
+	string outBuffer;
+
+	int pUpdateWrite();
+	int pUpdateRead();
+
+	int pReadData(char * data);
+	int pWriteData(const char * data, int dataSize);
+
+
+	enum SockState { 
+		skDISCONNECTED = 0, 
+		skUNDEF1, //Not implemented
+		skLISTENING, 
+		skUNDEF3, //Not implemented
+		skUNDEF4, //Not implemented
+		skUNDEF5, //Not implemented
+		skUNDEF6, //Not implemented
+		skCONNECTED, 
+		skERROR 
+	};
+
+	SockState state;
+
+private:
+
+	//Only necessiary in windows
+#if defined(WIN32)
+	WSADATA wsda;
+#endif
+
+	int MAXCON;
+	int sock;
+	struct sockaddr_in addr;
+
+
+	//Used for Select() command
+	fd_set  * scks;
+	timeval * times;
+
+	//Buffers
 };
+
+	istream& operator >>(istream &is,EzSockets &obj);
+	ostream& operator <<(ostream &os,EzSockets &obj);
+
 
 #endif

@@ -1,6 +1,3 @@
-//#include "global.h"
-//Commented out because there is no StepMania here.
-
 /*******************************************
   ezsockets.cpp -- Header for sockets.cpp
    Designed by Josh Allen and Charles
@@ -16,14 +13,16 @@
 ********************************************/
 
 // We need the WinSock32 Library on Windows
+
+#include <cstring>
+#include "ezsockets.h"
+
+#include <iostream>
+
+using namespace std;
 #if defined(WIN32)
 #pragma comment(lib,"wsock32.lib")
 #endif
-
-#include <iostream>//REMOVE SOON
-
-
-#include "ezsockets.h"
 
 EzSockets::EzSockets()
 {
@@ -36,6 +35,17 @@ EzSockets::EzSockets()
 #endif
 
 	sock = -1;
+	blocking=true;
+
+
+	scks = new fd_set;
+	times = new timeval;
+
+	
+	times->tv_sec = 0;
+	times->tv_usec = 0;
+	
+	state = skDISCONNECTED;
 }
 
 EzSockets::~EzSockets()
@@ -53,6 +63,7 @@ bool EzSockets::check()
 
 int EzSockets::create()
 {
+	state = skDISCONNECTED;
 	sock = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	return (true);
 }
@@ -78,6 +89,8 @@ bool EzSockets::listen()
 
 	if ( desc < 0 )
 		return false;
+
+	state = skLISTENING;
 	return true;
 }
 
@@ -96,12 +109,17 @@ bool EzSockets::accept( EzSockets &socket )
 	int length = sizeof( socket );
 
 	socket.sock = ::accept( sock, (struct sockaddr *)&socket.addr,(socklen_t *)&length );
+	socket.state = skCONNECTED;
 	if ( socket.sock < 0 )
 		return false;
+	
 	return true;
 }
 
 void EzSockets::close() {
+	state = skDISCONNECTED;
+	inBuffer = "";
+	outBuffer = "";
 	// The close socket command is different in Windows
 #if defined(WIN32)
 	::closesocket( sock );
@@ -110,197 +128,11 @@ void EzSockets::close() {
 #endif
 }
 
-bool EzSockets::receiveLength( int &length ) {
-	length = 0;
-
-//cannot send in void* in Windows.
-#if defined(WIN32)
-	int desc = recv( sock, (char*)&length, sizeof(int), 0 );
-#else
-	int desc = recv( sock, (void*)&length, sizeof(int), 0 );
-#endif
-
-	if ( desc <= 0 )
-		return false;
-	return true;
-}
-
-int EzSockets::receive(char *data, int MAXlength)
+long EzSockets::uAddr()
 {
-	int x=0;
-	if ( !receiveLength(x))
-		return false;
-
-	int desc=1;
-	std::string outData;
-	char buf[4];
-
-	outData = "";
-
-	
-
-	//YES! I know this is a crappy way to do it, but 
-	//until someone tells me better... DON'T COMPLAIN
-
-	while( (int) outData.length()<x && desc>0 )
-	{
-		desc = ::recv( sock, buf, 1 , 0 );
-		if (desc!=0)
-			outData+=buf[0];
-	}
-	if (desc==0)
-	{
-		return false;
-	}
-	if (x>MAXlength)
-	{
-		return false;
-	}
-
-	memcpy (data,outData.c_str(),x);
-
-	return true;
+	return addr.sin_addr.s_addr;
 }
 
-bool EzSockets::receive( int &x )
-{
-	if ( !receiveLength(x) )
-		return false;
-	return true;
-}
-
-bool EzSockets::receive( std::vector<char> &data )
-{
-	char buf[1024];
-	/* If the length is less than 1024 then receive
-	   all the data in one recv() command. If the
-	   length is greater than 1024 receive data
-	   with multiple recv() commands. */
-	int desc = 0;
-	int length;
-
-	length = 0;
-	data.resize(0);
-	if ( !receiveLength(length) )
-		return false;
-	if ( length <= 1024 )
-	{
-		memset( &buf, 0, sizeof(buf) );
-		desc = recv( sock, buf, 1024, 0 );
-		for ( int x = 0; x < desc; x++ )
-			data.push_back(buf[x]);
-	} else {
-		while ( int(data.size()) < length )
-		{
-			memset( &buf, 0, sizeof(buf) ); // Flush the buffer
-			desc = recv( sock, buf, 1024, 0 );
-			for ( int x = 0; x < desc; x++ )
-				data.push_back(buf[x]);
-		}
-	}
-	if ( desc <= 0 )
-		return false;
-	/* Make sure data is the correct size.
-	   This may be unneeded but seems like
-	   a good idea. */
-	data.resize( length );
-	return true;
-}
-
-bool EzSockets::send( const std::string& data )
-{
-	/* First send the length of the data to the
-	   server. Then if the length is less than or equal
-	   to the 1024 then send data in one sendData()
-	   command. If data is larger then 1024 than
-	   send the data in multiple sendData() commands.
-	   Each sendData() sends as much as 1024 bytes.
-	   HAVE NOT CHECKED TO SEE IF TRANSFER OF LARGE DATA
-	   IS CORRECT. */
-
-	int desc = sendLength( data.length() );
-	if ( desc == 0 )
-		return false;
-
-	if (data.length() <= (1024))
-	{
-		desc = sendData( (char*)data.c_str(), data.length() );
-		if ( desc == 0 )
-			return false;
-	} else {
-		for ( int x = 0; x < int(data.length()); x += 1024 )
-			desc = sendData( (char*)std::string(data.substr(x, x+1024)).c_str() );
-		if (desc == 0)
-			return false;
-	}
-	return true;
-}
-
-bool EzSockets::send( char *data, int length )
-{
-	/* Sends the data in chunks of 1024. Appears to
-	   work fine with large and small amounts of data. */
-	int desc;
-	char buf[1024];
-
-	desc = sendLength( length );
-	if ( desc == 0 )
-		return false;
-	for ( int x = 0; x < length; x += 1024 )
-	{
-		memset( &buf, 0, sizeof(buf) );
-		for ( int bytes = 0; bytes < 1024; bytes++ )
-			buf[bytes] = (char)data[x+bytes];
-		if ( length < 1024 )
-			desc = sendData( buf, length );
-		else
-			desc = sendData( buf );
-		if ( desc == 0 )
-			return false;
-	}
-	return true;
-}
-
-bool EzSockets::sendLength(int length)
-{
-#if defined(WIN32)
-	int desc = ::send( sock, (char*)&length, sizeof(int), 0 );
-#else
-	int desc = ::send( sock, (void*)&length, sizeof(int), 0 );
-#endif
-
-	if ( desc <= 0 )
-		return false;
-	return true;
-}
-
-bool EzSockets::send( int x )
-{
-	if ( !sendLength(x) )
-		return false;
-	return true;
-}
-
-bool EzSockets::sendData( char data[1024], int size )
-{
-	/* This function sends data just fine.
-	   Problem is with the reassemble while
-	   receiving data.*/
-	int desc;
-	int lpos = 0;
-
-	if ( size == 0 )
-		return true;
-
-	while (size-lpos > 0)
-	{
-		desc = ::send( sock, *((&data)+lpos), size, 0 );
-		if ( desc <= 0 )
-			return false;
-		lpos = lpos + desc;
-	}
-	return true;
-}
 
 bool EzSockets::connect( const std::string& host, unsigned short port )
 {
@@ -327,47 +159,270 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 	return desc >= 0;
 }
 
-bool EzSockets::sendFlash (const std::string & inData)
+
+
+bool EzSockets::CanRead()
 {
-	int inDataSize = inData.length();
-	int desc = ::send( sock, inData.c_str(), inDataSize+1 , 0 );
-		//Over-ride the C-string by one.
-	if (desc)
-		return (true);
-	else
-		return (false);
+	FD_ZERO(scks);
+	FD_SET(sock,scks);
+
+	if (select (0,scks,NULL,NULL,times)==0)
+		return false;
+	return true;
+}
+bool EzSockets::IsError()
+{
+	if (state == skERROR)
+		return true;
+
+	FD_ZERO(scks);
+	FD_SET(sock,scks);
+
+	if (select (0,NULL,NULL,scks,times)==0)
+		return false;
+	return true;
+}
+bool EzSockets::CanWrite()
+{
+	FD_ZERO(scks);
+	FD_SET(sock,scks);
+
+	if (select (0,NULL,scks,NULL,times)==0)
+		return false;
+	return true;
 }
 
-std::string EzSockets::recvFlash ()
+void EzSockets::update()
 {
-	int desc=1;
-	std::string outData;
-	char buf[4];
+	if (state==skERROR)
+		return;
+	//If socket is in error, don't bother.
 
-	outData = "";
+	if (IsError())
+	{
+		state=skERROR;
+		return;
+	}
 
+	//Check for reading
+	while (CanRead() && !IsError())
+		pUpdateRead();
+ 
+	if (CanWrite() && (outBuffer.length()>0))
+		pUpdateWrite();
+}
+
+
+
+//Raw data system 
+void EzSockets::SendData(string & outData)
+{
+	outBuffer.append(outData);
+	if (blocking)
+		while ((outBuffer.length()>0) && !IsError())
+			pUpdateWrite();
+	else
+		update();
+
+}
+
+void EzSockets::SendData(const char *data, unsigned int bytes)
+{
+	outBuffer.append(data,bytes);
+	if (blocking)
+		while ((outBuffer.length()>0) && !IsError())
+			pUpdateWrite();
+	else
+		update();
+}
+
+int EzSockets::ReadData(char *data, unsigned int bytes)
+{	
+	int bytesRead = PeekData(data,bytes);
+
+	inBuffer = inBuffer.substr(bytesRead);
+
+	return bytesRead;
+}
+
+int EzSockets::PeekData(char *data, unsigned int bytes)
+{
+	if (blocking)
+		while ((inBuffer.length()<bytes) && !IsError())
+			pUpdateRead();
+	else
+	{
+		while (CanRead()&&!IsError())
+			pUpdateRead();
+	}
+
+
+
+	int bytesRead = bytes;
+	if (inBuffer.length()<bytes)
+		bytesRead = inBuffer.length();
 	
 
-	//YES! I know this is a crappy way to do it, but 
-	//until someone tells me better... DON'T COMPLAIN
+	memcpy(data,(inBuffer.substr(0,bytesRead)).c_str(),bytesRead);
 
-	buf[0] = '\r'; //Put something in buf to stop while.
-	while ((buf[0] != '\0') && (desc>0)) {
-		desc = ::recv( sock, buf, 1 , 0 );
-		if (desc!=0)
-			outData+=buf[0];
-	}
-	if (desc==0)
-	{
-		outData = "999Data Failure";
-	}
-	return outData;
+	
+	return bytesRead;
 }
 
-
-
-long EzSockets::uAddr()
+//Packet system (for structures and classes)
+void EzSockets::SendPack(char * data, unsigned int bytes)
 {
-	return addr.sin_addr.s_addr;
+	SendData ((char *)&bytes,sizeof(int));
+	SendData (data,bytes);
 }
 
+int EzSockets::ReadPack(char * data, unsigned int max)
+{
+	int size = PeekPack(data,max);
+	if (size!=-1)
+	{
+		int tSize = (int)((inBuffer.substr(0,4)).c_str());
+		inBuffer = inBuffer.substr(tSize+4);
+	}
+	return size;
+}
+
+int EzSockets::PeekPack(char * data, unsigned int max)
+{
+	if (CanRead())
+		pUpdateRead();
+
+	if (blocking)
+	{
+		while ((inBuffer.length()<4)&& !IsError())
+		{
+			pUpdateRead();
+		}
+
+		unsigned int size=0;
+		PeekData((char*)size,4);
+
+		while ((inBuffer.length()<(size+4)) && !IsError())
+		{
+			pUpdateRead();
+		}
+
+		string tBuff(inBuffer.substr(4,size));
+
+		if (tBuff.length()>max)
+			tBuff.substr(0,max);
+
+		memcpy (data,tBuff.c_str(),tBuff.length());
+
+		return (size);
+	}	
+	else
+		if (inBuffer.length()>3)
+		{
+			unsigned int size=0;
+			PeekData((char*)size,4);
+			if (inBuffer.length()<(size+4))
+				return (-1);
+
+			string tBuff(inBuffer.substr(4,size));
+
+			if (tBuff.length()>max)
+				tBuff.substr(0,max);
+
+			memcpy (data,tBuff.c_str(),tBuff.length());
+
+			return (size);
+		} else
+			return (-1);
+	
+			
+}
+
+
+//String (Flash) system / Null-terminated strings
+void EzSockets::SendStr(string & data, char delim)
+{
+	char tDr[1];
+	tDr[0] = delim;
+	SendData(data.c_str(),data.length());
+	SendData(tDr,1);
+}
+
+int EzSockets::ReadStr(string & data, char delim)
+{
+	int t = PeekStr (data, delim);
+	if (t!=-1)
+		inBuffer = inBuffer.substr(t+1);
+	return t;
+}
+int EzSockets::PeekStr(string & data, char delim)
+{
+	int t;
+	t = inBuffer.find(delim,0);
+	if (blocking)
+	{
+		while ((t==-1) && !IsError())
+		{
+			pUpdateRead();
+			t = inBuffer.find(delim,0);
+		}
+		data = inBuffer.substr(0,t);
+	}else{
+		if (t == -1)
+			return -1;
+		data = inBuffer.substr(0,t);
+	}
+	return t;
+}
+
+
+
+
+int EzSockets::pUpdateRead()
+{
+	char tempData[1024];
+	int bytes = pReadData(tempData);
+	if (bytes>0)
+		inBuffer.append(tempData,bytes);
+
+	//You cannot read 0 bytes!
+	if (bytes<1) 
+		state = skERROR;
+
+	return bytes;
+}
+
+int EzSockets::pUpdateWrite()
+{
+	int bytes = pWriteData(outBuffer.c_str(),outBuffer.length());
+	outBuffer = outBuffer.substr(bytes);
+		
+	return bytes;
+}
+
+
+int EzSockets::pReadData(char * data)
+{
+	return recv( sock, data,1024, 0 );
+}
+
+int EzSockets::pWriteData(const char * data, int dataSize)
+{
+	return send( sock, data, dataSize, 0 );
+}
+
+
+istream& operator >>(istream &is,EzSockets &obj)
+{
+	string writeString;
+	obj.SendStr(writeString);
+	is>>writeString;
+	return is;
+}
+ostream& operator <<(ostream &os, EzSockets &obj)
+{
+	string readString;
+	obj.ReadStr(readString);
+	os<<readString;
+	return os;
+}
