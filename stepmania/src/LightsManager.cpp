@@ -20,6 +20,19 @@
 #include "InputMapper.h"
 
 
+static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
+	"MarqueeUpLeft",
+	"MarqueeUpRight",
+	"MarqueeLrLeft",
+	"MarqueeLrRight",
+	"ButtonsLeft",
+	"ButtonsRight",
+	"BassLeft",
+	"BassRight",
+};
+XToString( CabinetLight );
+
+
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program
 
 LightsManager::LightsManager(CString sDriver)

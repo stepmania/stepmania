@@ -13,7 +13,7 @@
 
 #include "PlayerNumber.h"
 #include "GameInput.h"
-#include "ForeachEnum.h"
+#include "EnumHelper.h"
 
 enum CabinetLight
 {
@@ -28,6 +28,7 @@ enum CabinetLight
 	NUM_CABINET_LIGHTS
 };
 #define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CABINET_LIGHTS, i )
+const CString& CabinetLightToString( CabinetLight cl );
 
 enum LightsMode
 {

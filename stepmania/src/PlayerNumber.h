@@ -14,7 +14,7 @@
 */
 
 #include "RageTypes.h"	// for RageColor
-#include "ForeachEnum.h"
+#include "EnumHelper.h"
 
 
 //

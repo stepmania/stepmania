@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ForeachEnum.h"
+#include "EnumHelper.h"
 
 enum GameController
 {

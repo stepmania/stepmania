@@ -14,7 +14,7 @@
 */
 
 #include "PlayerNumber.h"	// TODO: Get rid of this dependency.  -Chris
-#include "ForeachEnum.h"
+#include "EnumHelper.h"
 
 //
 // Screen Dimensions
@@ -59,7 +59,6 @@ enum RadarCategory
 	NUM_RADAR_CATEGORIES	// leave this at the end
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
-
 const CString& RadarCategoryToString( RadarCategory cat );
 
 struct RadarValues
@@ -96,7 +95,6 @@ enum Difficulty
 	DIFFICULTY_INVALID
 };
 #define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, NUM_DIFFICULTIES, dc )
-
 const CString& DifficultyToString( Difficulty dc );
 CString DifficultyToThemedString( Difficulty dc );
 Difficulty StringToDifficulty( const CString& sDC );
@@ -110,7 +108,6 @@ enum CourseDifficulty
 	COURSE_DIFFICULTY_INVALID
 };
 #define FOREACH_CourseDifficulty( cd ) FOREACH_ENUM( CourseDifficulty, NUM_COURSE_DIFFICULTIES, cd )
-
 const CString& CourseDifficultyToString( CourseDifficulty dc );
 CString CourseDifficultyToThemedString( CourseDifficulty dc );
 CourseDifficulty StringToCourseDifficulty( const CString& sDC );
@@ -165,7 +162,6 @@ enum PlayMode
 	PLAY_MODE_INVALID
 };
 #define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PLAY_MODES, pm )
-
 const CString& PlayModeToString( PlayMode pm );
 PlayMode StringToPlayMode( const CString& s );
 
@@ -195,9 +191,7 @@ enum SortOrder {
 	SORT_INVALID
 };
 const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
-
 #define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, NUM_SORT_ORDERS, so )
-
 const CString& SortOrderToString( SortOrder so );
 SortOrder StringToSortOrder( const CString& str );
 
@@ -219,7 +213,6 @@ enum TapNoteScore {
 	NUM_TAP_NOTE_SCORES
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
-
 const CString& TapNoteScoreToString( TapNoteScore tns );
 
 //enum TapNoteTiming { 

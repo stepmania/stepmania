@@ -59,10 +59,16 @@ void ScreenTestLights::Update( float fDeltaTime )
 
 	int iSec = (int)RageTimer::GetTimeSinceStart();
 
+	CabinetLight cl = (CabinetLight)(iSec%NUM_CABINET_LIGHTS);
+	int iNumGameButtons = GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController;
+	GameButton gb = (GameButton)(iSec%iNumGameButtons);
+	CString sCabLight = CabinetLightToString(cl);
+	CString sGameButton = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[gb];
+
 	CString s;
-	s += ssprintf("cabinet light %d\n", iSec%NUM_CABINET_LIGHTS);
+	s += ssprintf("cabinet light %d: %s\n", cl, sCabLight.c_str());
 	FOREACH_GameController( gc )
-		s += ssprintf("controller %d light %d\n", gc+1, iSec%MAX_GAME_BUTTONS);
+		s += ssprintf("controller %d light %d: %s\n", gc+1, gb, sGameButton.c_str());
 
 	m_textInputs.SetText( s );
 }

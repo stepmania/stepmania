@@ -249,7 +249,8 @@ void PlayerOptions::FromString( CString sOptions )
 #define SET_FLOAT( opt ) \
 		{ m_ ## opt = level; m_Speed ## opt = speed; }
 		const bool on = (level > 0.5f);
-			 if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
+			 if( sBit == "clearall" )	Init();
+		else if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
 		else if( sBit == "brake" || sBit == "land" ) SET_FLOAT( fAccels[ACCEL_BRAKE] )
 		else if( sBit == "wave" )		SET_FLOAT( fAccels[ACCEL_WAVE] )
 		else if( sBit == "expand" )		SET_FLOAT( fAccels[ACCEL_EXPAND] )
