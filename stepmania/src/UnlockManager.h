@@ -91,7 +91,7 @@ public:
 
 private:
 	// read unlocks
-	bool Load();
+	void Load();
 	
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;

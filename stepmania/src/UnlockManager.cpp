@@ -7,24 +7,26 @@
 #include "UnlockManager.h"
 #include "SongManager.h"
 #include "GameState.h"
-#include "MsdFile.h"
 #include "ProfileManager.h"
+#include "ThemeManager.h"
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
-#define UNLOCKS_PATH "Data/Unlocks.dat"
+#define UNLOCK_NAMES					THEME->GetMetric ("Unlocks","UnlockNames")
+#define UNLOCK(sLineName)				THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
 
 static CString UnlockTypeNames[NUM_UNLOCK_TYPES] =
 {
-	"ArcadePointsAccumulated",
-	"DancePointsAccumulated",
-	"SongPointsAccumulated",
-	"ExtraStagesCleared",
-	"ExtraStagesFailed",
-	"TotalToastysSeen",
-	"TotalStagesCleared"
+	"ArcadePoints",
+	"DancePoints",
+	"SongPoints",
+	"ExtraCleared",
+	"ExtraFailed",
+	"Toasties",
+	"StagesCleared"
 };
 XToString(UnlockType);
+StringToX(UnlockType);
 
 UnlockManager::UnlockManager()
 {
@@ -218,101 +220,52 @@ bool UnlockEntry::IsLocked() const
 	return true;
 }
 
-static const char *g_ShortUnlockNames[NUM_UNLOCK_TYPES] =
-{
-	"AP",
-	"DP",
-	"SP",
-	"EC",
-	"EF",
-	"!!",
-	"CS"
-};
-
-static UnlockType StringToUnlockType( const CString &s )
-{
-	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
-		if( g_ShortUnlockNames[i] == s )
-			return (UnlockType) i;
-	return UNLOCK_INVALID;
-}
-
-bool UnlockManager::Load()
+void UnlockManager::Load()
 {
 	LOG->Trace( "UnlockManager::Load()" );
-	
-	if( !IsAFile(UNLOCKS_PATH) )
-		return false;
 
-	MsdFile msd;
-	if( !msd.ReadFile( UNLOCKS_PATH ) )
+	CStringArray asUnlockNames;
+	split( UNLOCK_NAMES, ",", asUnlockNames );
+	if( asUnlockNames.empty() )
+		return;
+
+	for( unsigned i = 0; i < asUnlockNames.size(); ++i )
 	{
-		LOG->Warn( "Error opening file '%s' for reading: %s.", UNLOCKS_PATH, msd.GetError().c_str() );
-		return false;
-	}
+		const CString &sUnlockName = asUnlockNames[i];
+		CString sUnlock = UNLOCK(sUnlockName);
 
-	for( unsigned i=0; i<msd.GetNumValues(); i++ )
-	{
-		int iNumParams = msd.GetNumParams(i);
-		const MsdFile::value_t &sParams = msd.GetValue(i);
-		CString sValueName = sParams[0];
-
-		if( iNumParams < 1 )
-		{
-			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.c_str());
-			continue;
-		}
-
-		if( !stricmp(sParams[0],"ROULETTE") )
-		{
-			for( unsigned j = 1; j < sParams.params.size(); ++j )
-				m_RouletteCodes.insert( atoi(sParams[j]) );
-			continue;
-		}
-		
-		if( stricmp(sParams[0],"UNLOCK") )
-		{
-			LOG->Warn("Unrecognized unlock tag \"%s\", ignored.", sValueName.c_str());
-			continue;
-		}
+		Commands vCommands;
+		ParseCommands( sUnlock, vCommands );
 
 		UnlockEntry current;
-		current.m_sSongName = sParams[1];
-		LOG->Trace("Song entry: %s", current.m_sSongName.c_str() );
+		bool bRoulette = false;
 
-		CStringArray UnlockTypes;
-		split( sParams[2], ",", UnlockTypes );
-
-		for( unsigned j=0; j<UnlockTypes.size(); ++j )
+		for( unsigned j = 0; j < vCommands.v.size(); ++j )
 		{
-			CStringArray readparam;
-
-			split( UnlockTypes[j], "=", readparam );
-			const CString &unlock_type = readparam[0];
-
-			LOG->Trace("UnlockTypes line: %s", UnlockTypes[j].c_str() );
-
-			const float fVal = strtof( readparam[1], NULL );
-			const int iVal = atoi( readparam[1] );
-
-			const UnlockType ut = StringToUnlockType( unlock_type );
-			if( ut != UNLOCK_INVALID )
-				current.m_fRequired[ut] = fVal;
-			if( unlock_type == "CODE" )
-				current.m_iCode = iVal;
-			if( unlock_type == "RO" )
+			const Command &cmd = vCommands.v[j];
+			if( cmd.GetName() == "song" )
+				current.m_sSongName = cmd.GetArg(1);
+			else if( cmd.GetName() == "code" )
+				current.m_iCode = cmd.GetArg(1);
+			else if( cmd.GetName() == "roulette" )
+				bRoulette = true;
+			else
 			{
-				current.m_iCode = iVal;
-				m_RouletteCodes.insert( iVal );
+				const UnlockType ut = StringToUnlockType( cmd.GetName() );
+				if( ut != UNLOCK_INVALID )
+					current.m_fRequired[ut] = cmd.GetArg(1);
 			}
 		}
 
-		m_SongEntries.push_back(current);
+		if( bRoulette )
+			m_RouletteCodes.insert( current.m_iCode );
+
+		m_SongEntries.push_back( current );
 	}
 
 	UpdateSongs();
 
-	for(unsigned i=0; i < m_SongEntries.size(); i++)
+	for( unsigned i=0; i < m_SongEntries.size(); i++ )
 	{
 		CString str = ssprintf( "Unlock: %s; ", m_SongEntries[i].m_sSongName.c_str() );
 		FOREACH_UnlockType(j)
@@ -328,7 +281,7 @@ bool UnlockManager::Load()
 		LOG->Trace( "%s", str.c_str() );
 	}
 	
-	return true;
+	return;
 }
 
 float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
@@ -354,16 +307,16 @@ void UnlockManager::UpdateSongs()
 	{
 		m_SongEntries[i].m_pSong = NULL;
 		m_SongEntries[i].m_pCourse = NULL;
-		m_SongEntries[i].m_pSong = SONGMAN->FindSong( m_SongEntries[i].m_sSongName );
-		if( m_SongEntries[i].m_pSong == NULL )
-			m_SongEntries[i].m_pCourse = SONGMAN->FindCourse( m_SongEntries[i].m_sSongName );
+		if( m_SongEntries[i].m_sSongName != "" )
+			m_SongEntries[i].m_pSong = SONGMAN->FindSong( m_SongEntries[i].m_sSongName );
+        if( m_SongEntries[i].m_pSong == NULL )
+                m_SongEntries[i].m_pCourse = SONGMAN->FindCourse( m_SongEntries[i].m_sSongName );
 
 		// display warning on invalid song entry
-		if (m_SongEntries[i].m_pSong   == NULL &&
-			m_SongEntries[i].m_pCourse == NULL)
+		if( m_SongEntries[i].m_pSong == NULL && m_SongEntries[i].m_pCourse == NULL )
 		{
-			LOG->Warn("Unlock: Cannot find a matching entry for \"%s\"", m_SongEntries[i].m_sSongName.c_str() );
-			m_SongEntries.erase(m_SongEntries.begin() + i);
+			LOG->Warn( "Unlock: Cannot find a matching entry for \"%s\"", m_SongEntries[i].m_sSongName.c_str() );
+			m_SongEntries.erase( m_SongEntries.begin() + i );
 			--i;
 		}
 	}
