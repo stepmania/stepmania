@@ -62,11 +62,14 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 {
 	shutdown_mixer_thread = false;
 	pcm = NULL;
+}
 
+CString RageSound_DSound_Software::Init()
+{
 	/* If we're emulated, we're better off with the WaveOut driver; DS
 	 * emulation tends to be desynced. */
 	if( ds.IsEmulated() )
-		RageException::ThrowNonfatal( "Driver unusable (emulated device)" );
+		return "Driver unusable (emulated device)";
 
 	max_writeahead = safe_writeahead;
 	if( PREFSMAN->m_iSoundWriteAhead )
@@ -92,17 +95,22 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
+
+	return "";
 }
 
 RageSound_DSound_Software::~RageSound_DSound_Software()
 {
 	/* Signal the mixing thread to quit. */
-	shutdown_mixer_thread = true;
-	LOG->Trace("Shutting down mixer thread ...");
-	LOG->Flush();
-	MixingThread.Wait();
-	LOG->Trace("Mixer thread shut down.");
-	LOG->Flush();
+	if( MixingThread.IsCreated() )
+	{
+		shutdown_mixer_thread = true;
+		LOG->Trace("Shutting down mixer thread ...");
+		LOG->Flush();
+		MixingThread.Wait();
+		LOG->Trace("Mixer thread shut down.");
+		LOG->Flush();
+	}
 
 	delete pcm;
 }
