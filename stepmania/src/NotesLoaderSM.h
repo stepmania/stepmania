@@ -37,6 +37,8 @@ public:
 	static bool LoadTimingFromFile( const CString &fn, TimingData &out );
 	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
 	static bool LoadEdit( CString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromBuffer( const CString &sBuffer, CString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, ProfileSlot slot );
 };
 
 #endif
