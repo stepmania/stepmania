@@ -54,7 +54,6 @@ extern long __stdcall CrashHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 
 void CrashLog(const char *str);
 void StaticLog(const char *str);
-void AdditionalLog(const char *str);
 
 /* Exactly as advertised.  (This will bring up the crash handler even
  * in the debugger.) */

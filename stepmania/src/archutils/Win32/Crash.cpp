@@ -30,6 +30,8 @@
 #include "disasm.h"
 #include "CrashList.h"
 
+#include "RageLog.h" /* for RageLog::GetAdditionalLog only */
+
 #include "GotoURL.h"
 
 static void DoSave(const EXCEPTION_POINTERS *pExc);
@@ -1583,21 +1585,13 @@ static void ReportStaticLog(HWND hwnd, HANDLE hFile)
 //	Report(hwnd, hFile, "%s", staticlog);
 }
 
-static const int ADDLOG_SIZE = 1024*32;
-static char addlog[ADDLOG_SIZE]="";
-void AdditionalLog(const char *str)
-{
-	strncpy(addlog, str, ADDLOG_SIZE-1);
-	addlog[ADDLOG_SIZE-1]=0;
-}
-
 static void ReportAdditionalLog(HWND hwnd, HANDLE hFile)
 {
 	DWORD dwActual;
 
 	/* We crashed, so this data might well be bogus; don't use strlen. */
-	const char *p = (const char *) memchr(addlog, '\0', ADDLOG_SIZE);
-	int len = p? p-addlog: 0;
-
-	WriteFile(hFile, addlog, len, &dwActual, NULL);
+	const char *p;
+	int len;
+	RageLog::GetAdditionalLog( p, len );
+	WriteFile(hFile, p, len, &dwActual, NULL);
 }
