@@ -584,7 +584,7 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 	LockMut( *g_Mutex );
 
 	FileReferences::const_iterator it = g_Refs.find( cpy );
-	ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
+	ASSERT_M( it != g_Refs.end(), ssprintf( "CopyFileObj: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
 
 	RageFileObj *ret = cpy->Copy( p );
 
