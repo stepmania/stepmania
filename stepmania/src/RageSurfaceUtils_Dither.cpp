@@ -7,12 +7,6 @@
 #define DitherMatDim 4
 
 
-/*
- Added error-diffusion algorithm. (SM_SDL_ErrorDiffusionDither)
- Error distributed per-row, left to right.
- http://www.gamasutra.com/features/19990521/pixel_conversion_03.htm
- */
-
 /* Fractions, 0/16 to 15/16:  */
 static const int DitherMat[DitherMatDim][DitherMatDim] =
 {
@@ -166,9 +160,14 @@ static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &ac
 	return ret;
 }
 
-/* This is very similar to SM_SDL_OrderedDither, except instead of using a matrix
+/*
+ * This is very similar to OrderedDither, except instead of using a matrix
  * containing rounding values, we truncate and then add the resulting error for
- * each pixel to the next pixel on the same line.  (Maybe we could do both?) */
+ * each pixel to the next pixel on the same line.  (Maybe we could do both?)
+ *
+ * http://www.gamasutra.com/features/19990521/pixel_conversion_03.htm
+ */
+
 void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface *dst )
 {
 	/* We can't dither to paletted surfaces. */
