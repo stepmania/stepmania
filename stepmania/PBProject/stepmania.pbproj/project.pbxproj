@@ -551,6 +551,9 @@
 				AA6DAF0B05300B3D00D02EE9,
 				AAC622FD05389A0500D02EE9,
 				AAC622FF05389A0500D02EE9,
+				AADBE365053D5F8A00D02EE9,
+				AADBE367053D5F8A00D02EE9,
+				AADBE36B053DA38C00D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -814,6 +817,9 @@
 				AA6DAF0A05300B3D00D02EE9,
 				AAC622FC05389A0500D02EE9,
 				AAC622FE05389A0500D02EE9,
+				AADBE364053D5F8A00D02EE9,
+				AADBE366053D5F8A00D02EE9,
+				AADBE36A053DA38C00D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2086,6 +2092,8 @@
 				AA6E000D047711F3005F316C,
 				AA6E0010047711F3005F316C,
 				AA6E0011047711F3005F316C,
+				AADBE360053D5F8A00D02EE9,
+				AADBE361053D5F8A00D02EE9,
 				AA6E0016047711F3005F316C,
 				AA6E0017047711F3005F316C,
 				AAC622F805389A0500D02EE9,
@@ -2140,6 +2148,8 @@
 				AA6E0048047711F3005F316C,
 				AA6E0049047711F3005F316C,
 				AA6E004A047711F3005F316C,
+				AADBE362053D5F8A00D02EE9,
+				AADBE363053D5F8A00D02EE9,
 				AA6E004B047711F3005F316C,
 				AA6E004C047711F3005F316C,
 				AA53D28405277DAF00D02EE9,
@@ -3806,6 +3816,8 @@
 				AA6E01130477128A005F316C,
 				AA6E01140477128A005F316C,
 				AA6E01150477128A005F316C,
+				AADBE368053DA38C00D02EE9,
+				AADBE369053DA38C00D02EE9,
 			);
 			isa = PBXGroup;
 			name = GlobalSingletons;
@@ -10413,6 +10425,84 @@
 		};
 		AADB4F5B04D9220700D02EE9 = {
 			fileRef = AADB4F5904D9220700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AADBE360053D5F8A00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenBookkeeping.cpp;
+			path = ../src/ScreenBookkeeping.cpp;
+			refType = 4;
+		};
+		AADBE361053D5F8A00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenBookkeeping.h;
+			path = ../src/ScreenBookkeeping.h;
+			refType = 4;
+		};
+		AADBE362053D5F8A00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenNameEntryTraditional.cpp;
+			path = ../src/ScreenNameEntryTraditional.cpp;
+			refType = 4;
+		};
+		AADBE363053D5F8A00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenNameEntryTraditional.h;
+			path = ../src/ScreenNameEntryTraditional.h;
+			refType = 4;
+		};
+		AADBE364053D5F8A00D02EE9 = {
+			fileRef = AADBE360053D5F8A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AADBE365053D5F8A00D02EE9 = {
+			fileRef = AADBE361053D5F8A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AADBE366053D5F8A00D02EE9 = {
+			fileRef = AADBE362053D5F8A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AADBE367053D5F8A00D02EE9 = {
+			fileRef = AADBE363053D5F8A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AADBE368053DA38C00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = Bookkeeper.cpp;
+			path = ../src/Bookkeeper.cpp;
+			refType = 4;
+		};
+		AADBE369053DA38C00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = Bookkeeper.h;
+			path = ../src/Bookkeeper.h;
+			refType = 4;
+		};
+		AADBE36A053DA38C00D02EE9 = {
+			fileRef = AADBE368053DA38C00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AADBE36B053DA38C00D02EE9 = {
+			fileRef = AADBE369053DA38C00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
