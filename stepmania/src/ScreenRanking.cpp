@@ -802,7 +802,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
 	case PageToShow::TYPE_ALL_COURSES:
 		{
-			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
+			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
 			for( unsigned c=0; c<m_vpCourseScoreRowItem.size(); c++ )
 			{
