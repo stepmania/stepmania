@@ -50,7 +50,29 @@ void PrefsManager::Unsubscribe( IPreference *p )
 
 bool g_bAutoRestart = false;
 
-PrefsManager::PrefsManager()
+PrefsManager::PrefsManager() :
+	m_bWindowed				( Options, "Windowed",				
+#ifdef DEBUG
+	true
+#else
+	false
+#endif
+		),
+	m_iDisplayWidth			( Options, "DisplayWidth",			640 ),
+	m_iDisplayHeight		( Options, "DisplayHeight",			480 ),
+	m_iDisplayColorDepth	( Options, "DisplayColorDepth",		16 ),
+	m_iTextureColorDepth	( Options, "TextureColorDepth",		16 ),
+	m_iMovieColorDepth		( Options, "MovieColorDepth",		16 ),
+	m_iMaxTextureResolution	( Options, "MaxTextureResolution",	2048 ),
+	m_iRefreshRate			( Options, "RefreshRate",			REFRESH_DEFAULT ),
+	m_bShowStats			( Options, "ShowStats",				
+#ifdef DEBUG
+	true
+#else
+	false
+#endif
+	),
+	m_bShowBanners			( Options, "ShowBanners",			true )
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -58,27 +80,9 @@ PrefsManager::PrefsManager()
 
 void PrefsManager::Init()
 {
-#ifdef DEBUG
-	m_bWindowed = true;
-#else
-	m_bWindowed = false;
-#endif
-	m_iDisplayWidth = 640;
-	m_iDisplayHeight = 480;
-	m_iDisplayColorDepth = 16;
-	m_iTextureColorDepth = 16;		// default to 16 for better preformance on slower cards
-	m_iMovieColorDepth = 16;
-	m_iMaxTextureResolution = 2048;
-	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bOnlyDedicatedMenuButtons = false;
 	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
 	m_fConstantUpdateDeltaSeconds = 0;
-#ifdef DEBUG
-	m_bShowStats = true;
-#else
-	m_bShowStats = false;
-#endif
-	m_bShowBanners = true ;
 	m_BackgroundMode = BGMODE_ANIMATIONS;
 	m_iNumBackgrounds = 8;
 	m_bShowDanger = true;
@@ -365,21 +369,11 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	if( !ini.ReadFile(sIni) )
 		return;
 
-	ini.GetValue( "Options", "Windowed",						m_bWindowed );
 	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
 	ini.GetValue( "Options", "PAL",								m_bPAL );
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.GetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
-	ini.GetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
-	ini.GetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );
-	ini.GetValue( "Options", "TextureColorDepth",				m_iTextureColorDepth );
-	ini.GetValue( "Options", "MovieColorDepth",					m_iMovieColorDepth );
-	ini.GetValue( "Options", "MaxTextureResolution",			m_iMaxTextureResolution );
-	ini.GetValue( "Options", "RefreshRate",						m_iRefreshRate );
 	ini.GetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
-	ini.GetValue( "Options", "ShowStats",						m_bShowStats );
-	ini.GetValue( "Options", "ShowBanners",						m_bShowBanners );
 	ini.GetValue( "Options", "BackgroundMode",					(int&)m_BackgroundMode );
 	ini.GetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.GetValue( "Options", "ShowDanger",						m_bShowDanger );
@@ -624,19 +618,9 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 {
 	IniFile ini;
 
-	ini.SetValue( "Options", "Windowed",						m_bWindowed );
 	ini.SetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.SetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
-	ini.SetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
-	ini.SetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );
-	ini.SetValue( "Options", "TextureColorDepth",				m_iTextureColorDepth );
-	ini.SetValue( "Options", "MovieColorDepth",					m_iMovieColorDepth );
-	ini.SetValue( "Options", "MaxTextureResolution",			m_iMaxTextureResolution );
-	ini.SetValue( "Options", "RefreshRate",						m_iRefreshRate );
 	ini.SetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
-	ini.SetValue( "Options", "ShowStats",						m_bShowStats );
-	ini.SetValue( "Options", "ShowBanners",						m_bShowBanners );
 	ini.SetValue( "Options", "BackgroundMode",					m_BackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.SetValue( "Options", "ShowDanger",						m_bShowDanger );
@@ -900,7 +884,6 @@ PrefsManager::Premium	PrefsManager::GetPremium()
 	else 
 		return m_Premium; 
 }
-
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez

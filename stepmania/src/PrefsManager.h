@@ -5,8 +5,7 @@
 
 #include "PlayerNumber.h"
 #include "Grade.h"	// for NUM_GRADE_TIERS
-
-class IPreference;
+#include "Preference.h"
 class IniFile;
 
 class PrefsManager
@@ -18,16 +17,16 @@ public:
 	void Init();
 
 	// GameOptions (ARE saved between sessions)
-	bool			m_bWindowed;
-	int				m_iDisplayWidth;
-	int				m_iDisplayHeight;
-	int				m_iDisplayColorDepth;
-	int				m_iTextureColorDepth;
-	int				m_iMovieColorDepth;
-	int				m_iMaxTextureResolution;
-	int				m_iRefreshRate;
-	bool			m_bShowStats;
-	bool			m_bShowBanners;
+	Preference<bool>	m_bWindowed;
+	Preference<int>		m_iDisplayWidth;
+	Preference<int>		m_iDisplayHeight;
+	Preference<int>		m_iDisplayColorDepth;
+	Preference<int>		m_iTextureColorDepth;
+	Preference<int>		m_iMovieColorDepth;
+	Preference<int>		m_iMaxTextureResolution;
+	Preference<int>		m_iRefreshRate;
+	Preference<bool>	m_bShowStats;
+	Preference<bool>	m_bShowBanners;
 	enum BackgroundModes { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
 	int				m_iNumBackgrounds;
 	float			m_fBGBrightness;

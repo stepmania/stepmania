@@ -73,6 +73,17 @@ public:
 	{
 		return m_currentValue;
 	}
+
+	T& operator=( const T& other )
+	{
+		return m_currentValue = other;
+	}
+
+	T operator!()
+	{
+		return !m_currentValue;
+	}
+
 };
 
 #endif

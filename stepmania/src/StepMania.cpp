@@ -109,11 +109,11 @@ static void StoreActualGraphicOptions( bool initial )
 
 	CString log = ssprintf("%s %dx%d %d color %d texture %dHz %s %s",
 		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iTextureColorDepth, 
-		PREFSMAN->m_iRefreshRate,
+		(int)PREFSMAN->m_iDisplayWidth, 
+		(int)PREFSMAN->m_iDisplayHeight, 
+		(int)PREFSMAN->m_iDisplayColorDepth, 
+		(int)PREFSMAN->m_iTextureColorDepth, 
+		(int)PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
 		PREFSMAN->m_bSmoothLines? "AA" : "NoAA" );
 	if( initial )
