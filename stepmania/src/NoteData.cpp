@@ -785,6 +785,10 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	Init();
 	
 	SetNumTracks( iNewNumTracks );
+	ConvertHoldNotesTo2sAnd3s();
+
+	NoteData Input;
+	Input.To2sAnd3s( in );
 
 	// copy tracks
 	for( int t=0; t<GetNumTracks(); t++ )
@@ -795,23 +799,10 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 
 		if( iOriginalTrack == -1 )
 			continue;
-		m_TapNotes[t] = in.m_TapNotes[iOriginalTrack];
+		m_TapNotes[t] = Input.m_TapNotes[iOriginalTrack];
 	}
 
-	// copy holds
-	int iInverseMapping[MAX_NOTE_TRACKS];
-	for( int i = 0; i < iNewNumTracks; ++i )
-	{
-		int iFrom = iOriginalTrackToTakeFrom[i];
-		iInverseMapping[iFrom] = i;
-	}
-
-	for( int i=0; i<in.GetNumHoldNotes(); i++ )	// for each HoldNote
-	{
-		HoldNote hn = in.GetHoldNote(i);
-		hn.iTrack = iInverseMapping[hn.iTrack];
-		this->AddHoldNote( hn );
-	}
+	Convert2sAnd3sToHoldNotes();
 }
 
 void NoteData::MoveTapNoteTrack( int dest, int src )
