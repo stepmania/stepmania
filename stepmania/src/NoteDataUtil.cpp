@@ -846,25 +846,59 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			{
 			case TapNote::empty:
 			case TapNote::hold_head:
-				continue;
+			case TapNote::hold_tail:
+			case TapNote::autoKeysound:
+				continue;	// skip
+			case TapNote::tap:
+			case TapNote::mine:
+			case TapNote::attack:
+				break;	// shuffle this
+			default:
+				ASSERT(0);
 			}
 
-			if( inout.IsHoldNoteAtBeat(t1,r) )
-				continue;
+#if _DEBUG
+			ASSERT_M( !inout.IsHoldNoteAtBeat(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
+#endif
 
-			// a tap that is not part of a hold
-			// probe for a spot to swap with
-			for( int i=0; i<4; i++ )
+			// Probe for a spot to swap with.
+			set<int> vTriedTracks;
+			for( int i=0; i<4; i++ )	// probe max 4 times
 			{
-				const int t2 = rand() % inout.GetNumTracks();
+				int t2 = rand() % inout.GetNumTracks();
+				if( vTriedTracks.find(t2) != vTriedTracks.end() )	// already tried this track
+					continue;	// skip
+				vTriedTracks.insert( t2 );
+
+				// swapping with ourself is a no-op
+				if( t1 == t2 )
+					break;	// done swapping
+
 				const TapNote tn2 = inout.GetTapNote(t2, r);
+				switch( tn2.type )
+				{
+				case TapNote::hold_head:
+				case TapNote::hold_tail:
+				case TapNote::autoKeysound:
+					continue;	// don't swap with these
+				case TapNote::empty:
+				case TapNote::tap:
+				case TapNote::mine:
+				case TapNote::attack:
+					break;	// ok to swap with this
+				default:
+					ASSERT(0);
+				}
+
+				// don't swap into the middle of a hold note
 				if( inout.IsHoldNoteAtBeat(t2,r) )
 					continue;
 
-				// swap
+				// do the swap
 				inout.SetTapNote(t1, r, tn2);
 				inout.SetTapNote(t2, r, tn1);
-				break;
+				
+				break;	// done swapping
 			}
 		}
 	}
