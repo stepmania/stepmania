@@ -11,6 +11,7 @@
  */
 
 #include <SDL.h>
-#include "RageSoundDriver_SDL.h"
+#include "Sound/RageSoundDriver_SDL.h"
+
 #endif
 

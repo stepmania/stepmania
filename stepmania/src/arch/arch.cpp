@@ -21,8 +21,6 @@
 #include "arch_Win32.h"
 #endif
 
-#include "Sound/RageSoundDriver_SDL.h"
-
 LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }
 ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
 ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
@@ -71,12 +69,9 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 #ifdef HAVE_OSS
 			if(!DriversToTry[i].CompareNoCase("OSS")) ret = new RageSound_OSS;
 #endif
-            if(!DriversToTry[i].CompareNoCase("SDL"))
-              try {
-                ret = new RageSound_SDL;
-              } catch (RageException e) {
-                ret = NULL;
-              }
+#ifdef RAGE_SOUND_SDL
+            if(!DriversToTry[i].CompareNoCase("SDL")) ret = new RageSound_SDL;
+#endif
 			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
 			if( !ret )
 				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].c_str());
