@@ -134,7 +134,7 @@ try {
 	{
 		CString err;
 		Lua::PopStack( L, err );
-		RageException::Throw( err );
+		RageException::Throw( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
 	}
 
 	RAGE_ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
@@ -144,8 +144,8 @@ try {
 	lua_close( L );
 
 	return result;
-} catch( const CString &e ) {
-	RageException::Throw( "Error running \"%s\": %s", str.c_str(), e.c_str() );
+} catch( const CString &err ) {
+	RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
 }
 }
 
