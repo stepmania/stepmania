@@ -326,6 +326,8 @@ HRESULT CreateObjects( HWND hWnd )
 	//WM->SetNewWindow( new WindowSandbox );
 	WM->SetNewWindow( new WindowTitleMenu );
 
+	Sleep(1000);	// let the disk operations catch up
+
     DXUtil_Timer( TIMER_START );    // Start the accurate timer
 
 

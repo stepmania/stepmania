@@ -324,7 +324,9 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 				{
 					if( m_BPMSegments[b].m_fStartBeat == fFreezeBeat )
 					{
-						m_BPMSegments[b].m_fFreezeSeconds = fFreezeSeconds*0.8;
+						m_BPMSegments[b].m_fFreezeSeconds = fFreezeSeconds;
+						m_BPMSegments[b].m_fFreezeSeconds *= 0.8;	// hack - Why is this needed?
+
 						break;
 					}
 				}
@@ -393,37 +395,76 @@ void Song::TidyUpData()
 	{
 		CStringArray arrayPossibleMusic;
 		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 
 		if( arrayPossibleMusic.GetSize() != 0 )		// we found a match
 			m_sMusic = arrayPossibleMusic.GetAt( 0 );
 		else
-			RageError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
+			m_sMusic = "";
+		//	RageError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
 	}
 	if( m_sBanner == "" || !DoesFileExist(GetBannerPath()) )
 	{
+		// find the smallest image in the directory
+
 		CStringArray arrayPossibleBanners;
-		GetDirListing( m_sSongDir + CString("*banner*.*"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBanners );
 
-		if( arrayPossibleBanners.GetSize() != 0 )		// we found a match
-			m_sBanner = arrayPossibleBanners.GetAt( 0 );
+		D3DXIMAGE_INFO d3dii;
+		int iSmallestNumPixelsSoFar = 1024*1024;
+		CString sSmallestFileNameSoFar = "";
+
+		for( int i=0; i<arrayPossibleBanners.GetSize(); i++ )
+		{
+			if( SUCCEEDED( D3DXGetImageInfoFromFile( m_sSongDir + arrayPossibleBanners[i], &d3dii ) ) )
+			{
+				int iNumPixels = d3dii.Width * d3dii.Height;
+				if( iNumPixels < iSmallestNumPixelsSoFar )	// we have a new leader!
+				{
+					iSmallestNumPixelsSoFar = iNumPixels;
+					sSmallestFileNameSoFar = arrayPossibleBanners[i];
+				}
+			}
+		}
+
+		if( sSmallestFileNameSoFar != "" )		// we found a match
+			m_sBanner = sSmallestFileNameSoFar;
 		else
 			RageError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 	if( m_sBackground == "" || !DoesFileExist(GetBackgroundPath()) ) 
 	{
-		CStringArray arrayPossibleBanners;
-		GetDirListing( m_sSongDir + CString("*b*g*.*"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*640*.*"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBanners );
+		// find the largest image in the directory
 
-		if( arrayPossibleBanners.GetSize() != 0 )		// we found a match
-			m_sBackground = arrayPossibleBanners.GetAt( 0 );
+		CStringArray arrayPossibleBackgrounds;
+		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBackgrounds );
+		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBackgrounds );
+		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBackgrounds );
+
+		D3DXIMAGE_INFO d3dii;
+		int iBiggestNumPixelsSoFar = 0;
+		CString sBiggestFileNameSoFar = "";
+
+		for( int i=0; i<arrayPossibleBackgrounds.GetSize(); i++ )
+		{
+			if( SUCCEEDED( D3DXGetImageInfoFromFile( m_sSongDir + arrayPossibleBackgrounds[i], &d3dii ) ) )
+			{
+				int iNumPixels = d3dii.Width * d3dii.Height;
+				if( iNumPixels > iBiggestNumPixelsSoFar )	// we have a new leader!
+				{
+					iBiggestNumPixelsSoFar = iNumPixels;
+					sBiggestFileNameSoFar = arrayPossibleBackgrounds[i];
+				}
+			}
+		}
+
+		if( sBiggestFileNameSoFar != "" )		// we found a match
+			m_sBackground = sBiggestFileNameSoFar;
 		else
-			RageError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
+			RageError( ssprintf("Background could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 }
 

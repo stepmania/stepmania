@@ -192,6 +192,14 @@ SOURCE=.\WindowDancing.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowGameOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowGameOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowIntroCovers.cpp
 # End Source File
 # Begin Source File

@@ -54,6 +54,11 @@ public:
 	CString GetBackgroundPath()	{return m_sSongDir + m_sBackground; };
 //	Steps&  GetStepsAt( int iIndex )  {return arraySteps[iIndex]; };
 
+	bool HasMusic()			{return m_sMusic != ""		&&	DoesFileExist(GetMusicPath()); };
+	bool HasBanner()		{return m_sBanner != ""		&&  DoesFileExist(GetBannerPath()); };
+	bool HasBackground()	{return m_sBackground != ""	&&  DoesFileExist(GetBackgroundPath()); };
+
+
 	CString GetTitle()			{return m_sTitle; };
 	CString GetArtist()			{return m_sArtist; };
 	CString GetCreator()		{return m_sCreator; };

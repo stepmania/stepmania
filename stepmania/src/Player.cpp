@@ -438,8 +438,8 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	// compute what the score should be for the note we stepped on
 	StepScore &stepscore = m_StepScore[iIndexThatWasSteppedOn];
 
-	if(		 fPercentFromPerfect < 0.20f )	stepscore = perfect;
-	else if( fPercentFromPerfect < 0.45f )	stepscore = great;
+	if(		 fPercentFromPerfect < 0.25f )	stepscore = perfect;
+	else if( fPercentFromPerfect < 0.50f )	stepscore = great;
 	else if( fPercentFromPerfect < 0.75f )	stepscore = good;
 	else									stepscore = boo;
 
