@@ -464,6 +464,10 @@ bool Course::HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const
 {
 	/* Check to see if any songs would change if difficult. */
 
+	/* COURSE_DIFFICULTY_REGULAR is always available (provided IsPlayableIn). */
+	if( cd == COURSE_DIFFICULTY_REGULAR )
+		return true;
+
 	vector<Info> Normal, Hard;
 	GetCourseInfo( nt, Normal, COURSE_DIFFICULTY_REGULAR );
 	GetCourseInfo( nt, Hard, cd );
