@@ -627,7 +627,6 @@ float RageSound::GetPositionSecondsInternal() const
 
 float RageSound::GetPositionSeconds() const
 {
-	LOG->Trace("XXX fix %f", Sample->GetOffsetFix());
 	return GetPositionSecondsInternal() + Sample->GetOffsetFix();
 }
 
