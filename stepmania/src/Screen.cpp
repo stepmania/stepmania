@@ -238,6 +238,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
 #include "ScreenPlayerOptions.h"
+#include "ScreenSandbox.h"
 #include "ScreenSelectCourse.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenSelectDifficultyEX.h"
@@ -297,6 +298,7 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenInputOptions") )			ret = new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )			ret = new ScreenMusicScroll;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )		ret = new ScreenPlayerOptions;
+	else if( 0==stricmp(sClassName, "ScreenSandbox") )				ret = new ScreenSandbox;
 	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )			ret = new ScreenSelectCourse;
 	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )		ret = new ScreenSelectDifficulty;
 	else if( 0==stricmp(sClassName, "ScreenSelectDifficultyEX") )	ret = new ScreenSelectDifficultyEX;
