@@ -23,6 +23,8 @@ Adjusted "hoshi no umi kaze no yume" translit.
 When in "SM options navigation", pressing start in the options menus only moves
   to the "exit" row, instead of going directly to the next screen.  This ensures
   that both players have a chance to set options.
+Theme change: _shared fonts in "Numbers" are now named "_numbers".  (This is to
+  differentiate them from the _shared fonts in Fonts.)  .redir files need updating.
 
 * Alpha 21
 Fixed edits causing malformed DWI tags to be written.
