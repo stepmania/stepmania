@@ -7,6 +7,7 @@
 #include "RageThreads.h"
 
 class RageSound;
+class RageSoundBase;
 class RageSoundDriver;
 
 class RageSoundManager
@@ -16,7 +17,7 @@ class RageSoundManager
 	set<RageSound *> owned_sounds;
 
 	/* Set of sounds that are finished and should be deleted. */
-	set<RageSound *> sounds_to_delete;
+	set<RageSoundBase *> sounds_to_delete;
 
 	RageSoundDriver *driver;
 
