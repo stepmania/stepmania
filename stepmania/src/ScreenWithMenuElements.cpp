@@ -135,6 +135,7 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 		UtilOffCommand( m_MemoryCardDisplay[p], m_sName );
 	UtilOffCommand( m_autoFooter, m_sName );
 	UtilOffCommand( m_textHelp, m_sName );
+	OFF_COMMAND( m_sprOverlay );
 
 	SCREENMAN->PlaySharedBackgroundOffCommand();
 
