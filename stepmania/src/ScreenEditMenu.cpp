@@ -129,10 +129,10 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		return;
 
 	Song* pSong					= m_Selector.GetSelectedSong();
-	NotesType nt				= m_Selector.GetSelectedNotesType();
+	StepsType nt				= m_Selector.GetSelectedNotesType();
 	Difficulty dc				= m_Selector.GetSelectedDifficulty();
 	Steps* pNotes				= m_Selector.GetSelectedNotes();
-//	NotesType soureNT			= m_Selector.GetSelectedSourceNotesType();
+//	StepsType soureNT			= m_Selector.GetSelectedSourceNotesType();
 //	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
 	Steps* pSourceNotes			= m_Selector.GetSelectedSourceNotes();
 	EditMenu::Action action		= m_Selector.GetSelectedAction();

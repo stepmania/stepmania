@@ -409,7 +409,7 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongs
  * play that song, even if we're on difficult and harder notes don't exist.  (The
  * exception is a static song entry with a meter range, but that's not very useful.)
  */
-bool Course::HasDifficult( NotesType nt ) const
+bool Course::HasDifficult( StepsType nt ) const
 {
 	/* Check to see if any songs would change if difficult. */
 
@@ -447,7 +447,7 @@ bool Course::HasDifficult( NotesType nt ) const
 	return false;
 }
 
-bool Course::IsPlayableIn( NotesType nt ) const
+bool Course::IsPlayableIn( StepsType nt ) const
 {
 	vector<Info> ci;
 	GetCourseInfo( nt, ci );
@@ -455,7 +455,7 @@ bool Course::IsPlayableIn( NotesType nt ) const
 }
 
 
-static vector<Song*> GetFilteredBestSongs( NotesType nt )
+static vector<Song*> GetFilteredBestSongs( StepsType nt )
 {
 	vector<Song*> vSongsByMostPlayed = SONGMAN->GetBestSongs();
 	// filter out songs that don't have both medium and hard steps and long ver sons
@@ -472,7 +472,7 @@ static vector<Song*> GetFilteredBestSongs( NotesType nt )
 	return vSongsByMostPlayed;
 }
 
-void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficult ) const
+void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficult ) const
 {
 	vector<Entry> entries = m_entries;
 
@@ -701,7 +701,7 @@ void Course::GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHig
 bool Course::GetTotalSeconds( float& fSecondsOut ) const
 {
 	vector<Info> ci;
-	GetCourseInfo( NOTES_TYPE_DANCE_SINGLE, ci );
+	GetCourseInfo( STEPS_TYPE_DANCE_SINGLE, ci );
 
 	fSecondsOut = 0;
 	for( unsigned i=0; i<ci.size(); i++ )
@@ -730,7 +730,7 @@ struct RankingToInsert
 	}
 };
 
-void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iScore[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
+void Course::AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], int iScore[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
 {
 	vector<RankingToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )

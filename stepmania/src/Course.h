@@ -76,11 +76,11 @@ public:
 	};
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	void GetCourseInfo( NotesType nt, vector<Info> &ci, int Difficult = -1 ) const;
+	void GetCourseInfo( StepsType nt, vector<Info> &ci, int Difficult = -1 ) const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
-	bool HasDifficult( NotesType nt ) const;
-	bool IsPlayableIn( NotesType nt ) const;
+	bool HasDifficult( StepsType nt ) const;
+	bool IsPlayableIn( StepsType nt ) const;
 	RageColor GetColor() const;
 	Difficulty GetDifficulty( const Info &stage ) const;
 	void GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const;
@@ -113,7 +113,7 @@ public:
 		float fSurviveTime;
 	} m_MemCardScores[NUM_MEMORY_CARDS][NUM_NOTES_TYPES];
 	
-	void AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] );	// iNewRecordIndexOut[p] = -1 if not a new record
+	void AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] );	// iNewRecordIndexOut[p] = -1 if not a new record
 
 	// sorting values
 	int		SortOrder_TotalDifficulty;

@@ -28,14 +28,14 @@ public:
 	const StyleDef*	GetStyleDefForStyle( Style s );
 
 	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
-	void	GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo );
-	Style	GetEditorStyleForNotesType( NotesType nt );
+	void	GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo );
+	Style	GetEditorStyleForNotesType( StepsType nt );
 
 	void GetEnabledGames( vector<Game>& aGamesOut );
 
-	static int NotesTypeToNumTracks( NotesType nt );
-	static NotesType StringToNotesType( CString sNotesType );
-	static CString NotesTypeToString( NotesType nt );
+	static int NotesTypeToNumTracks( StepsType nt );
+	static StepsType StringToNotesType( CString sNotesType );
+	static CString NotesTypeToString( StepsType nt );
 	static Game StringToGameType( CString sGameType );
 	Style GameAndStringToStyle( Game game, CString sStyle );
 

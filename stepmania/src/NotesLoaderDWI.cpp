@@ -106,7 +106,7 @@ bool DWILoader::LoadFromDWITokens(
 {
 	LOG->Trace( "Steps::LoadFromDWITokens()" );
 
-	out.m_NotesType = NOTES_TYPE_INVALID;
+	out.m_NotesType = STEPS_TYPE_INVALID;
 
 	sStepData1.Replace( "\n", "" );
 	sStepData1.Replace( "\r", "" );
@@ -115,28 +115,28 @@ bool DWILoader::LoadFromDWITokens(
 	sStepData2.Replace( "\r", "" );
 	sStepData2.Replace( " ", "" );
 
-	if(		 sMode == "SINGLE" )	out.m_NotesType = NOTES_TYPE_DANCE_SINGLE;
-	else if( sMode == "DOUBLE" )	out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
-	else if( sMode == "COUPLE" )	out.m_NotesType = NOTES_TYPE_DANCE_COUPLE;
-	else if( sMode == "SOLO" )		out.m_NotesType = NOTES_TYPE_DANCE_SOLO;
+	if(		 sMode == "SINGLE" )	out.m_NotesType = STEPS_TYPE_DANCE_SINGLE;
+	else if( sMode == "DOUBLE" )	out.m_NotesType = STEPS_TYPE_DANCE_DOUBLE;
+	else if( sMode == "COUPLE" )	out.m_NotesType = STEPS_TYPE_DANCE_COUPLE;
+	else if( sMode == "SOLO" )		out.m_NotesType = STEPS_TYPE_DANCE_SOLO;
 	else	
 	{
 		ASSERT(0);	// Unrecognized DWI notes format
-		out.m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+		out.m_NotesType = STEPS_TYPE_DANCE_SINGLE;
 	}
 
 
 	g_mapDanceNoteToNoteDataColumn.clear();
 	switch( out.m_NotesType )
 	{
-	case NOTES_TYPE_DANCE_SINGLE:
+	case STEPS_TYPE_DANCE_SINGLE:
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
 		break;
-	case NOTES_TYPE_DANCE_DOUBLE:
-	case NOTES_TYPE_DANCE_COUPLE:
+	case STEPS_TYPE_DANCE_DOUBLE:
+	case STEPS_TYPE_DANCE_COUPLE:
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
@@ -146,7 +146,7 @@ bool DWILoader::LoadFromDWITokens(
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
 		break;
-	case NOTES_TYPE_DANCE_SOLO:
+	case STEPS_TYPE_DANCE_SOLO:
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
@@ -457,7 +457,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				(iNumParams==5) ? sParams[4] : "",
 				*pNewNotes
 				);
-			if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
+			if(pNewNotes->m_NotesType != STEPS_TYPE_INVALID)
 				out.m_apNotes.push_back( pNewNotes );
 			else
 				delete pNewNotes;

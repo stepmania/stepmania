@@ -124,7 +124,7 @@ EditMenu::EditMenu()
 				m_iSelection[ROW_SONG] = i;
 		OnRowValueChanged( ROW_SONG );
 
-		// Select the current NotesType and difficulty if any
+		// Select the current StepsType and difficulty if any
 		if( GAMESTATE->m_pCurNotes )
 		{
 			for( i=0; i<m_NotesTypes.size(); i++ )

@@ -234,7 +234,7 @@ public:
 	//
 
 	// Filled in by ScreenNameEntry and used by ScreenRanking to flash the recent high scores
-	NotesType			m_RankingNotesType;	// meaningless if a course was played
+	StepsType			m_RankingNotesType;	// meaningless if a course was played
 	RankingCategory		m_RankingCategory[NUM_PLAYERS];	// meaningless if a course was played
 	Course*				m_pRankingCourse;		// meaningless unless Course was played
 	int					m_iRankingIndex[NUM_PLAYERS];		// -1 if no new high score

@@ -95,7 +95,7 @@ public:
 	CString GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
-	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
+	void AutoGen( StepsType ntTo, StepsType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
 	void RemoveAutoGenNotes();
 
 	/* Directory this song data came from: */
@@ -243,18 +243,18 @@ public:
 	vector<Steps*> m_apNotes;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
-	bool SongHasNotesType( NotesType nt ) const;
-	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
-	void GetNotes( vector<Steps*>& arrayAddTo, NotesType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
-	Steps* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	Steps* GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
-	Steps* GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
-	Steps* GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	void GetEdits( vector<Steps*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
+	bool SongHasNotesType( StepsType nt ) const;
+	bool SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const;
+	void GetNotes( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
+	Steps* GetNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	Steps* GetNotes( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
+	Steps* GetNotes( StepsType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
+	Steps* GetClosestNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
-	bool IsEasy( NotesType nt ) const;
-	bool HasEdits( NotesType nt ) const;
+	bool IsEasy( StepsType nt ) const;
+	bool HasEdits( StepsType nt ) const;
 	Grade GetGradeForDifficulty( const StyleDef *s, PlayerNumber pn, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;

@@ -31,7 +31,7 @@ DifficultyDisplay::DifficultyDisplay()
 	}
 }
 
-void DifficultyDisplay::SetDifficulties( const Song* pSong, NotesType curType )
+void DifficultyDisplay::SetDifficulties( const Song* pSong, StepsType curType )
 {
 	for( int diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
 	{

@@ -71,8 +71,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
 	GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
-	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->GetNotes( NOTES_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
-	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->GetNotes( NOTES_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
+	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->GetNotes( STEPS_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
+	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->GetNotes( STEPS_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
@@ -168,7 +168,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		break;
 	case summary:
 		{
-			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
 				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
@@ -196,7 +196,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		break;
 	case course:
 		{
-			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
 				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);

@@ -829,7 +829,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetNotes( vector<Steps*>& arrayAddTo, NotesType nt, Difficulty dc, int iMeterLow, int iMeterHigh, CString sDescription, bool bIncludeAutoGen ) const
+void Song::GetNotes( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, int iMeterLow, int iMeterHigh, CString sDescription, bool bIncludeAutoGen ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Steps
 	{
@@ -848,7 +848,7 @@ void Song::GetNotes( vector<Steps*>& arrayAddTo, NotesType nt, Difficulty dc, in
 	}
 }
 
-Steps* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Steps* Song::GetNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	vector<Steps*> vNotes;
 	GetNotes( vNotes, nt, dc, -1, -1, "", bIncludeAutoGen );
@@ -858,7 +858,7 @@ Steps* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 		return vNotes[0];
 }
 
-Steps* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen ) const
+Steps* Song::GetNotes( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen ) const
 {
 	vector<Steps*> vNotes;
 	GetNotes( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", bIncludeAutoGen );
@@ -868,7 +868,7 @@ Steps* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bInclud
 		return vNotes[0];
 }
 
-Steps* Song::GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen ) const
+Steps* Song::GetNotes( StepsType nt, CString sDescription, bool bIncludeAutoGen ) const
 {
 	vector<Steps*> vNotes;
 	GetNotes( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription, bIncludeAutoGen );
@@ -879,7 +879,7 @@ Steps* Song::GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen 
 }
 
 
-Steps* Song::GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Steps* Song::GetClosestNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	Difficulty newDC = dc;
 	Steps* pNotes;
@@ -907,7 +907,7 @@ Steps* Song::GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen 
 	return pNotes;
 }
 
-void Song::GetEdits( vector<Steps*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const
+void Song::GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAutoGen ) const
 {
 }
 
@@ -920,7 +920,7 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 	return true;
 }
 
-bool Song::SongHasNotesType( NotesType nt ) const
+bool Song::SongHasNotesType( StepsType nt ) const
 {
 	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
 		if( m_apNotes[i]->m_NotesType == nt )
@@ -928,7 +928,7 @@ bool Song::SongHasNotesType( NotesType nt ) const
 	return false;
 }
 
-bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const
+bool Song::SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const
 {
 	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
 		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->GetDifficulty() == dc )
@@ -1000,7 +1000,7 @@ void Song::SaveToDWIFile()
 
 void Song::AddAutoGenNotes()
 {
-	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
+	for( StepsType ntMissing=(StepsType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(StepsType)(ntMissing+1) )
 	{
 		if( SongHasNotesType(ntMissing) )
 			continue;
@@ -1010,10 +1010,10 @@ void Song::AddAutoGenNotes()
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
 
 		// look for closest match
-		NotesType	ntBestMatch = (NotesType)-1;
+		StepsType	ntBestMatch = (StepsType)-1;
 		int			iBestTrackDifference = 10000;	// inf
 
-		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
+		for( StepsType nt=(StepsType)0; nt<NUM_NOTES_TYPES; nt=(StepsType)(nt+1) )
 		{
 			vector<Steps*> apNotes;
 			this->GetNotes( apNotes, nt );
@@ -1035,7 +1035,7 @@ void Song::AddAutoGenNotes()
 	}
 }
 
-void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
+void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
 //	int iNumTracksOfTo = GAMEMAN->NotesTypeToNumTracks(ntTo);
 
@@ -1088,7 +1088,7 @@ bool Song::IsNew() const
 	return GetNumTimesPlayed()==0;
 }
 
-bool Song::IsEasy( NotesType nt ) const
+bool Song::IsEasy( StepsType nt ) const
 {
 	Steps* pBeginnerNotes = GetNotes( nt, DIFFICULTY_BEGINNER );
 	Steps* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
@@ -1123,7 +1123,7 @@ bool Song::IsEasy( NotesType nt ) const
 		return false;
 }
 
-bool Song::HasEdits( NotesType nt ) const
+bool Song::HasEdits( StepsType nt ) const
 {
 	vector<Steps*> vpNotes;
 	this->GetEdits( vpNotes, nt );

@@ -612,7 +612,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 			const int iIndex = BeatToNoteRow( fBeat );
 
 //			if( m_iNumTracks != sMeasureLine.GetLength() )
-//				RageException::Throw( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
 			for( int c=0; c<min(sMeasureLine.GetLength(),out.GetNumTracks()); c++ )
 			{
@@ -803,15 +803,15 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 	{
 	case left:
 	case right:
-		// Is there a way to do this withoutn handling each NotesType? -Chris
+		// Is there a way to do this withoutn handling each StepsType? -Chris
 		// Identity transform for ones not handled below.  What should we do here?
 		for( t = 0; t < MAX_NOTE_TRACKS; ++t )
 			iTakeFromTrack[t] = t;
 		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 		{
-		case NOTES_TYPE_DANCE_SINGLE:
-		case NOTES_TYPE_DANCE_DOUBLE:
-		case NOTES_TYPE_DANCE_COUPLE:
+		case STEPS_TYPE_DANCE_SINGLE:
+		case STEPS_TYPE_DANCE_DOUBLE:
+		case STEPS_TYPE_DANCE_COUPLE:
 			iTakeFromTrack[0] = 2;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 3;
@@ -821,7 +821,7 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[6] = 7;
 			iTakeFromTrack[7] = 5;
 			break;
-		case NOTES_TYPE_DANCE_SOLO:
+		case STEPS_TYPE_DANCE_SOLO:
 			iTakeFromTrack[0] = 5;
 			iTakeFromTrack[1] = 4;
 			iTakeFromTrack[2] = 0;
@@ -829,8 +829,8 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[4] = 1;
 			iTakeFromTrack[5] = 2;
 			break;
-		case NOTES_TYPE_PUMP_SINGLE:
-		case NOTES_TYPE_PUMP_COUPLE:
+		case STEPS_TYPE_PUMP_SINGLE:
+		case STEPS_TYPE_PUMP_COUPLE:
 			iTakeFromTrack[0] = 3;
 			iTakeFromTrack[1] = 4;
 			iTakeFromTrack[2] = 2;
@@ -842,7 +842,7 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[8] = 5;
 			iTakeFromTrack[9] = 6;
 			break;
-		case NOTES_TYPE_PUMP_HALFDOUBLE:
+		case STEPS_TYPE_PUMP_HALFDOUBLE:
 			iTakeFromTrack[0] = 2;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 1;
@@ -850,7 +850,7 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[4] = 4;
 			iTakeFromTrack[5] = 5;
 			break;
-		case NOTES_TYPE_PUMP_DOUBLE:
+		case STEPS_TYPE_PUMP_DOUBLE:
 			iTakeFromTrack[0] = 8;
 			iTakeFromTrack[1] = 9;
 			iTakeFromTrack[2] = 7;

@@ -45,7 +45,7 @@ public:
 	
 	/* Steps format used for each player.  For example, "dance versus" reads
 	 * the Steps with the tag "dance-single". */
-	NotesType	m_NotesType;
+	StepsType	m_NotesType;
 									
 	enum StyleType
 	{
@@ -75,7 +75,7 @@ public:
 
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
 
-	bool MatchesNotesType( NotesType type ) const;
+	bool MatchesNotesType( StepsType type ) const;
 
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
 };

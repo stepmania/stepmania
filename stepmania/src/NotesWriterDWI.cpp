@@ -229,9 +229,9 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			CString str;
 			switch( out.m_NotesType )
 			{
-			case NOTES_TYPE_DANCE_SINGLE:
-			case NOTES_TYPE_DANCE_COUPLE:
-			case NOTES_TYPE_DANCE_DOUBLE:
+			case STEPS_TYPE_DANCE_SINGLE:
+			case STEPS_TYPE_DANCE_COUPLE:
+			case STEPS_TYPE_DANCE_DOUBLE:
 				str = NotesToDWIString( 
 					notedata.GetTapNote(start+0, row), 
 					notedata.GetTapNote(start+1, row),
@@ -244,7 +244,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 				notedata.SetTapNote(start+2, row, TAP_EMPTY);
 				notedata.SetTapNote(start+3, row, TAP_EMPTY);
 				break;
-			case NOTES_TYPE_DANCE_SOLO:
+			case STEPS_TYPE_DANCE_SOLO:
 				str = NotesToDWIString( 
 					notedata.GetTapNote(0, row),
 					notedata.GetTapNote(1, row),
@@ -299,10 +299,10 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
 
 	switch( out.m_NotesType )
 	{
-	case NOTES_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
-	case NOTES_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
-	case NOTES_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
-	case NOTES_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
+	case STEPS_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
+	case STEPS_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
+	case STEPS_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
+	case STEPS_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
 	default:	return false;	// not a type supported by DWI
 	}
 
@@ -389,8 +389,8 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 			continue;
 
 		WriteDWINotesField( fp, *out.m_apNotes[i], 0 );
-		if(out.m_apNotes[i]->m_NotesType==NOTES_TYPE_DANCE_DOUBLE ||
-		   out.m_apNotes[i]->m_NotesType==NOTES_TYPE_DANCE_COUPLE)
+		if(out.m_apNotes[i]->m_NotesType==STEPS_TYPE_DANCE_DOUBLE ||
+		   out.m_apNotes[i]->m_NotesType==STEPS_TYPE_DANCE_COUPLE)
 		{
 			fprintf( fp, ":\n" );
 			WriteDWINotesField( fp, *out.m_apNotes[i], 4 );

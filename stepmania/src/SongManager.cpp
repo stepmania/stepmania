@@ -296,7 +296,7 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 
 		for( unsigned i=0; i<uNumNotes; i++ )
 		{
-			NotesType nt;
+			StepsType nt;
 			Difficulty dc;
 
 			getline(f, line);
@@ -661,7 +661,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * set up, which is too restrictive.  How to handle this?
 	 *
 	 * XXX: Once we support edits, ignore them, too. */
-//	const NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+//	const StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Steps* pNotes = pSong->m_apNotes[i];
@@ -1018,8 +1018,8 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		pExtra2Notes = pExtra1Notes;
 	}
 
-	// If there are any notes at all that match this NotesType, everything should be filled out.
-	// Also, it's guaranteed that there is at least one Steps that matches the NotesType because the player
+	// If there are any notes at all that match this StepsType, everything should be filled out.
+	// Also, it's guaranteed that there is at least one Steps that matches the StepsType because the player
 	// had to play something before reaching the extra stage!
 	ASSERT( pExtra2Song && pExtra1Song && pExtra2Notes && pExtra1Notes );
 
@@ -1097,7 +1097,7 @@ struct CategoryScoreToInsert
 };
 
 // set iNewRecordIndex = -1 if not a new record
-void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
+void SongManager::AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS],
 							RankingCategory hsc[NUM_PLAYERS],
 							int iScore[NUM_PLAYERS],
 							int iNewRecordIndexOut[NUM_PLAYERS] )

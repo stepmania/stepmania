@@ -28,11 +28,11 @@
 
 Steps::Steps()
 {
-	/* FIXME: should we init this to NOTES_TYPE_INVALID? 
+	/* FIXME: should we init this to STEPS_TYPE_INVALID? 
 	 * I have a feeling that it's the right thing to do but that
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
-	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+	m_NotesType = STEPS_TYPE_DANCE_SINGLE;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
@@ -165,12 +165,10 @@ void Steps::Decompress() const
 			notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
 		else
 			notes->LoadTransformedSlidingWindow( &pdata, notes->GetNumTracks() );
-
-		return;
 	}
 	else if(!notes_comp)
 	{
-		return; /* there is no data */
+		/* there is no data, do nothing */
 	}
 	else
 	{
@@ -214,13 +212,13 @@ void Steps::DeAutogen()
 	Compress();
 }
 
-void Steps::AutogenFrom( Steps *parent_, NotesType ntTo )
+void Steps::AutogenFrom( Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_NotesType = ntTo;
 }
 
-void Steps::CopyFrom( Steps* pSource, NotesType ntTo )	// pSource does not have to be of the same NotesType!
+void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have to be of the same StepsType!
 {
 	m_NotesType = ntTo;
 	NoteData noteData;
@@ -236,7 +234,7 @@ void Steps::CopyFrom( Steps* pSource, NotesType ntTo )	// pSource does not have 
 		this->SetRadarValue( (RadarCategory)r, radarValues[r] );
 }
 
-void Steps::CreateBlank( NotesType ntTo )
+void Steps::CreateBlank( StepsType ntTo )
 {
 	m_NotesType = ntTo;
 	NoteData noteData;

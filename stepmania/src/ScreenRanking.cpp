@@ -99,7 +99,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 	}
 
 
-	vector<NotesType> aNotesTypesToShow;
+	vector<StepsType> aNotesTypesToShow;
 	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, aNotesTypesToShow );
 
 	// subtract hidden NotesTypes
@@ -108,10 +108,10 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 		split( NOTES_TYPES_TO_HIDE, ",", asNotesTypesToHide, true );
 		for( unsigned i=0; i<asNotesTypesToHide.size(); i++ )
 		{
-			NotesType nt = GameManager::StringToNotesType(asNotesTypesToHide[i]);
-			if( nt != NOTES_TYPE_INVALID )
+			StepsType nt = GameManager::StringToNotesType(asNotesTypesToHide[i]);
+			if( nt != STEPS_TYPE_INVALID )
 			{
-				const vector<NotesType>::iterator iter = find( aNotesTypesToShow.begin(), aNotesTypesToShow.end(), nt );
+				const vector<StepsType>::iterator iter = find( aNotesTypesToShow.begin(), aNotesTypesToShow.end(), nt );
 				if( iter != aNotesTypesToShow.end() )
 					aNotesTypesToShow.erase( iter );
 			}

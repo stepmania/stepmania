@@ -22,7 +22,7 @@ class DifficultyDisplay : public ActorFrame
 {
 public:
 	DifficultyDisplay();
-	void SetDifficulties( const Song* pSong, NotesType curType );
+	void SetDifficulties( const Song* pSong, StepsType curType );
 	void UnsetDifficulties();
 
 protected:

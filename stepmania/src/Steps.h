@@ -25,9 +25,9 @@ public:
 	~Steps();
 
 	// initializers
-	void AutogenFrom( Steps *parent, NotesType ntTo );
-	void CopyFrom( Steps* pSource, NotesType ntTo );
-	void CreateBlank( NotesType ntTo );
+	void AutogenFrom( Steps *parent, StepsType ntTo );
+	void CopyFrom( Steps* pSource, StepsType ntTo );
+	void CreateBlank( StepsType ntTo );
 
 	void Compress() const;
 	void Decompress() const;
@@ -44,7 +44,7 @@ public:
 	void SetRadarValue(int r, float val);
 	bool IsAutogen() const;	// Was created by autogen?
 
-	NotesType		m_NotesType;
+	StepsType		m_NotesType;
 
 	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );

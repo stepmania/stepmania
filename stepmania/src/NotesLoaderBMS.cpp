@@ -62,7 +62,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
-	out.m_NotesType = NOTES_TYPE_INVALID;
+	out.m_NotesType = STEPS_TYPE_INVALID;
 
 	NoteData* pNoteData = new NoteData;
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
@@ -107,14 +107,14 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			switch( atoi(value_data) )
 			{
 			case 1:		// 4 or 6 single
-				out.m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+				out.m_NotesType = STEPS_TYPE_DANCE_SINGLE;
 				// if the mode should be solo, then we'll update m_DanceStyle below when we read in step data
 				break;
 			case 2:		// couple/battle
-				out.m_NotesType = NOTES_TYPE_DANCE_COUPLE;
+				out.m_NotesType = STEPS_TYPE_DANCE_COUPLE;
 				break;
 			case 3:		// double
-				out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
+				out.m_NotesType = STEPS_TYPE_DANCE_DOUBLE;
 				break;
 			default:
 				LOG->Warn( "Invalid value '%d' for '#player'", atoi(value_data) );
@@ -142,7 +142,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 			// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 			if( value_data.Find("6") != -1 )
-				out.m_NotesType = NOTES_TYPE_DANCE_SOLO;
+				out.m_NotesType = STEPS_TYPE_DANCE_SOLO;
 		}
 		if( -1 != value_name.Find("#playlevel") ) 
 		{
@@ -186,15 +186,15 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		}
 	}
 	
-	if( out.m_NotesType == NOTES_TYPE_DANCE_SINGLE  || 
-		out.m_NotesType == NOTES_TYPE_DANCE_DOUBLE  || 
-		out.m_NotesType == NOTES_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
+	if( out.m_NotesType == STEPS_TYPE_DANCE_SINGLE  || 
+		out.m_NotesType == STEPS_TYPE_DANCE_DOUBLE  || 
+		out.m_NotesType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
 	{
 		pNoteData->MoveTapNoteTrack(DANCE_NOTE_PAD1_UP, DANCE_NOTE_PAD1_UPRIGHT);
 	}
 
 	// we're done reading in all of the BMS values
-	if( out.m_NotesType == NOTES_TYPE_INVALID )
+	if( out.m_NotesType == STEPS_TYPE_INVALID )
 	{
 		LOG->Warn("Couldn't determine note types of file '%s'", sPath.c_str() );
 		delete pNoteData;
@@ -210,14 +210,14 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	switch( out.m_NotesType )
 	{
-	case NOTES_TYPE_DANCE_SINGLE:
+	case STEPS_TYPE_DANCE_SINGLE:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
 		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
 		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
 		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
 		break;
-	case NOTES_TYPE_DANCE_DOUBLE:
-	case NOTES_TYPE_DANCE_COUPLE:
+	case STEPS_TYPE_DANCE_DOUBLE:
+	case STEPS_TYPE_DANCE_COUPLE:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
 		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
 		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
@@ -227,7 +227,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[6] = DANCE_NOTE_PAD2_UP;
 		iTransformNewToOld[7] = DANCE_NOTE_PAD2_RIGHT;
 		break;
-	case NOTES_TYPE_DANCE_SOLO:
+	case STEPS_TYPE_DANCE_SOLO:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
 		iTransformNewToOld[1] = DANCE_NOTE_PAD1_UPLEFT;
 		iTransformNewToOld[2] = DANCE_NOTE_PAD1_DOWN;

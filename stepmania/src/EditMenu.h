@@ -54,9 +54,9 @@ public:
 		{
 			"Group",
 			"Song",
-			"NotesType",
+			"StepsType",
 			"Difficulty",
-			"Source NotesType",
+			"Source StepsType",
 			"Source Difficulty",
 			"Action"
 		};
@@ -90,9 +90,9 @@ public:
 
 	CString		GetSelectedGroup()				{ return m_sGroups[m_iSelection[ROW_GROUP]]; }
 	Song*		GetSelectedSong()				{ return m_pSongs[m_iSelection[ROW_SONG]]; }
-	NotesType	GetSelectedNotesType()			{ return m_NotesTypes[m_iSelection[ROW_NOTES_TYPE]]; }
+	StepsType	GetSelectedNotesType()			{ return m_NotesTypes[m_iSelection[ROW_NOTES_TYPE]]; }
 	Difficulty	GetSelectedDifficulty()			{ return (Difficulty)m_iSelection[ROW_DIFFICULTY]; }
-	NotesType	GetSelectedSourceNotesType()	{ return m_NotesTypes[m_iSelection[ROW_SOURCE_NOTES_TYPE]]; }
+	StepsType	GetSelectedSourceNotesType()	{ return m_NotesTypes[m_iSelection[ROW_SOURCE_NOTES_TYPE]]; }
 	Difficulty	GetSelectedSourceDifficulty()	{ return (Difficulty)m_iSelection[ROW_SOURCE_DIFFICULTY]; }
 	Action		GetSelectedAction()				{ return m_Actions[m_iSelection[ROW_ACTION]]; }
 
@@ -113,7 +113,7 @@ private:
 	DifficultyMeter	m_SourceMeter;
 
 	CStringArray		m_sGroups;
-	vector<NotesType>	m_NotesTypes;
+	vector<StepsType>	m_NotesTypes;
 	vector<Song*>		m_pSongs;
 	vector<Action>		m_Actions;
 
