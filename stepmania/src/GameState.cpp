@@ -193,6 +193,23 @@ void GameState::PlayersFinalized()
 {
 	MEMCARDMAN->LockCards( true );
 	SONGMAN->LoadAllFromProfiles();
+
+
+	// apply saved default modifiers if any
+	FOREACH_HumanPlayer( pn )
+	{
+		if( PROFILEMAN->IsUsingProfile(pn) )
+		{
+			Profile* pProfile = PROFILEMAN->GetProfile(pn);
+			if( pProfile->m_bUsingProfileDefaultModifiers )
+			{
+				GAMESTATE->m_PlayerOptions[pn].Init();
+				GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
+			}
+		}
+	}
+
+
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */

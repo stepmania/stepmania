@@ -109,13 +109,6 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 		return false;
 	}
 
-	// apply saved default modifiers if any
-	if( m_Profile[pn].m_bUsingProfileDefaultModifiers )
-	{
-		GAMESTATE->m_PlayerOptions[pn].Init();
-		GAMESTATE->ApplyModifiers( pn, m_Profile[pn].m_sDefaultModifiers );
-	}
-
 	return true;
 }
 
