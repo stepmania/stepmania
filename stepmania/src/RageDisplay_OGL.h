@@ -65,7 +65,7 @@ protected:
 	bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-
+	PixelFormat GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg, int width, int height );
 };
 
 #endif

@@ -153,9 +153,6 @@ struct GLPixFmtInfo_t {
 	GLenum format; /* target format */
 	GLenum type; /* data format */
 } GL_PIXFMT_INFO[NUM_PIX_FORMATS] = {
-	/* XXX: GL_UNSIGNED_SHORT_4_4_4_4 is affected by endianness; GL_UNSIGNED_BYTE
-	 * is not, but all SDL masks are affected by endianness, so GL_UNSIGNED_BYTE
-	 * is reversed.  This isn't endian-safe. */
 	{
 		/* R8G8B8A8 */
 		GL_RGBA8,
@@ -921,6 +918,39 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 }
 
 
+PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg, int width, int height )
+{
+	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
+	
+	if( pixfmt == NUM_PIX_FORMATS )
+	{
+		/* The source isn't in a supported, known pixel format.  We need to convert
+		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
+		 * down to whatever the actual pixel format is.  This is a very slow code
+		 * path, which should almost never be used. */
+		pixfmt = FMT_RGBA8;
+		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+
+		SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
+
+		SDL_Rect area;
+		area.x = area.y = 0;
+		area.w = short(width);
+		area.h = short(height);
+
+		SDL_Surface *imgconv = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, width, height,
+			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+		SDL_BlitSurface(img, &area, imgconv, &area);
+		img = imgconv;
+		FreeImg = true;
+	}
+	else
+		FreeImg = false;
+
+	return pixfmt;
+}
+
+
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
 	SDL_Surface*& img )
@@ -938,6 +968,10 @@ unsigned RageDisplay_OGL::CreateTexture(
 	// texture must be power of two
 	ASSERT( img->w == power_of_two(img->w) );
 	ASSERT( img->h == power_of_two(img->h) );
+
+	/* Find the pixel format of the image we've been given. */
+	bool FreeImg;
+	PixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h );
 
 	if(pixfmt == FMT_PAL)
 	{
@@ -970,8 +1004,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
-	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
-	GLenum glImageType = GL_PIXFMT_INFO[pixfmt].type;
+	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
+	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
 
 	FlushGLErrors();
 
@@ -994,6 +1028,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 
+	if( FreeImg )
+		SDL_FreeSurface( img );
 	return uTexHandle;
 }
 
@@ -1007,29 +1043,8 @@ void RageDisplay_OGL::UpdateTexture(
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
-	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
-	SDL_Surface *imgconv = NULL;
-	
-	if( pixfmt == NUM_PIX_FORMATS )
-	{
-		/* The source isn't in a supported, known pixel format.  We need to convert
-		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
-		 * down to whatever the actual pixel format is.  This is a very slow code
-		 * path, which should almost never be used. */
-		pixfmt = FMT_RGBA8;
-		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
-
-		SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
-
-		SDL_Rect area;
-		area.x = area.y = 0;
-		area.w = short(width);
-		area.h = short(height);
-		imgconv = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, width, height,
-			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
-		SDL_BlitSurface(img, &area, imgconv, &area);
-		img = imgconv;
-	}
+	bool FreeImg;
+	PixelFormat pixfmt = GetImgPixelFormat( img, FreeImg, width, height );
 
 //	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
@@ -1044,8 +1059,8 @@ void RageDisplay_OGL::UpdateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 
-	if( imgconv )
-		SDL_FreeSurface( imgconv );
+	if( FreeImg )
+		SDL_FreeSurface( img );
 }
 
 CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
