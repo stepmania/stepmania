@@ -152,52 +152,6 @@ RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
 		root += '/';
 }
 
-/* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
-static bool CreateDirectories( CString Path )
-{
-	CStringArray parts;
-	CString curpath;
-	split(Path, "/", parts);
-
-	for(unsigned i = 0; i < parts.size(); ++i)
-	{
-		curpath += parts[i] + "/";
-
-#if defined(WIN32)
-		if( i == 0 && curpath.size() > 1 && curpath[1] == ':' )
-		{
-			/* Don't try to create the drive letter alone. */
-			continue;
-		}
-#endif
-
-		if( DoMkdir(curpath, 0755) == 0 )
-			continue;
-
-		if(errno == EEXIST)
-			continue;		// we expect to see this error
-
-		// Log the error, but continue on.
-		/* When creating a directory that already exists over Samba, Windows is
-		 * returning ENOENT instead of EEXIST. */
-		if( LOG )
-			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
-
-		/* Make sure it's a directory. */
-		struct stat st;
-		DoStat( curpath, &st );
-		if( !(st.st_mode & S_IFDIR) )
-		{
-			if( LOG )
-				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
-			
-			return false;
-		}
-	}
-	
-	return true;
-}
-
 
 static CString MakeTempFilename( const CString &sPath )
 {

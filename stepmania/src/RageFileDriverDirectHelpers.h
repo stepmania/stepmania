@@ -27,6 +27,7 @@ int WinMoveFile( CString sOldPath, CString sNewPath );
 #define O_BINARY 0
 #endif
 
+bool CreateDirectories( CString Path );
 bool PathReady( CString path );
 
 #endif

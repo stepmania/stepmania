@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 
 #include <errno.h>
 #include <sys/types.h>
@@ -109,6 +110,7 @@ int WinMoveFile( CString sOldPath, CString sNewPath )
 
 	return WinMoveFileInternal( sOldPath, sNewPath );
 }
+#endif
 
 bool PathReady( CString path )
 {
@@ -156,4 +158,49 @@ bool PathReady( CString path )
 #endif
 }
 
+/* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
+bool CreateDirectories( CString Path )
+{
+	CStringArray parts;
+	CString curpath;
+	split(Path, "/", parts);
+
+	for(unsigned i = 0; i < parts.size(); ++i)
+	{
+		curpath += parts[i] + "/";
+
+#if defined(WIN32)
+		if( i == 0 && curpath.size() > 1 && curpath[1] == ':' )
+		{
+			/* Don't try to create the drive letter alone. */
+			continue;
+		}
 #endif
+
+		if( DoMkdir(curpath, 0755) == 0 )
+			continue;
+
+		if(errno == EEXIST)
+			continue;		// we expect to see this error
+
+		// Log the error, but continue on.
+		/* When creating a directory that already exists over Samba, Windows is
+		 * returning ENOENT instead of EEXIST. */
+		if( LOG )
+			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+
+		/* Make sure it's a directory. */
+		struct stat st;
+		DoStat( curpath, &st );
+		if( !(st.st_mode & S_IFDIR) )
+		{
+			if( LOG )
+				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
+			
+			return false;
+		}
+	}
+	
+	return true;
+}
+
