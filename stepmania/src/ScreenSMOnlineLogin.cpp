@@ -1,213 +1,155 @@
-#include "global.h"
-
 #if !defined(WITHOUT_NETWORKING)
+#include "global.h"
 #include "ScreenSMOnlineLogin.h"
-#include "ScreenManager.h"
-#include "ThemeManager.h"
-#include "RageTimer.h"
-#include "ActorUtil.h"
-#include "Actor.h"
+#include "RageLog.h"
+#include "ProfileManager.h"
 #include "GameSoundManager.h"
-#include "MenuTimer.h"
-#include "NetworkSyncManager.h"
-#include "RageUtil.h"
+#include "ThemeManager.h"
+#include "PrefsManager.h"
+#include "ScreenManager.h"
+#include "ScreenTextEntry.h"
+#include "ScreenPrompt.h"
+#include "VirtualKeyboard.h"
 #include "GameState.h"
-#include "ScreenDimensions.h"
+#include "NetworkSyncManager.h"
+#include "ScreenTextEntry.h"
 #include "crypto/CryptMD5.h"
 
-const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);
+REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
-REGISTER_SCREEN_CLASS( ScreenSMOnlineLogin );
-ScreenSMOnlineLogin::ScreenSMOnlineLogin( const CString& sName ) : ScreenWithMenuElements( sName )
-{
-	m_iPlayer = THEME->GetMetricI( sName, "PlayerNumber" ) - 1;
+#define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
+#define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
+const ScreenMessage SM_SMOnlinePack	    = ScreenMessage(SM_User+8);
+const ScreenMessage SM_PasswordDone	    = ScreenMessage(SM_User+9);
+OptionRowData g_ProfileLine[1] = {
+	OptionRowData("Profile",false)
+};
 
-	if ( GAMESTATE->IsPlayerEnabled( (PlayerNumber)m_iPlayer ) )
-		m_sUserName = GAMESTATE->GetPlayerDisplayName((PlayerNumber)m_iPlayer);
-	else
-		m_sUserName = "INVALID";
+  ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sClassName) {
+	LOG->Trace( "ScreenSMOnlineLogin::ScreenSMOnlineLogin()" );
 
-	m_sprPassword.SetName( "PasswordBG" );
-	m_sprPassword.Load( THEME->GetPathG( m_sName, "PasswordBG" ) );
-	m_sprPassword.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND( m_sprPassword );
-	this->AddChild( &m_sprPassword );
+	g_ProfileLine[0].choices.clear();
+	PROFILEMAN->GetLocalProfileNames( g_ProfileLine[0].choices );
 
-	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	m_textTitle.SetName( "Title" );
-	SET_XY_AND_ON_COMMAND( m_textTitle );
-	this->AddChild( &m_textTitle );
-
-	m_textTitle.SetText( NSMAN->GetServerName() );
-
-	m_textUserName.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	m_textUserName.SetName( "UserName" );
-	m_textUserName.SetWrapWidthPixels( (int)SCREEN_WIDTH );
-	SET_XY_AND_ON_COMMAND( m_textUserName );
-	this->AddChild( &m_textUserName );
-
-	//XXX: Yuck, this should be metric'ed out when we get a chance
-	m_textUserName.SetText( "You are logging on as " + m_sUserName + " if this is incorrect, please change your profile." );	
-
-	m_textPassword.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	m_textPassword.SetName( "Password" );
-	SET_XY_AND_ON_COMMAND( m_textPassword );
-	this->AddChild( &m_textPassword );
-	m_sPassword = "";
-	
-	m_textLoginMessage.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	m_textLoginMessage.SetName( "LoginMessage" );
-	SET_XY_AND_ON_COMMAND( m_textLoginMessage );
-	this->AddChild( &m_textLoginMessage );
-
-	NSMAN->isSMOLoggedIn[m_iPlayer] = false;
-}
-
-void ScreenSMOnlineLogin::Input( const DeviceInput& DeviceI, const InputEventType type,
-								  const GameInput& GameI, const MenuInput& MenuI,
-								  const StyleInput& StyleI )
-{
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-		return;
-
-	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) && (type != IET_FAST_REPEAT ) )
-		return;
-
-	bool bHoldingShift = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
-
-	bool bHoldingCtrl = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
-		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
-
-	switch( DeviceI.button )
-	{
-	case KEY_ENTER:
-	case KEY_KP_ENTER:
-		if ( m_sPassword != "" )
-			SendLogin();
-		return;
-		break;
-	case KEY_BACK:
-		if(!m_sPassword.empty())
-			m_sPassword = m_sPassword.erase( m_sPassword.size()-1 );
-		UpdateTextInput();
-		break;
-	default:
-		char c;
-		c = DeviceI.ToChar();
-
-		if( bHoldingShift && !bHoldingCtrl )
-		{
-			c = (char)toupper(c);
-
-			switch( c )
-			{
-			case '`':	c='~';	break;
-			case '1':	c='!';	break;
-			case '2':	c='@';	break;
-			case '3':	c='#';	break;
-			case '4':	c='$';	break;
-			case '5':	c='%';	break;
-			case '6':	c='^';	break;
-			case '7':	c='&';	break;
-			case '8':	c='*';	break;
-			case '9':	c='(';	break;
-			case '0':	c=')';	break;
-			case '-':	c='_';	break;
-			case '=':	c='+';	break;
-			case '[':	c='{';	break;
-			case ']':	c='}';	break;
-			case '\'':	c='"';	break;
-			case '\\':	c='|';	break;
-			case ';':	c=':';	break;
-			case ',':	c='<';	break;
-			case '.':	c='>';	break;
-			case '/':	c='?';	break;
-			}
-		}
-		if( (c >= ' ') && (!bHoldingCtrl) )
-		{
-			m_sPassword += c;
-			UpdateTextInput();
-		}
-		break;
+	if(!g_ProfileLine[0].choices.size()) {
+      SCREENMAN->SystemMessage("You Must Define A Profile!");
+      SCREENMAN->SetNewScreen("ScreenProfileOptions");
 	}
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
-}
+    else {
+	  InitMenu(INPUTMODE_SHARE_CURSOR, g_ProfileLine, 1);
+  	  SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music"));
+	  Row &row = *m_Rows.back();
+	  BitmapText *bt = row.m_textItems.back();
+	  bt->SetText("Login");		//Change "Exit" Text
+	}
+  }
 
-void ScreenSMOnlineLogin::HandleScreenMessage( const ScreenMessage SM )
-{
-	Screen::HandleScreenMessage( SM );
-	switch( SM )
-	{
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
-		break;
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-		break;
-	case SM_SMOnlinePack:
+  void ScreenSMOnlineLogin::ImportOptions() {
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
+	CStringArray::iterator iter;
+
+	iter = find( 
+		vsProfiles.begin(),
+		vsProfiles.end(),
+		PREFSMAN->m_sDefaultLocalProfileID[0] );
+	if( iter != vsProfiles.end() )
+		m_Rows[0]->SetOneSelection((PlayerNumber) 0, iter - vsProfiles.begin());
+
+	iter = find( 
+		vsProfiles.begin(),
+		vsProfiles.end(),
+		PREFSMAN->m_sDefaultLocalProfileID[1] );
+	if( iter != vsProfiles.end() )
+	  m_Rows[0]->SetOneSelection((PlayerNumber) 1, iter - vsProfiles.begin());
+  }
+
+  void ScreenSMOnlineLogin::ExportOptions() {
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
+
+	if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0))
+	  PREFSMAN->m_sDefaultLocalProfileID[0] = vsProfiles[m_Rows[0]->GetOneSelection((PlayerNumber) 0)];
+
+	if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 1))
+	  PREFSMAN->m_sDefaultLocalProfileID[0] = vsProfiles[m_Rows[0]->GetOneSelection((PlayerNumber) 1)];
+  }
+
+  void ScreenSMOnlineLogin::GoToPrevScreen() {
+	SCREENMAN->SetNewScreen(PREV_SCREEN);
+  }
+
+  void ScreenSMOnlineLogin::GoToNextScreen() {
+    PREFSMAN->SaveGlobalPrefsToDisk();
+	PROFILEMAN->LoadLocalProfileFromMachine((PlayerNumber) 0);
+	PROFILEMAN->LoadLocalProfileFromMachine((PlayerNumber) 1);	//Update Profiles
+
+	if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0) && GAMESTATE->IsPlayerEnabled((PlayerNumber) 1) &&
+	  (GAMESTATE->GetPlayerDisplayName((PlayerNumber) 0) == GAMESTATE->GetPlayerDisplayName((PlayerNumber) 1))) {
+	  SCREENMAN->SystemMessage("Each Player Needs A Unique Profile!");
+	  SCREENMAN->SetNewScreen("ScreenSMOnlineLogin");
+	}
+	else {
+	  m_iPlayer=0;
+	  while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
+	 	++m_iPlayer;
+      SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
+	}
+  }
+
+  void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM) {
+    switch(SM) {
+      case SM_PasswordDone:
+		if(!ScreenTextEntry::s_bCancelledLast)
+	      SendLogin(ScreenTextEntry::s_sLastAnswer);
+		else
+          SCREENMAN->SetNewScreen(PREV_SCREEN);
+	  break;
+
+	  case SM_SMOnlinePack:
 		int ResponceCode = NSMAN->m_SMOnlinePacket.Read1();
-		if ( ResponceCode == 0 )
-		{
-			int Status = NSMAN->m_SMOnlinePacket.Read1();
-			if ( Status == 0 )
-			{
-				NSMAN->isSMOLoggedIn[m_iPlayer] = true;
-				SCREENMAN->SendMessageToTopScreen( SM_GoToNextScreen );
-			} 
-			else 
-			{
-				CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
-				m_textLoginMessage.SetText( Responce );
-			}
+		if (ResponceCode == 0) {
+		  int Status = NSMAN->m_SMOnlinePacket.Read1();
+		  if(Status == 0) {
+			NSMAN->isSMOLoggedIn[m_iPlayer++] = true;
+		    if(GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
+	          SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
+			else
+			  SCREENMAN->SetNewScreen(NEXT_SCREEN);
+		  } 
+		  else {
+			CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
+			SCREENMAN->Password( SM_PasswordDone, Responce + "\n\nYou are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
+		  }
 		}
-		//Else we ignore it.
-
-		break;
+ 	  break;
 	}
-}
+    ScreenOptions::HandleScreenMessage(SM);
+  }
 
-void ScreenSMOnlineLogin::MenuStart( PlayerNumber pn )
-{
-	SendLogin();
-}
+  void ScreenSMOnlineLogin::MenuStart(PlayerNumber pn,const InputEventType type) {
+    ScreenOptions::MenuStart(pn,type);
+  }
 
-void ScreenSMOnlineLogin::MenuBack( PlayerNumber pn )
-{
-	SCREENMAN->SendMessageToTopScreen( SM_GoToPrevScreen );
-}
+  CString ScreenSMOnlineLogin::GetSelectedProfileID() {
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-void ScreenSMOnlineLogin::TweenOffScreen()
-{
-	OFF_COMMAND( m_textTitle );
-	OFF_COMMAND( m_textUserName );
-	OFF_COMMAND( m_textPassword );
-	OFF_COMMAND( m_textLoginMessage );
-	OFF_COMMAND( m_sprPassword );
-}
+	const Row &row = *m_Rows[GetCurrentRow()];
+	const int Selection = row.GetOneSharedSelection();
+	if( !Selection )
+		return "";
+	return vsProfiles[ Selection-1 ];
+  }
 
-void ScreenSMOnlineLogin::UpdateTextInput()
-{
-	CString PasswordText;
-
-	for ( unsigned i = 0; i < m_sPassword.length(); ++i )
-		PasswordText+='*';
-
-	m_textPassword.SetText( PasswordText );  
-}
-
-void ScreenSMOnlineLogin::SendLogin()
-{
+  void ScreenSMOnlineLogin::SendLogin(CString sPassword) {
+	CString PlayerName = GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer);
 	CString HashedName;
 	CString PreHashedName;
 
 	unsigned char Output[16];
-	const unsigned char *Input = (unsigned char *)m_sPassword.c_str();
+	const unsigned char *Input = (unsigned char *)sPassword.c_str();
 
 	MD5Context BASE;
 
@@ -217,7 +159,7 @@ void ScreenSMOnlineLogin::SendLogin()
 	MD5Init( &BASE );
 
 
-	MD5Update( &BASE, Input, m_sPassword.length());
+	MD5Update( &BASE, Input, sPassword.length());
 
 	MD5Final( Output, &BASE );
 
@@ -235,20 +177,19 @@ void ScreenSMOnlineLogin::SendLogin()
 				HashedName += PreHashedName.c_str()[i];
 
 	NSMAN->m_SMOnlinePacket.ClearPacket();
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0); //Login command
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)m_iPlayer); //Player
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0); //MD5 hash style
-	NSMAN->m_SMOnlinePacket.WriteNT(m_sUserName);
+	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0);			//Login command
+	NSMAN->m_SMOnlinePacket.Write1((uint8_t)m_iPlayer);	//Player
+	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0);			//MD5 hash style
+	NSMAN->m_SMOnlinePacket.WriteNT(PlayerName);
 	NSMAN->m_SMOnlinePacket.WriteNT(HashedName);
 	NSMAN->SendSMOnline( );
-}
+  }
 
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2004 Charles Lohr Adam Lowman
  * All rights reserved.
- *      Elements from ScreenTextEntry
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

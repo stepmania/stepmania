@@ -22,7 +22,6 @@
 CString ScreenTextEntry::s_sLastAnswer = "";
 bool ScreenTextEntry::s_bCancelledLast = false;
 
-
 /* XXX: Don't let the user use internal-use codepoints (those
  * that resolve to Unicode codepoints above 0xFFFF); those are
  * subject to change and shouldn't be written to .SMs.
@@ -31,9 +30,11 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  * a whole UTF-8 character.  Better would be to operate in longchars.
  */
 //REGISTER_SCREEN_CLASS( ScreenTextEntry );
-ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
+
+ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)(), bool bPassword ) :
   Screen( sClassName )
 {
+	m_bPassword = bPassword;	// Added Password Support -APL 1/20/05
 	m_bIsTransparent = true;	// draw screens below us
 
 	m_pOnOK = OnOK;
@@ -43,7 +44,6 @@ ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString
 	m_bCancelled = false;
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenPrompt background") );
-	m_Background.PlayCommand( "On" );
 	this->AddChild( &m_Background );
 
 	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -73,6 +73,12 @@ ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString
 void ScreenTextEntry::UpdateText()
 {
 	CString txt = WStringToCString(m_sAnswer);
+	if(m_bPassword) {
+	  int len = txt.GetLength();
+	  txt = "";
+      for(int i=0;i<len;++i)
+	    txt += "*";
+	}
 	FontCharAliases::ReplaceMarkers(txt);
 	m_textAnswer.SetText( txt );
 }
@@ -177,33 +183,11 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 			}
 		}
 
-		//In the event we are using the numpad...
-		switch ( DeviceI.button )
-		{
-			case KEY_KP_C0:		c='0'; break;
-			case KEY_KP_C1:		c='1'; break;
-			case KEY_KP_C2:		c='2'; break;
-			case KEY_KP_C3:		c='3'; break;
-			case KEY_KP_C4:		c='4'; break;
-			case KEY_KP_C5:		c='5'; break;
-			case KEY_KP_C6:		c='6'; break;
-			case KEY_KP_C7:		c='7'; break;
-			case KEY_KP_C8:		c='8'; break;
-			case KEY_KP_C9:		c='9'; break;
-			case KEY_KP_SLASH:	c='/'; break;
-			case KEY_KP_ASTERISK: c='*'; break;
-			case KEY_KP_HYPHEN: c='-'; break;
-			case KEY_KP_PLUS:	c='+'; break;
-			case KEY_KP_PERIOD: c='.'; break;
-			case KEY_KP_EQUAL:	c='='; break;
-		}
-		
 		if( c >= ' ' )
 		{
 			m_sAnswer += c;
 			UpdateText();
 		}
-
 		break;
 	}
 }

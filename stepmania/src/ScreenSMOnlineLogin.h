@@ -1,46 +1,23 @@
-/* ScreenSMOnlineLogin - Login for StepMania online */
-
 #ifndef SCREENSMONLINELOGIN_H
 #define SCREENSMONLINELOGIN_H
 
-#include "ScreenWithMenuElements.h"
-#include "Sprite.h"
-#include "Quad.h"
-#include "BitmapText.h"
+#include "ScreenOptions.h"
 
-class ScreenSMOnlineLogin : public ScreenWithMenuElements
-{
-public:
-	ScreenSMOnlineLogin( const CString& sName );
+class ScreenSMOnlineLogin : public ScreenOptions {
 
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type,
-						const GameInput& GameI, const MenuInput& MenuI,
-						const StyleInput& StyleI );
-	
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+  public:
+	ScreenSMOnlineLogin(CString sName);
+	virtual void HandleScreenMessage(const ScreenMessage SM);
+	virtual void MenuStart(PlayerNumber pn,const InputEventType type);
+	void SendLogin(CString sPassword);
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-	virtual void TweenOffScreen();
-
-	void UpdateTextInput();
-	void SendLogin();
-private:
-
-	BitmapText		m_textTitle;
-
-	BitmapText		m_textUserName;
-
-	BitmapText		m_textPassword;
-	BitmapText		m_textLoginMessage;
-
-	CString			m_sUserName;
-	CString			m_sPassword;
-
-	Sprite			m_sprPassword;
-
-	int				m_iPlayer;
+  private:
+	void ImportOptions();
+	void ExportOptions();
+	void GoToNextScreen();
+	void GoToPrevScreen();
+	CString GetSelectedProfileID();
+	int	m_iPlayer;
 };
 
 #endif

@@ -99,7 +99,6 @@ void ScreenManager::ThemeChanged()
 	
 	// reload shared BGA
 	m_pSharedBGA->LoadFromAniDir( m_sLastLoadedBackgroundPath );
-	m_pSharedBGA->PlayCommand( "On" );
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -214,15 +213,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// pass input only to topmost state
-	if( m_ScreenStack.empty() )
-		return;
-
-	/* If a screen is queued to load, discard other inputs.  Coin inputs
-	 * are handled before they get here, so they won't be discarded. */
-	if( m_sDelayedScreen != "" )
-		return;
-
-	m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
+	if( !m_ScreenStack.empty() )
+		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 
@@ -384,7 +376,6 @@ retry:
 		// any common textures loaded.
 		BGAnimation *pNewBGA = new BGAnimation;
 		pNewBGA->LoadFromAniDir( sNewBGA );
-		pNewBGA->PlayCommand( "On" );
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
 
@@ -455,6 +446,19 @@ void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion,
 
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, OnOK, OnCancel );
+	pNewScreen->Init();
+	SetFromNewScreen( pNewScreen, true );
+
+	m_MessageSendOnPop = SM_SendWhenDone;
+}
+
+void ScreenManager::Password( ScreenMessage SM_SendWhenDone, const CString &sText, void(*OnOK)(CString sPassword), void(*OnCancel)() )
+{	
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
+	// add the new state onto the back of the array
+	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sText, "", OnOK, OnCancel, true );
 	pNewScreen->Init();
 	SetFromNewScreen( pNewScreen, true );
 

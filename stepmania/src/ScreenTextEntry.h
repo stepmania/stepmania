@@ -13,7 +13,7 @@
 class ScreenTextEntry : public Screen
 {
 public:
-	ScreenTextEntry( CString sName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
+	ScreenTextEntry( CString sName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL, bool bPassword = false );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -31,6 +31,7 @@ protected:
 
 	void UpdateText();
 
+	bool            m_bPassword;
 	BGAnimation		m_Background;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
