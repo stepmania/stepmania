@@ -25,9 +25,14 @@ LuaReference::LuaReference( const LuaReference &cpy )
 {
 	SubscriptionManager<LuaReference>::Subscribe( this );
 
-	/* Make a new reference. */
-	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iReference );
-	m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+	if( cpy.m_iReference == LUA_NOREF )
+		m_iReference = LUA_NOREF;
+	else
+	{
+		/* Make a new reference. */
+		lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iReference );
+		m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+	}
 }
 
 LuaReference &LuaReference::operator=( const LuaReference &cpy )
