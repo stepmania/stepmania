@@ -1438,12 +1438,12 @@ CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
 		return "";
 	case SORT_GRADE:
 		{
-			for( int i=NUM_GRADES; i>GRADE_NO_DATA; i-- )
+			for( int i=GRADE_TIER_1; i<NUM_GRADES; ++i )
 			{
 				Grade g = (Grade)i;
 				int iCount = pSong->GetNumNotesWithGrade( g );
 				if( iCount > 0 )
-					return ssprintf( "%4s x %d", GradeToString(g).c_str(), iCount );
+					return ssprintf( "%4s x %d", GradeToThemedString(g).c_str(), iCount );
 			}
 			return "NO DATA";
 		}
