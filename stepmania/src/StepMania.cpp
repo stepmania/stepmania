@@ -1084,6 +1084,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
+		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
 	
 		// HACK: Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
