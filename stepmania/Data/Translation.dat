@@ -191,6 +191,18 @@ ArtistTo: Pokémon Jhoto
 TitleFrom: Watashi No Tamagoyaki
 TitleTo: 私の卵焼き
 *
+TitleFrom: soramimi keeki
+TitleTo: そらみみけーき
+*
+TitleFrom: The Peace!
+TitleTo: The☆Peace!
+*
+TitleFrom: soramimi keeki
+TitleTo: そらみみけーき
+*
+TitleFrom: tentaikansoku
+TitleTo: 天体観測
+*
 TitleFrom: Under Star\(Hajime no Ippo Opening 2\)
 TitleTo: Under Star
 # Note that these are double-width parentheses.
@@ -216,6 +228,15 @@ ArtistTo: 桜井敏郎
 *
 ArtistFrom: Yasunori Mitsuda
 ArtistTo: 光田康典
+*
+ArtistFrom: Lee Jung Hyun
+ArtistTo: 이정현
+*
+ArtistFrom: Tamaki Nami
+ArtistTo: 玉置成実
+*
+ArtistFrom: Tomoe Shinohara
+ArtistTo: 篠原ともえ
 *
 
 # Subtitles:
