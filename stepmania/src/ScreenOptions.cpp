@@ -115,6 +115,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	{
 		m_iCurrentRow[p] = 0;
 		m_bWasOnExit[p] = false;
+		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
 	m_framePage.Command( FRAME_ON_COMMAND );
@@ -1091,8 +1092,18 @@ void ScreenOptions::StartGoToNextState()
 
 void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-	if( type == IET_RELEASE )
-		return;
+	switch( type )
+	{
+	case IET_FIRST_PRESS:
+		m_bGotAtLeastOneStartPressed[pn] = true;
+		break;
+	case IET_RELEASE:
+		return;	// ignore
+	default:	// repeat type
+		if( !m_bGotAtLeastOneStartPressed[pn] )
+			return;	// don't allow repeat
+		break;
+	}
 	
 	Row &row = *m_Rows[m_iCurrentRow[pn]];
 	OptionRowData &data = row.m_RowDef;

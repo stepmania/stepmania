@@ -170,6 +170,11 @@ protected:
 
 	AutoActor		m_sprMore;
 	bool			m_bMoreShown, m_bWasOnExit[NUM_PLAYERS];
+	
+	// TRICKY: People hold Start to get to PlayerOptions, then 
+	// the repeat events cause them to zip to the bottom.  So, ignore
+	// Start repeat events until we've seen one first pressed event.
+	bool			m_bGotAtLeastOneStartPressed[NUM_PLAYERS];
 
 	RageSound		m_SoundChangeCol;
 	RageSound		m_SoundNextRow;
