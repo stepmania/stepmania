@@ -22,7 +22,7 @@
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "RageSoundBass.h"
-// #include "RageSoundManager.h"
+#include "RageSoundManager.h"
 #include "RageMusic.h"
 #include "RageInput.h"
 #include "RageTimer.h"
@@ -314,6 +314,7 @@ int main(int argc, char* argv[])
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	SOUND		= new RageSoundBass;
+	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_bSoundDrivers);
 	MUSIC		= new RageSoundStream;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
@@ -348,7 +349,6 @@ int main(int argc, char* argv[])
 #endif
 
 	INPUTMAN	= new RageInput();
-//	SOUNDMAN	= new RageSoundManager();
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
@@ -412,7 +412,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
-//	SAFE_DELETE( SOUNDMAN );
+	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( TIMER );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
@@ -478,7 +478,7 @@ void GameLoop()
 		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		CLIENT->Update( fDeltaTime );
-//		SOUNDMAN->Update( fDeltaTime );
+		SOUNDMAN->Update( fDeltaTime );
 
 		static InputEventArray ieArray;
 		ieArray.clear();	// empty the array
@@ -573,8 +573,7 @@ void GameLoop()
 		DISPLAY->FlushQueue();
 		DISPLAY->Flip();
 
-		if( DISPLAY  &&  DISPLAY->IsWindowed() )
-			::Sleep( 0 );	// give some time to other processes
+		::Sleep( 0 );	// give some time to other processes and threads
 	}
 }
 
