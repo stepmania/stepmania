@@ -14,11 +14,32 @@
 #include "GhostArrow.h"
 #include "NoteSkinManager.h"
 #include "GameState.h"
+#include "NoteSkinManager.h"
 
 
 GhostArrow::GhostArrow()
 {
-	SetDiffuse( RageColor(1,1,1,0) );
+	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		m_spr[i].SetHidden( true );
+		this->AddChild( &m_spr[i] );
+	}
+}
+
+void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sFile, bool bLoadJustOne )
+{
+	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
+		
+		CString sFullFile = bLoadJustOne ? sFile : sFile  + " " + sJudge;
+
+		// HACK: for backward noteskin compatibility
+		CString sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullFile, true);	// optional
+		if( sPath.empty() )
+			sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFile);	// not optional
+		m_spr[i].Load( sPath );
+	}
 }
 
 void GhostArrow::Init( PlayerNumber pn )
@@ -35,11 +56,17 @@ void GhostArrow::Init( PlayerNumber pn )
 
 void GhostArrow::Update( float fDeltaTime )
 {
-	Sprite::Update( fDeltaTime );
+	ActorFrame::Update( fDeltaTime );
 }
 
 void GhostArrow::Step( TapNoteScore score )
 {
-	this->StopTweening();
-	this->Command( m_sScoreCommand[score] );
+	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		m_spr[i].StopTweening();
+		m_spr[i].SetHidden( true );
+	}
+
+	m_spr[score].SetHidden( false );
+	m_spr[score].Command( m_sScoreCommand[score] );
 }

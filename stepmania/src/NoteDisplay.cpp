@@ -198,93 +198,93 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_pTapNote[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap note "+sNoteType[i]) );
+			m_pTapNote[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_pTapNote[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap note") );
+		m_pTapNote[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note") );
 	}
 
 	if( cache->m_bTapAdditionAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_pTapAddition[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap addition "+sNoteType[i]) );
+			m_pTapAddition[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition "+sNoteType[i]) );
 	}
 	else
 	{
-		m_pTapAddition[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap addition") );
+		m_pTapAddition[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition") );
 	}
 
-	m_pTapMine = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "tap mine") );
+	m_pTapMine = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap mine") );
 
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldHeadActive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head active "+sNoteType[i]) );
-			m_pHoldHeadInactive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head inactive "+sNoteType[i]) );
+			m_pHoldHeadActive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head active "+sNoteType[i]) );
+			m_pHoldHeadInactive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldHeadActive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head active") );
-		m_pHoldHeadInactive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold head inactive") );
+		m_pHoldHeadActive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head active") );
+		m_pHoldHeadInactive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive") );
 	}
 
 	if( cache->m_bHoldTopCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold topcap active "+sNoteType[i]) );
-			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold topcap inactive "+sNoteType[i]) );
+			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap active "+sNoteType[i]) );
+			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold topcap active") );
-		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold topcap inactive") );
+		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap active") );
+		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive") );
 	}
 
 	if( cache->m_bHoldBodyAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold body active "+sNoteType[i]) );
-			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold body inactive "+sNoteType[i]) );
+			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body active "+sNoteType[i]) );
+			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold body active") );
-		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold body inactive") );
+		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body active") );
+		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive") );
 	}
 
 	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold bottomcap active "+sNoteType[i]) );
-			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold bottomcap inactive "+sNoteType[i]) );
+			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap active "+sNoteType[i]) );
+			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold bottomcap active") );
-		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold bottomcap inactive") );
+		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap active") );
+		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive") );
 	}
 
 	if( cache->m_bHoldTailAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_pHoldTailActive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail active "+sNoteType[i]) );
-			m_pHoldTailInactive[i] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail inactive "+sNoteType[i]) );
+			m_pHoldTailActive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail active "+sNoteType[i]) );
+			m_pHoldTailInactive[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_pHoldTailActive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail active") );
-		m_pHoldTailInactive[0] = MakeActor( NOTESKIN->GetPathTo(NoteSkin, Button, "hold tail inactive") );
+		m_pHoldTailActive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail active") );
+		m_pHoldTailInactive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold tail inactive") );
 	}
 }
 

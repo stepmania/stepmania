@@ -215,54 +215,57 @@ CString NoteSkinManager::ColToButtonName(int col)
 	return pGameDef->m_szButtonNames[GI.button];
 }
 
-CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName )
+CString NoteSkinManager::GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sFileName, bool bOptional )
 {
 	CString sButtonName = ColToButtonName(col);
 
-	return GetPathTo( pn, sButtonName, sFileName );
+	return GetPathToFromPlayerAndButton( pn, sButtonName, sFileName, bOptional );
 }
 
 
-CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CString sFileName )	// looks in GAMESTATE for the current Style
+CString NoteSkinManager::GetPathToFromPlayerAndButton( PlayerNumber pn, CString sButtonName, CString sElement, bool bOptional )	// looks in GAMESTATE for the current Style
 {
 	// search active NoteSkin
 	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
 	sNoteSkinName.MakeLower();
-	return GetPathTo( sNoteSkinName, sButtonName, sFileName );
+	return GetPathToFromNoteSkinAndButton( sNoteSkinName, sButtonName, sElement, bOptional );
 }
 
-CString NoteSkinManager::GetPathTo( CString NoteSkin, CString sButtonName, CString sFileName )
+CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
-	CString ret = GetPathTo( GetNoteSkinDir(NoteSkin), sButtonName+" "+sFileName );
+	CString ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement, bOptional );
 	if( !ret.empty() )	// we found something
 		return ret;
 
-	ret = GetPathTo( GetNoteSkinDir(NoteSkin), "Fallback "+sFileName);
+	ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), "Fallback "+sElement, bOptional );
 	if( !ret.empty() )	// we found something
 		return ret;
 
 	// Search game default NoteSkin
-	ret = GetPathTo( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sFileName);
+	ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement, bOptional );
 	if( !ret.empty() )	// we found something
 		return ret;
 
-	ret = GetPathTo( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), "Fallback "+sFileName);
+	ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), "Fallback "+sElement, bOptional );
 	if( !ret.empty() )	// we found something
 		return ret;
 
 	// Search global default NoteSkin
-	ret = GetPathTo( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sFileName );
+	ret = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement, bOptional );
 	if( !ret.empty() )	// we found something
 		return ret;
 
-	RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
-		sButtonName.c_str(), sFileName.c_str(), 
-		GetNoteSkinDir(NoteSkin).c_str(),
-		GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
-		GLOBAL_BASE_NOTESKIN_DIR.c_str() );
+	if( bOptional )
+		return "";
+	else
+		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
+			sButtonName.c_str(), sElement.c_str(), 
+			GetNoteSkinDir(NoteSkin).c_str(),
+			GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
+			GLOBAL_BASE_NOTESKIN_DIR.c_str() );
 }
 
-CString NoteSkinManager::GetPathTo( CString sDir, CString sFileName )
+CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName, bool bOptional )
 {
 	CStringArray matches;		// fill this with the possible files
 
@@ -295,7 +298,7 @@ CString NoteSkinManager::GetPathTo( CString sDir, CString sFileName )
 	{
 		CString sNewFileName = GetRedirContents(sPath);
 		
-		CString sNewPath = GetPathTo(sDir, sNewFileName);
+		CString sNewPath = GetPathToFromDir(sDir, sNewFileName, bOptional);
 
 		if( !sNewPath.empty() )
 			return sNewPath;

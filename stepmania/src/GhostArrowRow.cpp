@@ -52,10 +52,10 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 		m_GhostMine[c].Init( pn );
 		//m_HoldGhost[c].Init( pn );
 
-		m_GhostDim[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "tap explosion dim") );
-		m_GhostBright[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "tap explosion bright") );
-		m_GhostMine[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "tap explosion mine") );
-		m_HoldGhost[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold explosion") );
+		m_GhostDim[c].Load( NoteSkin, Button, "tap explosion dim", false);
+		m_GhostBright[c].Load( NoteSkin, Button, "tap explosion bright", false );
+		m_GhostMine[c].Load( NoteSkin, Button, "tap explosion mine", true );
+		m_HoldGhost[c].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold explosion") );
 	}
 }
 

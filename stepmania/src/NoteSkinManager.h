@@ -30,10 +30,10 @@ public:
 	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
 	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE
 
-	CString GetPathTo( PlayerNumber pn, int col, CString sElement );
-	CString GetPathTo( CString NoteSkin, CString sButtonName, CString sFileName );
-	CString GetPathTo( PlayerNumber pn, CString sButtonName, CString sElement );
-	CString GetPathTo( CString sDir, CString sFileName );
+	CString GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sElement, bool bOptional=false );
+	CString GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional=false );
+	CString GetPathToFromPlayerAndButton( PlayerNumber pn, CString sButtonName, CString sElement, bool bOptional=false );
+	CString GetPathToFromDir( CString sDir, CString sFileName, bool bOptional=false );
 
 	CString		GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue );
 	int			GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName );

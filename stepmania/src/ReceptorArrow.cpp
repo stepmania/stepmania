@@ -38,11 +38,11 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 		sButton = NoteSkinManager::ColToButtonName( iColNo );
 
 	CString sPath;
-	m_pReceptorWaiting.Load( NOTESKIN->GetPathTo(NoteSkin,sButton,"receptor waiting") );
-	m_pReceptorGo.Load( NOTESKIN->GetPathTo(NoteSkin,sButton,"receptor go") );
+	m_pReceptorWaiting.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor waiting") );
+	m_pReceptorGo.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor go") );
 	m_sStepCommand = NOTESKIN->GetMetric(GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin,"ReceptorArrow","StepCommand");
 
-	m_pPressBlock.Load( NOTESKIN->GetPathTo(NoteSkin,sButton,"KeypressBlock") );
+	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
 
 	// draw pressblock before receptors
 	this->AddChild( m_pPressBlock );
