@@ -464,12 +464,14 @@ void Background::DrawPrimitives()
 	if( IsDangerVisible() )
 	{
 		// Since this only shows when DANGER is visible, it will flash red on it's own accord :)
-		m_pDancingCharacters->m_bDrawDangerLight = true;
+		if( m_pDancingCharacters )
+			m_pDancingCharacters->m_bDrawDangerLight = true;
 		m_BGADanger.Draw();
 	}
 	else
 	{	
-		m_pDancingCharacters->m_bDrawDangerLight = false;
+		if( m_pDancingCharacters )
+			m_pDancingCharacters->m_bDrawDangerLight = false;
 		if( m_pCurrentBGA )
 			m_pCurrentBGA->Draw();
 		if( m_pFadingBGA )
