@@ -162,7 +162,6 @@ void BacktraceNames::FromString( CString s )
 void BacktraceNames::FromAddr( const void *p )
 {
     int fds[2];
-    int out = fileno(stdout);
     pid_t pid;
     pid_t ppid = getpid(); /* Do this before fork()ing! */
     
@@ -188,7 +187,7 @@ void BacktraceNames::FromAddr( const void *p )
         for (int fd = 3; fd < 1024; ++fd)
             if (fd != fds[1])
                 close(fd);
-        dup2(fds[1], out);
+        dup2(fds[1], fileno(stdout));
         close(fds[1]);
 
         char *addy;
@@ -201,7 +200,6 @@ void BacktraceNames::FromAddr( const void *p )
         fprintf(stderr, "execl(atos) failed: %s\n", strerror(errno));
         free(addy);
         free(p);
-        close(out);
         _exit(1);
     }
     
