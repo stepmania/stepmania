@@ -518,6 +518,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )
 {
+	RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, m_Rows.size() ) );
 	Row &row = *m_Rows[iRow];
 	if( row.Type == Row::ROW_EXIT )
 		return *row.m_textItems[0];
@@ -529,6 +530,7 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	else
 		index = iChoiceOnRow;
 
+	RAGE_ASSERT_M( index < (int)row.m_textItems.size(), ssprintf("%i < %i", index, row.m_textItems.size() ) );
 	return *row.m_textItems[index];
 }
 
@@ -558,8 +560,8 @@ void ScreenOptions::InitOptionsText()
 		BitmapText &title = row.m_textTitle;
 
 		title.LoadFromFont( THEME->GetPathToF("ScreenOptions title") );
-		CString sText = GetExplanationTitle( i );
 
+		const CString sText = GetExplanationTitle( i );
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( LABELS_ZOOM );
@@ -676,20 +678,21 @@ void ScreenOptions::PositionCursors()
 {
 	// Set the position of the highlight showing the current option the user is changing.
 	// Set the position of the underscores showing the current choice for each option line.
-	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+	for( int pn=0; pn<NUM_PLAYERS; pn++ )	// foreach player
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
+		if( !GAMESTATE->IsHumanPlayer(pn) )
 			continue;
 
-		int row = m_iCurrentRow[p];		
-		Row &Row = *m_Rows[row];
+		const int iRow = m_iCurrentRow[pn];
+		RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, m_Rows.size() ) );
+		Row &Row = *m_Rows[iRow];
 
-		OptionsCursor &highlight = m_Highlight[p];
+		OptionsCursor &highlight = m_Highlight[pn];
 
-		int iChoiceWithFocus = Row.m_iChoiceWithFocus[p];
+		const int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
 
 		int iWidth, iX, iY;
-		GetWidthXY( (PlayerNumber)p, row, iChoiceWithFocus, iWidth, iX, iY );
+		GetWidthXY( (PlayerNumber)pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 		highlight.SetBarWidth( iWidth );
 		highlight.SetXY( (float)iX, (float)iY );
 	}
@@ -698,18 +701,16 @@ void ScreenOptions::PositionCursors()
 void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
 	// Set the position of the highlight showing the current option the user is changing.
-	const int iCurRow = m_iCurrentRow[pn];
+	const int iRow = m_iCurrentRow[pn];
+	RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, m_Rows.size() ) );
 
-	OptionsCursor &highlight = m_Highlight[pn];
-
-	int row = m_iCurrentRow[pn];		
-	Row &Row = *m_Rows[row];
-
-	int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
+	const Row &Row = *m_Rows[iRow];
+	const int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
 
 	int iWidth, iX, iY;
-	GetWidthXY( pn, iCurRow, iChoiceWithFocus, iWidth, iX, iY );
+	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
+	OptionsCursor &highlight = m_Highlight[pn];
 	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
 	highlight.TweenBarWidth( iWidth );
@@ -718,7 +719,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
 		UtilCommand( m_sprLineHighlight[pn], "ScreenOptions", "Change" );
-		if( m_Rows[iCurRow]->Type == Row::ROW_EXIT )
+		if( m_Rows[iRow]->Type == Row::ROW_EXIT )
 			UtilCommand( m_sprLineHighlight[pn], "ScreenOptions", "ChangeToExit" );
 		m_sprLineHighlight[pn].SetY( (float)iY );
 	}
@@ -744,13 +745,38 @@ void ScreenOptions::UpdateText( PlayerNumber pn, int iRow )
 
 void ScreenOptions::UpdateEnabledDisabled()
 {
-	RageColor colorSelected = COLOR_SELECTED;
-	RageColor colorNotSelected = COLOR_NOT_SELECTED;
+	const RageColor colorSelected = COLOR_SELECTED, colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
 	for( unsigned i=0; i<m_Rows.size(); i++ )		// foreach line
 	{
 		Row &row = *m_Rows[i];
+
+		bool bThisRowIsSelected = false;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsHumanPlayer(p) && m_iCurrentRow[p] == (int) i )
+				bThisRowIsSelected = true;
+
+		/* Don't tween selection colors at all. */
+		const RageColor color = bThisRowIsSelected? colorSelected:colorNotSelected;
+		row.m_sprBullet.SetGlobalDiffuseColor( color );
+		row.m_textTitle.SetGlobalDiffuseColor( color );
+
+		for( unsigned j=0; j<row.m_textItems.size(); j++ )
+			row.m_textItems[j]->SetGlobalDiffuseColor( color );
+
+		for( unsigned j=0; j<row.m_textItems.size(); j++ )
+		{
+			const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
+			if( row.m_textItems[j]->GetDestY() == row.m_fY &&
+			    row.m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha )
+				continue;
+
+			row.m_textItems[j]->StopTweening();
+			row.m_textItems[j]->BeginTweening( 0.3f );
+			row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
+			row.m_textItems[j]->SetY( row.m_fY );
+		}
 
 		if( row.Type == Row::ROW_EXIT )
 		{
@@ -759,39 +785,11 @@ void ScreenOptions::UpdateEnabledDisabled()
 				if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != (int) i )
 					bExitRowIsSelectedByBoth = false;
 
-			RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
-			row.m_textItems[0]->SetGlobalDiffuseColor( color );
-
-			const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
-			if( row.m_textItems[0]->GetDestY() != row.m_fY ||
-			    row.m_textItems[0]->DestTweenState().diffuse[0][3] != DiffuseAlpha )
-			{
-				row.m_textItems[0]->StopTweening();
-				row.m_textItems[0]->BeginTweening( 0.3f );
-				row.m_textItems[0]->SetDiffuseAlpha( DiffuseAlpha );
-				row.m_textItems[0]->SetY( row.m_fY );
-			}
-
 			if( bExitRowIsSelectedByBoth )
 				row.m_textItems[0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 			else
 				row.m_textItems[0]->SetEffectNone();
-
-			continue;
 		}
-
-		bool bThisRowIsSelected = false;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] == (int) i )
-				bThisRowIsSelected = true;
-
-		/* Don't tween selection colors at all. */
-		RageColor color = bThisRowIsSelected ? colorSelected : colorNotSelected;
-		row.m_sprBullet.SetGlobalDiffuseColor( color );
-		row.m_textTitle.SetGlobalDiffuseColor( color );
-
-		for( unsigned j=0; j<row.m_textItems.size(); j++ )
-			row.m_textItems[j]->SetGlobalDiffuseColor( color );
 
 		if( row.m_sprBullet.GetDestY() != row.m_fY )
 		{
@@ -805,14 +803,6 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 			row.m_sprBullet.SetY( row.m_fY );
 			row.m_textTitle.SetY( row.m_fY );
-
-			for( unsigned j=0; j<row.m_textItems.size(); j++ )
-			{
-				row.m_textItems[j]->StopTweening();
-				row.m_textItems[j]->BeginTweening( 0.3f );
-				row.m_textItems[j]->SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-				row.m_textItems[j]->SetY( row.m_fY );
-			}
 		}
 	}
 }
