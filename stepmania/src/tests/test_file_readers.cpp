@@ -264,13 +264,13 @@ void TestSeek( bool relative )
 	/* Seek to the binary test data. */
 	int ret;
 	if( relative )
-		ret = test.SeekCur( junk.size() );
+		ret = test.Seek( test.Tell() + junk.size() );
 	else
 		ret = test.Seek( TestLine.size()+junk.size() );
 
 	if( ret != int(TestLine.size()+junk.size()) )
 	{
-		LOG->Warn( "%s(%i) failed: got %i", relative? "SeekCur":"Seek", TestLine.size()+junk.size(), ret );
+		LOG->Warn( "Seek(%i) failed: got %i", TestLine.size()+junk.size(), ret );
 		return;
 	}
 
