@@ -52,12 +52,13 @@ BEGIN
                     SS_CENTERIMAGE
     CTEXT           "line3",IDC_STATIC_MESSAGE3,0,65,310,10,SS_NOPREFIX | 
                     SS_CENTERIMAGE
+    CONTROL         "",IDC_SPLASH,"Static",SS_BITMAP,0,0,310,25
 END
 
 IDD_DISASM_CRASH DIALOGEX 0, 0, 399, 151
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "StepMania Error"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Close",IDC_BUTTON_CLOSE,348,135,50,15
     LTEXT           "crash reason: programmer needs good whack on head",
