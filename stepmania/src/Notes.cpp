@@ -21,6 +21,7 @@
 #include "GameInput.h"
 #include "RageException.h"
 #include "MsdFile.h"
+#include "GameManager.h"
 
 
 typedef int DanceNote;
@@ -44,11 +45,14 @@ enum {
 
 Notes::Notes()
 {
+	/* FIXME: should we init this to NOTES_TYPE_INVALID? 
+	 * I have a feeling that it's the right thing to do but that
+	 * it'd trip obscure asserts all over the place, so I'll wait
+	 * until after b6 to do this. -glenn */
 	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
 	m_DifficultyClass = CLASS_INVALID;
 	m_iMeter = 0;
-	for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		m_fRadarValues[r] = 0;
+	ZeroMemory(m_fRadarValues, sizeof(m_fRadarValues));
 
 	m_iNumTimesPlayed = 0;
 	m_iMaxCombo = 0;
@@ -255,7 +259,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	}
 
 	// we're done reading in all of the BMS values
-	int iNumNewTracks = NotesTypeToNumTracks( m_NotesType );
+	int iNumNewTracks = GameManager::NotesTypeToNumTracks( m_NotesType );
 	int iTransformNewToOld[MAX_NOTE_TRACKS];
 
 	switch( m_NotesType )
@@ -553,7 +557,7 @@ void Notes::LoadFromSMTokens(
 
 //	LOG->Trace( "Notes::LoadFromSMTokens()" );
 
-	m_NotesType = StringToNotesType(sNotesType);
+	m_NotesType = GameManager::StringToNotesType(sNotesType);
 	m_sDescription = sDescription;
 	m_DifficultyClass = StringToDifficultyClass( sDifficultyClass );
 	m_iMeter = atoi(sMeter);
@@ -570,9 +574,10 @@ void Notes::LoadFromSMTokens(
 
 void Notes::WriteSMNotesTag( FILE* fp )
 {
-	fprintf( fp, "\n//---------------%s - %s----------------\n", NotesTypeToString(m_NotesType), m_sDescription );
+	fprintf( fp, "\n//---------------%s - %s----------------\n",
+		GameManager::NotesTypeToString(m_NotesType), m_sDescription );
 	fprintf( fp, "#NOTES:\n" );
-	fprintf( fp, "     %s:\n", NotesTypeToString(m_NotesType) );
+	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(m_NotesType) );
 	fprintf( fp, "     %s:\n", m_sDescription );
 	fprintf( fp, "     %s:\n", DifficultyClassToString(m_DifficultyClass) );
 	fprintf( fp, "     %d:\n", m_iMeter );
@@ -705,13 +710,13 @@ void Notes::WriteDWINotesTag( FILE* fp )
 
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
-	ASSERT( pNewNoteData->m_iNumTracks == NotesTypeToNumTracks(m_NotesType) );
+	ASSERT( pNewNoteData->m_iNumTracks == GameManager::NotesTypeToNumTracks(m_NotesType) );
 	m_sSMNoteData = pNewNoteData->GetSMNoteDataString();
 }
 
 void Notes::GetNoteData( NoteData* pNoteDataOut )
 {
-	pNoteDataOut->m_iNumTracks = NotesTypeToNumTracks( m_NotesType );
+	pNoteDataOut->m_iNumTracks = GameManager::NotesTypeToNumTracks( m_NotesType );
 	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );
 }
 

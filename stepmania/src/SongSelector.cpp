@@ -271,7 +271,7 @@ void SongSelector::OnNotesTypeChange()
 {
 	m_iSelectedNotesType = clamp( m_iSelectedNotesType, 0, m_NotesTypes.GetSize()-1 );
 
-	m_textNotesType.SetText( NotesTypeToString( GetSelectedNotesType() ) );
+	m_textNotesType.SetText( GameManager::NotesTypeToString( GetSelectedNotesType() ) );
 
 	m_pNotess.RemoveAll();
 	GetSelectedSong()->GetNotesThatMatch( GetSelectedNotesType(), m_pNotess );
