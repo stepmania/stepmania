@@ -1,12 +1,12 @@
 #include "global.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
+#include "LuaReference.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
-#include "ActorCommands.h"
 
 #include <csetjmp>
 #include <cassert>
@@ -111,6 +111,35 @@ void LuaManager::PushStack( const CString &out, lua_State *L )
 	lua_pushstring( L, out );
 }
 
+void LuaManager::CreateTableFromArray( const vector<bool> &aIn, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	lua_newtable( L );
+	for( unsigned i = 0; i < aIn.size(); ++i )
+	{
+		lua_pushboolean( L, aIn[i] );
+		lua_rawseti( L, -2, i+1 );
+	}
+}
+
+void LuaManager::ReadArrayFromTable( vector<bool> &aOut, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
+	luaL_checktype( L, -1, LUA_TTABLE );
+
+	for( unsigned i = 0; i < aOut.size(); ++i )
+	{
+		lua_rawgeti( L, -1, i+1 );
+		bool bOn = !!lua_toboolean( L, -1 );
+		aOut[i] = bOn;
+		lua_pop( L, 1 );
+	}
+}
+
 void LuaManager::PopStack( CString &out )
 {
 	/* There must be at least one entry on the stack. */
@@ -208,7 +237,7 @@ void LuaManager::ResetState()
 		}
 	}
 
-	ActorCommands::ReRegisterAll();
+	LuaReference::ReRegisterAll();
 }
 
 void LuaManager::PrepareExpression( CString &sInOut )

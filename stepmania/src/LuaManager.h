@@ -49,6 +49,11 @@ public:
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 
+	/* Create a Lua array (a table with indices starting at 1) of the given vector,
+	 * and push it on the stack. */
+	static void CreateTableFromArray( const vector<bool> &aIn, lua_State *L = NULL );
+	/* Read the table at the top of the stack back into a vector. */
+	static void ReadArrayFromTable( vector<bool> &aOut, lua_State *L = NULL );
 
 	/* Run an expression.  The result is left on the Lua stack. */
 	bool RunExpression( const CString &str );
