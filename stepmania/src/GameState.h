@@ -101,8 +101,6 @@ public:
 	int		m_HoldNoteScores[NUM_PLAYERS][NUM_HOLD_NOTE_SCORES];
 	int		m_iMaxCombo[NUM_PLAYERS];
 	float	m_fScore[NUM_PLAYERS];
-	long	m_lScore[NUM_PLAYERS];
-	float	m_fScoreMultiplier;
 	float	m_fRadarPossible[NUM_PLAYERS][NUM_RADAR_VALUES];	// filled in by ScreenGameplay on end of notes
 	float	m_fRadarActual[NUM_PLAYERS][NUM_RADAR_VALUES];		// filled in by ScreenGameplay on end of notes
 	

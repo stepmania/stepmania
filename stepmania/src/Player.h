@@ -62,6 +62,8 @@ protected:
 	int				m_iNumTapNotes;	// num of TapNotes for the current notes needed by scoring
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 	int				m_iMeter;		// meter of current steps, needed by scoring
+	long			m_lScore;
+	float			m_fScoreMultiplier;
 
 	float			m_fOffset[SAMPLE_COUNT];//for AutoAdjust
 	int				m_iOffsetSample;		//

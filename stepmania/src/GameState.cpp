@@ -96,7 +96,6 @@ void GameState::Reset()
 		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
 			m_HoldNoteScores[p][s] = 0;
 		m_iMaxCombo[p] = 0;
-		m_lScore[p] = 0;
 		m_fScore[p] = 0;
 
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )

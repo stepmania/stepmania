@@ -124,8 +124,10 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	m_iNumTapNotes = pNoteData->GetNumTapNotes();
 	m_iTapNotesHit = 0;
+	m_lScore = 0;
 	m_iMeter = GAMESTATE->m_pCurNotes[m_PlayerNumber] ? GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter : 5;
-
+	m_fScoreMultiplier = (double)(m_iMeter * 1000000) / (double)((m_iNumTapNotes * (m_iNumTapNotes + 1)) >> 1);
+	ASSERT(m_fScoreMultiplier >= 0.0);
 
 
 	if( m_pScore )
@@ -624,7 +626,6 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 //		lScore == p * n
 //		m_fScoreMultiplier = (B/S)
 // keeping these seperate for as long as possible improves accuracy.
-	long &lScore = GAMESTATE->m_lScore[m_PlayerNumber];
 	int p;	// score multiplier 
 	
 	switch( score )
@@ -635,11 +636,12 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 	}
 
 	for( int i=0; i<iNumTapsInRow; i++ )
-		lScore += p * ++m_iTapNotesHit;
-	ASSERT(lScore > 0);
-	GAMESTATE->m_fScoreMultiplier = 0; // XXX this isn't being set anywhere
+		m_lScore += p * ++m_iTapNotesHit;
+
+	ASSERT(m_lScore >= 0);
+
 	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber] = lScore * GAMESTATE->m_fScoreMultiplier);
+		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier);
 }
 
 
