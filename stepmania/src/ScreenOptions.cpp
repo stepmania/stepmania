@@ -258,17 +258,33 @@ ScreenOptions::~ScreenOptions()
 }
 
 
+BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
+{
+	const bool bExitRow = iRow == m_iNumOptionRows;
+	if( bExitRow )
+		return *m_textItems[iRow][0];
+
+	const bool bLotsOfOptions = m_bRowIsLong[iRow];
+	if( !bLotsOfOptions )
+	{
+		unsigned iOptionInRow = m_iSelectedOption[pn][iRow];
+		return *m_textItems[iRow][iOptionInRow];
+	}
+
+	const bool bOneChoice = m_OptionRow[iRow].bOneChoiceForAllPlayers;
+
+	if( bOneChoice )
+		return *m_textItems[iRow][0];
+
+	/* We have lots of options and this isn't a OneChoice row, which means
+	 * each player has a separate item displayed.  */
+	int iOptionInRow = min( (unsigned)pn, m_textItems[iRow].size()-1 );
+	return *m_textItems[iRow][iOptionInRow];
+}
+
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
-	bool bExitRow = iRow == m_iNumOptionRows;
-	bool bLotsOfOptions = m_bRowIsLong[iRow];
-	bool bOneChoice = m_OptionRow[iRow].bOneChoiceForAllPlayers;
-	
-	unsigned iOptionInRow = bExitRow? 0: 
-							bLotsOfOptions? (bOneChoice? 0:pn):
-							m_iSelectedOption[pn][iRow];
-
-	BitmapText &text = *m_textItems[iRow][iOptionInRow];
+	BitmapText &text = GetTextItemForRow( pn, iRow );
 
 	iWidthOut = int(roundf( text.GetWidestLineWidthInSourcePixels() * text.GetZoomX() ));
 	iXOut = int(roundf( text.GetDestX() ));
