@@ -302,7 +302,7 @@ stepmania_LDADD = $(main_LDADD)
 if HAVE_GTK
 bin_PROGRAMS += GtkModule.so
 GtkModule_so_LDFLAGS = -rdynamic -shared
-GtkModule_so_CPPFLAGS = $(GTK_CFLAGS)
+GtkModule_so_CPPFLAGS = $(GTK_CFLAGS) -fPIC
 GtkModule_so_LDADD = $(GTK_LIBS)
 GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 endif
