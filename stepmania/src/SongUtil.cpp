@@ -185,6 +185,15 @@ void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers )
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
 
+/* This is for internal use, not display; sorting by Unicode codepoints isn't very
+ * interesting for display. */
+void SongUtil::SortSongPointerArrayByDisplayArtist( vector<Song*> &arraySongPointers )
+{
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+		song_sort_val[arraySongPointers[i]] = MakeSortString( arraySongPointers[i]->GetDisplayArtist() );
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
+}
+
 static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 {
 	return pSong1->m_sGroupName < pSong2->m_sGroupName;

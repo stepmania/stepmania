@@ -592,17 +592,25 @@ void SongManager::InitAutogenCourses()
 
 	/* Generate Oni courses from artists.  Only create courses if we have at least
 	 * four songs from an artist; create 3- and 4-song courses. */
-	vector<Song *> aSongs;
 	{
+		/* We normally sort by translit artist.  However, display artist is more
+		 * consistent.  For example, transliterated Japanese names are alternately
+		 * spelled given- and family-name first, but display titles are more consistent. */
 		vector<Song*> apSongs = this->GetAllSongs();
-		SongUtil::SortSongPointerArrayByArtist( apSongs );
+		SongUtil::SortSongPointerArrayByDisplayArtist( apSongs );
 
 		CString sCurArtist = "";
+		CString sCurArtistTranslit = "";
 		int iCurArtistCount = 0;
 
+		vector<Song *> aSongs;
 		unsigned i = 0;
 		do {
-			CString sArtist = i >= apSongs.size()? "": apSongs[i]->GetTranslitArtist();
+			CString sArtist = i >= apSongs.size()? "": apSongs[i]->GetDisplayArtist();
+			CString sTranslitArtist = i >= apSongs.size()? "": apSongs[i]->GetTranslitArtist();
+			LOG->Trace("foo '%s' '%s'",
+				sArtist.c_str(),
+				sTranslitArtist.c_str() );
 			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
 			{
 				aSongs.push_back( apSongs[i] );
@@ -612,11 +620,11 @@ void SongManager::InitAutogenCourses()
 
 			/* Different artist, or we're at the end.  If we have enough entries for
 			 * the last artist, add it.  Skip blanks and "Unknown artist". */
-			if( iCurArtistCount >= 3 && sCurArtist != "" &&
-				sCurArtist.CompareNoCase("Unknown artist") )
+			if( iCurArtistCount >= 3 && sCurArtistTranslit != "" &&
+				sCurArtistTranslit.CompareNoCase("Unknown artist") )
 			{
 				pCourse = new Course;
-				pCourse->AutogenOniFromArtist( sCurArtist, aSongs, DIFFICULTY_HARD );
+				pCourse->AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, DIFFICULTY_HARD );
 				m_pCourses.push_back( pCourse );
 			}
 
@@ -625,6 +633,7 @@ void SongManager::InitAutogenCourses()
 			if( i < apSongs.size() )
 			{
 				sCurArtist = sArtist;
+				sCurArtistTranslit = sTranslitArtist;
 				iCurArtistCount = 1;
 				aSongs.push_back( apSongs[i] );
 			}

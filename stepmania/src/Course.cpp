@@ -433,7 +433,7 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
 		m_entries.pop_back();
 }
 
-void Course::AutogenOniFromArtist( CString sArtistName, vector<Song*> aSongs, Difficulty dc )
+void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc )
 {
 	m_bIsAutogen = true;
 	m_bRepeat = false;
@@ -449,6 +449,9 @@ void Course::AutogenOniFromArtist( CString sArtistName, vector<Song*> aSongs, Di
 	/* "Artist Oni" is a little repetitive; "by Artist" stands out less, and lowercasing
 	 * "by" puts more emphasis on the artist's name.  It also sorts them together. */
 	m_sName = "by " + sArtistName;
+	if( sArtistNameTranslit != sArtistName )
+		m_sNameTranslit = "by " + sArtistNameTranslit;
+
 
 	// m_sBannerPath = ""; // XXX
 
