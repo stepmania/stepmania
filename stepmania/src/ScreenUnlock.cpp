@@ -30,8 +30,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	CString PointDisplay = THEME->GetMetric("ScreenUnlock", "TypeOfPointsToDisplay");
 	
-	CString IconCommand = 
-		THEME->GetMetric("ScreenUnlock", "UnlockIconCommand");
+	CString IconCommand = THEME->GetMetric("ScreenUnlock", "UnlockIconCommand");
 
 	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
 	{

@@ -26,6 +26,7 @@
 #include "RageSoundManager.h"
 #include "ActorUtil.h"
 #include "RageTimer.h"
+#include "UnlockSystem.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -202,11 +203,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				{
 					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p], bNewRecord[p] );
 					
-					// update unlock data
-					PREFSMAN->m_fTotalStagesCleared += 1;
-//					switch (
-
-
+					// update unlock data if unlocks are on
+					if ( PREFSMAN->m_bUseUnlockSystem )
+					{
+						GAMESTATE->m_pUnlockingSys->UnlockClearStage();
+						GAMESTATE->m_pUnlockingSys->UnlockAddAP( grade[p] );
+						GAMESTATE->m_pUnlockingSys->UnlockAddSP( grade[p] );
+					}
 				}
 			}
 		}
@@ -236,10 +239,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			// If unlocking is enabled, save the dance points
 			if( PREFSMAN->m_bUseUnlockSystem )
-			{
-				PREFSMAN->m_fDancePointsAccumulated += fTotalDP;
-				PREFSMAN->SaveGlobalPrefsToDisk();
-			}
+				GAMESTATE->m_pUnlockingSys->UnlockAddDP( fTotalDP );
 		}
 		break;
 	case course:
@@ -262,6 +262,21 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
 			GAMESTATE->m_pRankingCourse = pCourse;
 			GAMESTATE->m_RankingNotesType = nt;
+
+			// If unlocking is enabled, save the dance points
+			// (for courses)
+			if( PREFSMAN->m_bUseUnlockSystem )
+			{
+				for(p=0; p < NUM_PLAYERS; p++)
+				{
+					GAMESTATE->m_pUnlockingSys->UnlockAddDP( stageStats.iActualDancePoints[p] );
+					GAMESTATE->m_pUnlockingSys->UnlockAddAP( stageStats.iSongsPassed[p] );
+					GAMESTATE->m_pUnlockingSys->UnlockAddSP( stageStats.iSongsPassed[p] );
+				}
+			}
+			// cannot just use score since it may be nonstop mode
+
+
 		}
 		break;
 	default:

@@ -68,17 +68,31 @@ public:
 
 	vector<SongEntry>	m_SongEntries;	// All locked songs are stored here
 
-	// functions that add to values, which don't really work.
+	// functions that add to values
 	float UnlockAddAP(Grade credit);
+	float UnlockAddAP(float credit);
 	float UnlockAddDP(float credit);
 	float UnlockAddSP(Grade credit);
+	float UnlockAddSP(float credit);
 	float UnlockClearExtraStage();
 	float UnlockFailExtraStage();
 	float UnlockClearStage();
 	float UnlockToasty();
 	bool RouletteUnlock( const Song *song );
 
-
+	// read and write unlock functions
+	bool ReadValues( CString filename);
+	bool WriteValues( CString filename);
+	
+	// unlock values, cached
+	float ArcadePoints;
+	float DancePoints;
+	float SongPoints;
+	float ExtraClearPoints;
+	float ExtraFailPoints;
+	float ToastyPoints;
+	float StagesCleared;
+	CString RouletteSeeds;
 
 	void DebugPrint();
 
