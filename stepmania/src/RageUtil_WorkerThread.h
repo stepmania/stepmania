@@ -18,6 +18,13 @@ public:
 	void SetTimeout( float fSeconds );
 	bool TimeoutEnabled() const { return !m_Timeout.IsZero(); }
 
+	/* Return true if the last operation has timed out and has not yet recovered. */
+	bool IsTimedOut() const { return m_bTimedOut; }
+
+	/* Pause until the next heartbeat completes.  Returns false if timed out.  This
+	 * triggers no actions, so no cleanup is run and IsTimedOut() is not affected. */
+	bool WaitForOneHeartbeat();
+
 protected:
 	/* Call this in the derived class to start and stop the thread. */
 	void StartThread();
@@ -27,9 +34,6 @@ protected:
 	 * Always call IsTimedOut() first; if true is returned, the thread is currently
 	 * timed out and DoRequest() must not be called. */
 	bool DoRequest( int iRequest );
-
-	/* Return true if the last operation has timed out and has not yet recovered. */
-	bool IsTimedOut() const { return m_bTimedOut; }
 
 	/* Overload this in the derived class to handle requests. */
 	virtual void HandleRequest( int iRequest ) = 0;
@@ -58,6 +62,7 @@ private:
 
 	float m_fHeartbeat;
 	RageTimer m_NextHeartbeat;
+	RageEvent m_HeartbeatEvent;
 };
 
 #endif

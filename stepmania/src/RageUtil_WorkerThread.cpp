@@ -3,7 +3,8 @@
 #include "RageLog.h"
 
 WorkerThread::WorkerThread( const CString &sName ):
-	m_WorkerEvent( "\"" + sName + "\" worker event" )
+	m_WorkerEvent( "\"" + sName + "\" worker event" ),
+	m_HeartbeatEvent( "\"" + sName + "\" heartbeat event" )
 {
 	m_Timeout.SetZero();
 	m_iRequest = REQ_NONE;
@@ -122,6 +123,12 @@ void WorkerThread::WorkerMain()
 		{
 			DoHeartbeat();
 
+			/* Wake up anyone waiting for a heartbeat. */
+			m_HeartbeatEvent.Lock();
+			m_HeartbeatEvent.Broadcast();
+			m_HeartbeatEvent.Unlock();
+
+			/* Schedule the next heartbeat. */
 			m_NextHeartbeat.Touch();
 			m_NextHeartbeat += m_fHeartbeat;
 		}
@@ -162,6 +169,18 @@ void WorkerThread::WorkerMain()
 		if( iRequest == REQ_SHUTDOWN )
 			break;
 	}
+}
+
+bool WorkerThread::WaitForOneHeartbeat()
+{
+	/* It doesn't make sense to wait for a heartbeat if there is no heartbeat. */
+	ASSERT( m_fHeartbeat != -1 );
+
+	m_HeartbeatEvent.Lock();
+	bool bTimedOut = !m_HeartbeatEvent.Wait( &m_Timeout );
+	m_HeartbeatEvent.Unlock();
+
+	return !bTimedOut;
 }
 
 /*
