@@ -27,7 +27,6 @@
 
 #include "resource.h"
 #include "crash.h"
-#include "disasm.h"
 #include "CrashList.h"
 #include "ProductInfo.h"
 
@@ -35,6 +34,8 @@
 #include "RageThreads.h" /* for GetCheckpointLogs */
 
 #include "GotoURL.h"
+
+static HFONT hFontMono = NULL;
 
 static void DoSave(const EXCEPTION_POINTERS *pExc);
 
@@ -47,7 +48,34 @@ static void DoSave(const EXCEPTION_POINTERS *pExc);
 extern HINSTANCE g_hInstance;
 extern unsigned long version_num;
 
-static CodeDisassemblyWindow *g_pcdw;
+
+
+extern HINSTANCE g_hInstance;
+
+// WARNING: This is called from crash-time conditions!  No malloc() or new!!!
+
+#define malloc not_allowed_here
+#define new not_allowed_here
+
+
+
+static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
+	char tbuf[MAX_PATH];
+	char *pszFile;
+
+	GetModuleFileName(NULL, tbuf, sizeof tbuf);
+	GetFullPathName(tbuf, bufsiz, buf, &pszFile);
+	strcpy(pszFile, fn);
+}
+
+
+
+
+
+
+
+
+
 
 struct VDDebugInfoContext {
 	void *pRawBlock;
@@ -66,89 +94,8 @@ struct VDDebugInfoContext {
 
 static VDDebugInfoContext g_debugInfo;
 
-///////////////////////////////////////////////////////////////////////////
-
 BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-static void ReportCrashLog(HWND hwnd, HANDLE hFile);
-static void ReportStaticLog(HWND hwnd, HANDLE hFile);
-static void ReportAdditionalLog(HWND hwnd, HANDLE hFile);
 
-///////////////////////////////////////////////////////////////////////////
-
-#ifdef DEBUG
-/*
-void checkfpustack(const char *file, const int line) throw() {
-	static const char szFPUProblemCaption[]="FPU/MMX internal problem";
-	static const char szFPUProblemMessage[]="The FPU stack wasn't empty!  Tagword = %04x\nFile: %s, line %d";
-	static bool seenmsg=false;
-
-	char	buf[128];
-	unsigned short tagword;
-
-	if (seenmsg)
-		return;
-
-	__asm fnstenv buf
-
-	tagword = *(unsigned short *)(buf + 8);
-
-	if (tagword != 0xffff) {
-		wsprintf(buf, szFPUProblemMessage, tagword, file, line);
-		MessageBox(NULL, buf, szFPUProblemCaption, MB_OK);
-		seenmsg=true;
-	}
-
-}
-
-void __declspec(naked) *operator new(size_t bytes) {
-	static const char fname[]="stack trace";
-
-	__asm {
-		push	ebp
-		mov		ebp,esp
-
-		push	[ebp+4]				;return address
-		push	offset fname		;'filename'
-		push	_NORMAL_BLOCK		;block type
-		push	[ebp+8]				;allocation size
-
-		call	_malloc_dbg
-		add		esp,16
-
-		pop		ebp
-		ret
-	}
-}
-*/
-#endif
-
-#if 0
-void __declspec(naked) stackcheck(void *&sp) {
-	static const char g_szStackHemorrhage[]="WARNING: Thread is hemorrhaging stack space!\n";
-
-	__asm {
-		mov		eax,[esp+4]
-		mov		ecx,[eax]
-		or		ecx,ecx
-		jnz		started
-		mov		[eax],esp
-		ret
-started:
-		sub		ecx,esp
-		mov		eax,ecx
-		sar		ecx,31
-		xor		eax,ecx
-		sub		eax,ecx
-		cmp		eax,128
-		jb		ok
-		push	offset g_szStackHemorrhage
-		call	dword ptr [OutputDebugString]
-		int		3
-ok:
-		ret
-	}
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -236,42 +183,6 @@ bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src);
 bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename);
 void VDDebugInfoDeinit(VDDebugInfoContext *pctx);
 
-static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
-	char tbuf[MAX_PATH];
-	char *pszFile;
-
-	GetModuleFileName(NULL, tbuf, sizeof tbuf);
-	GetFullPathName(tbuf, bufsiz, buf, &pszFile);
-	strcpy(pszFile, fn);
-}
-
-long CrashSymLookup(VDDisassemblyContext *pctx, unsigned long virtAddr, char *buf, int buf_len) {
-	if (!g_debugInfo.pRVAHeap)
-		return -1;
-
-	return VDDebugInfoLookupRVA(&g_debugInfo, virtAddr, buf, buf_len);
-}
-
-static char szEmergencyDumpName[MAX_PATH];
-static void DoSaveEmergencyDump(const char *buf, int siz) {
-	HANDLE hFile;
-
-	SpliceProgramPath(szEmergencyDumpName, sizeof szEmergencyDumpName, "crashdump.dat");
-	hFile = CreateFile(szEmergencyDumpName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (INVALID_HANDLE_VALUE == hFile)
-		return;
-
-	DWORD dwActual;
-	WriteFile(hFile, buf, siz, &dwActual, NULL);
-	FlushFileBuffers(hFile);
-	
-	CloseHandle(hFile);
-}
-
-static void DoEraseEmergencyDump()
-{
-	DeleteFile(szEmergencyDumpName);
-}
 
 extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
@@ -332,17 +243,12 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	if(InHere)
 	{
 		/* If we get here, then we've been called recursively, which means
-		 * we (the disassembler or related code) crashed.  If this happens,
-		 * we're not in very good shape.  We've left the emergency dump;
-		 * that's all we have to go by.  Tell this to the user, and then die.
-		 * 
-		 * We've already blown up twice, and this is our last line of defense.
-		 * If this dies, we have nothing, so keep it simple. */
+		 * we crashed.
+		 */
 		SetUnhandledExceptionFilter(NULL);
 		MessageBox( NULL,
-			"The error reporting interface has crashed.\n"
-			"Please report a bug and attach the file \"crashdump.dat\"\n"
-			"to the report.", "Fatal Error", MB_OK );
+			"The error reporting interface has crashed.\n",
+			"Fatal Error", MB_OK );
 #ifdef DEBUG
 		DebugBreak();
 #endif
@@ -352,52 +258,31 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	InHere=true;
 	/////////////////////////
 
-	static char buf[CODE_WINDOW+16];
-	HANDLE hprMe = GetCurrentProcess();
-	void *lpBaseAddress = pExc->ExceptionRecord->ExceptionAddress;
-	char *lpAddr = (char *)((long)lpBaseAddress & -32);
+	hFontMono = CreateFont(
+			10,				// nHeight
+			0,				// nWidth
+			0,				// nEscapement
+			0,				// nOrientation
+			FW_DONTCARE,	// fnWeight
+			FALSE,			// fdwItalic
+			FALSE,			// fdwUnderline
+			FALSE,			// fdwStrikeOut
+			ANSI_CHARSET,	// fdwCharSet
+			OUT_DEFAULT_PRECIS,		// fdwOutputPrecision
+			CLIP_DEFAULT_PRECIS,	// fdwClipPrecision
+			DEFAULT_QUALITY,		// fdwQuality
+			DEFAULT_PITCH | FF_DONTCARE,	// fdwPitchAndFamily
+			"Lucida Console"
+			);
 
-	memset(buf, 0, sizeof buf);
-
-	if ((unsigned long)lpAddr > CODE_WINDOW/2)
-		lpAddr -= CODE_WINDOW/2;
-	else
-		lpAddr = NULL;
-
-	if (!ReadProcessMemory(hprMe, lpAddr, buf, CODE_WINDOW, NULL)) {
-		int i;
-
-		for(i=0; i<CODE_WINDOW; i+=32)
-			if (!ReadProcessMemory(hprMe, lpAddr+i, buf+i, 32, NULL))
-				memset(buf+i, 0, 32);
-	}
-
-	DoSaveEmergencyDump(buf, CODE_WINDOW);
-		 
-	CodeDisassemblyWindow cdw(buf, CODE_WINDOW, (char *)(buf-lpAddr), lpAddr);
-
-	g_pcdw = &cdw;
-
-	cdw.setFaultAddress(lpBaseAddress);
+	if (!hFontMono)
+		hFontMono = (HFONT)GetStockObject(ANSI_FIXED_FONT);
 
 	// Attempt to read debug file.
 
-	bool bSuccess;
-
-	if (cdw.vdc.pExtraData) {
-		bSuccess = VDDebugInfoInitFromMemory(&g_debugInfo, cdw.vdc.pExtraData);
-	} else {
-		SpliceProgramPath(buf, sizeof buf, "StepMania.vdi");
-		bSuccess = VDDebugInfoInitFromFile(&g_debugInfo, buf);
-		if (!bSuccess) {
-			SpliceProgramPath(buf, sizeof buf, "StepMani.vdi");
-			bSuccess = VDDebugInfoInitFromFile(&g_debugInfo, buf);
-		}
-	}
-
-	cdw.vdc.pSymLookup = CrashSymLookup;
-
-	cdw.parse();
+	char buf[1024];
+	SpliceProgramPath(buf, sizeof buf, "StepMania.vdi");
+	VDDebugInfoInitFromFile(&g_debugInfo, buf);
 
 	/* In case something goes amiss before the user can view the crash
 	 * dump, save it now. */
@@ -418,8 +303,6 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 
 	VDDebugInfoDeinit(&g_debugInfo);
 
-	/* We've made it.  Delete the emergency dump. */
-	DoEraseEmergencyDump();
 	InHere = false;
 
 	SetUnhandledExceptionFilter(NULL);
@@ -460,36 +343,6 @@ static void SetWindowTitlef(HWND hwnd, const char *format, ...) {
 	SetWindowText(hwnd, buf);
 }
 
-static void ReportCrashData(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
-//	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
-	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
-	int i, tos;
-
-	Report(hwnd, hFile, "EAX = %08lx", pContext->Eax);
-	Report(hwnd, hFile, "EBX = %08lx", pContext->Ebx);
-	Report(hwnd, hFile, "ECX = %08lx", pContext->Ecx);
-	Report(hwnd, hFile, "EDX = %08lx", pContext->Edx);
-	Report(hwnd, hFile, "EBP = %08lx", pContext->Ebp);
-	Report(hwnd, hFile, "DS:ESI = %04x:%08lx", pContext->SegDs, pContext->Esi);
-	Report(hwnd, hFile, "ES:EDI = %04x:%08lx", pContext->SegEs, pContext->Edi);
-	Report(hwnd, hFile, "SS:ESP = %04x:%08lx", pContext->SegSs, pContext->Esp);
-	Report(hwnd, hFile, "CS:EIP = %04x:%08lx", pContext->SegCs, pContext->Eip);
-	Report(hwnd, hFile, "FS = %04x", pContext->SegFs);
-	Report(hwnd, hFile, "GS = %04x", pContext->SegGs);
-	Report(hwnd, hFile, "EFLAGS = %08lx", pContext->EFlags);
-	Report(hwnd, hFile, "");
-
-	// extract out MMX registers
-
-	tos = (pContext->FloatSave.StatusWord & 0x3800)>>11;
-
-	for(i=0; i<8; i++) {
-		long *pReg = (long *)(pContext->FloatSave.RegisterArea + 10*((i-tos) & 7));
-
-		Report(hwnd, hFile, "MM%c = %08lx%08lx", i+'0', pReg[1], pReg[0]);
-	}
-}
-
 static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
 	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
@@ -522,33 +375,6 @@ static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTI
 		if (hFile)
 			Report(hwnd, hFile, "Crash reason: %s", pel->name);
 	}
-}
-
-static void ReportThreadStacks(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
-{
-	const char *buf = GetCheckpointLogs("\r\n");
-	Report( hwnd, hFile, "%s", buf );
-/*	
-	EnterCriticalSection(&g_csPerThreadState);
-
-	try {
-		for(List2<VirtualDubThreadStateNode>::fwit it = g_listPerThreadState.begin(); it; ++it) {
-			const VirtualDubThreadState *pState = it->pState;
-
-			Report(hwnd, hFile, "Thread %08lx (%s)", pState->dwThreadId, pState->pszThreadName?pState->pszThreadName:"unknown");
-
-			for(int i=0; i<CHECKPOINT_COUNT; ++i) {
-				const VirtualDubCheckpoint& cp = pState->cp[(pState->nNextCP+i) & (CHECKPOINT_COUNT-1)];
-
-				if (cp.file)
-					Report(hwnd, hFile, "\t%s:%d %s", cp.file, cp.line, cp.message? cp.message:"");
-			}
-		}
-	} catch(...) {
-	}
-
-	LeaveCriticalSection(&g_csPerThreadState);
-*/
 }
 
 static const char *GetNameFromHeap(const char *heap, int idx) {
@@ -1102,7 +928,8 @@ void VDDebugInfoDeinit(VDDebugInfoContext *pctx) {
 	}
 }
 
-bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename) {
+bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename)
+{
 	pctx->pRawBlock = NULL;
 	pctx->pRVAHeap = NULL;
 
@@ -1219,7 +1046,7 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 
 ///////////////////////////////////////////////////////////////////////////
 
-static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc, const void *pDebugSrc)
+static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
 	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
 	HANDLE hprMe = GetCurrentProcess();
@@ -1266,7 +1093,7 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 		VirtualQuery((void *)data, &meminfo, sizeof meminfo);
 		
 		if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT) {
-//				Report(hwnd, hFile, "Rejected: %08lx (%08lx)", data, meminfo.Protect);
+//				Report(NULL, hFile, "Rejected: %08lx (%08lx)", data, meminfo.Protect);
 			fValid = false;
 		}
 
@@ -1339,28 +1166,13 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	return true;
 }
 
-/*
-static void ReportDisasm(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+static void DoSave(const EXCEPTION_POINTERS *pExc)
 {
-	char tbuf[2048];
-	long idx = 0;
-
-	Report(hwnd, hFile, "Disassembly:");
-
-	while(idx = g_pcdw->getInstruction(tbuf, idx)) {
-		Report(hwnd, hFile, "%s", tbuf);
-	}
-	FlushFileBuffers(hFile);
-}
-*/
-static void DoSave(const EXCEPTION_POINTERS *pExc) {
-	HANDLE hFile;
 	char szModName2[MAX_PATH];
 
 	SpliceProgramPath(szModName2, sizeof szModName2, "crashinfo.txt");
 
-	hFile = CreateFile(szModName2, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
+	HANDLE hFile = CreateFile(szModName2, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (INVALID_HANDLE_VALUE == hFile)
 		return;
 
@@ -1369,39 +1181,29 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 			"--------------------------------------"
 			"\r\n", PRODUCT_NAME_VER, version_num);
 
-	// Detect operating system.
-
-	OSVERSIONINFO ovi;
-	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-
 	ReportReason(NULL, NULL, hFile, pExc);
 	Report(NULL, hFile, "");
 
 	// Dump thread stacks
-	ReportThreadStacks(NULL, hFile, pExc);
+	const char *checkpoints = GetCheckpointLogs("\r\n");
+	Report(NULL, hFile, "%s", checkpoints );
 	Report(NULL, hFile, "");
 
-	ReportCrashCallStack(NULL, hFile, pExc, g_pcdw->vdc.pExtraData);
+	ReportCrashCallStack(NULL, hFile, pExc);
 	Report(NULL, hFile, "");
 
-	ReportStaticLog(NULL, hFile);
-	ReportAdditionalLog(NULL, hFile);
+	Report(NULL, hFile, "Static log:");
+	Report(NULL, hFile, "%s", RageLog::GetInfo());
+
+	Report(NULL, hFile, "%s", RageLog::GetAdditionalLog() );
 	Report(NULL, hFile, "");
 
-	ReportCrashLog(NULL, hFile);
+	Report(NULL, hFile, "Partial log:");
+	int i = 0;
+	while( const char *p = RageLog::GetRecentLog( i++ ) )
+		Report(NULL, hFile, "%s", p);
 	Report(NULL, hFile, "");
 
-	/* We can do without these for now.  People keep saying "here's a bug,
-	 * tell me if you want the crash dump" which wastes time (of course we
-	 * do!).  Let's make the dump smaller to encourage just sending it, which
-	 * is what people should be doing.  (If we can use the SF BTS more
-	 * consistently, instead of forums, this will be less of an issue.) */
-/*	ReportDisasm(NULL, hFile, pExc);
-	Report(NULL, hFile, "");
-
-	ReportCrashData(NULL, hFile, pExc);
-	Report(NULL, hFile, "");
-*/
 	Report(NULL, hFile, "-- End of report");
 	CloseHandle(hFile);
 }
@@ -1441,22 +1243,17 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_INITDIALOG:
 			{
-				HWND hwndList1 = GetDlgItem(hDlg, IDC_ASMBOX);
-				HWND hwndList2 = GetDlgItem(hDlg, IDC_REGDUMP);
-				HWND hwndList3 = GetDlgItem(hDlg, IDC_CALL_STACK);
+				HWND hwndList = GetDlgItem(hDlg, IDC_CALL_STACK);
 				HWND hwndReason = GetDlgItem(hDlg, IDC_STATIC_BOMBREASON);
 				const EXCEPTION_POINTERS *const pExc = (const EXCEPTION_POINTERS *)lParam;
 
 				s_pExc = pExc;
 
-				g_pcdw->DoInitListbox(hwndList1);
-
-				SendMessage(hwndList2, WM_SETFONT, SendMessage(hwndList1, WM_GETFONT, 0, 0), MAKELPARAM(TRUE, 0));
-				SendMessage(hwndList3, WM_SETFONT, SendMessage(hwndList1, WM_GETFONT, 0, 0), MAKELPARAM(TRUE, 0));
+				if (hFontMono)
+					SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
 
 				ReportReason(NULL, hwndReason, NULL, pExc);
-				ReportCrashData(hwndList2, NULL, NULL, pExc);
-				s_bHaveCallstack = ReportCrashCallStack(hwndList3, NULL, pExc, g_pcdw->vdc.pExtraData);
+				s_bHaveCallstack = ReportCrashCallStack(hwndList, NULL, pExc);
 			}
 			return TRUE;
 
@@ -1515,12 +1312,6 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				break;
 			}
 			break;
-
-		case WM_MEASUREITEM:
-			return g_pcdw->DoMeasureItem(lParam);
-
-		case WM_DRAWITEM:
-			return g_pcdw->DoDrawItem(lParam);
 	}
 
 	return FALSE;
@@ -1534,31 +1325,4 @@ void crash() {
 //		__asm lock add dword ptr cs:[00000000h], 12345678h
 	} __except(CrashHandler((EXCEPTION_POINTERS*)_exception_info())) {
 	}
-}
-
-static void ReportCrashLog(HWND hwnd, HANDLE hFile)
-{
-	Report(NULL, hFile, "Partial log:");
-
-	int i = 0;
-	while( const char *p = RageLog::GetRecentLog( i++ ) )
-		Report(hwnd, hFile, "%s", p);
-}
-
-static void ReportStaticLog(HWND hwnd, HANDLE hFile)
-{
-	Report(NULL, hFile, "Static log:");
-
-	const char *p = RageLog::GetInfo();
-	DWORD dwActual;
-	WriteFile(hFile, p, strlen(p), &dwActual, NULL);
-//	Report(hwnd, hFile, "%s", staticlog);
-}
-
-static void ReportAdditionalLog(HWND hwnd, HANDLE hFile)
-{
-	const char *p = RageLog::GetAdditionalLog();
-
-	DWORD dwActual;
-	WriteFile(hFile, p, strlen(p), &dwActual, NULL);
 }
