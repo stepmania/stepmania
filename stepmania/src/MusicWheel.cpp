@@ -289,7 +289,7 @@ bool MusicWheel::SelectSort( SongSortOrder so )
 	{
 		if( from[i].m_SongSortOrder != so )
 			continue;
-		if( !from[i].m_Action.DescribesCurrentMode() )
+		if( !from[i].m_Action.DescribesCurrentModeForAllPlayers() )
 			continue;
 
 		// make its group the currently expanded group
@@ -304,7 +304,7 @@ bool MusicWheel::SelectSort( SongSortOrder so )
 	{
 		if( m_CurWheelItemData[i]->m_SongSortOrder != so )
 			continue;
-		if( !m_CurWheelItemData[i]->m_Action.DescribesCurrentMode() )
+		if( !m_CurWheelItemData[i]->m_Action.DescribesCurrentModeForAllPlayers() )
 			continue;
 		m_iSelection = i;		// select it
 		break;
