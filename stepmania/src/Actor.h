@@ -54,6 +54,8 @@ public:
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
 	};
 
+	enum EffectClock { CLOCK_TIMER, CLOCK_BGM };
+
 	// let subclasses override
 	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
 	virtual void BeginDraw();	// pushes transform onto world matrix stack
@@ -216,6 +218,10 @@ public:
 	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )			{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fSecs )			{ m_fEffectPeriodSeconds = fSecs; } 
+	void SetEffectOffset( float fPercent )		{ m_fEffectPerfectOffset = fPercent; }
+	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
+	void SetEffectClock( CString s );
+
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 
 	void SetEffectDiffuseBlink( 
@@ -335,6 +341,9 @@ protected:
 	Effect m_Effect;
 	float m_fSecsIntoEffect;
 	float m_fEffectPeriodSeconds;
+	float m_fEffectPerfectOffset;
+	EffectClock m_EffectClock;
+
 	RageColor   m_effectColor1;
 	RageColor   m_effectColor2;
 	RageVector3 m_vEffectMagnitude;

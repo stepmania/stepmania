@@ -21,6 +21,8 @@
 #include "RageLog.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
+#include "GameState.h" /* XXX: ugly dependency */
+
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */
 void Actor::Reset()
@@ -42,6 +44,8 @@ void Actor::Reset()
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
 	m_fEffectPeriodSeconds = 1;
+	m_fEffectPerfectOffset = 0;
+	m_EffectClock = CLOCK_TIMER;
 	m_vEffectMagnitude = RageVector3(0,0,10);
 	m_effectColor1 = RageColor(1,1,1,1);
 	m_effectColor2 = RageColor(1,1,1,1);
@@ -96,6 +100,9 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_tempState = m_current;
 
 		float fPercentThroughEffect = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
+		fPercentThroughEffect += m_fEffectPerfectOffset;
+		fPercentThroughEffect = fmodfp( fPercentThroughEffect, 1 );
+
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = (fPercentThroughEffect==0) ? 0 : (sinf( fPercentThroughEffect * 2 * PI ) / 2 + 0.5f);
 		ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
@@ -291,9 +298,18 @@ void Actor::Update( float fDeltaTime )
 	case bounce:
 	case bob:
 	case pulse:
-		m_fSecsIntoEffect += fDeltaTime;
-		while( m_fSecsIntoEffect >= m_fEffectPeriodSeconds )
-			m_fSecsIntoEffect -= m_fEffectPeriodSeconds;
+		switch( m_EffectClock )
+		{
+		case CLOCK_TIMER:
+			m_fSecsIntoEffect += fDeltaTime;
+			m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds );
+			break;
+
+		case CLOCK_BGM:
+			m_fSecsIntoEffect = GAMESTATE->m_fSongBeat;
+			break;
+		}
+
 		break;
 	case spin:
 		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
@@ -419,6 +435,14 @@ void Actor::SetVertAlign( CString s )
 	if     (s=="top")		SetVertAlign( align_top ); /* call derived */
 	else if(s=="middle")	SetVertAlign( align_middle );
 	else if(s=="bottom")	SetVertAlign( align_bottom );
+	else	ASSERT(0);
+}
+
+void Actor::SetEffectClock( CString s )
+{
+	s.MakeLower();
+	if     (s=="timer")		SetEffectClock( CLOCK_TIMER );
+	else if(s=="bgm")		SetEffectClock( CLOCK_BGM );
 	else	ASSERT(0);
 }
 
@@ -814,6 +838,8 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="effectcolor1" )	SetEffectColor1( cParam(1) );
 	else if( sName=="effectcolor2" )	SetEffectColor2( cParam(1) );
 	else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
+	else if( sName=="effectoffset" )	SetEffectOffset( fParam(1) );
+	else if( sName=="effectclock" )		SetEffectClock( sParam(1) );
 	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
 	else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
 	else if( sName=="scaletofit" )		{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToFitInside(R); }
