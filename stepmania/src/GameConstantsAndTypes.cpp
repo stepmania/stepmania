@@ -199,6 +199,8 @@ static const CString PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
 	"FullComboMarvelouses",
 	"SingleDigitGreats",
 	"SingleDigitPerfects",
+	"OneGreat",
+	"OnePerfect",
 	"Greats80Percent",
 	"Greats90Percent",
 	"Greats100Percent",

@@ -402,6 +402,9 @@ bool StageStats::FullComboOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOr
 	ASSERT( tnsAllGreaterOrEqual >= TNS_GREAT );
 	ASSERT( tnsAllGreaterOrEqual <= TNS_MARVELOUS );
 	
+	if( iHoldNoteScores[pn][HNS_NG] > 0 )
+		return false;
+
 	for( int i=TNS_MISS; i<tnsAllGreaterOrEqual; i++ )
 	{
 		if( iTapNoteScores[pn][i] > 0 )
@@ -414,6 +417,12 @@ bool StageStats::SingleDigitsOfScore( PlayerNumber pn, TapNoteScore tnsAllGreate
 {
 	return FullComboOfScore( pn, tnsAllGreaterOrEqual ) &&
 		iTapNoteScores[pn][tnsAllGreaterOrEqual] < 10;
+}
+
+bool StageStats::OneOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const
+{
+	return FullComboOfScore( pn, tnsAllGreaterOrEqual ) &&
+		iTapNoteScores[pn][tnsAllGreaterOrEqual] == 1;
 }
 
 int StageStats::GetTotalTaps( PlayerNumber pn ) const

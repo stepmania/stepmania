@@ -1075,6 +1075,11 @@ void ScreenEvaluation::CommitScores(
 						vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
 					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_MARVELOUS ) )
 						vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
+					
+					if( stageStats.OneOfScore( (PlayerNumber)p, TNS_GREAT ) )
+						vPdas.push_back( AWARD_ONE_GREAT );
+					if( stageStats.OneOfScore( (PlayerNumber)p, TNS_PERFECT ) )
+						vPdas.push_back( AWARD_ONE_PERFECT );
 
 					float fPercentGreats = stageStats.GetPercentageOfTaps((PlayerNumber)p, TNS_GREAT);
 					if( fPercentGreats >= 0.8f )
