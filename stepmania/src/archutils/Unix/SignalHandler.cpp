@@ -4,6 +4,7 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
+#include <signal.h>
 #include <cstdlib>
 #include <unistd.h>
 #include <sys/mman.h>
