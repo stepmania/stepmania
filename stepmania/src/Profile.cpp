@@ -77,8 +77,8 @@ void Profile::InitGeneralData()
 	m_SortOrder = SORT_INVALID;
 	m_LastDifficulty = DIFFICULTY_INVALID;
 	m_LastCourseDifficulty = DIFFICULTY_INVALID;
-	m_pLastSong = NULL;
-	m_pLastCourse = NULL;
+	m_lastSong.Unset();
+	m_lastCourse.Unset();
 	m_iTotalPlays = 0;
 	m_iTotalPlaySeconds = 0;
 	m_iTotalGameplaySeconds = 0;
@@ -709,8 +709,8 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "SortOrder",						SortOrderToString(m_SortOrder) );
 	pGeneralDataNode->AppendChild( "LastDifficulty",				DifficultyToString(m_LastDifficulty) );
 	pGeneralDataNode->AppendChild( "LastCourseDifficulty",			CourseDifficultyToString(m_LastCourseDifficulty) );
-	if( m_pLastSong )	pGeneralDataNode->AppendChild( "LastSong",	m_pLastSong->GetSongDir() );
-	if( m_pLastCourse )	pGeneralDataNode->AppendChild( "LastCourse",m_pLastCourse->m_sPath );
+	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
+	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
 	pGeneralDataNode->AppendChild( "TotalPlays",					m_iTotalPlays );
 	pGeneralDataNode->AppendChild( "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
@@ -846,6 +846,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	ASSERT( pNode->name == "GeneralData" );
 
 	CString s;
+	const XNode* pTemp;
 
 	pNode->GetChildValue( "Guid",							m_sGuid );
 	pNode->GetChildValue( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
@@ -853,8 +854,8 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
 	pNode->GetChildValue( "LastDifficulty",					s );	m_LastDifficulty = StringToDifficulty( s );
 	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToCourseDifficulty( s );
-	pNode->GetChildValue( "LastSong",						s );	m_pLastSong = SONGMAN->GetSongFromDir(s);
-	pNode->GetChildValue( "LastCourse",						s );	m_pLastCourse = SONGMAN->GetCourseFromPath(s);
+	pTemp = pNode->GetChild( "Song" );				if( pTemp ) m_lastSong.LoadFromNode( pTemp );
+	pTemp = pNode->GetChild( "Course" );			if( pTemp ) m_lastCourse.LoadFromNode( pTemp );
 	pNode->GetChildValue( "TotalPlays",						m_iTotalPlays );
 	pNode->GetChildValue( "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );

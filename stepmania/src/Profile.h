@@ -89,8 +89,8 @@ public:
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
-	Song* m_pLastSong;
-	Course* m_pLastCourse;
+	SongID m_lastSong;
+	CourseID m_lastCourse;
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;

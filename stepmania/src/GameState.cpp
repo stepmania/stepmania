@@ -268,8 +268,10 @@ void GameState::PlayersFinalized()
 			m_PreferredDifficulty[pn] = pProfile->m_LastDifficulty;
 		if( pProfile->m_LastCourseDifficulty != DIFFICULTY_INVALID )
 			m_PreferredCourseDifficulty[pn] = pProfile->m_LastCourseDifficulty;
-		if( m_pPreferredSong == NULL && pProfile->m_pLastSong )
-			m_pPreferredSong = pProfile->m_pLastSong;
+		if( m_pPreferredSong == NULL )
+			m_pPreferredSong = pProfile->m_lastSong.ToSong();
+		if( m_pPreferredCourse == NULL )
+			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
 	}
 
 	FOREACH_PlayerNumber( pn )
@@ -396,9 +398,9 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 	if( m_PreferredCourseDifficulty[pn] != DIFFICULTY_INVALID )
 		pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
 	if( m_pPreferredSong )
-		pProfile->m_pLastSong = m_pPreferredSong;
+		pProfile->m_lastSong.FromSong( m_pPreferredSong );
 	if( m_pPreferredCourse )
-		pProfile->m_pLastCourse = m_pPreferredCourse;
+		pProfile->m_lastCourse.FromCourse( m_pPreferredCourse );
 }
 
 void GameState::Update( float fDelta )
