@@ -228,7 +228,7 @@ void CheckStageStats( const StageStats &ss, int p )
 		CHECKPOINT_M( ss.pSong->GetFullTranslitTitle() );
 	ASSERT( ss.pSteps[p] );
 	ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("playmode %i", ss.playMode) );
-	ASSERT_M( ss.pStyleDef != NULL, ssprintf("style (game %d, %s)", ss.pStyleDef->m_Game, ss.pStyleDef->m_szName) );
+	ASSERT( ss.pStyleDef != NULL );
 	ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", ss.pSteps[p]->GetDifficulty()) );
 	/* Meter values can exceed MAX_METER; MAX_METER is just the highest meter value we
 	 * display/track. */
