@@ -342,26 +342,30 @@ TapNoteScore NoteDataWithScoring::GetTapNoteScore(unsigned track, unsigned row) 
 {
 	if(row >= m_TapNoteScores[track].size())
 		return TNS_NONE;
-	return m_TapNoteScores[track][row];
+	return m_TapNoteScores[track][row].tns;
 }
 
 void NoteDataWithScoring::SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns)
 {
-	extend(m_TapNoteScores[track], TNS_NONE, row);
-	m_TapNoteScores[track][row] = tns;
+	extend(m_TapNoteScores[track], TapNoteResult(), row);
+	TapNoteResult tnr = m_TapNoteScores[track][row];
+	tnr.tns = tns;
+	m_TapNoteScores[track][row] = tnr;
 }
 
 float NoteDataWithScoring::GetTapNoteOffset(unsigned track, unsigned row) const
 {
-	if(row >= m_TapNoteOffset[track].size())
+	if(row >= m_TapNoteScores[track].size())
 		return 0;
-	return m_TapNoteOffset[track][row];
+	return m_TapNoteScores[track][row].fTapNoteOffset;
 }
 
 void NoteDataWithScoring::SetTapNoteOffset(unsigned track, unsigned row, float offset)
 {
-	extend(m_TapNoteOffset[track], 0.f, row);
-	m_TapNoteOffset[track][row] = offset;
+	extend(m_TapNoteScores[track], TapNoteResult(), row);
+	TapNoteResult tnr = m_TapNoteScores[track][row];
+	tnr.fTapNoteOffset = offset;
+	m_TapNoteScores[track][row] = tnr;
 }
 
 /* We use the end row to index hold notes, instead of the start row, because the start row

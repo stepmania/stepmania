@@ -15,6 +15,21 @@ struct RowTrack: public pair<int,int>
 	RowTrack( const HoldNote &hn ): pair<int,int>( hn.iEndRow, hn.iTrack ) { }
 };
 
+struct TapNoteResult
+{
+	TapNoteResult()
+	{
+		tns = TNS_NONE;
+		fTapNoteOffset = 0;
+	}
+	TapNoteScore tns;
+
+	/* Offset, in seconds, for a tap grade.  Negative numbers mean the note
+	 * was hit early; positive numbers mean it was hit late.  These values are
+	 * only meaningful for graded taps (tns >= TNS_BOO). */
+	float fTapNoteOffset;
+};
+
 struct HoldNoteResult
 {
 	HoldNoteScore hns;
@@ -43,13 +58,8 @@ struct HoldNoteResult
 class NoteDataWithScoring : public NoteData
 {
 	// maintain this extra data in addition to the NoteData
-	vector<TapNoteScore> m_TapNoteScores[MAX_NOTE_TRACKS];
+	vector<TapNoteResult> m_TapNoteScores[MAX_NOTE_TRACKS];
 	map<RowTrack, HoldNoteResult> m_HoldNoteScores;
-
-	/* Offset, in seconds, for each tap grade.  Negative numbers mean the note
-	 * was hit early; positive numbers mean it was hit late.  These values are
-	 * only meaningful for graded taps (m_TapNoteScores >= TNS_BOO). */
-	vector<float> m_TapNoteOffset[MAX_NOTE_TRACKS];
 
 public:
 	NoteDataWithScoring();
