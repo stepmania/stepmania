@@ -104,7 +104,7 @@ if( !defined($bin_path) )
 
 print "Binary path: $bin_path\n";
 
-open F, "stepmania.nsi" || die "Couldn't open stepmania.nsi: $!";
+open(F, "stepmania.nsi") || die "Couldn't open stepmania.nsi: $!";
 
 
 # Search for the default installation section.
