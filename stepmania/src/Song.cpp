@@ -40,7 +40,7 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 107;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 108;	// increment this when Song or Notes changes to invalidate cache
 
 
 static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
