@@ -252,12 +252,15 @@ CString RageSound_DSound::Init()
 RageSound_DSound::~RageSound_DSound()
 {
 	/* Signal the mixing thread to quit. */
-	shutdown = true;
-	LOG->Trace("Shutting down mixer thread ...");
-	LOG->Flush();
-	MixingThread.Wait();
-	LOG->Trace("Mixer thread shut down.");
-	LOG->Flush();
+	if( MixingThread.IsCreated() )
+	{
+		shutdown = true;
+		LOG->Trace("Shutting down mixer thread ...");
+		LOG->Flush();
+		MixingThread.Wait();
+		LOG->Trace("Mixer thread shut down.");
+		LOG->Flush();
+	}
 
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		delete stream_pool[i];
