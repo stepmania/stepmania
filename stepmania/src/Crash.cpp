@@ -1160,7 +1160,7 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 		if (*fn_name < 32) {
 			int class_idx;
 
-			class_idx = ((unsigned)fn_name[0] - 1)*128 + ((unsigned)fn_name[1] - 1);
+			class_idx = (((unsigned char*)fn_name)[0] - 1)*128 + (((unsigned char*)fn_name)[1] - 1);
 			class_name = GetNameFromHeap(pctx->pClassNameHeap, class_idx);
 
 			fn_name += 2;
@@ -1556,7 +1556,7 @@ static void ReportCrashLog(HWND hwnd, HANDLE hFile)
 /* Same idea, except this is for data that we *always* want to print
  * in the crash log, even if it was printed when we started. */
 static const int STATICLOG_SIZE = 1024*32;
-static char staticlog[STATICLOG_SIZE];
+static char staticlog[STATICLOG_SIZE]="";
 static char *staticlog_ptr=staticlog, *staticlog_end=staticlog+STATICLOG_SIZE;
 void StaticLog(const char *str)
 {
