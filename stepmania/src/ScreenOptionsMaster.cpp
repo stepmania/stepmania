@@ -671,7 +671,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 		{
 			ASSERT( lua_gettop(LUA->L) == 0 );
 
-			/* Evaluate the GetValue(self,array,pn) function, where array is a table
+			/* Evaluate SetSelections(self,array,pn) function, where array is a table
 			 * representing vbSelectedOut. */
 
 			/* Hack: the NextRow entry is never set, and should be transparent.  Remove it. */
@@ -703,7 +703,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 
 			ASSERT( lua_gettop(LUA->L) == 5 ); /* vbSelectedOut, m_iLuaTable, function, arg, arg */
 
-			lua_call( LUA->L, 2, 0 ); // call function with 3 arguments and 0 results
+			lua_call( LUA->L, 2, 0 ); // call function with 2 arguments and 0 results
 			ASSERT( lua_gettop(LUA->L) == 2 );
 
 			lua_pop( LUA->L, 1 ); /* pop option table */
