@@ -36,7 +36,7 @@ public:
 	void UnloadModel( RageModelGeometry *m );
 //	void ReloadAll();
 
-	bool SetPrefs( ModelManagerPrefs prefs ) { m_Prefs = prefs; return true; }
+	bool SetPrefs( ModelManagerPrefs prefs );
 	ModelManagerPrefs GetPrefs() { return m_Prefs; }
 
 protected:
