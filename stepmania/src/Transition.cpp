@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: TransitionBGAnimation
+ Class: Transition
 
  Desc: See header
 
@@ -10,19 +10,19 @@
 -----------------------------------------------------------------------------
 */
 
-#include "TransitionBGAnimation.h"
+#include "Transition.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
 #include "IniFile.h"
 
 
-TransitionBGAnimation::TransitionBGAnimation()
+Transition::Transition()
 {
 	m_State = waiting;
 	m_fSecsIntoTransition = 0.0f;
 }
 
-void TransitionBGAnimation::Load( CString sBGAniDir )
+void Transition::Load( CString sBGAniDir )
 {
 	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != "/" )
 		sBGAniDir += "/";
@@ -45,7 +45,7 @@ void TransitionBGAnimation::Load( CString sBGAniDir )
 }
 
 
-void TransitionBGAnimation::Update( float fDeltaTime )
+void Transition::Update( float fDeltaTime )
 {
 	Actor::Update( fDeltaTime );
 
@@ -63,7 +63,7 @@ void TransitionBGAnimation::Update( float fDeltaTime )
 	}
 }
 
-void TransitionBGAnimation::DrawPrimitives()
+void Transition::DrawPrimitives()
 {
 	// Unless we're transitioning, don't draw because we'll waste resources drawing things
 	// that aren't visible.  -Chris
@@ -73,7 +73,7 @@ void TransitionBGAnimation::DrawPrimitives()
 	m_BGAnimation.Draw();
 }
 
-void TransitionBGAnimation::StartTransitioning( ScreenMessage send_when_done )
+void Transition::StartTransitioning( ScreenMessage send_when_done )
 {
 	ASSERT( m_State == waiting );	// can't call this more than once
 	m_MessageToSendWhenDone = send_when_done;
@@ -82,7 +82,7 @@ void TransitionBGAnimation::StartTransitioning( ScreenMessage send_when_done )
 	m_fSecsIntoTransition = 0.0;
 }
 
-float TransitionBGAnimation::GetLengthSeconds()
+float Transition::GetLengthSeconds()
 {
 	return m_BGAnimation.GetLengthSeconds();
 }

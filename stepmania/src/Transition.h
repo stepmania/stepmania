@@ -1,10 +1,10 @@
-#ifndef TransitionBGAnimation_H
-#define TransitionBGAnimation_H
+#ifndef Transition_H
+#define Transition_H
 /*
 -----------------------------------------------------------------------------
- Class: TransitionBGAnimation
+ Class: Transition
 
- Desc: TransitionBGAnimation that draws BGAnimation.
+ Desc: Transition that draws BGAnimation.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -17,10 +17,10 @@
 #include "RandomSample.h"
 
 
-class TransitionBGAnimation : public Actor
+class Transition : public Actor
 {
 public:
-	TransitionBGAnimation();
+	Transition();
 
 	void Load( CString sBGAniDir );
 
