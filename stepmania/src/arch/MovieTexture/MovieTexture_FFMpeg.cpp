@@ -321,6 +321,13 @@ int FFMpeg_Helper::DecodePacket()
 			GetNextTimestamp = false;
 		}
 
+		/* If we have no data on the first frame, just reutrn EOF; passing an empty packet
+		 * to avcodec_decode_video in this case is crashing it.  However, passing an empty
+		 * packet is normal with B-frames, to flush.  This may be unnecessary in newer
+		 * versions of avcodec, but I'm waiting until a new stable release to upgrade. */
+		if( pkt.size == 0 && FrameNumber == -1 )
+			return 0; /* eof */
+
 		int got_frame;
 		CHECKPOINT;
 		int len = avcodec::avcodec_decode_video(
@@ -399,6 +406,7 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	RageMovieTexture( ID )
 {
+try {
 	LOG->Trace( "MovieTexture_FFMpeg::MovieTexture_FFMpeg(%s)", ID.filename.c_str() );
 
 	FixLilEndian();
@@ -416,31 +424,26 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	m_BufferFinished = SDL_CreateSemaphore(0);
 
 	CreateDecoder();
-	CreateTexture();
-
-	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
-			m_iSourceWidth, m_iSourceHeight,
-			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
 	LOG->Trace("Bitrate: %i", decoder->m_stream->codec.bit_rate );
 	LOG->Trace("Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(decoder->m_stream->codec.pix_fmt) );
-	LOG->Trace("Texture pixel format: %i", m_AVTexfmt );
-
-	CreateFrameRects();
 
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
 	int ret = decoder->GetFrame();
 	if( ret == -1 )
-	{
-		/* XXX */
-		LOG->Trace( "%s: error getting first frame", GetID().filename.c_str() );
-		return;
-	}
+		RageException::ThrowNonfatal( "%s: error getting first frame", GetID().filename.c_str() );
 	if( ret == 0 )
 	{
-		/* There's nothing there. XXX */
-		LOG->Trace( "%s: EOF getting first frame", GetID().filename.c_str() );
-		return;
+		/* There's nothing there. */
+		RageException::ThrowNonfatal( "%s: EOF getting first frame", GetID().filename.c_str() );
 	}
+
+	CreateTexture();
+	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
+			m_iSourceWidth, m_iSourceHeight,
+			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
+	LOG->Trace("Texture pixel format: %i", m_AVTexfmt );
+
+	CreateFrameRects();
 
 	ConvertFrame();
 	UpdateFrame();
@@ -449,6 +452,18 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 
 	StartThread();
     Play();
+}
+catch(...)
+{
+	StopThread();
+	DestroyDecoder();
+	DestroyTexture();
+
+	delete decoder;
+
+	SDL_DestroySemaphore( m_BufferFinished );
+	throw;
+};
 }
 
 MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
@@ -866,10 +881,10 @@ void MovieTexture_FFMpeg::StartThread()
 
 void MovieTexture_FFMpeg::StopThread()
 {
-	LOG->Trace("Shutting down decoder thread ...");
-
 	if( !m_DecoderThread.IsCreated() )
 		return;
+
+	LOG->Trace("Shutting down decoder thread ...");
 
 	m_State = DECODER_QUIT;
 
