@@ -33,6 +33,7 @@ public:
 	~GameState();
 	void Reset();
 	void ApplyCmdline(); // called by Reset
+	void ApplyGameCommand( const CString &sCommand, PlayerNumber pn=PLAYER_INVALID );
 	void BeginGame();	// called when first player joins
 	void JoinPlayer( PlayerNumber pn );
 	void PlayersFinalized();	// called after a style is chosen, which means the number of players is finalized

@@ -79,6 +79,21 @@ GameState::~GameState()
 		SAFE_DELETE( m_pPlayerState[p] );
 }
 
+void GameState::ApplyGameCommand( const CString &sCommand, PlayerNumber pn )
+{
+	GameCommand m;
+	m.Load( 0, ParseCommands(sCommand) );
+
+	CString sWhy;
+	if( !m.IsPlayable(&sWhy) )
+		RageException::Throw( "Can't apply mode \"%s\": %s", sCommand.c_str(), sWhy.c_str() );
+
+	if( pn == PLAYER_INVALID )
+		m.ApplyToAllPlayers();
+	else
+		m.Apply( pn );
+}
+
 void GameState::ApplyCmdline()
 {
 	/* We need to join players before we can set the style. */
@@ -95,13 +110,7 @@ void GameState::ApplyCmdline()
 	CString sMode;
 	for( int i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
 	{
-		GameCommand m;
-		m.Load( 0, ParseCommands(sMode) );
-		CString why;
-		if( !m.IsPlayable(&why) )
-			RageException::Throw( "Can't apply mode \"%s\": %s", sMode.c_str(), why.c_str() );
-
-		m.ApplyToAllPlayers();
+		ApplyGameCommand( sMode );
 	}
 }
 
@@ -1881,12 +1890,21 @@ public:
 	static int IsPlayerEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsPlayerEnabled((PlayerNumber)(IArg(1)-1)) ); return 1; }
 	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)(IArg(1)-1)) ); return 1; }
 	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)(IArg(1)-1)) ); return 1; }
+	static int ApplyGameCommand( T* p, lua_State *L )
+	{
+		PlayerNumber pn = PLAYER_INVALID;
+		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
+			pn = (PlayerNumber)(IArg(2)-1);
+		p->ApplyGameCommand(SArg(1),pn);
+		return 0;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPlayerEnabled )
 		ADD_METHOD( IsHumanPlayer )
 		ADD_METHOD( GetPlayerDisplayName )
+		ADD_METHOD( ApplyGameCommand )
 		Luna<T>::Register( L );
 
 		// add global singleton
