@@ -75,7 +75,8 @@ struct LuaFunctionList
 	CString name;
 	lua_CFunction func;
 	LuaFunctionList *next;
-} extern *g_LuaFunctionList;
+};
+extern LuaFunctionList *g_LuaFunctionList;
 #define LuaFunction( func ) static LuaFunctionList g_##func( #func, LuaFunc_##func )
 
 #endif
