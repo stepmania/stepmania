@@ -21,16 +21,16 @@
 #include "ModeChoice.h"
 #include "ActorUtil.h"
 
-#define NUM_ICON_PARTS							THEME->GetMetricI("ScreenSelectMaster","NumIconParts")
-#define NUM_PREVIEW_PARTS						THEME->GetMetricI("ScreenSelectMaster","NumPreviewParts")
-#define NUM_CURSOR_PARTS						THEME->GetMetricI("ScreenSelectMaster","NumCursorParts")
-#define SHARED_PREVIEW_AND_CURSOR				THEME->GetMetricB("ScreenSelectMaster","SharedPreviewAndCursor")
-#define NUM_CHOICES_ON_PAGE_1					THEME->GetMetricI("ScreenSelectMaster","NumChoicesOnPage1")
-#define CURSOR_OFFSET_X_FROM_ICON( p, part )	THEME->GetMetricF("ScreenSelectMaster",ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1))
-#define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF("ScreenSelectMaster",ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
-#define DISABLED_COLOR							THEME->GetMetricC("ScreenSelectMaster","DisabledColor")
-#define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF("ScreenSelectMaster","PreSwitchPageSeconds")
-#define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF("ScreenSelectMaster","PostSwitchPageSeconds")
+#define NUM_ICON_PARTS							THEME->GetMetricI(m_sName,"NumIconParts")
+#define NUM_PREVIEW_PARTS						THEME->GetMetricI(m_sName,"NumPreviewParts")
+#define NUM_CURSOR_PARTS						THEME->GetMetricI(m_sName,"NumCursorParts")
+#define SHARED_PREVIEW_AND_CURSOR				THEME->GetMetricB(m_sName,"SharedPreviewAndCursor")
+#define NUM_CHOICES_ON_PAGE_1					THEME->GetMetricI(m_sName,"NumChoicesOnPage1")
+#define CURSOR_OFFSET_X_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1))
+#define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
+#define DISABLED_COLOR							THEME->GetMetricC(m_sName,"DisabledColor")
+#define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF(m_sName,"PreSwitchPageSeconds")
+#define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
 
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
@@ -127,7 +127,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_bChosen[p] = false;
 	}
 	
-	m_soundChange.Load( THEME->GetPathToS( "ScreenSelectMaster change") );
+	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())) );
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
@@ -307,6 +307,7 @@ void ScreenSelectMaster::ChangePage( Page newPage )
 	{
 		// XXX: only play this once (I thought we already did that?)
 		// DDR plays it on every change to page 2.  -Chris
+		/* That sounds ugly if you go back and forth quickly. -g */
 		m_soundDifficult.Stop();
 		m_soundDifficult.PlayRandom();
 	}
