@@ -117,7 +117,11 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	m_textMaxStages.LoadFromFont( THEME->GetPathF(m_sName,"MaxStages") );
 	m_textMaxStages.Command( MAX_STAGES_ON_COMMAND );
-	m_textMaxStages.SetText( ssprintf("%d "+MAX_STAGES_TEXT, PREFSMAN->m_iNumArcadeStages ) );
+	CString sText = 
+		PREFSMAN->m_bEventMode ?
+		"event mode" :
+		ssprintf( "%d %s%s max", PREFSMAN->m_iNumArcadeStages, MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iNumArcadeStages>1)?"s":"" );
+	m_textMaxStages.SetText( sText );
 	this->AddChild( &m_textMaxStages );
 
 	CString sCoinMode = CoinModeToString((CoinMode)PREFSMAN->m_iCoinMode);
