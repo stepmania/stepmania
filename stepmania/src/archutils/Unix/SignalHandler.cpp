@@ -45,7 +45,6 @@ SaveSignals::~SaveSignals()
 
 static void SigHandler(int sig)
 {
-	LOG->Trace("got sig %i", sig);
 	for(unsigned i = 0; i < handlers.size(); ++i)
 		handlers[i](sig);
 
