@@ -300,7 +300,8 @@ void RageBitmapTexture::Create()
 
 	if(!m_uGLTextureID)
 		glGenTextures(1, &m_uGLTextureID);
-
+	ASSERT(m_uGLTextureID);
+	
 	DISPLAY->SetTexture(this);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
