@@ -126,7 +126,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_iTapNotesHit = 0;
 	m_lScore = 0;
 	m_iMeter = GAMESTATE->m_pCurNotes[m_PlayerNumber] ? GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter : 5;
-	m_fScoreMultiplier = (double)(m_iMeter * 1000000) / (double)((m_iNumTapNotes * (m_iNumTapNotes + 1)) >> 1);
+	m_fScoreMultiplier = float(m_iMeter * 1000000) / float ((m_iNumTapNotes * (m_iNumTapNotes + 1)) / 2);
 	ASSERT(m_fScoreMultiplier >= 0.0);
 
 
@@ -365,7 +365,7 @@ void Player::Step( int col )
 		////////////////////////////
 		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexEarlier );
 		if( iCurrentIndexEarlier >= 0  &&
-			m_TapNotes[col][iCurrentIndexEarlier] != '0'  &&	// there is a note here
+			GetTapNote(col, iCurrentIndexEarlier) != TAP_EMPTY  &&	// there is a note here
 			m_TapNoteScores[col][iCurrentIndexEarlier] == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexEarlier;
@@ -378,7 +378,7 @@ void Player::Step( int col )
 		////////////////////////////
 		//LOG->Trace( "Checking Notes[%d]", iCurrentIndexLater );
 		if( iCurrentIndexLater >= 0  &&
-			m_TapNotes[col][iCurrentIndexLater] != '0'  &&	// there is a note here
+			GetTapNote(col, iCurrentIndexLater) != TAP_EMPTY  &&	// there is a note here
 			m_TapNoteScores[col][iCurrentIndexLater] == TNS_NONE )	// this note doesn't have a score
 		{
 			iIndexOverlappingNote = iCurrentIndexLater;
@@ -436,7 +436,7 @@ void Player::Step( int col )
 			bool bRowDestroyed = true;
 			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
 			{
-				if( m_TapNotes[t][iIndexOverlappingNote] != '0'  &&			// there is a note here
+				if( GetTapNote(t, iIndexOverlappingNote) != TAP_EMPTY  &&			// there is a note here
 					m_TapNoteScores[t][iIndexOverlappingNote] == TNS_NONE )	// and it doesn't have a score
 				{
 					bRowDestroyed = false;
@@ -482,7 +482,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	int iNumNotesInThisRow = 0;
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
 	{
-		if( m_TapNotes[c][iIndexThatWasSteppedOn] != '0' )	// if there is a note in this col
+		if( GetTapNote(c, iIndexThatWasSteppedOn) != TAP_EMPTY )	// if there is a note in this col
 		{
 			iNumNotesInThisRow++;
 
@@ -541,7 +541,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 		int iNumMissesThisRow = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( m_TapNotes[t][r] != '0'  &&  m_TapNoteScores[t][r] == TNS_NONE )
+			if( GetTapNote(t, r) != TAP_EMPTY  &&  m_TapNoteScores[t][r] == TNS_NONE )
 			{
 				m_TapNoteScores[t][r] = TNS_MISS;
 				iNumMissesFound++;
@@ -571,7 +571,7 @@ void Player::CrossedRow( int iNoteRow )
 		// check to see if there's at the crossed row
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( m_TapNotes[t][iNoteRow] != '0' )
+			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
 				this->Step( t );
 		}
 	}
