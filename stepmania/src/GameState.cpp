@@ -677,8 +677,6 @@ void GameState::ActivateAttack( PlayerNumber target, int slot, bool ActivingDela
 
 void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat )
 {
-			LOG->Trace("... queue at %f..%f", StartBeat, EndBeat );
-
 	map<float,CString> &BeatToNoteSkin = m_BeatToNoteSkin[pn];
 
 	/* Erase any other note skin settings in this range. */
