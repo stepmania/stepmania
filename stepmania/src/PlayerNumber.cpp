@@ -6,13 +6,6 @@
 #include "LuaManager.h"
 
 
-void LuaPlayerNumber(lua_State* L)
-{
-	FOREACH_PlayerNumber( pn )
-		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
-
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
 {
 	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
@@ -52,6 +45,14 @@ PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn )
 	}
 	return PLAYER_INVALID;
 }
+
+void LuaPlayerNumber(lua_State* L)
+{
+	FOREACH_PlayerNumber( pn )
+		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
+
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
