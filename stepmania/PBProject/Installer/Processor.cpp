@@ -12,6 +12,7 @@ using namespace std;
 #include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/param.h>
 #include "StdString.h"
 #include "Processor.h"
 
@@ -40,6 +41,17 @@ CString StripVar(const CString& var)
     if (!IsAVar(var))
         return var;
     return var.substr(1, var.npos);
+}
+
+Processor::Processor(CString& path, handleFileFunc f, getPathFunc p, askFunc a, bool i)
+: mDoGoto(false), mPath(path), mHandleFile(f), mGetPath(p), mAsk(a),
+mError(Processor::DefaultError), mInstalling(i)
+{
+    char cwd[MAXPATHLEN];
+    
+    getwd(cwd);
+    mCWD = cwd;
+    mConditionals["INSTALLING"] = i;
 }
 
 void Processor::ProcessLine(const CString& line, unsigned& nextLine)

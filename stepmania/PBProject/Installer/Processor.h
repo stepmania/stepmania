@@ -42,9 +42,7 @@ private:
     bool ResolveConditional(const CString& cond);
     static void DefaultError(const char *fmt, ...);
 public:
-    Processor(CString& path, handleFileFunc f, getPathFunc p, askFunc a, bool i)
-        : mDoGoto(false), mPath(path), mCWD("."), mHandleFile(f), mGetPath(p), mAsk(a),
-        mError(Processor::DefaultError), mInstalling(i) { mConditionals["INSTALLING"] = i; }
+    Processor(CString& path, handleFileFunc f, getPathFunc p, askFunc a, bool i);
     void ProcessLine(const CString& line, unsigned& nextLine);
     void SetErrorFunc(errorFunc f) { mError = f; }
 };
