@@ -460,6 +460,10 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	SDL_ShowCursor( p.windowed );
 #endif
 	
+#ifdef _XBOX
+	p.windowed = false;
+#endif
+
 	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
 	g_d3dpp.BackBufferWidth			=	p.width;
@@ -473,23 +477,17 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	g_d3dpp.EnableAutoDepthStencil	=	TRUE;
 	g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
 
-#ifndef _XBOX
-
-	g_d3dpp.Flags					=	0;
-	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
 	if(p.windowed)
 		g_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	else
 		g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 
+#ifndef _XBOX
+	g_d3dpp.Flags					=	0;
+	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 #else
-
-	g_d3dpp.Windowed				=	0;
 	g_d3dpp.Flags					=	(p.progressive ? D3DPRESENTFLAG_PROGRESSIVE : D3DPRESENTFLAG_INTERLACED) | D3DPRESENTFLAG_10X11PIXELASPECTRATIO;
 	g_d3dpp.FullScreen_RefreshRateInHz = p.PAL ? 50 : 60;
-	g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-
 #endif
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
