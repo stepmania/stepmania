@@ -7,6 +7,7 @@
 
 #if defined(WIN32)
 #define _WIN32_WINNT 0x0400		// VC6 header needs this defined.  
+#include <windows.h>
 #include <wincrypt.h>
 
 /*
