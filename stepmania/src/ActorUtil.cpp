@@ -83,6 +83,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	else if( sFile.CompareNoCase("coursebanner") == 0 )
 		sType = "CourseBanner";
 
+
 	if( sType == "BGAnimation" )
 	{
 		BGAnimation *p = new BGAnimation;
@@ -122,16 +123,19 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 
 		ThemeManager::EvaluateString( sText );
 		ThemeManager::EvaluateString( sAlttext );
+		
+		CString sFont = sFile;	// accept "File" for backward compatibility
+		pNode->GetAttrValue("Font", sFont );
 
 		BitmapText* pBitmapText = new BitmapText;
 
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the BGAnimationLayer that we're in. */
-		if( sFile == "" )
-			RageException::Throw( "A BitmapText in '%s' is missing the File attribute",
+		if( sFont == "" )
+			RageException::Throw( "A BitmapText in '%s' is missing the Font attribute",
 				sAniDir.c_str() );
 
-		pBitmapText->LoadFromFont( THEME->GetPathToF( sFile ) );
+		pBitmapText->LoadFromFont( THEME->GetPathToF( sFont ) );
 		pBitmapText->SetText( sText, sAlttext );
 		pActor = pBitmapText;
 	}
