@@ -18,6 +18,7 @@
 #include "Style.h"
 #include "Grade.h"
 #include "Attack.h"
+#include "RageTimer.h"
 
 #include <map>
 
@@ -144,6 +145,7 @@ public:
 	float		m_fSongBeat;
 	float		m_fCurBPS;
 	bool		m_bFreeze;	// in the middle of a freeze
+	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	bool		m_bPastHereWeGo;
 	float		m_fLastDrawnBeat[NUM_PLAYERS]; // set by NoteField
 

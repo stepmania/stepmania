@@ -389,6 +389,8 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 {
 	m_fMusicSeconds = fPositionSeconds;
 	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
+	m_LastBeatUpdate.Touch();
+
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 
