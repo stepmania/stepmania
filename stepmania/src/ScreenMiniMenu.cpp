@@ -68,7 +68,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 	float fLongestLabelPlusAnswer = 0;
 
-	for( int i=0; i<m_Def.rows.size(); i++ )
+	for( unsigned i=0; i<m_Def.rows.size(); i++ )
 	{
 		MenuRow& line = m_Def.rows[i];
 		m_iCurAnswers[i] = 0;
@@ -118,7 +118,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		fAnswerX += fIncreaseBy/2;
 	}
 
-	for( int k=0; k<m_Def.rows.size(); k++ )
+	for( unsigned k=0; k<m_Def.rows.size(); k++ )
 	{
 		m_textLabel[k].SetX( fLabelX );
 		m_textAnswer[k].SetX( fAnswerX );
@@ -264,7 +264,7 @@ int ScreenMiniMenu::GetGoUpSpot()
 
 int ScreenMiniMenu::GetGoDownSpot()
 {
-	int i;
+	unsigned i;
 	for( i=m_iCurLine+1; i<m_Def.rows.size(); i++ )
 		if( m_Def.rows[i].enabled )
 			return i;
