@@ -1021,6 +1021,9 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_sprBalloon.StopTweening();
 				OFF_COMMAND( m_sprBalloon );
 			}
+
+			// update stage counter display (long versions/marathons)
+			m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 		}
 		break;
 	case TYPE_ROULETTE:
