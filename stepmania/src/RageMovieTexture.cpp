@@ -54,7 +54,7 @@ struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureR
 class CTextureRenderer : public CBaseVideoRenderer
 {
 public:
-    CTextureRenderer(LPUNKNOWN pUnk,HRESULT *phr);
+    CTextureRenderer();
     ~CTextureRenderer();
 
 public:
@@ -84,17 +84,17 @@ protected:
 //-----------------------------------------------------------------------------
 // CTextureRenderer constructor
 //-----------------------------------------------------------------------------
-CTextureRenderer::CTextureRenderer( LPUNKNOWN pUnk, HRESULT *phr )
+static HRESULT CBV_ret;
+CTextureRenderer::CTextureRenderer()
                                    : CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
-                                   NAME("Texture Renderer"), pUnk, phr)
+                                   NAME("Texture Renderer"), NULL, &CBV_ret)
 {
-    if( FAILED(*phr) )
-        throw RageException( *phr, "Could not create texture renderer object!" );
+    if( FAILED(CBV_ret) )
+        throw RageException( CBV_ret, "Could not create texture renderer object!" );
 
     // Store and ARageef the texture for our use.
 	m_pTexture = NULL;
 	m_bBackBufferLocked = FALSE;
-    *phr = S_OK;
 }
 
 
@@ -394,7 +394,7 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
         throw RageException( hr, "Could not create CLSID_FilterGraph!" );
     
     // Create the Texture Renderer object
-    m_pCTR = new CTextureRenderer(NULL, &hr);
+    m_pCTR = new CTextureRenderer();
     
     // Get a pointer to the IBaseFilter on the TextureRenderer, add it to graph
     CComPtr<IBaseFilter> pFTR = m_pCTR;
