@@ -13,9 +13,11 @@ public:
 	~ComboGraph() { Unload(); }
 	void Load( CString Path, const StageStats &s, PlayerNumber pn );
 	void Unload();
+	void TweenOffScreen();
 
 private:
-	vector<Actor*>		m_Actors;
+	vector<Actor*>		m_Sprites;
+	vector<Actor*>		m_Numbers;
 };
 
 #endif

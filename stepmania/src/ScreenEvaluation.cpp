@@ -411,7 +411,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip
 
-			m_Combo[p].SetName( "ComboGraph", ssprintf("ComboP%i",p+1) );
+			m_Combo[p].SetName( m_sName, ssprintf("ComboP%i",p+1) );
 			m_Combo[p].Load( ssprintf("ScreenEvaluationStage combo p%i", p+1), stageStats, (PlayerNumber)p );
 			SET_XY_AND_ON_COMMAND( m_Combo[p] );
 
