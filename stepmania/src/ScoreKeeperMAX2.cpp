@@ -229,25 +229,18 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	//
 	// Toasty combo
 	//
-	if( GAMESTATE->IsCourseMode() )
+	switch( scoreOfLastTap )
 	{
-		// don't play Toasty in a course.  It's distracting.
-	}
-	else
-	{
-		switch( scoreOfLastTap )
-		{
-		case TNS_MARVELOUS:
-		case TNS_PERFECT:
-			m_iCurToastyCombo += iNumTapsInRow;
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+		m_iCurToastyCombo += iNumTapsInRow;
 
-			if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
-				SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-			break;
-		default:
-			m_iCurToastyCombo = 0;
-			break;
-		}
+		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
+			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
+		break;
+	default:
+		m_iCurToastyCombo = 0;
+		break;
 	}
 
 	//
