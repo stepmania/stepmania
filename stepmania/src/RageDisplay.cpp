@@ -135,6 +135,11 @@ void RageDisplay::SetupOpenGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+	/* Line antialiasing is fast on most hardware, and saying "don't care"
+	 * should turn it off if it isn't. */
+	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+	glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+
 	/* Initialize the default ortho projection. */
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
@@ -364,12 +369,8 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	if( g_vertMode != GL_LINE_LOOP )
 		FlushQueue();
 
-	/* Line antialiasing is fast on most hardware, and saying "don't care"
-	 * should turn it off if it isn't. */
 	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_POINT_SMOOTH);
-	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-	glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+
 	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
 	 * but these width functions actually want raster sizes (that is, actual pixels).
 	 * Scale the line width and point size by the average ratio of the scale. */
@@ -383,6 +384,8 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	AddVerts( v, iNumVerts );
 	FlushQueue();
 
+	glDisable(GL_LINE_SMOOTH);
+
 	/* Round off the corners.  This isn't perfect; the point is sometimes a little
 	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
 	 * that. 
@@ -391,11 +394,22 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	 * line size of 3 at 640x480 and 1024x768; I don't know what it would do at
 	 * other line sizes. */
 	glPointSize((LineWidth - .3f) * factor);
+
+	/* Hack: if the points will all be the same, we don't want to draw
+	 * any points at all, since there's nothing to connect.  That'll happen
+	 * if both scale factors in the matrix are ~0.  (Actually, I think
+	 * it's true if two of the three scale factors are ~0, but we don't
+	 * use this for anything 3d at the moment anyway ...) */
+	RageMatrix &mat = GetTopModelMatrix();
+	if(mat.m[0][0] < 1e-5 && mat.m[1][1] < 1e-5) 
+	    return;
+
+	glEnable(GL_POINT_SMOOTH);
+
 	g_vertMode = GL_POINTS;
 	AddVerts( v, iNumVerts );
 	FlushQueue();
 
-	glDisable(GL_LINE_SMOOTH);
 	glDisable(GL_POINT_SMOOTH);
 }
 
