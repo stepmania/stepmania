@@ -239,6 +239,8 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 		Reply.Write1( 4+128 );
 		Reply.Write1( (uint8_t) numPlayers );
 		for (int x = 0; x < numPlayers; x++) 
+			Reply.Write4(playersPtr[x]->PlayerID);
+		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write4(playersPtr[x]->score);
 		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write1( (uint8_t) playersPtr[x]->projgrade );
