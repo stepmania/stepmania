@@ -283,6 +283,15 @@ void Course::LoadFromCRSFile( CString sPath )
 				m_vDifficultiesToHide.insert( cd );
 			}
 		}
+		else if( !stricmp(sValueName, "DIFFICULTIESTOHIDE") )
+		{
+			m_vDifficultiesToHide.clear();
+			for( unsigned i=1; i<sParams.params.size(); i++ )
+			{
+				CourseDifficulty cd = StringToCourseDifficulty( sParams[i] );
+				m_vDifficultiesToHide.insert( cd );
+			}
+		}
 		else
 		{
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
