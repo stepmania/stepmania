@@ -311,8 +311,6 @@ void NoteData::AddHoldNote( HoldNote add )
 	ASSERT( add.iStartRow>=0 && add.iEndRow>=0 );
 
 	// look for other hold notes that overlap and merge them
-	// XXX: this is done implicitly with 4s, but 4s uses this function.
-	// Rework this later.
 	for( int i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
 	{
 		HoldNote &other = GetHoldNote(i);
@@ -712,9 +710,17 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	}
 
 	// copy holds
+	int iInverseMapping[MAX_NOTE_TRACKS];
+	for( int i = 0; i < iNewNumTracks; ++i )
+	{
+		int iFrom = iOriginalTrackToTakeFrom[i];
+		iInverseMapping[iFrom] = i;
+	}
+
 	for( int i=0; i<in.GetNumHoldNotes(); i++ )	// for each HoldNote
 	{
-		const HoldNote &hn = in.GetHoldNote(i);
+		HoldNote hn = in.GetHoldNote(i);
+		hn.iTrack = iInverseMapping[hn.iTrack];
 		this->AddHoldNote( hn );
 	}
 }
