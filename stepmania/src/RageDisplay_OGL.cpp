@@ -1250,41 +1250,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 	bool bGenerateMipMaps )
 {
 	ASSERT( pixfmt < NUM_PIX_FORMATS );
+	ASSERT( img->w == power_of_two(img->w) && img->h == power_of_two(img->h) );
 
-
-	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
-	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
-	// http://pyopengl.sourceforge.net/documentation/manual/gluBuild2DMipmaps.3G.html
-	if( g_gluVersion < 13 )
-	{
-		switch( pixfmt )
-		{
-		// OpenGL 1.1 types
-		case FMT_RGBA8:
-		case FMT_RGB8:
-		case FMT_PAL:
-		case FMT_BGR8:
-			break;
-		// OpenGL 1.2 types
-		default:
-			bGenerateMipMaps = false;
-			break;
-		}
-	}
-
-
-	unsigned int uTexHandle;
-	glGenTextures(1, reinterpret_cast<GLuint*>(&uTexHandle));
-	ASSERT(uTexHandle);
-	
-	glBindTexture( GL_TEXTURE_2D, uTexHandle );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bGenerateMipMaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
-	SetTextureWrapping( false );
-
-	// texture must be power of two
-	ASSERT( img->w == power_of_two(img->w) );
-	ASSERT( img->h == power_of_two(img->h) );
 
 	/* Find the pixel format of the image we've been given. */
 	bool FreeImg;
@@ -1318,8 +1285,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 		ASSERT( RealFormat == GL_RGBA8);	/* This is a case I don't expect to happen. */
 	}
 
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
-
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
@@ -1332,6 +1297,41 @@ unsigned RageDisplay_OGL::CreateTexture(
 		LOG->Trace("did 4 bit");
 		glTexFormat = GL_COLOR_INDEX4_EXT;
 	}
+
+	
+	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
+	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
+	// http://pyopengl.sourceforge.net/documentation/manual/gluBuild2DMipmaps.3G.html
+	if( g_gluVersion < 13 )
+	{
+		switch( pixfmt )
+		{
+		// OpenGL 1.1 types
+		case FMT_RGBA8:
+		case FMT_RGB8:
+		case FMT_PAL:
+		case FMT_BGR8:
+			break;
+		// OpenGL 1.2 types
+		default:
+			LOG->Trace( "Can't generate mipmaps for type %s because GLU version %.1f is too old.", GLToString(glImageType).c_str(), g_gluVersion/10.f );
+			bGenerateMipMaps = false;
+			break;
+		}
+	}
+
+	// allocate OpenGL texture resource
+	unsigned int uTexHandle;
+	glGenTextures(1, reinterpret_cast<GLuint*>(&uTexHandle));
+	ASSERT(uTexHandle);
+	
+	glBindTexture( GL_TEXTURE_2D, uTexHandle );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bGenerateMipMaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
+	SetTextureWrapping( false );
+
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
+
 
 	FlushGLErrors();
 
