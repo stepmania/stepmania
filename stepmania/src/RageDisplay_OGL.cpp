@@ -627,7 +627,9 @@ void DumpOpenGLDebugInfo()
 			continue;
 
 		CString str = ssprintf("Mode %i: ", i);
-		if(i == Actual) str += "*** ";
+		if( i != Actual )
+			continue;
+//		if(i == Actual) str += "*** ";
 		if(skip) str += "(BOGUS) ";
 		if(soft) str += "software ";
 		if(icd) str += "ICD ";
