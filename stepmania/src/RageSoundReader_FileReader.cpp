@@ -89,5 +89,6 @@ SoundReader *SoundReader_FileReader::OpenFile( CString filename, CString &error 
 		}
 	}
 
+	error = "Unknown file format";
 	return NULL;
 }

@@ -79,11 +79,10 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 		fclose(f);
 		switch( ret )
 		{
-		case OV_EREAD:
 		case OV_ENOTVORBIS:
-			return OPEN_MATCH_BUT_FAIL;
-		default:
 			return OPEN_NO_MATCH;
+		default:
+			return OPEN_MATCH_BUT_FAIL;
 		}
 	}
 
