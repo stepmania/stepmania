@@ -256,22 +256,6 @@ ScreenEnding::~ScreenEnding()
 
 void ScreenEnding::Update( float fDeltaTime )
 {
-	// The shared background isn't loaded until the screen is actually 
-	// showing.  The background is loaded by the time of the first update.
-	if( IsFirstUpdate() )
-	{
-		BGAnimation &background = *SCREENMAN->m_pSharedBGA;
-		float fSecsUntilBeginFadingOut = background.GetTweenTimeLeft() - m_Out.GetTweenTimeLeft();
-		if( fSecsUntilBeginFadingOut < 0 )
-		{
-			LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
-				m_sName.c_str(), m_Out.GetTweenTimeLeft(), background.GetTweenTimeLeft() );
-			fSecsUntilBeginFadingOut = 0;
-		}
-		this->PostScreenMessage( SM_BeginFadingOut, fSecsUntilBeginFadingOut );
-	}
-
-
 	ScreenAttract::Update( fDeltaTime );
 
 	if( m_In.IsTransitioning() && m_Out.IsTransitioning() )
