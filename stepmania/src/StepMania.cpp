@@ -810,7 +810,7 @@ void Update()
 	
 	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
 		fDeltaTime *= 4;
-	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT) ) )
+	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
 		fDeltaTime /= 4;
 
 
