@@ -21,6 +21,7 @@
     if (finished)
         [NSApp terminate:self];
     [sender setEnabled:NO];
+    [[[self window] standardWindowButton:NSWindowCloseButton] setEnabled:NO];
     [self postMessage:@"Starting installation."];
     [NSThread detachNewThreadSelector:@selector(startHelper:) toTarget:helper withObject:self];
 }
@@ -36,6 +37,7 @@
 
 - (void)finishedInstalling:(BOOL)success
 {
+    [[[self window] standardWindowButton:NSWindowCloseButton] setEnabled:YES];
     if (success)
     {
         [button setTitle:@"Quit Installer"];
@@ -58,4 +60,8 @@
     [NSApp stopModalWithCode:[sender tag]];
 }
 
+- (void)windowWillClose:(NSNotification *)notification
+{
+    [NSApp terminate:self];
+}
 @end

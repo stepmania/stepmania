@@ -20,4 +20,5 @@
 - (void)finishedInstalling:(BOOL)success;
 - (BOOL)askQuestion:(NSString *)question;
 - (IBAction)pushedQuestionButton:(id)sender;
+- (void)windowWillClose:(NSNotification *)notification;
 @end
