@@ -516,11 +516,11 @@ void ScreenEdit::DrawPrimitives()
 	m_textHelp.Draw();
 	m_textInfo.Draw();
 	m_Fade.Draw();
-	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
+/*	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
 	{
 		m_rectShortcutsBack.Draw();
 		m_textShortcuts.Draw();
-	}
+	} */
 
 	m_rectRecordBack.Draw();
 
@@ -1192,11 +1192,6 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 		{
 		case DIK_ESCAPE:
 			TransitionFromRecordToEdit();
-			
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
-
 			break;
 		}
 	}
