@@ -330,7 +330,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 	out.SetNumTracks( iNewNumTracks );
 
 	NoteData in;
-	in.To4s( input );
+	in.To2sAnd3s( input );
 
 	/* Keep track of the last source track that put a tap into each destination track,
 	 * and the row of that tap.  Then, if two rows are trying to put taps into the
@@ -342,47 +342,57 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 	for( int tr = 0; tr < MAX_NOTE_TRACKS; ++tr )
 	{
 		LastSourceTrack[tr] = -1;
-		LastSourceRow[tr] = -9999;
+		LastSourceRow[tr] = -MAX_NOTE_ROW;
 		DestRow[tr] = tr;
 		wrap( DestRow[tr], iNewNumTracks );
 	}
 
 	const int ShiftThreshold = BeatToNoteRow(1);
 
-	const int iLastRow = in.GetLastRow();
-	for( int row = 0; row <= iLastRow; ++row )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, row )
 	{
-		for ( int i = 0; i < in.GetNumTracks(); i++ )
+		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
-			const int iTrackFrom = i;
-			int &iTrackTo = DestRow[i];
-
 			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
 			if( tnFrom.type == TapNote::empty )
 				continue;
+			if( tnFrom.type == TapNote::hold_tail )
+				continue; /* copied with hold_head */
 
-			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
-				row - LastSourceRow[iTrackTo] < ShiftThreshold )
+			/* If this is a hold note, find the end. */
+			int iEndIndex = row;
+			if( tnFrom.type == TapNote::hold_head )
+				in.IsHoldNoteAtBeat( iTrackFrom, row, NULL, &iEndIndex );
+
+			int &iTrackTo = DestRow[iTrackFrom];
+			if( LastSourceTrack[iTrackTo] != iTrackFrom )
 			{
-				/* This destination track is in use by a different source track.  Use the
-				 * least-recently-used track. */
-				for( int DestTrack = 0; DestTrack < iNewNumTracks; ++DestTrack )
-					if( LastSourceRow[DestTrack] < LastSourceRow[iTrackTo] )
-						iTrackTo = DestTrack;
+				if( iEndIndex - LastSourceRow[iTrackTo] < ShiftThreshold )
+				{
+					/* This destination track is in use by a different source track.  Use the
+					 * least-recently-used track. */
+					for( int DestTrack = 0; DestTrack < iNewNumTracks; ++DestTrack )
+						if( LastSourceRow[DestTrack] < LastSourceRow[iTrackTo] )
+							iTrackTo = DestTrack;
+				}
+
+				/* If it's still in use, then we just don't have an available track. */
+				if( iEndIndex - LastSourceRow[iTrackTo] < ShiftThreshold )
+					continue;
 			}
 
-			/* If it's still in use, then we just don't have an available track. */
-			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
-				row - LastSourceRow[iTrackTo] < ShiftThreshold )
-				continue;
-
 			LastSourceTrack[iTrackTo] = iTrackFrom;
-			LastSourceRow[iTrackTo] = row;
+			LastSourceRow[iTrackTo] = iEndIndex;
 			out.SetTapNote( iTrackTo, row, tnFrom );
+			if( tnFrom.type == TapNote::hold_head )
+			{
+				TapNote tnTail = in.GetTapNote( iTrackFrom, iEndIndex );
+				out.SetTapNote( iTrackTo, iEndIndex, tnTail );
+			}
 		}
 	}
 
-	out.Convert4sToHoldNotes();
+	out.Convert2sAnd3sToHoldNotes();
 }
 
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
