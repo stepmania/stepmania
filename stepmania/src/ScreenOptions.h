@@ -31,6 +31,7 @@ struct OptionRowData {
 	char szTitle[30];
 	int iNumOptions;
 	char szOptionsText[MAX_OPTIONS_PER_LINE][60];
+	char szExplanation[2048];
 };
 
 enum InputMode 
@@ -101,6 +102,8 @@ protected:
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
+
+	BitmapText		m_textExplanation;
 
 	RageSoundSample	m_SoundChangeCol;
 	RageSoundSample	m_SoundNextRow;

@@ -31,6 +31,9 @@
 #define ITEMS_GAP_X			THEME->GetMetricF("ScreenOptions","ItemsGapX")
 #define ITEMS_START_Y		THEME->GetMetricF("ScreenOptions","ItemsStartY")
 #define ITEMS_SPACING_Y		THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
+#define EXPLANATION_X		THEME->GetMetricF("ScreenOptions","ExplanationX")
+#define EXPLANATION_Y		THEME->GetMetricF("ScreenOptions","ExplanationY")
+#define EXPLANATION_ZOOM	THEME->GetMetricF("ScreenOptions","ExplanationZoom")
 #define HELP_TEXT			THEME->GetMetric("ScreenOptions","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenOptions","TimerSeconds")
 #define COLOR_SELECTED		THEME->GetMetricC("ScreenOptions","ColorSelected")
@@ -65,7 +68,6 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	m_sprPage.Load( sPagePath );
 	m_sprPage.SetXY( CENTER_X, CENTER_Y );
 	m_framePage.AddChild( &m_sprPage );
-
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -137,6 +139,13 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	m_framePage.AddChild( &m_textOptions[i][0] );
 
+	// add explanation here so it appears on top
+	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","options explanation") );
+	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
+	m_textExplanation.SetZoom( EXPLANATION_ZOOM );
+	m_textExplanation.SetShadowLength( 2 );
+	m_framePage.AddChild( &m_textExplanation );
+
 
 	InitOptionsText();
 	PositionUnderlines();
@@ -144,12 +153,12 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumO
 	RefreshIcons();
 	PositionCursors();
 	UpdateEnabledDisabled();
+	OnChange();
 }
 
 ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
-
 }
 
 
@@ -363,12 +372,12 @@ void ScreenOptions::UpdateEnabledDisabled()
 			m_textOptions[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 	}
 
-	bool bThisRowIsSelected = false;
+	bool bThisRowIsSelectedByBoth = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] == i )
-			bThisRowIsSelected = true;
-	m_textOptions[i][0].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
-	if( bThisRowIsSelected )
+		if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] != i )
+			bThisRowIsSelectedByBoth = false;
+		m_textOptions[i][0].SetDiffuse( bThisRowIsSelectedByBoth ? colorNotSelected : colorSelected );
+	if( bThisRowIsSelectedByBoth )
 		m_textOptions[i][0].SetEffectCamelion( 2.5, colorSelected, colorNotSelected );
 	else
 		m_textOptions[i][0].SetEffectNone();
@@ -430,6 +439,12 @@ void ScreenOptions::OnChange()
 	PositionUnderlines();
 	RefreshIcons();
 	UpdateEnabledDisabled();
+
+	int iCurRow = m_iCurrentRow[PLAYER_1];
+	if( iCurRow < m_iNumOptionRows )
+		m_textExplanation.SetText( m_OptionRowData[iCurRow].szExplanation );
+	else
+		m_textExplanation.SetText( "" );
 }
 
 

@@ -22,7 +22,6 @@
 #include "RageLog.h"
 
 
-
 enum {
 	IO_IGNORE_AXES = 0,
 	IO_DEDICATED_MENU_BUTTONS,
@@ -31,10 +30,11 @@ enum {
 	IO_OPTIONS_NAVIGATION,
 	NUM_INPUT_OPTIONS_LINES
 };
+
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
  * preferably alongside button configuration. */
 OptionRowData g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
-	{ "Ignore\nJoyAxes",	2, {"OFF","ON (for NTPad or DirectPad)"} },
+	{ "Ignore\nJoy Axes",	2, {"OFF","ON (for NTPad or DirectPad)"} },
 	{ "Menu\nButtons",		2, {"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS"} },
 	{ "AutoPlay",			2, {"OFF","ON"} },
 	{ "Back\nDelayed",		2, {"INSTANT","HOLD"} },
@@ -49,6 +49,15 @@ ScreenInputOptions::ScreenInputOptions() :
 		)
 {
 	LOG->Trace( "ScreenInputOptions::ScreenInputOptions()" );
+
+	// fill g_InputOptionsLines with explanation text
+	for( int i=0; i<NUM_INPUT_OPTIONS_LINES; i++ )
+	{
+		CString sLineName = g_InputOptionsLines[i].szTitle;
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		strcpy( g_InputOptionsLines[i].szExplanation, THEME->GetMetric("ScreenInputOptions",sLineName) );
+	}
 
 	Init( 
 		INPUTMODE_BOTH, 

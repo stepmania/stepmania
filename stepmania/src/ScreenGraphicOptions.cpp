@@ -28,7 +28,6 @@ enum {
 	GO_DISPLAY_RESOLUTION,
 	GO_TEXTURE_RESOLUTION,
 	GO_REFRESH_RATE,
-	GO_SHOWSTATS,
 	GO_BGMODE,
 	GO_BGBRIGHTNESS,
 	GO_MOVIEDECODEMS,
@@ -37,16 +36,15 @@ enum {
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
-	{ "Display",		2,  {"FULLSCREEN", "WINDOWED"} },
-	{ "Display\nRes",	7,  {"320","400","512","640","800","1024","1280"} },
-	{ "Texture\nRes",	3,  {"256","512","1024"} },
-	{ "Refresh\nRate",	11, {"DEFAULT","MAX","60","70","72","75","80","85","90","100","120"} },
-	{ "Show\nStats",	2,  {"OFF","ON"} },
-	{ "BG\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
-	{ "BG\nBrightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
-	{ "Movie\nDecode",	4,  {"1ms","2ms","3ms","4ms"} },
-	{ "BG For\nBanner",	2,  {"NO", "YES (slow)"} },
-	{ "Wait for\nVsync",2,  {"NO", "YES"} },
+	{ "Display\nMode",			2,  {"FULLSCREEN", "WINDOWED"} },
+	{ "Display\nResolution",	7,  {"320","400","512","640","800","1024","1280"} },
+	{ "Texture\nResolution",	3,  {"256","512","1024"} },
+	{ "Refresh\nRate",			11, {"DEFAULT","MAX","60","70","72","75","80","85","90","100","120"} },
+	{ "Background\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
+	{ "Background\nBrightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
+	{ "Movie\nDecode",			4,  {"1ms","2ms","3ms","4ms"} },
+	{ "BG For\nBanner",			2,  {"NO", "YES (slow)"} },
+	{ "Wait For\nVsync",		2,  {"NO", "YES"} },
 };
 
 static const int HorizRes[] = {
@@ -64,6 +62,15 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 		)
 {
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
+
+	// fill g_InputOptionsLines with explanation text
+	for( int i=0; i<NUM_GRAPHIC_OPTIONS_LINES; i++ )
+	{
+		CString sLineName = g_GraphicOptionsLines[i].szTitle;
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		strcpy( g_GraphicOptionsLines[i].szExplanation, THEME->GetMetric("ScreenGraphicOptions",sLineName) );
+	}
 
 	Init(
 		INPUTMODE_BOTH, 
@@ -168,7 +175,6 @@ void ScreenGraphicOptions::ImportOptions()
 	default:	m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
 	}
 
-	m_iSelectedOption[0][GO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][GO_BGMODE]					= PREFSMAN->m_BackgroundMode;
 	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= roundf( PREFSMAN->m_fBGBrightness*10 ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
@@ -211,7 +217,6 @@ void ScreenGraphicOptions::ExportOptions()
 	default:	ASSERT(0);	PREFSMAN->m_iRefreshRate = 0;	break;
 	}
 
-	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][GO_SHOWSTATS] == 1;
 	PREFSMAN->m_BackgroundMode			= PrefsManager::BackgroundMode( m_iSelectedOption[0][GO_BGMODE] );
 	PREFSMAN->m_fBGBrightness			= m_iSelectedOption[0][GO_BGBRIGHTNESS] / 10.0f;
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;

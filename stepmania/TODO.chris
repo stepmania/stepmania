@@ -4,8 +4,6 @@ Fix
 
 Ready, here we go closer to start of notes
 
-off center backgrounds
-
 correct songs played show on eval
 
 make sure supports music in "Music" folder
@@ -14,34 +12,7 @@ supports music folder if aditional dirs
 
 "How to Play" explanation with the freeze arrows nearly takes up the entire screen.
 
-KeepAlive doesn't fold during how to play
-
-"try extra stage" swoop instead of cleared
-
-Wow!  pngcrush takes off 50% on some of these paletted pngs.  I'll look into making a script that we can check into CVS and run periodically.
-
-disable modifiers in extra stage
-
-the only other thing is to encorporate `...'   to replace <...>, and instead turn the <...> as triple jumps or more than 2 arrow jumps. its the new DWI format.
-
-change "bg change" to show a list
-
 change background change to look for movies in song dir and bganimations in song dir
-
-You're saying that right now the max combo text is being drawn underneath the bonus frame?
-
- the MAX announcer dosnt say "Extra Stage" anymore
-SlinkyWizard30: and there is no "%" sign on Oni
-
-crash loading bga in Win98
-
-editor play and record without set range
-
-editor intro prompt
-
-oni-specific comments
-
-arcade mode
 
 about us page
 
@@ -53,10 +24,6 @@ RMA phone
 
 RMA Kiko USB
 
-couples format
-
-3/5 button options toggle
-
 kitsappt photos
 
 slower eval bar tween
@@ -64,10 +31,6 @@ slower eval bar tween
 max style judge tween
 
 add turns to editor
-
-164 theme
-
-gap between wheel items
 
 sample pop
 

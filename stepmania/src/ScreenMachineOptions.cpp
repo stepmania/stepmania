@@ -30,6 +30,7 @@ enum {
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
 	MO_HIDDEN_SONGS,
+	MO_SHOWSTATS,
 	NUM_MACHINE_OPTIONS_LINES
 };
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
@@ -41,6 +42,7 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	{ "Judge\nDifficulty",	8, {"1","2","3","4","5","6","7","8"} },
 	{ "Life\nDifficulty",	7, {"1","2","3","4","5","6","7"} },
 	{ "Hidden\nSongs",		2, {"OFF","ON"} },
+	{ "Show\nStats",		2, {"OFF","ON"} },
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -51,6 +53,15 @@ ScreenMachineOptions::ScreenMachineOptions() :
 		)
 {
 	LOG->Trace( "ScreenMachineOptions::ScreenMachineOptions()" );
+
+	// fill g_InputOptionsLines with explanation text
+	for( int i=0; i<NUM_MACHINE_OPTIONS_LINES; i++ )
+	{
+		CString sLineName = g_MachineOptionsLines[i].szTitle;
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		strcpy( g_MachineOptionsLines[i].szExplanation, THEME->GetMetric("ScreenMachineOptions",sLineName) );
+	}
 
 	Init( 
 		INPUTMODE_BOTH, 
@@ -96,6 +107,8 @@ void ScreenMachineOptions::ImportOptions()
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.60f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 5;
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.40f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 6;
 	else													m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
+
+	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 }
 
 void ScreenMachineOptions::ExportOptions()
@@ -132,6 +145,7 @@ void ScreenMachineOptions::ExportOptions()
 	default:	ASSERT(0);
 	}
 	
+	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 }
 
 void ScreenMachineOptions::GoToPrevState()

@@ -38,6 +38,7 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 #define CHOICES_X						THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
 #define CHOICES_START_Y					THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
 #define CHOICES_SPACING_Y				THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
+#define CHOICES_SHADOW_LENGTH			THEME->GetMetricF("ScreenTitleMenu","ChoicesShadowLength")
 #define HELP_X							THEME->GetMetricF("ScreenTitleMenu","HelpX")
 #define HELP_Y							THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define LOGO_X							THEME->GetMetricF("ScreenTitleMenu","LogoX")
@@ -144,7 +145,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","titlemenu") );
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
 		m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
-		m_textChoice[i].SetShadowLength( 5 );
+		m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
 		this->AddChild( &m_textChoice[i] );
 	}	
 	

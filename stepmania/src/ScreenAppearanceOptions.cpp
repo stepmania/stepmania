@@ -35,10 +35,10 @@ enum {
 };
 
 OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
-	{ "Announ\n-cer",	1, {"OFF"} },	// fill this in on ImportOptions()
+	{ "Announcer",		1, {"OFF"} },	// fill this in on ImportOptions()
 	{ "Theme",			0, {""} },		// fill this in on ImportOptions()
 	{ "Note\nSkin",		0, {""} },		// fill this in on ImportOptions()
-	{ "How To\nPlay",	2, {"OFF","ON"} },
+	{ "How To\nPlay",	2, {"SKIP","SHOW"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -49,6 +49,15 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 		)
 {
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
+
+	// fill g_InputOptionsLines with explanation text
+	for( int i=0; i<NUM_APPEARANCE_OPTIONS_LINES; i++ )
+	{
+		CString sLineName = g_AppearanceOptionsLines[i].szTitle;
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		strcpy( g_AppearanceOptionsLines[i].szExplanation, THEME->GetMetric("ScreenAppearanceOptions",sLineName) );
+	}
 
 	Init( 
 		INPUTMODE_BOTH, 
