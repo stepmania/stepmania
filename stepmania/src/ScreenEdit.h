@@ -134,9 +134,8 @@ protected:
 	NoteField		m_NoteFieldEdit;
 	SnapDisplay		m_SnapDisplay;
 
-	Sprite			m_sprHelp;
+	AutoActor		m_sprHelp;
 	BitmapText		m_textHelp;
-	Sprite			m_sprInfo;
 	BitmapText		m_textInfo;		// status information that changes
 
 	// keep track of where we are and what we're doing

@@ -42,14 +42,8 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define SHORTCUTS_X		(SCREEN_CENTER_X - 150)
 #define SHORTCUTS_Y		(SCREEN_CENTER_Y)
 
-#define HELP_X			(SCREEN_LEFT)
-#define HELP_Y			(SCREEN_CENTER_Y)
-
 #define HELP_TEXT_X		(SCREEN_LEFT + 4)
 #define HELP_TEXT_Y		(40)
-
-#define INFO_X			(SCREEN_RIGHT)
-#define INFO_Y			(SCREEN_CENTER_Y)
 
 #define INFO_TEXT_X		(SCREEN_RIGHT - 114)
 #define INFO_TEXT_Y		(40)
@@ -563,9 +557,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	m_Out.Load( THEME->GetPathToB("ScreenEdit out") );
 
-	m_sprHelp.Load( THEME->GetPathToG("ScreenEdit help") );
-	m_sprHelp.SetHorizAlign( Actor::align_left );
-	m_sprHelp.SetXY( HELP_X, HELP_Y );
+	m_sprHelp.LoadAndSetName( m_sName, "Help" );
+	SET_XY_AND_ON_COMMAND( m_sprHelp );
 
 	m_textHelp.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
@@ -574,10 +567,6 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetText( HELP_TEXT );
 	m_textHelp.SetShadowLength( 0 );
-
-	m_sprInfo.Load( THEME->GetPathToG("ScreenEdit Info") );
-	m_sprInfo.SetHorizAlign( Actor::align_right );
-	m_sprInfo.SetXY( INFO_X, INFO_Y );
 
 	m_textInfo.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
@@ -719,9 +708,8 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_NoteFieldEdit.Update( fDeltaTime );
 	m_In.Update( fDeltaTime );
 	m_Out.Update( fDeltaTime );
-	m_sprHelp.Update( fDeltaTime );
+	m_sprHelp->Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
-	m_sprInfo.Update( fDeltaTime );
 	m_textInfo.Update( fDeltaTime );
 
 	m_rectRecordBack.Update( fDeltaTime );
@@ -822,9 +810,8 @@ void ScreenEdit::DrawPrimitives()
 	{
 	case MODE_EDITING:
 		{
-			m_sprHelp.Draw();
+			m_sprHelp->Draw();
 			m_textHelp.Draw();
-			m_sprInfo.Draw();
 			m_textInfo.Draw();
 			m_SnapDisplay.Draw();
 
