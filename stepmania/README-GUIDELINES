@@ -1,0 +1,6 @@
+Bits of possibly less-than-obvious advice:
+
+Avoid accessing other singleton classes from singleton destructors.  That
+introduces dependencies on the order of destruction, and can cause problems
+if one of the singletons throws an exception.
+
