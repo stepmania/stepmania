@@ -115,6 +115,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
+	if( m_pCourse && GAMESTATE->m_pCurCourse != m_pCourse )
+		return false;
 	if( m_pTrail && GAMESTATE->m_pCurTrail[pn] != m_pTrail )
 		return false;
 	if( !m_sSongGroup.empty() && GAMESTATE->m_sPreferredSongGroup != m_sSongGroup )
