@@ -32,7 +32,7 @@ FontPage::FontPage()
 	m_pTexture = NULL;
 }
 
-void FontPage::Load( const FontPageSettings &cfg )
+void FontPage::Load( FontPageSettings cfg )
 {
 	m_sTexturePath = cfg.TexturePath;
 
@@ -82,29 +82,21 @@ void FontPage::Load( const FontPageSettings &cfg )
 	if(LineSpacing == -1)
 		LineSpacing = m_pTexture->GetSourceFrameHeight();
 
-	/* All characters on a page have the same vertical spacing, baseline
-	 * and ascender. */
-	if(cfg.Baseline != -1 && cfg.Top == -1)
-		RageException::Throw("Font %s has Baseline but no Top; must have both or neither",
-			m_sTexturePath.GetString());
-	if(cfg.Baseline == -1 && cfg.Top != -1)
-		RageException::Throw("Font %s has Baseline but no Top; must have both or neither",
-			m_sTexturePath.GetString());
-
 	int baseline=0;
-	if(cfg.Baseline == -1 && cfg.Top == -1)
+	/* If we don't have a top and/or baseline, assume we're centered in the
+	 * frame, and that LineSpacing is the total height. */
+	if(cfg.Baseline == -1)
 	{
-		/* We don't have a top and baseline.  Assume we're centered in the
-		 * frame, and that LineSpacing is the total height. */
 		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
-		height = LineSpacing;
-		baseline = int(center + LineSpacing/2);
+		cfg.Baseline = int(center + LineSpacing/2);
 	}
-	else if(cfg.Baseline != -1 && cfg.Top != -1)
+	if(cfg.Top == -1)
 	{
-		baseline = cfg.Baseline;
-		height = baseline-cfg.Top;
+		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
+		cfg.Top = int(center - LineSpacing/2);
 	}
+	baseline = cfg.Baseline;
+	height = baseline-cfg.Top;
 
 	/* Shift the character up so the top will be rendered at the baseline. */
 	vshift = (float) -baseline;

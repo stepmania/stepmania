@@ -81,7 +81,7 @@ public:
 	FontPage();
 	~FontPage();
 
-	void Load( const FontPageSettings &cfg );
+	void Load( FontPageSettings cfg );
 
 	/* Page-global properties. */
 	int height;
