@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
+#include "RageSoundUtil.h"
 
 /*
  * Keyed sounds should pass this object to SoundReader_Preload, to preprocess it.
@@ -264,10 +265,6 @@ unsigned RageSoundReader_Chain::GetNextSoundIndex() const
 	return iNextSound;
 }
 
-// XXX move these out of RageSound.cpp
-void ConvertMonoToStereoInPlace( int16_t *data, int iFrames );
-void PanSound( int16_t *buffer, int frames, float fPos );
-
 int RageSoundReader_Chain::Read( char *pBuffer, unsigned iLength )
 {
 	RageSoundMixBuffer mix;
@@ -319,12 +316,12 @@ int RageSoundReader_Chain::Read( char *pBuffer, unsigned iLength )
 
 				if( m_iChannels == 2 && pSound->GetNumChannels() == 1 )
 				{
-					ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
+					RageSoundUtil::ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
 					iSamplesRead *= 2;
 				}
 
 				if( fabs(s.fPan) > 0.0001f )
-					PanSound( Buffer, iSamplesRead, s.fPan );
+					RageSoundUtil::Pan( Buffer, iSamplesRead, s.fPan );
 
 				mix.write( Buffer, iSamplesRead );
 				++i;

@@ -28,6 +28,7 @@
 #include "RageException.h"
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "RageSoundUtil.h"
 
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample.h"
@@ -280,22 +281,6 @@ void RageSound::RateChange(char *buf, int &cnt,
 	cnt = (cnt * speed_output_samples) / speed_input_samples;
 }
 
-/* Dupe mono to stereo in-place; do it in reverse, to handle overlap. */
-void ConvertMonoToStereoInPlace( int16_t *data, int iFrames )
-{
-	int16_t *input = data;
-	int16_t *output = input;
-	input += iFrames;
-	output += iFrames * 2;
-	while( iFrames-- )
-	{
-		input -= 1;
-		output -= 2;
-		output[0] = input[0];
-		output[1] = input[0];
-	}
-}
-
 /* Fill the buffer by about "bytes" worth of data.  (We might go a little
  * over, and we won't overflow our buffer.)  Return the number of bytes
  * actually read; 0 = EOF.  Convert mono input to stereo. */
@@ -338,7 +323,7 @@ int RageSound::FillBuf( int frames )
 
 		if( Sample->GetNumChannels() == 1 )
 		{
-			ConvertMonoToStereoInPlace( (int16_t *) inbuf, cnt / sizeof(int16_t) );
+			RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) inbuf, cnt / sizeof(int16_t) );
 			cnt *= 2;
 		}
 
@@ -394,59 +379,6 @@ int RageSound::GetData( char *buffer, int frames )
 	}
 
 	return got;
-}
-
-/* Pan buffer left or right; fPos is -1...+1. */
-void PanSound( int16_t *buffer, int frames, float fPos )
-{
-	if( fPos == 0 )
-		return; /* no change */
-
-	bool bSwap = fPos < 0;
-	if( bSwap )
-		fPos = -fPos;
-
-	float fLeftFactors[2] ={ 1-fPos, 0 };
-	float fRightFactors[2] =
-	{
-		SCALE( fPos, 0, 1, 0.5f, 0 ),
-		SCALE( fPos, 0, 1, 0.5f, 1 )
-	};
-
-	if( bSwap )
-	{
-		swap( fLeftFactors[0], fRightFactors[0] );
-		swap( fLeftFactors[1], fRightFactors[1] );
-	}
-
-	ASSERT_M( channels == 2, ssprintf("%i", channels) );
-	for( int samp = 0; samp < frames; ++samp )
-	{
-		int16_t l = int16_t(buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1]);
-		int16_t r = int16_t(buffer[0]*fRightFactors[0] + buffer[1]*fRightFactors[1]);
-		buffer[0] = l;
-		buffer[1] = r;
-		buffer += 2;
-	}
-}
-
-void FadeSound( int16_t *buffer, int frames, float fStartVolume, float fEndVolume  )
-{
-	/* If the whole buffer is full volume, skip. */
-	if( fStartVolume > .9999f && fEndVolume > .9999f )
-		return;
-
-	for( int samp = 0; samp < frames; ++samp )
-	{
-		float fVolPercent = SCALE( samp, 0, frames, fStartVolume, fEndVolume );
-
-		fVolPercent = clamp( fVolPercent, 0.f, 1.f );
-		for(int i = 0; i < channels; ++i)
-		{
-			*buffer = short(*buffer * fVolPercent);
-			buffer++;
-		}
-	}
 }
 
 /* RageSound::GetDataToPlay and RageSound::FillBuf are the main threaded API.  These
@@ -569,10 +501,10 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			const float fEndSecond = float(decode_position+got_frames) / samplerate();
 			const float fStartVolume = SCALE( fStartSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
 			const float fEndVolume = SCALE( fEndSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
-			FadeSound( buffer, got_frames, fStartVolume, fEndVolume );
+			RageSoundUtil::Fade( buffer, got_frames, fStartVolume, fEndVolume );
 		}
 
-		PanSound( buffer, got_frames, m_Param.m_Balance );
+		RageSoundUtil::Pan( buffer, got_frames, m_Param.m_Balance );
 
 		sound_frame = decode_position;
 
