@@ -123,12 +123,12 @@ public:
     byte GenerateByte();
     void ProcessData(byte *outString, const byte *inString, unsigned int length);
 	void Resynchronize(const byte *iv);
-	unsigned int OptimalBlockSize() const {return GetPolicy().GetBytesPerIteration();}
+	unsigned int OptimalBlockSize() const {return this->GetPolicy().GetBytesPerIteration();}
 	unsigned int GetOptimalNextBlockSize() const {return m_leftOver;}
-	unsigned int OptimalDataAlignment() const {return GetPolicy().GetAlignment();}
+	unsigned int OptimalDataAlignment() const {return this->GetPolicy().GetAlignment();}
 	bool IsSelfInverting() const {return true;}
 	bool IsForwardTransformation() const {return true;}
-	bool IsRandomAccess() const {return GetPolicy().IsRandomAccess();}
+	bool IsRandomAccess() const {return this->GetPolicy().IsRandomAccess();}
 	void Seek(dword position);
 
 	typedef typename BASE::PolicyInterface PolicyInterface;
@@ -165,7 +165,7 @@ struct CFB_CipherConcretePolicy : public BASE
 	unsigned int GetAlignment() const {return sizeof(WordType);}
 	unsigned int GetBytesPerIteration() const {return sizeof(WordType) * W;}
 	bool CanIterate() const {return true;}
-	void TransformRegister() {Iterate(NULL, NULL, ENCRYPTION, 1);}
+	void TransformRegister() {this->Iterate(NULL, NULL, ENCRYPTION, 1);}
 
 	template <class B>
 	struct RegisterOutput
@@ -215,9 +215,9 @@ class CFB_CipherTemplate : public BASE
 public:
 	void ProcessData(byte *outString, const byte *inString, unsigned int length);
 	void Resynchronize(const byte *iv);
-	unsigned int OptimalBlockSize() const {return GetPolicy().GetBytesPerIteration();}
+	unsigned int OptimalBlockSize() const {return this->GetPolicy().GetBytesPerIteration();}
 	unsigned int GetOptimalNextBlockSize() const {return m_leftOver;}
-	unsigned int OptimalDataAlignment() const {return GetPolicy().GetAlignment();}
+	unsigned int OptimalDataAlignment() const {return this->GetPolicy().GetAlignment();}
 	bool IsRandomAccess() const {return false;}
 	bool IsSelfInverting() const {return false;}
 
@@ -251,16 +251,16 @@ class SymmetricCipherFinalTemplate : public AlgorithmImpl<SimpleKeyingInterfaceI
 public:
  	SymmetricCipherFinalTemplate() {}
 	SymmetricCipherFinalTemplate(const byte *key)
-		{SetKey(key, DEFAULT_KEYLENGTH);}
+		{SetKey(key, this->DEFAULT_KEYLENGTH);}
 	SymmetricCipherFinalTemplate(const byte *key, unsigned int length)
 		{SetKey(key, length);}
 	SymmetricCipherFinalTemplate(const byte *key, unsigned int length, const byte *iv)
-		{SetKey(key, length); Resynchronize(iv);}
+		{SetKey(key, length); this->Resynchronize(iv);}
 
 	void SetKey(const byte *key, unsigned int length, const NameValuePairs &params = g_nullNameValuePairs)
 	{
-		ThrowIfInvalidKeyLength(length);
-		UncheckedSetKey(params, key, length);
+		this->ThrowIfInvalidKeyLength(length);
+		this->UncheckedSetKey(params, key, length);
 	}
 
 	Clonable * Clone() const {return static_cast<SymmetricCipher *>(new SymmetricCipherFinalTemplate<BASE, INFO>(*this));}
@@ -269,7 +269,7 @@ public:
 template <class S>
 void AdditiveCipherTemplate<S>::UncheckedSetKey(const NameValuePairs &params, const byte *key, unsigned int length)
 {
-	PolicyInterface &policy = AccessPolicy();
+	PolicyInterface &policy = this->AccessPolicy();
 	policy.CipherSetKey(params, key, length);
 	m_buffer.New(GetBufferByteSize(policy));
 	m_leftOver = 0;
@@ -278,7 +278,7 @@ void AdditiveCipherTemplate<S>::UncheckedSetKey(const NameValuePairs &params, co
 template <class BASE>
 void CFB_CipherTemplate<BASE>::UncheckedSetKey(const NameValuePairs &params, const byte *key, unsigned int length)
 {
-	PolicyInterface &policy = AccessPolicy();
+	PolicyInterface &policy = this->AccessPolicy();
 	policy.CipherSetKey(params, key, length);
 	m_leftOver = policy.GetBytesPerIteration();
 }

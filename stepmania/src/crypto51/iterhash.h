@@ -82,7 +82,7 @@ class IteratedHashWithStaticTransform : public IteratedHash<T, B, S>
 {
 protected:
 	IteratedHashWithStaticTransform(unsigned int digestSize) : IteratedHash<T, B, S>(digestSize) {}
-	void vTransform(const T *data) {M::Transform(m_digest, data);}
+	void vTransform(const T *data) {M::Transform(this->m_digest, data);}
 	std::string AlgorithmName() const {return M::StaticAlgorithmName();}
 };
 
@@ -90,19 +90,19 @@ protected:
 
 template <class T, class B, class BASE> void IteratedHashBase2<T, B, BASE>::TruncatedFinal(byte *hash, unsigned int size)
 {
-	ThrowIfInvalidTruncatedSize(size);
+	this->ThrowIfInvalidTruncatedSize(size);
 
-	PadLastBlock(BlockSize() - 2*sizeof(HashWordType));
-	CorrectEndianess(m_data, m_data, BlockSize() - 2*sizeof(HashWordType));
+	PadLastBlock(this->BlockSize() - 2*sizeof(HashWordType));
+	CorrectEndianess(this->m_data, this->m_data, this->BlockSize() - 2*sizeof(HashWordType));
 
-	m_data[m_data.size()-2] = B::ToEnum() ? GetBitCountHi() : GetBitCountLo();
-	m_data[m_data.size()-1] = B::ToEnum() ? GetBitCountLo() : GetBitCountHi();
+	this->m_data[this->m_data.size()-2] = B::ToEnum() ? this->GetBitCountHi() : this->GetBitCountLo();
+	this->m_data[this->m_data.size()-1] = B::ToEnum() ? this->GetBitCountLo() : this->GetBitCountHi();
 
-	vTransform(m_data);
-	CorrectEndianess(m_digest, m_digest, DigestSize());
-	memcpy(hash, m_digest, size);
+	vTransform(this->m_data);
+	CorrectEndianess(this->m_digest, this->m_digest, this->DigestSize());
+	memcpy(hash, this->m_digest, size);
 
-	Restart();		// reinit for next use
+	this->Restart();		// reinit for next use
 }
 
 template <class T, class B, class BASE> void IteratedHashBase2<T, B, BASE>::HashBlock(const HashWordType *input)
@@ -111,8 +111,8 @@ template <class T, class B, class BASE> void IteratedHashBase2<T, B, BASE>::Hash
 		vTransform(input);
 	else
 	{
-		ByteReverse(m_data.begin(), input, BlockSize());
-		vTransform(m_data);
+		ByteReverse(this->m_data.begin(), input, this->BlockSize());
+		vTransform(this->m_data);
 	}
 }
 

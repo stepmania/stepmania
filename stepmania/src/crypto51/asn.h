@@ -221,8 +221,8 @@ public:
 	}
 	void DEREncode(BufferedTransformation &out)
 	{
-		if (get() != NULL)
-			get()->DEREncode(out);
+		if (this->get() != NULL)
+			this->get()->DEREncode(out);
 	}
 };
 

@@ -1297,7 +1297,8 @@ carry2:
 
 #endif	// #ifdef SSE2_INTRINSICS_AVAILABLE
 
-#elif defined(__GNUC__) && defined(__i386__)
+/* disabled; this assembly apparently requires -fomit-frame-pointer, which is unacceptable -glenn */
+#elif defined(__GNUC__) && defined(__i386__) && 0
 
 class PentiumOptimized : public Portable
 {

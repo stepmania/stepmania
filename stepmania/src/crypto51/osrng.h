@@ -8,6 +8,9 @@
 #include "randpool.h"
 #include "rng.h"
 
+//added
+#include "cryptlib.h"
+
 NAMESPACE_BEGIN(CryptoPP)
 
 //! Exception class for Operating-System Random Number Generator.
@@ -147,7 +150,11 @@ byte AutoSeededX917RNG<BLOCK_CIPHER>::GenerateByte()
 	if (m_counter == m_lastBlock.size())
 	{
 		if (!m_isDifferent)
-			throw SelfTestFailure("AutoSeededX917RNG: Continuous random number generator test failed.");
+			// This originally threw a SelfTestFailure, which is
+			// only available from fips140.h, which I figure 
+			// probably was excluded for a good reason. Here's
+			// my workaround.
+			throw Exception(Exception::OTHER_ERROR, "AutoSeededX917RNG: Continuous random number generator test failed.");
 		m_counter = 0;
 		m_isDifferent = false;
 	}
