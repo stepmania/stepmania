@@ -530,7 +530,84 @@ ArtistFrom: sakura
 TitleTo: この思いを伝えたい
 ArtistTo: さくら
 *
-
+# TM5:
+TitleFrom: OMEGA
+ArtistFrom: MAX DRAGON
+TitleTo: Ω
+*
+TitleFrom: Haruka Kanata
+TitleTo: 遥か彼方
+*
+TitleFrom: Honjitsu wa Seiten Nari
+TitleTo: 本日は晴天なり
+*
+TitleFrom: Yuusha-oh Tanjou!
+TitleTo: 勇者王誕生！
+*
+# http://www.makusonia.com/discography/album/album_2.html
+TitleFrom: (Majimena|Urajimena) *Kikkake
+TitleTo: 真面目なキッカケ
+*
+# Don't translit all songs named "Sigma" to Σ; only the ones that are actually
+# intended to be written that way.
+TitleFrom: Sigma
+ArtistFrom: (Shiina Ringo|椎名林檎)
+TitleTo: Σ 
+*
+# http://www.hotei.com/
+ArtistFrom: Hotei Tomoyasu 
+ArtistTo: 布袋寅泰
+*
+# http://www.uyax.com/whats/index.html
+ArtistFrom: Yuuya Asaoka
+ArtistTo: 浅岡雄也
+*
+# http://www5a.biglobe.ne.jp/~iwadare/main_fl_j.html
+ArtistFrom: Noriyuki Iwadare
+ArtistTo: 岩垂徳行
+*
+# http://www.avexnet.or.jp/shimatani/
+ArtistFrom: Hitomi Shimatani
+ArtistTo: 島谷ひとみ
+*
+# http://www.pokemon.co.jp/videodvdcd/others/01.html
+# http://www.amazon.co.jp/exec/obidos/ASIN/B00005F3KX/qid=1085712723/br=1-10/ref=br_lf_m_9/249-1818804-8449929
+TitleFrom: POKEMON ieru ka NEO
+ArtistFrom: Imakuni
+TitleTo: ポケモン言えるかneo？
+ArtistTo: イマクニ？
+*
+# http://www.toshiba-emi.co.jp/domestic/artists/ringo/
+ArtistFrom: Shiina Ringo
+ArtistTo: 椎名林檎
+*
+# http://sdb.noppo.com/kumiko_w.htm
+ArtistFrom: KLONOA\(kumiko watanabe\)
+ArtistTo: KLONOA （渡辺久美子）
+*
+SubtitleFrom: -HOSHI NO UMI KAZE NO YUME-
+SubtitleTo: -星の海風の夢-
+ArtistFrom: RainbowColors. feat. DR
+ArtistTo: RainbowColors☆ feat. DR
+*
+# http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html
+# http://system.emedia.co.jp/details/NMC-1070912-9976204.html
+ArtistFrom: Shinichi Ish?ihara
+ArtistTo: 石原慎一
+*
+# http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html
+# http://system.emedia.co.jp/details/NMC-1070912-9976204.html
+ArtistFrom: Norifumi Ono 
+ArtistTo: 小野訓史
+*
+# http://www.konamistyle.com/product/product_detail.aspx?pfid=KOLA-51
+ArtistFrom: Kumiko Ishisaka
+ArtistTo: 石坂久美子
+*
+# http://www.ampcast.com/music/14706/artist.php
+ArtistFrom: KaW vs. Smiley vs. Inspector K
+ArtistTo: KaW vs. ☺ vs. Inspector K
+*
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
