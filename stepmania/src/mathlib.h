@@ -37,7 +37,6 @@ int VectorCompare (vec3_t v1, vec3_t v2);
 
 
 vec_t VectorNormalize (vec3_t v);
-void VectorInverse (vec3_t v);
 
 void AngleMatrix (const vec3_t angles, float matrix[3][4] );
 void R_ConcatTransforms (const float in1[3][4], const float in2[3][4], float out[3][4]);

@@ -62,13 +62,6 @@ i=1;
 	return length;
 }
 
-void VectorInverse (vec3_t v)
-{
-	v[0] = -v[0];
-	v[1] = -v[1];
-	v[2] = -v[2];
-}
-
 void AngleMatrix (const vec3_t angles, float matrix[3][4] )
 {
 	float		angle;
