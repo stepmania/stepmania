@@ -128,8 +128,8 @@ void ScreenPlayerOptions::ImportOptions()
 		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 2.0f )		m_iSelectedOption[p][PO_SPEED] = 5;
 		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 3.0f )		m_iSelectedOption[p][PO_SPEED] = 6;
 		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 5.0f )		m_iSelectedOption[p][PO_SPEED] = 7;
-		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 8.0f )		m_iSelectedOption[p][PO_SPEED] = 9;
-		else if( po.m_bTimeSpacing  && po.m_fScrollBPM == 200 )			m_iSelectedOption[p][PO_SPEED] = 8;
+		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 8.0f )		m_iSelectedOption[p][PO_SPEED] = 8;
+		else if( po.m_bTimeSpacing  && po.m_fScrollBPM == 200 )			m_iSelectedOption[p][PO_SPEED] = 9;
 		else if( po.m_bTimeSpacing  && po.m_fScrollBPM == 300 )			m_iSelectedOption[p][PO_SPEED] = 10;
 		else									m_iSelectedOption[p][PO_SPEED] = 3;
 
