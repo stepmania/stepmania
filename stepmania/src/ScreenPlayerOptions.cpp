@@ -12,6 +12,7 @@
 #include "ScreenDimensions.h"
 #include "Style.h"
 #include "PlayerState.h"
+#include "Foreach.h"
 
 
 #define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
@@ -65,8 +66,12 @@ void ScreenPlayerOptions::Init()
 		this->AddChild( m_sprCancelAll[p] );
 	}
 
-	FOREACH_HumanPlayer( p )
-		UpdateDisqualified( p );
+	FOREACH_PlayerNumber( p )
+	{
+		m_bRowCausesDisqualified[p].resize( m_Rows.size(), false );
+		for( unsigned r=0; r<m_Rows.size(); r++ )
+			UpdateDisqualified( r, p );
+	}
 }
 
 
@@ -145,14 +150,18 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		for( unsigned r=0; r<m_Rows.size(); r++ )
 			this->ImportOptions( r, pn );
 		this->PositionUnderlines();
-		this->UpdateDisqualified( pn );
+		for( unsigned r=0; r<m_Rows.size(); r++ )
+			this->UpdateDisqualified( r, pn );
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
 	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
-		UpdateDisqualified( pn );
+	{
+		int row = m_iCurrentRow[pn];
+		UpdateDisqualified( row, pn );
+	}
 }
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
@@ -184,24 +193,32 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptionsMaster::HandleScreenMessage( SM );
 }
 
-void ScreenPlayerOptions::UpdateDisqualified( PlayerNumber pn )
+void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 {
-	// save current player options 
-	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
-	
-	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
-	for( unsigned r=0; r<OptionRowHandlers.size(); r++ )
-		ScreenOptionsMaster::ExportOptions( r, pn );
+	// save original player options 
+	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
 
-	FOREACH_HumanPlayer( p )
+	// Find out if the current row when exprorted causes disqualification.
+	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
+	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions = PlayerOptions();
+	ExportOptions( row, pn );
+	bool bRowCausesDisqualified = GAMESTATE->IsDisqualified( pn );
+	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
+
+	// Update disqualified graphic
+	bool bDisqualified = false;
+	FOREACH_CONST( bool, m_bRowCausesDisqualified[pn], b )
 	{
-		bool bIsHandicap = GAMESTATE->IsDisqualified(p);
-		
-		m_sprDisqualify[p]->SetHidden( !bIsHandicap );
-
-		// restore previous player options in case the user escapes back after this
-		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po;
+		if( *b )
+		{
+			bDisqualified = true;
+			break;
+		}
 	}
+	m_sprDisqualify[pn]->SetHidden( !bDisqualified );
+
+	// restore previous player options in case the user escapes back after this
+	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions = poOrig;
 }
 
 /*

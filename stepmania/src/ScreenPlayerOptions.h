@@ -18,7 +18,8 @@ private:
 	void GoToNextScreen();
 	void GoToPrevScreen();
 
-	void UpdateDisqualified( PlayerNumber pn );
+	vector<bool>	m_bRowCausesDisqualified[NUM_PLAYERS];
+	void UpdateDisqualified( int row, PlayerNumber pn );
 
 	bool        m_bAcceptedChoices;
 	bool        m_bGoToOptions;
