@@ -41,7 +41,10 @@ hints.  Probably never an issue.
 
 Make class Notes store a NoteData instead of SMNoteData, so we'd
 only have to convert on initial load and when saving; faster and simpler.
- 
+
+Hmm, no good; SMData is still compressed more than NoteData.  Unless
+we can also load NoteData for songs on-demand ... 
+
 Even better: do away with m_HoldNotes completely, and change the default
 storage scheme to 4s.  Make every place that accesses holds either use
 them in 4s, or specifically request a hold list, when needed (such as
@@ -161,11 +164,6 @@ Maybe eg "200%" to specify the image is scaled twice as large as other images?
 Actually, entire thremes could be high-res, so it might be useful to
 have a more general way to do this (perhaps a way to specify a hint
 for a whole directory?)
-
-********
-
-Enable antialiasing for the radar lines.  It's extremely cheap for
-simple lines, and the aliasing makes the radar look really ugly.
 
 ********
 
@@ -333,3 +331,8 @@ and so on.  Novelty; low-pri.
 ********
 
 Option to turn off menu music (except for song previews).
+
+********
+
+Don't export *.old in SMZIPs.
+
