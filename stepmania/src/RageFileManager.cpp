@@ -114,6 +114,7 @@ static void ChangeToDirOfExecutable( CString argv0 )
 
 RageFileManager::RageFileManager( CString argv0 )
 {
+	CHECKPOINT_M( argv0 );
 	ChangeToDirOfExecutable( argv0 );
 	
 	g_Mutex = new RageMutex("RageFileManager");
@@ -171,8 +172,10 @@ void RageFileManager::MountInitialFilesystems()
 	RageFileManager::Mount( "dir", Root, "" );
 #elif defined(_WINDOWS)
 	/* All Windows data goes in the directory one level above the executable. */
+	CHECKPOINT_M( ssprintf( "DOE \"%s\"", DirOfExecutable.c_str()) );
 	CStringArray parts;
 	split( DirOfExecutable, "/", parts );
+	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
 	RAGE_ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
 	RageFileManager::Mount( "dir", Dir, "" );
@@ -276,20 +279,28 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
 
-	// Unmount anything that was previously mounted here.
-	Unmount( Type, Root, MountPoint );
-
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
 	ASSERT( Root != "" );
 
+	CHECKPOINT_M( ssprintf("\"%s\", \"%s\", \"%s\"",
+		Type.c_str(), Root.c_str(), MountPoint.c_str() ) );
+
+	// Unmount anything that was previously mounted here.
+	Unmount( Type, Root, MountPoint );
+
+	CHECKPOINT;
 	RageFileDriver *driver = MakeFileDriver( Type, Root );
 	if( !driver )
 	{
+		CHECKPOINT;
+
 		if( LOG )
 			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", Type.c_str(), Root.c_str() );
 		return;
 	}
+
+	CHECKPOINT;
 
 	LoadedDriver ld;
 	ld.driver = driver;
@@ -298,12 +309,17 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	ld.MountPoint = MountPoint;
 	g_Drivers.push_back( ld );
 
+	CHECKPOINT;
 	g_Mountpoints->LoadFromDrivers( g_Drivers );
+	CHECKPOINT;
 }
 
 void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
+
+	if( MountPoint.size() && MountPoint.Right(1) != "/" )
+		MountPoint += '/';
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -313,6 +329,8 @@ void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 			continue;
 		if( g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
 			continue;
+
+		delete g_Drivers[i].driver;
 		g_Drivers.erase( g_Drivers.begin()+i );
 	}
 
