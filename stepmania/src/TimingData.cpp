@@ -3,6 +3,7 @@
 #include "global.h"
 #include "TimingData.h"
 #include "PrefsManager.h"
+#include "RageUtil.h"
 
 TimingData::TimingData()
 {
@@ -99,7 +100,6 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
-	// This function is a nightmare.  Don't even try to understand it. :-)
 
 	fElapsedTime += PREFSMAN->m_fGlobalOffsetSeconds;
 
@@ -108,53 +108,31 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) // foreach BPMSegment
 	{
-		float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
-		bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
-		float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
-		float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
-		float fBPM = m_BPMSegments[i].m_fBPM;
-		float fBPS = fBPM / 60.0f;
+		const float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
+		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
+		const float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
+		const float fBPS = m_BPMSegments[i].m_fBPM / 60.0f;
 
-		// calculate the number of seconds in this segment
-		float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
-		unsigned j;
-		for( j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
+		for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 		{
-			if( fStartBeatThisSegment <= m_StopSegments[j].m_fStartBeat  &&  m_StopSegments[j].m_fStartBeat < fStartBeatNextSegment )	
-			{
-				// this freeze lies within this BPMSegment
-				fSecondsInThisSegment += m_StopSegments[j].m_fStopSeconds;
-			}
-		}
-
-
-		if( !bIsLastBPMSegment && fElapsedTime > fSecondsInThisSegment )
-		{
-			// this BPMSegement is NOT the current segment
-			fElapsedTime -= fSecondsInThisSegment;
-			continue;
-		}
-
-		// this BPMSegment IS the current segment
-
-		float fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
-
-		for( j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
-		{
-			if( fStartBeatThisSegment > m_StopSegments[j].m_fStartBeat  ||
-				m_StopSegments[j].m_fStartBeat > fStartBeatNextSegment )	
+			if( fStartBeatThisSegment >= m_StopSegments[j].m_fStartBeat )
+				continue;
+			if( !bIsLastBPMSegment && m_StopSegments[j].m_fStartBeat > fStartBeatNextSegment )
 				continue;
 
 			// this freeze lies within this BPMSegment
-
-			if( m_StopSegments[j].m_fStartBeat > fBeatEstimate )
+			const float fBeatsSinceStartOfSegment = m_StopSegments[j].m_fStartBeat - fStartBeatThisSegment;
+			const float fFreezeStartSecond = fBeatsSinceStartOfSegment / fBPS;
+			
+			if( fFreezeStartSecond >= fElapsedTime )
 				break;
 
+			// the freeze segment is <= current time
 			fElapsedTime -= m_StopSegments[j].m_fStopSeconds;
-			// re-estimate
-			fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
-			if( fBeatEstimate < m_StopSegments[j].m_fStartBeat )
+
+			if( fFreezeStartSecond >= fElapsedTime )
 			{
+				/* The time lies within the stop. */
 				fBeatOut = m_StopSegments[j].m_fStartBeat;
 				fBPSOut = fBPS;
 				bFreezeOut = true;
@@ -162,10 +140,19 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 			}
 		}
 
-		fBeatOut = fBeatEstimate;
-		fBPSOut = fBPS;
-		bFreezeOut = false;
-		return;
+		const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
+		const float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
+		if( bIsLastBPMSegment || fElapsedTime <= fSecondsInThisSegment )
+		{
+			// this BPMSegment IS the current segment
+			fBeatOut = fStartBeatThisSegment + fElapsedTime*fBPS;
+			fBPSOut = fBPS;
+			bFreezeOut = false;
+			return;
+		}
+
+		// this BPMSegment is NOT the current segment
+		fElapsedTime -= fSecondsInThisSegment;
 	}
 }
 
@@ -178,6 +165,7 @@ float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 
 	for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 	{
+		/* The exact beat of a stop comes before the stop, not after, so use >=, not >. */
 		if( m_StopSegments[j].m_fStartBeat >= fBeat )
 			break;
 		fElapsedTime += m_StopSegments[j].m_fStopSeconds;
@@ -185,22 +173,26 @@ float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) // foreach BPMSegment
 	{
-		const float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
 		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
-		const float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
 		const float fBPS = m_BPMSegments[i].m_fBPM / 60.0f;
-		const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
 
-		fElapsedTime += min(fBeat, fBeatsInThisSegment) / fBPS;
-		fBeat -= fBeatsInThisSegment;
+		if( bIsLastBPMSegment )
+		{
+			fElapsedTime += fBeat / fBPS;
+		}
+		else
+		{
+			const float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
+			const float fStartBeatNextSegment = m_BPMSegments[i+1].m_fStartBeat; 
+			const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
+			fElapsedTime += min(fBeat, fBeatsInThisSegment) / fBPS;
+			fBeat -= fBeatsInThisSegment;
+		}
 		
 		if( fBeat <= 0 )
 			return fElapsedTime;
 	}
 
-	// This assert fires if you leave the game running overnight with the 
-	// the menu timer off and the music wheel sitting on one song.
-	ASSERT(0);
 	return fElapsedTime;
 }
 
