@@ -248,11 +248,13 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = level;
 		else if( sBit == "blink" )		m_fAppearances[APPEARANCE_BLINK] = level;
 		else if( sBit == "randomvanish" ) m_fAppearances[APPEARANCE_RANDOMVANISH] = level;
+		else if( sBit == "turn" && !on )m_Turn = TURN_NONE; /* "no turn" */
 		else if( sBit == "mirror" )		m_Turn = TURN_MIRROR;
 		else if( sBit == "left" )		m_Turn = TURN_LEFT;
 		else if( sBit == "right" )		m_Turn = TURN_RIGHT;
 		else if( sBit == "shuffle" )	m_Turn = TURN_SHUFFLE;
 		else if( sBit == "supershuffle" )m_Turn = TURN_SUPER_SHUFFLE;
+		else if( sBit == "transform" && !on )	m_Transform = TRANSFORM_NONE; /* "no transform" */
 		else if( sBit == "little" )		m_Transform = TRANSFORM_LITTLE;
 		else if( sBit == "wide" )		m_Transform = TRANSFORM_WIDE;
 		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
@@ -278,7 +280,7 @@ void PlayerOptions::FromString( CString sOptions )
 			m_sPositioning = "";
 		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
-		else if( sBit == "nonoteskin" )
+		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 			m_sNoteSkin = "default";
 
 		// XXX: this warns about song options
