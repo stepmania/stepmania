@@ -244,9 +244,8 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( type != IET_FIRST_PRESS )
+	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) )
 		return;
-
 
 	bool bHoldingShift = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
@@ -263,7 +262,8 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	case KEY_KP_ENTER:
 		if (!bHoldingCtrl)
 		{
-			NSMAN->SendChat( m_sTextInput );
+			if ( m_sTextInput != "" )
+				NSMAN->SendChat( m_sTextInput );
 			m_sTextInput="";
 			UpdateTextInput();
 			return;
