@@ -8,9 +8,11 @@
 
 namespace X11Helper
 {
+	// All functions in here that return a bool return true on success, and
+	// false on failure.
+
 	// Create the connection, if necessary; otherwise do some important
 	// internal session-tracking stuff (so you should call this anyway).
-	// True on success, false failure.
 	bool Go();
 
 	// Get the current Display (connection). Behavior is undefined if you
@@ -19,26 +21,28 @@ namespace X11Helper
 
 	// (Re)create the window on the screen of this number with this depth,
 	// this visual type, this width (optional -- you can resize the window
-	// in your callback later), and this height (optional). Returns true on
-	// success, false on failure.
+	// in your callback later), and this height (optional).
 	bool MakeWindow(int screenNum, int depth, Visual *visual, int width=64,
 								int height=64);
 
 	// Callback type.
 	typedef void (*Callback_t)(Window*);
 
-	//  TODO: We need to manage event masks here, to keep the InputHandler
-	// and LowLevelWindow code separate.
-	
+	// Unmask one X event type mask thingy (XSelectInput() arg 3) on the
+	// current window. Masked/unmasked events will carry between windows.
+	bool OpenMask(long mask);
+
+	// (Re)mask one X event type mask thingy (XSelectInput() arg 3) on the
+	// current window. Masked/unmasked events will carry between windows.
+	bool CloseMask(long mask);
+
 	// Register a callback for new windows (including the initial window).
 	// This callback will be called with 0 if I try to create a new window,
-	// but fail. Returns false if for some really messed up reason it fails
-	// (shouldn't happen), false otherwise
+	// but fail.
 	bool Callback(Callback_t cb);
 
 	// Destroy the connection, if appropriate; otherwise do some important
 	// internal session-tracking stuff (so you should call it anyway).
-	// True success, false failure.
 	void Stop();
 }
 
