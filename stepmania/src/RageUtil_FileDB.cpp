@@ -243,7 +243,7 @@ void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
 
 /* Add the file or directory "sPath".  sPath is a directory if it ends with
  * a slash. */
-void FilenameDB::AddFile( const CString &sPath, int size, int mtime )
+void FilenameDB::AddFile( const CString &sPath, int size, int mtime, void *priv )
 {
 	vector<CString> parts;
 	split( sPath, "/", parts, false );
@@ -269,8 +269,12 @@ void FilenameDB::AddFile( const CString &sPath, int size, int mtime )
 		if( fs.files.find( f ) == fs.files.end() )
 		{
 			f.dir = IsDir;
-			f.size = size;
-			f.mtime = mtime;
+			if( !IsDir )
+			{
+				f.size = size;
+				f.mtime = mtime;
+				f.priv = priv;
+			}
 			fs.files.insert( f );
 		}
 		IsDir = true;
@@ -285,6 +289,20 @@ void FilenameDB::FlushDirCache()
 		delete i->second;
 	dirs.clear();
 }
+
+File *FilenameDB::GetFile( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet( Dir );
+
+	set<File>::iterator i = fs.files.find( File(Name) );
+	if(i == fs.files.end())
+		return NULL;
+
+	return &*i;
+}
+
 
 
 

@@ -25,11 +25,13 @@ struct File
 	 * when the file has been modified, this value will change. */
 	int mtime;
 
-	File() { dir=false; size=-1; mtime=-1; }
+	/* Private data, for RageFileDrivers. */
+	void *priv;
+	File() { dir=false; size=-1; mtime=-1; priv=NULL;}
 	File( const CString &fn )
 	{
 		SetName( fn );
-		dir=false; size=-1; mtime=-1;
+		dir=false; size=-1; mtime=-1; priv=NULL;
 	}
 	
 	bool operator== (const File &rhs) const { return lname==rhs.lname; }
@@ -83,7 +85,8 @@ public:
 		ExpireSeconds( -1 ) { }
 	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const CString &sPath, int size, int mtime );
+	void AddFile( const CString &sPath, int size, int mtime, void *priv=NULL );
+	File *GetFile( const CString &path );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
