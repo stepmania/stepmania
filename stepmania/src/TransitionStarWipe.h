@@ -15,6 +15,7 @@
 #include "Transition.h"
 #include "RageScreen.h"
 #include "RageSound.h"
+#include "Rectangle.h"
 
 
 class TransitionStarWipe : public Transition
@@ -23,7 +24,7 @@ public:
 	TransitionStarWipe();
 	~TransitionStarWipe();
 
-	void Draw();
+	virtual void RenderPrimitives();
 
 	void OpenWipingRight( WindowMessage send_when_done );
 	void OpenWipingLeft(  WindowMessage send_when_done );
@@ -36,6 +37,8 @@ protected:
 	Sprite m_sprStar;
 	int m_iStarWidth;
 	int m_iStarHeight;
+
+	RectangleActor	m_rect;
 };
 
 

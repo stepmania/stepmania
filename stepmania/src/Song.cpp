@@ -20,9 +20,6 @@
 #include <assert.h>
 
 
-const CString TEXTURE_FALLBACK_BANNER		= "Textures\\Fallback Banner.png";
-const CString TEXTURE_FALLBACK_BACKGROUND	= "Textures\\Fallback Background.png";
-
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -77,8 +74,8 @@ Song::Song()
 {
 	m_bChangedSinceSave = false;
 	m_fOffsetInSeconds = 0;
-	m_iMaxCombo = m_iTopScore = m_iNumTimesPlayed = 0;
-	m_bHasBeenLoadedBefore = false;
+
+	m_iNumTimesPlayed = 0;
 }
 
 
@@ -532,9 +529,8 @@ void Song::TidyUpData()
 	}
 
 	if( !DoesFileExist(GetBannerPath()) )
-		m_sBannerPath = "";
-	if( m_sBannerPath == "" )
 	{
+		m_sBannerPath = "";
 		// find the smallest image in the directory
 
 		CStringArray arrayPossibleBanners;
@@ -562,16 +558,13 @@ void Song::TidyUpData()
 
 		//RageError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
+
 	if( !DoesFileExist(GetBackgroundPath()) )
-		m_sBackgroundPath = "";
-	if( m_sBackgroundPath == "" ) 
 	{
+		m_sBackgroundPath = "";
 		// find the largest image in the directory
 
 		CStringArray arrayPossibleBackgrounds;
-		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleBackgrounds );
-		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleBackgrounds );
-		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleBackgrounds );
 		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBackgrounds );
 		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBackgrounds );
 		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBackgrounds );
@@ -588,15 +581,24 @@ void Song::TidyUpData()
 				sLargestFileSoFar = m_sSongDir + arrayPossibleBackgrounds[i];
 			}
 		}
-
+		
 		if( sLargestFileSoFar != "" )		// we found a match
 			m_sBackgroundPath = sLargestFileSoFar;
-		else
-			m_sBackgroundPath = "";
-		// RageError( ssprintf("Background could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
+	}
+
+	if( !DoesFileExist(GetBackgroundMoviePath()) )
+	{
+		m_sBackgroundMoviePath = "";
+
+		CStringArray arrayPossibleBackgroundMovies;
+		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleBackgroundMovies );
+		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleBackgroundMovies );
+		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleBackgroundMovies );
+
+		if( arrayPossibleBackgroundMovies.GetSize() > 0 )		// we found a match
+			m_sBackgroundMoviePath = arrayPossibleBackgroundMovies[0];
 	}
 }
-
 
 
 void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arrayAddTo )
@@ -663,3 +665,121 @@ void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int&
 	}
 }
 
+
+
+
+int CompareSongPointersByTitle(const void *arg1, const void *arg2)
+{
+	Song* pSong1 = *(Song**)arg1;
+	Song* pSong2 = *(Song**)arg2;
+	
+	CString sTitle1 = pSong1->GetTitle();
+	CString sTitle2 = pSong2->GetTitle();
+
+	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
+	CString sFilePath2 = pSong2->GetSongFilePath();
+
+	CString sCompareString1 = sTitle1 + sFilePath1;
+	CString sCompareString2 = sTitle2 + sFilePath2;
+
+	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
+}
+
+void SortSongPointerArrayByTitle( CArray<Song*, Song*&> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByTitle );
+}
+
+int CompareSongPointersByBPM(const void *arg1, const void *arg2)
+{
+	Song* pSong1 = *(Song**)arg1;
+	Song* pSong2 = *(Song**)arg2;
+		
+	float fMinBPM1, fMaxBPM1, fMinBPM2, fMaxBPM2;
+	pSong1->GetMinMaxBPM( fMinBPM1, fMaxBPM1 );
+	pSong2->GetMinMaxBPM( fMinBPM2, fMaxBPM2 );
+
+	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
+	CString sFilePath2 = pSong2->GetSongFilePath();
+
+	if( fMaxBPM1 < fMaxBPM2 )
+		return -1;
+	else if( fMaxBPM1 == fMaxBPM2 )
+		return CompareCStrings( (void*)&sFilePath1, (void*)&sFilePath2 );
+	else
+		return 1;
+}
+
+void SortSongPointerArrayByBPM( CArray<Song*, Song*&> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByBPM );
+}
+
+
+int CompareSongPointersByArtist(const void *arg1, const void *arg2)
+{
+	Song* pSong1 = *(Song**)arg1;
+	Song* pSong2 = *(Song**)arg2;
+		
+	CString sArtist1 = pSong1->GetArtist();
+	CString sArtist2 = pSong2->GetArtist();
+
+	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
+	CString sFilePath2 = pSong2->GetSongFilePath();
+
+	CString sCompareString1 = sArtist1 + sFilePath1;
+	CString sCompareString2 = sArtist2 + sFilePath2;
+
+	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
+}
+
+void SortSongPointerArrayByArtist( CArray<Song*, Song*&> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByArtist );
+}
+
+int CompareSongPointersByGroup(const void *arg1, const void *arg2)
+{
+	Song* pSong1 = *(Song**)arg1;
+	Song* pSong2 = *(Song**)arg2;
+		
+	CString sGroup1 = pSong1->GetGroupName();
+	CString sGroup2 = pSong2->GetGroupName();
+
+	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
+	CString sFilePath2 = pSong2->GetSongFilePath();
+
+	CString sCompareString1 = sGroup1 + sFilePath1;
+	CString sCompareString2 = sGroup2 + sFilePath2;
+
+	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
+}
+
+void SortSongPointerArrayByGroup( CArray<Song*, Song*&> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByGroup );
+}
+
+int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
+{
+	Song* pSong1 = *(Song**)arg1;
+	Song* pSong2 = *(Song**)arg2;
+		
+	int iNumTimesPlayed1 = pSong1->m_iNumTimesPlayed;
+	int iNumTimesPlayed2 = pSong2->m_iNumTimesPlayed;
+
+	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
+	CString sFilePath2 = pSong2->GetSongFilePath();
+
+	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
+		return -1;
+	else if( iNumTimesPlayed1 == iNumTimesPlayed2 )
+		return CompareCStrings( (void*)&sFilePath1, (void*)&sFilePath2 );
+	else
+		return 1;
+}
+
+void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*&> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByMostPlayed );
+}

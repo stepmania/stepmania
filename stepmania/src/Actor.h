@@ -9,8 +9,8 @@
 */
 
 
-#ifndef _ACTOR_H_
-#define _ACTOR_H_
+#ifndef _Actor_H_
+#define _Actor_H_
 
 #include "RageUtil.h"
 
@@ -21,14 +21,20 @@
 
 class Actor
 {
+protected:
+
+
 public:
 	Actor();
 
-	enum TweenType { no_tween, tween_linear, tween_bias_begin, tweening_bias_end };
+
+
+	enum TweenType { TWEEN_LINEAR, TWEEN_BIAS_BEGIN, TWEEN_BIAS_END };
 	enum Effect { no_effect,
 				blinking,	camelion,   glowing,
 				wagging,	spinning,
-				vibrating,	flickering
+				vibrating,	flickering,
+				bouncing
 				};
 
 	// let subclasses override
@@ -36,15 +42,20 @@ public:
 	virtual void Invalidate() {};
 
 	virtual void Draw();
-	virtual void Update( const float &fDeltaTime );
+	virtual void RenderPrimitives() = 0;
+	virtual void Update( float fDeltaTime );
 
 	virtual float GetX()					{ return m_pos.x; };
 	virtual float GetY()					{ return m_pos.y; };
+	virtual float GetZ()					{ return m_pos.z; };
 	virtual void  SetX( float x )			{ m_pos.x = x; };
-	virtual void  SetY( float y )			{				m_pos.y = y; };
+	virtual void  SetY( float y )			{ m_pos.y = y; };
+	virtual void  SetZ( float z )			{ m_pos.z = z; };
 	virtual void  SetXY( float x, float y )	{ m_pos.x = x;	m_pos.y = y; };
 
 	// height and width vary depending on zoom
+	virtual float GetUnzoomedWidth()		{ return m_size.x; }
+	virtual float GetUnzoomedHeight()		{ return m_size.y; }
 	virtual float GetZoomedWidth()			{ return m_size.x * m_scale.x; }
 	virtual float GetZoomedHeight()		{ return m_size.y * m_scale.y; }
 	virtual void  SetWidth( float width ){ m_size.x = width; }
@@ -79,17 +90,14 @@ public:
 	virtual void SetAddColor( D3DXCOLOR colorAdd ) { m_colorAdd = colorAdd; };
 	virtual D3DXCOLOR GetAddColor()				{ return m_colorAdd; };
 
-	virtual void TweenTo( float time, 
-						  float x, float y, 
-						  float zoom = 1.0, 
-						  float rot = 0.0, 
-						  D3DXCOLOR colDiffuse = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
-						  TweenType tt = tween_linear );
 
-	virtual void BeginTweening( float time, TweenType tt = tween_linear );
-	virtual void StopTweening() { m_TweenType = no_tween; };
+
+	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
+	virtual void BeginTweeningQueued( float time, TweenType tt = TWEEN_LINEAR );
+	virtual void StopTweening() { m_QueuedTweens.RemoveAll(); };
 	virtual void SetTweenX( float x );
 	virtual void SetTweenY( float y );
+	virtual void SetTweenZ( float z );
 	virtual void SetTweenXY( float x, float y );
 	virtual void SetTweenZoom( float zoom );
 	virtual void SetTweenZoomX( float zoom );
@@ -97,23 +105,18 @@ public:
 	virtual void SetTweenRotationX( float r );
 	virtual void SetTweenRotationY( float r );
 	virtual void SetTweenRotationZ( float r );
-	virtual void SetTweenDiffuseColor( D3DXCOLOR colorDiffuse ) { for(int i=0; i<4; i++) m_end_colorDiffuse[i] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorUpperLeft( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[0] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorUpperRight( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[1] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorLowerLeft( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[2] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorLowerRight( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[3] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorTopEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[0] = m_end_colorDiffuse[1] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorRightEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[1] = m_end_colorDiffuse[3] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[2] = m_end_colorDiffuse[3] = colorDiffuse; };
-	virtual void SetTweenDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse ) { m_end_colorDiffuse[0] = m_end_colorDiffuse[2] = colorDiffuse; };
-	virtual void SetTweenAddColor( D3DXCOLOR c )	{ m_end_colorAdd = c; }
+	virtual void SetTweenDiffuseColor( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorUpperLeft( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorUpperRight( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorLowerLeft( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorLowerRight( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorTopEdge( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorRightEdge( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse );
+	virtual void SetTweenAddColor( D3DXCOLOR c );
 
 
-	// NOTE: GetEdge functions don't consider rotation
-	//virtual float GetLeftEdge()		{ return m_pos.x - GetZoomedWidth()/2.0f; };
-	//virtual float GetRightEdge()	{ return m_pos.x + GetZoomedWidth()/2.0f; };
-	//virtual float GetTopEdge()		{ return m_pos.y - GetZoomedHeight()/2.0f; };
-	//virtual float GetBottomEdge()	{ return m_pos.y + GetZoomedHeight()/2.0f; };
 	
 	enum StretchType { fit_inside, cover };
 
@@ -122,6 +125,16 @@ public:
 	void ScaleTo( LPRECT rect, StretchType st );
 
 	void StretchTo( LPRECT rect );
+
+
+
+
+	enum HorizAlign { align_left, align_center, align_right };
+	void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; };
+
+	enum VertAlign { align_top, align_middle, align_bottom };
+	void SetVertAlign( VertAlign va ) { m_VertAlign = va; };
+
 
 
 	// effects
@@ -140,37 +153,70 @@ public:
 	void SetEffectSpinning( float fRadsPerSpeed = 2.0 );
 	void SetEffectVibrating( float fVibrationDistance = 5.0 );
 	void SetEffectFlickering();
+	void SetEffectBouncing( D3DXVECTOR3 vectBounceDir, float fPeriod );
 	Effect GetEffect() { return m_Effect; };
 
 
 protected:
 
-	void Init();
-
 	D3DXVECTOR2 m_size;		// width, height
-	D3DXVECTOR2 m_pos;		// X-Y coordinate of where the center point will appear on screen
+	D3DXVECTOR3 m_pos;		// X-Y coordinate of where the center point will appear on screen
 	D3DXVECTOR3 m_rotation;	// X, Y, and Z m_rotation
 	D3DXVECTOR2 m_scale;	// X and Y zooming
 	D3DXCOLOR   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
 	D3DXCOLOR   m_colorAdd;
 
-	// start and end position for tweening
-	D3DXVECTOR2 m_start_pos,			m_end_pos;
-	D3DXVECTOR3 m_start_rotation,		m_end_rotation;
-	D3DXVECTOR2 m_start_scale,			m_end_scale;
-	D3DXCOLOR   m_start_colorDiffuse[4],m_end_colorDiffuse[4];
-	D3DXCOLOR   m_start_colorAdd,		m_end_colorAdd;
 
-	// counters for tweening
-	TweenType	m_TweenType;
-	float		m_fTweenTime;		// seconds between Start and End positions/zooms
-	float		m_fTimeIntoTween;	// how long we have been tweening for
+	// tweening
+	D3DXVECTOR3 m_start_pos;
+	D3DXVECTOR3 m_start_rotation;
+	D3DXVECTOR2 m_start_scale;
+	D3DXCOLOR   m_start_colorDiffuse[4];
+	D3DXCOLOR   m_start_colorAdd;
+
+	struct TweenState
+	{
+		// start and end position for tweening
+		D3DXVECTOR3 m_end_pos;
+		D3DXVECTOR3 m_end_rotation;
+		D3DXVECTOR2 m_end_scale;
+		D3DXCOLOR   m_end_colorDiffuse[4];
+		D3DXCOLOR   m_end_colorAdd;
+
+		// counters for tweening
+		TweenType	m_TweenType;
+		float		m_fTimeLeftInTween;	// how far into the tween are we?
+		float		m_fTweenTime;		// seconds between Start and End positions/zooms
+
+		TweenState()
+		{
+			m_end_pos		= D3DXVECTOR3( 0, 0, 0 );
+			m_end_rotation	= D3DXVECTOR3( 0, 0, 0 );
+			m_end_scale		= D3DXVECTOR2( 1, 1 );
+			for(int i=0; i<4; i++) m_end_colorDiffuse[i]= D3DXCOLOR( 1, 1, 1, 1 );
+			m_end_colorAdd	= D3DXCOLOR( 0, 0, 0, 0 );
+		};
+	};
+
+	CArray<TweenState, TweenState&> m_QueuedTweens;
+	TweenState& GetLatestTween() { return m_QueuedTweens[m_QueuedTweens.GetSize()-1]; };
+
+
+	// alignment
+	HorizAlign	m_HorizAlign;
+	VertAlign	m_VertAlign;
+
 
 	// effect
 	Effect m_Effect;
 
+
 	// Counting variables for sprite effects:
 	// camelion and glowing:
+	D3DXCOLOR   m_effect_colorDiffuse1;
+	D3DXCOLOR   m_effect_colorDiffuse2;
+	D3DXCOLOR   m_effect_colorAdd1;
+	D3DXCOLOR   m_effect_colorAdd2;
 	float m_fPercentBetweenColors;
 	bool  m_bTweeningTowardEndColor;	// TRUE is fading toward end_color, FALSE if fading toward start_color
 	float m_fDeltaPercentPerSecond;	// percentage change in tweening per second
@@ -188,6 +234,12 @@ protected:
 
 	// flickering:
 	bool m_bVisibleThisFrame;
+
+	// bouncing:
+	D3DXVECTOR3 m_vectBounce;
+	float m_fBouncePeriod;
+	float m_fTimeIntoBounce;
+
 };
 
 

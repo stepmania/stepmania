@@ -26,13 +26,13 @@ protected:
 public:
 	BitmapText();
 
-	bool LoadFromFontName( CString sFontName );
+	virtual void RenderPrimitives();
+
+	bool Load( CString sFontName );
 	void SetText( CString sText );
 	CString GetText();
 
 	bool LoadFontWidths( CString sFilePath );
-
-	void Draw();
 
 	float GetWidestLineWidthInSourcePixels();	// in logical, pre-zoomed units
 	float GetLineWidthInSourcePixels( int iLineNo );
@@ -40,11 +40,11 @@ public:
 protected:
 	bool LoadCharWidths( CString sWidthFilePath );
 
-	CString m_sFontName;
-	float m_fCharWidthsInSourcePixels[NUM_CHARS];	// in soure coordinate space
+	CString m_sFontFilePath;
+	int  m_iCharToFrameNo[NUM_CHARS];
+	float m_fFrameNoToWidth[NUM_CHARS];	// in soure coordinate space
 	
 	CStringArray	m_sTextLines;
-	//CArray<float,float>	m_fLineWidths;
 };
 
 

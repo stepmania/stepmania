@@ -16,7 +16,6 @@
 #include "Sprite.h"
 #include "Song.h"
 #include "ActorFrame.h"
-#include "SpriteSequence.h"
 #include "BitmapText.h"
 #include "Rectangle.h"
 
@@ -29,7 +28,7 @@ public:
 	void SetBPMRange( float fLowBPM, float fHighBPM );
 
 protected:
-	SpriteSequence m_seqBPM;
+	BitmapText m_textBPM;
 	BitmapText m_textLabel;
 	RectangleActor m_rectFrame;
 

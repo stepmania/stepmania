@@ -54,9 +54,6 @@ void RageTexture::CreateFrameRects()
 {
 	GetFrameDimensionsFromFileName( m_sFilePath, &m_uFramesWide, &m_uFramesHigh );
 
-	m_uSourceFrameWidth		= GetSourceWidth() / m_uFramesWide;
-	m_uSourceFrameHeight	= GetSourceHeight() / m_uFramesHigh;
-
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	///////////////////////////////////

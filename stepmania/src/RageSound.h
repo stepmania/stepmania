@@ -24,28 +24,11 @@ class RageSound
 public:
 	RageSound( HWND hWnd );
 	~RageSound();
-	
-	HSAMPLE LoadSample( const CString sFileName );
-	void	UnloadSample( HSAMPLE hSample );
-	void	PlaySample( HSAMPLE hSample );
-	void	StopSample( HSAMPLE hSample );
-	float GetSampleLength( HSAMPLE hSample );
-	float GetSamplePosition( HSAMPLE hSample );
-
-	HSTREAM LoadStream( const CString sFileName );
-	void	UnloadStream( HSTREAM hStream);
-	void	PlayStream( HSTREAM hStream);
-	void	PauseStream( HSTREAM hStream);
-	void	StopStream( HSTREAM hStream);
-	float GetStreamLength( HSTREAM hStream);
-	float GetStreamPosition( HSTREAM hStream);
-	BOOL	IsPlaying(DWORD handle);
-
 
 
 private:
 	HWND		m_hWndApp;	// this is set on GRAPHICS_Create()
-//	HSAMPLE		m_hSample[NUM_STREAMS];
+
 };
 
 

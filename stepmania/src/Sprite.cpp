@@ -20,13 +20,6 @@
 
 Sprite::Sprite()
 {
-	Init();
-}
-
-void Sprite::Init()
-{
-	Actor::Init();
-
 	m_pTexture = NULL;
 	m_uNumStates = 0;
 	m_uCurState = 0;
@@ -43,6 +36,9 @@ void Sprite::Init()
 	m_fSpinSpeed =  2.0f;
 	m_fVibrationDistance =  5.0f;
 	m_bVisibleThisFrame =  FALSE;
+	m_HorizAlign = align_center;
+	m_VertAlign = align_middle;
+
 
 	if( GAMEINFO )
 		m_bHasShadow = GAMEINFO->m_GameOptions.m_bShadows;
@@ -52,6 +48,7 @@ void Sprite::Init()
 
 	m_bBlendAdd = false;
 }
+
 
 Sprite::~Sprite()
 {
@@ -65,7 +62,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath )
 {
 	RageLog( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
 
-	Init();
+	//Init();
 	return LoadTexture( sTexturePath );
 }
 
@@ -81,9 +78,18 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath )
 {
 	RageLog( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
 
-	Init();
+	//Init();
 
 	m_sSpritePath = sSpritePath;
+
+
+	// Split for the directory.  We'll need it below
+	CString sFontDir, sFontFileName, sFontExtension;
+	splitrelpath( m_sSpritePath, sFontDir, sFontFileName, sFontExtension );
+
+
+
+
 
 	// read sprite file
 	IniFile ini;
@@ -91,9 +97,11 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath )
 	if( !ini.ReadFile() )
 		RageError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
 
-	CString sTexturePath = ini.GetValue( "Sprite", "Texture" );
-	if( sTexturePath == "" )
+	CString sTextureFile = ini.GetValue( "Sprite", "Texture" );
+	if( sTextureFile == "" )
 		RageError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
+
+	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 
 	// Load the texture
 	if( !LoadTexture( sTexturePath ) )
@@ -123,9 +131,14 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath )
 	}
 
 	if( m_uNumStates == 0 )
-		RageError( ssprintf("Failed to find at least one state in %s.", m_sSpritePath) );
+	{
+		m_uNumStates = 1;
+		m_uFrame[0] = 0;
+		m_fDelay[0] = 10;
+	}
 
-	return TRUE;
+
+	return true;
 }
 
 bool Sprite::LoadTexture( CString sTexturePath )
@@ -184,11 +197,16 @@ void Sprite::Update( float fDeltaTime )
 }
 
 
-void Sprite::Draw()
+void Sprite::RenderPrimitives()
 {
-	D3DXVECTOR2 pos				= m_pos;
-	D3DXVECTOR3 rotation		= m_rotation;
-	D3DXVECTOR2 scale			= m_scale;
+
+	if( m_pTexture == NULL )
+		return;
+	
+	D3DXCOLOR	colorDiffuse[4];
+	for(int i=0; i<4; i++)
+		colorDiffuse[i] = m_colorDiffuse[i];
+	D3DXCOLOR	colorAdd		= m_colorAdd;
 
 	// update properties based on SpriteEffects 
 	switch( m_Effect )
@@ -196,214 +214,123 @@ void Sprite::Draw()
 	case no_effect:
 		break;
 	case blinking:
+		{
+		for(int i=0; i<4; i++)
+			colorDiffuse[i] = m_bTweeningTowardEndColor ? m_effect_colorDiffuse1 : m_effect_colorDiffuse2;
+		}
 		break;
 	case camelion:
+		{
+		for(int i=0; i<4; i++)
+			colorDiffuse[i] = m_effect_colorDiffuse1*m_fPercentBetweenColors + m_effect_colorDiffuse2*(1.0f-m_fPercentBetweenColors);
+		}
 		break;
 	case glowing:
+		colorAdd = m_effect_colorAdd1*m_fPercentBetweenColors + m_effect_colorAdd2*(1.0f-m_fPercentBetweenColors);
 		break;
 	case wagging:
-		rotation.z = m_fWagRadians * (float)sin( 
-			(m_fWagTimer / m_fWagPeriod)	// percent through wag
-			* 2.0 * D3DX_PI );
 		break;
 	case spinning:
 		// nothing special needed
 		break;
 	case vibrating:
-		pos.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
-		pos.y += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
 		break;
 	case flickering:
+		m_bVisibleThisFrame = !m_bVisibleThisFrame;
+		if( !m_bVisibleThisFrame )
+			for(int i=0; i<4; i++)
+				colorDiffuse[i] = D3DXCOLOR(0,0,0,0);		// don't draw the frame
 		break;
 	}
 
 
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	// make the object in logical units centered at the origin
 
-	// calculate and apply world transform
-	D3DXMATRIX matOriginalWorld, matNewWorld, matTemp;
-    pd3dDevice->GetTransform( D3DTS_WORLD, &matOriginalWorld );	// save the original world matrix
-
-	matNewWorld = matOriginalWorld;		// initialize the matrix we're about to build to transform into this Frame's coord space
-
-	D3DXMatrixTranslation( &matTemp, pos.x, pos.y, 0 );	// add in the translation
-	matNewWorld = matTemp * matNewWorld;
-	D3DXMatrixTranslation( &matTemp, -0.5f, -0.5f, 0 );		// shift to align texels with pixels
-	matNewWorld = matTemp * matNewWorld;
-	D3DXMatrixScaling( &matTemp, scale.x, scale.y, 1 );	// add in the zoom
-	matNewWorld = matTemp * matNewWorld;
-	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
-	matNewWorld = matTemp * matNewWorld;
-
-    pd3dDevice->SetTransform( D3DTS_WORLD, &matNewWorld );	// transform to local coordinates
 
 	
+	FRECT quadVerticies;
 
-	if( m_pTexture != NULL )
+	switch( m_HorizAlign )
 	{
-	
-		D3DXCOLOR	colorDiffuse[4];
-		for(int i=0; i<4; i++)
-			colorDiffuse[i] = m_colorDiffuse[i];
-		D3DXCOLOR	colorAdd		= m_colorAdd;
+	case align_top:		quadVerticies.left = 0;				quadVerticies.right = m_size.x;		break;
+	case align_middle:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
+	case align_bottom:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;			break;
+	default:		ASSERT( true );
+	}
 
-		// update properties based on SpriteEffects 
-		switch( m_Effect )
+	switch( m_VertAlign )
+	{
+	case align_bottom:	quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
+	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
+	case align_top:		quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;
+	default:		ASSERT( true );
+	}
+
+
+	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
+	CUSTOMVERTEX* v;
+	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+	// shift by one pixel because sprites are not aligned (why?!?)
+	v[0].p = D3DXVECTOR3( quadVerticies.left+1,		quadVerticies.bottom,	0 );	// bottom left
+	v[1].p = D3DXVECTOR3( quadVerticies.left+1,		quadVerticies.top,		0 );	// top left
+	v[2].p = D3DXVECTOR3( quadVerticies.right+1,	quadVerticies.bottom,	0 );	// bottom right
+	v[3].p = D3DXVECTOR3( quadVerticies.right+1,	quadVerticies.top,		0 );	// top right
+
+
+	if( m_bUsingCustomTexCoords ) 
+	{
+		v[0].tu = m_CustomTexCoords[0];		v[0].tv = m_CustomTexCoords[1];	// bottom left
+		v[1].tu = m_CustomTexCoords[2];		v[1].tv = m_CustomTexCoords[3];	// top left
+		v[2].tu = m_CustomTexCoords[4];		v[2].tv = m_CustomTexCoords[5];	// bottom right
+		v[3].tu = m_CustomTexCoords[6];		v[3].tv = m_CustomTexCoords[7];	// top right
+	} 
+	else 
+	{
+		UINT uFrameNo = m_uFrame[m_uCurState];
+		FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
+
+		v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
+		v[1].tu = pTexCoordRect->left;		v[1].tv = pTexCoordRect->top;		// top left
+		v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
+		v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
+	}
+
+
+	pVB->Unlock();
+
+
+
+
+	// Set the stage...
+	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
+
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
+	//pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
+	//pd3dDevice->SetRenderState( D3DRS_DESTBLEND, bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
+	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
+	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
+
+	pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
+
+
+
+	if( colorDiffuse[0].a != 0 )
+	{
+		//////////////////////
+		// render the shadow
+		//////////////////////
+		if( m_bHasShadow )
 		{
-		case no_effect:
-			break;
-		case blinking:
-			{
-			for(int i=0; i<4; i++)
-				colorDiffuse[i] = m_bTweeningTowardEndColor ? m_start_colorDiffuse[i] : m_end_colorDiffuse[i];
-			}
-			break;
-		case camelion:
-			{
-			for(int i=0; i<4; i++)
-				colorDiffuse[i] = m_start_colorDiffuse[i]*m_fPercentBetweenColors + m_end_colorDiffuse[i]*(1.0f-m_fPercentBetweenColors);
-			}
-			break;
-		case glowing:
-			colorAdd = m_start_colorAdd*m_fPercentBetweenColors + m_end_colorAdd*(1.0f-m_fPercentBetweenColors);
-			break;
-		case wagging:
-			break;
-		case spinning:
-			// nothing special needed
-			break;
-		case vibrating:
-			break;
-		case flickering:
-			m_bVisibleThisFrame = !m_bVisibleThisFrame;
-			if( !m_bVisibleThisFrame )
-				for(int i=0; i<4; i++)
-					colorDiffuse[i] = D3DXCOLOR(0,0,0,0);		// don't draw the frame
-			break;
-		}
+			SCREEN->PushMatrix();
+			SCREEN->Translate( 5, 5, 0 );	// shift by 5 units
 
-
-		// make the object in logical units centered at the origin
-		LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
-		CUSTOMVERTEX* v;
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-		float fHalfSizeX = m_size.x/2;
-		float fHalfSizeY = m_size.y/2;
-
-		v[0].p = D3DXVECTOR3( -fHalfSizeX,	 fHalfSizeY,	0 );	// bottom left
-		v[1].p = D3DXVECTOR3( -fHalfSizeX,	-fHalfSizeY,	0 );	// top left
-		v[2].p = D3DXVECTOR3(  fHalfSizeX,	 fHalfSizeY,	0 );	// bottom right
-		v[3].p = D3DXVECTOR3(  fHalfSizeX,	-fHalfSizeY,	0 );	// top right
-
-
-		if( m_bUsingCustomTexCoords ) 
-		{
-			v[0].tu = m_CustomTexCoords[0];		v[0].tv = m_CustomTexCoords[1];	// bottom left
-			v[1].tu = m_CustomTexCoords[2];		v[1].tv = m_CustomTexCoords[3];	// top left
-			v[2].tu = m_CustomTexCoords[4];		v[2].tv = m_CustomTexCoords[5];	// bottom right
-			v[3].tu = m_CustomTexCoords[6];		v[3].tv = m_CustomTexCoords[7];	// top right
-		} 
-		else 
-		{
-			UINT uFrameNo = m_uFrame[m_uCurState];
-			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
-
-			v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
-			v[1].tu = pTexCoordRect->left;		v[1].tv = pTexCoordRect->top;		// top left
-			v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
-			v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
-		}
-
-
-
-		pVB->Unlock();
-
-
-		// Set the stage...
-		pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
-
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
-		//pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
-		//pd3dDevice->SetRenderState( D3DRS_DESTBLEND, bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
-		pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
-		pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
-
-		pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
-		pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
-
-
-
-		if( colorDiffuse[0].a != 0 )
-		{
-			//////////////////////
-			// render the shadow
-			//////////////////////
-			if( m_bHasShadow )
-			{
-				D3DXMATRIX matOriginalWorld, matNewWorld, matTemp;
-				pd3dDevice->GetTransform( D3DTS_WORLD, &matOriginalWorld );	// save the original world matrix
-				matNewWorld = matOriginalWorld;
-
-				D3DXMatrixTranslation( &matTemp, 5, 5, 0 );	// shift by 5 units
-				matNewWorld = matTemp * matNewWorld;
-				pd3dDevice->SetTransform( D3DTS_WORLD, &matNewWorld );	// transform to local coordinates
-
-				pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-				v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
-				
-				pVB->Unlock();
-
-				pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-				pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-				pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-				pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-				pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-				pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-				
-				pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
-
-				pd3dDevice->SetTransform( D3DTS_WORLD, &matOriginalWorld );	// restore the original world matrix
-
-			}
-
-
-			//////////////////////
-			// render the diffuse pass
-			//////////////////////
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-			v[0].color = colorDiffuse[2];	// bottom left
-			v[1].color = colorDiffuse[0];	// top left
-			v[2].color = colorDiffuse[3];	// bottom right
-			v[3].color = colorDiffuse[1];	// top right
-			
-			pVB->Unlock();
-
-			
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
-
-
-			// finally!  Pump those triangles!	
-			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
-		}
-
-
-		//////////////////////
-		// render the add pass
-		//////////////////////
-		if( colorAdd.a != 0 )
-		{
-			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-			v[0].color = v[1].color = v[2].color = v[3].color = colorAdd;
+			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
 			
 			pVB->Unlock();
 
@@ -415,13 +342,58 @@ void Sprite::Draw()
 			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 			
 			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+
+			SCREEN->PopMatrix();
 		}
 
+
+		//////////////////////
+		// render the diffuse pass
+		//////////////////////
+		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+		v[0].color = colorDiffuse[2];	// bottom left
+		v[1].color = colorDiffuse[0];	// top left
+		v[2].color = colorDiffuse[3];	// bottom right
+		v[3].color = colorDiffuse[1];	// top right
+		
+		pVB->Unlock();
+
+		
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+
+
+		// finally!  Pump those triangles!	
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+	}
+
+
+	//////////////////////
+	// render the add pass
+	//////////////////////
+	if( colorAdd.a != 0 )
+	{
+		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+		v[0].color = v[1].color = v[2].color = v[3].color = colorAdd;
+		
+		pVB->Unlock();
+
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+		
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
 	}
 	
-	
-	pd3dDevice->SetTransform( D3DTS_WORLD, &matOriginalWorld );	// restore the original world matrix
-
 }
 
 

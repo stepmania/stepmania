@@ -12,19 +12,34 @@
 #include "RageUtil.h"
 
 #include "TextBanner.h"
+#include "ThemeManager.h"
+
+
 
 TextBanner::TextBanner()
 {
-	m_textTitle.LoadFromFontName( "Arial Bold" );
-	m_textSubTitle.LoadFromFontName( "Arial Bold" );
-	m_textArtist.LoadFromFontName( "Arial Bold" );
+	m_textTitle.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
+	m_textSubTitle.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
+	m_textArtist.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
+
+	m_textTitle.SetX( -TEXT_BANNER_WIDTH/2 );
+	m_textSubTitle.SetX( -TEXT_BANNER_WIDTH/2 );
+	m_textArtist.SetX( -TEXT_BANNER_WIDTH/2 );
+
+	m_textTitle.SetHorizAlign( align_left );
+	m_textSubTitle.SetHorizAlign( align_left );
+	m_textArtist.SetHorizAlign( align_left );
+
+	m_rect.ScaleToCover( CRect( -TEXT_BANNER_WIDTH/2,
+								-TEXT_BANNER_HEIGHT/2,
+								TEXT_BANNER_WIDTH/2,
+								TEXT_BANNER_HEIGHT/2 )
+								);
+	//this->AddActor( &m_rect );
 
 	this->AddActor( &m_textTitle );
 	this->AddActor( &m_textSubTitle );
 	this->AddActor( &m_textArtist );
-	this->SetZoom( 0.5f );
-
-
 }
 
 
@@ -34,19 +49,56 @@ bool TextBanner::LoadFromSong( Song &song )
 	CString sSubTitle;
 
 	m_textTitle.SetText( sTitle );
-	m_textTitle.SetZoom( 1.0f );
-	m_textTitle.SetXY( 0, -30 );
-
 	m_textSubTitle.SetText( sSubTitle );
-	m_textTitle.SetZoom( 0.5f );
-	m_textSubTitle.SetXY( 0, 0 );
-
-	m_textArtist.SetText( song.GetArtist() );
-	m_textTitle.SetZoom( 0.5f );
-	m_textArtist.SetXY( 0, 30 );
-
+	m_textArtist.SetText( "/" + song.GetArtist() );
 
 	
+	float fTitleZoom, fSubTitleZoom, fArtistZoom;
+
+	if( sSubTitle == "" )
+	{
+		fTitleZoom = 0.9f;
+		fSubTitleZoom = 0.0f;
+		fArtistZoom = 0.5f;
+	}
+	else
+	{
+		fTitleZoom = 0.6f;
+		fSubTitleZoom = 0.3f;
+		fArtistZoom = 0.5f;
+	}
+
+	m_textTitle.SetZoom( fTitleZoom );
+	m_textSubTitle.SetZoom( fSubTitleZoom );
+	m_textArtist.SetZoom( fArtistZoom );
+
+
+	float fZoomedTitleWidth		=	m_textTitle.GetWidestLineWidthInSourcePixels() * fTitleZoom;
+	float fZoomedSubTitleWidth	=	m_textSubTitle.GetWidestLineWidthInSourcePixels() * fSubTitleZoom;
+	float fZoomedArtistWidth	=	m_textArtist.GetWidestLineWidthInSourcePixels() * fArtistZoom;
+
+	// check to see if any of the lines run over the edge of the banner
+	if( fZoomedTitleWidth > TEXT_BANNER_WIDTH )
+		m_textTitle.SetZoomX( TEXT_BANNER_WIDTH / m_textTitle.GetWidestLineWidthInSourcePixels() );
+	if( fZoomedSubTitleWidth > TEXT_BANNER_WIDTH )
+		m_textSubTitle.SetZoomX( TEXT_BANNER_WIDTH / m_textSubTitle.GetWidestLineWidthInSourcePixels() );
+	if( fZoomedArtistWidth > TEXT_BANNER_WIDTH )
+		m_textArtist.SetZoomX( TEXT_BANNER_WIDTH / m_textArtist.GetWidestLineWidthInSourcePixels() );
+
+
+
+	if( sSubTitle == "" )
+	{
+		m_textTitle.SetY( -7 );
+		m_textSubTitle.SetY( 0 );
+		m_textArtist.SetY( 10 );
+	}
+	else
+	{
+		m_textTitle.SetY( -10 );
+		m_textSubTitle.SetY( -4 );
+		m_textArtist.SetY( 10 );
+	}
 
 	return true;
 }

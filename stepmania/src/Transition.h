@@ -13,24 +13,30 @@
 #define _Transition_H_
 
 
-#include "Actor.h"
 #include "RageScreen.h"
-#include "RageSound.h"
 #include "Window.h"
 #include "WindowManager.h"
+#include "Actor.h"
+#include "SoundSet.h"
 
 
-#define DEFAULT_TRANSITION_TIME		0.75f
+const float DEFAULT_TRANSITION_TIME		=	0.75f;
 
 
-class Transition
+class Transition : public Actor
 {
 public:
 	Transition();
-	~Transition();
+	virtual ~Transition();
 
-	void Update( float fDeltaTime );
-	virtual void Draw() PURE;
+	virtual void Update( float fDeltaTime );
+	virtual void Draw()
+	{
+		if( m_TransitionState == opened )
+			return;		// don't draw!
+
+		Actor::Draw();
+	}
 
 	virtual void SetOpened();
 	virtual void SetClosed();
@@ -48,8 +54,6 @@ public:
 	void SetTransitionTime( float fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
 
 	void SetColor( D3DXCOLOR new_color ) { m_Color = new_color; };
-	void SetCloseWipingRightSound( CString sSoundPath );
-	void SetCloseWipingLeftSound( CString sSoundPath );
 
 protected:
 
@@ -60,13 +64,26 @@ protected:
 	TransitionState	m_TransitionState;
 	float			m_fTransitionTime;
 	float			m_fPercentThroughTransition;
+	float GetPercentageOpen()
+	{
+		switch( m_TransitionState )
+		{
+		case opening_right:
+		case opening_left:
+			return 1.0f - m_fPercentThroughTransition;
+			break;
+		case closing_right:
+		case closing_left:
+			return m_fPercentThroughTransition;
+			break;
+		default:
+			ASSERT( true );
+			return 0;
+		}
+	};
+
 
 	WindowMessage	m_MessageToSendWhenDone;
-
-	bool m_bPlayCloseWipingRightSound;
-	bool m_bPlayCloseWipingLeftSound;
-	HSAMPLE m_hCloseWipingRightSound;
-	HSAMPLE m_hCloseWipingLeftSound;
 
 	D3DXCOLOR m_Color;
 };

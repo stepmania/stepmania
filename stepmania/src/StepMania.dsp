@@ -140,6 +140,22 @@ SOURCE=.\RageSound.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageSoundSample.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundSample.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundStream.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundStream.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageTexture.cpp
 # End Source File
 # Begin Source File
@@ -208,6 +224,14 @@ SOURCE=.\WindowGameOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowIdle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowIdle.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowIntroCovers.cpp
 # End Source File
 # Begin Source File
@@ -229,6 +253,38 @@ SOURCE=.\WindowManager.cpp
 # Begin Source File
 
 SOURCE=.\WindowManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenuResults.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenuResults.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenuSelectMusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenuSelectMusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenuSelectStyle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowMenuSelectStyle.h
 # End Source File
 # Begin Source File
 
@@ -256,43 +312,11 @@ SOURCE=.\WindowPrompt.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\WindowResults.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowResults.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\WindowSandbox.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\WindowSandbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectGameMode.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectGameMode.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectSong.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectSong.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectSteps.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectSteps.h
 # End Source File
 # Begin Source File
 
@@ -311,73 +335,9 @@ SOURCE=.\WindowTitleMenu.cpp
 SOURCE=.\WindowTitleMenu.h
 # End Source File
 # End Group
-# Begin Group "Game Objects"
+# Begin Group "Data Structures"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\Actor.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Actor.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ActorFrame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ActorFrame.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Background.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Background.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Banner.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Banner.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\BitmapText.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BitmapText.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\BlurredTitle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BlurredTitle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\BPMDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BPMDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorArrow.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\GameInfo.cpp
@@ -388,35 +348,11 @@ SOURCE=.\GameInfo.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GhostArrow.cpp
+SOURCE=.\Grade.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GhostArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowBright.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowBright.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldGhostArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldGhostArrow.h
+SOURCE=.\Grade.h
 # End Source File
 # Begin Source File
 
@@ -436,22 +372,6 @@ SOURCE=.\PlayerInput.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\PreviewGraphic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\previewgraphic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Rectangle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Rectangle.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Song.cpp
 # End Source File
 # Begin Source File
@@ -468,22 +388,6 @@ SOURCE=.\SoundSet.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Sprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Sprite.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\SpriteSequence.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SpriteSequence.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Steps.cpp
 # End Source File
 # Begin Source File
@@ -492,11 +396,11 @@ SOURCE=.\Steps.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TextBanner.cpp
+SOURCE=.\ThemeManager.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\TextBanner.h
+SOURCE=.\ThemeManager.h
 # End Source File
 # End Group
 # Begin Group "File Types"
@@ -621,6 +525,194 @@ SOURCE=.\TransitionStarWipe.cpp
 # Begin Source File
 
 SOURCE=.\TransitionStarWipe.h
+# End Source File
+# End Group
+# Begin Group "Actors"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Actor.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Actor.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorFrame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Banner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Banner.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BitmapText.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BitmapText.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BlurredSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BlurredSprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BPMDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BPMDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GradeDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GradeDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MiniBackground.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MiniBackground.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicSortDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicSortDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicStatusDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicStatusDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicWheel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicWheel.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PreviewGraphic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\previewgraphic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Rectangle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Rectangle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Sprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Sprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\StepsSelector.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\StepsSelector.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextBanner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextBanner.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TipDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TipDisplay.h
 # End Source File
 # End Group
 # End Target

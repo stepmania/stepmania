@@ -12,6 +12,7 @@
 #include "BPMDisplay.h"
 #include "RageUtil.h"
 #include "ScreenDimensions.h"
+#include "ThemeManager.h"
 
 
 
@@ -25,22 +26,22 @@ BPMDisplay::BPMDisplay()
 	m_rectFrame.SetZoomX( 120 );
 	m_rectFrame.SetZoomY( 40 );
 
-	m_seqBPM.LoadFromSequenceFile( "SpriteSequences\\LED Numbers.seq" );
-	m_seqBPM.SetXY( CENTER_X, SCREEN_HEIGHT - 50 );
-	//m_seqBPM.SetSequence( ssprintf("999") );
-	m_seqBPM.SetXY( -30, 0 );
-	m_seqBPM.SetZoom( 0.7f );
-	m_seqBPM.SetDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );	// yellow
-	m_seqBPM.SetDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
+	m_textBPM.Load( THEME->GetPathTo(FONT_LCD_NUMBERS) );
+	m_textBPM.SetXY( CENTER_X, SCREEN_HEIGHT - 50 );
+	//m_textBPM.SetSequence( ssprintf("999") );
+	m_textBPM.SetXY( -30, 0 );
+	m_textBPM.SetZoom( 0.7f );
+	m_textBPM.SetDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );	// yellow
+	m_textBPM.SetDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
 
-	m_textLabel.LoadFromFontName( "Black Wolf" );
+	m_textLabel.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
 	m_textLabel.SetXY( 54, 10 );
 	m_textLabel.SetText( "BPM" );
 	m_textLabel.SetDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );	// yellow
 	m_textLabel.SetDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
 
 	//this->AddActor( &m_rectFrame );
-	this->AddActor( &m_seqBPM );
+	this->AddActor( &m_textBPM );
 	this->AddActor( &m_textLabel );
 }
 
@@ -70,7 +71,7 @@ void BPMDisplay::Update( float fDeltaTime )
 	case holding_up:	m_fCurrentBPM = m_fHighBPM;												break;
 	case holding_down:	m_fCurrentBPM = m_fLowBPM;												break;
 	}
-	m_seqBPM.SetSequence( ssprintf("%03.0f", m_fCurrentBPM) ); 
+	m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) ); 
 }
 
 
@@ -86,18 +87,18 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 
 	if( m_fLowBPM != m_fHighBPM )
 	{
-		m_seqBPM.BeginTweening(0.5f);
-		m_seqBPM.SetTweenDiffuseColorTopEdge( D3DXCOLOR(1,0,0,1) );			// red
-		m_seqBPM.SetTweenDiffuseColorBottomEdge( D3DXCOLOR(0.6f,0,0,1) );	// dark red
+		m_textBPM.BeginTweening(0.5f);
+		m_textBPM.SetTweenDiffuseColorTopEdge( D3DXCOLOR(1,0,0,1) );			// red
+		m_textBPM.SetTweenDiffuseColorBottomEdge( D3DXCOLOR(0.6f,0,0,1) );	// dark red
 		m_textLabel.BeginTweening(0.5f);
 		m_textLabel.SetTweenDiffuseColorTopEdge( D3DXCOLOR(1,0,0,1) );			// red
 		m_textLabel.SetTweenDiffuseColorBottomEdge( D3DXCOLOR(0.6f,0,0,1) );	// dark red
 	}
 	else
 	{
-		m_seqBPM.BeginTweening(0.5f);
-		m_seqBPM.SetTweenDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );			// yellow
-		m_seqBPM.SetTweenDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
+		m_textBPM.BeginTweening(0.5f);
+		m_textBPM.SetTweenDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );			// yellow
+		m_textBPM.SetTweenDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
 		m_textLabel.BeginTweening(0.5f);
 		m_textLabel.SetTweenDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );			// yellow
 		m_textLabel.SetTweenDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange

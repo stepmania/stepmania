@@ -233,20 +233,16 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 	LPDIRECTINPUT8 pDI = pInput->GetDirectInput();
 
 
-    HRESULT hr;
+	static int i=0;		// ASSUMPTION:  This callback is only used on application start!
 
     // Obtain an interface to the enumerated joystick.
-	for( int i=0; i<NUM_JOYSTICKS; i++ )
-	{
-		hr = pDI->CreateDevice( pdidInstance->guidInstance, 
-								&pInput->m_pJoystick[i], 
-								NULL );
-		// This will only fail if the user unplugs while we were in the middle of enumerating.
+	if( i >= NUM_JOYSTICKS  )
+	    return DIENUM_STOP;		// we only care about the first 4 
 
-		return DIENUM_CONTINUE;
-	} 
-
-    return DIENUM_STOP;		// already enumerated NUm_pJoystick times
+	HRESULT hr = pDI->CreateDevice( pdidInstance->guidInstance, 
+									&pInput->m_pJoystick[i++], 
+									NULL );
+	return DIENUM_CONTINUE;
 }
 
 

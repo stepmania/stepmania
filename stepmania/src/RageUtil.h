@@ -33,7 +33,7 @@
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-#define clamp(val,low,high)		( min( (val), max((low),(high)) ) )
+#define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
 
 //-----------------------------------------------------------------------------
@@ -109,13 +109,13 @@ void RageLog( LPCTSTR fmt, ...);
 VOID DisplayErrorAndDie( CString sError );
 
 
-//#if defined(DEBUG) | defined(_DEBUG)
-    #define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%s(%d)", str,						 __FILE__, (DWORD)__LINE__, str) )
-    #define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%s(%d)", str, DXGetErrorString8(hr), __FILE__, (DWORD)__LINE__, str) )
-//#else
-//    #define RageError(str)		(0L)
-//    #define RageErrorHr(str,hr)	(hr)
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+    #define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%s(%d)", str,						 __FILE__, (DWORD)__LINE__) )
+    #define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%s(%d)", str, DXGetErrorString8(hr), __FILE__, (DWORD)__LINE__) )
+#else
+    #define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%", str						 ) )
+    #define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%", str, DXGetErrorString8(hr) ) )
+#endif
 
 
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);

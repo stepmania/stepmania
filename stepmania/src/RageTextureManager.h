@@ -33,7 +33,8 @@ public:
 	~RageTextureManager();
 
 	LPRageTexture LoadTexture( CString sTexturePath );
-	VOID UnloadTexture( CString sTexturePath );
+	bool IsTextureLoaded( CString sTexturePath );
+	void UnloadTexture( CString sTexturePath );
 
 protected:
 	LPRageScreen m_pScreen;

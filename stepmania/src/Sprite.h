@@ -28,11 +28,15 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
+	virtual bool Load( CString sFilePath )
+	{
+		if( sFilePath.Right(7) == ".sprite" )
+			return LoadFromSpriteFile( sFilePath );
+		else 
+			return LoadFromTexture( sFilePath );
+	};
 
-	virtual bool LoadFromTexture( CString sTexturePath );
-	virtual bool LoadFromSpriteFile( CString sSpritePath );
-
-	virtual void Draw();
+	virtual void RenderPrimitives();
 	virtual void Update( float fDeltaTime );
 
 	virtual void StartAnimating()	{ m_bIsAnimating = TRUE; };
@@ -53,12 +57,16 @@ public:
 	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
 
 protected:
-	void Init();
+
+	virtual bool LoadFromTexture( CString sTexturePath );
+	virtual bool LoadFromSpriteFile( CString sSpritePath );
 	
+
+
 	bool LoadTexture( CString sTexture );
 
 	CString	m_sSpritePath;
-	LPRageTexture m_pTexture;
+	RageTexture* m_pTexture;
 	CString	m_sTexturePath;
 
 	UINT	m_uFrame[MAX_SPRITE_STATES];	// array of indicies into m_rectBitmapFrames

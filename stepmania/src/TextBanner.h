@@ -15,21 +15,23 @@
 #include "ActorFrame.h"
 #include "Song.h"
 #include "BitmapText.h"
+#include "Rectangle.h"
 
 
 const float TEXT_BANNER_WIDTH	= 192;		// from the source art of DDR
-const float TEXT_BANNER_HEIGHT	= 55;
+const float TEXT_BANNER_HEIGHT	= 40;
 
 
 class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
-	bool LoadFromSong( Song &song);
+	bool LoadFromSong( Song &song );
 
 private:
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 
+	RectangleActor m_rect;
 
 };
 

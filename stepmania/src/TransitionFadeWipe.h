@@ -16,6 +16,7 @@
 #include "RageScreen.h"
 #include "RageSound.h"
 #include "Sprite.h"
+#include "Rectangle.h"
 
 
 class TransitionFadeWipe : public Transition
@@ -24,10 +25,11 @@ public:
 	TransitionFadeWipe();
 	~TransitionFadeWipe();
 
-	void Draw();
+	virtual void RenderPrimitives();
 
 protected:
-	Sprite m_sprLogo;
+	RectangleActor m_rectBlack, m_rectGradient;
+
 };
 
 

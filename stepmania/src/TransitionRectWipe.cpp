@@ -33,7 +33,7 @@ TransitionRectWipe::~TransitionRectWipe()
 
 }
 
-void TransitionRectWipe::Draw()
+void TransitionRectWipe::RenderPrimitives()
 {
 	if( m_TransitionState == opened ) 
 		return;
@@ -77,11 +77,11 @@ void TransitionRectWipe::Draw()
 		if( iRectWidth > 0 )
 		//if( i == iFadeLeftEdge  ||  i == iFadeRightEdge )
 		{	// draw the rectangle
-			RECT rect;
+/*			RECT rect;
 			SetRect( &rect, iRectX-iRectWidth/2, 0, 
 							iRectX+iRectWidth/2, SCREEN_HEIGHT );
 			SCREEN->DrawRect( &rect, D3DCOLOR_ARGB(255,0,0,0) );
-		}
+*/		}
 	}	// end foreach rect
 }
 

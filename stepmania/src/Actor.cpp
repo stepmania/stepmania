@@ -16,27 +16,21 @@
 
 Actor::Actor()
 {
-	Init();
-}
-
-void Actor::Init()
-{
-	m_size			= m_start_pos			= m_end_pos			= D3DXVECTOR2( 0, 0 );
-	m_pos			= m_start_pos			= m_end_pos			= D3DXVECTOR2( 0, 0 );
-	m_rotation		= m_start_rotation		= m_end_rotation	= D3DXVECTOR3( 0, 0, 0 );
-	m_scale			= m_start_scale			= m_end_scale		= D3DXVECTOR2( 1, 1 );
-	for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]	= m_end_colorDiffuse[i]= D3DXCOLOR( 1, 1, 1, 1 );
-	m_colorAdd		= m_start_colorAdd		= m_end_colorAdd	= D3DXCOLOR( 0, 0, 0, 0 );
-
-	m_TweenType	= no_tween;
-	m_fTweenTime = 0.0f;
-	m_fTimeIntoTween = 0.0f;
+	m_size									= D3DXVECTOR2( 1, 1 );
+	m_pos			= m_start_pos			= D3DXVECTOR3( 0, 0, 0 );
+	m_rotation		= m_start_rotation		= D3DXVECTOR3( 0, 0, 0 );
+	m_scale			= m_start_scale			= D3DXVECTOR2( 1, 1 );
+	for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i] = D3DXCOLOR( 1, 1, 1, 1 );
+	m_colorAdd		= m_start_colorAdd		= D3DXCOLOR( 0, 0, 0, 0 );
 }
 
 
-void Actor::Draw()
+void Actor::Draw()		// set the world matrix and calculate actor properties, the call RenderPrimitives
 {
-	D3DXVECTOR2 pos				= m_pos;
+	SCREEN->PushMatrix();	// we're actually going to do some drawing in this function	
+
+	
+	D3DXVECTOR3 pos				= m_pos;
 	D3DXVECTOR3 rotation		= m_rotation;
 	D3DXVECTOR2 scale			= m_scale;
 
@@ -65,28 +59,38 @@ void Actor::Draw()
 		break;
 	case flickering:
 		break;
+	case bouncing:
+		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
+		float fPercentOffset = sin( fPercentThroughBounce*D3DX_PI ); 
+		pos += m_vectBounce * fPercentOffset;
+		break;
 	}
 
 	
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	SCREEN->Translate( pos.x+0.5f, pos.y-0.5f, pos.z );	// offset so that pixels are aligned to texels
+	SCREEN->Scale( scale.x, scale.y, 1 );
 
-	// calculate and apply world transform
-	D3DXMATRIX matWorld, matTemp;
-	D3DXMatrixIdentity( &matWorld );	// pass this along to each thing we draw and let it set it's own world matrix
-	D3DXMatrixScaling( &matTemp, scale.x, scale.y, 1 );	// add in the zoom
-	matWorld *= matTemp;
-	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
-	matWorld *= matTemp;
-	D3DXMatrixTranslation( &matTemp, pos.x, pos.y, 0 );	// add in the translation
-	matWorld *= matTemp;
-	D3DXMatrixTranslation( &matTemp, -0.5f, -0.5f, 0 );		// shift to align texels with pixels
-	matWorld *= matTemp;
-    pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
+	// super slow!	
+	//	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
+	//	matNewWorld = matTemp * matNewWorld;
+
+	// replace with...
+	if( rotation.z != 0 )
+	{
+		SCREEN->RotateZ( rotation.z );
+	}    
+
+
+
+	this->RenderPrimitives();
+
+
+	SCREEN->PopMatrix();
 
 }
 
 
-void Actor::Update( const float &fDeltaTime )
+void Actor::Update( float fDeltaTime )
 {
 //	RageLog( "Actor::Update( %f )", fDeltaTime );
 
@@ -134,91 +138,118 @@ void Actor::Update( const float &fDeltaTime )
 		break;
 	case flickering:
 		break;
+	case bouncing:
+		m_fTimeIntoBounce += fDeltaTime;
+		if( m_fTimeIntoBounce >= m_fBouncePeriod )
+			m_fTimeIntoBounce -= m_fBouncePeriod;
+		break;
 	}
 
 
 	// update tweening
-	if( m_TweenType != no_tween )		// we are performing some type of tweening
+	if( m_QueuedTweens.GetSize() > 0 )		// we are performing some type of tweening
 	{
-		m_fTimeIntoTween += fDeltaTime;
+		TweenState &TS = m_QueuedTweens[0];
 
-		if( m_fTimeIntoTween > m_fTweenTime )	// The tweening is over.  Stop the tweening
+		if( TS.m_fTimeLeftInTween == TS.m_fTweenTime )	// we are just beginning this tween
 		{
-			m_pos = m_end_pos;
-			m_scale = m_end_scale;
-			m_rotation = m_end_rotation;
-			for(int i=0; i<4; i++) m_colorDiffuse[i] = m_end_colorDiffuse[i];
-			m_colorAdd = m_end_colorAdd;
-			m_TweenType = no_tween;
+			// set the start position
+			m_start_pos				= m_pos;
+			m_start_rotation		= m_rotation;
+			m_start_scale			= m_scale;
+			for( int i=0; i<4; i++) m_start_colorDiffuse[i] = m_colorDiffuse[i];
+			m_start_colorAdd		= m_colorAdd;
 		}
-		else		// Tweening.  Recalcute the curent position.
+		
+		TS.m_fTimeLeftInTween -= fDeltaTime;
+
+		if( TS.m_fTimeLeftInTween <= 0 )	// The tweening is over.  Stop the tweening
 		{
-			float fPercentThroughTween = m_fTimeIntoTween / m_fTweenTime;
+			m_pos			= TS.m_end_pos;
+			m_scale			= TS.m_end_scale;
+			m_rotation		= TS.m_end_rotation;
+			for(int i=0; i<4; i++) m_colorDiffuse[i] = TS.m_end_colorDiffuse[i];
+			m_colorAdd		= TS.m_end_colorAdd;
+			
+			m_QueuedTweens.RemoveAt( 0 );
+			return;
+		}
+		else		// in the middle of tweening.  Recalcute the curent position.
+		{
+			float fPercentThroughTween = 1-(TS.m_fTimeLeftInTween / TS.m_fTweenTime);
 
 			// distort the percentage if appropriate
-			if( m_TweenType == tween_bias_begin )
+			switch( TS.m_TweenType )
+			{
+			case TWEEN_BIAS_BEGIN:
 				fPercentThroughTween = (float) sqrt( fPercentThroughTween );
-			else if( m_TweenType == tweening_bias_end )
+				break;
+			case TWEEN_BIAS_END:
 				fPercentThroughTween = fPercentThroughTween * fPercentThroughTween;
+				break;
+			}
 
 
-			m_pos			= m_start_pos	  + (m_end_pos		- m_start_pos	  )*fPercentThroughTween;
-			m_scale			= m_start_scale	  + (m_end_scale	- m_start_scale	  )*fPercentThroughTween;
-			m_rotation		= m_start_rotation+ (m_end_rotation - m_start_rotation)*fPercentThroughTween;
-			for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]*(1.0f-fPercentThroughTween) + m_end_colorDiffuse[i]*(fPercentThroughTween);
-			m_colorAdd		= m_start_colorAdd    *(1.0f-fPercentThroughTween) + m_end_colorAdd    *(fPercentThroughTween);
+			m_pos			= m_start_pos	  + (TS.m_end_pos		- m_start_pos	  )*fPercentThroughTween;
+			m_scale			= m_start_scale	  + (TS.m_end_scale		- m_start_scale	  )*fPercentThroughTween;
+			m_rotation		= m_start_rotation+ (TS.m_end_rotation	- m_start_rotation)*fPercentThroughTween;
+			for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]*(1.0f-fPercentThroughTween) + TS.m_end_colorDiffuse[i]*(fPercentThroughTween);
+			m_colorAdd		= m_start_colorAdd    *(1.0f-fPercentThroughTween) + TS.m_end_colorAdd    *(fPercentThroughTween);
 		}
-	
+		
+
 	}	// end if m_TweenType != no_tween
 
 }
 
 
-void Actor::TweenTo( float time, float x, float y, float zoom, float rot, D3DXCOLOR col, TweenType tt )
-{
-	// set our tweeen starting values to the current position
-	m_start_pos			= m_pos;
-	m_start_scale		= m_scale;
-	m_start_rotation	= m_rotation;
-	for(int i=0; i<4; i++) m_start_colorDiffuse[i]		= m_colorDiffuse[i];
-
-	// set the ending tweening position to what the user asked for
-	m_end_pos.x = (float)x;
-	m_end_pos.y = (float)y;
-	m_end_scale.x = zoom;
-	m_end_scale.y = zoom;
-	m_end_rotation.z = rot;
-	for(i=0; i<4; i++) m_end_colorDiffuse[i] = col;
-	m_TweenType = tt;
-	m_fTweenTime = time;
-	m_fTimeIntoTween = 0;
-
-}
-
 
 void Actor::BeginTweening( float time, TweenType tt )
 {
-	// set our tweeen starting and ending values to the current position
-	m_start_pos				= m_end_pos				= m_pos;
-	m_start_scale			= m_end_scale			= m_scale;
-	m_start_rotation		= m_end_rotation		= m_rotation;
-	for(int i=0; i<4; i++)m_start_colorDiffuse[i]	= m_end_colorDiffuse[i]	= m_colorDiffuse[i];
-	m_start_colorAdd		= m_end_colorAdd		= m_colorAdd;
-
-	m_TweenType = tt;
-	m_fTweenTime = time;
-	m_fTimeIntoTween = 0;
+	StopTweening();
+	BeginTweeningQueued( time, tt );
 }
 
-void Actor::SetTweenX( float x )			{ m_end_pos.x = x; } 
-void Actor::SetTweenY( float y )			{ m_end_pos.y = y; }
-void Actor::SetTweenXY( float x, float y )	{ SetTweenX(x); SetTweenY(y); }
-void Actor::SetTweenZoom( float zoom )		{ m_end_scale.x = zoom;  m_end_scale.y = zoom; }
-void Actor::SetTweenZoomX( float zoom )		{ m_end_scale.x = zoom; }
-void Actor::SetTweenZoomY( float zoom )		{ m_end_scale.y = zoom; }
-void Actor::SetTweenRotationX( float r )	{ m_end_rotation.x = r; }
-void Actor::SetTweenRotationY( float r )	{ m_end_rotation.y = r; }
-void Actor::SetTweenRotationZ( float r )	{ m_end_rotation.z = r; }
+void Actor::BeginTweeningQueued( float time, TweenType tt )
+{
+	ASSERT( time > 0 );
+
+	m_QueuedTweens.Add( TweenState() );
+
+	TweenState &TS = m_QueuedTweens[m_QueuedTweens.GetSize()-1];
+
+	// set our tween starting and ending values to the current position
+	TS.m_end_pos			= m_pos;
+	TS.m_end_scale			= m_scale;
+	TS.m_end_rotation		= m_rotation;
+	for(int i=0; i<4; i++)	TS.m_end_colorDiffuse[i]	= m_colorDiffuse[i];
+	TS.m_end_colorAdd		= m_colorAdd;
+
+	TS.m_TweenType = tt;
+	TS.m_fTweenTime = time;
+	TS.m_fTimeLeftInTween = time;
+}
+
+void Actor::SetTweenX( float x )			{ GetLatestTween().m_end_pos.x = x; } 
+void Actor::SetTweenY( float y )			{ GetLatestTween().m_end_pos.y = y; }
+void Actor::SetTweenZ( float z )			{ GetLatestTween().m_end_pos.z = z; }
+void Actor::SetTweenXY( float x, float y )	{ GetLatestTween().m_end_pos.x = x; GetLatestTween().m_end_pos.y = y; }
+void Actor::SetTweenZoom( float zoom )		{ GetLatestTween().m_end_scale.x = zoom;  GetLatestTween().m_end_scale.y = zoom; }
+void Actor::SetTweenZoomX( float zoom )		{ GetLatestTween().m_end_scale.x = zoom; }
+void Actor::SetTweenZoomY( float zoom )		{ GetLatestTween().m_end_scale.y = zoom; }
+void Actor::SetTweenRotationX( float r )	{ GetLatestTween().m_end_rotation.x = r; }
+void Actor::SetTweenRotationY( float r )	{ GetLatestTween().m_end_rotation.y = r; }
+void Actor::SetTweenRotationZ( float r )	{ GetLatestTween().m_end_rotation.z = r; }
+void Actor::SetTweenDiffuseColor( D3DXCOLOR colorDiffuse )				{ for(int i=0; i<4; i++) GetLatestTween().m_end_colorDiffuse[i] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorUpperLeft( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[0] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorUpperRight( D3DXCOLOR colorDiffuse )	{ GetLatestTween().m_end_colorDiffuse[1] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorLowerLeft( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[2] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorLowerRight( D3DXCOLOR colorDiffuse )	{ GetLatestTween().m_end_colorDiffuse[3] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorTopEdge( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[0] = GetLatestTween().m_end_colorDiffuse[1] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorRightEdge( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[1] = GetLatestTween().m_end_colorDiffuse[3] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse )	{ GetLatestTween().m_end_colorDiffuse[2] = GetLatestTween().m_end_colorDiffuse[3] = colorDiffuse; };
+void Actor::SetTweenDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[0] = GetLatestTween().m_end_colorDiffuse[2] = colorDiffuse; };
+void Actor::SetTweenAddColor( D3DXCOLOR c )			{ GetLatestTween().m_end_colorAdd = c; };
 
 
 void Actor::ScaleTo( LPRECT pRect, StretchType st )
@@ -234,7 +265,7 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 	float rect_cx = pRect->left + rect_width/2;
 	float rect_cy = pRect->top  + rect_height/2;
 
-	// zoom factor needed to scale the Actor to fill the rectangle
+	// zoom fActor needed to scale the Actor to fill the rectangle
 	float fNewZoomX = (float)fabs(rect_width  / m_size.x);
 	float fNewZoomY = (float)fabs(rect_height / m_size.y);
 
@@ -260,20 +291,17 @@ void Actor::StretchTo( LPRECT pRect )
 	int rect_width = RECTWIDTH(*pRect);
 	int rect_height = RECTHEIGHT(*pRect);
 
-	if( rect_width < 0 )	SetRotationY( D3DX_PI );
-	if( rect_height < 0 )	SetRotationX( D3DX_PI );
-
 	// center of the rectangle
 	int rect_cx = pRect->left + rect_width/2;
 	int rect_cy = pRect->top  + rect_height/2;
 
-	// zoom factor needed to scale the Actor to fill the rectangle
-	float fNewZoomX = (float)fabs(rect_width  / m_size.x);
-	float fNewZoomY = (float)fabs(rect_height / m_size.y);
+	// zoom fActor needed to scale the Actor to fill the rectangle
+	float fNewZoomX = rect_width  / m_size.x;
+	float fNewZoomY = rect_height / m_size.y;
 
 	SetXY( (float)rect_cx, (float)rect_cy );
-	m_scale.x = fNewZoomX;
-	m_scale.y = fNewZoomY;
+	SetZoomX( fNewZoomX );
+	SetZoomY( fNewZoomY );
 }
 
 
@@ -290,34 +318,27 @@ void Actor::SetEffectNone()
 void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = blinking;
-	for(int i=0; i<4; i++) {
-		m_start_colorDiffuse[i] = Color;
-		m_end_colorDiffuse[i] = Color2;
-	}
-	//m_fPercentBetweenColors = 0.0;
-	//m_bTweeningTowardEndColor = TRUE;
+	m_effect_colorDiffuse1 = Color;
+	m_effect_colorDiffuse2 = Color2;
+
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
 void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = camelion;
-	for(int i=0; i<4; i++) {
-		m_start_colorDiffuse[i] = Color;
-		m_end_colorDiffuse[i] = Color2;
-	}
-	//m_fPercentBetweenColors = 0.0;
-	//m_bTweeningTowardEndColor = TRUE;
+	m_effect_colorDiffuse1 = Color;
+	m_effect_colorDiffuse2 = Color2;
+
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
 void Actor::SetEffectGlowing( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = glowing;
-	m_start_colorAdd = Color;
-	m_end_colorAdd = Color2;
-	//m_fPercentBetweenColors = 0.0;
-	//m_bTweeningTowardEndColor = TRUE;
+	m_effect_colorAdd1 = Color;
+	m_effect_colorAdd2 = Color2;
+
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
@@ -343,4 +364,14 @@ void Actor::SetEffectVibrating( float fVibrationDistance )
 void Actor::SetEffectFlickering()
 {
 	m_Effect = flickering;
+}
+
+void Actor::SetEffectBouncing( D3DXVECTOR3 vectBounce, float fPeriod )
+{
+	m_Effect = bouncing;
+	
+	m_vectBounce = vectBounce;
+	m_fBouncePeriod = fPeriod;
+	m_fTimeIntoBounce = 0;
+
 }

@@ -16,16 +16,19 @@
 #include "Transition.h"
 #include "RageScreen.h"
 #include "RageSound.h"
+#include "Rectangle.h"
 
 
 class TransitionFade : public Transition
 {
 public:
 	TransitionFade();
-	~TransitionFade();
+	virtual ~TransitionFade();
 
-	void Draw();
+	virtual void RenderPrimitives();
 
+protected:
+	RectangleActor m_rect;
 };
 
 

@@ -5,9 +5,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "HoldGhostArrow.h"
+#include "ThemeManager.h"
 
 
-const CString HOLD_GHOST_ARROW_SPRITE = "Sprites\\Hold Ghost Arrow.sprite";
 const float  HOLD_GHOST_ARROW_TWEEN_TIME = 0.5f;
 
 
@@ -20,7 +20,7 @@ HoldGhostArrow::HoldGhostArrow()
 	m_bWasSteppedOnLastFrame = false;
 	m_fHeatLevel = 0;
 
-	LoadFromSpriteFile( HOLD_GHOST_ARROW_SPRITE );
+	LoadFromSpriteFile( THEME->GetPathTo(GRAPHIC_HOLD_GHOST_ARROW) );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	SetZoom( 1.1f );
 }

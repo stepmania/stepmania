@@ -5,9 +5,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "GhostArrowBright.h"
+#include "ThemeManager.h"
 
 
-const CString GHOST_ARROW_SPRITE = "Sprites\\Ghost Arrow.sprite";
 const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 
@@ -17,7 +17,7 @@ const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 GhostArrowBright::GhostArrowBright()
 {
-	LoadFromSpriteFile( GHOST_ARROW_SPRITE );
+	Load( THEME->GetPathTo(GRAPHIC_GHOST_ARROW) );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	TurnShadowOff();
 }

@@ -5,9 +5,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "GrayArrow.h"
+#include "ThemeManager.h"
 
-
-const CString GRAY_ARROW_TEXTURE = "Textures\\Gray Arrow 1x2.png";
 const float GRAY_ARROW_POP_UP_TIME			= 0.3f;
 
 
@@ -17,7 +16,7 @@ const float GRAY_ARROW_POP_UP_TIME			= 0.3f;
 
 GrayArrow::GrayArrow()
 {
-	LoadFromTexture( GRAY_ARROW_TEXTURE );
+	Load( THEME->GetPathTo(GRAPHIC_GRAY_ARROW) );
 	StopAnimating();
 }
 

@@ -12,19 +12,20 @@
 #include "RageUtil.h"
 
 #include "Banner.h"
+#include "ThemeManager.h"
 
 
-const CString TEXTURE_FALLBACK_BANNER	=	"Textures\\Fallback Banner.png";
 
 
 bool Banner::LoadFromSong( Song &song )
 {
 	if( song.HasBanner() )
 		Sprite::LoadFromTexture( song.GetBannerPath() );
-	else if( song.HasBackground() && !song.BackgroundIsAMovie() )
+	else if( song.HasBackground() )
 		Sprite::LoadFromTexture( song.GetBackgroundPath() );
 	else
-		Sprite::LoadFromTexture( TEXTURE_FALLBACK_BANNER );
+		Sprite::LoadFromTexture( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+
 	//Sprite::TurnShadowOff();
 
 	int iSourceWidth	= m_pTexture->GetSourceWidth();

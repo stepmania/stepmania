@@ -330,7 +330,7 @@ automatically for you.  Would you like to do this?", "Error - DivX missing", MB_
 
 			CreateProcess(
 				NULL,
-				"divx/Register_DivX.exe",  // pointer to command line string
+				"DivX412Codec.exe",  // pointer to command line string
 				NULL,  // process security attributes
 				NULL,   // thread security attributes
 				FALSE,  // handle inheritance flag

@@ -23,7 +23,7 @@ public:
 	TransitionRectWipe();
 	~TransitionRectWipe();
 
-	void Draw();
+	virtual void RenderPrimitives();
 };
 
 

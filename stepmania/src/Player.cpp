@@ -14,6 +14,7 @@
 #include "Math.h" // for fabs()
 #include "Player.h"
 #include "RageUtil.h"
+#include "ThemeManager.h"
 
 
 
@@ -40,32 +41,23 @@ const int NUM_FRAMES_IN_COLOR_ARROW_SPRITE	= 12;
 
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
-const CString JUDGEMENT_TEXTURE		=	"Textures\\judgement 1x9.png";
 const float JUDGEMENT_Y_OFFSET		=	20;
 
-const CString HOLD_JUDGEMENT_TEXTURE	=	"Textures\\judgement 1x9.png";
 const float HOLD_JUDGEMENT_Y			=	GRAY_ARROW_Y + 80;
 
 
-const CString SEQUENCE_COMBO_NUMBERS		=	"SpriteSequences\\MAX Numbers.seq";
-const CString SEQUENCE_SCORE_NUMBERS		=	"SpriteSequences\\Bold Numbers.seq";
 
 const float COMBO_TWEEN_TIME		=	0.5f;
-const CString COMBO_TEXTURE			=	"Textures\\judgement 1x9.png";
 const float COMBO_Y					=	(CENTER_Y+60);
 
 
 const int LIEFMETER_NUM_PILLS		=	17;
-const CString LIFEMETER_FRAME_TEXTURE=	"Textures\\Life Meter Frame.png";
-const CString LIFEMETER_PILLS_TEXTURE=	"Textures\\Life Meter Pills 17x1.png";
 const float LIFEMETER_Y				=	30;
 const float LIFEMETER_PILLS_Y		=	LIFEMETER_Y;
 const float PILL_OFFSET_Y[LIEFMETER_NUM_PILLS] = {
 	0.3f, 0.7f, 1.0f, 0.7f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f	// kind of a sin wave
 };
 
-const CString FONT_SCORE			= "Fonts\\Font - Arial Bold numbers 30px.font";
-const CString SCORE_FRAME_TEXTURE	= "Textures\\Score Frame.png";
 const float SCORE_Y					= SCREEN_HEIGHT - 40;
 
 
@@ -187,26 +179,25 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 	// holder for judgement and combo displays
 	m_frameJudgementAndCombo.AddActor( &m_sprJudgement );
 	m_frameJudgementAndCombo.AddActor( &m_sprCombo );
-	m_frameJudgementAndCombo.AddActor( &m_ComboNumber );
+	m_frameJudgementAndCombo.AddActor( &m_textComboNumber );
 	m_frameJudgementAndCombo.SetXY( CENTER_X, CENTER_Y );
 
 	// judgement
 	m_fJudgementDisplayCountdown = 0;
-	m_sprJudgement.LoadFromTexture( JUDGEMENT_TEXTURE );
+	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_JUDGEMENT) );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.SetXY( 0, m_PlayerOptions.m_bReverseScroll ? JUDGEMENT_Y_OFFSET : -JUDGEMENT_Y_OFFSET  );
 
 	// combo
-	m_sprCombo.LoadFromTexture( COMBO_TEXTURE );
+	m_sprCombo.Load( THEME->GetPathTo(GRAPHIC_COMBO) );
 	m_sprCombo.StopAnimating();
-	m_sprCombo.SetState( 6 );
 	m_sprCombo.SetXY( 40, m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET+2 );
 	m_sprCombo.SetZoom( 1.0f );
 
-	m_ComboNumber.LoadFromSequenceFile( SEQUENCE_COMBO_NUMBERS );
-	m_ComboNumber.SetXY( -40, m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
+	m_textComboNumber.Load( THEME->GetPathTo(FONT_COMBO_NUMBERS) );
+	m_textComboNumber.SetXY( -40, m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
 
-	m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 
 
@@ -214,27 +205,27 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 	for( c=0; c<MAX_NUM_COLUMNS; c++ )
 	{
 		m_fHoldJudgementDisplayCountdown[c] = 0;
-		m_sprHoldJudgement[c].LoadFromTexture( HOLD_JUDGEMENT_TEXTURE );
+		m_sprHoldJudgement[c].Load( THEME->GetPathTo(GRAPHIC_JUDGEMENT) );
 		m_sprHoldJudgement[c].StopAnimating();
 	}
 
 	// life meter
-	m_sprLifeMeterFrame.LoadFromTexture( LIFEMETER_FRAME_TEXTURE );
-	m_sprLifeMeterPills.LoadFromTexture( LIFEMETER_PILLS_TEXTURE );
+	m_sprLifeMeterFrame.Load( THEME->GetPathTo(GRAPHIC_LIFEMETER_FRAME) );
 	m_sprLifeMeterFrame.StopAnimating();
+	m_sprLifeMeterPills.Load( THEME->GetPathTo(GRAPHIC_LIFEMETER_PILLS) );
 	m_sprLifeMeterPills.StopAnimating();
 
 	// score
-	m_sprScoreFrame.LoadFromTexture( SCORE_FRAME_TEXTURE );
-	m_ScoreNumber.LoadFromSequenceFile( SEQUENCE_SCORE_NUMBERS );
-	m_ScoreNumber.SetSequence( "         " );
+	m_sprScoreFrame.Load( THEME->GetPathTo(GRAPHIC_SCORE_FRAME) );
+	m_textScoreNumber.Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
+	m_textScoreNumber.SetText( "         " );
 
 
 	SetX( CENTER_X );
 
 
 	// assist
-	m_soundAssistTick.AddSound( "Sounds\\Assist Tick.wav" );
+	m_soundAssistTick.Load( THEME->GetPathTo(SOUND_ASSIST) );
 
 }
 
@@ -552,7 +543,7 @@ void Player::CrossedIndex( int iIndex )
 }
 
 
-void Player::Draw()
+void Player::RenderPrimitives()
 {
 	DrawGrayArrows(); 
 	DrawColorArrows();
@@ -1238,13 +1229,13 @@ void Player::SetComboX( int iNewX )
 	if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
 
 	//m_sprCombo.SetXY( iNewX+40, fY );		// the frame will do this for us
-	//m_ComboNumber.SetXY(  iNewX-50, fY );
+	//m_textComboNumber.SetXY(  iNewX-50, fY );
 }
 
 void Player::UpdateCombo( float fDeltaTime )
 {
 	//m_sprCombo.Update( fDeltaTime );		// the frame will do this for us
-	//m_ComboNumber.Update( fDeltaTime );	// the frame will do this for us
+	//m_textComboNumber.Update( fDeltaTime );	// the frame will do this for us
 }
 
 void Player::DrawCombo()
@@ -1252,7 +1243,7 @@ void Player::DrawCombo()
 // the frame will do this for us
 //	if( m_bComboVisible )
 //	{
-//		m_ComboNumber.Draw();
+//		m_textComboNumber.Draw();
 //		m_sprCombo.Draw();
 //	}
 }
@@ -1268,22 +1259,22 @@ void Player::ContinueCombo()
 
 	if( m_iCurCombo <= 4 )
 	{
-		m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+		m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	}
 	else
 	{
-		m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
+		m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 
-		m_ComboNumber.SetSequence( ssprintf("%d", m_iCurCombo) );
+		m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
 		float fNewZoom = 0.5f + m_iCurCombo/800.0f;
-		m_ComboNumber.SetZoom( fNewZoom ); 
-		m_ComboNumber.SetX( -40 - (fNewZoom-1)*30 ); 
-		m_ComboNumber.SetY( m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET ); 
+		m_textComboNumber.SetZoom( fNewZoom ); 
+		m_textComboNumber.SetX( -40 - (fNewZoom-1)*30 ); 
+		m_textComboNumber.SetY( m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET ); 
 		
-		//m_ComboNumber.BeginTweening( COMBO_TWEEN_TIME );
-		//m_ComboNumber.SetTweenZoom( 1 );
+		//m_textComboNumber.BeginTweening( COMBO_TWEEN_TIME );
+		//m_textComboNumber.SetTweenZoom( 1 );
 	}
 }
 
@@ -1291,7 +1282,7 @@ void Player::EndCombo()
 {
 	m_iCurCombo = 0;
 
-	m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 
 }
@@ -1366,18 +1357,18 @@ void Player::ChangeLife( StepScore score )
 void Player::SetScoreX( int iNewX )
 {
 	m_sprScoreFrame.SetXY( iNewX, SCORE_Y );
-	m_ScoreNumber.SetXY(  iNewX, SCORE_Y );
+	m_textScoreNumber.SetXY(  iNewX, SCORE_Y );
 }
 
 void Player::UpdateScore( float fDeltaTime )
 {
 	m_sprScoreFrame.Update( fDeltaTime );
-	m_ScoreNumber.Update( fDeltaTime );
+	m_textScoreNumber.Update( fDeltaTime );
 }
 
 void Player::DrawScore()
 {
-	m_ScoreNumber.Draw();
+	m_textScoreNumber.Draw();
 	m_sprScoreFrame.Draw();
 }
 
@@ -1418,5 +1409,5 @@ void Player::ChangeScore( StepScore score, int iCurCombo )
 	ASSERT( m_fScore >= 0 );
 
 	
-	m_ScoreNumber.SetSequence( ssprintf( "%9.0f", m_fScore ) );
+	m_textScoreNumber.SetText( ssprintf("%9.0f", m_fScore) );
 }

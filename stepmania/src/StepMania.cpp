@@ -21,12 +21,14 @@
 #include "RageInput.h"
 
 #include "GameInfo.h"
+#include "ThemeManager.h"
 #include "WindowManager.h"
 
 #include "WindowSandbox.h"
 #include "WindowLoading.h"
-#include "WindowResults.h"
+#include "WindowMenuResults.h"
 #include "WindowTitleMenu.h"
+#include "WindowPlayerOptions.h"
 
 #include <DXUtil.h>
 
@@ -90,7 +92,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		RageError( "StepMania is already running!" );
 	}
 
-	if( !DoesFileExist("Textures") )
+
+	if( !DoesFileExist("Songs") )
 	{
 		// change dir to path of the execuctable
 		TCHAR szFullAppPath[MAX_PATH];
@@ -100,6 +103,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		//MessageBox(NULL, szFullAppPath, szFullAppPath, MB_OK);
 		SetCurrentDirectory(szFullAppPath);
 	}
+
+
 
     CoInitialize (NULL);    // Initialize COM
 
@@ -175,7 +180,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			Update();
 			Render();
 			//if( !g_bFullscreen )
-			::Sleep(11);	// give some time for the movie decoding thread
+			::Sleep(4 );	// give some time for the movie decoding thread
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -309,6 +314,7 @@ HRESULT CreateObjects( HWND hWnd )
 
 	SCREEN	= new RageScreen( hWnd );
 	TM		= new RageTextureManager( SCREEN );
+	THEME	= new ThemeManager;
 	WM		= new WindowManager;
 
 	// throw something up on the screen while the game resources are loading
@@ -321,7 +327,7 @@ HRESULT CreateObjects( HWND hWnd )
 
 	// this stuff takes a long time...
 	SOUND	= new RageSound( hWnd );
-	MUSIC	= new RageMusic;
+	MUSIC	= new RageSoundStream;
 	INPUT	= new RageInput( hWnd );
 	GAMEINFO= new GameInfo;
 
@@ -333,10 +339,11 @@ HRESULT CreateObjects( HWND hWnd )
 
 
 	//WM->SetNewWindow( new WindowSandbox );
-	//WM->SetNewWindow( new WindowResults );
+	//WM->SetNewWindow( new WindowMenuResults );
+	//WM->SetNewWindow( new WindowPlayerOptions );
 	WM->SetNewWindow( new WindowTitleMenu );
 
-	Sleep(2000);	// let the disk operations catch up
+	//Sleep(2000);	// let the disk operations catch up
 
 
     DXUtil_Timer( TIMER_START );    // Start the accurate timer
@@ -351,7 +358,6 @@ HRESULT CreateObjects( HWND hWnd )
 //-----------------------------------------------------------------------------
 void DestroyObjects()
 {
-    // Setup the app so it can support single-stepping
     DXUtil_Timer( TIMER_STOP );
 
 	SAFE_DELETE( WM );
@@ -428,8 +434,8 @@ void Update()
 	
 	// This was a hack to fix timing issues with the old WindowSelectSong
 	//
-	//if( fDeltaTime > 0.050f )	// we dropped > 5 frames
-	//	fDeltaTime = 0.050f;
+	if( fDeltaTime > 0.050f )	// we dropped > 5 frames
+		fDeltaTime = 0.050f;
 	
 	MUSIC->Update( fDeltaTime );
 
@@ -491,16 +497,18 @@ void Render()
 
 				// calculate view and projection transforms
 
-				D3DXMATRIX matView;
-				D3DXMatrixIdentity( &matView );
-				pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
-
 				D3DXMATRIX matProj;
 				D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
 				pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 
-				D3DXCOLOR colorDiffuse = D3DXCOLOR(1,1,1,1);
-				D3DXCOLOR colorAdd = D3DXCOLOR(0,0,0,0);
+				D3DXMATRIX matView;
+				D3DXMatrixIdentity( &matView );
+				pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
+
+				D3DXMATRIX matWorld;
+				D3DXMatrixIdentity( &matWorld );
+				SCREEN->ResetMatrixStack( matWorld );
+
 
 				// draw the game
 				WM->Draw();

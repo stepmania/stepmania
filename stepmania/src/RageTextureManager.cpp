@@ -87,7 +87,19 @@ LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath )
 	return pTexture;
 }
 
-VOID RageTextureManager::UnloadTexture( CString sTexturePath )
+
+bool RageTextureManager::IsTextureLoaded( CString sTexturePath )
+{
+	sTexturePath.MakeLower();
+	RageTexture* pTexture;
+
+	if( m_mapPathToTexture.Lookup( sTexturePath, pTexture ) )	// if the texture exists in the map
+		return true;
+	else
+		return false;
+}	
+
+void RageTextureManager::UnloadTexture( CString sTexturePath )
 {
 //	RageLog( "RageTextureManager::UnloadTexture(%s).", sTexturePath );
 
@@ -96,6 +108,9 @@ VOID RageTextureManager::UnloadTexture( CString sTexturePath )
 		RageLog( "RageTextureManager::UnloadTexture() tried to Unload a blank" );
 		return;
 	}
+	
+	if( !IsTextureLoaded( sTexturePath ) )
+		RageError( ssprintf("Tried to Unload a texture that wasn't loaded. '%s'", sTexturePath) );
 
 	sTexturePath.MakeLower();
 	LPRageTexture pTexture;
@@ -114,7 +129,5 @@ VOID RageTextureManager::UnloadTexture( CString sTexturePath )
 //					 sTexturePath, pTexture->m_iRefCount) );
 
 	}
-	else
-		RageError( ssprintf("Tried to Unload a texture that wasn't loaded. '%s'", sTexturePath) );
 	
 }

@@ -18,43 +18,10 @@ class Steps;	// why is this needed?
 #include "GameInfo.h"	// for definition of GameMode
 enum GameMode;	// why is this needed?
 
+#include "Grade.h"
 
 
-struct Grade
-{
-	Grade() { m_GradeType = GRADE_NONE; };
-	CString ToString() 
-	{
-		switch( m_GradeType )
-		{
-		case GRADE_AAA:		return "AAA";
-		case GRADE_AA:		return "AA";
-		case GRADE_A:		return "A";
-		case GRADE_B:		return "B";
-		case GRADE_C:		return "C";
-		case GRADE_D:		return "D";
-		case GRADE_E:		return "E";
-		case GRADE_NONE:	return "N";
-		default:			return "N";
-		}
-	};
-	void FromString( CString sGradeString )
-	{
-		sGradeString.MakeUpper();
-		if	   ( sGradeString == "AAA" )	m_GradeType = GRADE_AAA;
-		else if( sGradeString == "AA" )		m_GradeType = GRADE_AA;
-		else if( sGradeString == "A" )		m_GradeType = GRADE_A;
-		else if( sGradeString == "B" )		m_GradeType = GRADE_B;
-		else if( sGradeString == "C" )		m_GradeType = GRADE_C;
-		else if( sGradeString == "D" )		m_GradeType = GRADE_D;
-		else if( sGradeString == "E" )		m_GradeType = GRADE_E;
-		else if( sGradeString == "N" )		m_GradeType = GRADE_NONE;
-		else								m_GradeType = GRADE_NONE;
-	}
 
-	enum GradeType { GRADE_NONE=0, GRADE_E, GRADE_D, GRADE_C, GRADE_B, GRADE_A, GRADE_AA, GRADE_AAA };
-	GradeType m_GradeType;
-};
 
 struct BPMSegment 
 {
@@ -84,25 +51,24 @@ private:
 	void TidyUpData();
 
 public:
-	CString GetSongFilePath()	{return m_sSongFilePath; };
-	CString GetSongFileDir()	{return m_sSongDir; };
-	CString GetGroupName()		{return m_sGroupName; };
-	CString GetMusicPath()		{return m_sMusicPath; };
-	CString GetBannerPath()		{return m_sBannerPath; };
-	CString GetBackgroundPath()	{return m_sBackgroundPath; };
-	bool BackgroundIsAMovie()	{return m_sBackgroundPath.Right(3) == "avi" || 
-										m_sBackgroundPath.Right(3) == "mpg" ||
-										m_sBackgroundPath.Right(4) == "mpeg";	};
+	CString GetSongFilePath()		{return m_sSongFilePath; };
+	CString GetSongFileDir()		{return m_sSongDir; };
+	CString GetGroupName()			{return m_sGroupName; };
+	CString GetMusicPath()			{return m_sMusicPath; };
+	CString GetBannerPath()			{return m_sBannerPath; };
+	CString GetBackgroundPath()		{return m_sBackgroundPath; };
+	CString GetBackgroundMoviePath(){return m_sBackgroundMoviePath; };
 
 
-	bool HasMusic()			{return m_sMusicPath != ""		&&	DoesFileExist(GetMusicPath()); };
-	bool HasBanner()		{return m_sBannerPath != ""		&&  DoesFileExist(GetBannerPath()); };
-	bool HasBackground()	{return m_sBackgroundPath != ""	&&  DoesFileExist(GetBackgroundPath()); };
+	bool HasMusic()				{return m_sMusicPath != ""			&&	DoesFileExist(GetMusicPath()); };
+	bool HasBanner()			{return m_sBannerPath != ""			&&  DoesFileExist(GetBannerPath()); };
+	bool HasBackground()		{return m_sBackgroundPath != ""		&&  DoesFileExist(GetBackgroundPath()); };
+	bool HasBackgroundMovie()	{return m_sBackgroundMoviePath != ""&&  DoesFileExist(GetBackgroundMoviePath()); };
 
 
-	CString GetTitle()			{return m_sTitle; };
-	CString GetArtist()			{return m_sArtist; };
-	CString GetCreator()		{return m_sCreator; };
+	CString GetTitle()				{return m_sTitle; };
+	CString GetArtist()				{return m_sArtist; };
+	CString GetCreator()			{return m_sCreator; };
 	float GetBeatOffsetInSeconds()	{return m_fOffsetInSeconds; };
 	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; };
 	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM )
@@ -122,10 +88,7 @@ public:
 	
 
 public:
-	// Song statistics:
-	int m_iMaxCombo, m_iTopScore, m_iNumTimesPlayed;
-	bool m_bHasBeenLoadedBefore;
-	Grade m_TopGrade;
+	int m_iNumTimesPlayed;
 
 
 private:
@@ -143,6 +106,7 @@ private:
 	CString	m_sMusicPath;
 	CString	m_sBannerPath;
 	CString	m_sBackgroundPath;
+	CString	m_sBackgroundMoviePath;
 
 	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before dancing
 	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before dancing
@@ -150,6 +114,13 @@ private:
 public:
 	CArray<Steps, Steps&> arraySteps;
 };
+
+
+void SortSongPointerArrayByTitle( CArray<Song*, Song*&> &arraySongPointers );
+void SortSongPointerArrayByBPM( CArray<Song*, Song*&> &arraySongPointers );
+void SortSongPointerArrayByArtist( CArray<Song*, Song*&> &arraySongPointers );
+void SortSongPointerArrayByGroup( CArray<Song*, Song*&> &arraySongPointers );
+void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*&> &arraySongPointers );
 
 
 

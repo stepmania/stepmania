@@ -15,7 +15,7 @@
 #include "GameInfo.h"	// for ScoreSummary
 #include "Steps.h"
 #include "Sprite.h"
-#include "SpriteSequence.h"
+#include "BitmapText.h"
 
 #include "ColorArrow.h"
 #include "GrayArrow.h"
@@ -32,17 +32,17 @@
 const int MAX_NUM_COLUMNS = 8;
 
 
-class Player
+class Player : public ActorFrame
 {
 public:
 	Player( PlayerOptions po, PlayerNumber pn );
 
+	virtual void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
+	virtual void RenderPrimitives();
+
 	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
-	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void CrossedIndex( int iIndex );
-	void Draw();
-
 
 	ScoreSummary GetScoreSummary();
 	int	UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
@@ -126,7 +126,7 @@ protected:
 	void EndCombo();
 	bool		m_bComboVisible;
 	Sprite		m_sprCombo;
-	SpriteSequence	m_ComboNumber;
+	BitmapText	m_textComboNumber;
 
 	// life meter
 	void SetLifeMeterX( int iX );
@@ -147,7 +147,7 @@ private:
 	void ChangeScore( StepScore stepscore, int iCurCombo );
 	float		m_fScore;
 	Sprite		m_sprScoreFrame;
-	SpriteSequence	m_ScoreNumber;
+	BitmapText	m_textScoreNumber;
 
 	// assist
 	SoundSet m_soundAssistTick;

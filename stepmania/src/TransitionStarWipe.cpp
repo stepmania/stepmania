@@ -12,13 +12,9 @@
 #include "RageUtil.h"
 
 #include "TransitionStarWipe.h"
+#include "ScreenDimensions.h"
+#include "ThemeManager.h"
 
-
-#define SCREEN_WIDTH	640
-#define SCREEN_HEIGHT	480
-
-#define TEXTURE_STAR_BLUE	"Textures\\Star Blue.png"
-#define TEXTURE_STAR_YELLOW	"Textures\\Star Yellow.png"
 
 TransitionStarWipe::TransitionStarWipe()
 {
@@ -30,12 +26,14 @@ TransitionStarWipe::~TransitionStarWipe()
 
 }
 
-void TransitionStarWipe::Draw()
+void TransitionStarWipe::RenderPrimitives()
 {
 	if( m_TransitionState == opened ) 
 		return;
 	else if( m_TransitionState == closed ) {
-		SCREEN->DrawRect( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT), D3DCOLOR_RGBA(0,0,0,255) );
+		m_rect.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
+		m_rect.SetDiffuseColor( D3DCOLOR_RGBA(0,0,0,255) );
+		m_rect.Draw();
 		return;
 	}
 
@@ -88,10 +86,9 @@ void TransitionStarWipe::Draw()
 		int x_rect_trailing_edge = ( bIsAnEvenRow ? 0 : SCREEN_WIDTH );
 		int y_top = y - m_iStarHeight/2;
 		int y_bot = y + m_iStarHeight/2;
-		SCREEN->DrawRect( CRect(x_rect_leading_edge, y_top,
-								x_rect_trailing_edge,  y_bot ),
-						  D3DCOLOR_ARGB(255,0,0,0) 
-						);
+		m_rect.StretchTo( CRect(x_rect_leading_edge, y_top, x_rect_trailing_edge,  y_bot) );
+		m_rect.SetDiffuseColor( D3DCOLOR_ARGB(255,0,0,0) );
+		m_rect.Draw();
 		
 	}
 }
@@ -99,30 +96,30 @@ void TransitionStarWipe::Draw()
 void TransitionStarWipe::OpenWipingRight( WindowMessage send_when_done )
 {
 	Transition::OpenWipingRight( send_when_done );
-	LoadNewStarSprite( TEXTURE_STAR_BLUE );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_CLOSING_STAR) );
 }
 
 void TransitionStarWipe::OpenWipingLeft(  WindowMessage send_when_done )
 {
 	Transition::OpenWipingLeft( send_when_done );
-	LoadNewStarSprite( TEXTURE_STAR_BLUE );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_CLOSING_STAR) );
 }
 
 void TransitionStarWipe::CloseWipingRight(WindowMessage send_when_done )
 {
 	Transition::CloseWipingRight( send_when_done );
-	LoadNewStarSprite( TEXTURE_STAR_YELLOW );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_OPENING_STAR) );
 }
 
 void TransitionStarWipe::CloseWipingLeft( WindowMessage send_when_done )
 {
 	Transition::CloseWipingLeft( send_when_done );
-	LoadNewStarSprite( TEXTURE_STAR_YELLOW );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_OPENING_STAR) );
 }
 
 void TransitionStarWipe::LoadNewStarSprite( CString sFileName )
 {
-	m_sprStar.LoadFromTexture( sFileName );
+	m_sprStar.Load( sFileName );
 	m_iStarWidth = m_sprStar.GetZoomedWidth();
 	m_iStarHeight = m_sprStar.GetZoomedHeight();
 }

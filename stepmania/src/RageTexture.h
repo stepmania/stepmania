@@ -51,11 +51,13 @@ public:
 	UINT GetSourceHeight()	{return m_uSourceHeight;};
 	UINT GetTextureWidth()	{return m_uTextureWidth;};
 	UINT GetTextureHeight()	{return m_uTextureHeight;};
+	UINT GetTextureFrameWidth()	{return GetTextureWidth()/GetFramesWide();};
+	UINT GetTextureFrameHeight(){return GetTextureHeight()/GetFramesHigh();};
 
-	UINT   GetFramesWide()  {return m_uFramesWide;};
-	UINT   GetFramesHigh()  {return m_uFramesHigh;};
-	UINT   GetSourceFrameWidth()  {return m_uSourceFrameWidth;};
-	UINT   GetSourceFrameHeight() {return m_uSourceFrameHeight;};
+	UINT GetFramesWide()  {return m_uFramesWide;};
+	UINT GetFramesHigh()  {return m_uFramesHigh;};
+	UINT GetSourceFrameWidth()	{return GetSourceWidth()/GetFramesWide();};
+	UINT GetSourceFrameHeight()	{return GetSourceHeight()/GetFramesHigh();};
 	FRECT* GetTextureCoordRect( UINT uFrameNo ) {return &m_TextureCoordRects[uFrameNo];};
 	UINT   GetNumFrames()	{return m_TextureCoordRects.GetSize();};
 	CString GetFilePath()	{return m_sFilePath;};

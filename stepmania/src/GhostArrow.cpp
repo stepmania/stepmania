@@ -5,9 +5,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "GhostArrow.h"
+#include "ThemeManager.h"
 
-
-const CString GHOST_ARROW_TEXTURE = "Textures\\Gray Arrow 1x2.png";
 const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 
@@ -17,7 +16,7 @@ const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 GhostArrow::GhostArrow()
 {
-	LoadFromTexture( GHOST_ARROW_TEXTURE );
+	Load( THEME->GetPathTo(GRAPHIC_GHOST_ARROW) );
 	SetState( 1 );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	TurnShadowOff();

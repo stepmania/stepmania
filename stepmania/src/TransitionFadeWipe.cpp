@@ -13,7 +13,7 @@
 
 #include "TransitionFadeWipe.h"
 #include "ScreenDimensions.h"
-
+#include "ThemeManager.h"
 
 //#define RECTANGLE_WIDTH	20
 //#define NUM_RECTANGLES	(SCREEN_WIDTH/RECTANGLE_WIDTH)
@@ -23,8 +23,6 @@ const float FADE_RECT_WIDTH		=	SCREEN_WIDTH/2;
 
 TransitionFadeWipe::TransitionFadeWipe()
 {
-	m_sprLogo.LoadFromTexture( "Textures\\Logo dots.png" );
-	m_sprLogo.SetXY( CENTER_X, CENTER_Y );
 }
 
 TransitionFadeWipe::~TransitionFadeWipe()
@@ -32,7 +30,7 @@ TransitionFadeWipe::~TransitionFadeWipe()
 
 }
 
-void TransitionFadeWipe::Draw()
+void TransitionFadeWipe::RenderPrimitives()
 {
 	if( m_TransitionState == opened ) 
 		return;
@@ -54,28 +52,16 @@ void TransitionFadeWipe::Draw()
 
 	float fDarkOutsideX = bLeftEdgeIsDarker ? fDarkEdgeX - SCREEN_WIDTH*2 : fDarkEdgeX + SCREEN_WIDTH*2;
 
-	// draw dark rect
-	SCREEN->DrawRect( 
-		CRect(fDarkOutsideX, 0, fDarkEdgeX, SCREEN_HEIGHT), 
-		D3DXCOLOR(0,0,0,1),	// up left
-		D3DXCOLOR(0,0,0,1),	// up right
-		D3DXCOLOR(0,0,0,1),	// down left
-		D3DXCOLOR(0,0,0,1) 	// down right
-		);
 
-	// draw gradient rect
-	SCREEN->DrawRect( 
-		CRect(fDarkEdgeX, 0, fLightEdgeX, SCREEN_HEIGHT), 
-		D3DXCOLOR(0,0,0,1),	// up left
-		D3DXCOLOR(0,0,0,0),	// up right
-		D3DXCOLOR(0,0,0,1),	// down left
-		D3DXCOLOR(0,0,0,0) 	// down right
-		);
+	m_rectBlack.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_rectBlack.StretchTo( CRect(fDarkOutsideX, 0, fDarkEdgeX, SCREEN_HEIGHT) );
+	m_rectBlack.Draw();
+	
+	m_rectGradient.SetDiffuseColorLeftEdge( D3DXCOLOR(0,0,0,1) );
+	m_rectGradient.SetDiffuseColorRightEdge( D3DXCOLOR(0,0,0,0) );
+	m_rectGradient.StretchTo( CRect(fDarkEdgeX, 0, fLightEdgeX, SCREEN_HEIGHT) );
+	m_rectGradient.Draw();
 
-	bool bIsOpening = m_TransitionState == opening_left || m_TransitionState == opening_right;
-	float fLogoAlpha = bIsOpening ? (1-fPercentComplete)*3-2 : fPercentComplete*3-2;
-	m_sprLogo.SetDiffuseColor( D3DXCOLOR(1,1,1,fLogoAlpha) );
-	m_sprLogo.Draw();
 
 }
 

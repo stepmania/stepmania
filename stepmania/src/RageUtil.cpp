@@ -393,12 +393,33 @@ void SortCStringArray( CStringArray &arrayCStrings, BOOL bSortAcsending )
 
 VOID DisplayErrorAndDie( CString sError )
 {
+	// Something very bad happened.  Display an error dialog, then exit right away.
+
+	/*
+	////////////////////////
+	// get a stack trace
+	////////////////////////
+	AfxDumpStack( AFX_STACK_DUMP_TARGET_CLIPBOARD );
+
+	//open the clipboard
+	CString fromClipboard;
+	if( OpenClipboard(NULL) ) 
+	{
+		HANDLE hData = GetClipboardData( CF_TEXT );
+		char *buffer = (char*)GlobalLock( hData );
+		fromClipboard = buffer;
+		GlobalUnlock( hData );
+		CloseClipboard();
+	}
+	sError += "\n\n" + fromClipboard;
+	*/
+
 	RageLog( "" );
 	RageLog( "// Fatal Error /////////////////////////////" );
 	RageLog( sError );
 	RageLog( "////////////////////////////////////////////" );
 
-	// Something very bad happened.  Display an error dialog, then exit right away.
+
 	MessageBox(
 	  NULL,					// handle of owner window
 	  sError,			// text in message box
