@@ -933,6 +933,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="SubscriptionManager.h">
 			</File>
 			<File
+				RelativePath="ThemeMetric.h">
+			</File>
+			<File
 				RelativePath="TimingData.cpp">
 			</File>
 			<File
