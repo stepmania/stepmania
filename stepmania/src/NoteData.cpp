@@ -637,7 +637,14 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				case '1': t = TAP_TAP; break;
 				case '2': t = TAP_HOLD_HEAD; break;
 				case '3': t = TAP_HOLD_TAIL; break;
-				default: ASSERT(0); t = TAP_EMPTY; break;
+				
+				default: 
+					/* Invalid data.  We don't want to assert, since there might
+					 * simply be invalid data in an .SM, and we don't want to die
+					 * due to invalid data.  We should probably check for this when
+					 * we load SM data for the first time ... */
+					// ASSERT(0); 
+					t = TAP_EMPTY; break;
 				}
 
 				out.SetTapNote(c, iIndex, t);
