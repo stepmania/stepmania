@@ -115,8 +115,7 @@ protected:
 	// metrics
 	ThemeMetric<float>				ARROWS_X;
 	ThemeMetric<float>				LABELS_X;
-	ThemeMetric<float>				LABELS_ZOOM;
-	ThemeMetric<int>				LABELS_H_ALIGN;
+	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
 	ThemeMetric<int>				NUM_ROWS_SHOWN;
 	ThemeMetric1D<float>			ROW_Y;
 	ThemeMetric<float>				ITEMS_ZOOM;

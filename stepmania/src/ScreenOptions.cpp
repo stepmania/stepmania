@@ -77,8 +77,7 @@ CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
 	ARROWS_X   						(m_sName,"ArrowsX"),
 	LABELS_X						(m_sName,"LabelsX"),
-	LABELS_ZOOM						(m_sName,"LabelsZoom"),
-	LABELS_H_ALIGN					(m_sName,"LabelsHAlign"),
+	LABELS_ON_COMMAND				(m_sName,"LabelsOnCommand"),
 	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
 	ROW_Y							(m_sName,ROW_Y_NAME,NUM_ROWS_SHOWN),
 	ITEMS_ZOOM						(m_sName,"ItemsZoom"),
@@ -620,10 +619,7 @@ void ScreenOptions::InitOptionsText()
 		const CString sText = GetExplanationTitle( i );
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
-		title.SetZoom( LABELS_ZOOM );
-		title.SetHorizAlign( (Actor::HorizAlign)(int)LABELS_H_ALIGN );
-		title.SetVertAlign( Actor::align_middle );		
-		title.SetShadowLength( 0 );		
+		title.RunCommands( LABELS_ON_COMMAND );
 
 		Sprite &bullet = row.m_sprBullet;
 		bullet.Load( THEME->GetPathG(m_sName,"bullet") );
