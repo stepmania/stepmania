@@ -276,17 +276,17 @@ int main(int argc, char* argv[])
 	 */
 	for(int i=0; i<argc; i++)
 	{
-		if(argv[i] == "--fsck")
+		if(!strcmp(argv[i], "--fsck"))
 			;//crash(); 
-		else if(argv[i] == "--song")
+		else if(!strcmp(argv[i], "--song"))
 			g_sSongPath = argv[++i];
-		else if(argv[i] == "--client")
+		else if(!strcmp(argv[i], "--client"))
 			g_bBeClient = true;
-		else if(argv[i] == "--server")
+		else if(!strcmp(argv[i], "--server"))
 			g_bBeServer = true;
-		else if(argv[i] == "--ip")
+		else if(!strcmp(argv[i], "--ip"))
 			g_sServerIP = argv[++i];
-		else if(argv[i] == "--numclients")
+		else if(!strcmp(argv[i], "--numclients"))
 			g_iNumClients = atoi(argv[++i]);
 	}
 
