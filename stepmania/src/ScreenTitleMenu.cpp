@@ -297,7 +297,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		#ifdef _DEBUG
 		case CHOICE_SANDBOX:
-			SCREENMAN->SetNewScreen( "ScreenSandbox" );
+			SCREENMAN->SetNewScreen( "ScreenTest" );
 			break;
 		#endif
 		case CHOICE_EDIT:

@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                          	cl                                           /Zl                                           /nologo                                           /c                                           verstub.cpp                                           /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                           	cl                                            /Zl                                            /nologo                                            /c                                            verstub.cpp                                            /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                          	cl                                           /Zl                                           /nologo                                           /c                                           verstub.cpp                                           /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                           	cl                                            /Zl                                            /nologo                                            /c                                            verstub.cpp                                            /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1530,6 +1530,30 @@ SOURCE=.\ScreenStage.cpp
 # Begin Source File
 
 SOURCE=.\ScreenStage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTest.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTest.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTestFonts.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTestFonts.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTestSound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTestSound.h
 # End Source File
 # Begin Source File
 

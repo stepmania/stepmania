@@ -361,6 +361,24 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
+				RelativePath="ScreenTest.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTest.h">
+			</File>
+			<File
+				RelativePath="ScreenTestFonts.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTestFonts.h">
+			</File>
+			<File
+				RelativePath="ScreenTestSound.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTestSound.h">
+			</File>
+			<File
 				RelativePath="ScreenTextEntry.cpp">
 			</File>
 			<File

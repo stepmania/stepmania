@@ -1,5 +1,5 @@
-#ifndef SCREENSANDBOX_H
-#define SCREENSANDBOX_H
+#ifndef SCREENTESTSOUND_H
+#define SCREENTESTSOUND_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenSandbox
@@ -12,20 +12,30 @@
 */
 
 #include "Screen.h"
-#include "Sample3dObject.h"
-#include "Quad.h"
+#include "BitmapText.h"
+#include "RageSound.h"
 
-class ScreenSandbox : public Screen
+const int nsounds = 5;
+
+class ScreenTestSound : public Screen
 {
 public:
-	ScreenSandbox();
+	ScreenTestSound();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void Update(float f);
-	Sample3dObject obj;
-	Quad m_quad;
+	void UpdateText(int n);
+
+	struct Sound {
+		RageSound s;
+		BitmapText txt;
+	};
+	Sound s[nsounds];
+	BitmapText HEEEEEEEEELP;
+	
+	int selected;
 };
 
 

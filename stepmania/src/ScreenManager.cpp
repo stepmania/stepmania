@@ -177,7 +177,6 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
 #include "ScreenPlayerOptions.h"
-#include "ScreenSandbox.h"
 #include "ScreenSelectCourse.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenSelectGame.h"
@@ -187,6 +186,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenSelectStyle.h"
 #include "ScreenSongOptions.h"
 #include "ScreenStage.h"
+#include "ScreenTest.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenWarning.h"
@@ -223,7 +223,6 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		ret = new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		ret = new ScreenMusicScroll;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	ret = new ScreenPlayerOptions;
-	else if( 0==stricmp(sClassName, "ScreenSandbox") )			ret = new ScreenSandbox;
 	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		ret = new ScreenSelectCourse;
 	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )	ret = new ScreenSelectDifficulty;
 	else if( 0==stricmp(sClassName, "ScreenSelectGame") )		ret = new ScreenSelectGame;
@@ -233,6 +232,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		ret = new ScreenSelectStyle;
 	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		ret = new ScreenSongOptions;
 	else if( 0==stricmp(sClassName, "ScreenStage") )			ret = new ScreenStage;
+	else if( 0==stricmp(sClassName, "ScreenTest") )				ret = new ScreenTest;
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenWarning") )			ret = new ScreenWarning;
