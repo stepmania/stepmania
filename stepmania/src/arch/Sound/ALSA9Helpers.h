@@ -5,8 +5,6 @@
 #define ALSA_PCM_NEW_SW_PARAMS_API
 #include <alsa/asoundlib.h>
 
-#include "SDL_types.h"
-
 class Alsa9Buf
 {
 private:

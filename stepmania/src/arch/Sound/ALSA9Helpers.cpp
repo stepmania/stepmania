@@ -2,7 +2,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "ALSA9Helpers.h"
-#include "SDL_utils.h"
 #include "ALSA9Dynamic.h"
 #include "PrefsManager.h"
 
@@ -380,7 +379,7 @@ bool Alsa9Buf::Recover( int r )
 		LOG->Trace("RageSound_ALSA9::Recover (resume)");
 		int err;
 		while ((err = dsnd_pcm_resume(pcm)) == -EAGAIN)
-			SDL_Delay(10);
+			usleep(10000); // 10ms
 
 		ALSA_ASSERT("dsnd_pcm_resume (Recover)");
 		return true;
