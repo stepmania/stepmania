@@ -4,7 +4,6 @@
 #include "../../RageLog.h"
 
 #define DIRECTSOUND_VERSION 0x0700
-#include <mmsystem.h>
 #include <dsound.h>
 
 #include <math.h>
@@ -26,28 +25,35 @@ DSound::DSound()
 {
 	HRESULT hr;
 
+#ifndef _XBOX
     // Initialize COM
     if( FAILED( hr = CoInitialize( NULL ) ) )
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "CoInitialize"));
+#endif
 
     // Create IDirectSound using the primary sound device
     if( FAILED( hr = DirectSoundCreate( NULL, &ds, NULL ) ) )
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate"));
 
+#ifndef _XBOX
 	DirectSoundEnumerate(EnumCallback, 0);
 	
 	/* Try to set primary mixing privileges */
 	hr = ds->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
+#endif
 }
 
 DSound::~DSound()
 {
 	ds->Release();
+#ifndef _XBOX
     CoUninitialize();
+#endif
 }
 
 bool DSound::IsEmulated() const
 {
+#ifndef _XBOX
 	/* Don't bother wasting time trying to create buffers if we're
  	 * emulated.  This also gives us better diagnostic information. */
 	DSCAPS Caps;
@@ -61,6 +67,9 @@ bool DSound::IsEmulated() const
 	}
 
 	return !!(Caps.dwFlags & DSCAPS_EMULDRIVER);
+#else
+	return false;
+#endif
 }
 
 DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
@@ -100,30 +109,44 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	DSBUFFERDESC format;
 	memset(&format, 0, sizeof(format));
 	format.dwSize = sizeof(format);
+#ifdef _XBOX
+	format.dwFlags = DSBCAPS_CTRLVOLUME;
+#else
 	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
-		
+#endif
+	
+#ifndef _XBOX
 	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
 	 * only use streaming buffers. */
 	if(hardware == HW_HARDWARE)
 		format.dwFlags |= DSBCAPS_LOCHARDWARE;
 	else
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
+#endif
 
 	if(NeedCtrlFrequency)
 		format.dwFlags |= DSBCAPS_CTRLFREQUENCY;
 
 	format.dwBufferBytes = buffersize;
+#ifndef _XBOX
 	format.dwReserved = 0;
+#endif
 	format.lpwfxFormat = &waveformat;
 
-	IDirectSoundBuffer *sndbuf_buf;
-	HRESULT hr = ds.GetDS()->CreateSoundBuffer(&format, &sndbuf_buf, NULL);
+	/* Query IID_IDirectSoundBuffer instead of IID_IDirectSoundBuffer8. -Chris */
+//	IDirectSoundBuffer *sndbuf_buf;
+//	HRESULT hr = ds.GetDS()->CreateSoundBuffer(&format, &sndbuf_buf, NULL);
+//	if (FAILED(hr))
+//		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
+//
+//	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*) &buf);
+//	ASSERT(buf);
+
+	HRESULT hr = ds.GetDS()->CreateSoundBuffer(&format, &buf, NULL);
 	if (FAILED(hr))
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
 
-	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer, (LPVOID*) &buf);
-	ASSERT(buf);
-
+#ifndef _XBOX
 	/* I'm not sure this should ever be needed, but ... */
 	DSBCAPS bcaps;
 	bcaps.dwSize=sizeof(bcaps);
@@ -137,6 +160,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 		buffersize = bcaps.dwBufferBytes;
 		writeahead = min(writeahead, buffersize);
 	}
+#endif
 }
 
 void DSoundBuf::SetSampleRate(int hz)
@@ -187,6 +211,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 	/* It's easiest to think of the cursor as a block, starting and ending at
 	 * the two values returned by GetCurrentPosition, that we can't write to. */
 	result = buf->GetCurrentPosition(&cursorstart, &cursorend);
+#ifndef _XBOX
 	if ( result == DSERR_BUFFERLOST ) {
 		buf->Restore();
 		result = buf->GetCurrentPosition(&cursorstart, &cursorend);
@@ -195,6 +220,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 		LOG->Warn(hr_ssprintf(result, "DirectSound::GetCurrentPosition failed"));
 		return false;
 	}
+#endif
 
 
 	/* XXX We can figure out if we've underrun, and increase the write-ahead
@@ -271,10 +297,12 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 
 	/* Lock the audio buffer. */
 	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
+#ifndef _XBOX
 	if ( result == DSERR_BUFFERLOST ) {
 		buf->Restore();
 		result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
 	}
+#endif
 	if ( result != DS_OK ) {
 		LOG->Warn(hr_ssprintf(result, "Couldn't lock the DirectSound buffer."));
 		return false;

@@ -28,7 +28,7 @@
 #include "D3dx8math.h"
 #include "SDL_video.h"	// for SDL_Surface
 #include "SDL_utils.h"
-#include "Dxerr8.h"
+#include "D3DX8Core.h"
 
 #include "arch/arch.h"
 
@@ -38,10 +38,18 @@
 #endif
 // load Windows D3D8 dynamically
 #pragma comment(lib, "D3dx8.lib")
-#pragma comment(lib, "Dxerr8.lib")
+//#pragma comment(lib, "Dxerr8.lib")
 
 #include <math.h>
 #include <list>
+
+
+CString GetErrorString( HRESULT hr )
+{
+	char szError[1024] = "";
+	D3DXGetErrorString( hr, szError, sizeof(szError) );
+	return szError;
+}
 
 
 //
@@ -290,11 +298,13 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 			g_pd3d = NULL;
 		}
 
+#if !defined(_XBOX)
 		if( g_D3D8_Module )
 		{
 			FreeLibrary( g_D3D8_Module );
 			g_D3D8_Module = NULL;
 		}
+#endif
 		throw;
 	}
 }
@@ -472,7 +482,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		if( FAILED(hr) )
 		{
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-			RageException::Throw( "CreateDevice failed: '%s'", DXGetErrorString8(hr) );
+			RageException::Throw( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	else
@@ -482,7 +492,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		if( FAILED(hr) )
 		{
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-			RageException::Throw( "g_pd3dDevice->Reset failed: '%s'", DXGetErrorString8(hr) );
+			RageException::Throw( "g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	
@@ -543,8 +553,10 @@ int RageDisplay_D3D::GetMaxTextureSize() const
 
 void RageDisplay_D3D::BeginFrame()
 {
+#ifndef _XBOX
 	if( g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
 		SetVideoMode( g_CurrentParams );
+#endif
 
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
@@ -902,7 +914,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 	hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,pixfmt=%i) failed: %s", 
-		img->w, img->h, pixfmt, DXGetErrorString8(hr) );
+		img->w, img->h, pixfmt, GetErrorString(hr).c_str() );
 
 	unsigned uTexHandle = (unsigned)pTex;
 

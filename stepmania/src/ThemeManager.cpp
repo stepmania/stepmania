@@ -22,6 +22,7 @@
 #include "Font.h"
 #include "FontCharAliases.h"
 #include "RageDisplay.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -157,15 +158,14 @@ try_element_again:
 		FlushDirCache();
 
 		CString message = ssprintf( 
-			"There is more than one theme element element that matches "
+			"ThemeManager:  There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
 							
-#if defined(WIN32) // XXX arch?
 		if( DISPLAY->IsWindowed() )
-			if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
+			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
 				goto try_element_again;
-#endif
+
 		RageException::Throw( message ); 
 	}
 	else if( asElementPaths.size() == 0 )
@@ -206,15 +206,14 @@ try_element_again:
 			else
 			{
 				CString message = ssprintf(
-						"The redirect '%s' points to the file '%s', which does not exist. "
+						"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
 						"Verify that this redirect is correct.",
 						sPath.c_str(), sNewFileName.c_str());
 
-#if defined(WIN32) // XXX arch?
 				if( DISPLAY->IsWindowed() )
-					if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
+					if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
 						goto try_element_again;
-#endif
+
 				RageException::Throw( "%s", message.c_str() ); 
 			}
 		}

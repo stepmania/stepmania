@@ -17,6 +17,7 @@
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include <math.h>
+#include "arch/ArchHooks/ArchHooks.h"
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
 {
@@ -240,24 +241,20 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		else if( sName=="rotationz" )		RageMatrixRotationZ( &b, fParam(1) );
 		else
 		{
-			CString sError = ssprintf( "Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
+			CString sError = ssprintf( "MatrixCommand:  Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
-#if defined(WIN32) && !defined(_XBOX) // XXX arch?
-			if( DISPLAY->GetVideoModeParams().windowed )
-				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
-#endif
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( sError );
 			continue;
 		}
 
 
 		if( iMaxIndexAccessed != (int)asTokens.size()-1 )
 		{
-			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
+			CString sError = ssprintf( "MatrixCommand:  Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
 			LOG->Warn( sError );
-#if defined(WIN32) // XXX arch?
-			if( DISPLAY->GetVideoModeParams().windowed )
-				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
-#endif
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( sError );
 			continue;
 		}
 

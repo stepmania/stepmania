@@ -600,9 +600,6 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	return true;
 }
 
-#include "SDL_opengl.h"
-#include "RageTimer.h"
-
 void Model::DrawPrimitives()
 {
 	if(m_Meshes.empty())

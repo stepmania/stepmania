@@ -26,7 +26,7 @@
 #include "Sprite.h"
 #include "RageDisplay.h"
 #include "ActorUtil.h"
-#include "StepMania.h"	// for HOOKS
+#include "arch/ArchHooks/ArchHooks.h"
 #include "RageTextureManager.h"
 
 

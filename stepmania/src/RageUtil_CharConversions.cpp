@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
 static bool CodePageConvert(CString &txt, int cp)

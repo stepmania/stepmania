@@ -49,9 +49,8 @@
 #include "SongCacheIndex.h"
 #include "BannerCache.h"
 #include "UnlockSystem.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
-/* This is also a global class; we own it. */
-ArchHooks *HOOKS = NULL;
 
 #ifdef WIN32
 
@@ -200,7 +199,7 @@ static void BoostAppPri()
 	if(!ChangeAppPri())
 		return;
 
-#ifdef WIN32
+#ifdef _WINDOWS
 	/* We just want a slight boost, so we don't skip needlessly if something happens
 	 * in the background.  We don't really want to be high-priority--above normal should
 	 * be enough.  However, ABOVE_NORMAL_PRIORITY_CLASS is only supported in Win2000
@@ -423,7 +422,7 @@ static void RestoreAppPri()
 	if(!ChangeAppPri())
 		return;
 
-#ifdef WIN32
+#ifdef _WINDOWS
 	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 #endif
 }
@@ -517,7 +516,7 @@ int main(int argc, char* argv[])
 	if ( SDL_GetWMInfo(&info) < 0 ) 
 		RageException::Throw( "SDL_GetWMInfo failed" );
 
-#ifdef WIN32
+#ifdef _WINDOWS
 	g_hWndMain = info.window;
 #endif
 

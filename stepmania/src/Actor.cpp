@@ -19,7 +19,7 @@
 #include "RageMath.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
-#include "StepMania.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */

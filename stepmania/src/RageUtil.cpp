@@ -133,8 +133,7 @@ CString vssprintf( const char *fmt, va_list argList)
 }
 
 #ifdef WIN32
-#include "dxerr8.h"
-#pragma comment(lib, "DxErr8.lib")
+#include "D3DX8Core.h"
 
 CString hr_ssprintf( int hr, const char *fmt, ...)
 {
@@ -143,9 +142,10 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
     CString s = vssprintf( fmt, va );
     va_end(va);
 
-	/* Why was this commented out?  -glenn */
-	return s + ssprintf( " (%s)", DXGetErrorString8(hr) );
-//	return s;// += ssprintf( " (%s)", DXGetErrorString8(hr) );
+	char szError[1024] = "";
+	D3DXGetErrorString( hr, szError, sizeof(szError) );
+	
+	return s + ssprintf( " (%s)", szError );
 }
 
 CString werr_ssprintf( int err, const char *fmt, ...)

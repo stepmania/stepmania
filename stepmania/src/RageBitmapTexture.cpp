@@ -18,7 +18,7 @@
 #include "RageException.h"
 #include "RageDisplay.h"
 #include "RageTypes.h"
-#include "StepMania.h"	// yuck.  Needed for HOOKS.
+#include "arch/ArchHooks/ArchHooks.h"
 
 #include "SDL.h"
 #include "SDL_image.h"

@@ -40,6 +40,8 @@ public:
 
 #endif
 
+extern ArchHooks *HOOKS;	// global and accessable from anywhere in our program
+
 /*
  * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *

@@ -17,7 +17,9 @@
 #include "arch_linux.h"
 #elif defined(DARWIN)
 #include "arch_darwin.h"
-#elif defined(WIN32)
+#elif defined(_XBOX)
+#include "arch_xbox.h"
+#elif defined(_WINDOWS)
 #include "arch_Win32.h"
 #endif
 
@@ -28,13 +30,13 @@ LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }
 
 void MakeInputHandlers(vector<InputHandler *> &Add)
 {
-#if defined(WIN32) && !defined(_XBOX)
+#if defined(_WINDOWS)
 	Add.push_back(new InputHandler_DInput);
 #else
 	Add.push_back(new InputHandler_SDL);
 #endif
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 	Add.push_back(new InputHandler_Win32_Pump);
 //	Add.push_back(new InputHandler_Win32_Para);
 #endif
@@ -62,10 +64,13 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			Driver = DriversToTry[i];
 			LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
 
-#ifdef WIN32
+#ifdef WINDOWS
 			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
 			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
 			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
+#endif
+#ifdef _XBOX
+			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
 #endif
 #ifdef HAVE_ALSA
 			if(!DriversToTry[i].CompareNoCase("ALSA9")) ret = new RageSound_ALSA9;

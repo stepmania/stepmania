@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "StepMania.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"

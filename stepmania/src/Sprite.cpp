@@ -22,7 +22,7 @@
 #include "RageDisplay.h"
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
-#include "StepMania.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 Sprite::Sprite()
 {

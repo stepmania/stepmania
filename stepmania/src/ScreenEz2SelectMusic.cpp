@@ -13,8 +13,6 @@
 
 #include "ScreenEz2SelectMusic.h"
 #include <math.h>
-#include "SDL.h"
-#include "SDL_opengl.h"
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
 #include "GameConstantsAndTypes.h"

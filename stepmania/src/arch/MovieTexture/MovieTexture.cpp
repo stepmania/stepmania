@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
 #endif
 
@@ -64,7 +64,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 {
 	DumpAVIDebugInfo( ID.filename );
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 	return new MovieTexture_DShow(ID);
 #else
 	/* XXX: need a simple null movie texture object */

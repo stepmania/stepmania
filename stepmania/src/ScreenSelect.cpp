@@ -25,7 +25,7 @@
 #include "ThemeManager.h"
 #include "ModeChoice.h"
 #include "RageDisplay.h"
-#include "StepMania.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 
 #define CHOICES					THEME->GetMetric (m_sName,"Choices")
