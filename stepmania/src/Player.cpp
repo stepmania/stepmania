@@ -847,8 +847,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( m_pSecondaryScoreKeeper )
 			m_pSecondaryScoreKeeper->HandleTapScore( score );
 
-		if( IsThereATapOrHoldHeadAtRow(iIndexOverlappingNote) ) // don't judge rows that are only mines
+		switch( tn )
 		{
+		case TAP_TAP:
+		case TAP_HOLD_HEAD:
+		case TAP_ADDITION:
+			// don't the row if this note is a mine or tap attack
 			if( IsRowCompletelyJudged(iIndexOverlappingNote) )
 				OnRowCompletelyJudged( iIndexOverlappingNote );
 		}
@@ -973,8 +977,8 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze )
 		{
-			/* iMissIfOlderThanThisIndex is a freeze.  Include the index of the freeze,
-			 * too.  Otherwise we won't show misses for tap notes on freezes until the
+			/* If there is a freeze on iMissIfOlderThanThisIndex, include this index too.
+			 * Otherwise we won't show misses for tap notes on freezes until the
 			 * freeze finishes. */
 			iMissIfOlderThanThisIndex++;
 		}
