@@ -579,6 +579,12 @@ Uint8 mySDL_EventState(Uint8 type, int state)
 #include "SDL_image.h"	// for setting icon
 #include "SDL_rotozoom.h"	// for setting icon
 
+#if defined(DARWIN) && DARWIN
+void mySDL_WM_SetIcon( CString sIconFile )
+{
+#pragma unused(sIconFile)
+}
+#else /* !defined(DARWIN) || !DARWIN */
 void mySDL_WM_SetIcon( CString sIconFile )
 {
 	if( sIconFile.empty() )
@@ -604,6 +610,7 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
 }
+#endif /* !defined(DARWIN) || !DARWIN */
 
 
 struct SurfaceHeader

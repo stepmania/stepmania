@@ -19,7 +19,8 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
 	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
 
-	/* Windows icons are 32x32 and SDL can't resize them for us, which
+#if !defined(DARWIN) || !DARWIN
+  /* Windows icons are 32x32 and SDL can't resize them for us, which
 	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
 	 * this is here just in case it changes.) */
 	ConvertSDLSurface(srf, srf->w, srf->h,
@@ -29,6 +30,7 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
 	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
+#endif
 
 
 	/* Load the BMP - we need it's dimensions */
