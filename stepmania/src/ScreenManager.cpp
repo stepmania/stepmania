@@ -501,7 +501,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
 	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
-	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). */
+	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). 
+	 * XXX: screens should turn this on in SM_LoseFocus if they handle timers themselves, too */
 	SOUND->HandleSongTimer( true );
 
 	/* Cleanup song data.  This can free up a fair bit of memory, so do it before
