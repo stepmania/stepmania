@@ -318,6 +318,7 @@ public:
 	//
 	virtual void PushSelf( lua_State *L );
 	void AddCommand( const CString &sCmdName, apActorCommands apac );
+	bool HasCommand( const CString &sCmdName );
 	virtual void PlayCommand( const CString &sCommandName );
 	virtual void PlayCommand2( const CString &sCommandName, Actor *pParent );
 	virtual void RunCommands( const LuaReference& cmds );

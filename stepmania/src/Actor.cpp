@@ -1058,6 +1058,12 @@ void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 	}
 }
 
+bool Actor::HasCommand( const CString &sCmdName )
+{
+	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCmdName );
+	return it != m_mapNameToCommands.end();
+}
+
 void Actor::PlayCommand( const CString &sCommandName )
 {
 	PlayCommand2( sCommandName, NULL );
@@ -1065,8 +1071,7 @@ void Actor::PlayCommand( const CString &sCommandName )
 
 void Actor::PlayCommand2( const CString &sCommandName, Actor *pParent )
 {
-	CString sKey = sCommandName;
-	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sKey );
+	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
 
 	if( it == m_mapNameToCommands.end() )
 		return;
