@@ -64,6 +64,9 @@ void PlayerAI::InitFromDisk()
 
 TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 {
+	if( pPlayerState->m_PlayerController == PC_AUTOPLAY )
+		return TNS_MARVELOUS;
+
 	int iCpuSkill = pPlayerState->m_iCpuSkill;
 
 	/* If we're in battle mode, reduce the skill based on the number of modifier attacks

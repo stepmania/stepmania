@@ -749,15 +749,7 @@ void Player::Step( int col, const RageTimer &tm )
 		
 		case PC_CPU:
 		case PC_AUTOPLAY:
-			switch( m_pPlayerState->m_PlayerController )
-			{
-			case PC_CPU:
-				score = PlayerAI::GetTapNoteScore( m_pPlayerState );
-				break;
-			case PC_AUTOPLAY:
-				score = TNS_MARVELOUS;
-				break;
-			}
+			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
 			// as "mine was hit" and everything else as "mine was avoided"
