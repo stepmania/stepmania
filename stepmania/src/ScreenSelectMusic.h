@@ -25,6 +25,7 @@
 #include "OptionIconRow.h"
 #include "DifficultyDisplay.h"
 #include "CourseContentsList.h"
+#include "HelpDisplay.h"
 
 
 class ScreenSelectMusic : public Screen
@@ -93,6 +94,7 @@ protected:
 	Sprite				m_sprBalloon;
 	DifficultyDisplay   m_DifficultyDisplay;
 	CourseContentsList	m_CourseContentsFrame;
+	HelpDisplay			m_Artist;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;

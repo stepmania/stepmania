@@ -221,6 +221,11 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		m_DifficultyMeter[p].Load();
 		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
+
+		m_Artist.SetName( "ArtistDisplay" );
+		m_Artist.Load();
+		SET_XY( m_Artist );
+		this->AddChild( &m_Artist );
 		
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
@@ -400,6 +405,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOnScreen();
 	ON_COMMAND( m_MusicWheel );
+	ON_COMMAND( m_Artist );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
@@ -445,6 +451,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_MusicWheel.TweenOffScreen();
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprBalloon );
+	OFF_COMMAND( m_Artist );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
@@ -987,6 +994,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
 	CString SampleMusicToPlay; 
+	vector<CString> m_Artists, m_AltArtists;
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
@@ -1078,6 +1086,9 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			// update stage counter display (long versions/marathons)
 			m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
+
+			m_Artists.push_back( pSong->GetDisplayArtist() );
+			m_AltArtists.push_back( pSong->GetTranslitArtist() );
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -1129,6 +1140,21 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_CourseContentsFrame.TweenInAfterChangedCourse();
 		m_DifficultyDisplay.UnsetDifficulties();
 
+		vector<Course::Info> ci;
+		pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
+
+		for( unsigned i = 0; i < ci.size(); ++i )
+		{
+			if( ci[i].Mystery )
+			{
+				m_Artists.push_back( "???" );
+				m_AltArtists.push_back( "???" );
+			} else {
+				m_Artists.push_back( ci[i].pSong->GetDisplayArtist() );
+				m_AltArtists.push_back( ci[i].pSong->GetTranslitArtist() );
+			}
+		}
+
 		break;
 	}
 	default:
@@ -1145,6 +1171,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 	}
 
+	m_Artist.SetTips( m_Artists, m_AltArtists );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
