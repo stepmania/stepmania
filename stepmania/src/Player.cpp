@@ -81,6 +81,7 @@ Player::Player()
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgment[c] );
 
+
 	PlayerAI::InitFromDisk();
 }
 
@@ -166,7 +167,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	// they change depending on PlayerOptions.
 
 	m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
-
 	m_soundMineExplosion.Load( THEME->GetPathToS("Player explosion") );
 }
 

@@ -785,7 +785,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
 		for( int pb=0; pb<NUM_PLAYERS; pb++ )
-			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] )
+			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
 					m_iPOB = pb;
 
 		m_Background.Unload();	// BeginnerHelper has it's own BG control.
@@ -995,6 +995,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( PREFSMAN->m_bShowBeginnerHelper )
 		{
 			int iStep = 0;
+			if( (m_Player[m_iPOB].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.1f)) ) ) )
+				m_BeginnerHelper.FlashOnce();
 			if((m_Player[m_iPOB].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)))))
 			{
 				for( int k=0; k<m_Player[m_iPOB].GetNumTracks(); k++ )
@@ -1185,10 +1187,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 	}
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
-	{
 		m_soundAssistTick.Play();
-		m_BeginnerHelper.FlashOnce();
-	}
 }
 
 
