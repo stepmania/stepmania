@@ -99,9 +99,9 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 				else
 					sFile = THEME->GetPathToG("Common fallback background");
 
-				/* Always load song backgrounds with LoadBG.  It sets texture properties;
+				/* Always load song backgrounds with SongBGTexture.  It sets texture properties;
 				 * if we load a background without setting those properties, we'll end up
-				 * with duplicate loads. */
+				 * with duplicates. */
 				Sprite* pSprite = new Sprite;
 				pSprite->LoadBG( sFile );
 				pActor = pSprite;
@@ -118,7 +118,14 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 					sFile = THEME->GetPathToG("Common fallback banner");
 
 				TEXTUREMAN->DisableOddDimensionWarning();
-				pActor = MakeActor( sFile );
+
+				/* Always load banners with BannerTex.  It sets texture properties;
+				 * if we load a background without setting those properties, we'll end up
+				 * with duplicates. */
+				Sprite* pSprite = new Sprite;
+				pSprite->Load( Sprite::SongBannerTexture(sFile) );
+				pActor = pSprite;
+
 				TEXTUREMAN->EnableOddDimensionWarning();
 			}
 			else if( sFile.CompareNoCase("coursebanner")==0 )
@@ -133,7 +140,9 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 					sFile = THEME->GetPathToG("Common fallback banner");
 
 				TEXTUREMAN->DisableOddDimensionWarning();
-				pActor = MakeActor( sFile );
+				Sprite* pSprite = new Sprite;
+				pSprite->Load( Sprite::SongBannerTexture(sFile) );
+				pActor = pSprite;
 				TEXTUREMAN->EnableOddDimensionWarning();
 			}
 			else if( IsAFile(sDir+sFile) || IsADirectory(sDir+sFile) )
