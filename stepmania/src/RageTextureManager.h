@@ -26,7 +26,6 @@ public:
 	~RageTextureManager();
 
 	RageTexture* LoadTexture( RageTextureID ID );
-	bool IsTextureLoaded( CString sTexturePath ); // XXX
 	void UnloadTexture( RageTextureID ID );
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();

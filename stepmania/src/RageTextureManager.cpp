@@ -104,13 +104,6 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 }
 
 
-bool RageTextureManager::IsTextureLoaded( CString sTexturePath )
-{
-	sTexturePath.MakeLower();
-
-	return m_mapPathToTexture.find(sTexturePath) != m_mapPathToTexture.end();
-}	
-
 void RageTextureManager::GCTextures()
 {
 	/* If m_iSecondsBeforeUnload is 0, then we'll unload textures immediately when
