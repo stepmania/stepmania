@@ -5,11 +5,13 @@
 #include "RageThreads.h"
 #include "windows.h"
 #include "Mmsystem.h"
+#include "RageTimer.h"
 
 class RageSound_WaveOut: public RageSoundDriver
 {
 	struct sound {
 	    RageSound *snd;
+		RageTimer start_time;
 
 		bool stopping;
 
