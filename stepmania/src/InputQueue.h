@@ -15,7 +15,7 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 
-const unsigned MAX_INPUT_QUEUE_LENGTH = 8;
+const unsigned MAX_INPUT_QUEUE_LENGTH = 16;
 
 class InputQueue
 {
