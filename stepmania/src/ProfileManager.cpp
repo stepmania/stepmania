@@ -864,11 +864,11 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
 	}
 }
 
-static CString HTMLQuoteDoubleQuotes( CString str )
+/* static CString HTMLQuoteDoubleQuotes( CString str )
 {
 	str.Replace( "\"", "&quot;" );
 	return str;
-}
+} */
 
 void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 {
