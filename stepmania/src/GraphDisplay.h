@@ -5,6 +5,7 @@
 #include "PlayerNumber.h"
 #include "RageTexture.h"
 
+struct StageStats;
 class GraphDisplay: public ActorFrame
 {
 public:
