@@ -98,17 +98,8 @@ class RageInput
 	} m_pumpState[NUM_PUMPS], m_oldPumpState[NUM_PUMPS];
 
 	/* Structure for reading Pump pads: */
-	struct pump_t {
-		HANDLE h;
-		OVERLAPPED ov;
-		long buf;
-		bool pending;
-
-		pump_t();
-		~pump_t();
-		bool init(int devno);
-		int GetPadEvent();
-	} *m_Pumps;
+	struct pump_t;
+	pump_t *m_Pumps;
 
 public:
 	RageInput();

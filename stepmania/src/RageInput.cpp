@@ -34,6 +34,19 @@ static const char *PumpButtonNames[] = {
 	"P2 UL", "P2 UR", "P2 MID", "P2 DL", "P2 DR"
 };
 
+struct RageInput::pump_t
+{
+	HANDLE h;
+	OVERLAPPED ov;
+	long buf;
+	bool pending;
+
+	pump_t();
+	~pump_t();
+	bool init(int devno);
+	int GetPadEvent();
+};
+
 int DeviceInput::NumButtons(InputDevice device)
 {
 	switch( device )
@@ -382,7 +395,6 @@ void RageInput::Update( float fDeltaTime )
 	}
 
 }
-
 
 bool RageInput::BeingPressed( DeviceInput di, bool bPrevState )
 {
