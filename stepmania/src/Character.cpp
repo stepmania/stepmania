@@ -52,7 +52,7 @@ CString GetRandomFileInDir( CString sDir )
 }
 
 
-CString Character::GetModelPath()
+CString Character::GetModelPath() const
 {
 	CString s = m_sCharDir + "model.txt";
 	if( DoesFileExist(s) )
@@ -61,10 +61,10 @@ CString Character::GetModelPath()
 		return "";
 }
 
-CString Character::GetRestAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
-CString Character::GetWarmUpAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
-CString Character::GetDanceAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }
-CString Character::GetTakingABreakPath()
+CString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
+CString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
+CString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }
+CString Character::GetTakingABreakPath() const
 {
 	CStringArray as;
 	GetDirListing( m_sCharDir+"break.png", as, false, true );
@@ -76,7 +76,8 @@ CString Character::GetTakingABreakPath()
 	else
 		return as[0];
 }
-CString Character::GetCardPath()
+
+CString Character::GetCardPath() const
 {
 	CStringArray as;
 	GetDirListing( m_sCharDir+"card.png", as, false, true );
@@ -88,7 +89,8 @@ CString Character::GetCardPath()
 	else
 		return as[0];
 }
-CString Character::GetIconPath()
+
+CString Character::GetIconPath() const
 {
 	CStringArray as;
 	GetDirListing( m_sCharDir+"icon.png", as, false, true );
@@ -100,7 +102,8 @@ CString Character::GetIconPath()
 	else
 		return as[0];
 }
-CString Character::GetHeadPath()
+
+CString Character::GetHeadPath() const
 {
 	CStringArray as;
 	GetDirListing( m_sCharDir+"head*.png", as, false, true );

@@ -21,14 +21,14 @@ public:
 
 	bool Load( CString sCharDir );	// return true if success
 
-	CString GetTakingABreakPath();
-	CString GetCardPath();
-	CString GetIconPath();
+	CString GetTakingABreakPath() const;
+	CString GetCardPath() const;
+	CString GetIconPath() const;
 
-	CString GetModelPath();
-	CString GetRestAnimationPath();
-	CString GetWarmUpAnimationPath();
-	CString GetDanceAnimationPath();
+	CString GetModelPath() const;
+	CString GetRestAnimationPath() const;
+	CString GetWarmUpAnimationPath() const;
+	CString GetDanceAnimationPath() const;
 
 	CString m_sCharDir;
 	CString m_sName;
@@ -38,7 +38,7 @@ public:
 
 	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 
-	CString GetHeadPath();
+	CString GetHeadPath() const;
 };
 
 
