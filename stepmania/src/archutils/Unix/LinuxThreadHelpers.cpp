@@ -166,7 +166,11 @@ bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 	 * it's us that attached, we will. */
 	if( PtraceAttach( ThreadID ) == -1 )
 	{
-		RAGE_ASSERT_M( errno == EPERM, ssprintf( "%s", strerror(errno) ) );
+		if( errno != EPERM )
+		{
+			CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)", strerror(errno), getpid(), GetCurrentThreadId(), ThreadID ) );
+			return false;
+		}
 	}
 
 	user_regs_struct regs;
