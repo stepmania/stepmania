@@ -24,6 +24,8 @@ Model::Model ()
 {
 	m_pModel = NULL;
 	m_pBones = NULL;
+	m_bTextureWrapping = true;
+	m_bUseZBuffer = true;
 }
 
 Model::~Model ()
@@ -723,13 +725,13 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
 
 void Model::DrawPrimitives()
 {
+
 	if (!m_pModel)
 		return;
 
-	DISPLAY->Scale( 1, -1, 1 );	// flip so positive Y is up
+	Actor::DrawPrimitives();	// set Actor-specified render states
 
-	DISPLAY->SetBlendModeNormal();
-	DISPLAY->EnableZBuffer();
+	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
 
 	for (int i = 0; i < (int)m_pModel->Meshes.size(); i++)
 	{
@@ -796,7 +798,7 @@ void Model::DrawPrimitives()
 		DISPLAY->DrawIndexedTriangles( &TempVertices[0], (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 	}
 
-	DISPLAY->DisableZBuffer();
+	DISPLAY->SetZBuffer( false );
 
 }
 

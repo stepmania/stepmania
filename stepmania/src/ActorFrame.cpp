@@ -48,6 +48,10 @@ void ActorFrame::MoveToHead( Actor* pActor )
 
 void ActorFrame::DrawPrimitives()
 {
+	// Don't set Actor-defined render states because we won't be drawing 
+	// any geometry that belongs to this object.
+	// Actor::DrawPrimitives();
+
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) {
 		m_SubActors[i]->Draw();
@@ -75,6 +79,15 @@ void ActorFrame::SetDiffuse( RageColor c )
 	// set all sub-Actors
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->SetDiffuse(c );
+}
+
+void ActorFrame::SetUseZBuffer( bool b )
+{
+	Actor::SetUseZBuffer( b );
+
+	// set all sub-Actors
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->SetUseZBuffer( b );
 }
 
 float ActorFrame::GetTweenTimeLeft() const

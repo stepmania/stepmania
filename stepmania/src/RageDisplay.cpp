@@ -132,6 +132,10 @@ void RageDisplay::SetupOpenGL()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
+	/* Reject pixels that are completely transparent early in the pipeline */
+	glAlphaFunc( GL_GREATER, 0.01f );
+	glEnable( GL_ALPHA_TEST );
+
 	/*
 	 * Set state variables
 	 */
@@ -906,13 +910,6 @@ void RageDisplay::SetTextureModeModulate()
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
-/* Set the blend mode for both texture and alpha.  This is all that's
- * available pre-OpenGL 1.4. */
-void RageDisplay::SetBlendMode(int src, int dst)
-{
-	glBlendFunc( GLenum(src), GLenum(dst) );
-}
-
 void RageDisplay::SetTextureModeGlow(GlowMode m)
 {
 	if(m == GLOW_WHITEN && !m_oglspecs->EXT_texture_env_combine)
@@ -921,7 +918,7 @@ void RageDisplay::SetTextureModeGlow(GlowMode m)
 	switch(m)
 	{
 	case GLOW_BRIGHTEN:
-		SetBlendMode( GL_SRC_ALPHA, GL_ONE );
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 		return;
 
 	case GLOW_WHITEN:
@@ -940,33 +937,46 @@ void RageDisplay::SetTextureModeGlow(GlowMode m)
 	}
 }
 
-void RageDisplay::SetBlendModeNormal()
+void RageDisplay::SetBlendMode( BlendMode mode )
 {
-	SetBlendMode( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-}
-void RageDisplay::SetBlendModeAdd()
-{
-	SetBlendMode( GL_ONE, GL_ONE );
+	switch( mode )
+	{
+	case BLEND_NORMAL:
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+		break;
+	case BLEND_ADD:
+		glBlendFunc( GL_ONE, GL_ONE );
+		break;
+	case BLEND_NO_EFFECT:
+		glBlendFunc( GL_ZERO, GL_ONE );
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
-bool RageDisplay::ZBufferEnabled() const
+bool RageDisplay::IsZBufferEnabled() const
 {
 	bool a;
 	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
 	return a;
 }
 
-void RageDisplay::EnableZBuffer()
+void RageDisplay::SetZBuffer( bool b )
 {
-	glEnable( GL_DEPTH_TEST );
+	if( b )
+		glEnable( GL_DEPTH_TEST );
+	else
+		glDisable( GL_DEPTH_TEST );
 }
-void RageDisplay::DisableZBuffer()
+void RageDisplay::ClearZBuffer()
 {
-	glDisable( GL_DEPTH_TEST );
+    glClear( GL_DEPTH_BUFFER_BIT );
 }
-void RageDisplay::EnableTextureWrapping(bool b)
+
+void RageDisplay::SetTextureWrapping( bool b )
 {
-	GLenum mode = b? GL_REPEAT:GL_CLAMP;
+	GLenum mode = b ? GL_REPEAT : GL_CLAMP;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
 }
@@ -986,7 +996,7 @@ void RageDisplay::SetMaterial(
 	glMaterialf( GL_FRONT, GL_SHININESS, shininess );
 }
 
-void RageDisplay::EnableLighting(bool b)
+void RageDisplay::SetLighting( bool b )
 {
 	if( b )	glEnable( GL_LIGHTING );
 	else	glDisable( GL_LIGHTING );
@@ -1016,4 +1026,12 @@ void RageDisplay::SetLightDirectional(
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
 
 	glPopMatrix();
+}
+
+void RageDisplay::SetBackfaceCull( bool b )
+{
+	if( b )
+		glEnable( GL_CULL_FACE );
+	else
+        glDisable( GL_CULL_FACE );
 }

@@ -32,7 +32,8 @@
 #include "Notes.h"
 #include "ActorUtil.h"
 #include "RageDisplay.h"
- 
+#include "RageTextureManager.h"
+
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -69,9 +70,17 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_MusicWheel.SetName( "Wheel" );
 	this->AddChild( &m_MusicWheel );
 
+	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
+	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
+	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
+	m_sprBannerMask.SetUseZBuffer( true );	// do draw to the zbuffer
+	m_sprBannerMask.SetZ( m_sprBannerMask.GetZ()+0.05f );
+	this->AddChild( &m_sprBannerMask );
+
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+	m_Banner.SetUseZBuffer( true );	// do have to pass the z test
 	this->AddChild( &m_Banner );
 
 	m_sprBannerFrame.SetName( "BannerFrame" );
@@ -202,8 +211,9 @@ void ScreenSelectMusic::DrawPrimitives()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
-	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
+	SET_XY_AND_ON_COMMAND( m_sprBannerMask );
 	SET_XY_AND_ON_COMMAND( m_Banner );
+	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
 	SET_XY_AND_ON_COMMAND( m_sprStage );
 	SET_XY_AND_ON_COMMAND( m_sprCDTitle );
@@ -237,8 +247,9 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	OFF_COMMAND( m_sprBannerFrame );
+	OFF_COMMAND( m_sprBannerMask );
 	OFF_COMMAND( m_Banner );
+	OFF_COMMAND( m_sprBannerFrame );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_sprCDTitle );

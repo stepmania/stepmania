@@ -280,14 +280,9 @@ void BitmapText::DrawPrimitives()
 		return;
 
 	DISPLAY->SetTextureModeModulate();
-	if( m_bBlendAdd )
-		DISPLAY->SetBlendModeAdd();
-	else
-		DISPLAY->SetBlendModeNormal();
 
-	/* Draw if we're not fully transparent or the zbuffer is enabled (which ignores
-	 * alpha). */
-	if( m_temp.diffuse[0].a != 0 || DISPLAY->ZBufferEnabled())
+	/* Draw if we're not fully transparent or the zbuffer is enabled */
+	if( m_temp.diffuse[0].a != 0 )
 	{
 		//////////////////////
 		// render the shadow

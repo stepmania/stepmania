@@ -1218,12 +1218,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="OptionsCursor.h">
 			</File>
 			<File
-				RelativePath="Sample3dObject.cpp">
-			</File>
-			<File
-				RelativePath="Sample3dObject.h">
-			</File>
-			<File
 				RelativePath="ScrollBar.cpp">
 			</File>
 			<File

@@ -22,6 +22,7 @@ struct RageVertex;
 const int REFRESH_DEFAULT = 0;
 struct oglspecs_t;
 
+
 class RageDisplay
 {
 	friend class RageTexture;
@@ -58,17 +59,19 @@ public:
 	void PostMultMatrix( const RageMatrix &f );
 	void PreMultMatrix( const RageMatrix &f );
 
+	void SetBlendMode( BlendMode mode );
+
 	void SetTexture( RageTexture* pTexture );
-
 	void SetTextureModeModulate();
-	void SetTextureModeGlow(GlowMode m = GLOW_WHITEN );
-	void SetBlendModeNormal();
-	void SetBlendModeAdd();
-	bool ZBufferEnabled() const;
-	void EnableZBuffer();
-	void DisableZBuffer();
-	void EnableTextureWrapping(bool b=true);
+	void SetTextureModeGlow( GlowMode m = GLOW_WHITEN );
+	void SetTextureWrapping( bool b );
 
+	bool IsZBufferEnabled() const;
+	void SetZBuffer( bool b );
+	void ClearZBuffer();
+
+	void SetBackfaceCull( bool b );
+	
 	void SetMaterial( 
 		float emissive[4],
 		float ambient[4],
@@ -77,7 +80,7 @@ public:
 		float shininess
 		);
 
-	void EnableLighting(bool b=true);
+	void SetLighting( bool b );
 	void SetLightOff( int index );
 	void SetLightDirectional( 
 		int index, 
@@ -119,7 +122,6 @@ public:
 
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
-	void SetBlendMode(int src, int dst);
 	void SetupOpenGL();
 	void SetupExtensions();
 	void SetViewport(int shift_left, int shift_down);

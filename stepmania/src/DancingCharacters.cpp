@@ -67,7 +67,7 @@ void DancingCharacters::DrawPrimitives()
 		m_CameraAt,
 		RageVector3(0,1,0) );
 
-	DISPLAY->EnableLighting( true );
+	DISPLAY->SetLighting( true );
 	DISPLAY->SetLightDirectional( 
 		0, 
 		RageColor(0.4f,0.4f,0.4f,1), 
@@ -78,7 +78,7 @@ void DancingCharacters::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 
 	DISPLAY->SetLightOff( 0 );
-	DISPLAY->EnableLighting( false );
+	DISPLAY->SetLighting( false );
 
 	DISPLAY->ExitPerspective();
 }

@@ -62,7 +62,7 @@ void ScreenSandbox::Update( float fDeltaTime )
 
 void ScreenSandbox::DrawPrimitives()
 {
-	DISPLAY->EnableLighting( true );
+	DISPLAY->SetLighting( true );
 	DISPLAY->SetLightDirectional( 
 		0, 
 		RageColor(0,0,0,0), 
@@ -73,7 +73,7 @@ void ScreenSandbox::DrawPrimitives()
 	Screen::DrawPrimitives();
 
 	DISPLAY->SetLightOff( 0 );
-	DISPLAY->EnableLighting( false );
+	DISPLAY->SetLighting( false );
 }
 
 void ScreenSandbox::MenuLeft( PlayerNumber pn )

@@ -12,7 +12,7 @@
 */
 
 #include "CroppedSprite.h"
-#include "RageTextureManager.h"
+#include "RageTexture.h"
 class Song;
 class Course;
 

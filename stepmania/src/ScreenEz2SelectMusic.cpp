@@ -28,6 +28,7 @@
 #include "Notes.h"
 #include "RageTimer.h"
 #include "ActorUtil.h"
+#include "RageTextureManager.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")

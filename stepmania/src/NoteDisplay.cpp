@@ -418,12 +418,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		RageTexture* pTexture = pBottomCap->GetTexture();
 		const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
-		DISPLAY->SetBlendModeNormal();
+		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
 			DISPLAY->SetTextureModeModulate();
-		DISPLAY->EnableTextureWrapping(false);
+		DISPLAY->SetTextureWrapping(false);
 
 		const float fFrameWidth		= pBottomCap->GetUnzoomedWidth();
 		const float fFrameHeight	= pBottomCap->GetUnzoomedHeight();
@@ -483,12 +483,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		RageTexture* pTexture = pSprBody->GetTexture();
 		const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
-		DISPLAY->SetBlendModeNormal();
+		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
 			DISPLAY->SetTextureModeModulate();
-		DISPLAY->EnableTextureWrapping();
+		DISPLAY->SetTextureWrapping( true );
 
 
 		const float fFrameWidth  = pSprBody->GetUnzoomedWidth();
@@ -561,12 +561,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		RageTexture* pTexture = pSprTopCap->GetTexture();
 		const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
-		DISPLAY->SetBlendModeNormal();
+		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		if( bDrawGlowOnly )
 			DISPLAY->SetTextureModeGlow();
 		else
 			DISPLAY->SetTextureModeModulate();
-		DISPLAY->EnableTextureWrapping(false);
+		DISPLAY->SetTextureWrapping(false);
 
 		const float fFrameWidth  = pSprTopCap->GetUnzoomedWidth();
 		const float fFrameHeight = pSprTopCap->GetUnzoomedHeight();
@@ -705,7 +705,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 
 	if( cache->m_bUseLighting )
 	{
-		DISPLAY->EnableLighting( true );
+		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
 			RageColor(0.0f,0.0f,0.0f,1), 
@@ -719,7 +719,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	if( cache->m_bUseLighting )
 	{
 		DISPLAY->SetLightOff( 0 );
-		DISPLAY->EnableLighting( false );
+		DISPLAY->SetLighting( false );
 	}
 }
 

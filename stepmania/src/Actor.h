@@ -54,7 +54,8 @@ public:
 	// let subclasses override
 	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
 	virtual void BeginDraw();	// pushes transform onto world matrix stack
-	virtual void DrawPrimitives() {}	// override with Actor specific action
+	virtual void SetRenderStates();	// Actor should call at beginning of their DrawPrimitives()
+	virtual void DrawPrimitives() {};	// Derivitives should override
 	virtual void EndDraw();		// pops transform from world matrix stack
 	bool IsFirstUpdate();
 	virtual void Update( float fDeltaTime );
@@ -219,14 +220,18 @@ public:
 	void SetShadowLength( float fLength );
 	void EnableShadow( bool b )	{ m_bShadow = b; }
 
-
-	virtual void EnableAdditiveBlend( bool b ) 		{ m_bBlendAdd = b; } 
-	
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }
 	virtual void StartAnimating()	{ this->EnableAnimation(true); };
 	virtual void StopAnimating()	{ this->EnableAnimation(false); };
 
-	virtual void EnableTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
+
+	//
+	// render states
+	//
+	virtual void SetBlendMode( BlendMode mode ) { m_BlendMode = mode; } 
+	virtual void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
+	virtual void SetUseZBuffer( bool b ) 		{ m_bUseZBuffer = b; } 
+	virtual void SetUseBackfaceCull( bool b ) 	{ m_bUseBackfaceCull = b; } 
 
 	//
 	// fade command
@@ -302,10 +307,15 @@ protected:
 	//
 	bool	m_bShadow;
 	float	m_fShadowLength;
-	bool	m_bTextureWrapping;
 	bool	m_bIsAnimating;
-	bool	m_bBlendAdd;
 
+	//
+	// render states
+	//
+	bool	m_bTextureWrapping;
+	BlendMode	m_BlendMode;
+	bool	m_bUseZBuffer;
+	bool	m_bUseBackfaceCull;
 };
 
 #endif

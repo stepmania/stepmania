@@ -27,6 +27,8 @@ public:
 
 	virtual void SetDiffuse( RageColor c );
 
+	virtual void SetUseZBuffer( bool b );
+
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 

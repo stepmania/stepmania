@@ -12,8 +12,9 @@
 */
 
 #include "Banner.h"
+#include "ActorFrame.h"
 
-class FadingBanner : public Actor
+class FadingBanner : public ActorFrame
 {
 public:
 	FadingBanner();

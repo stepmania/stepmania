@@ -16,6 +16,8 @@
 FadingBanner::FadingBanner()
 {
 	m_iIndexFront = 0;
+	for( int i=0; i<2; i++ )
+		this->AddChild( &m_Banner[i] );
 }
 
 void FadingBanner::SetCroppedSize( float fWidth, float fHeight )
@@ -26,14 +28,13 @@ void FadingBanner::SetCroppedSize( float fWidth, float fHeight )
 
 void FadingBanner::Update( float fDeltaTime )
 {
-	Actor::Update( fDeltaTime );
-	for( int i=0; i<2; i++ )
-		m_Banner[i].Update( fDeltaTime );
+	ActorFrame::Update( fDeltaTime );
 }
 
 void FadingBanner::DrawPrimitives()
 {
-	Actor::DrawPrimitives();
+	// draw manually
+//	ActorFrame::DrawPrimitives();
 	m_Banner[GetBackIndex()].Draw();
 	m_Banner[m_iIndexFront].Draw();
 }

@@ -47,7 +47,8 @@ void Actor::Reset()
 	m_fShadowLength = 4;
 	m_bTextureWrapping = false;
 	m_bIsAnimating = true;
-	m_bBlendAdd = false;
+	m_BlendMode = BLEND_NORMAL;
+	m_bUseZBuffer = false;
 }
 
 Actor::Actor()
@@ -182,6 +183,15 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 
 		DISPLAY->MultMatrix(mat);
 	}
+}
+
+void Actor::SetRenderStates()
+{
+	// set Actor-defined render states
+	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
+	DISPLAY->SetBlendMode( m_BlendMode );
+	DISPLAY->SetZBuffer( m_bUseZBuffer );
+	DISPLAY->SetBackfaceCull( m_bUseBackfaceCull );
 }
 
 void Actor::EndDraw()
@@ -733,8 +743,8 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
 		// Commands that take effect immediately (ignoring the tweening queue):
 		else if( sName=="animate" )			EnableAnimation( bParam(1) );
-		else if( sName=="texturewrapping" )	EnableTextureWrapping( bParam(1) );
-		else if( sName=="additiveblend" )	EnableAdditiveBlend( bParam(1) );
+		else if( sName=="texturewrapping" )	SetTextureWrapping( bParam(1) );
+		else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
 		else
 		{
 			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );

@@ -96,7 +96,7 @@ void CourseContentsList::Update( float fDeltaTime )
 void CourseContentsList::DrawPrimitives()
 {
 	// turn on Z buffer to clip items
-	DISPLAY->EnableZBuffer();
+	DISPLAY->SetZBuffer( true );
 
 	// write to z buffer so that top and bottom are clipped
 	m_quad.SetZ( 1 );
@@ -128,7 +128,7 @@ void CourseContentsList::DrawPrimitives()
 	}
 
 	// turn off Z buffer
-	DISPLAY->DisableZBuffer();
+	DISPLAY->SetZBuffer( false );
 }
 
 void CourseContentsList::TweenInAfterChangedCourse()

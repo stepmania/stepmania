@@ -116,7 +116,7 @@ public:
 
 	void DrawPrimitives()
 	{
-		DISPLAY->EnableZBuffer();
+		DISPLAY->SetZBuffer( true );
 
 		if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		{
@@ -139,7 +139,7 @@ public:
 
 		}
 
-		DISPLAY->DisableZBuffer();
+		DISPLAY->SetZBuffer( false );
 
 		m_sprFrame.Draw();
 

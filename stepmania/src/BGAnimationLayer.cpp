@@ -132,7 +132,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 	m_Sprites.push_back(new Sprite);
 	m_Sprites.back()->LoadBG( sMoviePath );
 	m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_Sprites.back()->EnableAdditiveBlend( true );
+	m_Sprites.back()->SetBlendMode( BLEND_ADD );
 }
 
 
@@ -326,7 +326,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 				{
 					m_Sprites.push_back(new Sprite);
 					m_Sprites.back()->Load( ID );
-					m_Sprites.back()->EnableTextureWrapping( true );	// gets rid of some "cracks"
+					m_Sprites.back()->SetTextureWrapping( true );	// gets rid of some "cracks"
 
 					switch( effect )
 					{
@@ -385,7 +385,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 
 	if( sPath.Find("add") != -1 )
 		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->EnableAdditiveBlend( true );
+			m_Sprites[i]->SetBlendMode( BLEND_ADD );
 
 	/*
 	CString sDir, sFName, sExt;
@@ -582,7 +582,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			{
 				m_Sprites.push_back(NewSprite(IsBanner));
 				m_Sprites.back()->Load( ID );
-				m_Sprites.back()->EnableTextureWrapping( true );		// gets rid of some "cracks"
+				m_Sprites.back()->SetTextureWrapping( true );		// gets rid of some "cracks"
 				m_Sprites.back()->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
 			}
 		}

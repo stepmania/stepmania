@@ -264,7 +264,7 @@ void Sprite::DrawPrimitives()
 	case align_top:		quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
 	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
 	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;
-	default:		ASSERT( false );
+	default:		ASSERT(0);
 	}
 
 
@@ -276,28 +276,24 @@ void Sprite::DrawPrimitives()
 
 	DISPLAY->SetTexture( m_pTexture );
 
+	// Must call this after setting the texture or else texture 
+	// parameters have no effect.
+	Actor::SetRenderStates();	// set Actor-specified render states
+
 	if( m_pTexture )
 	{
 		float TexCoords[8];
 		GetActiveTexCoords(TexCoords);
 		TexCoordsFromArray(v, TexCoords);
-
-		DISPLAY->EnableTextureWrapping(m_bTextureWrapping);
 	}
 
 	DISPLAY->SetTextureModeModulate();
-	if( m_bBlendAdd )
-		DISPLAY->SetBlendModeAdd();
-	else
-		DISPLAY->SetBlendModeNormal();
 
-	/* Draw if we're not fully transparent or the zbuffer is enabled (which ignores
-	 * alpha). */
+	/* Draw if we're not fully transparent */
 	if( m_temp.diffuse[0].a > 0 || 
 		m_temp.diffuse[1].a > 0 ||
 		m_temp.diffuse[2].a > 0 ||
-		m_temp.diffuse[3].a > 0 ||
-		DISPLAY->ZBufferEnabled() )
+		m_temp.diffuse[3].a > 0 )
 	{
 		//////////////////////
 		// render the shadow
@@ -311,13 +307,6 @@ void Sprite::DrawPrimitives()
 			DISPLAY->PopMatrix();
 		}
 
-		/* If the texture doesn't have alpha, and we're not changing alpha in diffuse,
-		 * don't bother to blend when doing the diffuse pass. */
-/* I'm not sure this actually helps anywhere.
-		if(m_pTexture && !m_bBlendAdd && m_pTexture->GetActualID().iAlphaBits == 0 &&
-			m_temp.diffuse[0].a + m_temp.diffuse[1].a + m_temp.diffuse[2].a + m_temp.diffuse[3].a == 4)
-			glDisable(GL_BLEND);
-*/
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
