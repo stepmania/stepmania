@@ -241,6 +241,44 @@ void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
 	dirs[sPath] = fs;
 }
 
+/* Add the file or directory "sPath".  sPath is a directory if it ends with
+ * a slash. */
+void FilenameDB::AddFile( const CString &sPath, int size, int mtime )
+{
+	vector<CString> parts;
+	split( sPath, "/", parts, false );
+
+	CStringArray::const_iterator begin = parts.begin();
+	CStringArray::const_iterator end = parts.end();
+
+	bool IsDir = true;
+	if( sPath[sPath.size()-1] != '/' )
+		IsDir = false;
+	else
+		--end;
+
+	do
+	{
+		/* Combine all but the last part. */
+		CString dir = join( "/", begin, end-1 ) + "/";
+		const CString &fn = *(end-1);
+		FileSet &fs = GetFileSet( dir );
+
+		File f;
+		f.SetName( fn );
+		if( fs.files.find( f ) == fs.files.end() )
+		{
+			f.dir = IsDir;
+			f.size = size;
+			f.mtime = mtime;
+			fs.files.insert( f );
+		}
+		IsDir = true;
+
+		--end;
+	} while( begin != end );
+}
+
 void FilenameDB::FlushDirCache()
 {
 	for( map<CString, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
