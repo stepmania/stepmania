@@ -318,9 +318,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		}
 	}
 
-	m_bgOverlay.SetName( "BGAOverlay");
-	m_bgOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenSelectMusic Overlay"));
-	this->AddChild( &m_bgOverlay );
+	m_Overlay.SetName( "Overlay");
+	m_Overlay.LoadFromAniDir( THEME->GetPathB(m_sName, "overlay"));
+	this->AddChild( &m_Overlay );
 
 	m_bgOptionsOut.Load( THEME->GetPathToB(m_sName+" options out") );
 //	this->AddChild( &m_bgOptionsOut ); // drawn on top
@@ -535,6 +535,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
 	ON_COMMAND( m_MachineRank );
+	ON_COMMAND( m_Overlay );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
@@ -588,6 +589,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprCourseHasMods );
 	OFF_COMMAND( m_Artist );
 	OFF_COMMAND( m_MachineRank );
+	OFF_COMMAND( m_Overlay );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		

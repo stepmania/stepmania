@@ -114,7 +114,7 @@ protected:
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 
-	BGAnimation			m_bgOverlay;
+	BGAnimation			m_Overlay;
 	Transition			m_bgOptionsOut;
 	Transition			m_bgNoOptionsOut;
 
