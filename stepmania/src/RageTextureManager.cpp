@@ -60,15 +60,20 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
 	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
 
+	if( ID.iColorDepth == -1 )
+		ID.iColorDepth = m_iTextureColorDepth;
+	ID.iMaxSize = min( ID.iMaxSize, m_iMaxTextureResolution );
+
 	/* We could have two copies of the same bitmap if there are equivalent but
 	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
 	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
-	while(p != m_mapPathToTexture.end())
+	if(p != m_mapPathToTexture.end())
 	{
 		/* Found the texture.  Just increase the refcount and return it. */
-		p->second->m_iRefCount++;
+		RageTexture* pTexture = p->second;
+		pTexture->m_iRefCount++;
 		LOG->UnmapLog( "LoadTexture" );
-		return p->second;
+		return pTexture;
 	}
 
 	// The texture is not already loaded.  Load it.
@@ -128,8 +133,19 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 {
 	ASSERT( t->m_iRefCount==0 );
 	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
-	m_mapPathToTexture.erase( t->GetID() );	// remove map entry
-	SAFE_DELETE( t );	// free the texture
+
+	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); i++ )
+	{
+		if( i->second == t )
+		{
+			m_mapPathToTexture.erase( i );	// remove map entry
+			SAFE_DELETE( t );	// free the texture
+			return;
+		}
+	}
+
+	ASSERT(0);	// we tried to delete a texture that wasn't loaded.
 }
 
 void RageTextureManager::GarbageCollect( GCType type )

@@ -725,11 +725,10 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
 
 void Model::DrawPrimitives()
 {
-
 	if (!m_pModel)
 		return;
 
-	Actor::DrawPrimitives();	// set Actor-specified render states
+	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
 

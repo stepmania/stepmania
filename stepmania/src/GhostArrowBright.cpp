@@ -50,7 +50,7 @@ void GhostArrowBright::Step( TapNoteScore score )
 	// HACK: set the length of each frame so the animation plays in exactly 1 pop up time.
 	//    We can't do this in the constructor because the image hasn't been loaded yet
 	for( int i=0; i<Sprite::GetNumStates(); i++ )
-		Sprite::m_fDelay[i] = GAB_SHOW_SECONDS / Sprite::GetNumStates();
+		Sprite::m_States[i].fDelay = GAB_SHOW_SECONDS / Sprite::GetNumStates();
 
 	RageColor colorStart;
 	switch( score )

@@ -23,13 +23,10 @@
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
 
-#include "RageDisplayInternal.h"
-
 Sprite::Sprite()
 {
 	m_pTexture = NULL;
 	m_bDrawIfTextureNull = false;
-	m_iNumStates = 0;
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0;
 	m_bUsingCustomTexCoords = false;
@@ -120,32 +117,27 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 
 	// Read in frames and delays from the sprite file, 
 	// overwriting the states that LoadFromTexture created.
-	for( int i=0; i<MAX_SPRITE_STATES; i++ )
+	// If the .sprite file doesn't define any states, leave
+	// frames and delays created during LoadFromTexture().
+	for( int i=0; true; i++ )
 	{
 		CString sFrameKey = ssprintf( "Frame%04d", i );
 		CString sDelayKey = ssprintf( "Delay%04d", i );
-		
-		m_iStateToFrame[i] = 0;
-		if( !ini.GetValueI( "Sprite", sFrameKey, m_iStateToFrame[i] ) )
+		State newState;
+
+		if( !ini.GetValueI( "Sprite", sFrameKey, newState.iFrameIndex ) )
 			break;
-		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
+		if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
 			RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
-				m_sSpritePath.c_str(), sFrameKey.c_str(), m_iStateToFrame[i], ID.filename.c_str(), m_pTexture->GetNumFrames() );
-		m_fDelay[i] = 0.2f;
-		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
+				m_sSpritePath.c_str(), sFrameKey.c_str(), newState.iFrameIndex, ID.filename.c_str(), m_pTexture->GetNumFrames() );
+
+		if( !ini.GetValueF( "Sprite", sDelayKey, newState.fDelay ) )
 			break;
 
-		if( m_iStateToFrame[i] == 0  &&  m_fDelay[i] > -0.00001f  &&  m_fDelay[i] < 0.00001f )	// both values are empty
-			break;
+		if( i == 0 )	// the ini file defines at least one frame
+			m_States.clear();	// clear before adding
 
-		m_iNumStates = i+1;
-	}
-
-	if( m_iNumStates == 0 )
-	{
-		m_iNumStates = 1;
-		m_iStateToFrame[0] = 0;
-		m_fDelay[0] = 10;
+		m_States.push_back( newState );
 	}
 
 	float f;
@@ -183,6 +175,8 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 		 * to reset Sprite::m_size, etc. */
 		UnloadTexture();
 		m_pTexture = TEXTUREMAN->LoadTexture( ID );
+		ASSERT( m_pTexture->GetTextureWidth() >= 0 );
+		ASSERT( m_pTexture->GetTextureHeight() >= 0 );
 	}
 
 	ASSERT( m_pTexture != NULL );
@@ -192,13 +186,13 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();		
 
 	// Assume the frames of this animation play in sequential order with 0.2 second delay.
+	m_States.clear();
 	for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
 	{
-		m_iStateToFrame[i] = i;
-		m_fDelay[i] = 0.1f;
+		State newState = { i, 0.1f };
+		m_States.push_back( newState );
 	}
 
-	m_iNumStates = m_pTexture->GetNumFrames();
 	return true;
 }
 
@@ -211,16 +205,17 @@ void Sprite::Update( float fDeltaTime )
 	if( !m_bIsAnimating )
 	    return;
 
+	if( !m_pTexture )	// no texture, nothing to animate
+	    return;
+
 	// update animation
 	m_fSecsIntoState += fDeltaTime;
 
-	if( m_fSecsIntoState > m_fDelay[m_iCurState] )		// it's time to switch frames
+	while( m_fSecsIntoState > m_States[m_iCurState].fDelay )	// it's time to switch frames
 	{
 		// increment frame and reset the counter
-		m_fSecsIntoState -= m_fDelay[m_iCurState];		// leave the left over time for the next frame
-		m_iCurState ++;
-		if( m_iCurState >= m_iNumStates )
-			m_iCurState = 0;
+		m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
+		m_iCurState = (m_iCurState+1) % m_States.size();
 	}
 }
 
@@ -301,7 +296,7 @@ void Sprite::DrawPrimitives()
 		if( m_bShadow )
 		{
 			DISPLAY->PushMatrix();
-			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
+			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 			DISPLAY->DrawQuad( v );
 			DISPLAY->PopMatrix();
@@ -335,9 +330,9 @@ void Sprite::SetState( int iNewState )
 	// This assert will likely trigger if the "missing" theme element graphic 
 	// is loaded in place of a multi-frame sprite.  We want to know about these
 	// problems in debug builds, but they're not fatal.
-	DEBUG_ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
+	DEBUG_ASSERT( iNewState >= 0  &&  iNewState < (int)m_States.size() );
 
-	CLAMP(iNewState, 0, m_iNumStates-1);
+	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
 }
@@ -389,7 +384,7 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, b
 
 const RectF *Sprite::GetCurrentTextureCoordRect() const
 {
-	unsigned int uFrameNo = m_iStateToFrame[m_iCurState];
+	unsigned int uFrameNo = m_States[m_iCurState].iFrameIndex;
 	return m_pTexture->GetTextureCoordRect( uFrameNo );
 }
 

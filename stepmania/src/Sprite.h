@@ -17,11 +17,6 @@
 #include "RageTexture.h"
 
 
-
-#define MAX_SPRITE_STATES 256
-
-
-
 class Sprite: public Actor
 {
 public:
@@ -42,7 +37,7 @@ public:
 	virtual void EnableAnimation( bool bEnable );
 	virtual void SetState( int iNewState );
 	
-	virtual int GetNumStates()		{ return m_iNumStates; };
+	virtual int GetNumStates()		{ return m_States.size(); };
 	CString	GetTexturePath()	{ return m_pTexture==NULL ? "" : m_pTexture->GetID().filename; };
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
@@ -66,9 +61,12 @@ protected:
 	RageTexture* m_pTexture;
 	bool	m_bDrawIfTextureNull;
 
-	int		m_iStateToFrame[MAX_SPRITE_STATES];	// array of indicies into m_rectBitmapFrames
-	float	m_fDelay[MAX_SPRITE_STATES];
-	int		m_iNumStates;
+	struct State
+	{
+		int iFrameIndex;
+		float fDelay;	// "seconds to show"
+	};
+	vector<State> m_States;
 	int		m_iCurState;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 

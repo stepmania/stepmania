@@ -23,6 +23,7 @@
 #include "RageTimer.h"
 #include "RageException.h"
 #include "RageMath.h"
+#include "RageDisplay.h"
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
@@ -438,10 +439,10 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			return true;
 		}
 	}
-	
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F5 conflicts with editor and AutoSync
+
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
 	{
-		// pressed F6.  Save Screenshot.
+		// Save Screenshot.
 		CString sPath;
 		for( int i=0; i<1000; i++ )
 		{

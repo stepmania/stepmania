@@ -125,6 +125,12 @@ void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 
 NoteDisplay::NoteDisplay()
 {
+	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+	{
+		m_pTapNote[i] = NULL;
+		m_pHoldHeadActive[i] = NULL;
+		m_pHoldHeadInactive[i] = NULL;
+	}
 	cache = new NoteMetricCache_t;
 }
 
@@ -136,7 +142,6 @@ NoteDisplay::~NoteDisplay()
 		delete m_pHoldHeadActive[i];
 		delete m_pHoldHeadInactive[i];
 	}
-
 	delete cache;
 }
 

@@ -120,25 +120,28 @@ void GrooveGraph::Mountain::DrawPrimitives()
 {
 	DISPLAY->SetTexture( NULL );
 	DISPLAY->SetTextureModeModulate();
-	RageVertex v[3];
+	RageVertex v[4];
 
 	for( int i=NUM_DIFFICULTIES-1; i>=0; i-- )
 	{
 		float fValue = SCALE(m_fPercentTowardNew, 0.f, 1.f, m_fValuesOld[i], m_fValuesNew[i] );
 		float fHeight = MOUNTAIN_HEIGHT*fValue;
-		v[0].p = RageVector3( -MOUNTAIN_WIDTH/2, 0,	0 );
+		v[0].p = v[3].p = RageVector3( -MOUNTAIN_WIDTH/2, 0,	0 );
 		v[1].p = RageVector3( MOUNTAIN_WIDTH/2, 0,	0 );
 		v[2].p = RageVector3( 0, -fHeight, 0 );
-		v[0].c = v[1].c = v[2].c = g_DifficultyColorsCache[i];
+		v[0].c = v[1].c = v[2].c = v[3].c = g_DifficultyColorsCache[i];
 		DISPLAY->DrawFan( v, 3 );
 	}
 
-	switch( PREFSMAN->m_iPolygonRadar )
-	{
-	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, 3, 2 );	break;
-	case 1:		DISPLAY->DrawLoop_Polys( v, 3, 2 );				break;
-	default:
-	case -1:	DISPLAY->DrawLoop( v, 3, 2 );					break;
-	}
+	// TODO: Add this back in
+//	switch( PREFSMAN->m_iPolygonRadar )
+//	{
+//	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, 3, 2 );	break;
+//	case 1:		DISPLAY->DrawLoop_Polys( v, 3, 2 );				break;
+//	default:
+//	case -1:
+	DISPLAY->DrawLineStrip( v, 4, 2 );
+//	break;
+//	}
 }
 

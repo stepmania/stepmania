@@ -36,7 +36,7 @@ typedef char TCHAR, *PTCHAR;
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageThreads.h"
-
+struct SDL_Surface;
 
 
 //-----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public:
 	MovieTexture_DShow( RageTextureID ID );
 	virtual ~MovieTexture_DShow();
 	/* only called by RageTextureManager::InvalidateTextures */
-	void Invalidate() { m_uGLTextureID = 0; }
+	void Invalidate() { m_uTexHandle = 0; }
 	void Update(float fDeltaTime);
 
 	virtual void Reload();
@@ -66,6 +66,8 @@ public:
 private:
 	const char *buffer;
 	SDL_sem *buffer_lock, *buffer_finished;
+	SDL_Surface* m_img;	// last frame in PixelFormat that is being used by graphics card
+	PixelFormat	m_PixelFormat;	// format being used by graphics card
 
 	void Create();
 
@@ -74,8 +76,8 @@ private:
 	void SkipUpdates();
 	void StopSkippingUpdates();
 
-	unsigned int GetGLTextureID() { return m_uGLTextureID; }
-	unsigned int m_uGLTextureID;
+	unsigned GetTexHandle() { return m_uTexHandle; }
+	unsigned m_uTexHandle;
 
 	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
 	bool					m_bLoop;

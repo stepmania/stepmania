@@ -222,7 +222,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		{
 			CString sError = ssprintf( "Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
-#if defined(WIN32) // XXX arch?
+#if defined(WIN32) || !defined(_XBOX) // XXX arch?
 			if( DISPLAY->IsWindowed() )
 				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
 #endif
@@ -400,4 +400,89 @@ void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4
 	pOut->y = scale0 * from.y + scale1 * to1[1];
 	pOut->z = scale0 * from.z + scale1 * to1[2];
 	pOut->w = scale0 * from.w + scale1 * to1[3];
+}
+
+RageMatrix RageLookAt(
+	float eyex, float eyey, float eyez,
+	float centerx, float centery, float centerz,
+	float upx, float upy, float upz )
+{
+	RageVector3 Z(eyex - centerx, eyey - centery, eyez - centerz);
+	RageVec3Normalize(&Z, &Z);
+
+	RageVector3 Y(upx, upy, upz);
+
+	RageVector3 X(
+		 Y[1] * Z[2] - Y[2] * Z[1],
+		-Y[0] * Z[2] + Y[2] * Z[0],
+		 Y[0] * Z[1] - Y[1] * Z[0]);
+
+	Y = RageVector3(
+		 Z[1] * X[2] - Z[2] * X[1],
+        -Z[0] * X[2] + Z[2] * X[0],
+         Z[0] * X[1] - Z[1] * X[0] );
+
+	RageVec3Normalize(&X, &X);
+	RageVec3Normalize(&Y, &Y);
+
+	RageMatrix mat(
+		X[0], Y[0], Z[0], 0,
+		X[1], Y[1], Z[1], 0,
+		X[2], Y[2], Z[2], 0,
+		   0,    0,    0, 1 );
+
+	RageMatrix mat2;
+	RageMatrixTranslation(&mat2, -eyex, -eyey, -eyez);
+
+	RageMatrix ret;
+	RageMatrixMultiply(&ret, &mat, &mat2);
+
+	return ret;
+}
+
+RageMatrix RageOrtho( float l, float r, float b, float t, float zn, float zf )
+{
+	RageMatrix m(
+		2/(r-l),      0,            0,           0,
+		0,            2/(t-b),      0,           0,
+		0,            0,            1/(zf-zn),   0,
+		(l+r)/(l-r),  (t+b)/(b-t),  zn/(zn-zf),  1 );
+	return m;
+}
+
+RageMatrix RageMatrixIdentity()
+{
+	RageMatrix m;
+	RageMatrixIdentity( &m );
+	return m;
+}
+
+RageMatrix RageMatrixFrustrum( 
+	float left,    
+	float right,   
+	float bottom,  
+	float top,     
+	float znear,   
+	float zfar )	// see glFrustrum docs
+{
+	float A = (right+left) / (right-left);
+	float B = (top+bottom) / (top-bottom);
+	float C = -1 * (zfar+znear) / (zfar-znear);
+	float D = -1 * (2*zfar*znear) / (zfar-znear);
+	RageMatrix m(
+		2*znear/(right-left), 0,                   0,  0,
+		0,                   2*znear/(top-bottom), 0,  0,
+		A,                   B,                    C,  -1,
+		0,                   0,                    D,  0 );
+	return m;
+}
+
+RageMatrix RageMatrixPerspective(float fovy, float aspect, float zNear, float zFar)
+{
+   float ymax = zNear * tanf(fovy * PI / 360.0f);
+   float ymin = -ymax;
+   float xmin = ymin * aspect;
+   float xmax = ymax * aspect;
+
+   return RageMatrixFrustrum(xmin, xmax, ymin, ymax, zNear, zFar);
 }

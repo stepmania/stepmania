@@ -22,6 +22,7 @@ void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV );
 void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM );
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM );
 void RageMatrixIdentity( RageMatrix* pOut );
+RageMatrix RageMatrixIdentity();
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB );
 void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z );
 void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z );
@@ -36,5 +37,18 @@ RageVector4 RageQuatFromH(float theta);
 RageVector4 RageQuatFromP(float theta);
 RageVector4 RageQuatFromR(float theta);
 void RageQuatMultiply( RageVector4* pOut, const RageVector4 &pA, const RageVector4 &pB );
+RageMatrix RageLookAt(
+	float eyex, float eyey, float eyez,
+	float centerx, float centery, float centerz,
+	float upx, float upy, float upz );
+RageMatrix RageOrtho( float l, float r, float b, float t, float zn, float zf ); 
+RageMatrix RageMatrixFrustrum(
+	float left,    
+	float right,   
+	float bottom,  
+	float top,     
+	float znear,   
+	float zfar );
+RageMatrix RageMatrixPerspective(float fovy, float aspect, float zNear, float zFar);
 
 #endif

@@ -28,7 +28,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include "RageDisplayInternal.h"
 
 #include "archutils/win32/tls.h"
 
@@ -44,10 +43,11 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
-	m_uGLTextureID = 0;
+	m_uTexHandle = 0;
 	buffer = NULL;
 	buffer_lock = SDL_CreateSemaphore(1);
 	buffer_finished = SDL_CreateSemaphore(0);
+	m_img = NULL;
 
 	Create();
 	CreateFrameRects();
@@ -98,8 +98,9 @@ MovieTexture_DShow::~MovieTexture_DShow()
 	}
 	LOG->Trace("MovieTexture_DShow: shutdown ok");
 	LOG->Flush();
-	if(m_uGLTextureID)
-		glDeleteTextures(1, &m_uGLTextureID);
+	if(m_uTexHandle)
+		DISPLAY->DeleteTexture( m_uTexHandle );
+	SDL_FreeSurface( m_img );
 
 	SDL_DestroySemaphore(buffer_lock);
 	SDL_DestroySemaphore(buffer_finished);
@@ -134,31 +135,39 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	/* Just in case we were invalidated: */
 	CreateTexture();
 
-	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
+	// DirectShow feeds us in BGR8
+	SDL_Surface *fromDShow = SDL_CreateRGBSurfaceFrom(
+		(void*)buffer, m_iSourceWidth, m_iSourceHeight,
+		24, 
+		m_iSourceWidth*3,
+		0xFF0000,
+		0x00FF00,
+		0x0000FF,
+		0x000000 );
 
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, 1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	/* We don't want to actually blend the alpha channel over the destination converted
+	 * surface; we want to simply blit it, so make sure SDL_SRCALPHA is not on. */
+	SDL_SetAlpha( fromDShow, 0, SDL_ALPHA_OPAQUE );
 
-	/* XXX: We should use m_lVidPitch; we might be padded.  However, I can't
-	 * find any codec that don't force the width to a multiple of at least
-	 * 4 anyway, so I can't test it, so I'll leave it like this for now. */
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iSourceWidth);
+	SDL_Rect area;
+	area.x = area.y = 0;
+	area.w = short(fromDShow->w);
+	area.h = short(fromDShow->h);
 
-	VDCHECKPOINT;
+	SDL_BlitSurface(fromDShow, &area, m_img, &area);
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0,
+	DISPLAY->UpdateTexture(
+		m_uTexHandle, 
+		m_PixelFormat,
+		m_img,
 		0, 0,
-		min(m_iSourceWidth, m_iTextureWidth),
-		min(m_iSourceHeight, m_iTextureHeight),
-		GL_BGR, GL_UNSIGNED_BYTE, buffer);
+		min(m_iSourceWidth,m_iTextureWidth), min(m_iSourceHeight,m_iTextureHeight) );
 
-	/* Must unset PixelStore when we're done! */
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glFlush();
+	SDL_FreeSurface( fromDShow );
 
 	buffer = NULL;
+
+	VDCHECKPOINT;
 
 	LOG->Trace("processed, signalling");
 
@@ -187,7 +196,7 @@ void MovieTexture_DShow::Create()
 {
     HRESULT hr;
     
-	m_ActualID.iAlphaBits = 0;
+	m_ID.iAlphaBits = 0;
 
     if( FAILED( hr=CoInitialize(NULL) ) )
         RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
@@ -208,7 +217,7 @@ void MovieTexture_DShow::Create()
     // Add the source filter
     CComPtr<IBaseFilter>    pFSrc;          // Source Filter
     WCHAR wFileName[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, m_ActualID.filename.c_str(), -1, wFileName, MAX_PATH);
+	MultiByteToWideChar(CP_ACP, 0, m_ID.filename.c_str(), -1, wFileName, MAX_PATH);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
@@ -236,14 +245,17 @@ void MovieTexture_DShow::Create()
 	// Pass us to our TextureRenderer.
 	pCTR->SetRenderTarget(this);
 
+	/* Cap the max texture size to the hardware max. */
+	m_ID.iMaxSize = min( m_ID.iMaxSize, DISPLAY->GetMaxTextureSize() );
+
     // The graph is built, now get the set the output video width and height.
 	// The source and image width will always be the same since we can't scale the video
 	m_iSourceWidth  = pCTR->GetVidWidth();
 	m_iSourceHeight = pCTR->GetVidHeight();
 
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, m_ActualID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, m_ActualID.iMaxSize );
+	m_iImageWidth = min( m_iSourceWidth, m_ID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, m_ID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
@@ -283,14 +295,13 @@ void MovieTexture_DShow::NewData(const char *data)
 
 void MovieTexture_DShow::CreateTexture()
 {
-	if(m_uGLTextureID)
+	if(m_uTexHandle)
 		return;
 
-	glGenTextures(1, &m_uGLTextureID);
-	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
-
-	/* Initialize the texture and set it to black. */
-	string buf(m_iTextureWidth*m_iTextureHeight*3, 0);
+	/* Have to free our frame holder becuase we might need a different 
+	 * PixelFormat than before. */
+	if( m_img )
+		SDL_FreeSurface( m_img );
 
 	/* My test clip (a high-res, MPEG1 video) goes from 12 fps to 14 fps
 	 * if I use a 16-bit internalformat instead of a 32-bit one; that's a
@@ -303,12 +314,17 @@ void MovieTexture_DShow::CreateTexture()
 	 * Some way to figure this out dynamically would be nice, but it's probably
 	 * impossible.  (For example, 24-bit textures may even be cheaper on pure
 	 * AGP cards; 16-bit requires a conversion.) */
-	int internalformat = GL_RGB8;
+	m_PixelFormat = FMT_RGB8;
 	if(TEXTUREMAN->GetTextureColorDepth() == 16)
-		internalformat = GL_RGB5;
+		m_PixelFormat = FMT_RGB5;
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalformat,
-		m_iTextureWidth, m_iTextureHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, buf.data());
+	m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight, PIXEL_FORMAT_DESC[m_PixelFormat].bpp,
+		PIXEL_FORMAT_DESC[m_PixelFormat].masks[0], PIXEL_FORMAT_DESC[m_PixelFormat].masks[1],
+		PIXEL_FORMAT_DESC[m_PixelFormat].masks[2], PIXEL_FORMAT_DESC[m_PixelFormat].masks[3]);
+
+	m_uTexHandle = DISPLAY->CreateTexture(
+		m_PixelFormat,
+		m_img );
 }
 
 bool MovieTexture_DShow::PlayMovie()

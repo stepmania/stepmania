@@ -53,6 +53,7 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 	COMP(iMipMaps);
 	COMP(iAlphaBits);
 	COMP(iColorDepth);
+	COMP(iTransparencyOnly);
 	COMP(bDither);
 	COMP(bStretch);
 	COMP(bHotPinkColorKey);
@@ -68,6 +69,7 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		iMipMaps == rhs.iMipMaps &&
 		iAlphaBits == rhs.iAlphaBits &&
 		iColorDepth == rhs.iColorDepth &&
+		iTransparencyOnly == rhs.iTransparencyOnly &&
 		bDither == rhs.bDither &&
 		bStretch == rhs.bStretch &&
 		bHotPinkColorKey == rhs.bHotPinkColorKey;
@@ -81,7 +83,7 @@ RageTexture::RageTexture( RageTextureID name ):
 
 	m_iRefCount = 1;
 
-	SetActualID();
+//	SetActualID();
 	m_iSourceWidth = m_iSourceHeight = 0;
 	m_iTextureWidth = m_iTextureHeight = 0;
 	m_iImageWidth = m_iImageHeight = 0;
@@ -91,18 +93,18 @@ RageTexture::RageTexture( RageTextureID name ):
 
 /* Set the initial ActualID; this is what the actual texture will start
  * from. */
-void RageTexture::SetActualID()
-{
-	m_ActualID = m_ID;
-
-	/* Texture color depth preference can be overridden. */
-	if(m_ID.iColorDepth == -1)
-		m_ActualID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
-
-	/* The max texture size can never be higher than the preference,
-	 * since it might be set to something to fix driver problems. */
-	m_ActualID.iMaxSize = min(m_ActualID.iMaxSize, TEXTUREMAN->GetMaxTextureResolution());
-}
+//void RageTexture::SetActualID()
+//{
+//	m_ActualID = m_ID;
+//
+//	/* Texture color depth preference can be overridden. */
+//	if(m_ID.iColorDepth == -1)
+//		m_ActualID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
+//
+//	/* The max texture size can never be higher than the preference,
+//	 * since it might be set to something to fix driver problems. */
+//	m_ActualID.iMaxSize = min(m_ActualID.iMaxSize, TEXTUREMAN->GetMaxTextureResolution());
+//}
 
 RageTexture::~RageTexture()
 {

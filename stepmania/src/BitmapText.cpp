@@ -292,6 +292,7 @@ void BitmapText::DrawPrimitives()
 	if( m_szTextLines.empty() )
 		return;
 
+	Actor::SetRenderStates();	// set Actor-specified render states
 	DISPLAY->SetTextureModeModulate();
 
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
@@ -303,7 +304,7 @@ void BitmapText::DrawPrimitives()
 		if( m_bShadow )
 		{
 			DISPLAY->PushMatrix();
-			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
+			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
 			RageColor dim(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 

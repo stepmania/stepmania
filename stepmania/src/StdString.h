@@ -260,8 +260,7 @@
 #define STDSTRING_H
 
 // In non-Visual C++ and/or non-Win32 builds, we can't use some cool stuff.
-
-#if !defined(_MSC_VER) || !defined(_WIN32)
+#if !defined(_MSC_VER) || !defined(_WIN32) || defined(_XBOX)
 	#define SS_ANSI
 #endif
 
@@ -271,7 +270,7 @@
 
 	// On non-Win32 platforms, there is no TCHAR.H so define what we need
 
-	#ifndef _WIN32
+	#if !defined(_WIN32) || defined(_XBOX)
 
 		typedef const char*		PCSTR;
 		typedef char*			PSTR;
@@ -590,7 +589,11 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 #ifdef SS_ANSI
 	inline int ssvsprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)
 	{
-		return vsnprintf(pA, nCount, pFmtA, vl);
+		#if defined(_XBOX)
+			return _vsnprintf(pA, nCount, pFmtA, vl);
+		#else
+			return vsnprintf(pA, nCount, pFmtA, vl);
+		#endif
 	}
 #else
 	inline int	ssnprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)

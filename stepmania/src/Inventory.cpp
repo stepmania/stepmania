@@ -181,7 +181,7 @@ void Inventory::UseItem( int iSlot )
 	if( asInventory[iSlot].IsBlank() )
 		return;
 
-    PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
+//    PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 	GameState::Attack a = asInventory[iSlot];
 
 //	GAMESTATE->LaunchAttack( pnToAttack, a );

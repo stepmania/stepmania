@@ -124,7 +124,13 @@ void mySDL_GetRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v)
 void mySDL_GetRGBAV(const Uint8 *p, const SDL_Surface *src, Uint8 *v)
 {
 	Uint32 pixel = decodepixel(p, src->format->BytesPerPixel);
-	mySDL_GetRGBAV(pixel, src, v);	
+	if( src->format->BytesPerPixel == 1 ) // paletted
+	{
+		memcpy( v, &src->format->palette->colors[pixel], sizeof(SDL_Color));
+		v[3] = 0xFF;	// full alpha
+	}
+	else	// RGBA
+		mySDL_GetRGBAV(pixel, src, v);	
 }
 
 

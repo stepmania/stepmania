@@ -15,8 +15,6 @@
 #include "RageTypes.h"
 
 
-const int MAX_TEXTURE_FRAMES = 256;
-
 /* A unique texture is identified by a RageTextureID.  (Loading the
  * same file with two different dither settings is considered two
  * different textures, for example.)  See RageTexture.cpp for explanations
@@ -51,9 +49,9 @@ public:
 	RageTexture( RageTextureID file );
 	virtual ~RageTexture() = 0;
 	virtual void Update( float fDeltaTime ) {}
-	virtual void Reload() { SetActualID(); }
+	virtual void Reload() {}
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
-	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
+	virtual unsigned GetTexHandle() = 0;	// accessed by RageDisplay
 
 	// movie texture/animated texture stuff
 	virtual void Play() {}
@@ -92,22 +90,13 @@ public:
 	/* The ID that we were asked to load: */
 	const RageTextureID &GetID() const { return m_ID; }
 
-	/* The ID that we actually got: */
-	const RageTextureID &GetActualID() const { return m_ActualID; }
-
 	static void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh );
 	static int GetFrameCountFromFileName( CString sPath );
-
-private:
-	/* The file we were asked to load.  (This is never changed.) */
-	const RageTextureID m_ID;
-
-	void SetActualID();
 
 protected:
 	/* We might change settings when loading (due to hints, hardware
 	 * limitations, etc).  The data actually loaded is here: */
-	RageTextureID m_ActualID;
+	RageTextureID m_ID;
 
 	int		m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
 	int		m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory

@@ -186,7 +186,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a line loop to draw the thick line
 		//
-		for( i=0; i<NUM_RADAR_CATEGORIES; i++ )
+		for( i=0; i<=NUM_RADAR_CATEGORIES; i++ )
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
@@ -199,13 +199,16 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[i].c = PlayerToColor( (PlayerNumber)p );
 		}
 
-		switch( PREFSMAN->m_iPolygonRadar )
-		{
-		case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;
-		case 1:		DISPLAY->DrawLoop_Polys( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );			break;
-		default:
-		case -1:	DISPLAY->DrawLoop( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );					break;
-		}
+		// TODO: Add this back in.  -Chris
+//		switch( PREFSMAN->m_iPolygonRadar )
+//		{
+//		case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;
+//		case 1:		DISPLAY->DrawLoop_Polys( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );			break;
+//		default:
+//		case -1:
+		DISPLAY->DrawLineStrip( v, NUM_RADAR_CATEGORIES+1, RADAR_EDGE_WIDTH );
+//		break;
+//		}
 	}
 }
 

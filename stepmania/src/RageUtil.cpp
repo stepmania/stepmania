@@ -134,8 +134,8 @@ CString vssprintf( const char *fmt, va_list argList)
 }
 
 #ifdef WIN32
-#include "dxerr8.h"
-#pragma comment(lib, "DxErr8.lib")
+//#include "dxerr8.h"
+//#pragma comment(lib, "DxErr8.lib")
 
 CString hr_ssprintf( int hr, const char *fmt, ...)
 {
@@ -144,14 +144,16 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
     CString s = vssprintf( fmt, va );
     va_end(va);
 
-	return s += ssprintf( " (%s)", DXGetErrorString8(hr) );
+	return s;// += ssprintf( " (%s)", DXGetErrorString8(hr) );
 }
 
 CString werr_ssprintf( int err, const char *fmt, ...)
 {
-	char buf[1024];
+	char buf[1024] = "";
+#ifndef _XBOX
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
 		0, err, 0, buf, sizeof(buf), NULL);
+#endif
 
     va_list	va;
     va_start(va, fmt);

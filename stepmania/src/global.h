@@ -131,6 +131,11 @@ inline float cosf(float x) { return float(cos(double(x))); }
 inline float acosf(float x) { return float(acos(double(x))); }
 #endif
 
+#ifdef _XBOX
+#include <xtl.h>
+#include <xgraphics.h>
+#include <stdio.h>
+#endif
 
 /* Don't include our own headers here, since they tend to change often. */
 
