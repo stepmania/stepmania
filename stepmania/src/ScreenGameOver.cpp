@@ -13,7 +13,6 @@
 #include "ScreenGameOver.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "TransitionFadeWipe.h"
 #include "Sprite.h"
 #include "AnnouncerManager.h"
 #include "ScreenManager.h"
