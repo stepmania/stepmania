@@ -18,6 +18,7 @@
 #include "ScreenSongOptions.h"
 #include "PrefsManager.h"
 #include "CodeDetector.h"
+#include "ProfileManager.h"
 
 
 #define PREV_SCREEN( play_mode )	THEME->GetMetric ("ScreenPlayerOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -109,13 +110,27 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		}
 	}
 
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL) )
+	PlayerNumber pn = StyleI.player;
+
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
-		GAMESTATE->m_PlayerOptions[MenuI.player].Init();
-		GAMESTATE->m_PlayerOptions[MenuI.player].FromString( PREFSMAN->m_sDefaultModifiers );
+		GAMESTATE->m_PlayerOptions[pn].Init();
+		GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );
 		this->ImportOptions();
 		this->PositionUnderlines();
+	}
+
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_SAVE_PLAYER_OPTIONS) )
+	{
+		if( PROFILEMAN->IsUsingProfile(pn) )
+		{
+			SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions save") );
+			this->ExportOptions();
+			Profile* pProfile = PROFILEMAN->GetProfile(pn);
+			pProfile->m_bUsingProfileDefaultModifiers = true;
+			pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
+		}
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );

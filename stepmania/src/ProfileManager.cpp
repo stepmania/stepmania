@@ -219,6 +219,8 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 
 const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 {
+	ASSERT( pn >= 0 && pn<NUM_PLAYERS );
+
 	if( m_sProfileDir[pn].empty() )
 		return NULL;
 	else
