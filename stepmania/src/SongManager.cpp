@@ -39,9 +39,9 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const CString CATEGORY_RANKING_FILE =			BASE_PATH "Data" SLASH "CategoryRanking.dat";
 const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStepsMemCardData.dat";
 const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
-const int CATEGORY_RANKING_VERSION = 2;
-const int STEPS_MEM_CARD_DATA_VERSION = 5;
-const int COURSE_MEM_CARD_DATA_VERSION = 3;
+const int CATEGORY_RANKING_VERSION = 3;
+const int STEPS_MEM_CARD_DATA_VERSION = 7;
+const int COURSE_MEM_CARD_DATA_VERSION = 4;
 
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
@@ -430,6 +430,10 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				CString sName;
+				if( !FileRead(f, sName) )
+					WARN_AND_RETURN;
+
 				Grade grade;
 				if( !FileRead(f, (int&)grade) )
 					WARN_AND_RETURN;
@@ -437,10 +441,6 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 
 				float iScore;
 				if( !FileRead(f, iScore) )
-					WARN_AND_RETURN;
-
-				CString sName;
-				if( !FileRead(f, sName) )
 					WARN_AND_RETURN;
 
 				float fPercentDP;
@@ -479,14 +479,14 @@ void SongManager::ReadCategoryRankingsFromFile( CString fn )
 			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				int iScore;
-				if( !FileRead(f, iScore) )
-					WARN_AND_RETURN;
 				CString sName;
 				if( !FileRead(f, sName) )
 					WARN_AND_RETURN;
-				m_CategoryDatas[st][rc].vHighScores[l].iScore = iScore;
+				int iScore;
+				if( !FileRead(f, iScore) )
+					WARN_AND_RETURN;
 				m_CategoryDatas[st][rc].vHighScores[l].sName = sName;
+				m_CategoryDatas[st][rc].vHighScores[l].iScore = iScore;
 			}
 		}
 	}
@@ -533,6 +533,10 @@ void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				CString sName;
+				if( !FileRead(f, sName) )
+					WARN_AND_RETURN;
+
 				int iScore;
 				if( !FileRead(f, iScore) )
 					WARN_AND_RETURN;
@@ -541,15 +545,11 @@ void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 				if( !FileRead(f, fSurviveTime) )
 					WARN_AND_RETURN;
 
-				CString sName;
-				if( !FileRead(f, sName) )
-					WARN_AND_RETURN;
-
 				if( pCourse )
 				{
+					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = sName;
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore = iScore;
 					pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime = fSurviveTime;
-					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = sName;
 				}
 			}
 		}
@@ -654,8 +654,8 @@ void SongManager::SaveCategoryRankingsToFile( CString fn )
 			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].iScore );
 				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].sName );
+				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].iScore );
 			}
 		}
 	}
@@ -689,9 +689,9 @@ void SongManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 			pCourse->m_MemCardDatas[st][mc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName );
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore );
 				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime );
-				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName );
 			}
 		}
 	}

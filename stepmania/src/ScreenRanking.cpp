@@ -28,6 +28,8 @@
 #define CATEGORY_WIDTH			THEME->GetMetricF("ScreenRanking","CategoryWidth")
 #define BANNER_X				THEME->GetMetricF("ScreenRanking","BannerX")
 #define BANNER_Y				THEME->GetMetricF("ScreenRanking","BannerY")
+#define BANNER_WIDTH			THEME->GetMetricF("ScreenRanking","BannerWidth")
+#define BANNER_HEIGHT			THEME->GetMetricF("ScreenRanking","BannerHeight")
 #define TYPE_X					THEME->GetMetricF("ScreenRanking","TypeX")
 #define TYPE_Y					THEME->GetMetricF("ScreenRanking","TypeY")
 #define LINE_SPACING_X			THEME->GetMetricF("ScreenRanking","LineSpacingX")
@@ -411,6 +413,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 			m_sprCategory.SetDiffuseAlpha(0);
 
 			m_banner.LoadFromSong( pts.pSong );
+			m_banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 			m_banner.SetDiffuseAlpha(1);
 
 			m_textCategory.SetZoom(1);
@@ -462,6 +465,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 void ScreenRanking::TweenPageOnScreen()
 {
 	m_sprCategory.FadeOn(0,"bounce right",0.5f);
+	m_banner.FadeOn(0,"bounce right",0.5f);
 	m_sprType.FadeOn(0.1f,"bounce right",0.5f);
 	m_textCategory.FadeOn(0,"bounce right",0.5f);
 
@@ -483,6 +487,7 @@ void ScreenRanking::TweenPageOnScreen()
 void ScreenRanking::TweenPageOffScreen()
 {
 	m_sprCategory.FadeOff(0,"fade",0.25f);
+	m_banner.FadeOff(0,"fade",0.25f);
 	m_sprType.FadeOff(0.1f,"fade",0.25f);
 	m_textCategory.FadeOff(0.1f,"fade",0.25f);
 
