@@ -248,12 +248,15 @@ bool RageSound::Load(CString sSoundFilePath, bool cache)
 
 void RageSound::SetStartSeconds( float secs )
 {
+	ASSERT(!playing);
 	m_StartSample = int(secs*samplerate);
 }
 
 void RageSound::SetLengthSeconds(float secs)
 {
 	ASSERT(secs == -1 || secs >= 0);
+	ASSERT(!playing);
+	
 	if(secs == -1)
 		m_LengthSamples = -1;
 	else
@@ -559,6 +562,19 @@ void RageSound::StartPlaying()
 	LockMut(SOUNDMAN->lock);
 
 	ASSERT(!playing);
+
+	/* Sanity check:
+	 * It's extremely inefficient to loop very small lengths of data.  For example,
+	 * if m_LengthSamples is 1000, then we'll decode a full buffer (which may be
+	 * a second or more), queue up 1000 samples, then seek and redecode the whole
+	 * full buffer of data and start again.  This only happens due to bogus SAMPLELENGTH
+	 * values, so throw a warning and set a more reasonable value. */
+	if(m_LengthSamples < samplerate*2)
+	{
+		LOG->Warn("Looping sound \"%s\" for too small a period (%f seconds)",
+			GetLoadedFilePath().GetString(), float(m_LengthSamples) / samplerate);
+		m_LengthSamples = samplerate * 10; /* 10 seconds */
+	}
 
 	/* Tell the sound manager to start mixing us. */
 	playing = true;
