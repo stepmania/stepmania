@@ -131,8 +131,6 @@ public:
 	virtual void SetTweenDiffuseBottomEdge( RageColor colorDiffuse );
 	virtual void SetTweenDiffuseLeftEdge( RageColor colorDiffuse );
 	virtual void SetTweenGlow( RageColor c );
-
-
 	
 	enum StretchType { fit_inside, cover };
 
@@ -188,10 +186,6 @@ public:
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
 
-protected:
-
-	bool	m_bFirstUpdate;
-
 	//
 	// Stuff for tweening
 	//
@@ -214,6 +208,15 @@ protected:
 			glow = RageColor( 1, 1, 1, 0 );
 		};
 	};
+
+	/* Intended for a very limited use: you can query the destination
+	 * state (that is, where the actor would end up if its tween finished),
+	 * stop tweening (possibly leaving it partially tweened), do something,
+	 * then tween to the original destination. */
+	virtual TweenState GetDestTweenState();
+	virtual void SetTweenState( const TweenState &ts );
+
+protected:
 
 	struct TweenInfo
 	{
@@ -242,6 +245,8 @@ protected:
 	RageColor   m_temp_colorDiffuse[4];
 	RageColor   m_temp_colorGlow;
 */
+
+	bool	m_bFirstUpdate;
 
 	//
 	// Stuff for alignment

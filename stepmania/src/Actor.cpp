@@ -336,6 +336,16 @@ void Actor::SetTweenDiffuseBottomEdge( RageColor c )	{ LatestTween().diffuse[2] 
 void Actor::SetTweenDiffuseLeftEdge( RageColor c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[2] = c; };
 void Actor::SetTweenGlow( RageColor c )					{ LatestTween().glow = c; };
 
+Actor::TweenState Actor::GetDestTweenState()
+{
+	if(!m_iNumTweenStates) return m_current;
+	return LatestTween();
+}
+
+void Actor::SetTweenState( const Actor::TweenState &ts )
+{
+	LatestTween() = ts;
+}
 
 void Actor::ScaleTo( const RectI &rect, StretchType st )
 {
