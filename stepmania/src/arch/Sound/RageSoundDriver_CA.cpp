@@ -183,7 +183,7 @@ RageSound_CA::RageSound_CA()
 
 	const Desc& procFormat = FindClosestFormat( procFormats, mFormat );
 	stream.SetCurrentIOProcFormat( procFormat );
-
+	mFormat = OTHER; // XXX Temporary
 	LOG->Info("Proc format is %s.",
 			  mFormat == EXACT ? "exact" : (mFormat == CANONICAL ?
 											"canonical" : "other"));
@@ -223,7 +223,7 @@ RageSound_CA::RageSound_CA()
 
 	StartDecodeThread();
 
-	if (mFormat = OTHER)
+	if (mFormat == OTHER)
 		gConverter = new AudioConverter( this, procFormat );
     
 	try
