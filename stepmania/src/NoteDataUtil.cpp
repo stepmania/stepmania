@@ -681,6 +681,8 @@ void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 		HoldNote &hn = in.GetHoldNote(i);
 		float fHoldEndBeat = hn.fEndBeat;
 		int iMineRow = BeatToNoteRow( fHoldEndBeat+0.5f );
+		if( iMineRow < first_row || iMineRow > last_row )
+			continue;
 		
 		// Add a mine right after the hold end.h
 		in.SetTapNote(hn.iTrack,iMineRow,TAP_MINE);
