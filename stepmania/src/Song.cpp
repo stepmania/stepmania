@@ -921,13 +921,14 @@ bool Song::HasEdits( NotesType nt ) const
 // Sorting
 /////////////////////////////////////
 
-int CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
+bool CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 {
 	//Prefer transliterations to full titles
-	CString sTitle1 = pSong1->GetFullTranslitTitle();
-	CString sTitle2 = pSong2->GetFullTranslitTitle();
+	int ret = pSong1->GetTranslitMainTitle().CompareNoCase(pSong1->GetTranslitMainTitle());
+	if(ret < 0) return true;
+	if(ret > 0) return false;
 
-	int ret = sTitle1.CompareNoCase(sTitle2);
+	ret = pSong1->GetTranslitSubTitle().CompareNoCase(pSong2->GetTranslitSubTitle());
 	if(ret < 0) return true;
 	if(ret > 0) return false;
 
@@ -1035,21 +1036,45 @@ void SortSongPointerArrayByGroup( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
 }
 
-int CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
+bool CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
 {
+	return pSong1->GetNumTimesPlayed() < pSong2->GetNumTimesPlayed();
+/*
+Comparing titles is slow, and this makes course selection choppy.  Turning this
+off means we don't get consistent orderings of songs that have been played
+the same amount, but that shouldn't be a big problem; the songs should stay
+in the same original order during a single load of the game anyway (and will
+probably stay in the same general order even across loads).  The number of
+plays is more likely to change.
+
+This is mostly a problem with new games, where there are a large number of songs
+that have all been played 0 times.
+
 	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
 	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();
-
+	
 	if( iNumTimesPlayed1 > iNumTimesPlayed2 )
 		return true;
 	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
 		return false;
 	return CompareSongPointersByTitle( pSong1, pSong2 );
+*/
+}
+/* Actually, just calculating GetNumTimesPlayed within the sort is pretty
+ * slow, so let's precompute it.  (This could be generalized with a template.) */
+map<const Song*, int> song_sort_val;
+
+bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2)
+{
+	return song_sort_val[pSong1] < song_sort_val[pSong2];
 }
 
 void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByMostPlayed );
+	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
+		song_sort_val[arraySongPointers[i]] = arraySongPointers[i]->GetNumTimesPlayed();
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortVal );
+	song_sort_val.clear();
 }
 
 bool Song::NormallyDisplayed() const 
