@@ -267,8 +267,6 @@ static void CheckSettings()
 #include "archutils/Win32/VideoDriverInfo.h"
 #include "regex.h"
 
-static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_BestBets&siteid=us&target=http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
-
 RageDisplay *CreateDisplay()
 {
 	/* We never want to bother users with having to decide which API to use.
@@ -395,8 +393,9 @@ RageDisplay *CreateDisplay()
 			error += "Initializing Direct3D...\n";
 			try {
 				return new RageDisplay_D3D( params );
-			} catch(RageException_D3DNotInstalled e) {
-				error += "DirectX 8.1 or greater is not installed.  You can download it from:\n"+D3DURL+"\n\n";
+			} catch(exception e) {
+				error += e.what();
+				error += "\n\n";
 			} catch(RageException_D3DNoAcceleration e) {
 				error += "Your system is reporting that Direct3D hardware acceleration is not available.  "
 					"Please obtain an updated driver from your video card manufacturer.\n\n";

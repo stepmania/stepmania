@@ -91,7 +91,15 @@ static void SetPalette( unsigned TexResource )
 
 		/* Load it. */
 #ifndef _XBOX
-		g_pd3dDevice->SetPaletteEntries( iPalIndex, g_TexResourceToTexturePalette[TexResource].p );
+		TexturePalette& pal = g_TexResourceToTexturePalette[TexResource];
+
+		// Cards that don't support palettes with alpha will crash unless
+		// all entires have full alpha.
+		if( ! (g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
+			for(int j=0; j<256; j++)
+				pal.p[j].peFlags = 255;
+
+		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
 #else
 		ASSERT(0);
 #endif
@@ -529,6 +537,11 @@ void RageDisplay_D3D::EndFrame()
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 {
+	// Some cards (Savage) don't support alpha in palettes.
+	// Don't allow paletted textures if this is the case.
+	if( pixfmt == FMT_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
+		return false;
+
 	D3DFORMAT d3dfmt = D3DFORMATS[pixfmt];
 	HRESULT hr = g_pd3d->CheckDeviceFormat( 
 		D3DADAPTER_DEFAULT,
@@ -717,7 +730,6 @@ void RageDisplay_D3D::SetTextureModeGlow(GlowMode m)
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-
 }
 
 void RageDisplay_D3D::SetTextureFiltering( bool b )
