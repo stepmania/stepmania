@@ -229,6 +229,7 @@ bool Song::LoadFromSongDir( CString sDir )
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
 		SMLoader ld;
 		ld.LoadFromSMFile( GetCacheFilePath(), *this, true );
+		ld.TidyUpData( *this, true );
 	}
 	else
 	{
@@ -246,12 +247,17 @@ bool Song::LoadFromSongDir( CString sDir )
 
 		bool success = ld->LoadFromDir( sDir, *this );
 		BlacklistedImages = ld->GetBlacklistedImages();
-		delete ld;
 
 		if(!success)
+		{
+			delete ld;
 			return false;
+		}
 
 		TidyUpData();
+		ld->TidyUpData( *this, false );
+
+		delete ld;
 
 		// save a cache file so we don't have to parse it all over again next time
 		SaveToCacheFile();

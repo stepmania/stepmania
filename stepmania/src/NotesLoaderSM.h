@@ -34,6 +34,7 @@ public:
 
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool LoadFromDir( CString sPath, Song &out );
+	void TidyUpData( Song &song, bool cache );
 	static bool LoadTimingFromFile( const CString &fn, TimingData &out );
 	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
 	static bool LoadEdit( CString sEditFilePath, ProfileSlot slot );
