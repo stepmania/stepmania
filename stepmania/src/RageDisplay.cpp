@@ -690,13 +690,13 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	switch( format )
 	{
 	case SAVE_LOSSLESS:
-		bSuccess = RageSurface_Save_BMP( surface, out );
+		bSuccess = RageSurfaceUtils::SaveBMP( surface, out );
 		break;
 	case SAVE_LOSSY_LOW_QUAL:
-		bSuccess = IMG_SaveJPG_RW( surface, out, false );
+		bSuccess = RageSurfaceUtils::SaveJPEG( surface, out, false );
 		break;
 	case SAVE_LOSSY_HIGH_QUAL:
-		bSuccess = IMG_SaveJPG_RW( surface, out, true );
+		bSuccess = RageSurfaceUtils::SaveJPEG( surface, out, true );
 		break;
 	default:
 		ASSERT(0);

@@ -1,5 +1,5 @@
-#ifndef SDL_SAVE_JPEG_H
-#define SDL_SAVE_JPEG_H
+#ifndef RAGE_SURFACE_SAVE_JPEG_H
+#define RAGE_SURFACE_SAVE_JPEG_H
 
 struct RageSurface;
 class RageFile;

@@ -1,5 +1,5 @@
-#ifndef SDL_ROTOZOOM_H
-#define SDL_ROTOZOOM_H
+#ifndef RAGE_SURFACE_UTILS_ZOOM_H
+#define RAGE_SURFACE_UTILS_ZOOM_H
 
 struct RageSurface;
 namespace RageSurfaceUtils

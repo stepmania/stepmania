@@ -1,5 +1,5 @@
-#ifndef SM_SDL_DITHER_H
-#define SM_SDL_DITHER_H
+#ifndef RAGE_SURFACE_UTILS_DITHER_H
+#define RAGE_SURFACE_UTILS_DITHER_H
 
 struct RageSurface;
 namespace RageSurfaceUtils
