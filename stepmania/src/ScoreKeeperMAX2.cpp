@@ -209,9 +209,6 @@ static int GetScore(int p, int B, int S, int n)
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
-	if( g_CurStageStats.bFailed[m_PlayerNumber] )
-		return;	// don't add
-
 	int &iScore = g_CurStageStats.iScore[m_PlayerNumber];
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -271,8 +268,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	const int sum = (N * (N + 1)) / 2;
 	const int B = m_iMaxPossiblePoints/10;
 
-	// What does this do?  "Don't use a multiplier if 
-	// the player has failed"?
+	// Don't use a multiplier if the player has failed
 	if( g_CurStageStats.bFailedEarlier[m_PlayerNumber] )
 	{
 		iScore += p;
@@ -321,25 +317,21 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 void ScoreKeeperMAX2::HandleTapScore( TapNoteScore score )
 {
-	if( g_CurStageStats.bFailed[m_PlayerNumber] )
-		return;	// don't add
-
 	if( score == TNS_HIT_MINE )
 	{
-		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( TNS_HIT_MINE );
+		if( GAMESTATE->m_HealthState[m_PlayerNumber] != GameState::DEAD )
+			g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( TNS_HIT_MINE );
 		g_CurStageStats.iTapNoteScores[m_PlayerNumber][TNS_HIT_MINE] += 1;
 	}
 }
 
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
-	if( g_CurStageStats.bFailed[m_PlayerNumber] )
-		return;	// don't add
-
 	ASSERT( iNumTapsInRow >= 1 );
 
 	// Update dance points.
-	g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
+	if( GAMESTATE->m_HealthState[m_PlayerNumber] != GameState::DEAD )
+		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
 	// update judged row totals
 	g_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
 
@@ -411,12 +403,10 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
-	if( g_CurStageStats.bFailed[m_PlayerNumber] )
-		return;	// don't add
-
 	// update dance points totals
+	if( GAMESTATE->m_HealthState[m_PlayerNumber] != GameState::DEAD )
+		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 	g_CurStageStats.iHoldNoteScores[m_PlayerNumber][holdScore] ++;
-	g_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 
 	if( holdScore == HNS_OK )
 		AddScore( TNS_MARVELOUS );
