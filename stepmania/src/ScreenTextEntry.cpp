@@ -64,7 +64,6 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	this->AddChild( &m_rectAnswerBox );
 
 	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
 	m_textAnswer.SetText( LStringToCString(m_sAnswer) );
 	this->AddChild( &m_textAnswer );
