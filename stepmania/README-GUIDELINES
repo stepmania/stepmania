@@ -1,5 +1,16 @@
 Bits of possibly less-than-obvious advice:
 
+archutils/ contains arch-specific code.  This should contain code
+shared by more than one arch/ driver.
+
+arch/ contains drivers for specific features that can be better
+implemented nonportably.  Most drivers (all except sound) contain
+default, portable implementations, so StepMania should work mostly
+out-of-the-box on platforms that are supported by the supporting
+libraries (particularly SDL); only a sound driver needs to be
+written.
+
+
 Avoid accessing other singleton classes from singleton destructors.  That
 introduces dependencies on the order of destruction, and can cause problems
 if one of the singletons throws an exception.
