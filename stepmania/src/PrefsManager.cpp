@@ -78,7 +78,8 @@ PrefsManager::PrefsManager()
 	m_iCoinsPerCredit = 1;
 	m_bJointPremium = false;
 	m_iBoostAppPriority = -1;
-	
+	m_iPolygonRadar = -1;
+
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
@@ -148,6 +149,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.GetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
+	ini.GetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -213,6 +215,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.SetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
+	ini.SetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

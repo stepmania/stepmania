@@ -23,6 +23,8 @@
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
+/* XXX: remove this once we add oglspecs_t::DisableAALines */
+#include "PrefsManager.h"
 
 #include <math.h>
 
@@ -576,9 +578,11 @@ void RageDisplay::DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, 
 
 void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth )
 {
-	/* XXX: need to autodetect voodoo 3500 (and any others that need this) */
-//	DrawLoop_LinesAndPoints(v, iNumVerts, LineWidth);
-	DrawLoop_Polys(v, iNumVerts, LineWidth);
+	/* XXX: -1, 0, 1 */
+	if(PREFSMAN->m_iPolygonRadar == 1)
+		DrawLoop_Polys(v, iNumVerts, LineWidth);
+	else
+		DrawLoop_LinesAndPoints(v, iNumVerts, LineWidth);
 }
 
 void RageDisplay::PushMatrix() 
