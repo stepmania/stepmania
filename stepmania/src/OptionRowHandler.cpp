@@ -1119,7 +1119,9 @@ public:
 		{
 		case EDIT_MENU_ACTION_EDIT:
 			// Prepare prepare for ScreenEdit
+			ASSERT( pSong );
 			ASSERT( pSteps );
+			GAMESTATE->m_pCurStyle = GAMEMAN->GetEditorStyleForStepsType( st );
 			return "ScreenEdit";
 			break;
 		case EDIT_MENU_ACTION_DELETE:
