@@ -872,7 +872,7 @@ float Course::GetMeter( StepsType nt, CourseDifficulty cd ) const
 {
 	/* If we have a manually-entered meter for this difficulty, use it. */
 	if( m_iCustomMeter[cd] != -1 )
-		return m_iCustomMeter[cd];
+		return (float)m_iCustomMeter[cd];
 
 	return roundf( GetTrail(nt,cd)->GetAverageMeter() );
 }
