@@ -396,22 +396,20 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 	 * in GetLatencySeconds().
 	 */
 
+	/* If the buffer is full, we can't be underrunning. */
+	if( buffer_bytes_filled < buffersize )
 	{
 		int first_byte_filled = write_cursor-buffer_bytes_filled;
 		if( first_byte_filled < 0 )
 			first_byte_filled += buffersize; /* unwrap */
 
 		/* Data between the play cursor and the write cursor is committed to be
-		 * played.  If we don't actually have data there, we've underrun. 
-		 * (If buffer_bytes_filled == buffersize, then it's full, and can't be
-		 * an underrun.) 
-		 */
+		 * played.  If we don't actually have data there, we've underrun. */
 
 		/* We're already underrunning, which means the play cursor has passed valid
 		 * data.  Let's move the cursor forward. */
-		if( buffer_bytes_filled < buffersize &&
-		   (!contained(first_byte_filled, write_cursor, cursorstart) ||
-		    !contained(first_byte_filled, write_cursor, cursorend)) )
+		if( !contained(first_byte_filled, write_cursor, cursorstart) ||
+		    !contained(first_byte_filled, write_cursor, cursorend) )
 		{
 			int missed_by = cursorend - write_cursor;
 			wrap( missed_by, buffersize );
