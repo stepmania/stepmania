@@ -272,8 +272,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="archutils\win32\verinc 
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
+				CommandLine="archutils\win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -1124,7 +1125,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
 					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_Null.h">
+						RelativePath=".\arch\LoadingWindow\LoadingWindow_Xbox.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\LoadingWindow\LoadingWindow_Xbox.h">
 					</File>
 				</Filter>
 				<Filter
