@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_CNAMBUF		(0x20000)
 #define MAX_FNAMBUF		(0x200000)
@@ -64,7 +65,36 @@ bool findline(const char *searchstr) {
 
 ///////////////////////////////////////////////////////////////////////////
 
+/* dbghelp UnDecorateSymbolName() doesn't handle anonymous namespaces,
+ * which look like "?A0x30dd143a".  Remove "@?A0x????????"; we don't
+ * want to see "<anonymous namespace>::" in crash dump output, anyway. */
+void RemoveAnonymousNamespaces( char *p )
+{
+	while( p = strstr( p, "@?A" ) )
+	{
+		int skip = 0, i;
+		if( strlen(p) < 13 )
+			break;
+
+		for( i = 5; i < 13; ++i )
+			if( !isxdigit(p[i]) )
+				skip = 1;
+		if( p[3] != '0' || p[4] != 'x' )
+			skip = 1;
+		if( skip )
+		{
+			++p;
+			continue;
+		}
+
+		memmove( p, p+13, strlen(p+13)+1 );
+	}
+
+}
+
 void parsename(long rva, char *func_name) {
+	RemoveAnonymousNamespaces( func_name );
+	 
 	fnamptr = strtack(fnamptr, func_name, fnambuf+MAX_FNAMBUF);
 	if(!fnamptr)
 		throw "Too many func names; increase MAX_FNAMBUF.";
