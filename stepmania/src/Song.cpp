@@ -576,27 +576,31 @@ void Song::TidyUpData()
 			continue;	// skip
 
 		SDL_Surface *img = IMG_Load( m_sSongDir + arrayImages[i] );
-		if( img )
+		if( !img )
 		{
-			int width = img->w;
-			int height = img->h;
-			SDL_FreeSurface( img );
+			LOG->Trace("Couldn't load %s%s: %s", 
+				m_sSongDir.GetString(), arrayImages[i].GetString(), SDL_GetError());
+			continue;
+		}
 
-			if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
-			{
-				m_sBackgroundFile = arrayImages[i];
-				continue;
-			}
-			if( !HasBanner()  &&  100<=width  &&  width<=320  &&  50<=height  &&  height<=240 )
-			{
-				m_sBannerFile = arrayImages[i];
-				continue;
-			}
-			if( !HasCDTitle()  &&  width<=100  &&  height<=50 )
-			{
-				m_sCDTitleFile = arrayImages[i];
-				continue;
-			}
+		const int width = img->w;
+		const int height = img->h;
+		SDL_FreeSurface( img );
+
+		if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
+		{
+			m_sBackgroundFile = arrayImages[i];
+			continue;
+		}
+		if( !HasBanner()  &&  100<=width  &&  width<=320  &&  50<=height  &&  height<=240 )
+		{
+			m_sBannerFile = arrayImages[i];
+			continue;
+		}
+		if( !HasCDTitle()  &&  width<=100  &&  height<=50 )
+		{
+			m_sCDTitleFile = arrayImages[i];
+			continue;
 		}
 	}
 
