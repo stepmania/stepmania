@@ -178,7 +178,8 @@ public:
 	float	m_fTugLifePercentP1;
 	float	m_fSuperMeter[NUM_PLAYERS];	// between 0 and NUM_ATTACK_LEVELS
 	
-	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
+	bool	m_bAttackBeganThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
+	bool	m_bAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
 	void GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ); // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );

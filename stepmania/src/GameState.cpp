@@ -171,7 +171,7 @@ void GameState::Update( float fDelta )
 		}
 
 		/* See if any attacks are ending. */
-		m_bActiveAttackEndedThisUpdate[p] = false;
+		m_bAttackEndedThisUpdate[p] = false;
 
 		for( s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		{
@@ -189,7 +189,7 @@ void GameState::Update( float fDelta )
 			/* ending */
 			m_ActiveAttacks[p][s].fSecsRemaining = 0;
 			m_ActiveAttacks[p][s].sModifier = "";
-			m_bActiveAttackEndedThisUpdate[p] = true;
+			m_bAttackEndedThisUpdate[p] = true;
 			RebuildPlayerOptions = true;
 		}
 
@@ -690,6 +690,8 @@ void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, flo
 void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
 	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifier.c_str(), target+1, a.fStartSecond );
+
+	m_bAttackBeganThisUpdate[target] = true;
 
 	// search for an open slot
 	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )

@@ -14,6 +14,8 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 
+#define TEXT_ON_COMMAND( p )	THEME->GetMetric("AttackDisplay",ssprintf("TextP%dOnCommand",p+1))
+
 
 AttackDisplay::AttackDisplay()
 {
@@ -27,13 +29,30 @@ void AttackDisplay::Update( float fDelta )
 	ActorFrame::Update( fDelta );
 
 	// FIXME: Make GAMESTATE->m_ActiveAttacks a vector
-	if( !GAMESTATE->m_ActiveAttacks[m_PlayerNumber][0].IsBlank() )
+	if( GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
 	{
+		// don't handle this again
+		GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] = false;
+
+		int s;
+		for( s=0; s<GameState::MAX_SIMULTANEOUS_ATTACKS; s++ )
+		{
+			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fStartSecond >= 0 )
+				continue; /* hasn't started yet */
+
+			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fSecsRemaining <= 0 )
+				continue; /* ended already */
+
+			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].IsBlank() )
+				continue;
+
+			break;
+		}
+
+		CString sText = GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier;
+
 		m_textAttack.SetDiffuseAlpha( 1 );
-		m_textAttack.SetText( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][0].sModifier );
-	}
-	else
-	{
-		m_textAttack.SetDiffuseAlpha( 0 );
+		m_textAttack.SetText( sText );
+		m_textAttack.Command( TEXT_ON_COMMAND(m_PlayerNumber) );
 	}
 }

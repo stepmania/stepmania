@@ -98,7 +98,7 @@ void Inventory::Load( PlayerNumber pn )
 
 void Inventory::Update( float fDelta )
 {
-	if( GAMESTATE->m_bActiveAttackEndedThisUpdate[m_PlayerNumber] )
+	if( GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber] )
 		m_soundItemEnding.Play();
 
 	PlayerNumber pn = m_PlayerNumber;

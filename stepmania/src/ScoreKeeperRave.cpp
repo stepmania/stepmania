@@ -71,7 +71,7 @@ void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 
 void ScoreKeeperRave::Update( float fDelta )
 {
-	if( GAMESTATE->m_bActiveAttackEndedThisUpdate[m_PlayerNumber] )
+	if( GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber] )
 		m_soundAttackEnding.Play();
 }
 
