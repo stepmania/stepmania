@@ -402,6 +402,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BackFromOpts:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		NSMAN->ReportNSSOnOff(1);
 		GAMESTATE->m_bEditing = false;
 		NSMAN->ReportPlayerOptions();
 		break;
@@ -450,6 +451,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 		break;
 	case SelectOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		NSMAN->ReportNSSOnOff(0);
 		GAMESTATE->m_bEditing = true;
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
 		break;
@@ -497,6 +499,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 		break;
 	case SelectOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		NSMAN->ReportNSSOnOff(0);
 		GAMESTATE->m_bEditing = true;
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
 		break;
