@@ -112,7 +112,7 @@ RageFileManager::RageFileManager()
 	/* All Windows data goes in the directory one level above the executable. */
 	CStringArray parts;
 	split( DirOfExecutable, "/", parts );
-	ASSERT( parts.size() > 1 );
+	RAGE_ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
 	RageFileManager::Mount( "dir", Dir, "" );
 #else
