@@ -49,7 +49,7 @@ CourseEntryDisplay::CourseEntryDisplay()
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","CourseEntryDisplay bar") );
 	this->AddChild( &m_sprFrame );
 
-	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
+	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","CourseEntryDisplay number") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.EnableShadow( false );
 	this->AddChild( &m_textNumber );
