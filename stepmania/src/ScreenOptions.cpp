@@ -83,7 +83,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
 	m_framePage.SetTweenX( 0 );
-	ZeroMemory(&m_OptionDim, sizeof(m_OptionDim));
+	memset(&m_OptionDim, 0, sizeof(m_OptionDim));
 }
 
 void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bUseIcons )
