@@ -482,7 +482,6 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Show\nBanners",		ShowBanners,		"OFF","ON" ),
 
 	/* Sound options */
-	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
 	ConfOption( "Resampling\nQuality",	ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ),
 	ConfOption( "Attract\nSound Frequency",	AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ),
 	ConfOption( "Sound\nVolume",		SoundVolume,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","10%" ),
