@@ -125,6 +125,7 @@ public:
 		paste_at_begin_marker,
 		clear,
 		quantize,
+		turn,
 		transform,
 		play,
 		record,
@@ -133,7 +134,8 @@ public:
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers );
-	enum TransformType { little, wide, big, quick, left, right, mirror, shuffle, super_shuffle, backwards, swap_sides, NUM_TRANSFORM_TYPES };
+	enum TurnType { left, right, mirror, shuffle, super_shuffle, backwards, swap_sides, NUM_TURN_TYPES };
+	enum TransformType { little, wide, big, quick, skippy, NUM_TRANSFORM_TYPES };
 
 	enum EditNotesStatisticsChoice {
 		difficulty,

@@ -1046,26 +1046,34 @@ void NoteDataUtil::Wide( NoteData &in )
 
 void NoteDataUtil::Big( NoteData &in )
 {
-	InsertIntelligentTaps(in,1.0f);	// add 8ths
+	InsertIntelligentTaps(in,1.0f,0.5f);	// add 8ths between 4ths
 }
 
 void NoteDataUtil::Quick( NoteData &in )
 {
-	InsertIntelligentTaps(in,0.5f);	// add 16ths
+	InsertIntelligentTaps(in,0.5f,0.25f);	// add 16ths between 8ths
 }
 
-void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval )
+void NoteDataUtil::Skippy( NoteData &in )
 {
+	InsertIntelligentTaps(in,1.0f,0.75f);	// add 16ths between 4ths
+}
+
+void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset )
+{
+	ASSERT( fInsertBeatOffset <= fBeatInterval );
+
 	in.ConvertHoldNotesTo4s();
 
-	// insert 16th between all 4th-8ths
+	// insert a beat in the middle of every fBeatInterval
 	int max_row = in.GetLastRow();
 	int rows_per_interval = BeatToNoteRow( fBeatInterval );
+	int insert_row_offset = BeatToNoteRow( fInsertBeatOffset );
 	for( int i=0; i<=max_row; i+=rows_per_interval ) 
 	{
 		int iRowEarlier = i;
 		int iRowLater = i + rows_per_interval;
-		int iRowMiddle = i + rows_per_interval/2;
+		int iRowToAdd = i + insert_row_offset;
 		if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTap(iRowEarlier)!=1 )
 			continue;
 		if( in.GetNumTapNonEmptyTracks(iRowLater)!=1 || in.GetNumTracksWithTap(iRowLater)!=1 )
@@ -1098,7 +1106,7 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval )
 					break;
 			}
 
-		in.SetTapNote(iTrackOfNoteMiddle, iRowMiddle, TAP_TAP);
+		in.SetTapNote(iTrackOfNoteMiddle, iRowToAdd, TAP_TAP);
 	}
 
 	in.Convert4sToHoldNotes();

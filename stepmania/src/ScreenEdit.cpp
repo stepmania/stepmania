@@ -148,7 +148,8 @@ MiniMenuDefinition g_AreaMenu =
 		{ "Paste at begin marker",	true, 1, 0, {""} },
 		{ "Clear",					true, 1, 0, {""} },
 		{ "Quantize",				true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
-		{ "Transform",				true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
+		{ "Turn",					true, ScreenEdit::NUM_TURN_TYPES, 0, {"Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
+		{ "Transform",				true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Skippy"} },
 		{ "Play selection",			true, 1, 0, {""} },
 		{ "Record in selection",	true, 1, 0, {""} },
 		{ "Insert blank beat and shift down", true, 1, 0, {""} },
@@ -1283,17 +1284,13 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				NoteDataUtil::SnapToNearestNoteType( m_NoteFieldEdit, nt, nt, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
 			}
 			break;
-		case transform:
+		case turn:
 			{
 				HandleAreaMenuChoice( cut, NULL );
 				
-				TransformType tt = (TransformType)iAnswers[c];
+				TurnType tt = (TurnType)iAnswers[c];
 				switch( tt )
 				{
-				case little:		NoteDataUtil::Little( m_Clipboard );							break;
-				case wide:			NoteDataUtil::Wide( m_Clipboard );								break;
-				case big:			NoteDataUtil::Big( m_Clipboard );								break;
-				case quick:			NoteDataUtil::Quick( m_Clipboard );								break;
 				case left:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::left );			break;
 				case right:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::right );			break;
 				case mirror:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::mirror );		break;
@@ -1301,6 +1298,24 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::super_shuffle );	break;
 				case backwards:		NoteDataUtil::Backwards( m_Clipboard );							break;
 				case swap_sides:	NoteDataUtil::SwapSides( m_Clipboard );							break;
+				default:		ASSERT(0);
+				}
+
+				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+			}
+			break;
+		case transform:
+			{
+				HandleAreaMenuChoice( cut, NULL );
+				
+				TransformType tt = (TransformType)iAnswers[c];
+				switch( tt )
+				{
+				case little:		NoteDataUtil::Little( m_Clipboard );	break;
+				case wide:			NoteDataUtil::Wide( m_Clipboard );		break;
+				case big:			NoteDataUtil::Big( m_Clipboard );		break;
+				case quick:			NoteDataUtil::Quick( m_Clipboard );		break;
+				case skippy:		NoteDataUtil::Skippy( m_Clipboard );	break;
 				default:		ASSERT(0);
 				}
 
