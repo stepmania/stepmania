@@ -10,6 +10,12 @@ ARFLAGS = -cr	# ar needs the dash on OpenBSD
 RANLIB = ranlib
 UNAME = $(shell uname)
 
+CXXFLAGS = -O3
+
+# -fno-strict-aliasing is needed to prevent crashes on keygen in g++ 3.2 and 3.3 with -O3. -glenn
+CXXFLAGS += -fno-strict-aliasing
+#CXXFLAGS = -g -O0
+
 ifeq ($(UNAME),)	# for DJGPP, where uname doesn't exist
 CXXFLAGS += -mbnu210
 else
