@@ -50,6 +50,8 @@ PrefsManager::PrefsManager()
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;
 	m_bDelayedEscape = true;
+	m_bHowToPlay = true;
+
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
@@ -92,6 +94,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "DelayedEscape",			m_bDelayedEscape );
 	ini.GetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
 	ini.GetValueB( "Options", "Vsync",					m_bVsync );
+	ini.GetValueB( "Options", "HowToPlay",				m_bHowToPlay );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -133,6 +136,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "DelayedEscape",			m_bDelayedEscape );
 	ini.SetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",					m_bVsync );
+	ini.SetValueB( "Options", "HowToPlay",				m_bHowToPlay );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 

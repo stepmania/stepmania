@@ -49,6 +49,7 @@ public:
 	float	m_fLifeDifficultyScale;
 	bool	m_bAutoPlay;
 	bool	m_bDelayedEscape;
+	bool	m_bHowToPlay;
 	
 	CStringArray m_asAdditionalSongFolders;
 

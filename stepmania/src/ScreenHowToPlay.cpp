@@ -39,8 +39,15 @@ ScreenHowToPlay::ScreenHowToPlay()
 		THEME->GetPathTo("Graphics","How To Play Top Edge"), 
 		HELP_TEXT, false, true, TIMER_SECONDS
 		);
-	m_Menu.TweenOnScreenFromMenu( SM_None );
 	this->AddChild( &m_Menu );
+
+	if(!PREFSMAN->m_bHowToPlay)
+	{
+		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
+		return;
+	}
+
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 
 	CString sHowToPlayPath;
 	switch( GAMESTATE->m_PlayMode )
