@@ -454,29 +454,29 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 
 	/* This is used for Oni percentage displays.  Grading values are currently in
 	 * StageStats::GetGrade. */
-	int TapScoreValues[NUM_TAP_NOTE_SCORES] =
+	switch( tns )
 	{
-		0,
-		PREFSMAN->m_iPercentScoreWeightHitMine,
-		PREFSMAN->m_iPercentScoreWeightMiss,
-		PREFSMAN->m_iPercentScoreWeightBoo,
-		PREFSMAN->m_iPercentScoreWeightGood,
-		PREFSMAN->m_iPercentScoreWeightGreat,
-		PREFSMAN->m_iPercentScoreWeightPerfect,
-		PREFSMAN->m_iPercentScoreWeightMarvelous,
-	};
-	return TapScoreValues[tns];
+	case TNS_NONE:		return 0;
+	case TNS_HIT_MINE:	return PREFSMAN->m_iPercentScoreWeightHitMine;
+	case TNS_MISS:		return PREFSMAN->m_iPercentScoreWeightMiss;
+	case TNS_BOO:		return PREFSMAN->m_iPercentScoreWeightBoo;
+	case TNS_GOOD:		return PREFSMAN->m_iPercentScoreWeightGood;
+	case TNS_GREAT:		return PREFSMAN->m_iPercentScoreWeightGreat;
+	case TNS_PERFECT:	return PREFSMAN->m_iPercentScoreWeightPerfect;
+	case TNS_MARVELOUS:	return PREFSMAN->m_iPercentScoreWeightMarvelous;
+	default: FAIL_M( ssprintf("%i", tns) );
+	}
 }
 
 int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
-	int HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
+	switch( hns )
 	{
-		0,
-		PREFSMAN->m_iPercentScoreWeightOK,
-		PREFSMAN->m_iPercentScoreWeightNG,
-	};
-	return HoldScoreValues[hns];
+	case HNS_NONE: return 0;
+	case HNS_NG: return PREFSMAN->m_iPercentScoreWeightNG;
+	case HNS_OK: return PREFSMAN->m_iPercentScoreWeightOK;
+	default: FAIL_M( ssprintf("%i", hns) );
+	}
 }
 
 /*
