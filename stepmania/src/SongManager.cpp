@@ -26,7 +26,7 @@
 #include "StepsUtil.h"
 #include "CourseUtil.h"
 #include "RageFileManager.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "CatalogXml.h"
 #include "Foreach.h"
 #include "StatsManager.h"

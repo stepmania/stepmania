@@ -15,7 +15,7 @@
 #include "GameSoundManager.h"
 #include "ActorUtil.h"
 #include "RageTimer.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "Course.h"
 #include "LightsManager.h"
 #include "ProfileManager.h"

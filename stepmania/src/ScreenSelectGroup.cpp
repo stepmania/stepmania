@@ -13,7 +13,7 @@
 #include <map>
 #include "ActorUtil.h"
 #include "GameState.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "MenuTimer.h"
 #include "SongUtil.h"
 

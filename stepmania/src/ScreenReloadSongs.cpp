@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenReloadSongs.h"
 #include "SongManager.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "ScreenManager.h"
 #include "RageTimer.h"
 #include "RageLog.h"

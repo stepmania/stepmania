@@ -16,7 +16,7 @@
 #include "GameSoundManager.h"
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "ProductInfo.h"
 #include "LightsManager.h"
 #include "CodeDetector.h"

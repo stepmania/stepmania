@@ -4,7 +4,7 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "RageLog.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "SongManager.h"
 #include "ActorUtil.h"
 #include "song.h"

@@ -55,7 +55,7 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 #include "BannerCache.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
 #include "LightsManager.h"

@@ -17,7 +17,7 @@
 #include "RageFileManager.h"
 #include "ScoreKeeperMAX2.h"
 #include "crypto/CryptRand.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "XmlFile.h"
 #include "Foreach.h"
 #include "CatalogXml.h"

@@ -11,7 +11,7 @@
 #include "Steps.h"
 #include "ScreenAttract.h"
 #include "RageUtil.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "Course.h"
 #include "ThemeManager.h"
 #include "Style.h"

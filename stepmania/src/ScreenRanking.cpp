@@ -11,7 +11,7 @@
 #include "ActorUtil.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "ScreenDimensions.h"
 
 static const CString PageTypeNames[NUM_PAGE_TYPES] = {

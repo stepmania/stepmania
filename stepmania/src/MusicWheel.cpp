@@ -16,7 +16,7 @@
 #include "RageTextureManager.h"
 #include "Banner.h"
 #include "Steps.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "GameCommand.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"

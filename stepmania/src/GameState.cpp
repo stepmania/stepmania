@@ -14,7 +14,7 @@
 #include "GameCommand.h"
 #include "NoteFieldPositioning.h"
 #include "Character.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
 #include "arch/arch.h"

@@ -20,7 +20,7 @@
 #include "Command.h"
 #include "arch/Dialog/Dialog.h"
 #include "Bookkeeper.h"
-#include "UnlockSystem.h"
+#include "UnlockManager.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"
