@@ -290,7 +290,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				this->AddChild( &m_LargeBanner );
 
 				m_sprLargeBannerFrame.Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
-				m_sprLargeBannerFrame.SetName( "LargeBanner" );
+				m_sprLargeBannerFrame.SetName( "LargeBannerFrame" );
 				UtilSetXYAndOnCommand( m_sprLargeBannerFrame, "ScreenEvaluation" );
 				this->AddChild( &m_sprLargeBannerFrame );
 
