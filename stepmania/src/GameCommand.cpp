@@ -56,6 +56,7 @@ void GameCommand::Init()
 
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
+	m_bFillMachineStats = false;
 	m_bTransferStatsFromMachine = false;
 	m_bTransferStatsToMachine = false;
 	m_bInsertCredit = false;
@@ -352,6 +353,10 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		{
 			m_bClearMachineStats = true;
 		}
+		else if( sName == "fillmachinestats" )
+		{
+			m_bFillMachineStats = true;
+		}
 		else if( sName == "transferstatsfrommachine" )
 		{
 			m_bTransferStatsFromMachine = true;
@@ -565,6 +570,31 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	Apply( vpns );
 }
 
+static HighScore MakeRandomHighScore()
+{
+	HighScore hs;
+	hs.sName = (char)('A'+rand()%26);
+	hs.grade = (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER_1, GRADE_TIER_5 );
+	hs.iScore = rand()%100*1000;
+	hs.fPercentDP = randomf( 50.0f, 100.0f );
+	hs.fSurviveSeconds = randomf( 30.0f, 100.0f );
+	PlayerOptions po;
+	po.ChooseRandomMofifiers();
+	hs.sModifiers = po.GetString();
+	hs.dateTime = DateTime::GetNowDateTime();
+	hs.sPlayerGuid = Profile::MakeGuid();
+	hs.sMachineGuid = Profile::MakeGuid();
+	hs.iProductID = rand()%10;
+	FOREACH_TapNoteScore( tns )
+		hs.iTapNoteScores[tns] = rand() % 100;
+	FOREACH_HoldNoteScore( hns )
+		hs.iHoldNoteScores[hns] = rand() % 100;
+	FOREACH_RadarCategory( rc )
+		hs.radarValues.m_fValues[rc] = randomf( 0, 1 );
+
+	return hs;
+}
+
 void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 {
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
@@ -701,6 +731,43 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 		pProfile->m_sGuid = sGuid;
 		PROFILEMAN->SaveMachineProfile();
 		SCREENMAN->SystemMessage( "Machine stats cleared." );
+	}
+	if( m_bFillMachineStats )
+	{
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+
+		vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
+		FOREACH( Song*, vpAllSongs, pSong )
+		{
+			vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
+			FOREACH( Steps*, vpAllSteps, pSteps )
+			{
+				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
+				{
+					int iIndex = 0;
+					pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(), iIndex );
+				}
+			}
+		}
+		
+		vector<Course*> vpAllCourses;
+		SONGMAN->GetAllCourses( vpAllCourses, true );
+		FOREACH( Course*, vpAllCourses, pCourse )
+		{
+			vector<Trail*> vpAllTrails;
+			(*pCourse)->GetAllTrails( vpAllTrails );
+			FOREACH( Trail*, vpAllTrails, pTrail )
+			{
+				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
+				{
+					int iIndex = 0;
+					pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(), iIndex );
+				}
+			}
+		}
+		
+		PROFILEMAN->SaveMachineProfile();
+		SCREENMAN->SystemMessage( "Machine stats filled." );
 	}
 	if( m_bTransferStatsFromMachine )
 	{

@@ -67,6 +67,7 @@ public:
 
 	bool m_bClearBookkeepingData;
 	bool m_bClearMachineStats;
+	bool m_bFillMachineStats;	// for testing
 	bool m_bTransferStatsFromMachine;
 	bool m_bTransferStatsToMachine;
 	bool m_bInsertCredit;
