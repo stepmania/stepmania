@@ -1,3 +1,5 @@
+/* ScoreDisplayPercentage - ScoreDisplay implementation for a percentage display. */
+
 #ifndef SCORE_DISPLAY_PERCENTAGE_H
 #define SCORE_DISPLAY_PERCENTAGE_H
 
@@ -5,7 +7,7 @@
 #include "PercentageDisplay.h"
 #include "Sprite.h"
 
-class ScoreDisplayPercentage : public ScoreDisplay
+class ScoreDisplayPercentage: public ScoreDisplay
 {
 public:
 	ScoreDisplayPercentage();

@@ -1,4 +1,4 @@
-/* SMLoader - reads a Song from an .SM file. */
+/* SMLoader - Reads a Song from an .SM file. */
 
 #ifndef NOTES_LOADER_SM_H
 #define NOTES_LOADER_SM_H
