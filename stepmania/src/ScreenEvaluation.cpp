@@ -841,7 +841,7 @@ void ScreenEvaluation::Init()
 				}
 				break;
 			default:
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(best_grade)) );
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToOldString(best_grade)) );
 				break;
 			}
 			break;
