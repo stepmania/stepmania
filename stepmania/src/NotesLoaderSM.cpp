@@ -264,7 +264,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 					out.AddBackgroundChange( change );
 					break;
 				default:
-					LOG->Warn("Invalid #BGCHANGES%s value \"%s\" was ignored",
+					LOG->Warn("Invalid #%s value \"%s\" was ignored",
 						sValueName.c_str(), aBGChangeExpressions[b].c_str());
 					break;
 				}
