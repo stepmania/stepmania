@@ -6,6 +6,17 @@
 #include "PrefsManager.h"
 #include "RageFileManager.h"
 #include "TimingData.h"
+CString GradeToString( Grade g )
+{
+        // string is meant to be human readable
+        switch( g )
+        {
+        case GRADE_NO_DATA:     return "NoData";
+        case GRADE_FAILED:      return "Failed";
+        default:
+                return ssprintf("%02d",g+1);
+        }
+};
 
 CString InitialWorkingDirectory = ".";
 CString DirOfExecutable = ".";
@@ -124,6 +135,18 @@ int q = 0;
 //		}
 	}
 LOG->Trace("... %i in %f", q, foobar.GetDeltaTime());
+
+	TimingData test2;
+	test2.AddBPMSegment( BPMSegment(0, 60) );
+	test2.AddStopSegment( StopSegment(0, 1) );
+	CHECK( test2.GetBeatFromElapsedTime(-1), -1.0f );
+	CHECK( test2.GetBeatFromElapsedTime(0), 0.0f );
+	CHECK( test2.GetBeatFromElapsedTime(1), 0.0f );
+	CHECK( test2.GetBeatFromElapsedTime(2), 1.0f );
+	CHECK( test2.GetElapsedTimeFromBeat(-1), -1.0f );
+	CHECK( test2.GetElapsedTimeFromBeat(0), 0.0f );
+	CHECK( test2.GetElapsedTimeFromBeat(1), 2.0f );
+	CHECK( test2.GetElapsedTimeFromBeat(2), 3.0f );
 }
 
 int main()
