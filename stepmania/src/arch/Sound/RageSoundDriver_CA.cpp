@@ -50,7 +50,7 @@ static CString FormatToString( int fmt )
 }
 
 RageSound_CA::RageSound_CA()
-{	
+{
 	try
 	{
 		AudioDeviceID dID;
