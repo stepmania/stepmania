@@ -923,8 +923,8 @@ bool Song::HasEdits( NotesType nt ) const
 
 bool CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 {
-	//Prefer transliterations to full titles
-	int ret = pSong1->GetTranslitMainTitle().CompareNoCase(pSong1->GetTranslitMainTitle());
+	// Prefer transliterations to full titles
+	int ret = pSong1->GetTranslitMainTitle().CompareNoCase(pSong2->GetTranslitMainTitle());
 	if(ret < 0) return true;
 	if(ret > 0) return false;
 
