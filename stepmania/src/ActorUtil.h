@@ -11,16 +11,18 @@ struct XNode;
 typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
 
 // Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file.
-#define REGISTER_ACTOR_CLASS( className ) \
+#define REGISTER_ACTOR_CLASS_WITH_NAME( className, externalClassName ) \
 	Actor* Create##className(const CString& sDir, const XNode* pNode) { \
 		className *pRet = new className; \
 		pRet->LoadFromNode(sDir, pNode); \
 		return pRet; } \
 	class Register##className { \
 	public: \
-		Register##className() { ActorUtil::Register(#className,Create##className); } \
+		Register##className() { ActorUtil::Register(#externalClassName,Create##className); } \
 	}; \
 	static Register##className register##className;
+
+#define REGISTER_ACTOR_CLASS( className ) REGISTER_ACTOR_CLASS_WITH_NAME( className, className )
 
 namespace ActorUtil
 {
