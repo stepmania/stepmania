@@ -59,6 +59,8 @@ static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
+
+	CodeDetector::RefreshCacheItems();
  
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select course music") );
 
