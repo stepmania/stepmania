@@ -15,7 +15,8 @@ class DifficultyList: public ActorFrame
 {
 public:
 	DifficultyList();
-	~DifficultyList();
+	virtual ~DifficultyList();
+	virtual void SetName( const CString &sName, const CString &sID = "" );
 
 	void Load();
 	void SetFromGameState();
@@ -30,6 +31,12 @@ private:
 	int GetCurrentRowIndex( PlayerNumber pn ) const;
 	void HideRows();
 	CString GetDifficultyString( Difficulty d ) const;
+
+	ThemeMetric<float> ITEMS_SPACING_Y;
+	ThemeMetric<float> DESCRIPTION_MAX_WIDTH;
+	ThemeMetric<float> NUM_SHOWN_ITEMS;
+	ThemeMetric<bool> CAPITALIZE_DIFFICULTY_NAMES;
+	ThemeMetric<apActorCommands> MOVE_COMMAND;
 
 	AutoActor		m_Cursors[NUM_PLAYERS];
 	ActorFrame		m_CursorFrames[NUM_PLAYERS];

@@ -13,12 +13,6 @@
 #include "CommonMetrics.h"
 #include "Command.h"
 
-#define ITEMS_SPACING_Y				THEME->GetMetricF(m_sName,"ItemsSpacingY")
-#define DESCRIPTION_MAX_WIDTH		THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
-#define NUM_SHOWN_ITEMS				THEME->GetMetricI(m_sName,"NumShownItems")
-#define CAPITALIZE_DIFFICULTY_NAMES	THEME->GetMetric( m_sName,"CapitalizeDifficultyNames" )
-#define MOVE_COMMAND				THEME->GetMetricA(m_sName,"MoveCommand")
-
 #define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG
 
 DifficultyList::DifficultyList()
@@ -28,6 +22,17 @@ DifficultyList::DifficultyList()
 
 DifficultyList::~DifficultyList()
 {
+}
+
+void DifficultyList::SetName( const CString &sName, const CString &sID )
+{
+	ActorFrame::SetName( sName, sID );
+
+        ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
+	DESCRIPTION_MAX_WIDTH.Load( m_sName, "DescriptionMaxWidth" );
+	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );
+	CAPITALIZE_DIFFICULTY_NAMES.Load( m_sName, "CapitalizeDifficultyNames" );
+	MOVE_COMMAND.Load( m_sName, "MoveCommand" );
 }
 
 void DifficultyList::Load()
