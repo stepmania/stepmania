@@ -1163,16 +1163,39 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			 * We may want to metric this, but for now, leave it like MAX/EX. -Chris */
 
 			/*
-			 * Start the music going now, but don't actually make any noise for
-			 * at least 2.5 seconds.  (This is so we scroll on screen smoothly.)
+			 * Don't actually reach any notes for at least 5.5 seconds.
+			 * "Here We Go" takes about two seconds, we want a half second or so of
+			 * a clear view, so we don't want any notes for 2.5 seconds, plus three
+			 * seconds until we actually begin the HWG.
+			 */
+			const float MinTimeToNotes = 5.5f;
+
+			/*
+			 * Tell the music to start, but don't actually make any noise for
+			 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
 			 *
-			 * Further, don't actually reach any notes for at least 5 seconds,
-			 * so we have time for the "Ready, Here We Go" sequence. */
-			float delay = StartPlayingSong( 3.0f, 1.5f );
+			 * Use 1.5 seconds to (try to) start when "Ready" is fading in;
+			 * 2.5 for when it's fading out.
+			 *
+			 * The last set of timings was aiming for 1. fade in "Ready", 2. fade
+			 * out "Ready", 3. music starts, 4. fade in "HWG"; the current timing
+			 * is 1. fade in "Ready" and start music, 2. fade out "Ready", 3. fade
+			 * in "HWG".
+			 *
+			 * This is only a minimum: the music might be started later, to meet
+			 * the minimum-time-to-notes value.  If you're writing song data,
+			 * and you want to make sure we get ideal timing here, make sure there's
+			 * a bit of space at the beginning of the music with no steps. */
+			const float MinTimeToMusic = 1.5f;
+
+			float delay = StartPlayingSong( MinTimeToNotes, MinTimeToMusic );
 
 			/* Start the Here We Go sequence 2.5 seconds before notes, so we
 			 * have time to fade in and fade out. */
 			this->SendScreenMessage( SM_StartHereWeGo, 3.0f );
+			// use this for HWG right as the notes are starting
+			// this->SendScreenMessage( SM_StartHereWeGo, delay - 3.0f );
+			delay; /* hush compiler */
 		}
 		break;
 	case SM_User+1:
