@@ -508,23 +508,14 @@ void StripCrnl(CString &s)
 /* path is a .redir pathname.  Read it and return the real one. */
 CString DerefRedir(const CString &path)
 {
-	CString sDir, sFName, sExt;
-	splitrelpath( path, sDir, sFName, sExt );
-
-	if(sExt != "redir") 
+	if( GetExtension(path) != "redir" )
 	{
 		CString path2 = path;
 		ResolvePath( path2 );
 		return path2;
 	}
 
-	CString sNewFileName;
-	{
-		ifstream file(path);
-		getline(file, sNewFileName);
-	}
-
-	StripCrnl(sNewFileName);
+	CString sNewFileName = GetRedirContents( path );
 
 	/* Empty is invalid. */
 	if(sNewFileName == "")
@@ -532,7 +523,7 @@ CString DerefRedir(const CString &path)
 
 	FixSlashesInPlace( sNewFileName );
 
-	CString path2 = sDir+sNewFileName;
+	CString path2 = Dirname(path) + sNewFileName;
 
 	CollapsePath( path2 );
 
@@ -546,11 +537,6 @@ CString DerefRedir(const CString &path)
 
 CString GetRedirContents(const CString &path)
 {
-	CString sDir, sFName, sExt;
-	splitrelpath( path, sDir, sFName, sExt );
-
-	ASSERT( sExt == "redir");	// don't ever call this on a non-redirect
-
 	CString sNewFileName;
 	{
 		ifstream file(path);

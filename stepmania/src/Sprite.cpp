@@ -84,12 +84,6 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 
 	m_sSpritePath = ID.filename;
 
-
-	// Split for the directory.  We'll need it below
-	CString sFontDir, sFontFileName, sFontExtension;
-	splitrelpath( m_sSpritePath, sFontDir, sFontFileName, sFontExtension );
-
-
 	// read sprite file
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
@@ -101,7 +95,8 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 	if( sTextureFile == ""  )
 		RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
 
-	ID.filename = sFontDir + sTextureFile;	// save the path of the real texture
+	// save the path of the real texture
+	ID.filename = Dirname(m_sSpritePath) + sTextureFile;
 	{
 		vector<CString> asElementPaths;
 		GetDirListing( ID.filename + "*", asElementPaths, false, true );

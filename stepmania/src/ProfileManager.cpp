@@ -121,11 +121,8 @@ bool Profile::LoadFromIni( CString sIniPath )
 {
 	Init();
 
-	CString sDir, sFName, sExt;
-	splitrelpath( sIniPath, sDir, sFName, sExt );
-	
 	CStringArray asBits;
-	split( sDir, SLASH, asBits, true );
+	split( Dirname(sIniPath), SLASH, asBits, true );
 	CString sLastDir = asBits.back();	// this is a number name, e.g. "0000001"
 
 	// Fill in a default value in case ini doesn't have it.

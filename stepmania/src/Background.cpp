@@ -145,8 +145,7 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
-		CString sThrowAway, sExt;
-		splitrelpath( asFiles[0], sThrowAway, sThrowAway, sExt );
+		const CString sExt = GetExtension( asFiles[0]) ;
 		if( sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
 			sExt.CompareNoCase("mpeg")==0 )
