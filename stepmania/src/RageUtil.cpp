@@ -19,6 +19,7 @@ unsigned long randseed = time(NULL);
 #include <math.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fstream>
 
 int power_of_two(int input)
 {
@@ -745,4 +746,25 @@ void TrimRight(CString &str, const char *s)
 	/* Delete from n to the end.  If n == str.size(), nothing is deleted;
 	 * if n == 0, the whole string is erased. */
 	str.erase(str.begin()+n, str.end());
+}
+
+/* path is a .redir pathname.  Read it and return the real one. */
+CString DerefRedir(const CString &path)
+{
+	CString sDir, sFName, sExt;
+	splitrelpath( path, sDir, sFName, sExt );
+
+	if(sExt != "redir") return path;
+
+	CString sNewFileName;
+	{
+		ifstream file(path);
+		getline(file, sNewFileName);
+	}
+
+	/* Empty is invalid. */
+	if(sNewFileName == "")
+		return "";
+
+	return sDir+sNewFileName;
 }

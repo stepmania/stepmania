@@ -189,6 +189,8 @@ float calc_stddev(const float *start, const float *end);
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
 
+CString DerefRedir(const CString &path);
+
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif

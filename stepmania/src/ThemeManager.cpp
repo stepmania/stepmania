@@ -20,7 +20,6 @@
 #include "IniFile.h"
 #include "RageTimer.h"
 
-#include <fstream>
 using namespace std;
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -131,14 +130,14 @@ try_element_again:
 
 	// look for a redirect
 	GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.redir", asPossibleElementFilePaths, false, true );
-	if( !asPossibleElementFilePaths.empty() )
+/*	if( !asPossibleElementFilePaths.empty() )
 	{
 		ifstream file(asPossibleElementFilePaths[0]);
 		CString sLine;
 		getline(file, sLine);
 	}
 
-
+*/
 	///////////////////////////////////////
 	// Search both the current theme and the default theme dirs for this element
 	///////////////////////////////////////
@@ -197,27 +196,20 @@ try_element_again:
 	asPossibleElementFilePaths[0].MakeLower();
 	if( asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
 	{
-		CString sRedirFilePath = asPossibleElementFilePaths[0];
+		CString sNewFilePath = DerefRedir(asPossibleElementFilePaths[0]);
 		
-		CString sDir, sFName, sExt;
-		splitrelpath( sRedirFilePath, sDir, sFName, sExt );
-
-		CString sNewFileName;
+		if( sNewFilePath == ""  ||  !DoesFileExist(sNewFilePath) )
 		{
-			ifstream file(sRedirFilePath);
-			getline(file, sNewFileName );
-//			CString sNewFilePath = sDir+"\\"+sNewFileName; // This is what it used to be, FONT redirs were getting extra slashes
-		// at the start of their file names, so I took out this extra slash - Andy.
-		}
+			CString message = ssprintf(
+						"The redirect '%s' points to the file '%s', which does not exist."
+						"Verify that this redirect is correct.",
+						asPossibleElementFilePaths[0].GetString(), sNewFilePath.GetString());
 
-		CString sNewFilePath = sDir+sNewFileName;
-		if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
-		{
 #ifdef _DEBUG
-			if( IDRETRY == MessageBox(NULL,"ThemeManager",ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString()), MB_RETRYCANCEL ) )
+			if( MessageBox(NULL, "ThemeManager", message.GetString(), MB_RETRYCANCEL ) == IDRETRY)
 				goto try_element_again;
 #endif
-			RageException::Throw( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString() ); 
+			RageException::Throw( "%s", message.GetString() ); 
 		}
 		else
 			return sNewFilePath;
