@@ -18,7 +18,7 @@
 #include "UnlockSystem.h"
 #include "SongManager.h"
 #include "ActorUtil.h"
-#include "Song.h"
+#include "song.h"
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
