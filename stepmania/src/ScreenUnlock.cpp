@@ -80,6 +80,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
 	this->PostScreenMessage( SM_BeginFadingOut, 
-		THEME->GetMetricI("ScreenUnlock", "TimeToDisplay") );
+		THEME->GetMetricF("ScreenUnlock", "TimeToDisplay") );
 
 }
