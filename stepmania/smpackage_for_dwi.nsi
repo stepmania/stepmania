@@ -36,15 +36,6 @@ DirText " " "IMPORTANT!  Select your DWI directory:"
 ;
 Function .onInit
 
-; force uninstall of previous version using NSIS
-IfFileExists "$INSTDIR\uninst.exe" prompt_uninstall_nsis old_nsis_not_installed
-prompt_uninstall_nsis:
-MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of StepMania must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_nsis
-Abort
-do_uninstall_nsis:
-Exec "$INSTDIR\uninst.exe"
-old_nsis_not_installed:
-
 FunctionEnd
 
 
@@ -56,12 +47,12 @@ Section ""
 ; write out uninstaller
 SetOutPath "$INSTDIR"
 SetOverwrite on
-WriteUninstaller "$INSTDIR\uninst.exe"
+WriteUninstaller "$INSTDIR\uninstall smpackage.exe"
 
 ; add registry entries
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "" "$INSTDIR"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
-WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninst.exe"'
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall smpackage.exe"'
 
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "StepMania package"
@@ -73,13 +64,14 @@ WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 SetOverwrite ifnewer
 
 SetOutPath "$INSTDIR"
-File "smpackage.exe"
+File "Program\smpackage.exe"
+File "Program\zlib1.dll"
 
 ; Create Start Menu icons
 SetShellVarContext all	; install in "All Users" if NT
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME}.lnk" "$INSTDIR\smpackage.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME}.lnk" "$INSTDIR\uninst.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME}.lnk" "$INSTDIR\uninstall smpackage.exe"
 
 Exec '$WINDIR\explorer.exe "$SMPROGRAMS\${PRODUCT_ID}\"'
 
@@ -94,7 +86,7 @@ UninstallText "This will uninstall StepMania from your system.$\nAny add-on pack
 Section Uninstall
 
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
-Delete "$INSTDIR\uninst.exe"
+Delete "$INSTDIR\uninstall smpackage.exe"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\StepMania"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\StepMania"
 
@@ -103,6 +95,7 @@ DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
 
 Delete "$INSTDIR\smpackage.exe"
+Delete "$INSTDIR\zlib1.dll"
 
 RMDir "$INSTDIR"	; will delete only if empty
 
