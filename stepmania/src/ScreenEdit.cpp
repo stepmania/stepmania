@@ -709,7 +709,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			GAMESTATE->m_fSongBeat += fBeatsToMove;
-			GAMESTATE->m_fSongBeat = clamp( GAMESTATE->m_fSongBeat, 0, MAX_BEATS-1 );
+			GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
 			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			m_soundChangeLine.Play();
 		}
