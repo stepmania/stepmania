@@ -126,19 +126,19 @@ void StatsManager::CommitStatsToProfiles()
 	//
 	FOREACH_HumanPlayer( pn )
 	{
-		int iNumTapsAndHolds	= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
-		int iNumJumps			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
-		int iNumHolds			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
-		int iNumMines			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
-		int iNumHands			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
-		float fCaloriesBurned	= STATSMAN->m_CurStageStats.m_player[pn].fCaloriesBurned;
+		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
+		int iNumMines			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
+		int iNumHands			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
+		float fCaloriesBurned	= m_CurStageStats.m_player[pn].fCaloriesBurned;
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
 	}
 
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = (int)truncf(STATSMAN->m_CurStageStats.fGameplaySeconds);
+	int iGameplaySeconds = (int)truncf(m_CurStageStats.fGameplaySeconds);
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iCurrentCombo = 0;
@@ -154,11 +154,11 @@ void StatsManager::CommitStatsToProfiles()
 			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 			pPlayerProfile->m_iCurrentCombo = 
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				STATSMAN->m_CurStageStats.m_player[pn].iCurCombo : 
+				m_CurStageStats.m_player[pn].iCurCombo : 
 				0;
 		}
 
-		const StageStats& ss = STATSMAN->m_CurStageStats;
+		const StageStats& ss = m_CurStageStats;
 		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
 
 		if( pPlayerProfile )
