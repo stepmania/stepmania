@@ -197,17 +197,24 @@ int Alsa9Buf::GetNumFramesToFill( int writeahead )
 {
     snd_pcm_sframes_t avail_frames = snd_pcm_avail_update(pcm);
 	
-	/* If this happens, we've underrun by avail_frames-total_frames frames.  If we fill in that
-	 * number of frames, then we won't actually skip any music; there'll just be a delay.  Don't
-	 * do that; it means the beat of the music will shift, which is much harder to recover
-	 * from while playing. */
-/*	if( avail_frames > total_frames )
+	if( avail_frames > total_frames )
 	{
-		int size = avail_frames-total_frames;
-		snd_pcm_forward( pcm, size );
-		LOG->Trace("ur write %i", size);
+		/* underrun */
+		const int size = avail_frames-total_frames;
+		LOG->Trace("underrun (%i frames)", size);
+		int large_skip_threshold = 2 * samplerate;
+
+		/* For small underruns, ignore them.  We'll return the maximum writeahead and ALSA will
+		 * just discard the data.  GetPosition will return consistent values during this time,
+		 * so arrows will continue to scroll smoothly until the music catches up. */
+		if( size >= large_skip_threshold )
+		{
+			/* It's a large skip.  Catch up.  If we fall too far behind, the sound thread will
+			 * be decoding as fast as it can, which will steal too many cycles from the rendering
+			 * thread. */
+			snd_pcm_forward( pcm, size );
+		}
 	}
-*/
 	
 	if( avail_frames < 0 && Recover(avail_frames) )
 		avail_frames = snd_pcm_avail_update(pcm);
