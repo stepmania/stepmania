@@ -5,6 +5,7 @@ const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
 
+/* If a sound is smaller than this, we'll load it entirely into memory. */
 const int max_prebuf_size = 1024*256;
 
 int SoundReader_Preload::total_samples() const

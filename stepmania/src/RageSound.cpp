@@ -100,8 +100,6 @@ RageSound::RageSound(const RageSound &cpy)
 	stream.Sample = NULL;
 
 	original = cpy.original;
-	full_buf = cpy.full_buf;
-	big = cpy.big;
 	m_StartSample = cpy.m_StartSample;
 	m_LengthSamples = cpy.m_LengthSamples;
 	StopMode = cpy.StopMode;
@@ -112,11 +110,8 @@ RageSound::RageSound(const RageSound &cpy)
 	speed_input_samples = cpy.speed_input_samples;
 	speed_output_samples = cpy.speed_output_samples;
 
-	if(big)
-	{
-		stream.buf.reserve(internal_buffer_size);
-		stream.Sample = cpy.stream.Sample->Copy();
-	}
+	stream.buf.reserve(internal_buffer_size);
+	stream.Sample = cpy.stream.Sample->Copy();
 
 	/* Load() won't work on a copy if m_sFilePath is already set, so
 	 * copy this down here. */
@@ -136,8 +131,6 @@ void RageSound::Unload()
 	
 	m_sFilePath = "";
 	stream.buf.clear();
-
-	full_buf.erase();
 }
 
 /* This is called upon fatal failure.  Replace the sound with silence. */
@@ -146,13 +139,10 @@ void RageSound::Fail(CString reason)
 	delete stream.Sample;
 	stream.Sample = NULL;
 
-	big = false;
-
-	full_buf.erase();
-	/* XXX untested
+	/* XXX 
 	 * full_buf.append(0, 1024); should be OK, but VC6 is broken ... */
 	basic_string<char> empty(1024, 0);
-	full_buf.insert(full_buf.end(), empty.begin(), empty.end());
+//	full_buf.insert(full_buf.end(), empty.begin(), empty.end());
 	position = 0;
 	
 	LOG->Warn("Decoding %s failed: %s",
@@ -181,9 +171,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 
-	/* Try to decode into full_buf. */
-	big = true;
-
+	/* Try to precache. */
 	if(precache)
 	{
 		SoundReader_Preload *Preload = new SoundReader_Preload;
@@ -196,7 +184,6 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		delete Preload;
 	}
 	stream.Sample = NewSample;
-//	stream.Sample->SetPosition_Accurate(0);
 
 	return true;
 }
@@ -220,21 +207,14 @@ void RageSound::SetLengthSeconds(float secs)
 
 void RageSound::Update(float delta)
 {
-	if(playing && big && delta)
+	if(playing && delta)
 		FillBuf(int(delta * samplerate * samplesize));
 }
 
 /* Return the number of bytes available in the input buffer. */
 int RageSound::Bytes_Available() const
 {
-	if(big)
-		return stream.buf.size();
-
-	unsigned byte_pos = position * samplesize; /* samples -> bytes */
-	if(byte_pos > full_buf.size())
-		return 0; /* eof */
-
-	return full_buf.size() - byte_pos;
+	return stream.buf.size();
 }
 
 #include <math.h>
@@ -302,9 +282,6 @@ void RageSound::RateChange(char *buf, int &cnt,
 int RageSound::FillBuf(int bytes)
 {
 	LockMut(SOUNDMAN->lock);
-
-	if(!big)
-		return 0; /* prebuffer is already fully loaded */
 
 	ASSERT(stream.Sample);
 
@@ -381,19 +358,12 @@ int RageSound::GetData(char *buffer, int size)
 		got = min(got, size);
 		if(buffer)
 			memset(buffer, 0, got);
-	} else if(big) {
+	} else {
 		/* Feed data out of our streaming buffer. */
 		ASSERT(stream.Sample);
 		got = min(int(stream.buf.size()), size);
 		if(buffer)
 			stream.buf.read(buffer, got);
-	} else {
-		/* Feed data out of our full buffer. */
-		int byte_pos = position * samplesize;
-		got = min(int(full_buf.size())-byte_pos, size);
-		got = max(got, 0);
-		if(buffer)
-			memcpy(buffer, full_buf.data()+byte_pos, got);
 	}
 
 	return got;
@@ -562,22 +532,17 @@ void RageSound::Stop()
 
 float RageSound::GetLengthSeconds()
 {
-	if(big) {
-		ASSERT(stream.Sample);
-		int len = stream.Sample->GetLength();
+	ASSERT(stream.Sample);
+	int len = stream.Sample->GetLength();
 
-		if(len < 0)
-		{
-			LOG->Warn("GetLengthSeconds failed on %s: %s",
-				GetLoadedFilePath().GetString(), stream.Sample->GetError().c_str() );
-			return -1;
-		}
-
-		return len / 1000.f; /* ms -> secs */
-	} else {
-		/* We have the whole file loaded; just return the position. */
-		return full_buf.size() / (float(samplerate)*samplesize);
+	if(len < 0)
+	{
+		LOG->Warn("GetLengthSeconds failed on %s: %s",
+			GetLoadedFilePath().GetString(), stream.Sample->GetError().c_str() );
+		return -1;
 	}
+
+	return len / 1000.f; /* ms -> secs */
 }
 
 float RageSound::GetPositionSeconds() const
@@ -684,19 +649,6 @@ bool RageSound::SetPositionSamples( int samples )
 	 * to do this in floating point to avoid overflow. */
 	int ms = int(float(samples) * 1000.f / samplerate);
 	ms = max(ms, 0);
-
-	if(!big) {
-		/* Just make sure the position is in range. */
-		if(position*samplesize < int(full_buf.size()))
-			return true;
-
-		/* We were told to seek beyond EOF.  This could be a truncated file
-		 * or invalid data.  Warn about it and jump back to the beginning. */
-		LOG->Warn("SetPositionSamples: %i ms is beyond EOF in %s",
-			ms, GetLoadedFilePath().GetString());
-		position = 0;
-		return false;
-	}
 
 	stream.buf.clear();
 

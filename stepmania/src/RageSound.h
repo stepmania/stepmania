@@ -82,9 +82,6 @@ public:
 	float GetPlaybackRate() const { return float(speed_input_samples) / speed_output_samples; }
 	bool IsPlaying() const { return playing; }
 	CString GetLoadedFilePath() const { return m_sFilePath; }
-	
-	/* Query only: */
-	bool IsStreaming() const { return big; }
 
 private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
@@ -97,13 +94,6 @@ private:
 		CircBuf buf;
 	} stream;
 	int FillBuf(int bytes);
-
-	/* These are only used when big == false: */
-	basic_string<char> full_buf;
-
-	/* If true, we're streaming data through sample and buf.  If false, the entire
-	 * file is pre-loaded into full_buf. */
-	bool big;
 
 	/* Sound blocks we've sent out recently through GetPCM.  We keep track
 	 * of each block for the last four calls of GetPCM. */
