@@ -160,8 +160,6 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 	for( int i=0; i<m_BPMSegments.GetSize(); i++ ) // foreach BPMSegment
 	{
-		const BPMSegment &this_seg = m_BPMSegments[i];
-
 		float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
 		bool bIsLastBPMSegment = i==m_BPMSegments.GetSize()-1;
 		float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
@@ -360,8 +358,8 @@ bool Song::LoadFromSongDir( CString sDir )
 	//
 	// First look in the cache for this song (without loading NoteData)
 	//
-	int iDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
-	if( GetHashForDirectory(m_sSongDir) == iDirHash && // this cache is up to date 
+	unsigned DirHash = SONGINDEX->GetCacheHash(m_sSongDir);
+	if( GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
 		DoesFileExist(GetCacheFilePath()))	
 	{
 		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
