@@ -26,6 +26,7 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut );
 
 static int RunProgram( const char *path, char *const args[], CString &out )
 {
+	LOG->Trace( "Running \"%s\"", path );
 	int fds[2];
 	if( pipe(fds) == -1 )
 		return -1;
@@ -411,7 +412,6 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 		CString sCommand = "/usr/sbin/lsusb";
 		char *szParams[] = { "/usr/sbin/lsusb", "-v", NULL }; 
 		CString sOutput;
-		LOG->Trace( sCommand );
 		RunProgram( sCommand, szParams, sOutput );
 		
 		CStringArray vsLines;
@@ -430,7 +430,6 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 			if( iRet == 1 )
 			{
 				usbd.iBus = iBus;
-				LOG->Trace( "iBus = %d", iBus );
 				continue;       // stop processing this line
 			}
 			
@@ -440,7 +439,6 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 			if( iRet == 2 )
 			{
 				usbd.sSerial = szSerial;
-				LOG->Trace( "sSerial = %s", szSerial );
 				continue;       // stop processing this line
 			}
 			
@@ -452,8 +450,8 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 				if( iClass == 8 )       // storage class
 				{		      
 					vDevicesOut.push_back( usbd );
-					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
-						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
+					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sSerial  = %s",
+						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str() );
 				}
 				continue;       // stop processing this line
 			}
@@ -464,7 +462,7 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 		// Find the usb-storage device index for all storage class devices.
 		
 		const CString sDir = "/proc/scsi/usb-storage/";
-		LOG->Trace( sDir );
+		LOG->Trace( "Scanning %s", sDir.c_str() );
 		DIR *dirp = opendir( sDir );
 		if( dirp )
 		{
@@ -554,7 +552,7 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
 		
 		CString fn = "/etc/fstab";
-		LOG->Trace( fn );
+		LOG->Trace( "Reading %s", fn.c_str() );
 		RageFile f;
 		if( !f.Open(fn) )
 		{
@@ -609,6 +607,8 @@ leave:
 		UsbStorageDevice& usbd = vDevicesOut[i];
 		if( usbd.sOsMountDir.empty() )
 		{
+			LOG->Trace( "Ignoring %s (couldn't find in /etc/fstab)", usbd.sSerial.c_str() );
+
 			vDevicesOut.erase( vDevicesOut.begin()+i );
 			--i;
 		}
