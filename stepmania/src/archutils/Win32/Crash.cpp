@@ -151,15 +151,6 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 
-	/* If we're fullscreen, the fullscreen d3d window will obscure
-	 * the crash dialog.  Do this before we suspend threads, or it'll
-	 * deadlock if the thread controlling this window has been stopped. */
-	/* XXX problem: If the sound thread crashes at the same time the main
-	 * thread tells it to shut down, the main thread will be blocking waiting
-	 * for the sound thread to finish; we'll come here and deadlock waiting for
-	 * it to hide.  Hmmmmm. */
-	ShowWindow( g_hWndMain, SW_HIDE );
-
 	RageThread::HaltAllThreads( false );
 
 	static bool InHere = false;
@@ -210,6 +201,14 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	/* In case something goes amiss before the user can view the crash
 	 * dump, save it now. */
 	DoSave(pExc);
+
+	/* Now things get more risky.  If we're fullscreen, the window will obscure the
+	 * crash dialog.  Try to hide the window.  We stopped threads above; we need to
+	 * resume them now, or ShowWindow will deadlock.  Things might blow up here;
+	 * do this after DoSave, so we always write a crash dump. */
+	RageThread::ResumeAllThreads();
+	ShowWindow( g_hWndMain, SW_HIDE );
+	RageThread::HaltAllThreads( false );
 
 	if( g_bAutoRestart )
 		Win32RestartProgram();
