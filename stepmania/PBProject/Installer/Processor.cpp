@@ -186,7 +186,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         mLabel = parts[1];
         if (mLabels.find(mLabel) != mLabels.end())
         {
-            mReturnStack.push(nextLine + 1);
+            mReturnStack.push(nextLine);
             nextLine = mLabels[mLabel];
             mLabel = "";
             return;
@@ -209,7 +209,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         {
             return;
         }
-        mReturnStack.push(nextLine + 1);
+        mReturnStack.push(nextLine);
         if (mLabels.find(mLabel) != mLabels.end())
         {
             nextLine = mLabels[mLabel];
