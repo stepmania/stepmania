@@ -208,30 +208,6 @@ I'll probably do this once I figure out a good place to display warnings.
 
 *********
 
-An override file.  Some people put their data on CD; it'd be nice to
-be able to tweak song data without actually rewriting the whole thing.
-Also, some people may not want to modify the original data at all
-("keep the source data prestine!").  I'm not sure if this should be
-done with internal data (eg. specific to given song options) or
-generic, applying to given .SM #OPTIONs.  The latter is cleaner, but
-we don't always load from .SM's.  (Hmm, maybe a way to apply SM
-options on top of a loaded song?)
-
-This shouldn't allow changing steps at all (but it should allow changing
-difficulty for existing steps).
-
-UI is tricky.  Perhaps just the EditMenu song selector, with an icon
-or color showing songs that currently have overrides ...
-
-(Useful but I don't need it right now, so "some day".)
-
-********
-
-Debug options.  Options that most users don't need, but I don't want
-to edit .INIs manually.  Show FPS can go here.
-
-********
-
 I don't like needing to use the keyboard to configure my pad; it's
 awkward.  A mode to simply scan through inputs isn't good; it'll be
 too easy to make false inputs.  Delayed inputs suck (eg. bmdx).
@@ -241,20 +217,6 @@ configuring two controllers one key at a time would be a pain.  (KM
 even more so.)  In that case, we can just scan, though.
 
 Low-pri; I'll do this if I figure out a good way.
-
-********
-
-Also, we have special cases for different hardware, and we'll only
-be getting more of these (such as the converter that toggles on the
-axis when opposite pad buttons are pressed); an autodetection mode
-would be useful, so the user doesn't have to play with options.
-"configure DDR pad via USB converter" -> "press up"; we know if we
-need to ignore the axis; if not, "press up and down"; we know if we
-need the toggle axis workaround.
-
-This is probably difficult to implement reliably without having
-access to all of the distinct adapter types, since this is very
-special-cased.
 
 ********
 
@@ -268,15 +230,6 @@ Option to turn off menu music (except for song previews).
 ********
 
 Don't export *.old in SMZIPs.
-
-********
-
-Make autogen go through combinations of arrows.
-
-That is, right now we just walk through consecutive arrows.  DDR
-to Pump results in DL, DR, C and UR being used or UL, C, UR, DR.
-Instead, walk through all combinations of 4; 11110, 11101, 11011,
-10111, 01111, so more patterns are possible.
 
 ********
 
@@ -297,10 +250,6 @@ textures, 16 bpp framebuffer.  Jumping to 32bpp textures costs 20 fps.
 We're more fillbound than most apps: we don't draw very many polys,
 but backgrounds can result in multiple fullscreen passes.
 (Okay, this isn't a TODO ...)
-
-********
-
-debug option to show console in release
 
 ********
 
