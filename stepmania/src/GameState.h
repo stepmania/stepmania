@@ -280,6 +280,13 @@ public:
 	CoinMode	GetCoinMode();
 	Premium		GetPremium();
 	
+	//
+	// Edit stuff
+	//
+	StepsType	m_stEdit;
+	Steps		*m_pStepsEditSource;
+	StepsType	m_stEditSource;
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

@@ -22,6 +22,7 @@
 #define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)			THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
+#define STEPS_TYPES_TO_HIDE			THEME->GetMetric ("OptionRowHandler","StepsTypesToHide")
 
 static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
@@ -82,10 +83,12 @@ public:
 	void FillList( OptionRowDefinition &defOut, CString param );
 	void FillNoteSkins( OptionRowDefinition &defOut );
 	void FillSteps( OptionRowDefinition &defOut );
+	void FillEditsAndNull( OptionRowDefinition &defOut );
 	void FillCharacters( OptionRowDefinition &defOut );
 	void FillStyles( OptionRowDefinition &defOut );
 	void FillGroups( OptionRowDefinition &defOut );
 	void FillDifficulties( OptionRowDefinition &defOut );
+	void FillSongsInCurrentSongGroup( OptionRowDefinition &defOut );
 };
 
 class OptionRowHandlerLua : public OptionRowHandler
@@ -122,6 +125,153 @@ public:
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const;
 
 	void FillConfig( OptionRowDefinition &defOut, CString param );
+};
+
+class OptionRowHandlerStepsType : public OptionRowHandler
+{
+public:
+	StepsType *m_pstToFill;
+	vector<StepsType> m_vStepsTypesToShow;
+
+	OptionRowHandlerStepsType::OptionRowHandlerStepsType() { Init(); }
+	void Init()
+	{
+		OptionRowHandler::Init();
+		m_pstToFill = NULL;
+		m_vStepsTypesToShow.clear();
+	}
+	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	{
+		if( GAMESTATE->m_pCurSteps[0] )
+		{
+			StepsType st = GAMESTATE->m_pCurSteps[0]->m_StepsType;
+			vector<StepsType>::const_iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
+			if( iter != m_vStepsTypesToShow.end() )
+			{
+				unsigned i = iter - m_vStepsTypesToShow.begin();
+				vbSelectedOut[i] = true;
+				return;
+			}
+		}
+		vbSelectedOut[0] = true;
+	}
+	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
+	{
+		int index = GetOneSelection( vbSelected );
+		*m_pstToFill = m_vStepsTypesToShow[index];
+		return 0;
+	}
+
+	void FillStepsType( OptionRowDefinition &defOut, CString sParam )
+	{
+		Init();
+		defOut.Init();
+
+		if( sParam == "EditStepsType" )
+			m_pstToFill = &GAMESTATE->m_stEdit;
+		else if( sParam == "EditSourceStepsType" )
+			m_pstToFill = &GAMESTATE->m_stEditSource;
+		else
+			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
+		
+		m_sName = sParam;
+		defOut.name = sParam;
+		defOut.bOneChoiceForAllPlayers = true;
+		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		defOut.m_bExportOnChange = true;
+
+		// calculate which StepsTypes to show
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_vStepsTypesToShow );
+
+		// subtract hidden StepsTypes
+		vector<CString> vsStepsTypesToHide;
+		split( STEPS_TYPES_TO_HIDE, ",", vsStepsTypesToHide, true );
+		for( unsigned i=0; i<vsStepsTypesToHide.size(); i++ )
+		{
+			StepsType st = GameManager::StringToStepsType(vsStepsTypesToHide[i]);
+			if( st != STEPS_TYPE_INVALID )
+			{
+				const vector<StepsType>::iterator iter = find( m_vStepsTypesToShow.begin(), m_vStepsTypesToShow.end(), st );
+				if( iter != m_vStepsTypesToShow.end() )
+					m_vStepsTypesToShow.erase( iter );
+			}
+		}
+
+		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
+		{
+			CString s = GAMEMAN->StepsTypeToString( *st );
+			defOut.choices.push_back( s );
+		}
+
+		if( *m_pstToFill == STEPS_TYPE_INVALID )
+			*m_pstToFill = m_vStepsTypesToShow[0];
+	}
+};
+
+
+class OptionRowHandlerSteps : public OptionRowHandler
+{
+public:
+	Steps **m_ppStepsToFill;
+	vector<Steps*> m_vSteps;
+
+	OptionRowHandlerSteps::OptionRowHandlerSteps() { Init(); }
+	void Init()
+	{
+		OptionRowHandler::Init();
+		m_ppStepsToFill = NULL;
+		m_vSteps.clear();
+	}
+	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
+	{
+		vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), *m_ppStepsToFill );
+		if( iter != m_vSteps.end() )
+		{
+			unsigned i = iter - m_vSteps.begin();
+			vbSelectedOut[i] = true;
+			return;
+		}
+		vbSelectedOut[0] = true;
+	}
+	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
+	{
+		int index = GetOneSelection( vbSelected );
+		*m_ppStepsToFill = m_vSteps[index];
+		return 0;
+	}
+
+	void FillSteps( OptionRowDefinition &defOut, CString sParam )
+	{
+		Init();
+		defOut.Init();
+
+		if( sParam == "EditSourceSteps" )
+			m_ppStepsToFill = &GAMESTATE->m_pStepsEditSource;
+		else
+			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
+		
+		m_sName = sParam;
+		defOut.name = sParam;
+		defOut.bOneChoiceForAllPlayers = true;
+		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		defOut.m_bExportOnChange = true;
+
+		GAMESTATE->m_pCurSong->GetSteps( m_vSteps, GAMESTATE->m_stEditSource );
+		StepsUtil::SortNotesArrayByDifficulty( m_vSteps );
+		for( unsigned i=0; i<m_vSteps.size(); i++ )
+		{
+			Steps* pSteps = m_vSteps[i];
+
+			CString s;
+			if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+				s = pSteps->GetDescription();
+			else
+				s = DifficultyToThemedString( pSteps->GetDifficulty() );
+			s += ssprintf( " (%d)", pSteps->GetMeter() );
+
+			defOut.choices.push_back( s );
+		}
+	}
 };
 
 
@@ -323,17 +473,20 @@ int OptionRowHandlerConfig::ExportOption( const OptionRowDefinition &def, Player
 /* Add the list named "ListName" to the given row/handler. */
 void OptionRowHandlerList::FillList( OptionRowDefinition &defOut, CString sListName )
 {
-	if(		 m_sName == "noteskins" )		{ FillNoteSkins( defOut );		return; }
-	else if( m_sName == "steps" )			{ FillSteps( defOut );			return; }
-	else if( m_sName == "characters" )		{ FillCharacters( defOut );		return; }
-	else if( m_sName == "styles" )			{ FillStyles( defOut );			return; }
-	else if( m_sName == "groups" )			{ FillGroups( defOut );			return; }
-	else if( m_sName == "difficulties" )	{ FillDifficulties( defOut );	return; }
+	m_sName = sListName;
+
+	if(		 m_sName.CompareNoCase("NoteSkins")==0 )	{ FillNoteSkins( defOut );		return; }
+	else if( m_sName.CompareNoCase("Steps")==0 )		{ FillSteps( defOut );			return; }
+	else if( m_sName.CompareNoCase("EditsAndNull")==0 )	{ FillEditsAndNull( defOut );	return; }
+	else if( m_sName.CompareNoCase("Characters")==0 )	{ FillCharacters( defOut );		return; }
+	else if( m_sName.CompareNoCase("Styles")==0 )		{ FillStyles( defOut );			return; }
+	else if( m_sName.CompareNoCase("Groups")==0 )		{ FillGroups( defOut );			return; }
+	else if( m_sName.CompareNoCase("Difficulties")==0 )	{ FillDifficulties( defOut );	return; }
+	else if( m_sName.CompareNoCase("SongsInCurrentSongGroup")==0 )	{ FillSongsInCurrentSongGroup( defOut );	return; }
 
 	Init();
 	defOut.Init();
 
-	m_sName = sListName;
 	m_bUseModNameForIcon = true;
 		
 	defOut.name = sListName;
@@ -372,7 +525,7 @@ void OptionRowHandlerList::FillList( OptionRowDefinition &defOut, CString sListN
 				defOut.m_vEnabledForPlayers.insert( pn );
 			}
 		}
-		else if( sName == "exportonchange" )	m_bExportOnChange = true;
+		else if( sName == "exportonchange" )	defOut.m_bExportOnChange = true;
 		else		RageException::Throw( "Unkown row flag \"%s\"", sName.c_str() );
 	}
 
@@ -498,7 +651,7 @@ void OptionRowHandlerLua::FillLua( OptionRowDefinition &defOut, CString sLuaFunc
 		lua_gettable( LUA->L, -2 );
 		if( !lua_isnil( LUA->L, -1 ) )
 		{
-			m_bExportOnChange = !!MyLua_checkboolean( LUA->L, -1 );
+			defOut.m_bExportOnChange = !!MyLua_checkboolean( LUA->L, -1 );
 		}
 		lua_pop( LUA->L, 1 ); /* pop ExportOnChange value */
 
@@ -610,6 +763,38 @@ void OptionRowHandlerList::FillSteps( OptionRowDefinition &defOut )
 			mc.m_dc = pSteps->GetDifficulty();
 			ListEntries.push_back( mc );
 		}
+	}
+}
+
+void OptionRowHandlerList::FillEditsAndNull( OptionRowDefinition &defOut )
+{
+	Init();
+	defOut.Init();
+
+	defOut.name = "EditsAndNull";
+	defOut.bOneChoiceForAllPlayers = true;
+	defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	defOut.m_bExportOnChange = true;
+
+	vector<Steps*> vSteps;
+	GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->m_stEdit, DIFFICULTY_EDIT );
+	StepsUtil::SortNotesArrayByDifficulty( vSteps );
+	FOREACH_CONST( Steps*, vSteps, p )
+	{
+		CString s = (*p)->GetDescription();
+		s += ssprintf( " (%d)", (*p)->GetMeter() );
+
+		defOut.choices.push_back( s );
+		GameCommand mc;
+		mc.m_pSteps = *p;
+		ListEntries.push_back( mc );
+	}
+
+	// Add NULL entry for a new edit
+	{
+		defOut.choices.push_back( ENTRY_NAME("NewEdit") );
+		GameCommand mc;
+		ListEntries.push_back( mc );
 	}
 }
 
@@ -752,6 +937,31 @@ void OptionRowHandlerList::FillDifficulties( OptionRowDefinition &defOut )
 	}
 }
 
+void OptionRowHandlerList::FillSongsInCurrentSongGroup( OptionRowDefinition &defOut )
+{
+	Init();
+	defOut.Init();
+
+	vector<Song*> vpSongs;
+	SONGMAN->GetSongs( vpSongs, GAMESTATE->m_sPreferredSongGroup );
+
+	if( GAMESTATE->m_pCurSong == NULL )
+		GAMESTATE->m_pCurSong = vpSongs[0];
+
+	defOut.name = "SongsInCurrentSongGroup";
+	defOut.bOneChoiceForAllPlayers = true;
+	defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	defOut.m_bExportOnChange = true;
+
+	FOREACH_CONST( Song*, vpSongs, p )
+	{
+		defOut.choices.push_back( (*p)->GetFullTranslitTitle() ); 
+		GameCommand mc;
+		mc.m_pSong = *p;
+		ListEntries.push_back( mc );
+	}
+}
+
 
 OptionRowHandler* OptionRowHandlerUtil::Make( const Command &command, OptionRowDefinition &defOut )
 {
@@ -761,9 +971,11 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Command &command, OptionRowD
 
 	const CString &name = command.GetName();
 
-	if(		 name == "list" )			{ OptionRowHandlerList *p = new OptionRowHandlerList;		p->FillList( defOut, sArg(1) );		pHand = p; }
-	else if( name == "lua" )			{ OptionRowHandlerLua *p = new OptionRowHandlerLua;			p->FillLua( defOut, sArg(1) );		pHand = p; }
-	else if( name == "conf" )			{ OptionRowHandlerConfig *p = new OptionRowHandlerConfig;	p->FillConfig( defOut, sArg(1) );	pHand = p; }
+	if(		 name == "list" )			{ OptionRowHandlerList *p = new OptionRowHandlerList;			p->FillList( defOut, sArg(1) );			pHand = p; }
+	else if( name == "lua" )			{ OptionRowHandlerLua *p = new OptionRowHandlerLua;				p->FillLua( defOut, sArg(1) );			pHand = p; }
+	else if( name == "conf" )			{ OptionRowHandlerConfig *p = new OptionRowHandlerConfig;		p->FillConfig( defOut, sArg(1) );		pHand = p; }
+	else if( name == "stepstype" )		{ OptionRowHandlerStepsType *p = new OptionRowHandlerStepsType;	p->FillStepsType( defOut, sArg(1) );	pHand = p; }
+	else if( name == "steps" )			{ OptionRowHandlerSteps *p = new OptionRowHandlerSteps;			p->FillSteps( defOut, sArg(1) );		pHand = p; }
 
 	EndHandleArgs;
 

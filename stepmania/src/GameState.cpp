@@ -207,6 +207,10 @@ void GameState::Reset()
 	m_bStatsCommitted = false;
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
+	
+	m_stEdit = STEPS_TYPE_INVALID;
+	m_pStepsEditSource = NULL;
+	m_stEditSource = STEPS_TYPE_INVALID;
 
 	ApplyCmdline();
 }
