@@ -95,10 +95,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"GIC USB Joystick",
 		"Boom USB convertor (black/gray)",
 		{
-			{ 0, JOY_16, DANCE_BUTTON_LEFT },
-			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
-			{ 0, JOY_13, DANCE_BUTTON_UP },
-			{ 0, JOY_15, DANCE_BUTTON_DOWN },
+			{ 0, JOY_16,		DANCE_BUTTON_LEFT },
+			{ 0, JOY_14,		DANCE_BUTTON_RIGHT },
+			{ 0, JOY_13,		DANCE_BUTTON_UP },
+			{ 0, JOY_15,		DANCE_BUTTON_DOWN },
 			{-1, -1, -1 },
 		}
 	},
@@ -107,10 +107,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"4 axis 16 button joystick",
 		"PC Magic Box",
 		{
-			{ 0, JOY_16, DANCE_BUTTON_LEFT },
-			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
-			{ 0, JOY_13, DANCE_BUTTON_UP },
-			{ 0, JOY_15, DANCE_BUTTON_DOWN },
+			{ 0, JOY_16,		DANCE_BUTTON_LEFT },
+			{ 0, JOY_14,		DANCE_BUTTON_RIGHT },
+			{ 0, JOY_13,		DANCE_BUTTON_UP },
+			{ 0, JOY_15,		DANCE_BUTTON_DOWN },
 			{-1, -1, -1 },
 		}
 	},
@@ -119,18 +119,18 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"GamePad Pro USB ",	// yes, there is a space at the end
 		"GamePad Pro USB",
 		{
-			{ 0, JOY_LEFT,	DANCE_BUTTON_LEFT },
-			{ 0, JOY_RIGHT,	DANCE_BUTTON_RIGHT },
-			{ 0, JOY_UP,	DANCE_BUTTON_UP },
-			{ 0, JOY_DOWN,	DANCE_BUTTON_DOWN },
-			{ 1, JOY_1,		DANCE_BUTTON_LEFT },
-			{ 1, JOY_3,		DANCE_BUTTON_RIGHT },
-			{ 1, JOY_4,		DANCE_BUTTON_UP },
-			{ 1, JOY_2,		DANCE_BUTTON_DOWN },
-			{ 0, JOY_5,		DANCE_BUTTON_UPLEFT },
-			{ 0, JOY_6,		DANCE_BUTTON_UPRIGHT },
-			{ 0, JOY_9,		DANCE_BUTTON_BACK },
-			{ 0, JOY_10,	DANCE_BUTTON_START },
+			{ 0, JOY_LEFT,		DANCE_BUTTON_LEFT },
+			{ 0, JOY_RIGHT,		DANCE_BUTTON_RIGHT },
+			{ 0, JOY_UP,		DANCE_BUTTON_UP },
+			{ 0, JOY_DOWN,		DANCE_BUTTON_DOWN },
+			{ 1, JOY_1,			DANCE_BUTTON_LEFT },
+			{ 1, JOY_3,			DANCE_BUTTON_RIGHT },
+			{ 1, JOY_4,			DANCE_BUTTON_UP },
+			{ 1, JOY_2,			DANCE_BUTTON_DOWN },
+			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT },
+			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT },
+			{ 0, JOY_9,			DANCE_BUTTON_BACK },
+			{ 0, JOY_10,		DANCE_BUTTON_START },
 			{-1, -1, -1 },
 		}
 	},
@@ -198,27 +198,27 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{-1, -1, -1 },
 		}
 	},
-        {
-	        GAME_DANCE,
-	        "0b43:0003", // The EMS USB2 doesn't provide a model string, so Linux 
-	        "EMS USB2",  // just gives us the VendorID and ModelID in hex.
-	        {
-		        // Player 1.
-	                { 0, JOY_13, DANCE_BUTTON_UP },
-	                { 0, JOY_16, DANCE_BUTTON_LEFT },
-	                { 0, JOY_14, DANCE_BUTTON_RIGHT },
-	                { 0, JOY_15, DANCE_BUTTON_DOWN },
-	                { 0, JOY_3,  DANCE_BUTTON_UPLEFT },
-	                { 0, JOY_2,  DANCE_BUTTON_UPRIGHT },
-	                { 0, JOY_10, DANCE_BUTTON_START },
-	                // Player 2.
-		        { 0, JOY_29, DANCE_BUTTON_UP,      true },
-	                { 0, JOY_30, DANCE_BUTTON_RIGHT,   true },
-	                { 0, JOY_31, DANCE_BUTTON_DOWN,    true },
-	                { 0, JOY_32, DANCE_BUTTON_LEFT,    true },
-	                { 0, JOY_18, DANCE_BUTTON_UPRIGHT, true },
-	                { 0, JOY_19, DANCE_BUTTON_UPLEFT,  true },
-	                { 0, JOY_26, DANCE_BUTTON_START,   true },
+	{
+		GAME_DANCE,
+		"0b43:0003", // The EMS USB2 doesn't provide a model string, so Linux 
+		"EMS USB2",  // just gives us the VendorID and ModelID in hex.
+		{
+			// Player 1.
+			{ 0, JOY_13,		DANCE_BUTTON_UP },
+			{ 0, JOY_16,		DANCE_BUTTON_LEFT },
+			{ 0, JOY_14,		DANCE_BUTTON_RIGHT },
+			{ 0, JOY_15,		DANCE_BUTTON_DOWN },
+			{ 0, JOY_3,			DANCE_BUTTON_UPLEFT },
+			{ 0, JOY_2,			DANCE_BUTTON_UPRIGHT },
+			{ 0, JOY_10,		DANCE_BUTTON_START },
+			// Player 2.
+			{ 0, JOY_29,		DANCE_BUTTON_UP,      true },
+			{ 0, JOY_30,		DANCE_BUTTON_RIGHT,   true },
+			{ 0, JOY_31,		DANCE_BUTTON_DOWN,    true },
+			{ 0, JOY_32,		DANCE_BUTTON_LEFT,    true },
+			{ 0, JOY_18,		DANCE_BUTTON_UPRIGHT, true },
+			{ 0, JOY_19,		DANCE_BUTTON_UPLEFT,  true },
+			{ 0, JOY_26,		DANCE_BUTTON_START,   true },
 			{-1, -1, -1 },
 		}
 	},
