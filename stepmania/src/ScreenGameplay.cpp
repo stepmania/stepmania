@@ -1053,20 +1053,18 @@ void ScreenGameplay::LoadNextSong()
 	//
 	// Load lights data
 	//
-	m_MarqueeLightsNoteData.Init();
-	m_BassLightsNoteData.Init();
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	ASSERT( GAMESTATE->m_pCurSong );
-	Steps* pStepsEasy = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_EASY, false );
-	Steps* pStepsMedium = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM, false );
-	if( pStepsEasy )	pStepsEasy->GetNoteData( &m_BassLightsNoteData );
-	if( pStepsMedium )	pStepsMedium->GetNoteData( &m_MarqueeLightsNoteData );
-	
-	// optimization: collapse to one and free unused tracks
-	NoteDataUtil::CollapseToOne(m_BassLightsNoteData);
-	m_BassLightsNoteData.SetNumTracks(1);
-	NoteDataUtil::CollapseToOne(m_MarqueeLightsNoteData);
-	m_MarqueeLightsNoteData.SetNumTracks(1);
+	{
+		m_CabinetLightsNoteData.Init();
+		ASSERT( GAMESTATE->m_pCurSong );
+		vector<Steps*> vSteps;
+		GAMESTATE->m_pCurSong->GetSteps( vSteps, STEPS_TYPE_LIGHTS_CABINET );
+		if( !vSteps.empty() )
+			vSteps[0]->GetNoteData( &m_CabinetLightsNoteData );
+
+		// Convert to 4s so that we can check if we're inside a hold with just 
+		// GetTapNote().
+		m_CabinetLightsNoteData.ConvertHoldNotesTo4s();
+	}
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
@@ -1402,11 +1400,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update lights
 	//
-	bool bBlinkMarqueeLights = false;
+	bool bBlink[NUM_CABINET_LIGHTS];
+	ZERO( bBlink );
 	bool bBlinkBassLights = false;
 	bool bCrossedABeat = false;
 	{
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds - 0.05f;	// trigger the light a tiny bit early
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds - LIGHTS_FALLOFF_SECONDS/2;	// trigger the light a tiny bit early
 		fPositionSeconds += (SOUND->GetPlayLatency()) * GAMESTATE->m_SongOptions.m_fMusicRate;
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
@@ -1421,8 +1420,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
-			bBlinkMarqueeLights |=	m_MarqueeLightsNoteData.IsThereATapOrHoldHeadAtRow( r );
-			bBlinkBassLights |=		m_BassLightsNoteData.IsThereATapOrHoldHeadAtRow( r );
+			FOREACH_CabinetLight( cl )
+				bBlink[cl] |= (m_CabinetLightsNoteData.GetTapNote( cl, r ) != TAP_EMPTY);
 		}
 
 		iRowLastCrossed = iRowNow;
@@ -1430,10 +1429,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	bool bOverrideBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat) && bCrossedABeat;
 
-	if( bOverrideBlink || bBlinkMarqueeLights )
-		LIGHTSMAN->GameplayBlinkMarqueeLights();
-	if( bOverrideBlink || bBlinkBassLights )
-		LIGHTSMAN->GameplayBlinkBassLights();
+	FOREACH_CabinetLight( cl )
+	{
+		if( bOverrideBlink || bBlink[cl] )
+			LIGHTSMAN->GameplayBlinkLight( cl );
+	}
 
 	//
 	// update song position meter

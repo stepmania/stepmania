@@ -15,6 +15,8 @@
 #include "GameInput.h"
 #include "EnumHelper.h"
 
+const float LIGHTS_FALLOFF_SECONDS = 0.1f;
+
 enum CabinetLight
 {
 	LIGHT_MARQUEE_UP_LEFT,
@@ -60,15 +62,13 @@ public:
 	
 	void Update( float fDeltaTime );
 
-	void GameplayBlinkMarqueeLights();
-	void GameplayBlinkBassLights();
+	void GameplayBlinkLight( CabinetLight cl );
 
 	void SetLightsMode( LightsMode lm );
 	LightsMode GetLightsMode();
 
 private:
-	float m_fSecsLeftInMarqueeBlink;
-	float m_fSecsLeftInBassBlink;
+	float m_fSecsLeftInBlink[NUM_CABINET_LIGHTS];
 
 	LightsDriver* m_pDriver;
 	LightsMode m_LightsMode;

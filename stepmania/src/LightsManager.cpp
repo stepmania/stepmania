@@ -54,8 +54,7 @@ LightsManager::LightsManager(CString sDriver)
 
 	m_pDriver = MakeLightsDriver(sDriver);
 
-	m_fSecsLeftInMarqueeBlink = 0;
-	m_fSecsLeftInBassBlink = 0;
+	ZERO( m_fSecsLeftInBlink );
 }
 
 LightsManager::~LightsManager()
@@ -65,14 +64,19 @@ LightsManager::~LightsManager()
 
 void LightsManager::Update( float fDeltaTime )
 {
-	m_fSecsLeftInMarqueeBlink = max( 0, m_fSecsLeftInMarqueeBlink - fDeltaTime );
-	m_fSecsLeftInBassBlink =	max( 0, m_fSecsLeftInBassBlink - fDeltaTime );
+	// update lights falloff
+	{
+		FOREACH_CabinetLight( cl )
+			m_fSecsLeftInBlink[cl] = max( 0, m_fSecsLeftInBlink[cl] - fDeltaTime );
+	}
 
 	//
-	// Update cabinet lights
+	// Set new lights state cabinet lights
 	//
-	FOREACH_CabinetLight( cl )
-		m_LightsState.m_bCabinetLights[cl] = false;
+	{
+		FOREACH_CabinetLight( cl )
+			m_LightsState.m_bCabinetLights[cl] = false;
+	}
 
 	switch( m_LightsMode )
 	{
@@ -147,17 +151,10 @@ void LightsManager::Update( float fDeltaTime )
 
 			bool bAllMarqueeLightsOn = !GAMESTATE->m_bPastHereWeGo;
 
-			bool bOn;
-			
-			bOn = bAllMarqueeLightsOn || (m_fSecsLeftInMarqueeBlink > 0);
-			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]	= bOn;
-			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT]	= bOn;
-			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]	= bOn;
-			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]	= bOn;
-
-			bOn = m_fSecsLeftInBassBlink > 0;
-			m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT]			= bOn;
-			m_LightsState.m_bCabinetLights[LIGHT_BASS_RIGHT]		= bOn;
+			{
+				FOREACH_CabinetLight( cl )
+					m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInBlink[cl] > 0 ;
+			}
 		}
 		break;
 	case LIGHTSMODE_STAGE:
@@ -264,14 +261,9 @@ void LightsManager::Update( float fDeltaTime )
 	m_pDriver->Set( &m_LightsState );
 }
 
-void LightsManager::GameplayBlinkMarqueeLights()
+void LightsManager::GameplayBlinkLight( CabinetLight cl )
 {
-	m_fSecsLeftInMarqueeBlink = 0.1f;
-}
-
-void LightsManager::GameplayBlinkBassLights()
-{
-	m_fSecsLeftInBassBlink = 0.1f;
+	m_fSecsLeftInBlink[cl] = LIGHTS_FALLOFF_SECONDS;
 }
 
 void LightsManager::SetLightsMode( LightsMode lm )

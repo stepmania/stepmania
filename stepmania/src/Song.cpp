@@ -867,23 +867,25 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, in
 		if( !Max )
 			break;
 
-		if( nt != STEPS_TYPE_INVALID && m_apNotes[i]->m_StepsType != nt ) 
+		Steps* pSteps = m_apNotes[i];
+
+		if( nt != STEPS_TYPE_INVALID && pSteps->m_StepsType != nt ) 
 			continue;
-		if( dc != DIFFICULTY_INVALID && dc != m_apNotes[i]->GetDifficulty() )
+		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
 			continue;
-		if( iMeterLow != -1 && iMeterLow > m_apNotes[i]->GetMeter() )
+		if( iMeterLow != -1 && iMeterLow > pSteps->GetMeter() )
 			continue;
-		if( iMeterHigh != -1 && iMeterHigh < m_apNotes[i]->GetMeter() )
+		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
 			continue;
-		if( sDescription != "" && sDescription != m_apNotes[i]->GetDescription() )
+		if( sDescription != "" && sDescription != pSteps->GetDescription() )
 			continue;
-		if( !bIncludeAutoGen && m_apNotes[i]->IsAutogen() )
+		if( !bIncludeAutoGen && pSteps->IsAutogen() )
 			continue;
 
 		if( Max != -1 )
 			--Max;
 
-		arrayAddTo.push_back( m_apNotes[i] );
+		arrayAddTo.push_back( pSteps );
 	}
 }
 

@@ -180,8 +180,7 @@ protected:
 
 	BeginnerHelper	m_BeginnerHelper;
 
-	NoteData		m_MarqueeLightsNoteData;
-	NoteData		m_BassLightsNoteData;
+	NoteData		m_CabinetLightsNoteData;
 };
 
 

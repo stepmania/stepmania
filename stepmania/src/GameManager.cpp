@@ -21,6 +21,7 @@
 #include "NoteSkinManager.h"
 #include "SDL_keysym.h"		// for SDLKeys
 #include "ThemeManager.h"
+#include "LightsManager.h"	// for NUM_CABINET_LIGHTS
 
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
@@ -65,8 +66,9 @@ struct {
 	{ "maniax-single",	4 },
 	{ "maniax-double",	8 },
 	{ "techno-single8", 8 },
-	{ "pnm-five", 5 },
-	{ "pnm-nine", 9 },
+	{ "pnm-five",		5 },
+	{ "pnm-nine",		9 },
+	{ "lights-cabinet",	NUM_CABINET_LIGHTS },
 };
 
 //
@@ -1031,6 +1033,106 @@ GameDef g_GameDefs[NUM_GAMES] =
 			},
 		}
 	},
+	{	// GAME_LIGHTS
+		"lights",					// m_szName
+		"Lights",					// m_szDescription
+		1,							// m_iNumControllers
+		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			"MarqueeUpLeft",
+			"MarqueeUpRight",
+			"MarqueeLrLeft",
+			"MarqueeLrRight",
+			"ButtonsLeft",
+			"ButtonsRight",
+			"BassLeft",
+			"BassRight",
+			"Start",
+			"Back",
+			"MenuLeft",
+			"MenuRight",
+			"MenuUp",
+			"MenuDown",
+			"Insert Coin",
+			"Operator",
+		},
+		{	// m_szSecondaryFunction
+			"(MenuLeft)",
+			"(MenuRight)",
+			"(MenuUp)",
+			"(MenuDown)",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"",
+			"",
+		},
+		{	// m_DedicatedMenuButton
+			LIGHTS_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			LIGHTS_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			LIGHTS_BUTTON_MENUUP,	// MENU_BUTTON_UP
+			LIGHTS_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			LIGHTS_BUTTON_START,		// MENU_BUTTON_START
+			LIGHTS_BUTTON_BACK,		// MENU_BUTTON_BACK
+			LIGHTS_BUTTON_COIN,		// MENU_BUTTON_COIN
+			LIGHTS_BUTTON_OPERATOR	// MENU_BUTTON_OPERATOR
+		},
+		{	// m_SecondaryMenuButton
+			LIGHTS_BUTTON_MARQUEE_UP_LEFT,		// MENU_BUTTON_LEFT
+			LIGHTS_BUTTON_MARQUEE_UP_RIGHT,		// MENU_BUTTON_RIGHT
+			LIGHTS_BUTTON_MARQUEE_LR_LEFT,		// MENU_BUTTON_UP
+			LIGHTS_BUTTON_MARQUEE_LR_RIGHT,		// MENU_BUTTON_DOWN
+			LIGHTS_BUTTON_START,		// MENU_BUTTON_START
+			LIGHTS_BUTTON_BACK,		// MENU_BUTTON_BACK
+			LIGHTS_BUTTON_COIN,		// MENU_BUTTON_COIN
+			LIGHTS_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
+		},
+		{	// m_iDefaultKeyboardKey
+			{	// PLAYER_1
+				SDLK_LEFT,				// LIGHTS_BUTTON_MARQUEE_UP_LEFT,
+				SDLK_RIGHT,				// LIGHTS_BUTTON_MARQUEE_UP_RIGHT,
+				SDLK_UP,				// LIGHTS_BUTTON_MARQUEE_LR_LEFT,
+				SDLK_DOWN,				// LIGHTS_BUTTON_MARQUEE_LR_RIGHT,
+				-1, //no default key 	// LIGHTS_BUTTON_BUTTONS_LEFT,
+				-1, //no default key	// LIGHTS_BUTTON_BUTTONS_RIGHT,
+				-1, //no default key 	// LIGHTS_BUTTON_BASS_LEFT,
+				-1, //no default key	// LIGHTS_BUTTON_BASS_RIGHT,
+				SDLK_RETURN,			// LIGHTS_BUTTON_START,
+				SDLK_ESCAPE,			// LIGHTS_BUTTON_BACK
+				SDLK_DELETE,			// LIGHTS_BUTTON_MENULEFT
+				SDLK_PAGEDOWN,			// LIGHTS_BUTTON_MENURIGHT
+				SDLK_HOME,				// LIGHTS_BUTTON_MENUUP
+				SDLK_END,				// LIGHTS_BUTTON_MENUDOWN
+				SDLK_F1,				// LIGHTS_BUTTON_COIN
+				SDLK_SCROLLOCK			// LIGHTS_BUTTON_OPERATOR
+			},
+			{	// PLAYER_2
+				SDLK_KP4,				// LIGHTS_BUTTON_MARQUEE_UP_LEFT,
+				SDLK_KP6,				// LIGHTS_BUTTON_MARQUEE_UP_RIGHT,
+				SDLK_KP8,				// LIGHTS_BUTTON_MARQUEE_LR_LEFT,
+				SDLK_KP2,				// LIGHTS_BUTTON_MARQUEE_LR_RIGHT,
+				SDLK_KP7,				// LIGHTS_BUTTON_BUTTONS_LEFT,
+				SDLK_KP9,				// LIGHTS_BUTTON_BUTTONS_RIGHT,
+				-1, //no default key 	// LIGHTS_BUTTON_BASS_LEFT,
+				-1, //no default key	// LIGHTS_BUTTON_BASS_RIGHT,
+				SDLK_KP_ENTER,			// LIGHTS_BUTTON_START,
+				SDLK_KP0,				// LIGHTS_BUTTON_BACK
+				SDLK_KP_DIVIDE,			// LIGHTS_BUTTON_MENULEFT
+				SDLK_KP_MULTIPLY,		// LIGHTS_BUTTON_MENURIGHT
+				SDLK_KP_MINUS,			// LIGHTS_BUTTON_MENUUP
+				SDLK_KP_PLUS,			// LIGHTS_BUTTON_MENUDOWN
+				-1,						// LIGHTS_BUTTON_COIN
+				-1						// LIGHTS_BUTTON_OPERATOR
+			},
+		}
+	},
 };
 
 StyleDef g_StyleDefs[NUM_STYLES] = 
@@ -1219,7 +1321,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 /*	{	// STYLE_DANCE_SOLO_VERSUS 
 		"dance-solo-versus",				// m_szName
-		STEPS_TYPE_DANCE_SOLO,				// m_StepsType
+ 		STEPS_TYPE_DANCE_SOLO,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		6,									// m_iColsPerPlayer
@@ -2183,6 +2285,41 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7,8
+		},
+	},
+	{	// STYLE_LIGHTS_CABINET
+		GAME_LIGHTS,							// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"cabinet",								// m_szName
+		STEPS_TYPE_LIGHTS_CABINET,				// m_StepsType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		NUM_CABINET_LIGHTS,						// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_UP_LEFT,	-DANCE_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_UP_RIGHT,	-DANCE_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_LR_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_LR_RIGHT,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BUTTONS_LEFT,		+DANCE_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BUTTONS_RIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BASS_LEFT,		+DANCE_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BASS_RIGHT,		+DANCE_COL_SPACING*3.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_UP_LEFT,	-DANCE_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_UP_RIGHT,	-DANCE_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_LR_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	LIGHTS_BUTTON_MARQUEE_LR_RIGHT,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BUTTONS_LEFT,		+DANCE_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BUTTONS_RIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BASS_LEFT,		+DANCE_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	LIGHTS_BUTTON_BASS_RIGHT,		+DANCE_COL_SPACING*3.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
 		},
 	},
 };

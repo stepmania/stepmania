@@ -22,7 +22,8 @@ enum Game
 	GAME_IIDX,		// Beatmania IIDX
 	GAME_MANIAX,	// DanceManiax
 	GAME_TECHNO,	// TechnoMotion
-	GAME_PNM,   // pop n music
+	GAME_PNM,		// pop n music
+	GAME_LIGHTS,	// cabinet lights (not really a game)
 	NUM_GAMES,		// leave this at the end
 	GAME_INVALID,
 };
