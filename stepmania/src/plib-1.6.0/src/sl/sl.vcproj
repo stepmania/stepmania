@@ -24,7 +24,7 @@
 				AdditionalIncludeDirectories="..\util,.."
 				PreprocessorDefinitions="NDEBUG,_LIB,NEEDNAMESPACESTD,HAVE_CONFIG_H,HAVE_WINDOWS_H,WIN32"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\Release/sl.pch"
 				AssemblerListingLocation=".\Release/"
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../sl.lib"
+				OutputFile=".\Release\sl.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -75,20 +75,20 @@ copy sm.h ..\..\sm.h
 				AdditionalIncludeDirectories="..\util,.."
 				PreprocessorDefinitions="_DEBUG,_LIB,NEEDNAMESPACESTD,HAVE_CONFIG_H,HAVE_WINDOWS_H,WIN32"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="1"
+				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/sl.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../sl_d.lib"
+				OutputFile="Debug\sl_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>

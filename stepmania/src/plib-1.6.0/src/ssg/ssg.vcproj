@@ -24,20 +24,20 @@
 				AdditionalIncludeDirectories="..\sg,..\util"
 				PreprocessorDefinitions="_DEBUG,WIN32,_LIB,PROXY_TEXTURES_ARE_NOT_BROKEN"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="1"
+				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/ssg.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../ssg_d.lib"
+				OutputFile="Debug\ssg_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -75,7 +75,7 @@ copy ssgKeyFlier.h ..\..\ssgKeyFlier.h
 				AdditionalIncludeDirectories="..\sg,..\util"
 				PreprocessorDefinitions="NDEBUG,WIN32,_LIB,PROXY_TEXTURES_ARE_NOT_BROKEN"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\Release/ssg.pch"
 				AssemblerListingLocation=".\Release/"
@@ -89,7 +89,7 @@ copy ssgKeyFlier.h ..\..\ssgKeyFlier.h
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../ssg.lib"
+				OutputFile=".\Release\ssg.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>

@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /Zi /O2 /I "..\sg" /I "..\util" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "PROXY_TEXTURES_ARE_NOT_BROKEN" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /I "..\sg" /I "..\util" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "PROXY_TEXTURES_ARE_NOT_BROKEN" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -70,8 +70,7 @@ PostBuild_Cmds=copy release\*.lib ..\..\*.*	copy ssg.h ..\..\ssg.h	copy ssgconf.
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /GX /Zi /Od /I "..\sg" /I "..\util" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "PROXY_TEXTURES_ARE_NOT_BROKEN" /FD /GZ /c
-# SUBTRACT CPP /YX
+# ADD CPP /nologo /MD /W3 /GX /Zi /Od /I "..\sg" /I "..\util" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "PROXY_TEXTURES_ARE_NOT_BROKEN" /FD /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -222,15 +221,15 @@ SOURCE=.\ssgLoadMD2.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=.\ssgLoadMDL_BGLTexture.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=.\ssgLoadMDL.cxx
 # End Source File
 # Begin Source File
 
 SOURCE=.\ssgLoadMDL.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ssgLoadMDL_BGLTexture.cxx
 # End Source File
 # Begin Source File
 

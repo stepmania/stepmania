@@ -24,7 +24,7 @@
 				AdditionalIncludeDirectories="..\fnt,..\sg,..\util,../../../glut/include,../../glut/include,..,../glut/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_LIB,GLUT_IS_PRESENT"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderFile=".\Release/pui.pch"
 				AssemblerListingLocation=".\Release/"
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../pui.lib"
+				OutputFile=".\Release\pui.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -73,7 +73,7 @@ copy pu.h ..\..\pu.h
 				AdditionalIncludeDirectories="..\fnt,..\sg,..\util,../../../glut/include,../../glut/include,..,../glut/include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_LIB,GLUT_IS_PRESENT"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="1"
+				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/pui.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -81,13 +81,13 @@ copy pu.h ..\..\pu.h
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../pui_d.lib"
+				OutputFile="Debug\pui_d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
