@@ -137,6 +137,9 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
+	if( m_Fade.IsClosing() || m_Fade.IsClosed() )
+		return;
+
 	GAMESTATE->m_pCurSong = Selector.GetSelectedSong();
 
 	if( !GAMESTATE->m_pCurSong->HasMusic() )
