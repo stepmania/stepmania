@@ -108,13 +108,9 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 		{
 			/* When we have lots of songs, the scale above has two problems.  First,
 			 * it biases too much: in a course with 50 songs, the first song is worth
-			 * 80k, the last 4mil, which is too much of a difference.  Second, songs
-			 * worth that little end up having a iScoreMultiplier of 0, which causes
-			 * the entire score of the song to be on the bonus. 
+			 * 80k, the last 4mil, which is too much of a difference.
 			 *
-			 * With this, each song in a 50-song course will be worth 2mil.  It won't
-			 * cause the iScoreMultiplier problem until 10*sum (below) exceeds 
-			 1000-song course will be worth 100000 */
+			 * With this, each song in a 50-song course will be worth 2mil. */
 			m_iMaxPossiblePoints = 100000000 / numSongsInCourse;
 		}
 	}
