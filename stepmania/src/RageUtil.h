@@ -30,6 +30,10 @@ inline float min(float a, int b) { return a < b? a:b; }
 inline float min(int a, float b) { return a < b? a:b; }
 inline float max(float a, int b) { return a > b? a:b; }
 inline float max(int a, float b) { return a > b? a:b; }
+inline unsigned long min(unsigned int a, unsigned long b) { return a < b? a:b; }
+inline unsigned long min(unsigned long a, unsigned int b) { return a < b? a:b; }
+inline unsigned long max(unsigned int a, unsigned long b) { return a > b? a:b; }
+inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
 
 /* Traditional defines.  Only use this if you absolutely need
  * a constant value. */
