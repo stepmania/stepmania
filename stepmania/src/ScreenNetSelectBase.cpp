@@ -11,6 +11,7 @@
 #include "MenuTimer.h"
 #include "NetworkSyncManager.h"
 #include "RageUtil.h"
+#include "GameState.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
@@ -169,7 +170,12 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 			m_sTextInput += c;
 			UpdateTextInput();
 		}
-		if( c >= ' ' ) 
+
+		//Tricky: If both players are playing, allow the 2 button through to the keymapper
+		if( c == '2' && GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
+			break;
+
+		if( c >= ' ' )
 			return;
 		break;
 	}

@@ -339,6 +339,14 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type )
 {
+	/*Tricky:  If we have a player on player 2, and there is only
+	  player 2, allow them to use player 1's controls to change 
+	  their difficulty. */
+
+	if ( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
+		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
+		pn = PLAYER_2;
+
 	if ( GAMESTATE->m_pCurSong == NULL )
 		return;
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
