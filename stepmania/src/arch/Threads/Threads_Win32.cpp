@@ -2,6 +2,7 @@
 #include "Threads_Win32.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
+#include "RageTimer.h"
 
 const int MAX_THREADS=128;
 
@@ -278,16 +279,16 @@ EventImpl_Win32::~EventImpl_Win32()
  * we don't guarantee or depend upon fair events, and SignalObjectAndWait is only
  * available in NT.  I also can't find a single function to signal an object like
  * SignalObjectAndWait, so we need to know if the object is a mutex or an event. */
-static void PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex )
+static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex, unsigned iMilliseconds = INFINITE )
 {
 	static bool bSignalObjectAndWaitUnavailable = false;
 	if( !bSignalObjectAndWaitUnavailable )
 	{
-		DWORD ret = SignalObjectAndWait( hObjectToSignal, hObjectToWaitOn, INFINITE, false );
+		DWORD ret = SignalObjectAndWait( hObjectToSignal, hObjectToWaitOn, iMilliseconds, false );
 		switch( ret )
 		{
 		case WAIT_OBJECT_0:
-			return;
+			return true;
 
 		case WAIT_ABANDONED:
 			/* The docs aren't particular about what this does, but it should never happen. */
@@ -303,6 +304,9 @@ static void PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 
 			FAIL_M( werr_ssprintf(GetLastError(), "SignalObjectAndWait") );
 
+		case WAIT_TIMEOUT:
+			return false;
+
 		default:
 			FAIL_M( "unknown" );
 		}
@@ -317,7 +321,22 @@ static void PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 	else
 		SetEvent( hObjectToSignal );
 
-	WaitForSingleObject( hObjectToWaitOn, INFINITE );
+	DWORD ret = WaitForSingleObject( hObjectToWaitOn, iMilliseconds );
+	switch( ret )
+	{
+	case WAIT_OBJECT_0:
+		return true;
+
+	case WAIT_ABANDONED:
+		/* The docs aren't particular about what this does, but it should never happen. */
+		FAIL_M( "WAIT_ABANDONED" );
+
+	case WAIT_TIMEOUT:
+		return false;
+
+	default:
+		FAIL_M( "unknown" );
+	}
 }
 
 /* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html.
@@ -328,21 +347,29 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	++m_iNumWaiting;
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
+	unsigned iMilliseconds = INFINITE;
+	if( pTimeout != NULL )
+	{
+		float fSecondsInFuture = -pTimeout->Ago();
+		iMilliseconds = (unsigned) max( 0, int( fSecondsInFuture * 1000 ) );
+	}
+
 	/* Unlock the mutex and wait for a signal. */
-	PortableSignalObjectAndWait( m_pParent->mutex, m_WakeupSema, true );
+	bool bSuccess = PortableSignalObjectAndWait( m_pParent->mutex, m_WakeupSema, true, iMilliseconds );
 
 	EnterCriticalSection( &m_iNumWaitingLock );
 	--m_iNumWaiting;
 	bool bLastWaiting = m_iNumWaiting == 0;
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* If we're the last waiter to wake up, wake up the signaller. */
-	if( bLastWaiting )
+	/* If we're the last waiter to wake up, and we were actually woken by another
+	 * thread (not by timeout), wake up the signaller. */
+	if( bLastWaiting && bSuccess )
 		PortableSignalObjectAndWait( m_WaitersDone, m_pParent->mutex, false );
 	else
 		WaitForSingleObject( m_pParent->mutex, INFINITE );
 
-	return true;
+	return bSuccess;
 }
 
 void EventImpl_Win32::Signal()
