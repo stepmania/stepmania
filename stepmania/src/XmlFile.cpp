@@ -161,7 +161,6 @@ char* _tcsepbrk( const char* psz, const char* chset, int escape )
 //========================================================
 void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
 {
-	//trim
 	if( trim )
 	{
 		while( psz && psz < end && isspace(*psz) ) psz++;
@@ -172,7 +171,6 @@ void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escap
 	if( escape )
 	{
 		len = _tcselen( escape, psz, end );
-//		char* pss = ps->GetBufferSetLength( len );
 		char* szTemp = new char[len];
 		unescape( szTemp, escape, psz, end );
 		*ps = szTemp;
@@ -180,12 +178,7 @@ void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escap
 	}
 	else
 	{
-//		char* pss = ps->GetBufferSetLength(len + 1 );
-		char* szTemp = new char[len+1];
-		memcpy( szTemp, psz, len );
-		szTemp[len] = '\0';
-		*ps = szTemp;
-		delete [] szTemp;
+		ps->assign( psz, len );
 	}
 }
 
