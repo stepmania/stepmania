@@ -1141,6 +1141,10 @@ void ScreenGameplay::PauseGame( bool bPause )
 		return;
 	}
 
+	/* Don't pause if we're already tweening out. */
+	if( bPause && m_DancingState == STATE_OUTRO )
+		return;
+
 	m_bPaused = bPause;
 	m_pSoundMusic->Pause( bPause );
 	if( bPause )
@@ -2407,6 +2411,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_Pause:
+		/* Ignore SM_Pause when in demonstration. */
+		if( GAMESTATE->m_bDemonstrationOrJukebox )
+			return;
+
 		if( !m_bPaused )
 			PauseGame( true );
 		break;
