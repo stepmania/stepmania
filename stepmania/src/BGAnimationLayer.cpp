@@ -508,13 +508,15 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 		{
 			Actor* pActor = LoadFromActorFile( sAniDir, layer );
 			this->AddChild( pActor );
+			if( bStretch )
+				pActor->StretchTo( FullScreenRectF );
+
+			/* Annoying: old BGAnimations (those in theme BGAnimations/ and, more importantly,
+			 * those included with songs) expect a 640x480 coordinate system with a default
+			 * of 320x240.  We can't just move the whole layer to the center (that'll move the
+			 * whole coordinate system, not just the default), we have to move the actor. */
 			if( !m_bGeneric )
-			{
-				if( bStretch )
-					pActor->StretchTo( FullScreenRectF );
-				else
-					pActor->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-			}
+				pActor->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		}
 		break;
 	case TYPE_PARTICLES:
