@@ -47,6 +47,18 @@ const int NUM_SCORE_DIGITS	=	9;
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
+/* We make a backface for the CDTitle by rotating it on Y and mirroring it
+ * on Y by flipping texture coordinates. */
+static void FlipSpriteHorizontally(Sprite &s)
+{
+	float Coords[8];
+	s.GetCurrentTextureCoords(Coords);
+	swap(Coords[0], Coords[6]); /* top left X <-> top right X */
+	swap(Coords[1], Coords[7]); /* top left Y <-> top right Y */
+	swap(Coords[2], Coords[4]); /* bottom left X <-> bottom left X */
+	swap(Coords[3], Coords[5]); /* bottom left Y <-> bottom left Y */
+	s.SetCustomTextureCoords(Coords);
+}
 
 ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 {
@@ -94,9 +106,21 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_sprStage );
 
-	m_sprCDTitle.SetName( "CDTitle" );
-	m_sprCDTitle.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
-	this->AddChild( &m_sprCDTitle );
+	m_sprCDTitleFront.SetName( "CDTitle" );
+	m_sprCDTitleFront.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
+	m_sprCDTitleFront.SetUseBackfaceCull(true);
+	m_sprCDTitleFront.SetDiffuse( RageColor(1,1,1,1) );
+	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 90, 0) );
+	this->AddChild( &m_sprCDTitleFront );
+
+	m_sprCDTitleBack.SetName( "CDTitle" );
+	m_sprCDTitleBack.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
+	FlipSpriteHorizontally(m_sprCDTitleBack);
+	m_sprCDTitleBack.SetUseBackfaceCull(true);
+	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
+	m_sprCDTitleBack.SetRotationY( 180 );
+	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 90, 0) );
+	this->AddChild( &m_sprCDTitleBack );
 
 	m_GrooveRadar.SetName( "Radar" );
 	if( SHOW_RADAR )
@@ -216,7 +240,8 @@ void ScreenSelectMusic::TweenOnScreen()
 	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
 	SET_XY_AND_ON_COMMAND( m_sprStage );
-	SET_XY_AND_ON_COMMAND( m_sprCDTitle );
+	SET_XY_AND_ON_COMMAND( m_sprCDTitleFront );
+	SET_XY_AND_ON_COMMAND( m_sprCDTitleBack );
 	m_GrooveRadar.TweenOnScreen();
 	SET_XY_AND_ON_COMMAND( m_GrooveRadar );
 	m_GrooveGraph.TweenOnScreen();
@@ -252,7 +277,8 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprBannerFrame );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_sprStage );
-	OFF_COMMAND( m_sprCDTitle );
+	OFF_COMMAND( m_sprCDTitleFront );
+	OFF_COMMAND( m_sprCDTitleBack );
 	m_GrooveRadar.TweenOffScreen();
 	OFF_COMMAND( m_GrooveRadar );
 	m_GrooveGraph.TweenOffScreen();
@@ -334,17 +360,6 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 			}
 		}
 	}
-
-	float fNewRotation = m_sprCDTitle.GetRotationY()+90*fDeltaTime;
-	fNewRotation = fmodf( fNewRotation, 360 );
-	m_sprCDTitle.SetRotationY( fNewRotation );
-	/* Hack: +11 fixes the switch time in the default theme.  This will break if
-	 * the sprite is moved.  To do this right, we should probably have two sprites,
-	 * one lit and one unlit, with backface culling on. */
-	if( fNewRotation > 90+11  &&  fNewRotation <= 270+11 )
-		m_sprCDTitle.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
-	else
-		m_sprCDTitle.SetDiffuse( RageColor(1,1,1,1) );
 }
 
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -778,7 +793,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			if(!no_banner_change)
 				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 			m_BPMDisplay.NoBPM();
-			m_sprCDTitle.UnloadTexture();
+			m_sprCDTitleFront.UnloadTexture();
+			m_sprCDTitleBack.UnloadTexture();
 
 			m_sprBalloon.StopTweening();
 			OFF_COMMAND( m_sprBalloon );
@@ -812,10 +828,11 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
 			}
 
-			if( pSong->HasCDTitle() )
-				m_sprCDTitle.Load( pSong->GetCDTitlePath() );
-			else
-				m_sprCDTitle.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
+			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
+			m_sprCDTitleFront.Load( CDTitlePath );
+			m_sprCDTitleBack.Load( CDTitlePath );
+			FlipSpriteHorizontally(m_sprCDTitleBack);
+
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
@@ -864,7 +881,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		if(!no_banner_change)
 			m_Banner.LoadRoulette();
 		m_BPMDisplay.NoBPM();
-		m_sprCDTitle.UnloadTexture();
+		m_sprCDTitleFront.UnloadTexture();
+		m_sprCDTitleBack.UnloadTexture();
 
 		SOUNDMAN->StopMusic();
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
@@ -879,7 +897,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		if(!no_banner_change)
 			m_Banner.LoadRandom();
 		m_BPMDisplay.NoBPM();
-		m_sprCDTitle.UnloadTexture();
+		m_sprCDTitleFront.UnloadTexture();
+		m_sprCDTitleBack.UnloadTexture();
 
 		SOUNDMAN->StopMusic();
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;

@@ -65,7 +65,7 @@ protected:
 	Sprite				m_sprBannerFrame;
 	BPMDisplay			m_BPMDisplay;
 	Sprite				m_sprStage;
-	Sprite				m_sprCDTitle;
+	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Sprite				m_AutoGenIcon[NUM_PLAYERS];
