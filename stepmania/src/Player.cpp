@@ -288,7 +288,11 @@ void Player::Update( float fDeltaTime )
 		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 	} */
 
-	const int iRowNow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
+	/* We want to send the crossed row message exactly when we cross the row--not
+	 * .5 before the row.  Use MAX3 as a test case: without rounding, autoplay steps
+	 * early. -glenn */
+	const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 	if( iRowNow >= 0 )
 	{
 		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
@@ -343,13 +347,16 @@ void Player::DrawPrimitives()
 		m_HoldJudgment[c].Draw();
 }
 
+/* It's OK for this function to search a little more than was requested. */
 int Player::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsDistance, int iDirection  )
 {
 	// look for the closest matching step
 	const int iIndexStartLookingAt = BeatToNoteRow( fBeat );
 
-	// number of elements to examine on either end of iIndexStartLookingAt
-	const int iNumElementsToExamine = BeatToNoteRow( fMaxBeatsDistance );
+	/* Number of elements to examine on either end of iIndexStartLookingAt.  Make
+	 * sure we always round up. */
+	const int iNumElementsToExamine = BeatToNoteRow( fMaxBeatsDistance + 1 );
+
 	// Start at iIndexStartLookingAt and search outward.
 	for( int delta=0; delta < iNumElementsToExamine; delta++ )
 	{
