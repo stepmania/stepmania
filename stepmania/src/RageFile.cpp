@@ -434,6 +434,51 @@ int RageFile::Seek( int offset, int whence )
 	return Seek( (int) offset );
 }
 
+void FileReading::ReadBytes( RageFile &f, void *buf, int size )
+{
+	int ret = f.Read( buf, size );
+	if( ret == -1 )
+		throw FatalError( f.GetError() );
+
+	if( ret < size )
+		throw UnexpectedEOF();
+}
+
+uint8_t FileReading::read_8( RageFile &f )
+{
+	uint8_t val;
+	ReadBytes( f, &val, sizeof(uint8_t) );
+	return val;
+}
+
+uint16_t FileReading::read_u16_le( RageFile &f )
+{
+	uint16_t val;
+	ReadBytes( f, &val, sizeof(uint16_t) );
+	return Swap16LE( val );
+}
+
+int16_t FileReading::read_16_le( RageFile &f )
+{
+	int16_t val;
+	ReadBytes( f, &val, sizeof(int16_t) );
+	return Swap16LE( val );
+}
+
+uint32_t FileReading::read_u32_le( RageFile &f )
+{
+	uint32_t val;
+	ReadBytes( f, &val, sizeof(uint32_t) );
+	return Swap32LE( val );
+}
+
+int32_t FileReading::read_32_le( RageFile &f )
+{
+	int32_t val;
+	ReadBytes( f, &val, sizeof(int32_t) );
+	return Swap32LE( val );
+}
+
 /*
  * Copyright (c) 2003-2004 Glenn Maynard, Chris Danford, Steve Checkoway
  * All rights reserved.

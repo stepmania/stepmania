@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface.h"
+using namespace FileReading;
 
 /* Tested with http://entropymine.com/jason/bmpsuite/. */
 
@@ -16,40 +17,6 @@ enum
 };
 
 struct NotBMP: public RageException  { NotBMP(): RageException("not a BMP") { } };
-struct FatalError: public RageException  { FatalError(const CString &str): RageException(str) { } };
-struct UnexpectedEOF: public RageException  { UnexpectedEOF(): RageException("Unexpected EOF") { } };
-
-
-static void ReadBytes( RageFile &f, void *buf, int size )
-{
-	int ret = f.Read( buf, size );
-	if( ret == -1 )
-		throw FatalError( f.GetError() );
-
-	if( ret < size )
-		throw UnexpectedEOF();
-}
-
-static uint8_t read_8( RageFile &f )
-{
-	uint8_t val;
-	ReadBytes( f, &val, sizeof(uint8_t) );
-    return val;
-}
-
-static uint16_t read_le16( RageFile &f )
-{
-	uint16_t val;
-	ReadBytes( f, &val, sizeof(uint16_t) );
-    return Swap16LE( val );
-}
-	
-static uint32_t read_le32( RageFile &f )
-{
-	uint32_t val;
-	ReadBytes( f, &val, sizeof(uint32_t) );
-    return Swap32LE( val );
-}
 
 static RageSurface *LoadBMP( RageFile &f, RageSurface *&ret )
 {
@@ -58,32 +25,32 @@ static RageSurface *LoadBMP( RageFile &f, RageSurface *&ret )
 	if( magic[0] != 'B' || magic[1] != 'M' )
 		throw NotBMP();
 
-	read_le32( f ); /* file size */
-	read_le32( f ); /* unused */
-	uint32_t iDataOffset = read_le32( f );
-	uint32_t iHeaderSize = read_le32( f );
+	read_u32_le( f ); /* file size */
+	read_u32_le( f ); /* unused */
+	uint32_t iDataOffset = read_u32_le( f );
+	uint32_t iHeaderSize = read_u32_le( f );
 
 	uint32_t iWidth, iHeight, iPlanes, iBPP, iCompression = COMP_BI_RGB, iColors = 0;
 	if( iHeaderSize == 12 )
 	{
 		/* OS/2 format */
-		iWidth = read_le16( f );
-		iHeight = read_le16( f );
-		iPlanes = read_le16( f );
-		iBPP = read_le16( f );
+		iWidth = read_u16_le( f );
+		iHeight = read_u16_le( f );
+		iPlanes = read_u16_le( f );
+		iBPP = read_u16_le( f );
 	}
 	else if( iHeaderSize == 40 )
 	{
-		iWidth = read_le32( f );
-		iHeight = read_le32( f );
-		iPlanes = read_le16( f );
-		iBPP = read_le16( f );
-		iCompression = read_le32( f );
-		read_le32( f ); /* bitmap size */
-		read_le32( f ); /* horiz resolution */
-		read_le32( f ); /* vert resolution */
-		iColors = read_le32( f );
-		read_le32( f ); /* "important" colors */
+		iWidth = read_u32_le( f );
+		iHeight = read_u32_le( f );
+		iPlanes = read_u16_le( f );
+		iBPP = read_u16_le( f );
+		iCompression = read_u32_le( f );
+		read_u32_le( f ); /* bitmap size */
+		read_u32_le( f ); /* horiz resolution */
+		read_u32_le( f ); /* vert resolution */
+		iColors = read_u32_le( f );
+		read_u32_le( f ); /* "important" colors */
 	}
 	else
 		throw FatalError( ssprintf( "expected header size of 40, got %u", iHeaderSize ) );
@@ -125,9 +92,9 @@ static RageSurface *LoadBMP( RageFile &f, RageSurface *&ret )
 
 	if( iCompression == COMP_BI_BITFIELDS )
 	{
-		Rmask = read_le32( f );
-		Gmask = read_le32( f );
-		Bmask = read_le32( f );
+		Rmask = read_u32_le( f );
+		Gmask = read_u32_le( f );
+		Bmask = read_u32_le( f );
 	}
 
 	RageSurface *img = CreateSurface( iWidth, iHeight, iBPP, Rmask, Gmask, Bmask, Amask );
@@ -223,9 +190,6 @@ RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSur
 		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
 	} catch( const FatalError &err ) {
 		error = err.what();
-		return RageSurfaceUtils::OPEN_FATAL_ERROR;
-	} catch( const UnexpectedEOF & ) {
-		error = "unexpected end of file";
 		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 	}
 

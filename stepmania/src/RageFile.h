@@ -91,4 +91,18 @@ private:
 	int		m_BufAvail;
 };
 
+/* Convenience wrappers for reading binary files. */
+namespace FileReading
+{
+	struct FatalError: public RageException { FatalError(const CString &str): RageException(str) { } };
+	struct UnexpectedEOF: public FatalError { UnexpectedEOF(): FatalError("Unexpected end of file") { } };
+
+	void ReadBytes( RageFile &f, void *buf, int size );
+	uint8_t read_8( RageFile &f );
+	int16_t read_16_le( RageFile &f );
+	uint16_t read_u16_le( RageFile &f );
+	int32_t read_32_le( RageFile &f );
+	uint32_t read_u32_le( RageFile &f );
+};
+
 #endif
