@@ -484,9 +484,10 @@ void ScreenStage::DrawPrimitives()
 
 	if ( STAGE_SCREEN_TYPE == SCREENTYPE_DANCE) // only DANCE uses the quadmask
 		m_quadMask.Draw();
-
 	m_frameStage.Draw();
+
 	DISPLAY->DisableZBuffer();
+
 	m_Fade.Draw();
 
 	if ( STAGE_SCREEN_TYPE == SCREENTYPE_PUMP) // only PUMP uses the song background on the stage screen

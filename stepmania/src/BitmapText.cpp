@@ -158,9 +158,9 @@ void BitmapText::DrawPrimitives()
 	int iY;	//	 the center position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_top:		iY = -(m_iNumLines-1) * iHeight;	break;
+	case align_bottom:	iY = -(m_iNumLines-1) * iHeight;	break;
 	case align_middle:	iY = -(m_iNumLines-1) * iHeight/2;	break;
-	case align_bottom:	iY = 0;								break;
+	case align_top:		iY = 0;								break;
 	default:		ASSERT( false );
 	}
 

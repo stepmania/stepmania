@@ -491,8 +491,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},	*/
 	{	// PUMP_STYLE_SINGLE
 		GAME_PUMP,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"pump-single",							// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -520,7 +520,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// PUMP_STYLE_VERSUS
 		GAME_PUMP,								// m_Game
-		false,									// m_bUsedForGameplay
+		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		"pump-versus",							// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
@@ -549,8 +549,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// PUMP_STYLE_DOUBLE
 		GAME_PUMP,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"pump-double",							// m_szName
 		NOTES_TYPE_PUMP_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
@@ -590,8 +590,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 
 	{	// EZ2_STYLE_SINGLE
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-single",							// m_szName
 		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -619,8 +619,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_SINGLE_HARD
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-single-hard",							// m_szName
 		NOTES_TYPE_EZ2_SINGLE_HARD,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -648,8 +648,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_DOUBLE
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-double",							// m_szName
 		NOTES_TYPE_EZ2_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
@@ -687,8 +687,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_REAL
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-real",							// m_szName
 		NOTES_TYPE_EZ2_REAL,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -720,8 +720,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_SINGLE_VERSUS
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-single-versus",					// m_szName
 		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -749,8 +749,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_SINGLE_VERSUS
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-single-hard-versus",				// m_szName
 		NOTES_TYPE_EZ2_SINGLE_HARD,				// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -778,8 +778,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	},
 	{	// EZ2_STYLE_REAL_VERSUS
 		GAME_EZ2,								// m_Game
-		false,									// m_bUsedForGameplay
-		false,									// m_bUsedForEdit
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
 		"ez2-real-versus",						// m_szName
 		NOTES_TYPE_EZ2_REAL,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType

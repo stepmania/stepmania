@@ -236,7 +236,7 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetHorizAlign( Actor::align_left );
-	m_textHelp.SetVertAlign( Actor::align_top );
+	m_textHelp.SetVertAlign( Actor::align_bottom );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( HELP_TEXT );
@@ -244,7 +244,7 @@ ScreenEdit::ScreenEdit()
 	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
 	m_textShortcuts.SetHorizAlign( Actor::align_left );
-	m_textShortcuts.SetVertAlign( Actor::align_bottom );
+	m_textShortcuts.SetVertAlign( Actor::align_top );
 	m_textShortcuts.SetZoom( 0.5f );
 	m_textShortcuts.SetShadowLength( 2 );
 	m_textShortcuts.SetText( SHORTCUT_TEXT );

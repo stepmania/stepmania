@@ -32,7 +32,7 @@ PrefsManager::PrefsManager()
 	m_iRefreshRate = 0;
 	m_bIgnoreJoyAxes = false;
 	m_bOnlyDedicatedMenuButtons = false;
-	m_bShowFPS = false;
+	m_bShowStats = false;
 	m_BackgroundMode = BGMODE_ANIMATIONS;
 	m_bShowDanger = true;
 	m_fBGBrightness = 0.8f;
@@ -66,7 +66,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "RefreshRate",			m_iRefreshRate );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",			m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
-	ini.GetValueB( "Options", "ShowFPS",				m_bShowFPS );
+	ini.GetValueB( "Options", "ShowStats",				m_bShowStats );
 	ini.GetValueI( "Options", "BackgroundMode",			(int&)m_BackgroundMode );
 	ini.GetValueB( "Options", "ShowDanger",				m_bShowDanger );
 	ini.GetValueF( "Options", "BGBrightness",			m_fBGBrightness );
@@ -103,7 +103,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "RefreshRate",			m_iRefreshRate );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",			m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
-	ini.SetValueB( "Options", "ShowFPS",				m_bShowFPS );
+	ini.SetValueB( "Options", "ShowStats",				m_bShowStats );
 	ini.SetValueI( "Options", "BackgroundMode",			m_BackgroundMode);
 	ini.SetValueB( "Options", "ShowDanger",				m_bShowDanger );
 	ini.SetValueF( "Options", "BGBrightness",			m_fBGBrightness );

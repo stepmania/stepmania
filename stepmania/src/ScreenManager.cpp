@@ -21,8 +21,8 @@
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 
-#define FPS_X				THEME->GetMetricF("Other","FPSX")
-#define FPS_Y				THEME->GetMetricF("Other","FPSY")
+#define STATS_X				THEME->GetMetricF("Other","StatsX")
+#define STATS_Y				THEME->GetMetricF("Other","StatsY")
 #define CREDITS_P1_X		THEME->GetMetricF("Other","CreditsP1X")
 #define CREDITS_P1_Y		THEME->GetMetricF("Other","CreditsP1Y")
 #define CREDITS_P2_X		THEME->GetMetricF("Other","CreditsP2X")
@@ -47,11 +47,12 @@ float CREDITS_Y( int p ) {
 
 ScreenManager::ScreenManager()
 {
-	m_textFPS.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textFPS.SetXY( FPS_X, FPS_Y );
-	m_textFPS.SetZ( -2 );
-	m_textFPS.SetZoom( 0.5f );
-	m_textFPS.SetShadowLength( 2 );
+	m_textStats.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textStats.SetXY( STATS_X, STATS_Y );
+	m_textStats.SetHorizAlign( Actor::align_right );
+	m_textStats.SetVertAlign( Actor::align_top );
+	m_textStats.SetZoom( 0.5f );
+	m_textStats.SetShadowLength( 2 );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -66,7 +67,6 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_bottom );
 	m_textSystemMessage.SetXY( 5.0f, 10.0f );
-	m_textSystemMessage.SetZ( -2 );
 	m_textSystemMessage.SetZoom( 0.5f );
 	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
@@ -88,7 +88,7 @@ ScreenManager::~ScreenManager()
 void ScreenManager::Update( float fDeltaTime )
 {
 	m_textSystemMessage.Update( fDeltaTime );
-	m_textFPS.Update( fDeltaTime );
+	m_textStats.Update( fDeltaTime );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_textCreditInfo[p].Update( fDeltaTime );
 
@@ -130,10 +130,10 @@ void ScreenManager::Draw()
 	if( m_textSystemMessage.GetDiffuseColor().a != 0 )
 		m_textSystemMessage.Draw();
 
-	if( PREFSMAN  &&  PREFSMAN->m_bShowFPS )
+	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
-		m_textFPS.SetText( ssprintf("%3.0f FPS", DISPLAY->GetFPS()) );
-		m_textFPS.Draw();
+		m_textStats.SetText( ssprintf("%d FPS\n%d TPF\n%d DPF", DISPLAY->GetFPS(),DISPLAY->GetTPF(),DISPLAY->GetDPF()) );
+		m_textStats.Draw();
 	}
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_textCreditInfo[p].Draw();

@@ -47,7 +47,7 @@ private:
 	CArray<Screen*, Screen*&> m_ScreenStack;
 	CArray<Screen*, Screen*&> m_ScreensToDelete;
 
-	BitmapText m_textFPS;
+	BitmapText m_textStats;
 	BitmapText m_textSystemMessage;
 	BitmapText m_textCreditInfo[NUM_PLAYERS];
 };

@@ -33,7 +33,7 @@ public:
 	int		m_iRefreshRate;		// 0 means 'default'
 	bool	m_bIgnoreJoyAxes;
 	bool	m_bOnlyDedicatedMenuButtons;
-	bool	m_bShowFPS;
+	bool	m_bShowStats;
 	BackgroundMode	m_BackgroundMode;
 	bool	m_bShowDanger;
 	float	m_fBGBrightness;

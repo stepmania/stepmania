@@ -54,6 +54,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	GAMESTATE->m_bPlayersCanJoin = true;
 
 	GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
+	ASSERT( m_aPossibleStyles.GetSize() > 0 );	// every game should have at least one Style, or else why have the Game? :-)
 	m_iSelection = 0;
 
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
@@ -379,7 +380,7 @@ void ScreenSelectStyle::UpdateEnabledDisabled()
 			break;
 		}
 	}
-	ASSERT( iSwitchToStyleIndex != -1 );
+	ASSERT( iSwitchToStyleIndex != -1 );	// no styles are enabled.  We're stuck!  This should never happen
 
 	m_iSelection = iSwitchToStyleIndex;
 	AfterChange();

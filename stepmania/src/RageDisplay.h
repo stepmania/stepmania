@@ -97,7 +97,9 @@ public:
 	void RotateZ( const float r );
 //	void RotateYawPitchRoll( const float x, const float y, const float z );
 
-	float GetFPS() { return m_fFPS; };
+	int GetFPS() { return m_iFPS; };
+	int GetTPF() { return m_iTPF; };
+	int GetDPF() { return m_iDPF; };
 
 private:
 	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.ElementAt( m_MatrixStack.GetSize()-1 ); };
@@ -122,9 +124,13 @@ private:
 	CArray<D3DXMATRIX, D3DXMATRIX&>	m_MatrixStack;
 
 	// for performance stats
-	float m_fLastUpdateTime;
-	int m_iFramesRenderedSinceLastCheck;
-	float m_fFPS;
+	float	m_fLastCheckTime;
+	int		m_iFramesRenderedSinceLastCheck;
+	int		m_iTrianglesRenderedSinceLastCheck;
+	int		m_iDrawsSinceLastCheck;
+	int		m_iFPS;
+	int		m_iTPF;
+	int		m_iDPF;
 
 
 	//

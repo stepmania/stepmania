@@ -32,9 +32,13 @@ RageDisplay::RageDisplay( HWND hWnd )
 	m_pd3dDevice = NULL;
 	m_pVB = NULL;
 
-	m_fLastUpdateTime = TIMER->GetTimeSinceStart();
+	m_fLastCheckTime = TIMER->GetTimeSinceStart();
 	m_iFramesRenderedSinceLastCheck = 0;
-	m_fFPS = 0;
+	m_iTrianglesRenderedSinceLastCheck = 0;
+	m_iDrawsSinceLastCheck = 0;
+	m_iFPS = 0;
+	m_iTPF = 0;
+	m_iDPF = 0;
 
 	m_iNumVerts = 0;
 
@@ -381,13 +385,17 @@ HRESULT RageDisplay::EndFrame()
 	m_iFramesRenderedSinceLastCheck++;
 
 	float fTimeNow = TIMER->GetTimeSinceStart();
-	if( fTimeNow - m_fLastUpdateTime > 1.0f )	// update stats every 1 sec.
+	if( fTimeNow - m_fLastCheckTime > 1.0f )	// update stats every 1 sec.
 	{
-		m_fFPS = (float)m_iFramesRenderedSinceLastCheck;
+		m_iFPS = m_iFramesRenderedSinceLastCheck;
 		m_iFramesRenderedSinceLastCheck = 0;
-		m_fLastUpdateTime = fTimeNow;
+		m_iTPF = m_iTrianglesRenderedSinceLastCheck / m_iFPS;
+		m_iTrianglesRenderedSinceLastCheck = 0;
+		m_iDPF = m_iDrawsSinceLastCheck / m_iFPS;
+		m_iDrawsSinceLastCheck = 0;
+		m_fLastCheckTime = fTimeNow;
 
-		LOG->Trace( "FPS: %.0f", m_fFPS );
+		LOG->Trace( "FPS: %d, TPF: %d, DPF: %d", m_iFPS, m_iTPF, m_iDPF );
 	}
 
 
@@ -497,6 +505,8 @@ void RageDisplay::AddTriangle(
 
 	if( m_iNumVerts > MAX_NUM_VERTICIES-4 )
 		FlushQueue();
+
+	m_iTrianglesRenderedSinceLastCheck++;
 }
 
 void RageDisplay::AddQuad(
@@ -527,8 +537,9 @@ void RageDisplay::FlushQueue()
 	memcpy( v, m_vertQueue, sizeof(RAGEVERTEX)*m_iNumVerts );
 	m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
 	m_pVB->Unlock();
-
 	m_iNumVerts = 0;
+
+	m_iDrawsSinceLastCheck++;
 }
 
 void RageDisplay::SetViewTransform( D3DXMATRIX* pMatrix )

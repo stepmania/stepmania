@@ -229,7 +229,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textTitles[i].SetXY( TITLES_START_X + i*TITLES_SPACING_X, TITLES_START_Y );
 		m_textTitles[i].SetHorizAlign( Actor::align_left );
-		m_textTitles[i].SetVertAlign( Actor::align_bottom );
+		m_textTitles[i].SetVertAlign( Actor::align_top );
 		m_textTitles[i].SetZoom( 0.5f );
 		m_textTitles[i].SetShadowLength( 2 );
 		this->AddSubActor( &m_textTitles[i] );

@@ -31,21 +31,21 @@ enum {
 	GO_DISPLAY_RESOLUTION,
 	GO_TEXTURE_RESOLUTION,
 	GO_REFRESH_RATE,
-	GO_SHOWFPS,
+	GO_SHOWSTATS,
 	GO_BGMODE,
 	GO_BGBRIGHTNESS,
 	GO_MOVIEDECODEMS,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
-	{ "Display",			2,  {"FULLSCREEN", "WINDOWED"} },
-	{ "Display Res",		7,  {"320","400","512","640","800","1024","1280"} },
-	{ "Texture Res",		3,  {"256","512","1024"} },
-	{ "Refresh Rate",		10, {"DEFAULT","60","70","72","75","80","85","90","100","120"} },
-	{ "Show FPS",			2,  {"OFF","ON"} },
-	{ "BG Mode",			4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
-	{ "BG Brightness",		5,  {"20%","40%","60%","80%","100%"} },
-	{ "Movie Decode MS",	5,  {"1ms","2ms","3ms","4ms","5ms"} },
+	{ "Display",		2,  {"FULLSCREEN", "WINDOWED"} },
+	{ "Display Res",	7,  {"320","400","512","640","800","1024","1280"} },
+	{ "Texture Res",	3,  {"256","512","1024"} },
+	{ "Refresh Rate",	10, {"DEFAULT","60","70","72","75","80","85","90","100","120"} },
+	{ "Show Stats",		2,  {"OFF","ON"} },
+	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
+	{ "BG Brightness",	5,  {"20%","40%","60%","80%","100%"} },
+	{ "Movie Decode",	5,  {"1ms","2ms","3ms","4ms","5ms"} },
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
@@ -104,7 +104,7 @@ void ScreenGraphicOptions::ImportOptions()
 	default:	m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
 	}
 
-	m_iSelectedOption[0][GO_SHOWFPS]				= PREFSMAN->m_bShowFPS ? 1:0;
+	m_iSelectedOption[0][GO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][GO_BGMODE]					= PREFSMAN->m_BackgroundMode;
 
 	if(      PREFSMAN->m_fBGBrightness == 0.2f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 0;
@@ -156,7 +156,7 @@ void ScreenGraphicOptions::ExportOptions()
 	default:	ASSERT(0);	PREFSMAN->m_iRefreshRate = 0;	break;
 	}
 
-	PREFSMAN->m_bShowFPS				= m_iSelectedOption[0][GO_SHOWFPS] == 1;
+	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][GO_SHOWSTATS] == 1;
 	PREFSMAN->m_BackgroundMode			= PrefsManager::BackgroundMode( m_iSelectedOption[0][GO_BGMODE] );
 
 	switch( m_iSelectedOption[0][GO_BGBRIGHTNESS] )
