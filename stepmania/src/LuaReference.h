@@ -65,6 +65,10 @@ private:
  * The object will be saved and restored across Lua resets. */
 class LuaData: public LuaReference
 {
+public:
+	virtual CString Serialize() const;
+	virtual void LoadFromString( const CString &s );
+
 protected:
 	virtual void BeforeReset();
 	virtual void Register();

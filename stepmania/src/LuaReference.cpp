@@ -125,7 +125,7 @@ void LuaExpression::Register()
 	this->SetFromStack();
 }
 
-void LuaData::BeforeReset()
+CString LuaData::Serialize() const
 {
 	/* Call Serialize(t), where t is our referenced object. */
 	lua_pushstring( LUA->L, "Serialize" );
@@ -144,23 +144,35 @@ void LuaData::BeforeReset()
 	if( pString == NULL )
 		FAIL_M( "Serialize() didn't return a string" );
 
-	m_sSerializedData = pString;
+	CString sRet = pString;
+	lua_pop( LUA->L, 1 );
+
+	return sRet;
 }
 
-void LuaData::Register()
+void LuaData::LoadFromString( const CString &s )
 {
 	/* Restore the serialized data by evaluating the serialized data. */
 	CString sError;
-	if( !LUA->RunScript( m_sSerializedData, "serialization", sError, 1 ) )
+	if( !LUA->RunScript( s, "serialization", sError, 1 ) )
 	{
 		/* Serialize() should never return an invalid script.  Drop the failed
 		 * script into the log (it may be too big to pass to FAIL_M) and fail. */
-		LOG->Warn( "Unserialization of \"%s\" failed: %s", m_sSerializedData.c_str(), sError.c_str() );
+		LOG->Warn( "Unserialization of \"%s\" failed: %s", s.c_str(), sError.c_str() );
 		FAIL_M( "Unserialization failed" );
 	}
 
 	this->SetFromStack();
+}
 
+void LuaData::BeforeReset()
+{
+	m_sSerializedData = Serialize();
+}
+
+void LuaData::Register()
+{
+	LoadFromString( m_sSerializedData );
 	m_sSerializedData.clear();
 }
 
