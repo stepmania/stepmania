@@ -372,7 +372,7 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 	 * being paused, weird stuff happening to the TTY, or kernel hung processes.
 	 * We just hope that we backtrace in time (which we almost always do). */
 #if defined(DARWIN)
-	SuspendThread(iCrashHandle);
+	SuspendThread(iID);
 #endif
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
