@@ -63,6 +63,11 @@ public:
 
 	Screen *GetTopScreen();
 
+	/* Return true if the given screen is in the main screen stack, but not the bottommost
+	 * screen.  If true, the screen should usually exit by popping itself, not by loading
+	 * another screen. */
+	bool IsStackedScreen( const Screen *pScreen ) const;
+
 	// Lua
 	void PushSelf( lua_State *L );
 

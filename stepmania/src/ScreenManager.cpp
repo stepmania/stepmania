@@ -137,6 +137,15 @@ Screen *ScreenManager::GetTopScreen()
 	return m_ScreenStack[m_ScreenStack.size()-1];
 }
 
+bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
+{
+	/* True if the screen is in the screen stack, but not the first. */
+	for( unsigned i = 1; i < m_ScreenStack.size(); ++i )
+		if( m_ScreenStack[i] == pScreen )
+			return true;
+	return false;
+}
+
 void ScreenManager::Update( float fDeltaTime )
 {
 	// Only update the topmost screen on the stack.
