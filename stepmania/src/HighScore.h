@@ -23,6 +23,8 @@ struct HighScore
 	float fPercentDP;
 	float fSurviveSeconds;
 	CString	sModifiers;
+	time_t time;		// return value of time() when screenshot was taken
+	CString sMachineGuid;	// where this screenshot was taken
 
 
 	HighScore()
@@ -31,6 +33,7 @@ struct HighScore
 		iScore = 0;
 		fPercentDP = 0;
 		fSurviveSeconds = 0;
+		time = 0;
 	}
 
 	bool operator>=( const HighScore& other ) const;

@@ -944,6 +944,8 @@ void ScreenEvaluation::CommitScores(
 			hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
 			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
+			hs.time = time(NULL);
+			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
