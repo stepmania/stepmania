@@ -271,7 +271,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		{
 			BEGIN_TABLE(2);
 			TABLE_LINE2( "DisplayName",						pProfile->m_sDisplayName );
-			TABLE_LINE2( "ID",								pProfile->GetDisplayGuid() );
+			TABLE_LINE2( "ID",								pProfile->m_sGuid );
 			TABLE_LINE2( "LastUsedHighScoreName",			pProfile->m_sLastUsedHighScoreName );
 			TABLE_LINE2( "UsingProfileDefaultModifiers",	pProfile->m_bUsingProfileDefaultModifiers );
 			TABLE_LINE2( "DefaultModifiers",				pProfile->m_sDefaultModifiers );
@@ -280,7 +280,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			TABLE_LINE2( "TotalGameplay",					SecondsToHHMMSS( (float) pProfile->m_iTotalGameplaySeconds) );
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
 			TABLE_LINE2( "TotalCaloriesBurned",				pProfile->GetDisplayTotalCaloriesBurned() );
-			TABLE_LINE2( "LastPlayedMachineID",				pProfile->GetDisplayLastPlayedMachineGuid() );
+			TABLE_LINE2( "LastPlayedMachineID",				pProfile->m_sGuid );
 			TABLE_LINE2( "TotalTapsAndHolds",				pProfile->m_iTotalTapsAndHolds );
 			TABLE_LINE2( "TotalJumps",						pProfile->m_iTotalJumps );
 			TABLE_LINE2( "TotalHolds",						pProfile->m_iTotalHolds );
@@ -922,7 +922,7 @@ void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 	TABLE_LINE2( "File", ss.sFileName );
 	TABLE_LINE2( "MD5", ss.sMD5 );
 	TABLE_LINE2( "Time", (CString)ctime(&ss.time) );
-	TABLE_LINE2( "Machine", ss.iMachineGuid );
+	TABLE_LINE2( "Machine", ss.sMachineGuid );
 
 	END_TABLE;
 
@@ -1135,7 +1135,7 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 	}
 
 	CString sName = pProfile->GetDisplayName();
-	CString sMachineName = pProfile->GetDisplayLastPlayedMachineGuid();
+	CString sMachineName = pProfile->m_sGuid;
 	time_t ltime = time( NULL );
 	CString sTime = ctime( &ltime );
 
