@@ -52,7 +52,7 @@ enum {
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
-	OptionRow( "Speed",				false, "x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x5","x8","C200","C300" ),	
+	OptionRow( "Speed",				false, "x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x5","x8","C200", "?" ),	
 	OptionRow( "Acceler\n-ation",	false, "OFF","BOOST","BRAKE","WAVE","EXPAND","BOOMERANG" ),	
 	OptionRow( "Effect",			false, "OFF","DRUNK","DIZZY","MINI","FLIP","TORNADO","TIPSY" ),	
 	OptionRow( "Appear\n-ance",		false, "VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK", "R.VANISH" ),	
@@ -196,7 +196,14 @@ void ScreenPlayerOptions::ImportOptions()
 		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 5.0f )		m_iSelectedOption[p][PO_SPEED] = 7;
 		else if( !po.m_bTimeSpacing && po.m_fScrollSpeed == 8.0f )		m_iSelectedOption[p][PO_SPEED] = 8;
 		else if( po.m_bTimeSpacing  && po.m_fScrollBPM == 200 )			m_iSelectedOption[p][PO_SPEED] = 9;
-		else if( po.m_bTimeSpacing  && po.m_fScrollBPM == 300 )			m_iSelectedOption[p][PO_SPEED] = 10;
+
+		// removed so all of them still fit on line
+		//		else if( po.m_bTimeSpacing  && po.m_fScrollBPM == 300 )			m_iSelectedOption[p][PO_SPEED] = 10;
+
+		else if( po.m_bTimeSpacing == IsModTimeSpacing( PREFSMAN->m_sCustomSpeedMod )
+			&& (po.m_fScrollBPM == ConvertModToNumber( PREFSMAN->m_sCustomSpeedMod)
+			    || po.m_fScrollSpeed == ConvertModToNumber( PREFSMAN->m_sCustomSpeedMod ) ) )
+				m_iSelectedOption[p][PO_SPEED] = 10;
 		else									m_iSelectedOption[p][PO_SPEED] = 3;
 
 		m_iSelectedOption[p][PO_ACCEL]		= po.GetFirstAccel()+1;
@@ -260,6 +267,12 @@ void ScreenPlayerOptions::ImportOptions()
 			}
 		}
 
+		// initialize custom speed mod text
+		if (PREFSMAN->m_sCustomSpeedMod != "")
+			m_OptionRow[PO_SPEED].choices[10] = PREFSMAN->m_sCustomSpeedMod;
+		else
+			m_OptionRow[PO_SPEED].choices.pop_back();
+
 		/* Default: */
 		m_iSelectedOption[p][PO_PERSPECTIVE] = 1;
 		if(po.m_fPerspectiveTilt == -1)
@@ -309,7 +322,22 @@ void ScreenPlayerOptions::ExportOptions()
 		case 7:	po.m_bTimeSpacing = false;	po.m_fScrollSpeed = 5.0f;	break;
 		case 8:	po.m_bTimeSpacing = false;	po.m_fScrollSpeed = 8.0f;	break;
 		case 9: po.m_bTimeSpacing = true;	po.m_fScrollSpeed = 1.0f;	po.m_fScrollBPM = 200;		break;
-		case 10:po.m_bTimeSpacing = true;	po.m_fScrollSpeed = 1.0f;	po.m_fScrollBPM = 300;		break;
+
+//		case 10:po.m_bTimeSpacing = true;	po.m_fScrollSpeed = 1.0f;	po.m_fScrollBPM = 300;		break;
+		case 10:
+			po.m_bTimeSpacing = IsModTimeSpacing( PREFSMAN->m_sCustomSpeedMod ); 
+			
+			if (po.m_bTimeSpacing)
+			{
+				po.m_fScrollSpeed = 1.0f;
+				po.m_fScrollBPM = ConvertModToNumber( PREFSMAN->m_sCustomSpeedMod );
+			}
+			else
+			{
+				po.m_fScrollSpeed = ConvertModToNumber( PREFSMAN->m_sCustomSpeedMod );
+				po.m_fScrollBPM = ConvertModToNumber( PREFSMAN->m_sCustomSpeedMod );
+			}
+			break;
 		default:	ASSERT(0);
 		}
 
@@ -496,4 +524,26 @@ CString ScreenPlayerOptions::ConvertParamToThemeDifficulty( const CString &in ) 
 	case DIFFICULTY_CHALLENGE:	return CHALLENGE_DESCRIPTION;
 	default:					return in;  // something else
 	}
+}
+
+float ScreenPlayerOptions::ConvertModToNumber(CString value)
+{
+	if (IsModTimeSpacing(value))
+	{
+		return atof(value.c_str() + 1 );
+	}
+	else
+	{
+		return atof(value.c_str() );
+	}
+}
+
+bool ScreenPlayerOptions::IsModTimeSpacing(CString value)
+{
+	ASSERT( value.GetLength() );
+
+	if (value[0] == 'C')
+		return true;
+
+	return false;
 }

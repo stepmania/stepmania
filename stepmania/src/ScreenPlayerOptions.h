@@ -34,6 +34,9 @@ private:
 
 	CString ConvertParamToThemeDifficulty( const CString &in ) const;
 
+	float ConvertModToNumber( CString value );
+	bool IsModTimeSpacing( CString value );
+
 	bool            m_bAcceptedChoices;
 	bool            m_bGoToOptions;
 	Sprite          m_sprOptionsMessage;

@@ -109,6 +109,8 @@ PrefsManager::PrefsManager()
 #endif
 	m_bTenFooterInRed = true;
 
+	m_sCustomSpeedMod = "C300";
+
 	// set to 0 so people aren't shocked at first
 	m_iProgressiveLifebar = 0;
 	m_iProgressiveNonstopLifebar = 0;
@@ -276,6 +278,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ShowLogWindow",					m_bShowLogWindow );
 	ini.GetValueB( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue ( "Options", "Language",						m_sLanguage );
+
+	ini.GetValue ( "Options", "CustomSpeedMod",					m_sCustomSpeedMod );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		ini.GetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
@@ -393,6 +398,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",		m_iProgressiveNonstopLifebar );
 	ini.SetValueB( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.SetValue ( "Options", "Language",						m_sLanguage );
+
+	ini.SetValue ( "Options", "CustomSpeedMod",					m_sCustomSpeedMod );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		ini.SetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
