@@ -1324,8 +1324,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	{
 		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
 
-		m_InputMode == INPUTMODE_SHARE_CURSOR);
-
 		/* If this row is bOneChoiceForAllPlayers, then lock the cursors together
 		 * for this row.  Don't do this in NAV_FIRST_CHOICE_GOES_DOWN, since the
 		 * current selection and the current focus are detached in that mode. */
