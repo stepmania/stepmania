@@ -338,12 +338,10 @@ static void InitCharAliases()
 		CString to = LcharToUTF8(i->second);
 		from.MakeUpper();
 		CharAliasRepl[from] = to;
-		LOG->Trace("from '%s' to '%s'", from.GetString(), to.GetString());
 	}
 }
 
-/* Replace all &markers; and &#NNNN;s with UTF-8.  I'm not really
- * sure where to put this; this is used elsewhere, too. */
+/* Replace all &markers; and &#NNNN;s with UTF-8. */
 void FontCharAliases::ReplaceMarkers( CString &sText )
 {
 	InitCharAliases();
