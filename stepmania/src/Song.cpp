@@ -35,6 +35,7 @@
 #include "NoteDataUtil.h"
 #include "SDL_utils.h"
 #include "ProfileManager.h"
+#include "StageStats.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -306,7 +307,7 @@ struct SongID
 		return ret;
 	}
 };
-#include "StageStats.h"
+
 void Song::RevertFromDisk()
 {
 	// Ugly:  When we re-load the song, the Steps* will change.
