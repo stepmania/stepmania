@@ -253,9 +253,12 @@ enum RankingCategory
 	RANKING_B,	// 4-6 meter per song avg.
 	RANKING_C,	// 7-9 meter per song avg.
 	RANKING_D,	// 10+ meter per song avg.	// doesn't count extra stage!
-	NUM_RANKING_CATEGORIES
+	NUM_RANKING_CATEGORIES,
+	RANKING_INVALID
 };
 #define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, NUM_RANKING_CATEGORIES, rc )
+CString RankingCategoryToString( RankingCategory rc );
+RankingCategory StringToRankingCategory( CString rc );
 
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 inline bool IsRankingToFillIn( CString sName ) { return !sName.empty() && sName[0]=='#'; }

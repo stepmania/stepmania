@@ -12,6 +12,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
+#include "RageUtil.h"
 
 
 CString RadarCategoryToString( RadarCategory cat )
@@ -124,7 +125,27 @@ RankingCategory AverageMeterToRankingCategory( float fAverageMeter )
 	else if( fAverageMeter <= 6 )	return RANKING_B;
 	else if( fAverageMeter <= 9 )	return RANKING_C;
 	else							return RANKING_D;
+}
 
+CString RankingCategoryToString( RankingCategory rc )
+{
+	switch( rc )
+	{
+	case RANKING_A: return "A";
+	case RANKING_B: return "B";
+	case RANKING_C: return "C";
+	case RANKING_D: return "D";
+	default: FAIL_M( ssprintf("%i", rc) );
+	}
+}
+
+RankingCategory StringToRankingCategory( CString rc )
+{
+	if( rc == "A" ) return RANKING_A;
+	if( rc == "B" ) return RANKING_B;
+	if( rc == "C" ) return RANKING_C;
+	if( rc == "D" ) return RANKING_D;
+	return RANKING_INVALID;
 }
 
 CString CoinModeToString( CoinMode cm )
