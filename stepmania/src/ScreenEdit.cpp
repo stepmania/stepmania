@@ -561,12 +561,10 @@ void ScreenEdit::Init()
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
 
+	// Reset player options, but don't reset the current NoteSkin
+	CString sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
-	// Set NoteSkin to note if available.
-	// Change noteskin back to default before loading player.
-	if( NOTESKIN->DoesNoteSkinExist("note") )
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = "note";
-	GAMESTATE->ResetNoteSkins();
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = sNoteSkin;
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
