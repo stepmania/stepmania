@@ -12,6 +12,7 @@ public:
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
 	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice );
 	virtual void Flush( UsbStorageDevice* pDevice );
+	virtual void ResetUsbStorage();
 protected:
 	int m_fds;
 	time_t m_lastModTime;

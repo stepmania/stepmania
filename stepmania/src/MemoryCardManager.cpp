@@ -236,5 +236,5 @@ void MemoryCardManager::FlushAllDisks()
 		m_pDriver->Flush(&m_Device[p]);
 	}
 
-	m_pDriver->ResetUsbDeviceNumbers();
+	m_pDriver->ResetUsbStorage();
 }
