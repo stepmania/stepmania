@@ -162,11 +162,10 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 	{
 		PREFSMAN->m_iCoinMode++;
 		wrap( PREFSMAN->m_iCoinMode, NUM_COIN_MODES );
-		/* ResetGame();
-				This causes problems on ScreenIntroMovie, which results in the
-				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
 
-		CString sMessage = CoinModeToString( (CoinMode)PREFSMAN->GetCoinMode() );
+		/* Show the real coin mode, not GetCoinMode(), or F3 will go "home, free, free"
+		 * in event mode.  XXX: move GetCoinMode to GameState to keep PrefsManager dumb? */
+		CString sMessage = CoinModeToString( (CoinMode)PREFSMAN->m_iCoinMode );
 		sMessage.MakeUpper();
 		sMessage = "Coin Mode: " + sMessage;
 		SCREENMAN->RefreshCreditsMessages();
