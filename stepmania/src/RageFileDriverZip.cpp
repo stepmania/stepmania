@@ -121,17 +121,8 @@ public:
 	}
 };
 
-class ZipFilenameDB: public FilenameDB
-{
-protected:
-	void PopulateFileSet( FileSet &fs, const CString &sPath ) { }
-public:
-	ZipFilenameDB() { ExpireSeconds = -1; }
-};
-
-
 RageFileDriverZip::RageFileDriverZip( CString path ):
-	RageFileDriver( new ZipFilenameDB )
+	RageFileDriver( new NullFilenameDB )
 {
 	if( !zip.Open(path) )
 		RageException::Throw( "Couldn't open %s: %s", path.c_str(), zip.GetError().c_str() );
