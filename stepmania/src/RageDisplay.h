@@ -59,8 +59,8 @@ public:
 	virtual void Draw( int iMeshIndex ) const = 0;
 
 protected:
-	size_t GetTotalVertices()  { return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
-	size_t GetTotalTriangles() { return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
+	size_t GetTotalVertices()  { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
+	size_t GetTotalTriangles() { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
 	
 	struct MeshInfo
 	{
