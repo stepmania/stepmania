@@ -95,7 +95,8 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	else
 		m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 
-	MEMCARDMAN->UnPauseMountingThread();
+	if( bIsMemCard )
+		MEMCARDMAN->UnPauseMountingThread();
 
 	LOG->Trace( "Done loading profile." );
 
