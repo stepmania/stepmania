@@ -757,39 +757,30 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
 			{
 				float& fScrollSpeed = GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
+				float fNewScrollSpeed = fScrollSpeed;
 
 				if( DeviceI.button == SDLK_UP )
 				{
 					if( fScrollSpeed == 4 )
-					{
-						fScrollSpeed = 2;
-						m_soundMarker.Play();
-						GAMESTATE->StoreSelectedOptions();
-					}
+						fNewScrollSpeed = 2;
 					else if( fScrollSpeed == 2 )
-					{
-						fScrollSpeed = 1;
-						m_soundMarker.Play();
-						GAMESTATE->StoreSelectedOptions();
-					}
-					break;
+						fNewScrollSpeed = 1;
 				}
 				else if( DeviceI.button == SDLK_DOWN )
 				{
 					if( fScrollSpeed == 2 )
-					{
-						fScrollSpeed = 4;
-						m_soundMarker.Play();
-						GAMESTATE->StoreSelectedOptions();
-					}
+						fNewScrollSpeed = 4;
 					else if( fScrollSpeed == 1 )
-					{
-						fScrollSpeed = 2;
-						m_soundMarker.Play();
-						GAMESTATE->StoreSelectedOptions();
-					}
-					break;
+						fNewScrollSpeed = 2;
 				}
+
+				if( fNewScrollSpeed != fScrollSpeed )
+				{
+					fScrollSpeed = fNewScrollSpeed;
+					m_soundMarker.Play();
+					GAMESTATE->StoreSelectedOptions();
+				}
+				break;
 			}
 
 			float fBeatsToMove=0.f;
