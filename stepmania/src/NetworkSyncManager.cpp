@@ -319,6 +319,20 @@ void NetworkSyncManager::StartRequest(short position)
 	else
 		WriteNT(m_packet,CString(""));
 
+	//Send Player (and song) Options
+	WriteNT(m_packet,GAMESTATE->m_SongOptions.GetString());
+
+	int players=0;
+	FOREACH_PlayerNumber (p)
+	{
+		players++;
+		WriteNT(m_packet,GAMESTATE->m_PlayerOptions[p].GetString());
+	}
+	for (int i=0;i<2-players;i++)
+		WriteNT(m_packet,"");	//Write a NULL if no player
+
+
+
 	//Block until go is recieved.
 	//Switch to blocking mode (this is the only
 	//way I know how to get precievably instantanious results
