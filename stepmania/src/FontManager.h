@@ -24,13 +24,18 @@ public:
 	FontManager();
 	~FontManager();
 
-	Font* LoadFont( CString sFontOrTextureFilePath, CString sChars = "" );
+	Font* LoadFont( const CString &sFontOrTextureFilePath, CString sChars = "" );
 	void UnloadFont( Font *fp );
 
 protected:
 	// map from file name to a texture holder
 	map<CString, Font*> m_mapPathToFont;
-	static CString FontManager::GetPageNameFromFileName(const CString &fn);
+	static Font *LoadFontInt(const CString &sFontOrTextureFilePath, CString sChars);
+	static bool MatchesFont(CString FontName, CString FileName);
+	static CString GetPageNameFromFileName(const CString &fn);
+	static void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &PageName, int NumFrames);
+	static void GetFontPaths(const CString &sFontOrTextureFilePath, 
+							   CStringArray &TexturePaths, CString &IniPath);
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

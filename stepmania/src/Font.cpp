@@ -24,7 +24,7 @@ FontPage::FontPage()
 	m_pTexture = NULL;
 }
 
-void FontPage::Load( const CString &TexturePath, IniFile &ini )
+void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 {
 	m_sTexturePath = TexturePath;
 
@@ -34,78 +34,41 @@ void FontPage::Load( const CString &TexturePath, IniFile &ini )
 	ASSERT( m_pTexture != NULL );
 
 	// load character widths
-	vector<int> FrameWidths;
+	vector<int> FrameWidths; // = cfg.GlyphWidths;
 	int i;
 	// Assume each character is the width of the frame by default.
 	for( i=0; i<m_pTexture->GetNumFrames(); i++ )
-		FrameWidths.push_back(m_pTexture->GetSourceFrameWidth());
-
 	{
-		/* Iterate over all keys. */
-		const IniFile::key *k = ini.GetKey("main");
-		if(k)
+		map<int,int>::const_iterator it = cfg.GlyphWidths.find(i);
+		if(it != cfg.GlyphWidths.end())
 		{
-			for(IniFile::key::const_iterator key = k->begin(); key != k->end(); ++key)
-			{
-				CString val = key->first;
-				CString data = key->second;
-
-				val.MakeUpper();
-
-				/* If val is an integer, it's a width, eg. "10=27". */
-				if(IsAnInt(val))
-				{
-					FrameWidths[atoi(val)] = atoi(data);
-					continue;
-				}
-
-				/* "map XXXX=frame" maps a char to a frame. */
-				if(val.substr(0, 4) == "map ")
-				{
-					val = val.substr(4); /* "XXXX" */
-
-					/* XXXX can be "U+HEX". */
-				
-					int c = -1;
-
-					if(val.substr(0, 2) == "U+" && IsHexVal(val.substr(2)))
-						sscanf(val.substr(2).c_str(), "%x", &c);
-
-					if(c == -1)
-						RageException::Throw( "The font '%s' has an invalid INI value '%s'.",
-							m_sTexturePath.GetString(), val.GetString() );
-
-					m_iCharToGlyphNo[i] = atoi(data);
-				}
-			}
+			FrameWidths.push_back(it->second);
+		} else {
+			FrameWidths.push_back(m_pTexture->GetSourceFrameWidth());
 		}
 	}
 
-	int DrawExtraPixelsLeft = 0, DrawExtraPixelsRight = 0;
-
-	ini.GetValueI( "main", "DrawExtraPixelsLeft", DrawExtraPixelsLeft );
-	ini.GetValueI( "main", "DrawExtraPixelsRight", DrawExtraPixelsRight );
-
-	int iAddToAllWidths = 0;
-	if( ini.GetValueI( "main", "AddToAllWidths", iAddToAllWidths ) )
+	if( cfg.AddToAllWidths )
 	{
 		for( int i=0; i<256; i++ )
-			FrameWidths[i] += iAddToAllWidths;
+			FrameWidths[i] += cfg.AddToAllWidths;
 	}
 
-	float fScaleAllWidthsBy = 0;
-	if( ini.GetValueF( "main", "ScaleAllWidthsBy", fScaleAllWidthsBy ) )
+	if( cfg.ScaleAllWidthsBy != 1 )
 	{
 		for( int i=0; i<256; i++ )
-			FrameWidths[i] = int(roundf( FrameWidths[i] * fScaleAllWidthsBy ));
+			FrameWidths[i] = int(roundf( FrameWidths[i] * cfg.ScaleAllWidthsBy ));
 	}
+
+	m_iCharToGlyphNo = cfg.CharToGlyphNo;
 
 	/* All characters on a page have the same vertical spacing. */
-	int LineSpacing = m_pTexture->GetSourceFrameHeight();
-	ini.GetValueI( "main", "LineSpacing", LineSpacing );
+	int LineSpacing = cfg.LineSpacing;
+	if(LineSpacing == -1)
+		LineSpacing = m_pTexture->GetSourceFrameHeight();
 
 	SetTextureCoords(FrameWidths, LineSpacing);
-	SetExtraPixels(DrawExtraPixelsLeft, DrawExtraPixelsRight);
+	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
 }
 
 void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
@@ -258,23 +221,17 @@ RageTexture *Font::GetGlyphTexture( int c )
 	return it->second->Texture;
 }
 
-/* Load font-global settings. */
-void Font::LoadINI(IniFile &ini)
+void Font::CapsOnly()
 {
-	bool CapitalsOnly = false;
-	ini.GetValueB( "main", "CapitalsOnly", CapitalsOnly );
-	if(CapitalsOnly)
+	/* For each uppercase character that we have a mapping for, add
+     * a lowercase one. */
+	for(char c = 'A'; c <= 'Z'; ++c)
 	{
-		/* For each uppercase character that we have a mapping for, add
-		 * a lowercase one. */
-		for(char c = 'A'; c <= 'Z'; ++c)
-		{
-			map<int,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+		map<int,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
-			if(it == m_iCharToGlyph.end())
-				continue;
+		if(it == m_iCharToGlyph.end())
+			continue;
 
-			m_iCharToGlyph[tolower(c)] = it->second;
-		}
+		m_iCharToGlyph[tolower(c)] = it->second;
 	}
 }

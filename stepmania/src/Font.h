@@ -30,6 +30,26 @@ struct glyph {
 	RectF rect;
 };
 
+struct FontPageSettings {
+	int DrawExtraPixelsLeft,
+		DrawExtraPixelsRight,
+		AddToAllWidths,
+		LineSpacing;
+	float ScaleAllWidthsBy;
+	
+	map<int,int> CharToGlyphNo;
+	/* If a value is missing, the width of the texture frame is used. */
+	map<int,int> GlyphWidths;
+
+	FontPageSettings():
+		DrawExtraPixelsLeft(0), DrawExtraPixelsRight(0),
+		AddToAllWidths(0), 
+		LineSpacing(-1),
+		ScaleAllWidthsBy(1)
+	{ }
+};
+
+
 class FontPage
 {
 public:
@@ -48,7 +68,7 @@ public:
 	int GetLineWidthInSourcePixels( const CString &szLine );
 	int GetLineHeightInSourcePixels( const CString &szLine );
 
-	void Load( const CString &sASCIITexturePath, IniFile &ini );
+	void Load( const CString &sASCIITexturePath, const FontPageSettings &cfg );
 
 private:
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
@@ -75,7 +95,7 @@ public:
 	void AddPage(FontPage *fp);
 
 	/* Load font-wide settings. */
-	void LoadINI(IniFile &ini);
+	void CapsOnly();
 
 private:
 	vector<FontPage *> pages;

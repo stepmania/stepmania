@@ -128,16 +128,6 @@ try_element_again:
 
 	CStringArray asPossibleElementFilePaths;
 
-	// look for a redirect
-	GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.redir", asPossibleElementFilePaths, false, true );
-/*	if( !asPossibleElementFilePaths.empty() )
-	{
-		ifstream file(asPossibleElementFilePaths[0]);
-		CString sLine;
-		getline(file, sLine);
-	}
-
-*/
 	///////////////////////////////////////
 	// Search both the current theme and the default theme dirs for this element
 	///////////////////////////////////////
@@ -157,13 +147,24 @@ try_element_again:
 	else if( sAssetCategory == "bganimations" ) asset_masks = bganimations_masks;
 	else ASSERT(0); // Unknown theme asset category
 	int i;
+	CString path;
 	for(i = 0; asset_masks[i]; ++i)
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + asset_masks[i],
+	{
+		path = sCurrentThemeDir;
+		GetDirListing( path + sAssetCategory+"\\"+sFileName + asset_masks[i],
 						asPossibleElementFilePaths, false, true );
-	for(i = 0; asset_masks[i]; ++i)
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + asset_masks[i],
-						asPossibleElementFilePaths, false, true );
+	}
 
+	if(asPossibleElementFilePaths.empty())
+	for(i = 0; asset_masks[i]; ++i)
+	{
+		path = sDefaultThemeDir;
+
+		GetDirListing( path + sAssetCategory+"\\"+sFileName + asset_masks[i],
+						asPossibleElementFilePaths, false, true );
+	}
+
+	/* If it's empty, we found nothing. */
 	if( asPossibleElementFilePaths.empty() )
 	{
 #ifdef _DEBUG
@@ -193,12 +194,21 @@ try_element_again:
 		}
 #endif
 	}
-	asPossibleElementFilePaths[0].MakeLower();
+
 	if( asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
 	{
 		CString sNewFilePath = DerefRedir(asPossibleElementFilePaths[0]);
 		
-		if( sNewFilePath == ""  ||  !DoesFileExist(sNewFilePath) )
+		if( sAssetCategory == "fonts" )
+		{
+			/* backwards-compatibility hack */
+			if( sAssetCategory == "fonts" )
+				sNewFilePath.Replace(" 16x16.png", "");
+
+			return sNewFilePath;
+		}
+
+		if( !DoesFileExist(sNewFilePath) )
 		{
 			CString message = ssprintf(
 						"The redirect '%s' points to the file '%s', which does not exist."
@@ -211,9 +221,15 @@ try_element_again:
 #endif
 			RageException::Throw( "%s", message.GetString() ); 
 		}
-		else
-			return sNewFilePath;
+
+
+		return sNewFilePath;
 	}
+
+	/* If we're searching for a font, the return value should be the file
+	 * prefix we searched for; don't resolve it to the complete filename. */
+	if( sAssetCategory == "fonts" )
+		return path + sAssetCategory+"\\"+sFileName;
 
 	return asPossibleElementFilePaths[0];
 }
