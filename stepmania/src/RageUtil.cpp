@@ -760,14 +760,29 @@ int masks[7] = { 0, 0x7f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
 
 int utf8_get_char_len (const char *pp)
 {
-  const unsigned char *p = (const unsigned char *) pp;
-  if (*p < 128)					 return 1;
-  else if ((*p & 0xe0) == 0xc0)  return 2;
-  else if ((*p & 0xf0) == 0xe0)  return 3;
-  else if ((*p & 0xf8) == 0xf0)  return 4;
-  else if ((*p & 0xfc) == 0xf8)  return 5;
-  else if ((*p & 0xfe) == 0xfc)  return 6;
-  return -1;
+	const unsigned char *p = (const unsigned char *) pp;
+	if (*p < 128)					 return 1;
+	else if ((*p & 0xe0) == 0xc0)  return 2;
+	else if ((*p & 0xf0) == 0xe0)  return 3;
+	else if ((*p & 0xf8) == 0xf0)  return 4;
+	else if ((*p & 0xfc) == 0xf8)  return 5;
+	else if ((*p & 0xfe) == 0xfc)  return 6;
+	return -1;
+}
+
+bool utf8_is_valid(const CString &str)
+{
+	unsigned pos = 0;
+	while(pos < str.size())
+	{
+		int len = utf8_get_char_len(str.c_str() + pos);
+		if(len == -1)
+			return false;
+
+		pos += len;
+	}
+
+	return true;
 }
 
 wchar_t utf8_get_char (const char *p)

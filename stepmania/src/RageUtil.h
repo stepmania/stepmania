@@ -164,6 +164,7 @@ CString WcharToUTF8( wchar_t c );
 wstring CStringToWstring(const CString &str);
 wchar_t utf8_get_char (const char *p);
 int utf8_get_char_len (const char *p);
+bool utf8_is_valid(const CString &str);
 
 // Splits a CString into an CStringArray according the Deliminator.
 void split(
