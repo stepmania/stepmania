@@ -27,7 +27,6 @@ void Banner::CacheGlobalBanners()
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","random")) );
-	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","leap")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Sort")) );
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
 }
