@@ -105,6 +105,15 @@ void Screen::MenuBack(	PlayerNumber pn, const InputEventType type )
 		MenuBack(pn); 
 }
 
+/* ScreenManager sends input here first.  Overlay screens can use it to get a first
+ * pass at input.  Return true if the input was handled and should not be passed
+ * to lower screens, or false if not handled.  If true is returned, Input() will
+ * not be called, either.  Normal screens should not overload this function. */
+bool Screen::OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	return false;
+}
+
 void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Don't send release messages with the default handler. */

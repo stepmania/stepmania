@@ -247,13 +247,20 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 //	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
-	// pass input only to topmost state
-	Screen *pInputFocus = NULL;
-	if( !m_ScreenStack.empty() )
-		pInputFocus = m_ScreenStack.back();
+	// First, give overlay screens a shot at the input.  If OverlayInput returns
+	// true, it handled the input, so don't pass it further.  OverlayInput could
+	// probably be merged with Input, but that would require changing all Input
+	// overloads, as well as all MenuLeft, etc. overloads.
+	for( unsigned i = 0; i < m_OverlayScreens.size(); ++i )
+	{
+		Screen *pScreen = m_OverlayScreens[i];
+		if( pScreen->OverlayInput(DeviceI, type, GameI, MenuI, StyleI) )
+			return;
+	}
 
-	if( pInputFocus != NULL )
-		pInputFocus->Input( DeviceI, type, GameI, MenuI, StyleI );
+	// pass input to topmost state
+	if( !m_ScreenStack.empty() )
+		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 /* Just create a new screen; don't do any associated cleanup. */
