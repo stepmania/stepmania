@@ -16,6 +16,7 @@ protected:
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint );
     virtual void ResetUsbStorage();
 	virtual void MountThreadDoOneUpdate();
+	virtual bool MountThreadWaitForUpdate();
 
 	DWORD m_dwLastLogicalDrives;
 };

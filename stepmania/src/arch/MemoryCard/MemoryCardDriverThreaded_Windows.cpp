@@ -64,16 +64,23 @@ void MemoryCardDriverThreaded_Windows::ResetUsbStorage()
 	m_dwLastLogicalDrives = 0;
 }
 
-void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
+bool MemoryCardDriverThreaded_Windows::MountThreadWaitForUpdate()
 {
 	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
-
 	if( dwNewLogicalDrives == m_dwLastLogicalDrives )
 	{
 		// no change from last update
 		usleep( 50000 );
-		return;
+		return false;
 	}
+
+	m_dwLastLogicalDrives = dwNewLogicalDrives;
+	return true;
+}
+
+void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
+{
+	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
 
 	{
 		vector<UsbStorageDevice> vNewStorageDevices;
@@ -120,8 +127,6 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 		}
 
 		CHECKPOINT;
-
-		m_dwLastLogicalDrives = dwNewLogicalDrives;
 	}
 }
 
