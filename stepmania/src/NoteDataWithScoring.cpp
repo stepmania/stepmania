@@ -132,8 +132,8 @@ int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 
 		TapNoteScore tns = GetTapNoteScore(t, row);
 		
-		/* Ignore tracks that haven't yet been graded. */
-		if(tns == TNS_NONE) continue;
+		if( tns == TNS_MISS || tns == TNS_NONE )
+			return t;
 
 		float tm = GetTapNoteOffset(t, row);
 		if(tm < scoretime) continue;
