@@ -509,10 +509,7 @@ void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_textCategory, "Hide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_textCategory, "Unhide" );
 
-        /* fSecUntilDoneScrolling isn't used for anything. Is there any reason
-         * for it to be a variable? -Steve
-         */
-		float fSecUntilDoneScrolling = m_FeatDisplay[pn][NewFeat].m_Wheel.Scroll();
+		m_FeatDisplay[pn][NewFeat].m_Wheel.Scroll();
 	}
 }
 
