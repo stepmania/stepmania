@@ -39,7 +39,7 @@ OptionRow g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
 	OptionRow( "Bat\nLives",	"1","2","3","4","5","6","7","8","9","10" ),	
 	OptionRow( "Fail",			"ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Assist\nTick",	"OFF", "ON" ),
-	OptionRow( "Rate",			"x0.3","x0.5","x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5" ),	
+	OptionRow( "Rate",			"x0.3","x0.4","x0.5","x0.6","x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5","x1.6","x1.7","x1.8","x1.9","x2.0" ),	
 	OptionRow( "Auto\nAdjust",	"OFF", "ON" ),	
 };
 
@@ -79,18 +79,10 @@ void ScreenSongOptions::ImportOptions()
 	m_iSelectedOption[0][SO_ASSIST] = so.m_bAssistTick;
 	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
 
-	if(		 so.m_fMusicRate == 0.3f )		m_iSelectedOption[0][SO_RATE] = 0;
-	if(		 so.m_fMusicRate == 0.5f )		m_iSelectedOption[0][SO_RATE] = 1;
-	if(		 so.m_fMusicRate == 0.7f )		m_iSelectedOption[0][SO_RATE] = 2;
-	else if( so.m_fMusicRate == 0.8f )		m_iSelectedOption[0][SO_RATE] = 3;
-	else if( so.m_fMusicRate == 0.9f )		m_iSelectedOption[0][SO_RATE] = 4;
-	else if( so.m_fMusicRate == 1.0f )		m_iSelectedOption[0][SO_RATE] = 5;
-	else if( so.m_fMusicRate == 1.1f )		m_iSelectedOption[0][SO_RATE] = 6;
-	else if( so.m_fMusicRate == 1.2f )		m_iSelectedOption[0][SO_RATE] = 7;
-	else if( so.m_fMusicRate == 1.3f )		m_iSelectedOption[0][SO_RATE] = 8;
-	else if( so.m_fMusicRate == 1.4f )		m_iSelectedOption[0][SO_RATE] = 9;
-	else if( so.m_fMusicRate == 1.5f )		m_iSelectedOption[0][SO_RATE] = 10;
-	else									m_iSelectedOption[0][SO_RATE] = 5;
+	m_iSelectedOption[0][SO_RATE] = 7;	// in case we don't match below
+	for( int i=0; i<g_SongOptionsLines[SO_RATE].choices.size(); i++ )
+		if( so.m_fMusicRate == atof(g_SongOptionsLines[SO_RATE].choices[i]) ) 
+			m_iSelectedOption[0][SO_RATE] = i;
 }
 
 void ScreenSongOptions::ExportOptions()
@@ -109,21 +101,8 @@ void ScreenSongOptions::ExportOptions()
 	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
 	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
 
-	switch( m_iSelectedOption[0][SO_RATE] )
-	{
-	case 0:	so.m_fMusicRate = 0.3f;	break;
-	case 1:	so.m_fMusicRate = 0.5f;	break;
-	case 2:	so.m_fMusicRate = 0.7f;	break;
-	case 3:	so.m_fMusicRate = 0.8f;	break;
-	case 4:	so.m_fMusicRate = 0.9f;	break;
-	case 5:	so.m_fMusicRate = 1.0f;	break;
-	case 6:	so.m_fMusicRate = 1.1f;	break;
-	case 7:	so.m_fMusicRate = 1.2f;	break;
-	case 8:	so.m_fMusicRate = 1.3f;	break;
-	case 9:	so.m_fMusicRate = 1.4f;	break;
-	case 10:so.m_fMusicRate = 1.5f;	break;
-	default:	ASSERT( false );
-	}
+	int iSel = m_iSelectedOption[0][SO_RATE];
+	so.m_fMusicRate = atof( g_SongOptionsLines[SO_RATE].choices[iSel] );
 }
 
 void ScreenSongOptions::GoToPrevState()
