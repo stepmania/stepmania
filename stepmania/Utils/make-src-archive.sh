@@ -21,7 +21,7 @@ cp -a autoconf $PRODUCTVER/
 cp -a Utils $PRODUCTVER/
 cp -a src $PRODUCTVER/
 
-cp COPYING.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
+cp Docs/Copying.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
    configure Makefile.in configure.ac   $PRODUCTVER
 
 mkdir $PRODUCTVER/Docs/
