@@ -454,6 +454,23 @@ bool Course::IsPlayableIn( NotesType nt ) const
 }
 
 
+static vector<Song*> GetFilteredBestSongs( NotesType nt )
+{
+	vector<Song*> vSongsByMostPlayed = SONGMAN->GetBestSongs();
+	// filter out songs that don't have both medium and hard steps and long ver sons
+	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
+	{
+		Song* pSong = vSongsByMostPlayed[j];
+		if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
+			pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
+			!pSong->GetNotes(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
+			!pSong->GetNotes(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
+			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
+	}
+
+	return vSongsByMostPlayed;
+}
+
 void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficult ) const
 {
 	vector<Entry> entries = m_entries;
@@ -469,18 +486,9 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 		random_shuffle( entries.begin(), entries.end(), rnd );
 	}
 
-	vector<Song*> vSongsByMostPlayed = SONGMAN->GetBestSongs();
-	// filter out songs that don't have both medium and hard steps and long ver sons
-	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
-	{
-		Song* pSong = vSongsByMostPlayed[j];
-		if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
-			pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
-			!pSong->GetNotes(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
-			!pSong->GetNotes(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
-			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
-	}
-
+	/* This can take some time, so don't fill it out unless we need it. */
+	bool bMostPlayedSet = false;
+	vector<Song*> vSongsByMostPlayed;
 	
 	vector<Song*> AllSongsShuffled = SONGMAN->GetAllSongs();
 	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
@@ -544,6 +552,12 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 		case Entry::best:
 		case Entry::worst:
 			{
+				if( !bMostPlayedSet )
+				{
+					bMostPlayedSet = true;
+					vSongsByMostPlayed = GetFilteredBestSongs( nt );
+				}
+
 				if( e.players_index >= (int)vSongsByMostPlayed.size() )
 					break;
 
