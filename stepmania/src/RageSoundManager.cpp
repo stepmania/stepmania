@@ -241,7 +241,7 @@ void SoundMixBuffer::read( float *buf )
 	}
 
 	for( unsigned pos = 0; pos < used; ++pos )
-		buf[pos] = SCALE( float(mixbuf[pos]), Minimum, Maximum, -1.0f, 1.0f );
+		buf[pos] = SCALE( (float)mixbuf[pos], Minimum, Maximum, -1.0f, 1.0f );
 
 	used = 0;
 }
