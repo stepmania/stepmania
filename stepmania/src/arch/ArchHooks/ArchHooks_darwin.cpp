@@ -10,6 +10,7 @@
 #include "global.h"
 #include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
+#include "RageLog.h"
 #include <Carbon/Carbon.h>
 
 const unsigned maxLogMessages = 10; /* Follow the windows example */
@@ -34,33 +35,35 @@ void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID) {
     if (allowHush && MessageIsIgnored(ID))
         return;
 
-    Str255 boxName = "\pDon't show again.";
+    CFStringRef boxName = CFStringCreateWithCString(NULL, "Don't show again", kCFStringEncodingASCII);
     CFStringRef error = CFStringCreateWithCString(NULL, sMessage.c_str(), kCFStringEncodingASCII);
     CFStringRef OK = CFStringCreateWithCString(NULL, "OK", kCFStringEncodingASCII);
     struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, NULL, NULL,
         kAlertStdAlertOKButton, NULL, kWindowAlertPositionParentWindowScreen, NULL};
     DialogRef dialog;
     CreateStandardAlert(kAlertNoteAlert, error, NULL, &params, &dialog);
-    Rect boxBounds = {20, 40, 300, 25}; /* again, whatever */
-    DialogItemIndex unused, index = CountDITL(dialog);
     OSErr err;
+    ControlRef box;
+    SInt16 unused;
     
-    /*if (allowHush) {
-        err = InsertCheckBoxDialogItem(dialog, CountDITL(dialog), &boxBounds, true, boxName);
-        ASSERT(err == noErr);
-    }*/
+    if (allowHush) {
+        Rect boxBounds = {20, 40, 300, 25}; /* again, whatever */
+        CreateCheckBoxControl(GetDialogWindow(dialog), &boxBounds, boxName, 0, true, &box);
+        GetBestControlRect(box, &boxBounds, &unused);
+        OSStatus status = InsertDialogItem(dialog, 0, kCheckBoxDialogItem, (Handle)box, &boxBounds);
+        ASSERT(status == noErr);
+    }
     err = AutoSizeDialog(dialog);
     ASSERT(err == noErr);
     
     RunStandardAlert(dialog, NULL, &unused);
-    /*if (allowHush) {
-        ControlRef box;
-        GetDialogItemAsControl(dialog, (SInt16)index, &box);
-        if (GetControl32BitValue(box))
-            IgnoreMessage(ID);
-    }*/
+    if (allowHush && GetControl32BitValue(box)){
+        LOG->Trace("Ignore dialog ID, \"%s\"", ID.c_str());
+        IgnoreMessage(ID);
+    }
     CFRelease(error);
     CFRelease(OK);
+    CFRelease(boxName);
 }
 
 ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString sMessage, CString ID) {
