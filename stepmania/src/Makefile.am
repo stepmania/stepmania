@@ -49,7 +49,7 @@ PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.
 SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.h StyleInput.h \
 TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h \
 LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h RaveHelper.cpp RaveHelper.h \
-PlayerAI.cpp PlayerAI.h Character.cpp Character.h
+PlayerAI.cpp PlayerAI.h Character.cpp Character.h ArrowBackdrop.cpp ArrowBackdrop.h
 
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h

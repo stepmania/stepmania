@@ -121,6 +121,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj
+/FIXED:no
 "
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
@@ -1240,6 +1241,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ActiveItemList.h">
+			</File>
+			<File
+				RelativePath="ArrowBackdrop.cpp">
+			</File>
+			<File
+				RelativePath="ArrowBackdrop.h">
 			</File>
 			<File
 				RelativePath=".\ArrowEffects.cpp">

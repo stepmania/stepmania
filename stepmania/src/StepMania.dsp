@@ -295,6 +295,14 @@ SOURCE=.\RageUtil.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\ArrowBackdrop.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ArrowBackdrop.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Character.cpp
 # End Source File
 # Begin Source File
