@@ -27,6 +27,7 @@ public:
 //	CString GetOsMountDir( PlayerNumber pn );	// only valid when state = ready
 
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
+	void MountAllCards();
 	
 	void PauseMountingThread();	// call this before reading or writing to memory card
 	void UnPauseMountingThread();	// call this when done reading or writing to memory card

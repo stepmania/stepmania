@@ -653,41 +653,39 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	SaveEditableDataToDir( sDir );
 
 	// Save stats.xml
+	CString fn = sDir + STATS_XML;
+
+	XNode xml;
+	xml.name = "Stats";
+	xml.AppendChild( SaveGeneralDataCreateNode() );
+	xml.AppendChild( SaveSongScoresCreateNode() );
+	xml.AppendChild( SaveCourseScoresCreateNode() );
+	xml.AppendChild( SaveCategoryScoresCreateNode() );
+	xml.AppendChild( SaveScreenshotDataCreateNode() );
+	xml.AppendChild( SaveCalorieDataCreateNode() );
+	xml.AppendChild( SaveRecentSongScoresCreateNode() );
+	xml.AppendChild( SaveRecentCourseScoresCreateNode() );
+	if( IsMachine() )
+		xml.AppendChild( SaveCoinDataCreateNode() );
+
+	DISP_OPT opts = optDefault;
+	opts.stylesheet = STATS_XSL;
+	bool bSaved = xml.SaveToFile(fn, &opts);
+	
+	// Update file cache, or else IsAFile in CryptManager won't see this new file.
+	FILEMAN->FlushDirCache( sDir );
+	
+	if( bSaved && bSignData )
 	{
-		CString fn = sDir + STATS_XML;
+		CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+		CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 
-		XNode xml;
-		xml.name = "Stats";
-		xml.AppendChild( SaveGeneralDataCreateNode() );
-		xml.AppendChild( SaveSongScoresCreateNode() );
-		xml.AppendChild( SaveCourseScoresCreateNode() );
-		xml.AppendChild( SaveCategoryScoresCreateNode() );
-		xml.AppendChild( SaveScreenshotDataCreateNode() );
-		xml.AppendChild( SaveCalorieDataCreateNode() );
-		xml.AppendChild( SaveRecentSongScoresCreateNode() );
-		xml.AppendChild( SaveRecentCourseScoresCreateNode() );
-		if( IsMachine() )
-			xml.AppendChild( SaveCoinDataCreateNode() );
-
-		DISP_OPT opts = optDefault;
-		opts.stylesheet = STATS_XSL;
-		bool bSaved = xml.SaveToFile(fn, &opts);
-		
-		// Update file cache, or else IsAFile in CryptManager won't see this new file.
+		// Update file cache, or else IsAFile in CryptManager won't see sStatsXmlSigFile.
 		FILEMAN->FlushDirCache( sDir );
-		
-		if( bSaved && bSignData )
-		{
-			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
-			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 
-			// Update file cache, or else IsAFile in CryptManager won't see sStatsXmlSigFile.
-			FILEMAN->FlushDirCache( sDir );
-
-			// Save the "don't share" file
-			CString sDontShareFile = sDir + DONT_SHARE_SIG;
-			CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
-		}
+		// Save the "don't share" file
+		CString sDontShareFile = sDir + DONT_SHARE_SIG;
+		CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
 	}
 
 	SaveStatsWebPageToDir( sDir );
@@ -696,7 +694,7 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	FILEMAN->CreateDir( sDir + EDITS_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
-	return true;
+	return bSaved;
 }
 
 void Profile::SaveEditableDataToDir( CString sDir ) const

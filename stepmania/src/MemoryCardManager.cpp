@@ -217,11 +217,21 @@ void MemoryCardManager::LockCards( bool bLock )
 		}
 	}
 	
-	
 	if( !bWasLocked && bLock )
 		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_dont_mount );
 	else
 		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
+}
+
+void MemoryCardManager::MountAllCards()
+{
+	FOREACH_PlayerNumber( p )
+	{
+		if( m_Device[p].IsBlank() )	// they don't have an assigned card
+			continue;
+		
+		m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+	}
 }
 
 void MemoryCardManager::FlushAndReset()

@@ -10,6 +10,8 @@
 
 static void SaveMachineStatsToFirstMemCard()
 {
+	MEMCARDMAN->MountAllCards();
+
 	FOREACH_PlayerNumber( pn )
 	{
 		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
@@ -19,9 +21,11 @@ static void SaveMachineStatsToFirstMemCard()
 		sDir += "MachineProfile/";
 
 		
-		PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
-		
-		SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
+		bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+		if( bSaved )
+			SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
+		else
+			SCREENMAN->SystemMessage( ssprintf("Error saving stats to P%d card.",pn+1) );
 		return;
 	}
 
