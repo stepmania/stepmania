@@ -2,6 +2,7 @@
 #include "MemoryCardDriver_Linux.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageFileManager.h"
 
 #include <stdio.h>
 #include <errno.h>
