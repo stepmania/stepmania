@@ -105,6 +105,7 @@ const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"E:      Edit description",
 	"A:      Edit main title",
 	"U:      Edit subtitle",
+	"`:      Edit transliteration",
 	"I:      Toggle assist tick",
 	"B:      Add/Edit background change at current beat",
 	"Ins:    Insert blank beat and shift down",
@@ -131,6 +132,7 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_E,
 	DIK_A,
 	DIK_U,
+	DIK_GRAVE,
 	DIK_I,
 	DIK_B,
 	DIK_INSERT,
@@ -444,6 +446,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		"Description = %s\n"
 		"Main title = %s\n"
 		"Sub title = %s\n"
+		"Transliteration = %s\n"
 		"Num notes tap: %d, hold: %d\n"
 		"Assist tick is %s\n"
 		"MusicOffsetSeconds: %.2f\n"
@@ -456,6 +459,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
 		m_pSong->m_sMainTitle,
 		m_pSong->m_sSubTitle,
+		m_pSong->m_sTransliteration,
 		iNumTapNotes, iNumHoldNotes,
 		GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK ? "ON" : "OFF",
 		m_pSong->m_fBeat0OffsetInSeconds,
@@ -573,6 +577,12 @@ void ChangeSubTitle( CString sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitle = sNew;
+}
+
+void ChangeTransliteration( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sTransliteration = sNew;
 }
 
 // End helper functions for InputEdit
@@ -959,6 +969,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 	case DIK_U:
 		SCREENMAN->TextEntry( SM_None, "Edit song sub title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitle, ChangeSubTitle, NULL );
+		break;
+
+	case DIK_GRAVE:
+		SCREENMAN->TextEntry( SM_None, "Edit song transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sTransliteration, ChangeTransliteration, NULL);
 		break;
 
 	case DIK_B:
