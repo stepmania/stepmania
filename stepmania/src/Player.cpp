@@ -44,7 +44,7 @@ CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField
 #define START_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
-#define RECEPTOR_CUTOFF							THEME->GetMetricI("Player","ReceptorNoSinkScoreCutoff")
+CachedThemeMetricI RECEPTOR_CUTOFF				("Player","ReceptorNoSinkScoreCutoff");
 
 /* Distance to search for a note in Step(). */
 /* Units? */
@@ -63,7 +63,8 @@ PlayerMinus::PlayerMinus()
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
 	TAP_JUDGMENTS_UNDER_FIELD.Refresh();
 	HOLD_JUDGMENTS_UNDER_FIELD.Refresh();
-	
+	RECEPTOR_CUTOFF.Refresh();
+
 	m_PlayerNumber = PLAYER_INVALID;
 	m_fNoteFieldHeight = 0;
 
