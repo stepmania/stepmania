@@ -9770,29 +9770,29 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Fast.cpp;
-			path = /Users/steve/stepmania/src/RageSoundReader_Resample_Fast.cpp;
-			refType = 0;
+			path = ../src/RageSoundReader_Resample_Fast.cpp;
+			refType = 4;
 		};
 		AAAE28F3052254A900D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Fast.h;
-			path = /Users/steve/stepmania/src/RageSoundReader_Resample_Fast.h;
-			refType = 0;
+			path = ../src/RageSoundReader_Resample_Fast.h;
+			refType = 4;
 		};
 		AAAE28F4052254A900D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Good.cpp;
-			path = /Users/steve/stepmania/src/RageSoundReader_Resample_Good.cpp;
-			refType = 0;
+			path = ../src/RageSoundReader_Resample_Good.cpp;
+			refType = 4;
 		};
 		AAAE28F5052254A900D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample_Good.h;
-			path = /Users/steve/stepmania/src/RageSoundReader_Resample_Good.h;
-			refType = 0;
+			path = ../src/RageSoundReader_Resample_Good.h;
+			refType = 4;
 		};
 		AAAE28F6052254A900D02EE9 = {
 			fileRef = AAAE28F2052254A900D02EE9;
