@@ -20,4 +20,6 @@ void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBea
 		 * screen, so new arrows will scroll on screen with this effect. */
 		GAMESTATE->GetUndisplayedBeats( pn, fSecsRemaining, fStartBeat, fEndBeat );
 	}
+
+	ASSERT( fEndBeat >= fStartBeat );
 }
