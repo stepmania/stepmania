@@ -48,7 +48,6 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 GameState::GameState()
 {
 	m_pPosition = NULL;
-	m_pUnlockingSys = new UnlockSystem;
 
 	m_CurGame = GAME_DANCE;
 	m_iCoins = 0;
@@ -66,7 +65,6 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-	delete m_pUnlockingSys;
 	delete m_pPosition;
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		delete m_pCharacters[i];

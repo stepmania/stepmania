@@ -29,7 +29,6 @@ class GameDef;
 class StyleDef;
 class NoteFieldPositioning;
 class Character;
-class UnlockSystem;
 class TimingData;
 struct StageStats;
 
@@ -48,7 +47,6 @@ public:
 	//
 	// Main state info
 	//
-	UnlockSystem	*m_pUnlockingSys;
 	Game			m_CurGame;
 	Style			m_CurStyle;
 	bool			m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
