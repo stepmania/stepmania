@@ -68,7 +68,6 @@ void Transition::Update( float fDeltaTime )
 
 void Transition::Reset()
 {
-	ASSERT( m_State == finished );
 	m_State = waiting;
 }
 
