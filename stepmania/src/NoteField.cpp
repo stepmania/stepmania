@@ -540,20 +540,12 @@ void NoteField::DrawPrimitives()
 		for( i=0; i < GetNumHoldNotes(); i++ )
 		{
 			const HoldNote &hn = GetHoldNote(i);
-			const HoldNoteScore hns = GetHoldNoteScore( hn );
-			const float fLife = GetHoldNoteLife( hn );
-			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
-			const bool bIsActive = m_ActiveHoldNotes[hn];
-			
-			if( bIsActive )
-				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
-			
-			
-			if( hns == HNS_OK )	// if this HoldNote was completed
-				continue;	// don't draw anything
-
 			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
+
+			const HoldNoteScore hns = GetHoldNoteScore( hn );
+			if( hns == HNS_OK )	// if this HoldNote was completed
+				continue;	// don't draw anything
 
 			// If no part of this HoldNote is on the screen, skip it
 			if( !( iFirstIndexToDraw <= hn.iEndRow && hn.iEndRow <= iLastIndexToDraw  ||
@@ -575,6 +567,10 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
+			const bool bIsActive = m_ActiveHoldNotes[hn];
+			if( bIsActive )
+				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
+			
 			RAGE_ASSERT_M( NoteRowToBeat(hn.iStartRow) > -2000, ssprintf("%i %i %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
 
@@ -588,6 +584,8 @@ void NoteField::DrawPrimitives()
 
 			NoteDisplayCols *nd = CurDisplay->second;
 
+			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
+			const float fLife = GetHoldNoteLife( hn );
 			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		
