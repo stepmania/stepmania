@@ -146,9 +146,9 @@ private:
 
 	RageSoundParams m_Param;
 	
-	/* Current position of the output sound; if < 0, nothing will play until it
-	 * becomes positive.  This is recorded in frames, to avoid rounding error. */
-	int		position;
+	/* Current position of the output sound, in frames.  If < 0, nothing will play
+	 * until it becomes positive. */
+	int		decode_position;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position

@@ -68,7 +68,7 @@ RageSound::RageSound()
 
 	original = this;
 	Sample = NULL;
-	position = 0;
+	decode_position = 0;
 	stopped_position = 0;
 	playing = false;
 	playing_thread = 0;
@@ -101,7 +101,7 @@ RageSound::RageSound(const RageSound &cpy):
 
 	original = cpy.original;
 	m_Param = cpy.m_Param;
-	position = cpy.position;
+	decode_position = cpy.decode_position;
 	stopped_position = cpy.stopped_position;
 	playing = false;
 	playing_thread = 0;
@@ -151,7 +151,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	Unload();
 
 	m_sFilePath = sSoundFilePath;
-	position = stopped_position = 0;
+	decode_position = stopped_position = 0;
 
 	CString error;
 	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
@@ -329,7 +329,7 @@ int RageSound::GetData( char *buffer, int frames )
 	{
 		/* We have a length; only read up to the end. */
 		const float LastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-		int FramesToRead = int(LastSecond*samplerate()) - position;
+		int FramesToRead = int(LastSecond*samplerate()) - decode_position;
 
 		/* If it's negative, we're past the end, so cap it at 0. Don't read
 		 * more than size. */
@@ -337,11 +337,11 @@ int RageSound::GetData( char *buffer, int frames )
 	}
 
 	int got;
-	if( position < 0 )
+	if( decode_position < 0 )
 	{
 		/* We havn't *really* started playing yet, so just feed silence.  How
 		 * many more bytes of silence do we need? */
-		got = -position;
+		got = -decode_position;
 		got = min( got, frames );
 		if( buffer )
 			memset( buffer, 0, got*framesize );
@@ -423,7 +423,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 	ASSERT(playing);
 
 	frames_stored = 0;
-	sound_frame = position;
+	sound_frame = decode_position;
 
 	while( 1 )
 	{
@@ -487,7 +487,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			}
 		}
 
-		/* This block goes from position to position+got_frames. */
+		/* This block goes from decode_position to decode_position+got_frames. */
 
 		/* We want to fade when there's FADE_TIME seconds left, but if
 		 * m_LengthFrames is -1, we don't know the length we're playing.
@@ -496,17 +496,17 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
 		{
 			const float fLastSecond = m_Param.m_StartSecond+m_Param.m_LengthSeconds;
-			const float fStartVolume = fLastSecond - float(position) / samplerate();
-			const float fEndVolume = fLastSecond - float(position+got_frames) / samplerate();
+			const float fStartVolume = fLastSecond - float(decode_position) / samplerate();
+			const float fEndVolume = fLastSecond - float(decode_position+got_frames) / samplerate();
 			FadeSound( (Sint16 *) buffer, got_frames, fStartVolume, fEndVolume );
 		}
 
 		AdjustBalance( (Sint16 *) buffer, got_frames, m_Param.m_Balance );
 
-		sound_frame = position;
+		sound_frame = decode_position;
 
 		frames_stored = got_frames;
-		position += got_frames;
+		decode_position += got_frames;
 		return true;
 	}
 }
@@ -747,7 +747,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	 * so guess what we think the real time is. */
 	if(pos_map.empty())
 	{
-		LOG->Trace("no data yet; %i", position);
+		LOG->Trace("no data yet; %i", stopped_position);
 		if( approximate )
 			*approximate = true;
 		return stopped_position;
@@ -810,19 +810,19 @@ bool RageSound::SetPositionFrames( int frames )
 		L.Unlock();
 
 	{
-		/* "position" records the number of frames we've output to the
+		/* "decode_position" records the number of frames we've output to the
 		 * speaker.  If the rate isn't 1.0, this will be different from the
 		 * position in the sound data itself.  For example, if we're playing
 		 * at 0.5x, and we're seeking to the 10th frame, we would have actually
 		 * played 20 frames, and it's the number of real speaker frames that
-		 * "position" represents. */
+		 * "decode_position" represents. */
 	    const int scaled_frames = int( frames / GetPlaybackRate() );
 
 	    /* If we're already there, don't do anything. */
-	    if( position == scaled_frames )
+	    if( decode_position == scaled_frames )
 		    return true;
 
-	    stopped_position = position = scaled_frames;
+	    stopped_position = decode_position = scaled_frames;
 	}
 
 	/* The position we're going to seek the input stream to.  We have
