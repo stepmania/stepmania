@@ -31,7 +31,6 @@
  * drivers.  These are all singleton drivers--we never use more than one. */
 /* XXX: null, none, Null--pick one */
 #include "LoadingWindow/LoadingWindow_Null.h"
-#include "ErrorDialog/ErrorDialog_null.h"
 #include "ArchHooks/ArchHooks_none.h"
 #include "Sound/RageSoundDriver_Null.h"
 

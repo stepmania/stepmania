@@ -27,7 +27,6 @@
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
-#include "arch/ErrorDialog/ErrorDialog.h"
 #include "time.h"
 
 #include "SDL_utils.h"

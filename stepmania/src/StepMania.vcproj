@@ -873,28 +873,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 				</Filter>
 				<Filter
-					Name="ErrorDialog"
-					Filter="">
-					<File
-						RelativePath="arch\ErrorDialog\ErrorDialog.h">
-					</File>
-					<File
-						RelativePath="arch\ErrorDialog\ErrorDialog_Win32.cpp">
-					</File>
-					<File
-						RelativePath="arch\ErrorDialog\ErrorDialog_Win32.h">
-					</File>
-					<File
-						RelativePath="arch\ErrorDialog\ErrorDialog_null.h">
-					</File>
-					<File
-						RelativePath="arch\ErrorDialog\ErrorDialog_stdout.cpp">
-					</File>
-					<File
-						RelativePath="arch\ErrorDialog\ErrorDialog_stdout.h">
-					</File>
-				</Filter>
-				<Filter
 					Name="Sound"
 					Filter="">
 					<File

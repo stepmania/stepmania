@@ -67,7 +67,6 @@ LoadingWindow *MakeLoadingWindow()
 	return ret;
 }
 
-ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
 ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
 #if defined(SUPPORT_OPENGL)
 LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }

@@ -2,14 +2,12 @@
 #define ARCH_H
 
 /* Include this file if you need to create an instance of a driver object.  */
-class ErrorDialog;
 class LoadingWindow;
 class RageSoundDriver;
 class ArchHooks;
 class InputHandler;
 class LowLevelWindow;
 
-ErrorDialog *MakeErrorDialog();
 LoadingWindow *MakeLoadingWindow();
 ArchHooks *MakeArchHooks();
 LowLevelWindow *MakeLowLevelWindow();

@@ -3,7 +3,6 @@
 
 /* Load drivers for Win32. */
 #include "LoadingWindow/LoadingWindow_Win32.h"
-#include "ErrorDialog/ErrorDialog_Win32.h"
 #include "ArchHooks/ArchHooks_Win32.h"
 
 #include "InputHandler/InputHandler_DirectInput.h"
