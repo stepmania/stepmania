@@ -15,6 +15,7 @@
 #include "Style.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#include "CommonMetrics.h"
 
 
 /*
@@ -338,7 +339,9 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 				pTrail->GetDisplayBpms( bpms );
 			}
 
-			if( bpms.IsSecret() )
+			if( bpms.vfBpms.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+			{}	// add nothing
+			else if( bpms.IsSecret() )
 				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
 			else if( bpms.BpmIsConstant() )
 				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );

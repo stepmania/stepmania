@@ -7,6 +7,7 @@
 #include "Course.h"
 #include "Style.h"
 #include "ActorUtil.h"
+#include "CommonMetrics.h"
 
 BPMDisplay::BPMDisplay()
 {
@@ -67,8 +68,11 @@ void BPMDisplay::Update( float fDeltaTime )
 		{
 			m_fBPMFrom = -1;
 			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? CString("xxx") : ssprintf("%03.0f",RandomFloat(0,600)) ); 
-		} else if(m_fBPMFrom == -1)
+		}
+		else if(m_fBPMFrom == -1)
+		{
 			m_fBPMFrom = m_fBPMTo;
+		}
 	}
 
 	// update m_textBPM
@@ -84,7 +88,16 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 {
 	ASSERT( !bpms.vfBpms.empty() );
 
+	m_BPMS.clear();
+
 	const vector<float> &BPMS = bpms.vfBpms;
+
+	if( BPMS.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+	{
+		m_BPMS.push_back( -1 );
+		m_textBPM.SetText( "Various" );
+		return;
+	}
 
 	bool AllIdentical = true;
 	for( unsigned i = 0; i < BPMS.size(); ++i )
@@ -110,9 +123,12 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 				m_textBPM.SetText( ssprintf("%i", MinBPM) );
 		}
 		else
+		{
 			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
-	} else {
-		m_BPMS.clear();
+		}
+	}
+	else
+	{
 		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
 			m_BPMS.push_back(BPMS[i]);

@@ -1726,6 +1726,14 @@ void ScreenSelectMusic::AfterMusicChange()
 	// update stage counter display (long versions/marathons)
 	m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
 
+	if( m_Artists.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+	{
+		m_Artists.clear();
+		m_AltArtists.clear();
+		m_Artists.push_back( "Various Artists" );
+		m_AltArtists.push_back( "Various Artists" );
+	}
+
 	m_Artist.SetTips( m_Artists, m_AltArtists );
 
 	FOREACH_HumanPlayer( p )
