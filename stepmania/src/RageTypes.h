@@ -140,6 +140,11 @@ public:
 	bool FromString( const CString &str )
 	{
 		int result = sscanf( str, "%f,%f,%f,%f", &r, &g, &b, &a );
+		if( result == 3 )
+		{
+			a = 1;
+			return true;
+		}
 		if( result == 4 )
 			return true;
 
