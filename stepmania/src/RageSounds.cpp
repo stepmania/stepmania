@@ -94,43 +94,43 @@ void StartQueuedMusic( const RageTimer &when )
 
 void RageSounds::Update( float fDeltaTime )
 {
-	if( g_UpdatingTimer )
+	if( !g_UpdatingTimer )
+		return;
+
+	if( !g_Music->IsPlaying() )
 	{
-		if( g_Music->IsPlaying() )
-		{
-			/* There's a delay between us calling Play() and the sound actually playing.
-			 * During this time, approximate will be true.  Keep using the previous timing
-			 * data until we get a non-approximate time, indicating that the sound has actually
-			 * started playing. */
-			bool approximate;
-			const float fSeconds = g_Music->GetPositionSeconds( &approximate );
-
-			if( g_TimingDelayed && !approximate )
-			{
-				/* We've passed the start position of the new sound, so we should be OK.
-				 * Load up the new timing data. */
-				g_Timing = g_MusicToPlay.timing;
-				g_TimingDelayed = false;
-			}
-
-			RageTimer now;
-			now.Touch();
-
-			if( approximate )
-			{
-				/* We're still waiting for the new sound to start playing, so keep using the
-				 * old timing data and fake the time. */
-				GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
-			}
-			else
-				GAMESTATE->UpdateSongPosition( fSeconds, g_Timing );
-		}
-		else
-		{
-			/* There's no song playing.  Fake it. */
-			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
-		}
+		/* There's no song playing.  Fake it. */
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
+		return;
 	}
+
+	/* There's a delay between us calling Play() and the sound actually playing.
+	 * During this time, approximate will be true.  Keep using the previous timing
+	 * data until we get a non-approximate time, indicating that the sound has actually
+	 * started playing. */
+	bool approximate;
+	const float fSeconds = g_Music->GetPositionSeconds( &approximate );
+
+	if( g_TimingDelayed && !approximate )
+	{
+		/* We've passed the start position of the new sound, so we should be OK.
+		 * Load up the new timing data. */
+		g_Timing = g_MusicToPlay.timing;
+		g_TimingDelayed = false;
+	}
+
+	RageTimer now;
+	now.Touch();
+
+	if( approximate )
+	{
+		/* We're still waiting for the new sound to start playing, so keep using the
+		 * old timing data and fake the time. */
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
+		return;
+	}
+
+	GAMESTATE->UpdateSongPosition( fSeconds, g_Timing );
 }
 
 
