@@ -330,7 +330,7 @@ void Background::LoadFromSong( const Song* pSong )
 
 	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
 
-	// Load the static background that will before notes start and after notes end
+	// Load the static background that will show before notes start and after notes end
 	{
 		BGAnimation *pTempBGA = new BGAnimation;
 		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
@@ -440,12 +440,19 @@ void Background::LoadFromSong( const Song* pSong )
 
 int Background::FindBGSegmentForBeat( float fBeat ) const
 {
-	int i;
-	for( i=0; i<(int)(m_aBGChanges.size()) - 1; i++ )
-		if( fBeat < m_aBGChanges[i+1].m_fStartBeat )
+	if( m_aBGChanges.empty() )
+		return -1;
+	if( fBeat < m_aBGChanges[0].m_fStartBeat )
+		return -1;
+	
+	// assumption: m_aBGChanges are sorted by m_fStartBeat
+	for( int i=m_aBGChanges.size()-1; i>=0; i-- )
+	{
+		if( fBeat >= m_aBGChanges[i].m_fStartBeat )
 			return i;
+	}
 
-	return -1;
+	return i;
 }
 
 /* If the BG segment has changed, move focus to it.  Send Update() calls. */
