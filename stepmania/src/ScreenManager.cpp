@@ -592,7 +592,7 @@ void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 
 void ScreenManager::SystemMessage( CString sMessage )
 {
-	LOG->Trace( sMessage );
+	LOG->Trace( "%s", sMessage.c_str() );
 	m_SystemLayer->SystemMessage( sMessage );
 }
 
