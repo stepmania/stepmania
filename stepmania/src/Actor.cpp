@@ -621,10 +621,13 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 
 void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
-	m_Effect = wag;
+	if( m_Effect != wag )
+	{
+		m_Effect = wag;
+		m_fSecsIntoEffect = 0;
+	}
 	m_fEffectPeriodSeconds = fPeriod;
 	m_vEffectMagnitude = vect;
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
