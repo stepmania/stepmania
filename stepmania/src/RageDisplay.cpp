@@ -42,6 +42,7 @@ RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
 float				g_fLastCheckTime;
 int					g_iFPS, g_iVPF, g_iDPF;
+int					g_glVersion;
 
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
@@ -111,6 +112,9 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 	g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
 	if(!g_screen)
 		throw RageException("Failed to open screen!");
+
+	g_glVersion = int(roundf(atof((const char *) glGetString(GL_VERSION)) * 10));
+	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
 
 	/*
 	 * Set up OpenGL for 2D rendering.
