@@ -65,6 +65,7 @@ public:
 	void ReportScore(int playerID, int step, int score, int combo);	
 	void ReportSongOver();	//Report to server that song is over
 	void ReportStyle();		//Report to server the style, players, and names
+	void ReportNSSOnOff(int i);	//Report song selection screen on/off
 	void StartRequest(short position);	//Request a start.  Block until granted.
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 

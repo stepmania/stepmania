@@ -16,6 +16,7 @@ protected:
 	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
 	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void TweenOffScreen( );
 
 	void UpdateStats( );
 private:

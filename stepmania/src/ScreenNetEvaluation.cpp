@@ -19,6 +19,7 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 {
 	m_bHasStats = false;
 	m_pActivePlayer = PLAYER_1;	
+	m_iCurrentPlayer = 0;
 
 	FOREACH_PlayerNumber (pn)
 		if ( GAMESTATE->IsPlayerEnabled( pn ) )
@@ -60,6 +61,7 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 		cx+=USERDX;
 		cy+=USERDY;
 	}
+	NSMAN->ReportNSSOnOff( 1 );
 }
 
 void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
@@ -100,16 +102,23 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		m_bHasStats = true;
 		for( int i=0; i<m_iActivePlayers; i++ )
 		{
-			if (NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] == GAMESTATE->GetPlayerDisplayName(m_pActivePlayer) )
-				m_iCurrentPlayer = i;
-
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
 			ON_COMMAND( m_textUsers[i] );
 		}
-		COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
 		return;	//no need to let ScreenEvaluation get ahold of this.
+	case SM_GoToNextScreen:
+		NSMAN->ReportNSSOnOff( 0 );
+		break;
 	}
 	ScreenEvaluation::HandleScreenMessage( SM );
+}
+
+void ScreenNetEvaluation::TweenOffScreen( )
+{
+	for( int i=0; i<m_iActivePlayers; i++ )	
+		OFF_COMMAND( m_textUsers[i] );
+	OFF_COMMAND( m_rectUsersBG );
+	ScreenEvaluation::TweenOffScreen();
 }
 
 void ScreenNetEvaluation::UpdateStats()

@@ -11,6 +11,7 @@ NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
+void NetworkSyncManager::ReportNSSOnOff(int i) { }
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber) { }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
 void NetworkSyncManager::ReportSongOver() { }
@@ -35,6 +36,7 @@ void NetworkSyncManager::SelectUserSong() { }
 #include "PrefsManager.h"
 #include "ProductInfo.h"
 #include "ScreenMessage.h"
+#include "GameManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
@@ -242,6 +244,12 @@ bool NetworkSyncManager::Listen(unsigned short port)
 	return useSMserver;
 }
 
+void NetworkSyncManager::ReportNSSOnOff(int i) 
+{
+	m_packet.ClearPacket();
+	m_packet.Write1( 10 );
+	m_packet.Write1( i );
+}
 
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber)
 {
@@ -616,6 +624,18 @@ void NetworkSyncManager::ProcessInput()
 					m_PlayerStatus.push_back( PStatus );
 					m_PlayerNames.push_back( m_packet.ReadNT() );
 				}
+			}
+			break;
+		case 10:
+			{
+				CString StyleName, GameName;
+				GameName = m_packet.ReadNT();
+				StyleName = m_packet.ReadNT();
+
+				GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( GameName );
+				GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, StyleName );
+
+				SCREENMAN->SetNewScreen( "ScreenNetSelectMusic" ); //Should this be metric'd out?
 			}
 			break;
 		}
