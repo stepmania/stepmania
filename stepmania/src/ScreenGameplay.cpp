@@ -285,7 +285,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	m_Background.SetZ( 2 );	// behind everything else
 	this->AddChild( &m_Background );
 
-	m_Foreground.SetZ( -1 );	// on top of everything else except transitions
+	m_Foreground.SetZ( -5 );	// on top of everything else, including transitions
 	this->AddChild( &m_Foreground );
 
 	
