@@ -633,7 +633,25 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, 
 		pSprTail->SetDiffuse( colorDiffuse );
 		pSprTail->SetGlow( RageColor(0,0,0,0) );
 	}
+
+	if( cache->m_bUseLighting )
+	{
+		DISPLAY->SetLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.1f,0.1f,0.1f,1), 
+			RageColor(1,1,1,1),
+			RageColor(1,1,1,1),
+			RageVector3(1, 0, +1) );
+	}
+
 	pSprTail->Draw();
+
+	if( cache->m_bUseLighting )
+	{
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
+	}
 }
 
 void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
