@@ -3,6 +3,7 @@
 
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "RageInputDevice.h"
 #include "archutils/Win32/USB.h"
 
