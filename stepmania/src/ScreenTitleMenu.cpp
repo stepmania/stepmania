@@ -143,7 +143,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
 
-	m_soundChange.Load( THEME->GetPathToS("ScreenTitleMenu change") );	
+	m_soundChange.Load( THEME->GetPathToS("ScreenTitleMenu change"),true );	
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 
