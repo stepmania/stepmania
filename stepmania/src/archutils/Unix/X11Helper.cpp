@@ -6,8 +6,6 @@
 
 #include "RageDisplay.h"	// RageDisplay
 
-vector<Callback_t>	pCBacks;	// Callbacks for the rendering
-					// thread
 list<long>		pMasks;		// Currently open masks
 Display			*pDpy;		// Running X connection
 Window			*pWin	= NULL;	// Current window
@@ -31,6 +29,11 @@ Display *X11Helper::Dpy()
 	return pDpy;
 }
 
+Window& X11Helper::Win()
+{
+	return pWin;
+}
+
 static bool pApplyMasks()
 {
 	int i;
@@ -52,13 +55,9 @@ bool X11Helper::OpenMask(long mask)
 {
 	pMasks.push_back(mask);
 	if(pWin != NULL)
-	{
-		return pApplyMasks();
-	}
+		{ return pApplyMasks(); }
 	else
-	{
-		return true;
-	}
+		{ return true; }
 }
 
 bool X11Helper::CloseMask(long mask)
@@ -78,13 +77,9 @@ bool X11Helper::CloseMask(long mask)
 	}
 
 	if(pWin != NULL)
-	{
-		return pApplyMasks();
-	}
+		{ return pApplyMasks(); }
 	else
-	{
-		return true;
-	}
+		{ return true; }
 }
 
 bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual int width=64, int height=64)
@@ -106,21 +101,7 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual int width=64
 		height, 0, depth, InputOutput, visual,
 		CWBorderPixel | CWColorMap | CWEventMask, &winAttribs);
 
-	i = 0;
-	while(i < pCBacks.size() )
-	{
-		pCBacks[i](pWin);
-		i++;
-	}
-
-	return pApplyMasks();
-}
-
-bool X11Helper::Callback(Callback_t cb)
-{
-	pCBacks.push_back(cb);
-
-	return true;
+	return pApplyMasks();	
 }
 
 void X11Helper::Stop()
