@@ -630,11 +630,7 @@ int RageInput::pump_t::GetPadEvent()
 		return -1;
 
     if(ret == 0) {
-		int err = GetLastError();
-		char ebuf[1024];
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
-			0, err, 0, ebuf, sizeof(ebuf), NULL);
-		LOG->Trace("Error reading Pump pad: %s\n", ebuf);
+		LOG->Trace(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
 	    return -1;
     }
 
