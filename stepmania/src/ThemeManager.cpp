@@ -412,9 +412,11 @@ try_element_again:
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
-	CString sMessage = "The theme element '" + sCategory + "/" + sFileName +"' is missing.";
+	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\"";
 	if( !sFallback.empty() )
-		sMessage += "  And it's fallback, '" + ClassAndElementToFileName(sFallback,sElement) + "' isn't present either.";
+		sMessage += " and its fallback \"" + sCategory + "/" + ClassAndElementToFileName(sFallback,sElement) + "\" are missing.";
+	else
+		sMessage += " is missing.";
 	ArchHooks::MessageBoxResult res;
 	if( category != Other )
 		res = HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement");
