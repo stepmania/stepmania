@@ -66,7 +66,6 @@ protected:
 
 	float m_fScreenCreateTime;
 
-	BGAnimation m_bgFailedBack;
 	BGAnimation m_bgOverlay;
 	ConditionalBGA m_bgCondBga;
 
