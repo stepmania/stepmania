@@ -1424,8 +1424,11 @@ void MusicWheel::Move(int n)
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
+		break;
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
+		if( n!= 0 )
+			return;
 		break;
 	default:
 		return;	// don't continue
