@@ -58,7 +58,11 @@
 #define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI(skin,name,"StartDrawingHoldBodyOffsetFromHead")
 #define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(skin,name,"StopDrawingHoldBodyOffsetFromTail")
 #define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(skin,name,"HoldNGGrayPercent")
-#define USE_LIGHTING								NOTESKIN->GetMetricB(skin,name,"UseLighting")
+#define TAP_NOTE_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"TapNoteUseLighting")
+#define TAP_ADDITION_USE_LIGHTING					NOTESKIN->GetMetricB(skin,name,"TapAdditionUseLighting")
+#define TAP_MINE_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"TapMineUseLighting")
+#define HOLD_HEAD_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"HoldHeadUseLighting")
+#define HOLD_TAIL_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"HoldTailUseLighting")
 #define FLIP_HEAD_AND_TAIL_WHEN_REVERSE				NOTESKIN->GetMetricB(skin,name,"FlipHeadAndTailWhenReverse")
 
 // cache
@@ -92,7 +96,11 @@ struct NoteMetricCache_t {
 	int m_iStartDrawingHoldBodyOffsetFromHead;
 	int m_iStopDrawingHoldBodyOffsetFromTail;
 	float m_fHoldNGGrayPercent;
-	bool m_bUseLighting;
+	bool m_bTapNoteUseLighting;
+	bool m_bTapAdditionUseLighting;
+	bool m_bTapMineUseLighting;
+	bool m_bHoldHeadUseLighting;
+	bool m_bHoldTailUseLighting;
 	bool m_bFlipHeadAndTailWhenReverse;
 
 	void Load(CString skin, const CString &name);
@@ -129,7 +137,11 @@ void NoteMetricCache_t::Load(CString skin, const CString &name)
 	m_iStartDrawingHoldBodyOffsetFromHead = START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD;
 	m_iStopDrawingHoldBodyOffsetFromTail = STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL;
 	m_fHoldNGGrayPercent = HOLD_NG_GRAY_PERCENT;
-	m_bUseLighting = USE_LIGHTING;
+	m_bTapNoteUseLighting = TAP_NOTE_USE_LIGHTING;
+	m_bTapAdditionUseLighting = TAP_ADDITION_USE_LIGHTING;
+	m_bTapMineUseLighting = TAP_MINE_USE_LIGHTING;
+	m_bHoldHeadUseLighting = HOLD_HEAD_USE_LIGHTING;
+	m_bHoldTailUseLighting = HOLD_TAIL_USE_LIGHTING;
 	m_bFlipHeadAndTailWhenReverse = FLIP_HEAD_AND_TAIL_WHEN_REVERSE;
 }
 
@@ -724,7 +736,7 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, 
 		pSprTail->SetGlow( RageColor(0,0,0,0) );
 	}
 
-	if( cache->m_bUseLighting )
+	if( cache->m_bHoldTailUseLighting )
 	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
@@ -737,7 +749,7 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, 
 
 	pSprTail->Draw();
 
-	if( cache->m_bUseLighting )
+	if( cache->m_bHoldTailUseLighting )
 	{
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
@@ -775,7 +787,7 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, 
 		pActor->SetGlow( RageColor(0,0,0,0) );
 	}
 
-	if( cache->m_bUseLighting )
+	if( cache->m_bHoldHeadUseLighting )
 	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
@@ -788,7 +800,7 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, 
 
 	pActor->Draw();
 
-	if( cache->m_bUseLighting )
+	if( cache->m_bHoldHeadUseLighting )
 	{
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
@@ -845,7 +857,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true, fReverseOffsetPixels );
 }
 
-void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
+void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting )
 {
 	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, iCol, fBeat );
 	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, iCol, fYOffset, fReverseOffsetPixels );
@@ -864,7 +876,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
 
-	if( cache->m_bUseLighting )
+	if( bUseLighting )
 	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
@@ -877,7 +889,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 
 	pActor->Draw();
 
-	if( cache->m_bUseLighting )
+	if( bUseLighting )
 	{
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
@@ -887,31 +899,27 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
 {
 	Actor* pActor = NULL;
+	bool bUseLighting = false;
 	if( bIsMine )
+	{
 		pActor = GetTapMineActor( fBeat );
+		bUseLighting = cache->m_bTapMineUseLighting;
+	}
 	else if( bIsAddition )
+	{
 		pActor = GetTapAdditionActor( fBeat );
+		bUseLighting = cache->m_bTapAdditionUseLighting;
+	}
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
+	{
 		pActor = GetHoldHeadActor( fBeat, false );
+		bUseLighting = cache->m_bHoldHeadUseLighting;
+	}
 	else	
+	{
 		pActor = GetTapNoteActor( fBeat );
+		bUseLighting = cache->m_bTapNoteUseLighting;
+	}
 
-	DrawActor( pActor, iCol, fBeat, fPercentFadeToFail, fLife, fReverseOffsetPixels );
+	DrawActor( pActor, iCol, fBeat, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting );
 }
-
-
-//	if( ct == PlayerOptions::COLOR_NOTE )
-//	{
-//		RageColor color = GetNoteColorFromBeat( fNoteBeat );
-//		colorLeadingOut = color;
-//		colorTrailingOut = color;
-//
-//		// add a little bit of white so the note doesn't look so plain
-//		colorLeadingOut.r += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-//		colorLeadingOut.g += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-//		colorLeadingOut.b += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-//		colorTrailingOut.r += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-//		colorTrailingOut.g += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-//		colorTrailingOut.b += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-//		return;
-//	}

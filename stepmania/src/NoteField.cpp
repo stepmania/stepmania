@@ -598,7 +598,7 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(i);
 				SearchForBeat( CurDisplay, NextDisplay, fBeat );
 				NoteDisplayCols *nd = CurDisplay->second;
-				nd->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+				nd->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false );
 			}
 			else
 			{
