@@ -834,7 +834,7 @@ void StepManiaLanServer::SendUserList()
 			if (Client[x]->Player[y].name.length() == 0)
 				Reply.Write1(0);
 			else
-				Reply.Write1( (int)Client[x]->NetScreenInfo + 1);
+				Reply.Write1( (int8_t)Client[x]->NetScreenInfo + 1);
 			Reply.WriteNT(Client[x]->Player[y].name);
 		}
 
