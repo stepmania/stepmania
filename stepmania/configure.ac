@@ -63,15 +63,14 @@ AM_CONDITIONAL(NHAVE_SDL, test x$enable_sdl = xno )
 # not sure
 # SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
-# These tests break my custom build environment.  I'll put them back in later.
-#AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
-#if test "x$have_SDL_image" = "xno"; then
-#  echo
-#  echo "*** SDL_image is required to build StepMania; please"
-#  echo "*** make sure that SDL_image is installed to continue"
-#  echo "*** the installation process."
-#  exit 0;
-#fi
+AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
+if test "x$have_SDL_image" = "xno"; then
+  echo
+  echo "*** SDL_image is required to build StepMania; please"
+  echo "*** make sure that SDL_image is installed to continue"
+  echo "*** the installation process."
+  exit 0;
+fi
 
 SM_ZLIB
 SM_AUDIO
