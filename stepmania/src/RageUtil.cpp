@@ -965,7 +965,9 @@ CString Capitalize( const CString &s )
 	if( s.GetLength()==0 )
 		return "";
 	CString s2 = s;
-	s2[0] = toupper( s2[0] );
+	/* XXX: utf-8 */
+	if( s2[0] <= 127 )
+		s2[0] = (char) toupper( s2[0] );
 	return s2;
 }
 
