@@ -197,6 +197,8 @@ SM_CHECK_CRASH_HANDLER
 
 AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
 
+AM_ICONV
+
 AC_ARG_ENABLE(gtk2, AC_HELP_STRING([--disable-gtk2], [Disable GTK support]), enable_gtk2=$enableval, enable_gtk2=yes)
 
 if test x$enable_gtk2 = xyes; then
