@@ -139,15 +139,15 @@ WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \
 ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h \
-CombinedLifeMeterEnemy.h CombinedLifeMeterEnemy.cpp CombinedLifeMeterTug.h CombinedLifeMeterTug.cpp Combo.cpp Combo.h \
-DancingCharacters.cpp DancingCharacters.h GhostArrow.cpp GhostArrow.h GhostArrowRow.cpp GhostArrowRow.h \
-GrayArrow.cpp GrayArrow.h GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h \
-HoldJudgment.cpp HoldJudgment.h Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h \
-LifeMeterBattery.cpp LifeMeterBattery.h LyricDisplay.cpp LyricDisplay.h BeginnerHelper.cpp BeginnerHelper.h \
-NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteField.h NoteFieldPlus.h NoteFieldPlus.cpp Player.cpp Player.h \
-ProTimingDisplay.cpp ProTimingDisplay.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
-ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
-ScoreDisplayRave.cpp ScoreDisplayRave.h TimingAssist.cpp TimingAssist.h
+BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeterEnemy.h CombinedLifeMeterEnemy.cpp \
+CombinedLifeMeterTug.h CombinedLifeMeterTug.cpp Combo.cpp Combo.h DancingCharacters.cpp DancingCharacters.h \
+GhostArrow.cpp GhostArrow.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
+GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
+Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp LifeMeterBattery.h \
+LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteField.h \
+NoteFieldPlus.h NoteFieldPlus.cpp Player.cpp Player.h ProTimingDisplay.cpp ProTimingDisplay.h \
+ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayBattle.cpp ScoreDisplayBattle.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h \
+ScoreDisplayOni.cpp ScoreDisplayOni.h ScoreDisplayRave.cpp ScoreDisplayRave.h TimingAssist.cpp TimingAssist.h
 
 Helpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.cpp SDL_utils.h
 
