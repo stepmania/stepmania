@@ -21,11 +21,6 @@ static int chunksize() { return max_writeahead / num_chunks; }
 
 void RageSound_DSound_Software::MixerThread()
 {
-	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
-	 * assigns it; we might get here before that happens, though. */
-	while( !SOUNDMAN && !shutdown_mixer_thread )
-		usleep( 10000 );
-
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
 		if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 			LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));

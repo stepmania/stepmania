@@ -25,11 +25,6 @@ int RageSound_ALSA9::MixerThread_start(void *p)
 
 void RageSound_ALSA9::MixerThread()
 {
-	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
-	 * assigns it; we might get here before that happens, though. */
-	while( !SOUNDMAN && !shutdown )
-		usleep( 10000 );
-
 	while(!shutdown)
 	{
 		/* Sleep for the size of one chunk. */

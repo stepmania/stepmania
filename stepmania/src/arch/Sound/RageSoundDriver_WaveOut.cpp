@@ -40,10 +40,6 @@ int RageSound_WaveOut::MixerThread_start(void *p)
 
 void RageSound_WaveOut::MixerThread()
 {
-	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
-	 * assigns it; we might get here before that happens, though. */
-	while(!SOUNDMAN && !shutdown) Sleep(10);
-
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 

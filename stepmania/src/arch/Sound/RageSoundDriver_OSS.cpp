@@ -30,11 +30,6 @@ int RageSound_OSS::MixerThread_start(void *p)
 
 void RageSound_OSS::MixerThread()
 {
-	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
-	 * assigns it; we might get here before that happens, though. */
-	while( !SOUNDMAN && !shutdown )
-		usleep( 10000 );
-
 	/* We want to set a higher priority, but Unix only lets root renice
 	 * < 0, which is silly.  Give it a try, anyway. */
 	nice( -10 );
