@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 //	from VirtualDub
 //	Copyright (C) 1998-2001 Avery Lee
 //
@@ -265,7 +267,8 @@ static void DoEraseEmergencyDump()
 	DeleteFile(szEmergencyDumpName);
 }
 
-#include "bass/bass.h"
+//#include "bass/bass.h"
+#include "RageSound.h"
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	/////////////////////////
 	//
@@ -369,9 +372,8 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	 * crashing ourselves.  Now, it's far from safe to call these functions
 	 * after a crash, but if we don't it'll crash anyway, so we have
 	 * nothing to lose. */
-	  
-	BASS_Stop();
-	BASS_Free();
+	delete SOUND;
+	SOUND = NULL;
 
 	/* We've made it.  Delete the emergency dump. */
 	DoEraseEmergencyDump();
