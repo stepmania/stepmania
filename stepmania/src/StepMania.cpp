@@ -219,8 +219,31 @@ void ResetGame( bool ReturnToFirstScreen )
 
 	PREFSMAN->m_bFirstRun = false;
 
-	if( PREFSMAN->m_bAutoMapJoysticks )
-		INPUTMAPPER->AutoMapJoysticksForCurrentGame();
+
+	//
+	// update last seen joysticks
+	//
+	vector<InputDevice> vDevices;
+	vector<CString> vDescriptions;
+	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+
+	vector<CString> vOldDescriptions;
+	split( PREFSMAN->m_sLastSeenInputDevices, ",", vOldDescriptions );
+	CString sInputDevices = join( ",", vDescriptions );
+
+	if( PREFSMAN->m_sLastSeenInputDevices != sInputDevices )
+	{
+		LOG->Info( "Input devices changed from '%s' to '%s'.", PREFSMAN->m_sLastSeenInputDevices.c_str(), sInputDevices.c_str() );
+
+		if( PREFSMAN->m_bAutoMapOnJoyChange )
+		{
+			LOG->Info( "Remapping joysticks." );
+			INPUTMAPPER->AutoMapJoysticksForCurrentGame();
+		}
+
+		PREFSMAN->m_sLastSeenInputDevices = sInputDevices;
+	}
+
 
 	if( ReturnToFirstScreen )
 		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );

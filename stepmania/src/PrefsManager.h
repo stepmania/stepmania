@@ -85,7 +85,7 @@ public:
 	CharacterOption	m_ShowDancingCharacters;
 	bool			m_bUseUnlockSystem;
 	bool			m_bFirstRun;
-	bool			m_bAutoMapJoysticks;
+	bool			m_bAutoMapOnJoyChange;
 	float			m_fGlobalOffsetSeconds;
 	bool			m_bForceLogFlush;
 	bool			m_bLogging;
@@ -115,6 +115,7 @@ public:
 	CString			m_DWIPath;
 
 	CString			m_sLastSeenVideoDriver;
+	CString			m_sLastSeenInputDevices;
 #if defined(WIN32)
 	int				m_iLastSeenMemory;
 #endif

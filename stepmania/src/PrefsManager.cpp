@@ -91,7 +91,7 @@ PrefsManager::PrefsManager()
 	m_ShowDancingCharacters = CO_OFF;
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
-	m_bAutoMapJoysticks = true;
+	m_bAutoMapOnJoyChange = true;
 	m_fGlobalOffsetSeconds = 0;
 	m_bForceLogFlush = false;
 	m_bLogging = true;
@@ -261,9 +261,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
 
 	ini.GetValue( "Options", "FirstRun",						m_bFirstRun );
-	ini.GetValue( "Options", "AutoMapJoysticks",				m_bAutoMapJoysticks );
+	ini.GetValue( "Options", "AutoMapJoysticks",				m_bAutoMapOnJoyChange );
 	ini.GetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
 	ini.GetValue( "Options", "LastSeenVideoDriver",				m_sLastSeenVideoDriver );
+	ini.GetValue( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
 #if defined(WIN32)
 	ini.GetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
 #endif
@@ -366,9 +367,10 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue( "Options", "ShowDancingCharacters",			m_ShowDancingCharacters );
 	ini.SetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
 	ini.SetValue( "Options", "FirstRun",						m_bFirstRun );
-	ini.SetValue( "Options", "AutoMapJoysticks",				m_bAutoMapJoysticks );
+	ini.SetValue( "Options", "AutoMapJoysticks",				m_bAutoMapOnJoyChange );
 	ini.SetValue ( "Options", "VideoRenderers",					m_sVideoRenderers );
 	ini.SetValue ( "Options", "LastSeenVideoDriver",			m_sLastSeenVideoDriver );
+	ini.SetValue ( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
 #if defined(WIN32)
 	ini.SetValue ( "Options", "LastSeenMemory",					m_iLastSeenMemory );
 #endif

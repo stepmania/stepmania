@@ -233,7 +233,7 @@ static void NumBackgrounds( int &sel, bool ToSel, const CStringArray &choices )
 }
 
 /* Input options */
-MOVE( AutoMapJoysticks,		PREFSMAN->m_bAutoMapJoysticks );
+MOVE( AutoMapOnJoyChange,	PREFSMAN->m_bAutoMapOnJoyChange );
 MOVE( MenuButtons,			PREFSMAN->m_bOnlyDedicatedMenuButtons );
 MOVE( AutoPlay,				PREFSMAN->m_bAutoPlay );
 MOVE( BackDelayed,			PREFSMAN->m_bDelayedEscape );
@@ -408,12 +408,12 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Random\nBackgrounds",	NumBackgrounds,		"5","10","15","20" ),
 
 	/* Input options */
-	ConfOption( "Auto Map\nJoysticks",	AutoMapJoysticks,	"OFF","ON (recommended)" ),
-	ConfOption( "MenuButtons",			MenuButtons,		"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
-	ConfOption( "AutoPlay",				AutoPlay,			"OFF","ON" ),
-	ConfOption( "Back\nDelayed",		BackDelayed,		"INSTANT","HOLD" ),
-	ConfOption( "Options\nNavigation",	OptionsNavigation,	"SM STYLE","ARCADE STYLE" ),
-	ConfOption( "Wheel\nSpeed",			WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ),
+	ConfOption( "Auto Map\nOn Joy Change",	AutoMapOnJoyChange,	"OFF","ON (recommended)" ),
+	ConfOption( "MenuButtons",				MenuButtons,		"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
+	ConfOption( "AutoPlay",					AutoPlay,			"OFF","ON" ),
+	ConfOption( "Back\nDelayed",			BackDelayed,		"INSTANT","HOLD" ),
+	ConfOption( "Options\nNavigation",		OptionsNavigation,	"SM STYLE","ARCADE STYLE" ),
+	ConfOption( "Wheel\nSpeed",				WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ),
 
 	/* Gameplay options */
 	ConfOption( "Solo\nSingles",		SoloSingles,		"OFF","ON" ),
