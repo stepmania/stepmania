@@ -192,7 +192,7 @@ inline unsigned char FTOC(float a)
 class RageVColor
 {
 public:
-	unsigned char b,g,r,a;	// specific ordering required by Direct3D
+	uint8_t b,g,r,a;	// specific ordering required by Direct3D
 
 	RageVColor(): b(0), g(0), r(0), a(0) { }
 	RageVColor(const RageColor &rc) { *this = rc; }
