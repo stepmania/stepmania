@@ -66,12 +66,11 @@ bool DWILoader::LoadFromDWITokens(
 	CString sNumFeet,
 	CString sStepData1, 
 	CString sStepData2,
-	Notes &out, Notes &out2)
+	Notes &out)
 {
 	LOG->Trace( "Notes::LoadFromDWITokens()" );
 
 	out.m_NotesType = NOTES_TYPE_INVALID;
-	out2.m_NotesType = NOTES_TYPE_INVALID;
 
 	sStepData1.Replace( "\n", "" );
 	sStepData1.Replace( " ", "" );
@@ -80,7 +79,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	if(		 sMode == "SINGLE" )	out.m_NotesType = NOTES_TYPE_DANCE_SINGLE;
 	else if( sMode == "DOUBLE" )	out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
-	else if( sMode == "COUPLE" )	out.m_NotesType = NOTES_TYPE_DANCE_COUPLE_1;
+	else if( sMode == "COUPLE" )	out.m_NotesType = NOTES_TYPE_DANCE_COUPLE;
 	else if( sMode == "SOLO" )		out.m_NotesType = NOTES_TYPE_DANCE_SOLO;
 	else	
 	{
@@ -99,7 +98,7 @@ bool DWILoader::LoadFromDWITokens(
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
 		break;
 	case NOTES_TYPE_DANCE_DOUBLE:
-	case NOTES_TYPE_DANCE_COUPLE_1:
+	case NOTES_TYPE_DANCE_COUPLE:
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
@@ -235,31 +234,6 @@ bool DWILoader::LoadFromDWITokens(
 
 	ASSERT( pNoteData->m_iNumTracks > 0 );
 
-	if(out.m_NotesType == NOTES_TYPE_DANCE_COUPLE_1) {
-		int iTransformNewToOld[MAX_NOTE_TRACKS];
-		/* Couples.  Set up a second note pattern for the 2p side. */
-		out2 = out;
-		out2.m_NotesType = NOTES_TYPE_DANCE_COUPLE_2;
-
-		for( int i = 0; i < MAX_NOTE_TRACKS; ++i)
-			iTransformNewToOld[i] = -1;
-
-		iTransformNewToOld[0] = 4;
-		iTransformNewToOld[1] = 5;
-		iTransformNewToOld[2] = 6;
-		iTransformNewToOld[3] = 7;
-
-		NoteData* pNoteData2 = new NoteData;
-		pNoteData2->m_iNumTracks = 4;
-
-		pNoteData2->LoadTransformed( pNoteData, 4, iTransformNewToOld );
-		out2.SetNoteData(pNoteData2);
-
-		delete pNoteData2;
-		out2.TidyUpData();
-
-		pNoteData->m_iNumTracks = 4;
-	}
 	out.SetNoteData(pNoteData);
 
 	delete pNoteData;
@@ -355,25 +329,18 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				 0==stricmp(sValueName,"SOLO"))
 		{
 			Notes* pNewNotes = new Notes;
-			Notes* pNewNotes2 = new Notes;
 			LoadFromDWITokens( 
 				sParams[0], 
 				sParams[1], 
 				sParams[2], 
 				sParams[3], 
 				(iNumParams==5) ? sParams[4] : "",
-				*pNewNotes,
-				*pNewNotes2
+				*pNewNotes
 				);
-			/* Add either note pattern that actually loaded. */
 			if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
 				out.m_apNotes.Add( pNewNotes );
 			else
 				delete pNewNotes;
-			if(pNewNotes2->m_NotesType != NOTES_TYPE_INVALID)
-				out.m_apNotes.Add( pNewNotes2 );
-			else
-				delete pNewNotes2;
 		}
 		else
 			// do nothing.  We don't care about this value name

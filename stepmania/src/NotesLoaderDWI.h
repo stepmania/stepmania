@@ -20,7 +20,7 @@ class DWILoader: public NotesLoader {
 	bool LoadFromDWITokens( 
 		CString sMode, CString sDescription, CString sNumFeet, CString sStepData1, 
 		CString sStepData2,
-		Notes &out, Notes &out2);
+		Notes &out );
 
 	bool LoadFromDWIFile( CString sPath, Song &out );
 

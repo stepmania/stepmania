@@ -58,12 +58,11 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 }
 
 
-bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
+bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 {
 	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
 	out.m_NotesType = NOTES_TYPE_INVALID;
-	out2.m_NotesType = NOTES_TYPE_INVALID;
 
 	NoteData* pNoteData = new NoteData;
 	pNoteData->m_iNumTracks = MAX_NOTE_TRACKS;
@@ -111,7 +110,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
 				// if the mode should be solo, then we'll update m_DanceStyle below when we read in step data
 				break;
 			case 2:		// couple/battle
-				out.m_NotesType = NOTES_TYPE_DANCE_COUPLE_1;
+				out.m_NotesType = NOTES_TYPE_DANCE_COUPLE;
 				break;
 			case 3:		// double
 				out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
@@ -184,7 +183,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
 	
 	if( out.m_NotesType == NOTES_TYPE_DANCE_SINGLE  || 
 		out.m_NotesType == NOTES_TYPE_DANCE_DOUBLE  || 
-		out.m_NotesType == NOTES_TYPE_DANCE_COUPLE_1)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
+		out.m_NotesType == NOTES_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// for each TapNote
 		{
@@ -212,13 +211,13 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
 	switch( out.m_NotesType )
 	{
 	case NOTES_TYPE_DANCE_SINGLE:
-	case NOTES_TYPE_DANCE_COUPLE_1:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
 		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
 		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
 		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
 		break;
 	case NOTES_TYPE_DANCE_DOUBLE:
+	case NOTES_TYPE_DANCE_COUPLE:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
 		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
 		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
@@ -245,24 +244,6 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out, Notes &out2 )
 	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
 
 	out.SetNoteData(pNoteData2);
-
-	if(out.m_NotesType == NOTES_TYPE_DANCE_COUPLE_1) {
-		/* Couples.  Set up a second note pattern for the 2p side. */
-		out2 = out;
-		out2.m_NotesType = NOTES_TYPE_DANCE_COUPLE_2;
-
-		for( i = 0; i < MAX_NOTE_TRACKS; ++i)
-			iTransformNewToOld[i] = -1;
-
-		iTransformNewToOld[0] = DANCE_NOTE_PAD2_LEFT;
-		iTransformNewToOld[1] = DANCE_NOTE_PAD2_DOWN;
-		iTransformNewToOld[2] = DANCE_NOTE_PAD2_UP;
-		iTransformNewToOld[3] = DANCE_NOTE_PAD2_RIGHT;
-
-		pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
-		out2.SetNoteData(pNoteData2);
-		out2.TidyUpData();
-	}
 
 	delete pNoteData;
 	delete pNoteData2;
@@ -291,19 +272,13 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
-		Notes* pNewNotes2 = new Notes;
 
 		LoadFromBMSFile( out.m_sSongDir + arrayBMSFileNames[i],
-			*pNewNotes, *pNewNotes2 );
-		/* Add either note pattern that actually loaded. */
+			*pNewNotes );
 		if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
 			out.m_apNotes.Add( pNewNotes );
 		else
 			delete pNewNotes;
-		if(pNewNotes2->m_NotesType != NOTES_TYPE_INVALID)
-			out.m_apNotes.Add( pNewNotes2 );
-		else
-			delete pNewNotes2;
 	}
 
 	CString sPath = out.m_sSongDir + arrayBMSFileNames[0];

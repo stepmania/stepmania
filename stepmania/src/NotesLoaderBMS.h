@@ -6,7 +6,7 @@
 #include "NotesLoader.h"
 
 class BMSLoader: public NotesLoader {
-	bool LoadFromBMSFile( const CString &sPath, Notes &out1, Notes &out2 );
+	bool LoadFromBMSFile( const CString &sPath, Notes &out1 );
 	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
 
 public:

@@ -114,8 +114,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 			switch( out.m_NotesType )
 			{
 			case NOTES_TYPE_DANCE_SINGLE:
-			case NOTES_TYPE_DANCE_COUPLE_1:
-			case NOTES_TYPE_DANCE_COUPLE_2:
+			case NOTES_TYPE_DANCE_COUPLE:
 			case NOTES_TYPE_DANCE_DOUBLE:
 				fprintf( fp, NotesToDWIString( 
 					notedata.m_TapNotes[start+0][row], 
@@ -182,7 +181,7 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 	switch( out.m_NotesType )
 	{
 	case NOTES_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
-	case NOTES_TYPE_DANCE_COUPLE_1:	fprintf( fp, "#COUPLE:" );	break;
+	case NOTES_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
 	case NOTES_TYPE_DANCE_DOUBLE:	fprintf( fp, "#DOUBLE:" );	break;
 	case NOTES_TYPE_DANCE_SOLO:		fprintf( fp, "#SOLO:" );	break;
 	default:	return false;	// not a type supported by DWI
@@ -242,58 +241,19 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		fprintf( fp, ";\n" );
 	}
 
-	/* Save all Notes for this file.
-	 *
-	 * Hmm.  We can have any number of notes for any tag; this means we can
-	 * have any number of COUPLE_1 and COUPLE_2.  We don't force them to be
-	 * a pair; one player can play couples on normal and the other can play
-	 * on hard.
-	 *
-	 * .DWIs pair up couples; we only write couples where we have a pairing
-	 * (eg. we have both COUPLE_1 and COUPLE_2 for the same difficulty.)
-	 * If we don't have both, write neither, since "COUPLE" in DWI without
-	 * a second side is meaningless.  (I think.)
-	 *
-	 * We can have any number of pairings; only write one pair for each
-	 * difficulty.
-	 */
-
-	Notes *c[NUM_DIFFICULTY_CLASSES][2];
-	memset(c, 0, sizeof(c));
-
 	for( int i=0; i<out.m_apNotes.GetSize(); i++ ) 
 	{
-		if(out.m_apNotes[i]->m_NotesType == NOTES_TYPE_DANCE_COUPLE_1) {
-			c[out.m_apNotes[i]->m_DifficultyClass][0] = out.m_apNotes[i];
-			continue;
-		}
-		if(out.m_apNotes[i]->m_NotesType == NOTES_TYPE_DANCE_COUPLE_2) {
-			c[out.m_apNotes[i]->m_DifficultyClass][1] = out.m_apNotes[i];
-			continue;
-		}
-
 		if(!WriteDWINotesTag( fp, *out.m_apNotes[i] ))
 			continue;
 
 		WriteDWINotesField( fp, *out.m_apNotes[i], 0 );
-		if(out.m_apNotes[i]->m_NotesType==NOTES_TYPE_DANCE_DOUBLE)
+		if(out.m_apNotes[i]->m_NotesType==NOTES_TYPE_DANCE_DOUBLE ||
+		   out.m_apNotes[i]->m_NotesType==NOTES_TYPE_DANCE_COUPLE)
 		{
 			fprintf( fp, ":\n" );
 			WriteDWINotesField( fp, *out.m_apNotes[i], 4 );
 		}
 
-		fprintf( fp, ";\n" );
-	}
-
-	for( i=0; i < NUM_DIFFICULTY_CLASSES; ++i )
-	{
-		/* Skip if we don't have both sides for this couples. */
-		if( !c[i][0] || !c[i][1] ) continue;
-
-		WriteDWINotesTag( fp, *c[i][0] );
-		WriteDWINotesField( fp, *c[i][0], 0 );
-		fprintf( fp, ":\n" );
-		WriteDWINotesField( fp, *c[i][1], 0 );
 		fprintf( fp, ";\n" );
 	}
 	

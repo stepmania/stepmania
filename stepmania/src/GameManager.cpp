@@ -36,8 +36,7 @@ struct {
 } const NotesTypes[NUM_NOTES_TYPES] = {
 	{ "dance-single", 4 },
 	{ "dance-double", 8 },
-	{ "dance-couple-1", 4 },
-	{ "dance-couple-2", 4 },
+	{ "dance-couple", 8 },
 	{ "dance-solo", 6 },
 	{ "pump-single", 5 },
 	{ "pump-double", 10 },
@@ -468,7 +467,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
 		"DDR Couples",						// m_szName
-		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_2 },	// m_NotesTypes
+		{ NOTES_TYPE_DANCE_COUPLE, NOTES_TYPE_DANCE_COUPLE },	// m_NotesTypes
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		4,									// m_iColsPerPlayer
@@ -480,10 +479,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
 			},
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
@@ -521,48 +520,25 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,1,2,3,4,5
 		},
 	},
-	{	// STYLE_DANCE_EDIT_COUPLE_1
+	{	// STYLE_DANCE_EDIT_COUPLE
 		GAME_DANCE,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"DDR Couples Player 1",					// m_szName
-		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_1 }, // m_NotesTypes
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
-		{ 320, 320 },							// m_iCenterX
-		4,										// m_iColsPerPlayer
+		"DDR Couples",							// m_szName
+		{ NOTES_TYPE_DANCE_COUPLE, NOTES_TYPE_DANCE_COUPLE }, // m_NotesTypes
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	GAME_CONTROLLER_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	GAME_CONTROLLER_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	GAME_CONTROLLER_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	GAME_CONTROLLER_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
-			},
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			0,1,2,3,4,5,6,7
-		},
-	},
-	{	// STYLE_DANCE_EDIT_COUPLE_2
-		GAME_DANCE,								// m_Game
-		false,									// m_bUsedForGameplay
-		true,									// m_bUsedForEdit
-		"DDR Couples Player 2",					// m_szName
-		{ NOTES_TYPE_DANCE_COUPLE_2, NOTES_TYPE_DANCE_COUPLE_2 }, // m_NotesTypes
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
-		{ 320, 320 },							// m_iCenterX
-		4,										// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	GAME_CONTROLLER_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	GAME_CONTROLLER_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	+DANCE_COL_SPACING*4.0f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	DANCE_BUTTON_DOWN,	+DANCE_COL_SPACING*3.0f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*2.0f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.0f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.0f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*2.0f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	DANCE_BUTTON_UP,	-DANCE_COL_SPACING*3.0f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	DANCE_BUTTON_RIGHT,	-DANCE_COL_SPACING*4.0f },
 			},
 			{	// PLAYER_2
 				{ TRACK_1,	GAME_CONTROLLER_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
