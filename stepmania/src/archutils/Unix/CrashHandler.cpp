@@ -376,8 +376,6 @@ static void do_backtrace(void **buf, size_t size)
         buf[i] = frame->linkReg;
     buf[i] = NULL;
 }
-#else
-#error BACKTRACE_METHOD_* required
 #endif
 
 
