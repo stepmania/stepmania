@@ -30,8 +30,6 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	TipDisplay m_text;
-	MenuElements m_Menu;
-	RageSoundStream	m_sound;
+	Sprite m_spr;
 };
 

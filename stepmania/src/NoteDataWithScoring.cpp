@@ -87,13 +87,10 @@ int NoteDataWithScoring::GetNumSuccessfulHoldNotes( const float fStartBeat, cons
 {
 	int iNumSuccessfulHolds = 0;
 
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
 	for( int i=0; i<m_iNumHoldNotes; i++ )
 	{
 		HoldNote &hn = m_HoldNotes[i];
-		if( iStartIndex <= hn.m_iStartIndex  &&  hn.m_iEndIndex <= iEndIndex  &&  m_HoldNoteScores[i] == HNS_OK )
+		if( fStartBeat <= hn.m_fStartBeat  &&  hn.m_fEndBeat <= fEndBeat  &&  m_HoldNoteScores[i] == HNS_OK )
 			iNumSuccessfulHolds++;
 	}
 	return iNumSuccessfulHolds;

@@ -36,7 +36,9 @@ void GameState::Reset()
 	int p;
 
 	m_CurStyle = STYLE_NONE;
-	m_MasterPlayerNumber = PLAYER_INVALID;
+	m_bPlayersCanJoin = false;
+	for( int i=0; i<2; i++ )
+		m_bIsJoined[i] = false;
 	m_sPreferredGroup	= "";
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficultyClass[p] = CLASS_INVALID;
@@ -264,8 +266,17 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	if( m_CurStyle == STYLE_NONE )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
 		return true;				// allow input from both sides
 
-	return ( pn == m_MasterPlayerNumber ) ||  
-		( GetCurrentStyleDef()->m_StyleType == StyleDef::TWO_PLAYERS_USE_TWO_SIDES );
+	switch( GetCurrentStyleDef()->m_StyleType )
+	{
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+		return true;
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+		return m_bIsJoined[pn];
+	default:
+		ASSERT(0);	
+		return false;
+	}
 }
 
 float GameState::GetElapsedSeconds()

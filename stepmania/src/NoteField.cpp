@@ -30,7 +30,7 @@ NoteField::NoteField()
 {
 	m_rectMeasureBar.TurnShadowOff();
 
-	m_textMeasureNumber.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textMeasureNumber.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 
 	m_rectMarkerBar.TurnShadowOff();
@@ -59,11 +59,9 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 
 	this->CopyAll( pNoteData );
 
-	// init arrow rotations and X positions
+	// init note displays
 	for( int c=0; c<m_iNumTracks; c++ ) 
-	{
-		m_ColorNote[c].Load( c, pn );
-	}
+		m_NoteDisplay[c].Load( c, pn );
 
 
 	for( i=0; i<MAX_HOLD_NOTES; i++ )
@@ -84,6 +82,7 @@ void NoteField::Update( float fDeltaTime )
 
 
 
+/*
 void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const bool bUseHoldNoteBeginColor )
 {
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fIndex );
@@ -113,41 +112,15 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 
 void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife )
 {
-	const int iCol = hn.m_iTrack;
-
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fIndex );
-	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
-	const float fRotation	= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
-	const float fXPos		= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
-	      float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
-
-	if( m_fPercentFadeToFail != -1 )
-		fAlpha = 1-m_fPercentFadeToFail;
-
-	int iGrayPartFrameNo;
-	int iColorPartFrameNo;
-	if( bActive )
-	{
-		iGrayPartFrameNo  = m_ColorNote[iCol].GetGrayPartFrameNoFull();
-		iColorPartFrameNo = m_ColorNote[iCol].GetColorPartFrameNoFull();
-	}
-	else
-	{
-		iGrayPartFrameNo  = m_ColorNote[iCol].GetGrayPartFrameNoClear();
-		iColorPartFrameNo = m_ColorNote[iCol].GetColorPartFrameNoClear();
-	}
-
-	const float fPercentIntoHold = (fIndex-hn.m_iStartIndex)/(hn.m_iEndIndex-hn.m_iStartIndex);
-	D3DXCOLOR color = m_ColorNote[iCol].GetHoldColorFromPercentIntoHold( fPercentIntoHold );
-
-	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
-
-	cni = ColorNoteInstance( fXPos, fYPos, fRotation, fAlpha, color, color, fAddAlpha, iColorPartFrameNo, iGrayPartFrameNo );
 }
+*/
 
-void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
+void NoteField::DrawMeasureBar( int iMeasureIndex )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const int iMeasureNoDisplay = iMeasureIndex+1;
+	const float fBeat = float(iMeasureIndex * BEATS_PER_MEASURE);
+
+	const float fYOffset	= ArrowGetYOffset2(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_rectMeasureBar.SetXY( 0, fYPos );
@@ -158,14 +131,14 @@ void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,0) );
-	m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNo) );
+	m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawMarkerBar( const int iIndex )
+void NoteField::DrawMarkerBar( const float fBeat )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYOffset	= ArrowGetYOffset2(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_rectMarkerBar.SetXY( 0, fYPos );
@@ -175,9 +148,9 @@ void NoteField::DrawMarkerBar( const int iIndex )
 	m_rectMarkerBar.Draw();
 }
 
-void NoteField::DrawBPMText( const int iIndex, const float fBPM )
+void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYOffset	= ArrowGetYOffset2(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
@@ -187,9 +160,9 @@ void NoteField::DrawBPMText( const int iIndex, const float fBPM )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawFreezeText( const int iIndex, const float fSecs )
+void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, (float)iIndex );
+	const float fYOffset	= ArrowGetYOffset2(	m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0,1) );
@@ -207,51 +180,44 @@ void NoteField::DrawPrimitives()
 	
 	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
 	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
-	const int iIndexFirstArrowToDraw = max( 0, BeatToNoteRow( fSongBeat - fBeatsToDrawBehind ) );
-	const int iIndexLastArrowToDraw  = BeatToNoteRow( fSongBeat + fBeatsToDrawAhead );
+	const float fFirstBeatToDraw = max( 0, fSongBeat - fBeatsToDrawBehind );
+	const float fLastBeatToDraw  = fSongBeat + fBeatsToDrawAhead;
+	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
+	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
 
 	//LOG->Trace( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
 	if( GAMESTATE->m_bEditing )
 	{
+		int i;
+
 		//
 		// Draw measure bars
 		//
-		for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )
-		{
-			if( i % ELEMENTS_PER_MEASURE == 0 )
-				DrawMeasureBar( i, i / ELEMENTS_PER_MEASURE + 1 );
-		}
+		for( float b=fFirstBeatToDraw; b<=fLastBeatToDraw; b+=1 )
+			DrawMeasureBar( int(b) );
 
 		//
 		// BPM text
 		//
 		CArray<BPMSegment,BPMSegment&> &aBPMSegments = GAMESTATE->m_pCurSong->m_BPMSegments;
 		for( i=0; i<aBPMSegments.GetSize(); i++ )
-		{
-			DrawBPMText( BeatToNoteRow(aBPMSegments[i].m_fStartBeat), aBPMSegments[i].m_fBPM );
-		}
+			DrawBPMText( aBPMSegments[i].m_fStartBeat, aBPMSegments[i].m_fBPM );
 
 		//
 		// Freeze text
 		//
 		CArray<StopSegment,StopSegment&> &aStopSegments = GAMESTATE->m_pCurSong->m_StopSegments;
 		for( i=0; i<aStopSegments.GetSize(); i++ )
-		{
-			DrawFreezeText( BeatToNoteRow(aStopSegments[i].m_fStartBeat), aStopSegments[i].m_fStopSeconds );
-		}
+			DrawFreezeText( aStopSegments[i].m_fStartBeat, aStopSegments[i].m_fStopSeconds );
 
 		//
 		// Draw marker bars
 		//
 		if( m_fBeginMarker != -1 )
-		{
-			DrawMarkerBar( BeatToNoteRow(m_fBeginMarker) );
-		}
+			DrawMarkerBar( m_fBeginMarker );
 		if( m_fEndMarker != -1 )
-		{
-			DrawMarkerBar( BeatToNoteRow(m_fEndMarker) );
-		}
+			DrawMarkerBar( m_fEndMarker );
 
 	}
 
@@ -261,14 +227,23 @@ void NoteField::DrawPrimitives()
 	// to draw the arrows in order of column.  This will let us fill up a vertex buffer of arrows 
 	// so we can draw them in one swoop without texture or state changes.
 	//
+	// Change:  Optimization made this code very unreadable and unmanagable, so we're going to 
+	// try a more global, higher-level optimization.  Our goal is to make fewer calls to 
+	// DrawPrimitive.  Instead of filling the vertex buffer all at once (the old optimization)
+	// we'll add something to Display that will automatically group together DrawPrimitive 
+	// calls as long as the texture or render states have not changed.
+	//
+	// To mimimize state and texture changes, we're going to draw one column at a time:
+	// HoldNotes, then TapNotes.
+	//
+
 
 
 	for( int c=0; c<m_iNumTracks; c++ )	// for each arrow column
 	{
-		const int MAX_COLOR_NOTE_INSTANCES = 300;
-		ColorNoteInstance instances[MAX_COLOR_NOTE_INSTANCES];
-		int iCount = 0;		// number of valid elements in the instances array
-
+//		const int MAX_COLOR_NOTE_INSTANCES = 300;
+//		ColorNoteInstance instances[MAX_COLOR_NOTE_INSTANCES];
+//		int iCount = 0;		// number of valid elements in the instances array
 
 
 
@@ -279,33 +254,31 @@ void NoteField::DrawPrimitives()
 		{
 			HoldNote &hn = m_HoldNotes[i];
 			HoldNoteScore &hns = m_HoldNoteScores[i];
+			const float fLife = m_fHoldNoteLife[i];
+			const bool bIsHoldingNote = m_bIsHoldingHoldNote[i];	// hack: added -1 because hn.m_iStartIndex changes as note is held
 			
 			if( hns == HNS_OK )	// if this HoldNote was completed
 				continue;	// don't draw anything
-
-			const float fLife = m_fHoldNoteLife[i];
 
 			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
 
 			// If no part of this HoldNote is on the screen, skip it
-			if( !( iIndexFirstArrowToDraw <= hn.m_iEndIndex && hn.m_iEndIndex <= iIndexLastArrowToDraw  ||
-				iIndexFirstArrowToDraw <= hn.m_iStartIndex  && hn.m_iStartIndex <= iIndexLastArrowToDraw  ||
-				hn.m_iStartIndex < iIndexFirstArrowToDraw && hn.m_iEndIndex > iIndexLastArrowToDraw ) )
+			if( !( fFirstBeatToDraw <= hn.m_fEndBeat && hn.m_fEndBeat <= fLastBeatToDraw  ||
+				fFirstBeatToDraw <= hn.m_fStartBeat  && hn.m_fStartBeat <= fLastBeatToDraw  ||
+				hn.m_fStartBeat < fFirstBeatToDraw   && hn.m_fEndBeat > fLastBeatToDraw ) )
 			{
 				continue;	// skip
 			}
 
 
-			// If this note was in the past and has life > 0, then it was completed and don't draw it!
-			if( hn.m_iEndIndex < BeatToNoteRow(fSongBeat)  &&  fLife > 0  &&  m_bIsHoldingHoldNote[i] )
-				continue;	// skip
+			m_NoteDisplay[c].DrawHold( hn, bIsHoldingNote, fLife, m_fPercentFadeToFail );
 
+//			// If this note was in the past and has life > 0, then it was completed and don't draw it!
+//			if( hn.m_iEndIndex < BeatToNoteRow(fSongBeat)  &&  fLife > 0  &&  m_bIsHoldingHoldNote[i] )
+//				continue;	// skip
 
-			const int iCol = hn.m_iTrack;
-			const float fHoldNoteLife = m_fHoldNoteLife[i];
-			const bool bActive = m_bIsHoldingHoldNote[i];	// hack: added -1 because hn.m_iStartIndex changes as note is held
-
+			/*
 			// parts of the hold
 			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed );
 			for( float j=fStartDrawingAtBeat; 
@@ -321,52 +294,44 @@ void NoteField::DrawPrimitives()
 
 				CreateHoldNoteInstance( instances[iCount++], bActive, (float)j, hn, fHoldNoteLife );
 			}
+			*/
 
 		}
 		
-		const bool bDrawAddPass = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
-		if( iCount > 0 )
-			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
+//		const bool bDrawAddPass = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
+//		if( iCount > 0 )
+//			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
 
 
 
-		iCount = 0;		// reset count
+//		iCount = 0;		// reset count
 
 		///////////////////////////////////
 		// Draw all TapNotes in this column
 		///////////////////////////////////
-		for( i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
+		for( i=iFirstIndexToDraw; i<=iLastIndexToDraw; i++ )	//	 for each row
 		{	
-			if( m_TapNotes[c][i] == '0' )
-				continue;	// no note here
+			if( m_TapNotes[c][i] == '0' )	// no note here
+				continue;	// skip
 			
-			// See if there is a hold step that begins on this beat.
-			bool bHoldNoteOnThisBeat = false;
-			float fHoldLife = -1;
-			for( int j=0; j<m_iNumHoldNotes; j++ )
+			if( m_TapNotes[c][i] == '2' )	// this is a HoldNote begin marker.  Grade it, but don't draw
+				continue;	// skip
+
+			// See if there is a hold step that begins on this index.
+			bool bHoldNoteBeginsOnThisBeat = false;
+			for( int c2=0; c2<m_iNumTracks; c2++ )
 			{
-				if( m_HoldNotes[j].m_iStartIndex == i )
+				if( m_TapNotes[c2][i] == '2' )
 				{
-					bHoldNoteOnThisBeat = true;
-					fHoldLife = m_fHoldNoteLife[j];
+					bHoldNoteBeginsOnThisBeat = true;
 					break;
 				}
 			}
 
-			if( bHoldNoteOnThisBeat )
-			{
-				D3DXCOLOR color(0,1,0,1);
-				color.r *= fHoldLife;
-				color.g *= fHoldLife;
-				color.b *= fHoldLife;
-				CreateTapNoteInstance( instances[iCount++], c, (float)i, true );
-			}
-			else
-				CreateTapNoteInstance( instances[iCount++], c, (float)i );
-		}
 
-		if( iCount > 0 )
-			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
+
+			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, m_fPercentFadeToFail );
+		}
 	}
 
 }

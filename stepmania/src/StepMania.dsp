@@ -260,6 +260,10 @@ SOURCE=.\Grade.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\HoldNote.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\NoteData.cpp
 # End Source File
 # Begin Source File
@@ -281,6 +285,14 @@ SOURCE=.\Notes.cpp
 # Begin Source File
 
 SOURCE=.\Notes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteTypes.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteTypes.h
 # End Source File
 # Begin Source File
 
@@ -592,6 +604,14 @@ SOURCE=.\DifficultyIcon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FadingBanner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FadingBanner.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FootMeter.cpp
 # End Source File
 # Begin Source File
@@ -605,14 +625,6 @@ SOURCE=.\GradeDisplay.cpp
 # Begin Source File
 
 SOURCE=.\GradeDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GranularityIndicator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GranularityIndicator.h
 # End Source File
 # Begin Source File
 
@@ -672,11 +684,27 @@ SOURCE=.\MusicWheel.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\OptionsCursor.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\OptionsCursor.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScrollBar.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ScrollBar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SnapDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SnapDisplay.h
 # End Source File
 # Begin Source File
 
@@ -737,14 +765,6 @@ SOURCE=.\BackgroundAnimation.cpp
 # Begin Source File
 
 SOURCE=.\BackgroundAnimation.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorNote.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorNote.h
 # End Source File
 # Begin Source File
 
@@ -865,6 +885,14 @@ SOURCE=.\MotionBlurSprite.cpp
 # Begin Source File
 
 SOURCE=.\MotionBlurSprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteDisplay.h
 # End Source File
 # Begin Source File
 
@@ -1000,11 +1028,11 @@ SOURCE=.\ScreenGameplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenLoading.cpp
+SOURCE=.\ScreenGraphicOptions.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenLoading.h
+SOURCE=.\ScreenGraphicOptions.h
 # End Source File
 # Begin Source File
 

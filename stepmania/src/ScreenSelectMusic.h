@@ -16,7 +16,8 @@
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "Banner.h"
-#include "SongInfoFrame.h"
+#include "FadingBanner.h"
+#include "BPMDisplay.h"
 #include "MenuElements.h"
 #include "GrooveRadar.h"
 #include "DifficultyIcon.h"
@@ -31,6 +32,7 @@ public:
 
 	virtual void DrawPrimitives();
 
+	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -53,26 +55,34 @@ protected:
 	void UpdateOptionsDisplays();
 
 	CArray<Notes*, Notes*> m_arrayNotes;
-	int				m_iSelection[NUM_PLAYERS];
+	int					m_iSelection[NUM_PLAYERS];
 
-	MenuElements	m_Menu;
+	MenuElements		m_Menu;
 
-	SongInfoFrame	m_SongInfoFrame;
-	Sprite			m_sprDifficultyFrame;
-	DifficultyIcon	m_DifficultyIcon[NUM_PLAYERS];
-	GrooveRadar		m_GrooveRadar;
-	BitmapText		m_textSongOptions;
-	Sprite			m_sprMeterFrame;
-	FootMeter		m_FootMeter[NUM_PLAYERS];
-	MusicWheel		m_MusicWheel;
+	Sprite				m_sprBannerFrame;
+	FadingBanner		m_Banner;
+	BPMDisplay			m_BPMDisplay;
+	BitmapText			m_textStage;
+	Sprite				m_sprCDTitle;
+	Sprite				m_sprDifficultyFrame;
+	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
+	GrooveRadar			m_GrooveRadar;
+	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
+	BitmapText			m_textSongOptions;
+	Sprite				m_sprMeterFrame;
+	FootMeter			m_FootMeter[NUM_PLAYERS];
+	MusicSortDisplay	m_MusicSortDisplay;
+	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
+	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
+	MusicWheel			m_MusicWheel;
 
-	bool			m_bMadeChoice;
-	bool			m_bGoToOptions;
-	BitmapText		m_textHoldForOptions;
+	bool				m_bMadeChoice;
+	bool				m_bGoToOptions;
+	BitmapText			m_textHoldForOptions;
 
-	RageSoundSample m_soundSelect;
-	RageSoundSample m_soundChangeNotes;
-	RageSoundSample m_soundLocked;
+	RageSoundSample		m_soundSelect;
+	RageSoundSample		m_soundChangeNotes;
+	RageSoundSample		m_soundLocked;
 };
 
 

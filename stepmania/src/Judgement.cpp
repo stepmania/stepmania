@@ -22,7 +22,7 @@ const float JUDGEMENT_DISPLAY_TIME	=	0.8f;
 Judgement::Judgement()
 {
 	m_fDisplayCountdown = 0;
-	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
+	m_sprJudgement.Load( THEME->GetPathTo("Graphics","gameplay judgement") );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.TurnShadowOn();
 	this->AddSubActor( &m_sprJudgement );
@@ -60,6 +60,8 @@ void Judgement::SetJudgement( TapNoteScore score )
 	default:	ASSERT( false );
 	}
 
+	// Chris:  Resize the graphic file itself if you want the size different for Ez2.
+	/*
 	if ( GAMESTATE->m_CurGame == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
 	{
 		m_sprJudgement.SetHeight( 22.0f * 2.1f );
@@ -70,6 +72,7 @@ void Judgement::SetJudgement( TapNoteScore score )
 			m_sprJudgement.SetWidth( 143.0f * 2.8f );
 		}
 	}
+	*/
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 

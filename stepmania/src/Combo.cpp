@@ -21,13 +21,13 @@ Combo::Combo()
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
 
-	m_sprCombo.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_COMBO) );
+	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo") );
 	m_sprCombo.TurnShadowOn();
 	m_sprCombo.StopAnimating();
 	m_sprCombo.SetX( 40 );
 	m_sprCombo.SetZoom( 1.0f );
 
-	m_textComboNumber.Load( THEME->GetPathTo(FONT_COMBO_NUMBERS) );
+	m_textComboNumber.LoadFromFont( THEME->GetPathTo("Fonts","combo numbers") );
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
 	m_textComboNumber.SetX( -0 );

@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: GhostArrowRow.h
+ Class: GhostArrowRow
 
  Desc: A graphic displayed in the GhostArrowRow during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -13,7 +14,6 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ColorNote.h"
 #include "ArrowEffects.h"
 #include "GameManager.h"
 #include "GameState.h"
@@ -62,7 +62,7 @@ void GhostArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
+		float fX = ArrowGetXPos2( m_PlayerNumber, c, 0 );
 		m_GhostArrowRow[c].SetX( fX );
 		m_GhostArrowRowBright[c].SetX( fX );
 		m_HoldGhostArrowRow[c].SetX( fX );

@@ -33,8 +33,6 @@ const float STYLE_ICON_LOCAL_Y	=	6;
 const float TIMER_LOCAL_X	=	270;
 const float TIMER_LOCAL_Y	=	0;
 
-const float CREDIT_X[NUM_PLAYERS]	=	{160,480};
-const float CREDIT_Y[NUM_PLAYERS]	=	{SCREEN_BOTTOM-8, SCREEN_BOTTOM-8};
 
 
 MenuElements::MenuElements()
@@ -49,8 +47,6 @@ MenuElements::MenuElements()
 	this->AddSubActor( &m_frameTopBar );
 	this->AddSubActor( &m_frameBottomBar );
 	this->AddSubActor( &m_textHelp );
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		this->AddSubActor( &m_textCreditInfo[p] );
 
 	m_KeepAlive.SetZ( -2 );
 	m_KeepAlive.SetOpened();
@@ -77,7 +73,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprTopEdge.Load( sTopEdgePath );
 	m_sprTopEdge.TurnShadowOff();
 	
-	m_sprStyleIcon.Load( THEME->GetPathTo(GRAPHIC_MENU_STYLE_ICONS) );
+	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics","menu style icons") );
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_LOCAL_X, STYLE_ICON_LOCAL_Y );
 	m_sprStyleIcon.SetZ( -1 );
@@ -99,7 +95,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 
 	m_frameBottomBar.SetZ( -1 );
 
-	m_sprBottomEdge.Load( THEME->GetPathTo(GRAPHIC_MENU_BOTTOM_EDGE) );
+	m_sprBottomEdge.Load( THEME->GetPathTo("Graphics","menu bottom edge") );
 	m_sprBottomEdge.TurnShadowOff();
 
 	m_textHelp.SetXY( HELP_X, HELP_Y );
@@ -110,28 +106,9 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	//m_textHelp.SetText( sHelpText );
 	m_textHelp.SetZoom( 0.5f );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_textCreditInfo[p].Load( THEME->GetPathTo(FONT_NORMAL) );
-		m_textCreditInfo[p].SetXY( CREDIT_X[p], CREDIT_Y[p] );
-		m_textCreditInfo[p].SetZ( -1 );
 
-		if( GAMESTATE->m_CurStyle == STYLE_NONE )
-			m_textCreditInfo[p].SetText( "PRESS START" );
-		else if( GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-			m_textCreditInfo[p].SetText( "" );
-		else	// not enabled
-			m_textCreditInfo[p].SetText( "NOT PRESENT" );
-
-
-		m_textCreditInfo[p].SetZoom( 0.5f );
-		m_textCreditInfo[p].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
-		m_textCreditInfo[p].TurnShadowOff();
-	}
-	
-	m_soundSwoosh.Load( THEME->GetPathTo(SOUND_MENU_SWOOSH) );
-	m_soundBack.Load( THEME->GetPathTo(SOUND_MENU_BACK) );
-
+	m_soundSwoosh.Load( THEME->GetPathTo("Sounds","menu swoosh") );
+	m_soundBack.Load( THEME->GetPathTo("Sounds","menu back") );
 
 
 	m_frameTopBar.SetXY( CENTER_X, m_sprTopEdge.GetZoomedHeight()/2 );
@@ -233,9 +210,6 @@ void MenuElements::DrawTopLayer()
 	m_frameTopBar.Draw();
 	m_frameBottomBar.Draw();
 	m_textHelp.Draw();
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_textCreditInfo[p].Draw();
-
 	m_KeepAlive.Draw();
 	m_Wipe.Draw();
 }
@@ -250,7 +224,3 @@ void MenuElements::StopTimer()
 	m_MenuTimer.StopTimer();
 }
 
-void MenuElements::OverrideCreditsMessage( PlayerNumber p, CString sNewString )
-{
-	m_textCreditInfo[p].SetText( sNewString );
-}

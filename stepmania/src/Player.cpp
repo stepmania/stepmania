@@ -80,7 +80,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	m_iNumTapNotes = pNoteData->GetNumTapNotes();
 	m_iTapNotesHit = 0;
-	m_iMeter = GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter;
+	m_iMeter = GAMESTATE->m_pCurNotes[m_PlayerNumber] ? GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter : 5;
 
 
 
@@ -95,8 +95,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	if( GAMESTATE->m_PlayerOptions[pn].m_bLittle )
 		this->MakeLittle();
 
-	int iPixelsToDrawBefore = 64;
-	int iPixelsToDrawAfter = 320;
+	int iPixelsToDrawBefore = 96;
+	int iPixelsToDrawAfter = 384;
 	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
 	case PlayerOptions::EFFECT_MINI:	iPixelsToDrawBefore *= 2;	iPixelsToDrawAfter *= 2;	break;
@@ -152,40 +152,40 @@ void Player::Update( float fDeltaTime )
 		HoldNote &hn = m_HoldNotes[i];
 		HoldNoteScore &hns = m_HoldNoteScores[i];
 		float &fLife = m_fHoldNoteLife[i];
+		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
+		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
+
+		m_NoteField.m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
+
 
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
 
-		float fStartBeat = NoteRowToBeat( (float)hn.m_iStartIndex );
-		float fEndBeat = NoteRowToBeat( (float)hn.m_iEndIndex );
-
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
-
-		// update the life
-		if( fStartBeat < fSongBeat && fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
+		if( hn.m_fStartBeat < fSongBeat && fSongBeat < hn.m_fEndBeat )	// if the song beat is in the range of this hold
 		{
 			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration;
 			// if they got a bad score or haven't stepped on the corresponding tap yet
-			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] != TNS_NONE  &&
-										   m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] != TNS_MISS; 
+			const TapNoteScore tns = m_TapNoteScores[hn.m_iTrack][iHoldStartIndex];
+			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
-			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;
+			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
 
-			if( bIsHoldingButton && bSteppedOnTapNote )
+			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
 				// Increase life
 				fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
 				fLife = min( fLife, 1 );	// clamp
 
-				m_NoteField.m_HoldNotes[i].m_iStartIndex = BeatToNoteRow( fSongBeat );	// move the start of this Hold
+				m_NoteField.m_HoldNotes[i].m_fStartBeat = fSongBeat;	// move the start of this Hold
 
 				m_GhostArrowRow.HoldNote( hn.m_iTrack );		// update the "electric ghost" effect
 			}
 			else
 			{
-				if( fSongBeat-fStartBeat > GetMaxBeatDifference() )
+				if( fSongBeat-hn.m_fStartBeat > GetMaxBeatDifference() )
 				{
 					// Decrease life
 					fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
@@ -206,7 +206,7 @@ void Player::Update( float fDeltaTime )
 		}
 
 		// check for OK
-		if( fSongBeat > fEndBeat )	// if this HoldNote is in the past
+		if( fSongBeat > hn.m_fEndBeat )	// if this HoldNote is in the past
 		{
 			// At this point fLife > 0, or else we would have marked it NG above
 			fLife = 1;
@@ -379,18 +379,19 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 			score = min( score, m_TapNoteScores[t][iIndexThatWasSteppedOn] );
 
 	// remove this row from the NoteField
-	bool bHoldNoteOnThisBeat = false;
-	for( int j=0; j<m_iNumHoldNotes; j++ )
-	{
-		if( m_HoldNotes[j].m_iStartIndex == iIndexThatWasSteppedOn )
-		{
-			bHoldNoteOnThisBeat = true;
-			break;
-		}
-	}
+//	bool bHoldNoteOnThisBeat = false;
+//	for( int j=0; j<m_iNumHoldNotes; j++ )
+//	{
+//		if( m_HoldNotes[j].m_iStartIndex == iIndexThatWasSteppedOn )
+//		{
+//			bHoldNoteOnThisBeat = true;
+//			break;
+//		}
+//	}
 
 
-	if ( score==TNS_PERFECT  ||  score == TNS_GREAT  ||  bHoldNoteOnThisBeat  )
+//	if ( score==TNS_PERFECT  ||  score == TNS_GREAT  ||  bHoldNoteOnThisBeat  )
+	if ( score==TNS_PERFECT  ||  score == TNS_GREAT )
 		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
@@ -545,7 +546,7 @@ void Player::HandleNoteScore( TapNoteScore score )
 	int B = m_iMeter * 1000000;
 	float S = (1+N)*N/2.0f;
 
-	printf( "m_iNumTapNotes %d, m_iTapNotesHit %d\n", m_iNumTapNotes, m_iTapNotesHit );
+//	printf( "m_iNumTapNotes %d, m_iTapNotesHit %d\n", m_iNumTapNotes, m_iTapNotesHit );
 
 	float one_step_score = p * (B/S) * n;
 

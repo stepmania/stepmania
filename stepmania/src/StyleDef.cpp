@@ -1,18 +1,18 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: StyleDef.cpp
+ Class: StyleDef
 
  Desc: A data structure that holds the definition of a GameMode.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "StyleDef.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-
 #include "GameDef.h"
 #include "IniFile.h"
 

@@ -40,6 +40,9 @@ private:
 	void BeforeChange();
 	void AfterChange();
 
+	bool IsEnabled( int iStyleIndex );
+	void UpdateEnabledDisabled();
+
 	MenuElements m_Menu;
 	
 	Sprite	m_sprIcon[NUM_STYLES];

@@ -18,7 +18,7 @@
 
 TransitionStarWipe::TransitionStarWipe()
 {
-	m_fTransitionTime = m_fTransitionTime * 1.5f;
+	m_fTransitionTime = m_fTransitionTime * 4;
 }
 
 TransitionStarWipe::~TransitionStarWipe()
@@ -75,7 +75,7 @@ void TransitionStarWipe::DrawPrimitives()
 		m_sprStar.Draw();
 		
 		int x_rect_leading_edge = x + ( bIsAnEvenRow ? - m_iStarWidth/2 : m_iStarWidth/2 );
-		int x_rect_trailing_edge = ( bIsAnEvenRow ? 0 : SCREEN_WIDTH );
+		int x_rect_trailing_edge = ( bIsAnEvenRow ? 0-1 : SCREEN_WIDTH+1 );
 		int y_top = y - m_iStarHeight/2;
 		int y_bot = y + m_iStarHeight/2+1;
 		m_rect.StretchTo( CRect(x_rect_leading_edge, y_top, x_rect_trailing_edge,  y_bot) );
@@ -88,25 +88,25 @@ void TransitionStarWipe::DrawPrimitives()
 void TransitionStarWipe::OpenWipingRight( ScreenMessage send_when_done )
 {
 	Transition::OpenWipingRight( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_CLOSING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo("Graphics","gameplay closing star") );
 }
 
 void TransitionStarWipe::OpenWipingLeft(  ScreenMessage send_when_done )
 {
 	Transition::OpenWipingLeft( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_CLOSING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo("Graphics","gameplay closing star") );
 }
 
 void TransitionStarWipe::CloseWipingRight(ScreenMessage send_when_done )
 {
 	Transition::CloseWipingRight( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_OPENING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo("Graphics","gameplay opening star") );
 }
 
 void TransitionStarWipe::CloseWipingLeft( ScreenMessage send_when_done )
 {
 	Transition::CloseWipingLeft( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_OPENING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo("Graphics","gameplay opening star") );
 }
 
 void TransitionStarWipe::LoadNewStarSprite( CString sFileName )

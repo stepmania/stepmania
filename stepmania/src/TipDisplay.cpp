@@ -23,7 +23,7 @@ TipDisplay::TipDisplay()
 {
 	LOG->Trace( "TipDisplay::TipDisplay()" );
 
-	m_textTip.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textTip.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textTip.SetEffectBlinking();
 	m_textTip.TurnShadowOff();
 	this->AddSubActor( &m_textTip );

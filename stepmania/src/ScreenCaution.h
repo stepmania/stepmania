@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenCaution.h
+ Class: ScreenCaution
 
  Desc: Screen that displays while SelectSong is being loaded.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 /****************************************
 ScreenEzSelectPlayer,cpp
 Desc: See Header
@@ -7,7 +8,6 @@ Andrew Livy
 
 /* Includes */
 
-#include "stdafx.h"
 #include "ScreenEz2SelectPlayer.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
@@ -21,6 +21,7 @@ Andrew Livy
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
+#include "ScreenSelectStyle.h"
 #include "ScreenEz2SelectStyle.h"
 #include "GameState.h"
 #include "RageException.h"
@@ -30,6 +31,9 @@ Andrew Livy
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+
+#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("Screens","UseNormalOrEZ2SelectStyle")
+
 const float TWEEN_TIME		= 0.35f;
 const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);
 const D3DXCOLOR OPT_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);
@@ -47,6 +51,8 @@ const float OPT_Y[NUM_EZ2_GRAPHICS] = {
 	CENTER_Y+115,
 }; // tells us the default Y position
 
+
+
 float ez2_lasttimercheck[2];
 int ez2_bounce=0; // used for the bouncing of the '1p' and '2p' images
 int ez2_direct=0; // direction of the bouncing of the '1p' and '2p' images
@@ -63,52 +69,44 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	ez2_lasttimercheck[1] = 0.0f;
 	m_iSelectedStyle=3; // by bbf: frieza, was this supposed to be 3 ?
 	GAMESTATE->m_CurStyle = STYLE_NONE;
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
+//	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
 
 // Load in the sprites we will be working with.
 	for( int i=0; i<NUM_EZ2_GRAPHICS; i++ )
 	{
-		CString sPadGraphicPath;
+		CString sOptFileName;
 		switch( i )
 		{
-		case 0:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE);	
-			break;
-		case 1:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE);	
-			break;
-		case 2:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_MEDIUM_PICTURE);	
-			break;
-		case 3:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_EASY_PICTURE);	
-			break;
+		case 0:	sOptFileName = "select difficulty hard picture";	break;
+		case 1:	sOptFileName = "select difficulty hard picture";	break;
+		case 2:	sOptFileName = "select difficulty medium picture";	break;
+		case 3:	sOptFileName = "select difficulty easy picture";	break;
 		}
-		m_sprOpt[i].Load( sPadGraphicPath );
+		m_sprOpt[i].Load( THEME->GetPathTo("Graphics",sOptFileName) );
 		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
-		m_sprOpt[i].SetZoom( 1 );
 		this->AddSubActor( &m_sprOpt[i] );
 	}
 
 
 	m_Menu.Load( 	
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
+		THEME->GetPathTo("Graphics","select style background"), 
+		THEME->GetPathTo("Graphics","select style top edge"),
 		ssprintf("Press %c on the pad you wish to play on", char(4) ),
 		false, true, 40 
 		);
 	this->AddSubActor( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
 
-//	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
+	/* Chris:  If EZ2 doesn't use this sound, make a theme that overrides is with a silent sound file */
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
 
 	if( !MUSIC->IsPlaying() )
 	{
-		MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
+		MUSIC->Load( THEME->GetPathTo("Sounds","select player music") );
         MUSIC->Play( true );
 	}
 
@@ -184,17 +182,17 @@ void ScreenEz2SelectPlayer::DrawPrimitives()
 		
 		if (m_iSelectedStyle == 0) // only the left pad was selected
 		{
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
 		}
 		else if (m_iSelectedStyle == 1) // only the right pad was selected
 		{
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
+//			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
 			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
 		}
 		else // they both selected
 		{
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
 		}
 
@@ -242,7 +240,10 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
+		if( USE_NORMAL_OR_EZ2_SELECT_STYLE )
+			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
+		else
+			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
 		break;
 	}
 }
@@ -293,7 +294,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 //	if(	GAMESTATE->m_MasterPlayerNumber != PLAYER_2 && GAMESTATE->m_MasterPlayerNumber != PLAYER_1 )
 	if (m_iSelectedStyle == 3)
 	{
-		GAMESTATE->m_MasterPlayerNumber = p;
+//		GAMESTATE->m_MasterPlayerNumber = p;
 
 		if (p == PLAYER_1)
 		{

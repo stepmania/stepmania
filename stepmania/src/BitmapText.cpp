@@ -16,6 +16,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "PrefsManager.h"
 
 
 
@@ -59,12 +60,12 @@ BitmapText::~BitmapText()
 		FONT->UnloadFont( m_pFont->m_sFontFilePath );
 }
 
-bool BitmapText::Load( const CString &sFontFilePath )
+bool BitmapText::LoadFromFont( CString sFontFilePath )
 {
 	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
 
 	// load font
-	m_pFont = FONT->LoadFont( sFontFilePath );
+	m_pFont = FONT->LoadFont( sFontFilePath, "" );
 
 	return true;
 }
@@ -134,6 +135,12 @@ void BitmapText::SetText( CString sText )
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
+	// offset so that pixels are aligned to texels
+	if( PREFSMAN->m_iDisplayResolution == 320 )
+		DISPLAY->TranslateLocal( -1, -1, 0 );
+	else
+		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
+
 	if( m_iNumLines == 0 )
 		return;
 

@@ -26,7 +26,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
 	// init the text
-	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
+	LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
 	TurnShadowOff();
 
 	m_fScore = 0;
@@ -35,7 +35,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 
 	CString s;
 	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
-		s += '0';
+		s += ' ';
 	SetText( s );
 }
 

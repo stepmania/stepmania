@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: ScreenManager
 
- Desc: Manages the game windows.
+ Desc: Manager/container for Screens.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -40,6 +40,8 @@ public:
 
 	void SendMessageToTopScreen( ScreenMessage SM, float fDelay );
 
+//	void OverrideCreditsMessage( PlayerNumber p, CString sNewString );
+	void RefreshCreditsMessages();
 
 private:
 	CArray<Screen*, Screen*&> m_ScreenStack;
@@ -47,6 +49,7 @@ private:
 
 	BitmapText m_textFPS;
 	BitmapText m_textSystemMessage;
+	BitmapText m_textCreditInfo[NUM_PLAYERS];
 };
 
 

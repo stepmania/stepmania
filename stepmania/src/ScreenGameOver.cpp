@@ -31,7 +31,7 @@ ScreenGameOver::ScreenGameOver()
 {
 	m_bClosing = false;
 
-	m_sprGameOver.Load( THEME->GetPathTo(GRAPHIC_GAME_OVER) );
+	m_sprGameOver.Load( THEME->GetPathTo("Graphics","game over") );
 	m_sprGameOver.SetXY( CENTER_X, CENTER_Y );
 	this->AddSubActor( &m_sprGameOver );
 

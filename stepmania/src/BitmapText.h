@@ -27,7 +27,8 @@ public:
 	~BitmapText();
 
 
-	bool Load( const CString &sFontName );
+	bool LoadFromFont( CString sFontName );
+	bool LoadFromTextureAndChars( CString sTexturePath, CString sChars );
 	void SetText( CString sText );
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };

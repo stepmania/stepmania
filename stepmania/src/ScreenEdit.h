@@ -19,7 +19,7 @@
 #include "RageMusic.h"
 #include "MotionBlurSprite.h"
 #include "Background.h"
-#include "GranularityIndicator.h"
+#include "SnapDisplay.h"
 
 
 class ScreenEdit : public Screen
@@ -50,7 +50,7 @@ protected:
 	Sprite			m_sprBackground;
 
 	NoteField				m_NoteFieldEdit;
-	GranularityIndicator	m_GranularityIndicator;
+	SnapDisplay				m_SnapDisplay;
 	GrayArrowRow			m_GrayArrowRowEdit;
 
 	BitmapText				m_textInfo;		// status information that changes
@@ -77,11 +77,12 @@ protected:
 
 // for MODE_PLAY
 
-	Player					m_Player;
+	Player			m_Player;
 
 // for MODE_RECORD and MODE_PLAY
 
 	RageSoundStream	m_soundMusic;
+	bool	m_bLayingAHold[MAX_NOTE_TRACKS];
 };
 
 

@@ -9,20 +9,21 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
+
 #include "ArrowEffects.h"
 #include "Notes.h"
-#include "ColorNote.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "NoteDisplay.h"
 
 
-float ArrowGetYOffset( const PlayerNumber pn, float fStepIndex )
+float ArrowGetYOffset2( const PlayerNumber pn, float fNoteBeat )
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fBeatsUntilStep = NoteRowToBeat( fStepIndex ) - fSongBeat;
+	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
 	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
@@ -36,7 +37,7 @@ float ArrowGetYOffset( const PlayerNumber pn, float fStepIndex )
 	return fYOffset;
 }
 
-float ArrowGetXPos( const PlayerNumber pn, int iColNum, float fYOffset ) 
+float ArrowGetXPos2( const PlayerNumber pn, int iColNum, float fYPos ) 
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
@@ -44,7 +45,7 @@ float ArrowGetXPos( const PlayerNumber pn, int iColNum, float fYOffset )
 	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DRUNK:
-		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYOffset*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
+		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
 		break;
 	}
 	return fPixelOffsetFromCenter;
@@ -85,10 +86,10 @@ float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
 		fAlpha = 1;
 		break;
 	case PlayerOptions::APPEARANCE_HIDDEN:
-		fAlpha = ((bReverse?-fYPos:fYPos)-100)/200;
+		fAlpha = ((bReverse?-fYPos:fYPos)-100)/100;
 		break;
 	case PlayerOptions::APPEARANCE_SUDDEN:
-		fAlpha = ((SCREEN_HEIGHT-(bReverse?-fYPos:fYPos))-260)/200;
+		fAlpha = ((SCREEN_HEIGHT-(bReverse?-fYPos:fYPos))-260)/100;
 		break;
 	case PlayerOptions::APPEARANCE_STEALTH:
 		fAlpha = 0;
@@ -138,7 +139,7 @@ float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
 	else if( bReverse  &&  fYPos > 0 )
 		fAlpha = 1;
 
-	return fAlpha;
+	return clamp( fAlpha, 0, 1 );
 };
 
 

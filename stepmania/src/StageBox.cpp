@@ -27,7 +27,7 @@ StageBox::StageBox()
 {
 	this->AddSubActor( &m_sprBox );
 	
-	m_textNumber.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNumber.TurnShadowOff();
 	m_textNumber.SetHorizAlign( Actor::align_right );
 	m_textNumber.SetVertAlign( Actor::align_top );
@@ -35,7 +35,7 @@ StageBox::StageBox()
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	this->AddSubActor( &m_textNumber );
 
-	m_textST.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textST.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textST.TurnShadowOff();
 	m_textST.SetHorizAlign( Actor::align_left );
 	m_textST.SetVertAlign( Actor::align_top );
@@ -46,7 +46,7 @@ StageBox::StageBox()
 
 void StageBox::SetStageInfo( PlayerNumber p, int iNumStagesCompleted )
 {
-	m_sprBox.Load( THEME->GetPathTo(p==PLAYER_1 ? GRAPHIC_EVALUATION_STAGE_FRAME_P1 : GRAPHIC_EVALUATION_STAGE_FRAME_P2) );
+	m_sprBox.Load( THEME->GetPathTo("Graphics",p==PLAYER_1?"evaluation stage frame p1":"evaluation stage frame p2") );
 	m_sprBox.StopAnimating();
 
 	m_textNumber.SetText( ssprintf("%2d", iNumStagesCompleted) );

@@ -19,6 +19,7 @@
 #include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
+#include "ScreenSelectGroup.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenSandbox.h"
 #include "GameManager.h"
@@ -27,19 +28,18 @@
 #include "GameState.h"
 
 
-const float ICONS_START_X	= SCREEN_LEFT + 60;
-const float ICONS_SPACING_X	= 76;
-const float ICON_Y			= SCREEN_TOP + 100;
+#define ICONS_START_X		THEME->GetMetricF("SelectStyle","IconsStartX")
+#define ICONS_SPACING_X		THEME->GetMetricF("SelectStyle","IconsSpacingX")
+#define ICONS_START_Y		THEME->GetMetricF("SelectStyle","IconsStartY")
+#define ICONS_SPACING_Y		THEME->GetMetricF("SelectStyle","IconsSpacingY")
+#define EXPLANATION_X		THEME->GetMetricF("SelectStyle","ExplanationX")
+#define EXPLANATION_Y		THEME->GetMetricF("SelectStyle","ExplanationY")
+#define INFO_X				THEME->GetMetricF("SelectStyle","InfoX")
+#define INFO_Y				THEME->GetMetricF("SelectStyle","InfoY")
+#define PREVIEW_X			THEME->GetMetricF("SelectStyle","PreviewX")
+#define PREVIEW_Y			THEME->GetMetricF("SelectStyle","PreviewY")
 
-const float EXPLANATION_X	= SCREEN_RIGHT - 160;
-const float EXPLANATION_Y	= CENTER_Y-70;
-
-const float INFO_X			= SCREEN_RIGHT - 160;
-const float INFO_Y			= CENTER_Y+40;
-
-const float PREVIEW_X		= SCREEN_LEFT + 160;
-const float PREVIEW_Y		= CENTER_Y;
-
+#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("Screens","SkipSelectDifficulty")
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
@@ -49,31 +49,26 @@ ScreenSelectStyle::ScreenSelectStyle()
 {
 	LOG->Trace( "ScreenSelectStyle::ScreenSelectStyle()" );
 
-
 	// Reset the current style and game
 	GAMESTATE->m_CurStyle = STYLE_NONE;
+	GAMESTATE->m_bPlayersCanJoin = true;
 
-
-	for( int s=0; s<NUM_STYLES; s++ )
-	{
-		Style style = (Style)s;
-		if( StyleToGame(style) == GAMESTATE->m_CurGame )	// games match
-			m_aPossibleStyles.Add( style );		
-	}
-
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
 	m_iSelection = 0;
 
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		Style style = m_aPossibleStyles[i];
-		m_sprIcon[i].Load( THEME->GetPathTo(GRAPHIC_SELECT_STYLE_ICONS) );
+		m_sprIcon[i].Load( THEME->GetPathTo("Graphics","select style icons") );
 		m_sprIcon[i].StopAnimating();
 		m_sprIcon[i].SetState( i );
-		m_sprIcon[i].SetXY( ICONS_START_X + ICONS_SPACING_X*i, ICON_Y );
+		m_sprIcon[i].SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );
 		this->AddSubActor( &m_sprIcon[i] );
 	}
 
-	m_sprExplanation.Load( THEME->GetPathTo(GRAPHIC_SELECT_STYLE_EXPLANATION) );
+	UpdateEnabledDisabled();
+
+	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select style explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	this->AddSubActor( &m_sprExplanation );
 	
@@ -87,35 +82,30 @@ ScreenSelectStyle::ScreenSelectStyle()
 	// Load dummy Sprites
 	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
-		ThemeElement te;
-
-		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_0+i);
-		m_sprDummyPreview[i].Load( THEME->GetPathTo(te) );
-
-		te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_0+i);
-		m_sprDummyInfo[i].Load( THEME->GetPathTo(te) );
+		m_sprDummyPreview[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,i)) );
+		m_sprDummyInfo[i].Load(    THEME->GetPathTo("Graphics",ssprintf("select style info game %d style %d",GAMESTATE->m_CurGame,i)) );
 	}
 
 
 	m_Menu.Load( 	
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
+		THEME->GetPathTo("Graphics","select style background"), 
+		THEME->GetPathTo("Graphics","select style top edge"),
 		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
 		false, true, 40 
 		);
 	this->AddSubActor( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
 
-	if( !MUSIC->IsPlaying() )
+	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select style music") )
 	{
-		MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
-        MUSIC->Play( true );
+		MUSIC->Load( THEME->GetPathTo("Sounds","select style music") );
+		MUSIC->Play( true );
 	}
 
 	AfterChange();
@@ -160,7 +150,10 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
+		if( SKIP_SELECT_DIFFICULTY )
+			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+		else
+			SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
 		break;
 	}
 }
@@ -174,11 +167,8 @@ void ScreenSelectStyle::AfterChange()
 {
 	m_sprIcon[m_iSelection].SetEffectGlowing();
 
-	ThemeElement te;
-
 	// Tween Preview
-	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_PREVIEW_0+m_iSelection);
-	m_sprPreview.Load( THEME->GetPathTo(te) );
+	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
 
 	m_sprPreview.StopTweening();
 	m_sprPreview.SetAddColor( D3DXCOLOR(1,1,1,0) );
@@ -199,8 +189,7 @@ void ScreenSelectStyle::AfterChange()
 
 
 	// Tween Info
-	te = (ThemeElement)(GRAPHIC_SELECT_STYLE_INFO_0+m_iSelection);
-	m_sprInfo.Load( THEME->GetPathTo(te) );
+	m_sprInfo.Load( THEME->GetPathTo("Graphics",ssprintf("select style info game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
 	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );
 	m_sprInfo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
@@ -209,11 +198,22 @@ void ScreenSelectStyle::AfterChange()
 
 void ScreenSelectStyle::MenuLeft( const PlayerNumber p )
 {
-	if( m_iSelection == 0 )		// can't go left any further
+	// search for a style to the left of the current selection that is enabled
+	int iSwitchToStyleIndex = -1;	// -1 means none found
+	for( int i=m_iSelection-1; i>=0; i-- )
+	{
+		if( IsEnabled(i) )
+		{
+			iSwitchToStyleIndex = i;
+			break;
+		}
+	}
+
+	if( iSwitchToStyleIndex == -1 )
 		return;
 
 	BeforeChange();
-	m_iSelection--;
+	m_iSelection = iSwitchToStyleIndex;
 	m_soundChange.PlayRandom();
 	AfterChange();
 }
@@ -221,19 +221,37 @@ void ScreenSelectStyle::MenuLeft( const PlayerNumber p )
 
 void ScreenSelectStyle::MenuRight( const PlayerNumber p )
 {
-	if( m_iSelection == m_aPossibleStyles.GetSize()-1 )		// can't go right any further
+	// search for a style to the right of the current selection that is enabled
+	int iSwitchToStyleIndex = -1;	// -1 means none found
+	for( int i=m_iSelection+1; i<m_aPossibleStyles.GetSize(); i++ )	
+	{
+		if( IsEnabled(i) )
+		{
+			iSwitchToStyleIndex = i;
+			break;
+		}
+	}
+
+	if( iSwitchToStyleIndex == -1 )
 		return;
 
 	BeforeChange();
-	m_iSelection++;
+	m_iSelection = iSwitchToStyleIndex;
 	m_soundChange.PlayRandom();
 	AfterChange();
 }
 
 void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 {
-	if( p != PLAYER_INVALID )
-		GAMESTATE->m_MasterPlayerNumber = p;
+	if( p!=PLAYER_INVALID  && !GAMESTATE->m_bIsJoined[p] )
+	{
+		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		GAMESTATE->m_bIsJoined[p] = true;
+		SCREENMAN->RefreshCreditsMessages();
+		UpdateEnabledDisabled();
+		return;	// don't fall through
+	}
+
 	GAMESTATE->m_CurStyle = GetSelectedStyle();
 
 	AnnouncerElement ae;
@@ -319,3 +337,51 @@ void ScreenSelectStyle::TweenOnScreen()
 	m_sprInfo.SetTweenZoomY( fOriginalZoom );
 	*/
 }
+
+bool ScreenSelectStyle::IsEnabled( int iStyleIndex )
+{
+	Style style = m_aPossibleStyles[iStyleIndex];
+
+	int iNumSidesJoined = 0;
+	for( int c=0; c<2; c++ )
+		if( GAMESTATE->m_bIsJoined[c] )
+			iNumSidesJoined++;	// left side, and right side
+
+	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
+	{
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:	return iNumSidesJoined==1;
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:	return iNumSidesJoined==2;
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:	return iNumSidesJoined==2;
+	default:	ASSERT(0);	return false;
+	}
+}
+
+void ScreenSelectStyle::UpdateEnabledDisabled()
+{
+	int i;
+	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	{
+		if( IsEnabled(i) )
+			m_sprIcon[i].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		else
+			m_sprIcon[i].SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
+	}
+
+	// Select first enabled style
+	BeforeChange();
+
+	int iSwitchToStyleIndex = -1;	// -1 means none found
+	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	{
+		if( IsEnabled(i) )
+		{
+			iSwitchToStyleIndex = i;
+			break;
+		}
+	}
+	ASSERT( iSwitchToStyleIndex != -1 );
+
+	m_iSelection = iSwitchToStyleIndex;
+	AfterChange();
+}
+

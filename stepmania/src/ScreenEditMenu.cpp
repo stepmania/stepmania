@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenEditMenu.h
+ Class: ScreenEditMenu
 
  Desc: The main title screen and menu.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -31,6 +32,9 @@ const float GROUP_Y				=	CENTER_Y - 160;
 
 const float SONG_BANNER_X		=	CENTER_X;
 const float SONG_BANNER_Y		=	CENTER_Y - 80;
+
+const float SONG_BANNER_WIDTH	=	286;
+const float SONG_BANNER_HEIGHT	=	92;
 
 const float ARROWS_X[2]			=	{ SONG_BANNER_X - 200, SONG_BANNER_X + 200 };
 const float ARROWS_Y[2]			=	{ SONG_BANNER_Y,       SONG_BANNER_Y };
@@ -63,38 +67,40 @@ ScreenEditMenu::ScreenEditMenu()
 	m_SelectedRow = ROW_GROUP;
 
 	SONGMAN->GetGroupNames( m_sGroups );
+	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
 	m_iSelectedGroup = 0;
 	m_iSelectedSong = 0;
-	m_CurNotesType = NOTES_TYPE_DANCE_SINGLE;
+	m_iSelectedNotesType = 0;
 	m_iSelectedNotes = 0;
 
-	m_textGroup.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textGroup.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textGroup.SetXY( GROUP_X, GROUP_Y );
 	m_textGroup.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	this->AddSubActor( &m_textGroup );
 
 	m_Banner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
+	m_Banner.SetCroppedSize( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
 	this->AddSubActor( &m_Banner );
 
 	m_TextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
 	this->AddSubActor( &m_TextBanner );
 	
-	m_sprArrowLeft.Load( THEME->GetPathTo(GRAPHIC_ARROWS_LEFT) );
+	m_sprArrowLeft.Load( THEME->GetPathTo("Graphics","edit menu left") );
 	m_sprArrowLeft.SetXY( ARROWS_X[0], ARROWS_Y[0] );
 	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_sprArrowLeft );
 
-	m_sprArrowRight.Load( THEME->GetPathTo(GRAPHIC_ARROWS_RIGHT) );
+	m_sprArrowRight.Load( THEME->GetPathTo("Graphics","edit menu right") );
 	m_sprArrowRight.SetXY( ARROWS_X[1], ARROWS_Y[1] );
 	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_sprArrowRight );
 
-	m_textNotesType.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textNotesType.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
 	m_textNotesType.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	this->AddSubActor( &m_textNotesType );
 
-	m_textNotes.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textNotes.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
 	m_textNotes.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	this->AddSubActor( &m_textNotes );
@@ -104,15 +110,15 @@ ScreenEditMenu::ScreenEditMenu()
 	OnGroupChange();
 
 
-	m_textExplanation.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddSubActor( &m_textExplanation );
 
 	m_Menu.Load( 
-		THEME->GetPathTo(GRAPHIC_EDIT_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_EDIT_TOP_EDGE),
+		THEME->GetPathTo("Graphics","edit background"), 
+		THEME->GetPathTo("Graphics","edit top edge"),
 		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
 		false, false, 40 
 		);
@@ -123,10 +129,10 @@ ScreenEditMenu::ScreenEditMenu()
 	this->AddSubActor( &m_Fade);
 
 
-	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundChangeMusic.Load( THEME->GetPathTo("Sounds","select music change music") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
+	MUSIC->Load( THEME->GetPathTo("Sounds","edit menu music") );
 	MUSIC->Play( true );
 
 
@@ -175,7 +181,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		NotesType nt = GetSelectedNotesType();
 		Style style = GAMEMAN->GetStyleThatPlaysNotesType( nt );
 		GAMESTATE->m_CurStyle = style;
-		GAMESTATE->m_CurGame = StyleToGame(style);
+		GAMESTATE->m_CurGame = GAMEMAN->GetStyleDefForStyle(style)->m_Game;
 
 		SCREENMAN->SetNewScreen( new ScreenEdit );
 		break;
@@ -231,7 +237,7 @@ void ScreenEditMenu::OnSongChange()
 
 void ScreenEditMenu::OnNotesTypeChange()
 {
-	m_CurNotesType = (NotesType)clamp( m_CurNotesType, 0, NUM_NOTES_TYPES );
+	m_iSelectedNotesType = clamp( m_iSelectedNotesType, 0, m_NotesTypes.GetSize()-1 );
 
 	m_textNotesType.SetText( NotesTypeToString( GetSelectedNotesType() ) );
 
@@ -252,7 +258,7 @@ void ScreenEditMenu::OnStepsChange()
 	if( GetSelectedNotes() == NULL )
 		m_textNotes.SetText( "(NEW)" );
 	else
-		m_textNotes.SetText( GetSelectedNotes()->m_sDescription );
+		m_textNotes.SetText( GetSelectedNotes()->m_sDescription!="" ? GetSelectedNotes()->m_sDescription : "[no name]" );
 
 }
 
@@ -293,9 +299,9 @@ void ScreenEditMenu::MenuLeft( const PlayerNumber p )
 		OnSongChange();
 		break;
 	case ROW_NOTES_TYPE:
-		if( m_CurNotesType == 0 )	// can't go left any further
+		if( m_iSelectedNotesType == 0 )	// can't go left any further
 			return;
-		m_CurNotesType = NotesType( m_CurNotesType-1 );
+		m_iSelectedNotesType--;
 		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:
@@ -326,9 +332,9 @@ void ScreenEditMenu::MenuRight( const PlayerNumber p )
 		OnSongChange();
 		break;
 	case ROW_NOTES_TYPE:
-		if( m_CurNotesType == NUM_NOTES_TYPES-1 )	// can't go right any further
+		if( m_iSelectedNotesType == m_NotesTypes.GetSize()-1 )	// can't go right any further
 			return;
-		m_CurNotesType = NotesType( m_CurNotesType+1 );
+		m_iSelectedNotesType++;
 		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:

@@ -62,8 +62,8 @@ const CString CREDIT_LINES[] =
 	"PROGRAMMING:",
 	"Chris Danford",
 	"Lord Frieza (Andrew Livy)",
-	"Dro Kulix (Peter S. May)",
 	"Bruno Figueiredo",
+	"Dro Kulix (Peter S. May)",
 	"Mantis (Ben Nordstrom)",
 	"Parasyte (Chris Gomez)",
 	"dirkthedaring (Michael Patterson)",
@@ -99,14 +99,16 @@ const CString CREDIT_LINES[] =
 	"Mark 'Foobly' Verrey",
 	"Mandarin Blue",
 	"Anne Kiel",
-	"BeMaNiFiNiNaTiC (Jeremy)",
+	"BeMaNiFiNiNaTiC (Jeremy Hine)",
 	"Garett Sakamoto",
+	"SailorBob",
+	"AngelTK {Kenny Lai}",
+	"Gotetsu",
 	"Illusionz - Issaquah, WA",
 	"Quarters - Kirkland, WA",
 	"Segapark - Bournemouth, UK",
 	"Pier Amusements - Bournemouth, UK",
 	"Westcliff Amusements - Bournemouth, UK",
-	"SailorBob",
 	"Naoki",
 	"Konami Computer Entertainment Japan",
 	"",
@@ -128,7 +130,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	 int i;
 
-	m_sprBackground.Load( THEME->GetPathTo(GRAPHIC_MUSIC_SCROLL_BACKGROUND) );
+	m_sprBackground.Load( THEME->GetPathTo("Graphics","music scroll background") );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	this->AddSubActor( &m_sprBackground );
 
@@ -142,7 +144,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	for( i=0; i<min(arraySongs.GetSize(), MAX_TOTAL_LINES); i++ )
 	{
 		Song* pSong = arraySongs[i];
-		m_textLines[m_iNumLines].Load( THEME->GetPathTo(FONT_NORMAL) );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textLines[m_iNumLines].SetText( pSong->GetFullTitle() );
 		m_textLines[m_iNumLines].SetDiffuseColor( SONGMAN->GetGroupColor(pSong->m_sGroupName) );
 
@@ -151,7 +153,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
 	{
-		m_textLines[m_iNumLines].Load( THEME->GetPathTo(FONT_NORMAL) );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
 //		this->AddSubActor( &m_textLines[m_iNumLines] );
 
@@ -171,24 +173,12 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddSubActor( &m_Fade );
 
-	if ( GAMESTATE->m_CurGame != GAME_EZ2 )	
-	{
-		m_soundMusic.Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
-	}
-	else
-	{
-		m_soundMusic.Load( THEME->GetPathTo(SOUND_MENU_PROMPT) ); // yes, yes, hack hack hack. What can I do huh? re-write thememanager? hahaha.
-	}
+	m_soundMusic.Load( THEME->GetPathTo("Sounds","music scroll music") );
+	m_soundMusic.Play( true );
+
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_MUSIC_SCROLL) );
 
 	m_Fade.OpenWipingRight();
-	if ( GAMESTATE->m_CurGame != GAME_EZ2 )
-	{
-		m_soundMusic.Play( true );
-	}
-	else
-	{
-		m_soundMusic.Play( false );
-	}
 }
 
 

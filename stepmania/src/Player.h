@@ -16,7 +16,6 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 
-#include "ColorNote.h"
 #include "GrayArrow.h"
 #include "GhostArrow.h"
 #include "GhostArrowBright.h"

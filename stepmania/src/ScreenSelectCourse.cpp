@@ -55,18 +55,18 @@ ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
 
-	if( !MUSIC->IsPlaying() )
+	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select course music") )
 	{
-		MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
-		MUSIC->Play(true);
+		MUSIC->Load( THEME->GetPathTo("Sounds","select course music") );
+		MUSIC->Play( true );
 	}
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 
 	m_Menu.Load(
-		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_TOP_EDGE),
+		THEME->GetPathTo("Graphics","select course background"), 
+		THEME->GetPathTo("Graphics","select course top edge"),
 		ssprintf("%c or %c change course    then press START", char(1), char(2)),
 		false, true, 60 
 		);
@@ -81,7 +81,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
 	this->AddSubActor( &m_MusicWheel );
 
-	m_textHoldForOptions.Load( THEME->GetPathTo(FONT_STAGE) );
+	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
@@ -90,8 +90,8 @@ ScreenSelectCourse::ScreenSelectCourse()
 	this->AddSubActor( &m_textHoldForOptions );
 
 
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-	m_soundChangeNotes.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_NOTES) );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music change notes") );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_COURSE_INTRO) );
 
@@ -154,7 +154,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 	{
 		m_bGoToOptions = true;
 		m_textHoldForOptions.SetText( "Entering Options..." );
-		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_START) );
+		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
 

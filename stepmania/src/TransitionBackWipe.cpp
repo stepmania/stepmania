@@ -23,7 +23,7 @@
 
 TransitionBackWipe::TransitionBackWipe()
 {
-	m_soundBack.Load( THEME->GetPathTo(SOUND_MENU_BACK) );
+	m_soundBack.Load( THEME->GetPathTo("Sounds","menu back") );
 }
 
 void TransitionBackWipe::DrawPrimitives()

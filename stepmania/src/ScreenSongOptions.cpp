@@ -47,8 +47,9 @@ OptionLineData g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
 
 ScreenSongOptions::ScreenSongOptions() :
 	ScreenOptions(
-		THEME->GetPathTo(GRAPHIC_SONG_OPTIONS_BACKGROUND),
-		THEME->GetPathTo(GRAPHIC_SONG_OPTIONS_TOP_EDGE)
+		THEME->GetPathTo("Graphics","song options background"),
+		THEME->GetPathTo("Graphics","song options page"),
+		THEME->GetPathTo("Graphics","song options top edge")
 		)
 {
 	LOG->Trace( "ScreenSongOptions::ScreenSongOptions()" );

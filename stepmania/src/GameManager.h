@@ -12,6 +12,8 @@
 */
 #include "GameDef.h"
 #include "StyleDef.h"
+#include "Style.h"
+#include "Game.h"
 
 
 class GameManager
@@ -24,8 +26,11 @@ public:
 
 	Style		GetStyleThatPlaysNotesType( NotesType nt );
 
-	void GetGameNames( CStringArray &AddTo );
-	bool DoesGameExist( CString sGameName );
+	void		GetStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo );
+	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );
+
+//	void GetGameNames( CStringArray &AddTo );
+//	bool DoesGameExist( CString sGameName );
 
 	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
 	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE
@@ -36,7 +41,10 @@ public:
 	void GetTapTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo );	// looks in GAMESTATE for the current Style
 	void GetHoldTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo );	// looks in GAMESTATE for the current Style
 
+	void GetEnabledGames( CArray<Game,Game>& aGamesOut );
+
 protected:
+	void GetNoteSkinNames( Game game, CStringArray &AddTo );
 
 	CString m_sCurNoteSkin;	
 

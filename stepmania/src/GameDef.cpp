@@ -27,15 +27,15 @@ CString GameDef::ElementToGraphicSuffix( const SkinElement gbg )
 
 	switch( gbg )
 	{
-		case GRAPHIC_NOTE_COLOR_PART:		sAssetPath = "note color part";			break;
-		case GRAPHIC_NOTE_GRAY_PART:		sAssetPath = "note gray part";			break;
+		case GRAPHIC_TAP_PARTS:				sAssetPath = "tap parts";				break;
+		case GRAPHIC_HOLD_PARTS:			sAssetPath = "hold parts";				break;
 		case GRAPHIC_RECEPTOR:				sAssetPath = "receptor";				break;
 		case GRAPHIC_HOLD_EXPLOSION:		sAssetPath = "hold explosion";			break;
 		case GRAPHIC_TAP_EXPLOSION_BRIGHT:	sAssetPath = "tap explosion bright";	break;
 		case GRAPHIC_TAP_EXPLOSION_DIM:		sAssetPath = "tap explosion dim";		break;
 
 		default:
-			throw RageException( ssprintf("Unhandled StyleElement %d", gbg) );
+			ASSERT(0);	// invalid SkinElement
 	}
 	
 	return sAssetPath;
@@ -56,6 +56,7 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButto
 	if( arrayPossibleFileNames.GetSize() > 0 )
 		return sSkinDir + arrayPossibleFileNames[0];
 
+	ASSERT(0);
 	throw RageException( "The game button graphic '%s%s %s' is missing.", sSkinDir, sButtonName, sGraphicSuffix );
 	return "";
 }
@@ -85,6 +86,9 @@ void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonN
 		if( bSuccess )
 			aTapColorsOut.Add( color );
 	} while( bSuccess );
+
+	if( aTapColorsOut.GetSize() == 0 )
+		aTapColorsOut.Add( D3DXCOLOR(1,1,1,1) );
 
 	fclose( fp );
 	return;
@@ -173,17 +177,17 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI )
 {
 	PlayerNumber pn;
 
-	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_USE_TWO_SIDES;
+	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
 	if( GAMESTATE->m_CurStyle != STYLE_NONE )
 		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
 	switch( type )
 	{
-	case StyleDef::ONE_PLAYER_USES_ONE_SIDE:
-	case StyleDef::TWO_PLAYERS_USE_TWO_SIDES:
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
 		pn = (PlayerNumber)GameI.controller;
 		break;
-	case StyleDef::ONE_PLAYER_USES_TWO_SIDES:
-		pn = GAMESTATE->m_MasterPlayerNumber;
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+		pn = GAMESTATE->m_bIsJoined[PLAYER_1] ? PLAYER_1 : PLAYER_2;
 		break;
 	default:
 		ASSERT(0);	// invalid m_StyleType
@@ -213,12 +217,12 @@ void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] )
 	int iNumSidesUsing = 1;
 	switch( GAMESTATE->GetCurrentStyleDef()->m_StyleType )
 	{
-	case StyleDef::ONE_PLAYER_USES_ONE_SIDE:
-	case StyleDef::TWO_PLAYERS_USE_TWO_SIDES:
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
 		controller[0] = (GameController)MenuI.player;
 		iNumSidesUsing = 1;
 		break;
-	case StyleDef::ONE_PLAYER_USES_TWO_SIDES:
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
 		controller[0] = GAME_CONTROLLER_1;
 		controller[1] = GAME_CONTROLLER_2;
 		iNumSidesUsing = 2;

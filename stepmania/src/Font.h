@@ -21,6 +21,7 @@ protected:
 
 public:
 	Font( const CString &sFontPath );
+	Font( const CString &sTexturePath, const CString& sChars );
 	~Font();
 
 	int GetLineWidthInSourcePixels( LPCTSTR szLine, int iLength );

@@ -46,7 +46,7 @@ GrooveRadar::GrooveRadar()
 		const float fY = -sinf(fRotation) * fRadius * 1.15f;
 		
 
-		m_sprRadarLabels[c].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_WORDS) );
+		m_sprRadarLabels[c].Load( THEME->GetPathTo("Graphics","select music radar words") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
 		m_sprRadarLabels[c].SetXY( fX, fY );
@@ -90,7 +90,7 @@ void GrooveRadar::TweenOffScreen()
 
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
-	m_sprRadarBase.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_BASE) );
+	m_sprRadarBase.Load( THEME->GetPathTo("Graphics","select music radar base") );
 	this->AddSubActor( &m_sprRadarBase );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )

@@ -19,7 +19,7 @@
 
 FootMeter::FootMeter()
 {
-	Load( THEME->GetPathTo(FONT_METER) );
+	LoadFromFont( THEME->GetPathTo("Fonts","meter") );
 
 	SetFromNotes( NULL );
 }

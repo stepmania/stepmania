@@ -13,30 +13,14 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
+//#include "GameConstantsAndTypes.h"
 #include "PlayerOptions.h"
+#include "NoteTypes.h"
 
 // '1' = tap note
 // '2' = hold note begin
 // '3' = hold note end  ('1' can also end a HoldNote) ('3' without a matching '2' is ignored
 // ... for future expansion
-
-
-
-
-
-struct HoldNote
-{
-	int m_iTrack;	
-	int m_iStartIndex;
-	int m_iEndIndex;
-};
-
-
-inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
-inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ELEMENTS_PER_BEAT ); };
-inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
-inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };
 
 
 

@@ -26,7 +26,7 @@ BPMDisplay::BPMDisplay()
 	m_rectFrame.SetZoomX( 120 );
 	m_rectFrame.SetZoomY( 40 );
 
-	m_textBPM.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textBPM.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textBPM.TurnShadowOff();
 	m_textBPM.SetXY( CENTER_X, SCREEN_HEIGHT - 50 );
 	//m_textBPM.SetSequence( ssprintf("999") );
@@ -35,7 +35,7 @@ BPMDisplay::BPMDisplay()
 	m_textBPM.SetDiffuseColorTopEdge( D3DXCOLOR(1,1,0,1) );	// yellow
 	m_textBPM.SetDiffuseColorBottomEdge( D3DXCOLOR(1,0.5f,0,1) );	// orange
 
-	m_textLabel.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textLabel.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textLabel.TurnShadowOff();
 	m_textLabel.SetXY( 34, 2 );
 	m_textLabel.SetText( "BPM" );

@@ -53,14 +53,15 @@ OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 
 ScreenPlayerOptions::ScreenPlayerOptions() :
 	ScreenOptions(
-		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_BACKGROUND),
-		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
+		THEME->GetPathTo("Graphics","player options background"),
+		THEME->GetPathTo("Graphics","player options page"),
+		THEME->GetPathTo("Graphics","player options top edge")
 		)
 {
 	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
 	
 	Init( 
-		INPUTMODE_2PLAYERS, 
+		INPUTMODE_PLAYERS, 
 		g_PlayerOptionsLines, 
 		NUM_PLAYER_OPTIONS_LINES
 		);

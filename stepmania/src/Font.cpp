@@ -131,7 +131,11 @@ Font::Font( const CString &sFontFilePath )
 				m_sFontFilePath, asCharWidths.GetSize(), m_pTexture->GetNumFrames() );
 
 		for( int i=0; i<asCharWidths.GetSize(); i++ )
+		{
 			m_iFrameNoToWidth[i] = atoi( asCharWidths[i] );
+			if( m_iFrameNoToWidth[i]%2 == 1 )
+				m_iFrameNoToWidth[i]++;
+		}
 	}
 	else	// The font file creator didn't supply widths.  Assume each character is the width of the frame.
 	{
@@ -140,6 +144,60 @@ Font::Font( const CString &sFontFilePath )
 			m_iFrameNoToWidth[i] = m_pTexture->GetSourceFrameWidth();
 		}
 	}
+}
+
+
+Font::Font( const CString &sTexturePath, const CString& sCharacters )
+{
+	//LOG->Trace( "Font::LoadFromFontName(%s)", sFontFilePath );
+	int i;
+	for( i=0; i<MAX_FONT_CHARS; i++ )
+	{
+		m_iCharToFrameNo[i] = -1;
+		m_iFrameNoToWidth[i] = -1;
+	}
+
+	m_bCapitalsOnly = false;
+	m_fDrawExtraPercent = 0;
+
+
+	m_iRefCount = 1;
+
+	m_sFontFilePath = sTexturePath;	// save 
+
+
+	//
+	// load texture
+	//
+	m_sTexturePath = sTexturePath;	// save the path of the new texture
+	m_sTexturePath.MakeLower();
+
+
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
+	assert( m_pTexture != NULL );
+
+
+	//
+	// find out what characters are in this font
+	//
+	// sanity check
+	if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
+		throw RageException( "The characters in '%s' does not match the number of frames in the texture."
+					"The font has %d frames, and the texture has %d frames.",
+					m_sFontFilePath, sCharacters.GetLength(), m_pTexture->GetNumFrames() );
+
+	// set the char to frame number map
+	for( i=0; i<sCharacters.GetLength(); i++ )
+	{
+		char c = sCharacters[i];
+		int iFrameNo = i; 
+
+		m_iCharToFrameNo[c] = iFrameNo;
+	}
+
+	// Assume each character is the width of the frame.
+	for( i=0; i<(int)m_pTexture->GetNumFrames(); i++ )
+		m_iFrameNoToWidth[i] = m_pTexture->GetSourceFrameWidth();
 }
 
 

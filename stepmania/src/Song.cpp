@@ -994,7 +994,14 @@ bool Song::LoadFromKSFDir( CString sDir )
 			LOG->Trace( "Unexpected value named '%s'", sValueName );
 	}
 
-	m_sMusicFile = "song.mp3";
+	// search for music with song in the file name
+	CStringArray arrayPossibleMusic;
+	GetDirListing( m_sSongDir + CString("song.mp3"), arrayPossibleMusic );
+	GetDirListing( m_sSongDir + CString("song.ogg"), arrayPossibleMusic );
+	GetDirListing( m_sSongDir + CString("song.wav"), arrayPossibleMusic );
+
+	if( arrayPossibleMusic.GetSize() > 0 )		// we found a match
+		m_sMusicFile = arrayPossibleMusic[0];
 
 	return TRUE;
 }

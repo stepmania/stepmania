@@ -11,7 +11,6 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "ColorNote.h"
 #include "BitmapText.h"
 #include "TransitionFade.h"
 #include "RandomSample.h"
@@ -33,6 +32,7 @@ public:
 		CHOICE_SELECT_GAME,
 		CHOICE_MAP_INSTRUMENTS,
 		CHOICE_GAME_OPTIONS,
+		CHOICE_GRAPHIC_OPTIONS,
 		CHOICE_APPEARANCE_OPTIONS,
 		CHOICE_EDIT,
 		CHOICE_EXIT,

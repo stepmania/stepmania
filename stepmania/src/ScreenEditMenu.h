@@ -1,16 +1,16 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenEditMenu.h
+ Class: ScreenEditMenu
 
- Desc: The main title screen and menu.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "ColorNote.h"
 #include "BitmapText.h"
 #include "TransitionFade.h"
 #include "RandomSample.h"
@@ -43,7 +43,7 @@ private:
 
 	CString		GetSelectedGroup()		{ return m_sGroups[m_iSelectedGroup]; };
 	Song*		GetSelectedSong()		{ return m_pSongs[m_iSelectedSong]; };
-	NotesType	GetSelectedNotesType()	{ return m_CurNotesType; };
+	NotesType	GetSelectedNotesType()	{ return m_NotesTypes[m_iSelectedNotesType]; };
 	Notes*		GetSelectedNotes()		{ return m_pNotess[m_iSelectedNotes]; };
 	
 	void MenuUp( const PlayerNumber p );
@@ -70,7 +70,8 @@ private:
 	Sprite  m_sprArrowLeft;
 	Sprite  m_sprArrowRight;
 
-	NotesType m_CurNotesType;	// index into enum GameMode
+	CArray<NotesType, NotesType> m_NotesTypes;
+	int m_iSelectedNotesType;	// index into m_NotesTypes
 	BitmapText m_textNotesType;
 
 	CArray<Notes*, Notes*> m_pNotess;

@@ -39,8 +39,6 @@ public:
 	void SetTimer( int iTimerSeconds );
 	void StopTimer();
 
-	void OverrideCreditsMessage( PlayerNumber p, CString sNewString );
-
 	void DrawTopLayer();
 	void DrawBottomLayer();
 
@@ -73,7 +71,6 @@ protected:
 	// stuff in the main frame
 	Sprite		m_sprBG;
 	TipDisplay	m_textHelp;
-	BitmapText	m_textCreditInfo[NUM_PLAYERS];
 
 	TransitionFadeWipe	m_Wipe;
 	TransitionKeepAlive	m_KeepAlive;

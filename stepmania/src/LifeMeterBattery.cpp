@@ -35,8 +35,8 @@ LifeMeterBattery::LifeMeterBattery()
 	m_fBatteryBlinkTime = 0;
 
 	
-	m_soundGainLife.Load( THEME->GetPathTo(SOUND_GAMEPLAY_ONI_GAIN_LIFE) );
-	m_soundLoseLife.Load( THEME->GetPathTo(SOUND_GAMEPLAY_ONI_LOSE_LIFE) );
+	m_soundGainLife.Load( THEME->GetPathTo("Sounds","gameplay oni gain life") );
+	m_soundLoseLife.Load( THEME->GetPathTo("Sounds","gameplay oni lose life") );
 }
 
 void LifeMeterBattery::Load( PlayerNumber pn )
@@ -45,22 +45,22 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
 
-	m_sprFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_ONI) );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter oni") );
 	this->AddSubActor( &m_sprFrame );
 
-	m_sprBattery.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_BATTERY) );
+	m_sprBattery.Load( THEME->GetPathTo("Graphics","gameplay lifemeter battery") );
 	m_sprBattery.StopAnimating();
 	if( bPlayerEnabled )
 		this->AddSubActor( &m_sprBattery );
 
-	m_textNumLives.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textNumLives.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNumLives.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );		// pink
 	m_textNumLives.SetZoom( 1.1f );
 	m_textNumLives.TurnShadowOff();
 	if( bPlayerEnabled )
 		this->AddSubActor( &m_textNumLives );
 
-	m_textPercent.Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
+	m_textPercent.LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
 	m_textPercent.TurnShadowOff();
 	m_textPercent.SetZoom( 0.7f );
 	m_textPercent.SetText( "00.0" );

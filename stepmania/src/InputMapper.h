@@ -33,13 +33,12 @@ public:
 	void SaveMappingsToDisk();
 
 	void ClearAllMappings();
-	void ClearDefaultMappings();
 
 	void SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex );
 	void ClearFromInputMap( DeviceInput DeviceI );
 	void ClearFromInputMap( GameInput GameI, int iSlotIndex );
 
-	void AddDefaultMappingsForCurrentGame();
+	void AddDefaultMappingsForCurrentGameIfUnmapped();
 
 	bool IsMapped( DeviceInput DeviceI );
 	bool IsMapped( GameInput GameI );

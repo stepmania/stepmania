@@ -125,23 +125,11 @@ protected:
 	void RebuildWheelItemDisplays();
 	void SwitchSortOrder();
 
-
-	ScrollBar	m_ScrollBar;
-
-
-	SongSortOrder		m_SortOrder;
-	MusicSortDisplay	m_MusicSortDisplay;
-
-	ActorFrame			m_frameOverlay;
-
-	// Actors inside of m_frameOverlay
+	ScrollBar			m_ScrollBar;
 	Sprite				m_sprSelectionOverlay;
-	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
-	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
-
 
 	CArray<WheelItemData, WheelItemData&> m_WheelItemDatas[NUM_SORT_ORDERS];
-	CArray<WheelItemData, WheelItemData&> &GetCurWheelItemDatas() { return m_WheelItemDatas[m_SortOrder]; };
+	CArray<WheelItemData, WheelItemData&> &GetCurWheelItemDatas();
 	
 	WheelItemDisplay	m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
 	

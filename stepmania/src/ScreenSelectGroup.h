@@ -15,11 +15,11 @@
 #include "Screen.h"
 #include "Quad.h"
 #include "MenuElements.h"
-#include "GroupInfoFrame.h"
+#include "FadingBanner.h"
 
 
 const int MAX_GROUPS = 15;
-const int NUM_CONTENTS_COLUMNS = 3;
+const int MAX_COLUMNS = 5;
 
 class ScreenSelectGroup : public Screen
 {
@@ -46,16 +46,18 @@ public:
 
 private:
 
-	MenuElements m_Menu;
+	MenuElements	m_Menu;
 
 	Sprite			m_sprExplanation;
-	GroupInfoFrame	m_GroupInfoFrame;
-	Sprite			m_sprGroupButton[MAX_GROUPS];
-	BitmapText		m_textGroup[MAX_GROUPS];
-	Sprite			m_sprContentsHeader;
-	BitmapText		m_textContents[NUM_CONTENTS_COLUMNS];
+	Sprite			m_sprFrame;
+	FadingBanner	m_Banner;
+	BitmapText		m_textNumber;
+	Sprite			m_sprButton[MAX_GROUPS];
+	BitmapText		m_textLabel[MAX_GROUPS];
+	Sprite			m_sprContents;
+	BitmapText		m_textTitles[MAX_COLUMNS];
 
-	CString			m_sContentsText[MAX_GROUPS][NUM_CONTENTS_COLUMNS];
+	CString			m_sContentsText[MAX_GROUPS][MAX_COLUMNS];
 	int				m_iNumSongsInGroup[MAX_GROUPS];
 
 	RandomSample m_soundChange;

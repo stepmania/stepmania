@@ -16,6 +16,25 @@
 #include "RageBitmapTexture.h"
 
 
+CroppedSprite::CroppedSprite()
+{
+	m_fCropWidth = m_fCropHeight = 100;
+}
+
+bool CroppedSprite::Load( CString sFilePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
+{
+	Sprite::Load( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
+	CropToSize( m_fCropWidth, m_fCropHeight );
+	
+	return true;
+}
+
+void CroppedSprite::SetCroppedSize( float fWidth, float fHeight )
+{
+	m_fCropWidth = fWidth;
+	m_fCropHeight = fHeight;
+}
+
 void CroppedSprite::CropToSize( float fWidth, float fHeight )
 {
 	m_fCropWidth = fWidth;

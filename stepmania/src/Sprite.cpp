@@ -76,12 +76,12 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
 	if( !ini.ReadFile() )
-		throw RageException( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
+		throw RageException( "Error opening Sprite file '%s'.", m_sSpritePath );
 
 	CString sTextureFile;
 	ini.GetValue( "Sprite", "Texture", sTextureFile );
 	if( sTextureFile == "" )
-		throw RageException( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
+		throw RageException( "Error reading value 'Texture' from %s.", m_sSpritePath );
 
 	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 
@@ -191,7 +191,10 @@ void Sprite::Update( float fDeltaTime )
 void Sprite::DrawPrimitives()
 {
 	// offset so that pixels are aligned to texels
-	DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
+	if( PREFSMAN->m_iDisplayResolution == 320 )
+		DISPLAY->TranslateLocal( -1, -1, 0 );
+	else
+		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
 
 	if( m_pTexture == NULL )
 		return;

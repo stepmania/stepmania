@@ -42,30 +42,32 @@ OptionLineData g_SelectGameLines[NUM_SELECT_GAME_LINES] =
 
 ScreenSelectGame::ScreenSelectGame() :
 	ScreenOptions(
-		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_BACKGROUND),
-		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
+		THEME->GetPathTo("Graphics","select game background"),
+		THEME->GetPathTo("Graphics","select game page"),
+		THEME->GetPathTo("Graphics","select game top edge")
 		)
 {
 	LOG->Trace( "ScreenSelectGame::ScreenSelectGame()" );
 
 
+	//
 	// populate g_SelectGameLines
-	CStringArray arrayGameNames;
-	GAMEMAN->GetGameNames( arrayGameNames );
-	for( int i=0; i<arrayGameNames.GetSize(); i++ )
-		strcpy( g_SelectGameLines[0].szOptionsText[i], arrayGameNames[i] );
-
-	g_SelectGameLines[0].iNumOptions = arrayGameNames.GetSize();
-
-
-	// HACK:  Chris: Temporarily disable EZ2Dancer.  The EZ2 menus aren't working correctly, 
-	// and I have to leave for California in 4 hours - not enough time to fix this and do a 
-	// release.
-	g_SelectGameLines[0].iNumOptions = 2;
+	//
+//	CStringArray arrayGameNames;
+//	GAMEMAN->GetGameNames( arrayGameNames );
+	CArray<Game,Game> aGames;
+	GAMEMAN->GetEnabledGames( aGames );
+	for( int i=0; i<aGames.GetSize(); i++ )
+	{
+		Game game = aGames[i];
+		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;
+		strcpy( g_SelectGameLines[0].szOptionsText[i], sGameName );
+	}
+	g_SelectGameLines[0].iNumOptions = i;
 
 
 	Init( 
-		INPUTMODE_P1_ONLY, 
+		INPUTMODE_BOTH, 
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES
 		);
@@ -84,7 +86,12 @@ void ScreenSelectGame::ExportOptions()
 	PREFSMAN->SaveGamePrefsToDisk();
 
 	// Switch the current style to the frist style of the selected game
-	Game game = (Game)m_iSelectedOption[0][SG_GAME];
+	int iSelection = m_iSelectedOption[0][SG_GAME];
+
+	CArray<Game,Game> aGames;
+	GAMEMAN->GetEnabledGames( aGames );
+	Game game = aGames[iSelection];
+
 	GAMESTATE->m_CurGame = game;
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();

@@ -21,6 +21,7 @@
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
+#include "GameState.h"
 
 
 
@@ -39,13 +40,13 @@ const ScreenMessage SM_GoToPrevState		= ScreenMessage(SM_User-5);
 const ScreenMessage SM_GoToNextState		= ScreenMessage(SM_User-6);
 
 
-ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
+ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CString sTopEdgePath )
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
-	m_SoundChangeCol.Load( THEME->GetPathTo(SOUND_OPTION_CHANGE_COL) );
-	m_SoundChangeRow.Load( THEME->GetPathTo(SOUND_OPTION_CHANGE_ROW) );
-	m_SoundNext.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_SoundChangeCol.Load( THEME->GetPathTo("Sounds","option change col") );
+	m_SoundChangeRow.Load( THEME->GetPathTo("Sounds","option change row") );
+	m_SoundNext.Load( THEME->GetPathTo("Sounds","menu start") );
 
 	m_Menu.Load(
 		sBackgroundPath, 
@@ -54,40 +55,30 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 		false, true, 40 
 		);
 	this->AddSubActor( &m_Menu );
-	m_Menu.TweenOnScreenFromBlack( SM_None );
 
-	// init row numbers and element colors
+	// add everything to m_framePage so we can animate everything at once
+	this->AddSubActor( &m_framePage );
+
+	m_sprPage.Load( sPagePath );
+	m_sprPage.SetXY( CENTER_X, CENTER_Y );
+	m_framePage.AddSubActor( &m_sprPage );
+
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iCurrentRow[p] = 0;
-		m_SelectionHighlight[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
-	
-		this->AddSubActor( &m_SelectionHighlight[p] );
 
 		for( int l=0; l<MAX_OPTION_LINES; l++ )
-		{
 			m_iSelectedOption[p][l] = 0;
-	
-			m_OptionUnderline[p][l].SetDiffuseColor( PlayerToColor(p) );
-			this->AddSubActor( &m_OptionUnderline[p][l] );
-		}
 	}
 
-	// add sub actors
-	for( int i=0; i<MAX_OPTION_LINES; i++ )		// foreach line
-	{
-		this->AddSubActor( &m_textOptionLineTitles[i] );
-
-		for( int j=0; j<MAX_OPTIONS_PER_LINE; j++ )
-		{
-			m_textOptions[i][j].SetZ( -1 );
-			this->AddSubActor( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
-		}
-	}
-
-
+	m_Menu.TweenOnScreenFromBlack( SM_None );
 	m_Wipe.OpenWipingRight(SM_None);
 	this->AddSubActor( &m_Wipe );
+
+	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
+	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
+	m_framePage.SetTweenX( 0 );
 }
 
 void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines )
@@ -101,6 +92,43 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 
 
 	this->ImportOptions();
+	if( m_InputMode == INPUTMODE_BOTH )
+	{
+		for( int l=0; l<MAX_OPTION_LINES; l++ )
+			m_iSelectedOption[PLAYER_2][l] = m_iSelectedOption[PLAYER_1][l];
+	}
+
+	// init highlights and underlines
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		for( int l=0; l<m_iNumOptionLines; l++ )
+		{	
+			m_Underline[p][l].Load( (PlayerNumber)p, true );
+			m_framePage.AddSubActor( &m_Underline[p][l] );
+		}
+
+		m_Highlight[p].Load( (PlayerNumber)p, false );
+		m_framePage.AddSubActor( &m_Highlight[p] );
+
+	}
+
+	// init text
+	for( int i=0; i<m_iNumOptionLines; i++ )		// foreach line
+	{
+		m_framePage.AddSubActor( &m_textOptionLineTitles[i] );
+
+		for( int j=0; j<m_OptionLineData[i].iNumOptions; j++ )
+		{
+			m_textOptions[i][j].SetZ( -1 );
+			m_framePage.AddSubActor( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
+		}
+	}
+
+
+
 	InitOptionsText();
 	PositionUnderlines();
 	PositionHighlights();
@@ -113,22 +141,14 @@ ScreenOptions::~ScreenOptions()
 }
 
 
-const int UNDERLINE_THICKNESS = 3;
-const int HIGHLIGHT_HEIGHT = 26;
-
-
-void ScreenOptions::GetWidthXY( PlayerNumber p, int iRow, float &fWidthOut, float &fXOut, float &fYOut )
+void ScreenOptions::GetWidthXY( PlayerNumber p, int iRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
 	int iOptionInRow = m_iSelectedOption[p][iRow];
 	BitmapText &option = m_textOptions[iRow][iOptionInRow];
 
-	fWidthOut = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX() + UNDERLINE_THICKNESS*2;
-	fXOut = option.GetX();
-	fYOut = option.GetY();
-
-	// offset so the underlines for each player don't overlap
-	fXOut += p - (NUM_PLAYERS-1)/2.0f * UNDERLINE_THICKNESS * 2;
-	fYOut += p - (NUM_PLAYERS-1)/2.0f * UNDERLINE_THICKNESS * 2;
+	iWidthOut = roundf( option.GetWidestLineWidthInSourcePixels() * option.GetZoomX() );
+	iXOut = roundf( option.GetX() );
+	iYOut = roundf( option.GetY() );
 }
 
 void ScreenOptions::InitOptionsText()
@@ -144,12 +164,12 @@ void ScreenOptions::InitOptionsText()
 
 		BitmapText &title = m_textOptionLineTitles[i];
 
-		title.Load( THEME->GetPathTo(FONT_HEADER2) );
+		title.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 		title.SetText( optline.szTitle );
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( 0.7f );
 		title.SetVertAlign( Actor::align_middle );		
-		this->AddSubActor( &title );
+		m_framePage.AddSubActor( &title );
 
 		// init all text in this line and count the width of the line
 		float fX = ITEMS_START_X;	// indent 70 pixels
@@ -157,31 +177,18 @@ void ScreenOptions::InitOptionsText()
 		{
 			BitmapText &option = m_textOptions[i][j];
 
-			option.Load( THEME->GetPathTo(FONT_NORMAL) );
+			option.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 			option.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			option.SetText( optline.szOptionsText[j] );
 			option.SetZoom( 0.5f );
 			option.SetShadowLength( 2 );
-			this->AddSubActor( &option );
+			m_framePage.AddSubActor( &option );
 
 			// set the XY position of each item in the line
 			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
 			fX += fItemWidth/2;
 			option.SetXY( fX, fY );
 			fX += fItemWidth/2 + ITEM_GAP_X;
-		}
-	}
-
-	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
-	{
-		if( p > PLAYER_1  &&  m_InputMode != INPUTMODE_2PLAYERS )
-			continue;	// skip
-
-		Quad &highlight = m_SelectionHighlight[p];
-
-		for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
-		{
-			Quad &underline = m_OptionUnderline[p][i];
 		}
 	}
 }
@@ -191,21 +198,15 @@ void ScreenOptions::PositionUnderlines()
 	// Set the position of the underscores showing the current choice for each option line.
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
-		if( p > PLAYER_1  &&  m_InputMode != INPUTMODE_2PLAYERS )
-			continue;	// skip
-
 		for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
 		{
-			Quad &underline = m_OptionUnderline[p][i];
+//			Quad &underline = m_OptionUnderline[p][i];
+			OptionsCursor &underline = m_Underline[p][i];
 
-			float fWidth, fX, fY;
-			GetWidthXY( (PlayerNumber)p, i, fWidth, fX, fY );
-			fY += HIGHLIGHT_HEIGHT/2;
-			float fHeight = UNDERLINE_THICKNESS;
-
-			underline.SetZoomX( fWidth );
-			underline.SetZoomY( fHeight );
-			underline.SetXY( fX, fY );
+			int iWidth, iX, iY;
+			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+			underline.SetBarWidth( iWidth );
+			underline.SetXY( (float)iX, (float)iY );
 		}
 	}
 }
@@ -217,20 +218,14 @@ void ScreenOptions::PositionHighlights()
 	// Set the position of the underscores showing the current choice for each option line.
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
-		if( p > PLAYER_1  &&  m_InputMode != INPUTMODE_2PLAYERS )
-			continue;	// skip
-
 		int i=m_iCurrentRow[p];
 
-		Quad &highlight = m_SelectionHighlight[p];
+		OptionsCursor &highlight = m_Highlight[p];
 
-		float fWidth, fX, fY;
-		GetWidthXY( (PlayerNumber)p, i, fWidth, fX, fY );
-		float fHeight = HIGHLIGHT_HEIGHT;
-
-		highlight.SetZoomX( fWidth );
-		highlight.SetZoomY( fHeight );
-		highlight.SetXY( fX, fY );
+		int iWidth, iX, iY;
+		GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+		highlight.SetBarWidth( iWidth );
+		highlight.SetXY( (float)iX, (float)iY );
 	}
 }
 
@@ -239,16 +234,13 @@ void ScreenOptions::TweenHighlight( PlayerNumber player_no )
 	// Set the position of the highlight showing the current option the user is changing.
 	int iCurRow = m_iCurrentRow[player_no];
 
-	Quad &highlight = m_SelectionHighlight[player_no];
+	OptionsCursor &highlight = m_Highlight[player_no];
 
-	float fWidth, fX, fY;
-	GetWidthXY( player_no, iCurRow, fWidth, fX, fY );
-	float fHeight = HIGHLIGHT_HEIGHT;
-
+	int iWidth, iX, iY;
+	GetWidthXY( player_no, iCurRow, iWidth, iX, iY );
 	highlight.BeginTweening( 0.2f );
-	highlight.SetTweenZoomX( fWidth );
-	highlight.SetTweenZoomY( fHeight );
-	highlight.SetTweenXY( fX, fY );
+	highlight.TweenBarWidth( iWidth );
+	highlight.SetTweenXY( (float)iX, (float)iY );
 }
 
 void ScreenOptions::Update( float fDeltaTime )
@@ -317,109 +309,82 @@ void ScreenOptions::MenuStart( const PlayerNumber p )
 
 	m_SoundNext.PlayRandom();
 	m_Wipe.CloseWipingRight( SM_GoToNextState );
+
+	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );
+	m_framePage.SetTweenX( SCREEN_RIGHT );
 }
 
-void ScreenOptions::MenuLeft( const PlayerNumber p ) 
+void ScreenOptions::MenuLeft( const PlayerNumber pn ) 
 {
-	PlayerNumber pn = p;
-
-	switch( m_InputMode )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-	case INPUTMODE_P1_ONLY:
-		if( pn != PLAYER_1 )
+		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+			continue;	// skip
+
+		int iCurRow = m_iCurrentRow[p];
+		if( m_iSelectedOption[p][iCurRow] == 0 )	// can't go left any more
 			return;
-	case INPUTMODE_BOTH:
-		pn = PLAYER_1;
-		break;
-	case INPUTMODE_2PLAYERS:
-		break;	// fall through
+
+		m_iSelectedOption[p][iCurRow]--;
+		
+		TweenHighlight( (PlayerNumber)p );
 	}
-
-	int iCurRow = m_iCurrentRow[pn];
-	if( m_iSelectedOption[pn][iCurRow] == 0 )	// can't go left any more
-		return;
-
 	m_SoundChangeCol.PlayRandom();
-	m_iSelectedOption[pn][iCurRow]--;
-	
-	TweenHighlight( pn );
 	OnChange();
 }
 
-void ScreenOptions::MenuRight( const PlayerNumber p ) 
+void ScreenOptions::MenuRight( const PlayerNumber pn ) 
 {
-	PlayerNumber pn = p;
-
-	switch( m_InputMode )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-	case INPUTMODE_P1_ONLY:
-		if( pn != PLAYER_1 )
+		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+			continue;	// skip
+
+		int iCurRow = m_iCurrentRow[p];
+		if( m_iSelectedOption[p][iCurRow] == m_OptionLineData[iCurRow].iNumOptions-1 )	// can't go right any more
 			return;
-	case INPUTMODE_BOTH:
-		pn = PLAYER_1;
-		break;
-	case INPUTMODE_2PLAYERS:
-		break;	// fall through
+		
+		m_iSelectedOption[p][iCurRow]++;
+		
+		TweenHighlight( (PlayerNumber)p );
 	}
-
-	int iCurRow = m_iCurrentRow[pn];
-	if( m_iSelectedOption[pn][iCurRow] == m_OptionLineData[iCurRow].iNumOptions-1 )	// can't go right any more
-		return;
-	
 	m_SoundChangeCol.PlayRandom();
-	m_iSelectedOption[pn][iCurRow]++;
-	
-	TweenHighlight( pn );
 	OnChange();
 }
 
-void ScreenOptions::MenuUp( const PlayerNumber p ) 
+void ScreenOptions::MenuUp( const PlayerNumber pn ) 
 {
-	PlayerNumber pn = p;
-
-	switch( m_InputMode )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-	case INPUTMODE_P1_ONLY:
-		return;
-	case INPUTMODE_BOTH:
-		pn = PLAYER_1;
-		break;
-	case INPUTMODE_2PLAYERS:
-		break;	// fall through
-	}
+		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+			continue;	// skip
 
+		if( m_iCurrentRow[p] == 0 )	
+			m_iCurrentRow[p] = m_iNumOptionLines-1; // wrap around
+		else
+			m_iCurrentRow[p]--;
+		
+		TweenHighlight( (PlayerNumber)p );
+	}
 	m_SoundChangeRow.PlayRandom();
-	if( m_iCurrentRow[pn] == 0 )	
-		m_iCurrentRow[pn] = m_iNumOptionLines-1; // wrap around
-	else
-		m_iCurrentRow[pn]--;
-	
-	TweenHighlight( pn );
 	OnChange();
 }
 
-void ScreenOptions::MenuDown( const PlayerNumber p ) 
+void ScreenOptions::MenuDown( const PlayerNumber pn ) 
 {
-	PlayerNumber pn = p;
-
-	switch( m_InputMode )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-	case INPUTMODE_P1_ONLY:
-		return;
-	case INPUTMODE_BOTH:
-		pn = PLAYER_1;
-		break;
-	case INPUTMODE_2PLAYERS:
-		break;	// fall through
+		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+			continue;	// skip
+
+		if( m_iCurrentRow[p] == m_iNumOptionLines-1 )	
+			m_iCurrentRow[p] = 0; // wrap around
+		else
+			m_iCurrentRow[p]++;
+
+		TweenHighlight( (PlayerNumber)p );
 	}
-
 	m_SoundChangeRow.PlayRandom();
-	if( m_iCurrentRow[pn] == m_iNumOptionLines-1 )	
-		m_iCurrentRow[pn] = 0; // wrap around
-	else
-		m_iCurrentRow[pn]++;
-
-	TweenHighlight( pn );
 	OnChange();
 }
 

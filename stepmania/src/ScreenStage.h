@@ -10,7 +10,9 @@
 */
 
 #include "Screen.h"
-#include "BitmapText.h"
+#include "ActorFrame.h"
+#include "Actor.h"
+#include "TransitionFade.h"
 
 
 class ScreenStage : public Screen
@@ -18,12 +20,20 @@ class ScreenStage : public Screen
 public:
 	ScreenStage();
 
+	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	bool			m_bTryExtraStage;
 
-	BitmapText		m_textStage;
+	ActorFrame		m_frameStage;
+	Sprite			m_sprNumbers[4];	// up to 3 numbers and suffix
+	Sprite			m_sprStage;			// "Stage"
+
+	Quad			m_quadMask;		// write this into ZBuffer as a mask
+
+	TransitionFade	m_Fade;
+
 	Screen*			m_pNextScreen;
 };
 

@@ -11,6 +11,7 @@
 */
 
 #include "RageDisplay.h"
+#include "RageTexture.h"
 #include <d3dx8.h>
 #include <assert.h>
 

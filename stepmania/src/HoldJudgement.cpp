@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: HoldJudgement.h
+ Class: HoldJudgement
 
  Desc: A graphic displayed in the HoldJudgement during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -15,13 +16,13 @@
 #include "PrefsManager.h"
 
 
-const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
+#define JUDGEMENT_DISPLAY_TIME			THEME->GetMetricF("HoldJudgement","DisplayTime")
 
 
 HoldJudgement::HoldJudgement()
 {
 	m_fDisplayCountdown = 0;
-	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
+	m_sprJudgement.Load( THEME->GetPathTo("Graphics","gameplay hold judgement") );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.TurnShadowOn();
 	this->AddSubActor( &m_sprJudgement );
@@ -51,8 +52,8 @@ void HoldJudgement::SetHoldJudgement( HoldNoteScore hns )
 	switch( hns )
 	{
 	case HNS_NONE:	m_sprJudgement.SetState( 0 );	break;
-	case HNS_OK:	m_sprJudgement.SetState( 7 );	break;
-	case HNS_NG:	m_sprJudgement.SetState( 8 );	break;
+	case HNS_OK:	m_sprJudgement.SetState( 0 );	break;
+	case HNS_NG:	m_sprJudgement.SetState( 1 );	break;
 	default:	ASSERT( false );
 	}
 

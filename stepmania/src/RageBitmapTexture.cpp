@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: RageBitmapTexture.h
+ Class: RageBitmapTexture
 
  Desc: Holder for a static texture with metadata.  Can load just about any image format.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -102,6 +103,10 @@ void RageBitmapTexture::Create(
 		iAlphaBits = 0;
 	else if( -1 != m_sFilePath.Find("1 alpha") )
 		iAlphaBits = 1;
+	else if( -1 != m_sFilePath.Find("1alpha") )
+		iAlphaBits = 1;
+	else if( -1 != m_sFilePath.Find("0alpha") )
+		iAlphaBits = 0;
 	if( -1 != m_sFilePath.Find("dither") )
 		bDither = true; 
 
@@ -143,12 +148,8 @@ void RageBitmapTexture::Create(
 
 	bStretch |= ddii.Width > dwMaxSize || ddii.Height > dwMaxSize;
 	
-/*
 	// HACK:  On a Voodoo3 and Win98, D3DXCreateTextureFromFileEx sometimes fails for no good reason.
 	// So, we'll try the call 2x in a row in case the first one fails
-*/
-	// I'm taking out the Savage hack because it's causing problems.  Tough luck for them.  I think
-	// the problem can be worked around by setting MaxTextureSize to 512.
 	for( int i=0; i<2; i++ )
 	{
 		if( FAILED( hr = D3DXCreateTextureFromFileEx( 
@@ -162,7 +163,7 @@ void RageBitmapTexture::Create(
 			D3DPOOL_MANAGED,			// which memory pool
 			(bStretch ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
 			D3DX_FILTER_BOX | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
-			0,							// no color key
+			D3DCOLOR_ARGB(255,255,0,255), // pink color key
 			&ddii,						// struct to fill with source image info
 			NULL,						// no palette
 			&m_pd3dTexture ) ) )

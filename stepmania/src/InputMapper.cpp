@@ -38,25 +38,24 @@ void InputMapper::ClearAllMappings()
 				m_GItoDI[i][j][k].MakeInvalid();
 }
 
-void InputMapper::ClearDefaultMappings()
+void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 {
-	// default mappings are in the third slot
+	// Clear default mappings.  Default mappings are in the third slot.
 	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
 		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
-			m_GItoDI[i][j][2].MakeInvalid();
-}
+			ClearFromInputMap( GameInput((GameController)i,(GameButton)j), 2 );
 
-void InputMapper::AddDefaultMappingsForCurrentGame()
-{
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	for( int c=0; c<MAX_GAME_CONTROLLERS; c++ )
 	{
 		for( int b=0; b<pGameDef->m_iButtonsPerController; b++ )
 		{
 			int key = pGameDef->m_iDefaultKeyboardKey[c][b];
+			if( key == -1 )	// "no key" marker"
+				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
 			GameInput GameI( (GameController)c, (GameButton)b );
-			if( key != -1  &&  !IsMapped(DeviceI) )
+			if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
 				SetInputMap( DeviceI, GameI, 2 );   
 		}
 	}
@@ -71,9 +70,8 @@ void InputMapper::ReadMappingsFromDisk()
 	CString sPath = GAMESTATE->GetCurrentGameDef()->m_szName + CString("Map.ini");
 	IniFile ini;
 	ini.SetPath( sPath );
-	if( !ini.ReadFile() ) {
+	if( !ini.ReadFile() )
 		LOG->Warn( "could not input mapping file '%s'.", sPath );
-	}
 
 	IniFile::key* pKey = ini.GetKey( "Input" );
 
@@ -100,8 +98,7 @@ void InputMapper::ReadMappingsFromDisk()
 		}
 	}
 
-	ClearDefaultMappings();
-	AddDefaultMappingsForCurrentGame();
+	AddDefaultMappingsForCurrentGameIfUnmapped();
 }
 
 

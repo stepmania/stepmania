@@ -44,8 +44,9 @@ OptionLineData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
 	ScreenOptions(
-		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_BACKGROUND),
-		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
+		THEME->GetPathTo("Graphics","appearance options background"),
+		THEME->GetPathTo("Graphics","appearance options page"),
+		THEME->GetPathTo("Graphics","appearance options top edge")
 		)
 {
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
@@ -152,6 +153,9 @@ void ScreenAppearanceOptions::ExportOptions()
 	int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
 	CString sNewSkin = m_OptionLineData[AO_SKIN].szOptionsText[iSelectedSkin];
 	GAMEMAN->SwitchNoteSkin( sNewSkin );
+
+	PREFSMAN->SaveGamePrefsToDisk();
+	PREFSMAN->SaveGlobalPrefsToDisk();
 }
 
 void ScreenAppearanceOptions::GoToPrevState()

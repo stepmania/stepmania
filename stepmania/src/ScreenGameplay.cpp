@@ -36,38 +36,141 @@
 // Defines
 //
 
-const float LIFE_LOCAL_X[NUM_PLAYERS] = { -180, +180 };
-const float LIFE_LOCAL_Y[NUM_PLAYERS] = { -8, -8 };
+#define TOP_FRAME_X						THEME->GetMetricF("Gameplay","TopFrameX")
+#define TOP_FRAME_Y						THEME->GetMetricF("Gameplay","TopFrameY")
+#define TOP_FRAME_EXTRA_Y				THEME->GetMetricF("Gameplay","TopFrameExtraY")
+#define BOTTOM_FRAME_X					THEME->GetMetricF("Gameplay","BottomFrameX")
+#define BOTTOM_FRAME_Y					THEME->GetMetricF("Gameplay","BottomFrameY")
+#define BOTTOM_FRAME_EXTRA_Y			THEME->GetMetricF("Gameplay","BottomFrameExtraY")
+#define MIDDLE_FRAME_X					THEME->GetMetricF("Gameplay","MiddleFrameX")
+#define MIDDLE_FRAME_Y					THEME->GetMetricF("Gameplay","MiddleFrameY")
+#define LIFE_P1_X						THEME->GetMetricF("Gameplay","LifeP1X")
+#define LIFE_P1_Y						THEME->GetMetricF("Gameplay","LifeP1Y")
+#define LIFE_P1_EXTRA_Y					THEME->GetMetricF("Gameplay","LifeP1ExtraY")
+#define LIFE_P2_X						THEME->GetMetricF("Gameplay","LifeP2X")
+#define LIFE_P2_Y						THEME->GetMetricF("Gameplay","LifeP2Y")
+#define LIFE_P2_EXTRA_Y					THEME->GetMetricF("Gameplay","LifeP2ExtraY")
+#define STAGE_X							THEME->GetMetricF("Gameplay","StageX")
+#define STAGE_Y							THEME->GetMetricF("Gameplay","StageY")
+#define STAGE_EXTRA_Y					THEME->GetMetricF("Gameplay","StageExtraY")
+#define SONG_NUMBER_P1_X				THEME->GetMetricF("Gameplay","SongNumberP1X")
+#define SONG_NUMBER_P1_Y				THEME->GetMetricF("Gameplay","SongNumberP1Y")
+#define SONG_NUMBER_P1_EXTRA_Y			THEME->GetMetricF("Gameplay","SongNumberP1ExtraY")
+#define SONG_NUMBER_P2_X				THEME->GetMetricF("Gameplay","SongNumberP2X")
+#define SONG_NUMBER_P2_Y				THEME->GetMetricF("Gameplay","SongNumberP2Y")
+#define SONG_NUMBER_P2_EXTRA_Y			THEME->GetMetricF("Gameplay","SongNumberP2ExtraY")
+#define SCORE_P1_X						THEME->GetMetricF("Gameplay","ScoreP1X")
+#define SCORE_P1_Y						THEME->GetMetricF("Gameplay","ScoreP1Y")
+#define SCORE_P1_EXTRA_Y				THEME->GetMetricF("Gameplay","ScoreP1ExtraY")
+#define SCORE_P2_X						THEME->GetMetricF("Gameplay","ScoreP2X")
+#define SCORE_P2_Y						THEME->GetMetricF("Gameplay","ScoreP2Y")
+#define SCORE_P2_EXTRA_Y				THEME->GetMetricF("Gameplay","ScoreP2ExtraY")
+#define PLAYER_OPTIONS_P1_X				THEME->GetMetricF("Gameplay","PlayerOptionsP1X")
+#define PLAYER_OPTIONS_P1_Y				THEME->GetMetricF("Gameplay","PlayerOptionsP1Y")
+#define PLAYER_OPTIONS_P1_EXTRA_Y		THEME->GetMetricF("Gameplay","PlayerOptionsP1ExtraY")
+#define PLAYER_OPTIONS_P2_X				THEME->GetMetricF("Gameplay","PlayerOptionsP2X")
+#define PLAYER_OPTIONS_P2_Y				THEME->GetMetricF("Gameplay","PlayerOptionsP2Y")
+#define PLAYER_OPTIONS_P2_EXTRA_Y		THEME->GetMetricF("Gameplay","PlayerOptionsP2ExtraY")
+#define SONG_OPTIONS_X					THEME->GetMetricF("Gameplay","SongOptionsX")
+#define SONG_OPTIONS_Y					THEME->GetMetricF("Gameplay","SongOptionsY")
+#define SONG_OPTIONS_EXTRA_Y			THEME->GetMetricF("Gameplay","SongOptionsExtraY")
+#define DIFFICULTY_P1_X					THEME->GetMetricF("Gameplay","DifficultyP1X")
+#define DIFFICULTY_P1_Y					THEME->GetMetricF("Gameplay","DifficultyP1Y")
+#define DIFFICULTY_P1_REVERSE_Y			THEME->GetMetricF("Gameplay","DifficultyP1ReverseY")
+#define DIFFICULTY_P1_EXTRA_Y			THEME->GetMetricF("Gameplay","DifficultyP1ExtraY")
+#define DIFFICULTY_P1_EXTRA_REVERSE_Y	THEME->GetMetricF("Gameplay","DifficultyP1ExtraReverseY")
+#define DIFFICULTY_P2_X					THEME->GetMetricF("Gameplay","DifficultyP2X")
+#define DIFFICULTY_P2_Y					THEME->GetMetricF("Gameplay","DifficultyP2Y")
+#define DIFFICULTY_P2_REVERSE_Y			THEME->GetMetricF("Gameplay","DifficultyP2ReverseY")
+#define DIFFICULTY_P2_EXTRA_Y			THEME->GetMetricF("Gameplay","DifficultyP2ExtraY")
+#define DIFFICULTY_P2_EXTRA_REVERSE_Y	THEME->GetMetricF("Gameplay","DifficultyP2ExtraReverseY")
+#define DEBUG_X							THEME->GetMetricF("Gameplay","DebugX")
+#define DEBUG_Y							THEME->GetMetricF("Gameplay","DebugY")
+#define SURVIVE_TIME_X					THEME->GetMetricF("Gameplay","SurviveTimeX")
+#define SURVIVE_TIME_Y					THEME->GetMetricF("Gameplay","SurviveTimeY")
+#define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("Gameplay","SecondsBetweenComments")
+#define DEMONSTRATION_SECONDS			THEME->GetMetricF("Gameplay","DemonstrationSeconds")
 
-const float STAGE_NUMBER_LOCAL_X = 0;
-const float STAGE_NUMBER_LOCAL_Y = +20;
-const float STAGE_NUMBER_LOCALEZ2_Y = -30;
-
-const float SONG_NUMBER_LOCAL_X[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_X-20, STAGE_NUMBER_LOCAL_X+20 };
-const float SONG_NUMBER_LOCAL_Y[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_Y, STAGE_NUMBER_LOCAL_Y };
-
-
-const float SCORE_LOCAL_X[NUM_PLAYERS] = { -214, +214 };
-const float SCORE_LOCAL_Y[NUM_PLAYERS] = { -6, -6 };
-
-const float SCORE_LOCALEZ2_X[NUM_PLAYERS] = { -240, +240 };
-const float SCORE_LOCALEZ2_Y[NUM_PLAYERS] = { -32, -32 };
-
-const float PLAYER_OPTIONS_LOCAL_X[NUM_PLAYERS]	= { -0, +0 };
-const float PLAYER_OPTIONS_LOCAL_Y[NUM_PLAYERS]	= { -12, +2 };
-
-const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+60, SCREEN_RIGHT-60 };
-const float DIFFICULTY_Y[NUM_PLAYERS]	= { SCREEN_BOTTOM-70, SCREEN_BOTTOM-70 };
-
-const float DEBUG_X	= CENTER_X;
-const float DEBUG_Y	= CENTER_Y-70;
-
-const float SURVIVE_TIME_X	= CENTER_X;
-const float SURVIVE_TIME_Y	= CENTER_Y+100;
-
-const float TIME_BETWEEN_DANCING_COMMENTS	=	13;
-
-const float DEMONSTRATION_TIME	=	30;
+float LIFE_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return LIFE_P1_X;
+		case PLAYER_2:	return LIFE_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float LIFE_Y( int p, bool bExtra ) {
+	switch( p ) {
+		case PLAYER_1:	return bExtra ? LIFE_P1_EXTRA_Y : LIFE_P1_Y;
+		case PLAYER_2:	return bExtra ? LIFE_P2_EXTRA_Y : LIFE_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float SONG_NUMBER_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return SONG_NUMBER_P1_X;
+		case PLAYER_2:	return SONG_NUMBER_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float SONG_NUMBER_Y( int p, bool bExtra ) {
+	switch( p ) {
+		case PLAYER_1:	return bExtra ? SONG_NUMBER_P1_EXTRA_Y : SONG_NUMBER_P1_Y;
+		case PLAYER_2:	return bExtra ? SONG_NUMBER_P2_EXTRA_Y : SONG_NUMBER_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float SCORE_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return SCORE_P1_X;
+		case PLAYER_2:	return SCORE_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float SCORE_Y( int p, bool bExtra ) {
+	switch( p ) {
+		case PLAYER_1:	return bExtra ? SCORE_P1_EXTRA_Y : SCORE_P1_Y;
+		case PLAYER_2:	return bExtra ? SCORE_P2_EXTRA_Y : SCORE_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float DIFFICULTY_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return DIFFICULTY_P1_X;
+		case PLAYER_2:	return DIFFICULTY_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float DIFFICULTY_Y( int p, bool bReverse, bool bExtra ) {
+	switch( p ) {
+		case PLAYER_1:	
+			if(  bExtra &&  bReverse )	return DIFFICULTY_P1_EXTRA_REVERSE_Y;
+			if( !bExtra &&  bReverse )	return DIFFICULTY_P1_REVERSE_Y;
+			if(  bExtra && !bReverse )  return DIFFICULTY_P1_EXTRA_Y;
+			if( !bExtra && !bReverse )	return DIFFICULTY_P1_Y;
+			else	ASSERT(0);
+		case PLAYER_2:
+			if(  bExtra &&  bReverse )	return DIFFICULTY_P2_EXTRA_REVERSE_Y;
+			if( !bExtra &&  bReverse )	return DIFFICULTY_P2_REVERSE_Y;
+			if(  bExtra && !bReverse )  return DIFFICULTY_P2_EXTRA_Y;
+			if( !bExtra && !bReverse )	return DIFFICULTY_P2_Y;
+			else	ASSERT(0);
+	}
+	ASSERT(0);	return 0;
+}
+float PLAYER_OPTIONS_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return PLAYER_OPTIONS_P1_X;
+		case PLAYER_2:	return PLAYER_OPTIONS_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float PLAYER_OPTIONS_Y( int p, bool bExtra ) {
+	switch( p ) {
+		case PLAYER_1:	return bExtra ? PLAYER_OPTIONS_P1_EXTRA_Y : PLAYER_OPTIONS_P1_Y;
+		case PLAYER_2:	return bExtra ? PLAYER_OPTIONS_P2_EXTRA_Y : PLAYER_OPTIONS_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
 
 
 // received while STATE_DANCING
@@ -98,6 +201,12 @@ ScreenGameplay::ScreenGameplay()
 
 
 	GAMESTATE->ResetStageStatistics();	// clear values
+
+	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
+	const bool bReverse[NUM_PLAYERS] = { 
+		GAMESTATE->m_PlayerOptions[0].m_bReverseScroll,
+		GAMESTATE->m_PlayerOptions[1].m_bReverseScroll
+	};
 
 	// Update possible dance points
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -142,7 +251,7 @@ ScreenGameplay::ScreenGameplay()
 
 
 	m_DancingState = STATE_INTRO;
-	m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+	m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 
 
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.4f,0.4f,0.4f,1) );
@@ -158,7 +267,7 @@ ScreenGameplay::ScreenGameplay()
 		m_Player[p].SetX( fPlayerX );
 		this->AddSubActor( &m_Player[p] );
 	
-		m_sprOniGameOver[p].Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_ONI_GAMEOVER) );
+		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","gameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
@@ -170,10 +279,9 @@ ScreenGameplay::ScreenGameplay()
 	this->AddSubActor( &m_OniFade );
 
 
-	//////////////////////////////////
-	// Add all Actors to m_frameTop
-	//////////////////////////////////
-	this->AddSubActor( &m_frameTop );
+	m_sprMiddleFrame.Load( THEME->GetPathTo("Graphics","Gameplay Middle Frame") );
+	m_sprMiddleFrame.SetXY( MIDDLE_FRAME_X, MIDDLE_FRAME_Y );
+
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -190,8 +298,11 @@ ScreenGameplay::ScreenGameplay()
 		}
 
 		m_pLifeMeter[p]->Load( (PlayerNumber)p );
-		m_pLifeMeter[p]->SetXY( LIFE_LOCAL_X[p], LIFE_LOCAL_Y[p] );
-		m_frameTop.AddSubActor( m_pLifeMeter[p] );
+		m_pLifeMeter[p]->SetXY( LIFE_X(p), LIFE_Y(p,bExtra) );
+		this->AddSubActor( m_pLifeMeter[p] );
+
+		/*
+		Chris:  EZ2 should change positions via Theme metrics
 
 		if( GAMESTATE->m_CurGame == GAME_EZ2 )
 		{
@@ -201,51 +312,41 @@ ScreenGameplay::ScreenGameplay()
 			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
 			m_frameTop.AddSubActor( m_pScoreDisplay[p] );
 		}
+		*/
 		
 	}
 
 	// TopFrame goes above LifeMeter
-	m_sprTopFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_TOP_FRAME) );
-	m_frameTop.AddSubActor( &m_sprTopFrame );
+	m_sprTopFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra top frame":"gameplay top frame") );
+	m_sprTopFrame.SetXY( TOP_FRAME_X, bExtra ? TOP_FRAME_EXTRA_Y : TOP_FRAME_Y );
+	this->AddSubActor( &m_sprTopFrame );
 
-	m_frameTop.SetXY( CENTER_X, SCREEN_TOP + m_sprTopFrame.GetZoomedHeight()/2 );
 
-	m_textStageNumber.Load( THEME->GetPathTo(FONT_HEADER2) );
+	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textStageNumber.TurnShadowOff();
-	m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCAL_Y );
+	m_textStageNumber.SetXY( STAGE_X, bExtra ? STAGE_EXTRA_Y : STAGE_Y );
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuseColor( GAMESTATE->GetStageColor() );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCourseSongNumber[p].Load( THEME->GetPathTo(FONT_HEADER2) );
+		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 		m_textCourseSongNumber[p].TurnShadowOff();
-		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_LOCAL_X[p], SONG_NUMBER_LOCAL_Y[p] );
+		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
 		m_textCourseSongNumber[p].SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,1,1) );	// light blue
 	}
 
-	if( GAMESTATE->m_CurGame == GAME_EZ2 )
-	{
-		m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCALEZ2_Y );
-	}
-	else
-	{
-		m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCAL_Y );
-	}
-	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
-	m_textStageNumber.SetDiffuseColor( GAMESTATE->GetStageColor() );
-
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-		m_frameTop.AddSubActor( &m_textStageNumber );
+		this->AddSubActor( &m_textStageNumber );
 		break;
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		for( p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_frameTop.AddSubActor( &m_textCourseSongNumber[p] );
+				this->AddSubActor( &m_textCourseSongNumber[p] );
 		break;
 	default:
 		ASSERT(0);	// invalid GameMode
@@ -255,12 +356,13 @@ ScreenGameplay::ScreenGameplay()
 	//////////////////////////////////
 	// Add all Actors to m_frameBottom
 	//////////////////////////////////
-	this->AddSubActor( &m_frameBottom );
+	m_sprBottomFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra bottom frame":"gameplay bottom frame") );
+	m_sprBottomFrame.SetXY( BOTTOM_FRAME_X, bExtra ? BOTTOM_FRAME_EXTRA_Y : BOTTOM_FRAME_Y );
+	this->AddSubActor( &m_sprBottomFrame );
 
-	m_sprBottomFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_BOTTOM_FRAME) );
-	m_frameBottom.AddSubActor( &m_sprBottomFrame );
 
-	m_frameBottom.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
+	/*
+	Chris:  Change this position using theme metrics
 
 	if( GAMESTATE->m_CurGame != GAME_EZ2 )
 	{
@@ -268,13 +370,16 @@ ScreenGameplay::ScreenGameplay()
 		m_frameBottom.AddSubActor( &m_sprBottomFrame );
 		m_frameBottom.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
 	}
-
+	*/
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		/*	Chris: I don't understand why EZ2 wouldn't want this.
+
 		if( GAMESTATE->m_CurGame != GAME_EZ2 )
 		{
+		*/
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ARCADE:
@@ -289,36 +394,47 @@ ScreenGameplay::ScreenGameplay()
 			}
 
 			m_pScoreDisplay[p]->Init( (PlayerNumber)p );
-			m_pScoreDisplay[p]->SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
+			m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
 			m_pScoreDisplay[p]->SetZoom( 0.8f );
 			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
-			m_frameBottom.AddSubActor( m_pScoreDisplay[p] );
+			this->AddSubActor( m_pScoreDisplay[p] );
+		/*
 		}
+		*/
 
-		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
+		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
+		/*	Chris:  EZ2 should control this with theme metrics
+			
 		if( GAMESTATE->m_CurGame != GAME_EZ2 )
-		{	
-			m_pScoreDisplay[p]->SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
+		{
+		*/
+			m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
 			m_pScoreDisplay[p]->SetZoom( 0.8f );
 			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
-			m_frameBottom.AddSubActor( m_pScoreDisplay[p] );
+			this->AddSubActor( m_pScoreDisplay[p] );
 	//	}
 		
-	//	m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
-
+		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textPlayerOptions[p].TurnShadowOff();
-		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_LOCAL_X[p], PLAYER_OPTIONS_LOCAL_Y[p] );
+		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p,bExtra) );
 		m_textPlayerOptions[p].SetZoom( 0.5f );
 		m_textPlayerOptions[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
-		m_frameBottom.AddSubActor( &m_textPlayerOptions[p] );
-		}
+		this->AddSubActor( &m_textPlayerOptions[p] );
+		//}
 	}
 
+	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSongOptions.TurnShadowOff();
+	m_textSongOptions.SetXY( SONG_OPTIONS_X, bExtra?SONG_OPTIONS_EXTRA_Y:SONG_OPTIONS_Y );
+	m_textSongOptions.SetZoom( 0.5f );
+	m_textSongOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
+	this->AddSubActor( &m_textSongOptions );
 
 
 	// Get the current StyleDef definition (used below)
@@ -353,18 +469,12 @@ ScreenGameplay::ScreenGameplay()
 		}
 */
 // HOW I THINK IT SHOULD BE FIXED:
-		if( GAMESTATE->m_CurGame != GAME_EZ2 )
-		{	
-			float fDifficultyY = DIFFICULTY_Y[p];
-			if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
-				fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p] -10;	// HACK: move difficulty banner up 10 if reverse
-			m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
-			this->AddSubActor( &m_DifficultyBanner[p] );
-		}
+		m_DifficultyBanner[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bReverse[p],bExtra) );
+		this->AddSubActor( &m_DifficultyBanner[p] );
 	}
 
 
-	m_textDebug.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
 	m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	this->AddSubActor( &m_textDebug );
@@ -374,22 +484,22 @@ ScreenGameplay::ScreenGameplay()
 	m_StarWipe.SetClosed();
 	this->AddSubActor( &m_StarWipe );
 
-	m_sprReady.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_READY) );
+	m_sprReady.Load( THEME->GetPathTo("Graphics","gameplay ready") );
 	m_sprReady.SetXY( CENTER_X, CENTER_Y );
 	m_sprReady.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_sprReady );
 
-	m_sprHereWeGo.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_HERE_WE_GO) );
+	m_sprHereWeGo.Load( THEME->GetPathTo("Graphics","gameplay here we go") );
 	m_sprHereWeGo.SetXY( CENTER_X, CENTER_Y );
 	m_sprHereWeGo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_sprHereWeGo );
 
-	m_sprCleared.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_CLEARED) );
+	m_sprCleared.Load( THEME->GetPathTo("Graphics","gameplay cleared") );
 	m_sprCleared.SetXY( CENTER_X, CENTER_Y );
 	m_sprCleared.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_sprCleared );
 
-	m_sprFailed.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_FAILED) );
+	m_sprFailed.Load( THEME->GetPathTo("Graphics","gameplay failed") );
 	m_sprFailed.SetXY( CENTER_X, CENTER_Y );
 	m_sprFailed.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_sprFailed );
@@ -400,7 +510,7 @@ ScreenGameplay::ScreenGameplay()
 		m_quadDemonstrationBox.StretchTo( CRect(SCREEN_LEFT, int(CENTER_Y-60), SCREEN_RIGHT, int(CENTER_Y+60)) );
 		this->AddSubActor( &m_quadDemonstrationBox );
 
-		m_sprDemonstration.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DEMONSTRATION) );
+		m_sprDemonstration.Load( THEME->GetPathTo("Graphics","gameplay demonstration") );
 		m_sprDemonstration.SetXY( CENTER_X, CENTER_Y );
 		m_sprDemonstration.SetEffectBlinking();
 		this->AddSubActor( &m_sprDemonstration );
@@ -412,7 +522,7 @@ ScreenGameplay::ScreenGameplay()
 	this->AddSubActor( &m_Fade );
 
 
-	m_textSurviveTime.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textSurviveTime.TurnShadowOff();
 	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 	m_textSurviveTime.SetText( "" );
@@ -423,8 +533,8 @@ ScreenGameplay::ScreenGameplay()
 
 	if( !GAMESTATE->m_bDemonstration )	// don't load sounds if just playing demonstration
 	{
-		m_soundFail.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_FAILED) );
-		m_soundOniDie.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_ONI_DIE) );
+		m_soundFail.Load(			THEME->GetPathTo("Sounds","gameplay failed") );
+		m_soundOniDie.Load(			THEME->GetPathTo("Sounds","gameplay oni die") );
 		m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_EXTRA) );
@@ -449,7 +559,7 @@ ScreenGameplay::ScreenGameplay()
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMBO_STOPPED) );
 	}
 
-	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_GAMEPLAY_ASSIST_TICK) );
+	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 
 
 	LoadNextSong( true );
@@ -460,7 +570,7 @@ ScreenGameplay::ScreenGameplay()
 		m_StarWipe.SetOpened();
 		m_DancingState = STATE_DANCING;
 		m_soundMusic.Play();
-		this->SendScreenMessage( SM_BeginFadingToTitleMenu, DEMONSTRATION_TIME );
+		this->SendScreenMessage( SM_BeginFadingToTitleMenu, DEMONSTRATION_SECONDS );
 	}
 	else
 	{
@@ -724,7 +834,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_fTimeLeftBeforeDancingComment -= fDeltaTime;
 			if( m_fTimeLeftBeforeDancingComment <= 0 )
 			{
-				m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;	// reset for the next comment
+				m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
 
 
 
@@ -815,11 +925,13 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( GAMESTATE->m_bDemonstration )
 	{
-		if( MenuI.button == MENU_BUTTON_START )
+		if( MenuI.button == MENU_BUTTON_START  &&  !m_Fade.IsClosing() )
 		{
 			m_soundMusic.Stop();
-			SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_INSERT_COIN) );
-			m_Fade.CloseWipingRight( SM_GoToTitleMenu );
+			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","insert coin") );
+			::Sleep( 1000 );	// do a little pause, like the arcade does
+			this->SendScreenMessage( SM_GoToTitleMenu, 0 );
+//			m_Fade.CloseWipingRight( SM_GoToTitleMenu );
 		}
 		return;	// don't fall through below
 	}
@@ -903,7 +1015,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
 			m_DancingState = STATE_OUTRO;
-			SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_BACK) );
+			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu back") );
 			m_soundMusic.Stop();
 			this->ClearMessageQueue();
 			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
@@ -1095,7 +1207,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				}
 				else
 				{
-					m_StarWipe.CloseWipingRight( SM_ShowCleared );
+					m_StarWipe.CloseWipingRight( SM_None );
+					this->SendScreenMessage( SM_ShowCleared, 1 );
 					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
 				}
 			}
@@ -1114,77 +1227,77 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer100Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_200Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer200Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_300Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer300Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_400Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer400Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_500Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer500Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_600Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer600Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_700Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer700Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_800Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer800Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_900Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer900Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_1000Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcer1000Combo.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_ComboStopped:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
 			m_announcerComboStopped.PlayRandom();
-			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 
@@ -1235,6 +1348,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.Pause();
+		m_StarWipe.SetTransitionTime( 1.5f );
 		m_StarWipe.CloseWipingRight( SM_None );
 		int p;
 		for( p=0; p<NUM_PLAYERS; p++ )

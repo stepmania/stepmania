@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: ArrowEffects.h
@@ -9,24 +10,18 @@
 -----------------------------------------------------------------------------
 */
 
-#ifndef _ArrowEffects_H_
-#define _ArrowEffects_H_
-
 
 #include "GameConstantsAndTypes.h"
 #include "StyleDef.h"
+
+const int	ARROW_SIZE	= 64;
+const float ARROW_GAP	= ARROW_SIZE;// + 2;
 
 
 //	fYOffset is a vertical position in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
 //	The ArrowEffect is applied in this stage.
-float ArrowGetYOffset( const PlayerNumber pn, float fStepIndex );
-
-
-//	fXPos is a horizontal position in pixels relative to the center of the field.
-//	This depends on the column of the arrow and possibly the Arrow effect and
-//	fYOffset (in the case of EFFECT_DRUNK).
-float ArrowGetXPos(	const PlayerNumber pn, int iCol, float fYOffset );
+float ArrowGetYOffset2( const PlayerNumber pn, float fNoteBeat );
 
 
 //	fRotation is Z rotation of an arrow.  This will depend on the column of 
@@ -41,9 +36,13 @@ float ArrowGetRotation(	const PlayerNumber pn, int iCol, float fYOffset );
 float ArrowGetYPos(	const PlayerNumber pn, float fYOffset );
 
 
+//	fXPos is a horizontal position in pixels relative to the center of the field.
+//	This depends on the column of the arrow and possibly the Arrow effect and
+//	fYPos (in the case of EFFECT_DRUNK).
+float ArrowGetXPos2( const PlayerNumber pn, int iCol, float fYPos );
+
+
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	ArrowAppearance.
 float ArrowGetAlpha( const PlayerNumber pn, float fYPos );
 
-
-#endif 

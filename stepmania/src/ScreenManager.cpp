@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenManager.h
+ Class: ScreenManager
 
- Desc: Manages the game windows.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -14,21 +15,54 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "GameState.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 
+#define FPS_X				THEME->GetMetricF("Other","FPSX")
+#define FPS_Y				THEME->GetMetricF("Other","FPSY")
+#define CREDITS_P1_X		THEME->GetMetricF("Other","CreditsP1X")
+#define CREDITS_P1_Y		THEME->GetMetricF("Other","CreditsP1Y")
+#define CREDITS_P2_X		THEME->GetMetricF("Other","CreditsP2X")
+#define CREDITS_P2_Y		THEME->GetMetricF("Other","CreditsP2Y")
+
+float CREDITS_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return CREDITS_P1_X;
+		case PLAYER_2:	return CREDITS_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float CREDITS_Y( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return CREDITS_P1_Y;
+		case PLAYER_2:	return CREDITS_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
+
+
 
 ScreenManager::ScreenManager()
 {
-	m_textFPS.Load( THEME->GetPathTo(FONT_NORMAL) );
-	m_textFPS.SetXY( SCREEN_WIDTH-35, 15 );
+	m_textFPS.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textFPS.SetXY( FPS_X, FPS_Y );
 	m_textFPS.SetZ( -2 );
 	m_textFPS.SetZoom( 0.5f );
 	m_textFPS.SetShadowLength( 2 );
 
-	m_textSystemMessage.Load( THEME->GetPathTo(FONT_NORMAL) );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
+		m_textCreditInfo[p].SetZoom( 0.5f );
+		m_textCreditInfo[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_textCreditInfo[p].SetShadowLength( 2 );
+	}
+
+	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_bottom );
 	m_textSystemMessage.SetXY( 5.0f, 10.0f );
@@ -55,6 +89,8 @@ void ScreenManager::Update( float fDeltaTime )
 {
 	m_textSystemMessage.Update( fDeltaTime );
 	m_textFPS.Update( fDeltaTime );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_textCreditInfo[p].Update( fDeltaTime );
 
 	// delete all ScreensToDelete
 	for( int i=0; i<m_ScreensToDelete.GetSize(); i++ ) {
@@ -99,6 +135,9 @@ void ScreenManager::Draw()
 		m_textFPS.SetText( ssprintf("%3.0f FPS", DISPLAY->GetFPS()) );
 		m_textFPS.Draw();
 	}
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_textCreditInfo[p].Draw();
+
 }
 
 
@@ -115,6 +154,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 void ScreenManager::SetNewScreen( Screen *pNewScreen )
 {
 	// move CurrentScreen to ScreenToDelete
+	RefreshCreditsMessages();
 	m_ScreensToDelete.Copy( m_ScreenStack );
 
 	m_ScreenStack.RemoveAll();
@@ -161,4 +201,20 @@ void ScreenManager::SystemMessage( CString sMessage )
 	LOG->Trace( "WARNING:  Didn't find an empty system messages slot." );
 }
 
+/*
+void ScreenManager::OverrideCreditsMessage( PlayerNumber p, CString sNewString )
+{
+	m_textCreditInfo[p].SetText( sNewString );
+}
+*/
 
+void ScreenManager::RefreshCreditsMessages()
+{
+	// update joined
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if(      GAMESTATE->m_bIsJoined[p] )	m_textCreditInfo[p].SetText( "" );
+		else if( GAMESTATE->m_bPlayersCanJoin )	m_textCreditInfo[p].SetText( "PRESS START" );
+		else									m_textCreditInfo[p].SetText( "CREDIT(s) 0 / 0" );
+	}
+}

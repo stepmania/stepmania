@@ -1,26 +1,18 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: TextBanner.h
+ Class: TextBanner
 
- Desc: The song's TextBanner displayed in SelectSong.
+ Desc: Shows song title, subtitle, and artist/.  Displayed on the MusicWheel.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#ifndef _TextBanner_H_
-#define _TextBanner_H_
-
-
 #include "ActorFrame.h"
-#include "Song.h"
 #include "BitmapText.h"
-#include "Quad.h"
-
-
-const float TEXT_BANNER_WIDTH	= 180;
-const float TEXT_BANNER_HEIGHT	= 40;
-
+class Song;
 
 class TextBanner : public ActorFrame
 {
@@ -31,8 +23,3 @@ public:
 private:
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 };
-
-
-
-
-#endif

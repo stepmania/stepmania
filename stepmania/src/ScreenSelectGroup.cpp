@@ -25,25 +25,32 @@
 #include "GameState.h"
 
 
-const float GROUP_INFO_FRAME_X	=	SCREEN_LEFT + 180;
-const float GROUP_INFO_FRAME_Y	=	SCREEN_TOP + 160;
+#define FRAME_X				THEME->GetMetricF("SelectGroup","FrameX")
+#define FRAME_Y				THEME->GetMetricF("SelectGroup","FrameY")
+#define BANNER_X			THEME->GetMetricF("SelectGroup","BannerX")
+#define BANNER_Y			THEME->GetMetricF("SelectGroup","BannerY")
+#define BANNER_WIDTH		THEME->GetMetricF("SelectGroup","BannerWidth")
+#define BANNER_HEIGHT		THEME->GetMetricF("SelectGroup","BannerHeight")
+#define NUMBER_X			THEME->GetMetricF("SelectGroup","NumberX")
+#define NUMBER_Y			THEME->GetMetricF("SelectGroup","NumberY")
+#define EXPLANATION_X		THEME->GetMetricF("SelectGroup","ExplanationX")
+#define EXPLANATION_Y		THEME->GetMetricF("SelectGroup","ExplanationY")
+#define BUTTON_X			THEME->GetMetricF("SelectGroup","ButtonX")
+#define BUTTON_SELECTED_X	THEME->GetMetricF("SelectGroup","ButtonSelectedX")
+#define BUTTON_START_Y		THEME->GetMetricF("SelectGroup","ButtonStartY")
+#define BUTTON_SPACING_Y	THEME->GetMetricF("SelectGroup","ButtonSpacingY")
+#define CONTENTS_X			THEME->GetMetricF("SelectGroup","ContentsX")
+#define CONTENTS_Y			THEME->GetMetricF("SelectGroup","ContentsY")
+#define TITLES_START_X		THEME->GetMetricF("SelectGroup","TitlesStartX")
+#define TITLES_SPACING_X	THEME->GetMetricF("SelectGroup","TitlesSpacingX")
+#define TITLES_START_Y		THEME->GetMetricF("SelectGroup","TitlesStartY")
+#define TITLES_COLUMNS		THEME->GetMetricI("SelectGroup","TitlesColumns")
+#define TITLES_ROWS			THEME->GetMetricI("SelectGroup","TitlesRows")
 
-const float EXPLANATION_X	=	SCREEN_LEFT + 110;
-const float EXPLANATION_Y	=	SCREEN_TOP + 65;
-
-const float BUTTON_X			=	SCREEN_RIGHT - 135;
-const float BUTTON_SELECTED_X	=	BUTTON_X - 30;
-const float BUTTON_START_Y		=	SCREEN_TOP + 65;
-const float BUTTON_GAP_Y		=	26;
-
-const float CONTENTS_X			=	CENTER_X;
-const float CONTENTS_START_Y	=	SCREEN_TOP + SCREEN_HEIGHT*3/5 - 15;
-
-const int TITLES_PER_COLUMN = 10;
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
-const ScreenMessage SM_StartFadingOut		 =	ScreenMessage(SM_User + 3);
+const ScreenMessage SM_StartFadingOut		=	ScreenMessage(SM_User + 3);
 
 
 ScreenSelectGroup::ScreenSelectGroup()
@@ -187,35 +194,45 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_bChosen = false;
 
 	m_Menu.Load(
-		THEME->GetPathTo(GRAPHIC_SELECT_GROUP_BACKGROUND) , 
-		THEME->GetPathTo(GRAPHIC_SELECT_GROUP_TOP_EDGE),
+		THEME->GetPathTo("Graphics","select group background") , 
+		THEME->GetPathTo("Graphics","select group top edge"),
 		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
 		false, true, 40 
 		);
 	this->AddSubActor( &m_Menu );
 
-	m_sprExplanation.Load( THEME->GetPathTo(GRAPHIC_SELECT_GROUP_EXPLANATION) );
+	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select group explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	this->AddSubActor( &m_sprExplanation );
 
-	m_GroupInfoFrame.SetXY( GROUP_INFO_FRAME_X, GROUP_INFO_FRAME_Y );
-	this->AddSubActor( &m_GroupInfoFrame );
+	// these guys get loaded SetSong and TweenToSong
+	m_Banner.SetXY( BANNER_X, BANNER_Y );
+	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+	this->AddSubActor( &m_Banner );
 
-	m_sprContentsHeader.Load( THEME->GetPathTo(GRAPHIC_SELECT_GROUP_CONTENTS_HEADER) );
-	m_sprContentsHeader.SetVertAlign( Actor::align_top );
-	m_sprContentsHeader.SetXY( CONTENTS_X, CONTENTS_START_Y );
-	this->AddSubActor( &m_sprContentsHeader );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","select group info frame") );
+	m_sprFrame.SetXY( FRAME_X, FRAME_Y );
+	this->AddSubActor( &m_sprFrame );
 
-	for( i=0; i<NUM_CONTENTS_COLUMNS; i++ )
+	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
+	m_textNumber.SetHorizAlign( Actor::align_right );
+	m_textNumber.TurnShadowOff();
+	this->AddSubActor( &m_textNumber );
+	
+	m_sprContents.Load( THEME->GetPathTo("Graphics","select group contents header") );
+	m_sprContents.SetXY( CONTENTS_X, CONTENTS_Y );
+	this->AddSubActor( &m_sprContents );
+
+	for( i=0; i<TITLES_COLUMNS; i++ )
 	{
-		const float fX = SCREEN_WIDTH * i / (float)NUM_CONTENTS_COLUMNS + 15;
-		m_textContents[i].Load( THEME->GetPathTo(FONT_NORMAL) );
-		m_textContents[i].SetXY( fX, CONTENTS_START_Y+15 );
-		m_textContents[i].SetHorizAlign( Actor::align_left );
-		m_textContents[i].SetVertAlign( Actor::align_bottom );
-		m_textContents[i].SetZoom( 0.5f );
-		m_textContents[i].SetShadowLength( 2 );
-		this->AddSubActor( &m_textContents[i] );
+		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textTitles[i].SetXY( TITLES_START_X + i*TITLES_SPACING_X, TITLES_START_Y );
+		m_textTitles[i].SetHorizAlign( Actor::align_left );
+		m_textTitles[i].SetVertAlign( Actor::align_bottom );
+		m_textTitles[i].SetZoom( 0.5f );
+		m_textTitles[i].SetShadowLength( 2 );
+		this->AddSubActor( &m_textTitles[i] );
 	}
 	
 
@@ -224,56 +241,23 @@ ScreenSelectGroup::ScreenSelectGroup()
 	{
 		CString sGroupName = m_arrayGroupNames[i];
 
-		m_sprGroupButton[i].Load( THEME->GetPathTo(GRAPHIC_SELECT_GROUP_BUTTON) );
-		m_sprGroupButton[i].SetXY( BUTTON_X, BUTTON_START_Y + BUTTON_GAP_Y*i );
-		this->AddSubActor( &m_sprGroupButton[i] );
+		m_sprButton[i].Load( THEME->GetPathTo("Graphics","select group button") );
+		m_sprButton[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
+		this->AddSubActor( &m_sprButton[i] );
 
-		m_textGroup[i].Load( THEME->GetPathTo(FONT_NORMAL) );
-		m_textGroup[i].SetXY( BUTTON_X, BUTTON_START_Y + BUTTON_GAP_Y*i );
-		m_textGroup[i].SetText( SONGMAN->ShortenGroupName( sGroupName ) );
-		m_textGroup[i].SetZoom( 0.8f );
-		m_textGroup[i].SetShadowLength( 2 );
+		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textLabel[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
+		m_textLabel[i].SetText( SONGMAN->ShortenGroupName( sGroupName ) );
+		m_textLabel[i].SetZoom( 0.8f );
+		m_textLabel[i].SetShadowLength( 2 );
 
-		if( i == 0 )	m_textGroup[i].TurnRainbowOn();
-		else			m_textGroup[i].SetDiffuseColor( SONGMAN->GetGroupColor(sGroupName) );
+		if( i == 0 )	m_textLabel[i].TurnRainbowOn();
+		else			m_textLabel[i].SetDiffuseColor( SONGMAN->GetGroupColor(sGroupName) );
 
-		this->AddSubActor( &m_textGroup[i] );
+		this->AddSubActor( &m_textLabel[i] );
 	}
 
-	//
-	// Generate what text will show in the contents for each group
-	//
 
-	/*
-	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
-	{
-		CArray<Song*, Song*> arraySongs;
-		const CString &sCurGroupName = m_arrayGroupNames[i];
-		
-		if( i == 0 )	arraySongs.Copy( SONGMAN->m_pSongs );
-		else			SONGMAN->GetSongsInGroup( sCurGroupName, arraySongs );
-
-		m_iNumSongsInGroup[i] = arraySongs.GetSize();
-
-		SortSongPointerArrayByTitle( arraySongs );
-
-		for( int c=0; c<NUM_CONTENTS_COLUMNS; c++ )
-		{
-			CString sText;
-			for( int j=c*TITLES_PER_COLUMN; j<(c+1)*TITLES_PER_COLUMN; j++ )
-			{
-				if( j < arraySongs.GetSize() )
-				{
-					if( j == NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 )
-						sText += ssprintf( "%d more.....", arraySongs.GetSize() - NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 );
-					else
-						sText += arraySongs[j]->GetFullTitle() + "\n";
-				}
-			}
-			m_sContentsText[i][c] = sText;
-		}
-	}
-	*/
 
 	//
 	// Generate what text will show in the contents for each group
@@ -290,15 +274,15 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 		SortSongPointerArrayByTitle( *p_arraySongs );
 
-		for( int c=0; c<NUM_CONTENTS_COLUMNS; c++ )
+		for( int c=0; c<TITLES_COLUMNS; c++ )
 		{
 			CString sText;
-			for( int j=c*TITLES_PER_COLUMN; j<(c+1)*TITLES_PER_COLUMN; j++ )
+			for( int j=c*TITLES_ROWS; j<(c+1)*TITLES_ROWS; j++ )
 			{
 				if( j < p_arraySongs->GetSize() )
 				{
-					if( j == NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 )
-						sText += ssprintf( "%d more.....", p_arraySongs->GetSize() - NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 );
+					if( j == TITLES_COLUMNS * TITLES_ROWS - 1 )
+						sText += ssprintf( "%d more.....", p_arraySongs->GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
 					else
 						sText += (*p_arraySongs)[j]->GetFullTitle() + "\n";
 				}
@@ -307,16 +291,16 @@ ScreenSelectGroup::ScreenSelectGroup()
 		}
 	}
 
-	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_GROUP_CHANGE) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_INTRO) );
 
 
-	if( !MUSIC->IsPlaying() )
+	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select group music") )
 	{
-		MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
-        MUSIC->Play( true );
+		MUSIC->Load( THEME->GetPathTo("Sounds","select group music") );
+		MUSIC->Play( true );
 	}
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
@@ -389,42 +373,44 @@ void ScreenSelectGroup::BeforeChange()
 {
 	int iSel = m_iSelection;
 
-	m_sprGroupButton[iSel].BeginTweening( 0.2f );
-	m_sprGroupButton[iSel].SetTweenX( BUTTON_X );
-	m_sprGroupButton[iSel].SetEffectNone();
+	m_sprButton[iSel].BeginTweening( 0.2f );
+	m_sprButton[iSel].SetTweenX( BUTTON_X );
+	m_sprButton[iSel].SetEffectNone();
 
-	m_textGroup[iSel].BeginTweening( 0.2f );
-	m_textGroup[iSel].SetTweenX( BUTTON_X );
-	m_textGroup[iSel].SetEffectNone();
+	m_textLabel[iSel].BeginTweening( 0.2f );
+	m_textLabel[iSel].SetTweenX( BUTTON_X );
+	m_textLabel[iSel].SetEffectNone();
 }
 
 void ScreenSelectGroup::AfterChange()
 {
 	int iSel = m_iSelection;
 
-	m_sprGroupButton[iSel].BeginTweening( 0.2f );
-	m_sprGroupButton[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_sprGroupButton[iSel].SetEffectGlowing();
+	m_sprButton[iSel].BeginTweening( 0.2f );
+	m_sprButton[iSel].SetTweenX( BUTTON_SELECTED_X );
+	m_sprButton[iSel].SetEffectGlowing();
 
-	m_textGroup[iSel].BeginTweening( 0.2f );
-	m_textGroup[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_textGroup[iSel].SetEffectGlowing();
+	m_textLabel[iSel].BeginTweening( 0.2f );
+	m_textLabel[iSel].SetTweenX( BUTTON_SELECTED_X );
+	m_textLabel[iSel].SetEffectGlowing();
 
-	for( int c=0; c<NUM_CONTENTS_COLUMNS; c++ )
-		m_textContents[c].SetText( m_sContentsText[m_iSelection][c] );
+	for( int c=0; c<TITLES_COLUMNS; c++ )
+		m_textTitles[c].SetText( m_sContentsText[m_iSelection][c] );
 
 	CString sSelectedGroupName = m_arrayGroupNames[m_iSelection];
 
 	CString sGroupBannerPath;
 	if( 0 == stricmp(sSelectedGroupName, "ALL MUSIC") )
-		sGroupBannerPath = THEME->GetPathTo(GRAPHIC_ALL_MUSIC_BANNER);
+		sGroupBannerPath = THEME->GetPathTo("Graphics","all music banner");
 	else if( SONGMAN->GetGroupBannerPath(sSelectedGroupName) != "" )
 		sGroupBannerPath = SONGMAN->GetGroupBannerPath(sSelectedGroupName);
 	else
-		sGroupBannerPath = THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER);
+		sGroupBannerPath = THEME->GetPathTo("Graphics","fallback banner");
 
-	// There is too much Z-fighting when we rotate this, so fake a rotation with a squash
-	m_GroupInfoFrame.Set( sGroupBannerPath, m_iNumSongsInGroup[m_iSelection] );
+	const int iNumSongs = m_iNumSongsInGroup[m_iSelection];
+	m_textNumber.SetText( ssprintf("%d", iNumSongs) );
+
+	m_Banner.SetFromGroup( sSelectedGroupName );
 }
 
 
@@ -499,39 +485,41 @@ void ScreenSelectGroup::TweenOffScreen()
 	m_sprExplanation.BeginTweeningQueued( 0.5f, TWEEN_BOUNCE_BEGIN );
 	m_sprExplanation.SetTweenX( EXPLANATION_X-400 );
 
-	m_GroupInfoFrame.BeginTweeningQueued( 0.9f );
-	m_GroupInfoFrame.BeginTweeningQueued( 0.5f, TWEEN_BOUNCE_BEGIN );
-	m_GroupInfoFrame.SetTweenX( GROUP_INFO_FRAME_X-400 );
-
-	m_sprContentsHeader.BeginTweeningQueued( 0.7f );
-	m_sprContentsHeader.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
-	m_sprContentsHeader.SetTweenY( CONTENTS_START_Y+400 );
-
-	int i;
-
-	for( i=0; i<NUM_CONTENTS_COLUMNS; i++ )
+	Actor* pActorsInGroupInfoFrame[] = { &m_sprFrame, &m_Banner, &m_textNumber };
+	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
+	for( int i=0; i<iNumActorsInGroupInfoFrame; i++ )
 	{
-		m_textContents[i].BeginTweeningQueued( 0.7f );
-		m_textContents[i].BeginTweeningQueued( 0.5f );
-		m_textContents[i].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		pActorsInGroupInfoFrame[i]->BeginTweeningQueued( 0.9f );
+		pActorsInGroupInfoFrame[i]->BeginTweeningQueued( 0.5f, TWEEN_BOUNCE_BEGIN );
+		pActorsInGroupInfoFrame[i]->SetTweenX( pActorsInGroupInfoFrame[i]->GetX()-400 );
+	}
+
+	m_sprContents.BeginTweeningQueued( 0.7f );
+	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
+	m_sprContents.SetTweenY( CONTENTS_Y+400 );
+	for( i=0; i<TITLES_COLUMNS; i++ )
+	{
+		m_textTitles[i].BeginTweeningQueued( 0.7f );
+		m_textTitles[i].BeginTweeningQueued( 0.5f );
+		m_textTitles[i].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	}
 	
 
 	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
 		if( i == m_iSelection )
-			m_sprGroupButton[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
+			m_sprButton[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
 		else
-			m_sprGroupButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_BEGIN );
-		m_sprGroupButton[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_sprGroupButton[i].SetTweenX( BUTTON_X+400 );
+			m_sprButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_BEGIN );
+		m_sprButton[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_BEGIN );
+		m_sprButton[i].SetTweenX( BUTTON_X+400 );
 
 		if( i == m_iSelection )
-			m_textGroup[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
+			m_textLabel[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
 		else
-			m_textGroup[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_BEGIN );
-		m_textGroup[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_textGroup[i].SetTweenX( BUTTON_X+400 );
+			m_textLabel[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_BEGIN );
+		m_textLabel[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_BEGIN );
+		m_textLabel[i].SetTweenX( BUTTON_X+400 );
 	}
 }
 
@@ -541,36 +529,40 @@ void ScreenSelectGroup::TweenOnScreen()
 	m_sprExplanation.BeginTweening( 0.5f, TWEEN_BOUNCE_END );
 	m_sprExplanation.SetTweenX( EXPLANATION_X );
 
-	m_GroupInfoFrame.SetX( GROUP_INFO_FRAME_X-400 );
-	m_GroupInfoFrame.BeginTweening( 0.5f, TWEEN_BOUNCE_END );
-	m_GroupInfoFrame.SetTweenX( GROUP_INFO_FRAME_X );
-
-	m_sprContentsHeader.SetY( CONTENTS_START_Y+400 );
-	m_sprContentsHeader.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
-	m_sprContentsHeader.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
-	m_sprContentsHeader.SetTweenY( CONTENTS_START_Y );
-
-	int i;
-
-	for( i=0; i<NUM_CONTENTS_COLUMNS; i++ )
+	Actor* pActorsInGroupInfoFrame[] = { &m_sprFrame, &m_Banner, &m_textNumber };
+	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
+	for( int i=0; i<iNumActorsInGroupInfoFrame; i++ )
 	{
-		m_textContents[i].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_textContents[i].BeginTweeningQueued( 0.5f );
-		m_textContents[i].BeginTweeningQueued( 0.5f );
-		m_textContents[i].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		float fOriginalX = pActorsInGroupInfoFrame[i]->GetX();
+		pActorsInGroupInfoFrame[i]->SetX( fOriginalX-400 );
+		pActorsInGroupInfoFrame[i]->BeginTweening( 0.5f, TWEEN_BOUNCE_END );
+		pActorsInGroupInfoFrame[i]->SetTweenX( fOriginalX );
+	}
+
+	m_sprContents.SetY( CONTENTS_Y+400 );
+	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );	// sleep
+	m_sprContents.BeginTweeningQueued( 0.5f, TWEEN_BIAS_END );
+	m_sprContents.SetTweenY( CONTENTS_Y );
+
+	for( i=0; i<TITLES_COLUMNS; i++ )
+	{
+		m_textTitles[i].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_textTitles[i].BeginTweeningQueued( 0.5f );
+		m_textTitles[i].BeginTweeningQueued( 0.5f );
+		m_textTitles[i].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	}
 	
 
 	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
-		m_sprGroupButton[i].SetX( BUTTON_X+400 );
-		m_sprGroupButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );
-		m_sprGroupButton[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_END );
-		m_sprGroupButton[i].SetTweenX( BUTTON_X );
+		m_sprButton[i].SetX( BUTTON_X+400 );
+		m_sprButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );
+		m_sprButton[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_END );
+		m_sprButton[i].SetTweenX( BUTTON_X );
 
-		m_textGroup[i].SetX( BUTTON_X+400 );
-		m_textGroup[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );
-		m_textGroup[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_END );
-		m_textGroup[i].SetTweenX( BUTTON_X );
+		m_textLabel[i].SetX( BUTTON_X+400 );
+		m_textLabel[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );
+		m_textLabel[i].BeginTweeningQueued( 0.2f, TWEEN_BOUNCE_END );
+		m_textLabel[i].SetTweenX( BUTTON_X );
 	}
 }

@@ -10,8 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-
-
 #include "GradeDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
@@ -26,7 +24,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 GradeDisplay::GradeDisplay()
 {
-	Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADES) );
+	Load( THEME->GetPathTo("Graphics","evaluation grades") );
 	StopAnimating();
 
 	m_fTimeLeftInScroll = 0;

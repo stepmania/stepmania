@@ -74,9 +74,13 @@ bool IniFile::ReadFile()
 			}
 			else //if a value
 			{
-				valuename = line.Left(line.Find("="));
-				value = line.Right(line.GetLength()-valuename.GetLength()-1);
-				SetValue(keyname,valuename,value);
+				int iEqualIndex = line.Find("=");
+				if( iEqualIndex != -1 )
+				{
+					valuename = line.Left(iEqualIndex);
+					value = line.Right(line.GetLength()-valuename.GetLength()-1);
+					SetValue(keyname,valuename,value);
+				}
 			}
 		}
 	}

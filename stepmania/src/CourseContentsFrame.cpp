@@ -38,10 +38,10 @@ const float CONTENTS_BAR_HEIGHT = 44;
 
 CourseContentDisplay::CourseContentDisplay()
 {
-	m_sprFrame.Load( THEME->GetPathTo(GRAPHIC_SELECT_COURSE_CONTENT_BAR) );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","select course content bar") );
 	this->AddSubActor( &m_sprFrame );
 	
-	m_textNumber.Load( THEME->GetPathTo(FONT_HEADER2) );
+	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.TurnShadowOff();
 	this->AddSubActor( &m_textNumber );
@@ -49,12 +49,12 @@ CourseContentDisplay::CourseContentDisplay()
 	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
 	this->AddSubActor( &m_TextBanner );
 
-	m_textFoot.Load( THEME->GetPathTo(FONT_METER) );
+	m_textFoot.LoadFromFont( THEME->GetPathTo("Fonts","meter") );
 	m_textFoot.SetXY( FOOT_X, FOOT_Y );
 	m_textFoot.TurnShadowOff();
 	this->AddSubActor( &m_textFoot );
 
-	m_textDifficultyNumber.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textDifficultyNumber.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textDifficultyNumber.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
 	m_textDifficultyNumber.SetZoom( 0.8f );
 	m_textDifficultyNumber.TurnShadowOff();

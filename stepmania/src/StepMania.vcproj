@@ -216,10 +216,10 @@
 				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
-				RelativePath="ScreenLoading.cpp">
+				RelativePath="ScreenGraphicOptions.cpp">
 			</File>
 			<File
-				RelativePath="ScreenLoading.h">
+				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenManager.cpp">
@@ -303,12 +303,6 @@
 				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectStyle5thMix.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectStyle5thMix.h">
-			</File>
-			<File
 				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File
@@ -341,6 +335,9 @@
 			</File>
 			<File
 				RelativePath=".\Font.h">
+			</File>
+			<File
+				RelativePath="Game.h">
 			</File>
 			<File
 				RelativePath="GameConstantsAndTypes.cpp">
@@ -385,6 +382,12 @@
 				RelativePath="NoteDataWithScoring.h">
 			</File>
 			<File
+				RelativePath="NoteTypes.cpp">
+			</File>
+			<File
+				RelativePath="NoteTypes.h">
+			</File>
+			<File
 				RelativePath="Notes.cpp">
 			</File>
 			<File
@@ -425,6 +428,9 @@
 			</File>
 			<File
 				RelativePath="SongOptions.h">
+			</File>
+			<File
+				RelativePath="Style.h">
 			</File>
 			<File
 				RelativePath=".\StyleDef.cpp">
@@ -593,6 +599,12 @@
 				RelativePath=".\DifficultyIcon.h">
 			</File>
 			<File
+				RelativePath="FadingBanner.cpp">
+			</File>
+			<File
+				RelativePath="FadingBanner.h">
+			</File>
+			<File
 				RelativePath=".\FootMeter.cpp">
 			</File>
 			<File
@@ -603,12 +615,6 @@
 			</File>
 			<File
 				RelativePath=".\GradeDisplay.h">
-			</File>
-			<File
-				RelativePath=".\GranularityIndicator.cpp">
-			</File>
-			<File
-				RelativePath=".\GranularityIndicator.h">
 			</File>
 			<File
 				RelativePath="GrooveRadar.cpp">
@@ -653,10 +659,22 @@
 				RelativePath=".\MusicWheel.h">
 			</File>
 			<File
+				RelativePath="OptionsCursor.cpp">
+			</File>
+			<File
+				RelativePath="OptionsCursor.h">
+			</File>
+			<File
 				RelativePath="ScrollBar.cpp">
 			</File>
 			<File
 				RelativePath="ScrollBar.h">
+			</File>
+			<File
+				RelativePath="SnapDisplay.cpp">
+			</File>
+			<File
+				RelativePath="SnapDisplay.h">
 			</File>
 			<File
 				RelativePath="SongInfoFrame.cpp">
@@ -703,12 +721,6 @@
 			</File>
 			<File
 				RelativePath="BackgroundAnimation.h">
-			</File>
-			<File
-				RelativePath="ColorNote.cpp">
-			</File>
-			<File
-				RelativePath="ColorNote.h">
 			</File>
 			<File
 				RelativePath=".\Combo.cpp">
@@ -799,6 +811,12 @@
 			</File>
 			<File
 				RelativePath=".\MotionBlurSprite.h">
+			</File>
+			<File
+				RelativePath="NoteDisplay.cpp">
+			</File>
+			<File
+				RelativePath="NoteDisplay.h">
 			</File>
 			<File
 				RelativePath="NoteField.cpp">

@@ -1,26 +1,30 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: TextBanner.h
+ Class: TextBanner
 
- Desc: The song's TextBanner displayed in SelectSong.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "RageUtil.h"
-
 #include "TextBanner.h"
+#include "RageUtil.h"
+#include "Song.h"
 #include "PrefsManager.h"
 
+
+const float TEXT_BANNER_WIDTH	= 180;
+const float TEXT_BANNER_HEIGHT	= 40;
 
 
 TextBanner::TextBanner()
 {
-	m_textTitle.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
-	m_textSubTitle.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
-	m_textArtist.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
+	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
+	m_textSubTitle.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
+	m_textArtist.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
 
 	m_textTitle.SetX( -TEXT_BANNER_WIDTH/2 );
 	m_textSubTitle.SetX( -TEXT_BANNER_WIDTH/2 );

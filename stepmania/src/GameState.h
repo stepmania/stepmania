@@ -13,6 +13,8 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "Game.h"
+#include "Style.h"
 
 
 class Song;
@@ -34,7 +36,8 @@ public:
 	//
 	Game			m_CurGame;
 	Style			m_CurStyle;
-	PlayerNumber	m_MasterPlayerNumber;
+	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join
+	bool			m_bIsJoined[2];	// left side, and right side
 
 	GameDef*	GetCurrentGameDef();
 	StyleDef*	GetCurrentStyleDef();

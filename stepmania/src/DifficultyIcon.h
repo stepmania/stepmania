@@ -22,7 +22,7 @@ class DifficultyIcon : public Sprite
 public:
 	DifficultyIcon()
 	{
-		Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_DIFFICULTY_ICONS) );
+		Load( THEME->GetPathTo("Graphics","select music difficulty icons") );
 		StopAnimating();
 
 		SetFromNotes( NULL );

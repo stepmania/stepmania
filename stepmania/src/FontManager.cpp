@@ -51,9 +51,9 @@ FontManager::~FontManager()
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk
 //-----------------------------------------------------------------------------
-Font* FontManager::LoadFont( CString sFontFilePath )
+Font* FontManager::LoadFont( CString sFontOrTextureFilePath, CString sChars )
 {
-	sFontFilePath.MakeLower();
+	sFontOrTextureFilePath.MakeLower();
 
 //	LOG->Trace( "FontManager::LoadFont(%s).", sFontFilePath );
 
@@ -65,7 +65,7 @@ Font* FontManager::LoadFont( CString sFontFilePath )
 
 	Font* pFont = NULL;
 
-	if( m_mapPathToFont.Lookup( sFontFilePath, pFont ) )	// if the texture already exists in the map
+	if( m_mapPathToFont.Lookup( sFontOrTextureFilePath, pFont ) )	// if the texture already exists in the map
 	{
 //		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontFilePath, pFont->m_iRefCount) );
 		pFont->m_iRefCount++;
@@ -73,13 +73,16 @@ Font* FontManager::LoadFont( CString sFontFilePath )
 	else	// the texture is not already loaded
 	{
 		CString sDrive, sDir, sFName, sExt;
-		splitpath( FALSE, sFontFilePath, sDrive, sDir, sFName, sExt );
+		splitpath( FALSE, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
 
-		pFont = (Font*) new Font( sFontFilePath );
+		if( sChars == "" )
+			pFont = (Font*) new Font( sFontOrTextureFilePath );
+		else
+			pFont = (Font*) new Font( sFontOrTextureFilePath, sChars );
 
 //		LOG->Trace( "FontManager: Loading '%s' from disk.", sFontFilePath);
 
-		m_mapPathToFont.SetAt( sFontFilePath, pFont );
+		m_mapPathToFont.SetAt( sFontOrTextureFilePath, pFont );
 	}
 
 	return pFont;

@@ -112,6 +112,10 @@ const float OPT_YP[NUM_EZ2P_GRAPHICS] = {
 	CENTER_Y+115,
 }; // tells us the default Y position
 
+
+#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("Screens","SkipSelectDifficulty")
+
+
 float ez2p_lasttimercheck[2];
 int ez2p_bounce=0; // used for the bouncing of the '1p' and '2p' images
 int ez2p_direct=0; // direction of the bouncing of the '1p' and '2p' images
@@ -127,18 +131,11 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	m_iSelectedStyle=0;
 	ez2p_lasttimercheck[0] = TIMER->GetTimeSinceStart();
-// Load in the sprites we will be working with.
+
+	// Load in the sprites we will be working with.
 	for( int i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
 	{
-		ThemeElement te;
-		switch( i )
-		{		//HACK! Would LIKE to have own filename :)
-		case 0:	te = GRAPHIC_SELECT_STYLE_PREVIEW_1;	break;
-		case 1:	te = GRAPHIC_SELECT_STYLE_PREVIEW_2;	break;	
-		case 2:	te = GRAPHIC_SELECT_STYLE_PREVIEW_3;	break;	
-		case 3:	te = GRAPHIC_SELECT_STYLE_PREVIEW_0;	break;
-		}
-		m_sprBackground[i].Load( THEME->GetPathTo(te) );
+		m_sprBackground[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,i)) );
 		m_sprBackground[i].SetXY( CENTER_X, CENTER_Y );
 		m_sprBackground[i].SetZoom( 1 );
 		this->AddSubActor( &m_sprBackground[i] );
@@ -146,15 +143,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	for( i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
 	{
-		ThemeElement te;
-		switch( i )
-		{
-		case 0:	te = GRAPHIC_SELECT_STYLE_INFO_3;	break;
-		case 1:	te = GRAPHIC_SELECT_STYLE_INFO_0;	break;
-		case 2:	te = GRAPHIC_SELECT_STYLE_INFO_1;	break;
-		case 3:	te = GRAPHIC_SELECT_STYLE_INFO_2;	break;
-		}
-		m_sprOpt[i].Load( THEME->GetPathTo(te) );
+		m_sprOpt[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style info game %d style %d",GAMESTATE->m_CurGame,i)) );
 		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
 		m_sprOpt[i].SetZoom( 1 );
 		this->AddSubActor( &m_sprOpt[i] );
@@ -162,50 +151,47 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	for( i=0; i<NUM_EZ2P_GRAPHICS; i++ )
 	{
-		CString sPadGraphicPath;
+		CString sPlyFileName;
 		switch( i )
 		{
-		case 0:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE);	
-			break;
-		case 1:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE);	
-			break;
-		case 2:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_MEDIUM_PICTURE);	
-			break;
-		case 3:
-			sPadGraphicPath = THEME->GetPathTo(GRAPHIC_SELECT_DIFFICULTY_EASY_PICTURE);	
-			break;
+		case 0:	sPlyFileName = "select difficulty hard picture";	break;
+		case 1:	sPlyFileName = "select difficulty hard picture";	break;
+		case 2:	sPlyFileName = "select difficulty medium picture";	break;
+		case 3:	sPlyFileName = "select difficulty easy picture";	break;
 		}
-		m_sprPly[i].Load( sPadGraphicPath );
+		m_sprPly[i].Load( THEME->GetPathTo("Graphics",sPlyFileName) );
 		m_sprPly[i].SetXY( OPT_XP[i], OPT_YP[i] );
 		m_sprPly[i].SetZoom( 1 );
 		this->AddSubActor( &m_sprPly[i] );
 	}
 
 	m_Menu.Load( 	
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
+		THEME->GetPathTo("Graphics","select style background"), 
+		THEME->GetPathTo("Graphics","select style top edge"),
 		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
 		false, true, 40 
 		);
 	this->AddSubActor( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_STYLE_CHANGE) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
 
-//	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
+	/* Chris:  if EZ2 shouldn't play a sound here, then make a slient sound file.  */
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
 
 	if( !MUSIC->IsPlaying() )
 	{
-		MUSIC->Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
+		MUSIC->Load( THEME->GetPathTo("Sounds","select style music") );
         MUSIC->Play( true );
 	}
 
-	if ( GAMESTATE->m_MasterPlayerNumber == PLAYER_1 && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p1 already selected hide graphic.
+	/*
+	TODO:  Get all the EZ2 specific stuff out of here
+	*/
+
+	if ( GAMESTATE->m_bIsJoined[PLAYER_1] && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p1 already selected hide graphic.
 	{
 		m_iSelectedPlayer = 0;
 		m_sprPly[1].BeginTweening( 0 );
@@ -213,7 +199,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		m_sprPly[2].BeginTweening( 0 );
 		m_sprPly[2].SetTweenZoomY( 0 );
 	}
-	else if ( GAMESTATE->m_MasterPlayerNumber == PLAYER_2 && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p2 already selected hide graphic.
+	else if ( GAMESTATE->m_bIsJoined[PLAYER_2] && GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE) //if p2 already selected hide graphic.
 	{
 		m_iSelectedPlayer = 1;
 		m_sprPly[3].BeginTweening( 0 );
@@ -343,7 +329,7 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			else // club
 			{
 				GAMESTATE->m_CurStyle = STYLE_EZ2_DOUBLE;
-				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+//				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 			}
 		}
 
@@ -357,7 +343,10 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+		if( SKIP_SELECT_DIFFICULTY )
+			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
+		else
+			SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
 		break;
 	}
 }
@@ -736,7 +725,7 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			{
 				GAMESTATE->m_CurStyle = STYLE_EZ2_DOUBLE;
 				GAMESTATE->m_CurStyle = STYLE_EZ2_DOUBLE;
-				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+//				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 				//m_soundInvalid.PlayRandom();
 				//return;
 			}

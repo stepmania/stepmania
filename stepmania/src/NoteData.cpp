@@ -176,8 +176,10 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 	for( iIndexRead = 0; iIndexRead < iOrigNumHoldNotes; iIndexRead++ )
 	{
 		HoldNote &hn = m_HoldNotes[iIndexRead];
-		if( (hn.m_iStartIndex >= iNoteIndexBegin && hn.m_iStartIndex <= iNoteIndexEnd)  || 
-			(hn.m_iEndIndex >= iNoteIndexBegin && hn.m_iEndIndex <= iNoteIndexEnd) )		// overlap (kinda)
+		int iHoldStartIndex = BeatToNoteRow( hn.m_fStartBeat );
+		int iHoldEndIndex = BeatToNoteRow( hn.m_fEndBeat );
+		if( (iHoldStartIndex >= iNoteIndexBegin  &&  iHoldStartIndex <= iNoteIndexEnd)  || 
+			(iHoldEndIndex   >= iNoteIndexBegin  &&  iHoldEndIndex   <= iNoteIndexEnd) )		// overlap (kinda)
 		{
 			;	// do nothing
 		}
@@ -227,63 +229,64 @@ void NoteData::AddHoldNote( HoldNote add )
 	{
 		HoldNote &other = m_HoldNotes[i];
 		if( add.m_iTrack == other.m_iTrack  &&		// the notes correspond
-			other.m_iStartIndex <= add.m_iEndIndex  &&
-			other.m_iEndIndex >= add.m_iStartIndex )	// these HoldNotes overlap (this isn't entirely correct!)
+			other.m_fStartBeat <= add.m_fEndBeat  &&
+			other.m_fEndBeat >= add.m_fStartBeat )	// these HoldNotes overlap (this isn't entirely correct!)
 		{
-			add.m_iStartIndex = min(add.m_iStartIndex, other.m_iStartIndex);
-			add.m_iEndIndex = max(add.m_iEndIndex, other.m_iEndIndex);
+			add.m_fStartBeat = min(add.m_fStartBeat, other.m_fStartBeat);
+			add.m_fEndBeat   = max(add.m_fEndBeat, other.m_fEndBeat);
 
 			// delete this HoldNote
 			for( int j=i; j<m_iNumHoldNotes-1; j++ )
-			{
 				m_HoldNotes[j] = m_HoldNotes[j+1];
-			}
+
 			m_iNumHoldNotes--;
 		}
 	}
 
+	int iAddStartIndex = BeatToNoteRow(add.m_fStartBeat);
+	int iAddEndIndex = BeatToNoteRow(add.m_fEndBeat);
+
 	// delete TapNotes under this HoldNote
-	for( i=add.m_iStartIndex+1; i<=add.m_iEndIndex; i++ )
-	{
+	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
 		m_TapNotes[add.m_iTrack][i] = '0';
-	};
 
 	// add a tap note at the start of this hold
-	m_TapNotes[add.m_iTrack][add.m_iStartIndex] = '1';
+	m_TapNotes[add.m_iTrack][iAddStartIndex] = '2';		// '2' means a Hold begin marker.  Don't draw this, but do grade it.
 
 	ASSERT( m_iNumHoldNotes < MAX_HOLD_NOTES );
 	m_HoldNotes[m_iNumHoldNotes++] = add;
 }
 
-void NoteData::RemoveHoldNote( int index )
+void NoteData::RemoveHoldNote( int iHoldIndex )
 {
-	ASSERT( index > 0  &&  index < m_iNumHoldNotes );
+	ASSERT( iHoldIndex > 0  &&  iHoldIndex < m_iNumHoldNotes );
+
+	HoldNote& hn = m_HoldNotes[iHoldIndex];
+
+	int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
+	int iHoldEndIndex = BeatToNoteRow(hn.m_fEndBeat);
 
 	// delete a tap note at the start of this hold
-	HoldNote &hn = m_HoldNotes[index];
-	m_TapNotes[hn.m_iTrack][hn.m_iStartIndex] = '0';
+	m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '0';
 
 	// remove from list
-	for( int j=index; j<m_iNumHoldNotes-1; j++ )
-	{
+	for( int j=iHoldIndex; j<m_iNumHoldNotes-1; j++ )
 		m_HoldNotes[j] = m_HoldNotes[j+1];
-	}
+
 	m_iNumHoldNotes--;
 }
 
 bool NoteData::IsThereANoteAtRow( int iRow )
 {
 	for( int t=0; t<m_iNumTracks; t++ )
-	{
 		if( m_TapNotes[t][iRow] != '0' )
 			return true;
-	}
 
-	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
-	{
-		if( m_HoldNotes[i].m_iStartIndex == iRow )
-			return true;
-	}
+// There is a tap note at the beginning of every HoldNote start
+//
+//	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
+//		if( m_HoldNotes[i].m_iStartIndex == NoteRowToBeatRow(iRow) )
+//			return true;
 
 	return false;
 }
@@ -291,61 +294,62 @@ bool NoteData::IsThereANoteAtRow( int iRow )
 
 int NoteData::GetFirstRow()
 { 
-	int iFirstIndexFoundSoFar = MAX_TAP_NOTE_ROWS-1;
-	
-	int i;
-
-	for( i=0; i<MAX_TAP_NOTE_ROWS, i<iFirstIndexFoundSoFar; i++ )		// iterate back to front
-	{
-		if( !IsRowEmpty(i) )
-		{
-			iFirstIndexFoundSoFar = i;
-			break;
-		}
-	}
-
-	for( i=0; i<m_iNumHoldNotes; i++ )
-	{
-		if( m_HoldNotes[i].m_iStartIndex < iFirstIndexFoundSoFar )
-			iFirstIndexFoundSoFar = m_HoldNotes[i].m_iStartIndex;
-	}
-
-
-	return iFirstIndexFoundSoFar;
+	return BeatToNoteRow( GetFirstBeat() );
 }
 
 float NoteData::GetFirstBeat()			
 { 
-	return NoteRowToBeat( GetFirstRow() );
+	float fEarliestBeatFoundSoFar = MAX_BEATS;
+	
+	int i;
+
+	for( i=0; i<MAX_TAP_NOTE_ROWS; i++ )
+	{
+		if( !IsRowEmpty(i) )
+		{
+			fEarliestBeatFoundSoFar = NoteRowToBeat(i);
+			break;
+		}
+	}
+
+	for( i=0; i<m_iNumHoldNotes; i++ )
+		if( m_HoldNotes[i].m_fStartBeat < fEarliestBeatFoundSoFar )
+			fEarliestBeatFoundSoFar = m_HoldNotes[i].m_fStartBeat;
+
+
+	if( fEarliestBeatFoundSoFar == MAX_BEATS )	// there are no notes
+		return 0;
+	else
+		return fEarliestBeatFoundSoFar;
 }
 
 int NoteData::GetLastRow()
 { 
-	int iOldestIndexFoundSoFar = 0;
+	return BeatToNoteRow( GetLastBeat() );
+}
+
+float NoteData::GetLastBeat()			
+{ 
+	float fOldestBeatFoundSoFar = 0;
 	
 	int i;
 
-	for( i=MAX_TAP_NOTE_ROWS-1; i>=iOldestIndexFoundSoFar; i-- )		// iterate back to front
+	for( i=MAX_TAP_NOTE_ROWS-1; i>=0; i-- )		// iterate back to front
 	{
 		if( !IsRowEmpty(i) )
 		{
-			iOldestIndexFoundSoFar = i;
+			fOldestBeatFoundSoFar = NoteRowToBeat(i);
 			break;
 		}
 	}
 
 	for( i=0; i<m_iNumHoldNotes; i++ )
 	{
-		if( m_HoldNotes[i].m_iEndIndex > iOldestIndexFoundSoFar )
-			iOldestIndexFoundSoFar = m_HoldNotes[i].m_iEndIndex;
+		if( m_HoldNotes[i].m_fEndBeat > fOldestBeatFoundSoFar )
+			fOldestBeatFoundSoFar = m_HoldNotes[i].m_fEndBeat;
 	}
 
-	return iOldestIndexFoundSoFar;
-}
-
-float NoteData::GetLastBeat()			
-{ 
-	return NoteRowToBeat( GetLastRow() );
+	return fOldestBeatFoundSoFar;
 }
 
 int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )			
@@ -356,13 +360,9 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
-	{
 		for( int t=0; t<m_iNumTracks; t++ )
-		{
 			if( m_TapNotes[t][i] != '0' )
 				iNumNotes++;
-		}
-	}
 	
 	return iNumNotes;
 }
@@ -393,13 +393,10 @@ int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat )
 {
 	int iNumHolds = 0;
 
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
 	for( int i=0; i<m_iNumHoldNotes; i++ )
 	{
 		HoldNote &hn = m_HoldNotes[i];
-		if( iStartIndex <= hn.m_iStartIndex  &&  hn.m_iEndIndex <= iEndIndex )
+		if( fStartBeat <= hn.m_fStartBeat  &&  hn.m_fEndBeat <= fEndBeat )
 			iNumHolds++;
 	}
 	return iNumHolds;
@@ -495,7 +492,7 @@ void NoteData::RemoveHoldNotes()
 	{
 		HoldNote &hn = m_HoldNotes[i];
 		
-		int iIndex = hn.m_iStartIndex;
+		int iIndex = BeatToNoteRow(hn.m_fStartBeat);
 		int iCol = hn.m_iTrack;
 
 		m_TapNotes[iCol][iIndex] = '1';
@@ -562,9 +559,6 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		case NOTES_TYPE_EZ2_SINGLE_HARD:
 		case NOTES_TYPE_EZ2_DOUBLE:
 		case NOTES_TYPE_EZ2_REAL:
-		case NOTES_TYPE_EZ2_SINGLE_VERSUS:
-		case NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS:
-		case NOTES_TYPE_EZ2_REAL_VERSUS:
 			// identity transform.  What should we do here?
 			iTakeFromTrack[0] = 0;
 			iTakeFromTrack[1] = 1;
@@ -643,7 +637,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 				{
 					if( m_TapNotes[col][j] != '0' )	// end hold on the next note we see
 					{
-						HoldNote hn = { col, i, j };
+						HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
 						AddHoldNote( hn );
 						break;
 					}
@@ -659,8 +653,10 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 	for( int i=0; i<m_iNumHoldNotes; i++ ) 
 	{
 		HoldNote &hn = m_HoldNotes[i];
-		m_TapNotes[hn.m_iTrack][hn.m_iStartIndex] = '2';
-		m_TapNotes[hn.m_iTrack][hn.m_iEndIndex] = '3';
+		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
+		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
+		m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '2';
+		m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = '3';
 	}
 	m_iNumHoldNotes = 0;
 }

@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenCaution.h
+ Class: ScreenCaution
 
-Desc: Screen that displays while resources are being loaded.
+ Desc: Screen that displays while resources are being loaded.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -13,9 +14,14 @@ Desc: Screen that displays while resources are being loaded.
 #include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "ScreenSelectStyle.h"
+#include "ScreenEZ2SelectStyle.h"
 #include "RageTextureManager.h"
 #include "PrefsManager.h"
 #include "AnnouncerManager.h"
+#include "GameState.h"
+
+
+#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("Screens","UseNormalOrEZ2SelectStyle")
 
 
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
@@ -25,8 +31,10 @@ const ScreenMessage SM_GoToSelectMusic	= ScreenMessage(SM_User-9);
 
 ScreenCaution::ScreenCaution()
 {
-	m_sprCaution.Load( THEME->GetPathTo(GRAPHIC_CAUTION) );
-	m_sprCaution.StretchTo( CRect(0,0,640,480) );
+	GAMESTATE->m_bPlayersCanJoin = true;
+
+	m_sprCaution.Load( THEME->GetPathTo("Graphics","caution") );
+	m_sprCaution.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	this->AddSubActor( &m_sprCaution );
 	
 	m_Wipe.OpenWipingRight( SM_DoneOpening );
@@ -57,13 +65,24 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_CAUTION) );
 		break;
 	case SM_GoToSelectMusic:
-		SCREENMAN->SetNewScreen( new ScreenSelectStyle );
+		if( USE_NORMAL_OR_EZ2_SELECT_STYLE )
+			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
+		else
+			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
 		break;
 	}
 }
 
 void ScreenCaution::MenuStart( const PlayerNumber p )
 {
-	if( !m_Wipe.IsClosing() )
+	if( p != PLAYER_INVALID  &&  !GAMESTATE->m_bIsJoined[p] )
+	{
+		GAMESTATE->m_bIsJoined[p] = true;
+		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		SCREENMAN->RefreshCreditsMessages();
+		return;	// don't fall though
+	}
+
+	if( !m_Wipe.IsOpening()  &&  !m_Wipe.IsClosing() )
 		m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
 }

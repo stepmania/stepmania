@@ -21,7 +21,7 @@ const float KEEP_ALIVE_BACKWARD_TRANSITION_TIME	=	0.4f;
 
 TransitionKeepAlive::TransitionKeepAlive()
 {
-	m_sprLogo.Load( THEME->GetPathTo(GRAPHIC_KEEP_ALIVE) );
+	m_sprLogo.Load( THEME->GetPathTo("Graphics","keep alive") );
 	m_sprLogo.SetXY( CENTER_X, CENTER_Y );
 
 	m_rect.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );

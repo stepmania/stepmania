@@ -50,10 +50,10 @@ bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 	Sprite::TurnShadowOff();
 
-	if( pSong == NULL )					Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	if( pSong == NULL )					Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
 	else if( pSong->HasBanner() )		Banner::Load( pSong->GetBannerPath() );
 //	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath() );
-	else								Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	else								Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
 
 	return true;
 }
@@ -64,10 +64,12 @@ bool Banner::LoadFromGroup( CString sGroupName )
 
 	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 
-	if( sGroupBannerPath != "" )
+	if( sGroupName == "ALL MUSIC" )
+		Banner::Load( THEME->GetPathTo("Graphics","all music banner") );
+	else if( sGroupBannerPath != "" )
 		Banner::Load( sGroupBannerPath );
 	else
-		Banner::Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SECTION_BANNER) );
+		Banner::Load( THEME->GetPathTo("Graphics","select music section banner") );
 
 	return true;
 }
@@ -78,16 +80,16 @@ bool Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 
 	Sprite::TurnShadowOff();
 
-	if( pCourse == NULL )						Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	if( pCourse == NULL )						Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
 	else if( pCourse->m_sBannerPath != "" )		Banner::Load( pCourse->m_sBannerPath );
-	else										Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	else										Banner::Load( THEME->GetPathTo("Graphics","fallback banner") );
 
 	return true;
 }
 
 bool Banner::LoadRoulette()
 {
-	Banner::Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_ROULETTE_BANNER), false, 0, 0, false, false );
+	Banner::Load( THEME->GetPathTo("Graphics","select music roulette banner"), false, 0, 0, false, false );
 	m_bScrolling = true;
 
 	return true;

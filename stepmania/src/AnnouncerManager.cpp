@@ -159,8 +159,8 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		case ANNOUNCER_STAGE_4:							sAssetDir = "stage 4";							break;
 		case ANNOUNCER_STAGE_5:							sAssetDir = "stage 5";							break;
 		case ANNOUNCER_STAGE_FINAL:						sAssetDir = "stage final";						break;
-		case ANNOUNCER_STAGE_EXTRA:						sAssetDir = "stage extra";						break;
-		case ANNOUNCER_STAGE_ANOTHER_EXTRA:				sAssetDir = "stage another extra";				break;
+		case ANNOUNCER_STAGE_EXTRA1:					sAssetDir = "stage extra1";						break;
+		case ANNOUNCER_STAGE_EXTRA2:					sAssetDir = "stage extra2";						break;
 		case ANNOUNCER_STAGE_ONI:						sAssetDir = "stage oni";						break;
 		case ANNOUNCER_STAGE_ENDLESS:					sAssetDir = "stage endless";					break;
 		case ANNOUNCER_TITLE_MENU_ATTRACT:				sAssetDir = "title menu attract";				break;
@@ -169,5 +169,7 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		default:	ASSERT(0);  // Unhandled Announcer element
 	}
 
-	return GetAnnouncerDirFromName( sAnnouncerName ) + sAssetDir;
+	CString sFullDir = GetAnnouncerDirFromName( sAnnouncerName ) + sAssetDir;
+	ASSERT( DoesFileExist(sFullDir) );	// the announcer directory doesn't exist.  Did we type the name wrong above?
+	return sFullDir;
 }

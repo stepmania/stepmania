@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  Class: RageMovieTexture
@@ -9,12 +10,8 @@
 -----------------------------------------------------------------------------
 */
 
-
-#ifndef _RAGEMOVIETEXTURE_H_
-#define _RAGEMOVIETEXTURE_H_
-
-
 #include "RageDisplay.h"
+#include "RageTexture.h"
 #include <d3dx8.h>
 //#include <d3d8types.h>
 #include <atlbase.h>
@@ -123,6 +120,3 @@ protected:
     CTextureRenderer        *m_pCTR;        // DShow Texture renderer
 
 };
-
-
-#endif

@@ -16,6 +16,7 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageException.h"
+#include "RageTexture.h"
 
 
 RageDisplay*		DISPLAY	= NULL;
@@ -35,6 +36,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 	m_iFramesRenderedSinceLastCheck = 0;
 	m_fFPS = 0;
 
+	m_iNumVerts = 0;
 
 	try
 	{
@@ -427,3 +429,126 @@ void RageDisplay::ReleaseVertexBuffer()
 	SAFE_RELEASE( m_pVB );
 }
 
+void RageDisplay::AddTriangle(
+	const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,
+	const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1,
+	const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2 )
+{
+	ASSERT( m_iNumVerts < MAX_NUM_VERTICIES-3 );
+	m_vertQueue[m_iNumVerts].p = p0;
+	m_vertQueue[m_iNumVerts].color = c0;
+	m_vertQueue[m_iNumVerts].t = t0;
+	m_addColors[m_iNumVerts] = a0;
+	m_iNumVerts++; 
+	m_vertQueue[m_iNumVerts].p = p1;
+	m_vertQueue[m_iNumVerts].color = c1;
+	m_vertQueue[m_iNumVerts].t = t1;
+	m_addColors[m_iNumVerts] = a1;
+	m_iNumVerts++; 
+	m_vertQueue[m_iNumVerts].p = p2;
+	m_vertQueue[m_iNumVerts].color = c2;
+	m_vertQueue[m_iNumVerts].t = t2;
+	m_addColors[m_iNumVerts] = a2;
+	m_iNumVerts++; 
+
+	if( m_iNumVerts > MAX_NUM_VERTICIES-4 )
+		FlushQueue();
+}
+
+void RageDisplay::AddQuad(
+	const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,	// upper-left
+	const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1, 	// upper-right
+	const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2, 	// lower-left
+	const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3, const D3DCOLOR& a3  )	// lower-right
+{
+	// trangles must be in clockwise order
+	AddTriangle( 
+		p0, c0, t0, a0,		// upper-left
+		p2, c2, t2, a1,		// lower-left
+		p3, c3, t3, a2 );	// lower-right
+				
+	AddTriangle(  
+		p0, c0, t0, a0,		// upper-left
+		p3, c3, t3, a1,		// lower-right
+		p1, c1, t1, a2 );	// upper-right
+}
+
+void RageDisplay::FlushQueue()
+{
+	if( m_iNumVerts == 0 )
+		return;
+	ASSERT( (m_iNumVerts % 3) == 0 );
+	RAGEVERTEX* v;
+	
+	//
+	// draw diffuse pass
+	//
+	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+	memcpy( v, m_vertQueue, sizeof(RAGEVERTEX)*m_iNumVerts );
+	m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
+	m_pVB->Unlock();
+
+	//
+	// draw add pass
+	//
+	bool bAnyVertsHaveAdd = false;
+	for( int i=0; i<m_iNumVerts; i++ )
+		if( m_addColors[i]>>24 != 0 )	// if there is any alpha
+			bAnyVertsHaveAdd = true;
+		
+	if( bAnyVertsHaveAdd )
+	{
+		SetColorTextureMultDiffuse();
+		SetColorDiffuse();
+		m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+		for( int i=0; i<m_iNumVerts; i++ )
+			m_vertQueue[i].color = m_addColors[i];
+		m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
+		m_pVB->Unlock();
+	}
+
+	m_iNumVerts = 0;
+}
+
+void RageDisplay::SetTexture( RageTexture* pTexture )
+{
+	m_pd3dDevice->SetTexture( 0, pTexture->GetD3DTexture() );
+}
+void RageDisplay::SetColorTextureMultDiffuse()
+{
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+}
+void RageDisplay::SetColorDiffuse()
+{
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+}
+void RageDisplay::SetAlphaTextureMultDiffuse()
+{
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+}
+void RageDisplay::SetBlendModeNormal()
+{
+	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
+	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+}
+void RageDisplay::SetBlendModeAdd()
+{
+	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
+	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+}
+void RageDisplay::EnableZBuffer()
+{
+	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
+	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+}
+void RageDisplay::DisableZBuffer()
+{
+	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
+	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+}

@@ -14,6 +14,7 @@
 #include "ScreenManager.h"
 #include "ScreenCaution.h"
 #include "ScreenMapInstruments.h"
+#include "ScreenGraphicOptions.h"
 #include "ScreenGameOptions.h"
 #include "ScreenEdit.h"
 #include "GameConstantsAndTypes.h"
@@ -33,38 +34,36 @@
 #include "ScreenGameplay.h"
 
 
-//
-// Defines specific to ScreenTitleMenu
-//
-
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
 	"SWITCH GAME",
 	"CONFIG KEY/JOY",
 	"GAME OPTIONS",
+	"GRAPHIC OPTIONS",
 	"APPEARANCE OPTIONS",
 	"EDIT/RECORD/SYNCH",
 	"EXIT",
 };
 
-const float CHOICES_START_Y		= 62;
-const float CHOICES_GAP_Y		= 52;
+#define CHOICES_X			THEME->GetMetricF("TitleMenu","ChoicesX")
+#define CHOICES_START_Y		THEME->GetMetricF("TitleMenu","ChoicesStartY")
+#define CHOICES_SPACING_Y	THEME->GetMetricF("TitleMenu","ChoicesSpacingY")
+#define HELP_X				THEME->GetMetricF("TitleMenu","HelpX")
+#define HELP_Y				THEME->GetMetricF("TitleMenu","HelpY")
+#define LOGO_X				THEME->GetMetricF("TitleMenu","LogoX")
+#define LOGO_Y				THEME->GetMetricF("TitleMenu","LogoY")
+#define VERSION_X			THEME->GetMetricF("TitleMenu","VersionX")
+#define VERSION_Y			THEME->GetMetricF("TitleMenu","VersionY")
+#define SONGS_X				THEME->GetMetricF("TitleMenu","SongsX")
+#define SONGS_Y				THEME->GetMetricF("TitleMenu","SongsY")
+#define COLOR_NOT_SELECTED	THEME->GetMetricC("TitleMenu","ColorNotSelected")
+#define COLOR_SELECTED		THEME->GetMetricC("TitleMenu","ColorSelected")
 
-const float HELP_X				= CENTER_X;
-const float HELP_Y				= SCREEN_HEIGHT-55;
+#define USE_CAUTION_OR_SELECT_PLAYER		THEME->GetMetricB("Screens","UseCautionOrSelectPlayer")
 
-//const CString EZ2_ANNOUNCER_NAME = "ez2";
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToCaution			=	ScreenMessage(SM_User+2);
-const ScreenMessage SM_GoToSelectStyle		=	ScreenMessage(SM_User+3);
-const ScreenMessage SM_GoToSelectGame		=	ScreenMessage(SM_User+4);
-const ScreenMessage SM_GoToMapInstruments	=	ScreenMessage(SM_User+5);
-const ScreenMessage SM_GoToGameOptions		=	ScreenMessage(SM_User+6);
-const ScreenMessage SM_GoToAppearanceOptions=	ScreenMessage(SM_User+7);
-const ScreenMessage SM_GoToEdit				=	ScreenMessage(SM_User+10);
-const ScreenMessage SM_DoneOpening			=	ScreenMessage(SM_User+11);
-const ScreenMessage SM_GoToEz2				=	ScreenMessage(SM_User+12);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
 const ScreenMessage SM_FadeToDemonstration	=	ScreenMessage(SM_User+13);
 const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+14);
 
@@ -82,130 +81,73 @@ ScreenTitleMenu::ScreenTitleMenu()
 	GAMESTATE->Reset();
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
+	GAMESTATE->m_bPlayersCanJoin = true;
 
 
-	m_sprBG.Load( THEME->GetPathTo(GRAPHIC_TITLE_MENU_BACKGROUND) );
+	m_sprBG.Load( THEME->GetPathTo("Graphics","title menu background") );
 	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
-	m_sprBG.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );
-	m_sprBG.TurnShadowOff();
 	this->AddSubActor( &m_sprBG );
 
-	m_sprLogo.Load( THEME->GetPathTo(GRAPHIC_TITLE_MENU_LOGO) );
-	m_sprLogo.SetXY( CENTER_X, CENTER_Y );
+	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo game %d",GAMESTATE->m_CurGame)) );
+	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
 	m_sprLogo.SetAddColor( D3DXCOLOR(1,1,1,1) );
 	m_sprLogo.SetZoomY( 0 );
-	m_sprLogo.BeginTweeningQueued( 0.5f );
+	m_sprLogo.BeginTweeningQueued( 0.5f );	// sleep
 	m_sprLogo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprLogo.SetEffectGlowing(1, D3DXCOLOR(1,1,1,0.1f), D3DXCOLOR(1,1,1,0.3f) );
 	m_sprLogo.SetTweenZoom( 1 );
 	this->AddSubActor( &m_sprLogo );
 
-	m_textHelp.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textHelp.SetText( ssprintf("Use %c %c to select, then press START", char(3), char(4)) );
-	m_textHelp.SetXY( CENTER_X, SCREEN_BOTTOM - 30 );
+	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();
 	m_textHelp.SetShadowLength( 2 );
 	this->AddSubActor( &m_textHelp );
 
 	
-	m_textVersion.Load( THEME->GetPathTo(FONT_NORMAL) );
-	m_textVersion.SetHorizAlign( Actor::align_right );
-	m_textVersion.SetText( "v3.0 beta 5" );
+	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textVersion.SetText( "v3.0 beta 6" );
 	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
-	m_textVersion.SetXY( SCREEN_RIGHT-16, SCREEN_BOTTOM-20 );
+	m_textVersion.SetXY( VERSION_X, VERSION_Y );
 	m_textVersion.SetZoom( 0.5f );
+	m_textVersion.SetShadowLength( 2 );
 	this->AddSubActor( &m_textVersion );
 
 
-	m_textSongs.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongs.SetHorizAlign( Actor::align_left );
 	m_textSongs.SetText( ssprintf("Found %d Songs", SONGMAN->m_pSongs.GetSize()) );
 	m_textSongs.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
-	m_textSongs.SetXY( SCREEN_LEFT+16, SCREEN_HEIGHT-20 );
+	m_textSongs.SetXY( SONGS_X, SONGS_Y );
 	m_textSongs.SetZoom( 0.5f );
+	m_textSongs.SetShadowLength( 2 );
 	this->AddSubActor( &m_textSongs );
 
 
 	for( int i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
 	{
-		m_textChoice[i].Load( THEME->GetPathTo(FONT_HEADER1) );
+		m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
-		m_textChoice[i].SetXY( CENTER_X, CHOICES_START_Y + i*CHOICES_GAP_Y );
+		m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 		m_textChoice[i].SetShadowLength( 5 );
 		this->AddSubActor( &m_textChoice[i] );
 	}	
 	
 	m_Fade.SetClosed();
-	m_Fade.OpenWipingRight( SM_DoneOpening );
+	m_Fade.OpenWipingRight( SM_None );
 
 	this->AddSubActor( &m_Fade );
 
-	/*
-	
-	// Chris:
-	// I'm removing this now that announcer prefs are saved per Game.
-	
-	// LEAVE THIS HERE! ITS ESSENTIAL
-	// I know you're a fan of removing my code, but if this isn't here
-	// the Ez2dancer announcer will be the default (as it loads in alphabetical order, and ez2dancer
-	// is the last announcer (E follows D))
-	// so just leave it yeah?
-	// I don't wanna fix this a 3rd TIME!!
-	// - Andy.
-
-	if( GAMESTATE->m_CurGame != GAME_EZ2 )
-		PREFSMAN->m_sAnnouncer = "";
-
-
-	// if (GAMEMAN->m_CurGame != GAME_EZ2)
-	//{
-	//	ANNOUNCER->SwitchAnnouncer( "default" );
-	//}
-
-	// Dear Andy:
-	// The above code breaks the program by making the announcer unswitchable.
-	// This is probably the wrong place for such a code change anyway.
-	// Cheers
-	// -- dro kulix
-
-	// Dear dro kulix:
-	// Good call, actually, I made this change when announcer switching wasn't possible.
-	// or rather, announcer switching WASN'T possible from the title menu (it used to be
-	// in song options)
-	// but since it is now changed before we get here, 
-	// care needs to be taken to ensure the player can still switch.
-
-	// However, your commenting code is still not that brill either ;) Brings back the first bug 
-	// (if we last played ez2dancer and then came back into the game ez2dancer
-    // default announcer loads for DDR). However, here's a different approach for you.
-
-	// If we start the game and find that we're playing something other than ez2dancer AND
-	// the current announcer is ez2 then we change it to the default announcer and specify announcer
-	// check as 1. This'll stay like this for the rest of the program, meaning should they
-	// REALLY want to play ez2dancer sounds during a game of DDR, they're free to do so.
-	// It just really bugs me when I see "SMMAX" and the sound "EZ2DANCER!" blares through my speakers ;)
-
-	// When other gametypes are implemented, this may or may not have to be extended to ensure we 
-	// don't hear "YEAH! I KNOW YOU CAN!" for pump or "AVEX AND KONAMI UNITE IN YOUR DANCE" for para e.t.c.
-
-	static int announcercheck=0; 
-
-	if( GAMESTATE->m_CurGame != GAME_EZ2  &&  PREFSMAN->m_sAnnouncer == "ez2" && announcercheck == 0)
-	{
-		ANNOUNCER->SwitchAnnouncer( "default" );
-		announcercheck = 1;
-	}
-
-	*/
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );
-	m_soundChange.Load( THEME->GetPathTo(SOUND_TITLE_MENU_CHANGE) );	
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
-	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","title menu change") );	
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
 
 
 	m_TitleMenuChoice = CHOICE_GAME_START;
@@ -242,31 +184,38 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_PlayAttract:
 		m_soundAttract.PlayRandom();
 		break;
-	case SM_DoneOpening:
-		break;
-	case SM_GoToCaution:
-		SCREENMAN->SetNewScreen( new ScreenCaution );
-		break;
-	case SM_GoToSelectStyle:
-		SCREENMAN->SetNewScreen( new ScreenSelectStyle );
-		break;
-	case SM_GoToSelectGame:
-		SCREENMAN->SetNewScreen( new ScreenSelectGame );
-		break;
-	case SM_GoToMapInstruments:
-		SCREENMAN->SetNewScreen( new ScreenMapInstruments );
-		break;
-	case SM_GoToGameOptions:
-		SCREENMAN->SetNewScreen( new ScreenGameOptions );
-		break;
-	case SM_GoToAppearanceOptions:
-		SCREENMAN->SetNewScreen( new ScreenAppearanceOptions );
-		break;
-	case SM_GoToEdit:
-		SCREENMAN->SetNewScreen( new ScreenEditMenu );
-		break;
-	case SM_GoToEz2:
-		SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
+	case SM_GoToNextScreen:
+		switch( m_TitleMenuChoice )
+		{
+		case CHOICE_GAME_START:
+			if( USE_CAUTION_OR_SELECT_PLAYER )
+				SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
+			else
+				SCREENMAN->SetNewScreen( new ScreenCaution );
+			break;
+		case CHOICE_SELECT_GAME:
+			SCREENMAN->SetNewScreen( new ScreenSelectGame );
+			break;
+		case CHOICE_MAP_INSTRUMENTS:
+			SCREENMAN->SetNewScreen( new ScreenMapInstruments );
+			break;
+		case CHOICE_GAME_OPTIONS:
+			SCREENMAN->SetNewScreen( new ScreenGameOptions );
+			break;
+		case CHOICE_GRAPHIC_OPTIONS:
+			SCREENMAN->SetNewScreen( new ScreenGraphicOptions );
+			break;
+		case CHOICE_APPEARANCE_OPTIONS:
+			SCREENMAN->SetNewScreen( new ScreenAppearanceOptions );
+			break;
+		case CHOICE_EDIT:
+			SCREENMAN->SetNewScreen( new ScreenEditMenu );
+			break;
+		case CHOICE_EXIT:
+		default:
+			ASSERT(0);	// should never get here
+			break;
+		}
 		break;
 	case SM_FadeToDemonstration:
 		{	
@@ -293,6 +242,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 				Song* pSong = SONGMAN->m_pSongs[ rand()%SONGMAN->m_pSongs.GetSize() ];
 				for( int j=0; j<3; j++ )	// try 3 times
 				{
+					if( pSong->m_apNotes.GetSize() == 0 )
+						continue;
+
 					Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
 					if( pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 					{
@@ -327,13 +279,14 @@ found_song_and_notes:
 						GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
 					if( RandomFloat(0,1)>0.9f )
 						GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
-					if( RandomFloat(0,1)>0.8f )
+					if( RandomFloat(0,1)>0.7f )
 						GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
 					if( RandomFloat(0,1)>0.9f )
 						GAMESTATE->m_PlayerOptions[p].m_bDark = true;
 				}
 			}
 			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType(rand()%SongOptions::NUM_LIFE_TYPES);
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 
 			GAMESTATE->m_bDemonstration = true;
 			m_Fade.CloseWipingRight( SM_GoToDemonstration );
@@ -354,8 +307,6 @@ void ScreenTitleMenu::LoseFocus( int iChoiceIndex )
 	m_soundChange.PlayRandom();
 
 	m_textChoice[iChoiceIndex].SetEffectNone();
-	m_textChoice[iChoiceIndex].SetAddColor( D3DXCOLOR(0,0,0,0) );
-	m_textChoice[iChoiceIndex].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
 	m_textChoice[iChoiceIndex].SetTweenZoom( 0.9f );
 
@@ -363,10 +314,13 @@ void ScreenTitleMenu::LoseFocus( int iChoiceIndex )
 
 void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 {
-	m_textChoice[iChoiceIndex].SetDiffuseColor( D3DXCOLOR(0.5f,1,0.5f,1) );
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
 	m_textChoice[iChoiceIndex].SetTweenZoom( 1.2f );
-	m_textChoice[iChoiceIndex].SetEffectCamelion( 2.5f, D3DXCOLOR(0.5f,1,0.5f,1), D3DXCOLOR(0.3f,0.6f,0.3f,1) );
+	D3DXCOLOR color1, color2;
+	color1 = COLOR_SELECTED;
+	color2 = color1 * 0.5f;
+	color2.a = 1;
+	m_textChoice[iChoiceIndex].SetEffectCamelion( 2.5f, color1, color2 );
 }
 
 void ScreenTitleMenu::MenuUp( const PlayerNumber p )
@@ -397,39 +351,22 @@ void ScreenTitleMenu::MenuDown( const PlayerNumber p )
 
 void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 {	
-	GAMESTATE->m_MasterPlayerNumber = p;
+	GAMESTATE->m_bIsJoined[p] = true;
+
+	GAMESTATE->m_bPlayersCanJoin = false;
+
 
 	switch( m_TitleMenuChoice )
 	{
 	case CHOICE_GAME_START:
-		if( GAMESTATE->m_CurGame == GAME_EZ2 )
-		{
-			m_soundSelect.PlayRandom();
-			m_Fade.CloseWipingRight( SM_GoToEz2 );
-		}
-		else
-		{
-			m_soundSelect.PlayRandom();
-			m_Fade.CloseWipingRight( SM_GoToCaution );
-		}
-		return;
 	case CHOICE_SELECT_GAME:
-	//	m_soundInvalid.PlayRandom();
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToSelectGame );
-		return;
 	case CHOICE_MAP_INSTRUMENTS:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToMapInstruments );
-		return;
 	case CHOICE_GAME_OPTIONS:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToGameOptions );
-		return;
+	case CHOICE_GRAPHIC_OPTIONS:
 	case CHOICE_APPEARANCE_OPTIONS:
 		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToAppearanceOptions );
-		return;
+		m_Fade.CloseWipingRight( SM_GoToNextScreen );
+		break;
 	case CHOICE_EDIT:
 		if( SONGMAN->m_pSongs.GetSize() == 0 )
 		{
@@ -438,9 +375,9 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		else
 		{
 			m_soundSelect.PlayRandom();
-			m_Fade.CloseWipingRight( SM_GoToEdit );
+			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		}
-		return;
+		break;
 /*	case CHOICE_HELP:
 		m_soundSelect.PlayRandom();
 		PREFSMAN->m_bWindowed = false;
@@ -465,6 +402,6 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 
 void ScreenTitleMenu::MenuBack( const PlayerNumber p )
 {	
-	//m_Fade.CloseWipingLeft( SM_GoToIntroCovers );
+	this->SendScreenMessage( SM_FadeToDemonstration, 0 );
 }
 

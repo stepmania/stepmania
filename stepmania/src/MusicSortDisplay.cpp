@@ -21,7 +21,7 @@
 
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathTo(GRAPHIC_MUSIC_SORT_ICONS) );
+	Load( THEME->GetPathTo("Graphics","music sort icons") );
 	StopAnimating();
 	TurnShadowOff();
 	//SetXY( ON_SCREEN_X, ON_SCREEN_Y );

@@ -20,8 +20,8 @@
 const int MAX_STYLES_PER_GAME = 10;
 
 enum SkinElement { 
-	GRAPHIC_NOTE_COLOR_PART,
-	GRAPHIC_NOTE_GRAY_PART,
+	GRAPHIC_TAP_PARTS,
+	GRAPHIC_HOLD_PARTS,
 	GRAPHIC_RECEPTOR,
 	GRAPHIC_TAP_EXPLOSION_BRIGHT,
 	GRAPHIC_TAP_EXPLOSION_DIM,
@@ -60,7 +60,7 @@ public:
 	int		m_iNumControllers;
 	int		m_iButtonsPerController;
 	char	m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
-	char	m_szButtonDescriptions[MAX_GAME_BUTTONS][60];	// just a longer name shown in the mapping screen
+	char	m_szSecondaryFunction[MAX_GAME_BUTTONS][60];	// displayed on the mapping screen
 	GameButton	m_DedicatedMenuButton[NUM_MENU_BUTTONS];
 	GameButton	m_SecondaryMenuButton[NUM_MENU_BUTTONS];
 	int		m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game

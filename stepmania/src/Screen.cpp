@@ -75,7 +75,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 
 void Screen::SendScreenMessage( ScreenMessage SM, float fDelay )
 {
-	assert( fDelay >= 0.0 );
+	ASSERT( fDelay >= 0.0 );
 
 	QueuedScreenMessage QSM;
 	QSM.SM = SM;

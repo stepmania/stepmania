@@ -24,7 +24,7 @@
 #include "NoteData.h"
 #include "StyleInput.h"
 #include "GameInput.h"
-#include "MenuInput.h"
+#include "Game.h"
 
 
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
@@ -35,14 +35,15 @@ class GameDef;
 class StyleDef
 {
 public:
+	Game		m_Game;			// Game this style is active under
 	char		m_szName[60];
 	NotesType	m_NotesType;	// the notes format that this style reads.  
 								// For example, the "dance versus" reads the Notes with the tag "dance-single".
 	enum StyleType
 	{
-		ONE_PLAYER_USES_ONE_SIDE,	// e.g. single
-		TWO_PLAYERS_USE_TWO_SIDES,	// e.g. versus
-		ONE_PLAYER_USES_TWO_SIDES,	// e.g. double
+		ONE_PLAYER_ONE_CREDIT,	// e.g. single
+		TWO_PLAYERS_TWO_CREDITS,	// e.g. versus
+		ONE_PLAYER_TWO_CREDITS,	// e.g. double
 	};
 	StyleType	m_StyleType;		// Defines how many players are allowed to play this Style.
 	int			m_iCenterX[NUM_PLAYERS];	// center of the player

@@ -18,6 +18,7 @@
 #include "TransitionInvisible.h"
 #include "Quad.h"
 #include "MenuElements.h"
+#include "OptionsCursor.h"
 
 
 const int MAX_OPTION_LINES = 20;
@@ -31,13 +32,17 @@ struct OptionLineData {
 	char szOptionsText[MAX_OPTIONS_PER_LINE][60];
 };
 
-enum InputMode { INPUTMODE_P1_ONLY, INPUTMODE_2PLAYERS, INPUTMODE_BOTH };	// both means both players control the same cursor
+enum InputMode 
+{ 
+	INPUTMODE_PLAYERS, 	// each player controls their own cursor
+	INPUTMODE_BOTH		// both players control the same cursor
+};
 
 
 class ScreenOptions : public Screen
 {
 public:
-	ScreenOptions( CString sBackgroundPath, CString sTopEdgePath );
+	ScreenOptions( CString sBackgroundPath, CString sPagePath, CString sTopEdgePath );
 	void Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
@@ -49,7 +54,7 @@ protected:
 	virtual void ImportOptions() = 0;
 	virtual void ExportOptions() = 0;
 	void InitOptionsText();
-	void GetWidthXY( PlayerNumber p, int iRow, float &fWidthOut, float &fXOut, float &fYOut );
+	void GetWidthXY( PlayerNumber p, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
 	void PositionUnderlines();
 	void PositionHighlights();
 	void TweenHighlight( PlayerNumber player_no );
@@ -66,25 +71,30 @@ protected:
 	void MenuUp( const PlayerNumber p );
 	void MenuDown( const PlayerNumber p );
 
-	InputMode m_InputMode;
+	InputMode		m_InputMode;
 
 	OptionLineData* m_OptionLineData;
-	int m_iNumOptionLines;
+	int				m_iNumOptionLines;
 
-	MenuElements m_Menu;
+	MenuElements	m_Menu;
 
-	BitmapText	m_textOptionLineTitles[MAX_OPTION_LINES];
-	BitmapText	m_textOptions[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
+	ActorFrame		m_framePage;
+	Sprite			m_sprPage;
+	BitmapText		m_textOptionLineTitles[MAX_OPTION_LINES];
+	BitmapText		m_textOptions[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
 
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 	int m_iCurrentRow[NUM_PLAYERS];
 
-	Quad m_OptionUnderline[NUM_PLAYERS][MAX_OPTION_LINES];
-	Quad m_SelectionHighlight[NUM_PLAYERS];
+//	Quad m_OptionUnderline[NUM_PLAYERS][MAX_OPTION_LINES];
+//	Quad m_SelectionHighlight[NUM_PLAYERS];
 
-	RandomSample m_SoundChangeCol;
-	RandomSample m_SoundChangeRow;
-	RandomSample m_SoundNext;
+	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
+	OptionsCursor	m_Highlight[NUM_PLAYERS];
+
+	RandomSample	m_SoundChangeCol;
+	RandomSample	m_SoundChangeRow;
+	RandomSample	m_SoundNext;
 
 	TransitionInvisible		m_Wipe;
 };

@@ -14,7 +14,7 @@
 class RageDisplay;
 
 
-#include "RageTexture.h"
+class RageTexture;
 #include <D3DX8.h>
 
 // A structure for our custom vertex type. We added texture coordinates
@@ -30,7 +30,7 @@ struct RAGEVERTEX
 
 
 const int MAX_NUM_QUADS = 2048;
-const int MAX_NUM_INDICIES = MAX_NUM_QUADS*3;	// two triangles per quad
+//const int MAX_NUM_INDICIES = MAX_NUM_QUADS*3;	// two triangles per quad
 const int MAX_NUM_VERTICIES = MAX_NUM_QUADS*4;	// 4 verticies per quad
 
 
@@ -183,6 +183,35 @@ private:
 	float m_fLastUpdateTime;
 	int m_iFramesRenderedSinceLastCheck;
 	float m_fFPS;
+
+
+	//
+	// Render Queue stuff
+	//
+protected:
+	RAGEVERTEX	m_vertQueue[MAX_NUM_VERTICIES];
+	D3DCOLOR	m_addColors[MAX_NUM_VERTICIES];
+	int			m_iNumVerts;
+
+public:
+	void AddTriangle(
+		const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,
+		const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1,
+		const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2 );
+	void AddQuad(
+		const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,	// upper-left
+		const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1, 	// upper-right
+		const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2, 	// lower-left
+		const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3, const D3DCOLOR& a3  );// lower-right
+	void FlushQueue();
+	void SetTexture( RageTexture* pTexture );
+	void SetColorTextureMultDiffuse();
+	void SetColorDiffuse();
+	void SetAlphaTextureMultDiffuse();
+	void SetBlendModeNormal();
+	void SetBlendModeAdd();
+	void EnableZBuffer();
+	void DisableZBuffer();
 };
 
 

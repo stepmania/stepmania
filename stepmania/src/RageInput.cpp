@@ -47,7 +47,7 @@ CString DeviceInput::GetDescription()
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
 	case DEVICE_JOY4:
-		sReturn = ssprintf("Joystick %d: ", device - DEVICE_JOY1 + 1 );
+		sReturn = ssprintf("Joy%d ", device - DEVICE_JOY1 + 1 );
 
 		switch( button )
 		{
@@ -84,7 +84,7 @@ CString DeviceInput::GetDescription()
 		break;
 
 	case DEVICE_KEYBOARD:		// keyboard
-		sReturn = "Keyboard: ";
+		sReturn = "Key ";
 
 		switch( button )
 		{
@@ -101,7 +101,7 @@ CString DeviceInput::GetDescription()
 		case DIK_0:			sReturn += "0";			break;
 		case DIK_MINUS:		sReturn += "Minus";		break;
 		case DIK_EQUALS:	sReturn += "Equals";	break;
-		case DIK_BACK:		sReturn += "Backspace";	break;
+		case DIK_BACK:		sReturn += "Backsp";	break;
 		case DIK_TAB:		sReturn += "Tab";		break;
 // why?		case DIK_BACK:		sReturn += "Backspace";	break;
 		case DIK_Q:			sReturn += "Q";			break;
@@ -127,11 +127,11 @@ CString DeviceInput::GetDescription()
 		case DIK_J:			sReturn += "J";			break;
 		case DIK_K:			sReturn += "K";			break;
 		case DIK_L:			sReturn += "L";			break;
-		case DIK_SEMICOLON:	sReturn += "Semicolon";	break;
-		case DIK_APOSTROPHE:sReturn += "Apostroph";	break;
+		case DIK_SEMICOLON:	sReturn += "Semicln";	break;
+		case DIK_APOSTROPHE:sReturn += "Apostro";	break;
 		case DIK_GRAVE:		sReturn += "Grave";		break;
 		case DIK_LSHIFT:	sReturn += "LShift";	break;
-		case DIK_BACKSLASH:	sReturn += "Backslash";	break;
+		case DIK_BACKSLASH:	sReturn += "Backslsh";	break;
 		case DIK_Z:			sReturn += "Z";			break;
 		case DIK_X:			sReturn += "X";			break;
 		case DIK_C:			sReturn += "C";			break;
@@ -142,11 +142,11 @@ CString DeviceInput::GetDescription()
 		case DIK_COMMA:		sReturn += "Comma";		break;
 		case DIK_PERIOD:	sReturn += "Period";	break;
 		case DIK_SLASH:		sReturn += "Slash";		break;
-		case DIK_RSHIFT:	sReturn += "R Shift";	break;
-		case DIK_MULTIPLY:	sReturn += "Multiply";	break;
-		case DIK_LMENU:		sReturn += "Left Menu";	break;
+		case DIK_RSHIFT:	sReturn += "RShift";	break;
+		case DIK_MULTIPLY:	sReturn += "Mult";		break;
+		case DIK_LMENU:		sReturn += "LMenu";		break;
 		case DIK_SPACE:		sReturn += "Space";		break;
-		case DIK_CAPITAL:	sReturn += "Caps Lock";	break;
+		case DIK_CAPITAL:	sReturn += "CapsLk";	break;
 		case DIK_F1:		sReturn += "F1";		break;
 		case DIK_F2:		sReturn += "F2";		break;
 		case DIK_F3:		sReturn += "F3";		break;
@@ -172,22 +172,22 @@ CString DeviceInput::GetDescription()
 		case DIK_NUMPAD3:	sReturn += "NumPad3";	break;
 		case DIK_NUMPAD0:	sReturn += "NumPad0";	break;
 		case DIK_DECIMAL:	sReturn += "Decimal";	break;
-		case DIK_RMENU:		sReturn += "Right Alt";	break;
+		case DIK_RMENU:		sReturn += "RightAlt";	break;
 		case DIK_PAUSE:		sReturn += "Pause";		break;
 		case DIK_HOME:		sReturn += "Home";		break;
 		case DIK_UP:		sReturn += "Up";		break;
-		case DIK_PRIOR:		sReturn += "Page Up";	break;
+		case DIK_PRIOR:		sReturn += "PageUp";	break;
 		case DIK_LEFT:		sReturn += "Left";		break;
 		case DIK_RIGHT:		sReturn += "Right";		break;
 		case DIK_END:		sReturn += "End";		break;
 		case DIK_DOWN:		sReturn += "Down";		break;
-		case DIK_NEXT:		sReturn += "Page Down";	break;
+		case DIK_NEXT:		sReturn += "PageDn";	break;
 		case DIK_INSERT:	sReturn += "Insert";	break;
 		case DIK_DELETE:	sReturn += "Delete";	break;
-		case DIK_LWIN:		sReturn += "Left Win";	break;
-		case DIK_RWIN:		sReturn += "Right Win";	break;
-		case DIK_APPS:		sReturn += "App Menu";	break;
-		case DIK_NUMPADENTER:	sReturn += "NumPadEnter";	break;
+		case DIK_LWIN:		sReturn += "LeftWin";	break;
+		case DIK_RWIN:		sReturn += "RightWin";	break;
+		case DIK_APPS:		sReturn += "AppMenu";	break;
+		case DIK_NUMPADENTER:	sReturn += "PadEnter";	break;
 
 		default:			sReturn += "Unknown Key"; break;
 		}

@@ -21,49 +21,52 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 
-
-const float FADE_TIME	=	1.0f;
-
-const float SWITCH_MUSIC_TIME	=	0.10f;
-const float SAMPLE_MUSIC_DELAY	=	0.20f;
-const float ROULETTE_SWITCH_MUSIC_TIME	=	SWITCH_MUSIC_TIME/2;
-const int ROULETTE_SWITCHES_IN_SLOWING_DOWN = 5;
-
-const float LOCKED_WHEEL_INITIAL_VELOCITY = 7;
-
-const float SORT_ICON_ON_SCREEN_X	=	-140;
-const float SORT_ICON_ON_SCREEN_Y	=	-180;
-
-const float SORT_ICON_OFF_SCREEN_X	=	SORT_ICON_ON_SCREEN_X;
-const float SORT_ICON_OFF_SCREEN_Y	=	SORT_ICON_ON_SCREEN_Y - 64;
+// WheelItem stuff
+#define ICON_X			THEME->GetMetricF("WheelItem","IconX")
+#define SONG_NAME_X		THEME->GetMetricF("WheelItem","SongNameX")
+#define SECTION_NAME_X	THEME->GetMetricF("WheelItem","SectionNameX")
+#define SECTION_ZOOM	THEME->GetMetricF("WheelItem","SectionZoom")
+#define ROULETTE_X		THEME->GetMetricF("WheelItem","RouletteX")
+#define ROULETTE_ZOOM	THEME->GetMetricF("WheelItem","RouletteZoom")
+#define COURSE_X		THEME->GetMetricF("WheelItem","CourseX")
+#define COURSE_ZOOM		THEME->GetMetricF("WheelItem","CourseZoom")
+#define GRADE_P1_X		THEME->GetMetricF("WheelItem","GradeP1X")
+#define GRADE_P2_X		THEME->GetMetricF("WheelItem","GradeP2Y")
 
 
-const float SCORE_X				=	58;
-const float SCORE_Y[NUM_PLAYERS] = { -40, 40 };
+// MusicWheel stuff
+#define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
+#define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
+#define SAMPLE_MUSIC_DELAY			THEME->GetMetricF("MusicWheel","SampleMusicDelay")
+#define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
+#define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
+#define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
+#define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
+#define SECTION_COLOR_1				THEME->GetMetricC("MusicWheel","SectionColor1")
+#define SECTION_COLOR_2				THEME->GetMetricC("MusicWheel","SectionColor2")
+#define SECTION_COLOR_3				THEME->GetMetricC("MusicWheel","SectionColor3")
+#define SECTION_COLOR_4				THEME->GetMetricC("MusicWheel","SectionColor4")
+#define SECTION_COLOR_5				THEME->GetMetricC("MusicWheel","SectionColor5")
+#define SECTION_COLOR_6				THEME->GetMetricC("MusicWheel","SectionColor6")
+#define SECTION_COLOR_7				THEME->GetMetricC("MusicWheel","SectionColor7")
+const int NUM_SECTION_COLORS = 7;
 
-const float SCROLLBAR_X			=	150;
-
-D3DXCOLOR COLOR_SECTION_TEXT = D3DXCOLOR(1,1,0.3f,1);
-
-
-D3DXCOLOR SECTION_COLORS[] = { 
-	D3DXCOLOR( 0.9f, 0.0f, 0.2f, 1 ),	// red
-	D3DXCOLOR( 0.6f, 0.0f, 0.4f, 1 ),	// pink
-	D3DXCOLOR( 0.2f, 0.1f, 0.3f, 1 ),	// purple
-	D3DXCOLOR( 0.0f, 0.4f, 0.8f, 1 ),	// sky blue
-	D3DXCOLOR( 0.0f, 0.6f, 0.6f, 1 ),	// sea green
-	D3DXCOLOR( 0.0f, 0.6f, 0.2f, 1 ),	// green
-	D3DXCOLOR( 0.8f, 0.6f, 0.0f, 1 ),	// orange
-};
-const int NUM_SECTION_COLORS = sizeof(SECTION_COLORS)/sizeof(D3DXCOLOR);
-
-
-
-inline D3DXCOLOR GetNextSectionColor()
-{
+D3DXCOLOR SECTION_COLORS( int i ) {
+	switch( i ) {
+		case 0:		return SECTION_COLOR_1;
+		case 1:		return SECTION_COLOR_2;
+		case 2:		return SECTION_COLOR_3;
+		case 3:		return SECTION_COLOR_4;
+		case 4:		return SECTION_COLOR_5;
+		case 5:		return SECTION_COLOR_6;
+		case 6:		return SECTION_COLOR_7;
+		default:	ASSERT(0);	return D3DXCOLOR(1,1,1,1);
+	}
+}
+inline D3DXCOLOR GetNextSectionColor() {
 	static int i=0;
 	i = i % NUM_SECTION_COLORS;
-	return SECTION_COLORS[i++];
+	return SECTION_COLORS(i++);
 }
 
 
@@ -76,54 +79,47 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSe
 	m_color = color;
 }
 
-
 WheelItemDisplay::WheelItemDisplay()
 {
 	m_fPercentGray = 0;
 
-	m_MusicStatusDisplay.SetXY( -136, 0 );
+	m_MusicStatusDisplay.SetXY( ICON_X, 0 );
 	
 	m_TextBanner.SetHorizAlign( align_left );
-	m_TextBanner.SetXY( -30, 0 );
+	m_TextBanner.SetXY( SONG_NAME_X, 0 );
 
-	m_sprSongBar.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SONG_BAR) );
+	m_sprSongBar.Load( THEME->GetPathTo("Graphics","select music song bar") );
 	m_sprSongBar.SetXY( 0, 0 );
 
-	m_sprSectionBar.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SECTION_BAR) );
+	m_sprSectionBar.Load( THEME->GetPathTo("Graphics","select music section bar") );
 	m_sprSectionBar.SetXY( 0, 0 );
 
-	m_textSectionName.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textSectionName.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textSectionName.TurnShadowOff();
-	m_textSectionName.SetHorizAlign( align_left );
 	m_textSectionName.SetVertAlign( align_middle );
-	m_textSectionName.SetXY( m_sprSectionBar.GetX() - m_sprSectionBar.GetUnzoomedWidth()/2 + 30, 0 );
-	m_textSectionName.SetZoom( 1.0f );
+	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
+	m_textSectionName.SetZoom( SECTION_ZOOM );
 
 
-
-	m_textRoulette.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
+	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
 	m_textRoulette.TurnShadowOff();
 	m_textRoulette.SetText( "ROULETTE" );
 	m_textRoulette.TurnRainbowOn();
-	m_textRoulette.SetZoom( 1.3f );
-	m_textRoulette.SetHorizAlign( align_left );
-	m_textRoulette.SetXY( -120, 0 );
+	m_textRoulette.SetZoom( ROULETTE_ZOOM );
+	m_textRoulette.SetXY( ROULETTE_X, 0 );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SMALL_GRADES) );
+		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 1x7") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
-		m_GradeDisplay[p].SetXY( 86.0f + p*26.0f, 0 );
+		m_GradeDisplay[p].SetXY( p==PLAYER_1 ? GRADE_P1_X : GRADE_P2_X, 0 );
 	}
 
-	m_textCourse.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
+	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
 	m_textCourse.TurnShadowOff();
-	m_textCourse.SetText( "ROULETTE" );
-	m_textCourse.TurnRainbowOn();
-	m_textCourse.SetZoom( 1.3f );
+	m_textCourse.SetZoom( COURSE_ZOOM );
 	m_textCourse.SetHorizAlign( align_left );
-	m_textCourse.SetXY( -120, 0 );
-
+	m_textCourse.SetXY( COURSE_X, 0 );
 }
 
 
@@ -296,54 +292,24 @@ MusicWheel::MusicWheel()
 { 
 	LOG->Trace( "MusicWheel::MusicWheel()" );
 
-	
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_NONE )
 		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
-
-	m_frameOverlay.SetXY( 0, 0 );
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
-			continue;	// skip
-
-		m_sprHighScoreFrame[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SCORE_FRAME) );
-		m_sprHighScoreFrame[p].SetXY( SCORE_X, SCORE_Y[p] );
-		m_frameOverlay.AddSubActor( &m_sprHighScoreFrame[p] );
-
-		m_HighScore[p].SetXY( SCORE_X, SCORE_Y[p]*0.97f );
-		m_HighScore[p].SetZoom( 0.6f );
-		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
-		m_frameOverlay.AddSubActor( &m_HighScore[p] );
-	}
-	
-	m_sprHighScoreFrame[1].SetZoomY( -1 );	// flip vertically
-
-
-	m_sprSelectionOverlay.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SONG_HIGHLIGHT) );
+	m_sprSelectionOverlay.Load( THEME->GetPathTo("Graphics","select music song highlight") );
 	m_sprSelectionOverlay.SetXY( 0, 0 );
 	m_sprSelectionOverlay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, D3DXCOLOR(1,1,1,0.4f), D3DXCOLOR(1,1,1,1) );
-	m_frameOverlay.AddSubActor( &m_sprSelectionOverlay );
+	AddSubActor( &m_sprSelectionOverlay );
 
-	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
-	m_MusicSortDisplay.SetEffectGlowing( 1.0f );
-	m_frameOverlay.AddSubActor( &m_MusicSortDisplay );
-
-	this->AddSubActor( &m_frameOverlay );
-
-
-	m_ScrollBar.SetX( SCROLLBAR_X ); 
+	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	this->AddSubActor( &m_ScrollBar );
 	
-
-	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC), 16 );
-	m_soundChangeSort.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_SORT) );
-	m_soundExpand.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_SECTION_EXPAND) );
-	m_soundStart.Load( THEME->GetPathTo(SOUND_MENU_START) );
-	m_soundLocked.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_WHEEL_LOCKED) );
+	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music"), 16 );
+	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","select music change sort") );
+	m_soundExpand.Load(			THEME->GetPathTo("Sounds","select music section expand") );
+	m_soundStart.Load(			THEME->GetPathTo("Sounds","menu start") );
+	m_soundLocked.Load(			THEME->GetPathTo("Sounds","select music wheel locked") );
 
 
 	m_fTimeLeftBeforePlayMusicSample = 0;
@@ -354,18 +320,10 @@ MusicWheel::MusicWheel()
 	arraySongs.Copy( SONGMAN->m_pSongs );
 	SortSongPointerArrayByGroup( arraySongs );
 	
-
-
-	m_SortOrder = GAMESTATE->m_SongSortOrder;
-	m_MusicSortDisplay.Set( m_SortOrder );
-	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
-
-
 	m_sExpandedSectionName = "";
 
 	m_iSelection = 0;
 
-	
 	m_WheelState = STATE_SELECTING_MUSIC;
 	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;
@@ -456,7 +414,11 @@ MusicWheel::MusicWheel()
 
 MusicWheel::~MusicWheel()
 {
-	GAMESTATE->m_SongSortOrder = m_SortOrder;
+}
+
+CArray<WheelItemData, WheelItemData&>& MusicWheel::GetCurWheelItemDatas()
+{
+	return m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
 }
 
 void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItemDatas, SongSortOrder so, bool bRoulette )
@@ -543,7 +505,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 							continue;
 					if( sThisSection != sLastSection)	// new section, make a section item
 					{
-						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS[iSectionColorIndex];
+						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
 						sLastSection = sThisSection;
@@ -625,7 +587,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 	if( arrayWheelItemDatas.GetSize() == 0 )
 	{
-		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "EMPTY", NULL, D3DXCOLOR(1,0,0,1)) );
+		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, D3DXCOLOR(1,0,0,1)) );
 	}
 	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE  &&  !bRoulette )
 	{
@@ -655,12 +617,12 @@ float MusicWheel::GetBannerAlpha( float fPosOffsetsFromMiddle )
 	if( m_WheelState == STATE_FLYING_OFF_BEFORE_NEXT_SORT 
 	 || m_WheelState == STATE_TWEENING_OFF_SCREEN  )
 	{
-		return m_fTimeLeftInState / FADE_TIME;
+		return m_fTimeLeftInState / FADE_SECONDS;
 	}
 	else if( m_WheelState == STATE_FLYING_ON_AFTER_NEXT_SORT
 		  || m_WheelState == STATE_TWEENING_ON_SCREEN )
 	{
-		return 1 - (m_fTimeLeftInState / FADE_TIME);
+		return 1 - (m_fTimeLeftInState / FADE_SECONDS);
 	}
 	else if( m_WheelState == STATE_WAITING_OFF_SCREEN )
 	{
@@ -729,9 +691,6 @@ void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and to
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Notes* m_pNotes = GAMESTATE->m_pCurNotes[ pn ];
 	
-	if( m_pNotes )
-		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
-
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
@@ -814,22 +773,15 @@ void MusicWheel::Update( float fDeltaTime )
 		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
-				m_fTimeLeftInState = FADE_TIME;
+				m_fTimeLeftInState = FADE_SECONDS;
 
 				Song* pPrevSelectedSong = GetCurWheelItemDatas()[m_iSelection].m_pSong;
 				CString sPrevSelectedSection = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;
 
 				// change the sort order
-				m_SortOrder = SongSortOrder(m_SortOrder+1);
-				if( m_SortOrder > NUM_SORT_ORDERS-1 )
-					m_SortOrder = (SongSortOrder)0;
-				m_sExpandedSectionName = GetSectionNameFromSongAndSort( pPrevSelectedSong, m_SortOrder );
+				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS );
+				m_sExpandedSectionName = GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder );
 				//RebuildWheelItems();
-
-				m_MusicSortDisplay.Set( m_SortOrder );
-				m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_BEGIN );
-				m_MusicSortDisplay.SetTweenXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
-
 
 				m_iSelection = 0;
 
@@ -948,7 +900,7 @@ void MusicWheel::Update( float fDeltaTime )
 	{
 		m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
 		
-		float fSpringForce = - m_fPositionOffsetFromSelection*LOCKED_WHEEL_INITIAL_VELOCITY;
+		float fSpringForce = - m_fPositionOffsetFromSelection * LOCKED_INITIAL_VELOCITY;
 		m_fLockedWheelVelocity += fSpringForce;
 
 		float fDrag = -m_fLockedWheelVelocity * fDeltaTime*4;
@@ -967,9 +919,9 @@ void MusicWheel::Update( float fDeltaTime )
 		// "rotate" wheel toward selected song
 		float fSpinSpeed;
 		if( m_WheelState == STATE_ROULETTE_SPINNING )
-			fSpinSpeed = 1.0f/ROULETTE_SWITCH_MUSIC_TIME;
+			fSpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
 		else
-			fSpinSpeed = 0.6f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_MUSIC_TIME;
+			fSpinSpeed = 0.6f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_SECONDS;
 
 		if( m_fPositionOffsetFromSelection > 0 )
 		{
@@ -997,7 +949,7 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 {
 	if( m_WheelState == STATE_LOCKED )
 	{
-		m_fLockedWheelVelocity = LOCKED_WHEEL_INITIAL_VELOCITY;
+		m_fLockedWheelVelocity = LOCKED_INITIAL_VELOCITY;
 		m_soundLocked.Play();
 		return;
 	}
@@ -1042,7 +994,7 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 {
 	if( m_WheelState == STATE_LOCKED )
 	{
-		m_fLockedWheelVelocity = -LOCKED_WHEEL_INITIAL_VELOCITY;
+		m_fLockedWheelVelocity = -LOCKED_INITIAL_VELOCITY;
 		m_soundLocked.Play();
 		return;
 	}
@@ -1102,13 +1054,11 @@ void MusicWheel::NextSort()
 	}
 
 	m_soundChangeSort.Play();
-	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );
-	m_MusicSortDisplay.SetTweenXY( SORT_ICON_OFF_SCREEN_X, SORT_ICON_OFF_SCREEN_Y );
 
 	TweenOffScreen();
 
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
-	m_fTimeLeftInState = FADE_TIME;
+	m_fTimeLeftInState = FADE_SECONDS;
 }
 
 bool MusicWheel::Select()	// return true of a playable item was chosen
@@ -1118,7 +1068,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
-		m_iSwitchesLeftInSpinDown = ROULETTE_SWITCHES_IN_SLOWING_DOWN/2+1 + rand()%(ROULETTE_SWITCHES_IN_SLOWING_DOWN/2);
+		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + rand()%(ROULETTE_SLOW_DOWN_SWITCHES/2);
 		m_fTimeLeftInState = 0.1f;
 		return false;
 	}
@@ -1157,9 +1107,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	case TYPE_ROULETTE:
 		m_soundExpand.Play();
 		m_WheelState = STATE_ROULETTE_SPINNING;
-		m_SortOrder = SORT_GROUP;
-		m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_MusicSortDisplay.SetEffectNone();
+		GAMESTATE->m_SongSortOrder = SORT_GROUP;
         BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
 		return false;
 
@@ -1173,24 +1121,17 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 void MusicWheel::TweenOnScreen() 
 {
 	m_WheelState = STATE_TWEENING_ON_SCREEN;
-	m_fTimeLeftInState = FADE_TIME; 
-
-
-	m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	m_MusicSortDisplay.BeginTweening( FADE_TIME );
-	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-
+	m_fTimeLeftInState = FADE_SECONDS; 
 
 
 	float fX, fY;
 	
 	fX = GetBannerX(0);
 	fY = GetBannerY(0);
-	m_frameOverlay.SetXY( fX+320, fY );
-	m_frameOverlay.BeginTweeningQueued( 0.5f );	// sleep
-	m_frameOverlay.BeginTweeningQueued( 0.4f, Actor::TWEEN_BIAS_BEGIN );
-	m_frameOverlay.SetTweenX( fX );
-
+	m_sprSelectionOverlay.SetXY( fX+320, fY );
+	m_sprSelectionOverlay.BeginTweeningQueued( 0.5f );	// sleep
+	m_sprSelectionOverlay.BeginTweeningQueued( 0.4f, Actor::TWEEN_BIAS_BEGIN );
+	m_sprSelectionOverlay.SetTweenX( fX );
 
 
 	fX = m_ScrollBar.GetX();
@@ -1218,29 +1159,16 @@ void MusicWheel::TweenOnScreen()
 void MusicWheel::TweenOffScreen()
 {
 	m_WheelState = STATE_TWEENING_OFF_SCREEN;
-	m_fTimeLeftInState = FADE_TIME;
-
-	
-	m_MusicSortDisplay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	m_MusicSortDisplay.SetEffectNone();
-	m_MusicSortDisplay.BeginTweening( FADE_TIME );
-	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
-
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-//		m_HighScore[p].BeginTweening( 0.2f, Actor::TWEEN_BIAS_END );
-//		m_HighScore[p].SetTweenX( m_HighScore[p].GetX()+320 );
-	}
+	m_fTimeLeftInState = FADE_SECONDS;
 
 
 	float fX, fY;
 	fX = GetBannerX(0);
 	fY = GetBannerY(0);
-	m_frameOverlay.SetXY( fX, fY );
-	m_frameOverlay.BeginTweeningQueued( 0 );	// sleep
-	m_frameOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
-	m_frameOverlay.SetTweenX( fX+320 );
+	m_sprSelectionOverlay.SetXY( fX, fY );
+	m_sprSelectionOverlay.BeginTweeningQueued( 0 );	// sleep
+	m_sprSelectionOverlay.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_END );
+	m_sprSelectionOverlay.SetTweenX( fX+320 );
 
 
 	m_ScrollBar.BeginTweeningQueued( 0 );

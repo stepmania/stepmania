@@ -25,17 +25,17 @@ MenuTimer::MenuTimer()
 	m_fStallSeconds = 0;
 	m_bTimerStopped = false;
 
-	m_textDigit1.Load( THEME->GetPathTo(FONT_TIMER_NUMBERS) );
+	m_textDigit1.LoadFromFont( THEME->GetPathTo("Fonts","timer numbers") );
 	m_textDigit1.TurnShadowOff();
 	m_textDigit1.SetXY( -18, 0 );
 	this->AddSubActor( &m_textDigit1 );
 
-	m_textDigit2.Load( THEME->GetPathTo(FONT_TIMER_NUMBERS) );
+	m_textDigit2.LoadFromFont( THEME->GetPathTo("Fonts","timer numbers") );
 	m_textDigit2.TurnShadowOff();
 	m_textDigit2.SetXY( +18, 0 );
 	this->AddSubActor( &m_textDigit2 );
 
-	m_soundBeep.Load( THEME->GetPathTo(SOUND_MENU_TIMER) );
+	m_soundBeep.Load( THEME->GetPathTo("Sounds","menu timer") );
 }
 
 

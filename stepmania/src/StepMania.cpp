@@ -57,7 +57,6 @@
 
 #include "ScreenSandbox.h"
 #include "ScreenTitleMenu.h"
-#include "ScreenLoading.h"
 
 
 #include "dxerr8.h"
@@ -576,15 +575,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 					return 0;
 				case IDM_CHANGEDETAIL:
 					if( PREFSMAN->m_iDisplayResolution != 640 )
-					{
 						PREFSMAN->m_iDisplayResolution = 640;
-						PREFSMAN->m_iTextureResolution = 512;
-					}
 					else
-					{
 						PREFSMAN->m_iDisplayResolution = 400;
-						PREFSMAN->m_iTextureResolution = 256;
-					}
+
 					ApplyGraphicOptions();
 					return 0;
                case IDM_EXIT:
@@ -696,7 +690,6 @@ HRESULT CreateObjects( HWND hWnd )
 
 	//SCREENMAN->SetNewScreen( new ScreenAttractLogo );
 	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
-	//SCREENMAN->SetNewScreen( new ScreenLoading );
 	//SCREENMAN->SetNewScreen( new ScreenSandbox );
 	//SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
 	//SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );

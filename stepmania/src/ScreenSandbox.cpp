@@ -22,26 +22,18 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
-//	m_text.Load( THEME->GetPathTo(FONT_NORMAL) );
-	m_text.SetXY( CENTER_X, CENTER_Y );
-	CStringArray as;
-	as.Add( "Testing...  Attention please." );
-	m_text.SetTips( as );
-	m_text.SetXY( CENTER_X, CENTER_Y );
-	this->AddSubActor( &m_text );
+	m_spr.Load( THEME->GetPathTo("Graphics","title menu logo game 0") );
+	m_spr.SetXY( CENTER_X, CENTER_Y );
+	this->AddSubActor( &m_spr );
 
-	m_Menu.Load( 	
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
-		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
-		false, true, 40 
-		);
-	this->AddSubActor( &m_Menu );
-	m_Menu.TweenOnScreenFromBlack( SM_None );
-
-	m_sound.Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
-	m_sound.SetPositionSeconds( -10 );
-	m_sound.Play();
+//	m_Menu.Load( 	
+//		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
+//		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
+//		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
+//		false, true, 40 
+//		);
+//	this->AddSubActor( &m_Menu );
+//	m_Menu.TweenOnScreenFromBlack( SM_None );
 
 	//this->AddSubActor( &m_spr );
 }
@@ -50,14 +42,11 @@ ScreenSandbox::ScreenSandbox()
 void ScreenSandbox::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
-	m_sound.Update( fDeltaTime );
 }
 
 void ScreenSandbox::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

@@ -41,7 +41,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, Prompt
 	m_Fade.CloseWipingRight();
 	this->AddSubActor( &m_Fade );
 
-	m_textQuestion.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textQuestion.SetText( sText );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddSubActor( &m_textQuestion );
@@ -49,8 +49,8 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, Prompt
 	m_rectAnswerBox.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,1.0f,0.7f) );
 	this->AddSubActor( &m_rectAnswerBox );
 
-	m_textAnswer[0].Load( THEME->GetPathTo(FONT_HEADER1) );
-	m_textAnswer[1].Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textAnswer[0].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textAnswer[1].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer[0].SetY( PROMPT_Y );
 	m_textAnswer[1].SetY( PROMPT_Y );
 	this->AddSubActor( &m_textAnswer[0] );
@@ -77,6 +77,8 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, Prompt
 	m_rectAnswerBox.SetZoomY( 30 );
 
 	m_textAnswer[m_bAnswer].SetEffectGlowing();
+
+	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu prompt") );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -134,7 +136,7 @@ void ScreenPrompt::MenuRight( const PlayerNumber p )
 	m_rectAnswerBox.SetTweenXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
 	m_rectAnswerBox.SetTweenZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 
-	SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_EDIT_CHANGE_LINE) );
+	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit change line") );
 }
 
 void ScreenPrompt::MenuStart( const PlayerNumber p )
@@ -154,7 +156,7 @@ void ScreenPrompt::MenuStart( const PlayerNumber p )
 	m_textAnswer[1].BeginTweening( 0.2f );
 	m_textAnswer[1].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-	SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_START) );
+	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 
 	if( m_bAnswer )
 		m_pOnYes();

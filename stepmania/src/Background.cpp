@@ -59,10 +59,10 @@ Background::Background()
 
 	m_sprDanger.SetZoom( 2 );
 	m_sprDanger.SetEffectWagging();
-	m_sprDanger.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DANGER_TEXT) );
+	m_sprDanger.Load( THEME->GetPathTo("Graphics","gameplay danger text") );
 	m_sprDanger.SetXY( CENTER_X, CENTER_Y );
 
-	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DANGER_BACKGROUND) );
+	m_sprDangerBackground.Load( THEME->GetPathTo("Graphics","gameplay danger background") );
 	m_sprDangerBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
 	m_quadBGBrightness.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
@@ -100,7 +100,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	else
 		m_BackgroundMode = MODE_ANIMATIONS;
 
-	m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), true, 4, 0, true );
+	m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background"), true, 4, 0, true );
 	
 	m_sprSongBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
@@ -112,7 +112,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	case MODE_MOVIE_BG:
 		m_sprMovieBackground.Load( pSong->GetMovieBackgroundPath() );
 		m_sprMovieBackground.StretchTo( CRect(SCREEN_LEFT+10,SCREEN_TOP+16,SCREEN_RIGHT-10,SCREEN_BOTTOM-16) );
-		m_sprMovieBackground.SetZoomY( m_sprMovieBackground.GetZoomY()*-1 );
+		m_sprMovieBackground.SetZoomY( m_sprMovieBackground.GetZoomY() );
 		m_sprMovieBackground.StopAnimating( );
 		break;
 	case MODE_MOVIE_VIS:

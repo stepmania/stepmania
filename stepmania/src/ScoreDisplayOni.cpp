@@ -26,7 +26,7 @@ ScoreDisplayOni::ScoreDisplayOni()
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
 	// init the text
-	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
+	LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
 	TurnShadowOff();
 }
 

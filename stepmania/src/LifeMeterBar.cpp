@@ -16,16 +16,11 @@
 #include "RageTimer.h"
 #include "GameState.h"
 
-const int NUM_LIFE_STREAM_SECTIONS = 3;
-const float LIFE_STREAM_SECTION_WIDTH = 1.0f/NUM_LIFE_STREAM_SECTIONS;
 
-const float METER_WIDTH = 258;
-const float METER_HEIGHT = 20;
-
-const float DANGER_THRESHOLD = 0.4f;
+#define METER_WIDTH			THEME->GetMetricF("LifeMeterBar","MeterWidth")
+#define METER_HEIGHT		THEME->GetMetricF("LifeMeterBar","MeterHeight")
+#define DANGER_THRESHOLD	THEME->GetMetricF("LifeMeterBar","DangerThreshold")
 const float FAIL_THRESHOLD = 0;
-
-
 
 
 LifeMeterBar::LifeMeterBar()
@@ -48,13 +43,13 @@ LifeMeterBar::LifeMeterBar()
 	m_quadBlackBackground.SetZoomY( METER_HEIGHT );
 	m_frame.AddSubActor( &m_quadBlackBackground );
 
-	m_sprStreamNormal.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_STREAM_NORMAL) );
+	m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream normal") );
 	m_frame.AddSubActor( &m_sprStreamNormal );
 
-	m_sprStreamHot.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_STREAM_HOT) );
+	m_sprStreamHot.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream hot") );
 	m_frame.AddSubActor( &m_sprStreamHot );
 
-	m_sprFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_LIFEMETER_BAR) );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter bar") );
 	m_frame.AddSubActor( &m_sprFrame );
 
 	this->AddSubActor( &m_frame );
@@ -199,7 +194,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 
 void LifeMeterBar::DrawPrimitives()
 {
-	float fPercentRed = IsInDanger() ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
+	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
 
 	if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )

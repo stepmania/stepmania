@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: MusicStatusDisplay.h
+ Class: MusicStatusDisplay
 
- Desc: A graphic displayed in the MusicStatusDisplay during Dancing.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -20,7 +21,7 @@
 
 MusicStatusDisplay::MusicStatusDisplay()
 {
-	Load( THEME->GetPathTo(GRAPHIC_MUSIC_STATUS_ICONS) );
+	Load( THEME->GetPathTo("Graphics","music status icons") );
 	StopAnimating();
 
 	SetType( TYPE_NONE );

@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  Class: FontManager
@@ -8,10 +9,6 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _FontManager_H_
-#define _FontManager_H_
-
 
 #include "Font.h"
 
@@ -25,7 +22,7 @@ public:
 	FontManager();
 	~FontManager();
 
-	Font* LoadFont( CString sFontPath );
+	Font* LoadFont( CString sFontOrTextureFilePath, CString sChars );
 	bool IsFontLoaded( CString sFontPath );
 	void UnloadFont( CString sFontPath );
 
@@ -36,4 +33,3 @@ protected:
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program
 
-#endif
