@@ -786,7 +786,13 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	{
 		Steps* pSteps = m_vpSteps[i];
 
-		/* If it's autogen, radar vals and first/last beat will come from the parent. */
+		pSteps->CalculateRadarValues( m_fMusicLengthSeconds );
+
+		//
+		// calculate lastBeat
+		//
+
+		/* If it's autogen, then first/last beat will come from the parent. */
 		if( pSteps->IsAutogen() )
 			continue;
 
@@ -795,26 +801,17 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( pSteps->IsAnEdit() )
 			continue;
 		
+		// Don't set first/last beat based on lights.  They often start very 
+		// early and end very late.
+		if( pSteps->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+			continue;
 
-		//
-		// calculate radar values
-		//
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
-
-		RadarValues v;
-		NoteDataUtil::GetRadarValues( tempNoteData, m_fMusicLengthSeconds, v );
-		pSteps->SetRadarValues( v );
-
 
 		/* Many songs have stray, empty song patterns.  Ignore them, so
 		 * they don't force the first beat of the whole song to 0. */
 		if( tempNoteData.GetLastRow() == 0 )
-			continue;
-
-		// Don't set first/last beat based on lights.  They often start very 
-		// early and end very late.
-		if( pSteps->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 			continue;
 
 		fFirstBeat = min( fFirstBeat, tempNoteData.GetFirstBeat() );

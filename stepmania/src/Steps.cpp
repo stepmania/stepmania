@@ -151,6 +151,23 @@ void Steps::TidyUpData()
 		SetMeter( int(PredictMeter()) );
 }
 
+void Steps::CalculateRadarValues( float fMusicLengthSeconds )
+{
+	m_RadarValues = RadarValues();
+	
+	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
+	if( parent != NULL )
+		return;
+
+	// If we're an edit, leave the RadarValues invalid.
+	if( IsAnEdit() )
+		return;
+
+	NoteData tempNoteData;
+	this->GetNoteData( tempNoteData );
+	NoteDataUtil::GetRadarValues( tempNoteData, fMusicLengthSeconds, m_RadarValues );
+}
+
 void Steps::Decompress() const
 {
 	if( m_bNoteDataIsFilled )
@@ -266,7 +283,7 @@ void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 	m_StepsType = ntTo;
 }
 
-void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have to be of the same StepsType!
+void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds )	// pSource does not have to be of the same StepsType
 {
 	m_StepsType = ntTo;
 	NoteData noteData;
@@ -276,7 +293,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 	this->SetDescription( pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
 	this->SetMeter( pSource->GetMeter() );
-	this->SetRadarValues( pSource->GetRadarValues() );
+	this->CalculateRadarValues( fMusicLengthSeconds );
 }
 
 void Steps::CreateBlank( StepsType ntTo )

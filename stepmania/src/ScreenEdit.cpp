@@ -1812,10 +1812,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				m_CurrentAction = c;
 
 				// copy edit into current Steps
+				Song* pSong = GAMESTATE->m_pCurSong;
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				ASSERT( pSteps );
 
 				pSteps->SetNoteData( m_NoteDataEdit );
+				pSteps->CalculateRadarValues( pSong->m_fMusicLengthSeconds );
 
 				if( HOME_EDIT_MODE )
 				{

@@ -22,7 +22,7 @@ public:
 
 	// initializers
 	void AutogenFrom( const Steps *parent, StepsType ntTo );
-	void CopyFrom( Steps* pSource, StepsType ntTo );
+	void CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds );
 	void CreateBlank( StepsType ntTo );
 
 	void Compress() const;
@@ -61,7 +61,8 @@ public:
 	void		GetSMNoteData( CString &notes_comp_out ) const;
 
 	void TidyUpData();
-
+	void CalculateRadarValues( float fMusicLengthSeconds );
+	
 	// Lua
 	void PushSelf( lua_State *L );
 
