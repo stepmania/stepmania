@@ -630,23 +630,48 @@ void SetupExtensions()
 	const float fGLUVersion = (float) atof( (const char *) gluGetString(GLU_VERSION) );
 	g_gluVersion = int(roundf(fGLUVersion * 10));
 
-	/* Find extension functions. */
+	/* Reset extensions. */
 	GLExt.Reset();
 	
-#if !defined(DARWIN)
-	GLExt.wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
-#else
-    GLExt.wglSwapIntervalEXT = wglSwapIntervalEXT;
+	/*
+	 * Find extension functions.
+	 *
+	 * X11R6.7.0 (or possibly ATI's drivers) seem to be returning bogus values for glBindBufferARB
+	 * if we don't actually check for GL_ARB_vertex_buffer_object. 
+	 * https://sf.net/tracker/download.php?group_id=37892&atid=421366&file_id=88086&aid=958820
+	 * https://sf.net/tracker/download.php?group_id=37892&atid=421366&file_id=85542&aid=944836
+	 *
+	 * Let's check them all, to be safe.
+	 */
+
+#if defined(WIN32)
+	if( HasExtension("WGL_EXT_swap_control") )
+		GLExt.wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
+#elif defined(DARWIN)
+	GLExt.wglSwapIntervalEXT = wglSwapIntervalEXT;
 #endif
-	GLExt.glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
-	GLExt.glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
-	GLExt.glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
-	GLExt.glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
-	GLExt.glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
-	GLExt.glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
-	GLExt.glBufferSubDataARB = (PFNGLBUFFERSUBDATAARBPROC) wind->GetProcAddress("glBufferSubDataARB");
-	GLExt.glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
-	GLExt.glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
+
+	if( HasExtension("EXT_paletted_texture") )
+	{
+		GLExt.glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
+		GLExt.glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
+	}
+
+	if( HasExtension("GL_ARB_multitexture") )
+		GLExt.glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
+
+	if( HasExtension("GL_ARB_vertex_buffer_object") )
+	{
+		GLExt.glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
+		GLExt.glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
+		GLExt.glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
+		GLExt.glBufferSubDataARB = (PFNGLBUFFERSUBDATAARBPROC) wind->GetProcAddress("glBufferSubDataARB");
+		GLExt.glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
+	}
+
+	if( HasExtension("GL_EXT_draw_range_elements") )
+		GLExt.glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
+
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures();
