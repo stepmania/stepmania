@@ -307,6 +307,7 @@ void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 
 void ScreenManager::SetNewScreen( const CString &sScreenName )
 {
+	ASSERT( sScreenName != "" );
 	m_sDelayedScreen = sScreenName;
 
 	/* If we're not delaying screen loads, load it now.  Otherwise, we'll load
