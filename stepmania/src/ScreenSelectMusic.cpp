@@ -345,7 +345,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	AfterMusicChange();
 	TweenOnScreen();
 
-//	this->SortByZ();
+	this->SortByZ();
 }
 
 
