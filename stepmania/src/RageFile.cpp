@@ -277,7 +277,7 @@ int RageFile::Seek( int offset )
 
 	/* If the new position is within the buffer, just eat the buffered data. */
 	int FromBuffer = offset - m_FilePos;
-	if( 0 < FromBuffer && FromBuffer <= m_BufUsed )
+	if( 0 <= FromBuffer && FromBuffer <= m_BufUsed )
 	{
 		m_FilePos += FromBuffer;
 		m_BufUsed -= FromBuffer;
@@ -289,6 +289,12 @@ int RageFile::Seek( int offset )
 	/* It's not.  Clear the buffer and do a real seek. */
 	ResetBuf();
 	
+	if( offset == 0 )
+	{
+		m_File->Rewind();
+		return 0;
+	}
+
 	int pos = m_File->Seek( offset );
 	if( pos == -1 )
 		return -1;
