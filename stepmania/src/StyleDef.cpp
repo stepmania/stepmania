@@ -47,7 +47,7 @@ StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI ) const
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		for( int t=0; t<MAX_NOTE_TRACKS; t++ )
+		for( int t=0; t<m_iColsPerPlayer; t++ )
 		{
 			if( m_ColumnInfo[p][t].controller == GameI.controller  &&
 				m_ColumnInfo[p][t].button == GameI.button )
