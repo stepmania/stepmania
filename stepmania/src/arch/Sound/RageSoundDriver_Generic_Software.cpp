@@ -38,9 +38,15 @@ int RageSound_Generic_Software::DecodeThread_start( void *p )
 	return 0;
 }
 
+static int g_TotalAhead = 0;
+static int g_TotalAheadCount = 0;
+
 void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno, int64_t current_frameno )
 {
 	RAGE_ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartDecodeThread() was never called" );
+
+	g_TotalAhead += (int) (frameno - current_frameno + frames);
+	++g_TotalAheadCount;
 
 	static SoundMixBuffer mix;
 
@@ -256,6 +262,7 @@ void RageSound_Generic_Software::Update(float delta)
 		int current_underruns = underruns;
 		if( current_underruns > logged_underruns )
 		{
+			LOG->MapLog( "GenericMixingUnderruns", "Mixing underruns: %i", current_underruns - logged_underruns );
 			LOG->Trace( "Mixing underruns: %i", current_underruns - logged_underruns );
 			logged_underruns = current_underruns;
 
@@ -391,6 +398,9 @@ RageSound_Generic_Software::~RageSound_Generic_Software()
 		LOG->Trace("Decode thread shut down.");
 		LOG->Flush();
 	}
+
+	LOG->Info( "Mixing %f ahead in %i Mix() calls",
+		float(g_TotalAhead) / max( g_TotalAheadCount, 1 ), g_TotalAheadCount );
 }
 
 /*
