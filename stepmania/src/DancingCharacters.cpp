@@ -95,6 +95,11 @@ void DancingCharacters::Update( float fDelta )
 		float fBPM = GAMESTATE->m_fCurBPS*60;
 		float fUpdateScale = SCALE( fBPM, 60.f, 300.f, 0.75f, 1.5f );
 		CLAMP( fUpdateScale, 0.75f, 1.5f );
+
+		/* It's OK for the animation to go slower than natural when we're
+		 * at a very low music rate. */
+		fUpdateScale *= GAMESTATE->m_SongOptions.m_fMusicRate;
+
 		ActorFrame::Update( fDelta*fUpdateScale );
 	}
 
