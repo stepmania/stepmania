@@ -29,24 +29,42 @@ struct TapNote
 					// Equivalent to all 4s aside from the first one.
 	};
 	unsigned source : 2;	// only valid if type!=empty
-	unsigned attackIndex : 3;	// attack index
-	// bit field sizes should add to 8 bits.
 
-	void Set( Type type_, Source source_, unsigned attackIndex_ )
+	bool bAttack : 1;	// true if this note causes an attack when hit
+	bool bKeysound : 1;	// true if this note plays a keysound when hit
+	
+	// CAREFUL: small fields grouped together for alignment.
+
+	uint8_t attackIndex;	// index into NoteData's vector of attacks
+							// Only valid if bAttack.
+	uint16_t keysoundIndex;	// index into Song's vector of keysound files.  
+							// Only valid if bKeysound.
+							// Some songs have > 256 keysounds.
+
+	void Set( 
+		Type type_, 
+		Source source_, 
+		bool bAttack_,
+		unsigned attackIndex_, 
+		bool bKeysound_,
+		unsigned keysoundIndex_ )
 	{
 		type = type_;
 		source = source_;
+		bAttack = bAttack_;
 		attackIndex = attackIndex_;
+		bKeysound = bKeysound_;
+		keysoundIndex = keysoundIndex_;
 	}
 	bool operator==( const TapNote &other )
 	{
 #define COMPARE(x)	if(x!=other.x) return false;
 		COMPARE(type);
 		COMPARE(source);
-//		COMPARE(bAttack);
-//		COMPARE(bKeysound);
+		COMPARE(bAttack);
+		COMPARE(bKeysound);
 		COMPARE(attackIndex);
-//		COMPARE(keysoundIndex);
+		COMPARE(keysoundIndex);
 #undef COMPARE
 		return true;
 	}

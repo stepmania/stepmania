@@ -71,16 +71,16 @@ enum BmsTrack
 	BMS_TRACK_INVALID,
 };
 
-static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, TapNote &tapNoteOut )
+static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, bool &bIsHoldOut )
 {
 	if( iRawTrack > 40 )
 	{
-		tapNoteOut = TAP_ORIGINAL_HOLD_HEAD;
+		bIsHoldOut = true;
 		iRawTrack -= 40;
 	}
 	else
 	{
-		tapNoteOut = TAP_ORIGINAL_TAP;
+		bIsHoldOut = false;
 	}
 
 	switch( iRawTrack )
@@ -178,7 +178,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	}
 }
 
-bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
+bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CString,unsigned> &mapWavIdToKeysoundIndex )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
@@ -262,7 +262,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		{
 			out.SetMeter(atoi(value_data));
 		}
-		else if( value_name.size() >= 6 && value_name[0] == '#'
+		else if( value_name.size() == 6 && value_name[0] == '#'
 			 && IsAnInt( value_name.substr(1,3) )
 			 && IsAnInt( value_name.substr(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
@@ -270,29 +270,46 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			int iRawTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
 			CString &sNoteData = value_data;
-			vector<bool> arrayNotes;
+			vector<TapNote> vTapNotes;
 
 			for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
 			{
-				bool bThisIsANote = sNoteData.substr(i,2) != "00";
-				arrayNotes.push_back( bThisIsANote );
+				CString sNoteId = sNoteData.substr(i,2);
+				if( sNoteId != "00" )
+				{
+					TapNote tn = TAP_ORIGINAL_TAP;
+					map<CString,unsigned>::const_iterator it = mapWavIdToKeysoundIndex.find(sNoteId);
+					if( it != mapWavIdToKeysoundIndex.end() )
+					{
+						tn.bKeysound = true;
+						tn.keysoundIndex = it->second;
+					}
+					vTapNotes.push_back( tn );
+				}
+				else
+				{
+					vTapNotes.push_back( TAP_EMPTY );
+				}
 			}
 
-			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
+			const unsigned uNumNotesInThisMeasure = vTapNotes.size();
 
-			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
+			for( unsigned j=0; j<uNumNotesInThisMeasure; j++ )
 			{
-				if( arrayNotes[j] )
+				if( vTapNotes[j].type != TapNote::empty )
 				{
-					float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
+					float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
 
 					const int iNoteIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 					BmsTrack bmsTrack;
-					TapNote tapNote;
-
-					if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, tapNote) )
-						pNoteData->SetTapNote(bmsTrack, iNoteIndex, tapNote);
+					bool bIsHold;
+					if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
+					{
+						TapNote tn = vTapNotes[j];
+						tn.type = bIsHold ? TapNote::hold_head : TapNote::tap;
+						pNoteData->SetTapNote(bmsTrack, iNoteIndex, tn);
+					}
 				}
 			}
 		}
@@ -434,6 +451,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
 
+	ASSERT( out.m_vsKeysoundFile.empty() );
+
 	CStringArray arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
@@ -441,20 +460,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	 * called to begin with. */
 	ASSERT( arrayBMSFileNames.size() );
 
-	// load the Steps from the rest of the BMS files
-	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
-	{
-		Steps* pNewNotes = new Steps;
-
-		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], 
-			*pNewNotes );
-		if( ok )
-			out.AddSteps( pNewNotes );
-		else
-			delete pNewNotes;
-	}
-
-	SlideDuplicateDifficulties( out );
+	// This maps from a BMS wav ID (e.g. "1A") to an entry in the Song's 
+	// keysound vector.  Fill this in below while parsing the song data.
+	map<CString,unsigned> mapWavIdToKeysoundIndex;
 
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
@@ -535,7 +543,15 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		{
 			out.m_sMusicFile = value_data;
 		}
-		else if( value_name.size() >= 6 && value_name[0] == '#'
+		else if( value_name.size() == 6 && value_name.Left(4) == "#wav" )	// this is keysound file name.  Looks like "#WAV1A"
+		{
+			CString sWavID = value_name.Right(2);
+			sWavID.MakeUpper();		// HACK: undo the MakeLower()
+			out.m_vsKeysoundFile.push_back( value_data );
+			mapWavIdToKeysoundIndex[ sWavID ] = out.m_vsKeysoundFile.size()-1;
+			LOG->Trace( "Inserting keysound index %u '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
+		}
+		else if( value_name.size() == 6 && value_name[0] == '#'
 			 && IsAnInt( value_name.substr(1,3) )
 			 && IsAnInt( value_name.substr(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
@@ -729,6 +745,27 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
 		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d",
 					out.m_Timing.m_BPMSegments[i].m_fStartBeat, out.m_Timing.m_BPMSegments[i].m_fBPM, i );
+
+
+	// Now that we've parsed the keysound data, load the Steps from the rest 
+	// of the .bms files.
+	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
+	{
+		Steps* pNewNotes = new Steps;
+
+		const bool ok = LoadFromBMSFile( 
+			out.GetSongDir() + arrayBMSFileNames[i], 
+			*pNewNotes,
+			mapWavIdToKeysoundIndex );
+		if( ok )
+			out.AddSteps( pNewNotes );
+		else
+			delete pNewNotes;
+	}
+
+	SlideDuplicateDifficulties( out );
+
+
 
 	return true;
 }

@@ -335,7 +335,18 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"NOTES") )
+		else if( 0==stricmp(sValueName,"KEYSOUNDS") )
+		{
+			CStringArray aKeysoundFiles;
+			split( sParams[1], ",", aKeysoundFiles );
+
+			for( unsigned k=0; k<aKeysoundFiles.size(); k++ )
+			{
+				out.m_vsKeysoundFile.push_back( aKeysoundFiles[k] );
+			}
+		}
+
+		else if( 0==stricmp(sValueName,"NOTES") || 0==stricmp(sValueName,"NOTES2") )
 		{
 			Steps* pNewNotes = new Steps;
 			ASSERT( pNewNotes );
@@ -347,8 +358,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 
 			LoadFromSMTokens( 
-				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:CString(""),
-				*pNewNotes);
+				sParams[1], 
+				sParams[2], 
+				sParams[3], 
+				sParams[4], 
+				sParams[5], 
+				sParams[6], 
+				(iNumParams>=8)?sParams[7]:CString(""),
+				*pNewNotes );
 
 			out.AddSteps( pNewNotes );
 		}

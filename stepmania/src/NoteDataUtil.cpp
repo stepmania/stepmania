@@ -92,25 +92,32 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 	//			if( m_iNumTracks != sMeasureLine.GetLength() )
 	//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
-				for( int c=0; c<min(sMeasureLine.GetLength(),out.GetNumTracks()); c++ )
+				const char *p = sMeasureLine;
+				int iTrack = 0;
+				while( *p )
 				{
-					TapNote t;
-					char ch = sMeasureLine[c];
+					TapNote tn;
+					char ch = *p;
 					switch( ch )
 					{
-					case '0': t = TAP_EMPTY;				break;
-					case '1': t = TAP_ORIGINAL_TAP;			break;
-					case '2': t = TAP_ORIGINAL_HOLD_HEAD;	break;
-					case '3': t = TAP_ORIGINAL_HOLD_TAIL;	break;
+					case '0': tn = TAP_EMPTY;				break;
+					case '1': tn = TAP_ORIGINAL_TAP;		break;
+					case '2': tn = TAP_ORIGINAL_HOLD_HEAD;	break;
+					case '3': tn = TAP_ORIGINAL_HOLD_TAIL;	break;
 	//				case 'm':
 					// Don't be loose with the definition.  Use only 'M' since
 					// that's what we've been writing to disk.  -Chris
-					case 'M': 
-						t = TAP_ORIGINAL_MINE;		break;					
+					case 'M': tn = TAP_ORIGINAL_MINE;		break;
 					default: 
 						if( ch >= 'a' && ch <= 'z' )
 						{
-							t.Set( TapNote::attack, TapNote::original, ch - 'a' );
+							tn.Set( 
+								TapNote::attack, 
+								TapNote::original, 
+								true,
+								ch - 'a', 
+								false,
+								0 );
 						}
 						else
 						{
@@ -119,11 +126,39 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 							 * due to invalid data.  We should probably check for this when
 							 * we load SM data for the first time ... */
 							// ASSERT(0); 
-							t = TAP_EMPTY;
+							tn = TAP_EMPTY;
 						}
 						break;
 					}
-					out.SetTapNote(c, iIndex, t);
+					
+					p++;
+					
+					// look for optional keysound index (e.g. "[123]")
+					if( *p == '[' )
+					{
+						p++;
+						unsigned uKeysoundIndex = 0;
+						if( 1 == sscanf( p, "%u]", &uKeysoundIndex ) )	// not fatal if this fails due to malformed data
+						{
+							tn.bKeysound = true;
+							tn.keysoundIndex = uKeysoundIndex;
+						}
+
+						// skip past the ']'
+						while( *p )
+						{
+							if( *p == '[]' )
+							{
+								p++;
+								break;
+							}
+							p++;
+						}
+					}
+
+					out.SetTapNote( iTrack, iIndex, tn );
+
+					iTrack++;
 				}
 			}
 		}
@@ -221,6 +256,11 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 						break;
 					}
 					sRet.append(1, c);
+
+					if( tn.bKeysound )
+					{
+						sRet.append( ssprintf("[%u]",tn.keysoundIndex) );
+					}
 				}
 				
 				sRet.append(1, '\n');

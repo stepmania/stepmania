@@ -275,7 +275,13 @@ void NoteData::SetTapAttackNote( int track, int row, Attack attack )
 		{
 			m_AttackMap[i] = attack;
 			TapNote tn;
-			tn.Set( TapNote::attack, TapNote::original, i );
+			tn.Set( 
+				TapNote::attack, 
+				TapNote::original, 
+				true,
+				i, 
+				false,
+				0 );
 			SetTapNote( track, row, tn );
 			return;
 		}

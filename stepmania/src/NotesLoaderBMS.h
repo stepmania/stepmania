@@ -4,13 +4,14 @@
 #include "NotesLoader.h"
 #include "GameConstantsAndTypes.h"
 #include "NoteTypes.h"
+#include <map>
 
 class Song;
 class Steps;
 
 class BMSLoader: public NotesLoader
 {
-	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
+	bool LoadFromBMSFile( const CString &sPath, Steps &out1, const map<CString,unsigned> &mapWavIdToKeysoundIndex );
 
 	void SlideDuplicateDifficulties( Song &p );
 

@@ -195,6 +195,13 @@ public:
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
+	// An array of keysound file names (e.g. "beep.wav").
+	// The index in this array corresponds to the index in TapNote.  If you 
+	// change the index in here, you must change all NoteData too.
+	// Any note that doesn't have a value in the range of this array
+	// means "this note doens't have a keysound".
+	vector<CString> m_vsKeysoundFile;
+
 private:
 	void AdjustDuplicateSteps(); // part of TidyUpData
 	void DeleteDuplicateSteps( vector<Steps*> &vSteps );

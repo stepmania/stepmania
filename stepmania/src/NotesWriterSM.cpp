@@ -107,6 +107,15 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 		}
 		f.PutLine( ";" );
 	}
+
+	f.Write( "#KEYSOUNDS:" );
+	for( unsigned i=0; i<out.m_vsKeysoundFile.size(); i++ )
+	{
+		f.Write( out.m_vsKeysoundFile[i] );
+		if( i != out.m_vsKeysoundFile.size()-1 )
+			f.Write( "," );
+	}
+	f.PutLine( ";" );
 }
 
 static void WriteLineList( RageFile &f, vector<CString> &lines, bool SkipLeadingBlankLines, bool OmitLastNewline )
@@ -127,12 +136,12 @@ static void WriteLineList( RageFile &f, vector<CString> &lines, bool SkipLeading
 	}
 }
 
-void NotesWriterSM::WriteSMNotesTag( const Steps &in, RageFile &f, bool bSavingCache )
+void NotesWriterSM::WriteSMNotesTag( const Song &song, const Steps &in, RageFile &f, bool bSavingCache )
 {
 	f.PutLine( "" );
 	f.PutLine( ssprintf( "//---------------%s - %s----------------",
 		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() ) );
-	f.PutLine( "#NOTES:" );
+	f.PutLine( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 	f.PutLine( ssprintf( "     %s:", GameManager::StepsTypeToString(in.m_StepsType).c_str() ) );
 	f.PutLine( ssprintf( "     %s:", in.GetDescription().c_str() ) );
 	f.PutLine( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
@@ -217,7 +226,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
-		WriteSMNotesTag( *pSteps, f, bSavingCache );
+		WriteSMNotesTag( out, *pSteps, f, bSavingCache );
 	}
 
 	return true;
