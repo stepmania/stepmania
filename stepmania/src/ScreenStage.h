@@ -11,6 +11,10 @@
 
 #include "Screen.h"
 #include "Transition.h"
+#include "Sprite.h"
+#include "Character.h"
+#include "BitmapText.h"
+#include "Banner.h"
 
 class ScreenStage : public Screen
 {
@@ -53,7 +57,13 @@ private:
 */
 	Transition	m_In, m_Out, m_Back;
 	BGAnimation				m_Background;
+	BGAnimation				m_Overlay; // overlays all elements except bitmaptexts
+	Banner			m_Banner;
+	BitmapText		m_SongTitle;
+	BitmapText		m_Artist;
 
+	// elements that cannot be created with BGAnimation
+	Sprite m_sprCharacterIcon[NUM_PLAYERS];
 protected:
 
 };

@@ -103,6 +103,32 @@ CString Character::GetSongSelectIconPath() const
 		return as[0];
 }
 
+CString Character::GetStageIconPath() const
+{
+	CStringArray as;
+	// first try and find an icon specific to the select music screen
+	// so you can have different icons for music select / char select
+	GetDirListing( m_sCharDir+"stageicon.png", as, false, true );
+	GetDirListing( m_sCharDir+"stageicon.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"stageicon.gif", as, false, true );
+	GetDirListing( m_sCharDir+"stageicon.bmp", as, false, true );
+
+	if( as.empty() )
+	{
+		// if that failed, try using the regular icon
+		GetDirListing( m_sCharDir+"card.png", as, false, true );
+		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"card.gif", as, false, true );
+		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
+		if( as.empty() )
+			return "";
+		else
+			return as[0];
+	}
+	else
+		return as[0];
+}
+
 CString Character::GetCardPath() const
 {
 	CStringArray as;

@@ -34,6 +34,7 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
+
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH						THEME->GetMetricF("ScreenEvaluation","BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenEvaluation","BannerHeight")
@@ -63,6 +64,7 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
 #define SHOW_STAT( s )						THEME->GetMetricB(m_sName,ssprintf("Show%s",STATS_STRING[l]))
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
+#define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
 #define SHOW_COMBO_AREA						THEME->GetMetricB(m_sName,"ShowComboArea")
@@ -257,8 +259,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_SoundSequences.push_back(temp);
 		}
 	}
-	m_timerSoundSequences.SetZero(); // zero the sound sequence timer
-	m_timerSoundSequences.Touch(); // set the timer going :]
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
 	if(m_bFailed && m_Type==stage)
 	{
@@ -650,6 +650,39 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		}
 	}
 
+	if( SHOW_TOTAL_SCORE_AREA )
+	{
+		m_sprTotalScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation totalscore labels 1x2") );
+		m_sprTotalScoreLabel.SetState( 0 );
+		m_sprTotalScoreLabel.StopAnimating();
+		m_sprTotalScoreLabel.SetName( "TotalScoreLabel" );
+		UtilSetXYAndOnCommand( m_sprTotalScoreLabel, "ScreenEvaluation" );
+		this->AddChild( &m_sprTotalScoreLabel );
+
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;	// skip
+
+			int iTotalScore=0;
+
+			int i=0;
+			for(i=0; i<GAMESTATE->m_vPlayedStageStats.size();i++)
+				iTotalScore += GAMESTATE->m_vPlayedStageStats[i].iScore[p];
+
+			iTotalScore += stageStats.iScore[p];
+
+			m_textTotalScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation totalscore") );
+			m_textTotalScore[p].EnableShadow( false );
+			m_textTotalScore[p].SetDiffuse( PlayerToColor(p) );
+			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
+			m_textTotalScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS+2, iTotalScore) );
+			UtilSetXYAndOnCommand( m_textTotalScore[p], "ScreenEvaluation" );
+
+			this->AddChild( &m_textTotalScore[p] );
+		}
+	}
+
 	//
 	// init time area
 	//
@@ -791,6 +824,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
+	m_timerSoundSequences.SetZero(); // zero the sound sequence timer
+	m_timerSoundSequences.Touch(); // set the timer going :]
 	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
 }
 
@@ -1072,6 +1107,18 @@ void ScreenEvaluation::TweenOffScreen()
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
 			UtilOffCommand( m_textScore[p], "ScreenEvaluation" );
+		}
+	}
+
+	// total score area
+	if( SHOW_TOTAL_SCORE_AREA )
+	{
+		UtilOffCommand( m_sprTotalScoreLabel, "ScreenEvaluation" );
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_textTotalScore[p], "ScreenEvaluation" );
 		}
 	}
 

@@ -296,6 +296,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
+	m_bgOverlay.SetName( "BGAOverlay");
+	m_bgOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenSelectMusic Overlay"));
+	this->AddChild( &m_bgOverlay );
 
 	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 	m_soundChangeNotes.Load( THEME->GetPathToS("ScreenSelectMusic difficulty") );

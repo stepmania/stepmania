@@ -120,6 +120,10 @@ protected:
 	Sprite				m_sprScoreLabel;
 	BitmapText			m_textScore[NUM_PLAYERS];
 
+	// total score area
+	Sprite				m_sprTotalScoreLabel;
+	BitmapText			m_textTotalScore[NUM_PLAYERS];
+
 	// time area
 	Sprite				m_sprTimeLabel;
 	BitmapText			m_textTime[NUM_PLAYERS];

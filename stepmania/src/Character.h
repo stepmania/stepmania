@@ -30,6 +30,7 @@ public:
 	CString GetWarmUpAnimationPath() const;
 	CString GetDanceAnimationPath() const;
 	CString GetSongSelectIconPath() const;
+	CString GetStageIconPath() const;
 	bool Has2DElems();
 
 

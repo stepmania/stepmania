@@ -29,6 +29,7 @@
 #include "HelpDisplay.h"
 #include "PaneDisplay.h"
 #include "Character.h"
+#include "BGAnimation.h"
 
 class ScreenSelectMusic : public Screen
 {
@@ -110,6 +111,8 @@ protected:
 	CString				m_sSampleMusicToPlay, m_sSampleMusicTimingData;
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
+
+	BGAnimation			m_bgOverlay;
 
 	RageSound			m_soundSelect;
 	RageSound			m_soundChangeNotes;

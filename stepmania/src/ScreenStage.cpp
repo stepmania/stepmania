@@ -1,4 +1,5 @@
 #include "global.h"
+#include "ActorUtil.h"
 /*
 -----------------------------------------------------------------------------
  Class: ScreenStage
@@ -23,7 +24,7 @@
 #include "RageSounds.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"
-
+#include "Song.h"
 
 #define NEXT_SCREEN				THEME->GetMetric ("ScreenStage","NextScreen")
 
@@ -63,6 +64,8 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenStage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_Background );
 
+	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenStage Overlay"));
+
 	m_In.Load( THEME->GetPathToB("ScreenStage in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
@@ -72,7 +75,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	m_Back.Load( THEME->GetPathToB("Common back") );
 	this->AddChild( &m_Back );
-	
+
 	/* Prep the new screen once the animation is complete.  This way, we
 	 * start loading the gameplay screen as soon as possible. */
 	this->PostScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
@@ -88,6 +91,45 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	this->PostScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
 
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		Character* pChar = GAMESTATE->m_pCurCharacters[p];
+		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
+		m_sprCharacterIcon[p].Load( pChar->GetStageIconPath() );
+		SET_XY( m_sprCharacterIcon[p] );
+	//	this->AddChild( &m_sprCharacterIcon[p] );
+		ON_COMMAND( m_sprCharacterIcon[p] );
+	}
+
+	m_SongTitle.SetName( "SongTitle");
+	m_Artist.SetName( "Artist" );
+	m_SongTitle.LoadFromFont( THEME->GetPathToF("ScreenStage Title") );
+	m_Artist.LoadFromFont( THEME->GetPathToF("ScreenStage Artist") );
+
+	if(GAMESTATE->m_pCurSong != NULL)
+	{
+		m_SongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
+		m_Artist.SetText( GAMESTATE->m_pCurSong->m_sArtist );
+	}
+	else
+	{
+		m_SongTitle.SetText( "" );
+		m_Artist.SetText( "" );
+	}
+
+	SET_XY( m_Artist );
+	SET_XY( m_SongTitle );
+	ON_COMMAND( m_Artist );
+	ON_COMMAND( m_SongTitle );
+
+	if ( PREFSMAN->m_bShowBanners )
+		if( GAMESTATE->m_pCurSong != NULL)
+			if( GAMESTATE->m_pCurSong->HasBanner() )
+				m_Banner.LoadFromSong( GAMESTATE->m_pCurSong );
+	m_Banner.SetName("Banner");
+	SET_XY( m_Banner );
+	ON_COMMAND(m_Banner);
 
 	//g_StageType = (StageType)STAGE_TYPE; 
 
@@ -567,11 +609,35 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 void ScreenStage::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_sprCharacterIcon[p].Update(fDeltaTime);
+	}
+	m_Overlay.Update(fDeltaTime);
+	if ( PREFSMAN->m_bShowBanners )
+		if( GAMESTATE->m_pCurSong != NULL)
+			if( GAMESTATE->m_pCurSong->HasBanner() )
+				m_Banner.Update(fDeltaTime);
+	m_SongTitle.Update(fDeltaTime);
+	m_Artist.Update(fDeltaTime);
 }
 
 void ScreenStage::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_sprCharacterIcon[p].Draw();
+	}
+	m_Overlay.Draw();
+	if ( PREFSMAN->m_bShowBanners )
+		if( GAMESTATE->m_pCurSong != NULL)
+			if( GAMESTATE->m_pCurSong->HasBanner() )
+				m_Banner.Draw();
+	m_SongTitle.Draw();
+	m_Artist.Draw();
 }
 
 void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
@@ -583,6 +649,14 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BeginFadingOut:
 		m_Out.StartTransitioning( SM_GoToNextScreen );
+		int p;
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			OFF_COMMAND( m_sprCharacterIcon[p] );
+		}
+		OFF_COMMAND( m_SongTitle );
+		OFF_COMMAND( m_Artist );
+		OFF_COMMAND( m_Banner );
 		break;
 	//case SM_StartFadingOut:
 	//	m_Fade.CloseWipingRight( SM_GoToNextScreen );
