@@ -31,7 +31,7 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 		 * search instead of string match). */
 		if(containing.size())
 		{
-			unsigned pos = i->name.find(containing, beginning.size());
+			size_t pos = i->name.find(containing, beginning.size());
 			if(pos == i->name.npos) continue; /* doesn't contain it */
 			if(pos + containing.size() > unsigned(end_pos)) continue; /* found it but it overlaps with the end */
 		}
@@ -87,7 +87,7 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 	if( Path.Right(1) == "/" )
 		Path.erase( Path.size()-1 );
 
-	unsigned sep = Path.find_last_of( '/' );
+	size_t  sep = Path.find_last_of( '/' );
 	if( sep == CString::npos )
 	{
 		Dir = "";
@@ -196,13 +196,13 @@ void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<C
 void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
 {
 	/* Does this contain a wildcard? */
-	unsigned first_pos = fn.find_first_of('*');
+	size_t  first_pos = fn.find_first_of('*');
 	if(first_pos == fn.npos)
 	{
 		/* No; just do a regular search. */
 		GetFilesEqualTo(dir, fn, out, bOnlyDirs);
 	} else {
-		unsigned second_pos = fn.find_first_of('*', first_pos+1);
+		size_t  second_pos = fn.find_first_of('*', first_pos+1);
 		if(second_pos == fn.npos)
 		{
 			/* Only one *: "A*B". */
@@ -392,7 +392,7 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 	ASSERT(!sPath.empty());
 
 	/* Strip off the last path element and use it as a mask. */
-	unsigned pos = sPath.find_last_of( '/' );
+	size_t  pos = sPath.find_last_of( '/' );
 	CString fn;
 	if( pos == sPath.npos )
 	{

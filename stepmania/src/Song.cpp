@@ -352,7 +352,7 @@ static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturn
 
 static CString RemoveInitialWhitespace( CString s )
 {
-	unsigned i = s.find_first_not_of(" \t\r\n");
+	size_t i = s.find_first_not_of(" \t\r\n");
 	if( i != s.npos )
 		s.erase( 0, i );
 	return s;

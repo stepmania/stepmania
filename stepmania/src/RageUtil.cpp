@@ -255,10 +255,10 @@ CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStr
 template <class S>
 void do_split( const S &Source, const S &Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
 {
-	unsigned startpos = 0;
+	size_t startpos = 0;
 
 	do {
-		unsigned pos;
+		size_t pos;
 		if( Delimitor.size() == 1 )
 			pos = Source.find( Delimitor[0], startpos );
 		else
@@ -323,7 +323,7 @@ void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int l
 
 	/* Where's the string function to find within a substring?  C++ strings apparently
 	 * are missing that ... */
-	unsigned pos;
+	size_t pos;
 	if( Delimitor.size() == 1 )
 		pos = Source.find( Delimitor[0], begin );
 	else
@@ -400,11 +400,11 @@ CString SetExtension( const CString &path, const CString &ext )
 
 CString GetExtension( const CString &sPath )
 {
-	unsigned pos = sPath.rfind( '.' );
+	size_t pos = sPath.rfind( '.' );
 	if( pos == sPath.npos )
 		return "";
 
-	unsigned slash = sPath.find( '/', pos );
+	size_t slash = sPath.find( '/', pos );
 	if( slash != sPath.npos )
 		return ""; /* rare: path/dir.ext/fn */
 
@@ -1007,7 +1007,7 @@ void Replace_Unicode_Markers( CString &Text )
 	{
 		/* Look for &#digits; */
 		bool hex = false;
-		unsigned pos = Text.find("&#", start);
+		size_t pos = Text.find("&#", start);
 		if(pos == Text.npos) {
 			hex = true;
 			pos = Text.find("&x", start);
@@ -1058,11 +1058,11 @@ CString WcharDisplayText(wchar_t c)
  */
 CString Basename( const CString &dir )
 {
-	unsigned end = dir.find_last_not_of( "/\\" );
+	size_t  end = dir.find_last_not_of( "/\\" );
 	if( end == dir.npos )
 		return "";
 
-	unsigned start = dir.find_last_of( "/\\", end );
+	size_t  start = dir.find_last_of( "/\\", end );
 	if( start == dir.npos )
 		start = 0;
 	else

@@ -316,7 +316,7 @@ void ReplaceText( CString &Text, const map<CString,CString> &m )
 	
 	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
 	{
-		unsigned start = 0;
+		size_t start = 0;
 		while(1)
 		{
 			unsigned pos = txt.find(it->first, start);

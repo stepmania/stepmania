@@ -847,7 +847,7 @@ bool GetCommandlineArgument( const CString &option, CString *argument, int iInde
 	{
 		const CString CurArgument = g_argv[arg];
 
-		const unsigned i = CurArgument.find( "=" );
+		const size_t i = CurArgument.find( "=" );
 		CString CurOption = CurArgument.substr(0,i);
 		if( CurOption.CompareNoCase(optstr) )
 			continue; /* no match */

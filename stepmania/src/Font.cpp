@@ -438,9 +438,9 @@ void Font::GetFontPaths(const CString &sFontOrTextureFilePath,
 
 CString Font::GetPageNameFromFileName(const CString &fn)
 {
-	unsigned begin = fn.find_first_of('[');
+	size_t begin = fn.find_first_of('[');
 	if(begin == fn.npos) return "main";
-	unsigned end = fn.find_first_of(']', begin);
+	size_t end = fn.find_first_of(']', begin);
 	if(end == fn.npos) return "main";
 	begin++; end--;
 	if(end == begin) return "main";

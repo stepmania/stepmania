@@ -91,7 +91,7 @@ static CString GetDirOfExecutable( CString argv0 )
 #endif
 
 	// strip off executable name
-	unsigned n = sPath.find_last_of("/");
+	size_t n = sPath.find_last_of("/");
 	if( n != sPath.npos )
 		sPath.erase(n);
 	else
