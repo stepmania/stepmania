@@ -185,6 +185,7 @@ if HAVE_GTK
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
+		    arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    $(PCRE) \
 		    $(Loading) \
