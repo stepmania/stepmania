@@ -304,7 +304,7 @@ void RageBitmapTexture::Create()
 	 * a texture when it's reused from our texture cache if it hasn't been used
 	 * in a long time). */
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 0.5f);
-	if(GetFilePath().Find("danger"))
+	if(GetFilePath().Find("danger") != -1)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
 
 	int pixfmt = desired_rgba_pixfmt;
