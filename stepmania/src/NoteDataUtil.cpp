@@ -658,15 +658,39 @@ void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 
 	int iRowCount = 0;
 	for( int r=first_row; r<=last_row; r++ )
+	{
 		if( !in.IsRowEmpty(r) )
 		{
 			iRowCount++;
+
 			// place every 6 or 7 rows
-			if( (iRowCount%7)==6 || ((iRowCount%7)==5 && rand()%2) )
+			if( (iRowCount>=7) || (iRowCount>=6 && rand()%2) )
+			{
 				for( int t=0; t<in.GetNumTracks(); t++ )
 					if( in.GetTapNote(t,r) == TAP_TAP )
 						in.SetTapNote(t,r,TAP_MINE);
+				
+				iRowCount = 0;
+			}
 		}
+	}
+
+	// Place mines right after hold so players must lift their foot.
+	for( int i=0; i<in.GetNumHoldNotes(); i++ )
+	{
+		HoldNote &hn = in.GetHoldNote(i);
+		float fHoldEndBeat = hn.fEndBeat;
+		int iMineRow = BeatToNoteRow( fHoldEndBeat+0.5f );
+		
+		// Add a mine right after the hold end.h
+		in.SetTapNote(hn.iTrack,iMineRow,TAP_MINE);
+
+		// Convert all other notes in this row to mines.
+		for( int t=0; t<in.GetNumTracks(); t++ )
+			if( in.GetTapNote(t,iMineRow) == TAP_TAP )
+				in.SetTapNote(t,iMineRow,TAP_MINE);
+		
+	}
 }
 
 
