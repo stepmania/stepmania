@@ -94,14 +94,14 @@ int DifficultyList::GetCurrentRowIndex( PlayerNumber pn ) const
 	{
 		const Row &row = m_Rows[i];
 
-		if( GAMESTATE->m_pCurNotes[pn] == NULL )
+		if( GAMESTATE->m_pCurSteps[pn] == NULL )
 		{
 			if( row.m_dc == GAMESTATE->m_PreferredDifficulty[pn] )
 				return i;
 		}
 		else
 		{
-			if( GAMESTATE->m_pCurNotes[pn] == row.m_Steps )
+			if( GAMESTATE->m_pCurSteps[pn] == row.m_Steps )
 				return i;
 		}
 	}

@@ -203,8 +203,8 @@ void MusicWheelItem::RefreshGrades()
 		}
 
 		Difficulty dc;
-		if( GAMESTATE->m_pCurNotes[p] )
-			dc = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
+		if( GAMESTATE->m_pCurSteps[p] )
+			dc = GAMESTATE->m_pCurSteps[p]->GetDifficulty();
 		else
 			dc = GAMESTATE->m_PreferredDifficulty[p];
 		Grade grade;

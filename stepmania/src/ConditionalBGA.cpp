@@ -376,9 +376,9 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			{
 				if(GAMESTATE->IsPlayerEnabled(pn))
 				{
-					if(GAMESTATE->m_pCurNotes[pn] != NULL)
+					if(GAMESTATE->m_pCurSteps[pn] != NULL)
 					{
-						if(GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == info.difficulties[d])
+						if(GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == info.difficulties[d])
 						{
 							foundmatchingdiff = true;
 							LOG->Info("Found Valid Difficulty");
@@ -458,19 +458,19 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			{
 				if(GAMESTATE->IsPlayerEnabled(pn))
 				{
-					if(GAMESTATE->m_pCurNotes[pn] != NULL)
+					if(GAMESTATE->m_pCurSteps[pn] != NULL)
 					{			
 						if(info.songmeters[d] < 0) // negative values stored mean we want to check a value greaterthan or equal to its negative
 						{
 							// first make it positive then check to see if the footrating is >= to it
 							int tmp = 0 - info.songmeters[d];
-							if(GAMESTATE->m_pCurNotes[pn]->GetMeter() >= tmp)
+							if(GAMESTATE->m_pCurSteps[pn]->GetMeter() >= tmp)
 							{
 								LOG->Info("Found Valid MeterRating");
 								foundmatchingmeter = true;
 							}
 						}
-						else if(GAMESTATE->m_pCurNotes[pn]->GetMeter() == info.songmeters[d])
+						else if(GAMESTATE->m_pCurSteps[pn]->GetMeter() == info.songmeters[d])
 						{
 							LOG->Info("Found Valid MeterRating");
 							foundmatchingmeter = true;

@@ -83,7 +83,7 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 
 	if( m_pSong && GAMESTATE->m_pCurSong != m_pSong )
 		return false;
-	if( m_pSteps && GAMESTATE->m_pCurNotes[pn] != m_pSteps )
+	if( m_pSteps && GAMESTATE->m_pCurSteps[pn] != m_pSteps )
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
@@ -424,7 +424,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	if( m_pSong )
 		GAMESTATE->m_pCurSong = m_pSong;
 	if( m_pSteps )
-		GAMESTATE->m_pCurNotes[pn] = m_pSteps;
+		GAMESTATE->m_pCurSteps[pn] = m_pSteps;
 	if( m_pCourse )
 		GAMESTATE->m_pCurCourse = m_pCourse;
 	if( m_pCharacter )

@@ -279,7 +279,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	SCREENMAN->RefreshCreditsMessages();
 
 	m_pSong = GAMESTATE->m_pCurSong;
-	m_pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	m_pAttacksFromCourse = NULL;
 
 	NoteData noteData;
@@ -585,7 +585,7 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).c_str() );
 	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).c_str() );
 	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
-	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().c_str() : "no description" );
+	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurSteps[PLAYER_1] ? GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription().c_str() : "no description" );
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
 	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.c_str() );
 	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapNotes );
@@ -945,7 +945,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_F6:
 		{
 			// save current steps
-			Steps* pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
 			pSteps->SetNoteData( &m_NoteFieldEdit );
 
@@ -983,7 +983,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			pSteps = *it;
-			GAMESTATE->m_pCurNotes[PLAYER_1] = m_pSteps = pSteps;
+			GAMESTATE->m_pCurSteps[PLAYER_1] = m_pSteps = pSteps;
 			pSteps->GetNoteData( &m_NoteFieldEdit );
 			SCREENMAN->SystemMessage( ssprintf(
 				"Switched to %s %s '%s'",
@@ -1350,7 +1350,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_pCurSong->RevertFromDisk( true );
 		/* We might do something with m_pSteps (eg. UpdateTextInfo) before we end up
 		 * in ScreenEditMenu, and m_pSteps might be invalid due to RevertFromDisk. */
-		m_pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case SM_BackFromMainMenu:
@@ -1421,7 +1421,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		StepsID id;
 		id.FromSteps( m_pSteps );
 
-		GAMESTATE->m_pCurNotes[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
+		GAMESTATE->m_pCurSteps[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
 		GAMESTATE->m_pCurSong->RevertFromDisk();
 
 		CString sMessage = "Reloaded from disk.";
@@ -1452,7 +1452,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->SystemMessage( sMessage );
 
-		m_pSteps = GAMESTATE->m_pCurNotes[PLAYER_1] = pSteps;
+		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1] = pSteps;
 		m_pSteps->GetNoteData( &m_NoteFieldEdit );
 
 		break;
@@ -1497,7 +1497,7 @@ void ScreenEdit::OnSnapModeChange()
 
 void ChangeDescription( CString sNew )
 {
-	Steps* pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetDescription(sNew);
 }
 
@@ -1554,7 +1554,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			{
 				/* XXX: If the difficulty is changed from EDIT, and pSteps->WasLoadedFromProfile()
 				 * is true, we should warn that the steps will no longer be saved to the profile. */
-				Steps* pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
 				g_EditNotesStatistics.rows[difficulty].defaultChoice = pSteps->GetDifficulty();
@@ -1589,7 +1589,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 		case save:
 			{
 				// copy edit into current Steps
-				Steps* pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				ASSERT( pSteps );
 
 				pSteps->SetNoteData( &m_NoteFieldEdit );
@@ -1884,8 +1884,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 						continue;
 
 					/* XXX: Edits are distinguished by description.  Compare vs m_pSteps. */
-					if( (sIter[i]->m_StepsType == GAMESTATE->m_pCurNotes[PLAYER_1]->m_StepsType) &&
-						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty()) )
+					if( (sIter[i]->m_StepsType == GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType) &&
+						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurSteps[PLAYER_1]->GetDifficulty()) )
 						continue;
 
 					sIter[i]->GetNoteData( &ndTemp );
@@ -1937,7 +1937,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				{
 					/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
 					 * and recalc it. */
-					Steps* pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+					Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 					ASSERT( pSteps );
 					pSteps->SetNoteData( &m_NoteFieldEdit );
 					m_pSong->ReCalculateRadarValuesAndLastBeat();
@@ -2083,7 +2083,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers )
 {
-	Steps* pSteps = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
 	pSteps->SetDifficulty( dc );
 	int iMeter = iAnswers[meter]+1;

@@ -178,7 +178,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 	}
 	else
 	{
-		Steps* pSteps = GAMESTATE->m_pCurNotes[pn];
+		Steps* pSteps = GAMESTATE->m_pCurSteps[pn];
 		if( pSteps )
 			SetFromNotes( pSteps );
 		else

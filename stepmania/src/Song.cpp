@@ -300,7 +300,7 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
 	for( int p = 0; p < NUM_PLAYERS; ++p )
 	{
-		OldCurNotes[p].FromSteps( GAMESTATE->m_pCurNotes[p] );
+		OldCurNotes[p].FromSteps( GAMESTATE->m_pCurSteps[p] );
 		OldCurStageStats[p].FromSteps( g_CurStageStats.pSteps[p] );
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
@@ -329,7 +329,7 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 		{
 			CHECKPOINT;
 			if( GAMESTATE->m_pCurSong == this )
-				GAMESTATE->m_pCurNotes[p] = OldCurNotes[p].ToSteps( this, bAllowNotesLoss );
+				GAMESTATE->m_pCurSteps[p] = OldCurNotes[p].ToSteps( this, bAllowNotesLoss );
 			CHECKPOINT;
 			if( g_CurStageStats.pSong == this )
 				g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( this, bAllowNotesLoss );

@@ -81,7 +81,7 @@ void LifeMeterBattery::OnSongEnded()
 	if( m_iLivesLeft < GAMESTATE->m_SongOptions.m_iBatteryLives )
 	{
 		m_iTrailingLivesLeft = m_iLivesLeft;
-		m_iLivesLeft += ( GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetMeter()>=8 ? 2 : 1 );
+		m_iLivesLeft += ( GAMESTATE->m_pCurSteps[m_PlayerNumber]->GetMeter()>=8 ? 2 : 1 );
 		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.m_iBatteryLives );
 		m_soundGainLife.Play();
 	}

@@ -165,7 +165,7 @@ void MusicWheel::Load()
 		{
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
-				GAMESTATE->m_pCurNotes[p] = pSteps;
+				GAMESTATE->m_pCurSteps[p] = pSteps;
 				GAMESTATE->m_PlayerOptions[p] = po;
 				GAMESTATE->m_PreferredDifficulty[p] = pSteps->GetDifficulty();
 			}

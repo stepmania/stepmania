@@ -96,7 +96,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 		// Found something we can use!
 		GAMESTATE->m_pCurSong = pSong;
 		FOREACH_PlayerNumber( p )
-			GAMESTATE->m_pCurNotes[p] = pSteps;
+			GAMESTATE->m_pCurSteps[p] = pSteps;
 		
 		return true;	// done looking
 	}

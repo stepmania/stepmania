@@ -1072,7 +1072,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		{
 			if( !GAMESTATE->IsHumanPlayer( (PlayerNumber)p ) )
 				continue;	// skip
-			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->GetMeter() >= 10 )
+			if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
 				bIsHard = true;
 		}
 
@@ -1194,7 +1194,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pSteps = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
 
-	GAMESTATE->m_pCurNotes[pn] = pSteps;
+	GAMESTATE->m_pCurSteps[pn] = pSteps;
 
 	if( pSteps )
 	{

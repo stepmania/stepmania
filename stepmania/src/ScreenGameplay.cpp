@@ -151,7 +151,7 @@ void ScreenGameplay::Init()
 
 	// fill in difficulty of CPU players with that of the first human player
     FOREACH_PotentialCpuPlayer(p)
-        GAMESTATE->m_pCurNotes[p] = GAMESTATE->m_pCurNotes[ GAMESTATE->GetFirstHumanPlayer() ];
+        GAMESTATE->m_pCurSteps[p] = GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ];
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -227,7 +227,7 @@ void ScreenGameplay::Init()
 		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
         FOREACH_PlayerNumber(p)
 		{
-			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurNotes[p] );
+			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurSteps[p] );
 			m_asModifiersQueue[p].push_back( AttackArray() );
 		}
 	}
@@ -795,7 +795,7 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	/* This is the first beat that can be changed without it being visible.  Until
 	 * we draw for the first time, any beat can be changed. */
 	GAMESTATE->m_fLastDrawnBeat[p] = -100;
-	GAMESTATE->m_pCurNotes[p] = m_vpStepsQueue[p][iSongIndex];
+	GAMESTATE->m_pCurSteps[p] = m_vpStepsQueue[p][iSongIndex];
 
 	// Put course options into effect.
 	GAMESTATE->m_ModsToApply[p].clear();
@@ -817,7 +817,7 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
 
 	NoteData pOriginalNoteData;
-	GAMESTATE->m_pCurNotes[p]->GetNoteData( &pOriginalNoteData );
+	GAMESTATE->m_pCurSteps[p]->GetNoteData( &pOriginalNoteData );
 	
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	NoteData pNewNoteData;
@@ -878,10 +878,10 @@ void ScreenGameplay::LoadNextSong()
 			SetupSong( p, iPlaySongIndex );
 
 			Song* pSong = GAMESTATE->m_pCurSong;
-			Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 
-			ASSERT( GAMESTATE->m_pCurNotes[p] );
-			m_textStepsDescription[p].SetText( GAMESTATE->m_pCurNotes[p]->GetDescription() );
+			ASSERT( GAMESTATE->m_pCurSteps[p] );
+			m_textStepsDescription[p].SetText( GAMESTATE->m_pCurSteps[p]->GetDescription() );
 
 			/* Increment the play count even if the player fails.  (It's still popular,
 			 * even if the people playing it aren't good at it.) */
@@ -912,13 +912,13 @@ void ScreenGameplay::LoadNextSong()
 					PREFSMAN->m_iProgressiveNonstopLifebar);
 			}
 
-			m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
+			m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurSteps[p] );
 
 			/* The actual note data for scoring is the base class of Player.  This includes
 			 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
-			m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p], &m_Player[p] );
+			m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
 			if( m_pSecondaryScoreKeeper[p] )
-				m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p], &m_Player[p] );
+				m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
 
 			if( m_bDemonstration )
 			{
@@ -928,7 +928,7 @@ void ScreenGameplay::LoadNextSong()
 			else if( GAMESTATE->IsCpuPlayer(p) )
 			{
 				GAMESTATE->m_PlayerController[p] = PC_CPU;
-				int iMeter = GAMESTATE->m_pCurNotes[p]->GetMeter();
+				int iMeter = GAMESTATE->m_pCurSteps[p]->GetMeter();
 				int iNewSkill = SCALE( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
 				/* Watch out: songs aren't actually bound by MAX_METER. */
 				iNewSkill = clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
@@ -1005,7 +1005,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		FOREACH_HumanPlayer( p )
 		{
-			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			if( GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
 				m_BeginnerHelper.AddPlayer( p, &m_Player[p] );
 		}
 	}

@@ -158,7 +158,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			ASSERT( ss.pSong->m_vpSteps.size() );
 			FOREACH_PlayerNumber( p )
 			{
-				GAMESTATE->m_pCurNotes[p] = ss.pSteps[p] = ss.pSong->m_vpSteps[0];
+				GAMESTATE->m_pCurSteps[p] = ss.pSteps[p] = ss.pSong->m_vpSteps[0];
 				ss.iPossibleDancePoints[p] = 1000;
 				ss.iActualDancePoints[p] = 985;
 
@@ -168,11 +168,11 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				hs.iScore = ss.iScore[p];
 				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 				int a, b;
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
 				PROFILEMAN->AddCategoryScore( st, RANKING_A, p, hs, a, b );
 			}
 

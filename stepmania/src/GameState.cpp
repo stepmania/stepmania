@@ -146,7 +146,7 @@ void GameState::Reset()
 
 	m_pCurSong = NULL;
 	FOREACH_PlayerNumber( p )
-		m_pCurNotes[p] = NULL;
+		m_pCurSteps[p] = NULL;
 	m_pCurCourse = NULL;
 	FOREACH_PlayerNumber( p )
 		m_pCurTrail[p] = NULL;
@@ -909,8 +909,8 @@ bool GameState::HasEarnedExtraStage() const
 			if( !this->IsPlayerEnabled(p) )
 				continue;	// skip
 
-			if( this->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_HARD && 
-				this->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+			if( this->m_pCurSteps[p]->GetDifficulty() != DIFFICULTY_HARD && 
+				this->m_pCurSteps[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 				continue; /* not hard enough! */
 
 			/* If "choose EX" is enabled, then we should only grant EX2 if the chosen
@@ -1054,7 +1054,7 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	{
 		return GAMESTATE->m_PlayerOptions[pn].IsEasierForSongAndSteps( 
 			GAMESTATE->m_pCurSong, 
-			GAMESTATE->m_pCurNotes[pn] );
+			GAMESTATE->m_pCurSteps[pn] );
 	}
 }
 
@@ -1736,12 +1736,12 @@ Difficulty GameState::GetEasiestNotesDifficulty() const
 	Difficulty dc = DIFFICULTY_INVALID;
 	FOREACH_HumanPlayer( p )
 	{
-		if( this->m_pCurNotes[p] == NULL )
+		if( this->m_pCurSteps[p] == NULL )
 		{
 			LOG->Warn( "GetEasiestNotesDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
-		dc = min( dc, this->m_pCurNotes[p]->GetDifficulty() );
+		dc = min( dc, this->m_pCurSteps[p]->GetDifficulty() );
 	}
 	return dc;
 }
@@ -1778,7 +1778,7 @@ LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficu
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
  * can't easily do if we return pointers. */
 LuaFunction_NoArgs( CurSong,				GAMESTATE->m_pCurSong )
-LuaFunction_PlayerNumber( CurSteps,			GAMESTATE->m_pCurNotes[pn] )
+LuaFunction_PlayerNumber( CurSteps,			GAMESTATE->m_pCurSteps[pn] )
 
 int LuaFunc_UsingModifier( lua_State *L )
 {

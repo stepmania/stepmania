@@ -73,7 +73,7 @@ Background::Background()
 		bOneOrMoreChars = true;
 		// Disable dancing characters if BH will be showing.
 		if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse() && 
-			GAMESTATE->m_pCurNotes[p] && GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			GAMESTATE->m_pCurSteps[p] && GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
 			bShowingBeginnerHelper = true;
 	}
 

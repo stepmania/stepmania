@@ -84,7 +84,7 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 void DeleteCurNotes( void* pThrowAway )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pStepsToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
 	pSong->Save();
 }
@@ -106,7 +106,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_pCurSong = pSong;
 	GAMESTATE->m_CurStyle = GAMEMAN->GetEditorStyleForNotesType( st );
-	GAMESTATE->m_pCurNotes[PLAYER_1] = pSteps;
+	GAMESTATE->m_pCurSteps[PLAYER_1] = pSteps;
 
 	//
 	// handle error cases

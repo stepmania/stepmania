@@ -118,10 +118,10 @@ void ScreenEvaluation::Init()
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
-		GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->m_vpSteps[0];
-		GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->m_vpSteps[0];
-		g_CurStageStats.pSteps[PLAYER_1] = GAMESTATE->m_pCurNotes[PLAYER_1];
-		g_CurStageStats.pSteps[PLAYER_2] = GAMESTATE->m_pCurNotes[PLAYER_2];
+		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->m_vpSteps[0];
+		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->m_vpSteps[0];
+		g_CurStageStats.pSteps[PLAYER_1] = GAMESTATE->m_pCurSteps[PLAYER_1];
+		g_CurStageStats.pSteps[PLAYER_2] = GAMESTATE->m_pCurSteps[PLAYER_2];
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;
@@ -363,7 +363,7 @@ void ScreenEvaluation::Init()
 					switch( m_Type )
 					{
 					case stage:
-						m_DifficultyIcon[p].SetFromNotes( p, GAMESTATE->m_pCurNotes[p] );
+						m_DifficultyIcon[p].SetFromNotes( p, GAMESTATE->m_pCurSteps[p] );
 						break;
 					case course:
 						m_DifficultyIcon[p].SetFromCourseDifficulty( p, GAMESTATE->m_PreferredCourseDifficulty[p] );
@@ -882,7 +882,7 @@ void ScreenEvaluation::CommitScores(
 				continue;
 
 			Song* pSong = GAMESTATE->m_pCurSong;
-			Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 
 			// whether or not to save scores when the stage was failed
 			// depends on if this is a course or not ... it's handled
@@ -974,7 +974,7 @@ void ScreenEvaluation::CommitScores(
 			case stage:
 				{
 					Song* pSong = GAMESTATE->m_pCurSong;
-					Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+					Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 					pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 				}
 				break;

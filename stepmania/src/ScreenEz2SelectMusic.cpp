@@ -682,7 +682,7 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	Steps* pSteps = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
-	GAMESTATE->m_pCurNotes[pn] = pSteps;
+	GAMESTATE->m_pCurSteps[pn] = pSteps;
 
 
 	if( pSteps != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
@@ -692,9 +692,9 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_DifficultyRating.SetDifficulty(pSteps->GetMeter());
 	}
 
-//	GAMESTATE->m_pCurNotes[pn] = pSteps;
+//	GAMESTATE->m_pCurSteps[pn] = pSteps;
 
-//	Steps* m_pSteps = GAMESTATE->m_pCurNotes[pn];
+//	Steps* m_pSteps = GAMESTATE->m_pCurSteps[pn];
 
 //	m_FootMeter[pn].SetFromNotes( pSteps );
 }

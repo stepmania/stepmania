@@ -140,7 +140,7 @@ public:
 	// State Info used during gameplay
 	//
 	Song*		m_pCurSong;
-	Steps*		m_pCurNotes[NUM_PLAYERS];
+	Steps*		m_pCurSteps[NUM_PLAYERS];
 	Course*		m_pCurCourse;
 	Course*		m_pCurTrail[NUM_PLAYERS];
 

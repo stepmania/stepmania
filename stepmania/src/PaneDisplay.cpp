@@ -144,7 +144,7 @@ void PaneDisplay::SetContent( PaneContents c )
 {
 	m_textContents[c].SetText( "" );
 
-	if( (g_Contents[c].req&NEED_NOTES) && !GAMESTATE->m_pCurNotes[m_PlayerNumber] )
+	if( (g_Contents[c].req&NEED_NOTES) && !GAMESTATE->m_pCurSteps[m_PlayerNumber] )
 		return;
 	if( (g_Contents[c].req&NEED_COURSE) && !GAMESTATE->m_pCurCourse )
 		return;
@@ -152,7 +152,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		return;
 
 	const Song *pSong = GAMESTATE->m_pCurSong;
-	const Steps *pSteps = GAMESTATE->m_pCurNotes[m_PlayerNumber];
+	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[m_PlayerNumber];
@@ -161,7 +161,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	RadarValues rv;
 
 	if( g_Contents[c].req&NEED_NOTES )
-		rv = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetRadarValues();
+		rv = GAMESTATE->m_pCurSteps[m_PlayerNumber]->GetRadarValues();
 	else if( g_Contents[c].req&NEED_COURSE )
 	{
 		ASSERT( pCourse );
