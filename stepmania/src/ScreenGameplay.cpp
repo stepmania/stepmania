@@ -1541,9 +1541,9 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_sprScoreFrame );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		ON_COMMAND( *m_pLifeMeter[p] );
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		ON_COMMAND( *m_pLifeMeter[p] );
 		ON_COMMAND( m_textCourseSongNumber[p] );
 		ON_COMMAND( *m_pScoreDisplay[p] );
 		ON_COMMAND( m_textPlayerOptions[p] );
@@ -1559,9 +1559,9 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_sprScoreFrame );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		OFF_COMMAND( *m_pLifeMeter[p] );
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		OFF_COMMAND( *m_pLifeMeter[p] );
 		OFF_COMMAND( m_textCourseSongNumber[p] );
 		OFF_COMMAND( *m_pScoreDisplay[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
