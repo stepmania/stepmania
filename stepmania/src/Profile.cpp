@@ -43,24 +43,17 @@ const int SM_390A12_CATEGORY_RANKING_VERSION = 6;
 const int SM_390A12_SONG_SCORES_VERSION = 9;
 const int SM_390A12_COURSE_SCORES_VERSION = 8;
 
-//
-// Current file versions
-//
-#define STATS_XML			"Stats.xml"
-#define EDITABLE_XML		"Editable.xml"
-
-#define REASONABLE_EDITABLE_XML_SIZE_BYTES	1000	// 1kb
 
 
 void Profile::InitEditableData()
 {
 	m_sDisplayName = "";	
+	m_sLastUsedHighScoreName = "";
 	m_fWeightPounds = 0;
 }
 
 void Profile::InitGeneralData()
 {
-	m_sLastUsedHighScoreName = "";
 	m_bUsingProfileDefaultModifiers = false;
 	m_sDefaultModifiers = "";
 	m_iTotalPlays = 0;
@@ -300,40 +293,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 		LoadCategoryScoresFromDirSM390a12( sDir );
 	}
 
-
-	// Read editable.xml.  This file is never signed.
-	FOR_ONCE
-	{
-		CString fn = sDir + EDITABLE_XML;
-		if( !IsAFile(fn) )
-			break;
-
-		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-
-		//
-		// Don't load unreasonably large editable.xml files.
-		//
-		if( iBytes > REASONABLE_EDITABLE_XML_SIZE_BYTES )
-		{
-			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-			break;
-		}
-
-
-		LOG->Trace( "Reading profile data '%s'", fn.c_str() );
-
-		XNode xml;
-		if( !xml.LoadFromFile( fn ) )
-		{
-			LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
-			break;
-		}
-
-		if( xml.name != "Editable" )
-			WARN_AND_BREAK;
-
-		LOAD_NODE( EditableData );
-	}
+	LoadEditableDataFromDir( sDir );
 
 	
 	// Read stats.xml
@@ -345,10 +305,35 @@ bool Profile::LoadAllFromDir( CString sDir )
 
 		LOG->Trace( "Reading profile data '%s'", fn.c_str() );
 
-		if( PREFSMAN->m_bSignProfileData && !CryptManager::VerifyFile(fn) )
+		//
+		// Don't unreasonably large stats.xml files.
+		//
+		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+		if( iBytes > REASONABLE_STATS_XML_SIZE_BYTES )
 		{
-			LOG->Warn( "The file '%s' has been tampered with.  Its data will be ignored.", fn.c_str() );
+			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
 			break;
+		}
+
+		if( PREFSMAN->m_bSignProfileData )
+		{
+			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+			CString sDontShareFile = sDir + DONT_SHARE_SIG;
+
+			// verify the stats.xml signature with the "don't share" file
+			if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
+			{
+				LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
+				break;
+			}
+
+			// verify stats.xml
+			if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
+			{
+				LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
+				break;
+			}
+
 		}
 
 		XNode xml;
@@ -376,15 +361,7 @@ bool Profile::SaveAllToDir( CString sDir ) const
 	m_sLastMachinePlayed = PREFSMAN->m_sMachineName;
 
 	// Save editable.xml
-	{
-		CString fn = sDir + EDITABLE_XML;
-
-		XNode xml;
-		xml.name = "Editable";
-		xml.AppendChild( SaveEditableDataCreateNode() );
-		if( !xml.SaveToFile(fn) )
-			return false;
-	}
+	SaveEditableDataToDir( sDir );
 
 	// Save stats.xml
 	{
@@ -397,10 +374,16 @@ bool Profile::SaveAllToDir( CString sDir ) const
 		xml.AppendChild( SaveCourseScoresCreateNode() );
 		xml.AppendChild( SaveCategoryScoresCreateNode() );
 		xml.AppendChild( SaveScreenshotDataCreateNode() );
-		if( !xml.SaveToFile(fn) )
-			return false;
-		if( PREFSMAN->m_bSignProfileData )
-			CryptManager::SignFile(fn);
+		bool bSaved = xml.SaveToFile(fn);
+		if( bSaved && PREFSMAN->m_bSignProfileData )
+		{
+			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
+
+			// Save the "don't share" file
+			CString sDontShareFile = sDir + DONT_SHARE_SIG;
+			CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
+		}
 	}
 
 
@@ -456,15 +439,17 @@ void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
 		ini.GetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
 }
 
-XNode* Profile::SaveEditableDataCreateNode() const
+void Profile::SaveEditableDataToDir( CString sDir ) const
 {
-	XNode* pEditableDataNode = new XNode;
-	pEditableDataNode->name = "EditableData";
-	
-	pEditableDataNode->AppendChild( "DisplayName",	m_sDisplayName );
-	pEditableDataNode->AppendChild( "WeightPounds",	m_fWeightPounds );
+	IniFile ini;
+	CString fn = sDir + EDITABLE_INI;
+	ini.SetPath( fn );
 
-	return pEditableDataNode;
+	ini.SetValue( "Editable", "DisplayName",			m_sDisplayName );
+	ini.SetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
+	ini.SetValue( "Editable", "WeightPounds",			m_fWeightPounds );
+
+	ini.WriteFile();
 }
 
 XNode* Profile::SaveGeneralDataCreateNode() const
@@ -472,7 +457,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	XNode* pGeneralDataNode = new XNode;
 	pGeneralDataNode->name = "GeneralData";
 	
-	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	pGeneralDataNode->AppendChild( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	pGeneralDataNode->AppendChild( "DefaultModifiers",				m_sDefaultModifiers );
 	pGeneralDataNode->AppendChild( "TotalPlays",					m_iTotalPlays );
@@ -512,12 +496,28 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	return pGeneralDataNode;
 }
 
-void Profile::LoadEditableDataFromNode( const XNode* pNode )
+void Profile::LoadEditableDataFromDir( CString sDir )
 {
-	ASSERT( pNode->name == "EditableData");
+	CString fn = sDir + EDITABLE_INI;
 
-	pNode->GetChildValue("DisplayName", m_sDisplayName);
-	pNode->GetChildValue("WeightPounds", m_fWeightPounds);
+	//
+	// Don't load unreasonably large editable.xml files.
+	//
+	int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+	if( iBytes > REASONABLE_EDITABLE_INI_SIZE_BYTES )
+	{
+		LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+		return;
+	}
+
+
+	IniFile ini;
+	ini.SetPath( fn );
+	ini.ReadFile();
+
+	ini.GetValue("Editable","DisplayName",				m_sDisplayName);
+	ini.GetValue("Editable","LastUsedHighScoreName",	m_sLastUsedHighScoreName);
+	ini.GetValue("Editable","WeightPounds",				m_fWeightPounds);
 
 	// This is data that the user can change, so we have to validate it.
 	if( m_sDisplayName.GetLength() > 12 )
@@ -531,7 +531,6 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->name == "GeneralData" );
 
-	pNode->GetChildValue( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	pNode->GetChildValue( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	pNode->GetChildValue( "DefaultModifiers",				m_sDefaultModifiers );
 	pNode->GetChildValue( "TotalPlays",						m_iTotalPlays );
@@ -1137,22 +1136,27 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 
 	// UGLY...
 	bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile());
+	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
+	SaveStatsWebPage( 
+		sDir,
+		this,
+		PROFILEMAN->GetMachineProfile(),
+		bThisIsMachineProfile ? HTML_TYPE_MACHINE : HTML_TYPE_PLAYER
+		);
 	if( bThisIsMachineProfile )
-	{
-		SaveMachineHtmlToDir( sDir, this );
-		SavePlayerHtmlToDir( sDir+"temp/", this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
-	}
-	else
-	{
-		SavePlayerHtmlToDir( sDir, this, PROFILEMAN->GetMachineProfile() );
-	}
+		SaveStatsWebPage( 
+			sDir+"temp/",
+			this,
+			PROFILEMAN->GetMachineProfile(),
+			HTML_TYPE_PLAYER
+			);
 }
 
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
 {
 	if( PREFSMAN->m_bSignProfileData && IsAFile(CRYPTMAN->GetPublicKeyFileName()) )
-		FileCopy( CRYPTMAN->GetPublicKeyFileName(), "public.key.rsa" );
+		FileCopy( CRYPTMAN->GetPublicKeyFileName(), PUBLIC_KEY_FILE );
 }
 
 void Profile::AddScreenshot( Screenshot screenshot )
@@ -1177,7 +1181,7 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 		if( !(*screenshot)->GetChildValue("FileName",ss.sFileName) )
 			WARN_AND_CONTINUE;
 
-		if( !(*screenshot)->GetChildValue("Signature",ss.sSignature) )
+		if( !(*screenshot)->GetChildValue("MD5",ss.sMD5) )
 			WARN_AND_CONTINUE;
 
 		XNode *pHighScoreNode = (*screenshot)->GetChild("HighScore");
@@ -1208,7 +1212,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 		XNode* pScreenshotNode = pNode->AppendChild( "Screenshot" );
 
 		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
-		pScreenshotNode->AppendChild( "Signature", ss.sSignature );
+		pScreenshotNode->AppendChild( "MD5", ss.sMD5);
 		pScreenshotNode->AppendChild( ss.highScore.CreateNode() );
 	}
 
