@@ -281,6 +281,7 @@ static inline int closest( int num, int n1, int n2 )
  * if the memory or settings change. */
 void BannerCache::CacheBanner( CString BannerPath )
 {
+	CHECKPOINT_M( BannerPath );
 	if( !DoesFileExist(BannerPath) )
 		return;
 
