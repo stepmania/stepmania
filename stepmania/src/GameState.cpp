@@ -218,8 +218,11 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	if( GAMESTATE->m_bIsOnSystemMenu )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
 		return true;				// allow input from both sides
 
-	if( m_CurStyle == STYLE_INVALID )
-		return m_bSideIsJoined[pn];
+	if( m_CurStyle == STYLE_INVALID )	// no style chosen
+		if( this->m_bPlayersCanJoin )	
+			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
+		else
+			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
 
 	switch( GetCurrentStyleDef()->m_StyleType )
 	{
