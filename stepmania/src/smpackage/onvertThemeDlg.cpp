@@ -103,9 +103,9 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "gameplay ready", "______OBSOLETE gameplay ready" );
 	RecursiveRename( sThemeDir, "keep alive", "______OBSOLETE keep alive" );
 	RecursiveRename( sThemeDir, "menu style icons 1x9", "______OBSOLETE menu style icons 1x9" );
-	RecursiveRename( sThemeDir, "title menu logo", "______OBSOLETE title menu logo" );
+	RecursiveRename( sThemeDir, "title menu logo", "ScreenLogo" );
 	RecursiveRename( sThemeDir, "BGAnimations\\appearance options", "BGAnimations\\ScreenAppearanceOptions background" );
-	RecursiveRename( sThemeDir, "BGAnimations\\caution",			"BGAnimations\\ScreenGameplay caution" );
+	RecursiveRename( sThemeDir, "BGAnimations\\caution",			"BGAnimations\\ScreenCaution background" );
 	RecursiveRename( sThemeDir, "BGAnimations\\game over",			"BGAnimations\\ScreenGameOver background" );
 	RecursiveRename( sThemeDir, "BGAnimations\\logo",				"BGAnimations\\ScreenLogo background" );
 	RecursiveRename( sThemeDir, "BGAnimations\\edit menu",			"BGAnimations\\ScreenEditMenu background" );
