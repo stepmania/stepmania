@@ -154,6 +154,7 @@ public:
 	float		m_fCurBPS;
 	bool		m_bFreeze;	// in the middle of a freeze
 	bool		m_bPastHereWeGo;
+	float		m_fLastDrawnBeat[NUM_PLAYERS]; // set by NoteField
 
 	map<float,CString> m_BeatToNoteSkin[NUM_PLAYERS];
 	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
@@ -192,6 +193,7 @@ public:
 	float	m_fSuperMeter[NUM_PLAYERS];	// between 0 and NUM_ATTACK_LEVELS
 	
 	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
+	void GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ); // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks()	// called on end of song

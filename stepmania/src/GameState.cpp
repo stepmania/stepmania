@@ -551,7 +551,18 @@ void GameState::ResetNoteSkins()
 }
 
 /* From NoteField: */
-extern float g_fNoteFieldLastBeatToDraw[NUM_PLAYERS];
+
+void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat )
+{
+	/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
+	StartBeat = min( this->m_fSongBeat+BEATS_PER_MEASURE*2, m_fLastDrawnBeat[pn] );
+	StartBeat = truncf(StartBeat)+1;
+
+	const float StartSecond = this->m_pCurSong->GetElapsedTimeFromBeat( StartBeat );
+	const float EndSecond = StartSecond + TotalSeconds;
+	EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( EndSecond );
+	EndBeat = truncf(EndBeat)+1;
+}
 
 void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
@@ -574,13 +585,8 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 		map<float,CString> &BeatToNoteSkin = m_BeatToNoteSkin[target];
 		/* Add it in the future, past what's currently on screen, so new arrows will scroll
 		 * on screen with this skin. */
-		const float CurBeat = this->m_fSongBeat;
-		/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
-		const float AddBeat = min( CurBeat+16, g_fNoteFieldLastBeatToDraw[target] );
-
-		const float AddSecond = this->m_pCurSong->GetElapsedTimeFromBeat( CurBeat );
-		const float EndSecond = AddSecond + a.fSecsRemaining;
-		const float EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( EndSecond );
+		float StartBeat, EndBeat;
+		GetUndisplayedBeats( target, a.fSecsRemaining, StartBeat, EndBeat );
 
 		/* If there are any note skins after the point we're adding, remove them.  We probably
 		 * have overlapping note skin attacks. */
@@ -589,7 +595,7 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 		{
 			map<float,CString>::iterator next = it;
 			++next;
-			if( it->first >= AddBeat )
+			if( it->first >= StartBeat )
 			{
 				LOG->Trace( "erase old %f", it->first );
 				BeatToNoteSkin.erase( it );
@@ -598,7 +604,7 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 		}
 
 		/* Add the skin to m_BeatToNoteSkin.  */
-		BeatToNoteSkin[AddBeat] = po.m_sNoteSkin;
+		BeatToNoteSkin[StartBeat] = po.m_sNoteSkin;
 
 		/* Return to the default note skin after the duration. */
 		BeatToNoteSkin[EndBeat] = GAMESTATE->m_PlayerOptions[target].m_sNoteSkin;
