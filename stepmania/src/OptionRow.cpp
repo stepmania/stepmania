@@ -699,6 +699,8 @@ int OptionRow::GetOneSharedSelection( bool bAllowFail ) const
 
 void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
 {
+	if( m_vbSelected[pn].empty() )
+		return;
 	for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
 		m_vbSelected[pn][i] = false;
 	m_vbSelected[pn][iChoice] = true;
