@@ -176,12 +176,7 @@ public:
 
 	} m_MemCardDatas[NUM_STEPS_TYPES][NUM_MEMORY_CARDS];
 	
-	void AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
-	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		m_MemCardDatas[st][pn].AddHighScore( hs, iPersonalIndexOut );
-		m_MemCardDatas[st][MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
-	}
+	void AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 
 	MemCardData::HighScore GetTopScore( StepsType st, MemoryCard card )
 	{

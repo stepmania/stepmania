@@ -92,12 +92,7 @@ public:
 		
 	} m_MemCardDatas[NUM_MEMORY_CARDS];
 
-	void AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
-	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		m_MemCardDatas[pn].AddHighScore( hs, iPersonalIndexOut );
-		m_MemCardDatas[MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
-	}
+	void AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 
 	MemCardData::HighScore GetTopScore( MemoryCard card )
 	{

@@ -28,6 +28,7 @@
 #include "RageFile.h"
 #include "arch/arch.h"
 #include "ThemeManager.h"
+#include "ProfileManager.h"
 
 /* Amount to increase meter ranges to make them difficult: */
 const int DIFFICULT_METER_CHANGE = 2;
@@ -1004,4 +1005,14 @@ bool Course::IsRanking() const
 			return true;
 
 	return false;
+}
+
+void Course::AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+{
+	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	if( PROFILEMAN->IsUsingProfile(pn) )
+		m_MemCardDatas[st][pn].AddHighScore( hs, iPersonalIndexOut );
+	else
+		iPersonalIndexOut = -1;
+	m_MemCardDatas[st][MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
 }

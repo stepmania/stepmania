@@ -24,6 +24,7 @@
 #include "MsdFile.h"
 #include "GameManager.h"
 #include "NoteDataUtil.h"
+#include "ProfileManager.h"
 
 
 Steps::Steps()
@@ -356,4 +357,14 @@ void Steps::MemCardData::AddHighScore( Steps::MemCardData::HighScore hs, int &iI
 		if( vHighScores.size() > NUM_RANKING_LINES )
 			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
 	}
+}
+
+void Steps::AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+{
+	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	if( PROFILEMAN->IsUsingProfile(pn) )
+		m_MemCardDatas[pn].AddHighScore( hs, iPersonalIndexOut );
+	else
+		iPersonalIndexOut = -1;
+	m_MemCardDatas[MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
 }
