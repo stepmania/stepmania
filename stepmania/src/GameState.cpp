@@ -77,8 +77,7 @@ void GameState::ApplyCmdline()
 {
 	int i;
 
-	/* This is in order of dependency: we need to join players before we can set
-	 * the style, and we need to set the style before we can select steps. */
+	/* We need to join players before we can set the style. */
 	CString sPlayer;
 	for( i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
 	{
