@@ -1,18 +1,18 @@
 #include "global.h"
 #include "ArchHooks_Win32.h"
 #include "RageUtil.h"
+#include "RageThreads.h"
 #include "PrefsManager.h"
-
-#include "resource.h"
+#include "ProductInfo.h"
 
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
 #include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
-#include "ProductInfo.h"
+#include "archutils/win32/VideoDriverInfo.h"
+#include "archutils/win32/WindowsResources.h"
 
-#include "RageThreads.h"
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	SetUnhandledExceptionFilter(CrashHandler);
