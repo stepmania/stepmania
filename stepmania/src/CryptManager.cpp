@@ -14,7 +14,6 @@
 #include <memory>
 
 using namespace CryptoPP;
-using namespace std;
 
 static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
@@ -48,17 +47,22 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	AutoSeededRandomPool rng;
+	try
+	{
+		AutoSeededRandomPool rng;
 
-	RSAES_OAEP_SHA_Decryptor priv(rng, keyLength);
-	RageFileSink privFile(privFilename);
-	priv.DEREncode(privFile);
-	privFile.MessageEnd();
+		RSAES_OAEP_SHA_Decryptor priv(rng, keyLength);
+		RageFileSink privFile(privFilename);
+		priv.DEREncode(privFile);
+		privFile.MessageEnd();
 
-	RSAES_OAEP_SHA_Encryptor pub(priv);
-	RageFileSink pubFile(pubFilename);
-	pub.DEREncode(pubFile);
-	pubFile.MessageEnd();
+		RSAES_OAEP_SHA_Encryptor pub(priv);
+		RageFileSink pubFile(pubFilename);
+		pub.DEREncode(pubFile);
+		pubFile.MessageEnd();
+	} catch( const CryptoPP::Exception &s ) {
+		LOG->Warn( "GenerateRSAKey failed: %s", s.what() );
+	}
 }
 
 void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
