@@ -635,7 +635,6 @@ void ScreenOptions::UpdateEnabledDisabled()
 			const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
 			if( row.m_textItems[0]->GetDestY() != row.m_fY ||
 			    row.m_textItems[0]->DestTweenState().diffuse[0][3] != DiffuseAlpha )
-			if( row.m_textItems[0]->GetDestY() != row.m_fY )
 			{
 				row.m_textItems[0]->StopTweening();
 				row.m_textItems[0]->BeginTweening( 0.3f );
