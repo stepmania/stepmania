@@ -33,6 +33,7 @@
 #include "ActorUtil.h"
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
+#include "Course.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -48,6 +49,8 @@ const int NUM_SCORE_DIGITS	=	9;
 #define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_OPTIONS_SCREEN( play_mode )	THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen"+Capitalize(PlayModeToString(play_mode)))
+#define COURSE_CONTENTS_X					THEME->GetMetricF("ScreenSelectMusic","CourseContentsX")
+#define COURSE_CONTENTS_Y					THEME->GetMetricF("ScreenSelectMusic","CourseContentsY")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -70,8 +73,8 @@ static void FlipSpriteHorizontally(Sprite &s)
 ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
-	if( GAMESTATE->IsCourseMode() )
-		RageException::Throw("Theme error: can't use ScreenSelectMusic in course modes" );
+
+	m_bInCourseDisplayMode = GAMESTATE->IsCourseMode();
 
 	/* Cache: */
 	g_sFallbackCDTitlePath = THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
@@ -91,6 +94,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	this->AddChild( &m_Menu );
 
 	m_MusicWheel.SetName( "Wheel" );
+	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
 	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
@@ -98,27 +102,33 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
 	m_sprBannerMask.SetUseZBuffer( true );	// do draw to the zbuffer
 	m_sprBannerMask.SetZ( m_sprBannerMask.GetZ()+0.05f );	// closer to camera
+	SET_XY( m_sprBannerMask );
 	this->AddChild( &m_sprBannerMask );
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetUseZBuffer( true );	// do have to pass the z test
 	m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
+	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
 	m_sprBannerFrame.SetName( "BannerFrame" );
 	m_sprBannerFrame.Load( THEME->GetPathToG("ScreenSelectMusic banner frame") );
+	SET_XY( m_sprBannerFrame );
 	this->AddChild( &m_sprBannerFrame );
 
 	m_BPMDisplay.SetName( "BPM" );
+	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
 	m_DifficultyDisplay.SetName( "DifficultyDisplay" );
 	m_DifficultyDisplay.EnableShadow( false );
+	SET_XY( m_DifficultyDisplay );
 	this->AddChild( &m_DifficultyDisplay );
 
 	m_sprStage.SetName( "Stage" );
 	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
+	SET_XY( m_sprStage );
 	this->AddChild( &m_sprStage );
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
@@ -126,6 +136,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_sprCDTitleFront.SetUseBackfaceCull(true);
 	m_sprCDTitleFront.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
+	SET_XY( m_sprCDTitleFront );
 	this->AddChild( &m_sprCDTitleFront );
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
@@ -135,19 +146,26 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprCDTitleBack.SetRotationY( 180 );
 	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
+	SET_XY( m_sprCDTitleBack );
 	this->AddChild( &m_sprCDTitleBack );
 
 	m_GrooveRadar.SetName( "Radar" );
+	SET_XY( m_GrooveRadar );
 	if( SHOW_RADAR )
 		this->AddChild( &m_GrooveRadar );
 
 	m_GrooveGraph.SetName( "Graph" );
+	SET_XY( m_GrooveGraph );
 	if( SHOW_GRAPH )
 		this->AddChild( &m_GrooveGraph );
 
 	m_textSongOptions.SetName( "SongOptions" );
 	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
+	SET_XY( m_textSongOptions );
 	this->AddChild( &m_textSongOptions );
+
+	m_CourseContentsFrame.SetXY( COURSE_CONTENTS_X, COURSE_CONTENTS_Y );
+	this->AddChild( &m_CourseContentsFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -157,41 +175,50 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
 		m_sprDifficultyFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic difficulty frame p%d",p+1)) );
 		m_sprDifficultyFrame[p].StopAnimating();
+		SET_XY( m_sprDifficultyFrame[p] );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x5") );
+		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 
 		m_AutoGenIcon[p].SetName( ssprintf("AutogenIconP%d",p+1) );
 		m_AutoGenIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic autogen") );
+		SET_XY( m_AutoGenIcon[p] );
 		this->AddChild( &m_AutoGenIcon[p] );
 
 		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
 		m_OptionIconRow[p].Refresh( (PlayerNumber)p );
+		SET_XY( m_OptionIconRow[p] );
 		this->AddChild( &m_OptionIconRow[p] );
 
 		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
 		m_sprMeterFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic meter frame p%d",p+1)) );
+		SET_XY( m_sprMeterFrame[p] );
 		this->AddChild( &m_sprMeterFrame[p] );
 
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeter[p].SetShadowLength( 2 );
+		SET_XY( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 		
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
+		SET_XY( m_sprHighScoreFrame[p] );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenSelectMusic score") );
 		m_textHighScore[p].EnableShadow( false );
 		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
+		SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
 	}	
 
 	m_MusicSortDisplay.SetName( "SortIcon" );
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
+	SET_XY( m_MusicSortDisplay );
 	this->AddChild( &m_MusicSortDisplay );
 
 	m_sprBalloon.SetName( "Balloon" );
@@ -243,38 +270,120 @@ void ScreenSelectMusic::DrawPrimitives()
 	DISPLAY->LoadMenuPerspective(0);
 }
 
+void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
+{
+	m_GrooveRadar.StopTweening();
+	m_GrooveGraph.StopTweening();
+	m_GrooveRadar.TweenOnScreen();
+	m_GrooveGraph.TweenOnScreen();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{		
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		ON_COMMAND( m_sprDifficultyFrame[p] );
+		ON_COMMAND( m_sprMeterFrame[p] );
+		ON_COMMAND( m_DifficultyIcon[p] );
+		ON_COMMAND( m_AutoGenIcon[p] );
+		ON_COMMAND( m_DifficultyMeter[p] );
+	}
+}
+
+void ScreenSelectMusic::TweenSongPartsOffScreen()
+{
+	m_GrooveRadar.TweenOffScreen();
+	m_GrooveGraph.TweenOffScreen();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{		
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		OFF_COMMAND( m_sprDifficultyFrame[p] );
+		OFF_COMMAND( m_sprMeterFrame[p] );
+		OFF_COMMAND( m_DifficultyIcon[p] );
+		OFF_COMMAND( m_AutoGenIcon[p] );
+		OFF_COMMAND( m_DifficultyMeter[p] );
+	}
+}
+
+void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
+{
+	m_CourseContentsFrame.SetZoomY( 1 );
+	if( Initial )
+		m_CourseContentsFrame.FadeOn( 0, "foldy", 0.3f );
+	else
+		m_CourseContentsFrame.SetFromCourse(NULL);
+}
+
+void ScreenSelectMusic::TweenCoursePartsOffScreen()
+{
+	m_CourseContentsFrame.SetZoomY( 1 );
+	m_CourseContentsFrame.FadeOff( 0, "foldy", 0.3f );
+}
+
+void ScreenSelectMusic::SkipSongPartTweens()
+{
+	m_GrooveRadar.FinishTweening();
+	m_GrooveGraph.FinishTweening();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{		
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		m_sprDifficultyFrame[p].FinishTweening();
+		m_sprMeterFrame[p].FinishTweening();
+		m_DifficultyIcon[p].FinishTweening();
+		m_AutoGenIcon[p].FinishTweening();
+		m_DifficultyMeter[p].FinishTweening();
+	}
+}
+
+void ScreenSelectMusic::SkipCoursePartTweens()
+{
+	m_CourseContentsFrame.FinishTweening();
+}
+
 void ScreenSelectMusic::TweenOnScreen()
 {
-	SET_XY_AND_ON_COMMAND( m_sprBannerMask );
-	SET_XY_AND_ON_COMMAND( m_Banner );
-	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
-	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
-	SET_XY_AND_ON_COMMAND( m_DifficultyDisplay );
-	SET_XY_AND_ON_COMMAND( m_sprStage );
-	SET_XY_AND_ON_COMMAND( m_sprCDTitleFront );
-	SET_XY_AND_ON_COMMAND( m_sprCDTitleBack );
-	m_GrooveRadar.TweenOnScreen();
-	SET_XY_AND_ON_COMMAND( m_GrooveRadar );
-	m_GrooveGraph.TweenOnScreen();
-	SET_XY_AND_ON_COMMAND( m_GrooveGraph );
-	SET_XY_AND_ON_COMMAND( m_textSongOptions );
-	SET_XY_AND_ON_COMMAND( m_MusicSortDisplay );
+	if( GAMESTATE->m_SongSortOrder == SORT_COURSES )
+	{
+		TweenCoursePartsOnScreen( true );
+		TweenSongPartsOffScreen();
+		SkipSongPartTweens();
+	}
+	else
+	{
+		TweenSongPartsOnScreen( true );
+		TweenCoursePartsOffScreen();
+		SkipCoursePartTweens();
+	}
+
+	ON_COMMAND( m_sprBannerMask );
+	ON_COMMAND( m_Banner );
+	ON_COMMAND( m_sprBannerFrame );
+	ON_COMMAND( m_BPMDisplay );
+	ON_COMMAND( m_DifficultyDisplay );
+	ON_COMMAND( m_sprStage );
+	ON_COMMAND( m_sprCDTitleFront );
+	ON_COMMAND( m_sprCDTitleBack );
+	ON_COMMAND( m_GrooveRadar );
+	ON_COMMAND( m_GrooveGraph );
+	ON_COMMAND( m_textSongOptions );
+	ON_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOnScreen();
-	SET_XY_AND_ON_COMMAND( m_MusicWheel );
+	ON_COMMAND( m_MusicWheel );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
-		SET_XY_AND_ON_COMMAND( m_sprDifficultyFrame[p] );
-		SET_XY_AND_ON_COMMAND( m_sprMeterFrame[p] );
-		SET_XY_AND_ON_COMMAND( m_OptionIconRow[p] );
-		SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
-		SET_XY_AND_ON_COMMAND( m_AutoGenIcon[p] );
-		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
-		SET_XY_AND_ON_COMMAND( m_sprHighScoreFrame[p] );
-		SET_XY_AND_ON_COMMAND( m_textHighScore[p] );
+		ON_COMMAND( m_OptionIconRow[p] );
+		ON_COMMAND( m_sprHighScoreFrame[p] );
+		ON_COMMAND( m_textHighScore[p] );
 	}
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -283,6 +392,11 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
+	if( GAMESTATE->m_SongSortOrder == SORT_COURSES )
+		TweenCoursePartsOffScreen();
+	else
+		TweenSongPartsOffScreen();
+
 	OFF_COMMAND( m_sprBannerMask );
 	OFF_COMMAND( m_Banner );
 	OFF_COMMAND( m_sprBannerFrame );
@@ -291,9 +405,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
-	m_GrooveRadar.TweenOffScreen();
 	OFF_COMMAND( m_GrooveRadar );
-	m_GrooveGraph.TweenOffScreen();
 	OFF_COMMAND( m_GrooveGraph );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_MusicSortDisplay );
@@ -306,15 +418,33 @@ void ScreenSelectMusic::TweenOffScreen()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
-		OFF_COMMAND( m_sprDifficultyFrame[p] );
-		OFF_COMMAND( m_sprMeterFrame[p] );
 		OFF_COMMAND( m_OptionIconRow[p] );
-		OFF_COMMAND( m_DifficultyIcon[p] );
-		OFF_COMMAND( m_AutoGenIcon[p] );
-		OFF_COMMAND( m_DifficultyMeter[p] );
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
 		OFF_COMMAND( m_textHighScore[p] );
 	}
+}
+
+
+/* This hides elements that are only relevant when displaying a single song,
+ * and shows elements for course display.  XXX: Allow different tween commands. */
+void ScreenSelectMusic::EnterCourseDisplayMode()
+{
+	if( m_bInCourseDisplayMode )
+		return;
+	m_bInCourseDisplayMode = true;
+
+	TweenSongPartsOffScreen();
+	TweenCoursePartsOnScreen( false );
+}
+
+void ScreenSelectMusic::ExitCourseDisplayMode()
+{
+	if( !m_bInCourseDisplayMode )
+		return;
+	m_bInCourseDisplayMode = false;
+
+	TweenSongPartsOnScreen( false );
+	TweenCoursePartsOffScreen();
 }
 
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
@@ -346,6 +476,11 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		apActorsInScore[i]->BeginTweening( factor*1, TWEEN_ACCELERATE );		// tween back on screen
 		apActorsInScore[i]->SetLatestTween(original);
 	}
+
+	if( GAMESTATE->m_SongSortOrder == SORT_COURSES )
+		EnterCourseDisplayMode();
+	else
+		ExitCourseDisplayMode();
 }
 
 void ScreenSelectMusic::Update( float fDeltaTime )
@@ -383,6 +518,9 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		if( type != IET_FIRST_PRESS ) return;
 		PREFSMAN->m_bShowNative ^= 1;
 		m_MusicWheel.RebuildMusicWheelItems();
+		Course* pCourse = m_MusicWheel.GetSelectedCourse();
+		if(pCourse)
+			m_CourseContentsFrame.SetFromCourse( pCourse );
 		return;
 	}
 
@@ -669,11 +807,47 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		else
 			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment general") );
 
+		m_bMadeChoice = true;
 
-		TweenOffScreen();
+		/* If we're in event mode, we may have just played a course (putting us
+		 * in course mode).  Make sure we're in a single song mode. */
+		if( GAMESTATE->IsCourseMode() )
+			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+
+		AdjustOptions();
+		break;
+	}
+	case TYPE_COURSE:
+	{
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
+
+		Course *pCourse = m_MusicWheel.GetSelectedCourse();
+		ASSERT( pCourse );
+		GAMESTATE->m_PlayMode = pCourse->GetPlayMode();
+
+		// apply #LIVES
+		if( pCourse->m_iLives != -1 )
+		{
+			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+			GAMESTATE->m_SongOptions.m_iBatteryLives = pCourse->m_iLives;
+		}
 
 		m_bMadeChoice = true;
 
+		break;
+	}
+	case TYPE_SECTION:
+	case TYPE_ROULETTE:
+	case TYPE_SORT:
+		break;
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	if( m_bMadeChoice )
+	{
+		TweenOffScreen();
 		m_soundSelect.Play();
 
 		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
@@ -683,14 +857,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			// show "hold START for options"
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );	// visible
 			SET_XY_AND_ON_COMMAND( m_sprOptionsMessage );
-/*			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
-			m_sprOptionsMessage.SetZoomY( 1 );
-			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
-			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.35f );	// sleep
-			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
-			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-			m_sprOptionsMessage.SetZoomY( 0 );
-*/
+
 			m_bAllowOptionsMenu = true;
 			/* Don't accept a held START for a little while, so it's not
 			 * hit accidentally.  Accept an initial START right away, though,
@@ -700,15 +867,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		}
 
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
-		AdjustOptions();
-		break;
-	}
-	case TYPE_SECTION:
-		break;
-	case TYPE_ROULETTE:
-		break;
-	case TYPE_SORT:
-		break;
 	}
 
 	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )
@@ -803,6 +961,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		GAMESTATE->m_pCurSong = pSong;
 
 	m_GrooveGraph.SetFromSong( pSong );
+
+	Course* pCourse = m_MusicWheel.GetSelectedCourse();
+	if( pCourse )
+		GAMESTATE->m_pCurCourse = pCourse;
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
@@ -931,6 +1093,27 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_sprBalloon.StopTweening();
 		OFF_COMMAND( m_sprBalloon );
 		break;
+	case TYPE_COURSE:
+	{
+		Course* pCourse = m_MusicWheel.GetSelectedCourse();
+
+		SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic course music");
+//		m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
+//		float fTotalSeconds;
+//		if( pCourse->GetTotalSeconds(fTotalSeconds) )
+//			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
+//		else
+//			m_textTime.SetText( "xx:xx:xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
+
+		m_Banner.LoadFromCourse( pCourse );
+		m_BPMDisplay.SetBPM( pCourse );
+
+		m_CourseContentsFrame.SetFromCourse( pCourse );
+		m_CourseContentsFrame.TweenInAfterChangedCourse();
+		m_DifficultyDisplay.UnsetDifficulties();
+
+		break;
+	}
 	default:
 		ASSERT(0);
 	}

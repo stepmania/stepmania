@@ -124,6 +124,7 @@ CString SongSortOrderToString( SongSortOrder so )
 	case SORT_MEDIUM_METER:	return "MEDIUM METER";
 	case SORT_HARD_METER:	return "HARD METER";
 	case SORT_SORT:			return "SORT";
+	case SORT_COURSES:		return "COURSES";
 	case SORT_ROULETTE:		return "ROULETTE";
 	default:
 		ASSERT(0);

@@ -24,6 +24,7 @@
 #include "DifficultyMeter.h"
 #include "OptionIconRow.h"
 #include "DifficultyDisplay.h"
+#include "CourseContentsList.h"
 
 
 class ScreenSelectMusic : public Screen
@@ -45,6 +46,15 @@ protected:
 	void TweenOnScreen();
 	void TweenOffScreen();
 	void TweenScoreOnAndOffAfterChangeSort();
+	void EnterCourseDisplayMode();
+	void ExitCourseDisplayMode();
+	bool m_bInCourseDisplayMode;
+	void TweenSongPartsOnScreen( bool Initial );
+	void TweenSongPartsOffScreen();
+	void TweenCoursePartsOnScreen( bool Initial );
+	void TweenCoursePartsOffScreen();
+	void SkipSongPartTweens();
+	void SkipCoursePartTweens();
 
 	void EasierDifficulty( PlayerNumber pn );
 	void HarderDifficulty( PlayerNumber pn );
@@ -83,6 +93,7 @@ protected:
 	MusicWheel			m_MusicWheel;
 	Sprite				m_sprBalloon;
 	DifficultyDisplay   m_DifficultyDisplay;
+	CourseContentsList	m_CourseContentsFrame;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
