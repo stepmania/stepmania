@@ -34,7 +34,7 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
      * distance from the start of the sample to its center. */
     for( x = 0; x < dst->w; x++ )
 	{
-		float sax = sx*x + sx/2;//SCALE(sx,2.f,0.5f,2.f,1.f);
+		float sax = sx*x + sx/2;
 
 		// Pixel alignment is off in the magnify case.
 		// This is an ugly hack to correct for it.
