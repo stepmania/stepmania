@@ -173,7 +173,7 @@ void LuaData::BeforeReset()
 void LuaData::Register()
 {
 	LoadFromString( m_sSerializedData );
-	m_sSerializedData.clear();
+	m_sSerializedData.erase( m_sSerializedData.begin(), m_sSerializedData.end() );
 }
 
 /*
