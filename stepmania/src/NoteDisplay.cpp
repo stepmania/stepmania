@@ -382,7 +382,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 //			m_sprHoldParts.SetState( bActive?1:0 );
 			// HACK:  the border around the edge of on this sprite is super-obvious.  
-			m_sprHoldParts.SetCustomTextureRect( bActive ? FRECT(0.251f,0.002f,0.499f,0.498f) : FRECT(0.001f,0.002f,0.249f,0.498f) );
+			m_sprHoldParts.SetCustomTextureRect( bActive ? RectF(0.251f,0.002f,0.499f,0.498f) : RectF(0.001f,0.002f,0.249f,0.498f) );
 			m_sprHoldParts.SetXY( fX, fY );
 			if( bDrawGlowOnly )
 			{

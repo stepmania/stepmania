@@ -168,7 +168,7 @@ public:
 		// set custom texture coords
 //		float fPrecentOffset = fRightEdgePercent;
 
-		FRECT frectCustomTexCoords(
+		RectF frectCustomTexCoords(
 			fPercentCroppedFromLeft,
 			0,
 			1-fPercentCroppedFromRight,
@@ -394,7 +394,7 @@ void LifeMeterBar::DrawPrimitives()
 	float fPrecentOffset = TIMER->GetTimeSinceStart();
 	fPrecentOffset -= (int)fPrecentOffset;
 
-	FRECT frectCustomTexCoords(
+	RectF frectCustomTexCoords(
 		0 - fPrecentOffset,
 		0,
 		m_fTrailingLifePercentage - fPrecentOffset,

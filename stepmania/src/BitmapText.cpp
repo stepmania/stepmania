@@ -262,7 +262,7 @@ void BitmapText::DrawPrimitives()
 			//
 			iNumV -= 4;
 
-			FRECT frectTexCoords = *pTexture->GetTextureCoordRect( iFrameNo );
+			RectF frectTexCoords = *pTexture->GetTextureCoordRect( iFrameNo );
 
 			// Tweak the textures frame rectangles so we don't draw extra 
 			// to the left and right of the character, saving us fill rate.

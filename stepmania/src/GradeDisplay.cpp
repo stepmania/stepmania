@@ -50,7 +50,7 @@ void GradeDisplay::Update( float fDeltaTime )
 		else
 			fPercentIntoScrolling = (1 + 1.0f/NUM_GRADE_FRAMES) - ((fPercentIntoScrolling-0.9f)/0.1f) * 1.0f/NUM_GRADE_FRAMES;
 
-		FRECT frectCurrentTextureCoords;
+		RectF frectCurrentTextureCoords;
 		frectCurrentTextureCoords.left   = m_frectStartTexCoords.left*(1-fPercentIntoScrolling)   + m_frectDestTexCoords.left*fPercentIntoScrolling;
 		frectCurrentTextureCoords.top    = m_frectStartTexCoords.top*(1-fPercentIntoScrolling)    + m_frectDestTexCoords.top*fPercentIntoScrolling;
 		frectCurrentTextureCoords.right  = m_frectStartTexCoords.right*(1-fPercentIntoScrolling)  + m_frectDestTexCoords.right*fPercentIntoScrolling;

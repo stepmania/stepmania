@@ -35,7 +35,7 @@ protected:
 
 	// for scrolling
 	bool  m_bDoScrolling;
-	FRECT m_frectStartTexCoords;
-	FRECT m_frectDestTexCoords;
+	RectF m_frectStartTexCoords;
+	RectF m_frectDestTexCoords;
 	float m_fTimeLeftInScroll;
 };

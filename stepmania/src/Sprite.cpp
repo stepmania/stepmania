@@ -203,7 +203,7 @@ void Sprite::DrawPrimitives()
 		0 );
 	
 	// use m_temp_* variables to draw the object
-	FRECT quadVerticies;
+	RectF quadVerticies;
 
 	switch( m_HorizAlign )
 	{
@@ -242,7 +242,7 @@ void Sprite::DrawPrimitives()
 	else 
 	{
 		UINT uFrameNo = m_iStateToFrame[m_iCurState];
-		FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
+		RectF *pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
 
 		v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
 		v[1].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
@@ -313,7 +313,7 @@ void Sprite::SetState( int iNewState )
 	m_fSecsIntoState = 0.0; 
 }
 
-void Sprite::SetCustomTextureRect( FRECT new_texcoord_frect ) 
+void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect ) 
 { 
 	m_bUsingCustomTexCoords = true;
 	m_CustomTexCoords[0] = new_texcoord_frect.left;		m_CustomTexCoords[1] = new_texcoord_frect.bottom;	// bottom left
@@ -337,7 +337,7 @@ void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) // order: bottom l
 }
 
 
-void Sprite::SetCustomImageRect( FRECT rectImageCoords )
+void Sprite::SetCustomImageRect( RectF rectImageCoords )
 {
 	// Convert to a rectangle in texture coordinate space.
 	rectImageCoords.left	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();

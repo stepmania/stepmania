@@ -84,7 +84,7 @@ public:
 	int GetImageFrameWidth() const		{return GetImageWidth()		/	GetFramesWide();}
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 	
-	FRECT* GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];}
+	RectF *GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];}
 	int   GetNumFrames() const {return m_TextureCoordRects.size();}
 	CString GetFilePath() const {return m_sFilePath;}
 
@@ -107,7 +107,7 @@ protected:
 	// RECTs that hold the bounds of each frame in the bitmap.
 	// e.g., if the texture has 4 frames of animation, the SrcRect for each frame would
 	// be in m_FrameRects[0..4].
-	CArray<FRECT, FRECT&>	m_TextureCoordRects;	
+	CArray<RectF, RectF&>	m_TextureCoordRects;	
 };
 
 

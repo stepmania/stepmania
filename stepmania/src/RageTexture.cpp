@@ -67,7 +67,7 @@ void RageTexture::CreateFrameRects()
 	{
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			FRECT frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
+			RectF frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
 						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight, 
 						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth, 
 						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );

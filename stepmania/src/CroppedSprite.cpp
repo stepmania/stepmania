@@ -79,7 +79,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 			
 			// generate a rectangle with new texture coordinates
-			FRECT fCustomImageCoords( 
+			RectF fCustomImageCoords( 
 				fPercentageToCutOffEachSide, 
 				0, 
 				1 - fPercentageToCutOffEachSide, 
@@ -92,7 +92,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 			
 			// generate a rectangle with new texture coordinates
-			FRECT fCustomImageCoords( 
+			RectF fCustomImageCoords( 
 				0, 
 				fPercentageToCutOffEachSide,
 				1, 

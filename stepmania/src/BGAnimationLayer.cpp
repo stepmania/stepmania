@@ -158,7 +158,7 @@ found_effect:
 		m_iNumSprites = 1;
 		m_Sprites[0].Load( sPath, false, 4, 4, false, true );
 		m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-		m_Sprites[0].SetCustomTextureRect( FRECT(0,0,1,1) );
+		m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
 
 		switch( m_Effect )
 		{
