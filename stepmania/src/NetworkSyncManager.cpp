@@ -562,9 +562,11 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
-		case 7:	//Chat message from server
+		case 7:	//Chat message from server					
 			{
-				m_WaitingChat = m_packet.ReadNT();
+				m_sChatText += m_packet.ReadNT() + " \n ";
+				//10000 chars backlog should be more than enough
+				m_sChatText = m_sChatText.Right(10000);
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
 			break;

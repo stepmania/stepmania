@@ -100,6 +100,8 @@ public:
 	int m_iSelectMode;
 	void SelectUserSong();
 
+	CString			m_sChatText;
+
 	bool isLanServer;	//Must be public for ScreenNetworkOptions
 	StepManiaLanServer *LANserver;
 private:

@@ -67,7 +67,8 @@ private:
 	Quad			m_rectChatInputBox;
 	Quad			m_rectChatOutputBox;
 	CString			m_sTextInput;
-	CString			m_sChatText;
+	CString			m_actualText;
+
 
 	//Selection
 	Quad			m_rectSelection;

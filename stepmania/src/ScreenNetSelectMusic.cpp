@@ -86,8 +86,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
-
-	m_textOutHidden.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textOutHidden.LoadFromFont( THEME->GetPathF("ScreenNetSelectMusic","chat") );
 	m_textOutHidden.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
 
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
@@ -97,6 +96,15 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	m_textChatOutput.SetName( "ChatOutput" );
 	SET_XY_AND_ON_COMMAND( m_textChatOutput );
 	this->AddChild( &m_textChatOutput );
+
+	//Display updated chat (maybe this should be a function)?
+	m_textOutHidden.SetText( NSMAN->m_sChatText );
+	vector <wstring> wLines;
+	m_textOutHidden.GetLines( wLines );
+	m_actualText = "";
+	for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
+		m_actualText += WStringToCString( wLines[i] )+'\n';
+	m_textChatOutput.SetText( m_actualText );
 
 	//Groups
 
@@ -329,17 +337,13 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_AddToChat:
 		{
-			//This SHOULD be done with cropping, but I cant seem to get
-			//text to crop properly.
-			m_sChatText += NSMAN->m_WaitingChat + " \n ";	//Forced newline
-			NSMAN->m_WaitingChat = "";
-			m_textOutHidden.SetText( m_sChatText );
+			m_textOutHidden.SetText( NSMAN->m_sChatText );
 			vector <wstring> wLines;
 			m_textOutHidden.GetLines( wLines );
-			CString actualText = "";
+			m_actualText = "";
 			for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
-				actualText += WStringToCString(wLines[i])+'\n';
-			m_textChatOutput.SetText( actualText );
+				m_actualText += WStringToCString( wLines[i] )+'\n';
+			m_textChatOutput.SetText( m_actualText );
 			break;
 		}
 	case SM_ChangeSong:
