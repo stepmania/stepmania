@@ -99,7 +99,7 @@ SDL_Surface *RageSurface::LoadFile( const CString &sPath, bool bHeaderOnly )
 		RageFile TestOpen;
 		if( !TestOpen.Open( sPath ) )
 		{
-			SDL_SetError( "%s", TestOpen.GetError() );
+			SDL_SetError( "%s", TestOpen.GetError().c_str() );
 			return NULL;
 		}
 	}
