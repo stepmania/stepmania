@@ -48,7 +48,7 @@ ExecWait '$WINDIR\unvise32.exe $INSTDIR\uninstal.log' $R1	; don't use quotes her
 ; unvise32.exe doesn't return a useful exit code.  See if uninstal.log still exists.
 IfFileExists "$INSTDIR\uninstal.log" vise_still_exists old_vise_not_installed
 vise_still_exists:
-MessageBox MB_OK|MB_ICONINFORMATION "Uninstallation failed."
+MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "Uninstallation failed.  Install anyway?" IDYES old_vise_not_installed
 Abort
 
 old_vise_not_installed:
@@ -85,7 +85,7 @@ Delete $R3
 ; failure (eg. aborted).
 IntCmp $R4 0 old_nsis_not_installed ; jump if 0
 
-MessageBox MB_OK|MB_ICONINFORMATION "Uninstallation failed."
+MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "Uninstallation failed.  Install anyway?" IDYES old_nsis_not_installed
 Abort
 
 
