@@ -205,22 +205,23 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 
 CString ThemeManager::GetPathToAndFallback( CString sThemeName, ElementCategory category, CString sClassName, CString sElement ) 
 {
-	// search with requested name
-	CString sRet = GetPathToRaw( sThemeName, category, sClassName, sElement );
-	if( !sRet.empty() )
-		return sRet;
-
-	// search fallback name (if any)
-	// XXX: should this check fallbacks recursively?
-	CString sFallback;
-	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+	int n = 100;
+	while( n-- )
 	{
-		sRet = GetPathToAndFallback( sThemeName, category, sFallback, sElement );
+		// search with requested name
+		CString sRet = GetPathToRaw( sThemeName, category, sClassName, sElement );
 		if( !sRet.empty() )
 			return sRet;
+
+		// search fallback name (if any)
+		CString sFallback;
+		if( !m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+			return "";
+		sClassName = sFallback;
 	}
 
-	return "";
+	RageException::Throw("Infinite recursion looking up theme element from theme \"%s\", class \"%s\"",
+		sThemeName.c_str(), sClassName.c_str() );
 }
 
 CString ThemeManager::GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sElement ) 
@@ -490,13 +491,19 @@ void ThemeManager::ReloadMetrics()
 
 bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString &ret )
 {
-	if( m_pIniMetrics->GetValue(sClassName,sValueName,ret) )
-		return true;
+	int n = 100;
+	while( n-- )
+	{
+		if( m_pIniMetrics->GetValue(sClassName,sValueName,ret) )
+			return true;
 
-	CString sFallback;
-	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
-		return GetMetricRaw( sFallback, sValueName, ret );
-	return false;
+		CString sFallback;
+		if( !m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+			return false;
+		sClassName = sFallback;
+	}
+
+	RageException::Throw("Infinite recursion looking up theme metric from class \"%s\"", sClassName.c_str() );
 }
 
 CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
