@@ -70,7 +70,7 @@ Transitions = Transition.cpp Transition.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h Sample3dObject.cpp Sample3dObject.h \
-Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h
+Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h Model.cpp Model.h mathlib.c mathlib.h
 
 ActorsInMenus = \
 Banner.cpp Banner.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
@@ -94,8 +94,7 @@ LifeMeterBattery.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
 ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
-TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp  ScoreDisplayRave.h \
-Model.h Model.cpp mathlib.h mathlib.c
+TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
