@@ -83,7 +83,7 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	 * in the real branch we can remove this #if. */
 #if defined(WIN32)
 	SDL_Event e;
-	if(SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_OPENGLRESETMASK))
+	if(SDL_GetEvent(&e, SDL_OPENGLRESETMASK))
 	{
 		LOG->Trace("New OpenGL context");
 
@@ -125,7 +125,7 @@ void LowLevelWindow_SDL::SwapBuffers()
 void LowLevelWindow_SDL::Update(float fDeltaTime)
 {
 	SDL_Event event;
-	while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_VIDEORESIZEMASK))
+	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK))
 	{
 		switch(event.type)
 		{

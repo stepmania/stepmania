@@ -508,7 +508,7 @@ static void HandleSDLEvents()
 {
 	// process all queued events
 	SDL_Event event;
-	while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_QUITMASK|SDL_ACTIVEEVENTMASK))
+	while(SDL_GetEvent(event, SDL_QUITMASK|SDL_ACTIVEEVENTMASK))
 	{
 		switch(event.type)
 		{
