@@ -70,10 +70,6 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 	case PERCENT_COMPLETE_MEDIUM:
 	case PERCENT_COMPLETE_HARD:
 	case PERCENT_COMPLETE_CHALLENGE:
-		{
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			Difficulty dc = (Difficulty)(line-1);
-		}
 		// Ugly...
 		{
 			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
