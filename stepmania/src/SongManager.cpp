@@ -925,7 +925,16 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		ASSERT(GAMESTATE->m_pCurSong);
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}
-	ASSERT(sGroup != "");
+	/* XXX: Temporary extra info: someone reported an odd assertion failure here. */
+//	ASSERT(sGroup != "");
+	if( sGroup == "" )
+	{
+		LOG->Warn("GetExtraStageInfo error: sGroup == \"\", m_pCurSong %p '%s' '%s'",
+		GAMESTATE->m_pCurSong,
+		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
+		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"");
+		ASSERT(0); /* get a backtrace */
+	}
 
 	if(GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pNotesOut, po_out, so_out))
 		return;
