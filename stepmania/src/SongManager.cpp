@@ -931,7 +931,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd,
 	}
 
 	ASSERT_M( sGroup != "", ssprintf("%p '%s' '%s'",
-		GAMESTATE->m_pCurSong,
+		GAMESTATE->m_pCurSong.Get(),
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
