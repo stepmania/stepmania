@@ -43,6 +43,7 @@ public:
 	~RageFileObjDeflate();
 
 	int GetFileSize() const { return m_pFile->GetFileSize(); }
+	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
 private:
 	int ReadInternal( void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
