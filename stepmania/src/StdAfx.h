@@ -28,6 +28,7 @@
  * place, eg. with ScreenMessages.  Those should be fixed, but later. XXX */
 #pragma warning (disable : 4063)
 #pragma warning (disable : 4127)
+#pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
 #endif
 
 #undef min
