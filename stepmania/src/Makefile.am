@@ -206,7 +206,7 @@ MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h MusicBannerWheel.cpp M
 MusicList.cpp MusicList.h MusicSortDisplay.cpp MusicSortDisplay.h MusicWheel.cpp MusicWheel.h \
 MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h OptionIconRow.cpp OptionIconRow.h \
 OptionsCursor.cpp OptionsCursor.h PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
-ScrollingList.cpp ScrollingList.h SongCreditDisplay.cpp SongCreditDisplay.h SnapDisplay.cpp SnapDisplay.h \
+ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \

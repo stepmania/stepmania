@@ -1280,6 +1280,53 @@ int LuaFunc_##func( lua_State *L ) { \
 LuaFunction( func ); /* register it */
 LuaFunction_Steps( StepsMeter, p->GetMeter() );
 
+CString GetSongCredits()
+{
+	if( GAMESTATE->IsCourseMode() )
+		return "";
+
+	const Song* pSong = GAMESTATE->m_pCurSong;
+	if( pSong == NULL )
+		return "";
+
+	CString s;
+	s += pSong->GetFullDisplayTitle() + "\n";
+	s += pSong->GetDisplayArtist() + "\n";
+	if( !pSong->m_sCredit.empty() )
+		s += pSong->m_sCredit + "\n";
+
+	// use a vector and not a set so that ordering is maintained
+	vector<Steps*> vpStepsToShow;
+	FOREACH_PlayerNumber( p )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+		
+		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+		bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
+		if( !bAlreadyAdded )
+			vpStepsToShow.push_back( pSteps );
+	}
+	for( unsigned i=0; i<vpStepsToShow.size(); i++ )
+	{
+		Steps* pSteps = vpStepsToShow[i];
+		CString sDifficulty = DifficultyToThemedString( pSteps->GetDifficulty() );
+		
+		// HACK: reset capitalization
+		sDifficulty.MakeLower();
+		sDifficulty = Capitalize( sDifficulty );
+		
+		s += sDifficulty + " steps: " + pSteps->GetDescription();
+		s += "\n";
+	}
+
+	// erase the last newline
+	s.erase( s.end()-1 );
+	return s;
+}
+
+LuaFunction_NoArgs( GetSongCredits,		GetSongCredits() )
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

@@ -7,7 +7,6 @@
 #include "IniFile.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
-#include "SongCreditDisplay.h"
 #include "song.h"
 #include "GameState.h"
 #include "RageTextureManager.h"
@@ -45,11 +44,7 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 	else if( sFile.CompareNoCase("coursebanner") == 0 )
 		sType = "CourseBanner";
 
-	if( sType == "SongCreditDisplay" )
-	{
-		pActor = new SongCreditDisplay;
-	}
-	else if( sType == "BGAnimation" )
+	if( sType == "BGAnimation" )
 	{
 		BGAnimation *pBGA = new BGAnimation;
 		pBGA->LoadFromNode( sAniDir, layer );
