@@ -13,6 +13,9 @@
 #include "stdafx.h"
 
 #include "RageThreads.h"
+#include "RageTimer.h"
+#include "RageLog.h"
+#include "RageUtil.h"
 
 RageMutex::RageMutex()
 {
@@ -67,6 +70,27 @@ void RageMutex::Unlock()
 	}
 
 	SDL_UnlockMutex(mut);
+}
+
+LockMutex::LockMutex(RageMutex &mut, const char *file_, int line_): 
+	mutex(mut),
+	file(file_),
+	line(line_),
+	locked_at(RageTimer::GetTimeSinceStart())
+{
+	mutex.Lock();
+}
+
+LockMutex::~LockMutex()
+{
+	mutex.Unlock();
+
+	if(file)
+	{
+		float dur = RageTimer::GetTimeSinceStart() - locked_at;
+		if(dur > 0.015)
+			LOG->Trace(ssprintf("Lock at %s:%i took %f", file, line, dur));
+	}
 }
 
 /*

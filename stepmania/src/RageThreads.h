@@ -27,10 +27,31 @@ class LockMutex
 {
 	RageMutex &mutex;
 
+	const char *file;
+	int line;
+	float locked_at;
+
 public:
-	LockMutex(RageMutex &mut): mutex(mut) { mutex.Lock(); }
-	~LockMutex() { mutex.Unlock(); }
-	LockMutex(LockMutex &cpy): mutex(cpy.mutex) { mutex.Lock(); }
+	LockMutex(RageMutex &mut, const char *file, int line);
+	LockMutex(RageMutex &mut): mutex(mut), file(NULL), line(-1), locked_at(0) { mutex.Lock(); }
+	~LockMutex();
+	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(cpy.file), line(cpy.line), locked_at(cpy.locked_at) { mutex.Lock(); }
 };
+
+/* Double-abstracting __LINE__ lets us append it to other text, to generate
+ * locally unique variable names.  (Otherwise we get "LocalLock__LINE__".) I'm
+ * not sure why this works, but it does, in both VC and GCC. */
+
+#ifdef DEBUG
+/* Use the debug version, which logs if something holds a lock for a long time.
+ * __FUNCTION__ is nonstandard, but both GCC and VC support it; VC doesn't
+ * support the standard, __func__. */
+#define LockMutL2(m, l) LockMutex LocalLock ## l (m, __FUNCTION__, __LINE__)
+#else
+#define LockMutL2(m, l) LockMutex LocalLock ## l (m)
+#endif
+
+#define LockMutL(m, l) LockMutL2(m, l)
+#define LockMut(m) LockMutL(m, __LINE__)
 
 #endif
