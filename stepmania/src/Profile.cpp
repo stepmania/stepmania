@@ -493,13 +493,21 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	{
 		XNode* pNumSongsPlayedByDifficulty = pGeneralDataNode->AppendChild("NumSongsPlayedByDifficulty");
 		FOREACH_Difficulty( dc )
+		{
+			if( !m_iNumSongsPlayedByDifficulty[dc] )
+				continue;
 			pNumSongsPlayedByDifficulty->AppendChild( DifficultyToString(dc), m_iNumSongsPlayedByDifficulty[dc] );
+		}
 	}
 
 	{
 		XNode* pNumSongsPlayedByMeter = pGeneralDataNode->AppendChild("NumSongsPlayedByMeter");
 		for( int i=0; i<MAX_METER+1; i++ )
+		{
+			if( !m_iNumSongsPlayedByMeter[i] )
+				continue;
 			pNumSongsPlayedByMeter->AppendChild( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
+		}
 	}
 
 	return pGeneralDataNode;
