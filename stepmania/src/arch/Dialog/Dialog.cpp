@@ -53,8 +53,8 @@ void Dialog::Init()
 
 void Dialog::Shutdown()
 {
-	ASSERT( g_pImpl != NULL );
-
+	delete g_pImpl;
+	g_pImpl = NULL;
 }
 
 static bool MessageIsIgnored( CString ID )
@@ -70,6 +70,7 @@ static bool MessageIsIgnored( CString ID )
 void Dialog::IgnoreMessage( CString ID )
 {
 	if( ID == "" )
+		return;
 
 	if( MessageIsIgnored(ID) )
 		return;
