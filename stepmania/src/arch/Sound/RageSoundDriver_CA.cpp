@@ -190,6 +190,9 @@ void RageSound_CA::FeederThread()
 
 RageSound_CA::RageSound_CA() : idealFormat(NULL), actualFormat(NULL), converter(NULL)
 {
+#if true
+    RageException::ThrowNonfatal("Broken driver on G5--disabled.");
+#endif
 
 	shutdown = false;
 
