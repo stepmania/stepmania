@@ -487,7 +487,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		ini.GetValue( sLayer, "Stretch", Stretch );
 
 			 if( atoi(type) == 0 || type == "sprite" ) m_Type = TYPE_SPRITE;
-		else if( atoi(type) == 1 ) { TYPE_SPRITE; Stretch = true; }
+		else if( atoi(type) == 1 ) { type = TYPE_SPRITE; Stretch = true; }
 		else if( atoi(type) == 2 || type == "particles" ) m_Type = TYPE_PARTICLES;
 		else if( atoi(type) == 3 || type == "tiles" ) m_Type = TYPE_TILES;
 		else
