@@ -337,14 +337,14 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"NOTES") )
 		{
-			Steps* pNewNotes = new Steps;
-			ASSERT( pNewNotes );
-
 			if( iNumParams < 7 )
 			{
 				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sPath.c_str(), iNumParams, 7 );
 				continue;
 			}
+
+			Steps* pNewNotes = new Steps;
+			ASSERT( pNewNotes );
 
 			LoadFromSMTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:CString(""),
@@ -435,14 +435,14 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 				return false;
 			}
 
-			Steps* pNewNotes = new Steps;
-			ASSERT( pNewNotes );
-
 			if( iNumParams < 7 )
 			{
 				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sEditFilePath.c_str(), iNumParams, 7 );
 				continue;
 			}
+
+			Steps* pNewNotes = new Steps;
+			ASSERT( pNewNotes );
 
 			LoadFromSMTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:CString(""),
