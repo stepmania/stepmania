@@ -8,7 +8,7 @@ class RageFileDriverDirect: public RageFileDriver
 public:
 	RageFileDriverDirect( CString root );
 
-	RageFileObj *Open( CString path, RageFile::OpenMode mode, RageFile &p, int &err );
+	RageFileObj *Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err );
 	bool Ready();
 
 private:

@@ -11,12 +11,12 @@ class RageFileDriver
 public:
 	RageFileDriver( FilenameDB *db ) { FDB = db; }
 	virtual ~RageFileDriver();
-	virtual RageFileObj *Open( CString path, RageFile::OpenMode mode, RageFile &p, int &err ) = 0;
-	virtual void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
-	virtual RageFileManager::FileType GetFileType( CString sPath );
-	virtual int GetFileSizeInBytes( CString sFilePath );
-	virtual int GetFileModTime( CString sPath );
-	virtual int GetPathValue( CString path );
+	virtual RageFileObj *Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err ) = 0;
+	virtual void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	virtual RageFileManager::FileType GetFileType( const CString &sPath );
+	virtual int GetFileSizeInBytes( const CString &sFilePath );
+	virtual int GetFileModTime( const CString &sPath );
+	virtual int GetPathValue( const CString &path );
 	virtual bool Ready() { return true; } /* see RageFileManager::MountpointIsReady */
 	virtual void FlushDirCache( const CString &sPath );
 

@@ -192,9 +192,10 @@ static bool CreateDirectories( CString Path )
 	return true;
 }
 
-RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode, RageFile &p, int &err )
+RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
 {
-	sPath = root + sPath;
+	CString sPath = root + path;
+
 	/* XXX: make sure this will partially resolve.  eg. if "abc/def" exists,
 	 * and we're opening "ABC/DEF/GHI/jkl/mno", make sure this will resolve
 	 * to "abc/def/GHI/jkl/mno"; we'll create the missing ones later. */

@@ -65,7 +65,7 @@ int RageFileObj::GetFileSize()
 	return ret;
 }
 
-int RageFileDriver::GetPathValue( CString path )
+int RageFileDriver::GetPathValue( const CString &path )
 {
 	vector<CString> parts;
 	split( path, SLASH, parts, true );
@@ -99,23 +99,23 @@ int RageFileDriver::GetPathValue( CString path )
 	return 0;
 }
 
-void RageFileDriver::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileDriver::GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FDB->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 
-RageFileManager::FileType RageFileDriver::GetFileType( CString sPath )
+RageFileManager::FileType RageFileDriver::GetFileType( const CString &sPath )
 {
 	/* XXX */
 	return (RageFileManager::FileType) FDB->GetFileType( sPath );
 }
 
-int RageFileDriver::GetFileSizeInBytes( CString sPath )
+int RageFileDriver::GetFileSizeInBytes( const CString &sPath )
 {
 	return FDB->GetFileSize( sPath );
 }
 
-int RageFileDriver::GetFileModTime( CString sPath )
+int RageFileDriver::GetFileModTime( const CString &sPath )
 {
 	return FDB->GetFileModTime( sPath );
 }
