@@ -605,7 +605,7 @@ void Song::TidyUpData()
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
 		// ignore DWI "-char" graphics
-		if( arrayImages[i].Find("-char.") != -1 )
+		if( arrayImages[i].Find("-char") != -1 )
 			continue;	// skip
 		
 		// Skip any image that we've already classified
