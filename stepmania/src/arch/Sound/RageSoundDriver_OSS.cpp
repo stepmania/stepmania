@@ -1,13 +1,11 @@
 #include "global.h"
 #include "RageSoundDriver_OSS.h"
 
-#include "RageTimer.h"
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageSoundManager.h"
 #include "RageUtil.h"
 
-#include "SDL.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -34,13 +32,15 @@ void RageSound_OSS::MixerThread()
 {
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
-	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
+	while( !SOUNDMAN && !shutdown )
+		usleep( 10000 );
 
 	/* We want to set a higher priority, but Unix only lets root renice
 	 * < 0, which is silly.  Give it a try, anyway. */
-	nice(-5);
+	nice( -10 );
 
-	while(!shutdown) {
+	while( !shutdown )
+	{
 		while(GetData())
 			;
 
@@ -48,83 +48,39 @@ void RageSound_OSS::MixerThread()
 		FD_ZERO(&f);
 		FD_SET(fd, &f);
 
-		SDL_Delay(10);
+		usleep( 10000 );
 
 		struct timeval tv = { 0, 10000 };
 		select(fd+1, NULL, &f, NULL, &tv);
 	}
 }
 
+void RageSound_OSS::SetupDecodingThread()
+{
+	nice( -5 );
+}
+
 bool RageSound_OSS::GetData()
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	/* Look for a free buffer. */
 	audio_buf_info ab;
-	if(ioctl(fd, SNDCTL_DSP_GETOSPACE, &ab) == -1)
+	if( ioctl(fd, SNDCTL_DSP_GETOSPACE, &ab) == -1 )
 		RageException::Throw("ioctl(SNDCTL_DSP_GETOSPACE): %s", strerror(errno) );
 
-	if(!ab.fragments)
+	if( !ab.fragments )
 		return false;
 		
 	const int chunksize = ab.fragsize;
 	
-	static Sint16 *buf = NULL;
+	static int16_t *buf = NULL;
 	if(!buf)
-		buf = new Sint16[chunksize / sizeof(Sint16)];
-	memset(buf, 0, chunksize);
+		buf = new int16_t[chunksize / sizeof(int16_t)];
 
-	/* Create a 32-bit buffer to mix sounds. */
-	static SoundMixBuffer mix;
+	this->Mix( buf, chunksize/bytes_per_frame, last_cursor_pos, GetPosition( NULL ) );
 
-	const int64_t play_pos = last_cursor_pos;
-	const int64_t cur_play_pos = GetPosition( NULL /* doesn't care */);
-
-	for(unsigned i = 0; i < sounds.size(); ++i)
-	{
-		if(sounds[i]->stopping)
-			continue;
-
-		int bytes_read = 0;
-		int bytes_left = chunksize;
-
-		if( !sounds[i]->start_time.IsZero() )
-		{
-			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
-			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
-			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * samplerate);
-			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
-
-			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
-			bytes_read += iSilentBytesInThisBuffer;
-			bytes_left -= iSilentBytesInThisBuffer;
-
-			if( !iSilentBytesInThisBuffer )
-				sounds[i]->start_time.SetZero();
-		}
-
-
-		/* Call the callback. */
-		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, last_cursor_pos+bytes_read/bytes_per_frame );
-		bytes_read += got;
-		bytes_left -= got;
-
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
-
-		if( bytes_left > 0 )
-		{
-			/* This sound is finishing. */
-			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = last_cursor_pos + (got / bytes_per_frame);
-		}
-	}
-
-	mix.read(buf);
-	int wrote = write(fd, buf, chunksize);
-  	if(wrote != chunksize)
-		RageException::Throw("write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "" );
+	int wrote = write( fd, buf, chunksize );
+  	if( wrote != chunksize )
+		RageException::Throw( "write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "" );
 
 	/* Increment last_cursor_pos. */
 	last_cursor_pos += chunksize / bytes_per_frame;
@@ -132,57 +88,10 @@ bool RageSound_OSS::GetData()
 	return true;
 }
 
-void RageSound_OSS::StartMixing(RageSoundBase *snd)
-{
-	sound *s = new sound;
-	s->snd = snd;
-	s->start_time = snd->GetStartTime();
-
-	LockMutex L(SOUNDMAN->lock);
-	sounds.push_back(s);
-}
-
-void RageSound_OSS::Update(float delta)
-{
-	LockMutex L(SOUNDMAN->lock);
-
-	/* SoundStopped might erase sounds out from under us, so make a copy
-	 * of the sound list. */
-	vector<sound *> snds = sounds;
-	for(unsigned i = 0; i < snds.size(); ++i)
-	{
-		if(!sounds[i]->stopping) continue;
-
-		if(GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
-			continue; /* stopping but still flushing */
-
-		/* This sound is done. */
-		snds[i]->snd->StopPlaying();
-	}
-}
-
-void RageSound_OSS::StopMixing(RageSoundBase *snd)
-{
-	LockMutex L(SOUNDMAN->lock);
-
-	/* Find the sound. */
-	unsigned i;
-	for(i = 0; i < sounds.size(); ++i)
-		if(sounds[i]->snd == snd) break;
-	if(i == sounds.size())
-	{
-		LOG->Trace("not stopping a sound because it's not playing");
-		return;
-	}
-
-	delete sounds[i];
-	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
-}
-
+/* XXX: There's a race on last_cursor_pos here: new data might be written after the
+ * ioctl returns, incrementing last_cursor_pos. */
 int64_t RageSound_OSS::GetPosition(const RageSoundBase *snd) const
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	ASSERT( fd != -1 );
 	
 	int delay;
@@ -192,7 +101,7 @@ int64_t RageSound_OSS::GetPosition(const RageSoundBase *snd) const
 	return last_cursor_pos - (delay / bytes_per_frame);
 }
 
-void CheckOSSVersion( int fd )
+void RageSound_OSS::CheckOSSVersion( int fd )
 {
 	int version;
 	if( ioctl(fd, OSS_GETVERSION, &version) != 0 )
@@ -269,6 +178,8 @@ RageSound_OSS::RageSound_OSS()
 	if(ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &i) == -1)
 		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno));
 
+	StartDecodeThread();
+	
 	MixingThread.SetName( "RageSound_OSS" );
 	MixingThread.Create( MixerThread_start, this );
 }
@@ -291,7 +202,7 @@ float RageSound_OSS::GetPlayLatency() const
 }
 
 /*
- * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  */
