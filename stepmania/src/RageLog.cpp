@@ -114,6 +114,7 @@ RageLog::~RageLog()
 	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
 		str += ssprintf("%s\n", i->second.c_str());
 	fprintf( m_fileInfo, "%s", str.c_str() );
+	fprintf( m_fileLog, "\nStatics:\n%s", str.c_str() );
 
 	Flush();
 	HideConsole();
