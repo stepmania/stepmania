@@ -11,7 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GrayArrow.h"
 #include "ActorFrame.h"
 #include "StyleDef.h"
 #include "GameConstantsAndTypes.h"

@@ -13,7 +13,6 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
-#include "GrayArrow.h"
 #include "InputMapper.h"
 #include "MenuElements.h"
 #include "RageInputDevice.h"
