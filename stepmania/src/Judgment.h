@@ -13,19 +13,14 @@
 
 #include "Sprite.h"
 #include "ActorFrame.h"
-#include "song.h"
+#include "GameConstantsAndTypes.h"
 #include "BitmapText.h"
-#include "PrefsManager.h"
 
 
 class Judgment : public ActorFrame
 {
 public:
 	Judgment();
-	virtual ~Judgment() { }
-
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 
 	void Reset();
 	void SetJudgment( TapNoteScore score );

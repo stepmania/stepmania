@@ -18,12 +18,12 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric	MARVELOUS_COMMAND	("Judgment","MarvelousCommand");
-CachedThemeMetric	PERFECT_COMMAND		("Judgment","PerfectCommand");
-CachedThemeMetric	GREAT_COMMAND		("Judgment","GreatCommand");
-CachedThemeMetric	GOOD_COMMAND		("Judgment","GoodCommand");
-CachedThemeMetric	BOO_COMMAND			("Judgment","BooCommand");
-CachedThemeMetric	MISS_COMMAND		("Judgment","MissCommand");
+static CachedThemeMetric	MARVELOUS_COMMAND	("Judgment","MarvelousCommand");
+static CachedThemeMetric	PERFECT_COMMAND		("Judgment","PerfectCommand");
+static CachedThemeMetric	GREAT_COMMAND		("Judgment","GreatCommand");
+static CachedThemeMetric	GOOD_COMMAND		("Judgment","GoodCommand");
+static CachedThemeMetric	BOO_COMMAND			("Judgment","BooCommand");
+static CachedThemeMetric	MISS_COMMAND		("Judgment","MissCommand");
 
 
 Judgment::Judgment()
@@ -39,16 +39,6 @@ Judgment::Judgment()
 	m_sprJudgment.StopAnimating();
 	Reset();
 	this->AddChild( &m_sprJudgment );
-}
-
-void Judgment::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
-}
-
-void Judgment::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
 }
 
 
