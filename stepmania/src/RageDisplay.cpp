@@ -38,6 +38,7 @@ RageMatrix&			GetTopModelMatrix() { return g_matModelStack.back(); }
 int					g_flags = 0;		/* SDL video flags */
 GLenum				g_vertMode = GL_TRIANGLES;
 RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
+RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
 float				g_fLastCheckTime;
 int					g_iFramesRenderedSinceLastCheck;
@@ -151,6 +152,20 @@ void RageDisplay::Flip()
 {
 	FlushQueue();
 	SDL_GL_SwapBuffers();
+	g_iFramesRenderedSinceLastCheck++;
+
+	if( g_LastCheckTimer.PeekDeltaTime() >= 1.0f )	// update stats every 1 sec.
+	{
+		g_LastCheckTimer.GetDeltaTime();
+		g_iFPS = g_iFramesRenderedSinceLastCheck;
+		g_iFramesRenderedSinceLastCheck = 0;
+		g_iTPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
+		g_iVertsRenderedSinceLastCheck = 0;
+		g_iDPF = g_iDrawsSinceLastCheck / g_iFPS;
+		g_iDrawsSinceLastCheck = 0;
+		//LOG->Trace( "FPS: %d, TPF: %d, DPF: %d", m_iFPS, m_iTPF, m_iDPF );
+	}
+
 }
 
 
@@ -198,12 +213,12 @@ void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 }
 void RageDisplay::AddVerts( const RageVertex v[], int iNumVerts )
 {
-	// Try not to overflow the queue
-	if( g_iNumVerts > MAX_NUM_VERTICIES-30 )	
-		FlushQueue();
-
 	for( int i=0; i<iNumVerts; i++ )
 	{
+		// Don't overflow the queue
+		if( g_iNumVerts+1 > MAX_NUM_VERTICIES )	
+			FlushQueue();
+
 		// transform the verticies as we copy
 		RageVec3TransformCoord( &g_vertQueue[g_iNumVerts].p, &v[i].p, &GetTopModelMatrix() ); 
 		g_vertQueue[g_iNumVerts].c = v[i].c;
@@ -322,6 +337,7 @@ void RageDisplay::SetTexture( RageTexture* pTexture )
 
 	if( iLastTexID != iNewTexID )
 		FlushQueue();
+	iLastTexID = iNewTexID;
 
 	glBindTexture( GL_TEXTURE_2D, iNewTexID );
 }
@@ -330,7 +346,7 @@ void RageDisplay::SetTextureModeModulate()
 	int a;
 	glGetTexEnviv( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &a );
 
-	if( a == GL_MODULATE )
+	if( a != GL_MODULATE )
 		FlushQueue();
 
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
