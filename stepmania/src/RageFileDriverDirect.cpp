@@ -102,7 +102,6 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, int mode, RageFile
 	/* This partially resolves.  For example, if "abc/def" exists, and we're opening
 	 * "ABC/DEF/GHI/jkl/mno", this will resolve it to "abc/def/GHI/jkl/mno"; we'll
 	 * create the missing parts below. */
-	/* XXX: does it? */
 	FDB->ResolvePath( sPath );
 
 	if( mode & RageFile::WRITE )
