@@ -229,6 +229,11 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	timespec abstime;
 	abstime.tv_sec = pTimeout->m_secs + ArchHooks_Unix::m_iStartTime/1000000;
 	abstime.tv_nsec = (pTimeout->m_us + ArchHooks_Unix::m_iStartTime%1000000) * 1000;
+	while(abstime.tv_nsec > 999999999)
+	{
+		abstime.tv_sec++;
+		abstime.tv_nsec -= 1000000000;
+	}
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
 	return iRet != ETIMEDOUT;
 }
