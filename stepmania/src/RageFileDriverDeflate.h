@@ -35,6 +35,25 @@ private:
 	int decomp_buf_avail;
 };
 
+class RageFileObjDeflate: public RageFileObj
+{
+public:
+	/* By default, pFile will not be freed. */
+	RageFileObjDeflate( RageFileBasic *pOutput );
+	~RageFileObjDeflate();
+
+	int GetFileSize() const { return m_pFile->GetFileSize(); }
+
+private:
+	int ReadInternal( void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
+	int WriteInternal( const void *pBuffer, size_t iBytes );
+	int FlushInternal();
+	
+	RageFileBasic *m_pFile;
+	z_stream *m_pDeflate;
+	bool m_bFileOwned;
+};
+
 #endif
 
 /*

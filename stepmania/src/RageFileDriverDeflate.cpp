@@ -181,6 +181,101 @@ int RageFileObjInflate::SeekInternal( int iPos )
 	return m_iFilePos;
 }
 
+RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
+{
+	m_pFile = pFile;
+	m_bFileOwned = false;
+
+	m_pDeflate = new z_stream;
+	memset( m_pDeflate, 0, sizeof(z_stream) );
+
+	int err = deflateInit2( m_pDeflate,
+				3,
+				Z_DEFLATED,
+				-15, // windowBits
+				8, // memLevel
+				Z_DEFAULT_STRATEGY );
+
+	if( err == Z_MEM_ERROR )
+		RageException::Throw( "inflateInit2( %i ): out of memory", -MAX_WBITS );
+	if( err != Z_OK )
+		LOG->Trace( "Huh? inflateInit2() err = %i", err );
+
+}
+
+RageFileObjDeflate::~RageFileObjDeflate()
+{
+	FlushInternal();
+
+	if( m_bFileOwned )
+		delete m_pFile;
+
+	int err = deflateEnd( m_pDeflate );
+	if( err != Z_OK )
+		LOG->Trace( "Huh? deflateEnd() err = %i", err );
+
+	delete m_pDeflate;
+}
+
+int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
+{
+	m_pDeflate->next_in  = (Bytef*) pBuffer;
+	m_pDeflate->avail_in = iBytes;
+
+	while( m_pDeflate->avail_in > 0 )
+	{
+		char buf[1024*4];
+		m_pDeflate->next_out = (Bytef *) buf;
+		m_pDeflate->avail_out = sizeof(buf);
+
+		int err = deflate( m_pDeflate, Z_NO_FLUSH );
+
+		if( err != Z_OK )
+			FAIL_M( ssprintf("deflate: err %i", err) );
+			
+		if( m_pDeflate->avail_out > 0 )
+		{
+			int iRet = m_pFile->Write( buf, sizeof(buf)-m_pDeflate->avail_out );
+			if( iRet == -1 )
+			{
+				SetError( m_pFile->GetError() );
+				return -1;
+			}
+		}
+	}
+
+	return iBytes;
+}
+
+int RageFileObjDeflate::FlushInternal()
+{
+	m_pDeflate->avail_in = 0;
+
+	while( 1 )
+	{
+		char buf[1024*4];
+		m_pDeflate->next_out = (Bytef *) buf;
+		m_pDeflate->avail_out = sizeof(buf);
+
+		int err = deflate( m_pDeflate, Z_FINISH );
+		if( err != Z_OK && err != Z_STREAM_END )
+			FAIL_M( ssprintf("deflate: err %i", err) );
+
+		if( m_pDeflate->avail_out > 0 )
+		{
+			int iRet = m_pFile->Write( buf, sizeof(buf)-m_pDeflate->avail_out );
+			if( iRet == -1 )
+			{
+				SetError( m_pFile->GetError() );
+				return -1;
+			}
+		}
+
+		if( err == Z_STREAM_END )
+			return 0;
+	}
+}
+
 /*
  * Copyright (c) 2003-2004 Glenn Maynard
  * All rights reserved.
