@@ -89,7 +89,6 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			{
-			LOG->Trace("key %i, %i", event.key.state, event.key.keysym.sym);
 			DeviceInput di(DEVICE_KEYBOARD, event.key.keysym.sym);
 			INPUTFILTER->ButtonPressed(di, event.key.state == SDL_PRESSED);
 			}
