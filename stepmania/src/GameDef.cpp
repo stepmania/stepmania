@@ -20,6 +20,7 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
+#define NOTESKIN_DIR "NoteSkins\\"
 
 CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) const
 {
@@ -43,7 +44,7 @@ CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) const
 
 CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) const
 {
-	const CString sSkinDir	= ssprintf("NoteSkins\\%s\\%s\\", m_szName, sSkinName);
+	const CString sSkinDir	= ssprintf(NOTESKIN_DIR "%s\\%s\\", m_szName, sSkinName);
 	const CString sGraphicSuffix = ElementToGraphicSuffix( gbg );
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
@@ -63,7 +64,7 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButto
 
 void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapColorsOut ) const
 {
-	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
+	const CString sSkinDir	= ssprintf(NOTESKIN_DIR "%s\\%s\\", m_szName, sSkinName);
 
 	const CString sColorsFilePath = sSkinDir + sButtonName + " Tap.colors";
 
@@ -96,7 +97,7 @@ void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonN
 
 void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldColorsOut ) const
 {
-	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
+	const CString sSkinDir	= ssprintf(NOTESKIN_DIR "%s\\%s\\", m_szName, sSkinName);
 
 	const CString sColorsFilePath = sSkinDir + sButtonName + " Hold.colors";
 
@@ -126,7 +127,7 @@ void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButton
 
 void GameDef::GetSkinNames( CStringArray &AddTo ) const
 {
-	CString sBaseSkinFolder = "Skins\\" + CString(m_szName) + "\\";
+	CString sBaseSkinFolder = NOTESKIN_DIR + CString(m_szName) + "\\";
 	GetDirListing( sBaseSkinFolder + "*.*", AddTo, true );
 
 	// strip out "CVS"
@@ -161,7 +162,7 @@ void GameDef::AssertSkinsAreComplete() const
 
 void GameDef::AssertSkinIsComplete( CString sSkin ) const
 {
-	CString sGameSkinFolder = "Skins\\" + sSkin + "\\";
+	CString sGameSkinFolder = NOTESKIN_DIR + sSkin + "\\";
 
 	for( int j=0; j<NUM_GAME_BUTTON_GRAPHICS; j++ )
 	{
