@@ -462,53 +462,30 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	
 	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
-#ifndef _XBOX
-
-	if(p.windowed)
-	{
-		g_d3dpp.BackBufferWidth			=	p.width;
-		g_d3dpp.BackBufferHeight		=	p.height;
-		g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
-		g_d3dpp.BackBufferCount			=	1;
-		g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
-		g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_COPY;
-		g_d3dpp.hDeviceWindow			=	NULL;
-		g_d3dpp.Windowed				=	p.windowed;
-		g_d3dpp.EnableAutoDepthStencil	=	TRUE;
-		g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
-		g_d3dpp.Flags					=	0;
-		g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-		g_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-	}
-	else
-	{
-		g_d3dpp.BackBufferWidth			=	p.width;
-		g_d3dpp.BackBufferHeight		=	p.height;
-		g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
-		g_d3dpp.BackBufferCount			=	1;
-		g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
-		g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_FLIP;
-		g_d3dpp.hDeviceWindow			=	NULL;
-		g_d3dpp.Windowed				=	p.windowed;
-		g_d3dpp.EnableAutoDepthStencil	=	TRUE;
-		g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
-		g_d3dpp.Flags					=	0;
-		g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-		g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	}
-
-#else
-
 	g_d3dpp.BackBufferWidth			=	p.width;
 	g_d3dpp.BackBufferHeight		=	p.height;
 	g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
 	g_d3dpp.BackBufferCount			=	1;
 	g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
-	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_FLIP;
+	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
 	g_d3dpp.hDeviceWindow			=	NULL;
-	g_d3dpp.Windowed				=	0;
+	g_d3dpp.Windowed				=	p.windowed;
 	g_d3dpp.EnableAutoDepthStencil	=	TRUE;
 	g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
+
+#ifndef _XBOX
+
+	g_d3dpp.Flags					=	0;
+	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+
+	if(p.windowed)
+		g_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	else
+		g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+
+#else
+
+	g_d3dpp.Windowed				=	0;
 	g_d3dpp.Flags					=	(p.progressive ? D3DPRESENTFLAG_PROGRESSIVE : D3DPRESENTFLAG_INTERLACED) | D3DPRESENTFLAG_10X11PIXELASPECTRATIO;
 	g_d3dpp.FullScreen_RefreshRateInHz = p.PAL ? 50 : 60;
 	g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -535,7 +512,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 #else
 			NULL,
-			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+			D3DCREATE_HARDWARE_VERTEXPROCESSING,
 #endif
 			&g_d3dpp, 
 			&g_pd3dDevice );
