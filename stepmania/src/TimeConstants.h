@@ -24,7 +24,6 @@ const int MONTHS_IN_YEAR = 12;
 CString DayInYearToString( int iDayInYearIndex );
 CString LastDayToString( int iLastDayIndex );
 CString DayOfWeekToString( int iDayOfWeekIndex );
-CString DayOfWeekToShortString( int iDayOfWeekIndex );
 CString HourInDayToString( int iHourIndex );
 CString MonthToString( int iMonthIndex );
 CString LastWeekToString( int iLastWeekIndex );

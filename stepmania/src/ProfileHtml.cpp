@@ -36,8 +36,11 @@ const CString STYLE_CSS		= "Style.css";
 #define TITLE					THEME->GetMetric("ProfileHtml","Title")
 #define FOOTER					THEME->GetMetric("ProfileHtml","Footer")
 #define VERIFICATION_TEXT		THEME->GetMetric("ProfileHtml","VerificationText")
-#define SHOW_PLAY_MODE(pm)		THEME->GetMetric("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
+#define SHOW_PLAY_MODE(pm)		THEME->GetMetricB("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
 #define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetricB("ProfileHtml","ShowRadarCategory"+RadarCategoryToString(rc))
+#define SHOW_STYLE(s)			THEME->GetMetricB("ProfileHtml","ShowStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle(s)->m_szName))
+#define SHOW_DIFFICULTY(dc)		THEME->GetMetricB("ProfileHtml","ShowDifficulty"+DifficultyToString(dc))
+#define SHOW_STEPS_TYPE(st)		THEME->GetMetricB("ProfileHtml","ShowStepsType"+Capitalize(GAMEMAN->NotesTypeToString(st)))
 
 #define NEWLINE "\r\n"
 
@@ -175,6 +178,12 @@ inline void PrintTable(RageFile &f,Table &table)
 				TranslatedWrite(f, line.sValue );
 				TranslatedWrite(f,"</td>");
 			}
+			else
+			{
+				TranslatedWrite(f,"<td>&nbsp;</td>");
+				TranslatedWrite(f,"<td>&nbsp;</td>");
+			}
+
 			TranslatedWrite(f, "\n" );
 
 			TranslatedWrite(f,"</tr>\n");
@@ -282,17 +291,19 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_OPEN(f,"General Info",true);
 		{
 			BEGIN_TABLE(2);
-			TABLE_LINE2( "DisplayName",						pProfile->m_sDisplayName );
+			TABLE_LINE2( "DisplayName",						pProfile->m_sDisplayName.empty() ? "(empty)" : pProfile->m_sDisplayName );
 			TABLE_LINE2( "ID",								pProfile->m_sGuid );
 			TABLE_LINE2( "LastUsedHighScoreName",			pProfile->m_sLastUsedHighScoreName );
+			TABLE_LINE2( "LastPlayedMachineID",				pProfile->m_sLastPlayedMachineGuid );
 			TABLE_LINE2( "UsingProfileDefaultModifiers",	pProfile->m_bUsingProfileDefaultModifiers );
-			TABLE_LINE2( "DefaultModifiers",				pProfile->m_sDefaultModifiers );
+			PlayerOptions po;
+			po.FromString( pProfile->m_sDefaultModifiers );
+			TABLE_LINE2( "DefaultModifiers",				po.GetThemedString() );
 			TABLE_LINE2( "TotalPlays",						pProfile->m_iTotalPlays );
 			TABLE_LINE2( "TotalPlay",						SecondsToHHMMSS( (float) pProfile->m_iTotalPlaySeconds) );
 			TABLE_LINE2( "TotalGameplay",					SecondsToHHMMSS( (float) pProfile->m_iTotalGameplaySeconds) );
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
 			TABLE_LINE2( "TotalCaloriesBurned",				pProfile->GetDisplayTotalCaloriesBurned() );
-			TABLE_LINE2( "LastPlayedMachineID",				pProfile->m_sGuid );
 			TABLE_LINE2( "TotalTapsAndHolds",				pProfile->m_iTotalTapsAndHolds );
 			TABLE_LINE2( "TotalJumps",						pProfile->m_iTotalJumps );
 			TABLE_LINE2( "TotalHolds",						pProfile->m_iTotalHolds );
@@ -320,9 +331,8 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_OPEN(f,"Num Songs Played by Style");
 		{
 			BEGIN_TABLE(4);
-			for( int i=0; i<NUM_STYLES; i++ )
+			for( Style style = (Style)0; style<NUM_STYLES; ((int&)style)++ )
 			{
-				Style style = (Style)i;
 				const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(style);
 				StepsType st = pStyleDef->m_StepsType;
 				if( !pStyleDef->m_bUsedForGameplay )
@@ -330,7 +340,9 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 				// only show if this style plays a StepsType that we're showing
 				if( find(vStepsTypesToShow.begin(),vStepsTypesToShow.end(),st) == vStepsTypesToShow.end() )
 					continue;	// skip
-				TABLE_LINE2( pStyleDef->m_szName, pProfile->m_iNumSongsPlayedByStyle[i] );
+				if( !SHOW_STYLE(style) )
+					continue;
+				TABLE_LINE2( pStyleDef->m_szName, pProfile->m_iNumSongsPlayedByStyle[style] );
 			}
 			END_TABLE;
 		}
@@ -341,7 +353,11 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		{
 			BEGIN_TABLE(4);
 			FOREACH_Difficulty( dc )
+			{
+				if( !SHOW_DIFFICULTY(dc) )
+					continue;
 				TABLE_LINE2( DifficultyToThemedString(dc), pProfile->m_iNumSongsPlayedByDifficulty[dc] );
+			}
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -643,7 +659,8 @@ bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 
 	vector<Steps*> vpSteps = pSong->GetAllSteps();
 
-	PRINT_OPEN(f, pSong->GetFullDisplayTitle() );
+	bool bPrintedOpen = false;
+
 	{
 		//
 		// Print Steps list
@@ -655,10 +672,15 @@ bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 				continue;	// skip autogen
 			if( pProfile->GetStepsNumTimesPlayed(pSong,pSteps)==0 )
 				continue;	// skip
-
 			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSong,pSteps );
 			if( hsl.vHighScores.empty() )
 				continue;
+
+			if( !bPrintedOpen )
+			{
+				PRINT_OPEN(f, pSong->GetFullDisplayTitle() );
+				bPrintedOpen = true;
+			}
 
 			CString s = 
 				GAMEMAN->NotesTypeToThemedString(pSteps->m_StepsType) + 
@@ -671,9 +693,10 @@ bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 			PRINT_CLOSE(f);
 		}
 	}
-	PRINT_CLOSE(f);
+	if( bPrintedOpen )
+		PRINT_CLOSE(f);
 
-	return true;
+	return bPrintedOpen;
 }
 
 bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCourse )
@@ -1012,45 +1035,81 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 {
 	PRINT_OPEN(f, sTitle );
 	{
-		TranslatedWrite(f,"<table class='calories'>\n");
+		PRINT_OPEN(f, "Totals", true);
+		{
+			BEGIN_TABLE(1);
 
-		// header row
-		TranslatedWrite(f,"<tr>");
-		TranslatedWrite(f,"<td></td>");
-		{
-			for( int i=0; i<DAYS_IN_WEEK; i++ )
-				TranslatedWrite(f,"<td>"+DayOfWeekToShortString(i)+"</td>");
-		}
-		TranslatedWrite(f,"<td>Total</td>");
-		TranslatedWrite(f,"</tr>\n");
+			TABLE_LINE2("All Time", pProfile->GetDisplayTotalCaloriesBurned() );
+			TABLE_LINE2("Per Song", ssprintf("%.2f",pProfile->m_fTotalCaloriesBurned/pProfile->GetTotalNumSongsPlayed()) );
+			TABLE_LINE2("Per Second of Gameplay", ssprintf("%.2f",pProfile->m_fTotalCaloriesBurned/(float)pProfile->m_iTotalGameplaySeconds) );
 		
-		// row for each week
-		tm when = GetLocalTime();
-		when = GetNextSunday( when );
-		when = AddDays( when, -DAYS_IN_WEEK );
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f, "By Week", false);
 		{
-			for( int i=0; i<NUM_LAST_WEEKS; i++ )
+			BEGIN_TABLE(4);
+
+			// row for each week
+			tm when = GetLocalTime();
+			when = GetNextSunday( when );
+			when = AddDays( when, -DAYS_IN_WEEK );
 			{
-				float fWeekCals = 0;
-				TranslatedWrite(f,"<tr>");
-				TranslatedWrite(f,"<td>"+LastWeekToString(i)+"</td>");
-				for( int i=0; i<DAYS_IN_WEEK; i++ )
+				for( int w=0; w<NUM_LAST_WEEKS; w++ )
+				{
+					float fWeekCals = 0;
+
+					for( int d=0; d<DAYS_IN_WEEK; d++ )
+					{
+						Profile::Day day = { when.tm_yday, when.tm_year+1900 };
+						float fDayCals = pProfile->GetCaloriesBurnedForDay( day );
+						fWeekCals += fDayCals;
+						when = AddDays( when, +1 );
+					}
+
+					TABLE_LINE2(LastWeekToString(w), Commify((int)fWeekCals) );
+
+					when = AddDays( when, -DAYS_IN_WEEK*2 );
+				}
+			}
+			
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f, "By Day of Week", false);
+		{
+			float fCaloriesByDay[DAYS_IN_WEEK];
+			ZERO( fCaloriesByDay );
+
+			// row for each week
+			tm when = GetLocalTime();
+			when = GetNextSunday( when );
+			when = AddDays( when, -DAYS_IN_WEEK );
+			for( int w=0; w<NUM_LAST_WEEKS; w++ )
+			{
+				for( int d=0; d<DAYS_IN_WEEK; d++ )
 				{
 					Profile::Day day = { when.tm_yday, when.tm_year+1900 };
 					float fDayCals = pProfile->GetCaloriesBurnedForDay( day );
-					fWeekCals += fDayCals;
-					CString sCalories;
-					if( fDayCals )
-						sCalories = Commify( (int)fDayCals );
-					TranslatedWrite(f,"<td class='daycalories'><font class='daycalories'>"+sCalories+"</font></td>");
+					fCaloriesByDay[d] += fDayCals;
 					when = AddDays( when, +1 );
 				}
-				TranslatedWrite(f,"<td class='weekcalories'><font class='weekcalories'>"+Commify((int)fWeekCals)+"</font></td>");
-				TranslatedWrite(f,"</tr>\n");
+
 				when = AddDays( when, -DAYS_IN_WEEK*2 );
 			}
+			
+			BEGIN_TABLE(2);
+
+			for( int d=0; d<DAYS_IN_WEEK; d++ )
+			{
+				TABLE_LINE2(DayOfWeekToString(d), Commify((int)fCaloriesByDay[d]) );
+			}
+
+			END_TABLE;
 		}
-		TranslatedWrite(f,"</table>\n");
+		PRINT_CLOSE(f);
 	}
 	PRINT_CLOSE(f);
 }
@@ -1121,9 +1180,11 @@ void SaveStatsWebPage(
 					break;
 				}
 			}
-
-			if( bOneSongHasStepsForThisStepsType )
-				vStepsTypesToShow.push_back( st );
+			if( !bOneSongHasStepsForThisStepsType )
+				continue;
+			if( !SHOW_STEPS_TYPE(st) )
+				continue;
+			vStepsTypesToShow.push_back( st );
 		}
 	}
 
@@ -1170,7 +1231,6 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 	}
 
 	CString sName = pProfile->GetDisplayName();
-	CString sMachineName = pProfile->m_sGuid;
 	time_t ltime = time( NULL );
 	CString sTime = ctime( &ltime );
 
@@ -1179,10 +1239,9 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 	{
 	case HTML_TYPE_PLAYER:
 		sNameCell = ssprintf(
-			"Player Name: %s<br>\n"
-			"Last Machine: %s<br>\n"
+			"%s<br>\n"
 			"%s\n",
-			sName.c_str(), sMachineName.c_str(), sTime.c_str() );
+			sName.c_str(), sTime.c_str() );
 		break;
 	case HTML_TYPE_MACHINE:
 		sNameCell = ssprintf(

@@ -58,11 +58,6 @@ CString DayOfWeekToString( int iDayOfWeekIndex )
 	return DAY_OF_WEEK_TO_NAME[iDayOfWeekIndex];
 }
 
-CString DayOfWeekToShortString( int iDayOfWeekIndex )
-{
-	return DayOfWeekToString(iDayOfWeekIndex).Left(3);
-}
-
 CString HourInDayToString( int iHourInDayIndex )
 {
 	return ssprintf("%02d:00", iHourInDayIndex);
