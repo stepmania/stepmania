@@ -317,11 +317,11 @@ MusicWheel::MusicWheel()
 	this->AddChild( &m_ScrollBar );
 	
 	/* We play a lot of this one, so precache it. */
-	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music"), true );
-	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","select music change sort") );
-	m_soundExpand.Load(			THEME->GetPathTo("Sounds","select music section expand") );
+	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change"), true );
+	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","select music sort") );
+	m_soundExpand.Load(			THEME->GetPathTo("Sounds","select music expand") );
 	m_soundStart.Load(			THEME->GetPathTo("Sounds","menu start") );
-	m_soundLocked.Load(			THEME->GetPathTo("Sounds","select music wheel locked") );
+	m_soundLocked.Load(			THEME->GetPathTo("Sounds","select music locked") );
 
 
 	// init m_mapGroupNameToBannerColor
