@@ -79,18 +79,19 @@ protected:
 	virtual void OnChange( PlayerNumber pn );
 
 	virtual void MenuBack( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
 	void StartGoToNextState();
 
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;
 
-	void MenuLeft( PlayerNumber pn ) { ChangeValue(pn,-1); }
-	void MenuRight( PlayerNumber pn ) { ChangeValue(pn,+1); }
-	void ChangeValue( PlayerNumber pn, int iDelta );
-	void MenuUp( PlayerNumber pn );
-	void MenuDown( PlayerNumber pn );
+	void MenuLeft( PlayerNumber pn, const InputEventType type ) { ChangeValue(pn,-1,type != IET_FIRST_PRESS); }
+	void MenuRight( PlayerNumber pn, const InputEventType type ) { ChangeValue(pn,+1,type != IET_FIRST_PRESS); }
+	void ChangeValue( PlayerNumber pn, int iDelta, bool Repeat );
+	void MenuUp( PlayerNumber pn, const InputEventType type ) { Move( pn, -1, type != IET_FIRST_PRESS ); }
+	void MenuDown( PlayerNumber pn, const InputEventType type ) { Move( pn, +1, type != IET_FIRST_PRESS ); }
+	void Move( PlayerNumber pn, int dir, bool Repeat );
 
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const { return m_iCurrentRow[pn]; }
 

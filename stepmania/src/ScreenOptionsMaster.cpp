@@ -546,7 +546,7 @@ void ScreenOptionsMaster::ExportOptions()
 	}
 }
 
-void ScreenOptionsMaster::MenuStart( PlayerNumber pn )
+void ScreenOptionsMaster::MenuStart( PlayerNumber pn, const InputEventType type )
 {
 	if( m_ForceSMOptionsNavigation )
 	{
@@ -554,7 +554,7 @@ void ScreenOptionsMaster::MenuStart( PlayerNumber pn )
 		return;
 	}
 
-	ScreenOptions::MenuStart( pn );
+	ScreenOptions::MenuStart( pn, type );
 }
 
 void ScreenOptionsMaster::GoToNextState()

@@ -49,9 +49,9 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
-	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change") );
-	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next") );
-	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev") );
+	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change"), true );
+	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next"), true );
+	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev"), true );
 	m_SoundStart.Load( THEME->GetPathToS("Common start") );
 
 	m_Menu.Load( sClassName );
@@ -576,6 +576,19 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 	if( m_Menu.m_Back.IsTransitioning() || m_Menu.m_Out.IsTransitioning() )
 		return;
 
+	if( type == IET_RELEASE )
+	{
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_START:
+		case MENU_BUTTON_RIGHT:
+		case MENU_BUTTON_LEFT:
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_START) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
+		}
+	}
+
 	// if we are in dedicated menubutton input and arcade navigation
 	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
 	const bool bHoldingLeftOrRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
@@ -583,9 +596,9 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) || 
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
 
-	if( bHoldingLeftOrRight )
+	if( type != IET_RELEASE && bHoldingLeftOrRight )
 	{
-		Screen::MenuUp( MenuI.player, type );
+		Move( MenuI.player, -1, type != IET_FIRST_PRESS );
 		return;
 	}
 
@@ -764,9 +777,11 @@ void ScreenOptions::StartGoToNextState()
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
-void ScreenOptions::MenuStart( PlayerNumber pn )
+void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
 	if( m_Menu.IsTransitioning() )
+		return;
+	if( type == IET_RELEASE )
 		return;
 
 	if( PREFSMAN->m_bArcadeOptionsNavigation )
@@ -777,18 +792,18 @@ void ScreenOptions::MenuStart( PlayerNumber pn )
 				bAllOnExit = false;
 
 		if( m_iCurrentRow[pn] != m_iNumOptionRows )	// not on exit
-			MenuDown( pn );	// can't go down any more
-		else if( bAllOnExit )
+			MenuDown( pn, type );	// can't go down any more
+		else if( bAllOnExit && type == IET_FIRST_PRESS )
 			this->PostScreenMessage( SM_BeginFadingOut, 0 );
 	}
-	else	// !m_bArcadeOptionsNavigation
+	else if( type == IET_FIRST_PRESS )	// !m_bArcadeOptionsNavigation
 	{
 		this->PostScreenMessage( SM_BeginFadingOut, 0 );
 	}
 }
 
 
-void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta ) 
+void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = m_OptionRow[iCurRow];
@@ -796,20 +811,20 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 	const int iNumOptions = row.choices.size();
 	if( PREFSMAN->m_bArcadeOptionsNavigation )
 	{
+		/* If START is being pressed, and arcade nav is on, then we're holding left/right
+		 * and start to move backwards.  Don't move left and right, too. */
+		if( PREFSMAN->m_bArcadeOptionsNavigation &&
+			INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
+			return;
+
 		if( iCurRow == m_iNumOptionRows || iNumOptions <= 1 )	// 1 or 0
 		{
-			if( iDelta < 0 )
-			{
-				MenuUp( pn );
-				return;
-			}
-			else
-			{
-				MenuDown( pn );
-				return;
-			}
+			Move( pn, iDelta, Repeat );
+			return;
 		}
 	}
+	if( Repeat )
+		return;
 
 	if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
 		return;		// don't allow a move
@@ -843,35 +858,25 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 }
 
 
-void ScreenOptions::MenuUp( PlayerNumber pn ) 
+void ScreenOptions::Move( PlayerNumber pn, int dir, bool Repeat ) 
 {
+	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
+	bool changed = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
+		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
 			continue;	// skip
 
-		if( m_iCurrentRow[p] == 0 )	// on first row
-			m_iCurrentRow[p] = m_iNumOptionRows;	// on exit
-		else
-			m_iCurrentRow[p]--;
+		int row = m_iCurrentRow[p] + dir;
+		if( Repeat && ( row == -1 || row == m_iNumOptionRows+1 ) )
+			continue; // don't wrap while repeating
+
+		wrap( row, m_iNumOptionRows+1 );
+		m_iCurrentRow[p] = row;
+
 		OnChange( (PlayerNumber)p );
+		changed = true;
 	}
-	m_SoundPrevRow.Play();
-}
-
-
-void ScreenOptions::MenuDown( PlayerNumber pn ) 
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
-			continue;	// skip
-
-		if( m_iCurrentRow[p] == m_iNumOptionRows )	// on exit
-			m_iCurrentRow[p] = 0;	// on first row
-		else
-			m_iCurrentRow[p]++;
-		OnChange( (PlayerNumber)p );
-	}
-	m_SoundNextRow.Play();
+	if( changed )
+		m_SoundNextRow.Play();
 }

@@ -18,7 +18,7 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
 private:
 	void ImportOptions();

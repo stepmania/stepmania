@@ -179,7 +179,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenProfileOptions::MenuStart( PlayerNumber pn )
+void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
 	CString sProfileID = GetSelectedProfileID();
 	CString sName = GetSelectedProfileName();
@@ -202,7 +202,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn )
 			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, NULL );
 		break;
 	default:
-		ScreenOptions::MenuStart( pn );
+		ScreenOptions::MenuStart( pn, type );
 	}
 }
 

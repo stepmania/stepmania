@@ -51,7 +51,7 @@ private:
 	void SetSaveToProfile( OptionRow &row, OptionRowHandler &hand );
 
 protected:
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 	virtual void ImportOptions();
 	virtual void ExportOptions();
 
