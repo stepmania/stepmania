@@ -446,7 +446,7 @@ static void do_backtrace( const void **buf, size_t size )
 
 void CrashSignalHandler( int signal )
 {
-	if( g_pCrashHandlerArgv0 )
+	if( g_pCrashHandlerArgv0 == NULL )
 	{
 		safe_print(fileno(stderr), "Crash handler failed: CrashHandlerHandleArgs was not called\n", NULL);
 		_exit(1);
