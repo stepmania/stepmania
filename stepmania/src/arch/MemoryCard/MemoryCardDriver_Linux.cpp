@@ -170,7 +170,7 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 						{
 							usbd.iUsbStorageIndex = i;
 							LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d, sSerial: %s",
-								usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub. usbd.sSerial.c_str() );
+								usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub, usbd.sSerial.c_str() );
 							break;	// done looking for the corresponding device.
 						}
 					}
