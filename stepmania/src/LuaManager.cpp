@@ -292,7 +292,7 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 bool LuaManager::RunScript( const CString &sExpression, const CString &sName, int iReturnValues )
 {
 	CString sError;
-	if( !RunScript( sExpression, sName.size()? sName:"in", sError, iReturnValues ) )
+	if( !RunScript( sExpression, sName.size()? sName:CString("in"), sError, iReturnValues ) )
 	{
 		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
@@ -406,7 +406,13 @@ LuaFunction_NoArgs( Year, GetLocalTime().tm_year+1900 );
 LuaFunction_NoArgs( Weekday, GetLocalTime().tm_wday );
 LuaFunction_NoArgs( DayOfYear, GetLocalTime().tm_yday );
 
-LuaFunction_Str( Trace, (LOG->Trace("%s", str.c_str()),true) );
+static bool Trace( const CString &sString )
+{
+	LOG->Trace( "%s", sString.c_str() );
+	return true;
+}
+
+LuaFunction_Str( Trace, Trace(str) );
 
 /*
  * (c) 2004 Glenn Maynard

@@ -6,6 +6,9 @@
 struct lua_State;
 typedef void (*RegisterWithLuaFn)(lua_State*);
 
+class LuaManager;
+extern LuaManager *LUA;
+
 namespace LuaHelpers
 {
 	template<class T>
@@ -132,8 +135,6 @@ public:
 			lua_rawseti( L, -2, i+1 );
 		}
 	}
-
-extern LuaManager *LUA;
 
 #define REGISTER_WITH_LUA_FUNCTION( Fn ) \
 	class Register##Fn { public: Register##Fn() { LuaManager::Register( Fn ); } }; \
