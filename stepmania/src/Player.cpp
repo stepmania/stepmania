@@ -343,8 +343,8 @@ void Player::Update( float fDeltaTime )
 		HoldNote &hn = m_NoteData.GetHoldNote(i);
 
 		// set hold flags so NoteField can do intelligent drawing
-		hn.bHeld = false;
-		hn.bActive = false;
+		hn.result.bHeld = false;
+		hn.result.bActive = false;
 
 
 		HoldNoteScore hns = hn.result.hns;
@@ -382,8 +382,8 @@ void Player::Update( float fDeltaTime )
 		if( hn.RowIsInRange(iSongRow) )
 		{
 			// set hold flag so NoteField can do intelligent drawing
-			hn.bHeld = bIsHoldingButton && bSteppedOnTapNote;
-			hn.bActive = bSteppedOnTapNote;
+			hn.result.bHeld = bIsHoldingButton && bSteppedOnTapNote;
+			hn.result.bActive = bSteppedOnTapNote;
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
