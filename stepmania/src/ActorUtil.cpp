@@ -133,7 +133,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	// FIXME: If specifying a path in Lua, assume it is absolute.  We need a way to specify 
 	// absolute paths.  We can't use a slash at the beginning to mean absolute because FILEMAN
 	// maps that to the root of the filesystem.
-	bool bIsAbsolutePath = LUA->RunAtExpressionS( sFile );
+	bool bIsAbsolutePath = LUA->RunAtExpressionS( sFile ) && sFile.Left(2) != "..";
 	FixSlashesInPlace( sFile );
 
 	CString sText;
