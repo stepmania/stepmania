@@ -11,7 +11,7 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-#include "Model.h"
+#include "RageModelGeometry.h"
 
 #include <map>
 

@@ -28,6 +28,7 @@ public:
 
 public:
 	void LoadMilkshapeAscii( CString sMilkshapeAsciiFile );
+	void OptimizeBones();
 
 	int m_iRefCount;
 

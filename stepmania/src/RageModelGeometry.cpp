@@ -24,6 +24,41 @@ RageModelGeometry::~RageModelGeometry ()
 {
 }
 
+void RageModelGeometry::OptimizeBones()
+{
+    for (unsigned i = 0; i < m_Meshes.size(); i++)
+    {
+		msMesh& mesh = m_Meshes[i];
+
+		// check to see if all vertices have the same bone index
+		bool bAllVertsUseSameBone = true;
+		char nBoneIndex = !mesh.Vertices.empty() ? mesh.Vertices[0].boneIndex : -1;
+		if( nBoneIndex != -1 )
+		{
+			for (unsigned j = 1; j < mesh.Vertices.size(); j++)
+			{
+				RageModelVertex& vertex = mesh.Vertices[j];
+				if( vertex.boneIndex != nBoneIndex )
+				{
+					bAllVertsUseSameBone = false;
+					break;
+				}
+			}
+		}
+		if( bAllVertsUseSameBone )
+		{
+			mesh.nBoneIndex = nBoneIndex;
+
+			// clear all vertex/bone associations;
+			for (unsigned j = 0; j < mesh.Vertices.size(); j++)
+			{
+				RageModelVertex& vertex = mesh.Vertices[j];
+				vertex.boneIndex = -1;
+			}
+		}
+	}
+}
+
 #define THROW RageException::Throw( "Parse at line %d: '%s'", sLine.c_str() );
 
 void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
@@ -81,6 +116,8 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 //                mesh.nFlags = nFlags;
                 mesh.nMaterialIndex = (byte)nIndex;
 
+				mesh.nBoneIndex = -1;
+
                 //
                 // vertices
                 //
@@ -117,7 +154,6 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
                     vertex.boneIndex = (byte)nIndex;
 					RageVec3AddToBounds( RageVector3(Vertex), m_vMins, m_vMaxs );
                 }
-
 
 
                 //
@@ -192,6 +228,8 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
             }
         }
     }
+
+	OptimizeBones();
 
 	f.Close();
 }

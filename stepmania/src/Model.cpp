@@ -111,7 +111,22 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	//
     // Setup temp vertices (if necessary)
 	//
-	m_bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
+	bool bHasAnyPerVertexBones = false;
+	for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+	{
+		msMesh& mesh = m_pGeometry->m_Meshes[i];
+		for (int j = 0; j < (int)mesh.Vertices.size(); j++)
+		{
+			RageModelVertex &vert = mesh.Vertices[j];
+			if( vert.boneIndex != -1 )
+			{
+				bHasAnyPerVertexBones = true;
+				break;
+			}
+		}
+	}
+
+	m_bUseTempVertices = bHasAnyPerVertexBones;
 	if( m_bUseTempVertices )
 	{
 		m_vTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
@@ -476,9 +491,6 @@ void Model::DrawPrimitives()
 					// UGLY:  This overrides the Actor's BlendMode
 					DISPLAY->SetTextureModeAdd();
 				}
-
-				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
-				DISPLAY->SetSphereEnironmentMapping( false );
 			}
 			else
 			{
@@ -495,7 +507,23 @@ void Model::DrawPrimitives()
 					shininess );
 				DISPLAY->ClearAllTextures();
 				DISPLAY->SetSphereEnironmentMapping( false );
-				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+			}
+
+			// apply mesh-specific bone (if any)
+			if( pMesh->nBoneIndex != -1 )
+			{
+				DISPLAY->PushMatrix();
+
+				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
+				DISPLAY->PreMultMatrix( mat );
+			}
+
+			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+			DISPLAY->SetSphereEnironmentMapping( false );
+
+			if( pMesh->nBoneIndex != -1 )
+			{
+				DISPLAY->PopMatrix();
 			}
 		}
 	}
@@ -611,12 +639,14 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		}
 	}
 
+	// subtract out the bone's resting position
 	for (i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
 			RageModelVertex *pVertex = &pMesh->Vertices[j];
+			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : pVertex->boneIndex;
 			if (pVertex->boneIndex != -1)
 			{
 				pVertex->p[0] -= m_vpBones[pVertex->boneIndex].mAbsolute.m[3][0];
@@ -785,9 +815,9 @@ void Model::Update( float fDelta )
 	}
 
 	//
-	// process vertices
+	// process per-vertex bones
 	//
-	if( m_bUseTempVertices && m_pGeometry )
+	if( m_pGeometry && m_bUseTempVertices )
 	{
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
