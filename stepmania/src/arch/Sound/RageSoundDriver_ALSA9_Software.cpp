@@ -5,6 +5,10 @@
 #include "RageSound.h"
 #include "RageSoundManager.h"
 #include "RageUtil.h"
+#include "RageTimer.h"
+
+#include <sys/time.h>
+#include <sys/resource.h>
 
 const int channels = 2;
 const int samplerate = 44100;
@@ -12,7 +16,11 @@ const int samplerate = 44100;
 const int samples_per_frame = channels;
 const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
 
-const unsigned max_writeahead = 1024*8;
+/* Linux 2.6 has a fine-grained scheduler; use a small buffer size.  Otherwise, use a larger one. */
+static const unsigned max_writeahead_linux_26 = 512;
+static const unsigned safe_writeahead = 1024*8;
+static unsigned max_writeahead;
+const int num_chunks = 8;
 
 int RageSound_ALSA9_Software::MixerThread_start(void *p)
 {
@@ -26,20 +34,32 @@ void RageSound_ALSA9_Software::MixerThread()
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
 
+	setpriority( PRIO_PROCESS, getpid(), -15 );
+
+//	RageTimer UnderrunTest;
 	while(!shutdown)
 	{
-		GetData();
+		while( GetData() )
+			;
 		const float delay_ms = 1000 * float(max_writeahead) / samplerate;
-		SDL_Delay( int(delay_ms) / 2);
+		SDL_Delay( int(delay_ms) / 4 );
+
+//		if( UnderrunTest.PeekDeltaTime() > 10 )
+//		{
+//			UnderrunTest.GetDeltaTime();
+//			SDL_Delay( 250 );
+//		}
 	}
 }
 
 /* Returns the number of frames processed */
-void RageSound_ALSA9_Software::GetData()
+bool RageSound_ALSA9_Software::GetData()
 {
-	const int frames_to_fill = pcm->GetNumFramesToFill( max_writeahead );
+	const int chunksize = max_writeahead / num_chunks;
+	
+	const int frames_to_fill = min( chunksize, pcm->GetNumFramesToFill( max_writeahead ) );
 	if( frames_to_fill <= 0 )
-		return;
+		return false;
 
 	/* Sint16 represents a single sample
 	 * each frame contains one sample per channel
@@ -76,6 +96,7 @@ void RageSound_ALSA9_Software::GetData()
 	mix.read( buf );
 
 	pcm->Write( buf, frames_to_fill );
+	return true;
 }
 
 
@@ -131,10 +152,42 @@ int RageSound_ALSA9_Software::GetPosition(const RageSound *snd) const
 	return pcm->GetPosition();
 }       
 
+#include <sys/utsname.h>
+
+static void GetKernel( CString &sys, int &vers )
+{
+	utsname uts;
+	uname( &uts );
+	
+	sys = uts.sysname;
+	vers = 0;
+
+	if( sys == "Linux" )
+	{
+		static Regex ver( "([0-9]+)\\.([0-9]+)\\.([0-9]+)" );
+		vector<CString> matches;
+		if( ver.Compare(uts.release, matches) )
+		{
+			ASSERT( matches.size() >= 2 );
+			int major = atoi(matches[0]);
+			int minor = atoi(matches[1]);
+			int revision = atoi(matches[2]);
+			vers = (major << 16) + (minor << 8) + (revision);
+		}
+	}
+}
 
 RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 {
 	shutdown = false;
+
+	max_writeahead = safe_writeahead;
+	CString sys;
+	int vers;
+	GetKernel( sys, vers );
+	LOG->Trace( "OS: %s ver %06x", sys.c_str(), vers );
+	if( sys == "Linux" && vers >= 0x020600 )
+		max_writeahead = max_writeahead_linux_26;
 
 	pcm = new Alsa9Buf( Alsa9Buf::HW_DONT_CARE, channels, samplerate );
 	

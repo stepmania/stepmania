@@ -29,7 +29,7 @@ private:
 	void MixerThread();
 	RageThread MixingThread;
 
-	void GetData();
+	bool GetData();
 
 public:
 	/* virtuals: */
