@@ -29,7 +29,8 @@ void MemoryCardDisplay::Update( float fDelta )
 	MemoryCardState newMcs = MEMCARDMAN->GetCardState(m_PlayerNumber);
 	if( m_LastSeenState != newMcs )
 	{
-		m_spr[m_LastSeenState].SetHidden( true );
+		if( m_LastSeenState != MEMORY_CARD_STATE_INVALID )
+			m_spr[m_LastSeenState].SetHidden( true );
 		m_LastSeenState = newMcs;
 		m_spr[m_LastSeenState].SetHidden( false );
 	}
