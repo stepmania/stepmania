@@ -236,9 +236,17 @@ void RageBitmapTexture::Create()
 
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
-	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+	/* We no longer need to do this; pixfmt and the format of img no longer have
+	 * to match.  This means that if we have a paletted image, but the hardware
+	 * doesn't support it, we can leave the data in the smaller paletted format
+	 * and let OpenGL dereference it, as long as nothing else (such as dithering)
+	 * ends up depalettizing it first.  We only have to scale it up to the texture
+	 * size, which we won't have to do either if the image size is already a power
+	 * of two. */
+	// const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 	RageSurfaceUtils::ConvertSurface( img, m_iTextureWidth, m_iTextureHeight,
-		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+		img->fmt.BitsPerPixel, img->fmt.Mask[0], img->fmt.Mask[1], img->fmt.Mask[2], img->fmt.Mask[3] );
+	//	pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 	
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img, actualID.bMipMaps );
 
