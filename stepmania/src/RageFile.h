@@ -49,7 +49,7 @@ public:
 	void ClearError() { clearerr(mFP); }
     
     long Tell() { return ftell(mFP); }
-    bool Seek(long offset, int origin = SEEK_CUR) { return !fseek(mFP, offset, origin); }
+    bool Seek(long offset) { return !fseek(mFP, offset, SEEK_SET); }
     void Rewind() { rewind(mFP); }
     
 	/* Raw I/O: */
