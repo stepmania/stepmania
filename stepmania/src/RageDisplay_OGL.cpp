@@ -301,6 +301,44 @@ static void FlushGLErrors()
 		;
 }
 
+#if defined(__unix__) && !defined(unix)
+#define unix
+#endif
+
+#if defined(unix)
+#define Font X11___Font
+#define Screen X11___Screen
+#include "GL/glx.h"
+#undef Font
+#undef Screen
+#endif
+
+static void LogGLXDebugInformation()
+{
+#if defined(unix)
+	CHECKPOINT;
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+	if ( SDL_GetWMInfo(&info) < 0 )
+	{
+		LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
+		return;
+	}
+
+	Display *disp = info.info.x11.display;
+	ASSERT( disp );
+
+	const int scr = DefaultScreen( disp );
+
+	LOG->Info( "Display: %s", DisplayString(disp) );
+	LOG->Info( "Screen: %i", scr );
+	LOG->Info( "Server GLX vendor: %s", glXQueryServerString( disp, scr, GLX_VENDOR ) );
+	LOG->Info( "Server GLX version: %s", glXQueryServerString( disp, scr, GLX_VERSION ) );
+	LOG->Info( "Client GLX vendor: %s", glXGetClientString( disp, GLX_VENDOR ) );
+	LOG->Info( "Client GLX version: %s", glXGetClientString( disp, GLX_VERSION ) );
+#endif
+}
+
 RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRenderer )
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
@@ -325,6 +363,8 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
 	LOG->Info("OGL Extensions: %s", glGetString(GL_EXTENSIONS));
 	LOG->Info("OGL Max texture size: %i", GetMaxTextureSize() );
+
+	LogGLXDebugInformation();
 
 	if( IsSoftwareRenderer() )
 	{
