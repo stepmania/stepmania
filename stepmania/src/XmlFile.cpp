@@ -9,6 +9,7 @@
 
 static const TCHAR chXMLTagOpen		= '<';
 static const TCHAR chXMLTagClose	= '>';
+static const TCHAR chXMLTagQuestion	= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
 static const TCHAR chXMLTagPre	= '/';
 static const TCHAR chXMLEscape = '\\';	// for value field escape
 
@@ -237,7 +238,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefaul
 			continue;
 
 		// close tag
-		if( *xml == chXMLTagClose || *xml == chXMLTagPre )
+		if( *xml == chXMLTagClose || *xml == chXMLTagPre || *xml == chXMLTagQuestion )
 			// wel-formed tag
 			return xml;
 
@@ -348,13 +349,23 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 	if( xml == NULL )
 		return NULL;
 
-	// alone tag <TAG ... />
-	if( *xml == chXMLTagPre )
+	// alone tag <TAG ... /> or <?TAG ... ?>
+	if( *xml == chXMLTagPre || *xml == chXMLTagQuestion )
 	{
 		xml++;
 		if( *xml == chXMLTagClose )
+		{
 			// wel-formed tag
-			return ++xml;
+			++xml;
+
+			// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
+			// just loaded is a meta tag, then Load ourself again using the rest 
+			// of the file until we reach a non-meta tag.
+			if( !name.empty() && name[0] == chXMLTagQuestion )
+				xml = Load( xml, pi );
+
+			return xml;
+		}
 		else
 		{
 			// error: <TAG ... / >
