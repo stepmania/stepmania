@@ -147,7 +147,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			bt->EnableShadow( false );
 
 			// set the X position of each item in the line
-			float fItemWidth = bt->GetWidestLineWidthInSourcePixels() * bt->GetZoomX();
+			const float fItemWidth = bt->GetZoomedWidth();
 			fX += fItemWidth/2;
 			bt->SetX( fX );
 			fX += fItemWidth/2 + ITEMS_GAP_X;
@@ -328,7 +328,7 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 {
 	BitmapText &text = GetTextItemForRow( pn, iRow );
 
-	iWidthOut = int(roundf( text.GetWidestLineWidthInSourcePixels() * text.GetZoomX() ));
+	iWidthOut = int(roundf( text.GetZoomedWidth() ));
 	iXOut = int(roundf( text.GetDestX() ));
 	/* We update m_fRowY, change colors and tween items, and then tween rows to
 	 * their final positions.  (This is so we don't tween colors, too.)  m_fRowY
