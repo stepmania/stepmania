@@ -34,7 +34,14 @@
 #define NOMINMAX /* make sure Windows doesn't try to define this */
 
 #include <afxwin.h>         // MFC core and standard components
+/* Make sure everyone has min and max: */
 #include <algorithm>
+
+/* Everything will need string for one reason or another: */
+#include <string>
+
+/* And vector: */
+#include <vector>
 
 using namespace std;
 
@@ -52,8 +59,18 @@ using namespace std;
 
 /* Use CStdString: */
 #define CString CStdString
-#define CStringArray StdCArray<CString,CString>
 #else
+
+/* Wrapper to use getline() on MFC strings. */
+template<class _E, class _Tr> inline
+basic_istream<_E, _Tr>& getline(basic_istream<_E, _Tr> &I,
+	CString &X) {
+	string str;
+
+	basic_istream<_E, _Tr> &ret = getline(I, str);
+	X = str.c_str();
+	return ret;
+}
 
 /* Arg.  VC7's CString has GetString(), an equivalent of c_str().
  * VC6 doesn't have that.  We need it to transition to std::string
@@ -88,8 +105,10 @@ inline const T& min(const T &a, const T &b, P Pr)
 
 #endif
 
-#include "STDCarray.h"
-#define CStringArray StdCArray<CString,CString>
+template <class Type, class IGNOREME>
+class StdCArray: public std::vector<Type> {};
+#define CArray StdCArray
+#define CStringArray vector<CString>
 
 /* Include this here to make sure our assertion handler is always
  * used.  (This file is a dependency of most everything anyway,
