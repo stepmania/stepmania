@@ -156,6 +156,7 @@ public:
 	
 	CArray<Notes*, Notes*> m_apNotes;
 
+	bool SongHasNoteType( NotesType nt ) const;
 	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo );
 	int GetNumTimesPlayed()
 	{

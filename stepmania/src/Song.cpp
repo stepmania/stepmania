@@ -1212,6 +1212,17 @@ void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 			arrayAddTo.Add( m_apNotes[i] );
 }
 
+bool Song::SongHasNoteType( NotesType nt ) const
+{
+	for( int i=0; i < m_apNotes.GetSize(); i++ ) // foreach Notes
+	{
+		if( m_apNotes[i]->m_NotesType == nt )
+			return true;
+	}
+
+	return false;
+}
+
 void Song::SaveToCacheFile()
 {
 	LOG->Trace( "Song::SaveToCacheFile()" );
