@@ -282,6 +282,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 
 			new_entry.attacks = attacks;
+			attacks.clear();
 			
 			m_entries.push_back( new_entry );
 		}
@@ -319,6 +320,22 @@ void Course::Save()
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
 		const CourseEntry& entry = m_entries[i];
+
+		for( unsigned j = 0; j < entry.attacks.size(); ++j )
+		{
+			if( j == 0 )
+				fprintf( fp, "#MODS:\n" );
+
+			const Attack &a = entry.attacks[j];
+			fprintf( fp, "  TIME=%.2f:LEN=%.2f:MODS=%s",
+				a.fStartSecond, a.fSecsRemaining, a.sModifier.c_str() );
+
+			if( j+1 < entry.attacks.size() )
+				fprintf( fp, ":" );
+			else
+				fprintf( fp, ";" );
+			fprintf( fp, "\n" );
+		}
 
 		switch( entry.type )
 		{
