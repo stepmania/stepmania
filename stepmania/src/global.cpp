@@ -8,8 +8,9 @@
 
 #if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN))
 #include "archutils/Unix/CrashHandler.h"
-#include <unistd.h>
 #endif
+
+#include <unistd.h>
 
 void NORETURN sm_crash( const char *reason )
 {
