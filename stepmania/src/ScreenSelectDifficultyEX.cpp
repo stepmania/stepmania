@@ -68,7 +68,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		
 		m_sprDifficultyIcon[p].SetState( 6 );
 		// 0=BEGINNER, 1=LIGHT, 2=STANDARD, 3=HEAVY, 4=NONSTOP/ONI, 5=ENDLESS, 6=RAVE
-		this->AddChild( &m_sprDifficultyIcon[p] );
+		//this->AddChild( &m_sprDifficultyIcon[p] );
 
 		CLAMP( m_iChoice[p], 0, (int)m_ModeChoices.size()-1 );
 		m_bChosen[p] = false;
