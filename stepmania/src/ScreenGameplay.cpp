@@ -2266,6 +2266,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		default:
 			ASSERT(0);
 		}
+		break;
+	case SM_StopMusic:
+		m_soundMusic.Stop();
+		break;
 	}
 }
 
