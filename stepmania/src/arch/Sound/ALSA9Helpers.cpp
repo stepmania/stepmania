@@ -309,7 +309,7 @@ int Alsa9Buf::GetNumFramesToFill()
 
 bool Alsa9Buf::WaitUntilFramesCanBeFilled( int timeout_ms )
 {
-	int err = snd_pcm_wait( pcm, timeout_ms );
+	int err = dsnd_pcm_wait( pcm, timeout_ms );
 	/* EINTR is normal; don't warn. */
 	if( err == -EINTR )
 		return false;
