@@ -129,7 +129,7 @@ public:
 
 	bool IsFixed() const;
 
-	bool ShowInDemonstrationAndRanking() const { return true; }
+	bool ShowInDemonstrationAndRanking() const;
 
 	void LoadFromCRSFile( CString sPath );
 	void RevertFromDisk();

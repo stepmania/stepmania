@@ -1246,6 +1246,14 @@ void Course::GetAllCachedTrails( vector<Trail *> &out )
 	}
 }
 
+bool Course::ShowInDemonstrationAndRanking() const
+{
+	// Don't show endless courses in Ranking.
+	if( IsEndless() )
+		return false;
+	return true;
+}
+
 
 // lua start
 #include "LuaBinding.h"
