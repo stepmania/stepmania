@@ -112,11 +112,11 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
 		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
-		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("ScreenSelectMaster more page%d",page+1) ) );
+		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("%s more page%d",m_sName.c_str(), page+1) ) );
 		this->AddChild( &m_sprMore[page] );
 
 		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
-		m_sprExplanation[page].Load( THEME->GetPathToG( ssprintf("ScreenSelectMaster explanation page%d",page+1) ) );
+		m_sprExplanation[page].Load( THEME->GetPathToG( ssprintf("%s explanation page%d",m_sName.c_str(), page+1) ) );
 		this->AddChild( &m_sprExplanation[page] );
 	}
 
@@ -412,7 +412,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	if(GetCurrentPage() != PAGE_2 || !AnotherPlayerSelected)
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaster comment %s",mc.m_sName.c_str())) );
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
 		m_soundSelect.Play();
 	}
 
