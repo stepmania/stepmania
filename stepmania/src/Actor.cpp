@@ -695,23 +695,40 @@ float Actor::Command( CString sCommandString )
 	return GetTweenTimeLeft();
 }
 
-inline CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
+#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
+#define fParam(i) ((float)atof(sParam(i)))
+#define iParam(i) (atoi(sParam(i)))
+#define bParam(i) (iParam(i)!=0)
+#define cParam(i) (ColorParam(asTokens,i,iMaxIndexAccessed))
+
+inline CString GetParam( const CStringArray& asTokens, int iIndex, int& iMaxIndexAccessed )
 {
 	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
-	if( iIndex < int(sParams.size()) )
-		return sParams[iIndex];
+	if( iIndex < int(asTokens.size()) )
+		return asTokens[iIndex];
 	else
 		return "";
+}
+
+inline RageColor ColorParam( const CStringArray& asTokens, int iIndex, int& iMaxIndexAccessed )
+{
+	const CString first = GetParam( asTokens, iIndex, iMaxIndexAccessed );
+	if( first == "" )
+		return RageColor( 1,1,1,1 );
+
+	if( (first[0] >= '0' && first[0] <= '9') || first[0] == '.' )
+		return RageColor( fParam(iIndex+0),fParam(iIndex+1),fParam(iIndex+2),fParam(iIndex+3) );
+
+	RageColor ret;
+	if( !ret.FromString( first ) )
+		return RageColor( 1,1,1,1 );
+
+	return ret;
 }
 
 void Actor::HandleCommand( const CStringArray &asTokens )
 {
 	int iMaxIndexAccessed = 0;
-
-#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
-#define fParam(i) ((float)atof(sParam(i)))
-#define iParam(i) (atoi(sParam(i)))
-#define bParam(i) (iParam(i)!=0)
 
 	const CString& sName = asTokens[0];
 
@@ -746,16 +763,16 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="fadetop" )			SetFadeTop( fParam(1) );
 	else if( sName=="faderight" )		SetFadeRight( fParam(1) );
 	else if( sName=="fadebottom" )		SetFadeBottom( fParam(1) );
-	else if( sName=="fadecolor" )		SetFadeDiffuseColor( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+	else if( sName=="fadecolor" )		SetFadeDiffuseColor( cParam(1) );
+	else if( sName=="diffuse" )			SetDiffuse( cParam(1) );
+	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( cParam(1) );
+	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( cParam(1) );
+	else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( cParam(1) );
+	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( cParam(1) );
 	/* Add left/right/top/bottom for alpha if needed. */
 	else if( sName=="diffusealpha" )	SetDiffuseAlpha( fParam(1) );
-	else if( sName=="diffusecolor" )	SetDiffuseColor( RageColor( fParam(1),fParam(2),fParam(3),1 ) );
-	else if( sName=="glow" )			SetGlow( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+	else if( sName=="diffusecolor" )	SetDiffuseColor( cParam(1) );
+	else if( sName=="glow" )			SetGlow( cParam(1) );
 	else if( sName=="glowmode" ) {
 		if(!sParam(1).CompareNoCase("whiten"))
 			SetGlowMode( GLOW_WHITEN );
@@ -784,8 +801,8 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="spin" )			SetEffectSpin();
 	else if( sName=="vibrate" )			SetEffectVibrate();
 	else if( sName=="stopeffect" )		SetEffectNone();
-	else if( sName=="effectcolor1" )	SetEffectColor1( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
-	else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+	else if( sName=="effectcolor1" )	SetEffectColor1( cParam(1) );
+	else if( sName=="effectcolor2" )	SetEffectColor2( cParam(1) );
 	else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
 	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
 	else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
