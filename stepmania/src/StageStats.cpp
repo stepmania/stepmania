@@ -36,6 +36,7 @@ void StageStats::AddStats( const StageStats& other )
 		iMeter[p] += other.iMeter[p] * iLengthMultiplier;
 		fAliveSeconds[p] += other.fAliveSeconds[p];
 		bFailed[p] |= other.bFailed[p];
+		bFailedEarlier[p] |= other.bFailedEarlier[p];
 		iPossibleDancePoints[p] += other.iPossibleDancePoints[p];
 		iActualDancePoints[p] += other.iActualDancePoints[p];
 		

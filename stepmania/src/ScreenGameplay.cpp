@@ -905,10 +905,8 @@ bool ScreenGameplay::AllAreFailing()
 bool ScreenGameplay::AllFailedEarlier()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) )
-			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->FailedEarlier()) || 
-				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->FailedEarlier((PlayerNumber)p)) )
-				return false;
+		if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailedEarlier[p] )
+			return false;
 	return true;
 }
 
@@ -1104,9 +1102,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				}
 			}
 		}
-		/* What is this line for? pn is always 2 here which goes into iPossibleDancePoints[0]
-		GAMESTATE->m_CurStageStats.bFailed[pn] = true;
-		*/
 
 		//
 		// Check to see if it's time to play a ScreenGameplay comment
@@ -1156,74 +1151,62 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_soundAssistTick.Play();
 }
 
+/* Set m_CurStageStats.bFailed for failed players, send SM_BeginFailed
+ * if all players failed, and kill dead Oni players.  This is all FAIL_ARCADE
+ * only.  In FAIL_END_OF_SONG, this happens in SM_NotesEnded.  */
 void ScreenGameplay::UpdateCheckFail()
 {
-	int pn;
-	switch( GAMESTATE->m_SongOptions.m_FailType )
-	{
-	case SongOptions::FAIL_ARCADE:
-		switch( GAMESTATE->m_SongOptions.m_LifeType )
-		{
-		case SongOptions::LIFE_BAR:
-			if( AllAreFailing() )	SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
-			if( AllAreInDanger() )	m_Background.TurnDangerOn();
-			else					m_Background.TurnDangerOff();
-			// check for individual fail
-			for ( pn=0; pn<NUM_PLAYERS; pn++ )
-			{
-				if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing() && !GAMESTATE->m_CurStageStats.bFailed[pn])  ||
-					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn) && !GAMESTATE->m_CurStageStats.bFailed[pn]) )
-				{
-					LOG->Trace("Player %d failed", (int)pn);
-					GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
-				}
-			}
-			break;
-		case SongOptions::LIFE_BATTERY:
-			if( AllFailedEarlier() )SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
-			if( AllAreInDanger() )	m_Background.TurnDangerOn();
-			else					m_Background.TurnDangerOff();
+	if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_ARCADE )
+		return;
 
-			// check for individual fail
-			for( pn=0; pn<NUM_PLAYERS; pn++ ) 
-			{
-				if( !GAMESTATE->IsPlayerEnabled(pn) )
-					continue;
-				if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
-					(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
-					continue; /* isn't failing */
-				if( GAMESTATE->m_CurStageStats.bFailed[pn] )
-					continue; /* failed and is already dead */
-				
-				if( !AllFailedEarlier() )	// if not the last one to fail
-				{
-					// kill them!
-					m_soundOniDie.PlayRandom();
-					ShowOniGameOver((PlayerNumber)pn);
-					m_Player[pn].Init();		// remove all notes and scoring
-					m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
-				}
-				GAMESTATE->m_CurStageStats.bFailed[pn] = true;
-			}
-			break;
-		}
-		break;
-	case SongOptions::FAIL_END_OF_SONG:
-		// we still need to check for fail for scoring purposes
+	/* Handle the background danger graphic. */
+	if( AllAreFailing() )	SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
+	if( AllAreInDanger() )	m_Background.TurnDangerOn();
+	else					m_Background.TurnDangerOff();
+
+	int pn;
+	switch( GAMESTATE->m_SongOptions.m_LifeType )
+	{
+	case SongOptions::LIFE_BAR:
+		// check for individual fail
 		for ( pn=0; pn<NUM_PLAYERS; pn++ )
 		{
-			if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing() && !GAMESTATE->m_CurStageStats.bFailed[pn])  ||
-				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn) && !GAMESTATE->m_CurStageStats.bFailed[pn]) )
+			if( !GAMESTATE->IsPlayerEnabled(pn) )
+				continue;
+			if( GAMESTATE->m_CurStageStats.bFailed[pn] )
+				continue; /* already failed */
+
+			if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing())  ||
+				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
 			{
 				LOG->Trace("Player %d failed", (int)pn);
 				GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 			}
 		}
 		break;
-	case SongOptions::FAIL_OFF:
+	case SongOptions::LIFE_BATTERY:
+		// check for individual fail
+		for( pn=0; pn<NUM_PLAYERS; pn++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(pn) )
+				continue;
+			if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
+				continue; /* isn't failing */
+			if( GAMESTATE->m_CurStageStats.bFailed[pn] )
+				continue; /* failed and is already dead */
+			
+			if( !AllFailedEarlier() )	// if not the last one to fail
+			{
+				// kill them!
+				m_soundOniDie.PlayRandom();
+				ShowOniGameOver((PlayerNumber)pn);
+				m_Player[pn].Init();		// remove all notes and scoring
+				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
+			}
+			GAMESTATE->m_CurStageStats.bFailed[pn] = true;
+		}
 		break;
-	default:
-		ASSERT(0);
 	}
 }
 
@@ -1585,6 +1568,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 
 			GAMESTATE->RemoveAllActiveAttacks();
+
+			/* All players failed. */
+			if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
+			{
+				for( p=0; p<NUM_PLAYERS; p++ )
+					if( GAMESTATE->IsPlayerEnabled(p)  )
+						GAMESTATE->m_CurStageStats.bFailed[p]=true;
+			}
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{

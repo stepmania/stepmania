@@ -34,7 +34,6 @@ public:
 	virtual bool IsInDanger() = 0;
 	virtual bool IsHot() = 0;
 	virtual bool IsFailing() = 0;
-	virtual bool FailedEarlier() = 0;
 
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) = 0;
 
@@ -59,7 +58,6 @@ public:
 	virtual bool IsInDanger( PlayerNumber pn ) = 0;
 	virtual bool IsHot( PlayerNumber pn ) = 0;
 	virtual bool IsFailing( PlayerNumber pn ) = 0;
-	virtual bool FailedEarlier( PlayerNumber pn ) = 0;
 	virtual void OnTaunt() {};
 };
 

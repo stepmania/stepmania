@@ -34,7 +34,6 @@ public:
 	virtual bool IsInDanger();
 	virtual bool IsHot();
 	virtual bool IsFailing();
-	virtual bool FailedEarlier();
 
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
 
@@ -43,7 +42,6 @@ public:
 private:
 	int			m_iLivesLeft;			// dead when 0
 	int			m_iTrailingLivesLeft;	// lags m_iLivesLeft
-	bool		m_bFailedEarlier;
 
 	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking
 

@@ -28,7 +28,6 @@ public:
 	virtual bool IsInDanger( PlayerNumber pn ) { return false; };
 	virtual bool IsHot( PlayerNumber pn ) { return false; };
 	virtual bool IsFailing( PlayerNumber pn ) { return false; };
-	virtual bool FailedEarlier( PlayerNumber pn ) { return false; };
 
 protected:
 

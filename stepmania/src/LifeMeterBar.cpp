@@ -376,7 +376,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	CLAMP( m_fLifePercentage, 0, 1 );
 
 	if( m_fLifePercentage <= FAIL_THRESHOLD )
-		m_bFailedEarlier = true;
+		GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber] = true;
 
 	m_fLifeVelocity += fDeltaLife;
 }
@@ -414,10 +414,6 @@ bool LifeMeterBar::IsFailing()
 	return m_fLifePercentage <= 0; 
 }
 
-bool LifeMeterBar::FailedEarlier() 
-{ 
-	return m_bFailedEarlier; 
-}
 
 void LifeMeterBar::Update( float fDeltaTime )
 {
