@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameState.h"
+#include "AnnouncerManager.h"
 
 
 #define JOINT_PREMIUM_ON_COMMAND	THEME->GetMetric ("ScreenSelectStyle","JointPremiumOnCommand")
@@ -182,6 +183,9 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
 	m_soundSelect.Play();
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
+
+	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectStyle comment %s",mc.name)) );
 
 	//
 	// TweenOffScreen
