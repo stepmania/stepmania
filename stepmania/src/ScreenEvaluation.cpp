@@ -713,7 +713,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	if( SHOW_TIME_AREA )
 	{
 		m_sprTimeLabel.Load( THEME->GetPathToG("ScreenEvaluation time label") );
-		m_sprTimeLabel.SetState( 1 );
+		m_sprTimeLabel.SetState( 0 );
 		m_sprTimeLabel.StopAnimating();
 		m_sprTimeLabel.SetName( "TimeLabel" );
 		SET_XY_AND_ON_COMMAND( m_sprTimeLabel );
