@@ -103,7 +103,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	      UsbStorageDeviceEx &old = vOld[i];
 	      if( find(vNew.begin(),vNew.end(),old) == vNew.end() )// didn't find
 		{
-		  LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
+		  LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str()) );
 		  vDisconnects.push_back( &old );
 		}
 	    }
@@ -115,7 +115,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	      UsbStorageDeviceEx &newd = vNew[i];
 	      if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )// didn't find
 		{
-		  LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
+		  LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str()) );
 		  vConnects.push_back( &newd );
 		}
 	    }
@@ -214,13 +214,13 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 			int iRet, iThrowAway;
 
 			// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-			int iBus, iPort, iDevice;
-			iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iBus, &iThrowAway, &iThrowAway, &iPort, &iThrowAway, &iDevice, &iThrowAway, &iThrowAway );
+			int iBus, iLevel, iPort, iDevice;
+			iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iBus, &iLevel, &iThrowAway, &iPort, &iThrowAway, &iDevice, &iThrowAway, &iThrowAway );
 			if( iRet == 8 )
 			{
 				usbd.iBus = iBus;
-				usbd.iDeviceOnBus = iDevice;
-				usbd.iPortOnHub = iPort;
+				usbd.iPort = iPort;
+				usbd.iLevel = iLevel;
 				continue;	// stop processing this line
 			}
 
@@ -241,8 +241,8 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 				if( iClass == 8 )	// storage class
 				{
 					vDevicesOut.push_back( usbd );
-					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
-						usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
+					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
+						usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
 				}
 				continue;	// stop processing this line
 			}
@@ -286,8 +286,8 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 						if( usbd.sSerial == szSerial )
 						{
 							usbd.iUsbStorageIndex = i;
-							LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d, sSerial: %s",
-								usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub, usbd.sSerial.c_str() );
+							LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sSerial: %s",
+								usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str() );
 							break;	// done looking for the corresponding device.
 						}
 					}
@@ -335,8 +335,8 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 				{
 					usbd.sOsMountDir = sMountPoint;
 
-					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d, sOsMountDir: %s",
-						usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub, usbd.sOsMountDir.c_str() );
+					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
+						usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sOsMountDir.c_str() );
 
 					break;	// stop looking for a match
 				}

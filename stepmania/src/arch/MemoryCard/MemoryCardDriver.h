@@ -9,15 +9,15 @@ struct UsbStorageDevice
 	{
 	  // -1 means "don't know"
 		iBus = -1;
-		iDeviceOnBus = -1;
-		iPortOnHub = -1;
+		iPort = -1;
+		iLevel = -1;
 		iUsbStorageIndex = -1;
 		sSerial = "";
 		sOsMountDir = "";
 	};
 	int iBus;
-	int iDeviceOnBus;
-	int iPortOnHub;
+	int iPort;
+	int iLevel;
 	CString sSerial;
 	int iUsbStorageIndex;
 	CString	sOsMountDir;	// WITHOUT trailing slash
@@ -28,8 +28,10 @@ struct UsbStorageDevice
 	{
 	  if( (iBus!=-1 || other.iBus!=-1) && iBus != other.iBus )
 	      return false;
-          if( (iDeviceOnBus!=-1 || other.iDeviceOnBus!=-1) && iDeviceOnBus != other.iDeviceOnBus )
-	    return false;
+	  if( (iPort!=-1 || other.iPort!=-1) && iPort != other.iPort )
+	      return false;
+	  if( (iLevel!=-1 || other.iLevel!=-1) && iBus != other.iLevel )
+	      return false;
 	  return sOsMountDir==other.sOsMountDir;  // every time a device is plugged in, it gets a unique device number
 	}
   bool operator!=(const UsbStorageDevice& other) const
