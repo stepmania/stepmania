@@ -35,6 +35,7 @@
 //104
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
+				AA245ACE07437CE500A27459,
 				AAA8E0020696984300FCE1F9,
 				AA230ECF06043EFD002672F3,
 				AA230EAE06043704002672F3,
@@ -1760,6 +1761,20 @@
 			settings = {
 			};
 		};
+		AA245ACE07437CE500A27459 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = vecLib.framework;
+			path = /System/Library/Frameworks/vecLib.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA245ACF07437CE500A27459 = {
+			fileRef = AA245ACE07437CE500A27459;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA251B7505841FCE00027ACB = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -2394,6 +2409,8 @@
 				AAAB2CE4072BD2FA00CD9FC9,
 				AA7ADC28072CAB7F00C50A7F,
 				AA7ADC2A072CAB7F00C50A7F,
+				AAF793F6074FE69E00D74516,
+				AAF793F8074FE69E00D74516,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4310,6 +4327,8 @@
 				AAAB2CE3072BD2FA00CD9FC9,
 				AA7ADC27072CAB7F00C50A7F,
 				AA7ADC29072CAB7F00C50A7F,
+				AAF793F5074FE69E00D74516,
+				AAF793F7074FE69E00D74516,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5745,6 +5764,7 @@
 				AA230EB006043704002672F3,
 				AA230EB106043704002672F3,
 				AAA8E0030696984300FCE1F9,
+				AA245ACF07437CE500A27459,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7368,6 +7388,10 @@
 				AADBE363053D5F8A00D02EE9,
 				AAB9C8B306EAF66C00AD97CD,
 				AAB9C8B406EAF66C00AD97CD,
+				AAF793F1074FE69E00D74516,
+				AAF793F2074FE69E00D74516,
+				AAF793F3074FE69E00D74516,
+				AAF793F4074FE69E00D74516,
 				AA22CBA306DE909C0083BA97,
 				AA22CBA406DE909C0083BA97,
 				AA42F5E6067068D30013509E,
@@ -16625,6 +16649,66 @@
 		};
 		AAF74591061181F700B19AD1 = {
 			fileRef = AAF7458F061181F700B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF793F1074FE69E00D74516 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenNetRoom.cpp;
+			path = ../src/ScreenNetRoom.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		AAF793F2074FE69E00D74516 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenNetRoom.h;
+			path = ../src/ScreenNetRoom.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		AAF793F3074FE69E00D74516 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenNetSelectBase.cpp;
+			path = ../src/ScreenNetSelectBase.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		AAF793F4074FE69E00D74516 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenNetSelectBase.h;
+			path = ../src/ScreenNetSelectBase.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		AAF793F5074FE69E00D74516 = {
+			fileRef = AAF793F1074FE69E00D74516;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF793F6074FE69E00D74516 = {
+			fileRef = AAF793F2074FE69E00D74516;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF793F7074FE69E00D74516 = {
+			fileRef = AAF793F3074FE69E00D74516;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF793F8074FE69E00D74516 = {
+			fileRef = AAF793F4074FE69E00D74516;
 			isa = PBXBuildFile;
 			settings = {
 			};
