@@ -1,4 +1,5 @@
 ------------------------CVS after 3.00 beta 6rc2----------------
+BUG FIX:  Crash handler works better in full screen.
 BUG FIX:  Crash handler restarts correctly.
 BUG FIX:  Fixed choosing song filenames when saving.
 BUG FIX:  Fix Endless crash when a song folder has over 99 minutes of songs.
