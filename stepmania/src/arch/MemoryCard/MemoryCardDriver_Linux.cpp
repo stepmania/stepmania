@@ -53,13 +53,6 @@ bool MemoryCardDriver_Linux::StorageDevicesChanged()
 
 void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
-	UsbStorageDevice usbd;
-	usbd.sOsMountDir = "/mnt";
-	vDevicesOut.push_back( usbd );
-	return;
-
-  usleep(1000);
-
 	/* If we couldn't open it before, we probably can't open it now; don't
 	 * output more errors. */
 	if( m_fds == -1 )
@@ -281,7 +274,7 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice, CStri
 
 void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )
 {
-	if( !pDevice->sOsMountDir.empty() )
+	if( pDevice->sOsMountDir.empty() )
 		return;
 
 	CString sCommand = "umount " + pDevice->sOsMountDir;
@@ -291,7 +284,7 @@ void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountP
 
 void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 {
-	if( !pDevice->sOsMountDir.empty() )
+	if( pDevice->sOsMountDir.empty() )
 		return;
 
 	// unmount and mount again.  Is there a better way to flush?
