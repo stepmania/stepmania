@@ -24,7 +24,6 @@
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
 class Inventory;
-#include "ActiveItemList.h"
 //#include "BeginnerHelper.h"	// uncomment once it's checked in
 #include "LyricDisplay.h"
 #include "TimingAssist.h"
@@ -144,7 +143,6 @@ protected:
 
 	// used in PLAY_MODE_BATTLE
 	Inventory*			m_pInventory[NUM_PLAYERS];
-	ActiveItemList		m_ActiveItemList[NUM_PLAYERS];
 	
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 

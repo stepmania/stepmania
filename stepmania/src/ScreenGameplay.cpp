@@ -265,16 +265,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	
 		m_TimingAssist.Load((PlayerNumber)p, &m_Player[p]);
 
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_HUMAN_BATTLE:
-		case PLAY_MODE_CPU_BATTLE:
-			m_ActiveItemList[p].Init( (PlayerNumber)p );
-			/* Position it in LoadNextSong. */
-			this->AddChild( &m_ActiveItemList[p] );
-			break;
-		}
-
 		m_sprOniGameOver[p].Load( THEME->GetPathToG("ScreenGameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
@@ -808,9 +798,6 @@ void ScreenGameplay::LoadNextSong()
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
-
-		m_ActiveItemList[p].SetName( ssprintf("ActiveItemsP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
-		SET_XY( m_ActiveItemList[p] );
 
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
 		SET_XY( m_DifficultyIcon[p] );
