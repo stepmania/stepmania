@@ -265,7 +265,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
-	float BPMPos2 = -1, BPM2 = -1;
+	float BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;;
 
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -279,8 +279,12 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 			out.AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );
 		else if( 0==stricmp(sValueName,"BPM2") )
 			BPM2 = float(atof(sParams[1]));
+		else if( 0==stricmp(sValueName,"BPM3") )
+			BPM3 = float(atof(sParams[1]));
 		else if( 0==stricmp(sValueName,"BUNKI") )
 			BPMPos2 = float(atof(sParams[1])) / 100.0f;
+		else if( 0==stricmp(sValueName,"BUNKI2") )
+			BPMPos3 = float(atof(sParams[1])) / 100.0f;
 		else if( 0==stricmp(sValueName,"STARTTIME") )
 			out.m_fBeat0OffsetInSeconds = -(float)atof(sParams[1])/100;		
 		else if( 0==stricmp(sValueName,"TICKCOUNT") ||
@@ -300,6 +304,15 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 		LOG->Trace("BPM %f, BPS %f, BPMPos2 %f, beat %f",
 			out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos2, beat);
 		out.AddBPMSegment( BPMSegment(beat, BPM2) );
+	}
+
+	if( BPM3 > 0 && BPMPos3 > 0 )
+	{
+		const float BeatsPerSecond = out.GetBPMAtBeat(0) / 60.0f;
+		const float beat = BPMPos3 * BeatsPerSecond;
+		LOG->Trace("BPM %f, BPS %f, BPMPos3 %f, beat %f",
+			out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos3, beat);
+		out.AddBPMSegment( BPMSegment(beat, BPM3) );
 	}
 
 	/* Try to fill in missing bits of information from the pathname. */
