@@ -142,24 +142,17 @@ bool test_read( SoundReader *snd, const char *expected_data, int bytes )
 	int got = snd->Read( buf, bytes );
 	ASSERT( got == bytes );
 
-//	printf("b %i, cmp %i\n",
-//			bytes, memcmp(expected_data, buf, bytes) );
-	const int skip = 32;
 	//compare_buffers( (const int16_t *) expected_data,
 	//		 (const int16_t *) buf,
 	//		 bytes/2,
 	//		 2 );
-			 
-	if( memcmp(expected_data, buf, bytes) && bytes > skip )
-	{
-		if( !memcmp(expected_data+skip, buf+skip, bytes-skip) )
-			return true;
-		dump( (const int16_t *) expected_data, min(100, bytes/2) );
-		dump( (const int16_t *) buf, min(100, bytes/2) );
-
-	}
 	
-	return !memcmp(expected_data, buf, bytes);
+	if( !memcmp(expected_data, buf, bytes) )
+		return true;
+
+	dump( (const int16_t *) expected_data, min(100, bytes/2) );
+	dump( (const int16_t *) buf, min(100, bytes/2) );
+	return false;
 }
 
 
@@ -427,7 +420,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 	snd->SetPosition_Accurate( 0 );
 	if( !test_read( snd, data, one_second ) )
 	{
-		LOG->Warn("Fail: rewind didn't work");
+		LOG->Warn("Fail: SetPosition_Accurate(0) didn't work");
 		return false;
 	}
 
@@ -435,7 +428,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 	snd->SetPosition_Fast( 0 );
 	if( !test_read( snd, data, one_second ) )
 	{
-		LOG->Warn("Fail: rewind didn't work");
+		LOG->Warn("Fail: SetPosition_Fast(0) didn't work");
 		return false;
 	}
 
@@ -443,7 +436,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 	snd->SetPosition_Accurate( 1 );
 	if( !test_read( snd, data + one_second * 1/1000, one_second * 1/1000 ) )
 	{
-		LOG->Warn("Fail: seek(1) didn't work");
+		LOG->Warn("Fail: SetPosition_Accurate(1) didn't work");
 		return false;
 	}
 
