@@ -287,13 +287,16 @@ ScreenManager::~ScreenManager()
 
 void ScreenManager::EmptyDeleteQueue()
 {
+	if(!m_ScreensToDelete.size())
+		return;
+
 	// delete all ScreensToDelete
 	for( unsigned i=0; i<m_ScreensToDelete.size(); i++ )
 		SAFE_DELETE( m_ScreensToDelete[i] );
 
 	m_ScreensToDelete.clear();
 
-	/* Now that we've actually deleted the screen, it makes sense to clear out
+	/* Now that we've actually deleted a screen, it makes sense to clear out
 	 * cached textures. */
 	TEXTUREMAN->DeleteCachedTextures();
 }
