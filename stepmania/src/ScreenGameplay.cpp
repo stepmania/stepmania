@@ -639,10 +639,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check for end of song
 		//
-		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+1  &&  !m_soundMusic.IsPlaying() )
+		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
+		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_OniFade.IsClosing() )
 		{
 			GAMESTATE->m_fSongBeat = 0;
-			m_soundMusic.Stop();
 			this->SendScreenMessage( SM_NotesEnded, 0 );
 		}
 

@@ -63,28 +63,28 @@ void TransitionOniFade::DrawPrimitives()
 
 void TransitionOniFade::OpenWipingRight( ScreenMessage send_when_done )
 {
-	SetTransitionTime( 4 );
+	SetTransitionTime( 2.5f );
 	Transition::OpenWipingRight( send_when_done );
 	UpdateSongText();
 }
 
 void TransitionOniFade::OpenWipingLeft(  ScreenMessage send_when_done )
 {
-	SetTransitionTime( 4 );
+	SetTransitionTime( 2.5f );
 	Transition::OpenWipingLeft( send_when_done );
 	UpdateSongText();
 }
 
 void TransitionOniFade::CloseWipingRight(ScreenMessage send_when_done )
 {
-	SetTransitionTime( 2 );
+	SetTransitionTime( 1 );
 	Transition::CloseWipingRight( send_when_done );
 	UpdateSongText();
 }
 
 void TransitionOniFade::CloseWipingLeft( ScreenMessage send_when_done )
 {
-	SetTransitionTime( 2 );
+	SetTransitionTime( 1 );
 	Transition::CloseWipingLeft( send_when_done );
 	UpdateSongText();
 }
