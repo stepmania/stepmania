@@ -150,14 +150,18 @@ void ConvertSDLSurface(SDL_Surface *&image,
 	ASSERT(ret_image != NULL);
 
 	/* If the formats are the same, no conversion is needed. */
-	if(width == image->w && height == image->h &&
+/*	if(width == image->w && height == image->h &&
 	   !memcmp(image->format, ret_image->format, sizeof(SDL_PixelFormat)))
 	{
 		SDL_FreeSurface(ret_image);
 		return;
 	}
 
-	if(!(image->flags & SDL_SRCCOLORKEY)) // XXX until HOT PINK color keys are gone
+	It's needed because of the color key; the blit converts it to alpha.  (Gah.) */
+
+	/* I'd really like to do away with this, but a lot of song images use it.
+	 * I suppose this should be yet another hint, but they're getting cumbersome ... */
+	if(!(image->flags & SDL_SRCCOLORKEY))
 		SDL_SetColorKey( image, SDL_SRCCOLORKEY, SDL_MapRGB(image->format, 0xFF, 0, 0xFF));
 
 	/* We don't want to actually blend the alpha channel over the destination converted
