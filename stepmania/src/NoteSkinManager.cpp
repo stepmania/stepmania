@@ -224,8 +224,16 @@ CString NoteSkinManager::GetPathTo( CString NoteSkin, CString sButtonName, CStri
 	if( !ret.empty() )	// we found something
 		return ret;
 
+	ret = GetPathTo( GetNoteSkinDir(NoteSkin), "Fallback "+sFileName);
+	if( !ret.empty() )	// we found something
+		return ret;
+
 	// Search game default NoteSkin
 	ret = GetPathTo( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sFileName);
+	if( !ret.empty() )	// we found something
+		return ret;
+
+	ret = GetPathTo( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), "Fallback "+sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
 
