@@ -449,12 +449,10 @@ void PlayerMinus::DrawPrimitives()
 	m_AttackDisplay.Draw();
 
 	if( TAP_JUDGMENTS_UNDER_FIELD )
-		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind )
-			DrawTapJudgments();
+		DrawTapJudgments();
 
 	if( HOLD_JUDGMENTS_UNDER_FIELD )
-		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
-			DrawHoldJudgments();
+		DrawHoldJudgments();
 
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
 	float fSkew = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fSkew;
@@ -506,6 +504,9 @@ void PlayerMinus::DrawPrimitives()
 
 void PlayerMinus::DrawTapJudgments()
 {
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind > 0 )
+		return;
+
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bProTiming )
 		m_ProTimingDisplay.Draw();
 	else
@@ -514,6 +515,9 @@ void PlayerMinus::DrawTapJudgments()
 
 void PlayerMinus::DrawHoldJudgments()
 {
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind > 0 )
+		return;
+
 	for( int c=0; c<GetNumTracks(); c++ )
 		m_HoldJudgment[c].Draw();
 }
