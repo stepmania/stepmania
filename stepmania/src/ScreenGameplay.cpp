@@ -89,7 +89,7 @@ const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
 ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sName)
 {
-        m_bDemonstration = bDemonstration;
+	m_bDemonstration = bDemonstration;
 	Init(); // work around horrible gcc bug 3187
 }
 
@@ -1226,6 +1226,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// Check for end of song
 		//
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+
+		/* Make sure we keep going long enough to register a miss for the last note. */
+		fSecondsToStop += PlayerMinus::GetMaxStepDistanceSeconds();
+
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSongOut.IsTransitioning() )
 			m_SongFinished.StartTransitioning( SM_NotesEnded );
 

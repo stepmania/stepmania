@@ -58,6 +58,8 @@ public:
 	void SetCharacterState(int iDCState) { m_iDCState = iDCState; };
 	void ApplyWaitingTransforms();
 
+	static float GetMaxStepDistanceSeconds();
+
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowCompletelyJudged( int iStepIndex );
@@ -69,8 +71,6 @@ protected:
 
 	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection ) const;
 	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind ) const;
-
-	static float GetMaxStepDistanceSeconds();
 
 	PlayerNumber	m_PlayerNumber;
 	float			m_fNoteFieldHeight;
