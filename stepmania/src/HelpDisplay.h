@@ -5,6 +5,7 @@
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
+#include "ThemeMetric.h"
 
 
 class HelpDisplay : public ActorFrame
@@ -16,8 +17,11 @@ public:
 	void SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt );
 
 	virtual void Update( float fDeltaTime );
+	virtual void SetName( const CString &sName, const CString &sID = "" );
 
 protected:
+	ThemeMetric<float> TIP_SHOW_TIME;
+
 	BitmapText m_textTip;
 
 	CStringArray m_arrayTips, m_arrayTipsAlt;

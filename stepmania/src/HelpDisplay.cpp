@@ -6,8 +6,6 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
-#define TIP_SHOW_TIME			THEME->GetMetricF(m_sName,"TipShowTime")
-
 
 HelpDisplay::HelpDisplay()
 {
@@ -23,6 +21,13 @@ void HelpDisplay::Load()
 	this->AddChild( &m_textTip );
 
 	m_fSecsUntilSwitch = TIP_SHOW_TIME;
+}
+
+void HelpDisplay::SetName( const CString &sName, const CString &sID )
+{
+	ActorFrame::SetName( sName, sID );
+
+	TIP_SHOW_TIME.Load( m_sName, "TipShowTime" );
 }
 
 void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt )
