@@ -21,9 +21,10 @@ struct ModeChoice		// used in SelectMode
 	ModeChoice() { Init(); }
 	void Init();
 
-	bool FromString( CString str );
+	bool FromString( CString str, bool bIgnoreUnknown=false );
 	void ApplyToAllPlayers();
 	void Apply( PlayerNumber pn );
+	bool DescribesCurrentMode() const;
 
 	Game		game;
 	Style		style;

@@ -19,7 +19,30 @@ void ModeChoice::Init()
 	numSidesJoinedToPlay = 1;
 }
 
-bool ModeChoice::FromString( CString sChoice )
+bool ModeChoice::DescribesCurrentMode() const
+{
+	if( game != GAME_INVALID && game != GAMESTATE->m_CurGame )
+		return false;
+	if( game != GAME_INVALID && GAMESTATE->m_CurGame != game )
+		return false;
+	if( pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != pm )
+		return false;
+	if( style != STYLE_INVALID && GAMESTATE->m_CurStyle != style )
+		return false;
+	if( dc != DIFFICULTY_INVALID )
+	{
+		for( int pn=0; pn<NUM_PLAYERS; pn++ )
+			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_PreferredDifficulty[pn] != dc )
+				return false;
+	}
+		
+	if( sAnnouncer != "" && sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
+		return false;
+	
+	return true;
+}
+
+bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 {
 	strncpy( this->name, sChoice, min(sChoice.size()+1, sizeof(this->name)) );
 	sChoice[sizeof(this->name)-1] = 0;
@@ -62,10 +85,13 @@ bool ModeChoice::FromString( CString sChoice )
 			continue;
 		}
 
-		CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
-		LOG->Warn( sError );
-		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( sError );
+		if( !bIgnoreUnknown )
+		{
+			CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
+			LOG->Warn( sError );
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( sError );
+		}
 		bChoiceIsInvalid |= true;
 	}
 
