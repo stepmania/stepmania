@@ -44,6 +44,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include <set>
+
 #define CACHE_DIR BASE_PATH "Cache" SLASH
 
 const int FILE_CACHE_VERSION = 127;	// increment this when Song or Notes changes to invalidate cache
@@ -332,6 +334,10 @@ NotesLoader *Song::MakeLoader( CString sDir ) const
 	return NULL;
 }
 
+/* Hack: This should be a parameter to TidyUpData, but I don't want to
+ * pull in <set> into Song.h, which is heavily used. */
+static set<CString> BlacklistedImages;
+
 bool Song::LoadWithoutCache( CString sDir )
 {
 	//
@@ -347,6 +353,7 @@ bool Song::LoadWithoutCache( CString sDir )
 	}
 
 	bool success = ld->LoadFromDir( sDir, *this );
+	BlacklistedImages = ld->GetBlacklistedImages();
 	delete ld;
 
 	if(!success)
@@ -482,6 +489,7 @@ static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturn
 	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
 }
 
+/* Songs in BlacklistImages will never be autodetected as song images. */
 void Song::TidyUpData()
 {
 	if( !HasMusic() )
@@ -678,7 +686,7 @@ void Song::TidyUpData()
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
 		// ignore DWI "-char" graphics
-		if( arrayImages[i].Find("-char") != -1 )
+		if( BlacklistedImages.find( arrayImages[i] ) != BlacklistedImages.end() )
 			continue;	// skip
 		
 		// Skip any image that we've already classified
@@ -696,8 +704,7 @@ void Song::TidyUpData()
 		SDL_Surface *img = IMG_Load( sPath );
 		if( !img )
 		{
-			LOG->Trace("Couldn't load '%s': %s", 
-				sPath.c_str(), SDL_GetError());
+			LOG->Trace("Couldn't load '%s': %s", sPath.c_str(), SDL_GetError());
 			continue;
 		}
 
