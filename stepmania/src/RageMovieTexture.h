@@ -52,7 +52,7 @@ public:
 	virtual void Pause();
 	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
-	virtual bool IsAMovie() { return true; };
+	virtual bool IsAMovie() const { return true; };
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
 	LPDIRECT3DTEXTURE8 GetBackBuffer() { return m_pd3dTexture[!m_iIndexFrontBuffer]; }
