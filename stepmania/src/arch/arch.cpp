@@ -37,14 +37,14 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			LOG->Trace("Initializing driver: %s", DriversToTry[i].GetString());
 
 #if defined(WIN32)
-			if(DriversToTry[i] == "DirectSound") ret = new RageSound_DSound;
-			else if(DriversToTry[i] == "DirectSound-sw") ret = new RageSound_DSound_Software;
-			else if(DriversToTry[i] == "WaveOut") ret = new RageSound_WaveOut;
+			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
+			else if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
+			else if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
 #else
 #warn No sound drivers defined!
-			if(0) ;
+			if(1) ret = new RageSound_Null;
 #endif
-			else if(DriversToTry[i] == "Null") ret = new RageSound_Null;
+			else if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
 			else
 				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].GetString());
 		}
