@@ -63,7 +63,7 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 6
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
+# PROP Output_Dir "../../"
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
@@ -108,6 +108,10 @@ SOURCE=.\irc.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageUtil.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SendFileDialog.cpp
 # End Source File
 # Begin Source File
@@ -145,6 +149,10 @@ SOURCE=.\EditChat.h
 # Begin Source File
 
 SOURCE=.\irc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageUtil.h
 # End Source File
 # Begin Source File
 

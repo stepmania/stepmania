@@ -26,6 +26,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSmlobbyDlg)
 	enum { IDD = IDD_SMLOBBY_DIALOG };
+	CComboBox	m_comboMusic;
 	CEdit	m_editGameName;
 	CEdit	m_editGameInfo;
 	CListBox	m_listUsers;

@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "smlobby.h"
 #include "smlobbyDlg.h"
+#include "RageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -84,6 +85,7 @@ void CSmlobbyDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSmlobbyDlg)
+	DDX_Control(pDX, IDC_COMBO_MUSIC, m_comboMusic);
 	DDX_Control(pDX, IDC_EDIT_GAME_NAME, m_editGameName);
 	DDX_Control(pDX, IDC_EDIT_GAME_INFO, m_editGameInfo);
 	DDX_Control(pDX, IDC_LIST_USERS, m_listUsers);
@@ -188,6 +190,41 @@ BOOL CSmlobbyDlg::OnInitDialog()
 	if( !m_bOk )
 		return FALSE;
 		
+
+	//
+	// populate drop-down list of songs
+	//
+	CString sDir = "Songs";	// search only in "Songs" directory in program folder
+
+	// Find all group directories in "Songs" folder
+	CStringArray arrayGroupDirs;
+	GetDirListing( sDir+"\\*.*", arrayGroupDirs, true );
+	SortCStringArray( arrayGroupDirs );
+	
+	for( unsigned i=0; i< arrayGroupDirs.GetSize(); i++ )	// for each dir in /Songs/
+	{
+		CString sGroupDirName = arrayGroupDirs[i];
+
+		if( 0 == stricmp( sGroupDirName, "cvs" ) )	// the directory called "CVS"
+			continue;		// ignore it
+
+		// Find all Song folders in this group directory
+		CStringArray arraySongDirs;
+		GetDirListing( ssprintf("%s\\%s\\*.*", sDir, sGroupDirName), arraySongDirs, true );
+		SortCStringArray( arraySongDirs );
+
+		for( unsigned j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
+		{
+			CString sSongDirName = arraySongDirs[j];
+
+			if( 0 == stricmp( sSongDirName, "cvs" ) )	// the directory called "CVS"
+				continue;		// ignore it
+
+			CString sSongDir = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName);
+
+			m_comboMusic.AddString( sSongDir );
+		}
+	}
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -588,14 +625,24 @@ void CSmlobbyDlg::OnButtonCreateGame()
 	sprintf(host_ip_str, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 
 	//Insert song name/hash code here
-	char songHash[12] = "0x00000000";
+
+	int iIndex = m_comboMusic.GetCurSel();
+	if( iIndex <= 0 )
+		ASSERT(0);	// what do we do here?
+	CString sSongDir;
+	m_comboMusic.GetLBText( iIndex, sSongDir );
+	unsigned long hash = GetHashForDirectory( sSongDir );
+
 
 	//Now tell the server our game info
-	g_ircSession << irc::CIrcMessage(CString("topic #") + gameName + CString(" :") 
-										+ gameName + CString(" ")
-										+ CString(host_ip_str) + CString(" ") 
-										+ CString(g_ircSession.GetInfo().sNick.c_str()) + CString(" ")
-										+ CString(songHash));
+	CString sIrcMessage = ssprintf( "topic #%s :%s %s %s %u",
+		gameName,
+		gameName,
+		host_ip_str,
+		g_ircSession.GetInfo().sNick.c_str(),
+		hash );
+
+	g_ircSession << irc::CIrcMessage(sIrcMessage);
 }
 
 bool CSmlobbyDlg::IsUniqueGameName(const CString GameName)
