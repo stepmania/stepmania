@@ -78,21 +78,21 @@ protected:
 
 	// banner area
 	Banner				m_LargeBanner;
-	Sprite				m_sprLargeBannerFrame;
-	Sprite				m_sprStage;
+	AutoActor			m_sprLargeBannerFrame;
+	AutoActor			m_sprStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	AutoActor			m_sprDisqualified[NUM_PLAYERS];
 	Banner				m_SmallBanner[MAX_SONGS_TO_SHOW];
-	Sprite				m_sprSmallBannerFrame[MAX_SONGS_TO_SHOW];
+	AutoActor			m_sprSmallBannerFrame[MAX_SONGS_TO_SHOW];
 
 	// grade area
-	Sprite				m_sprGradeFrame[NUM_PLAYERS];
+	AutoActor			m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
 	AutoActor			m_sprGrade[NUM_PLAYERS];
 
 	// graph area
-	Sprite				m_sprGraphFrame[NUM_PLAYERS];
+	AutoActor			m_sprGraphFrame[NUM_PLAYERS];
 	GraphDisplay		m_Graph[NUM_PLAYERS];
 
 	// combo area
@@ -101,19 +101,19 @@ protected:
 	// points area
 	bool				m_bNewSongsUnlocked;
 	PercentageDisplay	m_Percent[NUM_PLAYERS];
-	Sprite				m_sprPercentFrame[NUM_PLAYERS];
+	AutoActor			m_sprPercentFrame[NUM_PLAYERS];
 
 	// bonus area
-	Sprite				m_sprBonusFrame[NUM_PLAYERS];
+	AutoActor			m_sprBonusFrame[NUM_PLAYERS];
 	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
 	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
 
 	// survived area
-	Sprite				m_sprSurvivedFrame[NUM_PLAYERS];
+	AutoActor			m_sprSurvivedFrame[NUM_PLAYERS];
 	BitmapText			m_textSurvivedNumber[NUM_PLAYERS];
 
 	// win area
-	Sprite				m_sprWinFrame[NUM_PLAYERS];
+	AutoActor			m_sprWinFrame[NUM_PLAYERS];
 	Sprite				m_sprWin[NUM_PLAYERS];
 
 	// judgment area
@@ -125,22 +125,22 @@ protected:
 	BitmapText			m_textStatsText[NUM_STATS_LINES][NUM_PLAYERS];
 
 	// score area
-	Sprite				m_sprScoreLabel;
+	AutoActor			m_sprScoreLabel;
 	BitmapText			m_textScore[NUM_PLAYERS];
 
 	// total score area
-	Sprite				m_sprTotalScoreLabel;
+	AutoActor			m_sprTotalScoreLabel;
 	BitmapText			m_textTotalScore[NUM_PLAYERS];
 
 	// time area
-	Sprite				m_sprTimeLabel;
+	AutoActor			m_sprTimeLabel;
 	BitmapText			m_textTime[NUM_PLAYERS];
 
 	// extra area
 	AutoActor			m_sprMachineRecord[NUM_PLAYERS];
 	AutoActor			m_sprPersonalRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
-	Sprite				m_sprTryExtraStage;
+	AutoActor			m_sprTryExtraStage;
 	AutoActor			m_PerDifficultyAward[NUM_PLAYERS];
 	bool m_bFailed;
 
