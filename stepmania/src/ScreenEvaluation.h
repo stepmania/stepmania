@@ -62,7 +62,6 @@ protected:
 	void CommitScores( const StageStats &stageStats, int iPersonalHighScoreIndex[NUM_PLAYERS], int iMachineHighScoreIndex[NUM_PLAYERS], RankingCategory rc[NUM_PLAYERS] );
 	void EndScreen();
 
-	CString				m_sName;
 	Type				m_Type;
 
 	float m_fScreenCreateTime;

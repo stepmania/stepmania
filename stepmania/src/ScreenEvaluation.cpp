@@ -147,7 +147,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	ZERO( m_bSavedScreenshot );
 
 
-	m_sName = sClassName;
 	if( !TYPE.CompareNoCase("stage") )
 		m_Type = stage;
 	else if( !TYPE.CompareNoCase("summary") )
