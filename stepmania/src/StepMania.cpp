@@ -253,6 +253,30 @@ RageDisplay *CreateDisplay() { return CreateDisplay_OGL(); }
 
 #include "archutils/Win32/VideoDriverInfo.h"
 #include "Regex.h"
+
+static CString GetCardName()
+{
+	/* We can't too reliably get driver information before we set up the window. Ask
+	 * VideoDriverInfo; it'll usually give us a name we can match.  XXX: If we're on
+	 * an old system with more than one card, we won't know which to match. */
+	VideoDriverInfo info;
+	GetPrimaryVideoDriverInfo(info);
+	return info.sDescription;
+}
+
+static bool CardRequiresD3D()
+{
+	vector<Regex> Cards;
+	Cards.push_back(Regex(".*Voodoo.*"));
+//	Cards.push_back(Regex(".*nVidia.*")); // testing
+
+	const CString desc = GetCardName();
+	for(unsigned i = 0; i < Cards.size(); ++i)
+		if(Cards[i].Compare(desc)) return true;
+
+	return false;
+}
+
 RageDisplay *CreateDisplay()
 {
 	/* We never want to bother users with having to decide which API to use.
@@ -275,27 +299,11 @@ RageDisplay *CreateDisplay()
 	 * due to driver problems).  We'll probably get bug reports for all three types.
 	 * #2 is the only case that's actually a bug.
 	 *
-	 * If a system is listed as needing D3D, it's important--don't silently fall
-	 * back on OpenGL if it's missing.  (If that would work, we wouldn't use D3D
-	 * on that system to begin with.)
+	 * Actually, right now we're falling back.  I'm not sure which behavior is better.
 	 *
 	 * This should probably be exported into an INI.
 	 */
-	vector<Regex> Cards;
-	Cards.push_back(Regex(".*Voodoo.*"));
-//	Cards.push_back(Regex(".*nVidia.*")); // testing
-
-	/* We can't too reliably get driver information before we set up the window. Ask
-	 * VideoDriverInfo; it'll usually give us a name we can match.  XXX: If we're on
-	 * an old system with more than one card, we won't know which to match. */
-	VideoDriverInfo info;
-	GetPrimaryVideoDriverInfo(info);
-	const CString &desc = info.sDescription;
-	
 	bool NeedsD3D = false;
-	for(unsigned i = 0; i < Cards.size(); ++i)
-		if(Cards[i].Compare(desc)) NeedsD3D = true;
-
 	if( PREFSMAN->m_sRenderer != "" )
 	{
 		LOG->Warn("Forcing renderer: %s", PREFSMAN->m_sRenderer.c_str() );
@@ -307,13 +315,19 @@ RageDisplay *CreateDisplay()
 			RageException::Throw("Unknown Renderer value: %s", PREFSMAN->m_sRenderer.c_str() );
 	}
 
-	/* XXX: Handle AllowUnacceleratedRenderer.  Be careful not to fall back from D3D to
-	 * OpenGL because of it, and ending up with an accelerated but broken driver! */
+	if( CardRequiresD3D() )
+		NeedsD3D = true;
+
+	CString error = "There was an error while initializing your video card.\n\n";
+	if( PREFSMAN->m_sRenderer != "" )
+		error = "(WARNING: Renderer was forced)\n\n";
+	
+	error += "   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n";
+	
 	if( NeedsD3D )
 	{
 		/* We require D3D.  Try to start it.  */
-		CString error = "There was an error while initializing your video card.\n\n"
-			"Your display adapter, \"" + desc + "\", requires Direct3D 8 (or "
+		error += "Your display adapter, \"" + GetCardName() + "\", requires Direct3D 8 (or "
 			"higher), but ";
 
 		try {
@@ -327,13 +341,38 @@ RageDisplay *CreateDisplay()
 				"You can download an updated driver from your card's manufacturer.";
 		};
 
-		if( PREFSMAN->m_sRenderer != "" )
-			error = "WARNING: Renderer was forced\n\n" + error;
 
+		/* This card is listed as having problems in OpenGL, so don't try it; it'll
+		 * just generate bug reports. */
 		RageException::Throw( error );
 	}
 
-	return CreateDisplay_OGL();
+	/* Try to create an OpenGL renderer.  This should always succeed.  (Actually,
+	 * SDL may throw, but that only happens with broken driver installations, and
+	 * we probably don't want to fall back on D3D in that case anyway.) */
+	RageDisplay *ret = CreateDisplay_OGL();
+
+	if( PREFSMAN->m_bAllowUnacceleratedRenderer || !ret->IsSoftwareRenderer() )
+		return ret;
+
+	/* OpenGL is unaccelerated.  Try D3D. */
+	delete ret;
+
+	try {
+		return CreateDisplay_D3D();
+	} catch(RageException_D3DNotInstalled e) {
+		/* Eek.  We don't know if we need newer drivers, D3D8 or both. */
+		error += 
+			"OpenGL hardware acceleration is not available on your system, and "
+			"Direct3D 8 (or higher) is not installed.  You can download it from: URL"
+			"You may also need updated drivers from your card's manufacturer.";
+	} catch(RageException_D3DNoAcceleration e) {
+		error += 
+			"Neither OpenGL nor Direct3D hardware acceleration is available on your "
+			"system.  Please install the latest video drivers from your graphics "
+			"card vendor.";
+	};
+	RageException::Throw( error );
 }
 
 #endif
@@ -445,15 +484,6 @@ int main(int argc, char* argv[])
 	BoostAppPri();
 
 	ResetGame();
-	if( DISPLAY->IsSoftwareRenderer() && !PREFSMAN->m_bAllowUnacceleratedRenderer )
-		RageException::Throw( 
-			"OpenGL hardware acceleration is not available on your system.\n\n"  
-			"StepMania requires OpenGL hardware acceleration.\n\n"
-			"Please install the latest video driver from your graphics card vendor "
-			"to enable OpenGL hardware acceleration.\n\n"
-			"DO NOT FILE THIS ERROR AS A BUG!\n\n"
-			"(Advanced:  To run without OpenGL hardware acceleration, set \"AllowUnacceleratedRenderer=1\""
-			"in StepMania.ini)" );
 
 	/* Load the unlocks into memory */
 	GAMESTATE->UnlockingSys.LoadFromDATFile("Data/Unlocks.dat");
