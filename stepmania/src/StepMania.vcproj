@@ -603,6 +603,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Grade.h">
 			</File>
 			<File
+				RelativePath="HighScore.cpp">
+			</File>
+			<File
+				RelativePath="HighScore.h">
+			</File>
+			<File
 				RelativePath="Inventory.cpp">
 			</File>
 			<File
