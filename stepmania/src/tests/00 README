@@ -1,0 +1,11 @@
+This file contains test sets.
+
+Currently, all we have is test_audio_readers, which tests the MP3, WAV and Ogg
+file readers.
+
+Once I create smaller test inputs, I'll commit them; the current set is about
+30 megs.  Until then, if you want to try this, edit the source to point it at
+files you have.
+
+This is only compiled in the Unix build environment.
+
