@@ -20,7 +20,7 @@
 #include "SongManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "ThemeManager.h"
 #include <map>
 

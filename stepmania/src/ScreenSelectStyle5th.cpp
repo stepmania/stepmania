@@ -14,7 +14,7 @@
 #include "ScreenSelectStyle5th.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"

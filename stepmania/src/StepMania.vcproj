@@ -1138,12 +1138,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageMovieTextureHelper.h">
 			</File>
 			<File
-				RelativePath=".\RageMusic.cpp">
-			</File>
-			<File
-				RelativePath=".\RageMusic.h">
-			</File>
-			<File
 				RelativePath="RageNetworkClient.cpp">
 			</File>
 			<File

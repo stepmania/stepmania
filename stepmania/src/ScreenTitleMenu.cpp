@@ -24,7 +24,8 @@
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "SDL_Utils.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
+
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",

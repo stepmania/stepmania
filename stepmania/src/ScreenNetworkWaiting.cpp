@@ -19,7 +19,7 @@
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "ThemeManager.h"
 #include "RageNetworkClient.h"
 #include "NetGameState.h"

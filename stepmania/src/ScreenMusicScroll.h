@@ -12,7 +12,7 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "TransitionFade.h"
-#include "RageSoundStream.h"
+#include "RageSoundManager.h"
 #include "MenuElements.h"
 
 

@@ -16,7 +16,7 @@
 #include "Player.h"
 #include "RandomSample.h"
 #include "FocusingSprite.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "RageSound.h"
 #include "MotionBlurSprite.h"
 #include "BGAnimation.h"

@@ -16,7 +16,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "StyleDef.h"
 
 #define BANNERSPACING 200

@@ -18,7 +18,6 @@
 #include "RageTextureManager.h"
 #include "RageSoundBass.h"
 #include "RageSoundManager.h"
-#include "RageMusic.h"
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"
@@ -200,7 +199,6 @@ int main(int argc, char* argv[])
 	THEME		= new ThemeManager;
 	SOUND		= new RageSoundBass;
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_bSoundDrivers);
-	MUSIC		= new RageSoundStream;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
@@ -295,7 +293,6 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( INPUTMAN );
-	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
@@ -431,7 +428,6 @@ static void GameLoop()
 				fDeltaTime /= 4;
 
 		TEXTUREMAN->Update( fDeltaTime );
-		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		CLIENT->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );

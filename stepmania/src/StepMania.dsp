@@ -214,14 +214,6 @@ SOURCE=.\RageMovieTexture.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageMusic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageMusic.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\RageNetworkClient.cpp
 # End Source File
 # Begin Source File

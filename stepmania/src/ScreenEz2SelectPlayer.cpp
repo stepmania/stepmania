@@ -11,7 +11,7 @@ Andrew Livy
 #include "ScreenEz2SelectPlayer.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"

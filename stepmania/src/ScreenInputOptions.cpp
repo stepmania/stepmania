@@ -13,7 +13,7 @@
 #include "ScreenInputOptions.h"
 #include "RageTextureManager.h"
 #include "RageUtil.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"

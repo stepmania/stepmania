@@ -15,7 +15,7 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
 
@@ -95,7 +95,7 @@ void TransitionKeepAlive::OpenWipingRight( ScreenMessage send_when_done )
 void TransitionKeepAlive::OpenWipingLeft(  ScreenMessage send_when_done )
 {
 	if( STOP_MUSIC_ON_NEXT )
-		MUSIC->Stop();
+		SOUNDMAN->music->StopPlaying();
 
 	this->SetTransitionTime( KEEP_ALIVE_BACKWARD_TRANSITION_TIME );
 

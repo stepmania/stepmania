@@ -12,7 +12,7 @@
 
 #include "ScreenSongOptions.h"
 #include "RageUtil.h"
-#include "RageMusic.h"
+#include "RageSoundManager.h"
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
