@@ -39,6 +39,8 @@
 #include "RageException.h"
 #include "RageTimer.h"
 
+#include "PrefsManager.h"
+
 #include "RageSoundReader_SDL_Sound.h"
 #include "RageSoundReader_Preload.h"
 
@@ -170,6 +172,9 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	if(!NewSample->Open(sSoundFilePath.GetString()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
+
+	if(PREFSMAN->m_bSoundPreloadAll)
+		precache = true;
 
 	/* Try to precache. */
 	if(precache)

@@ -107,7 +107,10 @@ PrefsManager::PrefsManager()
 
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
-
+	/* This is experimental: let's see if preloading helps people's skipping.
+	 * If it doesn't do anything useful, it'll be removed. */
+	m_bSoundPreloadAll = false;
+	
 	m_bAllowSoftwareRenderer = false;
 
 	m_sDefaultNoteSkin = "default";
@@ -171,6 +174,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
+	ini.GetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
 	ini.GetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
 	ini.GetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.GetValueB( "Options", "JointPremium",				m_bJointPremium );
@@ -250,6 +254,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
+	ini.SetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
 	ini.SetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
 	ini.SetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.SetValueB( "Options", "JointPremium",				m_bJointPremium );

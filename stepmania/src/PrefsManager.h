@@ -88,6 +88,7 @@ public:
 
 	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;
+	bool			m_bSoundPreloadAll;
 	bool			m_bAllowSoftwareRenderer;
 
 	/* Game-specific prefs: */

@@ -25,11 +25,18 @@
 
 
 enum {
-	SO_MASTER_VOLUME,
+//	SO_MASTER_VOLUME,
+	SO_PRELOAD_SOUND,
 	NUM_SOUND_OPTIONS_LINES
 };
 OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
-	OptionRow( "Master\nVolume",		"MUTE","20%","40%","60%","80%","100%" ),
+	/* Err.  This shouldn't be here.  m_fSoundVolume is not the master volume,
+	 * it's the internal attenuation before mixing; we don't have control over
+	 * the master volume. m_fSoundVolume was never intended to be changed by
+	 * users, except to troubleshoot clipping; that's why I didn't put it in
+	 * the options to begin with. */
+//	OptionRow( "Master\nVolume",		"MUTE","20%","40%","60%","80%","100%" ),
+	OptionRow( "Preload\nSounds",		"NO","YES" ),
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
@@ -52,14 +59,16 @@ void ScreenSoundOptions::Input( const DeviceInput& DeviceI, const InputEventType
 void ScreenSoundOptions::ImportOptions()
 {
 	float fVolPercent = PREFSMAN->m_fSoundVolume;
-	m_iSelectedOption[0][SO_MASTER_VOLUME] = (int)(fVolPercent*5);
+//	m_iSelectedOption[0][SO_MASTER_VOLUME] = (int)(PREFSMAN->m_fSoundVolume*5);
+	m_iSelectedOption[0][SO_PRELOAD_SOUND] = PREFSMAN->m_bSoundPreloadAll;
 }
 
 void ScreenSoundOptions::ExportOptions()
 {
-	float fVolPercent = m_iSelectedOption[0][SO_MASTER_VOLUME] / 5.f;
-	SOUNDMAN->SetPrefs(fVolPercent);
-	PREFSMAN->m_fSoundVolume = fVolPercent;
+//	float fVolPercent = m_iSelectedOption[0][SO_MASTER_VOLUME] / 5.f;
+//	SOUNDMAN->SetPrefs(fVolPercent);
+//	PREFSMAN->m_fSoundVolume = fVolPercent;
+	PREFSMAN->m_bSoundPreloadAll = !!m_iSelectedOption[0][SO_PRELOAD_SOUND];
 }
 
 void ScreenSoundOptions::GoToPrevState()

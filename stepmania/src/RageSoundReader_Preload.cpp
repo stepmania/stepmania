@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundReader_Preload.h"
+#include "PrefsManager.h"
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
@@ -22,7 +23,8 @@ bool SoundReader_Preload::Open(SoundReader *source)
 		float secs = len / 1000.f;
 
 		int pcmsize = int(secs * samplerate * samplesize); /* seconds -> bytes */
-		if(pcmsize > max_prebuf_size)
+		if(!PREFSMAN->m_bSoundPreloadAll && 
+			pcmsize > max_prebuf_size)
 			return false; /* Don't bother trying to preload it. */
 
 		buf.get_owned().reserve(pcmsize);
