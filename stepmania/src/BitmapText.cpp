@@ -22,6 +22,16 @@
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
 
+/* XXX:
+ * We need some kind of font modifier string for metrics.  For example,
+ * "valign=top;spacing = x+5,y+2"
+ *
+ * Better, we could go all the way, drop all of the actor-specific font aliases,
+ * and do "font=header2;valign=top;...".
+ *
+ * However, let's wait until Pango support is in, so we can figure out how to
+ * integrate font selection at the same time.
+ */
 /*
  * Forward planning:
  *

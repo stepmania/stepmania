@@ -47,7 +47,7 @@ static int			g_iFramesRenderedSinceLastCheck,
 
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT;
 
-const GLenum RageVertexFormat = GL_T2F_C4UB_V3F;
+const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 void GetGLExtensions(set<string> &ext)
 {
