@@ -15,11 +15,13 @@ class GhostArrowRow : public ActorFrame
 {
 public:
 	GhostArrowRow();
+	virtual ~GhostArrowRow() { Unload(); }
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void CopyTweening( const GhostArrowRow &from );
 
 	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
+	void Unload();
 	
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void SetHoldIsActive( int iCol );
@@ -29,9 +31,9 @@ protected:
 	float m_fYReverseOffsetPixels;
 	PlayerNumber m_PlayerNumber;
 
-	GhostArrow		m_GhostDim[MAX_NOTE_TRACKS];
-	GhostArrow		m_GhostBright[MAX_NOTE_TRACKS];
-	HoldGhostArrow	m_HoldGhost[MAX_NOTE_TRACKS];
+	vector<GhostArrow *> 	m_GhostDim;
+	vector<GhostArrow *>	m_GhostBright;
+	vector<HoldGhostArrow *> m_HoldGhost;
 };
 
 

@@ -14,9 +14,11 @@ GhostArrowRow::GhostArrowRow()
 {
 	m_iNumCols = 0;
 }
-
+#include "RageLog.h"
 void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset )
 {
+	Unload();
+
 	m_PlayerNumber = pn;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
@@ -24,6 +26,7 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 
 	m_iNumCols = pStyle->m_iColsPerPlayer;
 
+	LOG->Trace("xxxsz: %i, %i", sizeof(GhostArrow), sizeof(HoldGhostArrow));
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
@@ -32,18 +35,38 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 		if(Button == "")
 			Button = NoteSkinManager::ColToButtonName(c);
 
-		m_GhostDim[c].SetName( "GhostArrowDim" );
-		m_GhostBright[c].SetName( "GhostArrowBright" );
-		m_HoldGhost[c].SetName( "HoldGhostArrow" );
-		
-		m_GhostDim[c].Init( pn );
-		m_GhostBright[c].Init( pn );
-		//m_HoldGhost[c].Init( pn );
+		m_GhostDim.push_back( new GhostArrow );
+		m_GhostBright.push_back( new GhostArrow );
+		m_HoldGhost.push_back( new HoldGhostArrow );
 
-		m_GhostDim[c].Load( NoteSkin, Button, "tap explosion dim" );
-		m_GhostBright[c].Load( NoteSkin, Button, "tap explosion bright" );
-		m_HoldGhost[c].Load( NoteSkin, Button, "hold explosion" );
+		m_GhostDim[c]->SetName( "GhostArrowDim" );
+		m_GhostBright[c]->SetName( "GhostArrowBright" );
+		m_HoldGhost[c]->SetName( "HoldGhostArrow" );
+		
+		m_GhostDim[c]->Init( pn );
+		m_GhostBright[c]->Init( pn );
+		//m_HoldGhost[c]->Init( pn );
+
+		m_GhostDim[c]->Load( NoteSkin, Button, "tap explosion dim" );
+		m_GhostBright[c]->Load( NoteSkin, Button, "tap explosion bright" );
+		m_HoldGhost[c]->Load( NoteSkin, Button, "hold explosion" );
 	}
+}
+
+void GhostArrowRow::Unload()
+{
+	for( int i = 0; i < m_iNumCols; ++i )
+	{
+		delete m_GhostDim[i];
+		delete m_GhostBright[i];
+		delete m_HoldGhost[i];
+	}
+
+	m_GhostDim.clear();
+	m_GhostBright.clear();
+	m_HoldGhost.clear();
+
+	m_iNumCols = 0;
 }
 
 
@@ -51,30 +74,30 @@ void GhostArrowRow::Update( float fDeltaTime )
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		m_GhostDim[c].Update( fDeltaTime );
-		m_GhostBright[c].Update( fDeltaTime );
-		m_HoldGhost[c].Update( fDeltaTime );
+		m_GhostDim[c]->Update( fDeltaTime );
+		m_GhostBright[c]->Update( fDeltaTime );
+		m_HoldGhost[c]->Update( fDeltaTime );
 
 		const float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		const float fY = ArrowGetYPos( m_PlayerNumber, c, 0, m_fYReverseOffsetPixels );
 		const float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
 
-		m_GhostDim[c].SetX( fX );
-		m_GhostBright[c].SetX( fX );
-		m_HoldGhost[c].SetX( fX );
+		m_GhostDim[c]->SetX( fX );
+		m_GhostBright[c]->SetX( fX );
+		m_HoldGhost[c]->SetX( fX );
 
-		m_GhostDim[c].SetY( fY );
-		m_GhostBright[c].SetY( fY );
-		m_HoldGhost[c].SetY( fY );
+		m_GhostDim[c]->SetY( fY );
+		m_GhostBright[c]->SetY( fY );
+		m_HoldGhost[c]->SetY( fY );
 
-		m_GhostDim[c].SetZ( fZ );
-		m_GhostBright[c].SetZ( fZ );
-		m_HoldGhost[c].SetZ( fZ );
+		m_GhostDim[c]->SetZ( fZ );
+		m_GhostBright[c]->SetZ( fZ );
+		m_HoldGhost[c]->SetZ( fZ );
 
 		const float fZoom = ArrowGetZoom( m_PlayerNumber );
-		m_GhostDim[c].SetZoom( fZoom );
-		m_GhostBright[c].SetZoom( fZoom );
-		m_HoldGhost[c].SetZoom( fZoom );
+		m_GhostDim[c]->SetZoom( fZoom );
+		m_GhostBright[c]->SetZoom( fZoom );
+		m_HoldGhost[c]->SetZoom( fZoom );
 	}
 }
 
@@ -84,9 +107,9 @@ void GhostArrowRow::DrawPrimitives()
 	{
 		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
 
-		m_GhostDim[c].Draw();
-		m_GhostBright[c].Draw();
-		m_HoldGhost[c].Draw();
+		m_GhostDim[c]->Draw();
+		m_GhostBright[c]->Draw();
+		m_HoldGhost[c]->Draw();
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
 	}
@@ -97,24 +120,24 @@ void GhostArrowRow::DidTapNote( int iCol, TapNoteScore score, bool bBright )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
 	if( bBright )
-		m_GhostBright[iCol].Step( score );
+		m_GhostBright[iCol]->Step( score );
 	else
-		m_GhostDim[iCol].Step( score );
+		m_GhostDim[iCol]->Step( score );
 }
 
 void GhostArrowRow::SetHoldIsActive( int iCol )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
-	m_HoldGhost[iCol].SetHoldIsActive( true );
+	m_HoldGhost[iCol]->SetHoldIsActive( true );
 }
 
 void GhostArrowRow::CopyTweening( const GhostArrowRow &from )
 {
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GhostDim[c].CopyTweening( from.m_GhostDim[c] );
-		m_GhostBright[c].CopyTweening( from.m_GhostBright[c] );
-		m_HoldGhost[c].CopyTweening( from.m_HoldGhost[c] );
+		m_GhostDim[c]->CopyTweening( *from.m_GhostDim[c] );
+		m_GhostBright[c]->CopyTweening( *from.m_GhostBright[c] );
+		m_HoldGhost[c]->CopyTweening( *from.m_HoldGhost[c] );
 	}
 	ActorFrame::CopyTweening( from );
 }
