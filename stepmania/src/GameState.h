@@ -106,10 +106,12 @@ public:
 	bool			m_bEditing;			// NoteField does special stuff when this is true
 	bool			m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool			m_bJukeboxUsesModifiers;
-	int				m_iCurrentStageIndex;	// incremented on Eval screen.  For a Course, this is always 0
+	int				m_iNumStagesOfThisSong;
+	int				m_iCurrentStageIndex;
 
 	int				GetStageIndex() const;
-	void			IncrementStageIndex();
+	void			BeginStage();
+	void			FinishStage();
 	int				GetNumStagesLeft() const;
 	bool			IsFinalStage() const;
 	bool			IsExtraStage() const;
@@ -191,7 +193,7 @@ public:
 	StageResult GetStageResult( PlayerNumber pn );
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
-	void GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
+	void GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut ) const;	// shown on arcade final evaluation
 
 
 	//

@@ -420,10 +420,15 @@ float GameState::GetSongPercent( float beat ) const
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
-void GameState::IncrementStageIndex()
+/* Called by ScreenGameplay.  Set the length of the current song. */
+void GameState::BeginStage()
 {
-	// Increment the stage counter.
-	int iNumStagesOfLastSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+	if( m_pCurSong )
+		m_iNumStagesOfThisSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+	else if( m_pCurCourse )
+		m_iNumStagesOfThisSong = 1;
+	else
+		FAIL_M("fail"); /* what are we playing? */
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
@@ -433,10 +438,23 @@ void GameState::IncrementStageIndex()
 		 * 
 		 * We can't simply not choose long songs as extra stages: if there are no
 		 * regular songs to choose, we'll end up with no song to use as an extra stage. */
-		iNumStagesOfLastSong = 1;
+		m_iNumStagesOfThisSong = 1;
 	}
+}
 
-	m_iCurrentStageIndex += iNumStagesOfLastSong;
+/* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a
+ * song.  Might be called more than once. */
+void GameState::FinishStage()
+{
+	/* If m_iNumStagesOfThisSong is 0, we've been called more than once before calling
+	 * BeginStage.  This can happen when backing out of the player options screen. */
+	if( !m_iNumStagesOfThisSong )
+		return;
+
+	// Increment the stage counter.
+	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
+
+	m_iNumStagesOfThisSong = 0;
 }
 
 int GameState::GetStageIndex() const
@@ -457,11 +475,13 @@ bool GameState::IsFinalStage() const
 {
 	if( PREFSMAN->m_bEventMode )
 		return false;
+
+	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
 	int iPredictedStageForCurSong = 1;
 	if( m_pCurSong != NULL )
 		iPredictedStageForCurSong = SongManager::GetNumStagesForSong( m_pCurSong );
 	
-	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iNumArcadeStages;
+	return m_iCurrentStageIndex + m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
 }
 
 bool GameState::IsExtraStage() const
@@ -708,7 +728,7 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 	return win;
 }
 
-void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut )
+void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut ) const
 {
 	statsOut = StageStats();
 

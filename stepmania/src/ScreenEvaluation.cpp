@@ -1355,8 +1355,5 @@ void ScreenEvaluation::EndScreen()
 			break;
 		}
 	}
-
-	if( m_Type == stage )
-		GAMESTATE->IncrementStageIndex();
 }
 

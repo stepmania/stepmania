@@ -75,6 +75,9 @@ const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
 ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : Screen( sName )
 {
+	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
+	GAMESTATE->FinishStage();
+
 	i_SkipAheadOffset = 0;
 	LastInputTime = 0;
 	ScrollStartTime = 0;
