@@ -15,7 +15,7 @@
 #include "RageUtil.h"
 #include "ThemeManager.h"
 
-const static CString EMPTY_STRING;
+static const CString EMPTY_STRING;
 
 #define XToString(X)	\
 	const CString& X##ToString( X x ) \
