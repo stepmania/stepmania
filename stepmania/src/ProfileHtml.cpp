@@ -386,7 +386,8 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			PRINT_OPEN(f, "Most Popular Songs" );
 			{
 				BEGIN_TABLE(1);
-				for( unsigned i=0; i<uMaxToShow; i++ )
+				unsigned i;
+				for( i=0; i<uMaxToShow; i++ )
 				{
 					Song* pSong = vpSongs[i];
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
@@ -406,7 +407,8 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			PRINT_OPEN(f, "Least Popular Songs" );
 			{
 				BEGIN_TABLE(1);
-				for( unsigned i=0; i<uMaxToShow; i++ )
+				unsigned i;
+				for( i=0; i<uMaxToShow; i++ )
 				{
 					Song* pSong = vpSongs[i];
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
@@ -428,7 +430,8 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			PRINT_OPEN(f, "Most Popular Steps" );
 			{
 				BEGIN_TABLE(1);
-				for( unsigned i=0; i<uNumToShow; i++ )
+				unsigned i;
+				for( i=0; i<uNumToShow; i++ )
 				{
 					Steps* pSteps = vpAllSteps[i];
 					int iNumTimesPlayed = pProfile->GetStepsNumTimesPlayed(pSteps);
@@ -455,7 +458,8 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			PRINT_OPEN(f, "Most Popular Courses" );
 			{
 				BEGIN_TABLE(2);
-				for( unsigned i=0; i<uNumToShow; i++ )
+				unsigned i;
+				for( i=0; i<uNumToShow; i++ )
 				{
 					Course* pCourse = vpCourses[i];
 					int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed(pCourse);
