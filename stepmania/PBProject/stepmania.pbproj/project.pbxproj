@@ -1900,6 +1900,7 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(BUILD_DIR)/StepMania.app/Contents/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks\"";
+				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
@@ -1921,7 +1922,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fcoalesce-templates -fconstant-cfstrings";
+				OTHER_CPLUSPLUSFLAGS = "-finline-limit=400 -Wno-switch -Wno-missing-braces -fcoalesce-templates -fconstant-cfstrings -falign-loops=32";
 				OTHER_LDFLAGS = "-lz  -lstdc++";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -10076,8 +10077,6 @@
 				AA6EFDD804770C79005F316C,
 				AA6EFDD904770C79005F316C,
 				AA6EFDDA04770C79005F316C,
-				AA6EFDDB04770C79005F316C,
-				AA6EFDDC04770C79005F316C,
 				AA6EFDDD04770C79005F316C,
 				AA6EFDDE04770C79005F316C,
 				AA6EFDDF04770C79005F316C,
@@ -10353,30 +10352,6 @@
 			isa = PBXFileReference;
 			name = GameConstantsAndTypes.h;
 			path = ../src/GameConstantsAndTypes.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6EFDDB04770C79005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = GameDef.cpp;
-			path = ../src/GameDef.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6EFDDC04770C79005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = GameDef.h;
-			path = ../src/GameDef.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
