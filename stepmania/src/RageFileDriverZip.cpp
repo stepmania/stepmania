@@ -593,7 +593,7 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 	while( iOffset )
 	{
 		/* Must call parent.Read: */
-		int got = Read( buf, min( (int) sizeof(buf), iOffset ) );
+		int got = ReadInternal( buf, min( (int) sizeof(buf), iOffset ) );
 		if( got == -1 )
 			return -1;
 
