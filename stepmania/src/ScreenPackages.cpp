@@ -473,9 +473,9 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	CString Proto;
 	CString Server;
 	int Port=80;
-	CString Addy;
+	CString sAddress;
 
-	if( !ParseHTTPAddress( sURL, Proto, Server, Port, Addy ) )
+	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
 		m_sStatus = "Invalid URL.";
 		UpdateProgress();
@@ -484,7 +484,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 
 	//Determine if this is a website, or a package?
 	//Criteria: does it end with *zip?
-	if( Addy.Right(3).CompareNoCase("zip") == 0 )
+	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
 		m_bIsPackage=true;
 	else
 		m_bIsPackage = false;
@@ -493,20 +493,20 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	while( k >= 0 )
 	{
 		j = k+1;
-		k = Addy.Find( '/', j );
+		k = sAddress.Find( '/', j );
 	}
 
-	//If there is no '/' in the addy, ignore it all
+	//If there is no '/' in the address, ignore it all
 	//for base address.
-	if( Addy.Find( '/', 0 ) < 0 )
+	if( sAddress.Find( '/', 0 ) < 0 )
 		j = 0;
 
-	m_sEndName = Addy.Right( Addy.length() - j + 1 );
+	m_sEndName = sAddress.Right( sAddress.length() - j + 1 );
 
 	if( Port == 80 )
-		m_sBaseAddress = "http://" + Server + "/" + Addy.substr(0, j);
+		m_sBaseAddress = "http://" + Server + "/" + sAddress.substr(0, j);
 	else
-		m_sBaseAddress = "http://" + Server + ssprintf( ":%d/", Port ) + Addy.substr(0, j);
+		m_sBaseAddress = "http://" + Server + ssprintf( ":%d/", Port ) + sAddress.substr(0, j);
 
 	//Open the file...
 
@@ -535,10 +535,10 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	}
 	//Continue...
 
-	Addy = URLEncode( Addy );
+	sAddress = URLEncode( sAddress );
 
-	if ( Addy != "/" )
-		Addy = "/" + Addy;
+	if ( sAddress != "/" )
+		sAddress = "/" + sAddress;
 
 	m_wSocket.close();
 	m_wSocket.create();
@@ -556,7 +556,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 
 	CString Header="";
 
-	Header = "GET "+Addy+" HTTP/1.0\r\n";
+	Header = "GET "+sAddress+" HTTP/1.0\r\n";
 	Header+= "Host: " + Server + "\r\n";
 	Header+= "Connection: closed\r\n\r\n";
 
@@ -669,7 +669,7 @@ void ScreenPackages::HTTPUpdate()
 	}
 }
 
-bool ScreenPackages::ParseHTTPAddress( const CString & URL, CString & Proto, CString & Server, int & Port, CString & Addy )
+bool ScreenPackages::ParseHTTPAddress( const CString & URL, CString & Proto, CString & Server, int & Port, CString & sAddress )
 {
 	int i,j,k,l;
 
@@ -714,7 +714,7 @@ bool ScreenPackages::ParseHTTPAddress( const CString & URL, CString & Proto, CSt
 	}
 	if (l<URL.length())
 		l++;
-	Addy = URL.substr( l );
+	sAddress = URL.substr( l );
 	
 	return true;
 }
