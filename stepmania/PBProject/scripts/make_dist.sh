@@ -11,8 +11,8 @@ DIRS=(Announcers/instructions.txt BGAnimations/instructions.txt \
 	NoteSkins/dance/note NoteSkins/dance/solo NoteSkins/pump/Classic \
 	NoteSkins/pump/default RandomMovies/instructions.txt \
 	Songs/instructions.txt Themes/instructions.txt Themes/default \
-	Visualizations/instructions.txt Data/Translation.dat Data/AI.ini \
-	Data/VideoCardDefaults.ini COPYING.txt README-FIRST.html NEWS)
+	Visualizations/instructions.txt Data)
+
 NUM=0
 TOTAL=0
 FIND=`which find`
