@@ -207,7 +207,7 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	m_Profile[pn].InitAll();
 }
 
-Profile* ProfileManager::GetProfile( PlayerNumber pn )
+const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 {
 	if( m_sProfileDir[pn].empty() )
 		return NULL;
@@ -217,7 +217,7 @@ Profile* ProfileManager::GetProfile( PlayerNumber pn )
 
 CString ProfileManager::GetPlayerName( PlayerNumber pn )
 {
-	Profile *prof = ProfileManager::GetProfile( pn );
+	Profile *prof = GetProfile( pn );
 	if( prof )
 		return prof->m_sLastUsedHighScoreName;
 
@@ -290,7 +290,7 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	return FILEMAN->Remove( sProfileDir );
 }
 
-void ProfileManager::SaveMachineScoresToDisk()
+void ProfileManager::SaveMachineScoresToDisk() const
 {
 	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR );
 }
@@ -399,7 +399,7 @@ CString ProfileManager::GetProfileDir( ProfileSlot slot )
 	}
 }
 
-Profile* ProfileManager::GetProfile( ProfileSlot slot )
+const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
@@ -420,7 +420,7 @@ Profile* ProfileManager::GetProfile( ProfileSlot slot )
 //
 // Song stats
 //
-int ProfileManager::GetSongNumTimesPlayed( Song* pSong, ProfileSlot slot )
+int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot ) const
 {
 	return GetProfile(slot)->GetSongNumTimesPlayed( pSong );
 }

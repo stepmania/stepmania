@@ -129,15 +129,15 @@ CString Profile::GetProfileDisplayNameFromDir( CString sDir )
 	return pro.GetDisplayName();
 }
 
-int Profile::GetSongNumTimesPlayed( Song* pSong )
+int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 {
 	int iTotalNumTimesPlayed = 0;
 	vector<Steps*> vpSteps;
 	pSong->GetSteps( vpSteps );
 	for( unsigned i=0; i<vpSteps.size(); i++ )
 	{
-		Steps* pSteps = vpSteps[i];
-		iTotalNumTimesPlayed += this->GetStepsHighScoreList(pSteps).iNumTimesPlayed;
+		const Steps* pSteps = vpSteps[i];
+		iTotalNumTimesPlayed += ((Profile*) this)->GetStepsHighScoreList(pSteps).iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
 }
@@ -152,6 +152,12 @@ void Profile::AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexO
 		m_StepsHighScores[pSteps].hs.AddHighScore( hs, iIndexOut );	// operator[] inserts into map
 	else
 		iter->second.hs.AddHighScore( hs, iIndexOut );
+}
+
+const HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps ) const
+{
+	/* We're const, but insert a blank entry anyway if the requested pointer doesn't exist. */
+	return ((Profile *) this)->m_StepsHighScores[pSteps].hs;
 }
 
 HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps )
@@ -197,6 +203,11 @@ void Profile::AddCourseHighScore( const Course* pCourse, StepsType st, HighScore
 		iter->second.hs[st].AddHighScore( hs, iIndexOut );
 }
 
+const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st ) const
+{
+	return ((Profile *)this)->m_CourseHighScores[pCourse].hs[st];
+}
+
 HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st )
 {
 	std::map<const Course*,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( pCourse );
@@ -233,6 +244,11 @@ void Profile::IncrementCoursePlayCount( const Course* pCourse, StepsType st )
 void Profile::AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut )
 {
 	m_CategoryHighScores[st][rc].AddHighScore( hs, iIndexOut );
+}
+
+const HighScoreList& Profile::GetCategoryHighScoreList( StepsType st, RankingCategory rc ) const
+{
+	return ((Profile *)this)->m_CategoryHighScores[st][rc];
 }
 
 HighScoreList& Profile::GetCategoryHighScoreList( StepsType st, RankingCategory rc )
@@ -300,7 +316,7 @@ bool Profile::LoadGeneralDataFromDir( CString sDir )
 	return true;
 }
 
-bool Profile::SaveGeneralDataToDir( CString sDir )
+bool Profile::SaveGeneralDataToDir( CString sDir ) const
 {
 	CString sIniPath = sDir + PROFILE_INI;
 
@@ -327,11 +343,11 @@ bool Profile::SaveGeneralDataToDir( CString sDir )
 	return ini.WriteFile();
 }
 
-void Profile::SaveSongScoresToDir( CString sDir )
+void Profile::SaveSongScoresToDir( CString sDir ) const
 {
 	CHECKPOINT;
 
-	Profile* pProfile = this;
+	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
 	CString fn = sDir + SONG_SCORES_XML;
@@ -366,7 +382,7 @@ void Profile::SaveSongScoresToDir( CString sDir )
 
 			LPXNode pStepsNode = pSongNode->AppendChild( "Steps" );
 
-			HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
+			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
 			
 			pStepsNode->AppendChild( "StepsType", pSteps->m_StepsType );
 			pStepsNode->AppendChild( "Difficulty", pSteps->GetDifficulty() );
@@ -721,11 +737,11 @@ void Profile::LoadCourseScoresFromDirSM390a12( CString sDir )
 }
 
 
-void Profile::SaveCourseScoresToDir( CString sDir )
+void Profile::SaveCourseScoresToDir( CString sDir ) const
 {
 	CHECKPOINT;
 
-	Profile* pProfile = this;
+	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
 	CString fn = sDir + COURSE_SCORES_XML;
@@ -755,7 +771,7 @@ void Profile::SaveCourseScoresToDir( CString sDir )
 
 			LPXNode pStepsTypeNode = pCourseNode->AppendChild( "StepsType", st );
 
-			HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st );
+			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st );
 			
 			pStepsTypeNode->AppendChild( hsl.CreateNode() );
 		}
@@ -817,11 +833,11 @@ void Profile::LoadCourseScoresFromDir( CString sDir )
 	xml.SaveToFile( fn );
 }
 
-void Profile::SaveCategoryScoresToDir( CString sDir )
+void Profile::SaveCategoryScoresToDir( CString sDir ) const
 {
 	CHECKPOINT;
 
-	Profile* pProfile = this;
+	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
 	CString fn = sDir + CATEGORY_SCORES_XML;
@@ -845,7 +861,7 @@ void Profile::SaveCategoryScoresToDir( CString sDir )
 
 			XNode* pRankingCategoryNode = pStepsTypeNode->AppendChild( "RankingCategory", rc );
 
-			HighScoreList &hsl = pProfile->GetCategoryHighScoreList( (StepsType)st, (RankingCategory)rc );
+			const HighScoreList &hsl = pProfile->GetCategoryHighScoreList( (StepsType)st, (RankingCategory)rc );
 
 			pRankingCategoryNode->AppendChild( hsl.CreateNode() );
 		}
@@ -902,27 +918,27 @@ void Profile::LoadCategoryScoresFromDir( CString sDir )
 	}
 }
 
-void Profile::DeleteSongScoresFromDirSM390a12( CString sDir )
+void Profile::DeleteSongScoresFromDirSM390a12( CString sDir ) const
 {
 	CString fn = sDir + SM_390A12_SONG_SCORES_DAT;
 	// FIXME
 }
 
-void Profile::DeleteCourseScoresFromDirSM390a12( CString sDir )
+void Profile::DeleteCourseScoresFromDirSM390a12( CString sDir ) const
 {
 	CString fn = sDir + SM_390A12_COURSE_SCORES_DAT;
 	// FIXME
 }
 
-void Profile::DeleteCategoryScoresFromDirSM390a12( CString sDir )
+void Profile::DeleteCategoryScoresFromDirSM390a12( CString sDir ) const
 {
 	CString fn = sDir + SM_390A12_CATEGORY_SCORES_DAT;
 	// FIXME
 }
 
-void Profile::SaveStatsWebPageToDir( CString sDir )
+void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
-	Profile* pProfile = this;
+	const Profile* pProfile = this;
 
 	CString fn = sDir + STATS_HTML;
 
@@ -1203,7 +1219,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir )
 					Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
 					if( pSteps )
 					{
-						HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
+						const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
 						CString sHighScore;
 						if( !hsl.vHighScores.empty() )
 						{
@@ -1331,7 +1347,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir )
 				Steps* pSteps = vpSteps[j];
 				if( pSteps->IsAutogen() )
 					continue;	// skip autogen
-				HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
+				const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
 				CString s = 
 					GAMEMAN->NotesTypeToString(pSteps->m_StepsType) + 
 					" - " +
@@ -1341,7 +1357,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir )
 				
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
-					HighScore &hs = hsl.vHighScores[i];
+					const HighScore &hs = hsl.vHighScores[i];
 					CString sName = ssprintf("#%d",i+1);
 					CString sHSName = hs.sName.empty() ? "????" : hs.sName;
 					CString sValue = ssprintf("%s, %s, %i, %.2f%%", sHSName.c_str(), GradeToString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);

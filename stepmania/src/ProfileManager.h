@@ -55,8 +55,10 @@ public:
 			return false;
 		}
 	}
-	Profile* GetProfile( PlayerNumber pn );
-	Profile* GetProfile( ProfileSlot slot );
+	const Profile* GetProfile( PlayerNumber pn ) const;
+	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
+	const Profile* GetProfile( ProfileSlot slot ) const;
+	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
 	CString GetProfileDir( ProfileSlot slot );
 
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
@@ -69,13 +71,13 @@ public:
 	// High scores
 	//
 	void InitMachineScoresFromDisk();
-	void SaveMachineScoresToDisk();
+	void SaveMachineScoresToDisk() const;
 
 	//
 	// Song stats
 	//
-	int GetSongNumTimesPlayed( Song* pSong, ProfileSlot card );
-	bool IsSongNew( Song* pSong ) { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
+	int GetSongNumTimesPlayed( const Song* pSong, ProfileSlot card ) const;
+	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
 	void AddStepsHighScore( const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber pn );
 	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc );

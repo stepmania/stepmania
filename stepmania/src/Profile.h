@@ -38,7 +38,7 @@ public:
 	CString GetDisplayCaloriesBurned();
 	int GetTotalNumSongsPlayed();
 	static CString GetProfileDisplayNameFromDir( CString sDir );
-	int GetSongNumTimesPlayed( Song* pSong );
+	int GetSongNumTimesPlayed( const Song* pSong ) const;
 
 	//
 	// General data
@@ -70,6 +70,7 @@ public:
 
 	void AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexOut );
 	HighScoreList& GetStepsHighScoreList( const Steps* pSteps );
+	const HighScoreList& GetStepsHighScoreList( const Steps* pSteps ) const;
 	int GetStepsNumTimesPlayed( const Steps* pSteps ) const;
 	void IncrementStepsPlayCount( const Steps* pSteps );
 
@@ -87,6 +88,7 @@ public:
 
 	void AddCourseHighScore( const Course* pCourse, StepsType st, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st );
+	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st ) const;
 	int GetCourseNumTimesPlayed( const Course* pCourse ) const;
 	void IncrementCoursePlayCount( const Course* pCourse, StepsType st );
 
@@ -98,6 +100,7 @@ public:
 
 	void AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCategoryHighScoreList( StepsType st, RankingCategory rc );
+	const HighScoreList& GetCategoryHighScoreList( StepsType st, RankingCategory rc ) const;
 	int GetCategoryNumTimesPlayed( StepsType st ) const;
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc );
 
@@ -132,7 +135,7 @@ public:
 		LoadCategoryScoresFromDir( sDir );
 		return bResult;
 	}
-	bool SaveAllToDir( CString sDir )
+	bool SaveAllToDir( CString sDir ) const
 	{
 		// Delete old files after saving new ones so we don't try to load old
 		// and make duplicate records. 
@@ -149,24 +152,24 @@ public:
 	}
 
 	bool LoadGeneralDataFromDir( CString sDir );
-	bool SaveGeneralDataToDir( CString sDir );
+	bool SaveGeneralDataToDir( CString sDir ) const;
 
 	void LoadSongScoresFromDirSM390a12( CString sDir );
 	void LoadSongScoresFromDir( CString sDir );
-	void SaveSongScoresToDir( CString sDir );
-	void DeleteSongScoresFromDirSM390a12( CString sDir );
+	void SaveSongScoresToDir( CString sDir ) const;
+	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;
 	
 	void LoadCourseScoresFromDirSM390a12( CString sDir );
 	void LoadCourseScoresFromDir( CString sDir );
-	void SaveCourseScoresToDir( CString sDir );
-	void DeleteCourseScoresFromDirSM390a12( CString sDir );
+	void SaveCourseScoresToDir( CString sDir ) const;
+	void DeleteCourseScoresFromDirSM390a12( CString sDir ) const;
 	
 	void LoadCategoryScoresFromDirSM390a12( CString sDir );
 	void LoadCategoryScoresFromDir( CString sDir );
-	void SaveCategoryScoresToDir( CString sDir );
-	void DeleteCategoryScoresFromDirSM390a12( CString sDir );
+	void SaveCategoryScoresToDir( CString sDir ) const;
+	void DeleteCategoryScoresFromDirSM390a12( CString sDir ) const;
 
-	void SaveStatsWebPageToDir( CString sDir );
+	void SaveStatsWebPageToDir( CString sDir ) const;
 };
 
 
