@@ -246,8 +246,8 @@ bool HasExtension(CString ext)
 
 static void CheckPalettedTextures()
 {
-//	GLuint texture;
-//	glGenTextures(1, reinterpret_cast<GLuint*>(&texture));
+	if( !GLExt::glColorTableEXT || !GLExt::glGetColorTableParameterivEXT )
+		return;
 
 	/* Check to see if paletted textures really work. */
 	GLenum glTexFormat = GL_PIXFMT_INFO[FMT_PAL].internalfmt;
@@ -259,7 +259,6 @@ static void CheckPalettedTextures()
 				16, 16, 0,
 				glImageFormat, glImageType, NULL);
 
-//	glBindTexture( GL_TEXTURE_2D, GL_PROXY_TEXTURE_2D );
 	CString error;
 
 	GLenum glError = glGetError();
@@ -928,6 +927,12 @@ unsigned RageDisplay_OGL::CreateTexture(
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[pixfmt].type;
+
+	/* Making an OpenGL call doesn't also flush the error state; if we happen
+	 * to have an error from a previous call, then the assert below will fail. 
+	 * Flush it. */
+	while( glGetError() != GL_NO_ERROR )
+		;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, glTexFormat, 
 			img->w, img->h, 0,
