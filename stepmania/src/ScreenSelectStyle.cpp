@@ -129,6 +129,8 @@ ScreenSelectStyle::ScreenSelectStyle()
 ScreenSelectStyle::~ScreenSelectStyle()
 {
 	LOG->Trace( "ScreenSelectStyle::~ScreenSelectStyle()" );
+	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
+		delete m_sprIcon[i];
 }
 
 void ScreenSelectStyle::DrawPrimitives()
