@@ -863,11 +863,14 @@ float Actor::GetTweenTimeLeft() const
 	return tot;
 }
 
-/* This is a hack to change all tween states while leaving existing tweens alone.
+/*
+ * This is a hack to change all tween states while leaving existing tweens alone.
  *
- * Perhaps the regular Set methods should also take an optional argument, eg.
- * "SET_TWEEN" (normal behavior) or "SET_GLOBAL" to set regardless of tweens.
- * That might be ugly, too.
+ * Hmm.  Most commands actually act on a TweenStateAndInfo, not the Actor itself.
+ * Conceptually, it wouldn't be hard to give TweenState a presence in Lua, so
+ * we can simply say eg. "for x in states(Actor) do x.SetDiffuseColor(c) end".
+ * However, we'd then have to give every TweenState a userdata in Lua while it's
+ * being manipulated, which would add overhead ...
  */
 void Actor::SetGlobalDiffuseColor( RageColor c )
 {
