@@ -243,9 +243,11 @@ void ResetGame( bool ReturnToFirstScreen )
 			SCREENMAN->SetNewScreen( FIRST_RUN_INITIAL_SCREEN );
 		else
 			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
+
+		PREFSMAN->m_bFirstRun = false;
+		PREFSMAN->SaveGlobalPrefsToDisk();	// persist FirstRun setting in case we don't exit normally
 	}
 
-	PREFSMAN->m_bFirstRun = false;
 }
 
 static void GameLoop();
