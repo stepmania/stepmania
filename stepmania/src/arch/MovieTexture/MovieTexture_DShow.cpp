@@ -178,6 +178,8 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 			SetPosition(0);
 	}
 
+	VDCHECKPOINT;
+
 	CheckFrame();
 }
 
