@@ -266,7 +266,6 @@
 
 //#define SS_NOLOCALE	// prevents use/inclusion of <locale> header
 //#define SS_UNSIGNED	// add CString ctor/assign op. for usigned characters
-// #define SS_SAFE_FORMAT  // use new template style Format() function
 
 // MACRO: SS_NO_REFCOUNT:
 //		turns off reference counting at the assignment level.  Only needed
@@ -1664,27 +1663,13 @@ public:
 
 	CStdStr(PCSTR pA)
 	{
-	#ifdef SS_ANSI
 		*this = pA;
-	#else
-		if ( 0 != HIWORD(pA) )
-			*this = pA;
-		else if ( 0 != pA && !Load(_TRES(pA)) )
-			TRACE(_T("Can't load string %u\n"), _TRES(pA));
-	#endif
 	}
 
 	const CT *GetString() const { return c_str(); }
 	CStdStr(PCWSTR pW)
 	{
-	#ifdef SS_ANSI
 		*this = pW;
-	#else
-		if ( 0 != HIWORD(pW) )
-			*this = pW;
-		else if ( 0 != pW && !Load(_TRES(pW)) )
-			TRACE(_T("Can't load string %u\n"), _TRES(pW));
-	#endif
 	}
 
 	CStdStr(MYCITER first, MYCITER last)
@@ -2026,66 +2011,6 @@ public:
 	{	// get copy, THEN compare (thread safe)
 		return  bUseCase ? this->compare(pT) == 0 : ssicmp(MYTYPE(*this).c_str(), pT) == 0;
 	} 
-
-	// -------------------------------------------------------------------------
-	// FUNCTION:  CStdStr::Load
-	// REMARKS:
-	//		Loads string from resource specified by nID
-	//
-	// PARAMETERS:
-	//		nID - resource Identifier.  Purely a Win32 thing in this case
-	//
-	// RETURN VALUE:
-	//		true if successful, false otherwise
-	// -------------------------------------------------------------------------
-#ifndef SS_ANSI
-	bool Load(UINT nId, HMODULE hModule=NULL)
-	{
-		bool bLoaded		= false;	// set to true of we succeed.
-
-	#ifdef _MFC_VER		// When in Rome...
-
-		CString strRes;
-		bLoaded				= FALSE != strRes.LoadString(nId);
-		if ( bLoaded )
-			*this			= strRes;
-
-	#else
-		
-		// Get the resource name and module handle
-
-		if ( NULL == hModule )
-			hModule			= GetResourceHandle();
-
-		PCTSTR szName		= MAKEINTRESOURCE((nId>>4)+1); // lifted 
-		DWORD dwSize		= 0;
-
-		// No sense continuing if we can't find the resource
-
-		HRSRC hrsrc			= ::FindResource(hModule, szName, RT_STRING);
-
-		if ( NULL == hrsrc )
-		{
-			TRACE(_T("Cannot find resource %d: 0x%X"), nId, ::GetLastError());
-		}
-		else if ( 0 == (dwSize = ::SizeofResource(hModule, hrsrc) / sizeof(CT)))
-		{
-			TRACE(_T("Cant get size of resource %d 0x%X\n"),nId,GetLastError());
-		}
-		else
-		{
-			bLoaded			= 0 != ssload(hModule, nId, GetBuf(dwSize), dwSize);
-			ReleaseBuffer();
-		}
-
-	#endif
-
-		if ( !bLoaded )
-			TRACE(_T("String not loaded 0x%X\n"), ::GetLastError());
-
-		return bLoaded;
-	}
-#endif
 	
 	// -------------------------------------------------------------------------
 	// FUNCTION:  CStdStr::Format
@@ -2110,23 +2035,6 @@ public:
     // If they want a Format() function that safely handles string objects
     // without casting
  
-
-	#ifndef SS_ANSI
-
-	void Format(UINT nId, ...)
-	{
-		va_list argList;
-		va_start(argList, nId);
-		va_start(argList, nId);
-
-		MYTYPE strFmt;
-		if ( strFmt.Load(nId) )
-			FormatV(strFmt, argList);
-
-		va_end(argList);
-	}
-    
-	#endif  // #ifdef SS_ANSI
 
 	void Format(const CT* szFmt, ...)
 	{
@@ -2406,13 +2314,6 @@ public:
 		nCount = SSMAX(0, SSMIN(nCount, static_cast<int>(this->size())));
 		return this->substr(0, static_cast<MYSIZE>(nCount)); 
 	}
-
-	#ifndef SS_ANSI
-	bool LoadString(UINT nId)
-	{
-		return this->Load(nId);
-	}
-	#endif
 
 	void MakeLower()
 	{
@@ -3115,133 +3016,19 @@ typedef CStdStr<OLECHAR>	CStdStringO;	// almost always CStdStringW
 	}
 #endif	// #ifdef _MFC_VER -- (i.e. is this MFC?)
 
-
-
-// -----------------------------------------------------------------------------
-// GLOBAL FUNCTION:  WUFormat
-//		CStdStringA WUFormat(UINT nId, ...);
-//		CStdStringA WUFormat(PCSTR szFormat, ...);
-//
-// REMARKS:
-//		This function allows the caller for format and return a CStdStringA
-//		object with a single line of code.
-// -----------------------------------------------------------------------------
-#ifdef SS_ANSI
-#else
-	inline CStdStringA WUFormatA(UINT nId, ...)
-	{
-		va_list argList;
-		va_start(argList, nId);
-
-		CStdStringA strFmt;
-		CStdStringA strOut;
-		if ( strFmt.Load(nId) )
-			strOut.FormatV(strFmt, argList);
-
-		va_end(argList);
-		return strOut;
-	}
-	inline CStdStringA WUFormatA(PCSTR szFormat, ...)
-	{
-		va_list argList;
-		va_start(argList, szFormat);
-		CStdStringA strOut;
-		strOut.FormatV(szFormat, argList);
-		va_end(argList);
-		return strOut;
-	}
-
-	inline CStdStringW WUFormatW(UINT nId, ...)
-	{
-		va_list argList;
-		va_start(argList, nId);
-
-		CStdStringW strFmt;
-		CStdStringW strOut;
-		if ( strFmt.Load(nId) )
-			strOut.FormatV(strFmt, argList);
-
-		va_end(argList);
-		return strOut;
-	}
-	inline CStdStringW WUFormatW(PCWSTR szwFormat, ...)
-	{
-		va_list argList;
-		va_start(argList, szwFormat);
-		CStdStringW strOut;
-		strOut.FormatV(szwFormat, argList);
-		va_end(argList);
-		return strOut;
-	}
-#endif // #ifdef SS_ANSI
-
-#ifdef SS_ANSI
-#else
-	// -------------------------------------------------------------------------
-	// FUNCTION: WUSysMessage
-	//	 CStdStringA WUSysMessageA(DWORD dwError, DWORD dwLangId=SS_DEFLANGID);
-	//	 CStdStringW WUSysMessageW(DWORD dwError, DWORD dwLangId=SS_DEFLANGID);
-	//           
-	// DESCRIPTION:
-	//	 This function simplifies the process of obtaining a string equivalent
-	//	 of a system error code returned from GetLastError().  You simply
-	//	 supply the value returned by GetLastError() to this function and the
-	//	 corresponding system string is returned in the form of a CStdStringA.
-	//
-	// PARAMETERS: 
-	//	 dwError - a DWORD value representing the error code to be translated
-	//	 dwLangId - the language id to use.  defaults to english.
-	//
-	// RETURN VALUE: 
-	//	 a CStdStringA equivalent of the error code.  Currently, this function
-	//	 only returns either English of the system default language strings.  
-	// -------------------------------------------------------------------------
-	#define SS_DEFLANGID MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT)
-	inline CStdStringA WUSysMessageA(DWORD dwError, DWORD dwLangId=SS_DEFLANGID)
-	{
-		CHAR szBuf[512];
-
-		if ( 0 != ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwError,
-								   dwLangId, szBuf, 511, NULL) )
-			return WUFormatA("%s (0x%X)", szBuf, dwError);
-		else
- 			return WUFormatA("Unknown error (0x%X)", dwError);
-	}
-	inline CStdStringW WUSysMessageW(DWORD dwError, DWORD dwLangId=SS_DEFLANGID)
-	{
-		WCHAR szBuf[512];
-
-		if ( 0 != ::FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, dwError,
-								   dwLangId, szBuf, 511, NULL) )
-			return WUFormatW(L"%s (0x%X)", szBuf, dwError);
-		else
- 			return WUFormatW(L"Unknown error (0x%X)", dwError);
-	}
-#endif
-
 // Define TCHAR based friendly names for some of these functions
 
 #ifdef UNICODE
 	#define CStdString				CStdStringW
-	#define WUSysMessage			WUSysMessageW
-	#define WUFormat				WUFormatW
 #else
 	#define CStdString				CStdStringA
-	#define WUSysMessage			WUSysMessageA
-	#define WUFormat				WUFormatA
 #endif
 
 // ...and some shorter names for the space-efficient
 
-#define WUSysMsg					WUSysMessage
-#define WUSysMsgA					WUSysMessageA
-#define WUSysMsgW					WUSysMessageW
 #define WUFmtA						WUFormatA
 #define	WUFmtW						WUFormatW
 #define WUFmt						WUFormat
-#define WULastErrMsg()				WUSysMessage(::GetLastError())
-#define WULastErrMsgA()				WUSysMessageA(::GetLastError())
-#define WULastErrMsgW()				WUSysMessageW(::GetLastError())
 
 
 // -----------------------------------------------------------------------------
