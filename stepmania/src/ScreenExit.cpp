@@ -33,7 +33,7 @@ void ScreenExit::Update( float fDelta )
 	{
 		DoQuit = true;
 		CString warn = ssprintf("ScreenExit: %i sound%s failed to finish playing quickly: ",
-			PlayingSounds.size() );
+			PlayingSounds.size(), PlayingSounds.size()==1?"":"s" );
 		for( set<RageSound *>::const_iterator i = PlayingSounds.begin();
 			i != PlayingSounds.end(); ++i )
 		{
