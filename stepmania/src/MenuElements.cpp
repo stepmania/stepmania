@@ -20,6 +20,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "MenuTimer.h"
+#include "HelpDisplay.h"
 
 
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
@@ -29,11 +30,13 @@
 MenuElements::MenuElements()
 {
 	m_MenuTimer = new MenuTimer;
+	m_textHelp = new HelpDisplay;
 }
 
 MenuElements::~MenuElements()
 {
 	delete m_MenuTimer;
+	delete m_textHelp;
 }
 
 void MenuElements::Load( CString sClassName )
@@ -79,12 +82,12 @@ void MenuElements::Load( CString sClassName )
 	UtilOnCommand( m_autoFooter, "MenuElements" );
 	this->AddChild( m_autoFooter );
 
-	m_textHelp.SetName( "Help" );
+	m_textHelp->SetName( "Help" );
 	UtilOnCommand( m_textHelp, "MenuElements" );
 	CStringArray asHelpTips;
 	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
-	m_textHelp.SetTips( asHelpTips );
-	this->AddChild( &m_textHelp );
+	m_textHelp->SetTips( asHelpTips );
+	this->AddChild( m_textHelp );
 
 
 	m_In.Load( THEME->GetPathToB(m_sName+" in") );
@@ -163,7 +166,7 @@ void MenuElements::DrawTopLayer()
 	if( m_bTimerEnabled )
 		m_MenuTimer->Draw();
 	m_autoFooter->Draw();
-	m_textHelp.Draw();
+	m_textHelp->Draw();
 	m_In.Draw();
 	m_Out.Draw();
 	m_Back.Draw();

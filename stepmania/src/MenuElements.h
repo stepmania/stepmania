@@ -15,12 +15,12 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "Transition.h"
-#include "HelpDisplay.h"
 #include "BGAnimation.h"
 #include "ActorUtil.h"
 #include "RageSound.h"
 
 class MenuTimer;
+class HelpDisplay;
 class MenuElements : public ActorFrame
 {
 public:
@@ -49,7 +49,7 @@ public:	// let owner tinker with these objects
 	Sprite				m_sprStyleIcon;
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
-	HelpDisplay			m_textHelp;
+	HelpDisplay			*m_textHelp;
 
 	Transition	m_In;
 	Transition	m_Out;
