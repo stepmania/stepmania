@@ -53,8 +53,7 @@ public:
 	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
 	virtual bool IsAMovie() { return true; };
-	virtual void TurnLoopOn();
-	virtual void TurnLoopOff();
+	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
 	LPDIRECT3DTEXTURE8 GetBackBuffer() { return m_pd3dTexture[!m_iIndexFrontBuffer]; }
 	void Flip() { m_iIndexFrontBuffer = !m_iIndexFrontBuffer; }
@@ -63,7 +62,7 @@ protected:
 	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
 	int m_iIndexFrontBuffer;	// index of the buffer that should be rendered from - either 0 or 1
 
-	virtual VOID Create();
+	virtual void Create();
 
 	virtual HRESULT CreateD3DTexture();
 	virtual HRESULT InitDShowTextureRenderer();

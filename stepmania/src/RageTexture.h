@@ -64,8 +64,7 @@ public:
 	virtual void Pause() {};
 	virtual void SetPosition( float fSeconds ) {};
 	virtual bool IsAMovie() { return false; };
-	virtual void TurnLoopOn();
-	virtual void TurnLoopOff();
+	void SetLooping(bool looping=true) { }
 
 	int GetSourceWidth()	{return m_iSourceWidth;};
 	int GetSourceHeight()	{return m_iSourceHeight;};

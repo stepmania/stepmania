@@ -111,11 +111,3 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 	}
 
 }
-
-void RageTexture::TurnLoopOn()
-{
-}
-
-void RageTexture::TurnLoopOff()
-{
-}

@@ -40,7 +40,6 @@ struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureR
 #include "RageLog.h"
 #include "RageException.h"
 
-
 #include <stdio.h>
 
 //-----------------------------------------------------------------------------
@@ -65,8 +64,8 @@ public:
     HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
 
 	// new methods
-	LONG GetVidWidth() {return m_lVidWidth;};
-	LONG GetVidHeight(){return m_lVidHeight;};
+	LONG GetVidWidth() const { return m_lVidWidth; }
+	LONG GetVidHeight() const { return m_lVidHeight; }
 	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
 
 protected:
@@ -89,6 +88,9 @@ CTextureRenderer::CTextureRenderer( LPUNKNOWN pUnk, HRESULT *phr )
                                    : CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
                                    NAME("Texture Renderer"), pUnk, phr)
 {
+    if( FAILED(*phr) )
+        throw RageException( *phr, "Could not create texture renderer object!" );
+
     // Store and ARageef the texture for our use.
 	m_pTexture = NULL;
 	m_bBackBufferLocked = FALSE;
@@ -137,15 +139,12 @@ HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt)
 //-----------------------------------------------------------------------------
 HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt)
 {
-//    HRESULT hr;
-
     // Retrive the size of this media type
     VIDEOINFO *pviBmp;                      // Bitmap info header
     pviBmp = (VIDEOINFO *)pmt->Format();
     m_lVidWidth  = pviBmp->bmiHeader.biWidth;
     m_lVidHeight = abs(pviBmp->bmiHeader.biHeight);
     m_lVidPitch = (m_lVidWidth * 3 + 3) & ~(3); // We are forcing RGB24
-
 
     return S_OK;
 }
@@ -345,7 +344,7 @@ LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
 //-----------------------------------------------------------------------------
 // RageMovieTexture::Create()
 //-----------------------------------------------------------------------------
-VOID RageMovieTexture::Create()
+void RageMovieTexture::Create()
 {
 	HRESULT hr;
 
@@ -396,8 +395,6 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
     
     // Create the Texture Renderer object
     m_pCTR = new CTextureRenderer(NULL, &hr);
-    if( FAILED(hr) )
-        throw RageException( hr, "Could not create texture renderer object!" );
     
     // Get a pointer to the IBaseFilter on the TextureRenderer, add it to graph
     CComPtr<IBaseFilter> pFTR = m_pCTR;
@@ -450,7 +447,6 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
 	m_iImageWidth   = m_iSourceWidth;
 	m_iImageHeight  = m_iSourceHeight;
 
-	
     return S_OK;
 }
 
@@ -512,7 +508,7 @@ void RageMovieTexture::CheckMovieStatus()
 
     // Check for completion events
     m_pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
-    if( EC_COMPLETE == lEventCode  &&  m_bLoop )
+    if( EC_COMPLETE == lEventCode  && m_bLoop )
         m_pMP->put_CurrentPosition(0);
 }
 
@@ -545,16 +541,6 @@ void RageMovieTexture::Stop()
 	HRESULT hr;
 	if( FAILED( hr = m_pMC->Stop() ) )
         throw RageException( hr, "Could not stop the DirectShow graph." );
-}
-
-void RageMovieTexture::TurnLoopOn()
-{
-	m_bLoop = true;
-}
-
-void RageMovieTexture::TurnLoopOff()
-{
-	m_bLoop = false;
 }
 
 void RageMovieTexture::SetPosition( float fSeconds )
