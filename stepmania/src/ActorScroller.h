@@ -52,12 +52,11 @@ public:
 	ActorScrollerAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
 	void LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
-		ActorScroller::LoadFromNode( sDir, pNode );
-
-		// FIXME!  We need to load children before ActorScroller::LoadFromNode or
+		// Load children before ActorScroller::LoadFromNode or
 		// else it won't SetDestinationItem correctly.
-
 		LoadChildrenFromNode( sDir, pNode );
+
+		ActorScroller::LoadFromNode( sDir, pNode );
 	}
 };
 
