@@ -1,16 +1,19 @@
 #ifndef BANNER_CACHE_H
 #define BANNER_CACHE_H
 
- #include "IniFile.h"
-// struct SDL_Surface;
+#include "IniFile.h"
 
 #include "RageTexture.h"
+
+class LoadingWindow;
 
 class BannerCache
 {
 	IniFile BannerData;
 
 	static CString GetBannerCachePath( CString BannerPath );
+	void LoadAllBanners();
+	void UnloadAllBanners();
 
 public:
 	BannerCache();

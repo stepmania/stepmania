@@ -21,21 +21,21 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 	return ssprintf( "Cache/Banners/%u", GetHashForFile(BannerPath) );
 }
 
-BannerCache::BannerCache()
+/* Load all banners that havn't been loaded already. */
+void BannerCache::LoadAllBanners()
 {
-	CreateDirectories("Cache/Banners/");
-	BannerData.SetPath( "Cache/banners.cache" );
-	BannerData.ReadFile();	// don't care if this fails
-
 	/* Load all banners. */
 	IniFile::const_iterator it = BannerData.begin();
 	for( ; it != BannerData.end(); ++it )
 	{
 		const CString &BannerPath = it->first;
+		if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
+			continue; /* already loaded */
+
 		const CString CachePath = GetBannerCachePath(BannerPath);
 
 		/* Load it. */
-		LOG->Trace( "Load cached banner: %s", CachePath.c_str() );
+		Checkpoint( ssprintf( "BannerCache::LoadAllBanners: %s", CachePath.c_str() ) );
 		SDL_Surface *img = mySDL_LoadSurface( CachePath );
 		if( img == NULL )
 		{
@@ -47,9 +47,27 @@ BannerCache::BannerCache()
 	}
 }
 
+void BannerCache::UnloadAllBanners()
+{
+	map<CString,SDL_Surface *>::iterator it;
+	for( it = m_BannerPathToImage.begin(); it != m_BannerPathToImage.end(); ++it )
+		SDL_FreeSurface(it->second);
+
+	m_BannerPathToImage.clear();
+}
+
+BannerCache::BannerCache()
+{
+	CreateDirectories("Cache/Banners/");
+	BannerData.SetPath( "Cache/banners.cache" );
+	BannerData.ReadFile();	// don't care if this fails
+	
+	LoadAllBanners();
+}
+
 BannerCache::~BannerCache()
 {
-
+	UnloadAllBanners();
 }
 
 #include "SDL_utils.h"
