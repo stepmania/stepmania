@@ -8,7 +8,7 @@
 
 #include <iosfwd>
 #include <algorithm>
-
+/*
 #ifdef _M_IX86
 #	if (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 500)) || (defined(__ICL) && (__ICL >= 500))
 #		define SSE2_INTRINSICS_AVAILABLE
@@ -20,7 +20,7 @@
 #		endif
 #	endif
 #endif
-
+*/
 NAMESPACE_BEGIN(CryptoPP)
 
 #ifdef SSE2_INTRINSICS_AVAILABLE
