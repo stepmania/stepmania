@@ -443,13 +443,13 @@ void ScreenEdit::Update( float fDeltaTime )
 			StyleInput StyleI( PLAYER_1, t );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
 
-			if( fSecsHeld > RECORD_HOLD_SECONDS )
+			if( fSecsHeld > RECORD_HOLD_SECONDS && GAMESTATE->m_fSongBeat > 0 )
 			{
 				// add or extend hold
 				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
 
-				float fStartBeat = m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds );
-				float fEndBeat = GAMESTATE->m_fSongBeat;
+				float fStartBeat = max( 0, m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds ) );
+				float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
 
 				// Round hold start and end to the nearest snap interval
 				fStartBeat = froundf( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
