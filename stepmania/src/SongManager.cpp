@@ -724,33 +724,25 @@ void SongManager::GetEndlessCourses( vector<Course*> &AddTo )
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	CString sCoursePath = "Songs/" + sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	const CString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	CString sCoursePath = "Songs/" + sCourseSuffix;
 	if( !DoesFileExist(sCoursePath) ) 
 	{
-		bool bFound = false;
-
 		/* try alternative song folders */
 		for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
 		{
-			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + "/" + sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + "/" + sCourseSuffix;
 			if( DoesFileExist(sCoursePath) ) 
-			{
-				bFound = true;
 				break;
-			}
 		}
+	}
 
-		if( !bFound && PREFSMAN->m_DWIPath != "" )
-		{
-			sCoursePath = PREFSMAN->m_DWIPath + "/Songs/" + sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
-			if( DoesFileExist(sCoursePath) )
-				bFound = true;
-		}
+	if( !DoesFileExist(sCoursePath) && PREFSMAN->m_DWIPath.size() )
+		sCoursePath = PREFSMAN->m_DWIPath + "/Songs/" + sCourseSuffix;
 
-		/*Couldn't find course in DWI path or Alternative Song Folders*/
-		if( !bFound )
-			return false;
-	}	
+	/* Couldn't find course in DWI path or alternative song folders */
+	if( !DoesFileExist(sCoursePath) )
+		return false;
 
 	Course course;
 	course.LoadFromCRSFile( sCoursePath );
