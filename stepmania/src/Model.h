@@ -10,18 +10,6 @@
 #include <map>
 #include "RageModelGeometry.h"
 
-/* This is a static class that holds and renders model data; it can be shared among
- * multiple Models.  (Note that geometry data is stored and refcounted separately;
- * that can */
-/* XXX: dumb name */
-/* class ModelHolder : public Actor
-{
-public:
-
-private:
-    RageModelGeometry	*m_pGeometry;
-
-} */
 
 class Model : public Actor
 {
