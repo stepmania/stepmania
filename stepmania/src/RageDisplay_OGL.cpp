@@ -406,7 +406,7 @@ static void SetupVertices( const RageVertex v[], int iNumVerts )
 	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
 
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, 0, Texture);
+	glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
 void RageDisplay_OGL::DrawQuads( const RageVertex v[], int iNumVerts )
