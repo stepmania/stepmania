@@ -29,6 +29,7 @@ InputFilter::InputFilter()
 
 bool InputFilter::BeingPressed( DeviceInput di, bool Prev )
 {
+	if(di.device == DEVICE_JOY1 || di.device == DEVICE_JOY2 || di.device == DEVICE_JOY3 || di.device == DEVICE_JOY4)
 	switch( di.button ) {
 	case JOY_Z_UP: case JOY_Z_DOWN:
 	case JOY_Z_ROT_UP: case JOY_Z_ROT_DOWN:
