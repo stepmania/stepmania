@@ -13,7 +13,7 @@ AM_CFLAGS =
 # generates enormous output.
 AM_CXXFLAGS += -finline-limit=300
 
-AM_CXXFLAGS += $(X_CFLAGS)
+AM_CXXFLAGS += $(XCFLAGS)
 
 LDADD = $(SDL_LIBS)
 
