@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -26,7 +27,7 @@
 #include "StyleDef.h"
 #include "Notes.h"
 #include "GameState.h"
-#include "FontManager.h"
+#include "FontCharAliases.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -39,7 +40,7 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 103;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 104;	// increment this when Song or Notes changes to invalidate cache
 
 
 static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
@@ -633,32 +634,78 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 	/* These REs aren't completely tested. XXX */
 	if(ttab.empty())
 	{
-		/* "+{" is the ugly hack for Kakumei: */
-		ttab.push_back(TitleTrans("^\\+\\{$", "", "", "&kakumei1;&kakumei2;", "", "") );
-		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
-
-		/* Ambiguous, so check artist: */
+		/* Ambiguous, so check artist.  Do this early; Riyu will be replaced later: */
 		ttab.push_back(TitleTrans("^Candy$", "", "^Luv.*", "Candy &whitestar;", "", "") );
 		ttab.push_back(TitleTrans("^Candy$", "", "^Riyu.*", "Candy &whiteheart;", "", "") );
 
-		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; Japan", "", "") );
-		ttab.push_back(TitleTrans("^} JAPAN$", "", "", "&matsuri; Japan", "", "") );
-		/* This is a little fuzzy, so check the artist, too. */
+		/* Make sure this appears after the above "Riyu" match, so it doesn't
+		 * break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
+		 * correct, but handle both. */
+		ttab.push_back(TitleTrans("", "", "Riyu Kosak[au]", "", "", "&kosaka1;&kosaka2;&hri;&hyu;") );
+
+		/* This is fuzzy, so check the artist, too. */
 		ttab.push_back(TitleTrans(".*Japan.*", "", "(Re-Venge)|(RevenG)", "&matsuri; Japan", "", "") );
 
-		ttab.push_back(TitleTrans("^Sweet Sweet (Love|\\$) Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
 
-		/* These ones are pretty distinct, so don't check artists: */
+		/* Fix up hacked titles: */
+		ttab.push_back(TitleTrans("^Max 300$", "", "%", "", "", "&omega;") );
+		ttab.push_back(TitleTrans("^Bre=kdown$", "", "", "Bre&flipped-a;kdown", "", "") );
 		ttab.push_back(TitleTrans("^Candy #$", "", "", "Candy &whitestar;", "", "") );
 		ttab.push_back(TitleTrans("^Candy \\$$", "", "", "Candy &whiteheart;", "", "") );
+		ttab.push_back(TitleTrans("^} JAPAN$", "", "", "&matsuri; Japan", "", "") );
+		ttab.push_back(TitleTrans("^\\+\\{$", "", "", "&kakumei1;&kakumei2;", "", "") );
+		ttab.push_back(TitleTrans("^Sweet Sweet \\$ Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
 
-		ttab.push_back(TitleTrans("^Max 300$", "", "(Omega)|(%)", "", "", "&omega;") );
+		/* Special stuff is done.  Titles: */
+		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; Japan", "", "") );
+		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
+		ttab.push_back(TitleTrans("^Sweet Sweet Love Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
+		ttab.push_back(TitleTrans("^Breakdown$", "", "", "Bre&flipped-a;kdown", "", "") );
+		/* サナ・ モレッテ・ ネ・ エンテ */
+		ttab.push_back(TitleTrans("^Sana Mollete Ne Ente", "", "", 
+			"&ksa;&kna;&kdot;&kmo;&kre;&kq;&kte;&kdot;&kne;&kdot;&ke;&kn;&kte;", "", ""));
+		ttab.push_back(TitleTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 
-		/* Uncomment this once we have this glyph: */
-//		ttab.push_back(TitleTrans("^Bre[a=]kdown$", "", "", "Bre&flipped-a;kdown", "", "") );
+		/* 夜空ノムコウ */
+		ttab.push_back(TitleTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;", "", "") );
+
+		/* XXX blackstar or whitestar?  Is this supposed to be capped? */
+		ttab.push_back(TitleTrans("^Mobo Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
+
+		/* XXX whiteheart or blackheart? Is this supposed to be capped? */
+		ttab.push_back(TitleTrans("^Love Shine$", "", "", "Love &whiteheart; Shine", "", "") );
+
+		/* ロマンスの神様 */
+		ttab.push_back(TitleTrans("^God of Romance$", "", "", "&kro;&kma;&kn;&ksu;&hno;&kami;&sama;", "", "") );
+
+		/* ダンシン・オール・アローン */
+		ttab.push_back(TitleTrans("^Dancing Pompokolin$", "", "", "&kda;&kn;&ksi;&kn;&kdot;&ko;&kdash;&kru;&kdot;&ka;&kro;&kdash;&kn;", "", "") );
+
+		/* メキシコ民謡 XXX What's the English trans? (lit: mexico song) */
+		ttab.push_back(TitleTrans("^La Bamba$", "", "", "", "", "&kme;&kki;&ksi;&kko;&minyou1;&minyou2;") );
+
+		/* 青い振動 XXX verify this title */
+		ttab.push_back(TitleTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
+
+		/* XXX 大見解 verify this title (Night Line or Nightline or am I completely wrong?) */
+		ttab.push_back(TitleTrans("^Night ?Line$", "", "", "&ookii;&kenkai1;&kenkai2;", "", "") );
+
+		/* XXX 三毛猫ロック three-haired-cat rock? nyo!) (title) */
+		/* XXX &heart; LOVE&squared; シュガ&rightarrow; &heart; (Love2 Sugar) */
+		/* XXX: "door of magic" (tobira no mahou) -> 魔法の扉 (title) */
+		/* XXX スペース★マコのテーマ (space * "mako"?'s team) (title or subtitle, not sure) */
+
+		/* Subtitles: */
+		/* XXX それぞれの明日 (every tomorrow?) (subtitle) (title is Graduation) */
+
+		/* Artists: */
+		ttab.push_back(TitleTrans("", "", "Omega", "", "", "&omega;") );
+
+		/* XXX 亜熱帯マジ-SKA爆弾 (serious tropical ska bomb? ruh roh) */
+		// ttab.push_back(TitleTrans("", "", "", "", "", "&anettai2;&anettai2;&anettai3;&kma;&kji;-SKA&bakudan1;&bakudan2;") );
+		ttab.push_back(TitleTrans("", "", "Sanae Shintani", "", "", "&shintani1;&shintani2;&hsa;&hna;&he;") );
+		ttab.push_back(TitleTrans("", "", "dj TAKA feat. ?Noria", "", "", "dj TAKA feat. &hno;&hri;&ha;") );
 	}
-
-	/* XXX: sana molette */
 
 	for(i = 0; i < ttab.size(); ++i)
 	{
@@ -670,19 +717,19 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		{
 			m_sMainTitleTranslit = m_sMainTitle;
 			m_sMainTitle = ttab[i].TitleTo;
-			FontManager::ReplaceMarkers( m_sMainTitle );
+			FontCharAliases::ReplaceMarkers( m_sMainTitle );
 		}
 		if(!ttab[i].SubTo.empty())
 		{
 			m_sSubTitleTranslit = m_sSubTitle;
 			m_sSubTitle = ttab[i].SubTo;
-			FontManager::ReplaceMarkers( m_sSubTitle );
+			FontCharAliases::ReplaceMarkers( m_sSubTitle );
 		}
 		if(!ttab[i].ArtistTo.empty())
 		{
 			m_sArtistTranslit = m_sArtist;
 			m_sArtist = ttab[i].ArtistTo;
-			FontManager::ReplaceMarkers( m_sArtist );
+			FontCharAliases::ReplaceMarkers( m_sArtist );
 		}
 	}
 }
