@@ -153,27 +153,18 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 
 void DifficultyMeter::Unset()
 {
-	m_textFeet.SetEffectNone();
-	if( FEET_IS_DIFFICULTY_COLOR )
-		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( "None" );
 }
 
 void DifficultyMeter::SetFromDifficulty( Difficulty dc )
 {
-	m_textFeet.SetEffectNone();
-	if( FEET_IS_DIFFICULTY_COLOR )
-		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( DifficultyToString( dc ) );
 }
 
 void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
 {
-	m_textFeet.SetEffectNone();
-	if( FEET_IS_DIFFICULTY_COLOR )
-		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( CourseDifficultyToString( cd ) );
 }
