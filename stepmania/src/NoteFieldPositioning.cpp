@@ -118,6 +118,34 @@ void NoteFieldPositioning::LoadFromStyleDef(const StyleDef *s, PlayerNumber pn)
 		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][t].fXOffset;
 		RageMatrixTranslation(&m_Position[t], fPixelXOffsetFromCenter, 0, 0);
 	}
+
+	// XXX
+
+	FILE *f = fopen("test.dat", "r");
+	if(f) for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+	{
+		char buf[1000];
+		if(!fgets(buf, 1000, f)) break;
+
+		CString b(buf);
+		TrimRight(b);
+		
+		RageMatrixIdentity(&m_Position[t]);
+		MatrixCommand(b, m_Position[t]);
+
+		if(!fgets(buf, 1000, f)) break;
+		b=buf;
+		TrimRight(b);
+
+		RageMatrixIdentity(&m_PerspPosition[t]);
+		MatrixCommand(b, m_PerspPosition[t]);
+
+		if(!fgets(buf, 1000, f)) break;
+		sscanf(buf, "%f", &m_fFov[t]);
+	}
+	fclose(f);
+// XXX
+
 }
 
 void NoteFieldPositioning::Update(float fDeltaTime)
@@ -127,34 +155,6 @@ void NoteFieldPositioning::Update(float fDeltaTime)
 
 void NoteFieldPositioning::BeginDrawTrack(int tn)
 {
-	// XXX
-#if 0
-	FILE *f = fopen("test.dat", "r");
-	if(f) for(int t = 0; t <= tn/*MAX_NOTE_TRACKS*/; ++t)
-	{
-		char buf[1000];
-		fgets(buf, 1000, f);
-
-		CString b(buf);
-		TrimRight(b);
-		
-		RageMatrixIdentity(&m_Position[t]);
-		MatrixCommand(b, m_Position[t]);
-
-		fgets(buf, 1000, f);
-		b=buf;
-		TrimRight(b);
-
-		RageMatrixIdentity(&m_PerspPosition[t]);
-		MatrixCommand(b, m_PerspPosition[t]);
-
-		fgets(buf, 1000, f);
-		sscanf(buf, "%f", &m_fFov[t]);
-	}
-	fclose(f);
-// XXX
-#endif
-
 	DISPLAY->PushMatrix();
 
 	glMultMatrixf((float *) m_Position[tn]);
