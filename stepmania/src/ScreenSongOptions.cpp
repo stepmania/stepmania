@@ -90,7 +90,7 @@ void ScreenSongOptions::ImportOptions()
 	for( unsigned i=0; i<g_SongOptionsLines[SO_RATE].choices.size(); i++ )
 	{
 		float fThisRate = (float) atof(g_SongOptionsLines[SO_RATE].choices[i]);
-		if( fThisRate == so.m_fMusicRate )
+		if( fabsf(fThisRate - so.m_fMusicRate) < 0.001 )
 			m_iSelectedOption[0][SO_RATE] = i;
 	}
 }
