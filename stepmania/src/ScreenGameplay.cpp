@@ -1780,7 +1780,7 @@ void ScreenGameplay::TweenOffScreen()
 	{
 		m_textDebug.StopTweening();
 		m_textDebug.BeginTweening( 1/8.f );
-		m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+		m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 	}
 }
 
