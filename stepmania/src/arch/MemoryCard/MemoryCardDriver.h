@@ -1,5 +1,5 @@
-#ifndef MEMORY_CARD_ENUMERATOR_H
-#define MEMORY_CARD_ENUMERATOR_H 1
+#ifndef MEMORY_CARD_DRIVER_H
+#define MEMORY_CARD_DRIVER_H 1
 
 struct UsbStorageDevice
 {
