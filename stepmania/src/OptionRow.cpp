@@ -34,12 +34,14 @@ CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
 
 OptionRow::OptionRow()
 {
+	m_pHand = NULL;
+
+	Clear();
+
 	FOREACH_PlayerNumber( p )
 		this->AddChild( &m_OptionIcons[p] );
 	this->AddChild( &m_sprBullet );
 	this->AddChild( &m_textTitle );
-
-	m_pHand = NULL;
 }
 
 OptionRow::~OptionRow()
@@ -68,6 +70,7 @@ void OptionRow::Clear()
 
 	m_bFirstItemGoesDown = false;
 	ZERO( m_bRowHasFocus );
+	ZERO( m_iChoiceInRowWithFocus );
 }
 
 void OptionRow::DetachHandler()

@@ -106,14 +106,14 @@ public:
 		if( m_RowDef.bOneChoiceForAllPlayers )
 			pn = PLAYER_1;
 		int iChoice = m_iChoiceInRowWithFocus[pn];
-		ASSERT(iChoice<(int)m_RowDef.choices.size());
+		ASSERT(iChoice >= 0 && iChoice < (int)m_RowDef.choices.size());
 		return iChoice; 
 	}
 	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
 	{
 		if( m_RowDef.bOneChoiceForAllPlayers )
 			pn = PLAYER_1;
-		ASSERT(iChoice<(int)m_RowDef.choices.size());
+		ASSERT(iChoice >= 0 && iChoice < (int)m_RowDef.choices.size());
 		m_iChoiceInRowWithFocus[pn] = iChoice;
 	}
 	bool GetSelected( PlayerNumber pn, int iChoice ) const

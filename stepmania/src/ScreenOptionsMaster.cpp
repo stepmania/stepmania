@@ -154,26 +154,18 @@ void ScreenOptionsMaster::BeginFadingOut()
 	* honor it. */
 	m_sNextScreen = "";
 
-	const unsigned uFocusRow = this->GetCurrentRow();
+	int iCurRow = this->GetCurrentRow();
+	ASSERT( iCurRow >= 0 && iCurRow < (int)m_Rows.size() );
+	OptionRow &row = *m_Rows[iCurRow];
 
-	for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
+	if( iCurRow < (int)OptionRowHandlers.size() )
 	{
-		OptionRow &row = *m_Rows[r];
-
-		CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
-		
-		/* If SELECT_NONE, only apply it if it's the selected option. */
-		if( row.GetRowDef().selectType == SELECT_NONE && r != uFocusRow )
-			continue;
-
-		OptionRowHandler *pHand = OptionRowHandlers[r];
-
 		const int iChoice = row.GetChoiceInRowWithFocus(GAMESTATE->m_MasterPlayerNumber);
+		OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
 		CString sScreen = pHand->GetAndEraseScreen( iChoice );
 		if( !sScreen.empty() )
 			m_sNextScreen = sScreen;
 	}
-	CHECKPOINT;
 
 	// NEXT_SCREEN;
 	if( m_sNextScreen == "" )

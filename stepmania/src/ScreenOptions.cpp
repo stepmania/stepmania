@@ -1013,6 +1013,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		const unsigned iOldSelection = row.GetChoiceInRowWithFocus(p);
 
 		m_iCurrentRow[p] = r;
+		ASSERT( r >= 0 && r < (int)m_Rows.size() );
 
 		OptionRow &row = *m_Rows[r];
 
@@ -1088,10 +1089,6 @@ void ScreenOptions::MenuDown( PlayerNumber pn, const InputEventType type )
 int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 {
 	const int r = m_iCurrentRow[pn];
-	OptionRow &row = *m_Rows[r];
-
-	if( row.GetRowType() != OptionRow::ROW_NORMAL )
-		return -1;
 	return r;
 }
 
