@@ -17,7 +17,6 @@
 #include "MenuElements.h"
 #include "Banner.h"
 #include "ScoreDisplayNormal.h"
-#include "StageBox.h"
 #include "BannerWithFrame.h"
 #include "DifficultyIcon.h"
 
