@@ -72,6 +72,10 @@ void GhostArrowRow::DrawPrimitives()
 		m_GhostArrowRow[c].SetX( fX );
 		m_GhostArrowRowBright[c].SetX( fX );
 		m_HoldGhostArrowRow[c].SetX( fX );
+		float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+		m_GhostArrowRow[c].SetZ( fZ );
+		m_GhostArrowRowBright[c].SetZ( fZ );
+		m_HoldGhostArrowRow[c].SetZ( fZ );
 
 		m_GhostArrowRow[c].Draw();
 		m_GhostArrowRowBright[c].Draw();

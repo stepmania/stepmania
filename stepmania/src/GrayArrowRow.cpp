@@ -68,6 +68,8 @@ void GrayArrowRow::DrawPrimitives()
 		// set arrow X
 		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GrayArrow[c].SetX( fX );
+		float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+		m_GrayArrow[c].SetZ( fZ );
 		m_GrayArrow[c].Draw();
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
