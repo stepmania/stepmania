@@ -52,8 +52,9 @@ MUSIC->Stop();
 	HEEEEEEEEELP.SetText(
 		"p  Play\n"
 		"s  Stop\n"
-		"l  Toggle looping\n"
-		"a  Toggle autostop\n");
+		"l  Set looping\n"
+		"a  Set autostop\n"
+		"c  Set continue");
 
 	for(int i = 0; i < nsounds; ++i)
 	{
@@ -65,21 +66,22 @@ MUSIC->Stop();
 	s[0].txt.SetXY(150, 100);
 	s[1].txt.SetXY(450, 100);
 	s[2].txt.SetXY(150, 250);
-//	s[3].txt.SetXY(450, 250);
-//	s[4].txt.SetXY(150, 400);
+	s[3].txt.SetXY(450, 250);
+	s[4].txt.SetXY(150, 400);
 
 	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
 	s[1].s.Load("Themes/default/Sounds/music scroll music.ogg");
 	s[2].s.Load("Themes/default/Sounds/evaluation extra stage.mp3");
-//	s[3].s.Load("Themes/default/Sounds/gameplay oni die.mp3");
-//	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
+	s[3].s.Load("Themes/default/Sounds/gameplay oni die.wav");
+	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
 
-/*s[0].s.SetPositionSeconds(3);
-s[0].s.SetStartSeconds(3);
-s[0].s.SetLengthSeconds(1);
-s[0].s.SetAutoStop(false);
-s[0].s.Play();
-*/
+//s[0].s.SetStartSeconds(45);
+//s[0].s.SetPositionSeconds();
+// s[4].s.SetLengthSeconds(1);
+//s[0].s.SetPlaybackRate(.9);
+//s[0].s.SetStopMode(RageSound::M_LOOP);
+//s[0].s.Play();
+
 	selected = 0;
 }
 
@@ -100,10 +102,9 @@ void ScreenSandbox::UpdateText(int n)
 		if(p) pos += ", ";
 		pos += ssprintf("%.3f", snds[p]->GetPositionSeconds());
 	}
-/*
+
 	s[n].txt.SetText(ssprintf(
 		"%i: %s\n"
-		"%s\n"
 		"%s\n"
 		"%s\n"
 		"(%s) of %.3f\n"
@@ -111,14 +112,16 @@ void ScreenSandbox::UpdateText(int n)
 		"%s",
 		n+1, fn.GetString(),
 		s[n].s.IsPlaying()? "Playing":"Stopped",
-		s[n].s.GetLooping()? "Looping": "Not looping", // Not Member Of Rage Sound
-		s[n].s.GetAutoStop()? "Stop when finished": "Continue until stopped", // Not Member Of Rage Sound
+		s[n].s.GetStopMode() == RageSound::M_STOP?
+			"Stop when finished":
+		s[n].s.GetStopMode() == RageSound::M_CONTINUE?
+			"Continue until stopped":
+			"Loop",
 		pos.size()? pos.GetString(): "none playing",
 		s[n].s.GetLengthSeconds(),
 		s[n].s.IsStreaming()? "Streaming":"Preloaded",
 		selected == n? "^^^^^^":""
 		));
-*/
 }
 
 void ScreenSandbox::Update(float f)
@@ -149,10 +152,13 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 			s[selected].s.Stop();
 			break;
 		case 'l':
-//			s[selected].s.SetLooping(!s[selected].s.GetLooping()); // Not Member Of RageSound
+			s[selected].s.SetStopMode(RageSound::M_LOOP);
 			break;
 		case 'a':
-//			s[selected].s.SetAutoStop(!s[selected].s.GetAutoStop()); // Not Member Of Rage Sound
+			s[selected].s.SetStopMode(RageSound::M_STOP);
+			break;
+		case 'c':
+			s[selected].s.SetStopMode(RageSound::M_CONTINUE);
 			break;
 
 /*		case SDLK_LEFT:

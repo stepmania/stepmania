@@ -19,7 +19,7 @@
 #include "RageSound.h"
 #include "Sample3dObject.h"
 
-const int nsounds = 3;
+const int nsounds = 5;
 
 class ScreenSandbox : public Screen
 {
