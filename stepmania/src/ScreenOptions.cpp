@@ -505,15 +505,20 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenOptions::PositionItems()
 {
-	int NumRows = m_iNumOptionRows + 1;
+	/* Total number of rows, including "EXIT". */
+	const int NumRows = m_iNumOptionRows + 1;
+
+	/* Choices for each player.  If only one player is active, it's the same for both. */
+	const int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
+	const int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
 	/* First half: */
-	const int earliest = min( m_iCurrentRow[PLAYER_1], m_iCurrentRow[PLAYER_2] );
+	const int earliest = min( P1Choice, P2Choice );
 	int first_start = max( earliest - halfsize+1, 0 );
 	int first_end = first_start + halfsize - 1;
 
 	/* Second half: */
-	int latest = max( m_iCurrentRow[PLAYER_1], m_iCurrentRow[PLAYER_2] );
+	int latest = max( P1Choice, P2Choice );
 
 	int second_start = max( latest - halfsize + 1, 0 );
 	/* Never overlap: */
