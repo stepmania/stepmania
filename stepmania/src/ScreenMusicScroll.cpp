@@ -126,7 +126,9 @@ ScreenMusicScroll::ScreenMusicScroll()
 {
 	LOG->Trace( "ScreenMusicScroll::ScreenMusicScroll()" );
 
-	 int i;
+	int i;
+
+	GAMESTATE->Reset();		// so that credits message for both players will show
 
 	m_sprBackground.Load( THEME->GetPathTo("Graphics","music scroll background") );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );

@@ -21,18 +21,15 @@
 #include "GameState.h"
 
 
+#define ICONS_X( p )		THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
+#define LABELS_X			THEME->GetMetricF("ScreenOptions","LabelsX")
+#define ITEMS_START_X		THEME->GetMetricF("ScreenOptions","ItemsStartX")
+#define ITEMS_GAP_X			THEME->GetMetricF("ScreenOptions","ItemsGapX")
+#define ITEMS_START_Y		THEME->GetMetricF("ScreenOptions","ItemsStartY")
+#define ITEMS_SPACING_Y		THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
 #define HELP_TEXT			THEME->GetMetric("ScreenOptions","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenOptions","TimerSeconds")
 
-const float HEADER_X		= CENTER_X;
-const float HEADER_Y		= 50;
-const float HELP_X			= CENTER_X;
-const float HELP_Y			= SCREEN_HEIGHT-35;
-const float ITEM_GAP_X		= 14;
-const float LABELS_X		= 80;
-const float LINE_START_Y	= 80;
-const float LINE_GAP_Y		= 34;
-const float ITEMS_START_X	= 160;
 
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
 const ScreenMessage SM_GoToPrevScreen		= ScreenMessage(SM_User-5);
@@ -107,6 +104,9 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 		{	
 			m_Underline[p][l].Load( (PlayerNumber)p, true );
 			m_framePage.AddChild( &m_Underline[p][l] );
+
+			m_OptionIcons[p][l].Load( (PlayerNumber)p, "BLAH", false );
+			m_framePage.AddChild( &m_OptionIcons[p][l] );
 		}
 
 		m_Highlight[p].Load( (PlayerNumber)p, false );
@@ -130,6 +130,7 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 
 	InitOptionsText();
 	PositionUnderlines();
+	PositionIcons();
 	PositionHighlights();
 }
 
@@ -152,19 +153,22 @@ void ScreenOptions::GetWidthXY( PlayerNumber p, int iRow, int &iWidthOut, int &i
 
 void ScreenOptions::InitOptionsText()
 {
-	const float fLineGap = LINE_GAP_Y - max(0, (m_iNumOptionLines-10)*2);
+	const float fLineGap = ITEMS_SPACING_Y - max(0, (m_iNumOptionLines-10)*2);
 
 	// init m_textOptions from optionLines
 	for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
 	{
 		OptionLineData &optline = m_OptionLineData[i];
 
-		float fY = LINE_START_Y + fLineGap*i;
+		float fY = ITEMS_START_Y + fLineGap*i;
 
 		BitmapText &title = m_textOptionLineTitles[i];
 
 		title.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
-		title.SetText( optline.szTitle );
+		title.SetLineHeight( 20 );
+		CString sText = optline.szTitle;
+		sText.Replace( " ", "\n" );
+		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( 0.7f );
 		title.SetVertAlign( Actor::align_middle );		
@@ -186,7 +190,7 @@ void ScreenOptions::InitOptionsText()
 			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
 			fX += fItemWidth/2;
 			option.SetXY( fX, fY );
-			fX += fItemWidth/2 + ITEM_GAP_X;
+			fX += fItemWidth/2 + ITEMS_GAP_X;
 		}
 	}
 }
@@ -235,6 +239,23 @@ void ScreenOptions::PositionUnderlines()
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
 			underline.SetBarWidth( iWidth );
 			underline.SetXY( (float)iX, (float)iY );
+		}
+	}
+}
+
+
+void ScreenOptions::PositionIcons()
+{
+	// Set the position of the underscores showing the current choice for each option line.
+	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+	{
+		for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
+		{
+			OptionIcon &icon = m_OptionIcons[p][i];
+
+			int iWidth, iX, iY;
+			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+			icon.SetXY( ICONS_X(p), (float)iY );
 		}
 	}
 }

@@ -22,6 +22,7 @@
 #include "GrooveRadar.h"
 #include "DifficultyIcon.h"
 #include "FootMeter.h"
+#include "OptionIconRow.h"
 
 
 class ScreenSelectMusic : public Screen
@@ -66,12 +67,13 @@ protected:
 	BPMDisplay			m_BPMDisplay;
 	BitmapText			m_textStage;
 	Sprite				m_sprCDTitle;
-	Sprite				m_sprDifficultyFrame;
+	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	GrooveRadar			m_GrooveRadar;
-	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
+//	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
-	Sprite				m_sprMeterFrame;
+	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
+	Sprite				m_sprMeterFrame[NUM_PLAYERS];
 	FootMeter			m_FootMeter[NUM_PLAYERS];
 	MusicSortDisplay	m_MusicSortDisplay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];

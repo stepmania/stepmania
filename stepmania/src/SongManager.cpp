@@ -25,13 +25,8 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 
 const CString g_sStatisticsFileName = "statistics.ini";
 
-#define GROUP_COLOR_1		THEME->GetMetricC("SongManager","GroupColor1")
-#define GROUP_COLOR_2		THEME->GetMetricC("SongManager","GroupColor2")
-#define GROUP_COLOR_3		THEME->GetMetricC("SongManager","GroupColor3")
-#define GROUP_COLOR_4		THEME->GetMetricC("SongManager","GroupColor4")
-#define GROUP_COLOR_5		THEME->GetMetricC("SongManager","GroupColor5")
-#define GROUP_COLOR_6		THEME->GetMetricC("SongManager","GroupColor6")
-#define GROUP_COLOR_7		THEME->GetMetricC("SongManager","GroupColor7")
+#define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
+#define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
 const int NUM_GROUP_COLORS = 7;

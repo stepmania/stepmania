@@ -80,6 +80,8 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 	// load font
 	m_pFont = FONT->LoadFont( sFontFilePath, "" );
 
+	m_iLineHeight = m_pFont->m_pTexture->GetSourceFrameHeight();
+
 	return true;
 }
 
@@ -187,9 +189,9 @@ void BitmapText::DrawPrimitives()
 	int iY;	//	 the center position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_bottom:	iY = -(m_iNumLines)	  * iHeight		+ iHeight/2;	break;
-	case align_middle:	iY = -(m_iNumLines-1) * iHeight/2;					break;
-	case align_top:		iY =								+ iHeight/2;	break;
+	case align_bottom:	iY = -(m_iNumLines)	  * m_iLineHeight		+ m_iLineHeight/2;	break;
+	case align_middle:	iY = -(m_iNumLines-1) * m_iLineHeight/2;					break;
+	case align_top:		iY =								+ m_iLineHeight/2;	break;
 	default:		ASSERT( false );
 	}
 
@@ -257,7 +259,7 @@ void BitmapText::DrawPrimitives()
 			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.bottom );	// bottom right
 		}
 
-		iY += iHeight;
+		iY += m_iLineHeight;
 	}
 
 

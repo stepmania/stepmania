@@ -18,8 +18,6 @@ class IniFile;
 
 class ThemeManager
 {
-	float NextReloadCheck;
-
 public:
 	ThemeManager();
 	~ThemeManager();
@@ -48,6 +46,7 @@ protected:
 	CString m_sCurThemeName;
 
 	IniFile* m_pIniMetrics;	// make this a pointer so we don't have to include IniFile in this header!
+	DWORD m_uNextReloadTicks;
 	int m_iHashForCurThemeMetrics;
 	int m_iHashForBaseThemeMetrics;
 };

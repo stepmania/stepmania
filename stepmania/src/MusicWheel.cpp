@@ -21,6 +21,7 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 
+
 // WheelItem stuff
 #define ICON_X			THEME->GetMetricF("WheelItemDisplay","IconX")
 #define SONG_NAME_X		THEME->GetMetricF("WheelItemDisplay","SongNameX")
@@ -30,8 +31,7 @@
 #define ROULETTE_ZOOM	THEME->GetMetricF("WheelItemDisplay","RouletteZoom")
 #define COURSE_X		THEME->GetMetricF("WheelItemDisplay","CourseX")
 #define COURSE_ZOOM		THEME->GetMetricF("WheelItemDisplay","CourseZoom")
-#define GRADE_P1_X		THEME->GetMetricF("WheelItemDisplay","GradeP1X")
-#define GRADE_P2_X		THEME->GetMetricF("WheelItemDisplay","GradeP2Y")
+#define GRADE_X( p )	THEME->GetMetricF("WheelItemDisplay",ssprintf("GradeP%dX",p+1))
 
 
 // MusicWheel stuff
@@ -43,27 +43,12 @@
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
 #define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
-#define SECTION_COLOR_1				THEME->GetMetricC("MusicWheel","SectionColor1")
-#define SECTION_COLOR_2				THEME->GetMetricC("MusicWheel","SectionColor2")
-#define SECTION_COLOR_3				THEME->GetMetricC("MusicWheel","SectionColor3")
-#define SECTION_COLOR_4				THEME->GetMetricC("MusicWheel","SectionColor4")
-#define SECTION_COLOR_5				THEME->GetMetricC("MusicWheel","SectionColor5")
-#define SECTION_COLOR_6				THEME->GetMetricC("MusicWheel","SectionColor6")
-#define SECTION_COLOR_7				THEME->GetMetricC("MusicWheel","SectionColor7")
-const int NUM_SECTION_COLORS = 7;
+#define ITEM_SPACING_Y				THEME->GetMetricF("MusicWheel","ItemSpacingY")
+#define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
+#define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 
-D3DXCOLOR SECTION_COLORS( int i ) {
-	switch( i ) {
-		case 0:		return SECTION_COLOR_1;
-		case 1:		return SECTION_COLOR_2;
-		case 2:		return SECTION_COLOR_3;
-		case 3:		return SECTION_COLOR_4;
-		case 4:		return SECTION_COLOR_5;
-		case 5:		return SECTION_COLOR_6;
-		case 6:		return SECTION_COLOR_7;
-		default:	ASSERT(0);	return D3DXCOLOR(1,1,1,1);
-	}
-}
+float g_fItemSpacingY;	// cache
+
 inline D3DXCOLOR GetNextSectionColor() {
 	static int i=0;
 	i = i % NUM_SECTION_COLORS;
@@ -114,7 +99,7 @@ WheelItemDisplay::WheelItemDisplay()
 	{
 		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 2x8") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
-		m_GradeDisplay[p].SetXY( p==PLAYER_1 ? GRADE_P1_X : GRADE_P2_X, 0 );
+		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 	}
 
 	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
@@ -287,6 +272,11 @@ void WheelItemDisplay::DrawPrimitives()
 MusicWheel::MusicWheel() 
 { 
 	LOG->Trace( "MusicWheel::MusicWheel()" );
+
+
+	// update theme metric cache
+	g_fItemSpacingY = ITEM_SPACING_Y;
+
 
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_NONE )
@@ -620,7 +610,7 @@ void MusicWheel::SwitchSortOrder()
 
 float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 {
-	return (float)roundf( fPosOffsetsFromMiddle*44 );
+	return (float)roundf( fPosOffsetsFromMiddle*g_fItemSpacingY );
 }
 
 float MusicWheel::GetBannerBrightness( float fPosOffsetsFromMiddle )

@@ -14,30 +14,41 @@
 #include "ThemeManager.h"
 #include "PlayerOptions.h"
 
-#define TEXT_X			THEME->GetMetricF("OptionIcon","TextX")
-#define TEXT_Y			THEME->GetMetricF("OptionIcon","TextY")
+#define TEXT_OFFSET_X	THEME->GetMetricF("OptionIcon","TextOffsetX")
+#define TEXT_OFFSET_Y	THEME->GetMetricF("OptionIcon","TextOffsetY")
 #define TEXT_H_ALIGN	THEME->GetMetricI("OptionIcon","TextHAlign")
 #define TEXT_V_ALIGN	THEME->GetMetricI("OptionIcon","TextVAlign")
 #define TEXT_WIDTH		THEME->GetMetricI("OptionIcon","TextWidth")
+#define TEXT_ZOOM		THEME->GetMetricF("OptionIcon","TextZoom")
 
 
 OptionIcon::OptionIcon()
 {
 	m_spr.Load( THEME->GetPathTo("Graphics","select music option icons 3x2") );
+	m_spr.StopAnimating();
 	this->AddChild( &m_spr );
 
 	m_text.LoadFromFont( THEME->GetPathTo("Fonts","option icons") );
+	m_text.TurnShadowOff();
+	m_text.SetZoom( TEXT_ZOOM );
+	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );
+	m_text.SetHorizAlign( (Actor::HorizAlign)TEXT_H_ALIGN );
+	m_text.SetVertAlign( (Actor::VertAlign)TEXT_V_ALIGN );
 	this->AddChild( &m_text );
 }
 
 void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 {
 	bool bVacant = (sText=="");
-	m_spr.SetState( pn*3 + bVacant?1:2 );
+	m_spr.SetState( pn*3 + (bHeader?0:(bVacant?1:2)) );
 
-	m_text.SetText( sText );
+	m_text.SetText( bHeader ? "" : sText );
+	m_text.SetZoom( TEXT_ZOOM );
 	m_text.CropToWidth( TEXT_WIDTH );
-	m_text.SetXY( TEXT_X, TEXT_Y );
-	m_text.SetHorizAlign( (Actor::HorizAlign)TEXT_H_ALIGN );
-	m_text.SetVertAlign( (Actor::VertAlign)TEXT_V_ALIGN );
 }
+
+void OptionIcon::DrawPrimitives()
+{
+	ActorFrame::DrawPrimitives();
+}
+

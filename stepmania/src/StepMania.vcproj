@@ -699,16 +699,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="OptionIcon.h">
 			</File>
 			<File
+				RelativePath="OptionIconRow.cpp">
+			</File>
+			<File
+				RelativePath="OptionIconRow.h">
+			</File>
+			<File
 				RelativePath="OptionsCursor.cpp">
 			</File>
 			<File
 				RelativePath="OptionsCursor.h">
-			</File>
-			<File
-				RelativePath="PlayerOptionIcons.cpp">
-			</File>
-			<File
-				RelativePath="PlayerOptionIcons.h">
 			</File>
 			<File
 				RelativePath="ScrollBar.cpp">

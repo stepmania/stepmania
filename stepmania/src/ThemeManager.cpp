@@ -31,7 +31,7 @@ ThemeManager::ThemeManager()
 	m_pIniMetrics = new IniFile;
 
 	/* Update the metric cache on the first call to GetMetric. */
-	NextReloadCheck = -1;
+	m_uNextReloadTicks = -1;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use te base theme for now.  It's up to PrefsManager to change this.
 
@@ -219,9 +219,9 @@ try_metric_again:
 	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
 
 	// Is our metric cache out of date?
-	if (NextReloadCheck == -1 || TIMER->GetTimeSinceStart() > NextReloadCheck)
+	if (m_uNextReloadTicks == -1 || ::GetTickCount() > m_uNextReloadTicks)
 	{
-		NextReloadCheck = TIMER->GetTimeSinceStart()+1.0f;
+		m_uNextReloadTicks = GetTickCount()+1000;
 		if( m_iHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 			m_iHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{

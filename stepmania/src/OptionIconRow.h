@@ -1,8 +1,8 @@
-#ifndef OptionIcon_H
-#define OptionIcon_H
+#ifndef OptionIconRow_H
+#define OptionIconRow_H
 /*
 -----------------------------------------------------------------------------
- Class: OptionIcon
+ Class: OptionIconRow
 
  Desc: Shows PlayerOptions and SongOptions in icon form.
 
@@ -11,23 +11,26 @@
 -----------------------------------------------------------------------------
 */
 
+
 #include "ActorFrame.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "GameConstantsAndTypes.h"
+#include "OptionIcon.h"
+struct PlayerOptions;
 
 
-class OptionIcon : public ActorFrame
+const int NUM_OPTION_COLS = 8;
+
+
+class OptionIconRow : public ActorFrame
 {
 public:
-	OptionIcon();
+	OptionIconRow();
 
-	void Load( PlayerNumber pn, CString sText, bool bHeader = false );
-	void DrawPrimitives();
+	void Refresh( PlayerNumber pn );
+	virtual void DrawPrimitives();
 
 protected:
-	BitmapText	m_text;
-	Sprite		m_spr;
+	PlayerNumber	m_PlayerNumber;
+	OptionIcon		m_OptionIcon[NUM_OPTION_COLS];
 };
 
 #endif

@@ -275,9 +275,9 @@ void ScreenSelectStyle::MenuBack( PlayerNumber p )
 void ScreenSelectStyle::TweenOnScreen() 
 {
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
-		m_sprIcon[i].FadeOntoScreen( (m_aPossibleStyles.GetSize()-i)*0.1f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprIcon[i].FadeOn( (m_aPossibleStyles.GetSize()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_sprExplanation.FadeOntoScreen( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprExplanation.FadeOn( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
 	// let AfterChange tween Preview and Info
 }
@@ -285,13 +285,13 @@ void ScreenSelectStyle::TweenOnScreen()
 void ScreenSelectStyle::TweenOffScreen()
 {
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
-		m_sprIcon[i].FadeOffScreen( (m_aPossibleStyles.GetSize()-i)*0.1f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprIcon[i].FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_sprExplanation.FadeOffScreen( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprExplanation.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_sprPreview.FadeOffScreen( 0, "Fade", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprPreview.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_sprInfo.FadeOffScreen( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprInfo.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 }
 
 

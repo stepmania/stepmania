@@ -19,6 +19,7 @@
 #include "Quad.h"
 #include "MenuElements.h"
 #include "OptionsCursor.h"
+#include "OptionIcon.h"
 
 
 const int MAX_OPTION_LINES = 20;
@@ -56,6 +57,7 @@ protected:
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber p, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
 	void PositionUnderlines();
+	void PositionIcons();
 	void PositionHighlights();
 	void TweenHighlight( PlayerNumber player_no );
 	virtual void OnChange();
@@ -93,6 +95,7 @@ protected:
 //	Quad m_SelectionHighlight[NUM_PLAYERS];
 
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
+	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
 	RandomSample	m_SoundChangeCol;

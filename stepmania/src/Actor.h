@@ -177,8 +177,8 @@ public:
 
 
 	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bOnToScreenOrOffOfScreen );
-	void FadeOntoScreen( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
-	void FadeOffScreen( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
+	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
+	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
 
 protected:

@@ -18,6 +18,12 @@
 #include "GameConstantsAndTypes.h"
 
 
+
+
+#define LABEL_OFFSET_X( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
+#define LABEL_OFFSET_Y( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
+
+
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
 
 const float RADAR_EDGE_WIDTH	= 3;
@@ -28,28 +34,10 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
-		const float fRadius = m_GrooveRadarValueMap.m_sprRadarBase.GetZoomedHeight()/2.0f;
-		const float fRotation = RADAR_VALUE_ROTATION(c);
-		float fX = cosf(fRotation) * fRadius;
-		
-		// push the labels out a little
-		switch( c )
-		{
-		case 0:												break;
-		case 1:
-		case 4: if( fabsf(fX) > 1 ) fX += fX/fabsf(fX) * 40;	break;
-		case 2:
-		case 3: if( fabsf(fX) > 1 ) fX += fX/fabsf(fX) * 50;	break;
-		default:	ASSERT( false );
-		}
-
-		const float fY = -sinf(fRotation) * fRadius * 1.15f;
-		
-
-		m_sprRadarLabels[c].Load( THEME->GetPathTo("Graphics","select music radar words") );
+		m_sprRadarLabels[c].Load( THEME->GetPathTo("Graphics","select music radar labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
-		m_sprRadarLabels[c].SetXY( fX, fY );
+		m_sprRadarLabels[c].SetXY( LABEL_OFFSET_X(c), LABEL_OFFSET_Y(c) );
 		this->AddChild( &m_sprRadarLabels[c] );
 	}
 }

@@ -530,7 +530,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		m_sprCursor[p].SetTweenRotationZ( 0 );
 		m_sprCursor[p].SetTweenZoom( 1 );
 		*/
-		m_sprCursor[p].FadeOntoScreen( 0, "SpinZ ZoomX ZoomY Fade", 0.3f );
+		m_sprCursor[p].FadeOn( 0, "SpinZ ZoomX ZoomY Fade", 0.3f );
 
 		m_sprCursorShadow[p].SetXY( CURSOR_X(iSelection,(PlayerNumber)p), CURSOR_Y(iSelection,(PlayerNumber)p) );
 		D3DXCOLOR colorOriginal = m_sprCursorShadow[p].GetDiffuse();
