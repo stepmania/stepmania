@@ -64,7 +64,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	// Element name is the type in XML.
 	// Type= is the name in INI.
 	CString sType = pNode->m_sName;
-	pNode->GetAttrValue( "Type", sType );
+	bool bHasType = pNode->GetAttrValue( "Type", sType );
 
 	CString sFile;
 	pNode->GetAttrValue( "File", sFile );
@@ -73,8 +73,10 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	CString sText;
 	bool bHasText = pNode->GetAttrValue( "Text", sText );
 
+	//
 	// backward compatibility hacks
-	if( bHasText )
+	//
+	if( bHasText && !bHasType )
 		sType = "BitmapText";
 	else if( sFile.CompareNoCase("songbackground") == 0 )
 		sType = "SongBackground";
