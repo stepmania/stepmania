@@ -138,8 +138,9 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
 		m_Rows.push_back( new Row() );
-		Row &Row = *m_Rows[r];
-		Row.m_RowDef = OptionRows[r];
+		Row &row = *m_Rows.back();
+		row.m_RowDef = OptionRows[r];
+		row.Type = Row::ROW_NORMAL;
 		
 		if( !OptionRows[r].choices.size() )
 			RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
@@ -147,13 +148,13 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		
 		FOREACH_PlayerNumber( p )
 		{
-			vector<bool> &vbSelected = Row.m_vbSelected[p];
-			vbSelected.resize( Row.m_RowDef.choices.size() );
+			vector<bool> &vbSelected = row.m_vbSelected[p];
+			vbSelected.resize( row.m_RowDef.choices.size() );
 			for( unsigned j=0; j<vbSelected.size(); j++ )
 				vbSelected[j] = false;
 			
 			// set select the first item if a SELECT_ONE row
-			if( Row.m_RowDef.type == OptionRowData::SELECT_ONE )
+			if( row.m_RowDef.type == OptionRowData::SELECT_ONE )
 				vbSelected[0] = true;
 		}
 	}
@@ -194,7 +195,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 				if( !bHasSelection )
 				{
-					LOG->Warn( "Options menu \"%s\" row %i has no selection", m_sName.c_str(), i );
+					LOG->Warn( "Options menu \"%s\" row index %i has no selection", m_sName.c_str(), r );
 					row.m_vbSelected[p][0] = true;
 				}
 				
@@ -245,18 +246,15 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	for( unsigned  r=0; r<m_Rows.size(); r++ )		// foreach row
 	{
 		Row &row = *m_Rows[r];
-		row.Type = Row::ROW_NORMAL;
 
 		vector<BitmapText *> & textItems = row.m_textItems;
 		const OptionRowData &optline = m_Rows[r]->m_RowDef;
-
-		unsigned c;
 
 		m_framePage.AddChild( &row.m_sprBullet );
 		m_framePage.AddChild( &row.m_textTitle );		
 
 		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( c=0; c<optline.choices.size(); c++ )
+		for( unsigned c=0; c<optline.choices.size(); c++ )
 		{
 			// init text
 			BitmapText *bt = new BitmapText;
@@ -275,11 +273,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			bt->SetX( fX );
 
 			// init underlines
-			FOREACH_PlayerNumber( p )
+			FOREACH_HumanPlayer( p )
 			{
-				if( !GAMESTATE->IsHumanPlayer(p) )
-					continue;
-
 				OptionsCursor *ul = new OptionsCursor;
 				row.m_Underline[p].push_back( ul );
 				ul->Load( (PlayerNumber)p, true );
@@ -294,12 +289,12 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			{
 				row.m_bRowIsLong = true;
 				for( unsigned j=0; j<textItems.size(); j++ )	// for each option on this row
-					delete textItems[j];
+					SAFE_DELETE( textItems[j] );
 				textItems.clear();
 				FOREACH_PlayerNumber( p )
 				{
 					for( unsigned j=0; j<row.m_Underline[p].size(); j++ )	// for each option on this row
-						delete row.m_Underline[p][j];
+						SAFE_DELETE( row.m_Underline[p][j] );
 					row.m_Underline[p].clear();
 				}
 				break;
@@ -337,9 +332,9 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			{
 				OptionsCursor *ul = new OptionsCursor;
 				row.m_Underline[p].push_back( ul );
-				ul->Load( (PlayerNumber)p, true );
+				ul->Load( p, true );
 				int iWidth, iX, iY;
-				GetWidthXY( (PlayerNumber) p, r, c, iWidth, iX, iY );
+				GetWidthXY( p, r, 0, iWidth, iX, iY );
 				ul->SetX( float(iX) );
 				ul->SetWidth( float(iWidth) );
 			}
@@ -375,14 +370,12 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	InitOptionsText();
 
 	// add explanation here so it appears on top
+	FOREACH_PlayerNumber( p )
 	{
-		FOREACH_PlayerNumber( p )
-		{
-			m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
-			m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
-			m_textExplanation[p].SetShadowLength( 0 );
-			m_framePage.AddChild( &m_textExplanation[p] );
-		}
+		m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
+		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
+		m_textExplanation[p].SetShadowLength( 0 );
+		m_framePage.AddChild( &m_textExplanation[p] );
 	}
 
 	/* Hack: if m_CurStyle is set, we're probably in the player or song options menu, so
