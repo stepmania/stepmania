@@ -62,7 +62,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery percent numbers") );
 	m_textPercent.TurnShadowOff();
 	m_textPercent.SetZoom( 0.7f );
-	m_textPercent.SetText( "00.0" );
+	m_textPercent.SetText( "00.0%" );
 	if( bPlayerEnabled )
 		this->AddChild( &m_textPercent );
 
@@ -150,8 +150,8 @@ void LifeMeterBattery::OnDancePointsChange()
 //	printf( "Actual %d, Possible %d, Percent %f\n", iActualDancePoints, iPossibleDancePoints, fPercentDancePoints );
 
 	float fNumToDisplay = MAX( 0, fPercentDancePoints*100 );
-	CString sNumToDisplay = ssprintf("%03.1f", fNumToDisplay);
-	if( sNumToDisplay.GetLength() == 3 )
+	CString sNumToDisplay = ssprintf("%03.1f%%", fNumToDisplay);
+	if( sNumToDisplay.GetLength() == 4 )
 		sNumToDisplay = "0" + sNumToDisplay;
 	m_textPercent.SetText( sNumToDisplay );
 }
