@@ -211,12 +211,11 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 */
 	int p = 0;	// score multiplier 
-	const bool MarvelousEnabled = GAMESTATE->IsCourseMode() && (PREFSMAN->m_iMarvelousTiming > 0);
 
 	switch( score )
 	{
 	case TNS_MARVELOUS:	p = 10;		break;
-	case TNS_PERFECT:	p = MarvelousEnabled? 9:10; break;
+	case TNS_PERFECT:	p = GAMESTATE->ShowMarvelous()? 9:10; break;
 	case TNS_GREAT:		p = 5;		break;
 	default:			p = 0;		break;
 	}
@@ -226,9 +225,6 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	const int N = m_iNumTapsAndHolds;
 	const int sum = (N * (N + 1)) / 2;
 	const int B = m_iMaxPossiblePoints/10;
-
-	int iScoreMultiplier = (m_iMaxPossiblePoints / (10*sum));
-	ASSERT( iScoreMultiplier >= 0 );
 
 	// What does this do?  "Don't use a multiplier if 
 	// the player has failed"?
@@ -263,6 +259,8 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 			m_iMaxScoreSoFar = 0;
 		}
 	}
+
+	ASSERT( iScore >= 0 );
 
 	/* Undo rounding from the last tap, and re-round. */
 	iScore += m_iScoreRemainder;
@@ -509,7 +507,7 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	case PLAY_MODE_ONI:
 		switch( hns )
 		{
-		case HNS_OK:	return (PREFSMAN->m_iMarvelousTiming != 0)? +3:+2;
+		case HNS_OK:	return GAMESTATE->ShowMarvelous()? +3:+2;
 		case HNS_NG:	return +0;
 		}
 		break;
