@@ -7,6 +7,9 @@
 #include <mmsystem.h>
 #include <dsound.h>
 
+#pragma comment(lib, "dsound.lib")
+#pragma comment(lib, "dxguid.lib")
+
 DSound::DSound()
 {
 	HRESULT hr;

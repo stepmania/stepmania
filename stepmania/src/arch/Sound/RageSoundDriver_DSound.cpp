@@ -19,9 +19,6 @@
 
 RageSoundManager *SOUNDMAN = NULL;
 
-#pragma comment(lib, "dsound.lib")
-#pragma comment(lib, "dxguid.lib")
-
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;

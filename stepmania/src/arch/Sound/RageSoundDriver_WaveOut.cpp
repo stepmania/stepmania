@@ -1,15 +1,7 @@
 #include "../../stdafx.h"
 #include "RageSoundDriver_WaveOut.h"
-// #include "DSoundHelpers.h"
 
-/* Known problems:
- *
- * Skips between screen changes in the software mixer.  This is because we use
- * a smaller buffer.  The hardware mixer uses a larger buffer, so the CPU used
- * loading the new screen isn't a problem.  We can't just stop sounds; we want
- * music to keep playing while we're between screens.  Throw a few SDL_Sleep(0)s
- * in strategic places?
- */
+#pragma comment(lib, "winmm.lib")
 
 #include "../../RageTimer.h"
 #include "../../RageLog.h"
