@@ -320,16 +320,16 @@ void MovieTexture_DShow::CreateTexture()
 	 * impossible.  (For example, 24-bit textures may even be cheaper on pure
 	 * AGP cards; 16-bit requires a conversion.) */
 	PixelFormat pixfmt;
-	switch( TEXTUREMAN->GetTextureColorDepth() )
+/*	switch( TEXTUREMAN->GetTextureColorDepth() )
 	{
 	default:
 		ASSERT(0);
-	case 16:
+	case 16: */
 		if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
 			pixfmt = FMT_RGB5;
 		else
 			pixfmt = FMT_RGBA4;	// everything supports RGBA4
-		break;
+/*		break;
 	case 32:
 		if( DISPLAY->SupportsTextureFormat(FMT_RGB8) )
 			pixfmt = FMT_RGB8;
@@ -340,7 +340,7 @@ void MovieTexture_DShow::CreateTexture()
 		else
 			pixfmt = FMT_RGBA4;	// everything supports RGBA4
 		break;
-	}
+	} */
 
 
 	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
