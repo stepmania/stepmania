@@ -125,6 +125,12 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 		LOG->Trace("SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers);
 
+		//XXX: This does remove functionalty, but until
+		// the cause for the strange snowball ScreenManager 
+		// crash can be found... this is the only way.
+		if ( m_iActivePlayers != NSMAN->m_ActivePlayers )
+			return;
+
 		RedoUserTexts();
 
 		LOG->Trace("SMNETCheckpoint");
