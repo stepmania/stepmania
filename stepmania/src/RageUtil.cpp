@@ -1063,11 +1063,11 @@ bool FilenameDB::IsADirectory( const CString &sPath )
 	return fs.IsADirectory(Name);
 }
 
+#if 0
 bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
 bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
 bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
-
-#if 0
+#else
 bool DoesFileExist( const CString &sPath )
 {
 	if(sPath.empty()) return false;
