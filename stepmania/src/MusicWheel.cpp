@@ -389,10 +389,14 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			for( unsigned j = 0; so == SORT_INVALID && j < parts.size(); ++j )
 				so = StringToSongSortOrder( parts[j] );
 
-			// If we have a valid default sort in metrics, select it.
-			so = StringToSongSortOrder(DEFAULT_SORT);
-			if( so != SORT_INVALID )
-				GAMESTATE->m_SongSortOrder = so;
+			if ( !GAMESTATE->IsCourseMode() )
+			{	
+				// If we have a valid default sort in metrics, select it.
+				// BUT ONLY IF WE ARE NOT IN COURSE MODE
+				so = StringToSongSortOrder(DEFAULT_SORT);
+				if( so != SORT_INVALID )
+					GAMESTATE->m_SongSortOrder = so;
+			}
 
 			if( so == SORT_INVALID )
 				so = SORT_GROUP;
