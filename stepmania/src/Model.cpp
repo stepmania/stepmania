@@ -62,7 +62,7 @@ void Model::Load( CString sFile )
 		LoadFromModelFile( sFile );
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() );
+#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
 
 void Model::LoadFromModelFile( CString sPath )
 {
@@ -161,63 +161,63 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 
                 // name
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
-					THROW
+					THROW;
                 Material.sName = szName;
 
                 // ambient
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 RageVector4 Ambient;
                 if (sscanf (sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4)
-					THROW
+					THROW;
                 memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
                 // diffuse
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 RageVector4 Diffuse;
                 if (sscanf (sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4)
-					THROW
+					THROW;
                 memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
                 // specular
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 RageVector4 Specular;
                 if (sscanf (sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4)
-					THROW
+					THROW;
                 memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
                 // emissive
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 RageVector4 Emissive;
                 if (sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4)
-					THROW
+					THROW;
                 memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
                 // shininess
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
 				char *p;
                 float fShininess = strtof( sLine, &p );
                 if ( p == sLine )
-					THROW
+					THROW;
                 Material.fShininess = fShininess;
 
                 // transparency
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 float fTransparency = strtof( sLine, &p );
                 if ( p == sLine )
-					THROW
+					THROW;
                 Material.fTransparency = fTransparency;
 
                 // diffuse texture
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 strcpy (szName, "");
                 sscanf (sLine, "\"%[^\"]\"", szName);
                 CString sDiffuseTexture = szName;
@@ -238,7 +238,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 
                 // alpha texture
 			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+					THROW;
                 strcpy (szName, "");
                 sscanf (sLine, "\"%[^\"]\"", szName);
 				CString sAlphaTexture = szName;
@@ -301,20 +301,14 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
                 // name
 			    if( f.GetLine( sLine ) <= 0 )
-                {
 					THROW;
-                }
                 if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
-                {
 					THROW;
-                }
                 strcpy( Bone.szName, szName );
 
                 // parent
 			    if( f.GetLine( sLine ) <= 0 )
-                {
 					THROW;
-                }
                 strcpy (szName, "");
                 sscanf (sLine, "\"%[^\"]\"", szName);
 
@@ -333,7 +327,7 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 {
 					THROW;
                 }
-				Rotation *= 180.0f / PI; /* rad -> deg */
+				Rotation = RadianToDegree(Rotation);
 
 				Bone.nFlags = nFlags;
                 memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
@@ -380,7 +374,7 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 					float fTime;
                     if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
 						THROW;
-					Rotation *= 180.0f / PI; /* rad -> deg */
+					Rotation = RadianToDegree(Rotation);
 
 					msRotationKey key;
 					key.fTime = fTime;
