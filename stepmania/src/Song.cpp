@@ -556,15 +556,35 @@ void Song::TidyUpData()
 	}
 }
 
-/* Get Notes that match a given style and player. */
-void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const
+/* Get Notes that match a given style and player. 
+ *
+ * If UseFallbacks is true, fallback notes will be returned if (and
+ * only if) no non-fallback notes are found at all.
+ *
+ * If UseFallbacks is false, fallback notes will never be returned.
+ */
+void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo, bool UseFallbacks ) const
 {
+	int cnt = GetNotesThatMatch( s->m_NotesTypes[p], arrayAddTo );
+
+	if ( UseFallbacks && !cnt )
+		GetNotesThatMatch( s->m_FallbackNotesType, arrayAddTo );
+}
+
+/* Get note patterns of the given type; return the number of patterns returned. */
+int Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
+{
+	int ret=0;
+
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
 	{
-		if( m_apNotes[i]->m_NotesType == s->m_NotesTypes[p] ||
-			m_apNotes[i]->m_NotesType == s->m_FallbackNotesType )
+		if( m_apNotes[i]->m_NotesType == nt )
+		{
 			arrayAddTo.Add( m_apNotes[i] );
+			ret++;
+		}
 	}
+	return ret;
 }
 
 /* Return whether the song is playable in the given style. */

@@ -471,9 +471,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
-		"DDR Couple",						// m_szName
+		"DDR Couples",						// m_szName
 		{ NOTES_TYPE_DANCE_COUPLE_1, NOTES_TYPE_DANCE_COUPLE_2 },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		NOTES_TYPE_DANCE_SINGLE,			// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		4,									// m_iColsPerPlayer
@@ -716,8 +716,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		"Pump Couples",							// m_szName
-		{ NOTES_TYPE_PUMP_SINGLE,NOTES_TYPE_PUMP_COUPLE_2},	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		{ NOTES_TYPE_PUMP_COUPLE_1,NOTES_TYPE_PUMP_COUPLE_2},	// m_NotesTypes
+		NOTES_TYPE_PUMP_SINGLE,					// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
