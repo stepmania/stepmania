@@ -219,20 +219,28 @@ void BeginnerHelper::DrawPrimitives()
 
 		m_mDancePad.Draw();
 		DISPLAY->ClearZBuffer();	// So character doesn't step "into" the dance pad.
+		DISPLAY->SetLightOff(0);
+		DISPLAY->SetLighting(false);
 	}
 	
 	// Draw StepCircles
-	DISPLAY->SetLighting(false);
 	for(int scd=0; scd<NUM_PLAYERS; scd++)
 		for(int scde=0; scde<4; scde++)
 			m_sStepCircle[scd][scde].Draw();
-	DISPLAY->SetLighting(true);
 	
 	if(DrawCelShaded) {
 		FOREACH_PlayerNumber(pn)	// Draw each dancer
 			if(GAMESTATE->IsHumanPlayer(pn)) {m_mDancer[pn].DrawCelShaded();}
 	}
 	else {
+		DISPLAY->SetLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.5,0.5,0.5,1), 
+			RageColor(1,1,1,1),
+			RageColor(0,0,0,1),
+			RageVector3(0, 0, 1) );
+
 		FOREACH_PlayerNumber(pn)	// Draw each dancer
 			if(GAMESTATE->IsHumanPlayer(pn)) {m_mDancer[pn].Draw();}
 
