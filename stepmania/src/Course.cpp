@@ -154,9 +154,6 @@ void Course::LoadFromCRSFile( CString sPath )
 		else if( 0 == stricmp(sValueName, "LIVES") )
 			m_iLives = atoi( sParams[1] );
 
-		else if( 0 == stricmp(sValueName, "EXTRA") )
-			m_iExtra = atoi( sParams[1] );
-
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
 			Entry new_entry;
@@ -278,7 +275,6 @@ void Course::Save()
 	fprintf( fp, "#COURSE:%s;\n", m_sName.c_str() );
 	fprintf( fp, "#REPEAT:%s;\n", m_bRepeat ? "YES" : "NO" );
 	fprintf( fp, "#LIVES:%i;\n", m_iLives );
-	fprintf( fp, "#EXTRA:%i;\n", m_iExtra );
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
