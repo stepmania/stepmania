@@ -72,7 +72,7 @@ const CString INPUT_TIPS_TEXT =
 	"Space bar:\n     Set area\n     marker\n"
 	"Enter:\n     Area Menu\n"
 	"Escape:\n     Main Menu\n"
-	"F1:\n     Show\n     keyboard\n     shortcuts\n";
+	"F1:\n     Show help\n";
 #else
 	"Up/Down:\n     change beat\n"
 	"Left/Right:\n     change snap\n"
@@ -312,8 +312,8 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 	}
 }
 
-static Menu g_KeyboardShortcuts(
-	"ScreenMiniMenuKeyboardShortcuts",
+static Menu g_EditHelp(
+	"ScreenMiniMenuEditHelp",
 #if !defined(XBOX)
 	MenuRow( -1, "PgUp/PgDn: jump measure",							false, true, 0, NULL ),
 	MenuRow( -1, "Home/End: jump to first/last beat",				false, true, 0, NULL ),
@@ -1034,7 +1034,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->MiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
-		SCREENMAN->MiniMenu( &g_KeyboardShortcuts, SM_None );
+		SCREENMAN->MiniMenu( &g_EditHelp, SM_None );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
