@@ -85,7 +85,7 @@ GameClient::GameClient() {
 
 int GameClient::GetData(PacketFunctions &Packet) {
 	int length = -1;
-	CheckConnection(); // Check for a connection problem
+	CheckConnection();
 	Packet.ClearPacket();
 	length = clientSocket.ReadPack((char*)Packet.Data, NETMAXBUFFERSIZE);
 	return length;
@@ -95,35 +95,35 @@ void StepManiaLanServer::ParseData(PacketFunctions &Packet, int clientNum) {
 	int command = Packet.Read1();
 	switch (command) {
 	case 0:
-		/* No Operation */
+		// No Operation
 		SendValue(129, clientNum);
 		break;
 	case 1:
-		/* No Operation response */
+		// No Operation response
 		break;
 	case 2:
-		/* Hello */
+		// Hello
 		Hello(Packet, clientNum);
 		break;
 	case 3:
-		/* Start Request */
+		// Start Request
 		Client[clientNum].StartRequest(Packet);
 		break;
 	case 4:
-		/* GameOver */ 
+		// GameOver 
 		GameOver(Packet, clientNum);
 		break;
 	case 5:
-		/* StatsUpdate */
+		// StatsUpdate
 		Client[clientNum].UpdateStats(Packet);
 		break;
 	case 6:
-		/* Style Update */
+		// Style Update
 		Client[clientNum].StyleUpdate(Packet);
 		SendUserList();
 		break;
 	case 7:
-	// Chat message
+		// Chat message
 		RelayChat(Packet, clientNum);
 		break;
 	case 8:
@@ -135,13 +135,12 @@ void StepManiaLanServer::ParseData(PacketFunctions &Packet, int clientNum) {
 }	 
 
 void StepManiaLanServer::Hello(PacketFunctions &Packet, int clientNum) {
-	Reply.ClearPacket();
-
 	int ClientVersion = Packet.Read1();
 	CString build = Packet.ReadNT();
 
 	Client[clientNum].SetClientVersion(ClientVersion, build);
 
+	Reply.ClearPacket();
 	Reply.Write1(130);
 	Reply.Write1(1);
 	Reply.WriteNT(servername);
@@ -187,14 +186,13 @@ void GameClient::StartRequest(PacketFunctions &Packet) {
 	gameInfo.artist = Packet.ReadNT();
 	gameInfo.course = Packet.ReadNT();
 
-	for (int i=0; i<2 ; i++)
-	{
-		Player[i].score = 0;
-		Player[i].combo = 0;
-		Player[i].projgrade = 0;
-		Player[i].maxCombo = 0;
+	for (int x = 0; x < 2; x++) {
+		Player[x].score = 0;
+		Player[x].combo = 0;
+		Player[x].projgrade = 0;
+		Player[x].maxCombo = 0;
 
-		memset((void*)Player[i].steps, 0, sizeof(int)*9);
+		memset((void*)Player[x].steps, 0, sizeof(int)*9);
 	}
 
 	Ready = true;
@@ -211,14 +209,13 @@ void StepManiaLanServer::CheckReady() {
 					Start = false;
 			
 
-	/* If All clients were ready, send the start command. */
+	// If All clients were ready, send the start command
 	if (Start == true)
 		for (x = 0; x < NUMBERCLIENTS; x++)
 			if (Client[x].Used == true) {
 				SendValue(131, x);
 				Client[x].Ready = false;
 			}
-
 }
 
 
@@ -227,13 +224,10 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 
 	Client[clientNum].Ready = false;
 	Client[clientNum].InGame = false;
-	for (int x = 0; (x < NUMBERCLIENTS)&&(allOver); x++) {
-		if (Client[x].Used == true) {
-			if ((Client[x].InGame == true)) {
+	for (int x = 0; (x < NUMBERCLIENTS)&&(allOver == true); x++)
+		if (Client[x].Used == true)
+			if ((Client[x].InGame == true))
 				allOver = false;
-			}
-		}
-	}
 
 	//Wait untill everyone is done before sending
 	if (allOver) {
@@ -248,7 +242,7 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write1(playersPtr[x]->diff);
 		for (int y = 6; y >= 1; y--)
-			for (int x = 0; x<numPlayers; x++)
+			for (int x = 0; x < numPlayers; x++)
 				Reply.Write2(playersPtr[x]->steps[y]);
 		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write2(playersPtr[x]->steps[8]);  //Tack on OK
@@ -261,10 +255,9 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 void StepManiaLanServer::AssignPlayerIDs() {
 	int counter = 0;
 	//Future: Figure out how to do dynamic numbering.
-	for (int x = 0; x < NUMBERCLIENTS; x++) {
-		Client[x].Player[0].PlayerID = counter++;
-		Client[x].Player[1].PlayerID = counter++;
-	}
+	for (int x = 0; x < NUMBERCLIENTS; x++)
+		for(int y = 0; y < 2; y++)
+			Client[x].Player[y].PlayerID = counter++;
 }
 
 int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
@@ -274,16 +267,10 @@ int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
 	bool allZero = true;
 
 	for (int x = 0; x < NUMBERCLIENTS; x++)
-		if (Client[x].Used == true) {
-			if (Client[x].IsPlaying(0)) {
-				playersPtr[counter] = &Client[x].Player[0];
-				counter++;
-			}
-			if (Client[x].IsPlaying(1)) {
-				playersPtr[counter] = &Client[x].Player[1];
-				counter++;
-			}
-		}
+		if (Client[x].Used == true)
+			if (Client[x].IsPlaying(0))
+				for (int y = 0; y < 2; y++)
+					playersPtr[counter++] = &Client[x].Player[y];
 
 
 	for (int x = 0; x < counter; x++) {
@@ -310,7 +297,6 @@ int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
 }
 
 void StepManiaLanServer::SendStatsToClients() {
-//	PacketFunctions StatsPacket;
 	int x;
 
 	numPlayers = SortStats(playersPtr); //Return number of players
@@ -374,14 +360,12 @@ void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, LanPlayer *playe
 		data.Write1(playersPtr[x]->PlayerID);
 }
 
-void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
-{
+void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {
 	for( int x = 0; x < numPlayers; x++ )
 		data.Write2( (uint16_t) playersPtr[x]->combo);
 }
 
-void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
-{
+void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {
 	for( int x = 0; x < numPlayers; x++ )
 		data.Write1( (uint8_t) playersPtr[x]->projgrade );
 }
@@ -399,10 +383,12 @@ void GameClient::UpdateStats(PacketFunctions &Packet) {
 	char firstbyte = Packet.Read1();
 	char secondbyte = Packet.Read1();
 	int pID = int(firstbyte/16); /* MSN */
+
 	Player[pID].currstep = int(firstbyte%16); /* LSN */
 	Player[pID].projgrade = int(secondbyte/16);
 	Player[pID].score = Packet.Read4();
 	Player[pID].combo = Packet.Read2();
+
 	if (Player[pID].combo > Player[pID].maxCombo)
 		Player[pID].maxCombo = Player[pID].combo;
 
@@ -415,6 +401,7 @@ void StepManiaLanServer::NewClientCheck() {
 	/* Find the first available empty client. Then stick a new connection
 		 in that client socket.*/
 	int CurrentEmptyClient = FindEmptyClient();
+
 	if (CurrentEmptyClient > -1)
 		if (server.accept(Client[CurrentEmptyClient].clientSocket) == 1)
 			Client[CurrentEmptyClient].Used = 1;
@@ -462,9 +449,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 			Reply.Write1(1);
 			Reply.WriteNT(CurrentSongInfo.title);
 			Reply.WriteNT(CurrentSongInfo.artist);
-			Reply.WriteNT(CurrentSongInfo.subtitle);
-
-			
+			Reply.WriteNT(CurrentSongInfo.subtitle);		
 
 			ClearHasSong();
 
@@ -475,6 +460,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 				if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
 					if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
 						SecondSameSelect = true;
+
 			if (SecondSameSelect == false) {
 				LastSongInfo.title = CurrentSongInfo.title;
 				LastSongInfo.artist = CurrentSongInfo.artist;
@@ -526,7 +512,8 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 		Reply.WriteNT(CurrentSongInfo.title);
 		Reply.WriteNT(CurrentSongInfo.artist);
 		Reply.WriteNT(CurrentSongInfo.subtitle);
-		//Reset last song in case host picks same song again
+
+		//Reset last song in case host picks same song again (otherwise dual select is bypassed)
 		LastSongInfo.title = "";
 		LastSongInfo.artist = "";
 		LastSongInfo.subtitle = "";
@@ -557,17 +544,14 @@ void StepManiaLanServer::SendToAllClients(PacketFunctions &Packet) {
 
 }
 void StepManiaLanServer::ServerChat(CString message) {
-//	PacketFunctions chat;
 	Reply.ClearPacket();
 	Reply.Write1(135);
 	Reply.WriteNT(message);
 	SendToAllClients(Reply);
-
 }
 
 int StepManiaLanServer::FindEmptyClient() {
-	/* Look at Used flag, if zero then it's an empty client.
-		 Return the index. */
+	//Look at Used flag, if zero then it's an empty client (return client index, -1 if none).
 	for (int x = 0; x < NUMBERCLIENTS; x++)
 		if (Client[x].Used == 0)
 			return x;
@@ -576,7 +560,7 @@ int StepManiaLanServer::FindEmptyClient() {
 }
 
 void GameClient::CheckConnection() {
-	/* If there is an error close the socket. */
+	//If there is an error close the socket.
 	if (clientSocket.IsError()) {
 		clientSocket.close();
 		Used = Ready = hasSong = InGame = false;
@@ -589,7 +573,7 @@ void StepManiaLanServer::MoveClientToHost() {
 		for (int x = 1; x < NUMBERCLIENTS; x++)
 			if (Client[x].Used == true) {
 				ClientHost = x;
-				x = 17;
+				x = NUMBERCLIENTS+1;
 			}
 }
 
@@ -598,20 +582,19 @@ void StepManiaLanServer::SendUserList() {
 	Reply.Write1(137);
 	Reply.Write1(NUMBERCLIENTS*2);
 	Reply.Write1(NUMBERCLIENTS*2);
+
 	for (int x = 0; x < NUMBERCLIENTS; x++) {
-		if (Client[x].Player[0].name.length() == 0) {
-			Reply.Write1(0);
-		} else {
-			Reply.Write1(1);
+		for (int y = 0; y < 2; y++) {
+			if (Client[x].Player[y].name.length() == 0) {
+				Reply.Write1(0);
+			} else {
+				Reply.Write1(1);
+			}
+
+			Reply.WriteNT(Client[x].Player[y].name);
 		}
-		Reply.WriteNT(Client[x].Player[0].name);
-		if (Client[x].Player[1].name.length() == 0) {
-			Reply.Write1(0);
-		} else {
-			Reply.Write1(1);
-		}
-		Reply.WriteNT(Client[x].Player[1].name);
 	}
+
 	SendToAllClients(Reply);
 }
 
