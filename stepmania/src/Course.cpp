@@ -745,7 +745,7 @@ bool Course::HasMods() const
 {
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
-		if( !m_entries[i].modifiers.empty() )
+		if( !m_entries[i].modifiers.empty() || !m_entries[i].attacks.empty() )
 			return true;
 	}
 
