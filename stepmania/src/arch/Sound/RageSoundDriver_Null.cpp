@@ -30,8 +30,8 @@ void RageSound_Null::MixerThread()
 	RageTimer Speaker;
 
 	while(!shutdown) {
-		float delay_ms = float(buffersize_frames) / samplerate;
-		SDL_Delay(int(delay_ms / 2));
+		const int delay_ms = 1000 * buffersize_frames / samplerate;
+		SDL_Delay(delay_ms / 2);
 
 		LockMutex L(SOUNDMAN->lock);
 
