@@ -260,7 +260,10 @@ static void InitCharAliases()
 		{ "nbsp",	0x00a0 }, /* Non-breaking space */
 
 		/* Symbols: */
+		{ "delta",	0x0394 }, /* Δ */
+		{ "sigma",	0x03a3 }, /* Σ */
 		{ "omega",	0x03a9 }, /* Ω */
+		{ "angle",	0x2220 }, /* ∠ */
 		{ "whiteheart",	0x2661 }, /* ♡ */
 		{ "blackstar",	0x2605 }, /* ★ */
 		{ "whitestar",	0x2606 }, /* ☆ */
