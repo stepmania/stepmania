@@ -19,7 +19,7 @@
 #include "ThemeManager.h"
 
 
-#define NEXT_SCREEN				THEME->GetMetric("ScreenCaution","NextScreen")
+#define NEXT_SCREEN				THEME->GetMetric(m_sName,"NextScreen")
 
 
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
@@ -34,22 +34,24 @@ ScreenCaution::ScreenCaution( CString sName ) : Screen( sName )
 		return;
 	}
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenCaution background") );
+	m_Background.LoadFromAniDir( THEME->GetPathB(m_sName,"background") );
 	this->AddChild( &m_Background );
 	
-	m_In.Load( THEME->GetPathToB("ScreenCaution in") );
+	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning( SM_DoneOpening );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB("ScreenCaution out") );
+	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	this->AddChild( &m_Out );
 
 	m_Back.Load( THEME->GetPathToB("Common back") );
 	this->AddChild( &m_Back );
 
-	this->PostScreenMessage( SM_StartClosing, m_Background.GetLengthSeconds()-m_Out.GetLengthSeconds() );
+	float fCloseInSeconds = m_Background.GetLengthSeconds()-m_Out.GetLengthSeconds();
+	fCloseInSeconds = max( 0, fCloseInSeconds );
+	this->PostScreenMessage( SM_StartClosing, fCloseInSeconds );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenCaution music") );
+	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
 
