@@ -21,7 +21,6 @@
 #include "Judgment.h"
 #include "HoldJudgment.h"
 #include "Combo.h"
-#include "NoteFieldPlus.h"
 #include "NoteDataWithScoring.h"
 #include "ArrowBackdrop.h"
 #include "RageTimer.h"
@@ -29,6 +28,7 @@
 #include "RageSound.h"
 #include "DancingCharacters.h"
 #include "AttackDisplay.h"
+#include "NoteField.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -48,7 +48,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField );
+	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteField* pNoteField );
 	void CrossedRow( int iNoteRow );
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
@@ -75,7 +75,7 @@ protected:
 	int				m_iOffsetSample;		//
 
 	ArrowBackdrop	m_ArrowBackdrop;
-	NoteFieldPlus*	m_pNoteField;
+	NoteField*		m_pNoteField;
 
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 
@@ -109,7 +109,7 @@ public:
 	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
 
 protected:
-	NoteFieldPlus	m_NoteField;
+	NoteField		m_NoteField;
 
 };
 
