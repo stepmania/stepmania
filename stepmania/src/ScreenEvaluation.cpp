@@ -1062,6 +1062,10 @@ void ScreenEvaluation::CommitScores(
 				}
 			}
 
+			// Max one PDA per stage
+			if( !vPdas.empty() )
+				vPdas.erase( vPdas.begin(), vPdas.end()-1 );
+			
 			if( !vPdas.empty() )
 				pdaToShowOut[p] = vPdas.back();
 
