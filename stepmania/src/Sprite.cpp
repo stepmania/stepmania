@@ -267,14 +267,11 @@ void TexCoordArrayFromRect(float fImageCoords[8], const RectF &rect)
 	fImageCoords[6] = rect.right;	fImageCoords[7] = rect.top;		// top right
 }
 
-void Sprite::DrawPrimitives()
+void Sprite::DrawTexture( const TweenState *state )
 {
-	if( m_pTexture == NULL  &&  !m_bDrawIfTextureNull )
-		return;
-
 	// bail if cropped all the way 
-    if( m_pTempState->crop.left + m_pTempState->crop.right > 1  || 
-		m_pTempState->crop.top + m_pTempState->crop.bottom > 1 ) 
+    if( state->crop.left + state->crop.right >= 1  || 
+		state->crop.top + state->crop.bottom >= 1 ) 
 		return; 
 
 	// use m_temp_* variables to draw the object
@@ -301,13 +298,14 @@ void Sprite::DrawPrimitives()
 
 
 	RectF croppedQuadVerticies = quadVerticies; 
-#define IF_CROP_POS(side,opp_side) if(m_pTempState->crop.side>0) croppedQuadVerticies.side = SCALE( m_pTempState->crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
+#define IF_CROP_POS(side,opp_side) \
+	if(state->crop.side>0) \
+		croppedQuadVerticies.side = \
+			SCALE( state->crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
 	IF_CROP_POS( left, right ); 
 	IF_CROP_POS( top, bottom ); 
 	IF_CROP_POS( right, left ); 
 	IF_CROP_POS( bottom, top ); 
-
-
 
 	static RageSpriteVertex v[4];
 	v[0].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,		0 );	// top left
@@ -336,36 +334,42 @@ void Sprite::DrawPrimitives()
 		};
 	
 
-		if( m_pTempState->crop.left>0 )
+		if( state->crop.left>0 )
 		{
-			v[0].t.x = SCALE( m_pTempState->crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
-			v[1].t.x = SCALE( m_pTempState->crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
+			v[0].t.x = SCALE( state->crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
+			v[1].t.x = SCALE( state->crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
 		}
-		if( m_pTempState->crop.right>0 )
+		if( state->crop.right>0 )
 		{
-			v[2].t.x = SCALE( m_pTempState->crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
-			v[3].t.x = SCALE( m_pTempState->crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
+			v[2].t.x = SCALE( state->crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
+			v[3].t.x = SCALE( state->crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
 		}
-		if( m_pTempState->crop.top>0 )
+		if( state->crop.top>0 )
 		{
-			v[0].t.y = SCALE( m_pTempState->crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
-			v[3].t.y = SCALE( m_pTempState->crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
+			v[0].t.y = SCALE( state->crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
+			v[3].t.y = SCALE( state->crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
 		}
-		if( m_pTempState->crop.bottom>0 )
+		if( state->crop.bottom>0 )
 		{
-			v[1].t.y = SCALE( m_pTempState->crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
-			v[2].t.y = SCALE( m_pTempState->crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
+			v[1].t.y = SCALE( state->crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
+			v[2].t.y = SCALE( state->crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
 		}
 	}
-
-	DISPLAY->SetTextureModeModulate();
+	else
+	{
+		// Just make sure we don't throw NaN/INF at the renderer:
+		for( unsigned i = 0; i < 4; ++i )
+			v[i].t.x = v[i].t.y = 0;
+	}
 
 	/* Draw if we're not fully transparent */
-	if( m_pTempState->diffuse[0].a > 0 || 
-		m_pTempState->diffuse[1].a > 0 ||
-		m_pTempState->diffuse[2].a > 0 ||
-		m_pTempState->diffuse[3].a > 0 )
+	if( state->diffuse[0].a > 0 || 
+		state->diffuse[1].a > 0 ||
+		state->diffuse[2].a > 0 ||
+		state->diffuse[3].a > 0 )
 	{
+		DISPLAY->SetTextureModeModulate();
+
 		//////////////////////
 		// render the shadow
 		//////////////////////
@@ -373,7 +377,7 @@ void Sprite::DrawPrimitives()
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
+			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*state->diffuse[0].a);	// semi-transparent black
 			DISPLAY->DrawQuad( v );
 			DISPLAY->PopMatrix();
 		}
@@ -381,22 +385,171 @@ void Sprite::DrawPrimitives()
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
-		v[0].c = m_pTempState->diffuse[0];	// top left
-		v[1].c = m_pTempState->diffuse[2];	// bottom left
-		v[2].c = m_pTempState->diffuse[3];	// bottom right
-		v[3].c = m_pTempState->diffuse[1];	// top right
+		v[0].c = state->diffuse[0];	// top left
+		v[1].c = state->diffuse[2];	// bottom left
+		v[2].c = state->diffuse[3];	// bottom right
+		v[3].c = state->diffuse[1];	// top right
 		DISPLAY->DrawQuad( v );
-//		glEnable(GL_BLEND);
 	}
 
 	//////////////////////
 	// render the glow pass
 	//////////////////////
-	if( m_pTempState->glow.a > 0.0001f )
+	if( state->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureModeGlow(m_pTempState->glowmode);
-		v[0].c = v[1].c = v[2].c = v[3].c = m_pTempState->glow;
+		DISPLAY->SetTextureModeGlow(state->glowmode);
+		v[0].c = v[1].c = v[2].c = v[3].c = state->glow;
 		DISPLAY->DrawQuad( v );
+	}
+}
+
+static RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColor &b )
+{
+	return RageColor(
+		SCALE( x, l1, h1, a.r, b.r ),
+		SCALE( x, l1, h1, a.g, b.g ),
+		SCALE( x, l1, h1, a.b, b.b ),
+		SCALE( x, l1, h1, a.a, b.a ) );
+}
+
+void Sprite::DrawPrimitives()
+{
+	if( m_pTexture == NULL  &&  !m_bDrawIfTextureNull )
+		return;
+
+	if( m_pTempState->fade.top > 0 ||
+		m_pTempState->fade.bottom > 0 ||
+		m_pTempState->fade.left > 0 ||
+		m_pTempState->fade.right > 0 )
+	{
+		/* We're fading the edges.  */
+		const RectF &FadeDist = m_pTempState->fade;
+
+		/* Actual size of the fade on each side: */
+		RectF FadeSize = FadeDist;
+
+		/* If the cropped size is less than the fade distance in either dimension, clamp. */
+		const float HorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
+		if( FadeDist.left+FadeDist.right > 0 &&
+			HorizRemaining < FadeDist.left+FadeDist.right )
+		{
+			const float LeftPercent = FadeDist.left/(FadeDist.left+FadeDist.right);
+			FadeSize.left = LeftPercent * HorizRemaining;
+			FadeSize.right = (1.0f-LeftPercent) * HorizRemaining;
+		}
+
+		const float VertRemaining = 1.0f - (m_pTempState->crop.top + m_pTempState->crop.bottom);
+		if( FadeDist.top+FadeDist.bottom > 0 &&
+			VertRemaining < FadeDist.top+FadeDist.bottom )
+		{
+			const float TopPercent = FadeDist.top/(FadeDist.top+FadeDist.bottom);
+			FadeSize.top = TopPercent * VertRemaining;
+			FadeSize.bottom = (1.0f-TopPercent) * VertRemaining;
+		}
+
+		const RageColor &FadeColor = m_pTempState->fadecolor;
+
+		/* Alpha value of the un-faded side of each fade rect: */
+		const RageColor RightColor  = scale( FadeSize.right,  FadeDist.right,  0, RageColor(1,1,1,1), FadeColor );
+		const RageColor LeftColor   = scale( FadeSize.left,   FadeDist.left,   0, RageColor(1,1,1,1), FadeColor );
+		const RageColor TopColor    = scale( FadeSize.top,    FadeDist.top,    0, RageColor(1,1,1,1), FadeColor );
+		const RageColor BottomColor = scale( FadeSize.bottom, FadeDist.bottom, 0, RageColor(1,1,1,1), FadeColor );
+
+		/* Draw the inside: */
+		TweenState ts = *m_pTempState;
+		ts.crop.left += FadeDist.left;
+		ts.crop.right += FadeDist.right;
+		ts.crop.top += FadeDist.top;
+		ts.crop.bottom += FadeDist.bottom;
+		DrawTexture( &ts );
+
+		if( FadeSize.left > 0.001f )
+		{
+			/* Draw the left: */
+			ts.crop = m_pTempState->crop; // restore
+			memcpy( ts.diffuse, m_pTempState->diffuse, sizeof(ts.diffuse) ); // restore
+
+			ts.crop.right = 1 - (ts.crop.left + FadeSize.left);
+			ts.crop.top += FadeDist.top;		// lop off the corner if fading both x and y
+			ts.crop.bottom += FadeDist.bottom;
+			ts.diffuse[0] *= FadeColor;			// top left
+			ts.diffuse[2] *= FadeColor;			// bottom left
+			ts.diffuse[3] *= LeftColor;			// bottom right
+			ts.diffuse[1] *= LeftColor;			// top right
+			DrawTexture( &ts );
+		}
+
+		if( FadeSize.right > 0.001f )
+		{
+			/* Draw the right: */
+			ts.crop = m_pTempState->crop; // restore
+			memcpy( ts.diffuse, m_pTempState->diffuse, sizeof(ts.diffuse) ); // restore
+
+			ts.crop.left = 1 - (ts.crop.right + FadeSize.right);
+			ts.crop.top += FadeDist.top;
+			ts.crop.bottom += FadeDist.bottom;
+			ts.diffuse[0] *= RightColor;		// top left
+			ts.diffuse[2] *= RightColor;		// bottom left
+			ts.diffuse[3] *= FadeColor;			// bottom right
+			ts.diffuse[1] *= FadeColor;			// top right
+			DrawTexture( &ts );
+		}
+
+		if( FadeSize.top > 0.001f )
+		{
+			/* Draw the top: */
+			ts.crop = m_pTempState->crop; // restore
+			memcpy( ts.diffuse, m_pTempState->diffuse, sizeof(ts.diffuse) ); // restore
+
+			ts.crop.bottom = 1 - (ts.crop.top + FadeSize.top);
+			ts.crop.left += FadeDist.left;
+			ts.crop.right += FadeDist.right;
+			ts.diffuse[0] *= FadeColor;			// top left
+			ts.diffuse[2] *= TopColor;			// bottom left
+			ts.diffuse[3] *= TopColor;			// bottom right
+			ts.diffuse[1] *= FadeColor;			// top right
+			DrawTexture( &ts );
+		}
+
+		if( FadeSize.bottom > 0.001f )
+		{
+			/* Draw the bottom: */
+			ts.crop = m_pTempState->crop; // restore
+			memcpy( ts.diffuse, m_pTempState->diffuse, sizeof(ts.diffuse) ); // restore
+
+			ts.crop.top = 1 - (ts.crop.bottom + FadeSize.bottom);
+			ts.crop.left += FadeDist.left;
+			ts.crop.right += FadeDist.right;
+			ts.diffuse[0] *= BottomColor;		// top left
+			ts.diffuse[2] *= FadeColor;			// bottom left
+			ts.diffuse[3] *= FadeColor;			// bottom right
+			ts.diffuse[1] *= BottomColor;		// top right
+			DrawTexture( &ts );
+		}
+
+#if 0
+		/* Not yet sure how to compute the inner diffuse color. */
+		if( FadeSize.top > 0.001f && FadeSize.left > 0.001f )
+		{
+			/* Draw the top-left: */
+			ts.crop = m_pTempState->crop; // restore
+			memcpy( ts.diffuse, m_pTempState->diffuse, sizeof(ts.diffuse) ); // restore
+
+			ts.crop.right = 1 - (ts.crop.left + FadeSize.left);
+			ts.crop.bottom = 1 - (ts.crop.top + FadeSize.top);
+
+			ts.diffuse[0] *= FadeColor;			// top left
+			ts.diffuse[2] *= FadeColor;			// bottom left
+			// XXX?
+			ts.diffuse[3] *= (TopColor+LeftColor) * 0.5f;		// bottom right
+			ts.diffuse[1] *= FadeColor;			// top right
+			DrawTexture( &ts );
+		}
+#endif
+	}
+	else
+	{
+		DrawTexture( m_pTempState );
 	}
 }
 
