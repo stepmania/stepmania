@@ -55,7 +55,7 @@ static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
-	kill( 0, SIGKILL );
+	kill( getpid(), SIGKILL );
 }
 	
 ArchHooks_Unix::ArchHooks_Unix()
