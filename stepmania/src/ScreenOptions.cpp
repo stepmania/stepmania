@@ -226,21 +226,21 @@ void ScreenOptions::InitOptionsText()
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( GAMESTATE->IsHumanPlayer(p) )
-				{
-					BitmapText &option = m_textItems[i][p];
+				if( !GAMESTATE->IsHumanPlayer(p) )
+					continue;
 
-					int iChoiceInRow = m_iSelectedOption[p][i];
+				BitmapText &option = m_textItems[i][p];
 
-					option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-					option.SetText( m_OptionRow[i].choices[iChoiceInRow] );
-					option.SetZoom( ITEMS_ZOOM );
-					option.EnableShadow( false );
+				const int iChoiceInRow = m_iSelectedOption[p][i];
 
-					option.SetXY( ITEM_X[p], fY );
+				option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+				option.SetText( m_OptionRow[i].choices[iChoiceInRow] );
+				option.SetZoom( ITEMS_ZOOM );
+				option.EnableShadow( false );
 
-					UpdateText( (PlayerNumber)p );
-				}
+				option.SetXY( ITEM_X[p], fY );
+
+				UpdateText( (PlayerNumber)p );
 			}
 		}
 	}
