@@ -222,6 +222,12 @@
 				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenHowToPlay.cpp">
+			</File>
+			<File
+				RelativePath="ScreenHowToPlay.h">
+			</File>
+			<File
 				RelativePath="ScreenManager.cpp">
 			</File>
 			<File
@@ -629,16 +635,16 @@
 				RelativePath="GrooveRadar.h">
 			</File>
 			<File
-				RelativePath="GroupList.cpp">
-			</File>
-			<File
-				RelativePath="GroupList.h">
-			</File>
-			<File
 				RelativePath="GroupInfoFrame.cpp">
 			</File>
 			<File
 				RelativePath="GroupInfoFrame.h">
+			</File>
+			<File
+				RelativePath="GroupList.cpp">
+			</File>
+			<File
+				RelativePath="GroupList.h">
 			</File>
 			<File
 				RelativePath="MenuElements.cpp">

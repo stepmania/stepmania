@@ -75,7 +75,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 		NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 		for( i=aAllSongs.GetSize()-1; i>=0; i-- )		// foreach Song, back to front
 		{
-			if( !aAllSongs[i]->SongHasNoteType(nt) )
+			if( !aAllSongs[i]->SongHasNotesType(nt) )
 				aAllSongs.RemoveAt( i );
 		}
 	}

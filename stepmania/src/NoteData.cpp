@@ -105,8 +105,11 @@ CString NoteData::GetSMNoteDataString()
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
 		NoteType nt = GetSmallestNoteTypeForMeasure( m );
-		float fBeatSpacing = NoteTypeToBeat( nt );
-		int iRowSpacing = roundf( fBeatSpacing * ROWS_PER_BEAT );
+		int iRowSpacing;
+		if( nt == NOTE_TYPE_INVALID )
+			iRowSpacing = 1;
+		else
+			iRowSpacing = roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT );
 
 		CStringArray asMeasureLines;
 		asMeasureLines.Add( ssprintf("  // measure %d", m+1) );
@@ -774,9 +777,12 @@ float NoteData::GetFreezeRadarValue( float fSongSeconds )
 }
 
 
-void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iNewToOriginalTrack[] )
+// -1 for iOriginalTracksToTakeFrom means no track
+void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
-	// init
+	pOriginal->ConvertHoldNotesTo4s();
+
+	// reset all notes
 	Init();
 	
 	m_iNumTracks = iNewNumTracks;
@@ -784,24 +790,14 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 	// copy tracks
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
-		int iOriginalTrack = iNewToOriginalTrack[t];
-
-		int i;
-
+		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
+		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
+		if( iOriginalTrack == -1 )
+			continue;
 		memcpy( m_TapNotes[t], pOriginal->m_TapNotes[iOriginalTrack], MAX_TAP_NOTE_ROWS*sizeof(m_TapNotes[0][0]) );
-
-		for( i=0; i<pOriginal->m_iNumHoldNotes; i++ )
-		{
-			HoldNote hn = pOriginal->m_HoldNotes[i];
-			if( hn.m_iTrack == iOriginalTrack )
-			{
-				hn.m_iTrack = t;
-				this->AddHoldNote( hn );
-			}
-		}
-
 	}
 
+	pOriginal->Convert4sToHoldNotes();
 }
 
 NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )

@@ -566,10 +566,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	//
 	// Draw the body
 	//
-	for( fY=fYBodyTop; fY<fYTailTop; fY+=fYStep )	// top to bottom
+	for( fY=fYBodyTop; fY<fYTailTop+1; fY+=fYStep )	// top to bottom
 	{
 		const float fYTop			= fY;
-		const float fYBottom		= min( fY+fYStep, fYTailTop );
+		const float fYBottom		= min( fY+fYStep, fYTailTop+1 );
 		const float fXTop			= ArrowGetXPos2( m_PlayerNumber, iCol, fYTop );
 		const float fXBottom		= ArrowGetXPos2( m_PlayerNumber, iCol, fYBottom );
 		const float fXTopLeft		= fXTop - fFrameWidth/2;

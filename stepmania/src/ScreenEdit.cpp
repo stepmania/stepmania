@@ -598,11 +598,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			switch( DeviceI.button )
 			{
 			case DIK_S:
-				GAMESTATE->m_pCurSong->SaveToSMFile();
+				GAMESTATE->m_pCurSong->SaveToSongFile();
 				SCREENMAN->SystemMessage( "Saved as SM." );
 				break;
 			case DIK_W:
-				GAMESTATE->m_pCurSong->SaveToSMAndDWIFile();
+				GAMESTATE->m_pCurSong->SaveToSongFileAndDWI();
 				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 				break;
 			default:

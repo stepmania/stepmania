@@ -21,9 +21,10 @@
 #include "RageSoundStream.h"
 #include "RageException.h"
 #include "SongCacheIndex.h"
+#include "GameManager.h"
 
 
-const int FILE_CACHE_VERSION = 61;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 64;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -217,8 +218,8 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 }
 
 
-// This is a super hack, but it's only called from ScreenEdit, so it's OK :-)
-// Writing an inverse function of GetBeatAndBPSFromElapsedTime() is impossible,
+// This is a super hack, but it's only called from ScreenEdit, so it's OK.
+// Writing an inverse function of GetBeatAndBPSFromElapsedTime() uber difficult,
 // so do a binary search to get close to the correct elapsed time.
 float Song::GetElapsedTimeFromBeat( float fBeat ) const
 {
@@ -260,7 +261,7 @@ void Song::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &
 
 CString Song::GetCacheFilePath() const
 {
-	return ssprintf( "Cache\\%u", (UINT)GetHashForString(m_sSongDir) );
+	return ssprintf( "Cache\\%u", GetHashForString(m_sSongDir) );
 }
 
 /* Get a path to the SM containing data for this song.  It might
@@ -311,6 +312,8 @@ bool Song::LoadWithoutCache( CString sDir )
 		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir );
 		return false;
 	}
+
+	AddAutoGenNotes();
 
 	TidyUpData();
 	
@@ -1223,14 +1226,19 @@ void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 			arrayAddTo.Add( m_apNotes[i] );
 }
 
-bool Song::SongHasNoteType( NotesType nt ) const
+bool Song::SongHasNotesType( NotesType nt ) const
 {
 	for( int i=0; i < m_apNotes.GetSize(); i++ ) // foreach Notes
-	{
 		if( m_apNotes[i]->m_NotesType == nt )
 			return true;
-	}
+	return false;
+}
 
+bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, DifficultyClass dc ) const
+{
+	for( int i=0; i < m_apNotes.GetSize(); i++ ) // foreach Notes
+		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->m_DifficultyClass == dc )
+			return true;
 	return false;
 }
 
@@ -1239,33 +1247,34 @@ void Song::SaveToCacheFile()
 	LOG->Trace( "Song::SaveToCacheFile()" );
 
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
-	SaveToSMFile( GetCacheFilePath() );
+	SaveToSMFile( GetCacheFilePath(), true );
+}
+
+void Song::SaveToSongFile()
+{
+	LOG->Trace( "Song::SaveToSongFile()" );
+
+	//
+	// rename all old files to avoid confusion
+	//
+	CStringArray arrayOldFileNames;
+	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
+	GetDirListing( m_sSongDir + "*.dwi", arrayOldFileNames );
+	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
+	
+	for( int i=0; i<arrayOldFileNames.GetSize(); i++ )
+	{
+		CString sOldPath = m_sSongDir + arrayOldFileNames[i];
+		CString sNewPath = sOldPath + ".old";
+		MoveFile( sOldPath, sNewPath );
+	}
+
+	SaveToSMFile( GetSongFilePath(), false );
 }
 
 
-void Song::SaveToSMFile( CString sPath )
+void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 {
-	if( sPath == "" )
-	{
-		sPath = GetSongFilePath();
-
-		//
-		// rename all old files to avoid confusion
-		//
-		CStringArray arrayOldFileNames;
-		GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
-		GetDirListing( m_sSongDir + "*.dwi", arrayOldFileNames );
-		GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
-		
-		for( int i=0; i<arrayOldFileNames.GetSize(); i++ )
-		{
-			CString sOldPath = m_sSongDir + arrayOldFileNames[i];
-			CString sNewPath = sOldPath + ".old";
-			MoveFile( sOldPath, sNewPath );
-		}
-	}
-
-
 	LOG->Trace( "Song::SaveToSMDir('%s')", sPath );
 
 	int i;
@@ -1328,16 +1337,20 @@ void Song::SaveToSMFile( CString sPath )
 	// Save all Notes for this file
 	//
 	for( i=0; i<m_apNotes.GetSize(); i++ ) 
-		m_apNotes[i]->WriteSMNotesTag( fp );
+	{
+		Notes* pNotes = m_apNotes[i];
+		if( bSavingCache  ||  pNotes->m_sDescription.Find("(autogen)") == -1 )	// If notes aren't autogen
+			m_apNotes[i]->WriteSMNotesTag( fp );
+	}
 
 	fclose( fp );
 }
 
-void Song::SaveToSMAndDWIFile()
+void Song::SaveToSongFileAndDWI()
 {
-	LOG->Trace( "Song::SaveToSMAndDWIFile()" );
+	LOG->Trace( "Song::SaveToSongFileAndDWI()" );
 
-	SaveToSMFile();
+	SaveToSongFile();
 
 	CString sPath = GetSongFilePath();
 	sPath.Replace( ".sm", ".dwi" );
@@ -1380,6 +1393,50 @@ void Song::SaveToSMAndDWIFile()
 		m_apNotes[i]->WriteDWINotesTag( fp );
 
 	fclose( fp );
+}
+
+struct AutoGenMapping
+{
+	NotesType ntMissing;
+	NotesType ntGenerateFrom;
+	int iOriginalTrackToTakeFrom[MAX_NOTE_TRACKS];
+};
+const AutoGenMapping AUTO_GEN_MAPPINGS[] = {
+	{ NOTES_TYPE_PUMP_SINGLE,	NOTES_TYPE_DANCE_SINGLE,	{ 0, 1, -1, 2, 3 }					},
+	{ NOTES_TYPE_DANCE_SINGLE,	NOTES_TYPE_PUMP_SINGLE,		{ 0, 1, 3, 4 }						},
+	{ NOTES_TYPE_PUMP_DOUBLE,	NOTES_TYPE_DANCE_DOUBLE,	{ 0, 1, -1, 2, 3, 4, 5, -1, 6, 7 }	},
+	{ NOTES_TYPE_DANCE_DOUBLE,	NOTES_TYPE_PUMP_DOUBLE,		{ 0, 1, 3, 4, 5, 6, 8, 9 }			},
+};
+const NUM_AUTOGEN_MAPPINGS = sizeof(AUTO_GEN_MAPPINGS) / sizeof(AutoGenMapping);
+
+void Song::AddAutoGenNotes()
+{
+	for( int i=0; i<NUM_AUTOGEN_MAPPINGS; i++ )
+	{
+		const AutoGenMapping& mapping = AUTO_GEN_MAPPINGS[i];
+
+		if( !SongHasNotesType(mapping.ntMissing))
+		{
+			for( int i=0; i<m_apNotes.GetSize(); i++ )
+			{
+				Notes* pOriginalNotes = m_apNotes[i];
+				if( pOriginalNotes->m_NotesType != mapping.ntGenerateFrom )
+					continue;
+
+				Notes* pNewNotes = new Notes;
+				pNewNotes->m_DifficultyClass	= pOriginalNotes->m_DifficultyClass;
+				pNewNotes->m_iMeter				= pOriginalNotes->m_iMeter;
+				pNewNotes->m_sDescription		= pOriginalNotes->m_sDescription + " (autogen)";
+				pNewNotes->m_NotesType			= mapping.ntMissing;
+
+				NoteData originalNoteData, newNoteData;
+				pOriginalNotes->GetNoteData( &originalNoteData );
+				newNoteData.LoadTransformed( &originalNoteData, GAMEMAN->NotesTypeToNumTracks(mapping.ntMissing), mapping.iOriginalTrackToTakeFrom );
+				pNewNotes->SetNoteData( &newNoteData );
+				this->m_apNotes.Add( pNewNotes );
+			}
+		}
+	}
 }
 
 Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc ) const

@@ -59,14 +59,16 @@ public:
 
 	void TidyUpData();	// call after loading to clean up invalid data
 
-	void SaveToSMFile( CString sPath = "" );	// no path means save to SongFilePath
-	void SaveToSMAndDWIFile();	// saves SM, then saves DWI so that the SM is the master copy and NoteTypes not supported by DWI are not lost
+	void SaveToSMFile( CString sPath, bool bSavingCache );
+	void SaveToSongFileAndDWI();	// saves SM, then saves DWI so that the SM is the master copy and NoteTypes not supported by DWI are not lost
 	void SaveToCacheFile();
+	void SaveToSongFile();	// no path means save to SongFilePath
 
 	const CString &GetSongFilePath() const;
 	CString GetCacheFilePath() const;
 
-public:
+	void AddAutoGenNotes();
+
 	/* Directory this song data came from: */
 	CString m_sSongDir;
 
@@ -167,7 +169,8 @@ public:
 	
 	CArray<Notes*, Notes*> m_apNotes;
 
-	bool SongHasNoteType( NotesType nt ) const;
+	bool SongHasNotesType( NotesType nt ) const;
+	bool SongHasNotesTypeAndDifficulty( NotesType nt, DifficultyClass dc ) const;
 	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const;
 	int GetNumTimesPlayed() const
 	{
