@@ -144,8 +144,8 @@ ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h Scre
 ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
 ScreenAutogenOptions.cpp ScreenAutogenOptions.h ScreenCredits.cpp ScreenCredits.h \
 ScreenSelectCharacter.cpp ScreenSelectCharacter.h ScreenRaveOptions.cpp ScreenRaveOptions.h \
-ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenUnlock.cpp ScreenUnlock.h
- 
+ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenUnlock.cpp ScreenUnlock.h ScreenSelectMaster.cpp \
+ScreenSelectMaster.h 
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
