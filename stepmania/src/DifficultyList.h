@@ -63,7 +63,6 @@ private:
 	
 	vector<Row>		m_Rows;
 
-	ThemeMetric<Commands>  MOVE_COMMAND;
 };
 
 #endif
