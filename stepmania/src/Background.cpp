@@ -418,6 +418,9 @@ void Background::Update( float fDeltaTime )
 		}
 	}
 	
+	if( PREFSMAN->m_bShowDancingCharacters )
+		m_DancingCharacters.Update( fDeltaTime );
+
 	m_quadBGBrightness.Update( fDeltaTime );
 }
 
@@ -436,6 +439,9 @@ void Background::DrawPrimitives()
 		if( m_pFadingBGA )
 			m_pFadingBGA->Draw();
 	}
+
+	if( PREFSMAN->m_bShowDancingCharacters )
+		m_DancingCharacters.Draw();
 
 	m_quadBGBrightness.Draw();
 	for( int i=0; i<4; i++ )

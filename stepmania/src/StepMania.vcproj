@@ -195,6 +195,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenAutogenOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenBackgroundOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenBackgroundOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenCaution.cpp">
 			</File>
 			<File
@@ -1043,6 +1049,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="CroppedSprite.h">
 			</File>
 			<File
+				RelativePath="DifficultyIcon.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyIcon.h">
+			</File>
+			<File
 				RelativePath="Transition.cpp">
 			</File>
 			<File
@@ -1075,12 +1087,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="CourseEntryDisplay.h">
-			</File>
-			<File
-				RelativePath="DifficultyIcon.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyIcon.h">
 			</File>
 			<File
 				RelativePath="DifficultyMeter.cpp">
@@ -1271,6 +1277,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\Combo.h">
+			</File>
+			<File
+				RelativePath="DancingCharacters.cpp">
+			</File>
+			<File
+				RelativePath="DancingCharacters.h">
 			</File>
 			<File
 				RelativePath=".\GhostArrow.cpp">

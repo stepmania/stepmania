@@ -29,6 +29,7 @@
 enum {
 	OM_APPEARANCE,
 	OM_AUTOGEN,
+	OM_BACKGROUND,
 	OM_CONFIG_KEY_JOY,
 	OM_INPUT,
 	OM_GAMEPLAY,
@@ -41,6 +42,7 @@ enum {
 OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	OptionRow( "",	"Appearance Options" ),
 	OptionRow( "",	"Autogen Options" ),
+	OptionRow( "",	"Background Options" ),
 	OptionRow( "",	"Config Key/Joy Mappings" ),
 	OptionRow( "",	"Input Options" ),
 	OptionRow( "",	"Gameplay Options" ),
@@ -94,6 +96,7 @@ void ScreenOptionsMenu::GoToNextState()
 	{
 		case OM_APPEARANCE:		SCREENMAN->SetNewScreen("ScreenAppearanceOptions");	break;
 		case OM_AUTOGEN:		SCREENMAN->SetNewScreen("ScreenAutogenOptions");	break;
+		case OM_BACKGROUND:		SCREENMAN->SetNewScreen("ScreenBackgroundOptions");	break;
 		case OM_CONFIG_KEY_JOY:	SCREENMAN->SetNewScreen("ScreenMapControllers");	break;
 		case OM_GAMEPLAY:		SCREENMAN->SetNewScreen("ScreenGameplayOptions");	break;
 		case OM_GRAPHIC:		SCREENMAN->SetNewScreen("ScreenGraphicOptions");	break;

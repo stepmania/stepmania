@@ -91,6 +91,7 @@ PrefsManager::PrefsManager()
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
+	m_bShowDancingCharacters = false;
 	m_BannerCacheType = preload_none;
 	
 	/* DDR Extreme-style extra stage support.
@@ -193,6 +194,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
+	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.GetValueI( "Options", "BannerCacheType",			(int&)m_BannerCacheType );
 
 	m_asAdditionalSongFolders.clear();
@@ -275,6 +277,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
+	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
 
 

@@ -75,6 +75,7 @@ public:
 	bool			m_bAutogenGroupCourses;
 	CString			m_sDefaultModifiers;
 	bool			m_bBreakComboToGetItem;
+	bool			m_bShowDancingCharacters;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;

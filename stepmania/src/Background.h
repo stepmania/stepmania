@@ -17,6 +17,7 @@
 #include "ActorFrame.h"
 #include "BGAnimation.h"
 #include "song.h"
+#include "DancingCharacters.h"
 
 
 class Background : public ActorFrame
@@ -43,6 +44,8 @@ public:
 protected:
 	bool IsDangerVisible();
 		
+	DancingCharacters	m_DancingCharacters;
+
 	BGAnimation		m_BGADanger;
 
 	BGAnimation* CreateSongBGA(const Song *pSong, CString sBGName) const;
