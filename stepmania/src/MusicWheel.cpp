@@ -383,8 +383,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 		CString sNames = MENU_NAMES, sActions = MENU_ACTIONS;
 		vector<CString> Names, Actions;
-		split( sNames, ",", Names );
-		split( sActions, ",", Actions );
+		split( sNames, ":", Names );
+		split( sActions, ":", Actions );
 		if( Names.size() != Actions.size() )
 			RageException::Throw("MusicWheel::MenuNames and MusicWheel::MenuActions must have the same number of components");
 
@@ -392,14 +392,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		{
 			/* Look for sort names. */
 			vector<CString> parts;
-			split( Actions[i], "-", parts );
+			split( Actions[i], ";", parts );
 		
-			SongSortOrder so = SORT_INVALID;
-			for( unsigned j = 0; so == SORT_INVALID && j < parts.size(); ++j )
-				so = StringToSongSortOrder( parts[j] );
-
-			if( so == SORT_INVALID )
-				so = SORT_GROUP;
+			SongSortOrder so = SORT_GROUP;
+			for( unsigned j = 0; j < parts.size(); ++j )
+			{
+				CStringArray asBits;
+				split( parts[j], ",", asBits );
+				if( !asBits[0].CompareNoCase("sort") )
+					so = StringToSongSortOrder( asBits[1] );
+			}
 
 			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR, so );
 			wid.m_sLabel = Names[i];
