@@ -115,9 +115,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		if( GAMESTATE->IsCpuPlayer(p) )
 			GAMESTATE->m_pCurNotes[p] = GAMESTATE->m_pCurNotes[ GAMESTATE->GetFirstHumanPlayer() ];
 
-
-	GAMESTATE->m_CurStageStats = StageStats();	// clear values
-
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
