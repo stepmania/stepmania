@@ -86,6 +86,7 @@ PrefsManager::PrefsManager()
 	m_bShowSongOptions = true;
 	m_DefaultFailType = SongOptions::FAIL_ARCADE;
 	m_bDDRExtremeDifficultySelect = false;
+	m_bDancePointsForOni = false; //DDR-Extreme style dance points instead of max2 percent
 
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -178,6 +179,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 	ini.GetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -253,6 +255,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 	ini.SetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

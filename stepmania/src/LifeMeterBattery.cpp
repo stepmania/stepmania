@@ -27,6 +27,8 @@ const float PERCENT_Y				=	0;
 
 const float BATTERY_BLINK_TIME		= 1.2f;
 
+const int NUM_DANCE_POINT_DIGITS	=	5;
+
 
 LifeMeterBattery::LifeMeterBattery()
 {
@@ -61,10 +63,20 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
-	m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery percent numbers") );
-	m_textPercent.TurnShadowOff();
-	m_textPercent.SetZoom( 0.7f );
-	m_textPercent.SetText( "00.0%" );
+	if(PREFSMAN->m_bDancePointsForOni)
+	{
+		m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery dance point numbers") );
+		m_textPercent.TurnShadowOff();
+		m_textPercent.SetZoom( 0.7f );
+		m_textPercent.SetText( "     " );
+	}
+	else
+	{
+		m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery percent numbers") );
+		m_textPercent.TurnShadowOff();
+		m_textPercent.SetZoom( 0.7f );
+		m_textPercent.SetText( "00.0%" );
+	}
 	if( bPlayerEnabled )
 		this->AddChild( &m_textPercent );
 
@@ -149,16 +161,24 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 void LifeMeterBattery::OnDancePointsChange()
 {
 	int iActualDancePoints = GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber];
-	int iPossibleDancePoints = GAMESTATE->m_CurStageStats.iPossibleDancePoints[m_PlayerNumber];
-	iPossibleDancePoints = max( 1, iPossibleDancePoints );
-	float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
+	CString sNumToDisplay;
+	
+	if(!PREFSMAN->m_bDancePointsForOni)
+	{
+		int iPossibleDancePoints = GAMESTATE->m_CurStageStats.iPossibleDancePoints[m_PlayerNumber];
+		iPossibleDancePoints = max( 1, iPossibleDancePoints );
+		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
 
-//	LOG->Trace( "Actual %d, Possible %d, Percent %f\n", iActualDancePoints, iPossibleDancePoints, fPercentDancePoints );
+	//	LOG->Trace( "Actual %d, Possible %d, Percent %f\n", iActualDancePoints, iPossibleDancePoints, fPercentDancePoints );
 
-	float fNumToDisplay = MAX( 0, fPercentDancePoints*100 );
-	CString sNumToDisplay = ssprintf("%03.1f%%", fNumToDisplay);
-	if( sNumToDisplay.GetLength() == 4 )
-		sNumToDisplay = "0" + sNumToDisplay;
+		float fNumToDisplay = MAX( 0, fPercentDancePoints*100 );
+		sNumToDisplay = ssprintf("%03.1f%%", fNumToDisplay);
+		if( sNumToDisplay.GetLength() == 4 )
+			sNumToDisplay = "0" + sNumToDisplay;
+	}
+	else
+		sNumToDisplay = ssprintf( "%*d", NUM_DANCE_POINT_DIGITS , iActualDancePoints );
+
 	m_textPercent.SetText( sNumToDisplay );
 }
 

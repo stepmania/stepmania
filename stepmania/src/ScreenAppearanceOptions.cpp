@@ -33,6 +33,7 @@ enum {
 	AO_SKIN,
 	AO_INSTRUCTIONS,
 	AO_CAUTION,
+	AO_DANCE_POINTS_FOR_ONI,
 	AO_SELECT_GROUP,
 	AO_WHEEL_SECTIONS,
 	AO_SHOW_TRANSLATIONS,
@@ -46,6 +47,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Note\nSkin",		    0, {""} },		// fill this in on ImportOptions()
 	{ "How To\nPlay",	    2, {"SKIP","SHOW"} },
 	{ "Caution",		    2, {"SKIP","SHOW"} },
+	{ "Oni Score\nDisplay",	2, {"PERCENT","DANCE POINTS"} },
 	{ "Song\nGroup",	    2, {"ALL MUSIC","CHOOSE"} },
 	{ "Wheel\nSections",    3, {"NEVER","ALWAYS", "ABC ONLY"} },
 	{ "Translations",	    2, {"NATIVE","TRANSLITERATE"} },
@@ -160,6 +162,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_INSTRUCTIONS]				= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
 //	m_iSelectedOption[0][AO_DIFF_SELECT]				= PREFSMAN->m_bDDRExtremeDifficultySelect? 1:0;
+	m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI]		= PREFSMAN->m_bDancePointsForOni? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
 	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowTranslations;
@@ -190,6 +193,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];
 	(int&)PREFSMAN->m_MusicWheelUsesSections	= m_iSelectedOption[0][AO_WHEEL_SECTIONS];
 	PREFSMAN->m_bShowTranslations				= !!m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
+	PREFSMAN->m_bDancePointsForOni				= !!m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();
