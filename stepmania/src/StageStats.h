@@ -76,7 +76,9 @@ struct StageStats
 		Combo_t(): start(-1), size(-1), cnt(-1) { }
 		bool IsZero() const { return start < 0; }
 	};
+	float fFirstPos[NUM_PLAYERS], fLastPos[NUM_PLAYERS];
 
+	bool	FullCombo( PlayerNumber pn ) const;
 	void	UpdateComboList( PlayerNumber pn, float pos );
 
 	void	Finish();

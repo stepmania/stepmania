@@ -21,8 +21,12 @@ StageStats::StageStats()
 {
 	memset( this, 0, sizeof(StageStats) );
 	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		for( int i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
 			fLifeRecord[p][i] = -1;
+		fFirstPos[p] = 1;
+		fLastPos[p] = 0;
+	}
 }
 
 void StageStats::AddStats( const StageStats& other )
@@ -175,6 +179,10 @@ void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
 void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 {
 	pos = clamp( pos, 0, 1 );
+
+	fFirstPos[pn] = min( pos, fFirstPos[pn] );
+	fLastPos[pn] = max( pos, fLastPos[pn] );
+	
 	const int cnt = iCurCombo[pn];
 	if( !cnt )
 		return; /* no combo */
@@ -205,8 +213,9 @@ void StageStats::Finish()
 		if( ComboList[pn].size() == 0 )
 			continue;
 
-		const float First = ComboList[pn].front().start;
-		const float Last = ComboList[pn].back().start + ComboList[pn].back().size;
+		const float First = fFirstPos[pn];
+		const float Last = fLastPos[pn];
+
 		if( fabsf(First-Last) < 0.0001f )
 			continue;
 
@@ -226,6 +235,28 @@ void StageStats::Finish()
 			NewLifeRecord[i] = fLifeRecord[pn][from];
 		}
 		memcpy( fLifeRecord[pn], NewLifeRecord, sizeof(fLifeRecord[pn]) );
+
+		fFirstPos[pn] = 0;
+		fLastPos[pn] = 1;
 	}
+}
+
+bool StageStats::FullCombo( PlayerNumber pn ) const
+{
+	if( ComboList[pn].size() != 1 )
+	{
+		LOG->Trace("FullCombo(%i): %i != 1", pn, ComboList[pn].size() );
+		return false;
+	}
+
+	const float ComboStart = ComboList[pn][0].start;
+	const float ComboEnd = ComboList[pn][0].start + ComboList[pn][0].size;
+
+	const bool ComboStartsAtBeginning = fabs( ComboStart - fFirstPos[pn] ) < 0.001f;
+	const bool ComboEndsAtEnd = fabs( ComboEnd - fLastPos[pn] ) < 0.001f;
+	
+	LOG->Trace("FullCombo(%i): %f .. %f, %f .. %f, %i, %i",
+		pn, ComboStart, ComboEnd, fFirstPos[pn], fLastPos[pn], ComboStartsAtBeginning, ComboEndsAtEnd );
+	return ComboStartsAtBeginning && ComboEndsAtEnd;
 }
 
