@@ -17,7 +17,7 @@
 class NoteDataWithScoring : public NoteData
 {
 	// maintain this extra data in addition to the NoteData
-	TapNoteScore	m_TapNoteScores[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
+	vector<TapNoteScore> m_TapNoteScores[MAX_NOTE_TRACKS];
 
 	vector<HoldNoteScore> m_HoldNoteScores;
 

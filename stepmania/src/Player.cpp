@@ -125,7 +125,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	// init scoring
-	NoteDataWithScoring::Init(pNoteData->GetNumTapNotes(), pNoteData->GetNumHoldNotes());
+	NoteDataWithScoring::Init(pNoteData->GetLastRow(), pNoteData->GetNumHoldNotes());
 
 	// copy note data
 	this->CopyAll( pNoteData );

@@ -24,8 +24,10 @@ void NoteDataWithScoring::Init(int taps, int holds)
 	NoteData::Init();
 
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
-			m_TapNoteScores[t][i] = TNS_NONE;
+	{
+		m_TapNoteScores[t].clear();
+		m_TapNoteScores[t].insert(m_TapNoteScores[t].begin(), taps, TNS_NONE);
+	}
 
 	m_HoldNoteScores.clear();
 	m_HoldNoteScores.insert(m_HoldNoteScores.begin(), holds, HNS_NONE);
@@ -35,14 +37,14 @@ void NoteDataWithScoring::Init(int taps, int holds)
 	m_fHoldNoteLife.insert(m_fHoldNoteLife.begin(), holds, 1.0f);
 }
 
-int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, const float fEndBeat )			
+int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, const float fEndBeat )
 { 
 	int iNumSuccessfulTapNotes = 0;
 
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
+	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
+	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
+	for( unsigned i=iStartIndex; i<min(iEndIndex, m_TapNoteScores[0].size()); i++ )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
@@ -58,10 +60,10 @@ int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float f
 {
 	int iNumSuccessfulDoubles = 0;
 
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
+	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
+	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
+	for( unsigned i=iStartIndex; i<min(iEndIndex, m_TapNoteScores[0].size()); i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_PERFECT;
@@ -160,7 +162,7 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 {
 	// count number of triplets
 	int iNumChaosNotesCompleted = 0;
-	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
+	for( unsigned r=0; r<m_TapNoteScores[0].size(); r++ )
 	{
 		if( !IsRowEmpty(r)  &&  IsRowComplete(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
 			iNumChaosNotesCompleted++;
