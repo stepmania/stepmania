@@ -9,6 +9,23 @@
 #include "GameConstantsAndTypes.h"
 #include "DifficultyMeter.h"
 #include "RandomSample.h"
+#include "EnumHelper.h"
+
+
+enum EditMenuRow 
+{ 
+	ROW_GROUP, 
+	ROW_SONG, 
+	ROW_STEPS_TYPE, 
+	ROW_STEPS,
+	ROW_SOURCE_STEPS_TYPE, 
+	ROW_SOURCE_STEPS, 
+	ROW_ACTION, 
+	NUM_EDIT_MENU_ROWS 
+};
+#define FOREACH_EditMenuRow( emr ) FOREACH_ENUM( EditMenuRow, NUM_EDIT_MENU_ROWS, emr )
+const CString& RadarCategoryToString( RadarCategory cat );
+const CString& RadarCategoryToThemedString( RadarCategory cat );
 
 
 class EditMenu: public ActorFrame 
@@ -28,64 +45,15 @@ public:
 	void Left();
 	void Right();
 
-	enum Row 
-	{ 
-		ROW_GROUP, 
-		ROW_SONG, 
-		ROW_STEPS_TYPE, 
-		ROW_STEPS,
-		ROW_SOURCE_STEPS_TYPE, 
-		ROW_SOURCE_STEPS, 
-		ROW_ACTION, 
-		NUM_ROWS 
-	} m_SelectedRow;
-	CString RowToString( Row r )
-	{
-		const CString s[NUM_ROWS] = 
-		{
-			"Group",
-			"Song",
-			"StepsType",
-			"Steps",
-			"Source StepsType",
-			"Source Steps",
-			"Action"
-		};
-		return s[r];
-	}
-
-	enum Action
-	{
-		ACTION_EDIT,
-		ACTION_DELETE,
-		ACTION_COPY,
-		ACTION_AUTOGEN,
-		ACTION_BLANK,
-		NUM_ACTIONS
-	};
-	CString ActionToString( Action a )
-	{
-		const CString s[NUM_ACTIONS] = 
-		{
-			"Edit Existing",
-			"Delete Existing",
-			"Create new from Source by Copy",
-			"Create new from Source by AutoGen",
-			"Create new empty"
-		};
-		return s[a];
-	}
-
 	void RefreshAll();
 
-
-	CString		GetSelectedGroup() const			{ ASSERT(m_iSelection[ROW_GROUP] < (int)m_sGroups.size());				return m_sGroups[m_iSelection[ROW_GROUP]]; }
-	Song*		GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG] < (int)m_pSongs.size());				return m_pSongs[m_iSelection[ROW_SONG]]; }
-	StepsType	GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE] < (int)m_StepsTypes.size());		return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
-	Steps*		GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS] < (int)m_vpSteps.size());				return m_vpSteps[m_iSelection[ROW_STEPS]]; }
-	StepsType	GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE] < (int)m_StepsTypes.size()); return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
-	Steps*		GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS] < (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]]; }
-	Action		GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION] < (int)m_Actions.size());				return m_Actions[m_iSelection[ROW_ACTION]]; }
+	CString			GetSelectedGroup() const			{ ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	Song*			GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG]				< (int)m_pSongs.size());		return m_pSongs[m_iSelection[ROW_SONG]]; }
+	StepsType		GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
+	Steps*			GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]]; }
+	StepsType		GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE]< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
+	Steps*			GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]]; }
+	EditMenuAction	GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION]			< (int)m_Actions.size());		return m_Actions[m_iSelection[ROW_ACTION]]; }
 
 	Difficulty	GetSelectedDifficulty();
 	Difficulty	GetSelectedSourceDifficulty();
@@ -93,9 +61,10 @@ public:
 private:
 	Sprite	m_sprArrows[2];
 
-	int			m_iSelection[NUM_ROWS];
-	BitmapText	m_textLabel[NUM_ROWS];
-	BitmapText	m_textValue[NUM_ROWS];
+	EditMenuRow m_SelectedRow;
+	int			m_iSelection[NUM_EDIT_MENU_ROWS];
+	BitmapText	m_textLabel[NUM_EDIT_MENU_ROWS];
+	BitmapText	m_textValue[NUM_EDIT_MENU_ROWS];
 
 	FadingBanner	m_GroupBanner;
 	FadingBanner	m_SongBanner;
@@ -112,10 +81,10 @@ private:
 	vector<StepsType>			m_StepsTypes;
 	vector<Steps*>				m_vpSteps;
 	vector<Steps*>				m_vpSourceSteps;
-	vector<Action>				m_Actions;
+	vector<EditMenuAction>		m_Actions;
 
-	void OnRowValueChanged( Row row );
-	void ChangeToRow( Row newRow );
+	void OnRowValueChanged( EditMenuRow row );
+	void ChangeToRow( EditMenuRow newRow );
 
 	RandomSample	m_soundChangeRow;
 	RandomSample	m_soundChangeValue;

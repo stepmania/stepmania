@@ -13,9 +13,9 @@
 #include "Steps.h"
 #include "song.h"
 
-#define PREV_SCREEN					THEME->GetMetric(m_sName,"PrevScreen")
-#define EXPLANATION_TEXT			THEME->GetMetric(m_sName,"ExplanationText")
-#define HELP_TEXT					THEME->GetMetric(m_sName,"HelpText")
+#define PREV_SCREEN			THEME->GetMetric(m_sName,"PrevScreen")
+#define EXPLANATION_TEXT	THEME->GetMetric(m_sName,"ExplanationText")
+#define HELP_TEXT			THEME->GetMetric(m_sName,"HelpText")
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
@@ -111,14 +111,14 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	if( IsTransitioning() )
 		return;
 
-	Song* pSong					= m_Selector.GetSelectedSong();
-	StepsType st				= m_Selector.GetSelectedStepsType();
-	Difficulty dc				= m_Selector.GetSelectedDifficulty();
-	Steps* pSteps				= m_Selector.GetSelectedSteps();
-//	StepsType soureNT			= m_Selector.GetSelectedSourceStepsType();
-//	Difficulty sourceDiff		= m_Selector.GetSelectedSourceDifficulty();
-	Steps* pSourceSteps			= m_Selector.GetSelectedSourceSteps();
-	EditMenu::Action action		= m_Selector.GetSelectedAction();
+	Song* pSong				= m_Selector.GetSelectedSong();
+	StepsType st			= m_Selector.GetSelectedStepsType();
+	Difficulty dc			= m_Selector.GetSelectedDifficulty();
+	Steps* pSteps			= m_Selector.GetSelectedSteps();
+//	StepsType soureNT		= m_Selector.GetSelectedSourceStepsType();
+//	Difficulty sourceDiff	= m_Selector.GetSelectedSourceDifficulty();
+	Steps* pSourceSteps		= m_Selector.GetSelectedSourceSteps();
+	EditMenuAction action	= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurStyle = GAMEMAN->GetEditorStyleForStepsType( st );
@@ -136,20 +136,20 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	switch( action )
 	{
-	case EditMenu::ACTION_EDIT:
+	case EDIT_MENU_ACTION_EDIT:
 		// Prepare prepare for ScreenEdit
 		ASSERT( pSteps );
 		SOUND->StopMusic();
 		SCREENMAN->PlayStartSound();
 		StartTransitioning( SM_GoToNextScreen );
 		break;
-	case EditMenu::ACTION_DELETE:
+	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
 		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurSteps );
 		m_Selector.RefreshAll();
 		return;
-	case EditMenu::ACTION_COPY:
-	case EditMenu::ACTION_AUTOGEN:
+	case EDIT_MENU_ACTION_COPY:
+	case EDIT_MENU_ACTION_AUTOGEN:
 		ASSERT( !pSteps );
 		ASSERT( pSourceSteps );
 		{
@@ -158,10 +158,10 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			Steps* pNewSteps = new Steps;
 			switch( action )
 			{
-				case EditMenu::ACTION_COPY:
+				case EDIT_MENU_ACTION_COPY:
 					pNewSteps->CopyFrom( pSourceSteps, st );
 					break;
-				case EditMenu::ACTION_AUTOGEN:
+				case EDIT_MENU_ACTION_AUTOGEN:
 					pNewSteps->AutogenFrom( pSourceSteps, st );
 					pNewSteps->DeAutogen();
 					break;
@@ -184,7 +184,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			m_Selector.RefreshAll();
 		}
 		return;
-	case EditMenu::ACTION_BLANK:
+	case EDIT_MENU_ACTION_BLANK:
 		ASSERT( !pSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since

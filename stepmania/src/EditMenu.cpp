@@ -11,6 +11,20 @@
 #include "Foreach.h"
 #include "CommonMetrics.h"
 
+
+static const CString EditMenuRowNames[NUM_EDIT_MENU_ROWS] = {
+	"Group",
+	"Song",
+	"StepsType",
+	"Steps",
+	"SourceStepsType",
+	"SourceSteps",
+	"Action"
+};
+XToString( EditMenuRow, NUM_EDIT_MENU_ROWS );
+XToThemedString( EditMenuRow, NUM_EDIT_MENU_ROWS );
+
+
 #define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
 #define SONG_BANNER_X			THEME->GetMetricF("EditMenu","SongBannerX")
 #define SONG_BANNER_Y			THEME->GetMetricF("EditMenu","SongBannerY")
@@ -44,7 +58,7 @@ EditMenu::EditMenu()
 		this->AddChild( &m_sprArrows[i] );
 	}
 
-	m_SelectedRow = (Row)0;
+	m_SelectedRow = (EditMenuRow)0;
 
 	ZERO( m_iSelection );
 
@@ -55,20 +69,20 @@ EditMenu::EditMenu()
 
 
 
-	for( int i=0; i<NUM_ROWS; i++ )
+	FOREACH_EditMenuRow( r )
 	{
-		m_textLabel[i].LoadFromFont( THEME->GetPathF("EditMenu","title") );
-		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
-		m_textLabel[i].SetText( RowToString((Row)i) );
-		m_textLabel[i].RunCommands( ROW_LABEL_ON_COMMAND );
-		m_textLabel[i].SetHorizAlign( Actor::align_left );
-		this->AddChild( &m_textLabel[i] );
+		m_textLabel[r].LoadFromFont( THEME->GetPathF("EditMenu","title") );
+		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y(r) );
+		m_textLabel[r].SetText( EditMenuRowToThemedString(r) );
+		m_textLabel[r].RunCommands( ROW_LABEL_ON_COMMAND );
+		m_textLabel[r].SetHorizAlign( Actor::align_left );
+		this->AddChild( &m_textLabel[r] );
 
-		m_textValue[i].LoadFromFont( THEME->GetPathF("EditMenu","value") );
-		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
-		m_textValue[i].SetText( "blah" );
-		m_textValue[i].RunCommands( ROW_VALUE_ON_COMMAND );
-		this->AddChild( &m_textValue[i] );
+		m_textValue[r].LoadFromFont( THEME->GetPathF("EditMenu","value") );
+		m_textValue[r].SetXY( ROW_VALUE_X(r), ROW_Y(r) );
+		m_textValue[r].SetText( "blah" );
+		m_textValue[r].RunCommands( ROW_VALUE_ON_COMMAND );
+		this->AddChild( &m_textValue[r] );
 	}
 
 	m_GroupBanner.SetXY( GROUP_BANNER_X, GROUP_BANNER_Y );
@@ -122,8 +136,8 @@ EditMenu::~EditMenu()
 
 void EditMenu::RefreshAll()
 {
-	ChangeToRow( (Row)0 );
-	OnRowValueChanged( (Row)0 );
+	ChangeToRow( (EditMenuRow)0 );
+	OnRowValueChanged( (EditMenuRow)0 );
 
 	// Select the current song if any
 	if( GAMESTATE->m_pCurSong )
@@ -175,7 +189,7 @@ bool EditMenu::CanGoUp()
 
 bool EditMenu::CanGoDown()
 {
-	return m_SelectedRow != NUM_ROWS-1;
+	return m_SelectedRow != NUM_EDIT_MENU_ROWS-1;
 }
 
 bool EditMenu::CanGoLeft()
@@ -185,7 +199,7 @@ bool EditMenu::CanGoLeft()
 
 bool EditMenu::CanGoRight()
 {
-	int num_values[NUM_ROWS] = 
+	int num_values[NUM_EDIT_MENU_ROWS] = 
 	{
 		m_sGroups.size(),
 		m_pSongs.size(),
@@ -206,7 +220,7 @@ void EditMenu::Up()
 		if( GetSelectedSteps() && m_SelectedRow==ROW_ACTION )
 			ChangeToRow( ROW_STEPS );
 		else
-			ChangeToRow( Row(m_SelectedRow-1) );
+			ChangeToRow( EditMenuRow(m_SelectedRow-1) );
 		m_soundChangeRow.PlayRandom();
 	}
 }
@@ -218,7 +232,7 @@ void EditMenu::Down()
 		if( GetSelectedSteps() && m_SelectedRow==ROW_STEPS )
 			ChangeToRow( ROW_ACTION );
 		else
-			ChangeToRow( Row(m_SelectedRow+1) );
+			ChangeToRow( EditMenuRow(m_SelectedRow+1) );
 		m_soundChangeRow.PlayRandom();
 	}
 }
@@ -244,7 +258,7 @@ void EditMenu::Right()
 }
 
 
-void EditMenu::ChangeToRow( Row newRow )
+void EditMenu::ChangeToRow( EditMenuRow newRow )
 {
 	m_SelectedRow = newRow;
 
@@ -256,7 +270,7 @@ void EditMenu::ChangeToRow( Row newRow )
 	m_sprArrows[1].EnableAnimation( CanGoRight() );
 }
 
-void EditMenu::OnRowValueChanged( Row row )
+void EditMenu::OnRowValueChanged( EditMenuRow row )
 {
 	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
@@ -376,23 +390,23 @@ void EditMenu::OnRowValueChanged( Row row )
 		m_Actions.clear();
 		if( GetSelectedSteps() )
 		{
-			m_Actions.push_back( ACTION_EDIT );
-			m_Actions.push_back( ACTION_DELETE );
+			m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
+			m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
 		}
 		else if( GetSelectedSourceSteps() )
 		{
-			m_Actions.push_back( ACTION_COPY );
-			m_Actions.push_back( ACTION_AUTOGEN );
-			m_Actions.push_back( ACTION_BLANK );
+			m_Actions.push_back( EDIT_MENU_ACTION_COPY );
+			m_Actions.push_back( EDIT_MENU_ACTION_AUTOGEN );
+			m_Actions.push_back( EDIT_MENU_ACTION_BLANK );
 		}
 		else
 		{
-			m_Actions.push_back( ACTION_BLANK );
+			m_Actions.push_back( EDIT_MENU_ACTION_BLANK );
 		}
 		m_iSelection[ROW_ACTION] = 0;
 		// fall through
 	case ROW_ACTION:
-		m_textValue[ROW_ACTION].SetText( ActionToString(GetSelectedAction()) );
+		m_textValue[ROW_ACTION].SetText( EditMenuActionToThemedString(GetSelectedAction()) );
 		break;
 	default:
 		ASSERT(0);	// invalid row
