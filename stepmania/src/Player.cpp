@@ -253,7 +253,7 @@ void Player::Update( float fDeltaTime )
 		if( hns != HNS_NONE )
 		{
 			/* this note's been judged */
-			HandleHoldNoteScore( hns, tns );
+			HandleHoldScore( hns, tns );
 			m_HoldJudgment[hn.iTrack].SetHoldJudgment( hns );
 		}
 
@@ -402,7 +402,8 @@ void Player::Step( int col )
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
 
-		if (GAMESTATE->m_SongOptions.m_bAutoSync ) 
+
+		if( GAMESTATE->m_SongOptions.m_bAutoSync  &&  score>=TNS_GREAT ) 
 		{
 			m_fOffset[m_iOffsetSample++] = fNoteOffset;
 			if (m_iOffsetSample >= SAMPLE_COUNT) 
@@ -422,7 +423,8 @@ void Player::Step( int col )
 
 
 
-		if (score > TNS_NONE) {
+		if (score > TNS_NONE) 
+		{
 			bool bRowDestroyed = true;
 			for( int t=0; t<GetNumTracks(); t++ )			// did this complete the elimination of the row?
 			{
@@ -434,7 +436,7 @@ void Player::Step( int col )
 				}
 			}
 			if( bRowDestroyed )
-				OnRowDestroyed( iIndexOverlappingNote );
+				OnRowDestroyed( score, iIndexOverlappingNote );
 		}
 	}
 
@@ -442,7 +444,7 @@ void Player::Step( int col )
 		m_GrayArrowRow.Step( col );
 }
 
-void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
+void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn )
 {
 	LOG->Trace( "Player::OnRowDestroyed" );
 	
@@ -486,14 +488,20 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 			iNumNotesInThisRow++;
 
 			// show the ghost arrow for this column
-			if(score == TNS_GREAT || score == TNS_PERFECT || score == TNS_MARVELOUS)
+			switch( score )
+			{
+			case TNS_GREAT:
+			case TNS_PERFECT:
+			case TNS_MARVELOUS:
 				m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>(int)BRIGHT_GHOST_COMBO_THRESHOLD);
+				break;
+			}
 		}
 	}
 		
 	if( iNumNotesInThisRow > 0 )
 	{
-		HandleNoteScore( score, iNumNotesInThisRow );	// update score
+		HandleTapRowScore( score, iNumNotesInThisRow );	// update score
 		m_Combo.SetScore( score, iNumNotesInThisRow, m_pInventory );
 		GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 	}
@@ -535,7 +543,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 		if( iNumMissesThisRow > 0 )
 		{
-			HandleNoteScore( TNS_MISS, iNumMissesThisRow );
+			HandleTapRowScore( TNS_MISS, iNumMissesThisRow );
 			m_Combo.SetScore( TNS_MISS, iNumMissesThisRow, m_pInventory );
 		}
 	}
@@ -564,7 +572,7 @@ void Player::CrossedRow( int iNoteRow )
 }
 
 
-void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
+void Player::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
@@ -575,19 +583,19 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 #endif //DEBUG
 
 	if(m_pScoreKeeper)
-		m_pScoreKeeper->HandleTapScore(score, iNumTapsInRow);
+		m_pScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow);
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
-		m_pLifeMeter->ChangeLife( score );
+		m_pLifeMeter->ChangeLife( scoreOfLastTap );
 		m_pLifeMeter->OnDancePointsChange();    // update oni life meter
 	}
 }
 
 
-void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
+void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
@@ -596,14 +604,14 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 #endif //DEBUG
 
 	if(m_pScoreKeeper) {
-		m_pScoreKeeper->HandleHoldScore(score, TapNoteScore);
+		m_pScoreKeeper->HandleHoldScore(holdScore, tapScore);
 	}
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
-		m_pLifeMeter->ChangeLife( score, TapNoteScore );
+		m_pLifeMeter->ChangeLife( holdScore, tapScore );
 	
 		// refresh Oni life meter
 		m_pLifeMeter->OnDancePointsChange();

@@ -54,9 +54,9 @@ public:
 	
 protected:
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
-	void OnRowDestroyed( int iStepIndex );
-	void HandleNoteScore( TapNoteScore score, int iNumTapsInRow );
-	void HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
+	void OnRowDestroyed( TapNoteScore lastScore, int iStepIndex );
+	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
+	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
 	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection );
 	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind );
