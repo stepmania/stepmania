@@ -163,6 +163,7 @@ CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, 
 {
 	sNoteSkinName.MakeLower();
 	CString sReturn;
+	ASSERT( m_mapNameToData.find(sNoteSkinName) != m_mapNameToData.end() );	// this NoteSkin doesn't exist!
 	NoteSkinData& data = m_mapNameToData[sNoteSkinName];
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;

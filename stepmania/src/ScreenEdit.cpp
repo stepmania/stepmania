@@ -297,7 +297,10 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 
 	GAMESTATE->m_PlayerOptions[PLAYER_1].Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin back to default before loading player
+	// Set NoteSkin to note if available.
+	// Change noteskin back to default before loading player.
+	if( NOTESKIN->DoesNoteSkinExist("note") )
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";
 	GAMESTATE->ResetNoteSkins();
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
