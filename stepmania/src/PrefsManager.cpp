@@ -200,7 +200,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueI( "Options", "ShowSongOptions",			(int&)m_ShowSongOptions );
 	ini.GetValueB( "Options", "AllowUnacceleratedRenderer",	m_bAllowUnacceleratedRenderer );
-	ini.SetValueB( "Options", "ThreadedInput",				m_bThreadedInput );
+	ini.GetValueB( "Options", "ThreadedInput",				m_bThreadedInput );
 	ini.GetValue ( "Options", "IgnoredMessageWindows",		m_sIgnoredMessageWindows );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
