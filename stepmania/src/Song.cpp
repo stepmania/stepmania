@@ -644,9 +644,6 @@ void Song::TranslateTitles()
 		/* ダンシン・オール・アローン */
 		ttab.push_back(TitleTrans("^Dancing Pompokolin$", "", "", "&kda;&kn;&ksi;&kn;&kdot;&ko;&kdash;&kru;&kdot;&ka;&kro;&kdash;&kn;", "", "") );
 
-		/* メキシコ民謡 */
-		ttab.push_back(TitleTrans("", "", "^Spanish Folk Music$", "", "", "&kme;&kki;&ksi;&kko;&minyou1;&minyou2;") );
-
 		/* 青い振動 */
 		ttab.push_back(TitleTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 		ttab.push_back(TitleTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
@@ -663,22 +660,22 @@ void Song::TranslateTitles()
 		/* 桜 */
 		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
 
-		/* 魔法の扉 */
-        ttab.push_back(TitleTrans("^Door of Magic$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") ); 
-        ttab.push_back(TitleTrans("^mahou no tobira$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") ); 
-
-		/* XXX スペース★マコのテーマ (space? special? * "mako"?'s team) (title or subtitle, not sure) */
+		/* 魔法の扉, スペース★マコのテーマ */
+        ttab.push_back(TitleTrans("^(Door of Magic)|(Mahou no Tobira)$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "&ksu;&kpe;&kdash;&ksu;&whitestar;&kma;&kko;&hno;&kti;&kdash;&kmu;", "") ); 
 
 		/* Subtitles: */
 		/* それぞれの明日 (title is Graduation) */
 		ttab.push_back(TitleTrans("", "^Each Tomorrow$", "", "", "&hso;&hre;&hzo;&hre;&hno;&aka;&nichi;", "") );
 
 		/* Artists: */
-		ttab.push_back(TitleTrans("", "", "Omega", "", "", "&omega;") );
-		ttab.push_back(TitleTrans("", "", "ZZ", "", "", "&doublezeta;") );
+		ttab.push_back(TitleTrans("", "", "^Omega$", "", "", "&omega;") );
+		ttab.push_back(TitleTrans("", "", "^ZZ$", "", "", "&doublezeta;") );
 
 		/* 亜熱帯マジ-SKA爆弾 (serious tropical ska bomb? ruh roh) */
 		ttab.push_back(TitleTrans("", "", "^Anettai Maji.*Ska (Bakudan|Bukuden)", "", "", "&anettai1;&anettai2;&anettai3;&kma;&kji;-SKA&bakudan1;&bakudan2;") );
+
+		/* メキシコ民謡 */
+		ttab.push_back(TitleTrans("", "", "^Spanish Folk Music$", "", "", "&kme;&kki;&ksi;&kko;&minyou1;&minyou2;") );
 
 		/* 新谷さなえ (Sanae or incorrect Sana) */
 		ttab.push_back(TitleTrans("", "", "Sanae? Shintani", "", "", "&shintani1;&shintani2;&hsa;&hna;&he;") );
@@ -688,7 +685,6 @@ void Song::TranslateTitles()
 		/* くにたけみゆき */
 		ttab.push_back(TitleTrans("", "", "Miyuki Kunitake", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;") );
 		ttab.push_back(TitleTrans("", "", "Kunitake Miyuki", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;") );
-//		ttab.push_back(TitleTrans(".*Legend.*", "", "ZZ", "", "", "&zz;") );
 	}
 
 	for(unsigned i = 0; i < ttab.size(); ++i)
