@@ -5,19 +5,21 @@
 
 void InformUserOfCrash( const CString &sPath )
 {
-    CFStringRef error = CFStringCreateWithCString(NULL,
-                                                  "StepMania has crashed.  Debug information has been output to\n"
-                                                  "\n"
-                                                  "    " + sPath + "\n"
-                                                  "\n"
-                                                  "Please report a bug at:\n"
-                                                  "\n"
-                                                  "    http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366",
-                                                  kCFStringEncodingASCII);
-    CFStringRef OK = CFStringCreateWithCString(NULL, "Open crashinfo", kCFStringEncodingASCII);
-    CFStringRef Cancel = CFStringCreateWithCString(NULL, "Cancel", kCFStringEncodingASCII);
-    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, Cancel, NULL,
-        kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, NULL};
+	CFStringRef error;
+	
+	error = CFStringCreateWithCString(kCFAllocatorDefault,
+									  "StepMania has crashed.  Debug "
+									  "information has been output to\n\n    "
+									  + sPath + "\n\nPlease report a bug at:"
+									  "\n\nhttp://sourceforge.net/tracker/"
+									  "?func=add&group_id=37892&atid=421366",
+									  kCFStringEncodingASCII);
+    CFStringRef OK = CFSTR("Open crashinfo");
+    CFStringRef Cancel = CFSTR("Cancel");
+    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne,
+		true, false, OK, Cancel, NULL, kAlertStdAlertOKButton,
+		kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen,
+		NULL};
     DialogRef dialog;
     SInt16 button;
 
@@ -27,7 +29,7 @@ void InformUserOfCrash( const CString &sPath )
     switch (button)
     {
         case kAlertStdAlertOKButton:
-            // This is lazy, and easy, and it _should_ work.
+            // This is lazy, and easy, and it seems to work.
             if (system(NULL))
                 system("open '" + sPath + "'");
             else
