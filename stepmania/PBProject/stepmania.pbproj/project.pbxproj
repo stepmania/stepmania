@@ -49,6 +49,7 @@
 				AAA0F7D2047ACBC9005F316C,
 				AAE443F804B1032300D02EE9,
 				AAE443F704B1032300D02EE9,
+				AAECB3730512794D001B792B,
 			);
 			isa = PBXGroup;
 			name = "Linked Frameworks";
@@ -105,6 +106,7 @@
 				17587328FF379C6511CA2CBB,
 				AA507E55050BA28F00F96139,
 				AA1C6544050D1FD00073A143,
+				AA1C68CB05116C7C0073A143,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -133,12 +135,12 @@
 				29B97326FDCFA39411CA2CEA,
 				AA507E54050BA28F00F96139,
 				AA1C6543050D1FD00073A143,
+				AA1C68CA05116C7C0073A143,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
 			children = (
 				AA1C6595050EE6390073A143,
-				AA1C657F050EE1BA0073A143,
 				AA52E9BD04DBBCF400D02EE9,
 				AA6E00FE047711FF005F316C,
 				AA6EFF7404770F8B005F316C,
@@ -151,6 +153,7 @@
 				AA6EFDC804770AF1005F316C,
 				AA6EFDBB04770A83005F316C,
 				29B97315FDCFA39411CA2CEA,
+				AAFC803F0513A6EB00D02EE9,
 				AA507E4F050BA1A000F96139,
 				29B97317FDCFA39411CA2CEA,
 				AA14ED150509F94C00E3FAD7,
@@ -173,7 +176,7 @@
 			isa = PBXGroup;
 			name = "Other Source";
 			path = ../src;
-			refType = 2;
+			refType = 4;
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
@@ -223,7 +226,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\"";
 				HEADER_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SDL_image.framework/Versions/A/Headers\" \"$(SYSTEM_LIBRARY_DIR)/SDL.framework/Headers\"";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "/Users/steve/stepmania/src/vorbis/win32 /Users/steve/stepmania/src/vorbis/xbox";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG";
@@ -545,10 +548,15 @@
 				AA14ED120509F40000E3FAD7,
 				AA1C6555050D23200073A143,
 				AA1C6559050D234B0073A143,
-				AA1C6583050EE2380073A143,
-				AA1C6590050EE2B50073A143,
-				AA1C6592050EE2B50073A143,
 				AA1C6597050EE68F0073A143,
+				AA1C65AC050FD21F0073A143,
+				AAFC7FF50513A67700D02EE9,
+				AAFC7FF60513A68600D02EE9,
+				AAFC804F0513A6EB00D02EE9,
+				AAFC80500513A6EB00D02EE9,
+				AAFC80510513A6EB00D02EE9,
+				AAFC80520513A6EB00D02EE9,
+				AAFC80530513A6EB00D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -810,13 +818,10 @@
 				AA14ED110509F40000E3FAD7,
 				AA1C6554050D23200073A143,
 				AA1C6558050D234B0073A143,
-				AA1C6582050EE2380073A143,
-				AA1C6589050EE26C0073A143,
-				AA1C658A050EE26C0073A143,
-				AA1C658B050EE26C0073A143,
-				AA1C658C050EE26C0073A143,
-				AA1C6591050EE2B50073A143,
-				AA1C6594050EE3050073A143,
+				AA1C65AB050FD21F0073A143,
+				AAFC7FF30513A67700D02EE9,
+				AAFC7FF40513A67700D02EE9,
+				AAFC7FF70513A68600D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -903,15 +908,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProTimingDisplay.cpp;
-			path = /Users/steve/stepmania/src/ProTimingDisplay.cpp;
-			refType = 0;
+			path = ../src/ProTimingDisplay.cpp;
+			refType = 4;
 		};
 		AA0E393404DA8EE700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProTimingDisplay.h;
-			path = /Users/steve/stepmania/src/ProTimingDisplay.h;
-			refType = 0;
+			path = ../src/ProTimingDisplay.h;
+			refType = 4;
 		};
 		AA0E393504DA8EE700D02EE9 = {
 			fileRef = AA0E393304DA8EE700D02EE9;
@@ -1032,6 +1037,7 @@
 				AA1C6567050D2D0D0073A143,
 				AA1C6569050D2D710073A143,
 				AA1C656B050D2D740073A143,
+				AAECB37805127994001B792B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1042,6 +1048,7 @@
 				AA1C6549050D20D30073A143,
 				AA1C654A050D20E20073A143,
 				AA1C6551050D21AB0073A143,
+				AAECB370051274B7001B792B,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1083,7 +1090,6 @@
 			);
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "../src Installer";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -1093,6 +1099,7 @@
 				WRAPPER_EXTENSION = app;
 			};
 			dependencies = (
+				AAECB36D0512749E001B792B,
 			);
 			isa = PBXApplicationTarget;
 			name = Installer;
@@ -1194,15 +1201,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenProfileOptions.cpp;
-			path = /Users/steve/stepmania/src/ScreenProfileOptions.cpp;
-			refType = 0;
+			path = ../src/ScreenProfileOptions.cpp;
+			refType = 4;
 		};
 		AA1C6553050D23200073A143 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenProfileOptions.h;
-			path = /Users/steve/stepmania/src/ScreenProfileOptions.h;
-			refType = 0;
+			path = ../src/ScreenProfileOptions.h;
+			refType = 4;
 		};
 		AA1C6554050D23200073A143 = {
 			fileRef = AA1C6552050D23200073A143;
@@ -1220,15 +1227,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProfileManager.cpp;
-			path = /Users/steve/stepmania/src/ProfileManager.cpp;
-			refType = 0;
+			path = ../src/ProfileManager.cpp;
+			refType = 4;
 		};
 		AA1C6557050D234B0073A143 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ProfileManager.h;
-			path = /Users/steve/stepmania/src/ProfileManager.h;
-			refType = 0;
+			path = ../src/ProfileManager.h;
+			refType = 4;
 		};
 		AA1C6558050D234B0073A143 = {
 			fileRef = AA1C6556050D234B0073A143;
@@ -1324,152 +1331,6 @@
 			settings = {
 			};
 		};
-		AA1C657F050EE1BA0073A143 = {
-			children = (
-				AA1C658E050EE2B50073A143,
-				AA1C658F050EE2B50073A143,
-				AA1C658D050EE2B50073A143,
-				AA1C6593050EE3050073A143,
-				AA1C6584050EE2400073A143,
-				AA1C6580050EE2380073A143,
-				AA1C6581050EE2380073A143,
-			);
-			isa = PBXGroup;
-			name = "SDL_sound-1.0.0";
-			path = "../src/SDL_sound-1.0.0";
-			refType = 4;
-		};
-		AA1C6580050EE2380073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = extra_rwops.c;
-			refType = 4;
-		};
-		AA1C6581050EE2380073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = extra_rwops.h;
-			refType = 4;
-		};
-		AA1C6582050EE2380073A143 = {
-			fileRef = AA1C6580050EE2380073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C6583050EE2380073A143 = {
-			fileRef = AA1C6581050EE2380073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C6584050EE2400073A143 = {
-			children = (
-				AA1C6585050EE26C0073A143,
-				AA1C6586050EE26C0073A143,
-				AA1C6587050EE26C0073A143,
-				AA1C6588050EE26C0073A143,
-			);
-			isa = PBXGroup;
-			path = decoders;
-			refType = 4;
-		};
-		AA1C6585050EE26C0073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = flac.c;
-			refType = 4;
-		};
-		AA1C6586050EE26C0073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = madlib.c;
-			refType = 4;
-		};
-		AA1C6587050EE26C0073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ogg.c;
-			refType = 4;
-		};
-		AA1C6588050EE26C0073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = wav.c;
-			refType = 4;
-		};
-		AA1C6589050EE26C0073A143 = {
-			fileRef = AA1C6585050EE26C0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C658A050EE26C0073A143 = {
-			fileRef = AA1C6586050EE26C0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C658B050EE26C0073A143 = {
-			fileRef = AA1C6587050EE26C0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C658C050EE26C0073A143 = {
-			fileRef = AA1C6588050EE26C0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C658D050EE2B50073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SDL_sound_internal.h;
-			refType = 4;
-		};
-		AA1C658E050EE2B50073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SDL_sound.c;
-			refType = 4;
-		};
-		AA1C658F050EE2B50073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SDL_sound.h;
-			refType = 4;
-		};
-		AA1C6590050EE2B50073A143 = {
-			fileRef = AA1C658D050EE2B50073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C6591050EE2B50073A143 = {
-			fileRef = AA1C658E050EE2B50073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C6592050EE2B50073A143 = {
-			fileRef = AA1C658F050EE2B50073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA1C6593050EE3050073A143 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = audio_convert.c;
-			refType = 4;
-		};
-		AA1C6594050EE3050073A143 = {
-			fileRef = AA1C6593050EE3050073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA1C6595050EE6390073A143 = {
 			children = (
 				AA1C6596050EE68F0073A143,
@@ -1492,13 +1353,142 @@
 			settings = {
 			};
 		};
+		AA1C659C050FD1E00073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = NetGameState.h;
+			path = ../src/NetGameState.h;
+			refType = 4;
+		};
+		AA1C659D050FD1E00073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = NetworkInput.h;
+			path = ../src/NetworkInput.h;
+			refType = 4;
+		};
+		AA1C659E050FD1E00073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = NetworkManager.cpp;
+			path = ../src/NetworkManager.cpp;
+			refType = 4;
+		};
+		AA1C659F050FD1E00073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = NetworkManager.h;
+			path = ../src/NetworkManager.h;
+			refType = 4;
+		};
+		AA1C65A4050FD21F0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_Vorbisfile.cpp;
+			path = ../src/RageSoundReader_Vorbisfile.cpp;
+			refType = 4;
+		};
+		AA1C65A5050FD21F0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_Vorbisfile.h;
+			path = ../src/RageSoundReader_Vorbisfile.h;
+			refType = 4;
+		};
+		AA1C65A6050FD21F0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_WAV.cpp;
+			path = ../src/RageSoundReader_WAV.cpp;
+			refType = 4;
+		};
+		AA1C65A7050FD21F0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_WAV.h;
+			path = ../src/RageSoundReader_WAV.h;
+			refType = 4;
+		};
+		AA1C65AB050FD21F0073A143 = {
+			fileRef = AA1C65A6050FD21F0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C65AC050FD21F0073A143 = {
+			fileRef = AA1C65A7050FD21F0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C68C605116C7C0073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AAECB37705127994001B792B,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C68C705116C7C0073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AAECB372051278EF001B792B,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C68C805116C7C0073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AAECB3740512794D001B792B,
+				AAECB37505127950001B792B,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C68C905116C7C0073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C68CA05116C7C0073A143 = {
+			buildPhases = (
+				AA1C68C605116C7C0073A143,
+				AA1C68C705116C7C0073A143,
+				AA1C68C805116C7C0073A143,
+				AA1C68C905116C7C0073A143,
+			);
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = installtool;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = installtool;
+			productInstallPath = /usr/local/bin;
+			productName = installtool;
+			productReference = AA1C68CB05116C7C0073A143;
+		};
+		AA1C68CB05116C7C0073A143 = {
+			isa = PBXExecutableFileReference;
+			path = installtool;
+			refType = 3;
+		};
 		AA1DC47204A485E900D02EE9 = {
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorUtil.h;
-			path = /Users/steve/stepmania/src/ActorUtil.h;
-			refType = 0;
+			path = ../src/ActorUtil.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1514,7 +1504,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectMaster.cpp;
 			path = ../src/ScreenSelectMaster.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1523,8 +1513,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMaster.h;
-			path = /Users/steve/stepmania/src/ScreenSelectMaster.h;
-			refType = 0;
+			path = ../src/ScreenSelectMaster.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1545,8 +1535,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ActorCollision.h;
-			path = /Users/steve/stepmania/src/ActorCollision.h;
-			refType = 0;
+			path = ../src/ActorCollision.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1560,9 +1550,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = Game.h;
-			path = /Users/steve/stepmania/src/Game.h;
-			refType = 0;
+			path = Game.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1571,8 +1560,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = glext.h;
-			path = /Users/steve/stepmania/src/glext.h;
-			refType = 0;
+			path = ../src/glext.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1581,8 +1570,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = MenuInput.h;
-			path = /Users/steve/stepmania/src/MenuInput.h;
-			refType = 0;
+			path = ../src/MenuInput.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1591,8 +1580,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ModeChoice.h;
-			path = /Users/steve/stepmania/src/ModeChoice.h;
-			refType = 0;
+			path = ../src/ModeChoice.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1661,14 +1650,14 @@
 			isa = PBXFileReference;
 			name = RageFile.cpp;
 			path = ../src/RageFile.cpp;
-			refType = 2;
+			refType = 4;
 		};
 		AA272C3104CD757100D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageFile.h;
-			path = /Users/steve/stepmania/src/RageFile.h;
-			refType = 0;
+			path = ../src/RageFile.h;
+			refType = 4;
 		};
 		AA272C3204CD757100D02EE9 = {
 			fileRef = AA272C3004CD757100D02EE9;
@@ -1843,6 +1832,8 @@
 				AA1C653B050C00CF0073A143,
 				AA1C653A050C00CF0073A143,
 				AA1C654B050D212D0073A143,
+				AAECB371051278EF001B792B,
+				AAECB37605127994001B792B,
 			);
 			isa = PBXGroup;
 			name = Installer;
@@ -2189,7 +2180,7 @@
 			isa = PBXFileReference;
 			name = Screen.cpp;
 			path = ../src/Screen.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2199,7 +2190,7 @@
 			isa = PBXFileReference;
 			name = Screen.h;
 			path = ../src/Screen.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2209,7 +2200,7 @@
 			isa = PBXFileReference;
 			name = ScreenAlbums.cpp;
 			path = ../src/ScreenAlbums.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2219,7 +2210,7 @@
 			isa = PBXFileReference;
 			name = ScreenAlbums.h;
 			path = ../src/ScreenAlbums.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2229,7 +2220,7 @@
 			isa = PBXFileReference;
 			name = ScreenAppearanceOptions.cpp;
 			path = ../src/ScreenAppearanceOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2239,7 +2230,7 @@
 			isa = PBXFileReference;
 			name = ScreenAppearanceOptions.h;
 			path = ../src/ScreenAppearanceOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2249,7 +2240,7 @@
 			isa = PBXFileReference;
 			name = ScreenAttract.cpp;
 			path = ../src/ScreenAttract.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2259,7 +2250,7 @@
 			isa = PBXFileReference;
 			name = ScreenAttract.h;
 			path = ../src/ScreenAttract.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2269,7 +2260,7 @@
 			isa = PBXFileReference;
 			name = ScreenAutogenOptions.cpp;
 			path = ../src/ScreenAutogenOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2279,7 +2270,7 @@
 			isa = PBXFileReference;
 			name = ScreenAutogenOptions.h;
 			path = ../src/ScreenAutogenOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2289,7 +2280,7 @@
 			isa = PBXFileReference;
 			name = ScreenBackgroundOptions.cpp;
 			path = ../src/ScreenBackgroundOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2299,7 +2290,7 @@
 			isa = PBXFileReference;
 			name = ScreenBackgroundOptions.h;
 			path = ../src/ScreenBackgroundOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2309,7 +2300,7 @@
 			isa = PBXFileReference;
 			name = ScreenCaution.cpp;
 			path = ../src/ScreenCaution.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2319,7 +2310,7 @@
 			isa = PBXFileReference;
 			name = ScreenCaution.h;
 			path = ../src/ScreenCaution.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2329,7 +2320,7 @@
 			isa = PBXFileReference;
 			name = ScreenCompany.h;
 			path = ../src/ScreenCompany.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2339,7 +2330,7 @@
 			isa = PBXFileReference;
 			name = ScreenCredits.cpp;
 			path = ../src/ScreenCredits.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2349,7 +2340,7 @@
 			isa = PBXFileReference;
 			name = ScreenCredits.h;
 			path = ../src/ScreenCredits.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2359,7 +2350,7 @@
 			isa = PBXFileReference;
 			name = ScreenDemonstration.cpp;
 			path = ../src/ScreenDemonstration.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2369,7 +2360,7 @@
 			isa = PBXFileReference;
 			name = ScreenDemonstration.h;
 			path = ../src/ScreenDemonstration.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2379,7 +2370,7 @@
 			isa = PBXFileReference;
 			name = ScreenEdit.cpp;
 			path = ../src/ScreenEdit.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2389,7 +2380,7 @@
 			isa = PBXFileReference;
 			name = ScreenEdit.h;
 			path = ../src/ScreenEdit.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2399,7 +2390,7 @@
 			isa = PBXFileReference;
 			name = ScreenEditMenu.cpp;
 			path = ../src/ScreenEditMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2409,7 +2400,7 @@
 			isa = PBXFileReference;
 			name = ScreenEditMenu.h;
 			path = ../src/ScreenEditMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2419,7 +2410,7 @@
 			isa = PBXFileReference;
 			name = ScreenEvaluation.cpp;
 			path = ../src/ScreenEvaluation.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2429,7 +2420,7 @@
 			isa = PBXFileReference;
 			name = ScreenEvaluation.h;
 			path = ../src/ScreenEvaluation.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2439,7 +2430,7 @@
 			isa = PBXFileReference;
 			name = ScreenEz2SelectMusic.cpp;
 			path = ../src/ScreenEz2SelectMusic.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2449,7 +2440,7 @@
 			isa = PBXFileReference;
 			name = ScreenEz2SelectMusic.h;
 			path = ../src/ScreenEz2SelectMusic.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2459,7 +2450,7 @@
 			isa = PBXFileReference;
 			name = ScreenEz2SelectPlayer.cpp;
 			path = ../src/ScreenEz2SelectPlayer.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2469,7 +2460,7 @@
 			isa = PBXFileReference;
 			name = ScreenEz2SelectPlayer.h;
 			path = ../src/ScreenEz2SelectPlayer.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2479,7 +2470,7 @@
 			isa = PBXFileReference;
 			name = ScreenGameOver.cpp;
 			path = ../src/ScreenGameOver.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2489,7 +2480,7 @@
 			isa = PBXFileReference;
 			name = ScreenGameOver.h;
 			path = ../src/ScreenGameOver.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2499,7 +2490,7 @@
 			isa = PBXFileReference;
 			name = ScreenGameplay.cpp;
 			path = ../src/ScreenGameplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2509,7 +2500,7 @@
 			isa = PBXFileReference;
 			name = ScreenGameplay.h;
 			path = ../src/ScreenGameplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2519,7 +2510,7 @@
 			isa = PBXFileReference;
 			name = ScreenGameplayOptions.cpp;
 			path = ../src/ScreenGameplayOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2529,7 +2520,7 @@
 			isa = PBXFileReference;
 			name = ScreenGameplayOptions.h;
 			path = ../src/ScreenGameplayOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2539,7 +2530,7 @@
 			isa = PBXFileReference;
 			name = ScreenGraphicOptions.cpp;
 			path = ../src/ScreenGraphicOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2549,7 +2540,7 @@
 			isa = PBXFileReference;
 			name = ScreenGraphicOptions.h;
 			path = ../src/ScreenGraphicOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2559,7 +2550,7 @@
 			isa = PBXFileReference;
 			name = ScreenHowToPlay.cpp;
 			path = ../src/ScreenHowToPlay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2569,7 +2560,7 @@
 			isa = PBXFileReference;
 			name = ScreenHowToPlay.h;
 			path = ../src/ScreenHowToPlay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2579,7 +2570,7 @@
 			isa = PBXFileReference;
 			name = ScreenInputOptions.cpp;
 			path = ../src/ScreenInputOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2589,7 +2580,7 @@
 			isa = PBXFileReference;
 			name = ScreenInputOptions.h;
 			path = ../src/ScreenInputOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2599,7 +2590,7 @@
 			isa = PBXFileReference;
 			name = ScreenInstructions.cpp;
 			path = ../src/ScreenInstructions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2609,7 +2600,7 @@
 			isa = PBXFileReference;
 			name = ScreenInstructions.h;
 			path = ../src/ScreenInstructions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2619,7 +2610,7 @@
 			isa = PBXFileReference;
 			name = ScreenIntroMovie.cpp;
 			path = ../src/ScreenIntroMovie.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2629,7 +2620,7 @@
 			isa = PBXFileReference;
 			name = ScreenIntroMovie.h;
 			path = ../src/ScreenIntroMovie.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2639,7 +2630,7 @@
 			isa = PBXFileReference;
 			name = ScreenJukebox.cpp;
 			path = ../src/ScreenJukebox.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2649,7 +2640,7 @@
 			isa = PBXFileReference;
 			name = ScreenJukebox.h;
 			path = ../src/ScreenJukebox.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2659,7 +2650,7 @@
 			isa = PBXFileReference;
 			name = ScreenJukeboxMenu.cpp;
 			path = ../src/ScreenJukeboxMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2669,7 +2660,7 @@
 			isa = PBXFileReference;
 			name = ScreenJukeboxMenu.h;
 			path = ../src/ScreenJukeboxMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2679,7 +2670,7 @@
 			isa = PBXFileReference;
 			name = ScreenLogo.cpp;
 			path = ../src/ScreenLogo.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2689,7 +2680,7 @@
 			isa = PBXFileReference;
 			name = ScreenLogo.h;
 			path = ../src/ScreenLogo.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2699,7 +2690,7 @@
 			isa = PBXFileReference;
 			name = ScreenMachineOptions.cpp;
 			path = ../src/ScreenMachineOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2709,7 +2700,7 @@
 			isa = PBXFileReference;
 			name = ScreenMachineOptions.h;
 			path = ../src/ScreenMachineOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2719,7 +2710,7 @@
 			isa = PBXFileReference;
 			name = ScreenManager.cpp;
 			path = ../src/ScreenManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2729,7 +2720,7 @@
 			isa = PBXFileReference;
 			name = ScreenManager.h;
 			path = ../src/ScreenManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2739,7 +2730,7 @@
 			isa = PBXFileReference;
 			name = ScreenMapControllers.cpp;
 			path = ../src/ScreenMapControllers.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2749,7 +2740,7 @@
 			isa = PBXFileReference;
 			name = ScreenMapControllers.h;
 			path = ../src/ScreenMapControllers.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2759,7 +2750,7 @@
 			isa = PBXFileReference;
 			name = ScreenMemoryCard.h;
 			path = ../src/ScreenMemoryCard.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2769,7 +2760,7 @@
 			isa = PBXFileReference;
 			name = ScreenMessage.h;
 			path = ../src/ScreenMessage.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2779,7 +2770,7 @@
 			isa = PBXFileReference;
 			name = ScreenMiniMenu.cpp;
 			path = ../src/ScreenMiniMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2789,7 +2780,7 @@
 			isa = PBXFileReference;
 			name = ScreenMiniMenu.h;
 			path = ../src/ScreenMiniMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2799,7 +2790,7 @@
 			isa = PBXFileReference;
 			name = ScreenMusicScroll.cpp;
 			path = ../src/ScreenMusicScroll.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2809,7 +2800,7 @@
 			isa = PBXFileReference;
 			name = ScreenMusicScroll.h;
 			path = ../src/ScreenMusicScroll.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2819,7 +2810,7 @@
 			isa = PBXFileReference;
 			name = ScreenNameEntry.cpp;
 			path = ../src/ScreenNameEntry.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2829,7 +2820,7 @@
 			isa = PBXFileReference;
 			name = ScreenNameEntry.h;
 			path = ../src/ScreenNameEntry.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2839,7 +2830,7 @@
 			isa = PBXFileReference;
 			name = ScreenOptions.cpp;
 			path = ../src/ScreenOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2849,7 +2840,7 @@
 			isa = PBXFileReference;
 			name = ScreenOptions.h;
 			path = ../src/ScreenOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2859,7 +2850,7 @@
 			isa = PBXFileReference;
 			name = ScreenOptionsMenu.cpp;
 			path = ../src/ScreenOptionsMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2869,7 +2860,7 @@
 			isa = PBXFileReference;
 			name = ScreenOptionsMenu.h;
 			path = ../src/ScreenOptionsMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2879,7 +2870,7 @@
 			isa = PBXFileReference;
 			name = ScreenPlayerOptions.cpp;
 			path = ../src/ScreenPlayerOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2889,7 +2880,7 @@
 			isa = PBXFileReference;
 			name = ScreenPlayerOptions.h;
 			path = ../src/ScreenPlayerOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2899,7 +2890,7 @@
 			isa = PBXFileReference;
 			name = ScreenPrompt.cpp;
 			path = ../src/ScreenPrompt.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2909,7 +2900,7 @@
 			isa = PBXFileReference;
 			name = ScreenPrompt.h;
 			path = ../src/ScreenPrompt.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2919,7 +2910,7 @@
 			isa = PBXFileReference;
 			name = ScreenRanking.cpp;
 			path = ../src/ScreenRanking.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2929,7 +2920,7 @@
 			isa = PBXFileReference;
 			name = ScreenRanking.h;
 			path = ../src/ScreenRanking.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2939,7 +2930,7 @@
 			isa = PBXFileReference;
 			name = ScreenRaveOptions.cpp;
 			path = ../src/ScreenRaveOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2949,7 +2940,7 @@
 			isa = PBXFileReference;
 			name = ScreenRaveOptions.h;
 			path = ../src/ScreenRaveOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2959,7 +2950,7 @@
 			isa = PBXFileReference;
 			name = ScreenSandbox.cpp;
 			path = ../src/ScreenSandbox.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2969,7 +2960,7 @@
 			isa = PBXFileReference;
 			name = ScreenSandbox.h;
 			path = ../src/ScreenSandbox.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2979,7 +2970,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelect.cpp;
 			path = ../src/ScreenSelect.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2989,7 +2980,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelect.h;
 			path = ../src/ScreenSelect.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -2999,7 +2990,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectCharacter.cpp;
 			path = ../src/ScreenSelectCharacter.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3009,7 +3000,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectCharacter.h;
 			path = ../src/ScreenSelectCharacter.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3019,7 +3010,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectCourse.cpp;
 			path = ../src/ScreenSelectCourse.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3029,7 +3020,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectCourse.h;
 			path = ../src/ScreenSelectCourse.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3039,7 +3030,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectDifficulty.cpp;
 			path = ../src/ScreenSelectDifficulty.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3049,7 +3040,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectDifficulty.h;
 			path = ../src/ScreenSelectDifficulty.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3059,7 +3050,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectDifficultyEX.cpp;
 			path = ../src/ScreenSelectDifficultyEX.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3069,7 +3060,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectDifficultyEX.h;
 			path = ../src/ScreenSelectDifficultyEX.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3079,7 +3070,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectGame.cpp;
 			path = ../src/ScreenSelectGame.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3089,7 +3080,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectGame.h;
 			path = ../src/ScreenSelectGame.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3099,7 +3090,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectGroup.cpp;
 			path = ../src/ScreenSelectGroup.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3109,7 +3100,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectGroup.h;
 			path = ../src/ScreenSelectGroup.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3119,7 +3110,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectMode.cpp;
 			path = ../src/ScreenSelectMode.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3129,7 +3120,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectMode.h;
 			path = ../src/ScreenSelectMode.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3139,7 +3130,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectMusic.cpp;
 			path = ../src/ScreenSelectMusic.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3149,7 +3140,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectMusic.h;
 			path = ../src/ScreenSelectMusic.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3159,7 +3150,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectStyle.cpp;
 			path = ../src/ScreenSelectStyle.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3169,7 +3160,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectStyle.h;
 			path = ../src/ScreenSelectStyle.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3179,7 +3170,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectStyle5th.cpp;
 			path = ../src/ScreenSelectStyle5th.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3189,7 +3180,7 @@
 			isa = PBXFileReference;
 			name = ScreenSelectStyle5th.h;
 			path = ../src/ScreenSelectStyle5th.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3199,7 +3190,7 @@
 			isa = PBXFileReference;
 			name = ScreenSongOptions.cpp;
 			path = ../src/ScreenSongOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3209,7 +3200,7 @@
 			isa = PBXFileReference;
 			name = ScreenSongOptions.h;
 			path = ../src/ScreenSongOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3219,7 +3210,7 @@
 			isa = PBXFileReference;
 			name = ScreenSoundOptions.cpp;
 			path = ../src/ScreenSoundOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3229,7 +3220,7 @@
 			isa = PBXFileReference;
 			name = ScreenSoundOptions.h;
 			path = ../src/ScreenSoundOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3239,7 +3230,7 @@
 			isa = PBXFileReference;
 			name = ScreenStage.cpp;
 			path = ../src/ScreenStage.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3249,7 +3240,7 @@
 			isa = PBXFileReference;
 			name = ScreenStage.h;
 			path = ../src/ScreenStage.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3259,7 +3250,7 @@
 			isa = PBXFileReference;
 			name = ScreenStyleSplash.cpp;
 			path = ../src/ScreenStyleSplash.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3269,7 +3260,7 @@
 			isa = PBXFileReference;
 			name = ScreenStyleSplash.h;
 			path = ../src/ScreenStyleSplash.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3279,7 +3270,7 @@
 			isa = PBXFileReference;
 			name = ScreenTest.cpp;
 			path = ../src/ScreenTest.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3289,7 +3280,7 @@
 			isa = PBXFileReference;
 			name = ScreenTest.h;
 			path = ../src/ScreenTest.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3299,7 +3290,7 @@
 			isa = PBXFileReference;
 			name = ScreenTestFonts.cpp;
 			path = ../src/ScreenTestFonts.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3309,7 +3300,7 @@
 			isa = PBXFileReference;
 			name = ScreenTestFonts.h;
 			path = ../src/ScreenTestFonts.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3319,7 +3310,7 @@
 			isa = PBXFileReference;
 			name = ScreenTestSound.cpp;
 			path = ../src/ScreenTestSound.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3329,7 +3320,7 @@
 			isa = PBXFileReference;
 			name = ScreenTestSound.h;
 			path = ../src/ScreenTestSound.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3339,7 +3330,7 @@
 			isa = PBXFileReference;
 			name = ScreenTextEntry.cpp;
 			path = ../src/ScreenTextEntry.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3349,7 +3340,7 @@
 			isa = PBXFileReference;
 			name = ScreenTextEntry.h;
 			path = ../src/ScreenTextEntry.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3359,7 +3350,7 @@
 			isa = PBXFileReference;
 			name = ScreenTitleMenu.cpp;
 			path = ../src/ScreenTitleMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3369,7 +3360,7 @@
 			isa = PBXFileReference;
 			name = ScreenTitleMenu.h;
 			path = ../src/ScreenTitleMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3379,7 +3370,7 @@
 			isa = PBXFileReference;
 			name = ScreenUnlock.cpp;
 			path = ../src/ScreenUnlock.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3389,7 +3380,7 @@
 			isa = PBXFileReference;
 			name = ScreenUnlock.h;
 			path = ../src/ScreenUnlock.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3399,7 +3390,7 @@
 			isa = PBXFileReference;
 			name = ScreenWarning.h;
 			path = ../src/ScreenWarning.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4150,6 +4141,10 @@
 				AA6E01090477128A005F316C,
 				AA6E010A0477128A005F316C,
 				AA1DCB6304A4872700D02EE9,
+				AA1C659C050FD1E00073A143,
+				AA1C659D050FD1E00073A143,
+				AA1C659E050FD1E00073A143,
+				AA1C659F050FD1E00073A143,
 				AA6E010B0477128A005F316C,
 				AA6E010C0477128A005F316C,
 				AA6E010D0477128A005F316C,
@@ -4196,7 +4191,7 @@
 			isa = PBXFileReference;
 			name = GameManager.cpp;
 			path = ../src/GameManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4206,7 +4201,7 @@
 			isa = PBXFileReference;
 			name = GameManager.h;
 			path = ../src/GameManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4216,7 +4211,7 @@
 			isa = PBXFileReference;
 			name = GameState.cpp;
 			path = ../src/GameState.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4226,7 +4221,7 @@
 			isa = PBXFileReference;
 			name = GameState.h;
 			path = ../src/GameState.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4236,7 +4231,7 @@
 			isa = PBXFileReference;
 			name = InputFilter.cpp;
 			path = ../src/InputFilter.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4246,7 +4241,7 @@
 			isa = PBXFileReference;
 			name = InputFilter.h;
 			path = ../src/InputFilter.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4256,7 +4251,7 @@
 			isa = PBXFileReference;
 			name = InputMapper.cpp;
 			path = ../src/InputMapper.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4266,7 +4261,7 @@
 			isa = PBXFileReference;
 			name = InputMapper.h;
 			path = ../src/InputMapper.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4276,7 +4271,7 @@
 			isa = PBXFileReference;
 			name = InputQueue.cpp;
 			path = ../src/InputQueue.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4286,7 +4281,7 @@
 			isa = PBXFileReference;
 			name = InputQueue.h;
 			path = ../src/InputQueue.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4296,7 +4291,7 @@
 			isa = PBXFileReference;
 			name = NoteSkinManager.cpp;
 			path = ../src/NoteSkinManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4306,7 +4301,7 @@
 			isa = PBXFileReference;
 			name = NoteSkinManager.h;
 			path = ../src/NoteSkinManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4316,7 +4311,7 @@
 			isa = PBXFileReference;
 			name = PrefsManager.cpp;
 			path = ../src/PrefsManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4326,7 +4321,7 @@
 			isa = PBXFileReference;
 			name = PrefsManager.h;
 			path = ../src/PrefsManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4336,7 +4331,7 @@
 			isa = PBXFileReference;
 			name = SongManager.cpp;
 			path = ../src/SongManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4346,7 +4341,7 @@
 			isa = PBXFileReference;
 			name = SongManager.h;
 			path = ../src/SongManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4365,7 +4360,7 @@
 			isa = PBXFileReference;
 			name = ThemeManager.cpp;
 			path = ../src/ThemeManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4375,7 +4370,7 @@
 			isa = PBXFileReference;
 			name = ThemeManager.h;
 			path = ../src/ThemeManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4385,7 +4380,7 @@
 			isa = PBXFileReference;
 			name = UnlockSystem.cpp;
 			path = ../src/UnlockSystem.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4395,7 +4390,7 @@
 			isa = PBXFileReference;
 			name = UnlockSystem.h;
 			path = ../src/UnlockSystem.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4550,9 +4545,8 @@
 				AAADA51E04E77F4400D02EE9,
 			);
 			isa = PBXGroup;
-			name = Sound;
-			path = /Users/steve/stepmania/src/arch/Sound;
-			refType = 0;
+			path = Sound;
+			refType = 4;
 		};
 		AA6E012E047712BE005F316C = {
 			fileEncoding = 30;
@@ -4607,9 +4601,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = arch.cpp;
-			path = ../src/arch/arch.cpp;
-			refType = 2;
+			path = arch.cpp;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4700,9 +4693,8 @@
 				AADB4E8D04D5261C00D02EE9,
 			);
 			isa = PBXGroup;
-			name = archutils;
-			path = ../src/archutils;
-			refType = 2;
+			path = archutils;
+			refType = 4;
 		};
 		AA6E01930477136A005F316C = {
 			fileRef = AA6E01410477136A005F316C;
@@ -4779,7 +4771,7 @@
 			isa = PBXFileReference;
 			name = SongCacheIndex.cpp;
 			path = ../src/SongCacheIndex.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4789,7 +4781,7 @@
 			isa = PBXFileReference;
 			name = SongCacheIndex.h;
 			path = ../src/SongCacheIndex.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4811,7 +4803,7 @@
 			isa = PBXFileReference;
 			name = Song.cpp;
 			path = ../src/Song.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4821,7 +4813,7 @@
 			isa = PBXFileReference;
 			name = song.h;
 			path = ../src/song.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4843,7 +4835,7 @@
 			isa = PBXFileReference;
 			name = RandomSample.cpp;
 			path = ../src/RandomSample.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4853,7 +4845,7 @@
 			isa = PBXFileReference;
 			name = RandomSample.h;
 			path = ../src/RandomSample.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4875,7 +4867,7 @@
 			isa = PBXFileReference;
 			name = RageBitmapTexture.cpp;
 			path = ../src/RageBitmapTexture.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4885,7 +4877,7 @@
 			isa = PBXFileReference;
 			name = RageBitmapTexture.h;
 			path = ../src/RageBitmapTexture.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4895,7 +4887,7 @@
 			isa = PBXFileReference;
 			name = RageDisplay.cpp;
 			path = ../src/RageDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4905,7 +4897,7 @@
 			isa = PBXFileReference;
 			name = RageDisplay.h;
 			path = ../src/RageDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4915,7 +4907,7 @@
 			isa = PBXFileReference;
 			name = RageException.cpp;
 			path = ../src/RageException.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4925,7 +4917,7 @@
 			isa = PBXFileReference;
 			name = RageException.h;
 			path = ../src/RageException.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4935,7 +4927,7 @@
 			isa = PBXFileReference;
 			name = RageInput.cpp;
 			path = ../src/RageInput.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4945,7 +4937,7 @@
 			isa = PBXFileReference;
 			name = RageInput.h;
 			path = ../src/RageInput.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4955,7 +4947,7 @@
 			isa = PBXFileReference;
 			name = RageInputDevice.cpp;
 			path = ../src/RageInputDevice.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4965,7 +4957,7 @@
 			isa = PBXFileReference;
 			name = RageInputDevice.h;
 			path = ../src/RageInputDevice.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4975,7 +4967,7 @@
 			isa = PBXFileReference;
 			name = RageLog.cpp;
 			path = ../src/RageLog.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4985,7 +4977,7 @@
 			isa = PBXFileReference;
 			name = RageLog.h;
 			path = ../src/RageLog.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -4995,7 +4987,7 @@
 			isa = PBXFileReference;
 			name = RageMath.cpp;
 			path = ../src/RageMath.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5005,7 +4997,7 @@
 			isa = PBXFileReference;
 			name = RageMath.h;
 			path = ../src/RageMath.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5015,7 +5007,7 @@
 			isa = PBXFileReference;
 			name = RageSound.cpp;
 			path = ../src/RageSound.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5025,7 +5017,7 @@
 			isa = PBXFileReference;
 			name = RageSound.h;
 			path = ../src/RageSound.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5035,7 +5027,7 @@
 			isa = PBXFileReference;
 			name = RageSoundManager.cpp;
 			path = ../src/RageSoundManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5045,7 +5037,7 @@
 			isa = PBXFileReference;
 			name = RageSoundManager.h;
 			path = ../src/RageSoundManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5055,7 +5047,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_Preload.cpp;
 			path = ../src/RageSoundReader_Preload.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5065,7 +5057,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_Preload.h;
 			path = ../src/RageSoundReader_Preload.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5075,7 +5067,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample.cpp;
 			path = ../src/RageSoundReader_Resample.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5085,7 +5077,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_Resample.h;
 			path = ../src/RageSoundReader_Resample.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5095,7 +5087,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_SDL_Sound.cpp;
 			path = ../src/RageSoundReader_SDL_Sound.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5105,7 +5097,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_SDL_Sound.h;
 			path = ../src/RageSoundReader_SDL_Sound.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5115,7 +5107,7 @@
 			isa = PBXFileReference;
 			name = RageSoundReader.h;
 			path = ../src/RageSoundReader.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5125,7 +5117,7 @@
 			isa = PBXFileReference;
 			name = RageSoundResampler.cpp;
 			path = ../src/RageSoundResampler.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5135,7 +5127,7 @@
 			isa = PBXFileReference;
 			name = RageSoundResampler.h;
 			path = ../src/RageSoundResampler.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5145,7 +5137,7 @@
 			isa = PBXFileReference;
 			name = RageTexture.cpp;
 			path = ../src/RageTexture.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5155,7 +5147,7 @@
 			isa = PBXFileReference;
 			name = RageTexture.h;
 			path = ../src/RageTexture.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5165,7 +5157,7 @@
 			isa = PBXFileReference;
 			name = RageTextureManager.cpp;
 			path = ../src/RageTextureManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5175,7 +5167,7 @@
 			isa = PBXFileReference;
 			name = RageTextureManager.h;
 			path = ../src/RageTextureManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5185,7 +5177,7 @@
 			isa = PBXFileReference;
 			name = RageThreads.cpp;
 			path = ../src/RageThreads.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5195,7 +5187,7 @@
 			isa = PBXFileReference;
 			name = RageThreads.h;
 			path = ../src/RageThreads.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5205,7 +5197,7 @@
 			isa = PBXFileReference;
 			name = RageTimer.cpp;
 			path = ../src/RageTimer.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5215,7 +5207,7 @@
 			isa = PBXFileReference;
 			name = RageTimer.h;
 			path = ../src/RageTimer.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5225,7 +5217,7 @@
 			isa = PBXFileReference;
 			name = RageTypes.h;
 			path = ../src/RageTypes.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5235,7 +5227,7 @@
 			isa = PBXFileReference;
 			name = RageUtil.cpp;
 			path = ../src/RageUtil.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5245,7 +5237,7 @@
 			isa = PBXFileReference;
 			name = RageUtil.h;
 			path = ../src/RageUtil.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5484,13 +5476,20 @@
 				AA6EFD7E04770A7C005F316C,
 				AA6EFD7F04770A7C005F316C,
 				AA6EFD8604770A7C005F316C,
+				AAFC7FF00513A67700D02EE9,
 				AADB4E7A04D4FE5D00D02EE9,
+				AAFC7FF10513A67700D02EE9,
+				AAFC7FF20513A67700D02EE9,
 				AA6EFD8004770A7C005F316C,
 				AA6EFD8104770A7C005F316C,
 				AA6EFD8204770A7C005F316C,
 				AA6EFD8304770A7C005F316C,
 				AA6EFD8404770A7C005F316C,
 				AA6EFD8504770A7C005F316C,
+				AA1C65A4050FD21F0073A143,
+				AA1C65A5050FD21F0073A143,
+				AA1C65A6050FD21F0073A143,
+				AA1C65A7050FD21F0073A143,
 				AA6EFD8704770A7C005F316C,
 				AA6EFD8804770A7C005F316C,
 				AADB4E7B04D4FE5D00D02EE9,
@@ -5529,7 +5528,7 @@
 			isa = PBXFileReference;
 			name = SDL_dither.cpp;
 			path = ../src/SDL_dither.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5539,7 +5538,7 @@
 			isa = PBXFileReference;
 			name = SDL_dither.h;
 			path = ../src/SDL_dither.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5549,7 +5548,7 @@
 			isa = PBXFileReference;
 			name = SDL_rotozoom.cpp;
 			path = ../src/SDL_rotozoom.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5559,7 +5558,7 @@
 			isa = PBXFileReference;
 			name = SDL_rotozoom.h;
 			path = ../src/SDL_rotozoom.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5569,7 +5568,7 @@
 			isa = PBXFileReference;
 			name = SDL_utils.cpp;
 			path = ../src/SDL_utils.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5579,7 +5578,7 @@
 			isa = PBXFileReference;
 			name = SDL_utils.h;
 			path = ../src/SDL_utils.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5706,7 +5705,7 @@
 			isa = PBXFileReference;
 			name = ArrowBackdrop.cpp;
 			path = ../src/ArrowBackdrop.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5716,7 +5715,7 @@
 			isa = PBXFileReference;
 			name = ArrowBackdrop.h;
 			path = ../src/ArrowBackdrop.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5726,7 +5725,7 @@
 			isa = PBXFileReference;
 			name = Character.cpp;
 			path = ../src/Character.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5736,7 +5735,7 @@
 			isa = PBXFileReference;
 			name = Character.h;
 			path = ../src/Character.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5746,7 +5745,7 @@
 			isa = PBXFileReference;
 			name = CodeDetector.cpp;
 			path = ../src/CodeDetector.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5756,7 +5755,7 @@
 			isa = PBXFileReference;
 			name = CodeDetector.h;
 			path = ../src/CodeDetector.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5766,7 +5765,7 @@
 			isa = PBXFileReference;
 			name = Course.cpp;
 			path = ../src/Course.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5776,7 +5775,7 @@
 			isa = PBXFileReference;
 			name = Course.h;
 			path = ../src/Course.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5786,7 +5785,7 @@
 			isa = PBXFileReference;
 			name = Font.cpp;
 			path = ../src/Font.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5796,7 +5795,7 @@
 			isa = PBXFileReference;
 			name = Font.h;
 			path = ../src/Font.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5806,7 +5805,7 @@
 			isa = PBXFileReference;
 			name = FontCharAliases.cpp;
 			path = ../src/FontCharAliases.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5816,7 +5815,7 @@
 			isa = PBXFileReference;
 			name = FontCharAliases.h;
 			path = ../src/FontCharAliases.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5826,7 +5825,7 @@
 			isa = PBXFileReference;
 			name = FontCharmaps.cpp;
 			path = ../src/FontCharmaps.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5836,7 +5835,7 @@
 			isa = PBXFileReference;
 			name = FontCharmaps.h;
 			path = ../src/FontCharmaps.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5846,7 +5845,7 @@
 			isa = PBXFileReference;
 			name = FontManager.cpp;
 			path = ../src/FontManager.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5856,7 +5855,7 @@
 			isa = PBXFileReference;
 			name = FontManager.h;
 			path = ../src/FontManager.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5866,7 +5865,7 @@
 			isa = PBXFileReference;
 			name = GameConstantsAndTypes.cpp;
 			path = ../src/GameConstantsAndTypes.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5876,7 +5875,7 @@
 			isa = PBXFileReference;
 			name = GameConstantsAndTypes.h;
 			path = ../src/GameConstantsAndTypes.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5886,7 +5885,7 @@
 			isa = PBXFileReference;
 			name = GameDef.cpp;
 			path = ../src/GameDef.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5896,7 +5895,7 @@
 			isa = PBXFileReference;
 			name = GameDef.h;
 			path = ../src/GameDef.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5906,7 +5905,7 @@
 			isa = PBXFileReference;
 			name = GameInput.cpp;
 			path = ../src/GameInput.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5916,7 +5915,7 @@
 			isa = PBXFileReference;
 			name = GameInput.h;
 			path = ../src/GameInput.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5926,7 +5925,7 @@
 			isa = PBXFileReference;
 			name = Grade.cpp;
 			path = ../src/Grade.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5936,7 +5935,7 @@
 			isa = PBXFileReference;
 			name = Grade.h;
 			path = ../src/Grade.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5946,7 +5945,7 @@
 			isa = PBXFileReference;
 			name = Inventory.cpp;
 			path = ../src/Inventory.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5956,7 +5955,7 @@
 			isa = PBXFileReference;
 			name = Inventory.h;
 			path = ../src/Inventory.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5966,7 +5965,7 @@
 			isa = PBXFileReference;
 			name = LyricsLoader.cpp;
 			path = ../src/LyricsLoader.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5976,7 +5975,7 @@
 			isa = PBXFileReference;
 			name = LyricsLoader.h;
 			path = ../src/LyricsLoader.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5986,7 +5985,7 @@
 			isa = PBXFileReference;
 			name = NoteData.cpp;
 			path = ../src/NoteData.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -5996,7 +5995,7 @@
 			isa = PBXFileReference;
 			name = NoteData.h;
 			path = ../src/NoteData.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6006,7 +6005,7 @@
 			isa = PBXFileReference;
 			name = NoteDataWithScoring.cpp;
 			path = ../src/NoteDataWithScoring.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6016,7 +6015,7 @@
 			isa = PBXFileReference;
 			name = NoteDataWithScoring.h;
 			path = ../src/NoteDataWithScoring.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6026,7 +6025,7 @@
 			isa = PBXFileReference;
 			name = NoteFieldPositioning.cpp;
 			path = ../src/NoteFieldPositioning.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6036,7 +6035,7 @@
 			isa = PBXFileReference;
 			name = NoteFieldPositioning.h;
 			path = ../src/NoteFieldPositioning.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6046,7 +6045,7 @@
 			isa = PBXFileReference;
 			name = NotesLoader.cpp;
 			path = ../src/NotesLoader.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6056,7 +6055,7 @@
 			isa = PBXFileReference;
 			name = NotesLoader.h;
 			path = ../src/NotesLoader.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6066,7 +6065,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderBMS.cpp;
 			path = ../src/NotesLoaderBMS.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6076,7 +6075,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderBMS.h;
 			path = ../src/NotesLoaderBMS.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6086,7 +6085,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderDWI.cpp;
 			path = ../src/NotesLoaderDWI.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6096,7 +6095,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderDWI.h;
 			path = ../src/NotesLoaderDWI.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6106,7 +6105,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderKSF.cpp;
 			path = ../src/NotesLoaderKSF.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6116,7 +6115,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderKSF.h;
 			path = ../src/NotesLoaderKSF.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6126,7 +6125,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderSM.cpp;
 			path = ../src/NotesLoaderSM.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6136,7 +6135,7 @@
 			isa = PBXFileReference;
 			name = NotesLoaderSM.h;
 			path = ../src/NotesLoaderSM.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6146,7 +6145,7 @@
 			isa = PBXFileReference;
 			name = NotesWriterDWI.cpp;
 			path = ../src/NotesWriterDWI.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6156,7 +6155,7 @@
 			isa = PBXFileReference;
 			name = NotesWriterDWI.h;
 			path = ../src/NotesWriterDWI.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6166,7 +6165,7 @@
 			isa = PBXFileReference;
 			name = NotesWriterSM.cpp;
 			path = ../src/NotesWriterSM.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6176,7 +6175,7 @@
 			isa = PBXFileReference;
 			name = NotesWriterSM.h;
 			path = ../src/NotesWriterSM.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6186,7 +6185,7 @@
 			isa = PBXFileReference;
 			name = NoteTypes.cpp;
 			path = ../src/NoteTypes.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6196,7 +6195,7 @@
 			isa = PBXFileReference;
 			name = NoteTypes.h;
 			path = ../src/NoteTypes.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6206,7 +6205,7 @@
 			isa = PBXFileReference;
 			name = Player.cpp;
 			path = ../src/Player.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6216,7 +6215,7 @@
 			isa = PBXFileReference;
 			name = Player.h;
 			path = ../src/Player.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6226,7 +6225,7 @@
 			isa = PBXFileReference;
 			name = PlayerAI.cpp;
 			path = ../src/PlayerAI.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6236,7 +6235,7 @@
 			isa = PBXFileReference;
 			name = PlayerAI.h;
 			path = ../src/PlayerAI.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6246,7 +6245,7 @@
 			isa = PBXFileReference;
 			name = PlayerNumber.cpp;
 			path = ../src/PlayerNumber.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6256,7 +6255,7 @@
 			isa = PBXFileReference;
 			name = PlayerNumber.h;
 			path = ../src/PlayerNumber.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6266,7 +6265,7 @@
 			isa = PBXFileReference;
 			name = PlayerOptions.cpp;
 			path = ../src/PlayerOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6276,7 +6275,7 @@
 			isa = PBXFileReference;
 			name = PlayerOptions.h;
 			path = ../src/PlayerOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6286,7 +6285,7 @@
 			isa = PBXFileReference;
 			name = SongOptions.cpp;
 			path = ../src/SongOptions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6296,7 +6295,7 @@
 			isa = PBXFileReference;
 			name = SongOptions.h;
 			path = ../src/SongOptions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6306,7 +6305,7 @@
 			isa = PBXFileReference;
 			name = StageStats.cpp;
 			path = ../src/StageStats.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6316,7 +6315,7 @@
 			isa = PBXFileReference;
 			name = StageStats.h;
 			path = ../src/StageStats.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6326,7 +6325,7 @@
 			isa = PBXFileReference;
 			name = StyleDef.cpp;
 			path = ../src/StyleDef.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6336,7 +6335,7 @@
 			isa = PBXFileReference;
 			name = StyleDef.h;
 			path = ../src/StyleDef.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6346,7 +6345,7 @@
 			isa = PBXFileReference;
 			name = StyleInput.h;
 			path = ../src/StyleInput.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6356,7 +6355,7 @@
 			isa = PBXFileReference;
 			name = TitleSubstitution.cpp;
 			path = ../src/TitleSubstitution.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6366,7 +6365,7 @@
 			isa = PBXFileReference;
 			name = TitleSubstitution.h;
 			path = ../src/TitleSubstitution.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6790,7 +6789,7 @@
 			isa = PBXFileReference;
 			name = IniFile.cpp;
 			path = ../src/IniFile.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6800,7 +6799,7 @@
 			isa = PBXFileReference;
 			name = IniFile.h;
 			path = ../src/IniFile.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6810,7 +6809,7 @@
 			isa = PBXFileReference;
 			name = MsdFile.cpp;
 			path = ../src/MsdFile.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6820,7 +6819,7 @@
 			isa = PBXFileReference;
 			name = MsdFile.h;
 			path = ../src/MsdFile.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6852,9 +6851,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = global.h;
-			path = ../src/global.h;
-			refType = 2;
+			path = global.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6862,9 +6860,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = ScreenDimensions.h;
-			path = ../src/ScreenDimensions.h;
-			refType = 2;
+			path = ScreenDimensions.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6872,9 +6869,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = StdString.h;
-			path = ../src/StdString.h;
-			refType = 2;
+			path = StdString.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6882,9 +6878,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = StepMania.cpp;
-			path = ../src/StepMania.cpp;
-			refType = 2;
+			path = StepMania.cpp;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6892,9 +6887,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = StepMania.h;
-			path = ../src/StepMania.h;
-			refType = 2;
+			path = StepMania.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7023,7 +7017,7 @@
 			isa = PBXFileReference;
 			name = Banner.cpp;
 			path = ../src/Banner.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7033,7 +7027,7 @@
 			isa = PBXFileReference;
 			name = Banner.h;
 			path = ../src/Banner.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7055,7 +7049,7 @@
 			isa = PBXFileReference;
 			name = BPMDisplay.cpp;
 			path = ../src/BPMDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7065,7 +7059,7 @@
 			isa = PBXFileReference;
 			name = BPMDisplay.h;
 			path = ../src/BPMDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7075,7 +7069,7 @@
 			isa = PBXFileReference;
 			name = CourseContentsList.cpp;
 			path = ../src/CourseContentsList.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7085,7 +7079,7 @@
 			isa = PBXFileReference;
 			name = CourseContentsList.h;
 			path = ../src/CourseContentsList.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7095,7 +7089,7 @@
 			isa = PBXFileReference;
 			name = CourseEntryDisplay.cpp;
 			path = ../src/CourseEntryDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7105,7 +7099,7 @@
 			isa = PBXFileReference;
 			name = CourseEntryDisplay.h;
 			path = ../src/CourseEntryDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7115,7 +7109,7 @@
 			isa = PBXFileReference;
 			name = DifficultyIcon.cpp;
 			path = ../src/DifficultyIcon.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7125,7 +7119,7 @@
 			isa = PBXFileReference;
 			name = DifficultyIcon.h;
 			path = ../src/DifficultyIcon.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7135,7 +7129,7 @@
 			isa = PBXFileReference;
 			name = DifficultyMeter.cpp;
 			path = ../src/DifficultyMeter.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7145,7 +7139,7 @@
 			isa = PBXFileReference;
 			name = DifficultyMeter.h;
 			path = ../src/DifficultyMeter.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7155,7 +7149,7 @@
 			isa = PBXFileReference;
 			name = DifficultyRating.cpp;
 			path = ../src/DifficultyRating.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7165,7 +7159,7 @@
 			isa = PBXFileReference;
 			name = DifficultyRating.h;
 			path = ../src/DifficultyRating.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7175,7 +7169,7 @@
 			isa = PBXFileReference;
 			name = EditMenu.cpp;
 			path = ../src/EditMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7185,7 +7179,7 @@
 			isa = PBXFileReference;
 			name = EditMenu.h;
 			path = ../src/EditMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7195,7 +7189,7 @@
 			isa = PBXFileReference;
 			name = FadingBanner.cpp;
 			path = ../src/FadingBanner.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7205,7 +7199,7 @@
 			isa = PBXFileReference;
 			name = FadingBanner.h;
 			path = ../src/FadingBanner.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7215,7 +7209,7 @@
 			isa = PBXFileReference;
 			name = GradeDisplay.cpp;
 			path = ../src/GradeDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7225,7 +7219,7 @@
 			isa = PBXFileReference;
 			name = GradeDisplay.h;
 			path = ../src/GradeDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7235,7 +7229,7 @@
 			isa = PBXFileReference;
 			name = GrooveGraph.cpp;
 			path = ../src/GrooveGraph.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7245,7 +7239,7 @@
 			isa = PBXFileReference;
 			name = GrooveGraph.h;
 			path = ../src/GrooveGraph.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7255,7 +7249,7 @@
 			isa = PBXFileReference;
 			name = GrooveRadar.cpp;
 			path = ../src/GrooveRadar.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7265,7 +7259,7 @@
 			isa = PBXFileReference;
 			name = GrooveRadar.h;
 			path = ../src/GrooveRadar.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7275,7 +7269,7 @@
 			isa = PBXFileReference;
 			name = GroupList.cpp;
 			path = ../src/GroupList.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7285,7 +7279,7 @@
 			isa = PBXFileReference;
 			name = GroupList.h;
 			path = ../src/GroupList.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7295,7 +7289,7 @@
 			isa = PBXFileReference;
 			name = HelpDisplay.cpp;
 			path = ../src/HelpDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7305,7 +7299,7 @@
 			isa = PBXFileReference;
 			name = HelpDisplay.h;
 			path = ../src/HelpDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7315,7 +7309,7 @@
 			isa = PBXFileReference;
 			name = JukeboxMenu.cpp;
 			path = ../src/JukeboxMenu.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7325,7 +7319,7 @@
 			isa = PBXFileReference;
 			name = JukeboxMenu.h;
 			path = ../src/JukeboxMenu.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7335,7 +7329,7 @@
 			isa = PBXFileReference;
 			name = MenuElements.cpp;
 			path = ../src/MenuElements.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7345,7 +7339,7 @@
 			isa = PBXFileReference;
 			name = MenuElements.h;
 			path = ../src/MenuElements.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7355,7 +7349,7 @@
 			isa = PBXFileReference;
 			name = MenuTimer.cpp;
 			path = ../src/MenuTimer.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7365,7 +7359,7 @@
 			isa = PBXFileReference;
 			name = MenuTimer.h;
 			path = ../src/MenuTimer.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7375,7 +7369,7 @@
 			isa = PBXFileReference;
 			name = MeterDisplay.cpp;
 			path = ../src/MeterDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7385,7 +7379,7 @@
 			isa = PBXFileReference;
 			name = MeterDisplay.h;
 			path = ../src/MeterDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7395,7 +7389,7 @@
 			isa = PBXFileReference;
 			name = MusicBannerWheel.cpp;
 			path = ../src/MusicBannerWheel.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7405,7 +7399,7 @@
 			isa = PBXFileReference;
 			name = MusicBannerWheel.h;
 			path = ../src/MusicBannerWheel.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7415,7 +7409,7 @@
 			isa = PBXFileReference;
 			name = MusicList.cpp;
 			path = ../src/MusicList.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7425,7 +7419,7 @@
 			isa = PBXFileReference;
 			name = MusicList.h;
 			path = ../src/MusicList.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7435,7 +7429,7 @@
 			isa = PBXFileReference;
 			name = MusicSortDisplay.cpp;
 			path = ../src/MusicSortDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7445,7 +7439,7 @@
 			isa = PBXFileReference;
 			name = MusicSortDisplay.h;
 			path = ../src/MusicSortDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7455,7 +7449,7 @@
 			isa = PBXFileReference;
 			name = MusicWheel.cpp;
 			path = ../src/MusicWheel.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7465,7 +7459,7 @@
 			isa = PBXFileReference;
 			name = MusicWheel.h;
 			path = ../src/MusicWheel.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7475,7 +7469,7 @@
 			isa = PBXFileReference;
 			name = MusicWheelItem.cpp;
 			path = ../src/MusicWheelItem.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7485,7 +7479,7 @@
 			isa = PBXFileReference;
 			name = MusicWheelItem.h;
 			path = ../src/MusicWheelItem.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7495,7 +7489,7 @@
 			isa = PBXFileReference;
 			name = OptionIcon.cpp;
 			path = ../src/OptionIcon.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7505,7 +7499,7 @@
 			isa = PBXFileReference;
 			name = OptionIcon.h;
 			path = ../src/OptionIcon.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7515,7 +7509,7 @@
 			isa = PBXFileReference;
 			name = OptionIconRow.cpp;
 			path = ../src/OptionIconRow.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7525,7 +7519,7 @@
 			isa = PBXFileReference;
 			name = OptionIconRow.h;
 			path = ../src/OptionIconRow.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7535,7 +7529,7 @@
 			isa = PBXFileReference;
 			name = OptionsCursor.cpp;
 			path = ../src/OptionsCursor.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7545,7 +7539,7 @@
 			isa = PBXFileReference;
 			name = OptionsCursor.h;
 			path = ../src/OptionsCursor.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7555,7 +7549,7 @@
 			isa = PBXFileReference;
 			name = ScrollBar.cpp;
 			path = ../src/ScrollBar.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7565,7 +7559,7 @@
 			isa = PBXFileReference;
 			name = ScrollBar.h;
 			path = ../src/ScrollBar.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7575,7 +7569,7 @@
 			isa = PBXFileReference;
 			name = ScrollingList.cpp;
 			path = ../src/ScrollingList.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7585,7 +7579,7 @@
 			isa = PBXFileReference;
 			name = ScrollingList.h;
 			path = ../src/ScrollingList.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7595,7 +7589,7 @@
 			isa = PBXFileReference;
 			name = SnapDisplay.cpp;
 			path = ../src/SnapDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7605,7 +7599,7 @@
 			isa = PBXFileReference;
 			name = SnapDisplay.h;
 			path = ../src/SnapDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7615,7 +7609,7 @@
 			isa = PBXFileReference;
 			name = TextBanner.cpp;
 			path = ../src/TextBanner.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7625,7 +7619,7 @@
 			isa = PBXFileReference;
 			name = TextBanner.h;
 			path = ../src/TextBanner.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7635,7 +7629,7 @@
 			isa = PBXFileReference;
 			name = WheelNotifyIcon.cpp;
 			path = ../src/WheelNotifyIcon.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -7645,7 +7639,7 @@
 			isa = PBXFileReference;
 			name = WheelNotifyIcon.h;
 			path = ../src/WheelNotifyIcon.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8089,7 +8083,7 @@
 			isa = PBXFileReference;
 			name = ArrowEffects.cpp;
 			path = ../src/ArrowEffects.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8099,7 +8093,7 @@
 			isa = PBXFileReference;
 			name = ArrowEffects.h;
 			path = ../src/ArrowEffects.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8109,7 +8103,7 @@
 			isa = PBXFileReference;
 			name = Background.cpp;
 			path = ../src/Background.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8119,7 +8113,7 @@
 			isa = PBXFileReference;
 			name = Background.h;
 			path = ../src/Background.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8129,7 +8123,7 @@
 			isa = PBXFileReference;
 			name = BGAnimation.cpp;
 			path = ../src/BGAnimation.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8139,7 +8133,7 @@
 			isa = PBXFileReference;
 			name = BGAnimation.h;
 			path = ../src/BGAnimation.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8149,7 +8143,7 @@
 			isa = PBXFileReference;
 			name = BGAnimationLayer.cpp;
 			path = ../src/BGAnimationLayer.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8159,7 +8153,7 @@
 			isa = PBXFileReference;
 			name = BGAnimationLayer.h;
 			path = ../src/BGAnimationLayer.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8169,7 +8163,7 @@
 			isa = PBXFileReference;
 			name = Combo.cpp;
 			path = ../src/Combo.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8179,7 +8173,7 @@
 			isa = PBXFileReference;
 			name = Combo.h;
 			path = ../src/Combo.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8189,7 +8183,7 @@
 			isa = PBXFileReference;
 			name = DancingCharacters.cpp;
 			path = ../src/DancingCharacters.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8199,7 +8193,7 @@
 			isa = PBXFileReference;
 			name = DancingCharacters.h;
 			path = ../src/DancingCharacters.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8209,7 +8203,7 @@
 			isa = PBXFileReference;
 			name = GhostArrow.cpp;
 			path = ../src/GhostArrow.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8219,7 +8213,7 @@
 			isa = PBXFileReference;
 			name = GhostArrow.h;
 			path = ../src/GhostArrow.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8229,7 +8223,7 @@
 			isa = PBXFileReference;
 			name = GhostArrowRow.cpp;
 			path = ../src/GhostArrowRow.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8239,7 +8233,7 @@
 			isa = PBXFileReference;
 			name = GhostArrowRow.h;
 			path = ../src/GhostArrowRow.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8249,7 +8243,7 @@
 			isa = PBXFileReference;
 			name = GrayArrow.cpp;
 			path = ../src/GrayArrow.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8259,7 +8253,7 @@
 			isa = PBXFileReference;
 			name = GrayArrow.h;
 			path = ../src/GrayArrow.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8269,7 +8263,7 @@
 			isa = PBXFileReference;
 			name = GrayArrowRow.cpp;
 			path = ../src/GrayArrowRow.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8279,7 +8273,7 @@
 			isa = PBXFileReference;
 			name = GrayArrowRow.h;
 			path = ../src/GrayArrowRow.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8289,7 +8283,7 @@
 			isa = PBXFileReference;
 			name = HoldGhostArrow.cpp;
 			path = ../src/HoldGhostArrow.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8299,7 +8293,7 @@
 			isa = PBXFileReference;
 			name = HoldGhostArrow.h;
 			path = ../src/HoldGhostArrow.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8309,7 +8303,7 @@
 			isa = PBXFileReference;
 			name = HoldJudgment.cpp;
 			path = ../src/HoldJudgment.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8319,7 +8313,7 @@
 			isa = PBXFileReference;
 			name = HoldJudgment.h;
 			path = ../src/HoldJudgment.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8329,7 +8323,7 @@
 			isa = PBXFileReference;
 			name = Judgment.cpp;
 			path = ../src/Judgment.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8339,7 +8333,7 @@
 			isa = PBXFileReference;
 			name = Judgment.h;
 			path = ../src/Judgment.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8349,7 +8343,7 @@
 			isa = PBXFileReference;
 			name = LifeMeter.h;
 			path = ../src/LifeMeter.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8359,7 +8353,7 @@
 			isa = PBXFileReference;
 			name = LifeMeterBar.cpp;
 			path = ../src/LifeMeterBar.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8369,7 +8363,7 @@
 			isa = PBXFileReference;
 			name = LifeMeterBar.h;
 			path = ../src/LifeMeterBar.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8379,7 +8373,7 @@
 			isa = PBXFileReference;
 			name = LifeMeterBattery.cpp;
 			path = ../src/LifeMeterBattery.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8389,7 +8383,7 @@
 			isa = PBXFileReference;
 			name = LifeMeterBattery.h;
 			path = ../src/LifeMeterBattery.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8399,7 +8393,7 @@
 			isa = PBXFileReference;
 			name = LyricDisplay.cpp;
 			path = ../src/LyricDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8409,7 +8403,7 @@
 			isa = PBXFileReference;
 			name = LyricDisplay.h;
 			path = ../src/LyricDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8419,7 +8413,7 @@
 			isa = PBXFileReference;
 			name = NoteDisplay.cpp;
 			path = ../src/NoteDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8429,7 +8423,7 @@
 			isa = PBXFileReference;
 			name = NoteDisplay.h;
 			path = ../src/NoteDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8439,7 +8433,7 @@
 			isa = PBXFileReference;
 			name = NoteField.cpp;
 			path = ../src/NoteField.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8449,7 +8443,7 @@
 			isa = PBXFileReference;
 			name = NoteField.h;
 			path = ../src/NoteField.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8459,7 +8453,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplay.cpp;
 			path = ../src/ScoreDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8469,7 +8463,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplay.h;
 			path = ../src/ScoreDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8479,7 +8473,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayBattle.cpp;
 			path = ../src/ScoreDisplayBattle.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8489,7 +8483,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayBattle.h;
 			path = ../src/ScoreDisplayBattle.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8499,7 +8493,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayNormal.cpp;
 			path = ../src/ScoreDisplayNormal.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8509,7 +8503,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayNormal.h;
 			path = ../src/ScoreDisplayNormal.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8519,7 +8513,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayOni.cpp;
 			path = ../src/ScoreDisplayOni.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8529,7 +8523,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayOni.h;
 			path = ../src/ScoreDisplayOni.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8539,7 +8533,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayRave.cpp;
 			path = ../src/ScoreDisplayRave.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8549,7 +8543,7 @@
 			isa = PBXFileReference;
 			name = ScoreDisplayRave.h;
 			path = ../src/ScoreDisplayRave.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8559,7 +8553,7 @@
 			isa = PBXFileReference;
 			name = ScoreKeeper.h;
 			path = ../src/ScoreKeeper.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8569,7 +8563,7 @@
 			isa = PBXFileReference;
 			name = ScoreKeeperMAX2.cpp;
 			path = ../src/ScoreKeeperMAX2.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8579,7 +8573,7 @@
 			isa = PBXFileReference;
 			name = ScoreKeeperMAX2.h;
 			path = ../src/ScoreKeeperMAX2.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8589,7 +8583,7 @@
 			isa = PBXFileReference;
 			name = TimingAssist.cpp;
 			path = ../src/TimingAssist.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8599,7 +8593,7 @@
 			isa = PBXFileReference;
 			name = TimingAssist.h;
 			path = ../src/TimingAssist.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8933,7 +8927,7 @@
 			isa = PBXFileReference;
 			name = Transition.cpp;
 			path = ../src/Transition.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8943,7 +8937,7 @@
 			isa = PBXFileReference;
 			name = Transition.h;
 			path = ../src/Transition.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8994,7 +8988,7 @@
 			isa = PBXFileReference;
 			name = Actor.cpp;
 			path = ../src/Actor.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9004,7 +8998,7 @@
 			isa = PBXFileReference;
 			name = Actor.h;
 			path = ../src/Actor.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9014,7 +9008,7 @@
 			isa = PBXFileReference;
 			name = ActorFrame.cpp;
 			path = ../src/ActorFrame.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9024,7 +9018,7 @@
 			isa = PBXFileReference;
 			name = ActorFrame.h;
 			path = ../src/ActorFrame.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9034,7 +9028,7 @@
 			isa = PBXFileReference;
 			name = ActorScroller.cpp;
 			path = ../src/ActorScroller.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9044,7 +9038,7 @@
 			isa = PBXFileReference;
 			name = ActorScroller.h;
 			path = ../src/ActorScroller.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9054,7 +9048,7 @@
 			isa = PBXFileReference;
 			name = BitmapText.cpp;
 			path = ../src/BitmapText.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9064,7 +9058,7 @@
 			isa = PBXFileReference;
 			name = BitmapText.h;
 			path = ../src/BitmapText.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9072,9 +9066,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = mathlib.c;
-			path = ../src/mathlib.c;
-			refType = 2;
+			path = mathlib.c;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9082,9 +9075,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = mathlib.h;
-			path = ../src/mathlib.h;
-			refType = 2;
+			path = mathlib.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9094,7 +9086,7 @@
 			isa = PBXFileReference;
 			name = Model.cpp;
 			path = ../src/Model.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9104,7 +9096,7 @@
 			isa = PBXFileReference;
 			name = Model.h;
 			path = ../src/Model.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9114,7 +9106,7 @@
 			isa = PBXFileReference;
 			name = ModelTypes.cpp;
 			path = ../src/ModelTypes.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9124,7 +9116,7 @@
 			isa = PBXFileReference;
 			name = ModelTypes.h;
 			path = ../src/ModelTypes.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9134,7 +9126,7 @@
 			isa = PBXFileReference;
 			name = Quad.h;
 			path = ../src/Quad.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9144,7 +9136,7 @@
 			isa = PBXFileReference;
 			name = Sprite.cpp;
 			path = ../src/Sprite.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9154,7 +9146,7 @@
 			isa = PBXFileReference;
 			name = Sprite.h;
 			path = ../src/Sprite.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9286,9 +9278,8 @@
 				AA8B6C7F04AFD87300D02EE9,
 			);
 			isa = PBXGroup;
-			name = pcre;
-			path = /Users/steve/stepmania/src/pcre;
-			refType = 0;
+			path = pcre;
+			refType = 4;
 		};
 		AA8B6C7904AFD87300D02EE9 = {
 			fileEncoding = 30;
@@ -9371,7 +9362,7 @@
 			isa = PBXFileReference;
 			name = DifficultyDisplay.cpp;
 			path = ../src/DifficultyDisplay.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9381,7 +9372,7 @@
 			isa = PBXFileReference;
 			name = DifficultyDisplay.h;
 			path = ../src/DifficultyDisplay.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9472,7 +9463,7 @@
 			isa = PBXFileReference;
 			name = ActorUtil.cpp;
 			path = ../src/ActorUtil.cpp;
-			refType = 2;
+			refType = 4;
 		};
 		AAA983CB04B9060A00D02EE9 = {
 			fileRef = AAA983CA04B9060A00D02EE9;
@@ -9484,22 +9475,22 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ModelOrSprite.h;
-			path = /Users/steve/stepmania/src/ModelOrSprite.h;
-			refType = 0;
+			path = ../src/ModelOrSprite.h;
+			refType = 4;
 		};
 		AAABAD3904F0E12B00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteFieldPlus.cpp;
-			path = /Users/steve/stepmania/src/NoteFieldPlus.cpp;
-			refType = 0;
+			path = ../src/NoteFieldPlus.cpp;
+			refType = 4;
 		};
 		AAABAD3A04F0E12B00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteFieldPlus.h;
-			path = /Users/steve/stepmania/src/NoteFieldPlus.h;
-			refType = 0;
+			path = ../src/NoteFieldPlus.h;
+			refType = 4;
 		};
 		AAABAD3C04F0E12B00D02EE9 = {
 			fileRef = AAABAD3604F0E12B00D02EE9;
@@ -9535,15 +9526,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEditCoursesMenu.cpp;
-			path = /Users/steve/stepmania/src/ScreenEditCoursesMenu.cpp;
-			refType = 0;
+			path = ../src/ScreenEditCoursesMenu.cpp;
+			refType = 4;
 		};
 		AAADA51704E75DD300D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenEditCoursesMenu.h;
-			path = /Users/steve/stepmania/src/ScreenEditCoursesMenu.h;
-			refType = 0;
+			path = ../src/ScreenEditCoursesMenu.h;
+			refType = 4;
 		};
 		AAADA51804E75DD300D02EE9 = {
 			fileRef = AAADA51604E75DD300D02EE9;
@@ -9561,15 +9552,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = EditCoursesMenu.cpp;
-			path = /Users/steve/stepmania/src/EditCoursesMenu.cpp;
-			refType = 0;
+			path = ../src/EditCoursesMenu.cpp;
+			refType = 4;
 		};
 		AAADA51B04E7609A00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = EditCoursesMenu.h;
-			path = /Users/steve/stepmania/src/EditCoursesMenu.h;
-			refType = 0;
+			path = ../src/EditCoursesMenu.h;
+			refType = 4;
 		};
 		AAADA51C04E7609A00D02EE9 = {
 			fileRef = AAADA51A04E7609A00D02EE9;
@@ -9787,7 +9778,7 @@
 			isa = PBXFileReference;
 			name = BannerCache.cpp;
 			path = ../src/BannerCache.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9797,7 +9788,7 @@
 			isa = PBXFileReference;
 			name = BannerCache.h;
 			path = ../src/BannerCache.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9819,7 +9810,7 @@
 			isa = PBXFileReference;
 			name = ModeSwitcher.cpp;
 			path = ../src/ModeSwitcher.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9829,7 +9820,7 @@
 			isa = PBXFileReference;
 			name = ModeSwitcher.h;
 			path = ../src/ModeSwitcher.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9920,8 +9911,8 @@
 			);
 			isa = PBXGroup;
 			name = ArchHooks;
-			path = ../src/arch;
-			refType = 2;
+			path = "";
+			refType = 4;
 		};
 		AABE36FF0497CE83005F316C = {
 			fileEncoding = 30;
@@ -9960,7 +9951,7 @@
 			isa = PBXFileReference;
 			name = RageDisplay_OGL.cpp;
 			path = ../src/RageDisplay_OGL.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9970,7 +9961,7 @@
 			isa = PBXFileReference;
 			name = RageDisplay_OGL.h;
 			path = ../src/RageDisplay_OGL.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9980,7 +9971,7 @@
 			isa = PBXFileReference;
 			name = RageUtil_CharConversions.cpp;
 			path = ../src/RageUtil_CharConversions.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -9990,7 +9981,7 @@
 			isa = PBXFileReference;
 			name = RageUtil_CharConversions.h;
 			path = ../src/RageUtil_CharConversions.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10023,14 +10014,14 @@
 			isa = PBXFileReference;
 			name = BeginnerHelper.cpp;
 			path = ../src/BeginnerHelper.cpp;
-			refType = 2;
+			refType = 4;
 		};
 		AAC28BBA04F758E500D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = BeginnerHelper.h;
 			path = ../src/BeginnerHelper.h;
-			refType = 2;
+			refType = 4;
 		};
 		AAC28BBB04F758E500D02EE9 = {
 			fileRef = AAC28BB904F758E500D02EE9;
@@ -10048,22 +10039,22 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSoundReader_FileReader.h;
-			path = /Users/steve/stepmania/src/RageSoundReader_FileReader.h;
-			refType = 0;
+			path = ../src/RageSoundReader_FileReader.h;
+			refType = 4;
 		};
 		AADB4E7B04D4FE5D00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSounds.cpp;
 			path = ../src/RageSounds.cpp;
-			refType = 2;
+			refType = 4;
 		};
 		AADB4E7C04D4FE5D00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSounds.h;
-			path = /Users/steve/stepmania/src/RageSounds.h;
-			refType = 0;
+			path = ../src/RageSounds.h;
+			refType = 4;
 		};
 		AADB4E7D04D4FE5D00D02EE9 = {
 			fileRef = AADB4E7A04D4FE5D00D02EE9;
@@ -10244,7 +10235,7 @@
 			isa = PBXFileReference;
 			name = CombinedLifeMeterEnemy.cpp;
 			path = ../src/CombinedLifeMeterEnemy.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10254,7 +10245,7 @@
 			isa = PBXFileReference;
 			name = CombinedLifeMeterEnemy.h;
 			path = ../src/CombinedLifeMeterEnemy.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10264,7 +10255,7 @@
 			isa = PBXFileReference;
 			name = CombinedLifeMeterTug.cpp;
 			path = ../src/CombinedLifeMeterTug.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10274,7 +10265,7 @@
 			isa = PBXFileReference;
 			name = CombinedLifeMeterTug.h;
 			path = ../src/CombinedLifeMeterTug.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10308,7 +10299,7 @@
 			isa = PBXFileReference;
 			name = ScoreKeeperRave.cpp;
 			path = ../src/ScoreKeeperRave.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10318,7 +10309,7 @@
 			isa = PBXFileReference;
 			name = ScoreKeeperRave.h;
 			path = ../src/ScoreKeeperRave.h;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10377,6 +10368,66 @@
 		};
 		AAE4444E04B1396400D02EE9 = {
 			fileRef = AAE443F704B1032300D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAECB36D0512749E001B792B = {
+			isa = PBXTargetDependency;
+			target = AA1C68CA05116C7C0073A143;
+		};
+		AAECB370051274B7001B792B = {
+			fileRef = AA1C68CB05116C7C0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAECB371051278EF001B792B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = installtool.c;
+			path = Installer/installtool.c;
+			refType = 4;
+		};
+		AAECB372051278EF001B792B = {
+			fileRef = AAECB371051278EF001B792B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAECB3730512794D001B792B = {
+			isa = PBXFrameworkReference;
+			name = Security.framework;
+			path = /System/Library/Frameworks/Security.framework;
+			refType = 0;
+		};
+		AAECB3740512794D001B792B = {
+			fileRef = AAECB3730512794D001B792B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAECB37505127950001B792B = {
+			fileRef = AAF33F2A04FF213100F93C24;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAECB37605127994001B792B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = install.h;
+			path = Installer/install.h;
+			refType = 4;
+		};
+		AAECB37705127994001B792B = {
+			fileRef = AAECB37605127994001B792B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAECB37805127994001B792B = {
+			fileRef = AAECB37605127994001B792B;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10528,7 +10579,7 @@
 			isa = PBXFileReference;
 			name = RageUtil_FileDB.cpp;
 			path = ../src/RageUtil_FileDB.cpp;
-			refType = 2;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10537,8 +10588,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil_FileDB.h;
-			path = /Users/steve/stepmania/src/RageUtil_FileDB.h;
-			refType = 0;
+			path = ../src/RageUtil_FileDB.h;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -10550,6 +10601,146 @@
 		};
 		AAF580AA04B3E2DC00D02EE9 = {
 			fileRef = AAF580A804B3E2DC00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC7FF00513A67700D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_FileReader.cpp;
+			path = ../src/RageSoundReader_FileReader.cpp;
+			refType = 4;
+		};
+		AAFC7FF10513A67700D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_MP3.cpp;
+			path = ../src/RageSoundReader_MP3.cpp;
+			refType = 4;
+		};
+		AAFC7FF20513A67700D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageSoundReader_MP3.h;
+			path = ../src/RageSoundReader_MP3.h;
+			refType = 4;
+		};
+		AAFC7FF30513A67700D02EE9 = {
+			fileRef = AAFC7FF00513A67700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC7FF40513A67700D02EE9 = {
+			fileRef = AAFC7FF10513A67700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC7FF50513A67700D02EE9 = {
+			fileRef = AAFC7FF20513A67700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC7FF60513A68600D02EE9 = {
+			fileRef = AA1C65A5050FD21F0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC7FF70513A68600D02EE9 = {
+			fileRef = AA1C65A4050FD21F0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC803F0513A6EB00D02EE9 = {
+			children = (
+				AAFC80400513A6EB00D02EE9,
+				AAFC80430513A6EB00D02EE9,
+			);
+			isa = PBXGroup;
+			name = vorbis;
+			path = ../src/vorbis;
+			refType = 4;
+		};
+		AAFC80400513A6EB00D02EE9 = {
+			children = (
+				AAFC80410513A6EB00D02EE9,
+				AAFC80420513A6EB00D02EE9,
+			);
+			isa = PBXGroup;
+			path = ogg;
+			refType = 4;
+		};
+		AAFC80410513A6EB00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ogg.h;
+			refType = 4;
+		};
+		AAFC80420513A6EB00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = os_types.h;
+			refType = 4;
+		};
+		AAFC80430513A6EB00D02EE9 = {
+			children = (
+				AAFC80440513A6EB00D02EE9,
+				AAFC80450513A6EB00D02EE9,
+				AAFC80460513A6EB00D02EE9,
+			);
+			isa = PBXGroup;
+			path = vorbis;
+			refType = 4;
+		};
+		AAFC80440513A6EB00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = codec.h;
+			refType = 4;
+		};
+		AAFC80450513A6EB00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = vorbisenc.h;
+			refType = 4;
+		};
+		AAFC80460513A6EB00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = vorbisfile.h;
+			refType = 4;
+		};
+		AAFC804F0513A6EB00D02EE9 = {
+			fileRef = AAFC80410513A6EB00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC80500513A6EB00D02EE9 = {
+			fileRef = AAFC80420513A6EB00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC80510513A6EB00D02EE9 = {
+			fileRef = AAFC80440513A6EB00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC80520513A6EB00D02EE9 = {
+			fileRef = AAFC80450513A6EB00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFC80530513A6EB00D02EE9 = {
+			fileRef = AAFC80460513A6EB00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
