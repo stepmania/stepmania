@@ -1,5 +1,27 @@
-//Test file for Miryo's new Unlock system. Songs are matched by name, not folder name
-// [DP]500|Gamelan de Couple
-// [DP]7500|Exotic Ethnic
-// [DP]10000|Maxx Unlimited
-[DP]4000|Paranoia Survivor Max
+// Test file for Miryo's new Unlock system. 
+// Songs are matched by name, not folder name
+//
+// System modified by curewater
+//
+// The following methods are implemented:
+//
+// [DP] - Dance points, e.g. 2 per perfect, 1 per great, etc.
+//    [DP]5000 would require 5000 dance points to unlock.
+//
+// [AP] - Arcade points, like MAX2 arcade
+//    [AP]5000 would require 5000 arcade points to unlock.
+//
+// [SP] - Song points, like MAX2 Home
+//    [SP]1000 would require 1000 song points to unlock.
+//
+// [CS] - Clear Stages, like 5th Home
+//    [CS]100 would mean you have to clear 100 stages to unlock.
+//
+// [RO] - Roulette, unlocked by landing on it in roulette.
+//    [RO]5 means the song is part of 'slot' 5.
+//
+// To be implemented: Toasty, Clear Extra Stages, Fail Extra Stages.
+//
+// Courses will be implemented eventually, but not yet.
+// Songs are matched by title + subtitle.
+
