@@ -528,9 +528,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 		m_textStepsDescription[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay StepsDescription") );
 		m_textStepsDescription[p].SetName( ssprintf("StepsDescriptionP%i",p+1) );
-		Steps* pSteps = GAMESTATE->m_pCurNotes[p];
-		ASSERT( pSteps );
-		m_textStepsDescription[p].SetText( pSteps->GetDescription() );
 		SET_XY( m_textStepsDescription[p] );
 		this->AddChild( &m_textStepsDescription[p] );
 	}
@@ -862,6 +859,9 @@ void ScreenGameplay::LoadNextSong()
 			continue;
 
 		SetupSong( p, iPlaySongIndex );
+
+		ASSERT( GAMESTATE->m_pCurNotes[p] );
+		m_textStepsDescription[p].SetText( GAMESTATE->m_pCurNotes[p]->GetDescription() );
 
 		/* Increment the play count even if the player fails.  (It's still popular,
 		 * even if the people playing it aren't good at it.) */

@@ -21,6 +21,9 @@ SongCreditDisplay::SongCreditDisplay()
 	this->LoadFromFont( THEME->GetPathToF("SongCreditDisplay",(CString)"text") );
 	
 	Song* pSong = GAMESTATE->m_pCurSong;
+	if( pSong == NULL ) /* probably course mode */
+		return;
+
 	CString s;
 	s += pSong->GetFullDisplayTitle() + "\n";
 	s += pSong->GetDisplayArtist() + "\n";
