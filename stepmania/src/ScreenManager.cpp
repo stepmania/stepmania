@@ -177,14 +177,13 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	{
 		CString sCredits;
 
-		if( GAMESTATE->m_bIsOnSystemMenu ) // no mem card
+		bool bShowCreditsMessage = 
+			GAMESTATE->m_bIsOnSystemMenu || !GAMESTATE->m_bSideIsJoined[p];
+		
+		if( !bShowCreditsMessage )
 		{
-			sCredits = "";
-		}
-		else if( GAMESTATE->m_bSideIsJoined[p] )
-		{
-			MemoryCardState mcs = MEMCARDMAN->GetCardState( (PlayerNumber)p );
-			Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+			MemoryCardState mcs = MEMCARDMAN->GetCardState( p );
+			Profile* pProfile = PROFILEMAN->GetProfile( p );
 			if( pProfile )
 			{
 				sCredits = pProfile->GetDisplayName();
@@ -213,7 +212,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				}
 			}
 		}
-		else 
+		else // bShowCreditsMessage
 		{
 			switch( PREFSMAN->GetCoinMode() )
 			{

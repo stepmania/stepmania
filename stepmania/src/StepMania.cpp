@@ -1294,7 +1294,7 @@ void InsertCoin( int iNum )
 
 void InsertCredit()
 {
-	GAMESTATE->m_iCoins += PREFSMAN->m_iCoinsPerCredit;
+	InsertCoin( PREFSMAN->m_iCoinsPerCredit );
 }
 
 /* Returns true if the key has been handled and should be discarded, false if
