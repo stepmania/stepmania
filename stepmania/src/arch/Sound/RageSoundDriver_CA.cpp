@@ -43,8 +43,8 @@ static CString FormatToString( int fmt )
     
 	/* Sanitize: */
 	for( int i = 0; i < 4; ++i )
-		if( c[i] < 32 || c[i] >= 127 )
-			return ssprintf( "0x%X", fmt );
+		if( !isalpha(c[i]) )
+			return ssprintf( "%#X", fmt );
     
 	return ssprintf( "%c%c%c%c", c[0], c[1], c[2], c[3] );
 }
@@ -66,14 +66,18 @@ CString RageSound_CA::Init()
 	{
 		return "Couldn't create default output device.";
 	}
+	
+	Float64 nominalSampleRate = 44100.0;
     
 	try
 	{
-		mOutputDevice->SetNominalSampleRate(44100.0);
+		mOutputDevice->SetNominalSampleRate(nominalSampleRate);
 	}
 	catch (const CAException& e)
 	{
-		return "Couldn't set the nominal sample rate.";
+		LOG->Warn("Couldn't set the nominal sample rate.");
+		nominalSampleRate = mOutputDevice->GetNominalSampleRate();
+		LOG->Warn("Device's nominal sample rate is %f", nominalSampleRate);
 	}
 	AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
 	CAAudioHardwareStream stream( sID );
@@ -88,15 +92,25 @@ CString RageSound_CA::Init()
 		LOG->Warn("Could not install the overload listener.");
 	}
 
-	const Desc CanonicalFormat(44100.0, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
-							   kAudioFormatFlagsNativeFloatPacked);
+	// The canonical format
+	// XXX should this be nominalSampleRate or not?
+	Desc IOProcFormat(nominalSampleRate, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
+					  kAudioFormatFlagsNativeFloatPacked);
 	const Desc SMFormat(44100.0, kAudioFormatLinearPCM, kBytesPerPacket,
                         kFramesPerPacket, kBytesPerFrame, kChannelsPerFrame,
                         kBitsPerChannel, kFormatFlags);
 	
-	stream.SetCurrentIOProcFormat(CanonicalFormat);
+	try
+	{
+		stream.SetCurrentIOProcFormat(IOProcFormat);
+	}
+	catch (const CAException& e)
+	{
+		LOG->Warn("Could not set the IOProc format to the canonical format.");
+		stream.GetCurrentIOProcFormat(IOProcFormat);
+	}
 	
-	if (AudioConverterNew(&SMFormat, &CanonicalFormat, &mConverter))
+	if (AudioConverterNew(&SMFormat, &IOProcFormat, &mConverter))
 		return "Couldn't create the audio converter";
 	
 	try
