@@ -565,8 +565,8 @@ void BGAnimationLayer::Update( float fDeltaTime )
 {
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	
-	
-	for( unsigned i=0; i<m_iNumSprites; i++ )
+	unsigned i;
+	for( i=0; i<m_iNumSprites; i++ )
 		m_Sprites[i].Update( fDeltaTime );
 
 
