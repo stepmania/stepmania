@@ -439,10 +439,6 @@ void GameLoop()
 		 */
 		float fDeltaTime = timer.GetDeltaTime();
 		
-		// This was a hack to fix timing issues with the old ScreenSelectSong
-		// See ScreenManager::Update comments for why we shouldn't do this. -glenn
-		//if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
-		// 	fDeltaTime = 0.050f;
 		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
 			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime = 0; /* both; stop time */
