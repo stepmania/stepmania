@@ -831,9 +831,12 @@ void Update()
 	
 	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
 		fDeltaTime *= 4;
-	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
-		fDeltaTime /= 4;
-
+	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) ) {
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
+			fDeltaTime = 0;
+		else
+			fDeltaTime /= 4;
+	}
 
 	MUSIC->Update( fDeltaTime );
 
@@ -897,7 +900,7 @@ void Render()
 				// calculate view and projection transforms
 				D3DXMATRIX mat;
 			
-				D3DXMatrixOrthoOffCenterLH( &mat, 0, 640, 480, 0, -1000, 1000 );
+				D3DXMatrixOrthoOffCenterLH( &mat, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1000, 1000 );
 				DISPLAY->SetProjectionTransform( &mat );
 
 				D3DXMatrixIdentity( &mat );
