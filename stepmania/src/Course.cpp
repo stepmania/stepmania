@@ -785,8 +785,8 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 
 static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	float iNum1 = pCourse1->SortOrder_AvgDifficulty;
-	float iNum2 = pCourse2->SortOrder_AvgDifficulty;
+	int iNum1 = pCourse1->GetMeter( false ); // SortOrder_AvgDifficulty;
+	int iNum2 = pCourse2->GetMeter( false ); // SortOrder_AvgDifficulty;
 
 	if( iNum1 < iNum2 )
 		return true;
