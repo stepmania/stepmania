@@ -37,6 +37,7 @@
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
 #define CHARACTERS_DIR BASE_PATH "Characters" SLASH
+#define NAMES_BLACKLIST_FILE BASE_PATH "Data" SLASH "NamesBlacklist.dat"
 
 GameState::GameState()
 {
@@ -913,6 +914,22 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 
 void GameState::StoreRankingName( PlayerNumber pn, CString name )
 {
+	//
+	// Filter swear words from name
+	//
+	name.MakeUpper();
+	ifstream f( BLACKLIST_NAMES_FILE );
+	f.open();
+	if( f.good() )
+	{
+		CString sLine;
+		while( getline(sLine) )
+		{
+			if( name.Find(sLine) != -1 )
+				name = "";
+		}
+	}
+
 	vector<RankingFeats> aFeats;
 	GetRankingFeats( pn, aFeats );
 
