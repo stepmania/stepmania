@@ -313,6 +313,13 @@ static void child_process()
         ret = read(3, Recent[i], size);
     }
 
+    /* 6. Read CHECKPOINTs. */
+    ret = read(3, &size, sizeof(size));
+    char *temp = new char [size];
+    ret = read(3, temp, size);
+    CStringArray Checkpoints;
+    split(temp, "$$", Checkpoints);
+
     /* Wait for the child to either finish cleaning up or die.  XXX:
         * This should time out, in case something deadlocks. */
 
@@ -392,6 +399,9 @@ static void child_process()
     fprintf(CrashDump, "\nPartial log:\n");
     for( int i = 0; i < cnt; ++i )
         fprintf(CrashDump, "%s\n", Recent[i] );
+    fprintf(CrashDump, "\nCheckpoints:\n");
+    for (unsigned i=0; i<Checkpoints.size(); ++i)
+        fprintf(CrashDump, Checkpoints[i]);
     fprintf(CrashDump, "\n");
     fprintf(CrashDump, "-- End of report\n");
     fclose(CrashDump);

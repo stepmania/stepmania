@@ -100,6 +100,12 @@ static void parent_process( int to_child, void **BacktracePointers, int SignalRe
 		parent_write(to_child, &size, sizeof(size));
 		parent_write(to_child, ps[i], size);
 	}
+
+    /* 6. Write CHECKPOINTs. */
+    p = GetCheckpointLogs("$$");
+    size = strlen(p)+1;
+    parent_write(to_child, &size, sizeof(size));
+    parent_write(to_child, p, size);
 	
 	close(to_child);
 }
