@@ -25,7 +25,7 @@ cp COPYING.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
    configure Makefile.in configure.ac   $PRODUCTVER
 
 mkdir $PRODUCTVER/Docs/
-cp Docs/ChangeLog $PRODUCTVER/Docs/
+cp Docs/ChangeLog.txt $PRODUCTVER/Docs/
 
 echo Pruning...
 cd $PRODUCTVER/src
