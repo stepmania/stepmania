@@ -650,7 +650,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
 	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
-	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fYPos ) * SCALE(fLife,0,1,0.2f,1);
+	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fYOffset ) * SCALE(fLife,0,1,0.2f,1);
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
 

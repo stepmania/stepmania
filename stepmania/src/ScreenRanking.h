@@ -42,7 +42,9 @@ protected:
 	BitmapText m_textType;
 	Sprite m_sprBullets[NUM_RANKING_LINES];
 	BitmapText m_textNames[NUM_RANKING_LINES];
-	BitmapText m_textScores[NUM_RANKING_LINES];
+	BitmapText m_textScores[NUM_RANKING_LINES];	// for category
+	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
+	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
 
 	vector<PageToShow>	m_vPagesToShow;
 };
