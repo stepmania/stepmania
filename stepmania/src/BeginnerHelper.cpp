@@ -17,7 +17,7 @@
 // STEPCIRCLE commands are relative to the HELPER position
 #define STEPCIRCLE_LEFT_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_LEFT_COMMAND",pz+1))
 #define STEPCIRCLE_DOWN_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_DOWN_COMMAND",pz+1))
-#define STEPCIRCLE_UP_COMMAND( pz )		THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_UP_COMMAND",pz+1))
+#define STEPCIRCLE_UP_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_UP_COMMAND",pz+1))
 #define STEPCIRCLE_RIGHT_COMMAND( pz )	THEME->GetMetric ("BeginnerHelper",ssprintf("StepCircleP%d_RIGHT_COMMAND",pz+1))
 
 // "HELPER" offsets effect the pad/dancer as a whole.. Their relative Y cooridinates are hard-coded for eachother.
@@ -95,6 +95,8 @@ void BeginnerHelper::Initialize( int iDancePadType )
 		this->AddChild(&m_sStepCircle[sc]);
 	}*/
 
+	Steps *Blahness;
+
 	// Load the DancePad
 	m_mDancePad.SetHorizAlign( align_left );
 	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );
@@ -116,6 +118,11 @@ void BeginnerHelper::Initialize( int iDancePadType )
 			GAMESTATE->m_pCurCharacters[pl] = GAMESTATE->GetRandomCharacter();
 		}
 
+		LOG->Trace( "Blahness" );
+		Blahness = GAMESTATE->m_pCurNotes[pl];
+		LOG->Trace( "Blahness2" );
+		LOG->Trace( "Players: %d, Player: %d",NUM_PLAYERS,pl );
+		LOG->Trace ("Blahness Difficulty: %d",Blahness->GetDifficulty() );
 		if( GAMESTATE->m_pCurNotes[pl]->GetDifficulty() == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[pl] != NULL )
 		{
 			// Load textures
@@ -185,7 +192,7 @@ void BeginnerHelper::Step( int pn, int CSTEP )
 {
 	LOG->Trace( "BeginnerHelper::Step()" );
 	// First make sure this player is on beginner mode and enabled... The difficulty check may be redundant, tho.
-	if( (GAMESTATE->IsPlayerEnabled(pn)) && (GAMESTATE->m_PreferredDifficulty[pn] == DIFFICULTY_BEGINNER) )
+	if( (GAMESTATE->IsPlayerEnabled(pn)) && (GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
 	{
 		ShowStepCircle( pn, CSTEP);
 		m_mDancer[pn].StopTweening();
@@ -194,7 +201,7 @@ void BeginnerHelper::Step( int pn, int CSTEP )
 		{
 		case ST_LEFT:	m_mDancer[pn].PlayAnimation( "Step-LEFT" ); break;
 		case ST_RIGHT:	m_mDancer[pn].PlayAnimation( "Step-RIGHT" ); break;
-		case ST_UP:		m_mDancer[pn].PlayAnimation( "Step-UP" ); break;
+		case ST_UP:	m_mDancer[pn].PlayAnimation( "Step-UP" ); break;
 		case ST_DOWN:	m_mDancer[pn].PlayAnimation( "Step-DOWN" ); break;
 		case ST_JUMPLR: m_mDancer[pn].PlayAnimation( "Step-JUMPLR" ); break;
 		case ST_JUMPUD:
@@ -221,7 +228,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
-		if( (!GAMESTATE->IsPlayerEnabled(pn)) || (GAMESTATE->m_PreferredDifficulty[pn] != DIFFICULTY_BEGINNER) )
+		if( (!GAMESTATE->IsPlayerEnabled(pn)) || (GAMESTATE->m_pCurNotes[pn]->GetDifficulty() != DIFFICULTY_BEGINNER) )
 			continue;	// skip
 
 		int iStep = 0;
