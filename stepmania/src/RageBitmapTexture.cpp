@@ -261,9 +261,8 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 		m_iImageHeight = m_iTextureHeight;
 	}
 
-	/* If the source is larger than the texture, we have to scale it down; that's
-	 * "stretching", I guess. */
-	if(m_iSourceWidth != m_iImageWidth || m_iSourceHeight > m_iImageHeight)
+	/* If the source is larger than the texture, we have to scale it to fit. */
+	if(m_iSourceWidth > m_iImageWidth || m_iSourceHeight > m_iImageHeight)
 		m_ActualID.bStretch = true;
 
 	pixfmt = PixFmtMaskNo(fmtTexture);
@@ -296,9 +295,7 @@ void RageBitmapTexture::Create()
 	/* This will be set to the pixfmt we should use if we use an RGBA texture. */
 	int desired_rgba_pixfmt;
 
-	
 	SDL_Surface *img = CreateImg(desired_rgba_pixfmt);
-
 	if(!m_uGLTextureID)
 		glGenTextures(1, reinterpret_cast<GLuint*>(&m_uGLTextureID));
 	ASSERT(m_uGLTextureID);
