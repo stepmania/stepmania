@@ -148,7 +148,8 @@ File "NEWS"
 File "stepmania.exe"
 ; What to do here?  Better to just delete an existing INI than to
 ; drop the local one in ... -glenn
-File "stepmania.ini"
+; Agreed. - Chris
+Delete "$INSTDIR\stepmania.ini"
 File "stepmania.vdi"
 File "smpackage.exe"
 

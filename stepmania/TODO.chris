@@ -2,6 +2,26 @@
 Fix
 /////////////////////////
 
+oni high scores
+
+download a bunch of DWIs to test for compatibility
+
+song ends sooner
+
+background aspect ratio
+
+codes in a separate file
+
+gray arrow change colors after here we go
+
+bgbrightness broken in release
+
+record an entire song and save it'll crash
+
+BGM Support? Oh the movies, I think someone WAS gonna fix that. But yes, I'd like to have gap values for movies as well.
+
+redo witch doctor bganimations
+
 select music score font size
 
 more traditional particle system in BGAnimationLayer?
@@ -21,10 +41,6 @@ red life glow in sync with beat
 
 No no, I know about chaning group colors but when in ABC sort they're all red
 
-on Ez2, the Ranking doesn't save (AAA, AA, A, B e.t.c.)
-but the score does, any ideas why?
-
-if you do an entire song in it. and save it'll crash
 
 re-add texture hints
 
@@ -81,6 +97,8 @@ warning screen
 lyrics
 
 team seattle link
+
+step chart generator
 
 //////////////////////
 Animachanic suggestions:

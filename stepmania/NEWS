@@ -1,9 +1,19 @@
-------------------------CVS after 3.00 beta 6----------------
+------------------------CVS after 3.00 beta 6rc2----------------
 CHANGE:  Name changed to "beta 7" to avoid confusion with the numerous beta 6
-	release candidates
-
+	release candidates.
+BUG FIX:  Fixed writing solo patterns to DWI file.
+CHANGE:  Group names: Pump It Up (PiU), ParaParaParadise (PPP), Dancing Stage 
+	(DS) are now shortened.
+BUG FIX:  Statistics for singles no longer show up under doubles
+CHANGE:  Added separate difficulty icons for smaniac, challenge, and battle.
+CHANGE:  Faster transition between songs in Oni.
+CHANGE:  Default setting for "Ignore Joy Axes" is now ON.
+BUG FIX:  Para demonstation no longer crashes.
+BUG FIX:  DWI reader now reads fractional BPM and FREEZE index values (e.g. 
+	Alya Part 2).
+	
 ------------------------CVS after 3.00 beta 6----------------
-CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life
+CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life.
 CHANGE:  Judge difficulty strictness increased slightly.
 CHANGE:  Initial sort order now sorts by meter of Easy notes, ala MAX.
 BUG FIX:  DWI music sample info now read correctly - again.
@@ -17,8 +27,7 @@ NEW FEATURE: PPP and PUMP use Ez2SelectStyle Menus to become more
 NEW FEATURE: Ez2SelectStyle Menu Background Animations Metric Configurable
 NEW FEATURE: ParaParaParadise Support
 NEW FEATURE:  Added transliteration support for song titles, subtitles & artist
-	names.
-	Tags are #TITLETRANSLIT, #SUBTITLETRANSLIT & #ARTISTTRANSLIT
+	names.  Tags are #TITLETRANSLIT, #SUBTITLETRANSLIT & #ARTISTTRANSLIT
 	respectively.  The transliterations of the title and subtitle are used when 
 	sorting	and grouping songs, so non-latin songs can be placed correctly
 NEW FEATURE:  DWI tree loading via "DWIPath".
