@@ -72,7 +72,7 @@ BitmapText::~BitmapText()
 		FONT->UnloadFont( m_pFont );
 }
 
-bool BitmapText::LoadFromFont( CString sFontFilePath )
+bool BitmapText::LoadFromFont( const CString& sFontFilePath )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
 
@@ -89,7 +89,7 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 }
 
 
-bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
+bool BitmapText::LoadFromTextureAndChars( const CString& sTexturePath, const CString& sChars )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
 
@@ -280,19 +280,18 @@ void BitmapText::DrawChars()
 /* sText is UTF-8.  If not all of the characters in sText are available in the
  * font, sAlternateText will be used instead.  If there are unavailable characters
  * in sAlternateText, too, just use sText. */
-void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthPixels )
+void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText, int iWrapWidthPixels )
 {
 	ASSERT( m_pFont );
 
-	if(StringWillUseAlternate(sText, sAlternateText))
-		sText = sAlternateText;
+	CString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
 
-	if(m_sText == sText && iWrapWidthPixels==m_iWrapWidthPixels)
+	if(m_sText == sNewText && iWrapWidthPixels==m_iWrapWidthPixels)
 		return;
-	m_sText = sText;
+	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
 
 
@@ -302,7 +301,7 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 
 	if( iWrapWidthPixels == -1 )
 	{
-		split( CStringToWstring(sText), L"\n", m_wTextLines, false );
+		split( CStringToWstring(m_sText), L"\n", m_wTextLines, false );
 	}
 	else
 	{
@@ -315,7 +314,7 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 		 * and soft hyphens and pretty easily, too. -glenn */
 		// TODO: Move this wrapping logic into Font
 		CStringArray asLines;
-		split( sText, "\n", asLines );
+		split( m_sText, "\n", asLines );
 
 		for( unsigned line = 0; line < asLines.size(); ++line )
 		{
@@ -386,7 +385,7 @@ void BitmapText::UpdateBaseZoom()
 	this->SetBaseZoomX( Zoom );
 }
 
-bool BitmapText::StringWillUseAlternate(CString sText, CString sAlternateText) const
+bool BitmapText::StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const
 {
 	ASSERT( m_pFont );
 

@@ -14,9 +14,9 @@ public:
 	virtual ~BitmapText();
 
 
-	bool LoadFromFont( CString sFontName );
-	bool LoadFromTextureAndChars( CString sTexturePath, CString sChars );
-	void SetText( CString sText, CString sAlternateText = "", int iWrapWidthPixels = -1 );
+	bool LoadFromFont( const CString& sFontName );
+	bool LoadFromTextureAndChars( const CString& sTexturePath, const CString& sChars );
+	void SetText( const CString& sText, const CString& sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetMaxWidth( float MaxWidth );
 	void SetWrapWidthPixels( int iWrapWidthPixels );
 
@@ -35,7 +35,7 @@ public:
 
 	CString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
-	bool StringWillUseAlternate(CString sText, CString sAlternateText) const;
+	bool StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const;
 
 	virtual void HandleCommand( const Command &command );
 
