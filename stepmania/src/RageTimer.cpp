@@ -13,6 +13,14 @@ const RageZeroTimer_t RageZeroTimer;
 
 void mySDL_GetTicks( unsigned &secs, unsigned &us )
 {
+	static bool bInitialized = false;
+	if( !bInitialized )
+	{
+		bInitialized = true;
+		if( !SDL_WasInit(SDL_INIT_TIMER) )
+			SDL_InitSubSystem( SDL_INIT_TIMER );
+	}
+
 	/* Ticks may be less than last for at least two reasons: the time may have wrapped (after
 	 * about 49 days), or the system clock may have moved backwards.  If the system clock moves
 	 * backwards, we can't just clamp the time; if it moved back an hour, we'll sit around for
@@ -45,6 +53,12 @@ void mySDL_GetTicks( unsigned &secs, unsigned &us )
 		const Uint32 offset_ms = last - millisecs;
 		offset_secs +=  offset_ms/1000;
 		offset_us   += (offset_ms%1000) * 1000;
+	}
+
+	if( offset_us >= TIMESTAMP_RESOLUTION )
+	{
+		offset_us -= TIMESTAMP_RESOLUTION;
+		++offset_secs;
 	}
 
 	last = millisecs;
