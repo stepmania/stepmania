@@ -30,12 +30,7 @@ const int COINS_DAT_VERSION = 1;
 
 Bookkeeper::Bookkeeper()
 {
-	int i, j;
-
-	m_iLastSeenTime = time(NULL);
-	for( i=0; i<DAYS_IN_YEAR; i++ )
-		for( j=0; j<HOURS_IN_DAY; j++ )
-			m_iCoinsByHourForYear[i][j] = 0;
+	ClearAll();
 
 	ReadFromDisk();
 
@@ -48,6 +43,14 @@ Bookkeeper::~Bookkeeper()
 }
 
 #define WARN_AND_RETURN { LOG->Warn("Error parsing at %s:%d",__FILE__,__LINE__); return; }
+
+void Bookkeeper::ClearAll()
+{
+	m_iLastSeenTime = time(NULL);
+	for( int i=0; i<DAYS_IN_YEAR; i++ )
+		for( int j=0; j<HOURS_IN_DAY; j++ )
+			m_iCoinsByHourForYear[i][j] = 0;
+}
 
 void Bookkeeper::ReadFromDisk()
 {

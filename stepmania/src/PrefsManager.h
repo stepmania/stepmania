@@ -20,6 +20,8 @@ public:
 	PrefsManager();
 	~PrefsManager();
 
+	void Init();
+
 	// GameOptions (ARE saved between sessions)
 	bool			m_bWindowed;
 	int				m_iDisplayWidth;
@@ -266,9 +268,12 @@ public:
 	void ReadGlobalPrefsFromDisk();
 	void SaveGlobalPrefsToDisk() const;
 
+	void ReadStaticPrefsFromDisk();
 
-	void ReadGamePrefsFromDisk();
-	void SaveGamePrefsToDisk();
+	void ResetToFactoryDefaults();
+
+protected:
+	void ReadPrefsFromFile( CString sIni );
 };
 
 /* This is global, because it can be accessed by crash handlers and error handlers

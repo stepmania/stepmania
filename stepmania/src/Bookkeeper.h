@@ -22,6 +22,8 @@ public:
 	Bookkeeper();
 	~Bookkeeper();
 
+	void ClearAll();
+
 	void CoinInserted();
 	void UpdateLastSeenTime();
 

@@ -33,6 +33,13 @@ bool g_bAutoRestart = false;
 
 PrefsManager::PrefsManager()
 {
+	Init();
+	ReadGlobalPrefsFromDisk();
+	ReadStaticPrefsFromDisk();
+}
+
+void PrefsManager::Init()
+{
 #ifdef DEBUG
 	m_bWindowed = true;
 #else
@@ -286,8 +293,6 @@ PrefsManager::PrefsManager()
 	}
 
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
-
-	ReadGlobalPrefsFromDisk();
 }
 
 PrefsManager::~PrefsManager()
@@ -296,13 +301,20 @@ PrefsManager::~PrefsManager()
 
 void PrefsManager::ReadGlobalPrefsFromDisk()
 {
-	IniFile ini;
-	ini.SetPath( STEPMANIA_INI_PATH );
-	ini.ReadFile();
+	ReadPrefsFromFile( STEPMANIA_INI_PATH );
+}
 
+void PrefsManager::ReadStaticPrefsFromDisk()
+{
 	/* Load this on top of the regular INI; if it exists, any settings listed
 	 * in it will override user settings. */
-	ini.SetPath( STATIC_INI_PATH );
+	ReadPrefsFromFile( STATIC_INI_PATH );
+}
+
+void PrefsManager::ReadPrefsFromFile( CString sIni )
+{
+	IniFile ini;
+	ini.SetPath( sIni );
 	ini.ReadFile();
 
 	ini.GetValue( "Options", "Windowed",						m_bWindowed );
@@ -763,3 +775,11 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	ini.WriteFile();
 }
+
+void PrefsManager::ResetToFactoryDefaults()
+{
+	Init();
+	ReadStaticPrefsFromDisk();	
+	SaveGlobalPrefsToDisk();
+}
+

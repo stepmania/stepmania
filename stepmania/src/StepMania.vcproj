@@ -206,6 +206,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
+				RelativePath="ScreenClearBookkeepingData.cpp">
+			</File>
+			<File
+				RelativePath="ScreenClearBookkeepingData.h">
+			</File>
+			<File
 				RelativePath="ScreenClearMachineStats.cpp">
 			</File>
 			<File
@@ -405,6 +411,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenReloadSongs.h">
+			</File>
+			<File
+				RelativePath="ScreenResetToDefaults.cpp">
+			</File>
+			<File
+				RelativePath="ScreenResetToDefaults.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">
