@@ -15,7 +15,7 @@
 #include "LoadingWindow/LoadingWindow_Cocoa.h"
 #include "InputHandler/InputHandler_SDL.h"
 #include "LowLevelWindow/LowLevelWindow_SDL.h"
-
+#include "ErrorDialog/ErrorDialog_darwin.h"
 #include "ArchHooks/ArchHooks_darwin.h"
 
 #endif
