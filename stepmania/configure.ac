@@ -74,6 +74,9 @@ case $host in
 i?86-*)
 	AC_DEFINE(CPU_X86, 1, [x86])
 	;;
+x86_64-*)
+	AC_DEFINE(CPU_X86_64, 1, [x86-64])
+	;;
 powerpc-*)
 	AC_DEFINE(CPU_PPC, 1, [PPC])
 	;;
