@@ -416,12 +416,6 @@ RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
 	}
 }
 
-CString SongManager::GetDifficultyThemeName( Difficulty dc ) const
-{
-	CString sMetricName = "Difficulty" + Capitalize( DifficultyToString(dc) );
-	return THEME->GetMetric( "Common", sMetricName );
-}
-
 static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &AddTo, CString sGroupName, int iMaxStages )
 {
 	AddTo.clear();

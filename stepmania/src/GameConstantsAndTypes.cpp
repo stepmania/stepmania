@@ -46,29 +46,30 @@ static const CString EMPTY_STRING;
 
 
 static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
-	"stream",
-	"voltage",
-	"air",
-	"freeze",
-	"chaos",
-	"taps",
-	"jumps",
-	"holds",
-	"mines",
-	"hands",
+	"Stream",
+	"Voltage",
+	"Air",
+	"Freeze",
+	"Chaos",
+	"Taps",
+	"Jumps",
+	"Holds",
+	"Mines",
+	"Hands",
 };
 XToString( RadarCategory );
 
 
 static const CString DifficultyNames[NUM_RADAR_CATEGORIES] = {
-	"beginner",
-	"easy",
-	"medium",
-	"hard",
-	"challenge",
-	"edit",
+	"Beginner",
+	"Easy",
+	"Medium",
+	"Hard",
+	"Challenge",
+	"Edit",
 };
 XToString( Difficulty );
+XToThemedString( Difficulty );
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
@@ -99,20 +100,21 @@ Difficulty StringToDifficulty( const CString& sDC )
 
 
 static const CString CourseDifficultyNames[NUM_COURSE_DIFFICULTIES] = {
-	"regular",
-	"difficult",
+	"Regular",
+	"Difficult",
 };
 XToString( CourseDifficulty );
+XToThemedString( CourseDifficulty );
 StringToX( CourseDifficulty );
 
 
 static const CString PlayModeNames[NUM_PLAY_MODES] = {
-	"arcade",
-	"nonstop",
-	"oni",
-	"endless",
-	"battle",
-	"rave",
+	"Arcade",
+	"Nonstop",
+	"Oni",
+	"Endless",
+	"Battle",
+	"Rave",
 };
 XToString( PlayMode );
 StringToX( PlayMode );

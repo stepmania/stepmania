@@ -46,7 +46,7 @@ SongCreditDisplay::SongCreditDisplay()
 	for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 	{
 		Steps* pSteps = vpStepsToShow[i];
-		CString sDifficulty = SONGMAN->GetDifficultyThemeName( pSteps->GetDifficulty() );
+		CString sDifficulty = DifficultyToThemedString( pSteps->GetDifficulty() );
 		
 		// HACK: reset capitalization
 		sDifficulty.MakeLower();

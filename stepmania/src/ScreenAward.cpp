@@ -47,7 +47,7 @@ ScreenAward::ScreenAward( CString sName ) : Screen( sName )
 			sAward = PerDifficultyAwardToString( pda );
 			sDescription = 
 				PerDifficultyAwardToThemedString( pda ) + "\n" +
-				SONGMAN->GetDifficultyThemeName( GAMESTATE->m_pCurNotes[p]->GetDifficulty() );
+				DifficultyToThemedString( GAMESTATE->m_pCurNotes[p]->GetDifficulty() );
 		}
 		else if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
 		{

@@ -114,15 +114,14 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
 		{
 			CourseDifficulty cd = (CourseDifficulty)d;
-			if( pCourse->HasCourseDifficulty(st,cd) )
-			{
-				CString sDifficulty = CourseDifficultyToString( cd );
-				sDifficulty = Capitalize( sDifficulty );
-				row.choices.push_back( ENTRY_NAME(sDifficulty+"Courses") );
-				ModeChoice mc;
-				mc.m_CourseDifficulty = cd;
-				hand.ListEntries.push_back( mc );
-			}
+			if( !pCourse->HasCourseDifficulty(st,cd) )
+				continue;	// skip
+
+			CString s = CourseDifficultyToThemedString( cd );
+			row.choices.push_back( s );
+			ModeChoice mc;
+			mc.m_CourseDifficulty = cd;
+			hand.ListEntries.push_back( mc );
 		}
 	}
 	else // !GAMESTATE->IsCourseMode(), playing a song
@@ -135,11 +134,10 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 			Steps* pSteps = vSteps[i];
 
 			CString s;
-			// convert to theme-defined difficulty name
 			if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
 				s = pSteps->GetDescription();
 			else
-				s = SONGMAN->GetDifficultyThemeName( pSteps->GetDifficulty() );
+				s = DifficultyToThemedString( pSteps->GetDifficulty() );
 			s += ssprintf( " (%d)", pSteps->GetMeter() );
 
 			row.choices.push_back( s );

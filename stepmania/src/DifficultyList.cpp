@@ -311,7 +311,7 @@ void DifficultyList::SetFromGameState()
 			if( row.m_Steps->GetDifficulty() == DIFFICULTY_EDIT )
 				s = row.m_Steps->GetDescription();
 			else
-				s = SONGMAN->GetDifficultyThemeName(dc);
+				s = DifficultyToThemedString(dc);
 			m_Descriptions[i].SetMaxWidth( DESCRIPTION_MAX_WIDTH );
 			m_Descriptions[i].SetText( s );
 			/* Don't mess with alpha; it might be fading on. */
