@@ -8,18 +8,36 @@ struct RageFileObjMemFile
 {
 	RageFileObjMemFile():
 		m_iRefs(0),
-		m_bDeleted(false),
 		m_Mutex("RageFileObjMemFile") { }
 	CString m_sBuf;
 	int m_iRefs;
-	bool m_bDeleted;
 	RageMutex m_Mutex;
+
+	static void AddReference( RageFileObjMemFile *pFile )
+	{
+		pFile->m_Mutex.Lock();
+		++pFile->m_iRefs;
+		pFile->m_Mutex.Unlock();
+	}
+
+	static void ReleaseReference( RageFileObjMemFile *pFile )
+	{
+		pFile->m_Mutex.Lock();
+		const int iRefs = --pFile->m_iRefs;
+		const bool bShouldDelete = (pFile->m_iRefs == 0);
+		pFile->m_Mutex.Unlock();
+		ASSERT( iRefs >= 0 );
+
+		if( bShouldDelete )
+			delete pFile;
+	}
 };
+
 
 class RageFileObjMem: public RageFileObj
 {
 public:
-	RageFileObjMem( RageFileObjMemFile *pFile );
+	RageFileObjMem( RageFileObjMemFile *pFile = NULL );
 	~RageFileObjMem();
 
 	int ReadInternal( void *buffer, size_t bytes );
@@ -35,23 +53,17 @@ private:
 
 RageFileObjMem::RageFileObjMem( RageFileObjMemFile *pFile )
 {
+	if( pFile == NULL )
+		pFile = new RageFileObjMemFile;
+
 	m_pFile = pFile;
 	m_iFilePos = 0;
-	++m_pFile->m_iRefs;
+	RageFileObjMemFile::AddReference( m_pFile );
 }
 
 RageFileObjMem::~RageFileObjMem()
 {
-	m_pFile->m_Mutex.Lock();
-	const int iRefs = --m_pFile->m_iRefs;
-	const bool bShouldDelete = (iRefs == 0 && m_pFile->m_bDeleted);
-	m_pFile->m_Mutex.Unlock();
-	ASSERT( iRefs >= 0 );
-
-	/* If the file was removed while we still had it open, and is now unreferenced,
-	 * delete it. */
-	if( bShouldDelete )
-		delete m_pFile;
+	RageFileObjMemFile::ReleaseReference( m_pFile );
 }
 
 int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
@@ -91,10 +103,6 @@ int RageFileObjMem::GetFileSize() const
 
 RageFileObj *RageFileObjMem::Copy() const
 {
-	m_pFile->m_Mutex.Unlock();
-	++m_pFile->m_iRefs;
-	m_pFile->m_Mutex.Lock();
-
 	RageFileObjMem *pRet = new RageFileObjMem( m_pFile );
 	pRet->m_iFilePos = m_iFilePos;
 
@@ -113,9 +121,7 @@ RageFileDriverMem::~RageFileDriverMem()
 	for( unsigned i = 0; i < m_Files.size(); ++i )
 	{
 		RageFileObjMemFile *pFile = m_Files[i];
-		ASSERT( !pFile->m_iRefs );
-
-		delete pFile;
+		RageFileObjMemFile::ReleaseReference( pFile );
 	}
 }
 
@@ -129,6 +135,9 @@ RageFileObj *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
 		Remove( sPath );
 
 		RageFileObjMemFile *pFile = new RageFileObjMemFile;
+
+		/* Add one reference, representing the file in the filesystem. */
+		RageFileObjMemFile::AddReference( pFile );
 
 		m_Files.push_back( pFile );
 		FDB->AddFile( sPath, 0, 0, pFile );
@@ -160,18 +169,7 @@ bool RageFileDriverMem::Remove( const CString &sPath )
 	ASSERT( it != m_Files.end() );
 	m_Files.erase( it );
 
-	pFile->m_Mutex.Lock();
-	if( pFile->m_iRefs )
-	{
-		/* The file is in use.  The last RageFileObjMem dtor will delete it. */
-		pFile->m_bDeleted = true;
-		pFile->m_Mutex.Unlock();
-	}
-	else
-	{
-		pFile->m_Mutex.Unlock();
-		delete pFile;
-	}
+	RageFileObjMemFile::ReleaseReference( pFile );
 
 	return true;
 }
