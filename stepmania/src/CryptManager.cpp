@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
+#include "RageFileManager.h"
 
 // crypt headers
 #include "CryptHelpers.h"
@@ -18,6 +19,7 @@ using namespace std;
 static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const int KEY_LENGTH = 1024;
+#define MAX_SIGNATURE_SIZE_BYTES 1024	// 1 KB
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
@@ -98,6 +100,10 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 		return false;
 
 	if( !IsAFile(sSignatureFile) )
+		return false;
+
+	int iBytes = FILEMAN->GetFileSizeInBytes( sSignatureFile );
+	if( iBytes > MAX_SIGNATURE_SIZE_BYTES )
 		return false;
 
 	try {
