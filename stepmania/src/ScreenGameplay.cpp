@@ -32,53 +32,25 @@
 //
 
 #define TOP_FRAME_X						THEME->GetMetricF("ScreenGameplay","TopFrameX")
-#define TOP_FRAME_Y						THEME->GetMetricF("ScreenGameplay","TopFrameY")
-#define TOP_FRAME_EXTRA_Y				THEME->GetMetricF("ScreenGameplay","TopFrameExtraY")
+#define TOP_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("TopFrame%sY",e?"Extra":""))
 #define BOTTOM_FRAME_X					THEME->GetMetricF("ScreenGameplay","BottomFrameX")
-#define BOTTOM_FRAME_Y					THEME->GetMetricF("ScreenGameplay","BottomFrameY")
-#define BOTTOM_FRAME_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","BottomFrameExtraY")
+#define BOTTOM_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("BottomFrame%sY",e?"Extra":""))
 #define MIDDLE_FRAME_X					THEME->GetMetricF("ScreenGameplay","MiddleFrameX")
 #define MIDDLE_FRAME_Y					THEME->GetMetricF("ScreenGameplay","MiddleFrameY")
-#define LIFE_P1_X						THEME->GetMetricF("ScreenGameplay","LifeP1X")
-#define LIFE_P1_Y						THEME->GetMetricF("ScreenGameplay","LifeP1Y")
-#define LIFE_P1_EXTRA_Y					THEME->GetMetricF("ScreenGameplay","LifeP1ExtraY")
-#define LIFE_P2_X						THEME->GetMetricF("ScreenGameplay","LifeP2X")
-#define LIFE_P2_Y						THEME->GetMetricF("ScreenGameplay","LifeP2Y")
-#define LIFE_P2_EXTRA_Y					THEME->GetMetricF("ScreenGameplay","LifeP2ExtraY")
+#define LIFE_X( p )						THEME->GetMetricF("ScreenGameplay",ssprintf("LifeP%dX",p+1))
+#define LIFE_Y( p, e )					THEME->GetMetricF("ScreenGameplay",ssprintf("LifeP%d%sY",p+1,e?"Extra":""))
 #define STAGE_X							THEME->GetMetricF("ScreenGameplay","StageX")
-#define STAGE_Y							THEME->GetMetricF("ScreenGameplay","StageY")
-#define STAGE_EXTRA_Y					THEME->GetMetricF("ScreenGameplay","StageExtraY")
-#define SONG_NUMBER_P1_X				THEME->GetMetricF("ScreenGameplay","SongNumberP1X")
-#define SONG_NUMBER_P1_Y				THEME->GetMetricF("ScreenGameplay","SongNumberP1Y")
-#define SONG_NUMBER_P1_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","SongNumberP1ExtraY")
-#define SONG_NUMBER_P2_X				THEME->GetMetricF("ScreenGameplay","SongNumberP2X")
-#define SONG_NUMBER_P2_Y				THEME->GetMetricF("ScreenGameplay","SongNumberP2Y")
-#define SONG_NUMBER_P2_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","SongNumberP2ExtraY")
-#define SCORE_P1_X						THEME->GetMetricF("ScreenGameplay","ScoreP1X")
-#define SCORE_P1_Y						THEME->GetMetricF("ScreenGameplay","ScoreP1Y")
-#define SCORE_P1_EXTRA_Y				THEME->GetMetricF("ScreenGameplay","ScoreP1ExtraY")
-#define SCORE_P2_X						THEME->GetMetricF("ScreenGameplay","ScoreP2X")
-#define SCORE_P2_Y						THEME->GetMetricF("ScreenGameplay","ScoreP2Y")
-#define SCORE_P2_EXTRA_Y				THEME->GetMetricF("ScreenGameplay","ScoreP2ExtraY")
-#define PLAYER_OPTIONS_P1_X				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP1X")
-#define PLAYER_OPTIONS_P1_Y				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP1Y")
-#define PLAYER_OPTIONS_P1_EXTRA_Y		THEME->GetMetricF("ScreenGameplay","PlayerOptionsP1ExtraY")
-#define PLAYER_OPTIONS_P2_X				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP2X")
-#define PLAYER_OPTIONS_P2_Y				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP2Y")
-#define PLAYER_OPTIONS_P2_EXTRA_Y		THEME->GetMetricF("ScreenGameplay","PlayerOptionsP2ExtraY")
+#define STAGE_Y( e )					THEME->GetMetricF("ScreenGameplay",ssprintf("Stage%sY",e?"Extra":""))
+#define SONG_NUMBER_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("SongNumberP%dX",p+1))
+#define SONG_NUMBER_Y( p, e )			THEME->GetMetricF("ScreenGameplay",ssprintf("SongNumberP%d%sY",p+1,e?"Extra":""))
+#define SCORE_X( p )					THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreP%dX",p+1))
+#define SCORE_Y( p, e )					THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreP%d%sY",p+1,e?"Extra":""))
+#define PLAYER_OPTIONS_X( p )			THEME->GetMetricF("ScreenGameplay",ssprintf("PlayerOptionsP%dX",p+1))
+#define PLAYER_OPTIONS_Y( p, e )		THEME->GetMetricF("ScreenGameplay",ssprintf("PlayerOptionsP%d%sY",p+1,e?"Extra":""))
 #define SONG_OPTIONS_X					THEME->GetMetricF("ScreenGameplay","SongOptionsX")
-#define SONG_OPTIONS_Y					THEME->GetMetricF("ScreenGameplay","SongOptionsY")
-#define SONG_OPTIONS_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","SongOptionsExtraY")
-#define DIFFICULTY_P1_X					THEME->GetMetricF("ScreenGameplay","DifficultyP1X")
-#define DIFFICULTY_P1_Y					THEME->GetMetricF("ScreenGameplay","DifficultyP1Y")
-#define DIFFICULTY_P1_REVERSE_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP1ReverseY")
-#define DIFFICULTY_P1_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP1ExtraY")
-#define DIFFICULTY_P1_EXTRA_REVERSE_Y	THEME->GetMetricF("ScreenGameplay","DifficultyP1ExtraReverseY")
-#define DIFFICULTY_P2_X					THEME->GetMetricF("ScreenGameplay","DifficultyP2X")
-#define DIFFICULTY_P2_Y					THEME->GetMetricF("ScreenGameplay","DifficultyP2Y")
-#define DIFFICULTY_P2_REVERSE_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP2ReverseY")
-#define DIFFICULTY_P2_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP2ExtraY")
-#define DIFFICULTY_P2_EXTRA_REVERSE_Y	THEME->GetMetricF("ScreenGameplay","DifficultyP2ExtraReverseY")
+#define SONG_OPTIONS_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("SongOptions%sY",e?"Extra":""))
+#define DIFFICULTY_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%dX",p+1))
+#define DIFFICULTY_Y( p, e, r )			THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
 #define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
 #define DEBUG_Y							THEME->GetMetricF("ScreenGameplay","DebugY")
 #define AUTOPLAY_X						THEME->GetMetricF("ScreenGameplay","AutoPlayX")
@@ -87,87 +59,6 @@
 #define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
 #define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenGameplay","SecondsBetweenComments")
 #define DEMONSTRATION_SECONDS			THEME->GetMetricF("ScreenGameplay","DemonstrationSeconds")
-
-float LIFE_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return LIFE_P1_X;
-		case PLAYER_2:	return LIFE_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float LIFE_Y( int p, bool bExtra ) {
-	switch( p ) {
-		case PLAYER_1:	return bExtra ? LIFE_P1_EXTRA_Y : LIFE_P1_Y;
-		case PLAYER_2:	return bExtra ? LIFE_P2_EXTRA_Y : LIFE_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float SONG_NUMBER_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SONG_NUMBER_P1_X;
-		case PLAYER_2:	return SONG_NUMBER_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float SONG_NUMBER_Y( int p, bool bExtra ) {
-	switch( p ) {
-		case PLAYER_1:	return bExtra ? SONG_NUMBER_P1_EXTRA_Y : SONG_NUMBER_P1_Y;
-		case PLAYER_2:	return bExtra ? SONG_NUMBER_P2_EXTRA_Y : SONG_NUMBER_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float SCORE_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SCORE_P1_X;
-		case PLAYER_2:	return SCORE_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float SCORE_Y( int p, bool bExtra ) {
-	switch( p ) {
-		case PLAYER_1:	return bExtra ? SCORE_P1_EXTRA_Y : SCORE_P1_Y;
-		case PLAYER_2:	return bExtra ? SCORE_P2_EXTRA_Y : SCORE_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float DIFFICULTY_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return DIFFICULTY_P1_X;
-		case PLAYER_2:	return DIFFICULTY_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float DIFFICULTY_Y( int p, bool bReverse, bool bExtra ) {
-	switch( p ) {
-		case PLAYER_1:	
-			if(  bExtra &&  bReverse )	return DIFFICULTY_P1_EXTRA_REVERSE_Y;
-			if( !bExtra &&  bReverse )	return DIFFICULTY_P1_REVERSE_Y;
-			if(  bExtra && !bReverse )  return DIFFICULTY_P1_EXTRA_Y;
-			if( !bExtra && !bReverse )	return DIFFICULTY_P1_Y;
-			else	ASSERT(0);
-		case PLAYER_2:
-			if(  bExtra &&  bReverse )	return DIFFICULTY_P2_EXTRA_REVERSE_Y;
-			if( !bExtra &&  bReverse )	return DIFFICULTY_P2_REVERSE_Y;
-			if(  bExtra && !bReverse )  return DIFFICULTY_P2_EXTRA_Y;
-			if( !bExtra && !bReverse )	return DIFFICULTY_P2_Y;
-			else	ASSERT(0);
-	}
-	ASSERT(0);	return 0;
-}
-float PLAYER_OPTIONS_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return PLAYER_OPTIONS_P1_X;
-		case PLAYER_2:	return PLAYER_OPTIONS_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float PLAYER_OPTIONS_Y( int p, bool bExtra ) {
-	switch( p ) {
-		case PLAYER_1:	return bExtra ? PLAYER_OPTIONS_P1_EXTRA_Y : PLAYER_OPTIONS_P1_Y;
-		case PLAYER_2:	return bExtra ? PLAYER_OPTIONS_P2_EXTRA_Y : PLAYER_OPTIONS_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
 
 
 // received while STATE_DANCING
@@ -307,13 +198,13 @@ ScreenGameplay::ScreenGameplay()
 
 	// TopFrame goes above LifeMeter
 	m_sprTopFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra top frame":"gameplay top frame") );
-	m_sprTopFrame.SetXY( TOP_FRAME_X, bExtra ? TOP_FRAME_EXTRA_Y : TOP_FRAME_Y );
+	m_sprTopFrame.SetXY( TOP_FRAME_X, TOP_FRAME_Y(bExtra) );
 	this->AddSubActor( &m_sprTopFrame );
 
 
 	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textStageNumber.TurnShadowOff();
-	m_textStageNumber.SetXY( STAGE_X, bExtra ? STAGE_EXTRA_Y : STAGE_Y );
+	m_textStageNumber.SetXY( STAGE_X, STAGE_Y(bExtra) );
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuseColor( GAMESTATE->GetStageColor() );
 
@@ -346,7 +237,7 @@ ScreenGameplay::ScreenGameplay()
 	// Add all Actors in bottom frame
 	//
 	m_sprBottomFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra bottom frame":"gameplay bottom frame") );
-	m_sprBottomFrame.SetXY( BOTTOM_FRAME_X, bExtra ? BOTTOM_FRAME_EXTRA_Y : BOTTOM_FRAME_Y );
+	m_sprBottomFrame.SetXY( BOTTOM_FRAME_X, BOTTOM_FRAME_Y(bExtra) );
 	this->AddSubActor( &m_sprBottomFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -384,7 +275,7 @@ ScreenGameplay::ScreenGameplay()
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongOptions.TurnShadowOff();
-	m_textSongOptions.SetXY( SONG_OPTIONS_X, bExtra?SONG_OPTIONS_EXTRA_Y:SONG_OPTIONS_Y );
+	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y(bExtra) );
 	m_textSongOptions.SetZoom( 0.5f );
 	m_textSongOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );

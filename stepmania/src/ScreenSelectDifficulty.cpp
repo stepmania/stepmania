@@ -23,15 +23,10 @@
 
 const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to complete
 
-
-#define MORE_PAGE1_X			THEME->GetMetricF("ScreenSelectDifficulty","MorePage1X")
-#define MORE_PAGE1_Y			THEME->GetMetricF("ScreenSelectDifficulty","MorePage1Y")
-#define MORE_PAGE2_X			THEME->GetMetricF("ScreenSelectDifficulty","MorePage2X")
-#define MORE_PAGE2_Y			THEME->GetMetricF("ScreenSelectDifficulty","MorePage2Y")
-#define EXPLANATION_PAGE1_X		THEME->GetMetricF("ScreenSelectDifficulty","ExplanationPage1X")
-#define EXPLANATION_PAGE1_Y		THEME->GetMetricF("ScreenSelectDifficulty","ExplanationPage1Y")
-#define EXPLANATION_PAGE2_X		THEME->GetMetricF("ScreenSelectDifficulty","ExplanationPage2X")
-#define EXPLANATION_PAGE2_Y		THEME->GetMetricF("ScreenSelectDifficulty","ExplanationPage2Y")
+#define MORE_X( p )				THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("MorePage%dX",p+1))
+#define MORE_Y( i )				THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("MorePage%dY",i+1))
+#define EXPLANATION_X( p )		THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("ExplanationPage%dX",p+1))
+#define EXPLANATION_Y( i )		THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("ExplanationPage%dY",i+1))
 #define EASY_X					THEME->GetMetricF("ScreenSelectDifficulty","EasyX")
 #define EASY_Y					THEME->GetMetricF("ScreenSelectDifficulty","EasyY")
 #define MEDIUM_X				THEME->GetMetricF("ScreenSelectDifficulty","MediumX")
@@ -42,10 +37,8 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define ONI_Y					THEME->GetMetricF("ScreenSelectDifficulty","OniY")
 #define ENDLESS_X				THEME->GetMetricF("ScreenSelectDifficulty","EndlessX")
 #define ENDLESS_Y				THEME->GetMetricF("ScreenSelectDifficulty","EndlessY")
-#define CURSOR_OFFSET_P1_X		THEME->GetMetricF("ScreenSelectDifficulty","CursorOffsetP1X")
-#define CURSOR_OFFSET_P1_Y		THEME->GetMetricF("ScreenSelectDifficulty","CursorOffsetP1Y")
-#define CURSOR_OFFSET_P2_X		THEME->GetMetricF("ScreenSelectDifficulty","CursorOffsetP2X")
-#define CURSOR_OFFSET_P2_Y		THEME->GetMetricF("ScreenSelectDifficulty","CursorOffsetP2Y")
+#define CURSOR_OFFSET_X( p )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorOffsetP%dX",p+1))
+#define CURSOR_OFFSET_Y( i )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorOffsetP%dY",i+1))
 #define CURSOR_SHADOW_LENGTH_X	THEME->GetMetricF("ScreenSelectDifficulty","CursorShadowLengthX")
 #define CURSOR_SHADOW_LENGTH_Y	THEME->GetMetricF("ScreenSelectDifficulty","CursorShadowLengthY")
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectDifficulty","HelpText")
@@ -54,34 +47,6 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenSelectDifficulty","NextScreenOni")
 
 
-float MORE_X( int iIndex ) {
-	switch( iIndex ) {
-	case 0:		return MORE_PAGE1_X;
-	case 1:		return MORE_PAGE2_X;
-	default:	ASSERT(0);	return 0;
-	}
-}
-float MORE_Y( int iIndex ) {
-	switch( iIndex ) {
-	case 0:		return MORE_PAGE1_Y;
-	case 1:		return MORE_PAGE2_Y;
-	default:	ASSERT(0);	return 0;
-	}
-}
-float EXPLANATION_X( int iIndex ) {
-	switch( iIndex ) {
-	case 0:		return EXPLANATION_PAGE1_X;
-	case 1:		return EXPLANATION_PAGE2_X;
-	default:	ASSERT(0);	return 0;
-	}
-}
-float EXPLANATION_Y( int iIndex ) {
-	switch( iIndex ) {
-	case 0:		return EXPLANATION_PAGE1_Y;
-	case 1:		return EXPLANATION_PAGE2_Y;
-	default:	ASSERT(0);	return 0;
-	}
-}
 float ITEM_X( int iItemIndex ) {
 	switch( iItemIndex ) {
 	case 0:		return EASY_X;
@@ -102,20 +67,8 @@ float ITEM_Y( int iItemIndex ) {
 	default:	ASSERT(0);	return 0;
 	}
 }
-float CURSOR_X( int iItemIndex, int p ) {
-	switch( p ) {
-	case PLAYER_1:	return ITEM_X(iItemIndex) + CURSOR_OFFSET_P1_X;
-	case PLAYER_2:	return ITEM_X(iItemIndex) + CURSOR_OFFSET_P2_X;
-	default:	ASSERT(0);	return 0;
-	}
-}
-float CURSOR_Y( int iItemIndex, int p ) {
-	switch( p ) {
-	case PLAYER_1:	return ITEM_Y(iItemIndex) + CURSOR_OFFSET_P1_Y;
-	case PLAYER_2:	return ITEM_Y(iItemIndex) + CURSOR_OFFSET_P2_Y;
-	default:	ASSERT(0);	return 0;
-	}
-}
+float CURSOR_X( int iItemIndex, int p ) { return ITEM_X(iItemIndex) + CURSOR_OFFSET_X(p); }
+float CURSOR_Y( int iItemIndex, int p ) { return ITEM_Y(iItemIndex) + CURSOR_OFFSET_Y(p); }
 
 
 const ScreenMessage SM_GoToPrevScreen			= ScreenMessage(SM_User + 1);

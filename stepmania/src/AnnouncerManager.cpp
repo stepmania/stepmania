@@ -78,48 +78,15 @@ try_again:
 #ifdef _DEBUG
 	if( m_sCurAnnouncerName!=""  &&  !DoesFileExist(sPathToFolderCurrent) )
 	{
-		int iResult = AfxMessageBox( 
-			ssprintf(
-			"The current announcer is missing the folder '%s'.\n"
-			"It may be that these sounds were never implemented in this announcer,\n"
-			"Or the folder may be misnamed.\n\n"
-			"Click Abort to break.\n"
-			"Click Retry after adding the folder menually.\n"
-			"Click Ignore to to automatically create the folder.\n\n", sFolderName), MB_ABORTRETRYIGNORE );
-		switch( iResult )
-		{
-		case IDABORT:
-			DebugBreak();
-			break;
-		case IDRETRY:
-			goto try_again;
-			break;
-		case IDIGNORE:
-			CreateDirectory( sPathToFolderCurrent, NULL );
-			break;
-		}
+		LOG->Trace( "The current announcer is missing the folder '%s'.", sFolderName );
+		MessageBeep( MB_OK );
+		CreateDirectory( sPathToFolderCurrent, NULL );
 	}
 	if( !DoesFileExist(sPathToFolderEmpty) )
 	{
-		int iResult = AfxMessageBox( 
-			ssprintf(
-			"The empty announcer is missing the folder '%s'.\n"
-			"This announcer should have empty folders for every saying.\n\n"
-			"Click Abort to break.\n"
-			"Click Retry after adding the folder menually.\n"
-			"Click Ignore to to automatically create the folder.\n\n", sFolderName), MB_ABORTRETRYIGNORE );
-		switch( iResult )
-		{
-		case IDABORT:
-			DebugBreak();
-			break;
-		case IDRETRY:
-			goto try_again;
-			break;
-		case IDIGNORE:
-			CreateDirectory( sPathToFolderEmpty, NULL );
-			break;
-		}
+		LOG->Trace( "The empty announcer is missing the folder '%s'.", sFolderName );
+		MessageBeep( MB_OK );
+		CreateDirectory( sPathToFolderEmpty, NULL );
 	}
 #endif
 

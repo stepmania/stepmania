@@ -298,7 +298,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"dance-single",							// m_szName
+		"Single",								// m_szName
 		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -325,7 +325,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
-		"dance-versus",							// m_szName
+		"Versus",								// m_szName
 		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -352,7 +352,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"dance-double",							// m_szName
+		"Double",								// m_szName
 		NOTES_TYPE_DANCE_DOUBLE,				// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
@@ -387,7 +387,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
-		"dance-couple",						// m_szName
+		"Couple",							// m_szName
 		NOTES_TYPE_DANCE_COUPLE,			// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
@@ -414,7 +414,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		true,								// m_bUsedForEdit
-		"dance-solo",						// m_szName
+		"Solo",								// m_szName
 		NOTES_TYPE_DANCE_SOLO,				// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 320, 320 },						// m_iCenterX
@@ -445,7 +445,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"dance-edit-couple",					// m_szName
+		"EditCouple",							// m_szName
 		NOTES_TYPE_DANCE_COUPLE,				// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
@@ -508,7 +508,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"pump-single",							// m_szName
+		"Single",								// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -537,7 +537,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
-		"pump-versus",							// m_szName
+		"Versus",								// m_szName
 		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -566,7 +566,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"pump-double",							// m_szName
+		"Double",								// m_szName
 		NOTES_TYPE_PUMP_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
 		{ 320, 480 },							// m_iCenterX
@@ -636,7 +636,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-single",							// m_szName
+		"Single",								// m_szName
 		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -665,7 +665,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-single-hard",							// m_szName
+		"SingleHard",							// m_szName
 		NOTES_TYPE_EZ2_SINGLE_HARD,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -694,7 +694,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-double",							// m_szName
+		"Double",								// m_szName
 		NOTES_TYPE_EZ2_DOUBLE,					// m_NotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -733,7 +733,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-real",							// m_szName
+		"Real",								// m_szName
 		NOTES_TYPE_EZ2_REAL,					// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -766,7 +766,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-single-versus",					// m_szName
+		"Versus",								// m_szName
 		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -795,7 +795,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-single-hard-versus",				// m_szName
+		"VersusHard",							// m_szName
 		NOTES_TYPE_EZ2_SINGLE_HARD,				// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -824,7 +824,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"ez2-real-versus",						// m_szName
+		"VersusReal",							// m_szName
 		NOTES_TYPE_EZ2_REAL,					// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },							// m_iCenterX

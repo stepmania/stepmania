@@ -56,8 +56,6 @@ GhostArrow::GhostArrow()
 void GhostArrow::Update( float fDeltaTime )
 {
 	Sprite::Update( fDeltaTime );
-
-	printf( "cur state is %d\n", Sprite::m_iCurState );
 }
 
 void GhostArrow::Step( TapNoteScore score )

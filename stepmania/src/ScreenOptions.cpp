@@ -169,7 +169,6 @@ void ScreenOptions::InitOptionsText()
 		title.SetZoom( 0.7f );
 		title.SetVertAlign( Actor::align_middle );		
 		title.TurnShadowOff();		
-		m_framePage.AddSubActor( &title );
 
 		// init all text in this line and count the width of the line
 		float fX = ITEMS_START_X;	// indent 70 pixels
@@ -182,7 +181,6 @@ void ScreenOptions::InitOptionsText()
 			option.SetText( optline.szOptionsText[j] );
 			option.SetZoom( 0.5f );
 			option.SetShadowLength( 2 );
-			m_framePage.AddSubActor( &option );
 
 			// set the XY position of each item in the line
 			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();

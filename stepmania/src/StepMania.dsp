@@ -56,10 +56,10 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386
 # Begin Special Build Tool
 IntDir=.\../Release
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=verinc  	cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
+PreLink_Cmds=verinc   	cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
 PostBuild_Cmds=mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=verinc  	cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
+PreLink_Cmds=verinc   	cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
 PostBuild_Cmds=mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1355,6 +1355,10 @@ SOURCE=.\Tls.cpp
 
 SOURCE=.\Tls.h
 # End Source File
+# End Group
+# Begin Group "Utils"
+
+# PROP Default_Filter ""
 # End Group
 # Begin Source File
 

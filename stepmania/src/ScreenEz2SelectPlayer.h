@@ -9,11 +9,7 @@ Andrew Livy
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "BitmapText.h"
-#include "TransitionFade.h"
-#include "Quad.h"
-#include "RandomSample.h"
-#include "Quad.h"
+#include "RageSoundSample.h"
 #include "MenuElements.h"
 
 
@@ -42,5 +38,5 @@ private:
 
 	MenuElements m_Menu;
 
-	RandomSample m_soundSelect;	
+	RageSoundSample m_soundSelect;	
 };

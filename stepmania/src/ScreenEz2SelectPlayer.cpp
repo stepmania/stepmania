@@ -27,46 +27,14 @@ const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
-#define CURSOR_P1_X				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP1X")
-#define CURSOR_P1_Y				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP1Y")
-#define CURSOR_P2_X				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP2X")
-#define CURSOR_P2_Y				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP2Y")
-#define CONTROLLER_P1_X			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP1X")
-#define CONTROLLER_P1_Y			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP1Y")
-#define CONTROLLER_P2_X			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP2X")
-#define CONTROLLER_P2_Y			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP2Y")
+#define CURSOR_X( p )			THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("CursorP%dX",p+1))
+#define CURSOR_Y( i )			THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("CursorP%dY",i+1))
+#define CONTROLLER_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("ControllerP%dX",p+1))
+#define CONTROLLER_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("ControllerP%dY",i+1))
 #define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
 
-float CURSOR_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return CURSOR_P1_X;
-		case PLAYER_2:	return CURSOR_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float CURSOR_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return CURSOR_P1_Y;
-		case PLAYER_2:	return CURSOR_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float CONTROLLER_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return CONTROLLER_P1_X;
-		case PLAYER_2:	return CONTROLLER_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float CONTROLLER_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return CONTROLLER_P1_Y;
-		case PLAYER_2:	return CONTROLLER_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
 
 const float TWEEN_TIME		= 0.35f;
 
@@ -235,7 +203,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 
 	GAMESTATE->m_bSideIsJoined[p] = true;
 	SCREENMAN->RefreshCreditsMessages();
-	m_soundSelect.PlayRandom();
+	m_soundSelect.Play();
 	m_sprCursors[p].BeginTweening( 0.25f );
 	m_sprCursors[p].SetTweenZoomY( 0 );
 	m_sprControllers[p].BeginTweening( 0.25f );
@@ -254,7 +222,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	else
 	{
 		// give the other player a little time to join
-		m_Menu.SetTimer( 5 );
+		m_Menu.SetTimer( 3 );
 		m_Menu.StartTimer();
 	}
 }

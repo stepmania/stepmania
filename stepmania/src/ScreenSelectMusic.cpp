@@ -41,30 +41,22 @@
 #define CD_TITLE_Y			THEME->GetMetricF("ScreenSelectMusic","CDTitleY")
 #define DIFFICULTY_X		THEME->GetMetricF("ScreenSelectMusic","DifficultyX")
 #define DIFFICULTY_Y		THEME->GetMetricF("ScreenSelectMusic","DifficultyY")
-#define ICON_P1_X			THEME->GetMetricF("ScreenSelectMusic","IconP1X")
-#define ICON_P1_Y			THEME->GetMetricF("ScreenSelectMusic","IconP1Y")
-#define ICON_P2_X			THEME->GetMetricF("ScreenSelectMusic","IconP2X")
-#define ICON_P2_Y			THEME->GetMetricF("ScreenSelectMusic","IconP2Y")
+#define ICON_X( p )			THEME->GetMetricF("ScreenSelectMusic",ssprintf("IconP%dX",p+1))
+#define ICON_Y( i )			THEME->GetMetricF("ScreenSelectMusic",ssprintf("IconP%dY",i+1))
 #define RADAR_X				THEME->GetMetricF("ScreenSelectMusic","RadarX")
 #define RADAR_Y				THEME->GetMetricF("ScreenSelectMusic","RadarY")
 #define SORT_ICON_X			THEME->GetMetricF("ScreenSelectMusic","SortIconX")
 #define SORT_ICON_Y			THEME->GetMetricF("ScreenSelectMusic","SortIconY")
-#define SCORE_P1_X			THEME->GetMetricF("ScreenSelectMusic","ScoreP1X")
-#define SCORE_P1_Y			THEME->GetMetricF("ScreenSelectMusic","ScoreP1Y")
-#define SCORE_P2_X			THEME->GetMetricF("ScreenSelectMusic","ScoreP2X")
-#define SCORE_P2_Y			THEME->GetMetricF("ScreenSelectMusic","ScoreP2Y")
+#define SCORE_X( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("ScoreP%dX",p+1))
+#define SCORE_Y( i )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("ScoreP%dY",i+1))
 #define METER_FRAME_X		THEME->GetMetricF("ScreenSelectMusic","MeterFrameX")
 #define METER_FRAME_Y		THEME->GetMetricF("ScreenSelectMusic","MeterFrameY")
-#define METER_P1_X			THEME->GetMetricF("ScreenSelectMusic","MeterP1X")
-#define METER_P1_Y			THEME->GetMetricF("ScreenSelectMusic","MeterP1Y")
-#define METER_P2_X			THEME->GetMetricF("ScreenSelectMusic","MeterP2X")
-#define METER_P2_Y			THEME->GetMetricF("ScreenSelectMusic","MeterP2Y")
+#define METER_X( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("MeterP%dX",p+1))
+#define METER_Y( i )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("MeterP%dY",i+1))
 #define WHEEL_X				THEME->GetMetricF("ScreenSelectMusic","WheelX")
 #define WHEEL_Y				THEME->GetMetricF("ScreenSelectMusic","WheelY")
-#define PLAYER_OPTIONS_P1_X	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP1X")
-#define PLAYER_OPTIONS_P1_Y	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP1Y")
-#define PLAYER_OPTIONS_P2_X	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP2X")
-#define PLAYER_OPTIONS_P2_Y	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP2Y")
+#define PLAYER_OPTIONS_X( p )THEME->GetMetricF("ScreenSelectMusic",ssprintf("PlayerOptionsP%dX",p+1))
+#define PLAYER_OPTIONS_Y( i )THEME->GetMetricF("ScreenSelectMusic",ssprintf("PlayerOptionsP%dY",i+1))
 #define SONG_OPTIONS_X		THEME->GetMetricF("ScreenSelectMusic","SongOptionsX")
 #define SONG_OPTIONS_Y		THEME->GetMetricF("ScreenSelectMusic","SongOptionsY")
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectMusic","HelpText")
@@ -73,57 +65,6 @@
 
 const float TWEEN_TIME		= 0.5f;
 
-float ICON_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return ICON_P1_X;
-		case PLAYER_2:	return ICON_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float ICON_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return ICON_P1_Y;
-		case PLAYER_2:	return ICON_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float HIGH_SCORE_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SCORE_P1_X;
-		case PLAYER_2:	return SCORE_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float HIGH_SCORE_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SCORE_P1_Y;
-		case PLAYER_2:	return SCORE_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float METER_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return METER_P1_X;
-		case PLAYER_2:	return METER_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float METER_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return METER_P1_Y;
-		case PLAYER_2:	return METER_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-#define PLAYER_OPTIONS_X(p) ( p==PLAYER_1 ? PLAYER_OPTIONS_P1_X : PLAYER_OPTIONS_P2_X )
-
-float PLAYER_OPTIONS_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return PLAYER_OPTIONS_P1_Y;
-		case PLAYER_2:	return PLAYER_OPTIONS_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
@@ -233,10 +174,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
-		m_sprHighScoreFrame[p].SetXY( HIGH_SCORE_X(p), HIGH_SCORE_Y(p) );
+		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		this->AddSubActor( &m_sprHighScoreFrame[p] );
 
-		m_HighScore[p].SetXY( HIGH_SCORE_X(p), HIGH_SCORE_Y(p) );
+		m_HighScore[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		m_HighScore[p].SetZoom( 0.6f );
 		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
 		this->AddSubActor( &m_HighScore[p] );
@@ -428,11 +369,11 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	}
 	for( int i=0; i<apActorsInScore.GetSize(); i++ )
 	{
-		float fOriginalX = HIGH_SCORE_X(p);
+		float fOriginalX = apActorsInScore[i]->GetX();
 		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
 		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
 		
-		apActorsInScore[i]->BeginTweeningQueued( 0.6f );		// sleep
+		apActorsInScore[i]->BeginTweeningQueued( 0.5f );		// sleep
 
 		apActorsInScore[i]->BeginTweeningQueued( 1, TWEEN_BIAS_BEGIN );		// tween back on screen
 		apActorsInScore[i]->SetTweenX( fOriginalX );

@@ -20,8 +20,6 @@ Andrew Livy
 
 /* Class Definition */
 
- const int NUM_EZ2STYLE_GRAPHICS = 4;
-// const int NUM_EZ2P_GRAPHICS = 4;
 
 class ScreenEz2SelectStyle : public Screen
 {
@@ -30,6 +28,7 @@ public:
 	virtual ~ScreenEz2SelectStyle(); // Destructor
 	
 	/* Public Function Prototypes */
+	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -39,35 +38,22 @@ public:
 	void MenuStart( PlayerNumber p );
 	void MenuBack( PlayerNumber p );
 	void MenuDown( PlayerNumber p );
+
+protected:
 	void TweenOffScreen();
-	void TweenPlyOffScreen();
+	void TweenOnScreen();
+	
+	Sprite	m_sprCursors[NUM_PLAYERS];
+	Sprite	m_sprControllers[NUM_PLAYERS];
 
-private:
-	/* Private Function Prototypes */
+	CArray<Style,Style> m_aPossibleStyles;
+	ScrollingList m_ScrollingList;
+	void RefreshStylesAndList();
 
-	void Update( float fDeltaTime );
-	void AnimateGraphics();
-	void AnimateBackground();
-	//	void BeforeChange();
-	void SetFadedStyles();
-//	void AnimateGraphics();
-	/* Variable Declarations */
+	Sprite	m_sprBackgrounds[NUM_STYLES];
 
 	MenuElements m_Menu;
-	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
-//	Sprite  m_sprPly[NUM_EZ2P_GRAPHICS];
-	Sprite	m_sprBackground[NUM_EZ2STYLE_GRAPHICS];
 
-	// used for the bouncing of the '1p' and '2p' images
-	float ez2_bounce; 
-
-	ScrollingList m_ScrList;
-	ScrollingList m_ScrList_2ply;
-
-	int m_iSelectedStyle;
-	int m_iSelectedPlayer;
-	RandomSample m_soundChange;
-	RandomSample m_soundSelect;	
-	RandomSample m_soundInvalid;
-protected:
+	RageSoundSample m_soundSelect;	
+	RageSoundSample m_soundChange;	
 };

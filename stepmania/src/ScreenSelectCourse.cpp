@@ -41,27 +41,11 @@
 #define CONTENTS_Y			THEME->GetMetricF("ScreenSelectCourse","ContentsY")
 #define WHEEL_X				THEME->GetMetricF("ScreenSelectCourse","WheelX")
 #define WHEEL_Y				THEME->GetMetricF("ScreenSelectCourse","WheelY")
-#define SCORE_P1_X			THEME->GetMetricF("ScreenSelectCourse","ScoreP1X")
-#define SCORE_P1_Y			THEME->GetMetricF("ScreenSelectCourse","ScoreP1Y")
-#define SCORE_P2_X			THEME->GetMetricF("ScreenSelectCourse","ScoreP2X")
-#define SCORE_P2_Y			THEME->GetMetricF("ScreenSelectCourse","ScoreP2Y")
+#define SCORE_X( p )		THEME->GetMetricF("ScreenSelectCourse",ssprintf("ScoreP%dX",p+1))
+#define SCORE_Y( i )		THEME->GetMetricF("ScreenSelectCourse",ssprintf("ScoreP%dY",i+1))
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectCourse","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectCourse","TimerSeconds")
 
-float BEST_TIME_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SCORE_P1_X;
-		case PLAYER_2:	return SCORE_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float BEST_TIME_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SCORE_P1_Y;
-		case PLAYER_2:	return SCORE_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -118,10 +102,10 @@ ScreenSelectCourse::ScreenSelectCourse()
 		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
-		m_sprHighScoreFrame[p].SetXY( BEST_TIME_X(p), BEST_TIME_Y(p) );
+		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		this->AddSubActor( &m_sprHighScoreFrame[p] );
 
-		m_HighScore[p].SetXY( BEST_TIME_X(p), BEST_TIME_Y(p) );
+		m_HighScore[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		m_HighScore[p].SetZoom( 0.6f );
 		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
 		this->AddSubActor( &m_HighScore[p] );

@@ -146,6 +146,7 @@ void MenuElements::TweenTopLayerOffScreen()
 
 void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
 {
+	m_MenuTimer.StopTimer();
 	TweenTopLayerOffScreen();
 	m_KeepAlive.CloseWipingRight( smSendWhenDone );
 	m_soundSwoosh.Play();
@@ -187,6 +188,8 @@ void MenuElements::TweenOnScreenFromBlack( ScreenMessage smSendWhenDone )
 
 void MenuElements::TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound )
 {
+	m_MenuTimer.StopTimer();
+
 	if( !bPlayBackSound )
 	{
 		TweenTopLayerOffScreen();

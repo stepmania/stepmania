@@ -20,97 +20,49 @@
 #include "SongManager.h"
 
 const int DEFAULT_VISIBLE_ELEMENTS = 3;
+const int DEFAULT_SPACING = 300;
 
-const float SPACING3ELEMENTS = 310.0f;
-const float SPACING4ELEMENTS = 225.0f;
-const float SPACING5ELEMENTS = 150.0f;
-
-
-ScrollingListDisplay::ScrollingListDisplay()
-{
-
-}
-
-/************************************
-Allows us to create a graphic element
-in the scrolling list
-*************************************/
-
-void ScrollingListDisplay::Load( CString graphiclocation )
-{
-	m_gLocation = graphiclocation;
-	m_sprListElement.Load( THEME->GetPathTo("Graphics",m_gLocation) );
-	this->AddSubActor( &m_sprListElement );
-}
-
-/***********************************
-RedefineGraphic
-
-Allows us to change a graphic
-element in the scrolling list
-************************************/
-
-void ScrollingListDisplay::RedefineGraphic( CString graphiclocation )
-{
-	m_gLocation = graphiclocation;
-	m_sprListElement.Load( THEME->GetPathTo("Graphics",m_gLocation) );
-}
-
-/*************************************
-GetGraphicLocation
-
-Returns the graphic filename from a
-scrollinglist element
-**************************************/
-
-CString ScrollingListDisplay::GetGraphicLocation()
-{
-	return m_gLocation;
-}
+const D3DXCOLOR COLOR_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);
+const D3DXCOLOR COLOR_NOT_SELECTED = D3DXCOLOR(0.4f,0.4f,0.4f,1);
 
 /***************************************
 ScrollingList
 
 Initializes Variables for the ScrollingList
 ****************************************/
-
 ScrollingList::ScrollingList()
 {
-	m_iNumContents = 0;
-	m_iNumVisElements = DEFAULT_VISIBLE_ELEMENTS;
-	m_iCurrentPos = 0;
+	m_iSelection = 0;
+	m_fSelectionLag = 0;
+	m_iSpacing = DEFAULT_SPACING;
+	m_iNumVisible = DEFAULT_VISIBLE_ELEMENTS;
 }
 
-/**************************************
-CreateNewElement
-
-Adds a new graphic element to the end of
-the scrolling element
-***************************************/
-
-void ScrollingList::CreateNewElement( CString graphiclocation )
+ScrollingList::~ScrollingList()
 {
-	float CurrentSpacing;
-	if (m_iNumVisElements <= 3)
-	{		
-		CurrentSpacing = SPACING3ELEMENTS;
-	}
-	else if (m_iNumVisElements == 4)
-	{
-		CurrentSpacing = SPACING4ELEMENTS;
-	}
-	else
-	{
-		CurrentSpacing = SPACING5ELEMENTS;
-	}
-	
-	m_ScrollingListDisplays[m_iNumContents].Load( graphiclocation );
-	this->AddSubActor( &m_ScrollingListDisplays[m_iNumContents] );
+	Unload();
+}
 
-	m_ScrollingListDisplays[m_iNumContents].SetX( 0 - (CurrentSpacing * m_iNumContents) );
+void ScrollingList::Unload()
+{
+	for( int i=0; i<m_apSprites.GetSize(); i++ )
+		delete m_apSprites[i];
+	m_apSprites.RemoveAll();
+}
 
-	if (m_iNumContents != SCRLIST_MAX_TOTAL_CONTENTS) // make sure that we cannot 'over create' menus
-		m_iNumContents = m_iNumContents + 1;
+/************************************
+Allows us to create a graphic element
+in the scrolling list
+*************************************/
+void ScrollingList::Load( const CStringArray& asGraphicPaths )
+{
+	Unload();
+	for( int i=0; i<asGraphicPaths.GetSize(); i++ )
+	{
+		Sprite* pNewSprite = new Sprite;
+		pNewSprite->Load( asGraphicPaths[i] );
+		m_apSprites.Add( pNewSprite );
+	}
 }
 
 
@@ -119,67 +71,12 @@ ShiftLeft
 
 Make the entire list shuffle left
 **************************************/
-
-void ScrollingList::ShiftLeft()
+void ScrollingList::Left()
 {
-	if ( m_iCurrentPos == 0 ) // if we're at the start of the list wrap to the end
-	{
-		m_iCurrentPos = m_iNumContents - 1;
-	}
-	else // just decrease our position
-	{
-		m_iCurrentPos--;
-	}
+	ASSERT( m_apSprites.GetSize() > 0 );	// nothing loaded!
 
-	float CurrentSpacing;
-	if (m_iNumVisElements <= 3)
-	{		
-		CurrentSpacing = SPACING3ELEMENTS;
-	}
-	else if (m_iNumVisElements == 4)
-	{
-		CurrentSpacing = SPACING4ELEMENTS;
-	}
-	else
-	{
-		CurrentSpacing = SPACING5ELEMENTS;
-	}
-
-
-	SetCurrentPosition( m_iCurrentPos );
-
-	for (int i=10; i > 0; i-- ) // 21 elements (10 going in both directions plus a 0)
-	{
-		if (m_iCurrentPos - i >= 0) // set -ve -tweening
-		{
-			m_ScrollingListDisplays[m_iCurrentPos - i].SetX( 0 - ((i-1) * CurrentSpacing) - (CurrentSpacing * 2) );
-			m_ScrollingListDisplays[m_iCurrentPos - i].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[m_iCurrentPos - i].SetTweenX( 0 - (CurrentSpacing * i) );
-		}
-		else
-		{
-			m_ScrollingListDisplays[m_iNumContents - i].SetX( 0 - ((i-1) * CurrentSpacing)  - (CurrentSpacing * 2));
-			m_ScrollingListDisplays[m_iNumContents - i].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[m_iNumContents - i].SetTweenX( 0 - (CurrentSpacing * i) );
-		}
-
-		if (m_iCurrentPos + i <= m_iNumContents - 1) // set +ve tweening
-		{
-			m_ScrollingListDisplays[m_iCurrentPos + i].SetX( 0 + (CurrentSpacing * i) + CurrentSpacing  - (CurrentSpacing * 2));
-			m_ScrollingListDisplays[m_iCurrentPos + i].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[m_iCurrentPos + i].SetTweenX( 0 + (CurrentSpacing * i) );
-		}
-		else
-		{
-			m_ScrollingListDisplays[i-1].SetX( 0 + (CurrentSpacing * i) + CurrentSpacing  - (CurrentSpacing * 2));
-			m_ScrollingListDisplays[i-1].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[i-1].SetTweenX( 0 + (CurrentSpacing * i) );
-		}
-	}
-
-	m_ScrollingListDisplays[m_iCurrentPos].SetX( 0 + CurrentSpacing   - (CurrentSpacing * 2));
-	m_ScrollingListDisplays[m_iCurrentPos].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-	m_ScrollingListDisplays[m_iCurrentPos].SetTweenX( 0 );
+	m_iSelection = (m_iSelection + m_apSprites.GetSize() - 1) % m_apSprites.GetSize();	// decrement with wrapping
+	m_fSelectionLag -= 1;
 }
 
 /**************************************
@@ -187,67 +84,12 @@ ShiftRight
 
 Make the entire list shuffle right
 **************************************/
-
-void ScrollingList::ShiftRight()
+void ScrollingList::Right()
 {
-	if ( m_iCurrentPos == m_iNumContents - 1 ) // if we're at the end of the list wrap to the start
-	{
-		m_iCurrentPos = 0;
-	}
-	else // just decrease our position
-	{
-		m_iCurrentPos++;
-	}
+	ASSERT( m_apSprites.GetSize() > 0 );	// nothing loaded!
 
-	float CurrentSpacing;
-	if (m_iNumVisElements <= 3)
-	{		
-		CurrentSpacing = SPACING3ELEMENTS;
-	}
-	else if (m_iNumVisElements == 4)
-	{
-		CurrentSpacing = SPACING4ELEMENTS;
-	}
-	else
-	{
-		CurrentSpacing = SPACING5ELEMENTS;
-	}
-
-
-	SetCurrentPosition( m_iCurrentPos );
-
-	for (int i=10; i > 0; i-- ) // 21 elements (10 going in both directions plus a 0)
-	{
-		if (m_iCurrentPos - i >= 0) // set -ve -tweening
-		{
-			m_ScrollingListDisplays[m_iCurrentPos - i].SetX( 0 - ((i-1) * CurrentSpacing) );
-			m_ScrollingListDisplays[m_iCurrentPos - i].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[m_iCurrentPos - i].SetTweenX( 0 - (CurrentSpacing * i) );
-		}
-		else
-		{
-			m_ScrollingListDisplays[m_iNumContents - i].SetX( 0 - ((i-1) * CurrentSpacing) );
-			m_ScrollingListDisplays[m_iNumContents - i].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[m_iNumContents - i].SetTweenX( 0 - (CurrentSpacing * i) );
-		}
-
-		if (m_iCurrentPos + i <= m_iNumContents - 1) // set +ve tweening
-		{
-			m_ScrollingListDisplays[m_iCurrentPos + i].SetX( 0 + (CurrentSpacing * i) + CurrentSpacing );
-			m_ScrollingListDisplays[m_iCurrentPos + i].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[m_iCurrentPos + i].SetTweenX( 0 + (CurrentSpacing * i) );
-		}
-		else
-		{
-			m_ScrollingListDisplays[i-1].SetX( 0 + (CurrentSpacing * i) + CurrentSpacing );
-			m_ScrollingListDisplays[i-1].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-			m_ScrollingListDisplays[i-1].SetTweenX( 0 + (CurrentSpacing * i) );
-		}
-	}
-
-	m_ScrollingListDisplays[m_iCurrentPos].SetX( 0 + CurrentSpacing );
-	m_ScrollingListDisplays[m_iCurrentPos].BeginTweening( 0.3f, TWEEN_BIAS_BEGIN );
-	m_ScrollingListDisplays[m_iCurrentPos].SetTweenX( 0 );
+	m_iSelection = (m_iSelection + 1) % m_apSprites.GetSize();	// increment with wrapping
+	m_fSelectionLag += 1;
 }
 
 /***********************************
@@ -256,55 +98,19 @@ SetCurrentPostion
 From the current postion in the array, add graphic elements
 in either direction to make the list seem infinite.
 ***********************************/
-
-void ScrollingList::SetCurrentPosition( int CurrentPos )
+void ScrollingList::SetSelection( int iIndex )
 {
-	m_iCurrentPos = CurrentPos;
-	// Setup Spacing
-	float CurrentSpacing;
-	if (m_iNumVisElements <= 3)
-	{		
-		CurrentSpacing = SPACING3ELEMENTS;
-	}
-	else if (m_iNumVisElements == 4)
-	{
-		CurrentSpacing = SPACING4ELEMENTS;
-	}
-	else
-	{
-		CurrentSpacing = SPACING5ELEMENTS;
-	}
+	m_iSelection = iIndex;
+}
 
-	// ORDER SPECIFICALLY!
-	// Central Element at front, then the next two behind, then the outer two behind them e.t.c.
-	// 21012 << Central element is 0, 1's are either side, 2's either side of those 3's come off-screen (regardless of spacing)
-	// we need 3's incase the user suddenly scrolls!!
+int ScrollingList::GetSelection()
+{
+	return m_iSelection;
+}
 
-		for( int i=3; i > 0; i--)
-		{
-			// Find the -ve Element
-			if ((CurrentPos - i) >= 0) // Bounds Checking: If we aren't under the first element
-			{
-				m_ScrollingListDisplays[CurrentPos-i].SetX( 0 - (i * CurrentSpacing ));
-			}
-			else // if we are under the final limit (by i)
-			{
-				m_ScrollingListDisplays[m_iNumContents+(CurrentPos - i)].SetX( 0 - (i * CurrentSpacing ));
-			}
-
-			// Find the +ve Element
-			if ((CurrentPos + i) <= m_iNumContents-1) // Bounds Checking: If we aren't over the final element
-			{
-				m_ScrollingListDisplays[CurrentPos+i].SetX( 0 + (i * CurrentSpacing ));
-			}
-			else // if we are over the final limit (by i)
-			{
-				m_ScrollingListDisplays[i-1].SetX( 0 + (i * CurrentSpacing ));
-			}
-		}
-
-	// Set The MIDDLE element
-	m_ScrollingListDisplays[CurrentPos].SetX( 0 );
+void ScrollingList::SetSpacing( int iSpacingInPixels )
+{
+	m_iSpacing = iSpacingInPixels;
 }
 
 /******************************
@@ -313,10 +119,9 @@ SetNumberVisibleElements
 Allows us to set whether 3,4 or 5
 elements are visible on screen at once
 *******************************/
-
-void ScrollingList::SetNumberVisibleElements( int VisibleElements )
+void ScrollingList::SetNumberVisible( int iNumVisibleElements )
 {
-	m_iNumVisElements = VisibleElements;
+	m_iNumVisible = iNumVisibleElements;
 }
 
 /*******************************
@@ -324,13 +129,28 @@ Update
 
 Updates the actorframe
 ********************************/
-
 void ScrollingList::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	for( int i=0; i<m_iNumContents; i++ )
-		m_ScrollingListDisplays[i].Update( fDeltaTime );
+	if( m_apSprites.GetSize() == 0 )
+		return;
+
+	// update m_fLaggingSelection
+	if( m_fSelectionLag != 0 )
+	{
+		const float fSign = m_fSelectionLag<0 ? -1.0f : +1.0f; 
+		const float fVelocity = -fSign + -m_fSelectionLag*10;
+		m_fSelectionLag += fVelocity * fDeltaTime;
+
+		// check to see if m_fLaggingSelection passed its destination
+		const float fNewSign = m_fSelectionLag<0 ? -1.0f : +1.0f; 
+		if( (fSign<0) ^ (fNewSign<0) )	// they have different signs
+			m_fSelectionLag = 0;		// snap
+	}
+
+	for( int i=0; i<m_apSprites.GetSize(); i++ )
+		m_apSprites[i]->Update( fDeltaTime );
 }
 
 /********************************
@@ -338,66 +158,35 @@ DrawPrimitives
 
 Draws the elements onto the screen
 *********************************/
-
 void ScrollingList::DrawPrimitives()
 {
-	const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.4f,0.4f,0.4f,1);
-	const D3DXCOLOR OPT_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);
+	ASSERT( m_apSprites.GetSize() > 0 );
 
-	for (int i=m_iNumContents; i>=0; i--)
+	for( int i=(m_iNumVisible)/2; i>= 0; i-- )	// draw outside to inside
 	{
-		if (i != m_iCurrentPos)
+		int iIndexToDraw1 = m_iSelection - i;
+		int iIndexToDraw2 = m_iSelection + i;
+		
+		// wrap IndexToDraw*
+		iIndexToDraw1 = (iIndexToDraw1 + m_apSprites.GetSize()*300) % m_apSprites.GetSize();	// make sure this is positive
+		iIndexToDraw2 = iIndexToDraw2 % m_apSprites.GetSize();
+
+		ASSERT( iIndexToDraw1 >= 0 );
+
+		m_apSprites[iIndexToDraw1]->SetX( (-i+m_fSelectionLag) * m_iSpacing );
+		m_apSprites[iIndexToDraw2]->SetX( (+i+m_fSelectionLag) * m_iSpacing );
+
+		if( i==0 )	// so we don't draw 0 twice
 		{
-			m_ScrollingListDisplays[i].SetDiffuseColor( OPT_NOT_SELECTED );
+			m_apSprites[iIndexToDraw1]->SetDiffuseColor( COLOR_SELECTED );
+			m_apSprites[iIndexToDraw1]->Draw();
 		}
 		else
 		{
-			m_ScrollingListDisplays[i].SetDiffuseColor( OPT_SELECTED );
+			m_apSprites[iIndexToDraw1]->SetDiffuseColor( COLOR_NOT_SELECTED );
+			m_apSprites[iIndexToDraw2]->SetDiffuseColor( COLOR_NOT_SELECTED );
+			m_apSprites[iIndexToDraw1]->Draw();
+			m_apSprites[iIndexToDraw2]->Draw();
 		}
 	}
-
-
-	// Start Drawing in a Specific Order For the elements around the current element
-	if (m_iCurrentPos == 0) // start of list?
-	{
-		m_ScrollingListDisplays[m_iNumContents - 2].Draw();
-		m_ScrollingListDisplays[2].Draw();
-
-		m_ScrollingListDisplays[m_iNumContents - 1].Draw();
-		m_ScrollingListDisplays[1].Draw();
-	}
-	else if (m_iCurrentPos == m_iNumContents - 1) // end of list
-	{
-		m_ScrollingListDisplays[1].Draw();
-		m_ScrollingListDisplays[m_iNumContents - 3].Draw();
-
-		m_ScrollingListDisplays[0].Draw();
-		m_ScrollingListDisplays[m_iNumContents - 2].Draw();
-	}
-	else if (m_iCurrentPos == 1) // near start
-	{
-		m_ScrollingListDisplays[m_iNumContents - 2].Draw();
-		m_ScrollingListDisplays[3].Draw();
-
-		m_ScrollingListDisplays[2].Draw();
-		m_ScrollingListDisplays[0].Draw();		
-	}
-	else if (m_iCurrentPos == m_iNumContents - 2) // near end
-	{
-		m_ScrollingListDisplays[0].Draw();
-		m_ScrollingListDisplays[m_iNumContents - 4].Draw();
-
-		m_ScrollingListDisplays[m_iNumContents - 1].Draw();
-		m_ScrollingListDisplays[m_iNumContents - 3].Draw();		
-	}
-	else // we're somewhere in the middle
-	{
-		m_ScrollingListDisplays[m_iCurrentPos + 2].Draw();
-		m_ScrollingListDisplays[m_iCurrentPos - 2].Draw();
-		m_ScrollingListDisplays[m_iCurrentPos - 1].Draw();
-		m_ScrollingListDisplays[m_iCurrentPos + 1].Draw();
-	}
-
-	m_ScrollingListDisplays[m_iCurrentPos].Draw();
-
 }

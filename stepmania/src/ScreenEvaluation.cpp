@@ -28,84 +28,57 @@
 #define BANNER_Y				THEME->GetMetricF("ScreenEvaluation","BannerY")
 #define STAGE_X					THEME->GetMetricF("ScreenEvaluation","StageX")
 #define STAGE_Y					THEME->GetMetricF("ScreenEvaluation","StageY")
-#define GRADE_P1_X				THEME->GetMetricF("ScreenEvaluation","GradeP1X")
-#define GRADE_P2_X				THEME->GetMetricF("ScreenEvaluation","GradeP2X")
+#define GRADE_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("GradeP%dX",p+1))
 #define GRADE_Y					THEME->GetMetricF("ScreenEvaluation","GradeY")
-#define PERCENT_BASE_P1_X		THEME->GetMetricF("ScreenEvaluation","PercentBaseP1X")
-#define PERCENT_BASE_P2_X		THEME->GetMetricF("ScreenEvaluation","PercentBaseP2X")
+#define PERCENT_BASE_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseP%dX",p+1))
 #define PERCENT_BASE_Y			THEME->GetMetricF("ScreenEvaluation","PercentBaseY")
 #define JUDGE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","JudgeLabelsX")
-#define PERFECT_P1_X			THEME->GetMetricF("ScreenEvaluation","PerfectP1X")
-#define PERFECT_P2_X			THEME->GetMetricF("ScreenEvaluation","PerfectP2X")
+#define PERFECT_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("PerfectP%dX",p+1))
 #define PERFECT_Y				THEME->GetMetricF("ScreenEvaluation","PerfectY")
-#define GREAT_P1_X				THEME->GetMetricF("ScreenEvaluation","GreatP1X")
-#define GREAT_P2_X				THEME->GetMetricF("ScreenEvaluation","GreatP2X")
+#define GREAT_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("GreatP%dX",p+1))
 #define GREAT_Y					THEME->GetMetricF("ScreenEvaluation","GreatY")
-#define GOOD_P1_X				THEME->GetMetricF("ScreenEvaluation","GoodP1X")
-#define GOOD_P2_X				THEME->GetMetricF("ScreenEvaluation","GoodP2X")
+#define GOOD_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("GoodP%dX",p+1))
 #define GOOD_Y					THEME->GetMetricF("ScreenEvaluation","GoodY")
-#define BOO_P1_X				THEME->GetMetricF("ScreenEvaluation","BooP1X")
-#define BOO_P2_X				THEME->GetMetricF("ScreenEvaluation","BooP2X")
+#define BOO_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("BooP%dX",p+1))
 #define BOO_Y					THEME->GetMetricF("ScreenEvaluation","BooY")
-#define MISS_P1_X				THEME->GetMetricF("ScreenEvaluation","MissP1X")
-#define MISS_P2_X				THEME->GetMetricF("ScreenEvaluation","MissP2X")
+#define MISS_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("MissP%dX",p+1))
 #define MISS_Y					THEME->GetMetricF("ScreenEvaluation","MissY")
-#define OK_P1_X					THEME->GetMetricF("ScreenEvaluation","OKP1X")
-#define OK_P2_X					THEME->GetMetricF("ScreenEvaluation","OKP2X")
+#define OK_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("OKP%dX",p+1))
 #define OK_Y					THEME->GetMetricF("ScreenEvaluation","OKY")
-#define MAX_COMBO_P1_X			THEME->GetMetricF("ScreenEvaluation","MaxComboP1X")
-#define MAX_COMBO_P2_X			THEME->GetMetricF("ScreenEvaluation","MaxComboP2X")
+#define MAX_COMBO_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("MaxComboP%dX",p+1))
 #define MAX_COMBO_Y				THEME->GetMetricF("ScreenEvaluation","MaxComboY")
 #define SCORE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","ScoreLabelsX")
-#define SCORE_NUMBERS_P1_X		THEME->GetMetricF("ScreenEvaluation","ScoreNumbersP1X")
-#define SCORE_NUMBERS_P2_X		THEME->GetMetricF("ScreenEvaluation","ScoreNumbersP2X")
+#define SCORE_NUMBERS_X( p )	THEME->GetMetricF("ScreenEvaluation",ssprintf("ScoreNumbersP%dX",p+1))
 #define SCORE_Y					THEME->GetMetricF("ScreenEvaluation","ScoreY")
-#define BONUS_P1_X				THEME->GetMetricF("ScreenEvaluation","BonusP1X")
-#define BONUS_P2_X				THEME->GetMetricF("ScreenEvaluation","BonusP2X")
+#define BONUS_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("BonusP%dX",p+1))
 #define BONUS_Y					THEME->GetMetricF("ScreenEvaluation","BonusY")
-#define BAR_P1_BASE_X			THEME->GetMetricF("ScreenEvaluation","BarP1BaseX")
-#define BAR_P2_BASE_X			THEME->GetMetricF("ScreenEvaluation","BarP2BaseX")
-#define BAR_P1_ROTATION			THEME->GetMetricF("ScreenEvaluation","BarP1Rotation")
-#define BAR_P2_ROTATION			THEME->GetMetricF("ScreenEvaluation","BarP2Rotation")
+#define BAR_BASE_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("BarP%dBaseX",p+1))
+#define BAR_ROTATION( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("BarP%dRotation",p+1))
 #define BAR_START_Y				THEME->GetMetricF("ScreenEvaluation","BarStartY")
 #define BAR_SPACING_Y			THEME->GetMetricF("ScreenEvaluation","BarSpacingY")
 #define BAR_WIDTH				THEME->GetMetricF("ScreenEvaluation","BarWidth")
 #define BAR_HEIGHT				THEME->GetMetricF("ScreenEvaluation","BarHeight")
-#define SONGS_SURVIVED_P1_X		THEME->GetMetricF("ScreenEvaluation","SongsSurvivedP1X")
-#define SONGS_SURVIVED_P2_X		THEME->GetMetricF("ScreenEvaluation","SongsSurvivedP2X")
+#define SONGS_SURVIVED_X( p )	THEME->GetMetricF("ScreenEvaluation",ssprintf("SongsSurvivedP%dX",p+1))
 #define SONGS_SURVIVED_Y		THEME->GetMetricF("ScreenEvaluation","SongsSurvivedY")
-#define NEW_RECORD_P1_X			THEME->GetMetricF("ScreenEvaluation","NewRecordP1X")
-#define NEW_RECORD_P2_X			THEME->GetMetricF("ScreenEvaluation","NewRecordP2X")
+#define NEW_RECORD_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("NewRecordP%dX",p+1))
 #define NEW_RECORD_Y			THEME->GetMetricF("ScreenEvaluation","NewRecordY")
 #define TRY_EXTRA_STAGE_X		THEME->GetMetricF("ScreenEvaluation","TryExtraStageX")
 #define TRY_EXTRA_STAGE_Y		THEME->GetMetricF("ScreenEvaluation","TryExtraStageY")
 #define HELP_TEXT				THEME->GetMetric("ScreenEvaluation","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEvaluation","TimerSeconds")
 #define SPIN_GRADES				THEME->GetMetricB("ScreenEvaluation","SpinGrades")
+#define GRADES_GLOW_COLOR_1		THEME->GetMetricC("ScreenEvaluation","GradesGlowColor1")
+#define GRADES_GLOW_COLOR_2		THEME->GetMetricC("ScreenEvaluation","GradesGlowColor2")
 
-float GRADE_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return GRADE_P1_X;
-		case PLAYER_2:	return GRADE_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float PERCENT_BASE_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return PERCENT_BASE_P1_X;
-		case PLAYER_2:	return PERCENT_BASE_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
 float JUDGE_X( int p, int l ) {
 	switch( l ) {
-		case 0:		return p==PLAYER_1 ? PERFECT_P1_X	: PERFECT_P2_X;
-		case 1:		return p==PLAYER_1 ? GREAT_P1_X		: GREAT_P2_X;
-		case 2:		return p==PLAYER_1 ? GOOD_P1_X		: GOOD_P2_X;
-		case 3:		return p==PLAYER_1 ? BOO_P1_X		: BOO_P2_X;
-		case 4:		return p==PLAYER_1 ? MISS_P1_X		: MISS_P2_X;
-		case 5:		return p==PLAYER_1 ? OK_P1_X		: OK_P2_X;
-		case 6:		return p==PLAYER_1 ? MAX_COMBO_P1_X : MAX_COMBO_P2_X;
+		case 0:		return PERFECT_X(p);
+		case 1:		return GREAT_X(p);
+		case 2:		return GOOD_X(p);
+		case 3:		return BOO_X(p);
+		case 4:		return MISS_X(p);
+		case 5:		return OK_X(p);
+		case 6:		return MAX_COMBO_X(p);
 		default:	ASSERT(0);	return 0;
 	}
 }
@@ -119,48 +92,6 @@ float JUDGE_Y( int l ) {
 		case 5:		return OK_Y;
 		case 6:		return MAX_COMBO_Y;
 		default:	ASSERT(0);	return 0;
-	}
-}
-float SCORE_NUMBERS_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SCORE_NUMBERS_P1_X;
-		case PLAYER_2:	return SCORE_NUMBERS_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float BONUS_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return BONUS_P1_X;
-		case PLAYER_2:	return BONUS_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float BAR_BASE_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return BAR_P1_BASE_X;
-		case PLAYER_2:	return BAR_P2_BASE_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float BAR_ROTATION( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return BAR_P1_ROTATION;
-		case PLAYER_2:	return BAR_P2_ROTATION;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float SONGS_SURVIVED_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return SONGS_SURVIVED_P1_X;
-		case PLAYER_2:	return SONGS_SURVIVED_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float NEW_RECORD_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return NEW_RECORD_P1_X;
-		case PLAYER_2:	return NEW_RECORD_P2_X;
-		default:		ASSERT(0);	return 0;
 	}
 }
 
@@ -539,7 +470,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_Grades[p].SetXY( GRADE_X(p), GRADE_Y );
 				m_Grades[p].SetZ( -2 );
 				m_Grades[p].SetZoom( 1.0f );
-				m_Grades[p].SetEffectGlowing( 1.0f );
+				m_Grades[p].SetEffectGlowing( 1.0f, GRADES_GLOW_COLOR_1, GRADES_GLOW_COLOR_2 );
 				if( SPIN_GRADES )
 					m_Grades[p].SpinAndSettleOn( grade[p] );
 				else
