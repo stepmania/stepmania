@@ -5,6 +5,9 @@
 
 #include "PlayerNumber.h"
 
+const int NETPROTOCOLVERSION=1;
+const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
+
 class EzSockets;
 
 class NetworkSyncManager 
@@ -18,7 +21,6 @@ public:
 	void ReportSongOver();	//Report to server that song is over
 	void StartRequest();	//Request a start.  Block until granted.
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
-	void SendSongs();  //Send song list to server (And exit) 
 
 	void PostStartUp(CString ServerIP);
 
@@ -28,11 +30,12 @@ public:
 
 	int m_playerLife[NUM_PLAYERS];	//Life
 
-
 	void Update(float fDeltaTime);
 
 private:
 #if !defined(WITHOUT_NETWORKING)
+
+
 	void StartUp();
 
 	int m_playerID;  //these are currently unused, but need to stay
@@ -42,6 +45,8 @@ private:
     
 	int m_startupStatus;	//Used to see if attempt was sucessful or not.
 
+	CString m_ServerName;
+
 	bool useSMserver;
  
     EzSockets *NetPlayerClient;
@@ -50,30 +55,33 @@ private:
 
 	bool Listen(unsigned short port);
 
-    
-    struct netHolder		//Data structure used for sending data to server
-    {
 
-		//NOTICE: Order of variables in this struct matters
-		//if order is changed, server would need to be re-written
-        int m_playerID;	//PID (also used for Commands)
-        int m_step;		//SID (StepID, 0-6 for Miss to Marv, 7,8 for boo and ok)
-        int m_score;	//Player's Score
-        int m_combo;	//Player's Current Combo
-		int m_life;		//Player's Life (AND GRADE) 
-			//m_life = [16-bit int life] <- LSB [16-bit int grade] <-MSB
-    };
-
-	struct netName			//Data structure used for 16-character strings.
+	//This is it's own type, so that more info can 
+	//be put at the end of it; after the data.
+	struct NetPacket
 	{
-		int m_packID;
-		char m_data[16];
+		unsigned char Data[NETMAXBUFFERSIZE];	//Data
+
+		int Position;				//Other info
 	};
 
-	struct netHolderFlash
-	{
-		char data[73];
-	};
+	//We only want to create this once per instance.
+	//No need to allocate and deallocate one all the time.
+	NetPacket m_packet;
+
+	//Commands used to operate on NetPackets
+	unsigned char Read1(NetPacket &Packet);
+	unsigned short int Read2(NetPacket &Packet);
+	unsigned int Read4(NetPacket &Packet);
+	CString ReadNT(NetPacket &Packet);
+
+	void Write1(NetPacket &Packet, unsigned char Data);
+	void Write2(NetPacket &Packet, unsigned short int Data);
+	void Write4(NetPacket &Packet, unsigned long Data);
+	void WriteNT(NetPacket &Packet, CString Data);
+
+	inline void ClearPacket(NetPacket &Packet)	{ memset((void*)(&Packet),0, sizeof(NetPacket)); }
+
 #endif
 };
 

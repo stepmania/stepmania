@@ -12,7 +12,6 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { ret
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
 void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::StartRequest() { }
-void NetworkSyncManager::SendSongs() { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 
@@ -33,6 +32,7 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 #include "SongManager.h"
 #include "GameState.h"
 #include "StageStats.h"
+#include "String.h"
 #include "Steps.h"
 
 NetworkSyncManager::NetworkSyncManager()
@@ -83,46 +83,39 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 			LOG->Warn( "Listen() failed" );
 			return;
 		}
-
 	}
 
 	useSMserver = true;
 
 	m_startupStatus = 1;	//Connection attepmpt sucessful
-	LOG->Info("CNConnected!");
-	int ClientCommand=3;
-	NetPlayerClient->SendPack((char*) &ClientCommand, 4);
-	LOG->Info("CNCHECKPOINT");
-
-	NetPlayerClient->ReadData((char*)&m_ServerVersion, 4);
-	LOG->Info("CNCHECKPOINT:%d", int(NetPlayerClient->inBuffer.length()));
 
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with
+
+	ClearPacket(m_packet);
+
+	Write1(m_packet,2);	//Hello Packet
+
+	Write1(m_packet,NETPROTOCOLVERSION);
+	int ctr = 2 * 16 + 0;
+	Write1(m_packet,ctr);
+
 	vector <CString> ProfileNames;
 	PROFILEMAN->GetLocalProfileNames(ProfileNames);
 	
-	netName PlayerName;
 	if( ProfileNames.size() > 0 )
-	{
-		PlayerName.m_packID = 30;
-		unsigned i;
-		for( i=0; i < strlen(ProfileNames[0]); i++ )
-			PlayerName.m_data[i] = ProfileNames[0][i];
-		PlayerName.m_data[i] = 0;
-		NetPlayerClient->SendPack((char*)&PlayerName, 20);
-	}
+		WriteNT(m_packet,ProfileNames[0]);
 	if( ProfileNames.size() > 1 )
-	{
-		PlayerName.m_packID = 31;
-		unsigned i=0;
-		for( i=0; i < strlen(ProfileNames[1]); i++ )
-			PlayerName.m_data[i] = ProfileNames[1][i];
-		PlayerName.m_data[i] = 0;
-		NetPlayerClient->SendPack( (char*)&PlayerName, 20 );
-	}
+		WriteNT(m_packet,ProfileNames[0]);
+	
+	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 
-	LOG->Info("Server Version: %d", m_ServerVersion);
+	NetPlayerClient->ReadPack((char*)m_packet.Data,NETMAXBUFFERSIZE);
+
+	m_ServerVersion = Read1(m_packet);
+	CString m_ServerName = ReadNT(m_packet);
+
+	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
 }
 
 
@@ -192,21 +185,24 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 {
 	if (!useSMserver) //Make sure that we are using the network
 		return;
-
-	netHolder SendNetPack;	//Create packet to send to server
-
-	SendNetPack.m_playerID = playerID;
-	SendNetPack.m_combo=combo;
-	SendNetPack.m_score=score;			//Load packet with appropriate info
-	SendNetPack.m_step=step-1;
 	
-	int CurGrade = g_CurStageStats.GetGrade((PlayerNumber)playerID);
+	ClearPacket(m_packet);
 
-	//Should be cleaned up
- 	SendNetPack.m_life=m_playerLife[playerID] + CurGrade*65536;
+	Write1(m_packet,5);
+	unsigned char ctr = playerID * 16 + step - 1;
+	Write1(m_packet,ctr);
 
-    //Send packet to server
-	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
+	ctr = g_CurStageStats.GetGrade((PlayerNumber)playerID)*16;
+
+	Write1(m_packet,ctr);
+
+	Write4(m_packet,score);
+
+	Write2(m_packet,combo);
+
+	Write2(m_packet,m_playerLife[playerID]);
+
+	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position); 
 
 }
 	
@@ -216,18 +212,11 @@ void NetworkSyncManager::ReportSongOver()
 	if (!useSMserver)	//Make sure that we are using the network
 		return ;
 
-	netHolder SendNetPack;	//Create packet to send to server
+	ClearPacket(m_packet);
 
-	SendNetPack.m_playerID = 21; // Song over Packet player ID
+	Write1(m_packet,4);
 
-
-	SendNetPack.m_step=0;	
-	SendNetPack.m_score=0;
-	SendNetPack.m_combo=0;
-	SendNetPack.m_life=0;
-	
-
-	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	return;
 }
 
@@ -236,98 +225,42 @@ void NetworkSyncManager::StartRequest()
 	if (!useSMserver)
 		return ;
 
-	//If it's going into demonstration (or jukebox) mode, do not 
-	//bother to sync.
 	if (GAMESTATE->m_bDemonstrationOrJukebox)
 		return ;
 
-
-	char tmp[4];	//Temporary vector used by receive function when waiting
-
 	LOG->Trace("Requesting Start from Server.");
 
-	netHolder SendNetPack;
+	ClearPacket(m_packet);
 
-	SendNetPack.m_playerID = 20; // Song Start Request Packet player ID
+	Write1(m_packet,3);	
 
-	//Report Step difficulties 
+	unsigned char ctr=0;
 
 	Steps * tSteps;
-	SendNetPack.m_step = 0;
 	tSteps = g_CurStageStats.pSteps[PLAYER_1];
 	if (tSteps!=NULL)
-	{
-		SendNetPack.m_step = tSteps->GetMeter();
-	}
+		ctr = ctr+tSteps->GetMeter()*16;
 
 	tSteps = g_CurStageStats.pSteps[PLAYER_2];
 	if (tSteps!=NULL)
-	{
-		SendNetPack.m_step += tSteps->GetMeter()*256;
-	}
-	SendNetPack.m_score = 0;
-	SendNetPack.m_life = 0;
-	SendNetPack.m_combo = 0;
+		ctr = ctr+tSteps->GetMeter();
 
-	NetPlayerClient->SendPack((char*)&SendNetPack, sizeof(netHolder)); 
+	Write1(m_packet,ctr);
+
+	WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sMainTitle);
+	WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sSubTitle);
+	WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sArtist);
+
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	
 	LOG->Trace("Waiting for RECV");
 
+	ClearPacket(m_packet);
 	//Block until go is recieved.
-	NetPlayerClient->ReadData((char *)tmp, 4);	
+	NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE);	
 
-	LOG->Trace("Starting Game.");
+	//Ignore this packet for now
 }
-
-//This must be executed after NSMAN was started.
-
-//this is for use with SMOnline.
-//In order to gaurentee song title and group names
-//line up, SM will be started and load, and then 
-//send all info to the local client. 
-//This information will be then relayed to the 
-//SMOnline server.
-void NetworkSyncManager::SendSongs()
-{	
-	if (!useSMserver)
-		return ;
-
-	vector <Song *> LogSongs;
-	LogSongs = SONGMAN->GetAllSongs();
-	unsigned i,j;
-	CString SongInfo;
-	char toSend[1020];	//Standard buffer is 1024 and 
-						//we have to include 4 size bytes
-	for (i=0; i<LogSongs.size(); i++)
-	{
-		Song * CSong = LogSongs[i];
-		SongInfo = char(1) + CSong->m_sGroupName;
-		SongInfo += char(2) + CSong->GetTranslitMainTitle();
-		SongInfo += char(3) + CSong->GetTranslitSubTitle();
-		SongInfo += char(4) + CSong->GetTranslitArtist(); 
-		
-		for (j=4;j<SongInfo.length()+4;j++)
-			toSend[j] = SongInfo.c_str()[j-4];
-		toSend[0] = char(35);
-		toSend[1] = char(0);
-		toSend[2] = char(0);
-		toSend[3] = char(0);
-
-		NetPlayerClient->SendPack(toSend, SongInfo.length() + 4);
-	}
-	toSend[0] = char(36);
-	NetPlayerClient->SendPack(toSend, 4);
-
-	//Exit because this is ONLY for use with SMOnline
-	//If admins feel strongly, this can be exported
-	//to another command line, like "--exitfirst"
-	exit(0);
-
-	//NOTE TO ADMINS: I do not actually know the 
-	//safe way to exit stepmania, if you can, either tell me
-	//or do it, please?
-}
-
 	
 void NetworkSyncManager::DisplayStartupStatus()
 {
@@ -351,7 +284,89 @@ void NetworkSyncManager::DisplayStartupStatus()
 void NetworkSyncManager::Update(float fDeltaTime)
 {
 }
+
+
+
+unsigned char NetworkSyncManager::Read1(NetPacket &Packet)
+{
+	if (Packet.Position>=NETMAXBUFFERSIZE)
+		return 0;
+
+	return Packet.Data[Packet.Position++];
+}
+
+unsigned short int NetworkSyncManager::Read2(NetPacket &Packet)
+{
+	if (Packet.Position>=NETMAXBUFFERSIZE-1)
+		return 0;
+
+	unsigned short int Temp;
+	memcpy((void *)&Temp,(void *)*(&Packet.Data + Packet.Position),2);
+	Packet.Position+=2;
+	return ntohs(Temp);
+}
+
+unsigned int NetworkSyncManager::Read4(NetPacket &Packet)
+{
+	if (Packet.Position>=NETMAXBUFFERSIZE-3)
+		return 0;
+
+	unsigned int Temp;
+	memcpy((void *)&Temp,(void *)(&Packet.Data + Packet.Position),4);
+	Packet.Position+=2;
+	return ntohl(Temp);
+}
+
+CString NetworkSyncManager::ReadNT(NetPacket &Packet)
+{
+	int Orig=Packet.Position;
+	CString TempStr;
+	while ((Packet.Position<NETMAXBUFFERSIZE)&& (((char*)Packet.Data)[Packet.Position]!=0))
+		TempStr+=(char)Packet.Data[Packet.Position++];
+
+	Packet.Position++;
+	return TempStr;
+}
+
+
+void NetworkSyncManager::Write1(NetPacket &Packet, unsigned char Data)
+{
+	if (Packet.Position>=NETMAXBUFFERSIZE)
+		return;
+	memcpy((void*)(&Packet.Data[Packet.Position]),(void *)&Data,1);	
+	Packet.Position++;
+}
+
+void NetworkSyncManager::Write2(NetPacket &Packet, unsigned short int Data)
+{
+	if (Packet.Position>=NETMAXBUFFERSIZE-1)
+		return;
+	Data = htons(Data);
+	memcpy((void*)(&Packet.Data[Packet.Position]),(void *)&Data,2);	
+	Packet.Position+=2;
+}
+
+void NetworkSyncManager::Write4(NetPacket &Packet, unsigned long Data)
+{
+	if (Packet.Position>=NETMAXBUFFERSIZE-3)
+		return ;
+
+	Data = htonl(Data);
+	memcpy((void*)(&Packet.Data[Packet.Position]),(void *)&Data,4);	
+	Packet.Position+=4;
+}
+
+void NetworkSyncManager::WriteNT(NetPacket &Packet, CString Data)
+{
+	int index=0;
+	while ((Packet.Position<NETMAXBUFFERSIZE)&&(index<Data.GetLength()))
+		Packet.Data[Packet.Position++] = (unsigned char)(Data.c_str()[index++]);
+			//Is it proper to do "(unsigned char)(Data.c_str()[index++])"?
+}
+
+
 #endif
+
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
