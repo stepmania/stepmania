@@ -71,7 +71,7 @@ CString ModeSwitcher::GetStyleName()
 	{
 		if( GAMESTATE->IsPlayerEnabled(i) )
 		{
-			switch(GAMESTATE->m_PreferredDifficulty[i])
+			switch( GAMESTATE->m_PreferredDifficulty[i].Get() )
 			{
 				case DIFFICULTY_BEGINNER: sDiff[i] = "Beginner\n"; break;
 				case DIFFICULTY_EASY:
