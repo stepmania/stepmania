@@ -225,15 +225,9 @@ typedef Rect<float> RectF;
  * have the same layout that D3D expects. */
 struct RageSpriteVertex	// has color
 {
-	/* Zero out by default. */
-	RageSpriteVertex():
-		p(0,0,0),
-		n(0,0,0),
-		t(0,0)
-		{ }
-    RageVector3		p;	// position
-    RageVector3		n;	// normal
-    RageVColor		c;	// diffuse color
+	RageVector3		p;	// position
+	RageVector3		n;	// normal
+	RageVColor		c;	// diffuse color
 	RageVector2		t;	// texture coordinates
 };
 
