@@ -22,7 +22,7 @@ RageSound*		SOUND	= NULL;
 /* I use this to turn off sound, since Bass doesn't want to work under
  * VTune.  -glenn */
 #if 0
-RageSound::RageSound( HWND hWnd ) { }
+RageSound::RageSound() { }
 RageSound::~RageSound() { }
 void RageSound::PlayOnceStreamed( CString sPath ) { }
 void RageSound::PlayOnceStreamedFromDir( CString sDir ) { }
@@ -89,7 +89,7 @@ RageSound::~RageSound()
 void RageSound::PlayOnceStreamed( CString sPath )
 {
 	HSTREAM hStream = BASS_StreamCreateFile( FALSE, const_cast<char*>((const char *)sPath), 0, 0, BASS_STREAM_AUTOFREE );
-	if( hStream == NULL )
+	if( !hStream )
 		throw RageException( "RageSound: Error creating stream." );
 
 	if( FALSE == BASS_StreamPlay( hStream, FALSE, 0 ) )
