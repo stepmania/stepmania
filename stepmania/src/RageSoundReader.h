@@ -21,6 +21,7 @@ public:
 
 	bool Error() const { return !error.empty(); }
 	string GetError() const { return error; }
+	static SoundReader *OpenFile( CString filename, CString error );
 };
 
 #endif
