@@ -234,6 +234,11 @@ try_element_again:
 	}
 	
 
+	if( asElementPaths.size() == 0 )
+	{
+		return "";	// This isn't fatal.
+	}
+
 	if( asElementPaths.size() > 1 )
 	{
 		FlushDirCache();
@@ -244,58 +249,57 @@ try_element_again:
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
 
-		if( ArchHooks::retry == HOOKS->MessageBoxRetryCancel(message) )
+		switch( HOOKS->MessageBoxAbortRetryIgnore(message) )
+		{
+		case ArchHooks::abort:
+			RageException::Throw( message ); 
+			break;
+		case ArchHooks::retry:
 			goto try_element_again;
-
-		RageException::Throw( message ); 
-	}
-	else if( asElementPaths.size() == 0 )
-	{
-		return "";	// This isn't fatal.
-	}
-	else	// asElementPaths.size() == 1
-	{
-		ASSERT( asElementPaths.size() == 1 );
-
-		CString sPath = asElementPaths[0];
-		bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
-
-		if( !bIsARedirect )
-		{
-			return sPath;
+		case ArchHooks::ignore:
+			break;
 		}
-		else	// bIsARedirect
+	}
+
+
+	CString sPath = asElementPaths[0];
+	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
+
+	if( !bIsARedirect )
+	{
+		return sPath;
+	}
+	else	// bIsARedirect
+	{
+		CString sNewFileName = GetRedirContents(sPath);
+		
+		/* backwards-compatibility hack */
+		if( category == Fonts )
+			sNewFileName.Replace(" 16x16.png", "");
+
+		/* Search again.  For example, themes/default/Fonts/foo might redir
+		* to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
+		/* Important: We need to do a full search.  For example, BG redirs in
+		* the default theme point to "_shared background", and themes override
+		* just "_shared background"; the redirs in the default theme should end
+		* up resolving to the overridden background. */
+		/* Use GetPathToOptional because we don't want report that there's an element
+		 * missing.  Instead we want to report that the redirect is invalid. */
+		CString sNewPath = GetPathTo(category, sNewFileName, true);
+
+		if( !sNewPath.empty() )
+			return sNewPath;
+		else
 		{
-			CString sNewFileName = GetRedirContents(sPath);
-			
-			/* backwards-compatibility hack */
-			if( category == Fonts )
-				sNewFileName.Replace(" 16x16.png", "");
+			CString message = ssprintf(
+					"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
+					"Verify that this redirect is correct.",
+					sPath.c_str(), sNewFileName.c_str());
 
-			/* Search again.  For example, themes/default/Fonts/foo might redir
-			* to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
-			/* Important: We need to do a full search.  For example, BG redirs in
-			* the default theme point to "_shared background", and themes override
-			* just "_shared background"; the redirs in the default theme should end
-			* up resolving to the overridden background. */
-			/* Use GetPathToOptional because we don't want report that there's an element
-			 * missing.  Instead we want to report that the redirect is invalid. */
-			CString sNewPath = GetPathTo(category, sNewFileName, true);
+			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+				goto try_element_again;
 
-			if( !sNewPath.empty() )
-				return sNewPath;
-			else
-			{
-				CString message = ssprintf(
-						"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
-						"Verify that this redirect is correct.",
-						sPath.c_str(), sNewFileName.c_str());
-
-				if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
-					goto try_element_again;
-
-				RageException::Throw( "%s", message.c_str() ); 
-			}
+			RageException::Throw( "%s", message.c_str() ); 
 		}
 	}
 }
@@ -342,32 +346,30 @@ try_element_again:
 		FlushDirCache();
 		g_ThemePathCache[category].clear();
 		goto try_element_again;
-	case ArchHooks::cancel:
+	case ArchHooks::ignore:
+		LOG->Warn( 
+			"Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
+			sCategory.c_str(),
+			sFileName.c_str(), 
+			GetThemeDirFromName(m_sCurThemeName).c_str(), 
+			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
+
+		/* Err? */
+		if(sFileName == "_missing")
+			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
+
+		Cache[sFileName] = GetPathTo( category, "_missing" );
+		return Cache[sFileName];
+	case ArchHooks::abort:
 		RageException::Throw( "Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
 			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
-		break;
-	case ArchHooks::ignore:
-		break;
 	default:
 		ASSERT(0);
+		return "";
 	}
-
-	LOG->Warn( 
-		"Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
-		sCategory.c_str(),
-		sFileName.c_str(), 
-		GetThemeDirFromName(m_sCurThemeName).c_str(), 
-		GetThemeDirFromName(BASE_THEME_NAME).c_str() );
-
-	/* Err? */
-	if(sFileName == "_missing")
-		RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
-
-	Cache[sFileName] = GetPathTo( category, "_missing" );
-	return Cache[sFileName];
 }
 
 
