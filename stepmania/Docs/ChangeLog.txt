@@ -1,3 +1,28 @@
+* Alpha 23
+Fixed garbled mono sounds.
+Fixed graphics being reset after exiting menus that don't affect graphics.
+Fixed fail mode being used in Oni mode.
+Fixed "by Unknown artist" autogen Oni courses.
+Fixed codes on ScreenTitleMenu when UseDedicatedMenuButtons is on.
+Fixed autogen course scoring.
+Fixed "MemoryCardOsMountPointP#" in Windows.
+Fixed extra stage music wheel entry not always being in a section.
+Fixed TM5 "GO", "Lady Madonna" wheel sorting due to extra spaces before titles.
+Fixed profile options being saved in jukebox mode.
+Fixed score shown on the music wheel in Oni mode.
+Fixed TexCoordArrayFromRect crash.
+Fixed CourseEntryDisplay::LoadFromTrailEntry crash.
+Fixed course editor saving crash.
+Windows: Fixed apostrophe inserting a quote in text entry.
+Windows: Improved DirectSound underrun recovery.
+OSX: Fixed some banners not being displayed.
+Disabled timer header for options screens that have no timer.
+Always load song banners as 32bpp, to speed up the music wheel.
+Allow selection of both 1280x960 (for CRTs) and 1280x1024 (for LCDs).
+Fixed OSC1 "Love Hina" title.
+Added OSC2 "Dejiko to Gema" translit and correct "Assami" -> "Asami".
+Added OSC3 "E-Paksa", Naofumi Hataya, "ukifune" kanji and translits.
+
 * Alpha 22
 Fixed menu timer running song roulette on course selection.
 Fixed OnCommand being played twice when song BGA layers first gain focus.
