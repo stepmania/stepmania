@@ -387,7 +387,6 @@ static void child_process()
     temp = new char [size];
     ret = read(3, temp, size);
     const CString CrashedThread(temp);
-    printf("got '%s'\n", CrashedThread.c_str());
     delete[] temp;
 
     /* Wait for the child to either finish cleaning up or die.  XXX:
