@@ -49,16 +49,25 @@ NEW FEATURE:  New parameters for background changes: rate, fade old, loop,
 CHANGE:  Background playback speed scaled by song rate, so movies stay in 
 	sync (although syncing isn't very accurate at some song rates).
 NEW FEATURE:  Automatic mapping of joysticks.
-NEW FEATURE:  Automatically adujst graphic detail on first run.
+NEW FEATURE:  Automatically adjust graphic detail on first run.
 NEW FEATURE:  #DISPLAYBPM tag for SM and DWI files.
+NEW FEATURE:  Korean characters in KSF files are converted correctly
+NEW FEATURE:  Music rates .3x and .5x
+NEW FEATURE:  Pump half-doubles
+NEW FEATURE:  Song lyrics
+BUG FIX:  Sort songs starting with a decimal point in the NUM folder
+NEW FEATURE:  Courses can be made more difficult; use the same codes as selecting a song
+NEW FEATURE:  Beginner difficulty
+NEW FEATURE:  Music wheel can be set to have sections for ABC only
+NEW FEATURE:  Note skins can now be selected per-player on the player options screen
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 
 	update the tap graphic.
 NEW FEATURE:  AutoSync status now shown during gameplay with icon
-NEW FEATURE:  added autogen icon to select music
-NEW FEATURE:  toggle for easter eggs in Machine Options
-NEW FEATURE:  marvelous step timing togglable in Machine Options
+NEW FEATURE:  Added autogen icon to select music
+NEW FEATURE:  Toggle for easter eggs in Machine Options
+NEW FEATURE:  Marvelous step timing togglable in Machine Options
 NEW FEATURE:  Grade AAAA (all marvelous)
 CHANGE:  Only show ScreenHowToPlay if at least one player chose easy
 NEW FEATURE: New High Score screen
