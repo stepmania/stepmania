@@ -33,18 +33,6 @@
 
 ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 {
-	/* This has replaced the above, because ScreenIntroMovie should not be
-		exited until the movie is done. This saves the hassle of having to
-		always update the metrics.ini file to reflect the movie's time.
-
-	XXX UPDATE: Until we have a way to determine a movie's length.. the fadeout
-				time will have to be manually set in the metrics file -- Miryokuteki
-
-	if( m_sMetricName == "ScreenIntroMovie" )
-	{
-		SECONDS_TO_SHOW = THEME->GetMetricF(m_sMetricName,"SecondsToShow");
-	}*/
-
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s, %s)", sMetricName.c_str(), sElementName.c_str() );
 
 	GAMESTATE->Reset();
@@ -148,16 +136,6 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 void ScreenAttract::Update( float fDelta )
 {
 	Screen::Update(fDelta);
-
-
-	/* See the above comment block -- Miryokuteki
-	if( m_sMetricName == "ScreenIntroMovie" )
-	{
-		if( RageMovieTexture::IsFinishedPlaying() == true )
-		{
-			this->SendScreenMessage( SM_BeginFadingOut,0 );
-		}
-	} */
 }
 
 void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
