@@ -567,8 +567,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 		arrayWheelItemDatas.reserve( arraySongs.size() );
 
-		if( PREFSMAN->m_MusicWheelUsesSections == PrefsManager::NEVER || (so != SORT_TITLE && PREFSMAN->m_MusicWheelUsesSections == PrefsManager::ABC_ONLY ))
+		switch( PREFSMAN->m_MusicWheelUsesSections )
+		{
+		case PrefsManager::NEVER:
 			bUseSections = false;
+			break;
+		case PrefsManager::ABC_ONLY:
+			if( so != SORT_TITLE && so != SORT_GROUP )
+				bUseSections = false;
+			break;
+		}
 
 		if( bUseSections )
 		{
@@ -611,7 +619,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 		}
 
-		if( so == SORT_PREFERRED )
+		if( so != SORT_ROULETTE )
 		{
 			if( SHOW_ROULETTE )
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
