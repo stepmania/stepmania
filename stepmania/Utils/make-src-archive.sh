@@ -52,11 +52,15 @@ rm -rf sdl_xbox_includes
 rm -rf SDL_net-1.2.5
 rm -rf SDLx-0.02.rar
 
+cd ..
+
 find -type d -name 'CVS' | xargs rm -rf
 find -type f -name '*.lib' | xargs rm -rf
+find -type f -name '*.exe' | xargs rm -rf
+find -type f -name '*.a' | xargs rm -rf
+find -type f -name '*.o' | xargs rm -rf
 
-cd ../..
-rm -f Utils/*.exe
+cd ..
 rm -rf Utils/Font\ generation/
 
 echo Archiving...
