@@ -9,6 +9,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenManager.h"
 #include "VirtualKeyboard.h"
+#include "Command.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
 #define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
@@ -211,8 +212,8 @@ void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 	switch (m_SelectMode) {
 	case SelectRooms:
 		if (m_iRoomPlace > 0) {
-			ShiftRoomsDown();
 			m_iRoomPlace--;
+			UpdateRoomPos();
 		}
 		ScreenNetSelectBase::MenuUp( pn );
 		break;
@@ -226,8 +227,8 @@ void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 	case SelectRooms:
 		if( m_iRoomPlace+1 < (int) m_RoomList.size() )
 		{
-			ShiftRoomsUp();
 			m_iRoomPlace++;
+			UpdateRoomPos();
 		}
 		ScreenNetSelectBase::MenuDown( pn );
 		break;
@@ -254,16 +255,8 @@ void ScreenNetRoom::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetRoom::UpdateRoomsList()
 {
-	float cx;
-	float cy;
-
-	if (m_RoomList.size() > 0) {
-		cx = m_RoomList[0].GetX();
-		cy = m_RoomList[0].GetY();
-	} else {
-		cx = THEME->GetMetricF(m_sName, "RoomsX");
-		cy = THEME->GetMetricF(m_sName, "RoomsY");
-	}
+	float cx = THEME->GetMetricF(m_sName, "RoomsX") - ROOMSPACEX * ( m_iRoomPlace );
+	float cy = THEME->GetMetricF(m_sName, "RoomsY") - ROOMSPACEY * ( m_iRoomPlace );
 
 	for (unsigned int i = 0; i < m_RoomList.size(); ++i)
 		this->RemoveChild(&m_RoomList[i]);
@@ -310,31 +303,23 @@ void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc )
 	NSMAN->SendSMOnline( );
 }
 
-void ScreenNetRoom::ShiftRoomsUp() {
-	for (unsigned int x = 0; x < m_RoomList.size(); ++x) {
-		m_RoomList[x].FinishTweening();
-		if ((m_RoomList[x].GetY()-ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()-ROOMSPACEY < ROOMLOWERBOUND)) {
-			COMMAND(m_RoomList[x], "ShiftUp");
-			COMMAND(m_RoomList[x], "RoomsOn");
-		} else {
-			COMMAND(m_RoomList[x], "ShiftUp");
-			COMMAND(m_RoomList[x], "RoomsOff");
-		}
-	}
-}
-
-void ScreenNetRoom::ShiftRoomsDown()
-{
-	for( unsigned x = 0; x < m_RoomList.size(); ++x )
+void ScreenNetRoom::UpdateRoomPos() {
+	float cx = THEME->GetMetricF(m_sName, "RoomsX") - ROOMSPACEX * ( m_iRoomPlace );
+	float cy = THEME->GetMetricF(m_sName, "RoomsY") - ROOMSPACEY * ( m_iRoomPlace );
+	for (unsigned int x = 0; x < m_RoomList.size(); ++x) 
 	{
-		m_RoomList[x].FinishTweening();
-		if ((m_RoomList[x].GetY()+ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()+ROOMSPACEY < ROOMLOWERBOUND)) {
-			COMMAND(m_RoomList[x], "ShiftDown");
-			COMMAND(m_RoomList[x], "RoomsOn");
-		} else {
-			COMMAND(m_RoomList[x], "ShiftDown");
-			COMMAND(m_RoomList[x], "RoomsOff");
-		}
+		m_RoomList[x].StopTweening();
+		CString Command = ssprintf( "linear,0.2;y,%f;x,%f;", cy, cx );
+
+		if ( ( cy > ROOMLOWERBOUND ) || ( cy < ROOMUPPERBOUND ) )
+			Command += THEME->GetMetric( m_sName, "RoomsOffCommand" );
+		else
+			Command += THEME->GetMetric( m_sName, "RoomsOnCommand" );
+
+		ActorCommands cmds( Command );
+		m_RoomList[x].RunCommands( cmds );
+		cx += ROOMSPACEX;
+		cy += ROOMSPACEY;
 	}
 }
 

@@ -45,8 +45,7 @@ private:
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 	void CreateNewRoom( const CString& rName,  const CString& rDesc );
-	void ShiftRoomsUp();
-	void ShiftRoomsDown();
+	void UpdateRoomPos();
 
 	enum NetSelectModes
 	{
