@@ -31,6 +31,7 @@
 #include "Sprite.h"
 #include "arch/arch.h"
 #include "RageFile.h"
+#include "RageFileManager.h"
 #include "NoteDataUtil.h"
 #include "SDL_utils.h"
 
@@ -937,43 +938,44 @@ bool Song::SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const
 	return false;
 }
 
-void Song::SaveToCacheFile()
-{
-	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
-	SaveToSMFile( GetCacheFilePath(), true );
-}
-
 void Song::Save()
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
-
-	/* rename all old files to avoid confusion.
-	 *
-	 * This also serves as a backup, so rename .sm's, too.  If we crash when
-	 * saving the .sm, we don't want to lose what we had.  But, what we really
-	 * should be doing is saving to another file (eg. foo.sm.new), then once we 
-	 * know we havn't crashed, move the old .sm to .sm.old and the new one to
-	 * the real filename.  That way, if we crash, we don't leave the song in an
-	 * unplayable state where the user has to manually un-rename stuff.  XXX -glenn 
-	 */
-	CStringArray arrayOldFileNames;
-	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
-	GetDirListing( m_sSongDir + "*.dwi", arrayOldFileNames );
-	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
-	GetDirListing( m_sSongDir + "*.sm", arrayOldFileNames );
-	
-	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
-	{
-		CString sOldPath = m_sSongDir + arrayOldFileNames[i];
-		CString sNewPath = sOldPath + ".old";
-		rename( sOldPath, sNewPath );
-	}
 
 	ReCalculateRadarValuesAndLastBeat();
 	TranslateTitles();
 
 	SaveToSMFile( GetSongFilePath(), false );
 	SaveToDWIFile();
+
+	/* We've safely written our files and created backups.  Rename non-SM and non-DWI
+	 * files to avoid confusion. 
+	 *
+	 * Don't rename anything before writing.  If we do, and we crash before we actually get
+	 * the file written, we'll be in a state where we can't automatically find the
+	 * data in the future and the user will have to correct it himself.  Also, don't
+	 * rename SM or DWI: we just wrote those. */
+	CStringArray arrayOldFileNames;
+	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
+	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
+//	GetDirListing( m_sSongDir + "*.dwi", arrayOldFileNames );
+//	GetDirListing( m_sSongDir + "*.sm", arrayOldFileNames );
+	
+	/* We copy files instead of renaming them, since it's more reliable: if we crash
+	 * before the data below is written, we'll be left */
+	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
+	{
+		const CString sOldPath = m_sSongDir + arrayOldFileNames[i];
+		const CString sNewPath = sOldPath + ".old";
+
+		if( !FileCopy( sOldPath, sNewPath ) )
+		{
+			LOG->Warn( "Backup of \"%s\" failed", sOldPath.c_str() );
+			/* Don't remove. */
+		} else
+			FILEMAN->Remove( sOldPath );
+	}
+
 }
 
 
@@ -981,14 +983,28 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 {
 	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
 
+	/* If the file exists, make a backup. */
+	if( !bSavingCache && IsAFile(sPath) )
+		FileCopy( sPath, sPath + ".old" );
+
 	NotesWriterSM wr;
 	wr.Write(sPath, *this, bSavingCache);
+}
+
+void Song::SaveToCacheFile()
+{
+	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
+	SaveToSMFile( GetCacheFilePath(), true );
 }
 
 void Song::SaveToDWIFile()
 {
 	const CString sPath = SetExtension( GetSongFilePath(), "dwi" );
 	LOG->Trace( "Song::SaveToDWIFile(%s)", sPath.c_str() );
+
+	/* If the file exists, make a backup. */
+	if( IsAFile(sPath) )
+		FileCopy( sPath, sPath + ".old" );
 
 	NotesWriterDWI wr;
 	wr.Write(sPath, *this);
