@@ -267,7 +267,6 @@ static void DoEraseEmergencyDump()
 	DeleteFile(szEmergencyDumpName);
 }
 
-#include "RageSoundBass.h"
 extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	/* If we're fullscreen, the fullscreen d3d window will obscure
@@ -385,14 +384,6 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	}
 
 	VDDebugInfoDeinit(&g_debugInfo);
-
-	/* Major hack:
-	 * Bass crashes if we close without freeing it, even if it's by
-	 * crashing ourselves.  Now, it's far from safe to call these functions
-	 * after a crash, but if we don't it'll crash anyway, so we have
-	 * nothing to lose. */
-	delete SOUND;
-	SOUND = NULL;
 
 	/* We've made it.  Delete the emergency dump. */
 	DoEraseEmergencyDump();

@@ -230,14 +230,6 @@ SOURCE=.\RageSound.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageSoundBass.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundBass.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\RageSoundManager.cpp
 # End Source File
 # Begin Source File
@@ -255,14 +247,6 @@ SOURCE=.\RageSoundReader_SDL_Sound.cpp
 # Begin Source File
 
 SOURCE=.\RageSoundReader_SDL_Sound.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundSample.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundSample.h
 # End Source File
 # Begin Source File
 

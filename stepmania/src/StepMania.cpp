@@ -16,7 +16,6 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
-#include "RageSoundBass.h"
 #include "RageSoundManager.h"
 #include "RageInput.h"
 #include "RageTimer.h"
@@ -197,7 +196,6 @@ int main(int argc, char* argv[])
 	PREFSMAN	= new PrefsManager;
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
-	SOUND		= new RageSoundBass;
 	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_bSoundDrivers);
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
@@ -293,7 +291,6 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( INPUTMAN );
-	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
