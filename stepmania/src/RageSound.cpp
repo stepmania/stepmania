@@ -168,10 +168,10 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		SetStopMode( M_STOP );
 
 	CString error;
-	Sample = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
+	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
 	if( Sample == NULL )
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
-			sSoundFilePath.c_str(), error.c_str());
+			m_sFilePath.c_str(), error.c_str());
 
 	if(SOUNDMAN->GetDriverSampleRate() != -1 &&
 	   Sample->GetSampleRate() != SOUNDMAN->GetDriverSampleRate())
