@@ -234,17 +234,20 @@ float NoteData::GetLastBeat() const
 }
 
 int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat ) const
-{ 
+{
 	int iNumNotes = 0;
-
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
+	if(fEndBeat == MAX_BEATS)
+		iEndIndex = min(iEndIndex, int(m_TapNotes[0].size()));
 
-	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
+	for( int t=0; t<m_iNumTracks; t++ )
 	{
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( int i=iStartIndex; i<iEndIndex; i++ )
+		{
 			if( GetTapNote(t, i) != TAP_EMPTY )
 				iNumNotes++;
+		}
 	}
 	
 	return iNumNotes;
