@@ -43,9 +43,6 @@ ThemeManager::ThemeManager()
 {
 	m_pIniMetrics = new IniFile;
 
-	/* Update the metric cache on the first call to GetMetric. */
-	m_fNextReloadTicks = 0;
-
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
 	m_uHashForCurThemeMetrics = m_uHashForBaseThemeMetrics = 0;
 	
@@ -292,10 +289,10 @@ try_metric_again:
 	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
 
 	// Is our metric cache out of date?
-	// XXX: GTSS wraps every ~40 days.  Need a better way to handler timers like this.
-	if (RageTimer::GetTimeSinceStart() >= m_fNextReloadTicks)
+	if ( !m_uHashForBaseThemeMetrics || m_ReloadTimer.PeekDeltaTime() >= 1 )
 	{
-		m_fNextReloadTicks = RageTimer::GetTimeSinceStart()+1.0f;
+		m_ReloadTimer.GetDeltaTime();
+
 		if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{

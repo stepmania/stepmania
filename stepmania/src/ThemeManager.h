@@ -13,6 +13,7 @@
 */
 
 #include "RageTypes.h"
+#include "RageTimer.h"
 
 class IniFile;
 
@@ -55,9 +56,9 @@ protected:
 	CString m_sCurThemeName;
 
 	IniFile* m_pIniMetrics;	// make this a pointer so we don't have to include IniFile in this header!
-	float m_fNextReloadTicks;
 	unsigned m_uHashForCurThemeMetrics;
 	unsigned m_uHashForBaseThemeMetrics;
+	RageTimer m_ReloadTimer;
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
