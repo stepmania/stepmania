@@ -273,13 +273,6 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
   
   Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible 
   score for any song is the number of feet difficulty X 10,000,000. 
-		
-  3dfsux:
-  I redid this code so it will store the score as a long, then correct the score for each song based on that value.
-  		m_lScore == p * n
-  		m_fScoreMultiplier = (B/S)
-   keeping these seperate for as long as possible improves accuracy.
-
 */
 	AddScore( scoreOfLastTap );		// only score once per row
 
