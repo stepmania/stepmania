@@ -431,7 +431,7 @@ try_element_again:
 		if(sFileName == "_missing")
 			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
-		Cache[sFileName] = GetPathTo( category, "Common", "missing" );
+		Cache[sFileName] = GetPathTo( category, "", "_missing" );
 		return Cache[sFileName];
 	/* XXX: "abort" and "cancel" are synonyms; merge */
 	case ArchHooks::abort:
