@@ -126,6 +126,7 @@ Desc: Animates the 1p/2p selection
 ************************************/
 void ScreenSelectMode::Update( float fDeltaTime )
 {
+	m_BGAnimations[ m_ScrollingList.GetSelection() ].Update( fDeltaTime );
 	Screen::Update( fDeltaTime );
 }
 
@@ -137,6 +138,7 @@ Desc: Draws the screen =P
 void ScreenSelectMode::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
+	m_BGAnimations[ m_ScrollingList.GetSelection() ].Draw();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 }
@@ -201,6 +203,20 @@ void ScreenSelectMode::RefreshModeChoices()
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
+
+
+	if( SELECTION_SPECIFIC_BG_ANIMATIONS )
+	{
+		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+
+		for( int i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
+		{
+			CString sChoiceName = m_aPossibleModeChoices[i].name;
+			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName, sChoiceName)) );	
+		}
+	}
+
+
 }
 
 
@@ -218,10 +234,8 @@ void ScreenSelectMode::MenuBack( PlayerNumber pn )
 
 void ScreenSelectMode::AfterChange()
 {
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
-	const ModeChoice& choice = m_aPossibleModeChoices[ m_ScrollingList.GetSelection() ];
-	if( SELECTION_SPECIFIC_BG_ANIMATIONS )
-		m_Menu.m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName, choice.name)) );
+//	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+//	const ModeChoice& choice = m_aPossibleModeChoices[ m_ScrollingList.GetSelection() ];
 }
 
 void ScreenSelectMode::MenuLeft( PlayerNumber pn )

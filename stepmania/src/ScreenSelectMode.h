@@ -21,6 +21,8 @@ Andrew Livy
 
 /* Class Definition */
 
+const int MAX_MODE_CHOICES = 10;
+
 
 class ScreenSelectMode : public Screen
 {
@@ -56,6 +58,7 @@ protected:
 	ScrollingList m_ScrollingList;
 	void RefreshModeChoices();
 
+	BGAnimation	m_BGAnimations[MAX_MODE_CHOICES];
 	MenuElements m_Menu;
 
 	RageSoundSample m_soundSelect;	
