@@ -110,8 +110,8 @@ void ScreenOptions::Init()
 	m_SoundChangeCol.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_SoundNextRow.Load( THEME->GetPathS(m_sName,"next"), true );
 	m_SoundPrevRow.Load( THEME->GetPathS(m_sName,"prev"), true );
-	m_SoundToggleOn.Load( THEME->GetPathS(m_sName,"toggle on") );
-	m_SoundToggleOff.Load( THEME->GetPathS(m_sName,"toggle off") );
+	m_SoundToggleOn.Load( THEME->GetPathS(m_sName,"toggle on"), true );
+	m_SoundToggleOff.Load( THEME->GetPathS(m_sName,"toggle off"), true );
 
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );

@@ -305,7 +305,7 @@ void ScreenEvaluation::Init()
 	//
 	// load other sounds
 	//
-	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
+	m_soundStart.Load( THEME->GetPathS(m_sName,"start"), true );
 
 	
 	//
