@@ -26,7 +26,7 @@
 #include "DifficultyIcon.h"
 #include "TransitionFadeWipe.h"
 #include "TransitionOniFade.h"
-
+#include "BPMDisplay.h"
 
 // messages sent by Combo
 const ScreenMessage SM_BeginToasty			= ScreenMessage(SM_User+104);
@@ -90,6 +90,7 @@ private:
 	BitmapText				m_textCourseSongNumber[NUM_PLAYERS];
 
 	Sprite					m_sprMiddleFrame;
+	BPMDisplay				m_BPMDisplay;
 
 	Sprite					m_sprScoreFrame;
 	ScoreDisplay*			m_pScoreDisplay[NUM_PLAYERS];

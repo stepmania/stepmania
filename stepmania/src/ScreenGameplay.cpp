@@ -32,6 +32,9 @@
 // Defines
 //
 
+#define BPM_X					THEME->GetMetricF("ScreenGameplay","BPMX")
+#define BPM_Y					THEME->GetMetricF("ScreenGameplay","BPMY")
+#define BPM_ZOOM				THEME->GetMetricF("ScreenGameplay","BPMZoom")
 #define LIFE_FRAME_X					THEME->GetMetricF("ScreenGameplay","LifeFrameX")
 #define LIFE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("LifeFrame%sY",e?"Extra":""))
 #define SCORE_FRAME_X					THEME->GetMetricF("ScreenGameplay","ScoreFrameX")
@@ -146,7 +149,6 @@ ScreenGameplay::ScreenGameplay()
 
 	}
 
-
 	m_bChangedOffsetOrBPM = (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON);
 
 
@@ -220,6 +222,16 @@ ScreenGameplay::ScreenGameplay()
 	m_textStageNumber.SetXY( STAGE_X, STAGE_Y(bExtra) );
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuse( GAMESTATE->GetStageColor() );
+
+	Song* pSong;
+	pSong = GAMESTATE->m_pCurSong;
+	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
+	m_BPMDisplay.SetZoom( BPM_ZOOM );
+	this->AddChild( &m_BPMDisplay );
+	float fMinBPM, fMaxBPM;
+	pSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
+	m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
+
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -644,6 +656,12 @@ bool ScreenGameplay::PlayTicks() const
 
 	return bAnyoneHasANote;
 }
+
+/***********************************
+UPDATE
+(had to add this I was LOST in this code
+hehe - Andy)
+************************************/
 
 void ScreenGameplay::Update( float fDeltaTime )
 {

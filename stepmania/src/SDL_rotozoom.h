@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#include <math.h>
+//#include <math.h> /* VC6 seems to hate this why?? - ANDY */
 #ifndef M_PI
 #define M_PI	3.141592654
 #endif

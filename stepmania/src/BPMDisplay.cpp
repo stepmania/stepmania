@@ -48,6 +48,7 @@ BPMDisplay::BPMDisplay()
 	m_textLabel.TurnShadowOff();
 	m_textLabel.SetXY( 34, 2 );
 	m_textLabel.SetText( "BPM" );
+//	if(GAMESTATE->
 	m_textLabel.SetZoom( 0.7f );
 	m_textLabel.SetZoomX( 0.5f );
 	m_textLabel.SetDiffuseTopEdge( NORMAL_COLOR_TOP );	// yellow
