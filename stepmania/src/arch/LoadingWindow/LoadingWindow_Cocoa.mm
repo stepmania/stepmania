@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#include "ProductInfo.h"
 
 static NSWindow *window;
 static NSTextView *text;
@@ -6,31 +7,36 @@ static NSTextView *text;
 void MakeNewCocoaWindow()
 {
 	NSImage *image = [NSImage imageNamed:@"splash"];
-	NSSize size = [image size];
-	float height = size.height;
-	NSImageView *iView = [[[NSImageView alloc] initWithFrame:NSMakeRect(0, height+1, size.width, height)] autorelease];
+	NSImageView *iView;
 	NSView *view;
-	NSRect rect;
-	rect.origin = NSMakePoint(0, height);
-	rect.size = size;
-	rect.size.height += height;
-
-	text = [[[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, rect.size.width, height)] autorelease];
+	NSSize size = [image size];
+	NSRect textRect, viewRect, windowRect;
+	float height = size.height;
+	
+	textRect = NSMakeRect(0, 0, size.width, height);
+	text = [[[NSTextView alloc] initWithFrame:textRect] autorelease];
 	[text setEditable:NO];
 	[text setSelectable:NO];
 	[text setDrawsBackground:YES];
 	[text setBackgroundColor:[NSColor lightGrayColor]];
 	[text setAlignment:NSCenterTextAlignment];
 
+	viewRect = NSMakeRect(0, height, size.width, height);
+	iView = [[[NSImageView alloc] initWithFrame:viewRect] autorelease];
 	[iView setImage:image];
 	[iView setImageFrameStyle:NSImageFrameNone];
 
-	window = [[NSWindow alloc] initWithContentRect:rect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+	windowRect = NSMakeRect(0, 0, size.width, height + height);
+	window = [[NSWindow alloc] initWithContentRect:windowRect
+										 styleMask:NSTitledWindowMask
+										   backing:NSBackingStoreBuffered
+											 defer:YES];
 	[window setOneShot:YES];
 	[window setReleasedWhenClosed:YES];
 	[window center];
 	[window useOptimizedDrawing:YES];
 	[window setViewsNeedDisplay:YES];
+	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME_VER]];
 
 	view = [window contentView];
 	[view addSubview:text]; /* This retains text */
@@ -54,7 +60,7 @@ void SetCocoaWindowText(const char *s)
 }
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
