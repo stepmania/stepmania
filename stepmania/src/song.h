@@ -74,9 +74,6 @@ public:
 
 	Song();
 	~Song();
-	
-	bool m_bIsForBM;	// If true, we read the data in differantly, for BeatMania
-
 
 	bool LoadWithoutCache( CString sDir );
 	NotesLoader *MakeLoader( CString sDir ) const;
