@@ -38,8 +38,8 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 	}
 	else	// Characters not enabled.
 		m_sprBreakPicture.Load( THEME->GetPathToG("Common fallback takingabreak") );
-	m_sprBreakPicture.SetX( CENTER_X );
-	m_sprBreakPicture.SetY( CENTER_Y );
+	m_sprBreakPicture.SetX( SCREEN_CENTER_X );
+	m_sprBreakPicture.SetY( SCREEN_CENTER_Y );
 		this->AddChild(&m_sprBreakPicture);
 
 	// Set up our countdown clock.
@@ -48,8 +48,8 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 	//BitmapText stuff
 	m_textTimeRemaining.LoadFromFont( THEME->GetPathToF("Common Normal") );
 	m_textTimeRemaining.SetText( SecondsToMMSSMsMs(m_fCountdownSecs) );
-	m_textTimeRemaining.SetX( CENTER_X );
-	m_textTimeRemaining.SetY( CENTER_Y );
+	m_textTimeRemaining.SetX( SCREEN_CENTER_X );
+	m_textTimeRemaining.SetY( SCREEN_CENTER_Y );
 
 	//Transition stuff
 	m_In.Load( THEME->GetPathToB("ScreenEndlessBreak In") );
