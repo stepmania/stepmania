@@ -24,18 +24,22 @@
 
 NoteData::NoteData()
 {
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
-		m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
+	memset(m_TapNotes, 0, sizeof(m_TapNotes));
 	Init();
 }
 
-NoteData::NoteData(const NoteData &cpy) { *this = cpy; }
+NoteData::NoteData(const NoteData &cpy)
+{
+	memset(m_TapNotes, 0, sizeof(m_TapNotes));
+	*this = cpy;
+}
+
 NoteData &NoteData::operator= (const NoteData &cpy)
 {
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t) {
-		m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
+	Init();
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
 		memmove( m_TapNotes[t], cpy.m_TapNotes[t], sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
-	}
+
 	m_iNumTracks = cpy.m_iNumTracks;
 	m_iNumHoldNotes = cpy.m_iNumHoldNotes;
 	return *this;
@@ -43,8 +47,11 @@ NoteData &NoteData::operator= (const NoteData &cpy)
 
 void NoteData::Init()
 {
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t) {
+		if(!m_TapNotes[t])
+			m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
 		memset( m_TapNotes[t], '0', sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
+	}
 	m_iNumTracks = 0;
 	m_iNumHoldNotes = 0;
 }
