@@ -216,7 +216,7 @@ void BitmapText::SetText( CString sText, bool DoSubst )
 	m_iLineWidths.clear();
 	m_iLineHeights.clear();
 
-	lstring s; s.push_back('\n');
+	lstring s; s+='\n';
 	split(CStringToLstring(sText), s, m_szTextLines, false);
 	
 	/* calculate line lengths and widths */

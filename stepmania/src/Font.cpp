@@ -209,11 +209,13 @@ Font::Font()
 
 Font::~Font()
 {
-	for(unsigned i = 0; i < pages.size(); ++i)
+	unsigned i;
+
+	for(i = 0; i < pages.size(); ++i)
 		delete pages[i];
 
 	/* Free any fonts that we merged into us. */
-	for(unsigned i = 0; i < merged_fonts.size(); ++i)
+	for(i = 0; i < merged_fonts.size(); ++i)
 		FONT->UnloadFont(merged_fonts[i]);
 }
 

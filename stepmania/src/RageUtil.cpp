@@ -915,9 +915,9 @@ lstring CStringToLstring(const CString &str)
 	{
 		longchar c = utf8_get_char (ptr);
 		if(c == -1)
-			ret.push_back(INVALID_CHAR);
+			ret += INVALID_CHAR;
 		else
-			ret.push_back(c);
+			ret += c;
 		ptr = utf8_find_next_char (ptr, end);
 	}
 
