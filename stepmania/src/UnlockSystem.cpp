@@ -13,7 +13,7 @@
 #include "global.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "Song.h"
+#include "song.h"
 #include "RageException.h"
 #include "RageUtil.h"
 #include "UnlockSystem.h"
