@@ -495,6 +495,14 @@ bool LifeMeterBar::IsFailing() const
 
 void LifeMeterBar::Update( float fDeltaTime )
 {
+	// HACK: Prevent 'Dead on Start' appearance
+	// the way the physics work, if there is an unusually
+	// larget delta, it will cause the meter to have a very
+	// strange effect. 
+	//
+	if ( fDeltaTime >= 2.0 )
+		return;
+
 	LifeMeter::Update( fDeltaTime );
 
 
