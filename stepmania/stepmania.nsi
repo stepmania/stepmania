@@ -146,7 +146,10 @@ File "COPYING.txt"
 File "README-FIRST.TXT"
 File "NEWS"
 File "stepmania.exe"
-; File "stepmania.ini"
+; What to do here?  Better to just delete an existing INI than to
+; drop the local one in ... -glenn
+File "stepmania.ini"
+File "stepmania.vdi"
 File "smpackage.exe"
 
 ; Create Start Menu icons
