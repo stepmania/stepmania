@@ -1,4 +1,5 @@
-#ifndef RAGE_MUSIC_H
+#ifndef RAGE_SOUNDS_H
+#define RAGE_SOUNDS_H
 
 /* This contains all of the generally useful user-level SOUNDMAN calls, as well
  * as some other simple helper stuff.  Don't include RageSoundManager for normal
