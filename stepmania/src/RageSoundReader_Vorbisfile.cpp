@@ -119,6 +119,8 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 	{
 		SetError( ov_ssprintf(ret, "ov_open failed") );
 		delete f;
+		delete vf;
+		vf = NULL;
 		switch( ret )
 		{
 		case OV_ENOTVORBIS:
