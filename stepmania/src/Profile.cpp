@@ -72,7 +72,7 @@ void Profile::InitGeneralData()
 	random_add_noise( "ai8049ujr3odusj" );
 	
 	{
-		for( int i=0; i<sizeof(m_iGuid); i++ )
+		for( unsigned i=0; i<sizeof(m_iGuid); i++ )
 			((Uint8*)&m_iGuid)[i] = random_byte();
 	}
 
