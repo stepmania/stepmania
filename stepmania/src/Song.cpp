@@ -25,8 +25,9 @@
 //////////////////////////////
 Song::Song()
 {
-	m_fBPM = 0;
-	m_fBeatOffset = 0;
+	m_bChangedSinceSave = false;
+//	m_fBPM = 0;
+	m_fOffsetInSeconds = 0;
 }
 
 bool Song::LoadFromSongDir( CString sDir )
@@ -120,8 +121,17 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 		}
 		else if( value_name == "#ARTIST" )
 			m_sArtist = data_array[0];
-		else if( value_name == "#BPM" )
-			m_fBPM = (FLOAT)atof( data_array[0] );
+		else if( value_name == "#BPM" ) {
+			BPMSegment new_seg;
+			new_seg.m_iStartBeat = 0;
+			new_seg.m_fBPM = (float)atof( data_array[0] );
+			// find insertion point
+			for( int i=0; i<m_BPMSegments.GetSize(); i++ )
+				if( m_BPMSegments[i].m_iStartBeat > new_seg.m_iStartBeat )
+					break;
+			m_BPMSegments.InsertAt( i, new_seg );
+			RageLog( "Inserting new BPM change at beat %d, BPM %f, index %d", new_seg.m_iStartBeat, new_seg.m_fBPM, i );
+		}
 		else if( value_name == "#BackBMP"  ||  value_name == "#backBMP")
 			m_sBackground = data_array[0];
 		else if( value_name == "#WAV99" )
@@ -129,7 +139,29 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 		else if( value_name.GetLength() == 6 )	// this is probably step or offset data.  Looks like "#00705"
 		{
 			int iMeasureNo	= atoi( value_name.Mid(1,3) );
-			int iNoteNum	= atoi( value_name.Mid(4,2) );
+			int iTrackNum	= atoi( value_name.Mid(4,2) );
+
+			if( m_sTitle.Find("era") > 0 )
+				m_sTitle = m_sTitle;
+			switch( iTrackNum )
+			{
+			case 03:	// bpm
+				{
+				int iNewBPM;
+				sscanf( data_array[0], "%x", &iNewBPM );	// data is in hexadecimal
+				BPMSegment new_seg;
+				new_seg.m_iStartBeat = iMeasureNo * 4;
+				new_seg.m_fBPM = (float)iNewBPM;
+				// find insertion point
+				for( int i=0; i<m_BPMSegments.GetSize(); i++ )
+					if( m_BPMSegments[i].m_iStartBeat > new_seg.m_iStartBeat )
+						break;
+				m_BPMSegments.InsertAt( i, new_seg );
+				RageLog( "Inserting new BPM change at beat %d, BPM %f, index %d", new_seg.m_iStartBeat, new_seg.m_fBPM, i );
+				}
+				break;
+			}
+
 			CString sNoteData = data_array[0];
 			CArray<BOOL, BOOL&> arrayNotes;
 
@@ -141,23 +173,38 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 			}
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
-			//RageLog( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
-			//	valuename, sNoteData, iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
+			//RageLog( "%s:%s: iMeasureNo = %d, iTrackNum = %d, iNumNotesInThisMeasure = %d", 
+			//	valuename, sNoteData, iMeasureNo, iTrackNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes.GetAt(j) == TRUE )
 				{
-					FLOAT fPercentThroughMeasure = (FLOAT)j/(FLOAT)iNumNotesInThisMeasure;
+					float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
 
 					// index is in quarter beats starting at beat 0
 					int iStepIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ELEMENTS_PER_BEAT );
 
-					switch( iNoteNum )
+					switch( iTrackNum )
 					{
 					case 01:	// offset
-						m_fBeatOffset = StepIndexToBeat(iStepIndex);
+						{
+						float fBeatOffset = StepIndexToBeat(iStepIndex);
+						float fBPS = m_BPMSegments[0].m_fBPM/60.0f;
+						m_fOffsetInSeconds = fBeatOffset / fBPS;
 						//RageLog( "Found offset to be index %d, beat %f", iStepIndex, StepIndexToBeat(iStepIndex) );
+						}
+						break;
+					case 03:	// bpm
+						{
+						int iNewBPM;
+						sscanf( data_array[0], "%x", &iNewBPM );	// data is in hexadecimal
+						BPMSegment seg;
+						seg.m_iStartBeat = iMeasureNo * 4;
+						seg.m_fBPM = (float)iNewBPM;
+						m_BPMSegments.Add(seg);
+						RageLog( "Found new BPM change at beat %d, BPM %f", seg.m_iStartBeat, seg.m_fBPM );
+						}
 						break;
 					}
 				}
@@ -286,10 +333,10 @@ void Song::TidyUpData()
 	if( m_sTitle == "" )	m_sTitle = "Untitled song";
 	if( m_sArtist == "" )	m_sArtist = "Unknown artist";
 	if( m_sCreator == "" )	m_sCreator = "";
-	if( m_fBPM == 0 )
+	if( m_BPMSegments.GetSize() == 0 )
 		RageError( ssprintf("No #BPM specified in '%s.'", GetSongFilePath()) );
 
-	if( m_fBeatOffset == 0.0 )	
+	if( m_fOffsetInSeconds == 0.0 )	
 		RageLog( "WARNING: #OFFSET or #GAP in '%s' is either 0.0, or was missing.", GetSongFilePath() );
 
 	if( m_sMusic == "" || !DoesFileExist(GetMusicPath()) )

@@ -10,75 +10,81 @@
 */
 
 #include "BitmapText.h"
-#include <assert.h>
 #include "IniFile.h"
+#include <stdio.h>
 
 
 
 BitmapText::BitmapText()
 {
-	m_pFont = NULL;
-	m_colorTop = D3DXCOLOR(1,1,1,1);
-	m_colorBottom = D3DXCOLOR(1,1,1,1);
+//	m_colorTop = D3DXCOLOR(1,1,1,1);
+//	m_colorBottom = D3DXCOLOR(1,1,1,1);
 
-}
-
-BitmapText::~BitmapText()
-{
-	delete m_pFont;
+	for( int i=0; i<NUM_CHARS; i++ )
+		m_fCharWidthsInSourcePixels[i] = 16;
 }
 
 bool BitmapText::LoadFromFontName( CString sFontName )
 {
 	RageLog( "BitmapText::LoadFromFontName(%s)", sFontName );
 	
-	SAFE_DELETE( m_pFont );	// delete old font (if any)
-
 	m_sFontName = sFontName;	// save font name
 
-	m_pFont= new CBitmapFont( SCREEN->GetD3D(), SCREEN->GetDevice() );
-	m_pFont->Load( BL_BITMAP, ssprintf("Fonts/%s.png",sFontName) );
-	m_pFont->Load( BL_SIZES,  ssprintf("Fonts/%s.dat",sFontName) );
+	Sprite::LoadFromTexture( ssprintf("Fonts/%s 16x16.png",sFontName) );
+	LoadCharWidths( ssprintf("Fonts/%s.widths",sFontName) );
 
 	return TRUE;
 }
 
-void BitmapText::Draw()
+// returns the font height in the case of a bitmap load. note does not use the real bitmap height but rather
+// the height of the bitmap / 16. generally returns > 0 for success.
+bool BitmapText::LoadCharWidths( CString sWidthFilePath )
 {
-	RECT rect = m_pFont->GetTextRect(m_sText, 0, 0);
-	float text_width	= RECTWIDTH( rect );
-	float text_height	= RECTHEIGHT( rect );
-
-
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
-
-	// calculate transforms
-	D3DXMATRIX matWorld, matTemp;
-	D3DXMatrixIdentity( &matWorld );		// initialize world
-	//D3DXMatrixScaling( &matTemp, m_size.x, m_size.y, 1 );	// scale to the native height and width
-	//matWorld *= matTemp;
-	D3DXMatrixScaling( &matTemp, m_scale.x, m_scale.y, 1 );	// add in the zoom
-	matWorld *= matTemp;
-	D3DXMatrixRotationYawPitchRoll( &matTemp, m_rotation.y, m_rotation.x, m_rotation.z );	// add in the rotation
-	matWorld *= matTemp;
-	D3DXMatrixTranslation( &matTemp, m_pos.x, m_pos.y, 0 );	// add in the translation
-	matWorld *= matTemp;
-    pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
-
-	D3DXMATRIX matView;
-    D3DXMatrixIdentity( &matView );
-	pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
-
-	D3DXMATRIX matProj;
-    D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
-	pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
-
-	m_pFont->BeginDraw();
-	m_pFont->DrawTextEx(m_sText, -text_width/2, -text_height/2, m_colorTop, m_colorBottom, 1.0f);
-	//m_pFont->DrawTextEx("Cool Effects!", 50, 80, 0xffffff00, 0xffff0000, 2.0f);
-	//m_pFont->DrawTextEx("Cool Effects!", 50, 120, 0x1100ffff, 0x8800ffff, 2.0f);
-	m_pFont->EndDraw();
-	///////////////////////////////////////////////////////////////////////////////
-
+	FILE *file;
+	file = fopen( sWidthFilePath, "rb" );
+	for( int i=0; i<256; i++ ) {
+		BYTE widthSourcePixels;
+		if( fread(&widthSourcePixels, 1, 1, file) != 1 ) 
+			return false;
+		m_fCharWidthsInSourcePixels[i] = widthSourcePixels;
+	}
+	fclose(file);
+	return true;
 }
 
+
+// get a rectangle for the text, considering a possible text scaling.
+// useful to know if some text is visible or not
+float BitmapText::GetTextWidthInSourcePixels()
+{
+	float fTextWidth = 0;
+	
+	for( int i=0; i<m_sText.GetLength(); i++ )
+		fTextWidth += m_fCharWidthsInSourcePixels[ m_sText[i] ];
+
+	return fTextWidth;
+}
+
+
+
+// draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
+void BitmapText::Draw()
+{
+	float fCenterX = GetX();
+	float fTextWidthInSourcePixels = GetTextWidthInSourcePixels();
+	float fTextWidth = fTextWidthInSourcePixels* GetZoom();
+	float fFrameWidth = GetZoomedWidth();
+	float fX = fCenterX - (fTextWidth/2);
+
+
+	for( int i=0; i<m_sText.GetLength(); i++ ) {
+		char c = m_sText[i];
+		SetState( c );
+		SetX( fX );		// set X acording to offset
+		Sprite::Draw();
+		fX += m_fCharWidthsInSourcePixels[c] * GetZoom();
+	}
+
+	// set properties back to original
+	SetX( fCenterX );
+}

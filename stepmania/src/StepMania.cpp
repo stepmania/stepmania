@@ -23,7 +23,7 @@
 #include "GameInfo.h"
 #include "WindowManager.h"
 
-#include "WindowIntroCovers.h"
+#include "WindowTitleMenu.h"
 #include "WindowSandbox.h"
 
 #include <DXUtil.h>
@@ -287,6 +287,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //-----------------------------------------------------------------------------
 HRESULT CreateObjects( HWND hWnd )
 {
+
+	srand( (unsigned)time(NULL) );	// seed number generator
+
+	RageLogStart();
+
 	SCREEN	= new RageScreen( hWnd );
 	TM		= new RageTextureManager( SCREEN );
 	SOUND	= new RageSound( hWnd );
@@ -296,15 +301,12 @@ HRESULT CreateObjects( HWND hWnd )
 	GAMEINFO	= new GameInfo;
 	WM			= new WindowManager;
 
-	RageLogStart();
+
+    DXUtil_Timer( TIMER_START );    // Start the accurate timer
 
 	//WM->SetNewWindow( new WindowSandbox );
-	WM->SetNewWindow( new WindowIntroCovers );
+	WM->SetNewWindow( new WindowTitleMenu );
 
-	srand( (unsigned)time(NULL) );
-
-    // Start the accurate timer
-    DXUtil_Timer( TIMER_START );
 
 	return S_OK;
 }

@@ -12,36 +12,43 @@
 #define _BITMAPTEXT_H_
 
 
-//#include "Actor.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
-#include "BitmapFont.h"
+
+const int NUM_CHARS = 256;
 
 
-
-class BitmapText : public Actor
+class BitmapText : public Sprite
 {
+protected:
+
 public:
 	BitmapText();
-	~BitmapText();
 
 	bool LoadFromFontName( CString sFontName );
 	void SetText( CString sText ) { m_sText = sText; };
 	CString GetText() { return m_sText; };
 
-	void SetTopColor( D3DXCOLOR new_color ) { m_colorTop = new_color; };
-	void SetBottomColor( D3DXCOLOR new_color ) { m_colorBottom = new_color; };
-	void SetColor( D3DXCOLOR new_color ) { SetTopColor(new_color); SetBottomColor(new_color); };
+	bool LoadFontWidths( CString sFilePath );
+	//float GetWidthZoomed();
 
-	virtual void Draw();
+//	void SetTopColor( D3DXCOLOR new_color ) { m_colorTop = new_color; };
+//	void SetBottomColor( D3DXCOLOR new_color ) { m_colorBottom = new_color; };
+//	void SetColor( D3DXCOLOR new_color ) { SetTopColor(new_color); SetBottomColor(new_color); };
+
+	void Draw();
 
 protected:
+	bool LoadCharWidths( CString sWidthFilePath );
+	float GetTextWidthInSourcePixels();	// in logical, pre-scaled units
+
 	CString m_sFontName;
-	CBitmapFont*	m_pFont;
+	float m_fCharWidthsInSourcePixels[NUM_CHARS];	// in soure coordinate space
+
 	CString	m_sText;	// the string that the font is displaying
-	D3DXCOLOR	m_colorTop;
-	D3DXCOLOR	m_colorBottom;
+//	D3DXCOLOR	m_colorTop;
+//	D3DXCOLOR	m_colorBottom;
 };
 
 

@@ -68,7 +68,7 @@ void RageBitmapTexture::Create()
 						D3DX_DEFAULT, D3DX_DEFAULT,		// width, height 
 						D3DX_DEFAULT,					// mip map levels
 						0,								// usage (is a render target?)
-						D3DFMT_A4R4G4B4,				// our preferred texture format
+						D3DFMT_UNKNOWN,					// our preferred texture format
 						D3DPOOL_MANAGED,				// which memory pool
 						D3DX_DEFAULT,					// filter
 						D3DX_DEFAULT,					// mip filter
