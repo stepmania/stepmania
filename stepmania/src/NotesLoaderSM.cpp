@@ -60,6 +60,7 @@ void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 void SMLoader::LoadTimingFromSMFile( MsdFile &msd, TimingData &out )
 {
+	out.m_fBeat0OffsetInSeconds = 0;
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
 
