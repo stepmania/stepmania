@@ -402,6 +402,9 @@ bool GameState::HasEarnedExtraStage()
 	if( PREFSMAN->m_bEventMode )
 		return false;
 
+	if( !PREFSMAN->m_bAllowExtraStage )
+		return false;
+
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_ARCADE )
 		return false;
 

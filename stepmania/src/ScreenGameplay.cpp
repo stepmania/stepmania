@@ -530,9 +530,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		m_Failed.Load( THEME->GetPathToB("ScreenGameplay failed") );
 		this->AddChild( &m_Failed );
 
-		if( GAMESTATE->IsFinalStage() )	// only load if we're going to use it
+		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsFinalStage() )	// only load if we're going to use it
 			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra1") );
-		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
+		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsExtraStage() )	// only load if we're going to use it
 			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra2") );
 		this->AddChild( &m_Extra );
 

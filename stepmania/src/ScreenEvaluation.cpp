@@ -668,7 +668,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		if( GAMESTATE->IsPlayerEnabled(p) && iPersonalHighScoreIndex[p] == 0 )
 			bOneHasNewRecord = true;
 	
-	if( m_bTryExtraStage )
+	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
 	{
 		m_sprTryExtraStage.Load( THEME->GetPathToG(GAMESTATE->IsExtraStage()?"ScreenEvaluation try extra2":"ScreenEvaluation try extra1") );
 		m_sprTryExtraStage.SetName( "TryExtraStage" );

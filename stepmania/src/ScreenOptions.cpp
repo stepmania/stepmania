@@ -570,11 +570,29 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	// if we are in dedicated menubutton input and arcade navigation
 	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
-	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
+
+	// Super Hack to use the feature in ScreenOptionsMenu (where no style is set)
+	bool bHoldingLeftOrRight = false;
+	bHoldingLeftOrRight |= MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
 		PREFSMAN->m_bArcadeOptionsNavigation &&
 		GAMESTATE->m_CurStyle != STYLE_INVALID &&
-		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) &&
-		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) )
+		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) || 
+		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
+
+	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
+	{
+		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		
+		bHoldingLeftOrRight |= MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
+			PREFSMAN->m_bArcadeOptionsNavigation &&
+			GAMESTATE->m_CurStyle != STYLE_INVALID &&
+			(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) ||
+			INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
+
+		GAMESTATE->m_CurStyle = STYLE_INVALID;
+	}
+
+	if( bHoldingLeftOrRight )
 	{
 		Screen::MenuUp( MenuI.player, type );
 		return;
@@ -772,12 +790,26 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 	int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = m_OptionRow[iCurRow];
 
+	const int iNumOptions = row.choices.size();
+	if( PREFSMAN->m_bArcadeOptionsNavigation )
+	{
+		if( iCurRow == m_iNumOptionRows || iNumOptions <= 1 )	// 1 or 0
+		{
+			if( iDelta < 0 )
+			{
+				MenuUp( pn );
+				return;
+			}
+			else
+			{
+				MenuDown( pn );
+				return;
+			}
+		}
+	}
+
 	if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
 		return;		// don't allow a move
-
-	const int iNumOptions = row.choices.size();
-	if( iNumOptions <= 1 )	// 1 or 0
-		return;	// don't change, don't play sound
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

@@ -111,6 +111,9 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
 		iter != m_mapNameToData.end(); ++iter )
 	{
+		// don't show "default"
+		if( iter->second.sName.CompareNoCase("default")==0 )
+			continue;
 		AddTo.push_back( iter->second.sName );
 	}
 }
