@@ -67,68 +67,18 @@ void GameState::Reset()
 	m_bDemonstration = false;
 	m_iCurrentStageIndex = 0;
 
-
 	m_pCurSong = NULL;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_pCurNotes[p] = NULL;
 	m_pCurCourse = NULL;
-
 
 	m_fMusicSeconds = 0;
 	m_fSongBeat = 0;
 	m_fCurBPS = 0;
 	m_bFreeze = 0;
 	
-
-	m_apSongsPlayed.clear();
-	
-	m_iSongsIntoCourse = 0;
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_fSecondsBeforeFail[p] = -1;
-		m_iSongsBeforeFail[p] = 0;
-	}
-
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		int s;
-
-		m_iPossibleDancePoints[p] = 0;
-		m_iActualDancePoints[p] = 0;
-		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
-			m_TapNoteScores[p][s] = 0;
-		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
-			m_HoldNoteScores[p][s] = 0;
-		m_iMaxCombo[p] = 0;
-		m_fScore[p] = 0;
-
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		{
-			m_fRadarPossible[p][r] = 0;
-			m_fRadarActual[p][r] = 0;
-		}
-	}
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		int s;
-
-		m_iAccumPossibleDancePoints[p] = 0;
-		m_iAccumActualDancePoints[p] = 0;
-		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
-			m_AccumTapNoteScores[p][s] = 0;
-		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
-			m_AccumHoldNoteScores[p][s] = 0;
-		m_iAccumMaxCombo[p] = 0;
-		m_fAccumScore[p] = 0;
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		{
-			m_fAccumRadarPossible[p][r] = 0;
-			m_fAccumRadarActual[p][r] = 0;
-		}
-	}
-
+	m_CurStageStats = StageStats();
+	m_vPassedStageStats.clear();
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PlayerOptions[p] = PlayerOptions();
@@ -142,65 +92,6 @@ void GameState::ResetMusicStatistics()
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 }
-
-void GameState::AccumulateStageStatistics()
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		int s;
-
-		m_iAccumPossibleDancePoints[p] += m_iPossibleDancePoints[p];
-		m_iAccumActualDancePoints[p] += m_iActualDancePoints[p];
-		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
-			m_AccumTapNoteScores[p][s] += m_TapNoteScores[p][s];
-		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
-			m_AccumHoldNoteScores[p][s] += m_HoldNoteScores[p][s];
-		m_iAccumMaxCombo[p] += m_iMaxCombo[p];
-		m_fAccumScore[p] += m_fScore[p];
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		{
-			m_fAccumRadarPossible[p][r] = m_fRadarPossible[p][r];
-			m_fAccumRadarActual[p][r] = m_fRadarActual[p][r];
-		}
-	}
-}
-
-void GameState::ResetStageStatistics()
-{
-	m_iSongsIntoCourse = 0;
-
-	switch( m_PlayMode )
-	{
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		m_apSongsPlayed.clear();
-		break;
-	}
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		int s;
-
-		m_iSongsBeforeFail[p] = 0;
-		m_fSecondsBeforeFail[p] = -1;
-
-		m_iPossibleDancePoints[p] = 0;
-		m_iActualDancePoints[p] = 0;
-		for( s=0; s<NUM_TAP_NOTE_SCORES; s++ )
-			m_TapNoteScores[p][s] = 0;
-		for( s=0; s<NUM_HOLD_NOTE_SCORES; s++ )
-			m_HoldNoteScores[p][s] = 0;
-		m_iMaxCombo[p] = 0;
-		m_fScore[p] = 0;
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		{
-			m_fRadarPossible[p][r] = 0;
-			m_fRadarActual[p][r] = 0;
-		}
-	}
-}
-
 
 int GameState::GetStageIndex()
 {
@@ -299,38 +190,11 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	}
 }
 
-float GameState::GetElapsedSeconds()
-{
-	switch( m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-		return max( 0, m_fMusicSeconds );
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			float fSecondsTotal = 0;
-			for( unsigned i=0; i<m_apSongsPlayed.size(); i++ )
-				fSecondsTotal += m_apSongsPlayed[i]->m_fMusicLengthSeconds;
-			fSecondsTotal += max( 0, m_fMusicSeconds );
-			return fSecondsTotal;
-		}
-	default:
-		ASSERT(0);
-		return 0;
-	}
-}
-
-float GameState::GetPlayerSurviveTime( PlayerNumber pn )
-{
-	if( m_fSecondsBeforeFail[pn] == -1 )	// haven't failed yet
-		return GetElapsedSeconds();
-	else
-		return m_fSecondsBeforeFail[pn];
-}
-
 Grade GameState::GetCurrentGrade( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(pn)  ||  GAMESTATE->m_fSecondsBeforeFail[pn] != -1 )
+	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// should be calling this is player isn't joined!
+
+	if( m_CurStageStats.bFailed[pn] )
 		return GRADE_E;
 
 	/* Based on the percentage of your total "Dance Points" to the maximum
@@ -344,19 +208,19 @@ Grade GameState::GetCurrentGrade( PlayerNumber pn )
 	 * Less - D
 	 * Fail - E
 	 */
-	float fPercentDancePoints = m_iActualDancePoints[pn] / (float)m_iPossibleDancePoints[pn];
-	fPercentDancePoints = max( fPercentDancePoints, 0 );
-	LOG->Trace( "iActualDancePoints: %i", m_iActualDancePoints[pn] );
-	LOG->Trace( "iPossibleDancePoints: %i", m_iPossibleDancePoints[pn] );
+	float fPercentDancePoints = m_CurStageStats.iActualDancePoints[pn] / (float)m_CurStageStats.iPossibleDancePoints[pn];
+	fPercentDancePoints = max( 0, fPercentDancePoints );
+	LOG->Trace( "iActualDancePoints: %i", m_CurStageStats.iActualDancePoints[pn] );
+	LOG->Trace( "iPossibleDancePoints: %i", m_CurStageStats.iPossibleDancePoints[pn] );
 	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
 
 	// check for "AAAA"
-	if( m_TapNoteScores[pn][TNS_MARVELOUS] > 0 &&
-		m_TapNoteScores[pn][TNS_PERFECT] == 0 &&
-		m_TapNoteScores[pn][TNS_GREAT] == 0 &&
-		m_TapNoteScores[pn][TNS_GOOD] == 0 &&
-		m_TapNoteScores[pn][TNS_BOO] == 0 &&
-		m_TapNoteScores[pn][TNS_MISS] == 0 )
+	if( m_CurStageStats.iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
+		m_CurStageStats.iTapNoteScores[pn][TNS_PERFECT] == 0 &&
+		m_CurStageStats.iTapNoteScores[pn][TNS_GREAT] == 0 &&
+		m_CurStageStats.iTapNoteScores[pn][TNS_GOOD] == 0 &&
+		m_CurStageStats.iTapNoteScores[pn][TNS_BOO] == 0 &&
+		m_CurStageStats.iTapNoteScores[pn][TNS_MISS] == 0 )
 		return GRADE_AAAA;
 
 	if     ( fPercentDancePoints == 1.00 )		return GRADE_AAA;
@@ -365,4 +229,20 @@ Grade GameState::GetCurrentGrade( PlayerNumber pn )
 	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;
 	else if( fPercentDancePoints >= 0.45 )		return GRADE_C;
 	else										return GRADE_D;
+}
+
+bool GameState::HasEarnedExtraStage()
+{
+	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage()) )
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;	// skip
+
+			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty()==DIFFICULTY_HARD && GetCurrentGrade((PlayerNumber)p)==GRADE_AA )
+				return true;
+		}
+	}
+	return false;
 }

@@ -605,6 +605,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="SongOptions.h">
 			</File>
 			<File
+				RelativePath="StageStats.cpp">
+			</File>
+			<File
+				RelativePath="StageStats.h">
+			</File>
+			<File
 				RelativePath="Style.h">
 			</File>
 			<File

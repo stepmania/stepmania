@@ -115,12 +115,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 {
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 	
-	int l, p;	// for counting
-
-
-	///////////////////////////
-	// Set m_ResultMode.  This enum will make our life easier later when we init different pieces depending on context.
-	///////////////////////////
+	//
+	// Set m_ResultMode.  This enum will make our life easier later when we init different pieces.
+	//
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -129,54 +126,42 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
-		m_ResultMode = RM_ONI;
+		m_ResultMode = RM_COURSE;
 		break;
 	default:
 		ASSERT(0);
 	}
 
-	///////////////////////////
-	// Figure out which statistics we're going to display
-	///////////////////////////
-	int		iPossibleDancePoints[NUM_PLAYERS];
-	int		iActualDancePoints[NUM_PLAYERS];
-	int		iTapNoteScores[NUM_PLAYERS][NUM_TAP_NOTE_SCORES];
-	int		iHoldNoteScores[NUM_PLAYERS][NUM_HOLD_NOTE_SCORES];
-	int		iMaxCombo[NUM_PLAYERS];
-	float	fScore[NUM_PLAYERS];
-	float	fPossibleRadarValues[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
-	float	fActualRadarValues[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
-
+	//
+	// Figure out which statistics and songs we're going to display
+	//
+	StageStats stageStats;
+	vector<Song*> vSongsToShow;
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_SUMMARY:
-		COPY( iPossibleDancePoints,	GAMESTATE->m_iAccumPossibleDancePoints );
-		COPY( iActualDancePoints,	GAMESTATE->m_iAccumActualDancePoints );
-		COPY( iTapNoteScores,		GAMESTATE->m_AccumTapNoteScores );
-		COPY( iHoldNoteScores,		GAMESTATE->m_AccumHoldNoteScores );
-		COPY( iMaxCombo,			GAMESTATE->m_iAccumMaxCombo );
-		COPY( fScore,				GAMESTATE->m_fAccumScore );
-		COPY( fPossibleRadarValues,	GAMESTATE->m_fAccumRadarPossible );
-		COPY( fActualRadarValues,	GAMESTATE->m_fAccumRadarActual );
+		{
+			// Show stats only for the latest 3 normal songs + passed extra stages
+			int iNumSongsToThrowAway = max( 0, PREFSMAN->m_iNumArcadeStages-3 );
+			for( unsigned i=iNumSongsToThrowAway; i<GAMESTATE->m_vPassedStageStats.size(); i++ )
+			{
+				stageStats += GAMESTATE->m_vPassedStageStats[i];
+				vSongsToShow.push_back( GAMESTATE->m_vPassedStageStats[i].pSong );
+			}
+		}
 		break;
 	case RM_ARCADE_STAGE:
-	case RM_ONI:
-		COPY( iPossibleDancePoints,	GAMESTATE->m_iPossibleDancePoints );
-		COPY( iActualDancePoints,	GAMESTATE->m_iActualDancePoints );
-		COPY( iTapNoteScores,		GAMESTATE->m_TapNoteScores );
-		COPY( iHoldNoteScores,		GAMESTATE->m_HoldNoteScores );
-		COPY( iMaxCombo,			GAMESTATE->m_iMaxCombo );
-		COPY( fScore,				GAMESTATE->m_fScore );
-		COPY( fPossibleRadarValues,	GAMESTATE->m_fRadarPossible );
-		COPY( fActualRadarValues,	GAMESTATE->m_fRadarActual );
+	case RM_COURSE:
+		stageStats = GAMESTATE->m_CurStageStats;
 		break;
+	default:
+		ASSERT(0);
 	}
 
 
-	///////////////////////////
+	//
 	// Init the song banners depending on m_ResultMode
-	///////////////////////////
-	// EZ2 should hide these things by placing them off screen with theme metrics
+	//
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_STAGE:
@@ -205,31 +190,23 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		break;
 	case RM_ARCADE_SUMMARY:
 		{
-			// crop down to 3
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			for( unsigned i=0; i<vSongsToShow.size(); i++ )
 			{
-				if( GAMESTATE->m_apSongsPlayed.size() > STAGES_TO_SHOW_IN_SUMMARY )
-					GAMESTATE->m_apSongsPlayed.erase( GAMESTATE->m_apSongsPlayed.begin(), GAMESTATE->m_apSongsPlayed.begin() + (GAMESTATE->m_apSongsPlayed.size() - STAGES_TO_SHOW_IN_SUMMARY) );
-			}
-
-			const unsigned iSongsToShow = GAMESTATE->m_apSongsPlayed.size();
-			ASSERT( iSongsToShow > 0 );
-
-			for( unsigned i=0; i<iSongsToShow; i++ )
-			{
-				m_BannerWithFrame[i].LoadFromSong( GAMESTATE->m_apSongsPlayed[i] );
-				float fBannerOffset = i - (iSongsToShow-1)/2.0f;
+				m_BannerWithFrame[i].LoadFromSong( vSongsToShow[i] );
+				float fBannerOffset = i - (vSongsToShow.size()-1)/2.0f;
 				m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
 				m_BannerWithFrame[i].SetZoom( 0.70f );
 				this->AddChild( &m_BannerWithFrame[i] );
 			}
 		}
 		break;
-	case RM_ONI:
+	case RM_COURSE:
 		m_BannerWithFrame[0].LoadFromCourse( GAMESTATE->m_pCurCourse );
 		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 		this->AddChild( &m_BannerWithFrame[0] );
 		break;
+	default:
+		ASSERT(0);
 	}
 
 
@@ -243,7 +220,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		);
 	this->AddChild( &m_Menu );
 
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	for( int p=0; p<NUM_PLAYERS; p++ ) 
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
 			continue;	// skip
@@ -256,19 +233,16 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	}
 
 
-
 	//
 	// Calculate grades
 	//
 	Grade grade[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p)  ||  GAMESTATE->m_fSecondsBeforeFail[p] != -1 )
-		{
+		if( !GAMESTATE->IsPlayerEnabled(p) || GAMESTATE->m_CurStageStats.bFailed[p] )
 			grade[p] = GRADE_E;
-			continue;
-		}
-		grade[p] = GAMESTATE->GetCurrentGrade( (PlayerNumber)p );
+		else
+			grade[p] = GAMESTATE->GetCurrentGrade( (PlayerNumber)p );
 	}
 
 	Grade max_grade = GRADE_NO_DATA;
@@ -276,52 +250,53 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		max_grade = max( max_grade, grade[p] ); 
 
 
-	////////////////////////
+	//
 	// update persistent statistics
-	////////////////////////
+	//
 	bool bNewRecord[NUM_PLAYERS];
-	for( p=0; p<NUM_PLAYERS; p++ )
-		bNewRecord[p] = false;
-
-	for( p=0; p<NUM_PLAYERS; p++ )
+	memset( bNewRecord, 0, sizeof(bNewRecord) );
+	m_bGoToNameEntry = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
-		if( grade[p] == GRADE_E )
-			continue;
+		if( !GAMESTATE->IsPlayerEnabled(p) || grade[p] == GRADE_E )
+			continue;	// can't be a new record
 
 		switch( m_ResultMode )
 		{
 		case RM_ARCADE_STAGE:
-			Notes* pNotes = GAMESTATE->m_pCurNotes[p];
-			if( SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
-				bNewRecord[p] = pNotes->AddMemCardScore( (PlayerNumber)p, grade[p], (int)fScore[p] );
+			{
+				Notes* pNotes = GAMESTATE->m_pCurNotes[p];
+				if( SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
+					bNewRecord[p] = pNotes->AddMemCardRecord( (PlayerNumber)p, grade[p], stageStats.fScore[p] );
+			}
 			break;
+		case RM_ARCADE_SUMMARY:
+			{
+				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;	// intentional: doesn't count extra stage
+				HighScoreCategory hsc = AverageMeterToHighScoreCategory( fAverageMeter );
+				m_bGoToNameEntry |= SONGMAN->IsNewMachineRecord( hsc, stageStats.fScore[p] );
+			}
+			break;
+		case RM_COURSE:
+			{
+				Course* pCourse = GAMESTATE->m_pCurCourse;
+				pCourse->IsNewMachineRecord( (PlayerNumber)p, stageStats.iActualDancePoints[p], stageStats.fAliveSeconds[p] );
+				m_bGoToNameEntry |= true;
+			}
+			break;
+		default:
+			ASSERT(0);
 		}
 	}
 
+	m_bTryExtraStage = 
+		GAMESTATE->HasEarnedExtraStage()  && 
+		m_ResultMode==RM_ARCADE_STAGE  &&
+		!PREFSMAN->m_bEventMode;
 
-	
-	m_bTryExtraStage = false;
-	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage())  &&  m_ResultMode==RM_ARCADE_STAGE )
-	{
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
-			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_HARD  &&  grade[p] >= GRADE_AA )
-				m_bTryExtraStage = true;
-		}
-	}
-	if( PREFSMAN->m_bEventMode )
-		m_bTryExtraStage = false;
-
-
-	/////////////////////////////////
+	//
 	// Init ResultMode-specific displays
-	/////////////////////////////////
+	//
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
@@ -331,7 +306,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		switch( m_ResultMode )
 		{
-		case RM_ONI:
+		case RM_COURSE:
 			{
 				m_sprPercentFrame[p].Load( THEME->GetPathTo("Graphics","evaluation percent frame") );
 				m_sprPercentFrame[p].StopAnimating();
@@ -356,8 +331,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentSmall[p].SetEffectGlowing( 1.0f );
 				this->AddChild( &m_textOniPercentSmall[p] );
 
-				iPossibleDancePoints[p] = max( 1, iPossibleDancePoints[p] );
-				float fPercentDancePoints =  iActualDancePoints[p] / (float)iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
+				stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
+				float fPercentDancePoints =  stageStats.iActualDancePoints[p] / (float)stageStats.iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
 				fPercentDancePoints = max( fPercentDancePoints, 0 );
 				int iPercentDancePointsLarge = int(fPercentDancePoints*100);
 				int iPercentDancePointsSmall = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
@@ -374,7 +349,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textSongsSurvived[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation stage numbers") );
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
-				m_textSongsSurvived[p].SetText( ssprintf("%02d", GAMESTATE->m_iSongsBeforeFail[p]) );
+				m_textSongsSurvived[p].SetText( ssprintf("%02d", stageStats.iSongsPassed[p]+1) );
 				this->AddChild( &m_textSongsSurvived[p] );
 			}
 			break;
@@ -405,42 +380,41 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprBonusFrame[p].SetXY( BONUS_X(p), BONUS_Y );
 				this->AddChild( &m_sprBonusFrame[p] );
 	
-				for( int l=0; l<NUM_RADAR_VALUES; l++ )	// foreach line
+				for( int r=0; r<NUM_RADAR_VALUES; r++ )	// foreach line
 				{
-					m_sprPossibleBar[p][l].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
-					m_sprPossibleBar[p][l].SetState( p );
-					m_sprPossibleBar[p][l].SetHorizAlign( Actor::align_left );
-					m_sprPossibleBar[p][l].SetX( BAR_BASE_X(p) );
-					m_sprPossibleBar[p][l].SetY( BAR_START_Y + BAR_SPACING_Y*l );
-					m_sprPossibleBar[p][l].SetRotation( BAR_ROTATION(p) );
-					m_sprPossibleBar[p][l].SetZoomX( 0 );
-					m_sprPossibleBar[p][l].ZoomToHeight( BAR_HEIGHT );
-					m_sprPossibleBar[p][l].BeginTweening( 0.2f + l*0.1f );	// sleep
-					m_sprPossibleBar[p][l].BeginTweening( 0.5f );			// tween
-					m_sprPossibleBar[p][l].SetTweenZoomToWidth( BAR_WIDTH*fPossibleRadarValues[p][l] );
-					this->AddChild( &m_sprPossibleBar[p][l] );
+					m_sprPossibleBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
+					m_sprPossibleBar[p][r].SetState( p );
+					m_sprPossibleBar[p][r].SetHorizAlign( Actor::align_left );
+					m_sprPossibleBar[p][r].SetX( BAR_BASE_X(p) );
+					m_sprPossibleBar[p][r].SetY( BAR_START_Y + BAR_SPACING_Y*r );
+					m_sprPossibleBar[p][r].SetRotation( BAR_ROTATION(p) );
+					m_sprPossibleBar[p][r].SetZoomX( 0 );
+					m_sprPossibleBar[p][r].ZoomToHeight( BAR_HEIGHT );
+					m_sprPossibleBar[p][r].BeginTweening( 0.2f + r*0.1f );	// sleep
+					m_sprPossibleBar[p][r].BeginTweening( 0.5f );			// tween
+					m_sprPossibleBar[p][r].SetTweenZoomToWidth( BAR_WIDTH*stageStats.fRadarPossible[p][r] );
+					this->AddChild( &m_sprPossibleBar[p][r] );
 
-					m_sprActualBar[p][l].Load( THEME->GetPathTo("Graphics","evaluation bars actual 1x2") );
-					m_sprActualBar[p][l].SetState( p );
-					m_sprActualBar[p][l].StopAnimating();
-					m_sprActualBar[p][l].SetHorizAlign( Actor::align_left );
-					m_sprActualBar[p][l].SetX( BAR_BASE_X(p) );
-					m_sprActualBar[p][l].SetY( BAR_START_Y + BAR_SPACING_Y*l );
-					m_sprActualBar[p][l].SetRotation( BAR_ROTATION(p) );
-					m_sprActualBar[p][l].SetZoomX( 0 );
-					m_sprActualBar[p][l].ZoomToHeight( BAR_HEIGHT );
-					m_sprActualBar[p][l].BeginTweening( 1.0f + l*0.2f );	// sleep
-					m_sprActualBar[p][l].BeginTweening( 1.0f );				// tween
-					m_sprActualBar[p][l].SetTweenZoomToWidth( BAR_WIDTH*fActualRadarValues[p][l] );
-					if( fActualRadarValues[p][l] == fPossibleRadarValues[p][l] )
-						m_sprActualBar[p][l].SetEffectGlowing();
-					this->AddChild( &m_sprActualBar[p][l] );
+					m_sprActualBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars actual 1x2") );
+					m_sprActualBar[p][r].SetState( p );
+					m_sprActualBar[p][r].StopAnimating();
+					m_sprActualBar[p][r].SetHorizAlign( Actor::align_left );
+					m_sprActualBar[p][r].SetX( BAR_BASE_X(p) );
+					m_sprActualBar[p][r].SetY( BAR_START_Y + BAR_SPACING_Y*r );
+					m_sprActualBar[p][r].SetRotation( BAR_ROTATION(p) );
+					m_sprActualBar[p][r].SetZoomX( 0 );
+					m_sprActualBar[p][r].ZoomToHeight( BAR_HEIGHT );
+					m_sprActualBar[p][r].BeginTweening( 1.0f + r*0.2f );	// sleep
+					m_sprActualBar[p][r].BeginTweening( 1.0f );				// tween
+					m_sprActualBar[p][r].SetTweenZoomToWidth( BAR_WIDTH*stageStats.fRadarActual[p][r] );
+					if( stageStats.fRadarActual[p][r] == stageStats.fRadarPossible[p][r] )
+						m_sprActualBar[p][r].SetEffectGlowing();
+					this->AddChild( &m_sprActualBar[p][r] );
 				}
 				break;
 			}
 		}
 
-		//	Chris:  If EZ2 wants to hide these things, place them off screen using theme metrics
 		if( bNewRecord[p] )
 		{
 			m_sprNewRecord[p].Load( THEME->GetPathTo("Graphics","evaluation new record") );
@@ -450,12 +424,12 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		}
 	}
 		
-	//////////////////////////
+	//
 	// Init non-ResultMode specific displays.
 	// Do this after Result-specific displays so that the text will draw on top of 
 	// the bonus frame.
-	//////////////////////////
-	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+	//
+	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		// EZ2 should hide these things by placing them off screen with theme metrics
 		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels 1x8") );
@@ -467,7 +441,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	}
 
 	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
-	m_sprScoreLabel.SetState( m_ResultMode==RM_ONI ? 1 : 0 );
+	m_sprScoreLabel.SetState( m_ResultMode==RM_COURSE ? 1 : 0 );
 	m_sprScoreLabel.StopAnimating();
 	m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
 	m_sprScoreLabel.SetZoom( 1.0f );
@@ -483,26 +457,26 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		{
 			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation judge numbers") );
 			m_textJudgeNumbers[l][p].TurnShadowOff();
-			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_ONI,p,l), JUDGE_Y(l) );
+			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_COURSE,p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 1.0f );
 			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
 			this->AddChild( &m_textJudgeNumbers[l][p] );
 		}
 
-		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MARVELOUS]) );
-		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
-		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
-		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
-		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
-		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
-		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
-		m_textJudgeNumbers[7][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
+		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", stageStats.iTapNoteScores[p][TNS_MARVELOUS]) );
+		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", stageStats.iTapNoteScores[p][TNS_PERFECT]) );
+		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", stageStats.iTapNoteScores[p][TNS_GREAT]) );
+		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", stageStats.iTapNoteScores[p][TNS_GOOD]) );
+		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", stageStats.iTapNoteScores[p][TNS_BOO]) );
+		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", stageStats.iTapNoteScores[p][TNS_MISS]) );
+		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", stageStats.iHoldNoteScores[p][HNS_OK]) );
+		m_textJudgeNumbers[7][p].SetText( ssprintf("%4d", stageStats.iMaxCombo[p]) );
 
 
-		if( m_ResultMode==RM_ONI )
-			m_ScoreDisplay[p].SetText( SecondsToTime(GAMESTATE->GetPlayerSurviveTime( (PlayerNumber)p )) );
+		if( m_ResultMode==RM_COURSE )
+			m_ScoreDisplay[p].SetText( SecondsToTime(stageStats.fAliveSeconds[p]) );
 		else
-			m_ScoreDisplay[p].SetScore( fScore[p] );
+			m_ScoreDisplay[p].SetScore( stageStats.fScore[p] );
 	}
 
 
@@ -546,7 +520,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				ASSERT(0);	// invalid grade
 			}
 			break;
-		case RM_ONI:
+		case RM_COURSE:
 		case RM_ARCADE_SUMMARY:
 			switch( max_grade )
 			{
@@ -594,7 +568,7 @@ void ScreenEvaluation::TweenOnScreen()
 
 	float fOriginalX, fOriginalY;
 
-	for( i=0; i<STAGES_TO_SHOW_IN_SUMMARY; i++ )
+	for( i=0; i<MAX_SONGS_TO_SHOW; i++ )
 	{
 		fOriginalY = m_BannerWithFrame[i].GetY();
 		m_BannerWithFrame[i].SetY( fOriginalY + SCREEN_HEIGHT );
@@ -695,7 +669,7 @@ void ScreenEvaluation::TweenOffScreen()
 {
 	int i, p;
 
-	for( i=0; i<STAGES_TO_SHOW_IN_SUMMARY; i++ )
+	for( i=0; i<MAX_SONGS_TO_SHOW; i++ )
 		m_BannerWithFrame[i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_textStage.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
@@ -797,12 +771,16 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEvaluation::MenuLeft( PlayerNumber pn )
 {
-	m_Grades[pn].SettleQuickly();
+	// What is the purpose of this?  I keep my feet on the pads and 
+	// was wondering why the grades weren't spinning. -Chris
+	//m_Grades[pn].SettleQuickly();
 }
 
 void ScreenEvaluation::MenuRight( PlayerNumber pn )
 {
-	m_Grades[pn].SettleQuickly();
+	// What is the purpose of this?  I keep my feet on the pads and 
+	// was wondering why the grades weren't spinning. -Chris
+	//m_Grades[pn].SettleQuickly();
 }
 
 void ScreenEvaluation::MenuBack( PlayerNumber pn )
@@ -851,9 +829,8 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
 	}
 
-	//
-	// Increment the stage counter.
-	//
-	GAMESTATE->m_iCurrentStageIndex++;
+	GAMESTATE->m_iCurrentStageIndex++;		// Increment the stage counter.
+
+	GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
 }
 

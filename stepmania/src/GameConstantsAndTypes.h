@@ -116,9 +116,9 @@ enum SongSortOrder {
 };
 
 
-///////////////////////////
+//
 // Scoring stuff
-///////////////////////////
+//
 
 enum TapNoteScore { 
 	TNS_NONE, 
@@ -174,16 +174,19 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 
 
 //
-// High Score types
+// High Score stuff
 //
-enum SongHighScoreCategory
+enum HighScoreCategory
 {
 	CATEGORY_A,	// 1-3 meter per song avg.
 	CATEGORY_B,	// 4-6 meter per song avg.
 	CATEGORY_C,	// 7-9 meter per song avg.
-	CATEGORY_D,	// 10+ meter per song avg.
+	CATEGORY_D,	// 10+ meter per song avg.	// doesn't count extra stage!
 	NUM_HIGH_SCORE_CATEGORIES
 };
+
+HighScoreCategory AverageMeterToHighScoreCategory( float fAverageMeter );
+
 const int NUM_HIGH_SCORE_LINES	= 5;
 
 #endif

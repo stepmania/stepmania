@@ -60,14 +60,24 @@ public:
 	// Statistics
 	int m_iNumTimesPlayed;
 
-	struct HighScore
+	struct MachineScore
 	{
 		int iDancePoints;
 		float fSurviveTime;
 		CString	sName;
-	};
-	HighScore m_MachineScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
-	HighScore m_MemCardScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_PLAYERS];
+	} m_MachineScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
+
+	bool IsNewMachineRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime ) const;	// return true if this is would be a new machine record
+	void AddMachineRecord( int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
+
+	struct MemCardScore
+	{
+		int iDancePoints;
+		float fSurviveTime;
+	} m_MemCardScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_PLAYERS];
+
+	bool AddMemCardRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime );	// return true if this is a new record
+
 
 private:
 	void Shuffle();

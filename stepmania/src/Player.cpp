@@ -136,7 +136,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	// copy note data
 	this->CopyAll( pNoteData );
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[m_PlayerNumber] != -1 )	// Oni dead
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed )	// Oni dead
 		this->ClearAll();
 
 	/* The editor reuses Players ... so we really need to make sure everything
@@ -341,7 +341,7 @@ void Player::DrawPrimitives()
 
 void Player::Step( int col )
 {
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[m_PlayerNumber] != -1 )	// Oni dead
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
 		return;	// do nothing
 
 	//LOG->Trace( "Player::HandlePlayerStep()" );
@@ -518,7 +518,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	{
 		HandleNoteScore( score, iNumNotesInThisRow );	// update score
 		m_Combo.UpdateScore( score, iNumNotesInThisRow );
-		GAMESTATE->m_iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
+		GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 	}
 
 	// update the judgement, score, and life
@@ -616,7 +616,7 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 		m_ScoreKeeper->HandleNoteScore(score, iNumTapsInRow);
 
 	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber]);
+		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( score );
@@ -636,7 +636,7 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 	}
 
 	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber]);
+		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		if( score == HNS_NG ) {

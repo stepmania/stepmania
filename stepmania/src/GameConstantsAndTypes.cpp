@@ -55,3 +55,15 @@ RageColor PlayerToColor( int p )
 { 
 	return PlayerToColor( (PlayerNumber)p ); 
 }
+
+
+HighScoreCategory AverageMeterToHighScoreCategory( float fAverageMeter )
+{
+	if(      fAverageMeter <= 3 )	return CATEGORY_A;
+	else if( fAverageMeter <= 6 )	return CATEGORY_B;
+	else if( fAverageMeter <= 9 )	return CATEGORY_C;
+	else							return CATEGORY_D;
+
+}
+
+

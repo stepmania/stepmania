@@ -27,7 +27,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 
-	virtual void SongEnded();
+	virtual void OnSongEnded();
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
 	virtual void OnDancePointsChange();	// look in GAMESTATE and update the display

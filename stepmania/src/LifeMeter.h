@@ -27,7 +27,7 @@ public:
 	virtual void Load( PlayerNumber pn ) { m_PlayerNumber = pn; }
 	virtual void Update( float fDeltaTime ) { ActorFrame::Update(fDeltaTime); };
 
-	virtual void SongEnded() {};
+	virtual void OnSongEnded() {};
 	/* Change life after receiving a tap note grade.  This *is* called for
 	 * the head of hold notes. */
 	virtual void ChangeLife( TapNoteScore score ) = 0;

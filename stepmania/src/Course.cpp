@@ -50,7 +50,6 @@ Course::Course()
 			{
 				m_MemCardScores[i][j][k].iDancePoints = 0;
 				m_MemCardScores[i][j][k].fSurviveTime = 0;
-				m_MemCardScores[i][j][k].sName = "STEP";
 			}
 }
 
@@ -302,10 +301,91 @@ int Course::GetNumStages() const
 	return entries.size();
 }
 
+
+bool Course::IsNewMachineRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime ) const	// return true if this would be a new machine record
+{
+	for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
+	{
+		const MachineScore& hs = m_MachineScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[pn]][i];
+		if( iDancePoints > hs.iDancePoints )
+			return true;
+	}
+	return false;
+}
+
+struct MachineScoreAndPlayerNumber : public Course::MachineScore
+{
+	PlayerNumber pn;
+
+	static int CompareDescending( const MachineScoreAndPlayerNumber &hs1, const MachineScoreAndPlayerNumber &hs2 )
+	{
+		if( hs1.iDancePoints > hs2.iDancePoints )		return -1;
+		else if( hs1.iDancePoints == hs2.iDancePoints )	return 0;
+		else											return +1;
+	}
+	static void SortDescending( vector<MachineScoreAndPlayerNumber>& vHSout )
+	{ 
+		sort( vHSout.begin(), vHSout.end(), CompareDescending ); 
+	}
+};
+
+void Course::AddMachineRecord( int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+{
+	vector<MachineScoreAndPlayerNumber> vHS;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		iNewRecordIndexOut[p] = -1;
+
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		MachineScoreAndPlayerNumber hs;
+		hs.iDancePoints = iDancePoints[p];
+		hs.fSurviveTime = fSurviveTime[p];
+		hs.sName = "";		// this must be filled in later!
+		hs.pn = (PlayerNumber)p;
+		vHS.push_back( hs );
+	}
+
+	// Sort descending before inserting.
+	// This guarantees that a high score will not switch poitions on us when we later insert scores for the other player
+	MachineScoreAndPlayerNumber::SortDescending( vHS );
+
+	for( unsigned i=0; i<vHS.size(); i++ )
+	{
+		MachineScoreAndPlayerNumber& newHS = vHS[i];
+		MachineScore* machineScores = m_MachineScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[newHS.pn]];
+		for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
+		{
+			if( newHS.iDancePoints > machineScores[i].iDancePoints )
+			{
+				// We found the insert point.  Shift down.
+				for( int j=i+1; j<NUM_HIGH_SCORE_LINES; j++ )
+					machineScores[j] = machineScores[j-1];
+				// insert
+				machineScores[i] = newHS;
+				iNewRecordIndexOut[newHS.pn] = i;
+			}
+		}
+	}
+}
+
+bool Course::AddMemCardRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime )	// return true if new record
+{
+	MemCardScore& hs = m_MemCardScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[pn]][pn];
+	if( iDancePoints > hs.iDancePoints )
+	{
+		hs.iDancePoints = iDancePoints;
+		hs.fSurviveTime = fSurviveTime;
+		return true;
+	}
+	return false;
+}
+
+
 //
 // Sorting stuff
 //
-
 static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
 	return pCourse1->GetNumStages() < pCourse2->GetNumStages();

@@ -42,7 +42,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	ASSERT(m_lScore >= 0);
 
-	GAMESTATE->m_fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier;
+	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier;
 }
 
 void ScoreKeeperMAX2::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
@@ -52,8 +52,8 @@ void ScoreKeeperMAX2::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 	ASSERT( iNumTapsInRow >= 1 );
 
 	// update dance points for Oni lifemeter
-	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( score );
-	GAMESTATE->m_TapNoteScores[m_PlayerNumber][score] += iNumTapsInRow;
+	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( score );
+	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][score] += iNumTapsInRow;
 
 /*
   A single step's points are calculated as follows: 
@@ -100,8 +100,8 @@ void ScoreKeeperMAX2::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 void ScoreKeeperMAX2::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
 {
 	// update dance points totals
-	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score] ++;
-	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
+	GAMESTATE->m_CurStageStats.iHoldNoteScores[m_PlayerNumber][score] ++;
+	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
 
 	if( score == HNS_OK )
 		AddScore( TNS_PERFECT );

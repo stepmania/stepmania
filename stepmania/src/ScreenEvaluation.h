@@ -22,7 +22,7 @@
 
 
 const int NUM_JUDGE_LINES =	8;	// marvelous, perfect, great, good, boo, miss, ok, max_combo
-const int STAGES_TO_SHOW_IN_SUMMARY = 3;	// only show the latest three stages in a summary
+const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 
 
 class ScreenEvaluation : public Screen
@@ -42,12 +42,12 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 protected:
-	enum ResultMode	{ RM_ARCADE_STAGE, RM_ARCADE_SUMMARY, RM_ONI };
+	enum ResultMode	{ RM_ARCADE_STAGE, RM_ARCADE_SUMMARY, RM_COURSE };
 	ResultMode			m_ResultMode;
 
 	MenuElements		m_Menu;
 
-	BannerWithFrame		m_BannerWithFrame[STAGES_TO_SHOW_IN_SUMMARY];
+	BannerWithFrame		m_BannerWithFrame[MAX_SONGS_TO_SHOW];
 	BitmapText			m_textStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
@@ -77,6 +77,8 @@ protected:
 	ScoreDisplayNormal	m_ScoreDisplay[NUM_PLAYERS];
 
 	Sprite				m_sprNewRecord[NUM_PLAYERS];
+
+	bool				m_bGoToNameEntry;
 
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;

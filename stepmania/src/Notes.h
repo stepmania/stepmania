@@ -52,14 +52,13 @@ public:
 	// High scores;
 	int m_iNumTimesPlayed;
 
-	struct HighScore
+	struct MemCardScore
 	{
 		Grade grade;
-		int iScore;
-	};
-	HighScore m_MemCardScores[NUM_PLAYERS];
+		float fScore;
+	} m_MemCardScores[NUM_PLAYERS];
 
-	bool AddMemCardScore( PlayerNumber pn, Grade grade, int iScore );	// return true if new high score
+	bool AddMemCardRecord( PlayerNumber pn, Grade grade, float fScore );	// return true if new high score
 
 
 	void TidyUpData();

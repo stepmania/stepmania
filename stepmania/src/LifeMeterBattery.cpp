@@ -83,7 +83,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	Refresh();
 }
 
-void LifeMeterBattery::SongEnded()
+void LifeMeterBattery::OnSongEnded()
 {
 	if( m_bFailedEarlier )
 		return;
@@ -145,8 +145,8 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 
 void LifeMeterBattery::OnDancePointsChange()
 {
-	int iActualDancePoints = GAMESTATE->m_iActualDancePoints[m_PlayerNumber];
-	int iPossibleDancePoints = GAMESTATE->m_iPossibleDancePoints[m_PlayerNumber];
+	int iActualDancePoints = GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber];
+	int iPossibleDancePoints = GAMESTATE->m_CurStageStats.iPossibleDancePoints[m_PlayerNumber];
 	iPossibleDancePoints = max( 1, iPossibleDancePoints );
 	float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
 

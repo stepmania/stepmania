@@ -52,7 +52,7 @@ Notes::Notes()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_MemCardScores[p].grade = GRADE_NO_DATA;
-		m_MemCardScores[p].iScore = 0;
+		m_MemCardScores[p].fScore = 0;
 	}
 }
 
@@ -313,11 +313,11 @@ void Notes::SetRadarValue(int r, float val)
 	m_fRadarValues[r] = val;
 }
 
-bool Notes::AddMemCardScore( PlayerNumber pn, Grade grade, int iScore )	// return true if new high score
+bool Notes::AddMemCardRecord( PlayerNumber pn, Grade grade, float fScore )	// return true if new high score
 {
-	if( iScore > m_MemCardScores[pn].iScore )
+	if( fScore > m_MemCardScores[pn].fScore )
 	{
-		m_MemCardScores[pn].iScore = iScore;
+		m_MemCardScores[pn].fScore = fScore;
 		m_MemCardScores[pn].grade = grade;
 		return true;
 	}

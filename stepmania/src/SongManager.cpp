@@ -30,6 +30,8 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 
 const CString CATEGORY_TOP_SCORE_FILE = "CategoryTopScores.dat";
 const CString COURSE_TOP_SCORE_FILE = "CourseTopScores.dat";
+const int CATEGORY_TOP_SCORE_VERSION = 1;
+const int COURSE_TOP_SCORE_VERSION = 1;
 
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
@@ -210,7 +212,7 @@ void SongManager::InitMachineScoresFromDisk()
 			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
 				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
 				{
-					m_MachineScores[i][j][k].iScore = 573000;
+					m_MachineScores[i][j][k].fScore = 573000;
 					m_MachineScores[i][j][k].sName = "STEP";
 				}
 	}
@@ -218,51 +220,62 @@ void SongManager::InitMachineScoresFromDisk()
 	// Read category top scores
 	{
 		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "r" );
-
-		for( int i=0; i<NUM_STYLES; i++ )
-			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
-				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
-					if( fp && !feof(fp) )
-					{
-						char szName[256];
-						fscanf(fp, "%d %[^\n]\n", &m_MachineScores[i][j][k].iScore, szName);
-						m_MachineScores[i][j][k].sName = szName;
-					}
-
 		if( fp )
+		{
+			int version;
+			fscanf(fp, "%d\n", &version );
+			if( version == CATEGORY_TOP_SCORE_VERSION )
+			{			
+				for( int i=0; i<NUM_STYLES; i++ )
+					for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+						for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+							if( fp && !feof(fp) )
+							{
+								char szName[256];
+								fscanf(fp, "%f %[^\n]\n", &m_MachineScores[i][j][k].fScore, szName);
+								m_MachineScores[i][j][k].sName = szName;
+							}
+			}
 			fclose(fp);
+		}
 	}
 
 	// Read course top scores
 	{
 		FILE* fp = fopen( COURSE_TOP_SCORE_FILE, "r" );
 
-		while( fp && !feof(fp) )
-		{
-			char szPath[256];
-			fscanf(fp, "%s\n", szPath);
-			Course* pCourse = GetCourseFromPath( szPath );
-			
-			for( int i=0; i<NUM_STYLES; i++ )
-				for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
-					for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
-						if( fp && !feof(fp) )
-						{
-							int iDancePoints;
-							float fSurviveTime;
-							char szName[256];
-							fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
-							if( pCourse )
-							{
-								pCourse->m_MachineScores[i][j][k].iDancePoints = iDancePoints;
-								pCourse->m_MachineScores[i][j][k].fSurviveTime = fSurviveTime;
-								pCourse->m_MachineScores[i][j][k].sName = szName;
-							}
-						}
-		}
-
 		if( fp )
+		{
+			int version;
+			fscanf(fp, "%d\n", &version );
+			if( version == COURSE_TOP_SCORE_VERSION )
+			{			
+				while( fp && !feof(fp) )
+				{
+						char szPath[256];
+						fscanf(fp, "%s\n", szPath);
+						Course* pCourse = GetCourseFromPath( szPath );
+						
+						for( int i=0; i<NUM_STYLES; i++ )
+							for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+								for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+									if( fp && !feof(fp) )
+									{
+										int iDancePoints;
+										float fSurviveTime;
+										char szName[256];
+										fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
+										if( pCourse )
+										{
+											pCourse->m_MachineScores[i][j][k].iDancePoints = iDancePoints;
+											pCourse->m_MachineScores[i][j][k].fSurviveTime = fSurviveTime;
+											pCourse->m_MachineScores[i][j][k].sName = szName;
+										}
+									}
+				}
+			}
 			fclose(fp);
+		}
 	}
 }
 
@@ -271,15 +284,16 @@ void SongManager::SaveMachineScoresToDisk()
 	// Write category top scores
 	{
 		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "w" );
-
-		for( int i=0; i<NUM_STYLES; i++ )
-			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
-				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
-					if( fp )
-						fprintf(fp, "%d %s\n", m_MachineScores[i][j][k].iScore, m_MachineScores[i][j][k].sName.c_str());
-
 		if( fp )
+		{
+			fprintf(fp,"%d",CATEGORY_TOP_SCORE_VERSION);
+			for( int i=0; i<NUM_STYLES; i++ )
+				for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+					for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+						if( fp )
+							fprintf(fp, "%f %s\n", m_MachineScores[i][j][k].fScore, m_MachineScores[i][j][k].sName.c_str());
 			fclose(fp);
+		}
 	}
 
 	// Write course top scores
@@ -288,6 +302,7 @@ void SongManager::SaveMachineScoresToDisk()
 
 		if( fp )
 		{
+			fprintf(fp,"%d",COURSE_TOP_SCORE_VERSION);
 			for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach course
 			{
 				Course* pCourse = m_pCourses[i];
@@ -615,4 +630,72 @@ Course* SongManager::GetCourseFromPath( CString sPath )
 bool SongManager::IsUsingMemoryCard( PlayerNumber pn )
 {
 	return true;
+}
+
+
+bool SongManager::IsNewMachineRecord( HighScoreCategory hsc, float fScore ) const	// return true if this is would be a new machine record
+{
+	for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
+	{
+		const MachineScore& hs = m_MachineScores[GAMESTATE->m_CurStyle][hsc][i];
+		if( fScore > hs.fScore )
+			return true;
+	}
+	return false;
+}
+
+struct MachineScoreAndPlayerNumber : public SongManager::MachineScore
+{
+	PlayerNumber pn;
+
+	static int CompareDescending( const MachineScoreAndPlayerNumber &hs1, const MachineScoreAndPlayerNumber &hs2 )
+	{
+		if( hs1.fScore > hs2.fScore )		return -1;
+		else if( hs1.fScore == hs2.fScore )	return 0;
+		else								return +1;
+	}
+	static void SortDescending( vector<MachineScoreAndPlayerNumber>& vHSout )
+	{ 
+		sort( vHSout.begin(), vHSout.end(), CompareDescending ); 
+	}
+};
+
+void SongManager::AddMachineRecord( HighScoreCategory hsc, float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+{
+	vector<MachineScoreAndPlayerNumber> vHS;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		iNewRecordIndexOut[p] = -1;
+
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		MachineScoreAndPlayerNumber hs;
+		hs.fScore = fScore[p];
+		hs.sName = "";		// this must be filled in later!
+		hs.pn = (PlayerNumber)p;
+		vHS.push_back( hs );
+	}
+
+	// Sort descending before inserting.
+	// This guarantees that a high score will not switch poitions on us when we later insert scores for the other player
+	MachineScoreAndPlayerNumber::SortDescending( vHS );
+
+	for( unsigned i=0; i<vHS.size(); i++ )
+	{
+		MachineScoreAndPlayerNumber& newHS = vHS[i];
+		MachineScore* machineScores = m_MachineScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[newHS.pn]];
+		for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
+		{
+			if( newHS.fScore > machineScores[i].fScore )
+			{
+				// We found the insert point.  Shift down.
+				for( int j=i+1; j<NUM_HIGH_SCORE_LINES; j++ )
+					machineScores[j] = machineScores[j-1];
+				// insert
+				machineScores[i] = newHS;
+				iNewRecordIndexOut[newHS.pn] = i;
+			}
+		}
+	}
 }

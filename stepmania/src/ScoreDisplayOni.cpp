@@ -50,7 +50,7 @@ void ScoreDisplayOni::Draw()
 {
 	float fSecsIntoPlay;
 	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-		fSecsIntoPlay = GAMESTATE->GetPlayerSurviveTime(m_PlayerNumber);
+		fSecsIntoPlay = GAMESTATE->m_CurStageStats.fAliveSeconds[m_PlayerNumber];
 	else
 		fSecsIntoPlay = 0;
 

@@ -71,17 +71,23 @@ public:
 	//
 	// High scores
 	//
-	struct HighScore
-	{
-		int iScore;
-		CString	sName;
-	};
-	HighScore m_MachineScores[NUM_STYLES][NUM_HIGH_SCORE_CATEGORIES][NUM_HIGH_SCORE_LINES];
-
 	void InitMachineScoresFromDisk();
 	void SaveMachineScoresToDisk();
 
+	bool MemoryCardIsInserted( PlayerNumber pn );
 	bool IsUsingMemoryCard( PlayerNumber pn );
+
+	void LoadMemoryCardScores( PlayerNumber pn );
+	void SaveMemoryCardScores( PlayerNumber pn );
+
+	struct MachineScore
+	{
+		float fScore;
+		CString	sName;
+	} m_MachineScores[NUM_STYLES][NUM_HIGH_SCORE_CATEGORIES][NUM_HIGH_SCORE_LINES];
+
+	bool IsNewMachineRecord( HighScoreCategory hsc, float fScore ) const;	// return true if this is would be a new machine record
+	void AddMachineRecord( HighScoreCategory hsc, float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
