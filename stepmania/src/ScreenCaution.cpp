@@ -69,11 +69,8 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartClosing:
-		if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() && !m_Back.IsTransitioning() )
-		{
-			m_Background.PlayCommand("Off");
-			m_Out.StartTransitioning( SM_GoToNextScreen );
-		}
+		m_Background.PlayCommand("Off");
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_DoneOpening:
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("caution") );
