@@ -125,7 +125,7 @@ if test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
 	have_ffmpeg=yes
 	AC_DEFINE(HAVE_FFMPEG, 1, [FMPEG support available])
 fi
-AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" == "yes" )
+AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" = "yes")
 
 SM_CHECK_CRASH_HANDLER
 
