@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-
+#include "GameManager.h"
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.8f;
 
@@ -57,6 +57,17 @@ void Judgement::SetJudgement( TapNoteScore score )
 	case TNS_BOO:		m_sprJudgement.SetState( 3 );	break;
 	case TNS_MISS:		m_sprJudgement.SetState( 4 );	break;
 	default:	ASSERT( false );
+	}
+
+	if ( GAMEMAN->m_CurGame == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
+	{
+		m_sprJudgement.SetHeight( 22.0f * 2.1f );
+		m_sprJudgement.SetWidth( 143.0f * 2.1f );
+		if ( score == TNS_PERFECT || score == TNS_GREAT )
+		{
+			m_sprJudgement.SetHeight( 22.0f * 2.6f );
+			m_sprJudgement.SetWidth( 143.0f * 2.8f );
+		}
 	}
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;

@@ -15,7 +15,7 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
-
+#include "PrefsManager.h"
 
 const float SCORE_TWEEN_TIME = 0.5f;
 
@@ -79,6 +79,11 @@ void ScoreDisplayRolling::Update( float fDeltaTime )
 
 void ScoreDisplayRolling::Draw()
 {
+	if( PREFSMAN->m_bAutoPlay )
+	{ 
+		m_fScore = 0 ;
+	} // No Scoring on Autoplay!
+
 	if( m_fScore == 0 )
 	{
 		CString sFormat = ssprintf( "%%%d.0d", NUM_SCORE_DIGITS );

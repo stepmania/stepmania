@@ -798,7 +798,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToResults:
 		SaveSummary();
-		SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
+			SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
 		break;
 
 

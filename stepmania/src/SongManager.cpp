@@ -50,7 +50,10 @@ SongManager::SongManager()
 
 SongManager::~SongManager()
 {
-	SaveStatisticsToDisk();
+	if( !PREFSMAN->m_bAutoPlay ) // BUG FIX: Stats will no longer save if you're in autoplay mode - Andy.
+	{
+		SaveStatisticsToDisk();
+	}
 	FreeSongArray();
 }
 

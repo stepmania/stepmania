@@ -32,8 +32,10 @@ const float GRADE_Y						=	BANNER_Y;
 
 const float JUDGE_LABELS_X				= CENTER_X;
 const float JUDGE_NUMBERS_X[NUM_PLAYERS]= { CENTER_X-88, CENTER_X+88 };
+const float JUDGE_NUMBERS_X_EZ2[NUM_PLAYERS]= { CENTER_X-88, CENTER_X+68 };
 const float JUDGE_START_Y				=	CENTER_Y - 70;
 const float JUDGE_SPACING				=	32;
+const float JUDGE_EZ2_COOL_Y			= CENTER_Y - 80;
 
 const float SCORE_LABEL_X				= CENTER_X;
 const float SCORE_DISPLAY_X[NUM_PLAYERS]= { CENTER_X-170, CENTER_X+170 };
@@ -116,45 +118,46 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	}
 
 
-
-	///////////////////////////
-	// Init the song banners depending on m_ResultMode
-	///////////////////////////
-	switch( m_ResultMode )
+	if (GAMEMAN->m_CurGame != GAME_EZ2 )
 	{
-	case RM_ARCADE_STAGE:
-		m_BannerWithFrame[0].LoadFromSong( SONGMAN->GetCurrentSong() );
-		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-		this->AddActor( &m_BannerWithFrame[0] );
-		break;
-	case RM_ARCADE_SUMMARY:
+		///////////////////////////
+		// Init the song banners depending on m_ResultMode
+		///////////////////////////
+		switch( m_ResultMode )
 		{
-			// crop down to 3
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( SONGMAN->m_aGameplayStatistics[p].GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
-					SONGMAN->m_aGameplayStatistics[p].RemoveAt( 0, SONGMAN->m_aGameplayStatistics[p].GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
-
-			const int iSongsToShow = SONGMAN->m_aGameplayStatistics[0].GetSize();
-			ASSERT( iSongsToShow > 0 );
-
-			for( int i=0; i<iSongsToShow; i++ )
+		case RM_ARCADE_STAGE:
+			m_BannerWithFrame[0].LoadFromSong( SONGMAN->GetCurrentSong() );
+			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
+			this->AddActor( &m_BannerWithFrame[0] );
+			break;
+		case RM_ARCADE_SUMMARY:
 			{
-				GameplayStatistics &GS = SONGMAN->m_aGameplayStatistics[0][i];
-				m_BannerWithFrame[i].LoadFromSong( GS.pSong );
-				float fBannerOffset = i - (iSongsToShow-1)/2.0f;
-				m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
-				m_BannerWithFrame[i].SetZoom( 0.70f );
-				this->AddActor( &m_BannerWithFrame[i] );
-			}
-		}
-		break;
-	case RM_ONI:
-		m_BannerWithFrame[0].LoadFromGroup( SONGMAN->m_sPreferredGroup );
-		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-		this->AddActor( &m_BannerWithFrame[0] );
-		break;
-	}
+				// crop down to 3
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( SONGMAN->m_aGameplayStatistics[p].GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
+						SONGMAN->m_aGameplayStatistics[p].RemoveAt( 0, SONGMAN->m_aGameplayStatistics[p].GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
 
+				const int iSongsToShow = SONGMAN->m_aGameplayStatistics[0].GetSize();
+				ASSERT( iSongsToShow > 0 );
+
+				for( int i=0; i<iSongsToShow; i++ )
+				{
+					GameplayStatistics &GS = SONGMAN->m_aGameplayStatistics[0][i];
+					m_BannerWithFrame[i].LoadFromSong( GS.pSong );
+					float fBannerOffset = i - (iSongsToShow-1)/2.0f;
+					m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
+					m_BannerWithFrame[i].SetZoom( 0.70f );
+					this->AddActor( &m_BannerWithFrame[i] );
+				}
+			}
+			break;
+		case RM_ONI:
+			m_BannerWithFrame[0].LoadFromGroup( SONGMAN->m_sPreferredGroup );
+			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
+			this->AddActor( &m_BannerWithFrame[0] );
+			break;
+		}
+	}
 
 
 
@@ -170,15 +173,17 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	this->AddActor( &m_Menu );
 
 
-
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-		m_sprJudgeLabels[l].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_JUDGE_LABELS) );
-		m_sprJudgeLabels[l].StopAnimating();
-		m_sprJudgeLabels[l].SetState( l );
-		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_START_Y + l*JUDGE_SPACING );
-		m_sprJudgeLabels[l].SetZoom( 1.0f );
-		this->AddActor( &m_sprJudgeLabels[l] );
+		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		{
+			m_sprJudgeLabels[l].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_JUDGE_LABELS) );
+			m_sprJudgeLabels[l].StopAnimating();
+			m_sprJudgeLabels[l].SetState( l );
+			m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_START_Y + l*JUDGE_SPACING );
+			m_sprJudgeLabels[l].SetZoom( 1.0f );
+			this->AddActor( &m_sprJudgeLabels[l] );
+		}
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
@@ -187,19 +192,43 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X[p], JUDGE_START_Y + l*JUDGE_SPACING );
 			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
 			m_textJudgeNumbers[l][p].SetDiffuseColor( PlayerToColor(p) );
+
+
+			// RE-ARRANGE the scoreboard for EZ2Dancer Scoring
+
+			if (l == 0 && GAMEMAN->m_CurGame == GAME_EZ2) // Change Position For Ez2dancer
+			{
+				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y);
+			}
+			else if (l == 2 && GAMEMAN->m_CurGame == GAME_EZ2)
+			{
+				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 55);
+			}
+			else if (l == 4 && GAMEMAN->m_CurGame == GAME_EZ2)
+			{
+				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 120);
+			}
+			else if ((l == 1 || l == 3 || l == 5) && GAMEMAN->m_CurGame == GAME_EZ2)
+			{
+				m_textJudgeNumbers[l][p].SetZoomX(0); // Hide These Ones
+			}
+
 			this->AddActor( &m_textJudgeNumbers[l][p] );
 		}
 	}
 
-	m_sprScoreLabel.Load( THEME->GetPathTo(GRAPHIC_EVALUATION_SCORE_LABELS) );
-	m_sprScoreLabel.StopAnimating();
-	m_sprScoreLabel.SetXY( SCORE_LABEL_X, SCORE_Y );
-	m_sprScoreLabel.SetZoom( 1.0f );
-	this->AddActor( &m_sprScoreLabel );
+	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	{
+		m_sprScoreLabel.Load( THEME->GetPathTo(GRAPHIC_EVALUATION_SCORE_LABELS) );
+		m_sprScoreLabel.StopAnimating();
+		m_sprScoreLabel.SetXY( SCORE_LABEL_X, SCORE_Y );
+		m_sprScoreLabel.SetZoom( 1.0f );
+		this->AddActor( &m_sprScoreLabel );
+	}
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) || GAMEMAN->m_CurGame == GAME_EZ2 )
 			continue;	// skip
 
 		m_ScoreDisplay[p].SetXY( SCORE_DISPLAY_X[p], SCORE_Y );
@@ -207,7 +236,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
 		this->AddActor( &m_ScoreDisplay[p] );
 	}
-
 
 
 
@@ -252,6 +280,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					GS[p].ng		+= GSstage.ng;
 					GS[p].max_combo = max( GS[p].max_combo, GSstage.max_combo );
 					GS[p].score		+= GSstage.score;
+
 					for( int i=0; i<NUM_RADAR_VALUES; i++ )
 					{
 						GS[p].fRadarPossible[i] += GSstage.fRadarPossible[i];
@@ -267,10 +296,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			}
 			break;
 		}
-
-		
-		
-		
+			
+		if (GAMEMAN->m_CurGame == GAME_EZ2) // Fake COOL! / GOOD / OOPS for Ez2dancer using the DDR Rankings.
+		{
+			GS[p].perfect += GS[p].great;
+			GS[p].great = 0;
+			GS[p].miss += GS[p].boo;
+			GS[p].boo = 0;
+		}
 		grade[p] = GS[p].GetGrade();
 
 		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", GS[p].perfect) );
@@ -284,7 +317,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_ScoreDisplay[p].SetScore( (float)GS[p].score );
 
 		m_BonusInfoFrame[p].SetBonusInfo( (PlayerNumber)p, GS[p].fRadarPossible, GS[p].fRadarActual, GS[p].max_combo );
-
 
 		switch( m_ResultMode )
 		{
@@ -337,7 +369,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) || GAMEMAN->m_CurGame == GAME_EZ2 )
 			continue;	// skip
 
 		m_sprGradeFrame[p].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADE_FRAME) );
@@ -440,11 +472,14 @@ void ScreenEvaluation::TweenOnScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		fOriginalY = m_sprJudgeLabels[i].GetY();
-		m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
-		m_sprJudgeLabels[i].BeginTweeningQueued( 0.2f + 0.1f*i );
-		m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-		m_sprJudgeLabels[i].SetTweenY( fOriginalY );
+		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		{
+			fOriginalY = m_sprJudgeLabels[i].GetY();
+			m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
+			m_sprJudgeLabels[i].BeginTweeningQueued( 0.2f + 0.1f*i );
+			m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			m_sprJudgeLabels[i].SetTweenY( fOriginalY );
+		}
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
@@ -456,44 +491,48 @@ void ScreenEvaluation::TweenOnScreen()
 		}
 	}
 
-	fOriginalY = m_sprScoreLabel.GetY();
-	m_sprScoreLabel.SetY( fOriginalY + SCREEN_HEIGHT );
-	m_sprScoreLabel.BeginTweeningQueued( 0.8f + 0.1f*i );
-	m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-	m_sprScoreLabel.SetTweenY( fOriginalY );
-
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	if (GAMEMAN->m_CurGame != GAME_EZ2)
 	{
-		fOriginalX = m_ScoreDisplay[p].GetX();
-		m_ScoreDisplay[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-		m_ScoreDisplay[p].BeginTweeningQueued( 0.8f + 0.1f*i );
-		m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-		m_ScoreDisplay[p].SetTweenX( fOriginalX );
+
+		fOriginalY = m_sprScoreLabel.GetY();
+		m_sprScoreLabel.SetY( fOriginalY + SCREEN_HEIGHT );
+		m_sprScoreLabel.BeginTweeningQueued( 0.8f + 0.1f*i );
+		m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_sprScoreLabel.SetTweenY( fOriginalY );
+		
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			fOriginalX = m_ScoreDisplay[p].GetX();
+			m_ScoreDisplay[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
+			m_ScoreDisplay[p].BeginTweeningQueued( 0.8f + 0.1f*i );
+			m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			m_ScoreDisplay[p].SetTweenX( fOriginalX );
+		}
+
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			fOriginalX = m_BonusInfoFrame[p].GetX();
+			m_BonusInfoFrame[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
+			m_BonusInfoFrame[p].BeginTweeningQueued( 0.2f + 0.1f*i );
+			m_BonusInfoFrame[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			m_BonusInfoFrame[p].SetTweenX( fOriginalX );
+
+			m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+			m_sprGradeFrame[p].SetTweenZoomY( 0 );
+
+			m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+			m_Grades[p].SetTweenZoomY( 0 );
+
+			m_textOniPercent[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+			m_textOniPercent[p].SetTweenZoomY( 0 );
+
+			m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+			m_textNewRecord[p].SetTweenZoomY( 0 );
+		}
+		
+		m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_textTryExtraStage.SetTweenZoomY( 0 );
 	}
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		fOriginalX = m_BonusInfoFrame[p].GetX();
-		m_BonusInfoFrame[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-		m_BonusInfoFrame[p].BeginTweeningQueued( 0.2f + 0.1f*i );
-		m_BonusInfoFrame[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-		m_BonusInfoFrame[p].SetTweenX( fOriginalX );
-
-		m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprGradeFrame[p].SetTweenZoomY( 0 );
-
-		m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_Grades[p].SetTweenZoomY( 0 );
-
-		m_textOniPercent[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textOniPercent[p].SetTweenZoomY( 0 );
-
-		m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textNewRecord[p].SetTweenZoomY( 0 );
-	}
-	
-	m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textTryExtraStage.SetTweenZoomY( 0 );
 }
 
 void ScreenEvaluation::TweenOffScreen()
@@ -508,8 +547,11 @@ void ScreenEvaluation::TweenOffScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_sprJudgeLabels[i].SetTweenZoomY( 0 );
+		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		{
+			m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+			m_sprJudgeLabels[i].SetTweenZoomY( 0 );
+		}
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
@@ -517,16 +559,19 @@ void ScreenEvaluation::TweenOffScreen()
 			m_textJudgeNumbers[i][p].SetTweenZoomY( 0 );
 		}
 	}
-
-	m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-	m_sprScoreLabel.SetTweenZoomY( 0 );
-
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	
+	if (GAMEMAN->m_CurGame != GAME_EZ2)
 	{
-		m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_ScoreDisplay[p].SetTweenZoomY( 0 );
-	}
+		m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+		m_sprScoreLabel.SetTweenZoomY( 0 );
 
+
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+			m_ScoreDisplay[p].SetTweenZoomY( 0 );
+		}
+	}
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_BonusInfoFrame[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
