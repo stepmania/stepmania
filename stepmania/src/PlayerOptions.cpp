@@ -13,6 +13,7 @@
 #include "PlayerOptions.h"
 #include "RageUtil.h"
 #include "math.h"
+#include "RageLog.h"
 
 #include "GameState.h"
 #include "NoteFieldPositioning.h"
@@ -162,20 +163,28 @@ void PlayerOptions::FromString( CString sOptions )
 		CString& sBit = asBits[i];
 		TrimLeft(sBit);
 		TrimRight(sBit);
-		
-		if(	     sBit == "0.25x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 0.25f;	}
-		else if( sBit == "0.5x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 0.50f;	}
-		else if( sBit == "0.75x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 0.75f;	}
-		else if( sBit == "1.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 1.00f;	}
-		else if( sBit == "1.5x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 1.50f;	}
-		else if( sBit == "2.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 2.00f;	}
-		else if( sBit == "3.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 3.00f;	}
-		else if( sBit == "4.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 4.00f;	}
-		else if( sBit == "5.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 5.00f;	}
-		else if( sBit == "8.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 8.00f;	}
-		else if( sBit == "12.0x" )		{ m_bTimeSpacing=false;	m_fScrollSpeed = 12.00f;}
-		else if( sBit == "C200" )		{ m_bTimeSpacing=true;	m_fScrollBPM = 200;	}
-		else if( sBit == "C300" )		{ m_bTimeSpacing=true;	m_fScrollBPM = 300;	}
+
+		int i1, i2;
+		if(	sscanf( sBit, "%d.%dx", &i1, &i2 ) == 2 )
+		{
+			m_bTimeSpacing = false;
+			m_fScrollSpeed = i1 + (i2 / 10.f);
+		}
+		else if( sscanf( sBit, "%dx", &i1 ) == 1 )
+		{
+			m_bTimeSpacing = false;
+			m_fScrollSpeed = i1;
+		}
+		else if( sscanf( sBit, ".%dx", &i1 ) == 1 )
+		{
+			m_bTimeSpacing = false;
+			m_fScrollSpeed = i1 / 10.f;
+		}
+		else if( sscanf( sBit, "C%d", &i1 ) == 1 )
+		{
+			m_bTimeSpacing = true;
+			m_fScrollBPM = i1;
+		}
 		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
 		else if( sBit == "brake" || sBit == "land" )		m_fAccels[ACCEL_BRAKE] = 1;
 		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = 1;
@@ -214,6 +223,8 @@ void PlayerOptions::FromString( CString sOptions )
 			m_sPositioning = sBit;
 		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
+		else
+			LOG->Warn( "Modifier '%s' not recognized.", sBit.c_str() );
 	}
 }
 
