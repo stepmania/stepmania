@@ -555,6 +555,7 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
+			RAGE_ASSERT_M( NoteRowToBeat(hn.iStartRow) > -2000, ssprintf("%i %i %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
 
 			bool bIsInSelectionRange = false;
@@ -618,6 +619,7 @@ void NoteField::DrawPrimitives()
 			bool bIsMine = (tn == TAP_MINE);
 			bool bIsAttack = IsTapAttack(tn);
 
+			RAGE_ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
 			NoteDisplayCols *nd = CurDisplay->second;
 			if( bIsAttack )

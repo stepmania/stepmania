@@ -322,6 +322,7 @@ void RageSounds::Update( float fDeltaTime )
 	if( !g_Playing->m_Music->IsPlaying() )
 	{
 		/* There's no song playing.  Fake it. */
+		CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_fMusicSeconds, fDeltaTime) );
 		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
 		return;
 	}
@@ -340,6 +341,7 @@ void RageSounds::Update( float fDeltaTime )
 		{
 			/* We're still waiting for the new sound to start playing, so keep using the
 			 * old timing data and fake the time. */
+			CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_fMusicSeconds, fDeltaTime) );
 			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
 			return;
 		}
@@ -367,6 +369,7 @@ void RageSounds::Update( float fDeltaTime )
 		sLastFile = ThisFile;
 	}
 
+	CHECKPOINT_M( ssprintf("%f", fSeconds) );
 	GAMESTATE->UpdateSongPosition( fSeconds, g_Playing->m_Timing, tm );
 }
 
