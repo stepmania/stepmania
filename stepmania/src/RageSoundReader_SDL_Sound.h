@@ -3,6 +3,7 @@
 
 #include "RageSoundReader.h"
 #include "SDL_sound-1.0.0/SDL_sound.h"
+#include "RageSoundResampler.h"
 
 class SoundReader_SDL_Sound: public SoundReader {
 	Sound_Sample *Sample;
@@ -10,6 +11,7 @@ class SoundReader_SDL_Sound: public SoundReader {
 	unsigned avail;
 	int SetPosition(int ms, bool accurate);
 	CString filename;
+	RageSoundResampler resamp;
 
 public:
 	bool Open(CString filename);
@@ -24,8 +26,6 @@ public:
 
 #endif
 /*
-------------------------------------------------------------------------------
- Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
-	Glenn Maynard
-------------------------------------------------------------------------------
-*/
+ * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
+ *	Glenn Maynard
+ */

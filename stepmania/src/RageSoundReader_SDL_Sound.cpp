@@ -42,11 +42,16 @@ bool SoundReader_SDL_Sound::Open(CString filename_)
 	Sound_AudioInfo sound_desired;
 	sound_desired.channels = channels;
 	sound_desired.format = AUDIO_S16SYS;
-	sound_desired.rate = samplerate;
+	sound_desired.rate = 0; // samplerate;
 
     Sample = Sound_NewSampleFromFile(filename.GetString(),
                     &sound_desired, read_block_size);
 
+	resamp.reset();
+	resamp.SetInputChannels(2);
+	resamp.SetOutputChannels(2);
+	resamp.SetInputSampleRate(Sample->actual.rate);
+	resamp.SetOutputSampleRate(samplerate);
 	if(Sample)
 		return true;
 	
@@ -82,6 +87,7 @@ int SoundReader_SDL_Sound::GetLength_Fast() const
 
 int SoundReader_SDL_Sound::SetPosition(int ms, bool accurate)
 {
+	resamp.reset();
 	if(ms == 0)
 	{
 		Sound_Rewind(Sample);
@@ -118,7 +124,16 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 	int bytes_read = 0;
 	while(len)
 	{
-		if(!avail)
+		int size = resamp.read(buf, len);
+
+		if(size == -1)
+			break;
+
+		buf += size;
+		len -= size;
+		bytes_read += size;
+
+		if(size == 0)
 		{
 			/* Don't read at all if we've already hit EOF (it'll whine). */
 			if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
@@ -127,7 +142,10 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 			int cnt = Sound_Decode(Sample);
 
 			if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
-				return bytes_read; /* EOF */
+			{
+				resamp.eof();
+				continue;
+			}
 
 			if(Sample->flags & SOUND_SAMPLEFLAG_ERROR)
 			{
@@ -135,17 +153,8 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 				return -1;
 			}
 
-			avail = cnt;
-			inbuf = (const char *) Sample->buffer;
+			resamp.write(Sample->buffer, cnt);
 		}
-
-		unsigned size = min(avail, len);
-		memcpy(buf, inbuf, size);
-		buf += size;
-		len -= size;
-		inbuf += size;
-		avail -= size;
-		bytes_read += size;
 	}
 
 	return bytes_read;
