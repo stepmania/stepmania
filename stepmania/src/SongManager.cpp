@@ -53,7 +53,7 @@ RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
 
 static void UpdateMetrics()
 {
-	if( g_LastMetricUpdate.PeekDeltaTime() < 1 )
+	if( !g_LastMetricUpdate.IsZero() && g_LastMetricUpdate.PeekDeltaTime() < 1 )
 		return;
 
 	g_LastMetricUpdate.Touch();
@@ -72,6 +72,9 @@ static void UpdateMetrics()
 
 SongManager::SongManager( LoadingWindow *ld )
 {
+	g_LastMetricUpdate.SetZero();
+	UpdateMetrics();
+
 	/* We initialize things that assume they can get at SONGMAN; we only
 	 * init one of these, so hook us up to it immediately. */
 	SONGMAN = this;
@@ -85,9 +88,6 @@ SongManager::SongManager( LoadingWindow *ld )
 		SONGMAN = NULL;
 		throw;
 	}
-	
-	g_LastMetricUpdate.SetZero();
-	UpdateMetrics();
 }
 
 SongManager::~SongManager()
