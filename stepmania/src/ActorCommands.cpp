@@ -4,71 +4,20 @@
 #include "Foreach.h"
 #include "RageUtil.h"
 #include <sstream>
-#include "LuaManager.h"
 #include "LuaBinding.h"
-
-#include "SubscriptionManager.h"
-template<>
-set<ActorCommands*>* SubscriptionManager<ActorCommands>::s_pSubscribers = NULL;
-
 
 ActorCommands::ActorCommands( const Commands& cmds )
 {
-	SubscriptionManager<ActorCommands>::Subscribe( this );
-	
 	m_cmds = cmds;
-	m_iLuaFunction = LUA_NOREF;
-
 	Register();
-}
-
-ActorCommands::~ActorCommands()
-{
-	SubscriptionManager<ActorCommands>::Unsubscribe( this );
-
-	Unregister();
-}
-
-ActorCommands::ActorCommands( const ActorCommands& cpy )
-{
-	SubscriptionManager<ActorCommands>::Subscribe( this );
-
-	/* Make a new reference. */
-	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iLuaFunction );
-	m_iLuaFunction = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
-}
-
-ActorCommands &ActorCommands::operator=( const ActorCommands& cpy )
-{
-	if( this == &cpy )
-		return *this;
-
-	Unregister();
-
-	/* Make a new reference. */
-	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iLuaFunction );
-	m_iLuaFunction = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
-
-	return *this;
-}
-
-void ActorCommands::PushSelf( lua_State *L ) const
-{
-	ASSERT( m_iLuaFunction != LUA_NOREF );
-
-	if( m_iLuaFunction != LUA_REFNIL )
-		lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, m_iLuaFunction );
-	else
-		LUA->PushNopFunction();
-
-	ASSERT_M( !lua_isnil(L, -1), ssprintf("%i", m_iLuaFunction) )
 }
 
 void ActorCommands::Register()
 {
 	if( m_cmds.v.size() == 0 )
 	{
-		m_iLuaFunction = LUA_REFNIL;
+		LUA->PushNopFunction();
+		this->SetFromStack();
 		return;
 	}
 
@@ -132,34 +81,7 @@ void ActorCommands::Register()
 	LUA->RunScript( s2, 1 );
 
 	/* The function is now on the stack. */
-	m_iLuaFunction = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
-}
-
-void ActorCommands::Unregister()
-{
-	if( LUA == NULL )
-		return;	// nothing to do
-
-	luaL_unref( LUA->L, LUA_REGISTRYINDEX, m_iLuaFunction );
-	m_iLuaFunction = LUA_NOREF;
-}
-
-void ActorCommands::ReRegister()
-{
-	/* When called, the Lua state has been wiped.  Don't try to unregister our old
-	 * function reference, since it's already gone (and the number may point somewhere
-	 * else). */
-	m_iLuaFunction = LUA_NOREF;
-	Register();
-}
-
-
-void ActorCommands::ReRegisterAll()
-{
-	if( SubscriptionManager<ActorCommands>::s_pSubscribers == NULL )
-		return;
-	FOREACHS( ActorCommands*, *SubscriptionManager<ActorCommands>::s_pSubscribers, p )
-		(*p)->ReRegister();
+	this->SetFromStack();
 }
 
 

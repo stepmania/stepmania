@@ -5,28 +5,17 @@
 
 #include "RageUtil_AutoPtr.h"
 #include "Command.h"
+#include "LuaReference.h"
 
-struct lua_State;
 
-class ActorCommands
+class ActorCommands: public LuaReference
 {
 public:
 	ActorCommands( const Commands& cmds );
-	~ActorCommands();
-	ActorCommands( const ActorCommands& cpy );
-	ActorCommands &operator=( const ActorCommands& cpy );
-
-	void PushSelf( lua_State *L ) const;
-
-	static void ReRegisterAll();	// call this after resetting Lua
 
 private:
 	void Register();
-	void ReRegister();
-	void Unregister();
-
 	Commands m_cmds;
-	int m_iLuaFunction;
 };
 
 typedef AutoPtrCopyOnWrite<ActorCommands> apActorCommands;
