@@ -46,7 +46,6 @@ typedef struct soundInfo
 static short dataRefIndices[4];
 static SoundDescriptionHandle sndDescHdl;
 
-//void soundInfo::DisposeSampleReferences(Media media, short index)
 void DisposeSampleReferences(Media media, short index)
 {
     LockMutex L(SOUNDMAN->lock);
@@ -133,11 +132,10 @@ static void CallBack(QTCallBack cb, long refCon)
     EndMediaEdits(media);
     err = GetMoviesError();
     TEST_ERR(err, AddMediaSample);
-    CHECKPOINT;
-    InsertMediaIntoTrack(track, -1, tv, samples, 0x00010000);
-    CHECKPOINT;
+    err = InsertMediaIntoTrack(track, -1, tv, samples, 1L<<16);
+    TEST_ERR(err, InsertMediaIntoTrack);
 
-    if (++dataRefIndices[3] > 3)
+    if (++dataRefIndices[3] >= 3)
     {
         SetMovieActiveSegment(movie, (dataRefIndices[3] - 2) * samples, twicesamples);
         DisposeSampleReferences(media, dataRefIndices[3] % 3);
@@ -162,6 +160,9 @@ static void CallBack(QTCallBack cb, long refCon)
 
 RageSound_QT::RageSound_QT()
 {
+#if 1
+    RageException::ThrowNonfatal("Class not finished.");
+#endif
     lastPos = 0;
     bzero(dataRefIndices, 8);
 
@@ -204,6 +205,17 @@ RageSound_QT::~RageSound_QT()
         s->snd->StopPlaying();
         sounds.pop_back();
     }
+    StopMovie(movie);
+    Media media = GetTrackMedia(track);
+    if (media)
+    {
+        DisposeSampleReferences(media, 0);
+        DisposeSampleReferences(media, 1);
+        DisposeSampleReferences(media, 2);
+    }
+    DisposeMovieTrack(track);
+    DisposeMovie(movie);
+    DisposeHandle(Handle(sndDescHdl));
 }
 
 void RageSound_QT::StartMixing(RageSound *snd)
