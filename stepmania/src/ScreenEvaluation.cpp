@@ -277,16 +277,18 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 	case stage:
 	case course:
+		m_bgOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "overlay") );
+		m_bgOverlay.SetZ( -1 ); /* draw on top of everything except transitions */
+		this->AddChild( &m_bgOverlay );
+
 		if( m_bFailed )
 		{
 			m_bgFailedBack.LoadFromAniDir( THEME->GetPathB(m_sName, "failed background") );
-			m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "failed overlay") );
 			m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
 		}
 		else
 		{
 			// the theme can use the regular background for passed background
-			m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "passed overlay") );
 			m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
 		}
 		m_sndPassFail.Play();
@@ -1220,7 +1222,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 			m_bPassFailTriggered = true;
 		}
 		m_bgFailedBack.Update( fDeltaTime );
-		m_bgFailedOverlay.Update( fDeltaTime );
 	}
 	else if (m_Type==stage||m_Type==course) // STAGE/NONSTOP eval AND passed
 	{
@@ -1229,9 +1230,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 			if(!m_sndPassFail.IsPlaying()) m_sndPassFail.Play();
 			m_bPassFailTriggered = true;
 		}
-
-		m_bgPassedOverlay.Update( fDeltaTime );
-
 	}
 //	if(m_Type == stage) // stage eval ... pass / fail / whatever
 //	{
@@ -1289,12 +1287,6 @@ void ScreenEvaluation::DrawPrimitives()
 //		m_bgSpecialBack.Draw();
 
 	Screen::DrawPrimitives();
-	
-	// draw the pass / failed overlays here respectively
-	if(m_bFailed && (m_Type==stage||m_Type==course))
-		m_bgFailedOverlay.Draw();
-	else if (m_Type==stage||m_Type==course)
-		m_bgPassedOverlay.Draw();
 
 	m_Menu.DrawTopLayer();
 }
