@@ -347,7 +347,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			
 			int i;
 
-			for ( i = 0; m_vSongs.size(); i++)
+			for ( i = 0; i < m_vSongs.size(); i++)
 				if ( ( m_vSongs[i]->GetTranslitArtist() == NSMAN->m_sArtist ) &&
 					 ( m_vSongs[i]->GetTranslitMainTitle() == NSMAN->m_sMainTitle ) &&
 					 ( m_vSongs[i]->GetTranslitSubTitle() == NSMAN->m_sSubTitle ) )
@@ -361,6 +361,13 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			switch (NSMAN->m_iSelectMode)
 			{
 			case 2: //We need to do cmd 1 as well here
+				if (haveSong)
+				{
+					m_iSongNum = i + m_vSongs.size();
+					UpdateSongsListPos();
+					StartSelectedSong();
+				}
+				break;
 			case 1:	//Scroll to song as well
 				if (haveSong)
 				{
@@ -375,10 +382,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 					NSMAN->m_iSelectMode = 1;
 				NSMAN->SelectUserSong();
 			}
-			//Play the song.
-			if ( ( NSMAN->m_iSelectMode == 2 ) && ( haveSong ) )
-				StartSelectedSong();
-
 		}
 		break;
 	}

@@ -484,6 +484,7 @@ void NetworkSyncManager::ProcessInput()
 				m_WaitingChat = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
+			break;
 		case 8: //Select Song/Play song
 			{
 				m_iSelectMode = m_packet.Read1();
@@ -492,6 +493,7 @@ void NetworkSyncManager::ProcessInput()
 				m_sSubTitle = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
+			break;
 		}
 		m_packet.ClearPacket();
 	}
