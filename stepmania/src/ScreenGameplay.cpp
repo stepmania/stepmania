@@ -185,16 +185,12 @@ void ScreenGameplay::Init()
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
 		ASSERT( pCourse );
-		const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 		/* Increment the play count. */
 		if( !m_bDemonstration )
 		{
 			FOREACH_EnabledPlayer(p)
-			{
-				Trail* pTrail = GAMESTATE->m_pCurTrail[p];
-				PROFILEMAN->IncrementCoursePlayCount( pCourse, pTrail, p );
-			}
+				PROFILEMAN->IncrementCoursePlayCount( pCourse, GAMESTATE->m_pCurTrail[p], p );
 		}
 
 		m_apSongsQueue.clear();
