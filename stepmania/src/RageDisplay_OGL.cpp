@@ -651,7 +651,7 @@ void SetupExtensions()
 	GLExt.wglSwapIntervalEXT = wglSwapIntervalEXT;
 #endif
 
-	if( HasExtension("EXT_paletted_texture") )
+	if( HasExtension("GL_EXT_paletted_texture") )
 	{
 		GLExt.glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
 		GLExt.glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
