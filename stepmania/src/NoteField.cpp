@@ -412,7 +412,7 @@ void NoteField::DrawPrimitives()
 	float fCenteredTimesBoomerang = 
 		current_po.m_fScrolls[PlayerOptions::SCROLL_CENTERED] * 
 		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
-	iFirstPixelToDraw += SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 );
+	iFirstPixelToDraw += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
 	int iLastPixelToDraw = m_iEndDrawingPixel;
 	
 	float fDrawScale = 1;
