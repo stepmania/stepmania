@@ -1478,6 +1478,21 @@ static void HandleInputEvents(float fDeltaTime)
 	}
 }
 
+void FocusChanged( bool bHasFocus )
+{
+	g_bHasFocus = bHasFocus;
+
+	LOG->Trace( "App %s focus", g_bHasFocus? "has":"doesn't have" );
+
+	/* If we lose focus, we may lose input events, especially key releases. */
+	INPUTFILTER->Reset();
+
+	if(g_bHasFocus)
+		BoostAppPri();
+	else
+		RestoreAppPri();
+}
+
 static void HandleSDLEvents()
 {
 	// process all queued events
@@ -1498,18 +1513,7 @@ static void HandleSDLEvents()
 					break;
 
 				uint8_t i = SDL_GetAppState();
-				
-				g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
-				LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
-					i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
-
-				/* If we lose focus, we may lose input events, especially key releases. */
-				INPUTFILTER->Reset();
-
-				if(g_bHasFocus)
-					BoostAppPri();
-				else
-					RestoreAppPri();
+				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
 			}
 		}
 	}
