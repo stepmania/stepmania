@@ -261,7 +261,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_HidePage:
 		TweenPageOffScreen();
-		this->PostScreenMessage( SM_ShowNextPage, 1 );
+		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
 		break;
 	}
 
