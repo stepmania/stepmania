@@ -267,11 +267,18 @@ void Course::AutoGenEndlessFromGroupAndDifficulty( CString sGroupName, Difficult
 	}
 
 	// only need one song because it repeats
+	// We want multiple songs, so we can try to prevent repeats during
+	// gameplay. (We might still get a repeat at the repeat boundary,
+	// but that'd be rare.) -glenn
 	Entry e;
 	e.type = Entry::random_within_group;
 	e.group_name = sGroupName;
 	e.difficulty = dc;
-	m_entries.push_back( e );
+
+	vector<Song*> vSongs;
+	SONGMAN->GetSongs( vSongs, e.group_name );
+	for( unsigned i = 0; i < vSongs.size(); ++i)
+		m_entries.push_back( e );
 }
 
 
@@ -285,8 +292,15 @@ bool Course::HasDifficult() const
 
 bool Course::IsPlayableIn( NotesType nt ) const
 {
-	// TODO: something smarter here
-	return m_entries.size() > 0;
+	/* XXX: Is this good enough?  This needs to be guaranteed: if we say
+	 * a course is playable and it's not, we'll crash in ScreenGameplay. */
+
+	vector<Song*> vSongs;
+	vector<Notes*> vNotes;
+	vector<CString> vsModifiers;
+	GetStageInfo( vSongs, vNotes, vsModifiers, nt, false);
+	
+	return vNotes.size() > 0;
 }
 
 
