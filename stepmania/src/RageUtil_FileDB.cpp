@@ -10,6 +10,9 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
+	CString containing_lower = containing;
+	containing_lower.ToLower();
+
 	set<File>::const_iterator i = files.lower_bound( File(beginning) );
 	for( ; i != files.end(); ++i)
 	{
@@ -31,8 +34,11 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 		 * search instead of string match). */
 		if(containing.size())
 		{
-			size_t pos = i->name.find(containing, beginning.size());
-			if(pos == i->name.npos) continue; /* doesn't contain it */
+			CString name = i->name;
+			name.ToLower();
+
+			size_t pos = name.find( containing_lower, beginning.size() );
+			if(pos == name.npos) continue; /* doesn't contain it */
 			if(pos + containing.size() > unsigned(end_pos)) continue; /* found it but it overlaps with the end */
 		}
 
