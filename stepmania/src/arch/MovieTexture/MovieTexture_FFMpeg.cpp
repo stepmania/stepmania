@@ -167,7 +167,7 @@ void FFMpeg_Helper::Init()
 	GetNextTimestamp = true;
 	CurrentTimestamp = 0, Last_IP_Timestamp = 0;
 	LastFrameDelay = 0;
-	pts = 0, last_IP_pts = 0;
+	pts = last_IP_pts = -1;
 
 	if( current_packet_offset != -1 )
 	{
@@ -331,7 +331,6 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	m_uTexHandle = 0;
 	m_bLoop = true;
     m_State = DECODER_QUIT; /* it's quit until we call StartThread */
-	m_bLoop = true;
 	m_img = NULL;
 	m_ImageWaiting = false;
 	m_Rate = 1;
@@ -401,45 +400,27 @@ static CString averr_ssprintf( int err, const char *fmt, ... )
 
 void MovieTexture_FFMpeg::CreateDecoder()
 {
-	RageTextureID actualID = GetID();
-
-	actualID.iAlphaBits = 0;
-
 	avcodec::av_register_all();
-	int ret = avcodec::av_open_input_file( &decoder->m_fctx, actualID.filename, NULL, 0, NULL );
+	int ret = avcodec::av_open_input_file( &decoder->m_fctx, GetID().filename, NULL, 0, NULL );
 	if( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", actualID.filename.c_str()) );
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", GetID().filename.c_str()) );
 
 	ret = avcodec::av_find_stream_info( decoder->m_fctx );
 	if ( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", actualID.filename.c_str()) );
+		RageException::Throw( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", GetID().filename.c_str()) );
 	
 	decoder->m_stream = FindVideoStream( decoder->m_fctx );
 	if ( decoder->m_stream == NULL )
-		RageException::Throw( "AVCodec (%s): Couldn't find any video streams", actualID.filename.c_str() );
+		RageException::Throw( "AVCodec (%s): Couldn't find any video streams", GetID().filename.c_str() );
 
 	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( decoder->m_stream->codec.codec_id );
 	if( codec == NULL )
-		RageException::Throw( "AVCodec (%s): Couldn't find decoder %i", actualID.filename.c_str(), decoder->m_stream->codec.codec_id );
+		RageException::Throw( "AVCodec (%s): Couldn't find decoder %i", GetID().filename.c_str(), decoder->m_stream->codec.codec_id );
 
 	LOG->Trace("Opening codec %s", codec->name );
 	ret = avcodec::avcodec_open( &decoder->m_stream->codec, codec );
 	if ( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", actualID.filename.c_str(), codec->name) );
-
-	/* Cap the max texture size to the hardware max. */
-	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
-
-	m_iSourceWidth  = decoder->m_stream->codec.width;
-	m_iSourceHeight = decoder->m_stream->codec.height;
-
-	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
-
-	/* Texture dimensions need to be a power of two; jump to the next. */
-	m_iTextureWidth = power_of_two(m_iImageWidth);
-	m_iTextureHeight = power_of_two(m_iImageHeight);
+		RageException::Throw( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", GetID().filename.c_str(), codec->name) );
 }
 
 
@@ -475,6 +456,23 @@ void MovieTexture_FFMpeg::CreateTexture()
         return;
 
 	CHECKPOINT;
+
+	RageTextureID actualID = GetID();
+	actualID.iAlphaBits = 0;
+
+	/* Cap the max texture size to the hardware max. */
+	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
+
+	m_iSourceWidth  = decoder->m_stream->codec.width;
+	m_iSourceHeight = decoder->m_stream->codec.height;
+
+	/* image size cannot exceed max size */
+	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
+
+	/* Texture dimensions need to be a power of two; jump to the next. */
+	m_iTextureWidth = power_of_two(m_iImageWidth);
+	m_iTextureHeight = power_of_two(m_iImageHeight);
 
 	/* If the movie is coming in RGB, we can potentially save a lot
 	 * of time by simply sending frame updates to RageDisplay in the
@@ -550,6 +548,17 @@ void MovieTexture_FFMpeg::DecoderThread()
 	RageTimer Timer;
 	float Clock = 0;
 	bool FrameSkipMode = false;
+
+	/* Movie decoding is bursty.  We burst decode a frame, then we sleep, then we burst
+	 * to YUV->RGB convert, then we wait for the frame to move, and we repeat.  */
+//	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL))
+//		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
+
+	/* Windows likes to boost priority when processes come out of a wait state.  We don't
+	 * want that, since it'll result in us having a small priority boost after each movie
+	 * frame, resulting in skips in the gameplay thread. */
+//	if(!SetThreadPriorityBoost(GetCurrentThread(), TRUE))
+//		LOG->Warn(werr_ssprintf(GetLastError(), "SetThreadPriorityBoost failed"));
 
 	CHECKPOINT;
 
