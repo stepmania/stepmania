@@ -311,9 +311,9 @@ void GetCwd(CString &s)
 class DirCache {
 public:
 	struct CacheEntry {
-		CArray<CString> files;
-		CArray<CString> exts;
-		CArray<int> Attributes;
+		CStringArray files;
+		CStringArray exts;
+		CArray<int,int> Attributes;
 
 		CString dir;
 	};
@@ -326,7 +326,7 @@ private:
 	CacheEntry *LoadDirCache( const CString &sPath );
 
 	/* We don't have too many directories ... XXX - glenn */
-	CArray<CacheEntry *> directory_cache;
+	CArray<CacheEntry *,CacheEntry *> directory_cache;
 } static DirectoryCache;
 
 void DirCache::FlushCache()
