@@ -5,6 +5,14 @@
 #include "RageDisplay.h" // for REFRESH_DEFAULT
 #include "StepMania.h"
 
+#if defined(UNIX)
+#include <X11/Xlib.h>
+#endif
+
+#if defined(UNIX)
+extern Display *g_X11Display;
+#endif
+
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
 	/* By default, ignore all SDL events.  We'll enable them as we need them.
@@ -181,6 +189,19 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 
 	/* Recreating the window changes the hwnd. */
 	SDL_UpdateHWnd();
+
+#if defined(unix)
+	{
+		SDL_SysWMinfo info;
+		SDL_VERSION(&info.version);
+
+		g_X11Display = NULL;
+		if ( SDL_GetWMInfo(&info) < 0 )
+			LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
+		else
+			g_X11Display = info.info.x11.display;
+	}
+#endif
 
 	{
 		/* Find out what we really got. */
