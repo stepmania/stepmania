@@ -31,9 +31,10 @@
 #include "ProfileManager.h"
 #include "arch/arch.h"
 #include "ThemeManager.h"
-#include "fstream"
+//#include "fstream"
 #include "Bookkeeper.h"
 #include "LightsManager.h"
+#include "RageFile.h"
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -1007,18 +1008,20 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	// Filter swear words from name
 	//
 	name.MakeUpper();
-	ifstream f;
-	f.open( NAMES_BLACKLIST_FILE );
-	if( f.good() )
-	{
-		CString sLine;
-		while( getline(f,sLine) )
+	RageFile file(NAMES_BLACKLIST_FILE);
+		
+		if (file.IsOpen())
 		{
-			sLine.MakeUpper();
-			if( name.Find(sLine) != -1 )
-				name = "";
+			CString line;
+			
+			while (!file.AtEOF())
+			{
+				line = file.GetLine();
+				line.MakeUpper();
+				if (name.Find(line) != -1)
+					name = "";
+			}
 		}
-	}
 
 	vector<RankingFeats> aFeats;
 	GetRankingFeats( pn, aFeats );

@@ -508,14 +508,10 @@ CString DerefRedir(const CString &path)
 
 CString GetRedirContents(const CString &path)
 {
-	CString sNewFileName;
-	{
-		ifstream file(path);
-		getline(file, sNewFileName);
-	}
-
+	RageFile file(path);
+	CString sNewFileName = file.GetLine();
+	
 	StripCrnl(sNewFileName);
-
 	return sNewFileName;
 }
 

@@ -18,8 +18,8 @@
 #include "IniFile.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
+#include "RageFile.h"
 #include <time.h>
-#include <fstream>
 
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
@@ -92,14 +92,15 @@ void Bookkeeper::ReadFromDisk()
 	ini.GetValue( "MachineStatistics", "TotalPlays",			m_iTotalPlays ); 
 
 	// read dat
-	FILE* fp = fopen( COINS_DAT, "r" );
-	if( fp )
-	{
-		for( int i=0; i<DAYS_PER_YEAR; i++ )
-			for( int j=0; j<HOURS_PER_DAY; j++ )
-				fscanf( fp, "%d ", &m_iCoinsByHourForYear[i][j] );
-		fclose( fp );
-	}
+    RageFile file(COINS_DAT, "r");
+    if (file.IsOpen())
+    {
+        FILE *fp = file.GetFilePointer();
+    
+        for (int i=0; i<DAYS_PER_YEAR; ++i)
+            for (int j=0; j<HOURS_PER_DAY; ++j)
+                fscanf(fp, "%d ", &m_iCoinsByHourForYear[i][j]);
+    }
 }
 
 void Bookkeeper::WriteToDisk()
@@ -117,14 +118,16 @@ void Bookkeeper::WriteToDisk()
 	ini.WriteFile();
 
 	// write dat
-	FILE* fp = fopen( COINS_DAT, "w" );
-	if( fp )
-	{
-		for( int i=0; i<DAYS_PER_YEAR; i++ )
-			for( int j=0; j<HOURS_PER_DAY; j++ )
-				fprintf( fp, "%d ", m_iCoinsByHourForYear[i][j] );
-		fclose( fp );
-	}
+    RageFile file(COINS_DAT, "w");
+    
+    if (file.IsOpen())
+    {
+        FILE *fp = file.GetFilePointer();
+        
+        for (int i=0; i<DAYS_PER_YEAR; ++i)
+            for (int j=0; j<HOURS_PER_DAY; ++j)
+                fprintf(fp, "%d ", m_iCoinsByHourForYear[i][j]);
+    }
 }
 
 void Bookkeeper::UpdateLastSeenTime()

@@ -155,13 +155,13 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
 	ResetTracksMagic();
 
-	ifstream file(sPath);
-	if( file.bad() )
-		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
-
-	CString line;
-	while( getline(file, line) )	// foreach line
+	RageFile file(sPath);
+	
+	if (!file.IsOpen())
+        RageException::Throw("Failed to open %s for reading.", sPath.c_str());
+	while (!file.AtEOF())
 	{
+		CString line = file.GetLine();
 		StripCrnl(line);
 		CString value_name;		// fill these in
 		CString value_data;	
@@ -454,15 +454,14 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
-	ifstream file(sPath);
-	if( file.bad() )
+	RageFile file(sPath);
+	
+	if (!file.IsOpen())
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
-
-	CString line;
-	while( getline(file, line) )	// foreach line
+	while (!file.AtEOF())
 	{
+		CString line = file.GetLine();
 		StripCrnl(line);
-
 		CString value_name;		// fill these in
 		CString value_data;	
 
@@ -577,20 +576,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					break;
 				}
 
-				// Let me just take a moment to express how frustrated I am with the new, 
-				// poorly-designed changes to the BMS format.
-				//
-				//
-				// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhhhhhhh!!!!!!!!!!!!!!!
-				//
-				// Thank you.
-
-				// MD 10/26/03 - And allow me to add to that my opinion of the BMS format in general.
-				//
-				// ()*&@^*&^@$(*&^!@(*&^($*&^!#(*&@!&*#*#*@#*@#(*@(%@(*!
-				//
-				// end MD 10/26/03
-
 				case 8:	{ // indirect bpm
 					// This is a very inefficient way to parse, but it doesn't matter much
 					// because this is only parsed on the first run after the song is installed.
@@ -599,13 +584,17 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					ifstream file(sPath);
-					if( file.bad() )
+					/* I don't like this. I think we should just seek back to the beginning
+					 * rather than open the file again. However, I'm not changing the logic,
+					 * only the implementation. -- Steve
+					 */
+					RageFile file(sPath);//Why doesn't VC6 bitch here but it does with int??
+					
+					if (!file.IsOpen())
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
-
-					CString line;
-					while( getline(file, line) )	// foreach line
+					while (!file.AtEOF())
 					{
+						CString line = file.GetLine();
 						StripCrnl(line);
 						CString value_name;		// fill these in
 						CString value_data;	
@@ -628,9 +617,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 							value_data.erase(0,iIndexOfSeparator+1);
 						}
 						else	// no separator
-						{
 							value_name = line;
-						}
 
 						if( 0==stricmp(value_name, sTagToLookFor) )
 						{
@@ -640,9 +627,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					}
 
 					if( fBPM == -1 )	// we didn't find the line we were looking for
-					{
 						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
-					}
 					else
 					{
 						BPMSegment newSeg( NoteRowToBeat(iStepIndex), fBPM );
@@ -661,13 +646,13 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					ifstream file(sPath);
-					if( file.bad() )
-						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
-
-					CString line;
-					while( getline(file, line) )	// foreach line
+					RageFile file(sPath);//Why doesn't VC6 bitch here but it does with int??
+						
+					if (!file.IsOpen())
+                        RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
+					while (!file.AtEOF())
 					{
+						CString line = file.GetLine();
 						StripCrnl(line);
 						CString value_name;		// fill these in
 						CString value_data;	

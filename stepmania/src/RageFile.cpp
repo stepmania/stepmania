@@ -46,6 +46,12 @@ void CollapsePath( CString &sPath )
     sPath = join( SLASH, as );
 }
 
+RageFile::RageFile(const CString& path, const char *mode)
+{
+    mFP = NULL;
+    Open(path, mode);
+}
+
 bool RageFile::Open(const CString& path, const char *mode)
 {
     Close();

@@ -14,7 +14,6 @@
 */
 
 #include <cstdio>
-#include <fstream>
 
 // call FixSlashes on any path that came from the user
 void FixSlashesInPlace( CString &sPath );
@@ -31,7 +30,7 @@ private:
     
 public:
     RageFile() : mPath("") { mFP = NULL; }
-    RageFile(const CString& path, const char *mode = "r") { Open(path, mode); }
+    RageFile(const CString& path, const char *mode = "r");
     ~RageFile() { Close(); }
     
     bool Open(const CString& path, const char *mode = "r");

@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "MovieTexture_Null.h"
 #include "PrefsManager.h"
+#include "RageFile.h"
 
 /* _WINDOWS is Windows only, where _WIN32 is Windows and Xbox, I think. Does this
  * work on the Xbox? -glenn */
@@ -21,7 +22,6 @@
 #include "MovieTexture_FFMpeg.h"
 #endif
 
-#include "RageFile.h"
 bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 {
 	CString ignore, ext;
@@ -35,32 +35,37 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 		return true;
 	}
 
-	ifstream f;
-	f.exceptions( ifstream::eofbit | ifstream::failbit | ifstream::badbit );
-
-	try {
-		f.open(fn);
-
-		f.seekg( 0x70, ios_base::beg );
-		type = "    ";
-		f.read((char *) type.c_str(), 4);
-		int i;
-		for( i = 0; i < 4; ++i)
-			if(type[i] < 0x20 || type[i] > 0x7E) type[i] = '?';
-
-		f.seekg( 0xBC, ios_base::beg );
-
-		handler = "    ";
-		f.read((char *) handler.c_str(), 4);
-		for(i = 0; i < 4; ++i)
-			if(handler[i] < 0x20 || handler[i] > 0x7E) handler[i] = '?';
-	} catch(ifstream::failure e) {
-		LOG->Warn("error on %s: %s", fn.c_str(), e.what() );
-		handler = type = "";
-		return false;
-	}
+	//Not very pretty but should do all the same error checking without iostream
+#define HANDLE_ERROR(x) {error = x; goto errorLabel;}
+	RageFile file(fn);
+	CString error("");
+	int i;
+	
+	if (!file.IsOpen())
+		HANDLE_ERROR("Could not open file.");
+	if (!file.Seek(0x70, SEEK_SET))
+		HANDLE_ERROR("Could not seek.");
+	type = "    ";
+	if (file.Read((char *)type.c_str(), 4) != 4)
+		HANDLE_ERROR("Could not read.");
+	for (i=0; i<4; ++i)
+		if (type[i] < 0x20 || type[i] > 0x7E) type[i] = '?';
+	
+	if (!file.Seek(0xBC, SEEK_SET))
+		HANDLE_ERROR("Could not seek.");
+	handler = "    ";
+	if (file.Read((char *)handler.c_str(), 4) != 4)
+		HANDLE_ERROR("Could not read.");
+	for (i=0; i<4; ++i)
+		if (handler[i] < 0x20 || handler[i] > 0x7E) handler[i] = '?';
 
 	return true;
+	
+errorLabel:
+	LOG->Warn("Error on %s: %s.", fn.c_str(), error.c_str());
+	handler = type = "";
+	return false;
+#undef HANDLE_ERROR
 }
 
 static void DumpAVIDebugInfo( CString fn )

@@ -38,6 +38,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define SONGS_DIR				BASE_PATH "Songs" SLASH
 #define COURSES_DIR				BASE_PATH "Courses" SLASH
 #define STATS_PATH				BASE_PATH "stats.html"
+#define GROUP_SORT_COLOR_FILE	BASE_PATH "Data" SLASH "GroupSortColor.ini"
 const CString CATEGORY_RANKING_FILE =			BASE_PATH "Data" SLASH "CategoryRanking.dat";
 const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStepsMemCardData.dat";
 const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
@@ -85,9 +86,39 @@ SongManager::SongManager( LoadingWindow *ld )
 		SONGMAN = NULL;
 		throw;
 	}
-
+	
 	g_LastMetricUpdate.SetZero();
 	UpdateMetrics();
+
+	IniFile gsc(GROUP_SORT_COLOR_FILE);
+	const CString sortKey("Sort");
+	const CString colorsKey("Colors");
+    const IniFile::key *key;
+	int i = 0;
+	CString value;
+	
+	if (!gsc.ReadFile())
+		return;
+
+	gsc.GetValue(sortKey, "UnsortedAtEnd", m_bUnsortedAtEnd);
+	while (gsc.GetValue(sortKey, ssprintf("Group%d", ++i), value))
+		m_sSortedGroupNames.push_back(value);
+
+	key = gsc.GetKey(colorsKey);
+
+	if (!key)
+		return;
+
+	IniFile::key::const_iterator iter = key->begin();
+
+	while (iter != key->end())
+	{
+		RageColor c(1,1,1,1);
+		sscanf((*iter).second, "%f,%f,%f,%f", &c.r, &c.g, &c.b, &c.a);
+		m_mMappedGroupColors[(*iter).first] = c;
+		LOG->Trace("Found color: %f.%f.%f.%f", c.r, c.g, c.b, c.a);
+		++iter;
+	}
 }
 
 SongManager::~SongManager()
@@ -346,60 +377,67 @@ void SongManager::FreeSongs()
 //
 // Helper function for reading/writing scores
 //
-bool FileRead( ifstream& f, CString& sOut )
+bool FileRead(RageFile& f, CString& sOut)
 {
-	if( f.eof() )
+	if (f.AtEOF())
 		return false;
-	getline(f, sOut);
+	sOut = f.GetLine();
 	return true;
 }
-bool FileRead( ifstream& f, int& iOut )
+
+bool FileRead(RageFile& f, int& iOut)
 {
 	CString s;
-	if( !FileRead( f, s ) )
+	if (!FileRead(f, s))
 		return false;
-	iOut = atoi( s );
+	iOut = atoi(s);
 	return true;
 }
-bool FileRead( ifstream& f, unsigned& uOut )
+
+bool FileRead(RageFile& f, unsigned& uOut)
 {
 	CString s;
-	if( !FileRead( f, s ) )
+	if (!FileRead(f, s))
 		return false;
-	uOut = atoi( s );
+	uOut = atoi(s);
 	return true;
 }
-bool FileRead( ifstream& f, float& fOut )
+
+bool FileRead(RageFile& f, float& fOut)
 {
 	CString s;
-	if( !FileRead( f, s ) )
+	if (!FileRead(f, s))
 		return false;
-	fOut = (float) atof( s );
+	fOut = (float)atof(s);
 	return true;
 }
-void FileWrite( ofstream& f, const CString& sWrite )
+
+void FileWrite(RageFile& f, const CString& sWrite)
 {
-	f << sWrite << "\n";
+	f.PutString(sWrite + "\n");
 }
-void FileWrite( ofstream& f, int iWrite )
+
+void FileWrite(RageFile& f, int iWrite)
 {
-	f << iWrite << "\n";
+	f.PutString(ssprintf("%d\n", iWrite));
 }
-void FileWrite( ofstream& f, size_t uWrite )
+
+void FileWrite(RageFile& f, size_t uWrite)
 {
-	f << uWrite << "\n";
+	f.PutString(ssprintf("%lu\n", uWrite));
 }
-void FileWrite( ofstream& f, float fWrite )
+
+void FileWrite(RageFile& f, float fWrite)
 {
-	f << fWrite << "\n";
+	f.PutString(ssprintf("%f\n", fWrite));
 }
 
 #define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
 
 void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 {
-	ifstream f(fn);
-	if( !f.good() )
+	RageFile f(fn);
+	if (!f.IsOpen() || f.GetError() != 0)
 		WARN_AND_RETURN;
 
 	int version;
@@ -493,10 +531,10 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 
 void SongManager::ReadCategoryRankingsFromFile( CString fn )
 {
-	ifstream f(fn);
-	if( !f.good() )
+	RageFile f(fn);
+	if (!f.IsOpen() || f.GetError() != 0)
 		WARN_AND_RETURN;
-
+	
 	int version;
 	if( !FileRead(f, version) )
 		WARN_AND_RETURN;
@@ -525,10 +563,10 @@ void SongManager::ReadCategoryRankingsFromFile( CString fn )
 
 void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 {
-	ifstream f(fn);
-	if( !f.good() )
+	RageFile f(fn);
+	if (!f.IsOpen() || f.GetError() != 0)
 		WARN_AND_RETURN;
-
+	
 	int version;
 	if( !FileRead(f, version) )
 		WARN_AND_RETURN;
@@ -680,8 +718,8 @@ void SongManager::SaveCategoryRankingsToFile( CString fn )
 {
 	LOG->Trace("SongManager::SaveCategoryRankingsToFile");
 
-	ofstream f(fn);
-	if( !f.good() )
+	RageFile f(fn);
+	if (!f.IsOpen() || f.GetError() != 0)
 		return;
 
 	FileWrite( f, CATEGORY_RANKING_VERSION );
@@ -708,10 +746,10 @@ void SongManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 {
 	LOG->Trace("SongManager::SaveCourseMemCardDataToFile");
 
-	ofstream f(fn);
-	if( !f.good() )
+	RageFile f(fn);
+	if (!f.IsOpen() || f.GetError() != 0)
 		return;
-
+	
 	FileWrite( f, COURSE_MEM_CARD_DATA_VERSION );
 
 	FileWrite( f, m_pCourses.size() );
@@ -761,12 +799,12 @@ void SongManager::SaveStepsMemCardDataToFile( CString fn, int mc )
 {
 	LOG->Trace("SongManager::SaveStepsMemCardDataToFile %s", fn.c_str());
 
-	ofstream f(fn);
-	if( !f.good() )
+	RageFile f(fn);
+	if (!f.IsOpen() || f.GetError() != 0)
 		return;
-
+	
 	FileWrite( f, STEPS_MEM_CARD_DATA_VERSION );
-
+	
 	FileWrite( f, m_pSongs.size() );
 
 	for( unsigned s=0; s<m_pSongs.size(); s++ )	// foreach song
@@ -847,6 +885,11 @@ bool SongManager::DoesGroupExist( CString sGroupName )
 
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
+	const map<CString, RageColor>::const_iterator iter = m_mMappedGroupColors.find(sGroupName);
+
+	if (iter != m_mMappedGroupColors.end())
+		return (*iter).second;
+	
 	UpdateMetrics();
 
 	// search for the group index

@@ -101,18 +101,22 @@ TitleSubst::TitleSubst(const CString &section)
 
 void TitleSubst::Load(const CString &filename, const CString &section)
 {
-	ifstream f;
-	f.open(filename);
-	if(!f.good()) return;
-
+	RageFile f(filename);
+	
+	if (!f.IsOpen() || f.GetError() != 0)
+		return;
+	
 	CString CurrentSection;
 	TitleTrans tr;
-
-	while(!f.eof())
+	
+	while (!f.AtEOF())
 	{
-		CString line;
-		if(!getline(f, line)) continue;
-
+		CString line = f.GetLine();
+		if (f.GetError() != 0)
+		{
+			clearerr(f.GetFilePointer());
+			continue;
+		}
 		if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)
 		{
 			/* Annoying header that Windows puts on UTF-8 plaintext
