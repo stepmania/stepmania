@@ -187,7 +187,7 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 	vector<float> BPMS;
 	for( unsigned i = 0; i < ci.size(); ++i )
 	{
-		if( ci[i].Random )
+		if( ci[i].Mystery )
 		{
 			BPMS.push_back( -1 );
 			continue;

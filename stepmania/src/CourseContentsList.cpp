@@ -61,7 +61,7 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	
-		if( ci[i].Random )
+		if( ci[i].Mystery )
 		{
 			Difficulty dc = pCourse->GetDifficulty( ci[i] );
 			int iMeterLow, iMeterHigh;

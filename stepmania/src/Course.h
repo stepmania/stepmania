@@ -23,6 +23,7 @@ class Course
 {
 	struct Entry {
 		enum Type { fixed, random, random_within_group, best, worst, caprice } type;
+		bool mystery;			// show "??????"
 		Song* pSong;			// used in type=fixed
 		CString group_name;		// used in type=random_within_group
 		Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
@@ -37,12 +38,10 @@ class Course
 			low_meter = -1;
 			high_meter = -1;
 			players_index = -1;
+			mystery = false;
 		}
 	};
 	vector<Entry> m_entries;
-
-	mutable bool m_bCapriceCached;          // whether or not caprice has been generated
-	mutable vector<Song*> m_CapriceEntries; // caprice entries
 
 public:
 	Course();
@@ -70,6 +69,7 @@ public:
 		Notes*	pNotes;
 		CString	Modifiers;
 		bool	Random;
+		bool	Mystery;
 		bool	Difficult; /* set to true if this is the difficult version */
 		/* Corresponding entry in m_entries: */
 		int		CourseIndex;

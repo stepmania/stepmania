@@ -101,7 +101,7 @@ int Course::GetMeter( int Difficult ) const
 	float fTotalMeter = 0;
 	for( unsigned c = 0; c < ci.size(); ++c )
 	{
-		if( ci[c].Random )
+		if( ci[c].Mystery )
 		{
 			switch( GetDifficulty(ci[c]) )
 			{
@@ -186,8 +186,6 @@ void Course::LoadFromCRSFile( CString sPath )
 				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				CLAMP( new_entry.players_index, 0, 500 );
 			}
-			else if( sParams[1] == "CAPRICE" )
-				new_entry.type = Entry::caprice;
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
 				new_entry.type = Entry::worst;
@@ -196,10 +194,12 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 			else if( sParams[1] == "*" )
 			{
+				new_entry.mystery = true;
 				new_entry.type = Entry::random;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
+				new_entry.mystery = true;
 				new_entry.type = Entry::random_within_group;
 				CString sSong = sParams[1];
 				sSong.Replace( "\\", "/" );
@@ -254,7 +254,23 @@ void Course::LoadFromCRSFile( CString sPath )
 				}
 			}
 
-			new_entry.modifiers = sParams[3];
+			{
+				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.mystery 
+				 * on or off. */
+				CStringArray mods;
+				split( sParams[3], ",", mods, true );
+				for( int j = (int) mods.size()-1; j >= 0 ; --j )
+				{
+					if( !mods[j].CompareNoCase("showcourse") )
+						new_entry.mystery = false;
+					else if( !mods[j].CompareNoCase("noshowcourse") )
+						new_entry.mystery = true;
+					else 
+						continue;
+					mods.erase(mods.begin() + j);
+				}
+				new_entry.modifiers = join( ",", mods );
+			}
 
 			m_entries.push_back( new_entry );
 		}
@@ -301,7 +317,7 @@ void Course::Save()
 			fprintf( fp, "#SONG:*" );
 			break;
 		case Entry::random_within_group:
-			fprintf( fp, "#SONG:" + entry.group_name + SLASH "*" );
+			fprintf( fp, "#SONG:%s/*", entry.group_name.c_str() );
 			break;
 		case Entry::best:
 			fprintf( fp, "#SONG:BEST%d", entry.players_index+1 );
@@ -313,11 +329,22 @@ void Course::Save()
 			ASSERT(0);
 		}
 
+		fprintf( fp, ":" );
 		if( entry.difficulty != DIFFICULTY_INVALID )
-			fprintf( fp, ":%s", DifficultyToString(entry.difficulty).c_str() );
+			fprintf( fp, "%s", DifficultyToString(entry.difficulty).c_str() );
 	
+		fprintf( fp, ":" );
 		if( entry.low_meter != -1  &&  entry.high_meter != -1 )
-			fprintf( fp, ":%d..%d", entry.low_meter, entry.high_meter );
+			fprintf( fp, "%d..%d", entry.low_meter, entry.high_meter );
+		fprintf( fp, ":%s", entry.modifiers.c_str() );
+
+		bool default_mystery = !(entry.type == Entry::random || entry.type == Entry::random_within_group);
+		if( default_mystery != entry.mystery )
+		{
+			if( entry.modifiers != "" )
+				fprintf( fp, "," );
+			fprintf( fp, entry.mystery? "noshowcourse":"showcourse" );
+		}
 
 		fprintf( fp, ";\n" );
 	}
@@ -397,7 +424,7 @@ bool Course::HasDifficult( NotesType nt ) const
 		if( Normal[i].CourseIndex != Hard[i].CourseIndex )
 			return true; /* it changed */
 
-		if( Normal[i].Random )
+		if( Normal[i].Mystery )
 		{
 			const Entry &e = m_entries[ Normal[i].CourseIndex ];
 			
@@ -446,8 +473,12 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
 	}
 
+	
+	/* Different seed for each course, but the same for the whole round: */
+	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
+
 	vector<Song*> AllSongsShuffled = SONGMAN->GetAllSongs();
-	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end() );
+	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
 
 	ci.clear(); 
@@ -466,51 +497,6 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 
 		switch( e.type )
 		{
-		case Entry::caprice:
-			if (m_bCapriceCached)
-			{
-				if (i > m_CapriceEntries.size()) break;  // out of range
-
-				pSong = m_CapriceEntries[i];
-				LOG->Trace("Accessing caprice at %d - %s", pSong, pSong->GetFullTranslitTitle().c_str());
-				if( pSong )
-				{
-					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
-					else
-						pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
-				}
-			}
-			else
-			{
-				// find a song with the notes we want
-				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
-				{
-					/* See if the first song matches what we want. */
-					pSong = AllSongsShuffled[CurSong];
-					CurSong = (CurSong+1) % AllSongsShuffled.size();
-
-					if(e.type == Entry::random_within_group &&
-					   pSong->m_sGroupName.CompareNoCase(e.group_name))
-					   continue; /* wrong group */
-
-					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
-					else
-						pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
-
-					if( pNotes )	// found a match
-					{
-						LOG->Trace("Accessing caprice at %d", pSong);
-						LOG->Trace("Song title: %s", pSong->GetFullTranslitTitle().c_str() );
-						break;						// stop searching
-					}
-
-					pSong = NULL;
-					pNotes = NULL;
-				}
-			}
-			break;
 		case Entry::fixed:
 			pSong = e.pSong;
 			if( pSong )
@@ -521,6 +507,7 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 					pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 			}
 			break;
+		case Entry::caprice:
 		case Entry::random:
 		case Entry::random_within_group:
 			{
@@ -582,14 +569,6 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 		if( !pSong || !pNotes )
 			continue;	// this song entry isn't playable.  Skip.
 
-		m_CapriceEntries.push_back(pSong);	// cache it for random caprice
-		               // NOTE: it must be done for all songs because
-		               // above it searches the entire array; for example
-		               // if a song is defined for songs 1 and 2 and caprice
-		               // is 3, it'll only have pushed one song if it was in
-		               // the old location.  Thus, here it'll make sure
-		               // the indice exists.
-
 		/* If e.difficulty == DIFFICULTY_INVALID, then we already increased difficulty
 		 * based on meter. */
 		if( IsDifficult(Difficult) && e.difficulty != DIFFICULTY_INVALID )
@@ -611,12 +590,11 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 		cinfo.pNotes = pNotes;
 		cinfo.Modifiers = e.modifiers;
 		cinfo.Random = ( e.type == Entry::random || e.type == Entry::random_within_group );
+		cinfo.Mystery = e.mystery;
 		cinfo.CourseIndex = i;
 		cinfo.Difficult = IsDifficult(Difficult);
 		ci.push_back( cinfo ); 
 	}
-
-	m_bCapriceCached = true;
 }
 
 RageColor Course::GetColor() const
@@ -707,7 +685,7 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 	fSecondsOut = 0;
 	for( unsigned i=0; i<ci.size(); i++ )
 	{
-		if( ci[i].Random )
+		if( ci[i].Mystery )
 			return false;
 		fSecondsOut += ci[i].pSong->m_fMusicLengthSeconds;
 	}
@@ -918,9 +896,6 @@ bool Course::HasBanner() const
 void Course::UpdateCourseStats()
 {
 	LOG->Trace("Updating course stats for %s", this->m_sName.c_str() );
-
-	m_CapriceEntries.clear();  // regenerate caprice entries
-	m_bCapriceCached = false;  // on update
 
 	SortOrder_AvgDifficulty = 0;
 	SortOrder_Ranking = 2;
