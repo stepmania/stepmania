@@ -623,7 +623,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 			LOG->Trace( "Done." );
 		}
 
-		LOG->Trace( "Loading stats.xml" );
+		LOG->Trace( "Loading %s", fn.c_str() );
 		XNode xml;
 		if( !xml.LoadFromFile( fn ) )
 		{
@@ -631,6 +631,11 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 			break;
 		}
 		LOG->Trace( "Done." );
+
+		/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
+		 * warn about it. */
+		if( xml.name == "html" )
+			break;
 
 		if( xml.name != "Stats" )
 			WARN_AND_BREAK_M( xml.name );
