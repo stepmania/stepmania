@@ -707,24 +707,12 @@ void ScreenOptionsMaster::RefreshIcons()
 			const OptionRowDefinition &data = row.m_RowDef;
 
 			// find first selection and whether multiple are selected
-			int iFirstSelection = -1;
-			bool bMultipleSelected = false;
-			for( unsigned j=0; j<row.m_vbSelected[p].size(); j++ )
-			{
-				if( row.m_vbSelected[p][j] )
-				{
-					if( iFirstSelection != -1 )
-						bMultipleSelected = true;
-					else
-						iFirstSelection = j;
-				}
-
-			}
+			int iFirstSelection = row.GetOneSelection( p, true );
 
 			// set icon name
 			CString sIcon;
 
-			if( bMultipleSelected )
+			if( iFirstSelection == -1 )
 			{
 				sIcon = "Multi";
 			}
