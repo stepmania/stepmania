@@ -13,6 +13,10 @@
 #include <map>
 using namespace std;
 
+static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &seg2)
+{
+   return seg1.m_fStartTime < seg2.m_fStartTime;
+}
 
 bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 {
@@ -28,6 +32,8 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 	string line;
 
 	RageColor CurrentColor(0,1,0,1);
+
+	out.m_LyricSegments.clear();
 
 	while(input.good() && getline(input, line))
 	{
@@ -82,6 +88,8 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 		}
 		
 	}
+
+	sort( out.m_LyricSegments.begin(), out.m_LyricSegments.end(), CompareLyricSegments );
 
 	return true;
 }
