@@ -268,7 +268,10 @@ void Course::LoadFromCRSFile( CString sPath )
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
 					if( !mods[j].CompareNoCase("showcourse") )
+					{
+						LOG->Trace("XXXXXXXXXXXXXX %s", m_sPath.c_str());
 						new_entry.mystery = false;
+					}
 					else if( !mods[j].CompareNoCase("noshowcourse") )
 						new_entry.mystery = true;
 					else 
@@ -514,7 +517,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		CourseEntry &e = entries[i];
+		const CourseEntry &e = entries[i];
 
 		Song* pSong = NULL;	// fill this in
 		Steps* pNotes = NULL;	// fill this in
@@ -537,7 +540,6 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 				else
 					pNotes = pSong->GetStepsByDifficulty( nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes );
 			}
-			e.mystery = false;
 			break;
 		case COURSE_ENTRY_RANDOM:
 		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
@@ -567,7 +569,6 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 					pNotes = NULL;
 				}
 			}
-			e.mystery = true;
 			break;
 		case COURSE_ENTRY_BEST:
 		case COURSE_ENTRY_WORST:
@@ -601,7 +602,6 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 				if( pNotes == NULL )
 					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
 			}
-			e.mystery = false;
 			break;
 		default:
 			ASSERT(0);
