@@ -196,7 +196,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	switch( GetCurrentRow() )
 	{
 	case PO_CREATE_NEW:
-		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", NULL );
+		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", 12 );
 		break;
 	case PO_DELETE_:
 	{

@@ -122,7 +122,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	case PO_CONNECTION:
 		if ( !NSMAN->useSMserver )
 		{
-			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", g_sLastServer, 15 );
+			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", g_sLastServer, 128 );
 		}
 		else
 		{
