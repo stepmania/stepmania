@@ -12,7 +12,7 @@
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="Debug OGL|Win32"
+			Name="Debug|Win32"
 			OutputDirectory=".\.."
 			IntermediateDirectory=".\../Debug"
 			ConfigurationType="1"
@@ -30,7 +30,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\../Debug/StepMania.pch"
+				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
 				AssemblerListingLocation=".\../Debug_OGL/"
 				ObjectFile=".\../Debug_OGL/"
 				ProgramDataBaseFileName=".\../Debug_OGL/"
@@ -81,7 +81,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
 		<Configuration
-			Name="Release OGL|Win32"
+			Name="Release|Win32"
 			OutputDirectory="./.."
 			IntermediateDirectory="./../Release"
 			ConfigurationType="1"
@@ -107,8 +107,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\../Release/StepMania.pch"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="global.h"
+				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
 				AssemblerListingLocation=".\../Release_OGL/"
 				ObjectFile=".\../Release_OGL/"
 				ProgramDataBaseFileName=".\../Release_OGL/"
@@ -129,154 +130,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
 				ProgramDatabaseFile="../Release_OGL/StepMania.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName="$(IntDir)\$(TargetName).map"
-				MapExports="TRUE"
-				SubSystem="2"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot; &quot;ia32.vdi&quot;"/>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
-"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-		<Configuration
-			Name="Debug D3D|Win32"
-			OutputDirectory="Debug D3D"
-			IntermediateDirectory="Debug D3D"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
-				Optimization="0"
-				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG,D3D"
-				ExceptionHandling="FALSE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\../Debug/StepMania.pch"
-				AssemblerListingLocation=".\../Debug_D3D/"
-				ObjectFile=".\../Debug_D3D/"
-				ProgramDataBaseFileName=".\../Debug_D3D/"
-				BrowseInformation="0"
-				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				OutputFile="../StepMania-debug.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="../Debug_D3D/StepMania-debug.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName="$(IntDir)\$(TargetName).map"
-				MapExports="TRUE"
-				SubSystem="2"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot; &quot;ia32.vdi&quot;"/>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
-"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-		<Configuration
-			Name="Release D3D|Win32"
-			OutputDirectory="Release D3D"
-			IntermediateDirectory="Release D3D"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
-				Optimization="3"
-				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="2"
-				OptimizeForProcessor="2"
-				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.5/include,SDL_image-1.2"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE,D3D"
-				StringPooling="TRUE"
-				MinimalRebuild="FALSE"
-				ExceptionHandling="FALSE"
-				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				EnableFunctionLevelLinking="FALSE"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\../Release/StepMania.pch"
-				AssemblerListingLocation=".\../Release_D3D/"
-				ObjectFile=".\../Release_D3D/"
-				ProgramDataBaseFileName=".\../Release_D3D/"
-				BrowseInformation="1"
-				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="3"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;
-/FIXED:no
-"
-				OutputFile=".\../StepMania.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
-				ProgramDatabaseFile="../Release_D3D/StepMania.pdb"
 				GenerateMapFile="TRUE"
 				MapFileName="$(IntDir)\$(TargetName).map"
 				MapExports="TRUE"
@@ -1100,21 +953,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.cpp">
-						<FileConfiguration
-							Name="Debug D3D|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCLCompilerTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.h">
-						<FileConfiguration
-							Name="Debug D3D|Win32"
-							ExcludedFromBuild="TRUE">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -1615,33 +1456,15 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageDisplay_D3D.cpp">
-				<FileConfiguration
-					Name="Debug OGL|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release OGL|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="RageDisplay_D3D.h">
 			</File>
 			<File
 				RelativePath="RageDisplay_OGL.cpp">
-				<FileConfiguration
-					Name="Debug D3D|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release D3D|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="RageDisplay_OGL.h">
 			</File>
 			<File
 				RelativePath="RageException.cpp">
