@@ -214,7 +214,9 @@ static void RestoreAppPri()
 	if(!ChangeAppPri())
 		return;
 
+#ifdef WIN32
 	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+#endif
 }
 
 int main(int argc, char* argv[])
