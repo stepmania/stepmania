@@ -966,7 +966,7 @@ CString Capitalize( const CString &s )
 		return "";
 	CString s2 = s;
 	/* XXX: utf-8 */
-	if( s2[0] <= 127 )
+	if( !(s2[0] & 0x80) )
 		s2[0] = (char) toupper( s2[0] );
 	return s2;
 }
@@ -1100,7 +1100,7 @@ void FileWrite(RageFile& f, int iWrite)
 
 void FileWrite(RageFile& f, size_t uWrite)
 {
-	f.PutLine( ssprintf("%lu", uWrite) );
+	f.PutLine( ssprintf("%i", (int)uWrite) );
 }
 
 void FileWrite(RageFile& f, float fWrite)
