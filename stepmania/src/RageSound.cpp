@@ -92,7 +92,9 @@ RageSound::~RageSound()
 	Unload();
 
 	/* Unregister ourselves. */
+	SOUNDMAN->lock.Lock();
 	SOUNDMAN->all_sounds.erase(this);
+	SOUNDMAN->lock.Unlock();
 }
 
 RageSound::RageSound(const RageSound &cpy)
@@ -532,7 +534,11 @@ void RageSound::StopPlaying()
 
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
+
+	SOUNDMAN->lock.Lock();
 	SOUNDMAN->playing_sounds.erase( this );
+	SOUNDMAN->lock.Unlock();
+
 	playing = false;
 
 	pos_map.clear();
