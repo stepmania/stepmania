@@ -87,7 +87,7 @@ BitmapText::~BitmapText()
 
 bool BitmapText::LoadFromFont( CString sFontFilePath )
 {
-	Checkpoint( ssprintf("BitmapText::LoadFromFontName(%s)", sFontFilePath.c_str()) );
+	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFontName(%s)", sFontFilePath.c_str()) );
 
 	if( m_pFont ) {
 		FONT->UnloadFont( m_pFont );
@@ -105,7 +105,7 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 
 bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 {
-	Checkpoint( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
+	CHECKPOINT_M( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
 
 	if( m_pFont ) {
 		FONT->UnloadFont( m_pFont );

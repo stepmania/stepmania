@@ -89,7 +89,7 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 
 void FontManager::UnloadFont( Font *fp )
 {
-	Checkpoint( ssprintf("FontManager::UnloadFont(%s).", fp->path.c_str()) );
+	CHECKPOINT_M( ssprintf("FontManager::UnloadFont(%s).", fp->path.c_str()) );
 
 	for( std::map<CString, Font*>::iterator i = m_mapPathToFont.begin();
 		i != m_mapPathToFont.end(); ++i)

@@ -759,7 +759,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 	}
 
 	/* The font is not already loaded.  Figure out what we have. */
-	Checkpoint( ssprintf("Font::Load(\"%s\",\"%s\").", sFontOrTextureFilePath.c_str(), Chars.c_str()) );
+	CHECKPOINT_M( ssprintf("Font::Load(\"%s\",\"%s\").", sFontOrTextureFilePath.c_str(), Chars.c_str()) );
 
 	path = sFontOrTextureFilePath;
 	Chars = sChars;

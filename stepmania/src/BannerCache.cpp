@@ -66,7 +66,7 @@ void BannerCache::LoadBanner( CString BannerPath )
 		if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
 			return; /* already loaded */
 
-		Checkpoint( ssprintf( "BannerCache::LoadBanner: %s", CachePath.c_str() ) );
+		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", CachePath.c_str() ) );
 		SDL_Surface *img = mySDL_LoadSurface( CachePath );
 		if( img == NULL )
 		{
