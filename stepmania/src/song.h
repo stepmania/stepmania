@@ -52,7 +52,8 @@ public:
 	CString GetTitle()			{return m_sTitle; };
 	CString GetArtist()			{return m_sArtist; };
 	CString GetCreator()		{return m_sCreator; };
-//	float GetBeatOffset()		{return m_fBeatOffset; };
+	float GetBeatOffsetInSeconds()	{return m_fOffsetInSeconds; };
+	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; };
 	void GetMinMaxBPM( int &iMinBPM, int &iMaxBPM )
 	{
 		iMaxBPM = 0;
@@ -85,9 +86,26 @@ public:
 			}
 		}
 	};
+	float GetBPMAtBeat( float fSongBeat )
+	{
+		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
+			if( m_BPMSegments[i].m_iStartBeat > fSongBeat || i==m_BPMSegments.GetSize()-1 )
+				break;
+		}
+		return m_BPMSegments[i].m_fBPM;
+	};
+	void SetBPM( float fNewBPM, float fSongBeat )
+	{
+		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
+			if( m_BPMSegments[i].m_iStartBeat > fSongBeat || i==m_BPMSegments.GetSize()-1 )
+				break;
+		}
+		m_BPMSegments[i].m_fBPM = fNewBPM;
+	};
 
 	void GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arrayAddTo );
 	void GetNumFeet( GameMode gm, int& iDiffEasy, int& iDiffMedium, int& iDiffHard );
+	
 
 public:
 
