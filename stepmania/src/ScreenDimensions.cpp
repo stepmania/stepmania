@@ -1,8 +1,37 @@
 #include "global.h"
 #include "ScreenDimensions.h"
+#include "PrefsManager.h"
 
-ThemeMetric<float> SCREEN_WIDTH("Common","ScreenWidth");
-ThemeMetric<float> SCREEN_HEIGHT("Common","ScreenHeight");
+
+ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
+ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
+
+//
+// The theme's logical resolution specifies the minimum screen width
+// and the minimum screen height with a 4:3 aspect ratio.  Scale just one 
+// of the dimensions up to meet the requested aspect ratio.
+//
+
+#define ASPECT_4_TO_3 (4/3.0f)
+
+float ScreenWidth()
+{
+	float fScale = 1;
+	if( PREFSMAN->m_fAspectRatio > ASPECT_4_TO_3 )
+		fScale = PREFSMAN->m_fAspectRatio / ASPECT_4_TO_3;
+	ASSERT( fScale >= 1 );
+	return THEME_SCREEN_WIDTH * fScale;
+}
+
+float ScreenHeight()
+{
+	float fScale = 1;
+	if( PREFSMAN->m_fAspectRatio < ASPECT_4_TO_3 )
+		fScale = ASPECT_4_TO_3 / PREFSMAN->m_fAspectRatio;
+	ASSERT( fScale >= 1 );
+	return THEME_SCREEN_HEIGHT * fScale;
+}
+
 
 /*
  * (c) 2001-2002 Chris Danford

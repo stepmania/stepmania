@@ -153,8 +153,8 @@ void Lua::UpdateGlobals()
 	ASSERT( L );
 
 	/* Important: explicitly refresh cached metrics that we use. */
-	SCREEN_WIDTH.Read();
-	SCREEN_HEIGHT.Read();
+	THEME_SCREEN_WIDTH.Read();
+	THEME_SCREEN_HEIGHT.Read();
 
 	lua_pushnumber( L, SCREEN_WIDTH );
 	lua_setglobal( L, "SCREEN_WIDTH" );

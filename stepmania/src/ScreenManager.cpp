@@ -95,6 +95,9 @@ void ScreenManager::ThemeChanged()
 	SAFE_DELETE( m_SystemLayer );
 	m_SystemLayer = new ScreenSystemLayer;
 	m_SystemLayer->RefreshCreditsMessages();
+	
+	// reload shared BGA
+	m_pSharedBGA->LoadFromAniDir( m_sLastLoadedBackgroundPath );
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -361,9 +364,9 @@ retry:
 	if( sNewBGA.empty() )
 	{
 		m_pSharedBGA->Unload();
-		m_sLastLoadedBackground = "";
+		m_sLastLoadedBackgroundPath = "";
 	}
-	else if( m_sLastLoadedBackground != sNewBGA )
+	else if( m_sLastLoadedBackgroundPath != sNewBGA )
 	{
 		// Create the new background before deleting the previous so that we keep
 		// any common textures loaded.
@@ -372,7 +375,7 @@ retry:
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
 
-		m_sLastLoadedBackground = sNewBGA;
+		m_sLastLoadedBackgroundPath = sNewBGA;
 	}
 
 	bool bWasOnSystemMenu = GAMESTATE->m_bIsOnSystemMenu;

@@ -26,6 +26,7 @@ public:
 	Preference<int>		m_iMovieColorDepth;
 	Preference<int>		m_iMaxTextureResolution;
 	Preference<int>		m_iRefreshRate;
+	Preference<float>	m_fAspectRatio;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 

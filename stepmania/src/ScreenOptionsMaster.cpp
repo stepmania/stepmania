@@ -21,6 +21,7 @@
 #include "RageSoundManager.h"
 #include "ProfileManager.h"
 #include "StepsUtil.h"
+#include "LuaHelpers.h"
 
 #define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
@@ -535,9 +536,19 @@ void ScreenOptionsMaster::ExportOptions()
 	if( m_sNextScreen == "" )
 		m_sNextScreen = NEXT_SCREEN;
 
-	/* Did the theme change? */
+	if( ChangeMask & OPT_APPLY_ASPECT_RATIO )
+	{
+		Lua::UpdateGlobals();	// This needs to be done before resetting the projection matrix below
+		SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
+	}
+
+	/* If the theme changes, we need to reset RageDisplay to apply new theme 
+	 * window title and icon. */
+	/* If the aspect ratio changes, we need to reset RageDisplay so that the 
+	 * projection matrix is re-created using the new screen dimensions. */
 	if( (ChangeMask & OPT_APPLY_THEME) || 
-		(ChangeMask & OPT_APPLY_GRAPHICS) ) 	// reset graphics to apply new window title and icon
+		(ChangeMask & OPT_APPLY_GRAPHICS) ||
+		(ChangeMask & OPT_APPLY_ASPECT_RATIO) )
 		ApplyGraphicOptions();
 
 	if( ChangeMask & OPT_SAVE_PREFERENCES )

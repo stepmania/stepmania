@@ -66,7 +66,7 @@ private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
 	ScreenSystemLayer	*m_SystemLayer;
 
-	CString				m_sLastLoadedBackground;
+	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
 	ScreenMessage		m_MessageSendOnPop;
 	vector<Screen*>		m_vPreparedScreens;

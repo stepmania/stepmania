@@ -6,8 +6,13 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-extern ThemeMetric<float> SCREEN_WIDTH;
-extern ThemeMetric<float> SCREEN_HEIGHT;
+#define SCREEN_WIDTH ScreenWidth()
+#define SCREEN_HEIGHT ScreenHeight()
+float ScreenWidth();
+float ScreenHeight();
+
+extern ThemeMetric<float> THEME_SCREEN_WIDTH;
+extern ThemeMetric<float> THEME_SCREEN_HEIGHT;
 
 #define		SCREEN_LEFT		(0)
 #define		SCREEN_RIGHT	(SCREEN_WIDTH)
