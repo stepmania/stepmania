@@ -103,6 +103,10 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"BACKGROUND") )
 			out.m_sBackgroundFile = sParams[1];
 
+		/* Save "#LYRICS" for later, so we can add an internal lyrics tag. */
+		else if( 0==stricmp(sValueName,"LYRICSPATH") )
+			out.m_sLyricsFile = sParams[1];
+
 		else if( 0==stricmp(sValueName,"CDTITLE") )
 			out.m_sCDTitleFile = sParams[1];
 

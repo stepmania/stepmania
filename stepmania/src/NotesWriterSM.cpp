@@ -16,6 +16,7 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 	fprintf( fp, "#CREDIT:%s;\n", out.m_sCredit.GetString() );
 	fprintf( fp, "#BANNER:%s;\n", out.m_sBannerFile.GetString() );
 	fprintf( fp, "#BACKGROUND:%s;\n", out.m_sBackgroundFile.GetString() );
+	fprintf( fp, "#LYRICSPATH:%s;\n", out.m_sLyricsFile.GetString() );
 	fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.GetString() );
 	fprintf( fp, "#MUSIC:%s;\n", out.m_sMusicFile.GetString() );
 	fprintf( fp, "#MUSICBYTES:%u;\n", out.m_iMusicBytes );
