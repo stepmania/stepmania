@@ -334,6 +334,7 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 Client SMOnline packets:
 000:  Send Login Information
  Size:
+    1		Player Number
     1		Encryption text
 		0: MD5 hash
     NT		Username
