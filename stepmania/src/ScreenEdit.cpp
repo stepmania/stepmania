@@ -1110,7 +1110,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GoToNextScreen:
 		// Reload song from disk to discard changes.
-		GAMESTATE->m_pCurSong->LoadFromSongDir( GAMESTATE->m_pCurSong->GetSongDir() );
+		GAMESTATE->m_pCurSong->RevertFromDisk();
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case SM_BackFromMainMenu:

@@ -1306,14 +1306,12 @@ void SaveChanges()
 
 void DontSaveChanges()
 {
-	SMLoader ld;
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		ld.LoadFromSMFile(GAMESTATE->m_pCurSong->GetCacheFilePath(),
-			*GAMESTATE->m_pCurSong);
+		GAMESTATE->m_pCurSong->RevertFromDisk();
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
