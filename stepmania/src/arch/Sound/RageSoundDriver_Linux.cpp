@@ -171,8 +171,8 @@ bool RageSound_Linux::GetData() {
 		
 		if (got < cs) {
 			/* sound is finishing */
-			sounds[i].stopping = true;
-			sounds[i].flush_pos = last_pos + (got / 16);
+			sounds[i]->stopping = true;
+			sounds[i]->flush_pos = last_pos + (got / 16);
 		}
 
 	  }
