@@ -1141,14 +1141,26 @@ public:
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 //		AssertNoGLError();
 
-		glEnableClientState(GL_NORMAL_ARRAY);
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-//		AssertNoGLError();
-		glNormalPointer(GL_FLOAT, 0, NULL);
-//		AssertNoGLError();
+		// TRICKY:  Don't bind and send normals if lighting is disabled.  This 
+		// will save some effort transforming these values.
+		GLboolean bLighting;
+		glGetBooleanv( GL_LIGHTING, &bLighting );
+		if( bLighting )
+		{
+			glEnableClientState(GL_NORMAL_ARRAY);
+			GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+	//		AssertNoGLError();
+			glNormalPointer(GL_FLOAT, 0, NULL);
+	//		AssertNoGLError();
 
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-//		AssertNoGLError();
+			GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	//		AssertNoGLError();
+		}
+		else
+		{
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
+
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
