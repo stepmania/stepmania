@@ -1177,12 +1177,10 @@ void MusicWheel::TweenOnScreen()
 	m_sprSelectionOverlay.SetTweenX( fX );
 
 
-	fX = m_ScrollBar.GetX();
-	fY = m_ScrollBar.GetY();
-	m_ScrollBar.SetXY( fX+30, fY );
+	m_ScrollBar.SetX( SCROLL_BAR_X+30 );
 	m_ScrollBar.BeginTweeningQueued( 0.7f );	// sleep
 	m_ScrollBar.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
-	m_ScrollBar.SetTweenX( fX );	
+	m_ScrollBar.SetTweenX( SCROLL_BAR_X );	
 
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
@@ -1216,7 +1214,7 @@ void MusicWheel::TweenOffScreen()
 
 	m_ScrollBar.BeginTweeningQueued( 0 );
 	m_ScrollBar.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN );
-	m_ScrollBar.SetTweenX( m_ScrollBar.GetX()+30 );	
+	m_ScrollBar.SetTweenX( SCROLL_BAR_X+30 );	
 
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
