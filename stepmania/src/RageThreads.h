@@ -43,7 +43,7 @@ namespace Checkpoints
 {
 	void LogCheckpoints( bool yes=true );
 	void SetCheckpoint( const char *file, int line, const char *message );
-	const char *GetLogs( const char *delim );
+	void GetLogs( char *pBuf, int iSize, const char *delim );
 };
 
 #define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))

@@ -382,26 +382,25 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 	return slot.ThreadFormattedOutput;
 }
 
-const char *Checkpoints::GetLogs( const char *delim )
+/* XXX: iSize check unimplemented */
+void Checkpoints::GetLogs( char *pBuf, int iSize, const char *delim )
 {
-	static char ret[1024*32];
-	ret[0] = 0;
+	pBuf[0] = 0;
 
 	for( int slotno = 0; slotno < MAX_THREADS; ++slotno )
 	{
 		const char *buf = GetCheckpointLog( slotno, 0 );
 		if( buf == NULL )
 			continue;
-		strcat( ret, buf );
-		strcat( ret, delim );
+		strcat( pBuf, buf );
+		strcat( pBuf, delim );
 		
 		for( int line = 1; (buf = GetCheckpointLog( slotno, line )) != NULL; ++line )
 		{
-			strcat( ret, buf );
-			strcat( ret, delim );
+			strcat( pBuf, buf );
+			strcat( pBuf, delim );
 		}
 	}	
-	return ret;
 }
 
 /*
