@@ -57,6 +57,7 @@ namespace GLExt {
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 #include "RageUtil.h"
+#include "SDL_endian.h"
 
 #include "arch/arch.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
@@ -95,7 +96,7 @@ const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
 LowLevelWindow *wind;
 
 
-static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
+static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	{
 		/* B8G8R8A8 */
 		32,
@@ -180,6 +181,28 @@ struct GLPixFmtInfo_t {
 };
 
 
+static void FixBigEndian()
+{
+#if SDL_BYTEORDER != SDL_LIL_ENDIAN
+	static bool Initialized = false;
+	if( Initialized )
+		return;
+	Initialized = true;
+
+	for( int i = 0; i < NUM_PIX_FORMATS; ++i )
+	{
+		PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
+
+		/* Byte formats aren't affected by endianness. */
+		if( GL_PIXFMT_INFO[i].type == GL_UNSIGNED_BYTE )
+			continue;
+
+		for( int mask = 0; mask < 4; ++mask)
+			pf.masks[mask] = SDL_Swap32( pf.masks[mask] );
+	}
+#endif
+}
+
 
 void GetGLExtensions(set<string> &ext)
 {
@@ -196,6 +219,8 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p )
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
+
+	FixBigEndian();
 
 	wind = MakeLowLevelWindow();
 
