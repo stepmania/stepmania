@@ -12,7 +12,7 @@ struct lua_State;
 
 struct StageStats
 {
-	StageStats() { Init(); }
+	StageStats();
 	void Init();
 
 	void AssertValid( PlayerNumber pn ) const;

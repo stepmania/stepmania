@@ -5,13 +5,18 @@
 #include "Steps.h"
 #include "song.h"
 
-void StageStats::Init()
+StageStats::StageStats()
 {
 	playMode = PLAY_MODE_INVALID;
 	pStyle = NULL;
 	vpSongs.clear();
 	StageType = STAGE_INVALID;
 	fGameplaySeconds = 0;
+}
+
+void StageStats::Init()
+{
+	*this = StageStats();
 }
 
 void StageStats::AssertValid( PlayerNumber pn ) const
