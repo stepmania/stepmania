@@ -3,35 +3,21 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 
-#include "SDL.h"
-#include "SDL_timer.h"
+#include "arch/ArchHooks/ArchHooks.h"
  
-/* We only actually get 1000 using SDL. */
 #define TIMESTAMP_RESOLUTION 1000000
 
 const RageTimer RageZeroTimer(0,0);
 
-void mySDL_GetTicks( unsigned &secs, unsigned &us )
+static void GetTime( unsigned &secs, unsigned &us )
 {
-	static bool bInitialized = false;
-	if( !bInitialized )
-	{
-		bInitialized = true;
-		/* We don't want the timer system; it starts a thread, and we never use it. */
-		// if( !SDL_WasInit(SDL_INIT_TIMER) )
-		//	SDL_InitSubSystem( SDL_INIT_TIMER );
-
-		/* Calling this will still initialize the hidden "ticks" system, so we can
-		 * use SDL_GetTicks. */
-		SDL_InitSubSystem( 0 );
-	}
-
-	/* Ticks may be less than last for at least two reasons: the time may have wrapped (after
+	/*
+	 * Ticks may be less than last for at least two reasons: the time may have wrapped (after
 	 * about 49 days), or the system clock may have moved backwards.  If the system clock moves
 	 * backwards, we can't just clamp the time; if it moved back an hour, we'll sit around for
 	 * an hour until it catches up.
 	 *
-	 * Keep track of an offset: the amount of time to add to the result of SDL_GetTicks.
+	 * Keep track of an offset: the amount of time to add to the result of GetMicrosecondsSinceStart.
 	 * If we move back by 100ms, the offset will be increased by 100ms.  If we loop, the
 	 * offset will be increased by the duration 2^32 ticks.  This is stored in the same
 	 * notation as RageTimer: one 32-bit int for seconds and another for microseconds, so
@@ -41,7 +27,7 @@ void mySDL_GetTicks( unsigned &secs, unsigned &us )
 	static uint32_t last = 0;
 	static uint32_t offset_secs = 0, offset_us = 0;
 
-	const uint32_t millisecs = SDL_GetTicks();
+	const uint32_t millisecs = (uint32_t) (ArchHooks::GetMicrosecondsSinceStart(true)/1000);
 
 	/* The time has wrapped if the last time was very high and the current time is very low. */
 	const uint32_t one_day = 24*60*60*1000;
@@ -84,13 +70,13 @@ void mySDL_GetTicks( unsigned &secs, unsigned &us )
 float RageTimer::GetTimeSinceStart()
 {
 	unsigned secs, us;
-	mySDL_GetTicks( secs, us );
+	GetTime( secs, us );
 	return secs + us / 1000000.0f;
 }
 
 void RageTimer::Touch()
 {
-	mySDL_GetTicks( this->m_secs, this->m_us );
+	GetTime( this->m_secs, this->m_us );
 }
 
 float RageTimer::Ago() const
