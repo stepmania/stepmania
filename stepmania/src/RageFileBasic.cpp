@@ -194,16 +194,11 @@ void RageFileObj::EnableCRC32( bool on )
 		return;
 	}
 
-	/* If we're not at the beginning of the file, it's meaningless to start
-	 * calculating a CRC32 now. */
-	if( m_iFilePos != 0 )
-		return;
-
 	m_bCRC32Enabled = true;
 	m_iCRC32 = 0;
 }
 
-bool RageFileObj::GetCRC32( unsigned *iRet )
+bool RageFileObj::GetCRC32( uint32_t *iRet )
 {
 	if( !m_bCRC32Enabled )
 		return false;

@@ -50,7 +50,7 @@ public:
 	virtual int PutLine( const CString &str ) = 0;
 
 	virtual void EnableCRC32( bool on=true ) = 0;
-	virtual bool GetCRC32( unsigned *iRet ) = 0;
+	virtual bool GetCRC32( uint32_t *iRet ) = 0;
 	
 	virtual int GetFileSize() const = 0;
 };
@@ -84,7 +84,7 @@ public:
 	int PutLine( const CString &str );
 
 	void EnableCRC32( bool on=true );
-	bool GetCRC32( unsigned *iRet );
+	bool GetCRC32( uint32_t *iRet );
 
 	virtual int GetFileSize() const = 0;
 	virtual CString GetDisplayPath() const { return ""; }
@@ -134,7 +134,7 @@ private:
 	 * This is only meaningful if EnableCRC32() is called at the very start of the
 	 * file, and no seeking is performed. */
 	bool m_bCRC32Enabled;
-	unsigned m_iCRC32;
+	uint32_t m_iCRC32;
 };
 
 #endif
