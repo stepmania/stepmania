@@ -13,16 +13,16 @@ Class2=CSmpackageDlg
 
 ResourceCount=7
 Resource1=IDR_MAINFRAME
-Resource2=IDD_MENU
+Resource2=IDD_EXPORTER
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_DIALOG_NAME
+Resource3=IDD_MENU
 Class5=EnterName
-Resource4=IDD_EDIT_INSTALLATIONS
+Resource4=IDD_INSTALL
 Class6=EditInsallations
-Resource5=IDD_EXPORTER
+Resource5=IDD_EDIT_INSTALLATIONS
 Class7=MainMenuDlg
-Resource6=IDD_INSTALL
+Resource6=IDD_DIALOG_NAME
 Class8=ConvertThemeDlg
 Resource7=IDD_CONVERT_THEME
 
