@@ -108,6 +108,163 @@ void BacktraceNames::FromAddr( const void *p )
     Offset = (char*)(p)-(char*)di.dli_saddr;
 }
 
+#elif defined(BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD)
+#include <mach-o/dyld.h>
+#include <mach-o/nlist.h>
+
+/*
+Copyright (c) 2002 Jorge Acereda  <jacereda@users.sourceforge.net> &
+                   Peter O'Gorman <ogorman@users.sourceforge.net>
+                   
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ Cleaned and adapted.  -glenn
+*/
+
+#include <mach-o/dyld.h>
+#include <mach-o/nlist.h>
+
+const load_command *next_load_command( const load_command *cmd )
+{
+	const char *p = (const char *) cmd;
+	p += cmd->cmdsize;
+	return (load_command *) p;
+}
+
+/* Return the image index of the given pointer, or -1 if not found. */
+int osx_find_image( const void *p )
+{
+	unsigned long image_count = _dyld_image_count();
+
+	for( unsigned i = 0; i < image_count; i++ )
+	{
+		const struct mach_header *header = _dyld_get_image_header(i);
+		if( header == NULL )
+			continue;
+
+		/* The load commands directly follow the mach_header. */
+		const struct load_command *cmd = (struct load_command *) &header[1];
+
+		for( unsigned j = 0; j < header->ncmds; j++ )
+		{
+			/* We only care about mapped segments. */
+			if( cmd->cmd != LC_SEGMENT )
+			{
+				cmd = next_load_command(cmd);
+				continue;
+			}
+
+			const segment_command *scmd = (const segment_command *) cmd;
+
+			const unsigned long bottom = scmd->vmaddr + _dyld_get_image_vmaddr_slide( i );
+			const unsigned long top = scmd->vmaddr + scmd->vmsize + _dyld_get_image_vmaddr_slide( i );
+			if ( (unsigned long) p >= bottom && (unsigned long) p < top )
+				return i;
+
+			cmd = next_load_command(cmd);
+		}
+	}
+
+	return -1;
+}
+
+const char *osx_find_link_edit( const struct mach_header *header )
+{
+	const struct load_command *cmd = (struct load_command *) &header[1];
+	for( unsigned i = 0; i < header->ncmds; i++, cmd = next_load_command(cmd) )
+	{
+		if( cmd->cmd != LC_SEGMENT )
+			continue;
+		const segment_command *scmd = (const segment_command *) cmd;
+
+		if( !strcmp(scmd->segname, "__LINKEDIT") )
+			return (char *) ( scmd->vmaddr - scmd->fileoff );
+	}
+
+	return NULL;
+}
+
+void BacktraceNames::FromAddr( const void *p )
+{
+	Address = (int) p;
+
+	/* Find the image with the given pointer. */
+	int index = osx_find_image( p );
+	if( index == -1 )
+		return;
+
+	File = _dyld_get_image_name( index );
+
+	/* Find the link-edit pointer. */
+	const char *link_edit = osx_find_link_edit( _dyld_get_image_header(index) );
+	if( link_edit == NULL )
+		return;
+	link_edit += _dyld_get_image_vmaddr_slide( index );
+
+	unsigned long addr = (unsigned long)p - _dyld_get_image_vmaddr_slide(index);
+	const struct mach_header *header = _dyld_get_image_header( index );
+	const struct load_command *cmd = (struct load_command *) &header[1];
+	unsigned long diff = 0xffffffff;
+
+        const char *dli_sname = NULL;
+        void *dli_saddr = NULL;
+
+	for( unsigned long i = 0; i < header->ncmds; i++, cmd = next_load_command(cmd) )
+	{
+		if( cmd->cmd != LC_SYMTAB )
+			continue;
+
+		const symtab_command *scmd = (const symtab_command *) cmd;
+		struct nlist *symtable = (struct nlist *)( link_edit + scmd->symoff );
+		for( unsigned long  j = 0; j < scmd->nsyms; j++ )
+		{
+			if( !symtable[j].n_value )
+				continue; /* Undefined */
+			if( symtable[j].n_type >= N_PEXT )
+				continue; /* Debug symbol */
+			if( !(symtable[j].n_type & N_EXT) )
+				continue; /* Local Symbol */
+
+			if( addr >= symtable[j].n_value && diff >= (addr - symtable[j].n_value) )
+			{
+				diff = addr - (unsigned long)symtable[j].n_value;
+				dli_saddr = symtable[j].n_value + ((char *)p - addr);
+				dli_sname = (const char *)( link_edit + scmd->stroff + symtable[j].n_un.n_strx );
+			}
+		}
+	}
+
+	if( diff == 0xffffffff )
+		return;
+
+	Symbol = dli_sname;
+	Offset = (char*)(p)-(char*)dli_saddr;
+
+	/*
+	 * __start   -> _start
+	 * __ZN7RageLog5TraceEPKcz -> _ZN7RageLog5TraceEPKcz (so demangling will work)
+	 */
+	if( Symbol.Left(1) == "_" )
+		Symbol = Symbol.substr(1);
+}
+
 #elif defined(BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS)
 /* This version parses backtrace_symbols(), an doesn't need libdl. */
 #include <execinfo.h>
