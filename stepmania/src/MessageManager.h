@@ -31,6 +31,29 @@ enum Message
 };
 const CString& MessageToString( Message m );
 
+class MessageManager
+{
+public:
+	MessageManager();
+	~MessageManager();
+
+	void Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Subscribe( IMessageSubscriber* pSubscriber, Message m );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
+	void Broadcast( const CString& sMessage ) const;
+	void Broadcast( Message m ) const;
+
+	// Lua
+	void PushSelf( lua_State *L );
+
+private:
+	typedef set<IMessageSubscriber*> SubscribersSet;
+	map<CString,SubscribersSet> m_MessageToSubscribers;
+};
+
+extern MessageManager*	MESSAGEMAN;	// global and accessable from anywhere in our program
+
 template<class T>
 class BroadcastOnChange
 {
@@ -90,30 +113,6 @@ public:
 	const BroadcastOnChangePtr<T>& operator[]( unsigned i ) const { return val[i]; }
 	BroadcastOnChangePtr<T>& operator[]( unsigned i ) { return val[i]; }
 };
-
-class MessageManager
-{
-public:
-	MessageManager();
-	~MessageManager();
-
-	void Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
-	void Subscribe( IMessageSubscriber* pSubscriber, Message m );
-	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
-	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
-	void Broadcast( const CString& sMessage ) const;
-	void Broadcast( Message m ) const;
-
-	// Lua
-	void PushSelf( lua_State *L );
-
-private:
-	typedef set<IMessageSubscriber*> SubscribersSet;
-	map<CString,SubscribersSet> m_MessageToSubscribers;
-};
-
-
-extern MessageManager*	MESSAGEMAN;	// global and accessable from anywhere in our program
 
 #endif
 

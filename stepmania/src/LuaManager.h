@@ -26,26 +26,6 @@ namespace LuaHelpers
 	bool FromStack( int &Object, int iOffset, lua_State *L );
 	bool FromStack( void *&Object, int iOffset, lua_State *L );
 	bool FromStack( CString &Object, int iOffset, lua_State *L );
-
-	template<class T>
-	void ReadArrayFromTable( vector<T> aOut, lua_State *L )
-	{
-		if( L == NULL )
-			L = LUA->L;
-
-		luaL_checktype( L, -1, LUA_TTABLE );
-
-		unsigned iCount = luaL_getn( L, -1 );
-
-		for( unsigned i = 0; i < iCount; ++i )
-		{
-			lua_rawgeti( L, -1, i+1 );
-			T value = T();
-			LuaHelpers::FromStack( value, -1, L );
-			aOut.push_back( value );
-			lua_pop( L, 1 );
-		}
-	}
 };
 
 class LuaManager
@@ -93,23 +73,7 @@ public:
 
 	void PushStackNil();
 	void PushNopFunction();
-	template<class T>
-	static void PushStack( const T &val, lua_State *L = NULL )
-	{
-		if( L == NULL )
-			L = LUA->L;
-		LuaHelpers::Push( val, L );
-	}
 
-	template<class T>
-	static bool PopStack( T &val, lua_State *L = NULL )
-	{
-		if( L == NULL )
-			L = LUA->L;
-		bool bRet = LuaHelpers::FromStack( val, -1, L );
-		lua_pop( L, 1 );
-		return bRet;
-	}
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 
@@ -120,7 +84,54 @@ public:
 	static void ReadArrayFromTableB( vector<bool> &aOut, lua_State *L = NULL );
 
 	lua_State *L;
+	template<class T>
+	static void PushStack( const T &val, lua_State *L = NULL );
+
+	template<class T>
+	static bool PopStack( T &val, lua_State *L = NULL );
 };
+
+namespace LuaHelpers
+{
+	template<class T>
+	void ReadArrayFromTable( vector<T> aOut, lua_State *L )
+	{
+		if( L == NULL )
+			L = LUA->L;
+
+		luaL_checktype( L, -1, LUA_TTABLE );
+
+		unsigned iCount = luaL_getn( L, -1 );
+
+		for( unsigned i = 0; i < iCount; ++i )
+		{
+			lua_rawgeti( L, -1, i+1 );
+			T value = T();
+			LuaHelpers::FromStack( value, -1, L );
+			aOut.push_back( value );
+			lua_pop( L, 1 );
+		}
+	}
+}
+
+template<class T>
+void LuaManager::PushStack( const T &val, lua_State *L)
+{
+	if( L == NULL )
+		L = LUA->L;
+	LuaHelpers::Push( val, L );
+}
+
+template<class T>
+bool LuaManager::PopStack( T &val, lua_State *L)
+{
+	if( L == NULL )
+		L = LUA->L;
+	bool bRet = LuaHelpers::FromStack( val, -1, L );
+	lua_pop( L, 1 );
+	return bRet;
+}
+
 
 	template<class T>
 	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
