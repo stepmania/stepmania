@@ -64,7 +64,7 @@ protected:
 
 	bool IsLastSong();
 	void LoadNextSong();
-	float StartPlayingSong(float MinTimeToStart);
+	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 
 	bool OneIsHot();
 	bool AllAreInDanger();

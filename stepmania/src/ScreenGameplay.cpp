@@ -468,7 +468,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 	else
 	{
-		StartPlayingSong( 0 );
+		StartPlayingSong( 0, 0 );
 	}
 
 
@@ -611,16 +611,18 @@ void ScreenGameplay::LoadNextSong()
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 }
 
-float ScreenGameplay::StartPlayingSong(float MinTimeToStart)
+float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
 {
+	ASSERT(MinTimeToNotes >= 0);
+	ASSERT(MinTimeToMusic >= 0);
+
 	/* XXX: We want the first beat *in use*, so we don't delay needlessly. */
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
-	float fStartSecond = fFirstSecond - MinTimeToStart;
+	float fStartSecond = fFirstSecond - MinTimeToNotes;
 
-	/* Don't skip any of the song. */
-	fStartSecond = min( 0, fStartSecond );
-
+	fStartSecond = min(fStartSecond, -MinTimeToMusic);
+	
 	m_soundMusic.SetPositionSeconds( fStartSecond );
 	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 
@@ -1145,7 +1147,21 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		// received while STATE_INTRO
 	case SM_User+0:
-		m_StarWipe.OpenWipingRight(SM_None);
+		{
+			m_StarWipe.OpenWipingRight(SM_None);
+
+			/*
+			 * Start the music going now, but don't actually make any noise for
+			 * at least 2.5 seconds.  (This is so we scroll on screen smoothly.)
+			 *
+			 * Further, don't actually reach any notes for at least 5 seconds,
+			 * so we have time for the "Ready, Here We Go" sequence. */
+			float delay = StartPlayingSong( 5.0f, 2.5f );
+
+			/* Start the Here We Go sequence 2.5 seconds before notes, so we
+			 * have time to fade in and fade out. */
+			this->SendScreenMessage( SM_StartHereWeGo, delay - 2.5f );
+		}
 		break;
 	case SM_User+1:
 		break;
@@ -1161,14 +1177,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_User+5:
 		{
 			m_Background.FadeIn();
-
-			/* Start the song with a minimum delay, so we have time for the
-			 * "Here We Go" sequence. */
-			float delay = StartPlayingSong( 2.5f );
-
-			/* Start the Here We Go sequence 2.5 seconds before notes, so we
-			 * have time to fade in and fade out. */
-			this->SendScreenMessage( SM_StartHereWeGo, delay - 2.5f );
 		}
 		break;
 	case SM_User+6:
@@ -1258,7 +1266,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginLoadingNextSong:
 		LoadNextSong();
-		StartPlayingSong( 0 );
+		StartPlayingSong( 0, 0 );
 		m_OniFade.OpenWipingRight( SM_None );
 		break;
 
