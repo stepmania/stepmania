@@ -447,6 +447,9 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 		CStringArray arrayValueTokens;
 		split( sValueString, ":", arrayValueTokens );
 
+		if( arrayValueTokens.GetSize() == 0 )
+			continue;
+
 		CString sValueName = arrayValueTokens.GetAt( 0 );
 		sValueName.TrimLeft();
 

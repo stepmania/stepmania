@@ -58,25 +58,23 @@ BOOL CSmpackageApp::InitInstance()
 
 	
 	// Make sure the current directory is the root program directory
+
+	// change dir to path of the execuctable
+	TCHAR szFullAppPath[MAX_PATH];
+	GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+		
+	// strip off executable name
+	LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
+	*pLastBackslash = '\0';	// terminate the string
+
+	SetCurrentDirectory(szFullAppPath);
+
 	if( !DoesFileExist("Songs") )
 	{
-		// change dir to path of the execuctable
-		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-		
-		// strip off executable name
-		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
-		*pLastBackslash = '\0';	// terminate the string
-
-		SetCurrentDirectory(szFullAppPath);
-
-		if( !DoesFileExist("Songs") )
-		{
-			AfxMessageBox( "Your Songs folder could not be located.  Be sure 'smpackage.exe' is in your Stepmania installation folder.", MB_ICONSTOP );
-			exit( 1 );
-		}
-	
+		AfxMessageBox( "Your Songs folder could not be located.  Be sure 'smpackage.exe' is in your Stepmania installation folder.", MB_ICONSTOP );
+		exit( 1 );
 	}
+	
 
 	// check if there's a .smzip command line argument
 	CStringArray arrayCommandLineBits;
