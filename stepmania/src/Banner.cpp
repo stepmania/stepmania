@@ -61,6 +61,7 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 	/* Set up the texture coord rects for the current state. */
 	Update(0);
 }
+#include "RageLog.h"
 
 void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
@@ -68,8 +69,16 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 	Sprite::TurnShadowOff();
 
+	LOG->Trace("xxxxxxx");
 	if( pSong == NULL )					LoadFallback();
-	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
+	else if( pSong->HasBanner() )
+	{
+		/* Song banners often have HOT PINK color keys. */
+	LOG->Trace("xxxxxxx 2 %s", pSong->GetBannerPath().GetString());
+		RageTextureID ID(pSong->GetBannerPath());
+		ID.bHotPinkColorKey = true;
+		Load( ID );
+	}
 	else if( PREFSMAN->m_bUseBGIfNoBanner  &&  pSong->HasBackground() )	Load( pSong->GetBackgroundPath() );
 	else								LoadFallback();
 }
