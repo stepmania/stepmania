@@ -160,7 +160,7 @@ void RageTextureManager::CacheTexture( RageTextureID ID )
 	if( pTexture->m_Policy == RageTexture::TEX_DEFAULT )
 		pTexture->m_Policy = RageTexture::TEX_CACHED;
 	else if( pTexture->m_Policy != RageTexture::TEX_CACHED )
-		LOG->Warn( "RageTextureManager::CacheTexture(%s): texture is %i, which?", ID.filename.c_str());
+		LOG->Warn( "RageTextureManager::CacheTexture(%s): texture is %i, which?", ID.filename.c_str(), pTexture->m_Policy );
 	UnloadTexture( pTexture );
 }
 
@@ -170,7 +170,7 @@ void RageTextureManager::VolatileTexture( RageTextureID ID )
 	if( pTexture->m_Policy == RageTexture::TEX_DEFAULT )
 		pTexture->m_Policy = RageTexture::TEX_VOLATILE;
 	else if( pTexture->m_Policy != RageTexture::TEX_VOLATILE )
-		LOG->Warn( "RageTextureManager::VolatileTexture(%s): texture is %i, which?", ID.filename.c_str());
+		LOG->Warn( "RageTextureManager::VolatileTexture(%s): texture is %i, which?", ID.filename.c_str(), pTexture->m_Policy );
 	UnloadTexture( pTexture );
 }
 
