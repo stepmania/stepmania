@@ -60,8 +60,8 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	
 	CString IconCommand = ICON_COMMAND;
 
-	int i;
-	for(i=1; i <= NUM_UNLOCKS; i++)
+	unsigned i;
+	for(i=1; i <= (unsigned) NUM_UNLOCKS; i++)
 	{
 		Sprite* entry = new Sprite;
 
@@ -100,7 +100,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	// scrolling text
 	if (UNLOCK_TEXT_SCROLL != 0)
 	{
-		int NumberUnlocks = NUM_UNLOCKS;
+		unsigned NumberUnlocks = NUM_UNLOCKS;
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
@@ -232,7 +232,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	if (UNLOCK_TEXT_SCROLL == 3)
 	{
-		int NumberUnlocks = NUM_UNLOCKS;
+		unsigned NumberUnlocks = NUM_UNLOCKS;
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
@@ -248,7 +248,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			if (i > (int) LastUnlocks.size())
 				continue;
 
-			int NextIcon = LastUnlocks[LastUnlocks.size() - i];
+			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
 			Sprite* NewIcon = new Sprite;
 			BitmapText* NewText = new BitmapText;
