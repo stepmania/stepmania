@@ -831,9 +831,16 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
 	switch( scoreOfLastTap )
 	{
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+	case TNS_GREAT:
+		GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber] = 0;
+		break;
+	case TNS_MISS:
+		++GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber];
+
 	case TNS_GOOD:
 	case TNS_BOO:
-	case TNS_MISS:
 		if( iCurCombo > 50 )
 			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 

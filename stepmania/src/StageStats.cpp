@@ -45,6 +45,7 @@ void StageStats::AddStats( const StageStats& other )
 			iHoldNoteScores[p][h] += other.iHoldNoteScores[p][h];
 		iCurCombo[p] += other.iCurCombo[p];
 		iMaxCombo[p] += other.iMaxCombo[p];
+		iCurMissCombo[p] += other.iCurMissCombo[p];
 		iScore[p] += other.iScore[p];
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 		{
