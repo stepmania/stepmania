@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <tlhelp32.h>
 
+#include "arch/Threads/Threads_Win32.h"
 #include "archutils/win32/WindowsResources.h"
 #include "crash.h"
 #include "ProductInfo.h"
@@ -123,14 +124,19 @@ static const char *LookupException( DWORD code )
 struct CrashInfo
 {
 	char m_CrashReason[256];
+
 	const void *m_BacktracePointers[BACKTRACE_MAX_SIZE];
 
-	const void *m_AlternateThreadBacktrace[BACKTRACE_MAX_SIZE];
+	enum { MAX_BACKTRACE_THREADS = 32 };
+	const void *m_AlternateThreadBacktrace[MAX_BACKTRACE_THREADS][BACKTRACE_MAX_SIZE];
+	char m_AlternateThreadName[MAX_BACKTRACE_THREADS][128];
 
 	CrashInfo()
 	{
 		m_CrashReason[0] = 0;
-		m_BacktracePointers[0] = m_AlternateThreadBacktrace[0] = NULL;
+		memset( m_AlternateThreadBacktrace, 0, sizeof(m_AlternateThreadBacktrace) );
+		memset( m_AlternateThreadName, 0, sizeof(m_AlternateThreadName) );
+		m_BacktracePointers[0] = NULL;
 	}
 };
 
@@ -797,11 +803,16 @@ static void DoSave()
 
 	if( g_CrashInfo.m_AlternateThreadBacktrace[0] )
 	{
-		Report( NULL, hFile, "Deadlocked with:" );
-		Report( NULL, hFile, "" );
-		
-		ReportCallStack( NULL, hFile, g_CrashInfo.m_AlternateThreadBacktrace );
-		Report(NULL, hFile, "");
+		for( int i = 0; i < CrashInfo::MAX_BACKTRACE_THREADS; ++i )
+		{
+			if( !g_CrashInfo.m_AlternateThreadBacktrace[i][0] )
+				continue;
+
+			Report( NULL, hFile, "Thread %s:", g_CrashInfo.m_AlternateThreadName[i] );
+			Report( NULL, hFile, "" );
+			ReportCallStack( NULL, hFile, g_CrashInfo.m_AlternateThreadBacktrace[i] );
+			Report(NULL, hFile, "");
+		}
 	}
 
 	Report(NULL, hFile, "Static log:");
@@ -936,21 +947,51 @@ void NORETURN debug_crash()
 	}
 }
 
-/* Get a stack trace of the current thread and the specified thread. */
-void ForceCrashHandlerDeadlock( CString reason, uint64_t iThreadHandle )
+/* Get a stack trace of the current thread and the specified thread.  If
+ * iID == GetInvalidThreadId(), then output a stack trace for every thread. */
+void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 {
-	HANDLE hThread = (HANDLE) iThreadHandle;
-
 	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
 
-	if( hThread == NULL )
+	/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
+	 * hThread, for GetThreadContext to work.) */
+	RageThread::HaltAllThreads( false );
+
+	if( iID == GetInvalidThreadId() )
 	{
-		strcat( g_CrashInfo.m_CrashReason, "(hThread == NULL)" );
+		/* Backtrace all threads. */
+		int iCnt = 0;
+		for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
+		{
+			if( iID == GetInvalidThreadId() )
+				continue;
+			
+			if( iID == GetCurrentThreadId() )
+				continue;
+
+			const HANDLE hThread = Win32ThreadIdToHandle( iID );
+
+			CONTEXT context;
+			context.ContextFlags = CONTEXT_FULL;
+			if( !GetThreadContext( hThread, &context ) )
+				strcat( g_CrashInfo.m_CrashReason, "(GetThreadContext failed)" );
+			else
+			{
+				static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
+				do_backtrace( g_CrashInfo.m_AlternateThreadBacktrace[iCnt], BACKTRACE_MAX_SIZE, GetCurrentProcess(), hThread, &context );
+
+				const char *pName = RageThread::GetThreadNameByID( iID );
+				strncpy( g_CrashInfo.m_AlternateThreadName[iCnt], pName? pName:"???", sizeof(g_CrashInfo.m_AlternateThreadName[iCnt])-1 );
+
+				++iCnt;
+			}
+
+			if( iCnt == CrashInfo::MAX_BACKTRACE_THREADS )
+				break;
+		}
 	} else {
-		/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
-		 * hThread, for GetThreadContext to work.) */
-		RageThread::HaltAllThreads( false );
+		const HANDLE hThread = Win32ThreadIdToHandle( iID );
 
 		CONTEXT context;
 		context.ContextFlags = CONTEXT_FULL;
@@ -959,7 +1000,10 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iThreadHandle )
 		else
 		{
 			static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-			do_backtrace( g_CrashInfo.m_AlternateThreadBacktrace, BACKTRACE_MAX_SIZE, GetCurrentProcess(), hThread, &context );
+			do_backtrace( g_CrashInfo.m_AlternateThreadBacktrace[0], BACKTRACE_MAX_SIZE, GetCurrentProcess(), hThread, &context );
+
+			const char *pName = RageThread::GetThreadNameByID( iID );
+			strncpy( g_CrashInfo.m_AlternateThreadName[0], pName? pName:"???", sizeof(g_CrashInfo.m_AlternateThreadName[0])-1 );
 		}
 	}
 
