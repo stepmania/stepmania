@@ -30,7 +30,7 @@ var OutputDir = "c:/temp/stepmania/utils/Font generation/Output/";
  * store prototypes for each font page.  These should just be PSD files that contain
  * a single text layer with the characters we want.  The orientation, font, etc.
  * don't matter; they'll be overridden. */
-var JAFontPages = Array("main", "kanji 1", "kanji 2","kanji 3");
+var JAFontPages = Array("main", "kanji 1", "kanji 2","kanji 3","kanji 4");
 var KRFontPages = Array("jamo 1", "jamo 2", "jamo 3", "jamo 4");
 
 var Fonts = new Array(
