@@ -17,7 +17,9 @@ void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxInde
 void ParsedCommandToken::Set( const CString &sParam )
 {
 	s = sParam;
-	f = Lua::RunExpressionF( sParam );
+	CString s = sParam;
+	Lua::PrepareExpression( s );	// strip invalid chars
+	f = Lua::RunExpressionF( s );
 	bColorIsValid = c.FromString( sParam );
 }
 

@@ -184,6 +184,17 @@ void Lua::UpdateGlobals()
 	lua_setglobal( L, "SCREEN_CENTER_Y" );
 }
 
+void Lua::PrepareExpression( CString &sInOut )
+{
+	// HACK: Many metrics have "//" comments that Lua fails to parse.
+	// Replace them with Lua-style comments.
+	sInOut.Replace( "//", "--" );
+
+	// Remove leading +, eg. "+50"; Lua doesn't handle that.
+	if( sInOut.size() >= 1 && sInOut[0] == '+' )
+		sInOut.erase( 0, 1 );
+}
+
 void RunExpression( const CString &str )
 {
 	LoadFromString( L, "return " + str );

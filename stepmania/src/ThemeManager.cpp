@@ -615,13 +615,8 @@ int ThemeManager::GetMetricI( CString sClassName, CString sValueName )
 float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 {
 	CString str = GetMetricRaw( sClassName,sValueName );
-	// HACK: Many metrics have "//" comments that Lua fails to parse.
-	// Replace them with Lua-style comments.
-	str.Replace( "//", "--" );
 
-	// Remove leading +, eg. "+50"; Lua doesn't handle that.
-	if( str.size() >= 1 && str[0] == '+' )
-		str.erase( 0, 1 );
+	Lua::PrepareExpression( str );
 
 	return Lua::RunExpressionF( str );
 }
@@ -634,9 +629,9 @@ bool ThemeManager::GetMetricB( CString sClassName, CString sValueName )
 		return false; /* optimization */
 	if( str == "1" )
 		return true; /* optimization */
-	// HACK: Many metrics have "//" comments that Lua fails to parse.
-	// Replace them with Lua-style comments.
-	str.Replace( "//", "--" );
+
+	Lua::PrepareExpression( str );
+	
 	return Lua::RunExpressionB( str );
 }
 

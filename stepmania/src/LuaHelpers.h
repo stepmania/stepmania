@@ -4,6 +4,7 @@
 struct lua_State;
 namespace Lua
 {
+	void PrepareExpression( CString &sInOut );	// strip "//" comments and "+"
 	bool RunExpressionB( const CString &str );
 	float RunExpressionF( const CString &str );
 
