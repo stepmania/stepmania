@@ -6,7 +6,7 @@
  Desc: An input event specific to a menu navigation.  This is generated based
 	on a GameDef.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -19,7 +19,7 @@ enum MenuButton
 	MENU_BUTTON_RIGHT,
 	MENU_BUTTON_UP,
 	MENU_BUTTON_DOWN,
-	MENU_BUTTON_NEXT,
+	MENU_BUTTON_START,
 	MENU_BUTTON_BACK,
 	NUM_MENU_BUTTONS,		// leave this at the end
 	MENU_BUTTON_NONE

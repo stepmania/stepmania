@@ -5,14 +5,14 @@
 
  Desc: Base class for all objects that appear on the screen.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
 #include "ActorFrame.h"
 
 
-void ActorFrame::RenderPrimitives()
+void ActorFrame::DrawPrimitives()
 {
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	for( int i=0; i<m_SubActors.GetSize(); i++ ) {

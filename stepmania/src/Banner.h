@@ -5,7 +5,7 @@
 
  Desc: The song's banner displayed in SelectSong.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -23,10 +23,27 @@ class Banner : public CroppedSprite
 public:
 	Banner()
 	{
+		m_bScrolling = false;
+		m_fPercentScrolling = 0;
+
 		m_fCropWidth = BANNER_WIDTH;
 		m_fCropHeight = BANNER_HEIGHT;
 	};
 
-	bool LoadFromSong( Song* pSong );		// NULL means no song
+	virtual bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 0, int iAlphaBits = 0, bool bDither = false, bool bStretch = false );
 
+	virtual void Update( float fDeltaTime );
+
+	bool LoadFromSong( Song* pSong );		// NULL means no song
+	bool LoadFromGroup( CString sGroupName );
+	bool LoadRoulette();
+
+	bool IsRouletteOn() { return m_bScrolling; };
+	void TurnOnRoulette();
+	void TurnOffRoulette();
+
+protected:
+
+	bool m_bScrolling;
+	float m_fPercentScrolling;
 };

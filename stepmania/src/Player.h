@@ -6,13 +6,13 @@
  Desc: Object that accepts pad input, knocks down ColorNotes that were stepped on, 
 		and keeps score for the player.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "PrefsManager.h"	// for ScoreSummary
-#include "NoteMetadata.h"
+#include "Notes.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
@@ -41,7 +41,7 @@ public:
 	Player();
 
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
-	void RenderPrimitives();
+	void DrawPrimitives();
 
 	void Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore );
 	void CrossedIndex( int iIndex );
@@ -61,8 +61,8 @@ protected:
 	PlayerOptions	m_PlayerOptions;
 
 	// maintain this extra data in addition to the NoteData
-	TapNote			m_TapNotesOriginal[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ELEMENTS];	// the original NoteMetadata that were loaded into player
-	TapNoteScore	m_TapNoteScores[MAX_TAP_NOTE_ELEMENTS];
+	TapNote			m_TapNotesOriginal[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];	// the original Notes that were loaded into player
+	TapNoteScore	m_TapNoteScores[MAX_TAP_NOTE_ROWS];
 	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTE_ELEMENTS];
 
 
@@ -70,8 +70,9 @@ protected:
 	NoteField			m_NoteField;
 	GhostArrowRow		m_GhostArrowRow;
 
-	Judgement				m_Judgement;
 	HoldJudgement			m_HoldJudgement[MAX_NOTE_TRACKS];
+	ActorFrame				m_frameJudgeAndCombo;
+	Judgement				m_Judgement;
 	Combo					m_Combo;
 	LifeMeterBar*			m_pLifeMeter;
 	ScoreDisplayRolling*	m_pScore;

@@ -5,7 +5,7 @@
 
  Desc: A graphic displayed in the GradeDisplay during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -22,12 +22,15 @@ public:
 	GradeDisplay();
 	
 	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
 	void SetGrade( Grade g );
 	void SpinAndSettleOn( Grade g );
 
 protected:
 	
+	Grade m_Grade;
+
 	// for scrolling
 	void ScrollToVirtualFrame( int iFrameNo );	// a virtual frame is a tiled state number
 	FRECT m_frectStartTexCoords;

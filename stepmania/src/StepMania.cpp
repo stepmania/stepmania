@@ -5,7 +5,7 @@
 
  Desc: 
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -20,33 +20,33 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
-#include "WindowManager.h"
+#include "AnnouncerManager.h"
+#include "ScreenManager.h"
 #include "GameManager.h"
 #include "FontManager.h"
 #include "InputFilter.h"
 #include "InputMapper.h"
+#include "InputQueue.h"
 
 //
 // StepMania common classes
 //
 #include "Font.h"
 #include "GameConstantsAndTypes.h"
-#include "GameConstantsAndTypes.h"
 #include "GameInput.h"
 #include "StyleInput.h"
 #include "Song.h"
 #include "StyleDef.h"
 #include "NoteData.h"
-#include "NoteMetadata.h"
+#include "Notes.h"
 
 
-#include "WindowSandbox.h"
-#include "WindowResults.h"
-#include "WindowTitleMenu.h"
-#include "WindowPlayerOptions.h"
-#include "WindowMusicScroll.h"
-
-#include "GameConstantsAndTypes.h"
+#include "ScreenSandbox.h"
+#include "ScreenResults.h"
+#include "ScreenTitleMenu.h"
+#include "ScreenPlayerOptions.h"
+#include "ScreenMusicScroll.h"
+#include "ScreenSelectMusic.h"
 
 // error catcher stuff
 #include "ErrorCatcher/ErrorCatcher.h"
@@ -96,7 +96,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow );	// wi
 void MainLoop();		// put everything in here so we can wrap it in a try...catch block
 void Update();			// Update the game logic
 void Render();			// Render a frame
-void ShowFrame();		// Display the contents of the back buffer to the screen
+void ShowFrame();		// Display the contents of the back buffer to the Window
 
 // Functions that work with game objects
 HRESULT		CreateObjects( HWND hWnd );	// allocate and initialize game objects
@@ -183,6 +183,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
  	if( NULL == g_hWndMain )
 		exit(1);
 
+	ShowWindow( g_hWndMain, SW_HIDE );
 
 
 
@@ -231,6 +232,9 @@ void MainLoop()
 	// run the game
 	CreateObjects( g_hWndMain );	// Create the game objects
 
+	ShowWindow( g_hWndMain, SW_SHOW );
+
+
 	// Now we're ready to recieve and process Windows messages.
 	MSG msg;
 	ZeroMemory( &msg, sizeof(msg) );
@@ -254,8 +258,8 @@ void MainLoop()
 		{
 			Update();
 			Render();
-			if( SCREEN  &&  SCREEN->IsWindowed() )
-				::Sleep( 0 );	// give some time to other processes
+			if( DISPLAY  &&  DISPLAY->IsWindowed() )
+				::Sleep( 1 );	// give some time to other processes
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -368,7 +372,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 		case WM_GETMINMAXINFO:
 			{
 				// Don't allow the window to be resized smaller than the screen resolution.
-				// This should snap to multiples of the screen size two!
+				// This should snap to multiples of the Window size two!
 
 				RECT rcWnd;
 				SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
@@ -382,7 +386,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_SETCURSOR:
 			// Turn off Windows cursor in fullscreen mode
-			if( SCREEN && !SCREEN->IsWindowed() )
+			if( DISPLAY && !DISPLAY->IsWindowed() )
             {
                 SetCursor( NULL );
                 return TRUE; // prevent Windows from setting the cursor
@@ -430,7 +434,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 		}
         case WM_NCHITTEST:
             // Prevent the user from selecting the menu in fullscreen mode
-            if( SCREEN && !SCREEN->IsWindowed() )
+            if( DISPLAY && !DISPLAY->IsWindowed() )
                 return HTCLIENT;
             break;
 
@@ -456,7 +460,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 HRESULT CreateObjects( HWND hWnd )
 {
 	//
-	// Draw a splash bitmap so the user isn't looking at a black screen
+	// Draw a splash bitmap so the user isn't looking at a black Window
 	//
 	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
 		GetModuleHandle( NULL ),
@@ -491,14 +495,16 @@ HRESULT CreateObjects( HWND hWnd )
 	LOG		= new RageLog();
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageSoundStream;
-	INPUTM	= new RageInput( hWnd );
+	INPUTMAN= new RageInput( hWnd );
 	PREFS	= new PrefsManager;
-	SCREEN	= new RageScreen( hWnd );
-	SONG	= new SongManager;		// this takes a long time to load
+	DISPLAY	= new RageDisplay( hWnd );
+	SONGMAN	= new SongManager;		// this takes a long time to load
 	GAME	= new GameManager;
 	THEME	= new ThemeManager;
-	FILTER	= new InputFilter();
-	MAPPER	= new InputMapper();
+	ANNOUNCER	= new AnnouncerManager;
+	INPUTFILTER	= new InputFilter();
+	INPUTMAPPER	= new InputMapper();
+	INPUTQUEUE	= new InputQueue();
 
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
@@ -507,27 +513,23 @@ HRESULT CreateObjects( HWND hWnd )
 	// Set the display mode to make sure the D3D device is created.
 	ApplyGraphicOptions(); 
 
-	TEXTURE	= new RageTextureManager( SCREEN );
-
-	// Ugly...  Set graphic options again so the TextureManager knows our preferences
-	ApplyGraphicOptions(); 
+	TEXTUREMAN	= new RageTextureManager( DISPLAY );
 
 	// These things depend on the TextureManager, so do them last!
 	FONT	= new FontManager;
-	WM		= new WindowManager;
+	SCREENMAN		= new ScreenManager;
 
-	// Ugly...  Switch the screen resolution again so that the system message will display
-	ApplyGraphicOptions(); 
-
-	WM->SystemMessage( ssprintf("Found %d songs.", SONG->m_pSongs.GetSize()) );
+//	SCREENMAN->SystemMessage( ssprintf("Found %d songs.", SONGMAN->m_pSongs.GetSize()) );
 
 
-	//WM->SetNewWindow( new WindowLoading );
-	//WM->SetNewWindow( new WindowSandbox );
-	//WM->SetNewWindow( new WindowResults );
-	//WM->SetNewWindow( new WindowPlayerOptions );
-	WM->SetNewWindow( new WindowTitleMenu );
-	//WM->SetNewWindow( new WindowMusicScroll );
+	//SCREENMAN->SetNewScreen( new ScreenLoading );
+	//SCREENMAN->SetNewScreen( new ScreenSandbox );
+	//SCREENMAN->SetNewScreen( new ScreenResults );
+	//SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
+	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	//SCREENMAN->SetNewScreen( new ScreenMusicScroll );
+	//SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+	//SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 
 
     DXUtil_Timer( TIMER_START );    // Start the accurate timer
@@ -544,19 +546,21 @@ void DestroyObjects()
 {
     DXUtil_Timer( TIMER_STOP );
 
-	SAFE_DELETE( WM );
-	SAFE_DELETE( PREFS );
-	SAFE_DELETE( SONG );
-	SAFE_DELETE( GAME );
+	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( FONT );
-	SAFE_DELETE( FILTER );
-	SAFE_DELETE( MAPPER );
-
-	SAFE_DELETE( INPUTM );
+	SAFE_DELETE( TEXTUREMAN );
+	SAFE_DELETE( INPUTQUEUE );
+	SAFE_DELETE( INPUTMAPPER );
+	SAFE_DELETE( INPUTFILTER );
+	SAFE_DELETE( ANNOUNCER );
+	SAFE_DELETE( THEME );
+	SAFE_DELETE( GAME );
+	SAFE_DELETE( SONGMAN );
+	SAFE_DELETE( DISPLAY );
+	SAFE_DELETE( PREFS );
+	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
-	SAFE_DELETE( TEXTURE );
-	SAFE_DELETE( SCREEN );
 	SAFE_DELETE( LOG );
 }
 
@@ -573,7 +577,7 @@ HRESULT RestoreObjects()
 	
     // Set window size
     RECT rcWnd;
-	if( SCREEN->IsWindowed() )
+	if( DISPLAY->IsWindowed() )
 	{
 		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
   		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
@@ -597,7 +601,7 @@ HRESULT RestoreObjects()
 	// Restore all game objects
 	///////////////////////////
 
-	SCREEN->Restore();
+	DISPLAY->Restore();
 
     return S_OK;
 }
@@ -609,7 +613,7 @@ HRESULT RestoreObjects()
 //-----------------------------------------------------------------------------
 HRESULT InvalidateObjects()
 {
-	SCREEN->Invalidate();
+	DISPLAY->Invalidate();
 	
 	return S_OK;
 }
@@ -624,25 +628,25 @@ void Update()
 {
 	float fDeltaTime = DXUtil_Timer( TIMER_GETELAPSEDTIME );
 	
-	// This was a hack to fix timing issues with the old WindowSelectSong
+	// This was a hack to fix timing issues with the old ScreenSelectSong
 	//
 	if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 		fDeltaTime = 0.050f;
 	
-	if( INPUTM->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
+	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
 		fDeltaTime *= 4;
-	if( INPUTM->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT) ) )
+	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT) ) )
 		fDeltaTime /= 4;
 
 
 	MUSIC->Update( fDeltaTime );
 
-	WM->Update( fDeltaTime );
+	SCREENMAN->Update( fDeltaTime );
 
 
 	static InputEventArray ieArray;
 	ieArray.SetSize( 0, 20 );	// zero the array
-	FILTER->GetInputEvents( ieArray, fDeltaTime );
+	INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
 
 	DeviceInput DeviceI;
 	InputEventType type;
@@ -655,15 +659,18 @@ void Update()
 		DeviceI = (DeviceInput)ieArray[i];
 		type = ieArray[i].type;
 
-		MAPPER->DeviceToGame( DeviceI, GameI );
+		INPUTMAPPER->DeviceToGame( DeviceI, GameI );
 		
-		MenuI = MAPPER->DeviceToMenu( DeviceI );
+		MenuI = INPUTMAPPER->DeviceToMenu( DeviceI );
 		if( !MenuI.IsValid() )	// try again
-			MAPPER->GameToMenu( GameI, MenuI );
+			INPUTMAPPER->GameToMenu( GameI, MenuI );
 		
-		MAPPER->GameToStyle( GameI, StyleI );
+		if( MenuI.IsValid()  &&  type == IET_FIRST_PRESS )
+			INPUTQUEUE->HandleInput( MenuI.player, MenuI.button );
 
-		WM->Input( DeviceI, type, GameI, MenuI, StyleI );
+		INPUTMAPPER->GameToStyle( GameI, StyleI );
+
+		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
 
 }
@@ -675,7 +682,7 @@ void Update()
 //-----------------------------------------------------------------------------
 void Render()
 {
-	HRESULT hr = SCREEN->BeginFrame();
+	HRESULT hr = DISPLAY->BeginFrame();
 	switch( hr )
 	{
 		case D3DERR_DEVICELOST:
@@ -686,7 +693,7 @@ void Render()
 			InvalidateObjects();
 
             // Resize the device
-            if( SUCCEEDED( hr = SCREEN->Reset() ) )
+            if( SUCCEEDED( hr = DISPLAY->Reset() ) )
             {
                 // Initialize the app's device-dependent objects
                 RestoreObjects();
@@ -694,14 +701,14 @@ void Render()
             }
 			else
 			{
-				FatalErrorHr( hr, "Failed to SCREEN->Reset()" );
+				FatalErrorHr( hr, "Failed to DISPLAY->Reset()" );
 			}
 
 			break;
 		case S_OK:
 			{
 				// set texture and alpha properties
-				LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+				LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 
 				// calculate view and projection transforms
 				D3DXMATRIX matProj;
@@ -712,14 +719,14 @@ void Render()
 				D3DXMatrixIdentity( &matView );
 				pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
 
-				SCREEN->ResetMatrixStack();
+				DISPLAY->ResetMatrixStack();
 
 
 				// draw the game
-				WM->Draw();
+				SCREENMAN->Draw();
 
 
-				SCREEN->EndFrame();
+				DISPLAY->EndFrame();
 			}
 			break;
 	}
@@ -735,8 +742,8 @@ void Render()
 void ShowFrame()
 {
 	// display the contents of the back buffer to the front
-	if( SCREEN )
-		SCREEN->ShowFrame();
+	if( DISPLAY )
+		DISPLAY->ShowFrame();
 }
 
 
@@ -762,25 +769,25 @@ void ApplyGraphicOptions()
 	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
 	//
-	if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+	if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 	{
 		// We failed.  Try full screen with same params.
 		bWindowed = false;
-		if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+		if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 		{
 			// Failed again.  Try 16 BPP
 			dwDisplayBPP = 16;
-			if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+			if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 			{
 				// Failed again.  Try 640x480
 				dwWidth = 640;
 				dwHeight = 480;
-				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+				if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 				{
 					// Failed again.  Try 320x240
 					dwWidth = 320;
 					dwHeight = 240;
-					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+					if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 					{
 						FatalError( "Tried every possible display mode, and couldn't change to any of them." );
 					}
@@ -792,20 +799,20 @@ void ApplyGraphicOptions()
 	//
 	// Let the texture manager know about our preferences
 	//
-	if( TEXTURE != NULL )
-		TEXTURE->SetPrefs( dwMaxTextureSize, dwTextureBPP );
+	if( TEXTUREMAN != NULL )
+		TEXTUREMAN->SetPrefs( dwMaxTextureSize, dwTextureBPP );
 
 	RestoreObjects();
 
 	PREFS->SavePrefsToDisk();
 
-	if( WM )
+	if( SCREENMAN )
 	{
 		CString sMessage = ssprintf("%s - %s detail", bWindowed ? "Windowed" : "FullScreen", sProfileName );
 		if( PREFS->m_GraphicProfile == PROFILE_CUSTOM )
 			sMessage += ssprintf(" - %ux%u - %u color, %u texture", dwWidth, dwHeight, dwDisplayBPP, dwTextureBPP);
 
-		WM->SystemMessage( sMessage );
+		SCREENMAN->SystemMessage( sMessage );
 	}
 }
 

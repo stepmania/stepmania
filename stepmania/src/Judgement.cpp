@@ -5,7 +5,7 @@
 
  Desc: A graphic displayed in the Judgement during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -15,14 +15,15 @@
 #include "ThemeManager.h"
 
 
-const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
+const float JUDGEMENT_DISPLAY_TIME	=	0.8f;
 
 
 Judgement::Judgement()
 {
 	m_fDisplayCountdown = 0;
-	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_JUDGEMENT) );
+	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
 	m_sprJudgement.StopAnimating();
+	m_sprJudgement.TurnShadowOn();
 	this->AddActor( &m_sprJudgement );
 }
 
@@ -35,11 +36,11 @@ void Judgement::Update( float fDeltaTime )
 		m_fDisplayCountdown = 0;
 }
 
-void Judgement::RenderPrimitives()
+void Judgement::DrawPrimitives()
 {
 	if( m_fDisplayCountdown > 0 )
 	{
-		ActorFrame::RenderPrimitives();
+		ActorFrame::DrawPrimitives();
 	}
 }
 
@@ -60,19 +61,40 @@ void Judgement::SetJudgement( TapNoteScore score )
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
+	m_sprJudgement.SetEffectNone();
+
 	if( score == TNS_MISS )
 	{
 		// falling down
-		m_sprJudgement.SetY( -30 );
-		m_sprJudgement.SetZoom( 1.0f );
+		m_sprJudgement.SetY( -20 );
+		//m_sprJudgement.SetZoom( 1.0f );
 		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
-		m_sprJudgement.SetTweenY( 30 );
+		m_sprJudgement.SetTweenY( 20 );
 	} 
+	else if( score == TNS_BOO )
+	{
+		// vibrate
+		m_sprJudgement.StopTweening();
+		m_sprJudgement.SetY( 0 );
+		m_sprJudgement.SetZoom( 1.0f );
+		m_sprJudgement.SetEffectVibrating();
+	}
 	else
 	{
 		// zooming out
-		m_sprJudgement.SetZoom( 1.35f );
-		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME/5.0f );
-		m_sprJudgement.SetTweenZoom( 1.0f );
+		float fMagnitudeX, fMagnitudeY;
+		switch( score )
+		{
+		case TNS_PERFECT:	fMagnitudeX = 1.50f;	fMagnitudeY = 2.00f;	break;
+		case TNS_GREAT:		fMagnitudeX = 1.30f;	fMagnitudeY = 1.50f;	break;
+		case TNS_GOOD:		fMagnitudeX = 1.10f;	fMagnitudeY = 1.25f;	break;
+		default:	ASSERT(false);	// invalid score value
+		}
+		m_sprJudgement.StopTweening();
+		m_sprJudgement.SetY( 0 );
+	//	m_sprJudgement.SetZoomY( fMagnitudeY );
+	//	m_sprJudgement.SetZoomX( fMagnitudeX );
+	//	m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME/5.0f );
+	//	m_sprJudgement.SetTweenZoom( 1 );
 	}
 }

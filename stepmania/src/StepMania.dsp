@@ -100,6 +100,14 @@ SOURCE=.\RageBitmapTexture.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageDisplay.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageInput.cpp
 # End Source File
 # Begin Source File
@@ -129,14 +137,6 @@ SOURCE=.\RageMusic.cpp
 # Begin Source File
 
 SOURCE=.\RageMusic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageScreen.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageScreen.h
 # End Source File
 # Begin Source File
 
@@ -187,214 +187,6 @@ SOURCE=.\RageUtil.cpp
 SOURCE=.\RageUtil.h
 # End Source File
 # End Group
-# Begin Group "Windows"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\Window.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Window.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowCaution.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowCaution.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowConfigurePads.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowConfigurePads.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowDancing.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowDancing.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowEdit.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowEdit.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowEditMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowEditMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowGameOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowGameOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowGraphicOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowGraphicOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowManager.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMessage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowOptionsType2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowOptionsType2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowPlayerOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowPlayerOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowPrompt.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowPrompt.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowResults.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowResults.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSandbox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSandbox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectDifficulty.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectDifficulty.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectGame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectGame.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectGroup.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectGroup.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectMode.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectMode.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectMusic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectMusic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectStyle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSelectStyle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSongOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSongOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSynchronize.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSynchronize.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSynchronizeMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowSynchronizeMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowTitleMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowTitleMenu.h
-# End Source File
-# End Group
 # Begin Group "Data Structures"
 
 # PROP Default_Filter ""
@@ -405,14 +197,6 @@ SOURCE=.\Font.cpp
 # Begin Source File
 
 SOURCE=.\Font.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FontManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FontManager.h
 # End Source File
 # Begin Source File
 
@@ -432,14 +216,6 @@ SOURCE=.\GameInput.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GameManager.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\GameTypes.h
 # End Source File
 # Begin Source File
@@ -452,22 +228,6 @@ SOURCE=.\Grade.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\InputFilter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\InputFilter.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\InputMapper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\InputMapper.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\NoteData.cpp
 # End Source File
 # Begin Source File
@@ -476,11 +236,11 @@ SOURCE=.\NoteData.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\NoteMetadata.cpp
+SOURCE=.\Notes.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\NoteMetadata.h
+SOURCE=.\Notes.h
 # End Source File
 # Begin Source File
 
@@ -497,14 +257,6 @@ SOURCE=.\Player.h
 # Begin Source File
 
 SOURCE=.\PlayerInput.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\PrefsManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\PrefsManager.h
 # End Source File
 # Begin Source File
 
@@ -532,14 +284,6 @@ SOURCE=.\song.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\SongManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SongManager.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\StyleDef.cpp
 # End Source File
 # Begin Source File
@@ -549,14 +293,6 @@ SOURCE=.\StyleDef.h
 # Begin Source File
 
 SOURCE=.\StyleInput.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ThemeManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ThemeManager.h
 # End Source File
 # End Group
 # Begin Group "File Types"
@@ -708,11 +444,11 @@ SOURCE=.\BitmapText.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RectangleActor.cpp
+SOURCE=.\Quad.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RectangleActor.h
+SOURCE=.\Quad.h
 # End Source File
 # Begin Source File
 
@@ -1033,6 +769,306 @@ SOURCE=.\ScoreDisplayRollingWithFrame.cpp
 # Begin Source File
 
 SOURCE=.\ScoreDisplayRollingWithFrame.h
+# End Source File
+# End Group
+# Begin Group "Screens"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Screen.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Screen.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenCaution.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenCaution.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEdit.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEdit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEditMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEditMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGameOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGameOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGameplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGameplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGraphicOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGraphicOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenMapInstruments.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenMapInstruments.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenMessage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenMusicScroll.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenMusicScroll.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsType2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsType2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenPlayerOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenPlayerOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenPrompt.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenPrompt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenResults.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenResults.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSandbox.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSandbox.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectDifficulty.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectDifficulty.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectGame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectGame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectGroup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectGroup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMode.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectStyle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectStyle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSongOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSongOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenStage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenStage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSynchronize.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSynchronize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSynchronizeMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSynchronizeMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTitleMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTitleMenu.h
+# End Source File
+# End Group
+# Begin Group "Global Singletons"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\AnnoncerManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AnnoncerManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputFilter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputFilter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputMapper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputMapper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputQueue.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputQueue.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PrefsManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PrefsManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ThemeManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ThemeManager.h
 # End Source File
 # End Group
 # Begin Source File

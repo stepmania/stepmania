@@ -5,7 +5,7 @@
 
  Desc: A row of GhostArrow Actors
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -24,7 +24,7 @@ class GhostArrowRow : public ActorFrame
 public:
 	GhostArrowRow();
 	void Update( float fDeltaTime, float fSongBeat );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	void Load( PlayerOptions po );
 	

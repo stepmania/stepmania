@@ -1,17 +1,14 @@
+#pragma once 
 /*
 -----------------------------------------------------------------------------
  File: RageUtil
 
  Desc: Miscellaneous helper functions.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _RAGEUTIL_H_
-#define _RAGEUTIL_H_
-
 
 
 //-----------------------------------------------------------------------------
@@ -27,6 +24,8 @@
 //-----------------------------------------------------------------------------
 #define RECTWIDTH(rect)   ((rect).right  - (rect).left)
 #define RECTHEIGHT(rect)  ((rect).bottom - (rect).top)
+inline int RECTCENTERX(RECT rect) { return rect.left + (rect.right-rect.left)/2; }
+inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; }
 
 #ifndef max
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
@@ -98,6 +97,9 @@ CString join(
 );
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false );
+ULONG GetHashForString( CString s );
+ULONG GetHashForFile( CString sPath );
+ULONG GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 
 bool DoesFileExist( const CString &sPath );
 DWORD GetFileSizeInBytes( const CString &sFilePath );
@@ -110,5 +112,6 @@ void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
 HINSTANCE GotoURL(LPCTSTR url);
 
+void WriteStringToFile( FILE* file, CString s );
+void ReadStringFromFile( FILE* file, CString& s );
 
-#endif

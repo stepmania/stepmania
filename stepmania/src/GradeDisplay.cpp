@@ -5,7 +5,7 @@
 
  Desc: A graphic displayed in the Grade during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -27,7 +27,7 @@ GradeDisplay::GradeDisplay()
 
 	m_fTimeLeftInScroll = 0;
 
-//	SetGrade( GRADE_NO_DATA );
+	SetGrade( GRADE_NO_DATA );
 }
 
 void GradeDisplay::Update( float fDeltaTime )
@@ -47,11 +47,21 @@ void GradeDisplay::Update( float fDeltaTime )
 	this->SetCustomTextureRect( frectCurrentTextureCoords );
 }
 
+void GradeDisplay::DrawPrimitives()
+{
+	if( m_Grade == GRADE_NO_DATA )
+		return;
+
+	Sprite::DrawPrimitives();
+}
+
 void GradeDisplay::SetGrade( Grade g )
 {
-//	StopUsingCustomCoords();
+	m_Grade = g;
 
-//	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	StopUsingCustomCoords();
+
+	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
 	switch( g )
 	{
@@ -62,7 +72,7 @@ void GradeDisplay::SetGrade( Grade g )
 	case GRADE_C:		SetState(4);	break;
 	case GRADE_D:		SetState(5);	break;
 	case GRADE_E:		SetState(6);	break;
-//	case GRADE_NO_DATA:	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	break;
+	case GRADE_NO_DATA:		break;	// don't draw at all if grade = GRADE_NO_DATA
 	default:			ASSERT( false );
 	}
 };

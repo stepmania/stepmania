@@ -6,13 +6,13 @@
  Desc: Holds data about a piece of music that can be played by one or more
 	Games.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 
-#include "NoteMetadata.h"
+#include "Notes.h"
 
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
@@ -40,19 +40,25 @@ class Song
 public:
 	Song();
 
-	bool LoadFromSongDir( CString sDir );
+	bool LoadFromSongDir( CString sDir );	// calls one of the loads below
+	void Save()			{ SaveToSMDir(); SaveToCacheFile(); }; 
+
+	bool LoadFromCacheFile( bool bLoadNoteData );
+
+protected:
 	bool LoadFromDWIFile( CString sPath );
 	bool LoadFromBMSDir( CString sDir );
 	bool LoadFromSMDir( CString sDir );
-
-	void Save();
-
-private:
-
 	void TidyUpData();	// call after loading to clean up invalid data
+
+	void SaveToSMDir();	// saves to StepMania song and notes files
+	void SaveToCacheFile();	// saves to cache file
+
+	void DeleteCacheFile();
 
 public:
 	CString GetSongFilePath()		{return m_sSongFilePath; };
+	CString GetCacheFilePath();
 	CString GetSongFileDir()		{return m_sSongDir; };
 	CString GetGroupName()			{return m_sGroupName; };
 	CString GetMusicPath()			{return m_sMusicPath; };
@@ -92,17 +98,18 @@ public:
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
 	float GetElapsedTimeFromBeat( float fBeat );
-	void GetNoteMetadatasThatMatchGameAndStyle( CString sGame, CString sStyle, CArray<NoteMetadata*, NoteMetadata*>& arrayAddTo );
+	void GetNotessThatMatchGameAndStyle( CString sGame, CString sStyle, CArray<Notes*, Notes*>& arrayAddTo );
 
 	int GetNumTimesPlayed()
 	{
 		int iTotalNumTimesPlayed = 0;
-		for( int i=0; i<m_arrayNoteMetadatas.GetSize(); i++ )
+		for( int i=0; i<m_arrayNotes.GetSize(); i++ )
 		{
-			iTotalNumTimesPlayed += m_arrayNoteMetadatas[i].m_iNumTimesPlayed;
+			iTotalNumTimesPlayed += m_arrayNotes[i].m_iNumTimesPlayed;
 		}
 		return iTotalNumTimesPlayed;
 	}
+	bool IsNew() { return GetNumTimesPlayed()==0; };
 
 	bool HasChangedSinceLastSave()	{ return m_bChangedSinceSave;	}
 	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
@@ -123,18 +130,19 @@ private:
 	float	m_fOffsetInSeconds;
 
 	CString	m_sMusicPath;
-	DWORD	m_dwMusicBytes;
+	DWORD	m_iMusicBytes;
+	float	m_fMusicLength;
 	float	m_fMusicSampleStartSeconds, m_fMusicSampleLengthSeconds;
 	CString	m_sBannerPath;
 	CString	m_sBackgroundPath;
 	CString	m_sBackgroundMoviePath;
 	CString	m_sCDTitlePath;
 
-	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before dancing
-	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before dancing
+	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
+	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before gameplay
 
 public:
-	CArray<NoteMetadata, NoteMetadata&> m_arrayNoteMetadatas;
+	CArray<Notes, Notes&> m_arrayNotes;
 };
 
 

@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the MusicStatusDisplay during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -72,7 +72,7 @@ public:
 
 	};
 
-	virtual void RenderPrimitives()
+	virtual void DrawPrimitives()
 	{
 		switch( m_MusicStatusDisplayType )
 		{
@@ -88,7 +88,7 @@ public:
 			break;
 		}
 
-		Sprite::RenderPrimitives();
+		Sprite::DrawPrimitives();
 	}
 
 protected:

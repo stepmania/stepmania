@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -20,15 +20,13 @@
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
 
-
 GrooveRadar::GrooveRadar()
 {
-	m_sprRadarBase.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_BASE) );
-	this->AddActor( &m_sprRadarBase );
+	this->AddActor( &m_GrooveRadarValueMap );
 
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
-		const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f;
+		const float fRadius = m_GrooveRadarValueMap.m_sprRadarBase.GetZoomedHeight()/2.0f;
 		const float fRotation = RADAR_VALUE_ROTATION(c);
 		float fX = cosf(fRotation) * fRadius;
 		
@@ -52,6 +50,45 @@ GrooveRadar::GrooveRadar()
 		m_sprRadarLabels[c].SetXY( fX, fY );
 		this->AddActor( &m_sprRadarLabels[c] );
 	}
+}
+
+void GrooveRadar::TweenOnScreen()
+{
+	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	{
+		float fOriginalX = m_sprRadarLabels[c].GetX();
+		m_sprRadarLabels[c].SetX( fOriginalX - 100 );
+		m_sprRadarLabels[c].SetZoom( 1.5f );
+		m_sprRadarLabels[c].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+		m_sprRadarLabels[c].BeginTweeningQueued( 0.6f+0.2f*c );	// sleep
+
+		m_sprRadarLabels[c].BeginTweeningQueued( 0.1f );	// begin fading on screen
+		m_sprRadarLabels[c].SetTweenAddColor( D3DXCOLOR(1,1,1,1) );
+		
+		m_sprRadarLabels[c].BeginTweeningQueued( 0.3f, Actor::TWEEN_BIAS_BEGIN );	// fly to the right
+		m_sprRadarLabels[c].SetTweenX( fOriginalX );
+		m_sprRadarLabels[c].SetTweenZoom( 1 );
+		m_sprRadarLabels[c].SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
+		m_sprRadarLabels[c].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	}
+	m_GrooveRadarValueMap.TweenOnScreen();
+}
+
+void GrooveRadar::TweenOffScreen()
+{
+	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	{
+		m_sprRadarLabels[c].BeginTweening( 0.2f );
+		m_sprRadarLabels[c].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	}
+	m_GrooveRadarValueMap.TweenOffScreen();
+}
+
+GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
+{
+	m_sprRadarBase.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_BASE) );
+	this->AddActor( &m_sprRadarBase );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -66,15 +103,15 @@ GrooveRadar::GrooveRadar()
 	}
 }
 
-void GrooveRadar::SetFromNoteMetadata( PlayerNumber p, NoteMetadata* pNoteMetadata )		// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber p, Notes* pNotes )		// NULL means no song
 {
-	if( pNoteMetadata != NULL )
+	if( pNotes != NULL )
 	{
 		for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 		{
 			const float fValueCurrent = m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p];
 			m_fValuesOld[p][c] = fValueCurrent;
-			m_fValuesNew[p][c] = randomf(0.5f,1.1f);
+			m_fValuesNew[p][c] = pNotes->m_fRadarValues[c];
 		}
 
 		if( m_bValuesVisible[p] == false )	// the values WERE invisible
@@ -84,13 +121,13 @@ void GrooveRadar::SetFromNoteMetadata( PlayerNumber p, NoteMetadata* pNoteMetada
 
 		m_bValuesVisible[p] = true;
 	}
-	else	// pNoteMetadata == NULL
+	else	// pNotes == NULL
 	{
 		m_bValuesVisible[p] = false;
 	}
 }
 
-void GrooveRadar::Update( float fDeltaTime )
+void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
@@ -100,14 +137,14 @@ void GrooveRadar::Update( float fDeltaTime )
 	}
 }
 
-void GrooveRadar::RenderPrimitives()
+void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 {
-	ActorFrame::RenderPrimitives();
+	ActorFrame::DrawPrimitives();
 
 	// draw radar filling
 	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f;
-	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
+	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, NULL );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
@@ -115,7 +152,7 @@ void GrooveRadar::RenderPrimitives()
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-	CUSTOMVERTEX* v;
+	RAGEVERTEX* v;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -138,7 +175,7 @@ void GrooveRadar::RenderPrimitives()
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
-				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] ) * fRadius;
+				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.15f ) * fRadius;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
 			const float fX = cosf(fRotation) * fDistFromCenter;
 			const float fY = -sinf(fRotation) * fDistFromCenter;
@@ -161,7 +198,7 @@ void GrooveRadar::RenderPrimitives()
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
-				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] ) * fRadius;
+				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.15f ) * fRadius;
 			const float fDistFromCenterInner = fDistFromCenter-2;
 			const float fDistFromCenterOutter = fDistFromCenter+2;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
@@ -184,7 +221,7 @@ void GrooveRadar::RenderPrimitives()
 
 }
 
-void GrooveRadar::TweenOnScreen()
+void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 {
 	SetZoom( 0.5f );
 	SetRotation( D3DX_PI*4 );
@@ -193,7 +230,7 @@ void GrooveRadar::TweenOnScreen()
 	SetTweenRotationZ( 0 );
 }
 
-void GrooveRadar::TweenOffScreen()
+void GrooveRadar::GrooveRadarValueMap::TweenOffScreen()
 {
 	BeginTweening( 0.6f );
 	SetTweenRotationZ( D3DX_PI*4 );

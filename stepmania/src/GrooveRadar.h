@@ -5,7 +5,7 @@
 
  Desc: The song's GrooveRadar displayed in SelectSong.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -22,21 +22,38 @@ class GrooveRadar : public ActorFrame
 public:
 	GrooveRadar();
 
-	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
-
-	void SetFromNoteMetadata( PlayerNumber p, NoteMetadata* pNoteMetadata );	// NULL means no Song
+	void SetFromNotes( PlayerNumber p, Notes* pNotes )	// NULL means no Song
+	{
+		m_GrooveRadarValueMap.SetFromNotes( p, pNotes );
+	}
 
 	void TweenOnScreen();
 	void TweenOffScreen();
 
 protected:
 
-	bool m_bValuesVisible[NUM_PLAYERS];
-	float m_PercentTowardNew[NUM_PLAYERS];
-	float m_fValuesNew[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
-	float m_fValuesOld[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
+	// the value map must be a separate Actor so we can tween it separately from the labels
+	class GrooveRadarValueMap : public ActorFrame
+	{
+	public:
+		GrooveRadarValueMap();
 
-	Sprite m_sprRadarBase;
+		virtual void Update( float fDeltaTime );
+		virtual void DrawPrimitives();
+
+		void SetFromNotes( PlayerNumber p, Notes* pNotes );	// NULL means no Song
+
+		void TweenOnScreen();
+		void TweenOffScreen();
+
+		bool m_bValuesVisible[NUM_PLAYERS];
+		float m_PercentTowardNew[NUM_PLAYERS];
+		float m_fValuesNew[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
+		float m_fValuesOld[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
+
+		Sprite m_sprRadarBase;
+	};
+
+	GrooveRadarValueMap m_GrooveRadarValueMap;
 	Sprite m_sprRadarLabels[NUM_RADAR_CATEGORIES];
 };

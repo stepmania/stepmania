@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -171,3 +171,29 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const int iInstrumen
 	FatalError( "The game button graphic '%s%s %s' is missing.", sSkinDir, sButtonName, sGraphicSuffix );
 	return "";
 }
+
+void GameDef::GetTweenColors( const CString sSkinName, const int iInstrumentButton, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors )
+{
+	const CString sSkinDir	= ssprintf("%s\\%s\\", m_sGameDir, sSkinName);
+	const CString sButtonName = m_sButtonNames[ iInstrumentButton ];
+
+	const CString sColorsFilePath = sSkinDir + sButtonName + ".colors";
+
+	FILE* file = fopen( sColorsFilePath, "r" );
+	ASSERT( file != NULL );
+	if( file == NULL )
+		return;
+
+	bool bSuccess;
+	do
+	{
+		D3DXCOLOR color;
+		int retval = fscanf( file, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
+		bSuccess = retval == 4;
+		if( bSuccess )
+			arrayTweenColors.Add( color );
+	} while( bSuccess );
+
+	return;
+}
+

@@ -5,7 +5,7 @@
 
  Desc: A bitmap actor that animates and moves around.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -33,16 +33,16 @@ Sprite::~Sprite()
 {
 //	LOG->WriteLine( "Sprite Destructor" );
 
-	TEXTURE->UnloadTexture( m_sTexturePath ); 
+	TEXTUREMAN->UnloadTexture( m_sTexturePath ); 
 }
 
 
-bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
+bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
 	LOG->WriteLine( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
 
 	//Init();
-	return LoadTexture( sTexturePath, dwHints, bForceReload );
+	return LoadTexture( sTexturePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
 }
 
 // Sprite file has the format:
@@ -53,7 +53,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceRe
 // Delay0000=1.0
 // Frame0001=3
 // Delay0000=2.0
-bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForceReload )
+bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
 	LOG->WriteLine( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
 
@@ -123,12 +123,12 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 void Sprite::UnloadTexture()
 {
 	if( m_pTexture != NULL )			// If there was a previous bitmap...
-		TEXTURE->UnloadTexture( m_sTexturePath );	// Unload it.
+		TEXTUREMAN->UnloadTexture( m_sTexturePath );	// Unload it.
 	m_pTexture = NULL;
 	m_sTexturePath = "";
 }
 
-bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
+bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
 	if( m_pTexture != NULL )			// If there was a previous bitmap...
 		UnloadTexture();
@@ -136,7 +136,7 @@ bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload
 
 	m_sTexturePath = sTexturePath;
 
-	m_pTexture = TEXTURE->LoadTexture( m_sTexturePath, dwHints, bForceReload );
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
 	assert( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled
@@ -184,9 +184,9 @@ void Sprite::Update( float fDeltaTime )
 }
 
 
-void Sprite::RenderPrimitives()
+void Sprite::DrawPrimitives()
 {
-	SCREEN->TranslateLocal( -0.5f, -0.5f, 0 );	// offset so that pixels are aligned to texels
+	DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );	// offset so that pixels are aligned to texels
 
 	if( m_pTexture == NULL )
 		return;
@@ -217,8 +217,8 @@ void Sprite::RenderPrimitives()
 	}
 
 
-	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
-	CUSTOMVERTEX* v;
+	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
+	RAGEVERTEX* v;
 	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
 	v[0].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
@@ -252,14 +252,14 @@ void Sprite::RenderPrimitives()
 
 
 	// Set the stage...
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
 
 	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
 	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
 
-	pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
+	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
 
 
 
@@ -270,8 +270,8 @@ void Sprite::RenderPrimitives()
 		//////////////////////
 		if( m_bShadow )
 		{
-			SCREEN->PushMatrix();
-			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
+			DISPLAY->PushMatrix();
+			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
@@ -288,7 +288,7 @@ void Sprite::RenderPrimitives()
 			
 			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
 
-			SCREEN->PopMatrix();
+			DISPLAY->PopMatrix();
 		}
 
 
@@ -345,6 +345,8 @@ void Sprite::RenderPrimitives()
 void Sprite::SetState( int iNewState )
 {
 	ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
+	if( iNewState < 0 )
+		iNewState = 0;
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
 }

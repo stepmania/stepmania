@@ -1,15 +1,13 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: Sprite.h
 
  Desc: A bitmap Actor that animates and moves around.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
-
-#ifndef _SPRITE_H_
-#define _SPRITE_H_
 
 
 #include "Actor.h"
@@ -28,18 +26,18 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-	virtual bool Load( CString sFilePath, DWORD dwHints = 0, bool bForceReload = false )
+	virtual bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false )
 	{
 		ASSERT( sFilePath != "" );
 		if( sFilePath.Right(7) == ".sprite" )
-			return LoadFromSpriteFile( sFilePath, dwHints, bForceReload  );
+			return LoadFromSpriteFile( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
 		else 
-			return LoadFromTexture( sFilePath, dwHints, bForceReload );
+			return LoadFromTexture( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
 	};
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };
 
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
 	virtual void StartAnimating()	{ m_bIsAnimating = TRUE; };
@@ -59,10 +57,10 @@ public:
 
 protected:
 
-	virtual bool LoadFromTexture( CString sTexturePath, DWORD dwHints = 0, bool bForceReload = false );
-	virtual bool LoadFromSpriteFile( CString sSpritePath, DWORD dwHints = 0, bool bForceReload = false );
+	virtual bool LoadFromTexture( CString sTexturePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
+	virtual bool LoadFromSpriteFile( CString sSpritePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
 	
-	virtual bool LoadTexture( CString sTexture, DWORD dwHints = 0, bool bForceReload = false );
+	virtual bool LoadTexture( CString sTexture, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
 
 
 
@@ -81,6 +79,3 @@ protected:
 	//FRECT m_CustomTexCoordRect;
 	float m_CustomTexCoords[8];	// (x,y) * 4
 };
-
-
-#endif

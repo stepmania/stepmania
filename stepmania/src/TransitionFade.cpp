@@ -5,7 +5,7 @@
 
  Desc: Fades out or in.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -27,7 +27,7 @@ TransitionFade::~TransitionFade()
 
 }
 
-void TransitionFade::RenderPrimitives()
+void TransitionFade::DrawPrimitives()
 {
 	const float fPercentageOpaque = 1 - GetPercentageOpen();
 	if( fPercentageOpaque == 0 )

@@ -4,7 +4,7 @@
 
  Desc: The song's TextBanner displayed in SelectSong.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -15,7 +15,7 @@
 #include "ActorFrame.h"
 #include "Song.h"
 #include "BitmapText.h"
-#include "RectangleActor.h"
+#include "Quad.h"
 
 
 const float TEXT_BANNER_WIDTH	= 180;

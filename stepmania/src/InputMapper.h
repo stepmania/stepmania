@@ -7,7 +7,7 @@
     also has temporary holders for information that passed between windows - e.g.
 	ScoreSummary.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -75,4 +75,4 @@ protected:
 };
 
 
-extern InputMapper*	MAPPER;	// global and accessable from anywhere in our program
+extern InputMapper*	INPUTMAPPER;	// global and accessable from anywhere in our program

@@ -5,7 +5,7 @@
 
  Desc: Shooting start across the screen leave a black trail.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -26,7 +26,7 @@ TransitionStarWipe::~TransitionStarWipe()
 
 }
 
-void TransitionStarWipe::RenderPrimitives()
+void TransitionStarWipe::DrawPrimitives()
 {
 	if( m_TransitionState == opened ) 
 		return;
@@ -98,28 +98,28 @@ void TransitionStarWipe::RenderPrimitives()
 	}
 }
 
-void TransitionStarWipe::OpenWipingRight( WindowMessage send_when_done )
+void TransitionStarWipe::OpenWipingRight( ScreenMessage send_when_done )
 {
 	Transition::OpenWipingRight( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_CLOSING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_CLOSING_STAR) );
 }
 
-void TransitionStarWipe::OpenWipingLeft(  WindowMessage send_when_done )
+void TransitionStarWipe::OpenWipingLeft(  ScreenMessage send_when_done )
 {
 	Transition::OpenWipingLeft( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_CLOSING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_CLOSING_STAR) );
 }
 
-void TransitionStarWipe::CloseWipingRight(WindowMessage send_when_done )
+void TransitionStarWipe::CloseWipingRight(ScreenMessage send_when_done )
 {
 	Transition::CloseWipingRight( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_OPENING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_OPENING_STAR) );
 }
 
-void TransitionStarWipe::CloseWipingLeft( WindowMessage send_when_done )
+void TransitionStarWipe::CloseWipingLeft( ScreenMessage send_when_done )
 {
 	Transition::CloseWipingLeft( send_when_done );
-	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_OPENING_STAR) );
+	LoadNewStarSprite( THEME->GetPathTo(GRAPHIC_GAMEPLAY_OPENING_STAR) );
 }
 
 void TransitionStarWipe::LoadNewStarSprite( CString sFileName )

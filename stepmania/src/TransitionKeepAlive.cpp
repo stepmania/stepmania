@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -36,7 +36,7 @@ void TransitionKeepAlive::Update( float fDeltaTime )
 }
 
 
-void TransitionKeepAlive::RenderPrimitives()
+void TransitionKeepAlive::DrawPrimitives()
 {
 	if( m_TransitionState == closing_left )	// we're going back
 	{
@@ -67,28 +67,28 @@ void TransitionKeepAlive::RenderPrimitives()
 }
 
 
-void TransitionKeepAlive::OpenWipingRight( WindowMessage send_when_done )
+void TransitionKeepAlive::OpenWipingRight( ScreenMessage send_when_done )
 {
 	this->SetTransitionTime( KEEP_ALIVE_FORWARD_TRANSITION_TIME );
 
 	Transition::OpenWipingRight( send_when_done );
 }
 
-void TransitionKeepAlive::OpenWipingLeft(  WindowMessage send_when_done )
+void TransitionKeepAlive::OpenWipingLeft(  ScreenMessage send_when_done )
 {
 	this->SetTransitionTime( KEEP_ALIVE_BACKWARD_TRANSITION_TIME );
 
 	Transition::OpenWipingLeft( send_when_done );
 }
 
-void TransitionKeepAlive::CloseWipingRight(WindowMessage send_when_done )
+void TransitionKeepAlive::CloseWipingRight(ScreenMessage send_when_done )
 {
 	this->SetTransitionTime( KEEP_ALIVE_FORWARD_TRANSITION_TIME );
 
 	Transition::CloseWipingRight( send_when_done );
 }
 
-void TransitionKeepAlive::CloseWipingLeft( WindowMessage send_when_done )
+void TransitionKeepAlive::CloseWipingLeft( ScreenMessage send_when_done )
 {
 	this->SetTransitionTime( KEEP_ALIVE_BACKWARD_TRANSITION_TIME );
 

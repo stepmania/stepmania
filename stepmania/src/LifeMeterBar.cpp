@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -20,11 +20,6 @@ const float SECTION_WIDTH = 1.0f/NUM_SECTIONS;
 
 LifeMeterBar::LifeMeterBar()
 {
-}
-
-void LifeMeterBar::SetPlayerOptions(const PlayerOptions& po) {
-	m_po = po;
-	//m_fLifePercentage = m_po.m_fInitialLifePercentage;
 	m_fLifePercentage = 0.5f;
 	m_fTrailingLifePercentage = 0;
 	m_fLifeVelocity = 0;
@@ -55,7 +50,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 
 	m_fLifeVelocity += fDelta * fDeltaTime;
 
-	m_fLifeVelocity = clamp( m_fLifeVelocity, -0.15f, 0.15f );
+	m_fLifeVelocity = clamp( m_fLifeVelocity, -0.30f, 0.30f );
 
 	m_fLifeVelocity *= 1-fDeltaTime*2;
 
@@ -84,19 +79,20 @@ const D3DXCOLOR COLOR_FULL_2	= D3DXCOLOR(1,1,0,1);
 
 D3DXCOLOR LifeMeterBar::GetColor( float fPercentIntoSection )
 {
-	const float fPercentColor1 = fabsf( fPercentIntoSection*2 - 1 );
+	float fPercentColor1 = fabsf( fPercentIntoSection*2 - 1 );
+	fPercentColor1 *= fPercentColor1 * fPercentColor1;
 	if( m_fLifePercentage == 1 )
 		return COLOR_FULL_1 * fPercentColor1 + COLOR_FULL_2 * (1-fPercentColor1);
 	else
         return COLOR_NORMAL_1 * fPercentColor1 + COLOR_NORMAL_2 * (1-fPercentColor1);
 }
 
-void LifeMeterBar::RenderPrimitives()
+void LifeMeterBar::DrawPrimitives()
 {
 
 	// make the object in logical units centered at the origin
-	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
-	CUSTOMVERTEX* v;
+	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
+	RAGEVERTEX* v;
 	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
 	int iNumV = 0;
@@ -175,7 +171,7 @@ void LifeMeterBar::RenderPrimitives()
 	pVB->Unlock();
 
 
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, NULL );
 
 
@@ -191,8 +187,8 @@ void LifeMeterBar::RenderPrimitives()
 
 
 	// finally!  Pump those triangles!	
-	pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
+	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
 	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, iNumV-2 );
 
 }

@@ -6,7 +6,7 @@
  Desc: Manages GameDefs (which define different games, like "dance" and "pump")
 	and StyleDefs (which define different games, like "single" and "couple")
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -49,6 +49,7 @@ public:
 		InstrumentButton b = gi.button;
 		return GetCurrentGameDef()->GetPathToGraphic( m_sCurrentSkin[p], b, gbg );
 	}
+	void GetTweenColors( const PlayerNumber p, const ColumnNumber col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );
 
 
 protected:

@@ -2,9 +2,9 @@
 -----------------------------------------------------------------------------
  File: MenuElements.h
 
- Desc: Base class for menu Windows.
+ Desc: Base class for menu Screens.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 #ifndef _MenuElements_H_
@@ -12,7 +12,7 @@
 
 
 
-#include "Window.h"
+#include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
@@ -27,7 +27,7 @@ class MenuElements : public ActorFrame
 public:
 	MenuElements();
 
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	void Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText );
 
@@ -56,8 +56,8 @@ protected:
 	Sprite	m_sprBottomEdge;
 	BitmapText	m_textHelp;
 
-	RandomSample m_soundSwoosh;
-	RandomSample m_soundBack;
+	RageSoundSample m_soundSwoosh;
+	RageSoundSample m_soundBack;
 };
 
 

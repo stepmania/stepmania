@@ -4,7 +4,7 @@
 
  Desc: A graphic that appears to blur and come into focus.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -30,7 +30,7 @@ public:
 	};
 
 	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	void StartFocusing();
 	void StartBlurring();

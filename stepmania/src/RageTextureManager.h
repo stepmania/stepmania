@@ -1,24 +1,15 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: RageTextureManager.h
+ Class: RageTextureManager
 
  Desc: Interface for loading and releasing textures.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-class RageTextureManager;
-
-
-
-#ifndef _RAGETEXTUREMANAGER_H_
-#define _RAGETEXTUREMANAGER_H_
-
-
 #include "RageTexture.h"
-//#include <d3dx8.h>
-//#include <d3d8types.h>
 
 
 //-----------------------------------------------------------------------------
@@ -27,10 +18,10 @@ class RageTextureManager;
 class RageTextureManager
 {
 public:
-	RageTextureManager( RageScreen* pScreen );
+	RageTextureManager( RageDisplay* pScreen );
 	~RageTextureManager();
 
-	RageTexture* LoadTexture( CString sTexturePath, const DWORD dwHints = 0, const bool bForceReload = false );
+	RageTexture* LoadTexture( CString sTexturePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
 	bool IsTextureLoaded( CString sTexturePath );
 	void UnloadTexture( CString sTexturePath );
 	void ReloadAll();
@@ -46,7 +37,7 @@ public:
 	DWORD GetTextureColorDepth() { return m_dwTextureColorDepth; };
 
 protected:
-	RageScreen* m_pScreen;
+	RageDisplay* m_pScreen;
 
 	DWORD m_dwMaxTextureSize;
 	DWORD m_dwTextureColorDepth;
@@ -55,6 +46,4 @@ protected:
 	CTypedPtrMap<CMapStringToPtr, CString, RageTexture*> m_mapPathToTexture;
 };
 
-extern RageTextureManager*	TEXTURE;	// global and accessable from anywhere in our program
-
-#endif
+extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program

@@ -5,7 +5,7 @@
 
  Desc: Abstract class for a texture and holds metadata.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -13,7 +13,7 @@
 
 
 
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include <d3dx8.h>
 #include <assert.h>
 //#include <d3d8types.h>
@@ -32,7 +32,6 @@ public:
 };
 
 
-
 //-----------------------------------------------------------------------------
 // RageTexture Class Declarations
 //-----------------------------------------------------------------------------
@@ -40,17 +39,25 @@ class RageTexture
 {
 public:
 	RageTexture( 
-		RageScreen* pScreen, 
+		RageDisplay* pScreen, 
 		const CString &sFilePath, 
-		const DWORD dwMaxSize, 
-		const DWORD dwTextureColorDepth,
-		const DWORD dwHints );
+		DWORD dwMaxSize = 2048, 
+		DWORD dwTextureColorDepth = 16, 
+		int iMipMaps = 4,
+		int iAlphaBits = 4,
+		bool bDither = false,
+		bool bStretch = false 
+		);
 	virtual ~RageTexture() = 0;
 
 	virtual void Reload( 
-		const DWORD dwMaxSize, 
-		const DWORD dwTextureColorDepth,
-		const DWORD dwHints ) = 0;
+		DWORD dwMaxSize = 2048, 
+		DWORD dwTextureColorDepth = 16, 
+		int iMipMaps = 4,
+		int iAlphaBits = 4,
+		bool bDither = false, 
+		bool bStretch = false 
+		) = 0;
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() = 0;
 
@@ -88,7 +95,7 @@ protected:
 	int				m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
 	int				m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
 	int				m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
-	D3DFORMAT			m_TextureFormat; 
+	D3DFORMAT		m_TextureFormat; 
 
 	// The number of frames of animation in each row and column of this texture.
 	int				m_iFramesWide, m_iFramesHigh;

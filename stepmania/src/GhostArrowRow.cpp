@@ -5,7 +5,7 @@
 
  Desc: A graphic displayed in the GhostArrowRow during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -59,7 +59,7 @@ void GhostArrowRow::Update( float fDeltaTime, float fSongBeat )
 	}
 }
 
-void GhostArrowRow::RenderPrimitives()
+void GhostArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{

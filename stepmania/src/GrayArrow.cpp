@@ -5,7 +5,7 @@
 
  Desc: A gray arrow that "receives" ColorNotes.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Ben Nordstrom
 	Chris Danford
 -----------------------------------------------------------------------------

@@ -5,7 +5,7 @@
 
  Desc: Holds multiple sounds samples and can play a random sound easily.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -37,6 +37,7 @@ bool RandomSample::LoadSoundDir( CString sDir )
 
 	CStringArray arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
+	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
 
 	for( int i=0; i<arraySoundFiles.GetSize(); i++ )

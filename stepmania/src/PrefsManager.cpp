@@ -5,7 +5,7 @@
 
  Desc: See Header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -121,12 +121,14 @@ void PrefsManager::ReadPrefsFromDisk()
 		{
 			pKey->GetNextAssoc( pos, name_string, value_string );
 
-			if( name_string == "IgnoreJoyAxes" )		m_GameOptions.m_bIgnoreJoyAxes	= ( value_string == "1" );
-			if( name_string == "ShowFPS" )				m_GameOptions.m_bShowFPS		= ( value_string == "1" );
-			if( name_string == "UseRandomVis" )			m_GameOptions.m_bUseRandomVis	= ( value_string == "1" );
-			if( name_string == "SkipCaution" )			m_GameOptions.m_bSkipCaution	= ( value_string == "1" );
-			if( name_string == "Announcer" )			m_GameOptions.m_bAnnouncer		= ( value_string == "1" );
-			if( name_string == "NumArcadeStages" )		m_GameOptions.m_iNumArcadeStages= atoi( value_string );
+			if( name_string == "IgnoreJoyAxes" )		m_GameOptions.m_bIgnoreJoyAxes			= ( value_string == "1" );
+			if( name_string == "ShowFPS" )				m_GameOptions.m_bShowFPS				= ( value_string == "1" );
+			if( name_string == "UseRandomVis" )			m_GameOptions.m_bUseRandomVis			= ( value_string == "1" );
+			if( name_string == "Announcer" )			m_GameOptions.m_bAnnouncer				= ( value_string == "1" );
+			if( name_string == "ShowCaution" )			m_GameOptions.m_bShowCaution			= ( value_string == "1" );
+			if( name_string == "ShowSelectDifficulty" )	m_GameOptions.m_bShowSelectDifficulty	= ( value_string == "1" );
+			if( name_string == "ShowSelectGroup" )		m_GameOptions.m_bShowSelectGroup		= ( value_string == "1" );
+			if( name_string == "NumArcadeStages" )		m_GameOptions.m_iNumArcadeStages		= atoi( value_string );
 			if( name_string == "JudgementDifficulty" )	m_GameOptions.m_JudgementDifficulty= (GameOptions::JudgementDifficulty) atoi( value_string );
 		}
 	}
@@ -193,14 +195,25 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValue( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );
 	ini.SetValue( "GameOptions", "ShowFPS",				m_GameOptions.m_bShowFPS ? "1":"0" );
 	ini.SetValue( "GameOptions", "UseRandomVis",		m_GameOptions.m_bUseRandomVis ? "1":"0" );
-	ini.SetValue( "GameOptions", "SkipCaution",			m_GameOptions.m_bSkipCaution ? "1":"0" );
 	ini.SetValue( "GameOptions", "Announcer",			m_GameOptions.m_bAnnouncer ? "1":"0" );
+	ini.SetValue( "GameOptions", "ShowCaution",			m_GameOptions.m_bShowCaution ? "1":"0" );
+	ini.SetValue( "GameOptions", "ShowSelectDifficulty",m_GameOptions.m_bShowSelectDifficulty ? "1":"0" );
+	ini.SetValue( "GameOptions", "ShowSelectGroup",		m_GameOptions.m_bShowSelectGroup ? "1":"0" );
 
 
 
 	ini.WriteFile();
 }
 
+int PrefsManager::GetStageNumber()
+{
+	return m_iCurrentStage;
+}
+
+bool PrefsManager::IsFinalStage()
+{
+	return m_GameOptions.m_iNumArcadeStages == m_iCurrentStage;
+}
 
 CString PrefsManager::GetStageText()
 {

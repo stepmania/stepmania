@@ -5,7 +5,7 @@
 
  Desc: See Header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -166,3 +166,12 @@ bool GameManager::IsPlayerEnabled( PlayerNumber PlayerNo )
 	return false;
 }
 
+void GameManager::GetTweenColors( const PlayerNumber p, const ColumnNumber col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
+{
+	GameDef* pGameDef = GetCurrentGameDef();
+	StyleDef* pStyleDef = GetCurrentStyleDef();
+	StyleInput StyleI( p, col );
+	GameInput GameI = pStyleDef->StyleInputToGameInput( StyleI );
+
+	pGameDef->GetTweenColors( m_sCurrentSkin[p], GameI.button, aTweenColorsAddTo );
+}

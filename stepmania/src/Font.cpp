@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -59,7 +59,7 @@ Font::Font( const CString &sFontFilePath )
 	m_sTexturePath.MakeLower();
 
 
-	m_pTexture = TEXTURE->LoadTexture( m_sTexturePath, 0, false );
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	assert( m_pTexture != NULL );
 
 
@@ -139,7 +139,7 @@ Font::Font( const CString &sFontFilePath )
 Font::~Font()
 {
 	if( m_pTexture != NULL )
-		TEXTURE->UnloadTexture( m_sTexturePath );
+		TEXTUREMAN->UnloadTexture( m_sTexturePath );
 }
 
 

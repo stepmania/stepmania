@@ -4,7 +4,7 @@
 
  Desc: The song's CroppedSprite displayed in SelectSong.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -24,9 +24,9 @@ public:
 		m_fCropWidth = m_fCropHeight = 100;
 	};
 
-	bool Load( CString sFilePath, DWORD dwHints = 0, bool bForceReload = false )
+	bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false )
 	{
-		Sprite::Load( sFilePath, dwHints, bForceReload );
+		Sprite::Load( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
 		CropToSize( m_fCropWidth, m_fCropHeight );
 		
 		return true;

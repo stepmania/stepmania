@@ -1,16 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: BitmapText
 
  Desc: An actor that holds a Font and draws text to the screen.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _BITMAPTEXT_H_
-#define _BITMAPTEXT_H_
 
 
 #include "Sprite.h"
@@ -34,8 +32,7 @@ public:
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
 
-	void RebuildVertexBuffer();		// fill the RageScreen's vertex buffer with what we're going to draw
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	void TurnRainbowOn()	{ m_bRainbow = true; };
 	void TurnRainbowOff()	{ m_bRainbow = false; };
@@ -52,12 +49,6 @@ protected:
 	int		m_iLineWidths[MAX_TEXT_LINES];	// in source pixels
 	int		m_iWidestLineWidth;					// in source pixels
 
-	// recalculate on RebuildVertexBuffer()
-//	LPDIRECT3DVERTEXBUFFER8 m_pVB;
-	int		m_iNumV;		// number of verticies we filled in the vertex buffer
-
 	bool m_bRainbow;
 };
 
-
-#endif

@@ -5,7 +5,7 @@
 
  Desc: A stream of ColorNotes that scrolls past Y==0.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -19,7 +19,7 @@
 #include "StyleDef.h"
 #include "ColorNote.h"
 #include "BitmapText.h"
-#include "RectangleActor.h"
+#include "Quad.h"
 #include "ArrowEffects.h"
 
 
@@ -30,14 +30,14 @@ class NoteField : public NoteData, public ActorFrame
 public:
 	NoteField();
 	virtual void Update( float fDeltaTime, float fSongBeat );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	enum NoteFieldMode {
 		MODE_DANCING,
 		MODE_EDITING,
 	};
 	
-	void Load( NoteData* pNoteData, PlayerOptions po, float fNumArrowsToDrawBehind, float fNumArrowsToDrawAhead, NoteFieldMode mode );
+	void Load( NoteData* pNoteData, PlayerNumber p, PlayerOptions po, float fNumArrowsToDrawBehind, float fNumArrowsToDrawAhead, NoteFieldMode mode );
 	void RemoveTapNoteRow( int iIndex );
 	void SetHoldNoteLife( int iIndex, float fLife );
 
@@ -65,7 +65,7 @@ protected:
 	ColorNote		m_ColorNote[MAX_NOTE_TRACKS];
 	
 	// used in MODE_EDIT
-	RectangleActor	m_rectMeasureBar;
+	Quad	m_rectMeasureBar;
 	BitmapText		m_textMeasureNumber;
-	RectangleActor	m_rectMarkerBar;
+	Quad	m_rectMarkerBar;
 };

@@ -15,12 +15,12 @@
 	correspondance.  For example, dance-versus has 8 columns but only 4 tracks
 	because two players place from the same set of 4 tracks.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "NoteMetadata.h"
+#include "Notes.h"
 #include "NoteData.h"
 #include "StyleInput.h"
 #include "GameInput.h"

@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -37,7 +37,7 @@ NoteField::NoteField()
 }
 
 
-void NoteField::Load( NoteData* pNoteData, PlayerOptions po, float fNumBeatsToDrawBehind, float fNumBeatsToDrawAhead, NoteFieldMode mode )
+void NoteField::Load( NoteData* pNoteData, PlayerNumber p, PlayerOptions po, float fNumBeatsToDrawBehind, float fNumBeatsToDrawAhead, NoteFieldMode mode )
 {
 	m_PlayerOptions = po;
 	m_fNumBeatsToDrawBehind = fNumBeatsToDrawBehind;
@@ -49,8 +49,11 @@ void NoteField::Load( NoteData* pNoteData, PlayerOptions po, float fNumBeatsToDr
 	// init arrow rotations and X positions
 	for( int c=0; c<m_iNumTracks; c++ ) 
 	{
-		m_ColorNote[c].m_sprColorPart.Load( GAME->GetPathToGraphic( PLAYER_1, c, GRAPHIC_NOTE_COLOR_PART) );
-		m_ColorNote[c].m_sprGrayPart.Load( GAME->GetPathToGraphic( PLAYER_1, c, GRAPHIC_NOTE_GRAY_PART) );
+		CArray<D3DXCOLOR,D3DXCOLOR>	arrayTweenColors;
+		GAME->GetTweenColors( p, c, arrayTweenColors );
+
+		m_ColorNote[c].m_sprColorPart.Load( GAME->GetPathToGraphic( p, c, GRAPHIC_NOTE_COLOR_PART) );
+		m_ColorNote[c].m_sprGrayPart.Load( GAME->GetPathToGraphic( p, c, GRAPHIC_NOTE_GRAY_PART) );
 	}
 
 
@@ -149,18 +152,18 @@ void NoteField::DrawMarkerBar( const int iIndex )
 	m_rectMarkerBar.Draw();
 }
 
-void NoteField::RenderPrimitives()
+void NoteField::DrawPrimitives()
 {
-	//LOG->WriteLine( "NoteField::RenderPrimitives()" );
+	//LOG->WriteLine( "NoteField::DrawPrimitives()" );
 
 	if( m_fSongBeat < 0 )
 		m_fSongBeat = 0;
 
 	int iBaseFrameNo = (int)(m_fSongBeat*2.5) % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;	// 2.5 is a "fudge number" :-)  This should be based on BPM
 	
-	int iIndexFirstArrowToDraw = BeatToNoteIndex( m_fSongBeat - m_fNumBeatsToDrawBehind );	// 2 beats earlier
+	int iIndexFirstArrowToDraw = BeatToNoteRow( m_fSongBeat - m_fNumBeatsToDrawBehind );	// 2 beats earlier
 	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
-	int iIndexLastArrowToDraw  = BeatToNoteIndex( m_fSongBeat + m_fNumBeatsToDrawAhead );	// 7 beats later
+	int iIndexLastArrowToDraw  = BeatToNoteRow( m_fSongBeat + m_fNumBeatsToDrawAhead );	// 7 beats later
 
 	//LOG->WriteLine( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
@@ -183,11 +186,11 @@ void NoteField::RenderPrimitives()
 	{
 		if( m_fBeginMarker != -1 )
 		{
-			DrawMarkerBar( BeatToNoteIndex(m_fBeginMarker) );
+			DrawMarkerBar( BeatToNoteRow(m_fBeginMarker) );
 		}
 		if( m_fEndMarker != -1 )
 		{
-			DrawMarkerBar( BeatToNoteIndex(m_fEndMarker) );
+			DrawMarkerBar( BeatToNoteRow(m_fEndMarker) );
 		}
 	}
 
@@ -252,7 +255,7 @@ void NoteField::RenderPrimitives()
 
 			const int iCol = hn.m_iTrack;
 			const float fHoldNoteLife = m_HoldNoteLife[i];
-			const bool bActive = NoteIndexToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteIndexToBeat(hn.m_iEndIndex);
+			const bool bActive = NoteRowToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteRowToBeat(hn.m_iEndIndex);
 
 
 			// draw the gray parts
@@ -264,7 +267,7 @@ void NoteField::RenderPrimitives()
 				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
 					continue;	// skip this arrow
 
-				if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteIndexToBeat(j) < m_fSongBeat )
+				if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteRowToBeat(j) < m_fSongBeat )
 					continue;		// don't draw
 
 				CreateHoldNoteInstance( instances[iCount++], bActive, j, hn, fHoldNoteLife );
@@ -273,7 +276,7 @@ void NoteField::RenderPrimitives()
 			// draw the first arrow on top of the others
 			j = (float)hn.m_iStartIndex;
 
-			if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteIndexToBeat(j) < m_fSongBeat )
+			if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteRowToBeat(j) < m_fSongBeat )
 				;		// don't draw
 			else
 				CreateHoldNoteInstance( instances[iCount++], bActive, j, hn, fHoldNoteLife );

@@ -4,7 +4,7 @@
 
  Desc: The transition between menu screens. "Let's Move On"
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -22,16 +22,16 @@ public:
 	TransitionKeepAlive();
 
 	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
-	virtual void OpenWipingRight( WindowMessage send_when_done = SM_None );
-	virtual void OpenWipingLeft(  WindowMessage send_when_done = SM_None );
-	virtual void CloseWipingRight(WindowMessage send_when_done = SM_None );
-	virtual void CloseWipingLeft( WindowMessage send_when_done = SM_None );
+	virtual void OpenWipingRight( ScreenMessage send_when_done = SM_None );
+	virtual void OpenWipingLeft(  ScreenMessage send_when_done = SM_None );
+	virtual void CloseWipingRight(ScreenMessage send_when_done = SM_None );
+	virtual void CloseWipingLeft( ScreenMessage send_when_done = SM_None );
 
 protected:
 	Sprite m_sprLogo;
-	RectangleActor m_rect;
+	Quad m_rect;
 };
 
 

@@ -1,17 +1,18 @@
 #include "stdafx.h"	// testing updates
 /*
 -----------------------------------------------------------------------------
- File: Actor.h
+ Class: Actor
 
- Desc: Base class for all objects that appear on the screen.
+ Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "Actor.h"
 #include <math.h>
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include "PrefsManager.h"
 
 
@@ -45,9 +46,9 @@ Actor::Actor()
 }
 
 
-void Actor::Draw()		// set the world matrix and calculate actor properties, the call RenderPrimitives
+void Actor::Draw()		// set the world matrix and calculate actor properties, the call DrawPrimitives
 {
-	SCREEN->PushMatrix();	// we're actually going to do some drawing in this function	
+	DISPLAY->PushMatrix();	// we're actually going to do some drawing in this function	
 
 	int i;
 	
@@ -112,8 +113,8 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 
 
 	
-	SCREEN->Translate( m_temp_pos.x, m_temp_pos.y, m_temp_pos.z );	// offset so that pixels are aligned to texels
-	SCREEN->Scale( m_temp_scale.x, m_temp_scale.y, 1 );
+	DISPLAY->Translate( m_temp_pos.x, m_temp_pos.y, m_temp_pos.z );	// offset so that pixels are aligned to texels
+	DISPLAY->Scale( m_temp_scale.x, m_temp_scale.y, 1 );
 
 	// super slow!	
 	//	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
@@ -122,19 +123,19 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	// replace with...
 	if( m_temp_rotation.z != 0 )
 	{
-		SCREEN->RotateZ( m_temp_rotation.z );
+		DISPLAY->RotateZ( m_temp_rotation.z );
 	}    
 	if( m_temp_rotation.y != 0 )
 	{
-		SCREEN->RotateY( m_temp_rotation.y );
+		DISPLAY->RotateY( m_temp_rotation.y );
 	}    
 
 
 
-	this->RenderPrimitives();	// call the most-derived version of RenderPrimitives();
+	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
 
 
-	SCREEN->PopMatrix();
+	DISPLAY->PopMatrix();
 }
 
 

@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -38,7 +38,6 @@ BitmapText::BitmapText()
 
 	m_iNumLines = 0;
 	m_iWidestLineWidth = 0;
-	m_iNumV = 0;
 	
 	for( int i=0; i<MAX_TEXT_LINES; i++ )
 	{
@@ -128,34 +127,21 @@ void BitmapText::SetText( CString sText )
 }
 
 
-
-
-void BitmapText::RebuildVertexBuffer()
+// draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
+void BitmapText::DrawPrimitives()
 {
-	//LOG->WriteLine( "BitmapText::RebuildVertexBuffer()" );
-
-
+	if( m_iNumLines == 0 )
+		return;
 
 	RageTexture* pTexture = m_pFont->m_pTexture;
 
 
-
-
-
-
-
-
-
 	// make the object in logical units centered at the origin
-	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
-	//LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
-
-	CUSTOMVERTEX* v;
+	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
+	RAGEVERTEX* v;
 	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+	int iNumV = 0;	// the current vertex number
 
-
-
-	m_iNumV = 0;	// the current vertex number
 
 	const int iHeight = pTexture->GetSourceFrameHeight();	// height of a character
 	const int iFrameWidth = pTexture->GetSourceFrameWidth();	// width of a character frame in logical units
@@ -205,21 +191,21 @@ void BitmapText::RebuildVertexBuffer()
 			const float fExtraPixels = fPercentExtra * pTexture->GetSourceFrameWidth();
 
 			// first triangle
-			v[m_iNumV++].p = D3DXVECTOR3( (float)iX, iY-iHeight/2.0f,	0 );		// top left
-			v[m_iNumV++].p = D3DXVECTOR3( (float)iX, iY+iHeight/2.0f,	0 );		// bottom left
+			v[iNumV++].p = D3DXVECTOR3( (float)iX,		 iY-iHeight/2.0f, 0 );		// top left
+			v[iNumV++].p = D3DXVECTOR3( (float)iX,		 iY+iHeight/2.0f, 0 );		// bottom left
 			iX += iCharWidth;
-			v[m_iNumV++].p = D3DXVECTOR3( iX+fExtraPixels,	iY-iHeight/2.0f, 0 );	// top right
+			v[iNumV++].p = D3DXVECTOR3( iX+fExtraPixels, iY-iHeight/2.0f, 0 );	// top right
 			
 			// 2nd triangle
-			v[m_iNumV++].p = v[m_iNumV-1].p;										// top right
-			v[m_iNumV++].p = v[m_iNumV-3].p;										// bottom left
-			v[m_iNumV++].p = D3DXVECTOR3( iX+fExtraPixels,	iY+iHeight/2.0f, 0 );	// bottom right
+			v[iNumV++].p = v[iNumV-1].p;										// top right
+			v[iNumV++].p = v[iNumV-3].p;										// bottom left
+			v[iNumV++].p = D3DXVECTOR3( iX+fExtraPixels, iY+iHeight/2.0f, 0 );	// bottom right
 
 
 			//
 			// set texture coordinates
 			//
-			m_iNumV -= 6;
+			iNumV -= 6;
 
 			FRECT frectTexCoords = *pTexture->GetTextureCoordRect( iFrameNo );
 
@@ -232,124 +218,95 @@ void BitmapText::RebuildVertexBuffer()
 
 			const float fExtraTexCoords = fPercentExtra * pTexture->GetTextureFrameWidth() / pTexture->GetTextureWidth();
 
-			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.top );		// top left
-			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.bottom );	// bottom left
-			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.top );		// top right
-			v[m_iNumV++].t = v[m_iNumV-1].t;																// top right
-			v[m_iNumV++].t = v[m_iNumV-3].t;																// bottom left
-			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.bottom );	// bottom right
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.top );		// top left
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.bottom );	// bottom left
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.top );		// top right
+			v[iNumV++].t = v[iNumV-1].t;																	// top right
+			v[iNumV++].t = v[iNumV-3].t;																	// bottom left
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.bottom );	// bottom right
 		}
 
 		iY += iHeight;
 	}
 
+	//
+	// set vertex colors for the diffuse pass
+	//
+	if( m_bRainbow )
+	{
+		int color_index = (GetTickCount() / 200) % NUM_RAINBOW_COLORS;
+		for( int i=0; i<iNumV; i+=6 )
+		{
+			const D3DXCOLOR color = RAINBOW_COLORS[color_index];
+			for( int j=i; j<i+6; j++ )
+				v[j].color = color;
 
+			color_index = (color_index+1)%NUM_RAINBOW_COLORS;
+		}
+	}
+	else
+	{
+		for( int i=0; i<iNumV; i+=6 )
+		{
+			v[i  ].color = m_temp_colorDiffuse[0];	// top left
+			v[i+1].color = m_temp_colorDiffuse[2];	// bottom left
+			v[i+2].color = m_temp_colorDiffuse[1];	// top right
+			v[i+3].color = m_temp_colorDiffuse[1];	// top right
+			v[i+4].color = m_temp_colorDiffuse[2];	// bottom left
+			v[i+5].color = m_temp_colorDiffuse[3];	// bottom right
+		}
+	}
 
 	pVB->Unlock();
 
-}
-
-
-// draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
-void BitmapText::RenderPrimitives()
-{
-	if( m_iNumLines == 0 )
-		return;
-
-	RageTexture* pTexture = m_pFont->m_pTexture;
-
-
-	// fill the RageScreen's vertex buffer with what we're going to draw 
-	RebuildVertexBuffer();
-
-
-	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
-	//LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
-	CUSTOMVERTEX* v;
 
 
 	// Set the stage...
-	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, pTexture->GetD3DTexture() );
 
 	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
 	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
 
-	pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
+	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
 
 
 
-	if( m_temp_colorDiffuse[0].a != 0 )
+	//////////////////////
+	// render the shadow
+	//////////////////////
+	if( m_bShadow  &&  m_temp_colorDiffuse[0].a != 0 )
 	{
-		//////////////////////
-		// render the shadow
-		//////////////////////
-		if( m_bShadow )
-		{
-			SCREEN->PushMatrix();
-			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
+		DISPLAY->PushMatrix();
+		DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
-			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+		DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
+		pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, dwColor );
 
-			for( int i=0; i<m_iNumV; i++ )
-				v[i].color = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
-			
-			pVB->Unlock();
-
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-			
-			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
-
-			SCREEN->PopMatrix();
-		}
-
-
-		//////////////////////
-		// render the diffuse pass
-		//////////////////////
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-		if( m_bRainbow )
-		{
-			int color_index = (GetTickCount() / 200) % NUM_RAINBOW_COLORS;
-			for( int i=0; i<m_iNumV; i+=6 )
-			{
-				const D3DXCOLOR color = RAINBOW_COLORS[color_index];
-				for( int j=i; j<i+6; j++ )
-					v[j].color = color;
-
-				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
-			}
-		}
-		else
-		{
-			for( int i=0; i<m_iNumV; i++ )
-			{
-				if( i%2 == 0 )	// this is a bottom vertex
-					v[i].color = m_temp_colorDiffuse[0];
-				else				// this is a top vertex
-					v[i].color = m_temp_colorDiffuse[1];
-			}
-		}
-		
-		pVB->Unlock();
-
-		
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TFACTOR );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
+
+		DISPLAY->PopMatrix();
 	}
+
+
+	//////////////////////
+	// render the diffuse pass
+	//////////////////////
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+
+	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
 
 
 	//////////////////////
@@ -357,21 +314,16 @@ void BitmapText::RenderPrimitives()
 	//////////////////////
 	if( m_temp_colorAdd.a != 0 )
 	{
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+		DWORD dwColor = m_temp_colorAdd;
+		pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, dwColor );
 
-		for( int i=0; i<m_iNumV; i++ )
-			v[i].color = m_temp_colorAdd;
-		
-		pVB->Unlock();
-
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TFACTOR );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 		
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
+		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
 	}
 
 }

@@ -5,12 +5,12 @@
 
  Desc: Functions that return properties of arrows based on StyleDef and PlayerOptions
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 #include "ArrowEffects.h"
-#include "NoteMetadata.h"
+#include "Notes.h"
 #include "ColorNote.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
@@ -18,7 +18,7 @@
 
 float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat )
 {
-	float fBeatsUntilStep = NoteIndexToBeat( fStepIndex ) - fSongBeat;
+	float fBeatsUntilStep = NoteRowToBeat( fStepIndex ) - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
 	switch( po.m_EffectType )
 	{

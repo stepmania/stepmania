@@ -4,7 +4,7 @@
 
  Desc: Include file for standard system include files.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -15,13 +15,13 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN		// Exclude rarely-used stuff from Screens headers
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>		// MFC templated collections
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
+#include <afxcmn.h>			// MFC support for Screens Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 
@@ -29,7 +29,7 @@
 // Rage global classes
 //
 #include "RageLog.h"
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "RageSound.h"
 #include "RageMusic.h"

@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -275,6 +275,49 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs )
 	::FindClose( hFind );
 }
 
+ULONG GetHashForString( CString s )
+{
+	ULONG hash = 0;
+	for( int i=0; i<s.GetLength(); i++ )
+	{
+		hash *= 10;
+		hash += (DWORD)s[i];
+	}
+	return hash;
+}
+
+ULONG GetHashForFile( CString sPath )
+{
+	ULONG hash = 0;
+
+	hash += GetHashForString( sPath );
+
+	hash += GetFileSizeInBytes( sPath ); 
+
+	CFileStatus status;
+	if( CFile::GetStatus(sPath, status) )
+		hash += status.m_mtime.GetHour() * 3600 + status.m_mtime.GetMinute() * 60 + status.m_mtime.GetSecond();
+
+	return hash;
+}
+
+ULONG GetHashForDirectory( CString sDir )
+{
+	ULONG hash = 0;
+
+	hash += GetHashForFile( sDir );
+
+	CStringArray arrayFiles;
+	GetDirListing( sDir+"\\*.*", arrayFiles, false );
+	for( int i=0; i<arrayFiles.GetSize(); i++ )
+	{
+		const CString sFilePath = sDir + arrayFiles[i];
+		hash += GetHashForFile( sFilePath );
+	}
+
+	return hash; 
+}
+
 DWORD GetFileSizeInBytes( const CString &sFilePath )
 {
 	HANDLE hFile = CreateFile(
@@ -289,7 +332,6 @@ DWORD GetFileSizeInBytes( const CString &sFilePath )
 
 	return GetFileSize( hFile, NULL );
 }
-
 
 bool DoesFileExist( const CString &sPath )
 {
@@ -374,6 +416,22 @@ HINSTANCE GotoURL(LPCTSTR url)
 	}
 
 	return result;
+}
+
+void WriteStringToFile( FILE* file, CString s )
+{
+	if( s == "" )
+		s = "_";
+	fprintf( file, "%s\n", s );
+}
+
+void ReadStringFromFile( FILE* file, CString& s )
+{
+	char szTemp[MAX_PATH];
+	fscanf( file, "%[^\n]\n", szTemp );
+	s = szTemp;
+	if( s == "_" )
+		s = "";
 }
 
 

@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the BPMDisplay during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -17,7 +17,7 @@
 #include "Song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "RectangleActor.h"
+#include "Quad.h"
 
 
 class BPMDisplay : public ActorFrame
@@ -30,7 +30,7 @@ public:
 protected:
 	BitmapText m_textBPM;
 	BitmapText m_textLabel;
-	RectangleActor m_rectFrame;
+	Quad m_rectFrame;
 
 	float m_fCurrentBPM;
 	float m_fLowBPM, m_fHighBPM;

@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -52,7 +52,7 @@ void GrayArrowRow::Update( float fDeltaTime, float fSongBeat )
 	}
 }
 
-void GrayArrowRow::RenderPrimitives()
+void GrayArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{

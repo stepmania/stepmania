@@ -1,16 +1,13 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: RageInput.h
 
  Desc: Wrapper for DirectInput.  Generates InputEvents.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
-
-#ifndef _RAGEINPUT_H_
-#define _RAGEINPUT_H_
-
 
 #ifndef DIRECTINPUT_VERSION 
 #define DIRECTINPUT_VERSION 0x0800
@@ -99,7 +96,7 @@ public:
 
 class RageInput
 {
-	// Our Windows Handle
+	// Our Screens Handle
 	HWND m_hWnd;
 
 	// Main DirectInput Object
@@ -155,7 +152,4 @@ public:
 };
 
 
-extern RageInput*			INPUTM;	// global and accessable from anywhere in our program
-
-
-#endif
+extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

@@ -5,7 +5,7 @@
 
  Desc: A wheel with song names used in the Select Music screen.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -14,7 +14,7 @@
 #include "Song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "RectangleActor.h"
+#include "Quad.h"
 #include "TextBanner.h"
 #include "RandomSample.h"
 #include "GradeDisplay.h"
@@ -22,7 +22,7 @@
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
-#include "Window.h"	// for WindowMessage
+#include "Screen.h"	// for ScreenMessage
 #include "ScoreDisplayRolling.h"
 #include "ScrollBar.h"
 
@@ -31,11 +31,11 @@ const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
 const float FADE_TIME	=	0.7f;
 
-const WindowMessage	SM_SongChanged		=	WindowMessage(SM_User+47);	// this should be unique!
-const WindowMessage SM_PlaySongSample	=	WindowMessage(SM_User+48);	
+const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
+const ScreenMessage SM_PlaySongSample	=	ScreenMessage(SM_User+48);	
 
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG };
+enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE };
 
 
 struct WheelItemData
@@ -43,12 +43,12 @@ struct WheelItemData
 public:
 	WheelItemData();
 
-	void LoadFromSectionName( const CString &sSectionName );
-	void LoadFromSong( Song* pSong );
+	void Load( WheelItemType wit, Song* pSong, const CString &sSectionName, const D3DXCOLOR color );
 
 	WheelItemType	m_WheelItemType;
 	CString			m_sSectionName;
 	Song*			m_pSong;
+	D3DXCOLOR		m_color;	// either text color or section background color
 	MusicStatusDisplayType m_MusicStatusDisplayType;
 };
 
@@ -60,24 +60,24 @@ public:
 	WheelItemDisplay();
 
 	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
-	CString GetSectionName()
-	{
-		return m_sSectionName;
-	};
+	CString GetSectionName() { return m_sSectionName; }
 
 	void LoadFromWheelItemData( WheelItemData* pWID );
 	void RefreshGrades();
 
-	// for a section
-	Sprite			m_sprSectionBar;
-	BitmapText		m_textSectionName;
+	// for TYPE_SECTION and TYPE_ROULETTE
+	Sprite				m_sprSectionBar;
+	// for TYPE_SECTION
+	BitmapText			m_textSectionName;
+	// for TYPE_ROULETTE
+	BitmapText			m_textRoulette;
 
-	// for a music
+	// for a TYPE_MUSIC
 	Sprite				m_sprSongBar;
 	MusicStatusDisplay	m_MusicStatusDisplay;
-	TextBanner			m_Banner;
+	TextBanner			m_TextBanner;
 	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
 };
 
@@ -91,13 +91,14 @@ public:
 	~MusicWheel();
 
 	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	virtual void TweenOnScreen();		
 	virtual void TweenOffScreen();
 
 	void PrevMusic();
 	void NextMusic();
+	void PrevSort();
 	void NextSort();
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
@@ -107,8 +108,9 @@ public:
 	float GetBannerX( float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
-	Song* GetSelectedSong() { return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
-	CString GetSelectedSection() { return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
+	WheelItemType GetSelectedType()	{ return GetCurWheelItemDatas()[m_iSelection].m_WheelItemType; };
+	Song* GetSelectedSong()			{ return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
+	CString GetSelectedSection()	{ return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
 
 
 protected:

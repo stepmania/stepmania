@@ -5,7 +5,7 @@
 
  Desc: See Header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -15,7 +15,7 @@
 #include "GameManager.h"
 
 
-InputMapper*	MAPPER = NULL;	// global and accessable from anywhere in our program
+InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
 
 InputMapper::InputMapper()
@@ -200,7 +200,7 @@ const HardCodedMenuKey g_HardCodedMenuKeys[] =
 	{ DEVICE_KEYBOARD,	DIK_DOWN,	PLAYER_1, MENU_BUTTON_DOWN },
 	{ DEVICE_KEYBOARD,	DIK_LEFT,	PLAYER_1, MENU_BUTTON_LEFT },
 	{ DEVICE_KEYBOARD,	DIK_RIGHT,	PLAYER_1, MENU_BUTTON_RIGHT },
-	{ DEVICE_KEYBOARD,	DIK_RETURN,	PLAYER_1, MENU_BUTTON_NEXT },
+	{ DEVICE_KEYBOARD,	DIK_RETURN,	PLAYER_1, MENU_BUTTON_START },
 	{ DEVICE_KEYBOARD,	DIK_ESCAPE,	PLAYER_1, MENU_BUTTON_BACK },
 };
 const int NUM_HARD_CODED_MENU_KEYS = sizeof(g_HardCodedMenuKeys) / sizeof(HardCodedMenuKey);
@@ -265,7 +265,7 @@ bool InputMapper::IsButtonDown( GameInput GameI )
 
 		if( GameToDevice( GameI, i, DeviceI ) )
 		{
-			if( INPUTM->IsBeingPressed( DeviceI ) )
+			if( INPUTMAN->IsBeingPressed( DeviceI ) )
 				return true;
 		}
 	}

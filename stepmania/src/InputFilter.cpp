@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -16,13 +16,13 @@
 #include "RageInput.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
-InputFilter*	FILTER = NULL;	// global and accessable from anywhere in our program
+InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
 
 
 void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 {
-	INPUTM->Update();
+	INPUTMAN->Update();
 
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
@@ -46,9 +46,9 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 		{
 			const DeviceInput di = DeviceInput(InputDevice(d),b);
 
-			if( INPUTM->WasBeingPressed(di) )
+			if( INPUTMAN->WasBeingPressed(di) )
 			{
-				if( INPUTM->IsBeingPressed(di) )
+				if( INPUTMAN->IsBeingPressed(di) )
 				{
 					const float fOldHoldTime = m_fTimeHeld[d][b];
 					m_fTimeHeld[d][b] += fDeltaTime;
@@ -72,14 +72,14 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 							array.Add( InputEvent(di,iet) );
 					}
 				}
-				else	// !INPUTM->IsBeingPressed(di)
+				else	// !INPUTMAN->IsBeingPressed(di)
 					m_fTimeHeld[d][b] = 0;
 			}
-			else	// !INPUTM->WasBeingPressed(di)
+			else	// !INPUTMAN->WasBeingPressed(di)
 			{
-				if( INPUTM->IsBeingPressed(di) )
+				if( INPUTMAN->IsBeingPressed(di) )
 					array.Add( InputEvent(di,IET_FIRST_PRESS) );
-				else	// !INPUTM->IsBeingPressed(di)
+				else	// !INPUTMAN->IsBeingPressed(di)
 					;	// don't care
 			}
 		}

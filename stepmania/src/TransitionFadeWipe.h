@@ -4,7 +4,7 @@
 
  Desc: Fades out or in.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -13,10 +13,10 @@
 
 
 #include "Transition.h"
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include "RageSound.h"
 #include "Sprite.h"
-#include "RectangleActor.h"
+#include "Quad.h"
 
 
 class TransitionFadeWipe : public Transition
@@ -25,10 +25,10 @@ public:
 	TransitionFadeWipe();
 	~TransitionFadeWipe();
 
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 protected:
-	RectangleActor m_rectBlack, m_rectGradient;
+	Quad m_rectBlack, m_rectGradient;
 
 };
 

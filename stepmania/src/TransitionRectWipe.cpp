@@ -5,7 +5,7 @@
 
  Desc: Black bands (horizontal window blinds) gradually close.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -30,7 +30,7 @@ TransitionRectWipe::~TransitionRectWipe()
 
 }
 
-void TransitionRectWipe::RenderPrimitives()
+void TransitionRectWipe::DrawPrimitives()
 {
 	if( m_TransitionState == opened ) 
 		return;
@@ -77,7 +77,7 @@ void TransitionRectWipe::RenderPrimitives()
 /*			RECT rect;
 			SetRect( &rect, iRectX-iRectWidth/2, 0, 
 							iRectX+iRectWidth/2, SCREEN_HEIGHT );
-			SCREEN->DrawRect( &rect, D3DCOLOR_ARGB(255,0,0,0) );
+			DISPLAY->DrawRect( &rect, D3DCOLOR_ARGB(255,0,0,0) );
 */		}
 	}	// end foreach rect
 }

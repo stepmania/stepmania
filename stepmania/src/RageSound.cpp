@@ -5,7 +5,7 @@
 
  Desc: Sound effects library (currently a wrapper around Bass Sound Library).
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -40,7 +40,7 @@ RageSound::RageSound( HWND hWnd )
 			"The most likely cause of this problem is that you do not have a sound card\n"
 			"installed, or that you have not yet installed a driver for your sound card.\n"
 			"Before running this program again, please verify that your sound card is\n"
-			"is working in other Windows applications."
+			"is working in other Screens applications."
 		);
 	}
 
@@ -87,3 +87,17 @@ void RageSound::PlayOnceStreamed( CString sPath )
 	// this stream will free itself when stopped 
 }
 
+void RageSound::PlayOnceStreamedFromDir( CString sDir )
+{
+	// make sure there's a backslash at the end of this path
+	if( sDir[sDir.GetLength()-1] != '\\' )
+		sDir += "\\";
+
+	CStringArray arraySoundFiles;
+	GetDirListing( sDir + "*.mp3", arraySoundFiles );
+	GetDirListing( sDir + "*.wav", arraySoundFiles );
+	GetDirListing( sDir + "*.ogg", arraySoundFiles );
+
+	int index = rand() % arraySoundFiles.GetSize();
+	PlayOnceStreamed( sDir + arraySoundFiles[index] );
+}

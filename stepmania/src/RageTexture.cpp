@@ -5,7 +5,7 @@
 
  Desc: Abstract class for a texture with metadata.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -21,11 +21,14 @@
 // RageTexture constructor
 //-----------------------------------------------------------------------------
 RageTexture::RageTexture(
-	RageScreen* pScreen, 
+	RageDisplay* pScreen, 
 	const CString &sFilePath, 
-	const DWORD dwMaxSize, 
-	const DWORD dwTextureColorDepth,
-	const DWORD dwHints )
+	DWORD dwMaxSize, 
+	DWORD dwTextureColorDepth,
+	int iMipMaps,
+	int iAlphaBits,
+	bool bDither,
+	bool bStretch )
 {
 //	LOG->WriteLine( "RageTexture::RageTexture()" );
 

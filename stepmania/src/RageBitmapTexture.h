@@ -1,30 +1,18 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: RageBitmapTexture.h
+ Class: RageBitmapTexture
 
  Desc: Holder for a static texture with metadata.  Can load just about any image format.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-
-class RageBitmapTexture;
-
-
-
-#ifndef _RageBitmapTexture_H_
-#define _RageBitmapTexture_H_
-
-
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include <d3dx8.h>
 #include <assert.h>
-//#include <d3d8types.h>
-
-
-const DWORD TEXTURE_HINT_NOMIPMAPS	=	1 << 0;
-const DWORD TEXTURE_HINT_DITHER		=	1 << 1;
 
 
 //-----------------------------------------------------------------------------
@@ -34,26 +22,36 @@ class RageBitmapTexture : public RageTexture
 {
 public:
 	RageBitmapTexture( 
-		RageScreen* pScreen, 
+		RageDisplay* pScreen, 
 		const CString &sFilePath, 
-		const DWORD dwMaxSize = 2048, 
-		const DWORD dwTextureColorDepth = 16, 
-		const DWORD dwHints = 0 
+		DWORD dwMaxSize = 2048, 
+		DWORD dwTextureColorDepth = 16, 
+		int iMipMaps = 4,
+		int iAlphaBits = 4,
+		bool bDither = false, 
+		bool bStretch = false 
 		);
 	~RageBitmapTexture();
 
 	virtual void Reload( 
-		const DWORD dwMaxSize, 
-		const DWORD dwTextureColorDepth,
-		const DWORD dwHints );
-
+		DWORD dwMaxSize, 
+		DWORD dwTextureColorDepth,
+		int iMipMaps = 4,
+		int iAlphaBits = 4,
+		bool bDither = false,
+		bool bStretch = false
+		);
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
 
 protected:
-	virtual void Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWORD dwHints );
+	virtual void Create( 
+		DWORD dwMaxSize, 
+		DWORD dwTextureColorDepth, 
+		int iMipMaps,
+		int iAlphaBits,
+		bool bDither,
+		bool bStretch
+		);
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 };
-
-
-#endif

@@ -7,7 +7,7 @@
 	represent when a button is first pressed, when a button is released,
 	or when an repeating input fires.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -53,5 +53,5 @@ public:
 };
 
 
-extern InputFilter*	FILTER;	// global and accessable from anywhere in our program
+extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
 

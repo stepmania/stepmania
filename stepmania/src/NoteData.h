@@ -8,12 +8,11 @@
 	track - corresponds to different columns of notes on the screen
 	index - corresponds to subdivisions of beats
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
 #include "GameConstantsAndTypes.h"
 
 // '1' = tap note
@@ -73,10 +72,10 @@ struct HoldNoteScore
 
 
 
-inline int   BeatToNoteIndex( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
+inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
 inline int   BeatToNoteIndexNotRounded( float fBeatNum ){ return (int)( fBeatNum * ELEMENTS_PER_BEAT ); };
-inline float NoteIndexToBeat( float fNoteIndex )		{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
-inline float NoteIndexToBeat( int iNoteIndex )			{ return NoteIndexToBeat( (float)iNoteIndex );	 };
+inline float NoteRowToBeat( float fNoteIndex )		{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
+inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };
 
 
 
@@ -85,24 +84,34 @@ class NoteData
 {
 public:
 	NoteData();
+	~NoteData();
 
-	int				m_iNumTracks;
-	TapNote			m_TapNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ELEMENTS];
-	HoldNote		m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
-	int				m_iNumHoldNotes;
+	// used for loading
+	void SetFromMeasureStrings( CStringArray &arrayMeasureStrings );	// for loading from a .notes file
+	void SetFromDWIInfo();	// for loading from a .dwi file
+	void SetFromBMSInfo();	// for loading from a .bms file
+	void ReadFromCacheFile( FILE* file );
+	static void SkipOverDataInCacheFile( FILE* file );
+
+	// used for saving
+	void GetMeasureStrings( CStringArray &arrayMeasureStrings );		// for saving to a .notes file
+	void WriteToCacheFile( FILE* file );
+
+	int			m_iNumTracks;
+	TapNote		m_TapNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
+	HoldNote	m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
+	int			m_iNumHoldNotes;
 
 	void ClearRange( NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd );
-	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ELEMENTS ); };
+	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
 	void CopyRange( NoteData* pFrom, NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd );
-	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; CopyRange( pFrom, 0, MAX_TAP_NOTE_ELEMENTS ); };
+	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
 
 	inline bool IsRowEmpty( NoteIndex index )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
-		{
 			if( m_TapNotes[t][index] != '0' )
 				return false;
-		}
 		return true;
 	}
 
@@ -110,18 +119,19 @@ public:
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
 	void RemoveHoldNote( int index );
 
-	// used for saving
-	void GetMeasureStrings( CStringArray &arrayMeasureStrings );		// for saving to a .notes file
-
-	// used for loading
-	void SetFromMeasureStrings( CStringArray &arrayMeasureStrings );	// for loading from a .notes file
-	void SetFromDWIInfo();	// for loading from a .dwi file
-	void SetFromBMSInfo();	// for loading from a .bms file
-
 	// statistics
-	float GetLastBeat();	// return the beat number of the last beat in the song
-	int GetNumTapNotes();
-	int GetNumHoldNotes();
+	float GetLastBeat();	// return the beat number of the last note
+	int GetLastRow();
+	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	int GetNumHoldNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	
+	// radar values - return between 0.0 and 1.2
+	float GetStreamRadarValue( float fSongSeconds );
+	float GetVoltageRadarValue( float fSongSeconds );
+	float GetAirRadarValue( float fSongSeconds );
+	float GetChaosRadarValue( float fSongSeconds );
+	float GetFreezeRadarValue( float fSongSeconds );
 
 	// Transformations
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, TrackNumber iNewToOriginalTrack[] );

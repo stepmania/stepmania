@@ -1,11 +1,11 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: NoteMetadata
+ Class: Notes
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -20,10 +20,13 @@
 #include "InputMapper.h"
 
 
-const float JUDGEMENT_Y			= CENTER_Y;
+// these two items are in the
+const float FRAME_JUDGE_AND_COMBO_Y = CENTER_Y;
+const float JUDGEMENT_Y_OFFSET	= -26;
+const float COMBO_Y_OFFSET		= +26;
+
 const float ARROWS_Y			= SCREEN_TOP + ARROW_SIZE * 1.5f;
 const float HOLD_JUDGEMENT_Y	= ARROWS_Y + 80;
-const float COMBO_Y				= CENTER_Y + 60;
 
 const float HOLD_ARROW_NG_TIME	=	0.27f;
 
@@ -35,7 +38,7 @@ Player::Player()
 	m_PlayerNumber = PLAYER_NONE;
 
 	// init step elements
-	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
+	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 	{
 		for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		{
@@ -52,10 +55,13 @@ Player::Player()
 	this->AddActor( &m_GrayArrowRow );
 	this->AddActor( &m_NoteField );
 	this->AddActor( &m_GhostArrowRow );
-	this->AddActor( &m_Judgement );
+
+	m_frameJudgeAndCombo.AddActor( &m_Judgement );
+	m_frameJudgeAndCombo.AddActor( &m_Combo );
+	this->AddActor( &m_frameJudgeAndCombo );
+	
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddActor( &m_HoldJudgement[c] );
-	this->AddActor( &m_Combo );
 }
 
 
@@ -78,14 +84,21 @@ void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOpti
 	if( po.m_bLittle )
 		this->MakeLittle();
 
-	m_NoteField.Load( (NoteData*)this, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
+	m_NoteField.Load( (NoteData*)this, player_no, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
+	
+	for( int t=0; t<pNoteData->m_iNumTracks; t++ )
+	{
+		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
+			m_TapNotesOriginal[t][r] = pNoteData->m_TapNotes[t][r];
+	}
 
 	m_GrayArrowRow.Load( po );
 	m_GhostArrowRow.Load( po );
 
+	m_frameJudgeAndCombo.SetY( FRAME_JUDGE_AND_COMBO_Y );
+	m_Combo.SetY( po.m_bReverseScroll ?  -COMBO_Y_OFFSET : COMBO_Y_OFFSET );
+	m_Judgement.SetY( po.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
 
-	m_Combo.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - COMBO_Y : COMBO_Y );
-	m_Judgement.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - JUDGEMENT_Y : JUDGEMENT_Y );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		m_HoldJudgement[c].SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - HOLD_JUDGEMENT_Y : HOLD_JUDGEMENT_Y );
 
@@ -123,8 +136,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		if( hns.m_Result != HNR_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
 
-		float fStartBeat = NoteIndexToBeat( (float)hn.m_iStartIndex );
-		float fEndBeat = NoteIndexToBeat( (float)hn.m_iEndIndex );
+		float fStartBeat = NoteRowToBeat( (float)hn.m_iStartIndex );
+		float fEndBeat = NoteRowToBeat( (float)hn.m_iEndIndex );
 
 		const int iCol = hn.m_iTrack;
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
@@ -133,7 +146,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
-			const bool bIsHoldingButton = MAPPER->IsButtonDown( GameI );
+			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 
 			if( bIsHoldingButton )
 			{
@@ -171,6 +184,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 	ActorFrame::Update( fDeltaTime );
 
+	m_frameJudgeAndCombo.Update( fDeltaTime );
+
 	m_pLifeMeter->SetBeat( fSongBeat );
 
 	m_GrayArrowRow.Update( fDeltaTime, fSongBeat );
@@ -181,19 +196,19 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 }
 
-void Player::RenderPrimitives()
+void Player::DrawPrimitives()
 {
 	D3DXMATRIX matOldView, matOldProj;
 
 	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
 		// turn off Z Buffering
-		SCREEN->GetDevice()->SetRenderState( D3DRS_ZENABLE,      FALSE );
-		SCREEN->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZENABLE,      FALSE );
+		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
 
 		// save old view and projection
-		SCREEN->GetDevice()->GetTransform( D3DTS_VIEW, &matOldView );
-		SCREEN->GetDevice()->GetTransform( D3DTS_PROJECTION, &matOldProj );
+		DISPLAY->GetDevice()->GetTransform( D3DTS_VIEW, &matOldView );
+		DISPLAY->GetDevice()->GetTransform( D3DTS_PROJECTION, &matOldProj );
 
 
 		// construct view and project matrix
@@ -202,11 +217,11 @@ void Player::RenderPrimitives()
 										 &D3DXVECTOR3( CENTER_X
 										 , GetY()+400.0f,   0.0f ), 
 										 &D3DXVECTOR3(          0.0f,         -1.0f,   0.0f ) );
-		SCREEN->GetDevice()->SetTransform( D3DTS_VIEW, &matNewView );
+		DISPLAY->GetDevice()->SetTransform( D3DTS_VIEW, &matNewView );
 
 		D3DXMATRIX matNewProj;
 		D3DXMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
-		SCREEN->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
+		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
 	}
 
 	m_GrayArrowRow.Draw();
@@ -216,19 +231,18 @@ void Player::RenderPrimitives()
 	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
 		// restire old view and projection
-		SCREEN->GetDevice()->SetTransform( D3DTS_VIEW, &matOldView );
-		SCREEN->GetDevice()->SetTransform( D3DTS_PROJECTION, &matOldProj );
+		DISPLAY->GetDevice()->SetTransform( D3DTS_VIEW, &matOldView );
+		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matOldProj );
 
 		// turn Z Buffering back on
-		SCREEN->GetDevice()->SetRenderState( D3DRS_ZENABLE,      TRUE );
-		SCREEN->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZENABLE,      TRUE );
+		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 	}
 
+	m_frameJudgeAndCombo.Draw();
 
-	m_Judgement.Draw();
 	for( int c=0; c<m_iNumTracks; c++ )
 		m_HoldJudgement[c].Draw();
-	m_Combo.Draw();
 }
 
 bool Player::IsThereANoteAtIndex( int iIndex )
@@ -277,11 +291,11 @@ void Player::HandlePlayerStep( float fSongBeat, ColumnNumber col, float fMaxBeat
 			
 		if( col == m_HoldNotes[i].m_iTrack ) // the player's step is the same as this HoldNote
 		{
-			float fBeatDifference = fabsf( NoteIndexToBeat(hn.m_iStartIndex) - fSongBeat );
+			float fBeatDifference = fabsf( NoteRowToBeat(hn.m_iStartIndex) - fSongBeat );
 			
 			if( fBeatDifference <= fMaxBeatDiff )
 			{
-				float fBeatsUntilStep = NoteIndexToBeat( (float)hn.m_iStartIndex ) - fSongBeat;
+				float fBeatsUntilStep = NoteRowToBeat( (float)hn.m_iStartIndex ) - fSongBeat;
 				float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
 
 				//LOG->WriteLine( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
@@ -315,7 +329,18 @@ void Player::HandlePlayerStep( float fSongBeat, ColumnNumber col, float fMaxBeat
 					break;
 				}
 
-
+				// zoom the judgement and combo like a heart beat
+				float fStartZoom;
+				switch( score )
+				{
+				case TNS_PERFECT:	fStartZoom = 1.5f;	break;
+				case TNS_GREAT:		fStartZoom = 1.3f;	break;
+				case TNS_GOOD:		fStartZoom = 1.2f;	break;
+				case TNS_BOO:		fStartZoom = 1.0f;	break;
+				}
+				m_frameJudgeAndCombo.SetZoom( fStartZoom );
+				m_frameJudgeAndCombo.BeginTweening( 0.2f );
+				m_frameJudgeAndCombo.SetTweenZoom( 1 );
 			}
 		}
 	}
@@ -328,8 +353,8 @@ void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxB
 	//LOG->WriteLine( "Player::CheckForCompleteRow()" );
 
 	// look for the closest matching step
-	int iIndexStartLookingAt = BeatToNoteIndex( fSongBeat );
-	int iNumElementsToExamine = BeatToNoteIndex( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
+	int iIndexStartLookingAt = BeatToNoteRow( fSongBeat );
+	int iNumElementsToExamine = BeatToNoteRow( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
 	
 	//LOG->WriteLine( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
@@ -340,14 +365,14 @@ void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxB
 		int iCurrentIndexLater   = iIndexStartLookingAt + delta;
 
 		// silly check to make sure we don't go out of bounds
-		iCurrentIndexEarlier	= clamp( iCurrentIndexEarlier, 0, MAX_TAP_NOTE_ELEMENTS-1 );
-		iCurrentIndexLater		= clamp( iCurrentIndexLater,   0, MAX_TAP_NOTE_ELEMENTS-1 );
+		iCurrentIndexEarlier	= clamp( iCurrentIndexEarlier, 0, MAX_TAP_NOTE_ROWS-1 );
+		iCurrentIndexLater		= clamp( iCurrentIndexLater,   0, MAX_TAP_NOTE_ROWS-1 );
 
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
-		//LOG->WriteLine( "Checking NoteMetadata[%d]", iCurrentIndexEarlier );
-		if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )	// these NoteMetadata overlap
+		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexEarlier );
+		if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )	// these Notes overlap
 		{
 			m_TapNotes[col][iCurrentIndexEarlier] = '0';	// mark hit
 			
@@ -365,8 +390,8 @@ void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxB
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
-		//LOG->WriteLine( "Checking NoteMetadata[%d]", iCurrentIndexLater );
-		if( m_TapNotes[col][iCurrentIndexLater] != '0' )	// these NoteMetadata overlap
+		//LOG->WriteLine( "Checking Notes[%d]", iCurrentIndexLater );
+		if( m_TapNotes[col][iCurrentIndexLater] != '0' )	// these Notes overlap
 		{
 			m_TapNotes[col][iCurrentIndexLater] = '0';	// mark hit
 			
@@ -385,7 +410,7 @@ void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxB
 
 void Player::OnRowDestroyed( float fSongBeat, ColumnNumber col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
 {
-	float fStepBeat = NoteIndexToBeat( (float)iIndexThatWasSteppedOn );
+	float fStepBeat = NoteRowToBeat( (float)iIndexThatWasSteppedOn );
 
  
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
@@ -431,6 +456,19 @@ void Player::OnRowDestroyed( float fSongBeat, ColumnNumber col, float fMaxBeatDi
 		m_Combo.EndCombo();
 		break;
 	}
+
+	// zoom the judgement and combo like a heart beat
+	float fStartZoom;
+	switch( score )
+	{
+	case TNS_PERFECT:	fStartZoom = 1.5f;	break;
+	case TNS_GREAT:		fStartZoom = 1.3f;	break;
+	case TNS_GOOD:		fStartZoom = 1.2f;	break;
+	case TNS_BOO:		fStartZoom = 1.0f;	break;
+	}
+	m_frameJudgeAndCombo.SetZoom( fStartZoom );
+	m_frameJudgeAndCombo.BeginTweening( 0.2f );
+	m_frameJudgeAndCombo.SetTweenZoom( 1 );
 }
 
 
@@ -438,7 +476,7 @@ ScoreSummary Player::GetScoreSummary()
 {
 	ScoreSummary scoreSummary;
 
-	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) 
+	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
 	{
 		switch( m_TapNoteScores[i] )
 		{
@@ -480,9 +518,9 @@ ScoreSummary Player::GetScoreSummary()
 
 int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
-	//LOG->WriteLine( "NoteMetadata::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//LOG->WriteLine( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 
-	int iMissIfOlderThanThisIndex = BeatToNoteIndex( fMissIfOlderThanThisBeat );
+	int iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
 
 	int iNumMissesFound = 0;
 	// Since this is being called every frame, let's not check the whole array every time.

@@ -5,7 +5,7 @@
 
  Desc: A graphic displayed in the HoldJudgement during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -21,7 +21,7 @@ const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
 HoldJudgement::HoldJudgement()
 {
 	m_fDisplayCountdown = 0;
-	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_JUDGEMENT) );
+	m_sprJudgement.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_JUDGEMENT) );
 	m_sprJudgement.StopAnimating();
 	this->AddActor( &m_sprJudgement );
 }
@@ -35,11 +35,11 @@ void HoldJudgement::Update( float fDeltaTime )
 		m_fDisplayCountdown = 0;
 }
 
-void HoldJudgement::RenderPrimitives()
+void HoldJudgement::DrawPrimitives()
 {
 	if( m_fDisplayCountdown > 0 )
 	{
-		ActorFrame::RenderPrimitives();
+		ActorFrame::DrawPrimitives();
 	}
 }
 

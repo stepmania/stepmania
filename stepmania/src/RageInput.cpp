@@ -5,7 +5,7 @@
 
  Desc: Wrapper for DirectInput.  Generates InputEvents.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -28,7 +28,7 @@
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
-RageInput*		INPUTM	= NULL;		// globally accessable input device
+RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
 
 
@@ -283,6 +283,8 @@ BOOL CALLBACK	EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 
 RageInput::RageInput( HWND hWnd )
 {
+	LOG->WriteLine( "RageInput::RageInput()" );
+
 	int i;
 
 	m_hWnd = hWnd;

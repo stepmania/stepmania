@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the DifficultyIcon during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -27,15 +27,15 @@ public:
 		Load( THEME->GetPathTo(GRAPHIC_DIFFICULTY_ICONS) );
 		StopAnimating();
 
-		SetFromNoteMetadata( NULL );
+		SetFromNotes( NULL );
 	};
 
-	void SetFromNoteMetadata( NoteMetadata* pNoteMetadata )
+	void SetFromNotes( Notes* pNotes )
 	{
-		if( pNoteMetadata != NULL )
+		if( pNotes != NULL )
 		{
 			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			SetFromDescription( pNoteMetadata->m_sDescription );
+			SetFromDescription( pNotes->m_sDescription );
 		}
 		else
 		{

@@ -4,7 +4,7 @@
 
  Desc: Shooting start across the screen leave a black trail.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -13,9 +13,9 @@
 
 
 #include "Transition.h"
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include "RageSound.h"
-#include "RectangleActor.h"
+#include "Quad.h"
 
 
 class TransitionStarWipe : public Transition
@@ -24,12 +24,12 @@ public:
 	TransitionStarWipe();
 	~TransitionStarWipe();
 
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
-	void OpenWipingRight( WindowMessage send_when_done );
-	void OpenWipingLeft(  WindowMessage send_when_done );
-	void CloseWipingRight(WindowMessage send_when_done );
-	void CloseWipingLeft( WindowMessage send_when_done );
+	void OpenWipingRight( ScreenMessage send_when_done );
+	void OpenWipingLeft(  ScreenMessage send_when_done );
+	void CloseWipingRight(ScreenMessage send_when_done );
+	void CloseWipingLeft( ScreenMessage send_when_done );
 
 protected:
 	void LoadNewStarSprite( CString sFileName );
@@ -38,7 +38,7 @@ protected:
 	int m_iStarWidth;
 	int m_iStarHeight;
 
-	RectangleActor	m_rect;
+	Quad	m_rect;
 };
 
 

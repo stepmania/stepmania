@@ -4,7 +4,7 @@
 
  Desc: Base class for all objects that appear on the screen.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -29,7 +29,7 @@ public:
 	void AddActor( Actor* pActor) { m_SubActors.Add(pActor); };
 
 	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 	virtual void SetDiffuseColor( D3DXCOLOR c );
 

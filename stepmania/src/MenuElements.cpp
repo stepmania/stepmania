@@ -3,9 +3,10 @@
 -----------------------------------------------------------------------------
  File: MenuElements.h
 
- Desc: Base class for menu Windows.
+ Desc: Base class for menu Screens.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -13,8 +14,8 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageMusic.h"
-#include "WindowManager.h"
-#include "WindowDancing.h"
+#include "ScreenManager.h"
+#include "ScreenGameplay.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
@@ -80,7 +81,7 @@ void MenuElements::TweenTopEdgeOnScreen()
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_textHelp.SetTweenZoomY( fOriginalZoomY );
 
-	m_soundSwoosh.PlayRandom();
+	m_soundSwoosh.Play();
 }
 
 void MenuElements::TweenTopEdgeOffScreen()
@@ -92,7 +93,7 @@ void MenuElements::TweenTopEdgeOffScreen()
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_textHelp.SetTweenZoomY( 0 );
 
-	m_soundSwoosh.PlayRandom();
+	m_soundSwoosh.Play();
 }
 
 void MenuElements::TweenBackgroundOnScreen()
@@ -106,7 +107,7 @@ void MenuElements::TweenBackgroundOnScreen()
 	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
-	m_soundSwoosh.PlayRandom();
+	m_soundSwoosh.Play();
 }
 
 void MenuElements::TweenBackgroundOffScreen()
@@ -118,7 +119,7 @@ void MenuElements::TweenBackgroundOffScreen()
 	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,1) );
 
-	m_soundBack.PlayRandom();
+	m_soundBack.Play();
 }
 
 void MenuElements::TweenAllOnScreen()
@@ -154,7 +155,7 @@ void MenuElements::SetTopEdgeOffScreen()
 }
 
 
-void MenuElements::RenderPrimitives()
+void MenuElements::DrawPrimitives()
 {
 	// do nothing.  Call DrawBottomLayer() and DrawTopLayer() instead.
 }

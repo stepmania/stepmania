@@ -5,7 +5,7 @@
 
  Desc: A graphic that appears to blur and come into focus.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -60,7 +60,7 @@ void FocusingSprite::Update( float fDeltaTime )
 
 }
 
-void FocusingSprite::RenderPrimitives()
+void FocusingSprite::DrawPrimitives()
 {
 	if( m_BlurState != invisible )
 	{
@@ -70,7 +70,7 @@ void FocusingSprite::RenderPrimitives()
 		m_sprites[1].SetXY( -m_fPercentBlurred*BLUR_DISTANCE*2, -m_fPercentBlurred*BLUR_DISTANCE );
 		m_sprites[2].SetXY( 0, 0 );
 
-		ActorFrame::RenderPrimitives();
+		ActorFrame::DrawPrimitives();
 	}
 
 }

@@ -1,29 +1,20 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: Actor.h
+ Class: Actor
 
  Desc: Base class for all objects that appear on the screen.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _Actor_H_
-#define _Actor_H_
-
-#include "RageUtil.h"
 
 #include <d3dx8math.h>
 
 
-
-
 class Actor
 {
-protected:
-
-
 public:
 	Actor();
 
@@ -48,8 +39,8 @@ public:
 	virtual void Restore() {};
 	virtual void Invalidate() {};
 
-	virtual void Draw();
-	virtual void RenderPrimitives() = 0;
+	virtual void Draw();	// set up the world matrix, then calls DrawPrimitives()
+	virtual void DrawPrimitives() = 0;
 	virtual void Update( float fDeltaTime );
 
 	virtual float GetX()					{ return m_pos.x; };
@@ -280,7 +271,3 @@ protected:
 	bool	m_bBlendAdd;
 
 };
-
-
-
-#endif

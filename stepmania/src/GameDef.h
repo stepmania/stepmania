@@ -5,12 +5,12 @@
 
  Desc: Holds information about a particular style of a game (e.g. "single", "double").
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "NoteMetadata.h"
+#include "Notes.h"
 #include "NoteData.h"
 #include "GameInput.h"
 #include "GameConstantsAndTypes.h"
@@ -64,6 +64,7 @@ public:
 		return false;
 	}
 	CString GetPathToGraphic( const CString sSkinName, const int iInstrumentButton, const GameButtonGraphic gbg );
+	void	GetTweenColors( const CString sSkinName, const int iInstrumentButton, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors );
 	CString ElementToGraphicSuffix( const GameButtonGraphic gbg );
 
 

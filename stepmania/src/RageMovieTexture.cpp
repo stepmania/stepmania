@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -243,12 +243,15 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 // RageMovieTexture constructor
 //-----------------------------------------------------------------------------
 RageMovieTexture::RageMovieTexture( 
-	RageScreen* pScreen, 
+	RageDisplay* pScreen, 
 	const CString &sFilePath, 
-	const DWORD dwMaxSize, 
-	const DWORD dwTextureColorDepth,
-	const DWORD dwHints ) :
-  RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, dwHints )
+	DWORD dwMaxSize, 
+	DWORD dwTextureColorDepth,
+	int iMipMaps,
+	int iAlphaBits,
+	bool bDither,
+	bool bStretch ) :
+  RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch )
 {
 	LOG->WriteLine( "RageBitmapTexture::RageBitmapTexture()" );
 
@@ -269,9 +272,12 @@ RageMovieTexture::~RageMovieTexture()
 }
 
 void RageMovieTexture::Reload( 
-		const DWORD dwMaxSize, 
-		const DWORD dwTextureColorDepth,
-		const DWORD dwHints )
+	DWORD dwMaxSize, 
+	DWORD dwTextureColorDepth,
+	int iMipMaps,
+	int iAlphaBits,
+	bool bDither,
+	bool bStretch )
 {
 	// do nothing
 }

@@ -5,7 +5,7 @@
 
  Desc: An input event specific to a style that is defined by a player number and the player's note column.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */

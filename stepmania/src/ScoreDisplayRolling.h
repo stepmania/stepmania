@@ -1,17 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: ScoreDisplayRolling.h
+ Class: ScoreDisplayRolling
 
  Desc: A graphic displayed in the ScoreDisplayRolling during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _ScoreDisplayRolling_H_
-#define _ScoreDisplayRolling_H_
-
 
 #include "Sprite.h"
 #include "Song.h"
@@ -41,5 +38,3 @@ protected:
 	int m_iCurrentScoreDigits[NUM_SCORE_DIGITS];
 	int m_iDestinationScoreDigits[NUM_SCORE_DIGITS];
 };
-
-#endif

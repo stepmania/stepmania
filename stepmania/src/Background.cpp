@@ -5,7 +5,7 @@
 
  Desc: Background behind arrows while dancing
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -26,10 +26,10 @@ Background::Background()
 
 	m_sprDanger.SetZoom( 2 );
 	m_sprDanger.SetEffectWagging();
-	m_sprDanger.Load( THEME->GetPathTo(GRAPHIC_DANGER_TEXT) );
+	m_sprDanger.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DANGER_TEXT) );
 	m_sprDanger.SetXY( CENTER_X, CENTER_Y );
 
-	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_DANGER_BACKGROUND) );
+	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DANGER_BACKGROUND) );
 	m_sprDangerBackground.StretchTo( CRect((int)SCREEN_LEFT, (int)SCREEN_TOP, (int)SCREEN_RIGHT, (int)SCREEN_BOTTOM) );
 }
 
@@ -38,7 +38,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	if( pSong->HasBackgroundMovie() )
 	{
 		// load the movie backgound, and don't load a visualization
-		m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND) );
+		m_sprSongBackground.Load( pSong->GetBackgroundMoviePath() );
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 		m_sprSongBackground.SetZoomY( -1 );
 		m_sprSongBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
@@ -47,8 +47,8 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	else
 	{
 		// load the static background (if available), and a visualization
-		if( pSong->HasBackground() )	m_sprSongBackground.Load( pSong->GetBackgroundPath(), TEXTURE_HINT_DITHER );
-		else							m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), TEXTURE_HINT_DITHER );
+		if( pSong->HasBackground() )	m_sprSongBackground.Load( pSong->GetBackgroundPath(), false, 2, 0, true );
+		else							m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), false, 2, 0, true );
 
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 		m_sprSongBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
@@ -91,9 +91,9 @@ void Background::Update( float fDeltaTime )
 	m_sprDangerBackground.Update( fDeltaTime );
 }
 
-void Background::RenderPrimitives()
+void Background::DrawPrimitives()
 {
-	ActorFrame::RenderPrimitives();
+	ActorFrame::DrawPrimitives();
 
 	if( m_bShowDanger  &&  (GetTickCount() % 1000) > 500 )
 	{

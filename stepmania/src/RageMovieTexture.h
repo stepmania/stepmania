@@ -4,7 +4,7 @@
 
  Desc: Based on the DShowTextures example in the DX8 SDK.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -14,7 +14,7 @@
 #define _RAGEMOVIETEXTURE_H_
 
 
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include <d3dx8.h>
 //#include <d3d8types.h>
 #include <atlbase.h>
@@ -75,17 +75,25 @@ class RageMovieTexture : public RageTexture
 {
 public:
 	RageMovieTexture( 
-		RageScreen* pScreen, 
+		RageDisplay* pScreen, 
 		const CString &sFilePath, 
-		const DWORD dwMaxSize, 
-		const DWORD dwTextureColorDepth,
-		const DWORD dwHints );
+		DWORD dwMaxSize = 2048, 
+		DWORD dwTextureColorDepth = 16, 
+		int iMipMaps = 4,
+		int iAlphaBits = 4,
+		bool bDither = false,
+		bool bStretch = false
+		);
 	virtual ~RageMovieTexture();
 
 	virtual void Reload( 
-		const DWORD dwMaxSize, 
-		const DWORD dwTextureColorDepth,
-		const DWORD dwHints );
+		DWORD dwMaxSize, 
+		DWORD dwTextureColorDepth,
+		int iMipMaps = 4,
+		int iAlphaBits = 4,
+		bool bDither = false,
+		bool bStretch = false
+		);
 
 	LPDIRECT3DTEXTURE8 GetD3DTexture();
 

@@ -5,7 +5,7 @@
 
  Desc: A pattern of ColorNotes that past Y==0.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -22,15 +22,52 @@
 
 NoteData::NoteData()
 {
-	for( int i=0; i<MAX_NOTE_TRACKS; i++ )
-	{
-		for( int j=0; j<MAX_TAP_NOTE_ELEMENTS; j++ )
-			m_TapNotes[i][j] = '0';
-	}
+	memset( m_TapNotes, '0', MAX_NOTE_TRACKS*MAX_TAP_NOTE_ROWS );
 	m_iNumTracks = 0;
-
 	m_iNumHoldNotes = 0;
 }
+
+NoteData::~NoteData()
+{
+}
+
+void NoteData::WriteToCacheFile( FILE* file )
+{
+	LOG->WriteLine( "NoteData::WriteToCacheFile()" );
+
+	ConvertHoldNotesTo2sAnd3s();
+
+	int iNumRows = GetLastRow();
+	fprintf( file, "%d\n", iNumRows );
+	fwrite( m_TapNotes, sizeof(TapNote), MAX_NOTE_TRACKS*iNumRows, file );
+	fprintf( file, "\n" );
+
+	Convert2sAnd3sToHoldNotes();
+}
+
+void NoteData::ReadFromCacheFile( FILE* file )
+{
+	LOG->WriteLine( "NoteData::ReadFromCacheFile()" );
+	
+	int iNumRows;
+	fscanf( file, "%d\n", &iNumRows );
+	fread( m_TapNotes, sizeof(TapNote), MAX_NOTE_TRACKS*iNumRows, file );
+	fscanf( file, "\n", &iNumRows );
+
+	Convert2sAnd3sToHoldNotes();
+}
+
+void NoteData::SkipOverDataInCacheFile( FILE* file )
+{
+	LOG->WriteLine( "NoteData::SkipOverDataInCacheFile()" );
+	
+	int iNumRows;
+	fscanf( file, "%d\n", &iNumRows );
+	int retval = fseek( file, sizeof(TapNote)*MAX_NOTE_TRACKS*iNumRows, SEEK_CUR );
+	ASSERT( retval == 0 );
+	fscanf( file, "\n", &iNumRows );
+}
+
 
 void NoteData::ClearRange( NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd )
 {
@@ -131,7 +168,7 @@ void NoteData::RemoveHoldNote( int index )
 	m_iNumHoldNotes--;
 }
 
-float NoteData::GetLastBeat()			
+int NoteData::GetLastRow()			
 { 
 	int iOldestIndexFoundSoFar = 0;
 	
@@ -143,7 +180,7 @@ float NoteData::GetLastBeat()
 			iOldestIndexFoundSoFar = m_HoldNotes[i].m_iEndIndex;
 	}
 
-	for( i=MAX_TAP_NOTE_ELEMENTS-1; i>=iOldestIndexFoundSoFar; i-- )		// iterate back to front
+	for( i=MAX_TAP_NOTE_ROWS-1; i>=iOldestIndexFoundSoFar; i-- )		// iterate back to front
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
@@ -157,14 +194,22 @@ float NoteData::GetLastBeat()
 done_searching_tap_notes:
 
 
-	return NoteIndexToBeat( iOldestIndexFoundSoFar );
+	return iOldestIndexFoundSoFar;
 }
 
-int NoteData::GetNumTapNotes()			
+float NoteData::GetLastBeat()			
+{ 
+	return NoteRowToBeat( GetLastRow() );
+}
+
+int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )			
 { 
 	int iNumSteps = 0;
 
-	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
@@ -173,14 +218,46 @@ int NoteData::GetNumTapNotes()
 		}
 	}
 	
-	iNumSteps += m_iNumHoldNotes;
-
 	return iNumSteps;
 }
 
-int NoteData::GetNumHoldNotes()			
-{ 
-	return m_iNumHoldNotes;
+int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )			
+{
+	int iNumDoubles = 0;
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
+	{
+		int iNumNotesThisIndex = 0;
+		for( int t=0; t<m_iNumTracks; t++ )
+		{
+			if( m_TapNotes[t][i] != '0' )
+				iNumNotesThisIndex++;
+		}
+		if( iNumNotesThisIndex >= 2 )
+			iNumDoubles++;
+	}
+	
+	return iNumDoubles;
+}
+
+int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat )			
+{
+	int iNumSteps = 0;
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	for( int i=0; i<m_iNumHoldNotes; i++ )
+	{
+		float fHoldStartBeat = NoteRowToBeat( m_HoldNotes[i].m_iStartIndex );
+		if( fStartBeat >= fHoldStartBeat  &&  fStartBeat < fEndBeat )
+			iNumSteps++;
+
+	}
+	return iNumSteps;
 }
 
 
@@ -192,7 +269,7 @@ void NoteData::CropToLeftSide()
 	// clear out the right half
 	for( int c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) // foreach TapNote
+		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
 			m_TapNotes[c][i] = '0';
 	}
 
@@ -219,14 +296,14 @@ void NoteData::CropToRightSide()
 	// clear out the left half
 	for( c=0; c<iFirstRightSideColumn; c++ )
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) // foreach TapNote
+		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
 			m_TapNotes[c][i] = '0';
 	}
 
 	// copy the right side into the left
 	for( c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) // foreach TapNote
+		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
 		{
 			m_TapNotes[c-4][i] = m_TapNotes[c][i];
 			m_TapNotes[c][i] = '0';
@@ -364,7 +441,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	pNewData->m_iNumTracks = m_iNumTracks;
 
 	// transform m_TapNotes 
-	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) 
+	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
 	{
 		for( int j=0; j<12; j++ )
 		{
@@ -402,7 +479,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 void NoteData::MakeLittle()
 {
 	// filter out all non-quarter notes
-	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) 
+	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
 	{
 		if( i%ELEMENTS_PER_BEAT != 0 )
 		{
@@ -424,11 +501,11 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 
 	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )	// foreach TapNote element
+		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
 			if( m_TapNotes[col][i] == '2' )	// this is a HoldNote begin marker
 			{
-				for( int j=i; j<MAX_TAP_NOTE_ELEMENTS; j++ )	// search for end of HoldNote
+				for( int j=i; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 				{
 					if( m_TapNotes[col][j] == '1'  ||
 						m_TapNotes[col][j] == '3' )	// found it!
@@ -479,8 +556,8 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 		default:	ASSERT( false );
 	}
 
-	int iNoteIndexBegin = BeatToNoteIndex( fBeginBeat );
-	int iNoteIndexEnd = BeatToNoteIndex( fEndBeat );
+	int iNoteIndexBegin = BeatToNoteRow( fBeginBeat );
+	int iNoteIndexEnd = BeatToNoteRow( fEndBeat );
 
 	//ConvertHoldNotesTo2sAnd3s();
 
@@ -488,13 +565,13 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
 	{
 		int iOldIndex = i;
-		float fOldBeat = NoteIndexToBeat( iOldIndex );
+		float fOldBeat = NoteRowToBeat( iOldIndex );
 		float fNewBeat1 = froundf( fOldBeat, fSnapInterval1 );
 		float fNewBeat2 = froundf( fOldBeat, fSnapInterval2 );
 
 		bool bNewBeat1IsCloser = fabsf(fNewBeat1-fOldBeat) < fabsf(fNewBeat2-fOldBeat);
 		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;
-		int iNewIndex = BeatToNoteIndex( fNewBeat );
+		int iNewIndex = BeatToNoteRow( fNewBeat );
 
 		for( int c=0; c<m_iNumTracks; c++ )
 		{
@@ -581,7 +658,7 @@ void NoteData::SetFromMeasureStrings( CStringArray &arrayMeasureStrings )
 		{
 			const float fPercentIntoMeasure = l/(float)arrayNoteLines.GetSize();
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
-			const int iIndex = BeatToNoteIndex( fBeat );
+			const int iIndex = BeatToNoteRow( fBeat );
 
 			CString sNoteLine = arrayNoteLines[l];
 			sNoteLine.TrimRight();
@@ -601,12 +678,61 @@ void NoteData::SetFromMeasureStrings( CStringArray &arrayMeasureStrings )
 	ASSERT( m_iNumTracks != 0 );
 }
 
+
+float NoteData::GetStreamRadarValue( float fSongSeconds )
+{
+	// density of steps
+	int iNumNotes = GetNumTapNotes() + GetNumHoldNotes();
+	float fBeatsPerSecond = iNumNotes/fSongSeconds;
+	return fBeatsPerSecond / 5;
+}
+
+float NoteData::GetVoltageRadarValue( float fSongSeconds )
+{
+	// peak density of steps
+	float fMaxDensityPerSecSoFar = 0;
+
+	for( int i=0; i<MAX_BEATS; i+=8 )
+	{
+		int iNumNotesThisMeasure = GetNumTapNotes((float)i,(float)i+8) + GetNumHoldNotes((float)i,(float)i+8);
+
+		float fDensityThisMeasure = iNumNotesThisMeasure/2.0f;
+
+		float fDensityPerSecThisMeasure = fDensityThisMeasure / fSongSeconds;
+
+		if( fDensityPerSecThisMeasure > fMaxDensityPerSecSoFar )
+			fMaxDensityPerSecSoFar = fDensityPerSecThisMeasure;
+	}
+
+	return fMaxDensityPerSecSoFar;
+}
+
+float NoteData::GetAirRadarValue( float fSongSeconds )
+{
+	// number of doubles
+	int iNumDoubles = GetNumDoubles();
+	return iNumDoubles / fSongSeconds * 2;
+}
+
+float NoteData::GetChaosRadarValue( float fSongSeconds )
+{
+	// irregularity of steps
+	return fabsf( GetStreamRadarValue(fSongSeconds) - GetVoltageRadarValue(fSongSeconds) );
+}
+
+float NoteData::GetFreezeRadarValue( float fSongSeconds )
+{
+	// number of hold steps
+	return GetNumHoldNotes() / fSongSeconds * 10;
+}
+
+
 void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, TrackNumber iNewToOriginalTrack[] )
 {
 	// init
 	for( int i=0; i<MAX_NOTE_TRACKS; i++ )
 	{
-		for( int j=0; j<MAX_TAP_NOTE_ELEMENTS; j++ )
+		for( int j=0; j<MAX_TAP_NOTE_ROWS; j++ )
 			m_TapNotes[i][j] = '0';
 	}
 	m_iNumHoldNotes = 0;
@@ -622,7 +748,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, TrackNum
 
 		int i;
 
-		for( i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
+		for( i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 			m_TapNotes[t][i] = pOriginal->m_TapNotes[iOriginalTrack][i];
 
 		for( i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )

@@ -7,7 +7,7 @@
     also has temporary holders for information that passed between windows - e.g.
 	ScoreSummary.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -28,16 +28,19 @@ public:
 	SongSortOrder	m_SongSortOrder;				// used by MusicWheel and should be saved until the app exits
 	GameMode		m_GameMode;
 	int				m_iCurrentStage;				// number of stages played +1
+
+	int				GetStageNumber();
+	bool			IsFinalStage();
 	CString			GetStageText();
 
-	DifficultyClass m_PreferredDifficultyClass[NUM_PLAYERS];
-	GameOptions		m_GameOptions;
-	bool			m_bWindowed;
-	GraphicProfile	m_GraphicProfile;
+	DifficultyClass			m_PreferredDifficultyClass[NUM_PLAYERS];
+	GameOptions				m_GameOptions;
+	bool					m_bWindowed;
+	GraphicProfile			m_GraphicProfile;
 	GraphicProfileOptions*	GetCustomGraphicProfileOptions();
 	GraphicProfileOptions*	GetCurrentGraphicProfileOptions();
-	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
-	SongOptions		m_SongOptions;
+	PlayerOptions			m_PlayerOptions[NUM_PLAYERS];
+	SongOptions				m_SongOptions;
 
 
 	void ReadPrefsFromDisk();

@@ -5,12 +5,11 @@
 
  Desc: Holds metadata for a song and the song's step data.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
-
-#include "NoteMetadata.h"
+#include "Notes.h"
 #include "RageUtil.h"
 
 #include "Song.h"
@@ -73,7 +72,8 @@ Song::Song()
 	m_bChangedSinceSave = false;
 	m_fOffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = m_fMusicSampleLengthSeconds = -1;
-	m_dwMusicBytes = 0;
+	m_iMusicBytes = 0;
+	m_fMusicLength = 0;
 }
 
 
@@ -151,7 +151,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 }
 
 
-// This is a super hack, but it's only called from WindowEdit, so it's OK :-)
+// This is a super hack, but it's only called from ScreenEdit, so it's OK :-)
 // Writing an inverse function of GetBeatAndBPSFromElapsedTime() is impossible,
 // so do a binary search to get close to the correct elapsed time.
 float Song::GetElapsedTimeFromBeat( float fBeat )
@@ -194,6 +194,12 @@ void Song::GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainT
 	sSubTitleOut = ""; 
 };	
 
+CString Song::GetCacheFilePath()
+{
+	ULONG hash = GetHashForString( m_sSongDir );
+	return ssprintf( "Cache\\%u", hash );
+}
+
 bool Song::LoadFromSongDir( CString sDir )
 {
 	LOG->WriteLine( "Song::LoadFromSongDir(%s)", sDir );
@@ -205,9 +211,18 @@ bool Song::LoadFromSongDir( CString sDir )
 	// save song dir
 	m_sSongDir = sDir;
 
-	// We are going to load from either a .song or .msd file.  
-	// If no .song files exist, then look for an .msd.
 
+	//
+	// First look in the cache for this song (without loading NoteData)
+	//
+	if( LoadFromCacheFile(false) )
+		return true;
+
+
+	//
+	// There was no entry in the cache for this song.
+	// Let's load it from a file, then write a cache entry.
+	//
 	CStringArray arrayBMSFileNames;
 	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
 	int iNumBMSFiles = arrayBMSFileNames.GetSize();
@@ -222,9 +237,9 @@ bool Song::LoadFromSongDir( CString sDir )
 
 
 	if( iNumSongFiles > 1 )
-		FatalError( "There is more than one DWI file in '%s'.  Which one should I use?", sDir );
+		FatalError( "There is more than one .song file in '%s'.  There should be only one!", sDir );
 	else if( iNumDWIFiles > 1 )
-		FatalError( "There is more than one DWI file in '%s'.  Which one should I use?", sDir );
+		FatalError( "There is more than one DWI file in '%s'.  There should be only one!", sDir );
 	else if( iNumSongFiles == 1 )
 		LoadFromSMDir( sDir );
 	else if( iNumDWIFiles == 1 )
@@ -232,9 +247,18 @@ bool Song::LoadFromSongDir( CString sDir )
 	else if( iNumBMSFiles > 0 )
 		LoadFromBMSDir( sDir );
 	else 
-		FatalError( "Couldn't find any Song, BMS, or MSD files in '%s'", sDir );
+		FatalError( "Couldn't find any .song, BMS, or DWI files in '%s'.  This is not a valid song directory.", sDir );
 
-	return TRUE;
+	TidyUpData();
+
+	//
+	// In order to save memory, we're going to save the file back to the cache, 
+	// then unload all the large NoteData. 
+	//
+	SaveToCacheFile();
+	LoadFromCacheFile( false );
+
+	return true;
 }
 
 
@@ -268,11 +292,11 @@ bool Song::LoadFromBMSDir( CString sDir )
 	// is identical for every BMS file in the directory.
 	m_sSongFilePath = m_sSongDir + arrayBMSFileNames[0];
 
-	// load the NoteMetadata from the rest of the BMS files
+	// load the Notes from the rest of the BMS files
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
 	{
-		m_arrayNoteMetadatas.SetSize( m_arrayNoteMetadatas.GetSize()+1 );
-		NoteMetadata &new_steps = m_arrayNoteMetadatas[ m_arrayNoteMetadatas.GetSize()-1 ];
+		m_arrayNotes.SetSize( m_arrayNotes.GetSize()+1 );
+		Notes &new_steps = m_arrayNotes[ m_arrayNotes.GetSize()-1 ];
 		new_steps.LoadFromBMSFile( m_sSongDir + arrayBMSFileNames[i] );
 	}
 
@@ -319,7 +343,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 		// handle the data
 		if( -1 != value_name.Find("#title") ) 
 		{
-			// strip NoteMetadata type out of description leaving only song title (looks like 'B4U <BASIC>')
+			// strip Notes type out of description leaving only song title (looks like 'B4U <BASIC>')
 			value_data.Replace( "(ANOTHER)", "" );
 			value_data.Replace( "(BASIC)", "" );
 			value_data.Replace( "(MANIAC)", "" );
@@ -387,15 +411,15 @@ bool Song::LoadFromBMSDir( CString sDir )
 					{
 					case 01:	// background music track
 						float fBeatOffset;
-						fBeatOffset = NoteIndexToBeat( (float)iStepIndex );
+						fBeatOffset = NoteRowToBeat( (float)iStepIndex );
 						float fBPS;
 						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
-						//LOG->WriteLine( "Found offset to be index %d, beat %f", iStepIndex, NoteIndexToBeat(iStepIndex) );
+						//LOG->WriteLine( "Found offset to be index %d, beat %f", iStepIndex, NoteRowToBeat(iStepIndex) );
 						break;
 					case 03:	// bpm
 						BPMSegment new_seg;
-						new_seg.m_fStartBeat = NoteIndexToBeat( (float)iStepIndex );
+						new_seg.m_fStartBeat = NoteRowToBeat( (float)iStepIndex );
 						new_seg.m_fBPM = (float)arrayNotes[j];
 
 						m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
@@ -411,9 +435,6 @@ bool Song::LoadFromBMSDir( CString sDir )
 		LOG->WriteLine( "There is a BPM change at beat %f, BPM %f, index %d", 
 					m_BPMSegments[i].m_fStartBeat, m_BPMSegments[i].m_fBPM, i );
 
-
-
-	TidyUpData();
 
 	return TRUE;
 }
@@ -535,7 +556,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				float fIndex = atoi( arrayFreezeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
-				float fFreezeBeat = NoteIndexToBeat( fIndex );
+				float fFreezeBeat = NoteRowToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
 				FreezeSegment new_seg;
@@ -560,7 +581,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				float fIndex = atoi( arrayBPMChangeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
-				float fBeat = NoteIndexToBeat( fIndex );
+				float fBeat = NoteRowToBeat( fIndex );
 				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
 				
 				BPMSegment new_seg;
@@ -575,9 +596,9 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 		else if( sValueName == "#SINGLE" || sValueName == "#DOUBLE" || sValueName == "#COUPLE" )
 		{
-			m_arrayNoteMetadatas.SetSize( m_arrayNoteMetadatas.GetSize()+1, 1 );
-			NoteMetadata &new_NoteMetadata = m_arrayNoteMetadatas[ m_arrayNoteMetadatas.GetSize()-1 ];
-			new_NoteMetadata.LoadFromDWITokens( 
+			m_arrayNotes.SetSize( m_arrayNotes.GetSize()+1, 1 );
+			Notes &new_Notes = m_arrayNotes[ m_arrayNotes.GetSize()-1 ];
+			new_Notes.LoadFromDWITokens( 
 				arrayValueTokens[0], 
 				arrayValueTokens[1], 
 				arrayValueTokens[2], 
@@ -589,9 +610,6 @@ bool Song::LoadFromDWIFile( CString sPath )
 			// do nothing.  We don't care about this value name
 			;
 	}
-
-	TidyUpData();
-
 
 	return TRUE;
 }
@@ -628,15 +646,15 @@ bool Song::LoadFromSMDir( CString sDir )
 	m_sSongFilePath = m_sSongDir + arraySongFileNames[0];
 
 
-	CStringArray arrayNoteMetadataFileNames;
-	GetDirListing( sDir + CString("*.notes"), arrayNoteMetadataFileNames );
+	CStringArray arrayNotesFileNames;
+	GetDirListing( sDir + CString("*.notes"), arrayNotesFileNames );
 
-	// load the NoteMetadata from the rest of the BMS files
-	for( i=0; i<arrayNoteMetadataFileNames.GetSize(); i++ ) 
+	// load the Notes from the rest of the BMS files
+	for( i=0; i<arrayNotesFileNames.GetSize(); i++ ) 
 	{
-		m_arrayNoteMetadatas.SetSize( m_arrayNoteMetadatas.GetSize()+1 );
-		NoteMetadata &new_steps = m_arrayNoteMetadatas[ m_arrayNoteMetadatas.GetSize()-1 ];
-		new_steps.LoadFromNotesFile( m_sSongDir + arrayNoteMetadataFileNames[i] );
+		m_arrayNotes.SetSize( m_arrayNotes.GetSize()+1 );
+		Notes &new_steps = m_arrayNotes[ m_arrayNotes.GetSize()-1 ];
+		new_steps.LoadFromNotesFile( m_sSongDir + arrayNotesFileNames[i] );
 	}
 
 
@@ -708,7 +726,7 @@ bool Song::LoadFromSMDir( CString sDir )
 			m_sMusicPath = sDir + "\\" + arrayValueTokens[1];
 
 		else if( sValueName == "#MUSICBYTES" )
-			m_dwMusicBytes = atoi( arrayValueTokens[1] );
+			m_iMusicBytes = atoi( arrayValueTokens[1] );
 
 		else if( sValueName == "#SAMPLESTART" )
 			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
@@ -768,8 +786,6 @@ bool Song::LoadFromSMDir( CString sDir )
 			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
 	}
 
-	TidyUpData();
-
 	return TRUE;
 }
 
@@ -795,6 +811,14 @@ void Song::TidyUpData()
 		else
 			m_sMusicPath = "";
 		//	FatalError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
+	}
+
+	// Save length of music
+	if( GetMusicPath() != "" )
+	{
+		RageSoundStream sound;
+		sound.Load( GetMusicPath() );
+		m_fMusicLength = sound.GetLengthSeconds();
 	}
 
 	if( !DoesFileExist(GetBannerPath()) )
@@ -872,149 +896,176 @@ void Song::TidyUpData()
 	{
 		m_sCDTitlePath = "";
 	}
+
+	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
+	{
+		Notes* pNM = &m_arrayNotes[i];
+
+		float fMusicLength = m_fMusicLength;
+		if( fMusicLength == 0 )
+			fMusicLength = 100;
+
+		pNM->m_fRadarValues[RADAR_STREAM]	= pNM->GetNoteData()->GetStreamRadarValue( fMusicLength );
+		pNM->m_fRadarValues[RADAR_VOLTAGE]	= pNM->GetNoteData()->GetVoltageRadarValue( fMusicLength );
+		pNM->m_fRadarValues[RADAR_AIR]		= pNM->GetNoteData()->GetAirRadarValue( fMusicLength );
+		pNM->m_fRadarValues[RADAR_CHAOS]	= pNM->GetNoteData()->GetChaosRadarValue( fMusicLength );
+		pNM->m_fRadarValues[RADAR_FREEZE]	= pNM->GetNoteData()->GetFreezeRadarValue( fMusicLength );
+	}
 }
 
 
-void Song::GetNoteMetadatasThatMatchGameAndStyle( CString sGame, CString sStyle, CArray<NoteMetadata*, NoteMetadata*>& arrayAddTo )
+void Song::GetNotessThatMatchGameAndStyle( CString sGame, CString sStyle, CArray<Notes*, Notes*>& arrayAddTo )
 {
-	for( int i=0; i<m_arrayNoteMetadatas.GetSize(); i++ )	// for each of the Song's NoteMetadata
+	for( int i=0; i<m_arrayNotes.GetSize(); i++ )	// for each of the Song's Notes
 	{
-		NoteMetadata* pCurNoteMetadata = &m_arrayNoteMetadatas[i];
+		Notes* pCurNotes = &m_arrayNotes[i];
 		
-		if( sGame == pCurNoteMetadata->m_sGame && 
-			( sStyle == pCurNoteMetadata->m_sStyle || (sStyle == "versus" && pCurNoteMetadata->m_sStyle == "single") ) )
+		if( sGame == pCurNotes->m_sIntendedGame && 
+			( sStyle == pCurNotes->m_sIntendedStyle || (sStyle == "versus" && pCurNotes->m_sIntendedStyle == "single") ) )
 		{
-			arrayAddTo.Add( pCurNoteMetadata );
+			arrayAddTo.Add( pCurNotes );
 		}
 	}
 
 }
 
 
-/*
-void Song::SaveOffsetChangeToDisk()
+const int FILE_CACHE_VERSION = 9;	// increment this when the cache file format changes
+
+void Song::SaveToCacheFile()
 {
-	CString sDir, sFName, sExt;
-	splitrelpath( GetSongFilePath(), sDir, sFName, sExt );
-	sExt.MakeLower();
-
-	if( sExt == "bms" )
-	{
-		for( int i=0; i<m_arrayNoteMetadatas.GetSize(); i++ )		// for each NoteMetadata
-		{
-			CString sNoteMetadataFileName = m_arrayNoteMetadatas[i].m_sNoteMetadataFilePath;
-
-			CStringArray arrayLines;
-			CStdioFile fileIn;
-			if( !fileIn.Open( sNoteMetadataFileName, CFile::modeRead|CFile::shareDenyNone) )
-				FatalError( ssprintf("Failed to open '%s' for reading", sNoteMetadataFileName) );
-
-			// read the file into sFileContents
-			CString sLine;
-			while( fileIn.ReadString(sLine) )
-			{
-				arrayLines.Add( sLine+"\n" );
-			}
-			fileIn.Close();
-
-			// write the file back to disk with the changes
-			CStdioFile fileOut;
-			if( !fileOut.Open( sNoteMetadataFileName, CFile::modeWrite|CFile::shareDenyWrite) )
-				FatalError( ssprintf("Failed to open '%s' for writing", sNoteMetadataFileName) );
-			for( int j=0; j<arrayLines.GetSize(); j++ )
-			{
-				CString sLine = arrayLines[j];
-				if( -1 != sLine.Find("01:") )
-				{
-					float fBPM = m_BPMSegments[0].m_fBPM;
-					float fBPS = fBPM/60;
-					float fOffsetInBeats = m_fOffsetInSeconds * fBPS;
-					float fOffsetInMeasures = fOffsetInBeats / BEATS_PER_MEASURE;
-					int   iMeasure = (int)fOffsetInMeasures;
-					float fPercentIntoMeasure = fmodf( fOffsetInMeasures, 1 );
-					CString sBMSMeasureString;
-					for( int k=0; k<64; k++ )
-					{
-						if( k == int(fPercentIntoMeasure*64) )
-							sBMSMeasureString += "99";
-						else
-							sBMSMeasureString += "00";
-					}
-
-					fileOut.WriteString( ssprintf("#%03d01:%s;\n", iMeasure, sBMSMeasureString) );
-				}
-				else
-				{
-					fileOut.WriteString( sLine );
-				}
-			}
-			fileOut.Close();
-		}
-		
-	}
-	else if( sExt == "dwi" )
-	{
-		CStringArray arrayLines;
-		CStdioFile fileIn;
-		if( !fileIn.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone) )
-			FatalError( ssprintf("Failed to open '%s' for reading", GetSongFilePath()) );
-
-		// read the file into sFileContents
-		CString sLine;
-		while( fileIn.ReadString(sLine) )
-		{
-			arrayLines.Add( sLine+"\n" );
-		}
-		fileIn.Close();
-
-
-		// write the file back to disk with the changes
-		CStdioFile fileOut;
-		if( !fileOut.Open( GetSongFilePath(), CFile::modeWrite|CFile::shareDenyWrite) )
-			FatalError( ssprintf("Failed to open '%s' for writing", GetSongFilePath()) );
-		for( int i=0; i<arrayLines.GetSize(); i++ )
-		{
-			CString sLine = arrayLines[i];
-			if( -1 != sLine.Find("#GAP") )
-			{
-				// Discover whether the GAP line has a semicolon at the end.  
-				// If it doesn't then the semicolon is probably on the next line
-				// and we don't want to write a second semicolon!
-				bool bHasSemiColon = -1 != sLine.Find(";");
-
-				// replace with new offset
-				fileOut.WriteString( ssprintf("#GAP:%d%s\n", roundf(GetBeatOffsetInSeconds()*-1*1000), bHasSemiColon ? ";" : "") );
-			}
-			else
-			{
-				fileOut.WriteString( sLine );
-			}
-		}
-		fileOut.Close();
-
-
-	}
-	else
-	{
-		FatalError( ssprintf("Unrecognized extension '%s' on song file '%s'", sExt, GetSongFilePath()) );
-	}
-
-
-	m_bChangedSinceSave = false;
-}
-*/
-void Song::Save()
-{
-	LOG->WriteLine( "Song::Save()" );
+	LOG->WriteLine( "Song::SaveToCacheFile()" );
 
 	int i;
+	CString sCacheFilePath = GetCacheFilePath();
 
-	if( -1 != m_sSongDir.Find("DWI Support") )
-	{
-		LOG->WriteLine("WARNING:  Can't save to DWI support folder!");
+	FILE* file = fopen( sCacheFilePath, "w" );
+	ASSERT( file != NULL );
+	if( file == NULL )
 		return;
+
+	fprintf( file, "%d\n", FILE_CACHE_VERSION );
+	fprintf( file, "%u\n", GetHashForDirectory(m_sSongDir) );
+	WriteStringToFile( file, m_sSongDir );
+	WriteStringToFile( file, m_sSongFilePath );
+	WriteStringToFile( file, m_sGroupName );
+
+	WriteStringToFile( file, m_sMainTitle );
+	WriteStringToFile( file, m_sSubTitle );
+	WriteStringToFile( file, m_sArtist );
+	WriteStringToFile( file, m_sCredit );
+	fprintf( file, "%f\n", m_fOffsetInSeconds );
+
+	WriteStringToFile( file, m_sMusicPath );
+	fprintf( file, "%d\n", m_iMusicBytes );
+	fprintf( file, "%f\n", m_fMusicLength );
+	fprintf( file, "%f\n", m_fMusicSampleStartSeconds );
+	fprintf( file, "%f\n", m_fMusicSampleLengthSeconds );
+	WriteStringToFile( file, m_sBannerPath );
+	WriteStringToFile( file, m_sBackgroundPath );
+	WriteStringToFile( file, m_sBackgroundMoviePath );
+	WriteStringToFile( file, m_sCDTitlePath );
+
+	fprintf( file, "%d\n", m_BPMSegments.GetSize() );
+	for( i=0; i<m_BPMSegments.GetSize(); i++ )
+		fprintf( file, "%f,%f\n", m_BPMSegments[i].m_fStartBeat, m_BPMSegments[i].m_fBPM );
+
+	fprintf( file, "%d\n", m_FreezeSegments.GetSize() );
+	for( i=0; i<m_FreezeSegments.GetSize(); i++ )
+		fprintf( file, "%f,%f\n", m_FreezeSegments[i].m_fStartBeat, m_FreezeSegments[i].m_fFreezeSeconds );
+
+	fprintf( file, "%d\n", m_arrayNotes.GetSize() );
+	for( i=0; i<m_arrayNotes.GetSize(); i++ )
+		m_arrayNotes[i].WriteToCacheFile( file );
+
+	fclose( file );
+}
+
+bool Song::LoadFromCacheFile( bool bLoadNoteData )
+{
+	LOG->WriteLine( "Song::LoadFromCacheFile( %i )", bLoadNoteData );
+
+	int i;
+	CString sCacheFilePath = GetCacheFilePath();
+
+	LOG->WriteLine( "cache file is '%s'.", sCacheFilePath );
+
+	FILE* file = fopen( sCacheFilePath, "r" );
+	if( file == NULL )
+		return false;
+
+	int iCacheVersion;
+	fscanf( file, "%d\n", &iCacheVersion );
+	if( iCacheVersion != FILE_CACHE_VERSION )
+	{
+		LOG->WriteLine( "Cache file versions don't match '%s'.", sCacheFilePath );
+		fclose( file );
+		DeleteCacheFile();
+		return false;
 	}
 
+	ULONG hash;
+	fscanf( file, "%u\n", &hash );
+	if( hash != GetHashForDirectory(m_sSongDir) )
+	{
+		LOG->WriteLine( "Cache file is out of date.", sCacheFilePath );
+		fclose( file );
+		return false;
+	}
+
+	ReadStringFromFile( file, m_sSongDir );
+	ReadStringFromFile( file, m_sSongFilePath );
+	ReadStringFromFile( file, m_sGroupName );
+
+	ReadStringFromFile( file, m_sMainTitle );
+	ReadStringFromFile( file, m_sSubTitle );
+	ReadStringFromFile( file, m_sArtist );
+	ReadStringFromFile( file, m_sCredit );
+	fscanf( file, "%f\n", &m_fOffsetInSeconds );
+
+	ReadStringFromFile( file, m_sMusicPath );
+	fscanf( file, "%d\n", &m_iMusicBytes );
+	fscanf( file, "%f\n", &m_fMusicLength );
+	fscanf( file, "%f\n", &m_fMusicSampleStartSeconds );
+	fscanf( file, "%f\n", &m_fMusicSampleLengthSeconds );
+	ReadStringFromFile( file, m_sBannerPath );
+	ReadStringFromFile( file, m_sBackgroundPath );
+	ReadStringFromFile( file, m_sBackgroundMoviePath );
+	ReadStringFromFile( file, m_sCDTitlePath );
+
+	int iNumBPMSegments;
+	fscanf( file, "%d\n", &iNumBPMSegments );
+	m_BPMSegments.SetSize( iNumBPMSegments );
+	for( i=0; i<iNumBPMSegments; i++ )
+		fscanf( file, "%f,%f\n", &m_BPMSegments[i].m_fStartBeat, &m_BPMSegments[i].m_fBPM );
+
+	int iNumFreezeSegments;
+	fscanf( file, "%d\n", &iNumFreezeSegments );
+	m_FreezeSegments.SetSize( iNumFreezeSegments );
+	for( i=0; i<iNumFreezeSegments; i++ )
+		fscanf( file, "%f,%f\n", &m_FreezeSegments[i].m_fStartBeat, &m_FreezeSegments[i].m_fFreezeSeconds );
+
+	int iNumNotes;
+	fscanf( file, "%d\n", &iNumNotes );
+	m_arrayNotes.SetSize( iNumNotes );
+	for( i=0; i<iNumNotes; i++ )
+		m_arrayNotes[i].ReadFromCacheFile( file, bLoadNoteData );
+
+	fclose( file );
+	return true;
+}
+
+void Song::DeleteCacheFile()
+{
+	DeleteFile( GetCacheFilePath() );
+}
+
+
+void Song::SaveToSMDir()
+{
+	LOG->WriteLine( "Song::SaveToSMDir()" );
+
+	int i;
 	//
 	// rename all old files to avoid confusion
 	//
@@ -1082,7 +1133,7 @@ void Song::Save()
 	else
 		file.WriteString( "#MUSIC:;\n" );
 
-	file.WriteString( ssprintf("#MUSICBYTES:%u;\n", m_dwMusicBytes) );
+	file.WriteString( ssprintf("#MUSICBYTES:%u;\n", m_iMusicBytes) );
 	file.WriteString( ssprintf("#OFFSET:%f;\n", m_fOffsetInSeconds) );
 
 	file.WriteString( ssprintf("#SAMPLESTART:%f;\n", m_fMusicSampleStartSeconds) );
@@ -1113,29 +1164,32 @@ void Song::Save()
 	file.Close();
 			
 	//
-	// Save all NoteMetadatas for this file
+	// Save all Notess for this file
 	//
-	for( i=0; i<m_arrayNoteMetadatas.GetSize(); i++ ) 
+	for( i=0; i<m_arrayNotes.GetSize(); i++ ) 
 	{
-		m_arrayNoteMetadatas[i].Save( m_sSongDir );
+		m_arrayNotes[i].SaveToSMDir( m_sSongDir );
 	}
 
 }
 
 Grade Song::GetGradeForDifficultyClass( CString sGame, CString sStyle, DifficultyClass dc )
 {
-	CArray<NoteMetadata*, NoteMetadata*> arrayNoteMetadatas;
-	this->GetNoteMetadatasThatMatchGameAndStyle( sGame, sStyle, arrayNoteMetadatas );
-	SortNoteMetadataArrayByDifficultyClass( arrayNoteMetadatas );
+	CArray<Notes*, Notes*> arrayNotess;
+	this->GetNotessThatMatchGameAndStyle( sGame, sStyle, arrayNotess );
+	SortNotesArrayByDifficultyClass( arrayNotess );
 
-	for( int i=0; i<arrayNoteMetadatas.GetSize(); i++ )
+	for( int i=0; i<arrayNotess.GetSize(); i++ )
 	{
-		NoteMetadata* pNoteMetadata = arrayNoteMetadatas[i];
-		if( pNoteMetadata->m_DifficultyClass == dc )
-			return pNoteMetadata->m_TopGrade;
+		Notes* pNotes = arrayNotess[i];
+		if( pNotes->m_DifficultyClass == dc )
+			return pNotes->m_TopGrade;
 	}
 	return GRADE_NO_DATA;
 }
+
+
+
 
 /////////////////////////////////////
 // Sorting

@@ -85,7 +85,7 @@
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="1"
+				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS"
@@ -138,166 +138,175 @@
 	</Configurations>
 	<Files>
 		<Filter
-			Name="Windows"
+			Name="Screens"
 			Filter="">
 			<File
-				RelativePath=".\Window.cpp">
+				RelativePath="Screen.cpp">
 			</File>
 			<File
-				RelativePath=".\Window.h">
+				RelativePath="Screen.h">
 			</File>
 			<File
-				RelativePath=".\WindowCaution.cpp">
+				RelativePath="ScreenCaution.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowCaution.h">
+				RelativePath="ScreenCaution.h">
 			</File>
 			<File
-				RelativePath=".\WindowConfigurePads.cpp">
+				RelativePath="ScreenDimensions.h">
 			</File>
 			<File
-				RelativePath=".\WindowConfigurePads.h">
+				RelativePath="ScreenEdit.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowDancing.cpp">
+				RelativePath="ScreenEdit.h">
 			</File>
 			<File
-				RelativePath=".\WindowDancing.h">
+				RelativePath="ScreenEditMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowEdit.cpp">
+				RelativePath="ScreenEditMenu.h">
 			</File>
 			<File
-				RelativePath=".\WindowEdit.h">
+				RelativePath="ScreenGameOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowEditMenu.cpp">
+				RelativePath="ScreenGameOptions.h">
 			</File>
 			<File
-				RelativePath=".\WindowEditMenu.h">
+				RelativePath="ScreenGameplay.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowGameOptions.cpp">
+				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
-				RelativePath=".\WindowGameOptions.h">
+				RelativePath="ScreenGraphicOptions.cpp">
 			</File>
 			<File
-				RelativePath="WindowGraphicOptions.cpp">
+				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
-				RelativePath="WindowGraphicOptions.h">
+				RelativePath="ScreenManager.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowManager.cpp">
+				RelativePath="ScreenManager.h">
 			</File>
 			<File
-				RelativePath=".\WindowManager.h">
+				RelativePath="ScreenMapInstruments.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowMessage.h">
+				RelativePath="ScreenMapInstruments.h">
 			</File>
 			<File
-				RelativePath="WindowMusicScroll.cpp">
+				RelativePath="ScreenMessage.h">
 			</File>
 			<File
-				RelativePath="WindowMusicScroll.h">
+				RelativePath="ScreenMusicScroll.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowOptions.cpp">
+				RelativePath="ScreenMusicScroll.h">
 			</File>
 			<File
-				RelativePath=".\WindowOptions.h">
+				RelativePath="ScreenOptions.cpp">
 			</File>
 			<File
-				RelativePath="WindowOptionsType2.cpp">
+				RelativePath="ScreenOptions.h">
 			</File>
 			<File
-				RelativePath="WindowOptionsType2.h">
+				RelativePath="ScreenOptionsType2.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowPlayerOptions.cpp">
+				RelativePath="ScreenOptionsType2.h">
 			</File>
 			<File
-				RelativePath=".\WindowPlayerOptions.h">
+				RelativePath="ScreenPlayerOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowPrompt.cpp">
+				RelativePath="ScreenPlayerOptions.h">
 			</File>
 			<File
-				RelativePath=".\WindowPrompt.h">
+				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
-				RelativePath="WindowResults.cpp">
+				RelativePath="ScreenPrompt.h">
 			</File>
 			<File
-				RelativePath="WindowResults.h">
+				RelativePath="ScreenResults.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowSandbox.cpp">
+				RelativePath="ScreenResults.h">
 			</File>
 			<File
-				RelativePath=".\WindowSandbox.h">
+				RelativePath="ScreenSandbox.cpp">
 			</File>
 			<File
-				RelativePath="WindowSelectDifficulty.cpp">
+				RelativePath="ScreenSandbox.h">
 			</File>
 			<File
-				RelativePath="WindowSelectDifficulty.h">
+				RelativePath="ScreenSelectDifficulty.cpp">
 			</File>
 			<File
-				RelativePath="WindowSelectGame.cpp">
+				RelativePath="ScreenSelectDifficulty.h">
 			</File>
 			<File
-				RelativePath="WindowSelectGame.h">
+				RelativePath="ScreenSelectGame.cpp">
 			</File>
 			<File
-				RelativePath="WindowSelectGroup.cpp">
+				RelativePath="ScreenSelectGame.h">
 			</File>
 			<File
-				RelativePath="WindowSelectGroup.h">
+				RelativePath="ScreenSelectGroup.cpp">
 			</File>
 			<File
-				RelativePath="WindowSelectMode.cpp">
+				RelativePath="ScreenSelectGroup.h">
 			</File>
 			<File
-				RelativePath="WindowSelectMode.h">
+				RelativePath="ScreenSelectMode.cpp">
 			</File>
 			<File
-				RelativePath="WindowSelectMusic.cpp">
+				RelativePath="ScreenSelectMode.h">
 			</File>
 			<File
-				RelativePath="WindowSelectMusic.h">
+				RelativePath="ScreenSelectMusic.cpp">
 			</File>
 			<File
-				RelativePath="WindowSelectStyle.cpp">
+				RelativePath="ScreenSelectMusic.h">
 			</File>
 			<File
-				RelativePath="WindowSelectStyle.h">
+				RelativePath="ScreenSelectStyle.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowSongOptions.cpp">
+				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
-				RelativePath=".\WindowSongOptions.h">
+				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowSynchronize.cpp">
+				RelativePath="ScreenSongOptions.h">
 			</File>
 			<File
-				RelativePath=".\WindowSynchronize.h">
+				RelativePath="ScreenStage.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowSynchronizeMenu.cpp">
+				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath=".\WindowSynchronizeMenu.h">
+				RelativePath="ScreenSynchronize.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowTitleMenu.cpp">
+				RelativePath="ScreenSynchronize.h">
 			</File>
 			<File
-				RelativePath=".\WindowTitleMenu.h">
+				RelativePath="ScreenSynchronizeMenu.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSynchronizeMenu.h">
+			</File>
+			<File
+				RelativePath="ScreenTitleMenu.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTitleMenu.h">
 			</File>
 		</Filter>
 		<Filter
@@ -308,12 +317,6 @@
 			</File>
 			<File
 				RelativePath=".\Font.h">
-			</File>
-			<File
-				RelativePath=".\FontManager.cpp">
-			</File>
-			<File
-				RelativePath=".\FontManager.h">
 			</File>
 			<File
 				RelativePath="GameConstantsAndTypes.h">
@@ -328,12 +331,6 @@
 				RelativePath="GameInput.h">
 			</File>
 			<File
-				RelativePath=".\GameManager.cpp">
-			</File>
-			<File
-				RelativePath=".\GameManager.h">
-			</File>
-			<File
 				RelativePath=".\GameTypes.h">
 			</File>
 			<File
@@ -341,18 +338,6 @@
 			</File>
 			<File
 				RelativePath=".\Grade.h">
-			</File>
-			<File
-				RelativePath="InputFilter.cpp">
-			</File>
-			<File
-				RelativePath="InputFilter.h">
-			</File>
-			<File
-				RelativePath="InputMapper.cpp">
-			</File>
-			<File
-				RelativePath="InputMapper.h">
 			</File>
 			<File
 				RelativePath="MenuInput.h">
@@ -364,22 +349,16 @@
 				RelativePath="NoteData.h">
 			</File>
 			<File
-				RelativePath="NoteMetadata.cpp">
+				RelativePath="Notes.cpp">
 			</File>
 			<File
-				RelativePath="NoteMetadata.h">
+				RelativePath="Notes.h">
 			</File>
 			<File
 				RelativePath=".\Player.cpp">
 			</File>
 			<File
 				RelativePath=".\Player.h">
-			</File>
-			<File
-				RelativePath=".\PrefsManager.cpp">
-			</File>
-			<File
-				RelativePath=".\PrefsManager.h">
 			</File>
 			<File
 				RelativePath=".\RandomSample.cpp">
@@ -397,10 +376,7 @@
 				RelativePath=".\Song.cpp">
 			</File>
 			<File
-				RelativePath=".\SongManager.cpp">
-			</File>
-			<File
-				RelativePath=".\SongManager.h">
+				RelativePath="Song.h">
 			</File>
 			<File
 				RelativePath=".\StyleDef.cpp">
@@ -410,15 +386,6 @@
 			</File>
 			<File
 				RelativePath="StyleInput.h">
-			</File>
-			<File
-				RelativePath=".\ThemeManager.cpp">
-			</File>
-			<File
-				RelativePath=".\ThemeManager.h">
-			</File>
-			<File
-				RelativePath=".\song.h">
 			</File>
 		</Filter>
 		<Filter
@@ -469,6 +436,12 @@
 				RelativePath=".\Transition.h">
 			</File>
 			<File
+				RelativePath="TransitionBackWipe.cpp">
+			</File>
+			<File
+				RelativePath="TransitionBackWipe.h">
+			</File>
+			<File
 				RelativePath=".\TransitionFade.cpp">
 			</File>
 			<File
@@ -509,40 +482,6 @@
 			</File>
 			<File
 				RelativePath=".\TransitionStarburst.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="Actors"
-			Filter="">
-			<File
-				RelativePath=".\Actor.cpp">
-			</File>
-			<File
-				RelativePath=".\Actor.h">
-			</File>
-			<File
-				RelativePath=".\ActorFrame.cpp">
-			</File>
-			<File
-				RelativePath=".\ActorFrame.h">
-			</File>
-			<File
-				RelativePath=".\BitmapText.cpp">
-			</File>
-			<File
-				RelativePath=".\BitmapText.h">
-			</File>
-			<File
-				RelativePath=".\RectangleActor.cpp">
-			</File>
-			<File
-				RelativePath=".\RectangleActor.h">
-			</File>
-			<File
-				RelativePath=".\Sprite.cpp">
-			</File>
-			<File
-				RelativePath=".\Sprite.h">
 			</File>
 		</Filter>
 		<Filter
@@ -745,6 +684,9 @@
 				RelativePath=".\Judgement.h">
 			</File>
 			<File
+				RelativePath="LifeMeter.h">
+			</File>
+			<File
 				RelativePath="LifeMeterBar.cpp">
 			</File>
 			<File
@@ -791,6 +733,12 @@
 				RelativePath=".\RageBitmapTexture.h">
 			</File>
 			<File
+				RelativePath="RageDisplay.cpp">
+			</File>
+			<File
+				RelativePath="RageDisplay.h">
+			</File>
+			<File
 				RelativePath=".\RageInput.cpp">
 			</File>
 			<File
@@ -813,12 +761,6 @@
 			</File>
 			<File
 				RelativePath=".\RageMusic.h">
-			</File>
-			<File
-				RelativePath=".\RageScreen.cpp">
-			</File>
-			<File
-				RelativePath=".\RageScreen.h">
 			</File>
 			<File
 				RelativePath=".\RageSound.cpp">
@@ -855,6 +797,98 @@
 			</File>
 			<File
 				RelativePath=".\RageUtil.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Actors"
+			Filter="">
+			<File
+				RelativePath=".\Actor.cpp">
+			</File>
+			<File
+				RelativePath=".\Actor.h">
+			</File>
+			<File
+				RelativePath=".\ActorFrame.cpp">
+			</File>
+			<File
+				RelativePath=".\ActorFrame.h">
+			</File>
+			<File
+				RelativePath=".\BitmapText.cpp">
+			</File>
+			<File
+				RelativePath=".\BitmapText.h">
+			</File>
+			<File
+				RelativePath="Quad.cpp">
+			</File>
+			<File
+				RelativePath="Quad.h">
+			</File>
+			<File
+				RelativePath=".\Sprite.cpp">
+			</File>
+			<File
+				RelativePath=".\Sprite.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Global Singletons"
+			Filter="">
+			<File
+				RelativePath="AnnouncerManager.cpp">
+			</File>
+			<File
+				RelativePath="AnnouncerManager.h">
+			</File>
+			<File
+				RelativePath=".\FontManager.cpp">
+			</File>
+			<File
+				RelativePath=".\FontManager.h">
+			</File>
+			<File
+				RelativePath=".\GameManager.cpp">
+			</File>
+			<File
+				RelativePath=".\GameManager.h">
+			</File>
+			<File
+				RelativePath="InputFilter.cpp">
+			</File>
+			<File
+				RelativePath="InputFilter.h">
+			</File>
+			<File
+				RelativePath="InputMapper.cpp">
+			</File>
+			<File
+				RelativePath="InputMapper.h">
+			</File>
+			<File
+				RelativePath="InputQueue.cpp">
+			</File>
+			<File
+				RelativePath="InputQueue.h">
+			</File>
+			<File
+				RelativePath=".\PrefsManager.cpp">
+			</File>
+			<File
+				RelativePath=".\PrefsManager.h">
+			</File>
+			<File
+				RelativePath=".\SongManager.cpp">
+			</File>
+			<File
+				RelativePath=".\SongManager.h">
+			</File>
+			<File
+				RelativePath=".\ThemeManager.cpp">
+			</File>
+			<File
+				RelativePath=".\ThemeManager.h">
 			</File>
 		</Filter>
 		<File

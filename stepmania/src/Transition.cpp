@@ -5,7 +5,7 @@
 
  Desc: Abstract base class for all transitions.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -53,7 +53,7 @@ void Transition::Update( float fDeltaTime )
 				break;
 			}
 
-			WM->SendMessageToTopWindow( m_MessageToSendWhenDone, 0 );
+			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone, 0 );
 
 		}
 		m_fPercentThroughTransition += fDeltaTime/m_fTransitionTime;
@@ -71,28 +71,28 @@ void Transition::SetOpened()
 	m_TransitionState = opened;
 }
 
-void Transition::OpenWipingRight( WindowMessage send_when_done )
+void Transition::OpenWipingRight( ScreenMessage send_when_done )
 {
 	m_MessageToSendWhenDone = send_when_done;
 	m_TransitionState = opening_right;
 	m_fPercentThroughTransition = 0.0;
 }
 
-void Transition::OpenWipingLeft( WindowMessage send_when_done )
+void Transition::OpenWipingLeft( ScreenMessage send_when_done )
 {
 	m_MessageToSendWhenDone = send_when_done;
 	m_TransitionState = opening_left;
 	m_fPercentThroughTransition = 0.0;
 }
 
-void Transition::CloseWipingRight( WindowMessage send_when_done )
+void Transition::CloseWipingRight( ScreenMessage send_when_done )
 {
 	m_MessageToSendWhenDone = send_when_done;
 	m_TransitionState = closing_right;
 	m_fPercentThroughTransition = 0.0;
 }
 
-void Transition::CloseWipingLeft( WindowMessage send_when_done )
+void Transition::CloseWipingLeft( ScreenMessage send_when_done )
 {
 	m_MessageToSendWhenDone = send_when_done;
 	m_TransitionState = closing_left;

@@ -5,7 +5,7 @@
 
  Desc: These things don't change very often.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -32,11 +32,19 @@ const int MAX_BEATS			= MAX_MEASURES * BEATS_PER_MEASURE;
 
 const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, 4, and 8
 const int ELEMENTS_PER_MEASURE = ELEMENTS_PER_BEAT * BEATS_PER_MEASURE;
-const int MAX_TAP_NOTE_ELEMENTS = MAX_BEATS*ELEMENTS_PER_BEAT;
+const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ELEMENTS_PER_BEAT;
 
 const int MAX_HOLD_NOTE_ELEMENTS = 200;
 
-const int NUM_RADAR_VALUES	=	5;
+enum RadarCatrgory	// starting from 12-o'clock rotating clockwise
+{
+	RADAR_STREAM = 0,
+	RADAR_VOLTAGE,
+	RADAR_AIR,
+	RADAR_CHAOS,
+	RADAR_FREEZE,
+	NUM_RADAR_VALUES	// leave this at the end
+};
 
 enum DifficultyClass 
 { 
@@ -160,16 +168,20 @@ struct GameOptions
 		m_bIgnoreJoyAxes = false;
 		m_bShowFPS = true;
 		m_bUseRandomVis = false;
-		m_bSkipCaution = false;
 		m_bAnnouncer = true;
+		m_bShowCaution = true;
+		m_bShowSelectDifficulty = true;
+		m_bShowSelectGroup = true;
 		m_iNumArcadeStages = 3;
 		m_JudgementDifficulty = JUDGE_NORMAL;
 	};
 	bool m_bIgnoreJoyAxes;
 	bool m_bShowFPS;
 	bool m_bUseRandomVis;
-	bool m_bSkipCaution;
 	bool m_bAnnouncer;
+	bool m_bShowCaution;
+	bool m_bShowSelectDifficulty;
+	bool m_bShowSelectGroup;
 	int	m_iNumArcadeStages;
 	enum JudgementDifficulty { JUDGE_EASY=0, JUDGE_NORMAL, JUDGE_HARD };
 	JudgementDifficulty m_JudgementDifficulty;

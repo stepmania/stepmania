@@ -1,19 +1,17 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: StepMania.h
 
- Desc: 
+ Desc: Objects accessable from anywhere in the program.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _STEPMANIA_H_
-#define _STEPMANIA_H_
 
 
 void ApplyGraphicOptions();
 
 
 
-#endif

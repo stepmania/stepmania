@@ -4,7 +4,7 @@
 
  Desc: Black bands (horizontal window blinds) gradually close.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -13,7 +13,7 @@
 
 
 #include "Transition.h"
-#include "RageScreen.h"
+#include "RageDisplay.h"
 #include "RageSound.h"
 
 
@@ -23,7 +23,7 @@ public:
 	TransitionRectWipe();
 	~TransitionRectWipe();
 
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 };
 
 

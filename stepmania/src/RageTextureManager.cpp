@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: RageTextureManager.cpp
+ Class: RageTextureManager
 
- Desc: Interface for loading and releasing textures.
+ Desc: See header.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -20,12 +21,12 @@
 #include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
-RageTextureManager*		TEXTURE		= NULL;
+RageTextureManager*		TEXTUREMAN		= NULL;
 
 //-----------------------------------------------------------------------------
 // constructor/destructor
 //-----------------------------------------------------------------------------
-RageTextureManager::RageTextureManager( RageScreen* pScreen )
+RageTextureManager::RageTextureManager( RageDisplay* pScreen )
 {
 	assert( pScreen != NULL );
 	m_pScreen = pScreen;
@@ -43,7 +44,7 @@ RageTextureManager::~RageTextureManager()
 	while( pos != NULL )  // iterate over all k/v pairs in map
 	{
 		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
-		LOG->WriteLine( "TEXTURE LEAK: '%s', RefCount = %d.", sPath, pTexture->m_iRefCount );
+		LOG->WriteLine( "TEXTUREMAN LEAK: '%s', RefCount = %d.", sPath, pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 
@@ -54,7 +55,7 @@ RageTextureManager::~RageTextureManager()
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk
 //-----------------------------------------------------------------------------
-RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD dwHints, const bool bForceReload )
+RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
 	sTexturePath.MakeLower();
 
@@ -72,7 +73,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 	{
 		pTexture->m_iRefCount++;
 		if( bForceReload )
-			pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
+			pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, iMipMaps, iAlphaBits, bDither );
 
 		LOG->WriteLine( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
 	}
@@ -82,12 +83,12 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
 
 		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
+			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 		else
-			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
+			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
 
-		LOG->WriteLine( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath );
+		LOG->WriteLine( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath, pTexture->m_iRefCount );
 
 
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );

@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the Judgement during Dancing.
 
- Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -26,7 +26,7 @@ public:
 	Judgement();
 	void SetJudgement( TapNoteScore score );
 	virtual void Update( float fDeltaTime );
-	virtual void RenderPrimitives();
+	virtual void DrawPrimitives();
 
 protected:
 	Sprite		m_sprJudgement;
