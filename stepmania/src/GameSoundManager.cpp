@@ -61,11 +61,9 @@ static MusicPlaying *g_Playing;
 
 static RageThread MusicThread;
 
-/* These buffers can be accessed without locking. */
-#include "RageUtil_CircularBuffer.h"
-CircBuf<CString *> g_SoundsToPlayOnce;
-CircBuf<CString *> g_SoundsToPlayOnceFromDir;
-CircBuf<CString *> g_SoundsToPlayOnceFromAnnouncer;
+vector<CString> g_SoundsToPlayOnce;
+vector<CString> g_SoundsToPlayOnceFromDir;
+vector<CString> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
@@ -80,7 +78,7 @@ struct MusicToPlay
 		HasTiming = false;
 	}
 };
-CircBuf<MusicToPlay *> g_MusicsToPlay;
+vector<MusicToPlay> g_MusicsToPlay;
 
 static void StartMusic( MusicToPlay &ToPlay )
 {
@@ -259,34 +257,46 @@ static void DoPlayOnceFromDir( CString sPath )
 	SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
 }
 
+static bool SoundWaiting()
+{
+	return !g_SoundsToPlayOnce.empty() ||
+		!g_SoundsToPlayOnceFromDir.empty() ||
+		!g_SoundsToPlayOnceFromAnnouncer.empty() ||
+		!g_MusicsToPlay.empty();
+}
+
+
 static void StartQueuedSounds()
 {
-	CString *p;
-	while( g_SoundsToPlayOnce.read( &p, 1 ) )
-	{
-		if( *p != "" )
-			SOUNDMAN->PlayOnce( *p );
-		delete p;
-	}
+	g_Mutex->Lock();
+	vector<CString> aSoundsToPlayOnce = g_SoundsToPlayOnce;
+	g_SoundsToPlayOnce.clear();
+	vector<CString> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
+	g_SoundsToPlayOnceFromDir.clear();
+	vector<CString> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
+	g_SoundsToPlayOnceFromAnnouncer.clear();
+	vector<MusicToPlay> aMusicsToPlay = g_MusicsToPlay;
+	g_MusicsToPlay.clear();
+	g_Mutex->Unlock();
 
-	while( g_SoundsToPlayOnceFromDir.read( &p, 1 ) )
-	{
-		CString sPath( *p );
-		DoPlayOnceFromDir( sPath );
-		delete p;
-	}
+	for( unsigned i = 0; i < aSoundsToPlayOnce.size(); ++i )
+		if( aSoundsToPlayOnce[i] != "" )
+			SOUNDMAN->PlayOnce( aSoundsToPlayOnce[i] );
 
-	while( g_SoundsToPlayOnceFromAnnouncer.read( &p, 1 ) )
+	for( unsigned i = 0; i < aSoundsToPlayOnceFromDir.size(); ++i )
+		DoPlayOnceFromDir( aSoundsToPlayOnceFromDir[i] );
+
+	for( unsigned i = 0; i < aSoundsToPlayOnceFromAnnouncer.size(); ++i )
 	{
-		CString sPath( *p );
+		CString sPath = aSoundsToPlayOnceFromAnnouncer[i];
 		if( sPath != "" )
+		{
 			sPath = ANNOUNCER->GetPathTo( sPath );
-		DoPlayOnceFromDir( sPath );
-		delete p;
+			DoPlayOnceFromDir( sPath );
+		}
 	}
 
-	MusicToPlay *pMusic;
-	while( g_MusicsToPlay.read( &pMusic, 1 ) )
+	for( unsigned i = 0; i < aMusicsToPlay.size(); ++i )
 	{
 		/* Don't bother starting this music if there's another one in the queue after it. */
 		/* Actually, it's a little trickier: the editor gives us a stop and then a sound in
@@ -294,8 +304,8 @@ static void StartQueuedSounds()
 		 * already playing.  We don't want to waste time loading a sound if it's going
 		 * to be replaced immediately, though.  So, if we have more music in the queue,
 		 * then forcibly stop the current sound. */
-		if( !g_MusicsToPlay.num_readable() )
-			StartMusic( *pMusic );
+		if( i+1 == aMusicsToPlay.size() )
+			StartMusic( aMusicsToPlay[i] );
 		else
 		{
 			CHECKPOINT;
@@ -307,7 +317,6 @@ static void StartQueuedSounds()
 
 			SOUNDMAN->DeleteSound( pOldSound );
 		}
-		delete pMusic;
 	}
 }
 
@@ -333,7 +342,8 @@ int MusicThread_start( void *p )
 	while( !g_Shutdown )
 	{
 		g_Mutex->Lock();
-		g_Mutex->Wait();
+		while( !SoundWaiting() && !g_Shutdown )
+			g_Mutex->Wait();
 		g_Mutex->Unlock();
 
 		/* This is a little hack: we want to make sure that we go through
@@ -362,11 +372,6 @@ GameSoundManager::GameSoundManager()
 	/* Init RageSoundMan first: */
 	ASSERT( SOUNDMAN );
 
-	g_SoundsToPlayOnce.reserve( 16 );
-	g_SoundsToPlayOnceFromDir.reserve( 16 );
-	g_SoundsToPlayOnceFromAnnouncer.reserve( 16 );
-	g_MusicsToPlay.reserve( 16 );
-
 	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
 
@@ -388,22 +393,8 @@ GameSoundManager::~GameSoundManager()
 	MusicThread.Wait();
 	LOG->Trace("Music start thread shut down.");
 
-	delete g_Playing;
-	delete g_Mutex;
-
-	CString *p;
-	while( g_SoundsToPlayOnce.read( &p, 1 ) )
-		delete p;
-
-	while( g_SoundsToPlayOnceFromDir.read( &p, 1 ) )
-		delete p;
-
-	while( g_SoundsToPlayOnceFromAnnouncer.read( &p, 1 ) )
-		delete p;
-
-	MusicToPlay *pMusic;
-	while( g_MusicsToPlay.read( &pMusic, 1 ) )
-		delete pMusic;
+	SAFE_DELETE( g_Playing );
+	SAFE_DELETE( g_Mutex );
 }
 
 float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
@@ -516,54 +507,50 @@ void GameSoundManager::PlayMusic( const CString &file, const CString &timing_fil
 {
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
-	MusicToPlay *ToPlay = new MusicToPlay;
+	MusicToPlay ToPlay;
 
-	ToPlay->file = file;
-	ToPlay->force_loop = force_loop;
-	ToPlay->start_sec = start_sec;
-	ToPlay->length_sec = length_sec;
-	ToPlay->fade_len = fade_len;
-	ToPlay->timing_file = timing_file;
-	ToPlay->align_beat = align_beat;
+	ToPlay.file = file;
+	ToPlay.force_loop = force_loop;
+	ToPlay.start_sec = start_sec;
+	ToPlay.length_sec = length_sec;
+	ToPlay.fade_len = fade_len;
+	ToPlay.timing_file = timing_file;
+	ToPlay.align_beat = align_beat;
 
 	/* If no timing file was specified, look for one in the same place as the music file. */
-	if( ToPlay->timing_file == "" )
-		ToPlay->timing_file = SetExtension( file, "sm" );
+	if( ToPlay.timing_file == "" && file != "" )
+		ToPlay.timing_file = SetExtension( file, "sm" );
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
-	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
-		delete ToPlay;
-
 	g_Mutex->Lock();
+	g_MusicsToPlay.push_back( ToPlay );
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
 }
 
 void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
 {
-	MusicToPlay *ToPlay = new MusicToPlay;
+	MusicToPlay ToPlay;
 	
 
-	ToPlay->file = file;
+	ToPlay.file = file;
 	if( pTiming )
 	{
-		ToPlay->HasTiming = true;
-		ToPlay->timing_data = *pTiming;
+		ToPlay.HasTiming = true;
+		ToPlay.timing_data = *pTiming;
 	}
 	else
-		ToPlay->timing_file = SetExtension( file, "sm" );
+		ToPlay.timing_file = SetExtension( file, "sm" );
 
-	ToPlay->force_loop = force_loop;
-	ToPlay->start_sec = start_sec;
-	ToPlay->length_sec = length_sec;
-	ToPlay->fade_len = fade_len;
-	ToPlay->align_beat = align_beat;
+	ToPlay.force_loop = force_loop;
+	ToPlay.start_sec = start_sec;
+	ToPlay.length_sec = length_sec;
+	ToPlay.fade_len = fade_len;
+	ToPlay.align_beat = align_beat;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
-	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
-		delete ToPlay;
-
 	g_Mutex->Lock();
+	g_MusicsToPlay.push_back( ToPlay );
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
 }
@@ -577,35 +564,26 @@ void GameSoundManager::HandleSongTimer( bool on )
 void GameSoundManager::PlayOnce( CString sPath )
 {
 	/* Add the sound to the g_SoundsToPlayOnce queue. */
-	CString *p = new CString( sPath );
-	if( !g_SoundsToPlayOnce.write( &p, 1 ) )
-		delete p;
-
 	g_Mutex->Lock();
+	g_SoundsToPlayOnce.push_back( sPath );
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromDir( CString PlayOnceFromDir )
+void GameSoundManager::PlayOnceFromDir( CString sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
-	CString *p = new CString( PlayOnceFromDir );
-	if( !g_SoundsToPlayOnceFromDir.write( &p, 1 ) )
-		delete p;
-
 	g_Mutex->Lock();
+	g_SoundsToPlayOnceFromDir.push_back( sPath );
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromAnnouncer( CString sFolderName )
+void GameSoundManager::PlayOnceFromAnnouncer( CString sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
-	CString *p = new CString( sFolderName );
-	if( !g_SoundsToPlayOnceFromAnnouncer.write( &p, 1 ) )
-		delete p;
-
 	g_Mutex->Lock();
+	g_SoundsToPlayOnceFromDir.push_back( sPath );
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
 }
@@ -625,7 +603,7 @@ void GameSoundManager::SetPlayerBalance( PlayerNumber pn, RageSoundParams &param
 }
 
 /*
- * Copyright (c) 2003-2004 Glenn Maynard
+ * Copyright (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
