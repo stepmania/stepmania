@@ -35,10 +35,10 @@ public:
 	void LoadFromVisualization( CString sMoviePath );
 	void LoadFromIni( CString sDir, CString sLayer );
 
-	virtual void Update( float fDeltaTime );
-	virtual void Draw();
+	void Update( float fDeltaTime );
+	void Draw();
 
-	virtual void SetDiffuse( RageColor c );
+	void SetDiffuse( RageColor c );
 
 	float GetMaxTweenTimeLeft() const;
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
