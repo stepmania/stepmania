@@ -34,6 +34,7 @@ public:
 	CString GetCurLanguage() { return m_sCurLanguage; };
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
+	void ReloadMetricsIfNecessary();
 
 	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );
 	CString GetPathToB( CString sFileName, bool bOptional=false ) { return GetPathTo(BGAnimations,sFileName,bOptional); };
@@ -69,8 +70,6 @@ protected:
 	unsigned m_uHashForBaseThemeCurLanguage;
 	unsigned m_uHashForCurThemeBaseLanguage;
 	unsigned m_uHashForBaseThemeBaseLanguage;
-	RageTimer m_ReloadTimer;
-	RageTimer m_ThemePathCacheTimer;
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program

@@ -28,6 +28,7 @@
 #include "Quad.h"
 #include "RageTextureManager.h"
 #include "ProfileManager.h"
+#include "ThemeManager.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -467,6 +468,7 @@ void ScreenManager::DeletePreppedScreen()
 void ScreenManager::SetNewScreen( Screen *pNewScreen )
 {
 	RefreshCreditsMessages();
+	THEME->ReloadMetricsIfNecessary();
 
 	// move current screen(s) to ScreenToDelete
 	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());

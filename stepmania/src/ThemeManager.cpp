@@ -25,6 +25,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/arch.h"
 #include "RageFile.h"
+#include "ScreenManager.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -306,13 +307,6 @@ try_element_again:
 
 CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bool bOptional ) 
 {
-	if ( m_ThemePathCacheTimer.PeekDeltaTime() >= 5 )
-	{
-		m_ThemePathCacheTimer.GetDeltaTime();
-		for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
-			g_ThemePathCache[i].clear();
-	}
-
 	map<CString, CString> &Cache = g_ThemePathCache[category];
 	{
 		map<CString, CString>::const_iterator i;
@@ -394,6 +388,29 @@ bool ThemeManager::HasMetric( CString sClassName, CString sValueName )
 	return m_pIniMetrics->GetValue(sClassName,sValueName,sThrowAway);
 }
 
+void ThemeManager::ReloadMetricsIfNecessary()
+{
+	//
+	// reload metrics if file has changed
+	//
+	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
+	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
+
+	if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
+		m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
+	{
+		SCREENMAN->SystemMessage( "Reloading metrics" );
+		SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
+	}
+
+	//
+	// clear theme path cache
+	//
+	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+		g_ThemePathCache[i].clear();
+}
+
+
 CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
 {
 #if defined(DEBUG) && defined(WIN32)
@@ -402,22 +419,6 @@ try_metric_again:
 	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
 
-	// Is our metric cache out of date?
-	if ( !m_uHashForBaseThemeMetrics || m_ReloadTimer.PeekDeltaTime() >= 1 )
-	{
-		m_ReloadTimer.GetDeltaTime();
-
-		if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
-			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
-		{
-			if(m_uHashForBaseThemeMetrics)
-			{
-				LOG->Warn( "Metrics file is out of date.  Reloading..." );
-//				MessageBeep( MB_OK );
-			}
-			SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
-		}
-	}
 
 	CString sValue;
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
