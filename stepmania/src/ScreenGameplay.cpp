@@ -1793,6 +1793,10 @@ void ScreenGameplay::SongFinished()
 			g_CurStageStats.fRadarActual[p][r] += m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
 		}
 	}
+
+	/* Extremely important: if we don't remove attacks before moving on to the next
+	 * screen, they'll still be turned on eventually. */
+	GAMESTATE->RemoveAllActiveAttacks();
 }
 
 void ScreenGameplay::StageFinished()
