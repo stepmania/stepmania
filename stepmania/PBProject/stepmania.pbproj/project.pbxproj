@@ -1384,6 +1384,7 @@
 				AA5C73FE0637A5F100AFB891,
 				AA5C74000637A5F100AFB891,
 				AA5C74020637A5F100AFB891,
+				AAA6BFED0644AB3700AFBBC8,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3311,6 +3312,7 @@
 				AA5C73FD0637A5F100AFB891,
 				AA5C73FF0637A5F100AFB891,
 				AA5C74010637A5F100AFB891,
+				AAA6BFEC0644AB3700AFBBC8,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6735,6 +6737,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AAA6BFEA0644AB3700AFBBC8,
+				AAA6BFEB0644AB3700AFBBC8,
 				AAF7435906110E8D00B19AD1,
 				AAF7435A06110E8D00B19AD1,
 				AA0A3DE6060513A00044E6B1,
@@ -12616,6 +12620,36 @@
 			path = /System/Library/Frameworks/QuickTime.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
+		};
+		AAA6BFEA0644AB3700AFBBC8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenWithMenuElements.cpp;
+			path = ../src/ScreenWithMenuElements.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAA6BFEB0644AB3700AFBBC8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenWithMenuElements.h;
+			path = ../src/ScreenWithMenuElements.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAA6BFEC0644AB3700AFBBC8 = {
+			fileRef = AAA6BFEA0644AB3700AFBBC8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAA6BFED0644AB3700AFBBC8 = {
+			fileRef = AAA6BFEB0644AB3700AFBBC8;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAA71EA005EE154E00D2E8FF = {
 			fileEncoding = 30;
