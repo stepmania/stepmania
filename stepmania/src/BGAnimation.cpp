@@ -183,6 +183,7 @@ void BGAnimation::Update( float fDeltaTime )
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ )
 		m_Layers[i]->Update( fDeltaTime );
+	ActorFrame::Update( fDeltaTime );
 }
 
 void BGAnimation::DrawPrimitives()
@@ -209,22 +210,24 @@ void BGAnimation::SetDiffuse( const RageColor &c )
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ ) 
 		m_Layers[i]->SetDiffuse(c);
+	ActorFrame::SetDiffuse( c );
 }
 
 float BGAnimation::GetTweenTimeLeft() const
 {
-	float tot = 0;
+	float ret = 0;
 
 	for( unsigned i=0; i<m_Layers.size(); ++i )
-		tot += m_Layers[i]->GetMaxTweenTimeLeft();
+		ret = max( ret, m_Layers[i]->GetMaxTweenTimeLeft() );
 
-	return tot;
+	return max( ret, Actor::GetTweenTimeLeft() );
 }
 
 void BGAnimation::FinishTweening()
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ )
 		m_Layers[i]->FinishTweening();
+	ActorFrame::FinishTweening();
 }
 
 void BGAnimation::PlayCommand( const CString &cmd )
