@@ -18,12 +18,6 @@ class RageSoundManager
 	/* Set of sounds that are finished and should be deleted. */
 	set<RageSound *> sounds_to_delete;
 
-	struct FakeSound {
-		float begin;
-		int samples_read;
-	};
-	map<RageSound *, FakeSound> fake_sounds;
-
 	RageSoundDriver *driver;
 
 	/* Prefs: */
@@ -42,7 +36,6 @@ public:
 	void StartMixing(RageSound *snd);	/* used by RageSound */
 	void StopMixing(RageSound *snd);	/* used by RageSound */
 	int GetPosition(const RageSound *snd) const;	/* used by RageSound */
-	void AddFakeSound(RageSound *snd);		/* used by drivers */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
 	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }
@@ -52,6 +45,7 @@ public:
 
 	RageSound *PlaySound(RageSound &snd);
 	void StopPlayingSound(RageSound &snd);
+
 	/* A list of all sounds that currently exist.  RageSound adds and removes
 	 * itself to this. */
 	set<RageSound *> all_sounds;
