@@ -7,7 +7,7 @@ inline void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite 
 {
 	CRegistry Reg;
 	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
-	Reg.SetKey("Software\\StepMania\\smpackage", TRUE);	// create if not already present
+	Reg.SetKey("Software\\StepMania\\smpackage\\Installations", TRUE);	// create if not already present
 
 	int i;
 
@@ -32,7 +32,7 @@ inline void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut )
 
 	CRegistry Reg;
 	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
-	Reg.SetKey("Software\\StepMania\\smpackage", TRUE);	// create if not already present
+	Reg.SetKey("Software\\StepMania\\smpackage\\Installations", TRUE);	// create if not already present
 
 	for( int i=0; i<100; i++ )
 	{
