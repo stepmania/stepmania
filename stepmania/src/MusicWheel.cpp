@@ -390,9 +390,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				so = StringToSongSortOrder( parts[j] );
 
 			// If we have a valid default sort in metrics, select it.
-				so = StringToSongSortOrder(DEFAULT_SORT);
-				if( so != SORT_INVALID )
-					GAMESTATE->m_SongSortOrder = so;
+			so = StringToSongSortOrder(DEFAULT_SORT);
+			if( so != SORT_INVALID )
+				GAMESTATE->m_SongSortOrder = so;
 
 			if( so == SORT_INVALID )
 				so = SORT_GROUP;
