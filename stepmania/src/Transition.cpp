@@ -36,6 +36,7 @@ void Transition::Update( float fDeltaTime )
 	case opening_left:
 	case closing_right:
 	case closing_left:
+		m_fPercentThroughTransition += fDeltaTime/m_fTransitionTime;
 
 		if( m_fPercentThroughTransition > 1.0f )	// the wipe is over
 		{
@@ -55,7 +56,6 @@ void Transition::Update( float fDeltaTime )
 			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone, 0 );
 
 		}
-		m_fPercentThroughTransition += fDeltaTime/m_fTransitionTime;
 		break;
 	}
 }
