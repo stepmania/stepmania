@@ -16,8 +16,10 @@ void StageStats::Init()
 
 void StageStats::AssertValid( PlayerNumber pn ) const
 {
+	ASSERT( vpSongs.size() != 0 );
 	if( vpSongs[0] )
 		CHECKPOINT_M( vpSongs[0]->GetFullTranslitTitle() );
+	ASSERT( m_player[pn].vpSteps.size() != 0 );
 	ASSERT( m_player[pn].vpSteps[0] );
 	ASSERT_M( playMode < NUM_PLAY_MODES, ssprintf("playmode %i", playMode) );
 	ASSERT( pStyle != NULL );
