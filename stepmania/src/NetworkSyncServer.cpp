@@ -288,8 +288,10 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 			Reply.WriteNT( playersPtr[x]->options );
 
 		for (x = 0; x < NUMBERCLIENTS; x++)
-			if(Client[x].wasIngame)
+			if(Client[x].wasIngame) {
 				SendNetPacket(x, Reply);
+				Client[x].wasIngame = false;
+			}
 
 //		SendToAllClients(Reply);
 	}
