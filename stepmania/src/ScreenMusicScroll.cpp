@@ -150,7 +150,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	
 	m_iNumLines = 0;
 
-	for( i=0; i<min(arraySongs.GetSize(), MAX_TOTAL_LINES); i++ )
+	for( i=0; i<min(arraySongs.GetSize(), MAX_MUSIC_LINES); i++ )
 	{
 		Song* pSong = arraySongs[i];
 		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","music scroll") );
