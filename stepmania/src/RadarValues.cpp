@@ -54,8 +54,6 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 
 	Zero();
 
-	CString s;
-
 	FOREACH_RadarCategory( rc )
 		pNode->GetChildValue( RadarCategoryToString(rc),	m_fValues[rc] );
 }
