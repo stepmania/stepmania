@@ -11,6 +11,10 @@
 # include <GL/gl.h>
 # include <GL/glu.h>
 #else
+/* XXX: Instead, try creating a directory "archutils/Darwin/include/GL", containing "gl.h" and
+ * "glu.h", which each contain a single line "#include <OpenGL/gl.h>".  Then, add
+ * "archutils/Darwin/include" to your -I paths, so the above <GL/gl.h> includes will work
+ * without changes. */
 # include <OpenGL/gl.h>
 # include <OpenGL/glu.h>
 #endif
@@ -31,37 +35,13 @@
 #include <set>
 #include <sstream>
 
-/* Not in glext.h: */
-typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
-
-
-/* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,
- * so they can be called like regular functions. */
-static struct GLExt_t
-{
-	PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
-	PFNGLCOLORTABLEPROC glColorTableEXT;
-	PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
-	PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
-	PFNGLGENBUFFERSARBPROC glGenBuffersARB;
-	PFNGLBINDBUFFERARBPROC glBindBufferARB;
-	PFNGLBUFFERDATAARBPROC glBufferDataARB;
-	PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
-	PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
-	PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
-	
-	void Reset()
-	{
-		memset( this, 0, sizeof(*this) );
-	}
-} GLExt;
-
 #if defined(DARWIN)
 #include "archutils/Darwin/Vsync.h"
 #endif
 
 #include "RageDisplay.h"
 #include "RageDisplay_OGL.h"
+#include "RageDisplay_OGL_Extensions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
@@ -85,9 +65,6 @@ static struct GLExt_t
 //
 // Globals
 //
-
-static bool g_bEXT_texture_env_combine = true;
-static bool g_bGL_EXT_bgra = true;
 
 static bool g_bReversePackedPixelsWorks = true;
 static bool g_bColorIndexTableWorks = true;
@@ -624,54 +601,12 @@ void SetupExtensions()
 	const float fGLUVersion = strtof( (const char *) gluGetString(GLU_VERSION), NULL );
 	g_gluVersion = int(roundf(fGLUVersion * 10));
 
-	/* Reset extensions. */
-	GLExt.Reset();
-	
-	/*
-	 * Find extension functions.
-	 *
-	 * X11R6.7.0 (or possibly ATI's drivers) seem to be returning bogus values for glBindBufferARB
-	 * if we don't actually check for GL_ARB_vertex_buffer_object. 
-	 * https://sf.net/tracker/download.php?group_id=37892&atid=421366&file_id=88086&aid=958820
-	 * https://sf.net/tracker/download.php?group_id=37892&atid=421366&file_id=85542&aid=944836
-	 *
-	 * Let's check them all, to be safe.
-	 */
+	GLExt.Load( wind );
 
-#if defined(WIN32)
-	if( HasExtension("WGL_EXT_swap_control") )
-		GLExt.wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) wind->GetProcAddress("wglSwapIntervalEXT");
-#elif defined(DARWIN)
-	GLExt.wglSwapIntervalEXT = wglSwapIntervalEXT;
-#endif
+	g_iMaxTextureUnits = 1;
+	if( GLExt.glActiveTextureARB != NULL )
+		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, (GLint *) &g_iMaxTextureUnits );
 
-	if( HasExtension("GL_EXT_paletted_texture") )
-	{
-		GLExt.glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
-		GLExt.glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
-	}
-
-	if( HasExtension("GL_ARB_multitexture") )
-	{
-		GLExt.glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
-		g_iMaxTextureUnits = 1;
-		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, (GLint *)&g_iMaxTextureUnits );
-	}
-
-	if( HasExtension("GL_ARB_vertex_buffer_object") )
-	{
-		GLExt.glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
-		GLExt.glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
-		GLExt.glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
-		GLExt.glBufferSubDataARB = (PFNGLBUFFERSUBDATAARBPROC) wind->GetProcAddress("glBufferSubDataARB");
-		GLExt.glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
-	}
-
-	if( HasExtension("GL_EXT_draw_range_elements") )
-		GLExt.glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
-
-	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
-	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures();
 	CheckReversePackedPixels();
 
@@ -1346,7 +1281,7 @@ void RageDisplay_OGL::SetTextureModeModulate()
 
 void RageDisplay_OGL::SetTextureModeGlow()
 {
-	if( !g_bEXT_texture_env_combine )
+	if( !GLExt.m_bEXT_texture_env_combine )
 	{
 		/* This is changing blend state, instead of texture state, which isn't
 		 * great, but it's better than doing nothing. */
@@ -1461,7 +1396,7 @@ void RageDisplay_OGL::SetMaterial(
 	// will have no effect.  Even if lighting is off, we still
 	// want Models to have basic color and transparency.
 	// We can do this fake lighting by setting the vertex color.
-
+	// XXX: unintended: SetLighting must be called before SetMaterial
 	GLboolean bLighting;
 	glGetBooleanv( GL_LIGHTING, &bLighting );
 
@@ -1850,7 +1785,7 @@ bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
 	switch( GL_PIXFMT_INFO[pixfmt].type )
 	{
 	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
-		return g_bGL_EXT_bgra && g_bReversePackedPixelsWorks;
+		return GLExt.m_bGL_EXT_bgra && g_bReversePackedPixelsWorks;
 	default:
 		return true;
 	}
@@ -1871,7 +1806,7 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 		return GLExt.glColorTableEXT && GLExt.glGetColorTableParameterivEXT;
 	case GL_BGR:
 	case GL_BGRA:
-		return g_bGL_EXT_bgra;
+		return GLExt.m_bGL_EXT_bgra;
 	default:
 		return true;
 	}
