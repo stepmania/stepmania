@@ -357,7 +357,7 @@ void RageDisplay::SetViewport(int shift_left, int shift_down)
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
 	shift_left = int( shift_left * float(g_CurrentWidth) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(g_CurrentWidth) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(g_CurrentHeight) / SCREEN_HEIGHT );
 
 	D3DVIEWPORT8 viewData = { shift_left, -shift_down, g_CurrentWidth, g_CurrentHeight, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData );

@@ -293,7 +293,7 @@ void RageDisplay::SetViewport(int shift_left, int shift_down)
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
 	shift_left = int( shift_left * float(wind->GetWidth()) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(wind->GetWidth()) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(wind->GetHeight()) / SCREEN_HEIGHT );
 
 	glViewport(shift_left, -shift_down, wind->GetWidth(), wind->GetHeight());
 }
