@@ -169,7 +169,8 @@ void ScreenHowToPlay::Update( float fDelta )
 		}
 		else
 		{
-			// HowToPlay animations.. This will be retimed soon to be a reasonable speed. This was just a quick'n'dirty way of showing this screen correctly.
+			/* HowToPlay animations.. This will be retimed soon to be a reasonable speed.
+			   This was just a quick'n'dirty way of showing this screen correctly. */
 			// Until we get a better HowToPlay animation done, it has to be this way..
 			if( (GAMESTATE->m_fSongBeat >= 15.0f && GAMESTATE->m_fSongBeat <= 15.2f) )
 			{
@@ -213,13 +214,8 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_BeginFadingOut:
-		/* We can't do this in ScreenHowToPlay::~ScreenHowToPlay, since that happens
-		 * after the ctor of the next screen; we don't want to mess with its state. */
-		GAMESTATE->m_pCurSong = NULL;
-
-		/* turn the blind modifier back off so the demo screen doesn't have it on */
-		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 0;
+	case SM_GoToNextScreen:
+		GAMESTATE->Reset();
 		break;
 	}
 	ScreenAttract::HandleScreenMessage( SM );
