@@ -94,6 +94,9 @@ public:
 	// course ranking
 	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
 
+	// scoring type; SCORING_MAX2 should always be first
+	enum { SCORING_MAX2, SCORING_5TH } m_iScoringType;
+
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
 

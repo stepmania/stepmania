@@ -116,6 +116,7 @@ PrefsManager::PrefsManager()
 
 	// default to old sort order
 	m_iCourseSortOrder = COURSE_SORT_SONGS;
+	m_iScoringType = SCORING_MAX2;
 
 	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds = 60*5.f;
@@ -231,6 +232,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.GetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.GetValueI( "Options", "CourseSortOrder",			(int&)m_iCourseSortOrder );
+
+	ini.GetValueI( "Options", "ScoringType",				(int&)m_iScoringType );
+
 	ini.GetValueI( "Options", "ProgressiveLifebar",			(int&)m_iProgressiveLifebar );
 	ini.GetValueI( "Options", "ProgressiveNonstopLifebar",  (int&)m_iProgressiveNonstopLifebar );
 	ini.GetValueI( "Options", "ProgressiveStageLifebar",	(int&)m_iProgressiveStageLifebar );
@@ -350,6 +354,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.SetValueI( "Options", "CourseSortOrder",			m_iCourseSortOrder );
+	ini.SetValueI( "Options", "ScoringType",				m_iScoringType );
+	
 	ini.SetValueI( "Options", "ProgressiveLifebar",			m_iProgressiveLifebar );
 	ini.SetValueI( "Options", "ProgressiveStageLifebar",	m_iProgressiveStageLifebar );
 	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",	m_iProgressiveNonstopLifebar );

@@ -28,6 +28,7 @@ enum {
 	MO_MENU_TIMER,
 	MO_COIN_MODE,
 	MO_NUM_ARCADE_STAGES,
+	MO_SCORING_TYPE,
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
 	MO_PROGRESSIVE_LIFEBAR,
@@ -45,6 +46,7 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
 	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
 	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","EVENT MODE" ),
+	OptionRow( "Scoring\nType",			"MAX2","5TH" ),
 	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8","JUSTICE" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Progressive\nLifebar",	"OFF","1","2","3","4","5","6","7","8"),
@@ -77,6 +79,8 @@ void ScreenMachineOptions::ImportOptions()
 	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_iCoinMode;
 	m_iSelectedOption[0][MO_MENU_TIMER]				= PREFSMAN->m_bMenuTimer ? 1:0;
 	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_bEventMode ? 7 : PREFSMAN->m_iNumArcadeStages - 1;
+
+	m_iSelectedOption[0][MO_SCORING_TYPE]			= PREFSMAN->m_iScoringType;
 
 	/* .02 difficulty is beyond our timing right now; even autoplay
 	 * misses!  At least fix autoplay before enabling this, or we'll
@@ -132,6 +136,8 @@ void ScreenMachineOptions::ExportOptions()
 	PREFSMAN->m_bEventMode					= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
 	PREFSMAN->m_iProgressiveNonstopLifebar	= m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR];
 	PREFSMAN->m_iProgressiveStageLifebar	= m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR];
+
+	(int&)PREFSMAN->m_iScoringType				= m_iSelectedOption[0][MO_SCORING_TYPE];
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
