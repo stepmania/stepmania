@@ -138,6 +138,8 @@ PrefsManager::PrefsManager()
 	m_fCenterImageScaleX = 1;
 	m_fCenterImageScaleY = 1;
 
+	m_bAttractSound = true;
+
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
@@ -297,6 +299,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
 	ini.GetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
+	ini.GetValue( "Options", "AttractSound",					m_bAttractSound );
 
 	CString sAdditionalSongFolders;
 	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
@@ -418,6 +421,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
 	ini.SetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
 	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
+	ini.SetValue( "Options", "AttractSound",					m_bAttractSound );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

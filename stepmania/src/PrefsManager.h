@@ -104,6 +104,7 @@ public:
 	int				m_iCenterImageTranslateY;
 	float			m_fCenterImageScaleX;
 	float			m_fCenterImageScaleY;
+	bool			m_bAttractSound;
 
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;

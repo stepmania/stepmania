@@ -373,6 +373,7 @@ static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 /* Sound options */
 MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
+MOVE( AttractSound,			PREFSMAN->m_bAttractSound );
 
 
 static const ConfOption g_ConfOptions[] =
@@ -454,7 +455,8 @@ static const ConfOption g_ConfOptions[] =
 	/* Sound options */
 	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
 	ConfOption( "Resampling\nQuality",	ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ),
-	ConfOption( "", NULL )
+	ConfOption( "Attract\nSound",		AttractSound,		"OFF","ON" ),
+	ConfOption( "", NULL )	// end marker
 };
 
 /* Get a mask of effects to apply if the given option changes. */

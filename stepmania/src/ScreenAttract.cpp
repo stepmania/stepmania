@@ -51,7 +51,8 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 
 	m_soundStart.Load( THEME->GetPathToS("Common start") );
 
-	SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
+	if( PREFSMAN->m_bAttractSound )
+		SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
