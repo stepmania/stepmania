@@ -1117,15 +1117,12 @@ bool FileCopy( CString sSrcFile, CString sDstFile )
 	if( !out.Open(sDstFile, RageFile::WRITE) )
 		return false;
 
-#define CLEANUP_AND_RETURN(b) {	delete data; return b; }
-
-	int size = in.GetFileSize();
-	char *data = new char[size];
-	if( !data )
-		CLEANUP_AND_RETURN( false );
-	if( !in.Read(data,size) )
-		CLEANUP_AND_RETURN( false );
-	if( !out.Write(data,size) )
-		CLEANUP_AND_RETURN( false );
-	CLEANUP_AND_RETURN( true );
+	CString data;
+	if( in.Read(data) == -1 )
+		return false;
+	if( out.Write(data) == -1 )
+		return false;
+	if( out.Flush() == -1 )
+		return false;
+	return true;
 }
