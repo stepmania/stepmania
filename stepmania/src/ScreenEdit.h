@@ -203,7 +203,7 @@ protected:
 
 public:
 	enum MainMenuChoice {
-		edit_notes_statistics,
+		edit_steps_information,
 		play_whole_song,
 		play_current_beat_to_end,
 		save,
@@ -265,9 +265,8 @@ public:
 		wide, 
 		big, 
 		quick, 
-		bmrize, 
 		skippy, 
-		mines, 
+		add_mines, 
 		echo, 
 		stomp, 
 		planted, 
@@ -303,23 +302,27 @@ public:
 		NUM_TEMPO_TYPES 
 	};
 
-	enum EditNotesStatisticsChoice {
+	enum StepsInformationChoice {
 		difficulty,
 		meter,
 		description,
 		predict_meter,
 		tap_notes,
-		hold_notes,
+		jumps,
+		hands,
+		quads,
+		holds,
+		mines,
 		stream,
 		voltage,
 		air,
 		freeze,
 		chaos,
-		NUM_EDIT_NOTES_STATISTICS_CHOICES
+		NUM_STEPS_INFORMATION_CHOICES
 	};
-	void HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, const vector<int> &iAnswers );
+	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
 
-	enum EditSongInfoChoice {
+	enum SongInformationChoice {
 		main_title,
 		sub_title,
 		artist,
@@ -327,9 +330,9 @@ public:
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
-		NUM_EDIT_SONG_INFO_CHOICES
+		NUM_SONG_INFORMATION_CHOICES
 	};
-	void HandleEditSongInfoChoice( EditSongInfoChoice c, const vector<int> &iAnswers );
+	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
 
 	enum BGChangeChoice {
 		rate,

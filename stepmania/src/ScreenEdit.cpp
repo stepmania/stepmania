@@ -46,9 +46,9 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 
 const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_BackFromAreaMenu				= (ScreenMessage)(SM_User+2);
-const ScreenMessage SM_BackFromEditNotesStatistics	= (ScreenMessage)(SM_User+3);
+const ScreenMessage SM_BackFromStepsInformation	= (ScreenMessage)(SM_User+3);
 const ScreenMessage SM_BackFromEditOptions			= (ScreenMessage)(SM_User+4);
-const ScreenMessage SM_BackFromEditSongInfo			= (ScreenMessage)(SM_User+5);
+const ScreenMessage SM_BackFromSongInformation			= (ScreenMessage)(SM_User+5);
 const ScreenMessage SM_BackFromBGChange				= (ScreenMessage)(SM_User+6);
 const ScreenMessage SM_BackFromPlayerOptions		= (ScreenMessage)(SM_User+7);
 const ScreenMessage SM_BackFromSongOptions			= (ScreenMessage)(SM_User+8);
@@ -359,20 +359,20 @@ static Menu g_KeyboardShortcuts(
 
 static Menu g_MainMenu(
 	"ScreenMiniMenuMainMenu",
-	MenuRow( ScreenEdit::edit_notes_statistics,		"Steps Information",		true, true, 0, NULL ),
-	MenuRow( ScreenEdit::play_whole_song,			"Play Whole Song",			true, true, 0, NULL ),
-	MenuRow( ScreenEdit::play_current_beat_to_end,	"Play Current Beat To End",	true, true, 0, NULL ),
-	MenuRow( ScreenEdit::save,						"Save",						true, true, 0, NULL ),
-	MenuRow( ScreenEdit::revert_to_last_save,		"Revert to Last Save",		true, true, 0, NULL ),
-	MenuRow( ScreenEdit::player_options,			"Player Options",			true, true, 0, NULL ),
-	MenuRow( ScreenEdit::song_options,				"Song Options",				true, false, 0, NULL ),
-	MenuRow( ScreenEdit::edit_song_info,			"Edit Song Info",			true, false, 0, NULL ),
-	MenuRow( ScreenEdit::edit_bpm,					"Edit BPM Change",			true, false, 0, NULL ),
-	MenuRow( ScreenEdit::edit_stop,					"Edit Stop",				true, false, 0, NULL ),
-	MenuRow( ScreenEdit::edit_bg_change,			"Add/Edit BG Change",		true, false, 0, NULL ),
-	MenuRow( ScreenEdit::play_preview_music,		"Play preview music",		true, false, 0, NULL ),
-	MenuRow( ScreenEdit::preferences,				"Preferences",				true, false, 0, NULL ),
-	MenuRow( ScreenEdit::exit,						"Exit",						true, true, 0, NULL )
+	MenuRow( ScreenEdit::edit_steps_information,	"Edit Steps Information",		true, true, 0, NULL ),
+	MenuRow( ScreenEdit::play_whole_song,			"Play Whole Song",				true, true, 0, NULL ),
+	MenuRow( ScreenEdit::play_current_beat_to_end,	"Play Current Beat to End",		true, true, 0, NULL ),
+	MenuRow( ScreenEdit::save,						"Save",							true, true, 0, NULL ),
+	MenuRow( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, true, 0, NULL ),
+	MenuRow( ScreenEdit::player_options,			"Player Options",				true, true, 0, NULL ),
+	MenuRow( ScreenEdit::song_options,				"Song Options",					true, false, 0, NULL ),
+	MenuRow( ScreenEdit::edit_song_info,			"Edit Song Info",				true, false, 0, NULL ),
+	MenuRow( ScreenEdit::edit_bpm,					"Edit BPM Change",				true, false, 0, NULL ),
+	MenuRow( ScreenEdit::edit_stop,					"Edit Stop",					true, false, 0, NULL ),
+	MenuRow( ScreenEdit::edit_bg_change,			"Add/Edit Background Change",	true, false, 0, NULL ),
+	MenuRow( ScreenEdit::play_preview_music,		"Play Preview Music",			true, false, 0, NULL ),
+	MenuRow( ScreenEdit::preferences,				"Preferences",					true, false, 0, NULL ),
+	MenuRow( ScreenEdit::exit,						"Exit",							true, true, 0, NULL )
 );
 
 static Menu g_AreaMenu(
@@ -382,9 +382,9 @@ static Menu g_AreaMenu(
 	MenuRow( ScreenEdit::paste_at_current_beat,	"Paste at current beat",			true, true, 0, NULL ),
 	MenuRow( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",			true, true, 0, NULL ),
 	MenuRow( ScreenEdit::clear,					"Clear area",						true, true, 0, NULL ),
-	MenuRow( ScreenEdit::quantize,				"Quantize",							true, true, 0, "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" ),
-	MenuRow( ScreenEdit::turn,					"Turn",								true, true, 0, "Left","Right","Mirror","Shuffle","Super Shuffle" ),
-	MenuRow( ScreenEdit::transform,				"Transform",						true, true, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","BMRize","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" ),
+	MenuRow( ScreenEdit::quantize,				"Quantize",							true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+	MenuRow( ScreenEdit::turn,					"Turn",								true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
+	MenuRow( ScreenEdit::transform,				"Transform",						true, true, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" ),
 	MenuRow( ScreenEdit::alter,					"Alter",							true, true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
 	MenuRow( ScreenEdit::tempo,					"Tempo",							true, true, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
 	MenuRow( ScreenEdit::play,					"Play selection",					true, true, 0, NULL ),
@@ -397,14 +397,18 @@ static Menu g_AreaMenu(
 	MenuRow( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, false, 0, NULL )
 );
 
-static Menu g_EditNotesStatistics(
-	"ScreenMiniMenuStatistics",
+static Menu g_StepsInformation(
+	"ScreenMiniMenuStepsInformation",
 	MenuRow( ScreenEdit::difficulty,	"Difficulty",		true, true,  0, "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE","EDIT" ),
-	MenuRow( ScreenEdit::meter,			"Meter",			true, true,  0, "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" ),
+	MenuRow( ScreenEdit::meter,			"Meter",			true, true,  0, "1","2","3","4","5","6","7","8","9","10","11","12","13" ),
 	MenuRow( ScreenEdit::description,	"Description",		true, true,  0, NULL ),
 	MenuRow( ScreenEdit::predict_meter,	"Predicted Meter",	false, true, 0, NULL ),
 	MenuRow( ScreenEdit::tap_notes,		"Tap Steps",		false, true, 0, NULL ),
-	MenuRow( ScreenEdit::hold_notes,	"Hold Steps",		false, true, 0, NULL ),
+	MenuRow( ScreenEdit::jumps,			"Jumps",			false, true, 0, NULL ),
+	MenuRow( ScreenEdit::hands,			"Hands",			false, true, 0, NULL ),
+	MenuRow( ScreenEdit::quads,			"Quads",			false, true, 0, NULL ),
+	MenuRow( ScreenEdit::holds,			"Holds",			false, true, 0, NULL ),
+	MenuRow( ScreenEdit::mines,			"Mines",			false, true, 0, NULL ),
 	MenuRow( ScreenEdit::stream,		"Stream",			false, true, 0, NULL ),
 	MenuRow( ScreenEdit::voltage,		"Voltage",			false, true, 0, NULL ),
 	MenuRow( ScreenEdit::air,			"Air",				false, true, 0, NULL ),
@@ -412,8 +416,8 @@ static Menu g_EditNotesStatistics(
 	MenuRow( ScreenEdit::chaos,			"Chaos",			false, true, 0, NULL )
 );
 
-static Menu g_EditSongInfo(
-	"ScreenMiniMenuEditSongInfo",
+static Menu g_SongInformation(
+	"ScreenMiniMenuSongInfomation",
 	MenuRow( ScreenEdit::main_title,					"Main title",					true, true, 0, NULL ),
 	MenuRow( ScreenEdit::sub_title,						"Sub title",					true, true, 0, NULL ),
 	MenuRow( ScreenEdit::artist,						"Artist",						true, true, 0, NULL ),
@@ -708,7 +712,7 @@ void ScreenEdit::UpdateTextInfo()
 		return;
 
 	int iNumTaps = m_NoteDataEdit.GetNumTapNotes();
-	int iNumJumps = m_NoteDataEdit.GetNumDoubles();
+	int iNumJumps = m_NoteDataEdit.GetNumJumps();
 	int iNumHands = m_NoteDataEdit.GetNumHands();
 	int iNumHolds = m_NoteDataEdit.GetNumHoldNotes();
 	int iNumMines = m_NoteDataEdit.GetNumMines();
@@ -1451,11 +1455,11 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromAreaMenu:
 		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 		break;
-	case SM_BackFromEditNotesStatistics:
-		HandleEditNotesStatisticsChoice( (EditNotesStatisticsChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
+	case SM_BackFromStepsInformation:
+		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 		break;
-	case SM_BackFromEditSongInfo:
-		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
+	case SM_BackFromSongInformation:
+		HandleSongInformationChoice( (SongInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 		break;
 	case SM_BackFromBPMChange:
 		{
@@ -1679,27 +1683,30 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 {
 	switch( c )
 	{
-		case edit_notes_statistics:
+		case edit_steps_information:
 			{
 				/* XXX: If the difficulty is changed from EDIT, and pSteps->WasLoadedFromProfile()
 				 * is true, we should warn that the steps will no longer be saved to the profile. */
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
-				g_EditNotesStatistics.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
-				g_EditNotesStatistics.rows[difficulty].bEnabled = !HOME_EDIT_MODE;
-				g_EditNotesStatistics.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, 14 );
-				g_EditNotesStatistics.rows[predict_meter].choices.resize(1);g_EditNotesStatistics.rows[predict_meter].choices[0] = ssprintf("%f",pSteps->PredictMeter());
-				g_EditNotesStatistics.rows[description].choices.resize(1);	g_EditNotesStatistics.rows[description].choices[0] = pSteps->GetDescription();
-				g_EditNotesStatistics.rows[tap_notes].choices.resize(1);	g_EditNotesStatistics.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumTapNotes());
-				g_EditNotesStatistics.rows[hold_notes].choices.resize(1);	g_EditNotesStatistics.rows[hold_notes].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes());
-				g_EditNotesStatistics.rows[stream].choices.resize(1);		g_EditNotesStatistics.rows[stream].choices[0] = ssprintf("%f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds));
-				g_EditNotesStatistics.rows[voltage].choices.resize(1);		g_EditNotesStatistics.rows[voltage].choices[0] = ssprintf("%f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds));
-
-				g_EditNotesStatistics.rows[air].choices.resize(1);			g_EditNotesStatistics.rows[air].choices[0] = ssprintf("%f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds));
-				g_EditNotesStatistics.rows[freeze].choices.resize(1);		g_EditNotesStatistics.rows[freeze].choices[0] = ssprintf("%f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds));
-				g_EditNotesStatistics.rows[chaos].choices.resize(1);		g_EditNotesStatistics.rows[chaos].choices[0] = ssprintf("%f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds));
-				SCREENMAN->MiniMenu( &g_EditNotesStatistics, SM_BackFromEditNotesStatistics );
+				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
+				g_StepsInformation.rows[difficulty].bEnabled = !HOME_EDIT_MODE;
+				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
+				g_StepsInformation.rows[predict_meter].choices.resize(1);g_StepsInformation.rows[predict_meter].choices[0] = ssprintf("%.2f",pSteps->PredictMeter());
+				g_StepsInformation.rows[description].choices.resize(1);	g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();
+				g_StepsInformation.rows[tap_notes].choices.resize(1);	g_StepsInformation.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumTapNotes());
+				g_StepsInformation.rows[jumps].choices.resize(1);		g_StepsInformation.rows[jumps].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumJumps());
+				g_StepsInformation.rows[hands].choices.resize(1);		g_StepsInformation.rows[hands].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumHands());
+				g_StepsInformation.rows[quads].choices.resize(1);		g_StepsInformation.rows[quads].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumQuads());
+				g_StepsInformation.rows[holds].choices.resize(1);		g_StepsInformation.rows[holds].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes());
+				g_StepsInformation.rows[mines].choices.resize(1);		g_StepsInformation.rows[mines].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumMines());
+				g_StepsInformation.rows[stream].choices.resize(1);		g_StepsInformation.rows[stream].choices[0] = ssprintf("%.2f", NoteDataUtil::GetStreamRadarValue(m_NoteDataEdit,fMusicSeconds));
+				g_StepsInformation.rows[voltage].choices.resize(1);		g_StepsInformation.rows[voltage].choices[0] = ssprintf("%.2f", NoteDataUtil::GetVoltageRadarValue(m_NoteDataEdit,fMusicSeconds));
+				g_StepsInformation.rows[air].choices.resize(1);			g_StepsInformation.rows[air].choices[0] = ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds));
+				g_StepsInformation.rows[freeze].choices.resize(1);		g_StepsInformation.rows[freeze].choices[0] = ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds));
+				g_StepsInformation.rows[chaos].choices.resize(1);		g_StepsInformation.rows[chaos].choices[0] = ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds));
+				SCREENMAN->MiniMenu( &g_StepsInformation, SM_BackFromStepsInformation );
 			}
 			break;
 		case play_whole_song:
@@ -1774,15 +1781,15 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case edit_song_info:
 			{
 				Song* pSong = GAMESTATE->m_pCurSong;
-				g_EditSongInfo.rows[main_title].choices.resize(1);					g_EditSongInfo.rows[main_title].choices[0] = pSong->m_sMainTitle;
-				g_EditSongInfo.rows[sub_title].choices.resize(1);					g_EditSongInfo.rows[sub_title].choices[0] = pSong->m_sSubTitle;
-				g_EditSongInfo.rows[artist].choices.resize(1);						g_EditSongInfo.rows[artist].choices[0] = pSong->m_sArtist;
-				g_EditSongInfo.rows[credit].choices.resize(1);						g_EditSongInfo.rows[credit].choices[0] = pSong->m_sCredit;
-				g_EditSongInfo.rows[main_title_transliteration].choices.resize(1);	g_EditSongInfo.rows[main_title_transliteration].choices[0] = pSong->m_sMainTitleTranslit;
-				g_EditSongInfo.rows[sub_title_transliteration].choices.resize(1);	g_EditSongInfo.rows[sub_title_transliteration].choices[0] = pSong->m_sSubTitleTranslit;
-				g_EditSongInfo.rows[artist_transliteration].choices.resize(1);		g_EditSongInfo.rows[artist_transliteration].choices[0] = pSong->m_sArtistTranslit;
+				g_SongInformation.rows[main_title].choices.resize(1);					g_SongInformation.rows[main_title].choices[0] = pSong->m_sMainTitle;
+				g_SongInformation.rows[sub_title].choices.resize(1);					g_SongInformation.rows[sub_title].choices[0] = pSong->m_sSubTitle;
+				g_SongInformation.rows[artist].choices.resize(1);						g_SongInformation.rows[artist].choices[0] = pSong->m_sArtist;
+				g_SongInformation.rows[credit].choices.resize(1);						g_SongInformation.rows[credit].choices[0] = pSong->m_sCredit;
+				g_SongInformation.rows[main_title_transliteration].choices.resize(1);	g_SongInformation.rows[main_title_transliteration].choices[0] = pSong->m_sMainTitleTranslit;
+				g_SongInformation.rows[sub_title_transliteration].choices.resize(1);	g_SongInformation.rows[sub_title_transliteration].choices[0] = pSong->m_sSubTitleTranslit;
+				g_SongInformation.rows[artist_transliteration].choices.resize(1);		g_SongInformation.rows[artist_transliteration].choices[0] = pSong->m_sArtistTranslit;
 
-				SCREENMAN->MiniMenu( &g_EditSongInfo, SM_BackFromEditSongInfo );
+				SCREENMAN->MiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
 			break;
 		case edit_bpm:
@@ -1990,9 +1997,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				case big:		NoteDataUtil::Big( m_NoteDataEdit, iBeginRow, iEndRow );		break;
 				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case bmrize:	NoteDataUtil::BMRize( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				case skippy:	NoteDataUtil::Skippy( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case mines:		NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case add_mines:	NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, iBeginRow, iEndRow );	break;
 				case planted:	NoteDataUtil::Planted( m_NoteDataEdit, iBeginRow, iEndRow );	break;
@@ -2268,7 +2274,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 
 }
 
-void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, const vector<int> &iAnswers )
+void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	Difficulty dc = (Difficulty)iAnswers[difficulty];
@@ -2279,12 +2285,12 @@ void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, c
 	switch( c )
 	{
 	case description:
-		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pSteps->GetDescription(), ChangeDescription, NULL );
+		SCREENMAN->TextEntry( SM_None, "Enter a description.\nPress Enter to confirm,\nEscape to cancel.", m_pSteps->GetDescription(), ChangeDescription, NULL );
 		break;
 	}
 }
 
-void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, const vector<int> &iAnswers )
+void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 
