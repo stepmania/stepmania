@@ -18,6 +18,13 @@
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
+static const float TIME_BEFORE_SLOW_REPEATS = 0.25f;
+static const float TIME_BEFORE_FAST_REPEATS = 1.5f;
+
+static const float SLOW_REPEATS_PER_SEC = 8;
+static const float FAST_REPEATS_PER_SEC = 8;
+
+static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenSlow, g_fTimeBetweenFast;
 
 
 InputFilter::InputFilter()
@@ -31,6 +38,7 @@ InputFilter::InputFilter()
 			m_fSecsToForce[d][b] = -1;	
 
 	Reset();
+	ResetRepeatRate();
 }
 
 InputFilter::~InputFilter()
@@ -42,6 +50,19 @@ void InputFilter::Reset()
 {
 	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
 		ResetDevice( InputDevice(i) );
+}
+
+void InputFilter::SetRepeatRate( float fSlowDelay, float fSlowRate, float fFastDelay, float fFastRate )
+{
+	g_fTimeBeforeSlow = fSlowDelay;
+	g_fTimeBeforeFast = fFastDelay;
+	g_fTimeBetweenSlow = 1/fSlowRate;
+	g_fTimeBetweenFast = 1/fFastRate;
+}
+
+void InputFilter::ResetRepeatRate()
+{
+	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, SLOW_REPEATS_PER_SEC, TIME_BEFORE_FAST_REPEATS, FAST_REPEATS_PER_SEC );
 }
 
 void InputFilter::ButtonPressed( DeviceInput di, bool Down )
@@ -202,16 +223,16 @@ void InputFilter::Update(float fDeltaTime)
 
 			float fTimeBetweenRepeats;
 			InputEventType iet;
-			if( fOldHoldTime > TIME_BEFORE_SLOW_REPEATS )
+			if( fOldHoldTime > g_fTimeBeforeSlow )
 			{
-				if( fOldHoldTime > TIME_BEFORE_FAST_REPEATS )
+				if( fOldHoldTime > g_fTimeBeforeFast )
 				{
-					fTimeBetweenRepeats = TIME_BETWEEN_FAST_REPEATS;
+					fTimeBetweenRepeats = g_fTimeBetweenFast;
 					iet = IET_FAST_REPEAT;
 				}
 				else
 				{
-					fTimeBetweenRepeats = TIME_BETWEEN_SLOW_REPEATS;
+					fTimeBetweenRepeats = g_fTimeBetweenSlow;
 					iet = IET_SLOW_REPEAT;
 				}
 				if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
@@ -232,6 +253,11 @@ bool InputFilter::IsBeingPressed( DeviceInput di )
 float InputFilter::GetSecsHeld( DeviceInput di )
 {
 	return m_fSecsHeld[di.device][di.button];
+}
+
+void InputFilter::ResetKeyRepeat( DeviceInput di )
+{
+	m_fSecsHeld[di.device][di.button] = 0;
 }
 
 void InputFilter::GetInputEvents( InputEventArray &array )

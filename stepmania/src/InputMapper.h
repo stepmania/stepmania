@@ -62,6 +62,10 @@ public:
 	bool IsButtonDown( MenuInput MenuI );
 	bool IsButtonDown( StyleInput StyleI );
 
+	void ResetKeyRepeat( GameInput GameI );
+	void ResetKeyRepeat( MenuInput MenuI );
+	void ResetKeyRepeat( StyleInput StyleI );
+
 protected:
 	// all the DeviceInputs that map to a GameInput
 	DeviceInput m_GItoDI[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];

@@ -630,3 +630,29 @@ float InputMapper::GetSecsHeld( StyleInput StyleI )
 	StyleToGame( StyleI, GameI );
 	return GetSecsHeld( GameI );
 }
+
+void InputMapper::ResetKeyRepeat( GameInput GameI )
+{
+	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+	{
+		DeviceInput DeviceI;
+		if( GameToDevice( GameI, i, DeviceI ) )
+			INPUTFILTER->ResetKeyRepeat( DeviceI );
+	}
+}
+
+void InputMapper::ResetKeyRepeat( MenuInput MenuI )
+{
+	GameInput GameI[4];
+	MenuToGame( MenuI, GameI );
+	for( int i=0; i<4; i++ )
+		if( GameI[i].IsValid() )
+			ResetKeyRepeat( GameI[i] );
+}
+
+void InputMapper::ResetKeyRepeat( StyleInput StyleI )
+{
+	GameInput GameI;
+	StyleToGame( StyleI, GameI );
+	ResetKeyRepeat( GameI );
+}

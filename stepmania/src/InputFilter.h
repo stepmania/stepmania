@@ -15,13 +15,6 @@
 
 #include "RageInputDevice.h"
 
-const float TIME_BEFORE_SLOW_REPEATS = 0.25f;
-const float TIME_BEFORE_FAST_REPEATS = 1.5f;
-
-//const float TIME_BETWEEN_SLOW_REPEATS = 0.25f;
-const float TIME_BETWEEN_SLOW_REPEATS = 0.125f;
-const float TIME_BETWEEN_FAST_REPEATS = 0.125f;
-
 enum InputEventType { IET_FIRST_PRESS, IET_SLOW_REPEAT, IET_FAST_REPEAT, IET_RELEASE };
 
 struct InputEvent : public DeviceInput
@@ -58,6 +51,10 @@ public:
 	~InputFilter();
 	void Reset();
 	void Update(float fDeltaTime);
+
+	void SetRepeatRate( float fSlowDelay, float fSlowRate, float fFastDelay, float fFastRate );
+	void ResetRepeatRate();
+	void ResetKeyRepeat( DeviceInput di );
 
 	bool IsBeingPressed( DeviceInput di );
 	float GetSecsHeld( DeviceInput di );
