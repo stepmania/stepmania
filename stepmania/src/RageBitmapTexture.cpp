@@ -292,18 +292,13 @@ void RageBitmapTexture::Create(
 
 	if( bDither )
 	{
-		RageTimer t;
-
 		/* Dither down to the destination format. */
 		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[target][4],
 			PixFmtMasks[target][0], PixFmtMasks[target][1], PixFmtMasks[target][2], PixFmtMasks[target][3]);
 
-		LOG->Trace("dithered in %f", t.GetDeltaTime());
 		SM_SDL_OrderedDither(img, dst);
 		SDL_FreeSurface(img);
 		img = dst;
-		
-		LOG->Trace("dithered in %f", t.GetDeltaTime());
 	}
 
 	/* Convert the data to the destination format.  Hmm.  We could just
