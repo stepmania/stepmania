@@ -17,9 +17,8 @@ void ResetGame();
 
 #if defined(WIN32)
 extern HWND g_hWndMain;
-#endif
-
 extern int g_argc;
 extern char **g_argv;
+#endif
 
 #endif
