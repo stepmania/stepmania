@@ -15,7 +15,7 @@
 #include <wincrypt.h>
 #endif
 
-#ifdef CRYPTOPP_UNIX_AVAILABLE
+#if defined(UNIX)
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -28,15 +28,15 @@ OS_RNG_Err::OS_RNG_Err(const std::string &operation)
 	: Exception(OTHER_ERROR, "OS_Rng: " + operation + " operation failed with error " + 
 #ifdef CRYPTOPP_WIN32_AVAILABLE
 		"0x" + IntToString(GetLastError(), 16)
-#else
+#elif defined(UNIX)
 		IntToString(errno)
+#else
+		"(unknown)"
 #endif
 		)
 {
 }
 #endif
-
-#ifdef NONBLOCKING_RNG_AVAILABLE
 
 #ifdef CRYPTOPP_WIN32_AVAILABLE
 
@@ -61,7 +61,7 @@ MicrosoftCryptoProvider::~MicrosoftCryptoProvider()
 
 NonblockingRng::NonblockingRng()
 {
-#ifndef CRYPTOPP_WIN32_AVAILABLE
+#if defined(UNIX)
 	m_fd = open("/dev/urandom",O_RDONLY);
 	if (m_fd == -1)
 		throw OS_RNG_Err("open /dev/urandom");
@@ -70,7 +70,7 @@ NonblockingRng::NonblockingRng()
 
 NonblockingRng::~NonblockingRng()
 {
-#ifndef CRYPTOPP_WIN32_AVAILABLE
+#if defined(UNIX)
 	close(m_fd);
 #endif
 }
@@ -90,54 +90,14 @@ void NonblockingRng::GenerateBlock(byte *output, unsigned int size)
 #	endif
 	if (!CryptGenRandom(m_Provider.GetProviderHandle(), size, output))
 		throw OS_RNG_Err("CryptGenRandom");
-#else
+#elif defined(UNIX)
 	if (read(m_fd, output, size) != int(size))
 		throw OS_RNG_Err("read /dev/urandom");
+#else
+#warning No crypto source
+	memset( output, 0, size );
 #endif
 }
-
-#endif
-
-// *************************************************************
-
-#ifdef BLOCKING_RNG_AVAILABLE
-
-BlockingRng::BlockingRng()
-{
-	m_fd = open("/dev/random",O_RDONLY);
-	if (m_fd == -1)
-		throw OS_RNG_Err("open /dev/random");
-}
-
-BlockingRng::~BlockingRng()
-{
-	close(m_fd);
-}
-
-byte BlockingRng::GenerateByte()
-{
-	byte b;
-	GenerateBlock(&b, 1);
-	return b;
-}
-
-void BlockingRng::GenerateBlock(byte *output, unsigned int size)
-{
-	while (size)
-	{
-		// on some systems /dev/random will block until all bytes
-		// are available, on others it will returns immediately
-		int len = read(m_fd, output, STDMIN(size, (unsigned int)INT_MAX));
-		if (len == -1)
-			throw OS_RNG_Err("read /dev/random");
-		size -= len;
-		output += len;
-		if (size)
-			sleep(1);
-	}
-}
-
-#endif
 
 NAMESPACE_END
 

@@ -3,8 +3,6 @@
 
 #include "config.h"
 
-#ifdef OS_RNG_AVAILABLE
-
 //removed
 //#include "randpool.h"
 
@@ -20,8 +18,6 @@ class OS_RNG_Err : public Exception
 public:
 	OS_RNG_Err(const std::string &operation);
 };
-
-#ifdef NONBLOCKING_RNG_AVAILABLE
 
 #ifdef CRYPTOPP_WIN32_AVAILABLE
 class MicrosoftCryptoProvider
@@ -54,32 +50,11 @@ protected:
 #	ifndef WORKAROUND_MS_BUG_Q258000
 		MicrosoftCryptoProvider m_Provider;
 #	endif
-#else
+#elif defined(UNIX)
 	int m_fd;
 #endif
 };
-
-#endif
-
-#ifdef BLOCKING_RNG_AVAILABLE
-
-//! encapsulate /dev/random
-class BlockingRng : public RandomNumberGenerator
-{
-public:
-	BlockingRng();
-	~BlockingRng();
-	byte GenerateByte();
-	void GenerateBlock(byte *output, unsigned int size);
-
-protected:
-	int m_fd;
-};
-
-#endif
 
 NAMESPACE_END
-
-#endif
 
 #endif
