@@ -16,7 +16,8 @@ LanPlayer::LanPlayer() {
 }
 
 StepManiaLanServer::StepManiaLanServer() {
-	stop = true;	
+	stop = true;
+	SecondSameSelect = false;
 }
 
 StepManiaLanServer::~StepManiaLanServer() {
@@ -405,20 +406,41 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 
 	if (use == 2) {
 		if (clientNum == 0) { 
-			gameInfo.title = Packet.ReadNT();
-			gameInfo.artist = Packet.ReadNT();
-			gameInfo.subtitle = Packet.ReadNT();
+			SecondSameSelect = false;
+
+			CurrentSongInfo.title = Packet.ReadNT();
+			CurrentSongInfo.artist = Packet.ReadNT();
+			CurrentSongInfo.subtitle = Packet.ReadNT();
 
 			Reply.ClearPacket();
 			Reply.Write1(136);
 			Reply.Write1(1);
-			Reply.WriteNT(gameInfo.title);
-			Reply.WriteNT(gameInfo.artist);
-			Reply.WriteNT(gameInfo.subtitle);
+			Reply.WriteNT(CurrentSongInfo.title);
+			Reply.WriteNT(CurrentSongInfo.artist);
+			Reply.WriteNT(CurrentSongInfo.subtitle);
+
+			
 
 			ClearHasSong();
 
 			SendToAllClients(Reply);
+
+			//The following code forces the host to select the same song twice in order to play it.
+			if (strcmp(CurrentSongInfo.title, LastSongInfo.title) == 0)
+				if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
+					if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
+						SecondSameSelect = true;
+			if (SecondSameSelect == false) {
+				LastSongInfo.title = CurrentSongInfo.title;
+				LastSongInfo.artist = CurrentSongInfo.artist;
+				LastSongInfo.subtitle = CurrentSongInfo.subtitle;
+				message = servername;
+				message += ":Play \"";
+				message += CurrentSongInfo.title;
+				message += "\"?";
+				ServerChat(message);
+			}
+
 		} else {
 			message = servername;
 			message += ": You do not have permission to pick a song.";
@@ -442,7 +464,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 		}
 
 		message += " lacks song \"";
-		message += gameInfo.title;
+		message += CurrentSongInfo.title;
 		message += "\"";
 		ServerChat(message);
 	}
@@ -451,13 +473,19 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 	if (use == 0)
 		Client[clientNum].hasSong = true;
 
-	if (CheckHasSongState()) {
+	//Only play if everyone has the same song and the host has select the same song twice.
+	if (CheckHasSongState()&&SecondSameSelect) {
 		Reply.ClearPacket();
 		Reply.Write1(136);
 		Reply.Write1(2);
-		Reply.WriteNT(gameInfo.title);
-		Reply.WriteNT(gameInfo.artist);
-		Reply.WriteNT(gameInfo.subtitle);
+		Reply.WriteNT(CurrentSongInfo.title);
+		Reply.WriteNT(CurrentSongInfo.artist);
+		Reply.WriteNT(CurrentSongInfo.subtitle);
+		//Reset last song in case host picks same song again
+		LastSongInfo.title = "";
+		LastSongInfo.artist = "";
+		LastSongInfo.subtitle = "";
+
 		SendToAllClients(Reply);
 	}
 }

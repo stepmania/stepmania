@@ -84,8 +84,10 @@ class StepManiaLanServer {
 		int ClientHost;
 		LanPlayer *playersPtr[NUMBERCLIENTS*2];
 		time_t statsTime;
-		GameInfo gameInfo;
+		GameInfo CurrentSongInfo;
+		GameInfo LastSongInfo;
 		bool StatsNameChange;
+		bool SecondSameSelect;
 
 		void Hello(PacketFunctions&Packet, int clientNum);
 		void UpdateClients();
