@@ -418,11 +418,15 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		// players joined.  If enough players aren't joined, then 
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
-		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-		int iNumCreditsPaid = GetNumCreditsPaid();
-		
-		int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
-		GAMESTATE->m_iCoins -= iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit;
+		if( PREFSMAN->m_iCoinMode == COIN_PAY )
+		{
+			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
+			int iNumCreditsPaid = GetNumCreditsPaid();
+			int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
+			GAMESTATE->m_iCoins -= iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit;
+			LOG->Trace( "Deducted %i coins, %i remaining",
+					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins );
+		}
 
 
 		// If only one side is joined and we picked a style
