@@ -584,6 +584,8 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 {
 	CHECKPOINT;
 
+	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
+
 	InitAll();
 
 	LoadEditableDataFromDir( sDir );
@@ -594,8 +596,6 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		CString fn = sDir + STATS_XML;
 		if( !IsAFile(fn) )
 			break;
-
-		LOG->Trace( "Reading profile data '%s'", fn.c_str() );
 
 		//
 		// Don't unreasonably large stats.xml files.
@@ -612,31 +612,37 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 
 		if( bRequireSignature )
 		{
+
 			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 			CString sDontShareFile = sDir + DONT_SHARE_SIG;
 
+			LOG->Trace( "Verifying don't share signature" );
 			// verify the stats.xml signature with the "don't share" file
 			if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
 			{
 				LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
 				break;
 			}
+			LOG->Trace( "Done." );
 
 			// verify stats.xml
+			LOG->Trace( "Verifying stats.xml signature" );
 			if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
 			{
 				LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
 				break;
 			}
-
+			LOG->Trace( "Done." );
 		}
 
+		LOG->Trace( "Loading stats.xml" );
 		XNode xml;
 		if( !xml.LoadFromFile( fn ) )
 		{
 			LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
 			break;
 		}
+		LOG->Trace( "Done." );
 
 		if( xml.name != "Stats" )
 			WARN_AND_BREAK;
