@@ -75,12 +75,12 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	void MenuUp( PlayerNumber pn );
-	void MenuDown( PlayerNumber pn );
-	void MenuLeft( PlayerNumber pn );
-	void MenuRight( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
+	void MenuUp( PlayerNumber pn, const InputEventType type );
+	void MenuDown( PlayerNumber pn, const InputEventType type );
+	void MenuLeft( PlayerNumber pn, const InputEventType type );
+	void MenuRight( PlayerNumber pn, const InputEventType type );
+	void MenuBack( PlayerNumber pn, const InputEventType type );
+	void MenuStart( PlayerNumber pn, const InputEventType type );
 
 	int GetGoUpSpot();		// return -1 if can't go up
 	int GetGoDownSpot();	// return -1 if can't go down

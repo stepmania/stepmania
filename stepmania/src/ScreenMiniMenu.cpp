@@ -144,19 +144,6 @@ void ScreenMiniMenu::Input( const DeviceInput& DeviceI, const InputEventType typ
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( DeviceI.device==DEVICE_KEYBOARD && type==IET_FIRST_PRESS )
-	{
-		switch( DeviceI.button )
-		{
-		case SDLK_LEFT:
-			this->MenuLeft( StyleI.player );
-			return;
-		case SDLK_RIGHT:
-			this->MenuRight( StyleI.player );
-			return;
-		}
-	}
-
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -173,8 +160,11 @@ void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenMiniMenu::MenuUp( PlayerNumber pn )
+void ScreenMiniMenu::MenuUp( PlayerNumber pn, const InputEventType type )
 {
+	if( type == IET_RELEASE )
+		return;
+
 	if( GetGoUpSpot() != -1 )
 	{
 		BeforeLineChanged();
@@ -183,8 +173,11 @@ void ScreenMiniMenu::MenuUp( PlayerNumber pn )
 	}
 }
 
-void ScreenMiniMenu::MenuDown( PlayerNumber pn )
+void ScreenMiniMenu::MenuDown( PlayerNumber pn, const InputEventType type )
 {
+	if( type == IET_RELEASE )
+		return;
+
 	if( GetGoDownSpot() != -1 )
 	{
 		BeforeLineChanged();
@@ -193,8 +186,11 @@ void ScreenMiniMenu::MenuDown( PlayerNumber pn )
 	}
 }
 
-void ScreenMiniMenu::MenuLeft( PlayerNumber pn )
+void ScreenMiniMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
+	if( type == IET_RELEASE )
+		return;
+
 	if( CanGoLeft() )
 	{
 		m_iCurAnswers[m_iCurLine]--;
@@ -202,8 +198,11 @@ void ScreenMiniMenu::MenuLeft( PlayerNumber pn )
 	}
 }
 
-void ScreenMiniMenu::MenuRight( PlayerNumber pn )
+void ScreenMiniMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 {
+	if( type == IET_RELEASE )
+		return;
+
 	if( CanGoRight() )
 	{
 		m_iCurAnswers[m_iCurLine]++;
@@ -211,8 +210,11 @@ void ScreenMiniMenu::MenuRight( PlayerNumber pn )
 	}
 }
 
-void ScreenMiniMenu::MenuStart( PlayerNumber pn )
+void ScreenMiniMenu::MenuStart( PlayerNumber pn, const InputEventType type )
 {
+	if( type == IET_RELEASE )
+		return;
+
 	m_Out.StartTransitioning( SM_GoToOK );
 
 	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
@@ -221,8 +223,11 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn )
 	COPY( s_iLastAnswers, m_iCurAnswers );
 }
 
-void ScreenMiniMenu::MenuBack( PlayerNumber pn )
+void ScreenMiniMenu::MenuBack( PlayerNumber pn, const InputEventType type )
 {
+	if( type == IET_RELEASE )
+		return;
+
 	m_Out.StartTransitioning( SM_GoToCancel );
 }
 
