@@ -88,7 +88,7 @@ void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromI
 	From.To4s( *pFrom );
 	To.To4s( *this );
 
-	// copy recorded TapSteps
+	// copy recorded TapNotes
 	int f = iFromIndexBegin, t = iToIndexBegin;
 	
 	while( f<=iFromIndexEnd )
@@ -271,7 +271,7 @@ void NoteData::AddHoldNote( HoldNote add )
 	int iAddStartIndex = add.iStartRow;
 	int iAddEndIndex = add.iEndRow;
 
-	// delete TapSteps under this HoldNote
+	// delete TapNotes under this HoldNote
 	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
 		SetTapNote(add.iTrack, i, TAP_EMPTY);
 
@@ -345,7 +345,7 @@ void NoteData::PruneUnusedAttacksFromMap()
 	}
 
 	// Remove all items from m_AttackMap that don't have corresponding
-	// TapSteps in use.
+	// TapNotes in use.
 	for( TapNote tn = TAP_ATTACK_BEGIN; tn<=TAP_ATTACK_END; tn++ )
 	{
 		bool bInAttackMap = m_AttackMap.find(tn) != m_AttackMap.end();

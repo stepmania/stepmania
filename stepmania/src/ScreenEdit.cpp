@@ -1328,7 +1328,7 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	int iNoteIndexBegin = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
 	int iNoteIndexEnd = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
 
-	// delete old TapSteps in the range
+	// delete old TapNotes in the range
 	m_NoteFieldEdit.ClearRange( iNoteIndexBegin, iNoteIndexEnd );
 
 	m_NoteFieldEdit.CopyRange( &m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );

@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------
  Class: NoteDisplay
 
- Desc: Draws TapSteps and HoldNotes.
+ Desc: Draws TapNotes and HoldNotes.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Brian Bugh
