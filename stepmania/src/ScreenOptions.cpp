@@ -285,6 +285,9 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 				if( CAPITALIZE_ALL_OPTION_NAMES )
 					sText.MakeUpper();
 				fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
+				
+				if( c != optline.choices.size()-1 )
+					fX += ITEMS_GAP_X;
 
 				if( fX > ITEMS_END_X ) 
 				{
