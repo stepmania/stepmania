@@ -1835,10 +1835,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case player_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptionsEdit" );
 			break;
 		case song_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
+			SCREENMAN->AddNewScreenToTop( "ScreenSongOptionsEdit" );
 			break;
 		case edit_song_info:
 			{
