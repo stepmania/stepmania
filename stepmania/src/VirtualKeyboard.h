@@ -1,14 +1,7 @@
-/* Allows a user to input profile names or IP addresses without using a keyboard.
- * Commands are mapped as follows:
- * left - delete
- * right - move cursor right (with space as default character)
- * up/down - change right most character to next/previous character
- */
+/* Allows a user to input profile names or IP addresses without using a keyboard. */
 
-#if !defined(VIRTUAL_KEYBOARD_H)
+#ifndef VIRTUAL_KEYBOARD_H
 #define VIRTUAL_KEYBOARD_H
-
-#pragma once
 
 #include "RageInputDevice.h"
 #include "MenuInput.h"
@@ -21,8 +14,8 @@ public:
 	VirtualKeyboard();
 	~VirtualKeyboard();
 
-	void Reset(VirtualKeyboardMode mode);
-	int Translate(const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar);
+	void Reset( VirtualKeyboardMode mode );
+	int Translate( const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar );
 
 protected:
 	VirtualKeyboardMode currentMode;

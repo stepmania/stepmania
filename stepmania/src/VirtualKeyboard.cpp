@@ -1,3 +1,10 @@
+/*
+ * Commands are mapped as follows:
+ * left - delete
+ * right - move cursor right (with space as default character)
+ * up/down - change right most character to next/previous character
+ */
+
 #include "global.h"
 #include "VirtualKeyboard.h"
 
@@ -12,12 +19,12 @@ VirtualKeyboard::~VirtualKeyboard()
 {
 }
 
-void VirtualKeyboard::Reset(VirtualKeyboardMode mode)
+void VirtualKeyboard::Reset( VirtualKeyboardMode mode )
 {
 	currentMode = mode;
 }
 
-int VirtualKeyboard::Translate(const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar)
+int VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput &MenuI, const wstring &cur_string, bool *nextChar )
 {
 	*nextChar = false;
 	MenuButton button = MenuI.button;
