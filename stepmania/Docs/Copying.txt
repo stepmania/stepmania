@@ -138,7 +138,7 @@ implied warranty.
 
 ******************************************************************************
 
-The only files which are under copyleft licenses are RageSoundReader_MP3,
-which is under the GPL (COPYING.GPL), and RageSoundReader_WAV, under
-the LGPL (COPYING.LGPL).  These files can be disabled at compile-time.
+The only file which is under a copyleft license is RageSoundReader_MP3,
+which is under the GPL (COPYING.GPL).  This file can be disabled at compile-
+time.
 
