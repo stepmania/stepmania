@@ -9,7 +9,6 @@
  *
  */
 
-#include "global.h"
 #include <MachineExceptions.h>
 
 OSStatus HandleException(ExceptionInformation *theException);
