@@ -19,9 +19,9 @@
 #include "RageTextureManager.h"
 
 
-CachedThemeMetricI TITLE_X						("TextBanner","TitleHorizX");
-CachedThemeMetricI SUB_TITLE_X					("TextBanner","SubTitleHorizX");
-CachedThemeMetricI ARTIST_X						("TextBanner","ArtistHorizX");
+CachedThemeMetricF TITLE_X						("TextBanner","TitleHorizX");
+CachedThemeMetricF SUB_TITLE_X					("TextBanner","SubTitleHorizX");
+CachedThemeMetricF ARTIST_X						("TextBanner","ArtistHorizX");
 CachedThemeMetricF MAX_TITLE_WIDTH				("TextBanner","MaxTitleWidth");
 CachedThemeMetricF MAX_SUB_TITLE_WIDTH			("TextBanner","MaxSubTitleWidth");
 CachedThemeMetricF MAX_ARTIST_WIDTH				("TextBanner","MaxArtistWidth");
@@ -94,7 +94,7 @@ void TextBanner::LoadFromString(
 	bool bTwoLines = sDisplaySubTitle.size() == 0;
 
 	const float fTitleZoom		= bTwoLines ? TWO_LINES_TITLE_ZOOM	: THREE_LINES_TITLE_ZOOM;
-	const float fSubTitleZoom	= bTwoLines ? 0						: THREE_LINES_SUB_TITLE_ZOOM;
+	const float fSubTitleZoom	= bTwoLines ? 0.0f					: THREE_LINES_SUB_TITLE_ZOOM;
 	const float fArtistZoom		= bTwoLines ? TWO_LINES_ARTIST_ZOOM : THREE_LINES_ARTIST_ZOOM;
 	
 	m_textTitle.SetZoom( fTitleZoom );
@@ -106,7 +106,7 @@ void TextBanner::LoadFromString(
 	m_textArtist.SetTextMaxWidth( MAX_ARTIST_WIDTH, sDisplayArtist, sTranslitArtist );
 
 	const float fTitleY		= bTwoLines ? TWO_LINES_TITLE_Y		: THREE_LINES_TITLE_Y;
-	const float fSubTitleY	= bTwoLines ? 0						: THREE_LINES_SUB_TITLE_Y;
+	const float fSubTitleY	= bTwoLines ? 0.0f					: THREE_LINES_SUB_TITLE_Y;
 	const float fArtistY	= bTwoLines ? TWO_LINES_ARTIST_Y	: THREE_LINES_ARTIST_Y;
 
 	m_textTitle.SetY( fTitleY );
