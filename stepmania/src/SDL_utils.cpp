@@ -981,3 +981,113 @@ void mySDL_BlitSurface(
 		/* We don't do RGBA->PAL. */
 		ASSERT(0);
 }
+
+/* This converts an image to a special 8-bit paletted format.  The palette is set up
+ * so that palette indexes look like regular, packed components.
+ *
+ * For example, an image with 8 bits of grayscale and 0 bits of alpha has a palette
+ * that looks like { 0,0,0,255 }, { 1,1,1,255 }, { 2,2,2,255 }, ... { 255,255,255,255 }.
+ * This results in index components that can be treated as grayscale values.
+ *
+ * An image with 2 bits of grayscale and 2 bits of alpha look like
+ * { 0,0,0,0  }, { 85,85,85,0  }, { 170,170,170,0  }, { 255,255,255,0  },
+ * { 0,0,0,85 }, { 85,85,85,85 }, { 170,170,170,85 }, { 255,255,255,85 }, ...
+ *
+ * This results in index components that can be pulled apart like regular packed
+ * values: the first two bits of the index are the grayscale component, and the next
+ * two bits are the alpha component.
+ *
+ * This gives us a generic way to handle arbitrary 8-bit texture formats.  It could
+ * possibly be used for 16-bit texture formats, but I doubt those are well-supported
+ * in hardware, and SDL blits only support 8-bit paletted surfaces. */
+SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits )
+{
+	AlphaBits = min( AlphaBits, 8-src_surf->format->Aloss );
+	
+	const int TotalBits = GrayBits + AlphaBits;
+	ASSERT( TotalBits <= 8 );
+
+	SDL_Surface *dst_surf = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, src_surf->w, src_surf->h,
+		8, 0,0,0,0 );
+
+	/* Set up the palette. */
+	const int TotalColors = 1 << TotalBits;
+	const int Ivalues = 1 << GrayBits;					// number of intensity values
+	const int Ishift = 0;								// intensity shift
+	const int Imask = ((1 << GrayBits) - 1) << Ishift;	// intensity mask
+	const int Iloss = 8-GrayBits;
+
+	const int Avalues = 1 << AlphaBits;					// number of alpha values
+	const int Ashift = GrayBits;						// alpha shift
+	const int Amask = ((1 << AlphaBits) - 1) << Ashift;	// alpha mask
+	const int Aloss = 8-AlphaBits;
+
+	for( int index = 0; index < TotalColors; ++index )
+	{
+		const int I = (index & Imask) >> Ishift;
+		const int A = (index & Amask) >> Ashift;
+
+		int ScaledI;
+		if( Ivalues == 1 )
+			ScaledI = 255; // if only one intensity value, always fullbright
+		else
+			ScaledI = clamp( int(roundf(I * (255.0f / (Ivalues-1)))), 0, 255 );
+
+		int ScaledA;
+		if( Avalues == 1 )
+			ScaledA = 255; // if only one alpha value, always opaque
+		else
+			ScaledA = clamp( int(roundf(A * (255.0f / (Avalues-1)))), 0, 255 );
+
+		SDL_Color c;
+		c.r = Uint8(ScaledI);
+		c.g = Uint8(ScaledI);
+		c.b = Uint8(ScaledI);
+		c.unused = Uint8(ScaledA);
+
+		SDL_SetColors( dst_surf, &c, index, 1);
+	}
+
+	const char *src = (const char *) src_surf->pixels;
+	const char *dst = (const char *) dst_surf->pixels;
+
+	int height = src_surf->h;
+	int width = src_surf->w;
+
+	/* Bytes to skip at the end of a line. */
+	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
+	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
+
+	while( height-- )
+	{
+		int x = 0;
+		while( x++ < width )
+		{
+			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
+
+			Uint8 colors[4];
+			mySDL_GetRGBAV(pixel, src_surf, colors);
+
+			int Ival = 0;
+			Ival += colors[0];
+			Ival += colors[1];
+			Ival += colors[2];
+			Ival /= 3;
+
+			pixel = (Ival >> Iloss) << Ishift |
+					(colors[3] >> Aloss) << Ashift;
+
+			/* Store it. */
+			*((Uint8 *) dst) = Uint8(pixel);
+
+			src += src_surf->format->BytesPerPixel;
+			dst += dst_surf->format->BytesPerPixel;
+		}
+
+		src += srcskip;
+		dst += dstskip;
+	}
+
+	return dst_surf;
+}
+
