@@ -143,6 +143,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
 	buffersize = 1024*64;
+	buffersize = min( buffersize, writeahead );
 
 	WAVEFORMATEX waveformat;
 	memset(&waveformat, 0, sizeof(waveformat));
