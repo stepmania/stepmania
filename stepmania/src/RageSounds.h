@@ -1,15 +1,15 @@
-/* RageSounds - High-level sound utilities. */
+/* GameSoundManager - High-level sound utilities. */
 
 #ifndef RAGE_SOUNDS_H
 #define RAGE_SOUNDS_H
 
 class TimingData;
 class RageSound;
-class RageSounds
+class GameSoundManager
 {
 public:
-	RageSounds();
-	~RageSounds();
+	GameSoundManager();
+	~GameSoundManager();
 	void Update( float fDeltaTime );
 
 	void PlayMusic( const CString &file, bool force_loop = false, float start_sec = 0, float length_sec = -1, float fade_len = 0, bool align_beat = true ) { PlayMusic( file, "", force_loop, start_sec, length_sec, fade_len, align_beat ); }
@@ -26,7 +26,7 @@ public:
 	float GetFrameTimingAdjustment( float fDeltaTime );
 };
 
-extern RageSounds *SOUND;
+extern GameSoundManager *SOUND;
 #endif
 
 /*

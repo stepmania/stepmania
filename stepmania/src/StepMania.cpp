@@ -1015,7 +1015,7 @@ int main(int argc, char* argv[])
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init( PREFSMAN->m_sSoundDrivers );
 	SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
-	SOUND		= new RageSounds;
+	SOUND		= new GameSoundManager;
 	BOOKKEEPER	= new Bookkeeper;
 	LIGHTSMAN	= new LightsManager(PREFSMAN->m_sLightsDriver);
 	INPUTFILTER	= new InputFilter;

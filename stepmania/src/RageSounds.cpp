@@ -11,7 +11,7 @@
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
 
-RageSounds *SOUND = NULL;
+GameSoundManager *SOUND = NULL;
 
 /*
  * When playing music, automatically search for an SM file for timing data.  If one is
@@ -299,7 +299,7 @@ int MusicThread_start( void *p )
 	return 0;
 }
 
-RageSounds::RageSounds()
+GameSoundManager::GameSoundManager()
 {
 	/* Init RageSoundMan first: */
 	ASSERT( SOUNDMAN );
@@ -309,7 +309,7 @@ RageSounds::RageSounds()
 	g_SoundsToPlayOnceFromAnnouncer.reserve( 16 );
 	g_MusicsToPlay.reserve( 16 );
 
-	g_Mutex = new RageMutex("RageSounds");
+	g_Mutex = new RageMutex("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
 
 	g_UpdatingTimer = false;
@@ -322,7 +322,7 @@ RageSounds::RageSounds()
 	}
 }
 
-RageSounds::~RageSounds()
+GameSoundManager::~GameSoundManager()
 {
 	if( g_ThreadedMusicStart )
 	{
@@ -351,7 +351,7 @@ RageSounds::~RageSounds()
 		delete pMusic;
 }
 
-float RageSounds::GetFrameTimingAdjustment( float fDeltaTime )
+float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 {
 	/*
 	 * We get one update per frame, and we're updated early, almost immediately after vsync,
@@ -386,7 +386,7 @@ float RageSounds::GetFrameTimingAdjustment( float fDeltaTime )
 	return min( -fExtraDelay, 0 );
 }
 
-void RageSounds::Update( float fDeltaTime )
+void GameSoundManager::Update( float fDeltaTime )
 {
 	LockMut( *g_Mutex );
 
@@ -450,14 +450,14 @@ void RageSounds::Update( float fDeltaTime )
 }
 
 
-CString RageSounds::GetMusicPath() const
+CString GameSoundManager::GetMusicPath() const
 {
 	LockMut( *g_Mutex );
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
 /* If g_ThreadedMusicStart, this function should not touch the disk at all. */
-void RageSounds::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
+void GameSoundManager::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
 {
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
@@ -483,13 +483,13 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 		StartQueuedSounds();
 }
 
-void RageSounds::HandleSongTimer( bool on )
+void GameSoundManager::HandleSongTimer( bool on )
 {
 	LockMut( *g_Mutex );
 	g_UpdatingTimer = on;
 }
 
-void RageSounds::PlayOnce( CString sPath )
+void GameSoundManager::PlayOnce( CString sPath )
 {
 	/* Add the sound to the g_SoundsToPlayOnce queue. */
 	CString *p = new CString( sPath );
@@ -500,7 +500,7 @@ void RageSounds::PlayOnce( CString sPath )
 		StartQueuedSounds();
 }
 
-void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
+void GameSoundManager::PlayOnceFromDir( CString PlayOnceFromDir )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	CString *p = new CString( PlayOnceFromDir );
@@ -511,7 +511,7 @@ void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
 		StartQueuedSounds();
 }
 
-void RageSounds::PlayOnceFromAnnouncer( CString sFolderName )
+void GameSoundManager::PlayOnceFromAnnouncer( CString sFolderName )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	CString *p = new CString( sFolderName );
@@ -522,7 +522,7 @@ void RageSounds::PlayOnceFromAnnouncer( CString sFolderName )
 		StartQueuedSounds();
 }
 
-float RageSounds::GetPlayLatency() const
+float GameSoundManager::GetPlayLatency() const
 {
 	return SOUNDMAN->GetPlayLatency();
 }
