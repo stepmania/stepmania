@@ -42,7 +42,7 @@ void RageSound_ALSA9::MixerThread()
 			if( stream_pool[i]->state == stream_pool[i]->INACTIVE )
 				continue; /* inactive */
 
-			while( stream_pool[i]->GetData(false) )
+			while( !shutdown && stream_pool[i]->GetData(false) )
 				;
 		}
 	}
