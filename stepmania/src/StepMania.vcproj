@@ -362,10 +362,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenNameEntryTraditional.h">
 			</File>
 			<File
-				RelativePath="ScreenNetworkOptions.cpp">
+				RelativePath="ScreenNetEvaluation.cpp">
 			</File>
 			<File
-				RelativePath="ScreenNetworkOptions.h">
+				RelativePath="ScreenNetEvaluation.h">
 			</File>
 			<File
 				RelativePath="ScreenNetSelectMusic.cpp">
@@ -374,10 +374,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenNetSelectMusic.h">
 			</File>
 			<File
-				RelativePath="ScreenNetEvaluation.cpp">
+				RelativePath="ScreenNetworkOptions.cpp">
 			</File>
 			<File
-				RelativePath="ScreenNetEvaluation.h">
+				RelativePath="ScreenNetworkOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenOptions.cpp">
@@ -1837,6 +1837,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageFileDriverDirectHelpers.h">
+			</File>
+			<File
+				RelativePath="RageFileDriverMemory.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverMemory.h">
 			</File>
 			<File
 				RelativePath="RageFileDriverZip.cpp">
