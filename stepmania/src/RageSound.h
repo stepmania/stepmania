@@ -151,6 +151,9 @@ private:
 	int stopped_position;
 	bool    playing;
 
+	/* Keep track of the max SOUNDMAN->GetPosition result (see GetPositionSecondsInternal). */
+	mutable int64_t max_driver_frame;
+
 	/* If playing, record the thread that called Play(). */
 	unsigned playing_thread;
 

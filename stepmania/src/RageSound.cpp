@@ -66,6 +66,7 @@ RageSound::RageSound():
 	Sample = NULL;
 	decode_position = 0;
 	stopped_position = 0;
+	max_driver_frame = 0;
 	playing = false;
 	playing_thread = 0;
 	databuf.reserve(internal_buffer_size);
@@ -109,6 +110,7 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	m_Param = cpy.m_Param;
 	decode_position = cpy.decode_position;
 	stopped_position = cpy.stopped_position;
+	max_driver_frame = 0;
 	playing = false;
 	playing_thread = 0;
 
@@ -600,7 +602,8 @@ void RageSound::StopPlaying()
 //	LOG->Trace("set playing false for %p (StopPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	playing = false;
 	playing_thread = 0;
-
+	
+	max_driver_frame = 0;
 	pos_map.Clear();
 //	LOG->Trace("StopPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 
@@ -683,6 +686,15 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 
 	/* Get our current hardware position. */
 	int64_t cur_frame = SOUNDMAN->GetPosition(this);
+
+	/* It's sometimes possible for the hardware position to move backwards, usually
+	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
+	 * error, so let's clamp the result here instead.  Be sure to reset this on stop,
+	 * since the position may reset. */
+	if( cur_frame < max_driver_frame )
+		LOG->Trace( "Sound %s: driver returned a lesser position (%i < %i)",
+			this->GetLoadedFilePath().c_str(), (int) cur_frame, (int) max_driver_frame );
+	max_driver_frame = cur_frame = max( cur_frame, max_driver_frame );
 
 	return pos_map.Search( cur_frame, approximate );
 }
