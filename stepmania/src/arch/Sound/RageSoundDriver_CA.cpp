@@ -24,20 +24,7 @@ const UInt32	kBitsPerChannel = 16;
 const UInt32	kSampleSize = kChannelsPerFrame * kBitsPerChannel / 8;
 const UInt32	kPacketSize = kSampleSize;
 
-// these are the same regardless of format
-extern UInt32 theFramesPerPacket; // this shouldn't change
 
-#if 0
-OSStatus GetData(void						*inRefCon,
-                 AudioUnitRenderActionFlags	*ioActionFlags,
-                 const AudioTimeStamp		*inTimeStamp,
-                 UInt32 					inBusNumber,
-                 UInt32						inNumberFrames,
-                 AudioBufferList			*ioData);
-#endif
-
-/* Static data */
-//static AudioUnit outputUnit;
 static AudioDeviceID outputDevice;
 
 #if defined(DEBUG)
@@ -51,73 +38,14 @@ asprintf(&__errorMessage, "err = %d, %s", result, __fourcc); \
 RAGE_ASSERT_M(result == noErr, __errorMessage); \
 free(__errorMessage)
 
-#define SAFE_TEST_ERR(result) \
-memcpy(__fourcc, &result, 4); \
-__fourcc[4] = '\000'; \
-asprintf(&__errorMessage, "err = %d, %s", result, __fourcc); \
-SAFE_ASSERT_M(result == noErr, __errorMessage); \
-free(__errorMessage)
 #else
 #define TEST_ERR(result)
-#define SAFE_TEST_ERR(result)
 #endif
-
-#define SAFE_ASSERT_M(x,message) if (!(x)) { if (message) LOG->Warn(message); *(char*)0=0; }
-#define SAFE_ASSERT(x) SAFE_ASSERT_M(x, NULL)
 
 RageSound_CA::RageSound_CA()
 {
-#if 1
-    RageException::ThrowNonfatal("Class not finished.");
-#endif
-    OSStatus err = noErr;
-#if 0
-    /* Open the default output unit */
-    err = OpenDefaultAudioOutput(&outputUnit);
-    TEST_ERR(err);
-    
-    /* Set up a callback function to generate output to the output unit */
-    AURenderCallbackStruct input;
-    input.inputProc = GetData;
-    input.inputProcRefCon = this;
-
-    err = AudioUnitSetProperty(outputUnit,
-                               kAudioUnitProperty_SetRenderCallback,
-                               kAudioUnitScope_Input,
-                               0,
-                               &input,
-                               sizeof(input));
-    TEST_ERR(err);
-
-    /* Set up the output stream format */
-    AudioStreamBasicDescription streamFormat;
-    
-    streamFormat.mSampleRate = kSampleRate;		
-    streamFormat.mFormatID = kAudioFormatLinearPCM;			
-    streamFormat.mFormatFlags = kAudioFormatFlagsNativeEndian;		
-    streamFormat.mBytesPerPacket = kPacketSize;
-    streamFormat.mFramesPerPacket = 1;
-    streamFormat.mBytesPerFrame = 0;
-    streamFormat.mChannelsPerFrame = kChannelsPerFrame;
-    streamFormat.mBitsPerChannel = 0;
-    streamFormat.mReserved = 0;
-
-    err = AudioUnitSetProperty(outputUnit,
-                               kAudioUnitProperty_StreamFormat,
-                               kAudioUnitScope_Input,
-                               0,
-                               &streamFormat,
-                               sizeof(AudioStreamBasicDescription));
-    TEST_ERR(err);
-
-    /* Initialize and start the outputUnit */
-    err = AudioUnitInitialize(outputUnit);
-    TEST_ERR(err);
-
-    err = AudioOutputUnitStart(outputUnit);
-    TEST_ERR(err);
-#else
     UInt32 thePropertySize = sizeof(AudioDeviceID);
+    OSStatus err;
     
     err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice, &thePropertySize,
                                    &outputDevice);
@@ -174,6 +102,7 @@ RageSound_CA::RageSound_CA()
               streamFormat.mFramesPerPacket, streamFormat.mBytesPerFrame, streamFormat.mChannelsPerFrame,
               streamFormat.mBitsPerChannel);    
 
+    thePropertySize = sizeof(streamFormat);
     err = AudioDeviceSetProperty(outputDevice, NULL, 0, 0, kAudioDevicePropertyStreamFormat,
                                  thePropertySize, &streamFormat);
     TEST_ERR(err);
@@ -186,21 +115,10 @@ RageSound_CA::RageSound_CA()
     TEST_ERR(err);
 
     latency = 0; //for now
-#endif
 }
 
 RageSound_CA::~RageSound_CA()
 {
-#if 0
-    OSStatus err;
-
-    /* Stop the outputUnit */
-    err = AudioOutputUnitStop(outputUnit);
-    TEST_ERR(err);
-
-    /* Dispose of the outputUnit */
-    CloseComponent(outputUnit);
-#else
     OSStatus err;
 
     err = AudioDeviceStop(outputDevice, GetData);
@@ -211,7 +129,6 @@ RageSound_CA::~RageSound_CA()
 
     err = AudioConverterDispose(converter);
     TEST_ERR(err);
-#endif
 }
 
 void RageSound_CA::StartMixing(RageSound *snd)
@@ -264,17 +181,6 @@ void RageSound_CA::Update(float delta)
     }
 }
 
-#if 0
-OSStatus GetData(void						*inRefCon,
-                 AudioUnitRenderActionFlags	*ioActionFlags,
-                 const AudioTimeStamp		*inTimeStamp,
-                 UInt32 					inBusNumber,
-                 UInt32						inNumberFrames,
-                 AudioBufferList			*ioData)
-{
-    return noErr;
-}
-#else
 OSStatus RageSound_CA::GetData(AudioDeviceID			inDevice,
                  const AudioTimeStamp*	inNow,
                  const AudioBufferList*	inInputData,
@@ -321,24 +227,11 @@ OSStatus RageSound_CA::GetData(AudioDeviceID			inDevice,
 
     OSStatus err = AudioConverterConvertBuffer(THIS->converter, THIS->buffersize, buffer, &size,
                                                outOutputData->mBuffers[0].mData);
-    SAFE_TEST_ERR(err);
-    SAFE_ASSERT(outputSize == size);
     
-    return noErr;
+    return err;
 }
 
 inline int RageSound_CA::ConvertAudioTimeStampToPosition(const AudioTimeStamp *time)
 {
-    /*if (time->mFlags & kAudioTimeStampSMPTETimeValid)
-        return time->mSMPTETime.mFrames;
-    
-    AudioTimeStamp temp;
-    temp.mFlags = kAudioTimeStampSMPTETimeValid;
-    OSStatus err = AudioDeviceTranslateTime(outputDevice, time, &temp);
-    SAFE_TEST_ERR(err);
-    SAFE_ASSERT(temp.mFlags & kAudioTimeStampSMPTETimeValid);
-    
-    return temp.mSMPTETime.mFrames;*/
     return (int)(time->mSampleTime / time->mRateScalar);
 }    
-#endif
