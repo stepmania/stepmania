@@ -50,7 +50,6 @@ public:
 	void CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_bytes );	/* used by drivers */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
-	set<RageSound *> GetPlayingSounds() const;
 
 	/* When deleting a sound from any thread except the one calling Update(), this
 	 * must be used to prevent race conditions. */

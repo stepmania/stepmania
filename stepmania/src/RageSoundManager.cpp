@@ -217,14 +217,6 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 	return sound_to_play;
 }
 
-/* XXX: If this is ever called from a thread, it should take a bLockSounds parameter,
- * like GetCopies. */
-set<RageSound *> RageSoundManager::GetPlayingSounds() const
-{
-	LockMut(g_SoundManMutex); /* lock for access to playing_sounds */
-	return playing_sounds;
-}
-
 void RageSoundManager::DeleteSound( RageSound *p )
 {
 	/* Stop playing the sound. */
