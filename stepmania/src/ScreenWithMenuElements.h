@@ -33,6 +33,7 @@ protected:
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
 	HelpDisplay			*m_textHelp;
+	AutoActor			m_sprOverlay;
 
 	Transition	m_In;
 	Transition	m_Out;
