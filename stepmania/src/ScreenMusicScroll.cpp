@@ -97,6 +97,9 @@ const CString CREDIT_LINES[] =
 	"Garett Sakamoto",
 	"Illusionz - Issaquah, WA",
 	"Quarters - Kirkland, WA",
+	"Segapark - Bournemouth, UK",
+	"Pier Amusements - Bournemouth, UK",
+	"Westcliff Amusements - Bournemouth, UK",
 	"Naoki",
 	"Konami Computer Entertainment Japan",
 	"",
@@ -163,10 +166,24 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddActor( &m_Fade );
 
-	m_soundMusic.Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
+	if ( GAMEMAN->m_CurGame != GAME_EZ2 )	
+	{
+		m_soundMusic.Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
+	}
+	else
+	{
+		m_soundMusic.Load( THEME->GetPathTo(SOUND_MENU_PROMPT) ); // yes, yes, hack hack hack. What can I do huh? re-write thememanager? hahaha.
+	}
 
 	m_Fade.OpenWipingRight();
-	m_soundMusic.Play( true );
+	if ( GAMEMAN->m_CurGame != GAME_EZ2 )
+	{
+		m_soundMusic.Play( true );
+	}
+	else
+	{
+		m_soundMusic.Play( false );
+	}
 }
 
 
@@ -178,6 +195,7 @@ void ScreenMusicScroll::Update( float fDeltaTime )
 	{
 		m_textLines[i].Update( fDeltaTime );
 	}
+		
 }	
 
 
