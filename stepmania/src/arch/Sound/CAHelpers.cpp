@@ -35,7 +35,7 @@ OSStatus AudioConverter::FormatConverterInputProc(UInt32& ioNumberDataPackets,
     if( mBufferSize < buf.mDataByteSize )
     {
         delete [] mBuffer;
-        mBuffer = new UInt8[mBufferSize];
+        mBuffer = new UInt8[buf.mDataByteSize];
         mBufferSize = buf.mDataByteSize;
     }
     buf.mData = mBuffer;
