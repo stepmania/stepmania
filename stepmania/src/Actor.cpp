@@ -740,7 +740,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 		ParsedCommand newcommand = command;
 		newcommand.vTokens.erase( newcommand.vTokens.begin() );
 		QueueCommand( newcommand );
-		return;	// don't to parameter number checking
+		return;	// don't do parameter number checking
 	}
 
 	/* These are commands intended for a Sprite commands, but they will get 
