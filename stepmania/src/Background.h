@@ -47,7 +47,6 @@ public:
 
 protected:
 	const Song *m_pSong;
-	void LoadFromAniDir( CString sAniDir );
 	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing );
 	int FindBGSegmentForBeat( float fBeat ) const;
 

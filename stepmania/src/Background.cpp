@@ -107,20 +107,6 @@ void Background::Unload()
 	m_fLastMusicSeconds	= -9999;
 }
 
-void Background::LoadFromAniDir( CString sAniDir )
-{
-	Unload();
-
-	if( PREFSMAN->m_fBGBrightness == 0.0f )
-		return;
-
-	BGAnimation* pTempBGA;
-	pTempBGA = new BGAnimation;
-	pTempBGA->LoadFromAniDir( sAniDir );
-	m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
-	m_aBGChanges.push_back( BackgroundChange(-1000, STATIC_BACKGROUND) );
-}
-
 BGAnimation *Background::CreateSongBGA( CString sBGName ) const
 {
 	BGAnimation *pTempBGA;
