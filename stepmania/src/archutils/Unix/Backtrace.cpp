@@ -171,22 +171,22 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	get_readable_ranges( readable_begin, readable_end, 1024 );
 		
 	/* Find the stack memory blocks. */
-	const int stack_block1 = find_address( (void *) ctx->ebp, readable_begin, readable_end );
+	const int stack_block1 = find_address( ctx->ebp, readable_begin, readable_end );
 	const int stack_block2 = find_address( SavedStackPointer, readable_begin, readable_end );
 
 	/* This matches the layout of the stack.  The frame pointer makes the
 	 * stack a linked list. */
 	struct StackFrame
 	{
-		StackFrame *link;
-		char *return_address;
+		const StackFrame *link;
+		const void *return_address;
 	};
 
-	StackFrame *frame = (StackFrame *) ctx->ebp;
+	const StackFrame *frame = (StackFrame *) ctx->ebp;
 
 	unsigned i=0;
 	if( i < size-1 && ctx->eip ) // -1 for NULL
-		buf[i++] = (void *) ctx->eip;
+		buf[i++] = ctx->eip;
 
 	while( i < size-1 ) // -1 for NULL
 	{
@@ -213,8 +213,8 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
-	ctx->eip = (long) uc->uc_mcontext.gregs[REG_EIP];
-	ctx->ebp = (long) uc->uc_mcontext.gregs[REG_EBP];
+	ctx->eip = (void *) uc->uc_mcontext.gregs[REG_EIP];
+	ctx->ebp = (void *) uc->uc_mcontext.gregs[REG_EBP];
 	ctx->pid = GetCurrentThreadId();
 }
 
@@ -227,8 +227,8 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	{
 		ctx = &CurrentCtx;
 
-		CurrentCtx.eip = 0;
-		CurrentCtx.ebp = (long) __builtin_frame_address(0);
+		CurrentCtx.eip = NULL;
+		CurrentCtx.ebp = __builtin_frame_address(0);
 		CurrentCtx.pid = GetCurrentThreadId();
 	}
 
