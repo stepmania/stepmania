@@ -82,45 +82,25 @@ void ScreenOptionsMaster::Init()
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
-
-		OptionRowDefinition &row = m_OptionRowAlloc[i];
-		
+		OptionRowDefinition &def = m_OptionRowAlloc[i];
 		CString sRowCommands = LINE(sLineName);
+		OptionRowHandler* &pHand = OptionRowHandlers[i];
+		pHand = NULL;
 		
 		Commands vCommands;
 		ParseCommands( sRowCommands, vCommands );
-		
-		if( vCommands.v.size() < 1 )
+		if( vCommands.v.size() != 1 )
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
 
-		OptionRowHandler* &pHand = OptionRowHandlers[i];
-		pHand = NULL;
+		Command& command = vCommands.v[0];
+		pHand = OptionRowHandlerUtil::Make( command, def );
+		if( pHand == NULL )
+            RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", command.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
 
-		for( unsigned c=0; c<vCommands.v.size(); ++c )
-		{
-			Command& command = vCommands.v[c];
-
-			BeginHandleArgs;
-
-			const CString &name = command.GetName();
-
-			if(		 name == "list" )			pHand = OptionRowHandlerUtil::MakeList( row, sArg(1) );
-			else if( name == "lua" )			pHand = OptionRowHandlerUtil::MakeLua( row, sArg(1) );
-			else if( name == "steps" )			pHand = OptionRowHandlerUtil::MakeSteps( row );
-			else if( name == "conf" )			pHand = OptionRowHandlerUtil::MakeConf( row, sArg(1) );
-			else if( name == "characters" )		pHand = OptionRowHandlerUtil::MakeCharacters( row );
-			else if( name == "styles" )			pHand = OptionRowHandlerUtil::MakeStyles( row );
-			else if( name == "groups" )			pHand = OptionRowHandlerUtil::MakeGroups( row );
-			else if( name == "difficulties" )	pHand = OptionRowHandlerUtil::MakeDifficulties( row );
-			else
-				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
-
-			EndHandleArgs;
-		}
 
 		// TRICKY:  Insert a down arrow as the first choice in the row.
 		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-			row.choices.insert( row.choices.begin(), ENTRY_NAME(NEXT_ROW_NAME) );
+			def.choices.insert( def.choices.begin(), ENTRY_NAME(NEXT_ROW_NAME) );
 	}
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
@@ -166,40 +146,36 @@ void ScreenOptionsMaster::Update( float fDelta )
 //	ASSERT( iNumSelected == 1 );
 //}
 
+/* Hack: the NextRow entry is never set, and should be transparent.  Remove
+ * it, and readd it below. */
+#define ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
+	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY ) \
+		vbSelected.erase( vbSelected.begin() );
+#define INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
+	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY ) \
+		vbSelected.insert( vbSelected.begin(), false );
+
+
 void ScreenOptionsMaster::ImportOptions( int r )
 {
 	const OptionRowHandler *pHand = OptionRowHandlers[r];
 	const OptionRowDefinition &def = m_OptionRowAlloc[r];
 	OptionRow &row = *m_Rows[r];
 
-	/* Hack: the NextRow entry is never set, and should be transparent.  Remove
-	 * it, and readd it below. */
-	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-	{
-		if( def.bOneChoiceForAllPlayers )
-			row.m_vbSelected[0].erase( row.m_vbSelected[0].begin() );
-		else
-			FOREACH_HumanPlayer( p )
-				row.m_vbSelected[p].erase( row.m_vbSelected[p].begin() );
-	}
-
 	if( def.bOneChoiceForAllPlayers )
 	{
+		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
 		pHand->ImportOption(def, PLAYER_1, row.m_vbSelected[0] );
+		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
 	}
 	else
 	{
 		FOREACH_HumanPlayer( p )
+		{
+			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
 			pHand->ImportOption( def, p, row.m_vbSelected[p] );
-	}
-
-	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-	{
-		if( def.bOneChoiceForAllPlayers )
-			row.m_vbSelected[0].insert( row.m_vbSelected[0].begin(), false );
-		else
-			FOREACH_HumanPlayer( p )
-				row.m_vbSelected[p].insert( row.m_vbSelected[p].begin(), false );
+			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
+		}
 	}
 }
 
@@ -226,11 +202,21 @@ void ScreenOptionsMaster::ExportOptions( int iRow )
 	const OptionRowHandler *pHand = OptionRowHandlers[iRow];
 	const OptionRowDefinition &def = m_OptionRowAlloc[iRow];
 	OptionRow &row = *m_Rows[iRow];
-	FOREACH_HumanPlayer( pn )
-	{
-		vector<bool> &vbSelected = row.m_vbSelected[pn];
 
-		m_iChangeMask |= pHand->ExportOption( def, pn, vbSelected );
+	if( def.bOneChoiceForAllPlayers )
+	{
+		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
+		m_iChangeMask |= pHand->ExportOption( def, PLAYER_1, row.m_vbSelected[0] );
+		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[0] );
+	}
+	else
+	{
+		FOREACH_HumanPlayer( p )
+		{
+			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
+			m_iChangeMask |= pHand->ExportOption( def, p, row.m_vbSelected[p] );
+			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( row.m_vbSelected[p] );
+		}
 	}
 }
 
@@ -282,7 +268,7 @@ void ScreenOptionsMaster::RefreshIcons()
 			else if( iFirstSelection != -1 )
 			{
 				const OptionRowHandler *pHand = OptionRowHandlers[i];
-				sIcon = pHand->GetIconText( def, iFirstSelection );
+				sIcon = pHand->GetIconText( def, iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0) );
 			}
 			
 

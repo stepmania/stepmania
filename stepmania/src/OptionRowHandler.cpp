@@ -39,6 +39,101 @@ static int GetOneSelection( const vector<bool> &vbSelected )
 }
 
 
+class OptionRowHandlerList : public OptionRowHandler
+{
+public:
+	vector<GameCommand> ListEntries;
+	GameCommand Default;
+	bool m_bUseModNameForIcon;
+
+	OptionRowHandlerList::OptionRowHandlerList() { Init(); }
+	virtual void Init()
+	{
+		OptionRowHandler::Init();
+		ListEntries.clear();
+		Default.Init();
+		m_bUseModNameForIcon = false;
+	}
+	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
+	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const;
+	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const
+	{
+		return m_bUseModNameForIcon ?
+			ListEntries[iFirstSelection].m_sModifiers :
+			def.choices[iFirstSelection];
+	}
+	virtual CString GetAndEraseScreen( int iChoice )
+	{ 
+		GameCommand &mc = ListEntries[iChoice];
+		if( mc.m_sScreen != "" )
+		{
+			/* Hack: instead of applying screen commands here, store them in
+			* m_sNextScreen and apply them after we tween out.  If we don't set
+			* m_sScreen to "", we'll load it twice (once for each player) and
+			* then again for m_sNextScreen. */
+			CString sNextScreen = mc.m_sScreen;
+			mc.m_sScreen = "";
+			return sNextScreen;
+		}
+		return "";
+	}
+};
+
+class OptionRowHandlerLua : public OptionRowHandler
+{
+public:
+	LuaExpression *m_pLuaTable;
+
+	OptionRowHandlerLua::OptionRowHandlerLua() { m_pLuaTable = NULL; Init(); }
+	void Init()
+	{
+		OptionRowHandler::Init();
+		delete m_pLuaTable;
+		m_pLuaTable = new LuaExpression;
+	}
+	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
+	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const;
+	virtual void Reload( OptionRowDefinition &defOut );
+};
+
+class OptionRowHandlerConfig : public OptionRowHandler
+{
+public:
+	const ConfOption *opt;
+
+	OptionRowHandlerConfig::OptionRowHandlerConfig() { Init(); }
+	void Init()
+	{
+		OptionRowHandler::Init();
+		opt = NULL;
+	}
+	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const;
+	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const;
+};
+
+
+namespace OptionRowHandlerUtil
+{
+	void FillList( OptionRowHandlerList* pHand, OptionRowDefinition &defOut, CString param );
+	void FillLua( OptionRowHandlerLua* pHand, OptionRowDefinition &defOut, CString sLuaFunction );
+	void FillSteps( OptionRowHandlerList* pHand, OptionRowDefinition &defOut );
+	void FillConf( OptionRowHandlerConfig* pHand, OptionRowDefinition &defOut, CString param );
+	void FillCharacters( OptionRowHandlerList* pHand, OptionRowDefinition &defOut );
+	void FillStyles( OptionRowHandlerList* pHand, OptionRowDefinition &defOut );
+	void FillGroups( OptionRowHandlerList* pHand, OptionRowDefinition &defOut );
+	void FillDifficulties( OptionRowHandlerList* pHand, OptionRowDefinition &defOut );
+
+	inline OptionRowHandler* MakeList( OptionRowDefinition &defOut, CString param )		{ OptionRowHandlerList *pHand = new OptionRowHandlerList; FillList( pHand, defOut, param );		return pHand; }
+	inline OptionRowHandler* MakeLua( OptionRowDefinition &defOut, CString sLuaFunction )	{ OptionRowHandlerLua *pHand = new OptionRowHandlerLua;   FillLua( pHand, defOut, sLuaFunction );	return pHand; }
+	inline OptionRowHandler* MakeSteps( OptionRowDefinition &defOut )						{ OptionRowHandlerList *pHand = new OptionRowHandlerList; FillSteps( pHand, defOut );				return pHand; }
+	inline OptionRowHandler* MakeConf( OptionRowDefinition &defOut, CString param )		{ OptionRowHandlerConfig *pHand = new OptionRowHandlerConfig; FillConf( pHand, defOut, param );	return pHand; }
+	inline OptionRowHandler* MakeCharacters( OptionRowDefinition &defOut )				{ OptionRowHandlerList *pHand = new OptionRowHandlerList; FillCharacters( pHand, defOut );			return pHand; }
+	inline OptionRowHandler* MakeStyles( OptionRowDefinition &defOut )					{ OptionRowHandlerList *pHand = new OptionRowHandlerList; FillStyles( pHand, defOut );				return pHand; }
+	inline OptionRowHandler* MakeGroups( OptionRowDefinition &defOut )					{ OptionRowHandlerList *pHand = new OptionRowHandlerList; FillGroups( pHand, defOut );				return pHand; }
+	inline OptionRowHandler* MakeDifficulties( OptionRowDefinition &defOut )				{ OptionRowHandlerList *pHand = new OptionRowHandlerList; FillDifficulties( pHand, defOut );		return pHand; }
+}
+
+
 void OptionRowHandlerList::ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 {
 	int FallbackOption = -1;
@@ -194,9 +289,9 @@ int OptionRowHandlerLua::ExportOption( const OptionRowDefinition &def, PlayerNum
 	return 0;
 }
 
-void OptionRowHandlerLua::Reload( OptionRowDefinition &def )
+void OptionRowHandlerLua::Reload( OptionRowDefinition &defOut )
 {
-	OptionRowHandlerUtil::FillLua( this, def, m_sName );
+	OptionRowHandlerUtil::FillLua( this, defOut, m_sName );
 }
 
 
@@ -225,6 +320,8 @@ int OptionRowHandlerConfig::ExportOption( const OptionRowDefinition &def, Player
 
 	return opt->GetEffects();
 }
+
+///////////////////////////////////////////////////////////////////////////////////
 
 
 /* Add the list named "ListName" to the given row/handler. */
@@ -650,6 +747,29 @@ void OptionRowHandlerUtil::FillDifficulties( OptionRowHandlerList* pHand, Option
 		mc.m_dc = *d;
 		pHand->ListEntries.push_back( mc );
 	}
+}
+
+
+OptionRowHandler* OptionRowHandlerUtil::Make( const Command &command, OptionRowDefinition &defOut )
+{
+	OptionRowHandler* pHand = NULL;
+
+	BeginHandleArgs;
+
+	const CString &name = command.GetName();
+
+	if(		 name == "list" )			pHand = OptionRowHandlerUtil::MakeList( defOut, sArg(1) );
+	else if( name == "lua" )			pHand = OptionRowHandlerUtil::MakeLua( defOut, sArg(1) );
+	else if( name == "steps" )			pHand = OptionRowHandlerUtil::MakeSteps( defOut );
+	else if( name == "conf" )			pHand = OptionRowHandlerUtil::MakeConf( defOut, sArg(1) );
+	else if( name == "characters" )		pHand = OptionRowHandlerUtil::MakeCharacters( defOut );
+	else if( name == "styles" )			pHand = OptionRowHandlerUtil::MakeStyles( defOut );
+	else if( name == "groups" )			pHand = OptionRowHandlerUtil::MakeGroups( defOut );
+	else if( name == "difficulties" )	pHand = OptionRowHandlerUtil::MakeDifficulties( defOut );
+
+	EndHandleArgs;
+
+	return pHand;
 }
 
 
