@@ -75,7 +75,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	GAMESTATE->m_pCurSong = m_pSong;
 	GAMESTATE->m_bPastHereWeGo = true;
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
-	m_Player.Load( PLAYER_1, pND, &m_LifeMeter, NULL, NULL, NULL );
+	m_Player.Load( PLAYER_1, pND, &m_LifeMeter, NULL, NULL, NULL, NULL, NULL );
 
 	m_Player.SetX( 480 );
 	m_Player.DontShowJudgement();

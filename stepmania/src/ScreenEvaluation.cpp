@@ -515,7 +515,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			m_sprWin[p].Load( THEME->GetPathToG("ScreenEvaluation win 2x3") );
 			m_sprWin[p].StopAnimating();
-			int iFrame = GAMESTATE->GetBattleResult( (PlayerNumber)p )*2 + p;
+			int iFrame = GAMESTATE->GetStageResult( (PlayerNumber)p )*2 + p;
 			m_sprWin[p].SetState( iFrame );
 			m_sprWin[p].SetName( ssprintf("WinP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprWin[p], "ScreenEvaluation" );
@@ -674,7 +674,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			{
 			case PLAY_MODE_BATTLE:
 				{
-					bool bWon = GAMESTATE->GetBattleResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
+					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
 					if( bWon )
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
 					else

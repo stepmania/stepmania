@@ -422,12 +422,13 @@ void SongManager::InitMachineScoresFromDisk()
 	// course ranking
 	ReadCourseRankingsFromFile( COURSE_RANKING_FILE );
 
+	int c;
 	// notes scores
-	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+	for( c=0; c<NUM_MEMORY_CARDS; c++ )
 		ReadNoteScoresFromFile( NOTES_SCORES_FILE[c], c );
 
 	// course scores
-	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+	for( c=0; c<NUM_MEMORY_CARDS; c++ )
 		ReadCourseScoresFromFile( COURSE_SCORES_FILE[c], c );
 }
 

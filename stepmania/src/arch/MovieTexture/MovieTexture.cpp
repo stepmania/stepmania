@@ -30,14 +30,15 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 		f.seekg( 0x70, ios_base::beg );
 		type = "    ";
 		f.read((char *) type.c_str(), 4);
-		for(int i = 0; i < 4; ++i)
+		int i;
+		for( i = 0; i < 4; ++i)
 			if(type[i] < 0x20 || type[i] > 0x7E) type[i] = '?';
 
 		f.seekg( 0xBC, ios_base::beg );
 
 		handler = "    ";
 		f.read((char *) handler.c_str(), 4);
-		for(int i = 0; i < 4; ++i)
+		for(i = 0; i < 4; ++i)
 			if(handler[i] < 0x20 || handler[i] > 0x7E) handler[i] = '?';
 	} catch(ifstream::failure e) {
 		LOG->Warn("error on %s: %s", fn.c_str(), e.what() );

@@ -222,7 +222,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber] = m_iScore;
 }
 
-void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory )
+void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
 

@@ -208,6 +208,14 @@ const int MIN_SKILL = 0;
 const int MAX_SKILL = 10;
 
 
+enum StageResult
+{
+	RESULT_WIN,
+	RESULT_LOSE,
+	RESULT_DRAW
+};
+
+
 //
 // Battle stuff
 //
@@ -221,15 +229,6 @@ enum AttackLevel
 };
 const int NUM_ATTACKS_PER_LEVEL	= 3;
 const int ITEM_NONE = -1;
-
-enum BattleResult
-{
-	RESULT_WIN,
-	RESULT_LOSE,
-	RESULT_DRAW
-};
-
-
 
 
 #define BG_ANIMS_DIR		CString("BGAnimations/")

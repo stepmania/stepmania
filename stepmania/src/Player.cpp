@@ -57,8 +57,10 @@ Player::Player()
 	m_bShowJudgment = true;
 
 	m_pLifeMeter = NULL;
+	m_pCombinedLifeMeter = NULL;
 	m_pScore = NULL;
-	m_pScoreKeeper = NULL;
+	m_pPrimaryScoreKeeper = NULL;
+	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
 	
 	m_iOffsetSample = 0;
@@ -79,15 +81,17 @@ Player::~Player()
 {
 }
 
-void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pScoreKeeper )
+void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper )
 {
 	//LOG->Trace( "Player::Load()", );
 
 	m_PlayerNumber = pn;
 	m_pLifeMeter = pLM;
+	m_pCombinedLifeMeter = pCombinedLM;
 	m_pScore = pScore;
 	m_pInventory = pInventory;
-	m_pScoreKeeper = pScoreKeeper;
+	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
+	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;
 	// m_iRowLastCrossed = -1;
 
@@ -660,8 +664,11 @@ void Player::HandleTapRowScore( unsigned row )
 	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
 		return;
 
-	if(m_pScoreKeeper)
-		m_pScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pInventory);
+	if(m_pPrimaryScoreKeeper)
+		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
+
+	if(m_pSecondaryScoreKeeper)
+		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
@@ -669,6 +676,10 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
 		m_pLifeMeter->OnDancePointsChange();    // update oni life meter
+	}
+	if( m_pCombinedLifeMeter ) {
+		m_pCombinedLifeMeter->ChangeLife( m_PlayerNumber, scoreOfLastTap );
+		m_pCombinedLifeMeter->OnDancePointsChange( m_PlayerNumber );    // update oni life meter
 	}
 }
 
@@ -686,8 +697,10 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
 		return;
 
-	if(m_pScoreKeeper)
-		m_pScoreKeeper->HandleHoldScore(holdScore, tapScore);
+	if(m_pPrimaryScoreKeeper)
+		m_pPrimaryScoreKeeper->HandleHoldScore(holdScore, tapScore);
+	if(m_pSecondaryScoreKeeper)
+		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore);
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
@@ -695,6 +708,10 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );
 		m_pLifeMeter->OnDancePointsChange();
+	}
+	if( m_pCombinedLifeMeter ) {
+		m_pCombinedLifeMeter->ChangeLife( m_PlayerNumber, holdScore, tapScore );
+		m_pCombinedLifeMeter->OnDancePointsChange( m_PlayerNumber );
 	}
 }
 

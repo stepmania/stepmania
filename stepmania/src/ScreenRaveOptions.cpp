@@ -60,7 +60,7 @@ void ScreenRaveOptions::ImportOptions()
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
-			int iHumanSuperIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowth[p], 0.25f, 2.f, 0.f, 7.f );
+			int iHumanSuperIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowthScale[p], 0.25f, 2.f, 0.f, 7.f );
 			CLAMP( iHumanSuperIndex, 0, 9 );
 			m_iSelectedOption[p][RO_HUMAN_SUPER]	= iHumanSuperIndex;
 		}
@@ -71,7 +71,7 @@ void ScreenRaveOptions::ImportOptions()
 			m_iSelectedOption[pnHuman][RO_CPU_SKILL]		= GAMESTATE->m_iCpuSkill[p];
 			CLAMP( m_iSelectedOption[pnHuman][RO_CPU_SKILL], 0, 10 );
 			
-			int iHumanSuperIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowth[pnHuman], 0.25f, 2.f, 0.f, 7.f );
+			int iHumanSuperIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowthScale[pnHuman], 0.25f, 2.f, 0.f, 7.f );
 			CLAMP( iHumanSuperIndex, 0, 9 );
 			m_iSelectedOption[pnHuman][RO_CPU_SUPER]	= iHumanSuperIndex;
 		}
@@ -86,11 +86,11 @@ void ScreenRaveOptions::ExportOptions()
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
-			GAMESTATE->m_fSuperMeterGrowth[p]	= SCALE( m_iSelectedOption[p][RO_HUMAN_SUPER], 0.f, 7.f, 0.25f, 2.f );
+			GAMESTATE->m_fSuperMeterGrowthScale[p]	= SCALE( m_iSelectedOption[p][RO_HUMAN_SUPER], 0.f, 7.f, 0.25f, 2.f );
 
 			PlayerNumber pnCPU = OPPOSITE_PLAYER[p];
 			GAMESTATE->m_iCpuSkill[pnCPU]			= m_iSelectedOption[p][RO_CPU_SKILL];
-			GAMESTATE->m_fSuperMeterGrowth[pnCPU]	= SCALE( m_iSelectedOption[p][RO_CPU_SUPER], 0, 7, 0.25f, 2.f );
+			GAMESTATE->m_fSuperMeterGrowthScale[pnCPU]	= SCALE( m_iSelectedOption[p][RO_CPU_SUPER], 0, 7, 0.25f, 2.f );
 		}
 	}
 }

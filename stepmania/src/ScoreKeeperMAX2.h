@@ -37,7 +37,7 @@ public:
 
 	void OnNextSong( int iSongInCourseIndex, Notes* pNotes );	// before a song plays (called multiple times if course)
 
-	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory );
+	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
 	int TapNoteScoreToDancePoints( TapNoteScore tns );

@@ -32,6 +32,7 @@
 #include "ArrowBackdrop.h"
 class ScoreDisplay;
 class LifeMeter;
+class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
 
@@ -47,7 +48,7 @@ public:
 	virtual void DrawPrimitives();
 	~Player();
 
-	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pScoreKeeper );
+	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
 	void CrossedRow( int iNoteRow );
 	void Step( int col );
 	void RandomiseNotes( int iNoteRow );
@@ -83,8 +84,10 @@ protected:
 	Combo			m_Combo;
 
 	LifeMeter*		m_pLifeMeter;
+	CombinedLifeMeter*		m_pCombinedLifeMeter;
 	ScoreDisplay*	m_pScore;
-	ScoreKeeper*	m_pScoreKeeper;
+	ScoreKeeper*	m_pPrimaryScoreKeeper;
+	ScoreKeeper*	m_pSecondaryScoreKeeper;
 	Inventory*		m_pInventory;
 
 	CString			m_sLastSeenNoteSkin;

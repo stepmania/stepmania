@@ -32,13 +32,14 @@
 #include "ThemeManager.h"
 #include "RageTimer.h"
 #include "ScoreKeeperMAX2.h"
+#include "ScoreKeeperRave.h"
 #include "NoteFieldPositioning.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
 #include "NoteSkinManager.h"
 #include "RageTextureManager.h"
-#include "EnemyHealth.h"
-#include "EnemyFace.h"
+#include "CombinedLifeMeterEnemy.h"
+#include "CombinedLifeMeterTug.h"
 
 //
 // Defines
@@ -96,8 +97,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	{
 		m_pLifeMeter[p] = NULL;
 		m_pScoreDisplay[p] = NULL;
-		m_pScoreKeeper[p] = NULL;
+		m_pPrimaryScoreKeeper[p] = NULL;
+		m_pSecondaryScoreKeeper[p] = NULL;
 	}
+	m_pCombinedLifeMeter = NULL;
 
 
 	// fill in difficulty of CPU players with that of the first human player
@@ -164,7 +167,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
-		m_pScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], (PlayerNumber)p );
+		m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], (PlayerNumber)p );
+
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_RAVE:
+			m_pSecondaryScoreKeeper[p] = new ScoreKeeperRave( (PlayerNumber)p );
+			break;
+		}
 	}
 
 
@@ -243,19 +253,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
 
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
-	{
-		m_pEnemyFace = new EnemyFace;
-		m_pEnemyFace->SetName( "EnemyFace" );
-		this->AddChild( m_pEnemyFace );
-		SET_XY( *m_pEnemyFace );
-
-		m_pEnemyHealth = new EnemyHealth;
-		m_pEnemyHealth->SetName( "EnemyHealth" );
-		this->AddChild( m_pEnemyHealth );
-		SET_XY( *m_pEnemyHealth );
-	}
-
 	this->AddChild(&m_TimingAssist);
 
 	this->AddChild( &m_NextSongIn );
@@ -277,25 +274,51 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	SET_XY( m_sprLifeFrame );
 	this->AddChild( &m_sprLifeFrame );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	switch( GAMESTATE->m_PlayMode )
 	{
-		switch( GAMESTATE->m_SongOptions.m_LifeType )
+	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ENDLESS:
+		for( p=0; p<NUM_PLAYERS; p++ )
 		{
-		case SongOptions::LIFE_BAR:
-			m_pLifeMeter[p] = new LifeMeterBar;
+			switch( GAMESTATE->m_SongOptions.m_LifeType )
+			{
+			case SongOptions::LIFE_BAR:
+				m_pLifeMeter[p] = new LifeMeterBar;
+				break;
+			case SongOptions::LIFE_BATTERY:
+				m_pLifeMeter[p] = new LifeMeterBattery;
+				break;
+			default:
+				ASSERT(0);
+			}
+
+			m_pLifeMeter[p]->Load( (PlayerNumber)p );
+			m_pLifeMeter[p]->SetName( ssprintf("LifeP%d%s",p+1,bExtra?"Extra":"") );
+			SET_XY( *m_pLifeMeter[p] );
+			this->AddChild( m_pLifeMeter[p] );		
+		}
+		break;
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_BATTLE:
+			m_pCombinedLifeMeter = new CombinedLifeMeterEnemy;
 			break;
-		case SongOptions::LIFE_BATTERY:
-			m_pLifeMeter[p] = new LifeMeterBattery;
+		case PLAY_MODE_RAVE:
+			m_pCombinedLifeMeter = new CombinedLifeMeterTug;
 			break;
 		default:
 			ASSERT(0);
 		}
-
-		m_pLifeMeter[p]->Load( (PlayerNumber)p );
-		m_pLifeMeter[p]->SetName( ssprintf("LifeP%d%s",p+1,bExtra?"Extra":"") );
-		SET_XY( *m_pLifeMeter[p] );
-		this->AddChild( m_pLifeMeter[p] );		
+		m_pCombinedLifeMeter->SetName( ssprintf("CombinedLife%s",bExtra?"Extra":"") );
+		SET_XY( *m_pCombinedLifeMeter );
+		this->AddChild( m_pCombinedLifeMeter );		
+		break;
 	}
+
 
 
 	m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
@@ -440,12 +463,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			m_Inventory[p].Load( (PlayerNumber)p );
 			this->AddChild( &m_Inventory[p] );
 		}
-
-		if( GAMESTATE->m_PlayMode==PLAY_MODE_RAVE )
-		{
-			m_RaveHelper[p].Load( (PlayerNumber)p );
-			this->AddChild( &m_RaveHelper[p] );
-		}
 	}
 
 	
@@ -572,11 +589,10 @@ ScreenGameplay::~ScreenGameplay()
 	{
 		SAFE_DELETE( m_pLifeMeter[p] );
 		SAFE_DELETE( m_pScoreDisplay[p] );
-		SAFE_DELETE( m_pScoreKeeper[p] );
+		SAFE_DELETE( m_pPrimaryScoreKeeper[p] );
+		SAFE_DELETE( m_pSecondaryScoreKeeper[p] );
 	}
-
-	delete m_pEnemyHealth;
-	delete m_pEnemyFace;
+	SAFE_DELETE( m_pCombinedLifeMeter );
 
 	m_soundMusic.StopPlaying();
 }
@@ -615,7 +631,9 @@ void ScreenGameplay::LoadNextSong()
 			continue;
 
 		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
-		m_pScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
+		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
+		if( m_pSecondaryScoreKeeper[p] )
+			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
 
 		// Put courses options into effect.
 		GAMESTATE->ApplyModifiers( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex] );
@@ -640,7 +658,7 @@ void ScreenGameplay::LoadNextSong()
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory[p], m_pScoreKeeper[p] );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pScoreDisplay[p], &m_Inventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 		if( m_bDemonstration )
 		{
 			GAMESTATE->m_PlayerController[p] = PC_CPU;
@@ -764,7 +782,8 @@ bool ScreenGameplay::OneIsHot()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( m_pLifeMeter[p]->IsHot() )
+			if( (m_pLifeMeter[p] && m_pLifeMeter[p]->IsHot()) || 
+				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsHot((PlayerNumber)p)) )
 				return true;
 	return false;
 }
@@ -773,7 +792,8 @@ bool ScreenGameplay::AllAreInDanger()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( !m_pLifeMeter[p]->IsInDanger() )
+			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsInDanger()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsInDanger((PlayerNumber)p)) )
 				return false;
 	return true;
 }
@@ -782,7 +802,8 @@ bool ScreenGameplay::AllAreFailing()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( !m_pLifeMeter[p]->IsFailing() )
+			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsFailing()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
 				return false;
 	return true;
 }
@@ -791,7 +812,8 @@ bool ScreenGameplay::AllFailedEarlier()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) )
-			if( !m_pLifeMeter[p]->FailedEarlier() )
+			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->FailedEarlier()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->FailedEarlier((PlayerNumber)p)) )
 				return false;
 	return true;
 }
@@ -940,7 +962,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				// check for individual fail
 				for ( pn=0; pn<NUM_PLAYERS; pn++ )
 				{
-					if ( m_pLifeMeter[pn]->IsFailing() && !GAMESTATE->m_CurStageStats.bFailed[pn] )
+					if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing() && !GAMESTATE->m_CurStageStats.bFailed[pn])  ||
+						(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn) && !GAMESTATE->m_CurStageStats.bFailed[pn]) )
 						GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 				}
 						
@@ -955,7 +978,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				{
 					if( !GAMESTATE->IsPlayerEnabled(pn) )
 						continue;
-					if( !m_pLifeMeter[pn]->IsFailing())
+					if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+						(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
 						continue; /* isn't failing */
 					if( GAMESTATE->m_CurStageStats.bFailed[pn] )
 						continue; /* failed and is already dead */
@@ -994,8 +1018,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( OneIsHot() )			m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
 				else						m_announcerGood.PlayRandom();
-				if( m_pEnemyFace )
-					m_pEnemyFace->SetFace( EnemyFace::taunt );
 				break;
 			case PLAY_MODE_NONSTOP:
 			case PLAY_MODE_ONI:
@@ -1413,7 +1435,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			{
 				for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
-					m_pLifeMeter[p]->OnSongEnded();	// give a little life back between stages
+				{
+					// give a little life back between stages
+					if( m_pLifeMeter[p] )
+						m_pLifeMeter[p]->OnSongEnded();	
+					if( m_pCombinedLifeMeter )
+						m_pCombinedLifeMeter->OnSongEnded();	
+				}
 
 				// HACK:  Temporarily set the song pointer to the next song so that 
 				// this m_NextSongOut will show the next song banner
@@ -1583,7 +1611,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		m_soundBattleTrickLevel1.PlayRandom();
-		m_pEnemyFace->SetFace( EnemyFace::attack );
 		break;
 	case SM_BattleTrickLevel2:
 		if( SECS_SINCE_LAST_COMMENT > 5 )
@@ -1592,7 +1619,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		m_soundBattleTrickLevel2.PlayRandom();
-		m_pEnemyFace->SetFace( EnemyFace::attack );
 		break;
 	case SM_BattleTrickLevel3:
 		if( SECS_SINCE_LAST_COMMENT > 5 )
@@ -1601,7 +1627,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		m_soundBattleTrickLevel3.PlayRandom();
-		m_pEnemyFace->SetFace( EnemyFace::attack );
 		break;
 	
 	case SM_BattleDamageLevel1:
@@ -1610,7 +1635,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_announcerBattleDamageLevel1.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
-		m_pEnemyFace->SetFace( EnemyFace::damage );
 		break;
 	case SM_BattleDamageLevel2:
 		if( SECS_SINCE_LAST_COMMENT > 5 )
@@ -1618,7 +1642,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_announcerBattleDamageLevel2.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
-		m_pEnemyFace->SetFace( EnemyFace::damage );
 		break;
 	case SM_BattleDamageLevel3:
 		if( SECS_SINCE_LAST_COMMENT > 5 )
@@ -1626,7 +1649,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_announcerBattleDamageLevel3.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
-		m_pEnemyFace->SetFace( EnemyFace::damage );
 		break;
 	
 	case SM_SaveChangedBeforeGoingBack:
@@ -1728,9 +1750,12 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_sprStage );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
+	if( m_pCombinedLifeMeter )
+		ON_COMMAND( *m_pCombinedLifeMeter );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		ON_COMMAND( *m_pLifeMeter[p] );
+		if( m_pLifeMeter[p] )
+			ON_COMMAND( *m_pLifeMeter[p] );
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		ON_COMMAND( m_textCourseSongNumber[p] );
@@ -1738,10 +1763,6 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_textPlayerOptions[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 	}
-	if( m_pEnemyFace )
-		ON_COMMAND( *m_pEnemyFace );
-	if( m_pEnemyHealth )
-		ON_COMMAND( *m_pEnemyHealth );
 }
 
 void ScreenGameplay::TweenOffScreen()
@@ -1750,9 +1771,12 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
+	if( m_pCombinedLifeMeter )
+		OFF_COMMAND( *m_pCombinedLifeMeter );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		OFF_COMMAND( *m_pLifeMeter[p] );
+		if( m_pLifeMeter[p] )
+			OFF_COMMAND( *m_pLifeMeter[p] );
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		OFF_COMMAND( m_textCourseSongNumber[p] );
@@ -1760,10 +1784,6 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}
-	if( m_pEnemyFace )
-		OFF_COMMAND( *m_pEnemyFace );
-	if( m_pEnemyHealth )
-		OFF_COMMAND( *m_pEnemyHealth );
 
 	m_textDebug.StopTweening();
 	m_textDebug.BeginTweening( 1/8.f );

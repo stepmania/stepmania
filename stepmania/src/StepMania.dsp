@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -61,7 +61,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                              	cl                                                                                                                                               /Zl                                                                                                                                               /nologo                                                                                                                                               /c                                                                                                                                               verstub.cpp                                                                                                                                               /Fo$(IntDir)\ 
@@ -100,7 +100,11 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
-PreLink_Cmds=disasm\verinc                                                                                                                                              	cl                                                                                                                                               /Zl                                                                                                                                               /nologo                                                                                                                                               /c                                                                                                                                               verstub.cpp                                                                                                                                               /Fo$(IntDir)\ 
+IntDir=.\StepMania___Xbox_Debug___VC6
+TargetDir=.\StepMania___Xbox_Debug___VC6
+TargetName=StepMania
+SOURCE="$(InputPath)"
+PreLink_Cmds=disasm\verinc                                                                                                                                               	cl                                                                                                                                                /Zl                                                                                                                                                /nologo                                                                                                                                                /c                                                                                                                                                verstub.cpp                                                                                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -137,7 +141,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                              	cl                                                                                                                                               /Zl                                                                                                                                               /nologo                                                                                                                                               /c                                                                                                                                               verstub.cpp                                                                                                                                               /Fo$(IntDir)\ 
@@ -1186,23 +1190,6 @@ SOURCE=.\RandomSample.cpp
 # Begin Source File
 
 SOURCE=.\RandomSample.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RaveHelper.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\RaveHelper.h
 # End Source File
 # Begin Source File
 
@@ -2293,6 +2280,40 @@ SOURCE=.\Background.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CombinedLifeMeterEnemy.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\CombinedLifeMeterEnemy.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CombinedLifeMeterTug.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\CombinedLifeMeterTug.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Combo.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -2324,40 +2345,6 @@ SOURCE=.\DancingCharacters.cpp
 # Begin Source File
 
 SOURCE=.\DancingCharacters.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\EnemyFace.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\EnemyFace.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\EnemyHealth.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\EnemyHealth.h
 # End Source File
 # Begin Source File
 
@@ -2494,19 +2481,6 @@ SOURCE=.\Judgment.cpp
 # Begin Source File
 
 SOURCE=.\Judgment.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeter.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -2701,19 +2675,6 @@ SOURCE=.\ScoreDisplayRave.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScoreKeeper.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScoreKeeper.h
 # End Source File
 # Begin Source File
@@ -2732,6 +2693,23 @@ SOURCE=.\ScoreKeeperMAX2.cpp
 # Begin Source File
 
 SOURCE=.\ScoreKeeperMAX2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeperRave.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeperRave.h
 # End Source File
 # Begin Source File
 

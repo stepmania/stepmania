@@ -102,8 +102,15 @@ void GameState::Reset()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_fSuperMeterGrowth[p] = 1;
+		m_fSuperMeterGrowthScale[p] = 1;
 		m_iCpuSkill[p] = 5;
+	}
+
+	m_fTugLifePercentP1 = 0.5f;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_fSuperMeter[p] = 0;
+		m_fSuperMeterGrowthScale[p] = 1;
 	}
 
 	SAFE_DELETE( m_pPosition );
@@ -385,19 +392,14 @@ PlayerNumber GameState::GetWinner()
 	return winner;
 }
 
-BattleResult GameState::GetBattleResult( PlayerNumber pn )
+StageResult GameState::GetStageResult( PlayerNumber pn )
 {
-//	PlayerNumber winner = GetWinner();
-//	if( winner == PLAYER_INVALID )
-//		return RESULT_DRAW;
-//	return (winner==pn) ? RESULT_WIN : RESULT_LOSE;
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
 		return (m_fOpponentHealthPercent==0)?RESULT_WIN:RESULT_LOSE;
 	default:
-		ASSERT(0);
-		return RESULT_WIN;
+		return (GetWinner()==pn)?RESULT_WIN:RESULT_LOSE;
 	}
 }
 

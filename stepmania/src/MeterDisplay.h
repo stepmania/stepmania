@@ -19,24 +19,17 @@
 class MeterDisplay : public Actor
 {
 public:
-	MeterDisplay(
-		CString sSteamPath,
-		CString sFramePath,
-		float fStreamWidth );
-	virtual ~MeterDisplay();
+	MeterDisplay();
+	void Load( CString sSteamPath, float fStreamWidth );
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();
 
 	void SetPercent( float fPercent );
 
-protected:
 
 	float	m_fStreamWidth;
 	float	m_fPercent;
-	float	m_fTrailingPercent;
-	Sprite m_sprStream;
-	Quad	m_quad;
-	Sprite m_sprFrame;
+	Sprite  m_sprStream;
 };
 
 #endif

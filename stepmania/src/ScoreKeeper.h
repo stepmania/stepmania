@@ -40,10 +40,11 @@ protected:
 public:
 	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
+	virtual void Update( float fDelta ) { }
 
 	virtual void OnNextSong( int iSongInCourseIndex, Notes* pNotes ) = 0;	// before a song plays (called multiple times if course)
 
-	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory ) = 0;
+	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow ) = 0;
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore ) = 0;
 
 	virtual int TapNoteScoreToDancePoints( TapNoteScore tns ) = 0;

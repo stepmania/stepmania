@@ -269,7 +269,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "default";	// change noteskin back to default before loading player
 
-	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL );
+	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
@@ -1465,7 +1465,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				 * where we're starting. */
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;
 
-				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL, NULL );
+				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL );
 				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
 				m_rectRecordBack.StopTweening();

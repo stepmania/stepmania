@@ -25,14 +25,10 @@
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
 #include "Inventory.h"
-#include "RaveHelper.h"
 #include "ActiveItemList.h"
 //#include "BeginnerHelper.h"	// uncomment once it's checked in
 #include "LyricDisplay.h"
 #include "TimingAssist.h"
-class EnemyHealth;
-class EnemyFace;
-
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -111,6 +107,7 @@ protected:
 
 	Sprite				m_sprLifeFrame;
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
+	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprStage;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 
@@ -118,7 +115,8 @@ protected:
 
 	Sprite				m_sprScoreFrame;
 	ScoreDisplay*		m_pScoreDisplay[NUM_PLAYERS];
-	ScoreKeeper*		m_pScoreKeeper[NUM_PLAYERS];
+	ScoreKeeper*		m_pPrimaryScoreKeeper[NUM_PLAYERS];
+	ScoreKeeper*		m_pSecondaryScoreKeeper[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
 
@@ -148,12 +146,7 @@ protected:
 	// used in PLAY_MODE_BATTLE
 	Inventory			m_Inventory[NUM_PLAYERS];
 	ActiveItemList		m_ActiveItemList[NUM_PLAYERS];
-	EnemyHealth*		m_pEnemyHealth;
-	EnemyFace*			m_pEnemyFace;
 	
-	// used in PLAY_MODE_RAVE
-	RaveHelper			m_RaveHelper[NUM_PLAYERS];
-
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
 	BGAnimation			m_bgaBH;
