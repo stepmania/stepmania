@@ -119,6 +119,7 @@ void MenuTimer::Update( float fDeltaTime )
 
 void MenuTimer::StopTimer()
 {
+	SetTimer( 0 );
 	m_bTimerStopped = true;
 }
 
