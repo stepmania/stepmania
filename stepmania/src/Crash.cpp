@@ -34,6 +34,9 @@
 // #include "RageUtil.h" // for GotoURL
 HINSTANCE GotoURL(const char *url);
 
+/* in StepMania.cpp */
+void CleanupForRestart();
+
 ///////////////////////////////////////////////////////////////////////////
 
 #define CODE_WINDOW (256)
@@ -1445,8 +1448,15 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				return TRUE;
 			case IDC_BUTTON_RESTART:
 				{
+					/* Clear the startup mutex, since we're starting a new
+					 * instance before ending ourself. */
+					CleanupForRestart();
+
 					char cwd[MAX_PATH];
 					SpliceProgramPath(cwd, MAX_PATH, "");
+
+					TCHAR szFullAppPath[MAX_PATH];
+					GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
 
 					// Launch StepMania
 					PROCESS_INFORMATION pi;
@@ -1455,7 +1465,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 					CreateProcess(
 						NULL,		// pointer to name of executable module
-						"stepmania.exe",		// pointer to command line string
+						szFullAppPath,		// pointer to command line string
 						NULL,  // process security attributes
 						NULL,   // thread security attributes
 						false,  // handle inheritance flag

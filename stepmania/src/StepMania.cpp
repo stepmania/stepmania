@@ -378,6 +378,11 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 	return 0L;
 }
 
+void CleanupForRestart()
+{
+	CloseHandle( g_hMutex );
+	g_hMutex = NULL;
+}
 
 void CreateLoadingWindow()
 {
@@ -502,6 +507,13 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 			break;
 		case IDC_BUTTON_RESTART:
 			{
+				/* Clear the startup mutex, since we're starting a new
+					* instance before ending ourself. */
+				CleanupForRestart();
+
+				TCHAR szFullAppPath[MAX_PATH];
+				GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+
 				// Launch StepMania
 				PROCESS_INFORMATION pi;
 				STARTUPINFO	si;
@@ -509,7 +521,7 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 				CreateProcess(
 					NULL,		// pointer to name of executable module
-					"stepmania.exe",		// pointer to command line string
+					szFullAppPath,		// pointer to command line string
 					NULL,  // process security attributes
 					NULL,   // thread security attributes
 					false,  // handle inheritance flag
