@@ -663,7 +663,10 @@ BrightnessOverlay::BrightnessOverlay()
 void BrightnessOverlay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-	SetBackgrounds();
+	/* If we're actually playing, then we're past fades, etc; update the background
+	 * brightness to follow Cover. */
+	if( GAMESTATE->m_bPastHereWeGo )
+		SetBackgrounds();
 }
 
 void BrightnessOverlay::SetBackgrounds()
@@ -688,18 +691,17 @@ void BrightnessOverlay::SetBackgrounds()
 	m_quadBGBrightnessFade.SetDiffuseRightEdge( RightColor );
 }
 
-void BrightnessOverlay::FadeIn()
+void BrightnessOverlay::Set( float fBrightness )
 {
 	FOREACH_PlayerNumber(pn)
-		m_quadBGBrightness[pn].BeginTweening( 0.5f );
-	SetBackgrounds();
+		m_quadBGBrightness[pn].SetDiffuse( RageColor(0,0,0,1-fBrightness) );
+	m_quadBGBrightnessFade.SetDiffuse( RageColor(0,0,0,1-fBrightness) );
 }
 
-void BrightnessOverlay::FadeOut()
+void BrightnessOverlay::FadeToActualBrightness()
 {
 	FOREACH_PlayerNumber(pn)
-	{
 		m_quadBGBrightness[pn].BeginTweening( 0.5f );
-		m_quadBGBrightness[pn].SetDiffuse( RageColor(0,0,0,1-0.5f) );
-	}
+	m_quadBGBrightnessFade.BeginTweening( 0.5f );
+	SetBackgrounds();
 }

@@ -60,6 +60,9 @@
 #define EVAL_ON_FAIL							THEME->GetMetricB("ScreenGameplay","ShowEvaluationOnFail")
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB("ScreenGameplay","ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH				THEME->GetMetricF("ScreenGameplay","SongPositionMeterWidth")
+/* XXX: This is ugly; most people don't need to override this per-mode.  This will
+ * go away eventually, once metrics can redirect to Lua calls. */
+#define INITIAL_BACKGROUND_BRIGHTNESS( play_mode )	THEME->GetMetricF("ScreenGameplay","InitialBackgroundBrightness"+Capitalize(PlayModeToString(play_mode)))
 
 static CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static CachedThemeMetricF TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -1015,6 +1018,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		/* BeginnerHelper disabled/failed to load. */
 		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+		m_Background.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS(GAMESTATE->m_PlayMode) );
 	}
 
 	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
@@ -1902,7 +1906,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PlayReady:
-		m_Background.FadeIn();
+		m_Background.FadeToActualBrightness();
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay ready") );
 		m_Ready.StartTransitioning( SM_PlayGo );
 		break;

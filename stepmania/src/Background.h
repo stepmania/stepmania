@@ -31,8 +31,8 @@ public:
 	BrightnessOverlay();
 	void Update( float fDeltaTime );
 
-	void FadeIn();
-	void FadeOut();
+	void FadeToActualBrightness();
+	void Set( float fBrightness );
 };
 
 class Background : public ActorFrame
@@ -47,8 +47,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void FadeIn() { m_Brightness.FadeIn(); }
-	void FadeOut() { m_Brightness.FadeOut(); }
+	void FadeToActualBrightness() { m_Brightness.FadeToActualBrightness(); }
+	void SetBrightness( float fBrightness ) { m_Brightness.Set(fBrightness); } /* overrides pref and Cover */
 	
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
@@ -62,7 +62,6 @@ protected:
 	bool IsDangerAllVisible();
 	bool IsDeadPlayerVisible( PlayerNumber pn );
 	void UpdateCurBGChange( float fCurrentTime );
-	void SetBackgrounds();
 	
 	DancingCharacters*	m_pDancingCharacters;
 
