@@ -468,6 +468,9 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType sele
 	if( m_Cancel.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
 		return;
 
+	if( !GAMESTATE->IsHumanPlayer(MenuI.player) )
+		return;
+
 	if( selectType == IET_RELEASE )
 	{
 		switch( MenuI.button )
