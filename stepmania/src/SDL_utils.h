@@ -46,5 +46,9 @@ bool SDL_GetEvent(SDL_Event &event, int mask);
 #define TRAIT_WHITE_ONLY		0x0004 /* 8alphaonly */
 int FindSurfaceTraits(const SDL_Surface *img);
 
+
+void mySDL_WM_SetIcon( CString sIconFile );
+
+
 #endif
 
