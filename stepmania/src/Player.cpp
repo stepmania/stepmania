@@ -356,7 +356,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		float fLife = m_NoteData.GetHoldNoteLife(hn);
 
 		// If the song beat is in the range of this hold:
-		if( hn.iStartRow <= iSongRow && iSongRow <= hn.iEndRow )
+		if( hn.RowIsInRange(iSongRow) )
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 			
