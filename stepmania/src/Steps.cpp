@@ -339,10 +339,6 @@ bool Steps::MemCardData::HighScore::operator>=( const Steps::MemCardData::HighSc
 void Steps::MemCardData::AddHighScore( Steps::MemCardData::HighScore hs, int &iIndexOut )
 {
 	int i;
-	for( i=0; i<(int)vHighScores.size(); i++ )
-	{
-		ASSERT( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[0] );
-	}
 
 	for( i=0; i<(int)vHighScores.size(); i++ )
 	{
