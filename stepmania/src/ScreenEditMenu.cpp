@@ -27,6 +27,11 @@ ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName 
 	/* Enable all players. */
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
+}
+
+void ScreenEditMenu::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
