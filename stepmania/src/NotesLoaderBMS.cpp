@@ -489,7 +489,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 
 	NoteData noteData2;
 	noteData2.SetNumTracks( iNumNewTracks );
-	noteData2.LoadTransformed( ndNotes, iNumNewTracks, iTransformNewToOld.begin() );
+	noteData2.LoadTransformed( ndNotes, iNumNewTracks, &*iTransformNewToOld.begin() );
 
 	out.SetNoteData( noteData2 );
 
