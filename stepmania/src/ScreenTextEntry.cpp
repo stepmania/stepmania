@@ -10,19 +10,28 @@
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
 
-const int SPECIAL_KEY_WIDTH = 3;	// special keys are 3x as wide as normal keys
 
+static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
+{
+	{"A","B","C","D","E","F","G","H","I","J","K","L","M"},
+	{"N","O","P","Q","R","S","T","U","V","W","X","Y","Z"},
+	{"a","b","c","d","e","f","g","h","i","j","k","l","m"},
+	{"n","o","p","q","r","s","t","u","v","w","x","y","z"},
+	{"0","1","2","3","4","5","6","7","8","9"},
+	{"!","@","#","$","%","^","&","(",")","[","]","{","}"},
+	{"+","-","=",",",".","_"},
+	{"","","Space","","","Backsp","","","Cancel","","","Done",""},
+};
 
-const int MAX_KEYS_PER_ROW = 13;
 
 float GetButtonX( int x )
 {
-	return roundf( SCALE( x, 0, MAX_KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
+	return roundf( SCALE( x, 0, KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
 }
 
 float GetButtonY( KeyboardRow r )
 {
-	return roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y, SCREEN_BOTTOM-100 ) );
+	return roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y-30, SCREEN_BOTTOM-80 ) );
 }
 
 CString ScreenTextEntry::s_sLastAnswer = "";
@@ -88,55 +97,15 @@ void ScreenTextEntry::Init()
 	m_iFocusY = (KeyboardRow)0;
 
 
-	// Fill in m_Keys
-	{
-		static const char* g_szKeys[NUM_KEYBOARD_CASES][NUM_KEYBOARD_ROWS][MAX_KEYS_PER_ROW+1] =
-		{
-			{
-				{"`","1","2","3","4","5","6","7","8","9","0","-","=",NULL},
-				{"q","w","e","r","t","y","u","i","o","p","[","]","\\",NULL},
-				{"a","s","d","f","g","h","j","k","l",";","\"",NULL},
-				{"z","x","c","v","b","n","m",",",".","/",NULL},
-				{"Caps","Space","Backsp","Done",NULL}
-			},
-			{
-				{"~","!","@","#","$","%","^","&","*","(",")","_","+",NULL},
-				{"Q","W","E","R","T","Y","U","I","O","P","{","}","|",NULL},
-				{"A","S","D","F","G","H","J","K","L",":","'",NULL},
-				{"Z","X","C","V","B","N","M","<",">","?",NULL},
-				{"CAPS","Space","Backsp","Done",NULL}
-			}
-		};
-		FOREACH_KeyboardCase( k )
-		{
-			FOREACH_KeyboardRow( r )
-			{
-				for( int x=0; true; x++ )
-				{
-					const char *c=g_szKeys[LOWERCASE][r][x];
-					if( c == NULL )
-						break;
-					m_Keys[k][r].push_back( c );
-					
-				}
-
-				ASSERT_M( m_Keys[k][r].size() == m_Keys[0][r].size(), "uppercase and lowercase sizes don't match" );
-			}
-		}
-	}
-
 	// Init keyboard
 	FOREACH_KeyboardRow( r )
 	{
-		vector<BitmapText*>	&v = m_textKeyboardChars[r];
-		const CStringArray &vKeys = m_Keys[LOWERCASE][r];
-		for( unsigned x=0; x<vKeys.size(); x++ )
+		for( unsigned x=0; x<KEYS_PER_ROW; x++ )
 		{
-			BitmapText *p = new BitmapText;
-			p->LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
-			p->SetXY( GetButtonX(x), GetButtonY(r) );
-			v.push_back( p );
-			this->AddChild( p );
+			BitmapText &bt = m_textKeyboardChars[r][x];
+			bt.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
+			bt.SetXY( GetButtonX(x), GetButtonY(r) );
+			this->AddChild( &bt );
 		}
 	}
 
@@ -158,24 +127,17 @@ void ScreenTextEntry::Init()
 
 ScreenTextEntry::~ScreenTextEntry()
 {
-	for( int i=0; i<NUM_KEYBOARD_ROWS; i++ )
-	{
-		FOREACH( BitmapText*, m_textKeyboardChars[i], p )
-			SAFE_DELETE(*p);
-		m_textKeyboardChars[i].clear();
-	}
 }
 
 void ScreenTextEntry::UpdateKeyboardText()
 {
 	FOREACH_KeyboardRow( r )
 	{
-		vector<BitmapText*>	&v = m_textKeyboardChars[r];
-		const CStringArray &vKeys = m_Keys[LOWERCASE][r];
-		for( unsigned x=0; x<vKeys.size(); x++ )
+		for( unsigned x=0; x<KEYS_PER_ROW; x++ )
 		{
-			BitmapText *p = v[x];
-			p->SetText( vKeys[x] );
+			const char *s = g_szKeys[r][x];
+			BitmapText &bt = m_textKeyboardChars[r][x];
+			bt.SetText( s );
 		}
 	}
 }
@@ -196,8 +158,8 @@ void ScreenTextEntry::UpdateAnswerText()
 
 void ScreenTextEntry::PositionCursor()
 {
-	BitmapText *p = m_textKeyboardChars[m_iFocusY][m_iFocusX];
-	m_sprCursor->SetXY( p->GetX(), p->GetY() );
+	BitmapText &bt = m_textKeyboardChars[m_iFocusY][m_iFocusX];
+	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
 }
 
 void ScreenTextEntry::Update( float fDeltaTime )
@@ -214,76 +176,6 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
-
-	if( type != IET_FIRST_PRESS )
-		return;
-
-	if( !MenuI.IsValid() )
-	{
-		switch( DeviceI.button )
-		{
-		case KEY_ESC:
-			m_bCancelled = true;
-			End();
-			break;
-		case KEY_ENTER:
-		case KEY_KP_ENTER:
-			End();
-			break;
-		case KEY_BACK:
-			if(!m_sAnswer.empty())
-				m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
-			UpdateAnswerText();
-			break;
-		default:
-			char c = DeviceI.ToChar();
-
-			bool bHoldingShift = 
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
-
-			// International keyboards often have other keys mapped to shifted keys, and always 
-			// using a US layout is a bit gimped.  This is better than nothing though.
-			if( bHoldingShift )
-			{
-				c = (char)toupper(c);
-
-				switch( c )
-				{
-				case '`':	c='~';	break;
-				case '1':	c='!';	break;
-				case '2':	c='@';	break;
-				case '3':	c='#';	break;
-				case '4':	c='$';	break;
-				case '5':	c='%';	break;
-				case '6':	c='^';	break;
-				case '7':	c='&';	break;
-				case '8':	c='*';	break;
-				case '9':	c='(';	break;
-				case '0':	c=')';	break;
-				case '-':	c='_';	break;
-				case '=':	c='+';	break;
-				case '[':	c='{';	break;
-				case ']':	c='}';	break;
-				case '\\':	c='|';	break;
-				case ';':	c=':';	break;
-				case '\'':	c='"';	break;
-				case ',':	c='<';	break;
-				case '.':	c='>';	break;
-				case '/':	c='?';	break;
-				}
-			}
-		
-			if( c >= ' ' )
-			{
-				m_sAnswer += c;
-				UpdateAnswerText();
-			}
-			break;
-		}
-
-		return;	// don't let Screen::Input handle
-	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
@@ -306,19 +198,64 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenTextEntry::MoveX( int iDir )
 {
-	m_iFocusX += iDir;
-	wrap( m_iFocusX, m_Keys[LOWERCASE][m_iFocusY].size() );
+	CString sKey;
+	do
+	{
+		m_iFocusX += iDir;
+		wrap( m_iFocusX, KEYS_PER_ROW );
+
+		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+	}
+	while( sKey == "" );
 
 	PositionCursor();
 }
 
 void ScreenTextEntry::MoveY( int iDir )
 {
-	m_iFocusY = (KeyboardRow)(m_iFocusY + iDir);
-	wrap( (int&)m_iFocusY, NUM_KEYBOARD_ROWS );
-	CLAMP( m_iFocusX, 0, (int)m_Keys[LOWERCASE][m_iFocusY].size()-1 );
+	CString sKey;
+	do
+	{
+		m_iFocusY = (KeyboardRow)(m_iFocusY + iDir);
+		wrap( (int&)m_iFocusY, NUM_KEYBOARD_ROWS );
+
+		// HACK: Round to nearest option so that we always stop 
+		// on KEYBOARD_ROW_SPECIAL.
+		if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
+		{
+			for( int i=0; true; i++ )
+			{
+				sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+				if( sKey != "" )
+					break;
+
+				// UGLY: Probe one space to the left before looking to the right
+				m_iFocusX += (i==0) ? -1 : +1;
+				wrap( m_iFocusX, KEYS_PER_ROW );
+			}
+		}
+
+		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+	}
+	while( sKey == "" );
 
 	PositionCursor();
+}
+
+void ScreenTextEntry::AppendToAnswer( CString s )
+{
+	m_sAnswer += CStringToWstring( s );
+	m_sndType.Play();
+	UpdateAnswerText();
+
+	UpdateKeyboardText();
+}
+
+void ScreenTextEntry::BackspaceInAnswer()
+{
+	m_sAnswer.erase( m_sAnswer.end()-1 );
+	m_sndBackspace.Play();
+	UpdateAnswerText();
 }
 
 void ScreenTextEntry::MenuStart( PlayerNumber pn )
@@ -327,20 +264,17 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	{
 		switch( m_iFocusX )
 		{
-		case CAPS:
-			break;
 		case SPACEBAR:
-			m_sAnswer += CStringToWstring( " " );
-			m_sndType.Play();
-			UpdateAnswerText();
+			AppendToAnswer( " " );
 			break;
 		case BACKSPACE:
-			m_sAnswer.erase( m_sAnswer.end()-1 );
-			m_sndBackspace.Play();
-			UpdateAnswerText();
+			BackspaceInAnswer();
+			break;
+		case CANCEL:
+			End( true );
 			break;
 		case DONE:
-			End();
+			End( false );
 			break;
 		default:
 			break;
@@ -348,13 +282,11 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	}
 	else
 	{
-		m_sAnswer += CStringToWstring( m_Keys[LOWERCASE][m_iFocusY][m_iFocusX] );
-		m_sndType.Play();
-		UpdateAnswerText();
+		AppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
 	}
 }
 
-void ScreenTextEntry::End()
+void ScreenTextEntry::End( bool bCancelled )
 {
 	m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
 
@@ -367,11 +299,10 @@ void ScreenTextEntry::End()
 
 	SCREENMAN->PlayStartSound();
 
-	if( m_bCancelled )
+	if( bCancelled )
 	{
 		if( m_pOnCancel ) 
 			m_pOnCancel();
-
 	} 
 	else 
 	{
@@ -389,8 +320,7 @@ void ScreenTextEntry::End()
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )
 {
-	m_bCancelled = true;
-	End();
+	End( true );
 }
 
 /*

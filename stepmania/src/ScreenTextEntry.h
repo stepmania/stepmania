@@ -13,25 +13,16 @@
 
 enum KeyboardRow
 {
-	KEYBOARD_ROW_1,
-	KEYBOARD_ROW_2,
-	KEYBOARD_ROW_3,
-	KEYBOARD_ROW_4,
+	R1, R2, R3, R4, R5, R6, R7,
 	KEYBOARD_ROW_SPECIAL,
 	NUM_KEYBOARD_ROWS
 };
 #define FOREACH_KeyboardRow( i ) FOREACH_ENUM( KeyboardRow, NUM_KEYBOARD_ROWS, i )
+const int KEYS_PER_ROW = 13;
 enum KeyboardRowSpecialKey
 {
-	CAPS, SPACEBAR, BACKSPACE, DONE
+	SPACEBAR=2, BACKSPACE=5, CANCEL=8, DONE=11
 };
-enum KeyboardCase
-{
-	LOWERCASE,
-	UPPERCASE,
-	NUM_KEYBOARD_CASES
-};
-#define FOREACH_KeyboardCase( i ) FOREACH_ENUM( KeyboardCase, NUM_KEYBOARD_CASES, i )
 
 class ScreenTextEntry : public Screen
 {
@@ -52,7 +43,10 @@ protected:
 	void MoveX( int iDir );
 	void MoveY( int iDir );
 	
-	void End();
+	void AppendToAnswer( CString s );
+	void BackspaceInAnswer();
+
+	void End( bool bCancelled );
 
 	virtual void MenuLeft( PlayerNumber pn )	{ MoveX(-1); }
 	virtual void MenuRight( PlayerNumber pn )	{ MoveX(+1); }
@@ -79,11 +73,10 @@ protected:
 
 	int				m_iFocusX;
 	KeyboardRow		m_iFocusY;
-
+	
 	void PositionCursor();
 
-	vector<CString>			m_Keys[NUM_KEYBOARD_CASES][NUM_KEYBOARD_ROWS];
-	vector<BitmapText*>		m_textKeyboardChars[NUM_KEYBOARD_ROWS];
+	BitmapText		m_textKeyboardChars[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
 
 	Transition		m_In;
 	Transition		m_Out;
