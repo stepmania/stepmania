@@ -65,7 +65,8 @@ private:
 	void ChangeDisplayedFeat();
 	void SelectChar( PlayerNumber pn, int c );
 
-	int				m_NumFeats[NUM_PLAYERS], m_CurFeat[NUM_PLAYERS];
+	int				m_NumFeats[NUM_PLAYERS];
+	int				m_CurFeat[NUM_PLAYERS];
 
 	BGAnimation		m_Background;
 	MenuElements	m_Menu;

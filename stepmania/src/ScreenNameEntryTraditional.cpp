@@ -138,8 +138,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 {
 	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );
 
-	ZERO( m_NumFeats[p] );
-	ZERO( m_CurFeat[p] );
+	ZERO( m_NumFeats );
+	ZERO( m_CurFeat );
 
 	if( PREFSMAN->m_bScreenTestMode )
 	{
