@@ -449,18 +449,6 @@ void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn 
 			score = min( score, tns );
 	}
 
-	// remove this row from the NoteField
-//	bool bHoldNoteOnThisBeat = false;
-//	for( int j=0; j<GetNumHoldNotes(); j++ )
-//	{
-//		if( GetHoldNote(j).m_iStartIndex == iIndexThatWasSteppedOn )
-//		{
-//			bHoldNoteOnThisBeat = true;
-//			break;
-//		}
-//	}
-
-
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */
 	switch ( score )
