@@ -404,6 +404,14 @@ SOURCE=.\dxutil.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\getdxver.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\getdxver.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\resource.h
 # End Source File
 # Begin Source File

@@ -67,7 +67,7 @@ void Update();			// Update the game logic
 void Render();			// Render a frame
 void ShowFrame();		// Display the contents of the back buffer to the screen
 void SetFullscreen( BOOL bFullscreen );	// Switch between fullscreen and windowed modes.
-
+void TestForDirectX();	// check for DirectX 8
 
 // Functions that work with game objects
 HRESULT		CreateObjects( HWND hWnd );	// allocate and initialize game objects
@@ -122,6 +122,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 				);
  	if( NULL == g_hWndMain )
 		exit(1);
+
+	
+	TestForDirectX();
 
 
 	// Load keyboard accelerators
@@ -478,3 +481,29 @@ void SetFullscreen( BOOL bFullscreen )
 								   SCREEN_HEIGHT );
 	RestoreObjects();
 }
+
+
+//-----------------------------------------------------------------------------
+// Name: TestForDirectX()
+// Desc:	check for DirectX 8
+//-----------------------------------------------------------------------------
+#include "getdxver.h"
+
+void TestForDirectX()
+{
+	if( GetDXVersion() < 0x0800 )
+	{
+		int iRetVal = MessageBox( NULL, "We're sorry, but you have an old version of the Microsoft DirectX drivers.\n\
+This application requires DirectX version 8.1 or higher.\n\n\
+Would you like to visit the Microsoft DirectX site to download the latest version?", "Sorry", MB_YESNO|MB_ICONSTOP );
+		if( iRetVal == IDYES )
+		{
+			GotoURL("http://www.microsoft.com/directx/homeuser/downloads/default.asp");
+		}
+
+		exit(1);
+	}
+
+}
+
+

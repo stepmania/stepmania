@@ -111,6 +111,8 @@ VOID DisplayErrorAndDie( CString sError );
 //#endif
 
 
+LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
+HINSTANCE GotoURL(LPCTSTR url);
 
 
 #endif
