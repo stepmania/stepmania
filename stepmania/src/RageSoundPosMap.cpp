@@ -2,6 +2,7 @@
 #include "RageSoundPosMap.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageTimer.h"
 
 /* The number of frames we should keep pos_map data for.  This being too high
  * is mostly harmless; the data is small. */
@@ -108,9 +109,14 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 #else
 #define LI "%lli"
 #endif
-	LOG->Trace( "Approximate sound time: driver frame " LI ", m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
-		frame, m_Queue[closest_block].frameno, m_Queue[closest_block].frameno+m_Queue[closest_block].frames,
-		closest_position_dist, closest_position );
+	static RageTimer last;
+	if( last.PeekDeltaTime() >= 1.0f )
+	{
+		last.GetDeltaTime();
+		LOG->Trace( "Approximate sound time: driver frame " LI ", m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
+			frame, m_Queue[closest_block].frameno, m_Queue[closest_block].frameno+m_Queue[closest_block].frames,
+			closest_position_dist, closest_position );
+	}
 
 	if( approximate )
 		*approximate = true;
