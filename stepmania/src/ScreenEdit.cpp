@@ -373,7 +373,7 @@ bool ScreenEdit::PlayTicks() const
 	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
 
 	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
-		bAnyoneHasANote |= m_Player.IsThereATapAtRow( r );
+		bAnyoneHasANote |= m_Player.IsThereATapOrHoldHeadAtRow( r );
 
 	iRowLastCrossed = iRowNow;
 
