@@ -336,8 +336,11 @@ bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 	{
 		if( p!=pn && m_CurrentPage==PAGE_1 )
 			continue;	// skip
-		if( m_iChoiceOnPage[p] == iNewChoice )
-			continue;	// skip
+		/* Don't do this.  If we were on page one, with P1 on choice 0, and P2 moves
+		 * to the second page, then we're setting choice 0 on the second page; 
+		 * m_iChoiceOnPage[p] is going from 0 to 0 (all that's changing is the page). */
+//		if( m_iChoiceOnPage[p] == iNewChoice )
+//			continue;	// skip
 
 		bAnyChanged = true;
 		m_iChoiceOnPage[p] = iNewChoice;
