@@ -10,6 +10,7 @@
 
 #include "stdafx.h"
 #include "IniFile.h"
+#include "RageUtil.h"
 
 
 /////////////////////////////////////////////////////////////////////
@@ -101,6 +102,8 @@ void IniFile::WriteFile()
 
 		CMapStringToString &map = keys[keynum];
 
+		CStringArray as;
+
 		// for each value_name/value pair
 		for( POSITION pos = map.GetStartPosition(); pos != NULL; )
 		{
@@ -109,8 +112,12 @@ void IniFile::WriteFile()
 			map.GetNextAssoc( pos, value_name, value );
 
 			sTemp.Format( "%s=%s\n", value_name, value );
-			file.WriteString( sTemp );
+			as.Add( sTemp );
 		}
+
+		SortCStringArray( as );
+		for( int i=0; i<as.GetSize(); i++ )
+			file.WriteString( as[i] );
 		file.WriteString( "\n" );
 	}
 

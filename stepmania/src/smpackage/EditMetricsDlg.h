@@ -50,6 +50,8 @@ protected:
 	afx_msg void OnButtonSave();
 	afx_msg void OnChangeEditValue();
 	afx_msg void OnButtonHelp();
+	afx_msg void OnDblclkTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnButtonClose();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

@@ -51,6 +51,8 @@ BEGIN_MESSAGE_MAP(EditMetricsDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, OnButtonSave)
 	ON_EN_CHANGE(IDC_EDIT_VALUE, OnChangeEditValue)
 	ON_BN_CLICKED(IDC_BUTTON_HELP, OnButtonHelp)
+	ON_NOTIFY(NM_DBLCLK, IDC_TREE, OnDblclkTree)
+	ON_BN_CLICKED(IDC_BUTTON_CLOSE, OnButtonClose)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -256,4 +258,19 @@ void EditMetricsDlg::OnButtonHelp()
 		"Not Bold = A metric that is not overridden by the current theme (exists in the base theme but not in the current theme)\n\n"
 		"Red = A metric that exists in the current theme but not in the base theme (check to see if the metric name is misspelled)"
 		 );	
+}
+
+void EditMetricsDlg::OnDblclkTree(NMHDR* pNMHDR, LRESULT* pResult) 
+{
+	// TODO: Add your control notification handler code here
+	
+	OnButtonOverride();
+
+	*pResult = 0;
+}
+
+void EditMetricsDlg::OnButtonClose() 
+{
+	// TODO: Add your control notification handler code here
+	EndDialog( IDOK );	
 }
