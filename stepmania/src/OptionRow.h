@@ -12,7 +12,7 @@ enum SelectType { SELECT_ONE, SELECT_MULTIPLE, SELECT_NONE, NUM_SELECT_TYPES, SE
 const CString& SelectTypeToString( SelectType pm );
 SelectType StringToSelectType( const CString& s );
 
-enum LayoutType { SHOW_ALL_IN_LINE, SHOW_ONE_IN_LINE, NUM_LAYOUT_TYPES, LAYOUT_INVALID };
+enum LayoutType { LAYOUT_SHOW_ALL_IN_ROW, LAYOUT_SHOW_ONE_IN_ROW, NUM_LAYOUT_TYPES, LAYOUT_INVALID };
 const CString& LayoutTypeToString( LayoutType pm );
 LayoutType StringToLayoutType( const CString& s );
 
@@ -24,10 +24,10 @@ struct OptionRowDefinition
 	enum LayoutType layoutType;
 	vector<CString> choices;
 
-	OptionRowDefinition(): name(""), bOneChoiceForAllPlayers(false), selectType(SELECT_ONE), layoutType(SHOW_ALL_IN_LINE) { }
+	OptionRowDefinition(): name(""), bOneChoiceForAllPlayers(false), selectType(SELECT_ONE), layoutType(LAYOUT_SHOW_ALL_IN_ROW) { }
 
 	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL ) :
-		name(n), bOneChoiceForAllPlayers(b), selectType(SELECT_ONE), layoutType(SHOW_ALL_IN_LINE)
+		name(n), bOneChoiceForAllPlayers(b), selectType(SELECT_ONE), layoutType(LAYOUT_SHOW_ALL_IN_ROW)
 	{
 #define PUSH( c )	if(c) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);

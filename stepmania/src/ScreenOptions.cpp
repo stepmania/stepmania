@@ -283,7 +283,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 
 				if( fX > ITEMS_END_X ) 
 				{
-					row.m_RowDef.layoutType = SHOW_ONE_IN_LINE;
+					row.m_RowDef.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 					break;
 				}
 			}
@@ -291,7 +291,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 
 		switch( row.m_RowDef.layoutType )
 		{
-		case SHOW_ONE_IN_LINE:
+		case LAYOUT_SHOW_ONE_IN_ROW:
 			// init text
 			FOREACH_HumanPlayer( p )
 			{
@@ -301,7 +301,10 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 				const int iChoiceInRowWithFocus = row.m_iChoiceInRowWithFocus[p];
 
 				bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
-				bt->SetText( optline.choices[iChoiceInRowWithFocus] );
+				CString sText = optline.choices[iChoiceInRowWithFocus];
+				if( CAPITALIZE_ALL_OPTION_NAMES )
+					sText.MakeUpper();
+				bt->SetText( sText );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
 
@@ -329,7 +332,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 			}
 			break;
 
-		case SHOW_ALL_IN_LINE:
+		case LAYOUT_SHOW_ALL_IN_ROW:
 			{
 				float fX = ITEMS_START_X;
 				for( unsigned c=0; c<optline.choices.size(); c++ )
@@ -572,13 +575,13 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	int index = -1;
 	switch( row.m_RowDef.layoutType )
 	{
-	case SHOW_ONE_IN_LINE:
+	case LAYOUT_SHOW_ONE_IN_ROW:
 		index = bOneChoice ? 0 : pn;
 		/* If only P2 is enabled, his selections will be in index 0. */
 		if( row.m_textItems.size() == 1 )
 			index = 0;
 		break;
-	case SHOW_ALL_IN_LINE:
+	case LAYOUT_SHOW_ALL_IN_ROW:
 		index = iChoiceOnRow;
 		break;
 	default:
@@ -648,13 +651,13 @@ void ScreenOptions::PositionUnderlines()
 		{
 			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
 
-			const int iNumUnderlines = (row.m_RowDef.layoutType == SHOW_ONE_IN_LINE) ? 1 : vpUnderlines.size();
+			const int iNumUnderlines = (row.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? 1 : vpUnderlines.size();
 			
 			for( int i=0; i<iNumUnderlines; i++ )
 			{
 				OptionsCursor& ul = *vpUnderlines[i];
 	
-				int iChoiceWithFocus = (row.m_RowDef.layoutType == SHOW_ONE_IN_LINE) ? row.m_iChoiceInRowWithFocus[p] : i;
+				int iChoiceWithFocus = (row.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? row.m_iChoiceInRowWithFocus[p] : i;
 
 				/* Don't tween X movement and color changes. */
 				int iWidth, iX, iY;
@@ -783,7 +786,7 @@ void ScreenOptions::UpdateText( int iRow )
 	OptionRow &row = *m_Rows[iRow];
 	const OptionRowDefinition &data = row.m_RowDef;
 
-	if( !row.m_RowDef.layoutType == SHOW_ONE_IN_LINE )
+	if( !row.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW )
 		return;
 
 	FOREACH_HumanPlayer( pn )
@@ -1255,7 +1258,7 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
 	/* Long rows always put us in the center, so don't update the focus. */
 	const OptionRow &OptionRow = *m_Rows[m_iCurrentRow[pn]];
-	if( OptionRow.m_RowDef.layoutType == SHOW_ONE_IN_LINE )
+	if( OptionRow.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW )
 		return;
 
 	int iWidth, iY;
@@ -1399,7 +1402,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		{
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( m_Rows[row]->m_RowDef.layoutType != SHOW_ONE_IN_LINE )
+			if( m_Rows[row]->m_RowDef.layoutType != LAYOUT_SHOW_ONE_IN_ROW )
 			{
 				int iSelectionDist = -1;
 				for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
