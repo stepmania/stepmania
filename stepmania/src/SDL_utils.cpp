@@ -9,6 +9,7 @@
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageThreads.h"
 #include "StepMania.h"
 
 #include <errno.h>
@@ -335,6 +336,17 @@ void SDL_UpdateHWnd()
 #endif
 }
 
+#if defined(UNIX)
+#include "archutils/Unix/EmergencyShutdown.h"
+void EmergencyShutdownSDL()
+{
+	/* Only do this if the main thread crashes; trying to shut down from
+	 * another thread causes crashes (eg. GL may be using TLS). */
+	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
+#endif
+
 void SetupSDL()
 {
 	static bool bDone = false;
@@ -347,6 +359,11 @@ void SetupSDL()
 
 	/* Clean up on exit. */
 	atexit( SDL_Quit );
+
+#if defined(UNIX)
+	/* Attempt to shut down the window on crash. */
+        RegisterEmergencyShutdownCallback( EmergencyShutdownSDL );
+#endif
 }
 
 /*
