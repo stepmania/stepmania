@@ -291,7 +291,9 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 		pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
 		pProfile->m_iNumSongsPlayedByStyle[sID] ++;
 		pProfile->m_iNumSongsPlayedByDifficulty[pSteps->GetDifficulty()] ++;
-		pProfile->m_iNumSongsPlayedByMeter[pSteps->GetMeter()] ++;
+
+		int iMeter = clamp( pSteps->GetMeter(), 0, MAX_METER );
+		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
 	}
 	
 	pProfile->m_iTotalDancePoints += ss.iActualDancePoints[pn];
