@@ -131,7 +131,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 }
 
 
-void zoomSurface( RageSurface *&src, int dstwidth, int dstheight )
+void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 {
     if( src == NULL )
 		return;

@@ -159,9 +159,9 @@ struct BannerTexture: public RageTexture
 			img->h > DISPLAY->GetMaxTextureSize() )
 		{
 			LOG->Warn("Converted %s at runtime", GetID().filename.c_str() );
-			RageSurfaceUtils::ConvertSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-			zoomSurface(img, min( img->w, DISPLAY->GetMaxTextureSize() ),
-				min( img->h, DISPLAY->GetMaxTextureSize() ));
+			int width = min( img->w, DISPLAY->GetMaxTextureSize() );
+			int height = min( img->h, DISPLAY->GetMaxTextureSize() );
+			RageSurfaceUtils::Zoom( img, width, height );
 		}
 
 		/* We did this when we cached it. */
@@ -375,8 +375,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	RageSurfaceUtils::ApplyHotPinkColorKey( img );
 
 	{
-		RageSurfaceUtils::ConvertSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-		zoomSurface(img, width, height);
+		RageSurfaceUtils::Zoom( img, width, height );
 
 		/* Dither to the final format.  We use A1RGB5, since that's usually supported
 		 * natively by both OpenGL and D3D. */

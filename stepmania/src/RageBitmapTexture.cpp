@@ -151,9 +151,7 @@ void RageBitmapTexture::Create()
 	}
 
 	if( img->w != m_iImageWidth || img->h != m_iImageHeight ) 
-	{
-		zoomSurface(img, m_iImageWidth, m_iImageHeight );
-	}
+		RageSurfaceUtils::Zoom( img, m_iImageWidth, m_iImageHeight );
 
 	// Format of the image that we will pass to OpenGL and that we want OpenGL to use
 	RageDisplay::PixelFormat pixfmt;

@@ -124,9 +124,7 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	/* Windows icons are 32x32 and SDL can't resize them for us, which
 	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
 	 * this is here just in case it changes.) */
-	RageSurfaceUtils::ConvertSurface(srf, srf->w, srf->h,
-		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-	zoomSurface(srf, 32, 32);
+	RageSurfaceUtils::Zoom( srf, 32, 32 );
 
 	SDL_Surface *sdl_srf = SDLSurfaceFromRageSurface( srf );
 	delete srf;

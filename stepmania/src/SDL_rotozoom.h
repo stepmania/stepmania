@@ -2,7 +2,10 @@
 #define SDL_ROTOZOOM_H
 
 struct RageSurface;
-void zoomSurface( RageSurface *&src, int dstwidth, int dstheight );
+namespace RageSurfaceUtils
+{
+	void Zoom( RageSurface *&src, int width, int height );
+};
 
 #endif
 

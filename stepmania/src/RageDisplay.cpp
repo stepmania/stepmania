@@ -660,7 +660,7 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	 * there's no sense in saving 1280x960 screenshots, and if we're in a custom
 	 * resolution (eg. 640x240), we don't want to output in that resolution. */
 	if( format != SAVE_LOSSLESS && (surface->h != 640 || surface->w != 480) )
-		zoomSurface( surface, 640, 480 );
+		RageSurfaceUtils::Zoom( surface, 640, 480 );
 
 	RageFile out;
 	if( !out.Open( sPath, RageFile::WRITE ) )
