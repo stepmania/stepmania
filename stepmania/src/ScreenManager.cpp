@@ -254,7 +254,7 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
-		m_textStats.SetDiffuse( RageColor(1,1,1,0.5) );
+		m_textStats.SetDiffuse( RageColor(1,1,1,0.7f) );
 
 		/* If FPS == 0, we don't have stats yet. */
 		if(DISPLAY->GetFPS())
@@ -383,7 +383,7 @@ void ScreenManager::Update( float fDeltaTime )
 
 void ScreenManager::Draw()
 {
-	DISPLAY->Clear();
+	DISPLAY->BeginFrame();
 
 	if(g_SkipRendering)
 	{
@@ -404,7 +404,7 @@ void ScreenManager::Draw()
 			m_ScreenStack[i]->Draw();
 	m_SystemLayer->Draw();
 
-	DISPLAY->Flip();
+	DISPLAY->EndFrame();
 }
 
 

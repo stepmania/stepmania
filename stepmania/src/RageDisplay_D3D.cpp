@@ -392,16 +392,10 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 	this->SetDefaultRenderStates();
 	
-	g_pd3dDevice->BeginScene();
-
 	/* Palettes were lost by Reset(), so mark them unloaded. */
 	g_TexResourceToPaletteIndex.clear();
 
 	return false;
-	// return true;	
-
-	// Always reload textures.  None of our textures 
-	// are managed and all texture palettes are lost on Reset().
 	/* Err, all of our textures are managed.  With the palette loading, we don't
 	 * appear to have to reload textures anymore. */
 }
@@ -432,17 +426,20 @@ int RageDisplay::GetMaxTextureSize() const
 	return g_DeviceCaps.MaxTextureWidth;
 }
 
-void RageDisplay::Clear()
+void RageDisplay::BeginFrame()
 {
+	if( g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
+		SetVideoMode( g_Windowed, g_CurrentWidth, g_CurrentHeight, g_CurrentBPP, 0, 0 );
+
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
+	g_pd3dDevice->BeginScene();
 }
 
-void RageDisplay::Flip()
+void RageDisplay::EndFrame()
 {
 	g_pd3dDevice->EndScene();
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
-	g_pd3dDevice->BeginScene();
 	ProcessStatsOnFlip();
 }
 

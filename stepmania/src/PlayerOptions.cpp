@@ -172,7 +172,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "C200" )		{ m_bTimeSpacing=true;	m_fScrollBPM = 200;	}
 		else if( sBit == "C300" )		{ m_bTimeSpacing=true;	m_fScrollBPM = 300;	}
 		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
-		else if( sBit == "brake" )		m_fAccels[ACCEL_BRAKE] = 1;
+		else if( sBit == "brake" || sBit == "land" )		m_fAccels[ACCEL_BRAKE] = 1;
 		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = 1;
 		else if( sBit == "expand" )		m_fAccels[ACCEL_EXPAND] = 1;
 		else if( sBit == "boomerang" )	m_fAccels[ACCEL_BOOMERANG] = 1;

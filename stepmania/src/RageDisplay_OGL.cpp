@@ -252,8 +252,8 @@ void RageDisplay::ResolutionChanged()
 	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */
-	Clear();
-	Flip();
+	BeginFrame();
+	EndFrame();
 }
 
 /* Set the video mode.  In some cases, changing the video mode will reset
@@ -305,13 +305,13 @@ int RageDisplay::GetMaxTextureSize() const
 	return size;
 }
 
-void RageDisplay::Clear()
+void RageDisplay::BeginFrame()
 {
 	glClearColor( 0,0,0,1 );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
-void RageDisplay::Flip()
+void RageDisplay::EndFrame()
 {
 	wind->SwapBuffers();
 	ProcessStatsOnFlip();

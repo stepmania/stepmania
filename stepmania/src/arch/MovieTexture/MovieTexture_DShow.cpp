@@ -324,9 +324,7 @@ void MovieTexture_DShow::CreateTexture()
 		PIXEL_FORMAT_DESC[m_PixelFormat].masks[0], PIXEL_FORMAT_DESC[m_PixelFormat].masks[1],
 		PIXEL_FORMAT_DESC[m_PixelFormat].masks[2], PIXEL_FORMAT_DESC[m_PixelFormat].masks[3]);
 
-	m_uTexHandle = DISPLAY->CreateTexture(
-		m_PixelFormat,
-		m_img );
+	m_uTexHandle = DISPLAY->CreateTexture( m_PixelFormat, m_img );
 }
 
 bool MovieTexture_DShow::PlayMovie()

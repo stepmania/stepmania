@@ -80,8 +80,8 @@ public:
 	/* Call this when the resolution has been changed externally: */
 	void ResolutionChanged();
 
-	void Clear();
-	void Flip();
+	void BeginFrame();	
+	void EndFrame();
 	bool IsWindowed() const;
 	int GetWidth() const;
 	int GetHeight() const;
