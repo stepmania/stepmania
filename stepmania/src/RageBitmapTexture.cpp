@@ -171,6 +171,14 @@ apply_color_key:
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
+	/* If we're under 8x8, increase it, to avoid filtering problems on odd hardware. */
+	if(m_iTextureWidth < 8 || m_iTextureHeight < 8)
+	{
+		actualID.bStretch = true;
+		m_iTextureWidth = max(8, m_iTextureWidth);
+		m_iTextureHeight = max(8, m_iTextureHeight);
+	}
+
 	ASSERT( m_iTextureWidth <= actualID.iMaxSize );
 	ASSERT( m_iTextureHeight <= actualID.iMaxSize );
 
