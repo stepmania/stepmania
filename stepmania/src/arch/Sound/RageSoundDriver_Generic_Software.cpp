@@ -270,6 +270,7 @@ void RageSound_Generic_Software::Update(float delta)
 //		LOG->Trace("finishing sound %i", i);
 
 		sounds[i].snd->SoundIsFinishedPlaying();
+		sounds[i].snd = NULL;
 
 		/* This sound is done.  Set it to HALTING, since the mixer thread might
 		 * be accessing it; it'll change it back to STOPPED once it's ready to
