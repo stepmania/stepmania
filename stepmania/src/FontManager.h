@@ -30,6 +30,7 @@ public:
 protected:
 	// map from file name to a texture holder
 	map<CString, Font*> m_mapPathToFont;
+	static CString FontManager::GetPageNameFromFileName(const CString &fn);
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

@@ -122,6 +122,10 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 		g.width = float(widths[i]);
 		g.height = float(m_pTexture->GetSourceFrameHeight());
 
+		/* By default, advance one pixel more than the width.  (This could be
+		 * an option.) */
+		g.hadvance = int(g.width + 1);
+
 		/* Shift the character up so the top of the rendered quad is at the top
 		 * of the character. */
 		g.vshift = -(m_pTexture->GetSourceFrameHeight() - LineSpacing)/2.0f;
@@ -131,25 +135,24 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 		g.hshift = 0;
 		{
 			int iPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
+			if((iPixelsToChopOff % 2) == 1)
+			{
+				/* We don't want to chop off an odd number of pixels, since that'll
+				 * put our texture coordinates between texels and make things blurrier. */
+				iPixelsToChopOff--;
+				g.width++;
+			}
 			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
-			
+
 			g.rect.left  += fTexCoordsToChopOff/2;
 			g.rect.right -= fTexCoordsToChopOff/2;
 		}
 
-		/* By default, advance one pixel more than the width.  (This could be
-		 * an option.) */
-		g.hadvance = g.width + 1;
-		g.vadvance = float(LineSpacing);
+		g.vadvance = LineSpacing;
+		g.Texture = m_pTexture;
+
 		glyphs.push_back(g);
 	}
-
-	// force widths to even number
-	// Why do this?  It seems to just artificially widen some characters a little and
-	// make it look a little worse in 640x480 ...
-//	for( i=0; i<int(glyphs.size()); i++ )
-//		if( glyphs[i].width %2 == 1 )
-//			glyphs[i].width++;
 }
 
 void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
@@ -159,13 +162,18 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 	DrawExtraPixelsRight++;
 	DrawExtraPixelsLeft++;
 
+	if((DrawExtraPixelsLeft % 2) == 1)
+		DrawExtraPixelsLeft++;
+
 	/* Adjust for DrawExtraPixelsLeft and DrawExtraPixelsRight. */
 	for(unsigned i = 0; i < glyphs.size(); ++i)
 	{
 		int iFrameWidth = m_pTexture->GetSourceFrameWidth();
-		float iCharWidth = glyphs[i].hadvance;
+		float iCharWidth = glyphs[i].width;
 
-		/* Extra pixels to draw to the left and right. */
+		/* Extra pixels to draw to the left and right.  We don't have to
+		 * worry about alignment here; CharWidth is always even (by
+		 * SetTextureCoords) and iFrameWidth are almost always even. */
 		float ExtraLeft = min( float(DrawExtraPixelsLeft), (iFrameWidth-iCharWidth)/2.0f );
 		float ExtraRight = min( float(DrawExtraPixelsRight), (iFrameWidth-iCharWidth)/2.0f );
 
@@ -174,8 +182,6 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
 		glyphs[i].hshift -= ExtraLeft;
 		glyphs[i].width += ExtraLeft + ExtraRight;
-
-		glyphs[i].Texture = m_pTexture;
 	}
 }
 
@@ -186,31 +192,25 @@ FontPage::~FontPage()
 }
 
 
-int Font::GetLineWidthInSourcePixels( const CString &szLine )
+int Font::GetLineWidthInSourcePixels( const CString &szLine ) const
 {
-	float LineWidth = 0;
+	int LineWidth = 0;
 	
 	for( unsigned i=0; i<szLine.size(); i++ )
-	{
-		const glyph &g = GetGlyph(szLine[i]);
-		LineWidth += g.hadvance;
-	}
+		LineWidth += GetGlyph(szLine[i]).hadvance;
 
-	return int(LineWidth);
+	return LineWidth;
 }
 
-int Font::GetLineHeightInSourcePixels( const CString &szLine )
+int Font::GetLineHeightInSourcePixels( const CString &szLine ) const
 {
-	float iLineSpacing = 0;
-	
+	int iLineSpacing = 0;
+
+	/* The spacing of a line is the spacing of its tallest used font page. */
 	for( unsigned i=0; i<szLine.size(); i++ )
-	{
-		const glyph &g = GetGlyph(szLine[i]);
+		iLineSpacing = max(iLineSpacing, GetGlyph(szLine[i]).vadvance);
 
-		iLineSpacing = max(iLineSpacing, g.vadvance);
-	}
-
-	return int(iLineSpacing);
+	return iLineSpacing;
 }
 
 
@@ -246,6 +246,16 @@ const glyph &Font::GetGlyph( int c ) const
 		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
 
 	return *it->second;
+}
+
+RageTexture *Font::GetGlyphTexture( int c )
+{
+	map<int,glyph*>::iterator it = m_iCharToGlyph.find(c);
+
+	if(it == m_iCharToGlyph.end())
+		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
+
+	return it->second->Texture;
 }
 
 /* Load font-global settings. */

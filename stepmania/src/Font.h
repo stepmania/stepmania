@@ -18,7 +18,7 @@ struct glyph {
 	RageTexture *Texture;
 
 	/* Number of pixels to advance horizontally after drawing this character. */
-	float hadvance, vadvance;
+	int hadvance, vadvance;
 
 	/* Size of the actual rendered character. */
 	float width, height;
@@ -67,8 +67,8 @@ public:
 	RageTexture *GetGlyphTexture( int c );
 	const glyph &GetGlyph( int c ) const;
 
-	int GetLineWidthInSourcePixels( const CString &szLine );
-	int GetLineHeightInSourcePixels( const CString &szLine );
+	int GetLineWidthInSourcePixels( const CString &szLine ) const;
+	int GetLineHeightInSourcePixels( const CString &szLine ) const;
 
 	/* Add a FontPage to this font. */
 	void AddPage(FontPage *fp);
@@ -78,7 +78,6 @@ public:
 
 private:
 	vector<FontPage *> pages;
-
 };
 
 #endif

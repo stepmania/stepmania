@@ -36,6 +36,9 @@ public:
 	void TurnRainbowOn()	{ m_bRainbow = true; };
 	void TurnRainbowOff()	{ m_bRainbow = false; };
 
+	void SetHorizAlign( HorizAlign ha );
+	void SetVertAlign( VertAlign va );
+
 public:
 	CString m_sFontFilePath;
 	Font* m_pFont;
@@ -50,6 +53,21 @@ protected:
 	int				m_iWidestLineWidth;		// in source pixels
 
 	bool m_bRainbow;
+
+//	struct chr {
+//		RageVertex v[4];
+//		RageTexture *t;
+//	};
+
+	vector<RageVertex> verts;
+//	int num_vertices;
+	vector<RageTexture *> tex;
+//	vector<int> vec_cnt;
+	
+//	vector<one_char> chars;
+//	static bool sort_chars(const one_char &a, const one_char &b);
+	void BuildChars();
+	void DrawChars();
 };
 
 

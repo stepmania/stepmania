@@ -3,16 +3,15 @@
 -----------------------------------------------------------------------------
  Class: FontManager
 
- Desc: Interface for loading and releasing textures.
+ Desc: Interface for loading and releasing fonts.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
+	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
 
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
 #include "FontManager.h"
 #include "Font.h"
 #include "RageUtil.h"
@@ -23,9 +22,6 @@
 
 FontManager*	FONT	= NULL;
 
-//-----------------------------------------------------------------------------
-// constructor/destructor
-//-----------------------------------------------------------------------------
 FontManager::FontManager()
 {
 }
@@ -42,9 +38,6 @@ FontManager::~FontManager()
 }
 
 
-//-----------------------------------------------------------------------------
-// Load/Unload textures from disk
-//-----------------------------------------------------------------------------
 Font* FontManager::LoadFont( CString sFontOrTextureFilePath, CString sChars )
 {
 	sFontOrTextureFilePath.MakeLower();
@@ -142,4 +135,15 @@ void FontManager::UnloadFont( Font *fp )
 	}
 	
 	RageException::Throw( "Unloaded an unknown font (%p)", fp );
+}
+
+CString FontManager::GetPageNameFromFileName(const CString &fn)
+{
+	unsigned begin = fn.find_first_of('[');
+	if(begin == fn.npos) return "main";
+	unsigned end = fn.find_first_of(']', begin);
+	if(end == fn.npos) return "main";
+	begin++; end--;
+	if(end == begin) return "main";
+	return fn.substr(begin+1, end-begin+1);
 }

@@ -70,6 +70,8 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 	// load font
 	m_pFont = FONT->LoadFont( sFontFilePath );
 
+	BuildChars();
+
 	return true;
 }
 
@@ -86,15 +88,95 @@ bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 	// load font
 	m_pFont = FONT->LoadFont( sTexturePath, sChars );
 
+	BuildChars();
+
 	return true;
 }
 
+void BitmapText::BuildChars()
+{
+	/* If we don't have a font yet, we'll do this when it loads. */
+	if(m_pFont == NULL)
+		return;
 
+	verts.clear();
+	tex.clear();
+	
+	int TotalHeight = 0;
+	unsigned i;
+	for(i = 0; i < m_szTextLines.size(); ++i)
+		TotalHeight += m_iLineHeights[i];
 
+	int iY;	//	 the top position of the first row of characters
+	switch( m_VertAlign )
+	{
+	case align_top:		iY = 0;					break;
+	case align_middle:	iY = -TotalHeight/2;	break;
+	case align_bottom:	iY = -TotalHeight;		break;
+	default:			ASSERT( false );		return;
+	}
+
+	for( i=0; i<m_szTextLines.size(); i++ )		// foreach line
+	{
+		const CString &szLine = m_szTextLines[i];
+		const int iLineWidth = m_iLineWidths[i];
+		
+		int iX;
+		switch( m_HorizAlign )
+		{
+		case align_left:	iX = 0;				break;
+		case align_center:	iX = -iLineWidth/2;	break;
+		case align_right:	iX = -iLineWidth;	break;
+		default:			ASSERT( false );	return;
+		}
+
+		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
+		{
+			RageVertex v[4];
+			const glyph &g = m_pFont->GetGlyph(szLine[j]);
+
+			/* set vertex positions */
+			v[0].p = RageVector3( iX+g.hshift,			iY+g.vshift,		  0 );	// top left
+			v[1].p = RageVector3( iX+g.hshift,			iY+g.vshift+g.height, 0 );	// bottom left
+			v[2].p = RageVector3( iX+g.hshift+g.width,	iY+g.vshift+g.height, 0 );	// bottom right
+			v[3].p = RageVector3( iX+g.hshift+g.width,	iY+g.vshift,		  0 );	// top right
+
+			/* Advance the cursor. */
+			iX += g.hadvance;
+
+			/* set texture coordinates */
+			v[0].t = RageVector2( g.rect.left,	g.rect.top );
+			v[1].t = RageVector2( g.rect.left,	g.rect.bottom );
+			v[2].t = RageVector2( g.rect.right,	g.rect.bottom );
+			v[3].t = RageVector2( g.rect.right,	g.rect.top );
+
+			verts.insert(verts.end(), &v[0], &v[4]);
+			tex.push_back(m_pFont->GetGlyphTexture(szLine[j]));
+		}
+
+		iY += m_iLineHeights[i];
+	}
+}
+
+void BitmapText::DrawChars()
+{
+	for(unsigned start = 0; start < tex.size(); ++start)
+	{
+		unsigned end = start;
+		while(end < tex.size() && tex[end] == tex[start])
+			end++;
+		DISPLAY->SetTexture( tex[start] );
+		DISPLAY->DrawQuads( &verts[start*4], (end-start)*4 );
+		
+		start = end+1;
+	}
+}
 
 void BitmapText::SetText( CString sText )
 {
 	ASSERT( m_pFont );
+	if(m_szText == sText)
+		return;
 
 	m_szText = sText;
 
@@ -114,6 +196,8 @@ void BitmapText::SetText( CString sText )
 		m_iLineHeights.push_back(m_pFont->GetLineHeightInSourcePixels( m_szTextLines[l] ));
 		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
 	}
+
+	BuildChars();
 }
 
 void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
@@ -136,82 +220,6 @@ void BitmapText::DrawPrimitives()
 	if( m_szTextLines.empty() )
 		return;
 
-	/* XXX */
-	RageTexture* pTexture = m_pFont->GetGlyph('0').Texture;
-
-	static RageVertex *v = NULL;
-	static int vcnt = 0;
-	{
-		int charcnt = 0;
-		for( unsigned i=0; i<m_szTextLines.size(); i++ )
-			charcnt += m_szTextLines[i].size();
-
-		charcnt *= 4; /* 4 vertices per char */
-		if(charcnt > vcnt)
-		{
-			vcnt = charcnt;
-			delete [] v;
-			v = new RageVertex[vcnt];
-		}
-	}
-
-	int iNumV = 0;	// the current vertex number
-
-	float TotalHeight = 0;
-	unsigned i;
-	for(i = 0; i < m_szTextLines.size(); ++i)
-		TotalHeight += m_iLineHeights[i];
-
-	float iY;	//	 the top position of the first row of characters
-	switch( m_VertAlign )
-	{
-	case align_top:		iY = 0;						break;
-	case align_middle:	iY = -TotalHeight/2.0f;		break;
-	case align_bottom:	iY = -TotalHeight;			break;
-	default:			ASSERT( false );			return;
-	}
-
-	for( i=0; i<m_szTextLines.size(); i++ )		// foreach line
-	{
-		const CString &szLine = m_szTextLines[i];
-		const float fLineWidth = float(m_iLineWidths[i]);
-		
-		float iX;
-		switch( m_HorizAlign )
-		{
-		case align_left:	iX = 0;					break;
-		case align_center:	iX = -fLineWidth/2.0f;	break;
-		case align_right:	iX = -fLineWidth;		break;
-		default:			ASSERT( false );		return;
-		}
-
-		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
-		{
-			const glyph &g = m_pFont->GetGlyph(szLine[j]);
-
-			/* set vertex positions */
-			v[iNumV++].p = RageVector3( (float)iX+g.hshift,			iY+g.vshift,		  0 );	// top left
-			v[iNumV++].p = RageVector3( (float)iX+g.hshift,			iY+g.vshift+g.height, 0 );	// bottom left
-			v[iNumV++].p = RageVector3( (float)iX+g.hshift+g.width,	iY+g.vshift+g.height, 0 );	// bottom right
-			v[iNumV++].p = RageVector3( (float)iX+g.hshift+g.width,	iY+g.vshift,		  0 );	// top right
-
-			/* Advance the cursor. */
-			iX += g.hadvance;
-
-			/* set texture coordinates */
-			iNumV -= 4;
-
-			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.top );
-			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.bottom );
-			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.bottom );
-			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.top );
-		}
-
-		iY += m_iLineHeights[i];
-	}
-
-
-	DISPLAY->SetTexture( pTexture );
 	DISPLAY->SetTextureModeModulate();
 	if( m_bBlendAdd )
 		DISPLAY->SetBlendModeAdd();
@@ -232,9 +240,9 @@ void BitmapText::DrawPrimitives()
 
 			RageColor dim(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 
-			for( int i=0; i<iNumV; i++ )
-				v[i].c = dim;
-			DISPLAY->DrawQuads( v, iNumV );
+			for( unsigned i=0; i<verts.size(); i++ )
+				verts[i].c = dim;
+			DrawChars();
 
 			DISPLAY->PopMatrix();
 		}
@@ -245,27 +253,27 @@ void BitmapText::DrawPrimitives()
 		if( m_bRainbow )
 		{
 			int color_index = int(RageTimer::GetTimeSinceStart() / 0.200) % NUM_RAINBOW_COLORS;
-			for( int i=0; i<iNumV; i+=4 )
+			for( unsigned i=0; i<verts.size(); i+=4 )
 			{
 				const RageColor color = RAINBOW_COLORS[color_index];
-				for( int j=i; j<i+4; j++ )
-					v[j].c = color;
+				for( unsigned j=i; j<i+4; j++ )
+					verts[j].c = color;
 
 				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
 			}
 		}
 		else
 		{
-			for( int i=0; i<iNumV; i+=4 )
+			for( unsigned i=0; i<verts.size(); i+=4 )
 			{
-				v[i+0].c = m_temp.diffuse[0];	// top left
-				v[i+1].c = m_temp.diffuse[2];	// bottom left
-				v[i+2].c = m_temp.diffuse[3];	// bottom right
-				v[i+3].c = m_temp.diffuse[1];	// top right
+				verts[i+0].c = m_temp.diffuse[0];	// top left
+				verts[i+1].c = m_temp.diffuse[2];	// bottom left
+				verts[i+2].c = m_temp.diffuse[3];	// bottom right
+				verts[i+3].c = m_temp.diffuse[1];	// top right
 			}
 		}
 
-		DISPLAY->DrawQuads( v, iNumV );
+		DrawChars();
 	}
 
 	/* render the glow pass */
@@ -273,9 +281,23 @@ void BitmapText::DrawPrimitives()
 	{
 		DISPLAY->SetTextureModeGlow();
 
-		int i;
-		for( i=0; i<iNumV; i++ )
-			v[i].c = m_temp.glow;
-		DISPLAY->DrawQuads( v, iNumV );
+		for( unsigned i=0; i<verts.size(); i++ )
+			verts[i].c = m_temp.glow;
+		DrawChars();
 	}
+}
+
+/* Rebuild when these change. */
+void BitmapText::SetHorizAlign( HorizAlign ha )
+{
+	if(ha == m_HorizAlign) return;
+	Actor::SetHorizAlign(ha);
+	BuildChars();
+}
+
+void BitmapText::SetVertAlign( VertAlign va )
+{
+	if(va == m_VertAlign) return;
+	Actor::SetVertAlign(va);
+	BuildChars();
 }
