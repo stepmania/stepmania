@@ -150,7 +150,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_OPEN(f,"General Info",true);
 		{
 			BEGIN_TABLE(2);
-			TABLE_LINE2( "Name",							pProfile->m_sName );
+			TABLE_LINE2( "DisplayName",						pProfile->m_sDisplayName );
 			TABLE_LINE2( "LastUsedHighScoreName",			pProfile->m_sLastUsedHighScoreName );
 			TABLE_LINE2( "UsingProfileDefaultModifiers",	pProfile->m_bUsingProfileDefaultModifiers );
 			TABLE_LINE2( "DefaultModifiers",				pProfile->m_sDefaultModifiers );
@@ -653,23 +653,32 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 	PRINT_CLOSE(f);
 }
 
+void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
+{
+	CString sHtmlPath = "Screenshots/"+ss.sFileName;
+	CString sImgTag = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sHtmlPath.c_str(), sHtmlPath.c_str() );
+	CString sDetails = "<p>This is a screenshot</p>\n<p>We have no idea where it came from</p>";
+
+	BEGIN_TABLE(1);
+
+	TABLE_LINE2( sImgTag, sDetails );
+
+	END_TABLE;
+}
+
 void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CString sProfileDir )
 {
 	PRINT_OPEN(f, sTitle );
 	{
-		CStringArray asFiles;
-		GetDirListing( sProfileDir+"Screenshots/*.jpg", asFiles );
-
-		BEGIN_TABLE(2);
-		for( unsigned i=0; i<asFiles.size(); i++ )
+		PRINT_OPEN(f, "Less Than 1 Month Old" );
 		{
-			CString sFile = "Screenshots/"+asFiles[i];
-
-			CString sImgTag = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sFile.c_str(), sFile.c_str() );
-
-			TABLE_LINE1( sImgTag );
+			for( int i=0; i<pProfile->m_vScreenshots.size(); i++ )
+			{
+				const Profile::Screenshot &ss = pProfile->m_vScreenshots[i];
+				PrintScreenshot( f, ss );
+			}
 		}
-		END_TABLE;
+		PRINT_CLOSE(f);
 	}
 	PRINT_CLOSE(f);
 }
@@ -793,7 +802,7 @@ TITLE.c_str(), STYLE_CSS ) );
 
 	CString sName = 
 		pProfile->m_sLastUsedHighScoreName.empty() ? 
-		pProfile->m_sName :
+		pProfile->m_sDisplayName :
 		pProfile->m_sLastUsedHighScoreName;
 	time_t ltime = time( NULL );
 	CString sTime = ctime( &ltime );

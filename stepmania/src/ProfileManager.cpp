@@ -116,7 +116,7 @@ bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 	bool bResult;
 
 	Profile pro;
-	pro.m_sName = sName;
+	pro.m_sDisplayName = sName;
 	bResult = pro.SaveAllToDir( sProfileDir );
 	if( !bResult )
 		return false;
@@ -249,15 +249,7 @@ bool ProfileManager::CreateLocalProfile( CString sName )
 		return false;
 	sProfileDir += "/";
 
-	Profile pro;
-	pro.m_sName = sName;
-
-	bool bResult = pro.SaveAllToDir( sProfileDir );
-	if( !bResult )
-		return false;
-
-	FlushDirCache();
-	return true;
+	return CreateProfile( sProfileDir, sName );
 }
 
 bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
@@ -271,7 +263,7 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 	bResult = pro.LoadAllFromDir( sProfileDir );
 	if( !bResult )
 		return false;
-	pro.m_sName = sNewName;
+	pro.m_sDisplayName = sNewName;
 	bResult = pro.SaveAllToDir( sProfileDir );
 	if( !bResult )
 		return false;
@@ -297,7 +289,7 @@ void ProfileManager::SaveMachineProfile()
 	// If the machine name has changed, make sure we use the new name.
 	// It's important that this name be applied before the Player profiles 
 	// are saved, so that the Player's profiles show the right machine name.
-	m_MachineProfile.m_sName = PREFSMAN->m_sMachineName;
+	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
 
 	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR );
 }
@@ -317,7 +309,7 @@ void ProfileManager::LoadMachineProfile()
 	}
 
 	// If the machine name has changed, make sure we use the new name
-	m_MachineProfile.m_sName = PREFSMAN->m_sMachineName;
+	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
 }
 
 /*

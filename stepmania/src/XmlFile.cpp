@@ -785,6 +785,20 @@ LPXNode	_tagXMLNode::GetChild( LPCTSTR name )
 	return NULL;
 }
 
+const LPXNode	_tagXMLNode::GetChild( LPCTSTR name ) const
+{
+	for( unsigned i = 0 ; i < childs.size(); i++ )
+	{
+		LPXNode node = childs[i];
+		if( node )
+		{
+			if( node->name == name )
+				return node;
+		}
+	}
+	return NULL;
+}
+
 //========================================================
 // Name   : GetChildValue
 // Desc   : Find child with name and return child's value

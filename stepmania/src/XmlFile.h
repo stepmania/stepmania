@@ -123,9 +123,10 @@ typedef struct _tagXMLNode
 	// name and value
 	CString name;
 	CString	value;
-	void GetValue(CString &out)	{ out = value; }
-	void GetValue(int &out)		{ out = atoi(value); }
-	void GetValue(float &out)	{ out = (float) atof(value); }
+	void GetValue(CString &out) const	{ out = value; }
+	void GetValue(int &out) const		{ out = atoi(value); }
+	void GetValue(float &out) const		{ out = (float) atof(value); }
+	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
 
 	// internal variables
 	LPXNode	parent;		// parent node
@@ -146,11 +147,13 @@ typedef struct _tagXMLNode
 	XAttrs	GetAttrs( LPCTSTR name ); 
 
 	// in one level child nodes
+	const LPXNode	GetChild( LPCTSTR name ) const; 
 	LPXNode	GetChild( LPCTSTR name ); 
 	LPCTSTR	GetChildValue( LPCTSTR name ); 
-	bool GetChildValue(LPCTSTR name,CString &out)	{ XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue(LPCTSTR name,int &out)		{ XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue(LPCTSTR name,float &out)		{ XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(LPCTSTR name,CString &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(LPCTSTR name,int &out) const		{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(LPCTSTR name,float &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(LPCTSTR name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	XNodes	GetChilds( LPCTSTR name ); 
 	XNodes	GetChilds(); 
 

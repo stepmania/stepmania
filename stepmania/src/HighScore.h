@@ -35,7 +35,7 @@ struct HighScore
 	bool operator>=( const HighScore& other ) const;
 
 	XNode* CreateNode() const;
-	void LoadFromNode( XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 };
 
 struct HighScoreList
@@ -56,7 +56,7 @@ struct HighScoreList
 	const HighScore& GetTopScore() const;
 
 	XNode* CreateNode() const;
-	void LoadFromNode( XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 };
 
 

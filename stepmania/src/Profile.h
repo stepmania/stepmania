@@ -41,9 +41,14 @@ public:
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 
 	//
+	// Editable data
+	//
+	CString m_sDisplayName;
+	float m_fWeightPounds;
+
+	//
 	// General data
 	//
-	CString m_sName;
 	CString m_sLastUsedHighScoreName;
 	bool m_bUsingProfileDefaultModifiers;
 	CString m_sDefaultModifiers;
@@ -51,7 +56,6 @@ public:
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
-	float m_fWeightPounds;
 	int m_fCaloriesBurned;
 	mutable CString m_sLastMachinePlayed;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
@@ -124,12 +128,14 @@ public:
 	//
 	void InitAll()
 	{
+		InitEditableData(); 
 		InitGeneralData(); 
 		InitSongScores(); 
 		InitCourseScores(); 
 		InitCategoryScores(); 
 		InitScreenshotData(); 
 	}
+	void InitEditableData(); 
 	void InitGeneralData(); 
 	void InitSongScores(); 
 	void InitCourseScores(); 
@@ -139,32 +145,34 @@ public:
 	//
 	// Loading and saving
 	//
-	bool LoadAllFromDir( CString sDir );
+	bool LoadAllFromDir( CString sDir );	// return false on 
 	bool SaveAllToDir( CString sDir ) const;
 
-	bool LoadGeneralDataFromDir( CString sDir );
-	bool SaveGeneralDataToDir( CString sDir ) const;
-
+	void LoadProfileDataFromDirSM390a12( CString sDir );
 	void LoadSongScoresFromDirSM390a12( CString sDir );
-	void LoadSongScoresFromDir( CString sDir );
-	void SaveSongScoresToDir( CString sDir ) const;
-	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;
-	
 	void LoadCourseScoresFromDirSM390a12( CString sDir );
-	void LoadCourseScoresFromDir( CString sDir );
-	void SaveCourseScoresToDir( CString sDir ) const;
-	void DeleteCourseScoresFromDirSM390a12( CString sDir ) const;
-	
 	void LoadCategoryScoresFromDirSM390a12( CString sDir );
-	void LoadCategoryScoresFromDir( CString sDir );
-	void SaveCategoryScoresToDir( CString sDir ) const;
+	
+	void LoadEditableDataFromNode( const XNode* pNode );
+	void LoadGeneralDataFromNode( const XNode* pNode );
+	void LoadSongScoresFromNode( const XNode* pNode );
+	void LoadCourseScoresFromNode( const XNode* pNode );
+	void LoadCategoryScoresFromNode( const XNode* pNode );
+	void LoadScreenshotDataFromNode( const XNode* pNode );
+
+	XNode* SaveEditableDataCreateNode() const;
+	XNode* SaveGeneralDataCreateNode() const;
+	XNode* SaveSongScoresCreateNode() const;
+	XNode* SaveCourseScoresCreateNode() const;
+	XNode* SaveCategoryScoresCreateNode() const;
+	XNode* SaveScreenshotDataCreateNode() const;
+
+	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
+	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;
+	void DeleteCourseScoresFromDirSM390a12( CString sDir ) const;
 	void DeleteCategoryScoresFromDirSM390a12( CString sDir ) const;
 
-	void LoadScreenshotDataFromDir( CString sDir );
-	void SaveScreenshotDataToDir( CString sDir ) const;
-
 	void SaveStatsWebPageToDir( CString sDir ) const;
-
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 };
 

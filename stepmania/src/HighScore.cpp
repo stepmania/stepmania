@@ -54,19 +54,19 @@ XNode* HighScore::CreateNode() const
 	return pNode;
 }
 
-void HighScore::LoadFromNode( XNode* pNode )
+void HighScore::LoadFromNode( const XNode* pNode ) 
 {
 	ASSERT( pNode->name == "HighScore" );
-	XNodes childs = pNode->GetChilds();
-	for( unsigned i = 0 ; i < childs.size(); i++)
+	for( XNodes::const_iterator child = pNode->childs.begin(); 
+		child != pNode->childs.end(); 
+		child++ )
 	{
-		XNode* pChild = childs[i];
-		if( pChild->name == "Name" )				pChild->GetValue( sName );
-		else if( pChild->name == "Grade" )			pChild->GetValue( (int&)grade );
-		else if( pChild->name == "Score" )			pChild->GetValue( iScore );
-		else if( pChild->name == "PercentDP" )		pChild->GetValue( fPercentDP );
-		else if( pChild->name == "SurviveSeconds" )	pChild->GetValue( fSurviveSeconds );
-		else if( pChild->name == "Modifiers" )		pChild->GetValue( sModifiers );
+		if( (*child)->name == "Name" )					(*child)->GetValue( sName );
+		else if( (*child)->name == "Grade" )			(*child)->GetValue( (int&)grade );
+		else if( (*child)->name == "Score" )			(*child)->GetValue( iScore );
+		else if( (*child)->name == "PercentDP" )		(*child)->GetValue( fPercentDP );
+		else if( (*child)->name == "SurviveSeconds" )	(*child)->GetValue( fSurviveSeconds );
+		else if( (*child)->name == "Modifiers" )		(*child)->GetValue( sModifiers );
 	}
 }
 
@@ -124,12 +124,12 @@ XNode* HighScoreList::CreateNode() const
 	return pNode;
 }
 
-void HighScoreList::LoadFromNode( XNode* pNode )
+void HighScoreList::LoadFromNode( const XNode* pNode )
 {
 	Init();
 
 	ASSERT( pNode->name == "HighScoreList" );
-	for( XNodes::iterator child = pNode->childs.begin();
+	for( XNodes::const_iterator child = pNode->childs.begin();
 		child != pNode->childs.end();
 		child++)
 	{

@@ -1185,7 +1185,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"couple (edit)",						// m_szName
+		"couple-edit",						// m_szName
 		STEPS_TYPE_DANCE_COUPLE,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -1405,7 +1405,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"couple (edit)",						// m_szName
+		"couple-edit",						// m_szName
 		STEPS_TYPE_PUMP_COUPLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -1912,7 +1912,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"single5 (edit)",						// m_szName
+		"single5-edit",						// m_szName
 		STEPS_TYPE_IIDX_SINGLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
@@ -1947,7 +1947,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"double5 (edit)",						// m_szName
+		"double5-edit",						// m_szName
 		STEPS_TYPE_IIDX_DOUBLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
