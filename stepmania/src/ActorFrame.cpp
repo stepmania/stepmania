@@ -8,6 +8,7 @@
 #include "ActorCommands.h"
 #include "RageDisplay.h"
 #include "ScreenDimensions.h"
+#include "Foreach.h"
 
 // lua start
 LUA_REGISTER_CLASS( ActorFrame )
@@ -87,6 +88,16 @@ void ActorFrame::RemoveChild( Actor* pActor )
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
 		m_SubActors.erase( iter );
+}
+
+Actor* ActorFrame::GetChild( const CString &sName )
+{
+	FOREACH( Actor*, m_SubActors, a )
+	{
+		if( (*a)->GetName() == sName )
+			return *a;
+	}
+	return NULL;
 }
 
 void ActorFrame::RemoveAllChildren()

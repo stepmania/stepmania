@@ -12,10 +12,20 @@ public:
 	LunaActorFrame() { LUA->Register( Register ); }
 
 	static int propagate( T* p, lua_State *L )	{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
+	static int GetChild( T* p, lua_State *L )
+	{
+		Actor *pChild = p->GetChild( SArg(1) );
+		if( pChild )
+			pChild->PushSelf( L );
+		else
+			lua_pushnil( L );
+		return 1;
+	}
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( propagate )
+		ADD_METHOD( GetChild )
 		LunaActor<T>::Register( L );
 	}
 };
@@ -31,6 +41,8 @@ public:
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
+	Actor* GetChild( const CString &sName );
+
 	void RemoveAllChildren();
 	void MoveToTail( Actor* pActor );
 	void MoveToHead( Actor* pActor );
