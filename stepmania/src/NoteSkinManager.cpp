@@ -149,9 +149,11 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue )
 {
 	sNoteSkinName.MakeLower();
+	map<CString,NoteSkinData>::const_iterator it = m_mapNameToData.find(sNoteSkinName);
+	ASSERT_M( it != m_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
+	const NoteSkinData& data = it->second;
+
 	CString sReturn;
-	ASSERT( m_mapNameToData.find(sNoteSkinName) != m_mapNameToData.end() );	// this NoteSkin doesn't exist!
-	NoteSkinData& data = m_mapNameToData[sNoteSkinName];
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
 	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
