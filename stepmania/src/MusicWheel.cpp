@@ -1230,17 +1230,22 @@ void MusicWheel::StartRoulette()
 void MusicWheel::StartRandom()
 {
 	/* Shuffle the roulette wheel. */
-	unsigned total =  m_WheelItemDatas[SORT_ROULETTE].size();
-	for(unsigned i = 0; i < total; ++i)
-		swap(m_WheelItemDatas[SORT_ROULETTE][i], m_WheelItemDatas[SORT_ROULETTE][rand() % total]);
+	//unsigned total =  m_WheelItemDatas[SORT_ROULETTE].size();
+	//for(unsigned i = 0; i < total; ++i)
+	//	swap(m_WheelItemDatas[SORT_ROULETTE][i], m_WheelItemDatas[SORT_ROULETTE][rand() % total]);
 
-	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
+	//SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
 
-	m_Moving = -1;
-	m_TimeBeforeMovingBegins = 0;
-	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-	m_SpinSpeed *= 20.0f; /* faster! */
+	//m_Moving = -1;
+	//m_TimeBeforeMovingBegins = 0;
+	//m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
+	//m_SpinSpeed *= 20.0f; /* faster! */
+
+
+	//Simplify Random to make it more random than previously
 	m_WheelState = STATE_RANDOM_SPINNING;
+
+	SelectSong(SONGMAN->GetRandomSong());
 
 	this->Select();
 	RebuildMusicWheelItems();
