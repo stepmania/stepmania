@@ -147,6 +147,8 @@ void ScreenManager::Update( float fDeltaTime )
 
 	Screen* pScreen = m_ScreenStack.empty() ? NULL : GetTopScreen();
 
+	bool bFirstUpdate = pScreen && pScreen->IsFirstUpdate();
+
 	/* Loading a new screen can take seconds and cause a big jump on the new 
 	 * Screen's first update.  Clamp the first update delta so that the 
 	 * animations don't jump. */
@@ -164,6 +166,11 @@ void ScreenManager::Update( float fDeltaTime )
 
 	m_SystemLayer->Update( fDeltaTime );	
 	
+	/* The music may be started on the first update.  If we're reading from a CD,
+	 * it might not start immediately.  Make sure we start playing the sound before
+	 * continuing, since it's strange to start rendering before the music starts. */
+	if( bFirstUpdate )
+			SOUND->Flush();
 
 	EmptyDeleteQueue();
 
