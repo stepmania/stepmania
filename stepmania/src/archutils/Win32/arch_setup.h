@@ -50,5 +50,11 @@
 /* For RageLog */
 #define HAVE_VERSION_INFO
 
+#ifdef _XBOX
+#include <xtl.h>
+#include <xgraphics.h>
+#include <stdio.h>
+#endif
+
 #endif
 
