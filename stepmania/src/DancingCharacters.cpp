@@ -9,6 +9,7 @@
 #include "Character.h"
 #include "StageStats.h"
 #include "PrefsManager.h"
+#include "Model.h"
 
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
@@ -48,6 +49,7 @@ DancingCharacters::DancingCharacters()
 
 	FOREACH_PlayerNumber( p )
 	{
+		m_pCharacter[p] = new Model;
 		m_2DIdleTimer[p].SetZero();
 		m_i2DAnimState[p] = AS2D_IDLE; // start on idle state
 		m_bHasIdleAnim[p] = m_bHas2DElements[p] = false;
@@ -129,24 +131,30 @@ DancingCharacters::DancingCharacters()
 			continue;
 		
 		if( GAMESTATE->GetNumPlayersEnabled()==2 )
-			m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
+			m_pCharacter[p]->SetX( MODEL_X_TWO_PLAYERS[p] );
 		else
-			m_Character[p].SetX( MODEL_X_ONE_PLAYER );
+			m_pCharacter[p]->SetX( MODEL_X_ONE_PLAYER );
 
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
-			m_Character[p].SetRotationY( MODEL_ROTATIONY_TWO_PLAYERS[p] );
+			m_pCharacter[p]->SetRotationY( MODEL_ROTATIONY_TWO_PLAYERS[p] );
 			break;
 		}
 
-		m_Character[p].LoadMilkshapeAscii( pChar->GetModelPath() );
-		m_Character[p].LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
-		m_Character[p].LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
-		m_Character[p].LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
-		m_Character[p].SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
+		m_pCharacter[p]->LoadMilkshapeAscii( pChar->GetModelPath() );
+		m_pCharacter[p]->LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
+		m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
+		m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
+		m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
 	}
+}
+
+DancingCharacters::~DancingCharacters()
+{
+	FOREACH_PlayerNumber( p )
+		delete m_pCharacter[p];
 }
 
 void DancingCharacters::LoadNextSong()
@@ -166,7 +174,7 @@ void DancingCharacters::LoadNextSong()
 	
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
-			m_Character[p].PlayAnimation( "rest" );
+			m_pCharacter[p]->PlayAnimation( "rest" );
 }
 
 int Neg1OrPos1() { return rand()%2 ? -1 : +1; }
@@ -193,7 +201,7 @@ void DancingCharacters::Update( float fDelta )
 		FOREACH_PlayerNumber( p )
 		{
 			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_Character[p].Update( fDelta*fUpdateScale );
+				m_pCharacter[p]->Update( fDelta*fUpdateScale );
 		}
 	}
 
@@ -203,7 +211,7 @@ void DancingCharacters::Update( float fDelta )
 	{
 		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_Character[p].PlayAnimation( "warmup" );
+				m_pCharacter[p]->PlayAnimation( "warmup" );
 	}
 	bWasHereWeGo = bIsHereWeGo;
 
@@ -214,7 +222,7 @@ void DancingCharacters::Update( float fDelta )
 		fThisBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat )
 	{
 		FOREACH_PlayerNumber( p )
-			m_Character[p].PlayAnimation( "dance" );
+			m_pCharacter[p]->PlayAnimation( "dance" );
 	}
 	fLastBeat = fThisBeat;
 
@@ -330,7 +338,7 @@ void DancingCharacters::DrawPrimitives()
 	{
 		if( PREFSMAN->m_bCelShadeModels )
 		{
-			m_Character[p].DrawCelShaded();
+			m_pCharacter[p]->DrawCelShaded();
 			continue;
 		}
 
@@ -348,7 +356,7 @@ void DancingCharacters::DrawPrimitives()
 			specular,
 			RageVector3(+1, 0, +1) );
 
-		m_Character[p].Draw();
+		m_pCharacter[p]->Draw();
 
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );

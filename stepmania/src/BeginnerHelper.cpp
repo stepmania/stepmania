@@ -9,6 +9,7 @@
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "Style.h"
+#include "Model.h"
 
 // "PLAYER_X" offsets are relative to the pad.. ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310
 #define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%d_X",px+1))
@@ -59,8 +60,11 @@ BeginnerHelper::BeginnerHelper()
 	m_bShowBackground = true;
 	m_bInitialized = false;
 	m_iLastRowChecked = m_iLastRowFlashed = 0;
-	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	FOREACH_PlayerNumber( pn )
 		m_bPlayerEnabled[pn] = false;
+	FOREACH_PlayerNumber( pn )
+		m_pDancer[pn] = new Model;
+	m_pDancePad = new Model;
 }
 
 BeginnerHelper::~BeginnerHelper()
@@ -163,15 +167,15 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	switch(iDancePadType)
 	{
 		case 0: break; // No pad
-		case 1: m_mDancePad.LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD)); break;
-		case 2: m_mDancePad.LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS)); break;
+		case 1: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD)); break;
+		case 2: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS)); break;
 	}
 	
-	m_mDancePad.SetHorizAlign( align_left );
-	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );
-	m_mDancePad.SetX(HELPER_X);
-	m_mDancePad.SetY(HELPER_Y);
-	m_mDancePad.SetZoom(23);	// Pad should always be 3 units bigger in zoom than the dancer.
+	m_pDancePad->SetHorizAlign( align_left );
+	m_pDancePad->SetRotationX( DANCEPAD_ANGLE );
+	m_pDancePad->SetX(HELPER_X);
+	m_pDancePad->SetY(HELPER_Y);
+	m_pDancePad->SetZoom(23);	// Pad should always be 3 units bigger in zoom than the dancer.
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
@@ -184,24 +188,24 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		ASSERT( Character != NULL );
 
 		// Load textures
-		m_mDancer[pl].SetHorizAlign( align_left );
-		m_mDancer[pl].LoadMilkshapeAscii( Character->GetModelPath() );
+		m_pDancer[pl]->SetHorizAlign( align_left );
+		m_pDancer[pl]->LoadMilkshapeAscii( Character->GetModelPath() );
 
 		// Load needed animations
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-LEFT",		GetAnimPath(ANIM_LEFT));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-DOWN",		GetAnimPath(ANIM_DOWN));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-UP", 		GetAnimPath(ANIM_UP));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-RIGHT", 	GetAnimPath(ANIM_RIGHT));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-JUMPLR", 	GetAnimPath(ANIM_JUMPLR));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("rest",			Character->GetRestAnimationPath());
-		m_mDancer[pl].SetDefaultAnimation("rest");
-		m_mDancer[pl].PlayAnimation("rest");
-		m_mDancer[pl].SetRotationX(PLAYER_ANGLE);
-		m_mDancer[pl].SetX(HELPER_X+PLAYER_X(pl));
-		m_mDancer[pl].SetY(HELPER_Y+10);
-		m_mDancer[pl].SetZoom(20);
-		m_mDancer[pl].SetCullMode(CULL_NONE);	// many of the DDR PC character models have the vertex order flipped
-		m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
+		m_pDancer[pl]->LoadMilkshapeAsciiBones("Step-LEFT",		GetAnimPath(ANIM_LEFT));
+		m_pDancer[pl]->LoadMilkshapeAsciiBones("Step-DOWN",		GetAnimPath(ANIM_DOWN));
+		m_pDancer[pl]->LoadMilkshapeAsciiBones("Step-UP", 		GetAnimPath(ANIM_UP));
+		m_pDancer[pl]->LoadMilkshapeAsciiBones("Step-RIGHT", 	GetAnimPath(ANIM_RIGHT));
+		m_pDancer[pl]->LoadMilkshapeAsciiBones("Step-JUMPLR", 	GetAnimPath(ANIM_JUMPLR));
+		m_pDancer[pl]->LoadMilkshapeAsciiBones("rest",			Character->GetRestAnimationPath());
+		m_pDancer[pl]->SetDefaultAnimation("rest");
+		m_pDancer[pl]->PlayAnimation("rest");
+		m_pDancer[pl]->SetRotationX(PLAYER_ANGLE);
+		m_pDancer[pl]->SetX(HELPER_X+PLAYER_X(pl));
+		m_pDancer[pl]->SetY(HELPER_Y+10);
+		m_pDancer[pl]->SetZoom(20);
+		m_pDancer[pl]->SetCullMode(CULL_NONE);	// many of the DDR PC character models have the vertex order flipped
+		m_pDancer[pl]->m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating->
 	}
 
 	m_bInitialized = true;
@@ -219,7 +223,7 @@ void BeginnerHelper::DrawPrimitives()
 
 	bool DrawCelShaded = PREFSMAN->m_bCelShadeModels;
 	if(DrawCelShaded)
-		m_mDancePad.DrawCelShaded();
+		m_pDancePad->DrawCelShaded();
 	else
 	{
 		DISPLAY->SetLighting( true );
@@ -230,7 +234,7 @@ void BeginnerHelper::DrawPrimitives()
 			RageColor(0,0,0,1),
 			RageVector3(0, 0, 1) );
 
-		m_mDancePad.Draw();
+		m_pDancePad->Draw();
 		DISPLAY->ClearZBuffer();	// So character doesn't step "into" the dance pad.
 		DISPLAY->SetLightOff(0);
 		DISPLAY->SetLighting(false);
@@ -244,7 +248,7 @@ void BeginnerHelper::DrawPrimitives()
 	if(DrawCelShaded)
 		FOREACH_PlayerNumber(pn)	// Draw each dancer
 			if(GAMESTATE->IsHumanPlayer(pn))
-				m_mDancer[pn].DrawCelShaded();
+				m_pDancer[pn]->DrawCelShaded();
 	else
 	{
 		DISPLAY->SetLighting( true );
@@ -257,7 +261,7 @@ void BeginnerHelper::DrawPrimitives()
 
 		FOREACH_PlayerNumber(pn)	// Draw each dancer
 			if(GAMESTATE->IsHumanPlayer(pn))
-				m_mDancer[pn].Draw();
+				m_pDancer[pn]->Draw();
 
 		DISPLAY->SetLightOff(0);
 		DISPLAY->SetLighting(false);
@@ -266,42 +270,42 @@ void BeginnerHelper::DrawPrimitives()
 
 void BeginnerHelper::Step( int pn, int CSTEP )
 {
-	m_mDancer[pn].StopTweening();
-	m_mDancer[pn].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
+	m_pDancer[pn]->StopTweening();
+	m_pDancer[pn]->SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
 
 	switch(CSTEP)
 	{
 		case ST_LEFT:
 			ShowStepCircle(pn, ST_LEFT);
-			m_mDancer[pn].PlayAnimation("Step-LEFT", 1.5f);
+			m_pDancer[pn]->PlayAnimation("Step-LEFT", 1.5f);
 			break;
 		case ST_RIGHT:
 			ShowStepCircle(pn, ST_RIGHT);
-			m_mDancer[pn].PlayAnimation("Step-RIGHT", 1.5f);
+			m_pDancer[pn]->PlayAnimation("Step-RIGHT", 1.5f);
 			break;
 		case ST_UP:
 			ShowStepCircle(pn, ST_UP);
-			m_mDancer[pn].PlayAnimation("Step-UP", 1.5f);
+			m_pDancer[pn]->PlayAnimation("Step-UP", 1.5f);
 			break;
 		case ST_DOWN:
 			ShowStepCircle(pn, ST_DOWN);
-			m_mDancer[pn].PlayAnimation("Step-DOWN", 1.5f);
+			m_pDancer[pn]->PlayAnimation("Step-DOWN", 1.5f);
 			break;
 		case ST_JUMPLR:
 			ShowStepCircle(pn, ST_LEFT);
 			ShowStepCircle(pn, ST_RIGHT);
-			m_mDancer[pn].PlayAnimation("Step-JUMPLR", 1.5f);
+			m_pDancer[pn]->PlayAnimation("Step-JUMPLR", 1.5f);
 			break;
 		case ST_JUMPUD:
 			ShowStepCircle(pn, ST_UP);
 			ShowStepCircle(pn, ST_DOWN);
-			m_mDancer[pn].StopTweening();
-			m_mDancer[pn].PlayAnimation("Step-JUMPLR", 1.5f);
-			m_mDancer[pn].BeginTweening((GAMESTATE->m_fCurBPS /8), TWEEN_LINEAR);
-			m_mDancer[pn].SetRotationY(90);
-			m_mDancer[pn].BeginTweening((1/(GAMESTATE->m_fCurBPS * 2))); //sleep between jump-frames
-			m_mDancer[pn].BeginTweening(GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR);
-			m_mDancer[pn].SetRotationY(0);
+			m_pDancer[pn]->StopTweening();
+			m_pDancer[pn]->PlayAnimation("Step-JUMPLR", 1.5f);
+			m_pDancer[pn]->BeginTweening((GAMESTATE->m_fCurBPS /8), TWEEN_LINEAR);
+			m_pDancer[pn]->SetRotationY(90);
+			m_pDancer[pn]->BeginTweening((1/(GAMESTATE->m_fCurBPS * 2))); //sleep between jump-frames
+			m_pDancer[pn]->BeginTweening(GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR);
+			m_pDancer[pn]->SetRotationY(0);
 			break;
 	}
 	
@@ -349,7 +353,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 	
 	// Update animations
 	ActorFrame::Update(fDeltaTime);
-	m_mDancePad.Update(fDeltaTime);
+	m_pDancePad->Update(fDeltaTime);
 	m_sFlash.Update(fDeltaTime);
 
 	float beat = (fDeltaTime*GAMESTATE->m_fCurBPS);
@@ -360,7 +364,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 			continue;
 		
 		// Update dancer's animation and StepCircles
-		m_mDancer[pu].Update( beat );
+		m_pDancer[pu]->Update( beat );
 		for(int scu=0; scu<NUM_PLAYERS; scu++)
 			for(int scue=0; scue<4; scue++)
 				m_sStepCircle[scu][scue].Update(beat);

@@ -1,12 +1,12 @@
 #ifndef DancingCharacters_H
 #define DancingCharacters_H
 
-#include "Model.h"
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
 #include "BGAnimation.h"
 #include "ThemeManager.h"
 #include "RageTimer.h"
+class Model;
 
 enum ANIM_STATES_2D
 {
@@ -26,6 +26,7 @@ class DancingCharacters : public ActorFrame
 {
 public:
 	DancingCharacters();
+	virtual ~DancingCharacters();
 
 	virtual void LoadNextSong();
  
@@ -35,7 +36,7 @@ public:
 	void Change2DAnimState(int iPlayerNum, int iState);
 protected:
 
-	Model	m_Character[NUM_PLAYERS];
+	Model	*m_pCharacter[NUM_PLAYERS];
 
 	float	m_CameraDistance;
 	float	m_CameraPanYStart;

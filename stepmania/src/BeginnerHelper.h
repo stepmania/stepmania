@@ -2,11 +2,11 @@
 #define BEGINNER_HELPER_H
 
 #include "ActorFrame.h"
-#include "Model.h"
 #include "Character.h"
 #include "Sprite.h"
 #include "PlayerNumber.h"
 #include "NoteData.h"
+class Model;
 
 class BeginnerHelper : public ActorFrame
 {
@@ -29,8 +29,8 @@ protected:
 
 	NoteData m_NoteData[NUM_PLAYERS];
 	bool m_bPlayerEnabled[NUM_PLAYERS];
-	Model m_mDancer[NUM_PLAYERS];
-	Model m_mDancePad;
+	Model *m_pDancer[NUM_PLAYERS];
+	Model *m_pDancePad;
 	Sprite	m_sFlash;
 	Sprite	m_sBackground;
 	Sprite	m_sStepCircle[NUM_PLAYERS][4];	// More memory, but much easier to manage
