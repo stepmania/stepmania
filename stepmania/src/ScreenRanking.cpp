@@ -405,6 +405,7 @@ void ScreenRanking::Scroll( int iDir )
 	{
 		// TODO: play sound
 		m_ListScoreRowItems.SetDestinationItem( fDest );
+		m_ListCourseRowItems.SetDestinationItem( fDest );
 	}
 }
 
@@ -695,6 +696,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 			for( unsigned i=0; i<m_vpCourseScoreRowItem.size(); i++ )
 				vpActors.push_back( m_vpCourseScoreRowItem[i] );
 			m_ListCourseRowItems.Load( vpActors, SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0, false );
+
+			if( (bool)MANUAL_SCROLLING )
+			{
+				m_ListCourseRowItems.SetCurrentItem( 0 );
+				m_ListCourseRowItems.SetDestinationItem( 0 );
+			}
 
 			for( unsigned s=0; s<m_vpCourseScoreRowItem.size(); s++ )
 			{
