@@ -705,13 +705,12 @@ RageDisplay *CreateDisplay()
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
 #if defined(SUPPORT_OPENGL)
-			error += "Initializing OpenGL...\n";
-			try {
-				return new RageDisplay_OGL( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
-			} catch(RageException e) {
-				error += CString(e.what()) + "\n";
-				continue;
-			};
+			RageDisplay_OGL *pRet = new RageDisplay_OGL;
+			CString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
+			if( sError == "" )
+				return pRet;
+			error += "Initializing OpenGL...\n" + sError;
+			delete pRet;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )

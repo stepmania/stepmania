@@ -358,7 +358,7 @@ static void LogGLXDebugInformation()
 #endif
 }
 
-RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRenderer )
+RageDisplay_OGL::RageDisplay_OGL()
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
@@ -366,15 +366,17 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	FixLilEndian();
 	InitStringMap();
 
+	wind = NULL;
+}
+
+CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
+{
 	wind = MakeLowLevelWindow();
 
 	bool bIgnore = false;
 	CString sError = SetVideoMode( p, bIgnore );
 	if( sError != "" )
-	{
-		delete wind;
-		RageException::ThrowNonfatal( sError );
-	}
+		return sError;
 
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
@@ -389,12 +391,9 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	if( IsSoftwareRenderer() )
 	{
 		if( !bAllowUnacceleratedRenderer )
-		{
-			delete wind;
-			RageException::ThrowNonfatal(
+			return
 				"Your system is reporting that OpenGL hardware acceleration is not available.  "
-				"Please obtain an updated driver from your video card manufacturer.\n\n" );
-		}
+				"Please obtain an updated driver from your video card manufacturer.\n\n";
 		LOG->Warn("This is a software renderer!");
 	}
 
@@ -404,22 +403,16 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	 * too using Direct3D directly.  (If we can't, it's a bug that we can work
 	 * around--if GLDirect can do it, so can we!) */
 	if( !strncmp( (const char *) glGetString(GL_RENDERER), "GLDirect", 8 ) )
-	{
-		delete wind;
-		RageException::ThrowNonfatal( "GLDirect was detected.  GLDirect is not compatible with StepMania, and should be disabled.\n" );
-	}
+		return "GLDirect was detected.  GLDirect is not compatible with StepMania, and should be disabled.\n";
 #endif
 
 #if defined(UNIX)
 	if( !glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
 	{
 		if( !bAllowUnacceleratedRenderer )
-		{
-			delete wind;
-			RageException::ThrowNonfatal(
-				"Your system is reporting that direct rendering is not available.  "
+			return "Your system is reporting that direct rendering is not available.  "
 				"Please obtain an updated driver from your video card manufacturer." );
-		}
+
 		LOG->Warn("Direct rendering is not enabled!");
 	}
 #endif
@@ -430,6 +423,8 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_line_granularity);
 	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_point_granularity);
+
+	return "";
 }
 
 #if defined(UNIX) && defined(HAVE_LIBXTST)

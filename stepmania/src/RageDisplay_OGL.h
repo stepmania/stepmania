@@ -6,8 +6,9 @@
 class RageDisplay_OGL: public RageDisplay
 {
 public:
-	RageDisplay_OGL( VideoModeParams params, bool bAllowUnacceleratedRenderer );
+	RageDisplay_OGL();
 	virtual ~RageDisplay_OGL();
+	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
