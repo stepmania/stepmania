@@ -7,13 +7,7 @@
 #include "Course.h"
 #include "Style.h"
 
-BPMDisplay::BPMDisplay():
-	NORMAL_COLOR( m_sName, "NormalColor"),
-	CHANGE_COLOR( m_sName, "ChangeColor" ),
-	EXTRA_COLOR( m_sName, "ExtraColor" ),
-	CYCLE( m_sName, "Cycle" ),
-	SEPARATOR( m_sName, "Separator" ),
-	NO_BPM_TEXT( m_sName, "NoBPMText" )
+BPMDisplay::BPMDisplay()
 {
 	m_fBPMFrom = m_fBPMTo = 0;
 	m_iCurrentBPM = 0;
@@ -24,6 +18,13 @@ BPMDisplay::BPMDisplay():
 
 void BPMDisplay::Load()
 {
+	NORMAL_COLOR.Load( m_sName, "NormalColor");
+	CHANGE_COLOR.Load( m_sName, "ChangeColor" );
+	EXTRA_COLOR.Load( m_sName, "ExtraColor" );
+	CYCLE.Load( m_sName, "Cycle" );
+	SEPARATOR.Load( m_sName, "Separator" );
+	NO_BPM_TEXT.Load( m_sName, "NoBPMText" );
+
 	m_textBPM.SetName( "Text" );
 	m_textBPM.LoadFromFont( THEME->GetPathToF(m_sName) );
 	SET_XY_AND_ON_COMMAND( m_textBPM );
