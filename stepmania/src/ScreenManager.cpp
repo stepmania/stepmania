@@ -399,20 +399,8 @@ void ScreenManager::RefreshCreditsMessages()
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
 		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
 		
-
-		int _c = GAMESTATE->m_iCoins;
-		int _x = PREFSMAN->m_iCoinsPerCredit;
 		LOG->Trace("Actual coins: %d",GAMESTATE->m_iCoins);
 
-		unsigned int _r = 0;
-				
-		while (_c >= _x) {
-			_c -= _x;
-			_r++;
-
-		}
-		
-	
 		switch( PREFSMAN->m_CoinMode )
 		{
 		case PrefsManager::COIN_HOME:
@@ -424,8 +412,13 @@ void ScreenManager::RefreshCreditsMessages()
 				m_textCreditInfo[p].SetText( "NOT PRESENT" );
 			break;
 		case PrefsManager::COIN_PAY:
-			if (_c == 0) m_textCreditInfo[p].SetText( ssprintf("CREDIT(S) %d ",_r) );
-			else m_textCreditInfo[p].SetText( ssprintf("CREDIT(S) %d (%d / %d)",_r,_c,_x ) );
+			{
+				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+				CString txt = ssprintf("CREDIT(S) %d ", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+				if (Coins)
+					txt += ssprintf(" (%d / %d)", Coins, PREFSMAN->m_iCoinsPerCredit );
+				m_textCreditInfo[p].SetText(txt);
+			}
 			break;
 		case PrefsManager::COIN_FREE:
 			m_textCreditInfo[p].SetText( "FREE PLAY" );
@@ -435,3 +428,4 @@ void ScreenManager::RefreshCreditsMessages()
 		}
 	}
 }
+
