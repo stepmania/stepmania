@@ -1,15 +1,14 @@
-#ifndef LUA_HELPERS_H
-#define LUA_HELPERS_H
+#ifndef LUA_MANAGER_H
+#define LUA_MANAGER_H
 
 struct lua_State;
-class LuaManager;
-typedef void (*RegisterActorFn)(lua_State*);
+typedef void (*RegisterWithLuaFn)(lua_State*);
 
 class LuaManager
 {
 public:
 	// Every Actor should register its class at program initialization.
-	static void Register( RegisterActorFn pfn );
+	static void Register( RegisterWithLuaFn pfn );
 
 	LuaManager();
 	~LuaManager();
