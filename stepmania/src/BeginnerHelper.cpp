@@ -80,7 +80,7 @@ void BeginnerHelper::ShowStepCircle( int pn, int CSTEP )
 	m_sStepCircle[pn][isc].SetEffectNone();
 	m_sStepCircle[pn][isc].SetZoom(2);
 	m_sStepCircle[pn][isc].StopTweening();
-	m_sStepCircle[pn][isc].BeginTweening((GAMESTATE->m_fCurBPS/4), TWEEN_LINEAR);
+	m_sStepCircle[pn][isc].BeginTweening((GAMESTATE->m_fCurBPS/3), TWEEN_LINEAR);
 	m_sStepCircle[pn][isc].SetZoom(0);
 }
 
