@@ -867,12 +867,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		m_soundChangeLine.Play();
 		break;
 	case SDLK_LEFT:
-		m_SnapDisplay.PrevSnapMode();
-		OnSnapModeChange();
+		if( m_SnapDisplay.PrevSnapMode() )
+			OnSnapModeChange();
 		break;
 	case SDLK_RIGHT:
-		m_SnapDisplay.NextSnapMode();
-		OnSnapModeChange();
+		if( m_SnapDisplay.NextSnapMode() )
+			OnSnapModeChange();
 		break;
 	case SDLK_SPACE:
 		if( m_NoteFieldEdit.m_fBeginMarker==-1 && m_NoteFieldEdit.m_fEndMarker==-1 )
