@@ -214,7 +214,8 @@ ScreenStage::ScreenStage()
 		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
 		m_quadMask.StretchTo( CRect(SCREEN_LEFT, roundf(fStageOffScreenY-fStageHeight/2), 
 							        SCREEN_RIGHT, roundf(fStageOffScreenY+fStageHeight/2)) );
-		m_quadMask.SetZ( -1 );		// important: fill Z buffer with values that will cause subsequent draws to fail the Z test
+		/* Put the quad mask on top, so draws to the Stage will be "under" it. */
+		m_quadMask.SetZ( -1 );
 
 		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
 		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
@@ -227,7 +228,7 @@ ScreenStage::ScreenStage()
 	//
 	if( g_StageType == STAGE_TYPE_PUMP )
 	{
-		Song* pSong = GAMESTATE->m_pCurSong;
+		const Song* pSong = GAMESTATE->m_pCurSong;
 		m_sprSongBackground.Load( (pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
 		m_sprSongBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 

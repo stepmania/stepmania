@@ -113,19 +113,19 @@ public:
 	CString	m_sCDTitleFile;
 	CString	m_sMovieBackgroundFile;
 
-	CString GetMusicPath()			{return m_sMusicFile.Find('.')==0 ? m_sMusicFile : m_sSongDir+m_sMusicFile; };
-	CString GetBannerPath()			{return m_sSongDir+m_sBannerFile; };
-	CString GetBackgroundPath()		{return m_sSongDir+m_sBackgroundFile; };
-	CString GetCDTitlePath()		{return m_sCDTitleFile.Find('.')==0 ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile; };
-	CString GetMovieBackgroundPath(){return m_sSongDir+m_sMovieBackgroundFile; };
+	CString GetMusicPath() const	{return m_sMusicFile.Find('.')==0 ? m_sMusicFile : m_sSongDir+m_sMusicFile; };
+	CString GetBannerPath() const	{return m_sSongDir+m_sBannerFile; };
+	CString GetBackgroundPath() const {return m_sSongDir+m_sBackgroundFile; };
+	CString GetCDTitlePath() const	{return m_sCDTitleFile.Find('.')==0 ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile; };
+	CString GetMovieBackgroundPath() const {return m_sSongDir+m_sMovieBackgroundFile; };
 
 
-	bool HasMusic()				{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); };
-	bool HasBanner()			{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); };
-	bool HasBackground()		{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
-	bool HasCDTitle()			{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
-	bool HasMovieBackground()	{return m_sMovieBackgroundFile != ""&&  IsAFile(GetMovieBackgroundPath()); };
-	bool HasBGChanges()			{return m_BackgroundChanges.GetSize() > 0; };
+	bool HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); };
+	bool HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); };
+	bool HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
+	bool HasCDTitle() const 	{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
+	bool HasMovieBackground() const {return m_sMovieBackgroundFile != ""&&  IsAFile(GetMovieBackgroundPath()); };
+	bool HasBGChanges() const 	{return m_BackgroundChanges.GetSize() > 0; };
 
 	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
 	CArray<StopSegment, StopSegment&> m_StopSegments;	// this must be sorted before gameplay
