@@ -781,7 +781,7 @@ void ScreenEvaluation::Init()
 		}
 		if( iPersonalHighScoreIndex[p] != -1 )
 		{
-			m_sprPersonalRecord[p].Load( THEME->GetPathG( "ScreenEvaluation", ssprintf("PersonalRecord %02d",iMachineHighScoreIndex[p]+1) ) );
+			m_sprPersonalRecord[p].Load( THEME->GetPathG( "ScreenEvaluation", ssprintf("PersonalRecord %02d",iPersonalHighScoreIndex[p]+1) ) );
 			m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
 			m_sprPersonalRecord[p]->StopAnimating();
 			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
