@@ -738,7 +738,7 @@ RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sV
 
 	RageColor ret(1,1,1,1);
 	if( !ret.FromString(sValue) )
-		LOG->Warn( "The color value '%s' for metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).c_str(), sClassName.c_str(), sValueName.c_str() );
+		LOG->Warn( "The color value '%s' for metric '%s : %s' is invalid.", sValue.c_str(), sClassName.c_str(), sValueName.c_str() );
 	return ret;
 }
 
