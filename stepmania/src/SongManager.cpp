@@ -753,7 +753,7 @@ Song* SongManager::GetRandomSong()
 	if( m_pShuffledSongs.empty() )
 		return NULL;
 
-	static i = 0;
+	static int i = 0;
 	i++;
 	wrap( i, m_pShuffledSongs.size() );
 
@@ -765,7 +765,7 @@ Course* SongManager::GetRandomCourse()
 	if( m_pShuffledCourses.empty() )
 		return NULL;
 
-	static i = 0;
+	static int i = 0;
 	i++;
 	wrap( i, m_pShuffledCourses.size() );
 
