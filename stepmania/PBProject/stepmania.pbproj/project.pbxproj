@@ -1923,7 +1923,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "/usr/include   \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src  \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\" ../src/archutils/Darwin/PublicUtility";
+				HEADER_SEARCH_PATHS = "/usr/include ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\" ../src/archutils/Darwin/PublicUtility \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers\" ";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
@@ -13034,9 +13034,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = image.png;
 			name = splash.png;
-			path = /Users/steve/programming/stepmania/Data/splash.png;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../Data/splash.png;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA817DF80622889500EA44DB = {
 			fileRef = AA817DF70622889500EA44DB;
@@ -16478,9 +16478,9 @@
 			);
 			isa = PBXGroup;
 			name = crypto;
-			path = /Users/steve/programming/stepmania/src/crypto;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/crypto;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAE66F630657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
