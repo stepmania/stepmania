@@ -126,12 +126,25 @@ CourseContentsFrame::CourseContentsFrame()
 	ContentsBarWidth = m_CourseContentDisplays[0].m_sprFrame.GetTexture()->GetSourceFrameWidth();
 }
 
+void CourseContentsFrame::TweenInAfterChangedCourse()
+{
+	m_fItemAtTopOfList = 0;
+	m_fTimeUntilScroll = 3;
+
+	for( int i=0; i<m_iNumContents; i++ )
+	{
+		CourseContentDisplay& display = m_CourseContentDisplays[i];
+
+		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
+		display.StopTweening();
+		display.BeginTweening( i*0.1f );
+		display.SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(ContentsBarHeight) );
+	}
+}
+
 void CourseContentsFrame::SetFromCourse( Course* pCourse )
 {
 	ASSERT( pCourse != NULL );
-
-	m_fTimeUntilScroll = 3;
-	m_fItemAtTopOfList = 0;
 
 	m_iNumContents = 0; 
 
@@ -162,14 +175,11 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 			CString sModifiers = vsModifiers[i];
 			display.LoadFromSongAndNotes( m_iNumContents+1, pSong, pNotes );
 		}
-
-		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
-		display.StopTweening();
-		display.BeginTweening( m_iNumContents*0.1f );
-		display.SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + m_iNumContents) * float(ContentsBarHeight) );
 		
 		m_iNumContents ++;
 	}
+
+	m_fItemAtTopOfList = fmodf(m_fItemAtTopOfList, float(m_iNumContents));
 }
 
 void CourseContentsFrame::Update( float fDeltaTime )

@@ -52,6 +52,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void SetFromCourse( Course* pCourse );
+	void TweenInAfterChangedCourse();
 
 protected:
 

@@ -190,7 +190,18 @@ void ScreenSelectCourse::TweenOffScreen()
 void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectCourse::Input()" );
-	
+
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
+	{
+		if( type != IET_FIRST_PRESS ) return;
+		PREFSMAN->m_bShowTranslations ^= 1;
+		m_MusicWheel.RebuildWheelItemDisplays();
+		Course* pCourse = m_MusicWheel.GetSelectedCourse();
+		if(pCourse)
+			m_CourseContentsFrame.SetFromCourse( pCourse );
+		return;
+	}
+
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
 		if( !MenuI.IsValid() ) return;
@@ -354,6 +365,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			m_Banner.LoadFromCourse( pCourse );
 
 			m_CourseContentsFrame.SetFromCourse( pCourse );
+			m_CourseContentsFrame.TweenInAfterChangedCourse();
 		}
 		break;
 	case TYPE_SECTION:	// if we get here, there are no courses
