@@ -1712,7 +1712,7 @@ void Profile::LoadAwardsFromNode( const XNode* pNode )
 		else if( (*pAward)->name == "PeakComboAward" )
 		{
 			CString sPeakComboAward;
-			if( !(*pAward)->GetAttrValue( "PerDifficultyAward", sPeakComboAward ) )
+			if( !(*pAward)->GetAttrValue( "PeakComboAward", sPeakComboAward ) )
 				WARN_AND_CONTINUE;
 			PeakComboAward pca = StringToPeakComboAward( sPeakComboAward );
 			if( pca == PEAK_COMBO_AWARD_INVALID )
