@@ -83,6 +83,7 @@ public:
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	void SetStartTime( const RageTimer &tm ) { StartTime = tm; }
 	RageTimer GetStartTime() const { return StartTime; }
+	void SetBalance( float f ) { m_Balance = f; }
 
 private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
@@ -124,6 +125,9 @@ private:
 	float fade_length;
 
 	float m_Volume;
+
+	/* Pan: -1, left; 1, right */
+	float m_Balance;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position

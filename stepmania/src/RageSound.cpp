@@ -78,6 +78,7 @@ RageSound::RageSound():
 	m_StartSample = 0;
 	m_LengthSamples = -1;
 	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
+	m_Balance = 0; // center
 	AccurateSync = false;
 	fade_length = 0;
 	/* Register ourselves, so we receive Update()s. */
@@ -501,6 +502,21 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 					p++;
 				}
 				this_position++;
+			}
+		}
+
+		if( m_Balance != 0 )
+		{
+			Sint16 *p = (Sint16 *) buffer;
+			const float fLeft = SCALE( m_Balance, -1, 1, 1, 0 );
+			const float fRight = SCALE( m_Balance, -1, 1, 0, 1 );
+			const int iLeft = int(fLeft*256);
+			const int iRight = int(fRight*256);
+			RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
+			for( int samp = 0; samp < got_frames; ++samp )
+			{
+				*(p++) = short( (*p * iLeft) >> 8 );
+				*(p++) = short( (*p * iRight) >> 8 );
 			}
 		}
 
