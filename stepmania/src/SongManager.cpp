@@ -93,6 +93,7 @@ SongManager::SongManager( LoadingWindow *ld )
 SongManager::~SongManager()
 {
 	FreeSongs();
+	FreeCourses();
 }
 
 void SongManager::Reload()

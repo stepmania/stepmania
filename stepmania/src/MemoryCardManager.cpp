@@ -45,7 +45,7 @@ MemoryCardManager::MemoryCardManager()
 
 MemoryCardManager::~MemoryCardManager()
 {
-
+	delete m_pDriver;
 }
 
 void MemoryCardManager::Update( float fDelta )

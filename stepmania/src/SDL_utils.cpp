@@ -1153,7 +1153,10 @@ SDL_Surface *SDL_LoadImage( const CString &sPath )
 	if( rw == NULL )
 		return NULL;
 
-	return IMG_LoadTyped_RW( rw, true, (char *) GetExtension(sPath).c_str() );
+	SDL_Surface *ret = IMG_LoadTyped_RW( rw, true, (char *) GetExtension(sPath).c_str() );
+	SDL_FreeRW( rw );
+
+	return ret;
 }
 
 struct RWString
