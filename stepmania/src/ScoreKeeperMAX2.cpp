@@ -16,7 +16,7 @@
 #include "NetworkSyncManager.h"
 #include "PlayerState.h"
 #include "Style.h"
-#include "Song.h"
+#include "song.h"
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( 
 		const vector<Song*>& apSongs, 
