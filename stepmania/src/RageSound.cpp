@@ -197,6 +197,9 @@ void RageSound::Update(float delta)
 
 //	if( playing && delta )
 //		FillBuf(int(delta * GetSampleRate() * framesize));
+
+	/* Erase old pos_map data. */
+	CleanPosMap( pos_map );
 }
 
 /* Return the number of bytes available in the input buffer. */
@@ -504,11 +507,20 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int got_frames )
 {
 	LockMut(SOUNDMAN->lock);
-	pos_map_t p( frameno, pos, got_frames );
-	pos_map.push_back( p );
 
-	/* Erase old pos_map data. */
-	CleanPosMap( pos_map );
+	if( pos_map.size() )
+	{
+		/* Optimization: If the last entry lines up with this new entry, just merge them. */
+		pos_map_t &last = pos_map.back();
+		if( last.frameno+last.frames == frameno &&
+		    last.position+last.frames == pos )
+		{
+			last.frames += got_frames;
+			return;
+		}
+	}
+
+	pos_map.push_back( pos_map_t( frameno, pos, got_frames ) );
 }
 
 /* Called by the mixer: return a block of sound data. 
