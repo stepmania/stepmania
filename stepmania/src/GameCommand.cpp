@@ -39,6 +39,7 @@ void GameCommand::Init()
 	m_sModifiers = "";
 	m_sAnnouncer = "";
 	m_sScreen = "";
+	m_sLuaFunction = "";
 	m_pSong = NULL;
 	m_pSteps = NULL;
 	m_pCourse = NULL;
@@ -208,6 +209,11 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 			if( m_sModifiers != "" )
 				m_sModifiers += ",";
 			m_sModifiers += sValue;
+		}
+		
+		else if( sName == "lua" )
+		{
+			m_sLuaFunction = sValue;
 		}
 		
 		else if( sName == "screen" )
@@ -622,6 +628,8 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	if( m_sModifiers != "" )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ApplyModifiers( *pn, m_sModifiers );
+	if( m_sLuaFunction != "" )
+		LUA->RunScript( m_sLuaFunction, "in", 0 );
 	if( m_sScreen != "" )
 		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )

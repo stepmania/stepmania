@@ -47,6 +47,7 @@ public:
 	CString		m_sAnnouncer;
 	CString		m_sModifiers;
 	CString		m_sScreen;
+	CString		m_sLuaFunction;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Course*		m_pCourse;
