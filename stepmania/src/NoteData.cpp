@@ -471,11 +471,11 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 	NoteData in;
 	in.To2sAnd3s( *pOriginal );
 
+	const int iLastRow = in.GetMaxRow();
 	for ( int i = 0; i < in.GetNumTracks(); i++ )
 	{
-		int iTrackTo = i % iNewNumTracks;
-		int iTrackFrom = i;
-		const int iLastRow = in.GetMaxRow();
+		const int iTrackTo = i % iNewNumTracks;
+		const int iTrackFrom = i;
 
 		for( int row = 0; row < iLastRow; ++row )
 		{
