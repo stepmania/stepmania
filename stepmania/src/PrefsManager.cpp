@@ -61,7 +61,6 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowBooSeconds = 0.180f;
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
 	m_fLifeDifficultyScale = 1.0f;
-	m_iMovieDecodeMS = 2;
 	m_bDelayedEscape = true;
 	m_bInstructions = true;
 	m_bShowDontDie = true;
@@ -206,7 +205,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.GetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
 	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
-	ini.GetValue( "Options", "MovieDecodeMS",					m_iMovieDecodeMS );
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.GetValue( "Options", "Vsync",							m_bVsync );
@@ -324,7 +322,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.SetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
 	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
-	ini.SetValue( "Options", "MovieDecodeMS",					m_iMovieDecodeMS );
 	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );

@@ -32,7 +32,6 @@ public:
 	enum BackgroundModes { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
 	int				m_iNumBackgrounds;
 	float			m_fBGBrightness;
-	int 			m_iMovieDecodeMS;
 	bool			m_bHiddenSongs;
 	bool			m_bVsync;
 	bool			m_bInterlaced;

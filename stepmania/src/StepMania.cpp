@@ -357,43 +357,43 @@ struct VideoCardDefaults
 	int iHeight;
 	int iDisplayColor;
 	int iTextureColor;
+	int iMovieColor;
 	bool bAntiAliasing;
 } const g_VideoCardDefaults[] = 
 {
 	{
 		"Voodoo3|3dfx",
 		"d3d,opengl",
-		640,
-		480,
-		16,
-		16,
+		640,480,
+		16,16,16,
 		0	// broken, causes black screen
+	},
+	{
+		"Radeon 7|ArcadeVGA",	// Radeon 7xxx
+		"opengl,d3d",
+		640,480,
+		16,16,16,
+		1	// hardware accelerated
 	},
 	{
 		"GeForce|Radeon",
 		"opengl,d3d",
-		640,
-		480,
-		32,
-		32,	// 32 bit textures are faster to load
+		640,480,
+		32,32,32,	// 32 bit textures are faster to load
 		1	// hardware accelerated
 	},
 	{
 		"TNT|Vanta|M64",
 		"opengl,d3d",
-		640,
-		480,
-		16,	// ease out on the fill rate a bit
-		16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
+		640,480,
+		16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
 		1	// hardware accelerated
 	},
 	{
 		"G200|G250|G400",
 		"d3d,opengl",
-		640,
-		480,
-		16,
-		16,
+		640,480,
+		16,16,16,
 		0	// broken, causes black screen
 	},
 	{
@@ -402,10 +402,8 @@ struct VideoCardDefaults
 			// OpenGL is unusable on my Savage IV with even the latest drivers.  
 			// It draws 30 frames of gibberish then crashes.  This happens even with
 			// simple NeHe demos.  -Chris
-		640,
-		480,
-		16,
-		16,
+		640,480,
+		16,16,16,
 		false
 	},
 	{
@@ -415,29 +413,22 @@ struct VideoCardDefaults
 			// drivers come with an ICD.  Also, the WinXP driver performance 
 			// is terrible and supports only 640.  The ATI driver is usable.
 			// -Chris
-		400,	// lower resolution for 60fps
-		300,
-		16,
-		16,
+		400,300,	// lower resolution for 60fps
+		16,16,16,
 		0
 	},
 	{
 		"RAGE MOBILITY-M1",
 		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
-		400,	// lower resolution for 60fps
-		300,
-		16,
-		16,
+		400,300,	// lower resolution for 60fps
+		16,16,16,
 		0
 	},
 	{
 		"Intel.*82810|Intel.*82815",
 		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
-
-		512,	// lower resolution for 60fps
-		384,
-		16,
-		16,
+		512,384,	// lower resolution for 60fps
+		16,16,16,
 		0
 	},
 	{
@@ -448,28 +439,15 @@ struct VideoCardDefaults
 		// bug 791950: AV in glsis630!DrvSwapBuffers for "SiS 630/730"
 		"Trident Video Accelerator CyberBlade|VIA.*VT|SiS 6*",
 		"d3d,opengl",
-		640,
-		480,
-		16,
-		16,
-		0
-	},
-	{
-		"Voodoo3|3dfx",
-		"d3d,opengl",
-		640,
-		480,
-		16,
-		16,
+		640,480,
+		16,16,16,
 		0
 	},
 	{
 		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
 		"opengl",
-		640,
-		480,
-		16,
-		16,
+		640,480,
+		16,16,16,
 		1		// Right now, they've got to have NVidia or ATi Cards anyway..
 	},
 	{
@@ -477,13 +455,9 @@ struct VideoCardDefaults
 		// This must be the very last entry!
 		"",
 		"opengl,d3d",
-		640,
-		480,
-		16,
-		16,
-		0
-		// AA is slow on some cards, so let's selectively enable it on cards we know are hardware
-		// accelerated.  Enabling AA on a G400 slows screenSelectMusic from 45fps to 35fps.
+		640,480,
+		16,16,16,
+		0  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
 	},
 };
 
@@ -542,7 +516,7 @@ static void CheckVideoDefaultSettings()
 		PREFSMAN->m_iDisplayHeight = pDefaults->iHeight;
 		PREFSMAN->m_iDisplayColorDepth = pDefaults->iDisplayColor;
 		PREFSMAN->m_iTextureColorDepth = pDefaults->iTextureColor;
-		PREFSMAN->m_iMovieColorDepth = pDefaults->iTextureColor;
+		PREFSMAN->m_iMovieColorDepth = pDefaults->iMovieColor;
 		PREFSMAN->m_bAntiAliasing = pDefaults->bAntiAliasing;
 
 		// Update last seen video card

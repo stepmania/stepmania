@@ -358,16 +358,16 @@ static void TextureColor( int &sel, bool ToSel, const CStringArray &choices )
 	MoveMap( sel, PREFSMAN->m_iTextureColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
+static void MovieColor( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int mapping[] = { 16,32 };
+	MoveMap( sel, PREFSMAN->m_iMovieColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 {
 	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
 	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
-}
-
-static void MovieDecode( int &sel, bool ToSel, const CStringArray &choices )
-{
-	const int mapping[] = { 1,2,3,4 };
-	MoveMap( sel, PREFSMAN->m_iMovieDecodeMS, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Sound options */
@@ -445,9 +445,9 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Display\nColor",		DisplayColor,		"16BIT","32BIT" ),
 	ConfOption( "Texture\nResolution",	TextureResolution,	"256","512","1024","2048" ),
 	ConfOption( "Texture\nColor",		TextureColor,		"16BIT","32BIT" ),
+	ConfOption( "Movie\nColor",			MovieColor,		"16BIT","32BIT" ),
 	ConfOption( "Keep Textures\nIn Memory", KeepTexturesInMemory,	"NO","YES" ),
 	ConfOption( "Refresh\nRate",		RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
-	ConfOption( "Movie\nDecode",		MovieDecode,		"1ms","2ms","3ms","4ms" ),
 	ConfOption( "Wait For\nVsync",		WaitForVsync,		"NO", "YES" ),
 	ConfOption( "Show\nStats",			ShowStats,			"OFF","ON" ),
 
