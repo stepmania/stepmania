@@ -176,7 +176,7 @@ Sound += $(Sound_OSS)
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
-		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) 
+		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    $(PCRE) \
 	            arch/arch.cpp \
 		    arch/InputHandler/InputHandler_SDL.cpp \
