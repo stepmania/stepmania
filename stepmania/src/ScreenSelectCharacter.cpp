@@ -89,8 +89,6 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 	}
 
 	
-	int p;
-
 	FOREACH_PlayerNumber( p )
 	{
 		m_iSelectedCharacter[p] = 0;
