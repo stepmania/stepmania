@@ -58,9 +58,45 @@ static void GetDisplayDriverDebugInfo()
 	CoUninitialize();
 }
 
+static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
+{
+	char buf[MAXERRORLENGTH];
+	waveOutGetErrorText(err, buf, MAXERRORLENGTH);
+
+    va_list	va;
+    va_start(va, fmt);
+    CString s = vssprintf( fmt, va );
+    va_end(va);
+
+	return s += ssprintf( "(%s)", buf );
+}
+
+static void GetSoundDriverDebugInfo()
+{
+	int cnt = waveOutGetNumDevs();
+
+	for(int i = 0; i < cnt; ++i)
+	{
+		WAVEOUTCAPS caps;
+	
+		MMRESULT ret = waveOutGetDevCaps(i, &caps, sizeof(caps));
+		if(ret != MMSYSERR_NOERROR)
+		{
+			LOG->Info(wo_ssprintf(ret, "waveOutGetDevCaps(%i) failed", i));
+			continue;
+		}
+		LOG->Info("Sound device %i: %s, %i.%i, MID %i, PID %i %s", i, caps.szPname,
+			HIBYTE(caps.vDriverVersion),
+			LOBYTE(caps.vDriverVersion),
+			caps.wMid, caps.wPid,
+			caps.dwSupport & WAVECAPS_SAMPLEACCURATE? "":"(INACCURATE)");
+	}
+}
+
 void SearchForDebugInfo()
 {
 	GetDisplayDriverDebugInfo();
+	GetSoundDriverDebugInfo();
 
 	/* Detect operating system. */
 	OSVERSIONINFO ovi;
