@@ -1038,7 +1038,7 @@ void SaveStatsWebPage(
 	RageFile f;
 	if( !f.Open( fn, RageFile::WRITE ) )
 	{
-		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
 		return;
 	}
 
