@@ -176,12 +176,15 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 		}
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			MenuRight( (PlayerNumber)p );
-			MenuLeft( (PlayerNumber)p );
-		}
+	// I'm not sure why this was here -- but there seem no ill effects
+	// of it's removal.
+	//
+	//for( int p=0; p<NUM_PLAYERS; p++ )
+	//	if( GAMESTATE->IsHumanPlayer(p) )
+	//	{
+	//		MenuRight( (PlayerNumber)p );
+	//		MenuLeft( (PlayerNumber)p );
+	//	}
 }
 
 void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
