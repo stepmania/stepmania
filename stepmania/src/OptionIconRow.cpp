@@ -67,6 +67,7 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Reverse",		5},
 	{"Split",		5},
 	{"Alternate",	5},
+	{"Cross",		5},
 	{"Incoming",	6},
 	{"Space",		6},
 	{"Hallway",		6},

@@ -126,6 +126,7 @@ CString PlayerOptions::GetString() const
 	sReturn += AddPart( m_fScrolls[SCROLL_REVERSE],	"Reverse" );
 	sReturn += AddPart( m_fScrolls[SCROLL_SPLIT],	"Split" );
 	sReturn += AddPart( m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
+	sReturn += AddPart( m_fScrolls[SCROLL_CROSS],	"Cross" );
 
 	sReturn += AddPart( m_fDark, "Dark");
 
@@ -292,6 +293,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "reverse" )	SET_FLOAT( fScrolls[SCROLL_REVERSE] )
 		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
+		else if( sBit == "cross" )		SET_FLOAT( fScrolls[SCROLL_CROSS] )
 		else if( sBit == "noholds" || sBit == "nofreeze" )	m_bTransforms[TRANSFORM_NOHOLDS] = on;
 		else if( sBit == "nomines" )	m_bTransforms[TRANSFORM_NOMINES] = on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
@@ -459,11 +461,21 @@ void PlayerOptions::SetOneScroll( Scroll s )
 float PlayerOptions::GetReversePercentForColumn( int iCol )
 {
 	float f = 0;
+	int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
+
 	f += m_fScrolls[SCROLL_REVERSE];
-	if( iCol >= GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer/2 )
+	
+	if( iCol >= iNumCols/2 )
 		f += m_fScrolls[SCROLL_SPLIT];
+
 	if( (iCol%2)==1 )
 		f += m_fScrolls[SCROLL_ALTERNATE];
+	
+	int iFirstCrossCol = iNumCols/4;
+	int iLastCrossCol = iNumCols-1-iFirstCrossCol;
+	if( iCol>=iFirstCrossCol && iCol<=iLastCrossCol )
+		f += m_fScrolls[SCROLL_CROSS];
+	
 	if( f > 2 )
 		f = fmodf( f, 2 );
 	if( f > 1 )
