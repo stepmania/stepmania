@@ -68,10 +68,12 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSe
 	m_IconType = MusicStatusDisplay::none;
 }
 
+
 WheelItemDisplay::WheelItemDisplay()
 {
-	m_fPercentGray = 0;
+	data = NULL;
 
+	m_fPercentGray = 0;
 	m_MusicStatusDisplay.SetXY( ICON_X, 0 );
 	
 	m_TextBanner.SetHorizAlign( align_left );
@@ -92,7 +94,6 @@ WheelItemDisplay::WheelItemDisplay()
 
 	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel roulette") );
 	m_textRoulette.TurnShadowOff();
-	m_textRoulette.SetText( "ROULETTE" );
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetZoom( ROULETTE_ZOOM );
 	m_textRoulette.SetXY( ROULETTE_X, 0 );
@@ -117,13 +118,16 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	ASSERT( pWID != NULL );
 	
 	
+	
+	data = pWID;
+	/*
 	// copy all data items
 	this->m_WheelItemType	= pWID->m_WheelItemType;
 	this->m_sSectionName	= pWID->m_sSectionName;
 	this->m_pCourse			= pWID->m_pCourse;
 	this->m_pSong			= pWID->m_pSong;
 	this->m_color			= pWID->m_color;
-	this->m_IconType		= pWID->m_IconType;
+	this->m_IconType		= pWID->m_IconType; */
 
 
 	// init type specific stuff
@@ -136,17 +140,17 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 			BitmapText *bt;
 			if(pWID->m_WheelItemType == TYPE_SECTION)
 			{
-				sDisplayName = SONGMAN->ShortenGroupName(m_sSectionName);
+				sDisplayName = SONGMAN->ShortenGroupName(data->m_sSectionName);
 				bt = &m_textSectionName;
 			}
 			else
 			{
-				sDisplayName = m_pCourse->m_sName;
+				sDisplayName = data->m_pCourse->m_sName;
 				bt = &m_textCourse;
 			}
 			bt->SetZoom( 1 );
 			bt->SetText( sDisplayName );
-			bt->SetDiffuse( m_color );
+			bt->SetDiffuse( data->m_color );
 			bt->TurnRainbowOff();
 
 			float fSourcePixelWidth = (float)bt->GetWidestLineWidthInSourcePixels();
@@ -157,14 +161,20 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		break;
 	case TYPE_SONG:
 		{
-			m_TextBanner.LoadFromSong( m_pSong );
-			m_TextBanner.SetDiffuse( m_color );
-			m_MusicStatusDisplay.SetType( m_IconType );
+			m_TextBanner.LoadFromSong( data->m_pSong );
+			m_TextBanner.SetDiffuse( data->m_color );
+			m_MusicStatusDisplay.SetType( data->m_IconType );
 			RefreshGrades();
 		}
 		break;
 	case TYPE_ROULETTE:
+		m_textRoulette.SetText( "ROULETTE" );
 		break;
+
+	case TYPE_RANDOM:
+		m_textRoulette.SetText( "RANDOM" );
+		break;
+
 	default:
 		ASSERT( false );	// invalid type
 	}
@@ -181,9 +191,9 @@ void WheelItemDisplay::RefreshGrades()
 			continue;
 		}
 
-		if( m_pSong )	// this is a song display
+		if( data->m_pSong )	// this is a song display
 		{
-			if( m_pSong == GAMESTATE->m_pCurSong )
+			if( data->m_pSong == GAMESTATE->m_pCurSong )
 			{
 				Notes* pNotes = GAMESTATE->m_pCurNotes[p];
 				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, pNotes ? pNotes->m_TopGrade : GRADE_NO_DATA );
@@ -191,7 +201,7 @@ void WheelItemDisplay::RefreshGrades()
 			else
 			{
 				const Difficulty dc = GAMESTATE->m_PreferredDifficulty[p];
-				const Grade grade = m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), p, dc );
+				const Grade grade = data->m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), p, dc );
 				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 			}
 		}
@@ -208,13 +218,14 @@ void WheelItemDisplay::Update( float fDeltaTime )
 {
 	Actor::Update( fDeltaTime );
 
-	switch( m_WheelItemType )
+	switch( data->m_WheelItemType )
 	{
 	case TYPE_SECTION:
 		m_sprSectionBar.Update( fDeltaTime );
 		m_textSectionName.Update( fDeltaTime );
 		break;
 	case TYPE_ROULETTE:
+	case TYPE_RANDOM:
 		m_sprSectionBar.Update( fDeltaTime );
 		m_textRoulette.Update( fDeltaTime );
 		break;
@@ -238,38 +249,49 @@ void WheelItemDisplay::Update( float fDeltaTime )
 
 void WheelItemDisplay::DrawPrimitives()
 {
-	switch( m_WheelItemType )
+	Sprite *bar = NULL;
+	switch( data->m_WheelItemType )
+	{
+	case TYPE_SECTION: 
+	case TYPE_ROULETTE:
+	case TYPE_RANDOM: bar = &m_sprSectionBar; break;
+	case TYPE_SONG:		
+	case TYPE_COURSE: bar = &m_sprSongBar; break;
+	default: ASSERT(0);
+	}
+	
+	bar->Draw();
+
+	switch( data->m_WheelItemType )
 	{
 	case TYPE_SECTION:
-		m_sprSectionBar.Draw();
 		m_textSectionName.Draw();
 		break;
 	case TYPE_ROULETTE:
-		m_sprSectionBar.Draw();
+	case TYPE_RANDOM:
 		m_textRoulette.Draw();
 		break;
 	case TYPE_SONG:		
-		m_sprSongBar.Draw();
 		m_TextBanner.Draw();
 		m_MusicStatusDisplay.Draw();
 		int p;
 		for( p=0; p<NUM_PLAYERS; p++ )
 			m_GradeDisplay[p].Draw();
-		if( m_fPercentGray > 0 )
-		{
-			m_sprSongBar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
-			m_sprSongBar.SetDiffuse( RageColor(0,0,0,0) );
-			m_sprSongBar.Draw();
-			m_sprSongBar.SetDiffuse( RageColor(0,0,0,1) );
-			m_sprSongBar.SetGlow( RageColor(0,0,0,0) );
-		}
 		break;
 	case TYPE_COURSE:
-		m_sprSongBar.Draw();
 		m_textCourse.Draw();
 		break;
 	default:
 		ASSERT(0);
+	}
+
+	if( m_fPercentGray > 0 )
+	{
+		bar->SetGlow( RageColor(0,0,0,m_fPercentGray) );
+		bar->SetDiffuse( RageColor(0,0,0,0) );
+		bar->Draw();
+		bar->SetDiffuse( RageColor(0,0,0,1) );
+		bar->SetGlow( RageColor(0,0,0,0) );
 	}
 }
 
@@ -357,6 +379,7 @@ MusicWheel::MusicWheel()
 	 * the extra stage, so it knows to always display it. */
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
+	BuildWheelItemDatas( m_WheelItemDatas[SORT_ROULETTE], SongSortOrder(SORT_ROULETTE) );
 
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )
@@ -448,9 +471,38 @@ bool MusicWheel::SelectCourse( const Course *p )
 	return true;
 }
 
-void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so, bool bRoulette )
+void MusicWheel::GetSongList(CArray<Song*, Song*> &arraySongs, bool bRoulette )
+{
+	// copy only songs that have at least one Notes for the current GameMode
+	for( unsigned i=0; i<SONGMAN->m_pSongs.size(); i++ )
+	{
+		Song* pSong = SONGMAN->m_pSongs[i];
+
+		/* If we're on an extra stage, and this song is selected, ignore
+			* #SELECTABLE. */
+		if( pSong != GAMESTATE->m_pCurSong || 
+			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) ) {
+			/* Hide songs that asked to be hidden via #SELECTABLE. */
+			if( !bRoulette && !pSong->NormallyDisplayed() )
+				continue;
+			if( bRoulette && !pSong->RouletteDisplayed() )
+				continue;
+		}
+
+		CArray<Notes*, Notes*> arraySteps;
+		pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
+
+		if( !arraySteps.empty() )
+			arraySongs.push_back( pSong );
+	}
+}
+
+void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so )
 {
 	unsigned i;
+
+	if(so == SongSortOrder(SORT_ROULETTE) && GAMESTATE->m_PlayMode != PLAY_MODE_ARCADE)
+		return; /* only used in arcade */
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -461,34 +513,13 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			///////////////////////////////////
 			CArray<Song*, Song*> arraySongs;
 			
-			// copy only songs that have at least one Notes for the current GameMode
-			for( i=0; i<SONGMAN->m_pSongs.size(); i++ )
-			{
-				Song* pSong = SONGMAN->m_pSongs[i];
-
-				/* If we're on an extra stage, and this song is selected, ignore
-				 * #SELECTABLE. */
-				if( pSong != GAMESTATE->m_pCurSong || 
-					(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) ) {
-					/* Hide songs that asked to be hidden via #SELECTABLE. */
-					if( !bRoulette && !pSong->NormallyDisplayed() )
-						continue;
-					if( bRoulette && !pSong->RouletteDisplayed() )
-						continue;
-				}
-
-				CArray<Notes*, Notes*> arraySteps;
-				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
-
-				if( !arraySteps.empty() )
-					arraySongs.push_back( pSong );
-			}
-
+			GetSongList(arraySongs, so == SORT_ROULETTE);
 
 			// sort the songs
 			switch( so )
 			{
 			case SORT_GROUP:
+			case SORT_ROULETTE:
 				SortSongPointerArrayByGroup( arraySongs );
 				break;
 			case SORT_TITLE:
@@ -523,10 +554,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_BPM:			bUseSections = false;	break;
 			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == "ALL MUSIC";	break;
 			case SORT_TITLE:		bUseSections = true;	break;
+			case SORT_ROULETTE:		bUseSections = false;	break;
 			default:		ASSERT( false );
 			}
-			if( bRoulette )
-				bUseSections = false;
 
 			if( !PREFSMAN->m_bMusicWheelUsesSections )
 				bUseSections = false;
@@ -568,9 +598,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		}
 
 
-		if( !bRoulette )
+		if( so != SORT_ROULETTE )
 		{
 			arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
+			arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
 		}
 
 		// HACK:  Add extra stage item if it isn't already present on the music wheel
@@ -725,6 +756,7 @@ void MusicWheel::DrawPrimitives()
 		case STATE_SELECTING_MUSIC:
 		case STATE_ROULETTE_SPINNING:
 		case STATE_ROULETTE_SLOWING_DOWN:
+		case STATE_RANDOM_SPINNING:
 		case STATE_LOCKED:
 			{
 				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
@@ -784,11 +816,26 @@ void MusicWheel::Update( float fDeltaTime )
 	{
 		m_TimeBeforeMovingBegins -= fDeltaTime;
 		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
-		if(m_TimeBeforeMovingBegins == 0 && m_WheelState != STATE_LOCKED)
+		if(m_TimeBeforeMovingBegins == 0 && m_WheelState != STATE_LOCKED &&
+			fabsf(m_fPositionOffsetFromSelection) < 0.5f)
 		{
-			// spin as fast as possible
-			if(m_Moving == 1) NextMusic();
-			else PrevMusic();
+			if(m_WheelState == STATE_RANDOM_SPINNING && !m_iSwitchesLeftInSpinDown)
+			{
+//				m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
+				m_Moving = 0;
+				m_WheelState = STATE_LOCKED;
+				m_soundStart.Play();
+				m_fLockedWheelVelocity = 0;
+				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+			}
+			else {
+				// spin as fast as possible
+				if(m_Moving == 1) NextMusic();
+				else PrevMusic();
+
+				if(m_WheelState == STATE_RANDOM_SPINNING)
+					m_iSwitchesLeftInSpinDown--;
+			}
 		}
 	}
 
@@ -800,9 +847,6 @@ void MusicWheel::Update( float fDeltaTime )
 		{
 		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
-				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
-				m_fTimeLeftInState = FADE_SECONDS;
-
 				Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
 				CString sPrevSelectedSection = m_CurWheelItemData[m_iSelection]->m_sSectionName;
 
@@ -844,15 +888,16 @@ void MusicWheel::Update( float fDeltaTime )
 				}
 
 				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
-
 				RebuildWheelItemDisplays();
-
 				TweenOnScreen(true);
+				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 			}
 			break;
+
 		case STATE_FLYING_ON_AFTER_NEXT_SORT:
 			m_WheelState = STATE_SELECTING_MUSIC;	// now, wait for input
 			break;
+
 		case STATE_TWEENING_ON_SCREEN:
 			m_fTimeLeftInState = 0;
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -888,6 +933,7 @@ void MusicWheel::Update( float fDeltaTime )
 			m_fTimeLeftInState = 0;
 			break;
 		case STATE_ROULETTE_SPINNING:
+		case STATE_RANDOM_SPINNING:
 			break;
 		case STATE_WAITING_OFF_SCREEN:
 			break;
@@ -928,20 +974,30 @@ void MusicWheel::Update( float fDeltaTime )
 
 	if( m_WheelState == STATE_LOCKED )
 	{
-		m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
-		
-		float fSpringForce = - m_fPositionOffsetFromSelection * LOCKED_INITIAL_VELOCITY;
-		m_fLockedWheelVelocity += fSpringForce;
-
-		float fDrag = -m_fLockedWheelVelocity * fDeltaTime*4;
-		m_fLockedWheelVelocity += fDrag;
-
-		m_fPositionOffsetFromSelection  += m_fLockedWheelVelocity*fDeltaTime;
-
-		if( fabsf(m_fPositionOffsetFromSelection) < 0.01f  &&  fabsf(m_fLockedWheelVelocity) < 0.01f )
+		/* Do this in at most .1 sec chunks, so we don't get weird if we
+		 * stop for some reason (and so it behaves the same when being
+		 * single stepped). */
+		float tm = fDeltaTime;
+		while(tm > 0)
 		{
-			m_fPositionOffsetFromSelection = 0;
-			m_fLockedWheelVelocity = 0;
+			float t = min(tm, 0.1f);
+			tm -= t;
+
+			m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
+
+			float fSpringForce = - m_fPositionOffsetFromSelection * LOCKED_INITIAL_VELOCITY;
+			m_fLockedWheelVelocity += fSpringForce;
+
+			float fDrag = -m_fLockedWheelVelocity * t*4;
+			m_fLockedWheelVelocity += fDrag;
+
+			m_fPositionOffsetFromSelection  += m_fLockedWheelVelocity*t;
+
+			if( fabsf(m_fPositionOffsetFromSelection) < 0.01f  &&  fabsf(m_fLockedWheelVelocity) < 0.01f )
+			{
+				m_fPositionOffsetFromSelection = 0;
+				m_fLockedWheelVelocity = 0;
+			}
 		}
 	}
 	else
@@ -986,6 +1042,7 @@ void MusicWheel::PrevMusic()
 	case STATE_SELECTING_MUSIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
+	case STATE_RANDOM_SPINNING:
 		break;	// fall through
 	default:
 		return;	// don't fall through
@@ -1022,6 +1079,7 @@ void MusicWheel::NextMusic()
 	case STATE_SELECTING_MUSIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
+	case STATE_RANDOM_SPINNING:
 		break;
 	default:
 		LOG->Trace( "NextMusic() ignored" );
@@ -1066,10 +1124,12 @@ bool MusicWheel::NextSort()
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
 }
-
 bool MusicWheel::Select()	// return true of a playable item was chosen
 {
 	LOG->Trace( "MusicWheel::Select()" );
+
+	if( m_WheelState == STATE_ROULETTE_SLOWING_DOWN )
+		return false;
 
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
@@ -1115,6 +1175,44 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	case TYPE_ROULETTE:
 		StartRoulette();
 		return false;
+	case TYPE_RANDOM:
+		{
+			const RANDOM_SPINS = 5;
+
+			/* Grab all of the currently-visible data. */
+			vector<WheelItemData *> &newData = m_CurWheelItemData;
+			newData.clear();
+
+			int i;
+
+			/* Add RANDOM_SPINS * 2 worth of random items. */
+			int total =  int(m_WheelItemDatas[SORT_ROULETTE].size());
+			for(i = 0; i < total; ++i)
+				swap(m_WheelItemDatas[SORT_ROULETTE][i], m_WheelItemDatas[SORT_ROULETTE][rand() % total]);
+
+			for(i = 0; i < RANDOM_SPINS * 2; ++i)
+				newData.push_back( &m_WheelItemDatas[SORT_ROULETTE][i] );
+
+			/* The cursor is on m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW/2].
+			 * Fill from 0 to NUM_WHEEL_ITEMS_TO_DRAW, so all of the items
+			 * that were on the screen stay there.  However, skip some from
+			 * the beginning to make sure we don't actually *land* on one. */
+			int fillstart = max(NUM_WHEEL_ITEMS_TO_DRAW/2 - RANDOM_SPINS + 1, 0);
+
+			for( i=fillstart; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+				newData.push_back(m_WheelItemDisplays[i].data);
+
+			m_iSelection = newData.size() - NUM_WHEEL_ITEMS_TO_DRAW/2 - 1;
+			
+			m_Moving = -1;
+			m_TimeBeforeMovingBegins = 0;
+			m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
+			m_iSwitchesLeftInSpinDown = RANDOM_SPINS;
+			m_WheelState = STATE_RANDOM_SPINNING;
+			RebuildWheelItemDisplays();
+		}
+
+		return false;
 
 	case TYPE_SONG:
 	default:
@@ -1129,13 +1227,14 @@ void MusicWheel::StartRoulette()
 	m_Moving = 1;
 	m_TimeBeforeMovingBegins = 0;
 	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-	GAMESTATE->m_SongSortOrder = SORT_GROUP;
-    BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
-	SetOpenGroup("");
+	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
 }
 
-void MusicWheel::SetOpenGroup(CString group)
+void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 {
+	if(so == NUM_SORT_ORDERS)
+		so = GAMESTATE->m_SongSortOrder;
+
 	m_sExpandedSectionName = group;
 
 	WheelItemData *old = NULL;
@@ -1143,7 +1242,7 @@ void MusicWheel::SetOpenGroup(CString group)
 		old = m_CurWheelItemData[m_iSelection];
 
 	m_CurWheelItemData.clear();
-	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[so];
 	unsigned i;
 	for(i = 0; i < from.size(); ++i)
 	{
@@ -1162,11 +1261,14 @@ void MusicWheel::SetOpenGroup(CString group)
 		if(m_CurWheelItemData[i] == old)
 			m_iSelection=i;
 	}
+
+	RebuildWheelItemDisplays();
 }
 
 bool MusicWheel::IsRouletting() const
 {
-	return m_WheelState == STATE_ROULETTE_SPINNING || m_WheelState == STATE_ROULETTE_SLOWING_DOWN;
+	return m_WheelState == STATE_ROULETTE_SPINNING || m_WheelState == STATE_ROULETTE_SLOWING_DOWN ||
+		   m_WheelState == STATE_RANDOM_SPINNING;
 }
 
 int MusicWheel::IsMoving() const

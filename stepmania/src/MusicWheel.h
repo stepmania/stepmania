@@ -35,7 +35,7 @@ const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should 
 const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+48);	
 
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_COURSE };
+enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE };
 
 
 struct WheelItemData
@@ -53,8 +53,7 @@ public:
 };
 
 
-class WheelItemDisplay : public WheelItemData,
-						 public ActorFrame
+class WheelItemDisplay: public ActorFrame
 {
 public:
 	WheelItemDisplay();
@@ -62,11 +61,10 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
-	CString GetSectionName() { return m_sSectionName; }
-
 	void LoadFromWheelItemData( WheelItemData* pWID );
 	void RefreshGrades();
 
+	WheelItemData *data;
 	float				m_fPercentGray;
 
 	// for TYPE_SECTION and TYPE_ROULETTE
@@ -87,7 +85,7 @@ public:
 };
 
 
-
+enum { SORT_ROULETTE = NUM_SORT_ORDERS+1 };
 
 class MusicWheel : public ActorFrame
 {
@@ -125,9 +123,10 @@ public:
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 
 protected:
-	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so, bool bRoulette = false );
+	void GetSongList(CArray<Song*, Song*> &arraySongs, bool bRoulette );
+	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so );
 	void RebuildWheelItemDisplays();
-	void SetOpenGroup(CString group);
+	void SetOpenGroup(CString group, SongSortOrder so = NUM_SORT_ORDERS);
 	bool SelectSong(const Song *p);
 	bool SelectCourse(const Course *p);
 	void NextMusic();
@@ -136,7 +135,7 @@ protected:
 	ScrollBar			m_ScrollBar;
 	Sprite				m_sprSelectionOverlay;
 
-	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
+	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS+2];
 	vector<WheelItemData *> m_CurWheelItemData;
 	
 	WheelItemDisplay	m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
@@ -159,6 +158,7 @@ protected:
 		STATE_WAITING_OFF_SCREEN,
 		STATE_ROULETTE_SPINNING,
 		STATE_ROULETTE_SLOWING_DOWN,
+		STATE_RANDOM_SPINNING,
 		STATE_LOCKED,
 	};
 	WheelState			m_WheelState;
