@@ -1018,30 +1018,16 @@ int RWRageFile_Write( struct SDL_RWops *context, const void *ptr, int size, int 
 /* Close and free an allocated SDL_FSops structure */
 int RWRageFile_Close(struct SDL_RWops *context)
 {
-	RageFile *f = (RageFile *) context->hidden.unknown.data1;
-	delete f;
 	return 0;
 }
 
-SDL_RWops *OpenRWops( const CString &sPath, bool Write )
+void OpenRWops( SDL_RWops *rw, RageFile *f )
 {
-	RageFile *f = new RageFile;
-	if( !f->Open(sPath, Write? RageFile::WRITE:RageFile::READ) )
-	{
-		LOG->Trace("Couldn't open %s: %s", sPath.c_str(), f->GetError().c_str() );
-		delete f;
-		return NULL;
-	}
-
-	SDL_RWops *rw = SDL_AllocRW();
-	ASSERT( rw );
 	rw->hidden.unknown.data1 = f;
 	rw->seek = RWRageFile_Seek;
 	rw->read = RWRageFile_Read;
 	rw->write = RWRageFile_Write;
 	rw->close = RWRageFile_Close;
-
-	return rw;
 }
 
 struct RWString

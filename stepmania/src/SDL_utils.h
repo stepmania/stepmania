@@ -84,7 +84,8 @@ void mySDL_FixupPalettedAlpha( SDL_Surface *img );
 void mySDL_AddColorKey( SDL_Surface *img, Uint32 color );
 void ApplyHotPinkColorKey( SDL_Surface *&img );
 
-SDL_RWops *OpenRWops( const CString &sPath, bool Write=false );
+class RageFile;
+void OpenRWops( SDL_RWops *rw, RageFile *f );
 SDL_RWops *OpenRWops( CString &sBuf );
 SDL_Surface *mySDL_MakeDummySurface( int height, int width );
 

@@ -4,6 +4,7 @@
 #include "RageSurface_Load_JPEG.h"
 #include "RageSurface_Load_GIF.h"
 #include "RageUtil.h"
+#include "RageFile.h"
 
 SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 {
@@ -19,17 +20,17 @@ SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 		ret = RageSurface_Load_JPEG( sPath, error );
 	else if( !ext.CompareNoCase("bmp") )
 	{
-		SDL_RWops *rw = OpenRWops( sPath, false );
-		if( rw == NULL )
+		RageFile f;
+		if( !f.Open(sPath) )
 		{
-			/* XXX */
-			SDL_SetError( "fail" );
+			SDL_SetError( "%s", f.GetError() );
 			return NULL;
 		}
 
-		ret = SDL_LoadBMP_RW( rw, false );
-		SDL_RWclose( rw );
-		SDL_FreeRW( rw );
+		SDL_RWops rw;
+		OpenRWops( &rw, &f );
+		ret = SDL_LoadBMP_RW( &rw, false );
+		SDL_RWclose( &rw );
 
 		if( ret )
 			mySDL_FixupPalettedAlpha( ret );
