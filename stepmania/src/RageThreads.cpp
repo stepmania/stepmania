@@ -435,13 +435,7 @@ RageMutexImpl::RageMutexImpl()
 
 RageMutexImpl::~RageMutexImpl()
 {
-#if defined(_XBOX)
 	CloseHandle( mutex );
-#else
-	// i think this is wrong
-	// dosent windows use CloseHandle() to destroy a mutex too??
-	DeleteObject( mutex );
-#endif
 }
 
 
