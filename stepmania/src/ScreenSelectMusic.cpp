@@ -1067,69 +1067,71 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	// a song was selected
 	switch( m_MusicWheel.GetSelectedType() )
 	{
-	case TYPE_SONG: {
-		const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
-		bool bIsHard = false;
-		FOREACH_PlayerNumber( p )
+	case TYPE_SONG:
+	case TYPE_PORTAL:
 		{
-			if( !GAMESTATE->IsHumanPlayer( (PlayerNumber)p ) )
-				continue;	// skip
-			if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
-				bIsHard = true;
+			const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
+			bool bIsHard = false;
+			FOREACH_PlayerNumber( p )
+			{
+				if( !GAMESTATE->IsHumanPlayer( (PlayerNumber)p ) )
+					continue;	// skip
+				if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
+					bIsHard = true;
+			}
+
+			/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
+			bool bIsRepeat = false;
+			int i = 0;
+			if( PREFSMAN->m_bEventMode )
+				i = max( 0, int(g_vPlayedStageStats.size())-5 );
+			for( ; i < (int)g_vPlayedStageStats.size(); ++i )
+				if( g_vPlayedStageStats[i].pSong == m_MusicWheel.GetSelectedSong() )
+					bIsRepeat = true;
+
+			/* Don't complain about repeats if the user didn't get to pick. */
+			if( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage )
+				bIsRepeat = false;
+
+			if( bIsRepeat )
+				SOUND->PlayOnceFromAnnouncer( "select music comment repeat" );
+			else if( bIsNew )
+				SOUND->PlayOnceFromAnnouncer( "select music comment new" );
+			else if( bIsHard )
+				SOUND->PlayOnceFromAnnouncer( "select music comment hard" );
+			else
+				SOUND->PlayOnceFromAnnouncer( "select music comment general" );
+
+			m_bMadeChoice = true;
+
+			/* If we're in event mode, we may have just played a course (putting us
+			 * in course mode).  Make sure we're in a single song mode. */
+			if( GAMESTATE->IsCourseMode() )
+				GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 		}
-
-		/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
-		bool bIsRepeat = false;
-		int i = 0;
-		if( PREFSMAN->m_bEventMode )
-			i = max( 0, int(g_vPlayedStageStats.size())-5 );
-		for( ; i < (int)g_vPlayedStageStats.size(); ++i )
-			if( g_vPlayedStageStats[i].pSong == m_MusicWheel.GetSelectedSong() )
-				bIsRepeat = true;
-
-		/* Don't complain about repeats if the user didn't get to pick. */
-		if( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage )
-			bIsRepeat = false;
-
-		if( bIsRepeat )
-			SOUND->PlayOnceFromAnnouncer( "select music comment repeat" );
-		else if( bIsNew )
-			SOUND->PlayOnceFromAnnouncer( "select music comment new" );
-		else if( bIsHard )
-			SOUND->PlayOnceFromAnnouncer( "select music comment hard" );
-		else
-			SOUND->PlayOnceFromAnnouncer( "select music comment general" );
-
-		m_bMadeChoice = true;
-
-		/* If we're in event mode, we may have just played a course (putting us
-		 * in course mode).  Make sure we're in a single song mode. */
-		if( GAMESTATE->IsCourseMode() )
-			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-
 		break;
-	}
+
 	case TYPE_COURSE:
-	{
-		SOUND->PlayOnceFromAnnouncer( "select course comment general" );
-
-		Course *pCourse = m_MusicWheel.GetSelectedCourse();
-		ASSERT( pCourse );
-		GAMESTATE->m_PlayMode = pCourse->GetPlayMode();
-
-		// apply #LIVES
-		if( pCourse->m_iLives != -1 )
 		{
-			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-			GAMESTATE->m_SongOptions.m_iBatteryLives = pCourse->m_iLives;
+			SOUND->PlayOnceFromAnnouncer( "select course comment general" );
+
+			Course *pCourse = m_MusicWheel.GetSelectedCourse();
+			ASSERT( pCourse );
+			GAMESTATE->m_PlayMode = pCourse->GetPlayMode();
+
+			// apply #LIVES
+			if( pCourse->m_iLives != -1 )
+			{
+				GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+				GAMESTATE->m_SongOptions.m_iBatteryLives = pCourse->m_iLives;
+			}
+
+			m_bMadeChoice = true;
 		}
-
-		m_bMadeChoice = true;
-
 		break;
-	}
 	case TYPE_SECTION:
 	case TYPE_ROULETTE:
+	case TYPE_RANDOM:
 	case TYPE_SORT:
 		break;
 	default:
