@@ -1,3 +1,9 @@
+/*
+ * BannerCache
+ *
+ * Maintains a cache of reduced-quality banners.
+ */
+
 #include "global.h"
 
 #include "RageDisplay.h"
@@ -261,27 +267,6 @@ static inline int closest( int num, int n1, int n2 )
 	return n1;
 }
 
-/* Erase the cache for a path. UNTESTED */
-#if 0
-void BannerCache::UncacheBanner( CString BannerPath )
-{
-	const CString CachePath = GetBannerCachePath( BannerPath );
-
-	/* If the image is loaded, free it. */
-	if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
-	{
-		SDL_Surface *img = m_BannerPathToImage[BannerPath];
-		SDL_FreeSurface( img );
-		m_BannerPathToImage.erase(BannerPath);
-	}
-
-	/* Remove the image from the INI. */
-	BannerData.DeleteKey( BannerPath );
-	BannerData.WriteFile();
-}
-#endif
-
-
 /* We write the cache even if we won't use it, so we don't have to recache everything
  * if the memory or settings change. */
 void BannerCache::CacheBanner( CString BannerPath )
@@ -429,3 +414,8 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	BannerData.SetValueB( BannerPath, "Rotated", WasRotatedBanner );
 	BannerData.WriteFile();
 }
+
+/*
+   Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+	Glenn Maynard
+*/
