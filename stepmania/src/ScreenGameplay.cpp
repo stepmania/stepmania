@@ -1356,7 +1356,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 		ASSERT(0);
 	}
 
-	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, true, SaveChanges, DontSaveChanges );
+	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, false, SaveChanges, DontSaveChanges );
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
