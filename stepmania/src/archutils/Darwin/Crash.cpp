@@ -54,8 +54,9 @@ void InformUserOfCrash( const CString &sPath )
     switch (button)
     {
         case kAlertStdAlertOKButton:
+            // This is lazy, and easy, and it _should_ work.
             if (system(NULL))
-                system("open /tmp/crashinfo.txt");
+                system("open '" + sPath + "'");
             else
                 SysBeep(30);
             break;
