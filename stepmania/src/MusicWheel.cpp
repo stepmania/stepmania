@@ -983,12 +983,11 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		else				// already collapsed
 			m_sExpandedSectionName = sThisItemSectionName;	// expand it
 
+		m_soundExpand.Play();
+
 		SetOpenGroup(m_sExpandedSectionName);
 	
 		RebuildMusicWheelItems();
-
-
-		m_soundExpand.Play();
 
 
 		m_iSelection = 0;	// reset in case we can't find the last selected song
