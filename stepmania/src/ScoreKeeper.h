@@ -11,7 +11,6 @@
  * Results are injected directly into GameState.
  */
 
-#include "Actor.h"
 #include "Attack.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore and HoldNoteScore
 class NoteData;
@@ -22,7 +21,7 @@ struct PlayerState;
 struct PlayerStageStats;
 
 
-class ScoreKeeper: public Actor 
+class ScoreKeeper
 {
 protected:
 	PlayerState* m_pPlayerState;

@@ -123,10 +123,6 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 }
 
 
-void ScoreKeeperRave::Update( float fDelta )
-{
-}
-
 void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
