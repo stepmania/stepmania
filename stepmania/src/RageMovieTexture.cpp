@@ -321,7 +321,12 @@ RageMovieTexture::RageMovieTexture(
 RageMovieTexture::~RageMovieTexture()
 {
 	LOG->Trace("RageMovieTexture::~RageMovieTexture");
-	CleanupDShow();
+
+	// Shut down the graph
+    if (m_pGB) {
+		Stop();
+		m_pGB.Release ();
+	}
 
 	SAFE_RELEASE(m_pd3dTexture[0]);
 	SAFE_RELEASE(m_pd3dTexture[1]);
@@ -537,20 +542,6 @@ void RageMovieTexture::CheckMovieStatus()
 		SetPosition(0);
 }
 
-
-//-----------------------------------------------------------------------------
-// CleanupDShow
-//-----------------------------------------------------------------------------
-void RageMovieTexture::CleanupDShow()
-{
-	LOG->Trace("RageMovieTexture::CleanupDShow()");
-    // Shut down the graph
-    if (m_pGB) {
-		Stop();
-		m_pGB.Release ();
-	}
-}
-    
 void RageMovieTexture::Play()
 {
 	PlayMovie();

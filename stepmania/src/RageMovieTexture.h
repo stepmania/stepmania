@@ -67,7 +67,6 @@ protected:
 	virtual HRESULT InitDShowTextureRenderer();
 	virtual HRESULT PlayMovie();
 	virtual void CheckMovieStatus();
-	virtual void CleanupDShow();
 
 	//-----------------------------------------------------------------------------
 	// DirectShow pointers
