@@ -141,7 +141,7 @@ void LuaManager::SetGlobal( const CString &sName )
 static int LuaPanic( lua_State *L )
 {
 	CString sErr;
-	LuaHelpers::PopStack( sErr );
+	LuaHelpers::PopStack( sErr, NULL );
 
 	RageException::Throw( "%s", sErr.c_str() );
 }
@@ -270,7 +270,7 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 
 		if( ret )
 		{
-			LuaHelpers::PopStack( sError );
+			LuaHelpers::PopStack( sError, NULL );
 			return false;
 		}
 	}
@@ -280,7 +280,7 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 		int ret = lua_pcall( L, 0, iReturnValues, 0 );
 		if( ret )
 		{
-			LuaHelpers::PopStack( sError );
+			LuaHelpers::PopStack( sError, NULL );
 			return false;
 		}
 	}

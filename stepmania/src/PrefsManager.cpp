@@ -861,7 +861,7 @@ int LuaFunc_GetPreference( lua_State *L )
 	REQ_ARG( "GetPreference", 1, string );
 
 	CString sName;
-	LuaHelpers::PopStack( sName );
+	LuaHelpers::PopStack( sName, NULL );
 
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
 	if( pPref == NULL )
