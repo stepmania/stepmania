@@ -43,7 +43,7 @@ public:
 protected:
 	Sprite		m_Sprites[MAX_SPRITES];
 	RageVector3 m_vParticleVelocity[MAX_SPRITES];
-	int			m_iNumSprites;
+	unsigned	m_iNumSprites;
 
 	enum Effect {
 		EFFECT_CENTER,

@@ -263,7 +263,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 			int iSpriteArea = int( m_Sprites[0].GetUnzoomedWidth()*m_Sprites[0].GetUnzoomedHeight() );
 			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
 			m_iNumSprites = m_iNumParticles = iMaxArea / iSpriteArea;
-			m_iNumSprites = m_iNumParticles = min( m_iNumSprites, MAX_SPRITES );
+			m_iNumSprites = m_iNumParticles = min( m_iNumSprites, unsigned(MAX_SPRITES) );
 			for( unsigned i=0; i<m_iNumSprites; i++ )
 			{
 				m_Sprites[i].Load( sPath );
@@ -669,7 +669,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 			float fTotalWidth = m_iNumTilesWide * m_fTilesSpacingX;
 			float fTotalHeight = m_iNumTilesHigh * m_fTilesSpacingY;
 			
-			ASSERT( m_iNumSprites == m_iNumTilesWide * m_iNumTilesHigh );
+			ASSERT( int(m_iNumSprites) == m_iNumTilesWide * m_iNumTilesHigh );
 
 			for( int x=0; x<m_iNumTilesWide; x++ )
 			{
@@ -844,7 +844,7 @@ void BGAnimationLayer::GainingFocus()
 	// if movie texture, pause and play movie so we don't waste CPU cycles decoding frames that won't be shown
 	m_Sprites[0].GetTexture()->Play();
 
-	for( int i=0; i<m_iNumSprites; i++ )
+	for( unsigned i=0; i<m_iNumSprites; i++ )
 		m_Sprites[i].Command( m_sCommand );
 }
 
