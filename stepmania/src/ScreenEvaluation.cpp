@@ -1338,7 +1338,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 
 	m_bgCondBga.Update(fDeltaTime);
-	if( !m_bPassFailTriggered && (m_Type==stage || m_Type==course) )
+	if( !m_bPassFailTriggered )
 	{
 		float fTime = m_bFailed? FAILED_SOUND_TIME:PASSED_SOUND_TIME;
 		if(	m_timerSoundSequences.Ago() > fTime )
@@ -1349,20 +1349,17 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		}
 	}
 
-//	if(m_Type == stage) // stage eval ... pass / fail / whatever
-//	{
-		for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
+	for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
+	{
+		if(m_SoundSequences[snd].fTime != -1) // already played? skip...
 		{
-			if(m_SoundSequences[snd].fTime != -1) // already played? skip...
+			if(m_timerSoundSequences.Ago() > m_SoundSequences[snd].fTime )
 			{
-				if(m_timerSoundSequences.Ago() > m_SoundSequences[snd].fTime )
-				{
-					m_SoundSequences[snd].fTime = -1; // -1 indicates already started playing
-					m_SoundSequences[snd].sSound.Play();
-				}
+				m_SoundSequences[snd].fTime = -1; // -1 indicates already started playing
+				m_SoundSequences[snd].sSound.Play();
 			}
 		}
-//	}
+	}
 	
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
