@@ -571,21 +571,6 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail )
 
 CString PlayerOptions::ThemeMod( CString sOneMod )
 {
-	// Strip out the approach speed token
-	if( !sOneMod.empty() && sOneMod[0]=='*' )
-	{
-		int iPos = sOneMod.Find(' ');
-		if( iPos != -1 )
-			sOneMod.erase( sOneMod.begin(), sOneMod.begin()+iPos+1 );
-	}
-
-	// Strip out "100% "
-#define PERCENT_100 "100% "
-	if( !strncmp( sOneMod, PERCENT_100, sizeof(PERCENT_100)) )
-	{
-		sOneMod.erase( sOneMod.begin(), sOneMod.begin()+sizeof(PERCENT_100) );
-	}
-
 	// Change all token to first letter capitalized, rest lowercase
 	CStringArray asTokens;
 	split( sOneMod, " ", asTokens );
@@ -594,6 +579,14 @@ CString PlayerOptions::ThemeMod( CString sOneMod )
 		s->MakeLower();
 		*s = Capitalize( *s );
 	}
+
+	// Strip the approach speed token, if any
+	if( asTokens[0][0] == '*' )
+		asTokens.erase( asTokens.begin() );
+
+	// Strip "100%", if any
+	if( asTokens[0] == "100%" )
+		asTokens.erase( asTokens.begin() );
 
 	/* Theme the mod name (the last string).  Allow this to not exist, since
 	 * characters might use modifiers that don't exist in the theme. */
