@@ -583,8 +583,7 @@ bool CompareNotesPointersForExtra(const Notes *n1, const Notes *n2)
 void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *sd, 
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	if(GetExtraStageInfoFromCourse(bExtra2, sPreferredGroup,
-			pSongOut, pNotesOut, po_out, so_out))
+	if(GetExtraStageInfoFromCourse(bExtra2, (GAMESTATE->m_sPreferredGroup == "ALL MUSIC" ? GAMESTATE->m_pCurSong->m_sGroupName : GAMESTATE->m_sPreferredGroup), pSongOut, pNotesOut, po_out, so_out))
 		return;
 	
 	// Choose a hard song for the extra stage
