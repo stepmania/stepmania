@@ -3,13 +3,24 @@ X denotes task complete or no longer required to do.
 - denotes task to do, but also being worked upon by other dev.
 H denotes task on hold.
 
+TODO As of: 04:46:PM 27/11/02
+* Systems Programming Assignment
+* Integrating Assignment 2
+* Add Scoreboard Initials Entry Frontend
+
+TODO As of: 01:30:PM 13/11/02
+* Work on 3DDX Support
+* Software Engineering Assignment
+X Operating Systems Assignment
+* Object Oriented Design Assignment
+
 TODO As of: 07:30:PM 28/10/02
 
-* Networking Assignment
-* Integrating Assignment 1 (nearly finished!)
+X Networking Assignment
+X Integrating Assignment 1
 * Update Menu Graphics for Para
-* Update Menu Graphics for Ez2
-* Finish The PUMP Graphics
+H Update Menu Graphics for Ez2
+H Finish The PUMP Graphics
 * Work on Beatmania Support
 
 TODO As of: 07:47:PM 12/09/02
@@ -30,7 +41,7 @@ X Fix Ez2dancer SelectPlayer Theme Metrics
 X Try to fix ez2dancer select style.
 H Create Ez2dancer style Gameover by making some Gameover Metrics.
 H Create Ez2dancer style End Scroll, possibly new class, possibly just metric changes.
-H Create Ez2dancer style song select.
+* Create Ez2dancer style song select.
 H Add Scoreboard System (longterm project)
 H Create some kind of metrics so that Ez2dancer may have extra stage the way it should
 X Fix Ez2dancer type stage screens

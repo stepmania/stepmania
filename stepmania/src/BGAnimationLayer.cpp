@@ -97,7 +97,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 	const CString EFFECT_STRING[NUM_EFFECTS] = {
 		"center",
 		"stretchstill",
-		"scretchscrollleft",
+		"stretchscrollleft",
 		"stretchscrollright",
 		"stretchscrollup",
 		"stretchscrolldown",
