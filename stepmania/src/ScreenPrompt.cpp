@@ -6,12 +6,13 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "ScreenDimensions.h"
 
-const float QUESTION_X	=	CENTER_X;
-const float QUESTION_Y	=	CENTER_Y - 60;
+#define QUESTION_X	(CENTER_X)
+#define QUESTION_Y	(CENTER_Y - 60)
 
-const float PROMPT_X	=	CENTER_X;
-const float PROMPT_Y	=	CENTER_Y + 120;
+#define PROMPT_X	(CENTER_X)
+#define PROMPT_Y	(CENTER_Y + 120)
 
 bool ScreenPrompt::s_bLastAnswer = false;
 

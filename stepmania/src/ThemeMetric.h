@@ -1,30 +1,54 @@
-/* ScoreKeeperMAX2 - MAX2-style scorekeeping. */
+/* ThemeMetric - Theme specific data. */
 
-#ifndef SCREEN_DIMENSIONS_H
-#define SCREEN_DIMENSIONS_H
+#ifndef THEME_METRIC_H
+#define THEME_METRIC_H
 
-#include "ThemeMetric.h"
+#include "IniFile.h"
+#include "ThemeManager.h"
 
-extern ThemeMetric<float> SCREEN_WIDTH;
-extern ThemeMetric<float> SCREEN_HEIGHT;
+class IThemeMetric
+{
+public:
+	virtual ~IThemeMetric() { }
+	virtual void Read() = 0;
+};
 
-#define		SCREEN_LEFT		(0)
-#define		SCREEN_RIGHT	(SCREEN_WIDTH)
-#define		SCREEN_TOP		(0)
-#define		SCREEN_BOTTOM	(SCREEN_HEIGHT)
+template <class T>
+class ThemeMetric : public IThemeMetric
+{
+private:
+	CString		m_sGroup;
+	CString		m_sName;
+	T			m_currentValue;
 
-#define		CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
-#define		CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
+public:
+	ThemeMetric( const CString& sGroup, const CString& sName ):
+		m_sGroup( sGroup ),
+		m_sName( sName )
+	{
+		ThemeManager::Subscribe( this );
+	}
 
-#define	SCREEN_NEAR		(-1000)
-#define	SCREEN_FAR		(1000)
+	void Read()
+	{
+		THEME->GetMetric( m_sGroup, m_sName, m_currentValue );
+	}
 
-#define	ARROW_SIZE		(64)
+	const T& GetValue() const
+	{
+		return m_currentValue;
+	}
+	
+	operator const T& () const
+	{
+		return m_currentValue;
+	}
+};
 
 #endif
 
 /*
- * (c) 2001-2002 Chris Danford
+ * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

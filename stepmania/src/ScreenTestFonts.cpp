@@ -4,6 +4,7 @@
 #include "RageTextureManager.h"
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
+#include "ScreenDimensions.h"
 
 
 static const float LineWidth = 400;

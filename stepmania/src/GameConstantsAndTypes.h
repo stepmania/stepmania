@@ -7,25 +7,6 @@
 #include "Difficulty.h"		// TODO: Get rid of this dependency.
 #include "EnumHelper.h"
 
-//
-// Screen Dimensions
-//
-#define	SCREEN_WIDTH	(640)
-#define	SCREEN_HEIGHT	(480)
-
-#define	SCREEN_LEFT		(0)
-#define	SCREEN_RIGHT	(SCREEN_WIDTH)
-#define	SCREEN_TOP		(0)
-#define	SCREEN_BOTTOM	(SCREEN_HEIGHT)
-
-#define	CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
-#define	CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
-
-#define	SCREEN_NEAR		(-1000)
-#define	SCREEN_FAR		(1000)
-
-#define	ARROW_SIZE		(64)
-
 
 //
 // Note definitions

@@ -3,6 +3,7 @@
 
 #include "Actor.h"
 #include "GameConstantsAndTypes.h"
+#include "ScreenDimensions.h"
 
 
 inline float GetOffScreenLeft(  Actor* pActor ) { return SCREEN_LEFT  - pActor->GetZoomedWidth()/2; }

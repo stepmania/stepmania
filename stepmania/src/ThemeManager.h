@@ -8,6 +8,7 @@
 #include <set>
 #include <deque>
 
+class IThemeMetric;
 class IniFile;
 
 enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, Other, NUM_ELEMENT_CATEGORIES };
@@ -57,6 +58,17 @@ public:
 	float		GetMetricF( CString sClassName, CString sValueName );
 	bool		GetMetricB( CString sClassName, CString sValueName );
 	RageColor	GetMetricC( CString sClassName, CString sValueName );
+	void	GetMetric( CString sClassName, CString sValueName, CString &valueOut )	{ valueOut = GetMetric( sClassName, sValueName ); }
+	void	GetMetric( CString sClassName, CString sValueName, int &valueOut )		{ valueOut = GetMetricI( sClassName, sValueName ); }
+	void	GetMetric( CString sClassName, CString sValueName, float &valueOut )	{ valueOut = GetMetricF( sClassName, sValueName ); }
+	void	GetMetric( CString sClassName, CString sValueName, bool &valueOut )		{ valueOut = GetMetricB( sClassName, sValueName ); }
+	void	GetMetric( CString sClassName, CString sValueName, RageColor &valueOut ){ valueOut = GetMetricC( sClassName, sValueName ); }
+
+	//
+	// For self-registering metrics
+	//
+	static void Subscribe( IThemeMetric *p );
+
 
 protected:
 	void LoadThemeRecursive( deque<Theme> &theme, CString sThemeName );

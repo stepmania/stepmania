@@ -49,7 +49,7 @@ public:
 		m_defaultValue( defaultValue ),
 		m_currentValue( defaultValue )
 	{
-		Subscribe( this );
+		PrefsManager::Subscribe( this );
 	}
 
 	void LoadDefault()

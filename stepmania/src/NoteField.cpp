@@ -14,6 +14,7 @@
 #include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
 #include "song.h"
+#include "ScreenDimensions.h"
 
 NoteField::NoteField()
 {	

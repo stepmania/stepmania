@@ -9,6 +9,7 @@
 #include "ScreenSongOptions.h"
 #include "PrefsManager.h"
 #include "CodeDetector.h"
+#include "ScreenDimensions.h"
 
 
 #define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")

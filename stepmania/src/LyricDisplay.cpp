@@ -1,5 +1,6 @@
 #include "global.h"
 #include "LyricDisplay.h"
+#include "ScreenDimensions.h"
 
 #include "GameState.h"
 #include "ThemeManager.h"

@@ -281,16 +281,17 @@ public:
 
 	void ResetToFactoryDefaults();
 
+	//
+	// For self-registering prefs
+	//
+	static void Subscribe( IPreference *p );
+
 protected:
 	void ReadPrefsFromFile( CString sIni );
 
 };
 
 
-//
-// For self-registering prefs
-//
-void Subscribe( IPreference *p );
 
 
 /* This is global, because it can be accessed by crash handlers and error handlers

@@ -1,27 +1,10 @@
-/* ScoreKeeperMAX2 - MAX2-style scorekeeping. */
+#include "global.h"
+#include "ScreenDimensions.h"
 
-#ifndef SCREEN_DIMENSIONS_H
-#define SCREEN_DIMENSIONS_H
+ThemeMetric<float> SCREEN_WIDTH("Common","ScreenWidth");
+ThemeMetric<float> SCREEN_HEIGHT("Common","ScreenHeight");
 
-#include "ThemeMetric.h"
 
-extern ThemeMetric<float> SCREEN_WIDTH;
-extern ThemeMetric<float> SCREEN_HEIGHT;
-
-#define		SCREEN_LEFT		(0)
-#define		SCREEN_RIGHT	(SCREEN_WIDTH)
-#define		SCREEN_TOP		(0)
-#define		SCREEN_BOTTOM	(SCREEN_HEIGHT)
-
-#define		CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
-#define		CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
-
-#define	SCREEN_NEAR		(-1000)
-#define	SCREEN_FAR		(1000)
-
-#define	ARROW_SIZE		(64)
-
-#endif
 
 /*
  * (c) 2001-2002 Chris Danford

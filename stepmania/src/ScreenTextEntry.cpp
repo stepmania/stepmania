@@ -8,14 +8,15 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "FontCharAliases.h"
+#include "ScreenDimensions.h"
 
-const float QUESTION_X	=	CENTER_X;
-const float QUESTION_Y	=	CENTER_Y - 60;
+#define QUESTION_X		(CENTER_X)
+#define QUESTION_Y		(CENTER_Y - 60)
 
-const float ANSWER_X	=	CENTER_X;
-const float ANSWER_Y	=	CENTER_Y + 120;
-const float ANSWER_WIDTH	=	440;
-const float ANSWER_HEIGHT	=	30;
+#define ANSWER_X		(CENTER_X)
+#define ANSWER_Y		(CENTER_Y + 120)
+#define ANSWER_WIDTH	(440)
+#define ANSWER_HEIGHT	(30)
 
 
 CString ScreenTextEntry::s_sLastAnswer = "";

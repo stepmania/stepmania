@@ -10,6 +10,7 @@
 #include "GameManager.h"
 #include "IniFile.h"
 #include "Game.h"
+#include "ScreenDimensions.h"
 
 /* Copies of the current mode.  Update this by calling Load. */
 NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];

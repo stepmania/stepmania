@@ -13,6 +13,7 @@
 #include "RageDisplay.h"
 #include "LightsManager.h"
 #include "Game.h"
+#include "ScreenDimensions.h"
 
 
 ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )

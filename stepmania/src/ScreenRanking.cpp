@@ -12,6 +12,7 @@
 #include "ProfileManager.h"
 #include "RageLog.h"
 #include "UnlockSystem.h"
+#include "ScreenDimensions.h"
 
 static const CString PageTypeNames[NUM_PAGE_TYPES] = {
 	"Category",

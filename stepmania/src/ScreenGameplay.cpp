@@ -40,6 +40,7 @@
 #include "NetworkSyncManager.h"
 #include "Foreach.h"
 #include "DancingCharacters.h"
+#include "ScreenDimensions.h"
 
 //
 // Defines

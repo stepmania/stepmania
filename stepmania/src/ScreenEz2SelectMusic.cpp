@@ -16,6 +16,7 @@
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
 #include "StepsUtil.h"
+#include "ScreenDimensions.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")

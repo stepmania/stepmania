@@ -12,6 +12,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Bookkeeper.h"
+#include "ScreenDimensions.h"
 
 
 ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuElements( sClassName )

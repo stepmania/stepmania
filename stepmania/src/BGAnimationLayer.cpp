@@ -27,7 +27,7 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
-static const RectI FullScreenRectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
+#define FullScreenRectI RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
 
 BGAnimationLayer::BGAnimationLayer( bool Generic )

@@ -23,6 +23,7 @@
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
+#include "ScreenDimensions.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;

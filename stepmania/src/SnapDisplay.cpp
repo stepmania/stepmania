@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Style.h"
+#include "ScreenDimensions.h"
 
 
 SnapDisplay::SnapDisplay()

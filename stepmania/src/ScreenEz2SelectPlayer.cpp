@@ -13,6 +13,7 @@
 #include "RageTimer.h"
 #include "ThemeManager.h"
 #include "MenuTimer.h"
+#include "ScreenDimensions.h"
 
 /* Constants */
 

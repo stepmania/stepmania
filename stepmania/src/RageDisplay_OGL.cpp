@@ -22,6 +22,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "PrefsManager.h" // XXX
+#include "ScreenDimensions.h" // XXX
 
 /* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
 #ifndef GL_TEXTURE_INDEX_SIZE_EXT

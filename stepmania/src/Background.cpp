@@ -15,6 +15,7 @@
 #include "arch/arch.h"
 #include "BeginnerHelper.h"
 #include "StageStats.h"
+#include "ScreenDimensions.h"
 
 #include <set>
 

@@ -13,6 +13,7 @@
 #include "song.h"
 #include "Course.h"
 #include "Style.h"
+#include "ScreenDimensions.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 

@@ -25,9 +25,9 @@ const CString DEFAULT_LIGHTS_DRIVER = "Null";
 //
 // For self-registering prefs
 //
-vector<IPreference*> *g_pvpSubscribers = NULL;
+static vector<IPreference*> *g_pvpSubscribers = NULL;
 
-void Subscribe( IPreference *p )
+void PrefsManager::Subscribe( IPreference *p )
 {
 	// TRICKY: If we make this a global vector instead of a global pointer,
 	// then we'd have to be careful that the static constructors of all

@@ -15,6 +15,8 @@
 #include "RageFile.h"
 #include "ScreenManager.h"
 #include "StepMania.h"
+#include "Foreach.h"
+#include "ThemeMetric.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -43,6 +45,28 @@ struct Theme
 };
 // When looking for a metric or an element, search these from head to tail.
 deque<Theme> g_vThemes;
+
+
+
+
+//
+// For self-registering metrics
+//
+static vector<IThemeMetric*> *g_pvpSubscribers = NULL;
+
+void ThemeManager::Subscribe( IThemeMetric *p )
+{
+	// TRICKY: If we make this a global vector instead of a global pointer,
+	// then we'd have to be careful that the static constructors of all
+	// Preferences are called before the vector constructor.  It's
+	// too tricky to enfore that, so we'll allocate the vector ourself
+	// so that the compiler can't possibly call the vector constructor
+	// after we've already added to the vector.
+	if( g_pvpSubscribers == NULL )
+		g_pvpSubscribers = new vector<IThemeMetric*>;
+	g_pvpSubscribers->push_back( p );
+}
+
 
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
@@ -221,6 +245,9 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	// reload common sounds
 	if ( SCREENMAN != NULL )
 		SCREENMAN->ThemeChanged();
+
+	// reload subscribers
+	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )

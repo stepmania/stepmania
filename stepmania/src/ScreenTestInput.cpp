@@ -12,6 +12,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Game.h"
+#include "ScreenDimensions.h"
 
 
 ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )

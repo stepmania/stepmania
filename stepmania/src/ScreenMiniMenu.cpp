@@ -7,6 +7,7 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
+#include "ScreenDimensions.h"
 
 
 const float LABEL_X		=	200;

@@ -2,6 +2,7 @@
 #include "RageLog.h"
 #include "ScreenManager.h"
 #include "ScreenEndlessBreak.h"
+#include "ScreenDimensions.h"
 
 //TODO:: Add scripting support
 

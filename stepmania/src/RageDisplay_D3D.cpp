@@ -21,6 +21,7 @@
 #include "PrefsManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "ScreenDimensions.h"
 
 #include "arch/arch.h"
 

@@ -11,6 +11,7 @@
 #include "SDL_rotozoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
+#include "ScreenDimensions.h"
 
 //
 // Statistics stuff

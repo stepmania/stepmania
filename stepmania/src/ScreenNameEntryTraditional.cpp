@@ -22,6 +22,7 @@
 #include "RageDisplay.h"
 #include "Foreach.h"
 #include "Style.h"
+#include "ScreenDimensions.h"
 
 
 //

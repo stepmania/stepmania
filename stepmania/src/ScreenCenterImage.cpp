@@ -11,6 +11,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "HelpDisplay.h"
+#include "ScreenDimensions.h"
 
 ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {

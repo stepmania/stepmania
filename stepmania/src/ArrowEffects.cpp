@@ -9,6 +9,7 @@
 #include "NoteDisplay.h"
 #include "song.h"
 #include "RageMath.h"
+#include "ScreenDimensions.h"
 
 const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 

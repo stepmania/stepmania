@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
+#include "ScreenDimensions.h"
 
 
 ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )

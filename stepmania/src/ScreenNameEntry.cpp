@@ -17,6 +17,7 @@
 #include "NoteFieldPositioning.h"
 #include "StageStats.h"
 #include "Game.h"
+#include "ScreenDimensions.h"
 
 
 //

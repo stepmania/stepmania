@@ -13,6 +13,7 @@
 #include "RageDisplay.h"
 #include "Game.h"
 #include "HelpDisplay.h"
+#include "ScreenDimensions.h"
 
 
 #define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")
