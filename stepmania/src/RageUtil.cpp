@@ -12,7 +12,9 @@
 */
 
 #include "RageUtil.h"
+#if 0
 #include "fnmatch.h"
+#endif
 
 ULONG		randseed = time(NULL);
 
