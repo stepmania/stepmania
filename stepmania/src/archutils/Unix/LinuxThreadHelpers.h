@@ -4,7 +4,7 @@
 CString ThreadsVersion();
 
 /* Get the current thread's ThreadID. */
-int GetCurrentThreadId();
+uint64_t GetCurrentThreadId();
 
 /* Return true if NPTL libraries are in use, false if linuxthreads. */
 bool UsingNPTL();

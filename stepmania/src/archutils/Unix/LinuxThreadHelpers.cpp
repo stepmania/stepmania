@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 
 #include "Backtrace.h"
+#include "archutils/Unix/RunningUnderValgrind.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -117,8 +118,15 @@ static int PtraceDetach( int ThreadID )
 
 
 /* Get this thread's ID (this may be a TID or a PID). */
-int GetCurrentThreadId()
+uint64_t GetCurrentThreadId()
 {
+	/* If we're under Valgrind, neither the PID nor the TID is associated with the
+	 * thread.  Return the pthread ID.  This can't be used to kill threads, etc.,
+	 * but that only happens under error conditions anyway.  If we don't return a
+	 * usable, unique ID, then mutexes won't work. */
+	if( RunningUnderValgrind() )
+		return (int) pthread_self();
+	
 	InitializePidThreadHelpers(); // for g_bUsingNPTL
 
 	/* Don't keep calling gettid() if it's not supported; it'll make valgrind spam us. */
@@ -183,7 +191,7 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 		if( errno != EPERM )
 		{
 			CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)",
-									strerror(errno), getpid(), GetCurrentThreadId(), int(ThreadID) ) );
+									strerror(errno), getpid(), (int)GetCurrentThreadId(), int(ThreadID) ) );
 			return false;
 		}
 	}
