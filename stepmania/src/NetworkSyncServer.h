@@ -6,7 +6,6 @@
 #if !defined(WITHOUT_NETWORKING)
 #include "ezsockets.h"
 #define NETMAXBUFFERSIZE 1020
-#define NUMBERCLIENTS 16
 
 class LanPlayer
 {
@@ -42,17 +41,14 @@ class GameClient
 public:
 	bool GotStartRequest;
 	EzSockets clientSocket;
-	bool Used;
 	void UpdateStats(PacketFunctions &Packet);
 	void SetClientVersion(int ver, const CString& b);
 	void StartRequest(PacketFunctions &Packet);
 	int GetData(PacketFunctions &Packet);
 	GameClient();
 	LanPlayer Player[2];
-	void CheckConnection();
 	bool IsPlaying(int Player);
 	void StyleUpdate(PacketFunctions &Packet);
-	void Disconnect();
 	bool InGame;
 	int twoPlayers;
 	bool hasSong;
@@ -61,7 +57,7 @@ public:
 	int startPosition;
 	bool isStarting;
 	bool wasIngame;
-	bool hasCheated;
+	bool lowerJudge;
 	
 private:
 	string build;
@@ -87,51 +83,50 @@ private:
 	bool stop;
 	PacketFunctions Packet;
 	PacketFunctions Reply;
-	GameClient Client[NUMBERCLIENTS];
-	int CurrentEmptyClient; 
+	vector<GameClient*> Client; 
 	EzSockets server;
 	int ClientHost;
-	LanPlayer *playersPtr[NUMBERCLIENTS*2];
+	vector<LanPlayer*> playersPtr;
 	time_t statsTime;
 	GameInfo CurrentSongInfo;
 	GameInfo LastSongInfo;
 	bool StatsNameChange;
 	bool SecondSameSelect;
-	int numPlayers;
 	vector<CString> bannedIPs;
 
-	void Hello(PacketFunctions& Packet, int clientNum);
+	void Hello(PacketFunctions& Packet, const unsigned int clientNum);
 	void UpdateClients();
-	int FindEmptyClient();
 	void NewClientCheck();
-	void ParseData(PacketFunctions& Packet, int clientNum);
-	void SendValue(uint8_t value, int clientNum);
+	void ParseData(PacketFunctions& Packet, const unsigned int clientNum);
+	void SendValue(uint8_t value, const unsigned int clientNum);
 	void CheckReady();
 	void MoveClientToHost();
-	void StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[],
-						  int numPlayers);
+	void StatsComboColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr);
 	void SendStatsToClients();
-	void StatsProjgradeColumn(PacketFunctions& data, LanPlayer *playersPtr[], int numPlayers);
-	void StatsNameColumn(PacketFunctions& data, LanPlayer *playersPtr[], int numPlayers);
-	void SendNetPacket(int client, PacketFunctions &Packet);
-	int SortStats(LanPlayer *playersPtr[]);
-	void RelayChat(CString &passedmessage, int clientNum);
-	void SelectSong(PacketFunctions& Packet, int clientNum);
+	void StatsProjgradeColumn(PacketFunctions& data, vector<LanPlayer*> &playresPtr);
+	void StatsNameColumn(PacketFunctions& data, vector<LanPlayer*> &playresPtr);
+	void SendNetPacket(const unsigned int clientNum, PacketFunctions &Packet);
+	int SortStats(vector<LanPlayer*> &playresPtr);
+	void RelayChat(CString &passedmessage, const unsigned int clientNum);
+	void SelectSong(PacketFunctions& Packet, const unsigned int clientNum);
 	void ServerChat(const CString& message);
 	void SendToAllClients(PacketFunctions& Packet);
 	bool CheckHasSongState();
 	void ClearHasSong();
 	void AssignPlayerIDs();
 	void SendUserList();
-	void GameOver(PacketFunctions& Packet, int clientNum);
-	void ScreenNetMusicSelectStatus(PacketFunctions& Packet, int clientNum);
-	void AnalizeChat(PacketFunctions &Packet, int clientNum);
+	void GameOver(PacketFunctions& Packet, const unsigned int clientNum);
+	void ScreenNetMusicSelectStatus(PacketFunctions& Packet, const unsigned int clientNum);
+	void AnalizeChat(PacketFunctions &Packet, const unsigned int clientNum);
 	CString StepManiaLanServer::ListPlayers();
 	void Kick(CString &name);
 	void Ban(CString &name);
 	bool IsBanned(CString &ip);
 	void ForceStart();
-	bool CheckCheat(int clientNum);
+	void CheckLowerJudge(const unsigned int clientNum);
+	bool CheckConnection(const unsigned int clientNum);
+	void PopulatePlayersPtr(vector<LanPlayer*> &playersPtr);
+	void Disconnect(const unsigned int clientNum);
 };
 
 #endif
