@@ -59,10 +59,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\temp\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                        	cl                                                                                                                                        /Zl                                                                                                                                        /nologo                                                                                                                                        /c                                                                                                                                        verstub.cpp                                                                                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                         	cl                                                                                                                                         /Zl                                                                                                                                         /nologo                                                                                                                                         /c                                                                                                                                         verstub.cpp                                                                                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -96,10 +96,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none /debug
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\temp\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                         	cl                                                                                                  /Zl                                                                                                  /nologo                                                                                                  /c                                                                                                  verstub.cpp                                                                                                  /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                          	cl                                                                                                   /Zl                                                                                                   /nologo                                                                                                   /c                                                                                                   verstub.cpp                                                                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -166,14 +166,6 @@ SOURCE=.\SDL_SaveJPEG.cpp
 # Begin Source File
 
 SOURCE=.\SDL_SaveJPEG.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_utils.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_utils.h
 # End Source File
 # End Group
 # Begin Source File
@@ -1528,15 +1520,6 @@ SOURCE=.\archutils\Win32\WindowsResources.rc
 # End Group
 # Begin Source File
 
-SOURCE=.\custom_launch_params.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
-SOURCE=.\custom_launch_params.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\global.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -1556,11 +1539,6 @@ SOURCE=.\global.h
 # Begin Source File
 
 SOURCE=.\ScreenDimensions.h
-# End Source File
-# Begin Source File
-
-SOURCE=".\SDL-1.2.5\src\main\xbox\SDL_main.c"
-# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 

@@ -1123,10 +1123,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\LowLevelWindow\LowLevelWindow.h">
 					</File>
 					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.cpp">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.cpp">
 					</File>
 					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.h">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1246,6 +1246,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\GotoURL.h">
 				</File>
 				<File
+					RelativePath="archutils\Win32\GraphicsWindow.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\GraphicsWindow.h">
+				</File>
+				<File
 					RelativePath="archutils\Win32\RegistryAccess.cpp">
 				</File>
 				<File
@@ -1271,6 +1277,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\VideoDriverInfo.h">
+				</File>
+				<File
+					RelativePath="archutils\Win32\WindowIcon.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\WindowIcon.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\WindowsResources.h">
@@ -2098,12 +2110,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="SDL_rotozoom.h">
-				</File>
-				<File
-					RelativePath="SDL_utils.cpp">
-				</File>
-				<File
-					RelativePath="SDL_utils.h">
 				</File>
 				<File
 					RelativePath="ezsockets.cpp">
