@@ -100,11 +100,8 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
 
-#ifdef SDL_HAS_REFRESH_RATE
-	if( p.rate == REFRESH_DEFAULT )
-		SDL_SM_SetRefreshRate(0);
-	else
-		SDL_SM_SetRefreshRate(p.rate);
+#if defined(_WINDOWS)
+	SDL_SetRefreshRate( (p.rate == REFRESH_DEFAULT)? SDL_REFRESH_DEFAULT:p.rate );
 #endif
 
 #if defined(WIN32)
