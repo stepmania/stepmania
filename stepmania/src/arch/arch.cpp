@@ -2,11 +2,11 @@
  * This file provides functions to create driver objects.
  */
 
-#include "../stdafx.h"
-#include "../RageLog.h"
-#include "../RageUtil.h"
+#include "global.h"
+#include "RageLog.h"
+#include "RageUtil.h"
 
-#include "../PrefsManager.h"
+#include "PrefsManager.h"
 #include "arch.h"
 
 /* Load default drivers. */

@@ -3,7 +3,7 @@
  * Each sound gets its own stream, which allows for very little startup
  * latency for each sound and lower CPU usage. */
 
-#include "stdafx.h"
+#include "global.h"
 #include "RageSoundDriver_DSound.h"
 #include "DSoundHelpers.h"
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "RageSoundDriver_WaveOut.h"
 
 #pragma comment(lib, "winmm.lib")

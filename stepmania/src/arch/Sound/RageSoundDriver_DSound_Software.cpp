@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "RageSoundDriver_DSound_Software.h"
 #include "DSoundHelpers.h"
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "ArchHooks_Win32.h"
 
 #include "archutils/win32/tls.h"

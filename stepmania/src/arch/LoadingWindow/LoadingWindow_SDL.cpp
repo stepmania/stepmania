@@ -1,4 +1,4 @@
-#include "../../stdafx.h"
+#include "../../global.h"
 
 #include "SDL_image.h"
 #include "LoadingWindow_SDL.h"

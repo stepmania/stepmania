@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "InputHandler_Win32_Pump.h"
 
 #include "RageLog.h"

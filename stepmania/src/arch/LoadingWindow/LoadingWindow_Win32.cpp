@@ -1,4 +1,4 @@
-#include "../../stdafx.h"
+#include "../../global.h"
 #include "../../RageUtil.h"
 
 #include "LoadingWindow_Win32.h"

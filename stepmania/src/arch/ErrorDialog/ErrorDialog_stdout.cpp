@@ -1,4 +1,4 @@
-#include "../../stdafx.h"
+#include "../../global.h"
 #include "ErrorDialog_stdout.h"
 
 void ErrorDialog_stdout::ShowError()
