@@ -44,7 +44,7 @@ enum {
 OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
 	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
-	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","UNLIMITED" ),
+	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","EVENT MODE" ),
 	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8","JUSTICE" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Progressive\nLifebar",	"OFF","1","2","3","4","5","6","7","8"),
