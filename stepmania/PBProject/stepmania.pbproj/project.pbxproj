@@ -253,7 +253,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				LIBRARY_STYLE = Static;
+				LIBRARY_STYLE = Bundle;
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
@@ -834,7 +834,7 @@
 				AA4B42D905736AB5005FB5DB,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks\" /Users/steve/stepmania/PBProject/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks";
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -842,7 +842,7 @@
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "/usr/include $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers ../src $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Versions/A/Headers $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers";
+				HEADER_SEARCH_PATHS = "Frameworks/SDL.framework/Headers Frameworks/SDL_image.framework/Headers /usr/include $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers ../src $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Versions/A/Headers $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
@@ -1153,6 +1153,7 @@
 				AAC6DDE10569C71000B5D56F,
 				AAC6DDE90569C80900B5D56F,
 				AAB691F505704FA50078BED4,
+				AAB005F30579B8CB000BBA58,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3086,6 +3087,7 @@
 				AAB691F405704FA50078BED4,
 				AA4B59EF0573AA5B005FB5DB,
 				AA4B5DD1057421F4005FB5DB,
+				AAB005F20579B8CB000BBA58,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3400,6 +3402,7 @@
 			fileRef = AA6EFE0E04770C79005F316C;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-O0";
 			};
 		};
 		AA29CD760558741A00961A51 = {
@@ -10380,6 +10383,8 @@
 			children = (
 				AA6EFEFD04770F63005F316C,
 				AA6EFEFE04770F63005F316C,
+				AAB005F00579B8CB000BBA58,
+				AAB005F10579B8CB000BBA58,
 				AA6EFEFF04770F63005F316C,
 				AA6EFF0004770F63005F316C,
 				AAC28BB904F758E500D02EE9,
@@ -11894,6 +11899,36 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		AAB005F00579B8CB000BBA58 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = AttackDisplay.cpp;
+			path = ../src/AttackDisplay.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB005F10579B8CB000BBA58 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = AttackDisplay.h;
+			path = ../src/AttackDisplay.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB005F20579B8CB000BBA58 = {
+			fileRef = AAB005F00579B8CB000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB005F30579B8CB000BBA58 = {
+			fileRef = AAB005F10579B8CB000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AAB3B36B04C38B4600D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -12822,6 +12857,7 @@
 			path = ../src/Bookkeeper.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		AADBE369053DA38C00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
