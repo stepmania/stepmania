@@ -68,10 +68,6 @@ void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
 
 CString AnnouncerManager::GetPathTo( CString sFolderName )
 {
-#ifdef _DEBUG
-try_again:
-#endif
-
 	CString sPathToFolderCurrent = GetAnnouncerDirFromName(m_sCurAnnouncerName) + "\\" + sFolderName;
 	CString sPathToFolderEmpty = GetAnnouncerDirFromName(EMPTY_ANNOUNCER_NAME) + "\\" + sFolderName;
 
