@@ -108,6 +108,11 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SET_XY( m_sprBannerMask );
 	this->AddChild( &m_sprBannerMask );
 
+	m_sprExplanation.Load( THEME->GetPathG(m_sName,"explanation") );
+	m_sprExplanation->SetName( "Explanation" );
+	SET_XY( m_sprExplanation );
+	this->AddChild( m_sprExplanation );
+
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
@@ -119,11 +124,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	m_sprBannerFrame->SetName( "BannerFrame" );
 	SET_XY( m_sprBannerFrame );
 	this->AddChild( m_sprBannerFrame );
-
-	m_sprExplanation.Load( THEME->GetPathG(m_sName,"explanation") );
-	m_sprExplanation->SetName( "Explanation" );
-	SET_XY( m_sprExplanation );
-	this->AddChild( m_sprExplanation );
 
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.Load();
