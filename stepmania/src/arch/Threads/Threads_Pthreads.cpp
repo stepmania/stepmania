@@ -222,6 +222,7 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 	return new MutexImpl_Pthreads( pParent );
 }
 
+#if 0
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	sem_init( &sem, 0, iInitialValue );
@@ -267,6 +268,61 @@ bool SemaImpl_Pthreads::TryWait()
 		RageException::Throw( "TryWait: sem_trywait failed: %s", strerror(errno) );
 	return true;
 }
+#else
+/* Use conditions, to work around OSX "forgetting" to implement semaphores. */
+SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
+{
+	int ret = pthread_cond_init( &m_Cond, NULL );
+	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
+	ret = pthread_mutex_init( &m_Mutex, NULL );
+	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
+		
+	m_iValue = iInitialValue;
+}
+
+SemaImpl_Pthreads::~SemaImpl_Pthreads()
+{
+	pthread_cond_destroy( &m_Cond );
+	pthread_mutex_destroy( &m_Mutex );
+}
+
+void SemaImpl_Pthreads::Post()
+{
+	pthread_mutex_lock( &m_Mutex );
+	++m_iValue;
+	if( m_iValue == 1 )
+		pthread_cond_signal( &m_Cond );
+	pthread_mutex_unlock( &m_Mutex );
+}
+
+bool SemaImpl_Pthreads::Wait()
+{
+	pthread_mutex_lock( &m_Mutex );
+	while( !m_iValue )
+		pthread_cond_wait( &m_Cond, &m_Mutex );
+
+	--m_iValue;
+	pthread_mutex_unlock( &m_Mutex);
+
+	return true;
+}
+
+bool SemaImpl_Pthreads::TryWait()
+{
+	pthread_mutex_lock( &m_Mutex );
+	if( !m_iValue )
+	{
+		pthread_mutex_unlock( &m_Mutex);
+		return false;
+	}
+	
+	--m_iValue;
+	pthread_mutex_unlock( &m_Mutex);
+
+	return true;
+}
+
+#endif
 
 SemaImpl *MakeSemaphore( int iInitialValue )
 {
