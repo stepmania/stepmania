@@ -26,6 +26,7 @@ public:
 	void SetFromSong( Song* pSong );
 	void SetFromGroup( const CString &sGroupName );
 	void SetRoulette();
+	void SetFromCourse( Course *pCourse );
 	//void SetFromTexture( const CString &sTexturePath );
 
 protected:

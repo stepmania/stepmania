@@ -71,3 +71,9 @@ void FadingBanner::SetRoulette()
 	BeforeChange();
 	m_Banner[0].LoadRoulette();
 }
+
+void FadingBanner::SetFromCourse( Course *pCourse )
+{
+	BeforeChange();
+	m_Banner[0].LoadFromCourse( pCourse );
+}
