@@ -244,11 +244,11 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 		{
 			switch( code )
 			{
-			case CODE_MIRROR:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_MIRROR,			PlayerOptions::TURN_NONE );	break;
-			case CODE_LEFT:				TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_LEFT,			PlayerOptions::TURN_NONE );	break;
-			case CODE_RIGHT:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_RIGHT,			PlayerOptions::TURN_NONE );	break;
-			case CODE_SHUFFLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_SHUFFLE,			PlayerOptions::TURN_NONE );	break;
-			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
+			case CODE_MIRROR:			GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_MIRROR );		break;
+			case CODE_LEFT:				GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_LEFT );		break;
+			case CODE_RIGHT:			GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_RIGHT );		break;
+			case CODE_SHUFFLE:			GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_SHUFFLE );	break;
+			case CODE_SUPER_SHUFFLE:	GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_SUPER_SHUFFLE );	break;
 			case CODE_NEXT_TRANSFORM:	GAMESTATE->m_PlayerOptions[pn].NextTransform();									break;
 			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );		break;
 			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;

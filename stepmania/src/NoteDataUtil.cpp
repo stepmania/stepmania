@@ -1369,16 +1369,11 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat, float fEndBeat )
 {
-	switch( po.m_Turn )
-	{
-	case PlayerOptions::TURN_NONE:																								break;
-	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, fStartBeat, fEndBeat );			break;
-	case PlayerOptions::TURN_LEFT:			NoteDataUtil::Turn( nd, st, NoteDataUtil::left, fStartBeat, fEndBeat  );			break;
-	case PlayerOptions::TURN_RIGHT:			NoteDataUtil::Turn( nd, st, NoteDataUtil::right, fStartBeat, fEndBeat  );			break;
-	case PlayerOptions::TURN_SHUFFLE:		NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, fStartBeat, fEndBeat  );			break;
-	case PlayerOptions::TURN_SUPER_SHUFFLE:	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, fStartBeat, fEndBeat  );	break;
-	default:		ASSERT(0);
-	}
+	if( po.m_bTurns[PlayerOptions::TURN_MIRROR] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, fStartBeat, fEndBeat );
+	if( po.m_bTurns[PlayerOptions::TURN_LEFT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::left, fStartBeat, fEndBeat );
+	if( po.m_bTurns[PlayerOptions::TURN_RIGHT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::right, fStartBeat, fEndBeat );
+	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, fStartBeat, fEndBeat );
+	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, fStartBeat, fEndBeat );
 
 	// apply little before others
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little(nd, fStartBeat, fEndBeat);

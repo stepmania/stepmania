@@ -424,10 +424,13 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 						LOG->Info("Found Invalid Appearance Mod");
 					}
 				}
-				if((po.m_Turn != PlayerOptions::TURN_NONE) && (po.m_Turn == GAMESTATE->m_PlayerOptions[pn].m_Turn))
+				for(md=0;md<PlayerOptions::NUM_TURNS;md++)
 				{
-					bModsValid=false;
-					LOG->Info("Found Invalid Turn Mod");
+					if(po.m_bTurns[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTurns[md] != 0.0f)
+					{
+						bModsValid=false;
+						LOG->Info("Found Invalid Turn Mod");
+					}
 				}
 				for(md=0;md<PlayerOptions::NUM_TRANSFORMS;md++)
 				{

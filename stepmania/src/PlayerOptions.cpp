@@ -35,7 +35,7 @@ void PlayerOptions::Init()
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
-	m_Turn = TURN_NONE;
+	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bTimingAssist = false;
 	m_bProTiming = false;
@@ -135,16 +135,11 @@ CString PlayerOptions::GetString() const
 
 	sReturn += AddPart( m_fPassmark, "Passmark");
 
-	switch( m_Turn )
-	{
-	case TURN_NONE:										break;
-	case TURN_MIRROR:		sReturn += "Mirror, ";		break;
-	case TURN_LEFT:			sReturn += "Left, ";		break;
-	case TURN_RIGHT:		sReturn += "Right, ";		break;
-	case TURN_SHUFFLE:		sReturn += "Shuffle, ";		break;
-	case TURN_SUPER_SHUFFLE:sReturn += "SuperShuffle, ";break;
-	default:	ASSERT(0);	// invalid
-	}
+	if( m_bTurns[TURN_MIRROR] )			sReturn += "Mirror, ";
+	if( m_bTurns[TURN_LEFT] )			sReturn += "Left, ";
+	if( m_bTurns[TURN_RIGHT] )			sReturn += "Right, ";
+	if( m_bTurns[TURN_SHUFFLE] )		sReturn += "Shuffle, ";
+	if( m_bTurns[TURN_SUPER_SHUFFLE] )	sReturn += "SuperShuffle, ";
 
 	if( m_bTransforms[TRANSFORM_NOHOLDS] )	sReturn += "NoHolds, ";
 	if( m_bTransforms[TRANSFORM_NOMINES] )	sReturn += "NoMines, ";
@@ -271,12 +266,12 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "stealth" )	SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
 		else if( sBit == "blink" )		SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
 		else if( sBit == "randomvanish" ) SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
-		else if( sBit == "turn" && !on )m_Turn = TURN_NONE; /* "no turn" */
-		else if( sBit == "mirror" )		m_Turn = TURN_MIRROR;
-		else if( sBit == "left" )		m_Turn = TURN_LEFT;
-		else if( sBit == "right" )		m_Turn = TURN_RIGHT;
-		else if( sBit == "shuffle" )	m_Turn = TURN_SHUFFLE;
-		else if( sBit == "supershuffle" )m_Turn = TURN_SUPER_SHUFFLE;
+		else if( sBit == "turn" && !on ) ZERO( m_bTurns ); /* "no turn" */
+		else if( sBit == "mirror" )		m_bTurns[TURN_MIRROR] = on;
+		else if( sBit == "left" )		m_bTurns[TURN_LEFT] = on;
+		else if( sBit == "right" )		m_bTurns[TURN_RIGHT] = on;
+		else if( sBit == "shuffle" )	m_bTurns[TURN_SHUFFLE] = on;
+		else if( sBit == "supershuffle" )m_bTurns[TURN_SUPER_SHUFFLE] = on;
 		else if( sBit == "little" )		m_bTransforms[TRANSFORM_LITTLE] = on;
 		else if( sBit == "wide" )		m_bTransforms[TRANSFORM_WIDE] = on;
 		else if( sBit == "big" )		m_bTransforms[TRANSFORM_BIG] = on;
@@ -319,7 +314,6 @@ void PlayerOptions::FromString( CString sOptions )
 	}
 }
 
-
 void NextFloat( float fValues[], int size )
 {
 	int index = -1;
@@ -342,6 +336,28 @@ void NextFloat( float fValues[], int size )
 		fValues[index+1] = 1;
 }
 
+void NextBool( bool bValues[], int size )
+{
+	int index = -1;
+	int i;
+	for( i=0; i<size; i++ )
+	{
+		if( bValues[i] )
+		{
+			index = i;
+			break;
+		}
+	}
+
+	for( i=0; i<size; i++ )
+		bValues[i] = false;
+
+	if( index == size-1 )	// if true, then the last float in the list was selected
+		;	// leave all off
+	else
+		bValues[index+1] = 1;
+}
+
 void PlayerOptions::NextAccel()
 {
 	NextFloat( m_fAccels, NUM_ACCELS );
@@ -359,13 +375,12 @@ void PlayerOptions::NextAppearance()
 
 void PlayerOptions::NextTurn()
 {
-	m_Turn = (Turn) ((m_Turn+1)%NUM_TURNS);
+	NextBool( m_bTurns, NUM_TURNS );
 }
 
 void PlayerOptions::NextTransform()
 {
-	// It's dumb to use a code to change transforms because there are so many of them. -Chris
-	//m_Transforms = (Transform) ((m_Transform+1)%NUM_TRANSFORMS);
+	NextBool( m_bTransforms, NUM_TRANSFORMS );
 }
 
 void PlayerOptions::NextScroll()
@@ -460,6 +475,13 @@ void PlayerOptions::SetOneScroll( Scroll s )
 	m_fScrolls[s] = 1;
 }
 
+void PlayerOptions::ToggleOneTurn( Turn t )
+{
+	bool bWasOn = m_bTurns[t];
+	ZERO( m_bTurns );
+	m_bTurns[t] = !bWasOn;
+}
+
 float PlayerOptions::GetReversePercentForColumn( int iCol )
 {
 	float f = 0;
@@ -493,7 +515,6 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
-	COMPARE(m_Turn);
 	COMPARE(m_bTimingAssist);
 	COMPARE(m_bProTiming);
 	COMPARE(m_fPerspectiveTilt);
@@ -509,6 +530,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_fAppearances[i]);
 	for( i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
 		COMPARE(m_fScrolls[i]);
+	for( i = 0; i < PlayerOptions::NUM_TURNS; ++i )
+		COMPARE(m_bTurns[i]);
 	for( i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
 		COMPARE(m_bTransforms[i]);
 #undef COMPARE

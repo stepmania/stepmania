@@ -109,7 +109,7 @@ struct PlayerOptions
 	 * the song to pass.  This is independent of SongOptions::m_FailType. */
 	float		m_fPassmark,			m_SpeedfPassmark;
 
-	Turn		m_Turn;
+	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bTimingAssist;
 	bool		m_bProTiming;
@@ -133,6 +133,7 @@ struct PlayerOptions
 	void SetOneEffect( Effect e );
 	void SetOneAppearance( Appearance a );
 	void SetOneScroll( Scroll s );
+	void ToggleOneTurn( Turn t );
 };
 
 #endif
