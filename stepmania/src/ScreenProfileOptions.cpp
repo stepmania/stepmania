@@ -217,7 +217,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		if( sProfileID=="" )
 			SCREENMAN->PlayInvalidSound();
 		else
-			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, NULL );
+			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, 12 );
 		break;
 	}
 	default:
