@@ -251,7 +251,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	}
 
 	m_OptionRowAlloc = new OptionRowData[asLineNames.size()];
-	for( i = 0; (int) i < asLineNames.size(); ++i )
+	for( i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
 
