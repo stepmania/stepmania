@@ -19,7 +19,7 @@ public:
 
 	/* For crash handlers: kill or suspend all threads (except for
 	 * the running one) immediately. */ 
-	static void HaltAllThreads();
+	static void HaltAllThreads( bool Kill=false );
 	static const char *GetCurThreadName();
 
 	int Wait();

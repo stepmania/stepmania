@@ -201,9 +201,16 @@ int RageThread::Wait()
 	return ret;
 }
 
-void RageThread::HaltAllThreads()
+void RageThread::HaltAllThreads( bool Kill )
 {
 #if defined(PID_BASED_THREADS)
+	/* Send a SIGSTOP to all other threads.  If we send a SIGKILL, pthreads
+	 * will "helpfully" propagate it to the other threads, and we'll get
+	 * killed, too.
+	 *
+	 * This isn't ideal, since it can cause the process to background
+	 * as far as the shell is concerned, so the shell prompt can display
+	 * before the crash handler actually displays a message. */
 	int ThisThread = getpid();
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
@@ -212,7 +219,7 @@ void RageThread::HaltAllThreads()
 		const int pid = g_ThreadSlots[entry].pid;
 		if( pid <= 0 || pid == ThisThread )
 			continue;
-		kill( pid, SIGKILL );
+		kill( pid, Kill? SIGKILL:SIGSTOP );
 	}
 #endif
 }
