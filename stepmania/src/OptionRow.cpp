@@ -417,7 +417,7 @@ void OptionRow::UpdateEnabledDisabled(
 			else
 				color = colorDisabled;
 
-			float fEnabledDisabledAlpha = bRowEnabled ? 1:0;
+			float fEnabledDisabledAlpha = bRowEnabled ? 1.0f:0.0f;
 
 			unsigned item_no = m_RowDef.bOneChoiceForAllPlayers ? 0 : pn;
 
