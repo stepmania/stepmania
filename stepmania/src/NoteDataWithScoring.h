@@ -35,13 +35,29 @@ public:
 	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 
-	TapNoteScore GetTapNoteScore(int track, int row) const
+	const TapNoteScore &GetTapNoteScore(int track, int row) const
 	{
 		return m_TapNoteScores[track][row];
 	}
-	void SetTapNoteScore(int track, int row, TapNoteScore tns)
+	TapNoteScore &GetTapNoteScore(int track, int row)
 	{
-		m_TapNoteScores[track][row] = tns;
+		return m_TapNoteScores[track][row];
+	}
+	const HoldNoteScore &GetHoldNoteScore(int h) const
+	{
+		return m_HoldNoteScores[h];
+	}
+	HoldNoteScore &GetHoldNoteScore(int h)
+	{
+		return m_HoldNoteScores[h];
+	}
+	float &GetHoldNoteLife(int h)
+	{
+		return m_fHoldNoteLife[h];
+	}
+	const float &GetHoldNoteLife(int h) const
+	{
+		return m_fHoldNoteLife[h];
 	}
 
 	bool IsRowComplete( int index );

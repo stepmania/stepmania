@@ -214,8 +214,8 @@ void Player::Update( float fDeltaTime )
 	for( int i=0; i < GetNumHoldNotes(); i++ )		// for each HoldNote
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		HoldNoteScore &hns = m_HoldNoteScores[i];
-		float &fLife = m_fHoldNoteLife[i];
+		HoldNoteScore &hns = GetHoldNoteScore(i);
+		float &fLife = GetHoldNoteLife(i);
 		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
 
 		m_NoteField.m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
@@ -261,7 +261,7 @@ void Player::Update( float fDeltaTime )
 					fLife = max( fLife, 0 );	// clamp
 				}
 			}
-			m_NoteField.m_fHoldNoteLife[i] = fLife;	// update the NoteField display
+			m_NoteField.GetHoldNoteLife(i) = fLife;	// update the NoteField display
 		}
 
 		/* check for NG.  If the head was missed completely, don't count
@@ -271,7 +271,7 @@ void Player::Update( float fDeltaTime )
 			hns = HNS_NG;
 			HandleHoldNoteScore( hns, tns );
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
-			m_NoteField.m_HoldNoteScores[i] = HNS_NG;	// update the NoteField display
+			m_NoteField.GetHoldNoteScore(i) = HNS_NG;	// update the NoteField display
 		}
 
 		// check for OK
@@ -282,8 +282,8 @@ void Player::Update( float fDeltaTime )
 			HandleHoldNoteScore( hns, tns );
 			m_GhostArrowRow.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
-			m_NoteField.m_fHoldNoteLife[i] = fLife;		// update the NoteField display
-			m_NoteField.m_HoldNoteScores[i] = HNS_OK;	// update the NoteField display
+			m_NoteField.GetHoldNoteLife(i) = fLife;		// update the NoteField display
+			m_NoteField.GetHoldNoteScore(i) = HNS_OK;	// update the NoteField display
 		}
 	}
 
@@ -410,7 +410,7 @@ void Player::Step( int col )
 		bDestroyedNote = (score >= TNS_GOOD);
 
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
-		SetTapNoteScore(col, iIndexOverlappingNote, score);
+		GetTapNoteScore(col, iIndexOverlappingNote) = score;
 
 		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) 
 		{
@@ -546,7 +546,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 		{
 			if( GetTapNote(t, r) != TAP_EMPTY  &&  GetTapNoteScore(t, r) == TNS_NONE )
 			{
-				SetTapNoteScore(t, r, TNS_MISS);
+				GetTapNoteScore(t, r) = TNS_MISS;
 				iNumMissesFound++;
 				iNumMissesThisRow++;
 			}

@@ -220,8 +220,8 @@ void NoteField::DrawPrimitives()
 		for( i=0; i < GetNumHoldNotes(); i++ )
 		{
 			const HoldNote &hn = GetHoldNote(i);
-			HoldNoteScore &hns = m_HoldNoteScores[i];
-			const float fLife = m_fHoldNoteLife[i];
+			HoldNoteScore &hns = GetHoldNoteScore(i);
+			const float fLife = GetHoldNoteLife(i);
 			const bool bIsHoldingNote = m_bIsHoldingHoldNote[i];	// hack: added -1 because hn.m_iStartIndex changes as note is held
 			
 			if( hns == HNS_OK )	// if this HoldNote was completed
