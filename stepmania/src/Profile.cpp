@@ -815,7 +815,10 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 
 		Song* pSong = SONGMAN->GetSongFromDir( sSongDir );
 		if( pSong == NULL )
-			WARN_AND_CONTINUE;
+		{
+			LOG->Trace("Couldn't find song \"%s\"; scoring data will be lost", sSongDir.c_str() );
+			continue;
+		}
 
 		for( XNodes::iterator steps = (*song)->childs.begin(); 
 			steps != (*song)->childs.end(); 
@@ -1240,8 +1243,11 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 		if( pCourse == NULL )
 			pCourse = SONGMAN->GetCourseFromName( sCourse );
 		if( pCourse == NULL )
-			WARN_AND_CONTINUE;
-		
+		{
+			LOG->Trace("Couldn't find course \"%s\"; scoring data will be lost", sCourse.c_str() );
+			continue;
+		}
+
 		for( XNodes::iterator stepsType = (*course)->childs.begin(); 
 			stepsType != (*course)->childs.end(); 
 			stepsType++ )
