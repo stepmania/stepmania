@@ -223,7 +223,7 @@ static Menu g_BGChange( "Background Change", g_BGChangeItems );
 
 static const MenuRow g_InsertAttackItems[] =
 {
-	{ "Duration",							true, 2, { "0:10","0:20","0:30","0:40","0:50","1:00","1:10","1:20","1:30","1:40","1:50","2:00" } },
+	{ "Duration seconds",					true, 2, { "10","20","30","40","50","60","70","80","90" } },
 	{ "Set modifiers",						true, 0, { "PRESS START" } },
 	{ NULL, true, 0, { NULL } }
 };
@@ -233,6 +233,7 @@ static Menu g_InsertAttack( "Insert Attack", g_InsertAttackItems );
 // that we can lay the attack note after coming back from
 // menus.
 int g_iLastInsertAttackTrack = -1;
+float g_fLastInsertAttackDurationSeconds = -1;
 
 ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
@@ -1264,8 +1265,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 		break;
 	case SM_BackFromInsertAttack:
-		GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
+		{
+			int iDurationChoice = ScreenMiniMenu::s_iLastAnswers[0];
+			g_fLastInsertAttackDurationSeconds = atof( g_InsertAttackItems[0].choices[iDurationChoice] );
+			GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
+		}
 		break;
 	case SM_BackFromInsertAttackModifiers:
 		{
@@ -1273,6 +1278,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			CString sMods = poChosen.GetString();
 			int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 			m_NoteFieldEdit.SetTapNote( g_iLastInsertAttackTrack, row, TAP_TAP );
+			m_NoteFieldEdit.SetTapNoteAttack( g_iLastInsertAttackTrack, row, sMods, g_fLastInsertAttackDurationSeconds );
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;

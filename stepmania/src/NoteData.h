@@ -51,6 +51,7 @@ public:
 	}
 	void MoveTapNoteTrack(int dest, int src);
 	void SetTapNote(int track, int row, TapNote t);
+	void SetTapNoteAttack( int track, int row, CString sMods, float fDurationSeconds );
 
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll();

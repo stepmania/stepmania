@@ -596,6 +596,7 @@ void NoteData::SetTapNoteAttack( int track, int row, CString sMods, float fDurat
 	if(row < 0) return;
 
 	PadTapNotes(row);
+	// TODO: mark as TAP_ATTACK and save attack params to array
 	m_TapNotes[track][row]=TAP_TAP;
 }
 
