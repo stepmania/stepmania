@@ -149,6 +149,12 @@ try {
 	}
 
 	RAGE_ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
+
+	/* Don't accept a function as a return value; if you really want to use a function
+	 * as a boolean, convert it before returning. */
+	if( lua_isfunction( L, -1 ) )
+		throw CString( "result is a function; did you forget \"()\"?" );
+
 	bool result = !!lua_toboolean( L, -1 );
 	lua_pop( L, -1 );
 
