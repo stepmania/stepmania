@@ -360,7 +360,11 @@ void NoteField::DrawPrimitives()
 	//
 
 	float fSelectedRangeGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
-	CString ColDisplay = NOTESKIN->GetMetric(m_PlayerNumber, "NoteDisplay", "ReverseDrawOrder");
+	/* This isn't good.  A single note skin can be used for any number of play
+	 * styles with completely different column layouts, eg. doubles, solo. 
+	 * Also, please be sure to update all note skins when making a change; don't
+	 * simply update Dance and break everything else. */
+//	CString ColDisplay = NOTESKIN->GetMetric(m_PlayerNumber, "NoteDisplay", "ReverseDrawOrder");
 
 	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
 	{
@@ -407,14 +411,14 @@ void NoteField::DrawPrimitives()
 		int last = iLastIndexToDraw;
 		int increment = 1;
 
-		if (ColDisplay[c] == '1')
+/*		if (ColDisplay[c] == '1')
 		{
 			first = iLastIndexToDraw;
 			last = iFirstIndexToDraw;
 			increment = -1;
 		}
-		
-		for( i=first; (increment * i) <= (increment * last); i+=increment )	//	 for each row
+*/		
+		for( i=first; i <= last; i+=increment )	//	 for each row
 		{	
 			if( GetTapNote(c, i) == TAP_EMPTY )	// no note here
 				continue;	// skip
