@@ -535,7 +535,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 		{
 			ASSERT( lua_gettop(LUA->L) == 0 );
 
-			/* Evaluate the GetValue(self,array,pn) function, where array is a table
+			/* Evaluate the LoadSelections(self,array,pn) function, where array is a table
 			 * representing vbSelectedOut. */
 
 			/* Hack: the NextRow entry is never set, and should be transparent.  Remove
@@ -555,10 +555,10 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 			hand.m_LuaTable.PushSelf( LUA->L );
 			ASSERT( lua_istable( LUA->L, -1 ) );
 
-			lua_pushstring( LUA->L, "GetSelections" );
+			lua_pushstring( LUA->L, "LoadSelections" );
 			lua_gettable( LUA->L, -2 );
 			if( !lua_isfunction( LUA->L, -1 ) )
-				RageException::Throw( "\"%s\" \"GetSelections\" entry is not a function", row.name.c_str() );
+				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", row.name.c_str() );
 
 			/* Argument 1 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
@@ -675,7 +675,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 		{
 			ASSERT( lua_gettop(LUA->L) == 0 );
 
-			/* Evaluate SetSelections(self,array,pn) function, where array is a table
+			/* Evaluate SaveSelections(self,array,pn) function, where array is a table
 			 * representing vbSelectedOut. */
 
 			/* Hack: the NextRow entry is never set, and should be transparent.  Remove it. */
@@ -691,10 +691,10 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 			hand.m_LuaTable.PushSelf( LUA->L );
 			ASSERT( lua_istable( LUA->L, -1 ) );
 
-			lua_pushstring( LUA->L, "SetSelections" );
+			lua_pushstring( LUA->L, "SaveSelections" );
 			lua_gettable( LUA->L, -2 );
 			if( !lua_isfunction( LUA->L, -1 ) )
-				RageException::Throw( "\"%s\" \"SetSelections\" entry is not a function", row.name.c_str() );
+				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", row.name.c_str() );
 
 			/* Argument 1 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
