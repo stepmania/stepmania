@@ -26,7 +26,6 @@ class Steps;
 class Course;
 class GameDef;
 class StyleDef;
-struct ModeChoice;
 class NoteFieldPositioning;
 class Character;
 class UnlockSystem;
@@ -70,8 +69,6 @@ public:
 
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();
-
-	bool IsPlayable( const ModeChoice& mc );
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn );

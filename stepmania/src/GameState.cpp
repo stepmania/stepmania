@@ -305,34 +305,6 @@ const StyleDef* GameState::GetCurrentStyleDef()
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 
-bool GameState::IsPlayable( const ModeChoice& mc )
-{
-	if( mc.m_bInvalid )
-		return false;
-
-	if ( mc.m_style != STYLE_INVALID )
-	{
-		const int SidesJoinedToPlay = GAMEMAN->GetStyleDefForStyle(mc.m_style)->NumSidesJoinedToPlay();
-		if( SidesJoinedToPlay != GAMESTATE->GetNumSidesJoined() )
-			return false;
-	}
-
-	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
-	 * and vice versa. */
-	const PlayMode &rPlayMode = (mc.m_pm != PLAY_MODE_INVALID) ? mc.m_pm : m_PlayMode;
-	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
-	{
-		// Can't play rave if there isn't enough room for two players.
-		// This is correct for dance (ie, no rave for solo and doubles),
-		// and should be okay for pump .. not sure about other game types.
-		const Style &rStyle = mc.m_style != STYLE_INVALID? mc.m_style: m_CurStyle;
-		if( rStyle != STYLE_INVALID &&
-			GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
-			return false;
-	}
-
-	return true;    // no grounds to deny the request
-}
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
