@@ -12,7 +12,8 @@ RadarValues::RadarValues()
 
 void RadarValues::Init()
 {
-	ZERO( *this );
+	FOREACH_RadarCategory( rc )
+		m_fValues[rc] = RADAR_VAL_UNKNOWN;
 }
 
 XNode* RadarValues::CreateNode() const

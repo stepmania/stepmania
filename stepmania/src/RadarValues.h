@@ -6,6 +6,8 @@
 
 #include "GameConstantsAndTypes.h"
 
+#define RADAR_VAL_UNKNOWN -1
+
 struct XNode;
 
 struct RadarValues

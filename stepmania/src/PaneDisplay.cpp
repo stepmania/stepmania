@@ -142,163 +142,168 @@ void PaneDisplay::Update( float fDeltaTime )
 
 void PaneDisplay::SetContent( PaneContents c )
 {
-	m_textContents[c].SetText( "" );
-
-	if( (g_Contents[c].req&NEED_NOTES) && !GAMESTATE->m_pCurSteps[m_PlayerNumber] )
-		return;
-	if( (g_Contents[c].req&NEED_COURSE) && !GAMESTATE->m_pCurTrail[m_PlayerNumber] )
-		return;
-	if( (g_Contents[c].req&NEED_PROFILE) && !PROFILEMAN->IsUsingProfile( m_PlayerNumber ) )
-		return;
+	CString str = "?";	// fill this in
+	float val = 0;	// fill this in
 
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
+	const Profile *pProfile = PROFILEMAN->GetProfile( m_PlayerNumber );
 
-	RadarValues rv;
+	if( (g_Contents[c].req&NEED_NOTES) && !pSteps )
+		goto done;
+	if( (g_Contents[c].req&NEED_COURSE) && !pTrail )
+		goto done;
+	if( (g_Contents[c].req&NEED_PROFILE) && !pProfile )
+		goto done;
 
-	if( g_Contents[c].req&NEED_NOTES )
-		rv = pSteps->GetRadarValues();
-	else if( g_Contents[c].req&NEED_COURSE )
-		rv = pTrail->GetRadarValues();
-
-	float val = 0;
-	CString str;
-	switch( c )
 	{
-	case COURSE_NUM_STEPS:
-	case SONG_NUM_STEPS:				val = rv[RADAR_NUM_TAPS_AND_HOLDS]; break;
-	case COURSE_JUMPS:
-	case SONG_JUMPS:					val = rv[RADAR_NUM_JUMPS]; break;
-	case COURSE_HOLDS:
-	case SONG_HOLDS:					val = rv[RADAR_NUM_HOLDS]; break;
-	case COURSE_MINES:
-	case SONG_MINES:					val = rv[RADAR_NUM_MINES]; break;
-	case COURSE_HANDS:
-	case SONG_HANDS:					val = rv[RADAR_NUM_HANDS]; break;
-	case SONG_DIFFICULTY_RADAR_STREAM:	val = rv[RADAR_STREAM]; break;
-	case SONG_DIFFICULTY_RADAR_VOLTAGE:	val = rv[RADAR_VOLTAGE]; break;
-	case SONG_DIFFICULTY_RADAR_AIR:		val = rv[RADAR_AIR]; break;
-	case SONG_DIFFICULTY_RADAR_FREEZE:	val = rv[RADAR_FREEZE]; break;
-	case SONG_DIFFICULTY_RADAR_CHAOS:	val = rv[RADAR_CHAOS]; break;
-	case SONG_PROFILE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
-		break;
-	case SONG_PROFILE_NUM_PLAYS:
-		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsNumTimesPlayed(pSong,pSteps);
-		break;
+		RadarValues rv;
 
-	case SONG_MACHINE_HIGH_NAME: /* set val for color */
-	case SONG_MACHINE_HIGH_SCORE:
-		CHECKPOINT;
-		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
-		break;
+		if( g_Contents[c].req&NEED_NOTES )
+			rv = pSteps->GetRadarValues();
+		else if( g_Contents[c].req&NEED_COURSE )
+			rv = pTrail->GetRadarValues();
 
-	case SONG_MACHINE_RANK:
+		switch( c )
 		{
-		const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
-		val = (float) FindIndex( best.begin(), best.end(), pSong );
-		val += 1;
-		break;
+		case COURSE_NUM_STEPS:
+		case SONG_NUM_STEPS:				val = rv[RADAR_NUM_TAPS_AND_HOLDS]; break;
+		case COURSE_JUMPS:
+		case SONG_JUMPS:					val = rv[RADAR_NUM_JUMPS]; break;
+		case COURSE_HOLDS:
+		case SONG_HOLDS:					val = rv[RADAR_NUM_HOLDS]; break;
+		case COURSE_MINES:
+		case SONG_MINES:					val = rv[RADAR_NUM_MINES]; break;
+		case COURSE_HANDS:
+		case SONG_HANDS:					val = rv[RADAR_NUM_HANDS]; break;
+		case SONG_DIFFICULTY_RADAR_STREAM:	val = rv[RADAR_STREAM]; break;
+		case SONG_DIFFICULTY_RADAR_VOLTAGE:	val = rv[RADAR_VOLTAGE]; break;
+		case SONG_DIFFICULTY_RADAR_AIR:		val = rv[RADAR_AIR]; break;
+		case SONG_DIFFICULTY_RADAR_FREEZE:	val = rv[RADAR_FREEZE]; break;
+		case SONG_DIFFICULTY_RADAR_CHAOS:	val = rv[RADAR_CHAOS]; break;
+		case SONG_PROFILE_HIGH_SCORE:
+			val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
+			break;
+		case SONG_PROFILE_NUM_PLAYS:
+			val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsNumTimesPlayed(pSong,pSteps);
+			break;
+
+		case SONG_MACHINE_HIGH_NAME: /* set val for color */
+		case SONG_MACHINE_HIGH_SCORE:
+			CHECKPOINT;
+			val = 100.0f * PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
+			break;
+
+		case SONG_MACHINE_RANK:
+			{
+			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
+			val = (float) FindIndex( best.begin(), best.end(), pSong );
+			val += 1;
+			break;
+			}
+
+		case SONG_PROFILE_RANK:
+			{
+			const vector<Song*> best = SONGMAN->GetBestSongs( PlayerMemCard(m_PlayerNumber) );
+			val = (float) FindIndex( best.begin(), best.end(), pSong );
+			val += 1;
+			break;
+			}
+
+		case COURSE_MACHINE_HIGH_NAME: /* set val for color */
+		case COURSE_MACHINE_HIGH_SCORE:
+			val = 100.0f * PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
+			break;
+
+		case COURSE_MACHINE_NUM_PLAYS:
+			val = (float) PROFILEMAN->GetMachineProfile()->GetCourseNumTimesPlayed( pCourse );
+			break;
+
+		case COURSE_MACHINE_RANK:
+			{
+			const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
+			val = (float) FindIndex( best.begin(), best.end(), pCourse );
+			val += 1;
+			}
+			break;
+
+		case COURSE_PROFILE_HIGH_SCORE:
+			val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
+			break;
+		case COURSE_PROFILE_NUM_PLAYS:
+			val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseNumTimesPlayed( pCourse );
+			break;
+
+		case COURSE_PROFILE_RANK:
+			const vector<Course*> best = SONGMAN->GetBestCourses( PlayerMemCard(m_PlayerNumber) );
+			val = (float) FindIndex( best.begin(), best.end(), pCourse );
+			val += 1;
+			break;
+		};
+
+		if( val == RADAR_VAL_UNKNOWN )
+			goto done;
+
+		/* Scale, round, clamp, etc. for floats: */
+		switch( c )
+		{
+		case SONG_DIFFICULTY_RADAR_STREAM:
+		case SONG_DIFFICULTY_RADAR_VOLTAGE:
+		case SONG_DIFFICULTY_RADAR_AIR:
+		case SONG_DIFFICULTY_RADAR_FREEZE:
+		case SONG_DIFFICULTY_RADAR_CHAOS:
+			val = roundf( SCALE( val, 0, 1, 0, 10 ) );
+			val = clamp( val, 0, 10 );
+			str = ssprintf( "%.0f", val );
+			break;
 		}
 
-	case SONG_PROFILE_RANK:
+		switch( c )
 		{
-		const vector<Song*> best = SONGMAN->GetBestSongs( PlayerMemCard(m_PlayerNumber) );
-		val = (float) FindIndex( best.begin(), best.end(), pSong );
-		val += 1;
-		break;
+		case SONG_MACHINE_HIGH_NAME:
+			str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().sName;
+			break;
+		case COURSE_MACHINE_HIGH_NAME:
+
+			str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().sName;
+			break;
+
+		case SONG_MACHINE_HIGH_SCORE:
+		case COURSE_MACHINE_HIGH_SCORE:
+		case SONG_PROFILE_HIGH_SCORE:
+		case COURSE_PROFILE_HIGH_SCORE:
+			str = ssprintf( "%.2f%%", val );
+			break;
+		case SONG_NUM_STEPS:
+		case SONG_JUMPS:
+		case SONG_HOLDS:
+		case SONG_MINES:
+		case SONG_HANDS:
+		case COURSE_NUM_STEPS:
+		case COURSE_JUMPS:
+		case COURSE_HOLDS:
+		case COURSE_MINES:
+		case COURSE_HANDS:
+		case SONG_MACHINE_NUM_PLAYS:
+		case COURSE_MACHINE_NUM_PLAYS:
+		case SONG_PROFILE_NUM_PLAYS:
+		case COURSE_PROFILE_NUM_PLAYS:
+		case SONG_MACHINE_RANK:
+		case COURSE_MACHINE_RANK:
+		case SONG_PROFILE_RANK:
+		case COURSE_PROFILE_RANK:
+			str = ssprintf( "%.0f", val );
 		}
-
-	case COURSE_MACHINE_HIGH_NAME: /* set val for color */
-	case COURSE_MACHINE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
-		break;
-
-	case COURSE_MACHINE_NUM_PLAYS:
-		val = (float) PROFILEMAN->GetMachineProfile()->GetCourseNumTimesPlayed( pCourse );
-		break;
-
-	case COURSE_MACHINE_RANK:
-		{
-		const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
-		val = (float) FindIndex( best.begin(), best.end(), pCourse );
-		val += 1;
-		}
-		break;
-
-	case COURSE_PROFILE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
-		break;
-	case COURSE_PROFILE_NUM_PLAYS:
-		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseNumTimesPlayed( pCourse );
-		break;
-
-	case COURSE_PROFILE_RANK:
-		const vector<Course*> best = SONGMAN->GetBestCourses( PlayerMemCard(m_PlayerNumber) );
-		val = (float) FindIndex( best.begin(), best.end(), pCourse );
-		val += 1;
-		break;
-	};
-
-	/* Scale, round, clamp, etc. for floats: */
-	switch( c )
-	{
-	case SONG_DIFFICULTY_RADAR_STREAM:
-	case SONG_DIFFICULTY_RADAR_VOLTAGE:
-	case SONG_DIFFICULTY_RADAR_AIR:
-	case SONG_DIFFICULTY_RADAR_FREEZE:
-	case SONG_DIFFICULTY_RADAR_CHAOS:
-		val = roundf( SCALE( val, 0, 1, 0, 10 ) );
-		val = clamp( val, 0, 10 );
-		str = ssprintf( "%.0f", val );
-		break;
 	}
 
-	switch( c )
-	{
-	case SONG_MACHINE_HIGH_NAME:
-		str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().sName;
-		break;
-	case COURSE_MACHINE_HIGH_NAME:
 
-		str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().sName;
-		break;
-
-	case SONG_MACHINE_HIGH_SCORE:
-	case COURSE_MACHINE_HIGH_SCORE:
-	case SONG_PROFILE_HIGH_SCORE:
-	case COURSE_PROFILE_HIGH_SCORE:
-		str = ssprintf( "%.2f%%", val );
-		break;
-	case SONG_NUM_STEPS:
-	case SONG_JUMPS:
-	case SONG_HOLDS:
-	case SONG_MINES:
-	case SONG_HANDS:
-	case COURSE_NUM_STEPS:
-	case COURSE_JUMPS:
-	case COURSE_HOLDS:
-	case COURSE_MINES:
-	case COURSE_HANDS:
-	case SONG_MACHINE_NUM_PLAYS:
-	case COURSE_MACHINE_NUM_PLAYS:
-	case SONG_PROFILE_NUM_PLAYS:
-	case COURSE_PROFILE_NUM_PLAYS:
-	case SONG_MACHINE_RANK:
-	case COURSE_MACHINE_RANK:
-	case SONG_PROFILE_RANK:
-	case COURSE_PROFILE_RANK:
-		str = ssprintf( "%.0f", val );
-	}
-
-	int p;
-
+done:
 	m_textContents[c].SetText( str );
 
 	const int num = NUM_ITEM_COLORS( g_Contents[c].name );
-	for( p = 0; p < num; ++p )
+	for( int p = 0; p < num; ++p )
 	{
 		const CString metric = ITEM_COLOR(g_Contents[c].name, p);
 		CStringArray spec;
