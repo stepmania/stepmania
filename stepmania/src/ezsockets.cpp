@@ -161,7 +161,7 @@ bool EzSockets::receive(std::vector<char> &data) {
   return true;
 }
 
-bool EzSockets::send(std::string data) {
+bool EzSockets::send(const std::string& data) {
   /* First send send the length of the data to the
      server. Then if the length is less than or equal
      to the 1024 then send data in one sendData()
@@ -257,10 +257,9 @@ bool EzSockets::sendData(char data[1024], int size) {
   return true;
 }
 
-bool EzSockets::connect(std::string host, unsigned short port) {
-  if (!check()) {
+bool EzSockets::connect(const std::string& host, unsigned short port) {
+  if (!check())
     return false;
-  }
 
 #if defined(WIN32)
   struct hostent* phe;
@@ -278,10 +277,7 @@ bool EzSockets::connect(std::string host, unsigned short port) {
   int desc = ::connect(sock,(struct sockaddr *)&addr,sizeof(addr));
 #endif
 
-  if (desc < 0) {
-    return false;
-  }
-  return true;
+  return desc >= 0;
 }
 
 long EzSockets::uAddr() {

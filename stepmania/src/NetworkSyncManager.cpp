@@ -32,10 +32,10 @@ NetworkSyncManager::~NetworkSyncManager ()
 	delete NetPlayerClient;
 }
 
-int NetworkSyncManager::Connect(char * addy, unsigned short port)
+bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 {
 	if (port!=8765) 
-		return -1;
+		return false;
 	//Make sure using port 8765
 	//This may change in future versions
 	//It is this way now for protocol's purpose.
@@ -43,22 +43,19 @@ int NetworkSyncManager::Connect(char * addy, unsigned short port)
 
 	//Since under non-lan conditions, the client
 	//will be connecting to localhost, this port does not matter.
-	
+    /* What do you mean it doesn't matter if you are connecting to localhost?
+     * Also, when does it ever connect to localhost?
+     * -- Steve
+     */
 
-	NetPlayerClient->create();	//Initilize Socket
-
-	if(!NetPlayerClient->connect(addy,port)) {
-		useSMserver = false;	//If connection to socket fails, tell
-							//other network functions to not do anything
-	} else {
-		useSMserver = 1;	//Utilize other network funtions
-	}
-	return 1;
+    useSMserver = NetPlayerClient->connect(addy, port);
+    
+	return useSMserver;
 }
 
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo)
 {
-	if (useSMserver!=1) //Make sure that we are using the network
+	if (!useSMserver) //Make sure that we are using the network
 		return;
 
 	netHolder SendNetPack;	//Create packet to send to server
@@ -74,7 +71,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 
 void NetworkSyncManager::ReportSongOver() 
 {
-	if (useSMserver!=1)	//Make sure that we are using the network
+	if (!useSMserver)	//Make sure that we are using the network
 		return ;
 
 	netHolder SendNetPack;	//Create packet to send to server
@@ -90,7 +87,7 @@ void NetworkSyncManager::ReportSongOver()
 
 void NetworkSyncManager::StartRequest() 
 {
-	if (useSMserver!=1)
+	if (!useSMserver)
 		return ;
 
 	vector <char> tmp;	//Temporary vector used by receive function when waiting

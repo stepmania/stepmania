@@ -65,14 +65,14 @@ class EzSockets {
   //Receive structure
   bool receive(int &x);
   //Send string
-  bool send(std::string data);
+  bool send(const std::string& data);
   //Send Structure (or other data)
   bool send(char *data, int length);
   //Send Integer
   bool send(int x);
   //Connect to remote host
   //NOTE: YOU MUST PUT IN IP, NOT NAME
-  bool connect(std::string host, unsigned short port);
+  bool connect(const std::string& host, unsigned short port);
   
   long uAddr(); 
   //Kill socket

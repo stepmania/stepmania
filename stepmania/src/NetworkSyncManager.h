@@ -21,16 +21,13 @@ public:
 	NetworkSyncManager(int argc, char **argv);
 	~NetworkSyncManager();
 
+    //If "useSMserver" then send score to server
 	void ReportScore(int playerID, int step, int score, int combo);	
-		//If "useSMserver" then send score to server
-
 	void ReportSongOver();	//Report to server that song is over
-
 	void StartRequest();	//Request a start.  Block until granted.
+	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 
-	int Connect(char * addy, unsigned short port);
-							//Connect to SM Server
-
+private:
 	int m_playerID;  //these are currently unused, but need to stay
 	int m_step;
 	int m_score;
@@ -38,7 +35,6 @@ public:
     bool useSMserver;
     EzSockets *NetPlayerClient;
     
-private:
     struct netHolder		//Data structure used for sending data to server
     {
         int m_playerID;	//PID (also used for Commands)
