@@ -148,7 +148,7 @@ void AutoKeysounds::Update( float fDelta )
 }
 
 /*
- * (c) 2003 Chris Danford
+ * (c) 2004 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
