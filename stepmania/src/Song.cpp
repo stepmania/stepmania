@@ -833,7 +833,7 @@ bool Song::IsEasy( NotesType nt ) const
 	Notes* pHardNotes = GetNotes( nt, DIFFICULTY_HARD );
 
 	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
-	if( pHardNotes && pHardNotes->GetMeter()<=9 )
+	if( pHardNotes && pHardNotes->GetMeter() > 9 )
 		return false;
 
 	if( pBeginnerNotes && pBeginnerNotes->GetMeter()==1 )
