@@ -29,9 +29,7 @@
 
 /* Load default fallback drivers; some of these may be overridden by arch-specific
  * drivers.  These are all singleton drivers--we never use more than one. */
-/* XXX: null, none, Null--pick one */
 #include "LoadingWindow/LoadingWindow_Null.h"
-#include "ArchHooks/ArchHooks_none.h"
 #include "Sound/RageSoundDriver_Null.h"
 #include "Lights/LightsDriver_Null.h"
 #include "Lights/LightsDriver_SystemMessage.h"
