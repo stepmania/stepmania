@@ -15,8 +15,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include <string.h>
-#include <errno.h>
 
 IniFile::IniFile(CString inipath)
 {
@@ -37,24 +35,20 @@ void IniFile::SetPath(CString newpath)
 // returns true if successful, false otherwise
 bool IniFile::ReadFile()
 {
-	LOG->Trace("INI: Reading '%s'",path.c_str() );
-	FILE *f = fopen(path, "r");
+	CHECKPOINT_M( ssprintf("Reading '%s'",path.c_str()) );
 
-	if (f == NULL)
+	RageFile f;
+	if( !f.Open( path ) )
 	{
-		LOG->Trace("Reading '%s' failed: %s", path.c_str(), strerror(errno));
-		error = ssprintf("Unable to open ini file: %s", strerror(errno));
+		LOG->Trace( "Reading '%s' failed: %s", path.c_str(), f.GetError().c_str() );
+		error = ssprintf("Unable to open ini file: %s", f.GetError().c_str() );
 		return 0;
 	}
 
 	CString keyname;
-	char buf[10240];
-	while (fgets(buf, sizeof(buf), f))
+	CString line;
+	while( f.GetLine(line) )
 	{
-		buf[sizeof(buf)-1]=0;
-		CString line(buf);
-//		LOG->Trace("Read line '%s'", line.c_str());
-
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
 			line[1] == '\xbb' &&
@@ -67,9 +61,6 @@ bool IniFile::ReadFile()
 
 		if (line == "")
 			continue;
-
-		StripCrnl(line);
-//		LOG->Trace("Stripped: '%s'", line.c_str());
 
 		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
 			continue; /* comment */
@@ -90,31 +81,32 @@ bool IniFile::ReadFile()
 		}
 	}
 
-	fclose(f);	
-	return 1;
+	return true;
 }
 
 // writes data stored in class to ini file
 void IniFile::WriteFile()
 {
-	FILE* fp = fopen( path, "w" );
-
-	if( fp == NULL )
+	RageFile f;
+	if( !f.Open( path, RageFile::WRITE ) )
+	{
+		LOG->Trace( "Writing '%s' failed: %s", path.c_str(), f.GetError().c_str() );
+		error = ssprintf("Unable to open ini file for writing: %s", f.GetError().c_str() );
 		return;
+	}
 
 	for (keymap::const_iterator k = keys.begin(); k != keys.end(); ++k)
 	{
 		if (k->second.empty())
 			continue;
 
-		fprintf( fp, "[%s]\n", k->first.c_str() );
+		f.PutLine( ssprintf("[%s]", k->first.c_str()) );
 
 		for (key::const_iterator i = k->second.begin(); i != k->second.end(); ++i)
-			fprintf( fp, "%s=%s\n", i->first.c_str(), i->second.c_str() );
+			f.PutLine( ssprintf("%s=%s\n", i->first.c_str(), i->second.c_str()) );
 
-		fprintf( fp, "\n" );
+		f.PutLine( "" );
 	}
-	fclose( fp );
 }
 
 // deletes all stored ini data
