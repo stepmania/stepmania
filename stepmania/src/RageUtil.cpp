@@ -179,12 +179,18 @@ CString werr_ssprintf( int err, const char *fmt, ...)
 		0, err, 0, buf, sizeof(buf), NULL);
 #endif
 
-    va_list	va;
+	/* Why is FormatMessage returning text ending with \r\n? */
+	CString text = buf;
+	text.Replace( "\n", "" );
+	text.Replace( "\r", " " ); /* foo\r\nbar -> foo bar */
+	TrimRight( text ); /* "foo\r\n" -> "foo" */
+
+	va_list	va;
     va_start(va, fmt);
     CString s = vssprintf( fmt, va );
     va_end(va);
 
-	return s += ssprintf( " (%s)", buf );
+	return s += ssprintf( " (%s)", text.c_str() );
 }
 
 #endif
