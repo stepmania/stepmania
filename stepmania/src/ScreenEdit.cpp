@@ -998,27 +998,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
 		{
 			m_soundInvalid.Play();
-		}
-		else
-		{
+		} else {
 			int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
 			int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
 
+			m_Clipboard.ClearAll();
 			m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
-			m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow  );
-		}
-		break;
-	case SDLK_c:
-		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-		{
-			m_soundInvalid.Play();
-		}
-		else
-		{
-			int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-			int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
-
-			m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
+			if(DeviceI.button == SDLK_x)
+				m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow  );
 		}
 		break;
 	case SDLK_v:
