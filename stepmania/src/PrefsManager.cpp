@@ -125,9 +125,13 @@ PrefsManager::PrefsManager()
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
 	m_bVsync = true;
+
+	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
-	m_bProgressive = false;
+	m_bInterlaced = true;
 	m_bPAL = false;
+#else
+	m_bInterlaced = false;
 #endif
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	
@@ -161,8 +165,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 		return;		// could not read config file, load nothing
 
 	ini.GetValueB( "Options", "Windowed",					m_bWindowed );
+	ini.GetValueB( "Options", "Interlaced",					m_bInterlaced );
 #ifdef _XBOX
-	ini.GetValueB( "Options", "ProgressiveScan",			m_bProgressive );
 	ini.GetValueB( "Options", "PAL",						m_bPAL );
 #endif
 	ini.GetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
@@ -303,8 +307,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "DelayedEscape",				m_bDelayedEscape );
 	ini.SetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",						m_bVsync );
+	ini.SetValueB( "Options", "Interlaced",					m_bInterlaced );
 #ifdef _XBOX
-	ini.SetValueB( "Options", "ProgressiveScan",			m_bProgressive );
 	ini.SetValueB( "Options", "PAL",						m_bPAL );
 #endif
 	ini.SetValueB( "Options", "HowToPlay",					m_bInstructions );

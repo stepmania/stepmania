@@ -486,7 +486,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	g_d3dpp.Flags					=	0;
 	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 #else
-	g_d3dpp.Flags					=	(p.progressive ? D3DPRESENTFLAG_PROGRESSIVE : D3DPRESENTFLAG_INTERLACED) | D3DPRESENTFLAG_10X11PIXELASPECTRATIO;
+	g_d3dpp.Flags					=	(p.interlaced? D3DPRESENTFLAG_INTERLACED: D3DPRESENTFLAG_PROGRESSIVE ) | D3DPRESENTFLAG_10X11PIXELASPECTRATIO;
 	g_d3dpp.FullScreen_RefreshRateInHz = p.PAL ? 50 : 60;
 #endif
 

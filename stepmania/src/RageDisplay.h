@@ -70,33 +70,33 @@ public:
 		// Initialize with a constructor so to guarantee all paramters
 		// are filled (in case new params are added).
 		VideoModeParams( 
-			bool _windowed,
-			int _width,
-			int _height,
-			int _bpp,
-			int _rate,
-			bool _vsync,
-			bool _bAntiAliasing,
-			CString _sWindowTitle,
-			CString _sIconFile
+			bool windowed_,
+			int width_,
+			int height_,
+			int bpp_,
+			int rate_,
+			bool vsync_,
+			bool interlaced_,
+			bool bAntiAliasing_,
+			CString sWindowTitle_,
+			CString sIconFile_
 #ifdef _XBOX
-			, bool _progressive
-			, bool _PAL
+			, bool PAL_
 #endif
 		)
 		{
-			windowed = _windowed;
-			width = _width;
-			height = _height;
-			bpp = _bpp;
-			rate = _rate;
-			vsync = _vsync;
-			bAntiAliasing = _bAntiAliasing;
-			sWindowTitle = _sWindowTitle;
-			sIconFile = _sIconFile;
+			windowed = windowed_;
+			width = width_;
+			height = height_;
+			bpp = bpp_;
+			rate = rate_;
+			vsync = vsync_;
+			interlaced = interlaced_;
+			bAntiAliasing = bAntiAliasing_;
+			sWindowTitle = sWindowTitle_;
+			sIconFile = sIconFile_;
 #ifdef _XBOX
-			progressive = _progressive;
-			PAL = _PAL;
+			PAL = PAL_;
 #endif
 		}
 		VideoModeParams() {}
@@ -108,8 +108,8 @@ public:
 		int rate;
 		bool vsync;
 		bool bAntiAliasing;
+		bool interlaced;
 #ifdef _XBOX
-		bool progressive;
 		bool PAL;
 #endif
 		CString sWindowTitle;

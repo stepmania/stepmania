@@ -106,11 +106,11 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_iDisplayColorDepth,
 			PREFSMAN->m_iRefreshRate,
 			PREFSMAN->m_bVsync,
+			PREFSMAN->m_bInterlaced,
 			PREFSMAN->m_bAntiAliasing,
 			THEME->GetMetric("Common","WindowTitle"),
 			THEME->GetPathToG("Common window icon")
 #ifdef _XBOX
-			, PREFSMAN->m_bProgressive
 			, PREFSMAN->m_bPAL
 #endif
 	);
