@@ -24,6 +24,12 @@ const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 REGISTER_SCREEN_CLASS( ScreenStage );
 ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 {
+}
+
+void ScreenStage::Init()
+{
+	Screen::Init();
+
 	m_bZeroDeltaOnNextUpdate = false;
 
 	SOUND->StopMusic();

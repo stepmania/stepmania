@@ -11,6 +11,7 @@ class ScreenTestSound : public Screen
 {
 public:
 	ScreenTestSound( CString sName );
+	virtual void Init();
 	~ScreenTestSound();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

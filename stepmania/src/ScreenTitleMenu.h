@@ -15,6 +15,7 @@ class ScreenTitleMenu : public ScreenSelectMaster
 {
 public:
 	ScreenTitleMenu( CString sName );
+	virtual void Init();
 	virtual ~ScreenTitleMenu();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

@@ -43,6 +43,11 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	SCROLLER_SPACING_Y(m_sName,"ScrollerSpacingY"),
 	DEFAULT_CHOICE(m_sName,"DefaultChoice")
 {
+}
+
+void ScreenSelectMaster::Init()
+{
+	ScreenSelect::Init();
 
 	// TODO: Move default choice to ScreenSelect
 	int iDefaultChoice = -1;

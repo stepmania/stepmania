@@ -191,9 +191,13 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 	}
 
 
-	// Update final profile stats before we load them for display below.
+	// Update final profile stats before we load them for display.
 	GAMESTATE->FinishStage();
+}
 
+void ScreenEnding::Init()
+{
+	ScreenAttract::Init();
 
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );

@@ -113,7 +113,12 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	CAPITALIZE_ALL_OPTION_NAMES		(m_sName,"CapitalizeAllOptionNames")
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
+}
 
+
+void ScreenOptions::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 

@@ -15,7 +15,13 @@ REGISTER_SCREEN_CLASS( ScreenTestLights );
 ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenTestLights::ScreenTestLights()" );
-	
+
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST );
+}
+
+void ScreenTestLights::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInputs.SetText( "" );
@@ -25,8 +31,6 @@ ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElement
 	this->AddChild( &m_textInputs );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenTestLights","music") );
-
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST );
 }
 
 

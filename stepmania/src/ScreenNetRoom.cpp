@@ -29,6 +29,12 @@ REGISTER_SCREEN_CLASS( ScreenNetRoom );
 ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )
 {
 	GAMESTATE->FinishStage();
+}
+
+void ScreenNetRoom::Init()
+{
+	ScreenNetSelectBase::Init();
+
 	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel"));
 
 	m_iRoomPlace = 0;
@@ -77,7 +83,6 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	this->AddChild( &m_sprCreateRoom );
 
 	NSMAN->ReportNSSOnOff(7);
-	return;
 }
 
 void ScreenNetRoom::Input( const DeviceInput& DeviceI, const InputEventType type,

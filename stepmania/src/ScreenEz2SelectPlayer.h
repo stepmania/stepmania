@@ -11,7 +11,8 @@ class ScreenEz2SelectPlayer : public ScreenWithMenuElements
 {
 public:
 	ScreenEz2SelectPlayer( CString sName );
-	virtual ~ScreenEz2SelectPlayer(); // Destructor
+	virtual void Init();
+	virtual ~ScreenEz2SelectPlayer();
 	
 	/* Public Function Prototypes */
 	virtual void Update( float fDeltaTime );

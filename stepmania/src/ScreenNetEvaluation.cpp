@@ -22,6 +22,12 @@ const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
 REGISTER_SCREEN_CLASS( ScreenNetEvaluation );
 ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEvaluation( sClassName )
 {
+}
+
+void ScreenNetEvaluation::Init()
+{
+	ScreenEvaluation::Init();
+
 	m_bHasStats = false;
 	m_pActivePlayer = PLAYER_1;	
 	m_iCurrentPlayer = 0;

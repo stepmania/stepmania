@@ -34,6 +34,11 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds")
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
+}
+
+void ScreenSelect::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	//
 	// Load choices

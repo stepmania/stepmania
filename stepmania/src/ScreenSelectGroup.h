@@ -15,6 +15,7 @@ class ScreenSelectGroup : public ScreenWithMenuElements
 {
 public:
 	ScreenSelectGroup( CString sName );
+	virtual void Init();
 
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

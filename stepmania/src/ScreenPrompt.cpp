@@ -28,13 +28,19 @@ ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswe
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
 	m_pCallbackData = pCallbackData;
+	m_sText = sText;
+}
+
+void ScreenPrompt::Init()
+{
+	Screen::Init();
 
 	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenPrompt","background") );
 	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textQuestion.SetText( sText );
+	m_textQuestion.SetText( m_sText );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
 

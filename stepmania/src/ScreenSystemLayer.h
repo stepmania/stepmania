@@ -28,6 +28,7 @@ class ScreenSystemLayer : public Screen
 
 public:
 	ScreenSystemLayer();
+	virtual void Init();
 	void SystemMessage( const CString &sMessage );
 	void SystemMessageNoAnimate( const CString &sMessage );
 	void ReloadCreditsText();

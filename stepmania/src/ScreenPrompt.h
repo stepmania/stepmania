@@ -15,6 +15,7 @@ class ScreenPrompt : public Screen
 {
 public:
 	ScreenPrompt( CString sName );
+	virtual void Init();
 	ScreenPrompt( CString sText, bool bYesNoPrompt=false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 
 	virtual void Update( float fDeltaTime );
@@ -30,7 +31,7 @@ protected:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
-
+	CString			m_sText;
 	BGAnimation					m_Background;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;

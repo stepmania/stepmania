@@ -7,6 +7,7 @@ class ScreenPlayerOptions : public ScreenOptionsMaster
 {
 public:
 	ScreenPlayerOptions( CString sName );
+	virtual void Init();
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();

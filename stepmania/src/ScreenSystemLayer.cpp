@@ -31,6 +31,12 @@
 //REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
+}
+
+void ScreenSystemLayer::Init()
+{
+	Screen::Init();
+
 	this->AddChild(&m_textMessage);
 	this->AddChild(&m_textStats);
 	this->AddChild(&m_textTime);

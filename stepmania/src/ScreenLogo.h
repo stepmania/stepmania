@@ -9,6 +9,7 @@ class ScreenLogo : public ScreenAttract
 {
 public:
 	ScreenLogo( CString sName );
+	virtual void Init();
 
 protected:
 	Sprite				m_sprLogo;

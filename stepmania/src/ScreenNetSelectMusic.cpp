@@ -38,6 +38,11 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
 	GAMESTATE->FinishStage();
+}
+
+void ScreenNetSelectMusic::Init()
+{
+	ScreenNetSelectBase::Init();
 
 	//Diff Icon background
 	m_sprDiff.Load( THEME->GetPathG( m_sName, "DiffBG" ) );

@@ -22,9 +22,14 @@
 REGISTER_SCREEN_CLASS( ScreenSelectStyle );
 ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClassName )
 {
-	m_iSelection = 0;
-
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+}
+
+void ScreenSelectStyle::Init()
+{
+	ScreenSelect::Init();
+
+	m_iSelection = 0;
 
 	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{

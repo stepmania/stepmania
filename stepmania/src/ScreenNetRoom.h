@@ -25,6 +25,7 @@ class ScreenNetRoom : public ScreenNetSelectBase
 {
 public:
 	ScreenNetRoom( const CString& sName );
+	virtual void Init();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type,
 						const GameInput& GameI, const MenuInput& MenuI,
 						const StyleInput& StyleI );

@@ -8,6 +8,7 @@ class ScreenTest : public Screen
 public:
 	ScreenTest( CString sName );
 	~ScreenTest();
+	virtual void Init();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

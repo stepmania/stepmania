@@ -173,6 +173,11 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	MAX_RANKING_NAME_LENGTH.Load( m_sName, "MaxRankingNameLength" );
 	FEAT_INTERVAL.Load( m_sName, "FeatInterval" );
 	KEYBOARD_LETTERS.Load( m_sName, "KeyboardLetters" );
+}
+
+void ScreenNameEntryTraditional::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	// Find out if players deserve to enter their name
 	FOREACH_PlayerNumber( p )

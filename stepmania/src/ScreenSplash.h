@@ -10,6 +10,7 @@ class ScreenSplash : public ScreenWithMenuElements
 {
 public:
 	ScreenSplash( CString sName );
+	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void MenuBack( PlayerNumber pn );

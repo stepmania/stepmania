@@ -24,17 +24,20 @@
 REGISTER_SCREEN_CLASS( ScreenAttract );
 ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sName )
 {
-	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );
+	if( bResetGameState )
+		GAMESTATE->Reset();
 
 	// increment times through attract count
 	if( m_sName == INITIAL_SCREEN.GetValue() )
 		GAMESTATE->m_iNumTimesThroughAttract++;
+}
 
-	if( bResetGameState )
-		GAMESTATE->Reset();
+void ScreenAttract::Init()
+{
+	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );
 
-	// We have to do initialization in the first update because this->GetElementName() won't
-	// work until the object has been fully constructed.
+	Screen::Init();
+
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );

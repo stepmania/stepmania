@@ -31,6 +31,12 @@ REGISTER_SCREEN_CLASS( ScreenTest );
 ScreenTest::ScreenTest( CString sClassName ) : Screen( sClassName )
 {
 	current = NULL;
+}
+
+void ScreenTest::Init()
+{
+	Screen::Init();
+
 	cur_screen = -1;
 
 	SOUND->StopMusic();

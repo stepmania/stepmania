@@ -9,6 +9,12 @@
 REGISTER_SCREEN_CLASS( ScreenTestSound );
 ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 {	
+}
+
+void ScreenTestSound::Init()
+{
+	Screen::Init();
+
 	this->AddChild(&HEEEEEEEEELP);
 
 	HEEEEEEEEELP.SetXY(450, 400);

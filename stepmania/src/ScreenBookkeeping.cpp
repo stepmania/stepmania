@@ -19,7 +19,12 @@ REGISTER_SCREEN_CLASS( ScreenBookkeeping );
 ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenBookkeeping::ScreenBookkeeping()" );
-	
+}
+
+void ScreenBookkeeping::Init()
+{
+	ScreenWithMenuElements::Init();
+
 	m_textTitle.LoadFromFont( THEME->GetPathF("Common","title") );
 	m_textTitle.SetText( "header" );
 	m_textTitle.SetXY( SCREEN_CENTER_X, 60 );

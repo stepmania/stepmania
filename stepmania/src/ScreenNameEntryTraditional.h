@@ -41,7 +41,8 @@ class ScreenNameEntryTraditional : public ScreenWithMenuElements
 {
 public:
 	ScreenNameEntryTraditional( CString sName );
-	~ScreenNameEntryTraditional();
+	virtual void Init();
+	virtual ~ScreenNameEntryTraditional();
 
 	void Update( float fDeltaTime );
 	void DrawPrimitives();

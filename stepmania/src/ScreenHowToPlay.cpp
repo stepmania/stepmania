@@ -74,6 +74,11 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	m_pLifeMeterBar = NULL;
 	m_pmCharacter = NULL;
 	m_pmDancePad = NULL;
+}
+
+void ScreenHowToPlay::Init()
+{
+	ScreenAttract::Init();
 
 	m_In.Load( THEME->GetPathB("ScreenHowToPlay","in") );
 	m_In.StartTransitioning();

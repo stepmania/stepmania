@@ -32,6 +32,12 @@ const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but sh
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMenuElements( sName )
 {
+}
+
+void ScreenNetSelectBase::Init()
+{
+	ScreenWithMenuElements::Init();
+
 	//ChatBox
 	m_sprChatInputBox.SetName( "ChatInputBox" );
 	m_sprChatInputBox.Load( THEME->GetPathG( m_sName, "ChatInputBox" ) );

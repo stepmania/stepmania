@@ -11,6 +11,7 @@ class ScreenUnlock : public ScreenAttract
 {
 public:
 	ScreenUnlock( CString sName );
+	virtual void Init();
 	~ScreenUnlock();
 
 protected:

@@ -32,15 +32,20 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
-	unsigned NumUnlocks = NUM_UNLOCKS;
-	if (UNLOCKMAN->m_SongEntries.size() < NumUnlocks)
-		NumUnlocks = UNLOCKMAN->m_SongEntries.size();
+	unsigned NumUnlocks = min( (unsigned) NUM_UNLOCKS, UNLOCKMAN->m_SongEntries.size() );
 
 	if (!PREFSMAN->m_bUseUnlockSystem || NumUnlocks == 0)
 	{
 		this->HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
+}
+
+void ScreenUnlock::Init()
+{
+	ScreenAttract::Init();
+
+	unsigned NumUnlocks = min( (unsigned) NUM_UNLOCKS, UNLOCKMAN->m_SongEntries.size() );
 
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathF("Common","normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );

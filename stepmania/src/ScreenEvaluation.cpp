@@ -90,11 +90,6 @@ REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );
-}
-
-void ScreenEvaluation::Init()
-{
-	Screen::Init();
 
 	//
 	// debugging
@@ -178,8 +173,14 @@ void ScreenEvaluation::Init()
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}
+}
 
-	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
+
+void ScreenEvaluation::Init()
+{
+	LOG->Trace( "ScreenEvaluation::Init()" );
+
+	Screen::Init();
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 

@@ -45,6 +45,12 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 		GAMESTATE->m_bSideIsJoined[p] = false;
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
+}
+
+
+void ScreenEz2SelectPlayer::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	FOREACH_PlayerNumber( p )
 	{

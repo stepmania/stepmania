@@ -31,6 +31,7 @@ class ScreenSelectMusic : public ScreenWithMenuElements
 public:
 	ScreenSelectMusic( CString sName );
 	virtual ~ScreenSelectMusic();
+	virtual void Init();
 
 	virtual void DrawPrimitives();
 

@@ -15,6 +15,7 @@ class ScreenBookkeeping : public ScreenWithMenuElements
 {
 public:
 	ScreenBookkeeping( CString sName );
+	virtual void Init();
 	virtual ~ScreenBookkeeping();
 
 	virtual void DrawPrimitives();

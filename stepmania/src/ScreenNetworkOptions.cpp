@@ -40,6 +40,11 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 	LOG->Trace( "ScreenNetworkOptions::ScreenNetworkOptions()" );
 
 	m_sClassName = sClassName;
+}
+
+void ScreenNetworkOptions::Init()
+{
+	ScreenOptions::Init();
 
 	g_NetworkOptionsLines[PO_CONNECTION].choices.clear();
 	if ( NSMAN->useSMserver )

@@ -22,6 +22,11 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
 {
 	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
+}
+
+void ScreenPlayerOptions::Init()
+{
+	ScreenOptionsMaster::Init();
 
 	m_bAskOptionsMessage =
 		!GAMESTATE->m_bEditing && PREFSMAN->m_ShowSongOptions == PrefsManager::ASK;

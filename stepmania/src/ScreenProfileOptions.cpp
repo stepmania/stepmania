@@ -40,6 +40,11 @@ REGISTER_SCREEN_CLASS( ScreenProfileOptions );
 ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenProfileOptions::ScreenProfileOptions()" );
+}
+
+void ScreenProfileOptions::Init()
+{
+	ScreenOptions::Init();
 
 	g_ProfileOptionsLines[PO_PLAYER1].choices.clear();
 	g_ProfileOptionsLines[PO_PLAYER1].choices.push_back( "-NONE-" );

@@ -20,6 +20,13 @@ REGISTER_SCREEN_CLASS( ScreenSongOptions );
 ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
 {
+}
+
+
+void ScreenSongOptions::Init()
+{
+	ScreenOptionsMaster::Init();
+
 	/* Hack: If we're coming in from "press start for more options", we need a different
 	 * fade in. */
 	if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)

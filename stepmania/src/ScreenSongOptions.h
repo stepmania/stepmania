@@ -7,6 +7,7 @@ class ScreenSongOptions : public ScreenOptionsMaster
 {
 public:
 	ScreenSongOptions( CString sName );
+	virtual void Init();
 	static CString GetNextScreen();
 
 private:

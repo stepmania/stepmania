@@ -9,6 +9,7 @@ class ScreenTestLights : public ScreenWithMenuElements
 {
 public:
 	ScreenTestLights( CString sName );
+	virtual void Init();
 	virtual ~ScreenTestLights();
 
 	virtual void DrawPrimitives();

@@ -18,18 +18,19 @@
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
 {
-	LOG->Trace( "ScreenWithMenuElements::ScreenWithMenuElements()" );
-
 	m_MenuTimer = new MenuTimer;
 	m_textHelp = new HelpDisplay;
+}
 
-	m_FirstUpdateCommand.Load( sClassName, "FirstUpdateCommand" );
+void ScreenWithMenuElements::Init()
+{
+	LOG->Trace( "ScreenWithMenuElements::Init()" );
 
-	LOG->Trace( "MenuElements::MenuElements()" );
+	Screen::Init();
 
-	ASSERT( this->m_SubActors.empty() );	// don't call Load twice!
+	m_FirstUpdateCommand.Load( m_sName, "FirstUpdateCommand" );
 
-	this->SetName( sClassName );
+	ASSERT( this->m_SubActors.empty() );	// don't call Init twice!
 
 	m_autoHeader.Load( THEME->GetPathG(m_sName,"header") );
 	m_autoHeader->SetName("Header");

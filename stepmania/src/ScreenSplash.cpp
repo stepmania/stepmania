@@ -13,6 +13,12 @@ ScreenSplash::ScreenSplash( CString sClassName ) : ScreenWithMenuElements( sClas
 	PREV_SCREEN					(m_sName,"PrevScreen"),
 	MINIMUM_LOAD_DELAY_SECONDS	(m_sName,"MinimumLoadDelaySeconds")
 {
+}
+
+void ScreenSplash::Init()
+{
+	ScreenWithMenuElements::Init();
+
 	/* Prep the new screen once m_sprOverlay is complete. */ 	 
 	this->PostScreenMessage( SM_PrepScreen, m_In.GetTweenTimeLeft() );
 }

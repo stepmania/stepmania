@@ -9,6 +9,7 @@ class ScreenReloadSongs: public Screen
 {
 public:
 	ScreenReloadSongs( CString sClassName );
+	virtual void Init();
 	~ScreenReloadSongs();
 	void Update( float fDeltaTime );
 

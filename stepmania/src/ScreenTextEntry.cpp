@@ -34,8 +34,8 @@ bool ScreenTextEntry::s_bCancelledLast = false;
 ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)(), bool bPassword ) :
   Screen( sClassName )
 {
-	m_bPassword = bPassword;	// Added Password Support -APL 1/20/05
 	m_bIsTransparent = true;	// draw screens below us
+	m_bPassword = bPassword;
 
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;
@@ -43,11 +43,16 @@ ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString
 	m_sAnswer = CStringToWstring(sInitialAnswer);
 	m_bCancelled = false;
 
+	m_sQuestion = sQuestion;
+}
+
+void ScreenTextEntry::Init()
+{
 	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenPrompt","background") );
 	this->AddChild( &m_Background );
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textQuestion.SetText( sQuestion );
+	m_textQuestion.SetText( m_sQuestion );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
 

@@ -39,6 +39,11 @@ REGISTER_SCREEN_CLASS( ScreenMapControllers );
 ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
+}
+
+void ScreenMapControllers::Init()
+{
+	ScreenWithMenuElements::Init();
 
 #ifdef _XBOX
 	CStringArray strArray;

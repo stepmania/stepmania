@@ -24,6 +24,7 @@ class ScreenEnding : public ScreenAttract
 {
 public:
 	ScreenEnding( CString sName );
+	virtual void Init();
 	~ScreenEnding();
 
 	void Update( float fDeltaTime );

@@ -68,11 +68,17 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
-	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
-
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
 	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
 	GAMESTATE->FinishStage();
+}
+
+
+void ScreenSelectMusic::Init()
+{
+	ScreenWithMenuElements::Init();
+
+	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
 
 	/* Cache: */
 	g_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");

@@ -8,6 +8,12 @@
 REGISTER_SCREEN_CLASS( ScreenLogo );
 ScreenLogo::ScreenLogo( CString sName ) : ScreenAttract( sName )
 {
+}
+
+void ScreenLogo::Init()
+{
+	ScreenAttract::Init();
+
 	m_sprLogo.SetName( "Logo" );
 	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGame()->m_szName) );
 	SET_XY_AND_ON_COMMAND( m_sprLogo );

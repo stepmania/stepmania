@@ -31,6 +31,11 @@ REGISTER_SCREEN_CLASS( ScreenSelectDifficulty );
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_CurrentPage = PAGE_1;
+}
+
+void ScreenSelectDifficulty::Init()
+{
+	ScreenSelect::Init();
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -38,7 +43,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 		m_bChosen[p] = false;
 	}
 
-	unsigned c; // GCC is bitching again.
+	unsigned c;
 	for( c=0; c<m_aGameCommands.size(); c++ )
 	{
 		if( (int)c < NUM_CHOICES_ON_PAGE_1 )

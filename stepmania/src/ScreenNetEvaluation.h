@@ -8,6 +8,8 @@ class ScreenNetEvaluation: public ScreenEvaluation
 {
 public:
 	ScreenNetEvaluation (const CString& sClassName);
+	virtual void Init();
+
 protected:
 	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
 	virtual void MenuUp( PlayerNumber pn, const InputEventType type );

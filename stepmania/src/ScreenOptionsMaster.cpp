@@ -458,6 +458,11 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
 	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
+}
+
+void ScreenOptionsMaster::Init()
+{
+	ScreenOptions::Init();
 
 	CStringArray asLineNames;
 	split( LINE_NAMES, ",", asLineNames );

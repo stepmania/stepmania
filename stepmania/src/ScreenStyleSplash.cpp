@@ -23,6 +23,12 @@ const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 REGISTER_SCREEN_CLASS( ScreenStyleSplash );
 ScreenStyleSplash::ScreenStyleSplash( CString sName ) : ScreenWithMenuElements( sName )
 {
+}
+
+void ScreenStyleSplash::Init()
+{
+	ScreenWithMenuElements::Init();
+
 	SOUND->StopMusic();
 
 	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;	

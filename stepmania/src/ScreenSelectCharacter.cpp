@@ -77,7 +77,12 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 			return;
 		}
 	}
+}
 
+
+void ScreenSelectCharacter::Init()
+{
+	ScreenWithMenuElements::Init();
 	
 	FOREACH_PlayerNumber( p )
 	{

@@ -24,6 +24,12 @@ const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 REGISTER_SCREEN_CLASS( ScreenMusicScroll );
 ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sClassName )
 {
+}
+
+void ScreenMusicScroll::Init()
+{
+	ScreenAttract::Init();
+
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );

@@ -90,6 +90,12 @@ const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 REGISTER_SCREEN_CLASS( ScreenRanking );
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 {
+}
+
+void ScreenRanking::Init()
+{
+	ScreenAttract::Init();
+
 	// init Actors for category and course
 	{
 		m_Banner.SetName( "Banner" );

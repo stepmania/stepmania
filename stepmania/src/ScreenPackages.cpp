@@ -24,11 +24,17 @@ const ScreenMessage	SM_BackFromURL			= ScreenMessage(SM_User+2);
 REGISTER_SCREEN_CLASS( ScreenPackages );
 ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
+}
+
+void ScreenPackages::Init()
+{
+	ScreenWithMenuElements::Init();
+	
 	m_iPackagesPos = 0;
 	m_iLinksPos = 0;
 	m_iDLorLST = 0;
 	m_bIsDownloading = false;
-	m_bCanDL = THEME->GetMetricB( sClassName, "CanDL" );
+	m_bCanDL = THEME->GetMetricB( m_sName, "CanDL" );
 	m_sStatus = "";
 	m_fLastUpdate = 0;
 	m_iTotalBytes = 0;

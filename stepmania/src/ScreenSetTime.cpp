@@ -40,7 +40,12 @@ REGISTER_SCREEN_CLASS( ScreenSetTime );
 ScreenSetTime::ScreenSetTime( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSetTime::ScreenSetTime()" );
-	
+}
+
+void ScreenSetTime::Init()
+{
+	ScreenWithMenuElements::Init();
+
 	m_Selection = hour;
 
 	FOREACH_PlayerNumber( pn )

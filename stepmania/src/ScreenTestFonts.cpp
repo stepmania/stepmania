@@ -28,6 +28,12 @@ void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 REGISTER_SCREEN_CLASS( ScreenTestFonts );
 ScreenTestFonts::ScreenTestFonts( CString sClassName ) : Screen( sClassName )
 {
+}
+
+void ScreenTestFonts::Init()
+{
+	Screen::Init();
+
 	Hline.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 	Hline.SetZoomX(LineWidth);
 	Hline.SetDiffuse( RageColor(1, 1, 1, 1) );

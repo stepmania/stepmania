@@ -52,7 +52,11 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	// TRICKY: Do this after GameState::Reset.
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
+}
 
+void ScreenTitleMenu::Init()
+{
+	ScreenSelectMaster::Init();
 
 	m_sprLogo.Load( THEME->GetPathG(m_sName,GAMESTATE->GetCurrentGame()->m_szName) );
 	m_sprLogo->SetName( "Logo" );

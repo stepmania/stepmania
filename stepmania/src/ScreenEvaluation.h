@@ -36,6 +36,7 @@ class ScreenEvaluation : public ScreenWithMenuElements
 public:
 	enum Type	{ stage, summary, course };
 	ScreenEvaluation( CString sClassName );
+	virtual void Init();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -49,7 +50,6 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 protected:
-	virtual void Init();
 	void CommitScores( 
 		const StageStats &stageStats, 
 		int iPersonalHighScoreIndexOut[NUM_PLAYERS], 

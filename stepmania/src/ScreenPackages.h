@@ -12,6 +12,7 @@ class ScreenPackages : public ScreenWithMenuElements
 {
 public:
 	ScreenPackages( CString sName );
+	virtual void Init();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

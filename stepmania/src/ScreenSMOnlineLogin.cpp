@@ -28,6 +28,11 @@ OptionRowDefinition g_ProfileLine[1] = {
 ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sClassName)
 {
 	LOG->Trace( "ScreenSMOnlineLogin::ScreenSMOnlineLogin()" );
+}
+
+void ScreenSMOnlineLogin::Init()
+{
+	ScreenOptions::Init();
 
 	g_ProfileLine[0].choices.clear();
 	PROFILEMAN->GetLocalProfileNames( g_ProfileLine[0].choices );

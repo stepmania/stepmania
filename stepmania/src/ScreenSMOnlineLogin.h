@@ -3,9 +3,11 @@
 
 #include "ScreenOptions.h"
 
-class ScreenSMOnlineLogin : public ScreenOptions {
+class ScreenSMOnlineLogin : public ScreenOptions
+{
 public:
 	ScreenSMOnlineLogin(CString sName);
+	virtual void Init();
 	virtual void HandleScreenMessage(const ScreenMessage SM);
 	virtual void MenuStart(PlayerNumber pn,const InputEventType type);
 	void SendLogin(CString sPassword);

@@ -11,6 +11,7 @@ class ScreenAttract : public Screen
 {
 public:
 	ScreenAttract( CString sName, bool bResetGameState=true );
+	virtual void Init();
 	virtual ~ScreenAttract();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

@@ -123,6 +123,7 @@ class ScreenEdit : public Screen
 {
 public:
 	ScreenEdit( CString sName );
+	virtual void Init();
 	virtual ~ScreenEdit();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

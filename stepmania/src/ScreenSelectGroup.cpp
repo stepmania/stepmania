@@ -33,7 +33,11 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
+}
 
+void ScreenSelectGroup::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	vector<Song*> aAllSongs;
 	SONGMAN->GetSongs( aAllSongs );

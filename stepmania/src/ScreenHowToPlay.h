@@ -13,6 +13,7 @@ class ScreenHowToPlay : public ScreenAttract
 {
 public:
 	ScreenHowToPlay( CString sName );
+	virtual void Init();
 	~ScreenHowToPlay();
 	
 	virtual void Update( float fDelta );

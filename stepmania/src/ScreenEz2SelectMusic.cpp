@@ -71,6 +71,11 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
 	GAMESTATE->FinishStage();
+}
+
+void ScreenEz2SelectMusic::Init()
+{
+	ScreenWithMenuElements::Init();
 
 	i_SkipAheadOffset = 0;
 	LastInputTime = 0;

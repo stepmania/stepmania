@@ -489,6 +489,11 @@ REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
+}
+
+void ScreenEdit::Init()
+{
+	Screen::Init();
 
 	InitEditMappings();
 

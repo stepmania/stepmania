@@ -30,6 +30,7 @@ class ScreenRanking : public ScreenAttract
 {
 public:
 	ScreenRanking( CString sName );
+	virtual void Init();
 	~ScreenRanking();
 
 	void HandleScreenMessage( const ScreenMessage SM );

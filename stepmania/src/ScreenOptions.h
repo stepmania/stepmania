@@ -22,6 +22,7 @@ class ScreenOptions : public ScreenWithMenuElements
 {
 public:
 	ScreenOptions( CString sClassName );
+	virtual void Init();
 	void InitMenu( InputMode im, OptionRowDefinition defs[], int iNumOptionLines, bool bShowUnderlines = true );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );

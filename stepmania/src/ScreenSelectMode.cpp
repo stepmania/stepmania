@@ -34,6 +34,12 @@ Desc: Sets up the screen display
 REGISTER_SCREEN_CLASS( ScreenSelectMode );
 ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassName )
 {
+}
+
+void ScreenSelectMode::Init()
+{
+	ScreenSelect::Init();
+
 	m_b2DAvailable = m_bCharsAvailable = false;
 
 	int pn;

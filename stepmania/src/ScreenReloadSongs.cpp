@@ -49,6 +49,12 @@ public:
 REGISTER_SCREEN_CLASS( ScreenReloadSongs );
 ScreenReloadSongs::ScreenReloadSongs( CString sClassName ): Screen(sClassName)
 {
+}
+
+void ScreenReloadSongs::Init()
+{
+	Screen::Init();
+
 	m_iUpdates = 0;
 
 	m_Loading.LoadFromFont( THEME->GetPathF("Common", "normal") );

@@ -7,6 +7,7 @@ class ScreenProfileOptions : public ScreenOptions
 {
 public:
 	ScreenProfileOptions( CString sName );
+	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
