@@ -400,6 +400,17 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			wid.m_sLabel = Names[i];
 			wid.m_Action.FromString( Actions[i], true );
 
+			switch( so )
+			{
+			case SORT_ALL_COURSES:
+			case SORT_NONSTOP_COURSES:
+			case SORT_ONI_COURSES:
+			case SORT_ENDLESS_COURSES:
+				/* Don't display course modes after the first stage. */
+				if( !PREFSMAN->m_bEventMode && GAMESTATE->m_iCurrentStageIndex )
+					continue;
+			}
+
 			arrayWheelItemDatas.push_back( wid );
 		}		
 		break;
@@ -565,7 +576,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		case SORT_ALL_COURSES:		SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
 		default: ASSERT(0); break;
 		}
-		LOG->Trace("generate %i", apCourses.size());
 
 		SortCoursePointerArrayByDifficulty( apCourses );
 
