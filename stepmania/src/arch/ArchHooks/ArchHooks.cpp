@@ -40,7 +40,7 @@ void ArchHooks::MessageBoxOK( CString sMessage, CString ID )
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
-	// don't show MessageBox if windowed
+	// only show MessageBox if windowed
 	if( DISPLAY && !DISPLAY->IsWindowed() )
 		ArchHooks::MessageBoxOKPrivate( sMessage, ID );
 	else
@@ -52,7 +52,7 @@ ArchHooks::MessageBoxResult ArchHooks::MessageBoxAbortRetryIgnore( CString sMess
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return ArchHooks::MessageBoxAbortRetryIgnorePrivate( sMessage, ID );
 
-	// don't show MessageBox if windowed
+	// only show MessageBox if windowed
 	if( DISPLAY && !DISPLAY->IsWindowed() )
 		return ArchHooks::MessageBoxAbortRetryIgnorePrivate( sMessage, ID );
 	else
@@ -64,7 +64,7 @@ ArchHooks::MessageBoxResult ArchHooks::MessageBoxRetryCancel( CString sMessage, 
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return ArchHooks::MessageBoxRetryCancelPrivate( sMessage, ID );
 
-	// don't show MessageBox if windowed
+	// only show MessageBox if windowed
 	if( DISPLAY && !DISPLAY->IsWindowed() )
 		return ArchHooks::MessageBoxRetryCancelPrivate( sMessage, ID );
 	else
