@@ -7,6 +7,7 @@
 
 #include "global.h"
 #include "RageFileDriverZip.h"
+#include "RageFileDriverSlice.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
@@ -91,31 +92,6 @@ public:
 		RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjZipDeflated" );
 
 		// return new RageFileObjZipDeflated( *this, p );
-	}
-};
-
-class RageFileObjZipStored: public RageFileObj
-{
-private:
-	RageFileBasic *m_pFile;
-	int m_iFilePos;
-	int m_iOffset, m_iFileSize;
-
-public:
-	/* pFile will be freed. */
-	RageFileObjZipStored( RageFileBasic *pFile, int iOffset, int iFileSize );
-	~RageFileObjZipStored();
-
-	int ReadInternal( void *pBuffer, size_t iBytes );
-	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
-	int SeekInternal( int iOffset );
-	int GetFileSize() const { return m_iFileSize; }
-
-	RageFileBasic *Copy() const
-	{
-		RageFileObjZipStored *pRet = new RageFileObjZipStored( m_pFile->Copy(), m_iOffset, m_iFileSize );
-		pRet->m_iFilePos = m_iFilePos;
-		return pRet;
 	}
 };
 
@@ -434,7 +410,7 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 
 	zip.Seek( info->data_offset );
 
-	RageFileBasic *pFile = new RageFileObjZipStored( zip.Copy(), info->data_offset, info->compr_size );
+	RageFileBasic *pFile = new RageFileDriverSlice( zip.Copy(), info->data_offset, info->compr_size );
 	switch( info->compression_method )
 	{
 	case STORED:
@@ -485,6 +461,7 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cp
 	m_pFile = cpy.m_pFile->Copy();
 	inflateCopy( &dstrm, const_cast<z_streamp>(&cpy.dstrm) );
 
+	// memcpy decomp_buf?
 	decomp_buf_ptr = decomp_buf + (cpy.decomp_buf_ptr - cpy.decomp_buf);
 	decomp_buf_avail = cpy.decomp_buf_avail;
 	m_iFilePos = cpy.m_iFilePos;
@@ -601,57 +578,6 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 	}
 
 	return m_iFilePos;
-}
-
-RageFileObjZipStored::RageFileObjZipStored( RageFileBasic *pFile, int iOffset, int iFileSize )
-{
-	m_pFile = pFile;
-	m_iOffset = iOffset;
-	m_iFileSize = iFileSize;
-	m_iFilePos = 0;
-}
-
-RageFileObjZipStored::~RageFileObjZipStored()
-{
-	delete m_pFile;
-}
-
-int RageFileObjZipStored::ReadInternal( void *buf, size_t bytes )
-{
-	/* Make sure we're reading from the right place.  We might have been constructed
-	 * with a file not pointing to iOffset. */
-	m_pFile->Seek( m_iFilePos+m_iOffset );
-
-	const int bytes_left = m_iFileSize-this->m_iFilePos;
-	const int got = m_pFile->Read( buf, min( (int) bytes, bytes_left ) );
-	if( got == -1 )
-	{
-		SetError( m_pFile->GetError() );
-		return -1;
-	}
-
-	m_iFilePos += got;
-
-	return got;
-}
-
-
-int RageFileObjZipStored::SeekInternal( int offset )
-{
-	ASSERT( offset >= 0 );
-	offset = min( offset, m_iFileSize );
-
-	int ret = m_pFile->Seek( m_iOffset + offset );
-	if( ret == -1 )
-	{
-		SetError( m_pFile->GetError() );
-		return -1;
-	}
-	ret -= m_iOffset;
-	ASSERT( ret >= 0 );
-	m_iFilePos = ret;
-
-	return ret;
 }
 
 /*
