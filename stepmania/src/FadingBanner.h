@@ -13,6 +13,7 @@
 
 #include "Banner.h"
 #include "ActorFrame.h"
+#include "RageTimer.h"
 
 class FadingBanner : public ActorFrame
 {
@@ -39,6 +40,9 @@ protected:
 	Banner		m_Banner[2];
 	int			m_iIndexFront;
 	int			GetBackIndex() { return m_iIndexFront==0 ? 1 : 0; }
+
+	CString		m_sPendingBanner;
+	RageTimer	m_PendingTimer;
 };
 
 #endif
