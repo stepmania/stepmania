@@ -121,6 +121,37 @@ inline float froundf( const float f, const float fRoundInterval )
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }
 
+/*
+ * Safely add an integer to an enum.
+ *
+ * This is illegal:
+ *
+ *  ((int&)val) += iAmt;
+ *
+ * It breaks aliasing rules; the compiler is allowed to assume that "val" doesn't
+ * change (unless it's declared volatile), and in some cases, you'll end up getting
+ * old values for "val" following the add.  (What's probably really happening is
+ * that the memory location is being added to, but the value is stored in a register,
+ * and breaking aliasing rules mean the compiler doesn't know that the register
+ * value is invalid.)
+ *
+ * Always do these conversions through a union.
+ */
+template<typename T>
+static inline void enum_add( T &val, int iAmt )
+{
+        union conv
+        {
+                T value;
+                int i;
+                conv( T v ):value(v) { }
+        };
+
+        conv c( val );
+        c.i += iAmt;
+        val = c.value;
+}
+
 // Move val toward other_val by to_move.
 void fapproach( float& val, float other_val, float to_move );
 
