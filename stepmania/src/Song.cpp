@@ -716,20 +716,20 @@ Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 		return vNotes[0];
 }
 
-Notes* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh ) const
+Notes* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen ) const
 {
 	vector<Notes*> vNotes;
-	GetNotes( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh );
+	GetNotes( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
 		return vNotes[0];
 }
 
-Notes* Song::GetNotes( NotesType nt, CString sDescription ) const
+Notes* Song::GetNotes( NotesType nt, CString sDescription, bool bIncludeAutoGen ) const
 {
 	vector<Notes*> vNotes;
-	GetNotes( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription );
+	GetNotes( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription, bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
@@ -737,31 +737,31 @@ Notes* Song::GetNotes( NotesType nt, CString sDescription ) const
 }
 
 
-Notes* Song::GetClosestNotes( NotesType nt, Difficulty dc ) const
+Notes* Song::GetClosestNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	Difficulty newDC = dc;
 	Notes* pNotes;
-	pNotes = GetNotes( nt, newDC );
+	pNotes = GetNotes( nt, newDC, bIncludeAutoGen );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc-1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetNotes( nt, newDC );
+	pNotes = GetNotes( nt, newDC, bIncludeAutoGen );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc+1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetNotes( nt, newDC );
+	pNotes = GetNotes( nt, newDC, bIncludeAutoGen );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc-2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetNotes( nt, newDC );
+	pNotes = GetNotes( nt, newDC, bIncludeAutoGen );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc+2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetNotes( nt, newDC );
+	pNotes = GetNotes( nt, newDC, bIncludeAutoGen );
 	return pNotes;
 }
 

@@ -401,9 +401,9 @@ void Course::GetStageInfo(
 			if( pSong )
 			{
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
+					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter, PREFSMAN->m_bAutogenMissingTypes );
 				else
-					pNotes = pSong->GetNotes( nt, e.difficulty );
+					pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 			}
 			break;
 		case Entry::random:
@@ -421,9 +421,9 @@ void Course::GetStageInfo(
 					   continue; /* wrong group */
 
 					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
+						pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter, PREFSMAN->m_bAutogenMissingTypes );
 					else
-						pNotes = pSong->GetNotes( nt, e.difficulty );
+						pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 
 					if( pNotes )	// found a match
 						break;		// stop searching
@@ -450,8 +450,8 @@ void Course::GetStageInfo(
 						Song* pSong = vSongsByMostPlayed[j];
 						if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
 							pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
-							!pSong->GetNotes(nt, DIFFICULTY_MEDIUM)  ||
-							!pSong->GetNotes(nt, DIFFICULTY_HARD) )
+							!pSong->GetNotes(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
+							!pSong->GetNotes(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
 							vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
 					}
 				}
@@ -472,9 +472,9 @@ void Course::GetStageInfo(
 				}
 
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
+					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter, PREFSMAN->m_bAutogenMissingTypes );
 				else
-					pNotes = pSong->GetNotes( nt, e.difficulty );
+					pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 
 				if( pNotes == NULL )
 					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
@@ -495,7 +495,7 @@ void Course::GetStageInfo(
 			if(dc < DIFFICULTY_CHALLENGE)
 			{
 				dc  = Difficulty(dc + 1);
-				Notes* pNewNotes = pSong->GetNotes( nt, dc );
+				Notes* pNewNotes = pSong->GetNotes( nt, dc, PREFSMAN->m_bAutogenMissingTypes );
 				if(pNewNotes)
 					pNotes = pNewNotes;
 			}
