@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories="SDL-1.2.5/include,SDL_image-1.2"
+				AdditionalIncludeDirectories=".;SDL-1.2.5/include,SDL_image-1.2"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -741,6 +741,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="DebugInfo"
+					Filter="">
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"
@@ -769,6 +773,31 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath=".\resource.h">
 				</File>
+				<Filter
+					Name="Disasm"
+					Filter="">
+					<File
+						RelativePath="archutils\Win32\Crash.cpp">
+					</File>
+					<File
+						RelativePath="archutils\Win32\Crash.h">
+					</File>
+					<File
+						RelativePath="archutils\Win32\CrashList.h">
+					</File>
+					<File
+						RelativePath="archutils\Win32\Disasm.cpp">
+					</File>
+					<File
+						RelativePath="archutils\Win32\Disasm.h">
+					</File>
+					<File
+						RelativePath="archutils\Win32\Tls.cpp">
+					</File>
+					<File
+						RelativePath="archutils\Win32\Tls.h">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1394,31 +1423,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\ThemeManager.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="Disasm"
-			Filter="">
-			<File
-				RelativePath="Crash.cpp">
-			</File>
-			<File
-				RelativePath="Crash.h">
-			</File>
-			<File
-				RelativePath="CrashList.h">
-			</File>
-			<File
-				RelativePath="Disasm.cpp">
-			</File>
-			<File
-				RelativePath="Disasm.h">
-			</File>
-			<File
-				RelativePath="Tls.cpp">
-			</File>
-			<File
-				RelativePath="Tls.h">
 			</File>
 		</Filter>
 		<File

@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                              	cl                                               /Zl                                               /nologo                                               /c                                               verstub.cpp                                               /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                               	cl                                                /Zl                                                /nologo                                                /c                                                verstub.cpp                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -78,7 +78,7 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                              	cl                                               /Zl                                               /nologo                                               /c                                               verstub.cpp                                               /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                               	cl                                                /Zl                                                /nologo                                                /c                                                verstub.cpp                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -511,6 +511,14 @@ SOURCE=.\SongOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\StageStats.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\StageStats.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StyleDef.cpp
 # End Source File
 # Begin Source File
@@ -656,6 +664,38 @@ SOURCE=.\arch\arch_Win32.h
 # Begin Group "system"
 
 # PROP Default_Filter ""
+# Begin Group "Disasm"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\archutils\Win32\Crash.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\Crash.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\CrashList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\Disasm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\Disasm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\Tls.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\Tls.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\archutils\Win32\AppInstance.cpp
@@ -1714,38 +1754,6 @@ SOURCE=.\ThemeManager.cpp
 # Begin Source File
 
 SOURCE=.\ThemeManager.h
-# End Source File
-# End Group
-# Begin Group "Disasm"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\Crash.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Crash.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CrashList.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Disasm.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Disasm.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Tls.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Tls.h
 # End Source File
 # End Group
 # Begin Group "Utils"
