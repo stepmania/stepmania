@@ -613,14 +613,14 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
-	if( m_arrayNotes[pn].empty() )
+	if( m_arrayNotes.empty() )
 		return;
 	if( m_iSelection[pn] == 0 )
 		return;
 
 	m_iSelection[pn]--;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
 
 	m_soundChangeNotes.Play();
 
@@ -633,14 +633,14 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
-	if( m_arrayNotes[pn].empty() )
+	if( m_arrayNotes.empty() )
 		return;
-	if( m_iSelection[pn] == int(m_arrayNotes[pn].size()-1) )
+	if( m_iSelection[pn] == int(m_arrayNotes.size()-1) )
 		return;
 
 	m_iSelection[pn]++;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
 
 	m_soundChangeNotes.Play();
 
@@ -885,9 +885,9 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 	
-	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()-1) );	// bounds clamping
+	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes.size()-1) );	// bounds clamping
 
-	Notes* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
+	Notes* pNotes = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
 
 	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
@@ -922,9 +922,9 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 		/* Find the closest match to the user's preferred difficulty. */
 		int CurDifference = -1;
-		for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
+		for( unsigned i=0; i<m_arrayNotes.size(); i++ )
 		{
-			int Diff = abs(m_arrayNotes[p][i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
+			int Diff = abs(m_arrayNotes[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
 
 			if( CurDifference == -1 || Diff < CurDifference )
 			{
@@ -933,7 +933,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			}
 		}
 
-		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
+		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes.size()) ) ;
 	}
 }
 
@@ -953,7 +953,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
-		m_arrayNotes[pn].clear();
+		m_arrayNotes.clear();
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
@@ -997,11 +997,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-			for( int pn = 0; pn < NUM_PLAYERS; ++pn) 
-			{
-				pSong->GetNotes( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
-				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
-			}
+			pSong->GetNotes( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			SortNotesArrayByDifficulty( m_arrayNotes );
 
 			m_Banner.LoadFromSong( pSong );
 

@@ -67,7 +67,7 @@ protected:
 	void UpdateOptionsDisplays();
 	void AdjustOptions();
 
-	vector<Notes*> m_arrayNotes[NUM_PLAYERS];
+	vector<Notes*> m_arrayNotes;
 	int					m_iSelection[NUM_PLAYERS];
 
 	MenuElements		m_Menu;
