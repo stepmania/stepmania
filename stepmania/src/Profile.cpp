@@ -15,7 +15,7 @@
 #include "CryptManager.h"
 #include "ProfileManager.h"
 #include "RageFileManager.h"
-#include "ScoreKeeperMAX2.h"
+#include "LuaManager.h"
 #include "crypto/CryptRand.h"
 #include "UnlockManager.h"
 #include "XmlFile.h"
