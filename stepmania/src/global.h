@@ -58,9 +58,12 @@ using namespace std;
 #endif
 
 /* RageThreads defines (don't pull in all of RageThreads.h here) */
-void SetCheckpoint( const char *file, int line, const char *message );
-#define CHECKPOINT (SetCheckpoint(__FILE__, __LINE__, NULL))
-#define CHECKPOINT_M(m) (SetCheckpoint(__FILE__, __LINE__, m))
+namespace Checkpoints
+{
+	void SetCheckpoint( const char *file, int line, const char *message );
+};
+#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
+#define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 /* Assertion that sets an optional message and brings up the crash handler, so
  * we get a backtrace.  This should probably be used instead of throwing an

@@ -716,7 +716,7 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 	Report(NULL, hFile, "");
 
 	// Dump thread stacks
-	WriteBuf( hFile, GetCheckpointLogs("\r\n") );
+	WriteBuf( hFile, Checkpoints::GetLogs("\r\n") );
 	Report(NULL, hFile, "");
 
 	ReportCrashCallStack(NULL, hFile, pExc);

@@ -302,8 +302,15 @@ void RageThread::HaltAllThreads( bool Kill )
 #endif
 }
 
+/* Normally, checkpoints are only seen in crash logs.  It's occasionally useful
+ * to see them in logs, but this outputs a huge amount of text. */
+static bool g_LogCheckpoints = false;
+void Checkpoints::LogCheckpoints( bool on )
+{
+	g_LogCheckpoints = on;
+}
 
-void SetCheckpoint( const char *file, int line, const char *message )
+void Checkpoints::SetCheckpoint( const char *file, int line, const char *message )
 {
 	int slotno = GetCurThreadSlot();
 	ASSERT( slotno != -1 );
@@ -312,13 +319,16 @@ void SetCheckpoint( const char *file, int line, const char *message )
 	
 	slot.Checkpoints[slot.CurCheckpoint].Set( file, line, message );
 
+	if( g_LogCheckpoints )
+		LOG->Trace( "%s", slot.Checkpoints[slot.CurCheckpoint].FormattedBuf );
+
 	++slot.CurCheckpoint;
 	slot.NumCheckpoints = max( slot.NumCheckpoints, slot.CurCheckpoint );
 	slot.CurCheckpoint %= CHECKPOINT_COUNT;
 }
 
 /* This is called under crash conditions.  Be careful. */
-const char *GetCheckpointLog( int slotno, int lineno )
+static const char *GetCheckpointLog( int slotno, int lineno )
 {
 	static char ret[1024*32];
 	ret[0] = 0;
@@ -335,7 +345,7 @@ const char *GetCheckpointLog( int slotno, int lineno )
 	return ret;
 }
 
-const char *GetCheckpointLogs( const char *delim )
+const char *Checkpoints::GetLogs( const char *delim )
 {
 	static char ret[1024*32];
 	ret[0] = 0;
@@ -431,16 +441,16 @@ LockMutex::~LockMutex()
 
 void LockMutex::Unlock()
 {
-	ASSERT(locked);
+	ASSERT( locked );
 	locked = false;
 
 	mutex.Unlock();
 
-	if(file && locked_at != -1)
+	if( file && locked_at != -1 )
 	{
-		float dur = RageTimer::GetTimeSinceStart() - locked_at;
-		if(dur > 0.015)
-			LOG->Trace(ssprintf("Lock at %s:%i took %f", file, line, dur));
+		const float dur = RageTimer::GetTimeSinceStart() - locked_at;
+		if( dur > 0.015f )
+			LOG->Trace( "Lock at %s:%i took %f", file, line, dur );
 	}
 }
 

@@ -27,11 +27,15 @@ public:
 	bool IsCreated() const { return thr != NULL; }
 };
 
-void SetCheckpoint( const char *file, int line, const char *message );
-const char *GetCheckpointLogs( const char *delim );
+namespace Checkpoints
+{
+	void LogCheckpoints( bool yes=true );
+	void SetCheckpoint( const char *file, int line, const char *message );
+	const char *GetLogs( const char *delim );
+};
 
-#define CHECKPOINT (SetCheckpoint(__FILE__, __LINE__, NULL))
-#define CHECKPOINT_M(m) (SetCheckpoint(__FILE__, __LINE__, m))
+#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
+#define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 /* Mutex class that follows the behavior of Windows mutexes: if the same
  * thread locks the same mutex twice, we just increase a refcount; a mutex

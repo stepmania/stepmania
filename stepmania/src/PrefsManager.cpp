@@ -106,7 +106,6 @@ PrefsManager::PrefsManager()
 	m_ShowSongOptions = YES;
 	m_bDancePointsForOni = false;
 	m_bPercentageScoring = false;
-	m_bTimestamping = false;
 	m_bShowLyrics = true;
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
@@ -116,17 +115,10 @@ PrefsManager::PrefsManager()
 	m_bFirstRun = true;
 	m_bAutoMapOnJoyChange = true;
 	m_fGlobalOffsetSeconds = 0;
-	m_bForceLogFlush = false;
-	m_bLogging = true;
 	m_bShowBeginnerHelper = false;
 	m_bEndlessBreakEnabled = true;
 	m_iEndlessNumStagesUntilBreak = 5;
 	m_iEndlessBreakLength = 5;
-#ifdef DEBUG
-	m_bShowLogOutput = true;
-#else
-	m_bShowLogOutput = false;
-#endif
 	m_bTenFooterInRed = true;
 
 	// set to 0 so people aren't shocked at first
@@ -199,6 +191,16 @@ PrefsManager::PrefsManager()
 	m_sIgnoredMessageWindows = "";
 
 	m_sCoursesToShowRanking = "";
+
+	m_bLogging = true;
+	m_bForceLogFlush = false;
+#ifdef DEBUG
+	m_bShowLogOutput = true;
+#else
+	m_bShowLogOutput = false;
+#endif
+	m_bTimestamping = false;
+	m_bLogCheckpoints = false;
 
 	ReadGlobalPrefsFromDisk();
 }
@@ -310,7 +312,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "ShowLyrics",						m_bShowLyrics );
 	ini.GetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
-	ini.GetValue( "Options", "Timestamping",					m_bTimestamping );
 	ini.GetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
 	ini.GetValue( "Options", "ShowDancingCharacters",			(int&)m_ShowDancingCharacters );
 	ini.GetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
@@ -338,9 +339,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
 	ini.GetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
 	ini.GetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
-	ini.GetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
-	ini.GetValue( "Options", "Logging",							m_bLogging );
-	ini.GetValue( "Options", "ShowLogOutput",					m_bShowLogOutput );
 	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue( "Options", "Language",						m_sLanguage );
 	ini.GetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
@@ -371,6 +369,12 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 		m_asAdditionalSongFolders.clear();
 		split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
 	}
+
+	ini.GetValue( "Debug", "Logging",							m_bLogging );
+	ini.GetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
+	ini.GetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
+	ini.GetValue( "Debug", "Timestamping",						m_bTimestamping );
+	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
@@ -466,7 +470,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ShowLyrics",						m_bShowLyrics );
 	ini.SetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.SetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
-	ini.SetValue( "Options", "Timestamping",					m_bTimestamping );
 	ini.SetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
 	ini.SetValue( "Options", "ShowDancingCharacters",			m_ShowDancingCharacters );
 	ini.SetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
@@ -482,9 +485,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "GetRankingName",					m_iGetRankingName);
 	ini.SetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
-	ini.SetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
-	ini.SetValue( "Options", "Logging",							m_bLogging );
-	ini.SetValue( "Options", "ShowLogOutput",					m_bShowLogOutput );
 
 	ini.SetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
 	ini.SetValue( "Options", "CourseSortOrder",					m_iCourseSortOrder );
@@ -528,10 +528,14 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
-	
-
 
 	ini.SetValue ( "Options", "AdditionalSongFolders", 			join(",", m_asAdditionalSongFolders) );
+
+	ini.SetValue( "Debug", "Logging",							m_bLogging );
+	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
+	ini.SetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
+	ini.SetValue( "Debug", "Timestamping",						m_bTimestamping );
+	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 
 	ini.WriteFile();
 }

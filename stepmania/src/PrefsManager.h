@@ -99,7 +99,6 @@ public:
 	bool			m_bSoloSingle;
 	bool			m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
 	bool			m_bPercentageScoring;
-	bool			m_bTimestamping;
 	bool			m_bShowLyrics;
 	bool			m_bAutogenMissingTypes;
 	bool			m_bAutogenGroupCourses;
@@ -110,9 +109,6 @@ public:
 	bool			m_bFirstRun;
 	bool			m_bAutoMapOnJoyChange;
 	float			m_fGlobalOffsetSeconds;
-	bool			m_bForceLogFlush;
-	bool			m_bLogging;
-	bool			m_bShowLogOutput;
 	bool			m_bTenFooterInRed;
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;
@@ -166,6 +162,13 @@ public:
 	CString			m_sIgnoredMessageWindows;
 
 	CString			m_sCoursesToShowRanking;
+
+	/* Debug: */
+	bool			m_bLogging;
+	bool			m_bForceLogFlush;
+	bool			m_bShowLogOutput;
+	bool			m_bTimestamping;
+	bool			m_bLogCheckpoints;
 
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
