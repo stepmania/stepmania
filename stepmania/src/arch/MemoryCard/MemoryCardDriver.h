@@ -31,19 +31,19 @@ struct UsbStorageDevice
 	int iScsiIndex;
 	CString sScsiDevice;
 	CString	sOsMountDir;	// WITHOUT trailing slash
-  bool bNeedsWriteTest;
-  bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
-  bool bIsNameAvailable;  // Name in the profile on the memory card.
-  CString sName;  // Name in the profile on the memory card.
-  int idVendor;
-  int idProduct;
-  CString sVendor;
-  CString sProduct;
+	bool bNeedsWriteTest;
+	bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
+	bool bIsNameAvailable;  // Name in the profile on the memory card.
+	CString sName;  // Name in the profile on the memory card.
+	int idVendor;
+	int idProduct;
+	CString sVendor;
+	CString sProduct;
 
-  bool IsBlank() const { return sOsMountDir.empty(); }
-  void SetOsMountDir( const CString &s );
+	bool IsBlank() const { return sOsMountDir.empty(); }
+	void SetOsMountDir( const CString &s );
 
-  bool operator==(const UsbStorageDevice& other) const;
+	bool operator==(const UsbStorageDevice& other) const;
 };
 
 class MemoryCardDriver
