@@ -31,9 +31,9 @@ public:
 	void Init();
 
 	// statistics
-	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 );
+	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 );
+	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 );
 
 	TapNoteScore GetTapNoteScore(unsigned track, unsigned row) const;
 	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
