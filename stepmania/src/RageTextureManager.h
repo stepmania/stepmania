@@ -1,6 +1,4 @@
-/*
- * RageTextureManager - Interface for loading and releasing textures.
- */
+/* RageTextureManager - Interface for loading textures.  */
 
 #ifndef RAGE_TEXTURE_MANAGER_H
 #define RAGE_TEXTURE_MANAGER_H
@@ -39,7 +37,7 @@ struct RageTextureManagerPrefs
 		m_bMipMaps = bMipMaps;
 	}
 
-	bool operator!=( const RageTextureManagerPrefs& rhs )
+	bool operator!=( const RageTextureManagerPrefs& rhs ) const
 	{
 		return 
 			m_iTextureColorDepth != rhs.m_iTextureColorDepth ||
