@@ -644,6 +644,7 @@ static void RestoreAppPri()
 
 
 #define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
+#define STATIC_INI_PATH BASE_PATH "Data" SLASH "Static.ini"
 
 void ChangeCurrentGame( Game g )
 {
@@ -668,6 +669,9 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	IniFile ini;
 	ini.SetPath( GAMEPREFS_INI_PATH );
 	ini.ReadFile();	// it's OK if this fails
+
+	ini.SetPath( STATIC_INI_PATH );
+	ini.ReadFile();	// it's OK if this fails, too
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
