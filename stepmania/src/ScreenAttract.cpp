@@ -25,7 +25,7 @@
 #include "ThemeManager.h"
 #include "SDL_Utils.h"
 #include "RageSoundManager.h"
-
+#include "RageMovieTexture.h"
 
 #define SECONDS_TO_SHOW					THEME->GetMetricF(m_sMetricName,"SecondsToShow")
 #define NEXT_SCREEN						THEME->GetMetric(m_sMetricName,"NextScreen")
@@ -33,6 +33,18 @@
 
 ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 {
+	/* This has replaced the above, because ScreenIntroMovie should not be
+		exited until the movie is done. This saves the hassle of having to
+		always update the metrics.ini file to reflect the movie's time.
+
+	XXX UPDATE: Until we have a way to determine a movie's length.. the fadeout
+				time will have to be manually set in the metrics file -- Miryokuteki
+
+	if( m_sMetricName == "ScreenIntroMovie" )
+	{
+		SECONDS_TO_SHOW = THEME->GetMetricF(m_sMetricName,"SecondsToShow");
+	}*/
+
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s, %s)", sMetricName.c_str(), sElementName.c_str() );
 
 	GAMESTATE->Reset();
@@ -76,7 +88,10 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		ResetGame();
+		/*ResetGame();
+				This causes problems on ScreenIntroMovie, which results in the
+				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
+
 		CString sMessage = "Coin Mode: ";
 		switch( PREFSMAN->m_CoinMode )
 		{
@@ -84,6 +99,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
 		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
 		}
+		SCREENMAN->RefreshCreditsMessages();
 		SCREENMAN->SystemMessage( sMessage );
 		return;
 	}
@@ -97,7 +113,8 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			this->SendScreenMessage( SM_BeginFadingOut, 0 );
 			break;
 		case MENU_BUTTON_COIN:
-			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
+			/* Credit already taken care of.. go forth -- Miryokuteki */
+			//Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			SOUNDMAN->StopMusic();
 			::Sleep( 800 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -131,6 +148,16 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 void ScreenAttract::Update( float fDelta )
 {
 	Screen::Update(fDelta);
+
+
+	/* See the above comment block -- Miryokuteki
+	if( m_sMetricName == "ScreenIntroMovie" )
+	{
+		if( RageMovieTexture::IsFinishedPlaying() == true )
+		{
+			this->SendScreenMessage( SM_BeginFadingOut,0 );
+		}
+	} */
 }
 
 void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )

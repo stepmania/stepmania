@@ -35,6 +35,7 @@ enum	// DanceButtons
 	DANCE_BUTTON_MENUUP,
 	DANCE_BUTTON_MENUDOWN,
 	DANCE_BUTTON_COIN,
+	DANCE_BUTTON_OPERATOR,
 	NUM_DANCE_BUTTONS,		// leave this at the end
 };
 
@@ -52,6 +53,7 @@ enum	// PumpButtons
 	PUMP_BUTTON_MENUUP,
 	PUMP_BUTTON_MENUDOWN,
 	PUMP_BUTTON_COIN,
+	PUMP_BUTTON_OPERATOR,
 	NUM_PUMP_BUTTONS,		// leave this at the end
 };
 
@@ -71,6 +73,7 @@ enum	// EZ2Buttons
 	EZ2_BUTTON_MENUUP,
 	EZ2_BUTTON_MENUDOWN,
 	EZ2_BUTTON_COIN,
+	EZ2_BUTTON_OPERATOR,
 	NUM_EZ2_BUTTONS,		// leave this at the end
 };
 
@@ -88,6 +91,7 @@ enum	// ParaButtons
 	PARA_BUTTON_MENUUP,
 	PARA_BUTTON_MENUDOWN,
 	PARA_BUTTON_COIN,
+	PARA_BUTTON_OPERATOR,
 	NUM_PARA_BUTTONS,		// leave this at the end
 };
 
@@ -108,6 +112,7 @@ enum // 3DDX Buttons
 	DS3DDX_BUTTON_MENUUP,
 	DS3DDX_BUTTON_MENUDOWN,
 	DS3DDX_BUTTON_COIN,
+	DS3DDX_BUTTON_OPERATOR,
 	NUM_DS3DDX_BUTTONS, // leave this at the end.
 };
 
@@ -131,6 +136,7 @@ enum // BM Buttons
 	BM_BUTTON_MENUUP,
 	BM_BUTTON_MENUDOWN,
 	BM_BUTTON_COIN,
+	BM_BUTTON_OPERATOR,
 	NUM_BM_BUTTONS, // leave this at the end.
 };
 

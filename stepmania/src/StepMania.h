@@ -11,7 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-
 void ApplyGraphicOptions();
 void ExitGame();
 void ResetGame();

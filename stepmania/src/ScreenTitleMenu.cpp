@@ -52,6 +52,7 @@ const ScreenMessage SM_ScrollJointPremium	=	ScreenMessage(SM_User+14);
 ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
+
 	if( PREFSMAN->m_bJointPremium )
 	{
 		m_sprJointPremiumMsg.Load( THEME->GetPathTo("Graphics","joint premium scroll message") );
@@ -117,9 +118,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 
 	this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
-	this->SendScreenMessage( SM_ScrollJointPremium, 1);
 
 	this->MoveToTail( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
+	this->SendScreenMessage( SM_ScrollJointPremium, 1);
 }
 
 ScreenTitleMenu::~ScreenTitleMenu()
@@ -137,9 +138,17 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
-		/* Coin mode changed.. since this effects how this screen appears, the screen
-		   is reloaded */
+		/* Coin mode changed.. since this effects how this screen appears, JUST the 
+		screen is just reloaded, not a reset as was before -- Miryokuteki */
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
+		CString sMessage = "Coin Mode: ";
+		switch( PREFSMAN->m_CoinMode )
+		{
+			case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
+			case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
+			case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
+		}
+		SCREENMAN->SystemMessage( sMessage );
 		SCREENMAN->RefreshCreditsMessages();
 		SCREENMAN->SetNewScreen("ScreenTitleMenu");
 		return;

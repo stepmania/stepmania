@@ -404,43 +404,60 @@ static void HandleInputEvents(float fDeltaTime)
 		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
 			continue;	// skip
 
-		
-						
-		/* Global operator key.. like arcade, allows quick immediate access
-		   to the adminstrative options panel. A global boolean has been
-		   added to not allow this to function on system option screens,
-		   or in the step editor. This will save the hassle of an "accidental
-		   keystroke, and your edit is gone".  -- Miryokuteki
-		*/
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_SCROLLOCK )
-		{
-			if( type != IET_FIRST_PRESS ) continue;
-			if( GAMESTATE->m_bIsOnSystemMenu ) continue;
 
-			SCREENMAN->SystemMessage("OPERATOR");
-			SCREENMAN->SetNewScreen("ScreenOptionsMenu");
-			continue;
-		}
+
+
 		
-		// Global credit key.. accepts a credit anywhere, like the arcade -- Mirykouteki
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F1 && type == IET_FIRST_PRESS )
+		/* Begin Global Key Support.. Any of these keys are configurable thru the normal
+			key/joy configuration screens */
+
+		if( type == IET_FIRST_PRESS ) // This only takes effect if the key is pressed once.
 		{
-			switch( PREFSMAN->m_CoinMode )
+			MenuInput	MenuII; /* These are temporary holders to turn the device    */
+			GameInput	GameII; /* input into a menu button for certain keys         */
+			INPUTMAPPER->DeviceToGame(DeviceI,GameII);
+			INPUTMAPPER->GameToMenu(GameII,MenuII);							
+		
+			switch( MenuII.button )
 			{
-				case PrefsManager::COIN_FREE:
-				case PrefsManager::COIN_HOME:
-				case PrefsManager::COIN_PAY:
-					GAMESTATE->m_iCoins++;
-					SCREENMAN->RefreshCreditsMessages();
-					SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-					break;
-				default:
-					ASSERT(0);
+				case MENU_BUTTON_OPERATOR:
+					/* Global operator key.. like arcade, allows quick immediate access
+						to the adminstrative options panel. A global boolean has been
+						added to not allow this to function on system option screens,
+						or in the step editor. This will save the hassle of an "accidental
+						keystroke, and your edit is gone".  -- Miryokuteki
+					*/
+					if( !GAMESTATE->m_bIsOnSystemMenu )
+					{
+						SCREENMAN->SystemMessage("OPERATOR");
+						SCREENMAN->SetNewScreen("ScreenOptionsMenu");
+						//continue;
+						return;
+					}
+
+			
+			
+					
+				/* Global credit.. accepts anywhere, like the arcade -- Mirykouteki */
+				case MENU_BUTTON_COIN:
+					switch( PREFSMAN->m_CoinMode )
+					{
+						case PrefsManager::COIN_FREE: //fall thru
+						case PrefsManager::COIN_HOME: //fall thru
+						case PrefsManager::COIN_PAY:
+							GAMESTATE->m_iCoins++;
+							SCREENMAN->RefreshCreditsMessages();
+							SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+							//continue;
+							break;
+						default:
+							ASSERT(0);
+					}
 			}
-			/* Fall through, so screens will receive MenuCoin. */
-		}
-
-
+		}/* end GKSD */
+	
+		
+		
 		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 		{
 			if(type != IET_FIRST_PRESS) continue;
@@ -505,7 +522,7 @@ static void HandleInputEvents(float fDeltaTime)
 			INPUTMAPPER->GameToMenu( GameI, MenuI );
 			INPUTMAPPER->GameToStyle( GameI, StyleI );
 		}
-
+		
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
 }
@@ -584,4 +601,3 @@ static void GameLoop()
 			::Sleep( 2 );	// give more time to other processes and threads, but not so much that we skip sound
 	}
 }
-

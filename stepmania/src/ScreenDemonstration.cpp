@@ -184,7 +184,10 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		ResetGame();
+		/*ResetGame();
+				This causes problems on ScreenIntroMovie, which results in the
+				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
+
 		CString sMessage = "Coin Mode: ";
 		switch( PREFSMAN->m_CoinMode )
 		{
@@ -192,6 +195,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
 		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
 		}
+		SCREENMAN->RefreshCreditsMessages();
 		SCREENMAN->SystemMessage( sMessage );
 		return;
 	}

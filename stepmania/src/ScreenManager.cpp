@@ -328,7 +328,8 @@ void ScreenManager::SetNewScreen( CString sClassName )
 
 	SetNewScreen( pNewScreen );
 
-	// If this is a system menu, don't let the global operator key touch it! -- Miryokuteki
+	/* If this is a system menu, don't let the operator key touch it! 
+		However, if you add an options screen, please include it here -- Miryokuteki */
 	if(	sClassName == "ScreenOptionsMenu" || sClassName == "ScreenMachineOptions" || 
 		 sClassName == "ScreenOptions" || sClassName == "ScreenInputOptions" || 
 		 sClassName == "ScreenGraphicOptions" || sClassName == "ScreenGameplayOptions" || 
@@ -399,8 +400,6 @@ void ScreenManager::RefreshCreditsMessages()
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
 		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
 		
-		LOG->Trace("Actual coins: %d",GAMESTATE->m_iCoins);
-
 		switch( PREFSMAN->m_CoinMode )
 		{
 		case PrefsManager::COIN_HOME:

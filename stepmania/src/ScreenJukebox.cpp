@@ -166,7 +166,10 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		ResetGame();
+		/*ResetGame();
+				You only changed the coin mode.. as with the arcade versions,
+				the machine should not reset.	-- Miryokuteki				*/
+
 		CString sMessage = "Coin Mode: ";
 		switch( PREFSMAN->m_CoinMode )
 		{
@@ -174,6 +177,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
 		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
 		}
+		SCREENMAN->RefreshCreditsMessages();
 		SCREENMAN->SystemMessage( sMessage );
 		return;
 	}

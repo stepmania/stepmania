@@ -70,13 +70,13 @@ private:
 	BitmapText		m_textHelp;
 	BitmapText		m_textChoice[NUM_CHOICES];
 
+	Sprite			m_sprJointPremiumMsg;
+
 	RandomSample	m_soundAttract;
 	RandomSample	m_soundChange;
 	RandomSample	m_soundSelect;
 	RandomSample	m_soundInvalid;
 	
-	Sprite			m_sprJointPremiumMsg;
-
 	RageTimer		TimeToDemonstration;
 	RageTimer		TimeToJPScroll;
 };

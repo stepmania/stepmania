@@ -53,6 +53,7 @@ ScreenMapControllers::ScreenMapControllers()
 
 		m_textName[b].LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 		m_textName[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y-6 );
+
 		m_textName[b].SetText( sName );
 		m_textName[b].SetZoom( 0.7f );
 		m_textName[b].SetShadowLength( 2 );
