@@ -157,8 +157,6 @@ void RageBitmapTexture::Create()
 
 	if( img->w != m_iImageWidth || img->h != m_iImageHeight ) 
 	{
-		/* resize currently only does RGBA8888 */
-		RageSurfaceUtils::ConvertSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
 
