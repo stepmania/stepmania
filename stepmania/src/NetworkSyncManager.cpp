@@ -104,7 +104,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		if (localID >= 0 && localID < int(profileNames.size()))
 			WriteNT(m_packet, profileNames[localID]);
 		else
-			WriteNT(m_packet, "[No Profile Set]");
+			WriteNT(m_packet, "[No Prof]");
 	}
 
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
@@ -374,11 +374,12 @@ void NetworkSyncManager::ProcessInput()
 	while (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)>0)
 	{
 		int command = Read1(m_packet);
-		LOG->Trace("Received command from server:%d",command-128);
-
 		//Check to make sure command is valid from server
 		if (command<128)
-			break;
+		{		
+			LOG->Info("CMD (below 128) Invalid> %d",command);
+ 			break;
+		}
 
 		command+=-128;
 
@@ -393,9 +394,46 @@ void NetworkSyncManager::ProcessInput()
 		case 3: //This is taken care of by the blocking start code
 		case 4: //Undefined
 		case 5: //Scoreboard Update
-			{
+			{	//Ease scope
 				int ColumnNumber=Read1(m_packet);
-				m_Scoreboard[ColumnNumber] = ReadNT(m_packet);
+				int NumberPlayers=Read1(m_packet);
+				CString ColumnData;
+				int i;
+				switch (ColumnNumber) {
+				case 0:
+					ColumnData = "Names\n";
+					for (i=0;i<NumberPlayers;i++)
+						ColumnData += ReadNT(m_packet) + "\n";
+					break;
+				case 1:
+					ColumnData = "Combo\n";
+					for (i=0;i<NumberPlayers;i++)
+						ColumnData += ssprintf("%d\n",Read2(m_packet));
+					break;
+				case 2:
+					ColumnData = "Grade\n";
+					for (i=0;i<NumberPlayers;i++)
+						switch (Read1(m_packet)) {
+						case 0:
+							ColumnData+="AAAA\n"; break;
+						case 1:
+							ColumnData+="AAA\n"; break;
+						case 2:
+							ColumnData+="AA\n"; break;
+						case 3:
+							ColumnData+="A\n"; break;
+						case 4:
+							ColumnData+="B\n"; break;
+						case 5:
+							ColumnData+="C\n"; break;
+						case 6:
+							ColumnData+="D\n"; break;
+						case 7: 
+							ColumnData+="E\n";	break;	//Is there a better way?
+						}
+					break;
+				}
+				m_Scoreboard[ColumnNumber] = ColumnData;
 				m_scoreboardchange[ColumnNumber]=true;
 			}
 			break;
@@ -404,6 +442,7 @@ void NetworkSyncManager::ProcessInput()
 			SCREENMAN->SystemMessage(SysMSG);
 			break;
 		}
+		ClearPacket(m_packet);
 	}
 }
 
@@ -430,7 +469,7 @@ uint16_t NetworkSyncManager::Read2(NetPacket &Packet)
 		return 0;
 
 	uint16_t Temp;
-	memcpy( &Temp, *(&Packet.Data + Packet.Position),2 );
+	memcpy( &Temp, Packet.Data + Packet.Position,2 );
 	Packet.Position+=2;
 	return Swap16BE(Temp);
 }
@@ -441,8 +480,8 @@ uint32_t NetworkSyncManager::Read4(NetPacket &Packet)
 		return 0;
 
 	uint32_t Temp;
-	memcpy( &Temp, (&Packet.Data + Packet.Position),4 );
-	Packet.Position+=2;
+	memcpy( &Temp, Packet.Data + Packet.Position,4 );
+	Packet.Position+=4;
 	return Swap32BE(Temp);
 }
 
