@@ -8,6 +8,7 @@
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 #include "ActorUtil.h"
+#include "Difficulty.h"
 
 class Steps;
 class Trail;

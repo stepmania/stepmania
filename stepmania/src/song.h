@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
 #include "TimingData.h"
+#include "Difficulty.h"
 
 class Steps;
 class Style;

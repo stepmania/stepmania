@@ -7,6 +7,7 @@
 #include "PlayerNumber.h"
 #include "Grade.h"
 #include "RadarValues.h"
+#include "Difficulty.h"
 class NoteData;
 class Profile;
 

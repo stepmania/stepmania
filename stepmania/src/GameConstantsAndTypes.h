@@ -4,7 +4,6 @@
 #define GAME_CONSTANTS_AND_TYPES_H
 
 #include "PlayerNumber.h"	// TODO: Get rid of this dependency.  -Chris
-#include "Difficulty.h"		// TODO: Get rid of this dependency.
 #include "EnumHelper.h"
 
 

@@ -8,6 +8,7 @@
 #include "Banner.h"
 #include "ListDisplay.h"
 #include "ActorUtil.h"
+#include "Difficulty.h"
 
 class Course;
 class Song;

@@ -4,6 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Sprite.h"
 #include "ActorFrame.h"
+#include "Difficulty.h"
 
 class Song;
 

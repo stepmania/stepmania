@@ -15,6 +15,7 @@ struct PlayerOptions;
 #include "SongOptions.h"
 #include "PlayerOptions.h"
 #include "PlayerNumber.h"
+#include "Difficulty.h"
 
 class SongManager
 {

@@ -5,6 +5,7 @@
 
 #include "Attack.h"
 #include "RadarValues.h"
+#include "Difficulty.h"
 
 class Song;
 class Steps;

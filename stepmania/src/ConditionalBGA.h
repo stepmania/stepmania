@@ -4,6 +4,7 @@
 #include "PlayerOptions.h"
 #include "GameConstantsAndTypes.h"
 #include "BGAnimation.h"
+#include "Difficulty.h"
 
 class Style;
 

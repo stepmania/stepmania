@@ -8,6 +8,7 @@
 #include "Grade.h"
 #include "Attack.h"
 #include "RageTimer.h"
+#include "Difficulty.h"
 
 #include <map>
 #include <deque>

@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "Difficulty.h"
 #include <map>
 
 class Song;

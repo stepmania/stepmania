@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
+#include "Difficulty.h"
 class Steps;
 class Trail;
 

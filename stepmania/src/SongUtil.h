@@ -4,6 +4,7 @@
 #define SONG_UTIL_H
 
 #include "GameConstantsAndTypes.h"
+#include "Difficulty.h"
 
 class Song;
 class Profile;

@@ -8,6 +8,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RandomSample.h"
 #include "BitmapText.h"
+#include "Difficulty.h"
 
 class Style;
 

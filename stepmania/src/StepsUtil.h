@@ -2,6 +2,7 @@
 #define STEPSUTIL_H
 
 #include "GameConstantsAndTypes.h"
+#include "Difficulty.h"
 
 class Steps;
 class Song;
