@@ -13,6 +13,7 @@
 
 #include "RageMath.h"
 #include "RageTypes.h"
+#include "RageUtil.h"
 #include <math.h>
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
@@ -100,7 +101,9 @@ void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z )
 }
 
 void RageMatrixRotationX( RageMatrix* pOut, float theta )
-{ /* UNTESTED */
+{
+	theta *= PI/180;
+
 	RageMatrixIdentity(pOut);
 	pOut->m[1][1] = cosf(theta);
 	pOut->m[2][2] = pOut->m[1][1];
@@ -110,7 +113,9 @@ void RageMatrixRotationX( RageMatrix* pOut, float theta )
 }
 
 void RageMatrixRotationY( RageMatrix* pOut, float theta )
-{ /* UNTESTED */
+{
+	theta *= PI/180;
+
 	RageMatrixIdentity(pOut);
 	pOut->m[0][0] = cosf(theta);
 	pOut->m[2][2] = pOut->m[0][0];
@@ -121,6 +126,8 @@ void RageMatrixRotationY( RageMatrix* pOut, float theta )
 
 void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 {
+	theta *= PI/180;
+
 	RageMatrixIdentity(pOut);
 	pOut->m[0][0] = cosf(theta);
 	pOut->m[1][1] = pOut->m[0][0];
