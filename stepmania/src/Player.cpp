@@ -1307,7 +1307,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	case TNS_BOO:
 		if( iCurCombo > 50 )
 			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-		iCurMissCombo = 0;
+		iCurCombo = 0;
 		break;
 	
 	default:
