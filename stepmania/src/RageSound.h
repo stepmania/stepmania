@@ -1,8 +1,6 @@
 #ifndef RAGE_SOUND_OBJ_H
 #define RAGE_SOUND_OBJ_H
 
-#include "SDL_sound-1.0.0/SDL_sound.h"
-
 #include "RageThreads.h"
 #include "RageSoundManager.h"
 
@@ -24,18 +22,75 @@ public:
 	void read(char *buf, unsigned size);
 };
 
+class SoundReader;
+class SpeedChanger;
+
 class RageSound
 {
+public:
+	/* M_STOP (default) stops the sound after m_LengthSamples have been played.
+	 * M_LOOP restarts from m_StartSample.
+	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the
+	 * actual sound. */
+	enum StopMode_t {
+		M_STOP, M_LOOP, M_CONTINUE
+	} StopMode;
+
+	RageSound();
+	~RageSound();
+	RageSound(const RageSound &cpy);
+
+	/* If cache is true, we'll preload the entire file into memory if it's
+	 * small enough.  False is only generally used when we're going to do
+	 * operations on a file but not actually play it (eg. to find out
+	 * its length).
+	 * 
+	 * If the file failed to load, false is returned, Error() is set
+	 * and a null sample will be loaded.  (This makes failed loads nonfatal;
+	 * they can be ignored most of the time, so we continue to work if a file
+	 * is broken or missing.) */
+	bool Load(CString fn, bool cache = true);
+
+	void LoadAndPlayIfNotAlready( CString sSoundFilePath );
+	void Unload();
+
+	void SetStopMode(StopMode_t m) { StopMode = m; }
+	StopMode_t GetStopMode() const { return StopMode; }
+
+	void SetStartSeconds(float secs = 0); /* default = beginning */
+	void SetLengthSeconds(float secs = -1); /* default = no length limit */
+	void StartPlaying();
+	void StopPlaying();
+
+	CString GetError() const { return error; }
+	bool Error() const { return !error.empty(); }
+
+	RageSound *Play();
+	void Stop();
+
+	float GetLengthSeconds();
+	float GetPositionSeconds() const;
+	bool SetPositionSeconds( float fSeconds = -1);
+	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
+	void SetPlaybackRate( float fScale );
+	float GetPlaybackRate() const { return speed; }
+	bool IsPlaying() const { return playing; }
+	CString GetLoadedFilePath() const { return m_sFilePath; }
+	
+	/* Query only: */
+	bool IsStreaming() const { return big; }
+
+private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
 	 * this is ourself. */
 	RageSound *original;
 
 	/* These are only used when big == true: */
 	struct stream_t {
-		Sound_Sample *Sample;
-		int FillBuf(int bytes);
+		SoundReader *Sample;
 		CircBuf buf;
 	} stream;
+	int FillBuf(int bytes);
 
 	/* These are only used when big == false: */
 	basic_string<char> full_buf;
@@ -61,35 +116,28 @@ class RageSound
 	deque<pos_map_t> pos_map;
 
 	CString m_sFilePath;
-//	float m_Rate;
 
 	/* The amount of data to play (or loop): */
 	int m_StartSample, m_LengthSamples;
-	bool Loop;
-
+	
 	/* Current position of the output sound; if < 0, nothing will play until it
 	 * becomes positive.  This is recorded in samples, to avoid rounding error. */
 	int		position;
 	bool    playing;
 
 	float speed;
+	SpeedChanger *speedchanger; /* only if speed != 1 */
 
 	bool AccurateSync;
 
-	/* If true, the sound will stop when it reaches the end; otherwise it'll
-	 * continue to move forward, feeding silence, which is useful to continue
-	 * timing longer than the actual sound.  (However, if this is false, the
-	 * sound will never stop on its own unless destructed; it must be explitly
-	 * stopped, and PlayCopy can't be used.)  Default is true.  Ignored when looping. */
-	bool AutoStop;
+	CString error;
 
-	void SetPositionSamples( int samples = -1 );
+	bool SetPositionSamples( int samples = -1 );
+	int GetData(char *buffer, int size);
+	void Fail(CString reason);
+	int Bytes_Available() const;
 
 public:
-	RageSound();
-	~RageSound();
-	RageSound(const RageSound &cpy);
-
 	/* Used by RageSoundManager: */
 	RageSound *GetOriginal() { return original; }
 
@@ -101,45 +149,6 @@ public:
 	int GetPCM(char *buffer, int size, int sampleno);
 
 	void Update(float delta);
-
-	/* User API from here on: */
-
-	/* If cache is true, we'll preload the entire file into memory if it's
-	 * small enough.  False is only generally used when we're going to do
-	 * operations on a file but not actually play it (eg. to find out
-	 * its length). */
-	void Load(CString fn, bool cache = true);
-
-	void LoadAndPlayIfNotAlready( CString sSoundFilePath );
-	void Unload();
-
-	/* If enabled, then the sound will automatically stop when it reaches
-	 * the end; otherwise it'll feed silence until stopped manually. */
-	void SetAutoStop(bool yes=true) { AutoStop=yes; }
-	bool GetAutoStop() const { return AutoStop; }
-
-	void SetStartSeconds(float secs = 0); /* default = beginning */
-	void SetLengthSeconds(float secs = -1); /* default = no length limit */
-	void StartPlaying();
-//	void Pause();
-	void StopPlaying();
-
-	RageSound *Play();
-	void Stop();
-
-	float GetLengthSeconds();
-	float GetPositionSeconds() const;
-	void SetPositionSeconds( float fSeconds = -1);
-	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
-	void SetPlaybackRate( float fScale );
-	float GetPlaybackRate() const { return speed; }
-	bool IsPlaying() const { return playing; }
-	CString GetLoadedFilePath() const { return m_sFilePath; }
-	void SetLooping(bool yes=true) { Loop=yes; }
-	bool GetLooping() const { return Loop; }
-	
-	/* Query only: */
-	bool IsStreaming() const { return big; }
 };
 
 #endif

@@ -11,13 +11,17 @@
  * in large chunks, we're forced to decode in larger chunks as well, which can
  * cause framerate problems.
  *
- * Known problems:
- * I hear a click in one speaker at the beginning of some MP3s.  This is probably
- * something wrong with my SDL_sound MAD wrapper ...
- *
  * TODO:
  * Rate (speed)
  * Configurable buffer sizes (stored in SoundManager) and so on
+ *
+ * Error handling:
+ * Decoding errors (eg. CRC failures) will be recovered from when possible.
+ *
+ * When they can't be recovered, the sound will stop (unless loop or !autostop)
+ * and the error will be available in GetError().
+ *
+ * Seeking past the end of the file will throw a warning and rewind.
  *
  * We need (yet) another layer of abstraction: RageSoundSource.  It'll just
  * implement the SDL_sound interface (in a class).  Two implementations;
@@ -36,19 +40,14 @@
 #include "RageException.h"
 #include "RageTimer.h"
 
-#include "SDL_sound-1.0.0/SDL_sound.h"
-#ifdef _DEBUG
-#pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static_d.lib")
-#else
-#pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static.lib")
-#endif
+#include "RageSoundReader_SDL_Sound.h"
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
-const int max_prebuf_size = 1024*256;
+const int max_prebuf_size = 0; // 1024*256;
 
 /* The most data to buffer when streaming.  This should generally be at least as large
  * as the largest hardware buffer. */
@@ -61,6 +60,155 @@ const int read_block_size = 1024;
  * is mostly harmless (the data is small).  Let's keep a second; no sane audio
  * driver will have that much latency. */
 const int pos_map_backlog_samples = samplerate;
+
+class SpeedChanger
+{
+	/* Number of samples for each input value: */
+	int compress;
+
+	/* Amount to compress the sample: */
+	float rate;
+
+	/* Current sample: */
+	Uint32 cur_sample;
+
+	/* Number of inputs for this sample (once it reaches compress, it's complete). */
+	int sample_inputs;
+
+	float frac;
+
+	basic_string<Uint16> samples;
+
+	basic_string<Uint16> output;
+
+	static float cub(float fm1, float f0, float f1, float f2, float x);
+	void move_data();
+
+public:
+	SpeedChanger();
+	~SpeedChanger();
+	void Set(float speed);
+	void write(const Uint16 *buf, int size);
+	void eof(); /* no more data will be written */
+	unsigned read(Uint16 *buf, unsigned size);
+};
+
+SpeedChanger::SpeedChanger()
+{
+	compress = 1;
+	rate = 1;
+	cur_sample = sample_inputs = 0;
+	frac = 0;
+}
+
+SpeedChanger::~SpeedChanger()
+{
+}
+
+/* compute f(x) with a cubic interpolation */
+float SpeedChanger::cub(
+  float fm1, /* f(-1) */
+  float f0,  /* f(0)  */
+  float f1,  /* f(1)  */
+  float f2,  /* f(2)  */
+  float x)   /* 0.0 <= x < 1.0 */
+{
+    /* a x^3 + b x^2 + c x + d */
+    float a, b, c, d;
+
+    d = f0;
+    b = .5f * (f1+fm1) - f0;
+    a = 1/6.f * (f2-f1+fm1-f0-4.0f*b);
+    c = f1 - a - b - d;
+
+    return ((a * x + b) * x + c) * x + d;
+};
+
+#include <math.h>
+
+void SpeedChanger::Set(float speed)
+{
+	if(speed >= 1.0f)
+		compress = int(speed);
+	else
+		compress = 1;
+	
+	rate = speed / compress;
+
+	cur_sample = sample_inputs = 0;
+
+	/* previous value for interp: */
+	samples.insert(samples.end(), 0);
+}
+
+void SpeedChanger::write(const Uint16 *buf, int size)
+{
+	while(size)
+	{
+		cur_sample += buf[0];
+		buf++;
+		size--;
+		sample_inputs++;
+
+		if(sample_inputs == compress)
+			move_data();
+	}
+}
+
+void SpeedChanger::move_data()
+{
+	/* We have a complete sample.  Reduce it to the average: */
+	cur_sample /= compress;
+
+	/* Add it to the sample buffer: */
+	samples.insert(samples.end(), Uint16(cur_sample));
+	sample_inputs = cur_sample = 0;
+
+	if(samples.size() != 4)
+		return;
+
+	/* We have enough samples to interpolate. */
+	while(frac < 1)
+	{
+		float interp = cub(samples[0], samples[1],
+                samples[2], samples[3], frac);
+
+		Uint16 clipped;
+		if(interp > 65535) clipped = 65535u;
+		else if(interp < 0) clipped = 0;
+		else clipped = Uint16(interp);
+		output.insert(output.end(), clipped);
+		frac += rate;
+	}
+
+	frac -= 1;
+	samples.erase(samples.begin(), samples.begin()+1);
+}
+
+void SpeedChanger::eof()
+{
+	/* Feed null until all samples are empty. */
+
+	while(1)
+	{
+		Uint16 nothing = 0;
+		write(&nothing, 0);
+
+		int empty = true;
+		for(unsigned i = 0; empty && i < samples.size(); ++i)
+			if(samples[i]) empty = false;
+		if(empty) return;
+		move_data();
+	}
+}
+
+unsigned SpeedChanger::read(Uint16 *buf, unsigned size)
+{
+	size = min(size, output.size());
+	memcpy(buf, output.data(), size*sizeof(Uint16));
+	output.erase(output.begin(), output.begin() + size);
+	return size;
+}
 
 RageSound::RageSound()
 {
@@ -79,9 +227,9 @@ RageSound::RageSound()
 	stream.Sample = NULL;
 	position = 0;
 	playing = false;
-	Loop = false;
-	AutoStop = true;
+	StopMode = M_STOP;
 	speed = 1.0f;
+	speedchanger = NULL;
 	stream.buf.reserve(internal_buffer_size);
 	m_StartSample = 0;
 	m_LengthSamples = -1;
@@ -115,13 +263,13 @@ RageSound::RageSound(const RageSound &cpy)
 	big = cpy.big;
 	m_StartSample = cpy.m_StartSample;
 	m_LengthSamples = cpy.m_LengthSamples;
-	Loop = cpy.Loop;
+	StopMode = cpy.StopMode;
 	position = cpy.position;
 	playing = false;
-	speed = cpy.speed;
+	speed = 1;
+	speedchanger = NULL;
 	AccurateSync = cpy.AccurateSync;
-	AutoStop = cpy.AutoStop;
-	
+
 	if(big)
 	{
 		/* We can't copy the Sound_Sample, so load a new one. 
@@ -129,6 +277,9 @@ RageSound::RageSound(const RageSound &cpy)
 		stream.buf.reserve(internal_buffer_size);
 		Load(cpy.GetLoadedFilePath(), false);
 	}
+
+	if(cpy.speed != 1)
+		SetPlaybackRate(cpy.speed);
 
 	/* Load() won't work on a copy if m_sFilePath is already set, so
 	 * copy this down here. */
@@ -143,16 +294,40 @@ void RageSound::Unload()
 	if(IsPlaying())
 		StopPlaying();
 
-	Sound_FreeSample(stream.Sample);
+	delete stream.Sample;
 	stream.Sample = NULL;
-
+	
+	delete speedchanger;
+	speedchanger = NULL;
+	
 	m_sFilePath = "";
 	stream.buf.clear();
 
 	full_buf.erase();
 }
 
-void RageSound::Load(CString sSoundFilePath, bool cache)
+/* This is called upon fatal failure.  Replace the sound with silence. */
+void RageSound::Fail(CString reason)
+{
+	delete stream.Sample;
+	stream.Sample = NULL;
+
+	big = false;
+
+	full_buf.erase();
+	/* XXX untested
+	 * full_buf.append(0, 1024); should be OK, but VC6 is broken ... */
+	basic_string<char> empty(1024, 0);
+	full_buf.insert(full_buf.end(), empty.begin(), empty.end());
+	position = 0;
+	
+	LOG->Warn("Decoding %s failed: %s",
+		GetLoadedFilePath().GetString(), reason.GetString() );
+
+	error = reason;
+}
+
+bool RageSound::Load(CString sSoundFilePath, bool cache)
 {
 	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.GetString() );
 
@@ -168,12 +343,8 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 	sound_desired.format = AUDIO_S16SYS;
 	sound_desired.rate = samplerate;
 
-    Sound_Sample *NewSample = Sound_NewSampleFromFile(sSoundFilePath.GetString(),
-                    &sound_desired, read_block_size);
-
-	if( NewSample == NULL )
-		RageException::Throw( "RageSound::LoadSound: error loading %s: %s",
-		sSoundFilePath.GetString(), Sound_GetError() );
+    SoundReader *NewSample = new SoundReader_SDL_Sound;
+	NewSample->Open(sSoundFilePath.GetString());
 
 	/* Try to decode into full_buf. */
 	big = false;
@@ -182,10 +353,9 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 
 	/* Check the length, and see if we think it'll fit in the buffer. */
 	{
-		int len = Sound_Length(NewSample);
-		/* This will fail with EAGAIN if it'll take a while.  We only want
-		 * to do this if it's fast. */
-		if(len != -1) {
+		int len = NewSample->GetLength_Fast();
+		if(len != -1)
+		{
 			float secs = len / 1000.f;
 
 			int pcmsize = int(secs * samplerate * samplesize); /* seconds -> bytes */
@@ -194,40 +364,41 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 			else
 				full_buf.reserve(pcmsize);
 		}
-
-		Sound_Rewind(NewSample);
 	}
 
 	while(!big) {
-		int cnt = Sound_Decode(NewSample);
+		char buf[1024];
+		int cnt = NewSample->Read(buf, sizeof(buf));
 
-		if(cnt < 0)
-			RageException::Throw("Read error on %s: %s", 
-				sSoundFilePath.GetString(), Sound_GetError() ); /* XXX (see other error-handling XXX) */
+		if(cnt < 0) {
+			/* XXX untested */
+			Fail(Sound_GetError());
+			delete NewSample;
+			return false;
+		}
+
+		if(!cnt) break; /* eof */
 
 		/* Add the buffer. */
-		full_buf.append((const char *)NewSample->buffer, 
-			(const char *)NewSample->buffer+cnt);
+		full_buf.append(buf, buf+cnt);
 
 		if(full_buf.size() > max_prebuf_size) {
 			full_buf.erase();
 			big = true; /* too big */
 		}
-
-		if(NewSample->flags & SOUND_SAMPLEFLAG_EOF)
-			break;
 	}
 
 	if(big) {
 		/* Oops; we need to stream it. */
 		stream.Sample = NewSample;
-		Sound_Rewind(stream.Sample);
+		stream.Sample->SetPosition_Accurate(0);
 	} else {
 		/* We're done with the stream. */
-		Sound_FreeSample(NewSample);
+		delete NewSample;
 	}
 
 	position = 0;
+	return true;
 }
 
 void RageSound::SetStartSeconds( float secs )
@@ -247,50 +418,155 @@ void RageSound::SetLengthSeconds(float secs)
 void RageSound::Update(float delta)
 {
 	if(playing && big && delta)
-		stream.FillBuf(int(delta * samplerate * samplesize));
+		FillBuf(int(delta * samplerate * samplesize));
+}
+
+/* Return the number of bytes available in the input buffer. */
+int RageSound::Bytes_Available() const
+{
+	if(big)
+		return stream.buf.size();
+
+	unsigned byte_pos = position * samplesize; /* samples -> bytes */
+	if(byte_pos > full_buf.size())
+		return 0; /* eof */
+
+	return full_buf.size() - byte_pos;
 }
 
 /* Fill the buffer by about "bytes" worth of data.  (We might go a little
- * over, and we won't overflow our buffer.) */
-int RageSound::stream_t::FillBuf(int bytes)
+ * over, and we won't overflow our buffer.)  Return the number of bytes
+ * actually read; 0 = EOF. */
+int RageSound::FillBuf(int bytes)
 {
 	LockMut(SOUNDMAN->lock);
 
-	ASSERT(Sample);
+	if(!big)
+		return 0; /* prebuffer is already fully loaded */
+
+	ASSERT(stream.Sample);
 
 	bool got_something = false;
-	if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
-		return got_something; /* EOF */
+
+	bool at_eof = false;
 
 	while(bytes > 0)
 	{
-		if(buf.size()+read_block_size > buf.capacity())
+		if(read_block_size > stream.buf.capacity() - stream.buf.size())
 			break; /* full */
 
-		int cnt = Sound_Decode(Sample);
-		if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
-			return got_something; /* EOF */
-
-		if(Sample->flags & SOUND_SAMPLEFLAG_ERROR)
+		char inbuf[1024];
+		int cnt = 0;
+		if(speedchanger)
 		{
-			/* There was a fatal error; get it with Sound_GetError().
-			 * XXX: How should we handle sound errors?  We can't
-			 * just return error, since we're in a separate thread.
-			 * Most of the time we should probably just warn and move
-			 * on (no big deal), but the gameplay screen should query
-			 * periodically and do something more intelligent when we
-			 * fail (so we don't play out the rest of the song in
-			 * silence) ... */
-			RageException::Throw("Read error: %s",
-					Sound_GetError() );
+			unsigned input_size = stream.buf.capacity() - stream.buf.size();
+			input_size = min(input_size, sizeof(inbuf));
+			input_size /= sizeof(Uint16);
+
+			cnt = speedchanger->read((Uint16 *) inbuf, input_size);
+			cnt *= sizeof(Uint16);
+
+			stream.buf.write((const char *) inbuf, cnt);
+			bytes -= cnt;
+
+			if(cnt)
+				got_something = true;
+
+			if(!cnt)
+			{
+				/* Read input data. */
+				cnt = stream.Sample->Read(inbuf, sizeof(inbuf));
+				if(cnt == -1)
+				{
+					/* XXX untested */
+					Fail(Sound_GetError());
+
+					/* Pretend we got data; we actually just switched to a non-streaming
+					 * buffer. */
+					return true;
+				}
+				
+				if(cnt == 0)
+				{
+					if(!at_eof)
+					{
+						at_eof = true;
+						speedchanger->eof();
+						continue;
+					}
+
+					/* Really EOF. */
+					speedchanger->eof();
+					return got_something; /* EOF */
+				}
+
+				speedchanger->write((const Uint16 *) inbuf, cnt/2);
+			}
+			continue;
 		}
 
-		buf.write((const char *)Sample->buffer, cnt);
+		cnt = stream.Sample->Read(inbuf, sizeof(inbuf));
+		if(cnt == 0)
+			return got_something; /* EOF */
+
+		if(cnt == -1)
+		{
+			/* XXX untested */
+			Fail(Sound_GetError());
+
+			/* Pretend we got data; we actually just switched to a non-streaming
+			 * buffer. */
+			return true;
+		}
+
+		/* Add the data to the buffer. */
+		stream.buf.write((const char *) inbuf, cnt);
 		bytes -= cnt;
 		got_something = true;
 	}
 
 	return got_something;
+}
+
+/* Get a block of data from the input.  If buffer is NULL, just return the amount
+ * that would be read. */
+int RageSound::GetData(char *buffer, int size)
+{
+	if(m_LengthSamples != -1)
+	{
+		/* We have a length; only read up to the end.  MaxPosition is the
+		 * sample position of the end. */
+		int SamplesToRead = m_StartSample + m_LengthSamples - position;
+
+		/* If it's negative, we're past the end, so cap it at 0. Don't read
+		 * more than size. */
+		size = clamp(SamplesToRead * samplesize, 0, size);
+	}
+
+	int got;
+	if(position < 0) {
+		/* We havn't *really* started playing yet, so just feed silence.  How
+		 * many more bytes of silence do we need? */
+		got = -position * samplesize;
+		got = min(got, size);
+		if(buffer)
+			memset(buffer, 0, got);
+	} else if(big) {
+		/* Feed data out of our streaming buffer. */
+		ASSERT(stream.Sample);
+		got = min(int(stream.buf.size()), size);
+		if(buffer)
+			stream.buf.read(buffer, got);
+	} else {
+		/* Feed data out of our full buffer. */
+		int byte_pos = position * samplesize;
+		got = min(int(full_buf.size())-byte_pos, size);
+		got = max(got, 0);
+		if(buffer)
+			memcpy(buffer, full_buf.data()+byte_pos, got);
+	}
+
+	return got;
 }
 
 /* Called by the mixer: return a block of sound data. 
@@ -301,96 +577,59 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 
 	ASSERT(playing);
 
-	int bytes_stored = 0;
-
 	/* Erase old pos_map data. */
 	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples)
 		pos_map.pop_front();
 
-	/* "sampleno" is the audio driver's conception of time.  "position"
-	 * is ours. Keep track of sampleno->position mappings for two GetPCM calls.
+	/*
+	 * "sampleno" is the audio driver's conception of time.  "position"
+	 * is ours. Keep track of sampleno->position mappings.
 	 *
 	 * This way, when we query the time later on, we can derive position
 	 * values from the sampleno values returned from GetPosition.
-	 *
-	 * We need to keep two buffers worth of values, since we might loop at
-	 * the end of a buffer. */
+	 */
 
 	/* Now actually put data from the correct buffer into the output. */
+	int bytes_stored = 0;
 	while(size)
 	{
-		int got;
-		int MaxBytes = size;
-		if(m_LengthSamples != -1)
-		{
-			/* We have a length; only read up to the end.  MaxPosition is the
-			 * sample position of the end. */
-			int SamplesToRead = m_StartSample + m_LengthSamples - position;
-
-			/* If it's negative, we're past the end, so cap it at 0. Don't read
-			 * more than size. */
-			MaxBytes = clamp(SamplesToRead * samplesize, 0, size);
-		}
-
-		if(position < 0) {
-			/* We havn't *really* started playing yet, so just feed silence.  How
-			 * many more bytes of silence do we need? */
-			got = -position * samplesize;
-			got = min(got, MaxBytes);
-			memset(buffer, 0, got);
-		} else if(big) {
-			/* Feed data out of our streaming buffer. */
-			ASSERT(stream.Sample);
-			got = min(int(stream.buf.size()), MaxBytes);
-			stream.buf.read(buffer, got);
-		} else {
-			/* Feed data out of our full buffer. */
-			int byte_pos = position * samplesize;
-			got = min(int(full_buf.size())-byte_pos, MaxBytes);
-			got = max(got, 0);
-			memcpy(buffer, full_buf.data()+byte_pos, got);
-		}
+		/* Get a block of data. */
+		int got = GetData(buffer, size);
 
 		if(!got)
 		{
-			/* We need more data.  Find out if we've hit EOF. */
-			bool HitEOF = true;
-			if(big) {
-				/* If we don't have any data left buffered, fill the buffer by up to
-				 * as much as we need. */
-				if(stream.buf.size() || stream.FillBuf(size))
-					HitEOF = false; /* we have more */
-			} else {
-				unsigned byte_pos = position * samplesize; /* samples -> bytes */
-				if(byte_pos < full_buf.size())
-					HitEOF = false; /* we have more */
-			}
+			/* If we don't have any data left buffered, fill the buffer by
+			 * up to as much as we need. */
+			if(!Bytes_Available())
+				FillBuf(size);
 
-			/* If we've passed the stop point (m_StartSample+m_LengthSamples), pretend
-			 * we've hit EOF. */
-			if(m_LengthSamples != -1 &&
-					position >= m_StartSample+m_LengthSamples)
-				HitEOF = true;
+			/* If we got some data, we're OK. */
+			if(GetData(NULL, size) != 0)
+				continue; /* we have more */
 
-			if(!HitEOF)
-				continue;
-
-			if(Loop && m_LengthSamples == 0)
-			{
-				/* Oops.  Looping with seconds == 0 doesn't make much sense.
-				 * It might happen if we're given an empty sound file as input,
-				 * though.  Let's just stop. */
-				break;
-			}
-
-			/* We're at EOF.  If we're not looping, just stop. */
-			if(Loop && m_LengthSamples != 0)
+			/* We're at the end of the data.  If we're looping, rewind and restart. */
+			if(StopMode == M_LOOP)
 			{
 				/* Rewind and start over. */
 				SetPositionSamples(m_StartSample);
+
+				/* Make sure we can get some data.  If we can't, then we'll have
+				 * nothing to send and we'll just end up coming back here. */
+				if(!Bytes_Available()) FillBuf(size);
+				if(GetData(NULL, size) == 0)
+				{
+					LOG->Warn("Can't loop data in %s; no data available at start point %i",
+						GetLoadedFilePath().GetString(), m_StartSample);
+
+					/* Stop here. */
+					return bytes_stored;
+				}
+
 				continue;
 			}
-			if(AutoStop)
+
+			/* Not looping.  Normally, we'll just stop here. */
+			if(StopMode == M_STOP)
 				break;
 
 			/* We're out of data, but we're not going to stop, so fill in the
@@ -399,12 +638,12 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			got = size;
 		}
 
-		/* Save this sampleno/position map. */
-		pos_map.push_back(pos_map_t(sampleno, position, got/samplesize));
-
+		/* This block goes from position to position+got_samples. */
 		int got_samples = got / samplesize;  /* bytes -> samples */
 
-		/* This block goes from position to position+got_samples. */
+		/* Save this sampleno/position map. */
+		pos_map.push_back(pos_map_t(sampleno, position, got_samples));
+
 		const float FADE_TIME = 1.5f;
 
 		/* XXX: Loop shouldn't set fading; add a Fade_Time member?
@@ -413,7 +652,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 		 * m_LengthSamples is -1, we don't know the length we're playing.
 		 * (m_LengthSamples is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if(Loop && m_LengthSamples != -1) {
+		if(StopMode == M_LOOP && m_LengthSamples != -1) {
 			Sint16 *p = (Sint16 *) buffer;
 			int this_position = position;
 
@@ -430,7 +669,6 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 				this_position++;
 			}
 		}
-
 
 		bytes_stored += got;
 		position += got_samples;
@@ -450,7 +688,7 @@ void RageSound::StartPlaying()
 
 	ASSERT(!playing);
 
-	// Tell the sound manager to start mixing us
+	/* Tell the sound manager to start mixing us. */
 	playing = true;
 	SOUNDMAN->StartMixing(this);
 }
@@ -479,16 +717,14 @@ float RageSound::GetLengthSeconds()
 {
 	if(big) {
 		ASSERT(stream.Sample);
-
- 		int len = Sound_Length(stream.Sample);
-		if(len == -1 && stream.Sample->flags & SOUND_SAMPLEFLAG_EAGAIN) {
-			/* This indicates the length check will take a little while; call
-			 * it again to confirm. */
-			len = Sound_Length(stream.Sample);
-		}
+		int len = stream.Sample->GetLength();
 
 		if(len < 0)
-			return -1; /* XXX: put a Sound_GetError() error message somewhere */
+		{
+			LOG->Warn("GetLengthSeconds failed on %s: %s",
+				GetLoadedFilePath().GetString(), stream.Sample->GetError().c_str() );
+			return -1;
+		}
 
 		return len / 1000.f; /* ms -> secs */
 	} else {
@@ -503,14 +739,14 @@ float RageSound::GetPositionSeconds() const
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
-		return position / float(samplerate);
+		return speed * position / float(samplerate);
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so report the static position. */
 	{
 		if(pos_map.empty()) {
 			LOG->Trace("no data yet; %i", position);
-			return position / float(samplerate);
+			return speed * position / float(samplerate);
 		}
 	}
 
@@ -528,7 +764,7 @@ float RageSound::GetPositionSeconds() const
 			/* cur_sample lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
 			int diff = pos_map[i].position - pos_map[i].sampleno;
-			return float(cur_sample + diff) / samplerate;
+			return speed * float(cur_sample + diff) / samplerate;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
@@ -558,60 +794,94 @@ float RageSound::GetPositionSeconds() const
 	 * 3. Underflow; we'll be given a larger sample number than we know about.
 	 */
 
-	return closest_position / float(samplerate);
+	return speed * closest_position / float(samplerate);
 }
 
-void RageSound::SetPositionSeconds( float fSeconds )
+bool RageSound::SetPositionSeconds( float fSeconds )
 {
-	SetPositionSamples( fSeconds == -1? -1: int(fSeconds * samplerate) );
+	return SetPositionSamples( fSeconds == -1? -1: int(fSeconds * samplerate) );
 }
 
-void RageSound::SetPositionSamples( int samples )
+bool RageSound::SetPositionSamples( int samples )
 {
 	if(samples == -1)
 		samples = m_StartSample;
 
 	/* This can take a while.  Only lock the sound buffer if we're actually playing. */
-	SOUNDMAN->lock.Lock();
+	LockMutex L(SOUNDMAN->lock);
 
+	/* This can take a while.  Only hold the sound buffer if we're actually playing. */
 	if(!playing)
-	{
-		SOUNDMAN->lock.Unlock();
-		/* If we're already there, don't do anything. */
-		if(position == samples)
-			return;
-	}
+		L.Unlock();
+
+	/* If we're already there, don't do anything. */
+	if(position == samples)
+		return true;
 
 	position = samples;
 	if( samples < 0 )
 		samples = 0;
 
-	if(big) {
-		ASSERT(stream.Sample);
-		int ms = int(float(samples) * 1000.f / samplerate);
+	int ms = int(float(samples) * 1000.f / samplerate);
 
-		if(ms == 0)
-			Sound_Rewind(stream.Sample);
-		else if(AccurateSync)
-			Sound_AccurateSeek(stream.Sample, ms);
-		else
-		{
-RageTimer tm;
-			Sound_FastSeek(stream.Sample, ms);
-LOG->Trace("%f", tm.GetDeltaTime());
-		}
-		stream.buf.clear();
+	if(!big) {
+		/* Just make sure the position is in range. */
+		if(position*samplesize < int(full_buf.size()))
+			return true;
+
+		/* We were told to seek beyond EOF.  This could be a truncated file
+		 * or invalid data.  Warn about it and jump back to the beginning. */
+		LOG->Warn("SetPositionSamples: %i ms is beyond EOF in %s",
+			ms, GetLoadedFilePath().GetString());
+		position = 0;
+		return false;
 	}
 
-	if(playing)
-		SOUNDMAN->lock.Unlock();
+	stream.buf.clear();
+
+	ASSERT(stream.Sample);
+
+	int ret;
+	if(AccurateSync)
+		ret = stream.Sample->SetPosition_Accurate(ms);
+	else
+		ret = stream.Sample->SetPosition_Fast(ms);
+
+	if(ret == -1)
+	{
+		/* XXX untested */
+		Fail(Sound_GetError());
+		return false; /* failed */
+	}
+
+	if(ret == 0 && ms != 0)
+	{
+		/* We were told to seek somewhere, and we got 0 instead, which means
+		 * we passed EOF.  This could be a truncated file or invalid data.  Warn
+		 * about it and jump back to the beginning. */
+		LOG->Warn("SetPositionSamples: %i ms is beyond EOF in %s",
+			ms, GetLoadedFilePath().GetString());
+
+		position = 0;
+		return false; /* failed (but recoverable) */
+	}
+
+	return true;
 }
 
-void RageSound::SetPlaybackRate( float fScale )
+void RageSound::SetPlaybackRate( float NewSpeed )
 {
 	LockMut(SOUNDMAN->lock);
 
-	speed = fScale;
+	/* Scale the position to the new scale. XXX untested */
+	position *= int(speed / NewSpeed);
+
+	speed = NewSpeed;
+
+	if(!speedchanger)
+		speedchanger = new SpeedChanger;
+	
+	speedchanger->Set(speed);
 }
 
 /* This is used to start music.  It probably belongs in RageSoundManager. */
@@ -629,7 +899,7 @@ void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 	SetStartSeconds();
 	SetLengthSeconds();
 	SetPositionSamples();
-	SetLooping();
+	SetStopMode(M_LOOP);
 	StartPlaying();
 }
 

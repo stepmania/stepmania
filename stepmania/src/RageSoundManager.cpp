@@ -12,6 +12,7 @@
 
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
+#include "SDL_audio.h"
 
 RageSoundManager::RageSoundManager(CString drivers)
 {
