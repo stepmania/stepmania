@@ -39,10 +39,12 @@ wchar_t VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput 
 	if(button == MENU_BUTTON_RIGHT)
 	{
 		*nextChar = true;
-		if(currentMode == VKMODE_PROFILE)
-			return ' ';
-		else 
-			return '0';
+		switch( currentMode )
+		{
+		case VKMODE_PROFILE: return ' ';
+		case VKMODE_IP: return '0';
+		default: FAIL_M( ssprintf("%i", currentMode) );
+		}
 	}
 	else if(button == MENU_BUTTON_UP)
 	{
