@@ -14,7 +14,12 @@
 #include <set>
 #include "Foreach.h"
 #include "GameManager.h"
+#include "StyleUtil.h"
+#include "ThemeManager.h"
+#include "PrefsManager.h"
 
+#define SHOW_PLAY_MODE(pm)	THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
+#define SHOW_STYLE(ps)		THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
 
 void SaveCatalogXml()
 {
@@ -106,7 +111,8 @@ void SaveCatalogXml()
 		GAMESTATE->GetDifficultiesToShow( vDiffs );
 		for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
 		{
-			pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
+			XNode* pNode2 = pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
+			pNode2->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
 		}
 	}
 
@@ -117,7 +123,8 @@ void SaveCatalogXml()
 		GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
 		for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
 		{
-			pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
+			XNode* pNode2 = pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
+			pNode2->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );
 		}
 	}
 
@@ -128,7 +135,57 @@ void SaveCatalogXml()
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
 		for( vector<StepsType>::const_iterator iter = vStepsTypes.begin(); iter != vStepsTypes.end(); iter++ )
 		{
-			pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
+			XNode* pNode2 = pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
+			pNode2->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToThemedString(*iter) );
+		}
+	}
+
+	{
+		XNode* pNode = xml.AppendChild( "PlayModesToShow" );
+
+		FOREACH_PlayMode( pm )
+		{
+			if( !SHOW_PLAY_MODE(pm) )
+				continue;
+			XNode* pNode2 = pNode->AppendChild( "PlayMode", PlayModeToString(pm) );
+			pNode2->AppendAttr( "DisplayAs", PlayModeToThemedString(pm) );
+		}
+	}
+
+	{
+		XNode* pNode = xml.AppendChild( "StylesToShow" );
+
+		vector<const Style*> vpStyle;
+		GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vpStyle );
+		FOREACH( const Style*, vpStyle, pStyle )
+		{
+			if( !SHOW_STYLE(*pStyle) )
+				continue;
+			StyleID sID;
+			sID.FromStyle( (*pStyle) );
+			const Style *pStyle = sID.ToStyle();
+			XNode* pNode2 = pNode->AppendChild( sID.CreateNode() );
+			pNode2->AppendAttr( "DisplayAs", GAMEMAN->StyleToThemedString(pStyle) );
+		}
+	}
+
+	{
+		XNode* pNode = xml.AppendChild( "MetersToShow" );
+
+		for( int i=MIN_METER; i<=MAX_METER; i++ )
+		{
+			XNode* pNode2 = pNode->AppendChild( "Meter", ssprintf("Meter%d",i) );
+			pNode2->AppendAttr( "DisplayAs", ssprintf("%d",i) );
+		}
+	}
+
+	{
+		XNode* pNode = xml.AppendChild( "GradesToShow" );
+
+		FOREACH_UsedGrade( g )
+		{
+			XNode* pNode2 = pNode->AppendChild( "Grade", GradeToString(g) );
+			pNode2->AppendAttr( "DisplayAs", GradeToThemedString(g) );
 		}
 	}
 
