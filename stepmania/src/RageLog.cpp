@@ -17,6 +17,7 @@
 #include "RageUtil.h"
 #include "RageTimer.h"
 #include "RageFile.h"
+#include "RageThreads.h"
 #include <time.h>
 #include "ProductInfo.h"
 #if defined(WIN32) && !defined(_XBOX)
@@ -73,6 +74,10 @@ map<CString, CString> LogMaps;
 
 static RageFile g_fileLog, g_fileInfo;
 
+/* Mutex writes to the files.  Writing to files is not thread-aware, and this is the
+ * only place we write to the same file from multiple threads. */
+RageMutex *g_Mutex;
+
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
 extern const char *version_time;
@@ -91,6 +96,8 @@ enum {
 
 RageLog::RageLog()
 {
+	g_Mutex = new RageMutex;
+
 	m_bEnabled = true;
 	m_bFlush = false;
 	m_bTimestamping = false;
@@ -141,6 +148,9 @@ RageLog::~RageLog()
 	ShowLogOutput( false );
 	g_fileLog.Close();
 	g_fileInfo.Close();
+
+	delete g_Mutex;
+	g_Mutex = NULL;
 }
 
 void RageLog::SetLogging( bool b )
@@ -221,6 +231,8 @@ void RageLog::Warn( const char *fmt, ...)
 
 void RageLog::Write( int where, const CString &line )
 {
+	LockMut( *g_Mutex );
+
 	vector<CString> lines;
 	split( line, "\n", lines, false );
 	if( g_fileLog.IsOpen() && (where & WRITE_LOUD) )
