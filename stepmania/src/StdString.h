@@ -670,8 +670,6 @@ public:
 	{
 	}
 
-	const CT *GetString() const { return c_str(); }
-
 	// CStdStr inline assignment operators -- the ssasn function now takes care
 	// of fixing  the MSVC assignment bug (see knowledge base article Q172398).
 	MYTYPE& operator=(const MYTYPE& str)
