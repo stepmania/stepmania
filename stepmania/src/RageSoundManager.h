@@ -1,3 +1,5 @@
+/* RageSoundManager - A global singleton to interface RageSound and RageSoundDriver. */
+
 #ifndef RAGE_SOUND_MANAGER_H
 #define RAGE_SOUND_MANAGER_H
 
@@ -12,25 +14,6 @@ struct RageSoundParams;
 
 class RageSoundManager
 {
-	/* Set of sounds that we've taken over (and are responsible for deleting
-	 * when they're finished playing): */
-	set<RageSound *> owned_sounds;
-
-	/* A list of all sounds that currently exist, by ID. */
-	map<int,RageSound *> all_sounds;
-	
-	RageSoundDriver *driver;
-
-	/* Prefs: */
-	float MixVolume;
-	struct queued_pos_map_t
-	{
-		int ID, pos, got_frames;
-		int64_t frameno;
-	};
-
-	CircBuf<queued_pos_map_t> pos_map_queue;
-
 public:
 	RageSoundManager();
 	~RageSoundManager();
@@ -70,7 +53,26 @@ public:
 	static void AttenuateBuf( int16_t *buf, int samples, float vol );
 
 private:
+	/* Set of sounds that we've taken over (and are responsible for deleting
+	 * when they're finished playing): */
+	set<RageSound *> owned_sounds;
+
+	/* A list of all sounds that currently exist, by ID. */
+	map<int,RageSound *> all_sounds;
+	
+	RageSoundDriver *driver;
+
+	/* Prefs: */
+	float MixVolume;
+	struct queued_pos_map_t
+	{
+		int ID, pos, got_frames;
+		int64_t frameno;
+	};
+
+	CircBuf<queued_pos_map_t> pos_map_queue;
 	void FlushPosMapQueue();
+
 	RageSound *GetSoundByID( int ID );
 };
 

@@ -1,6 +1,4 @@
-/*
- * RageModelGeometry - stores model geometry 
- */
+/* RageModelGeometry - Stores mesh data. */
 
 #ifndef RAGE_MODEL_GEOMETRY_H
 #define RAGE_MODEL_GEOMETRY_H
@@ -24,7 +22,7 @@ public:
 	int m_iRefCount;
 
 	vector<msMesh> m_Meshes;
-    RageCompiledGeometry* m_pCompiledGeometry;	// video memory copy of geometry shared by all meshes
+	RageCompiledGeometry* m_pCompiledGeometry;	// video memory copy of geometry shared by all meshes
 
 	RageVector3 m_vMins, m_vMaxs;
 };

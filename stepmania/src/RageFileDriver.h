@@ -1,4 +1,4 @@
-/* RageFileDriver, RageFileObj: Low-level file access driver classes. */
+/* RageFileDriver - File driver base classes. */
 
 #ifndef RAGE_FILE_DRIVER_H
 #define RAGE_FILE_DRIVER_H

@@ -1,6 +1,4 @@
-/*
- * RageFile: high-level file abstraction
- */
+/* RageFile - High-level file access. */
 
 #ifndef RAGE_FILE_H
 #define RAGE_FILE_H

@@ -1,4 +1,4 @@
-/* RageInput: Starts up InputHandlers, which generate InputEvents. */
+/* RageInput - Starts up InputHandlers, which generate InputEvents. */
 
 #ifndef RAGEINPUT_H
 #define RAGEINPUT_H
@@ -8,8 +8,6 @@
 class InputHandler;
 class RageInput
 {
-	vector<InputHandler *> Devices;
-
 public:
 	RageInput( CString drivers );
 	~RageInput();
@@ -17,6 +15,9 @@ public:
 	void Update( float fDeltaTime );
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 	void WindowReset();
+
+private:
+	vector<InputHandler *> Devices;
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

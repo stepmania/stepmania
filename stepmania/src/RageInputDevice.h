@@ -1,5 +1,6 @@
-#ifndef RAGEINPUTDEVICE_H
-#define RAGEINPUTDEVICE_H 1
+/* RageInputDevice - User input types. */
+#ifndef RAGE_INPUT_DEVICE_H
+#define RAGE_INPUT_DEVICE_H
 
 #include "RageTimer.h"
 

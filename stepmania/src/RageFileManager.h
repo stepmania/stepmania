@@ -1,6 +1,4 @@
-/*
- * RageFileManager: File utilities and high-level manager for RageFile objects.
- */
+/* RageFileManager - File utilities and high-level manager for RageFile objects. */
 
 #ifndef RAGE_FILE_MANAGER_H
 #define RAGE_FILE_MANAGER_H

@@ -1,3 +1,5 @@
+/* RageFileDriverZip - A read-only file driver for ZIPs. */
+
 #ifndef RAGE_FILE_DRIVER_ZIP_H
 #define RAGE_FILE_DRIVER_ZIP_H
 
@@ -16,7 +18,7 @@ public:
 
 private:
 	RageFile zip;
-    vector<FileInfo *> Files;
+	vector<FileInfo *> Files;
 
 	void ParseZipfile();
 	static void ReadEndCentralRecord( RageFile &zip, end_central_dir_record &ec );

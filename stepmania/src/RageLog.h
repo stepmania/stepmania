@@ -1,6 +1,4 @@
-/*
- * RageLog - Manages logging.
- */
+/* RageLog - Manages logging. */
 
 #ifndef RAGELOG_H
 #define RAGELOG_H

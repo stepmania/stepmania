@@ -1,4 +1,4 @@
-/* RageFileDriverTimeOut - manipulate files with a forced timeout */
+/* RageFileDriverTimeOut - manipulate files with a forced timeout. */
 
 #ifndef RAGE_FILE_DRIVER_TIMEOUT_H
 #define RAGE_FILE_DRIVER_TIMEOUT_H
