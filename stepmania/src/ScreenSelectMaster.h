@@ -9,6 +9,8 @@
 #include "ActorUtil.h"
 #include "ActorScroller.h"
 
+#define MAX_CHOICES 30
+
 class ScreenSelectMaster : public ScreenSelect
 {
 public:
@@ -55,7 +57,7 @@ protected:
 	float GetCursorY( PlayerNumber pn, int iPartIndex );
 
 	AutoActor	m_sprExplanation[NUM_PAGES];
-	Sprite	m_sprMore[NUM_PAGES];
+	AutoActor	m_sprMore[NUM_PAGES];
 #define MAX_ICON_PARTS 3
 	// icon is the piece shared, per-choice piece
 	AutoActor m_sprIcon[MAX_ICON_PARTS][MAX_CHOICES];
@@ -64,7 +66,7 @@ protected:
 	AutoActor m_sprPreview[MAX_PREVIEW_PARTS][MAX_CHOICES][NUM_PLAYERS];
 #define MAX_CURSOR_PARTS 3
 	// cursor is the per-player that's shared by all choices
-	Sprite	m_sprCursor[MAX_CURSOR_PARTS][NUM_PLAYERS];
+	AutoActor	m_sprCursor[MAX_CURSOR_PARTS][NUM_PLAYERS];
 	// scroll is the per-player, per-choice piece that's scrolled
 	AutoActor	m_sprScroll[MAX_CHOICES][NUM_PLAYERS];
 	ActorScroller	m_Scroller[NUM_PLAYERS];

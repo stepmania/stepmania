@@ -41,6 +41,8 @@ const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
+
+	// TODO: Move default choice to ScreenSelect
 	int iDefaultChoice = -1;
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
@@ -65,9 +67,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 		{
 			CString sFName = ssprintf("%s Cursor Part%d", m_sName.c_str(),i+1);
-			m_sprCursor[i][0].SetName( ssprintf("CursorPart%d",i+1) );
 			m_sprCursor[i][0].Load( THEME->GetPathToG(sFName) );
-			this->AddChild( &m_sprCursor[i][0] );
+			m_sprCursor[i][0]->SetName( ssprintf("CursorPart%d",i+1) );
+			this->AddChild( m_sprCursor[i][0] );
 		}
 	}
 	else
@@ -77,9 +79,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			FOREACH_HumanPlayer( p )
 			{
 				CString sFName = ssprintf("%s Cursor Part%d P%d", m_sName.c_str(),i+1,p+1);
-				m_sprCursor[i][p].SetName( ssprintf("CursorPart%dP%d",i+1,p+1) );
 				m_sprCursor[i][p].Load( THEME->GetPathToG(sFName) );
-				this->AddChild( &m_sprCursor[i][p] );
+				m_sprCursor[i][p]->SetName( ssprintf("CursorPart%dP%d",i+1,p+1) );
+				this->AddChild( m_sprCursor[i][p] );
 			}
 		}
 	}
@@ -178,9 +180,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
 		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("%s more page%d",m_sName.c_str(), page+1) ) );
-		this->AddChild( &m_sprMore[page] );
+		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
+		this->AddChild( m_sprMore[page] );
 
 		m_sprExplanation[page].Load( THEME->GetPathToG( ssprintf("%s explanation page%d",m_sName.c_str(), page+1) ) );
 		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
@@ -278,7 +280,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			{
 				for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 				{
-					m_sprCursor[i][0].SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
+					m_sprCursor[i][0]->SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
 					COMMAND( m_sprCursor[i][0], "PostSwitchPage" );
 				}
 			}
@@ -287,7 +289,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 				for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 					FOREACH_HumanPlayer( p )
 					{
-						m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
+						m_sprCursor[i][p]->SetXY( GetCursorX(p,i), GetCursorY(p,i) );
 						COMMAND( m_sprCursor[i][p], "PostSwitchPage" );
 					}
 			}
@@ -333,13 +335,10 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 			COMMAND( m_sprIcon[i][c], m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;
-
 		if( !m_aGameCommands[m_iChoice[p]].IsPlayable() )
-			Move( (PlayerNumber) p, DIR_AUTO );
+			Move( p, DIR_AUTO );
 		ASSERT( m_aGameCommands[m_iChoice[p]].IsPlayable() );
 	}
 }
@@ -521,7 +520,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 			for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 			{
 				COMMAND( m_sprCursor[i][0], "Change" );
-				m_sprCursor[i][0].SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
+				m_sprCursor[i][0]->SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
 			}
 		}
 		else
@@ -529,7 +528,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 			for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 			{
 				COMMAND( m_sprCursor[i][p], "Change" );
-				m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
+				m_sprCursor[i][p]->SetXY( GetCursorX(p,i), GetCursorY(p,i) );
 			}
 		}
 
@@ -576,13 +575,13 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
 		OFF_COMMAND( m_sprMore[page] );
-		fSecs = max( fSecs, m_sprMore[page].GetTweenTimeLeft() );
+		fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
 	}
 
 	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 	{
 		COMMAND( m_sprCursor[i][pn], "Choose");
-		fSecs = max( fSecs, m_sprCursor[i][pn].GetTweenTimeLeft() );
+		fSecs = max( fSecs, m_sprCursor[i][pn]->GetTweenTimeLeft() );
 	}
 
 	return fSecs;
@@ -672,7 +671,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 		{
-			m_sprCursor[i][0].SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
+			m_sprCursor[i][0]->SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
 			ON_COMMAND( m_sprCursor[i][0] );
 		}
 	}
@@ -681,7 +680,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 			FOREACH_HumanPlayer( p )
 			{
-				m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
+				m_sprCursor[i][p]->SetXY( GetCursorX(p,i), GetCursorY(p,i) );
 				ON_COMMAND( m_sprCursor[i][p] );
 			}
 	}
@@ -710,7 +709,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	
 	for (int page=0;page<NUM_PAGES;page++)
 	{
-		m_sprMore[page].SetXY(999,999);
+		m_sprMore[page]->SetXY(999,999);
 		m_sprExplanation[page]->SetXY(999,999);
 	}
 
