@@ -216,12 +216,12 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
-		throw RageException( "Error opening song file '%s' for writing.", sPath );
+		throw RageException( "Error opening song file '%s' for writing.", sPath.GetString() );
 
 	if(out.GetFullTitle().GetLength() != 0)
-		fprintf( fp, "#TITLE:%s;\n", out.GetFullTitle() );
+		fprintf( fp, "#TITLE:%s;\n", out.GetFullTitle().GetString() );
 	if(out.m_sArtist.GetLength() != 0)
-		fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist );
+		fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist.GetString() );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
 	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
 	fprintf( fp, "#GAP:%d;\n", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 )) );

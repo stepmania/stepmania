@@ -222,7 +222,7 @@ void RageBitmapTexture::Create(
 		D3DPOOL_MANAGED,			// which memory pool
 		&m_pd3dTexture) ))
 	{
-		throw RageException( hr, "CreateTexture() failed for file '%s'.", m_sFilePath );
+		throw RageException( hr, "CreateTexture() failed for file '%s'.", m_sFilePath.GetString() );
 	}
 
 	{
@@ -297,7 +297,7 @@ void RageBitmapTexture::Create(
 	{
 		D3DLOCKED_RECT d3dlr;
 		if( FAILED( hr=m_pd3dTexture->LockRect(0, &d3dlr, 0, 0) ) )
-			throw RageException( hr, "LockRect failed for file '%s'.", m_sFilePath );
+			throw RageException( hr, "LockRect failed for file '%s'.", m_sFilePath.GetString() );
 
 		memcpy( (byte *)(d3dlr.pBits), img->pixels, img->h*img->pitch );
 		ASSERT( !FAILED( m_pd3dTexture->UnlockRect(0) ) ) ;
@@ -305,7 +305,7 @@ void RageBitmapTexture::Create(
 
 	SDL_FreeSurface(img);
 	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bStretch = %d, source %d,%d;  image %d,%d.", 
-		m_sFilePath, GetTextureWidth(), GetTextureHeight(),
+		m_sFilePath.GetString(), GetTextureWidth(), GetTextureHeight(),
 		bStretch, m_iSourceWidth, m_iSourceHeight,
 		m_iImageWidth,	m_iImageHeight);
 }
@@ -347,7 +347,7 @@ void RageBitmapTexture::Create(
 	D3DXIMAGE_INFO ddii;
 	if( FAILED( hr = D3DXGetImageInfoFromFile(m_sFilePath,&ddii) ) )
 	{
-        throw RageException( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
+        throw RageException( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath.GetString() );
 	}
 
 
@@ -402,7 +402,7 @@ void RageBitmapTexture::Create(
 				::Sleep( 10 );
 				continue;
 			}
-			throw RageException( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
+			throw RageException( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath.GetString() );
 		}
 		else
 			break;
@@ -435,7 +435,7 @@ void RageBitmapTexture::Create(
 	}
 
 	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bStretch = %d, source %d,%d;  image %d,%d.", 
-		m_sFilePath, 
+		m_sFilePath.GetString(), 
 		GetTextureWidth(), 
 		GetTextureHeight(),
 		bStretch,

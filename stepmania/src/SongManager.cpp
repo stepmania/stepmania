@@ -69,16 +69,16 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.
 	CStringArray arrayFiles;
-	GetDirListing( ssprintf("%s\\*.mp3", sDir), arrayFiles );
-	GetDirListing( ssprintf("%s\\*.ogg", sDir), arrayFiles );
-	GetDirListing( ssprintf("%s\\*.wav", sDir), arrayFiles );
+	GetDirListing( sDir + "\\*.mp3", arrayFiles );
+	GetDirListing( sDir + "\\*.ogg", arrayFiles );
+	GetDirListing( sDir + "\\*.wav", arrayFiles );
 	if( arrayFiles.GetSize() > 0 )
 		throw RageException( 
-			ssprintf( "The folder '%s' contains music files.\n\n"
-				"This probably means that you have a song outside of a group folder.\n"
-				"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"
-				"See the StepMania readme for more info.",
-				ssprintf("%s\\%s", sDir ) )
+			"The folder '%s' contains music files.\n\n"
+			"This means that you have a music outside of a song folder.\n"
+			"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"
+			"See the StepMania readme for more info.",
+			sDir.GetString()
 		);
 	
 }
@@ -94,16 +94,16 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 
 	// Look for a group banner in this group folder
 	CStringArray arrayGroupBanners;
-	GetDirListing( ssprintf("%s\\%s\\*.png", sDir, sGroupDirName), arrayGroupBanners );
-	GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir, sGroupDirName), arrayGroupBanners );
-	GetDirListing( ssprintf("%s\\%s\\*.gif", sDir, sGroupDirName), arrayGroupBanners );
-	GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir, sGroupDirName), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.png", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.gif", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
 	CString sBannerPath;
 
 	if( arrayGroupBanners.GetSize() > 0 )
 	{
-		sBannerPath = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
-		LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, sBannerPath) );
+		sBannerPath = ssprintf("%s\\%s\\%s", sDir.GetString(), sGroupDirName.GetString(), arrayGroupBanners[0].GetString() );
+		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.GetString(), sBannerPath.GetString() );
 	}
 
 	m_arrayGroupNames.Add( sGroupDirName );
@@ -131,7 +131,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
-		GetDirListing( ssprintf("%s\\%s\\*.*", sDir, sGroupDirName), arraySongDirs, true );
+		GetDirListing( ssprintf("%s\\%s\\*.*", sDir.GetString(), sGroupDirName.GetString()), arraySongDirs, true );
 		SortCStringArray( arraySongDirs );
 
 		int j;
@@ -145,11 +145,11 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
-			GAMESTATE->m_sLoadingMessage = ssprintf("Loading songs...\n%s\n%s", sGroupDirName, sSongDirName);
+			GAMESTATE->m_sLoadingMessage = ssprintf("Loading songs...\n%s\n%s", sGroupDirName.GetString(), sSongDirName.GetString());
 			if( callback )
 				callback();
 			Song* pNewSong = new Song;
-			if( !pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName) ) ) {
+			if( !pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir.GetString(), sGroupDirName.GetString(), sSongDirName.GetString()) ) ) {
 				/* The song failed to load. */
 				delete pNewSong;
 				continue;
@@ -189,7 +189,7 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 	// now we've got the listing of the mix directories
 	// and we need to use THOSE directories to find our
 	// dwis
-	GetDirListing( ssprintf("%s\\Songs\\*.*", DWIHome ), MixDirs, true );
+	GetDirListing( ssprintf("%s\\Songs\\*.*", DWIHome ), MixDirs.GetString(), true );
 	SortCStringArray( MixDirs );
 	
 	for( int i=0; i< MixDirs.GetSize(); i++ )	// for each dir in /Songs/
@@ -200,14 +200,14 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 		sDirName.MakeLower();
 		if( sDirName == "cvs" )	// ignore the directory called "CVS"
 			continue;
-		GetDirListing( ssprintf("%s\\Songs\\%s\\*.*", DWIHome, MixDirs[i]), arrayDirs,  true);
+		GetDirListing( ssprintf("%s\\Songs\\%s\\*.*", DWIHome.GetString(), MixDirs[i].GetString()), arrayDirs,  true);
 		SortCStringArray(arrayDirs, true);
 
 		for( int b = 0; b < arrayDirs.GetSize(); b++)
 		{
 			// Find all DWIs in this directory
 			CStringArray arrayDWIFiles;
-			GetDirListing( ssprintf("%s\\Songs\\%s\\%s\\*.dwi", DWIHome, MixDirs[i], arrayDirs[b]), arrayDWIFiles, false);
+			GetDirListing( ssprintf("%s\\Songs\\%s\\%s\\*.dwi", DWIHome.GetString(), MixDirs[i].GetString(), arrayDirs[b].GetString()), arrayDWIFiles, false);
 			SortCStringArray( arrayDWIFiles );
 
 			for( int j=0; j< arrayDWIFiles.GetSize(); j++ )	// for each DWI file
@@ -219,7 +219,7 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 				DWILoader ld;
 				Song* pNewSong = new Song;
 				ld.LoadFromDWIFile(
-					ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome, MixDirs[i], arrayDirs[b], sDWIFileName),
+					ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome.GetString(), MixDirs[i].GetString(), arrayDirs[b].GetString(), sDWIFileName.GetString()),
 					*pNewSong);
 				m_pSongs.Add( pNewSong );
 			}
@@ -252,7 +252,7 @@ void SongManager::ReadStatisticsFromDisk()
 	IniFile ini;
 	ini.SetPath( g_sStatisticsFileName );
 	if( !ini.ReadFile() ) {
-		LOG->Trace( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
+		LOG->Trace( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName.GetString() );
 		return;		// load nothing
 	}
 
@@ -348,11 +348,11 @@ void SongManager::SaveStatisticsToDisk()
 
 			// Each value has the format "SongName::NotesName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s::%s", pSong->m_sSongDir, GameManager::NotesTypeToString(pNotes->m_NotesType), pNotes->m_sDescription );
+			CString sName = ssprintf( "%s::%s::%s", pSong->m_sSongDir.GetString(), GameManager::NotesTypeToString(pNotes->m_NotesType).GetString(), pNotes->m_sDescription.GetString() );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
 				pNotes->m_iNumTimesPlayed,
-				GradeToString( pNotes->m_TopGrade ),
+				GradeToString( pNotes->m_TopGrade ).GetString(),
 				pNotes->m_iTopScore, 
 				pNotes->m_iMaxCombo
 			);

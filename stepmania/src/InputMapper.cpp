@@ -72,7 +72,7 @@ void InputMapper::ReadMappingsFromDisk()
 	IniFile ini;
 	ini.SetPath( sPath );
 	if( !ini.ReadFile() )
-		LOG->Warn( "could not input mapping file '%s'.", sPath );
+		LOG->Warn( "could not input mapping file '%s'.", sPath.GetString() );
 
 	IniFile::const_iterator Key = ini.GetKey( "Input" );
 
@@ -121,7 +121,7 @@ void InputMapper::SaveMappingsToDisk()
 			GameInput GameI( (GameController)i, (GameButton)j );
 			sNameString = GameI.toString();
 			sValueString = ssprintf( "%s,%s,%s", 
-				m_GItoDI[i][j][0].toString(), m_GItoDI[i][j][1].toString(), m_GItoDI[i][j][2].toString() );
+				m_GItoDI[i][j][0].toString().GetString(), m_GItoDI[i][j][1].toString().GetString(), m_GItoDI[i][j][2].toString().GetString() );
 			
 			ini.SetValue( "Input", sNameString, sValueString );
 		}

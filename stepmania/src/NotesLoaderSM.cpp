@@ -49,7 +49,7 @@ void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromSMDir(%s)", sPath );
+	LOG->Trace( "Song::LoadFromSMDir(%s)", sPath.GetString() );
 
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
@@ -59,7 +59,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath );
+		throw RageException( "Error opening file '%s'.", sPath.GetString() );
 
 	for( i=0; i<msd.m_iNumValues; i++ )
 	{
@@ -131,7 +131,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			else if(!stricmp(sParams[1],"ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ROULETTE;
 			else
-				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, \"%s\"; ignored.", sPath, sParams[1]);
+				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.GetString(), sParams[1].GetString());
 		}
 
 		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
@@ -201,7 +201,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 			if( iNumParams != 7 )
 			{
-				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath, iNumParams, 7 );
+				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath.GetString(), iNumParams, 7 );
 			}
 			else
 			{
@@ -217,7 +217,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		}
 
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName );
+			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
 
 	return true;
@@ -230,7 +230,7 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.GetSize() > 1 )
-		throw RageException( "There is more than one SM file in '%s'.  There should be only one!", sPath );
+		throw RageException( "There is more than one SM file in '%s'.  There should be only one!", sPath.GetString() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */

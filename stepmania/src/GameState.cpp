@@ -248,7 +248,7 @@ CString GameState::GetStageText()
 		default:sNumberSuffix = "th";	break;
 		}
 	}
-	return ssprintf( "%d%s", iStageNo, sNumberSuffix );
+	return ssprintf( "%d%s", iStageNo, sNumberSuffix.GetString() );
 }
 
 RageColor GameState::GetStageColor()

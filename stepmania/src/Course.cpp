@@ -27,7 +27,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 {
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
-		throw RageException( "Error opening CRS file '%s'.", sPath );
+		throw RageException( "Error opening CRS file '%s'.", sPath.GetString() );
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
@@ -74,8 +74,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 
 			if(!sSongDir.GetLength()) {
 			    /* Err. */
-			    LOG->Trace( "Course file \"%s\" has an empty #SONG.  Ignored.",
-				            (const char *) sPath, (const char *) sSongDir);
+			    LOG->Trace( "Course file '%s' has an empty #SONG.  Ignored.", sPath.GetString(), sSongDir.GetString() );
 			    continue;
 			}
 
@@ -132,7 +131,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 		}
 
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName );
+			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
 }
 

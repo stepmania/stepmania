@@ -163,7 +163,7 @@ try_element_again:
 	if( asPossibleElementFilePaths.GetSize() == 0 )
 	{
 #ifdef _DEBUG
-		switch( AfxMessageBox( ssprintf("The theme element %s/%s is missing.",sAssetCategory,sFileName), MB_ABORTRETRYIGNORE ) )
+		switch( AfxMessageBox( ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString()), MB_ABORTRETRYIGNORE ) )
 		{
 		case IDRETRY:
 			goto try_element_again;
@@ -171,16 +171,16 @@ try_element_again:
 		case IDABORT:
 #endif
 			throw RageException( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-				sAssetCategory,
-				sFileName, 
+				sAssetCategory.GetString(),
+				sFileName.GetString(), 
 				GetThemeDirFromName(m_sCurThemeName), 
 				GetThemeDirFromName(BASE_THEME_NAME) );
 #ifdef _DEBUG
 		case IDIGNORE:
 			LOG->Warn( 
 				"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-				sAssetCategory,
-				sFileName, 
+				sAssetCategory.GetString(),
+				sFileName.GetString(), 
 				GetThemeDirFromName(m_sCurThemeName), 
 				GetThemeDirFromName(BASE_THEME_NAME) );
 			return GetPathTo( sAssetCategory, "_missing" );
@@ -207,10 +207,10 @@ try_element_again:
 		if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
 		{
 #ifdef _DEBUG
-			if( IDRETRY == AfxMessageBox( ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath), MB_RETRYCANCEL ) )
+			if( IDRETRY == AfxMessageBox( ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString()), MB_RETRYCANCEL ) )
 				goto try_element_again;
 #endif
-			throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath ); 
+			throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString() ); 
 		}
 		else
 			return sNewFilePath;
@@ -253,15 +253,15 @@ try_metric_again:
 	}
 
 #ifdef _DEBUG
-	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName,sValueName), MB_RETRYCANCEL ) )
+	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()), MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
 
 	throw RageException( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
-		sClassName,
-		sValueName,
-		sCurMetricPath, 
-		sDefaultMetricPath
+		sClassName.GetString(),
+		sValueName.GetString(),
+		sCurMetricPath.GetString(), 
+		sDefaultMetricPath.GetString()
 		);
 }
 
@@ -289,7 +289,7 @@ RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", szValue, sClassName, sValueName );
+		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", szValue, sClassName.GetString(), sValueName.GetString() );
 		ASSERT(0);
 	}
 

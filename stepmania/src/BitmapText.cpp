@@ -75,7 +75,7 @@ BitmapText::~BitmapText()
 
 bool BitmapText::LoadFromFont( CString sFontFilePath )
 {
-	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
+	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath.GetString() );
 
 	if( m_pFont ) {
 		FONT->UnloadFont( m_pFont->m_sTexturePath );
@@ -91,7 +91,7 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 
 bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 {
-	LOG->Trace( "BitmapText::LoadFromTextureAndChars(%s)", sTexturePath );
+	LOG->Trace( "BitmapText::LoadFromTextureAndChars(%s)", sTexturePath.GetString() );
 
 	if( m_pFont ) {
 		FONT->UnloadFont( m_pFont->m_sTexturePath );
@@ -239,7 +239,7 @@ void BitmapText::DrawPrimitives()
 			const char c = szLine[j];
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-				throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
+				throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath.GetString(), c );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
 			// The right side of any italic letter is being cropped.  So, we're going to draw a little bit

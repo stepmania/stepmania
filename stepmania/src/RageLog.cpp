@@ -71,8 +71,8 @@ void RageLog::Trace( const char *fmt, ...)
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
 
-	fprintf( m_fileLog, "%s\n", sBuff ); 
-	printf( "%s\n", sBuff ); 
+	fprintf( m_fileLog, "%s\n", sBuff.GetString() ); 
+	printf( "%s\n", sBuff.GetString() ); 
 	CrashLog(sBuff);
 
 #ifdef DEBUG
@@ -88,7 +88,7 @@ void RageLog::Trace( HRESULT hr, const char *fmt, ...)
     va_end(va);
 
 	s += ssprintf( "(%s)", DXGetErrorString8(hr) );
-	this->Trace( "%s", s );
+	this->Trace( "%s", s.GetString() );
 }
 
 void RageLog::Warn( const char *fmt, ...)
@@ -101,7 +101,7 @@ void RageLog::Warn( const char *fmt, ...)
 	Trace(  "/////////////////////////////////////////\n"
 			"WARNING:  %s\n"
 			"/////////////////////////////////////////",
-			sBuff ); 
+			sBuff.GetString() ); 
 }
 
 void RageLog::Flush()

@@ -57,19 +57,19 @@ Notes::~Notes()
 void Notes::WriteSMNotesTag( FILE* fp )
 {
 	fprintf( fp, "\n//---------------%s - %s----------------\n",
-		GameManager::NotesTypeToString(m_NotesType), m_sDescription );
+		GameManager::NotesTypeToString(m_NotesType).GetString(), m_sDescription.GetString() );
 	fprintf( fp, "#NOTES:\n" );
-	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(m_NotesType) );
-	fprintf( fp, "     %s:\n", m_sDescription );
-	fprintf( fp, "     %s:\n", DifficultyToString(m_Difficulty) );
+	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(m_NotesType).GetString() );
+	fprintf( fp, "     %s:\n", m_sDescription.GetString() );
+	fprintf( fp, "     %s:\n", DifficultyToString(m_Difficulty).GetString() );
 	fprintf( fp, "     %d:\n", m_iMeter );
 	
 	CStringArray asRadarValues;
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 		asRadarValues.Add( ssprintf("%.3f", m_fRadarValues[r]) );
-	fprintf( fp, "     %s:\n", join(",",asRadarValues) );
+	fprintf( fp, "     %s:\n", join(",",asRadarValues).GetString() );
 
-	fprintf( fp, "%s;\n", m_sSMNoteData );
+	fprintf( fp, "%s;\n", m_sSMNoteData.GetString() );
 }
 
 void Notes::SetNoteData( NoteData* pNewNoteData )

@@ -1032,7 +1032,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 			"Would you like to save these changes back\n"
 			"to the song file?\n"
 			"Choosing NO will discard your changes.",
-			GAMESTATE->m_pCurSong->GetFullTitle() );
+			GAMESTATE->m_pCurSong->GetFullTitle().GetString() );
 		break;
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:

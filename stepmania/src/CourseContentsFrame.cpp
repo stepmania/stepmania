@@ -106,7 +106,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 		if( pNotes == NULL )
 			continue;	// skip
 
-		printf( "Adding song '%s'\n", pSong->m_sMainTitle );
+		printf( "Adding song '%s'\n", pSong->m_sMainTitle.GetString() );
 		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );
 		m_CourseContentDisplays[m_iNumContents].SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT );
 		m_CourseContentDisplays[m_iNumContents].StopTweening();

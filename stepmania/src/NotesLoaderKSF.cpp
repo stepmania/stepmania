@@ -11,12 +11,12 @@
 
 bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 {
-	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath );
+	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath.GetString() );
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath );
+		throw RageException( "Error opening file '%s'.", sPath.GetString() );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
 	CString iStep;			// this is the value we read for STEP
@@ -39,7 +39,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	if( iTickCount == -1 )
 	{
 		iTickCount = 2;
-		LOG->Warn( "%s:\nTICKCOUNT not found; defaulting to %i", sPath, iTickCount );
+		LOG->Warn( "%s:\nTICKCOUNT not found; defaulting to %i", sPath.GetString(), iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -146,13 +146,13 @@ void KSFLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 {
-	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir );
+	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.GetString() );
 
 	CStringArray arrayKSFFileNames;
 	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
 
 	if( arrayKSFFileNames.GetSize() == 0 )
-		throw RageException( "Couldn't find any KSF files in '%s'", sDir );
+		throw RageException( "Couldn't find any KSF files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the KSF files
 	for( int i=0; i<arrayKSFFileNames.GetSize(); i++ ) 
@@ -167,7 +167,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s'.", sPath );
+		throw RageException( "Error opening file '%s'.", sPath.GetString() );
 
 	for( i=0; i<msd.m_iNumValues; i++ )
 	{
@@ -238,7 +238,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 				 0==stricmp(sValueName,"DIFFICULTY"))
 			; /* Handled in LoadFromKSFFile; don't warn. */
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName );
+			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
 
 	// search for music with song in the file name

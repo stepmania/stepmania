@@ -244,13 +244,13 @@ bool DWILoader::LoadFromDWITokens(
 
 bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath );
+	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.GetString() );
 	
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
-		throw RageException( "Error opening file '%s' for reading.", sPath );
+		throw RageException( "Error opening file '%s' for reading.", sPath.GetString() );
 
 	for( int i=0; i<msd.m_iNumValues; i++ )
 	{
@@ -329,7 +329,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if(arrayBPMChangeValues.GetSize() != 2) {
-					LOG->Warn( "Invalid CHANGEBPM: \"%s\"", arrayBPMChangeExpressions[b]);
+					LOG->Warn( "Invalid CHANGEBPM: '%s'", arrayBPMChangeExpressions[b].GetString());
 					continue;
 				}
 				float fIndex = (float)atof( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
@@ -378,7 +378,7 @@ bool DWILoader::LoadFromDir( CString sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.GetSize() > 1 )
-		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sPath );
+		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sPath.GetString() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */

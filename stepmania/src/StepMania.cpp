@@ -220,6 +220,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 			SetCurrentDirectory( szFullAppPath );
 		}
 
+		/*
+		This was a stupid idea...  -Chris
+
 		//
 		// Check for packages in the AutoInstall folder
 		//
@@ -227,7 +230,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 		GetDirListing( "AutoInstall\\*.smzip", asPackagePaths, false, true );
 		for( i=0; i<asPackagePaths.GetSize(); i++ )
 		{
-			CString sCommandLine = ssprintf( "smpackage.exe %s", asPackagePaths[i] );
+			CString sCommandLine = ssprintf( "smpackage.exe %s", asPackagePaths[i].GetString() );
 
 			PROCESS_INFORMATION pi;
 			STARTUPINFO	si;
@@ -246,7 +249,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 				&pi  // pointer to PROCESS_INFORMATION
 			);
 		}
-
+		*/
 
 		CoInitialize (NULL);    // Initialize COM
 
@@ -360,7 +363,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 				"Exception: %s\n"
 				"//////////////////////////////////////////////////////\n"
 				"\n",
-				g_sErrorString
+				g_sErrorString.GetString()
 				);
 		}
 
@@ -1040,7 +1043,7 @@ void ApplyGraphicOptions()
 		iDisplayHeight, 
 		iTextureSize, 
 		iTextureSize,
-		bWindowed ? "" : ssprintf(", %dHz", iRefreshRate) 
+		bWindowed ? "" : ssprintf(", %dHz", iRefreshRate).GetString() 
 		);
 
 	//

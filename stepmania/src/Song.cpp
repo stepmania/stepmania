@@ -267,7 +267,7 @@ bool Song::LoadWithoutCache( CString sDir )
 	NotesLoader *ld = MakeLoader( sDir );
 	if(!ld)
 	{
-		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir );
+		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir.GetString() );
 		return false;
 	}
 
@@ -288,7 +288,7 @@ bool Song::LoadWithoutCache( CString sDir )
 
 bool Song::LoadFromSongDir( CString sDir )
 {
-	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir );
+	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.GetString() );
 
 	// make sure there is a trailing '\\' at the end of sDir
 	if( sDir.Right(1) != "\\" )
@@ -309,7 +309,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	if( GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
 		DoesFileExist(GetCacheFilePath()))	
 	{
-		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
+		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.GetString(), GetCacheFilePath().GetString() );
 		SMLoader ld;
 		ld.LoadFromSMFile( GetCacheFilePath(), *this );
 	}
@@ -371,7 +371,7 @@ void Song::TidyUpData()
 	m_sSubTitle.TrimRight();
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.GetSize() == 0 )
-		throw RageException( "No #BPM specified in '%s.'", m_sSongDir+m_sSongFileName );
+		throw RageException( "No #BPM specified in '%s%s.'", m_sSongDir.GetString(), m_sSongFileName.GetString() );
 
 	if( !HasMusic() )
 	{
@@ -384,7 +384,7 @@ void Song::TidyUpData()
 			m_sMusicFile = arrayPossibleMusic[0];
 //		Don't throw on missing music.  -Chris
 //		else
-//			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
+//			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
 	}
 
 	if( HasMusic() )
@@ -641,25 +641,25 @@ void Song::Save()
 
 void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 {
-	LOG->Trace( "Song::SaveToSMDir('%s')", sPath );
+	LOG->Trace( "Song::SaveToSMDir('%s')", sPath.GetString() );
 
 	int i;
 
 	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
-		throw RageException( "Error opening song file '%s' for writing.", sPath );
+		throw RageException( "Error opening song file '%s' for writing.", sPath.GetString() );
 
-	fprintf( fp, "#TITLE:%s;\n", m_sMainTitle );
-	fprintf( fp, "#SUBTITLE:%s;\n", m_sSubTitle );
-	fprintf( fp, "#ARTIST:%s;\n", m_sArtist );
-	fprintf( fp, "#TITLETRANSLIT:%s;\n", m_sMainTitleTranslit );
-	fprintf( fp, "#SUBTITLETRANSLIT:%s;\n", m_sSubTitleTranslit );
-	fprintf( fp, "#ARTISTTRANSLIT:%s;\n", m_sArtistTranslit );
-	fprintf( fp, "#CREDIT:%s;\n", m_sCredit );
-	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile );
-	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile );
-	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile );
-	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile );
+	fprintf( fp, "#TITLE:%s;\n", m_sMainTitle.GetString() );
+	fprintf( fp, "#SUBTITLE:%s;\n", m_sSubTitle.GetString() );
+	fprintf( fp, "#ARTIST:%s;\n", m_sArtist.GetString() );
+	fprintf( fp, "#TITLETRANSLIT:%s;\n", m_sMainTitleTranslit.GetString() );
+	fprintf( fp, "#SUBTITLETRANSLIT:%s;\n", m_sSubTitleTranslit.GetString() );
+	fprintf( fp, "#ARTISTTRANSLIT:%s;\n", m_sArtistTranslit.GetString() );
+	fprintf( fp, "#CREDIT:%s;\n", m_sCredit.GetString() );
+	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile.GetString() );
+	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile.GetString() );
+	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile.GetString() );
+	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile.GetString() );
 	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
 	fprintf( fp, "#MUSICLENGTH:%.3f;\n", m_fMusicLengthSeconds );
 	if(bSavingCache) {
@@ -708,7 +708,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	{
 		BackgroundChange &seg = m_BackgroundChanges[i];
 
-		fprintf( fp, "%.3f=%s", seg.m_fStartBeat, seg.m_sBGName );
+		fprintf( fp, "%.3f=%s", seg.m_fStartBeat, seg.m_sBGName.GetString() );
 		if( i != m_BackgroundChanges.GetSize()-1 )
 			fprintf( fp, "," );
 	}

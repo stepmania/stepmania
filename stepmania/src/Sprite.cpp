@@ -42,7 +42,7 @@ Sprite::~Sprite()
 
 bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
-	LOG->Trace( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
+	LOG->Trace( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath.GetString()) );
 
 	//Init();
 	return LoadTexture( sTexturePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
@@ -58,7 +58,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipM
 // Delay0000=2.0
 bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
 {
-	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
+	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath.GetString()) );
 
 	//Init();
 
@@ -77,17 +77,17 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
 	if( !ini.ReadFile() )
-		throw RageException( "Error opening Sprite file '%s'.", m_sSpritePath );
+		throw RageException( "Error opening Sprite file '%s'.", m_sSpritePath.GetString() );
 
 	CString sTextureFile;
 	ini.GetValue( "Sprite", "Texture", sTextureFile );
 	if( sTextureFile == ""  )
-		throw RageException( "Error reading value 'Texture' from %s.", m_sSpritePath );
+		throw RageException( "Error reading value 'Texture' from %s.", m_sSpritePath.GetString() );
 
 	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 
 	if( !DoesFileExist(sTexturePath) )
-		throw RageException( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath, sTexturePath );
+		throw RageException( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.GetString(), sTexturePath.GetString() );
 
 
 
@@ -108,7 +108,7 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 			break;
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
 			throw RageException( "In '%s', %s is %d, but the texture %s only has %d frames.",
-				m_sSpritePath, sFrameKey, m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames() );
+				m_sSpritePath.GetString(), sFrameKey.GetString(), m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames() );
 		m_fDelay[i] = 0.2f;
 		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
 			break;

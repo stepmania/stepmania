@@ -60,7 +60,7 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 
 bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 {
-	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath );
+	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath.GetString() );
 
 	out.m_NotesType = NOTES_TYPE_INVALID;
 
@@ -69,7 +69,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Failed to open %s for reading.", sPath );
+		throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 	CString line;
 	while( file.ReadString(line) )	// foreach line
@@ -134,7 +134,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
 				out.m_sDescription = out.m_sDescription.Mid( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
 			out.m_sDescription.MakeLower();
-			LOG->Trace( "Notes description found to be '%s'", out.m_sDescription );
+			LOG->Trace( "Notes description found to be '%s'", out.m_sDescription.GetString() );
 
 			// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 			if( out.m_sDescription.Find("6") != -1 )
@@ -163,7 +163,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
-			//	valuename, sNoteData, iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
+			//	valuename.GetString(), sNoteData.GetString(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] )
@@ -253,13 +253,13 @@ void BMSLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 {
-	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir );
+	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.GetString() );
 
 	CStringArray arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
 	if( arrayBMSFileNames.GetSize() == 0 )
-		throw RageException( "Couldn't find any BMS files in '%s'", sDir );
+		throw RageException( "Couldn't find any BMS files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the BMS files
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
@@ -278,7 +278,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Failed to open %s for reading.", sPath );
+		throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 	CString line;
 	while( file.ReadString(line) )	// foreach line
@@ -366,7 +366,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d", 
-			//	valuename, sNoteData, iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
+			//	valuename.GetString(), sNoteData.GetString(), iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] == 0 )
@@ -415,7 +415,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					CStdioFile file;	
 					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-						throw RageException( "Failed to open %s for reading.", sPath );
+						throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 					CString line;
 					while( file.ReadString(line) )	// foreach line
@@ -454,7 +454,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					if( fBPM == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, sPath );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.GetString(), sPath.GetString() );
 					}
 					else
 					{
@@ -477,7 +477,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// open the song file again and and look for this tag's value
 					CStdioFile file;	
 					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-						throw RageException( "Failed to open %s for reading.", sPath );
+						throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 					CString line;
 					while( file.ReadString(line) )	// foreach line
@@ -531,7 +531,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, sPath );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.GetString(), sPath.GetString() );
 					}
 					else
 					{

@@ -79,7 +79,7 @@ int OptionToPreferredColumn( CString sOptionText )
 		if( g_OptionColumnEntries[i].szString == sOptionText )
 			return g_OptionColumnEntries[i].iSlotIndex;
 
-	LOG->Warn("Unknown option: \"%s\"", sOptionText );
+	LOG->Warn("Unknown option: '%s'", sOptionText.GetString() );
 	return -1;
 }
 

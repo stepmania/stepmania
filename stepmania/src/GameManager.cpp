@@ -1247,7 +1247,7 @@ void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 		CString sPath = GetCurNoteSkinDir() + "metrics.ini";
 		m_pIniFile->SetPath(sPath);
 		if( !m_pIniFile->ReadFile() )
-			throw RageException( "Could not read NoteSkin metrics file '%s'", sPath );
+			throw RageException( "Could not read NoteSkin metrics file '%s'", sPath.GetString() );
 	}
 }
 
@@ -1255,14 +1255,14 @@ CString GameManager::GetCurNoteSkinDir()
 {
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
-	return NOTESKIN_DIR + ssprintf("%s\\%s\\", pGameDef->m_szName, m_sCurNoteSkin);
+	return NOTESKIN_DIR + ssprintf("%s\\%s\\", pGameDef->m_szName, m_sCurNoteSkin.GetString());
 }
 
 CString GameManager::GetMetric( CString sClassName, CString sValue )	// looks in GAMESTATE for the current Style
 {
 	CString sReturn;
 	if( !m_pIniFile->GetValue( sClassName, sValue, sReturn ) )
-		throw RageException( "Could not read metric '%s - %s' from '%s'", sClassName, sValue, GetCurNoteSkinDir() + "metrics.ini" );
+		throw RageException( "Could not read metric '%s - %s' from '%smetrics.ini'", sClassName.GetString(), sValue.GetString(), GetCurNoteSkinDir().GetString() );
 	return sReturn;
 }
 
@@ -1290,7 +1290,7 @@ RageColor GameManager::GetMetricC( CString sClassName, CString sValueName )
 	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sClassName, sValueName );
+		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sClassName.GetString(), sValueName.GetString() );
 		ASSERT(0);
 	}
 
@@ -1311,17 +1311,17 @@ CString GameManager::GetPathTo( const int col, CString sElementName )	// looks i
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
 
-	GetDirListing( ssprintf("%s%s %s*.sprite", sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.png",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.gif",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*",        sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.sprite", sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.png",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*",        sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
 
 	if( arrayPossibleFileNames.GetSize() > 0 )
 		return arrayPossibleFileNames[0];
 
-	throw RageException( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName, sElementName, sDir );
+	throw RageException( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
 }
 
 void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
@@ -1383,7 +1383,7 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 			return NotesType(i);
 	
 	// invalid NotesType
-	LOG->Warn( "Invalid NotesType string '%s' encountered.  Assuming this is 'dance-single'.", sNotesType );
+	LOG->Warn( "Invalid NotesType string '%s' encountered.  Assuming this is 'dance-single'.", sNotesType.GetString() );
 	return NOTES_TYPE_DANCE_SINGLE;
 }
 

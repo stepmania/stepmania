@@ -240,7 +240,7 @@ void ScreenSelectMode::RefreshModeChoices()
 	for( i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
 	{
 		const ModeChoice& choice = m_aPossibleModeChoices[i];
-		asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName, choice.name) ) );
+		asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), choice.name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -253,7 +253,7 @@ void ScreenSelectMode::RefreshModeChoices()
 		for( int i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
 		{
 			CString sChoiceName = m_aPossibleModeChoices[i].name;
-			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName, sChoiceName)) );	
+			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
 		}
 	}
 }

@@ -223,7 +223,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 //	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	return new ScreenEz2SelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenNetworkGame") )		return new ScreenNetworkGame;
 	else
-		throw RageException( "Invalid Screen class name '%s'", sClassName );
+		throw RageException( "Invalid Screen class name '%s'", sClassName.GetString() );
 }
 
 void ScreenManager::PrepNewScreen( CString sClassName )
@@ -264,7 +264,7 @@ void ScreenManager::SetNewScreen( CString sClassName )
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
 	Screen* pNewScreen = MakeNewScreen(sClassName);
-	LOG->Trace( "Loaded %s in %f", sClassName, t.GetDeltaTime());
+	LOG->Trace( "Loaded %s in %f", sClassName.GetString(), t.GetDeltaTime());
 
 	SetNewScreen( pNewScreen );
 }

@@ -74,13 +74,13 @@ CString AnnouncerManager::GetPathTo( CString sFolderName )
 #ifdef _DEBUG
 	if( m_sCurAnnouncerName!=""  &&  !DoesFileExist(sPathToFolderCurrent) )
 	{
-		LOG->Trace( "The current announcer is missing the folder '%s'.", sFolderName );
+		LOG->Trace( "The current announcer is missing the folder '%s'.", sFolderName.GetString() );
 //		MessageBeep( MB_OK );
 		CreateDirectories( sPathToFolderCurrent );
 	}
 	if( !DoesFileExist(sPathToFolderEmpty) )
 	{
-		LOG->Trace( "The empty announcer is missing the folder '%s'.", sFolderName );
+		LOG->Trace( "The empty announcer is missing the folder '%s'.", sFolderName.GetString() );
 //		MessageBeep( MB_OK );
 		CreateDirectories( sPathToFolderEmpty );
 		CreateDirectories( sPathToFolderEmpty );

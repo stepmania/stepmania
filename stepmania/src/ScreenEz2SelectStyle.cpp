@@ -197,7 +197,7 @@ void ScreenEz2SelectStyle::RefreshModeChoices()
 		const ModeChoice& choice = m_aPossibleModeChoices[i];
 
 		if( choice.numSidesJoinedToPlay == iNumSidesJoined )
-			asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode %s %s", sGameName, choice.name) ) );
+			asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode %s %s", sGameName.GetString(), choice.name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -221,7 +221,7 @@ void ScreenEz2SelectStyle::AfterChange()
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	const ModeChoice& choice = m_aPossibleModeChoices[ m_ScrollingList.GetSelection() ];
 	if( CHANGE_BG_ANIMATIONS )
-		m_Menu.m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName, choice.name)) );
+		m_Menu.m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName.GetString(), choice.name)) );
 }
 
 void ScreenEz2SelectStyle::MenuLeft( PlayerNumber pn )
