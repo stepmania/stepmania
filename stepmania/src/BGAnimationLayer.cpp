@@ -446,6 +446,19 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	IniFile ini(sPathToIni);
 	ini.ReadFile();
+	{
+		int player;
+		if( ini.GetValue( sLayer, "Player", player ) )
+		{
+			if( player > 0 && player <= NUM_PLAYERS )
+			{
+				if( !GAMESTATE->IsPlayerEnabled(player-1) )
+					return;
+			} else
+				LOG->Warn("BGA \"%s\" %s has an invalid Player field",
+					sAniDir.c_str(), sLayer.c_str() );
+		}
+	}
 
 	bool IsBanner = false;
 
