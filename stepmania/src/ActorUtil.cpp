@@ -99,7 +99,12 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 				else
 					sFile = THEME->GetPathToG("Common fallback background");
 
-				pActor = MakeActor( sFile );
+				/* Always load song backgrounds with LoadBG.  It sets texture properties;
+				 * if we load a background without setting those properties, we'll end up
+				 * with duplicate loads. */
+				Sprite* pSprite = new Sprite;
+				pSprite->LoadBG( sFile );
+				pActor = pSprite;
 			}
 			else if( sFile.CompareNoCase("songbanner")==0 )
 			{
