@@ -1044,7 +1044,6 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 
 
 	// increment m_iSelection
-RageTimer xxx;
 	do
 	{
 		m_iSelection++;
