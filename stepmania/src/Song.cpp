@@ -1109,10 +1109,11 @@ void Song::RemoveAutoGenNotes()
 
 bool Song::IsEasy( StepsType st ) const
 {
-	const Steps* pHardNotes = GetStepsByDifficulty( st, DIFFICULTY_HARD );
-
-	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
-	if( pHardNotes && pHardNotes->GetMeter() > 9 )
+	/* Very fast songs and songs with wide tempo changes are hard for new players,
+	 * even if they have beginner steps. */
+	DisplayBpms bpms;
+	this->GetDisplayBpms(bpms);
+	if( bpms.GetMax() >= 250 || bpms.GetMax() - bpms.GetMin() >= 75 )
 		return false;
 
 	/* The easy marker indicates which songs a beginner, having selected "beginner",
