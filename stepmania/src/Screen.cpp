@@ -293,7 +293,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenBookkeeping.h"
 #include "ScreenBranch.h"
 #include "ScreenEnding.h"
-#include "ScreenAward.h"
 #include "ScreenDownloadMachineStats.h"
 #include "ScreenSetTime.h"
 #include "ScreenTestLights.h"
@@ -362,7 +361,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenBookkeeping );
 	IF_RETURN( ScreenBranch );
 	IF_RETURN( ScreenEnding );
-	IF_RETURN( ScreenAward );
 	IF_RETURN( ScreenDownloadMachineStats );
 	IF_RETURN( ScreenSetTime );
 	IF_RETURN( ScreenTestLights );

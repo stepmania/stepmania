@@ -21,7 +21,7 @@ $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && sh ./configure && make
 
 Screens = \
-Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h ScreenAward.cpp ScreenAward.h \
+Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h ScreenBranch.cpp ScreenBranch.h ScreenCaution.cpp ScreenCaution.h \
 ScreenCenterImage.cpp ScreenCenterImage.h ScreenCredits.cpp ScreenCredits.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \

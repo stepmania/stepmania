@@ -176,12 +176,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenAttract.h">
 			</File>
 			<File
-				RelativePath="ScreenAward.cpp">
-			</File>
-			<File
-				RelativePath="ScreenAward.h">
-			</File>
-			<File
 				RelativePath="ScreenBookkeeping.cpp">
 			</File>
 			<File
