@@ -682,15 +682,11 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
 	SAFE_DELETE( LOG );
-	SAFE_DELETE( HOOKS );
 	
 	if( g_sErrorString != "" )
-	{
-		// throw up a pretty error dialog
-		ErrorDialog *d = MakeErrorDialog();
-		d->ShowError( g_sErrorString );
-		delete d;
-	}
+		HOOKS->MessageBoxError( g_sErrorString ); // throw up a pretty error dialog
+
+	SAFE_DELETE( HOOKS );
 
 	return 0;
 }

@@ -8,6 +8,7 @@ public:
     ArchHooks_Win32();
     void DumpDebugInfo();
     void MessageBoxOK( CString sMessage, CString ID );
+	void MessageBoxError( CString error );
     MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID );
 };
 

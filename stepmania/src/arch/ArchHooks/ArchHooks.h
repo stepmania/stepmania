@@ -37,6 +37,7 @@ public:
 	 * prompts. */
 	enum MessageBoxResult { abort, retry, ignore };
 	virtual void MessageBoxOK( CString sMessage, CString ID = "" ) {}
+	virtual void MessageBoxError( CString error ) { printf("Error: %s\n", error.c_str()); }
 	virtual MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID = "" ) { return ignore; } 
 
 	virtual ~ArchHooks() { }
