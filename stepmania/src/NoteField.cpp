@@ -554,7 +554,7 @@ void NoteField::DrawPrimitives()
 
 		{
 			NoteData::TrackMap::const_iterator begin, end;
-			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstIndexToDraw, iLastIndexToDraw, begin, end );
+			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstIndexToDraw, iLastIndexToDraw+1, begin, end );
 
 			for( ; begin != end; ++begin )
 			{	
@@ -609,7 +609,7 @@ void NoteField::DrawPrimitives()
 		// draw notes from furthest to closest
 
 		NoteData::TrackMap::const_iterator begin, end;
-		m_pNoteData->GetTapNoteRange( c, iFirstIndexToDraw, iLastIndexToDraw, begin, end );
+		m_pNoteData->GetTapNoteRange( c, iFirstIndexToDraw, iLastIndexToDraw+1, begin, end );
 		for( ; begin != end; ++begin )
 		{	
 			int i = begin->first;
