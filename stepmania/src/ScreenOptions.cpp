@@ -272,7 +272,7 @@ void ScreenOptions::InitOptionsText()
 				else
 					option.SetX( ITEM_X[p] );
 
-				UpdateText( (PlayerNumber)p );
+				UpdateText( (PlayerNumber)p, j );
 			}
 		}
 	}
@@ -416,15 +416,14 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 	highlight.SetXY( (float)iX, (float)iY );
 }
 
-void ScreenOptions::UpdateText( PlayerNumber player_no )
+void ScreenOptions::UpdateText( PlayerNumber player_no, int row )
 {
-	int iCurRow = m_iCurrentRow[player_no];
-	int iChoiceInRow = m_iSelectedOption[player_no][iCurRow];
+	int iChoiceInRow = m_iSelectedOption[player_no][row];
 
-	bool bLotsOfOptions = m_bRowIsLong[iCurRow];
+	bool bLotsOfOptions = m_bRowIsLong[row];
 
 	if( bLotsOfOptions )
-		m_textItems[iCurRow][player_no].SetText( m_OptionRow[iCurRow].choices[iChoiceInRow] );
+		m_textItems[row][player_no].SetText( m_OptionRow[row].choices[iChoiceInRow] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -755,15 +754,16 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 		if( row.bOneChoiceForAllPlayers )
 		{
 			for( int p2=0; p2<NUM_PLAYERS; p2++ )
+			{
 				m_iSelectedOption[p2][iCurRow] = iNewSel;
+				UpdateText( (PlayerNumber)p2, iCurRow );
+			}
 		}
 		else
 		{
 			m_iSelectedOption[p][iCurRow] = iNewSel;
+			UpdateText( (PlayerNumber)p, iCurRow );
 		}
-
-		
-		UpdateText( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
 	OnChange();
