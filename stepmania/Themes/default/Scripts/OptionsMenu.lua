@@ -41,7 +41,7 @@ end
 -- (This could handle SelectMultiple, by saving the result to a table, eg.
 -- table["run"]["fast"] = true.)
 
-local OptionRowTable =
+OptionRowTable =
 {
 	SaveTo = nil, -- set this
 
