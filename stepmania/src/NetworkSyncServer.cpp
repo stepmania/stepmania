@@ -187,15 +187,15 @@ void GameClient::StartRequest(PacketFunctions &Packet) {
 	gameInfo.artist = Packet.ReadNT();
 	gameInfo.course = Packet.ReadNT();
 
-	Player[0].score = 0;
-	Player[0].combo = 0;
-	Player[0].projgrade = 0;
-	Player[1].score = 0;
-	Player[1].combo = 0;
-	Player[1].projgrade = 0;
+	for (int i=0; i<2 ; i++)
+	{
+		Player[i].score = 0;
+		Player[i].combo = 0;
+		Player[i].projgrade = 0;
+		Player[i].maxCombo = 0;
 
-	memset((void*)Player[0].steps, 0, sizeof(int)*8);
-	memset((void*)Player[1].steps, 0, sizeof(int)*8);
+		memset((void*)Player[i].steps, 0, sizeof(int)*9);
+	}
 
 	Ready = true;
 	InGame = true;
@@ -241,32 +241,19 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 		Reply.ClearPacket();
 		Reply.Write1( 4+128 );
 		Reply.Write1(numPlayers);
-		//I can't get the following area to work with out the {}.
-		for (int x = 0; x < numPlayers; x++) {
+		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write4(playersPtr[x]->score);
-//			LOG->Info("SCORE: %d", playersPtr[x]->score);
-		}
-		for (int x = 0; x < numPlayers; x++) {
+		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write1(playersPtr[x]->projgrade);
-//			LOG->Info("Grade: %d", playersPtr[x]->projgrade);
-		}
-		for (int x = 0; x < numPlayers; x++) {
+		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write1(playersPtr[x]->diff);
-//			LOG->Info("Diff: %d", playersPtr[x]->diff);
-		}
-		for (int x = 0; x < numPlayers; x++) {
-			for (int y = 6; y >= 1; y--) {
-				//Dont send NoGoods
-				//Send in reverse
+		for (int y = 6; y >= 1; y--)
+			for (int x = 0; x<numPlayers; x++)
 				Reply.Write2(playersPtr[x]->steps[y]);
-//				LOG->Info("step %d: %d", y, playersPtr[x]->steps[y]);
-			}
+		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write2(playersPtr[x]->steps[8]);  //Tack on OK
-		}
-		for (int x = 0; x < numPlayers; x++) {
+		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write2(playersPtr[x]->maxCombo);
-//			LOG->Info("MaxCombo: %d", playersPtr[x]->maxCombo);
-		}
 		SendToAllClients(Reply);
 	}
 }
@@ -532,7 +519,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions &Packet, int clientNum) {
 		Client[clientNum].hasSong = true;
 
 	//Only play if everyone has the same song and the host has select the same song twice.
-	if (CheckHasSongState()&&SecondSameSelect) {
+	if ( CheckHasSongState() && SecondSameSelect && (clientNum == 0) ) {
 		Reply.ClearPacket();
 		Reply.Write1(136);
 		Reply.Write1(2);
