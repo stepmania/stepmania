@@ -195,7 +195,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 
 		CString &sRet = notes_out;
 
-		sRet = "\n"; /* data begins on a new line when written to disk */
+		sRet = "";
 		
 		for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 		{
