@@ -28,6 +28,7 @@ public:
     HRESULT CheckMediaType(const CMediaType *pmt );     // Format acceptable?
     HRESULT SetMediaType(const CMediaType *pmt );       // Video format notification
     HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
+	void OnReceiveFirstSample( IMediaSample * pSample );
 
 	// new methods
 	long GetVidWidth() const { return m_lVidWidth; }

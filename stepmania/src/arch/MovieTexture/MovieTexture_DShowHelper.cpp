@@ -85,3 +85,8 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 
     return S_OK;
 }
+
+void CTextureRenderer::OnReceiveFirstSample( IMediaSample * pSample )
+{
+	DoRenderSample( pSample );
+}
