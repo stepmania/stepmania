@@ -116,32 +116,39 @@ static int retried_write( int fd, const void *buf, size_t count )
 	return ret;
 }
 
-static void parent_write(int to_child, const void *p, size_t size)
+static bool parent_write(int to_child, const void *p, size_t size)
 {
 	size_t ret = retried_write(to_child, p, size);
 	if(ret != size)
 	{
 		safe_print(fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", NULL);
-		exit(1);
+		return false;
 	}
+
+	return true;
 }
 
 static void parent_process( int to_child, const CrashData *crash )
 {
 	/* 1. Write the CrashData. */
-	parent_write(to_child, crash, sizeof(CrashData));
+	if( !parent_write(to_child, crash, sizeof(CrashData)) )
+		return;
 	
 	/* 2. Write info. */
 	const char *p = RageLog::GetInfo();
 	int size = strlen(p)+1;
-	parent_write(to_child, &size, sizeof(size));
-	parent_write(to_child, p, size);
+	if( !parent_write(to_child, &size, sizeof(size)) )
+		return;
+	if( !parent_write(to_child, p, size) )
+		return;
 
 	/* 3. Write AdditionalLog. */
 	p = RageLog::GetAdditionalLog();
 	size = strlen(p)+1;
-	parent_write(to_child, &size, sizeof(size));
-	parent_write(to_child, p, size);
+	if( !parent_write(to_child, &size, sizeof(size)) )
+		return;
+	if( !parent_write(to_child, p, size) )
+		return;
 	
 	/* 4. Write RecentLogs. */
 	int cnt = 0;
@@ -153,23 +160,28 @@ static void parent_process( int to_child, const CrashData *crash )
 	for( int i = 0; i < cnt; ++i )
 	{
 		size = strlen(ps[i])+1;
-		parent_write(to_child, &size, sizeof(size));
-		parent_write(to_child, ps[i], size);
+		if( parent_write(to_child, &size, sizeof(size)) )
+			return;
+		if( parent_write(to_child, ps[i], size) )
+			return;
 	}
 
     /* 5. Write CHECKPOINTs. */
     p = Checkpoints::GetLogs("\n");
     size = strlen(p)+1;
-    parent_write(to_child, &size, sizeof(size));
-    parent_write(to_child, p, size);
+    if( !parent_write(to_child, &size, sizeof(size)) )
+	return;
+
+    if( !parent_write(to_child, p, size) )
+	return;
 	
     /* 6. Write the crashed thread's name. */
     p = RageThread::GetCurThreadName();
     size = strlen(p)+1;
-    parent_write(to_child, &size, sizeof(size));
-    parent_write(to_child, p, size);
-	
-	close(to_child);
+    if( !parent_write(to_child, &size, sizeof(size)) )
+	return;
+    if( !parent_write(to_child, p, size) )
+	return;
 }
 
 
@@ -341,6 +353,8 @@ static void RunCrashHandler( const CrashData *crash )
 	{
 		close(fds[0]);
 		parent_process( fds[1], crash );
+		close( fds[1] );
+
 		int status = 0;
 		waitpid( childpid, &status, 0 );
 		if( WIFSIGNALED(status) )
