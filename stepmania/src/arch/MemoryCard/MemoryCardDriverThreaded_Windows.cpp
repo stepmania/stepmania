@@ -90,38 +90,38 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 		for( int i=2; i<MAX_DRIVES; i++ )	// skip 'a:" and "b:"
 		{
 			DWORD mask = (1 << i);
-			if( dwNewLogicalDrives & mask ) // drive letter is valid
-			{
-				CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
+			if( !(dwNewLogicalDrives & mask) )
+				continue; // drive letter is invalid
 
-				LOG->Trace( "Found drive %s", sDrive.c_str() );
+			CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
 
-				if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
-					continue;
+			LOG->Trace( "Found drive %s", sDrive.c_str() );
 
-				if( !TestReady(sDrive) )
-					continue;
+			if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
+				continue;
 
-				UsbStorageDevice usbd;
-				usbd.SetOsMountDir( sDrive );
-				usbd.bWriteTestSucceeded = TestWrite( sDrive );
+			if( !TestReady(sDrive) )
+				continue;
 
-				// read name
-				this->Mount( &usbd, TEMP_MOUNT_POINT );
-				FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
-				FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
+			UsbStorageDevice usbd;
+			usbd.SetOsMountDir( sDrive );
+			usbd.bWriteTestSucceeded = TestWrite( sDrive );
 
-				Profile profile;
-				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-				profile.LoadEditableDataFromDir( sProfileDir );
-				usbd.bIsNameAvailable = true;
-				usbd.sName = profile.GetDisplayName();
+			// read name
+			this->Mount( &usbd, TEMP_MOUNT_POINT );
+			FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
+			FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 
-				FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
-				FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
+			Profile profile;
+			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+			profile.LoadEditableDataFromDir( sProfileDir );
+			usbd.bIsNameAvailable = true;
+			usbd.sName = profile.GetDisplayName();
 
-				vNewStorageDevices.push_back( usbd );
-			}
+			FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
+			FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
+
+			vNewStorageDevices.push_back( usbd );
 		}
 
 		CHECKPOINT;
