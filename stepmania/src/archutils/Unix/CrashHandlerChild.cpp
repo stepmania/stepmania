@@ -192,7 +192,7 @@ void BacktraceNames::FromAddr( void *p )
         free(addy);
         free(p);
         close(out);
-        _exit(0);
+        _exit(1);
     }
     
     close(fds[1]);
