@@ -257,9 +257,9 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 {
 	CString sPath = root + path;
 
-	/* XXX: make sure this will partially resolve.  eg. if "abc/def" exists,
-	 * and we're opening "ABC/DEF/GHI/jkl/mno", make sure this will resolve
-	 * to "abc/def/GHI/jkl/mno"; we'll create the missing ones later. */
+	/* This partially resolves.  For example, if "abc/def" exists, and we're opening
+	 * "ABC/DEF/GHI/jkl/mno", this will resolve it to "abc/def/GHI/jkl/mno"; we'll
+	 * create the missing parts below. */
 	FDB->ResolvePath( sPath );
 
 	if( mode == RageFile::WRITE )
@@ -319,17 +319,16 @@ bool RageFileDriverDirect::Ready()
 		sizeof(szFileSystemNameBuffer) );
 	return !!bResult;
 #else
-
 	// Try to create directory before writing a temp file.
-	CreateDirectories( root ); // XXX
+	CreateDirectories( root );
 	
 	// Try to write a file.
-	CString sFile = root + "temp"; /* XXX no */
-	RageFile f;
-	if( !f.Open( sFile, RageFile::WRITE ) )
+	const CString sFile = root + "temp";
+	int fd = open( sFile, O_WRONLY|O_CREAT|O_TRUNC );
+	if( fd == -1 )
 		return false;
 
-	f.Close();
+	close( fd );
 	remove( sFile );
 	return true;
 #endif
