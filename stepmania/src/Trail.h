@@ -42,11 +42,13 @@ public:
 	StepsType			m_StepsType;
 	CourseDifficulty	m_CourseDifficulty;
 	vector<TrailEntry>  m_vEntries;
+	int					m_iMeter;
 
 	Trail()
 	{
 		m_StepsType = STEPS_TYPE_INVALID;
 		m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
+		m_iMeter = 1;
 	}
 
 	RadarValues GetRadarValues() const;

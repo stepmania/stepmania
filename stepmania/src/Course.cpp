@@ -799,6 +799,12 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.dc = dc;
 		trail.m_vEntries.push_back( te ); 
 	}
+
+	/* If we have a manually-entered meter for this difficulty, use it. */
+	if( m_iCustomMeter[cd] != -1 )
+		trail.m_iMeter = m_iCustomMeter[cd];
+	else
+		trail.m_iMeter = (int) roundf( trail.GetAverageMeter() );
 }
 
 void Course::GetTrails( vector<Trail*> &out, StepsType st ) const
