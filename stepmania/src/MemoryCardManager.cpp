@@ -219,16 +219,6 @@ void MemoryCardManager::LockCards()
 		return;
 
 	m_bCardsLocked = true;
-	
-	LOG->Trace( "do the final mount" );
-	
-	FOREACH_EnabledPlayer( p )
-	{
-		if( m_Device[p].IsBlank() )	// they don't have an assigned card
-			continue;
-		
-		MountCard( p );
-	}
 }
 
 void MemoryCardManager::UnlockCards()
@@ -243,7 +233,8 @@ void MemoryCardManager::UnlockCards()
 }
 
 
-/* Used by TransferStatsFromMachine, TransferStatsToMachine.  Should block. */
+/* Used by TransferStatsFromMachine, TransferStatsToMachine, and PlayersFinalized()
+ * just before reading the profile.  Should block. */
 void MemoryCardManager::TryMountAllCards()
 {
 	FOREACH_EnabledPlayer( p )

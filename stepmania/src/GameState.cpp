@@ -108,6 +108,9 @@ void GameState::Reset()
 {
 	EndGame();
 	
+	/* Don't do the OS mount for cards during the attract screens.  Only do OS mounts in
+	 * the time between BeginGame and PlayersFinalized.  XXX: I think we do that anyway,
+	 * when m_bMemoryCardsMountOnlyWhenNecessary is true.  Can we remove this? */
 	MEMCARDMAN->LockCards();
 	
 	ASSERT( THEME );
@@ -227,7 +230,8 @@ void GameState::PlayersFinalized()
 	m_bPlayersFinalized = true;
 
 	MEMCARDMAN->PauseMountingThread();
-	MEMCARDMAN->LockCards();	// this does a mount
+	MEMCARDMAN->LockCards();
+	MEMCARDMAN->TryMountAllCards();
 
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
