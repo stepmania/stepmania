@@ -21,7 +21,7 @@ public:
 	int steps[9];
 	int maxCombo;
 	int Grade;
-	int offset;
+	double offset;
 	int PlayerID;
 	int diff;
 	CString options;
@@ -56,10 +56,12 @@ public:
 	bool InGame;
 	int twoPlayers;
 	bool hasSong;
+	bool forceHas;
 	bool inNetMusicSelect;
 	int startPosition;
 	bool isStarting;
 	bool wasIngame;
+	bool hasCheated;
 	
 private:
 	string build;
@@ -129,6 +131,7 @@ private:
 	void Ban(CString &name);
 	bool IsBanned(in_addr &ip);
 	void ForceStart();
+	bool CheckCheat(int clientNum);
 };
 
 #endif

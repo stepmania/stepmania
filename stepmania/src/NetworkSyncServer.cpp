@@ -1,6 +1,7 @@
 #include "global.h"
 #include "NetworkSyncServer.h"
 #include "RageLog.h"
+#include "PrefsManager.h"
 #include <time.h>
 
 #if defined(WITHOUT_NETWORKING)
@@ -77,13 +78,11 @@ void StepManiaLanServer::ServerUpdate()
 	{
 		NewClientCheck(); /* See if there is another client wanting to play */
 		UpdateClients();
-//		CheckReady();
 		if (time(NULL) > statsTime)
 		{
 			SendStatsToClients();
 			statsTime = time(NULL);
 		}
-	// MoveClientToHost();
 	}
 }
 
@@ -106,10 +105,11 @@ GameClient::GameClient()
 	version = 0;
 	startPosition = 0;
 	InGame = 0;
-	hasSong = false;
+	hasSong = forceHas = false;
 	inNetMusicSelect = false;
 	isStarting = false;  //Used for after ScreenNetMusicSelect but before InGame
 	wasIngame = false;
+	hasCheated = false;
 }
 
 void GameClient::Disconnect()
@@ -155,6 +155,8 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, int clientNum)
 	case NSCGSU:
 		// StatsUpdate
 		Client[clientNum].UpdateStats(Packet);
+		if (!Client[clientNum].hasCheated)
+			Client[clientNum].hasCheated = CheckCheat(clientNum);
 		break;
 	case NSCSU:
 		// Style Update
@@ -248,7 +250,6 @@ void GameClient::StartRequest(PacketFunctions& Packet)
 	}
 
 	GotStartRequest = true;
-//	InGame = true;
 }
 
 void StepManiaLanServer::CheckReady()
@@ -278,6 +279,7 @@ void StepManiaLanServer::CheckReady()
 			if (Client[x].Used)
 				if (Client[x].isStarting)
 				{
+					Client[x].hasCheated = false;
 					Client[x].clientSocket.blocking = true;
 					SendValue(NSCGSR + NSServerOffset, x);
 					Client[x].GotStartRequest = false;
@@ -300,6 +302,7 @@ void StepManiaLanServer::GameOver(PacketFunctions& Packet, int clientNum)
 	bool allOver = true;
 	int x;
 
+	Client[clientNum].hasSong = Client[clientNum].forceHas = 0;
 	Client[clientNum].GotStartRequest = false;
 	Client[clientNum].InGame = false;
 	Client[clientNum].wasIngame = true;
@@ -340,8 +343,6 @@ void StepManiaLanServer::GameOver(PacketFunctions& Packet, int clientNum)
 				SendNetPacket(x, Reply);
 				Client[x].wasIngame = false;
 			}
-
-//		SendToAllClients(Reply);
 	}
 }
 
@@ -489,22 +490,35 @@ bool GameClient::IsPlaying(int x)
 
 void GameClient::UpdateStats(PacketFunctions& Packet)
 {
-	/* Get the Stats form a packet */
+	/* Get the Stats from a packet */
 	char firstbyte = Packet.Read1();
 	char secondbyte = Packet.Read1();
 	int pID = int(firstbyte/16); /* MSN */
 
-	Player[pID].currstep = int(firstbyte%16); /* LSN */
-	Player[pID].projgrade = int(secondbyte/16);
-	Player[pID].score = Packet.Read4();
-	Player[pID].combo = Packet.Read2();
+	if (!hasCheated) {
 
-	if (Player[pID].combo > Player[pID].maxCombo)
-		Player[pID].maxCombo = Player[pID].combo;
+		Player[pID].currstep = int(firstbyte%16); /* LSN */
+		Player[pID].projgrade = int(secondbyte/16);
+		Player[pID].score = Packet.Read4();
+		Player[pID].combo = Packet.Read2();
 
-	Player[pID].health = Packet.Read2();
-	Player[pID].offset = Packet.Read2();
-	Player[pID].steps[Player[pID].currstep]++;
+		if (Player[pID].combo > Player[pID].maxCombo)
+			Player[pID].maxCombo = Player[pID].combo;
+
+		Player[pID].health = Packet.Read2();
+		Player[pID].offset = ((double)abs(int(Packet.Read2())-32767)/2000);
+		Player[pID].steps[Player[pID].currstep]++;
+	}
+	else
+	{
+		Player[pID].currstep = 0;
+		Player[pID].projgrade = 'E';
+		Player[pID].score = 0;
+		Player[pID].combo = 0;
+		Player[pID].maxCombo = 0;
+		Player[pID].health = 0;
+		Player[pID].offset = 99999.99;
+	}
 }
 
 void StepManiaLanServer::NewClientCheck()
@@ -544,7 +558,16 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, int clientNum)
 				SendNetPacket(clientNum, Reply);
 			}
 			else
-				Client[clientNum].hasSong = true;
+			{
+				message = "";
+				message += Client[clientNum].Player[0].name;
+				if (Client[clientNum].twoPlayers)
+					message += "&";
+				message += Client[clientNum].Player[1].name;
+				message += " forces has song.";
+				Client[clientNum].forceHas = true;
+				ServerChat(message);
+			}
 		}
 		else
 		{
@@ -889,13 +912,41 @@ void StepManiaLanServer::ForceStart()
 		//Only send data to clients currently in ScreenNetMusicSelect
 		for (int x = 0; x < NUMBERCLIENTS; ++x)
 			if (Client[x].inNetMusicSelect)
-				if(Client[x].hasSong)
+				if((Client[x].hasSong)||(Client[x].forceHas))
 				{
+					Client[x].hasCheated = false;
 					SendNetPacket(x, Reply);
 					//Designate the client is starting,
 					//after ScreenNetMusicSelect but before game play (InGame).
 					Client[x].isStarting = true;
 				}
+}
+
+bool StepManiaLanServer::CheckCheat(int clientNum)
+{
+	for (int x = 0; x < 2; ++x)
+		if (Client[clientNum].IsPlaying(x))
+		{
+			if ((Client[clientNum].Player[x].currstep == 2)&&
+				(PREFSMAN->m_fJudgeWindowSecondsBoo < Client[clientNum].Player[x].offset))
+				return true;
+			if ((Client[clientNum].Player[x].currstep == 3)&&
+				(PREFSMAN->m_fJudgeWindowSecondsGood < Client[clientNum].Player[x].offset))
+				return true;
+			if ((Client[clientNum].Player[x].currstep == 4)&&
+				(PREFSMAN->m_fJudgeWindowSecondsGreat < Client[clientNum].Player[x].offset))
+				return true;
+			if ((Client[clientNum].Player[x].currstep == 5)&&
+				(PREFSMAN->m_fJudgeWindowSecondsPerfect < Client[clientNum].Player[x].offset))
+				return true;
+			if ((Client[clientNum].Player[x].currstep == 6)&&
+				(PREFSMAN->m_fJudgeWindowSecondsMarvelous < Client[clientNum].Player[x].offset))
+				return true;
+			if ((Client[clientNum].Player[x].currstep == 8)&&
+				(PREFSMAN->m_fJudgeWindowSecondsOK < Client[clientNum].Player[x].offset))
+				return true;
+		}
+	return false;
 }
 #endif
 /*
