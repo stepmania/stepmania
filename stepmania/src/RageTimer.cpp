@@ -98,7 +98,7 @@ RageTimer RageTimer::Sum(const RageTimer &lhs, float tm)
 	int seconds = (int) floorf(tm);
 	int us = int( (tm - seconds) * TIMESTAMP_RESOLUTION );
 
-	RageTimer ret;
+	RageTimer ret(0,0); // Prevent unnecessarily checking the time
 	ret.m_secs = seconds + lhs.m_secs;
 	ret.m_us = us + lhs.m_us;
 
