@@ -377,15 +377,19 @@ int RageFileObjDirect::Flush()
 	if( !write_buf.size() )
 		return 0;
 
+	CHECKPOINT;
 	int ret = retried_write( fd, write_buf.data(), write_buf.size() );
+	CHECKPOINT;
 	if( ret == -1 )
 	{
 		LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
 	}
 
+	CHECKPOINT;
 	write_buf.erase();
 	write_buf.reserve( BUFSIZE );
+	CHECKPOINT;
 	return ret;
 }
 
