@@ -35,7 +35,7 @@ void Background::LoadFromSong( Song& song )
 	}
 }
 
-void Background::Update( const FLOAT& fDeltaTime)
+void Background::Update( float fDeltaTime)
 {
 	Sprite::Update( fDeltaTime );
 	m_sprVis.Update( fDeltaTime );
