@@ -137,9 +137,10 @@ void ScreenManager::Draw()
 	{
 		/* If FPS == 0, we don't have stats yet. */
 		m_textStats.SetText( ssprintf(DISPLAY->GetFPS()?
-			"%i FPS\n%i VPF":
-			"-- FPS\n-- VPF",
-			DISPLAY->GetFPS(), DISPLAY->GetVPF()) );
+			"%i FPS\n%i av FPS\n%i VPF":
+			"-- FPS\n-- av FPS\n-- VPF",
+			DISPLAY->GetFPS(), DISPLAY->GetCumFPS(), 
+			DISPLAY->GetVPF()) );
 
 		m_textStats.Draw();
 	}
@@ -187,6 +188,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenSongOptions.h"
 #include "ScreenStage.h"
 #include "ScreenTest.h"
+#include "ScreenTestFonts.h"
+#include "ScreenTestSound.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenWarning.h"
@@ -234,6 +237,8 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		ret = new ScreenSongOptions;
 	else if( 0==stricmp(sClassName, "ScreenStage") )			ret = new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTest") )				ret = new ScreenTest;
+	else if( 0==stricmp(sClassName, "ScreenTestFonts") )		ret = new ScreenTestFonts;
+	else if( 0==stricmp(sClassName, "ScreenTestSound") )		ret = new ScreenTestSound;
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenWarning") )			ret = new ScreenWarning;

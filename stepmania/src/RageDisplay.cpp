@@ -68,7 +68,7 @@ void GetGLExtensions(set<string> &ext)
 
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
-//	LOG->Trace( "RageDisplay::RageDisplay()" );
+	LOG->Trace( "RageDisplay::RageDisplay()" );
 	m_oglspecs = new oglspecs_t;
 	
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
