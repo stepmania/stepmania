@@ -91,7 +91,7 @@ bool RageSound_WaveOut::GetPCM()
 		unsigned got = sounds[i]->snd->GetPCM((char *) buf, chunksize, last_cursor_pos);
 
 		SOUNDMAN->MixAudio(
-			(Uint8 *) buffers[b].lpData, (Uint8 *) buf, got, SDL_MIX_MAXVOLUME/2);
+			(Sint16 *) buffers[b].lpData, buf, got, .5);
 
 		if(got < chunksize)
 		{

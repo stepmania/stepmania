@@ -63,17 +63,15 @@ bool RageSound_DSound_Software::GetPCM()
 	/* Silence the buffer. */
 	memset(locked_buf, 0, len);
 
-	/* Create a 32-bit buffer to mix sounds. */
-	static Sint32 *mixbuf = NULL;
 	static Sint16 *buf = NULL;
 	int bufsize = buffersize_frames * channels;
 	if(!buf)
 	{
 		buf = new Sint16[bufsize];
-		mixbuf = new Sint32[bufsize];
 	}
 	memset(buf, 0, bufsize*sizeof(Uint16));
-	memset(mixbuf, 0, bufsize*sizeof(Uint32));
+
+	SoundMixBuffer mix;
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
@@ -83,8 +81,7 @@ bool RageSound_DSound_Software::GetPCM()
 		/* Call the callback. */
 		unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, play_pos);
 
-		SOUNDMAN->MixAudio(
-			(Uint8 *) locked_buf, (Uint8 *) buf, got, SDL_MIX_MAXVOLUME/2);
+		mix.write((Sint16 *) buf, got);
 
 		if(got < len)
 		{
@@ -93,6 +90,8 @@ bool RageSound_DSound_Software::GetPCM()
 			sounds[i]->flush_pos = str_ds->GetMaxPosition();
 		}
 	}
+
+	mix.read((Sint16 *) locked_buf);
 
 	str_ds->release_output_buf(locked_buf, len);
 
