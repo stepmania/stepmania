@@ -463,8 +463,14 @@ void DSoundBuf::Stop()
 {
 	buf->Stop();
 	buf->SetCurrentPosition(0);
+
 	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 	LastPosition = 0;
+
+	/* When stopped and rewound, the play and write cursors should both be 0. */
+	DWORD play, write;
+	buf->GetCurrentPosition( &play, &write );
+	RAGE_ASSERT_M( play == 0 && write == 0, ssprintf("%i, %i", play, write) );
 }
 
 /*
