@@ -4,6 +4,7 @@
 #include "NetworkSyncManager.h"
 #include "Quad.h"
 #include "BitmapText.h"
+#include "ScreenMessage.h"
 
 class ScreenNetEvaluation: public ScreenEvaluation
 {
@@ -14,6 +15,7 @@ protected:
 	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
 	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
 	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void UpdateStats( );
 private:
@@ -24,4 +26,6 @@ private:
 	int				m_iActivePlayers;
 	
 	PlayerNumber	m_pActivePlayer;
+
+	bool			m_bHasStats;
 };

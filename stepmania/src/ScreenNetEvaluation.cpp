@@ -13,8 +13,11 @@ const int NUM_SCORE_DIGITS	=	9;
 
 #define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
 
+const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
+
 ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEvaluation( sClassName )
 {
+	m_bHasStats = false;
 	m_pActivePlayer = PLAYER_1;	
 
 	FOREACH_PlayerNumber (pn)
@@ -48,22 +51,15 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 
 	for( int i=0; i<m_iActivePlayers; i++ )
 	{
-		if (NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] == GAMESTATE->GetPlayerDisplayName(m_pActivePlayer) )
-			m_iCurrentPlayer = i;
-
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"names") );
 		m_textUsers[i].SetName( "User" );
 		m_textUsers[i].SetShadowLength( 1 );
 		m_textUsers[i].SetXY( cx, cy );
-		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
 
-		ON_COMMAND( m_textUsers[i] );
 		this->AddChild( &m_textUsers[i] );
 		cx+=USERDX;
 		cy+=USERDY;
 	}
-
-	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
 }
 
 void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
@@ -73,6 +69,8 @@ void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetEvaluation::MenuUp( PlayerNumber pn, const InputEventType type )
 {
+	if (!m_bHasStats)
+		return;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + m_iActivePlayers - 1) % m_iActivePlayers;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
@@ -86,10 +84,31 @@ void ScreenNetEvaluation::MenuRight( PlayerNumber pn, const InputEventType type 
 
 void ScreenNetEvaluation::MenuDown( PlayerNumber pn, const InputEventType type )
 {
+	if (!m_bHasStats)
+		return;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + 1) % m_iActivePlayers;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
 	UpdateStats();
+}
+
+void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+	case SM_GotEval:
+		m_bHasStats = true;
+		for( int i=0; i<m_iActivePlayers; i++ )
+		{
+			if (NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] == GAMESTATE->GetPlayerDisplayName(m_pActivePlayer) )
+				m_iCurrentPlayer = i;
+
+			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
+			ON_COMMAND( m_textUsers[i] );
+		}
+		COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
+		break;
+	}
 }
 
 void ScreenNetEvaluation::UpdateStats()

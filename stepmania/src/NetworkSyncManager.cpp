@@ -39,6 +39,7 @@ void NetworkSyncManager::SelectUserSong() { }
 
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
+const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
 
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
@@ -394,6 +395,7 @@ void NetworkSyncManager::StartRequest(short position)
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	for (int i=0; i< NETMAXPLAYERS; i++)
 	{
+		m_EvalPlayerData[i].name=0;
 		m_EvalPlayerData[i].grade=0;
 		m_EvalPlayerData[i].score=0;
 		m_EvalPlayerData[i].difficulty=(Difficulty)0;
@@ -516,6 +518,8 @@ void NetworkSyncManager::ProcessInput()
 			{
 				int PlayersInPack = m_packet.Read1();
 				for (int i=0;i<PlayersInPack;i++)
+					m_EvalPlayerData[i].name = m_packet.Read1();
+				for (int i=0;i<PlayersInPack;i++)
 					m_EvalPlayerData[i].score = m_packet.Read4();
 				for (int i=0;i<PlayersInPack;i++)
 					m_EvalPlayerData[i].grade = m_packet.Read1();
@@ -524,6 +528,7 @@ void NetworkSyncManager::ProcessInput()
 				for (int j=0;j<NETNUMTAPSCORES;j++) 
 					for (int i=0;i<PlayersInPack; i++)
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
+				SCREENMAN->SendMessageToTopScreen( SM_GotEval );
 			}
 			break;
 		case 5: //Scoreboard Update

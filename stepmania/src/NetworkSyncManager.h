@@ -15,6 +15,7 @@ const int NETNUMTAPSCORES=8;
 
 struct EndOfGame_PlayerData
 {
+	int name;
 	int score;
 	int grade;
 	Difficulty difficulty;
