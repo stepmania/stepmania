@@ -4,7 +4,7 @@
 struct BacktraceNames
 {
 	CString Symbol, File;
-	int Address;
+	intptr_t Address;
 	int Offset;
 	void FromAddr( const void *p );
 	void FromString( CString str );

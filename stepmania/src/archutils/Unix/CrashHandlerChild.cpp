@@ -301,9 +301,9 @@ static void child_process()
 	case SIGSEGV:
 	case SIGBUS:
 	    if( crash.si.si_code == SI_USER )
-		    reason += ssprintf( " from pid %i", (int) crash.si.si_addr );
+		    reason += ssprintf( " from pid %li", (long) crash.si.si_addr );
 	    else
-		    reason += ssprintf( " at 0x%08x", (unsigned int) crash.si.si_addr );
+		    reason += ssprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
 	}
 	break;
     }
