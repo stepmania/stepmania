@@ -34,7 +34,7 @@ CString SongUtil::MakeSortString( CString s )
 {
 	s.MakeUpper();
 
-	// Make sure that non-alphanumeric characters are placed at the very end
+	// Make sure that non-alphanumeric strings are placed at the very end.
 	if( s.size() > 0 )
 	{
 		if( s[0] == '.' )	// ".59"
@@ -336,7 +336,7 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointe
 		/* Make sure NUM comes first and OTHER comes last. */
 		if( val == "NUM" )			val = "0";
 		else if( val == "OTHER" )	val = "2";
-		else						val = "1" + val;
+		else						val = "1" + MakeSortString(val);
 
 		song_sort_val[arraySongPointers[i]] = val;
 	}
