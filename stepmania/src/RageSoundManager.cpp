@@ -11,7 +11,6 @@
 
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
-#include "SDL_audio.h"
 
 #if defined(WIN32)
 set<void *> g_ProtectedPages;
@@ -335,12 +334,13 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 	g_DeletionMutex.Lock();
 
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	const all_sounds_type sounds = all_sounds;
+	set<RageSound *> sounds;
+	sounds.insert( all_sounds.begin(), all_sounds.end() );
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 	
 	RageSound *parent = snd.GetOriginal();
 
-	all_sounds_type::const_iterator it;
+	set<RageSound *>::const_iterator it;
 	for( it = sounds.begin(); it != sounds.end(); ++it )
 	{
 		CHECKPOINT_M( ssprintf("%p %p", *it, parent) );
