@@ -12,12 +12,19 @@ public:
 	 * the file.
 	 *
 	 * If the file can not be opened at all, or contains no data, return OPEN_MATCH_BUT_FAIL. */
-	enum OpenResult { OPEN_OK, OPEN_NO_MATCH, OPEN_MATCH_BUT_FAIL };
+	enum OpenResult
+	{
+		OPEN_OK,
+		OPEN_UNKNOWN_FILE_FORMAT=1,
+		OPEN_NO_MATCH=1, // deprecated
+		OPEN_FATAL_ERROR=2,
+		OPEN_MATCH_BUT_FAIL=2, // deprecated
+	};
 	virtual OpenResult Open(CString filename) = 0;
 
 	static SoundReader *OpenFile( CString filename, CString &error );
 private:
-	static SoundReader_FileReader *TryOpenFile( CString filename, CString &error, CString format );
+	static SoundReader_FileReader *TryOpenFile( CString filename, CString &error, CString format, bool &bKeepTrying );
 };
 
 #endif
