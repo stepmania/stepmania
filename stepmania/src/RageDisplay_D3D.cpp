@@ -357,7 +357,9 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	
 	g_pd3dDevice->BeginScene();
 
-	return false;	// we can always reuse the D3D device
+	return true;	
+	// Always reload textures.  None of our textures 
+	// are managed and all texture palettes are lost on Reset().
 }
 
 void RageDisplay::ResolutionChanged()
