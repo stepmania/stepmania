@@ -156,7 +156,8 @@ void MovieTexture_DShow::CheckFrame()
 		m_PixelFormat,
 		m_img,
 		0, 0,
-		min(m_iSourceWidth,m_iTextureWidth), min(m_iSourceHeight,m_iTextureHeight) );
+		m_iImageWidth, m_iImageHeight );
+//		min(m_iSourceWidth,m_iTextureWidth), min(m_iSourceHeight,m_iTextureHeight) );
 	VDCHECKPOINT;
 
 	SDL_FreeSurface( fromDShow );
