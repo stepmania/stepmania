@@ -17,16 +17,14 @@ struct OptionRowData
 {
 	CString name;
 	bool bOneChoiceForAllPlayers;
-	bool bMultiSelect;
+	enum Type { SELECT_ONE, SELECT_MULTIPLE, SELECT_NONE } type;
 	vector<CString> choices;
 
-	OptionRowData(): name(""), bOneChoiceForAllPlayers(false), bMultiSelect(false) { }
+	OptionRowData(): name(""), bOneChoiceForAllPlayers(false), type(SELECT_ONE) { }
 
-	OptionRowData( const char *n, int b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+	OptionRowData( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL ) :
+		name(n), bOneChoiceForAllPlayers(b), type(SELECT_ONE)
 	{
-		name = n;
-		bOneChoiceForAllPlayers = !!b;
-		bMultiSelect = false;
 #define PUSH( c )	if(c) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
@@ -111,7 +109,7 @@ protected:
 		bool m_bRowIsLong;	// goes off edge of screen
 		bool m_bHidden; // currently off screen
 
-		int m_iChoiceWithFocus[NUM_PLAYERS];	// this choice has input focus
+		int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 
 		// Only one will true at a time if m_RowDef.bMultiSelect
 		vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().

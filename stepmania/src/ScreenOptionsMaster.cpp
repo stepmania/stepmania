@@ -72,8 +72,10 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 	{
 		if( asParts[i].CompareNoCase("together") == 0 )
 			row.bOneChoiceForAllPlayers = true;
-		else if( asParts[i].CompareNoCase("multiselect") == 0 )
-			row.bMultiSelect = true;
+		else if( asParts[i].CompareNoCase("SelectMultiple") == 0 )
+			row.type = OptionRowData::SELECT_MULTIPLE;
+		else if( asParts[i].CompareNoCase("SelectNone") == 0 )
+			row.type = OptionRowData::SELECT_NONE;
 	}
 
 	for( int col = 0; col < NumCols; ++col )
@@ -335,7 +337,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					/* The entry has no effect.  This is usually a default "none of the
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
-					if( !row.bMultiSelect )
+					if( row.type != OptionRowData::SELECT_MULTIPLE )
 						FallbackOption = e;
 					continue;
 				}
@@ -345,7 +347,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
 						UseFallbackOption = false;
-						if( !row.bMultiSelect )
+						if( row.type != OptionRowData::SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
 							vbSelectedOut[e] = true;
@@ -356,7 +358,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					if( mc.DescribesCurrentMode(  pn) )
 					{
 						UseFallbackOption = false;
-						if( !row.bMultiSelect )
+						if( row.type != OptionRowData::SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
 							vbSelectedOut[e] = true;
@@ -364,8 +366,13 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 				}
 			}
 
-			if( UseFallbackOption && FallbackOption != -1 && !row.bMultiSelect )
+			if( row.type != OptionRowData::SELECT_NONE && 
+				UseFallbackOption && 
+				FallbackOption != -1 && 
+				row.type != OptionRowData::SELECT_MULTIPLE )
+			{
 				SelectExactlyOne( FallbackOption, vbSelectedOut );
+			}
 
 			return;
 		}
@@ -381,7 +388,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 		ASSERT(0);
 	}
 
-	if( !row.bMultiSelect )
+	if( row.type != OptionRowData::SELECT_MULTIPLE )
 	{
 		// The first row ("go down") should not be selected.
 		ASSERT( !vbSelectedOut[0] );
@@ -513,7 +520,7 @@ void ScreenOptionsMaster::ExportOptions()
 	CHECKPOINT;
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
 	 * honor it. */
-	m_NextScreen = "";
+	m_sNextScreen = "";
 
 	const int row = this->GetCurrentRow();
 	if( row != -1 )
@@ -521,17 +528,18 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowHandler &hand = OptionRowHandlers[row];
 		if( hand.type == ROW_LIST )
 		{
-			const int choice = m_Rows[row]->m_iChoiceWithFocus[0];
+			const int choice = m_Rows[row]->m_iChoiceInRowWithFocus[0];
 			const GameCommand &mc = hand.ListEntries[choice];
 			if( mc.m_sScreen != "" )
-				m_NextScreen = mc.m_sScreen;
+				m_sNextScreen = mc.m_sScreen;
+			mc.Apply( GAMESTATE->m_MasterPlayerNumber );
 		}
 	}
 	CHECKPOINT;
 
 	// NEXT_SCREEN;
-	if( m_NextScreen == "" )
-		m_NextScreen = NEXT_SCREEN;
+	if( m_sNextScreen == "" )
+		m_sNextScreen = NEXT_SCREEN;
 
 	/* Did the theme change? */
 	if( (ChangeMask & OPT_APPLY_THEME) || 
@@ -549,7 +557,7 @@ void ScreenOptionsMaster::ExportOptions()
 	if( ChangeMask & OPT_RESET_GAME )
 	{
 		ResetGame();
-		m_NextScreen = "";
+		m_sNextScreen = "";
 	}
 
 	if( ChangeMask & OPT_APPLY_SOUND )
@@ -567,8 +575,8 @@ void ScreenOptionsMaster::GoToNextState()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
-	else if( m_NextScreen != "" )
-		SCREENMAN->SetNewScreen( m_NextScreen );
+	else if( m_sNextScreen != "" )
+		SCREENMAN->SetNewScreen( m_sNextScreen );
 }
 
 void ScreenOptionsMaster::GoToPrevState()

@@ -37,7 +37,7 @@ private:
 		const ConfOption *opt;
 	};
 
-	CString m_NextScreen;
+	CString m_sNextScreen;
 
 	vector<OptionRowHandler> OptionRowHandlers;
 	OptionRowData *m_OptionRowAlloc;

@@ -152,8 +152,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			for( unsigned j=0; j<vbSelected.size(); j++ )
 				vbSelected[j] = false;
 			
-			// set select the first item if not a multiselect row
-			if( !Row.m_RowDef.bMultiSelect )
+			// set select the first item if a SELECT_ONE row
+			if( Row.m_RowDef.type == OptionRowData::SELECT_ONE )
 				vbSelected[0] = true;
 		}
 	}
@@ -162,38 +162,47 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
-		Row &Row = *m_Rows[r];
+		Row &row = *m_Rows[r];
 		
 		// Make all selections the same if bOneChoiceForAllPlayers
-		if( Row.m_RowDef.bOneChoiceForAllPlayers )
+		if( row.m_RowDef.bOneChoiceForAllPlayers )
 		{
 			for( int p=1; p<NUM_PLAYERS; p++ )
-				Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
+				row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
 		}
 			
-		CHECKPOINT_M( ssprintf("row %i: %s", r, Row.m_RowDef.name.c_str()) );
+		CHECKPOINT_M( ssprintf("row %i: %s", r, row.m_RowDef.name.c_str()) );
 		FOREACH_PlayerNumber( p )
 		{
+			//
+			// Set focus to one item in the row
+			//
 			if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
-				Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
-			else
+			{
+				row.m_iChoiceInRowWithFocus[p] = 0;	// focus on the first row, which is "go down"
+			}
+			else if( row.m_RowDef.type == OptionRowData::SELECT_ONE )
 			{
 				/* Make sure the row actually has a selection. */
 				bool bHasSelection = false;
 				unsigned i;
-				for( i=0; i<Row.m_vbSelected[p].size(); i++ )
+				for( i=0; i<row.m_vbSelected[p].size(); i++ )
 				{
-					if( Row.m_vbSelected[p][i] )
+					if( row.m_vbSelected[p][i] )
 						bHasSelection = true;
 				}
 
 				if( !bHasSelection )
 				{
 					LOG->Warn( "Options menu \"%s\" row %i has no selection", m_sName.c_str(), i );
-					Row.m_vbSelected[p][0] = true;
+					row.m_vbSelected[p][0] = true;
 				}
 				
-				Row.m_iChoiceWithFocus[p] = Row.GetOneSelection( (PlayerNumber)p);	// focus on the only selected choice
+				row.m_iChoiceInRowWithFocus[p] = row.GetOneSelection(p);	// focus on the selection we just set
+			}
+			else
+			{
+				row.m_iChoiceInRowWithFocus[p] = 0;
 			}
 		}
 	}
@@ -204,11 +213,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	m_framePage.AddChild( m_sprPage );
 
 	// init line highlights
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		m_sprLineHighlight[p].Load( THEME->GetPathToG("ScreenOptions line highlight") );
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
 		m_sprLineHighlight[p].SetX( SCREEN_CENTER_X );
@@ -217,21 +223,15 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	}
 	
 	// init highlights
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		m_Highlight[p].Load( (PlayerNumber)p, false );
 		m_framePage.AddChild( &m_Highlight[p] );
 	}
 
 	// init row icons
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		for( unsigned l=0; l<m_Rows.size(); l++ )
 		{	
 			Row &row = *m_Rows[l];
@@ -314,10 +314,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				BitmapText *bt = new BitmapText;
 				textItems.push_back( bt );
 
-				const int iChoiceWithFocus = row.m_iChoiceWithFocus[p];
+				const int iChoiceInRowWithFocus = row.m_iChoiceInRowWithFocus[p];
 
 				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-				bt->SetText( optline.choices[iChoiceWithFocus] );
+				bt->SetText( optline.choices[iChoiceInRowWithFocus] );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
 
@@ -572,7 +572,9 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 			index = 0;
 	}
 	else
+	{
 		index = iChoiceOnRow;
+	}
 
 	ASSERT_M( index < (int)row.m_textItems.size(), ssprintf("%i < %i", index, (int)row.m_textItems.size() ) );
 	return *row.m_textItems[index];
@@ -636,11 +638,8 @@ void ScreenOptions::PositionUnderlines()
 		if( row.Type == Row::ROW_EXIT )
 			continue;
 
-		FOREACH_PlayerNumber( p )
+		FOREACH_HumanPlayer( p )
 		{
-			if( !GAMESTATE->IsHumanPlayer(p) )
-				continue;	// skip
-
 			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
 
 			const int iNumUnderlines = row.m_bRowIsLong ? 1 : vpUnderlines.size();
@@ -649,19 +648,16 @@ void ScreenOptions::PositionUnderlines()
 			{
 				OptionsCursor& ul = *vpUnderlines[i];
 	
-				int iChoiceWithFocus = row.m_bRowIsLong ? row.m_iChoiceWithFocus[p] : i;
+				int iChoiceWithFocus = row.m_bRowIsLong ? row.m_iChoiceInRowWithFocus[p] : i;
 
 				/* Don't tween X movement and color changes. */
 				int iWidth, iX, iY;
-				GetWidthXY( (PlayerNumber)p, r, iChoiceWithFocus, iWidth, iX, iY );
+				GetWidthXY( p, r, iChoiceWithFocus, iWidth, iX, iY );
 				ul.SetGlobalX( (float)iX );
 				ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
 
-				// Don't show underlines on the ScreenOptionsMenu.  We know we're on this
-				// screen if the row title is empty.
-				bool bEmptyTitle = GetExplanationTitle(r).empty();
 				bool bSelected = row.m_vbSelected[p][ iChoiceWithFocus ];
-				bool bHidden = bEmptyTitle || !bSelected || row.m_bHidden;
+				bool bHidden = !bSelected || row.m_bHidden;
 
 				if( ul.GetDestY() != row.m_fY )
 				{
@@ -669,8 +665,7 @@ void ScreenOptions::PositionUnderlines()
 					ul.BeginTweening( 0.3f );
 				}
 
-				/* XXX: diffuse doesn't work since underline is an ActorFrame */
-				ul.SetDiffuse( RageColor(1,1,1,bHidden? 0.0f:1.0f) );
+				ul.SetHidden( bHidden );
 				ul.SetBarWidth( iWidth );
 				ul.SetY( (float)iY );
 			}
@@ -693,7 +688,7 @@ void ScreenOptions::PositionIcons()
 
 			OptionIcon &icon = row.m_OptionIcons[p];
 
-			int iChoiceWithFocus = row.m_iChoiceWithFocus[p];
+			int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[p];
 
 			int iWidth, iX, iY;			// We only use iY
 			GetWidthXY( (PlayerNumber)p, i, iChoiceWithFocus, iWidth, iX, iY );
@@ -733,7 +728,7 @@ void ScreenOptions::PositionCursors()
 
 		OptionsCursor &highlight = m_Highlight[pn];
 
-		const int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
+		const int iChoiceWithFocus = Row.m_iChoiceInRowWithFocus[pn];
 
 		int iWidth, iX, iY;
 		GetWidthXY( (PlayerNumber)pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
@@ -749,7 +744,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 
 	const Row &Row = *m_Rows[iRow];
-	const int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
+	const int iChoiceWithFocus = Row.m_iChoiceInRowWithFocus[pn];
 
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
@@ -785,7 +780,7 @@ void ScreenOptions::UpdateText( int iRow )
 
 	FOREACH_HumanPlayer( pn )
 	{
-		int iChoiceWithFocus = row.m_iChoiceWithFocus[pn];
+		int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[pn];
 		unsigned item_no = data.bOneChoiceForAllPlayers ? 0 : pn;
 
 		/* If player_no is 2 and there is no player 1: */
@@ -1186,7 +1181,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 
 	if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 	{
-		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		if( iChoiceInRow == 0 )
 		{
 			MenuDown( pn, type );
@@ -1194,10 +1189,10 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		}
 	}
 	
-	// If this is a bFirstChoiceGoesDown, then  if this is a multiselect row.
-	if( data.bMultiSelect )
+	// If this is a bFirstChoiceGoesDown, then if this is a multiselect row.
+	if( data.type == OptionRowData::SELECT_MULTIPLE )
 	{
-		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
 		if( row.m_vbSelected[pn][iChoiceInRow] )
 			m_SoundToggleOn.Play();
@@ -1207,9 +1202,12 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		RefreshIcons();
 
 		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-			ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
+		{
+			// move to the first choice in the row
+			ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], type != IET_FIRST_PRESS );
+		}
 	}
-	else
+	else	// data.type != SELECT_MULTIPLE
 	{
 		switch( m_OptionsNavigation )
 		{
@@ -1218,16 +1216,16 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( !data.bMultiSelect )
+			if( data.type != OptionRowData::SELECT_MULTIPLE )
 			{
-				int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+				int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 				if( row.m_RowDef.bOneChoiceForAllPlayers )
 					row.SetOneSharedSelection( iChoiceInRow );
 				else
 					row.SetOneSelection( pn, iChoiceInRow );
 			}
 			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-				ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
+				ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
 			else
 				ChangeValueInRow( pn, 0, type != IET_FIRST_PRESS );
 			break;
@@ -1253,8 +1251,8 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 		return;
 
 	int iWidth, iY;
-	GetWidthXY( pn, m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceWithFocus[pn], iWidth, m_iFocusX[pn], iY );
-	LOG->Trace("cur selection %ix%i @ %i", m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceWithFocus[pn],
+	GetWidthXY( pn, m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceInRowWithFocus[pn], iWidth, m_iFocusX[pn], iY );
+	LOG->Trace("cur selection %ix%i @ %i", m_iCurrentRow[pn], m_Rows[m_iCurrentRow[pn]]->m_iChoiceInRowWithFocus[pn],
 		m_iFocusX[pn]);
 }
 
@@ -1286,14 +1284,14 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	bool bOneChanged = false;
 
 
-	int iCurrentChoiceWithFocus = row.m_iChoiceWithFocus[pn];
+	int iCurrentChoiceWithFocus = row.m_iChoiceInRowWithFocus[pn];
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
 	wrap( iNewChoiceWithFocus, iNumOptions );
 	
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
 		bOneChanged = true;
 
-	row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
+	row.m_iChoiceInRowWithFocus[pn] = iNewChoiceWithFocus;
 	StoreFocus( pn );
 
 	if( optrow.bOneChoiceForAllPlayers )
@@ -1316,7 +1314,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			// lock focus together
 			FOREACH_HumanPlayer( p )
 			{
-				row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
+				row.m_iChoiceInRowWithFocus[p] = iNewChoiceWithFocus;
 				StoreFocus( pn );
 			}
 		}
@@ -1329,7 +1327,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			}
 			else
 			{
-				if( optrow.bMultiSelect )
+				if( optrow.type == OptionRowData::SELECT_MULTIPLE )
 					;	// do nothing.  User must press Start to toggle the selection.
 				else
 					row.SetOneSelection( (PlayerNumber)p, iNewChoiceWithFocus );			
@@ -1344,7 +1342,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		}
 		else
 		{
-			if( optrow.bMultiSelect )
+			if( optrow.type == OptionRowData::SELECT_MULTIPLE )
 				;	// do nothing.  User must press Start to toggle the selection.
 			else
 				row.SetOneSelection( pn, iNewChoiceWithFocus );
@@ -1369,7 +1367,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		// the first choice before moving.
 		const int iCurrentRow = m_iCurrentRow[pn];
 		Row &row = *m_Rows[iCurrentRow];
-		row.m_iChoiceWithFocus[pn] = 0;
+		row.m_iChoiceInRowWithFocus[pn] = 0;
 	}
 
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
@@ -1385,7 +1383,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 
 		wrap( row, m_Rows.size() );
 
-		const unsigned iOldSelection = m_Rows[m_iCurrentRow[p]]->m_iChoiceWithFocus[p];
+		const unsigned iOldSelection = m_Rows[m_iCurrentRow[p]]->m_iChoiceInRowWithFocus[p];
 
 		m_iCurrentRow[p] = row;
 
@@ -1404,10 +1402,10 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 					if( iSelectionDist == -1 || iDist < iSelectionDist )
 					{
 						iSelectionDist = iDist;
-						m_Rows[row]->m_iChoiceWithFocus[p] = i;
+						m_Rows[row]->m_iChoiceInRowWithFocus[p] = i;
 					}
 				}
-				m_Rows[row]->m_iChoiceWithFocus[p] = min( iOldSelection, m_Rows[row]->m_textItems.size()-1 );
+				m_Rows[row]->m_iChoiceInRowWithFocus[p] = min( iOldSelection, m_Rows[row]->m_textItems.size()-1 );
 			}
 		}
 
@@ -1439,10 +1437,10 @@ ScreenOptions::Row::Row()
 ScreenOptions::Row::~Row()
 {
 	for( unsigned i = 0; i < m_textItems.size(); ++i )
-		delete m_textItems[i];
+		SAFE_DELETE( m_textItems[i] );
 	FOREACH_PlayerNumber( p )
 		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
-			delete m_Underline[p][i];
+			SAFE_DELETE( m_Underline[p][i] );
 }
 
 /*
