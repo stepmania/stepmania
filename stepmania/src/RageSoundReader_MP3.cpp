@@ -826,7 +826,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
  *    so it's unsuitable for precise seeks.  Our own TOC is byte-accurate.
  *    (SetPosition_toc)
  *
- * 2. We can jump based on the bitrate.  This is fast, but not always accurate.
+ * 2. We can jump based on the bitrate.  This is fast, but not accurate.
  *    (SetPosition_estimate)
  *
  * 3. We can seek from any position to any higher position by decoding headers.
@@ -835,10 +835,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
  * Both 1 and 2 will leave the position behind the actual requested position; 
  * combine them with 3 to catch up. Never do 3 alone in "fast" mode, since it's
  * slow if it ends up seeking from the beginning of the file.  Never do 2 in
- * "precise" mode with VBR.
- *
- * We become inaccurate if we do 2 in VBR (which we only do in fast mode); when this
- * happens, we no longer trust our timer to be accurate, so we stop updating our TOC.
+ * "precise" mode.
  */
 
 /* Returns 1 on success, 0 on error, -1 if we couldn't it (don't have
@@ -917,7 +914,7 @@ int RageSoundReader_MP3::SetPosition_hard( int ms )
 			mad_timer_t ts = mad->Timer;
 			mad_timer_sub( &ts, mad->framelength );
 
-			/* We just synthed data starting at ts, containing desired offset.
+			/* We just synthed data starting at ts, containing the desired offset.
 			 * Skip (desired - ts) worth of frames in the output to line up. */
 			mad_timer_t skip = desired;
 			mad_timer_sub( &skip, ts );
