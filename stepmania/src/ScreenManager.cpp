@@ -98,7 +98,6 @@ void ScreenManager::ThemeChanged()
 	SAFE_DELETE( m_SystemLayer );
 	m_SystemLayer = new ScreenSystemLayer;
 	m_SystemLayer->Init();
-	m_SystemLayer->ReloadCreditsText();
 	this->RefreshCreditsMessages();
 }
 
