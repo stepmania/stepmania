@@ -80,10 +80,11 @@ namespace GLExt {
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT = NULL;
 PFNGLCOLORTABLEPROC GLExt::glColorTableEXT = NULL;
 PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
-bool g_bEXT_texture_env_combine = true;
-bool g_bGL_EXT_bgra = true;
+static bool g_bEXT_texture_env_combine = true;
+static bool g_bGL_EXT_bgra = true;
 
-bool g_bReversePackedPixelsWorks = true;
+static bool g_bReversePackedPixelsWorks = true;
+static bool g_b4BitPalettesWork = true;
 
 /* OpenGL system information that generally doesn't change at runtime. */
 
@@ -173,7 +174,7 @@ static void InitStringMap()
 	#define X(a) g_Strings[a] = #a;
 	X(GL_RGBA8);	X(GL_RGBA4);	X(GL_RGB5_A1);	X(GL_RGB5);	X(GL_RGBA);	X(GL_RGB);
 	X(GL_BGR);	X(GL_BGRA);
-	X(GL_COLOR_INDEX8_EXT);	X(GL_COLOR_INDEX);
+	X(GL_COLOR_INDEX8_EXT);	X(GL_COLOR_INDEX4_EXT);	X(GL_COLOR_INDEX);
 	X(GL_UNSIGNED_BYTE);	X(GL_UNSIGNED_SHORT_4_4_4_4); X(GL_UNSIGNED_SHORT_5_5_5_1);
 	X(GL_UNSIGNED_SHORT_1_5_5_5_REV);
 	X(GL_INVALID_ENUM); X(GL_INVALID_VALUE); X(GL_INVALID_OPERATION);
@@ -371,7 +372,7 @@ bool HasExtension(CString ext)
 	return g_glExts.find(ext) != g_glExts.end();
 }
 
-static void CheckPalettedTextures()
+static void CheckPalettedTextures( bool LowColor )
 {
 	if( !GLExt::glColorTableEXT || !GLExt::glGetColorTableParameterivEXT )
 		return;
@@ -381,6 +382,14 @@ static void CheckPalettedTextures()
 	GLenum glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
 	GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
 
+	int bits = 8;
+
+	if( LowColor )
+	{
+		glTexFormat = GL_COLOR_INDEX4_EXT;
+		bits = 4;
+	}
+
 	FlushGLErrors();
 	glTexImage2D(GL_PROXY_TEXTURE_2D,
 				0, glTexFormat, 
@@ -388,6 +397,18 @@ static void CheckPalettedTextures()
 				glImageFormat, glImageType, NULL);
 
 	CString error;
+
+	{
+		GLuint ifmt = 0;
+		glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *)&ifmt );
+		if( ifmt != glTexFormat )
+		{
+			error = ssprintf( "Expected format %s, got %s instead",
+				GLToString(glTexFormat).c_str(),
+				GLToString(ifmt).c_str() );
+			goto fail;
+		}
+	}
 
 	GLenum glError = glGetError();
 	if( glError != GL_NO_ERROR )
@@ -398,7 +419,7 @@ static void CheckPalettedTextures()
 
 	GLubyte palette[256*4];
 	memset(palette, 0, sizeof(palette));
-	GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+	GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 1 << bits, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 	glError = glGetError();
 	if( glError != GL_NO_ERROR )
 	{
@@ -409,9 +430,9 @@ static void CheckPalettedTextures()
 	{	// in brackets to hush VC6 error
 		GLint size = 0;
 		glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
-		if(size != 8)
+		if( bits > size || size > 8 )
 		{
-			error = ssprintf("Expected an 8-bit palette, got a %i-bit one instead", size);
+			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, size);
 			goto fail;
 		}
 	}
@@ -419,9 +440,18 @@ static void CheckPalettedTextures()
 	return;
 
 fail:
-	GLExt::glColorTableEXT = NULL;
-	GLExt::glGetColorTableParameterivEXT = NULL;
-	LOG->Info("Paletted textures disabled: %s.", error.c_str());
+	if( LowColor )
+	{
+		/* Disable 4-bit palettes, but allow 8-bit ones. */
+		g_b4BitPalettesWork = false;
+		LOG->Info("4-bit paletted textures disabled: %s.", error.c_str());
+	} else {
+		/* If 8-bit palettes don't work, disable them entirely--don't trust 4-bit
+		 * palettes if it can't even get 8-bit ones right. */
+		GLExt::glColorTableEXT = NULL;
+		GLExt::glGetColorTableParameterivEXT = NULL;
+		LOG->Info("Paletted textures disabled: %s.", error.c_str());
+	}
 }
 
 static void CheckReversePackedPixels()
@@ -460,7 +490,8 @@ void SetupExtensions()
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
-	CheckPalettedTextures();
+	CheckPalettedTextures( false );
+	CheckPalettedTextures( true );
 	CheckReversePackedPixels();
 
 	// Checks for known bad drivers
@@ -617,6 +648,11 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt )
 	default:
 		return true;	// No way to query this in OGL.  You pass it a format and hope it doesn't have to convert.
 	}
+}
+
+bool RageDisplay_OGL::Supports4BitPalettes()
+{
+	return g_b4BitPalettesWork;
 }
 
 void RageDisplay_OGL::SaveScreenshot( CString sPath )
@@ -1143,6 +1179,15 @@ unsigned RageDisplay_OGL::CreateTexture(
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
+
+	/* If we support 4-bit palettes, and this image fits in 4 bits, then change
+	 * internalformat to GL_COLOR_INDEX4_EXT.  We'll still upload it as 256 colors,
+	 * but OpenGL can discard the extra bits. */
+	if( (img->unused1 & FOUR_BIT_PALETTE) && Supports4BitPalettes() )
+	{
+		LOG->Trace("did 4 bit");
+		glTexFormat = GL_COLOR_INDEX4_EXT;
+	}
 
 	FlushGLErrors();
 
