@@ -95,8 +95,6 @@ void BeginnerHelper::Initialize( int iDancePadType )
 		this->AddChild(&m_sStepCircle[sc]);
 	}*/
 
-	Steps *Blahness;
-
 	// Load the DancePad
 	m_mDancePad.SetHorizAlign( align_left );
 	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );
@@ -112,17 +110,15 @@ void BeginnerHelper::Initialize( int iDancePadType )
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
+		if( !GAMESTATE->IsPlayerEnabled(pl))
+			continue;
+
 		// if there is no character set, try loading a random one.
 		if( GAMESTATE->m_pCurCharacters[pl] == NULL )
 		{
 			GAMESTATE->m_pCurCharacters[pl] = GAMESTATE->GetRandomCharacter();
 		}
 
-		LOG->Trace( "Blahness" );
-		Blahness = GAMESTATE->m_pCurNotes[pl];
-		LOG->Trace( "Blahness2" );
-		LOG->Trace( "Players: %d, Player: %d",NUM_PLAYERS,pl );
-		LOG->Trace ("Blahness Difficulty: %d",Blahness->GetDifficulty() );
 		if( GAMESTATE->m_pCurNotes[pl]->GetDifficulty() == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[pl] != NULL )
 		{
 			// Load textures
@@ -224,11 +220,9 @@ void BeginnerHelper::Update( float fDeltaTime )
 	if(!m_bInitialized)
 		return;
 
-	float beat = fDeltaTime * GAMESTATE->m_fCurBPS;
-
 	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
-		if( (!GAMESTATE->IsPlayerEnabled(pn)) || (GAMESTATE->m_pCurNotes[pn]->GetDifficulty() != DIFFICULTY_BEGINNER) )
+		if( !( GAMESTATE->IsPlayerEnabled(pn) && GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
 			continue;	// skip
 
 		int iStep = 0;
@@ -253,11 +247,17 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	ActorFrame::Update( fDeltaTime );
 	m_mDancePad.Update( fDeltaTime );
-
 	m_sFlash.Update( fDeltaTime );
-	for( int scu=0; scu<NUM_PLAYERS*2; scu++ )
-		m_sStepCircle[scu].Update( beat );
+
+	float beat = fDeltaTime * GAMESTATE->m_fCurBPS;
 
 	for( int pu=0; pu<NUM_PLAYERS; pu++ )
+	{
+		if(!GAMESTATE->IsPlayerEnabled(pu))
+			continue;
+
 		m_mDancer[pu].Update( beat );	//Update dancers
+		for( int scu=0; scu<2; scu++ )
+			m_sStepCircle[pu+scu].Update( beat );
+	}
 }

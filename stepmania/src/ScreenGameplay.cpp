@@ -784,7 +784,7 @@ void ScreenGameplay::LoadNextSong()
 		bool anybeginners = false;
 
 		for( int pb=0; pb<NUM_PLAYERS; pb++ )
-			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
+			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_pCurNotes[pb]->GetDifficulty() == DIFFICULTY_BEGINNER )
 			{
 				anybeginners = true;
 				m_BeginnerHelper.AddPlayer( pb, &m_Player[pb] );
