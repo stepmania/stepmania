@@ -42,7 +42,7 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 114;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 115;	// increment this when Song or Notes changes to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -85,7 +85,7 @@ Song::Song()
 {
 	m_bChangedSinceSave = false;
 	m_fBeat0OffsetInSeconds = 0;
-	m_fMusicSampleStartSeconds = 0;
+	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_iMusicBytes = 0;
 	m_fMusicLengthSeconds = 0;
@@ -471,14 +471,17 @@ void Song::TidyUpData()
 	}
 
 	/* Only automatically set the sample time if there was no sample length
-	 * (m_fMusicSampleStartSeconds == -1).  We don't want to test 
-	 * if m_fMusicSampleStartSeconds == 0, since some people really do want
-	 * the sample to start at the very beginning of the song. */
-
-	// We're going to try and do something intelligent here...
-	// The MusicSampleStart always seems to be about 100-120 beats into 
-	// the song regardless of BPM.  Let's take a shot-in-the dark guess.
+	 * (m_fMusicSampleStartSeconds == -1). */
+	/* We don't want to test if m_fMusicSampleStartSeconds == 0, since some 
+	 * people really do want the sample to start at the very beginning of the song. */
+	
+	/* Having a sample start of 0 sounds terrible for most songs because because
+	 * of the silence at the beginning.  Many of my files have a 0 for the 
+	 * sample start that was not manually set, and I assume other people have the same.
+	 * If there are complaints atou manually-set sample start at 0 is being ignored, 
+	 * then change this back.  -Chris */
 	if( m_fMusicSampleStartSeconds == -1 ||
+		m_fMusicSampleStartSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 	{
 		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
