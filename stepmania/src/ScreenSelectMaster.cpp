@@ -149,7 +149,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		// init preview 
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
-			for( i=0; i<NUM_PREVIEW_PARTS; i++ )
+			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
 				CString sFName = ssprintf("%s Preview Part%d Choice%s", m_sName.c_str(),i+1,mc.m_sName.c_str());
 				m_sprPreview[i][c][0].Load( THEME->GetPathToG(sFName) );
@@ -161,7 +161,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		{
 			FOREACH_HumanPlayer( p )
 			{
-				for( i=0; i<NUM_PREVIEW_PARTS; i++ )
+				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 				{
 					CString sFName = ssprintf("%s Preview Part%d Choice%s P%d", m_sName.c_str(),i+1,mc.m_sName.c_str(),p+1);
 					m_sprPreview[i][c][p].Load( THEME->GetPathToG(sFName) );
