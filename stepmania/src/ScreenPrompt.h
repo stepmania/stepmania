@@ -21,7 +21,7 @@ class ScreenPrompt : public Screen
 {
 public:
 	ScreenPrompt();
-	ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt=false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
+	ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt=false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -42,8 +42,9 @@ protected:
 	bool			m_bYesNoPrompt;		// false = OK prompt, true = YES/NO prompt
 	bool			m_bAnswer;		// true = "YES", false = "NO";
 	ScreenMessage	m_SMSendWhenDone;
-	void(*m_pOnYes)();
-	void(*m_pOnNo)();
+	void(*m_pOnYes)(void*);
+	void(*m_pOnNo)(void*);
+	void* m_pCallbackData;
 	Transition		m_In;
 	Transition		m_Out;
 };

@@ -71,6 +71,7 @@ protected:
 	bool IsLastSong();
 	void LoadNextSong();
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
+	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 
 	bool OneIsHot();
 	bool AllAreInDanger();

@@ -1413,43 +1413,21 @@ void ScreenGameplay::UpdateAutoPlayText()
 	m_textAutoPlay.SetText( sText );
 }
 
-void SaveChanges()
+void SaveChanges( void* papSongsQueue )
 {
-	/* XXX: Hmm.  Better would be to make sure m_pCurCourse is only set when we're
-	 * playing out of a course, and use that here, so these things wouldn't need to
-	 * special case play modes.  Need to make sure m_pCurCourse gets erased
-	 * correctly, though. -glenn */
-	/* That's a very clever idea!   I should look into this.  -Chris */
-	if( GAMESTATE->IsCourseMode() )
-	{
-		// FIXME!!!
-		//for( int i=0; i<m_apSongsQueue.size(); i++ )
-		//	m_apSongsQueue[i]->Save();
-	}
-	else
-	{
-		GAMESTATE->m_pCurSong->Save();
-	}
+	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
+	for( int i=0; i<apSongsQueue.size(); i++ )
+		apSongsQueue[i]->Save();
 }
 
-void DontSaveChanges()
+void RevertChanges( void* papSongsQueue )
 {
-	if( GAMESTATE->IsCourseMode() )
-	{
-		// FIXME
-//			for( unsigned i=0; i<m_apSongsQueue.size(); i++ )
-//			{
-//				Song* pSong = m_apSongsQueue[i];
-//				ld.LoadFromSMFile( pSong->GetCacheFilePath(), *pSong );
-//			}
-	}
-	else
-	{
-		GAMESTATE->m_pCurSong->RevertFromDisk();
-	}
+	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
+	for( int i=0; i<apSongsQueue.size(); i++ )
+		apSongsQueue[i]->RevertFromDisk();
 }
 
-void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
+void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 {
 	CString sMessage;
 	switch( GAMESTATE->m_PlayMode )
@@ -1493,7 +1471,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 		ASSERT(0);
 	}
 
-	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, false, SaveChanges, DontSaveChanges );
+	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, false, SaveChanges, RevertChanges, &m_apSongsQueue );
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )

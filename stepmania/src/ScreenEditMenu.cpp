@@ -115,7 +115,7 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 
 // helpers for MenuStart() below
-void DeleteCurNotes()
+void DeleteCurNotes( void* pThrowAway )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];

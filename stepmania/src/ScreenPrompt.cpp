@@ -26,7 +26,7 @@ const float PROMPT_X	=	CENTER_X;
 const float PROMPT_Y	=	CENTER_Y + 120;
 
 
-ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() ) :
+ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData ) :
   Screen("ScreenPrompt")
 {
 	m_bIsTransparent = true;	// draw screens below us
@@ -36,7 +36,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_bAnswer = bDefaultAnswer;
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
-
+	m_pCallbackData = pCallbackData;
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenPrompt background") );
 	this->AddChild( &m_Background );
@@ -179,10 +179,10 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	if( m_bAnswer )
 	{
 		if( m_pOnYes )
-			m_pOnYes();
+			m_pOnYes(m_pCallbackData);
 	} else {
 		if( m_pOnNo )
-			m_pOnNo();
+			m_pOnNo(m_pCallbackData);
 	}
 }
 
