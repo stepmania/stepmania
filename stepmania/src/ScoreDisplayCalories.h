@@ -26,6 +26,8 @@ public:
 	ScoreDisplayCalories();
 	~ScoreDisplayCalories();
 
+	virtual void Update( float fDelta );
+
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	void PlayCommand( const CString &sCommandName );

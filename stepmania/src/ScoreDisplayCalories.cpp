@@ -37,9 +37,17 @@ void ScoreDisplayCalories::LoadFromNode( const CString& sDir, const XNode* pNode
 	
 	m_sMessageOnStep = ssprintf("StepP%d",m_PlayerNumber+1);
 	
-	UpdateNumber();
-
 	MESSAGEMAN->Subscribe( this, m_sMessageOnStep );
+}
+
+void ScoreDisplayCalories::Update( float fDelta )
+{
+	// We have to set the initial text after StatsManager::CalcAccumStageStats 
+	// is called.
+	if( IsFirstUpdate() )
+		UpdateNumber();
+	
+	RollingNumbers::Update( fDelta );
 }
 
 void ScoreDisplayCalories::PlayCommand( const CString &sCommandName )
@@ -54,8 +62,10 @@ void ScoreDisplayCalories::PlayCommand( const CString &sCommandName )
 
 void ScoreDisplayCalories::UpdateNumber()
 {
-	float fCals = STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
-	fCals += STATSMAN->GetAccumStageStats().m_player[m_PlayerNumber].fCaloriesBurned;
+	float fCals = 
+		STATSMAN->GetAccumStageStats().m_player[m_PlayerNumber].fCaloriesBurned + 
+		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
+	
 	SetTargetNumber( fCals );
 }
 
