@@ -76,10 +76,9 @@ public:
 	~Song();
 	void Reset();
 
-	bool LoadWithoutCache( CString sDir );
 	NotesLoader *MakeLoader( CString sDir ) const;
 
-	bool LoadFromSongDir( CString sDir );
+	bool LoadFromSongDir( CString sDir, bool bAllowCache = true );
 	void RevertFromDisk();
 
 	void TidyUpData();	// call after loading to clean up invalid data

@@ -360,35 +360,7 @@ NotesLoader *Song::MakeLoader( CString sDir ) const
  * pull in <set> into Song.h, which is heavily used. */
 static set<istring> BlacklistedImages;
 
-bool Song::LoadWithoutCache( CString sDir )
-{
-	//
-	// There was no entry in the cache for this song, or it was out of date.
-	// Let's load it from a file, then write a cache entry.
-	//
-	
-	NotesLoader *ld = MakeLoader( sDir );
-	if(!ld)
-	{
-		LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir.c_str() );
-		return false;
-	}
-
-	bool success = ld->LoadFromDir( sDir, *this );
-	BlacklistedImages = ld->GetBlacklistedImages();
-	delete ld;
-
-	if(!success)
-		return false;
-
-	TidyUpData();
-
-	// save a cache file so we don't have to parse it all over again next time
-	SaveToCacheFile();
-	return true;
-}
-
-bool Song::LoadFromSongDir( CString sDir )
+bool Song::LoadFromSongDir( CString sDir, bool bAllowCache )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT( sDir != "" );
@@ -411,7 +383,8 @@ bool Song::LoadFromSongDir( CString sDir )
 	// First look in the cache for this song (without loading NoteData)
 	//
 	unsigned uDirHash = SONGINDEX->GetCacheHash(m_sSongDir);
-	if( GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
+	if( bAllowCache &&
+		GetHashForDirectory(m_sSongDir) == uDirHash && // this cache is up to date 
 		DoesFileExist(GetCacheFilePath()))	
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
@@ -420,8 +393,29 @@ bool Song::LoadFromSongDir( CString sDir )
 	}
 	else
 	{
-		if(!LoadWithoutCache(m_sSongDir))
+		//
+		// There was no entry in the cache for this song, or it was out of date.
+		// Let's load it from a file, then write a cache entry.
+		//
+		
+		NotesLoader *ld = MakeLoader( sDir );
+		if(!ld)
+		{
+			LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir.c_str() );
 			return false;
+		}
+
+		bool success = ld->LoadFromDir( sDir, *this );
+		BlacklistedImages = ld->GetBlacklistedImages();
+		delete ld;
+
+		if(!success)
+			return false;
+
+		TidyUpData();
+
+		// save a cache file so we don't have to parse it all over again next time
+		SaveToCacheFile();
 	}
 
 	/* Load the cached banners, if it's not loaded already. */
@@ -489,7 +483,10 @@ void Song::RevertFromDisk()
 
 	/* Erase all existing data. */
 	Reset();
-	LoadFromSongDir( dir );
+
+	// Don't load from cache, or else we'll get an old version
+	// if they've saved in the editor.
+	LoadFromSongDir( dir, false );	
 
 	if( GAMESTATE->m_pCurSong == this )
 	{
