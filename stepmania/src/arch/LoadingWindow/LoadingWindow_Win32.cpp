@@ -74,14 +74,14 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 {
 	hwnd = CreateDialog(handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
 	for( unsigned i = 0; i < 3; ++i )
-		text[i] = "XXX"; /* always set on first call */
+		text[i] = "ABC"; /* always set on first call */
 	SetText("Initializing hardware...");
 	Paint();
 }
 
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
-	if(hwnd)
+	if( hwnd )
 		DestroyWindow( hwnd );
 }
 
@@ -92,7 +92,8 @@ void LoadingWindow_Win32::Paint()
 	/* Process all queued messages since the last paint.  This allows the window to
 	 * come back if it loses focus during load. */
 	MSG msg;
-	while( PeekMessage( &msg, hwnd, 0, 0, PM_NOREMOVE ) ) {
+	while( PeekMessage( &msg, hwnd, 0, 0, PM_NOREMOVE ) )
+	{
 		GetMessage(&msg, hwnd, 0, 0 );
 		DispatchMessage( &msg );
 	}
