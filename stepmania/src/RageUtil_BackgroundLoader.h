@@ -1,4 +1,4 @@
-/* XXX */
+/* BackgroundLoader - Loads files in a thread. */
 
 #ifndef RAGE_UTIL_BACKGROUND_LOADER_H
 #define RAGE_UTIL_BACKGROUND_LOADER_H
