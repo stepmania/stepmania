@@ -83,7 +83,7 @@ CString BacktraceNames::Format() const
 		ShortenedPath = CString("(") + ShortenedPath + ")";
 	}
 
-	CString ret = ssprintf( "%08x: ", Address );
+	CString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), Address );
 	if( Symbol != "" )
 		ret += Symbol + " ";
 	ret += ShortenedPath;
@@ -97,7 +97,7 @@ CString BacktraceNames::Format() const
 #include <dlfcn.h>
 void BacktraceNames::FromAddr( const void *p )
 {
-    Address = (int) p;
+    Address = (intptr_t) p;
 
     /*
      * When calling a function that doesn't return, gcc will truncate a function.
@@ -222,7 +222,7 @@ const char *osx_find_link_edit( const struct mach_header *header )
 
 void BacktraceNames::FromAddr( const void *p )
 {
-	Address = (int) p;
+	Address = (intptr_t) p;
 
 	/* Find the image with the given pointer. */
 	int index = osx_find_image( p );
@@ -287,7 +287,7 @@ void BacktraceNames::FromAddr( const void *p )
 #include <execinfo.h>
 void BacktraceNames::FromAddr( const void *p )
 {
-    Address = (int) p;
+    Address = (intptr_t) p;
 
     char **foo = backtrace_symbols(&p, 1);
     if( foo == NULL )
@@ -340,7 +340,7 @@ void BacktraceNames::FromAddr( const void *p )
     pid_t ppid = getpid(); /* Do this before fork()ing! */
     
     Offset = 0;
-    Address = long(p);
+    Address = intptr_t(p);
 
     if (pipe(fds) != 0)
     {
@@ -447,7 +447,7 @@ void BacktraceNames::FromAddr( const void *p )
 #warning Undefined BACKTRACE_LOOKUP_METHOD_*
 void BacktraceNames::FromAddr( const void *p )
 {
-    Address = long(p);
+    Address = intptr_t(p);
     Offset = 0;
     Symbol = "";
     File = "";
