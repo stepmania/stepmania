@@ -29,12 +29,12 @@ public:
 	void MenuLeft( PlayerNumber pn );
 	void MenuRight( PlayerNumber pn );
 
-///	Model m_model;
-	Quad m_quad1;
-	Quad m_quad2;
-	Transition	m_In;
-	Transition	m_Out;
-	Sprite	m_text;
+	Model m_model;
+//	Quad m_quad1;
+//	Quad m_quad2;
+//	Transition	m_In;
+//	Transition	m_Out;
+//	Sprite	m_text;
 };
 
 

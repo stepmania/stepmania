@@ -489,7 +489,7 @@ void LifeStream::DrawPrimitives()
 {
 	// make the object in logical units centered at the origin
 	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
-	RAGEVERTEX* v;
+	RageSpriteVertex* v;
 	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
 	int iNumV = 0;
@@ -570,8 +570,8 @@ void LifeStream::DrawPrimitives()
 
 
 	// finally!  Pump those triangles!	
-	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
+	pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RageSpriteVertex) );
 	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, iNumV-2 );
 
 }

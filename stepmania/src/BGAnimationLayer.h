@@ -45,7 +45,7 @@ public:
 	void LosingFocus();
 
 protected:
-	vector<Sprite *> m_Sprites;
+	vector<Actor*> m_pActors;
 	RageVector3 m_vParticleVelocity[MAX_SPRITES];
 
 	enum Effect {
@@ -97,6 +97,7 @@ protected:
 	// common stuff
 	CString m_sCommand;
 	float m_fUpdateRate;	// get by GainingFocus
+	float m_fFOV;
 
 	// stretch stuff
 	float m_fStretchTexCoordVelocityX;
@@ -122,7 +123,6 @@ protected:
 	float m_fTilesSpacingY;
 	float m_fTileVelocityX;
 	float m_fTileVelocityY;
-
 
 };
 

@@ -12,6 +12,7 @@
 */
 
 #include "Actor.h"
+#include "ThemeManager.h"
 
 
 #define SET_XY( actor )			UtilSetXY( actor, m_sName )
@@ -54,5 +55,8 @@ inline float UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
 	UtilSetXY( actor, sClassName );
 	return UtilOnCommand( actor, sClassName );
 }
+
+// Return a Sprite, BitmapText, or Model depending on the file type
+Actor* MakeActor( CString sPath );
 
 #endif

@@ -85,6 +85,7 @@ private:
 
 	Transition		m_In;
 	Transition		m_Out;
+	Transition		m_BeginOut;
 };
 
 

@@ -22,6 +22,7 @@
 #include "RageDisplay.h"
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
+#include "StepMania.h"
 
 Sprite::Sprite()
 {
@@ -252,7 +253,7 @@ void Sprite::Update( float fDelta )
 	}
 }
 
-static void TexCoordsFromArray(RageVertex *v, const float *f)
+static void TexCoordsFromArray(RageSpriteVertex *v, const float *f)
 {
 	v[0].t = RageVector2( f[0], f[1] );	// top left
 	v[1].t = RageVector2( f[2],	f[3] );	// bottom left
@@ -316,7 +317,7 @@ void Sprite::DrawPrimitives()
 
 
 
-	static RageVertex v[4];
+	static RageSpriteVertex v[4];
 	v[0].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,		0 );	// top left
 	v[1].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.bottom,	0 );	// bottom left
 	v[2].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.bottom,	0 );	// bottom right
@@ -591,4 +592,45 @@ bool Sprite::IsDiagonalBanner( int iWidth, int iHeight )
 {
 	/* A diagonal banner is a square.  Give a couple pixels of leeway. */
 	return iWidth >= 100 && abs(iWidth - iHeight) < 2;
+}
+
+inline CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
+{
+	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
+	if( iIndex < int(sParams.size()) )
+		return sParams[iIndex];
+	else
+		return "";
+}
+
+void Sprite::HandleCommand( const CStringArray &asTokens )
+{
+	int iMaxIndexAccessed = 0;
+
+#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
+#define fParam(i) ((float)atof(sParam(i)))
+#define iParam(i) (atoi(sParam(i)))
+#define bParam(i) (iParam(i)!=0)
+
+	const CString& sName = asTokens[0];
+
+	// Commands that go in the tweening queue:
+	/* Add left/right/top/bottom for alpha if needed. */
+	// Commands that take effect immediately (ignoring the tweening queue):
+	if( sName=="customtexturerect" )	SetCustomTextureRect( RectF(fParam(1),fParam(2),fParam(3),fParam(4)) );
+	else if( sName=="texcoordvelocity" )	SetTexCoordVelocity( fParam(1),fParam(2) );
+	else if( sName=="scaletoclipped" )	ScaleToClipped( fParam(1),fParam(2) );
+	else
+	{
+		Actor::HandleCommand( asTokens );
+		return;
+	}
+
+	if( iMaxIndexAccessed != (int)asTokens.size()-1 )
+	{
+		CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
+		LOG->Warn( sError );
+		if( DISPLAY->IsWindowed() )
+			HOOKS->MessageBoxOK( sError );
+	}
 }

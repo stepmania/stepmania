@@ -94,7 +94,7 @@ set<string> g_glExts;
 
 /* We don't actually use normals (we don't tunr on lighting), there's just
  * no GL_T2F_C4F_V3F. */
-const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
+const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 
 LowLevelWindow *wind;
@@ -605,7 +605,7 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 
 RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
 
-static void SetupVertices( const RageVertex v[], int iNumVerts )
+static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 {
 	static float *Vertex, *Texture, *Normal;	
 	static GLubyte *Color;
@@ -651,7 +651,45 @@ static void SetupVertices( const RageVertex v[], int iNumVerts )
 	glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
-void RageDisplay_OGL::DrawQuads( const RageVertex v[], int iNumVerts )
+static void SetupVertices( const RageModelVertex v[], int iNumVerts )
+{
+	static float *Vertex, *Texture, *Normal;	
+	static int Size = 0;
+	if(iNumVerts > Size)
+	{
+		Size = iNumVerts;
+		delete [] Vertex;
+		delete [] Texture;
+		delete [] Normal;
+		Vertex = new float[Size*3];
+		Texture = new float[Size*2];
+		Normal = new float[Size*3];
+	}
+
+	for(unsigned i = 0; i < unsigned(iNumVerts); ++i)
+	{
+		Vertex[i*3+0]  = v[i].p[0];
+		Vertex[i*3+1]  = v[i].p[1];
+		Vertex[i*3+2]  = v[i].p[2];
+		Texture[i*2+0] = v[i].t[0];
+		Texture[i*2+1] = v[i].t[1];
+		Normal[i*3+0] = v[i].n[0];
+		Normal[i*3+1] = v[i].n[1];
+		Normal[i*3+2] = v[i].n[2];
+	}
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, Vertex);
+
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
+
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glNormalPointer(GL_FLOAT, 0, Normal);
+}
+
+void RageDisplay_OGL::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
@@ -669,7 +707,7 @@ void RageDisplay_OGL::DrawQuads( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawFan( const RageVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
@@ -681,7 +719,7 @@ void RageDisplay_OGL::DrawFan( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawStrip( const RageVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
@@ -693,7 +731,7 @@ void RageDisplay_OGL::DrawStrip( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawTriangles( const RageVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
@@ -707,7 +745,7 @@ void RageDisplay_OGL::DrawTriangles( const RageVertex v[], int iNumVerts )
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_OGL::DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
 {
 	if( iNumIndices == 0 )
 		return;
@@ -718,12 +756,12 @@ void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], int iNumVerts,
 	glLoadMatrixf( (const float*)GetModelViewTop() );
 
 	SetupVertices( v, iNumVerts );
-//	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+//	glInterleavedArrays( RageSpriteVertexFormat, sizeof(RageSpriteVertex), v );
 	glDrawElements( GL_TRIANGLES, iNumIndices, GL_UNSIGNED_SHORT, pIndices );
 	StatsAddVerts( iNumIndices );
 }
 
-void RageDisplay_OGL::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 
@@ -795,9 +833,15 @@ void RageDisplay_OGL::DrawLineStrip( const RageVertex v[], int iNumVerts, float 
 
 void RageDisplay_OGL::SetTexture( RageTexture* pTexture )
 {
-	glEnable( GL_TEXTURE_2D );
-	unsigned id = pTexture ? pTexture->GetTexHandle() : 0; 
-	glBindTexture( GL_TEXTURE_2D, id );
+	if( pTexture )
+	{
+		glEnable( GL_TEXTURE_2D );
+		glBindTexture( GL_TEXTURE_2D, pTexture->GetTexHandle() );
+	}
+	else
+	{
+		glDisable( GL_TEXTURE_2D );
+	}
 }
 void RageDisplay_OGL::SetTextureModeModulate()
 {

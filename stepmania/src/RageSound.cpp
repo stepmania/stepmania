@@ -182,6 +182,8 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	// Check for "loop" hint
 	if( m_sFilePath.Find("loop") != -1 )
 		SetStopMode( M_LOOP );
+	else
+		SetStopMode( M_STOP );
 
 
     SoundReader_FileReader *NewSample = new RageSoundReader_LowLevel;

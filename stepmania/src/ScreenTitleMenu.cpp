@@ -131,6 +131,9 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 	m_Out.Load( THEME->GetPathToB("ScreenTitleMenu out") );
 	this->AddChild( &m_Out );
 
+	m_BeginOut.Load( THEME->GetPathToB("ScreenTitleMenu begin out") );
+	this->AddChild( &m_BeginOut );
+
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
@@ -152,6 +155,7 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 
 	this->MoveToTail( &m_In );	// put it in the back so it covers up the stuff we just added
 	this->MoveToTail( &m_Out );	// put it in the back so it covers up the stuff we just added
+	this->MoveToTail( &m_BeginOut );	// put it in the back so it covers up the stuff we just added
 }
 
 ScreenTitleMenu::~ScreenTitleMenu()
@@ -182,7 +186,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case MENU_BUTTON_UP:
 		if( PREFSMAN->m_iCoinMode != COIN_HOME )
 			break;
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_BeginOut.IsTransitioning() )
 			break;
 		TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
 		LoseFocus( m_Choice );
@@ -195,7 +199,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case MENU_BUTTON_DOWN:
 		if( PREFSMAN->m_iCoinMode != COIN_HOME )
 			break;
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_BeginOut.IsTransitioning() )
 			break;
 		TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
 		LoseFocus( m_Choice );
@@ -206,7 +210,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		GainFocus( m_Choice );
 		break;
 	case MENU_BUTTON_BACK:
-		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_BeginOut.IsTransitioning() )
 			break;
 		m_Out.StartTransitioning( SM_GoToAttractLoop );
 		break;
@@ -232,8 +236,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 
 		if( Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
-			if( !m_Out.IsTransitioning() )
-				m_Out.StartTransitioning( SM_GoToNextScreen );
+			if( !m_Out.IsTransitioning() && !m_BeginOut.IsTransitioning() )
+				m_BeginOut.StartTransitioning( SM_GoToNextScreen );
 	}
 
 	// detect codes

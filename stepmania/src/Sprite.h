@@ -56,6 +56,7 @@ public:
 	void ScaleToClipped( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
+	virtual void HandleCommand( const CStringArray &asTokens );
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );

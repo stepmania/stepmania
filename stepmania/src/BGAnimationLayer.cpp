@@ -24,7 +24,8 @@
 #include "ThemeManager.h"
 #include "ActorCollision.h"
 #include "Sprite.h"
-
+#include "RageDisplay.h"
+#include "ActorUtil.h"
 
 
 const float PARTICLE_SPEED = 300;
@@ -46,9 +47,9 @@ BGAnimationLayer::~BGAnimationLayer()
 
 void BGAnimationLayer::Unload()
 {
-	for( unsigned i=0; i<m_Sprites.size(); i++ )
-		delete m_Sprites[i];
-	m_Sprites.clear();
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		delete m_pActors[i];
+	m_pActors.clear();
 }
 
 void BGAnimationLayer::Init()
@@ -56,6 +57,7 @@ void BGAnimationLayer::Init()
 	Unload();
 
 	m_fUpdateRate = 1;
+	m_fFOV = 0;		// ortho
 
 //	m_bCycleColor = false;
 //	m_bCycleAlpha = false;
@@ -110,29 +112,32 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 	Init();
 	RageTextureID ID(sPath);
 	ID.iAlphaBits = 0;
-	m_Sprites.push_back(new Sprite);
-	m_Sprites.back()->LoadBG( ID );
-	m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	Sprite* pSprite = new Sprite;
+	pSprite->LoadBG( ID );
+	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_pActors.push_back( pSprite );
 }
 
 void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 {
 	Init();
-	m_Sprites.push_back(new Sprite);
-	m_Sprites.back()->LoadBG( sMoviePath );
-	m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_Sprites.back()->GetTexture()->Play();
+	Sprite* pSprite = new Sprite;
+	pSprite->LoadBG( sMoviePath );
+	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	pSprite->GetTexture()->Play();
 	SDL_Delay( 50 );	// decode a frame so we don't see a black flash at the beginning
-	m_Sprites.back()->GetTexture()->Pause();
+	pSprite->GetTexture()->Pause();
+	m_pActors.push_back( pSprite );
 }
 
 void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 {
 	Init();
-	m_Sprites.push_back(new Sprite);
-	m_Sprites.back()->LoadBG( sMoviePath );
-	m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_Sprites.back()->SetBlendMode( BLEND_ADD );
+	Sprite* pSprite = new Sprite;
+	m_pActors.push_back( pSprite );
+	pSprite->LoadBG( sMoviePath );
+	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	pSprite->SetBlendMode( BLEND_ADD );
 }
 
 
@@ -192,10 +197,13 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	switch( effect )
 	{
 	case EFFECT_CENTER:
-		m_Type = TYPE_SPRITE;
-		m_Sprites.push_back(new Sprite);
-		m_Sprites.back()->Load( sPath );
-		m_Sprites.back()->SetXY( CENTER_X, CENTER_Y );
+		{
+			m_Type = TYPE_SPRITE;
+			Sprite* pSprite = new Sprite;
+			m_pActors.push_back( pSprite );
+			pSprite->Load( sPath );
+			pSprite->SetXY( CENTER_X, CENTER_Y );
+		}
 		break;
 	case EFFECT_STRETCH_STILL:
 	case EFFECT_STRETCH_SCROLL_LEFT:
@@ -207,12 +215,13 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	case EFFECT_STRETCH_TWIST:
 		{
 			m_Type = TYPE_STRETCH;
-			m_Sprites.push_back(new Sprite);
+			Sprite* pSprite = new Sprite;
+			m_pActors.push_back( pSprite );
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
-			m_Sprites.back()->LoadBG( ID );
-			m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-			m_Sprites.back()->SetCustomTextureRect( RectF(0,0,1,1) );
+			pSprite->LoadBG( ID );
+			pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 
 			switch( effect )
 			{
@@ -227,26 +236,27 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	case EFFECT_STRETCH_SPIN:
 		{
 			m_Type = TYPE_STRETCH;
-			m_Sprites.push_back(new Sprite);
-			m_Sprites.back()->LoadBG( sPath );
-			m_Sprites.back()->ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
-			m_Sprites.back()->SetEffectSpin( RageVector3(0,0,60) );
+			Sprite* pSprite = new Sprite;
+			m_pActors.push_back( pSprite );
+			pSprite->LoadBG( sPath );
+			pSprite->ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
+			pSprite->SetEffectSpin( RageVector3(0,0,60) );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
 	case EFFECT_PARTICLES_SPIRAL_IN:
 /*		{
 			m_Type = TYPE_PARTICLES;
-			m_Sprites.back()->Load( sPath );
-			int iSpriteArea = int( m_Sprites.back()->GetUnzoomedWidth()*m_Sprites.back()->GetUnzoomedHeight() );
+			pSprite->Load( sPath );
+			int iSpriteArea = int( pSprite->GetUnzoomedWidth()*pSprite->GetUnzoomedHeight() );
 			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
 			m_iNumSprites = m_iNumParticles = iMaxArea / iSpriteArea;
 			m_iNumSprites = m_iNumParticles = min( m_iNumSprites, MAX_SPRITES );
 			for( unsigned i=0; i<m_iNumSprites; i++ )
 			{
-				m_Sprites[i].Load( sPath );
-				m_Sprites[i].SetZoom( randomf(0.2f,2) );
-				m_Sprites[i].SetRotationZ( randomf(0,360) );
+				m_pActors[i].Load( sPath );
+				m_pActors[i].SetZoom( randomf(0.2f,2) );
+				m_pActors[i].SetRotationZ( randomf(0,360) );
 			}
 		}
 		break;
@@ -266,31 +276,32 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 
 			for( int i=0; i<m_iNumParticles; i++ )
 			{
-				m_Sprites.push_back(new Sprite);
-				m_Sprites.back()->Load( sPath );
-				m_Sprites.back()->SetZoom( 0.7f + 0.6f*i/(float)m_iNumParticles );
-				m_Sprites.back()->SetX( randomf( GetGuardRailLeft(m_Sprites.back()), GetGuardRailRight(m_Sprites.back()) ) );
-				m_Sprites.back()->SetY( randomf( GetGuardRailTop(m_Sprites.back()), GetGuardRailBottom(m_Sprites.back()) ) );
+				Sprite* pSprite = new Sprite;
+				m_pActors.push_back( pSprite );
+				pSprite->Load( sPath );
+				pSprite->SetZoom( 0.7f + 0.6f*i/(float)m_iNumParticles );
+				pSprite->SetX( randomf( GetGuardRailLeft(pSprite), GetGuardRailRight(pSprite) ) );
+				pSprite->SetY( randomf( GetGuardRailTop(pSprite), GetGuardRailBottom(pSprite) ) );
 
 				switch( effect )
 				{
 				case EFFECT_PARTICLES_FLOAT_UP:
 				case EFFECT_PARTICLES_SPIRAL_OUT:
-					m_vParticleVelocity[i] = RageVector3( 0, -PARTICLE_SPEED*m_Sprites.back()->GetZoom(), 0 );
+					m_vParticleVelocity[i] = RageVector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 );
 					break;
 				case EFFECT_PARTICLES_FLOAT_DOWN:
 				case EFFECT_PARTICLES_SPIRAL_IN:
-					m_vParticleVelocity[i] = RageVector3( 0, PARTICLE_SPEED*m_Sprites.back()->GetZoom(), 0 );
+					m_vParticleVelocity[i] = RageVector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 );
 					break;
 				case EFFECT_PARTICLES_FLOAT_LEFT:
-					m_vParticleVelocity[i] = RageVector3( -PARTICLE_SPEED*m_Sprites.back()->GetZoom(), 0, 0 );
+					m_vParticleVelocity[i] = RageVector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 );
 					break;
 				case EFFECT_PARTICLES_FLOAT_RIGHT:
-					m_vParticleVelocity[i] = RageVector3( +PARTICLE_SPEED*m_Sprites.back()->GetZoom(), 0, 0 );
+					m_vParticleVelocity[i] = RageVector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 );
 					break;
 				case EFFECT_PARTICLES_BOUNCE:
 					m_bParticlesBounce = true;
-					m_Sprites.back()->SetZoom( 1 );
+					pSprite->SetZoom( 1 );
 					m_vParticleVelocity[i] = RageVector3( randomf(), randomf(), 0 );
 					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
 					break;
@@ -328,9 +339,10 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			{
 				for( int y=0; y<m_iNumTilesHigh; y++ )
 				{
-					m_Sprites.push_back(new Sprite);
-					m_Sprites.back()->Load( ID );
-					m_Sprites.back()->SetTextureWrapping( true );	// gets rid of some "cracks"
+					Sprite* pSprite = new Sprite;
+					m_pActors.push_back( pSprite );
+					pSprite->Load( ID );
+					pSprite->SetTextureWrapping( true );	// gets rid of some "cracks"
 
 					switch( effect )
 					{
@@ -349,13 +361,13 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 						m_fTileVelocityY = +PARTICLE_SPEED;
 						break;
 					case EFFECT_TILE_FLIP_X:
-						m_Sprites.back()->SetEffectSpin( RageVector3(2,0,0) );
+						pSprite->SetEffectSpin( RageVector3(2,0,0) );
 						break;
 					case EFFECT_TILE_FLIP_Y:
-						m_Sprites.back()->SetEffectSpin( RageVector3(0,2,0) );
+						pSprite->SetEffectSpin( RageVector3(0,2,0) );
 						break;
 					case EFFECT_TILE_PULSE:
-						m_Sprites.back()->SetEffectPulse( 1, 0.3f, 1.f );
+						pSprite->SetEffectPulse( 1, 0.3f, 1.f );
 						break;
 					default:
 						ASSERT(0);
@@ -372,24 +384,24 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	sPath.MakeLower();
 
 	if( sPath.Find("cyclecolor") != -1 )
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->SetEffectRainbow( 5 );
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->SetEffectRainbow( 5 );
 
 	if( sPath.Find("cyclealpha") != -1 )
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->SetEffectDiffuseShift( 2, RageColor(1,1,1,1), RageColor(1,1,1,0) );
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->SetEffectDiffuseShift( 2, RageColor(1,1,1,1), RageColor(1,1,1,0) );
 
 	if( sPath.Find("startonrandomframe") != -1 )
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->SetState( rand()%m_Sprites[i]->GetNumStates() );
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->SetState( rand()%m_pActors[i]->GetNumStates() );
 
 	if( sPath.Find("dontanimate") != -1 )
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->StopAnimating();
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->StopAnimating();
 
 	if( sPath.Find("add") != -1 )
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->SetBlendMode( BLEND_ADD );
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->SetBlendMode( BLEND_ADD );
 
 	/*
 	CString sDir, sFName, sExt;
@@ -417,23 +429,23 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 
 	if(m_ShowTime != 0) // they don't want to show until a certain point... hide it all
 	{
-		m_Sprites[0].SetDiffuse(RageColor(0,0,0,0));
+		m_pActors[0].SetDiffuse(RageColor(0,0,0,0));
 	}
 	if(m_PosX != 0)
 	{
-		m_Sprites[0].SetX(m_PosX);
+		m_pActors[0].SetX(m_PosX);
 	}
 	if(m_PosY != 0)
 	{
-		m_Sprites[0].SetY(m_PosY);
+		m_pActors[0].SetY(m_PosY);
 	}
 	if(m_Zoom != 0)
 	{
-		m_Sprites[0].SetZoom(m_Zoom);
+		m_pActors[0].SetZoom(m_Zoom);
 	}
 	if(m_Rot != 0)
 	{
-		m_Sprites[0].SetRotationZ(m_Rot);
+		m_pActors[0].SetRotationZ(m_Rot);
 	}
 	*/
 }
@@ -503,6 +515,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
 	ini.GetValue ( sLayer, "Command", m_sCommand );
+	ini.GetValueF( sLayer, "FOV", m_fFOV );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
 	ini.GetValueF( sLayer, "ZoomMin", m_fZoomMin );
@@ -529,28 +542,31 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
-		m_Sprites.push_back( new Sprite );
-		m_Sprites.back()->Load( sPath );
-		m_Sprites.back()->SetXY( CENTER_X, CENTER_Y );
+		{
+			Actor* pActor = MakeActor( sPath );
+			m_pActors.push_back( pActor );
+			pActor->SetXY( CENTER_X, CENTER_Y );
+		}
 		break;
 	case TYPE_STRETCH:
 		{
-			m_Sprites.push_back( new Sprite );
+			Sprite* pSprite = new Sprite;
+			m_pActors.push_back( pSprite );
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
-			m_Sprites.back()->LoadBG( ID );
-			m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-			m_Sprites.back()->SetCustomTextureRect( RectF(0,0,1,1) );
+			pSprite->LoadBG( ID );
+			pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 		}
 		break;
 	case TYPE_PARTICLES:
 		{
 			for( int i=0; i<m_iNumParticles; i++ )
 			{
-				m_Sprites.push_back( new Sprite );
-				m_Sprites.back()->Load( sPath );
-				m_Sprites.back()->SetXY( randomf(SCREEN_LEFT,SCREEN_RIGHT), randomf(SCREEN_TOP,SCREEN_BOTTOM) );
-				m_Sprites.back()->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
+				Actor* pActor = MakeActor( sPath );
+				m_pActors.push_back( pActor );
+				pActor->SetXY( randomf(SCREEN_LEFT,SCREEN_RIGHT), randomf(SCREEN_TOP,SCREEN_BOTTOM) );
+				pActor->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
 				m_vParticleVelocity[i] = RageVector3( 
 					randomf(m_fVelocityXMin,m_fVelocityXMax),
 					randomf(m_fVelocityYMin,m_fVelocityYMax),
@@ -578,10 +594,11 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			unsigned NumSprites = m_iNumTilesWide * m_iNumTilesHigh;
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
-				m_Sprites.push_back( new Sprite );
-				m_Sprites.back()->Load( ID );
-				m_Sprites.back()->SetTextureWrapping( true );		// gets rid of some "cracks"
-				m_Sprites.back()->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
+				Sprite* pSprite = new Sprite;
+				m_pActors.push_back( pSprite );
+				pSprite->Load( ID );
+				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
+				pSprite->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
 			}
 		}
 		break;
@@ -593,14 +610,14 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValueB( sLayer, "StartOnRandomFrame", bStartOnRandomFrame );
 	if( bStartOnRandomFrame )
 	{
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->SetState( rand()%m_Sprites[i]->GetNumStates() );
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->SetState( rand()%m_pActors[i]->GetNumStates() );
 	}
 
 	if( m_sCommand != "" )
 	{
-		for( unsigned i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->Command( m_sCommand );
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->Command( m_sCommand );
 	}
 }
 
@@ -608,8 +625,8 @@ float BGAnimationLayer::GetMaxTweenTimeLeft() const
 {
 	float ret = 0;
 
-	for( unsigned i=0; i<m_Sprites.size(); i++ )
-		ret = max(ret, m_Sprites[i]->GetTweenTimeLeft());
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		ret = max(ret, m_pActors[i]->GetTweenTimeLeft());
 
 	return ret;
 }
@@ -621,8 +638,8 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	
 	unsigned i;
-	for( i=0; i<m_Sprites.size(); i++ )
-		m_Sprites[i]->Update( fDeltaTime );
+	for( i=0; i<m_pActors.size(); i++ )
+		m_pActors[i]->Update( fDeltaTime );
 
 
 	switch( m_Type )
@@ -630,10 +647,12 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	case TYPE_SPRITE:
 		break;
 	case TYPE_STRETCH:
-		for( i=0; i<m_Sprites.size(); i++ )
+		for( i=0; i<m_pActors.size(); i++ )
 		{
 			float fTexCoords[8];
-			m_Sprites[i]->GetActiveTextureCoords( fTexCoords );
+			// FIXME:  Very dangerous.  How could we handle this better?
+			Sprite* pSprite = (Sprite*)m_pActors[i];
+			pSprite->GetActiveTextureCoords( fTexCoords );
 
 			for( int j=0; j<8; j+=2 )
 			{
@@ -641,81 +660,81 @@ void BGAnimationLayer::Update( float fDeltaTime )
 				fTexCoords[j+1] += fDeltaTime*m_fStretchTexCoordVelocityY;
 			}
  
-			m_Sprites[i]->SetCustomTextureCoords( fTexCoords );
+			pSprite->SetCustomTextureCoords( fTexCoords );
 		}
 		break;
 /*	case EFFECT_PARTICLES_SPIRAL_OUT:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetZoom( m_Sprites[i].GetZoom() + fDeltaTime );
-			if( m_Sprites[i].GetZoom() > SPIRAL_MAX_ZOOM )
-				m_Sprites[i].SetZoom( SPIRAL_MIN_ZOOM );
+			m_pActors[i].SetZoom( m_pActors[i].GetZoom() + fDeltaTime );
+			if( m_pActors[i].GetZoom() > SPIRAL_MAX_ZOOM )
+				m_pActors[i].SetZoom( SPIRAL_MIN_ZOOM );
 
-			m_Sprites[i].SetRotationZ( m_Sprites[i].GetRotationZ() + fDeltaTime );
+			m_pActors[i].SetRotationZ( m_pActors[i].GetRotationZ() + fDeltaTime );
 
-			float fRadius = (m_Sprites[i].GetZoom()-SPIRAL_MIN_ZOOM);
+			float fRadius = (m_pActors[i].GetZoom()-SPIRAL_MIN_ZOOM);
 			fRadius *= fRadius;
 			fRadius *= 200;
-			m_Sprites[i].SetX( CENTER_X + cosf(m_Sprites[i].GetRotationZ())*fRadius );
-			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotationZ())*fRadius );
+			m_pActors[i].SetX( CENTER_X + cosf(m_pActors[i].GetRotationZ())*fRadius );
+			m_pActors[i].SetY( CENTER_Y + sinf(m_pActors[i].GetRotationZ())*fRadius );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_IN:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetZoom( m_Sprites[i].GetZoom() - fDeltaTime );
-			if( m_Sprites[i].GetZoom() < SPIRAL_MIN_ZOOM )
-				m_Sprites[i].SetZoom( SPIRAL_MAX_ZOOM );
+			m_pActors[i].SetZoom( m_pActors[i].GetZoom() - fDeltaTime );
+			if( m_pActors[i].GetZoom() < SPIRAL_MIN_ZOOM )
+				m_pActors[i].SetZoom( SPIRAL_MAX_ZOOM );
 
-			m_Sprites[i].SetRotationZ( m_Sprites[i].GetRotationZ() - fDeltaTime );
+			m_pActors[i].SetRotationZ( m_pActors[i].GetRotationZ() - fDeltaTime );
 
-			float fRadius = (m_Sprites[i].GetZoom()-SPIRAL_MIN_ZOOM);
+			float fRadius = (m_pActors[i].GetZoom()-SPIRAL_MIN_ZOOM);
 			fRadius *= fRadius;
 			fRadius *= 200;
-			m_Sprites[i].SetX( CENTER_X + cosf(m_Sprites[i].GetRotationZ())*fRadius );
-			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotationZ())*fRadius );
+			m_pActors[i].SetX( CENTER_X + cosf(m_pActors[i].GetRotationZ())*fRadius );
+			m_pActors[i].SetY( CENTER_Y + sinf(m_pActors[i].GetRotationZ())*fRadius );
 		}
 		break;
 */
 	case TYPE_PARTICLES:
-		for( i=0; i<m_Sprites.size(); i++ )
+		for( i=0; i<m_pActors.size(); i++ )
 		{
-			m_Sprites[i]->SetX( m_Sprites[i]->GetX() + fDeltaTime*m_vParticleVelocity[i].x  );
-			m_Sprites[i]->SetY( m_Sprites[i]->GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
-			m_Sprites[i]->SetZ( m_Sprites[i]->GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
+			m_pActors[i]->SetX( m_pActors[i]->GetX() + fDeltaTime*m_vParticleVelocity[i].x  );
+			m_pActors[i]->SetY( m_pActors[i]->GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
+			m_pActors[i]->SetZ( m_pActors[i]->GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
 			if( m_bParticlesBounce )
 			{
-				if( HitGuardRailLeft(m_Sprites[i]) )	
+				if( HitGuardRailLeft(m_pActors[i]) )	
 				{
 					m_vParticleVelocity[i].x *= -1;
-					m_Sprites[i]->SetX( GetGuardRailLeft(m_Sprites[i]) );
+					m_pActors[i]->SetX( GetGuardRailLeft(m_pActors[i]) );
 				}
-				if( HitGuardRailRight(m_Sprites[i]) )	
+				if( HitGuardRailRight(m_pActors[i]) )	
 				{
 					m_vParticleVelocity[i].x *= -1;
-					m_Sprites[i]->SetX( GetGuardRailRight(m_Sprites[i]) );
+					m_pActors[i]->SetX( GetGuardRailRight(m_pActors[i]) );
 				}
-				if( HitGuardRailTop(m_Sprites[i]) )	
+				if( HitGuardRailTop(m_pActors[i]) )	
 				{
 					m_vParticleVelocity[i].y *= -1;
-					m_Sprites[i]->SetY( GetGuardRailTop(m_Sprites[i]) );
+					m_pActors[i]->SetY( GetGuardRailTop(m_pActors[i]) );
 				}
-				if( HitGuardRailBottom(m_Sprites[i]) )	
+				if( HitGuardRailBottom(m_pActors[i]) )	
 				{
 					m_vParticleVelocity[i].y *= -1;
-					m_Sprites[i]->SetY( GetGuardRailBottom(m_Sprites[i]) );
+					m_pActors[i]->SetY( GetGuardRailBottom(m_pActors[i]) );
 				}
 			}
 			else // !m_bParticlesBounce 
 			{
-				if( m_vParticleVelocity[i].x<0  &&  IsOffScreenLeft(m_Sprites[i]) )
-					m_Sprites[i]->SetX( GetOffScreenRight(m_Sprites[i]) );
-				if( m_vParticleVelocity[i].x>0  &&  IsOffScreenRight(m_Sprites[i]) )
-					m_Sprites[i]->SetX( GetOffScreenLeft(m_Sprites[i]) );
-				if( m_vParticleVelocity[i].y<0  &&  IsOffScreenTop(m_Sprites[i]) )
-					m_Sprites[i]->SetY( GetOffScreenBottom(m_Sprites[i]) );
-				if( m_vParticleVelocity[i].y>0  &&  IsOffScreenBottom(m_Sprites[i]) )
-					m_Sprites[i]->SetY( GetOffScreenTop(m_Sprites[i]) );
+				if( m_vParticleVelocity[i].x<0  &&  IsOffScreenLeft(m_pActors[i]) )
+					m_pActors[i]->SetX( GetOffScreenRight(m_pActors[i]) );
+				if( m_vParticleVelocity[i].x>0  &&  IsOffScreenRight(m_pActors[i]) )
+					m_pActors[i]->SetX( GetOffScreenLeft(m_pActors[i]) );
+				if( m_vParticleVelocity[i].y<0  &&  IsOffScreenTop(m_pActors[i]) )
+					m_pActors[i]->SetY( GetOffScreenBottom(m_pActors[i]) );
+				if( m_vParticleVelocity[i].y>0  &&  IsOffScreenBottom(m_pActors[i]) )
+					m_pActors[i]->SetY( GetOffScreenTop(m_pActors[i]) );
 			}
 		}
 		break;
@@ -725,7 +744,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 			float fTotalWidth = m_iNumTilesWide * m_fTilesSpacingX;
 			float fTotalHeight = m_iNumTilesHigh * m_fTilesSpacingY;
 			
-			ASSERT( int(m_Sprites.size()) == m_iNumTilesWide * m_iNumTilesHigh );
+			ASSERT( int(m_pActors.size()) == m_iNumTilesWide * m_iNumTilesHigh );
 
 			for( int x=0; x<m_iNumTilesWide; x++ )
 			{
@@ -748,30 +767,30 @@ void BGAnimationLayer::Update( float fDeltaTime )
 					fX -= m_fTilesSpacingX/2;
 					fY -= m_fTilesSpacingY/2;
 					
-					m_Sprites[i]->SetX( fX );
-					m_Sprites[i]->SetY( fY );
+					m_pActors[i]->SetX( fX );
+					m_pActors[i]->SetY( fY );
 				}
 			}
 /*			
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime*  );
-			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
-			m_Sprites[i].SetZ( m_Sprites[i].GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
-			if( IsOffScreenLeft(&m_Sprites[i]) )
-				m_Sprites[i].SetX( m_Sprites[i].GetX()-GetOffScreenLeft(&m_Sprites[i]) + GetOffScreenRight(&m_Sprites[i]) );
-			if( IsOffScreenRight(&m_Sprites[i]) )
-				m_Sprites[i].SetX( m_Sprites[i].GetX()-GetOffScreenRight(&m_Sprites[i]) + GetOffScreenLeft(&m_Sprites[i]) );
-			if( IsOffScreenTop(&m_Sprites[i]) )
-				m_Sprites[i].SetY( m_Sprites[i].GetY()-GetOffScreenTop(&m_Sprites[i]) + GetOffScreenBottom(&m_Sprites[i]) );
-			if( IsOffScreenBottom(&m_Sprites[i]) )
-				m_Sprites[i].SetY( m_Sprites[i].GetY()-GetOffScreenBottom(&m_Sprites[i]) + GetOffScreenTop(&m_Sprites[i]) );
+			m_pActors[i].SetX( m_pActors[i].GetX() + fDeltaTime*  );
+			m_pActors[i].SetY( m_pActors[i].GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
+			m_pActors[i].SetZ( m_pActors[i].GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
+			if( IsOffScreenLeft(&m_pActors[i]) )
+				m_pActors[i].SetX( m_pActors[i].GetX()-GetOffScreenLeft(&m_pActors[i]) + GetOffScreenRight(&m_pActors[i]) );
+			if( IsOffScreenRight(&m_pActors[i]) )
+				m_pActors[i].SetX( m_pActors[i].GetX()-GetOffScreenRight(&m_pActors[i]) + GetOffScreenLeft(&m_pActors[i]) );
+			if( IsOffScreenTop(&m_pActors[i]) )
+				m_pActors[i].SetY( m_pActors[i].GetY()-GetOffScreenTop(&m_pActors[i]) + GetOffScreenBottom(&m_pActors[i]) );
+			if( IsOffScreenBottom(&m_pActors[i]) )
+				m_pActors[i].SetY( m_pActors[i].GetY()-GetOffScreenBottom(&m_pActors[i]) + GetOffScreenTop(&m_pActors[i]) );
 				*/
 		}
 		break;
 	case EFFECT_TILE_PULSE:
-		for( i=0; i<m_Sprites.size(); i++ )
-			m_Sprites[i]->SetZoom( sinf( fSongBeat*PI/2 ) );
+		for( i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->SetZoom( sinf( fSongBeat*PI/2 ) );
 
 		break;
 	default:
@@ -784,7 +803,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		m_TweenStartTime -= fDeltaTime;
 		if(m_TweenStartTime <= 0) // if we've gone past the magic point... show the beast....
 		{
-		//	m_Sprites[0].SetXY( m_TweenX, m_TweenY);
+		//	m_pActors[0].SetXY( m_TweenX, m_TweenY);
 			
 			// WHAT WOULD BE NICE HERE:
 			// Set the Sprite Tweening To m_TweenX and m_TweenY
@@ -808,25 +827,25 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	{
 		if(m_TweenPassedY != 1) // Check to see if we still need to Tween Along the Y Axis
 		{
-			if(m_Sprites[0].GetY() < m_TweenY) // it needs to travel down
+			if(m_pActors[0].GetY() < m_TweenY) // it needs to travel down
 			{
 				// Speed = Distance / Time....
 				// Take away from the current position... the distance it has to travel divided by the time they want it done in...
-				m_Sprites[0].SetY(m_Sprites[0].GetY() + ((m_TweenY - m_PosY)/(m_TweenSpeed*60)));
+				m_pActors[0].SetY(m_pActors[0].GetY() + ((m_TweenY - m_PosY)/(m_TweenSpeed*60)));
 
-				if(m_Sprites[0].GetY() > m_TweenY) // passed the location we wanna go to?
+				if(m_pActors[0].GetY() > m_TweenY) // passed the location we wanna go to?
 				{
-					m_Sprites[0].SetY(m_TweenY); // set it to the exact location we want
+					m_pActors[0].SetY(m_TweenY); // set it to the exact location we want
 					m_TweenPassedY = 1; // say we passed it.
 				}
 			}
 			else // travelling up
 			{
-				m_Sprites[0].SetY(m_Sprites[0].GetY() - ((m_TweenY + m_PosY)/(m_TweenSpeed*60)));
+				m_pActors[0].SetY(m_pActors[0].GetY() - ((m_TweenY + m_PosY)/(m_TweenSpeed*60)));
 
-				if(m_Sprites[0].GetY() < m_TweenY)
+				if(m_pActors[0].GetY() < m_TweenY)
 				{
-					m_Sprites[0].SetY(m_TweenY);
+					m_pActors[0].SetY(m_TweenY);
 					m_TweenPassedY = 1;
 				}
 			}
@@ -834,21 +853,21 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 		if(m_TweenPassedX != 1) // Check to see if we still need to Tween Along the X Axis
 		{
-			if(m_Sprites[0].GetX() < m_TweenX) // it needs to travel right
+			if(m_pActors[0].GetX() < m_TweenX) // it needs to travel right
 			{
-				m_Sprites[0].SetX(m_Sprites[0].GetX() + ((m_TweenX - m_PosX)/(m_TweenSpeed*60)));
-				if(m_Sprites[0].GetX() > m_TweenX)
+				m_pActors[0].SetX(m_pActors[0].GetX() + ((m_TweenX - m_PosX)/(m_TweenSpeed*60)));
+				if(m_pActors[0].GetX() > m_TweenX)
 				{
-					m_Sprites[0].SetX(m_TweenX);
+					m_pActors[0].SetX(m_TweenX);
 					m_TweenPassedX = 1;
 				}
 			}
 			else // travelling left
 			{
-				m_Sprites[0].SetX(m_Sprites[0].GetX() - ((m_TweenX + m_PosX)/(m_TweenSpeed*60)));
-				if(m_Sprites[0].GetX() < m_TweenX)
+				m_pActors[0].SetX(m_pActors[0].GetX() - ((m_TweenX + m_PosX)/(m_TweenSpeed*60)));
+				if(m_pActors[0].GetX() < m_TweenX)
 				{
-					m_Sprites[0].SetX(m_TweenX);
+					m_pActors[0].SetX(m_TweenX);
 					m_TweenPassedX = 1;
 				}
 			}
@@ -865,7 +884,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		m_ShowTime -= fDeltaTime;
 		if(m_ShowTime <= 0) // if we've gone past the magic point... show the beast....
 		{
-			m_Sprites[0].SetDiffuse( RageColor(1,1,1,1) );
+			m_pActors[0].SetDiffuse( RageColor(1,1,1,1) );
 		}		
 	}
 	if(m_HideTime != 0 && !(m_HideTime < 0)) // make sure it's not 0 or less than 0...
@@ -873,7 +892,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		m_HideTime -= fDeltaTime;
 		if(m_HideTime <= 0) // if we've gone past the magic point... hide the beast....
 		{
-			m_Sprites[0].SetDiffuse( RageColor(0,0,0,0) );
+			m_pActors[0].SetDiffuse( RageColor(0,0,0,0) );
 		}
 		
 	}
@@ -882,32 +901,41 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 void BGAnimationLayer::Draw()
 {
-	for( unsigned i=0; i<m_Sprites.size(); i++ )
-		m_Sprites[i]->Draw();
+	DISPLAY->LoadMenuPerspective( m_fFOV );
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		m_pActors[i]->Draw();
+	DISPLAY->LoadMenuPerspective( 0 );
 }
 
 void BGAnimationLayer::SetDiffuse( RageColor c )
 {
-	for(unsigned i=0; i<m_Sprites.size(); i++) 
-		m_Sprites[i]->SetDiffuse(c);
+	for(unsigned i=0; i<m_pActors.size(); i++) 
+		m_pActors[i]->SetDiffuse(c);
 }
 
 void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
 	m_fUpdateRate = fRate;
-	m_Sprites.back()->GetTexture()->SetPlaybackRate(fRate);
+
+	// FIXME:  Very dangerous.  How could we handle this better?
+	Sprite* pSprite = (Sprite*)m_pActors[0];
+
+	pSprite->GetTexture()->SetPlaybackRate(fRate);
 	if( bRewindMovie )
-		m_Sprites[0]->GetTexture()->SetPosition( 0 );
-	m_Sprites.back()->GetTexture()->SetLooping(bLoop);
+		pSprite->GetTexture()->SetPosition( 0 );
+	pSprite->GetTexture()->SetLooping(bLoop);
 
 	// if movie texture, pause and play movie so we don't waste CPU cycles decoding frames that won't be shown
-	m_Sprites[0]->GetTexture()->Play();
+	pSprite->GetTexture()->Play();
 
-	for( unsigned i=0; i<m_Sprites.size(); i++ )
-		m_Sprites[i]->Command( m_sCommand );
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		m_pActors[i]->Command( m_sCommand );
 }
 
 void BGAnimationLayer::LosingFocus()
 {
-	m_Sprites[0]->GetTexture()->Pause();
+	// FIXME:  Very dangerous.  How could we handle this better?
+	Sprite* pSprite = (Sprite*)m_pActors[0];
+
+	pSprite->GetTexture()->Pause();
 }

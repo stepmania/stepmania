@@ -185,11 +185,12 @@ public:
 typedef Rect<int> RectI;
 typedef Rect<float> RectF;
 
-// A structure for our custom vertex type.  Note that these data structes have the same layout that D3D expects.
-struct RageVertex
+/* Structure for our custom vertex type.  Note that these data structes 
+ * have the same layout that D3D expects. */
+struct RageSpriteVertex	// has color
 {
 	/* Zero out by default. */
-	RageVertex():
+	RageSpriteVertex():
 		p(0,0,0),
 		n(0,0,0),
 		t(0,0)
@@ -197,6 +198,19 @@ struct RageVertex
     RageVector3		p;	// position
     RageVector3		n;	// normal
     RageVColor		c;	// diffuse color
+	RageVector2		t;	// texture coordinates
+};
+
+struct RageModelVertex	// doesn't have color.  Relies on material color
+{
+	/* Zero out by default. */
+	RageModelVertex():
+		p(0,0,0),
+		n(0,0,0),
+		t(0,0)
+		{ }
+    RageVector3		p;	// position
+    RageVector3		n;	// normal
 	RageVector2		t;	// texture coordinates
 };
 

@@ -257,7 +257,8 @@ public:
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
-	virtual float Command( CString sCommandString );	// return length in seconds to execute command
+	float Command( CString sCommandString );	// return length in seconds to execute command
+	virtual void HandleCommand( const CStringArray &asTokens );	// derivable
 	static float GetCommandLength( CString command );
 
 	virtual void SetState( int iNewState ) {};

@@ -412,7 +412,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	const int size = 4096;
-	static RageVertex queue[size];
+	static RageSpriteVertex queue[size];
 
 	//
 	// Draw the bottom cap (always wavy)
@@ -421,7 +421,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		Sprite* pBottomCap = GetHoldBottomCapSprite( hn.fStartBeat, bActive );
 
 		// draw manually in small segments
-		RageVertex *v = &queue[0];
+		RageSpriteVertex *v = &queue[0];
 		RageTexture* pTexture = pBottomCap->GetTexture();
 		const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
@@ -490,7 +490,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		Sprite* pSprBody = GetHoldBodySprite( hn.fStartBeat, bActive );
 
 		// draw manually in small segments
-		RageVertex *v = &queue[0];
+		RageSpriteVertex *v = &queue[0];
 		RageTexture* pTexture = pSprBody->GetTexture();
 		const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
@@ -572,7 +572,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		Sprite* pSprTopCap = GetHoldTopCapSprite( hn.fStartBeat, bActive );
 
 		// draw manually in small segments
-		RageVertex *v = &queue[0];
+		RageSpriteVertex *v = &queue[0];
 		RageTexture* pTexture = pSprTopCap->GetTexture();
 		const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );

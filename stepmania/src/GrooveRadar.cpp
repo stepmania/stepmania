@@ -151,7 +151,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 	DISPLAY->SetTexture( NULL );
 	DISPLAY->SetTextureModeModulate();
-	RageVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
+	RageSpriteVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

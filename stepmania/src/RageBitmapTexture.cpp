@@ -153,6 +153,7 @@ apply_color_key:
 	if( HintString.Find("4alphaonly") != -1 )		actualID.iTransparencyOnly = 4;
 	else if( HintString.Find("8alphaonly") != -1 )	actualID.iTransparencyOnly = 8;
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
+	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
 
 	if( actualID.iTransparencyOnly )
 		actualID.iColorDepth = 32;	/* Treat the image as 32-bit, so we don't lose any alpha precision. */
@@ -311,6 +312,8 @@ apply_color_key:
 	
 	// HACK: Don't check song graphics.  Many of them are weird dimensions.
 	if( (actualID.filename.length()>=6 && actualID.filename.Left(6)=="Songs/") )
+		 bRunCheck = false;
+	if( (actualID.filename.length()>=6 && actualID.filename.Left(9)=="CDTitles/") )
 		 bRunCheck = false;
 
 	if( bRunCheck )

@@ -58,7 +58,7 @@ protected:
 
 	bool m_bRainbow;
 
-	vector<RageVertex> verts;
+	vector<RageSpriteVertex> verts;
 	vector<RageTexture *> tex;
 	
 	void BuildChars();

@@ -127,7 +127,7 @@ void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSince
 /* Draw a line as a quad.  GL_LINES with antialiasing off can draw line
  * ends at odd angles--they're forced to axis-alignment regardless of the
  * angle of the line. */
-void RageDisplay::DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth )
+void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth )
 {
 	/* soh cah toa strikes strikes again! */
 	float opp = p2.p.x - p1.p.x;
@@ -137,7 +137,7 @@ void RageDisplay::DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float
 	float lsin = opp/hyp;
 	float lcos = adj/hyp;
 
-	RageVertex v[4];
+	RageSpriteVertex v[4];
 
 	v[0] = v[1] = p1;
 	v[2] = v[3] = p2;
@@ -158,7 +158,7 @@ void RageDisplay::DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float
 }
 
 
-void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 
@@ -174,10 +174,10 @@ void RageDisplay::DrawLineStrip( const RageVertex v[], int iNumVerts, float Line
 		DrawCircle( v[i], LineWidth/2 );
 }
 
-void RageDisplay::DrawCircle( const RageVertex &p, float radius )
+void RageDisplay::DrawCircle( const RageSpriteVertex &p, float radius )
 {
 	const int subdivisions = 32;
-	RageVertex v[subdivisions+2];
+	RageSpriteVertex v[subdivisions+2];
 	v[0] = p;
 
 	for(int i = 0; i < subdivisions+1; ++i) 

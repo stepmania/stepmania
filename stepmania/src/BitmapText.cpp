@@ -178,7 +178,7 @@ void BitmapText::BuildChars()
 
 		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
 		{
-			RageVertex v[4];
+			RageSpriteVertex v[4];
 			const glyph &g = m_pFont->GetGlyph(szLine[j]);
 
 			/* set vertex positions */

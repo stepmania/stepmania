@@ -51,12 +51,12 @@ public:
 		RageColor specular, 
 		RageVector3 dir );
 
-	void DrawQuads( const RageVertex v[], int iNumVerts );
-	void DrawFan( const RageVertex v[], int iNumVerts );
-	void DrawStrip( const RageVertex v[], int iNumVerts );
-	void DrawTriangles( const RageVertex v[], int iNumVerts );
-	void DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices );
-	void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
+	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
+	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
+	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
+	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
+	void DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices );
+	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
 	CString GetTextureDiagnostics( unsigned id ) const;
 

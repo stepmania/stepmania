@@ -68,8 +68,8 @@ private:
 
 	RageVector3			m_vMins, m_vMaxs;
 	myBone_t			*m_pBones;
-	typedef vector<RageVertex>	RageVertexVector;
-	vector<RageVertexVector>	m_vTempVerticesByBone;
+	typedef vector<RageModelVertex>	RageModelVertexVector;
+	vector<RageModelVertexVector>	m_vTempVerticesByBone;
 	float				m_fCurrFrame;
 };
 

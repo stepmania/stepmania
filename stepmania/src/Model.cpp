@@ -614,7 +614,7 @@ void Model::DrawPrimitives()
 	for (int i = 0; i < (int)m_Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_Meshes[i];
-		RageVertexVector& TempVertices = m_vTempVerticesByBone[i];
+		RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
 
 		// apply material
 		if( pMesh->nMaterialIndex != -1 )
@@ -647,10 +647,8 @@ void Model::DrawPrimitives()
 		// process vertices
 		for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
-			RageVertex& tempVert = TempVertices[j];
+			RageModelVertex& tempVert = TempVertices[j];
 			msVertex& originalVert = pMesh->Vertices[j];
-
-			tempVert.c = RageColor(1,1,1,1);
 
 			memcpy( &tempVert.t, originalVert.uv, sizeof(originalVert.uv) );
 			

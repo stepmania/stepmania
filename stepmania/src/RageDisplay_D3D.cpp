@@ -127,7 +127,8 @@ static void SetPalette( unsigned TexResource )
 #endif
 }
 
-#define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)	// D3D FVF flags which describe our vertex structure
+#define D3DFVF_RageSpriteVertex (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
+#define D3DFVF_RageModelVertex (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1)
 
 
 static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
@@ -601,7 +602,7 @@ RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { retur
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 
 
-void RageDisplay_D3D::DrawQuads( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
@@ -628,7 +629,7 @@ void RageDisplay_D3D::DrawQuads( const RageVertex v[], int iNumVerts )
 		vIndices[i*6+5] = i*4+0;
 	}
 
-	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
@@ -638,60 +639,60 @@ void RageDisplay_D3D::DrawQuads( const RageVertex v[], int iNumVerts )
 		&vIndices[0], // pIndexData,
 		D3DFMT_INDEX16, // IndexDataFormat,
 		v, // pVertexStreamZeroData,
-		sizeof(RageVertex) // VertexStreamZeroStride
+		sizeof(RageSpriteVertex) // VertexStreamZeroStride
 	);
 
 	StatsAddVerts( iNumVerts );
 }
-void RageDisplay_D3D::DrawFan( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
-	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN, // PrimitiveType
 		iNumVerts-2, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageVertex)
+		sizeof(RageSpriteVertex)
 	);
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawStrip( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
-	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLESTRIP, // PrimitiveType
 		iNumVerts-2, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageVertex)
+		sizeof(RageSpriteVertex)
 	);
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawTriangles( const RageVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
 	ASSERT( iNumVerts >= 3 );
-	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
 		iNumVerts/3, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageVertex)
+		sizeof(RageSpriteVertex)
 	);
 	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
+void RageDisplay_D3D::DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16 pIndices[], int iNumIndices )
 {
 	if( iNumIndices == 0 )
 		return;
-	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
@@ -701,7 +702,7 @@ void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], int iNumVerts,
 		pIndices, // pIndexData,
 		D3DFMT_INDEX16, // IndexDataFormat,
 		v, // pVertexStreamZeroData,
-		sizeof(RageVertex) // VertexStreamZeroStride
+		sizeof(RageModelVertex) // VertexStreamZeroStride
 	);
 	StatsAddVerts( iNumIndices );
 }
@@ -709,17 +710,17 @@ void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], int iNumVerts,
 /* Use the default poly-based implementation.  D3D lines apparently don't support
  * AA with greater-than-one widths. */
 /*
-void RageDisplay_D3D::DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 	g_pd3dDevice->SetRenderState( D3DRS_POINTSIZE, *((DWORD*)&LineWidth) );	// funky cast.  See D3DRENDERSTATETYPE doc
-	g_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
 		D3DPT_LINESTRIP, // PrimitiveType
 		iNumVerts-1, // PrimitiveCount,
 		v, // pVertexStreamZeroData,
-		sizeof(RageVertex)
+		sizeof(RageSpriteVertex)
 	);
 	StatsAddVerts( iNumVerts );
 }

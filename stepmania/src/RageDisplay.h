@@ -30,7 +30,7 @@ struct SDL_Surface;
 	RageVector3& Normal( int index );
 	RageVector3& Position( int index );
 	// convenience.  Remove this later!
-	void Set( int index, const RageVertex& v );
+	void Set( int index, const RageSpriteVertex& v );
 
 	struct Impl;
 	Impl* pImpl;
@@ -170,15 +170,15 @@ public:
 		RageVector3 dir ) = 0;
 
 
-	void DrawQuad( const RageVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
-	virtual void DrawQuads( const RageVertex v[], int iNumVerts ) = 0;
-	virtual void DrawFan( const RageVertex v[], int iNumVerts ) = 0;
-	virtual void DrawStrip( const RageVertex v[], int iNumVerts ) = 0;
-	virtual void DrawTriangles( const RageVertex v[], int iNumVerts ) = 0;
-	virtual void DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices ) = 0;
-	virtual void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
+	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
+	virtual void DrawQuads( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawFan( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawStrip( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawTriangles( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices ) = 0;
+	virtual void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
-	void DrawCircle( const RageVertex &v, float radius );
+	void DrawCircle( const RageSpriteVertex &v, float radius );
 
 	virtual void SaveScreenshot( CString sPath ) = 0;
 
@@ -192,7 +192,7 @@ protected:
 
 	virtual void SetViewport(int shift_left, int shift_down) = 0;
 
-	void DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth );
+	void DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
 
 	// Stuff in RageDisplay.cpp
 	void SetDefaultRenderStates();

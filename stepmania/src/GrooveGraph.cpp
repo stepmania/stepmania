@@ -120,7 +120,7 @@ void GrooveGraph::Mountain::DrawPrimitives()
 {
 	DISPLAY->SetTexture( NULL );
 	DISPLAY->SetTextureModeModulate();
-	RageVertex v[4];
+	RageSpriteVertex v[4];
 
 	for( int i=NUM_DIFFICULTIES-1; i>=0; i-- )
 	{
