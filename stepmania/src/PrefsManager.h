@@ -281,6 +281,13 @@ public:
 
 	void ResetToFactoryDefaults();
 
+#if defined (WITHOUT_NETWORKING)
+#else
+	/* Network Info */
+	CString			m_sLastServer;
+	float			m_fStartWait;
+#endif
+
 protected:
 	void ReadPrefsFromFile( CString sIni );
 

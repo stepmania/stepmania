@@ -11,6 +11,7 @@ NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp(const CString& ServerIP ) { }
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
+CString NetworkSyncManager::GetServerName() { }
 void NetworkSyncManager::ReportNSSOnOff(int i) { }
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber) { }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
@@ -22,6 +23,9 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
+
+void NetworkSyncManager::SendSMOnline( PacketFunctions &PackData ) { }
+
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -42,6 +46,8 @@ void NetworkSyncManager::SelectUserSong() { }
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
+const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
+const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);
 
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
@@ -203,10 +209,6 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 	LOG->Info("Beginning to connect");
 	if (port != 8765) 
 		return false;
-	//Make sure using port 8765
-	//This may change in future versions
-	//It is this way now for protocol's purpose.
-	//If there is a new protocol developed down the road
 
     NetPlayerClient->create(); // Initilize Socket
     useSMserver = NetPlayerClient->connect(addy, port);
@@ -253,6 +255,11 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	m_packet.Write1( NSCSMS );
 	m_packet.Write1( (uint8_t) i );
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
+}
+
+CString NetworkSyncManager::GetServerName() 
+{ 
+	return m_ServerName;
 }
 
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber)
@@ -322,6 +329,8 @@ void NetworkSyncManager::ReportSongOver()
 
 void NetworkSyncManager::ReportStyle() 
 {
+	LOG->Trace( "Sending \"Style\" to server" );
+
 	if (!useSMserver)
 		return;
 	m_packet.ClearPacket();
@@ -414,7 +423,7 @@ void NetworkSyncManager::StartRequest(short position)
 	for (int i=0; i<NETMAXPLAYERS; ++i)
 	{
 		m_EvalPlayerData[i].name=0;
-		m_EvalPlayerData[i].grade=0;
+				m_EvalPlayerData[i].grade=0;
 		m_EvalPlayerData[i].score=0;
 		m_EvalPlayerData[i].difficulty=(Difficulty)0;
 		for (int j=0; j<NETNUMTAPSCORES; ++j)
@@ -441,7 +450,7 @@ void NetworkSyncManager::StartRequest(short position)
 
 	m_packet.ClearPacket();
 
-	
+		
 	while (dontExit)
 	{
 		//Keep the server going during the loop.
@@ -458,6 +467,7 @@ void NetworkSyncManager::StartRequest(short position)
 			dontExit=false;
 		//Only allow passing on Start request. 
 		//Otherwise scoreboard updates and such will confuse us.
+
 	}
 	NetPlayerClient->blocking=false;
 
@@ -508,8 +518,11 @@ void NetworkSyncManager::ProcessInput()
 
 	m_packet.ClearPacket();
 
-	while (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)>0)
+	int packetSize;
+
+	while ( (packetSize = NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE) ) > 0 )
 	{
+		m_packet.size = packetSize;
 		int command = m_packet.Read1();
 		//Check to make sure command is valid from server
 		if (command < NSServerOffset)
@@ -555,22 +568,22 @@ void NetworkSyncManager::ProcessInput()
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
 				CString ColumnData;
-				int i;
+
 				switch (ColumnNumber)
 				{
 				case NSSB_NAMES:
 					ColumnData = "Names\n";
-					for (i=0; i<NumberPlayers; ++i)
+					for (int i=0; i<NumberPlayers; ++i)
 						ColumnData += m_PlayerNames[m_packet.Read1()] + "\n";
 					break;
 				case NSSB_COMBO:
 					ColumnData = "Combo\n";
-					for (i=0; i<NumberPlayers; ++i)
+					for (int i=0; i<NumberPlayers; ++i)
 						ColumnData += ssprintf("%d\n",m_packet.Read2());
 					break;
 				case NSSB_GRADE:
 					ColumnData = "Grade\n";
-					for (i=0;i<NumberPlayers;i++)
+					for (int i=0;i<NumberPlayers;i++)
 						switch (m_packet.Read1())
 						{
 						case 0:
@@ -623,6 +636,7 @@ void NetworkSyncManager::ProcessInput()
 			{
 				/*int ServerMaxPlayers=*/m_packet.Read1();
 				int PlayersInThisPacket=m_packet.Read1();
+				m_ActivePlayer.clear();
 				m_PlayerStatus.clear();
 				m_PlayerNames.clear();
 				m_ActivePlayers = 0;
@@ -637,6 +651,7 @@ void NetworkSyncManager::ProcessInput()
 					m_PlayerStatus.push_back( PStatus );
 					m_PlayerNames.push_back( m_packet.ReadNT() );
 				}
+				SCREENMAN->SendMessageToTopScreen( SM_UsersUpdate );
 			}
 			break;
 		case NSCSMS:
@@ -651,6 +666,16 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SetNewScreen( "ScreenNetSelectMusic" ); //Should this be metric'd out?
 			}
 			break;
+		case NSCSMOnline:
+			{
+				PacketFunctions smoPack;
+				smoPack.size = packetSize - 1;
+				smoPack.Position = 0;
+				memcpy( smoPack.Data, m_packet.Data, packetSize-1 );
+				LOG->Trace( "Received SMOnline Command: %d, size:%d", command, packetSize - 1 );
+				m_SMOnlineStack.push_front( smoPack );
+				SCREENMAN->SendMessageToTopScreen( SM_SMOnlinePack );
+			}
 		}
 		m_packet.ClearPacket();
 	}
@@ -689,8 +714,51 @@ void NetworkSyncManager::SelectUserSong()
 	m_packet.WriteNT( m_sMainTitle );
 	m_packet.WriteNT( m_sArtist );
 	m_packet.WriteNT( m_sSubTitle );
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
+	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
+
+void NetworkSyncManager::SendSMOnline( PacketFunctions &PackData )
+{
+	NetPlayerClient->SendPack( (char*)&PackData.Data , PackData.size );
+}
+
+PacketFunctions NetworkSyncManager::GetSMOnline( ) 
+{
+	PacketFunctions Pack;
+
+	if ( m_SMOnlineStack.empty() )
+	{
+		Pack.Position = 0;
+		Pack.size = 0;
+		return Pack;
+	}
+	
+	Pack = m_SMOnlineStack.back();
+
+	memcpy( Pack.Data,  m_SMOnlineStack.back().Data, Pack.size );
+
+	m_SMOnlineStack.pop_back();
+	return Pack;
+}
+
+PacketFunctions NetworkSyncManager::PeekSMOnline( ) 
+{
+	PacketFunctions Pack;
+
+	if ( m_SMOnlineStack.empty() )
+	{
+		Pack.Position = 0;
+		Pack.size = 0;
+		return Pack;
+	}
+	
+	Pack = m_SMOnlineStack.back();
+
+	memcpy( Pack.Data,  m_SMOnlineStack.back().Data, Pack.size );
+
+	return Pack;
+}
+
 
 
 //Packet functions

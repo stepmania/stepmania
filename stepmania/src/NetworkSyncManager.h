@@ -5,6 +5,7 @@
 
 #include "PlayerNumber.h"
 #include "Difficulty.h"
+#include <queue>
 
 class LoadingWindow;
 
@@ -27,6 +28,7 @@ enum NSCommand
 	NSCUUL,			//9
 	NSCSMS,			//10
 	NSCUPOpts,		//11
+	NSCSMOnline,	//12
 	NUM_NS_COMMANDS
 };
 
@@ -59,6 +61,8 @@ class PacketFunctions
 public:
 	unsigned char Data[NETMAXBUFFERSIZE];	//Data
 	int Position;				//Other info (Used for following functions)
+	int size;					//When sending these pacs, Position should
+								//be used; NOT size.
 
 	//Commands used to operate on NetPackets
 	uint8_t Read1();
@@ -87,6 +91,13 @@ public:
 	void ReportStyle();		//Report to server the style, players, and names
 	void ReportNSSOnOff(int i);	//Report song selection screen on/off
 	void StartRequest(short position);	//Request a start.  Block until granted.
+	CString GetServerName();
+	
+	//SMOnline stuff
+	void SendSMOnline( PacketFunctions &PackData );
+	PacketFunctions GetSMOnline( );
+	PacketFunctions PeekSMOnline( );
+
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 
 	void PostStartUp(const CString& ServerIP);
@@ -159,6 +170,8 @@ private:
 	bool Listen(unsigned short port);
 
 	PacketFunctions m_packet;
+	
+	deque<PacketFunctions>	m_SMOnlineStack;
 #endif
 };
 
