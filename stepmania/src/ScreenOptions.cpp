@@ -19,37 +19,9 @@
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
 #define ICONS_X( p )					THEME->GetMetricF(m_sName,ssprintf("IconsP%dX",p+1))
-#define ARROWS_X						THEME->GetMetricF(m_sName,"ArrowsX")
-#define LABELS_X						THEME->GetMetricF(m_sName,"LabelsX")
-#define LABELS_ZOOM						THEME->GetMetricF(m_sName,"LabelsZoom")
-#define LABELS_H_ALIGN					THEME->GetMetricI(m_sName,"LabelsHAlign")
-#define ITEMS_ZOOM						THEME->GetMetricF(m_sName,"ItemsZoom")
-#define ITEMS_START_X					THEME->GetMetricF(m_sName,"ItemsStartX")
-#define ITEMS_END_X						THEME->GetMetricF(m_sName,"ItemsEndX")
-#define ITEMS_GAP_X						THEME->GetMetricF(m_sName,"ItemsGapX")
-#define ITEMS_START_Y					THEME->GetMetricF(m_sName,"ItemsStartY")
-#define ITEMS_SPACING_Y					THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define EXPLANATION_X(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dX",p+1))
 #define EXPLANATION_Y(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dY",p+1))
 #define EXPLANATION_ON_COMMAND(p)		THEME->GetMetricA(m_sName,ssprintf("ExplanationP%dOnCommand",p+1))
-#define EXPLANATION_TOGETHER_X			THEME->GetMetricF(m_sName,"ExplanationTogetherX")
-#define EXPLANATION_TOGETHER_Y			THEME->GetMetricF(m_sName,"ExplanationTogetherY")
-#define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetricA(m_sName,"ExplanationTogetherOnCommand")
-#define SHOW_SCROLL_BAR					THEME->GetMetricB(m_sName,"ShowScrollBar")
-/* Extra parens needed to work around stupid VC6 compiler crash: */
-#define SCROLL_BAR_HEIGHT				(THEME->GetMetricF(m_sName,"ScrollBarHeight"))
-#define SCROLL_BAR_TIME					(THEME->GetMetricF(m_sName,"ScrollBarTime"))
-#define ITEMS_SPACING_Y					THEME->GetMetricF(m_sName,"ItemsSpacingY")
-#define EXPLANATION_ZOOM				THEME->GetMetricF(m_sName,"ExplanationZoom")
-#define COLOR_SELECTED					THEME->GetMetricC(m_sName,"ColorSelected")
-#define COLOR_NOT_SELECTED				THEME->GetMetricC(m_sName,"ColorNotSelected")
-#define NUM_SHOWN_ITEMS					THEME->GetMetricI(m_sName,"NumShownItems")
-#define SHOW_BPM_IN_SPEED_TITLE			THEME->GetMetricB(m_sName,"ShowBpmInSpeedTitle")
-#define FRAME_ON_COMMAND				THEME->GetMetricA(m_sName,"FrameOnCommand")
-#define FRAME_OFF_COMMAND				THEME->GetMetricA(m_sName,"FrameOffCommand")
-#define SEPARATE_EXIT_ROW				THEME->GetMetricB(m_sName,"SeparateExitRow")
-#define SEPARATE_EXIT_ROW_Y				THEME->GetMetricF(m_sName,"SeparateExitRowY")
-#define CAPITALIZE_ALL_OPTION_NAMES		THEME->GetMetricB(m_sName,"CapitalizeAllOptionNames")
 
 /*
  * These navigation types are provided:
@@ -101,6 +73,35 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
+
+
+	ARROWS_X.Load   					(m_sName,"ArrowsX");
+	LABELS_X.Load						(m_sName,"LabelsX");
+	LABELS_ZOOM.Load					(m_sName,"LabelsZoom");
+	LABELS_H_ALIGN.Load					(m_sName,"LabelsHAlign");
+	ITEMS_ZOOM.Load						(m_sName,"ItemsZoom");
+	ITEMS_START_X.Load					(m_sName,"ItemsStartX");
+	ITEMS_END_X.Load					(m_sName,"ItemsEndX");
+	ITEMS_GAP_X.Load					(m_sName,"ItemsGapX");
+	ITEMS_START_Y.Load					(m_sName,"ItemsStartY");
+	ITEMS_SPACING_Y.Load				(m_sName,"ItemsSpacingY");
+	EXPLANATION_TOGETHER_X.Load			(m_sName,"ExplanationTogetherX");
+	EXPLANATION_TOGETHER_Y.Load			(m_sName,"ExplanationTogetherY");
+	EXPLANATION_TOGETHER_ON_COMMAND.Load(m_sName,"ExplanationTogetherOnCommand");
+	SHOW_SCROLL_BAR.Load				(m_sName,"ShowScrollBar");
+	SCROLL_BAR_HEIGHT.Load				(m_sName,"ScrollBarHeight");
+	SCROLL_BAR_TIME.Load				(m_sName,"ScrollBarTime");
+	EXPLANATION_ZOOM.Load				(m_sName,"ExplanationZoom");
+	COLOR_SELECTED.Load					(m_sName,"ColorSelected");
+	COLOR_NOT_SELECTED.Load				(m_sName,"ColorNotSelected");
+	NUM_SHOWN_ITEMS.Load				(m_sName,"NumShownItems");
+	SHOW_BPM_IN_SPEED_TITLE.Load		(m_sName,"ShowBpmInSpeedTitle");
+	FRAME_ON_COMMAND.Load				(m_sName,"FrameOnCommand");
+	FRAME_OFF_COMMAND.Load				(m_sName,"FrameOffCommand");
+	SEPARATE_EXIT_ROW.Load				(m_sName,"SeparateExitRow");
+	SEPARATE_EXIT_ROW_Y.Load			(m_sName,"SeparateExitRowY");
+	CAPITALIZE_ALL_OPTION_NAMES.Load	(m_sName,"CapitalizeAllOptionNames");
+
 
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 
@@ -603,7 +604,7 @@ void ScreenOptions::InitOptionsText()
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( LABELS_ZOOM );
-		title.SetHorizAlign( (Actor::HorizAlign)LABELS_H_ALIGN );
+		title.SetHorizAlign( (Actor::HorizAlign)(int)LABELS_H_ALIGN );
 		title.SetVertAlign( Actor::align_middle );		
 		title.SetShadowLength( 0 );		
 
@@ -936,7 +937,7 @@ void ScreenOptions::PositionItems()
 	vector<Row*> Rows( m_Rows );
 	Row *ExitRow = NULL;
 
-	if( SEPARATE_EXIT_ROW && Rows.back()->Type == Row::ROW_EXIT )
+	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->Type == Row::ROW_EXIT )
 	{
 		ExitRow = &*Rows.back();
 
