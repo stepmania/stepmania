@@ -127,6 +127,10 @@ struct XNode
 	void GetValue(float &out) const		{ out = (float) atof(value); }
 	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
 	void GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
+	void SetValue(int v);
+	void SetValue(float v);
+	void SetValue(bool v);
+	void SetValue(unsigned v);
 
 	// internal variables
 	LPXNode	parent;		// parent node

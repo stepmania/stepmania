@@ -13,6 +13,7 @@
 #include "StepsUtil.h"	// for StepsID
 #include "CourseUtil.h"	// for CourseID
 #include "TrailUtil.h"	// for TrailID
+#include "StyleUtil.h"	// for StyleID
 
 struct XNode;
 
@@ -107,7 +108,7 @@ public:
 	set<int> m_UnlockedSongs;
 	mutable CString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
-	map<const Style*,int> m_iNumSongsPlayedByStyle;
+	map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];

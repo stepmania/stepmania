@@ -626,6 +626,31 @@ bool XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 }
 
 //========================================================
+// Name   : GetValue
+// Desc   : 
+// Param  :
+// Return : 
+//--------------------------------------------------------
+// Coder    Date                      Desc
+//========================================================
+void XNode::SetValue(int v)
+{
+	value = ssprintf("%d",v);
+}
+void XNode::SetValue(float v)
+{
+	value = ssprintf("%f",v);
+}
+void XNode::SetValue(bool v)
+{
+	value = ssprintf("%d",v);
+}
+void XNode::SetValue(unsigned v)
+{
+	value = ssprintf("%u",v);
+}
+
+//========================================================
 // Name   : GetAttr
 // Desc   : get attribute with attribute name
 // Param  :

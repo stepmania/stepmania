@@ -769,18 +769,17 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumSongsPlayedByStyle = pGeneralDataNode->AppendChild("NumSongsPlayedByStyle");
-		for( map<const Style*,int>::const_iterator iter = m_iNumSongsPlayedByStyle.begin();
+		for( map<StyleID,int>::const_iterator iter = m_iNumSongsPlayedByStyle.begin();
 			iter != m_iNumSongsPlayedByStyle.end();
 			iter++ )
 		{
-			const Style *s = iter->first;
-			const GameDef *g = GAMEMAN->GetGameDefForGame( s->m_Game );
-			ASSERT( g );
+			const StyleID &s = iter->first;
 			int iNumPlays = iter->second;
-			XNode *pStyleNode = pNumSongsPlayedByStyle->AppendChild( "Style", iNumPlays );
 
-			pStyleNode->AppendAttr( "Game", g->m_szName );
-			pStyleNode->AppendAttr( "Style", s->m_szName );
+			XNode *pStyleNode = s.CreateNode();
+			pStyleNode->SetValue( iNumPlays );
+
+			pNumSongsPlayedByStyle->AppendChild( pStyleNode );
 		}
 	}
 
@@ -919,18 +918,10 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				if( style->name != "Style" )
 					continue;
 
-				CString sGame;
-				if( !style->GetAttrValue( "Game", sGame ) )
-					WARN_AND_CONTINUE;
-				Game g = GAMEMAN->StringToGameType( sGame );
-				if( g == GAME_INVALID )
-					WARN_AND_CONTINUE;
+				StyleID s;
+				s.LoadFromNode( style );
 
-				CString sStyle;
-				if( !style->GetAttrValue( "Style", sStyle ) )
-					WARN_AND_CONTINUE;
-				const Style* s = GAMEMAN->GameAndStringToStyle( g, sStyle );
-				if( s == NULL )
+				if( !s.IsValid() )
 					WARN_AND_CONTINUE;
 
 				style->GetValue( m_iNumSongsPlayedByStyle[s] );
