@@ -451,7 +451,6 @@ void Player::DrawGrayArrows()
 {
 	for( int i=0; i<m_iNumColumns; i++ )
 	{
-		//m_sprGrayArrow[i].Draw();
 		m_GrayArrow[i].CalculateColor( m_fSongBeat );
 		m_GrayArrow[i].Draw();
 	}
@@ -460,7 +459,6 @@ void Player::DrawGrayArrows()
 void Player::SetGrayArrowsX( int iNewX )
 {
 	for( int i=0; i<m_iNumColumns; i++ )
-		//m_sprGrayArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
 		m_GrayArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
 }
 
