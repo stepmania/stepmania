@@ -9,6 +9,7 @@
 #include "archutils/win32/tls.h"
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
+#include "ProductInfo.h"
 
 ArchHooks_Win32::ArchHooks_Win32()
 {
@@ -84,7 +85,7 @@ void ArchHooks_Win32::MessageBoxOK( CString sMessage, CString ID )
 
 ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString sMessage, CString ID )
 {
-	switch( MessageBox(NULL, sMessage, "StepMania", MB_ABORTRETRYIGNORE ) )
+	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE ) )
 	{
 	case IDABORT:	return abort;
 	case IDRETRY:	return retry;
