@@ -6,14 +6,14 @@
 #include "StyleDef.h"
 #include "PlayerNumber.h"
 
-class Actor;
+#include "RageMath.h"
 
 class NoteFieldPositioning
 {
-	Actor *m_Position[MAX_NOTE_TRACKS];
-	bool m_bPerspective[MAX_NOTE_TRACKS];
-//	float 
-	Actor *m_PerspPosition[MAX_NOTE_TRACKS];
+	RageMatrix m_Position[MAX_NOTE_TRACKS];
+	/* 0 = no perspective */
+	float m_fFov[MAX_NOTE_TRACKS];
+	RageMatrix m_PerspPosition[MAX_NOTE_TRACKS];
 
 public:
 	NoteFieldPositioning();

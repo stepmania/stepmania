@@ -1,43 +1,104 @@
 #include "global.h"
 #include "NoteFieldPositioning.h"
-#include "Actor.h"
 #include "RageDisplay.h"
-#include "RageUtil.h"
-#include "RageMath.h"
-#include "RageLog.h"
+#include "RageDisplayInternal.h"
 
+#include "RageUtil.h"
+#include "RageLog.h"
+#include "RageMath.h"
+
+/* This is similar in style to Actor::Command.  However, Actors don't store
+ * matrix stacks; they only store offsets and scales, and compound them into
+ * a single transformations at once.  This makes some things easy, but it's not
+ * convenient for generic 3d transforms.  For that, we have this, which has the
+ * small subset of the actor commands that applies to raw matrices, and we apply
+ * commands in the order given.  "scale,2;x,1;" is very different from
+ * "x,1;scale,2;". */
+static CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
+{
+	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
+	if( iIndex < int(sParams.size()) )
+		return sParams[iIndex];
+	else
+		return "";
+}
+
+void MatrixCommand(CString sCommandString, RageMatrix &mat)
+{
+	CStringArray asCommands;
+	split( sCommandString, ";", asCommands, true );
+	
+	for( unsigned c=0; c<asCommands.size(); c++ )
+	{
+		CStringArray asTokens;
+		split( asCommands[c], ",", asTokens, true );
+
+		int iMaxIndexAccessed = 0;
+
+#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
+#define fParam(i) ((float)atof(sParam(i)))
+#define iParam(i) (atoi(sParam(i)))
+#define bParam(i) (iParam(i)!=0)
+
+		CString& sName = asTokens[0];
+		sName.MakeLower();
+
+		RageMatrix b;
+		// Act on command
+		if( sName=="x" )					RageMatrixTranslation( &b, fParam(1),0,0 );
+		else if( sName=="y" )				RageMatrixTranslation( &b, 0,fParam(1),0 );
+		else if( sName=="z" )				RageMatrixTranslation( &b, 0,0,fParam(1) );
+		else if( sName=="zoomx" )			RageMatrixScaling(&b, fParam(1),1,1 );
+		else if( sName=="zoomy" )			RageMatrixScaling(&b, 1,fParam(1),1 );
+		else if( sName=="zoomz" )			RageMatrixScaling(&b, 1,1,fParam(1) );
+		else if( sName=="rotationx" )		RageMatrixRotationX( &b, fParam(1) );
+		else if( sName=="rotationy" )		RageMatrixRotationY( &b, fParam(1) );
+		else if( sName=="rotationz" )		RageMatrixRotationZ( &b, fParam(1) );
+		else
+		{
+			CString sError = ssprintf( "Unrecognized matrix command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
+			LOG->Warn( sError );
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
+#endif
+			continue;
+		}
+
+
+		if( iMaxIndexAccessed != (int)asTokens.size()-1 )
+		{
+			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).GetString(), iMaxIndexAccessed+1, (int)asTokens.size() );
+			LOG->Warn( sError );
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
+#endif
+			continue;
+		}
+
+		RageMatrix a(mat);
+		RageMatrixMultiply(&mat, &a, &b);
+	}
+	
+}
 
 NoteFieldPositioning::NoteFieldPositioning()
 {
-	/* Note: while Actor class is usually the base class of something that
-	 * renders something to screen, all Actor itself does is store location and
-	 * effect state and handle tweening between them.  These actors do this
-	 * without actually rendering anything; we only use them for their render
-	 * state. */
-	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-	{
-		m_Position[t] = new Actor;
-		m_bPerspective[t] = false;
-		m_PerspPosition[t] = new Actor;
-	}
-
 	Init();
 }
 
 NoteFieldPositioning::~NoteFieldPositioning()
 {
-	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-	{
-		delete m_Position[t];
-		delete m_PerspPosition[t];
-	}
 }
 
 void NoteFieldPositioning::Init()
 {
-	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
+	for( int tn=0; tn<MAX_NOTE_TRACKS; tn++ )
 	{
-		m_Position[t]->Reset();
+		RageMatrixIdentity(&m_Position[tn]);
+		RageMatrixIdentity(&m_PerspPosition[tn]);
+		m_fFov[tn] = 0;
 	}
 }
 /*
@@ -55,40 +116,60 @@ void NoteFieldPositioning::LoadFromStyleDef(const StyleDef *s, PlayerNumber pn)
 	{
 		/* Set up the normal position of each track. */
 		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][t].fXOffset;
-		m_Position[t]->SetX(fPixelXOffsetFromCenter);
+		RageMatrixTranslation(&m_Position[t], fPixelXOffsetFromCenter, 0, 0);
 	}
 }
 
 void NoteFieldPositioning::Update(float fDeltaTime)
 {
-	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-	{
-		m_Position[t]->Update(fDeltaTime);
-		m_PerspPosition[t]->Update(fDeltaTime);
-	}
 }
+
 
 void NoteFieldPositioning::BeginDrawTrack(int tn)
 {
-	m_Position[tn]->BeginDraw();
-
-	if(m_bPerspective[tn])
+	// XXX
+#if 0
+	FILE *f = fopen("test.dat", "r");
+	if(f) for(int t = 0; t <= tn/*MAX_NOTE_TRACKS*/; ++t)
 	{
-		DISPLAY->EnterPerspective(45);
+		char buf[1000];
+		fgets(buf, 1000, f);
+
+		CString b(buf);
+		TrimRight(b);
+		
+		RageMatrixIdentity(&m_Position[t]);
+		MatrixCommand(b, m_Position[t]);
+
+		fgets(buf, 1000, f);
+		b=buf;
+		TrimRight(b);
+
+		RageMatrixIdentity(&m_PerspPosition[t]);
+		MatrixCommand(b, m_PerspPosition[t]);
+
+		fgets(buf, 1000, f);
+		sscanf(buf, "%f", &m_fFov[t]);
 	}
+	fclose(f);
+// XXX
+#endif
+
+	DISPLAY->PushMatrix();
+
+	glMultMatrixf((float *) m_Position[tn]);
+
+	if(m_fFov[tn])
+		DISPLAY->EnterPerspective(m_fFov[tn]);
 	
-//	m_PerspPosition[tn]->BeginDraw();
+	glMultMatrixf((float *) m_PerspPosition[tn]);
 }
 
 void NoteFieldPositioning::EndDrawTrack(int tn)
 {
-	m_PerspPosition[tn]->EndDraw();
-
-	if(m_bPerspective[tn])
-	{
+	if(m_fFov[tn])
 		DISPLAY->ExitPerspective();
-	}
 
-//	m_Position[tn]->EndDraw();
+	DISPLAY->PopMatrix();
 }
 
