@@ -107,7 +107,10 @@ ScreenStage::ScreenStage()
 	for( int i=0; i<4; i++ )
 	{
 		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers") );
-		m_sprNumbers[i].SetDiffuse( GAMESTATE->GetStageColor() );
+
+		if( g_StageType != STAGE_TYPE_EZ2 ) // DONT DIFFUSE COLORS FOR EZ2. Coz we actually set the color in the .png
+			m_sprNumbers[i].SetDiffuse( GAMESTATE->GetStageColor() );
+
 		m_sprNumbers[i].StopAnimating();
 	}
 	m_sprStage.Load( THEME->GetPathTo("Graphics","stage stage") );	// we may load a different graphic into here later
@@ -272,7 +275,7 @@ ScreenStage::ScreenStage()
 			m_sprNumbers[i].SetZoom( 20.0f ); // make it really really big on-screen
 			m_sprNumbers[i].SetRotation( 10 ); // make this thing rotated
 			m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
-			m_sprNumbers[i].SetTweenZoom( 1.0f ); // shrink it down to it's proper size
+			m_sprNumbers[i].SetTweenZoom( 3.0f ); // shrink it down to it's proper size
 			m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
 		}
 	
@@ -373,9 +376,9 @@ ScreenStage::ScreenStage()
 
 		for (i=0; i<2; i++) // specify the font file.
 		{
-			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
 			m_ez2ukm[i].TurnShadowOff();
-			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
 			m_stagedesc[i].TurnShadowOff();
 		}
 
@@ -489,7 +492,7 @@ ScreenStage::ScreenStage()
 
 
 		// write the stage name
-		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
 		m_stagename.TurnShadowOff();
 
 		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
