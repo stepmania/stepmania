@@ -633,7 +633,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 				continue;	// skip
 
-			MEMCARDMAN->MountUsedCard(pn);
+			MEMCARDMAN->MountCard(pn);
 
 			bTriedToSave = true;
 
@@ -664,7 +664,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 				continue;	// skip
 
-			MEMCARDMAN->MountUsedCard(pn);
+			MEMCARDMAN->MountCard(pn);
 
 			bTriedToLoad = true;
 

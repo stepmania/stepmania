@@ -235,7 +235,7 @@ void GameState::PlayersFinalized()
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
 	{
-		MEMCARDMAN->MountUsedCard( pn );
+		MEMCARDMAN->MountCard( pn );
 
 		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
 
@@ -358,7 +358,7 @@ void GameState::EndGame()
 			continue;
 
 		if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
-			MEMCARDMAN->MountUsedCard( pn );
+			MEMCARDMAN->MountCard( pn );
 		PROFILEMAN->SaveProfile( pn );
 		MEMCARDMAN->UnmountCard( pn );
 

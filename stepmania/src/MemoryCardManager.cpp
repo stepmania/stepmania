@@ -233,21 +233,12 @@ void MemoryCardManager::UnlockCards()
 	m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
 }
 
-/* Called in EndGame just before writing the profile.  Should block. */
-void MemoryCardManager::MountUsedCard( PlayerNumber pn )
-{
-	if( m_Device[pn].IsBlank() )	// they don't have an assigned card
-		return;
-	
-	MountCard( pn );
-}
-
+/* Called just before reading or writing to the memory card.  Should block. */
 void MemoryCardManager::MountCard( PlayerNumber pn )
 {
-	ASSERT( !m_Device[pn].IsBlank() );
-
-	if( !m_Device[pn].bWriteTestSucceeded || m_bTooLate[pn] )
+	if( GetCardState(pn) != MEMORY_CARD_STATE_READY )
 		return;
+	ASSERT( !m_Device[pn].IsBlank() );
 
 	/* Pause the mounting thread when we mount the first drive. */
 	bool bStartingMemoryCardAccess = true;
