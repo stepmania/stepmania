@@ -328,6 +328,12 @@ bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
 	case DIFFICULTY_MEDIUM:		f.Write( "ANOTHER:" );	break;
 	case DIFFICULTY_HARD:		f.Write( "MANIAC:" );	break;
 	case DIFFICULTY_CHALLENGE:	f.Write( "SMANIAC:" );	break;
+		// we crash if we try to write Edit steps,
+		// and DWI doesn't really support edit steps,
+		// either - so we'll just leave them out, okay?
+		// Besides, we're not checking for these (or Beginner,
+		// for that matter) in the loader.
+	case DIFFICULTY_EDIT:		return false;
 	default:	ASSERT(0);	return false;
 	}
 
