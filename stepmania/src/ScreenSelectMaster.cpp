@@ -130,7 +130,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 				{
 					const ModeChoice& mc = m_aModeChoices[c];
 
-					CString sFName = ssprintf("%s Scroll Choice%s P%s", m_sName.c_str(),mc.m_sName.c_str(),p+1);
+					CString sFName = ssprintf("%s Scroll Choice%s P%d", m_sName.c_str(),mc.m_sName.c_str(),p+1);
 					m_sprScroll[c][p].Load( THEME->GetPathToG(sFName) );
 					m_sprScroll[c][p]->SetName( ssprintf("ScrollP%d",p+1) );
 					m_Scroller[p].AddChild( m_sprScroll[c][p] );
