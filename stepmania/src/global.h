@@ -99,7 +99,6 @@ using namespace std;
 #endif
 
 /* Define a few functions if necessary */
-/* You're right, that was the wrong way, how's this? */
 #include <math.h>
 #ifdef NEED_POWF
 inline float powf (float x, float y) { return float(pow(double(x),double(y))); }
@@ -111,6 +110,10 @@ inline float sqrtf(float x) { return float(sqrt(double(x))); }
 
 #ifdef NEED_SINF
 inline float sinf(float x) { return float(sin(double(x))); }
+#endif
+
+#ifdef NEED_TANF
+inline float tanf(float x) { return float(tan(double(x))); }
 #endif
 
 #ifdef NEED_COSF
