@@ -202,14 +202,8 @@ void RageBitmapTexture::Create(
 		if( !img->format->alpha && !img->format->colorkey )
 			iAlphaBits = 0;
 
-/* XXX todo? In debug mode only (or something), search for files that set a
- * color key or alpha but don't use it and log it.  If they don't have a color key set
- * at all, we can load it more efficiently.  Don't just scan every texture all
- * the time to check this, though; better off getting it right in the data than
- * spending cycles in a release build.
- *
- * Scan the image, and see if it actually uses its alpha channel/color key (if any).  Reduce
- * to 1 or 0 bits of alpha if possible. */
+/* XXX Scan the image, and see if it actually uses its alpha channel/color key
+ * (if any).  Reduce to 1 or 0 bits of alpha if possible. */
 		
 		switch( iAlphaBits ) {
 		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
@@ -279,13 +273,10 @@ void RageBitmapTexture::Create(
 			* want to accidentally create a 513x513 texture, for example (it won't just
 			* cause lines; it'll be copied to the texture completely wrong). */
 		
-		/* If zoomSurface is having problems with some pixel formats, this will
-		 * sanitize it: */
-		if(img->format->BitsPerPixel == 8 || img->format->colorkey) {
+		/* resize currently only does RGBA8888 */
+		if(img->format->BitsPerPixel != 32 || img->format->colorkey) {
 			int mask = 0;
-			/* resize currently doesn't do paletted */
-			if(img->format->BytesPerPixel == 1)
-			    ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
+			ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
 				PixFmtMasks[mask][0], PixFmtMasks[mask][1], PixFmtMasks[mask][2], PixFmtMasks[mask][3]);
 		}
 		SDL_Surface *dst;
