@@ -10,14 +10,13 @@
 -----------------------------------------------------------------------------
 */
 
-
 #include "RageLog.h"
 #include "RageUtil.h"
 #include <fstream>
 
 
 #include "dxerr8.h"
-	#pragma comment(lib, "DxErr8.lib")
+#pragma comment(lib, "DxErr8.lib")
 
 
 RageLog* LOG;		// global and accessable from anywhere in the program
