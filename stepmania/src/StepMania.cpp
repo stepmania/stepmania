@@ -324,10 +324,14 @@ RageDisplay *CreateDisplay()
 #else
     CString sVideoDriver = "OpenGL";
 #endif
+	
+	LOG->Log( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
+
 	if( PREFSMAN->m_sVideoRenderers == "" || 
 		PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
 	{
-		// Apply default graphic settings for this card
+		LOG->Log( "Video card has changed.  Applying new defaults." );
+
 		IniFile ini;
 		ini.SetPath( VIDEOCARDS_INI_PATH );
 		if(!ini.ReadFile())
@@ -345,7 +349,7 @@ RageDisplay *CreateDisplay()
 			if( !regex.Compare(sVideoDriver) )
 				continue;	// skip
 
-			LOG->Trace( "Using default graphics settings for '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
+			LOG->Log( "Using default graphics settings for '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
 
 			ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
 			ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
@@ -386,6 +390,8 @@ RageDisplay *CreateDisplay()
 	CString error = "There was an error while initializing your video card.\n\n"
 		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
 		"Video Driver: "+sVideoDriver+"\n\n";
+
+	LOG->Info( "Trying video renderers: '%s'", PREFSMAN->m_sVideoRenderers.c_str() );
 
 	CStringArray asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );

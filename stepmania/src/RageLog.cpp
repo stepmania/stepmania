@@ -19,6 +19,7 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 #include <time.h>
+#include "ProductInfo.h"
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 
@@ -97,8 +98,10 @@ RageLog::RageLog()
 	if( m_fileInfo == NULL )
 		RageException::Throw( " Couldn't open info.txt: %s", strerror(errno) );
 
+	this->Info( PRODUCT_NAME_VER );
+
 #if defined(_MSC_VER)
-	this->Trace( "Last compiled on %s.", __TIMESTAMP__ );
+	this->Info( "Last compiled on %s.", __TIMESTAMP__ );
 #endif
 
 	time_t cur_time;
