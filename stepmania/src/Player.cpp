@@ -281,21 +281,24 @@ void PlayerMinus::Update( float fDeltaTime )
 	for( int i=0; i < GetNumHoldNotes(); i++ )		// for each HoldNote
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		HoldNoteScore hns = GetHoldNoteScore(i);
-		float fLife = GetHoldNoteLife(i);
-		int iHoldStartIndex = hn.iStartRow;
+		HoldNoteScore hns = GetHoldNoteScore(hn);
 
 		m_pNoteField->m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
 
 
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
+		if( iSongRow < hn.iStartRow )
+			continue;	// hold hasn't happened yet
+
 		const StyleInput StyleI( m_PlayerNumber, hn.iTrack );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
-		const TapNoteScore tns = GetTapNoteScore(hn.iTrack, iHoldStartIndex);
+		const TapNoteScore tns = GetTapNoteScore( hn.iTrack, hn.iStartRow );
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
+
+		float fLife = GetHoldNoteLife(hn);
 
 		// If the song beat is in the range of this hold:
 		if( hn.iStartRow <= iSongRow && iSongRow <= hn.iEndRow )
@@ -312,12 +315,7 @@ void PlayerMinus::Update( float fDeltaTime )
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
 			{
 				// Move the start of this Hold
-				//
-				// IMPORTANT: Every HoldNote::fStartBeat must be at least 1 index less than
-				// its HoldNote::fEndBeat.  Otherwise, when HoldNotes are converted to the 
-				// 4s representation, it disappears, which causes problems for the way we 
-				// store HoldNote life (by index of the hold).
-				m_pNoteField->GetHoldNote(i).iStartRow = min( iSongRow, m_pNoteField->GetHoldNote(i).iEndRow-1 );
+				m_pNoteField->GetHoldNote(i).iStartRow = min( iSongRow, m_pNoteField->GetHoldNote(i).iEndRow );
 			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
@@ -368,11 +366,11 @@ void PlayerMinus::Update( float fDeltaTime )
 				m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
 		}
 
-		m_pNoteField->SetHoldNoteLife(i, fLife);	// update the NoteField display
-		m_pNoteField->SetHoldNoteScore(i, hns);	// update the NoteField display
+		m_pNoteField->SetHoldNoteLife(hn, fLife);	// update the NoteField display
+		m_pNoteField->SetHoldNoteScore(hn, hns);	// update the NoteField display
 
-		SetHoldNoteLife(i, fLife);
-		SetHoldNoteScore(i, hns);
+		SetHoldNoteLife(hn, fLife);
+		SetHoldNoteScore(hn, hns);
 	}
 
 	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
@@ -397,15 +395,6 @@ void PlayerMinus::Update( float fDeltaTime )
 		 * changes the note skin. */
 		po.m_sNoteSkin = "";
 		po.FromString( mod.sModifier );
-
-		/* Note that runtime effects like these currently must not change hold
-		 * notes.  CopyRange below converts through 4s, which means the hold note
-		 * array will be reconstructed; if hold notes end up in a different order,
-		 * they won't align with this->m_HoldNoteScores. */
-		if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )
-			RageException::Throw("Can't use NoHolds as a battle attack");
-		if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )
-			RageException::Throw("Can't use NoMines as a battle attack");
 
 		float fStartBeat, fEndBeat;
 		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_PlayerNumber, fStartBeat, fEndBeat );

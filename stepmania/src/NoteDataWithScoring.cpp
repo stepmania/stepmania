@@ -100,7 +100,9 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		if( iStartIndex <= hn.iStartRow &&  hn.iEndRow <= iEndIndex  &&  m_HoldNoteScores[i] == hns )
+		if( iStartIndex > hn.iStartRow ||  hn.iEndRow > iEndIndex )
+			continue;
+		if( GetHoldNoteScore(hn) == hns )
 			iNumSuccessfulHolds++;
 	}
 	return iNumSuccessfulHolds;
@@ -315,29 +317,30 @@ void NoteDataWithScoring::SetTapNoteOffset(unsigned track, unsigned row, float o
 	m_TapNoteOffset[track][row] = offset;
 }
 
-HoldNoteScore NoteDataWithScoring::GetHoldNoteScore(unsigned h) const
+/* We use the end row to index hold notes, instead of the start row, because the start row
+ * changes when hold notes are being stepped on, but end rows never change. */
+HoldNoteScore NoteDataWithScoring::GetHoldNoteScore( const HoldNote &hn ) const
 {
-	if(h >= m_HoldNoteScores.size())
+	map<RowTrack, HoldNoteScore>::const_iterator it = m_HoldNoteScores.find( RowTrack(hn.iEndRow, hn.iTrack) );
+	if( it == m_HoldNoteScores.end() )
 		return HNS_NONE;
-	return m_HoldNoteScores[h];
+	return it->second;
 }
 
-void NoteDataWithScoring::SetHoldNoteScore(unsigned h, HoldNoteScore hns)
+void NoteDataWithScoring::SetHoldNoteScore( const HoldNote &hn, HoldNoteScore hns )
 {
-	extend(m_HoldNoteScores, HNS_NONE, h);
-	m_HoldNoteScores[h] = hns;
+	m_HoldNoteScores[RowTrack(hn.iEndRow, hn.iTrack)] = hns;
 }
 
-void NoteDataWithScoring::SetHoldNoteLife(unsigned h, float f)
+void NoteDataWithScoring::SetHoldNoteLife( const HoldNote &hn, float f )
 {
-	extend(m_fHoldNoteLife, 1.0f, h);
-	m_fHoldNoteLife[h] = f;
+	m_fHoldNoteLife[RowTrack(hn.iEndRow, hn.iTrack)] = f;
 }
 
-float NoteDataWithScoring::GetHoldNoteLife(unsigned h) const
+float NoteDataWithScoring::GetHoldNoteLife( const HoldNote &hn ) const
 {
-	// start with full life
-	if(h >= m_fHoldNoteLife.size())
+	map<RowTrack, float>::const_iterator it = m_fHoldNoteLife.find( RowTrack(hn.iEndRow, hn.iTrack) );
+	if( it == m_fHoldNoteLife.end() )
 		return 1.0f;
-	return m_fHoldNoteLife[h];
+	return it->second;
 }

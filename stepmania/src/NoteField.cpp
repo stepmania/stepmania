@@ -517,8 +517,8 @@ void NoteField::DrawPrimitives()
 		for( i=0; i < GetNumHoldNotes(); i++ )
 		{
 			const HoldNote &hn = GetHoldNote(i);
-			const HoldNoteScore hns = GetHoldNoteScore(i);
-			const float fLife = GetHoldNoteLife(i);
+			const HoldNoteScore hns = GetHoldNoteScore( hn );
+			const float fLife = GetHoldNoteLife( hn );
 			const bool bIsHoldingNote = (i < int(m_bIsHoldingHoldNote.size()))?
 				m_bIsHoldingHoldNote[i]: false;
 			

@@ -14,12 +14,14 @@
 #include "GameConstantsAndTypes.h"
 #include "NoteData.h"
 #include "PlayerNumber.h"
+#include <map>
 
 class NoteDataWithScoring : public NoteData
 {
 	// maintain this extra data in addition to the NoteData
 	vector<TapNoteScore> m_TapNoteScores[MAX_NOTE_TRACKS];
-	vector<HoldNoteScore> m_HoldNoteScores;
+	typedef pair<int,int> RowTrack;
+	map<RowTrack, HoldNoteScore> m_HoldNoteScores;
 
 	/* Offset, in seconds, for each tap grade.  Negative numbers mean the note
 	 * was hit early; positive numbers mean it was hit late.  These values are
@@ -30,7 +32,7 @@ class NoteDataWithScoring : public NoteData
 	 * 0.0 means this HoldNote is dead
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HSS_OK. */
-	vector<float>	m_fHoldNoteLife;
+	map<RowTrack, float> m_fHoldNoteLife;
 
 public:
 	NoteDataWithScoring();
@@ -46,10 +48,11 @@ public:
 	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
 	float GetTapNoteOffset(unsigned track, unsigned row) const;
 	void SetTapNoteOffset(unsigned track, unsigned row, float offset);
-	HoldNoteScore GetHoldNoteScore(unsigned h) const;
-	void SetHoldNoteScore(unsigned h, HoldNoteScore hns);
-	float GetHoldNoteLife(unsigned h) const;
-	void SetHoldNoteLife(unsigned h, float f);
+
+	HoldNoteScore GetHoldNoteScore( const HoldNote &hn ) const;
+	void SetHoldNoteScore( const HoldNote &hn, HoldNoteScore hns );
+	float GetHoldNoteLife( const HoldNote &hn ) const;
+	void SetHoldNoteLife( const HoldNote &hn, float f );
 
 	bool IsRowCompletelyJudged(unsigned row) const;
 	TapNoteScore MinTapNoteScore(unsigned row) const;
