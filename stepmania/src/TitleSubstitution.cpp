@@ -56,21 +56,21 @@ void TitleSubst::Subst( TitleFields &tf )
 		{
 			if( ttab[i]->translit )
 				tf.TitleTranslit = tf.Title;
-			tf.Title = (ttab[i]->Dest.Title != "-erase-")? ttab[i]->Dest.Title: "";
+			tf.Title = (ttab[i]->Dest.Title != "-erase-")? ttab[i]->Dest.Title: CString("");
 			FontCharAliases::ReplaceMarkers( tf.Title );
 		}
 		if( !ttab[i]->Dest.Subtitle.empty() && tf.Subtitle != ttab[i]->Dest.Subtitle )
 		{
 			if( ttab[i]->translit )
 				tf.SubtitleTranslit = tf.Subtitle;
-			tf.Subtitle = (ttab[i]->Dest.Subtitle != "-erase-")? ttab[i]->Dest.Subtitle: "";
+			tf.Subtitle = (ttab[i]->Dest.Subtitle != "-erase-")? ttab[i]->Dest.Subtitle: CString("");
 			FontCharAliases::ReplaceMarkers( tf.Subtitle );
 		}
 		if( !ttab[i]->Dest.Artist.empty() && tf.Artist != ttab[i]->Dest.Artist )
 		{
 			if( ttab[i]->translit )
 				tf.ArtistTranslit = tf.Artist;
-			tf.Artist = (ttab[i]->Dest.Artist != "-erase-")? ttab[i]->Dest.Artist: "";
+			tf.Artist = (ttab[i]->Dest.Artist != "-erase-")? ttab[i]->Dest.Artist: CString("");
 			FontCharAliases::ReplaceMarkers( tf.Artist );
 		}
 
@@ -78,17 +78,17 @@ void TitleSubst::Subst( TitleFields &tf )
 		 * correct data.  Should be used sparingly. */
 		if( !ttab[i]->Dest.TitleTranslit.empty() )
 		{
-			tf.TitleTranslit = (ttab[i]->Dest.TitleTranslit != "-erase-")? ttab[i]->Dest.TitleTranslit: "";
+			tf.TitleTranslit = (ttab[i]->Dest.TitleTranslit != "-erase-")? ttab[i]->Dest.TitleTranslit: CString("");
 			FontCharAliases::ReplaceMarkers( tf.TitleTranslit );
 		}
 		if( !ttab[i]->Dest.SubtitleTranslit.empty() )
 		{
-			tf.SubtitleTranslit = (ttab[i]->Dest.SubtitleTranslit != "-erase-")? ttab[i]->Dest.SubtitleTranslit: "";
+			tf.SubtitleTranslit = (ttab[i]->Dest.SubtitleTranslit != "-erase-")? ttab[i]->Dest.SubtitleTranslit: CString("");
 			FontCharAliases::ReplaceMarkers( tf.SubtitleTranslit );
 		}
 		if( !ttab[i]->Dest.ArtistTranslit.empty() )
 		{
-			tf.ArtistTranslit = (ttab[i]->Dest.ArtistTranslit != "-erase-")? ttab[i]->Dest.ArtistTranslit: "";
+			tf.ArtistTranslit = (ttab[i]->Dest.ArtistTranslit != "-erase-")? ttab[i]->Dest.ArtistTranslit: CString("");
 			FontCharAliases::ReplaceMarkers( tf.ArtistTranslit );
 		}
 	}

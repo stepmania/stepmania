@@ -656,7 +656,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 			CString sCDTitlePath = sPath;
 
 			if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
-				sCDTitlePath = g_bWantFallbackCdTitle? g_sFallbackCDTitlePath:"";
+				sCDTitlePath = g_bWantFallbackCdTitle? g_sFallbackCDTitlePath:CString("");
 
 			if( !sCDTitlePath.empty() )
 			{
