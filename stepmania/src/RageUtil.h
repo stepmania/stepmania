@@ -197,7 +197,7 @@ int FindIndex( T1 begin, T1 end, const T2 *p )
 	T1 iter = find( begin, end, p );
 	if( iter == end )
 		return -1;
-	return it - begin;
+	return iter - begin;
 }
 
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
