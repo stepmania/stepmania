@@ -7,6 +7,7 @@ class Style;
 class Game;
 
 #include "GameConstantsAndTypes.h"
+#include "GameInput.h"
 
 class GameManager
 {
@@ -34,6 +35,7 @@ public:
 	static const Game* StringToGameType( CString sGameType );
 	const Style* GameAndStringToStyle( const Game* pGame, CString sStyle );
 	static CString StyleToThemedString( const Style* s );
+	CString GetSecondaryMenuButtonName( const Game *pGame, GameButton gb ) const;
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

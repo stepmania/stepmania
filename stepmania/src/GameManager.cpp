@@ -2862,6 +2862,66 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, CString sStyle
 	return NULL;
 }
 
+
+CString GameManager::GetSecondaryMenuButtonName( const Game *pGame, GameButton gb ) const
+{
+	/*
+	 * Each GameButton can be used in gameplay (if any gameplay style maps to
+	 * it) and/or map to a menu button (if m_DedicatedMenuButton or m_SecondaryMenuButton
+	 * map to it).
+	 *
+	 * If a button is only used in gameplay, return ""; the primary description is
+	 * sufficient.
+	 *
+	 * If a button is only used in menus, return "(dedicated)" if any other button
+	 * maps to the same MenuButton; otherwise return "".
+	 *
+	 * If a button is used in both gameplay and menus, return szSecondaryNames[] for
+	 * the MenuButton.
+	 */
+	vector<const Style*> aStyles;
+	this->GetStylesForGame( pGame, aStyles );
+	bool bUsedInGameplay = false;
+	for( unsigned i = 0; i < aStyles.size(); ++i )
+	{
+		const Style *pStyle = aStyles[i];
+		FOREACH_GameController(gc)
+		{
+			const StyleInput si = pStyle->GameInputToStyleInput( GameInput(gc,gb) );
+			if( si.IsValid() )
+				bUsedInGameplay = true;
+		}
+	}
+
+	static const char *szSecondaryNames[NUM_MENU_BUTTONS] =
+	{
+		"(MenuLeft)",
+		"(MenuRight)",
+		"(MenuUp)",
+		"(MenuDown)",
+		"(MenuStart)",
+		"(MenuBack)",
+		"(Coin)",
+		"(Operator)"
+	};
+
+	FOREACH_MenuButton(m)
+	{
+		if( !bUsedInGameplay && pGame->m_DedicatedMenuButton[m] == gb )
+		{
+			if( pGame->m_SecondaryMenuButton[m] == pGame->m_DedicatedMenuButton[m] ||
+			    pGame->m_SecondaryMenuButton[m] == GAME_BUTTON_INVALID )
+				return "";
+			else
+				return "(dedicated)";
+		}
+		else if( bUsedInGameplay && pGame->m_SecondaryMenuButton[m] == gb )
+			return szSecondaryNames[m];
+	}
+
+	return ""; // only used in gameplay
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

@@ -8,6 +8,7 @@
 #include "ThemeManager.h"
 #include "Game.h"
 #include "ScreenDimensions.h"
+#include "GameManager.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenTestInput );
@@ -58,7 +59,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 				if( INPUTMAPPER->DeviceToGame(di,gi) )
 				{
 					CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
-					CString sSecondary = GAMESTATE->GetCurrentGame()->m_szSecondaryFunction[gi.button];
+					CString sSecondary = GAMEMAN->GetSecondaryMenuButtonName( GAMESTATE->GetCurrentGame(), gi.button );
 					
 					sTemp += ssprintf("  (Controller %d %s)  %s", gi.controller+1, sName.c_str(), sSecondary.c_str() );
 				}
