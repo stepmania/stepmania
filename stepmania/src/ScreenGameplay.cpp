@@ -1331,7 +1331,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( GAMESTATE->AllHaveComboOf30OrMoreMisses() )
 				bBeginFailed = true;
 			break;
-		default:
 		}
 
 		if( bBeginFailed )
