@@ -30,6 +30,7 @@ public:
 
 	/* Used only by RageFile: */
 	RageFileObj *Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );
+	void Close( RageFileObj *obj );
 
 private:
 	RageFileObj *OpenForWriting( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );

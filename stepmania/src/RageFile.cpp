@@ -115,7 +115,7 @@ bool RageFile::Open( const CString& path, RageFile::OpenMode mode )
 
 void RageFile::Close()
 {
-	delete m_File;
+	FILEMAN->Close( m_File );
 	m_File = NULL;
 }
 

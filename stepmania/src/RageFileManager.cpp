@@ -29,6 +29,9 @@ public:
 };
 static RageFileDriverMountpoints *g_Mountpoints = NULL;
 
+typedef map< const RageFileObj *, RageFileDriver * > FileReferences;
+static FileReferences g_Refs;
+
 struct LoadedDriver
 {
 	/* A loaded driver may have a base path, which modifies the path we
@@ -39,6 +42,7 @@ struct LoadedDriver
 	RageFileDriver *driver;
 	CString MountPoint;
 
+	LoadedDriver() { driver = NULL; }
 	CString GetPath( CString path );
 };
 
@@ -283,6 +287,25 @@ static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
 	return a.second < b.second;
 }
 
+void AddReference( const RageFileObj *obj, RageFileDriver *driver )
+{
+	pair< const RageFileObj *, RageFileDriver * > ref;
+	ref.first = obj;
+	ref.second = driver;
+
+	/* map::insert returns an iterator (which we discard) and a bool, indicating whether
+	 * this is a new entry.  This should always be new. */
+	const pair< FileReferences::iterator, bool > ret = g_Refs.insert( ref );
+	RAGE_ASSERT_M( ret.second, ssprintf( "RemoveReference: Duplicate reference (%s)", obj->GetDisplayPath().c_str() ) );
+}
+
+void RemoveReference( const RageFileObj *obj )
+{
+	FileReferences::iterator it = g_Refs.find( obj );
+	RAGE_ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", obj->GetDisplayPath().c_str() ) );
+	g_Refs.erase( it );
+}
+
 /* Used only by RageFile: */
 RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
@@ -295,13 +318,17 @@ RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mod
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
-		const CString path = g_Drivers[i].GetPath( sPath );
+		LoadedDriver &ld = g_Drivers[i];
+		const CString path = ld.GetPath( sPath );
 		if( path.size() == 0 )
 			continue;
 		int error;
-		RageFileObj *ret = g_Drivers[i].driver->Open( path, mode, p, error );
+		RageFileObj *ret = ld.driver->Open( path, mode, p, error );
 		if( ret )
+		{
+			AddReference( ret, ld.driver );
 			return ret;
+		}
 
 		/* ENOENT (File not found) is low-priority: if some other error
 		 * was reported, return that instead. */
@@ -367,10 +394,22 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, RageFile::Op
 
 		RageFileObj *ret = ld.driver->Open( path, mode, p, error );
 		if( ret )
+		{
+			AddReference( ret, ld.driver );
 			return ret;
+		}
 	}
 	err = error;
 	return NULL;
+}
+
+void RageFileManager::Close( RageFileObj *obj )
+{
+	if( obj == NULL )
+		return;
+
+	RemoveReference( obj );
+	delete obj;
 }
 
 bool RageFileManager::IsAFile( const CString &sPath ) { return GetFileType(sPath) == TYPE_FILE; }
