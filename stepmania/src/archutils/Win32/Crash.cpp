@@ -38,7 +38,7 @@
 
 static HFONT hFontMono = NULL;
 
-static void DoSave(const EXCEPTION_POINTERS *pExc);
+static void DoSave();
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +52,7 @@ extern unsigned long version_num;
 
 
 extern HINSTANCE g_hInstance;
+#define BACKTRACE_MAX_SIZE 100
 
 // WARNING: This is called from crash-time conditions!  No malloc() or new!!!
 
@@ -69,7 +70,10 @@ static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	strcpy(pszFile, fn);
 }
 
-struct VDDebugInfoContext {
+struct VDDebugInfoContext
+{
+	VDDebugInfoContext() { pRVAHeap=NULL; }
+	bool Loaded() const { return pRVAHeap != NULL; }
 	void *pRawBlock;
 
 	int nBuildNumber;
@@ -113,9 +117,47 @@ static const struct ExceptionLookup {
 	{	NULL	},
 };
 
+static const char *LookupException( DWORD code )
+{
+	for( int i = 0; exceptions[i].code; ++i )
+		if( exceptions[i].code == code )
+			return exceptions[i].name;
+
+	return NULL;
+}
+
+struct CrashInfo
+{
+	char m_CrashReason[256];
+	const void *m_BacktracePointers[BACKTRACE_MAX_SIZE];
+
+	const void *m_AlternateThreadBacktrace[BACKTRACE_MAX_SIZE];
+
+	CrashInfo()
+	{
+		m_CrashReason[0] = 0;
+		m_BacktracePointers[0] = m_AlternateThreadBacktrace[0] = NULL;
+	}
+};
+
+static CrashInfo g_CrashInfo;
+static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
+{
+	// fill out bomb reason
+	const char *reason = LookupException( pRecord->ExceptionCode );
+
+	if( reason == NULL )
+		wsprintf( crash->m_CrashReason, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode );
+	else
+	{
+		strcpy( crash->m_CrashReason, "Crash reason: " );
+		strcat( crash->m_CrashReason, reason );
+	}
+}
+
 long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int buflen);
 bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src);
-bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename);
+bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx );
 void VDDebugInfoDeinit(VDDebugInfoContext *pctx);
 
 
@@ -197,13 +239,14 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 
 	// Attempt to read debug file.
 
-	char buf[1024];
-	SpliceProgramPath(buf, sizeof buf, "StepMania.vdi");
-	VDDebugInfoInitFromFile(&g_debugInfo, buf);
+	VDDebugInfoInitFromFile( &g_debugInfo );
 
 	/* In case something goes amiss before the user can view the crash
 	 * dump, save it now. */
-	DoSave(pExc);
+	if( !g_CrashInfo.m_CrashReason[0] )
+		GetReason( pExc->ExceptionRecord, &g_CrashInfo );
+	do_backtrace( g_CrashInfo.m_BacktracePointers, BACKTRACE_MAX_SIZE, GetCurrentProcess(),  GetCurrentThread(), pExc->ContextRecord );
+	DoSave();
 
 	++InHere;
 
@@ -231,8 +274,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
 		HINSTANCE handle = LoadLibrary(szFullAppPath);
 
-		DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL,
-			CrashDlgProc, (LPARAM)pExc);
+		DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, (LPARAM)pExc);
 	}
 
 	VDDebugInfoDeinit(&g_debugInfo);
@@ -269,43 +311,19 @@ static void Report(HWND hwndList, HANDLE hFile, const char *format, ...) {
 	}
 }
 
-static void ReportReason(HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+
+
+static void ReportReason( HWND hwndReason, HANDLE hFile, const CrashInfo *pCrash )
 {
-	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
-
-	// fill out bomb reason
-
-	const struct ExceptionLookup *pel = exceptions;
-
-	while(pel->code) {
-		if (pel->code == pRecord->ExceptionCode)
-			break;
-
-		++pel;
-	}
-
-	// Unfortunately, EXCEPTION_ACCESS_VIOLATION doesn't seem to provide
-	// us with the read/write flag and virtual address as the docs say...
-	// *sigh*
-
-	char buf[256] = "";
-
-	if (!pel->code)
-		wsprintf( buf, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode );
-	else
-	{
-		strcpy( buf, "Crash reason: " );
-		strcat( buf, pel->name );
-	}
-
 	if( hwndReason )
-		SetWindowText( hwndReason, buf );
+		SetWindowText( hwndReason, pCrash->m_CrashReason );
 
 	if( hFile )
-		Report( NULL, hFile, buf );
+		Report( NULL, hFile, pCrash->m_CrashReason );
 }
 
-static const char *GetNameFromHeap(const char *heap, int idx) {
+static const char *GetNameFromHeap(const char *heap, int idx)
+{
 	while(idx--)
 		while(*heap++);
 
@@ -314,7 +332,8 @@ static const char *GetNameFromHeap(const char *heap, int idx) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-static bool IsValidCall(char *buf, int len) {
+static bool IsValidCall(char *buf, int len)
+{
 	// Permissible CALL sequences that we care about:
 	//
 	//	E8 xx xx xx xx			CALL near relative
@@ -450,8 +469,14 @@ void VDDebugInfoDeinit(VDDebugInfoContext *pctx) {
 	}
 }
 
-bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename)
+bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx )
 {
+	if( pctx->Loaded() )
+		return true;
+
+	char pszFilename[1024];
+	SpliceProgramPath(pszFilename, sizeof(pszFilename), "StepMania.vdi");
+
 	pctx->pRawBlock = NULL;
 	pctx->pRVAHeap = NULL;
 
@@ -624,14 +649,19 @@ static bool PointsToValidCall( unsigned long ptr )
 	return IsValidCall(buf+7, len);
 }
 
-static void do_backtrace( const void **buf, size_t size, 
+void do_backtrace( const void **buf, size_t size, 
 						 HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext )
 {
 	// Retrieve stack pointers.
 	const char *pStackBase;
 	{
 		LDT_ENTRY sel;
-		GetThreadSelectorEntry( hThread, pContext->SegFs, &sel );
+		if( !GetThreadSelectorEntry( hThread, pContext->SegFs, &sel ) )
+		{
+			buf[0] = NULL;
+			return;
+		}
+
 		const NT_TIB *tib = (NT_TIB *) ((sel.HighWord.Bits.BaseHi<<24)+(sel.HighWord.Bits.BaseMid<<16)+sel.BaseLow);
 		const NT_TIB *pTib = tib->Self;
 		pStackBase = (char *)pTib->StackBase;
@@ -669,10 +699,51 @@ static void do_backtrace( const void **buf, size_t size,
 	buf[i++] = NULL;
 }
 
-
-static bool ReportCrashCallStack( HWND hwnd, HANDLE hFile, const CONTEXT *pContext )
+void SymLookup( const void *ptr, char *buf )
 {
-	if( !g_debugInfo.pRVAHeap )
+	VDDebugInfoInitFromFile( &g_debugInfo );
+	if( !g_debugInfo.Loaded() )
+	{
+		strcpy( buf, "error" );
+		return;
+	}
+
+	MEMORY_BASIC_INFORMATION meminfo;
+	VirtualQuery( ptr, &meminfo, sizeof meminfo );
+
+	char tmp[512];
+	if( VDDebugInfoLookupRVA(&g_debugInfo, (unsigned int)ptr, tmp, sizeof(tmp)) >= 0 )
+	{
+		wsprintf( buf, "%08p: %s", ptr, Demangle(tmp) );
+		return;
+	}
+
+	char szName[MAX_PATH];
+	if( !CrashGetModuleBaseName((HMODULE)meminfo.AllocationBase, szName) )
+		strcpy( szName, "???" );
+
+	DWORD64 disp;
+	SYMBOL_INFO *pSymbol = GetSym( (unsigned int)ptr, disp );
+
+	if( pSymbol )
+	{
+		wsprintf( buf, "%08lx: %s!%s [%08lx+%lx+%lx]",
+			(unsigned long) ptr, szName, pSymbol->Name,
+			(unsigned long) meminfo.AllocationBase,
+			(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
+			(unsigned long) disp);
+		return;
+	}
+
+	wsprintf( buf, "%08lx: %s!%08lx",
+		(unsigned long) ptr, szName, 
+		(unsigned long) meminfo.AllocationBase );
+}
+
+static bool ReportCallStack( HWND hwnd, HANDLE hFile, const void **Backtrace )
+{
+	VDDebugInfoInitFromFile( &g_debugInfo );
+	if( !g_debugInfo.Loaded() )
 	{
 		Report(hwnd, hFile, "Could not open debug resource file (StepMania.vdi).");
 		return false;
@@ -680,44 +751,15 @@ static bool ReportCrashCallStack( HWND hwnd, HANDLE hFile, const CONTEXT *pConte
 
 	if( g_debugInfo.nBuildNumber != int(version_num) )
 	{
-		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of StepMania -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
+		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of " PRODUCT_NAME " -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
 		return false;
 	}
 
-#define BACKTRACE_MAX_SIZE 100
-	static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	do_backtrace( BacktracePointers, BACKTRACE_MAX_SIZE, GetCurrentProcess(),  GetCurrentThread(), pContext );
-
-	for( int i = 0; BacktracePointers[i]; ++i )
+	for( int i = 0; Backtrace[i]; ++i )
 	{
-		MEMORY_BASIC_INFORMATION meminfo;
-		VirtualQuery( BacktracePointers[i], &meminfo, sizeof meminfo );
-
-		char buf[512];
-		if( VDDebugInfoLookupRVA(&g_debugInfo, (unsigned int)BacktracePointers[i], buf, sizeof(buf)) >= 0 )
-		{
-			Report(hwnd, hFile, "%08p: %s", BacktracePointers[i], Demangle(buf));
-		} else {
-			char szName[MAX_PATH];
-			if( !CrashGetModuleBaseName((HMODULE)meminfo.AllocationBase, szName) )
-				strcpy( szName, "???" );
-
-			DWORD64 disp;
-			SYMBOL_INFO *pSymbol = GetSym( (unsigned int)BacktracePointers[i], disp );
-
-			if( pSymbol )
-			{
-				Report(hwnd, hFile, "%08lx: %s!%s [%08lx+%lx+%lx]",
-					(unsigned long) BacktracePointers[i], szName, pSymbol->Name,
-					(unsigned long) meminfo.AllocationBase,
-					(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
-					(unsigned long) disp);
-			} else {
-				Report(hwnd, hFile, "%08lx: %s!%08lx",
-					(unsigned long) BacktracePointers[i], szName, 
-					(unsigned long) meminfo.AllocationBase );
-			}
-		}
+		char buf[10240];
+		SymLookup( Backtrace[i], buf );
+		Report( hwnd, hFile, "%s", buf );
 	}
 
 	return true;
@@ -729,7 +771,7 @@ void WriteBuf( HANDLE hFile, const char *buf )
 	WriteFile(hFile, buf, strlen(buf), &dwActual, NULL);
 }
 
-static void DoSave(const EXCEPTION_POINTERS *pExc)
+static void DoSave()
 {
 	char szModName2[MAX_PATH];
 
@@ -744,15 +786,24 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 			"--------------------------------------"
 			"\r\n", PRODUCT_NAME_VER, version_num);
 
-	ReportReason(NULL, hFile, pExc);
+	ReportReason( NULL, hFile, &g_CrashInfo );
 	Report(NULL, hFile, "");
 
 	// Dump thread stacks
 	WriteBuf( hFile, Checkpoints::GetLogs("\r\n") );
 	Report(NULL, hFile, "");
 
-	ReportCrashCallStack( NULL, hFile, pExc->ContextRecord );
+	ReportCallStack( NULL, hFile, g_CrashInfo.m_BacktracePointers );
 	Report(NULL, hFile, "");
+
+	if( g_CrashInfo.m_AlternateThreadBacktrace[0] )
+	{
+		Report( NULL, hFile, "Deadlocked with:" );
+		Report( NULL, hFile, "" );
+		
+		ReportCallStack( NULL, hFile, g_CrashInfo.m_AlternateThreadBacktrace );
+		Report(NULL, hFile, "");
+	}
 
 	Report(NULL, hFile, "Static log:");
 	WriteBuf( hFile, RageLog::GetInfo() );
@@ -796,89 +847,87 @@ void ViewWithNotepad(const char *str)
 	);
 }
 
-BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
-	static const EXCEPTION_POINTERS *s_pExc;
+BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+{
 	static bool s_bHaveCallstack;
 
-	switch(msg) {
+	switch(msg)
+	{
+	case WM_INITDIALOG:
+		{
+			HWND hwndList = GetDlgItem(hDlg, IDC_CALL_STACK);
+			HWND hwndReason = GetDlgItem(hDlg, IDC_STATIC_BOMBREASON);
 
-		case WM_INITDIALOG:
-			{
-				HWND hwndList = GetDlgItem(hDlg, IDC_CALL_STACK);
-				HWND hwndReason = GetDlgItem(hDlg, IDC_STATIC_BOMBREASON);
-				const EXCEPTION_POINTERS *const pExc = (const EXCEPTION_POINTERS *)lParam;
+			if (hFontMono)
+				SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
 
-				s_pExc = pExc;
+			ReportReason( hwndReason, NULL, &g_CrashInfo );
+			s_bHaveCallstack = ReportCallStack( hwndList, NULL, g_CrashInfo.m_BacktracePointers );
+		}
+		return TRUE;
 
-				if (hFontMono)
-					SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
-
-				ReportReason(hwndReason, NULL, pExc);
-				s_bHaveCallstack = ReportCrashCallStack( hwndList, NULL, pExc->ContextRecord );
-			}
+	case WM_COMMAND:
+		switch(LOWORD(wParam)) {
+		case IDC_BUTTON_CLOSE:
+			EndDialog(hDlg, FALSE);
 			return TRUE;
-
-		case WM_COMMAND:
-			switch(LOWORD(wParam)) {
-			case IDC_BUTTON_CLOSE:
-				EndDialog(hDlg, FALSE);
-				return TRUE;
-			case IDOK:
-				// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
-				return TRUE;
-			case IDC_VIEW_LOG:
-				ViewWithNotepad("../log.txt");
-				break;
-			case IDC_CRASH_SAVE:
-				if (!s_bHaveCallstack)
-					if (IDOK != MessageBox(hDlg,
-						PRODUCT_NAME " cannot load its crash resource file, and thus the crash dump will be "
-						"missing the most important part, the call stack. Crash dumps are much less useful "
-						"without the call stack.",
-						PRODUCT_NAME " warning", MB_OK|MB_ICONEXCLAMATION))
-						return TRUE;
-
-				ViewWithNotepad("../crashinfo.txt");
-				return TRUE;
-			case IDC_BUTTON_RESTART:
-				{
-					char cwd[MAX_PATH];
-					SpliceProgramPath(cwd, MAX_PATH, "");
-
-					TCHAR szFullAppPath[MAX_PATH];
-					GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-
-					// Launch StepMania
-					PROCESS_INFORMATION pi;
-					STARTUPINFO	si;
-					ZeroMemory( &si, sizeof(si) );
-
-					CreateProcess(
-						NULL,		// pointer to name of executable module
-						szFullAppPath,		// pointer to command line string
-						NULL,  // process security attributes
-						NULL,   // thread security attributes
-						false,  // handle inheritance flag
-						0, // creation flags
-						NULL,  // pointer to new environment block
-						cwd,   // pointer to current directory name
-						&si,  // pointer to STARTUPINFO
-						&pi  // pointer to PROCESS_INFORMATION
-					);
-				}
-				EndDialog( hDlg, FALSE );
-				break;
-			case IDC_BUTTON_REPORT:
-				GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
-				break;
-			}
+		case IDOK:
+			// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
+			return TRUE;
+		case IDC_VIEW_LOG:
+			ViewWithNotepad("../log.txt");
 			break;
+		case IDC_CRASH_SAVE:
+			if (!s_bHaveCallstack)
+				if (IDOK != MessageBox(hDlg,
+					PRODUCT_NAME " cannot load its crash resource file, and thus the crash dump will be "
+					"missing the most important part, the call stack. Crash dumps are much less useful "
+					"without the call stack.",
+					PRODUCT_NAME " warning", MB_OK|MB_ICONEXCLAMATION))
+					return TRUE;
+
+			ViewWithNotepad("../crashinfo.txt");
+			return TRUE;
+		case IDC_BUTTON_RESTART:
+			{
+				char cwd[MAX_PATH];
+				SpliceProgramPath(cwd, MAX_PATH, "");
+
+				TCHAR szFullAppPath[MAX_PATH];
+				GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+
+				// Launch StepMania
+				PROCESS_INFORMATION pi;
+				STARTUPINFO	si;
+				ZeroMemory( &si, sizeof(si) );
+
+				CreateProcess(
+					NULL,		// pointer to name of executable module
+					szFullAppPath,		// pointer to command line string
+					NULL,  // process security attributes
+					NULL,   // thread security attributes
+					false,  // handle inheritance flag
+					0, // creation flags
+					NULL,  // pointer to new environment block
+					cwd,   // pointer to current directory name
+					&si,  // pointer to STARTUPINFO
+					&pi  // pointer to PROCESS_INFORMATION
+				);
+			}
+			EndDialog( hDlg, FALSE );
+			break;
+		case IDC_BUTTON_REPORT:
+			GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
+			break;
+		}
+		break;
 	}
 
 	return FALSE;
 }
 
-void debug_crash() {
+void NORETURN debug_crash()
+{
 	__try {
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
@@ -887,3 +936,34 @@ void debug_crash() {
 	} __except(CrashHandler((EXCEPTION_POINTERS*)_exception_info())) {
 	}
 }
+
+/* Get a stack trace of the current thread and the specified thread. */
+void NORETURN Crash_BacktraceThread( HANDLE hThread )
+{
+	if( GetThreadId( hThread ) == GetCurrentThreadId() )
+	{
+		/* hThread is the current thread.  This shouldn't happen. */
+		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (with the current thread?)" );
+		debug_crash();
+	}
+
+	/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
+	 * hThread, for GetThreadContext to work.) */
+	RageThread::HaltAllThreads( false );
+	// SuspendThread( hThread );
+
+	CONTEXT context;
+	context.ContextFlags = CONTEXT_FULL;
+	if( !GetThreadContext( hThread, &context ) )
+	{
+		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (GetThreadContext failed)" );
+		debug_crash();
+	}
+
+	static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
+	do_backtrace( g_CrashInfo.m_AlternateThreadBacktrace, BACKTRACE_MAX_SIZE, GetCurrentProcess(), hThread, &context );
+
+	strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock" );
+	debug_crash();
+}
+

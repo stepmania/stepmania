@@ -15,13 +15,17 @@
 //	along with this program; if not, write to the Free Software
 //	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-#ifndef f_CRASH_H
-#define f_CRASH_H
-
+#ifndef CRASH_H
+#define CRASH_H
+#include <windows.h>
 extern long __stdcall CrashHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 
 /* Exactly as advertised.  (This will bring up the crash handler even
  * in the debugger.) */
-void debug_crash();
+void NORETURN debug_crash();
+
+void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
+void SymLookup( const void *ptr, char *buf );
+void NORETURN Crash_BacktraceThread( HANDLE hThread );
 
 #endif
