@@ -332,7 +332,8 @@ void SongManager::InitMachineScoresFromDisk()
 						Difficulty dc;
 	
 						getline(f, line);
-						sscanf(line.c_str(), "%d %d", &nt, &dc);
+						if( sscanf(line.c_str(), "%d %d", &nt, &dc) != 2 )
+							break;
 
 						CString sDescription;
 						getline(f, sDescription);
@@ -348,12 +349,16 @@ void SongManager::InitMachineScoresFromDisk()
 						
 						getline(f, line);
 						
+						int iNumTimesPlayed;
+						Grade grade;
+						float fScore;
+						if( sscanf(line.c_str(), "%d %d %f\n", &iNumTimesPlayed, &grade, &fScore) != 3 )
+							break;
 						if( pNotes )
 						{
-							sscanf(line.c_str(), "%d %d %f\n",
-								&pNotes->m_MemCardScores[c].iNumTimesPlayed,
-								&pNotes->m_MemCardScores[c].grade,
-								&pNotes->m_MemCardScores[c].fScore);
+							pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
+							pNotes->m_MemCardScores[c].grade = grade;
+							pNotes->m_MemCardScores[c].fScore = fScore;
 						}
 					}
 				}
