@@ -82,6 +82,8 @@ public:
 
 	char ToChar() const;
 
+	bool IsJoystick() const { return DEVICE_JOY1 <= device && device <= DEVICE_JOY4; }
+
 	static int NumButtons(InputDevice device);
 };
 
