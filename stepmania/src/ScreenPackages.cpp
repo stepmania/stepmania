@@ -483,24 +483,20 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	else
 		m_bIsPackage = false;
 
-	int k=0,j=0;
-	while( k >= 0 )
+	m_sBaseAddress = "http://" + Server;
+	if( Port != 80 )
+		m_sBaseAddress += ssprintf( ":%d", Port );
+	m_sBaseAddress += "/";
+
+	if( sAddress.Right(1) != "/" )
 	{
-		j = k+1;
-		k = sAddress.Find( '/', j );
+		m_sEndName = Basename( sAddress );
+		m_sBaseAddress += Dirname( sAddress );
 	}
-
-	//If there is no '/' in the address, ignore it all
-	//for base address.
-	if( sAddress.Find( '/', 0 ) < 0 )
-		j = 0;
-
-	m_sEndName = sAddress.Right( sAddress.length() - j + 1 );
-
-	if( Port == 80 )
-		m_sBaseAddress = "http://" + Server + "/" + CString(sAddress.substr(0, j));
 	else
-		m_sBaseAddress = "http://" + Server + ssprintf( ":%d/", Port ) + CString(sAddress.substr(0, j));
+	{
+		m_sEndName = "";
+	}
 
 	//Open the file...
 
