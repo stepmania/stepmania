@@ -86,6 +86,7 @@ protected:
 
 	/* Returns -1 if on a row with no OptionRowData (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
+	bool AllAreOnExit() const;
 
 protected:	// derived classes need access to these
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );

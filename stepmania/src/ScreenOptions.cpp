@@ -51,33 +51,35 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 /*
  * These navigation types are provided:
  *
- * NAV_THREE_KEY:
+ * All modes:
  *  left, right -> change option
  *  up, down -> change row
+ *   (in toggle modes, focus on nearest item to old focus)
+ *
+ * NAV_THREE_KEY:
  *  start -> move to next row
  *  left+right+start -> move to prev row
  *  (next screen via "exit" entry)
  * This is the minimal navigation, for using menus with only three buttons.
  *
  * NAV_FIVE_KEY:
- *  left, right -> change option
- *  up, down -> change row
  *  start -> next screen
  * This is a much more convenient navigation, requiring five keys.
  *
  * NAV_TOGGLE_THREE_KEY:
- *  left, right -> change option
- *  up, down -> change row
- *  start -> on first choice, move down; otherewise toggle option and move to first choice
+ *  start -> on first choice, move to next row; otherewise toggle option and move to first choice
+ *  left+right+start -> move to prev row
  *
  * NAV_TOGGLE_FIVE_KEY:
- *  left, right -> change option
- *  up, down -> change row
  *  start -> toggle option
  *
  * Regular modes and toggle modes must be enabled by the theme.  We could simply
  * automatically switch to toggle mode for multiselect rows, but that would be strange
  * for non-multiselect rows (eg. scroll speed).
+ *
+ * THREE_KEY modes are navigatable with only MenuLeft, MenuRight and MenuStart, and
+ * are used when PREFSMAN->m_bArcadeOptionsNavigation is enabled.  However, they can
+ * still use MenuUp and MenuDown for nonessential behavior.
  *
  * NAV_THREE_KEY_MENU:
  *  left, right -> change row
@@ -1131,6 +1133,14 @@ void ScreenOptions::StartGoToNextState()
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
+bool ScreenOptions::AllAreOnExit() const
+{
+	FOREACH_PlayerNumber( p )
+		if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
+			return false;
+	return true;
+}
+
 void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
 	switch( type )
@@ -1150,12 +1160,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	OptionRowData &data = row.m_RowDef;
 
 
-	// if we are in dedicated menubutton input and arcade navigation
-	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
-	/* This was left or right, instead of left and right.  Require both.  When
-	 * running through a menu quickly in three key mode with lots of right and
-	 * start taps, it's very easy to tap start before actually releasing the right
-	 * tap, causing the menu to move up when you wanted it to go down. */
+	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
+	 * MENU_BUTTON_RIGHT are being held. */
 	switch( m_OptionsNavigation )
 	{
 	case NAV_THREE_KEY:
@@ -1176,13 +1182,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	// If on exit, check it all players are on "Exit"
 	if( row.Type == Row::ROW_EXIT )
 	{
-		bool bAllOnExit = true;
-		FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
-				bAllOnExit = false;
-
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
-		if( bAllOnExit  &&  type == IET_FIRST_PRESS && !IsTransitioning() )
+		if( AllAreOnExit()  &&  type == IET_FIRST_PRESS && !IsTransitioning() )
 			StartGoToNextState();
 		return;
 	}
@@ -1234,7 +1235,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
 			else
 				ChangeValueInRow( pn, 0, type != IET_FIRST_PRESS );
-//				m_SoundChangeCol.Play();
 			break;
 		case NAV_THREE_KEY_MENU:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
@@ -1242,7 +1242,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				StartGoToNextState();
 			break;
 		case NAV_FIVE_KEY:
-			/* Jump to the exit row. */
+			/* Jump to the exit row.  (If everyone's already on the exit row, then
+			 * we'll have already gone to the next screen above.) */
 			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
 			break;
 		}
@@ -1251,9 +1252,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 
 void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
-	if( m_OptionsNavigation != NAV_TOGGLE_FIVE_KEY )
-		return;
-
 	/* Long rows always put us in the center, so don't update the focus. */
 	const Row &Row = *m_Rows[m_iCurrentRow[pn]];
 	if( Row.m_bRowIsLong )
@@ -1396,21 +1394,26 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 
 		m_iCurrentRow[p] = row;
 
-		if( m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY && !m_Rows[row]->m_bRowIsLong )
+		switch( m_OptionsNavigation )
 		{
-			int iSelectionDist = -1;
-			for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
+		case NAV_TOGGLE_THREE_KEY:
+		case NAV_TOGGLE_FIVE_KEY:
+			if( !m_Rows[row]->m_bRowIsLong )
 			{
-				int iWidth, iX, iY;
-				GetWidthXY( p, m_iCurrentRow[p], i, iWidth, iX, iY );
-				const int iDist = abs( iX-m_iFocusX[p] );
-				if( iSelectionDist == -1 || iDist < iSelectionDist )
+				int iSelectionDist = -1;
+				for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
 				{
-					iSelectionDist = iDist;
-					m_Rows[row]->m_iChoiceWithFocus[p] = i;
+					int iWidth, iX, iY;
+					GetWidthXY( p, m_iCurrentRow[p], i, iWidth, iX, iY );
+					const int iDist = abs( iX-m_iFocusX[p] );
+					if( iSelectionDist == -1 || iDist < iSelectionDist )
+					{
+						iSelectionDist = iDist;
+						m_Rows[row]->m_iChoiceWithFocus[p] = i;
+					}
 				}
+				m_Rows[row]->m_iChoiceWithFocus[p] = min( iOldSelection, m_Rows[row]->m_textItems.size()-1 );
 			}
-			m_Rows[row]->m_iChoiceWithFocus[p] = min( iOldSelection, m_Rows[row]->m_textItems.size()-1 );
 		}
 
 		OnChange( (PlayerNumber)p );
