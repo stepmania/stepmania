@@ -2,9 +2,11 @@
 #define ARCH_H
 
 /* Include this file if you need to create an instance of a driver object.  */
+class ErrorDialog;
 class LoadingWindow;
 class RageSoundDriver;
 
+ErrorDialog *MakeErrorDialog();
 LoadingWindow *MakeLoadingWindow();
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
