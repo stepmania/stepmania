@@ -420,6 +420,25 @@ float GameState::GetSongPercent( float beat ) const
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
+void GameState::IncrementStageIndex()
+{
+	// Increment the stage counter.
+	int iNumStagesOfLastSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+
+	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	{
+		/* If it's an extra stage, always increment by one.  This is because in some
+		 * unusual cases we can pick a long or marathon song as an extra stage.  The
+		 * most common cause of this is when an entire group of songs is long/nonstop mixes.
+		 * 
+		 * We can't simply not choose long songs as extra stages: if there are no
+		 * regular songs to choose, we'll end up with no song to use as an extra stage. */
+		iNumStagesOfLastSong = 1;
+	}
+
+	m_iCurrentStageIndex += iNumStagesOfLastSong;
+}
+
 int GameState::GetStageIndex() const
 {
 	return m_iCurrentStageIndex;

@@ -109,6 +109,7 @@ public:
 	int				m_iCurrentStageIndex;	// incremented on Eval screen.  For a Course, this is always 0
 
 	int				GetStageIndex() const;
+	void			IncrementStageIndex();
 	int				GetNumStagesLeft() const;
 	bool			IsFinalStage() const;
 	bool			IsExtraStage() const;
