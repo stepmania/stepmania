@@ -31,6 +31,36 @@
 #define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
 #define ST_JUMPUD	(ST_UP | ST_DOWN)
 
+enum Animation
+{
+	ANIM_DANCE_PAD,
+	ANIM_DANCE_PADS,
+	ANIM_UP,
+	ANIM_DOWN,
+	ANIM_LEFT,
+	ANIM_RIGHT,
+	ANIM_JUMPLR,
+	NUM_ANIMATIONS
+};
+
+static const char *anims[NUM_ANIMATIONS] =
+{
+	"DancePad-DDR.txt",
+	"DancePads-DDR.txt",
+	"BeginnerHelper_step-left.bones.txt",
+	"BeginnerHelper_step-down.bones.txt",
+	"BeginnerHelper_step-up.bones.txt",
+	"BeginnerHelper_step-right.bones.txt",
+	"BeginnerHelper_step-jumplr.bones.txt"
+};
+
+
+static CString GetAnimPath( Animation a )
+{
+	return ssprintf("Characters%s%s", SLASH, anims[a]);
+}
+
+
 BeginnerHelper::BeginnerHelper()
 {
 	LOG->Trace("BeginnerHelper::BeginnerHelper()");
@@ -86,10 +116,10 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
 
 bool BeginnerHelper::CanUse()
 {
-	if( !DoesFileExist("Characters" SLASH "DancePad-DDR.txt") )
-		return false;
-	if( !DoesFileExist("Characters" SLASH "DancePads-DDR.txt") )
-		return false;
+	for( int i = 0; i < NUM_ANIMATIONS; ++i )
+		if( !DoesFileExist( GetAnimPath( (Animation) i ) ) )
+			return false;
+
 	if( GAMESTATE->m_CurGame != GAME_DANCE )
 		return false;
 	if( GAMESTATE->m_pCharacters.size() == 0 )
@@ -132,8 +162,8 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	switch(iDancePadType)
 	{
 		case 0: break; // No pad
-		case 1: m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" ); break;
-		case 2: m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" ); break;
+		case 1: m_mDancePad.LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) ); break;
+		case 2: m_mDancePad.LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PADS) ); break;
 	}
 	m_mDancePad.SetHorizAlign( align_left );
 	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );
@@ -163,11 +193,11 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		m_mDancer[pl].LoadMilkshapeAscii( Character->GetModelPath() );
 
 		// Load needed animations
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT","Characters" SLASH "BeginnerHelper_step-right.bones.txt" );
-		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR","Characters" SLASH "BeginnerHelper_step-jumplr.bones.txt" );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
+		m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
 		/*m_mDancer[pl].LoadMilkshapeAsciiBones( "Step-JUMPUD","Characters\\BeginnerHelper_step-jumpud.bones.txt" );*/
 		m_mDancer[pl].LoadMilkshapeAsciiBones( "rest",Character->GetRestAnimationPath() );
 		m_mDancer[pl].SetDefaultAnimation( "rest" );
