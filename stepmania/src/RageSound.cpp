@@ -40,13 +40,11 @@
 #include "RageTimer.h"
 
 #include "RageSoundReader_SDL_Sound.h"
+#include "RageSoundReader_Preload.h"
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
-
-/* If a sound is smaller than this, we'll load it entirely into memory. */
-const int max_prebuf_size = 1024*256;
 
 /* The most data to buffer when streaming.  This should generally be at least as large
  * as the largest hardware buffer. */
@@ -116,10 +114,8 @@ RageSound::RageSound(const RageSound &cpy)
 
 	if(big)
 	{
-		/* We can't copy the Sound_Sample, so load a new one. 
-		 * Don't bother trying to load it in a small buffer. */
 		stream.buf.reserve(internal_buffer_size);
-		Load(cpy.GetLoadedFilePath(), false);
+		stream.Sample = cpy.stream.Sample->Copy();
 	}
 
 	/* Load() won't work on a copy if m_sFilePath is already set, so
@@ -178,11 +174,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	Unload();
 
 	m_sFilePath = sSoundFilePath;
-
-	Sound_AudioInfo sound_desired;
-	sound_desired.channels = channels;
-	sound_desired.format = AUDIO_S16SYS;
-	sound_desired.rate = samplerate;
+	position = 0;
 
     SoundReader_SDL_Sound *NewSample = new SoundReader_SDL_Sound;
 	if(!NewSample->Open(sSoundFilePath.GetString()))
@@ -190,57 +182,22 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 
 	/* Try to decode into full_buf. */
-	big = false;
-	if(!precache)
-		big = true; /* Don't. */
+	big = true;
 
-	/* Check the length, and see if we think it'll fit in the buffer. */
+	if(precache)
 	{
-		int len = NewSample->GetLength_Fast();
-		if(len != -1)
+		SoundReader_Preload *Preload = new SoundReader_Preload;
+		if(Preload->Open(NewSample))
 		{
-			float secs = len / 1000.f;
-
-			int pcmsize = int(secs * samplerate * samplesize); /* seconds -> bytes */
-			if(pcmsize > max_prebuf_size)
-				big = true; /* Don't bother trying to preload it. */
-			else
-				full_buf.reserve(pcmsize);
-		}
-	}
-
-	while(!big) {
-		char buf[1024];
-		int cnt = NewSample->Read(buf, sizeof(buf));
-
-		if(cnt < 0) {
-			/* XXX untested */
-			Fail(stream.Sample->GetError());
+			stream.Sample = Preload;
 			delete NewSample;
-			return false;
+			return true;
 		}
-
-		if(!cnt) break; /* eof */
-
-		/* Add the buffer. */
-		full_buf.append(buf, buf+cnt);
-
-		if(full_buf.size() > max_prebuf_size) {
-			full_buf.erase();
-			big = true; /* too big */
-		}
+		delete Preload;
 	}
+	stream.Sample = NewSample;
+//	stream.Sample->SetPosition_Accurate(0);
 
-	if(big) {
-		/* Oops; we need to stream it. */
-		stream.Sample = NewSample;
-		stream.Sample->SetPosition_Accurate(0);
-	} else {
-		/* We're done with the stream. */
-		delete NewSample;
-	}
-
-	position = 0;
 	return true;
 }
 
@@ -843,3 +800,10 @@ void CircBuf::read(char *buffer, unsigned buffer_size)
 		buffer_size -= cpy;
 	}
 }
+
+/*
+-----------------------------------------------------------------------------
+ Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
+	Glenn Maynard
+-----------------------------------------------------------------------------
+*/
