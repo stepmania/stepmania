@@ -72,12 +72,6 @@ ThemeManager::ThemeManager()
 	m_pIniBaseMetrics = new IniFile;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
-	m_uHashForCurThemeMetrics = 0;
-	m_uHashForBaseThemeMetrics = 0;
-	m_uHashForCurThemeCurLanguage = 0;
-	m_uHashForBaseThemeCurLanguage = 0;
-	m_uHashForCurThemeBaseLanguage = 0;
-	m_uHashForBaseThemeBaseLanguage = 0;
 	
 	CStringArray arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
@@ -157,14 +151,6 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	int i;
 	for( i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
 		g_ThemePathCache[i].clear();
-
-	// update hashes for metrics files
-	m_uHashForCurThemeMetrics = GetHashForFile( GetMetricsIniPath(m_sCurThemeName) );
-	m_uHashForBaseThemeMetrics = GetHashForFile( GetMetricsIniPath(BASE_THEME_NAME) );
-	m_uHashForBaseThemeBaseLanguage = GetHashForFile( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
-	m_uHashForCurThemeBaseLanguage = GetHashForFile( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
-	m_uHashForBaseThemeCurLanguage = GetHashForFile( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
-	m_uHashForCurThemeCurLanguage = GetHashForFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniBaseMetrics->Reset();
@@ -467,21 +453,6 @@ bool ThemeManager::HasMetric( CString sClassName, CString sValueName )
 {
 	CString sThrowAway;
 	return GetMetricRaw( sClassName, sValueName, sThrowAway );
-}
-
-void ThemeManager::ReloadMetricsIfNecessary()
-{
-	//
-	// reload metrics if file has changed
-	//
-	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
-	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
-
-	if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
-		m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
-	{
-		ReloadMetrics();
-	}
 }
 
 void ThemeManager::ReloadMetrics()

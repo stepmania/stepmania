@@ -541,7 +541,6 @@ void ScreenManager::ClearScreenStack()
 void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 {
 	RefreshCreditsMessages();
-	THEME->ReloadMetricsIfNecessary();
 
 	if( !Stack )
 		ClearScreenStack();

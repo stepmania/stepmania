@@ -27,7 +27,6 @@ public:
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
 	void ReloadMetrics();
-	void ReloadMetricsIfNecessary();
 	void GetModifierNames( set<CString>& AddTo );
 
 	/* I renamed these for two reasons.  The overload conflicts with the ones below:
@@ -73,12 +72,6 @@ protected:
 
 	IniFile* m_pIniCurMetrics;	// make this a pointer so we don't have to include IniFile here
 	IniFile* m_pIniBaseMetrics;	// make this a pointer so we don't have to include IniFile here
-	unsigned m_uHashForCurThemeMetrics;
-	unsigned m_uHashForBaseThemeMetrics;
-	unsigned m_uHashForCurThemeCurLanguage;
-	unsigned m_uHashForBaseThemeCurLanguage;
-	unsigned m_uHashForCurThemeBaseLanguage;
-	unsigned m_uHashForBaseThemeBaseLanguage;
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
