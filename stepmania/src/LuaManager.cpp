@@ -106,20 +106,12 @@ void LuaManager::SetGlobal( const CString &sName )
 }
 
 
-
-static jmp_buf jbuf;
-static CString jbuf_error;
-
 static int LuaPanic( lua_State *L )
 {
-	CString err;
-	LUA->PopStack( err );
+	CString sErr;
+	LUA->PopStack( sErr );
 
-	/* Grr.  We can't throw an exception from here: it'll explode going through the
-	 * Lua stack for some reason.  Get it off the stack with a longjmp and throw
-	 * an exception from there. */
-	jbuf_error = err;
-	longjmp( jbuf, 1 );
+	RageException::Throw( "%s", sErr.c_str() );
 }
 
 
@@ -143,8 +135,6 @@ LuaManager::LuaManager()
 {
 	LUA = this;	// so that LUA is available when we call the Register functions
 
-	if( setjmp(jbuf) )
-		RageException::Throw("%s", jbuf_error.c_str());
 	L = NULL;
 
 	ResetState();
