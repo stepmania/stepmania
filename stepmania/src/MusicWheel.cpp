@@ -370,7 +370,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				SortSongPointerArrayByGroupAndDifficulty( arraySongs );
 				break;
 			case SORT_GROUP:
-				SortSongPointerArrayByGroupAndTitle( arraySongs );
+				/* Maybe this should sort by title once we have PREFERRED implemented. */
+				SortSongPointerArrayByGroupAndDifficulty( arraySongs );
+				// SortSongPointerArrayByGroupAndTitle( arraySongs );
 				break;
 			case SORT_TITLE:
 				SortSongPointerArrayByTitle( arraySongs );
