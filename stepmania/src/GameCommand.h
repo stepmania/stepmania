@@ -51,6 +51,8 @@ struct GameCommand		// used in SelectMode
 	SortOrder	m_SortOrder;
 	int			m_iUnlockIndex;	// -1 for no unlock
 	CString		m_sSoundPath;	// "" for no sound
+	vector<CString>	m_vsScreensToPrepare;
+	bool	m_bDeletePreparedScreens;
 
 	bool m_bClearBookkeepingData;
 	bool m_bClearMachineStats;

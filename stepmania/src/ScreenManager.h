@@ -35,9 +35,8 @@ public:
 	void Draw();
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
-	void PrepNewScreen( const CString &sName );
-	void LoadPreppedScreen();
-	void DeletePreppedScreen();
+	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
+	void DeletePreparedScreens();
 	
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName, ScreenMessage messageSendOnPop );
@@ -55,10 +54,6 @@ public:
 	void RefreshCreditsMessages();
 	void ThemeChanged();
 
-	void EmptyDeleteQueue();
-
-	void LoadDelayedScreen();
-
 	Screen *GetTopScreen();
 
 public:
@@ -66,18 +61,23 @@ public:
 	// in draw order first to last
 	//
 	BGAnimation			*m_pSharedBGA;	// BGA object that's persistent between screens
-	void PlaySharedBackgroundOffCommand();
+	void	PlaySharedBackgroundOffCommand();
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
-	ScreenMessage		m_MessageSendOnPop;
-	vector<Screen*>		m_ScreensToDelete;
-	Screen				*m_ScreenBuffered;
 	ScreenSystemLayer	*m_SystemLayer;
+
+	CString				m_sLastLoadedBackground;
+	CString				m_sDelayedScreen;
+	ScreenMessage		m_MessageSendOnPop;
+	vector<Screen*>		m_vPreparedScreens;
+	vector<Screen*>		m_vScreensToDelete;
 
 	Screen* MakeNewScreen( const CString &sName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
 	CString m_DelayedScreen;
 	void ClearScreenStack();
+	void EmptyDeleteQueue();
+	void LoadDelayedScreen();
 
 	// Keep these sounds always loaded, because they could be 
 	// played at any time.  We want to eliminate SOUND->PlayOnce

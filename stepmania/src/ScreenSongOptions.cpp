@@ -32,9 +32,14 @@ ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 void ScreenSongOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )
+	{
 		SCREENMAN->PopTopScreen( SM_None );
+	}
 	else
+	{
+		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
+	}
 }
 
 void ScreenSongOptions::GoToNextScreen()

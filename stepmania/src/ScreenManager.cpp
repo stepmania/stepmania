@@ -30,6 +30,7 @@
 #include "ThemeManager.h"
 #include "ScreenSystemLayer.h"
 #include "BGAnimation.h"
+#include "Foreach.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -54,15 +55,14 @@ ScreenManager::ScreenManager()
 	m_pSharedBGA = new BGAnimation;
 	m_SystemLayer = NULL;
 
+	m_MessageSendOnPop = SM_None;
+
 	/* By the time this is constructed, THEME has already been set up and set to
 	 * the current theme.  Call ThemeChanged(), to handle the starting theme
 	 * and set up m_SystemLayer. */
 	ASSERT( THEME );
 	ASSERT( !THEME->GetCurThemeName().empty() );
 	this->ThemeChanged();
-
-	m_ScreenBuffered = NULL;
-	m_MessageSendOnPop = SM_None;
 }
 
 
@@ -74,9 +74,9 @@ ScreenManager::~ScreenManager()
 
 	SAFE_DELETE( m_pSharedBGA );
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		delete m_ScreenStack[i];
-	delete m_ScreenBuffered;
-	delete m_SystemLayer;
+		SAFE_DELETE( m_ScreenStack[i] );
+	DeletePreparedScreens();
+	SAFE_DELETE( m_SystemLayer );
 }
 
 /* This is called when we start up, and when the theme changes or is reloaded. */
@@ -99,14 +99,13 @@ void ScreenManager::ThemeChanged()
 
 void ScreenManager::EmptyDeleteQueue()
 {
-	if(!m_ScreensToDelete.size())
+	if(!m_vScreensToDelete.size())
 		return;
 
-	// delete all ScreensToDelete
-	for( unsigned i=0; i<m_ScreensToDelete.size(); i++ )
-		SAFE_DELETE( m_ScreensToDelete[i] );
+	for( unsigned i=0; i<m_vScreensToDelete.size(); i++ )
+		SAFE_DELETE( m_vScreensToDelete[i] );
 
-	m_ScreensToDelete.clear();
+	m_vScreensToDelete.clear();
 
 	/* Now that we've actually deleted a screen, it makes sense to clear out
 	 * cached textures. */
@@ -249,23 +248,26 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 	return ret;
 }
 
-void ScreenManager::PrepNewScreen( const CString &sScreenName )
+void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
-	ASSERT(m_ScreenBuffered == NULL);
-	m_ScreenBuffered = MakeNewScreen(sScreenName);
+	// Delete previously prepared versions of the screen.
+	FOREACH( Screen*, m_vPreparedScreens, s )
+	{
+		if( (*s)->m_sName == sScreenName )
+		{
+			SAFE_DELETE( *s );
+			break;
+		}
+	}
+
+	m_vPreparedScreens.push_back( MakeNewScreen(sScreenName) );
 }
 
-void ScreenManager::LoadPreppedScreen()
+void ScreenManager::DeletePreparedScreens()
 {
-	ASSERT( m_ScreenBuffered != NULL);
-	SetFromNewScreen( m_ScreenBuffered, false  );
-	
-	m_ScreenBuffered = NULL;
-}
-
-void ScreenManager::DeletePreppedScreen()
-{
-	SAFE_DELETE( m_ScreenBuffered );
+	FOREACH( Screen*, m_vPreparedScreens, s )
+		SAFE_DELETE( *s );
+	m_vPreparedScreens.clear();
 
 	TEXTUREMAN->DeleteCachedTextures();
 }
@@ -279,7 +281,7 @@ void ScreenManager::ClearScreenStack()
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// move current screen(s) to ScreenToDelete
-	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
+	m_vScreensToDelete.insert(m_vScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
 	m_ScreenStack.clear();
 }
 
@@ -299,7 +301,7 @@ void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 
 void ScreenManager::SetNewScreen( const CString &sScreenName )
 {
-	m_DelayedScreen = sScreenName;
+	m_sDelayedScreen = sScreenName;
 
 	/* If we're not delaying screen loads, load it now.  Otherwise, we'll load
 	 * it on the next iteration.  Only delay if we already have a screen
@@ -311,20 +313,37 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 void ScreenManager::LoadDelayedScreen()
 {
 retry:
-	CString sScreenName = m_DelayedScreen;
-	m_DelayedScreen = "";
-
-	/* If we prepped a screen but didn't use it, nuke it. */
-	SAFE_DELETE( m_ScreenBuffered );
+	CString sScreenName = m_sDelayedScreen;
+	m_sDelayedScreen = "";
 
 	Screen* pOldTopScreen = m_ScreenStack.empty() ? NULL : m_ScreenStack.back();
 
 
-	// It makes sense that ScreenManager should allocate memory for a new screen since it 
-	// deletes it later on.  This also convention will reduce includes because screens won't 
-	// have to include each other's headers of other screens.
-	Screen* pNewScreen = MakeNewScreen(sScreenName);
+	//
+	// Search prepped screens to see if we already have this screen available.
+	// If not prepped, then make it.
+	//
+	Screen* pNewScreen = NULL;
+	FOREACH( Screen*, m_vPreparedScreens, s )
+	{
+		if( (*s)->m_sName == sScreenName )
+		{
+			pNewScreen = *s;
+			m_vPreparedScreens.erase( s );
+			break;
+		}
+	}
+	if( pNewScreen == NULL )
+		pNewScreen = MakeNewScreen(sScreenName);
 
+
+	// Load shared BGAnimation
+	CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
+	if( m_sLastLoadedBackground != sNewBGA )
+	{
+		m_pSharedBGA->LoadFromAniDir( sNewBGA );
+		m_sLastLoadedBackground = sNewBGA;
+	}
 	
 
 	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
@@ -425,7 +444,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
 	pScreenToPop->HandleScreenMessage( SM_LoseFocus );
 	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
-	m_ScreensToDelete.push_back( pScreenToPop );
+	m_vScreensToDelete.push_back( pScreenToPop );
 
 	/* Post to the new top.  This must be done now; otherwise, we'll have a single
 	 * frame between popping and these messages, which can result in a frame where eg.

@@ -1045,7 +1045,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		return;
 	case SM_GoToPrevScreen:
+		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
+
 		/* We may have stray SM_SongChanged messages from the music wheel.  We can't
 		 * handle them anymore, since the title menu (and attract screens) reset
 		 * the game state, so just discard them. */

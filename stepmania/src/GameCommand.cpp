@@ -45,7 +45,9 @@ void GameCommand::Init()
 	m_SortOrder = SORT_INVALID;
 	m_iUnlockIndex = -1;
 	m_sSoundPath = "";
-	
+	m_vsScreensToPrepare.clear();
+	m_bDeletePreparedScreens = false;
+
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
 	m_bDownloadMachineStats = false;
@@ -244,6 +246,16 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "sound" )
 		{
 			m_sSoundPath = sValue;
+		}
+
+		else if( sName == "preparescreen" )
+		{
+			m_vsScreensToPrepare.push_back( sValue );
+		}
+		
+		else if( sName == "deletepreparedscreens" )
+		{
+			m_bDeletePreparedScreens = true;
 		}
 		
 		else if( sName == "clearbookkeepingdata" )
@@ -548,6 +560,10 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
 	if( m_sSoundPath != "" )
 		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
+	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
+		SCREENMAN->PrepareScreen( *s );
+	if( m_bDeletePreparedScreens )
+		SCREENMAN->DeletePreparedScreens();
 
 	if( m_bClearBookkeepingData )
 	{

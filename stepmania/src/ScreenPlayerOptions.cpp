@@ -60,9 +60,14 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 void ScreenPlayerOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )
+	{
 		SCREENMAN->PopTopScreen();
+	}
 	else
+	{
+		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
+	}
 }
 
 void ScreenPlayerOptions::GoToNextScreen()

@@ -1289,6 +1289,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		 * (to prevent quitting without storing changes). */
 		if( !GAMESTATE->m_bIsOnSystemMenu )
 		{
+			SCREENMAN->DeletePreparedScreens();
 			SCREENMAN->SystemMessage( "OPERATOR" );
 			GAMESTATE->Reset();
 			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );

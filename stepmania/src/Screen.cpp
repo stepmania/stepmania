@@ -156,6 +156,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_GoToPrevScreen:
+		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	}

@@ -2295,6 +2295,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		GAMESTATE->CancelStage();
 
+		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 
@@ -2364,9 +2365,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( PREFSMAN->m_bEventMode )
 			{
 				if(EVAL_ON_FAIL) // go to the eval screen if we fail
+				{
 					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
+				}
 				else // the theme says just fail and go back to the song select for event mode
+				{
+					SCREENMAN->DeletePreparedScreens();
 					SCREENMAN->SetNewScreen( PREV_SCREEN );
+				}
 			}
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );

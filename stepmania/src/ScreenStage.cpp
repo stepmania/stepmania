@@ -105,7 +105,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		 * we can. */
 		this->PostScreenMessage( SM_BeginFadingOut, MINIMUM_DELAY );
 
-		SCREENMAN->PrepNewScreen( NEXT_SCREEN );
+		SCREENMAN->PrepareScreen( NEXT_SCREEN );
 		break;
 
 	case SM_BeginFadingOut:
@@ -116,16 +116,14 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		OFF_COMMAND( m_Artist );
 		OFF_COMMAND( m_Banner );
 		SCREENMAN->PlaySharedBackgroundOffCommand();
-
-
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 		
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->LoadPreppedScreen(); /* use prepped */
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->DeletePreppedScreen();
+		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	}
