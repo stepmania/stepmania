@@ -523,7 +523,6 @@ void CRC32( unsigned int &iCRC, const void *pVoidBuffer, size_t iSize )
 
 	iCRC ^= 0xFFFFFFFF;
 
-	unsigned crc = 0;
 	const char *pBuffer = (const char *) pVoidBuffer;
 	for( unsigned i = 0; i < iSize; ++i )
 		iCRC = (iCRC >> 8) ^ tab[(iCRC ^ pBuffer[i]) & 0xFF];
