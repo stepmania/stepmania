@@ -86,18 +86,6 @@ void BGAnimationLayer::Init()
 	m_fTileVelocityY = 0;
 }
 
-/* Static background layers are simple, uncomposited background images with nothing
- * behind them.  Since they have nothing behind them, they have no need for alpha,
- * so turn that off. */
-void BGAnimationLayer::LoadFromStaticGraphic( const CString& sPath )
-{
-	Init();
-	Sprite* pSprite = new Sprite;
-	pSprite->LoadBG( sPath );
-	pSprite->StretchTo( FullScreenRectF );
-	this->AddChild( pSprite );
-}
-
 void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
@@ -116,7 +104,11 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 		else
 			sSongBGPath = THEME->GetPathToG("Common fallback background");
 
-		LoadFromStaticGraphic( sSongBGPath );
+		Sprite* pSprite = new Sprite;
+		pSprite->LoadBG( sSongBGPath );
+		pSprite->StretchTo( FullScreenRectF );
+		this->AddChild( pSprite );
+
 		return;		// this will ignore other effects in the file name
 	}
 

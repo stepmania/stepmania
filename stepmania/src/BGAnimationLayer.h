@@ -17,7 +17,6 @@ public:
 	void Init();
 	void Unload();
 
-	void LoadFromStaticGraphic( const CString& sPath );
 	void LoadFromAniLayerFile( const CString& sPath );
 	void LoadFromNode( const CString& sAniDir, const XNode& layer );
 

@@ -166,7 +166,6 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
-		pTempBGA = new BGAnimation;
 		const CString sExt = GetExtension( asFiles[0]) ;
 		if( sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
@@ -174,9 +173,10 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 			return MakeMovie( asFiles[0] );
 		else
 		{
-			pTempBGA = new BGAnimation;
-			pTempBGA->LoadFromStaticGraphic( asFiles[0] );
-			return pTempBGA;
+			Sprite *pSprite = new Sprite;
+			pSprite->LoadBG( asFiles[0] );
+			pSprite->StretchTo( FullScreenRectF );
+			return pSprite;
 		}
 	}
 	// Look for movies in the RandomMovies dir
@@ -400,10 +400,10 @@ void Background::LoadFromSong( const Song* pSong )
 	if( bStaticBackgroundUsed )
 	{
 		CString sSongBGPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
-		BGAnimation *pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
-		pTempBGA->PlayCommand( "On" );
-		m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
+		Sprite* pSprite = new Sprite;
+		pSprite->LoadBG( sSongBGPath );
+		pSprite->StretchTo( FullScreenRectF );
+		m_BGAnimations[STATIC_BACKGROUND] = pSprite;
 	}
 
 

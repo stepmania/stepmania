@@ -29,15 +29,6 @@ void BGAnimation::Unload()
     DeleteAllChildren();
 }
 
-void BGAnimation::LoadFromStaticGraphic( const CString &sPath )
-{
-	Unload();
-
-	BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
-	pLayer->LoadFromStaticGraphic( sPath );
-	AddChild( pLayer );
-}
-
 static bool CompareLayerNames( const CString& s1, const CString& s2 )
 {
 	int i1, i2;

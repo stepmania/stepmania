@@ -17,7 +17,6 @@ public:
 
 	void Unload();
 
-	void LoadFromStaticGraphic( const CString &sPath );
 	void LoadFromAniDir( const CString &sAniDir );
 	void LoadFromNode( const CString &sDir, const XNode& node );
 
