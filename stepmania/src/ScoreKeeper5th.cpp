@@ -202,15 +202,10 @@ void ScoreKeeper5th::AddScore( TapNoteScore score )
 
 	// What does this do?  "Don't use a multiplier if 
 	// the player has failed"?
-	// Also, why does this switch on score again instead
-	// of just adding p?  -Chris
 	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
-		switch( score )
-		{
-			case TNS_MARVELOUS:	m_iScore += 10;		break;
-			case TNS_PERFECT:	m_iScore += MarvelousEnabled? 9:10; break;
-			case TNS_GREAT:		m_iScore += 5;		break;
-		}
+	{
+		m_iScore += p;
+	}
 	else
 	{
 		m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
