@@ -131,7 +131,7 @@ MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 	m_fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
 	if( m_fd == -1 )
 		LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
-
+	
 	this->StartThread();
 }
 
@@ -149,13 +149,13 @@ void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 	//
 	
 	// unmount all devices before trying to remove the module
-  FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
+	FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
     {
 		CString sCommand = "umount " + d->sOsMountDir;
 		LOG->Trace( "reset unmount (%s)", sCommand.c_str() );
 		ExecuteCommand( sCommand );
 		LOG->Trace( "reset unmount done" );
-
+		
 		// force a remount the next time cards aren't locked
 		d->bNeedsWriteTest = true;
 		d->bWriteTestSucceeded = false;
@@ -174,40 +174,40 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		usleep( 50000 );
 		return;
 	}
-
+	
 	bool bNeedToDoAnyMounts = false;
 	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
-	  {
-	    UsbStorageDevice &d = m_vDevicesLastSeen[i];
-	    if( d.bNeedsWriteTest )
-	      {
-		bNeedToDoAnyMounts = true;
-		break;
-	      }
-	  }
-
+	{
+		UsbStorageDevice &d = m_vDevicesLastSeen[i];
+		if( d.bNeedsWriteTest )
+		{
+			bNeedToDoAnyMounts = true;
+			break;
+		}
+	}
+	
 	if( bNeedToDoAnyMounts )
-	  {
-	    // fall through
-	  }
+	{
+		// fall through
+	}
 	else
-	  {
-	    pollfd pfd = { m_fd, POLLIN, 0 };
-	    int ret = poll( &pfd, 1, 100 );
-	    switch( ret )
-	      {
-	      case 1:
-		// file changed.  Fall through.
-		break;
-	      case 0: // no change.  Poll again.
-		return;
-	      case -1:
-		if( errno != EINTR )
-		  LOG->Warn( "Error polling: %s", strerror(errno) );
-		return;
-	      }
-	  }
-
+	{
+		pollfd pfd = { m_fd, POLLIN, 0 };
+		int ret = poll( &pfd, 1, 100 );
+		switch( ret )
+		{
+		case 1:
+			// file changed.  Fall through.
+			break;
+		case 0: // no change.  Poll again.
+			return;
+		case -1:
+			if( errno != EINTR )
+				LOG->Warn( "Error polling: %s", strerror(errno) );
+			return;
+		}
+	}
+	
 	// TRICKY: We're waiting for a change in the USB device list, but 
 	// the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
 	// on the USB device list because the usb-storage descriptors are separate files per 
@@ -223,111 +223,111 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	vector<UsbStorageDevice> vDisconnects;
 	FOREACH( UsbStorageDevice, vOld, old )
 	{
-	  bool bMatch = false;
-	  FOREACH( UsbStorageDevice, vNew, newd )
-	    {
-	      if( old->IdsMatch(*newd) )
+		bool bMatch = false;
+		FOREACH( UsbStorageDevice, vNew, newd )
 		{
-		  bMatch = true;
-		  break;
+			if( old->IdsMatch(*newd) )
+			{
+				bMatch = true;
+				break;
+			}
 		}
-	    }
-
-	  if( !bMatch )    // didn't find
-	    {
-	      LOG->Trace( "Disconnected bus %d port %d level %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
-	      vDisconnects.push_back( *old );
-
-	      FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
+		
+		if( !bMatch )    // didn't find
 		{
-		  if( old->IdsMatch(*d) )
-		  {
-		    m_vDevicesLastSeen.erase( d );
-		    break;
-		  }
+			LOG->Trace( "Disconnected bus %d port %d level %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
+			vDisconnects.push_back( *old );
+			
+			FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
+			{
+				if( old->IdsMatch(*d) )
+				{
+					m_vDevicesLastSeen.erase( d );
+					break;
+				}
+			}
 		}
-	    }
 	}
-
+	
 	
 	// check for connects
 	vector<UsbStorageDevice> vConnects;
-        FOREACH( UsbStorageDevice, vNew, newd )
-	  {
-	    bool bMatch = false;
-	    FOREACH( UsbStorageDevice, vOld, old )
-	      {
-		if( old->IdsMatch(*newd) )
-		  {
-		    bMatch = true;
-		    break;
-		  }
-	      }
-
-	    if( !bMatch )    // didn't find
-	      {
-		LOG->Trace( "Connected bus %d port %d level %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
-		vConnects.push_back( *newd );
-
-		m_vDevicesLastSeen.push_back( *newd );
-	      }
-	  }
-
+	FOREACH( UsbStorageDevice, vNew, newd )
+	{
+		bool bMatch = false;
+		FOREACH( UsbStorageDevice, vOld, old )
+		{
+			if( old->IdsMatch(*newd) )
+			{
+				bMatch = true;
+				break;
+			}
+		}
+		
+		if( !bMatch )    // didn't find
+		{
+			LOG->Trace( "Connected bus %d port %d level %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
+			vConnects.push_back( *newd );
+			
+			m_vDevicesLastSeen.push_back( *newd );
+		}
+	}
+	
 	bool bDidAnyMounts = false;	
-
+	
 	// unmount all disconnects
 	if( ShouldDoOsMount() )
-	  {
-	    for( unsigned i=0; i<vDisconnects.size(); i++ )
-	      {
-		UsbStorageDevice &d = vDisconnects[i];
-		CString sCommand = "umount " + d.sOsMountDir;
-		LOG->Trace( "unmount disconnects %i/%i (%s)", i, vDisconnects.size(), sCommand.c_str() );
-		ExecuteCommand( sCommand );
-		LOG->Trace( "unmount disconnects %i/%i done", i, vDisconnects.size() );
-	      }
-	    
-	    // mount all devices that need a write test
-	    for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
-	      {	  
-		UsbStorageDevice &d = m_vDevicesLastSeen[i];
-		if( !d.bNeedsWriteTest )
-		  continue;  // skip
-
-		bDidAnyMounts = true;
-
-		d.bNeedsWriteTest = false;
-
-		CString sCommand;
+	{
+		for( unsigned i=0; i<vDisconnects.size(); i++ )
+		{
+			UsbStorageDevice &d = vDisconnects[i];
+			CString sCommand = "umount " + d.sOsMountDir;
+			LOG->Trace( "unmount disconnects %i/%i (%s)", i, vDisconnects.size(), sCommand.c_str() );
+			ExecuteCommand( sCommand );
+			LOG->Trace( "unmount disconnects %i/%i done", i, vDisconnects.size() );
+		}
 		
-		// unmount this device before trying to mount it.  If this device
-		// wasn't unmounted before, then our mount call will fail and the 
-		// mount may contain an out-of-date view of the files on the device.
-		sCommand = "umount " + d.sOsMountDir;
-		LOG->Trace( "unmount old connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
-		ExecuteCommand( sCommand );   // don't care if this fails
-		LOG->Trace( "unmount old connect %i/%i done", i, vConnects.size() );
-		
-		sCommand = "mount " + d.sOsMountDir;
-		LOG->Trace( "mount new connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
-		bool bMountedSuccessfully = ExecuteCommand( sCommand );
-		LOG->Trace( "mount new connect %i/%i done", i, vConnects.size() );
-		
-		d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
-		
-		// read name
-		this->Mount( &d, TEMP_MOUNT_POINT );
-		FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-		Profile profile;
-		CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-		profile.LoadEditableDataFromDir( sProfileDir );
-		d.sName = profile.GetDisplayName();
-		UnmountMountPoint( TEMP_MOUNT_POINT );
-
-		LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
-	      }
-	  }
-
+		// mount all devices that need a write test
+		for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
+		{	  
+			UsbStorageDevice &d = m_vDevicesLastSeen[i];
+			if( !d.bNeedsWriteTest )
+				continue;  // skip
+			
+			bDidAnyMounts = true;
+			
+			d.bNeedsWriteTest = false;
+			
+			CString sCommand;
+			
+			// unmount this device before trying to mount it.  If this device
+			// wasn't unmounted before, then our mount call will fail and the 
+			// mount may contain an out-of-date view of the files on the device.
+			sCommand = "umount " + d.sOsMountDir;
+			LOG->Trace( "unmount old connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
+			ExecuteCommand( sCommand );   // don't care if this fails
+			LOG->Trace( "unmount old connect %i/%i done", i, vConnects.size() );
+			
+			sCommand = "mount " + d.sOsMountDir;
+			LOG->Trace( "mount new connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
+			bool bMountedSuccessfully = ExecuteCommand( sCommand );
+			LOG->Trace( "mount new connect %i/%i done", i, vConnects.size() );
+			
+			d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
+			
+			// read name
+			this->Mount( &d, TEMP_MOUNT_POINT );
+			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+			Profile profile;
+			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+			profile.LoadEditableDataFromDir( sProfileDir );
+			d.sName = profile.GetDisplayName();
+			UnmountMountPoint( TEMP_MOUNT_POINT );
+			
+			LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
+		}
+	}
+	
 	if( bDidAnyMounts || !vDisconnects.empty() || !vConnects.empty() )	  
 	{
 		LockMut( m_mutexStorageDevices );
@@ -457,12 +457,12 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 	
 	{
 		// Bus 002 Device 001: ID 0000:0000
-	        // Port 4
+		// Port 4
 		//   iSerial                 3 1125198948886
 		//       bInterfaceClass         8 Mass Storage
 		
-	        // Don't include a path.  The usbutils installer script installs 
-	        // to /usr/local/sbin and the Debian package installs to /usr/sbin/.
+		// Don't include a path.  The usbutils installer script installs 
+		// to /usr/local/sbin and the Debian package installs to /usr/sbin/.
 		CString sCommand = "lsusb";
 		char *szParams[] = { "lsusb", "-v", NULL }; 
 		CString sOutput;
@@ -486,16 +486,16 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				usbd.iBus = iBus;
 				continue;       // stop processing this line
 			}
-
-                        // Port 4
-                        int iPort;
-                        iRet = sscanf( sLine.c_str(), "Port %d", &iPort );
-                        if( iRet == 1 )
+			
+			// Port 4
+			int iPort;
+			iRet = sscanf( sLine.c_str(), "Port %d", &iPort );
+			if( iRet == 1 )
 			{
-			    usbd.iPort = iPort;
-			    continue;       // stop processing this line
+				usbd.iPort = iPort;
+				continue;       // stop processing this line
 			}		
-	
+			
 			//   iSerial                 3 1125198948886
 			char szSerial[1024];
 			iRet = sscanf( sLine.c_str(), "  iSerial %d %[^\n]", &iThrowAway, szSerial );
@@ -671,7 +671,7 @@ leave:
 		if( usbd.sOsMountDir.empty() )
 		{
 			LOG->Trace( "Ignoring %s (couldn't find in /etc/fstab)", usbd.sSerial.c_str() );
-
+			
 			vDevicesOut.erase( vDevicesOut.begin()+i );
 			--i;
 		}
