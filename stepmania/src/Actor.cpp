@@ -20,7 +20,7 @@ Actor::Actor()
 {
 	m_iNumTweenStates = 0;
 
-	m_size = D3DXVECTOR2( 1, 1 );
+	m_size = RageVector2( 1, 1 );
 
 	m_start.Init();
 	m_current.Init();
@@ -35,7 +35,7 @@ Actor::Actor()
 	m_fWagRadians =  0.2f;
 	m_fWagPeriod =  2.0f;
 	m_fWagTimer =  0.0f;
-	m_vSpinVelocity =  D3DXVECTOR3(0,0,0);
+	m_vSpinVelocity =  RageVector3(0,0,0);
 	m_fVibrationDistance =  5.0f;
 	m_bVisibleThisFrame =  FALSE;
 
@@ -81,13 +81,13 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		break;
 	case glowing:
 		float fCurvedPercent;
-		fCurvedPercent = sinf( m_fPercentBetweenColors * D3DX_PI );
+		fCurvedPercent = sinf( m_fPercentBetweenColors * PI );
 		m_temp.glow = m_effect_colorGlow1*fCurvedPercent + m_effect_colorGlow2*(1.0f-fCurvedPercent);
 		break;
 	case wagging:
 		m_temp.rotation.z = m_fWagRadians * sinf( 
 			(m_fWagTimer / m_fWagPeriod)	// percent through wag
-			* 2.0f * D3DX_PI );
+			* 2.0f * PI );
 		break;
 	case spinning:
 		// nothing needs to be here
@@ -100,19 +100,19 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_bVisibleThisFrame = !m_bVisibleThisFrame;
 		if( !m_bVisibleThisFrame )
 			for(int i=0; i<4; i++)
-				m_temp.diffuse[i] = D3DXCOLOR(0,0,0,0);		// don't draw the frame
+				m_temp.diffuse[i] = RageColor(0,0,0,0);		// don't draw the frame
 		break;
 	case bouncing:
 		{
 		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
-		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI ); 
+		float fPercentOffset = sinf( fPercentThroughBounce*PI ); 
 		m_temp.pos += m_vectBounce * fPercentOffset;
 		}
 		break;
 	case bobbing:
 		{
 		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
-		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI*2 ); 
+		float fPercentOffset = sinf( fPercentThroughBounce*PI*2 ); 
 		m_temp.pos += m_vectBounce * fPercentOffset;
 		}
 		break;
@@ -127,7 +127,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, 1 );
 
 	// super slow, and most Actors don't have any rotation	
-	//	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
+	//	RageMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
 	//	matNewWorld = matTemp * matNewWorld;
 
 	// replace with...
@@ -179,12 +179,12 @@ void Actor::UpdateTweening( float fDeltaTime )
 		float fPercentAlongPath = 0.f;
 		switch( TI.m_TweenType )
 		{
-		case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;														break;
-		case TWEEN_BIAS_BEGIN:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);					break;
-		case TWEEN_BIAS_END:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;								break;
-		case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(D3DX_PI-1.1f) ) / 0.89f;				break;
-		case TWEEN_BOUNCE_END:	fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(D3DX_PI-1.1f) ) / 0.89f;				break;
-		case TWEEN_SPRING:		fPercentAlongPath = 1 - cosf( fPercentThroughTween*D3DX_PI*2.5f )/(1+fPercentThroughTween*3);	break;
+		case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;													break;
+		case TWEEN_BIAS_BEGIN:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);				break;
+		case TWEEN_BIAS_END:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;							break;
+		case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(PI-1.1f) ) / 0.89f;				break;
+		case TWEEN_BOUNCE_END:	fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(PI-1.1f) ) / 0.89f;				break;
+		case TWEEN_SPRING:		fPercentAlongPath = 1 - cosf( fPercentThroughTween*PI*2.5f )/(1+fPercentThroughTween*3);	break;
 		default:	ASSERT(0);
 		}
 
@@ -233,9 +233,9 @@ void Actor::Update( float fDeltaTime )
 		break;
 	case spinning:
 		m_current.rotation += m_vSpinVelocity;
-		if( m_current.rotation.x > 1000*D3DX_PI*2 )	m_current.rotation.x -= 1000*D3DX_PI*2;
-		if( m_current.rotation.y > 1000*D3DX_PI*2 )	m_current.rotation.y -= 1000*D3DX_PI*2;
-		if( m_current.rotation.z > 1000*D3DX_PI*2 )	m_current.rotation.z -= 1000*D3DX_PI*2;
+		if( m_current.rotation.x > 1000*PI*2 )	m_current.rotation.x -= 1000*PI*2;
+		if( m_current.rotation.y > 1000*PI*2 )	m_current.rotation.y -= 1000*PI*2;
+		if( m_current.rotation.z > 1000*PI*2 )	m_current.rotation.z -= 1000*PI*2;
 		break;
 	case vibrating:
 		break;
@@ -296,16 +296,16 @@ void Actor::SetTweenZoomToHeight( float zoom )	{ SetTweenZoomX( zoom/GetUnzoomed
 void Actor::SetTweenRotationX( float r )		{ LatestTween().rotation.x = r; }
 void Actor::SetTweenRotationY( float r )		{ LatestTween().rotation.y = r; }
 void Actor::SetTweenRotationZ( float r )		{ LatestTween().rotation.z = r; }
-void Actor::SetTweenDiffuse( D3DXCOLOR c )				{ for(int i=0; i<4; i++) LatestTween().diffuse[i] = c; };
-void Actor::SetTweenDiffuseUpperLeft( D3DXCOLOR c )		{ LatestTween().diffuse[0] = c; };
-void Actor::SetTweenDiffuseUpperRight( D3DXCOLOR c )	{ LatestTween().diffuse[1] = c; };
-void Actor::SetTweenDiffuseLowerLeft( D3DXCOLOR c )		{ LatestTween().diffuse[2] = c; };
-void Actor::SetTweenDiffuseLowerRight( D3DXCOLOR c )	{ LatestTween().diffuse[3] = c; };
-void Actor::SetTweenDiffuseTopEdge( D3DXCOLOR c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[1] = c; };
-void Actor::SetTweenDiffuseRightEdge( D3DXCOLOR c )		{ LatestTween().diffuse[1] = LatestTween().diffuse[3] = c; };
-void Actor::SetTweenDiffuseBottomEdge( D3DXCOLOR c )	{ LatestTween().diffuse[2] = LatestTween().diffuse[3] = c; };
-void Actor::SetTweenDiffuseLeftEdge( D3DXCOLOR c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[2] = c; };
-void Actor::SetTweenGlow( D3DXCOLOR c )					{ LatestTween().glow = c; };
+void Actor::SetTweenDiffuse( RageColor c )				{ for(int i=0; i<4; i++) LatestTween().diffuse[i] = c; };
+void Actor::SetTweenDiffuseUpperLeft( RageColor c )		{ LatestTween().diffuse[0] = c; };
+void Actor::SetTweenDiffuseUpperRight( RageColor c )	{ LatestTween().diffuse[1] = c; };
+void Actor::SetTweenDiffuseLowerLeft( RageColor c )		{ LatestTween().diffuse[2] = c; };
+void Actor::SetTweenDiffuseLowerRight( RageColor c )	{ LatestTween().diffuse[3] = c; };
+void Actor::SetTweenDiffuseTopEdge( RageColor c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[1] = c; };
+void Actor::SetTweenDiffuseRightEdge( RageColor c )		{ LatestTween().diffuse[1] = LatestTween().diffuse[3] = c; };
+void Actor::SetTweenDiffuseBottomEdge( RageColor c )	{ LatestTween().diffuse[2] = LatestTween().diffuse[3] = c; };
+void Actor::SetTweenDiffuseLeftEdge( RageColor c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[2] = c; };
+void Actor::SetTweenGlow( RageColor c )					{ LatestTween().glow = c; };
 
 
 void Actor::ScaleTo( LPRECT pRect, StretchType st )
@@ -314,8 +314,8 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 	float rect_width = (float)RECTWIDTH(*pRect);
 	float rect_height = (float)RECTHEIGHT(*pRect);
 
-	if( rect_width < 0 )	SetRotationY( D3DX_PI );
-	if( rect_height < 0 )	SetRotationX( D3DX_PI );
+	if( rect_width < 0 )	SetRotationY( PI );
+	if( rect_height < 0 )	SetRotationX( PI );
 
 	// center of the rectangle
 	float rect_cx = pRect->left + rect_width/2;
@@ -368,10 +368,10 @@ void Actor::StretchTo( LPRECT pRect )
 void Actor::SetEffectNone()
 {
 	m_Effect = no_effect;
-	//m_color = D3DXCOLOR( 1.0,1.0,1.0,1.0 );
+	//m_color = RageColor( 1.0,1.0,1.0,1.0 );
 }
 
-void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
+void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, RageColor Color, RageColor Color2 )
 {
 	m_Effect = blinking;
 	m_effect_colorDiffuse1 = Color;
@@ -380,7 +380,7 @@ void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
-void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
+void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, RageColor Color, RageColor Color2 )
 {
 	m_Effect = camelion;
 	m_effect_colorDiffuse1 = Color;
@@ -389,7 +389,7 @@ void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
-void Actor::SetEffectGlowing( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
+void Actor::SetEffectGlowing( float fDeltaPercentPerSecond, RageColor Color, RageColor Color2 )
 {
 	m_Effect = glowing;
 	m_effect_colorGlow1 = Color;
@@ -405,7 +405,7 @@ void Actor::SetEffectWagging(	float fWagRadians, float fWagPeriod )
 	m_fWagPeriod = fWagPeriod;
 }
 
-void Actor::SetEffectSpinning( D3DXVECTOR3 vectRotationVelocity )
+void Actor::SetEffectSpinning( RageVector3 vectRotationVelocity )
 {
 	m_Effect = spinning;
 	m_vSpinVelocity = vectRotationVelocity;
@@ -422,7 +422,7 @@ void Actor::SetEffectFlickering()
 	m_Effect = flickering;
 }
 
-void Actor::SetEffectBouncing( D3DXVECTOR3 vectBounce, float fPeriod )
+void Actor::SetEffectBouncing( RageVector3 vectBounce, float fPeriod )
 {
 	m_Effect = bouncing;
 	
@@ -432,7 +432,7 @@ void Actor::SetEffectBouncing( D3DXVECTOR3 vectBounce, float fPeriod )
 
 }
 
-void Actor::SetEffectBobbing( D3DXVECTOR3 vectBob, float fPeriod )
+void Actor::SetEffectBobbing( RageVector3 vectBob, float fPeriod )
 {
 	m_Effect = bobbing;
 	
@@ -489,9 +489,9 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	mod.pos.x		+= (CONTAINS("left")?-SCREEN_WIDTH:0) + (CONTAINS("right")?+SCREEN_HEIGHT:0);
 	mod.pos.y		+= (CONTAINS("top")?-SCREEN_WIDTH:0)  + (CONTAINS("bottom")?+SCREEN_HEIGHT:0);
 	mod.pos.z		+= 0;
-	mod.rotation.x	+= (CONTAINS("spinx")?-D3DX_PI*2:0);
-	mod.rotation.y	+= (CONTAINS("spiny")?-D3DX_PI*2:0);
-	mod.rotation.z	+= (CONTAINS("spinz")?-D3DX_PI*2:0);
+	mod.rotation.x	+= (CONTAINS("spinx")?-PI*2:0);
+	mod.rotation.y	+= (CONTAINS("spiny")?-PI*2:0);
+	mod.rotation.z	+= (CONTAINS("spinz")?-PI*2:0);
 	mod.scale.x		*= (CONTAINS("foldx")?0:1) * (CONTAINS("zoomx")?3:1);
 	mod.scale.y		*= (CONTAINS("foldy")?0:1) * (CONTAINS("zoomy")?3:1);
 	for( int i=0; i<4; i++ )

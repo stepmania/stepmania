@@ -232,15 +232,15 @@ void Course::GetSongAndNotesForCurrentStyle(
 	}
 }
 
-D3DXCOLOR Course::GetColor()
+RageColor Course::GetColor()
 {
 	// This could be made smarter
 	if( m_iStages >= 7 )
-		return D3DXCOLOR(1,0,0,1);	// red
+		return RageColor(1,0,0,1);	// red
 	else if( m_iStages >= 4 )
-		return D3DXCOLOR(1,0.5f,0,1);	// orange
+		return RageColor(1,0.5f,0,1);	// orange
 	else
-		return D3DXCOLOR(0,1,0,1);	// green
+		return RageColor(0,1,0,1);	// green
 }
 
 void Course::GetPlayerOptions( PlayerOptions* pPO_out )

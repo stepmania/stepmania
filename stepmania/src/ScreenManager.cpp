@@ -51,7 +51,7 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetXY( 4.0f, 4.0f );
 	m_textSystemMessage.SetZoom( 0.5f );
 	m_textSystemMessage.SetShadowLength( 2 );
-	m_textSystemMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
 
@@ -182,6 +182,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenStage.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
+#include "ScreenNetworkGame.h"
 
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
@@ -220,6 +221,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenStage") )			return new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		return new ScreenTitleMenu;
 //	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	return new ScreenEz2SelectMusic;
+	else if( 0==stricmp(sClassName, "ScreenNetworkGame") )		return new ScreenNetworkGame;
 	else
 		throw RageException( "Invalid Screen class name '%s'", sClassName );
 }
@@ -306,10 +308,10 @@ void ScreenManager::SystemMessage( CString sMessage )
 	// Look for an open spot
 	m_textSystemMessage.StopTweening();
 	m_textSystemMessage.SetText( sMessage );
-	m_textSystemMessage.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,1) );
 	m_textSystemMessage.BeginTweening( 5 );
 	m_textSystemMessage.BeginTweening( 1 );
-	m_textSystemMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textSystemMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 	LOG->Trace( "WARNING:  Didn't find an empty system messages slot." );
 }

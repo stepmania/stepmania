@@ -17,6 +17,7 @@ ULONG		randseed = time(NULL);
 
 #include <direct.h>
 #include <numeric>
+#include <math.h>
 using namespace std;
 
 bool IsAnInt( const char *s )

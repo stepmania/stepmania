@@ -41,7 +41,7 @@ void ActorFrame::Update( float fDeltaTime )
 }
 
 
-void ActorFrame::SetDiffuse( D3DXCOLOR c )
+void ActorFrame::SetDiffuse( RageColor c )
 {
 	Actor::SetDiffuse( c );
 

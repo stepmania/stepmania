@@ -123,7 +123,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoomY( 0 );
-	m_sprOptionsMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprOptionsMessage );
 
 
@@ -286,13 +286,13 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		m_bMadeChoice = true;
 
 		// show "hold START for options"
-		m_sprOptionsMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
 		m_sprOptionsMessage.SetTweenZoomY( 1 );
-		m_sprOptionsMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
 		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
-		m_sprOptionsMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 		m_sprOptionsMessage.SetTweenZoomY( 0 );
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );

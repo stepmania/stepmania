@@ -70,7 +70,7 @@ public:
 	bool			IsExtraStage();
 	bool			IsExtraStage2();
 	CString			GetStageText();
-	D3DXCOLOR		GetStageColor();
+	RageColor		GetStageColor();
 
 	//
 	// State Info used during gameplay

@@ -42,13 +42,13 @@ struct WheelItemData
 {
 public:
 	WheelItemData() {};	// this is needed to use a CArray of these
-	WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color );
+	WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const RageColor color );
 
 	WheelItemType	m_WheelItemType;
 	CString			m_sSectionName;
 	Course*			m_pCourse;
 	Song*			m_pSong;
-	D3DXCOLOR		m_color;	// either text color or section background color
+	RageColor		m_color;	// either text color or section background color
 	MusicStatusDisplay::IconType  m_IconType;
 };
 

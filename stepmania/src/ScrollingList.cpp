@@ -22,8 +22,8 @@
 const int DEFAULT_VISIBLE_ELEMENTS = 9;
 const int DEFAULT_SPACING = 300;
 
-const D3DXCOLOR COLOR_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);
-const D3DXCOLOR COLOR_NOT_SELECTED = D3DXCOLOR(0.4f,0.4f,0.4f,1);
+const RageColor COLOR_SELECTED = RageColor(1.0f,1.0f,1.0f,1);
+const RageColor COLOR_NOT_SELECTED = RageColor(0.4f,0.4f,0.4f,1);
 
 /***************************************
 ScrollingList

@@ -14,7 +14,6 @@
 
 #include "Song.h"
 #include "Course.h"
-//#include <d3dxmath.h>	// for D3DXCOLOR
 
 const int MAX_SONG_QUEUE_SIZE = 400;	// this has to be gigantic to fit an "endless" number of songs
 
@@ -36,8 +35,8 @@ public:
 
 	CString GetGroupBannerPath( CString sGroupName );
 	void GetGroupNames( CStringArray &AddTo );
-	D3DXCOLOR GetGroupColor( const CString &sGroupName );
-	D3DXCOLOR GetSongColor( Song* pSong );
+	RageColor GetGroupColor( const CString &sGroupName );
+	RageColor GetSongColor( Song* pSong );
 
 	static CString ShortenGroupName( const CString &sOrigGroupName );
 

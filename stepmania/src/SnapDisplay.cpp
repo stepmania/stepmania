@@ -28,7 +28,7 @@ SnapDisplay::SnapDisplay()
 	}
 
 	m_NoteType = NOTE_TYPE_4TH;
-	D3DXCOLOR color = NoteTypeToColor( m_NoteType );
+	RageColor color = NoteTypeToColor( m_NoteType );
 	
 	for( i=0; i<2; i++ )
 		m_sprIndicators[i].SetDiffuse( color );
@@ -69,7 +69,7 @@ bool SnapDisplay::NextSnapMode()
 
 void SnapDisplay::SnapModeChanged()
 {
-	D3DXCOLOR color = NoteTypeToColor( m_NoteType );
+	RageColor color = NoteTypeToColor( m_NoteType );
 	
 	for( int i=0; i<2; i++ )
 	{

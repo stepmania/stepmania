@@ -31,7 +31,7 @@ BPMDisplay::BPMDisplay()
 	m_fTimeLeftInState = 0;
 	m_bExtraStage = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
-	m_rectFrame.SetDiffuse( D3DXCOLOR(0,0,0,0.3f) );
+	m_rectFrame.SetDiffuse( RageColor(0,0,0,0.3f) );
 	m_rectFrame.SetZoomX( 120 );
 	m_rectFrame.SetZoomY( 40 );
 

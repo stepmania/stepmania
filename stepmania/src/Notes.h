@@ -47,7 +47,7 @@ public:
 	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );
 	NotesDisplayType GetNotesDisplayType() const;
-	D3DXCOLOR		GetColor() const;
+	RageColor		GetColor() const;
 	
 	// Statistics
 	Grade m_TopGrade;

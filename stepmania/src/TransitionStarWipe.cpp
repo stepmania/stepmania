@@ -32,7 +32,7 @@ void TransitionStarWipe::DrawPrimitives()
 		return;
 	else if( m_TransitionState == closed ) {
 		m_rect.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
-		m_rect.SetDiffuse( D3DCOLOR_RGBA(0,0,0,255) );
+		m_rect.SetDiffuse( RageColor(0,0,0,1) );
 		m_rect.Draw();
 		return;
 	}
@@ -79,7 +79,7 @@ void TransitionStarWipe::DrawPrimitives()
 		int y_top = y - m_iStarHeight/2;
 		int y_bot = y + m_iStarHeight/2+1;
 		m_rect.StretchTo( CRect(x_rect_leading_edge, y_top, x_rect_trailing_edge,  y_bot) );
-		m_rect.SetDiffuse( D3DCOLOR_ARGB(255,0,0,0) );
+		m_rect.SetDiffuse( RageColor(1,0,0,0) );
 		m_rect.Draw();
 		
 	}

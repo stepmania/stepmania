@@ -22,6 +22,7 @@
 #include "SongManager.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "RageMath.h"
 
 
 #define JUDGE_PERFECT_ZOOM_X		THEME->GetMetricF("Player","JudgePerfectZoomX")
@@ -283,7 +284,7 @@ void Player::DrawPrimitives()
 {
 	m_frameCombo.Draw();	// draw this below everything else
 
-	D3DXMATRIX matOldView, matOldProj;
+	RageMatrix matOldView, matOldProj;
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
@@ -292,26 +293,26 @@ void Player::DrawPrimitives()
 		DISPLAY->GetProjectionTransform( &matOldProj );
 
 		// construct view and project matrix
-		D3DXMATRIX matNewView;
+		RageMatrix matNewView;
 		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll )
-			D3DXMatrixLookAtLH( 
+			RageMatrixLookAtLH( 
 				&matNewView, 
-				&D3DXVECTOR3( CENTER_X, GetY()-300.0f, 400.0f ),
-				&D3DXVECTOR3( CENTER_X, GetY()+100.0f, 0.0f ), 
-				&D3DXVECTOR3( 0.0f,     -1.0f,           0.0f ) 
+				&RageVector3( CENTER_X, GetY()-300.0f, 400.0f ),
+				&RageVector3( CENTER_X, GetY()+100.0f, 0.0f ), 
+				&RageVector3( 0.0f,     -1.0f,           0.0f ) 
 				);
 		else
-			D3DXMatrixLookAtLH( 
+			RageMatrixLookAtLH( 
 				&matNewView, 
-				&D3DXVECTOR3( CENTER_X, GetY()+800.0f, 400.0f ),
-				&D3DXVECTOR3( CENTER_X, GetY()+400.0f, 0.0f ), 
-				&D3DXVECTOR3( 0.0f,     -1.0f,           0.0f ) 
+				&RageVector3( CENTER_X, GetY()+800.0f, 400.0f ),
+				&RageVector3( CENTER_X, GetY()+400.0f, 0.0f ), 
+				&RageVector3( 0.0f,     -1.0f,           0.0f ) 
 				);
 
 		DISPLAY->SetViewTransform( &matNewView );
 
-		D3DXMATRIX matNewProj;
-		D3DXMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
+		RageMatrix matNewProj;
+		RageMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
 		DISPLAY->SetProjectionTransform( &matNewProj );
 	}
 

@@ -984,6 +984,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageLog.h">
 			</File>
 			<File
+				RelativePath="RageMath.cpp">
+			</File>
+			<File
+				RelativePath="RageMath.h">
+			</File>
+			<File
 				RelativePath=".\RageMovieTexture.cpp">
 			</File>
 			<File
@@ -1030,6 +1036,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageTimer.h">
+			</File>
+			<File
+				RelativePath="RageTypes.h">
 			</File>
 			<File
 				RelativePath=".\RageUtil.cpp">

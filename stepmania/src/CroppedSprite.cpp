@@ -58,7 +58,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 		};
 		Sprite::SetCustomImageCoords( fCustomImageCoords );
 		
-		m_size = D3DXVECTOR2( m_fCropWidth, m_fCropHeight );
+		m_size = RageVector2( m_fCropWidth, m_fCropHeight );
 		SetZoom( 1 );
 	}
 	else	// this is probably a background graphic or something not intended to be a CroppedSprite
@@ -99,7 +99,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageCoords );
 		}
-		m_size = D3DXVECTOR2( m_fCropWidth, m_fCropHeight );
+		m_size = RageVector2( m_fCropWidth, m_fCropHeight );
 		SetZoom( 1 );
 	}
 

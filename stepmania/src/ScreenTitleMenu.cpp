@@ -25,6 +25,7 @@
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
+	"NETWORK GAME",
 	"SWITCH GAME",
 	"CONFIG KEY/JOY",
 	"INPUT OPTIONS",
@@ -97,12 +98,12 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
-	m_sprLogo.SetGlow( D3DXCOLOR(1,1,1,1) );
+	m_sprLogo.SetGlow( RageColor(1,1,1,1) );
 	m_sprLogo.SetZoomY( 0 );
 	m_sprLogo.StopTweening();
 	m_sprLogo.BeginTweening( 0.5f );	// sleep
 	m_sprLogo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprLogo.SetEffectGlowing(1, D3DXCOLOR(1,1,1,0.1f), D3DXCOLOR(1,1,1,0.3f) );
+	m_sprLogo.SetEffectGlowing(1, RageColor(1,1,1,0.1f), RageColor(1,1,1,0.3f) );
 	m_sprLogo.SetTweenZoom( 1 );
 	this->AddChild( &m_sprLogo );
 
@@ -117,7 +118,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textVersion.SetText( "v3.0 final" );
-	m_textVersion.SetDiffuse( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
+	m_textVersion.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( VERSION_X, VERSION_Y );
 	m_textVersion.SetZoom( 0.5f );
 	m_textVersion.SetShadowLength( 2 );
@@ -127,7 +128,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongs.SetHorizAlign( Actor::align_left );
 	m_textSongs.SetText( ssprintf("Found %d Songs", SONGMAN->m_pSongs.GetSize()) );
-	m_textSongs.SetDiffuse( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
+	m_textSongs.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textSongs.SetXY( SONGS_X, SONGS_Y );
 	m_textSongs.SetZoom( 0.5f );
 	m_textSongs.SetShadowLength( 2 );
@@ -201,6 +202,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		{
 		case CHOICE_GAME_START:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+			break;
+		case CHOICE_NETWORK_GAME:
+			SCREENMAN->SetNewScreen( "ScreenNetworkGame" );
 			break;
 		case CHOICE_SELECT_GAME:
 			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
@@ -302,7 +306,7 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
 	m_textChoice[iChoiceIndex].SetTweenZoom( ZOOM_SELECTED );
-	D3DXCOLOR color1, color2;
+	RageColor color1, color2;
 	color1 = COLOR_SELECTED;
 	color2 = color1 * 0.5f;
 	color2.a = 1;
@@ -350,6 +354,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 	switch( m_TitleMenuChoice )
 	{
 	case CHOICE_GAME_START:
+	case CHOICE_NETWORK_GAME:
 	case CHOICE_SELECT_GAME:
 	case CHOICE_MAP_INSTRUMENTS:
 	case CHOICE_INPUT_OPTIONS:

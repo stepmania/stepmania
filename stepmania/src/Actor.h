@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ACTOR_H
+#define ACTOR_H
 /*
 -----------------------------------------------------------------------------
  Class: Actor
@@ -10,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include <d3dx8math.h>
+#include "RageTypes.h"
 
 
 const int MAX_TWEEN_STATES = 10;
@@ -85,20 +86,20 @@ public:
 	virtual void  SetRotationY( float rot )	{ m_current.rotation.y = rot; }
 	virtual void  SetRotationZ( float rot )	{ m_current.rotation.z = rot; }
 
-	virtual void SetDiffuse( D3DXCOLOR c ) { for(int i=0; i<4; i++) m_current.diffuse[i] = c; };
-	virtual void SetDiffuses( int i, D3DXCOLOR c )		{ m_current.diffuse[i] = c; };
-	virtual void SetDiffuseUpperLeft( D3DXCOLOR c )		{ m_current.diffuse[0] = c; };
-	virtual void SetDiffuseUpperRight( D3DXCOLOR c )	{ m_current.diffuse[1] = c; };
-	virtual void SetDiffuseLowerLeft( D3DXCOLOR c )		{ m_current.diffuse[2] = c; };
-	virtual void SetDiffuseLowerRight( D3DXCOLOR c )	{ m_current.diffuse[3] = c; };
-	virtual void SetDiffuseTopEdge( D3DXCOLOR c )		{ m_current.diffuse[0] = m_current.diffuse[1] = c; };
-	virtual void SetDiffuseRightEdge( D3DXCOLOR c )		{ m_current.diffuse[1] = m_current.diffuse[3] = c; };
-	virtual void SetDiffuseBottomEdge( D3DXCOLOR c )	{ m_current.diffuse[2] = m_current.diffuse[3] = c; };
-	virtual void SetDiffuseLeftEdge( D3DXCOLOR c )		{ m_current.diffuse[0] = m_current.diffuse[2] = c; };
-	virtual D3DXCOLOR GetDiffuse()						{ return m_current.diffuse[0]; };
-	virtual D3DXCOLOR GetDiffuses( int i )				{ return m_current.diffuse[i]; };
-	virtual void SetGlow( D3DXCOLOR c )					{ m_current.glow = c; };
-	virtual D3DXCOLOR GetGlow()							{ return m_current.glow; };
+	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) m_current.diffuse[i] = c; };
+	virtual void SetDiffuses( int i, RageColor c )		{ m_current.diffuse[i] = c; };
+	virtual void SetDiffuseUpperLeft( RageColor c )		{ m_current.diffuse[0] = c; };
+	virtual void SetDiffuseUpperRight( RageColor c )	{ m_current.diffuse[1] = c; };
+	virtual void SetDiffuseLowerLeft( RageColor c )		{ m_current.diffuse[2] = c; };
+	virtual void SetDiffuseLowerRight( RageColor c )	{ m_current.diffuse[3] = c; };
+	virtual void SetDiffuseTopEdge( RageColor c )		{ m_current.diffuse[0] = m_current.diffuse[1] = c; };
+	virtual void SetDiffuseRightEdge( RageColor c )		{ m_current.diffuse[1] = m_current.diffuse[3] = c; };
+	virtual void SetDiffuseBottomEdge( RageColor c )	{ m_current.diffuse[2] = m_current.diffuse[3] = c; };
+	virtual void SetDiffuseLeftEdge( RageColor c )		{ m_current.diffuse[0] = m_current.diffuse[2] = c; };
+	virtual RageColor GetDiffuse()						{ return m_current.diffuse[0]; };
+	virtual RageColor GetDiffuses( int i )				{ return m_current.diffuse[i]; };
+	virtual void SetGlow( RageColor c )					{ m_current.glow = c; };
+	virtual RageColor GetGlow()							{ return m_current.glow; };
 
 
 
@@ -118,16 +119,16 @@ public:
 	virtual void SetTweenRotationX( float r );
 	virtual void SetTweenRotationY( float r );
 	virtual void SetTweenRotationZ( float r );
-	virtual void SetTweenDiffuse( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseUpperLeft( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseUpperRight( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseLowerLeft( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseLowerRight( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseTopEdge( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseRightEdge( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseBottomEdge( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenDiffuseLeftEdge( D3DXCOLOR colorDiffuse );
-	virtual void SetTweenGlow( D3DXCOLOR c );
+	virtual void SetTweenDiffuse( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseUpperLeft( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseUpperRight( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseLowerLeft( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseLowerRight( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseTopEdge( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseRightEdge( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseBottomEdge( RageColor colorDiffuse );
+	virtual void SetTweenDiffuseLeftEdge( RageColor colorDiffuse );
+	virtual void SetTweenGlow( RageColor c );
 
 
 	
@@ -153,21 +154,21 @@ public:
 	// effects
 	void SetEffectNone();
 	void SetEffectBlinking( float fDeltaPercentPerSecond = 2.5,
-						    D3DXCOLOR Color  = D3DXCOLOR(0.5f,0.5f,0.5f,1), 
-						    D3DXCOLOR Color2 = D3DXCOLOR(1,1,1,1) );
+						    RageColor Color  = RageColor(0.5f,0.5f,0.5f,1), 
+						    RageColor Color2 = RageColor(1,1,1,1) );
 	void SetEffectCamelion( float fDeltaPercentPerSecond = 2.5,
-						    D3DXCOLOR Color  = D3DXCOLOR(0,0,0,1), 
-						    D3DXCOLOR Color2 = D3DXCOLOR(1,1,1,1) );
+						    RageColor Color  = RageColor(0,0,0,1), 
+						    RageColor Color2 = RageColor(1,1,1,1) );
 	void SetEffectGlowing( float fDeltaPercentPerSecond = 2.5,
-						   D3DXCOLOR Color  = D3DXCOLOR(1,1,1,0.2f),
-						   D3DXCOLOR Color2 = D3DXCOLOR(1,1,1,0.8f) );
+						   RageColor Color  = RageColor(1,1,1,0.2f),
+						   RageColor Color2 = RageColor(1,1,1,0.8f) );
 	void SetEffectWagging( float fWagRadians =  0.2,
 						   float fWagPeriod = 2.0 );
-	void SetEffectSpinning( D3DXVECTOR3 vectRotationVelocity );
+	void SetEffectSpinning( RageVector3 vectRotationVelocity );
 	void SetEffectVibrating( float fVibrationDistance = 5.0 );
 	void SetEffectFlickering();
-	void SetEffectBouncing( D3DXVECTOR3 vectBounceDir, float fPeriod );
-	void SetEffectBobbing( D3DXVECTOR3 vectBobDir, float fPeriod );
+	void SetEffectBouncing( RageVector3 vectBounceDir, float fPeriod );
+	void SetEffectBobbing( RageVector3 vectBobDir, float fPeriod );
 	Effect GetEffect() { return m_Effect; };
 
 
@@ -188,12 +189,12 @@ public:
 protected:
 
 /*
-	D3DXVECTOR2 m_size;		// width, height
-	D3DXVECTOR3 m_pos;		// X-Y coordinate of where the center point will appear on screen
-	D3DXVECTOR3 m_rotation;	// X, Y, and Z m_rotation
-	D3DXVECTOR2 m_scale;	// X and Y zooming
-	D3DXCOLOR   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
-	D3DXCOLOR   m_colorGlow;
+	RageVector2 m_size;		// width, height
+	RageVector3 m_pos;		// X-Y coordinate of where the center point will appear on screen
+	RageVector3 m_rotation;	// X, Y, and Z m_rotation
+	RageVector2 m_scale;	// X and Y zooming
+	RageColor   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
+	RageColor   m_colorGlow;
 */
 	//
 	// Stuff for tweening
@@ -203,20 +204,20 @@ protected:
 	struct TweenState
 	{
 		// start and end position for tweening
-		D3DXVECTOR3 pos;
-		D3DXVECTOR3 rotation;
-		D3DXVECTOR2 scale;
-		D3DXCOLOR   diffuse[4];
-		D3DXCOLOR   glow;
+		RageVector3 pos;
+		RageVector3 rotation;
+		RageVector2 scale;
+		RageColor   diffuse[4];
+		RageColor   glow;
 
 		void Init()
 		{
-			pos	= D3DXVECTOR3( 0, 0, 0 );
-			rotation = D3DXVECTOR3( 0, 0, 0 );
-			scale = D3DXVECTOR2( 1, 1 );
+			pos	= RageVector3( 0, 0, 0 );
+			rotation = RageVector3( 0, 0, 0 );
+			scale = RageVector2( 1, 1 );
 			for(int i=0; i<4; i++) 
-				diffuse[i] = D3DXCOLOR( 1, 1, 1, 1 );
-			glow = D3DXCOLOR( 1, 1, 1, 0 );
+				diffuse[i] = RageColor( 1, 1, 1, 1 );
+			glow = RageColor( 1, 1, 1, 0 );
 		};
 	};
 
@@ -228,7 +229,7 @@ protected:
 		float		m_fTweenTime;		// seconds between Start and End positions/zooms
 	};
 
-	D3DXVECTOR2	m_size;
+	RageVector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
 	TweenState	m_TweenStates[MAX_TWEEN_STATES];
@@ -241,12 +242,12 @@ protected:
 	// Temporary variables that are filled just before drawing
 	//
 	TweenState m_temp;
-/*	D3DXVECTOR2 m_temp_size;
-	D3DXVECTOR3 m_temp_pos;
-	D3DXVECTOR3 m_temp_rotation;
-	D3DXVECTOR2 m_temp_scale;
-	D3DXCOLOR   m_temp_colorDiffuse[4];
-	D3DXCOLOR   m_temp_colorGlow;
+/*	RageVector2 m_temp_size;
+	RageVector3 m_temp_pos;
+	RageVector3 m_temp_rotation;
+	RageVector2 m_temp_scale;
+	RageColor   m_temp_colorDiffuse[4];
+	RageColor   m_temp_colorGlow;
 */
 
 	//
@@ -263,10 +264,10 @@ protected:
 
 
 	// Counting variables for camelion and glowing:
-	D3DXCOLOR   m_effect_colorDiffuse1;
-	D3DXCOLOR   m_effect_colorDiffuse2;
-	D3DXCOLOR   m_effect_colorGlow1;
-	D3DXCOLOR   m_effect_colorGlow2;
+	RageColor   m_effect_colorDiffuse1;
+	RageColor   m_effect_colorDiffuse2;
+	RageColor   m_effect_colorGlow1;
+	RageColor   m_effect_colorGlow2;
 	float m_fPercentBetweenColors;
 	bool  m_bTweeningTowardEndColor;	// TRUE is fading toward end_color, FALSE if fading toward start_color
 	float m_fDeltaPercentPerSecond;	// percentage change in tweening per second
@@ -277,7 +278,7 @@ protected:
 	float m_fWagTimer;		// num of seconds into this wag
 
 	// spinning:
-	D3DXVECTOR3 m_vSpinVelocity;	// delta per second
+	RageVector3 m_vSpinVelocity;	// delta per second
 
 	// vibrating:
 	float m_fVibrationDistance;
@@ -286,7 +287,7 @@ protected:
 	bool m_bVisibleThisFrame;
 
 	// bouncing:
-	D3DXVECTOR3 m_vectBounce;
+	RageVector3 m_vectBounce;
 	float m_fBouncePeriod;
 	float m_fTimeIntoBounce;
 
@@ -299,3 +300,5 @@ protected:
 	bool	m_bBlendAdd;
 
 };
+
+#endif

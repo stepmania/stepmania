@@ -236,7 +236,7 @@ ScreenEdit::ScreenEdit()
 	m_NoteFieldEdit.Load( &noteData, PLAYER_1, 200, 800 );
 
 	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectRecordBack.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	m_GrayArrowRowRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_GrayArrowRowRecord.Load( PLAYER_1 );
@@ -270,7 +270,7 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.SetText( HELP_TEXT );
 
 	m_rectShortcutsBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectShortcutsBack.SetDiffuse( D3DXCOLOR(0,0,0,0.8f) );
+	m_rectShortcutsBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 
 	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
@@ -910,7 +910,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
+			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
 		}
 		break;
 	case DIK_N:
@@ -921,7 +921,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
+			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
 		}
 		break;
 	case DIK_R:
@@ -949,7 +949,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_rectRecordBack.StopTweening();
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
+			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
 
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 			float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
@@ -1389,7 +1389,7 @@ void ScreenEdit::TransitionToEdit()
 	m_soundMusic.Stop();
 	m_rectRecordBack.StopTweening();
 	m_rectRecordBack.BeginTweening( 0.5f );
-	m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0) );
 
 	/* Make sure we're snapped. */
 	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
@@ -1441,7 +1441,7 @@ void ScreenEdit::OnSnapModeChange()
 
 void ScreenEdit::MenuItemGainFocus( BitmapText* menuitem )
 {
-	menuitem->SetEffectCamelion( 2.5, D3DXCOLOR(1,1,1,1), D3DXCOLOR(0,1,0,1) );
+	menuitem->SetEffectCamelion( 2.5, RageColor(1,1,1,1), RageColor(0,1,0,1) );
 	menuitem->SetZoom( 0.7f );
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit menu change") );
 }

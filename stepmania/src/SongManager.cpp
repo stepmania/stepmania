@@ -10,7 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-//#include <d3dxmath.h>
 #include "SongManager.h"
 #include "IniFile.h"
 #include "RageLog.h"
@@ -30,8 +29,8 @@ const CString g_sStatisticsFileName = "statistics.ini";
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
-D3DXCOLOR g_GroupColors[30];
-D3DXCOLOR g_ExtraColor;
+RageColor g_GroupColors[30];
+RageColor g_ExtraColor;
 
 
 SongManager::SongManager( void(*callback)() )
@@ -383,7 +382,7 @@ void SongManager::GetGroupNames( CStringArray &AddTo )
 	AddTo.insert(AddTo.end(), m_arrayGroupNames.begin(), m_arrayGroupNames.end() );
 }
 
-D3DXCOLOR SongManager::GetGroupColor( const CString &sGroupName )
+RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
 	// search for the group index
 	for( int i=0; i<m_arrayGroupNames.GetSize(); i++ )
@@ -396,7 +395,7 @@ D3DXCOLOR SongManager::GetGroupColor( const CString &sGroupName )
 	return g_GroupColors[i%NUM_GROUP_COLORS];
 }
 
-D3DXCOLOR SongManager::GetSongColor( Song* pSong )
+RageColor SongManager::GetSongColor( Song* pSong )
 {
 	ASSERT( pSong );
 	for( int i=0; i<pSong->m_apNotes.GetSize(); i++ )

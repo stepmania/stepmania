@@ -65,7 +65,7 @@ public:
 	}
 
 	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut, bool bShuffled );
-	D3DXCOLOR	GetColor();
+	RageColor	GetColor();
 
 private:
 	int SongOrdering[MAX_COURSE_STAGES];

@@ -48,14 +48,14 @@
 
 float g_fItemSpacingY;	// cache
 
-inline D3DXCOLOR GetNextSectionColor() {
+inline RageColor GetNextSectionColor() {
 	static int i=0;
 	i = i % NUM_SECTION_COLORS;
 	return SECTION_COLORS(i++);
 }
 
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color )
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const RageColor color )
 {
 	m_WheelItemType = wit;
 	m_pSong = pSong;
@@ -144,7 +144,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	case TYPE_SONG:
 		{
 			m_TextBanner.LoadFromSong( m_pSong );
-			D3DXCOLOR color = m_color;
+			RageColor color = m_color;
 			m_TextBanner.SetDiffuse( color );
 			m_MusicStatusDisplay.SetType( m_IconType );
 			RefreshGrades();
@@ -179,7 +179,7 @@ void WheelItemDisplay::RefreshGrades()
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 		{
-			m_GradeDisplay[p].SetDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_GradeDisplay[p].SetDiffuse( RageColor(1,1,1,0) );
 			continue;
 		}
 
@@ -259,11 +259,11 @@ void WheelItemDisplay::DrawPrimitives()
 			m_GradeDisplay[p].Draw();
 		if( m_fPercentGray > 0 )
 		{
-			m_sprSongBar.SetGlow( D3DXCOLOR(0,0,0,m_fPercentGray) );
-			m_sprSongBar.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+			m_sprSongBar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
+			m_sprSongBar.SetDiffuse( RageColor(0,0,0,0) );
 			m_sprSongBar.Draw();
-			m_sprSongBar.SetDiffuse( D3DXCOLOR(0,0,0,1) );
-			m_sprSongBar.SetGlow( D3DXCOLOR(0,0,0,0) );
+			m_sprSongBar.SetDiffuse( RageColor(0,0,0,1) );
+			m_sprSongBar.SetGlow( RageColor(0,0,0,0) );
 		}
 		break;
 	case TYPE_COURSE:
@@ -290,8 +290,8 @@ MusicWheel::MusicWheel()
 
 	m_sprSelectionOverlay.Load( THEME->GetPathTo("Graphics","select music song highlight") );
 	m_sprSelectionOverlay.SetXY( 0, 0 );
-	m_sprSelectionOverlay.SetDiffuse( D3DXCOLOR(1,1,1,1) );
-	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, D3DXCOLOR(1,1,1,0.4f), D3DXCOLOR(1,1,1,1) );
+	m_sprSelectionOverlay.SetDiffuse( RageColor(1,1,1,1) );
+	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, RageColor(1,1,1,0.4f), RageColor(1,1,1,1) );
 	AddChild( &m_sprSelectionOverlay );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
@@ -501,7 +501,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			{
 				// make WheelItemDatas with sections
 				CString sLastSection = "";
-				D3DXCOLOR colorSection;
+				RageColor colorSection;
 				for( int i=0; i< arraySongs.GetSize(); i++ )
 				{
 					Song* pSong = arraySongs[i];
@@ -536,7 +536,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 		if( !bRoulette )
 		{
-			arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1)) );
+			arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
 		}
 
 		// HACK:  Add extra stage item if it isn't already present on the music wheel
@@ -628,7 +628,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 	if( arrayWheelItemDatas.GetSize() == 0 )
 	{
-		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, D3DXCOLOR(1,0,0,1)) );
+		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
 	}
 }
 
@@ -870,7 +870,7 @@ void MusicWheel::Update( float fDeltaTime )
 //					m_soundExpand.Play();
 //					m_WheelState = STATE_ROULETTE_SPINNING;
 //					m_SortOrder = SORT_GROUP;
-//					m_MusicSortDisplay.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+//					m_MusicSortDisplay.SetDiffuse( RageColor(1,1,1,0) );
 //					m_MusicSortDisplay.SetEffectNone();
 //					BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
 //				}

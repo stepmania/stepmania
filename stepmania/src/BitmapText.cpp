@@ -28,7 +28,7 @@
 #define RAINBOW_COLOR_7		THEME->GetMetricC("BitmapText","RainbowColor7")
 
 const int NUM_RAINBOW_COLORS = 7;
-D3DXCOLOR RAINBOW_COLORS[NUM_RAINBOW_COLORS];
+RageColor RAINBOW_COLORS[NUM_RAINBOW_COLORS];
 
 
 BitmapText::BitmapText()
@@ -201,7 +201,7 @@ void BitmapText::DrawPrimitives()
 
 
 	// make the object in logical units centered at the origin
-	static RAGEVERTEX v[4000];
+	static RageVertex v[4000];
 	int iNumV = 0;	// the current vertex number
 
 
@@ -250,10 +250,10 @@ void BitmapText::DrawPrimitives()
 			//
 			// set vertex positions
 			//
-			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft,										iY-iHeight/2.0f, 0 );	// top left
-			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY-iHeight/2.0f, 0 );	// top right
-			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft,										iY+iHeight/2.0f, 0 );	// bottom left
-			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY+iHeight/2.0f, 0 );	// bottom right
+			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft,										iY-iHeight/2.0f, 0 );	// top left
+			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY-iHeight/2.0f, 0 );	// top right
+			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft,										iY+iHeight/2.0f, 0 );	// bottom left
+			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY+iHeight/2.0f, 0 );	// bottom right
 
 			iX += iCharWidth;
 
@@ -274,10 +274,10 @@ void BitmapText::DrawPrimitives()
 			const float fExtraTexCoordsLeft = iDrawExtraPixelsLeft / (float)pTexture->GetSourceWidth();
 			const float fExtraTexCoordsRight = iDrawExtraPixelsRight / (float)pTexture->GetSourceWidth();
 
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.top );		// top left
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.top );		// top right
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.bottom );	// bottom left
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.bottom );	// bottom right
+			v[iNumV++].t = RageVector2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.top );		// top left
+			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.top );		// top right
+			v[iNumV++].t = RageVector2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.bottom );	// bottom left
+			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.bottom );	// bottom right
 		}
 
 		iY += iLineSpacing;
@@ -305,11 +305,11 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
-			DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
+			DWORD dwColor = RageColor(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 
 			int i;
 			for( i=0; i<iNumV; i++ )
-				v[i].color = dwColor;
+				v[i].c = dwColor;
 			for( i=0; i<iNumV; i+=4 )
 				DISPLAY->AddQuad( &v[i] );
 
@@ -324,9 +324,9 @@ void BitmapText::DrawPrimitives()
 			int color_index = int(TIMER->GetTimeSinceStart() / 0.200) % NUM_RAINBOW_COLORS;
 			for( int i=0; i<iNumV; i+=4 )
 			{
-				const D3DXCOLOR color = RAINBOW_COLORS[color_index];
+				const RageColor color = RAINBOW_COLORS[color_index];
 				for( int j=i; j<i+4; j++ )
-					v[j].color = color;
+					v[j].c = color;
 
 				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
 			}
@@ -335,10 +335,10 @@ void BitmapText::DrawPrimitives()
 		{
 			for( int i=0; i<iNumV; i+=4 )
 			{
-				v[i+0].color = m_temp.diffuse[0];	// top left
-				v[i+1].color = m_temp.diffuse[1];	// top right
-				v[i+2].color = m_temp.diffuse[2];	// bottom left
-				v[i+3].color = m_temp.diffuse[3];	// bottom right
+				v[i+0].c = m_temp.diffuse[0];	// top left
+				v[i+1].c = m_temp.diffuse[1];	// top right
+				v[i+2].c = m_temp.diffuse[2];	// bottom left
+				v[i+3].c = m_temp.diffuse[3];	// bottom right
 			}
 		}
 
@@ -355,7 +355,7 @@ void BitmapText::DrawPrimitives()
 
 		int i;
 		for( i=0; i<iNumV; i++ )
-			v[i].color = m_temp.glow;
+			v[i].c = m_temp.glow;
 		for( i=0; i<iNumV; i+=4 )
 			DISPLAY->AddQuad( &v[i] );
 	}

@@ -31,7 +31,7 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 {
 	if( pNotes != NULL )
 	{
-		SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		SetDiffuse( RageColor(1,1,1,1) );
 		SetNumFeet( pNotes->m_iMeter );
 		if( pNotes->m_iMeter > GLOW_IF_METER_GREATER_THAN )
 			this->SetEffectGlowing();
@@ -43,7 +43,7 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 	else
 	{
 		this->SetEffectNone();
-		SetDiffuse( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
+		SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 		SetNumFeet( 0 );
 	}
 }

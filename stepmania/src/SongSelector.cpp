@@ -47,7 +47,7 @@ SongSelector::SongSelector()
 
 	m_textGroup.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textGroup.SetXY( GROUP_X, GROUP_Y );
-	m_textGroup.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textGroup.SetDiffuse( RageColor(0.7f,0.7f,0.7f,1) );
 	m_textGroup.SetText( "blah" );
 	this->AddChild( &m_textGroup );
 
@@ -60,23 +60,23 @@ SongSelector::SongSelector()
 	
 	m_sprArrowLeft.Load( THEME->GetPathTo("Graphics","edit menu left") );
 	m_sprArrowLeft.SetXY( ARROWS_X[0], ARROWS_Y[0] );
-	m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprArrowLeft.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprArrowLeft );
 
 	m_sprArrowRight.Load( THEME->GetPathTo("Graphics","edit menu right") );
 	m_sprArrowRight.SetXY( ARROWS_X[1], ARROWS_Y[1] );
-	m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprArrowRight.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprArrowRight );
 
 	m_textStyle.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textStyle.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
-	m_textStyle.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textStyle.SetDiffuse( RageColor(0.7f,0.7f,0.7f,1) );
 	m_textStyle.SetText( "blah" );
 	this->AddChild( &m_textStyle );
 
 	m_textNotes.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
-	m_textNotes.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textNotes.SetDiffuse( RageColor(0.7f,0.7f,0.7f,1) );
 	m_textNotes.SetText( "blah" );
 	this->AddChild( &m_textNotes );
 
@@ -216,8 +216,8 @@ void SongSelector::Right()
 void SongSelector::ChangeSelectedRow( SelectedRow row )
 {
 	m_textGroup.SetEffectNone();
-	m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-	m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprArrowLeft.SetDiffuse( RageColor(1,1,1,0) );
+	m_sprArrowRight.SetDiffuse( RageColor(1,1,1,0) );
 	m_textStyle.SetEffectNone();
 	m_textNotes.SetEffectNone();
 	m_SelectedRow = row;
@@ -226,8 +226,8 @@ void SongSelector::ChangeSelectedRow( SelectedRow row )
 	{
 	case ROW_GROUP:			m_textGroup.SetEffectGlowing();			break;
 	case ROW_SONG:
-		m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,1) );
-		m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprArrowLeft.SetDiffuse( RageColor(1,1,1,1) );
+		m_sprArrowRight.SetDiffuse( RageColor(1,1,1,1) );
 		break;
 	case ROW_STYLE:	m_textStyle.SetEffectGlowing(); 		break;
 	case ROW_STEPS:			m_textNotes.SetEffectGlowing();			break;

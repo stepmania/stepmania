@@ -56,16 +56,16 @@ Background::Background()
 	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","gameplay danger") );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
-	m_quadBGBrightness.SetDiffuse( D3DXCOLOR(0,0,0,1-PREFSMAN->m_fBGBrightness) );
+	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
 
 	m_quadBorder[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[0].SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBorder[1].StretchTo( CRect(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
-	m_quadBorder[1].SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBorder[2].StretchTo( CRect(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_quadBorder[2].SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBorder[3].StretchTo( CRect(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[3].SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
 }
 
 Background::~Background()
@@ -402,7 +402,7 @@ void Background::Update( float fDeltaTime )
 			m_pFadingBGA->Update( fDeltaTime );
 			m_fSecsLeftInFade -= fDeltaTime;
 			float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
-			m_pFadingBGA->SetDiffuse( D3DXCOLOR(1,1,1,fPercentOpaque) );
+			m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
 			if( fPercentOpaque <= 0 )
 				m_pFadingBGA = NULL;
 		}
@@ -440,12 +440,12 @@ bool Background::DangerVisible()
 void Background::FadeIn()
 {
 	m_quadBGBrightness.BeginTweening( 0.5f );
-	m_quadBGBrightness.SetTweenDiffuse( D3DXCOLOR(0,0,0,1-PREFSMAN->m_fBGBrightness) );
+	m_quadBGBrightness.SetTweenDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
 }
 
 void Background::FadeOut()
 {
 	m_quadBGBrightness.BeginTweening( 0.5f );
-	m_quadBGBrightness.SetTweenDiffuse( D3DXCOLOR(0,0,0,1-0.5f) );
+	m_quadBGBrightness.SetTweenDiffuse( RageColor(0,0,0,1-0.5f) );
 
 }

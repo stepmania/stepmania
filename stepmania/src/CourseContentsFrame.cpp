@@ -65,8 +65,8 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 {
 	m_textNumber.SetText( ssprintf("%d", iNum) );
 
-	D3DXCOLOR colorGroup = SONGMAN->GetSongColor( pSong );
-	D3DXCOLOR colorNotes = pNotes->GetColor();
+	RageColor colorGroup = SONGMAN->GetSongColor( pSong );
+	RageColor colorNotes = pNotes->GetColor();
 
 	m_TextBanner.LoadFromSong( pSong );
 	m_TextBanner.SetDiffuse( colorGroup );
@@ -83,7 +83,7 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 CourseContentsFrame::CourseContentsFrame()
 {
 	m_iNumContents = 0;
-	m_quad.SetDiffuse( D3DXCOLOR(0,0,0,0) );	// invisible, since we want to write only to the Zbuffer
+	m_quad.SetDiffuse( RageColor(0,0,0,0) );	// invisible, since we want to write only to the Zbuffer
 
 	m_fTimeUntilScroll = 0;
 	m_fItemAtTopOfList = 0;

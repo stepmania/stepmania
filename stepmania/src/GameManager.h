@@ -58,7 +58,7 @@ public:
 	int			GetMetricI( CString sClassName, CString sValueName );
 	float		GetMetricF( CString sClassName, CString sValueName );
 	bool		GetMetricB( CString sClassName, CString sValueName );
-	D3DXCOLOR	GetMetricC( CString sClassName, CString sValueName );
+	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 
 	void GetEnabledGames( CArray<Game,Game>& aGamesOut );

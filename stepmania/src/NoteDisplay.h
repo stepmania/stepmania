@@ -29,12 +29,12 @@ public:
 protected:
 	int			GetTapGrayFrameNo( const float fNoteBeat );
 	int			GetTapColorFrameNo( const float fNoteBeat );
-	void		GetTapEdgeColors( const float fNoteBeat, D3DXCOLOR &colorLeadingOut, D3DXCOLOR &colorTrailingOut );
+	void		GetTapEdgeColors( const float fNoteBeat, RageColor &colorLeadingOut, RageColor &colorTrailingOut );
 
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
 
 	Sprite		m_sprTapParts;		// for now, must be an even number of frames
 	Sprite		m_sprHoldParts;		// for now, must be 8 frames
 
-	CArray<D3DXCOLOR,D3DXCOLOR> m_colorTapTweens;
+	CArray<RageColor,RageColor> m_colorTapTweens;
 };

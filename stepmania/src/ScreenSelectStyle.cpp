@@ -165,21 +165,21 @@ void ScreenSelectStyle::AfterChange()
 	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 
 	m_sprPreview.StopTweening();
-	m_sprPreview.SetGlow( D3DXCOLOR(1,1,1,0) );
-	m_sprPreview.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetGlow( RageColor(1,1,1,0) );
+	m_sprPreview.SetDiffuse( RageColor(1,1,1,0) );
 
 	m_sprPreview.BeginTweening( 0.25f );			// sleep
 
 	m_sprPreview.BeginTweening( 0.2f );			// fade to white
-	m_sprPreview.SetTweenGlow( D3DXCOLOR(1,1,1,1) );
-	m_sprPreview.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetTweenGlow( RageColor(1,1,1,1) );
+	m_sprPreview.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 	m_sprPreview.BeginTweening( 0.01f );			// turn color on
-	m_sprPreview.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_sprPreview.SetTweenDiffuse( RageColor(1,1,1,1) );
 
 	m_sprPreview.BeginTweening( 0.2f );			// fade to color
-	m_sprPreview.SetTweenGlow( D3DXCOLOR(1,1,1,0) );
-	m_sprPreview.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_sprPreview.SetTweenGlow( RageColor(1,1,1,0) );
+	m_sprPreview.SetTweenDiffuse( RageColor(1,1,1,1) );
 
 
 	// Tween Info
@@ -328,9 +328,9 @@ void ScreenSelectStyle::UpdateEnabledDisabled()
 	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		if( IsEnabled(i) )
-			m_sprIcon[i].SetDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_sprIcon[i].SetDiffuse( RageColor(1,1,1,1) );
 		else
-			m_sprIcon[i].SetDiffuse( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
+			m_sprIcon[i].SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 	}
 
 	// Select first enabled style

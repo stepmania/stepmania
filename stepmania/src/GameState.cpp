@@ -251,7 +251,7 @@ CString GameState::GetStageText()
 	return ssprintf( "%d%s", iStageNo, sNumberSuffix );
 }
 
-D3DXCOLOR GameState::GetStageColor()
+RageColor GameState::GetStageColor()
 {
 	if( m_bDemonstration )		return STAGE_COLOR_DEMO;
 	else if( m_PlayMode==PLAY_MODE_ONI || m_PlayMode==PLAY_MODE_ENDLESS )	return STAGE_COLOR_ONI;

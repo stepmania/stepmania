@@ -20,12 +20,10 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
-	m_spr.Load( THEME->GetPathTo("Graphics","title menu logo game 0") );
-	m_spr.SetXY( CENTER_X, CENTER_Y );
-	m_spr.SetZoomY( 0 );
-	m_spr.BeginTweening( 0.5f );
-	m_spr.SetTweenZoomY( 1 );
-	this->AddChild( &m_spr );
+	m_text.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_text.SetXY( CENTER_X, CENTER_Y );
+	m_text.SetText( "Press Left to Become Server\nRight to become Client." );
+	this->AddChild( &m_text );
 
 //	m_Menu.Load( 	
 //		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
@@ -52,23 +50,27 @@ void ScreenSandbox::DrawPrimitives()
 
 void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( MenuI.IsValid() )
+	if( type != IET_FIRST_PRESS )
+		return;	// ignore
+
+	switch( DeviceI.device)
 	{
-		switch( MenuI.button )
+	case DEVICE_KEYBOARD:
+		switch( DeviceI.button )
 		{
-		case MENU_BUTTON_LEFT:
+		case DIK_LEFT:
+			m_text.SetText( "You are the server." );
 			break;
-		case MENU_BUTTON_RIGHT:
+		case DIK_RIGHT:
+			m_text.SetText( "You are the client." );
 			break;
-		case MENU_BUTTON_BACK:
-			//SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-			return;
+		case DIK_T:
+			break;
 		}
 	}
 
 //	m_sprBG.SetEffectCamelion( 5, D3DXCOLOR(1,0.8f,0.8f,1), D3DXCOLOR(1,0.2f,0.2f,1) );
 }
-
 
 void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 {

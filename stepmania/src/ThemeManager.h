@@ -12,7 +12,7 @@
 */
 
 #include "RageUtil.h"
-#include "D3DX8Math.h"	// for D3DXCOLOR
+#include "RageTypes.h"
 
 class IniFile;
 
@@ -33,7 +33,7 @@ public:
 	int			GetMetricI( CString sClassName, CString sValueName );
 	float		GetMetricF( CString sClassName, CString sValueName );
 	bool		GetMetricB( CString sClassName, CString sValueName );
-	D3DXCOLOR	GetMetricC( CString sClassName, CString sValueName );
+	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 protected:
 	void GetAllThemeNames( CStringArray& AddTo );

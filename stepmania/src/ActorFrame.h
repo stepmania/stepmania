@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ACTORFRAME_H
+#define ACTORFRAME_H
 /*
 -----------------------------------------------------------------------------
  Class: ActorFrame
@@ -10,12 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageUtil.h"
-
-#include <d3dx8math.h>
 #include "Actor.h"
-
-
 
 class ActorFrame : public Actor
 {
@@ -26,8 +22,10 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void SetDiffuse( D3DXCOLOR c );
+	virtual void SetDiffuse( RageColor c );
 
 protected:
 	CArray<Actor*,Actor*>	m_SubActors;
 };
+
+#endif

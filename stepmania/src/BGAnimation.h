@@ -34,7 +34,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void SetDiffuse( const D3DXCOLOR &c );
+	virtual void SetDiffuse( const RageColor &c );
 
 
 	void GainingFocus();

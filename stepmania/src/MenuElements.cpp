@@ -77,7 +77,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 
 	m_Background.LoadFromAniDir( sBackgroundPath );
 
-	m_quadBrightness.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_quadBrightness.SetDiffuse( RageColor(0,0,0,0) );
 	m_quadBrightness.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 
 	m_sprTopEdge.Load( sTopEdgePath );
@@ -87,7 +87,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_X, STYLE_ICON_Y );
 	if( GAMESTATE->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
-		m_sprStyleIcon.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprStyleIcon.SetDiffuse( RageColor(1,1,1,0) );
 	else
 	{
 		int iRowNum = GetStyleIndexRelativeToGame( GAMESTATE->m_CurGame, GAMESTATE->m_CurStyle );
@@ -226,9 +226,9 @@ void MenuElements::TweenBottomLayerOnScreen()
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY );
 
-	m_quadBrightness.SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBrightness.SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBrightness.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
-	m_quadBrightness.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_quadBrightness.SetTweenDiffuse( RageColor(0,0,0,0) );
 }
 
 void MenuElements::TweenBottomLayerOffScreen()
@@ -238,11 +238,11 @@ void MenuElements::TweenBottomLayerOffScreen()
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY + 100 );
 
-	m_quadBrightness.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_quadBrightness.SetDiffuse( RageColor(0,0,0,0) );
 	m_quadBrightness.StopTweening();
 	m_quadBrightness.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*3/2.0f );	// sleep
 	m_quadBrightness.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );	// fade
-	m_quadBrightness.SetTweenDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBrightness.SetTweenDiffuse( RageColor(0,0,0,1) );
 }
 
 void MenuElements::TweenOnScreenFromBlack( ScreenMessage smSendWhenDone )

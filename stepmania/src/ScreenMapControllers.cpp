@@ -82,7 +82,7 @@ ScreenMapControllers::ScreenMapControllers()
 	m_textError.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textError.SetText( "" );
 	m_textError.SetXY( CENTER_X, CENTER_Y );
-	m_textError.SetDiffuse( D3DXCOLOR(0,1,0,0) );
+	m_textError.SetDiffuse( RageColor(0,1,0,0) );
 	m_textError.SetZoom( 0.8f );
 	this->AddChild( &m_textError );
 
@@ -152,10 +152,10 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		{
 			//m_textError.SetText( "Game option is set to ignore the Joystick D-Pad." );
 			//m_fErrorDisplayCountdown = 5;	// show the error message
-			m_textError.SetDiffuse( D3DXCOLOR(0,1,0,1) );
+			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
 			m_textError.BeginTweening( 1 );
-			m_textError.SetTweenDiffuse( D3DXCOLOR(0,1,0,0) );
+			m_textError.SetTweenDiffuse( RageColor(0,1,0,0) );
 
 			return;	// ignore this press
 		}
@@ -260,16 +260,16 @@ void ScreenMapControllers::Refresh()
 					m_textMappedTo[p][b][s].SetText( "-----------" );
 				
 				// highlight the currently selected pad button
-				D3DXCOLOR color;
+				RageColor color;
 				if( p == m_iCurController  &&  b == m_iCurButton  &&  s == m_iCurSlot ) 
 				{
 					if( m_bWaitingForPress )
-						color = D3DXCOLOR(1,0.5,0.5,1);	// red
+						color = RageColor(1,0.5,0.5,1);	// red
 					else
-						color = D3DXCOLOR(1,1,1,1);		// white
+						color = RageColor(1,1,1,1);		// white
 				} 
 				else 
-					color = D3DXCOLOR(0.5,0.5,0.5,1);	// gray
+					color = RageColor(0.5,0.5,0.5,1);	// gray
 				m_textMappedTo[p][b][s].SetDiffuse( color );
 			}
 		}

@@ -32,12 +32,12 @@ void DifficultyIcon::SetFromNotes( PlayerNumber pn, Notes* pNotes )
 {
 	if( pNotes == NULL )
 	{
-		SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		SetDiffuse( RageColor(1,1,1,0) );
 		return;
 	}
 	else
 	{
-		SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		SetDiffuse( RageColor(1,1,1,1) );
 
 		int iStateNo = pNotes->GetNotesDisplayType();
 

@@ -65,7 +65,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	bool bSuccess;
 	do
 	{
-		D3DXCOLOR color;
+		RageColor color;
 		int retval = fscanf( fp, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
 		bSuccess = (retval == 4);
 		if( bSuccess )
@@ -73,7 +73,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	} while( bSuccess );
 
 	if( m_colorTapTweens.GetSize() == 0 )
-		m_colorTapTweens.Add( D3DXCOLOR(1,1,1,1) );
+		m_colorTapTweens.Add( RageColor(1,1,1,1) );
 
 	fclose( fp );
 	return;
@@ -98,7 +98,7 @@ int NoteDisplay::GetTapColorFrameNo( const float fNoteBeat )
 	return GetTapGrayFrameNo(fNoteBeat) + 1;
 }
 
-void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, D3DXCOLOR &colorLeadingOut, D3DXCOLOR &colorTrailingOut )
+void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, RageColor &colorLeadingOut, RageColor &colorTrailingOut )
 {
 // Chris: If EZ2 doesn't use a color part, leave that part of the NoteSkin graphic empty
 //
@@ -162,7 +162,7 @@ void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, D3DXCOLOR &colorLeadi
 
 	if( ct == PlayerOptions::COLOR_NOTE )
 	{
-		D3DXCOLOR color = GetNoteColorFromBeat( fNoteBeat );
+		RageColor color = GetNoteColorFromBeat( fNoteBeat );
 		colorLeadingOut = color;
 		colorTrailingOut = color;
 
@@ -257,10 +257,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
 		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 		const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
-		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
-		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fGlowBottom);
+		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
+		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
+		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
 
 		// the shift by -0.5 is to align texels to pixels
 
@@ -270,10 +270,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			continue;
 
 		DISPLAY->AddQuad( 
-			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
-			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
-			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
-			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+			RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
+			RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
+			RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
+			RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}
 
 	//
@@ -300,10 +300,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
 		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 		const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
-		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
-		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fGlowBottom);
+		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
+		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
+		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
 
 		if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
 			continue;
@@ -311,10 +311,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			continue;
 
 		DISPLAY->AddQuad( 
-			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),    //colorGlowTop,			// top-left
-			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),    //colorGlowTop,			// top-right
-			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom), //colorGlowBottom,		// bottom-left
-			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+			RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordLeft,  fTexCoordTop),    //colorGlowTop,			// top-left
+			RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordRight, fTexCoordTop),    //colorGlowTop,			// top-right
+			RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordLeft,  fTexCoordBottom), //colorGlowBottom,		// bottom-left
+			RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}	
 
 	if( g_bDrawTapOnTopOfHoldHead )
@@ -345,10 +345,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
 			const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 			const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-			const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
-			const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-			const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
-			const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fGlowBottom);
+			const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
+			const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+			const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
+			const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
 
 			// the shift by -0.5 is to align texels to pixels
 
@@ -358,10 +358,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 				continue;
 
 			DISPLAY->AddQuad( 
-				D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
-				D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
-				D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
-				D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+				RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
+				RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
+				RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
+				RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 		}
 
 		DISPLAY->FlushQueue();
@@ -377,8 +377,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
 			const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
 			const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-			const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
-			const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
+			const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+			const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
 //			m_sprHoldParts.SetState( bActive?1:0 );
 			// HACK:  the border around the edge of on this sprite is super-obvious.  
@@ -386,13 +386,13 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			m_sprHoldParts.SetXY( fX, fY );
 			if( bDrawGlowOnly )
 			{
-				m_sprHoldParts.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+				m_sprHoldParts.SetDiffuse( RageColor(1,1,1,0) );
 				m_sprHoldParts.SetGlow( colorGlow );
 			}
 			else
 			{
 				m_sprHoldParts.SetDiffuse( colorDiffuse );
-				m_sprHoldParts.SetGlow( D3DXCOLOR(0,0,0,0) );
+				m_sprHoldParts.SetGlow( RageColor(0,0,0,0) );
 			}
 			m_sprHoldParts.Draw();
 		}
@@ -422,9 +422,9 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	const int iColorPartFrameNo	= GetTapColorFrameNo( fBeat );
 	const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
 
-	D3DXCOLOR colorGrayPart = D3DXCOLOR(fColorScale,fColorScale,fColorScale,1);
-	D3DXCOLOR colorLeadingEdge;
-	D3DXCOLOR colorTrailingEdge;
+	RageColor colorGrayPart = RageColor(fColorScale,fColorScale,fColorScale,1);
+	RageColor colorLeadingEdge;
+	RageColor colorTrailingEdge;
 	GetTapEdgeColors( fBeat, colorLeadingEdge, colorTrailingEdge );
 	colorGrayPart.a		*= fAlpha;
 	colorLeadingEdge.a	*= fAlpha;
@@ -444,7 +444,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 		//
 		m_sprHoldParts.SetXY( fXPos, fYPos );
 		m_sprHoldParts.SetDiffuse( colorGrayPart );
-		m_sprHoldParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
+		m_sprHoldParts.SetGlow( RageColor(1,1,1,fGlow) );
 		m_sprHoldParts.StopUsingCustomCoords();
 		m_sprHoldParts.SetState( 0 );
 		m_sprHoldParts.Draw();
@@ -453,7 +453,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	{
 		m_sprTapParts.SetXY( fXPos, fYPos );
 		m_sprTapParts.SetRotation( fRotation );
-		m_sprTapParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
+		m_sprTapParts.SetGlow( RageColor(1,1,1,fGlow) );
 
 		//
 		// draw gray part

@@ -206,7 +206,7 @@ ScreenStage::ScreenStage()
 
 		/* The quadMask masks out draws via Z; it doesn't actually erase
 		 * anything, so make it transparent. */
-		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+		m_quadMask.SetDiffuse( RageColor(0,0,0,0) );
 		m_quadMask.StretchTo( CRect(SCREEN_LEFT, int(roundf(fStageOffScreenY-fStageHeight/2)), 
 							        SCREEN_RIGHT, int(roundf(fStageOffScreenY+fStageHeight/2))) );
 		/* Put the quad mask on top, so draws to the Stage will be "under" it. */
@@ -381,17 +381,17 @@ ScreenStage::ScreenStage()
 		for (i=0; i<2; i++) // initialize the UK MOVE text and positions
 		{
 			m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" ); // choose something better if you like ;)
-			m_ez2ukm[i].SetDiffuse( D3DXCOLOR(1,1,1,1) ); // it's white
+			m_ez2ukm[i].SetDiffuse( RageColor(1,1,1,1) ); // it's white
 			m_ez2ukm[i].BeginTweening(0.5f); // start it tweening
 			if (stage_mode == MODE_FINAL)
 			{
 				m_stagedesc[i].SetText( "FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL" ); // this is the desc text for final stage
-				m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
+				m_stagedesc[i].SetDiffuse( RageColor(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
 			}
 			else
 			{
 				m_stagedesc[i].SetText( "NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT" ); // normal stages use this text
-				m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // it's orangey
+				m_stagedesc[i].SetDiffuse( RageColor(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // it's orangey
 			}
 			m_stagedesc[i].BeginTweening(0.5f); // start tweening the descriptions
 
@@ -496,11 +496,11 @@ ScreenStage::ScreenStage()
 			default: m_stagename.SetText( "" ); break; // make this text disappear.
 		}
 
-		m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
+		m_stagename.SetDiffuse( RageColor(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
 
 		if (stage_mode == MODE_FINAL) // if we're final stage 
 		{
-			m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
+			m_stagename.SetDiffuse( RageColor(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
 			m_stagename.SetText( "THE FINAL STAGE" );
 		}
 

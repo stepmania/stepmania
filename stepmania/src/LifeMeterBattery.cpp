@@ -54,7 +54,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 		this->AddChild( &m_sprBattery );
 
 	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery life numbers") );
-	m_textNumLives.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
 	m_textNumLives.TurnShadowOff();
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );

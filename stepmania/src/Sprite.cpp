@@ -222,20 +222,20 @@ void Sprite::DrawPrimitives()
 	}
 
 
-	static RAGEVERTEX v[4];
+	static RageVertex v[4];
 
-	v[0].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
-	v[1].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
-	v[2].p = D3DXVECTOR3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
-	v[3].p = D3DXVECTOR3( quadVerticies.right,	quadVerticies.top,		0 );	// top right
+	v[0].p = RageVector3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
+	v[1].p = RageVector3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
+	v[2].p = RageVector3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
+	v[3].p = RageVector3( quadVerticies.right,	quadVerticies.top,		0 );	// top right
 
 
 	if( m_bUsingCustomTexCoords ) 
 	{
-		v[0].t = D3DXVECTOR2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
-		v[1].t = D3DXVECTOR2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
-		v[2].t = D3DXVECTOR2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
-		v[3].t = D3DXVECTOR2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
+		v[0].t = RageVector2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
+		v[1].t = RageVector2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
+		v[2].t = RageVector2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
+		v[3].t = RageVector2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
 
 		DISPLAY->EnableTextureWrapping();
 	} 
@@ -244,10 +244,10 @@ void Sprite::DrawPrimitives()
 		UINT uFrameNo = m_iStateToFrame[m_iCurState];
 		FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
 
-		v[0].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
-		v[1].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
-		v[2].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
-		v[3].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
+		v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
+		v[1].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
+		v[2].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
+		v[3].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
 
 		// if the texture has more than one frame, we're going to get border mess from the 
 		// neighboring frame, so don't bother turning wrapping off.
@@ -278,7 +278,7 @@ void Sprite::DrawPrimitives()
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
+			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 			DISPLAY->AddQuad( v );
 			DISPLAY->PopMatrix();
 		}
@@ -286,10 +286,10 @@ void Sprite::DrawPrimitives()
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
-		v[0].color = m_temp.diffuse[2];	// bottom left
-		v[1].color = m_temp.diffuse[0];	// top left
-		v[2].color = m_temp.diffuse[3];	// bottom right
-		v[3].color = m_temp.diffuse[1];	// top right
+		v[0].c = m_temp.diffuse[2];	// bottom left
+		v[1].c = m_temp.diffuse[0];	// top left
+		v[2].c = m_temp.diffuse[3];	// bottom right
+		v[3].c = m_temp.diffuse[1];	// top right
 		DISPLAY->AddQuad( v );
 	}
 
@@ -299,7 +299,7 @@ void Sprite::DrawPrimitives()
 	if( m_temp.glow.a != 0 )
 	{
 		DISPLAY->SetColorDiffuse();
-		v[0].color = v[1].color = v[2].color = v[3].color = m_temp.glow;
+		v[0].c = v[1].c = v[2].c = v[3].c = m_temp.glow;
 		DISPLAY->AddQuad( v );
 	}
 }

@@ -2,6 +2,20 @@
 Fix
 /////////////////////////
 
+You'll notice that if you add up the Perfects and Greats, they are far less than the max combo. Where did they go? Apparently Jumps count for 2 steps during normal game play, but ONLY for max combo. 
+
+test BGChange grabbing from random movies
+
+change banner loading on select music to cache banners for active section
+
+change andy's link on the downloads page to say "para"
+
+- Load banner/title graphics for songs in the current section.
+> when you press Esc it validates the choice. For me, Esc would not save.
+> Same thing for Esc starting the Demonstration mode. Start demo with 
+- credits
+- add marathon and long ver balloons
+
 super shuffle doesn't correctly handle holds (Ayla Part 2)
 
 There's a major Oni course bug (at least in Pump mode):

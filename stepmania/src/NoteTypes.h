@@ -71,12 +71,12 @@ enum NoteType
 	NOTE_TYPE_INVALID
 };
 
-D3DXCOLOR NoteTypeToColor( NoteType nt );
+RageColor NoteTypeToColor( NoteType nt );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int iNoteIndex );
 bool IsNoteOfType( int iNoteIndex, NoteType t );
-D3DXCOLOR GetNoteColorFromIndex( int iNoteIndex );
-D3DXCOLOR GetNoteColorFromBeat( float fBeat );
+RageColor GetNoteColorFromIndex( int iNoteIndex );
+RageColor GetNoteColorFromBeat( float fBeat );
 
 
 

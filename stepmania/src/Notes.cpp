@@ -104,7 +104,7 @@ NotesDisplayType Notes::GetNotesDisplayType() const
 	}
 }
 
-D3DXCOLOR Notes::GetColor() const
+RageColor Notes::GetColor() const
 {
 	switch( GetNotesDisplayType() )
 	{

@@ -244,9 +244,9 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 	m_textOptions[line][option].StopTweening();
 	m_textOptions[line][option].BeginTweening(.250);
 	if(m_OptionDim[line][option])
-		m_textOptions[line][option].SetTweenDiffuse( D3DXCOLOR(.5,.5,.5,1) );
+		m_textOptions[line][option].SetTweenDiffuse( RageColor(.5,.5,.5,1) );
 	else
-		m_textOptions[line][option].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_textOptions[line][option].SetTweenDiffuse( RageColor(1,1,1,1) );
 
 	/* Don't know if I like this ...-glenn
 	m_textOptionLineTitles[line].BeginTweening(.250);
@@ -353,8 +353,8 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 
 void ScreenOptions::UpdateEnabledDisabled()
 {
-	D3DXCOLOR colorSelected = COLOR_SELECTED;
-	D3DXCOLOR colorNotSelected = COLOR_NOT_SELECTED;
+	RageColor colorSelected = COLOR_SELECTED;
+	RageColor colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
 	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line

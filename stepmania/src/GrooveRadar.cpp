@@ -49,18 +49,18 @@ void GrooveRadar::TweenOnScreen()
 		float fOriginalX = m_sprRadarLabels[c].GetX();
 		m_sprRadarLabels[c].SetX( fOriginalX - 100 );
 		m_sprRadarLabels[c].SetZoom( 1.5f );
-		m_sprRadarLabels[c].SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
 
 		m_sprRadarLabels[c].BeginTweening( 0.6f+0.2f*c );	// sleep
 
 		m_sprRadarLabels[c].BeginTweening( 0.1f );	// begin fading on screen
-		m_sprRadarLabels[c].SetTweenGlow( D3DXCOLOR(1,1,1,1) );
+		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,1) );
 		
 		m_sprRadarLabels[c].BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );	// fly to the right
 		m_sprRadarLabels[c].SetTweenX( fOriginalX );
 		m_sprRadarLabels[c].SetTweenZoom( 1 );
-		m_sprRadarLabels[c].SetTweenGlow( D3DXCOLOR(1,1,1,0) );
-		m_sprRadarLabels[c].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,0) );
+		m_sprRadarLabels[c].SetTweenDiffuse( RageColor(1,1,1,1) );
 	}
 	m_GrooveRadarValueMap.TweenOnScreen();
 }
@@ -74,8 +74,8 @@ void GrooveRadar::TweenOffScreen()
 		/* Make sure we undo glow.  We do this at the end of TweenIn,
 		 * but we might tween off before we complete tweening in, and
 		 * the glow can remain. */
-		m_sprRadarLabels[c].SetTweenGlow( D3DXCOLOR(1,1,1,0) );
-		m_sprRadarLabels[c].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,0) );
+		m_sprRadarLabels[c].SetTweenDiffuse( RageColor(1,1,1,0) );
 	}
 	m_GrooveRadarValueMap.TweenOffScreen();
 }
@@ -142,7 +142,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	DISPLAY->SetTexture( NULL );
 	DISPLAY->SetColorTextureMultDiffuse();
 	DISPLAY->SetAlphaTextureMultDiffuse();
-	RAGEVERTEX v[12];	// needed to draw 5 fan primitives and 10 strip primitives
+	RageVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -152,10 +152,10 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a fan to draw the volume
 		//
-		D3DXCOLOR color = PlayerToColor( (PlayerNumber)p );
+		RageColor color = PlayerToColor( (PlayerNumber)p );
 		color.a = 0.5f;
-		v[0].p = D3DXVECTOR3( 0, 0, 0 );
-		v[0].color = color;
+		v[0].p = RageVector3( 0, 0, 0 );
+		v[0].c = color;
 
 		int i;
 
@@ -168,8 +168,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fX = cosf(fRotation) * fDistFromCenter;
 			const float fY = -sinf(fRotation) * fDistFromCenter;
 
-			v[1+i].p = D3DXVECTOR3( fX, fY,	0 );
-			v[1+i].color = v[0].color;
+			v[1+i].p = RageVector3( fX, fY,	0 );
+			v[1+i].c = v[0].c;
 		}
 
 		DISPLAY->AddFan( v, 5 );
@@ -191,10 +191,10 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fYInner = -sinf(fRotation) * fDistFromCenterInner;
 			const float fYOutter = -sinf(fRotation) * fDistFromCenterOutter;
 
-			v[i*2+0].p = D3DXVECTOR3( fXInner, fYInner, 0 );
-			v[i*2+1].p = D3DXVECTOR3( fXOutter, fYOutter,	0 );
-			v[i*2+0].color = PlayerToColor( (PlayerNumber)p );
-			v[i*2+1].color = v[i*2+0].color;
+			v[i*2+0].p = RageVector3( fXInner, fYInner, 0 );
+			v[i*2+1].p = RageVector3( fXOutter, fYOutter,	0 );
+			v[i*2+0].c = PlayerToColor( (PlayerNumber)p );
+			v[i*2+1].c = v[i*2+0].c;
 		}
 
 		DISPLAY->AddStrip( v, 10 );

@@ -91,7 +91,7 @@ ScreenSelectMode::ScreenSelectMode()
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
 		if( BOUNCE_JOIN_MESSAGE )
-			m_sprJoinMessage[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
+			m_sprJoinMessage[p].SetEffectBouncing( RageVector3(0,10,0), 0.5f );
 		this->AddChild( &m_sprJoinMessage[p] );
 	
 		if( GAMESTATE->m_bSideIsJoined[p] )

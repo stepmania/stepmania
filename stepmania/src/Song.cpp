@@ -33,6 +33,10 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
+
+// needed for D3DXGetImageInfo.  Remove this ASAP!
+#include "D3DX8.h"
+
 const int FILE_CACHE_VERSION = 102;	// increment this when Song or Notes changes to invalidate cache
 
 

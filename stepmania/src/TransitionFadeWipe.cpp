@@ -50,12 +50,12 @@ void TransitionFadeWipe::DrawPrimitives()
 	float fDarkOutsideX = bLeftEdgeIsDarker ? fDarkEdgeX - SCREEN_WIDTH*2 : fDarkEdgeX + SCREEN_WIDTH*2;
 
 
-	m_rectBlack.SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_rectBlack.SetDiffuse( RageColor(0,0,0,1) );
 	m_rectBlack.StretchTo( CRect((int)fDarkOutsideX, 0, (int)fDarkEdgeX, (int)SCREEN_HEIGHT) );
 	m_rectBlack.Draw();
 	
-	m_rectGradient.SetDiffuseLeftEdge( D3DXCOLOR(0,0,0,1) );
-	m_rectGradient.SetDiffuseRightEdge( D3DXCOLOR(0,0,0,0) );
+	m_rectGradient.SetDiffuseLeftEdge( RageColor(0,0,0,1) );
+	m_rectGradient.SetDiffuseRightEdge( RageColor(0,0,0,0) );
 	m_rectGradient.StretchTo( CRect((int)fDarkEdgeX, 0, (int)fLightEdgeX, (int)SCREEN_HEIGHT) );
 	m_rectGradient.Draw();
 

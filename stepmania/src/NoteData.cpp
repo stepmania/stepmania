@@ -19,6 +19,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageException.h"
 #include "GameState.h"
+#include "math.h"
 
 
 

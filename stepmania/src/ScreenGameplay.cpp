@@ -154,7 +154,7 @@ ScreenGameplay::ScreenGameplay()
 	m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 
 
-	m_Background.SetDiffuse( D3DXCOLOR(0.4f,0.4f,0.4f,1) );
+	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
 
 
@@ -170,7 +170,7 @@ ScreenGameplay::ScreenGameplay()
 		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","gameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
-		m_sprOniGameOver[p].SetDiffuse( D3DXCOLOR(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
 
@@ -288,7 +288,7 @@ ScreenGameplay::ScreenGameplay()
 		m_textPlayerOptions[p].TurnShadowOff();
 		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p,bExtra) );
 		m_textPlayerOptions[p].SetZoom( 0.5f );
-		m_textPlayerOptions[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_textPlayerOptions[p].SetDiffuse( RageColor(1,1,1,1) );
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
@@ -297,7 +297,7 @@ ScreenGameplay::ScreenGameplay()
 	m_textSongOptions.TurnShadowOff();
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y(bExtra) );
 	m_textSongOptions.SetZoom( 0.5f );
-	m_textSongOptions.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textSongOptions.SetDiffuse( RageColor(1,1,1,1) );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 	this->AddChild( &m_textSongOptions );
 
@@ -315,13 +315,13 @@ ScreenGameplay::ScreenGameplay()
 
 	m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
-	m_textDebug.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild( &m_textDebug );
 	
 	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
 	m_textAutoPlay.SetText( "AutoPlay is ON" );
-	m_textAutoPlay.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_textAutoPlay.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild( &m_textAutoPlay );
 	
 	
@@ -330,22 +330,22 @@ ScreenGameplay::ScreenGameplay()
 
 	m_sprReady.Load( THEME->GetPathTo("Graphics","gameplay ready") );
 	m_sprReady.SetXY( CENTER_X, CENTER_Y );
-	m_sprReady.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprReady.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprReady );
 
 	m_sprHereWeGo.Load( THEME->GetPathTo("Graphics","gameplay here we go") );
 	m_sprHereWeGo.SetXY( CENTER_X, CENTER_Y );
-	m_sprHereWeGo.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprHereWeGo.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprHereWeGo );
 
 	m_sprCleared.Load( THEME->GetPathTo("Graphics","gameplay cleared") );
 	m_sprCleared.SetXY( CENTER_X, CENTER_Y );
-	m_sprCleared.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprCleared.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprCleared );
 
 	m_sprFailed.Load( THEME->GetPathTo("Graphics","gameplay failed") );
 	m_sprFailed.SetXY( CENTER_X, CENTER_Y );
-	m_sprFailed.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprFailed.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprFailed );
 
 	if( GAMESTATE->IsFinalStage() )
@@ -353,7 +353,7 @@ ScreenGameplay::ScreenGameplay()
 	else if( GAMESTATE->IsExtraStage() )
 		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics","gameplay try extra stage2") );
 	m_sprTryExtraStage.SetXY( CENTER_X, CENTER_Y );
-	m_sprTryExtraStage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprTryExtraStage.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprTryExtraStage );
 
 	if( GAMESTATE->m_bDemonstration )
@@ -378,12 +378,12 @@ ScreenGameplay::ScreenGameplay()
 	m_textSurviveTime.TurnShadowOff();
 	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 	m_textSurviveTime.SetText( "" );
-	m_textSurviveTime.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_textSurviveTime );
 
 
 	m_sprToasty.Load( THEME->GetPathTo("Graphics","gameplay toasty") );
-	m_sprToasty.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprToasty );
 	
 	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
@@ -534,7 +534,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 
 		// reset oni game over graphic
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
-		m_sprOniGameOver[p].SetDiffuse( D3DXCOLOR(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
 
 		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[p] != -1 )	// already failed
 			ShowOniGameOver((PlayerNumber)p);
@@ -554,9 +554,9 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	}
 
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
-	m_Background.SetDiffuse( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
+	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweening( 2 );
-	m_Background.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_Background.SetTweenDiffuse( RageColor(1,1,1,1) );
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath(), true );	// enable accurate sync
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
@@ -781,9 +781,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_soundAssistTick.Play();
 
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
-		m_textAutoPlay.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_textAutoPlay.SetDiffuse( RageColor(1,1,1,1) );
 	else
-		m_textAutoPlay.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_textAutoPlay.SetDiffuse( RageColor(1,1,1,0) );
 
 	Screen::Update( fDeltaTime );
 }
@@ -835,11 +835,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				GAMESTATE->m_SongOptions.m_AutoAdjust = SongOptions::ADJUST_ON;
 				m_textDebug.SetText( "AutoAdjust is ON" );
 			}
-			m_textDebug.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 3 );		// sleep
 			m_textDebug.BeginTweening( 0.5f );	// fade out
-			m_textDebug.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			break;
 		case DIK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
@@ -847,11 +847,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			else
 				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
 			m_textDebug.SetText( ssprintf( "Assist tick is %s.", (GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_NONE)?"OFF":"ON") );
-			m_textDebug.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 3 );		// sleep
 			m_textDebug.BeginTweening( 0.5f );	// fade out
-			m_textDebug.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			break;
 		case DIK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
@@ -875,11 +875,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				seg.m_fBPM += fOffsetDelta;
 
 				m_textDebug.SetText( ssprintf("Cur BPM = %f", seg.m_fBPM) );
-				m_textDebug.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 3 );		// sleep
 				m_textDebug.BeginTweening( 0.5f );	// fade out
-				m_textDebug.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+				m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
 		case DIK_F11:
@@ -900,11 +900,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 
 				m_textDebug.SetText( ssprintf("Offset = %f", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
-				m_textDebug.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 3 );		// sleep
 				m_textDebug.BeginTweening( 0.5f );	// fade out
-				m_textDebug.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+				m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
 		}
@@ -1166,7 +1166,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		// set off screen
 		m_sprToasty.StopTweening();
-		m_sprToasty.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprToasty.SetDiffuse( RageColor(1,1,1,1) );
 		m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
 		m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
 		m_sprToasty.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN ); // slide on
@@ -1175,7 +1175,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprToasty.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );	// slide off
 		m_sprToasty.SetTweenX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
 		m_sprToasty.BeginTweening( 0.001f );	// fade out
-		m_sprToasty.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
 		break;
 
 	case SM_PlayToastySound:
@@ -1264,10 +1264,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	// received while STATE_OUTRO
 	case SM_ShowCleared:
 		m_sprCleared.BeginTweening(1.0f);
-		m_sprCleared.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprCleared.BeginTweening(1.5f); // sleep
 		m_sprCleared.BeginTweening(0.7f);
-		m_sprCleared.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,0) );
 		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
 		break;
 
@@ -1277,9 +1277,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			// make the background invisible so we don't waste mem bandwidth drawing it
 			m_Background.BeginTweening( 1 );
-			m_Background.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
 
-			D3DXCOLOR colorStage = GAMESTATE->GetStageColor();
+			RageColor colorStage = GAMESTATE->GetStageColor();
 			colorStage.a *= 0.7f;
 
 			m_sprTryExtraStage.SetZoom( 4 );
@@ -1353,21 +1353,21 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		// make the background invisible so we don't waste mem bandwidth drawing it
 		m_Background.BeginTweening( 1 );
-		m_Background.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 		m_sprFailed.SetZoom( 4 );
 		m_sprFailed.BeginBlurredTweening( 0.8f, TWEEN_BIAS_END );
 		m_sprFailed.SetTweenZoom( 0.5f );			// zoom out
-		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
 		m_sprFailed.BeginTweening( 0.3f );
 		m_sprFailed.SetTweenZoom( 1.1f );			// bounce
-		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
 		m_sprFailed.BeginTweening( 0.2f );
 		m_sprFailed.SetTweenZoom( 1.0f );			// come to rest
-		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
 		m_sprFailed.BeginTweening( 2 );		// sleep
 		m_sprFailed.BeginTweening( 1 );
-		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 		// show the survive time if extra stage
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
@@ -1380,10 +1380,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_textSurviveTime.SetText( "TIME  " + SecondsToTime(fMaxSurviveSeconds) );
 			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.3f );	// fade in
-			m_textSurviveTime.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,1) );
 			m_textSurviveTime.BeginTweening( 3.5f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.5f );	// fade out
-			m_textSurviveTime.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,0) );
 		}
 
 		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.0f );
@@ -1476,8 +1476,8 @@ void ScreenGameplay::TweenOffScreen()
 
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 {
-	m_sprOniGameOver[pn].SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_sprOniGameOver[pn].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprOniGameOver[pn].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprOniGameOver[pn].SetTweenY( CENTER_Y );
-	m_sprOniGameOver[pn].SetEffectBobbing( D3DXVECTOR3(0,6,0), 4 );
+	m_sprOniGameOver[pn].SetEffectBobbing( RageVector3(0,6,0), 4 );
 }

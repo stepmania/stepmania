@@ -47,10 +47,10 @@ void FadingBanner::BeforeChange()
 		m_Banner[1].SetScrolling( m_Banner[0].IsScrolling() );
 	}
 
-	m_Banner[1].SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_Banner[1].SetDiffuse( RageColor(1,1,1,1) );
 	m_Banner[1].StopTweening();
 	m_Banner[1].BeginTweening( 0.25f );		// fade out
-	m_Banner[1].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_Banner[1].SetTweenDiffuse( RageColor(1,1,1,0) );
 
 }
 

@@ -56,10 +56,10 @@ public:
 	virtual void  SetRotationX( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationX(rot); }
 	virtual void  SetRotationY( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationY(rot); }
 
-	virtual void SetDiffuse( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetDiffuse(c); };
-	virtual D3DXCOLOR GetDiffuse()			{ return m_sprites[0].GetDiffuse(); };
-	virtual void SetGlow( D3DXCOLOR c )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetGlow(c); };
-	virtual D3DXCOLOR GetGlow()				{ return m_sprites[0].GetGlow(); };
+	virtual void SetDiffuse( RageColor c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetDiffuse(c); };
+	virtual RageColor GetDiffuse()			{ return m_sprites[0].GetDiffuse(); };
+	virtual void SetGlow( RageColor c )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetGlow(c); };
+	virtual RageColor GetGlow()				{ return m_sprites[0].GetGlow(); };
 
 
 	// The blur is made by delaying the tweens
@@ -89,8 +89,8 @@ public:
 	virtual void SetTweenRotationX( float r )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenRotationX(r); };
 	virtual void SetTweenRotationY( float r )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenRotationY(r); };
 	virtual void SetTweenRotationZ( float r )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenRotationZ(r); };
-	virtual void SetTweenDiffuse( D3DXCOLOR c ){ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenDiffuse(c); };
-	virtual void SetTweenGlow( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenGlow(c); };
+	virtual void SetTweenDiffuse( RageColor c ){ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenDiffuse(c); };
+	virtual void SetTweenGlow( RageColor c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenGlow(c); };
 
 
 	void ScaleToCover( LPRECT rect )			{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleToCover(rect); };

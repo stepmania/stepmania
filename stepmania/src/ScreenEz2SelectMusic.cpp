@@ -128,7 +128,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
-	m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textHoldForOptions.SetDiffuse( RageColor(1,1,1,0) );
 	m_textHoldForOptions.SetZ( -2 );
 	this->AddChild( &m_textHoldForOptions );
 
@@ -164,7 +164,7 @@ void ScreenEz2SelectMusic::DrawPrimitives()
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 
-	D3DXMATRIX matOldView, matOldProj;
+	RageMatrix matOldView, matOldProj;
 
 		// save old view and projection
 		DISPLAY->GetViewTransform( &matOldView );
@@ -173,34 +173,34 @@ void ScreenEz2SelectMusic::DrawPrimitives()
 		// construct view and project matrix
 
 
-		D3DXMATRIX matNewView;
+		RageMatrix matNewView;
 
-			D3DXMatrixLookAtLH( 
+			RageMatrixLookAtLH( 
 				&matNewView, 
-				&D3DXVECTOR3( CENTER_X+SIDE_BANNER_ANGLE, CENTER_Y, SIDE_BANNER_ZOOM ),
-				&D3DXVECTOR3( CENTER_X-SIDE_BANNER_SPACING, CENTER_Y, 0.0f ), 
-				&D3DXVECTOR3( 0.0f, -1.0f, 0.0f ) 
+				&RageVector3( CENTER_X+SIDE_BANNER_ANGLE, CENTER_Y, SIDE_BANNER_ZOOM ),
+				&RageVector3( CENTER_X-SIDE_BANNER_SPACING, CENTER_Y, 0.0f ), 
+				&RageVector3( 0.0f, -1.0f, 0.0f ) 
 				);
 
 		DISPLAY->SetViewTransform( &matNewView );
 
-		D3DXMATRIX matNewProj;
-		D3DXMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
+		RageMatrix matNewProj;
+		RageMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
 		DISPLAY->SetProjectionTransform( &matNewProj );
 //	}
 
 	m_BannerNext.Draw();
 
-			D3DXMatrixLookAtLH( 
+			RageMatrixLookAtLH( 
 				&matNewView, 
-				&D3DXVECTOR3( CENTER_X-SIDE_BANNER_ANGLE, CENTER_Y, SIDE_BANNER_ZOOM ),
-				&D3DXVECTOR3( CENTER_X+SIDE_BANNER_SPACING, CENTER_Y, 0.0f ), 
-				&D3DXVECTOR3( 0.0f, -1.0f, 0.0f ) 
+				&RageVector3( CENTER_X-SIDE_BANNER_ANGLE, CENTER_Y, SIDE_BANNER_ZOOM ),
+				&RageVector3( CENTER_X+SIDE_BANNER_SPACING, CENTER_Y, 0.0f ), 
+				&RageVector3( 0.0f, -1.0f, 0.0f ) 
 				);
 
 		DISPLAY->SetViewTransform( &matNewView );
 
-		D3DXMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
+		RageMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
 		DISPLAY->SetProjectionTransform( &matNewProj );
 
 	m_BannerPrevious.Draw();
@@ -353,7 +353,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 				MUSIC->Stop();
 
 				m_MusicSortDisplay.BeginTweening( 0.3f );
-				m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+				m_MusicSortDisplay.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 				TweenScoreOnAndOffAfterChangeSort();
 			}
@@ -497,7 +497,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 				MUSIC->Stop();
 
 				m_MusicSortDisplay.BeginTweening( 0.3f );
-				m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+				m_MusicSortDisplay.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 				TweenScoreOnAndOffAfterChangeSort();
 			}
@@ -558,13 +558,13 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 				if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 				{
 					// show "hold START for options"
-					m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+					m_textHoldForOptions.SetDiffuse( RageColor(1,1,1,0) );
 					m_textHoldForOptions.BeginTweening( 0.25f );	// fade in
 					m_textHoldForOptions.SetTweenZoomY( 1 );
-					m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+					m_textHoldForOptions.SetTweenDiffuse( RageColor(1,1,1,1) );
 					m_textHoldForOptions.BeginTweening( 2.0f );	// sleep
 					m_textHoldForOptions.BeginTweening( 0.25f );	// fade out
-					m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+					m_textHoldForOptions.SetTweenDiffuse( RageColor(1,1,1,0) );
 					m_textHoldForOptions.SetTweenZoomY( 0 );
 				}
 
@@ -739,7 +739,7 @@ void ScreenEz2SelectMusic::SortOrderChanged()
 	// tween music sort on screen
 //	m_MusicSortDisplay.SetEffectGlowing();
 	m_MusicSortDisplay.BeginTweening( 0.3f );
-	m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );		
+	m_MusicSortDisplay.SetTweenDiffuse( RageColor(1,1,1,1) );		
 }
 
 */

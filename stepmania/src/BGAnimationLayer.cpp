@@ -15,6 +15,7 @@
 #include "PrefsManager.h"
 #include "GameState.h"
 #include "IniFile.h"
+#include "RageMath.h"
 
 
 inline float GetOffScreenLeft(  Actor* pActor ) { return SCREEN_LEFT  - pActor->GetZoomedWidth()/2; }
@@ -161,14 +162,14 @@ found_effect:
 
 		switch( m_Effect )
 		{
-		case EFFECT_STRETCH_SCROLL_LEFT:	m_vTexCoordVelocity = D3DXVECTOR2(+0.5f,0);	break;
-		case EFFECT_STRETCH_SCROLL_RIGHT:	m_vTexCoordVelocity = D3DXVECTOR2(-0.5f,0);	break;
-		case EFFECT_STRETCH_SCROLL_UP:		m_vTexCoordVelocity = D3DXVECTOR2(0,+0.5f);	break;
-		case EFFECT_STRETCH_SCROLL_DOWN:	m_vTexCoordVelocity = D3DXVECTOR2(0,-0.5f);	break;
+		case EFFECT_STRETCH_SCROLL_LEFT:	m_vTexCoordVelocity = RageVector2(+0.5f,0);	break;
+		case EFFECT_STRETCH_SCROLL_RIGHT:	m_vTexCoordVelocity = RageVector2(-0.5f,0);	break;
+		case EFFECT_STRETCH_SCROLL_UP:		m_vTexCoordVelocity = RageVector2(0,+0.5f);	break;
+		case EFFECT_STRETCH_SCROLL_DOWN:	m_vTexCoordVelocity = RageVector2(0,-0.5f);	break;
 		case EFFECT_STRETCH_WATER:
 		case EFFECT_STRETCH_BUBBLE:
 		case EFFECT_STRETCH_TWIST:
-			m_vTexCoordVelocity = D3DXVECTOR2(-0.0f,0);	
+			m_vTexCoordVelocity = RageVector2(-0.0f,0);	
 			break;
 		default:
 			ASSERT(0);
@@ -215,8 +216,8 @@ found_effect:
 				if( m_Effect == EFFECT_PARTICLES_BOUNCE )
 				{
 					m_Sprites[i].SetZoom( 1 );
-					m_vHeadings[i] = D3DXVECTOR2( randomf(), randomf() );
-					D3DXVec2Normalize( &m_vHeadings[i], &m_vHeadings[i] );
+					m_vHeadings[i] = RageVector2( randomf(), randomf() );
+					RageVec2Normalize( &m_vHeadings[i], &m_vHeadings[i] );
 				}
 			}
 		}
@@ -301,7 +302,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 	{
 		for( int i=0; i<m_iNumSprites; i++ )
 		{
-			D3DXCOLOR color = D3DXCOLOR(
+			RageColor color = RageColor(
 				cosf( fSongBeat+i ) * 0.5f + 0.5f,
 				cosf( fSongBeat+i + D3DX_PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
 				cosf( fSongBeat+i + D3DX_PI * 4.0f / 3.0f) * 0.5f + 0.5f,
@@ -314,7 +315,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 	{
 		for( int i=0; i<m_iNumSprites; i++ )
 		{
-			D3DXCOLOR color = m_Sprites[i].GetDiffuse();
+			RageColor color = m_Sprites[i].GetDiffuse();
 			color.a = cosf( fSongBeat/2 ) * 0.5f + 0.5f;
 			m_Sprites[i].SetDiffuse( color );
 		}

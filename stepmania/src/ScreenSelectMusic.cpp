@@ -150,8 +150,8 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y );
 	m_textSongOptions.SetZoom( 0.5f );
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		m_textSongOptions.SetEffectCamelion( 2.5f, D3DXCOLOR(1,0,0,1), D3DXCOLOR(1,1,1,1) );	// blink red
-	m_textSongOptions.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// white
+		m_textSongOptions.SetEffectCamelion( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
+	m_textSongOptions.SetDiffuse( RageColor(1,1,1,1) );	// white
 	this->AddChild( &m_textSongOptions );
 
 /*	
@@ -166,8 +166,8 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_textPlayerOptions[p].SetHorizAlign( p==PLAYER_1 ? Actor::align_left : Actor::align_right );
 		m_textPlayerOptions[p].SetVertAlign( Actor::align_middle );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_textPlayerOptions[p].SetEffectCamelion( 2.5f, D3DXCOLOR(1,0,0,1), D3DXCOLOR(1,1,1,1) );	// blink red
-		m_textPlayerOptions[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );	// white
+			m_textPlayerOptions[p].SetEffectCamelion( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
+		m_textPlayerOptions[p].SetDiffuse( RageColor(1,1,1,1) );	// white
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 */
@@ -220,7 +220,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoom( 1 );
-	m_sprOptionsMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprOptionsMessage );
 
 
@@ -389,9 +389,9 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	fNewRotation = fmodf( fNewRotation, D3DX_PI*2 );
 	m_sprCDTitle.SetRotationY( fNewRotation );
 	if( fNewRotation > D3DX_PI/2  &&  fNewRotation <= D3DX_PI*3.0f/2 )
-		m_sprCDTitle.SetDiffuse( D3DXCOLOR(0.2f,0.2f,0.2f,1) );
+		m_sprCDTitle.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	else
-		m_sprCDTitle.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprCDTitle.SetDiffuse( RageColor(1,1,1,1) );
 }
 
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -636,13 +636,13 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 		{
 			// show "hold START for options"
-			m_sprOptionsMessage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 			m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
 			m_sprOptionsMessage.SetTweenZoomY( 1 );
-			m_sprOptionsMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
 			m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
 			m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
-			m_sprOptionsMessage.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 			m_sprOptionsMessage.SetTweenZoomY( 0 );
 		}
 

@@ -54,12 +54,13 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
+# SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                   	cl                    /Zl                    /nologo                    /c                    verstub.cpp                    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                      	cl                       /Zl                       /nologo                       /c                       verstub.cpp                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -88,13 +89,13 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /out:"../StepMania-debug.exe"
-# SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
+# SUBTRACT LINK32 /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                   	cl                    /Zl                    /nologo                    /c                    verstub.cpp                    /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                      	cl                       /Zl                       /nologo                       /c                       verstub.cpp                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -186,6 +187,14 @@ SOURCE=.\RageLog.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageMath.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageMath.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageMovieTexture.cpp
 # End Source File
 # Begin Source File
@@ -199,6 +208,14 @@ SOURCE=.\RageMusic.cpp
 # Begin Source File
 
 SOURCE=.\RageMusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageNetwork.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageNetwork.h
 # End Source File
 # Begin Source File
 
@@ -247,6 +264,10 @@ SOURCE=.\RageTimer.cpp
 # Begin Source File
 
 SOURCE=.\RageTimer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageTypes.h
 # End Source File
 # Begin Source File
 
@@ -1213,6 +1234,14 @@ SOURCE=.\ScreenMusicScroll.cpp
 # Begin Source File
 
 SOURCE=.\ScreenMusicScroll.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenNetworkGame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenNetworkGame.h
 # End Source File
 # Begin Source File
 

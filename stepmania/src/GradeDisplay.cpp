@@ -72,7 +72,7 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
-	SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	SetDiffuse( RageColor(1,1,1,1) );
 
 	// Ugly...  This has to handle cases where the sprite has 7, 8, 14, or 16 states
 	int iNumCols = (this->GetNumStates()>8) ? 2 : 1;
@@ -85,7 +85,7 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	case GRADE_C:		SetState( 4*iNumCols+pn );	break;
 	case GRADE_D:		SetState( 5*iNumCols+pn );	break;
 	case GRADE_E:		SetState( 6*iNumCols+pn );	break;
-	case GRADE_NO_DATA:	SetDiffuse( D3DXCOLOR(1,1,1,0) );	break;
+	case GRADE_NO_DATA:	SetDiffuse( RageColor(1,1,1,0) );	break;
 	default:			ASSERT(0);
 	}
 };
@@ -98,7 +98,7 @@ void GradeDisplay::SpinAndSettleOn( Grade g )
 	m_bDoScrolling = true;
 
 
-	SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	SetDiffuse( RageColor(1,1,1,1) );
 
 	int iFrameNo=0;
 	switch( g )

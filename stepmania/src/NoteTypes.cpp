@@ -12,19 +12,19 @@
 #include "NoteTypes.h"
 
 
-D3DXCOLOR NoteTypeToColor( NoteType nt )
+RageColor NoteTypeToColor( NoteType nt )
 {
 	switch( nt )
 	{
-	case NOTE_TYPE_4TH:		return D3DXCOLOR(1,0,0,1);	// red
-	case NOTE_TYPE_8TH:		return D3DXCOLOR(0,0,1,1);	// blue
-	case NOTE_TYPE_12TH:	return D3DXCOLOR(1,0,1,1);	// purple
-	case NOTE_TYPE_16TH:	return D3DXCOLOR(1,1,0,1);	// yellow
-	case NOTE_TYPE_24TH:	return D3DXCOLOR(0,1,1,1);	// light blue
+	case NOTE_TYPE_4TH:		return RageColor(1,0,0,1);	// red
+	case NOTE_TYPE_8TH:		return RageColor(0,0,1,1);	// blue
+	case NOTE_TYPE_12TH:	return RageColor(1,0,1,1);	// purple
+	case NOTE_TYPE_16TH:	return RageColor(1,1,0,1);	// yellow
+	case NOTE_TYPE_24TH:	return RageColor(0,1,1,1);	// light blue
 	default:
 		ASSERT(0);
 	case NOTE_TYPE_32ND:	// fall through
-		return D3DXCOLOR(0.5f,0.5f,0.5f,1);	// gray
+		return RageColor(0.5f,0.5f,0.5f,1);	// gray
 	}		
 };
 
@@ -58,12 +58,12 @@ bool IsNoteOfType( int iNoteIndex, NoteType t )
 	return GetNoteType(iNoteIndex) == t;
 }
 
-D3DXCOLOR GetNoteColorFromIndex( int iIndex )
+RageColor GetNoteColorFromIndex( int iIndex )
 { 
 	return NoteTypeToColor( GetNoteType(iIndex) );
 }
 
-D3DXCOLOR GetNoteColorFromBeat( float fBeat )
+RageColor GetNoteColorFromBeat( float fBeat )
 { 
 	return GetNoteColorFromIndex( BeatToNoteRow(fBeat) );
 }

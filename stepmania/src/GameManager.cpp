@@ -1281,7 +1281,7 @@ bool GameManager::GetMetricB( CString sClassName, CString sValueName )
 	return atoi( GetMetric(sClassName,sValueName) ) != 0;
 }
 
-D3DXCOLOR GameManager::GetMetricC( CString sClassName, CString sValueName )
+RageColor GameManager::GetMetricC( CString sClassName, CString sValueName )
 {
 	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
 	CString sValue = GetMetric(sClassName,sValueName);
@@ -1294,7 +1294,7 @@ D3DXCOLOR GameManager::GetMetricC( CString sClassName, CString sValueName )
 		ASSERT(0);
 	}
 
-	return D3DXCOLOR(r,g,b,a);
+	return RageColor(r,g,b,a);
 }
 
 

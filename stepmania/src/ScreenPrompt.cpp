@@ -35,7 +35,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 
 
 	m_Fade.SetTransitionTime( 0.5f );
-	m_Fade.SetDiffuse( D3DXCOLOR(0,0,0,0.7f) );
+	m_Fade.SetDiffuse( RageColor(0,0,0,0.7f) );
 	m_Fade.SetOpened();
 	m_Fade.CloseWipingRight();
 	this->AddChild( &m_Fade );
@@ -45,7 +45,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
 
-	m_rectAnswerBox.SetDiffuse( D3DXCOLOR(0.5f,0.5f,1.0f,0.7f) );
+	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
 	this->AddChild( &m_rectAnswerBox );
 
 	m_textAnswer[0].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
@@ -142,17 +142,17 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
 	m_textQuestion.BeginTweening( 0.2f );
-	m_textQuestion.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textQuestion.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_rectAnswerBox.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 	m_textAnswer[m_bAnswer].SetEffectNone();
 
 	m_textAnswer[0].BeginTweening( 0.2f );
-	m_textAnswer[0].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textAnswer[0].SetTweenDiffuse( RageColor(1,1,1,0) );
 	m_textAnswer[1].BeginTweening( 0.2f );
-	m_textAnswer[1].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	m_textAnswer[1].SetTweenDiffuse( RageColor(1,1,1,0) );
 
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 

@@ -38,8 +38,9 @@
 
 using namespace std;
 
-#include <d3d8.h>
-#include <d3dx8math.h>
+// Don't include these everywhere.  They're big.  -Chris
+//#include <d3d8.h>
+//#include <d3dx8math.h>
 
 #ifndef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION  0x0800

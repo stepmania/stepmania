@@ -100,10 +100,10 @@ const float HELP_Y		= SCREEN_HEIGHT-20;
 
 const float TWEEN_TIME		= 0.35f;
 
-const D3DXCOLOR COLOR_P1_SELECTED = D3DXCOLOR(0.4f,1.0f,0.8f,1);
-const D3DXCOLOR COLOR_P2_SELECTED = D3DXCOLOR(1.0f,0.5f,0.2f,1);
-const D3DXCOLOR COLOR_P1_NOT_SELECTED = COLOR_P1_SELECTED*0.5f + D3DXCOLOR(0,0,0,0.5f);
-const D3DXCOLOR COLOR_P2_NOT_SELECTED = COLOR_P2_SELECTED*0.5f + D3DXCOLOR(0,0,0,0.5f);
+const RageColor COLOR_P1_SELECTED = RageColor(0.4f,1.0f,0.8f,1);
+const RageColor COLOR_P2_SELECTED = RageColor(1.0f,0.5f,0.2f,1);
+const RageColor COLOR_P1_NOT_SELECTED = COLOR_P1_SELECTED*0.5f + RageColor(0,0,0,0.5f);
+const RageColor COLOR_P2_NOT_SELECTED = COLOR_P2_SELECTED*0.5f + RageColor(0,0,0,0.5f);
 
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
@@ -147,7 +147,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 
 
 	m_textExplanation1.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textExplanation1.SetDiffuse( D3DXCOLOR(0,0.7f,0,1) );
+	m_textExplanation1.SetDiffuse( RageColor(0,0.7f,0,1) );
 	m_textExplanation1.SetXY( EXPLANATION1_X, EXPLANATION1_Y );
 	m_textExplanation1.SetZ( -1 );
 	m_textExplanation1.SetZoomX( EXPLANATION1_ZOOM_X );
@@ -156,7 +156,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	this->AddChild( &m_textExplanation1 );
 
 	m_textExplanation2.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textExplanation2.SetDiffuse( D3DXCOLOR(0,0.7f,0,1) );
+	m_textExplanation2.SetDiffuse( RageColor(0,0.7f,0,1) );
 	m_textExplanation2.SetXY( EXPLANATION2_X, EXPLANATION2_Y );
 	m_textExplanation2.SetZ( -1 );
 	m_textExplanation2.SetZoomX( EXPLANATION2_ZOOM_X );
@@ -344,7 +344,7 @@ void ScreenSelectStyle5th::AfterChange()
 	{
 	case 0:
 		m_sprPad[0].BeginTweening( TWEEN_TIME );
-		m_sprPad[0].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[0].SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[0].BeginTweening( TWEEN_TIME );
 		m_sprDancer[0].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[0].StartAnimating();
@@ -352,7 +352,7 @@ void ScreenSelectStyle5th::AfterChange()
 		break;
 	case 1:
 		m_sprPad[1].BeginTweening( TWEEN_TIME );
-		m_sprPad[1].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[1].SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[1].BeginTweening( TWEEN_TIME );
 		m_sprDancer[1].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[1].StartAnimating();
@@ -363,7 +363,7 @@ void ScreenSelectStyle5th::AfterChange()
 		break;
 	case 2:
 		m_sprPad[2].BeginTweening( TWEEN_TIME );
-		m_sprPad[2].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[2].SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[3].BeginTweening( TWEEN_TIME );
 		m_sprDancer[3].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[3].StartAnimating();
@@ -371,7 +371,7 @@ void ScreenSelectStyle5th::AfterChange()
 		break;
 	case 3:
 		m_sprPad[3].BeginTweening( TWEEN_TIME );
-		m_sprPad[3].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[3].SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[4].BeginTweening( TWEEN_TIME );
 		m_sprDancer[4].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[4].StartAnimating();
@@ -382,7 +382,7 @@ void ScreenSelectStyle5th::AfterChange()
 		break;
 	case 4:
 		m_sprPad[4].BeginTweening( TWEEN_TIME );
-		m_sprPad[4].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+		m_sprPad[4].SetTweenDiffuse( RageColor(1,1,1,1) );
 		m_sprDancer[6].BeginTweening( TWEEN_TIME );
 		m_sprDancer[6].SetTweenDiffuse( COLOR_P1_SELECTED );
 		m_sprDancer[6].StartAnimating();

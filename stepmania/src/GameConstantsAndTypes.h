@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "D3DX8Math.h"	// for D3DXCOLOR
+#include "RageTypes.h"	// for RageColor
 
 
 /////////////////////////////
@@ -93,8 +93,8 @@ enum PlayerNumber {
 	PLAYER_INVALID
 };
 
-D3DXCOLOR PlayerToColor( PlayerNumber pn );
-D3DXCOLOR PlayerToColor( int p );
+RageColor PlayerToColor( PlayerNumber pn );
+RageColor PlayerToColor( int p );
 
 
 enum SongSortOrder { 

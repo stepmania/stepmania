@@ -124,7 +124,7 @@ void BGAnimation::GainingFocus()
 	for( int i=0; i<m_Layers.GetSize(); i++ )
 		m_Layers[i]->GainingFocus();
 
-	SetDiffuse( D3DXCOLOR(1,1,1,1) );
+	SetDiffuse( RageColor(1,1,1,1) );
 }
 
 void BGAnimation::LosingFocus()
@@ -133,7 +133,7 @@ void BGAnimation::LosingFocus()
 		m_Layers[i]->LosingFocus();
 }
 
-void BGAnimation::SetDiffuse( const D3DXCOLOR &c )
+void BGAnimation::SetDiffuse( const RageColor &c )
 {
 	for( int i=0; i<m_Layers.GetSize(); i++ ) 
 		m_Layers[i]->SetDiffuse(c);

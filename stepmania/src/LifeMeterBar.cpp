@@ -50,7 +50,7 @@ public:
 
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
 
-		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+		m_quadMask.SetDiffuse( RageColor(0,0,0,0) );
 		m_quadMask.SetZ( -1 );
 
 		CString sGraphicPath;
@@ -177,7 +177,7 @@ public:
 		m_sprStreamNormal.SetCustomTextureRect( frectCustomTexCoords );
 		m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
 
-		m_sprStreamHot.SetDiffuse( D3DXCOLOR(1,1,1,m_fHotAlpha) );
+		m_sprStreamHot.SetDiffuse( RageColor(1,1,1,m_fHotAlpha) );
 
 		m_sprStreamNormal.Draw();
 		m_sprStreamHot.Draw();
@@ -240,7 +240,7 @@ LifeMeterBar::LifeMeterBar()
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
 
-	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBlackBackground.SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBlackBackground.SetZoomX( (float)g_iMeterWidth );
 	m_quadBlackBackground.SetZoomY( (float)g_iMeterHeight );
 
@@ -405,7 +405,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_sprStreamHot.StretchTo( &rectSize );
 	m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
 
-	m_sprStreamHot.SetDiffuse(    D3DXCOLOR(1,1,1,m_fHotAlpha) );
+	m_sprStreamHot.SetDiffuse(    RageColor(1,1,1,m_fHotAlpha) );
 
 */
 
@@ -413,7 +413,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
 	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
-	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
+	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
 
 	ActorFrame::DrawPrimitives();
 }
@@ -424,20 +424,20 @@ void LifeMeterBar::DrawPrimitives()
   of the theme.  That's where it belongs anyway...
 
   
-const D3DXCOLOR COLOR_EZ2NORMAL_1	= D3DXCOLOR(0.7f,0.4f,0,1);
-const D3DXCOLOR COLOR_EZ2NORMAL_2	= D3DXCOLOR(0.8f,0.4f,0,1);
-const D3DXCOLOR COLOR_EZ2NEARFULL_1	= D3DXCOLOR(0.7f,0.6f,0,1);
-const D3DXCOLOR COLOR_EZ2NEARFULL_2	= D3DXCOLOR(0.8f,0.7f,0,1);
-const D3DXCOLOR COLOR_EZ2NEARFAIL_1	= D3DXCOLOR(0.9f,0.0f,0,1);
-const D3DXCOLOR COLOR_EZ2NEARFAIL_2	= D3DXCOLOR(0.8f,0.1f,0,1);
-const D3DXCOLOR COLOR_EZ2FULL_1	= D3DXCOLOR(0.3f,0.9f,0.4f,1);
-const D3DXCOLOR COLOR_EZ2FULL_2	= D3DXCOLOR(0.2f,0.7f,0.3f,1);
-const D3DXCOLOR COLOR_NORMAL_1	= D3DXCOLOR(1,1,1,1);
-const D3DXCOLOR COLOR_NORMAL_2	= D3DXCOLOR(0,1,0,1);
-const D3DXCOLOR COLOR_FULL_1	= D3DXCOLOR(1,0,0,1);
-const D3DXCOLOR COLOR_FULL_2	= D3DXCOLOR(1,1,0,1);
+const RageColor COLOR_EZ2NORMAL_1	= RageColor(0.7f,0.4f,0,1);
+const RageColor COLOR_EZ2NORMAL_2	= RageColor(0.8f,0.4f,0,1);
+const RageColor COLOR_EZ2NEARFULL_1	= RageColor(0.7f,0.6f,0,1);
+const RageColor COLOR_EZ2NEARFULL_2	= RageColor(0.8f,0.7f,0,1);
+const RageColor COLOR_EZ2NEARFAIL_1	= RageColor(0.9f,0.0f,0,1);
+const RageColor COLOR_EZ2NEARFAIL_2	= RageColor(0.8f,0.1f,0,1);
+const RageColor COLOR_EZ2FULL_1	= RageColor(0.3f,0.9f,0.4f,1);
+const RageColor COLOR_EZ2FULL_2	= RageColor(0.2f,0.7f,0.3f,1);
+const RageColor COLOR_NORMAL_1	= RageColor(1,1,1,1);
+const RageColor COLOR_NORMAL_2	= RageColor(0,1,0,1);
+const RageColor COLOR_FULL_1	= RageColor(1,0,0,1);
+const RageColor COLOR_FULL_2	= RageColor(1,1,0,1);
 
-D3DXCOLOR LifeStream::GetColor( float fPercentIntoSection )
+RageColor LifeStream::GetColor( float fPercentIntoSection )
 {
 	float fPercentColor1 = fabsf( fPercentIntoSection*2 - 1 );
 	fPercentColor1 *= fPercentColor1 * fPercentColor1 * fPercentColor1;	// make the color bunch around one side
@@ -483,11 +483,11 @@ void LifeStream::DrawPrimitives()
 		//
 		// draw middle
 		//
-		v[iNumV++].p = D3DXVECTOR3( fX, -0.5f, 0 );
-		v[iNumV++].p = D3DXVECTOR3( fX,  0.5f, 0 );
+		v[iNumV++].p = RageVector3( fX, -0.5f, 0 );
+		v[iNumV++].p = RageVector3( fX,  0.5f, 0 );
 		
 		iNumV -= 2;
-		const D3DXCOLOR color = GetColor( fPercentIntoSection ); 
+		const RageColor color = GetColor( fPercentIntoSection ); 
 		v[iNumV++].color = color;
 		v[iNumV++].color = color;
 
@@ -517,11 +517,11 @@ void LifeStream::DrawPrimitives()
 	//
 	// draw right edge
 	//
-	v[iNumV++].p = D3DXVECTOR3( fX, -0.5f, 0 );
-	v[iNumV++].p = D3DXVECTOR3( fX,  0.5f, 0 );
+	v[iNumV++].p = RageVector3( fX, -0.5f, 0 );
+	v[iNumV++].p = RageVector3( fX,  0.5f, 0 );
 	
 	iNumV -= 2;
-	const D3DXCOLOR color = GetColor( fPercentIntoSection ); 
+	const RageColor color = GetColor( fPercentIntoSection ); 
 	v[iNumV++].color = color;
 	v[iNumV++].color = color; 
 

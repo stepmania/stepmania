@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAGEDISPLAY_H
+#define RAGEDISPLAY_H
 /*
 -----------------------------------------------------------------------------
  Class: RageDisplay
@@ -11,36 +12,17 @@
 -----------------------------------------------------------------------------
 */
 
-class RageDisplay;
-
-
-class RageTexture;
-#include <D3DX8.h>
-
-// A structure for our custom vertex type. We added texture coordinates
-struct RAGEVERTEX
-{
-    D3DXVECTOR3 p;			// position
-    D3DCOLOR    color;		// diffuse color
-	D3DXVECTOR2 t;			// texture coordinates
-};
-
-// Our custom FVF, which describes our custom vertex structure
-#define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-
-
-const int MAX_NUM_QUADS = 2048;
-//const int MAX_NUM_INDICIES = MAX_NUM_QUADS*3;	// two triangles per quad
-const int MAX_NUM_VERTICIES = MAX_NUM_QUADS*4;	// 4 verticies per quad
-
-
-
 // 
 // Chris:
-// I did a lot of testing, and drawing indexed primitives is SLOWER than duplicating 
-// verticies and not indexing.  In fact, drawing indexed primitives is about 30% slower.
+// Drawing indexed primitives is 30% SLOWER than duplicating verticies on a TNT, 
+// Win98 w/ latest drivers.  In fact, drawing indexed primitives is about 30% slower.
+// Does this have something to do with poor usage of the vertex cache since we're using 
+// DrawPrimitiveUP instead of DrawPrimitive?
 // 
 
+#include "D3D8.h"
+class RageTexture;
+#include "RageTypes.h"
 
 class RageDisplay
 {
@@ -72,10 +54,10 @@ public:
 	unsigned GetBPP() const		{ return GetBPP( m_d3dpp.BackBufferFormat ); }
 	
 //	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
-	void SetViewTransform( const D3DXMATRIX* pMatrix );
-	void SetProjectionTransform( const D3DXMATRIX* pMatrix );
-	void GetViewTransform( D3DXMATRIX* pMatrixOut );
-	void GetProjectionTransform( D3DXMATRIX* pMatrixOut );
+	void SetViewTransform( const RageMatrix* pMatrix );
+	void SetProjectionTransform( const RageMatrix* pMatrix );
+	void GetViewTransform( RageMatrix* pMatrixOut );
+	void GetProjectionTransform( RageMatrix* pMatrixOut );
 
 	void ResetMatrixStack();
 	void PushMatrix();
@@ -99,7 +81,7 @@ private:
 	unsigned GetBPP(D3DFORMAT fmt) const;
 	HRESULT SetMode();
 	D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP);
-	D3DXMATRIX& GetTopMatrix() { return m_MatrixStack.back(); }
+	RageMatrix& GetTopMatrix() { return m_MatrixStack.back(); }
 
 	HWND m_hWnd;
 
@@ -118,7 +100,7 @@ private:
 	void ReleaseVertexBuffer();
 
 	// OpenGL-like matrix stack
-	CArray<D3DXMATRIX, D3DXMATRIX&>	m_MatrixStack;
+	CArray<RageMatrix, RageMatrix&>	m_MatrixStack;
 
 	// for performance stats
 	float	m_fLastCheckTime;
@@ -132,24 +114,28 @@ private:
 	// Render Queue stuff
 	//
 protected:
-	RAGEVERTEX	m_vertQueue[MAX_NUM_VERTICIES];
+
+#define MAX_NUM_QUADS 2048
+#define MAX_NUM_VERTICIES (MAX_NUM_QUADS*4)	// 4 verticies per quad
+
+	RageVertex	m_vertQueue[MAX_NUM_VERTICIES];
 	int			m_iNumVerts;
 
 public:
 	// TODO:  Elminiate vertex duplication using an index buffer.  Would this work with OpenGL though?
-//	void AddTriangle( const RAGEVERTEX v[3] );
-	void AddQuad( const RAGEVERTEX v[4] );	// upper-left, upper-right, lower-left, lower-right
-	void AddFan( const RAGEVERTEX v[], int iNumPrimitives );
-	void AddStrip( const RAGEVERTEX v[], int iNumPrimitives );
+//	void AddTriangle( const RageVertex v[3] );
+	void AddQuad( const RageVertex v[4] );	// upper-left, upper-right, lower-left, lower-right
+	void AddFan( const RageVertex v[], int iNumPrimitives );
+	void AddStrip( const RageVertex v[], int iNumPrimitives );
 	void AddTriangle(
-		const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0,
-		const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1,
-		const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2 );
+		const RageVector3& p0, const D3DCOLOR& c0, const RageVector2& t0,
+		const RageVector3& p1, const D3DCOLOR& c1, const RageVector2& t1,
+		const RageVector3& p2, const D3DCOLOR& c2, const RageVector2& t2 );
 	void AddQuad(
-		const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0,	// upper-left
-		const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, 	// upper-right
-		const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, 	// lower-left
-		const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3 );	// lower-right
+		const RageVector3 &p0, const D3DCOLOR& c0, const RageVector2& t0,	// upper-left
+		const RageVector3 &p1, const D3DCOLOR& c1, const RageVector2& t1, 	// upper-right
+		const RageVector3 &p2, const D3DCOLOR& c2, const RageVector2& t2, 	// lower-left
+		const RageVector3 &p3, const D3DCOLOR& c3, const RageVector2& t3 );	// lower-right
 	void FlushQueue();
 	void SetTexture( RageTexture* pTexture );
 	void SetColorTextureMultDiffuse();
@@ -165,3 +151,5 @@ public:
 
 
 extern RageDisplay*		DISPLAY;	// global and accessable from anywhere in our program
+
+#endif

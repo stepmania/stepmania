@@ -39,17 +39,17 @@ Difficulty StringToDifficulty( CString sDC )
 	return CLASS_INVALID;
 }
 
-D3DXCOLOR PlayerToColor( PlayerNumber pn ) 
+RageColor PlayerToColor( PlayerNumber pn ) 
 {
 	switch( pn )
 	{
 		case PLAYER_1:	return COLOR_P1;
 		case PLAYER_2:	return COLOR_P2;
-		default: ASSERT(0); return D3DXCOLOR(0.5f,0.5f,0.5f,1);
+		default: ASSERT(0); return RageColor(0.5f,0.5f,0.5f,1);
 	}
 };
 
-D3DXCOLOR PlayerToColor( int p ) 
+RageColor PlayerToColor( int p ) 
 { 
 	return PlayerToColor( (PlayerNumber)p ); 
 }

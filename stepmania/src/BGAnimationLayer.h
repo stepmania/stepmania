@@ -32,7 +32,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
 
-	virtual void SetDiffuse( D3DXCOLOR c ) { for(int i=0; i<m_iNumSprites; i++) m_Sprites[i].SetDiffuse(c); }
+	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<m_iNumSprites; i++) m_Sprites[i].SetDiffuse(c); }
 
 	void GainingFocus();
 	void LosingFocus();
@@ -75,8 +75,8 @@ protected:
 	};
 	Effect	m_Effect;
 
-	D3DXVECTOR2 m_vHeadings[MAX_SPRITES];	// only used in EFFECT_PARTICLES_BOUNCE
+	RageVector2 m_vHeadings[MAX_SPRITES];	// only used in EFFECT_PARTICLES_BOUNCE
 
-	D3DXVECTOR2 m_vTexCoordVelocity;
+	RageVector2 m_vTexCoordVelocity;
 	float m_fRotationalVelocity;
 };

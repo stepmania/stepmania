@@ -29,7 +29,7 @@
 
 float g_fShowSeconds;
 float g_fZoomStart, g_fZoomEnd;
-D3DXCOLOR 
+RageColor 
 	g_colorPerfectStart, g_colorPerfectEnd, 
 	g_colorGreatStart, g_colorGreatEnd, 
 	g_colorGoodStart, g_colorGoodEnd, 
@@ -50,7 +50,7 @@ GhostArrow::GhostArrow()
 	g_colorBooEnd		= COLOR_BOO_END;
 
 
-	SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	SetDiffuse( RageColor(1,1,1,0) );
 }
 
 void GhostArrow::Update( float fDeltaTime )
@@ -65,7 +65,7 @@ void GhostArrow::Step( TapNoteScore score )
 	for( int i=0; i<Sprite::GetNumStates(); i++ )
 		Sprite::m_fDelay[i] = g_fShowSeconds / (float)Sprite::GetNumStates();
 
-	D3DXCOLOR colorStart, colorEnd;
+	RageColor colorStart, colorEnd;
 	switch( score )
 	{
 	case TNS_PERFECT:	colorStart = g_colorPerfectStart;	colorEnd = g_colorPerfectEnd;	break;
@@ -87,5 +87,5 @@ void GhostArrow::Step( TapNoteScore score )
 	SetTweenDiffuse( colorEnd );
 
 	BeginTweening( 0.0001f );		// snap to invisible
-	SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+	SetTweenDiffuse( RageColor(1,1,1,0) );
 }

@@ -26,6 +26,8 @@
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"
+#include "RageNetwork.h"
+#include "RageMath.h"
 
 #include "SDL.h"
 
@@ -709,6 +711,7 @@ HRESULT CreateObjects( HWND hWnd )
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter();
 	INPUTMAPPER	= new InputMapper();
+	NETWORK		= new RageNetwork();
 	INPUTQUEUE	= new InputQueue();
 	SONGINDEX	= new SongCacheIndex();
 	/* depends on SONGINDEX: */
@@ -749,6 +752,7 @@ HRESULT CreateObjects( HWND hWnd )
 void DestroyObjects()
 {
 	SAFE_DELETE( SCREENMAN );
+	SAFE_DELETE( NETWORK );
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
@@ -858,6 +862,52 @@ void Update()
 
 	SCREENMAN->Update( fDeltaTime );
 
+	NETWORK->Update( fDeltaTime );
+
+	// handle network input
+	Packet packet;
+	while( NETWORK->Recv(&packet) )
+	{
+		SCREENMAN->SystemMessage( "Packet Recv'd" );
+
+		// process pPacket
+		switch( packet.type )
+		{
+		case Packet::chat:
+			SCREENMAN->SystemMessage( (char*)packet.GetData() );
+			break;
+		case Packet::input:
+			{
+				GameInput* pGI;
+				pGI = (GameInput*)packet.GetData();
+				ASSERT( packet.GetSize() == sizeof(GameInput) );
+
+				DeviceInput DeviceI;
+				InputEventType type;
+				GameInput GameI;
+				MenuInput MenuI;
+				StyleInput StyleI;
+
+				DeviceI.MakeInvalid();
+				type = IET_FIRST_PRESS;
+
+				GameI = *pGI;
+
+				if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
+					INPUTQUEUE->RememberInput( GameI );
+				if( GameI.IsValid() )
+				{
+					INPUTMAPPER->GameToMenu( GameI, MenuI );
+					INPUTMAPPER->GameToStyle( GameI, StyleI );
+				}
+
+				SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
+			}
+			break;
+		default:
+			ASSERT(0);	// corrupt packet?  Not a type we recognize
+		}
+	}
 
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array
@@ -882,6 +932,17 @@ void Update()
 		}
 
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
+
+		if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
+		{
+			Packet packet;
+			packet.type = Packet::input;
+			packet.SetData( &GameI, sizeof(GameInput) );
+
+			NETWORK->Send( &packet );
+
+			SCREENMAN->SystemMessage( "Packet Sent" );
+		}
 	}
 }
 
@@ -913,12 +974,12 @@ void Render()
 		case S_OK:
 			{
 				// calculate view and projection transforms
-				D3DXMATRIX mat;
+				RageMatrix mat;
 			
-				D3DXMatrixOrthoOffCenterLH( &mat, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1000, 1000 );
+				RageMatrixOrthoOffCenterLH( &mat, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1000, 1000 );
 				DISPLAY->SetProjectionTransform( &mat );
 
-				D3DXMatrixIdentity( &mat );
+				RageMatrixIdentity( &mat );
 				DISPLAY->SetViewTransform( &mat );
 
 				DISPLAY->ResetMatrixStack();
