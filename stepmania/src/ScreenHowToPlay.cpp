@@ -100,6 +100,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 		if( sModelPath != "" )
 		{
 			m_pmCharacter = new Model;
+			m_pmCharacter->SetName( "Character" );
 			m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
