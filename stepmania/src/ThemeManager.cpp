@@ -15,6 +15,7 @@
 #include "PrefsManager.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "RageUtil.h"
 #include "GameState.h"
 #include "GameDef.h"
 #include "IniFile.h"
@@ -26,6 +27,7 @@
 #include "arch/arch.h"
 #include "RageFile.h"
 #include "ScreenManager.h"
+#include "StepMania.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -164,7 +166,8 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 		m_sCurLanguage = sLanguage;
 
 	// clear theme path cache
-	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+	int i;
+	for( i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
 		g_ThemePathCache[i].clear();
 
 	// update hashes for metrics files
@@ -197,6 +200,20 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	m_pIniCurMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 	m_pIniCurMetrics->ReadFile();
 
+	CString sMetric;
+	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
+	{
+		/* sMetric must be "foo::bar=baz".  "foo" and "bar" never contain "=", so in
+		 * "foo::bar=1+1=2", "baz" is always "1+1=2".  Neither foo nor bar may be
+		 * empty, but baz may be. */
+		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
+		vector<CString> sBits;
+		if( !re.Compare( sMetric, sBits ) )
+			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
+
+		m_pIniCurMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
+	}
+	
 	LOG->MapLog("theme", "Theme: %s", sThemeName.c_str());
 	LOG->MapLog("language", "Language: %s", sLanguage.c_str());
 }
