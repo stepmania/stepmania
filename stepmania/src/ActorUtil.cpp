@@ -64,6 +64,12 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 		 *
 		 * and allow "$TextItem$" in .actors to reference that.
 		 */
+		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
+		 * loading the BGAnimationLayer that we're in. */
+		if( sFile == "" )
+			RageException::Throw( "The actor file '%s' layer %s is missing File",
+				sIniPath.c_str(), sLayer.c_str() );
+
 		CString text;
 		if( ini.GetValue ( sLayer, "Text", text ) )
 		{
@@ -84,7 +90,6 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 		}
 		else
 		{
-
 			if( sFile.CompareNoCase("songbackground")==0 )
 			{
 				Song *pSong = GAMESTATE->m_pCurSong;
