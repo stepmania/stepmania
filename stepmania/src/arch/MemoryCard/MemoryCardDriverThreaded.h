@@ -4,19 +4,6 @@
 #include "MemoryCardDriver.h"
 #include "RageThreads.h"
 
-struct UsbStorageDeviceEx : public UsbStorageDevice
-{
-	UsbStorageDeviceEx() { MakeBlank(); }
-
-	void MakeBlank()
-	{
-		UsbStorageDevice::MakeBlank();
-		bWriteTestSucceeded = false;
-	}
-	
-	bool bWriteTestSucceeded;
-};
-
 class MemoryCardDriverThreaded : public MemoryCardDriver
 {
 public:
@@ -49,11 +36,9 @@ protected:
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
 	bool ShouldDoOsMount() { return m_MountThreadState==detect_and_mount; }
 
-	vector<UsbStorageDeviceEx> m_vStorageDevices;
+	vector<UsbStorageDevice> m_vStorageDevices;
 	bool m_bStorageDevicesChanged;
 	RageMutex m_mutexStorageDevices;	// protects the above two
-	bool m_bForceRedetectNextUpdate;	// on the next update, redetect from scratch report new devices found
-
 
 	// placed here for use by derivitives to eliminate duplicate code
 	void UnmountMountPoint( const CString &sMountPoint );

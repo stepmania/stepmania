@@ -5,6 +5,7 @@
 #include "RageFileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
+#include "Foreach.h"
 
 #include <cstdio>
 #include <cstring>
@@ -22,7 +23,7 @@ const CString TEMP_MOUNT_POINT = "@mctemp/";
 static const char *USB_DEVICE_LIST_FILE = "/proc/bus/usb/devices";
 static const char *ETC_MTAB = "/etc/mtab";
 
-void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut );
+void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
 
 static int RunProgram( const char *path, char *const args[], CString &out )
 {
@@ -147,23 +148,22 @@ void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 	// if usb-storage gets in a bad state, resetting usb-storage will sometimes fix it.
 	//
 	
-	LockMut( m_mutexStorageDevices );
-	
 	// unmount all devices before trying to remove the module
-	for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
+  FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
     {
-		UsbStorageDeviceEx &d = m_vStorageDevices[i];
-		CString sCommand = "umount " + d.sOsMountDir;
-		LOG->Trace( "reset unmount %i/%i (%s)", i, m_vStorageDevices.size(), sCommand.c_str() );
+		CString sCommand = "umount " + d->sOsMountDir;
+		LOG->Trace( "reset unmount (%s)", sCommand.c_str() );
 		ExecuteCommand( sCommand );
-		LOG->Trace( "reset unmount %i/%i done", i, m_vStorageDevices.size() );
+		LOG->Trace( "reset unmount done" );
+
+		// force a remount the next time cards aren't locked
+		d->bNeedsWriteTest = true;
+		d->bWriteTestSucceeded = false;
     }
 	
 	ExecuteCommand( "rmmod usb-storage" );
 	ExecuteCommand( "modprobe usb-storage" );
 	
-	m_bForceRedetectNextUpdate = true;
-
 	MountThreadDoOneUpdate();
 }
 
@@ -174,31 +174,40 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		usleep( 50000 );
 		return;
 	}
-	
-	if( m_bForceRedetectNextUpdate )
-	{
-		m_vDevicesLastSeen.clear();
-		m_bForceRedetectNextUpdate = false;
-		// fall through
-	}
+
+	bool bNeedToDoAnyMounts = false;
+	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
+	  {
+	    UsbStorageDevice &d = m_vDevicesLastSeen[i];
+	    if( d.bNeedsWriteTest )
+	      {
+		bNeedToDoAnyMounts = true;
+		break;
+	      }
+	  }
+
+	if( bNeedToDoAnyMounts )
+	  {
+	    // fall through
+	  }
 	else
-	{
-		pollfd pfd = { m_fd, POLLIN, 0 };
-		int ret = poll( &pfd, 1, 100 );
-		switch( ret )
-		{
-		case 1:
-			// file changed.  Fall through.
-			break;
-		case 0: // no change.  Poll again.
-			return;
-		case -1:
-			if( errno != EINTR )
-				LOG->Warn( "Error polling: %s", strerror(errno) );
-			return;
-		}
-	}
-	
+	  {
+	    pollfd pfd = { m_fd, POLLIN, 0 };
+	    int ret = poll( &pfd, 1, 100 );
+	    switch( ret )
+	      {
+	      case 1:
+		// file changed.  Fall through.
+		break;
+	      case 0: // no change.  Poll again.
+		return;
+	      case -1:
+		if( errno != EINTR )
+		  LOG->Warn( "Error polling: %s", strerror(errno) );
+		return;
+	      }
+	  }
+
 	// TRICKY: We're waiting for a change in the USB device list, but 
 	// the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
 	// on the USB device list because the usb-storage descriptors are separate files per 
@@ -206,52 +215,89 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	// usb-storage a chance to initialize.  
 	usleep(1000*300);
 	
-	vector<UsbStorageDeviceEx> vDevicesNow;
-	GetNewStorageDevices( vDevicesNow );
-	
-	vector<UsbStorageDeviceEx> &vNew = vDevicesNow;
-	vector<UsbStorageDeviceEx> &vOld = m_vDevicesLastSeen;
+	vector<UsbStorageDevice> vNew;
+	GetNewStorageDevices( vNew );
+	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
 	
 	// check for disconnects
-	vector<UsbStorageDeviceEx*> vDisconnects;
-	for( unsigned i=0; i<vOld.size(); i++ )
+	vector<UsbStorageDevice> vDisconnects;
+	FOREACH( UsbStorageDevice, vOld, old )
 	{
-		UsbStorageDeviceEx &old = vOld[i];
-		if( find(vNew.begin(),vNew.end(),old) == vNew.end() )// didn't find
+	  bool bMatch = false;
+	  FOREACH( UsbStorageDevice, vNew, newd )
+	    {
+	      if( old->IdsMatch(*newd) )
 		{
-			LOG->Trace( "Disconnected bus %d port %d level %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str() );
-			vDisconnects.push_back( &old );
+		  bMatch = true;
+		  break;
 		}
+	    }
+
+	  if( !bMatch )    // didn't find
+	    {
+	      LOG->Trace( "Disconnected bus %d port %d level %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
+	      vDisconnects.push_back( *old );
+
+	      FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
+		{
+		  if( old->IdsMatch(*d) )
+		  {
+		    m_vDevicesLastSeen.erase( d );
+		    break;
+		  }
+		}
+	    }
 	}
+
 	
 	// check for connects
-	vector<UsbStorageDeviceEx*> vConnects;
-	for( unsigned i=0; i<vNew.size(); i++ )
-	{
-		UsbStorageDeviceEx &newd = vNew[i];
-		if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )// didn't find
-		{
-			LOG->Trace( "Connected bus %d port %d level %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str() );
-			vConnects.push_back( &newd );
-		}
-	}
-	
+	vector<UsbStorageDevice> vConnects;
+        FOREACH( UsbStorageDevice, vNew, newd )
+	  {
+	    bool bMatch = false;
+	    FOREACH( UsbStorageDevice, vOld, old )
+	      {
+		if( old->IdsMatch(*newd) )
+		  {
+		    bMatch = true;
+		    break;
+		  }
+	      }
+
+	    if( !bMatch )    // didn't find
+	      {
+		LOG->Trace( "Connected bus %d port %d level %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
+		vConnects.push_back( *newd );
+
+		m_vDevicesLastSeen.push_back( *newd );
+	      }
+	  }
+
+	bool bDidAnyMounts = false;	
+
 	// unmount all disconnects
 	if( ShouldDoOsMount() )
 	  {
 	    for( unsigned i=0; i<vDisconnects.size(); i++ )
 	      {
-		UsbStorageDeviceEx &d = *vDisconnects[i];
+		UsbStorageDevice &d = vDisconnects[i];
 		CString sCommand = "umount " + d.sOsMountDir;
 		LOG->Trace( "unmount disconnects %i/%i (%s)", i, vDisconnects.size(), sCommand.c_str() );
 		ExecuteCommand( sCommand );
 		LOG->Trace( "unmount disconnects %i/%i done", i, vDisconnects.size() );
 	      }
 	    
-	    // mount all connects
-	    for( unsigned i=0; i<vConnects.size(); i++ )
+	    // mount all devices that need a write test
+	    for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
 	      {	  
-		UsbStorageDeviceEx &d = *vConnects[i];
+		UsbStorageDevice &d = m_vDevicesLastSeen[i];
+		if( !d.bNeedsWriteTest )
+		  continue;  // skip
+
+		bDidAnyMounts = true;
+
+		d.bNeedsWriteTest = false;
+
 		CString sCommand;
 		
 		// unmount this device before trying to mount it.  If this device
@@ -278,28 +324,21 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		d.sName = profile.GetDisplayName();
 		UnmountMountPoint( TEMP_MOUNT_POINT );
 
-		LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
+		LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
 	      }
 	  }
 
-	if( !vDisconnects.empty() || !vConnects.empty() )	  
+	if( bDidAnyMounts || !vDisconnects.empty() || !vConnects.empty() )	  
 	{
 		LockMut( m_mutexStorageDevices );
 		m_bStorageDevicesChanged = true;
-		m_vStorageDevices = vDevicesNow;
-		for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
-		{
-			UsbStorageDeviceEx &d = m_vStorageDevices[i];
-			LOG->Trace( "index %d, bWriteTestSucceeded %d", i, d.bWriteTestSucceeded );
-		}
+		m_vStorageDevices = m_vDevicesLastSeen;
 	}
-	
-	m_vDevicesLastSeen = vDevicesNow;
 	
 	CHECKPOINT;
 }
 
-bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDeviceEx>& vDevicesOut )
+bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "ReadUsbStorageDescriptor %s", fn.c_str() );
 	
@@ -348,7 +387,7 @@ bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevi
 
 #if 0
 /* usbd must have the serial number filled in; fill in iPort and iLevel. */
-static bool GetPortAndLevelFromSerial( CString sSerial, UsbStorageDeviceEx &usbd )
+static bool GetPortAndLevelFromSerial( CString sSerial, UsbStorageDevice &usbd )
 {
 	// Find all attached USB devices.  Output looks like:
 	// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
@@ -410,7 +449,7 @@ static bool GetPortAndLevelFromSerial( CString sSerial, UsbStorageDeviceEx &usbd
 }
 #endif
 
-void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
+void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "GetNewStorageDevices" );
 	
@@ -432,7 +471,7 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 		CStringArray vsLines;
 		split( sOutput, "\n", vsLines );
 		
-		UsbStorageDeviceEx usbd;
+		UsbStorageDevice usbd;
 		for( unsigned i=0; i<vsLines.size(); i++ )
 		{
 			CString &sLine = vsLines[i];

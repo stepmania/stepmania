@@ -25,7 +25,6 @@ MemoryCardDriverThreaded::MemoryCardDriverThreaded() :
 	m_mutexStorageDevices("StorageDevices")
 {
 	m_bShutdownNextUpdate = false;
-	m_bForceRedetectNextUpdate = true;
 	m_bStorageDevicesChanged = false;
 	m_MountThreadState = detect_and_mount;
 }
@@ -64,13 +63,6 @@ void MemoryCardDriverThreaded::SetMountThreadState( MountThreadState mts )
 
 	if( old == paused && mts != paused )
 		m_mutexPause.Unlock();
-
-	if( old == detect_and_dont_mount && mts == detect_and_mount )
-	{
-		m_bForceRedetectNextUpdate = true;
-		LockMut( m_mutexStorageDevices );
-		m_vStorageDevices.clear();
-	}
 
 	m_MountThreadState = mts;
 }
@@ -121,7 +113,7 @@ void MemoryCardDriverThreaded::GetStorageDevices( vector<UsbStorageDevice>& vDev
 bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint )
 {
 	LockMut( m_mutexStorageDevices );
-	vector<UsbStorageDeviceEx>::const_iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), *pDevice );
+	vector<UsbStorageDevice>::const_iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), *pDevice );
 	if( iter == m_vStorageDevices.end() )
 	{
 		LOG->Warn( "Trying to mount a memory card that is no longer connected. bus %d port %d device %d path %s", pDevice->iBus, pDevice->iPort, pDevice->iLevel, pDevice->sOsMountDir.c_str() );

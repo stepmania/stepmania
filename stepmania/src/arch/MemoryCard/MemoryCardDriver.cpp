@@ -4,7 +4,7 @@
 
 #include "arch/arch_platform.h"
 
-bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
+bool UsbStorageDevice::IdsMatch(const UsbStorageDevice& other) const
 {
   //  LOG->Trace( "Comparing %d %d %d %s %s to %d %d %d %s %s",
   //	      iBus, iPort, iLevel, sName.c_str(), sOsMountDir.c_str(),

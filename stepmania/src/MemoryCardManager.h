@@ -46,11 +46,7 @@ protected:
 
 	bool	m_bCardsLocked;
 	bool	m_bTooLate[NUM_PLAYERS];	// card was inserted after lock
-	bool	m_bWriteError[NUM_PLAYERS];	// couldn't write to the card
 	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, NULL if none
-
-	// don't play sounds on the first assign after resetting the driver
-	bool m_bDontPlaySoundsOnce;
 
 	RageSound m_soundReady;
 	RageSound m_soundError;

@@ -15,6 +15,8 @@ struct UsbStorageDevice
 		sScsiDevice = "";
 		sSerial = "";
 		sOsMountDir = "";
+		bNeedsWriteTest = true;
+		bWriteTestSucceeded = false;
 		sName = "";
 	};
 	int iBus;
@@ -24,16 +26,30 @@ struct UsbStorageDevice
 	int iScsiIndex;
 	CString sScsiDevice;
 	CString	sOsMountDir;	// WITHOUT trailing slash
-	CString	sName;	// Name in the profile on the memory card.  
-	// This is passed here because it's read in the mounting thread.
-	
+  bool bNeedsWriteTest;
+  bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
+  CString sName;  // Name in the profile on the memory card.
+
 	bool IsBlank() { return sOsMountDir.empty(); }
-	
-        bool operator==(const UsbStorageDevice& other) const;
-	bool operator!=(const UsbStorageDevice& other) const
-	{
-		return !operator==(other);
-	}
+
+  bool operator==(const UsbStorageDevice& other) const
+  {
+#define COMPARE(x) if( x != other.x ) return false;
+    COMPARE( iBus );
+    COMPARE( iPort );
+    COMPARE( iLevel );
+    COMPARE( sSerial );
+    COMPARE( iScsiIndex );
+    COMPARE( sScsiDevice );
+    COMPARE( sOsMountDir );
+    COMPARE( sName );
+    COMPARE( bNeedsWriteTest );
+    COMPARE( bWriteTestSucceeded );
+    COMPARE( sOsMountDir );
+#undef COMPARE
+    return true;
+  }
+        bool IdsMatch(const UsbStorageDevice& other) const;
 };
 
 class MemoryCardDriver
