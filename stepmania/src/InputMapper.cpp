@@ -400,7 +400,7 @@ void InputMapper::ReadMappingsFromDisk()
 
 	if( Key  )
 	{
-		FOREACH_CONST_Child( Key, i )
+		FOREACH_CONST_Attr( Key, i )
 		{
 			const CString &name = i->m_sName;
 			const CString &value = i->m_sValue;
