@@ -19,9 +19,9 @@
 #include "StyleDef.h"
 
 
-#define NORMAL_COLOR		THEME->GetMetricC("BPMDisplay","NormalColor")
-#define CHANGE_COLOR		THEME->GetMetricC("BPMDisplay","ChangeColor")
-#define EXTRA_COLOR			THEME->GetMetricC("BPMDisplay","ExtraColor")
+#define NORMAL_COLOR		THEME->GetMetricC(m_sName,"NormalColor")
+#define CHANGE_COLOR		THEME->GetMetricC(m_sName,"ChangeColor")
+#define EXTRA_COLOR			THEME->GetMetricC(m_sName,"ExtraColor")
 
 
 BPMDisplay::BPMDisplay()
