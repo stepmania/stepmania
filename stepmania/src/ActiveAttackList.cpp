@@ -50,6 +50,15 @@ void ActiveAttackList::Update( float fDelta )
 				continue; /* hasn't started yet */
 
 			CString sDisplayText = attack.sModifier;
+			
+			// Strip out the approach speed token
+			if( !sDisplayText.empty() && sDisplayText[0]=='*' )
+			{
+				int iPos = sDisplayText.Find(' ');
+				if( iPos != -1 )
+					sDisplayText.erase( sDisplayText.begin(), sDisplayText.begin()+iPos+1 );
+			}
+			
 			if( s.empty() )
 				s = sDisplayText;
 			else
