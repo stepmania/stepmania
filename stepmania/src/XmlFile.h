@@ -125,7 +125,7 @@ typedef struct _tagXMLNode
 	CString	value;
 	void GetValue(CString &out)	{ out = value; }
 	void GetValue(int &out)		{ out = atoi(value); }
-	void GetValue(float &out)	{ out = atof(value); }
+	void GetValue(float &out)	{ out = (float) atof(value); }
 
 	// internal variables
 	LPXNode	parent;		// parent node
