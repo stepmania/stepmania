@@ -80,6 +80,9 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	LABELS_ON_COMMAND				(m_sName,"LabelsOnCommand"),
 	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
 	ROW_Y							(m_sName,ROW_Y_NAME,NUM_ROWS_SHOWN),
+	ROW_Y_OFF_SCREEN_TOP			(m_sName,"RowYOffScreenTop"),
+	ROW_Y_OFF_SCREEN_CENTER			(m_sName,"RowYOffScreenCenter"),
+	ROW_Y_OFF_SCREEN_BOTTOM			(m_sName,"RowYOffScreenBottom"),
 	ITEMS_ZOOM						(m_sName,"ItemsZoom"),
 	ITEMS_START_X					(m_sName,"ItemsStartX"),
 	ITEMS_END_X						(m_sName,"ItemsEndX"),
@@ -1017,21 +1020,20 @@ void ScreenOptions::PositionItems()
 	int pos = 0;
 	for( int i=0; i<(int) Rows.size(); i++ )		// foreach row
 	{
-		float ItemPosition;
+		float fY;
 		if( i < first_start )
-			ItemPosition = -0.5f;
+			fY = ROW_Y_OFF_SCREEN_TOP;
 		else if( i < first_end )
-			ItemPosition = (float) pos++;
+			fY = ROW_Y.GetValue( pos++ );
 		else if( i < second_start )
-			ItemPosition = halfsize - 0.5f;
+			fY = ROW_Y_OFF_SCREEN_CENTER;
 		else if( i < second_end )
-			ItemPosition = (float) pos++;
+			fY = ROW_Y.GetValue( pos++ );
 		else
-			ItemPosition = (float) total - 0.5f;
+			fY = ROW_Y_OFF_SCREEN_BOTTOM;
 			
 		OptionRow &row = *Rows[i];
 
-		float fY = ROW_Y.GetValue( ItemPosition );
 		row.m_fY = fY;
 		row.m_bHidden = i < first_start ||
 							(i >= first_end && i < second_start) ||

@@ -118,6 +118,9 @@ protected:
 	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
 	ThemeMetric<int>				NUM_ROWS_SHOWN;
 	ThemeMetric1D<float>			ROW_Y;
+	ThemeMetric<float>				ROW_Y_OFF_SCREEN_TOP;
+	ThemeMetric<float>				ROW_Y_OFF_SCREEN_CENTER;
+	ThemeMetric<float>				ROW_Y_OFF_SCREEN_BOTTOM;
 	ThemeMetric<float>				ITEMS_ZOOM;
 	ThemeMetric<float>				ITEMS_START_X;
 	ThemeMetric<float>				ITEMS_END_X;
