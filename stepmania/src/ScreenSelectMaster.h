@@ -48,6 +48,7 @@ protected:
 	bool Move( PlayerNumber pn, int dir );
 	bool ChangePage( int iNewChoice );
 	bool ChangeSelection( PlayerNumber pn, int iNewChoice );
+	float DoMenuStart( PlayerNumber pn );
 
 	float GetCursorX( PlayerNumber pn, int iPartIndex );
 	float GetCursorY( PlayerNumber pn, int iPartIndex );

@@ -414,52 +414,44 @@ ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage()
 }
 
 
+float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
+{
+	if( m_bChosen[pn] == true )
+		return 0;
+	m_bChosen[pn] = true;
+
+	float fSecs = 0;
+	for( int page=0; page<NUM_PAGES; page++ )
+		fSecs = max( fSecs, OFF_COMMAND( m_sprMore[page] ) );
+
+	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
+		fSecs = max( fSecs, COMMAND( m_sprCursor[i][pn], "Choose") );
+	return fSecs;
+}
+
 void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 )
 		return;
-	if( m_bChosen[pn] == true )
-		return;
-	m_bChosen[pn] = true;
 
-	for( int page=0; page<NUM_PAGES; page++ )
-		OFF_COMMAND( m_sprMore[page] );
-
-	const ModeChoice& mc = m_aModeChoices[m_iChoice[pn]];
-	/* Don't play sound if we're on the second page and another player
-	 * has already selected, since it just played. */
-	bool AnotherPlayerSelected = false;
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
-		if(p != pn && m_bChosen[p])
-			AnotherPlayerSelected = true;
-
-	if(GetCurrentPage() != PAGE_2 || !AnotherPlayerSelected)
-	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
-		m_soundSelect.Play();
-	}
-
-	if( GetCurrentPage() == PAGE_2 )
-	{
-		// choose this for all the other players too
-		for( p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsHumanPlayer(p) && !m_bChosen[p] )
-				MenuStart( (PlayerNumber)p );
-	}
-
-	float fSecs = 0;
-
-	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-		fSecs = max( fSecs, COMMAND( m_sprCursor[i][pn], "Choose") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), m_aModeChoices[m_iChoice[pn]].m_sName.c_str())) );
+	m_soundSelect.Play();
 
 	bool bAllDone = true;
-
-	/* If SHARED_PREVIEW_AND_CURSOR, only one player has to pick. */
-	if( !SHARED_PREVIEW_AND_CURSOR )
+	float fSecs = 0;
+	if( SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
+		/* Only one player has to pick.  Choose this for all the other players, too. */
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsHumanPlayer(p) )
+			{
+				ASSERT( !m_bChosen[p] );
+				fSecs = max( fSecs, DoMenuStart( (PlayerNumber)p ) );
+			}
+	} else {
+		fSecs = max( fSecs, DoMenuStart(pn) );
 		// check to see if everyone has chosen
-		for( p=0; p<NUM_PLAYERS; p++ )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 				bAllDone &= m_bChosen[p];
 	}
