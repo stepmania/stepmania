@@ -578,8 +578,17 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
 			if( SHOW_RANDOM )
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+
 			if( SHOW_PORTAL )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+			{
+				/* Only add TYPE_PORTAL if there's at least one song on the list. */
+				bool bFoundAnySong = false;
+				for( unsigned i=0; !bFoundAnySong && i < arrayWheelItemDatas.size(); i++ )
+					if( arrayWheelItemDatas[i].m_Type == TYPE_SONG )
+						bFoundAnySong = true;
+				if( bFoundAnySong )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+			}
 		}
 
 		// HACK:  Add extra stage item if it isn't already present on the music wheel
