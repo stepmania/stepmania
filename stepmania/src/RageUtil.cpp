@@ -16,13 +16,12 @@
 ULONG		randseed = time(NULL);
 
 
-
 bool IsAnInt( LPCTSTR s )
 {
-	if( strlen(s) == 0 )
+	if( s[0] == '\0' )
 		return false;
 
-	for( UINT i=0; i<strlen(s); i++ )
+	for( UINT i=0; s[i]; i++ )
 		if( s[i] < '0' || s[i] > '9' )
 			return false;
 
