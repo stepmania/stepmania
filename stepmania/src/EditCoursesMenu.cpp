@@ -52,13 +52,13 @@ enum CourseEntryMenuRow
 	lives,
 };
 
-Menu g_CourseOptionsMenu
-(
-	"Course Options",
-	MenuRow( "Repeat",		true, 0, "NO","YES" ),
-	MenuRow( "Randomize",	true, 0, "NO","YES" ),
-	MenuRow( "Lives",		true, 4, "Use Bar Life","1","2","3","4","5","6","7","8","9","10" )
-);
+static const MenuRow g_CourseOptionsMenuItems[] =
+{
+	{ "Repeat",		true, 0, { "NO","YES" } },
+	{ "Randomize",	true, 0, { "NO","YES" } },
+	{ "Lives",		true, 4, { "Use Bar Life","1","2","3","4","5","6","7","8","9","10" } }
+};
+static Menu g_CourseOptionsMenu( "Course Options", g_CourseOptionsMenuItems );
 
 enum CourseOptionsMenuRow
 {
@@ -71,16 +71,16 @@ enum CourseOptionsMenuRow
 	NUM_ENTRY_OPTIONS_MENU_ROWS
 };
 
-Menu g_CourseEntryMenu
-(
-	"Course Entry Options",
-	MenuRow( "Song",			true, 0 ),
-	MenuRow( "Group",			true, 0 ),
-	MenuRow( "Difficulty",		true, 0 ),
-	MenuRow( "Low Meter",		true, 0 ),
-	MenuRow( "High Meter",		true, 0 ),
-	MenuRow( "Best/Worst value",true, 0 )
-);
+static const MenuRow g_CourseEntryMenuItems[] =
+{
+	{ "Song",			true, 0, { } },
+	{ "Group",			true, 0, { } },
+	{ "Difficulty",		true, 0, { } },
+	{ "Low Meter",		true, 0, { } },
+	{ "High Meter",		true, 0, { } },
+	{ "Best/Worst value",true, 0, { } },
+};
+static Menu g_CourseEntryMenu( "Course Entry Options", g_CourseEntryMenuItems );
 
 
 const bool g_bRowEnabledForType[NUM_COURSE_ENTRY_TYPES][NUM_ENTRY_OPTIONS_MENU_ROWS] = 

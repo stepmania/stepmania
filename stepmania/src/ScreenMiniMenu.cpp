@@ -67,7 +67,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 	for( unsigned i=0; i<m_Def.rows.size(); i++ )
 	{
-		MenuRow& line = m_Def.rows[i];
+		MenuRowInternal& line = m_Def.rows[i];
 		m_iCurAnswers[i] = 0;
 
 		float fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
@@ -296,3 +296,24 @@ bool ScreenMiniMenu::CanGoRight()
 	else
 		return m_iCurAnswers[m_iCurLine] != iNumInCurRow-1;
 }
+
+
+
+Menu::Menu( CString t, const MenuRow *rowp )
+{
+	title = t;
+	for( int i = 0; rowp[i].name; ++i )
+		rows.push_back( rowp[i] );
+}
+
+MenuRowInternal::MenuRowInternal( const MenuRow &r )
+{
+	name = r.name;
+	enabled = r.enabled;
+	defaultChoice = r.defaultChoice;
+#define PUSH( c )   if(c!=NULL) choices.push_back(c);
+	for( unsigned i = 0; i < ARRAYSIZE(r.choices); ++i )
+		PUSH( r.choices[i] );
+#undef PUSH
+}
+

@@ -115,7 +115,6 @@ public:
 	};
 	void HandleMainMenuChoice( MainMenuChoice c, int* iAnswers );
 
-	// MD 11/02/03 - added conversions of beats to pauses and vice-versa
 	enum AreaMenuChoice {
 		cut,
 		copy,
