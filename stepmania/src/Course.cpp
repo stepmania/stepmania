@@ -22,6 +22,7 @@
 #include "PlayerOptions.h"
 #include "SongOptions.h"
 #include "RageUtil.h"
+#include "TitleSubstitution.h"
 
 Course::Course()
 {
@@ -175,6 +176,11 @@ void Course::LoadFromCRSFile( CString sPath )
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
+	static TitleSubst tsub;
+
+	CString ignore;
+	tsub.Subst(m_sName, ignore, ignore,
+				ignore, ignore, ignore);
 }
 
 
