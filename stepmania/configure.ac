@@ -55,15 +55,15 @@ AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
 
 AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
 
-AC_ARG_ENABLE(gtk2,[  --enable-gtk2             enable debug mode [default=yes]], , enable_gtk2=yes)
+AC_ARG_ENABLE(gtk2, AC_HELP_STRING([--disable-gtk2], [Disable GTK support]), enable_gtk2=$enableval, enable_gtk2=yes)
 
 if test x$enable_gtk2 = xyes; then
-  AM_PATH_GTK_2_0(2.0.0,AC_DEFINE([HAVE_GTK],1,[Define presence of GTK]),gtk=false)
+  AM_PATH_GTK_2_0(2.0.0,AC_DEFINE([HAVE_GTK],1,[Define presence of GTK]),enable_gtk2=no)
 fi
 
 AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
-AM_CONDITIONAL(HAVE_GTK, test x$gtk != xfalse )
+AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
