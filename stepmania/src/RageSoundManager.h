@@ -5,6 +5,7 @@
 #include <map>
 #include "SDL_utils.h"
 #include "RageThreads.h"
+#include "RageUtil_CircularBuffer.h"
 
 class RageSound;
 class RageSoundBase;
@@ -24,6 +25,13 @@ class RageSoundManager
 
 	/* Prefs: */
 	float MixVolume;
+	struct queued_pos_map_t
+	{
+		int ID, pos, got_frames;
+		int64_t frameno;
+	};
+
+	CircBuf<queued_pos_map_t> pos_map_queue;
 
 public:
 	RageMutex lock;
@@ -40,6 +48,8 @@ public:
 	int64_t GetPosition( const RageSoundBase *snd ) const;	/* used by RageSound */
 	int RegisterSound( RageSound *p );		/* used by RageSound */
 	void UnregisterSound( RageSound *p );	/* used by RageSound */
+	void CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_bytes );	/* used by drivers */
+	void FlushPosMapQueue();				/* used by RageSound */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
 	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }

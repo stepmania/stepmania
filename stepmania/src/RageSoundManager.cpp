@@ -32,6 +32,8 @@ RageSoundManager::RageSoundManager(CString drivers)
 		SOUNDMAN = NULL;
 		throw;
 	}
+
+	pos_map_queue.reserve( 1024 );
 }
 
 RageSoundManager::~RageSoundManager()
@@ -75,6 +77,9 @@ int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
 void RageSoundManager::Update(float delta)
 {
 	LockMut(lock);
+
+	FlushPosMapQueue();
+
 	while(!sounds_to_delete.empty())
 	{
 		delete *sounds_to_delete.begin();
@@ -103,6 +108,42 @@ void RageSoundManager::UnregisterSound( RageSound *p )
 {
 	LockMut(lock);
 	all_sounds.erase( p );
+}
+
+void RageSoundManager::CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_frames )
+{
+	/* This can be called from realtime threads; don't lock any mutexes. */
+	queued_pos_map_t p;
+	p.ID = ID;
+	p.frameno = frameno;
+	p.pos = pos;
+	p.got_frames = got_frames;
+
+	pos_map_queue.write( &p, 1 );
+}
+
+void RageSoundManager::FlushPosMapQueue()
+{
+	LockMut(SOUNDMAN->lock);
+	queued_pos_map_t p;
+
+	while( pos_map_queue.read( &p, 1 ) )
+	{
+		/* Find the sound with p.ID. */
+		set<RageSound *>::iterator it;
+		for( it = all_sounds.begin(); it != all_sounds.end(); ++it )
+			if( (*it)->GetID() == p.ID )
+				break;
+
+		/* If we can't find the ID, the sound was probably deleted before we got here. */
+		if( it == all_sounds.end() )
+		{
+			LOG->Trace("ignored unknown (stale?) commit ID %i", p.ID);
+			continue;
+		}
+
+		(*it)->CommitPlayingPosition( p.frameno, p.pos, p.got_frames );
+	}
 }
 
 float RageSoundManager::GetPlayLatency() const
