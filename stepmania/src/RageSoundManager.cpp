@@ -81,6 +81,14 @@ void RageSoundManager::StopMixing( RageSoundBase *snd )
 		driver->StopMixing(snd);
 }
 
+bool RageSoundManager::Pause( RageSoundBase *snd, bool bPause )
+{
+	if( driver == NULL )
+		return false;
+	else
+		return driver->PauseMixing( snd, bPause );
+}
+
 int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
 {
 	if( driver == NULL )

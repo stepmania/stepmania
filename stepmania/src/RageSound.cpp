@@ -643,6 +643,12 @@ void RageSound::Stop()
 	StopPlaying();
 }
 
+bool RageSound::Pause( bool bPause )
+{
+	ASSERT( Sample );
+	return SOUNDMAN->Pause( this, bPause );
+}
+	
 
 float RageSound::GetLengthSeconds()
 {

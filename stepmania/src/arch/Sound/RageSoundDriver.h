@@ -21,6 +21,13 @@ public:
 	 * snd was not actually being played, though it may print a warning. */
 	virtual void StopMixing( RageSoundBase *snd ) = 0;
 
+	/* Pause or unpause the given sound.  If the sound was stopped (not paused),
+	 * return false and do nothing; otherwise return true and pause or unpause
+	 * the sound.  Unlike StopMixing, pausing and unpause a sound will not lose
+	 * any buffered sound (but will not release any resources associated with
+	 * playing the sound, either). */
+	virtual bool PauseMixing( RageSoundBase *snd, bool bStop ) = 0;
+
 	/* Get the current position of a given buffer, in the same units and time base
 	 * as passed to RageSound::GetPCM. */
 	virtual int64_t GetPosition( const RageSoundBase *snd ) const = 0;

@@ -108,6 +108,10 @@ public:
 	RageSound *Play( const RageSoundParams *params=NULL );
 	void Stop();
 
+	/* Cleanly pause or unpause the sound.  If the sound wasn't already playing,
+	 * return true and do nothing. */
+	bool Pause( bool bPause );
+
 	float GetLengthSeconds();
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;

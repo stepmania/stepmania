@@ -14,6 +14,7 @@ public:
 
 	void StartMixing( RageSoundBase *snd );		/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
+	bool PauseMixing( RageSoundBase *snd, bool bStop );
 
 	RageSound_Generic_Software();
 	virtual ~RageSound_Generic_Software();
@@ -106,6 +107,8 @@ private:
 
 		/* If true, this sound is in STOPPED and available for use. */
 		bool available;
+
+		bool paused;
 
 		enum
 		{

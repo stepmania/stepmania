@@ -26,6 +26,7 @@ RageSound_Generic_Software::sound::sound()
 	snd = NULL;
 	state = STOPPED;
 	available = true;
+	paused = false;
 }
 
 void RageSound_Generic_Software::sound::Allocate( int frames )
@@ -82,6 +83,9 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 			continue;
 
 		/* STOPPING or PLAYING.  Read sound data. */
+		if( sounds[i].paused )
+			continue;
+
 		int got_frames = 0;
 		int frames_left = frames;
 
@@ -396,6 +400,27 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 //	LOG->Trace("end StopMixing");
 }
 
+
+bool RageSound_Generic_Software::PauseMixing( RageSoundBase *snd, bool bStop )
+{
+	LockMut( m_Mutex );
+
+	/* Find the sound. */
+	unsigned i;
+	for( i = 0; i < ARRAYSIZE(sounds); ++i )
+		if( !sounds[i].available && sounds[i].snd == snd )
+			break;
+
+	if( i == ARRAYSIZE(sounds) )
+	{
+		LOG->Trace( "not pausing a sound because it's not playing" );
+		return false;
+	}
+
+	sounds[i].paused = bStop;
+
+	return true;
+}
 
 void RageSound_Generic_Software::StartDecodeThread()
 {
