@@ -203,7 +203,7 @@ void RageSound::Update(float delta)
 /* Return the number of bytes available in the input buffer. */
 int RageSound::Bytes_Available() const
 {
-	return databuf.size();
+	return databuf.num_readable();
 }
 
 
@@ -277,7 +277,7 @@ int RageSound::FillBuf(int bytes)
 
 	while(bytes > 0)
 	{
-		if(read_block_size > databuf.capacity() - databuf.size())
+		if(read_block_size > databuf.num_writable())
 			break; /* full */
 
 		char inbuf[10240];
@@ -347,7 +347,7 @@ int RageSound::GetData(char *buffer, int size)
 	} else {
 		/* Feed data out of our streaming buffer. */
 		ASSERT(Sample);
-		got = min(int(databuf.size()), size);
+		got = min(int(databuf.num_readable()), size);
 		if(buffer)
 			databuf.read(buffer, got);
 	}
