@@ -25,6 +25,8 @@
 #include "ThemeManager.h"
 #include "GameManager.h"
 
+#include <fstream>
+
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 
@@ -34,7 +36,7 @@ const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { "Player1NotesScores.dat", 
 const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { "Player1CourseScores.dat", "Player2CourseScores.dat", "MachineCourseScores.dat" };
 const int CATEGORY_RANKING_VERSION = 1;
 const int COURSE_RANKING_VERSION = 1;
-const int NOTES_SCORES_VERSION = 1;
+const int NOTES_SCORES_VERSION = 2;
 const int COURSE_SCORES_VERSION = 1;
 
 
@@ -302,37 +304,54 @@ void SongManager::InitMachineScoresFromDisk()
 	// notes scores
 	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
 	{
-		FILE* fp = fopen( NOTES_SCORES_FILE[c], "r" );
-		if( fp )
+		ifstream f(NOTES_SCORES_FILE[c]);
+		if( f.good() )
 		{
+			CString line;
+
+			getline(f, line);
 			int version;
-			fscanf(fp, "%d\n", &version );
+			sscanf(line.GetString(), "%i", &version);
+
 			if( version == NOTES_SCORES_VERSION )
 			{			
-				while( fp && !feof(fp) )
+				while( f && !f.eof() )
 				{
-					char szSongDir[256];
+					CString sSongDir;
+					getline(f, sSongDir);
+
+					getline(f, line);
 					unsigned uNumNotes;
-					fscanf(fp, "%[^\n]\n%u\n", szSongDir, &uNumNotes);
-					Song* pSong = this->GetSongFromDir( szSongDir );
+					sscanf(line.GetString(), "%u", &uNumNotes);
+
+					Song* pSong = this->GetSongFromDir( sSongDir );
 
 					for( unsigned i=0; i<uNumNotes; i++ )
 					{
 						NotesType nt;
 						Difficulty dc;
-						char szDescription[256];
-						fscanf(fp, "%d\n%d\n%[^\n]\n", &nt, &dc, szDescription);
+	
+						getline(f, line);
+						sscanf(line.GetString(), "%d %d", &nt, &dc);
+
+						CString sDescription;
+						getline(f, sDescription);
+
 						Notes* pNotes = NULL;
 						if( pSong )
+						{
 							if( dc==DIFFICULTY_INVALID )
-								pNotes = pSong->GetNotes( nt, szDescription );
+								pNotes = pSong->GetNotes( nt, sDescription );
 							else
 								pNotes = pSong->GetNotes( nt, dc );
-
+						}
 						int iNumTimesPlayed;
 						Grade grade;
 						float fScore;
-						fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &grade, &fScore );
+						
+						getline(f, line);
+						sscanf(line.GetString(), "%d %d %f\n", &iNumTimesPlayed, &grade, &fScore );
+						
 						if( pNotes )
 						{
 							pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
@@ -342,7 +361,6 @@ void SongManager::InitMachineScoresFromDisk()
 					}
 				}
 			}
-			fclose(fp);
 		}
 	}
 
@@ -474,7 +492,7 @@ void SongManager::SaveMachineScoresToDisk()
 					Notes* pNotes = vNotes[i];
 					ASSERT(pNotes);
 
-					fprintf(fp, "%d\n%d\n%s\n", 
+					fprintf(fp, "%d %d\n%s\n", 
 						pNotes->m_NotesType,
 						pNotes->GetDifficulty(),
 						pNotes->GetDescription().c_str() );
