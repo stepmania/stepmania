@@ -17,6 +17,8 @@
 #include "RageSound.h"
 #include "BGAnimation.h"
 #include "SnapDisplay.h"
+#include "Background.h"
+#include "Foreground.h"
 
 
 const int NUM_ACTION_MENU_ITEMS = 23;
@@ -87,6 +89,8 @@ protected:
 // for MODE_PLAY
 
 	Player			m_Player;
+	Background		m_Background;
+	Foreground		m_Foreground;
 
 // for MODE_RECORD and MODE_PLAY
 
@@ -107,6 +111,7 @@ public:
 		edit_song_info,
 		edit_bg_change,
 		play_preview_music,
+		preferences,
 		exit,
 		NUM_MAIN_MENU_CHOICES
 	};
@@ -180,6 +185,11 @@ public:
 		add_global_visualization,
 		delete_change,
 		NUM_BGCHANGE_CHOICES
+	};
+
+	enum PrefsChoice {
+		pref_show_bgs_play,
+		NUM_PREFS_CHOICES
 	};
 	void HandleBGChangeChoice( BGChangeChoice c, int* iAnswers );
 

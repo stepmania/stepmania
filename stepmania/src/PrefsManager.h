@@ -187,6 +187,9 @@ public:
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
 
+	/* Editor prefs: */
+	bool			m_bEditorShowBGChangesPlay;
+
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
 	bool			m_bMoveRandomToEnd;

@@ -213,6 +213,8 @@ PrefsManager::PrefsManager()
 	m_bAllowExtraStage = true;
 	g_bAutoRestart = false;
 
+	m_bEditorShowBGChangesPlay = false;
+
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
 	m_bInterlaced = true;
@@ -485,6 +487,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 
+	ini.GetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
+
 	CString sAdditionalSongFolders;
 	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
 	{
@@ -694,6 +698,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
+
+	ini.SetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

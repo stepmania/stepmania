@@ -93,7 +93,7 @@ const ScreenMessage SM_BackFromPlayerOptions		= (ScreenMessage)(SM_User+7);
 const ScreenMessage SM_BackFromSongOptions			= (ScreenMessage)(SM_User+8);
 const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
 const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
-
+const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
 
 const CString HELP_TEXT = 
 	"Up/Down:\n     change beat\n"
@@ -147,6 +147,7 @@ static const MenuRow g_MainMenuItems[] =
 	{ "Edit Song Info",				true, 0, { NULL } },
 	{ "Add/Edit BG Change",			true, 0, { NULL } },
 	{ "Play preview music",			true, 0, { NULL } },
+	{ "Preferences",				true, 0, { NULL } },
 	{ "Exit (discards changes since last save)",true, 0, { NULL } },
 	{ NULL, true, 0, { NULL } }
 };
@@ -221,6 +222,13 @@ static const MenuRow g_BGChangeItems[] =
 	{ NULL, true, 0, { NULL } }
 };
 static Menu g_BGChange( "Background Change", g_BGChangeItems );
+
+static const MenuRow g_PrefsItems[] =
+{
+	{ "Show BGChanges during Play/Record",	true, 0, { "NO","YES" } },
+	{ NULL, true, 0, { NULL } }
+};
+static Menu g_Prefs( "Preferences", g_PrefsItems );
 
 static const MenuRow g_InsertAttackItems[] =
 {
@@ -442,6 +450,12 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
 	{
+		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+		{
+			m_Background.Update( fDeltaTime );
+			m_Foreground.Update( fDeltaTime );
+		}
+
 		// check for end of playback/record
 
 		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker + 4 )		// give a one measure lead out
@@ -585,12 +599,24 @@ void ScreenEdit::DrawPrimitives()
 		}
 		break;
 	case MODE_RECORDING:
-		m_BGAnimation.Draw();
+		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+			m_Background.Draw();
+		else
+			m_BGAnimation.Draw();
+
 		m_NoteFieldRecord.Draw();
+		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+			m_Foreground.Draw();
 		break;
 	case MODE_PLAYING:
-		m_BGAnimation.Draw();
+		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+			m_Background.Draw();
+		else
+			m_BGAnimation.Draw();
+
 		m_Player.Draw();
+		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+			m_Foreground.Draw();
 		break;
 	default:
 		ASSERT(0);
@@ -1206,6 +1232,10 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 /* Switch to editing. */
 void ScreenEdit::TransitionToEdit()
 {
+	/* Important: people will stop playing, change the BG and start again; make sure we reload */
+	m_Background.Unload();
+	m_Foreground.Unload();
+
 	m_EditMode = MODE_EDITING;
 	m_soundMusic.StopPlaying();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
@@ -1261,6 +1291,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BackFromBGChange:
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
+	case SM_BackFromPrefs:
+		PREFSMAN->m_bEditorShowBGChangesPlay = !!ScreenMiniMenu::s_iLastAnswers[pref_show_bgs_play];
+		PREFSMAN->SaveGlobalPrefsToDisk();
 		break;
 	case SM_BackFromPlayerOptions:
 	case SM_BackFromSongOptions:
@@ -1499,6 +1533,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				SCREENMAN->MiniMenu( &g_BGChange, SM_BackFromBGChange );
 			}
 			break;
+		case preferences:
+			g_Prefs.rows[pref_show_bgs_play].defaultChoice = PREFSMAN->m_bEditorShowBGChangesPlay;
+
+			SCREENMAN->MiniMenu( &g_Prefs, SM_BackFromPrefs );
+			break;
+
 		case play_preview_music:
 			PlayPreviewMusic();
 			break;
@@ -1701,6 +1741,22 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 			
+				if( PREFSMAN->m_bEditorShowBGChangesPlay )
+				{
+					/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
+					 * and recalc it. */
+					Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+					ASSERT( pNotes );
+					pNotes->SetNoteData( &m_NoteFieldEdit );
+					m_pSong->ReCalculateRadarValuesAndLastBeat();
+
+					m_Background.Unload();
+					m_Background.LoadFromSong( m_pSong );
+
+					m_Foreground.Unload();
+					m_Foreground.LoadFromSong( m_pSong );
+				}
+
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
