@@ -1035,22 +1035,23 @@ void ScreenGameplay::LoadNextSong()
 		//   -- Miryokuteki
 		//	Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
 
-		StepsType lightsSteps = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
-		GAMESTATE->m_pCurSong->GetSteps(vSteps,lightsSteps);
+		vSteps = GAMESTATE->m_pCurSong->GetAllSteps( STEPS_TYPE_LIGHTS_CABINET);
+
+		//If there are no light steps do this (to get current style's steps
+		if (vSteps.empty())
+			GAMESTATE->m_pCurSong->GetSteps(vSteps,
+				GAMESTATE->GetCurrentStyle()->m_StepsType);
 		
+		//Obtain the default steps (just in case the desired difficulty does not exist)
 		if(!vSteps.empty())
 			vSteps[0]->GetNoteData(&m_CabinetLightsNoteData);
+
+		//Scan through all available steps, to see if any match our desired difficulty
 		for (unsigned i = 0; i < vSteps.size(); ++i)
-		{ 	 
-			Difficulty DC = StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty);
-			Difficulty DC2 = vSteps[i]->GetDifficulty();
-			if(DC == DC2)
-				vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );
-		}
+			if (StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) ==
+				vSteps[i]->GetDifficulty())
+					vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );
 
-
-
-		
 		//if( pSteps != NULL )
 		//	pSteps->GetNoteData( &m_CabinetLightsNoteData );
 		
