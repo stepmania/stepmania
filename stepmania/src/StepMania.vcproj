@@ -381,6 +381,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenRanking.h">
 			</File>
 			<File
+				RelativePath="ScreenRaveOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenRaveOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenSandbox.cpp">
 			</File>
 			<File
