@@ -103,12 +103,16 @@ int64_t RageSound_OSS::GetPosition(const RageSoundBase *snd) const
 
 void RageSound_OSS::CheckOSSVersion( int fd )
 {
-	int version;
+	int version = 0;
+
+#if defined(HAVE_OSS_GETVERSION)
 	if( ioctl(fd, OSS_GETVERSION, &version) != 0 )
 	{
 		LOG->Warn( "OSS_GETVERSION failed: %s", strerror(errno) );
 		version = 0;
 	}
+#endif
+
 	/*
 	 * Find out if /dev/dsp is really ALSA emulating it.  ALSA's OSS emulation has
 	 * been buggy.  If we got here, we probably failed to init ALSA.  The only case
@@ -131,19 +135,22 @@ void RageSound_OSS::CheckOSSVersion( int fd )
 		RageException::ThrowNonfatal( "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.");
 	}
 #endif
-	int major, minor, rev;
-	if( version < 361 )
+	if( version )
 	{
-		major = (version/100)%10;
-		minor = (version/10) %10;
-		rev =   (version/1)  %10;
-	} else {
-		major = (version/0x10000) % 0x100;
-		minor = (version/0x00100) % 0x100;
-		rev =   (version/0x00001) % 0x100;
-	}
+		int major, minor, rev;
+		if( version < 361 )
+		{
+			major = (version/100)%10;
+			minor = (version/10) %10;
+			rev =   (version/1)  %10;
+		} else {
+			major = (version/0x10000) % 0x100;
+			minor = (version/0x00100) % 0x100;
+			rev =   (version/0x00001) % 0x100;
+		}
 
-	LOG->Info("OSS: %i.%i.%i", major, minor, rev );
+		LOG->Info("OSS: %i.%i.%i", major, minor, rev );
+	}
 }
 
 RageSound_OSS::RageSound_OSS()
