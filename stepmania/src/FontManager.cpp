@@ -67,7 +67,7 @@ Font* FontManager::LoadFont( CString sFontFilePath )
 
 	if( m_mapPathToFont.Lookup( sFontFilePath, pFont ) )	// if the texture already exists in the map
 	{
-		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontFilePath, pFont->m_iRefCount) );
+//		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontFilePath, pFont->m_iRefCount) );
 		pFont->m_iRefCount++;
 	}
 	else	// the texture is not already loaded
@@ -77,7 +77,7 @@ Font* FontManager::LoadFont( CString sFontFilePath )
 
 		pFont = (Font*) new Font( sFontFilePath );
 
-		LOG->Trace( "FontManager: Loading '%s' from disk.", sFontFilePath);
+//		LOG->Trace( "FontManager: Loading '%s' from disk.", sFontFilePath);
 
 		m_mapPathToFont.SetAt( sFontFilePath, pFont );
 	}
@@ -106,7 +106,7 @@ void FontManager::UnloadFont( CString sFontFilePath )
 
 	if( sFontFilePath == "" )
 	{
-		LOG->Trace( "FontManager::UnloadTexture(): tried to Unload a blank" );
+//		LOG->Trace( "FontManager::UnloadTexture(): tried to Unload a blank" );
 		return;
 	}
 	
@@ -117,13 +117,13 @@ void FontManager::UnloadFont( CString sFontFilePath )
 		pFont->m_iRefCount--;
 		if( pFont->m_iRefCount == 0 )		// there are no more references to this texture
 		{
-			LOG->Trace( "FontManager: '%s' will be deleted.  It has %d references.", sFontFilePath, pFont->m_iRefCount );
+//			LOG->Trace( "FontManager: '%s' will be deleted.  It has %d references.", sFontFilePath, pFont->m_iRefCount );
 			SAFE_DELETE( pFont );		// free the texture
 			m_mapPathToFont.RemoveKey( sFontFilePath );	// and remove the key in the map
 		}
 		else
 		{
-			LOG->Trace( ssprintf("FontManager: '%s' will not be deleted.  It still has %d references.", sFontFilePath, pFont->m_iRefCount) );
+//			LOG->Trace( ssprintf("FontManager: '%s' will not be deleted.  It still has %d references.", sFontFilePath, pFont->m_iRefCount) );
 		}
 
 	}

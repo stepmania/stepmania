@@ -932,7 +932,7 @@ void ScreenEdit::TransitionToEditFromRecord()
 	// delete old TapNotes in the range
 	m_NoteFieldEdit.ClearRange( iNoteIndexBegin, iNoteIndexEnd );
 
-	m_NoteFieldEdit.CopyRange( (NoteData*)&m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd );
+	m_NoteFieldEdit.CopyRange( (NoteData*)&m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
 
 	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
 }

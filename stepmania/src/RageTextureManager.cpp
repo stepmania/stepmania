@@ -76,7 +76,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		if( bForceReload )
 			pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
-		LOG->Trace( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
+//		LOG->Trace( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
 	}
 	else	// the texture is not already loaded
 	{
@@ -89,13 +89,13 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
 
-		LOG->Trace( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath, pTexture->m_iRefCount );
+		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath );
 
 
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
 	}
 
-	LOG->Trace( "Display: %.2f KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem()/1000000.0f );
+//	LOG->Trace( "Display: %.2f KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem()/1000000.0f );
 
 	return pTexture;
 }
@@ -132,13 +132,13 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		pTexture->m_iRefCount--;
 		if( pTexture->m_iRefCount == 0 )		// there are no more references to this texture
 		{
-			LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
+//			LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
 			SAFE_DELETE( pTexture );		// free the texture
 			m_mapPathToTexture.RemoveKey( sTexturePath );	// and remove the key in the map
 		}
 		else
 		{
-			LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
+//			LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
 		}
 	}
 	else // texture not found

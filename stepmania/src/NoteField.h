@@ -41,7 +41,7 @@ public:
 	void FadeToFail();
 
 protected:
-	inline void CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const D3DXCOLOR color = D3DXCOLOR(-1,-1,-1,-1) );
+	inline void CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const bool bUseHoldNoteBeginColor = false );
 	inline void CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife );
 	inline void DrawMeasureBar( const int iIndex, const int iMeasureNo );
 	inline void DrawMarkerBar( const int iIndex );

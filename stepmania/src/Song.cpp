@@ -22,7 +22,7 @@
 #include "RageException.h"
 
 
-const int FILE_CACHE_VERSION = 53;	// increment this to force a cache reload (useful when the SM file format changes)
+const int FILE_CACHE_VERSION = 54;	// increment this to force a cache reload (useful when the SM file format changes)
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -256,7 +256,7 @@ void Song::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &
 
 CString Song::GetCacheFilePath()
 {
-	return ssprintf( "Cache\\%d", GetHashForString(m_sSongDir) );
+	return ssprintf( "Cache\\%u", (UINT)GetHashForString(m_sSongDir) );
 }
 
 CString Song::GetSongFilePath()

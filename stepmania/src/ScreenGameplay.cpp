@@ -769,10 +769,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// fPositionSeconds ahead
 	if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
-		fPositionSeconds += (SOUND->GetPlayLatency()+0.04f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.04 seconds to make them play a tiny bit earlier
+		fPositionSeconds += (SOUND->GetPlayLatency()+0.01f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.02 seconds to account for the fact that the sound file has 0.01 seconds of silence at the beginning
 		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		iRowNow = max( 0, iRowNow );
 		static int iRowLastCrossed = 0;
 
 		bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed

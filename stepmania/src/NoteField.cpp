@@ -62,9 +62,6 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 	// init arrow rotations and X positions
 	for( int c=0; c<m_iNumTracks; c++ ) 
 	{
-		CArray<D3DXCOLOR,D3DXCOLOR>	arrayTweenColors;
-		GAMEMAN->GetTweenColors( c, arrayTweenColors );
-
 		m_ColorNote[c].Load( c, pn );
 	}
 
@@ -87,7 +84,7 @@ void NoteField::Update( float fDeltaTime )
 
 
 
-void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const D3DXCOLOR color )
+void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const bool bUseHoldNoteBeginColor )
 {
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerNumber, fIndex );
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
@@ -99,17 +96,19 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 		fAlpha = 1-m_fPercentFadeToFail;
 
 	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
-	if( color.a == -1 )	// indicated "NULL"
-		m_ColorNote[iCol].GetEdgeColorsFromIndexAndBeat( roundf(fIndex), colorLeading, colorTrailing );
+	if( bUseHoldNoteBeginColor )
+		colorLeading = colorTrailing = m_ColorNote[iCol].GetHoldColorFromPercentIntoHold( 0 );
 	else
-		colorLeading = colorTrailing = color;
+		m_ColorNote[iCol].GetEdgeColorsFromIndexAndBeat( roundf(fIndex), colorLeading, colorTrailing );
 
 	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
-	int iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat( roundf(fIndex), GAMESTATE->m_fSongBeat );
+	int iColorPartFrameNo = m_ColorNote[iCol].GetColorPartFrameNoFromIndexAndBeat( roundf(fIndex), GAMESTATE->m_fSongBeat );
+	int iGrayPartFrameNo  = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat(  roundf(fIndex), GAMESTATE->m_fSongBeat );
 
+	if( iCol == 2 )
+		printf( "iColorPartFrameNo = %d\n", iColorPartFrameNo );
 
-	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
-	cni = instance;
+	cni = ColorNoteInstance( fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iColorPartFrameNo, iGrayPartFrameNo );
 }
 
 void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife )
@@ -126,21 +125,24 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 		fAlpha = 1-m_fPercentFadeToFail;
 
 	int iGrayPartFrameNo;
+	int iColorPartFrameNo;
 	if( bActive )
-		iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFull();
+	{
+		iGrayPartFrameNo  = m_ColorNote[iCol].GetGrayPartFrameNoFull();
+		iColorPartFrameNo = m_ColorNote[iCol].GetColorPartFrameNoFull();
+	}
 	else
-		iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoClear();
+	{
+		iGrayPartFrameNo  = m_ColorNote[iCol].GetGrayPartFrameNoClear();
+		iColorPartFrameNo = m_ColorNote[iCol].GetColorPartFrameNoClear();
+	}
 
 	const float fPercentIntoHold = (fIndex-hn.m_iStartIndex)/(hn.m_iEndIndex-hn.m_iStartIndex);
-	D3DXCOLOR colorLeading( fPercentIntoHold, 1, 0, 1 ); // color shifts from green to yellow
-	colorLeading *= fHoldNoteLife;
-	colorLeading.a = 1;
-	D3DXCOLOR colorTrailing = colorLeading;
+	D3DXCOLOR color = m_ColorNote[iCol].GetHoldColorFromPercentIntoHold( fPercentIntoHold );
 
 	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
 
-	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
-	cni = instance;
+	cni = ColorNoteInstance( fXPos, fYPos, fRotation, fAlpha, color, color, fAddAlpha, iColorPartFrameNo, iGrayPartFrameNo );
 }
 
 void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
@@ -202,8 +204,6 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	float fSongBeat = max( 0, GAMESTATE->m_fSongBeat );
-
-	int iBaseFrameNo = (int)(fSongBeat*2.5) % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;	// 2.5 is a "fudge number" :-)  This should be based on BPM
 	
 	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
 	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fArrowScrollSpeed);
@@ -359,7 +359,7 @@ void NoteField::DrawPrimitives()
 				color.r *= fHoldLife;
 				color.g *= fHoldLife;
 				color.b *= fHoldLife;
-				CreateTapNoteInstance( instances[iCount++], c, (float)i, color );
+				CreateTapNoteInstance( instances[iCount++], c, (float)i, true );
 			}
 			else
 				CreateTapNoteInstance( instances[iCount++], c, (float)i );

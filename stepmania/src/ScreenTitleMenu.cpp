@@ -69,7 +69,7 @@ const ScreenMessage SM_FadeToDemonstration	=	ScreenMessage(SM_User+13);
 const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+14);
 
 
-const float SECONDS_BEFORE_DEMONSTRATION = 5;
+const float SECONDS_BEFORE_DEMONSTRATION = 30;
 
 
 ScreenTitleMenu::ScreenTitleMenu()
@@ -238,6 +238,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_PlayAttract:
+		m_soundAttract.PlayRandom();
+		break;
 	case SM_DoneOpening:
 		break;
 	case SM_GoToCaution:
@@ -277,13 +280,17 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
+			if( SONGMAN->m_pSongs.GetSize() == 0 )
+				goto abort_demonstration;
+
 			// choose a Song and Notes
-			Song* pSongToPlay = NULL;
-			Notes* pNotesToPlay = NULL;
-			for( int i=0; i<100; i++ )	// try 100 times
+			Song* pSongToPlay;
+			Notes* pNotesToPlay;
+			int i;
+			for( i=0; i<600; i++ )	// try 600 times
 			{
 				Song* pSong = SONGMAN->m_pSongs[ rand()%SONGMAN->m_pSongs.GetSize() ];
-				for( int j=0; j<10; j++ )	// try 10 times
+				for( int j=0; j<3; j++ )	// try 3 times
 				{
 					Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
 					if( pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
@@ -295,6 +302,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 					}
 				}
 			}
+abort_demonstration:
 			// Couldn't find Song/Notes to play.  Abort demonstration!
 			GAMESTATE->Reset();
 			return;
@@ -311,12 +319,17 @@ found_song_and_notes:
 			{
 				if( GAMESTATE->IsPlayerEnabled(p) )
 				{
-					GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = (RandomFloat(0,1)>0.7f ? 1.5f : 1.0f) ;
+					if( RandomFloat(0,1)>0.8f )
+						GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
 					GAMESTATE->m_PlayerOptions[p].m_EffectType = PlayerOptions::EffectType(rand()%PlayerOptions::NUM_EFFECT_TYPES);
-					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::AppearanceType(rand()%(PlayerOptions::NUM_APPEARANCE_TYPES-1));	// don't use blink
-					GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = RandomFloat(0,1) > 0.8f;
-					GAMESTATE->m_PlayerOptions[p].m_ColorType = PlayerOptions::ColorType(rand()%PlayerOptions::NUM_COLOR_TYPES);
-					GAMESTATE->m_PlayerOptions[p].m_bDark = RandomFloat(0,1) > 0.8f;
+					if( RandomFloat(0,1)>0.9f )
+						GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
+					if( RandomFloat(0,1)>0.9f )
+						GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
+					if( RandomFloat(0,1)>0.8f )
+						GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
+					if( RandomFloat(0,1)>0.9f )
+						GAMESTATE->m_PlayerOptions[p].m_bDark = true;
 				}
 			}
 			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType(rand()%SongOptions::NUM_LIFE_TYPES);

@@ -166,7 +166,7 @@ void Player::Update( float fDeltaTime )
 		// update the life
 		if( fStartBeat < fSongBeat && fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
-			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay;
+			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration;
 			// if they got a bad score or haven't stepped on the corresponding tap yet
 			const bool bSteppedOnTapNote = m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] != TNS_NONE  &&
 										   m_TapNoteScores[hn.m_iTrack][hn.m_iStartIndex] != TNS_MISS; 

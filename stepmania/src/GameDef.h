@@ -83,6 +83,7 @@ public:
 	void AssertSkinIsComplete( CString sSkin );
 
 	CString GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg );
-	void	GetTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors );
+	void	GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo );
+	void	GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo );
 	CString ElementToGraphicSuffix( const SkinElement gbg );
 };

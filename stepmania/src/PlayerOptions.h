@@ -21,7 +21,7 @@ struct PlayerOptions
 	TurnType m_TurnType;
 	bool m_bLittle;
 	bool m_bReverseScroll;
-	enum ColorType { COLOR_ARCADE=0, COLOR_NOTE, COLOR_FLAT, COLOR_PLAIN, NUM_COLOR_TYPES };
+	enum ColorType { COLOR_VIVID=0, COLOR_NOTE, COLOR_FLAT, COLOR_PLAIN, NUM_COLOR_TYPES };
 	ColorType m_ColorType;
 	bool m_bHoldNotes;
 	bool m_bDark;
@@ -35,7 +35,7 @@ struct PlayerOptions
 		m_TurnType = TURN_NONE;
 		m_bLittle = false;
 		m_bReverseScroll = false;
-		m_ColorType = COLOR_ARCADE;
+		m_ColorType = COLOR_VIVID;
 		m_bHoldNotes = true;
 		m_bDark = false;
 	};

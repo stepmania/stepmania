@@ -60,27 +60,63 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButto
 	return "";
 }
 
-void GameDef::GetTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors )
+void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapColorsOut )
 {
 	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
 
-	const CString sColorsFilePath = sSkinDir + sButtonName + ".colors";
+	const CString sColorsFilePath = sSkinDir + sButtonName + " Tap.colors";
 
-	FILE* file = fopen( sColorsFilePath, "r" );
-	ASSERT( file != NULL );
-	if( file == NULL )
+	FILE* fp = fopen( sColorsFilePath, "r" );
+	ASSERT( fp != NULL );
+	if( fp == NULL )
+	{
+		ASSERT(0);
+		aTapColorsOut.Add( D3DXCOLOR(1,1,1,1) );
+		LOG->Warn( "Couldn't open .colors file '%s'", sColorsFilePath );
 		return;
+	}
 
 	bool bSuccess;
 	do
 	{
 		D3DXCOLOR color;
-		int retval = fscanf( file, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
+		int retval = fscanf( fp, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
 		bSuccess = retval == 4;
 		if( bSuccess )
-			arrayTweenColors.Add( color );
+			aTapColorsOut.Add( color );
 	} while( bSuccess );
 
+	fclose( fp );
+	return;
+}
+
+void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldColorsOut )
+{
+	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
+
+	const CString sColorsFilePath = sSkinDir + sButtonName + " Hold.colors";
+
+	FILE* fp = fopen( sColorsFilePath, "r" );
+	ASSERT( fp != NULL );
+	if( fp == NULL )
+	{
+		ASSERT(0);
+		aHoldColorsOut.Add( D3DXCOLOR(1,1,1,1) );
+		LOG->Warn( "Couldn't open .colors file '%s'", sColorsFilePath );
+		return;
+	}
+
+	bool bSuccess;
+	do
+	{
+		D3DXCOLOR color;
+		int retval = fscanf( fp, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
+		bSuccess = retval == 4;
+		if( bSuccess )
+			aHoldColorsOut.Add( color );
+	} while( bSuccess );
+
+	fclose( fp );
 	return;
 }
 

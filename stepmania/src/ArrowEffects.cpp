@@ -41,39 +41,10 @@ float ArrowGetXPos( const PlayerNumber pn, int iColNum, float fYOffset )
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
 	
-	// BUG OR FEATURE??? THIS IS WHERE THE REAL COLUMN PLACEMENT HAPPENS!!!
-	// GAMEMANAGER SITS AROUND ON ITS ASS DOING NOTHING
-	// 
-	// As I know very little about this system, and as this is the only place I can think of that I
-	// can possibly change my arrow placements, Ez2dancer column setups will be here until
-	// somebody makes some other system. In the meantime, if it works, i'm using it.
-
-	// Chris:
-	// It's working now, so I'm commenting out your placement code below.
-
-	/*
-	if ( GAMESTATE->m_CurGame == GAME_EZ2 )
-	{
-		fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.3f;
-		if ( GAEMSTATE->m_CurStyle == STYLE_EZ2_REAL || GAEMSTATE->m_CurStyle == STYLE_EZ2_REAL_VERSUS ) // real gets MEGA squashed
-		{
-			fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.6f;
-		}
-		else if ( GAEMSTATE->m_CurStyle == STYLE_EZ2_DOUBLE && GAEMSTATE->m_sMasterPlayerNumber == PLAYER_1)
-		{
-			fPixelOffsetFromCenter = (fColOffsetFromCenter + 2.9f) * ARROW_SIZE / 1.3f;
-		}
-		else if ( GAEMSTATE->m_CurStyle == STYLE_EZ2_DOUBLE && GAEMSTATE->m_sMasterPlayerNumber == PLAYER_2)
-		{
-			fPixelOffsetFromCenter = (fColOffsetFromCenter - 3.1f) * ARROW_SIZE / 1.3f;
-		}
-	}
-	*/
-	
 	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DRUNK:
-		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart()*2 + iColNum*0.4f + fYOffset/SCREEN_HEIGHT*4) * ARROW_SIZE/3; 
+		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYOffset*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
 		break;
 	}
 	return fPixelOffsetFromCenter;

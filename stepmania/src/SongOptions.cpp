@@ -43,10 +43,10 @@ CString SongOptions::GetString()
 
 	if( m_fMusicRate != 1 )
 	{
-		CString s = ssprintf( "%2.2fxMusic", m_fMusicRate );
+		CString s = ssprintf( "%2.2f", m_fMusicRate );
 		if( s[s.GetLength()-1] == '0' )
-			s.Delete(s.GetLength());
-		sReturn += s + ", ";
+			s.Delete(s.GetLength()-1);
+		sReturn += s + "xMusic, ";
 	}
 
 	if( sReturn.GetLength() > 2 )

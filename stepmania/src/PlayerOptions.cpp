@@ -66,7 +66,7 @@ CString PlayerOptions::GetString()
 
 	switch( m_ColorType )
 	{
-	case COLOR_ARCADE:							break;
+	case COLOR_VIVID:							break;
 	case COLOR_NOTE:	sReturn += "Note, ";	break;
 	case COLOR_FLAT:	sReturn += "Flat, ";	break;
 	case COLOR_PLAIN:	sReturn += "Plain, ";	break;

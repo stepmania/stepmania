@@ -42,10 +42,12 @@ bool MsdFile::ReadFile( CString sNewPath )
 	  NULL         // handle to file with attributes to 
 	);
 
-	int iBufferSize = GetFileSize( hFile, NULL ) + 1;
+	int iBufferSize = GetFileSize( hFile, NULL ) + 1000; // +1000 just in case
 	CloseHandle( hFile );
 
 	// allocate a string to hold the file
+	if( m_szFileString )
+		delete m_szFileString;
 	m_szFileString = new char[iBufferSize];
 
 	FILE* fp = fopen(sNewPath, "r");

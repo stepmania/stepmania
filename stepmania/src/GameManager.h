@@ -33,12 +33,10 @@ public:
 	CString GetCurNoteSkin() { return m_sCurNoteSkin; };
 
 	CString GetPathTo( const int col, const SkinElement gbg );	// looks in GAMESTATE for the current Style
-	void GetTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );	// looks in GAMESTATE for the current Style
+	void GetTapTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo );	// looks in GAMESTATE for the current Style
+	void GetHoldTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo );	// looks in GAMESTATE for the current Style
 
 protected:
-
-	CString GetPathTo( Game g, CString sSkinName, CString sButtonName, const SkinElement gbg );
-	void GetTweenColors( Game g, CString sSkinName, CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );
 
 	CString m_sCurNoteSkin;	
 

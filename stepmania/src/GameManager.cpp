@@ -802,16 +802,6 @@ void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 		m_sCurNoteSkin = sNewNoteSkin;
 }
 
-CString GameManager::GetPathTo( Game g, CString sSkinName, CString sButtonName, const SkinElement gbg )
-{
-	return GetGameDefForGame(g)->GetPathToGraphic( sSkinName, sButtonName, gbg );
-}
-
-void GameManager::GetTweenColors( Game g, CString sSkinName, CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
-{
-	GetGameDefForGame(g)->GetTweenColors( sSkinName, sButtonName, aTweenColorsAddTo );
-}
-
 CString GameManager::GetPathTo( const int col, const SkinElement gbg )	// looks in GAMESTATE for the current Style
 {
 	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
@@ -823,7 +813,7 @@ CString GameManager::GetPathTo( const int col, const SkinElement gbg )	// looks 
 	return pGameDef->GetPathToGraphic( m_sCurNoteSkin, sButtonName, gbg );
 }
 
-void GameManager::GetTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )	// looks in GAMESTATE for the current Style
+void GameManager::GetTapTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo )	// looks in GAMESTATE for the current Style
 {
 	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
 
@@ -833,5 +823,18 @@ void GameManager::GetTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aT
 	StyleInput SI( PLAYER_1, col );
 	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
 	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
-	pGameDef->GetTweenColors( m_sCurNoteSkin, sButtonName, aTweenColorsAddTo );
+	pGameDef->GetTapTweenColors( m_sCurNoteSkin, sButtonName, aTapTweenColorsAddTo );
+}
+
+void GameManager::GetHoldTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo )	// looks in GAMESTATE for the current Style
+{
+	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
+
+	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+
+	StyleInput SI( PLAYER_1, col );
+	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
+	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
+	pGameDef->GetHoldTweenColors( m_sCurNoteSkin, sButtonName, aHoldTweenColorsAddTo );
 }
