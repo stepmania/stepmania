@@ -670,7 +670,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		ttab.push_back(TitleTrans("^Freckles$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 		ttab.push_back(TitleTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 
-		/* 夜空ノムコウ */
+		/* 夜空のムコウ */
 		ttab.push_back(TitleTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;", "", "") );
 
 		/* 17才 */
