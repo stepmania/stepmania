@@ -217,22 +217,21 @@ void ScreenEvaluation::Init()
 	// Calculate grades
 	//
 	Grade grade[NUM_PLAYERS];
-	{
-		FOREACH_PlayerNumber( p )
-		{
-			if( GAMESTATE->IsPlayerEnabled(p) )
-				grade[p] = stageStats.GetGrade( p );
-			else
-				grade[p] = GRADE_FAILED;
 
-			if( PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH )
+	FOREACH_PlayerNumber( p )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			grade[p] = stageStats.GetGrade( p );
+		else
+			grade[p] = GRADE_FAILED;
+
+		if( PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH )
+		{
+			const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
+			if( grade[p] < (int) ARRAYSIZE(ScoreBonuses) )
 			{
-				const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
-				if( grade[p] < (int) ARRAYSIZE(ScoreBonuses) )
-				{
-					g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
-					stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
-				}
+				g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+				stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
 			}
 		}
 	}
@@ -761,17 +760,13 @@ void ScreenEvaluation::Init()
 	}
 
 	bool bOneHasNewTopRecord = false;
-	{
-		FOREACH_PlayerNumber( p )
-			if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
-				bOneHasNewTopRecord = true;
-	}
+	FOREACH_PlayerNumber( p )
+		if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
+			bOneHasNewTopRecord = true;
 
 	Grade best_grade = GRADE_NO_DATA;
-	{
-		FOREACH_PlayerNumber( p )
-			best_grade = min( best_grade, grade[p] ); 
-	}
+	FOREACH_PlayerNumber( p )
+		best_grade = min( best_grade, grade[p] ); 
 	
 	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
 	{
