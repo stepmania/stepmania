@@ -1521,7 +1521,7 @@ void Song::RemoveNotes( Notes* pNotes )
 
 	RemoveAutoGenNotes();
 
-	for( unsigned j=m_apNotes.size()-1; j>=0; j-- )
+	for( int j=m_apNotes.size()-1; j>=0; j-- )
 	{
 		if( m_apNotes[j] == pNotes )
 		{
