@@ -113,12 +113,19 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 		pTempBGA->LoadFromAniDir( asFiles[0] );
 		return pTempBGA;
 	}
-	// Look for BG movies in the song dir
+	// Look for BG movies or static graphics in the song dir
 	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromMovie( asFiles[0], true, true );
+		CString sThrowAway, sExt;
+		splitrelpath( asFiles[0], sThrowAway, sThrowAway, sExt );
+		if( sExt.CompareNoCase("avi")==0 ||
+			sExt.CompareNoCase("mpg")==0 ||
+			sExt.CompareNoCase("mpeg")==0 )
+			pTempBGA->LoadFromMovie( asFiles[0], true, true );
+		else
+			pTempBGA->LoadFromStaticGraphic( asFiles[0] );
 		return pTempBGA;
 	}
 	// Look for movies in the RandomMovies dir

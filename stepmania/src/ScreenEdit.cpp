@@ -197,6 +197,7 @@ Menu g_BGChange
 	MenuRow( "Add Change to random",				true ),
 	MenuRow( "Add Change to song BGAnimation",		true ),
 	MenuRow( "Add Change to song Movie",			true ),
+	MenuRow( "Add Change to song Still",			true ),
 	MenuRow( "Add Change to global Random Movie",	true ),
 	MenuRow( "Add Change to global BGAnimation",	true ),
 	MenuRow( "Add Change to global Visualization",	true ),
@@ -1252,6 +1253,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				GetDirListing( m_pSong->GetSongDir()+"*.mpg", g_BGChange.rows[add_song_movie].choices, false );
 				GetDirListing( m_pSong->GetSongDir()+"*.mpeg", g_BGChange.rows[add_song_movie].choices, false );
 
+				g_BGChange.rows[add_song_still].choices.clear();
+				GetDirListing( m_pSong->GetSongDir()+"*.png", g_BGChange.rows[add_song_still].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"*.jpg", g_BGChange.rows[add_song_still].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"*.gif", g_BGChange.rows[add_song_still].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"*.bmp", g_BGChange.rows[add_song_still].choices, false );
+
 				g_BGChange.rows[add_global_random_movie].choices.clear();
 				GetDirListing( RANDOMMOVIES_DIR+"*.avi", g_BGChange.rows[add_global_random_movie].choices, false );
 				GetDirListing( RANDOMMOVIES_DIR+"*.mpg", g_BGChange.rows[add_global_random_movie].choices, false );
@@ -1277,6 +1284,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				g_BGChange.rows[add_random].enabled = true;
 				g_BGChange.rows[add_song_bganimation].enabled = g_BGChange.rows[add_song_bganimation].choices.size() > 0;
 				g_BGChange.rows[add_song_movie].enabled = g_BGChange.rows[add_song_movie].choices.size() > 0;
+				g_BGChange.rows[add_song_still].enabled = g_BGChange.rows[add_song_still].choices.size() > 0;
 				g_BGChange.rows[add_global_random_movie].enabled = g_BGChange.rows[add_global_random_movie].choices.size() > 0;
 				g_BGChange.rows[add_global_bganimation].enabled = g_BGChange.rows[add_global_bganimation].choices.size() > 0;
 				g_BGChange.rows[add_global_visualization].enabled = g_BGChange.rows[add_global_visualization].choices.size() > 0;
@@ -1543,6 +1551,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 		break;
 	case add_song_bganimation:
 	case add_song_movie:
+	case add_song_still:
 	case add_global_random_movie:
 	case add_global_bganimation:
 	case add_global_visualization:

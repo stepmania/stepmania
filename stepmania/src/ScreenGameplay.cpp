@@ -217,6 +217,12 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
 
+	if( !bDemonstration )	// only load if we're going to use it
+	{
+		m_Toasty.Load( THEME->GetPathToB("ScreenGameplay toasty") );
+		this->AddChild( &m_Toasty );
+	}
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
@@ -293,6 +299,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	}
 
 
+	m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
+	SET_XY( m_sprStage );
+
+	
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
@@ -309,8 +319,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
-		m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
-		SET_XY( m_sprStage );
 		this->AddChild( &m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -461,9 +469,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
 			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra2") );
 		this->AddChild( &m_Extra );
-
-		m_Toasty.Load( THEME->GetPathToB("ScreenGameplay toasty") );
-		this->AddChild( &m_Toasty );
 
 		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
 		this->AddChild( &m_In );

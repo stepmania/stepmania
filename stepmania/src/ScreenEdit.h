@@ -170,6 +170,7 @@ public:
 		add_random,
 		add_song_bganimation,
 		add_song_movie,
+		add_song_still,
 		add_global_random_movie,
 		add_global_bganimation,
 		add_global_visualization,
