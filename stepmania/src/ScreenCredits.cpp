@@ -124,6 +124,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Kevin Slaughter (Miryokuteki)"},
 	{0,"Thad Ward (Coderjoe)"},
 	{0,"Steve Checkoway"},
+	{0,"Sean Burke"},
 	{0,""},
 	{0,""},
 	{0,""},
