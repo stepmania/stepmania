@@ -129,13 +129,14 @@ bool SetUpSongOptions()		// always return true.
 	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
 	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 
+	GAMESTATE->m_bDemonstration = true;
+
 	return true;
 }
 
 ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
-	GAMESTATE->m_bDemonstration = true;
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
 	{
