@@ -150,7 +150,8 @@ public:
 	float GetLastBeat() const;	// return the beat number of the last note
 	int GetLastRow() const;
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetNumRowsWithTaps( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumRowsWithTap( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumRowsWithTapOrHoldHead( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;

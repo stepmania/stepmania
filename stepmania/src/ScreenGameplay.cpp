@@ -973,7 +973,7 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;		// skip
 
-			bAnyoneHasANote |= m_Player[p].IsThereATapAtRow( r );
+			bAnyoneHasANote |= m_Player[p].IsThereATapOrHoldHeadAtRow( r );
 			break;	// this will only play the tick for the first player that is joined
 		}
 	}

@@ -256,7 +256,7 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 	return iNumNotes;
 }
 
-int NoteData::GetNumRowsWithTaps( float fStartBeat, float fEndBeat ) const
+int NoteData::GetNumRowsWithTap( float fStartBeat, float fEndBeat ) const
 {
 	int iNumNotes = 0;
 
@@ -266,6 +266,21 @@ int NoteData::GetNumRowsWithTaps( float fStartBeat, float fEndBeat ) const
 	
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 		if( IsThereATapAtRow(i) )
+			iNumNotes++;
+	
+	return iNumNotes;
+}
+
+int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) const
+{
+	int iNumNotes = 0;
+
+	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+	
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
+		if( IsThereATapOrHoldHeadAtRow(i) )
 			iNumNotes++;
 	
 	return iNumNotes;

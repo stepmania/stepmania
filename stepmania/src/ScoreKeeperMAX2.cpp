@@ -171,7 +171,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
-	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTaps() + pNoteData->GetNumHoldNotes();
+	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes();
 
 	m_iPointBonus = m_iMaxPossiblePoints;
 
@@ -424,7 +424,7 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData &preNoteData, const 
 	 * The logic here is that if you use a modifier that adds notes, you should have to
 	 * hit the new notes to get a high grade.  However, if you use one that removes notes,
 	 * they should simply be counted as misses. */
-	int NumTaps = max( preNoteData.GetNumRowsWithTaps(), postNoteData.GetNumRowsWithTaps() );
+	int NumTaps = max( preNoteData.GetNumRowsWithTapOrHoldHead(), postNoteData.GetNumRowsWithTapOrHoldHead() );
 	int NumHolds = max( preNoteData.GetNumHoldNotes(), postNoteData.GetNumHoldNotes() );
 	return NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
 	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
