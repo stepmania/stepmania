@@ -106,8 +106,8 @@ void Bookkeeper::UpdateLastSeenTime()
 {
 	// clear all coin counts from (lOldTime,lNewTime]
 
-	long lOldTime = m_iLastSeenTime;
-	long lNewTime = time(NULL);
+	time_t lOldTime = m_iLastSeenTime;
+	time_t lNewTime = time(NULL);
 
 	if( lNewTime < lOldTime )
 	{
@@ -149,7 +149,7 @@ void Bookkeeper::CoinInserted()
 {
 	UpdateLastSeenTime();
 
-	long lTime = m_iLastSeenTime;
+	time_t lTime = m_iLastSeenTime;
     tm pTime;
 	localtime_r( &lTime, &pTime );
 
@@ -169,7 +169,7 @@ void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] )
 {
 	UpdateLastSeenTime();
 
-	long lOldTime = m_iLastSeenTime;
+	time_t lOldTime = m_iLastSeenTime;
     tm time;
 	localtime_r( &lOldTime, &time );
 
@@ -185,7 +185,7 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
 {
 	UpdateLastSeenTime();
 
-	long lOldTime = m_iLastSeenTime;
+	time_t lOldTime = m_iLastSeenTime;
     tm time;
 	localtime_r( &lOldTime, &time );
 
@@ -211,7 +211,7 @@ void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] )
 	for( int i=0; i<DAYS_IN_WEEK; i++ )
 		coins[i] = 0;
 
-	long lOldTime = m_iLastSeenTime;
+	time_t lOldTime = m_iLastSeenTime;
     tm time;
 	localtime_r( &lOldTime, &time );
 
