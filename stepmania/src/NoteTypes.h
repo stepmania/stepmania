@@ -49,9 +49,7 @@ enum
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
-const int MAX_BEATS			= 3000;	// J-Paradise has about 2120
 const int BEATS_PER_MEASURE = 4;
-
 const int ROWS_PER_BEAT	= 24;	// It is important that this number is evenly divisible by 2, 3, and 4.
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 
