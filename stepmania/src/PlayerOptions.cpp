@@ -25,7 +25,7 @@
 
 void PlayerOptions::Init()
 {
-	m_bTimeSpacing = false;
+	m_fTimeSpacing = 0;			m_SpeedfTimeSpacing = 1.0f;
 	m_fScrollSpeed = 1.0f;		m_SpeedfScrollSpeed = 1.0f;
 	m_fScrollBPM = 200;			m_SpeedfScrollBPM = 1.0f;
 	ZERO( m_fAccels );			ONE( m_SpeedfAccels );
@@ -59,6 +59,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 		APP( fAppearances[i] );
 	for( i=0; i<NUM_SCROLLS; i++ )
 		APP( fScrolls[i] );
+	APP( fTimeSpacing );
 	APP( fScrollSpeed );
 	APP( fDark );
 	APP( fBlind );
@@ -82,7 +83,7 @@ CString PlayerOptions::GetString() const
 {
 	CString sReturn;
 
-	if( !m_bTimeSpacing )
+	if( !m_fTimeSpacing )
 	{
 		if( m_fScrollSpeed != 1 )
 		{
@@ -206,7 +207,7 @@ void PlayerOptions::FromString( CString sOptions )
 		vector<CString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
-			m_bTimeSpacing = false;
+			m_fTimeSpacing = 0.0f;
 			int ret = sscanf( matches[0], "%f", &m_fScrollSpeed );
 			ASSERT( ret == 1 );
 			continue;
@@ -214,7 +215,7 @@ void PlayerOptions::FromString( CString sOptions )
 
 		else if( sscanf( sBit, "c%d", &i1 ) == 1 )
 		{
-			m_bTimeSpacing = true;
+			m_fTimeSpacing = 1.0f;
 			m_fScrollBPM = (float) i1;
 			continue;
 		}
@@ -514,7 +515,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol )
 bool PlayerOptions::operator==( const PlayerOptions &other ) const
 {
 #define COMPARE(x) { if( x != other.x ) return false; }
-	COMPARE(m_bTimeSpacing);
+	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fDark);
@@ -544,7 +545,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 
 bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 {
-	if( m_bTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
+	if( m_fTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
 		return true;
 	if( m_bTransforms[TRANSFORM_NOHOLDS] && pSteps->GetRadarValues()[RADAR_NUM_HOLDS]>0 )
 		return true;

@@ -27,26 +27,32 @@ float		g_fExpandSeconds = 0;
 
 static float GetNoteFieldHeight( PlayerNumber pn )
 {
-	return SCREEN_HEIGHT + fabsf(GAMESTATE->m_PlayerOptions[pn].m_fPerspectiveTilt)*200;
+	return SCREEN_HEIGHT + fabsf(GAMESTATE->m_CurrentPlayerOptions[pn].m_fPerspectiveTilt)*200;
 }
 
 float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 {
-	float fYOffset;
-	if( !GAMESTATE->m_PlayerOptions[pn].m_bTimeSpacing )
+	float fYOffset = 0;
+
+	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
+	 * entirely time spacing (respectively).  Occasionally, we tween between them. */
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing != 1.0f )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
-		fYOffset = fBeatsUntilStep * ARROW_SPACING;
+		float fYOffsetBeatSpacing = fBeatsUntilStep * ARROW_SPACING;
+		fYOffset += fYOffsetBeatSpacing * (1-GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing);
 	}
-	else
+
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing != 0.0f )
 	{
 		float fSongSeconds = GAMESTATE->m_fMusicSeconds;
 		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
-		float fBPM = GAMESTATE->m_PlayerOptions[pn].m_fScrollBPM;
+		float fBPM = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollBPM;
 		float fBPS = fBPM/60.f;
-		fYOffset = fSecondsUntilStep * fBPS * ARROW_SPACING;
+		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS * ARROW_SPACING;
+		fYOffset += fYOffsetTimeSpacing * GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing;
 	}
 
 	// don't mess with the arrows after they've crossed 0

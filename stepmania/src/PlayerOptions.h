@@ -95,11 +95,9 @@ struct PlayerOptions
 	};
 	float GetReversePercentForColumn( int iCol ); // accounts for all Directions
 
-	
-	bool		m_bTimeSpacing;	// instead of Beat spacing
-
 	/* All floats have a corresponding speed setting, which determines how fast
 	 * PlayerOptions::Approach approaches. */
+	float		m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing
 	float		m_fScrollSpeed,			m_SpeedfScrollSpeed;		// used if !m_bTimeSpacing
 	float		m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing
 	float		m_fAccels[NUM_ACCELS],	m_SpeedfAccels[NUM_ACCELS];
