@@ -55,6 +55,12 @@ private:
 		int m_life;		//Player's Life
     };
 
+	struct netName			//Data structure used for 16-character strings.
+	{
+		int m_packID;
+		char m_data[16];
+	};
+
 	struct netHolderFlash
 	{
 		char data[73];

@@ -11,70 +11,84 @@
 -----------------------------------------------------------------------------
 */
 
-
-
-/*
------------------------
-NOTE TO DEVS:
-
-This file is still under heavy editing.
-Don't bother to edit it.  I will be editing it as I go.
-
-
-
-  IF YOU DO EDIT THIS FILE PLEASE LEAVE A NOTE!
-  I AM CONSTANTLY EDITING IT.
------------------------
-*/
-
-
-
 #include "global.h"
 #include <cstring>
 #include "NetworkSyncManager.h"
-
-#include "BPMDisplay.h"
-//for ssprintf
+#include "ProfileManager.h"
 #include "ezsockets.h"
 #include "RageLog.h"
+
+#include "RageUtil.h"
+	//String compare functions for command line args
 
 NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 {
     NetPlayerClient = new EzSockets;
 	m_ServerVersion = 0;
 
-	CString tempargv(argv[1]);
+    if (argc > 1) {
+		LOG->Trace("Multiple arguements were entered.");
+		int argCtr = 1;
 
-    if (argc > 2) {
-		LOG->Info("Multiple arguements were entered.");
-		
-		if (!tempargv.CompareNoCase("LISTEN"))
-			if (Listen(8765)) {
-				useSMserver = true;
-			} else
-				useSMserver = false;
-		else
-			if (Connect(argv[1],8765) == true)
+		while (argCtr<argc) {
+			CString tempargv(argv[argCtr]);
+			CString Checking(tempargv.substr(0,8));
+			Checking.MakeUpper();
+			if (strcmp(Checking.c_str(),"--NETIP:")==0)
 			{
-				useSMserver = true;
-			} else
-				useSMserver = false;
+				CString IPAddy (tempargv.substr(8,tempargv.GetLength()-8));
 
+				LOG->Trace ("NetIP Found:%s",IPAddy.c_str());
+			
+				if (!IPAddy.CompareNoCase("LISTEN"))
+					if (Listen(8765)) {
+						useSMserver = true;
+					} else
+						useSMserver = false;
+				else
+					if (Connect(IPAddy.c_str(),8765) == true)
+					{
+						useSMserver = true;
+					} else
+						useSMserver = false;
+
+				break;//Once connected, break outta loop.
+			}
+			argCtr++;
+		}
 	}
     else
         useSMserver = false;
 
+
+
 	if (useSMserver) {
 		int ClientCommand=3;
 		NetPlayerClient->send((char*) &ClientCommand, 4);
-//		NetPlayerClient->send(0);//Send 0 for flash client
 
 		NetPlayerClient->receive(m_ServerVersion);
 			//If network play is desired
 			//AND the connection works
 			//Halt until we know what server 
 			//version we're dealing with
-
+		vector <CString> ProfileNames;
+		PROFILEMAN->GetLocalProfileNames(ProfileNames);
+		
+		netName PlayerName;
+		int i;
+	
+		if (ProfileNames.size()>0) {
+			PlayerName.m_packID = 30;
+			for (i=0;i<strlen(ProfileNames[0]);i++)
+				PlayerName.m_data[i] = ProfileNames[0][i];
+			NetPlayerClient->send((char*) &PlayerName,20);
+		}
+		if (ProfileNames.size()>1) {
+			PlayerName.m_packID = 31;
+			for (i=0;i<strlen(ProfileNames[1]);i++)
+				PlayerName.m_data[i] = ProfileNames[1][i];
+			NetPlayerClient->send((char*) &PlayerName,20);
+		}
 		LOG->Info("Server Version: %d",m_ServerVersion);
 	}
 
