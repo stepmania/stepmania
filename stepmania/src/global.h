@@ -57,24 +57,18 @@ using namespace std;
 #undef ASSERT
 #endif
 
-#if defined(_WINDOWS)
-	/* Assertion that sets an optional message and brings up the crash handler, so
-	 * we get a backtrace.  This should probably be used instead of throwing an
-	 * exception in most cases we expect never to happen (but not in cases that
-	 * we do expect, such as DSound init failure.) */
-	#include "archutils/win32/crash.h"
-	#define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { VDCHECKPOINT_M(MESSAGE); *(char*)0=0; } }
-	#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
-	#define ASSERT RAGE_ASSERT
-#else
-	#define VDCHECKPOINT (void*)(0)
-	#include <assert.h>
-	/* TODO: do something useful and portable with RAGE_ASSERT*. */
-	#define RAGE_ASSERT_M(COND, MESSAGE) ASSERT(COND)
-	#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
-	#define ASSERT assert
-#endif
+/* RageThreads defines (don't pull in all of RageThreads.h here) */
+void SetCheckpoint( const char *file, int line, const char *message );
+#define CHECKPOINT (SetCheckpoint(__FILE__, __LINE__, NULL))
+#define CHECKPOINT_M(m) (SetCheckpoint(__FILE__, __LINE__, m))
 
+/* Assertion that sets an optional message and brings up the crash handler, so
+ * we get a backtrace.  This should probably be used instead of throwing an
+ * exception in most cases we expect never to happen (but not in cases that
+ * we do expect, such as DSound init failure.) */
+#define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { CHECKPOINT_M(MESSAGE); *(char*)0=0; } }
+#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
+#define ASSERT RAGE_ASSERT
 
 #ifdef DEBUG
 #define DEBUG_ASSERT(x)	ASSERT(x)
