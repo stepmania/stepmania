@@ -27,14 +27,13 @@
 #define CHECKPOINT_COUNT		(2)
 
 struct VirtualDubThreadState {
-	const char				*pszThreadName;
 	unsigned long			dwThreadId;
 	void *					hThread;
 };
 
 EXTERN __declspec(thread) VirtualDubThreadState g_PerThreadState;
 
-void VirtualDubInitializeThread(const char *pszName);
+void VirtualDubInitializeThread();
 void VirtualDubDeinitializeThread();
 extern long __stdcall CrashHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 

@@ -119,7 +119,7 @@ static CRITICAL_SECTION g_csPerThreadState;
 static List2<VirtualDubThreadStateNode> g_listPerThreadState;
 static LONG g_nThreadsTrackedMinusOne = -1;
 
-void VirtualDubInitializeThread(const char *pszName) {
+void VirtualDubInitializeThread() {
 	DWORD dwThreadId = GetCurrentThreadId();
 
 	if (!InterlockedIncrement(&g_nThreadsTrackedMinusOne)) {
@@ -128,9 +128,9 @@ void VirtualDubInitializeThread(const char *pszName) {
 
 	EnterCriticalSection(&g_csPerThreadState);
 
-	if (DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), (HANDLE *)&g_PerThreadState.hThread, NULL, FALSE, DUPLICATE_SAME_ACCESS)) {
-
-		g_PerThreadState.pszThreadName = pszName;
+	g_PerThreadState.hThread = NULL;
+	if (DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), (HANDLE *)&g_PerThreadState.hThread, NULL, FALSE, DUPLICATE_SAME_ACCESS))
+	{
 		g_PerThreadState.dwThreadId = dwThreadId;
 
 		g_PerThreadStateNode.pState = &g_PerThreadState;
@@ -147,7 +147,7 @@ void VirtualDubDeinitializeThread() {
 
 	LeaveCriticalSection(&g_csPerThreadState);
 
-	if (g_PerThreadState.pszThreadName)
+	if (g_PerThreadState.hThread)
 		CloseHandle((HANDLE)g_PerThreadState.hThread);
 
 	InterlockedDecrement(&g_nThreadsTrackedMinusOne);

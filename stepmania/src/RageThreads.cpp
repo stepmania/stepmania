@@ -171,7 +171,7 @@ void ThreadSlot::SetupThisThread()
 #endif
 
 #ifdef _WINDOWS
-	InitThreadData( name );
+	InitThreadData();
 #endif
 
 	threadid = SDL_ThreadID();

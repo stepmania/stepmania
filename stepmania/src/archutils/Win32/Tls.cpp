@@ -21,7 +21,7 @@
 
 __declspec(thread) VirtualDubTLSData g_tlsdata;
 
-void InitThreadData(const char *pszName) {
+void InitThreadData() {
 	VirtualDubTLSData *pData = &g_tlsdata;
 
 	__asm {
@@ -29,7 +29,7 @@ void InitThreadData(const char *pszName) {
 		mov		dword ptr fs:[14h],eax
 	}
 
-	VirtualDubInitializeThread(pszName);
+	VirtualDubInitializeThread();
 }
 
 void DeinitThreadData() {

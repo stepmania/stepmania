@@ -25,7 +25,7 @@ struct VirtualDubTLSData {
 
 extern __declspec(thread) VirtualDubTLSData g_tlsdata;
 
-void InitThreadData(const char *pszName);
+void InitThreadData();
 void DeinitThreadData();
 
 #endif
