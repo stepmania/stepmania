@@ -160,11 +160,53 @@ TitleTo: L'amour et la liberté
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
 *
+# TM4:
 TitleFrom: Akumajo Dracula MEDLEY
 TitleTo: 悪魔城ドラキュラMEDLEY
 *
 ArtistFrom: Kukeihakurabu
 ArtistTo: 矩形波倶楽部
+*
+ArtistFrom: Yuji Ueda & Yui Horie
+ArtistTo: 上田祐司＆堀江由衣
+*
+ArtistFrom: Atsuko Enomoto
+ArtistTo: 榎本温子
+*
+TitleFrom: Hareta Hi no Marine
+TitleTo: 晴れた日のマリーン
+*
+ArtistFrom: Gotou? Maki
+ArtistTo: 後藤真希
+*
+TitleFrom: La Duena del Swing
+TitleTo: La Dueña del Swing
+*
+TitleFrom: Pokemon Trainer Theme
+TitleTo: Pokèmon Trainer Theme
+*
+ArtistFrom: Pokemon Jhoto
+ArtistTo: Pokèmon Jhoto
+*
+TitleFrom: Watashi No Tamagoyaki
+TitleTo: 私の卵焼き
+*
+TitleFrom: Under Star\(Hajime no Ippo Opening 2\)
+TitleTo: Under Star
+# Note that these are double-width parentheses.
+SubtitleTo: （はじめの一歩 Opening 2）
+SubtitleTransTo: (Hajime no Ippo Opening 2)
+*
+# This song had the game title in the artist field, instead of the
+# actual artist.
+TitleTo: Meridian Dance
+ArtistFrom: Seiken Densetsu 2 OST
+
+SubtitleTo: 聖剣伝説2OST
+SubtitleTransTo: Seiken Densetsu 2 OST
+
+ArtistTo: 菊田裕樹
+ArtistTransTo: Hiroki Kikuta
 *
 # Subtitles:
 # (Title is Graduation.)
@@ -323,7 +365,7 @@ ArtistFrom: (Ayumi Hamasaki)|(Hamasaki Ayumi)
 ArtistTo: 浜崎あゆみ
 *
 ArtistFrom: (Hiroko Kasahara)|(Kasahara Hiroko)
-ArtistTo: 笠原拡子 
+ArtistTo: 笠原弘子 
 *
 ArtistFrom: (Mai Kuraki)|(Kuraki Mai)
 ArtistTo: 倉木麻衣
@@ -375,7 +417,10 @@ ArtistTo: 堀江由衣
 *
 ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
-
+*
+ArtistFrom: Mitsuishi Kotono
+ArtistTo: 三石琴乃
+*
 [Courses]
 TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
 TitleTo: 鬼道
