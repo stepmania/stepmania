@@ -181,7 +181,7 @@ Combo.cpp Combo.h DancingCharacters.cpp DancingCharacters.h Foreground.cpp Foreg
 GhostArrowRow.cpp GhostArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
 Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp LifeMeterBattery.h \
 LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteField.h \
-NoteFieldPlus.cpp NoteFieldPlus.h PercentageDisplay.cpp PercentageDisplay.h Player.cpp Player.h \
+PercentageDisplay.cpp PercentageDisplay.h Player.cpp Player.h \
 ProTimingDisplay.cpp ProTimingDisplay.h ReceptorArrow.cpp ReceptorArrow.h ReceptorArrowRow.cpp ReceptorArrowRow.h \
 ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
 ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
