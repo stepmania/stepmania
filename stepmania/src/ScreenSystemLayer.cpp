@@ -243,50 +243,51 @@ void ScreenSystemLayer::AddTimestampLine( const CString &txt, const RageColor &c
 	m_LastSkip %= NUM_SKIPS_TO_SHOW;
 }
 
-void ScreenSystemLayer::UpdateTimestampAndSkips()
+void ScreenSystemLayer::UpdateSkips()
 {
+	if( !PREFSMAN->m_bTimestamping && !PREFSMAN->m_bLogSkips )
+		return;
+
 	/* Use our own timer, so we ignore `/tab. */
 	const float UpdateTime = SkipTimer.GetDeltaTime();
 
 	/* FPS is 0 for a little while after we load a screen; don't report
 	 * during this time. Do clear the timer, though, so we don't report
 	 * a big "skip" after this period passes. */
-	if(DISPLAY->GetFPS())
+	if( !DISPLAY->GetFPS() )
+		return;
+
+	/* We want to display skips.  We expect to get updates of about 1.0/FPS ms. */
+	const float ExpectedUpdate = 1.0f / DISPLAY->GetFPS();
+	
+	/* These are thresholds for severity of skips.  The smallest
+	 * is slightly above expected, to tolerate normal jitter. */
+	const float Thresholds[] =
 	{
-		/* We want to display skips.  We expect to get updates of about 1.0/FPS ms. */
-		const float ExpectedUpdate = 1.0f / DISPLAY->GetFPS();
-		
-		/* These are thresholds for severity of skips.  The smallest
-		 * is slightly above expected, to tolerate normal jitter. */
-		const float Thresholds[] = {
-			ExpectedUpdate * 2.0f, ExpectedUpdate * 4.0f, 0.1f, -1
+		ExpectedUpdate * 2.0f, ExpectedUpdate * 4.0f, 0.1f, -1
+	};
+
+	int skip = 0;
+	while( Thresholds[skip] != -1 && UpdateTime > Thresholds[skip] )
+		skip++;
+
+	if( skip )
+	{
+		CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()));
+
+		static const RageColor colors[] =
+		{
+			RageColor(0,0,0,0),		  /* unused */
+			RageColor(0.2f,0.2f,1,1), /* light blue */
+			RageColor(1,1,0,1),		  /* yellow */
+			RageColor(1,0.2f,0.2f,1)  /* light red */
 		};
 
-		int skip = 0;
-		while(Thresholds[skip] != -1 && UpdateTime > Thresholds[skip])
-			skip++;
-
-		if(skip)
-		{
-			CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()));
-
-			static const RageColor colors[] = {
-				RageColor(0,0,0,0),		  /* unused */
-				RageColor(0.2f,0.2f,1,1), /* light blue */
-				RageColor(1,1,0,1),		  /* yellow */
-				RageColor(1,0.2f,0.2f,1)  /* light red */
-			};
-
-			if( PREFSMAN->m_bTimestamping )
-				AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate),
-					colors[skip] );
-			if( PREFSMAN->m_bLogSkips )
-				LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
-		}
+		if( PREFSMAN->m_bTimestamping )
+			AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
+		if( PREFSMAN->m_bLogSkips )
+			LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
 	}
-
-	if( PREFSMAN->m_bTimestamping )
-		m_textTime.SetText( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) );
 }
 
 void ScreenSystemLayer::Update( float fDeltaTime )
@@ -303,7 +304,10 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 		m_textStats.SetDiffuse( RageColor(1,1,1,0) ); /* hide */
 	}
 
-	UpdateTimestampAndSkips();
+	UpdateSkips();
+
+	if( PREFSMAN->m_bTimestamping )
+		m_textTime.SetText( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) );
 }
 
 /*
