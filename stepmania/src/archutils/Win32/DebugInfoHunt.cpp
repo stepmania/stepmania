@@ -5,6 +5,7 @@
 #include "VideoDriverInfo.h"
 #include "../../archutils/Win32/GotoURL.h"
 
+#include "RageThreads.h"
 
 
 
@@ -150,10 +151,10 @@ static void GetVideoCodecDebugInfo()
 	ICINFO info = { sizeof(ICINFO) };
 	int i;
 	LOG->Info("Video codecs:");
-	VDCHECKPOINT;
+	CHECKPOINT;
 	for(i=0; ICInfo(ICTYPE_VIDEO, i, &info); ++i)
 	{
-		VDCHECKPOINT;
+		CHECKPOINT;
 		if( FourCCToString(info.fccHandler) == "ASV1" )
 		{
 			/* Broken. */
@@ -162,7 +163,7 @@ static void GetVideoCodecDebugInfo()
 		}
 
 		LOG->Trace( "Scanning codec %s", FourCCToString(info.fccHandler).c_str() );
-		VDCHECKPOINT;
+		CHECKPOINT;
 		HIC hic;
 		hic = ICOpen(info.fccType, info.fccHandler, ICMODE_DECOMPRESS);
 		if(!hic)
@@ -172,7 +173,7 @@ static void GetVideoCodecDebugInfo()
 			continue;
 		}
 
-		VDCHECKPOINT;
+		CHECKPOINT;
 		if (ICGetInfo(hic, &info, sizeof(ICINFO)))
 			LOG->Info("    %s: %ls (%ls)",
 				FourCCToString(info.fccHandler).c_str(), info.szName, info.szDescription);
@@ -180,7 +181,7 @@ static void GetVideoCodecDebugInfo()
 			LOG->Info("ICGetInfo(%s) failed",
 				FourCCToString(info.fccHandler).c_str());
 
-		VDCHECKPOINT;
+		CHECKPOINT;
 		ICClose(hic);
 	}
 

@@ -11,6 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
+/* XXX register thread */
 #pragma comment(lib, "winmm.lib") 
  
 // Link with the DirectShow base class libraries
@@ -116,7 +117,7 @@ void MovieTexture_DShow::CheckFrame()
 	if(buffer == NULL)
 		return;
 
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	/* Just in case we were invalidated: */
 	CreateTexture();
@@ -141,29 +142,29 @@ void MovieTexture_DShow::CheckFrame()
 	 * to do a very slow conversion.  Both RGB8 and BGR8 are both (usually) valid
 	 * formats.
 	 */
-	VDCHECKPOINT;
+	CHECKPOINT;
 	DISPLAY->UpdateTexture(
 		m_uTexHandle, 
 		fromDShow,
 		0, 0,
 		m_iImageWidth, m_iImageHeight );
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	SDL_FreeSurface( fromDShow );
 
 	buffer = NULL;
 
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	/* Start the decoding thread again. */
 	SDL_SemPost(buffer_finished);
 
-	VDCHECKPOINT;
+	CHECKPOINT;
 }
 
 void MovieTexture_DShow::Update(float fDeltaTime)
 {
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	// restart the movie if we reach the end
 	if(m_bLoop)
@@ -178,7 +179,7 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 			SetPosition(0);
 	}
 
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	CheckFrame();
 }
