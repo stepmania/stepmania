@@ -31,7 +31,7 @@
 #define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
 #define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF(m_sName,"PreSwitchPageSeconds")
 #define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
-#define EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"SleepAfterTweenOffSeconds")
+#define EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"ExtraSleepAfterTweenOffSeconds")
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
