@@ -316,25 +316,27 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 	}
 }
 
-//
-//struct CompareSongPointerArrayBySectionName
-//{
-//	SongSortOrder so;
-//	CompareSongPointerArrayBySectionName( SongSortOrder so_ ): so(so_) { }
-//	bool operator() (const Song *p1, const Song *p2) const
-//	{
-//		CString sec1 = MusicWheel::GetSectionNameFromSongAndSort( p1, so );
-//		CString sec2 = MusicWheel::GetSectionNameFromSongAndSort( p2, so );
-//	
-//		/* In the TITLE sort, make sure NUM comes first and OTHER comes last. */
-//		if(so == SORT_TITLE && sec1 == "NUM" && sec2 != "NUM") return true;
-//		if(so == SORT_TITLE && sec1 != "NUM" && sec2 == "NUM") return false;
-//		if(so == SORT_TITLE && sec1 != "OTHER" && sec2 == "OTHER") return true;
-//		if(so == SORT_TITLE && sec1 == "OTHER" && sec2 != "OTHER") return false;
-//
-//		return sec1 < sec2;
-//	}
-//};
+extern map<const Song*, CString> song_sort_val;
+bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2);
+
+void MusicWheel::SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so )
+{
+	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
+	{
+		CString val = MusicWheel::GetSectionNameFromSongAndSort( arraySongPointers[i], so );
+
+		/* Make sure NUM comes first and OTHER comes last. */
+		if( val == "NUM" )			val = "0";
+		else if( val == "OTHER" )	val = "2";
+		else						val = "1" + val;
+
+		song_sort_val[arraySongPointers[i]] = val;
+	}
+
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortVal );
+	song_sort_val.clear();
+}
+
 
 void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so )
 {
@@ -422,10 +424,14 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				// Sorting twice isn't necessary.  Instead, modify the compatator functions 
 				// in Song.cpp to have the desired effect. -Chris
+				/* Keeping groups together with the sorts is tricky and brittle; we
+				 * keep getting OTHER split up without this.  However, it puts the 
+				 * Grade and BPM sorts in the wrong order, and they're already correct,
+				 * so don't re-sort for them. */
 //				/* We're using sections, so use the section name as the top-level
 //				 * sort. */
-//				stable_sort(arraySongs.begin(), arraySongs.end(),
-//							CompareSongPointerArrayBySectionName(so));
+				if( so != SORT_GRADE && so != SORT_BPM )
+					SortSongPointerArrayBySectionName(arraySongs, so);
 
 				// make WheelItemDatas with sections
 				CString sLastSection = "";
