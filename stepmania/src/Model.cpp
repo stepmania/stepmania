@@ -539,41 +539,27 @@ void Model::DrawPrimitives()
 			const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
 
 			// apply material
+			RageColor emissive = m_pTempState->glow;
+			RageColor ambient = RageColor(0,0,0,0);
+			RageColor diffuse = RageColor(0,0,0,0);
+			RageColor specular = RageColor(0,0,0,0);
+			float shininess = 1;
+
+			DISPLAY->SetMaterial( 
+				emissive,
+				ambient,
+				diffuse,
+				specular,
+				shininess );
+			DISPLAY->ClearAllTextures();
+
 			if( pMesh->nMaterialIndex != -1 )
 			{
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-
-				RageColor Emissive = mat.Emissive;
-				RageColor Ambient = mat.Ambient;
-				RageColor Diffuse = mat.Diffuse;
-				
-				Emissive = m_pTempState->glow;
-				Ambient = m_pTempState->glow;
-				Diffuse = m_pTempState->glow;
-
-				DISPLAY->SetMaterial( 
-					Emissive,
-					Ambient,
-					Diffuse,
-					mat.Specular,
-					mat.fShininess );
-				DISPLAY->ClearAllTextures();
 				DISPLAY->SetTexture( 0, mat.diffuse.ani.GetCurrentTexture() );
 			}
 			else
 			{
-				RageColor emissive = m_pTempState->glow;
-				RageColor ambient = m_pTempState->glow;
-				RageColor diffuse = m_pTempState->glow;
-				RageColor specular = m_pTempState->glow;
-				float shininess = 1;
-				DISPLAY->SetMaterial(
-					emissive,
-					ambient,
-					diffuse,
-					specular,
-					shininess );
-				DISPLAY->ClearAllTextures();
 			}
 
 			// apply mesh-specific bone (if any)

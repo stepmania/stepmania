@@ -981,7 +981,6 @@ public:
 		glVertexPointer(3, GL_FLOAT, 0, &m_vPosition[0]);
 
 		glDisableClientState(GL_COLOR_ARRAY);
-		glColor4f(1,1,1,1);
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(2, GL_FLOAT, 0, &m_vTexture[0]);
@@ -1189,7 +1188,6 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	AssertNoGLError();
 
 	glDisableClientState(GL_COLOR_ARRAY);
-	glColor4f(1,1,1,1);
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
@@ -1535,11 +1533,26 @@ void RageDisplay_OGL::SetMaterial(
 	float shininess
 	)
 {
-	glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
-	glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
-	glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
-	glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
-	glMaterialf( GL_FRONT, GL_SHININESS, shininess );
+	// TRICKY:  If lighting is off, then setting the material 
+	// will have no effect.  Even if lighting is off, we still
+	// want Models to have basic color and transparency.
+	// We can do this fake lighting by setting the vertex color.
+
+	GLboolean bLighting;
+	glGetBooleanv( GL_LIGHTING, &bLighting );
+
+	if( bLighting )
+	{
+		glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
+		glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
+		glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
+		glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
+		glMaterialf( GL_FRONT, GL_SHININESS, shininess );
+	}
+	else
+	{
+		glColor4fv( emissive + ambient + diffuse );
+	}
 }
 
 void RageDisplay_OGL::SetLighting( bool b )
