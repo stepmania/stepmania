@@ -80,13 +80,6 @@ CString		g_sServerIP = "";
 
 const int SM_PORT = 573;	// "Ko" + "na" + "mitsu"
 
-/*------------------------------------------------
-	Common stuff
-------------------------------------------------*/
-int		flags = 0;		/* SDL video flags */
-int		window_w = SCREEN_WIDTH, window_h = SCREEN_HEIGHT;	/* window width and height */
-CString  g_sErrorString = "";
-
 static void ChangeToDirOfExecutable(const char *argv0)
 {
 	/* Make sure the current directory is the root program directory
@@ -102,10 +95,6 @@ static void ChangeToDirOfExecutable(const char *argv0)
 
 		chdir( dir.GetString() );
 	}
-}
-
-void CreateLoadingWindow()
-{
 }
 
 //-----------------------------------------------------------------------------
@@ -186,6 +175,8 @@ int main(int argc, char* argv[])
 	SDL_Init(SDL_flags);
 
 	atexit(SDL_Quit);
+
+	CString  g_sErrorString = "";
 
 #ifndef _DEBUG
 	try{
