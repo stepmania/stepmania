@@ -543,9 +543,14 @@ void RageMutex::Lock()
 		const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
 		const ThreadSlot *OtherSlot = GetThreadSlotFromID( m_LockedBy );
 
-		const CString sReason = ssprintf( "Thread deadlock on mutex %s between %s and %s", GetName().c_str(),
-			ThisSlot? ThisSlot->GetThreadName(): "(???" ")", // stupid trigraph warnings
-			OtherSlot? OtherSlot->GetThreadName(): "(???" ")" );
+		CString ThisSlotName = "(???" ")"; // stupid trigraph warnings
+		CString OtherSlotName = "(???" ")"; // stupid trigraph warnings
+		if( ThisSlot )
+			ThisSlotName = ssprintf( "%s (%i)", ThisSlot->GetThreadName(), (int) ThisSlot->id );
+		if( OtherSlot )
+			OtherSlotName = ssprintf( "%s (%i)", OtherSlot->GetThreadName(), (int) OtherSlot->id );
+		const CString sReason = ssprintf( "Thread deadlock on mutex %s between %s and %s",
+			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
 #if defined(CRASH_HANDLER) && !defined(DARWIN)
 		/* Don't leave g_ThreadSlotsLock when we call ForceCrashHandlerDeadlock. */
@@ -556,7 +561,7 @@ void RageMutex::Lock()
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
 		ForceCrashHandlerDeadlock( sReason, CrashHandle );
 #else
-		RageException::Throw( "%s", sReason.c_str() );
+		FAIL_M( sReason );
 #endif
 	}
 
