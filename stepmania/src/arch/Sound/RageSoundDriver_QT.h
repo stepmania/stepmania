@@ -19,7 +19,7 @@ protected:
 	virtual void StopMixing(RageSound *snd);
 	virtual int GetPosition(const RageSound *snd) const;
 	virtual void Update (float delta);
-	virtual float GetPlayLatency() const { return 0; }
+	virtual float GetPlayLatency() const;
 
 public:
 	RageSound_QT();
