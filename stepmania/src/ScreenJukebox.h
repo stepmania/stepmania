@@ -10,7 +10,7 @@
 class ScreenJukebox : public ScreenGameplay
 {
 public:
-	ScreenJukebox( CString sName, bool bDemonstration = false );
+	ScreenJukebox( CString sName );
 	virtual void Init();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -20,10 +20,9 @@ public:
 	static bool SetSong( bool bDemonstration );
 
 protected:
+	bool m_bDemonstration;
 	Transition	m_In;
 	Transition	m_Out;
-
-	static bool PrepareForJukebox( bool bDemonstration );
 };
 
 #endif

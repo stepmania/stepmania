@@ -107,13 +107,19 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	return false;
 }
 
-bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return true.
+ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( "ScreenGameplay" )
+{
+	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
+	m_bDemonstration = false;
+}
+
+void ScreenJukebox::Init()
 {
 	// ScreeJukeboxMenu must set this
 	ASSERT( GAMESTATE->m_pCurStyle );
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
-	SetSong( bDemonstration );
+	SetSong( m_bDemonstration );
 
 //	ASSERT( GAMESTATE->m_pCurSong );
 
@@ -161,16 +167,7 @@ bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return t
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 
-	return true;
-}
-
-ScreenJukebox::ScreenJukebox( CString sName, bool bDemonstration ) : ScreenGameplay( "ScreenGameplay", PrepareForJukebox(bDemonstration) )	// this is a hack to get some code to execute before the ScreenGameplay constructor
-{
-	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
-}
-
-void ScreenJukebox::Init()
-{
+	/* Now that we've set up, init the base class. */
 	ScreenGameplay::Init();
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.

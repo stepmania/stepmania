@@ -55,7 +55,7 @@ class LyricsLoader;
 class ScreenGameplay : public Screen
 {
 public:
-	ScreenGameplay( CString sName, bool bDemonstration = false );
+	ScreenGameplay( CString sName );
 	virtual void Init();
 	virtual ~ScreenGameplay();
 
@@ -177,7 +177,6 @@ protected:
 	RageSound		m_soundBattleTrickLevel3;
 
 	bool			m_bZeroDeltaOnNextUpdate;
-	bool			m_bDemonstration;
 
 	RageSound		m_soundAssistTick;
 	RageSound		*m_pSoundMusic;

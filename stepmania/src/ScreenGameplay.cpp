@@ -86,16 +86,15 @@ const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
 
 REGISTER_SCREEN_CLASS( ScreenGameplay );
-ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sName)
+ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 {
-	m_bDemonstration = bDemonstration;
 }
 
 void ScreenGameplay::Init()
 {
 	Screen::Init();
 
-	if( m_bDemonstration )
+	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
 	else
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
@@ -184,7 +183,7 @@ void ScreenGameplay::Init()
 		ASSERT( pCourse );
 
 		/* Increment the play count. */
-		if( !m_bDemonstration )
+		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			FOREACH_EnabledPlayer(p)
 				PROFILEMAN->IncrementCoursePlayCount( pCourse, GAMESTATE->m_pCurTrail[p], p );
@@ -306,7 +305,7 @@ void ScreenGameplay::Init()
 	m_sprStaticBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );	// behind everything else
 	this->AddChild(&m_sprStaticBackground);
 
-	if( !m_bDemonstration )	// only load if we're going to use it
+	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Toasty.Load( THEME->GetPathB(m_sName,"toasty") );
 		this->AddChild( &m_Toasty );
@@ -642,7 +641,7 @@ void ScreenGameplay::Init()
 	m_textAutoPlay.LoadFromFont( THEME->GetPathF(m_sName,"autoplay") );
 	m_textAutoPlay.SetName( "AutoPlay" );
 	SET_XY( m_textAutoPlay );
-	if( !m_bDemonstration )	// only load if we're not in demonstration of jukebox
+	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're not in demonstration or jukebox
 		this->AddChild( &m_textAutoPlay );
 	UpdateAutoPlayText();
 	
@@ -667,7 +666,7 @@ void ScreenGameplay::Init()
 	}
 
 	
-	if( !m_bDemonstration )	// only load if we're going to use it
+	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Ready.Load( THEME->GetPathB(m_sName,"ready") );
 		this->AddChild( &m_Ready );
@@ -743,7 +742,7 @@ void ScreenGameplay::Init()
 
 	this->SortByDrawOrder();
 
-	if( !m_bDemonstration )	// only load if we're going to use it
+	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
 
@@ -935,7 +934,7 @@ void ScreenGameplay::LoadNextSong()
 
 		/* Increment the play count even if the player fails.  (It's still popular,
 		 * even if the people playing it aren't good at it.) */
-		if( !m_bDemonstration )
+		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 			PROFILEMAN->IncrementStepsPlayCount( pSong, pSteps, p );
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString() );
@@ -948,7 +947,7 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && g_CurStageStats.m_player[p].bFailed )	// already failed
 			ShowOniGameOver(p);
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && !PREFSMAN->m_bEventMode && !m_bDemonstration)
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && !PREFSMAN->m_bEventMode && !GAMESTATE->m_bDemonstrationOrJukebox)
 		{
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetStageIndex(), 
@@ -974,7 +973,7 @@ void ScreenGameplay::LoadNextSong()
 		if( m_pSecondaryScoreKeeper[p] )
 			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p].m_NoteData );
 
-		if( m_bDemonstration )
+		if( GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PC_CPU;
 			GAMESTATE->m_pPlayerState[p]->m_iCpuSkill = 5;
@@ -1065,7 +1064,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		/* BeginnerHelper disabled/failed to load. */
 		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
-		if( !m_bDemonstration )
+		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			/* This will fade from a preset brightness to the actual brightness (based
 			 * on prefs and "cover").  The preset brightness may be 0 (to fade from
@@ -1254,7 +1253,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Get the transitions rolling
 		//
-		if( m_bDemonstration )
+		if( GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			StartPlayingSong( 0, 0 );	// *kick* (no transitions)
 		}
