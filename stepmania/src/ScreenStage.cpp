@@ -27,6 +27,7 @@
 #include "song.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+#define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 
 const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 
@@ -59,20 +60,8 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	m_Back.SetZ( -2 ); // on top of everything else
 	this->AddChild( &m_Back );
 
-	/* Prep the new screen once the animation is complete.  This way, we
-	 * start loading the gameplay screen as soon as possible. */
+	/* Prep the new screen once m_In is complete. */
 	this->PostScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
-
-	/* Start fading out after m_In is complete, minus the length of m_Out.  This
-	 * essentially makes m_In a timer to pad the length, so we always wait a minimum
-	 * amount of time.  It's a slightly confusing timer, though; maybe we shouldn't
-	 * make m_Out affect it.  (Maybe just make it a metric? XXX) */
-	float fStartFadingOutSeconds = m_In.GetLengthSeconds() - m_Out.GetLengthSeconds();
-
-	/* Never do this before we send SM_PrepScreen--we havn't loaded the screen yet. */
-	fStartFadingOutSeconds = max(fStartFadingOutSeconds, m_Background.GetLengthSeconds());
-
-	this->PostScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
 
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -126,8 +115,14 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PrepScreen:
+		/* Start fading out in after MINIMUM_DELAY seconds.  Loading the screen
+		 * might take longer than that, in which case we'll fade out as early as
+		 * we can. */
+		this->PostScreenMessage( SM_BeginFadingOut, MINIMUM_DELAY );
+
 		SCREENMAN->PrepNewScreen( NEXT_SCREEN );
 		break;
+
 	case SM_BeginFadingOut:
 		m_Out.StartTransitioning();
 		int p;
