@@ -219,11 +219,11 @@ SOURCE=.\RageNetworkClient.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageSound.cpp
+SOURCE=.\RageSoundBass.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageSound.h
+SOURCE=.\RageSoundBass.h
 # End Source File
 # Begin Source File
 

@@ -268,7 +268,7 @@ static void DoEraseEmergencyDump()
 	DeleteFile(szEmergencyDumpName);
 }
 
-#include "RageSound.h"
+#include "RageSoundBass.h"
 extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	/* If we're fullscreen, the fullscreen d3d window will obscure

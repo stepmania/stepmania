@@ -11,7 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageSound.h"
 #include "RageSoundSample.h"
 #include "RageUtil.h"
 

@@ -21,7 +21,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
-#include "RageSound.h"
+#include "RageSoundBass.h"
 // #include "RageSoundManager.h"
 #include "RageMusic.h"
 #include "RageInput.h"
@@ -313,7 +313,7 @@ int main(int argc, char* argv[])
 	PREFSMAN	= new PrefsManager;
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
-	SOUND		= new RageSound;
+	SOUND		= new RageSoundBass;
 	MUSIC		= new RageSoundStream;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;

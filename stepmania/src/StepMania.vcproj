@@ -1076,10 +1076,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageNetworkServer.h">
 			</File>
 			<File
-				RelativePath=".\RageSound.cpp">
+				RelativePath=".\RageSoundBass.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSound.h">
+				RelativePath=".\RageSoundBass.h">
 			</File>
 			<File
 				RelativePath=".\RageSoundSample.cpp">
