@@ -95,7 +95,7 @@ protected:
 	CString m_sOnCommand;
 	CString m_sOffCommand;
 	float m_fRepeatCommandEverySeconds;	// -1 = no repeat
-	float m_fSecondsUntilRepeatCommand;
+	float m_fSecondsUntilNextCommand;
 	float m_fUpdateRate;	// set by GainingFocus
 	float m_fFOV;	// -1 = no change
 	bool m_bLighting;

@@ -63,7 +63,7 @@ void BGAnimationLayer::Init()
 	Unload();
 
 	m_fRepeatCommandEverySeconds = -1;
-	m_fSecondsUntilRepeatCommand = 0;
+	m_fSecondsUntilNextCommand = 0;
 	m_fUpdateRate = 1;
 	m_fFOV = -1;	// no change
 	m_bLighting = false;
@@ -535,7 +535,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	CLAMP( m_Type, (Type)0, TYPE_INVALID );
 	ini.GetValue( sLayer, "Command", m_sOnCommand );
 	ini.GetValue( sLayer, "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
-	m_fSecondsUntilRepeatCommand = m_fRepeatCommandEverySeconds;
+	m_fSecondsUntilNextCommand = m_fRepeatCommandEverySeconds;
 	ini.GetValue( sLayer, "OffCommand", m_sOffCommand );
 	ini.GetValue( sLayer, "FOV", m_fFOV );
 	ini.GetValue( sLayer, "Lighting", m_bLighting );
@@ -930,12 +930,14 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 	if( m_fRepeatCommandEverySeconds != -1 )	// if repeating
 	{
-		m_fSecondsUntilRepeatCommand -= fDeltaTime;
-		if( m_fSecondsUntilRepeatCommand <= 0 )
+		m_fSecondsUntilNextCommand -= fDeltaTime;
+		if( m_fSecondsUntilNextCommand <= 0 )
 		{
 			for( unsigned i=0; i<m_pActors.size(); i++ )
-				m_pActors[i]->Command( m_sOnCommand );
-			m_fSecondsUntilRepeatCommand += m_fRepeatCommandEverySeconds;
+			{
+				m_pActors[i]->Command( m_sOnCommand );			
+			}
+			m_fSecondsUntilNextCommand += m_fRepeatCommandEverySeconds;
 		}
 	}
 }
