@@ -112,6 +112,14 @@ SOURCE=.\EditMetricsDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\EnterComment.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EnterComment.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EnterName.cpp
 # End Source File
 # Begin Source File
@@ -177,6 +185,14 @@ SOURCE=.\Registry.h
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ShowComment.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ShowComment.h
 # End Source File
 # Begin Source File
 

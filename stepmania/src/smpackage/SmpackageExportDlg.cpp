@@ -7,6 +7,7 @@
 #include "RageUtil.h"
 #include "ZipArchive\ZipArchive.h"	
 #include "EnterName.h"	
+#include "EnterComment.h"	
 #include "smpackageUtil.h"	
 #include "EditInsallations.h"	
 
@@ -138,7 +139,7 @@ CString GetDesktopPath()
     return strPath;
 }
 
-bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExport )	
+bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExport, CString sComment )	
 {
 	CZipArchive zip;
 	
@@ -158,6 +159,8 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 		return false;
 	}
 
+
+	zip.SetGlobalComment( sComment );
 
 	//
 	// Add files to zip
@@ -235,7 +238,15 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 	sPackageName = nameDlg.m_sEnteredName;
 	sPackageName = ReplaceInvalidFileNameChars( sPackageName+".smzip" );
 
-	if( ExportPackage( sPackageName, asPaths ) )
+	// Generate a comment
+	CString sComment;
+	EnterComment commentDlg;
+	nResponse = commentDlg.DoModal();
+	if( nResponse != IDOK )
+		return;	// cancelled
+	sComment = commentDlg.m_sEnteredComment;
+
+	if( ExportPackage( sPackageName, asPaths, sComment ) )
 		AfxMessageBox( ssprintf("Successfully exported package '%s' to your Desktop.",sPackageName) );
 }
 
@@ -252,6 +263,15 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 		return;
 	}
 	
+	// Generate a comment
+	CString sComment;
+	EnterComment commentDlg;
+	int nResponse = commentDlg.DoModal();
+	if( nResponse != IDOK )
+		return;	// cancelled
+	sComment = commentDlg.m_sEnteredComment;
+
+
 	bool bAllSucceeded = true;
 	CStringArray asExportedPackages;
 	CStringArray asFailedPackages;
@@ -269,7 +289,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 		CStringArray asPathsToExport;
 		asPathsToExport.Add( sPath );
 		
-		if( ExportPackage( sPackageName, asPathsToExport ) )
+		if( ExportPackage( sPackageName, asPathsToExport, sComment ) )
 			asExportedPackages.Add( sPackageName );
 		else
 			asFailedPackages.Add( sPackageName );

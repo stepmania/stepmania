@@ -17,6 +17,8 @@
 #define CONVERTTHEME                    144
 #define IDD_EDIT_METRICS                145
 #define EDIT_METRICS                    146
+#define IDD_ENTER_COMMENT               146
+#define IDD_SHOW_COMMENT                147
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001

@@ -226,6 +226,29 @@ BEGIN
     PUSHBUTTON      "Explanation",IDC_BUTTON_HELP,65,214,71,13
 END
 
+IDD_ENTER_COMMENT DIALOG DISCARDABLE  0, 0, 312, 202
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add A Comment"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "This message will be displayed before a user installs your package.",
+                    -1,7,7,219,12
+    EDITTEXT        IDC_EDIT,17,24,232,171,ES_MULTILINE | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,255,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,255,24,50,14
+END
+
+IDD_SHOW_COMMENT DIALOG DISCARDABLE  0, 0, 246, 186
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Package Comment"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT,7,7,232,151,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,72,165,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,128,165,50,14
+END
+
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
@@ -332,6 +355,22 @@ BEGIN
         RIGHTMARGIN, 325
         TOPMARGIN, 7
         BOTTOMMARGIN, 227
+    END
+
+    IDD_ENTER_COMMENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 305
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 195
+    END
+
+    IDD_SHOW_COMMENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 239
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 179
     END
 END
 #endif    // APSTUDIO_INVOKED

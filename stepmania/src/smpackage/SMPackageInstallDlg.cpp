@@ -7,6 +7,7 @@
 #include "RageUtil.h"
 #include "smpackageUtil.h"
 #include "EditInsallations.h"
+#include "ShowComment.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -121,7 +122,6 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 
 	RefreshInstallationList();
 
-	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -167,6 +167,19 @@ void CSMPackageInstallDlg::OnOK()
 	CString sInstallDir;
 	m_comboDir.GetWindowText( sInstallDir );
 	
+
+	// Show comment (if any)
+	CString sComment = m_zip.GetGlobalComment();
+	if( sComment != "" )
+	{
+		ShowComment commentDlg;
+		commentDlg.m_sComment = sComment;
+		int nResponse = commentDlg.DoModal();
+		if( nResponse != IDOK )
+			return;	// cancelled
+	}
+
+
 	// Unzip the SMzip package into the Stepmania installation folder
 	for( int i=0; i<m_zip.GetCount(); i++ )
 	{

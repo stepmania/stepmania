@@ -2,31 +2,36 @@
 
 [General Info]
 Version=1
-LastClass=EditMetricsDlg
+LastClass=ShowComment
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"
 
-ClassCount=9
+ClassCount=11
 Class1=CSmpackageApp
 Class2=CSmpackageDlg
 
-ResourceCount=8
+ResourceCount=11
 Resource1=IDR_MAINFRAME
-Resource2=IDD_EXPORTER
+Resource2=IDD_ENTER_STRING
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_MENU
+Resource3=IDD_ENTER_COMMENT
 Class5=EnterName
-Resource4=IDD_DIALOG_NAME
+Resource4=IDD_EXPORTER
 Class6=EditInsallations
-Resource5=IDD_INSTALL
+Resource5=IDD_MENU
 Class7=MainMenuDlg
-Resource6=IDD_EDIT_INSTALLATIONS
+Resource6=IDD_INSTALL
 Class8=ConvertThemeDlg
-Resource7=IDD_CONVERT_THEME
+Resource7=IDD_EDIT_INSTALLATIONS
 Class9=EditMetricsDlg
-Resource8=IDD_EDIT_METRICS
+Resource8=IDD_CONVERT_THEME
+Resource9=IDD_DIALOG_NAME
+Class10=EnterComment
+Resource10=IDD_EDIT_METRICS
+Class11=ShowComment
+Resource11=IDD_SHOW_COMMENT
 
 [CLS:CSmpackageApp]
 Type=0
@@ -94,16 +99,6 @@ BaseClass=CDialog
 Filter=D
 LastObject=CSmpackageExportDlg
 VirtualFilter=dWC
-
-[DLG:IDD_DIALOG_NAME]
-Type=1
-Class=EnterName
-ControlCount=5
-Control1=IDC_STATIC,static,1342308352
-Control2=IDC_EDIT,edit,1350631552
-Control3=IDOK,button,1342242817
-Control4=IDCANCEL,button,1342242816
-Control5=IDC_STATIC,static,1342308352
 
 [CLS:EnterName]
 Type=0
@@ -213,5 +208,59 @@ ImplementationFile=EditMetricsDlg.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
-LastObject=IDC_TREE
+LastObject=EditMetricsDlg
+
+[DLG:IDD_ENTER_STRING]
+Type=1
+Class=EnterName
+ControlCount=4
+Control1=IDC_STATIC,static,1342308352
+Control2=IDC_EDIT,edit,1350631552
+Control3=IDOK,button,1342242817
+Control4=IDCANCEL,button,1342242816
+
+[DLG:IDD_ENTER_COMMENT]
+Type=1
+Class=EnterComment
+ControlCount=4
+Control1=65535,static,1342308352
+Control2=IDC_EDIT,edit,1350631556
+Control3=IDOK,button,1342242817
+Control4=IDCANCEL,button,1342242816
+
+[DLG:IDD_DIALOG_NAME]
+Type=1
+Class=?
+ControlCount=5
+Control1=IDC_STATIC,static,1342308352
+Control2=IDC_EDIT,edit,1350631552
+Control3=IDOK,button,1342242817
+Control4=IDCANCEL,button,1342242816
+Control5=IDC_STATIC,static,1342308352
+
+[CLS:EnterComment]
+Type=0
+HeaderFile=EnterComment.h
+ImplementationFile=EnterComment.cpp
+BaseClass=CDialog
+Filter=D
+LastObject=IDC_EDIT
+VirtualFilter=dWC
+
+[DLG:IDD_SHOW_COMMENT]
+Type=1
+Class=ShowComment
+ControlCount=3
+Control1=IDC_EDIT,edit,1350633604
+Control2=IDOK,button,1342242817
+Control3=IDCANCEL,button,1342242816
+
+[CLS:ShowComment]
+Type=0
+HeaderFile=ShowComment.h
+ImplementationFile=ShowComment.cpp
+BaseClass=CDialog
+Filter=D
+VirtualFilter=dWC
+LastObject=ShowComment
 
