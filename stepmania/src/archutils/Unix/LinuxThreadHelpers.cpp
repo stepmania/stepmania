@@ -95,18 +95,18 @@ static int PtraceDetach( int ThreadID )
 }
 
 
+#ifndef _CS_GNU_LIBPTHREAD_VERSION
+#define _CS_GNU_LIBPTHREAD_VERSION 3
+#endif
+
 CString ThreadsVersion()
 {
-// Not all systems have a header that declares _CS_GNU_LIBPTHREAD_VERSION.
-// Deal with it.
-#if defined(_CS_GNU_LIBPTHREAD_VERSION)
 	char buf[1024];
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
-	RAGE_ASSERT_M( ret != -1, ssprintf( "%i", ret) );
+	if( ret == -1 )
+		return "(unknown)";
+
 	return buf;
-#else
-	return "(unknown)";
-#endif
 }
 
 /* Get this thread's ID (this may be a TID or a PID). */
