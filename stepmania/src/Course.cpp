@@ -29,7 +29,7 @@ Course::Course()
 	m_bRandomize = false;
 	m_iLives = -1;
 	m_iExtra = 0;
-
+	m_iNumTimesPlayed = 0;
 
 	//
 	// Init high scores
@@ -219,8 +219,8 @@ Notes* Course::GetNotesForStage( int iStage )
 		if( !GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
 			continue;
 
-		if( pNotes->GetDescription().CompareNoCase(sDescription)  ||
-			DifficultyToString(pNotes->GetDifficulty()).CompareNoCase(sDescription) )
+		if( !pNotes->GetDescription().CompareNoCase(sDescription)  ||
+			!DifficultyToString(pNotes->GetDifficulty()).CompareNoCase(sDescription) )
 			return pNotes;
 	}
 
