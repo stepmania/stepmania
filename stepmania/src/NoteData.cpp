@@ -273,7 +273,7 @@ bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow ) const
 	/* Starting at iRow, search upwards.  If we find a TapNote::hold_head, we're within
 	 * a hold.  If we find a tap, mine or attack, we're not--those never lie within hold
 	 * notes.  Ignore autoKeysound. */
-	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, iRow, 0 )
+	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, 0, iRow )
 	{
 		const TapNote &tn = GetTapNote( iTrack, r );
 		switch( tn.type )
