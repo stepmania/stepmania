@@ -85,8 +85,8 @@ CString DeviceInput::GetDescription()
 		case JOY_DOWN:		sReturn += "Down";		break;
 		case JOY_Z_UP:		sReturn += "Z-Up";		break;
 		case JOY_Z_DOWN:	sReturn += "Z-Down";	break;
-		case JOY_ROT_UP:	sReturn += "Z-Down";	break;
-		case JOY_ROT_DOWN:	sReturn += "Z-Down";	break;
+		case JOY_Z_ROT_UP:  sReturn += "ZR-Up";		break;
+		case JOY_Z_ROT_DOWN:sReturn += "ZR-Down";	break;
 		case JOY_HAT_LEFT:	sReturn += "H-Left";	break;
 		case JOY_HAT_RIGHT:	sReturn += "H-Right";	break;
 		case JOY_HAT_UP:	sReturn += "H-Up";		break;
@@ -491,8 +491,6 @@ void RageInput::Initialize()
 											 DIEDFL_ATTACHEDONLY ) ) )
 			throw RageException( hr, "m_pDI->EnumDevices failed." );
 	}
-//	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
-//		m_Pumps[pumpNo].init(pumpNo);
 
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
@@ -734,6 +732,14 @@ void RageInput::Update()
 		if ( IS_RIGHT(joyState.lX) ) m_joyState[i][JOY_RIGHT] = true;
 		if ( IS_UP(joyState.lY) )    m_joyState[i][JOY_UP] = true;
 		if ( IS_DOWN(joyState.lY) )  m_joyState[i][JOY_DOWN] = true;
+		if ( IS_UP(joyState.lZ) )    m_joyState[i][JOY_Z_UP] = true;
+		if ( IS_DOWN(joyState.lZ) )  m_joyState[i][JOY_Z_DOWN] = true;
+		if ( IS_UP(joyState.lRz) )   m_joyState[i][JOY_Z_ROT_UP] = true;
+		if ( IS_DOWN(joyState.lRz) ) m_joyState[i][JOY_Z_ROT_DOWN] = true;
+		if ( joyState.rgdwPOV[0] == 27000 ) m_joyState[i][JOY_HAT_LEFT] = true;
+		if ( joyState.rgdwPOV[0] == 9000 )  m_joyState[i][JOY_HAT_RIGHT] = true;
+		if ( joyState.rgdwPOV[0] == 0 )     m_joyState[i][JOY_HAT_UP] = true;
+		if ( joyState.rgdwPOV[0] == 18000 ) m_joyState[i][JOY_HAT_DOWN] = true;
 
 		for (int button_index = JOY_1; button_index < NUM_JOYSTICK_BUTTONS; ++button_index)
 		{
@@ -745,6 +751,12 @@ void RageInput::Update()
 	UpdatePump();
 }
 
+
+bool RageInput::BeingPressed( DeviceInput di, bool Prev )
+{
+	if(Prev) return WasBeingPressed(di);
+	return IsBeingPressed(di);
+}
 
 bool RageInput::IsBeingPressed( DeviceInput di )
 {
@@ -762,7 +774,7 @@ bool RageInput::IsBeingPressed( DeviceInput di )
 	case DEVICE_PUMP2:
 	{
 		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-		return m_pumpState[pump_index - DEVICE_PUMP1].button[di.button];
+		return m_pumpState[di.device - DEVICE_PUMP1].button[di.button];
 	}
 	default:
 		ASSERT( false ); // bad device
@@ -786,7 +798,7 @@ bool RageInput::WasBeingPressed( DeviceInput di )
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2: {
 		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-		return m_oldPumpState[pump_index - DEVICE_PUMP1].button[di.button];
+		return m_oldPumpState[di.device - DEVICE_PUMP1].button[di.button];
 	}
 
 	default:
