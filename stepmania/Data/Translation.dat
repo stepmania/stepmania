@@ -50,12 +50,13 @@ ArtistFrom: Park Ji Yoon
 ArtistTo: 박지윤
 *
 # Baek Ji Young - Sad Salsa
-TitleFrom: Sad Salsa
+ArtistFrom: Baek Ji Young
+#TitleFrom: Sad Salsa
 ArtistTo: 뱩지옝
 *
 # Lee Hyun Do - Pierrot
-TitleFrom: Pierrot
-ArtistTo: 이혠도
+#TitleFrom: Pierrot
+#ArtistTo: 이혠도
 *
 # Lee Hyun Do (most probably)
 ArtistFrom: Lee Hyun Do
