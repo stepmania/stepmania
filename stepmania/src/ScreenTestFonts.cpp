@@ -38,12 +38,12 @@ ScreenTestFonts::ScreenTestFonts() : Screen("ScreenTestFonts")
 	this->AddChild(&Vline);
 	
 	font.SetXY( CENTER_X, CENTER_Y+100 );
-	font.LoadFromFont( "Themes/default/Fonts/header1" );
+	font.LoadFromFont( "Themes/default/Fonts/Common Normal" );
 	font.SetZoom(.5);
 	this->AddChild(&font);
 
 	txt.SetXY( CENTER_X, CENTER_Y );
-	SetFont( "Themes/default/Fonts/header1" );
+	SetFont( "Themes/default/Fonts/Common Normal" );
 	SetText( "Foo" );
 }
 
@@ -93,17 +93,17 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 				  SCREENMAN->TextEntry( SM_ChangeText, "Edit text.", CustomText, ChangeText, NULL);
 			  break;
 	case '1': SetText("Waaai"); break;
-	case '2': SetText("WAAI &kakumei1;"); break;
-	case '3': SetText("WAAI &oni;"); break;
+	case '2': SetText("WAAI &#9769;"); break;
+	case '3': SetText("WAAI &#93bc;"); break;
 
 	case '4': SetText("WAAI\nWAAI"); break;
-	case '5': SetText("WAAI &oni;\nWAAI"); break;
+	case '5': SetText("WAAI &#93bc;\nWAAI"); break;
 
-	case 'q': SetFont( "Themes/default/Fonts/_common11" ); break;
-	case 'w': SetFont( "Themes/default/Fonts/_common2" ); break;
-	case 'e': SetFont( "Themes/default/Fonts/Normal" ); break;
-	case 'r': SetFont( "Themes/SMMAX2/Fonts/titlemenu" ); break;
-	case 't': SetFont( "Themes/default/Fonts/small titles" ); break;
+	case 'q': SetFont( "Themes/default/Fonts/_shared2" ); break;
+	case 'w': SetFont( "Themes/default/Fonts/Common Normal" ); break;
+	case 'e': SetFont( "Themes/default/Fonts/MusicList titles" ); break;
+	case 'r': SetFont( "Themes/default/Fonts/_shared1" ); break;
+	case 't': SetFont( "Themes/default/Fonts/ScreenRanking letters" ); break;
 
 	case 'z': FONT->ReloadFonts();
 			  TEXTUREMAN->ReloadAll();
