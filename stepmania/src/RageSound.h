@@ -8,10 +8,10 @@
 class SoundReader;
 
 /* Driver interface for sounds: this is what drivers see. */
-class RageDriverSound
+class RageSoundBase
 {
 public:
-	virtual ~RageDriverSound() { }
+	virtual ~RageSoundBase() { }
 	virtual void StopPlaying() = 0;
 	virtual int GetPCM( char *buffer, int size, int sampleno ) = 0;
 	virtual int GetSampleRate() const = 0;
@@ -19,7 +19,7 @@ public:
 	virtual CString GetLoadedFilePath() const = 0;
 };
 
-class RageSound: public RageDriverSound
+class RageSound: public RageSoundBase
 {
 public:
 	/* M_STOP (default) stops the sound after m_LengthSamples have been played.
