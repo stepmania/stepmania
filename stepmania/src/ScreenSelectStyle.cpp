@@ -40,7 +40,12 @@
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectStyle","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectStyle","TimerSeconds")
 #define NEXT_SCREEN				PREFSMAN->m_bDDRExtremeDifficultySelect? THEME->GetMetric("ScreenSelectStyle","NextScreen") : "ScreenSelectDifficultyEX"
-
+/* I couldn't find a cleaner way to add this so that SM can show DDREX style,
+	if configured to, in place of the normal style select difficulty screen..
+	I know the screen after this one is supposed to be dynamic to whatever
+	is in the metrics file.. But logically, shouldn't select difficulty always
+	come after select style? -- Miryokuteki
+*/
 
 
 ScreenSelectStyle::ScreenSelectStyle()
