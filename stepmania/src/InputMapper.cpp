@@ -434,17 +434,20 @@ void InputMapper::SaveMappingsToDisk()
 	ini.DeleteKey( GAMESTATE->GetCurrentGame()->m_szName );
 
 	// iterate over our input map and write all mappings to the ini file
-	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
+	FOREACH_GameController(i)
 	{
 		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
 		{
-			CString sNameString, sValueString;
-			
 			GameInput GameI( (GameController)i, (GameButton)j );
-			sNameString = GameI.toString();
-			sValueString = ssprintf( "%s,%s,%s", 
-				m_GItoDI[i][j][0].toString().c_str(), m_GItoDI[i][j][1].toString().c_str(), m_GItoDI[i][j][2].toString().c_str() );
+			CString sNameString = GameI.toString();
 			
+			vector<CString> asValues;
+			for( unsigned button = 0; button < NUM_GAME_TO_DEVICE_SLOTS; ++button )
+				asValues.push_back( m_GItoDI[i][j][button].toString() );
+			while( asValues.size() && asValues.back() == "" )
+				asValues.erase( asValues.begin()+asValues.size()-1 );
+			CString sValueString = join( ",", asValues );
+
 			ini.SetValue( GAMESTATE->GetCurrentGame()->m_szName, sNameString, sValueString );
 		}
 	}
