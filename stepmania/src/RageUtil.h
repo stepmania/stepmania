@@ -62,9 +62,9 @@ inline float max(int a, float b) { return a > b? a:b; }
 // Fast random number generators
 // Taken from "Numerical Recipes in C"
 
-extern ULONG randseed;
+extern unsigned long randseed;
 
-inline ULONG Random()
+inline unsigned long Random()
 {
 	randseed = 1664525L * randseed + 1013904223L;
 	return randseed;
@@ -73,7 +73,7 @@ inline ULONG Random()
 inline float RandomFloat()
 {
 	randseed = 1664525L * randseed + 1013904223L;
-	ULONG itemp = 0x3f800000 | (0x007fffff & randseed);
+	unsigned long itemp = 0x3f800000 | (0x007fffff & randseed);
 	return (*(float *)&itemp) - 1.0f;
 }
 
@@ -98,7 +98,7 @@ inline int RandomInt(int nLow, int nHigh)
 // Simple function for generating random numbers
 inline float randomf( const float low=-1.0f, const float high=1.0f )
 {
-    return low + ( high - low ) * ( (FLOAT)rand() ) / RAND_MAX;
+    return low + ( high - low ) * ( (float)rand() ) / RAND_MAX;
 }
 
 /* XXX: These are C99 functions (except for the roundf(double) overload); what's
@@ -173,7 +173,7 @@ unsigned int GetHashForDirectory( CString sDir );	// a hash value that remains t
 bool DoesFileExist( const CString &sPath );
 bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
-DWORD GetFileSizeInBytes( const CString &sFilePath );
+unsigned GetFileSizeInBytes( const CString &sFilePath );
 
 bool CompareCStringsAsc(const CString &str1, const CString &str2);
 bool CompareCStringsDesc(const CString &str1, const CString &str2);

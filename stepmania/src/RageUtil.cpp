@@ -13,7 +13,7 @@
 
 #include "RageUtil.h"
 
-ULONG		randseed = time(NULL);
+unsigned long randseed = time(NULL);
 
 #include <direct.h>
 #include <numeric>
@@ -632,7 +632,7 @@ unsigned int GetHashForDirectory( CString sDir )
 	return hash; 
 }
 
-DWORD GetFileSizeInBytes( const CString &sFilePath )
+unsigned GetFileSizeInBytes( const CString &sFilePath )
 {
 	HANDLE hFile = CreateFile(
 	  sFilePath,          // pointer to name of the file
