@@ -4,6 +4,7 @@
 #include "LoadingWindow_Win32.h"
 #include "../../resource.h"
 #include <windows.h>
+#include "StepMania.h"
 
 HBITMAP g_hBitmap = NULL;
 
@@ -15,10 +16,11 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 	switch( msg )
 	{
 	case WM_INITDIALOG:
+	    /* XXX: Figure out how to use SDL_LoadImage here. */
 		g_hBitmap = 
 			(HBITMAP)LoadImage( 
 				handle.Get(), 
-				"Data\\splash.bmp",
+				DirOfExecutable + "\\..\\Data\\splash.bmp",
 				IMAGE_BITMAP,
 				0, 0,
 				LR_LOADFROMFILE );
