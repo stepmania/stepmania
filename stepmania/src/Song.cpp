@@ -558,24 +558,14 @@ void Song::TidyUpData()
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
 	}
 
-
-
-
-	LOG->Trace("Looking for lyrics..");
-	if( HasLyrics() )
+	if( !HasLyrics() )
 	{
-		//Check if there is a lyric file in here
+		// Check if there is a lyric file in here
 		CStringArray arrayLyricFiles;
 		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
 		if(	!arrayLyricFiles.empty() )
-		{
-			m_sLyricsFile = m_sSongDir+arrayLyricFiles[0];
-			LyricsLoader	ll;
-			ll.LoadFromLRCFile(m_sLyricsFile.GetBuffer(), *GAMESTATE->m_pCurSong);
-		}
+			m_sLyricsFile = arrayLyricFiles[0];
 	}
-
-
 
 
 
@@ -1219,15 +1209,7 @@ CString Song::GetBannerPath() const
 
 CString Song::GetLyricsPath() const
 {
-	//LOG->Trace("\n\n\n TRYING TO GET LYRICS FROM:: %s%s", m_sSongDir, m_sLyricsFile);
-		CStringArray arrayLyricFiles;
-		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
-		if(	!arrayLyricFiles.empty() )
-		{
-			return m_sSongDir+arrayLyricFiles[0];
-		}
-		
-		return CString("NULL");
+	return m_sSongDir+m_sLyricsFile;
 }
 
 CString Song::GetCDTitlePath() const
