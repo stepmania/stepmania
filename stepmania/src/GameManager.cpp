@@ -15,7 +15,9 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "GameInput.h"	// for GameButton constants
+#ifndef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION  0x0800
+#endif
 #include <dinput.h> 	// for DIK_* key codes
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
