@@ -106,9 +106,10 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 
 	this->UpdateSelectableChoices();
 
+	m_sprJointPremium.SetName( "JointPremium" );
+
 	if( PREFSMAN->m_bJointPremium )
 	{
-		m_sprJointPremium.SetName( "JointPremium" );
 		m_sprJointPremium.Load( THEME->GetPathToG("ScreenSelectStyle joint premium") );
 		this->AddChild( &m_sprJointPremium );
 	}
