@@ -81,6 +81,9 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 			conv[i] = MaxOutputIntensity * 65536 / MaxInputIntensity;
 	}
 
+	/* Max alpha value; used when there's no alpha source.  */
+	const Uint8 alpha_max = Uint8((1 << dst_cbits[3]) - 1);
+
 	/* For each row: */
 	for(int row = 0; row < src->h; ++row) {
 		const Uint8 *srcp = (const Uint8 *)src->pixels + row * src->pitch;
@@ -97,10 +100,19 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 				colors[c] = DitherPixel(col, row, colors[c], conv[c]);
 			}
 
-			if( src_cbits[3] == 0 )					/* src doesn't have alpha */
-				colors[3] = (1<<dst_cbits[3]) - 1;	/* Give dst full alpha */
-			else									/* src does have alpha */
-				colors[3] >>= src_cbits[3] - dst_cbits[3];	/* Convert the alpha channel, which we didn't dither. */
+			/* If the source has no alpha, the conversion formula will end up
+			 * with 0; that's fine for color channels, but for alpha we need to
+			 * be opaque. */
+			if(src_cbits[3] == 0) {
+				colors[3] = alpha_max;
+			} else {
+				/* Same as DitherPixel, except it doesn't actually dither; dithering
+				 * looks bad on the alpha channel. */
+				int out_intensity = colors[3] * conv[3];
+	
+				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
+				colors[3] = Uint8((out_intensity + 1) >> 16);
+			}
 
 			/* Raw value -> int -> pixel */
 			mySDL_SetRawRGBAV(dstp, dst, colors);
