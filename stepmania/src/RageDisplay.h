@@ -79,7 +79,8 @@ public:
 
 	int GetMaxTextureSize() const;
 	
-	void EnterPerspective(float fov, bool preserve_loc = true);
+	// This far clipping this might cause Z-fighting if we ever turn the z-buffer on
+	void EnterPerspective(float fov, bool preserve_loc = true, float near = 1, float far = 1000);
 	void ExitPerspective();
 	void LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up);
 
