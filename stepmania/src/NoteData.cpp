@@ -102,10 +102,20 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 //			if( m_iNumTracks != sMeasureLine.GetLength() )
 //				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
-			/* XXXXX: don't do this, translate explicitly, so the TAP_* constants
-			 * can be changed */
 			for( int c=0; c<min(sMeasureLine.GetLength(),m_iNumTracks); c++ )
-				SetTapNote(c, iIndex, sMeasureLine[c]);
+			{
+				TapNote t;
+				switch(sMeasureLine[c])
+				{
+				case '0': t = TAP_EMPTY; break;
+				case '1': t = TAP_TAP; break;
+				case '2': t = TAP_HOLD_HEAD; break;
+				case '3': t = TAP_HOLD_TAIL; break;
+				default: ASSERT(0); t = TAP_EMPTY; break;
+				}
+
+				SetTapNote(c, iIndex, t);
+			}
 		}
 	}
 	this->Convert2sAnd3sToHoldNotes();
@@ -137,12 +147,19 @@ CString NoteData::GetSMNoteDataString()
 
 		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
-			char szLineString[MAX_NOTE_TRACKS];
-			/* XXXXX: don't do this, translate explicitly, so the TAP_* constants
-			 * can be changed */
-			for( int t=0; t<m_iNumTracks; t++ )
-				szLineString[t] = GetTapNote(t, r);
-			szLineString[t] = '\0';
+			CString szLineString;
+			for( int t=0; t<m_iNumTracks; t++ ) {
+				char c;
+				switch(GetTapNote(t, r)) {
+				case TAP_EMPTY: c = '0'; break;
+				case TAP_TAP:   c = '1'; break;
+				case TAP_HOLD_HEAD: c = '2'; break;
+				case TAP_HOLD_TAIL: c = '3'; break;
+				default: ASSERT(0); c = '0'; break;
+				}
+				szLineString.append(1, c);
+			}
+			
 			asMeasureLines.push_back( szLineString );
 		}
 
