@@ -469,7 +469,8 @@ void ScreenManager::Draw()
 	if( m_ScreenStack.back()->IsFirstUpdate() )
 		return;
 
-	DISPLAY->BeginFrame();
+	if( !DISPLAY->BeginFrame() )
+		return;
 
 	if( !m_ScreenStack.empty() && !m_ScreenStack.back()->IsTransparent() )	// top screen isn't transparent
 		m_ScreenStack.back()->Draw();

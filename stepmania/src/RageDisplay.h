@@ -158,7 +158,7 @@ public:
 	/* Call this when the resolution has been changed externally: */
 	virtual void ResolutionChanged() { }
 
-	virtual void BeginFrame() = 0;	
+	virtual bool BeginFrame() = 0;	
 	virtual void EndFrame() = 0;
 	virtual VideoModeParams GetVideoModeParams() const = 0;
 	bool IsWindowed() const { return this->GetVideoModeParams().windowed; }
