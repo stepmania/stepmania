@@ -291,7 +291,7 @@ int RageSound_DSound::GetPosition(const RageSound *snd) const
 		if(stream_pool[i]->snd == snd) break;
 
 	if(i == stream_pool.size())
-		RageException::Throw("GetPosition: Sound %s is not being played", snd->GetLoadedFilePath());
+		RageException::Throw("GetPosition: Sound %s is not being played", snd->GetLoadedFilePath().c_str());
 
 	ASSERT(i != stream_pool.size());
 
