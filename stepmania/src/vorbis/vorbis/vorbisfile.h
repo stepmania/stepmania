@@ -112,6 +112,12 @@ extern int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos);
 extern int ov_time_seek(OggVorbis_File *vf,double pos);
 extern int ov_time_seek_page(OggVorbis_File *vf,double pos);
 
+extern int ov_raw_seek_lap(OggVorbis_File *vf,ogg_int64_t pos);
+extern int ov_pcm_seek_lap(OggVorbis_File *vf,ogg_int64_t pos);
+extern int ov_pcm_seek_page_lap(OggVorbis_File *vf,ogg_int64_t pos);
+extern int ov_time_seek_lap(OggVorbis_File *vf,double pos);
+extern int ov_time_seek_page_lap(OggVorbis_File *vf,double pos);
+
 extern ogg_int64_t ov_raw_tell(OggVorbis_File *vf);
 extern ogg_int64_t ov_pcm_tell(OggVorbis_File *vf);
 extern double ov_time_tell(OggVorbis_File *vf);
@@ -123,6 +129,10 @@ extern long ov_read_float(OggVorbis_File *vf,float ***pcm_channels,int samples,
 			  int *bitstream);
 extern long ov_read(OggVorbis_File *vf,char *buffer,int length,
 		    int bigendianp,int word,int sgned,int *bitstream);
+extern int ov_crosslap(OggVorbis_File *vf1,OggVorbis_File *vf2);
+
+extern int ov_halfrate(OggVorbis_File *vf,int flag);
+extern int ov_halfrate_p(OggVorbis_File *vf);
 
 #ifdef __cplusplus
 }

@@ -176,6 +176,8 @@ extern void     vorbis_comment_clear(vorbis_comment *vc);
 extern int      vorbis_block_init(vorbis_dsp_state *v, vorbis_block *vb);
 extern int      vorbis_block_clear(vorbis_block *vb);
 extern void     vorbis_dsp_clear(vorbis_dsp_state *v);
+extern double   vorbis_granule_time(vorbis_dsp_state *v,
+				    ogg_int64_t granulepos);
 
 /* Vorbis PRIMITIVES: analysis/DSP layer ****************************/
 
@@ -200,12 +202,17 @@ extern int      vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,
 					  ogg_packet *op);
 
 extern int      vorbis_synthesis_init(vorbis_dsp_state *v,vorbis_info *vi);
+extern int      vorbis_synthesis_restart(vorbis_dsp_state *v);
 extern int      vorbis_synthesis(vorbis_block *vb,ogg_packet *op);
 extern int      vorbis_synthesis_trackonly(vorbis_block *vb,ogg_packet *op);
 extern int      vorbis_synthesis_blockin(vorbis_dsp_state *v,vorbis_block *vb);
 extern int      vorbis_synthesis_pcmout(vorbis_dsp_state *v,float ***pcm);
+extern int      vorbis_synthesis_lapout(vorbis_dsp_state *v,float ***pcm);
 extern int      vorbis_synthesis_read(vorbis_dsp_state *v,int samples);
 extern long     vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op);
+
+extern int      vorbis_synthesis_halfrate(vorbis_info *v,int flag);
+extern int      vorbis_synthesis_halfrate_p(vorbis_info *v);
 
 /* Vorbis ERRORS and return codes ***********************************/
 
