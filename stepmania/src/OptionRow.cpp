@@ -111,8 +111,8 @@ void OptionRow::LoadMetrics( const CString &sType )
 	SHOW_UNDERLINES					.Load(m_sType,"ShowUnderlines");
 	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
 	THEME_ITEMS						.Load(m_sType,"ThemeItems");
-	THEME_ITEMS						.Load(m_sType,"ThemeItems");
-	SHOW_BPM_IN_SPEED_TITLE			.Load(m_sName,"ShowBpmInSpeedTitle");
+	THEME_TITLES					.Load(m_sType,"ThemeTitles");
+	SHOW_BPM_IN_SPEED_TITLE			.Load(m_sType,"ShowBpmInSpeedTitle");
 
 	FOREACH_PlayerNumber( p )
 		m_OptionIcons[p].Load( m_sType );
