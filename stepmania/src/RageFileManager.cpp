@@ -212,6 +212,15 @@ bool RageFileManager::Remove( const CString &sPath )
 
 #include "RageFileDriverDirect.h"
 #include "RageFileDriverZip.h"
+RageFileDriver *MakeFileDriver( CString Type, CString Root )
+{
+	if( !Type.CompareNoCase("DIR") )
+		return new RageFileDriverDirect( Root );
+	if( !Type.CompareNoCase("ZIP") )
+		return new RageFileDriverZip( Root );
+	return NULL;
+}
+
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
@@ -220,16 +229,7 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 		MountPoint += '/';
 	ASSERT( Root != "" );
 
-	RageFileDriver *driver = NULL;
-	if( !Type.CompareNoCase("DIR") )
-	{
-		driver = new RageFileDriverDirect( Root );
-	}
-	else if( !Type.CompareNoCase("ZIP") )
-	{
-		driver = new RageFileDriverZip( Root );
-	}
-
+	RageFileDriver *driver = MakeFileDriver( Type, Root );
 	if( !driver )
 	{
 		LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", Type.c_str(), Root.c_str() );
