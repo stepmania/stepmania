@@ -10,4 +10,7 @@ void AddStepManiaInstallDir( CString sNewInstallDir );
 bool GetPref( CString name, bool &val );
 bool SetPref( CString name, bool val );
 
+CString GetPackageDirectory(CString path);
+bool IsValidPackageDirectory(CString path);
+
 #endif

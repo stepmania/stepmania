@@ -89,4 +89,52 @@ bool SetPref( CString name, bool val )
 
 }
 
+/* Get a package directory.  For most paths, this is the first two components.  For
+ * songs, this is the first three. */
+CString GetPackageDirectory(CString path)
+{
+	if( path.Find("CVS") != -1 )
+		return "";	// skip
+
+	CStringArray Parts;
+	split( path, "\\", Parts );
+
+	unsigned NumParts = 2;
+	if( !Parts[0].CompareNoCase("songs") )
+		NumParts = 3;
+	if( Parts.size() < NumParts )
+		return "";
+
+	Parts.erase(Parts.begin() + NumParts, Parts.end());
+
+	CString ret = join( "\\", Parts );
+	if( !IsADirectory(ret) )
+		return "";
+	return ret;
+}
+
+
+bool IsValidPackageDirectory(CString path)
+{
+	/* Make sure the path contains only second-level directories, and doesn't
+	 * contain any ".", "..", "...", etc. dirs. */
+	CStringArray Parts;
+	split( path, "\\", Parts, true );
+	if( Parts.size() == 0 )
+		return false;
+
+	/* Make sure we're not going to "uninstall" an entire Songs subfolder. */
+	unsigned NumParts = 2;
+	if( !Parts[0].CompareNoCase("songs") )
+		NumParts = 3;
+	if( Parts.size() < NumParts )
+		return false;
+
+	/* Make sure the path doesn't contain any ".", "..", "...", etc. dirs. */
+	for( unsigned i = 0; i < Parts.size(); ++i )
+		if( Parts[i][0] == '.' )
+			return false;
+
+	return true;
+}
 
