@@ -241,30 +241,24 @@ void BitmapText::DrawChars()
 		{
 			int i = start*4;
 
+			float fAlpha = 1.0f;
 			if( FadeSize.left > 0.001f )
 			{
 				/* Add .5, so we fade wrt. the center of the vert, not the left side. */
 				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
-				fPercent *= LeftAlpha;
-
-				verts[i+0].c.a = (unsigned char)( verts[i+0].c.a * fPercent ); // top left
-				verts[i+1].c.a = (unsigned char)( verts[i+1].c.a * fPercent ); // bottom left
-				verts[i+2].c.a = (unsigned char)( verts[i+2].c.a * fPercent ); // bottom right
-				verts[i+3].c.a = (unsigned char)( verts[i+3].c.a * fPercent ); // top right
+				fAlpha *= fPercent * LeftAlpha;
 			}
 
 			if( FadeSize.right > 0.001f )
 			{
 				float fPercent = SCALE( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
-				fPercent *= RightAlpha;
-
-				verts[i+0].c.a = (unsigned char)( verts[i+0].c.a * fPercent ); // top left
-				verts[i+1].c.a = (unsigned char)( verts[i+1].c.a * fPercent ); // bottom left
-				verts[i+2].c.a = (unsigned char)( verts[i+2].c.a * fPercent ); // bottom right
-				verts[i+3].c.a = (unsigned char)( verts[i+3].c.a * fPercent ); // top right
+				fAlpha *= fPercent * RightAlpha;
 			}
+
+			for( int j = 0; j < 4; ++j )
+				verts[i+j].c.a = (unsigned char)( verts[i+j].c.a * fAlpha );
 		}
 	}
 
