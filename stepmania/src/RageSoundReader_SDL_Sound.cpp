@@ -123,9 +123,6 @@ int SoundReader_SDL_Sound::Read(char *buf, unsigned len)
 
 			int cnt = Sound_Decode(Sample);
 
-			if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
-				return bytes_read; /* EOF */
-
 			if(Sample->flags & SOUND_SAMPLEFLAG_ERROR)
 			{
 				SetError(Sound_GetError());
