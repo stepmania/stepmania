@@ -2,18 +2,8 @@
 #define SCREEN_OPTIONS_MASTER_H
 
 #include "ScreenOptions.h"
-#include "GameCommand.h"
-#include "LuaReference.h"
 
-struct ConfOption;
-
-enum OptionRowHandlerType
-{
-	ROW_LIST, /* list of custom settings */
-	ROW_LUA, /* lua tells us what to do */
-	ROW_CONFIG,	/* global pref */
-	NUM_OPTION_ROW_TYPES
-};
+class OptionRowHandler;
 
 class ScreenOptionsMaster: public ScreenOptions
 {
@@ -25,57 +15,12 @@ public:
 
 protected:
 
-	struct OptionRowHandler
-	{
-		OptionRowHandler() { m_pLuaTable=NULL; Init(); }
-		void Init()
-		{
-			type = ROW_LIST;
-			m_sName = "";
-			m_vsRefreshRowNames.clear();
-			ListEntries.clear();
-			Default.Init();
-			m_bUseModNameForIcon = false;
-			delete m_pLuaTable;
-			m_pLuaTable = new LuaExpression;
-			opt = NULL;
-		}
-
-		OptionRowHandlerType type;
-		CString m_sName;
-		bool	m_bExportOnChange;
-		vector<CString> m_vsRefreshRowNames;	// refresh these rows when the value of this row changes
-
-		/* ROW_LIST: */
-		vector<GameCommand> ListEntries;
-		GameCommand Default;
-		bool m_bUseModNameForIcon;
-
-		/* ROW_LUA: */
-		LuaExpression *m_pLuaTable;
-
-		/* ROW_CONFIG: */
-		const ConfOption *opt;
-	};
-
 	int m_iChangeMask;
 	CString m_sNextScreen;
 
-	vector<OptionRowHandler> OptionRowHandlers;
-	OptionRowDefinition *m_OptionRowAlloc;
-
-	int ExportOption( const OptionRowDefinition &def, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
-	void ImportOption( const OptionRowDefinition &def, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
+	vector<OptionRowHandler*> OptionRowHandlers;
+	vector<OptionRowDefinition> m_OptionRowAlloc;
 	
-	static void SetList( OptionRowDefinition &def, OptionRowHandler &hand, CString param );
-	static void SetLua( OptionRowDefinition &def, OptionRowHandler &hand, const CString &sLuaFunction );
-	static void SetSteps( OptionRowDefinition &def, OptionRowHandler &hand );
-	static void SetConf( OptionRowDefinition &def, OptionRowHandler &hand, CString param );
-	static void SetCharacters( OptionRowDefinition &def, OptionRowHandler &hand );
-	static void SetStyles( OptionRowDefinition &def, OptionRowHandler &hand );
-	static void SetGroups( OptionRowDefinition &def, OptionRowHandler &hand );
-	static void SetDifficulties( OptionRowDefinition &def, OptionRowHandler &hand );
-
 protected:
 	void HandleScreenMessage( const ScreenMessage SM );
 
