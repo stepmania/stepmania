@@ -1,10 +1,10 @@
-#ifndef RAGE_SOUND_QT
-#define RAGE_SOUND_QT
+#ifndef RAGE_SOUND_QT1
+#define RAGE_SOUND_QT1
 /*
- *  RageSoundDriver_QT.h
+ *  RageSoundDriver_QT1.h
  *  stepmania
  *
- *  Use multiple Sound Manager channels to output sound.
+ *  Use only a single Sound Manager channel to output sound.
  *
  *  Created by Steve Checkoway on Mon Jun 23 2003.
  *  Copyright (c) 2003 Steve Checkoway. All rights reserved.
@@ -23,7 +23,7 @@ namespace QT {
 #include "RageSound.h"
 #include "RageSoundDriver.h"
 
-class RageSound_QT: public RageSoundDriver {
+class RageSound_QT1: public RageSoundDriver {
 private:
 	struct sound {
 		RageSound *snd;
@@ -47,9 +47,9 @@ protected:
 	virtual float GetPlayLatency() const;
 
 public:
-	RageSound_QT();
-	virtual ~RageSound_QT();
+	RageSound_QT1();
+	virtual ~RageSound_QT1();
 	static void GetData(QT::SndChannel *chan, QT::SndCommand *cmd_passed);
 };
 
-#endif /* RAGE_SOUND_QT */
+#endif /* RAGE_SOUND_QT1 */

@@ -10,7 +10,7 @@
  *
  */
 
-//#include "Sound/RageSoundDriver_QT_old.h"
+#include "Sound/RageSoundDriver_QT1.h"
 #include "Sound/RageSoundDriver_QT.h"
 #include "LoadingWindow/LoadingWindow_Cocoa.h"
 
