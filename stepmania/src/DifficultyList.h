@@ -29,8 +29,8 @@ private:
 
 	DifficultyMeter *m_Meters;
 	AutoActor		m_Cursors[NUM_PLAYERS];
+	ActorFrame		m_CursorFrames[NUM_PLAYERS];
 	BitmapText		*m_Descriptions;
-	ActorFrame		*m_Frames;
 	Song			*m_CurSong;
 	vector<Steps*>	m_CurSteps;
 };
