@@ -23,6 +23,9 @@ class ScreenOptionsMenu : public ScreenOptions
 public:
 	ScreenOptionsMenu();
 
+protected:
+	void MenuStart( PlayerNumber pn );
+
 private:
 	void ImportOptions();
 	void ExportOptions();

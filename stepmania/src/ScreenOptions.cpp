@@ -458,6 +458,10 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 	m_Wipe.CloseWipingLeft( SM_GoToPrevScreen );
 }
 
+void ScreenOptions::StartGoToNextState()
+{
+	this->SendScreenMessage( SM_TweenOffScreen, 0 );
+}
 
 void ScreenOptions::MenuStart( PlayerNumber pn )
 {

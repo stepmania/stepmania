@@ -66,8 +66,10 @@ protected:
 	void UpdateEnabledDisabled();
 	virtual void OnChange();
 
-	void MenuBack( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
+	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuStart( PlayerNumber pn );
+
+	void StartGoToNextState();
 
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;

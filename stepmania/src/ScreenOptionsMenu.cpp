@@ -72,6 +72,12 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","options menu music") );
 }
 
+/* We depend on the SM options navigation for this screen, not arcade. */
+void ScreenOptionsMenu::MenuStart( PlayerNumber pn )
+{
+	StartGoToNextState();
+}
+
 void ScreenOptionsMenu::ImportOptions()
 {
 }
