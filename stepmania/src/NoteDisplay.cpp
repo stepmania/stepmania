@@ -397,10 +397,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fYBodyBottom = fYTail + g_iStopDrawingHoldBodyOffsetFromTail;
 		
 		// top to bottom
-		for( float fY=fYBodyTop; fY<=fYBodyBottom+2; fY+=fYStep )	// HACK: +1 to fill gab between body and tail.
+		for( float fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )
 		{
 			const float fYTop					= fY;
-			const float fYBottom				= min( fY+fYStep, fYBodyBottom+1 );	// HACK: +1 to fill gab between body and tail.
+			const float fYBottom				= min( fY+fYStep, fYBodyBottom );
 			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
 			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
 			const float fXTopLeft				= fXTop - fFrameWidth/2;
