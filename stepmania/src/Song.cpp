@@ -900,14 +900,14 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 		if( !bIncludeAutoGen && pSteps->IsAutogen() )
 			continue;
 
+		arrayAddTo.push_back( pSteps );
+
 		if( Max != -1 )
 		{
 			--Max;
 			if( !Max )
 				break;
 		}
-
-		arrayAddTo.push_back( pSteps );
 	}
 }
 
