@@ -79,6 +79,8 @@ SongManager::SongManager()
 
 SongManager::~SongManager()
 {
+	// Courses depend on Songs and Songs don't depend on Courses.
+	// So, delete the Courses first.
 	FreeCourses();
 	FreeSongs();
 }

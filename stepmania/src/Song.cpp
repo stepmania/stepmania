@@ -86,8 +86,9 @@ Song::~Song()
 	m_vpSteps.clear();
 
 	/* We deleted some Steps*; clear stuff that used it. */
-	/* Don't make Song depend on SongManager.  It's leading to some 
-	 * confusing limitation on what can be done in SONGMAN->FlushCaches(). */
+	/* TODO: Don't make Song depend on SongManager.  This is breaking 
+	 * encapsulation and placing confusing limitation on what can be done in 
+	 * SONGMAN->Invalidate(). -Chris */
 	SONGMAN->Invalidate( this );
 }
 
@@ -103,8 +104,11 @@ void Song::Reset()
 	Song empty;
 	*this = empty;
 
-	/* Courses cache Notes* pointers.  On the off chance that this isn't the last
+	/* Courses cache Steps pointers.  On the off chance that this isn't the last
 	 * thing this screen does, clear that cache. */
+	/* TODO: Don't make Song depend on SongManager.  This is breaking 
+	 * encapsulation and placing confusing limitation on what can be done in 
+	 * SONGMAN->Invalidate(). -Chris */
 	SONGMAN->Invalidate( this );
 }
 
