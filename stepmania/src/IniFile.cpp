@@ -51,8 +51,22 @@ bool IniFile::ReadFile()
 	CString line;
 	while (getline(file, line))
 	{
+		
+		if(line.size() >= 3 &&
+			line[0] == '\xef' &&
+			line[1] == '\xbb' &&
+			line[2] == '\xbf'
+			)
+		{
+			/* Obnoxious NT marker for UTF-8.  Remove it. */
+			line.erase(0, 3);
+		}
+
 		if (line == "")
 			continue;
+
+		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
+			continue; /* comment */
 
 		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 		{
