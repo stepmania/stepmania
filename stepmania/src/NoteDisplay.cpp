@@ -335,7 +335,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 		diffuse.g *= noteColor.g;
 		diffuse.b *= noteColor.b;
 
-		glow = RageColor(1,1,1,1)*fGlow + noteColor*(1-fGlow)*0.5f;
+		glow = RageColor(1,1,1,1)*fGlow + noteColor*(1-fGlow)*0.7f*fAlpha;
 	}
 
 	if( bOnSameRowAsHoldStart  &&  g_bDrawHoldHeadForTapsOnSameRow )

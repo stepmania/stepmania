@@ -53,7 +53,22 @@ BGAnimationLayer::BGAnimationLayer()
 	m_iNumSprites = 0;
 	m_bCycleColor = false;
 	m_bCycleAlpha = false;
-	m_Effect = EFFECT_STRETCH_STILL;	
+	m_Effect = EFFECT_STRETCH_STILL;
+
+	m_PosX = 0;
+	m_PosY = 0;
+	m_Zoom = 0;
+	m_Rot = 0;
+	m_ShowTime = 0;
+	m_HideTime = 0;
+	m_TweenStartTime = 0;
+	m_TweenX = 0.0;
+	m_TweenY = 0.0;
+	m_TweenSpeed = 0;
+	m_TweenState = 0;
+	m_TweenPassedX = 0;
+	m_TweenPassedY = 0;
+
 }
 
 /* Static background layers are simple, uncomposited background images with nothing
@@ -92,19 +107,6 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath )
 {
 	sPath.MakeLower();
-	m_PosX = 0;
-	m_PosY = 0;
-	m_Zoom = 0;
-	m_Rot = 0;
-	m_ShowTime = 0;
-	m_HideTime = 0;
-	m_TweenStartTime = 0;
-	m_TweenX = 0.0;
-	m_TweenY = 0.0;
-	m_TweenSpeed = 0;
-	m_TweenState = 0;
-	m_TweenPassedX = 0;
-	m_TweenPassedY = 0;
 
 	if( sPath.Find("usesongbg") != -1 )
 	{
