@@ -201,7 +201,7 @@ public:
 	// For 8:3 displays (640x240 arcade monitors), every odd line of texels
 	// doesn't get drawn.  This makes text look really ugly.  So, squash all
 	// textures to half height to match the aspect ratio of the display.
-	float			m_bHalveTextureHeight;
+	bool			m_bHalveTextureHeight;
 
 	// If true, then signatures created when writing profile data 
 	// and verified when reading profile data.  Leave this false if 
