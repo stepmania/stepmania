@@ -10,7 +10,7 @@
 	Andrew Livy
 -----------------------------------------------------------------------------
 */
-
+/*
 #include "ScreenEz2Stage.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
@@ -214,3 +214,4 @@ void ScreenEz2Stage::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
+*/

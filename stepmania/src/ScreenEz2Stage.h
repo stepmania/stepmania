@@ -14,6 +14,13 @@
 #include "BitmapText.h"
 
 
+/*
+
+	Chris:  I made big changes to ScreenStage that I don't want to have to 
+	duplicate here.  Let me know how I can help accomodate working EZ2 specifc 
+	changes into the existing ScreenStage.  These classes are very similar, 
+	and it's silly to duplicate so much code.  Sorry.
+
 class ScreenEz2Stage : public Screen
 {
 public:
@@ -31,5 +38,5 @@ private:
 	BitmapText		m_ez2ukm[2];
 	Screen*			m_pNextScreen;
 };
-
+*/
 

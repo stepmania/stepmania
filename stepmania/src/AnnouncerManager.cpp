@@ -170,6 +170,6 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 	}
 
 	CString sFullDir = GetAnnouncerDirFromName( sAnnouncerName ) + sAssetDir;
-	ASSERT( DoesFileExist(sFullDir) );	// the announcer directory doesn't exist.  Did we type the name wrong above?
+//	ASSERT( DoesFileExist(sFullDir) );	// the announcer directory doesn't exist.  Did we type the name wrong above?
 	return sFullDir;
 }
