@@ -1528,7 +1528,7 @@ void MusicWheel::Move(int n)
 		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	}
 
-	m_TimeBeforeMovingBegins = TIME_BEFORE_SLOW_REPEATS;
+	m_TimeBeforeMovingBegins = 1/4.0f;
 	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
 	m_Moving = n;
 
