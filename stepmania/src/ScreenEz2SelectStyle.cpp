@@ -330,7 +330,7 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			{
 			//	m_soundInvalid.PlayRandom();
 			//	return;
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD_VERSUS;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_HARD_VERSUS;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
@@ -344,11 +344,11 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		{
 			if (m_iSelectedStyle == 0) // easy
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;	
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_HARD;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
@@ -718,15 +718,15 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			
 			if (m_iSelectedStyle == 0 || m_iSelectedStyle == 3) // easy
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD_VERSUS;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_HARD_VERSUS;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
 			}
 
 		}
@@ -734,11 +734,11 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 		{
 			if (m_iSelectedStyle == 0) // easy
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;	
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD;	
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_HARD;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{

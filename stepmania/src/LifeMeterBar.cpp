@@ -152,10 +152,10 @@ void LifeMeterBar::Update( float fDeltaTime )
 
 	// set custom texture coords
 	CRect rectSize( 
-		-METER_WIDTH/2, 
-		-METER_HEIGHT/2, 
-		-METER_WIDTH/2  + METER_WIDTH  * m_fTrailingLifePercentage, 
-		-METER_HEIGHT/2 + METER_HEIGHT );
+		int( -METER_WIDTH/2 ), 
+		int( -METER_HEIGHT/2 ), 
+		int( -METER_WIDTH/2  + METER_WIDTH  * m_fTrailingLifePercentage ), 
+		int( -METER_HEIGHT/2 + METER_HEIGHT) );
 
 	float fPrecentOffset = TIMER->GetTimeSinceStart();
 	fPrecentOffset -= (int)fPrecentOffset;
