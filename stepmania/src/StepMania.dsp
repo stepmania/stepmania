@@ -5,7 +5,7 @@
 # TARGTYPE "Win32 (x86) Application" 0x0101
 # TARGTYPE "Xbox Application" 0x0b01
 
-CFG=StepMania - Win32 Debug D3D
+CFG=StepMania - Win32 Release
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -14,15 +14,13 @@ CFG=StepMania - Win32 Debug D3D
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "StepMania.mak" CFG="StepMania - Win32 Debug D3D"
+!MESSAGE NMAKE /f "StepMania.mak" CFG="StepMania - Win32 Release"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "StepMania - Win32 Debug OGL" (based on "Win32 (x86) Application")
-!MESSAGE "StepMania - Win32 Debug D3D" (based on "Win32 (x86) Application")
+!MESSAGE "StepMania - Win32 Debug" (based on "Win32 (x86) Application")
 !MESSAGE "StepMania - Xbox Debug" (based on "Xbox Application")
-!MESSAGE "StepMania - Win32 Release D3D" (based on "Win32 (x86) Application")
-!MESSAGE "StepMania - Win32 Release OGL" (based on "Win32 (x86) Application")
+!MESSAGE "StepMania - Win32 Release" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -30,7 +28,7 @@ CFG=StepMania - Win32 Debug D3D
 # PROP Scc_ProjName ""
 # PROP Scc_LocalPath ""
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -40,8 +38,8 @@ CFG=StepMania - Win32 Debug D3D
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Win32_Debug_OGL_VC6"
-# PROP Intermediate_Dir "Win32_Debug_OGL_VC6"
+# PROP Output_Dir "../Debug6"
+# PROP Intermediate_Dir "../Debug6"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 CPP=cl.exe
@@ -62,51 +60,11 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"Win32_Debug_OGL_VC6/StepMania-debug.pdb" /map /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug-ogl.exe"
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
-IntDir=.\Win32_Debug_OGL_VC6
-TargetDir=\stepmania\stepmania
+IntDir=.\../Debug6
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug-ogl
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
-PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
-# End Special Build Tool
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "StepMania___Win32_Debug_D3D"
-# PROP BASE Intermediate_Dir "StepMania___Win32_Debug_D3D"
-# PROP BASE Ignore_Export_Lib 0
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Win32_Debug_D3D_VC6"
-# PROP Intermediate_Dir "Win32_Debug_D3D_VC6"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
-# ADD CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /D "D3D" /Fr /YX"global.h" /FD /c
-MTL=midl.exe
-# ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
-RSC=rc.exe
-# ADD BASE RSC /l 0x409 /d "_DEBUG"
-# ADD RSC /l 0x409 /d "_DEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
-# SUBTRACT BASE LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"Win32_Debug_D3D_VC6/StepMania-debug.pdb" /map /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug-d3d.exe"
-# SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
-# Begin Special Build Tool
-IntDir=.\Win32_Debug_D3D_VC6
-TargetDir=\stepmania\stepmania
-TargetName=StepMania-debug-d3d
-SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                              	cl                                                                                                                               /Zl                                                                                                                               /nologo                                                                                                                               /c                                                                                                                               verstub.cpp                                                                                                                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -124,69 +82,29 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Intermediate_Dir "StepMania___Xbox_Debug___VC6"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-XBCP=xbecopy.exe
-# ADD BASE XBCP /NOLOGO
-# ADD XBCP /NOLOGO
-XBE=imagebld.exe
-# ADD BASE XBE /nologo /stack:0x10000 /debug
-# ADD XBE /nologo /stack:0x10000 /debug
+CPP=cl.exe
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:IX86 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
 # SUBTRACT BASE LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # ADD LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:IX86 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-CPP=cl.exe
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
+XBE=imagebld.exe
+# ADD BASE XBE /nologo /stack:0x10000 /debug
+# ADD XBE /nologo /stack:0x10000 /debug
+XBCP=xbecopy.exe
+# ADD BASE XBCP /NOLOGO
+# ADD XBCP /NOLOGO
 # Begin Special Build Tool
-PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                              	cl                                                                                                                               /Zl                                                                                                                               /nologo                                                                                                                               /c                                                                                                                               verstub.cpp                                                                                                                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "StepMania___Win32_Release_D3D"
-# PROP BASE Intermediate_Dir "StepMania___Win32_Release_D3D"
-# PROP BASE Ignore_Export_Lib 0
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Win32_Release_D3D_VC6"
-# PROP Intermediate_Dir "Win32_Release_D3D_VC6"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "D3D" /FR /YX /FD /c
-MTL=midl.exe
-# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-RSC=rc.exe
-# ADD BASE RSC /l 0x409 /d "NDEBUG"
-# ADD RSC /l 0x409 /d "NDEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo /o"../StepMania-StackTrace.bsc"
-# ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
-LINK32=link.exe
-# ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
-# SUBTRACT BASE LINK32 /verbose /pdb:none
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"../StepMania-d3d.exe"
-# SUBTRACT LINK32 /verbose /pdb:none
-# Begin Special Build Tool
-IntDir=.\Win32_Release_D3D_VC6
-TargetDir=\stepmania\stepmania
-TargetName=StepMania-d3d
-SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
-PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
-# End Special Build Tool
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -196,8 +114,8 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Win32_Release_OGL_VC6"
-# PROP Intermediate_Dir "Win32_Release_OGL_VC6"
+# PROP Output_Dir "../Release6"
+# PROP Intermediate_Dir "../Release6"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 CPP=cl.exe
@@ -218,11 +136,11 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"../StepMania-ogl.exe"
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
-IntDir=.\Win32_Release_OGL_VC6
-TargetDir=\stepmania\stepmania
+IntDir=.\../Release6
+TargetDir=\temp\stepmania
 TargetName=StepMania-ogl
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                              	cl                                                                                                                               /Zl                                                                                                                               /nologo                                                                                                                               /c                                                                                                                               verstub.cpp                                                                                                                               /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -230,11 +148,9 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 
 # Begin Target
 
-# Name "StepMania - Win32 Debug OGL"
-# Name "StepMania - Win32 Debug D3D"
+# Name "StepMania - Win32 Debug"
 # Name "StepMania - Xbox Debug"
-# Name "StepMania - Win32 Release D3D"
-# Name "StepMania - Win32 Release OGL"
+# Name "StepMania - Win32 Release"
 # Begin Group "Rage"
 
 # PROP Default_Filter ""
@@ -245,15 +161,11 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 
 SOURCE=.\regex.c
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -266,15 +178,11 @@ SOURCE=.\regex.h
 
 SOURCE=.\SDL_dither.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -287,15 +195,11 @@ SOURCE=.\SDL_dither.h
 
 SOURCE=.\SDL_rotozoom.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -308,15 +212,11 @@ SOURCE=.\SDL_rotozoom.h
 
 SOURCE=.\SDL_utils.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -330,21 +230,14 @@ SOURCE=.\SDL_utils.h
 
 SOURCE=.\RageBitmapTexture.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-# ADD BASE CPP /YX
-# ADD CPP /YX
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 # ADD BASE CPP /YX
 # ADD CPP /YX
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -357,15 +250,11 @@ SOURCE=.\RageBitmapTexture.h
 
 SOURCE=.\RageDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -378,60 +267,48 @@ SOURCE=.\RageDisplay.h
 
 SOURCE=.\RageDisplay_D3D.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
-
-# PROP Exclude_From_Build 1
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageDisplay_D3D.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageDisplay_OGL.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
-
-# PROP Exclude_From_Build 1
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
 # PROP BASE Exclude_From_Build 1
 # PROP Exclude_From_Build 1
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageDisplay_OGL.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageException.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -444,15 +321,11 @@ SOURCE=.\RageException.h
 
 SOURCE=.\RageInput.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -461,15 +334,11 @@ SOURCE=.\RageInput.cpp
 
 SOURCE=.\RageInputDevice.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -482,15 +351,11 @@ SOURCE=.\RageInputDevice.h
 
 SOURCE=.\RageLog.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -503,15 +368,11 @@ SOURCE=.\RageLog.h
 
 SOURCE=.\RageMath.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -524,15 +385,11 @@ SOURCE=.\RageMath.h
 
 SOURCE=.\RageSound.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -545,15 +402,11 @@ SOURCE=.\RageSound.h
 
 SOURCE=.\RageSoundManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -570,15 +423,11 @@ SOURCE=.\RageSoundReader.h
 
 SOURCE=.\RageSoundReader_Preload.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -591,15 +440,11 @@ SOURCE=.\RageSoundReader_Preload.h
 
 SOURCE=.\RageSoundReader_Resample.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -612,15 +457,11 @@ SOURCE=.\RageSoundReader_Resample.h
 
 SOURCE=.\RageSoundReader_SDL_Sound.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -633,15 +474,11 @@ SOURCE=.\RageSoundReader_SDL_Sound.h
 
 SOURCE=.\RageSoundResampler.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -654,15 +491,11 @@ SOURCE=.\RageSoundResampler.h
 
 SOURCE=.\RageTexture.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -675,15 +508,11 @@ SOURCE=.\RageTexture.h
 
 SOURCE=.\RageTextureManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -696,15 +525,11 @@ SOURCE=.\RageTextureManager.h
 
 SOURCE=.\RageThreads.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -717,15 +542,11 @@ SOURCE=.\RageThreads.h
 
 SOURCE=.\RageTimer.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -742,15 +563,11 @@ SOURCE=.\RageTypes.h
 
 SOURCE=.\RageUtil.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -763,15 +580,11 @@ SOURCE=.\RageUtil.h
 
 SOURCE=.\RageUtil_CharConversions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -788,15 +601,11 @@ SOURCE=.\RageUtil_CharConversions.h
 
 SOURCE=.\ArrowBackdrop.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -809,15 +618,11 @@ SOURCE=.\ArrowBackdrop.h
 
 SOURCE=.\Character.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -830,15 +635,11 @@ SOURCE=.\Character.h
 
 SOURCE=.\CodeDetector.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -851,15 +652,11 @@ SOURCE=.\CodeDetector.h
 
 SOURCE=.\Course.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -872,15 +669,11 @@ SOURCE=.\Course.h
 
 SOURCE=.\Font.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -893,15 +686,11 @@ SOURCE=.\Font.h
 
 SOURCE=.\FontCharAliases.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -914,15 +703,11 @@ SOURCE=.\FontCharAliases.h
 
 SOURCE=.\FontCharmaps.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -935,15 +720,11 @@ SOURCE=.\FontCharmaps.h
 
 SOURCE=.\GameConstantsAndTypes.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -956,15 +737,11 @@ SOURCE=.\GameConstantsAndTypes.h
 
 SOURCE=.\GameDef.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -977,15 +754,11 @@ SOURCE=.\GameDef.h
 
 SOURCE=.\GameInput.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1002,15 +775,11 @@ SOURCE=.\GameTypes.h
 
 SOURCE=.\Grade.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1023,15 +792,11 @@ SOURCE=.\Grade.h
 
 SOURCE=.\Inventory.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1044,15 +809,11 @@ SOURCE=.\Inventory.h
 
 SOURCE=.\LyricsLoader.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1069,15 +830,11 @@ SOURCE=.\ModeChoice.h
 
 SOURCE=.\NoteData.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1090,15 +847,11 @@ SOURCE=.\NoteData.h
 
 SOURCE=.\NoteDataWithScoring.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1111,15 +864,11 @@ SOURCE=.\NoteDataWithScoring.h
 
 SOURCE=.\NoteFieldPositioning.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1132,15 +881,11 @@ SOURCE=.\NoteFieldPositioning.h
 
 SOURCE=.\Notes.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1153,15 +898,11 @@ SOURCE=.\Notes.h
 
 SOURCE=.\NotesLoader.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1174,15 +915,11 @@ SOURCE=.\NotesLoader.h
 
 SOURCE=.\NotesLoaderBMS.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1195,15 +932,11 @@ SOURCE=.\NotesLoaderBMS.h
 
 SOURCE=.\NotesLoaderDWI.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1216,15 +949,11 @@ SOURCE=.\NotesLoaderDWI.h
 
 SOURCE=.\NotesLoaderKSF.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1237,15 +966,11 @@ SOURCE=.\NotesLoaderKSF.h
 
 SOURCE=.\NotesLoaderSM.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1258,15 +983,11 @@ SOURCE=.\NotesLoaderSM.h
 
 SOURCE=.\NotesWriterDWI.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1279,15 +1000,11 @@ SOURCE=.\NotesWriterDWI.h
 
 SOURCE=.\NotesWriterSM.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1300,15 +1017,11 @@ SOURCE=.\NotesWriterSM.h
 
 SOURCE=.\NoteTypes.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1321,15 +1034,11 @@ SOURCE=.\NoteTypes.h
 
 SOURCE=.\PlayerAI.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1342,15 +1051,11 @@ SOURCE=.\PlayerAI.h
 
 SOURCE=.\PlayerNumber.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1363,15 +1068,11 @@ SOURCE=.\PlayerNumber.h
 
 SOURCE=.\PlayerOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1384,15 +1085,11 @@ SOURCE=.\PlayerOptions.h
 
 SOURCE=.\RandomSample.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1405,15 +1102,11 @@ SOURCE=.\RandomSample.h
 
 SOURCE=.\RaveHelper.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1426,15 +1119,11 @@ SOURCE=.\RaveHelper.h
 
 SOURCE=.\Song.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1447,15 +1136,11 @@ SOURCE=.\song.h
 
 SOURCE=.\SongCacheIndex.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1468,15 +1153,11 @@ SOURCE=.\SongCacheIndex.h
 
 SOURCE=.\SongOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1489,15 +1170,11 @@ SOURCE=.\SongOptions.h
 
 SOURCE=.\StageStats.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1510,15 +1187,11 @@ SOURCE=.\StageStats.h
 
 SOURCE=.\StyleDef.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1535,15 +1208,11 @@ SOURCE=.\StyleInput.h
 
 SOURCE=.\TitleSubstitution.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1560,15 +1229,11 @@ SOURCE=.\TitleSubstitution.h
 
 SOURCE=.\IniFile.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1581,15 +1246,11 @@ SOURCE=.\IniFile.h
 
 SOURCE=.\MsdFile.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1616,15 +1277,11 @@ SOURCE=.\arch\LoadingWindow\LoadingWindow.h
 
 SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1637,15 +1294,11 @@ SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.h
 
 SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1662,15 +1315,11 @@ SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.h
 
 SOURCE=.\arch\Sound\DSoundHelpers.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1687,15 +1336,11 @@ SOURCE=.\arch\Sound\RageSoundDriver.h
 
 SOURCE=.\arch\Sound\RageSoundDriver_DSound.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1708,15 +1353,11 @@ SOURCE=.\arch\Sound\RageSoundDriver_DSound.h
 
 SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1729,15 +1370,11 @@ SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.h
 
 SOURCE=.\arch\Sound\RageSoundDriver_Null.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1750,15 +1387,11 @@ SOURCE=.\arch\Sound\RageSoundDriver_Null.h
 
 SOURCE=.\arch\Sound\RageSoundDriver_WaveOut.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1783,15 +1416,11 @@ SOURCE=.\arch\ErrorDialog\ErrorDialog_null.h
 
 SOURCE=.\arch\ErrorDialog\ErrorDialog_stdout.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1804,15 +1433,11 @@ SOURCE=.\arch\ErrorDialog\ErrorDialog_stdout.h
 
 SOURCE=.\arch\ErrorDialog\ErrorDialog_Win32.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1837,15 +1462,11 @@ SOURCE=.\arch\ArchHooks\ArchHooks_none.h
 
 SOURCE=.\arch\ArchHooks\ArchHooks_Win32.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1866,15 +1487,11 @@ SOURCE=.\arch\InputHandler\InputHandler.h
 
 SOURCE=.\arch\InputHandler\InputHandler_SDL.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1887,15 +1504,11 @@ SOURCE=.\arch\InputHandler\InputHandler_SDL.h
 
 SOURCE=.\arch\InputHandler\InputHandler_Win32_Pump.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1912,15 +1525,11 @@ SOURCE=.\arch\InputHandler\InputHandler_Win32_Pump.h
 
 SOURCE=.\arch\MovieTexture\MovieTexture.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1933,15 +1542,11 @@ SOURCE=.\arch\MovieTexture\MovieTexture.h
 
 SOURCE=.\arch\MovieTexture\MovieTexture_DShow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1954,15 +1559,11 @@ SOURCE=.\arch\MovieTexture\MovieTexture_DShow.h
 
 SOURCE=.\arch\MovieTexture\MovieTexture_DShowHelper.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -1983,15 +1584,11 @@ SOURCE=.\arch\LowLevelWindow\LowLevelWindow.h
 
 SOURCE=.\arch\LowLevelWindow\LowLevelWindow_SDL.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2005,15 +1602,11 @@ SOURCE=.\arch\LowLevelWindow\LowLevelWindow_SDL.h
 
 SOURCE=.\arch\arch.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2041,15 +1634,11 @@ SOURCE=.\arch\arch_Win32.h
 
 SOURCE=.\archutils\Win32\Crash.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2066,15 +1655,11 @@ SOURCE=.\archutils\Win32\CrashList.h
 
 SOURCE=.\archutils\Win32\Disasm.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2087,15 +1672,11 @@ SOURCE=.\archutils\Win32\Disasm.h
 
 SOURCE=.\archutils\Win32\Tls.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2109,15 +1690,11 @@ SOURCE=.\archutils\Win32\Tls.h
 
 SOURCE=.\archutils\Win32\AppInstance.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2130,15 +1707,11 @@ SOURCE=.\archutils\Win32\AppInstance.h
 
 SOURCE=.\archutils\Win32\DebugInfoHunt.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2151,15 +1724,11 @@ SOURCE=.\archutils\Win32\DebugInfoHunt.h
 
 SOURCE=.\archutils\Win32\GotoURL.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2180,15 +1749,11 @@ SOURCE=.\StepMania.ICO
 
 SOURCE=.\StepMania.RC
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2197,15 +1762,11 @@ SOURCE=.\StepMania.RC
 
 SOURCE=.\archutils\Win32\USB.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2219,21 +1780,14 @@ SOURCE=.\archutils\Win32\USB.h
 
 SOURCE=.\global.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-# ADD BASE CPP /Yc"global.h"
-# ADD CPP /Yc"global.h"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 # ADD BASE CPP /Yc"global.h"
 # ADD CPP /Yc"global.h"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2254,15 +1808,11 @@ SOURCE=.\StdString.h
 
 SOURCE=.\StepMania.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2279,15 +1829,11 @@ SOURCE=.\StepMania.h
 
 SOURCE=.\Actor.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2304,15 +1850,11 @@ SOURCE=.\ActorCollision.h
 
 SOURCE=.\ActorFrame.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2325,15 +1867,11 @@ SOURCE=.\ActorFrame.h
 
 SOURCE=.\ActorScroller.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2350,15 +1888,11 @@ SOURCE=.\ActorUtil.h
 
 SOURCE=.\BitmapText.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2371,15 +1905,11 @@ SOURCE=.\BitmapText.h
 
 SOURCE=.\mathlib.c
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2392,15 +1922,11 @@ SOURCE=.\mathlib.h
 
 SOURCE=.\Model.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2413,15 +1939,11 @@ SOURCE=.\Model.h
 
 SOURCE=.\ModelTypes.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2438,15 +1960,11 @@ SOURCE=.\Quad.h
 
 SOURCE=.\Sprite.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2463,15 +1981,11 @@ SOURCE=.\Sprite.h
 
 SOURCE=.\Banner.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2484,15 +1998,11 @@ SOURCE=.\Banner.h
 
 SOURCE=.\BGAnimation.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2505,15 +2015,11 @@ SOURCE=.\BGAnimation.h
 
 SOURCE=.\BGAnimationLayer.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2526,15 +2032,11 @@ SOURCE=.\BGAnimationLayer.h
 
 SOURCE=.\CroppedSprite.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2547,15 +2049,11 @@ SOURCE=.\CroppedSprite.h
 
 SOURCE=.\DifficultyIcon.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2568,15 +2066,11 @@ SOURCE=.\DifficultyIcon.h
 
 SOURCE=.\FadingBanner.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2589,15 +2083,11 @@ SOURCE=.\FadingBanner.h
 
 SOURCE=.\MeterDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2610,15 +2100,11 @@ SOURCE=.\MeterDisplay.h
 
 SOURCE=.\Transition.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2635,15 +2121,11 @@ SOURCE=.\Transition.h
 
 SOURCE=.\ActiveItemList.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2656,15 +2138,11 @@ SOURCE=.\ActiveItemList.h
 
 SOURCE=.\ArrowEffects.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2677,15 +2155,11 @@ SOURCE=.\ArrowEffects.h
 
 SOURCE=.\Background.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2698,15 +2172,11 @@ SOURCE=.\Background.h
 
 SOURCE=.\Combo.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2719,15 +2189,11 @@ SOURCE=.\Combo.h
 
 SOURCE=.\DancingCharacters.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2740,15 +2206,11 @@ SOURCE=.\DancingCharacters.h
 
 SOURCE=.\EnemyFace.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2761,15 +2223,11 @@ SOURCE=.\EnemyFace.h
 
 SOURCE=.\EnemyHealth.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2782,15 +2240,11 @@ SOURCE=.\EnemyHealth.h
 
 SOURCE=.\GhostArrow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2803,15 +2257,11 @@ SOURCE=.\GhostArrow.h
 
 SOURCE=.\GhostArrowBright.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2824,15 +2274,11 @@ SOURCE=.\GhostArrowBright.h
 
 SOURCE=.\GhostArrowRow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2845,15 +2291,11 @@ SOURCE=.\GhostArrowRow.h
 
 SOURCE=.\GrayArrow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2866,15 +2308,11 @@ SOURCE=.\GrayArrow.h
 
 SOURCE=.\GrayArrowRow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2887,15 +2325,11 @@ SOURCE=.\GrayArrowRow.h
 
 SOURCE=.\HoldGhostArrow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2908,15 +2342,11 @@ SOURCE=.\HoldGhostArrow.h
 
 SOURCE=.\HoldJudgment.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2929,15 +2359,11 @@ SOURCE=.\HoldJudgment.h
 
 SOURCE=.\Judgment.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2950,15 +2376,11 @@ SOURCE=.\Judgment.h
 
 SOURCE=.\LifeMeter.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2971,15 +2393,11 @@ SOURCE=.\LifeMeter.h
 
 SOURCE=.\LifeMeterBar.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -2992,15 +2410,11 @@ SOURCE=.\LifeMeterBar.h
 
 SOURCE=.\LifeMeterBattery.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3013,15 +2427,11 @@ SOURCE=.\LifeMeterBattery.h
 
 SOURCE=.\LyricDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3034,15 +2444,11 @@ SOURCE=.\LyricDisplay.h
 
 SOURCE=.\NoteDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3055,15 +2461,11 @@ SOURCE=.\NoteDisplay.h
 
 SOURCE=.\NoteField.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3076,15 +2478,11 @@ SOURCE=.\NoteField.h
 
 SOURCE=.\Player.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3097,15 +2495,11 @@ SOURCE=.\Player.h
 
 SOURCE=.\ScoreDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3118,15 +2512,11 @@ SOURCE=.\ScoreDisplay.h
 
 SOURCE=.\ScoreDisplayBattle.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3139,15 +2529,11 @@ SOURCE=.\ScoreDisplayBattle.h
 
 SOURCE=.\ScoreDisplayNormal.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3160,15 +2546,11 @@ SOURCE=.\ScoreDisplayNormal.h
 
 SOURCE=.\ScoreDisplayOni.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3181,15 +2563,11 @@ SOURCE=.\ScoreDisplayOni.h
 
 SOURCE=.\ScoreDisplayRave.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3202,15 +2580,11 @@ SOURCE=.\ScoreDisplayRave.h
 
 SOURCE=.\ScoreKeeper.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3223,15 +2597,11 @@ SOURCE=.\ScoreKeeper.h
 
 SOURCE=.\ScoreKeeperMAX2.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3244,15 +2614,11 @@ SOURCE=.\ScoreKeeperMAX2.h
 
 SOURCE=.\TimingAssist.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3269,15 +2635,11 @@ SOURCE=.\TimingAssist.h
 
 SOURCE=.\BPMDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3290,15 +2652,11 @@ SOURCE=.\BPMDisplay.h
 
 SOURCE=.\CourseContentsList.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3311,15 +2669,11 @@ SOURCE=.\CourseContentsList.h
 
 SOURCE=.\CourseEntryDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3332,15 +2686,11 @@ SOURCE=.\CourseEntryDisplay.h
 
 SOURCE=.\DifficultyMeter.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3353,15 +2703,11 @@ SOURCE=.\DifficultyMeter.h
 
 SOURCE=.\DifficultyRating.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3374,15 +2720,11 @@ SOURCE=.\DifficultyRating.h
 
 SOURCE=.\EditMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3395,15 +2737,11 @@ SOURCE=.\EditMenu.h
 
 SOURCE=.\GradeDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3416,15 +2754,11 @@ SOURCE=.\GradeDisplay.h
 
 SOURCE=.\GrooveGraph.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3437,15 +2771,11 @@ SOURCE=.\GrooveGraph.h
 
 SOURCE=.\GrooveRadar.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3458,15 +2788,11 @@ SOURCE=.\GrooveRadar.h
 
 SOURCE=.\GroupList.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3479,15 +2805,11 @@ SOURCE=.\GroupList.h
 
 SOURCE=.\HelpDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3500,15 +2822,11 @@ SOURCE=.\HelpDisplay.h
 
 SOURCE=.\JukeboxMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3521,15 +2839,11 @@ SOURCE=.\JukeboxMenu.h
 
 SOURCE=.\MenuElements.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3542,15 +2856,11 @@ SOURCE=.\MenuElements.h
 
 SOURCE=.\MenuTimer.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3563,15 +2873,11 @@ SOURCE=.\MenuTimer.h
 
 SOURCE=.\MusicBannerWheel.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3584,15 +2890,11 @@ SOURCE=.\MusicBannerWheel.h
 
 SOURCE=.\MusicList.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3605,15 +2907,11 @@ SOURCE=.\MusicList.h
 
 SOURCE=.\MusicSortDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3626,15 +2924,11 @@ SOURCE=.\MusicSortDisplay.h
 
 SOURCE=.\MusicWheel.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3647,15 +2941,11 @@ SOURCE=.\MusicWheel.h
 
 SOURCE=.\MusicWheelItem.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3668,15 +2958,11 @@ SOURCE=.\MusicWheelItem.h
 
 SOURCE=.\OptionIcon.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3689,15 +2975,11 @@ SOURCE=.\OptionIcon.h
 
 SOURCE=.\OptionIconRow.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3710,15 +2992,11 @@ SOURCE=.\OptionIconRow.h
 
 SOURCE=.\OptionsCursor.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3731,15 +3009,11 @@ SOURCE=.\OptionsCursor.h
 
 SOURCE=.\ScrollBar.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3752,15 +3026,11 @@ SOURCE=.\ScrollBar.h
 
 SOURCE=.\ScrollingList.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3773,15 +3043,11 @@ SOURCE=.\ScrollingList.h
 
 SOURCE=.\SnapDisplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3794,15 +3060,11 @@ SOURCE=.\SnapDisplay.h
 
 SOURCE=.\TextBanner.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3815,15 +3077,11 @@ SOURCE=.\TextBanner.h
 
 SOURCE=.\WheelNotifyIcon.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3840,15 +3098,11 @@ SOURCE=.\WheelNotifyIcon.h
 
 SOURCE=.\Screen.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3861,15 +3115,11 @@ SOURCE=.\Screen.h
 
 SOURCE=.\ScreenAlbums.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3882,15 +3132,11 @@ SOURCE=.\ScreenAlbums.h
 
 SOURCE=.\ScreenAppearanceOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3903,15 +3149,11 @@ SOURCE=.\ScreenAppearanceOptions.h
 
 SOURCE=.\ScreenAttract.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3924,15 +3166,11 @@ SOURCE=.\ScreenAttract.h
 
 SOURCE=.\ScreenAutogenOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3966,15 +3204,11 @@ SOURCE=.\ScreenAutoGraphicDetail.h
 
 SOURCE=.\ScreenBackgroundOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -3987,15 +3221,11 @@ SOURCE=.\ScreenBackgroundOptions.h
 
 SOURCE=.\ScreenCaution.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4012,15 +3242,11 @@ SOURCE=.\ScreenCompany.h
 
 SOURCE=.\ScreenCredits.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4033,15 +3259,11 @@ SOURCE=.\ScreenCredits.h
 
 SOURCE=.\ScreenDemonstration.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4054,15 +3276,11 @@ SOURCE=.\ScreenDemonstration.h
 
 SOURCE=.\ScreenEdit.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4075,21 +3293,14 @@ SOURCE=.\ScreenEdit.h
 
 SOURCE=.\ScreenEditMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-# ADD BASE CPP /YX"global.h"
-# ADD CPP /YX"global.h"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 # ADD BASE CPP /YX"global.h"
 # ADD CPP /YX"global.h"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4102,15 +3313,11 @@ SOURCE=.\ScreenEditMenu.h
 
 SOURCE=.\ScreenEvaluation.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4123,15 +3330,11 @@ SOURCE=.\ScreenEvaluation.h
 
 SOURCE=.\ScreenEz2SelectMusic.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4144,15 +3347,11 @@ SOURCE=.\ScreenEz2SelectMusic.h
 
 SOURCE=.\ScreenEz2SelectPlayer.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4165,15 +3364,11 @@ SOURCE=.\ScreenEz2SelectPlayer.h
 
 SOURCE=.\ScreenGameOver.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4186,15 +3381,11 @@ SOURCE=.\ScreenGameOver.h
 
 SOURCE=.\ScreenGameplay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4207,15 +3398,11 @@ SOURCE=.\ScreenGameplay.h
 
 SOURCE=.\ScreenGameplayOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4228,15 +3415,11 @@ SOURCE=.\ScreenGameplayOptions.h
 
 SOURCE=.\ScreenGraphicOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4249,15 +3432,11 @@ SOURCE=.\ScreenGraphicOptions.h
 
 SOURCE=.\ScreenHowToPlay.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4270,15 +3449,11 @@ SOURCE=.\ScreenHowToPlay.h
 
 SOURCE=.\ScreenInputOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4291,15 +3466,11 @@ SOURCE=.\ScreenInputOptions.h
 
 SOURCE=.\ScreenInstructions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4312,15 +3483,11 @@ SOURCE=.\ScreenInstructions.h
 
 SOURCE=.\ScreenIntroMovie.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4333,15 +3500,11 @@ SOURCE=.\ScreenIntroMovie.h
 
 SOURCE=.\ScreenJukebox.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4354,15 +3517,11 @@ SOURCE=.\ScreenJukebox.h
 
 SOURCE=.\ScreenJukeboxMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4375,15 +3534,11 @@ SOURCE=.\ScreenJukeboxMenu.h
 
 SOURCE=.\ScreenLogo.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4396,15 +3551,11 @@ SOURCE=.\ScreenLogo.h
 
 SOURCE=.\ScreenMachineOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4417,15 +3568,11 @@ SOURCE=.\ScreenMachineOptions.h
 
 SOURCE=.\ScreenMapControllers.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4446,15 +3593,11 @@ SOURCE=.\ScreenMessage.h
 
 SOURCE=.\ScreenMiniMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4467,15 +3610,11 @@ SOURCE=.\ScreenMiniMenu.h
 
 SOURCE=.\ScreenMusicScroll.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4488,15 +3627,11 @@ SOURCE=.\ScreenMusicScroll.h
 
 SOURCE=.\ScreenNameEntry.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4509,15 +3644,11 @@ SOURCE=.\ScreenNameEntry.h
 
 SOURCE=.\ScreenOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4530,15 +3661,11 @@ SOURCE=.\ScreenOptions.h
 
 SOURCE=.\ScreenOptionsMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4551,15 +3678,11 @@ SOURCE=.\ScreenOptionsMenu.h
 
 SOURCE=.\ScreenPlayerOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4572,15 +3695,11 @@ SOURCE=.\ScreenPlayerOptions.h
 
 SOURCE=.\ScreenPrompt.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4593,15 +3712,11 @@ SOURCE=.\ScreenPrompt.h
 
 SOURCE=.\ScreenRanking.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4614,15 +3729,11 @@ SOURCE=.\ScreenRanking.h
 
 SOURCE=.\ScreenRaveOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4635,15 +3746,11 @@ SOURCE=.\ScreenRaveOptions.h
 
 SOURCE=.\ScreenSandbox.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4656,15 +3763,11 @@ SOURCE=.\ScreenSandbox.h
 
 SOURCE=.\ScreenSelect.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4677,15 +3780,11 @@ SOURCE=.\ScreenSelect.h
 
 SOURCE=.\ScreenSelectCharacter.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4698,15 +3797,11 @@ SOURCE=.\ScreenSelectCharacter.h
 
 SOURCE=.\ScreenSelectCourse.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4719,15 +3814,11 @@ SOURCE=.\ScreenSelectCourse.h
 
 SOURCE=.\ScreenSelectDifficulty.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4740,15 +3831,11 @@ SOURCE=.\ScreenSelectDifficulty.h
 
 SOURCE=.\ScreenSelectDifficultyEX.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4761,15 +3848,11 @@ SOURCE=.\ScreenSelectDifficultyEX.h
 
 SOURCE=.\ScreenSelectGame.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4782,15 +3865,11 @@ SOURCE=.\ScreenSelectGame.h
 
 SOURCE=.\ScreenSelectGroup.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4803,15 +3882,11 @@ SOURCE=.\ScreenSelectGroup.h
 
 SOURCE=.\ScreenSelectMode.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4824,15 +3899,11 @@ SOURCE=.\ScreenSelectMode.h
 
 SOURCE=.\ScreenSelectMusic.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4845,15 +3916,11 @@ SOURCE=.\ScreenSelectMusic.h
 
 SOURCE=.\ScreenSelectStyle.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4866,15 +3933,11 @@ SOURCE=.\ScreenSelectStyle.h
 
 SOURCE=.\ScreenSelectStyle5th.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4887,15 +3950,11 @@ SOURCE=.\ScreenSelectStyle5th.h
 
 SOURCE=.\ScreenSongOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4908,15 +3967,11 @@ SOURCE=.\ScreenSongOptions.h
 
 SOURCE=.\ScreenSoundOptions.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4929,15 +3984,11 @@ SOURCE=.\ScreenSoundOptions.h
 
 SOURCE=.\ScreenStage.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4950,15 +4001,11 @@ SOURCE=.\ScreenStage.h
 
 SOURCE=.\ScreenStyleSplash.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4971,15 +4018,11 @@ SOURCE=.\ScreenStyleSplash.h
 
 SOURCE=.\ScreenTest.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -4992,15 +4035,11 @@ SOURCE=.\ScreenTest.h
 
 SOURCE=.\ScreenTestFonts.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5013,15 +4052,11 @@ SOURCE=.\ScreenTestFonts.h
 
 SOURCE=.\ScreenTestSound.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5034,15 +4069,11 @@ SOURCE=.\ScreenTestSound.h
 
 SOURCE=.\ScreenTextEntry.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5055,15 +4086,11 @@ SOURCE=.\ScreenTextEntry.h
 
 SOURCE=.\ScreenTitleMenu.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5076,15 +4103,11 @@ SOURCE=.\ScreenTitleMenu.h
 
 SOURCE=.\ScreenUnlock.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5109,15 +4132,11 @@ SOURCE=.\ScreenWarning.h
 
 SOURCE=.\AnnouncerManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5130,15 +4149,11 @@ SOURCE=.\AnnouncerManager.h
 
 SOURCE=.\FontManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5151,15 +4166,11 @@ SOURCE=.\FontManager.h
 
 SOURCE=.\GameManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5172,15 +4183,11 @@ SOURCE=.\GameManager.h
 
 SOURCE=.\GameState.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5193,15 +4200,11 @@ SOURCE=.\GameState.h
 
 SOURCE=.\InputFilter.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5214,15 +4217,11 @@ SOURCE=.\InputFilter.h
 
 SOURCE=.\InputMapper.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5235,15 +4234,11 @@ SOURCE=.\InputMapper.h
 
 SOURCE=.\InputQueue.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5256,15 +4251,11 @@ SOURCE=.\InputQueue.h
 
 SOURCE=.\NoteSkinManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5277,15 +4268,11 @@ SOURCE=.\NoteSkinManager.h
 
 SOURCE=.\PrefsManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5298,15 +4285,11 @@ SOURCE=.\PrefsManager.h
 
 SOURCE=.\ScreenManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5319,15 +4302,11 @@ SOURCE=.\ScreenManager.h
 
 SOURCE=.\SongManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5340,15 +4319,11 @@ SOURCE=.\SongManager.h
 
 SOURCE=.\ThemeManager.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
@@ -5361,15 +4336,11 @@ SOURCE=.\ThemeManager.h
 
 SOURCE=.\UnlockSystem.cpp
 
-!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
 
 !ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
 
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
 !ENDIF 
 
