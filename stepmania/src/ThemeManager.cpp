@@ -162,14 +162,30 @@ try_element_again:
 	if( asPossibleElementFilePaths.GetSize() == 0 )
 	{
 #ifdef _DEBUG
-		if( IDRETRY == AfxMessageBox( ssprintf("The theme element %s/%s is missing.  Correct this and click Retry, or Cancel to break.",sAssetCategory,sFileName), MB_RETRYCANCEL ) )
+		switch( AfxMessageBox( ssprintf("The theme element %s/%s is missing.",sAssetCategory,sFileName), MB_ABORTRETRYIGNORE ) )
+		{
+		case IDRETRY:
 			goto try_element_again;
+			break;
+		case IDABORT:
 #endif
-		throw RageException( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-			sAssetCategory,
-			sFileName, 
-			GetThemeDirFromName(m_sCurThemeName), 
-			GetThemeDirFromName(BASE_THEME_NAME) );
+			throw RageException( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+				sAssetCategory,
+				sFileName, 
+				GetThemeDirFromName(m_sCurThemeName), 
+				GetThemeDirFromName(BASE_THEME_NAME) );
+#ifdef _DEBUG
+		case IDIGNORE:
+			LOG->Warn( 
+				"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+				sAssetCategory,
+				sFileName, 
+				GetThemeDirFromName(m_sCurThemeName), 
+				GetThemeDirFromName(BASE_THEME_NAME) );
+			return GetPathTo( sAssetCategory, "_missing" );
+			break;
+		}
+#endif
 	}
 	asPossibleElementFilePaths[0].MakeLower();
 	if( asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
