@@ -396,7 +396,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
 	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
-		FOREACH_PlayerNumber( p )
+		FOREACH_HumanPlayer( p )
 		{
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
