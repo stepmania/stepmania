@@ -195,10 +195,7 @@ int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
 
 int RageSoundReader_WAV::get_length_fmt_adpcm() const
 {
-	this->rw.Rewind();
-
-	int offset = this->rw.Tell();
-    offset -= fmt.data_starting_offset;
+	int offset = this->rw.GetFileSize() - fmt.data_starting_offset;
 
 	/* pcm bytes per block */
 	const int bpb = (adpcm.wSamplesPerBlock * fmt.adpcm_sample_frame_size);
