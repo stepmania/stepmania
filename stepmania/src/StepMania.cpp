@@ -71,6 +71,8 @@
 HWND g_hWndMain = NULL;
 #endif
 
+static bool g_bHasFocus = true;
+
 #include <time.h>
 
 
@@ -165,16 +167,24 @@ static void SetIcon()
 	SDL_FreeSurface(srf);
 }
 
-static void BoostAppPri()
+static bool ChangeAppPri()
 {
 	if(PREFSMAN->m_iBoostAppPriority == 0)
-		return;
+		return false;
 
 	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
 #ifdef DEBUG
 	if(PREFSMAN->m_iBoostAppPriority == -1)
-		return;
+		return false;
 #endif
+
+	return true;
+}
+
+static void BoostAppPri()
+{
+	if(!ChangeAppPri())
+		return;
 
 #ifdef WIN32
 	/* We just want a slight boost, so we don't skip needlessly if something happens
@@ -197,6 +207,14 @@ static void BoostAppPri()
 	 * sound thread stays higher priority than the main thread. */
 	SetPriorityClass(GetCurrentProcess(), pri);
 #endif
+}
+
+static void RestoreAppPri()
+{
+	if(!ChangeAppPri())
+		return;
+
+	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 }
 
 int main(int argc, char* argv[])
@@ -451,6 +469,14 @@ static void GameLoop()
 			case SDL_VIDEORESIZE:
 				DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
 				break;
+			case SDL_ACTIVEEVENT:
+				g_bHasFocus = !!event.active.gain;
+				LOG->Trace("App %s focus", g_bHasFocus? "has":"doesn't have");
+
+				if(event.active.gain)
+					BoostAppPri();
+				else
+					RestoreAppPri();
 			}
 		}
 
@@ -483,7 +509,10 @@ static void GameLoop()
 
 		DISPLAY->Flip();
 
-		::Sleep( 0 );	// give some time to other processes and threads
+		if(g_bHasFocus)
+			::Sleep( 0 );	// give some time to other processes and threads
+		else
+			::Sleep( 2 );	// give more time to other processes and threads, but not so much that we skip sound
 	}
 }
 
