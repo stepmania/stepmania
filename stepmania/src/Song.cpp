@@ -529,12 +529,12 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 	{
 		CHECKPOINT;
 		const Steps *s1 = vSteps[i];
-		LOG->Trace("comparing %i (%p) ...", i, s1);
+
 		for( unsigned j=i+1; j<vSteps.size(); j++ )
 		{
 			CHECKPOINT;
 			const Steps *s2 = vSteps[j];
-		LOG->Trace("     with %i (%p) ...", j, s2);
+
 			if( s1->GetDescription() != s2->GetDescription() )
 				continue;
 			if( s1->GetMeter() != s2->GetMeter() )
