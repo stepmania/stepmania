@@ -26,7 +26,8 @@
 #include "InputMapper.h"
 #include "CodeDetector.h"
 #include "Notes.h"
-
+#include "RageTimer.h"
+#include "ActorUtil.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
@@ -61,6 +62,8 @@ const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
 ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 {
+	i_SkipAheadOffset = 0;
+	ScrollStartTime = 0;
 	m_bTransitioning = false;
 	m_fRemainingWaitTime = 0.0f;
 	i_ErrorDetected=0;
@@ -167,6 +170,11 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprOptionsMessage );
 
+		m_sprBalloon.SetName( "Balloon" );
+		TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon long") );
+		TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+		this->AddChild( &m_sprBalloon );
+
 		m_soundOptionsChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic options") );
 
 		m_bGoToOptions = false;
@@ -218,9 +226,28 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( type != IET_FIRST_PRESS )
 	{
 		m_soundMusicCycle.Play();
+		i_SkipAheadOffset = 0;
+		if(ScrollStartTime == 0)
+		{
+			i_SkipAheadOffset = 0;
+			ScrollStartTime = RageTimer::GetTimeSinceStart();
+		}
+		else
+		{
+			if(RageTimer::GetTimeSinceStart() - ScrollStartTime > 5) // been cycling for more than 5 seconds
+			{
+				i_SkipAheadOffset = 2; // start skipping ahead in twos
+			}
+			else if (RageTimer::GetTimeSinceStart() - ScrollStartTime > 10) // been cycling for more than 10 seconds
+			{
+				i_SkipAheadOffset = 3; // start skipping ahead 3 at a time
+			}
+		}
 	}
 	else
 	{
+		i_SkipAheadOffset = 0;
+		ScrollStartTime = 0;
 		m_soundMusicChange.Play();
 	}
 
@@ -318,6 +345,8 @@ void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 {
 	m_Menu.m_MenuTimer.Stall();
 	m_MusicBannerWheel.BannersRight();
+	for(int i=i_SkipAheadOffset; i>0; i--)
+		m_MusicBannerWheel.BannersRight();
 	MusicChanged();
 }
 
@@ -345,6 +374,8 @@ void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 {
 	m_Menu.m_MenuTimer.Stall();
 	m_MusicBannerWheel.BannersLeft();
+	for(int i=i_SkipAheadOffset; i>0; i--)
+		m_MusicBannerWheel.BannersLeft();
 	MusicChanged();
 }
 
@@ -475,6 +506,24 @@ void ScreenEz2SelectMusic::MusicChanged()
 {
 	Song* pSong = m_MusicBannerWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
+
+	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
+	{
+		m_sprBalloon.StopTweening();
+		m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+		SET_XY_AND_ON_COMMAND( m_sprBalloon );
+	}
+	else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
+	{
+		m_sprBalloon.StopTweening();
+		m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon long") );
+		SET_XY_AND_ON_COMMAND( m_sprBalloon );
+	}
+	else
+	{
+		m_sprBalloon.StopTweening();
+		OFF_COMMAND( m_sprBalloon );
+	}
 
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
 	{

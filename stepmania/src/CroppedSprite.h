@@ -23,6 +23,7 @@ public:
 
 	bool Load( RageTextureID ID );
 	void SetCroppedSize( float fWidth, float fHeight );
+	void SetWH(float fWidth, float fHeight);	
 
 protected:
 	void CropToSize( float fWidth, float fHeight );

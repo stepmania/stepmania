@@ -97,6 +97,7 @@ void ScrollingList::StartBouncing()
 	m_iBouncingState = 1;
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{
+		m_RippleSprite.UnloadTexture();
 		m_RippleSprite.Load( m_apSprites[m_iSelection]->GetTexturePath() );
 		m_RippleSprite.SetXY( m_apSprites[m_iSelection]->GetX(), m_apSprites[m_iSelection]->GetY() );
 		m_RippleSprite.SetZoom( 1.1f );
@@ -104,8 +105,21 @@ void ScrollingList::StartBouncing()
 	}
 	else
 	{
-		m_RippleCSprite.SetCroppedSize( 100, 100 );
+		m_RippleCSprite.UnloadTexture();
 		m_RippleCSprite.Load( m_apCSprites[m_iSelection]->GetTexturePath() );
+
+		if(m_RippleCSprite.GetUnzoomedWidth() == m_RippleCSprite.GetUnzoomedHeight()) // rotated graphics need cropping
+		{
+			m_RippleCSprite.SetCroppedSize( 100, 100 );
+		}
+		else // flat, unrotated graphics need widths changing
+		{
+			m_RippleCSprite.SetCroppedSize( -1, -1 ); // default image size.
+			m_RippleCSprite.SetWidth(EZ2_BANNER_WIDTH);
+			m_RippleCSprite.SetHeight(EZ2_BANNER_HEIGHT);
+		//	m_RippleCSprite.SetWH(EZ2_BANNER_WIDTH+10, EZ2_BANNER_HEIGHT+10);
+		}
+
 		m_RippleCSprite.SetXY( m_apCSprites[m_iSelection]->GetX(), m_apCSprites[m_iSelection]->GetY() );
 		m_RippleCSprite.SetZoom( 2.0f );
 		m_RippleCSprite.SetDiffuse( RageColor(1,1,1,0.5f));
@@ -142,22 +156,11 @@ void ScrollingList::Load( const CStringArray& asGraphicPaths )
 		for( unsigned i=0; i<asGraphicPaths.size(); i++ )
 		{
 			CroppedSprite* pNewCSprite = new CroppedSprite;
-			if(m_iBannerPrefs == BANNERPREFS_DDRFLAT)
-			{
-				pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-			}
-			else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
-			{
-				pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-				pNewCSprite->SetRotationZ( DDRROT_ROTATION );
-			}
-			else if(m_iBannerPrefs == BANNERPREFS_EZ2)
-			{
-				pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2 );
-			}
-
 			pNewCSprite->Load( asGraphicPaths[i] );
+
 			m_apCSprites.push_back( pNewCSprite );
+			for(int i=m_apCSprites.size()-1; i>=0; i--)
+				Replace(asGraphicPaths[i],i);
 		}
 	}
 }
@@ -394,9 +397,17 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 	else
 	{
 		CroppedSprite* pNewCSprite = new CroppedSprite;
+		pNewCSprite->Load( sGraphicPath );
 		if(m_iBannerPrefs == BANNERPREFS_DDRFLAT)
 		{
-			pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
+			{
+				pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+			}
+			else // flat, unrotated graphics need widths changing
+			{
+				pNewCSprite->SetWH(BANNER_WIDTH, BANNER_HEIGHT );
+			}
 		}
 		else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
 		{
@@ -405,13 +416,17 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 		}
 		else if(m_iBannerPrefs == BANNERPREFS_EZ2)
 		{
-			pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2 );
+			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
+			{
+				pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2 );
+			}
+			else // flat, unrotated graphics need widths changing
+			{
+				pNewCSprite->SetWH(EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2);
+			}
 		}
-
-			pNewCSprite->Load( sGraphicPath );
-
 			
-			m_apCSprites[ElementNumber] = pNewCSprite;
+		m_apCSprites[ElementNumber] = pNewCSprite;
 	}
 }
 
@@ -425,10 +440,12 @@ void ScrollingList::DrawPrimitives()
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{
 		ASSERT( !m_apSprites.empty() );
+		m_RippleSprite.SetXY( m_apSprites[m_iSelection]->GetX(), m_apSprites[m_iSelection]->GetY() ); // keep the ripple sprites with the current selection
 	}
 	else
 	{
 		ASSERT( !m_apCSprites.empty() );
+		m_RippleCSprite.SetXY( m_apCSprites[m_iSelection]->GetX(), m_apCSprites[m_iSelection]->GetY() ); // keep the ripple sprites with the current selection
 	}
 
 	for( int i=(m_iNumVisible)/2; i>= 0; i-- )	// draw outside to inside

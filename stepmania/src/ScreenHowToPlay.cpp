@@ -18,17 +18,33 @@
 #include "SongManager.h"
 #include "NoteFieldPositioning.h"
 
+#define BPMSPEED				THEME->GetMetricI("ScreenHowToPlay","ScrollBPM")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
-	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+	int iNumOfTracks = 0;
+	switch(GAMESTATE->m_CurGame) // which style should we use to demonstrate?
+	{
+		case GAME_DANCE: GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE; iNumOfTracks = 4; break;
+		case GAME_PUMP: GAMESTATE->m_CurStyle = STYLE_PUMP_SINGLE; iNumOfTracks = 5; break;
+		case GAME_EZ2: GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE; iNumOfTracks = 5; break;
+		case GAME_PARA: GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE; iNumOfTracks = 5; break;
+		case GAME_DS3DDX: GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE; iNumOfTracks = 8; break;
+		case GAME_BM: GAMESTATE->m_CurStyle = STYLE_BM_SINGLE; iNumOfTracks = 6; break;
+		default: ASSERT(0); break; // we should cover all gametypes....
+	}
+	
+	if(iNumOfTracks < 1)
+	{
+		ASSERT(0); // crazy to have less than 1 track....
+	}
 
 	m_LifeMeter.Load( PLAYER_1 );
 	m_LifeMeter.SetXY( 480, 40 );
 	this->AddChild( &m_LifeMeter );
 
 	NoteData* pND = new NoteData;
-	pND->SetNumTracks( 4 );
+	pND->SetNumTracks( iNumOfTracks );
 	pND->SetTapNote( 0, ROWS_PER_BEAT*12, TAP_TAP );
 	pND->SetTapNote( 1, ROWS_PER_BEAT*16, TAP_TAP );
 	pND->SetTapNote( 2, ROWS_PER_BEAT*20, TAP_TAP );
@@ -47,7 +63,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	pND->SetTapNote( 2, ROWS_PER_BEAT*46,    TAP_TAP );
 
 	m_pSong = new Song;
-	m_pSong->AddBPMSegment( BPMSegment(0,60) );
+	m_pSong->AddBPMSegment( BPMSegment(0,BPMSPEED) );
 	m_pSong->AddStopSegment( StopSegment(12,2) );
 	m_pSong->AddStopSegment( StopSegment(16,2) );
 	m_pSong->AddStopSegment( StopSegment(20,2) );

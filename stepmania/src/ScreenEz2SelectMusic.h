@@ -62,6 +62,7 @@ protected:
 	Sprite	m_ShuffleIcon[NUM_PLAYERS];
 	Sprite	m_HiddenIcon[NUM_PLAYERS];
 	Sprite	m_VanishIcon[NUM_PLAYERS];
+	Sprite				m_sprBalloon;
 	BitmapText	m_PumpDifficultyRating;
 
 	RageSound			m_soundOptionsChange;
@@ -78,7 +79,10 @@ protected:
 	bool m_bGoToOptions;
 	bool m_bMadeChoice;
 	bool m_bTransitioning;
-	
+
+	int i_SkipAheadOffset;
+	float ScrollStartTime;
+
 	int i_ErrorDetected;
 
 	#ifdef DEBUG
@@ -86,6 +90,7 @@ protected:
 	#endif
 
 	int iConfirmSelection;
+
 
 	RageSound			m_soundSelect;
 };
