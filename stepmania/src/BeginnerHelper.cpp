@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "ThemeManager.h"
+#include "Steps.h"
 
 // "PLAYER_X" offsets are relative to the pad.. ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310
 #define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%d_X",px+1))
