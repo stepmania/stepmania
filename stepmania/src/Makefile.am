@@ -87,6 +87,7 @@ endif
 
 if HAVE_ALSA
 Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h \
+	 arch/Sound/RageSoundDriver_ALSA9_Software.cpp arch/Sound/RageSoundDriver_ALSA9_Software.h \
 	 arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h
 endif
 
