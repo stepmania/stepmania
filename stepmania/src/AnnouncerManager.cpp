@@ -56,7 +56,7 @@ bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
 
 CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
 {
-	return ANNOUNCERS_DIR + sAnnouncerName + "\\";
+	return ANNOUNCERS_DIR + sAnnouncerName + "/";
 }
 
 void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
@@ -69,8 +69,8 @@ void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
 
 CString AnnouncerManager::GetPathTo( CString sFolderName )
 {
-	CString sPathToFolderCurrent = GetAnnouncerDirFromName(m_sCurAnnouncerName) + "\\" + sFolderName;
-	CString sPathToFolderEmpty = GetAnnouncerDirFromName(EMPTY_ANNOUNCER_NAME) + "\\" + sFolderName;
+	CString sPathToFolderCurrent = GetAnnouncerDirFromName(m_sCurAnnouncerName) + sFolderName;
+	CString sPathToFolderEmpty = GetAnnouncerDirFromName(EMPTY_ANNOUNCER_NAME) + sFolderName;
 
 #ifdef _DEBUG
 	if( m_sCurAnnouncerName!=""  &&  !DoesFileExist(sPathToFolderCurrent) )
