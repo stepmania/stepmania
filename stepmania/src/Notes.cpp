@@ -742,6 +742,7 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 		throw RageException( "Error opening file '%s'.", sPath );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
+	CString iStep;			// this is the value we read for STEP
 
 	for( int i=0; i<msd.m_iNumValues; i++ )
 	{
@@ -751,101 +752,100 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TICKCOUNT") )
-			iTickCount = atoi(sParams[1]);		
+			iTickCount = atoi(sParams[1]);
 
 		else if( 0==stricmp(sValueName,"STEP") )
+			iStep = sParams[1];
+		else if( 0==stricmp(sValueName,"DIFFICULTY") )
+			m_iMeter = atoi(sParams[1]);
+	}
+
+	if( iTickCount == -1 )
+	{
+		iTickCount = 2;
+		LOG->Warn( "TICKCOUNT not found; defaulting to %i", sPath, iTickCount );
+	}
+
+	NoteData notedata;	// read it into here
+
+	CStringArray asRows;
+	iStep.TrimLeft();
+	split( iStep, "\n", asRows, true );
+
+	int iHoldStartRow[13];
+	for( int t=0; t<13; t++ )
+		iHoldStartRow[t] = -1;
+
+	for( int r=0; r<asRows.GetSize(); r++ )
+	{
+		CString& sRowString = asRows[r];
+		ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
+		if( sRowString == "2222222222222" )
+			break;
+		float fBeatThisRow = r/(float)iTickCount;	// the length of a note in a row depends on TICKCOUNT
+		int row = BeatToNoteRow(fBeatThisRow);
+		for( int t=0; t<13; t++ )
 		{
-			if( iTickCount == -1 )
+			if( sRowString[t] == '4' )
 			{
-				LOG->Warn( "In KSF file '%s', STEP was read before TICKCOUNT", sPath );
-				iTickCount = 2;
+				if( iHoldStartRow[t] == -1 )
+					iHoldStartRow[t] = r;
+				else
+					;	// ignore middle of hold
 			}
-
-			NoteData notedata;	// read it into here
-
-			CStringArray asRows;
-			sParams[1].TrimLeft();
-			split( sParams[1], "\n", asRows, true );
-
-			int iHoldStartRow[13];
-			for( int t=0; t<13; t++ )
-				iHoldStartRow[t] = -1;
-
-			for( int r=0; r<asRows.GetSize(); r++ )
+			else	// sRowString[t] != '4'
 			{
-				CString& sRowString = asRows[r];
-				ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
-				if( sRowString == "2222222222222" )
-					break;
-				float fBeatThisRow = r/(float)iTickCount;	// the length of a note in a row depends on TICKCOUNT
-				int row = BeatToNoteRow(fBeatThisRow);
-				for( int t=0; t<13; t++ )
+				if( iHoldStartRow[t] != -1 )	// this ends the hold
 				{
-					if( sRowString[t] == '4' )
-					{
-						if( iHoldStartRow[t] == -1 )
-							iHoldStartRow[t] = r;
-						else
-							;	// ignore middle of hold
-					}
-					else	// sRowString[t] != '4'
-					{
-						if( iHoldStartRow[t] != -1 )	// this ends the hold
-						{
-							HoldNote hn = { t, iHoldStartRow[t]/(float)iTickCount, (r-1)/(float)iTickCount };
-							notedata.AddHoldNote( hn );
-							iHoldStartRow[t] = -1;
-						}
-					}
-
-					if( sRowString[t] != '4' )
-						notedata.m_TapNotes[t][row] = sRowString[t];
+					HoldNote hn = { t, iHoldStartRow[t]/(float)iTickCount, (r-1)/(float)iTickCount };
+					notedata.AddHoldNote( hn );
+					iHoldStartRow[t] = -1;
 				}
 			}
 
-			CString sDir, sFName, sExt;
-			splitrelpath( sPath, sDir, sFName, sExt );
-			sFName.MakeLower();
-			
-			m_sDescription = sFName;
-			if( sFName.Find("crazy")!=-1 )
-			{
-				m_DifficultyClass = CLASS_HARD;
-				m_iMeter = 8;
-			}
-			else if( sFName.Find("hard")!=-1 )
-			{
-				m_DifficultyClass = CLASS_MEDIUM;
-				m_iMeter = 5;
-			}
-			else if( sFName.Find("easy")!=-1 )
-			{
-				m_DifficultyClass = CLASS_EASY;
-				m_iMeter = 2;
-			}
-			else
-			{
-				m_DifficultyClass = CLASS_MEDIUM;
-				m_iMeter = 5;
-			}
-
-			if( sFName.Find("double") != -1 )
-			{
-				notedata.m_iNumTracks = 10;
-				m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
-			}
-			else
-			{
-				notedata.m_iNumTracks = 5;
-				m_NotesType = NOTES_TYPE_PUMP_SINGLE;
-			}
-
-			m_sSMNoteData = notedata.GetSMNoteDataString();
+			if( sRowString[t] != '4' )
+				notedata.m_TapNotes[t][row] = sRowString[t];
 		}
-
-		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName );
 	}
+
+	CString sDir, sFName, sExt;
+	splitrelpath( sPath, sDir, sFName, sExt );
+	sFName.MakeLower();
+	
+	m_sDescription = sFName;
+	if( sFName.Find("crazy")!=-1 )
+	{
+		m_DifficultyClass = CLASS_HARD;
+		if(!m_iMeter) m_iMeter = 8;
+	}
+	else if( sFName.Find("hard")!=-1 )
+	{
+		m_DifficultyClass = CLASS_MEDIUM;
+		if(!m_iMeter) m_iMeter = 5;
+	}
+	else if( sFName.Find("easy")!=-1 )
+	{
+		m_DifficultyClass = CLASS_EASY;
+		if(!m_iMeter) m_iMeter = 2;
+	}
+	else
+	{
+		m_DifficultyClass = CLASS_MEDIUM;
+		if(!m_iMeter) m_iMeter = 5;
+	}
+
+	if( sFName.Find("double") != -1 )
+	{
+		notedata.m_iNumTracks = 10;
+		m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
+	}
+	else
+	{
+		notedata.m_iNumTracks = 5;
+		m_NotesType = NOTES_TYPE_PUMP_SINGLE;
+	}
+
+	m_sSMNoteData = notedata.GetSMNoteDataString();
 
 	return true;
 }
