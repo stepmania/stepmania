@@ -18,6 +18,7 @@
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 #include "NoteSkinManager.h"
+#include "NoteFieldPositioning.h"
 
 #define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenPlayerOptions","NextScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -47,7 +48,7 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Note\nSkin",		"" ),	
 	OptionRow( "Holds",				"OFF","ON" ),	
 	OptionRow( "Other",				"OFF","DARK","TIME SPACING" ),	
-	OptionRow( "Perspec\n-tive",	"INCOMING","OVERHEAD","SPACE" ),	
+	OptionRow( "Perspec\n-tive",	"" ),
 };
 
 
@@ -80,6 +81,19 @@ void ScreenPlayerOptions::ImportOptions()
 	{
 		arraySkinNames[i].MakeUpper();
 		m_OptionRow[PO_NOTE_SKIN].choices.push_back( arraySkinNames[i] ); 
+	}
+
+	m_OptionRow[PO_PERSPECTIVE].choices.clear();
+	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "INCOMING" ); 
+	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "OVERHEAD" ); 
+	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "SPACE" ); 
+
+	CStringArray arrayPosNames;
+	GAMESTATE->m_Position->GetNamesForCurrentGame(arrayPosNames);
+	for( unsigned i=0; i<arrayPosNames.size(); i++ )
+	{
+		arrayPosNames[i].MakeUpper();
+		m_OptionRow[PO_PERSPECTIVE].choices.push_back( arrayPosNames[i] ); 
 	}
 
 
@@ -134,8 +148,19 @@ void ScreenPlayerOptions::ImportOptions()
 		else
 			m_iSelectedOption[p][PO_OTHER] = 0;
 
-		m_iSelectedOption[p][PO_PERSPECTIVE]= (int)po.m_fPerspectiveTilt + 1;
-
+		/* Default: */
+		m_iSelectedOption[p][PO_PERSPECTIVE] = 1;
+		if(po.m_fPerspectiveTilt == -1)
+			m_iSelectedOption[p][PO_PERSPECTIVE] = 0;
+		else if(po.m_fPerspectiveTilt == 1)
+			m_iSelectedOption[p][PO_PERSPECTIVE] = 2;
+		else /* po.m_fPerspectiveTilt == 0 */
+		{
+			vector<CString> &choices = m_OptionRow[PO_PERSPECTIVE].choices;
+			for(unsigned n = 3; n < choices.size(); ++n)
+				if(!choices[n].CompareNoCase(po.m_sPositioning))
+					m_iSelectedOption[p][PO_PERSPECTIVE] = n;
+		}
 
 		po.Init();
 	}
@@ -187,7 +212,18 @@ void ScreenPlayerOptions::ExportOptions()
 		po.m_bHoldNotes			= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
 		po.m_fDark				= (m_iSelectedOption[p][PO_OTHER] == 1) ? 1.f : 0.f;
 		po.m_bTimeSpacing		= (m_iSelectedOption[p][PO_OTHER] == 2);
-		po.m_fPerspectiveTilt	= (float)m_iSelectedOption[p][PO_PERSPECTIVE] - 1;
+		
+		switch(m_iSelectedOption[p][PO_PERSPECTIVE])
+		{
+		case 0: po.m_fPerspectiveTilt = -1; break;
+		case 2: po.m_fPerspectiveTilt =  1; break;
+		default:po.m_fPerspectiveTilt =  0; break;
+		}
+		if(m_iSelectedOption[p][PO_PERSPECTIVE] > 2)
+		{
+			const int choice = m_iSelectedOption[p][PO_PERSPECTIVE];
+			po.m_sPositioning = m_OptionRow[PO_PERSPECTIVE].choices[choice];
+		}
 	}
 }
 
