@@ -156,7 +156,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 			m_Out.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
-		/* XXX: Look at the def of the screen we're going to; if it has a 
+		/* Look at the def of the screen we're going to; if it has a 
 		 * music theme element and it's the same as the one we're playing
 		 * now, don't stop.  (However, if we're going to interrupt it 
 		 * when we fade in, it's cleaner to stop it before we fade out.) */
@@ -167,7 +167,13 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		/* But if you don't stop it, for screens that have their own unique
 		 * music, it will constantly loop even after the screen has gone on
 		 * to the next attract screen. -- Miryokuteki */
-		SOUND->PlayMusic( "" );
+		bool bGoingToPlayTheSameMusic =
+			THEME->GetPathToS( NEXT_SCREEN, "music", false) == THEME->GetPathToS( m_sName, "music", false);
+		if( bGoingToPlayTheSameMusic )
+			; // do nothing
+		else
+			SOUND->PlayMusic( "" );	// stop the music
+
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
