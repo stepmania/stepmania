@@ -1461,15 +1461,17 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_EditMode = MODE_PLAYING;
 
+				/* Give a 1 measure lead-in.  Set this before loading Player, so it knows
+				 * where we're starting. */
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;
+
 				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL, NULL );
 				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
-
-				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
-				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
+				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );

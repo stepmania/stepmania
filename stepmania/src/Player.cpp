@@ -88,7 +88,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_pScore = pScore;
 	m_pInventory = pInventory;
 	m_pScoreKeeper = pScoreKeeper;
-	m_iRowLastCrossed = -1;
+	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;
+	// m_iRowLastCrossed = -1;
 
 	/* Ensure that this is up-to-date. */
 	GAMESTATE->m_pPosition->Load(pn);
