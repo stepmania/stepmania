@@ -86,9 +86,27 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 		g_GraphicOptionsLines, 
 		NUM_GRAPHIC_OPTIONS_LINES,
 		false );
+	UpdateRefreshRates();
 	m_Menu.StopTimer();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","graphic options music") );
+}
+
+
+void ScreenGraphicOptions::UpdateRefreshRates()
+{
+	/* If we're windowed, leave all refresh rates dimmed, but don't
+	 * change the actual selection. */
+	if(m_iSelectedOption[0][GO_WINDOWED])
+		return;
+
+//	PositionUnderlines();
+}
+
+void ScreenGraphicOptions::OnChange()
+{
+	ScreenOptions::OnChange();
+	UpdateRefreshRates();
 }
 
 void ScreenGraphicOptions::ImportOptions()

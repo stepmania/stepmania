@@ -120,11 +120,13 @@ bool DWILoader::LoadFromDWITokens(
 		ASSERT(0);
 	}
 
+	int iNumFeet = atoi(sNumFeet);
 	out.SetDescription(sDescription);
-
-	out.SetMeter(atoi(sNumFeet));
-
-	//SetDifficulty(DifficultyFromDescriptionAndMeter( GetDescription(), GetMeter() ));
+	out.SetMeter(iNumFeet);
+	if( sDescription.CompareNoCase("basic")==0 )		out.SetDifficulty( DIFFICULTY_EASY );
+	else if( sDescription.CompareNoCase("trick")==0 )	out.SetDifficulty( DIFFICULTY_MEDIUM );
+	else if( sDescription.CompareNoCase("maniac")==0 )	out.SetDifficulty( DIFFICULTY_HARD );
+	else if( sDescription.CompareNoCase("smaniac")==0 )	out.SetDifficulty( DIFFICULTY_CHALLENGE );
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );

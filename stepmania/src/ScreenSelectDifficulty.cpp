@@ -28,8 +28,20 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define MORE_Y( page )			THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("MorePage%dY",page+1))
 #define EXPLANATION_X( page )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("ExplanationPage%dX",page+1))
 #define EXPLANATION_Y( page )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("ExplanationPage%dY",page+1))
-#define CHOICE_X( i )			THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("Choice%dX",i+1))
-#define CHOICE_Y( i )			THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("Choice%dY",i+1))
+#define BEGINNER_X()			THEME->GetMetricF("ScreenSelectDifficulty","BeginnerX")
+#define BEGINNER_Y()			THEME->GetMetricF("ScreenSelectDifficulty","BeginnerY")
+#define EASY_X()				THEME->GetMetricF("ScreenSelectDifficulty","EasyX")
+#define EASY_Y()				THEME->GetMetricF("ScreenSelectDifficulty","EasyY")
+#define MEDIUM_X()				THEME->GetMetricF("ScreenSelectDifficulty","MediumX")
+#define MEDIUM_Y()				THEME->GetMetricF("ScreenSelectDifficulty","MediumY")
+#define HARD_X()				THEME->GetMetricF("ScreenSelectDifficulty","HardX")
+#define HARD_Y()				THEME->GetMetricF("ScreenSelectDifficulty","HardY")
+#define NONSTOP_X()				THEME->GetMetricF("ScreenSelectDifficulty","NonstopX")
+#define NONSTOP_Y()				THEME->GetMetricF("ScreenSelectDifficulty","NonstopY")
+#define ONI_X()					THEME->GetMetricF("ScreenSelectDifficulty","OniX")
+#define ONI_Y()					THEME->GetMetricF("ScreenSelectDifficulty","OniY")
+#define ENDLESS_X()				THEME->GetMetricF("ScreenSelectDifficulty","EndlessX")
+#define ENDLESS_Y()				THEME->GetMetricF("ScreenSelectDifficulty","EndlessY")
 #define CURSOR_OFFSET_X( p )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorOffsetP%dX",p+1))
 #define CURSOR_OFFSET_Y( i )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorOffsetP%dY",i+1))
 #define CURSOR_SHADOW_LENGTH_X	THEME->GetMetricF("ScreenSelectDifficulty","CursorShadowLengthX")
@@ -40,8 +52,50 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenSelectDifficulty","NextScreenArcade")
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenSelectDifficulty","NextScreenOni")
 
+float CHOICE_X( int choice )
+{
+	switch( choice )
+	{
+	case 0: return BEGINNER_X();
+	case 1: return EASY_X();
+	case 2: return MEDIUM_X();
+	case 3: return HARD_X();
+	case 4: return NONSTOP_X();
+	case 5: return ONI_X();
+	case 6: return ENDLESS_X();
+	default:	ASSERT(0);	return 0;
+	}
+}
+
+float CHOICE_Y( int choice )
+{
+	switch( choice )
+	{
+	case 0: return BEGINNER_Y();
+	case 1: return EASY_Y();
+	case 2: return MEDIUM_Y();
+	case 3: return HARD_Y();
+	case 4: return NONSTOP_Y();
+	case 5: return ONI_Y();
+	case 6: return ENDLESS_Y();
+	default:	ASSERT(0);	return 0;
+	}
+}
+
+const CString CHOICE_TEXT[ScreenSelectDifficulty::NUM_CHOICES] = 
+{
+	"beginner",
+	"easy",
+	"medium",
+	"hard",
+	"nonstop",
+	"oni",
+	"endless"
+};
+
 float CURSOR_X( int choice, int p ) { return CHOICE_X(choice) + CURSOR_OFFSET_X(p); }
 float CURSOR_Y( int choice, int p ) { return CHOICE_Y(choice) + CURSOR_OFFSET_Y(p); }
+
 
 
 const ScreenMessage SM_GoToPrevScreen			= ScreenMessage(SM_User + 1);
@@ -70,8 +124,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	for( unsigned c=0; c<NUM_CHOICES; c++ )
 	{
-		CString sHeaderFile = ssprintf( "select difficulty header %d", c+1 );
-		CString sPictureFile = ssprintf( "select difficulty picture %d", c+1 );
+		CString sHeaderFile = ssprintf( "select difficulty header %s", CHOICE_TEXT[c].c_str() );
+		CString sPictureFile = ssprintf( "select difficulty picture %s", CHOICE_TEXT[c].c_str() );
 
 		m_sprPicture[c].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 		m_sprPicture[c].SetXY( CHOICE_X(c), CHOICE_Y(c) );
@@ -197,23 +251,26 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		{
 			switch( m_Choice[p] )
 			{
-			case 3:	// need to set preferred difficulty even for courses
-			case 4:
-			case 5:
-			case 0:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;		break;
-			case 1:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;	break;
-			case 2:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_HARD;		break;
+			case CHOICE_BEGINNER:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_BEGINNER;	break;
+			case CHOICE_EASY:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;		break;
+			case CHOICE_NONSTOP:	// need to set preferred difficulty even for courses
+			case CHOICE_ONI:
+			case CHOICE_ENDLESS:
+			case CHOICE_MEDIUM:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;	break;
+			case CHOICE_HARD:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_HARD;		break;
+			default:	ASSERT(0);
 			}
 		}
 
 		switch( m_Choice[GAMESTATE->m_MasterPlayerNumber] )
 		{
-		case 0:
-		case 1:
-		case 2:	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;	break;
-		case 3:	GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;	break;
-		case 4:	GAMESTATE->m_PlayMode = PLAY_MODE_ONI;		break;
-		case 5:	GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;	break;
+		case CHOICE_BEGINNER:
+		case CHOICE_EASY:
+		case CHOICE_MEDIUM:
+		case CHOICE_HARD:		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;	break;
+		case CHOICE_NONSTOP:	GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;	break;
+		case CHOICE_ONI:		GAMESTATE->m_PlayMode = PLAY_MODE_ONI;		break;
+		case CHOICE_ENDLESS:	GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;	break;
 		default:	ASSERT(0);	// bad selection
 		}
 
@@ -257,7 +314,7 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 	ChangeTo( pn, m_Choice[pn], m_Choice[pn]+1 );
 }
 
-bool ScreenSelectDifficulty::IsItemOnPage2( int iItemIndex )
+bool ScreenSelectDifficulty::IsOnPage2( int iItemIndex )
 {
 	ASSERT( iItemIndex >= 0  &&  iItemIndex < NUM_CHOICES );
 
@@ -268,19 +325,19 @@ bool ScreenSelectDifficulty::SelectedSomethingOnPage2()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled(p)  &&  IsItemOnPage2(m_Choice[p]) )
+		if( GAMESTATE->IsPlayerEnabled(p)  &&  IsOnPage2(m_Choice[p]) )
 			return true;
 	}
 	return false;
 }
 
-void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int iSelectionIs )
+void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iOldChoice, int iNewChoice )
 {
-	bool bChangedPagesFrom1To2 = iSelectionWas < 3  &&  iSelectionIs >= 3;
-	bool bChangedPagesFrom2To1 = iSelectionWas >= 3  &&  iSelectionIs < 3;
+	bool bChangedPagesFrom1To2 = !IsOnPage2(iOldChoice) && IsOnPage2(iNewChoice);
+	bool bChangedPagesFrom2To1 = IsOnPage2(iOldChoice) && !IsOnPage2(iNewChoice);
 	bool bChangedPages = bChangedPagesFrom1To2 || bChangedPagesFrom2To1;
-	bool bSelectedSomethingOnPage1 = iSelectionIs < 3;
-	bool bSelectedSomethingOnPage2 = iSelectionIs >= 3;
+	bool bSelectedSomethingOnPage1 = !IsOnPage2(iNewChoice);
+	bool bSelectedSomethingOnPage2 = IsOnPage2(iNewChoice);
 
 	bool bSomeoneMadeAChoice = false;
 	int p;
@@ -295,12 +352,12 @@ void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int i
 	{
 		// change both players
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			m_Choice[p] = (Choice)iSelectionIs;
+			m_Choice[p] = (Choice)iNewChoice;
 	}
 	else	// moving around in page 1
 	{
 		// change only the player who pressed the button
-		m_Choice[pn] = (Choice)iSelectionIs;
+		m_Choice[pn] = (Choice)iNewChoice;
 
 	}
 
@@ -442,7 +499,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( unsigned c=0; c<NUM_CHOICES; c++ )
 	{
-		if( SelectedSomethingOnPage2() != IsItemOnPage2(c) )	// item isn't on selected page
+		if( SelectedSomethingOnPage2() != IsOnPage2(c) )	// item isn't on selected page
 			continue;	// don't tween
 
 		const float fPauseTime = c*0.2f;
@@ -512,7 +569,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 	{
 		const float fPauseTime = d*0.2f;
 
-		if( SelectedSomethingOnPage2() != IsItemOnPage2(d) )	// item isn't on the current page
+		if( SelectedSomethingOnPage2() != IsOnPage2(d) )	// item isn't on the current page
 			continue;	// don't tween
 
 		// set off screen

@@ -186,28 +186,18 @@ Notes* Course::GetNotesForStage( int iStage )
 {
 	Song* pSong = GetSong(iStage);
 	CString sDescription = entries[iStage].description;
-	unsigned i;
 	
-	for( i=0; i<pSong->m_apNotes.size(); i++ )
+	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
-		if( 0==stricmp(pNotes->GetDescription(), sDescription)  &&
-			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
+
+		if( !GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
+			continue;
+
+		if( pNotes->GetDescription().CompareNoCase(sDescription)  ||
+			DifficultyToString(pNotes->GetDifficulty()).CompareNoCase(sDescription) )
 			return pNotes;
 	}
-
-
-	// Didn't find a matching description.  Try to match the Difficulty instead.
-	Difficulty dc = Notes::DifficultyFromDescriptionAndMeter( sDescription, 5 );
-
-	for( i=0; i<pSong->m_apNotes.size(); i++ )
-	{
-		Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->GetDifficulty() == dc  &&
-			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
-			return pNotes;
-	}
-
 
 	return NULL;
 }

@@ -199,19 +199,14 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 	default:	return false;	// not a type supported by DWI
 	}
 
-	if( 0==out.GetDescription().CompareNoCase("challenge") )
-		fprintf( fp, "SMANIAC:" );
-	else if( 0==out.GetDescription().CompareNoCase("smaniac") )
-		fprintf( fp, "SMANIAC:" );
-	else
+	switch( out.GetDifficulty() )
 	{
-		switch( out.GetDifficulty() )
-		{
-		case DIFFICULTY_EASY:	fprintf( fp, "BASIC:" );	break;
-		case DIFFICULTY_MEDIUM:	fprintf( fp, "ANOTHER:" );	break;
-		case DIFFICULTY_HARD:	fprintf( fp, "MANIAC:" );	break;
-		default:	ASSERT(0);	return false;
-		}
+	case DIFFICULTY_BEGINNER:
+	case DIFFICULTY_EASY:		fprintf( fp, "BASIC:" );	break;
+	case DIFFICULTY_MEDIUM:		fprintf( fp, "ANOTHER:" );	break;
+	case DIFFICULTY_HARD:		fprintf( fp, "MANIAC:" );	break;
+	case DIFFICULTY_CHALLENGE:	fprintf( fp, "SMANIAC:" );	break;
+	default:	ASSERT(0);	return false;
 	}
 
 	fprintf( fp, "%d:\n", out.GetMeter() );

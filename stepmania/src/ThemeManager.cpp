@@ -320,30 +320,27 @@ try_element_again:
 
 #ifdef _DEBUG
 	CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
-	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_ABORTRETRYIGNORE ) )
+	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:
 		goto try_element_again;
-	case IDABORT:
-		break;
-	case IDIGNORE:
-		LOG->Warn( 
-			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+	case IDCANCEL:
+		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sAssetCategory.GetString(),
 			sFileName.GetString(), 
 			GetThemeDirFromName(m_sCurThemeName).GetString(), 
 			GetThemeDirFromName(BASE_THEME_NAME).GetString() );
-		return GetPathTo( sAssetCategory, "_missing" );
+		break;
 	}
 #endif
 
-	RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+	LOG->Warn( 
+		"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 		sAssetCategory.GetString(),
 		sFileName.GetString(), 
 		GetThemeDirFromName(m_sCurThemeName).GetString(), 
 		GetThemeDirFromName(BASE_THEME_NAME).GetString() );
-
-	return "";	// shut VC6 up
+	return GetPathTo( sAssetCategory, "_missing" );
 }
 
 

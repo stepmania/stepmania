@@ -60,7 +60,7 @@ void GameState::Reset()
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= "";
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_PreferredDifficulty[p] = CLASS_INVALID;
+		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 	m_SongSortOrder = SORT_GROUP;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;

@@ -341,7 +341,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","gameplay difficulty icons 2x6") );
+		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","gameplay difficulty icons 2x5") );
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
 		this->AddChild( &m_DifficultyIcon[p] );
 	}

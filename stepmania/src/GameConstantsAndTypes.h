@@ -50,11 +50,13 @@ enum RadarCategory	// starting from 12-o'clock rotating clockwise
 
 enum Difficulty 
 {
-	DIFFICULTY_EASY,	// corresponds to Basic, Easy
-	DIFFICULTY_MEDIUM,	// corresponds to Trick, Another, Standard, Normal
-	DIFFICULTY_HARD,	// corresponds to Maniac, SSR, Heavy, Crazy
+	DIFFICULTY_BEGINNER,	// corresponds to DDREX Beginner
+	DIFFICULTY_EASY,		// corresponds to Basic, Easy
+	DIFFICULTY_MEDIUM,		// corresponds to Trick, Another, Standard, Normal
+	DIFFICULTY_HARD,		// corresponds to Maniac, SSR, Heavy, Crazy
+	DIFFICULTY_CHALLENGE,	// corresponds to 5th SMANIAC, MAX2 Challenge, EX Challenge
 	NUM_DIFFICULTIES,
-	CLASS_INVALID
+	DIFFICULTY_INVALID
 };
 
 CString DifficultyToString( Difficulty dc );

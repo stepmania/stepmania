@@ -556,22 +556,6 @@ void Song::TidyUpData()
 		}
 	}
 
-	// challenge notes are encoded as smaniac.  If there is only one Notes for 
-	// a NotesType and it's "smaniac", then convert it to "Challenge"
-	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
-	{
-		vector<Notes*> apNotes;
-		GetNotesThatMatch( nt, apNotes );
-		if( apNotes.size() == 1 )
-		{
-			if( 0 == apNotes[0]->GetDescription().CompareNoCase("smaniac") )
-			{
-				apNotes[0]->SetDescription("Challenge");
-				apNotes[0]->SetDifficulty(DIFFICULTY_HARD);
-			}
-		}
-	}
-
 	for( i=0; i<m_apNotes.size(); i++ )
 		m_apNotes[i]->Compress();
 }
@@ -707,9 +691,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		/* 桜 */
 		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
 
-		/* XXX: "door of magic" (mahou no tobira) -> 魔法の扉 */
-		ttab.push_back(TitleTrans("^Door of Magic$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") );
-		ttab.push_back(TitleTrans("^mahou no tobira$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") );
+		/* XXX: "door of magic" (tobira no mahou) -> 魔法の扉 */
 		/* XXX スペース★マコのテーマ (space? special? * "mako"?'s team) (title or subtitle, not sure) */
 
 		/* Subtitles: */

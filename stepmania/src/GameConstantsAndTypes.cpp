@@ -21,10 +21,12 @@ CString DifficultyToString( Difficulty dc )
 {
 	switch( dc )
 	{
-	case DIFFICULTY_EASY:	return "easy";
-	case DIFFICULTY_MEDIUM:	return "medium";
-	case DIFFICULTY_HARD:	return "hard";
-	default:	ASSERT(0);	return "";	// invalid Difficulty
+	case DIFFICULTY_BEGINNER:	return "beginner";
+	case DIFFICULTY_EASY:		return "easy";
+	case DIFFICULTY_MEDIUM:		return "medium";
+	case DIFFICULTY_HARD:		return "hard";
+	case DIFFICULTY_CHALLENGE:	return "challenge";
+	default:	ASSERT(0);		return "";	// invalid Difficulty
 	}
 }
 
@@ -36,7 +38,7 @@ Difficulty StringToDifficulty( CString sDC )
 		if( sDC == DifficultyToString(dc) )
 			return dc;
 	}
-	return CLASS_INVALID;
+	return DIFFICULTY_INVALID;
 }
 
 RageColor PlayerToColor( PlayerNumber pn ) 

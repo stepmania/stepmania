@@ -22,13 +22,13 @@
 
 MusicStatusDisplay::MusicStatusDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music status icons 1x4") );
+	Load( THEME->GetPathTo("Graphics","music status icons 1x5") );
 	StopAnimating();
 
 	SetType( none );
 }
 
-void MusicStatusDisplay::SetType( IconType type )
+void MusicStatusDisplay::SetType( Type type )
 {
 	m_type = type;
 

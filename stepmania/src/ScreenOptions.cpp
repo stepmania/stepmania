@@ -85,6 +85,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
 	m_framePage.SetTweenX( 0 );
+	ZeroMemory(&m_OptionDim, sizeof(m_OptionDim));
 }
 
 void ScreenOptions::Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bUseIcons )
@@ -229,6 +230,36 @@ void ScreenOptions::InitOptionsText()
 	option.SetShadowLength( 2 );
 	float fY = ITEMS_START_Y + fLineGap*i;
 	option.SetXY( CENTER_X, fY );
+}
+
+void ScreenOptions::DimOption(int line, int option, bool dim)
+{
+	if(m_OptionDim[line][option] == dim)
+		return;
+
+	m_OptionDim[line][option] = dim;
+	m_textOptions[line][option].StopTweening();
+	m_textOptions[line][option].BeginTweening(.250);
+	if(m_OptionDim[line][option])
+		m_textOptions[line][option].SetTweenDiffuse( RageColor(.5,.5,.5,1) );
+	else
+		m_textOptions[line][option].SetTweenDiffuse( RageColor(1,1,1,1) );
+
+	/* Don't know if I like this ...-glenn
+	m_textOptionLineTitles[line].BeginTweening(.250);
+	if(RowCompletelyDimmed(line))
+		m_textOptionLineTitles[line].SetTweenZoom( 0.6f );
+	else
+		m_textOptionLineTitles[line].SetTweenZoom( 0.7f );
+	*/
+
+}
+
+bool ScreenOptions::RowCompletelyDimmed(int line) const
+{
+	for(unsigned i = 0; i < m_OptionRowData[line].iNumOptions; ++i)
+		if(!m_OptionDim[line][i]) return false;
+	return true;
 }
 
 void ScreenOptions::PositionUnderlines()
@@ -459,6 +490,17 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 
 		const int iNumOptions = m_OptionRowData[iCurRow].iNumOptions;
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]-1+iNumOptions) % iNumOptions;
+// Chris:  I commented this out because it made wrapping a pain.  Is it used anyway?  If so, please
+// let me know and I'll fix it.
+//		do {
+//			new_opt--;
+//		} while(new_opt >= 0 && m_OptionDim[iCurRow][new_opt]);
+//		
+//		if( new_opt < 0 )	// can't go left any more
+//			return;
+//
+//		m_iSelectedOption[p][iCurRow] = new_opt;
+		
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
@@ -479,6 +521,19 @@ void ScreenOptions::MenuRight( PlayerNumber pn )
 
 		const int iNumOptions = m_OptionRowData[iCurRow].iNumOptions;
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]+1) % iNumOptions;
+// Chris:  I commented this out because it made wrapping a pain.  Is it used anyway?  If so, please
+// let me know and I'll fix it.
+//		int new_opt = m_iSelectedOption[p][iCurRow];
+//		do {
+//			new_opt++;
+//		} while(new_opt < m_OptionRowData[iCurRow].iNumOptions && 
+//			    m_OptionDim[iCurRow][new_opt]);
+//		
+//		if( new_opt == m_OptionRowData[iCurRow].iNumOptions )	// can't go right any more
+//			return;
+//		
+//		m_iSelectedOption[p][iCurRow] = new_opt;
+		
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
@@ -496,6 +551,18 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			return;	// can't go up any more
 
 		m_iCurrentRow[p]--;
+
+
+//	Chris:  Will add back in later
+//		/* Find the prev row with any un-dimmed entries. */
+//		int new_row = m_iCurrentRow[p];
+//		do {
+///			if(--new_row < 0)
+//				new_row = m_iNumOptionRows-1; // wrap around
+//			if(!RowCompletelyDimmed(new_row)) break;
+//		} while(new_row != m_iCurrentRow[p]);
+//		m_iCurrentRow[p] = new_row;
+
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundPrevRow.Play();
@@ -514,6 +581,17 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			return;	// can't go down any more
 
 		m_iCurrentRow[p]++;
+
+// Chris:  Commented this out, but will add back in later.
+//		/* Find the next row with any un-dimmed entries. */
+//		int new_row = m_iCurrentRow[p];
+//		do {
+//			if( ++new_row == m_iNumOptionRows )
+//				new_row = 0; // wrap around
+//			if(!RowCompletelyDimmed(new_row)) break;
+//		} while(new_row != m_iCurrentRow[p]);
+//		m_iCurrentRow[p] = new_row;
+
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundNextRow.Play();

@@ -20,9 +20,11 @@
 
 class ScreenSelectDifficulty : public Screen
 {
+public:
 	enum Choice
 	{
-		CHOICE_EASY,	// page 1
+		CHOICE_BEGINNER = 0,	// page 1
+		CHOICE_EASY,
 		CHOICE_MEDIUM,
 		CHOICE_HARD,
 		CHOICE_NONSTOP,	// page 2
@@ -31,11 +33,10 @@ class ScreenSelectDifficulty : public Screen
 		NUM_CHOICES
 	};
 
-#define NUM_CHOICES_ON_PAGE_1	3	// easy, medium, hard, 
+#define NUM_CHOICES_ON_PAGE_1	4	// beginner, easy, medium, hard, 
 #define NUM_CHOICES_ON_PAGE_2	3	// Nonstop, Oni, Endless
 #define NUM_PAGES	2
 
-public:
 	ScreenSelectDifficulty();
 	virtual ~ScreenSelectDifficulty();
 
@@ -53,9 +54,9 @@ public:
 	void TweenOnScreen();
 
 private:
-	void ChangeTo( PlayerNumber pn, int iSelectionWas, int iSelectionIs );
+	void ChangeTo( PlayerNumber pn, int iOldChoice, int iNewChoice );
 
-	bool IsItemOnPage2( int iItemIndex );
+	bool IsOnPage2( int iChoice );
 	bool SelectedSomethingOnPage2();	// checks selection of players
 
 	MenuElements m_Menu;

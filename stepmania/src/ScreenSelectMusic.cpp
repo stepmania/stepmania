@@ -136,7 +136,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprDifficultyFrame[p].SetState( p );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
-		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x6") );
+		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x5") );
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
 		this->AddChild( &m_DifficultyIcon[p] );
 

@@ -21,14 +21,14 @@ class MusicStatusDisplay : public Sprite
 public:
 	MusicStatusDisplay();
 
-	enum IconType { none, easy, crown1, crown2, crown3 };
-	void SetType( IconType type );
+	enum Type { none, easy, crown1, crown2, crown3, edits };
+	void SetType( Type type );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 protected:
-	IconType m_type;
+	Type m_type;
 };
 
 #endif

@@ -17,16 +17,6 @@
 #include "Grade.h"
 class NoteData;
 
-enum NotesDisplayType
-{
-	NOTES_DISPLAY_EASY,
-	NOTES_DISPLAY_MEDIUM,
-	NOTES_DISPLAY_HARD,
-	NOTES_DISPLAY_S_HARD,
-	NOTES_DISPLAY_CHALLENGE,
-	NOTES_DISPLAY_BATTLE
-};
-
 struct Notes
 {
 public:
@@ -56,17 +46,13 @@ public:
 	void			SetSMNoteData( const CString &out );
 	CString 		GetSMNoteData() const;
 	void AutogenFrom( Notes *parent, NotesType ntTo );
-
-	NotesDisplayType GetNotesDisplayType() const;
-	RageColor		GetColor() const;
+	RageColor		GetColor() const;	// a function of difficulty
 	
 	// Statistics
 	Grade m_TopGrade;
 	int m_iTopScore;
 	int m_iMaxCombo;
 	int m_iNumTimesPlayed;
-
-	static Difficulty DifficultyFromDescriptionAndMeter( CString sDescription, int iMeter );
 
 	void TidyUpData();
 

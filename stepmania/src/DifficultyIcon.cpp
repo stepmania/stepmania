@@ -22,8 +22,8 @@
 bool DifficultyIcon::Load( CString sPath )
 {
 	Sprite::Load( sPath );
-	if( GetNumStates() != 6  &&  GetNumStates() != 12 )
-		RageException::Throw( "The difficulty icon graphic '%s' must have 6 or 12 states.", sPath.GetString() );
+	if( GetNumStates() != 5  &&  GetNumStates() != 10 )
+		RageException::Throw( "The difficulty icon graphic '%s' must have 5 or 10 frames.", sPath.GetString() );
 	StopAnimating();
 	return true;
 }
@@ -39,12 +39,12 @@ void DifficultyIcon::SetFromNotes( PlayerNumber pn, Notes* pNotes )
 	{
 		SetDiffuse( RageColor(1,1,1,1) );
 
-		int iStateNo = pNotes->GetNotesDisplayType();
+		int iStateNo = pNotes->GetDifficulty();
 
 		switch( GetNumStates() )
 		{
-		case 6:		SetState( iStateNo );		break;
-		case 12:	SetState( iStateNo*2+pn );	break;
+		case 5:		SetState( iStateNo );		break;
+		case 10:	SetState( iStateNo*2+pn );	break;
 		default:	ASSERT(0);
 		}
 	}

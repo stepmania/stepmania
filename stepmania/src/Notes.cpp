@@ -26,12 +26,11 @@
 #include "ThemeManager.h"
 
 
+#define COLOR_BEGINNER	THEME->GetMetricC("Notes","ColorBeginner")
 #define COLOR_EASY		THEME->GetMetricC("Notes","ColorEasy")
 #define COLOR_MEDIUM	THEME->GetMetricC("Notes","ColorMedium")
 #define COLOR_HARD		THEME->GetMetricC("Notes","ColorHard")
-#define COLOR_S_HARD	THEME->GetMetricC("Notes","ColorSHard")
 #define COLOR_CHALLENGE	THEME->GetMetricC("Notes","ColorChallenge")
-#define COLOR_BATTLE	THEME->GetMetricC("Notes","ColorBattle")
 
 Notes::Notes()
 {
@@ -40,7 +39,7 @@ Notes::Notes()
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
 	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
-	m_Difficulty = CLASS_INVALID;
+	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 	for(int i = 0; i < NUM_RADAR_VALUES; ++i)
 		m_fRadarValues[i] = -1; /* unknown */
@@ -104,92 +103,64 @@ CString Notes::GetSMNoteData() const
 	return *notes_comp;
 }
 
-// Color is a function of Difficulty and Intended Style
-NotesDisplayType Notes::GetNotesDisplayType() const
-{
-	CString sDescription = GetDescription();
-	sDescription.MakeLower();
-
-	if( -1 != sDescription.Find("battle") )			return NOTES_DISPLAY_BATTLE;
-	else if( -1 != sDescription.Find("couple") )	return NOTES_DISPLAY_BATTLE;
-	else if( -1 != sDescription.Find("smaniac") )	return NOTES_DISPLAY_S_HARD;
-	else if( -1 != sDescription.Find("challenge") )	return NOTES_DISPLAY_CHALLENGE;
-
-	switch( GetDifficulty() )
-	{
-	case DIFFICULTY_EASY:	return NOTES_DISPLAY_EASY;
-	case DIFFICULTY_MEDIUM:	return NOTES_DISPLAY_MEDIUM;
-	case DIFFICULTY_HARD:	return NOTES_DISPLAY_HARD;
-	default:	ASSERT(0);	return NOTES_DISPLAY_EASY;
-	}
-}
-
 RageColor Notes::GetColor() const
 {
-	switch( GetNotesDisplayType() )
+	switch( m_Difficulty )
 	{
-	case NOTES_DISPLAY_EASY:		return COLOR_EASY;
-	case NOTES_DISPLAY_MEDIUM:		return COLOR_MEDIUM;
-	case NOTES_DISPLAY_HARD:		return COLOR_HARD;
-	case NOTES_DISPLAY_S_HARD:		return COLOR_S_HARD;
-	case NOTES_DISPLAY_CHALLENGE:	return COLOR_CHALLENGE;
-	case NOTES_DISPLAY_BATTLE:		return COLOR_BATTLE;
-	default:	return COLOR_EASY;
+	case DIFFICULTY_BEGINNER:	return COLOR_BEGINNER;
+	case DIFFICULTY_EASY:		return COLOR_EASY;
+	case DIFFICULTY_MEDIUM:		return COLOR_MEDIUM;
+	case DIFFICULTY_HARD:		return COLOR_HARD;
+	case DIFFICULTY_CHALLENGE:	return COLOR_CHALLENGE;
+	default:	ASSERT(0);	return COLOR_BEGINNER;
 	}
 }
 
 void Notes::TidyUpData()
 {
-	if( GetDifficulty() == CLASS_INVALID )
-		SetDifficulty(DifficultyFromDescriptionAndMeter( GetDescription(), GetMeter() ));
-
-	if( GetMeter() < 1 || GetMeter() > 10 ) 
+	if( GetDifficulty() == DIFFICULTY_INVALID )
 	{
+		CString sDescription = GetDescription();
+		sDescription.MakeLower();
+		if( sDescription == "beginner" )		SetDifficulty(DIFFICULTY_BEGINNER);
+		else if( sDescription == "easy" )		SetDifficulty(DIFFICULTY_EASY);
+		else if( sDescription == "basic" )		SetDifficulty(DIFFICULTY_EASY);
+		else if( sDescription == "light" )		SetDifficulty(DIFFICULTY_EASY);
+		else if( sDescription == "medium" )		SetDifficulty(DIFFICULTY_MEDIUM);
+		else if( sDescription == "another" )	SetDifficulty(DIFFICULTY_MEDIUM);
+		else if( sDescription == "trick" )		SetDifficulty(DIFFICULTY_MEDIUM);
+		else if( sDescription == "standard" )	SetDifficulty(DIFFICULTY_MEDIUM);
+		else if( sDescription == "hard" )		SetDifficulty(DIFFICULTY_HARD);
+		else if( sDescription == "ssr" )		SetDifficulty(DIFFICULTY_HARD);
+		else if( sDescription == "maniac" )		SetDifficulty(DIFFICULTY_HARD);
+		else if( sDescription == "heavy" )		SetDifficulty(DIFFICULTY_HARD);
+		else if( sDescription == "smaniac" )	SetDifficulty(DIFFICULTY_CHALLENGE);
+		else if( sDescription == "challenge" )	SetDifficulty(DIFFICULTY_CHALLENGE);
+	}
+	
+	if( GetDifficulty() == DIFFICULTY_INVALID )
+	{
+		if(		 GetMeter() == 1 )	SetDifficulty(DIFFICULTY_BEGINNER);
+		else if( GetMeter() <= 3 )	SetDifficulty(DIFFICULTY_EASY);
+		else if( GetMeter() <= 6 )	SetDifficulty(DIFFICULTY_MEDIUM);
+		else						SetDifficulty(DIFFICULTY_HARD);
+	}
+
+
+	if( GetMeter() < 1 || GetMeter() > 10 ) // meter is invalid
+	{
+		// guess meter from difficulty class
 		switch( GetDifficulty() )
 		{
-		case DIFFICULTY_EASY:	SetMeter(3);	break;
-		case DIFFICULTY_MEDIUM:	SetMeter(5);	break;
-		case DIFFICULTY_HARD:	SetMeter(8);	break;
+		case DIFFICULTY_BEGINNER:	SetMeter(1);	break;
+		case DIFFICULTY_EASY:		SetMeter(3);	break;
+		case DIFFICULTY_MEDIUM:		SetMeter(5);	break;
+		case DIFFICULTY_HARD:		SetMeter(8);	break;
+		case DIFFICULTY_CHALLENGE:	SetMeter(8);	break;
+		case DIFFICULTY_INVALID:	SetMeter(5);	break;
 		default:	ASSERT(0);
 		}
 	}
-}
-
-Difficulty Notes::DifficultyFromDescriptionAndMeter( CString sDescription, int iMeter )
-{
-	sDescription.MakeLower();
-
-	const int DESCRIPTIONS_PER_CLASS = 4;
-	const CString sDescriptionParts[NUM_DIFFICULTIES][DESCRIPTIONS_PER_CLASS] = {
-		{
-			"easy",
-			"basic",
-            "light",
-			"GARBAGE",	// don't worry - this will never match because the compare string is all lowercase
-		},
-		{
-			"medium",
-			"another",
-            "trick",
-            "standard",
-		},
-		{
-			"hard",
-			"ssr",
-            "maniac",
-            "heavy",
-		},
-	};
-
-	for( int i=0; i<NUM_DIFFICULTIES; i++ )
-		for( int j=0; j<DESCRIPTIONS_PER_CLASS; j++ )
-			if( sDescription.Find(sDescriptionParts[i][j]) != -1 )
-				return (Difficulty)i;
-	
-	// guess difficulty class from meter
-	if(		 iMeter <= 3 )	return DIFFICULTY_EASY;
-	else if( iMeter <= 6 )	return DIFFICULTY_MEDIUM;
-	else					return DIFFICULTY_HARD;
 }
 
 
