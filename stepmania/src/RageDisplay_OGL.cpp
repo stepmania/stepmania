@@ -989,9 +989,6 @@ void RageDisplay_OGL::UpdateTexture(
 {
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 //	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
