@@ -680,7 +680,7 @@ void Song::TidyUpData()
 	// image is the banner, which is the background, and which is the CDTitle.
 	//
 
-	LOG->Trace("Looking for images...");
+	CHECKPOINT_M( "Looking for images..." );
 
 	/* Replace backslashes with slashes in all paths. */	
 	FixSlashesInPlace( m_sMusicFile );
