@@ -5,6 +5,9 @@
 #include "SDL_utils.h"
 
 #pragma comment(lib, "dinput.lib")
+#if defined(_WINDOWS)
+#pragma comment(lib, "dxguid.lib")
+#endif
 LPDIRECTINPUT dinput = NULL;
 
 static int ConvertScancodeToKey( int scancode );
