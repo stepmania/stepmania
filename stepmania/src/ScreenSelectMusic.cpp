@@ -58,6 +58,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define NEXT_OPTIONS_SCREEN( play_mode )	THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen"+Capitalize(PlayModeToString(play_mode)))
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
+#define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB("ScreenSelectMusic","DoRouletteOnMenuTimer")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -814,14 +815,23 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_Menu.m_MenuTimer->SetSeconds( 15 );
 			m_Menu.m_MenuTimer->Start();
 		}
-		else if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+		else if( DO_ROULETTE_ON_MENU_TIMER )
 		{
-			m_MusicWheel.StartRoulette();
-			m_Menu.m_MenuTimer->SetSeconds( 15 );
-			m_Menu.m_MenuTimer->Start();
+			if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+			{
+				m_MusicWheel.StartRoulette();
+				m_Menu.m_MenuTimer->SetSeconds( 15 );
+				m_Menu.m_MenuTimer->Start();
+			}
+			else
+			{
+				MenuStart(PLAYER_INVALID);
+			}
 		}
 		else
 		{
+			if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+				m_MusicWheel.StartRandom();
 			MenuStart(PLAYER_INVALID);
 		}
 		break;
