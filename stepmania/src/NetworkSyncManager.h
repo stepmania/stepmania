@@ -94,9 +94,7 @@ public:
 	CString GetServerName();
 	
 	//SMOnline stuff
-	void SendSMOnline( PacketFunctions &PackData );
-	PacketFunctions GetSMOnline( );
-	PacketFunctions PeekSMOnline( );
+	void SendSMOnline( );
 
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 
@@ -111,6 +109,7 @@ public:
 	void Update(float fDeltaTime);
 
 	bool useSMserver;
+	bool isSMOnline;
 
 	vector <int> m_PlayerStatus;
 	int m_ActivePlayers;
@@ -140,8 +139,11 @@ public:
 
 	CString			m_sChatText;
 
+	PacketFunctions	m_SMOnlinePacket;
+
 	bool isLanServer;	//Must be public for ScreenNetworkOptions
 	StepManiaLanServer *LANserver;
+
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -170,8 +172,6 @@ private:
 	bool Listen(unsigned short port);
 
 	PacketFunctions m_packet;
-	
-	deque<PacketFunctions>	m_SMOnlineStack;
 #endif
 };
 

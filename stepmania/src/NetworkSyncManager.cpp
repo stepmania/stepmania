@@ -53,6 +53,7 @@ const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
 	LANserver = NULL;	//So we know if it has been created yet
+
 	if( GetCommandlineArgument( "runserver" ))
 	{
 		ld->SetText("Initilizing server...");
@@ -70,6 +71,8 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 
    
 	useSMserver = false;
+	isSMOnline = false;
+
 	m_startupStatus = 0;	//By default, connection not tried.
 
 	m_ActivePlayers = 0;
@@ -174,7 +177,11 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 	}
 
 	NetPlayerClient->blocking = false;
+
 	m_ServerVersion = m_packet.Read1();
+	if ( m_ServerVersion >= 128 )
+		isSMOnline = true;
+
 	m_ServerName = m_packet.ReadNT();
 
 	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
@@ -668,12 +675,10 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case NSCSMOnline:
 			{
-				PacketFunctions smoPack;
-				smoPack.size = packetSize - 1;
-				smoPack.Position = 0;
-				memcpy( smoPack.Data, m_packet.Data, packetSize-1 );
+				m_SMOnlinePacket.size = packetSize - 1;
+				m_SMOnlinePacket.Position = 0;
+				memcpy( m_SMOnlinePacket.Data, (m_packet.Data + 1), packetSize-1 );
 				LOG->Trace( "Received SMOnline Command: %d, size:%d", command, packetSize - 1 );
-				m_SMOnlineStack.push_front( smoPack );
 				SCREENMAN->SendMessageToTopScreen( SM_SMOnlinePack );
 			}
 		}
@@ -717,49 +722,10 @@ void NetworkSyncManager::SelectUserSong()
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-void NetworkSyncManager::SendSMOnline( PacketFunctions &PackData )
+void NetworkSyncManager::SendSMOnline( )
 {
-	NetPlayerClient->SendPack( (char*)&PackData.Data , PackData.size );
+	NetPlayerClient->SendPack( (char*)&m_SMOnlinePacket.Data , m_SMOnlinePacket.size );
 }
-
-PacketFunctions NetworkSyncManager::GetSMOnline( ) 
-{
-	PacketFunctions Pack;
-
-	if ( m_SMOnlineStack.empty() )
-	{
-		Pack.Position = 0;
-		Pack.size = 0;
-		return Pack;
-	}
-	
-	Pack = m_SMOnlineStack.back();
-
-	memcpy( Pack.Data,  m_SMOnlineStack.back().Data, Pack.size );
-
-	m_SMOnlineStack.pop_back();
-	return Pack;
-}
-
-PacketFunctions NetworkSyncManager::PeekSMOnline( ) 
-{
-	PacketFunctions Pack;
-
-	if ( m_SMOnlineStack.empty() )
-	{
-		Pack.Position = 0;
-		Pack.size = 0;
-		return Pack;
-	}
-	
-	Pack = m_SMOnlineStack.back();
-
-	memcpy( Pack.Data,  m_SMOnlineStack.back().Data, Pack.size );
-
-	return Pack;
-}
-
-
 
 //Packet functions
 
@@ -848,6 +814,7 @@ void PacketFunctions::ClearPacket()
 #endif
 
 LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
+LuaFunction_NoArgs( IsNetSMOnline,			NSMAN->isSMOnline )
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen

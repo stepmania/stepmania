@@ -1,14 +1,26 @@
 #include "global.h"
 
-//XXX: THIS IS JUST A STUB!
-//XXX: THIS CLASS IS NOT FUNCTIONAL
-
 #if !defined(WITHOUT_NETWORKING)
 #include "ScreenNetRoom.h"
 #include "ScreenManager.h"
 #include "NetworkSyncManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+
+#define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
+#define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
+#define TITLEBG_COLOR				THEME->GetMetricC(m_sName,"TitleBGColor")
+
+#define ROOMSBG_WIDTH				THEME->GetMetricF(m_sName,"RoomsBGWidth")
+#define ROOMSBG_HEIGHT				THEME->GetMetricF(m_sName,"RoomsBGHeight")
+#define ROOMSBG_COLOR				THEME->GetMetricC(m_sName,"RoomsBGColor")
+
+#define	NUM_ROOMS_SHOW				THEME->GetMetricI(m_sName,"NumRoomsShow");
+
+#define SEL_WIDTH					THEME->GetMetricF(m_sName,"SelWidth")
+#define SEL_HEIGHT					THEME->GetMetricF(m_sName,"SelHeight")
+#define SEL_COLOR					THEME->GetMetricC(m_sName,"SelColor")
+
 
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
@@ -18,6 +30,43 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	GAMESTATE->FinishStage();
 	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetRoom change sel"));
 
+	m_iRoomPlace = 0;
+
+	m_rectTitleBG.SetDiffuse( TITLEBG_COLOR );
+	m_rectTitleBG.SetName( "TitleBG" );
+	m_rectTitleBG.SetWidth( TITLEBG_WIDTH );
+	m_rectTitleBG.SetHeight( TITLEBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectTitleBG );
+	this->AddChild( &m_rectTitleBG);
+
+	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
+	m_textTitle.SetShadowLength( 0 );
+	m_textTitle.SetName( "Title" );
+	m_textTitle.SetMaxWidth( TITLEBG_WIDTH );
+	SET_XY_AND_ON_COMMAND( m_textTitle );
+	this->AddChild( &m_textTitle);
+
+	m_rectRoomsBG.SetDiffuse( ROOMSBG_COLOR );
+	m_rectRoomsBG.SetName( "RoomsBG" );
+	m_rectRoomsBG.SetWidth( ROOMSBG_WIDTH );
+	m_rectRoomsBG.SetHeight( ROOMSBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectRoomsBG );
+	this->AddChild( &m_rectRoomsBG);
+
+	m_textRooms.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
+	m_textRooms.SetShadowLength( 0 );
+	m_textRooms.SetName( "Rooms" );
+	m_textRooms.SetMaxWidth( ROOMSBG_WIDTH );
+	SET_XY_AND_ON_COMMAND( m_textRooms );
+	this->AddChild( &m_textRooms );
+
+	m_rectRoomsSel.SetDiffuse( SEL_COLOR );
+	m_rectRoomsSel.SetName( "Sel" );
+	m_rectRoomsSel.SetWidth( SEL_WIDTH );
+	m_rectRoomsSel.SetHeight( SEL_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectRoomsSel );
+	this->AddChild( &m_rectRoomsSel );
+	
 	NSMAN->ReportNSSOnOff(7);
 	return;
 }
@@ -31,11 +80,49 @@ void ScreenNetRoom::Input( const DeviceInput& DeviceI, const InputEventType type
 
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
+	switch( SM )
+	{
+	case SM_GoToPrevScreen:
+		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
+		break;
+	case SM_GoToNextScreen:
+		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
+		break;
+	case SM_SMOnlinePack:
+		if ( NSMAN->m_SMOnlinePacket.Read1() == 1 )
+			switch ( NSMAN->m_SMOnlinePacket.Read1() )
+			{
+			case 0: //Room title Change
+				m_textTitle.SetText( NSMAN->m_SMOnlinePacket.ReadNT() + '\n' + NSMAN->m_SMOnlinePacket.ReadNT() );
+			case 1: //Rooms list change
+				{
+					int numRooms = NSMAN->m_SMOnlinePacket.Read1();
+					m_Rooms.clear();
+					for (int i=0;i<numRooms;i++)
+					{
+						m_Rooms.push_back( NSMAN->m_SMOnlinePacket.ReadNT() );
+						NSMAN->m_SMOnlinePacket.ReadNT();
+					}
+					if (m_iRoomPlace<0)
+						m_iRoomPlace=0;
+					if (m_iRoomPlace>=m_Rooms.size())
+						m_iRoomPlace=m_Rooms.size()-1;
+					UpdateRoomsList();
+				}
+			}
+		break;
+	}
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
 void ScreenNetRoom::TweenOffScreen()
 {
+	OFF_COMMAND( m_textTitle );
+	OFF_COMMAND( m_rectTitleBG );
+	OFF_COMMAND( m_rectRoomsBG );
+	OFF_COMMAND( m_textRooms );
+	OFF_COMMAND( m_rectRoomsSel );
+
 	NSMAN->ReportNSSOnOff(6);
 }
 
@@ -46,22 +133,55 @@ void ScreenNetRoom::Update( float fDeltaTime )
 
 void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
+	NSMAN->m_SMOnlinePacket.ClearPacket();
+	NSMAN->m_SMOnlinePacket.Write1( 1 );
+	NSMAN->m_SMOnlinePacket.WriteNT( m_Rooms[m_iRoomPlace] );
+	NSMAN->SendSMOnline( );
 	ScreenNetSelectBase::MenuStart( pn );
 }
 
 void ScreenNetRoom::MenuBack( PlayerNumber pn )
 {
+	TweenOffScreen();
+
+	Back( SM_GoToPrevScreen );
+
 	ScreenNetSelectBase::MenuBack( pn );
 }
 
 void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 {
+	m_iRoomPlace--;
+	if (m_iRoomPlace<0)
+		m_iRoomPlace=0;
+	if (m_iRoomPlace>=m_Rooms.size())
+		m_iRoomPlace=m_Rooms.size()-1;
+	UpdateRoomsList();
 	ScreenNetSelectBase::MenuUp( pn );
 }
 
 void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 {
+	m_iRoomPlace++;
+	if (m_iRoomPlace<0)
+		m_iRoomPlace=0;
+	if (m_iRoomPlace>=m_Rooms.size())
+		m_iRoomPlace=m_Rooms.size()-1;
+	UpdateRoomsList();
 	ScreenNetSelectBase::MenuDown( pn );
+}
+
+void ScreenNetRoom::UpdateRoomsList()
+{
+	CString TempText="";
+	//It doesn't like this stuff inline
+	int min = m_iRoomPlace-NUM_ROOMS_SHOW;
+	int max = m_iRoomPlace+NUM_ROOMS_SHOW;
+	for (int i=min; i<max; i++ )
+	{
+		if ( ( i >= 0 ) && ( i < m_Rooms.size() ) )
+			TempText += m_Rooms[i] + '\n';
+	}
 }
 
 #endif

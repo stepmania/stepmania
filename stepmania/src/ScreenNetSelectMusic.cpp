@@ -235,8 +235,6 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
-	ScreenNetSelectBase::HandleScreenMessage( SM );
-
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:
@@ -324,7 +322,9 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		NSMAN->ReportPlayerOptions();
 		break;
 	}
-
+	//Must be at end, as so it is last resort for SMOnline packets.
+	//If it doens't know what to do, then it'll just remove them.
+	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
 void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )

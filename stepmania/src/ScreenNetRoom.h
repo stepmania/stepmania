@@ -5,6 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "ScreenNetSelectBase.h"
+#include <vector>
 
 class ScreenNetRoom : public ScreenNetSelectBase
 {
@@ -24,7 +25,20 @@ protected:
 	virtual void TweenOffScreen( );
 	virtual void Update( float fDeltaTime );
 
+private:
+	void UpdateRoomsList();
+		
 	RageSound m_soundChangeSel;
+	
+	BitmapText m_textTitle;
+	Quad m_rectTitleBG;
+
+	Quad m_rectRoomsBG;
+	BitmapText m_textRooms;
+	Quad m_rectRoomsSel;
+
+	vector < CString > m_Rooms;
+	int m_iRoomPlace;
 };
 
 #endif
