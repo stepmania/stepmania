@@ -21,10 +21,6 @@
 #include "SongManager.h"
 
 
-//	const int NUM_FEET_IN_METER					=	10;
-//	const int MAX_FEET_IN_METER					=	14;
-//	const int GLOW_IF_METER_GREATER_THAN		=	9;
-
 #define NUM_FEET_IN_METER						THEME->GetMetricI("DifficultyMeter","NumFeetInMeter")
 #define MAX_FEET_IN_METER						THEME->GetMetricI("DifficultyMeter","MaxFeetInMeter")
 #define GLOW_IF_METER_GREATER_THAN				THEME->GetMetricI("DifficultyMeter","GlowIfMeterGreaterThan")
@@ -32,8 +28,7 @@
 
 DifficultyMeter::DifficultyMeter()
 {
-	m_Text.LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
-	this->AddChild( &m_Text );
+	BitmapText::LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
 
 	Unset();
 }
@@ -47,7 +42,7 @@ void DifficultyMeter::SetFromNotes( const Steps* pNotes )
 	}
 
 	SetMeter( pNotes->GetMeter() );
-	m_Text.SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
+	SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
 }
 
 void DifficultyMeter::SetFromCourse( const Course* pCourse )
@@ -73,13 +68,13 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse )
 		c = SONGMAN->GetDifficultyColor( DIFFICULTY_HARD );
 	else
 		c = SONGMAN->GetDifficultyColor( DIFFICULTY_CHALLENGE );
-	m_Text.SetDiffuse( c );
+	SetDiffuse( c );
 }
 
 void DifficultyMeter::Unset()
 {
-	m_Text.SetEffectNone();
-	m_Text.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	SetEffectNone();
+	SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetMeter( 0 );
 }
 
@@ -103,10 +98,10 @@ void DifficultyMeter::SetMeter( int iMeter )
 		if( f<iMeter )
 			sNewText += "1";
 
-	m_Text.SetText( sNewText );
+	SetText( sNewText );
 
 	if( iMeter > GLOW_IF_METER_GREATER_THAN )
-		m_Text.SetEffectGlowShift();
+		SetEffectGlowShift();
 	else
-		m_Text.SetEffectNone();
+		SetEffectNone();
 }
