@@ -77,6 +77,7 @@ void Judgement::SetJudgement( TapNoteScore score )
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
 	m_sprJudgement.SetEffectNone();
+	m_sprJudgement.StopTweening();
 
 	if( score == TNS_MISS )
 	{
@@ -88,7 +89,6 @@ void Judgement::SetJudgement( TapNoteScore score )
 	else if( score == TNS_BOO )
 	{
 		// vibrate
-		m_sprJudgement.StopTweening();
 		m_sprJudgement.SetY( 0 );
 		m_sprJudgement.SetZoom( 1.0f );
 		m_sprJudgement.SetEffectVibrating();
@@ -104,7 +104,6 @@ void Judgement::SetJudgement( TapNoteScore score )
 		case TNS_GOOD:		fMagnitudeX = 1.10f;	fMagnitudeY = 1.25f;	break;
 		default:	ASSERT(false);	// invalid score value
 		}
-		m_sprJudgement.StopTweening();
 		m_sprJudgement.SetY( 0 );
 	//	m_sprJudgement.SetZoomY( fMagnitudeY );
 	//	m_sprJudgement.SetZoomX( fMagnitudeX );
