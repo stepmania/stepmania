@@ -1030,7 +1030,7 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 
 		/* This is almost exclusively used to draw masks to the Z-buffer.  Make sure
 		 * masks always win the depth test when drawn at the same position. */
-		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 1 );
+		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 30 );	// this bias is bigger than it needs to be to handle the coplanar case
 
 		break;
 	default:

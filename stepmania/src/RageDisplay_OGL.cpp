@@ -1475,7 +1475,7 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 
 		/* This is almost exclusively used to draw masks to the Z-buffer.  Make sure
 		 * masks always win the depth test when drawn at the same position. */
-		glDepthRange( 0.0, 0.95 );
+		glDepthRange( 0.0, 0.95 );	// this bias is bigger than it needs to be to handle the coplanar case
 		break;
 	default:
 		ASSERT(0);
