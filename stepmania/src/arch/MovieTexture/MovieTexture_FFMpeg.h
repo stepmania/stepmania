@@ -43,7 +43,6 @@ public:
 private:
 	avcodec::AVFormatContext *m_fctx;
 	avcodec::AVStream *m_stream;
-	avcodec::AVCodec *m_codec;
 
 	/* The time the movie is actually at: */
 	float m_Position;

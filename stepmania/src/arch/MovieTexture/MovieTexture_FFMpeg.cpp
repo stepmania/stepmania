@@ -137,7 +137,6 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 
 	CreateDecoder();
 
-	LOG->Trace("Codec: %s", m_codec->name );
 	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
 			m_iSourceWidth, m_iSourceHeight,
 			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
@@ -207,13 +206,14 @@ void MovieTexture_FFMpeg::CreateDecoder()
 	if ( m_stream == NULL )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find video stream") );
 
-	m_codec = avcodec::avcodec_find_decoder( m_stream->codec.codec_id );
-	if( m_codec == NULL )
+	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( m_stream->codec.codec_id );
+	if( codec == NULL )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find decoder") );
 
-	ret = avcodec::avcodec_open( &m_stream->codec, m_codec );
+	LOG->Trace("Opening codec %s", codec->name );
+	ret = avcodec::avcodec_open( &m_stream->codec, codec );
 	if ( ret < 0 )
-		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open decoder (%i)") );
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open decoder") );
 
 	/* Cap the max texture size to the hardware max. */
 	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
@@ -339,7 +339,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 	float CurrentTimestamp = 0, Last_IP_Timestamp = 0;
 
 	bool FrameSkipMode = false;
-	unsigned Frame = 0;
 	float LastFrameDelay = 0;
 	float Clock = 0;
 	RageTimer Timer;
@@ -381,7 +380,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 				CurrentTimestamp = Last_IP_Timestamp = 0;
 				GetNextTimestamp = true;
 				FrameSkipMode = false;
-				Frame = 0;
 				LastFrameDelay = 0;
 				Clock = 0;
 				continue;
@@ -404,7 +402,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 			break;
 		}
-		CHECKPOINT;
 
 		/* Decode the packet. */
 		int current_packet_offset = 0;
@@ -426,11 +423,13 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 			avcodec::AVFrame frame;
 			int got_frame;
+			CHECKPOINT;
 			int len = avcodec::avcodec_decode_video(
 					&m_stream->codec, 
 					&frame, &got_frame,
 					pkt.data + current_packet_offset,
 					pkt.size - current_packet_offset );
+			CHECKPOINT;
 
 			if (len < 0)
 			{
@@ -442,8 +441,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 			if (!got_frame)
 				continue;
-
-			++Frame;
 
 			/* Length of this frame: */
 			LastFrameDelay = (float)m_stream->codec.frame_rate_base / m_stream->codec.frame_rate;
@@ -506,7 +503,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 			}
 
 			if( FrameSkipMode )
-				if( Frame % 2 )
+				if( m_stream->codec.frame_number % 2 )
 					SkipThisTextureUpdate = true;
 			
 			if( m_State == PLAYING_ONE )
