@@ -462,21 +462,26 @@ int CRegistry::ReadInt(CString strName, int nDefault)
 	return n;
 }
 
-BOOL CRegistry::ReadBool(CString strName, BOOL bDefault)
+bool CRegistry::Read(CString strName, bool &result)
 {
-	DWORD dwType = REG_BINARY;
+	ASSERT(m_strCurrentPath.GetLength() > 0);
+	HKEY hKey;
+	if (::RegOpenKeyEx(m_hRootKey, LPCTSTR(m_strCurrentPath), 0,
+		KEY_READ, &hKey) != ERROR_SUCCESS)
+		return false;
+
 	BOOL b;
 	DWORD dwSize = sizeof(b);
-	HKEY hKey;
-
-	ASSERT(m_strCurrentPath.GetLength() > 0);
-	if (::RegOpenKeyEx(m_hRootKey, LPCTSTR(m_strCurrentPath), 0,
-		KEY_READ, &hKey) != ERROR_SUCCESS) return bDefault;
-
-	if (::RegQueryValueEx(hKey, LPCTSTR(strName), NULL,
-		&dwType, (LPBYTE)&b, &dwSize) != ERROR_SUCCESS) b = bDefault;
+	DWORD dwType = REG_BINARY;
+	int ret = ::RegQueryValueEx(hKey, LPCTSTR(strName), NULL, &dwType, (LPBYTE)&b, &dwSize);
 	::RegCloseKey(hKey);	
-	return b;
+
+	if ( ret != ERROR_SUCCESS )
+		return false;
+
+	result = !!b;
+
+	return true;
 }
 
 
@@ -588,7 +593,8 @@ BOOL CRegistry::WriteBool(CString strName, BOOL bValue)
 		REG_BINARY, (LPBYTE)&bValue, sizeof(bValue))
 		 != ERROR_SUCCESS) bSuccess = FALSE;
 		
-	if (!m_bLazyWrite) ::RegFlushKey(hKey);
+	if (!m_bLazyWrite)
+		::RegFlushKey(hKey);
 	::RegCloseKey(hKey);
 	return bSuccess;
 }

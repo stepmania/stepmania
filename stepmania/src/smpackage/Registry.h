@@ -1,7 +1,5 @@
-
-
-#ifndef __REGISTRY_H__
-#define __REGISTRY_H__
+#ifndef REGISTRY_H
+#define REGISTRY_H
 
 class CRegistry
 {
@@ -9,7 +7,7 @@ public:
 	CRegistry();
 	~CRegistry();
 
-int m_nLastError;
+	int m_nLastError;
 
 // CRegistry properties	
 protected:
@@ -18,15 +16,10 @@ protected:
 	CString m_strCurrentPath;
 
 public:
-	inline BOOL PathIsValid() {
-		return (m_strCurrentPath.GetLength() > 0); }
-	inline CString GetCurrentPath() {
-		return m_strCurrentPath; }
-	inline HKEY GetRootKey() {
-		return m_hRootKey; }
+	inline BOOL PathIsValid() const { return m_strCurrentPath.GetLength() > 0; }
+	inline CString GetCurrentPath() const { return m_strCurrentPath; }
+	inline HKEY GetRootKey() const { return m_hRootKey; }
 
-
-//CRegistry	methods
 public:
 	BOOL ClearKey();
 	BOOL SetRootKey(HKEY hRootKey);
@@ -54,6 +47,10 @@ public:
 	BOOL ReadSize(CString strName, CSize* pSize);
 	BOOL ReadRect(CString strName, CRect* pRect);
 	DWORD ReadDword(CString strName, DWORD dwDefault);
+
+	/* Readers converted to a less silly mechanism below (do these as needed): 
+	 * return the value in result if found, otherwise return false. */
+	bool Read(CString strName, bool &result);
 
 	// data writing functions
 	BOOL WriteBool(CString strName, BOOL bValue);
