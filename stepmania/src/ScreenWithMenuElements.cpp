@@ -84,12 +84,13 @@ void ScreenWithMenuElements::Init()
 
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
-	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
 	SET_XY_AND_ON_COMMAND( m_sprUnderlay );
 	this->AddChild( m_sprUnderlay );
 	
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
+	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
 	SET_XY_AND_ON_COMMAND( m_sprOverlay );
 	this->AddChild( m_sprOverlay );
 

@@ -14,9 +14,12 @@ class LuaReference;
 #include "MessageManager.h"
 
 
-#define DRAW_ORDER_BEFORE_EVERYTHING	-100
-#define DRAW_ORDER_TRANSITIONS			100
-#define DRAW_ORDER_AFTER_EVERYTHING		200
+#define DRAW_ORDER_BEFORE_EVERYTHING	-200
+#define DRAW_ORDER_UNDERLAY				-100
+// normal screen elements go here
+#define DRAW_ORDER_OVERLAY				+100
+#define DRAW_ORDER_TRANSITIONS			+110
+#define DRAW_ORDER_AFTER_EVERYTHING		+200
 
 
 class Actor : public IMessageSubscriber
