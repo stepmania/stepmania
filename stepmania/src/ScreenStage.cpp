@@ -211,7 +211,7 @@ ScreenStage::ScreenStage()
 		m_quadMask.StretchTo( RectI(SCREEN_LEFT, int(roundf(fStageOffScreenY-fStageHeight/2)), 
 							        SCREEN_RIGHT, int(roundf(fStageOffScreenY+fStageHeight/2))) );
 		/* Put the quad mask on top, so draws to the Stage will be "under" it. */
-		m_quadMask.SetZ( -1 );
+		m_quadMask.SetZ( 1 );
 
 		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
 		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
