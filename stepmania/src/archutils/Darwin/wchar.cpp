@@ -7,11 +7,14 @@
  *
  */
 
+#include <AvailabilityMacros.h>
+
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+
 #define	_BSD_WCHAR_T_DEFINED_
 #include <stddef.h>
 #include <string>
 #include <cstring>
-
 
 extern "C" {
 #ifndef wcslen
@@ -72,4 +75,6 @@ wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n)
 
 #ifndef wstring
 template class std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >;
+#endif
+
 #endif
