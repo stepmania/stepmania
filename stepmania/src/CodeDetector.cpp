@@ -64,59 +64,44 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"NextBannerGroup2"
 };
 
-const unsigned MAX_CODE_LENGTH = 10;
-
-struct CodeCacheItem {
-	int iNumButtons;
-	GameButton buttons[MAX_CODE_LENGTH];
-	enum Type { 
-		sequence,		// press the buttons in sequence
-		hold_and_press,	// hold the first iNumButtons-1 buttons, then press the last
-		tap				// press all buttons simultaneously
-	};
-	Type m_Type;
-	float fMaxSecondsBack;
-};	
-CodeCacheItem g_CodeCacheItems[CodeDetector::NUM_CODES];
+CodeItem g_CodeItems[CodeDetector::NUM_CODES];
 
 
-bool CodeDetector::EnteredCode( GameController controller, Code code )
+bool CodeItem::EnteredCode( GameController controller ) const
 {
-	if( g_CodeCacheItems[code].iNumButtons == 0 )
+	if( buttons.size() == 0 )
 		return false;
 
-	const CodeCacheItem& item = g_CodeCacheItems[code];
-	switch( item.m_Type )
+	switch( m_Type )
 	{
-	case CodeCacheItem::sequence:
-		return INPUTQUEUE->MatchesSequence(controller, item.buttons, item.iNumButtons, item.fMaxSecondsBack);
-	case CodeCacheItem::hold_and_press:
+	case sequence:
+		return INPUTQUEUE->MatchesSequence( controller, &buttons[0], buttons.size(), fMaxSecondsBack );
+	case hold_and_press:
 		{
 			// check that all but the last are being held
-			for( int i=0; i<item.iNumButtons-1; i++ )
+			for( unsigned i=0; i<buttons.size()-1; i++ )
 			{
-				GameInput gi(controller, item.buttons[i]);
+				GameInput gi( controller, buttons[i] );
 				if( !INPUTMAPPER->IsButtonDown(gi) )
 					return false;
 			}
 			// just pressed the last button
-			return INPUTQUEUE->MatchesSequence(controller, &item.buttons[item.iNumButtons-1], 1, 0.05f);
+			return INPUTQUEUE->MatchesSequence( controller, &buttons[buttons.size()-1], 1, 0.05f );
 		}
 		break;
-	case CodeCacheItem::tap:
-		return INPUTQUEUE->AllWerePressedRecently(controller, item.buttons, item.iNumButtons, item.fMaxSecondsBack);
+	case tap:
+		return INPUTQUEUE->AllWerePressedRecently( controller, &buttons[0], buttons.size(), fMaxSecondsBack );
 	default:
 		ASSERT(0);
 		return false;
 	}
 }
 
-void RefreshCacheItem( int iIndex )
+void CodeItem::Load( CString sButtonsNames )
 {
-	CodeCacheItem& item = g_CodeCacheItems[iIndex];
+	buttons.clear();
+
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	CString sCodeName = g_sCodeNames[iIndex];
-	CString sButtonsNames = THEME->GetMetric("CodeDetector",sCodeName);
 	CStringArray asButtonNames;
 
 	bool bHasAPlus = sButtonsNames.Find( '+' ) != -1;
@@ -124,62 +109,53 @@ void RefreshCacheItem( int iIndex )
 
 	if( bHasAPlus )
 	{
-		item.m_Type = CodeCacheItem::tap;
+		m_Type = tap;
 		split( sButtonsNames, "+", asButtonNames, false );
 	}
 	else if( bHasADash )
 	{
-		item.m_Type = CodeCacheItem::hold_and_press;
+		m_Type = hold_and_press;
 		split( sButtonsNames, "-", asButtonNames, false );
 	}
 	else
 	{
-		item.m_Type = CodeCacheItem::sequence;
+		m_Type = sequence;
 		split( sButtonsNames, ",", asButtonNames, false );
 	}
 
 	if( asButtonNames.size() < 2 )
 	{
 		if( sButtonsNames != "" )
-			LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sCodeName.c_str() );
-		item.iNumButtons = 0;
+			LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sButtonsNames.c_str() );
 		return;
 	}
 
-	for( unsigned i=0; i<asButtonNames.size() && i<MAX_CODE_LENGTH; i++ )	// for each button in this code
+	for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
 	{
-		CString sButtonName = asButtonNames[i];
+		const CString sButtonName = asButtonNames[i];
 
 		// Search for the corresponding GameButton
-		GameButton& gb = item.buttons[i];
-		gb = -1;
-		for( int j=0; j<pGameDef->m_iButtonsPerController; j++ )
+		const GameButton gb = pGameDef->ButtonNameToIndex( sButtonName );
+		if( gb == GAME_BUTTON_INVALID )
 		{
-			if( 0==stricmp(sButtonName,pGameDef->m_szButtonNames[j]) )
-			{
-				gb = j;
-				item.iNumButtons = i+1;
-				break;	// found it.  Don't keep searching
-			}
-		}
-		if( gb == -1 )	// didn't find it
-		{
-			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sCodeName.c_str(), sButtonName.c_str() );
-			item.iNumButtons = 0;
+			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sButtonsNames.c_str(), sButtonName.c_str() );
+			buttons.clear();
 			return;
 		}
+
+		buttons.push_back( gb );
 	}
 
-	switch( item.m_Type )
+	switch( m_Type )
 	{
-	case CodeCacheItem::sequence:
-		item.fMaxSecondsBack = item.iNumButtons*0.4f;
+	case sequence:
+		fMaxSecondsBack = buttons.size()*0.4f;
 		break;
-	case CodeCacheItem::hold_and_press:
-		item.fMaxSecondsBack = -1.f;	// not applicable
+	case hold_and_press:
+		fMaxSecondsBack = -1.f;	// not applicable
 		break;
-	case CodeCacheItem::tap:
-		item.fMaxSecondsBack = 0.05f;	// simultaneous
+	case tap:
+		fMaxSecondsBack = 0.05f;	// simultaneous
 		break;
 	default:
 		ASSERT(0);
@@ -188,10 +164,22 @@ void RefreshCacheItem( int iIndex )
 	// if we make it here, we found all the buttons in the code
 }
 
+bool CodeDetector::EnteredCode( GameController controller, Code code )
+{
+	return g_CodeItems[code].EnteredCode( controller );
+}
+
+
 void CodeDetector::RefreshCacheItems()
 {
 	for( int i=0; i<NUM_CODES; i++ )
-		RefreshCacheItem( i );
+	{
+		CodeItem& item = g_CodeItems[i];
+		const CString sCodeName = g_sCodeNames[i];
+		const CString sButtonsNames = THEME->GetMetric("CodeDetector",sCodeName);
+
+		item.Load( sButtonsNames );
+	}
 }
 
 bool CodeDetector::EnteredNextBannerGroup( GameController controller )

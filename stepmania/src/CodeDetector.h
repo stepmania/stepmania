@@ -13,6 +13,24 @@
 
 #include "GameInput.h"
 
+struct CodeItem
+{
+public:
+	void Load( CString sButtonsNames );
+	bool EnteredCode( GameController controller ) const;
+
+private:
+	vector<GameButton> buttons;
+	enum Type
+	{ 
+		sequence,		// press the buttons in sequence
+		hold_and_press,	// hold the first iNumButtons-1 buttons, then press the last
+		tap				// press all buttons simultaneously
+	};
+	Type m_Type;
+	float fMaxSecondsBack;
+};	
+
 class CodeDetector
 {
 public:
@@ -68,7 +86,6 @@ public:
 	static bool DetectAndAdjustMusicOptions( GameController controller );
 	static bool EnteredCode( GameController controller, Code code );
 	static bool EnteredNextBannerGroup( GameController controller );
-
 };
 
 
