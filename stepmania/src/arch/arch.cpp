@@ -37,10 +37,10 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 #endif
 }
 
-#if defined(LINUX)
+//#if defined(LINUX)
 // #define HAVE_OSS
-#define HAVE_ALSA
-#endif
+//#define HAVE_ALSA
+//#endif
 
 /* Err, this is ugly--breaks arch encapsulation. Hmm. */
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
