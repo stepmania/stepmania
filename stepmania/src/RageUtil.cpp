@@ -273,28 +273,42 @@ CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStr
 	return ret;
 }
 
-
 template <class S>
-void do_split( const S &Source, const S &Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
+static int DelimitorLength( const S &Delimitor )
+{
+	return Delimitor.size();
+}
+
+static int DelimitorLength( char Delimitor )
+{
+	return 1;
+}
+
+template <class S, class C>
+void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
 {
 	size_t startpos = 0;
 
 	do {
 		size_t pos;
-		if( Delimitor.size() == 1 )
-			pos = Source.find( Delimitor[0], startpos );
-		else
-			pos = Source.find( Delimitor, startpos );
+		pos = Source.find( Delimitor, startpos );
 		if( pos == Source.npos )
 			pos = Source.size();
 
 		if( pos-startpos > 0 || !bIgnoreEmpty )
 		{
-			const S AddCString = Source.substr(startpos, pos-startpos);
-			AddIt.push_back(AddCString);
+			/* Optimization: if we're copying the whole string, avoid substr; this
+			 * allows this copy to be refcounted, which is much faster. */
+			if( startpos == 0 && pos-startpos == Source.size() )
+				AddIt.push_back(Source);
+			else
+			{
+				const S AddCString = Source.substr(startpos, pos-startpos);
+				AddIt.push_back(AddCString);
+			}
 		}
 
-		startpos = pos+Delimitor.size();
+		startpos = pos+DelimitorLength(Delimitor);
 	} while ( startpos <= Source.size() );
 }
 
@@ -988,15 +1002,22 @@ const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 wstring CStringToWstring( const CString &s )
 {
 	wstring ret;
+	ret.reserve( s.size() );
 	for( unsigned start = 0; start < s.size(); )
 	{
-		wchar_t ch;
-		if( !utf8_to_wchar_ec( s, start, ch ) )
+		char c = s[start];
+		if( !(c&0x80) )
 		{
-			ret += INVALID_CHAR;
+			/* ASCII fast path */
+			ret += c;
+			++start;
+			continue;
 		}
-		else
-			ret += ch;
+		
+		wchar_t ch;
+		if( !utf8_to_wchar( s, start, ch ) )
+			ch = INVALID_CHAR;
+		ret += ch;
 	}
 
 	return ret;
