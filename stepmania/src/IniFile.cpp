@@ -18,11 +18,6 @@
 // Construction/Destruction
 /////////////////////////////////////////////////////////////////////
 
-//default constructor
-IniFile::IniFile()
-{
-}
-
 //constructor, can specify pathname here instead of using SetPath later
 IniFile::IniFile(CString inipath)
 {
@@ -64,23 +59,23 @@ bool IniFile::ReadFile()
 	CString line;
 	while (file.ReadString(line))
 	{
-		if (line != "")
+		if (line == "")
+			continue;
+
+		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 		{
-			if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
+			keyname = line;
+			keyname.TrimLeft('[');
+			keyname.TrimRight(']');
+		}
+		else //if a value
+		{
+			int iEqualIndex = line.Find("=");
+			if( iEqualIndex != -1 )
 			{
-				keyname = line;
-				keyname.TrimLeft('[');
-				keyname.TrimRight(']');
-			}
-			else //if a value
-			{
-				int iEqualIndex = line.Find("=");
-				if( iEqualIndex != -1 )
-				{
-					valuename = line.Left(iEqualIndex);
-					value = line.Right(line.GetLength()-valuename.GetLength()-1);
-					SetValue(keyname,valuename,value);
-				}
+				valuename = line.Left(iEqualIndex);
+				value = line.Right(line.GetLength()-valuename.GetLength()-1);
+				SetValue(keyname,valuename,value);
 			}
 		}
 	}

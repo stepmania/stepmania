@@ -57,11 +57,8 @@ public:
 
 	//public functions
 public:
-	//default constructor
-	IniFile();
-
 	//constructor, can specify pathname here instead of using SetPath later
-	IniFile(CString inipath);
+	IniFile(CString inipath = "");
 
 	//default destructor
 	virtual ~IniFile();
