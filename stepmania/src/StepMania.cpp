@@ -1024,6 +1024,7 @@ int main(int argc, char* argv[])
 	// Create game objects
 	//
 
+	LUA			= new LuaManager;
 	GAMESTATE	= new GameState;
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
@@ -1052,7 +1053,6 @@ int main(int argc, char* argv[])
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
-	LUA			= new LuaManager;
 
 	/* Set up the theme and announcer. */
 	ReadGamePrefsFromDisk();
