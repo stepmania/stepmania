@@ -36,39 +36,42 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 	noteDataOut.LoadTransformed( original, m_iColsPerPlayer, iNewToOriginalTrack );
 }
 
-
 GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
 {
 	ASSERT_M( StyleI.player < NUM_PLAYERS, ssprintf("P%i", StyleI.player) );
 	ASSERT_M( StyleI.col < MAX_COLS_PER_PLAYER, ssprintf("C%i", StyleI.col) );
-	GameController c = m_ColumnInfo[StyleI.player][StyleI.col].controller;
-	GameButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
-	return GameInput( c, b );
+
+	FOREACH_GameController(gc)
+	{
+		for( int i = 0; i < m_pGame->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
+			if( m_iInputColumn[gc][i] == StyleI.col )
+				return GameInput( gc, i );
+	}
+
+	FAIL_M( ssprintf("Unknown StyleInput %i,%i", StyleI.player, StyleI.col) );
 };
 
 StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 {
 	StyleInput SI;
 
-	FOREACH_PlayerNumber( p )
-	{
-		for( int t=0; t<m_iColsPerPlayer; t++ )
-		{
-			if( m_ColumnInfo[p][t].controller == GameI.controller  &&
-				m_ColumnInfo[p][t].button == GameI.button )
-			{
-				SI = StyleInput( (PlayerNumber)p, t );
+	if( m_iInputColumn[0][0] == NO_MAPPING )
+		return SI;	// Return invalid.
 
-				// HACK:  Looking up the player number using m_ColumnInfo 
-				// returns the wrong answer for ONE_PLAYER_TWO_SIDES styles
-				if( m_StyleType == ONE_PLAYER_TWO_SIDES )
-					SI.player = GAMESTATE->m_MasterPlayerNumber;
-				
-				return SI;
-			}
-		}
+	for( int i = 0; i < GameI.button; ++i )
+	{
+		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
+			return SI;	// Return invalid.
 	}
-	return SI;	// Didn't find a match.  Return invalid.
+
+	SI = StyleInput( (PlayerNumber) GameI.controller, m_iInputColumn[GameI.controller][i] );
+
+	// HACK:  Looking up the player number using m_ColumnInfo 
+	// returns the wrong answer for ONE_PLAYER_TWO_SIDES styles
+	if( m_StyleType == ONE_PLAYER_TWO_SIDES )
+		SI.player = GAMESTATE->m_MasterPlayerNumber;
+
+	return SI;
 }
 
 

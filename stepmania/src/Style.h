@@ -37,11 +37,15 @@ public:
 	struct ColumnInfo 
 	{ 
 		int				track;		// take note data from this track
-		GameController	controller;	// use this instrument to hit a note on this track
-		GameButton		button;		// use this button to hit a note on this track
 		float			fXOffset;	// x position of the column relative to player center
 	};
+
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
+
+	/* This maps from game inputs to columns.  More than one button may map to a
+	 * single column. */
+	enum { NO_MAPPING = -1, END_MAPPING = -2 };
+	int			m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]; // maps each input to a column, or GAME_BUTTON_INVALID
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 	bool		m_bNeedsZoomOutWith2Players;
 	bool		m_bCanUseBeginnerHelper;
