@@ -111,6 +111,9 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
 		default:	ASSERT(0);
 		}
+
+		/* Clamp the life meter only for calculating the multiplier. */
+		fLifePercentage = clamp( fLifePercentage, 0.0f, 1.0f );
 		fPercentToMove *= SCALE( fLifePercentage, 0.f, 1.f, 0.2f, 1.f);
 	}
 
