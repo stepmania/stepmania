@@ -44,6 +44,10 @@ RageColor g_ExtraColor;
 
 SongManager::SongManager( LoadingWindow *ld )
 {
+	/* We initialize things that assume they can get at SONGMAN; we only
+	 * init one of these, so hook us up to it immediately. */
+	SONGMAN = this;
+
 	g_vGroupColors.clear();
 	for( int i=0; i<NUM_GROUP_COLORS; i++ )
 		g_vGroupColors.push_back( GROUP_COLOR(i) );
@@ -427,7 +431,7 @@ void SongManager::InitCoursesFromDisk()
 	for( unsigned i=0; i<saCourseFiles.size(); i++ )
 	{
 		Course* pCourse = new Course;
-		pCourse->LoadFromCRSFile( saCourseFiles[i], m_pSongs );
+		pCourse->LoadFromCRSFile( saCourseFiles[i] );
 		if( pCourse->GetNumStages() > 0 )
 			m_pCourses.push_back( pCourse );
 		else
@@ -549,7 +553,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	}	
 
 	Course course;
-	course.LoadFromCRSFile( sCoursePath, m_pSongs );
+	course.LoadFromCRSFile( sCoursePath );
 	if( course.GetNumStages() <= 0 ) return false;
 
 	pSongOut = course.GetSong(0);

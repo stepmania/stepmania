@@ -51,7 +51,66 @@ Course::Course()
 		}
 }
 
-void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
+/*
+ * GetSongDir() contains a path to the song, possibly a full path, eg:
+ * Songs\Group\SongName                   or 
+ * My Other Song Folder\Group\SongName    or
+ * c:\Corny J-pop\Group\SongName
+ *
+ * Most course group names are "Group\SongName", so we want to
+ * match against the last two elements. Let's also support
+ * "SongName" alone, since the group is only important when it's
+ * potentially ambiguous.
+ *
+ * Let's *not* support "Songs\Group\SongName" in course files.
+ * That's probably a common error, but that would result in
+ * course files floating around that only work for people who put
+ * songs in "Songs"; we don't want that.
+ */
+
+Song *Course::FindSong(CString sSongDir)
+{
+	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
+
+	CStringArray split_SongDir;
+	sSongDir.Replace("\\", "/");
+	split( sSongDir, "/", split_SongDir, true );
+
+	if( split_SongDir.size() > 2 )
+	{
+		LOG->Warn( "Course file \"%s\" path \"%s\" should contain "
+					"at most one backslash; ignored.",
+				    m_sPath.GetString(), sSongDir.GetString());
+		return NULL;
+	}
+
+	// foreach song
+	for( unsigned i = 0; i < apSongs.size(); i++ )
+	{
+		CString dir = apSongs[i]->GetSongDir();
+		dir.Replace("\\", "/");
+		CStringArray splitted; /* splat! */
+		split( dir, "/", splitted, true );
+		bool matches = true;
+		
+		int split_no = splitted.size()-1;
+		int SongDir_no = split_SongDir.size()-1;
+
+		while( split_no >= 0 && SongDir_no >= 0 ) {
+			if( stricmp(splitted[split_no--], split_SongDir[SongDir_no--] ) )
+				matches=false;
+		}
+
+		if(matches)
+			return apSongs[i];
+	}
+
+	LOG->Trace( "Course \"%s\": couldn't match song \"%s\"",
+			    m_sPath.GetString(), sSongDir.GetString());
+	return NULL;
+}
+
+void Course::LoadFromCRSFile( CString sPath )
 {
 	m_sPath = sPath;	// save path
 
@@ -105,55 +164,8 @@ void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 			    continue;
 			}
 
-			/* GetSongDir() contains a path to the song, possibly a full path, eg:
-			 * Songs\Group\SongName                   or 
-			 * My Other Song Folder\Group\SongName    or
-			 * c:\Corny J-pop\Group\SongName
-			 *
-			 * Most course group names are "Group\SongName", so we want to
-			 * match against the last two elements. Let's also support
-			 * "SongName" alone, since the group is only important when it's
-			 * potentially ambiguous.
-			 *
-			 * Let's *not* support "Songs\Group\SongName" in course files.
-			 * That's probably a common error, but that would result in
-			 * course files floating around that only work for people who put
-			 * songs in "Songs"; we don't want that.
-			 */
+			Song *pSong = FindSong(sSongDir);
 
-			CStringArray split_SongDir;
-			sSongDir.Replace("\\", "/");
-			split( sSongDir, "/", split_SongDir, true );
-
-			if( split_SongDir.size() > 2 )
-			{
-			    LOG->Warn( "Course file \"%s\" path \"%s\" should contain "
-						   "at most one backslash; ignored.",
-				           (const char *) sPath, (const char *) sSongDir);
-			    continue;
-			}
-
-			Song *pSong = NULL;
-			// foreach song
-			for( unsigned i = 0; pSong == NULL && i < apSongs.size(); i++ )
-			{
-				CString dir = apSongs[i]->GetSongDir();
-				dir.Replace("\\", "/");
-				CStringArray splitted;
-				split( dir, "/", splitted, true );
-				bool matches = true;
-				
-				int split_no = splitted.size()-1;
-				int SongDir_no = split_SongDir.size()-1;
-
-				while( split_no >= 0 && SongDir_no >= 0 ) {
-				    if( stricmp(splitted[split_no--], split_SongDir[SongDir_no--] ) )
-						matches=false;
-				}
-
-				if(matches)
-					pSong = apSongs[i];
-			}
 			if( pSong == NULL )	// we didn't find the Song
 				continue;	// skip this song
 			

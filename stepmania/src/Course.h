@@ -49,7 +49,7 @@ public:
 	void GetSongOptions( SongOptions* pSO_out) const;
 	int GetNumStages() const;
 
-	void LoadFromCRSFile( CString sPath, vector<Song*> &apSongs );
+	void LoadFromCRSFile( CString sPath );
 	void CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup );
 	void AddStage( Song* pSong, CString sDescription, CString sModifiers );
 
@@ -77,6 +77,7 @@ public:
 
 private:
 	void Shuffle();
+	Song *FindSong(CString sSongDir);
 };
 
 
