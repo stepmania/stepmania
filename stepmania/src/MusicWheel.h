@@ -41,8 +41,12 @@ const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+48);
 
 enum { SORT_ROULETTE = NUM_SORT_ORDERS+1 };
 
+struct CompareSongPointerArrayBySectionName;
+
 class MusicWheel : public ActorFrame
 {
+	friend struct CompareSongPointerArrayBySectionName;
+
 public:
 	MusicWheel();
 	~MusicWheel();
@@ -76,11 +80,11 @@ public:
 	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; };
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
+	void RebuildWheelItemDisplays();
 
 protected:
 	void GetSongList(vector<Song*> &arraySongs, bool bRoulette );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so );
-	void RebuildWheelItemDisplays();
 	void SetOpenGroup(CString group, SongSortOrder so = NUM_SORT_ORDERS);
 	bool SelectSong(const Song *p);
 	bool SelectCourse(const Course *p);
@@ -128,7 +132,7 @@ protected:
 	RageSound m_soundStart;
 	RageSound m_soundLocked;
 
-	CString GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so );
+	static CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so );
 	bool WheelItemIsVisible(int n);
 	void UpdateScrollbar();
 };

@@ -56,7 +56,7 @@ void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 				continue;
 			}
 
-			CString sTitle = Songs[iIndex]->GetFullTitle();
+			CString sTitle = Songs[iIndex]->GetFullDisplayTitle();
 			// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
 			if( sTitle.GetLength() > 40 )
 			{

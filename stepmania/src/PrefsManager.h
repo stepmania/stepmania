@@ -52,6 +52,7 @@ public:
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
+	bool			m_bShowTranslations;
 	bool			m_bArcadeOptionsNavigation;
 	bool			m_bCoinOpMode;
 	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;

@@ -104,6 +104,6 @@ void TransitionOniFade::UpdateSongText()
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	ASSERT( pSong );
-	m_textSongInfo.SetText( pSong->GetFullTitle() + "\n" + pSong->m_sArtist + "\n");
+	m_textSongInfo.SetText( pSong->GetFullDisplayTitle() + "\n" + pSong->m_sArtist + "\n");
 	m_Banner.LoadFromSong( pSong );
 }

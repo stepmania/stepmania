@@ -99,9 +99,9 @@ bool TextBanner::LoadFromSong( const Song* pSong )
 		return true;
 	}
 
-	m_textTitle.SetText( pSong->m_sMainTitle );
-	m_textSubTitle.SetText( pSong->m_sSubTitle );
-	m_textArtist.SetText( g_sArtistPrependString + pSong->m_sArtist );
+	m_textTitle.SetText( pSong->GetDisplayMainTitle() );
+	m_textSubTitle.SetText( pSong->GetDisplaySubTitle() );
+	m_textArtist.SetText( g_sArtistPrependString + pSong->GetDisplayArtist() );
 
 	bool bTwoLines = pSong->m_sSubTitle.length() == 0;
 

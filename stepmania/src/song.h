@@ -94,17 +94,27 @@ public:
 
 	bool	m_bChangedSinceSave;
 
-	CString	m_sMainTitle;
-	CString	m_sSubTitle;
-	CString	m_sArtist;
-	CString m_sMainTitleTranslit;
-	CString m_sSubTitleTranslit;
-	CString m_sArtistTranslit;
+	CString	m_sMainTitle, m_sSubTitle, m_sArtist;
+	CString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
+
+	/* If PREFSMAN->m_bShowTranslations is off, these are the same as GetTranslit* below.
+	 * Otherwise, they return the main titles. */
+	CString GetDisplayMainTitle() const;
+	CString GetDisplaySubTitle() const;
+	CString GetDisplayArtist() const;
+
+	/* Returns the transliterated titles, if any; otherwise returns the main titles. */
+	CString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
+	CString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
+	CString GetTranslitArtist() const { return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; }
+
+	/* "title subtitle" */
+	CString GetFullDisplayTitle() const;
+	CString GetFullTranslitTitle() const;
+
+	/* This is read and saved, but never actually used. */
 	CString	m_sCredit;
 
-	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
-	CString GetSortTitle() const;
-												
 	CString	m_sMusicFile;
 	unsigned m_iMusicBytes;
 	float	m_fBeat0OffsetInSeconds;

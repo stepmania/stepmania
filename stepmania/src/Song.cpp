@@ -857,8 +857,8 @@ bool Song::HasEdits( NotesType nt ) const
 int CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 {
 	//Prefer transliterations to full titles
-	CString sTitle1 = pSong1->GetSortTitle();
-	CString sTitle2 = pSong2->GetSortTitle();
+	CString sTitle1 = pSong1->GetFullTranslitTitle();
+	CString sTitle2 = pSong2->GetFullTranslitTitle();
 
 	int ret = sTitle1.CompareNoCase(sTitle2);
 	if(ret < 0) return true;
@@ -1078,19 +1078,40 @@ CString Song::GetBackgroundPath() const
 	return m_sSongDir+m_sBackgroundFile;
 }
 
-CString Song::GetSortTitle() const
+CString Song::GetDisplayMainTitle() const
 {
-	CString Title = m_sMainTitleTranslit.empty()?
-			m_sMainTitle: m_sMainTitleTranslit;
+	if(!PREFSMAN->m_bShowTranslations) return GetTranslitMainTitle();
+	return m_sMainTitle;
+}
 
-	CString SubTitle = m_sSubTitleTranslit.empty()?
-		m_sSubTitle:m_sSubTitleTranslit;
+CString Song::GetDisplaySubTitle() const
+{
+	if(!PREFSMAN->m_bShowTranslations) return GetTranslitSubTitle();
+	return m_sSubTitle;
+}
 
-	if(!SubTitle.empty())
-	{
-		Title += " " + SubTitle;
-	}
+CString Song::GetDisplayArtist() const
+{
+	if(!PREFSMAN->m_bShowTranslations) return GetTranslitArtist();
+	return m_sArtist;
+}
 
+
+CString Song::GetFullDisplayTitle() const
+{
+	CString Title = GetDisplayMainTitle();
+	CString SubTitle = GetDisplaySubTitle();
+
+	if(!SubTitle.empty()) Title += " " + SubTitle;
+	return Title;
+}
+
+CString Song::GetFullTranslitTitle() const
+{
+	CString Title = GetTranslitMainTitle();
+	CString SubTitle = GetTranslitSubTitle();
+
+	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
 }
 

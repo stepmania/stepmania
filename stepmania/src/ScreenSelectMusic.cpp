@@ -410,6 +410,14 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 {
 	LOG->Trace( "ScreenSelectMusic::Input()" );
 	
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
+	{
+		if( type != IET_FIRST_PRESS ) return;
+		PREFSMAN->m_bShowTranslations ^= 1;
+		m_MusicWheel.RebuildWheelItemDisplays();
+		return;
+	}
+
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
 		if( !MenuI.IsValid() ) return;

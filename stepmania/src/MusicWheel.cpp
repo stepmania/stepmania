@@ -269,6 +269,17 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, bool bRoulette )
 	}
 }
 
+struct CompareSongPointerArrayBySectionName
+{
+	SongSortOrder so;
+	CompareSongPointerArrayBySectionName( SongSortOrder so_ ): so(so_) { }
+	bool operator() (const Song *p1, const Song *p2) const
+	{
+		return MusicWheel::GetSectionNameFromSongAndSort( p1, so ) < 
+			   MusicWheel::GetSectionNameFromSongAndSort( p2, so );
+	}
+};
+
 void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so )
 {
 	unsigned i;
@@ -322,7 +333,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			bool bUseSections = false;
 			switch( so )
 			{
-//			case SORT_GROUP_NOHEADER:	bUseSections = false; break;
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
 			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == "ALL MUSIC";	break;
@@ -336,6 +346,11 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			if( bUseSections )
 			{
+				/* We're using sections, so use the section name as the top-levle
+				 * sort. */
+				stable_sort(arraySongs.begin(), arraySongs.end(),
+							CompareSongPointerArrayBySectionName(so));
+
 				// make WheelItemDatas with sections
 				CString sLastSection = "";
 				RageColor colorSection;
@@ -347,6 +362,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
 							continue;
+
 					if( sThisSection != sLastSection)	// new section, make a section item
 					{
 						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
@@ -1073,7 +1089,7 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 	m_fTimeLeftInState = TweenTime() + 0.100f;
 }
 
-CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so )
+CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
 {
 	if( pSong == NULL )
 		return "";
@@ -1093,7 +1109,7 @@ CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so
 //				sTemp = "NUM";
 //			return sTemp;
 	case SORT_TITLE:
-		sTemp = pSong->GetSortTitle();
+		sTemp = pSong->GetTranslitSubTitle();
 		sTemp.MakeUpper();
 		if(sTemp.empty()) return "";
 
