@@ -102,6 +102,7 @@ void SongManager::Reload()
 {
 	FlushDirCache();
 
+	SaveMachineScoresToDisk();
 	FreeSongs();
 	FreeCourses();
 
@@ -111,6 +112,7 @@ void SongManager::Reload()
 	InitSongsFromDisk(NULL);
 	InitCoursesFromDisk(NULL);
 	InitAutogenCourses();
+	InitMachineScoresFromDisk();
 }
 
 
