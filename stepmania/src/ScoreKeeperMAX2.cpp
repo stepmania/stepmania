@@ -1,20 +1,33 @@
 #include "global.h"
+/*
+-----------------------------------------------------------------------------
+ Class: ScoreKeeperMAX2
+
+ Desc: 
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
 #include "ScoreKeeperMAX2.h"
 #include "GameState.h"
+#include "PrefsManager.h"
+#include "Notes.h"
 
-ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, PlayerNumber pn_):
+ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, PlayerNumber pn_):
 	ScoreKeeper(pn_)
 {
 //	Stats_DoublesCount = true;
 
+	NoteData noteData;
+	notes->GetNoteData( &noteData );
+
 	int Meter = notes? notes->GetMeter() : 5;
 	Meter = min(Meter, 10);
 
-	/* Hold notes count as two tap notes.  However, hold notes already count
-	 * as 1 in GetNumTapNotes(), so only add 1*GetNumHoldNotes, not 2. */
-	int iNumTapNotes = data.GetNumTapNotes() + data.GetNumHoldNotes();
+	int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
 	
-	int sum = (iNumTapNotes * (iNumTapNotes + 1)) / 2;
+	int sum = (N * (N + 1)) / 2;
 
 	if(sum)
 		m_fScoreMultiplier = float(Meter * 1000000) / sum;
@@ -50,9 +63,9 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
-	// update dance points for Oni lifemeter
-	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( scoreOfLastTap );
-	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += iNumTapsInRow;
+	// update dance points
+	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
+	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
 
 /*
   A single step's points are calculated as follows: 
@@ -91,8 +104,8 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
    keeping these seperate for as long as possible improves accuracy.
 
 */
-	for( int i=0; i<iNumTapsInRow; i++ )
-		AddScore( scoreOfLastTap );
+//	for( int i=0; i<iNumTapsInRow; i++ )
+	AddScore( scoreOfLastTap );		// only score once per row
 }
 
 
@@ -105,3 +118,60 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	if( holdScore == HNS_OK )
 		AddScore( TNS_PERFECT );
 }
+
+
+int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData* pNoteData )
+{
+//Each song has a certain number of "Dance Points" assigned to it. For regular arrows, this is 2 per arrow. For freeze arrows, it is 6 per arrow. When you add this all up, you get the maximum number of possible "Dance Points". 
+//
+//Your "Dance Points" are calculated as follows: 
+//
+//A "Marvelous" is worth 3 points, but oniy when in oni mode
+//A "Perfect" is worth 2 points
+//A "Great" is worth 1 points
+//A "Good" is worth 0 points
+//A "Boo" will subtract 4 points
+//A "Miss" will subtract 8 points
+//An "OK" (Successful Freeze step) will add 6 points
+//A "NG" (Unsuccessful Freeze step) is worth 0 points
+
+	/* Note that, if Marvelous timing is disabled or not active (not course mode),
+	 * PERFECT will be used instead. */
+
+	TapNoteScore maxPossibleTapScore = PREFSMAN->m_bMarvelousTiming ? TNS_MARVELOUS : TNS_PERFECT;
+
+	return pNoteData->GetNumRowsWithTaps()*TapNoteScoreToDancePoints(maxPossibleTapScore)+
+	   pNoteData->GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
+}
+
+
+int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
+{
+	const bool bOni = GAMESTATE->IsCourseMode();
+
+	if(!PREFSMAN->m_bMarvelousTiming && tns == TNS_MARVELOUS)
+		tns = TNS_PERFECT;
+
+	switch( tns )
+	{
+	case TNS_MARVELOUS:	return bOni ? +3 : +2;
+	case TNS_PERFECT:	return +2;
+	case TNS_GREAT:		return +1;
+	case TNS_GOOD:		return +0;
+	case TNS_BOO:		return bOni ? 0 : -4;
+	case TNS_MISS:		return bOni ? 0 : -8;
+	case TNS_NONE:		return 0;
+	default:	ASSERT(0);	return 0;
+	}
+}
+
+int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
+{
+	switch( hns )
+	{
+	case HNS_OK:	return +6;
+	case HNS_NG:	return +0;
+	default:	ASSERT(0);	return 0;
+	}
+}
+

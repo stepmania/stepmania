@@ -267,7 +267,7 @@ ScreenEdit::ScreenEdit()
 
 	NOTESKIN->SwitchNoteSkin( PLAYER_1, "default" );	// change noteskin back to default before loading player
 
-	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL );
+	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL );
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_Fade.SetClosed();
@@ -336,7 +336,7 @@ bool ScreenEdit::PlayTicks() const
 	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
 
 	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
-		bAnyoneHasANote |= m_Player.IsThereANoteAtRow( r );
+		bAnyoneHasANote |= m_Player.IsThereATapAtRow( r );
 
 	iRowLastCrossed = iRowNow;
 
@@ -1400,7 +1400,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_EditMode = MODE_PLAYING;
 
-				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL );
+				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL, NULL );
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );

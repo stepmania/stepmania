@@ -176,21 +176,14 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
-bool NoteData::IsThereANoteAtRow( int iRow ) const
+bool NoteData::IsThereATapAtRow( int iRow ) const
 {
 	for( int t=0; t<m_iNumTracks; t++ )
 		if( GetTapNote(t, iRow) != TAP_EMPTY )
 			return true;
 
-// There is a tap note at the beginning of every HoldNote start
-//
-//	for( int i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
-//		if( GetHoldNote(i).m_iStartIndex == NoteRowToBeatRow(iRow) )
-//			return true;
-
 	return false;
 }
-
 
 int NoteData::GetFirstRow() const
 { 
@@ -274,6 +267,21 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 	return iNumNotes;
 }
 
+int NoteData::GetNumRowsWithTaps( float fStartBeat, float fEndBeat ) const
+{
+	int iNumNotes = 0;
+
+	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+	
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
+		if( IsThereATapAtRow(i) )
+			iNumNotes++;
+	
+	return iNumNotes;
+}
+
 int NoteData::GetNumDoubles( float fStartBeat, float fEndBeat ) const
 {
 	int iNumDoubles = 0;
@@ -309,27 +317,6 @@ int NoteData::GetNumHoldNotes( float fStartBeat, float fEndBeat ) const
 			iNumHolds++;
 	}
 	return iNumHolds;
-}
-
-int NoteData::GetPossibleDancePoints()
-{
-//Each song has a certain number of "Dance Points" assigned to it. For regular arrows, this is 2 per arrow. For freeze arrows, it is 6 per arrow. When you add this all up, you get the maximum number of possible "Dance Points". 
-//
-//Your "Dance Points" are calculated as follows: 
-//
-//A "Marvelous" is worth 3 points, but oniy when in oni mode
-//A "Perfect" is worth 2 points
-//A "Great" is worth 1 points
-//A "Good" is worth 0 points
-//A "Boo" will subtract 4 points
-//A "Miss" will subtract 8 points
-//An "OK" (Successful Freeze step) will add 6 points
-//A "NG" (Unsuccessful Freeze step) is worth 0 points
-
-	/* Note that, if Marvelous timing is disabled or not active (not course mode),
-	 * PERFECT will be used instead. */
-	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
-	   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
 }
 
 void NoteData::Convert2sAnd3sToHoldNotes()

@@ -105,6 +105,7 @@ protected:
 
 	Sprite				m_sprScoreFrame;
 	ScoreDisplay*		m_pScoreDisplay[NUM_PLAYERS];
+	ScoreKeeper*		m_pScoreKeeper[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
 

@@ -68,10 +68,9 @@ int Player::GetPlayersMaxCombo()
 
 Player::~Player()
 {
-	delete m_pScoreKeeper;
 }
 
-void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory )
+void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pScoreKeeper )
 {
 	//LOG->Trace( "Player::Load()", );
 
@@ -79,6 +78,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
 	m_pInventory = pInventory;
+	m_pScoreKeeper = pScoreKeeper;
 
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
@@ -97,9 +97,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 //	m_Combo.Reset();		// don't reset combos between songs in a course!
 	m_Combo.Init( pn );
 	m_Judgment.Reset();
-
-	if(m_pScoreKeeper) delete m_pScoreKeeper;
-	m_pScoreKeeper = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[m_PlayerNumber], *this, pn);
 
 	if( m_pScore )
 		m_pScore->Init( pn );
@@ -603,9 +600,8 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 		return;
 #endif //DEBUG
 
-	if(m_pScoreKeeper) {
+	if(m_pScoreKeeper)
 		m_pScoreKeeper->HandleHoldScore(holdScore, tapScore);
-	}
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);

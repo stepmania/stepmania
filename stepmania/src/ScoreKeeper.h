@@ -20,7 +20,8 @@
 
 #include "Actor.h"
 #include "PlayerNumber.h"
-#include "GameConstantsAndTypes.h"
+#include "GameConstantsAndTypes.h"	// for TapNoteScore and HoldNoteScore
+class NoteData;
 
 class ScoreKeeper: public Actor 
 {
@@ -39,6 +40,10 @@ public:
 
 	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow ) = 0;
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore ) = 0;
+
+	virtual int TapNoteScoreToDancePoints( TapNoteScore tns ) = 0;
+	virtual int HoldNoteScoreToDancePoints( HoldNoteScore hns ) = 0;
+	virtual int	GetPossibleDancePoints( const NoteData* pNoteData ) = 0;
 };
 
 #endif

@@ -45,7 +45,7 @@ public:
 	virtual void DrawPrimitives();
 	~Player();
 
-	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory );
+	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pScoreKeeper );
 	void CrossedRow( int iNoteRow );
 	void Step( int col );
 	int GetPlayersMaxCombo();

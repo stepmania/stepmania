@@ -29,8 +29,8 @@
 #include "GrooveRadar.h"
 #include "NotesLoaderSM.h"
 #include "ThemeManager.h"
-
 #include "RageTimer.h"
+#include "ScoreKeeperMAX2.h"
 
 //
 // Defines
@@ -104,7 +104,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
-	 m_bDemonstration = bDemonstration;
+ m_bDemonstration = bDemonstration;
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	G_TICK_EARLY_SECONDS.Refresh();
@@ -127,11 +127,22 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		{
 			m_pLifeMeter[p] = NULL;
 			m_pScoreDisplay[p] = NULL;
+			m_pScoreKeeper[p] = NULL;
 		}
 	}
 
 
 	GAMESTATE->m_CurStageStats = StageStats();	// clear values
+
+
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+		m_pScoreKeeper[p] = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[p], (PlayerNumber)p);
+	}
+
 
 	// Fill in m_CurStageStats
 	NoteData notedata;
@@ -147,7 +158,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 					continue;	// skip
 				GAMESTATE->m_CurStageStats.iMeter[p] = GAMESTATE->m_pCurNotes[p]->GetMeter();
 				GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
-				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = notedata.GetPossibleDancePoints();
+				// TODO:  Make this more elegant
+				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = m_pScoreKeeper[p]->GetPossibleDancePoints( &notedata );
 			}
 		}
 		break;
@@ -164,7 +176,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			{
 				iTotalMeter += m_apCourseNotes[i]->GetMeter();
 				m_apCourseNotes[i]->GetNoteData( &notedata );
-				iTotalPossibleDancePoints += notedata.GetPossibleDancePoints();
+				iTotalPossibleDancePoints += m_pScoreKeeper[p]->GetPossibleDancePoints( &notedata );
 			}
 
 			GAMESTATE->m_CurStageStats.pSong = NULL;
@@ -214,7 +226,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
 
-	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
@@ -510,6 +521,7 @@ ScreenGameplay::~ScreenGameplay()
 	{
 		SAFE_DELETE( m_pLifeMeter[p] );
 		SAFE_DELETE( m_pScoreDisplay[p] );
+		SAFE_DELETE( m_pScoreKeeper[p] );
 	}
 
 	m_soundMusic.StopPlaying();
@@ -608,7 +620,7 @@ void ScreenGameplay::LoadNextSong()
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory, m_pScoreKeeper[p] );
 	}
 
 	/* Set up song-specific graphics. */
@@ -724,7 +736,7 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;		// skip
 
-			bAnyoneHasANote |= m_Player[p].IsThereANoteAtRow( r );
+			bAnyoneHasANote |= m_Player[p].IsThereATapAtRow( r );
 			break;	// this will only play the tick for the first player that is joined
 		}
 	}

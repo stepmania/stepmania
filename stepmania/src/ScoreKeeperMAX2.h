@@ -13,8 +13,8 @@
 */
 
 #include "ScoreKeeper.h"
-#include "Notes.h"
 #include "NoteDataWithScoring.h"
+struct Notes;
 
 class ScoreKeeperMAX2: public ScoreKeeper
 {
@@ -25,10 +25,14 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	void AddScore( TapNoteScore score );
 
 public:
-	ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, PlayerNumber pn);
+	ScoreKeeperMAX2(Notes *notes, PlayerNumber pn);
 
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
+
+	int TapNoteScoreToDancePoints( TapNoteScore tns );
+	int HoldNoteScoreToDancePoints( HoldNoteScore hns );
+	int	GetPossibleDancePoints( const NoteData* pNoteData );
 };
 
 #endif

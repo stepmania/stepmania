@@ -105,7 +105,7 @@ public:
 	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
 
 	// statistics
-	bool IsThereANoteAtRow( int iRow ) const;
+	bool IsThereATapAtRow( int iRow ) const;
 
 	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
 	 * accuracy.) */
@@ -117,12 +117,11 @@ public:
 	float GetLastBeat() const;	// return the beat number of the last note
 	int GetLastRow() const;
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumRowsWithTaps( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
-
-	int GetPossibleDancePoints();
 
 	// Transformations
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track

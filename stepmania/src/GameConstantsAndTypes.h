@@ -124,7 +124,6 @@ enum TapNoteScore {
 	NUM_TAP_NOTE_SCORES
 };
 
-int TapNoteScoreToDancePoints( TapNoteScore tns );
 
 //enum TapNoteTiming { 
 //	TNT_NONE, 
@@ -140,17 +139,6 @@ enum HoldNoteScore
 	HNS_NG,		// the HoldNote has passed and they missed it
 	NUM_HOLD_NOTE_SCORES
 };
-
-
-inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
-{
-	switch( hns )
-	{
-	case HNS_OK:	return +6;
-	case HNS_NG:	return +0;
-	default:	ASSERT(0);	return 0;
-	}
-}
 
 
 //
