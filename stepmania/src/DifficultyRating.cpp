@@ -71,18 +71,18 @@ void DifficultyRating::SetOrientation(int Orientation)
 		{
 			//damn! in that case everything is to the side of the middle....
 			int incrementor=1; // start on one... 0 is reserved for 'central' (read odd number)
-			int offset=0;
+			int offset=0.5f;
 			for(int i=0; i<iMaxElements; i++)
 			{
 				if(incrementor == 1) // + offset
 				{
-					m_apSprites[i]->SetX((0 - 0.5f) + offset);
+					m_apSprites[i]->SetX(0  + offset);
 					incrementor++;
 				}
 				else // - offset
 				{
-					m_apSprites[i]->SetX((0 + 0.5f) - offset);
-					offset += ELEMSPACING; // increase offset
+					m_apSprites[i]->SetX(0 - offset);
+					offset += ELEMSPACING + 0.5f; // increase offset
 					incrementor=1;
 				}
 			}			

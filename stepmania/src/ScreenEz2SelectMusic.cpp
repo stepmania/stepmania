@@ -50,6 +50,8 @@
 #define DIFFICULTYRATING_X		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingX")
 #define DIFFICULTYRATING_Y		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingY")
 #define DIFFICULTYRATING_ORIENTATION		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingOrientation")
+#define INFOFRAME_X		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameX")
+#define INFOFRAME_Y		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameY")
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -132,6 +134,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 
 			m_iSelection[p] = 0;
 		}
+
+		m_InfoFrame.Load( THEME->GetPathTo("Graphics","select music infoframe") );
+		m_InfoFrame.SetXY( INFOFRAME_X, INFOFRAME_Y );
+		this->AddChild( &m_InfoFrame );
 
 		m_PumpDifficultyCircle.Load( THEME->GetPathTo("Graphics","select music pump difficulty circle"));
 		m_PumpDifficultyCircle.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );

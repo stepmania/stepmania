@@ -54,7 +54,8 @@ protected:
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
-	Sprite				m_sprOptionsMessage;
+	Sprite	m_sprOptionsMessage;
+	Sprite	m_InfoFrame;
 	Sprite  m_PumpDifficultyCircle;
 	Sprite	m_SpeedIcon[NUM_PLAYERS];
 	Sprite	m_MirrorIcon[NUM_PLAYERS];
