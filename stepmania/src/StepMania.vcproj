@@ -67,7 +67,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 "/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
@@ -146,7 +146,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 "/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
@@ -215,7 +215,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 "/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
@@ -294,7 +294,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 "/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
