@@ -14,12 +14,9 @@
 
 // We need the WinSock32 Library on Windows
 
-#include <cstring>
+#include "global.h"
 #include "ezsockets.h"
 
-#include <iostream>
-
-using namespace std;
 #if defined(WIN32)
 #pragma comment(lib,"wsock32.lib")
 #endif
@@ -164,7 +161,7 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 bool EzSockets::CanRead()
 {
 	FD_ZERO(scks);
-	FD_SET(sock,scks);
+	FD_SET((unsigned)sock,scks);
 
 	if (select (0,scks,NULL,NULL,times)==0)
 		return false;
@@ -176,7 +173,7 @@ bool EzSockets::IsError()
 		return true;
 
 	FD_ZERO(scks);
-	FD_SET(sock,scks);
+	FD_SET((unsigned)sock,scks);
 
 	if (select (0,NULL,NULL,scks,times)==0)
 		return false;
@@ -185,7 +182,7 @@ bool EzSockets::IsError()
 bool EzSockets::CanWrite()
 {
 	FD_ZERO(scks);
-	FD_SET(sock,scks);
+	FD_SET((unsigned)sock,scks);
 
 	if (select (0,NULL,scks,NULL,times)==0)
 		return false;
