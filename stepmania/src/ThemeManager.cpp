@@ -75,7 +75,8 @@ CString ClassAndElementToFileName( const CString &sClassName, const CString &sEl
 
 ThemeManager::ThemeManager()
 {
-	m_sCurThemeName = "";	// Use the base theme for now.  It's up to PrefsManager to change this.
+	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
+	m_sCurThemeName = "";
 	
 	CStringArray arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
