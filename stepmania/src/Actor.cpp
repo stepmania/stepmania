@@ -665,6 +665,9 @@ void Actor::Command( CString sCommandString )
 		CString& sName = asTokens[0];
 		sName.MakeLower();
 
+		if( sName.size() == 0 )
+			continue;
+		
 		// Commands that go in the tweening queue:
 		if     ( sName=="sleep" )			BeginTweening( fParam(1), TWEEN_LINEAR );
 		else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
