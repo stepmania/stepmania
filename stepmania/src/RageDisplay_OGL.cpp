@@ -431,9 +431,6 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_line_granularity);
 	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_point_granularity);
-	LOG->Info("Line width range: %.3f-%.3f +%.3f  Point size range: %.3f-%.3f +%.3f",
-		g_line_range[0], g_line_range[1], g_line_granularity,
-		g_point_range[0], g_point_range[1], g_point_granularity );
 }
 
 #if defined(unix) && defined(HAVE_LIBXTST)
