@@ -655,12 +655,13 @@ try_metric_again:
 	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
 
-	RageException::Throw( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
+	CString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sClassName.c_str(),
 		sValueName.c_str(),
 		sCurMetricPath.c_str(), 
 		sDefaultMetricPath.c_str()
 		);
+	RageException::Throw( sError );
 }
 
 /* Get a string metric. */
