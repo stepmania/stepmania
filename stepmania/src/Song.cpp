@@ -106,6 +106,17 @@ Song::~Song()
 	m_apNotes.clear();
 }
 
+/* Reset to an empty song. */
+void Song::Reset()
+{
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
+		SAFE_DELETE( m_apNotes[i] );
+	m_apNotes.clear();
+
+	Song empty;
+	*this = empty;
+}
+
 
 void Song::AddBPMSegment( BPMSegment seg )
 {
@@ -344,6 +355,7 @@ bool Song::LoadWithoutCache( CString sDir )
 bool Song::LoadFromSongDir( CString sDir )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
+	ASSERT( sDir != "" );
 
 	sDir.Replace("\\", "/");
 	// make sure there is a trailing slash at the end of sDir
@@ -427,6 +439,15 @@ bool Song::LoadFromSongDir( CString sDir )
 		return false;	// don't load this song
 	else
 		return true;	// do load this song
+}
+
+void Song::RevertFromDisk()
+{
+	const CString dir = GetSongDir();
+
+	/* Erase all existing data. */
+	Reset();
+	LoadFromSongDir( dir );
 }
 
 
