@@ -117,7 +117,7 @@ void DSoundBuf::SetVolume(float vol)
 
 	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
 
-	/* Volume is in percent; SetVolume wants attenuation in thousands of a
+	/* Volume is a multiplier; SetVolume wants attenuation in thousands of a
 	 * decibel. */
 	if(vol != 1)
 		buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
