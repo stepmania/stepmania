@@ -7,7 +7,6 @@
  Desc: DDR Extreme Difficulty Select
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
-	Chris Danford
 	Kevin Slaughter
 -----------------------------------------------------------------------------
 */
@@ -19,6 +18,7 @@
 #include "ScreenSelect.h"
 #include "Sprite.h"
 #include "DifficultyIcon.h"
+#include "OptionsCursor.h"
 
 class ScreenSelectDifficultyEX : public ScreenSelect
 {
@@ -41,20 +41,30 @@ protected:
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
 
-	bool AllPlayersAreOnCourse();
 	void Change( PlayerNumber pn, int iNewChoice );
 	float GetCursorX( PlayerNumber pn );
 	float GetCursorY( PlayerNumber pn );
 	bool IsACourse( int mIndex );
-	bool PlayerIsOnCourse( PlayerNumber pn );
+	bool IsValidModeName( CString ModeName );
 	void SetAllPlayersSelection( int iChoice, bool bSwitchingModes );
 
 	ActorFrame	m_framePages;
 	Sprite	m_sprCursor[NUM_PLAYERS];
-//	Sprite	m_sprExplanation;		Will implement properly soon -- Miryokuteki
 	Sprite	m_sprInfo[NUM_PLAYERS];
-//	Sprite	m_sprMore;				Will implement properly soon -- Miryokuteki
-	DifficultyIcon	m_sprDifficultyIcon[NUM_PLAYERS];
+
+
+/* Icon Bar stuff */
+	int	NUM_MODES;
+	DifficultyIcon	m_sprDifficultyIcon[8];
+	Sprite	m_sprIconBar;
+	BitmapText	m_textDifficultyText[8];
+	OptionsCursor	m_sprHighlight[NUM_PLAYERS];
+
+	int	GetIconIndex( CString DiffName );
+	void SetDifficultyIconText( bool bDisplayCourseItems );
+/* -------------- */
+
+
 	Sprite	m_sprOK[NUM_PLAYERS];
 	Sprite	m_sprPicture[NUM_PLAYERS];
 

@@ -6,7 +6,6 @@
  Desc: See header.
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
-	Chris Danford
 	Kevin Slaughter
 -----------------------------------------------------------------------------
 */
@@ -22,17 +21,27 @@
 #include "ThemeManager.h"
 
 
-#define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetXFromPicture",p+1))
-#define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetYFromPicture",p+1))
-#define DISABLED_COLOR						THEME->GetMetricC("ScreenSelectDifficultyEX","DisabledColor")
-#define INFO_X( p )							THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("InfoXP%d",p+1))
-#define INFO_Y( p )							THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("InfoYP%d",p+1))
-#define LOCK_INPUT_SECONDS					THEME->GetMetricF("ScreenSelectDifficultyEX","LockInputSeconds")
-#define PICTURE_X( p )						THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("PictureXP%d",p+1))
-#define PICTURE_Y( p )						THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("PictureYP%d",p+1))
-#define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF("ScreenSelectDifficultyEX","SleepAfterChoiceSeconds")
-#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectDifficultyEX","SleepAfterTweenOffSeconds")
-
+#define	ANIMATE_MODE_SWITCH						THEME->GetMetricB("ScreenSelectDifficultyEX","AnimateModeSwitch")
+#define	ANIMATE_MODE_SWITCH_LOCK_TIME			THEME->GetMetricF("ScreenSelectDifficultyEX","AnimateModeSwitchLockTime")
+#define ANIMATE_MODE_SWITCH_INFO_OFF_COMMAND	THEME->GetMetric("ScreenSelectDifficultyEX","AnimateModeSwitchInfoOFFCommand")
+#define ANIMATE_MODE_SWITCH_INFO_ON_COMMAND		THEME->GetMetric("ScreenSelectDifficultyEX","AnimateModeSwitchInfoONCommand")
+#define ANIMATE_MODE_SWITCH_PICTURE_OFF_COMMAND	THEME->GetMetric("ScreenSelectDifficultyEX","AnimateModeSwitchPictureOFFCommand")
+#define ANIMATE_MODE_SWITCH_PICTURE_ON_COMMAND	THEME->GetMetric("ScreenSelectDifficultyEX","AnimateModeSwitchPictureONCommand")
+#define CURSOR_OFFSET_X_FROM_PICTURE( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetXFromPicture",p+1))
+#define CURSOR_OFFSET_Y_FROM_PICTURE( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetYFromPicture",p+1))
+#define DIFFICULTYICON_X( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dX",p+1))
+#define DIFFICULTYICON_Y( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dY",p+1))
+#define DIFFICULTYICON_COLOR( p )				THEME->GetMetricC("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dCOLOR",p+1))
+#define DISABLED_COLOR							THEME->GetMetricC("ScreenSelectDifficultyEX","DisabledColor")
+#define ICONBAR_X								THEME->GetMetricF("ScreenSelectDifficultyEX","IconBarX")
+#define ICONBAR_Y								THEME->GetMetricF("ScreenSelectDifficultyEX","IconBarY")
+#define INFO_X( p )								THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("InfoXP%d",p+1))
+#define INFO_Y( p )								THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("InfoYP%d",p+1))
+#define LOCK_INPUT_SECONDS						THEME->GetMetricF("ScreenSelectDifficultyEX","LockInputSeconds")
+#define PICTURE_X( p )							THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("PictureXP%d",p+1))
+#define PICTURE_Y( p )							THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("PictureYP%d",p+1))
+#define SLEEP_AFTER_CHOICE_SECONDS				THEME->GetMetricF("ScreenSelectDifficultyEX","SleepAfterChoiceSeconds")
+#define SLEEP_AFTER_TWEEN_OFF_SECONDS			THEME->GetMetricF("ScreenSelectDifficultyEX","SleepAfterTweenOffSeconds")
 
 
 ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSelectDifficultyEX" )
@@ -44,31 +53,54 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		m_iChoice[p] = 0;
 		m_bChosen[p] = false;
 	}
-
+	
+	NUM_MODES = 0;
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
 		m_ModeChoices.push_back( m_aModeChoices[c] );
+		NUM_MODES++;
 	}
 	
-	//m_sprMore.Load( THEME->GetPathToG( "ScreenSelectDifficultyEX more page1") );
-	//m_framePages.AddChild( &m_sprMore );
+	m_sprIconBar.Load( THEME->GetPathToG("ScreenSelectDifficultyEX icon bar.png") );
+	m_sprIconBar.SetXY( ICONBAR_X, ICONBAR_Y );
+	this->AddChild( &m_sprIconBar );
 
-	//m_sprExplanation.Load( THEME->GetPathToG( "ScreenSelectDifficultyEX explanation") );
-	//m_sprExplanation.StopAnimating();
-	//m_sprExplanation.SetState( 1 );
-	//m_framePages.AddChild( &m_sprExplanation );
+	for( unsigned k=0; k < NUM_MODES || k <= 7 ; k++ )
+	{
+		CString MOO = m_aModeChoices[k].name;
+		if( IsValidModeName(MOO) )
+		{
+			// We cannot show more than 8 icons at a time, BTW
+			m_sprDifficultyIcon[k].Load( THEME->GetPathToG("ScreenSelectDifficultyEX icons 1x10") );
+			m_sprDifficultyIcon[k].SetX( DIFFICULTYICON_X(k) );
+			m_sprDifficultyIcon[k].SetY( DIFFICULTYICON_Y(k) );
+			m_sprDifficultyIcon[k].SetZoom( 1 );
+			this->AddChild( &m_sprDifficultyIcon[k] );
+			
+			m_textDifficultyText[k].SetHorizAlign( Actor::align_left );		
+			m_textDifficultyText[k].LoadFromFont( THEME->GetPathToF("Common normal") );
+			m_textDifficultyText[k].SetX( DIFFICULTYICON_X(k) + 20 );
+			m_textDifficultyText[k].SetY( DIFFICULTYICON_Y(k) );
+			m_textDifficultyText[k].SetZoom( .5 );
+			m_textDifficultyText[k].SetShadowLength( 1 );
+			m_textDifficultyText[k].SetDiffuse( DIFFICULTYICON_COLOR(k) );
+			this->AddChild( &m_textDifficultyText[k] );
+		}
+	}
+	SetDifficultyIconText( false );	// Make sure we show the names!
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprDifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x10") );
-		
-		m_sprDifficultyIcon[p].SetX( 200 );
-		m_sprDifficultyIcon[p].SetY( 200 );
-		m_sprDifficultyIcon[p].SetZoom( 10 );
-		
-		m_sprDifficultyIcon[p].SetState( 6 );
-		// 0=BEGINNER, 1=LIGHT, 2=STANDARD, 3=HEAVY, 4=NONSTOP/ONI, 5=ENDLESS, 6=RAVE
-		//this->AddChild( &m_sprDifficultyIcon[p] );
+		if( GAMESTATE->IsPlayerEnabled(p) ) // Only show their cursor, if they're enabled
+		{
+			m_sprHighlight[p].SetHorizAlign( Actor::align_left );
+			m_sprHighlight[p].Load( (PlayerNumber)p, false );
+			m_sprHighlight[p].SetX( DIFFICULTYICON_X(0) );
+			m_sprHighlight[p].SetY( DIFFICULTYICON_Y(0) );
+			m_sprHighlight[p].SetBarWidth( m_sprDifficultyIcon[0].GetZoomedWidth() + 20 + m_textDifficultyText[0].GetZoomedWidth() * 3 );
+			this->AddChild( &m_sprHighlight[p] );
+			this->MoveToHead( &m_sprHighlight[p] );
+		}
 
 		CLAMP( m_iChoice[p], 0, (int)m_ModeChoices.size()-1 );
 		m_bChosen[p] = false;
@@ -82,6 +114,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		m_sprPicture[p].SetX( PICTURE_X(p) );
+
 		m_sprPicture[p].SetY( PICTURE_Y(p) );
 		m_framePages.AddChild( &m_sprPicture[p] );
 		
@@ -194,15 +227,10 @@ void ScreenSelectDifficultyEX::MenuRight( PlayerNumber pn )
 	if( m_iChoice[pn] < (int)m_ModeChoices.size()-1 ) { Change( pn, m_iChoice[pn]+1 ); }
 }
 
-bool ScreenSelectDifficultyEX::PlayerIsOnCourse( PlayerNumber pn )
-{
-	if( m_iChoice[pn] > 3 ) { return true; }  
-	else { return false; }
-}
-
 bool ScreenSelectDifficultyEX::IsACourse( int mIndex )
 {
-	if( mIndex > 3 ) { return true; }
+	CString	MODECHOICENAME = m_ModeChoices[mIndex].name;
+	if( MODECHOICENAME.Left(7) != "arcade-" ) { return true; }
 	else { return false; }
 }
 
@@ -211,34 +239,32 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iChoice[p] = iChoice;
-		if( bSwitchingModes )
+		if( bSwitchingModes && ANIMATE_MODE_SWITCH )
 		{
 			// Only do this if we are going from a course~normal or vice-vera
-			m_fLockInputTime = 0.5f;
-			m_sprPicture[p].StopTweening();
-			m_sprInfo[p].StopTweening();
-			m_sprPicture[p].FadeOn( 0.0, "foldy bounce", 0.3f );
-			m_sprInfo[p].FadeOn( 0.0, "foldy bounce", 0.3f );
+			m_fLockInputTime = ANIMATE_MODE_SWITCH_LOCK_TIME;
+
+			m_sprPicture[p].Command( ANIMATE_MODE_SWITCH_PICTURE_OFF_COMMAND );
+			m_sprInfo[p].Command( ANIMATE_MODE_SWITCH_INFO_OFF_COMMAND );
+
+			/* It would be logical to seperate these, as I don't want the pic
+				to change until the OFF command has completed. Unfortunatly, 
+				until I find a way to correctly do that, sometimes the pic
+				changes before the OFF is even done, when OFF is set to only
+				take 0.0secs! Perhaps a loop here until GetTweenTimeLeft() = 0? */
+
+			m_sprPicture[p].Command( ANIMATE_MODE_SWITCH_PICTURE_ON_COMMAND );
+			m_sprInfo[p].Command( ANIMATE_MODE_SWITCH_INFO_ON_COMMAND );			
 		}
 		
 		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].name );
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
+		m_sprHighlight[p].SetXY( DIFFICULTYICON_X( iChoice ), DIFFICULTYICON_Y( iChoice ) );
 	}
 	
 	m_soundChange.Play();
-}
-
-bool ScreenSelectDifficultyEX::AllPlayersAreOnCourse()
-{
-	bool OC = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( IsACourse(m_iChoice[p]) ) { OC = true; }
-	}
-
-	return OC;
 }
 
 void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
@@ -252,20 +278,17 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		// Course/Mode & Difficulty
 		for( int pl=0; pl<NUM_PLAYERS; pl++ )
 		{
-			if( m_bChosen[pl] && IsACourse(iNewChoice) )
-			{
-					return;
-			}
+			if( m_bChosen[pl] && IsACourse(iNewChoice) ) { return; }
 		}
 	
-		// Going from a non-mode/course to a normal difficulty. 
+		// Going from a course/mode to a normal difficulty, or vice-versa. 
 		if( IsACourse(iNewChoice) && !IsACourse(m_iChoice[p]) || !IsACourse(iNewChoice) && IsACourse(m_iChoice[p]) )
 		{ 
 			SetAllPlayersSelection( iNewChoice, true );
 			return; 
 		}
 
-		// Going from course~course/mode~mode
+		// Going between courses/modes
 		if( IsACourse(iNewChoice) && IsACourse(m_iChoice[p]) )
 		{
 			SetAllPlayersSelection( iNewChoice, false );
@@ -277,9 +300,58 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
+		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]), DIFFICULTYICON_Y(m_iChoice[p]) );
+
 	}
 	
 	m_soundChange.Play();
+}
+
+bool ScreenSelectDifficultyEX::IsValidModeName( CString ModeName )
+{
+	if( ModeName == "arcade-beginner" || ModeName == "beginner" || ModeName == "arcade-easy" || ModeName == "easy" || ModeName == "arcade-medium" || ModeName == "medium" || ModeName == "arcade-hard" || ModeName == "hard" || ModeName == "nonstop" || ModeName == "oni" || ModeName == "endless" || ModeName == "rave" || ModeName == "battle" )
+	{
+		return true;
+	}
+	else { return false; };
+}
+
+int ScreenSelectDifficultyEX::GetIconIndex( CString DiffName )
+{
+	if( DiffName == "arcade-beginner" || DiffName == "beginner" ) { return 0; }
+	else if( DiffName == "arcade-easy" || DiffName == "easy" ) { return 1; }
+	else if( DiffName == "arcade-medium" || DiffName == "medium" ) { return 2; }
+	else if( DiffName == "arcade-hard" || DiffName == "hard" ) { return 3; }
+	else if( DiffName == "nonstop" ) { return 4; }
+	else if( DiffName == "oni" || DiffName == "challenge" ) { return 5; }
+	else if( DiffName == "endless" ) { return 6; }
+	else if( DiffName == "rave" || DiffName == "battle" ) { return 7; }
+	else { return 10; };
+}
+
+void ScreenSelectDifficultyEX::SetDifficultyIconText( bool bDisplayCourseItems )
+{
+	for( unsigned k=0; k < m_aModeChoices.size(); k++ )
+	{
+		CString	MMNAME = m_ModeChoices[k].name;
+		MMNAME.Replace( "arcade-", "" );
+		m_sprDifficultyIcon[k].SetState( GetIconIndex(MMNAME.c_str()) );
+		m_textDifficultyText[k].SetDiffuse( RageColor(1,1,1,1) );
+
+		/* Grammatically correct names. There has to be a better way to
+			do this.. Anyone? -- Miryo */
+		MMNAME.Replace( "beginner", "Beginner");
+		MMNAME.Replace( "easy", "Light" );
+		MMNAME.Replace( "medium", "Standard" );
+		MMNAME.Replace( "hard", "Heavy" );
+		MMNAME.Replace( "nonstop", "Nonstop");
+		MMNAME.Replace( "oni", "Oni");
+		MMNAME.Replace( "endless", "Endless");
+		MMNAME.Replace( "rave", "Rave");
+
+		m_textDifficultyText[k].SetText( MMNAME.c_str() );
+		m_textDifficultyText[k].SetDiffuse( DIFFICULTYICON_COLOR(k) );
+	}
 }
 
 void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
@@ -298,6 +370,15 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 
 	if( !IsACourse( m_iChoice[pn] ) || !AnotherPlayerSelected)
 	{
+		// Disable the courses
+		for( unsigned e=0; e < NUM_MODES || e <= 7; e++ )
+		{
+			if( IsACourse(e) )
+			{
+				m_textDifficultyText[e].SetDiffuse( RageColor(.5,.5,.5,1) );
+				m_sprDifficultyIcon[e].SetDiffuse( RageColor(.5,.5,.5,1) );
+			}
+		}
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
 		m_soundSelect.Play();
 	}
@@ -337,13 +418,6 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 {
 	unsigned p;
 
-	for( int page=0; page<NUM_PAGES; page++ )
-	{
-		//m_sprExplanation.Command( "linear,0.5;bounceend,0.5" );
-		//m_sprMore.Command( "linear,0.5;bounceend,0.5" );
-
-	}
-
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) ) { continue; }
@@ -357,11 +431,6 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 
 void ScreenSelectDifficultyEX::TweenOffScreen()
 {	
-//	const int page = m_CurrentPage;
-
-	//m_sprExplanation.Command( "linear,0.5;bounceend,0.5" );
-	//m_sprMore.Command( "linear,0.5;bounceend,0.5" );
-
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) ) { continue; }
@@ -377,10 +446,10 @@ void ScreenSelectDifficultyEX::TweenOffScreen()
 
 float ScreenSelectDifficultyEX::GetCursorX( PlayerNumber pn )
 {
-	return m_sprPicture[pn].GetX();// + CURSOR_OFFSET_X_FROM_PICTURE(pn);
+	return m_sprPicture[pn].GetX();
 }
 
 float ScreenSelectDifficultyEX::GetCursorY( PlayerNumber pn )
 {
-	return m_sprPicture[pn].GetY();// + CURSOR_OFFSET_Y_FROM_PICTURE(pn);
+	return m_sprPicture[pn].GetY();
 }
