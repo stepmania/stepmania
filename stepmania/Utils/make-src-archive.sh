@@ -22,7 +22,7 @@ cp -a Utils $PRODUCTVER/
 cp -a src $PRODUCTVER/
 
 cp BUGS COPYING.txt NEWS README-FIRST.html README-GUIDELINES Makefile.am aclocal.m4 \
-   autogen.sh configure Makefile.in configure.ac   $PRODUCTVER
+   configure Makefile.in configure.ac   $PRODUCTVER
 
 echo Pruning...
 cd $PRODUCTVER/src
