@@ -55,14 +55,8 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
-	// get unlock data first
-	CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->DancePointsUntilNextUnlock() );
-	CString sAP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->ArcadePointsUntilNextUnlock() );
-	CString sSP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->SongPointsUntilNextUnlock() );
-	
-	CString IconCommand = ICON_COMMAND;
-
 	int i;
+	CString IconCommand = ICON_COMMAND;
 	for(i=1; i <= NumUnlocks; i++)
 	{
 		Sprite* entry = new Sprite;
@@ -91,7 +85,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		}
 
 		entry->Command(IconCommand);
-
 		Unlocks.push_back(entry);
 
 		if ( !pSong->isLocked )
@@ -101,7 +94,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	// scrolling text
 	if (UNLOCK_TEXT_SCROLL != 0)
 	{
-		int NumberUnlocks = NumUnlocks;
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
@@ -116,11 +108,11 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		float SECS_PER_CYCLE = 0;
 
 		if (UNLOCK_TEXT_SCROLL != 3)
-			SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows + NumberUnlocks);
+			SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows + NumUnlocks);
 		else
-			SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumberUnlocks + 4);
+			SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumUnlocks + 4);
 
-		for(i = 1; i <= NumberUnlocks; i++)
+		for(i = 1; i <= NumUnlocks; i++)
 		{
 			BitmapText* text = new BitmapText;
 
@@ -129,15 +121,12 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 			CString DisplayedSong = DISPLAYED_SONG(i);
 			if (USE_UNLOCKS_DAT == 1)
-			{
 				if ((unsigned)i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
 					DisplayedSong = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
-			}
-
 			
 			DisplayedSong.MakeUpper();
 			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
-			if ( pSong == NULL )
+			if ( pSong == NULL )  // no such song
 				continue;
 
 			/* Reset zoom before using SetTextMaxWidth. */
@@ -151,7 +140,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 					title = title + "\n" + subtitle;
 				text->SetTextMaxWidth( MaxWidth, title );
 			}
-			else					 // song is missing
+			else		 // song is missing, might be a course
 			{
 				Course *crs = SONGMAN->FindCourse( DisplayedSong );
 				if (crs != NULL)
@@ -168,11 +157,11 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 			if (pSong != NULL && pSong->m_pSong != NULL)
 			{
-				if( pSong->isLocked)
+				if( pSong->isLocked) // song is locked
 				{
 					text->SetText("???");
 					text->SetZoomX(1);
-				} else {
+				} else {             // song is unlocked, change color
 					RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
 					text->SetGlobalDiffuseColor(color);
 				}
@@ -181,7 +170,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			text->SetXY(ScrollingTextX, ScrollingTextStartY);
 
 			if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NumUnlocks)
-			{
+			{   // special command for last unlocks when extreme-style scrolling is in effect
 				float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NumUnlocks;
 				float StopOffPoint = ScrollingTextEndY - TargetRow / UNLOCK_TEXT_SCROLL_ROWS * (ScrollingTextEndY - ScrollingTextStartY);
 				float FirstCycleTime = (UNLOCK_TEXT_SCROLL_ROWS - TargetRow) * SECS_PER_CYCLE;
@@ -236,16 +225,13 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	if (UNLOCK_TEXT_SCROLL == 3)
 	{
-		int NumberUnlocks = NumUnlocks;
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
-		// float ScrollingTextZoom = UNLOCK_TEXT_SCROLL_ZOOM;
 		float ScrollingTextRows = UNLOCK_TEXT_SCROLL_ROWS;
 		float MaxWidth = UNLOCK_TEXT_SCROLL_MAX_WIDTH;
 		float SecondsToScroll = TIME_TO_DISPLAY - 1;
-		float SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumberUnlocks + 4);
-
+		float SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumUnlocks + 4);
 
 		for(i=1; i <= UNLOCK_TEXT_SCROLL_ROWS; i++)
 		{
@@ -292,7 +278,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
-			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			// new unlock graphic
 			NewIcon->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", NextIcon)) );
@@ -303,7 +289,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 
-			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			ItemIcons.push_back(NewIcon);
 			item.push_back(NewText);
@@ -320,13 +306,16 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	
 	CString PointDisplay = TYPE_TO_DISPLAY;
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
+	{
+		CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->DancePointsUntilNextUnlock() );
 		PointsUntilNextUnlock.SetText( sDP );
-
-	if (PointDisplay == "AP" || PointDisplay == "Arcade")
+	} else if (PointDisplay == "AP" || PointDisplay == "Arcade") {
+		CString sAP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->ArcadePointsUntilNextUnlock() );
 		PointsUntilNextUnlock.SetText( sAP );
-
-	if (PointDisplay == "SP" || PointDisplay == "Song")
+	} else if (PointDisplay == "SP" || PointDisplay == "Song") {
+		CString sSP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->SongPointsUntilNextUnlock() );
 		PointsUntilNextUnlock.SetText( sSP );
+	}
 
 	PointsUntilNextUnlock.SetZoom( POINTS_ZOOM );
 	SET_XY( PointsUntilNextUnlock );
