@@ -30,7 +30,6 @@ BeginnerHelper::BeginnerHelper()
 	m_bFlashEnabled = false;
 	m_bInitialized = false;
 	this->AddChild(&m_sBackground);
-	this->AddChild(&m_sFlash);
 }
 
 BeginnerHelper::~BeginnerHelper()
@@ -100,7 +99,6 @@ void BeginnerHelper::Initialize( int iDancePadType, NoteData *pNotes )
 		case 1:m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" ); break;
 		case 2:m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" ); break;
 	}
-	this->AddChild( &m_mDancePad );
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
@@ -131,8 +129,6 @@ void BeginnerHelper::Initialize( int iDancePadType, NoteData *pNotes )
 			m_mDancer[pl].SetY( HELPER_Y + 10 );
 			m_mDancer[pl].SetZoom( 20 );
 			m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
-
-			this->AddChild( &m_mDancer[pl] );
 		}
 	}
 
@@ -144,7 +140,7 @@ void BeginnerHelper::FlashOnce()
 	m_sFlash.SetDiffuseAlpha(1);
 	m_sFlash.SetEffectNone();
 	m_sFlash.StopTweening();
-	m_sFlash.BeginTweening((GAMESTATE->m_fCurBPS/4));
+	m_sFlash.BeginTweening( 1/GAMESTATE->m_fCurBPS * 0.5);
 	m_sFlash.SetDiffuseAlpha(0);
 }
 
@@ -153,7 +149,8 @@ void BeginnerHelper::DrawPrimitives()
 	if(!m_bInitialized)
 		return;
 
-	m_sBackground.Draw();
+	ActorFrame::DrawPrimitives();
+
 	m_sFlash.Draw();
 
 	DISPLAY->SetLighting( true );
@@ -191,7 +188,7 @@ void BeginnerHelper::Step( int CSTEP )
 			{
 			case ST_LEFT:	m_mDancer[p].PlayAnimation( "Step-LEFT" ); break;
 			case ST_RIGHT:	m_mDancer[p].PlayAnimation( "Step-RIGHT" ); break;
-			case ST_UP:	m_mDancer[p].PlayAnimation( "Step-UP" ); break;
+			case ST_UP:		m_mDancer[p].PlayAnimation( "Step-UP" ); break;
 			case ST_DOWN:	m_mDancer[p].PlayAnimation( "Step-DOWN" ); break;
 			case ST_JUMPLR: m_mDancer[p].PlayAnimation( "Step-JUMPLR" ); break;
 			case ST_JUMPUD:
@@ -199,10 +196,10 @@ void BeginnerHelper::Step( int CSTEP )
 				m_mDancer[p].PlayAnimation( "Step-JUMPLR" );
 				
 				m_mDancer[p].StopTweening();
-				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS/8, TWEEN_LINEAR );
+				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
 				m_mDancer[p].SetRotationY( 90 );
-				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS/2 ); //sleep between jump-frames
-				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS/6, TWEEN_LINEAR );
+				m_mDancer[p].BeginTweening( (1/GAMESTATE->m_fCurBPS) ); //sleep between jump-frames
+				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
 				m_mDancer[p].SetRotationY( 0 );
 				break;
 			}
@@ -217,20 +214,13 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	float beat = fDeltaTime * GAMESTATE->m_fCurBPS;
 
-	m_sFlash.Update( beat );
-	for( int scu=0; scu<NUM_PLAYERS*2; scu++ )
-		m_sStepCircle[scu].Update( beat );
-
-	for( int pu=0; pu<NUM_PLAYERS; pu++ )
-		m_mDancer[pu].Update( beat );	//Update dancers
-
 	int iStep = 0;
-	if( (m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.1f)) ) ) )
+	if( (m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
 		FlashOnce();
-	if((m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)))))
+	if((m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)))))
 	{
 		for( int k=0; k<m_NoteData.GetNumTracks(); k++ )
-			if( m_NoteData.GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.45f)) ) == TAP_TAP )
+			if( m_NoteData.GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)) ) == TAP_TAP )
 			{
 				switch(k)
 				{
@@ -242,4 +232,14 @@ void BeginnerHelper::Update( float fDeltaTime )
 			}
 		Step( iStep );
 	}
+
+	ActorFrame::Update( fDeltaTime );
+	m_mDancePad.Update( fDeltaTime );
+
+	m_sFlash.Update( fDeltaTime );
+	for( int scu=0; scu<NUM_PLAYERS*2; scu++ )
+		m_sStepCircle[scu].Update( beat );
+
+	for( int pu=0; pu<NUM_PLAYERS; pu++ )
+		m_mDancer[pu].Update( beat );	//Update dancers
 }
