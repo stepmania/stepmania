@@ -53,8 +53,8 @@
 //
 // Defines
 //
-#define PREV_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define PREV_SCREEN								THEME->GetMetric ("ScreenGameplay","PrevScreen")
+#define NEXT_SCREEN								THEME->GetMetric ("ScreenGameplay","NextScreen")
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
 #define EVAL_ON_FAIL							THEME->GetMetricB("ScreenGameplay","ShowEvaluationOnFail")
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB("ScreenGameplay","ShowScoreInRave")
@@ -2145,7 +2145,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		GAMESTATE->CancelStage();
 
-		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 
 	case SM_GoToStateAfterCleared:
@@ -2159,7 +2159,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SongFinished();
 		StageFinished( false );
 
-		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 
 	case SM_LoseFocus:
@@ -2218,7 +2218,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if(EVAL_ON_FAIL) // go to the eval screen if we fail
 					SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
 				else // the theme says just fail and go back to the song select for event mode
-					SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+					SCREENMAN->SetNewScreen( PREV_SCREEN );
 			}
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );

@@ -45,8 +45,8 @@
 #define HELP_TEXT							THEME->GetMetric ("ScreenSelectCharacter","HelpText")
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectCharacter","SleepAfterTweenOffSeconds")
-#define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectCharacter","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectCharacter","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define PREV_SCREEN							THEME->GetMetric ("ScreenSelectCharacter","PrevScreen")
+#define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectCharacter","NextScreen")
 #define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
 #define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
 #define ICONS_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
@@ -214,10 +214,10 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart(PLAYER_1);
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

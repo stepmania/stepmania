@@ -570,8 +570,7 @@ void ScreenOptionsMaster::ExportOptions()
 	}
 	CHECKPOINT;
 
-	// NEXT_SCREEN(GAMESTATE->m_PlayMode) );
-	// XXX: handle different destinations based on play mode?
+	// NEXT_SCREEN;
 	if( m_NextScreen == "" )
 		m_NextScreen = NEXT_SCREEN;
 

@@ -21,9 +21,9 @@
 #include "PrefsManager.h"
 
 
-#define HELP_TEXT			THEME->GetMetric("ScreenInstructions","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("ScreenInstructions","TimerSeconds")
-#define NEXT_SCREEN( pm )	THEME->GetMetric("ScreenInstructions","NextScreen"+Capitalize(PlayModeToString(pm)) )
+#define HELP_TEXT		THEME->GetMetric("ScreenInstructions","HelpText")
+#define TIMER_SECONDS	THEME->GetMetricI("ScreenInstructions","TimerSeconds")
+#define NEXT_SCREEN		THEME->GetMetric("ScreenInstructions","NextScreen")
 
 
 ScreenInstructions::ScreenInstructions( CString sName ) : Screen( sName )
@@ -114,7 +114,7 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );		
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

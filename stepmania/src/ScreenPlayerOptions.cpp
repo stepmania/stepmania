@@ -20,8 +20,8 @@
 #include "CodeDetector.h"
 
 
-#define PREV_SCREEN( play_mode )	THEME->GetMetric ("ScreenPlayerOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_SCREEN( play_mode )	THEME->GetMetric ("ScreenPlayerOptions","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
+#define NEXT_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","NextScreen")
 
 ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
@@ -68,7 +68,7 @@ void ScreenPlayerOptions::GoToPrevState()
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
 	else
-		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 }
 
 void ScreenPlayerOptions::GoToNextState()
@@ -80,7 +80,7 @@ void ScreenPlayerOptions::GoToNextState()
 		GAMESTATE->AdjustFailType();
 
 		if( m_bGoToOptions )
-			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		else
 			SCREENMAN->SetNewScreen( ScreenSongOptions::GetNextScreen() );
 	}
