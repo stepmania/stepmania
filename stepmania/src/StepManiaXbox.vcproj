@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".,sdl_xbox_includes,SDL_image-1.2;vorbis,libjpeg,lua-5.0/include"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,_DEBUG,OGG_ONLY,_INC_WINDOWS"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -239,7 +239,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".;sdl_xbox_includes;SDL_image-1.2;vorbis,libjpeg,lua-5.0/include"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
@@ -257,7 +257,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
+				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
 				AdditionalDependencies="$(intdir)\verstub.obj xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
 				OutputFile="../StepMania.exe"
 				LinkIncremental="1"
@@ -1253,19 +1253,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 				</Filter>
 				<Filter
-					Name="LowLevelWindow"
-					Filter="">
-					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow.h">
-					</File>
-					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.cpp">
-					</File>
-					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.h">
-					</File>
-				</Filter>
-				<Filter
 					Name="Lights"
 					Filter="">
 					<File
@@ -2180,12 +2167,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				</File>
 				<File
 					RelativePath="SDL_SaveJPEG.h">
-				</File>
-				<File
-					RelativePath="SDL_utils.cpp">
-				</File>
-				<File
-					RelativePath="SDL_utils.h">
 				</File>
 				<Filter
 					Name="pcre"
