@@ -245,9 +245,18 @@ void RageBitmapTexture::Create()
 	 * done *before* we set up the palette, since it might change it. */
 	FixHiddenAlpha(img);
 
+	/* Make we're using a supported format. 
+	 * Every card supports either RGBA8 or RGBA4. */
+	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
+	{
+		pixfmt = FMT_RGBA8;
+		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
+			pixfmt = FMT_RGBA4;
+	}
+		
+
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
-
 	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);

@@ -253,7 +253,12 @@ RageDisplay_D3D::RageDisplay_D3D( bool windowed, int width, int height, int bpp,
 	}
 
 
-	SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
+	if( SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile ) )
+		return;
+	if( SetVideoMode( false, width, height, bpp, rate, vsync, sWindowTitle, sIconFile ) )
+		return;
+	if( SetVideoMode( false, width, height, 16, rate, vsync, sWindowTitle, sIconFile ) )
+		return;
 }
 
 void RageDisplay_D3D::Update(float fDeltaTime)
@@ -343,8 +348,8 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 		return fmtBackBuffer;
 	}
 
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-	RageException::Throw( "Couldn't find an appropriate back buffer format." );
+	LOG->Trace( "Couldn't find an appropriate back buffer format." );
+	return (D3DFORMAT)-1;
 }
 
 #ifndef _XBOX
@@ -365,6 +370,9 @@ HWND GetHwnd()
 /* Set the video mode. */
 bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
+	if( FindBackBufferType( windowed, bpp ) == -1 )	// no possible back buffer formats
+		return false;
+
 	/* Set SDL window title and icon -before- creating the window */
 	SDL_WM_SetCaption(sWindowTitle, "");
 	mySDL_WM_SetIcon( sIconFile );
@@ -891,6 +899,9 @@ void RageDisplay_D3D::UpdateTexture(
 	rect.bottom = height - yoffset;
 
 	D3DLOCKED_RECT lr;
+
+	
+	
 	pTex->LockRect( 0, &lr, &rect, 0 );
 	
 	// copy each row
