@@ -774,6 +774,58 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 	return bAnyoneHasANote;
 }
 
+void ScreenGameplay::UpdateLyrics( float fDeltaTime )
+{
+	//
+	// Check if we should show lyrics now
+	//
+	if( !m_bHasLyrics )
+		return;
+
+	m_fLyricsTime += fDeltaTime;
+	float	fStartTime = (GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime);
+
+	// Make sure we don't go over the array's boundry
+	if( m_iCurLyricNumber <= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
+	{
+		// Check if it's time to animate the old lyrics to off-screen
+		if( (fStartTime - m_fLyricsTime) <= .30 || (fStartTime - m_fLyricsTime) <= -.30f)
+		{
+			m_textLyrics.FadeOff( 0, "foldy", .20f);
+		}
+
+		if( m_fLyricsTime >= fStartTime )
+		{
+			/*I figure for longer lines of text, the Lyric display object should
+				be scaled down, if needed, by the .ScaleTo() function. But somehow
+				it jus ain't working for me at all.. anyone able to do this
+				properly?? We prolly should also add detection of where to put
+				the Lyric object, if the arrows are on reverse? Jus an idea, 
+				but it kinda defeats the purpose of the Lyric object X/Y being a
+				theme element :)
+			
+				BTW: Once the function is done, this will also be where the color
+						of this lyric block will be set -- Miryokuteki */
+			//m_textLyrics.SetDiffuse(COLOR HERE);
+			
+			/*if( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric == "" || GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric == " " )
+			{
+				For some reason, once this fades off, it never comes back when 
+				it's called! -- Miryokuteki
+
+				m_textLyrics.FadeOff( 0, "fade", .10f );
+				m_iCurLyricNumber++;
+			}
+			else
+			{
+			*/
+				m_textLyrics.FadeOn( 0, "foldy", .20f );
+				m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
+				m_iCurLyricNumber++;
+			//}
+		}
+	}
+}
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
@@ -841,56 +893,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
-		
-		//
-		// Check if we should show lyrics now
-		//
-		if( (m_bHasLyrics) ) // Every song without lyrics would crash here.. bug fix -- Miryokuteki
-		{
-			m_fLyricsTime += fDeltaTime;
-			float	fStartTime = (GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime);
-
-			// Make sure we don't go over the array's boundry
-			if( m_iCurLyricNumber <= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
-			{
-				// Check if it's time to animate the old lyrics to off-screen
-				if( (fStartTime - m_fLyricsTime) <= .30 || (fStartTime - m_fLyricsTime) <= -.30f)
-				{
-					m_textLyrics.FadeOff( 0, "foldy", .20f);
-				}
-
-				if( m_fLyricsTime >= fStartTime )
-				{
-					/*I figure for longer lines of text, the Lyric display object should
-						be scaled down, if needed, by the .ScaleTo() function. But somehow
-						it jus ain't working for me at all.. anyone able to do this
-						properly?? We prolly should also add detection of where to put
-						the Lyric object, if the arrows are on reverse? Jus an idea, 
-						but it kinda defeats the purpose of the Lyric object X/Y being a
-						theme element :)
-					
-						BTW: Once the function is done, this will also be where the color
-							 of this lyric block will be set -- Miryokuteki */
-					//m_textLyrics.SetDiffuse(COLOR HERE);
-					
-					/*if( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric == "" || GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric == " " )
-					{
-						For some reason, once this fades off, it never comes back when 
-						it's called! -- Miryokuteki
-
-						m_textLyrics.FadeOff( 0, "fade", .10f );
-						m_iCurLyricNumber++;
-					}
-					else
-					{
-					*/
-						m_textLyrics.FadeOn( 0, "foldy", .20f );
-						m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
-						m_iCurLyricNumber++;
-					//}
-				}
-			}
-		}	
+		UpdateLyrics(fDeltaTime);
 		
 		//
 		// Update players' alive time
