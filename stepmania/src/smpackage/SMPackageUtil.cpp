@@ -90,7 +90,7 @@ bool SetPref( CString name, bool val )
 }
 
 /* Get a package directory.  For most paths, this is the first two components.  For
- * songs, this is the first three. */
+ * songs and note skins, this is the first three. */
 CString GetPackageDirectory(CString path)
 {
 	if( path.Find("CVS") != -1 )
@@ -100,7 +100,7 @@ CString GetPackageDirectory(CString path)
 	split( path, "\\", Parts );
 
 	unsigned NumParts = 2;
-	if( !Parts[0].CompareNoCase("songs") )
+	if( !Parts[0].CompareNoCase("Songs") || !Parts[0].CompareNoCase("NoteSkins") )
 		NumParts = 3;
 	if( Parts.size() < NumParts )
 		return "";
