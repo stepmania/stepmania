@@ -441,6 +441,12 @@
 			<File
 				RelativePath="StyleInput.h">
 			</File>
+			<File
+				RelativePath="SongCacheIndex.cpp">
+			</File>
+			<File
+				RelativePath="SongCacheIndex.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="File Types"
