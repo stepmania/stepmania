@@ -1026,35 +1026,25 @@ void ScreenGameplay::LoadNextSong()
 	// Load cabinet lights data
 	//
 	{
-		vector<Steps*> vSteps;
 		m_CabinetLightsNoteData.Init();
 		ASSERT( GAMESTATE->m_pCurSong );
-		
-		// From what I understood, if there is no pre-defined step set for lights, then we fall-back
-		//   onto the specified difficulty's stepchart, flashing all cabinet lights on each tap note.
-		//   -- Miryokuteki
-		//	Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
 
-		vSteps = GAMESTATE->m_pCurSong->GetAllSteps( STEPS_TYPE_LIGHTS_CABINET);
+		Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+		if( pSteps != NULL )
+		{
+			pSteps->GetNoteData( &m_CabinetLightsNoteData );
+		}
+		else
+		{
+			pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+			if( pSteps )
+			{
+				NoteData TapNoteData;
+				pSteps->GetNoteData( &TapNoteData );
+				NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
+			}
+		}
 
-		//If there are no light steps do this (to get current style's steps
-		if (vSteps.empty())
-			GAMESTATE->m_pCurSong->GetSteps(vSteps,
-				GAMESTATE->GetCurrentStyle()->m_StepsType);
-		
-		//Obtain the default steps (just in case the desired difficulty does not exist)
-		if(!vSteps.empty())
-			vSteps[0]->GetNoteData(&m_CabinetLightsNoteData);
-
-		//Scan through all available steps, to see if any match our desired difficulty
-		for (unsigned i = 0; i < vSteps.size(); ++i)
-			if (StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) ==
-				vSteps[i]->GetDifficulty())
-					vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );
-
-		//if( pSteps != NULL )
-		//	pSteps->GetNoteData( &m_CabinetLightsNoteData );
-		
 		// Convert to 4s so that we can check if we're inside a hold with just 
 		// GetTapNote().
 		m_CabinetLightsNoteData.ConvertHoldNotesTo4s();
