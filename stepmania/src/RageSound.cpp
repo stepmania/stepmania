@@ -178,6 +178,12 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	m_sFilePath = sSoundFilePath;
 	position = 0;
 
+	
+	// Check for "loop" hint
+	if( m_sFilePath.Find("loop") != -1 )
+		SetStopMode( M_LOOP );
+
+
     SoundReader_FileReader *NewSample = new RageSoundReader_LowLevel;
 	if(!NewSample->Open(sSoundFilePath.c_str()))
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",

@@ -256,7 +256,7 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 	}
 }
 
-void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float length_sec, float fade_len)
+void RageSoundManager::PlayMusic(CString file, bool force_loop, float start_sec, float length_sec, float fade_len)
 {
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), music->GetLoadedFilePath().c_str());
 	if(music->IsPlaying())
@@ -272,8 +272,8 @@ void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float
 		return;
 
 	music->Load( file, false );
-
-	music->SetStopMode(loop? RageSound::M_LOOP:RageSound::M_STOP);
+	if( force_loop )
+		music->SetStopMode( RageSound::M_LOOP );
 
 	if(start_sec == -1)
 		music->SetStartSeconds();

@@ -60,7 +60,7 @@ public:
 	 * itself to this. */
 	set<RageSound *> all_sounds;
 
-	void PlayMusic(CString file, bool loop = true, float start_sec = -1, float length_sec = -1, float fade_len = 0);
+	void PlayMusic(CString file, bool force_loop = false, float start_sec = -1, float length_sec = -1, float fade_len = 0);
 	void StopMusic() { PlayMusic(""); }
 	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
 };
