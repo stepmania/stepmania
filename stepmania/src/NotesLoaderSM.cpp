@@ -423,7 +423,7 @@ bool SMLoader::LoadEditFromBuffer( const CString &sBuffer, CString sEditFilePath
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer );
-	LoadEditFromMsd( msd, sEditFilePath, slot );
+	return LoadEditFromMsd( msd, sEditFilePath, slot );
 }
 
 bool SMLoader::LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, ProfileSlot slot )
