@@ -1013,14 +1013,6 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	return fFirstSecond - fStartSecond;
 }
 
-bool ScreenGameplay::AllFailedEarlier() const
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && !g_CurStageStats.bFailedEarlier[p] )
-			return false;
-	return true;
-}
-
 // play assist ticks
 bool ScreenGameplay::IsTimeToPlayTicks() const
 {
@@ -1380,7 +1372,7 @@ void ScreenGameplay::UpdateCheckFail()
 		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
 			GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )
 		{
-			if( !AllFailedEarlier() )	// if not the last one to fail
+			if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
 			{
 				// kill them!
 				m_soundOniDie.PlayRandom();

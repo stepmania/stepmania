@@ -224,6 +224,14 @@ bool StageStats::AllFailed() const
 	return true;
 }
 
+bool StageStats::AllFailedEarlier() const
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) && !bFailedEarlier[p] )
+			return false;
+	return true;
+}
+
 float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 {
 	if( iPossibleDancePoints[pn] == 0 )

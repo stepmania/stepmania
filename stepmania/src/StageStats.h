@@ -28,6 +28,7 @@ struct StageStats
 	Grade GetGrade( PlayerNumber pn ) const;
 	bool OnePassed() const;
 	bool AllFailed() const;
+	bool AllFailedEarlier() const;
 	float GetPercentDancePoints( PlayerNumber pn ) const;
 
 	PlayMode	playMode;
