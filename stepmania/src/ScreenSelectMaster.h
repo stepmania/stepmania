@@ -39,8 +39,8 @@ public:
 
 protected:
 	enum Page { PAGE_1, PAGE_2, NUM_PAGES };	// on PAGE_2, cursors are locked together
-	Page GetPage( int iChoiceIndex );
-	Page GetCurrentPage();
+	Page GetPage( int iChoiceIndex ) const;
+	Page GetCurrentPage() const;
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();

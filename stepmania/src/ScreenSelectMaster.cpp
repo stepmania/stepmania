@@ -29,7 +29,6 @@
 #define NUM_CHOICES_ON_PAGE_1					THEME->GetMetricI(m_sName,"NumChoicesOnPage1")
 #define CURSOR_OFFSET_X_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1))
 #define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
-#define DISABLED_COLOR							THEME->GetMetricC(m_sName,"DisabledColor")
 #define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF(m_sName,"PreSwitchPageSeconds")
 #define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
 
@@ -203,17 +202,9 @@ int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
 
 void ScreenSelectMaster::UpdateSelectableChoices()
 {
-	/* XXX: If a player joins during the tween-in, this diffuse change
-	 * will be undone by the tween.  Hmm. */
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
-	{
-		if( m_aModeChoices[c].IsPlayable() )
-			for( int i=0; i<NUM_ICON_PARTS; i++ )
-				m_sprIcon[i][c]->SetDiffuse( RageColor(1,1,1,1) );
-		else
-			for( int i=0; i<NUM_ICON_PARTS; i++ )
-				m_sprIcon[i][c]->SetDiffuse( DISABLED_COLOR );
-	}
+		for( int i=0; i<NUM_ICON_PARTS; i++ )
+			COMMAND( m_sprIcon[i][c], m_aModeChoices[c].IsPlayable()? "Enabled":"Disabled" );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -397,15 +388,12 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 	return true;
 }
 
-ScreenSelectMaster::Page ScreenSelectMaster::GetPage( int iChoiceIndex )
+ScreenSelectMaster::Page ScreenSelectMaster::GetPage( int iChoiceIndex ) const
 {
-	if( iChoiceIndex < NUM_CHOICES_ON_PAGE_1 )
-		return PAGE_1;
-	else
-		return PAGE_2;
+	return iChoiceIndex < NUM_CHOICES_ON_PAGE_1? PAGE_1:PAGE_2;
 }
 
-ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage()
+ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage() const
 {
 	// Both players are guaranteed to be on the same page.
 	return GetPage( m_iChoice[GAMESTATE->m_MasterPlayerNumber] );
@@ -430,6 +418,8 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 )
+		return;
+	if( m_bChosen[pn] == true )
 		return;
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), m_aModeChoices[m_iChoice[pn]].m_sName.c_str())) );
