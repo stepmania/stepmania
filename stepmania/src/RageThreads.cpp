@@ -6,8 +6,7 @@
  * If there's any way to avoid them, take it!  Threaded code an order of
  * magnitude more complicated, harder to debug and harder to make robust.
  *
- * That said, here are a few helpers for when they're unavoidable.  (Use
- * SDL for the rest.)
+ * That said, here are a few helpers for when they're unavoidable.
  */
 
 #include "global.h"
