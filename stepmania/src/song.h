@@ -258,7 +258,7 @@ public:
 	int	GetNumNotesWithGrade( Grade g ) const;
 
 	void AddNotes( Steps* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
-	void RemoveNotes( Steps* pNotes );
+	void RemoveNotes( const Steps* pNotes );
 };
 
 CString MakeSortString( CString s );

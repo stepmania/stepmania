@@ -1583,7 +1583,7 @@ void Song::AddNotes( Steps* pNotes )
 	m_apNotes.push_back( pNotes );
 }
 
-void Song::RemoveNotes( Steps* pNotes )
+void Song::RemoveNotes( const Steps* pNotes )
 {
 	// Avoid any stale Note::parent pointers by removing all AutoGen'd Steps,
 	// then adding them again.
