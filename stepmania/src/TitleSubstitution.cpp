@@ -8,7 +8,7 @@
 
 #include "RageFile.h"
 
-#define TRANSLATION_PATH BASE_PATH "Data" SLASH "Translation.dat"
+#define TRANSLATION_PATH "Data/Translation.dat"
 
 struct TitleTrans
 {

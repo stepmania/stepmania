@@ -47,7 +47,7 @@
 
 #include <set>
 
-#define CACHE_DIR BASE_PATH "Cache" SLASH
+#define CACHE_DIR "Cache/"
 
 const int FILE_CACHE_VERSION = 131;	// increment this when Song or Steps changes to invalidate cache
 

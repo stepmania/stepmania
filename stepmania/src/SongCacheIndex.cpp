@@ -9,7 +9,7 @@
 #include "song.h"
 #include "arch/arch.h"
 
-#define CACHE_DIR BASE_PATH "Cache" SLASH
+#define CACHE_DIR "Cache/"
 
 SongCacheIndex *SONGINDEX;
 

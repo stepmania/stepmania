@@ -18,7 +18,7 @@
 #include <math.h>
 #include "arch/arch.h"
 
-#define AI_PATH BASE_PATH "Data" SLASH "AI.ini"
+#define AI_PATH "Data/AI.ini"
 
 struct TapScoreDistribution
 {

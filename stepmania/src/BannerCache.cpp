@@ -23,7 +23,7 @@
 
 #include "Banner.h"
 
-#define CACHE_DIR BASE_PATH "Cache" SLASH
+#define CACHE_DIR "Cache/"
 
 /* Call CacheBanner to cache a banner by path.  If the banner is already
  * cached, it'll be recreated.  This is efficient if the banner hasn't changed,

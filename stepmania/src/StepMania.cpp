@@ -672,8 +672,8 @@ static void RestoreAppPri()
 }
 
 
-#define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
-#define STATIC_INI_PATH BASE_PATH "Data" SLASH "Static.ini"
+#define GAMEPREFS_INI_PATH "Data/GamePrefs.ini"
+#define STATIC_INI_PATH "Data/Static.ini"
 
 void ChangeCurrentGame( Game g )
 {
@@ -773,7 +773,7 @@ static void MountTreeOfZips( const CString &dir )
 	}
 }
 
-#define UNLOCKS_PATH BASE_PATH "Data" SLASH "Unlocks.dat"
+#define UNLOCKS_PATH BASE_PATH "Data/Unlocks.dat"
 
 #ifdef _XBOX
 char *xboxargv[] = { "d:\\default.xbe" };
