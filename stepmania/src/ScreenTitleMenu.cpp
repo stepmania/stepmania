@@ -15,7 +15,6 @@
 #include "ScreenCaution.h"
 #include "ScreenMapInstruments.h"
 #include "ScreenGameOptions.h"
-#include "ScreenSynchronizeMenu.h"
 #include "ScreenEdit.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
@@ -39,15 +38,14 @@
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
 	"SWITCH GAME",
-	"CONFIG INSTRUMENTS",
+	"KEY/JOY MAPPING",
 	"GAME OPTIONS",
-	"SYNCHRONIZE",
-	"EDIT/RECORD",
+	"EDIT/RECORD/SYNCH",
 	"EXIT",
 };
 
 const float CHOICES_START_Y		= 66;
-const float CHOICES_GAP_Y		= 50;
+const float CHOICES_GAP_Y		= 56;
 
 const float HELP_X				= CENTER_X;
 const float HELP_Y				= SCREEN_HEIGHT-55;
@@ -59,7 +57,6 @@ const ScreenMessage SM_GoToSelectStyle		=	ScreenMessage(SM_User+3);
 const ScreenMessage SM_GoToSelectGame		=	ScreenMessage(SM_User+4);
 const ScreenMessage SM_GoToMapInstruments	=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_GoToGameOptions		=	ScreenMessage(SM_User+6);
-const ScreenMessage SM_GoToSynchronize		=	ScreenMessage(SM_User+9);
 const ScreenMessage SM_GoToEdit				=	ScreenMessage(SM_User+10);
 const ScreenMessage SM_DoneOpening			=	ScreenMessage(SM_User+11);
 const ScreenMessage SM_GoToEz2				=	ScreenMessage(SM_User+12);
@@ -196,9 +193,6 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToGameOptions:
 		SCREENMAN->SetNewScreen( new ScreenGameOptions );
 		break;
-	case SM_GoToSynchronize:
-		SCREENMAN->SetNewScreen( new ScreenSynchronizeMenu );
-		break;
 	case SM_GoToEdit:
 		SCREENMAN->SetNewScreen( new ScreenEditMenu );
 		break;
@@ -285,10 +279,6 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 	case CHOICE_GAME_OPTIONS:
 		m_soundSelect.PlayRandom();
 		m_Fade.CloseWipingRight( SM_GoToGameOptions );
-		return;
-	case CHOICE_SYNCHRONIZE:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToSynchronize );
 		return;
 	case CHOICE_EDIT:
 		m_soundSelect.PlayRandom();

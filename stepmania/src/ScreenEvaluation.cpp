@@ -662,6 +662,12 @@ void ScreenEvaluation::MenuStart( const PlayerNumber p )
 {
 	TweenOffScreen();
 
+	if( PREFSMAN->m_bEventMode )
+	{
+		PREFSMAN->m_iCurrentStageIndex++;
+		m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+		return;
+	}
 
 	switch( m_ResultMode )
 	{

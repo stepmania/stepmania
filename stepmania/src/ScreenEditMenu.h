@@ -65,7 +65,10 @@ private:
 
 	CArray<Song*, Song*> m_pSongs;
 	int m_iSelectedSong;		// index into m_pSongs
-	BitmapText m_textSong;
+	Banner  m_Banner;
+	TextBanner  m_TextBanner;
+	Sprite  m_sprArrowLeft;
+	Sprite  m_sprArrowRight;
 
 	NotesType m_CurNotesType;	// index into enum GameMode
 	BitmapText m_textNotesType;

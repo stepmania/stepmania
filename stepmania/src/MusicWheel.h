@@ -185,17 +185,17 @@ protected:
 		switch( so )
 		{
 		case SORT_GROUP:	
-			sTemp = pSong->GetGroupName();
+			sTemp = pSong->m_sGroupName;
 			return sTemp;
 //		case SORT_ARTIST:	
-//			sTemp = pSong->GetArtist();
+//			sTemp = pSong->m_sArtist;
 //			sTemp.MakeUpper();
 //			sTemp =  (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
 //			if( IsAnInt(sTemp) )
 //				sTemp = "NUM";
 //			return sTemp;
 		case SORT_TITLE:	
-			sTemp = pSong->GetMainTitle();
+			sTemp = pSong->GetFullTitle();
 			sTemp.MakeUpper();
 			sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
 			if( IsAnInt(sTemp) )

@@ -60,7 +60,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 
 	for( i=0; i<pCourse->m_iStages-1; i++ )
 	{
-		m_textContents[i].SetText( pCourse->m_apSongs[i]->GetMainTitle() );
+		m_textContents[i].SetText( pCourse->m_apSongs[i]->GetFullTitle() );
 		m_textContents[i].SetDiffuseColor( DifficultyClassToColor(pCourse->m_apNotes[i]->m_DifficultyClass) );
 
 		m_Meters[i].SetFromNotes( pCourse->m_apNotes[i] );

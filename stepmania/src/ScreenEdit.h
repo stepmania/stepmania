@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenEdit.h
+ Class: ScreenEdit
 
- Desc: The music plays, the notes scroll, and the Player is pressing buttons.
+ Desc: Edit, record, playback, or synchronize notes.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -53,27 +54,29 @@ protected:
 	GranularityIndicator	m_GranularityIndicator;
 	GrayArrowRow			m_GrayArrowRowEdit;
 
-	BitmapText				m_textExplanation;
 	BitmapText				m_textInfo;		// status information that changes
+	BitmapText				m_textHelp;
 
 	// keep track of where we are and what we're doing
-	float			m_fTrailingBeat;	// this approaches m_fBeat
-	float			m_fBeat;
+	float				m_fTrailingBeat;	// this approaches m_fBeat
+	float				m_fBeat;
 
+	DifficultyClass		m_DifficultyClass;
+	NoteData			m_Clipboard;
 
-	RandomSample		m_soundChangeLine;
-	RandomSample		m_soundChangeSnap;
-	RandomSample		m_soundMarker;
-	RandomSample		m_soundInvalid;
+	RageSoundSample		m_soundChangeLine;
+	RageSoundSample		m_soundChangeSnap;
+	RageSoundSample		m_soundMarker;
+	RageSoundSample		m_soundInvalid;
 
-	TransitionFade	m_Fade;
+	TransitionFade		m_Fade;
 
 
 // for MODE_RECORD
 
 	Quad			m_rectRecordBack;
-	NoteField			m_NoteFieldRecord;
-	GrayArrowRow				m_GrayArrowRowRecord;
+	NoteField		m_NoteFieldRecord;
+	GrayArrowRow	m_GrayArrowRowRecord;
 
 // for MODE_PLAY
 

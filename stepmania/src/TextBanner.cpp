@@ -50,12 +50,12 @@ bool TextBanner::LoadFromSong( Song* pSong )
 		return true;
 	}
 
-	CString sMainTitle = pSong->GetMainTitle();
-	CString sSubTitle = pSong->GetSubTitle();
+	CString sMainTitle = pSong->m_sMainTitle;
+	CString sSubTitle = pSong->m_sSubTitle;
 
 	m_textTitle.SetText( sMainTitle );
 	m_textSubTitle.SetText( sSubTitle );
-	m_textArtist.SetText( "/" + pSong->GetArtist() );
+	m_textArtist.SetText( "/" + pSong->m_sArtist );
 
 	
 	float fTitleZoom, fSubTitleZoom, fArtistZoom;

@@ -25,24 +25,29 @@
 //
 // Defines specific to ScreenEditMenu
 //
-const float LINE_START_Y	=	CENTER_Y-150;
-const float LINE_GAP		=	50;
+const float GROUP_X				=	CENTER_X;
+const float GROUP_Y				=	CENTER_Y - 160;
 
-const float GROUP_X			=	CENTER_X;
-const float GROUP_Y			=	LINE_START_Y + LINE_GAP;
+const float SONG_BANNER_X		=	CENTER_X;
+const float SONG_BANNER_Y		=	CENTER_Y - 80;
 
-const float SONG_X			=	CENTER_X;
-const float SONG_Y			=	GROUP_Y + LINE_GAP;
+const float ARROWS_X[2]			=	{ SONG_BANNER_X - 200, SONG_BANNER_X + 200 };
+const float ARROWS_Y[2]			=	{ SONG_BANNER_Y,       SONG_BANNER_Y };
 
-const float GAME_STYLE_X	=	CENTER_X;
-const float GAME_STYLE_Y	=	SONG_Y + LINE_GAP;
+const float SONG_TEXT_BANNER_X	=	CENTER_X;
+const float SONG_TEXT_BANNER_Y	=	CENTER_Y - 10;
 
-const float STEPS_X			=	CENTER_X;
-const float STEPS_Y			=	GAME_STYLE_Y + LINE_GAP;
+const float GAME_STYLE_X		=	CENTER_X;
+const float GAME_STYLE_Y		=	CENTER_Y + 40;
 
-const float EXPLANATION_X	=	CENTER_X;
-const float EXPLANATION_Y	=	STEPS_Y + LINE_GAP*2;
+const float STEPS_X				=	CENTER_X;
+const float STEPS_Y				=	CENTER_Y + 90;
 
+const float EXPLANATION_X		=	CENTER_X;
+const float EXPLANATION_Y		=	SCREEN_BOTTOM - 70;
+const CString EXPLANATION_TEXT	= 
+	"In this mode, you can edit existing notes patterns,\n"
+	"create note patterns, or synchronize notes with the music.";
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
@@ -67,10 +72,21 @@ ScreenEditMenu::ScreenEditMenu()
 	m_textGroup.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	this->AddActor( &m_textGroup );
 
-	m_textSong.Load( THEME->GetPathTo(FONT_HEADER1) );
-	m_textSong.SetXY( SONG_X, SONG_Y );
-	m_textSong.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
-	this->AddActor( &m_textSong );
+	m_Banner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
+	this->AddActor( &m_Banner );
+
+	m_TextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
+	this->AddActor( &m_TextBanner );
+	
+	m_sprArrowLeft.Load( THEME->GetPathTo(GRAPHIC_ARROWS_LEFT) );
+	m_sprArrowLeft.SetXY( ARROWS_X[0], ARROWS_Y[0] );
+	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddActor( &m_sprArrowLeft );
+
+	m_sprArrowRight.Load( THEME->GetPathTo(GRAPHIC_ARROWS_RIGHT) );
+	m_sprArrowRight.SetXY( ARROWS_X[1], ARROWS_Y[1] );
+	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddActor( &m_sprArrowRight );
 
 	m_textNotesType.Load( THEME->GetPathTo(FONT_HEADER1) );
 	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
@@ -89,7 +105,7 @@ ScreenEditMenu::ScreenEditMenu()
 
 	m_textExplanation.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	m_textExplanation.SetText( ssprintf("This mode will allow you to\nedit existing notes patterns,\n or create new ones from scratch.") );
+	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddActor( &m_textExplanation );
 
@@ -163,7 +179,8 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 void ScreenEditMenu::BeforeRowChange()
 {
 	m_textGroup.SetEffectNone();
-	m_textSong.SetEffectNone();
+	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	m_textNotesType.SetEffectNone();
 	m_textNotes.SetEffectNone();
 }
@@ -173,7 +190,10 @@ void ScreenEditMenu::AfterRowChange()
 	switch( m_SelectedRow )
 	{
 	case ROW_GROUP:			m_textGroup.SetEffectGlowing();			break;
-	case ROW_SONG:			m_textSong.SetEffectGlowing();			break;
+	case ROW_SONG:
+		m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		break;
 	case ROW_NOTES_TYPE:	m_textNotesType.SetEffectGlowing();		break;
 	case ROW_STEPS:			m_textNotes.SetEffectGlowing();			break;
 	default:		ASSERT(false);
@@ -197,7 +217,8 @@ void ScreenEditMenu::OnSongChange()
 {
 	m_iSelectedSong = clamp( m_iSelectedSong, 0, m_pSongs.GetSize()-1 );
 
-	m_textSong.SetText( GetSelectedSong()->GetMainTitle() );
+	m_Banner.LoadFromSong( GetSelectedSong() );
+	m_TextBanner.LoadFromSong( GetSelectedSong() );
 
 	OnNotesTypeChange();
 }

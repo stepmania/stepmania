@@ -45,15 +45,12 @@ enum
 	TRACK_11,
 	TRACK_12,
 	TRACK_13,
-	TRACK_14,
-	TRACK_15,
-	TRACK_16,
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
-const int MAX_MEASURES		= 200;	// this should be long enough to hold 10:00 minute songs (
+const int MAX_BEATS			= 300 * 2;	// 300 bpm * 2 mins
 const int BEATS_PER_MEASURE = 4;
-const int MAX_BEATS			= MAX_MEASURES * BEATS_PER_MEASURE;
+const int MAX_MEASURES		= MAX_BEATS / BEATS_PER_MEASURE;
 
 const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, and 4.
 const int ELEMENTS_PER_MEASURE = ELEMENTS_PER_BEAT * BEATS_PER_MEASURE;
@@ -143,6 +140,17 @@ inline D3DXCOLOR DifficultyClassToColor( DifficultyClass dc )
 	case CLASS_MEDIUM:	return D3DXCOLOR(1,0,0,1);	// red
 	case CLASS_HARD:	return D3DXCOLOR(0,1,0,1);	// green
 	default:	ASSERT(0);	return D3DXCOLOR();	// invalid DifficultyClass
+	}
+}
+
+inline CString DifficultyClassToString( DifficultyClass dc )
+{
+	switch( dc )
+	{
+	case CLASS_EASY:	return "easy";
+	case CLASS_MEDIUM:	return "medium";
+	case CLASS_HARD:	return "hard";
+	default:	ASSERT(0);	return "";	// invalid DifficultyClass
 	}
 }
 
@@ -448,7 +456,3 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	default:	ASSERT(0);	return 0;
 	}
 }
-
-
-
-

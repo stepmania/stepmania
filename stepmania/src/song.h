@@ -19,7 +19,6 @@
 //enum DanceStyle;	// why is this needed?
 
 
-
 struct BPMSegment 
 {
 	BPMSegment() { m_fStartBeat = m_fBPM = -1; };
@@ -45,6 +44,7 @@ public:
 
 	bool LoadFromSongDir( CString sDir );	// calls one of the loads below
 	void Save()			{ SaveToSMDir(); SaveToCacheFile(); }; 
+	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
 
 	bool LoadFromCacheFile( bool bLoadNoteData );
 
@@ -60,35 +60,55 @@ protected:
 	void DeleteCacheFile();
 
 public:
-	CString GetSongFilePath()		{return m_sSongFilePath; };
+
+	CString m_sSongFile;
+	CString m_sSongDir;
+	CString m_sGroupName;
+
+	CString GetSongFilePath()	{return m_sSongDir+m_sSongFile; };
 	CString GetCacheFilePath();
-	CString GetSongFileDir()		{return m_sSongDir; };
-	CString GetGroupName()			{return m_sGroupName; };
-	CString GetMusicPath()			{return m_sMusicPath; };
-	float GetMusicLengthSeconds()	{return m_fMusicLength; };
-	void GetMusicSampleRange( float &fStartSec, float &fEndSec ) { fStartSec = m_fMusicSampleStartSeconds; fEndSec = m_fMusicSampleStartSeconds + m_fMusicSampleLengthSeconds; };
-	CString GetBannerPath()			{return m_sBannerPath; };
-	CString GetBackgroundPath()		{return m_sBackgroundPath; };
-	CString GetBackgroundMoviePath(){return m_sBackgroundMoviePath; };
-	CString GetCDTitlePath()		{return m_sCDTitlePath; };
 
+	bool	m_bChangedSinceSave;
 
-	bool HasMusic()				{return m_sMusicPath != ""			&&	DoesFileExist(GetMusicPath()); };
-	bool HasBanner()			{return m_sBannerPath != ""			&&  DoesFileExist(GetBannerPath()); };
-	bool HasBackground()		{return m_sBackgroundPath != ""		&&  DoesFileExist(GetBackgroundPath()); };
-	bool HasBackgroundMovie()	{return m_sBackgroundMoviePath != ""&&  DoesFileExist(GetBackgroundMoviePath()); };
-	bool HasCDTitle()			{return m_sCDTitlePath != ""		&&  DoesFileExist(GetCDTitlePath()); };
+	CString	m_sMainTitle;
+	CString	m_sSubTitle;
+	CString	m_sArtist;
+	CString	m_sCredit;
 
-
-	CString GetMainTitle()		{return m_sMainTitle; };
-	CString GetSubTitle()		{return m_sSubTitle; };
 	CString GetFullTitle()		{return m_sMainTitle + " " + m_sSubTitle; };
-	void GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
+	static void GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 
-	CString GetArtist()				{return m_sArtist; };
-	CString GetCredit()				{return m_sCredit; };
-	float GetBeatOffsetInSeconds()	{return m_fOffsetInSeconds; };
-	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; SetChangedSinceLastSave(); };
+
+	CString	m_sMusicFile;
+	DWORD	m_iMusicBytes;
+	float	m_fOffsetInSeconds;
+	float	m_fMusicLengthSeconds;
+	float	m_fMusicSampleStartSeconds;
+	float	m_fMusicSampleLengthSeconds;
+	CString	m_sBannerFile;
+	CString	m_sBackgroundFile;
+	CString	m_sBackgroundMovieFile;
+	CString	m_sCDTitleFile;
+
+	CString GetMusicPath()			{return m_sSongDir+m_sMusicFile; };
+	CString GetBannerPath()			{return m_sSongDir+m_sBannerFile; };
+	CString GetBackgroundPath()		{return m_sSongDir+m_sBackgroundFile; };
+	CString GetBackgroundMoviePath(){return m_sSongDir+m_sBackgroundMovieFile; };
+	CString GetCDTitlePath()		{return m_sSongDir+m_sCDTitleFile; };
+
+
+	bool HasMusic()				{return m_sMusicFile != ""			&&	DoesFileExist(GetMusicPath()); };
+	bool HasBanner()			{return m_sBannerFile != ""			&&  DoesFileExist(GetBannerPath()); };
+	bool HasBackground()		{return m_sBackgroundFile != ""		&&  DoesFileExist(GetBackgroundPath()); };
+	bool HasBackgroundMovie()	{return m_sBackgroundMovieFile != ""&&  DoesFileExist(GetBackgroundMoviePath()); };
+	bool HasCDTitle()			{return m_sCDTitleFile != ""		&&  DoesFileExist(GetCDTitlePath()); };
+
+
+	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
+	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before gameplay
+
+	void AddBPMSegment( BPMSegment seg );
+	void AddFreezeSegment( FreezeSegment seg );
 	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM )
 	{
 		fMaxBPM = 0;
@@ -100,10 +120,21 @@ public:
 			fMinBPM = min( seg.m_fBPM, fMinBPM );
 		}
 	};
+	float GetBPMAtBeat( float fBeat )
+	{
+		for( int i=0; i<m_BPMSegments.GetSize()-1; i++ )
+			if( m_BPMSegments[i+1].m_fStartBeat <= fBeat )
+				break;
+		return m_BPMSegments[i].m_fBPM;
+	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
 	float GetElapsedTimeFromBeat( float fBeat );
-	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo );
+	
+	
+	
+	CArray<Notes*, Notes*> m_arrayNotes;
 
+	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo );
 	int GetNumTimesPlayed()
 	{
 		int iTotalNumTimesPlayed = 0;
@@ -114,43 +145,7 @@ public:
 		return iTotalNumTimesPlayed;
 	}
 	bool IsNew() { return GetNumTimesPlayed()==0; };
-
-	bool HasChangedSinceLastSave()	{ return m_bChangedSinceSave;	}
-
 	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc );
-
-
-private:
-	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
-
-	CString m_sSongFilePath;
-	CString m_sSongDir;
-	CString m_sGroupName;
-
-	bool	m_bChangedSinceSave;
-	CString	m_sMainTitle;
-	CString	m_sSubTitle;
-	CString	m_sArtist;
-	CString	m_sCredit;
-	float	m_fOffsetInSeconds;
-
-	CString	m_sMusicPath;
-	DWORD	m_iMusicBytes;
-	float	m_fMusicLength;
-	float	m_fMusicSampleStartSeconds, m_fMusicSampleLengthSeconds;
-	CString	m_sBannerPath;
-	CString	m_sBackgroundPath;
-	CString	m_sBackgroundMoviePath;
-	CString	m_sCDTitlePath;
-
-	void AddBPMSegment( BPMSegment seg );
-	void AddFreezeSegment( FreezeSegment seg );
-
-	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
-	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before gameplay
-
-public:
-	CArray<Notes*, Notes*> m_arrayNotes;
 };
 
 

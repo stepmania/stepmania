@@ -29,7 +29,7 @@ struct RAGEVERTEX
 #define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 
 
-const int MAX_NUM_QUADS = 1000;
+const int MAX_NUM_QUADS = 2048;
 const int MAX_NUM_INDICIES = MAX_NUM_QUADS*3;	// two triangles per quad
 const int MAX_NUM_VERTICIES = MAX_NUM_QUADS*4;	// 4 verticies per quad
 

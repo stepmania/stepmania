@@ -65,7 +65,7 @@ public:
 
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
-	void CopyRange( NoteData* pFrom, int iNoteIndexBegin, int iNoteIndexEnd );
+	void CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
 	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; m_iNumHoldNotes = 0; CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
 
 	inline bool IsRowEmpty( int index )

@@ -501,10 +501,8 @@ void ScreenSelectMusic::PlayMusicSample()
  
 	if( pSong->HasMusic() )
 	{
-		float fStartSeconds, fEndSeconds;
-		pSong->GetMusicSampleRange( fStartSeconds, fEndSeconds );
 		MUSIC->Load( sSongToPlay );
-		MUSIC->Play( true, fStartSeconds, fEndSeconds );
+		MUSIC->Play( true, pSong->m_fMusicSampleStartSeconds, pSong->m_fMusicSampleLengthSeconds );
 	}
 }
 

@@ -24,6 +24,7 @@
 const float FADE_TIME	=	1.0f;
 
 const float SWITCH_MUSIC_TIME	=	0.15f;
+const float SAMPLE_MUSIC_DELAY	=	0.15f;
 const float ROULETTE_SWITCH_MUSIC_TIME	=	SWITCH_MUSIC_TIME/2;
 const int ROULETTE_SWITCHES_IN_SLOWING_DOWN = 5;
 
@@ -485,14 +486,14 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					if( sThisSection != sLastSection )	// new section, make a section item
 					{
 						WheelItemData &WID = arrayWheelItemDatas[iCurWheelItem++];
-						colorSection = (so==SORT_TITLE) ? SONGMAN->GetGroupColor(pSong->GetGroupName()) : SECTION_COLORS[iSectionColorIndex];
+						colorSection = (so==SORT_TITLE) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS[iSectionColorIndex];
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						WID.Load( TYPE_SECTION, NULL, sThisSection, NULL, colorSection );
 						sLastSection = sThisSection;
 					}
 
 					WheelItemData &WID = arrayWheelItemDatas[iCurWheelItem++];
-					WID.Load( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetGroupColor(pSong->GetGroupName()) );
+					WID.Load( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName) );
 				}
 				arrayWheelItemDatas.SetSize( iCurWheelItem );	// make sure we have enough room for all music and section items	
 			}
@@ -504,7 +505,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					{
 						Song* pSong = arraySongs[i];
 						WheelItemData &WID = arrayWheelItemDatas[i];
-						WID.Load( TYPE_SONG, pSong, "", NULL, SONGMAN->GetGroupColor(pSong->GetGroupName()) );
+						WID.Load( TYPE_SONG, pSong, "", NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName) );
 					}
 				}
 			}
@@ -873,9 +874,23 @@ void MusicWheel::Update( float fDeltaTime )
 			fSpinSpeed = 0.6f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_MUSIC_TIME;
 
 		if( m_fPositionOffsetFromSelection > 0 )
-			m_fPositionOffsetFromSelection = max( 0, m_fPositionOffsetFromSelection - fSpinSpeed*fDeltaTime );
+		{
+			m_fPositionOffsetFromSelection -= fSpinSpeed*fDeltaTime;
+			if( m_fPositionOffsetFromSelection < 0 )
+			{
+				m_fPositionOffsetFromSelection = 0;
+				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
+			}
+		}
 		else if( m_fPositionOffsetFromSelection < 0 )
-			m_fPositionOffsetFromSelection = min( 0, m_fPositionOffsetFromSelection + fSpinSpeed*fDeltaTime );
+		{
+			m_fPositionOffsetFromSelection += fSpinSpeed*fDeltaTime;
+			if( m_fPositionOffsetFromSelection > 0 )
+			{
+				m_fPositionOffsetFromSelection = 0;
+				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
+			}
+		}
 	}
 }
 

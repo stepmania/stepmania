@@ -135,8 +135,8 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		Song* pSong = arraySongs[i];
 		m_textLines[m_iNumLines].Load( THEME->GetPathTo(FONT_NORMAL) );
-		m_textLines[m_iNumLines].SetText( pSong->GetMainTitle() );
-		m_textLines[m_iNumLines].SetDiffuseColor( SONGMAN->GetGroupColor(pSong->GetGroupName()) );
+		m_textLines[m_iNumLines].SetText( pSong->GetFullTitle() );
+		m_textLines[m_iNumLines].SetDiffuseColor( SONGMAN->GetGroupColor(pSong->m_sGroupName) );
 
 		m_iNumLines++;
 	}

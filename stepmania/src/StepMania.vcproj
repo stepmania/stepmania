@@ -302,18 +302,6 @@
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath="ScreenSynchronize.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSynchronize.h">
-			</File>
-			<File
-				RelativePath="ScreenSynchronizeMenu.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSynchronizeMenu.h">
-			</File>
-			<File
 				RelativePath="ScreenTitleMenu.cpp">
 			</File>
 			<File

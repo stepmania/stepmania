@@ -227,6 +227,18 @@ bool RageDisplay::SwitchDisplayMode(
 
 	if( m_pd3dDevice == NULL )
 	{
+		D3DADAPTER_IDENTIFIER8	identifier;
+		if( FAILED( hr = m_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier ) ) )
+		{
+			LOG->WriteLineHr( hr, "GetAdapterIdentifier failed" );
+			return false;
+		}
+
+		LOG->WriteLine( "Driver: %s.  Description: %s.", 
+			identifier.Driver, 
+			identifier.Description 
+			);
+
 		// device is not yet created.  We need to create it
 		if( FAILED( hr = m_pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
 											m_hWnd,

@@ -72,9 +72,10 @@ Song::Song()
 {
 	m_bChangedSinceSave = false;
 	m_fOffsetInSeconds = 0;
-	m_fMusicSampleStartSeconds = m_fMusicSampleLengthSeconds = -1;
+	m_fMusicSampleStartSeconds = 0;
+	m_fMusicSampleLengthSeconds = 16;	// start fading out at m_fMusicSampleLengthSeconds-1 seconds
 	m_iMusicBytes = 0;
-	m_fMusicLength = 0;
+	m_fMusicLengthSeconds = 0;
 }
 
 Song::~Song()
@@ -314,7 +315,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
 	// file.  So, we read the song data from only the first BMS file and assume that the info 
 	// is identical for every BMS file in the directory.
-	m_sSongFilePath = m_sSongDir + arrayBMSFileNames[0];
+	m_sSongFile = arrayBMSFileNames[0];
 
 	// load the Notes from the rest of the BMS files
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
@@ -326,9 +327,9 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 
 	CStdioFile file;	
-	if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
+	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		throw RageException( "Failed to open %s.", m_sSongFilePath );
+		throw RageException( "Failed to open %s.", GetSongFilePath() );
 		return false;
 	}
 
@@ -392,11 +393,11 @@ bool Song::LoadFromBMSDir( CString sDir )
 		}
 		else if( value_name == "#backbmp" ) 
 		{
-			m_sBackgroundPath = m_sSongDir + value_data;
+			m_sBackgroundFile = value_data;
 		}
 		else if( value_name == "#wav" ) 
 		{
-			m_sMusicPath = m_sSongDir + value_data;
+			m_sMusicFile = value_data;
 		}
 		else if( value_name.Left(1) == "#"  
 			 && IsAnInt( value_name.Mid(1,3) )
@@ -465,9 +466,9 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 							// open the song file again and and look for this tag's value
 							CStdioFile file;	
-							if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
+							if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
 							{
-								throw RageException( "Failed to open %s.", m_sSongFilePath );
+								throw RageException( "Failed to open %s.", GetSongFilePath() );
 								return false;
 							}
 
@@ -508,7 +509,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 							if( fBPM == -1 )	// we didn't find the line we were looking for
 							{
-								LOG->WriteLine( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, m_sSongFilePath );
+								LOG->WriteLine( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, GetSongFilePath() );
 							}
 							else
 							{
@@ -529,11 +530,8 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 							// open the song file again and and look for this tag's value
 							CStdioFile file;	
-							if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
-							{
-								throw RageException( "Failed to open %s.", m_sSongFilePath );
-								return false;
-							}
+							if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
+								throw RageException( "Failed to open %s.", GetSongFilePath() );
 
 							CString line;
 							while( file.ReadString(line) )	// foreach line
@@ -587,7 +585,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 							if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
 							{
-								LOG->WriteLine( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, m_sSongFilePath );
+								LOG->WriteLine( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor, GetSongFilePath() );
 							}
 							else
 							{
@@ -616,13 +614,11 @@ bool Song::LoadFromDWIFile( CString sPath )
 {
 	LOG->WriteLine( "Song::LoadFromDWIFile(%s)", sPath );
 	
-	// save song file path
-	m_sSongFilePath = sPath;
-
-	// save song dir
+	// save song dir and file name
 	CString sDir, sFName, sExt;
 	splitrelpath(sPath, sDir, sFName, sExt);
 	m_sSongDir = sDir;
+	m_sSongFile = sFName+"."+sExt;
 
 	// get group name
 	sDir.MakeLower();
@@ -677,7 +673,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 		// handle the data
 		if( sValueName == "#FILE" )
-			m_sMusicPath = arrayValueTokens[1];
+			m_sMusicFile = arrayValueTokens[1];
 
 		else if( sValueName == "#TITLE" )
 			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
@@ -788,7 +784,7 @@ bool Song::LoadFromSMDir( CString sDir )
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
 	// file.  So, we read the song data from only the first BMS file and assume that the info 
 	// is identical for every BMS file in the directory.
-	m_sSongFilePath = m_sSongDir + arraySongFileNames[0];
+	m_sSongFile = arraySongFileNames[0];
 
 
 	CStringArray arrayNotesFileNames;
@@ -863,23 +859,19 @@ bool Song::LoadFromSMDir( CString sDir )
 			m_sCredit = arrayValueTokens[1];
 
 		else if( sValueName == "#BANNER" )
-			m_sBannerPath = sDir + "\\" + arrayValueTokens[1];
+			m_sBannerFile = arrayValueTokens[1];
 
 		else if( sValueName == "#BACKGROUND" )
-			m_sBackgroundPath = sDir + "\\" + arrayValueTokens[1];
+			m_sBackgroundFile = arrayValueTokens[1];
 
 		else if( sValueName == "#BACKGROUNDMOVIE" )
-		{
-			if( arrayValueTokens[1] != "" )
-				m_sBackgroundMoviePath = sDir + "\\" + arrayValueTokens[1];
-		}
+			m_sBackgroundMovieFile = arrayValueTokens[1];
+
 		else if( sValueName == "#CDTITLE" )
-		{
-			if( arrayValueTokens[1] != "" )
-				m_sCDTitlePath = sDir + "\\" + arrayValueTokens[1];
-		}
+			m_sCDTitleFile = arrayValueTokens[1];
+
 		else if( sValueName == "#MUSIC" )
-			m_sMusicPath = sDir + "\\" + arrayValueTokens[1];
+			m_sMusicFile = arrayValueTokens[1];
 
 		else if( sValueName == "#MUSICBYTES" )
 			m_iMusicBytes = atoi( arrayValueTokens[1] );
@@ -955,7 +947,7 @@ void Song::TidyUpData()
 	if( m_BPMSegments.GetSize() == 0 )
 		throw RageException( "No #BPM specified in '%s.'", GetSongFilePath() );
 
-	if( m_sMusicPath == "" || !DoesFileExist(GetMusicPath()) )
+	if( m_sMusicFile == "" || !DoesFileExist(GetMusicPath()) )
 	{
 		CStringArray arrayPossibleMusic;
 		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
@@ -963,10 +955,9 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 
 		if( arrayPossibleMusic.GetSize() != 0 )		// we found a match
-			m_sMusicPath = m_sSongDir + arrayPossibleMusic[0];
+			m_sMusicFile = arrayPossibleMusic[0];
 		else
-			m_sMusicPath = "";
-		//	throw RageException( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
+			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
 	}
 
 	// Save length of music
@@ -974,12 +965,12 @@ void Song::TidyUpData()
 	{
 		RageSoundStream sound;
 		sound.Load( GetMusicPath() );
-		m_fMusicLength = sound.GetLengthSeconds();
+		m_fMusicLengthSeconds = sound.GetLengthSeconds();
 	}
 
 	if( !DoesFileExist(GetBannerPath()) )
 	{
-		m_sBannerPath = "";
+		m_sBannerFile = "";
 		// find the smallest image in the directory
 
 		CStringArray arrayPossibleBanners;
@@ -996,21 +987,21 @@ void Song::TidyUpData()
 			if( this_size < dwSmallestFileSoFar )	// we have a new leader!
 			{
 				dwSmallestFileSoFar = this_size;
-				sSmallestFileSoFar = m_sSongDir + arrayPossibleBanners[i];
+				sSmallestFileSoFar = arrayPossibleBanners[i];
 			}
 		}
 
 		if( sSmallestFileSoFar != "" )		// we found a match
-			m_sBannerPath = sSmallestFileSoFar;
+			m_sBannerFile = sSmallestFileSoFar;
 		else
-			m_sBannerPath = "";
+			m_sBannerFile = "";
 
 		//throw RageException( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 
 	if( !DoesFileExist(GetBackgroundPath()) )
 	{
-		m_sBackgroundPath = "";
+		m_sBackgroundFile = "";
 		// find the largest image in the directory
 
 		CStringArray arrayPossibleBackgrounds;
@@ -1027,17 +1018,17 @@ void Song::TidyUpData()
 			if( this_size > dwLargestFileSoFar )	// we have a new leader!
 			{
 				dwLargestFileSoFar = this_size;
-				sLargestFileSoFar = m_sSongDir + arrayPossibleBackgrounds[i];
+				sLargestFileSoFar = arrayPossibleBackgrounds[i];
 			}
 		}
 		
 		if( sLargestFileSoFar != "" )		// we found a match
-			m_sBackgroundPath = sLargestFileSoFar;
+			m_sBackgroundFile = sLargestFileSoFar;
 	}
 
 	if( !DoesFileExist(GetBackgroundMoviePath()) )
 	{
-		m_sBackgroundMoviePath = "";
+		m_sBackgroundMovieFile = "";
 
 		CStringArray arrayPossibleBackgroundMovies;
 		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleBackgroundMovies );
@@ -1045,19 +1036,19 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleBackgroundMovies );
 
 		if( arrayPossibleBackgroundMovies.GetSize() > 0 )		// we found a match
-			m_sBackgroundMoviePath = arrayPossibleBackgroundMovies[0];
+			m_sBackgroundMovieFile = arrayPossibleBackgroundMovies[0];
 	}
 
 	if( !DoesFileExist(GetCDTitlePath()) )
 	{
-		m_sCDTitlePath = "";
+		m_sCDTitleFile = "";
 	}
 
 	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
 	{
 		Notes* pNM = m_arrayNotes[i];
 
-		float fMusicLength = m_fMusicLength;
+		float fMusicLength = m_fMusicLengthSeconds;
 		if( fMusicLength == 0 )
 			fMusicLength = 100;
 
@@ -1095,7 +1086,7 @@ void Song::SaveToCacheFile()
 	fprintf( file, "%d\n", FILE_CACHE_VERSION );
 	fprintf( file, "%u\n", GetHashForDirectory(m_sSongDir) );
 	WriteStringToFile( file, m_sSongDir );
-	WriteStringToFile( file, m_sSongFilePath );
+	WriteStringToFile( file, m_sSongFile );
 	WriteStringToFile( file, m_sGroupName );
 
 	WriteStringToFile( file, m_sMainTitle );
@@ -1104,15 +1095,14 @@ void Song::SaveToCacheFile()
 	WriteStringToFile( file, m_sCredit );
 	fprintf( file, "%f\n", m_fOffsetInSeconds );
 
-	WriteStringToFile( file, m_sMusicPath );
+	WriteStringToFile( file, m_sMusicFile );
 	fprintf( file, "%d\n", m_iMusicBytes );
-	fprintf( file, "%f\n", m_fMusicLength );
+	fprintf( file, "%f\n", m_fMusicLengthSeconds );
 	fprintf( file, "%f\n", m_fMusicSampleStartSeconds );
-	fprintf( file, "%f\n", m_fMusicSampleLengthSeconds );
-	WriteStringToFile( file, m_sBannerPath );
-	WriteStringToFile( file, m_sBackgroundPath );
-	WriteStringToFile( file, m_sBackgroundMoviePath );
-	WriteStringToFile( file, m_sCDTitlePath );
+	WriteStringToFile( file, m_sBannerFile );
+	WriteStringToFile( file, m_sBackgroundFile );
+	WriteStringToFile( file, m_sBackgroundMovieFile );
+	WriteStringToFile( file, m_sCDTitleFile );
 
 	fprintf( file, "%d\n", m_BPMSegments.GetSize() );
 	for( i=0; i<m_BPMSegments.GetSize(); i++ )
@@ -1162,7 +1152,7 @@ bool Song::LoadFromCacheFile( bool bLoadNoteData )
 	}
 
 	ReadStringFromFile( file, m_sSongDir );
-	ReadStringFromFile( file, m_sSongFilePath );
+	ReadStringFromFile( file, m_sSongFile );
 	ReadStringFromFile( file, m_sGroupName );
 
 	ReadStringFromFile( file, m_sMainTitle );
@@ -1171,15 +1161,14 @@ bool Song::LoadFromCacheFile( bool bLoadNoteData )
 	ReadStringFromFile( file, m_sCredit );
 	fscanf( file, "%f\n", &m_fOffsetInSeconds );
 
-	ReadStringFromFile( file, m_sMusicPath );
+	ReadStringFromFile( file, m_sMusicFile );
 	fscanf( file, "%d\n", &m_iMusicBytes );
-	fscanf( file, "%f\n", &m_fMusicLength );
+	fscanf( file, "%f\n", &m_fMusicLengthSeconds );
 	fscanf( file, "%f\n", &m_fMusicSampleStartSeconds );
-	fscanf( file, "%f\n", &m_fMusicSampleLengthSeconds );
-	ReadStringFromFile( file, m_sBannerPath );
-	ReadStringFromFile( file, m_sBackgroundPath );
-	ReadStringFromFile( file, m_sBackgroundMoviePath );
-	ReadStringFromFile( file, m_sCDTitlePath );
+	ReadStringFromFile( file, m_sBannerFile );
+	ReadStringFromFile( file, m_sBackgroundFile );
+	ReadStringFromFile( file, m_sBackgroundMovieFile );
+	ReadStringFromFile( file, m_sCDTitleFile );
 
 	int iNumBPMSegments;
 	fscanf( file, "%d\n", &iNumBPMSegments );
@@ -1228,62 +1217,21 @@ void Song::SaveToSMDir()
 		MoveFile( sOldPath, sNewPath );
 	}
 
-	CString sDir, sFName, sExt;
-	splitrelpath( GetSongFilePath(), sDir, sFName, sExt );
-	m_sSongFilePath = m_sSongDir + sFName + ".song";
-
 	CStdioFile file;	
-	if( !file.Open( m_sSongFilePath, CFile::modeWrite | CFile::modeCreate ) )
-		throw RageException( "Error opening song file '%s' for writing.", m_sSongFilePath );
+	if( !file.Open( GetSongFilePath(), CFile::modeWrite | CFile::modeCreate ) )
+		throw RageException( "Error opening song file '%s' for writing.", GetSongFilePath() );
 
 	file.WriteString( ssprintf("#MAINTITLE:%s;\n", m_sMainTitle) );
 	file.WriteString( ssprintf("#SUBTITLE:%s;\n", m_sSubTitle) );
 	file.WriteString( ssprintf("#ARTIST:%s;\n", m_sArtist) );
 	file.WriteString( ssprintf("#CREDIT:%s;\n", m_sCredit) );
-	
-	if( m_sBannerPath != "" )
-	{
-		splitrelpath( m_sBannerPath, sDir, sFName, sExt );
-		file.WriteString( ssprintf("#BANNER:%s;\n", sFName+"."+sExt) );
-	}
-	else
-		file.WriteString( "#BANNER:;\n" );
-
-	if( m_sBackgroundPath != "" )
-	{
-		splitrelpath( m_sBackgroundPath, sDir, sFName, sExt );
-		file.WriteString( ssprintf("#BACKGROUND:%s;\n", sFName+"."+sExt) );
-	}
-	else
-		file.WriteString( "#BACKGROUND:;\n" );
-
-	if( m_sBackgroundMoviePath != "" )
-	{
-		splitrelpath( m_sBackgroundMoviePath, sDir, sFName, sExt );
-		file.WriteString( ssprintf("#BACKGROUNDMOVIE:%s;\n", sFName+"."+sExt) );
-	}
-	else
-		file.WriteString( "#BACKGROUNDMOVIE:;\n" );
-
-	if( m_sCDTitlePath != "" )
-	{
-		splitrelpath( m_sCDTitlePath, sDir, sFName, sExt );
-		file.WriteString( ssprintf("#CDTITLE:%s;\n", sFName+"."+sExt) );
-	}
-	else
-		file.WriteString( "#CDTITLE:;\n" );
-
-	if( m_sMusicPath != "" )
-	{
-		splitrelpath( m_sMusicPath, sDir, sFName, sExt );
-		file.WriteString( ssprintf("#MUSIC:%s;\n", sFName+"."+sExt) );
-	}
-	else
-		file.WriteString( "#MUSIC:;\n" );
-
+	file.WriteString( ssprintf("#BANNER:%s;\n", m_sBannerFile) );
+	file.WriteString( ssprintf("#BACKGROUND:%s;\n", m_sBackgroundFile) );
+	file.WriteString( ssprintf("#BACKGROUNDMOVIE:%s;\n", m_sBackgroundMovieFile) );
+	file.WriteString( ssprintf("#CDTITLE:%s;\n", m_sCDTitleFile) );
+	file.WriteString( ssprintf("#MUSIC:%s;\n", m_sMusicFile) );
 	file.WriteString( ssprintf("#MUSICBYTES:%u;\n", m_iMusicBytes) );
 	file.WriteString( ssprintf("#OFFSET:%f;\n", m_fOffsetInSeconds) );
-
 	file.WriteString( ssprintf("#SAMPLESTART:%f;\n", m_fMusicSampleStartSeconds) );
 	file.WriteString( ssprintf("#SAMPLELENGTH:%f;\n", m_fMusicSampleLengthSeconds) );
 
@@ -1348,8 +1296,8 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	Song* pSong1 = *(Song**)arg1;
 	Song* pSong2 = *(Song**)arg2;
 	
-	CString sTitle1 = pSong1->GetMainTitle();
-	CString sTitle2 = pSong2->GetMainTitle();
+	CString sTitle1 = pSong1->GetFullTitle();
+	CString sTitle2 = pSong2->GetFullTitle();
 
 	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
 	CString sFilePath2 = pSong2->GetSongFilePath();
@@ -1396,8 +1344,8 @@ int CompareSongPointersByArtist(const void *arg1, const void *arg2)
 	Song* pSong1 = *(Song**)arg1;
 	Song* pSong2 = *(Song**)arg2;
 		
-	CString sArtist1 = pSong1->GetArtist();
-	CString sArtist2 = pSong2->GetArtist();
+	CString sArtist1 = pSong1->m_sArtist;
+	CString sArtist2 = pSong2->m_sArtist;
 
 	if( sArtist1 < sArtist2 )
 		return -1;
@@ -1417,8 +1365,8 @@ int CompareSongPointersByGroup(const void *arg1, const void *arg2)
 	Song* pSong1 = *(Song**)arg1;
 	Song* pSong2 = *(Song**)arg2;
 		
-	CString sGroup1 = pSong1->GetGroupName();
-	CString sGroup2 = pSong2->GetGroupName();
+	CString sGroup1 = pSong1->m_sGroupName;
+	CString sGroup2 = pSong2->m_sGroupName;
 
 	if( sGroup1 < sGroup2 )
 		return -1;

@@ -547,18 +547,10 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
-		case DIK_F9:
-			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()-0.01f );
-			break;
-		case DIK_F10:
-			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()+0.01f );
-			break;
-		case DIK_F11:
-			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()-(1/fBPS) );
-			break;
-		case DIK_F12:
-			m_pCurSong->SetBeatOffsetInSeconds( m_pCurSong->GetBeatOffsetInSeconds()+(1/fBPS) );
-			break;
+		case DIK_F9:	m_pCurSong->m_fOffsetInSeconds -= 0.01f;	break;
+		case DIK_F10:	m_pCurSong->m_fOffsetInSeconds += 0.01f;	break;
+		case DIK_F11:	m_pCurSong->m_fOffsetInSeconds -= 1/fBPS;	break;
+		case DIK_F12:	m_pCurSong->m_fOffsetInSeconds += 1/fBPS;	break;
 		}
 
 		switch( DeviceI.button )
@@ -567,7 +559,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_F10:
 		case DIK_F11:
 		case DIK_F12:
-			m_textDebug.SetText( ssprintf("Offset = %f.", m_pCurSong->GetBeatOffsetInSeconds()) );
+			m_textDebug.SetText( ssprintf("Offset = %f.", m_pCurSong->m_fOffsetInSeconds) );
 			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweeningQueued( 3 );		// sleep

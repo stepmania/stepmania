@@ -104,29 +104,31 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 
 }
 	
-void NoteData::CopyRange( NoteData* pFrom, int iNoteIndexBegin, int iNoteIndexEnd )
+void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
 {
 	ASSERT( pFrom->m_iNumTracks == m_iNumTracks );
 
-	int i;
+	if( iToIndexBegin == -1 )
+		iToIndexBegin = iFromIndexBegin;
+
+	pFrom->ConvertHoldNotesTo2sAnd3s();
+
+	int f, t;
 
 	// copy recorded TapNotes
-	for( i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
+	f = iFromIndexBegin;
+	t = iToIndexBegin;
+	
+	while( f<=iFromIndexEnd )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
-			m_TapNotes[c][i] = pFrom->m_TapNotes[c][i];
+			m_TapNotes[c][t] = pFrom->m_TapNotes[c][f];
+		f++;
+		t++;
 	}
 
-	// copy recorded HoldNotes
-	for( i=0; i<pFrom->m_iNumHoldNotes; i++ )
-	{
-		HoldNote hn = pFrom->m_HoldNotes[i];
-		if( (hn.m_iStartIndex >= iNoteIndexBegin && hn.m_iStartIndex <= iNoteIndexEnd)  || 
-			(hn.m_iEndIndex >= iNoteIndexBegin && hn.m_iEndIndex <= iNoteIndexEnd) )		// overlap (kinda)
-		{
-			this->AddHoldNote( hn );
-		}
-	}
+	pFrom->Convert2sAnd3sToHoldNotes();
+	this->Convert2sAnd3sToHoldNotes();
 }
 
 void NoteData::AddHoldNote( HoldNote add )
@@ -554,7 +556,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 			{
 				for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 				{
-					if( m_TapNotes[col][j] != '0' )	// end on the next note we see
+					if( m_TapNotes[col][j] != '0' )	// end hold on the next note we see
 					{
 						HoldNote hn = { col, i, j };
 						AddHoldNote( hn );

@@ -17,6 +17,7 @@
 #include "ArrowEffects.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
+#include "SongManager.h"
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;
 const float HOLD_NOTE_BITS_PER_ROW	= HOLD_NOTE_BITS_PER_BEAT / ELEMENTS_PER_BEAT;
@@ -141,6 +142,8 @@ void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
 	m_rectMeasureBar.SetDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
 	m_rectMeasureBar.Draw();
 
+	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,0) );
 	m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNo) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
 	m_textMeasureNumber.Draw();
@@ -158,6 +161,30 @@ void NoteField::DrawMarkerBar( const int iIndex )
 	m_rectMarkerBar.Draw();
 }
 
+void NoteField::DrawBPMText( const int iIndex, const float fBPM )
+{
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
+	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
+
+	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
+	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
+	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 50, fYPos );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawFreezeText( const int iIndex, const float fSecs )
+{
+	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
+	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
+
+	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0,0,0.6f,1) );
+	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
+	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 20, fYPos );
+	m_textMeasureNumber.Draw();
+}
+
 void NoteField::DrawPrimitives()
 {
 	//LOG->WriteLine( "NoteField::DrawPrimitives()" );
@@ -173,23 +200,38 @@ void NoteField::DrawPrimitives()
 
 	//LOG->WriteLine( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
-	//
-	// Draw measure bars
-	//
 	if( m_Mode == MODE_EDITING )
 	{
+		//
+		// Draw measure bars
+		//
 		for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )
 		{
 			if( i % ELEMENTS_PER_MEASURE == 0 )
-				DrawMeasureBar( i, i / ELEMENTS_PER_MEASURE );
+				DrawMeasureBar( i, i / ELEMENTS_PER_MEASURE + 1 );
 		}
-	}
 
-	//
-	// Draw marker bars
-	//
-	if( m_Mode == MODE_EDITING )
-	{
+		//
+		// BPM text
+		//
+		CArray<BPMSegment,BPMSegment&> &aBPMSegments = SONGMAN->GetCurrentSong()->m_BPMSegments;
+		for( i=0; i<aBPMSegments.GetSize(); i++ )
+		{
+			DrawBPMText( BeatToNoteRow(aBPMSegments[i].m_fStartBeat), aBPMSegments[i].m_fBPM );
+		}
+
+		//
+		// Freeze text
+		//
+		CArray<FreezeSegment,FreezeSegment&> &aFreezeSegments = SONGMAN->GetCurrentSong()->m_FreezeSegments;
+		for( i=0; i<aFreezeSegments.GetSize(); i++ )
+		{
+			DrawFreezeText( BeatToNoteRow(aFreezeSegments[i].m_fStartBeat), aFreezeSegments[i].m_fFreezeSeconds );
+		}
+
+		//
+		// Draw marker bars
+		//
 		if( m_fBeginMarker != -1 )
 		{
 			DrawMarkerBar( BeatToNoteRow(m_fBeginMarker) );
@@ -198,7 +240,9 @@ void NoteField::DrawPrimitives()
 		{
 			DrawMarkerBar( BeatToNoteRow(m_fEndMarker) );
 		}
+
 	}
+
 
 	//
 	// Optimization is very important here because there are so many arrows to draw.  We're going 

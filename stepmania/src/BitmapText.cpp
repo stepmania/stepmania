@@ -80,6 +80,8 @@ void BitmapText::SetText( CString sText )
 	//
 	// save the string and crop if necessary
 	//
+	ASSERT( sText.GetLength() < MAX_TEXT_CHARS/2 );
+
 	strncpy( m_szText, sText, MAX_TEXT_CHARS );
 	m_szText[MAX_TEXT_CHARS-1] = '\0';
 

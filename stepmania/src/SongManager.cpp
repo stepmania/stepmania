@@ -97,7 +97,7 @@ void SongManager::InitSongArrayFromDisk()
 	for( i=0; i<m_pSongs.GetSize(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		const CString sGroupName = m_pSongs[i]->GetGroupName();
+		const CString sGroupName = m_pSongs[i]->m_sGroupName;
 
 		if( m_arrayGroupNames.GetSize() == 0  ||  m_arrayGroupNames[m_arrayGroupNames.GetSize()-1] != sGroupName )
 			m_arrayGroupNames.Add( sGroupName );
@@ -262,13 +262,13 @@ void SongManager::ReadStatisticsFromDisk()
 
 			// Each value has the format "SongName::StepsName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			char szSongName[256];
-			char szStepsName[256];
+			char szSongDir[256];
+			char szNotesName[256];
 			int iRetVal;
 			int i;
 
 			// Parse for Song name and Notes name
-			iRetVal = sscanf( name_string, "%[^:]::%[^\n]", szSongName, szStepsName );
+			iRetVal = sscanf( name_string, "%[^:]::%[^\n]", szSongDir, szNotesName );
 			if( iRetVal != 2 )
 				continue;	// this line doesn't match what is expected
 	
@@ -277,7 +277,7 @@ void SongManager::ReadStatisticsFromDisk()
 			Song* pSong = NULL;
 			for( i=0; i<m_pSongs.GetSize(); i++ )
 			{
-				if( m_pSongs[i]->GetMainTitle() == szSongName )	// match!
+				if( m_pSongs[i]->m_sSongDir == szSongDir )	// match!
 				{
 					pSong = m_pSongs[i];
 					break;
@@ -291,7 +291,7 @@ void SongManager::ReadStatisticsFromDisk()
 			Notes* pNotes = NULL;
 			for( i=0; i<pSong->m_arrayNotes.GetSize(); i++ )
 			{
-				if( pSong->m_arrayNotes[i]->m_sDescription == szStepsName )	// match!
+				if( pSong->m_arrayNotes[i]->m_sDescription == szNotesName )	// match!
 				{
 					pNotes = pSong->m_arrayNotes[i];
 					break;
@@ -339,7 +339,7 @@ void SongManager::SaveStatisticsToDisk()
 
 			// Each value has the format "SongName::NotesName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s", pSong->GetMainTitle(), pNotes->m_sDescription );
+			CString sName = ssprintf( "%s::%s", pSong->m_sSongDir, pNotes->m_sDescription );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
 				pNotes->m_iNumTimesPlayed,
@@ -389,7 +389,7 @@ void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*
 	for( int i=0; i<m_pSongs.GetSize(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		if( sGroupName == m_pSongs[i]->GetGroupName() )
+		if( sGroupName == m_pSongs[i]->m_sGroupName )
 			AddTo.Add( pSong );
 	}
 	SortSongPointerArrayByGroup( AddTo );

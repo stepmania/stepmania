@@ -52,6 +52,8 @@ protected:
 	inline void CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife );
 	inline void DrawMeasureBar( const int iIndex, const int iMeasureNo );
 	inline void DrawMarkerBar( const int iIndex );
+	inline void DrawBPMText( const int iIndex, const float fBPM );
+	inline void DrawFreezeText( const int iIndex, const float fBPM );
 
 	PlayerOptions	m_PlayerOptions;
 

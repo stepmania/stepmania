@@ -316,9 +316,9 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 
 		TapNoteScore &score = m_TapNoteScores[col][iIndexOverlappingNote];
 
-		if(		 fPercentFromPerfect < 0.35f )	score = TNS_PERFECT;
-		else if( fPercentFromPerfect < 0.6f )	score = TNS_GREAT;
-		else if( fPercentFromPerfect < 0.8f )	score = TNS_GOOD;
+		if(		 fPercentFromPerfect < 0.30f )	score = TNS_PERFECT;
+		else if( fPercentFromPerfect < 0.55f )	score = TNS_GREAT;
+		else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
 		else									score = TNS_BOO;
 
 
@@ -498,8 +498,8 @@ GameplayStatistics Player::GetGameplayStatistics()
 
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 	{
-		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->GetMusicLengthSeconds() );
-		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->GetMusicLengthSeconds() );
+		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
+		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
 
 		GSreturn.fRadarPossible[r] = clamp( GSreturn.fRadarPossible[r], 0, 1 );
 		GSreturn.fRadarActual[r] = clamp( GSreturn.fRadarActual[r], 0, 1 );

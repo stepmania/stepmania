@@ -115,7 +115,7 @@ void FontManager::UnloadFont( CString sFontFilePath )
 		pFont->m_iRefCount--;
 		if( pFont->m_iRefCount == 0 )		// there are no more references to this texture
 		{
-			LOG->WriteLine( ssprintf("FontManager: '%s' will be deleted.  It has %d references.", sFontFilePath, pFont->m_iRefCount) );
+			LOG->WriteLine( "FontManager: '%s' will be deleted.  It has %d references.", sFontFilePath, pFont->m_iRefCount );
 			SAFE_DELETE( pFont );		// free the texture
 			m_mapPathToFont.RemoveKey( sFontFilePath );	// and remove the key in the map
 		}

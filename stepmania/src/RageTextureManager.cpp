@@ -94,6 +94,8 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
 	}
 
+	LOG->WriteLine( "Display: %u MB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem() );
+
 	return pTexture;
 }
 
@@ -118,7 +120,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 
 	if( sTexturePath == "" )
 	{
-		LOG->WriteLine( "RageTextureManager::UnloadTexture(): tried to Unload a blank texture." );
+		//LOG->WriteLine( "RageTextureManager::UnloadTexture(): tried to Unload a blank texture." );
 		return;
 	}
 	
@@ -129,7 +131,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		pTexture->m_iRefCount--;
 		if( pTexture->m_iRefCount == 0 )		// there are no more references to this texture
 		{
-			LOG->WriteLine( ssprintf("RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount) );
+			LOG->WriteLine( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
 			SAFE_DELETE( pTexture );		// free the texture
 			m_mapPathToTexture.RemoveKey( sTexturePath );	// and remove the key in the map
 		}
