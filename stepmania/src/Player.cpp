@@ -308,7 +308,7 @@ void Player::Update( float fDeltaTime )
 
 	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 	/* We want to send the crossed row message exactly when we cross the row--not
-	 * .5 before the row.  Use MAX3 as a test case: without rounding, autoplay steps
+	 * .5 before the row.  Use MAX300 as a test case: without rounding, autoplay steps
 	 * early. -glenn */
 	const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 	if( iRowNow >= 0 )
@@ -647,7 +647,8 @@ void Player::CrossedRow( int iNoteRow )
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
 			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
-				Step( t, now );
+				if( GetTapNoteScore(t, iNoteRow) == TNS_NONE )
+					Step( t, now );
 	}
 }
 
