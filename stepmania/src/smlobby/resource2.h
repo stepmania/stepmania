@@ -38,6 +38,10 @@
 #define IDC_TOFROM                      1023
 #define IDC_SENTRECVD                   1024
 #define IDC_COMBO1                      1030
+#define IDC_NEWGAMEFRAME                1031
+#define IDC_SELECT_MUSIC_STATIC         1032
+#define IDC_GAME_NAME_STATIC            1033
+#define IDC_REFRESH_GAME_LIST           1034
 
 // Next default values for new objects
 // 
@@ -45,7 +49,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1031
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -14,26 +14,60 @@
 
 class CSendFileDialog : public CDialog
 {
+// Public data types
+public:
+	// DCC Info
+	struct DCCTransferInfo
+	{
+		bool m_bIsSender;
+		bool m_bIsConnected;
+		CString m_fileName;
+		CString m_directory;
+		CString m_partnerName;
+		unsigned long m_ulPartnerIP;
+		unsigned int m_uiPort;
+		unsigned long m_ulFileSize;
+		unsigned long m_ulBytesSent;
+		unsigned long m_ulStartTime;
+		unsigned int m_uiXferRate;
+		Socket m_sock;
+		FILE* m_fp;
+
+		DCCTransferInfo() : 
+			m_bIsSender(false),
+			m_bIsConnected(false),
+			m_ulPartnerIP(0L),
+			m_uiPort(0),
+			m_ulFileSize(0L),
+			m_ulBytesSent(0L),
+			m_ulStartTime(0L),
+			m_uiXferRate(0),
+			m_fp(NULL)
+		{}
+	};
+
 // Construction
 public:
-	CSendFileDialog(CWnd* pParent = NULL);   // standard constructor
+	// standard constructor
+	CSendFileDialog(DCCTransferInfo dccinfo, CWnd* pParent = NULL);
 
 // Dialog Data
 	//{{AFX_DATA(CSendFileDialog)
 	enum { IDD = IDD_FILEXFER };
+	CStatic	m_XferStatus;
+	CStatic	m_XferRate;
+	CStatic	m_ToFrom;
+	CStatic	m_TimeLeft;
+	CStatic	m_SentRecvd;
+	CStatic	m_RecvrName;
+	CStatic	m_FolderName;
+	CStatic	m_Filesize;
+	CStatic	m_FileName;
+	CStatic	m_BytesSent;
 	CProgressCtrl	m_ProgressFile;
-	CString	m_BytesSent;
-	CString	m_Filesize;
-	CString	m_FolderName;
-	CString	m_FileName;
-	CString	m_RecvrName;
-	CString	m_TimeLeft;
-	CString	m_XferRate;
-	CString	m_XferStatus;
-	CString	m_SentRecvd;
-	CString	m_ToFrom;
 	//}}AFX_DATA
 
+	DCCTransferInfo m_dccInfo;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -44,16 +78,32 @@ public:
 
 // Implementation
 public:
-	bool isCanceled()	{ return m_bIsCanceled; }
+	int Setup();
+	static unsigned short MakePortReservation();
+	static void AddTransferDialog(CSendFileDialog *ptr);
+	static void FreeAnyCompletedTransfers();
+	
+protected:
+	void FreePort(unsigned short port);
+	int SetupSend();
+	int SetupRecv();
+	void SendSomeData();
+	void RecvSomeData();
 
 protected:
-	bool m_bIsCanceled;
+	static std::vector<HANDLE> m_hThread;
+	static std::vector<unsigned short> m_usedPorts;
+	static std::vector<CSendFileDialog *> m_transferDialogs;
+
+	static const unsigned short kFirstPort;
+	static const unsigned short kLastPort;
 
 protected:
 	
 	// Generated message map functions
 	//{{AFX_MSG(CSendFileDialog)
 	virtual void OnCancel();
+	afx_msg void OnTimer(UINT nIDEvent);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -14,7 +14,8 @@ static char THIS_FILE[] = __FILE__;
 
 
 #include "ConnectDlg.h"
-
+#include "SendFileDialog.h"
+#include <process.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // global objects
@@ -22,7 +23,7 @@ static const NetworkInit g_wsInit;
 static const unsigned short FILE_XFER_RATE = 4096;
 
 irc::CIrcSession g_ircSession;
-irc::CIrcDCCServer g_DCCServer;
+//irc::CIrcDCCServer g_DCCServer;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -80,12 +81,20 @@ CSmlobbyDlg::CSmlobbyDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	//We aren't trying to join any games just yet
+	m_bWantToJoin = false;
 }
 
 void CSmlobbyDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSmlobbyDlg)
+	DDX_Control(pDX, IDC_BUTTON_BEGIN_GAME, m_buttonStartGame);
+	DDX_Control(pDX, IDC_GAME_NAME_STATIC, m_staticGameName);
+	DDX_Control(pDX, IDC_SELECT_MUSIC_STATIC, m_staticSelectMusic);
+	DDX_Control(pDX, IDC_NEWGAMEFRAME, m_frameNewGame);
+	DDX_Control(pDX, IDC_BUTTON_CREATE_GAME, m_buttonCreateGame);
 	DDX_Control(pDX, IDC_COMBO_MUSIC, m_comboMusic);
 	DDX_Control(pDX, IDC_EDIT_GAME_NAME, m_editGameName);
 	DDX_Control(pDX, IDC_EDIT_GAME_INFO, m_editGameInfo);
@@ -103,8 +112,10 @@ BEGIN_MESSAGE_MAP(CSmlobbyDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_DESTROY()
 	ON_LBN_DBLCLK(IDC_LIST_GAMES, OnDblclkListGames)
-	ON_LBN_SELCHANGE(IDC_LIST_GAMES, OnSelchangeListGames)
 	ON_BN_CLICKED(IDC_BUTTON_CREATE_GAME, OnButtonCreateGame)
+	ON_LBN_SELCHANGE(IDC_LIST_GAMES, OnSelchangeListGames)
+	ON_BN_CLICKED(IDC_BUTTON_BEGIN_GAME, OnButtonBeginGame)
+	ON_BN_CLICKED(IDC_REFRESH_GAME_LIST, OnRefreshGameList)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -148,6 +159,7 @@ BOOL CSmlobbyDlg::OnInitDialog()
 	IRC_MAP_ENTRY(CSmlobbyDlg, "MODE", OnIrc_MODE)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "NICK", OnIrc_NICK)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "PART", OnIrc_PART)
+	IRC_MAP_ENTRY(CSmlobbyDlg, "QUIT", OnIrc_QUIT)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "PRIVMSG", OnIrc_PRIVMSG)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "DCC", OnIrc_DCC_SEND)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "002", OnIrc_YOURHOST)
@@ -158,7 +170,7 @@ BOOL CSmlobbyDlg::OnInitDialog()
 	IRC_MAP_ENTRY(CSmlobbyDlg, "332", OnIrc_RPL_TOPIC)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "353", OnIrc_RPL_NAMREPLY)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "366", OnIrc_IgnoreMesg)			//RPL_ENDOFNAMES
-	IRC_MAP_ENTRY(CSmlobbyDlg, "376", OnIrc_IgnoreMesg)			//RPL_ENDOFMOTD
+	IRC_MAP_ENTRY(CSmlobbyDlg, "376", OnIrc_RPL_ENDOFMOTD)
 
 	
 	//Initialize IRC Server connection dialog
@@ -203,6 +215,8 @@ BOOL CSmlobbyDlg::OnInitDialog()
 	GetDirListing( sDir+"\\*.*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
 	
+	//FILE *fp = fopen("SongHashes.txt","wt");
+	//int k=1000;
 	for( unsigned i=0; i< arrayGroupDirs.GetSize(); i++ )	// for each dir in /Songs/
 	{
 		CString sGroupDirName = arrayGroupDirs[i];
@@ -223,10 +237,18 @@ BOOL CSmlobbyDlg::OnInitDialog()
 				continue;		// ignore it
 
 			CString sSongDir = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName);
+			unsigned long ulSongHash = GetHashForDirectory( sSongDir );
 
 			m_comboMusic.AddString( sSongDir );
+			m_comboMusic.SetItemData( m_comboMusic.GetCount()-1, ulSongHash );
+			//fprintf(fp, "%d,%s,%lu\n", k, LPCSTR(sSongDir), ulSongHash);
+			//k++;
 		}
 	}
+
+	//fclose(fp);
+	//Make sure start game button is invisible
+	m_buttonStartGame.ShowWindow(FALSE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -304,11 +326,58 @@ bool CSmlobbyDlg::OnIrc_NICK(const CIrcMessage* pmsg)
 
 bool CSmlobbyDlg::OnIrc_PRIVMSG(const CIrcMessage* pmsg)
 {
-	//See if were being sent a DCC command
+	//See if were being sent a DCC comand
 	if (OnIrc_DCC_RECV(pmsg)) 
 		return true;
-	
+
+	//see if someone is starting a game
+	if (OnIrc_DDR_GAME_START(pmsg))
+		return true;
+
 	UpdateChatMessages( pmsg );
+
+	return true;
+}
+
+bool CSmlobbyDlg::OnIrc_RPL_ENDOFMOTD(const CIrcMessage *pmsg)
+{
+	g_ircSession << irc::CIrcMessage(CString("join #mainlobby"));
+	
+	return true;
+}
+
+bool CSmlobbyDlg::OnIrc_DDR_GAME_START(const CIrcMessage *pmsg)
+{
+	//incoming::
+	// PRIVMSG <recipient> :<0x01>DDR START
+
+	//Make sure we have a parameter
+	if ( pmsg->parameters.size() < 1 ) 
+		return false;
+
+	//Make sure it's a DDR start
+	if ( std::string::npos == pmsg->parameters[1].find("\001DDR START") ) 
+		return false;
+
+	//Get the info for this chat room
+	String sSongPath = g_ircSession.GetInfo().sSongPath;
+	String sIP = g_ircSession.GetInfo().sHostIP;
+	String sMyUserName = g_ircSession.GetInfo().sNick;
+
+	//Are we the one who stated the game
+	if (m_buttonStartGame.IsWindowVisible() == TRUE)
+	{
+		m_buttonStartGame.ShowWindow(FALSE);
+		if ( !WinExec("smserver.exe") )
+			AfxMessageBox("Lobby unable to start Stepmania game server!");
+	}
+
+	//Start up the game
+	if ( !WinExec("stepmania.exe " + sSongPath + " " + sIP.c_str() + " " + sMyUserName.c_str()) )
+		AfxMessageBox("Lobby unable to start Stepmania!");
+
+	//Bail from this lobby
+	g_ircSession << irc::CIrcMessage(CString("part ") + CString(g_ircSession.GetInfo().sCurrentChatRoom.c_str()));
 
 	return true;
 }
@@ -318,7 +387,8 @@ bool CSmlobbyDlg::OnIrc_DCC_SEND(const CIrcMessage *pmsg)
 	//incoming:
 	// /DCC SEND <recipient> 
 	//outgoing: 
-	// PRIVMSG <recipient> :<0x01>DCC SEND <filename> <ipaddress> <port> <filesize><0x01>
+	// PRIVMSG <recipient> :<0x01>DCC SEND <filename> <ipaddress> <port> <filesize> <0x01>
+ 
 	const kRecptParm = 1;
 
 	//Make sure we have a parameter
@@ -352,29 +422,41 @@ bool CSmlobbyDlg::OnIrc_DCC_SEND(const CIrcMessage *pmsg)
 	CString dirname = fullpath.Left(fullpath.GetLength() - filename.GetLength());
 
 	//Place all of the connection info into a dcc info structure
-	irc::CIrcDCCServer::DCCTransferInfo dccInfo;
+	//irc::CIrcDCCServer::DCCTransferInfo dccInfo;
+	CSendFileDialog::DCCTransferInfo dccInfo;
 	dccInfo.m_bIsSender = true;
 	dccInfo.m_fileName = filename;
 	dccInfo.m_directory = dirname;
 	dccInfo.m_partnerName = partnerName;
-	dccInfo.m_uiPort = g_DCCServer.MakePortReservation();
+	dccInfo.m_uiPort = CSendFileDialog::MakePortReservation();
 	dccInfo.m_uiXferRate = FILE_XFER_RATE;
 	dccInfo.m_ulFileSize = GetFileSizeInBytes(fullpath);
 	dccInfo.m_ulPartnerIP = ipaddr.host;
 
 	//Create a dcc command to send to the user to which our file is going
+	// make sure data is in network byte order
 	char szDCCString[512];
-	sprintf(szDCCString, "PRIVMSG %s :\001DCC SEND %s %ul %u %ul\001",
-			dccInfo.m_partnerName, dccInfo.m_fileName, ipaddr.host,
-			dccInfo.m_uiPort, dccInfo.m_ulFileSize);
+	unsigned long ip = ntohl(ipaddr.host);
+	unsigned short port = dccInfo.m_uiPort;//htons(dccInfo.m_uiPort);
+	unsigned long filesize = dccInfo.m_ulFileSize;//htonl(dccInfo.m_ulFileSize);
+	sprintf(szDCCString, "PRIVMSG %s :\001DCC SEND %s %lu %u %lu \001",
+			dccInfo.m_partnerName, dccInfo.m_fileName, ip, port, filesize);
 
 	//Send of the dcc command to the other party
 	g_ircSession << irc::CIrcMessage(szDCCString);
 
-	//We now have enough info to fire off a thread that will
+	//We now have enough info to open a window that will
 	//wait for the other party to connect to us and then
 	//transfer the file to them
-	g_DCCServer.Start(dccInfo);  
+	//g_DCCServer.Start(dccInfo);
+	CSendFileDialog *dlg = new CSendFileDialog(dccInfo);
+
+	//Remember this dialog so that when we exit the app
+	//CSendFileDialog::FreeAnyCompletedTransfers() can release it
+	CSendFileDialog::AddTransferDialog(dlg);
+
+	//Now let's try and open the window
+	if ( !dlg->Create(IDD_FILEXFER, NULL) || !dlg->Setup() ) return false;
 
 	return true;
 }
@@ -383,6 +465,7 @@ bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 {
 	//incoming::
 	// PRIVMSG <recipient> :<0x01>DCC SEND <filename> <ipaddress> <port> <filesize><0x01>
+	// filesize, ipaddress, and port are in network byte order
 
 	//Make sure we have a parameter
 	if ( pmsg->parameters.size() < 1 ) 
@@ -395,13 +478,28 @@ bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 	//Make sure we can read out the dcc send fields
 	const char* pszRawString = pmsg->parameters[1].c_str();
 	char szFilename[256];
-	unsigned long ulPartnerIP;
-	unsigned short uiPartnerPort;
-	unsigned long ulFileSize;
+	unsigned long ulPartnerIP = 0L;
+	unsigned short uiPartnerPort = 0;
+	unsigned long ulFileSize = 0L;
 
 	//Snag the dcc info fields from the message string
-	if ( 4 != sscanf(pszRawString, "\001DCC SEND %255s %lu %u %lu", 
-				&szFilename, &ulPartnerIP, &uiPartnerPort, &ulFileSize) )
+	int ret = sscanf(pszRawString, "\001DCC SEND %255s %lu %u %lu \001", 
+				&szFilename, &ulPartnerIP, &uiPartnerPort, &ulFileSize);
+	if ( 4 != ret )
+		return false;
+
+	//Transform data from network byte order to host byte order
+	//ulFileSize = ntohl(ulFileSize);
+	//uiPartnerPort = ntohs(uiPartnerPort);
+	//ulPartnerIP = ntohl(ulPartnerIP);
+
+	//See if this is an echo of a connection I already sent
+	IPaddress ipaddr;
+	char szHostName[256];
+	gethostname(szHostName, 256);
+	SDLNet_ResolveHost(&ipaddr, szHostName, 0);
+	
+	if (ulPartnerIP == ntohl(ipaddr.host)) 
 		return false;
 
 	//Open a dialog box so user can decide where to save file
@@ -410,7 +508,8 @@ bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 		return false;
 
 	//Assemble all of this info into a dcc info structure
-	irc::CIrcDCCServer::DCCTransferInfo dccInfo;
+	//irc::CIrcDCCServer::DCCTransferInfo dccInfo;
+	CSendFileDialog::DCCTransferInfo dccInfo;
 	dccInfo.m_bIsSender = false;
 	dccInfo.m_directory = pathname;
 	dccInfo.m_fileName = szFilename;
@@ -420,8 +519,16 @@ bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 	dccInfo.m_ulFileSize = ulFileSize;
 	dccInfo.m_ulPartnerIP = ulPartnerIP;
 
-	//We now have enough info to fire off a thread that downloads the file
-	g_DCCServer.Start(dccInfo);  
+	//We now have enough info to create a window to deal with file xfer
+	//g_DCCServer.Start(dccInfo);
+	CSendFileDialog *dlg = new CSendFileDialog(dccInfo);
+
+	//Remember this dialog so that when we exit the app
+	//CSendFileDialog::FreeAnyCompletedTransfers() can release it
+	CSendFileDialog::AddTransferDialog(dlg);
+
+	//Now let's try and open the window
+	if ( !dlg->Create(IDD_FILEXFER, NULL) || !dlg->Setup() ) return false;
 
 	return true;
 }
@@ -446,29 +553,50 @@ bool CSmlobbyDlg::OnIrc_JOIN(const CIrcMessage* pmsg)
 
 bool CSmlobbyDlg::OnIrc_PART(const CIrcMessage* pmsg)
 {
-	if( !pmsg->prefix.sNick.length() || pmsg->prefix.sNick == m_session.GetInfo().sNick )
-		return false;
-
-	//make sure to reset the names lists since were leaving current room
-	m_listUsers.ResetContent();
+	char szName[256];
 
 	//forget which chat room we joined
 	g_ircSession.GetInfo().sCurrentChatRoom = "";
+
+	//if we are the host kick everyone else out
+	if ( g_ircSession.GetInfo().bIsGameHost )
+	{
+		for (int i = 0; i < m_listUsers.GetCount(); i++)
+		{
+			m_listUsers.GetDlgItemText(i, szName, 256);
+			if (szName[0] != '@') 
+			{
+
+			}
+		}
+	}
+
+	//make sure to reset the names lists since were leaving current room
+	m_listUsers.ResetContent();
 
 	//query the server for a list of chat rooms
 	g_ircSession << irc::CIrcMessage(CString("list"));
 
 	UpdateChatMessages( pmsg );
 
+	//Now that we've left a game, we can allow user to create a game
+	m_frameNewGame.ShowWindow(TRUE);
+	m_buttonCreateGame.ShowWindow(TRUE);
+	m_comboMusic.ShowWindow(TRUE);
+	m_editGameName.ShowWindow(TRUE);
+	m_staticGameName.ShowWindow(TRUE);
+	m_staticSelectMusic.ShowWindow(TRUE);
+
+
 	return true;
 }
 
 bool CSmlobbyDlg::OnIrc_KICK(const CIrcMessage* pmsg)
 {
-	if( !pmsg->prefix.sNick.length() )
+	/*if( !pmsg->prefix.sNick.length() )
 		return false;
 
-	UpdateChatMessages( pmsg );
+	UpdateChatMessages( pmsg );*/
 
 	return true;
 }
@@ -481,6 +609,20 @@ bool CSmlobbyDlg::OnIrc_MODE(const CIrcMessage* pmsg)
 		return false;
 
 	UpdateChatMessages( pmsg );
+
+	return true;
+}
+
+
+bool CSmlobbyDlg::OnIrc_QUIT(const CIrcMessage *pmsg)
+{
+	//leave a game if we are currently in one
+	if (g_ircSession.GetInfo().sCurrentChatRoom != "")
+	{
+		g_ircSession << irc::CIrcMessage(CString("part ") + CString(g_ircSession.GetInfo().sCurrentChatRoom.c_str()));
+	}
+
+	PostQuitMessage(0);
 
 	return true;
 }
@@ -512,7 +654,7 @@ bool CSmlobbyDlg::OnIrc_RPL_TOPIC(const CIrcMessage *pmsg)
 
 	//Put the info for a game up in the game info box
 	//msg Format: "<channel> :<topic>"
-	//topic format: "GameName\nserverIP\nServerIRCName\nSongHash"
+	//topic format: "GameName serverIP ServerIRCName SongHash SongPath"
 	std::vector<String> vecGameParams;
 	const char* p1 = pmsg->parameters[2].c_str();
 	const char* p2 = p1;
@@ -532,14 +674,54 @@ bool CSmlobbyDlg::OnIrc_RPL_TOPIC(const CIrcMessage *pmsg)
 	}
 
 	//somehow we lost some game info
-	if (vecGameParams.size() != 4) return false;
+	if (vecGameParams.size() != 5) return false;
 
 	//Display game info 
 	m_editGameInfo.SetSel(-1, 0);
 	m_editGameInfo.ReplaceSel(("Game Name: " + vecGameParams[0] + "\n").c_str());
 	m_editGameInfo.ReplaceSel(("Server IP: " + vecGameParams[1] + "\n").c_str());
 	m_editGameInfo.ReplaceSel(("Host IRC Name: " + vecGameParams[2] + "\n").c_str());
-	m_editGameInfo.ReplaceSel(("Song Hash: " + vecGameParams[3] + "\n").c_str());
+	m_editGameInfo.ReplaceSel(("Song: " + vecGameParams[4] + "\n").c_str());
+
+	//Get the hash value
+	unsigned long hash;
+	sscanf(vecGameParams[3].c_str(), "%ul", &hash);
+
+	//Remember the game info for later
+	g_ircSession.SetGameInfo((m_buttonStartGame.IsWindowVisible() == TRUE) ?  true: false,
+								vecGameParams[4], hash, vecGameParams[2], vecGameParams[1]);
+
+	//See if we wanted to join a game
+	if (m_bWantToJoin == true)
+	{
+		m_bWantToJoin = false;
+
+		//See if we have a song that matches that hash
+		if (FindSongNameFromHash(hash) >= 0)
+		{
+			//Tell the server that we join this a chat room
+			g_ircSession << irc::CIrcMessage(CString("join #") + 
+												CString(vecGameParams[0].c_str()));
+
+			return true;
+		}
+		//Otherwise ask if we want to send a song download request
+		else
+		{
+			int ret = AfxMessageBox("I'm sorry, you don't have the song their using.\nWould you like me to send a message into that room asking\nsomeone to send you a copy so that you can join?", MB_YESNO);
+			if (ret == IDYES)
+			{
+				String msg;
+				msg = "PRIVMSG #" + vecGameParams[0] + " " 
+					+ g_ircSession.GetInfo().sNick
+					+ " would like to join you, but they need a copy of "
+					+ vecGameParams[4];
+		
+				g_ircSession << irc::CIrcMessage(CString(msg.c_str()));
+				return false;
+			}
+		}
+	}
 
 	return true;
 }
@@ -594,6 +776,9 @@ void CSmlobbyDlg::OnDestroy()
 	g_ircSession.Disconnect();
 	g_ircSession.RemoveMonitor(this);
 
+	//Free any left over file transfer dialogs
+	CSendFileDialog::FreeAnyCompletedTransfers();
+
 	//Close the parent application
 	AfxGetApp()->ExitInstance();
 }
@@ -634,17 +819,25 @@ void CSmlobbyDlg::UpdateChatMessages( const CIrcMessage* p )
 
 void CSmlobbyDlg::OnDblclkListGames() 
 {
+	//make sure we're not in the room we are already trying to join
 	//Get the game name that was currently selected
-	int nIndex = m_listGames.GetCurSel();
-	CString strGameName;
+	char szGameName[128];
+	int nDummy;
 
-	if (nIndex != LB_ERR)
-	{
-		m_listGames.GetText(nIndex, strGameName);
-		
-		//Tell the server that we wanted to join a chat room
-		g_ircSession << irc::CIrcMessage(CString("join ") + strGameName);
-	}
+	int nIndex = m_listGames.GetCurSel();
+	if (nIndex == LB_ERR) return;
+
+	m_listGames.GetText(nIndex, szGameName);
+	sscanf(szGameName, "%s (%d)", &szGameName, &nDummy);
+
+	if (g_ircSession.GetInfo().sCurrentChatRoom == szGameName) return;
+
+	//other wise, tell server we want to part this channel
+	if (g_ircSession.GetInfo().sCurrentChatRoom != "")
+		g_ircSession << irc::CIrcMessage(CString("part ") + CString(szGameName));
+
+	m_bWantToJoin = true;
+	OnSelchangeListGames();
 }
 
 void CSmlobbyDlg::OnSelchangeListGames() 
@@ -692,9 +885,16 @@ void CSmlobbyDlg::OnButtonCreateGame()
 		return;
 	}
 
+	//Make sure we have some songs
+	if(m_comboMusic.GetCount() <= 0)
+	{
+		MessageBox("You don't have any songs!");
+		return;
+	}
+
 	//Make sure a song is selected
 	int iIndex = m_comboMusic.GetCurSel();
-	if( iIndex <= 0 )
+	if( iIndex == CB_ERR )
 	{
 		MessageBox("Need to select a song to play!");
 		return;
@@ -718,14 +918,48 @@ void CSmlobbyDlg::OnButtonCreateGame()
 	unsigned long hash = GetHashForDirectory( sSongDir );
 
 	//Now tell the server our game info
-	CString sIrcMessage = ssprintf( "topic #%s :%s %s %s %u",
+	CString sIrcMessage = ssprintf( "topic #%s :%s %s %s %u ",
 		gameName,
 		gameName,
 		host_ip_str,
 		g_ircSession.GetInfo().sNick.c_str(),
 		hash );
 
+	//Tack on the song name
+	sIrcMessage += sSongDir;
+
+	//make sure to clean out the values you put in the fields
+	m_comboMusic.SetCurSel(-1);
+	m_editGameName.SetSel(0, -1);
+	m_editGameName.Clear();
+
+	//Make sure we can't create another game until we part this lobby
+	m_frameNewGame.ShowWindow(FALSE);
+	m_buttonCreateGame.ShowWindow(FALSE);
+	m_comboMusic.ShowWindow(FALSE);
+	m_editGameName.ShowWindow(FALSE);
+	m_staticGameName.ShowWindow(FALSE);
+	m_staticSelectMusic.ShowWindow(FALSE);
+
+	//Show the start game button
+	m_buttonStartGame.ShowWindow(TRUE);
+
+	//Send off topic and request update now
 	g_ircSession << irc::CIrcMessage(sIrcMessage);
+	g_ircSession << irc::CIrcMessage(CString("topic #") + gameName);
+}
+
+int CSmlobbyDlg::FindSongNameFromHash(unsigned long hash)
+{
+	unsigned long comboHash;
+	for (int i = 0; i < m_comboMusic.GetCount(); i++)
+	{
+		comboHash = m_comboMusic.GetItemData(i);
+		if (hash == comboHash)
+			return i;
+	}
+
+	return -1;
 }
 
 bool CSmlobbyDlg::IsUniqueGameName(const CString GameName)
@@ -779,4 +1013,51 @@ CString CSmlobbyDlg::SelectFolder()
 	}
 
 	return CString(szPath);
+}
+
+void CSmlobbyDlg::OnButtonBeginGame() 
+{
+	//Create a dcc command to send to the user to which our file is going
+	char szString[64];
+	sprintf(szString, "PRIVMSG %s :\001DDR START", g_ircSession.GetInfo().sCurrentChatRoom.c_str());
+
+	//Send of the dcc command to the other party
+	g_ircSession << irc::CIrcMessage(szString);	
+}
+
+
+bool CSmlobbyDlg::WinExec(String sCmdLine)
+{
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    memset(&si,0,sizeof(si));
+    memset(&pi,0,sizeof(pi));
+    si.cb = sizeof(si);
+    si.wShowWindow=SW_SHOW;
+
+	char szCmdLine[256];
+	strncpy(szCmdLine, sCmdLine.c_str(), 255);
+
+    int ret = CreateProcess(
+        NULL,				// pointer to name of executable module 
+        szCmdLine,			// pointer to command line string 
+        NULL,				// pointer to process security attributes 
+        NULL,				// pointer to thread security attributes 
+        FALSE,				// handle inheritance flag 
+        NULL,				// creation flags 
+        NULL,				// pointer to new environment block 
+        NULL,				// pointer to current directory name 
+        &si,				// pointer to STARTUPINFO 
+        &pi					// pointer to PROCESS_INFORMATION 
+        );
+
+	if (FAILED(ret)) return false;
+	else return true;
+}
+
+void CSmlobbyDlg::OnRefreshGameList() 
+{
+	//Ask for a refresh of the games
+	g_ircSession << irc::CIrcMessage("list");	
 }

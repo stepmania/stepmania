@@ -1,0 +1,42 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: smlobby - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\BRENDA~1\LOCALS~1\Temp\RSP1BA.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\eclipse\workspace\stepmania\src\smlobby\smlobbyDlg.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\BRENDA~1\LOCALS~1\Temp\RSP1BA.tmp" 
+Creating temporary file "C:\DOCUME~1\BRENDA~1\LOCALS~1\Temp\RSP1BB.tmp" with contents
+[
+ws2_32.lib /nologo /subsystem:windows /incremental:yes /pdb:"../../smlobby.pdb" /debug /machine:I386 /out:"../../smlobby.exe" /pdbtype:sept 
+.\Debug\ConnectDlg.obj
+.\Debug\CrossThreadsMessagingDevice.obj
+.\Debug\EditChat.obj
+.\Debug\irc.obj
+.\Debug\RageUtil.obj
+.\Debug\SendFileDialog.obj
+.\Debug\smlobby.obj
+.\Debug\smlobbyDlg.obj
+.\Debug\socket.obj
+.\Debug\StdAfx.obj
+.\Debug\smlobby.res
+]
+Creating command line "link.exe @C:\DOCUME~1\BRENDA~1\LOCALS~1\Temp\RSP1BB.tmp"
+<h3>Output Window</h3>
+Compiling...
+smlobbyDlg.cpp
+Linking...
+
+
+
+<h3>Results</h3>
+smlobby.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

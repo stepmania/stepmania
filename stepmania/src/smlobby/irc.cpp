@@ -195,6 +195,7 @@ bool CIrcSession::Connect(const CIrcSessionInfo& info)
 
 		m_socket.Send("USER %s %s %s :%s\r\n", 
 			info.sUserID.c_str(), szHostName, "server", info.sFullName.c_str());
+
 	}
 	catch( const char* )
 	{
@@ -339,7 +340,7 @@ void CIrcSession::RemoveMonitor(IIrcSessionMonitor* pMonitor)
 ////////////////////////////////////////////////////////////////////
 
 CIrcSessionInfo::CIrcSessionInfo()
-	:	iPort(0), bIdentServer(false), iIdentServerPort(0)
+	:	iPort(0), bIdentServer(false), iIdentServerPort(0), bIsGameHost(false), luSongHash(0L)	
 {
 }
 
@@ -353,7 +354,12 @@ CIrcSessionInfo::CIrcSessionInfo(const CIrcSessionInfo& si)
 		sPassword(si.sPassword),
 		bIdentServer(si.bIdentServer),
 		sIdentServerType(si.sIdentServerType),
-		iIdentServerPort(si.iIdentServerPort)
+		iIdentServerPort(si.iIdentServerPort),
+		bIsGameHost(si.bIsGameHost),
+		sSongPath(si.sSongPath),
+		luSongHash(si.luSongHash),
+		sHostName(si.sHostName),
+		sHostIP(si.sHostIP)
 {
 }
 
@@ -369,6 +375,14 @@ void CIrcSessionInfo::Reset()
 	bIdentServer = false;
 	sIdentServerType = "";
 	iIdentServerPort = 0;
+
+	bIsGameHost = false;
+	sSongPath = "";
+	luSongHash = 0L;
+	sHostName = "";
+	sHostIP = "";
+
+
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -469,7 +483,7 @@ DWORD WINAPI CIrcIdentServer::ListenProc(LPVOID pparam)
 }
 
 ////////////////////////////////////////////////////////////////////
-std::vector<unsigned short> CIrcDCCServer::m_usedPorts;
+/*std::vector<unsigned short> CIrcDCCServer::m_usedPorts;
 std::vector<HANDLE> CIrcDCCServer::m_hThread;
 const unsigned short CIrcDCCServer::kFirstPort = 1024;
 const unsigned short CIrcDCCServer::kLastPort = 5000;
@@ -558,7 +572,7 @@ bool CIrcDCCServer::Start(DCCTransferInfo dccinfo)
 	dccinfo.m_pDCCSever = this;
 
 	//Create the appropriate thread, but don't start it just yet
-	/*if (dccinfo.m_bIsSender)
+	if (dccinfo.m_bIsSender)
 		dccinfo.m_pThread = CreateThread(NULL, 0, DoThreadSend, (void *)&dccinfo, 
 											CREATE_SUSPENDED, NULL);
 	else
@@ -570,12 +584,7 @@ bool CIrcDCCServer::Start(DCCTransferInfo dccinfo)
 
 	//Now we can fire off the thread
 	if (-1 == ResumeThread(dccinfo.m_pThread)) return false;
-	Sleep(100);*/
-
-	if (dccinfo.m_bIsSender)
-		DoThreadSend((void *)&dccinfo);
-	else
-		DoThreadRecv((void *)&dccinfo);
+	Sleep(100);
 
 	return true;
 }
@@ -896,7 +905,7 @@ DWORD WINAPI CIrcDCCServer::DoThreadSend(void* dccInfo)
 	}
 
 	return 0;
-}
+}*/
 
 ////////////////////////////////////////////////////////////////////
 

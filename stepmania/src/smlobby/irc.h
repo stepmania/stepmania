@@ -15,7 +15,7 @@
 #include <map>
 #include <set>
 #include "CrossThreadsMessagingDevice.h"
-#include "SendFileDialog.h"
+//#include "SendFileDialog.h"
 
 ////////////////////////////////////////////////////////////////////
 namespace irc {
@@ -76,6 +76,12 @@ struct CIrcSessionInfo
 	String sIdentServerType;
 	unsigned int iIdentServerPort;
 
+	bool bIsGameHost;
+	String sSongPath;
+	unsigned long luSongHash;
+	String sHostName;
+	String sHostIP;
+
 	CIrcSessionInfo();
 	CIrcSessionInfo(const CIrcSessionInfo& si);
 
@@ -102,6 +108,15 @@ public :
 
 	CIrcSessionInfo& GetInfo() const
 				{ return (CIrcSessionInfo&)m_info; }
+
+	void SetGameInfo(bool isHost, String sPath, unsigned long luHash, String sHost, String sIP)
+	{
+		m_info.bIsGameHost = isHost;
+		m_info.sSongPath = sPath;
+		m_info.luSongHash = luHash;
+		m_info.sHostName = sHost;
+		m_info.sHostIP = sIP;
+	}
 
 	operator bool() const { return (bool)m_socket; }
 
@@ -166,7 +181,7 @@ private :
 
 ////////////////////////////////////////////////////////////////////
 
-class CIrcDCCServer
+/*class CIrcDCCServer
 {
 public:
 	struct DCCTransferInfo
@@ -218,7 +233,7 @@ protected:
 
 	static DWORD WINAPI DoThreadSend(void* dccinfo);
 	static DWORD WINAPI DoThreadRecv(void* dccinfo);
-};
+};*/
 
 ////////////////////////////////////////////////////////////////////
 

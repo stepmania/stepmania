@@ -188,6 +188,10 @@ SOURCE=.\res\smlobby.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\smlobby.rc
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\smlobby.rc2
 # End Source File
 # End Group

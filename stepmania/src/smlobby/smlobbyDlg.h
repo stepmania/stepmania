@@ -26,6 +26,11 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSmlobbyDlg)
 	enum { IDD = IDD_SMLOBBY_DIALOG };
+	CButton	m_buttonStartGame;
+	CStatic	m_staticGameName;
+	CStatic	m_staticSelectMusic;
+	CButton	m_frameNewGame;
+	CButton	m_buttonCreateGame;
 	CComboBox	m_comboMusic;
 	CEdit	m_editGameName;
 	CEdit	m_editGameInfo;
@@ -44,6 +49,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
+	bool m_bWantToJoin;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSmlobbyDlg)
@@ -53,8 +59,10 @@ protected:
 	virtual void OnPaint();
 	virtual void OnDestroy();
 	afx_msg void OnDblclkListGames();
-	afx_msg void OnSelchangeListGames();
 	afx_msg void OnButtonCreateGame();
+	afx_msg void OnSelchangeListGames();
+	afx_msg void OnButtonBeginGame();
+	afx_msg void OnRefreshGameList();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -66,12 +74,15 @@ protected:
 	bool OnIrc_PART(const CIrcMessage* pmsg);
 	bool OnIrc_KICK(const CIrcMessage* pmsg);
 	bool OnIrc_MODE(const CIrcMessage* pmsg);
+	bool OnIrc_QUIT(const CIrcMessage *pmsg);
 	bool OnIrc_RPL_LISTSTART(const CIrcMessage *pmsg);
 	bool OnIrc_RPL_LIST(const CIrcMessage *pmsg);
 	bool OnIrc_RPL_TOPIC(const CIrcMessage *pmsg);
 	bool OnIrc_RPL_NAMREPLY(const CIrcMessage *pmsg);
 	bool OnIrc_DCC_SEND(const CIrcMessage *pmsg);
 	bool OnIrc_DCC_RECV(const CIrcMessage *pmsg);
+	bool OnIrc_DDR_GAME_START(const CIrcMessage *pmsg);
+	bool OnIrc_RPL_ENDOFMOTD(const CIrcMessage *pmsg);
 	bool OnIrc_IgnoreMesg(const CIrcMessage *pmsg)		{ return true; }
 
 	virtual void OnIrcDefault(const CIrcMessage* pmsg);
@@ -79,7 +90,9 @@ protected:
 
 	void UpdateChatMessages( const CIrcMessage* p );
 	bool IsUniqueGameName(const CString GameName);
+	int FindSongNameFromHash(unsigned long hash);
 	CString SelectFolder();
+	bool WinExec(String sCmdLine);
 };
 
 //{{AFX_INSERT_LOCATION}}

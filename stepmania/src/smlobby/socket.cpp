@@ -106,7 +106,16 @@ bool Socket::Listen()
 
 Socket Socket::Accept()
 {
-	return Socket(SDLNet_TCP_Accept(m_sock));
+	const int kMaxRetry = 10;
+	TCPsocket new_sock;
+
+	for (int i = 0; i < kMaxRetry; i++)
+	{
+		new_sock = SDLNet_TCP_Accept(m_sock); 
+		if ( new_sock ) break;
+	}
+
+	return Socket(new_sock);
 }
 
 int Socket::Send(const unsigned char* buf, int cbBuf)
