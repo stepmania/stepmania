@@ -93,7 +93,7 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	if( bLoadNamesOnly )
 		m_Profile[pn].LoadEditableDataFromDir( m_sProfileDir[pn] );
 	else
-		m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn] );
+		m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 
 	return true;
 }
@@ -104,7 +104,7 @@ bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 
 	Profile pro;
 	pro.m_sDisplayName = sName;
-	bResult = pro.SaveAllToDir( sProfileDir );
+	bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
 	if( !bResult )
 		return false;
 
@@ -186,7 +186,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	if( m_sProfileDir[pn].empty() )
 		return false;
 
-	return m_Profile[pn].SaveAllToDir( m_sProfileDir[pn] );
+	return m_Profile[pn].SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 }
 
 void ProfileManager::UnloadProfile( PlayerNumber pn )
@@ -249,11 +249,11 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 
 	Profile pro;
 	bool bResult;
-	bResult = pro.LoadAllFromDir( sProfileDir );
+	bResult = pro.LoadAllFromDir( sProfileDir, PREFSMAN->m_bSignProfileData );
 	if( !bResult )
 		return false;
 	pro.m_sDisplayName = sNewName;
-	bResult = pro.SaveAllToDir( sProfileDir );
+	bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
 	if( !bResult )
 		return false;
 
@@ -280,7 +280,7 @@ void ProfileManager::SaveMachineProfile()
 	// are saved, so that the Player's profiles show the right machine name.
 	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
 
-	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR );
+	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 }
 
 
@@ -291,10 +291,10 @@ void ProfileManager::LoadMachineProfile()
 	// read old style notes scores
 //	ReadSM300NoteScores();
 
-	if( !m_MachineProfile.LoadAllFromDir(MACHINE_PROFILE_DIR ) )
+	if( !m_MachineProfile.LoadAllFromDir(MACHINE_PROFILE_DIR, false) )
 	{
 		CreateProfile(MACHINE_PROFILE_DIR, "Machine");
-		m_MachineProfile.LoadAllFromDir( MACHINE_PROFILE_DIR );
+		m_MachineProfile.LoadAllFromDir( MACHINE_PROFILE_DIR, false );
 	}
 
 	// If the machine name has changed, make sure we use the new name

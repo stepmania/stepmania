@@ -446,7 +446,7 @@ int g_iOnceCtr;
 #define FOR_ONCE	for(g_iOnceCtr=0;g_iOnceCtr<1;g_iOnceCtr++)
 
 
-bool Profile::LoadAllFromDir( CString sDir )
+bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 {
 	CHECKPOINT;
 
@@ -483,7 +483,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 			break;
 		}
 
-		if( PREFSMAN->m_bSignProfileData )
+		if( bRequireSignature )
 		{
 			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 			CString sDontShareFile = sDir + DONT_SHARE_SIG;
@@ -526,7 +526,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 	return true;	// FIXME?  Investigate what happens if we always return true.
 }
 
-bool Profile::SaveAllToDir( CString sDir ) const
+bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 {
 	m_sLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 
@@ -547,7 +547,7 @@ bool Profile::SaveAllToDir( CString sDir ) const
 		xml.AppendChild( SaveCalorieDataCreateNode() );
 		xml.AppendChild( SaveAwardsCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
-		if( bSaved && PREFSMAN->m_bSignProfileData )
+		if( bSaved && bSignData )
 		{
 			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);

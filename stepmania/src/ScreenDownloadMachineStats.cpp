@@ -5,6 +5,7 @@
 #include "ScreenManager.h"
 #include "MemoryCardManager.h"
 #include "ThemeManager.h"
+#include "PrefsManager.h"
 
 #define NEXT_SCREEN			THEME->GetMetric(m_sName,"NextScreen")
 
@@ -17,7 +18,7 @@ static void SaveMachineStatsToFirstMemCard()
 
 		CString sDir = MEM_CARD_MOUNT_POINT[pn];
 		sDir += "MachineProfile/";
-		PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir );
+		PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
 		SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
 		return;
 	}

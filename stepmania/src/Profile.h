@@ -263,8 +263,8 @@ public:
 	//
 	// Loading and saving
 	//
-	bool LoadAllFromDir( CString sDir );	// return false on 
-	bool SaveAllToDir( CString sDir ) const;
+	bool LoadAllFromDir( CString sDir, bool bRequireSignature );	// return false on error
+	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
 	void LoadProfileDataFromDirSM390a12( CString sDir );
 	void LoadSongScoresFromDirSM390a12( CString sDir );
