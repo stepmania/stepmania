@@ -796,7 +796,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers ../src $(SYSTEM_LIBRARY_DIR)/Frameworks/SDL_image.framework/Versions/A/Headers $(SYSTEM_LIBRARY_DIR)/SDL.framework/Headers ../src /usr/local/include/SDL";
-				INFOPLIST_FILE = "Info-stepmania__Upgraded_.plist";
+				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
@@ -4693,7 +4693,7 @@
 		AA29CE570558741A00961A51 = {
 			expectedFileType = text.plist;
 			isa = PBXFileReference;
-			path = "Info-stepmania__Upgraded_.plist";
+			path = "Info-StepMania.plist";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5381,7 +5381,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = "../src Installer";
-				INFOPLIST_FILE = "Info-Installer__Upgraded_.plist";
+				INFOPLIST_FILE = "Info-Installer.plist";
 				OTHER_CFLAGS = "-Wwrite-strings";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -5584,7 +5584,7 @@
 		AA67BFCE0558751E00EF34A6 = {
 			expectedFileType = text.plist;
 			isa = PBXFileReference;
-			path = "Info-Installer__Upgraded_.plist";
+			path = "Info-Installer.plist";
 			refType = 4;
 			sourceTree = "<group>";
 		};
