@@ -6,7 +6,6 @@
  * time, RageDisplay.h is sufficient. 
  */
 
-#include "SDL_utils.h"
 /* ours is more up-to-date */
 #define NO_SDL_GLEXT
 #define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
@@ -265,7 +264,7 @@ static void FixLilEndian()
 	{
 		RageDisplay::PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
 
-		/* OpenGL and SDL handle byte formats differently; we need
+		/* OpenGL and RageSurface handle byte formats differently; we need
 		 * to flip non-paletted masks to make them line up. */
 		if( GL_PIXFMT_INFO[i].type != GL_UNSIGNED_BYTE || pf.bpp == 8 )
 			continue;
@@ -335,7 +334,7 @@ static void TurnOffHardwareVBO()
 #endif
 
 #if defined(unix)
-static Display *g_X11Display = NULL;
+Display *g_X11Display = NULL;
 #endif
 
 static void LogGLXDebugInformation()
@@ -772,19 +771,6 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		/* Recreate all vertex buffers. */
 		InvalidateAllGeometry();
 	}
-
-#if defined(unix)
-	{
-		SDL_SysWMinfo info;
-		SDL_VERSION(&info.version);
-
-		g_X11Display = NULL;
-		if ( SDL_GetWMInfo(&info) < 0 )
-			LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
-		else
-			g_X11Display = info.info.x11.display;
-	}
-#endif
 
 	this->SetDefaultRenderStates();
 	DumpOpenGLDebugInfo();
