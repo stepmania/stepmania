@@ -36,41 +36,15 @@ enum InputDevice {
 
 // button byte codes for directional pad
 enum JoystickButton {
-	JOY_LEFT = 0,
-	JOY_RIGHT,
-	JOY_UP,
-	JOY_DOWN,
-	JOY_1,
-	JOY_2,
-	JOY_3,
-	JOY_4,
-	JOY_5,
-	JOY_6,
-	JOY_7,
-	JOY_8,
-	JOY_9,
-	JOY_10,
-	JOY_11,
-	JOY_12,
-	JOY_13,
-	JOY_14,
-	JOY_15,
-	JOY_16,
-	JOY_17,
-	JOY_18,
-	JOY_19,
-	JOY_20,
-	JOY_21,
-	JOY_22,
-	JOY_23,
-	JOY_24,
+	JOY_LEFT = 0, JOY_RIGHT, JOY_UP, JOY_DOWN,
+	JOY_1,	JOY_2,	JOY_3,	JOY_4,	JOY_5,	JOY_6,	JOY_7,	JOY_8,	JOY_9,	JOY_10,
+	JOY_11,	JOY_12,	JOY_13,	JOY_14,	JOY_15,	JOY_16,	JOY_17,	JOY_18,	JOY_19,	JOY_20,
+	JOY_21,	JOY_22,	JOY_23,	JOY_24,
 	NUM_JOYSTICK_BUTTONS	// leave this at the end
 };
 
 const int NUM_DEVICE_BUTTONS = MAX( MAX( NUM_KEYBOARD_BUTTONS, NUM_JOYSTICK_BUTTONS ), 
 								NUM_PUMP_PAD_BUTTONS );
-
-extern const char *PumpButtonNames[];
 
 struct DeviceInput
 {
@@ -164,7 +138,7 @@ public:
 	// Initialize DirectInput Resources
 	HRESULT Initialize();
 	// Release all DirectInput Resources
-	VOID Release();
+	void Release();
 	// Get our Devices State
 	HRESULT Update();
 	bool IsBeingPressed( DeviceInput di );

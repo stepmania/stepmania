@@ -36,7 +36,7 @@
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
-const char *PumpButtonNames[] = {
+static const char *PumpButtonNames[] = {
 	"UL", "UR", "MID", "DL", "DR", "Esc",
 	"P2 UL", "P2 UR", "P2 MID", "P2 DL", "P2 DR"
 };
