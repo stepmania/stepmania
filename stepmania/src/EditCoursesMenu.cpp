@@ -45,10 +45,10 @@ enum CourseEntryMenuRow
 
 static const MenuRow g_CourseOptionsMenuItems[] =
 {
-	{ "Repeat",		true, true, 0, { "NO","YES" } },
-	{ "Randomize",	true, true, 0, { "NO","YES" } },
-	{ "Lives",		true, true, 4, { "Use Bar Life","1","2","3","4","5","6","7","8","9","10" } },
-	{ NULL, true, true, 0, { NULL } }
+	{ repeat,		"Repeat",		true, true, 0, { "NO","YES" } },
+	{ randomize,	"Randomize",	true, true, 0, { "NO","YES" } },
+	{ lives,		"Lives",		true, true, 4, { "Use Bar Life","1","2","3","4","5","6","7","8","9","10" } },
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_CourseOptionsMenu( "Course Options", g_CourseOptionsMenuItems );
 

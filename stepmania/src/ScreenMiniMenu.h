@@ -15,6 +15,7 @@
 
 struct MenuRow
 {
+	int		iRowCode;
 	const char *name;
 	bool	enabled;
 	bool	bShowInHomeEditMode;
@@ -25,6 +26,7 @@ struct MenuRow
 
 struct MenuRowInternal
 {
+	int		iRowCode;
 	CString name;
 	bool    enabled;
 	bool	bShowInHomeEditMode;
@@ -33,6 +35,7 @@ struct MenuRowInternal
 
 	MenuRowInternal()
 	{
+		iRowCode = -1;
 		enabled = true;
 		bShowInHomeEditMode = true;
 		defaultChoice = 0;
@@ -95,7 +98,7 @@ protected:
 	Transition		m_Out;
 
 public:
-	static int	s_iLastLine;
+	static int	s_iLastRowCode;
 	static int	s_iLastAnswers[MAX_MENU_ROWS];
 
 };

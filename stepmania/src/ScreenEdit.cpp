@@ -69,6 +69,7 @@ const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+13);
 const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
 const ScreenMessage SM_BackFromBPMChange			= (ScreenMessage)(SM_User+15);
 const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
+const ScreenMessage SM_DoExit						= (ScreenMessage)(SM_User+17);
 
 const CString HELP_TEXT = 
 #if !defined(XBOX)
@@ -319,163 +320,161 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 static const MenuRow g_KeyboardShortcutsItems[] =
 {
 #if !defined(XBOX)
-	{ "PgUp/PgDn: jump measure",						false, true, 0, { NULL } },
-	{ "Home/End: jump to first/last beat",				false, true, 0, { NULL } },
-	{ "Ctrl + Up/Down: Change zoom",					false, true, 0, { NULL } },
-	{ "Shift + Up/Down: Drag area marker",				false, true, 0, { NULL } },
-	{ "P: Play selection",								false, true, 0, { NULL } },
-	{ "Ctrl + P: Play whole song",						false, true, 0, { NULL } },
-	{ "Shift + P: Play current beat to end",			false, true, 0, { NULL } },
-	{ "Ctrl + R: Record",								false, true, 0, { NULL } },
-	{ "F4: Toggle assist tick",							false, true, 0, { NULL } },
-	{ "F5/F6: Next/prev steps of same StepsType",		false, true, 0, { NULL } },
-	{ "F7/F8: Decrease/increase BPM at cur beat",		false, true, 0, { NULL } },
-	{ "F9/F10: Decrease/increase stop at cur beat",		false, true, 0, { NULL } },
-	{ "F11/F12: Decrease/increase music offset",		false, true, 0, { NULL } },
+	{ -1, "PgUp/PgDn: jump measure",						false, true, 0, { NULL } },
+	{ -1, "Home/End: jump to first/last beat",				false, true, 0, { NULL } },
+	{ -1, "Ctrl + Up/Down: Change zoom",					false, true, 0, { NULL } },
+	{ -1, "Shift + Up/Down: Drag area marker",				false, true, 0, { NULL } },
+	{ -1, "P: Play selection",								false, true, 0, { NULL } },
+	{ -1, "Ctrl + P: Play whole song",						false, true, 0, { NULL } },
+	{ -1, "Shift + P: Play current beat to end",			false, true, 0, { NULL } },
+	{ -1, "Ctrl + R: Record",								false, true, 0, { NULL } },
+	{ -1, "F4: Toggle assist tick",							false, true, 0, { NULL } },
+	{ -1, "F5/F6: Next/prev steps of same StepsType",		false, true, 0, { NULL } },
+	{ -1, "F7/F8: Decrease/increase BPM at cur beat",		false, true, 0, { NULL } },
+	{ -1, "F9/F10: Decrease/increase stop at cur beat",		false, true, 0, { NULL } },
+	{ -1, "F11/F12: Decrease/increase music offset",		false, true, 0, { NULL } },
 		/* XXX: This would be better as a single submenu, to let people tweak
 		 * and play the sample several times (without having to re-enter the
 		 * menu each time), so it doesn't use a whole bunch of hotkeys. */
-	{ "[ and ]: Decrease/increase sample music start",	false, true, 0, { NULL } },
-	{ "{ and }: Decrease/increase sample music length",	false, true, 0, { NULL } },
-	{ "M: Play sample music",							false, true, 0, { NULL } },
-	{ "B: Add/Edit Background Change",					false, true, 0, { NULL } },
-	{ "Insert: Insert beat and shift down",				false, true, 0, { NULL } },
-	{ "Ctrl + Insert: Shift BPM changes and stops down one beat",
+	{ -1, "[ and ]: Decrease/increase sample music start",	false, true, 0, { NULL } },
+	{ -1, "{ and }: Decrease/increase sample music length",	false, true, 0, { NULL } },
+	{ -1, "M: Play sample music",							false, true, 0, { NULL } },
+	{ -1, "B: Add/Edit Background Change",					false, true, 0, { NULL } },
+	{ -1, "Insert: Insert beat and shift down",				false, true, 0, { NULL } },
+	{ -1, "Ctrl + Insert: Shift BPM changes and stops down one beat",
 														false, true, 0, { NULL } },
-	{ "Delete: Delete beat and shift up",				false, true, 0, { NULL } },
-	{ "Ctrl + Delete: Shift BPM changes and stops up one beat",
+	{ -1, "Delete: Delete beat and shift up",				false, true, 0, { NULL } },
+	{ -1, "Ctrl + Delete: Shift BPM changes and stops up one beat",
 														false, true, 0, { NULL } },
-	{ "Shift + number: Lay mine",						false, true, 0, { NULL } },
-	{ "Alt + number: Add to/remove from right half",	false, true, 0, { NULL } },
+	{ -1, "Shift + number: Lay mine",						false, true, 0, { NULL } },
+	{ -1, "Alt + number: Add to/remove from right half",	false, true, 0, { NULL } },
 #else
-	{ "L + Up/Down: Change zoom",						false, true, 0, { NULL } },
-	{ "R + Up/Down: Drag area marker",					false, true, 0, { NULL } },
-	{ "L + Select: Play selection",						false, true, 0, { NULL } },
-	{ "R + Start: Play whole song",						false, true, 0, { NULL } },
-	{ "R + Select: Record",								false, true, 0, { NULL } },
-	{ "L + Black: Toggle assist tick",					false, true, 0, { NULL } },
-	{ "R + White: Insert beat and shift down",			false, true, 0, { NULL } },
-	{ "R + Black: Delete beat and shift up",			false, true, 0, { NULL } },
-	{ "R + button: Lay mine",							false, true, 0, { NULL } },
-	{ "L + button: Add to/remove from right half",		false, true, 0, { NULL } },
+	{ -1, "L + Up/Down: Change zoom",						false, true, 0, { NULL } },
+	{ -1, "R + Up/Down: Drag area marker",					false, true, 0, { NULL } },
+	{ -1, "L + Select: Play selection",						false, true, 0, { NULL } },
+	{ -1, "R + Start: Play whole song",						false, true, 0, { NULL } },
+	{ -1, "R + Select: Record",								false, true, 0, { NULL } },
+	{ -1, "L + Black: Toggle assist tick",					false, true, 0, { NULL } },
+	{ -1, "R + White: Insert beat and shift down",			false, true, 0, { NULL } },
+	{ -1, "R + Black: Delete beat and shift up",			false, true, 0, { NULL } },
+	{ -1, "R + button: Lay mine",							false, true, 0, { NULL } },
+	{ -1, "L + button: Add to/remove from right half",		false, true, 0, { NULL } },
 #endif
-	{ NULL, true, 0, { NULL } }
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_KeyboardShortcuts( "Keyboard Shortcuts", g_KeyboardShortcutsItems );
 
 static const MenuRow g_MainMenuItems[] =
 {
-	{ "Edit Steps Statistics",					true, true, 0, { NULL } },
-	{ "Play Whole Song",						true, true, 0, { NULL } },
-	{ "Play Current Beat To End",				true, true, 0, { NULL } },
-	{ "Save",									true, true, 0, { NULL } },
-	{ "Revert",									true, true, 0, { NULL } },
-	{ "Player Options",							true, true, 0, { NULL } },
-	{ "Song Options",							true, false, 0, { NULL } },
-	{ "Edit Song Info",							true, false, 0, { NULL } },
-	{ "Edit BPM Change",						true, false, 0, { NULL } },
-	{ "Edit Stop",								true, false, 0, { NULL } },
-	{ "Add/Edit BG Change",						true, false, 0, { NULL } },
-	{ "Play preview music",						true, false, 0, { NULL } },
-	{ "Preferences",							true, false, 0, { NULL } },
-	{ "Exit (discards changes since last save)",true, true, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
+	{ ScreenEdit::edit_notes_statistics,	"Edit Steps Statistics",	true, true, 0, { NULL } },
+	{ ScreenEdit::play_whole_song,			"Play Whole Song",			true, true, 0, { NULL } },
+	{ ScreenEdit::play_current_beat_to_end, "Play Current Beat To End",	true, true, 0, { NULL } },
+	{ ScreenEdit::save,						"Save",						true, true, 0, { NULL } },
+	{ ScreenEdit::reload,					"Revert",					true, true, 0, { NULL } },
+	{ ScreenEdit::player_options,			"Player Options",			true, true, 0, { NULL } },
+	{ ScreenEdit::song_options,				"Song Options",				true, false, 0, { NULL } },
+	{ ScreenEdit::edit_song_info,			"Edit Song Info",			true, false, 0, { NULL } },
+	{ ScreenEdit::edit_bpm,					"Edit BPM Change",			true, false, 0, { NULL } },
+	{ ScreenEdit::edit_stop,				"Edit Stop",				true, false, 0, { NULL } },
+	{ ScreenEdit::edit_bg_change,			"Add/Edit BG Change",		true, false, 0, { NULL } },
+	{ ScreenEdit::play_preview_music,		"Play preview music",		true, false, 0, { NULL } },
+	{ ScreenEdit::preferences,				"Preferences",				true, false, 0, { NULL } },
+	{ ScreenEdit::exit,						"Exit",						true, true, 0, { NULL } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_MainMenu( "Main Menu", g_MainMenuItems );
 
 static const MenuRow g_AreaMenuItems[] =
 {
-	{ "Cut",						true, true, 0, { NULL } },
-	{ "Copy",						true, true, 0, { NULL } },
-	{ "Paste at current beat",		true, true, 0, { NULL } },
-	{ "Paste at begin marker",		true, true, 0, { NULL } },
-	{ "Clear",						true, true, 0, { NULL } },
-	{ "Quantize",					true, true, 0, { "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" } },
-	{ "Turn",						true, true, 0, { "Left","Right","Mirror","Shuffle","Super Shuffle" } },
-	{ "Transform",					true, true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","BMRize","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" } },
-	{ "Alter",						true, true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" } },
-	{ "Tempo",						true, true, 0, { "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" } },
-	{ "Play selection",				true, true, 0, { NULL } },
-	{ "Record in selection",		true, true, 0, { NULL } },
-	{ "Insert beat and shift down",	true, true, 0, { NULL } },
-	{ "Delete beat and shift up",	true, true, 0, { NULL } },
-	{ "Shift pauses and BPM changes down",			
-									true, false, 0, { NULL } },
-	{ "Shift pauses and BPM changes up",
-									true, false, 0, { NULL } },
-	{ "Convert beats to pause",		true, false, 0, { NULL } },
-	{ "Convert pause to beats",		true, false, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
+	{ ScreenEdit::cut,						"Cut",								true, true, 0, { NULL } },
+	{ ScreenEdit::copy,						"Copy",								true, true, 0, { NULL } },
+	{ ScreenEdit::paste_at_current_beat,	"Paste at current beat",			true, true, 0, { NULL } },
+	{ ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",			true, true, 0, { NULL } },
+	{ ScreenEdit::clear,					"Clear area",						true, true, 0, { NULL } },
+	{ ScreenEdit::quantize,					"Quantize",							true, true, 0, { "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" } },
+	{ ScreenEdit::turn,						"Turn",								true, true, 0, { "Left","Right","Mirror","Shuffle","Super Shuffle" } },
+	{ ScreenEdit::transform,				"Transform",						true, true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","BMRize","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" } },
+	{ ScreenEdit::alter,					"Alter",							true, true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" } },
+	{ ScreenEdit::tempo,					"Tempo",							true, true, 0, { "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" } },
+	{ ScreenEdit::play,						"Play selection",					true, true, 0, { NULL } },
+	{ ScreenEdit::record,					"Record in selection",				true, true, 0, { NULL } },
+	{ ScreenEdit::insert_and_shift,			"Insert beat and shift down",		true, true, 0, { NULL } },
+	{ ScreenEdit::delete_and_shift,			"Delete beat and shift up",			true, true, 0, { NULL } },
+	{ ScreenEdit::shift_pauses_forward,		"Shift pauses and BPM changes down",true, false, 0, { NULL } },
+	{ ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, false, 0, { NULL } },
+	{ ScreenEdit::convert_beat_to_pause,	"Convert beats to pause",			true, false, 0, { NULL } },
+	{ ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, false, 0, { NULL } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_AreaMenu( "Area Menu", g_AreaMenuItems );
 
 static const MenuRow g_EditNotesStatisticsItems[] =
 {
-	{ "Difficulty",					true, true,  0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE","EDIT" } },
-	{ "Meter",						true, true,  0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" } },
-	{ "Description",				true, true,  0, { NULL } },
-	{ "Predicted Meter",			false, true, 0, { NULL } },
-	{ "Tap Steps",					false, true, 0, { NULL } },
-	{ "Hold Steps",					false, true, 0, { NULL } },
-	{ "Stream",						false, true, 0, { NULL } },
-	{ "Voltage",					false, true, 0, { NULL } },
-	{ "Air",						false, true, 0, { NULL } },
-	{ "Freeze",						false, true, 0, { NULL } },
-	{ "Chaos",						false, true, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
+	{ ScreenEdit::difficulty,		"Difficulty",		true, true,  0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE","EDIT" } },
+	{ ScreenEdit::meter,			"Meter",			true, true,  0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" } },
+	{ ScreenEdit::description,		"Description",		true, true,  0, { NULL } },
+	{ ScreenEdit::predict_meter,	"Predicted Meter",	false, true, 0, { NULL } },
+	{ ScreenEdit::tap_notes,		"Tap Steps",		false, true, 0, { NULL } },
+	{ ScreenEdit::hold_notes,		"Hold Steps",		false, true, 0, { NULL } },
+	{ ScreenEdit::stream,			"Stream",			false, true, 0, { NULL } },
+	{ ScreenEdit::voltage,			"Voltage",			false, true, 0, { NULL } },
+	{ ScreenEdit::air,				"Air",				false, true, 0, { NULL } },
+	{ ScreenEdit::freeze,			"Freeze",			false, true, 0, { NULL } },
+	{ ScreenEdit::chaos,			"Chaos",			false, true, 0, { NULL } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_EditNotesStatistics( "Statistics", g_EditNotesStatisticsItems );
 
 static const MenuRow g_EditSongInfoItems[] =
 {
-	{ "Main title",					true, true, 0, { NULL } },
-	{ "Sub title",					true, true, 0, { NULL } },
-	{ "Artist",						true, true, 0, { NULL } },
-	{ "Credit",						true, true, 0, { NULL } },
-	{ "Main title transliteration",	true, true, 0, { NULL } },
-	{ "Sub title transliteration",	true, true, 0, { NULL } },
-	{ "Artist transliteration",		true, true, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
+	{ ScreenEdit::main_title,					"Main title",					true, true, 0, { NULL } },
+	{ ScreenEdit::sub_title,					"Sub title",					true, true, 0, { NULL } },
+	{ ScreenEdit::artist,						"Artist",						true, true, 0, { NULL } },
+	{ ScreenEdit::credit,						"Credit",						true, true, 0, { NULL } },
+	{ ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, true, 0, { NULL } },
+	{ ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, true, 0, { NULL } },
+	{ ScreenEdit::artist_transliteration,		"Artist transliteration",		true, true, 0, { NULL } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_EditSongInfo( "Edit Song Info", g_EditSongInfoItems );
 
 static const MenuRow g_BGChangeItems[] =
 {
-	{ "Rate (applies to new adds)",			true, true, 10, { "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" } },
-	{ "Fade Last (applies to new adds)",	true, true, 0, { "NO","YES" } },
-	{ "Rewind Movie (applies to new adds)",	true, true, 0, { "NO","YES" } },
-	{ "Loop (applies to new adds)",			true, true, 1, { "NO","YES" } },
-	{ "Add Change to random",				true, true, 0, { NULL } },
-	{ "Add Change to song BGAnimation",		true, true, 0, { NULL } },
-	{ "Add Change to song Movie",			true, true, 0, { NULL } },
-	{ "Add Change to song Still",			true, true, 0, { NULL } },
-	{ "Add Change to global Random Movie",	true, true, 0, { NULL } },
-	{ "Add Change to global BGAnimation",	true, true, 0, { NULL } },
-	{ "Add Change to global Visualization",	true, true, 0, { NULL } },
-	{ "Remove Change",						true, true, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
+	{ ScreenEdit::rate,						"Rate (applies to new adds)",			true, true, 10, { "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" } },
+	{ ScreenEdit::fade_last,				"Fade Last (applies to new adds)",		true, true, 0, { "NO","YES" } },
+	{ ScreenEdit::rewind_movie,				"Rewind Movie (applies to new adds)",	true, true, 0, { "NO","YES" } },
+	{ ScreenEdit::loop,						"Loop (applies to new adds)",			true, true, 1, { "NO","YES" } },
+	{ ScreenEdit::add_random,				"Add Change to random",					true, true, 0, { NULL } },
+	{ ScreenEdit::add_song_bganimation,		"Add Change to song BGAnimation",		true, true, 0, { NULL } },
+	{ ScreenEdit::add_song_movie,			"Add Change to song Movie",				true, true, 0, { NULL } },
+	{ ScreenEdit::add_song_still,			"Add Change to song Still",				true, true, 0, { NULL } },
+	{ ScreenEdit::add_global_random_movie,	"Add Change to global Random Movie",	true, true, 0, { NULL } },
+	{ ScreenEdit::add_global_bganimation,	"Add Change to global BGAnimation",		true, true, 0, { NULL } },
+	{ ScreenEdit::add_global_visualization, "Add Change to global Visualization",	true, true, 0, { NULL } },
+	{ ScreenEdit::delete_change,			"Remove Change",						true, true, 0, { NULL } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_BGChange( "Background Change", g_BGChangeItems );
 
 static const MenuRow g_PrefsItems[] =
 {
-	{ "Show BGChanges during Play/Record",	true, true, 0, { "NO","YES" } },
-	{ NULL, true, 0, { NULL } }
+	{ ScreenEdit::pref_show_bgs_play,		"Show BGChanges during Play/Record",	true, true, 0, { "NO","YES" } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_Prefs( "Preferences", g_PrefsItems );
 
 static const MenuRow g_InsertAttackItems[] =
 {
-	{ "Duration seconds",					true, true, 3, { "5","10","15","20","25","30","35","40","45" } },
-	{ "Set modifiers",						true, true, 0, { "PRESS START" } },
-	{ NULL, true, 0, { NULL } }
+	{ -1, "Duration seconds",			true, true, 3, { "5","10","15","20","25","30","35","40","45" } },
+	{ -1, "Set modifiers",				true, true, 0, { "PRESS START" } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_InsertAttack( "Insert Attack", g_InsertAttackItems );
 
 static const MenuRow g_CourseModeItems[] =
 {
-	{ "Play mods from course",				true, true, 0, { NULL } },
-	{ NULL, true, 0, { NULL } }
+	{ -1, "Play mods from course",		true, true, 0, { NULL } },
+	{ -1, NULL, true, 0, { NULL } }
 };
 static Menu g_CourseMode( "Course Display", g_CourseModeItems );
 
@@ -1513,16 +1512,16 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		break;
 	case SM_BackFromMainMenu:
-		HandleMainMenuChoice( (MainMenuChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		HandleMainMenuChoice( (MainMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_iLastAnswers );
 		break;
 	case SM_BackFromAreaMenu:
-		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_iLastAnswers );
 		break;
 	case SM_BackFromEditNotesStatistics:
-		HandleEditNotesStatisticsChoice( (EditNotesStatisticsChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		HandleEditNotesStatisticsChoice( (EditNotesStatisticsChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_iLastAnswers );
 		break;
 	case SM_BackFromEditSongInfo:
-		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_iLastAnswers );
 		break;
 	case SM_BackFromBPMChange:
 		{
@@ -1539,7 +1538,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_BackFromBGChange:
-		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_iLastAnswers );
 		break;
 	case SM_BackFromPrefs:
 		PREFSMAN->m_bEditorShowBGChangesPlay = !!ScreenMiniMenu::s_iLastAnswers[pref_show_bgs_play];
@@ -1641,6 +1640,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		UpdateTextInfo();
 		break;
 
+	case SM_DoExit:
+		m_Out.StartTransitioning( SM_GoToNextScreen );
+		break;
+
 	case SM_GainFocus:
 		/* We do this ourself. */
 		SOUND->HandleSongTimer( false );
@@ -1722,6 +1725,11 @@ void ChangeArtistTranslit( CString sNew )
 	pSong->m_sArtistTranslit = sNew;
 }
 
+ScreenEdit *g_pScreenEdit = NULL;
+static void DoSave( void* )
+{
+	g_pScreenEdit->HandleMainMenuChoice( ScreenEdit::save, NULL );
+}
 
 // End helper functions
 
@@ -1913,7 +1921,11 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			PlayPreviewMusic();
 			break;
 		case exit:
-			m_Out.StartTransitioning( SM_GoToNextScreen );
+			g_pScreenEdit = this;
+			SCREENMAN->Prompt(
+				SM_DoExit,
+				"Do you want to save changes before exiting?",
+				true, true, DoSave );
 			break;
 		default:
 			ASSERT(0);

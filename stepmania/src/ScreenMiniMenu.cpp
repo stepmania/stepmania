@@ -25,7 +25,7 @@ const ScreenMessage SM_GoToOK		= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_GoToCancel	= (ScreenMessage)(SM_User+2);
 
 
-int	ScreenMiniMenu::s_iLastLine;
+int	ScreenMiniMenu::s_iLastRowCode;
 int	ScreenMiniMenu::s_iLastAnswers[MAX_MENU_ROWS];
 
 
@@ -217,7 +217,7 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn, const InputEventType type )
 
 	SCREENMAN->PlayStartSound();
 
-	s_iLastLine = m_iCurLine;
+	s_iLastRowCode = m_Def.rows[m_iCurLine].iRowCode;
 	COPY( s_iLastAnswers, m_iCurAnswers );
 }
 
@@ -304,6 +304,7 @@ Menu::Menu( CString t, const MenuRow *rowp )
 
 MenuRowInternal::MenuRowInternal( const MenuRow &r )
 {
+	iRowCode = r.iRowCode;
 	name = r.name;
 	enabled = r.enabled;
 	defaultChoice = r.defaultChoice;
