@@ -61,7 +61,7 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowGreatSeconds = 0.090f;
 	m_fJudgeWindowGoodSeconds = 0.135f;
 	m_fJudgeWindowBooSeconds = 0.180f;
-	m_fJudgeWindowOKSeconds = 0.120f;
+	m_fJudgeWindowOKSeconds = 0.140f;
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;
