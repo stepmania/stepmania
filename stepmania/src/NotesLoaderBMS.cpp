@@ -908,7 +908,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	
 	// This is used a LOT, so let's just declare it here and get it
 	// over with.
-	unsigned commonSubstrLen = commonSubstring.GetLength();
+	unsigned commonSubstrLen = commonSubstring.size();
 
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
@@ -922,9 +922,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		Steps *pSteps = apSteps[i];
 		pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
 		CString sTag;
-		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.GetLength() != commonSubstrLen )
+		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.size() != commonSubstrLen )
 		{
-			sTag = sTag.substr( commonSubstrLen, sTag.GetLength() - commonSubstrLen );
+			sTag = sTag.substr( commonSubstrLen, sTag.size() - commonSubstrLen );
 			sTag.ToLower();
 
 			// XXX: Someone find me some DDR BMS examples!
@@ -935,10 +935,10 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 			// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
 			// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
-			if( sTag.Find("l") != sTag.npos )
+			if( sTag.find('l') != sTag.npos )
 				pSteps->SetDifficulty( DIFFICULTY_EASY );
 			// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
-			else if( sTag.Find("a") != sTag.npos )
+			else if( sTag.find('a') != sTag.npos )
 				pSteps->SetDifficulty( DIFFICULTY_HARD );
 			// Other tags I've seen here include (5KEYS) (10KEYS) (7keys) (14keys) (dp) [MIX] [14] (14 Keys Mix)
 			// XXX: I'm sure [MIX] means something... anyone know?
