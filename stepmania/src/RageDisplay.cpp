@@ -421,7 +421,48 @@ void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
+	if(iNumVerts == 0)
+		return;
+#if 1
+	static float *Vertex, *Color, *Texture;	
+	static int Size = 0;
+	if(iNumVerts > Size)
+	{
+		Size = iNumVerts;
+		delete [] Vertex;
+		delete [] Color;
+		delete [] Texture;
+		Vertex = new float[Size*3];
+		Color = new float[Size*4];
+		Texture = new float[Size*2];
+	}
+
+	for(unsigned i = 0; i < unsigned(iNumVerts); ++i)
+	{
+		Vertex[i*3+0]  = v[i].p[0];
+		Vertex[i*3+1]  = v[i].p[1];
+		Vertex[i*3+2]  = v[i].p[2];
+		Color[i*4+0]   = v[i].c[0];
+		Color[i*4+1]   = v[i].c[1];
+		Color[i*4+2]   = v[i].c[2];
+		Color[i*4+3]   = v[i].c[3];
+		Texture[i*2+0] = v[i].t[0];
+		Texture[i*2+1] = v[i].t[1];
+	}
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, Vertex);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(4, GL_FLOAT, 0, Color);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
+
+	glDisableClientState(GL_NORMAL_ARRAY);
+#else
 	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+#endif
+
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
 
 	g_iVertsRenderedSinceLastCheck += iNumVerts;
