@@ -463,14 +463,10 @@ ScreenGameplay::ScreenGameplay()
 	 * include options set by the course.  Should it? -glenn */
 	LoadNextSong( true );
 
-	/* Keep the music playing after it's finished; we'll stop it. */
-	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
-
 	if( GAMESTATE->m_bDemonstration )
 	{
 		m_StarWipe.SetOpened();
 		m_DancingState = STATE_DANCING;
-		m_soundMusic.StartPlaying();
 		this->SendScreenMessage( SM_BeginFadingToTitleMenu, DEMONSTRATION_SECONDS );
 	}
 	else
@@ -478,6 +474,8 @@ ScreenGameplay::ScreenGameplay()
 		for( int i=0; i<30; i++ )
 			this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );	// Send messages to we can get the introduction rolling
 	}
+
+	Update(0);
 }
 
 ScreenGameplay::~ScreenGameplay()
@@ -606,11 +604,27 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
-	const float fStartSecond = min( 0, fFirstSecond-4 );
+	/* Make sure there's at least four seconds of delay between the music
+	 * starting and notes.  (On the first start, this lines up with SM_User+8.) */
+	float fStartSecond = fFirstSecond-4;
+
+	/* Don't skip any of the song. */
+	fStartSecond = min( 0, fStartSecond );
+
+	/* The first start is delayed 2.5 seconds, which lines up with SM_User+5. 
+	 * Demonstration music starts immediately. 
+	 *
+	 * XXX: Make demonstration skip to the beginning of the notes? Need to be
+	 * able to fade in, first. */
+	if( bFirstLoad && !GAMESTATE->m_bDemonstration )
+		 fStartSecond -= 2.5f;
+
 	m_soundMusic.SetPositionSeconds( fStartSecond );
 	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-	if( !bFirstLoad )
-		m_soundMusic.StartPlaying();
+
+	/* Keep the music playing after it's finished; we'll stop it. */
+	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
+	m_soundMusic.StartPlaying();
 }
 
 bool ScreenGameplay::OneIsHot()
@@ -1119,7 +1133,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_sprHereWeGo.StartFocusing();
 			m_announcerHereWeGo.PlayRandom();
 			m_Background.FadeIn();
-			m_soundMusic.StartPlaying();
 		}
 		break;
 	case SM_User+6:
