@@ -179,6 +179,8 @@ void Course::GetSongAndNotesForCurrentStyle(
 		Notes* pNotes = GetNotesForStage( num );
 		CString sModifiers = m_asModifiers[num];
 
+		if( !pSong->HasMusic() )
+			continue;	// skip
 		if( pNotes == NULL )
 			continue;	// skip
 

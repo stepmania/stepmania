@@ -33,19 +33,19 @@
 #define PERCENT_BASE_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseP%dX",p+1))
 #define PERCENT_BASE_Y			THEME->GetMetricF("ScreenEvaluation","PercentBaseY")
 #define JUDGE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","JudgeLabelsX")
-#define PERFECT_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("PerfectP%dX",p+1))
+#define PERFECT_X(o,p)			THEME->GetMetricF("ScreenEvaluation",ssprintf("Perfect%sP%dX",o?"Oni":"",p+1))
 #define PERFECT_Y				THEME->GetMetricF("ScreenEvaluation","PerfectY")
-#define GREAT_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("GreatP%dX",p+1))
+#define GREAT_X(o,p)			THEME->GetMetricF("ScreenEvaluation",ssprintf("Great%sP%dX",o?"Oni":"",p+1))
 #define GREAT_Y					THEME->GetMetricF("ScreenEvaluation","GreatY")
-#define GOOD_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("GoodP%dX",p+1))
+#define GOOD_X(o,p)				THEME->GetMetricF("ScreenEvaluation",ssprintf("Good%sP%dX",o?"Oni":"",p+1))
 #define GOOD_Y					THEME->GetMetricF("ScreenEvaluation","GoodY")
-#define BOO_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("BooP%dX",p+1))
+#define BOO_X(o,p)				THEME->GetMetricF("ScreenEvaluation",ssprintf("Boo%sP%dX",o?"Oni":"",p+1))
 #define BOO_Y					THEME->GetMetricF("ScreenEvaluation","BooY")
-#define MISS_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("MissP%dX",p+1))
+#define MISS_X(o,p)				THEME->GetMetricF("ScreenEvaluation",ssprintf("Miss%sP%dX",o?"Oni":"",p+1))
 #define MISS_Y					THEME->GetMetricF("ScreenEvaluation","MissY")
-#define OK_X( p )				THEME->GetMetricF("ScreenEvaluation",ssprintf("OKP%dX",p+1))
+#define OK_X(o,p)				THEME->GetMetricF("ScreenEvaluation",ssprintf("OK%sP%dX",o?"Oni":"",p+1))
 #define OK_Y					THEME->GetMetricF("ScreenEvaluation","OKY")
-#define MAX_COMBO_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("MaxComboP%dX",p+1))
+#define MAX_COMBO_X(o,p)		THEME->GetMetricF("ScreenEvaluation",ssprintf("MaxCombo%sP%dX",o?"Oni":"",p+1))
 #define MAX_COMBO_Y				THEME->GetMetricF("ScreenEvaluation","MaxComboY")
 #define SCORE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","ScoreLabelsX")
 #define SCORE_NUMBERS_X( p )	THEME->GetMetricF("ScreenEvaluation",ssprintf("ScoreNumbersP%dX",p+1))
@@ -70,15 +70,15 @@
 #define GRADES_GLOW_COLOR_1		THEME->GetMetricC("ScreenEvaluation","GradesGlowColor1")
 #define GRADES_GLOW_COLOR_2		THEME->GetMetricC("ScreenEvaluation","GradesGlowColor2")
 
-float JUDGE_X( int p, int l ) {
+float JUDGE_X( bool oni, int p, int l ) {
 	switch( l ) {
-		case 0:		return PERFECT_X(p);
-		case 1:		return GREAT_X(p);
-		case 2:		return GOOD_X(p);
-		case 3:		return BOO_X(p);
-		case 4:		return MISS_X(p);
-		case 5:		return OK_X(p);
-		case 6:		return MAX_COMBO_X(p);
+		case 0:		return PERFECT_X(oni,p);
+		case 1:		return GREAT_X(oni,p);
+		case 2:		return GOOD_X(oni,p);
+		case 3:		return BOO_X(oni,p);
+		case 4:		return MISS_X(oni,p);
+		case 5:		return OK_X(oni,p);
+		case 6:		return MAX_COMBO_X(oni,p);
 		default:	ASSERT(0);	return 0;
 	}
 }
@@ -369,7 +369,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprPercentFrame[p].SetXY( GRADE_X(p), GRADE_Y );
 				this->AddChild( &m_sprPercentFrame[p] );
 
-				m_textOniPercentLarge[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"1234567890%.   " );
+				m_textOniPercentLarge[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"0123456789%. :x" );
 				m_textOniPercentLarge[p].TurnShadowOff();
 				m_textOniPercentLarge[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
@@ -377,7 +377,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentLarge[p].SetEffectGlowing( 1.0f );
 				this->AddChild( &m_textOniPercentLarge[p] );
 
-				m_textOniPercentSmall[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"1234567890%.   " );
+				m_textOniPercentSmall[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation percent numbers 5x3"),"0123456789%. :x" );
 				m_textOniPercentSmall[p].TurnShadowOff();
 				m_textOniPercentSmall[p].SetZoom( 0.5f );
 				m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
@@ -401,7 +401,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_sprCourseFrame[p].SetXY( BONUS_X(p), BONUS_Y );
 				this->AddChild( &m_sprCourseFrame[p] );
 		
-				m_textSongsSurvived[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation stage numbers 5x3"),"1234567890%.   ");
+				m_textSongsSurvived[p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation stage numbers 5x3"),"0123456789%. :x");
 				m_textSongsSurvived[p].TurnShadowOff();
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 				m_textSongsSurvived[p].SetText( ssprintf("%02d", GAMESTATE->m_iSongsBeforeFail[p]) );
@@ -411,7 +411,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_STAGE:
 		case RM_ARCADE_SUMMARY:
 			{
-				m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","evaluation grade frame") );
+				m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","evaluation grade frame 1x2") );
 				m_sprGradeFrame[p].StopAnimating();
 				m_sprGradeFrame[p].SetState( p );
 				m_sprGradeFrame[p].SetXY( GRADE_X(p), GRADE_Y );
@@ -511,9 +511,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
-			m_textJudgeNumbers[l][p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation score numbers 7x2"), "01234 :56789%." );
+			m_textJudgeNumbers[l][p].LoadFromTextureAndChars( THEME->GetPathTo("Graphics","evaluation score numbers 5x3"), "0123456789%. :x" );
 			m_textJudgeNumbers[l][p].TurnShadowOff();
-			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(p,l), JUDGE_Y(l) );
+			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_ONI,p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
 			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
 			this->AddChild( &m_textJudgeNumbers[l][p] );

@@ -2,19 +2,21 @@
 Fix
 /////////////////////////
 
-> We also throw when we get a difficulty we don't know about.
+Fixed:
+fix "Max Combo" showing on Oni Evauation screen
+NG now causes to lose a battery life
+songs w/o music no longer show up in courses
+changed all "numbers" images to have the same format
 
-> LifeMeterBattery::Refresh wants "x", but the font being used..
 
-Like when playing MAX300, how the judgement "pulsing" goofs up?
+SMANIAC difficulty BLUE DUDE! DO IT!
+yes because basically these days, Oni challenge modes are defined as smaniac
+Spig301: so really, challenge = smaniac
 
-freezes are locked until NG
 
 the CDTitles DWI style arent being read anymore.
 
 faster IniFile (with std::map?)
-
-flag for use hold head
 
 fix movie texture crash
 

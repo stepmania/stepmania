@@ -119,6 +119,8 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		Refresh();
 		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
 		break;
+	default:
+		ASSERT(0);
 	}
 	if( m_iLivesLeft == 0 )
 		m_bFailedEarlier = true;
@@ -126,7 +128,16 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score )
 {
-	// do nothing
+	switch( score )
+	{
+	case HNS_OK:
+		break;
+	case HNS_NG:
+		ChangeLife( TNS_MISS );		// NG is the same as a miss
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 void LifeMeterBattery::OnDancePointsChange()
