@@ -256,7 +256,7 @@ void MemoryCardManager::FlushAllDisks()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !m_Device[p].IsBlank() )	// they already have an assigned card
+		if( m_Device[p].IsBlank() )	// no card assigned
 			continue;	// skip
 		if( m_bWriteError[p] || m_bTooLate[p] )
 			continue;	// skip
