@@ -56,12 +56,16 @@ LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
     cfsetospeed(&my_termios, B2400);
     tcsetattr(fd, TCSANOW, &my_termios);
 
-	LOG->Info("Lights info:");
-	LOG->Info("  new cflag=%08x\n", my_termios.c_cflag);
-    LOG->Info("  new oflag=%08x\n", my_termios.c_oflag);
-    LOG->Info("  new iflag=%08x\n", my_termios.c_iflag);
-    LOG->Info("  new lflag=%08x\n", my_termios.c_lflag);
-    LOG->Info("  new line=%02x\n", my_termios.c_line);
+    LOG->Info("Lights info:");
+    LOG->Info("  new cflag=%08x", unsigned(my_termios.c_cflag));
+    LOG->Info("  new oflag=%08x", unsigned(my_termios.c_oflag));
+    LOG->Info("  new iflag=%08x", unsigned(my_termios.c_iflag));
+    LOG->Info("  new lflag=%08x", unsigned(my_termios.c_lflag));
+    // c_line dosen't seem to be defined in every termios.h file
+    // Is it really needed in info?
+#if 0
+    LOG->Info("  new line=%02x", my_termios.c_line);
+#endif
 
     WriteString( "Yo", strlen("Yo") );
 }
