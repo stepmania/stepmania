@@ -54,11 +54,11 @@ float Course::GetMeterForPlayer( PlayerNumber pn ) const
 	return GetMeter( GAMESTATE->m_CourseDifficulty[pn] );
 }
 
-const int DifficultMeterRamp[NUM_COURSE_DIFFICULTIES] = { 0, 3 };
 float Course::GetMeter( CourseDifficulty cd ) const
 {
-	if( m_iMeter != -1 )
-		return float( m_iMeter + DifficultMeterRamp[cd] );
+	/* If we have a meter for this difficulty, use it. */
+	if( m_iMeter[cd] != -1 )
+		return float( m_iMeter[cd] );
 
 	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
 			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());*/
@@ -148,7 +148,21 @@ void Course::LoadFromCRSFile( CString sPath )
 			m_iLives = atoi( sParams[1] );
 
 		else if( 0 == stricmp(sValueName, "METER") )
-			m_iMeter = atoi( sParams[1] );
+		{
+			if( sParams.params.size() == 2 )
+				m_iMeter[COURSE_DIFFICULTY_REGULAR] = atoi( sParams[1] ); /* compat */
+			else if( sParams.params.size() == 3 )
+			{
+				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
+				if( cd == COURSE_DIFFICULTY_INVALID )
+				{
+					LOG->Warn( "Course file '%s' contains an invalid #METER string: \"%s\"",
+								m_sPath.c_str(), sParams[1].c_str() );
+					continue;
+				}
+				m_iMeter[cd] = atoi( sParams[2] );
+			}
+		}
 
 		else if( 0 == stricmp(sValueName, "MODS") )
 		{
@@ -304,7 +318,7 @@ void Course::Unload()
 	m_bRepeat = false;
 	m_bRandomize = false;
 	m_iLives = -1;
-	m_iMeter = -1;
+	m_iMeter[0] = m_iMeter[1] = -1;
 	m_entries.clear();
 	m_sPath = m_sName = m_sTranslitName = m_sBannerPath = m_sCDTitlePath = "";
 }
@@ -325,8 +339,12 @@ void Course::Save()
 		f.PutLine( "#REPEAT:YES;" );
 	if( m_iLives != -1 )
 		f.PutLine( ssprintf("#LIVES:%i;", m_iLives) );
-	if( m_iMeter != -1 )
-		f.PutLine( ssprintf("#METER:%i;", m_iMeter) );
+	FOREACH_CourseDifficulty( cd )
+	{
+		if( m_iMeter[cd] == -1 )
+			continue;
+		f.PutLine( ssprintf("#METER:%s:%i;", CourseDifficultyToString(cd).c_str(), m_iMeter[cd]) );
+	}
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
@@ -415,7 +433,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
-	m_iMeter = -1;
+	m_iMeter[0] = m_iMeter[1] = -1;
 
 	m_sName = SONGMAN->ShortenGroupName( sGroupName );	
 	m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
