@@ -332,9 +332,9 @@ NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
 {
 	NDMap::iterator it = m_BeatToNoteDisplays.lower_bound( Beat );
 	/* The first entry should always be lower than any Beat we might receive. */
-	ASSERT( it != m_BeatToNoteDisplays.begin() );
+	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
 	--it;
-	ASSERT( it != m_BeatToNoteDisplays.end() );
+	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
 
 	return it->second;
 }
