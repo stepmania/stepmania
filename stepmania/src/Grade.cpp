@@ -14,18 +14,6 @@
 #include "RageUtil.h"
 #include "ThemeManager.h"
 
-CString GradeToString( Grade g )
-{
-	// string is meant to be human readable
-	switch( g )
-	{
-	case GRADE_NO_DATA:	return "NoData";
-	case GRADE_FAILED:	return "Failed";
-	default:
-		return ssprintf("%02d",g+1);
-	}
-};
-
 CString GradeToThemedString( Grade g )
 {
 	CString s = GradeToString(g);

@@ -13,6 +13,8 @@
 #ifndef GRADE_H
 #define GRADE_H
 
+#include "RageUtil.h"
+
 #define NUM_GRADE_TIERS 20
 enum Grade 
 { 
@@ -41,7 +43,18 @@ enum Grade
 	GRADE_NO_DATA,	// ~GRADE_INVALID
 };
 
-CString GradeToString( Grade g );
+inline CString GradeToString( Grade g )
+{
+        // string is meant to be human readable
+        switch( g )
+        {
+        case GRADE_NO_DATA:     return "NoData";
+        case GRADE_FAILED:      return "Failed";
+        default:
+                return ssprintf("%02d",g+1);
+        }
+}
+
 CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
 CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );
