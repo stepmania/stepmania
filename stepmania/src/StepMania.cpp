@@ -60,6 +60,11 @@
 #include "CryptManager.h"
 #include "NetworkSyncManager.h"
 
+#if defined(XBOX)
+#include "Archutils/Xbox/VirtualMemory.h"
+#include <new.h>
+#endif
+
 #define ZIPS_DIR "Packages/"
 
 #ifdef _WINDOWS
@@ -913,16 +918,30 @@ static void ProcessArgsSecond()
 }
 
 #ifdef _XBOX
+void XboxMain();
+
 void __cdecl main()
+{
+	_set_new_handler(NoMemory);
+	_set_new_mode(1);
+
+	__try
+	{
+		XboxMain();
+	}
+	__except(CheckPageFault(GetExceptionInformation())) { }
+}
+
+void XboxMain()
 #else
 int main(int argc, char* argv[])
 #endif
 {
-#ifdef _XBOX
+#if defined(XBOX)
 	int argc = 1;
 	char *argv[] = {"default.xbe"};
 #endif
-
+	
 	g_argc = argc;
 	g_argv = argv;
 
@@ -932,6 +951,7 @@ int main(int argc, char* argv[])
 	CString  g_sErrorString = "";
 #if !defined(DEBUG)
 	/* Always catch RageExceptions; they should always have distinct strings. */
+
 	try { /* RageException */
 
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
@@ -961,6 +981,18 @@ int main(int argc, char* argv[])
 	PREFSMAN	= new PrefsManager;
 
 	ApplyLogPreferences();
+
+#if defined(XBOX)
+	if(PREFSMAN->m_bEnableVirtualMemory)
+	{
+		if(!vmem_Manager.Init(1024 * 1024 * PREFSMAN->m_iPageFileSize, 1024 * PREFSMAN->m_iPageSize, 1024 * PREFSMAN->m_iPageThreshold))
+			return;
+	}
+
+	/* Logging the virtual memory manager seems to crash on exit, so it should be enabled only
+	 * for debugging. */
+	vmem_Manager.SetLogging(PREFSMAN->m_bLogVirtualMemory);
+#endif
 
 	WriteLogHeader();
 
@@ -1179,6 +1211,7 @@ int main(int argc, char* argv[])
 
 #ifndef _XBOX
 	return 0;
+	
 #endif
 }
 
