@@ -12,6 +12,7 @@
 
 #include "Grade.h"
 #include "RageUtil.h"
+#include "ThemeManager.h"
 
 CString GradeToString( Grade g )
 {
@@ -24,6 +25,11 @@ CString GradeToString( Grade g )
 		return ssprintf("%02d",g+1);
 	}
 };
+
+CString GradeToThemedString( Grade g )
+{
+	return THEME->GetMetric( "Grade",GradeToString(g) );
+}
 
 CString GradeToOldString( Grade g )
 {

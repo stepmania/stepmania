@@ -119,6 +119,7 @@ public:
 	int				m_iGradeWeightOK;
 	int				m_iGradeWeightNG;
 
+	int				m_iNumGradeTiersUsed;
 	float			m_fGradePercentTier[NUM_GRADE_TIERS];	// the minimum percent necessary achieve a grade
 	bool			m_bGradeTier02IsAllPerfects;	// DDR special case.  If true, m_fGradePercentTier[GRADE_TIER_2] is ignored
 

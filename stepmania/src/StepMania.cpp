@@ -1127,18 +1127,23 @@ bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 	//
 	CString sScreenshotPath = ssprintf( sDir+"screen%04d.%s",fileno,bSaveCompressed ? "jpg" : "bmp" );
 	bool bResult = DISPLAY->SaveScreenshot( sScreenshotPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
-	if( bResult )
-		SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
-	else
+	if( !bResult )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
 		return false;
 	}
 
+	SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
+
+	// We wrote a new file, and SignFile won't pick it up unless we invalidate
+	// the Dir cache.  There's got to be a better way of doing this than 
+	// thowing out all the cache. -Chris
+	FlushDirCache();
+
 	if( bMakeSignature )
 		CryptManager::SignFile( sScreenshotPath );
 
-	return bResult;
+	return false;
 }
 
 /* Returns true if the key has been handled and should be discarded, false if

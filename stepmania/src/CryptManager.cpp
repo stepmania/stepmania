@@ -17,8 +17,8 @@ using namespace CryptoPP;
 using namespace std;
 
 static const CString SIGNATURE_POSPEND = ".sig.rsa";
-static const CString PRIVATE_KEY_PATH = "private.rsa";
-static const CString PUBLIC_KEY_PATH = "public.rsa";
+static const CString PRIVATE_KEY_PATH = "private.key.rsa";
+static const CString PUBLIC_KEY_PATH = "public.key.rsa";
 static const int KEY_LENGTH = 1024;
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
@@ -64,7 +64,8 @@ void CryptManager::SignFile( CString sPath )
 	CString sMessageFilename = sPath;;
 	CString sSignatureFilename = sPath + SIGNATURE_POSPEND;
 
-	ASSERT( IsAFile(sPrivFilename) );
+	if( !IsAFile(sPrivFilename) )
+		return;
 
 	if( !IsAFile(sMessageFilename) )
 		return;
@@ -84,7 +85,8 @@ bool CryptManager::VerifyFile( CString sPath )
 	CString sMessageFilename = sPath;;
 	CString sSignatureFilename = sPath + SIGNATURE_POSPEND;
 
-	ASSERT( IsAFile(sPubFilename) );
+	if( !IsAFile(sPubFilename) )
+		return false;
 
 	if( !IsAFile(sSignatureFilename) )
 		return false;

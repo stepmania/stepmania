@@ -43,6 +43,7 @@ enum Grade
 
 CString GradeToString( Grade g );
 CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
+CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );
 
 #endif

@@ -21,13 +21,15 @@
 #include "GameManager.h"
 #include "Course.h"
 #include "Bookkeeper.h"
+#include "PrefsManager.h"
 
 
 #define STATS_HTML			"stats.html"
 #define STYLE_CSS			"style.css"
 
-#define STATS_TITLE			THEME->GetMetric("ProfileManager","StatsTitle")
-#define STATS_FOOTER		THEME->GetMetric("ProfileManager","StatsFooter")
+#define TITLE				THEME->GetMetric("ProfileHtml","Title")
+#define FOOTER				THEME->GetMetric("ProfileHtml","Footer")
+#define VERIFICATION_TEXT	THEME->GetMetric("ProfileHtml","VerificationText")
 
 
 static int g_Level = 1;
@@ -36,12 +38,6 @@ inline CString MakeUniqueId()												{ CString s="id"+ssprintf("%d%d%d",rand
 inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_Level++; ASSERT(g_Level>0 && g_Level<6); f.Write( ssprintf("<div class='section%d'>\n" "<h%d onClick='expandIt(%s); return false' CLASS='outline'>%s</h%d>\n" "<DIV ID='%s' CLASS='%s'>\n", g_Level, g_Level, sID.c_str(), sName.c_str(), g_Level, sID.c_str(), bExpanded?"visibletext":"hiddentext") ); }
 inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded=false)		{ PRINT_OPEN(f,sName,bExpanded,MakeUniqueId()); }
 inline void PRINT_CLOSE(RageFile &f)										{ f.Write( "</div>\n" "</div>\n" ); g_Level--; ASSERT(g_Level>=0); }
-//inline void PRINT_LINK(RageFile &f,CString sName,CString sLink)				{ f.Write( ssprintf("<p><a href='%s'>%s</a></p>\n",sLink.c_str(),sName.c_str()) ); }
-//inline void PRINT_LINE_S(RageFile &f,CString sName,CString sVal) 			{ f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",sName.c_str(),sVal.c_str()) ); }
-//inline void PRINT_LINE_B(RageFile &f,CString sName,bool bVal) 				{ f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",sName.c_str(),(bVal)?"yes":"no") ); }
-//inline void PRINT_LINE_I(RageFile &f,CString sName,int iVal) 				{ f.Write( ssprintf("<p>%s = <b>%d</b></p>\n",sName.c_str(),iVal) ); }
-//inline void PRINT_LINE_RANK(RageFile &f,int iRank,CString sName,int iVal)	{ f.Write( ssprintf("<p><b>%d</b> - %s (%d)</p>\n",iRank,sName.c_str(),iVal) ); }
-//inline void PRINT_LINE_RANK_LINK(RageFile &f,int iRank,CString sName,CString sLink,int iVal)	{ f.Write( ssprintf("<p><b>%d</b> - <a href='%s'>%s</a> (%d)</p>\n",iRank,sLink.c_str(),sName.c_str(),iVal) ); }
 
 
 struct Table
@@ -51,13 +47,18 @@ struct Table
 	struct Line
 	{
 		Line() {}
-		Line(CString n,CString v)	{ sName = n; sValue = v; }
-		Line(CString n,bool v)		{ sName = n; sValue = ssprintf("%s",v?"yes":"no"); }
-		Line(CString n,int v)		{ sName = n; sValue = ssprintf("%d",v); }
-		Line(int r,CString n,int v)	{ sRank = ssprintf("%d",r); sName = n; sValue = ssprintf("%d",v); }
+		Line(CString n)							{ sName = n; }
+		Line(CString n,CString v)				{ sName = n; sValue = v; }
+		Line(CString n,bool v)					{ sName = n; sValue = ssprintf("%s",v?"yes":"no"); }
+		Line(CString n,int v)					{ sName = n; sValue = ssprintf("%d",v); }
+		Line(int r,CString n,int v)				{ sRank = ssprintf("%d",r); sName = n; sValue = ssprintf("%d",v); }
+		Line(int r,CString n,CString sn,int v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sValue = ssprintf("%d",v); }
+		Line(int r,CString n,CString sn,CString ssn,int v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sSubSubName = ssn; sValue = ssprintf("%d",v); }
 
 		CString sRank;
 		CString sName;
+		CString sSubName;
+		CString sSubSubName;
 		CString sValue;
 	};
 
@@ -65,15 +66,13 @@ struct Table
 	vector<Line> vLines;
 };
 
-//inline CString MAKE_LINE_S(CString sName,CString sVal) 			{ return ssprintf("<p>%s = <b>%s</b></p>\n",sName.c_str(),sVal.c_str()); }
-//inline CString MAKE_LINE_B(CString sName,bool bVal) 			{ return ssprintf("<p>%s = <b>%s</b></p>\n",sName.c_str(),(bVal)?"yes":"no"); }
-//inline CString MAKE_LINE_I(CString sName,int iVal) 				{ return ssprintf("<p>%s = <b>%d</b></p>\n",sName.c_str(),iVal); }
-//inline CString MAKE_LINE_RANK(int iRank,CString sName,int iVal)	{ return ssprintf("<p><b>%d</b> - %s (%d)</p>\n",iRank,sName.c_str(),iVal); }
-
-#define BEGIN_TABLE(cols)		{ Table table; table.iNumCols=cols;
-#define TABLE_LINE2(p1,p2)		table.vLines.push_back( Table::Line(p1,p2) );
-#define TABLE_LINE3(p1,p2,p3)	table.vLines.push_back( Table::Line(p1,p2,p3) );
-#define END_TABLE				PrintTable( f, table ); }
+#define BEGIN_TABLE(cols)			{ Table table; table.iNumCols=cols;
+#define TABLE_LINE1(p1)				table.vLines.push_back( Table::Line(p1) );
+#define TABLE_LINE2(p1,p2)			table.vLines.push_back( Table::Line(p1,p2) );
+#define TABLE_LINE3(p1,p2,p3)		table.vLines.push_back( Table::Line(p1,p2,p3) );
+#define TABLE_LINE4(p1,p2,p3,p4)	table.vLines.push_back( Table::Line(p1,p2,p3,p4) );
+#define TABLE_LINE5(p1,p2,p3,p4,p5)	table.vLines.push_back( Table::Line(p1,p2,p3,p4,p5) );
+#define END_TABLE					PrintTable( f, table ); }
 
 inline void PrintTable(RageFile &f,Table &table)
 {
@@ -109,13 +108,30 @@ inline void PrintTable(RageFile &f,Table &table)
 				f.Write("</td>");
 				f.Write("<td>&nbsp;</td>");
 			}
-			f.Write("<td class='name'>");
-			f.Write( line.sName );
-			f.Write("</td>");
-			f.Write("<td>&nbsp;</td>");
-			f.Write("<td class='value'>");
-			f.Write( line.sValue );
-			f.Write("</td>");
+			if( bPrintRank )
+			{
+				f.Write("<td>");
+				f.Write("<p class='songtitle'>");
+				f.Write( line.sName );
+				f.Write("</p>");
+				f.Write("<p class='songsubtitle'>");
+				f.Write( line.sSubName );
+				f.Write("</p>");
+				f.Write("</td>");
+			}
+			else
+			{
+				f.Write("<td class='name'>");
+				f.Write( line.sName );
+				f.Write("</td>");
+			}
+			if( !line.sValue.empty() )
+			{
+				f.Write("<td>&nbsp;</td>");
+				f.Write("<td class='value'>");
+				f.Write( line.sValue );
+				f.Write("</td>");
+			}
 			f.Write( "\n" );
 
 			f.Write("</tr>");
@@ -129,9 +145,9 @@ inline void PrintTable(RageFile &f,Table &table)
 
 void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
-	PRINT_OPEN(f,sTitle);
+	PRINT_OPEN(f,sTitle,true);
 	{
-		PRINT_OPEN(f,"This Profile",true);
+		PRINT_OPEN(f,"General Info",true);
 		{
 			BEGIN_TABLE(2);
 			TABLE_LINE2( "Name",							pProfile->m_sName );
@@ -149,7 +165,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_CLOSE(f);
 		
 
-		PRINT_OPEN(f,"Num Songs Played by PlayMode",true);
+		PRINT_OPEN(f,"Num Songs Played by PlayMode");
 		{
 			BEGIN_TABLE(4);
 			FOREACH_PlayMode( pm )
@@ -159,7 +175,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_CLOSE(f);
 
 
-		PRINT_OPEN(f,"Num Songs Played by Style",true);
+		PRINT_OPEN(f,"Num Songs Played by Style");
 		{
 			BEGIN_TABLE(4);
 			for( int i=0; i<NUM_STYLES; i++ )
@@ -179,7 +195,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_CLOSE(f);
 
 
-		PRINT_OPEN(f,"Num Songs Played by Difficulty",true);
+		PRINT_OPEN(f,"Num Songs Played by Difficulty");
 		{
 			BEGIN_TABLE(4);
 			FOREACH_Difficulty( dc )
@@ -188,11 +204,37 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		}
 		PRINT_CLOSE(f);
 
-		PRINT_OPEN(f,"Num Songs Played by Meter",true);
+		PRINT_OPEN(f,"Num Songs Played by Meter");
 		{
 			BEGIN_TABLE(4);
 			for( int i=MIN_METER; i<=MAX_METER; i++ )
 				TABLE_LINE2( ssprintf("Meter %d",i), pProfile->m_iNumSongsPlayedByMeter[i] );
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"Grade Count");
+		{
+			int iGradeCount[NUM_GRADES];
+			ZERO( iGradeCount );
+
+			for( int i=0; i<vpAllSteps.size(); i++ )
+			{
+				Steps* pSteps = vpAllSteps[i];
+				const HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSteps);
+				if( hsl.vHighScores.empty() )
+					continue;	// no data, skip this one
+				Grade g = hsl.GetTopScore().grade;
+				ASSERT( g != GRADE_NO_DATA );
+				ASSERT( g < NUM_GRADES );
+				ASSERT( g >= 0 );
+				iGradeCount[g] ++;
+			}
+
+			BEGIN_TABLE(6);
+			for( int g=0; g<PREFSMAN->m_iNumGradeTiersUsed; g++ )
+				TABLE_LINE2( GradeToThemedString((Grade)g), iGradeCount[g] );
+			TABLE_LINE2( GradeToThemedString(GRADE_FAILED), iGradeCount[GRADE_FAILED] );
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -224,7 +266,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 					if( iNumTimesPlayed == 0 || iNumTimesPlayed < iPopularNumPlaysThreshold )	// not popular
 						break;	// done searching
-					TABLE_LINE3(i+1, pSong->GetFullDisplayTitle(), iNumTimesPlayed );
+					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), iNumTimesPlayed );
 				}
 				END_TABLE;
 			}
@@ -242,7 +284,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 					if( iNumTimesPlayed >= iPopularNumPlaysThreshold )	// not unpopular
 						break;	// done searching
-					TABLE_LINE3(i+1, pSong->GetFullDisplayTitle(), iNumTimesPlayed );
+					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), iNumTimesPlayed );
 				}
 				END_TABLE;
 			}
@@ -263,12 +305,10 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 						continue;	// skip
 					Song* pSong = mapStepsToSong[pSteps];
 					CString s;
-					s += pSong->GetFullDisplayTitle();
-					s += " - ";
 					s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 					s += " ";
 					s += DifficultyToString(pSteps->GetDifficulty());
-					TABLE_LINE3(i+1, s, pProfile->GetStepsNumTimesPlayed(pSteps) );
+					TABLE_LINE5(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), s, pProfile->GetStepsNumTimesPlayed(pSteps) );
 				}
 				END_TABLE;
 			}
@@ -612,6 +652,27 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 	PRINT_CLOSE(f);
 }
 
+void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CString sProfileDir )
+{
+	PRINT_OPEN(f, sTitle );
+	{
+		CStringArray asFiles;
+		GetDirListing( sProfileDir+"Screenshots/*.jpg", asFiles );
+
+		BEGIN_TABLE(2);
+		for( int i=0; i<asFiles.size(); i++ )
+		{
+			CString sFile = "Screenshots/"+asFiles[i];
+
+			CString sImgTag = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sFile.c_str(), sFile.c_str() );
+
+			TABLE_LINE1( sImgTag );
+		}
+		END_TABLE;
+	}
+	PRINT_CLOSE(f);
+}
+
 enum SaveType { SAVE_TYPE_PLAYER, SAVE_TYPE_MACHINE };
 
 void SaveStatsWebPageToDir( CString sDir, SaveType saveType, const Profile *pProfile, const Profile *pProfileMachine )
@@ -719,7 +780,7 @@ function expandIt(whichEl)\n\
 <link rel='stylesheet' type='text/css' href='%s'>\n\
 </head>\n\
 <body>",
-STATS_TITLE.c_str(), STYLE_CSS ) );
+TITLE.c_str(), STYLE_CSS ) );
 	}
 
 	CString sType;
@@ -738,7 +799,7 @@ STATS_TITLE.c_str(), STYLE_CSS ) );
 
 	f.Write( ssprintf(
 		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>%s %s<br>%s</td></tr></table>\n",
-		STATS_TITLE.c_str(), sType.c_str(), sName.c_str(), sTime.c_str() ) );
+		TITLE.c_str(), sType.c_str(), sName.c_str(), sTime.c_str() ) );
 
 	CString sPlayerName = pProfile->GetDisplayName();
 	CString sMachineName = pProfileMachine->GetDisplayName();
@@ -749,6 +810,7 @@ STATS_TITLE.c_str(), STYLE_CSS ) );
 		PrintStatistics(		f, pProfile,		sPlayerName+"'s Statistics",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintPopularity(		f, pProfile,		sPlayerName+"'s Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintHighScores(		f, pProfile,		sPlayerName+"'s High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintScreenshots(		f, pProfile,		sPlayerName+"'s Screenshots",	sDir );
 		PrintPopularity(		f, pProfileMachine, sMachineName+"'s Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintHighScores(		f, pProfileMachine, sMachineName+"'s High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		break;
@@ -764,7 +826,7 @@ STATS_TITLE.c_str(), STYLE_CSS ) );
 		ASSERT(0);
 	}
 
-	f.PutLine( ssprintf("<p class='footer'>%s</p>\n", STATS_FOOTER.c_str()) );
+	f.PutLine( ssprintf("<p class='footer'>%s</p>\n", FOOTER.c_str()) );
 
 	f.PutLine( "</body>" );
 	f.PutLine( "</html>" );
