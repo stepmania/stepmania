@@ -55,20 +55,19 @@ BGAnimationLayer::BGAnimationLayer()
 	m_bCycleAlpha = false;
 	m_Effect = EFFECT_STRETCH_STILL;
 
-	m_PosX = 0;
-	m_PosY = 0;
+	/* Why doesn't this use the existing tweening mechanism? I can't make
+	 * sense of what this code is doing; all I can tell is that it's duplicating
+	 * stuff we already have. -glenn */
+	m_PosX = m_PosY = 0;
 	m_Zoom = 0;
 	m_Rot = 0;
 	m_ShowTime = 0;
 	m_HideTime = 0;
 	m_TweenStartTime = 0;
-	m_TweenX = 0.0;
-	m_TweenY = 0.0;
+	m_TweenX = m_TweenY = 0.0;
 	m_TweenSpeed = 0;
 	m_TweenState = 0;
-	m_TweenPassedX = 0;
-	m_TweenPassedY = 0;
-
+	m_TweenPassedX = m_TweenPassedY = 0;
 }
 
 /* Static background layers are simple, uncomposited background images with nothing
