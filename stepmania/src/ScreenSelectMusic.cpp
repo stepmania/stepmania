@@ -669,51 +669,6 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 	AfterNotesChange( pn );
 }
 
-template<class T>
-void setmin( T &a, const T &b )
-{
-	a = min(a, b);
-}
-
-template<class T>
-void setmax( T &a, const T &b )
-{
-	a = max(a, b);
-}
-
-/* Adjust game options.  These settings may be overridden again later by the
- * SongOptions menu. */
-void ScreenSelectMusic::AdjustOptions()
-{
-	/* Find the easiest difficulty notes selected by either player. */
-	Difficulty dc = DIFFICULTY_INVALID;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
-		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
-	}
-
-	if( !GAMESTATE->m_bChangedFailMode )
-	{
-		/* Reset the fail type to the default. */
-		SongOptions so;
-		so.FromString( PREFSMAN->m_sDefaultModifiers );
-		GAMESTATE->m_SongOptions.m_FailType = so.m_FailType;
-
-        /* Easy and beginner are never harder than FAIL_END_OF_SONG. */
-		if(dc <= DIFFICULTY_EASY)
-			setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_END_OF_SONG);
-
-		/* If beginner's steps were chosen, and this is the first stage,
-		 * turn off failure completely--always give a second try. */
-		if(dc == DIFFICULTY_BEGINNER &&
-			!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
-			GAMESTATE->m_iCurrentStageIndex == 0)
-			setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
-	}
-}
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -754,6 +709,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
+			GAMESTATE->AdjustFailType();
 			SOUNDMAN->StopMusic();
 			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		}
@@ -822,7 +778,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		if( GAMESTATE->IsCourseMode() )
 			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
-		AdjustOptions();
 		break;
 	}
 	case TYPE_COURSE:

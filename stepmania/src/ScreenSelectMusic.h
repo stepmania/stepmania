@@ -65,7 +65,6 @@ protected:
 	void SortOrderChanged();
 
 	void UpdateOptionsDisplays();
-	void AdjustOptions();
 
 	vector<Notes*> m_arrayNotes;
 	int					m_iSelection[NUM_PLAYERS];

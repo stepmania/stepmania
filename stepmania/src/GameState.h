@@ -104,7 +104,7 @@ public:
 
 	CString			m_sLoadingMessage;	// used in loading screen
 	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
-	bool			m_bChangedFailMode;	// true if the fail mode was changed in the song options screen
+	bool			m_bChangedFailType;	// true if FailType was changed in the song options screen
 	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	bool			m_bEditing;			// NoteField does special stuff when this is true
@@ -203,6 +203,7 @@ public:
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
 
+	void AdjustFailType();
 
 	// character stuff
 	vector<Character*> m_pCharacters;

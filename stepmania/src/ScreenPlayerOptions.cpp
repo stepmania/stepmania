@@ -362,6 +362,8 @@ void ScreenPlayerOptions::GoToPrevState()
 
 void ScreenPlayerOptions::GoToNextState()
 {
+	GAMESTATE->AdjustFailType();
+
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
 	else if( m_bGoToOptions )

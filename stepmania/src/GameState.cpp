@@ -65,7 +65,7 @@ void GameState::Reset()
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
-	m_bChangedFailMode = false;
+	m_bChangedFailType = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 	m_SongSortOrder = SORT_INVALID;
@@ -542,3 +542,51 @@ int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
 	return iSum;
 }
 
+template<class T>
+void setmin( T &a, const T &b )
+{
+	a = min(a, b);
+}
+
+template<class T>
+void setmax( T &a, const T &b )
+{
+	a = max(a, b);
+}
+
+/* Adjust the fail mode based on the chosen difficulty.  This must be called
+ * after the difficulty has been finalized (usually in ScreenSelectMusic or
+ * ScreenPlayerOptions), and before the fail mode is displayed or used (usually
+ * in ScreenSongOptions). */
+void GameState::AdjustFailType()
+{
+	/* If the player changed the fail mode explicitly, leave it alone. */
+	if( GAMESTATE->m_bChangedFailType )
+		return;
+
+	/* Find the easiest difficulty notes selected by either player. */
+	Difficulty dc = DIFFICULTY_INVALID;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
+	}
+
+	/* Reset the fail type to the default. */
+	SongOptions so;
+	so.FromString( PREFSMAN->m_sDefaultModifiers );
+	GAMESTATE->m_SongOptions.m_FailType = so.m_FailType;
+
+    /* Easy and beginner are never harder than FAIL_END_OF_SONG. */
+	if(dc <= DIFFICULTY_EASY)
+		setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_END_OF_SONG);
+
+	/* If beginner's steps were chosen, and this is the first stage,
+		* turn off failure completely--always give a second try. */
+	if(dc == DIFFICULTY_BEGINNER &&
+		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
+		GAMESTATE->m_iCurrentStageIndex == 0)
+		setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
+}

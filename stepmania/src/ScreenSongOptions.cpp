@@ -104,7 +104,7 @@ void ScreenSongOptions::ExportOptions()
 	if( so.m_FailType !=	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL] )
 	{
 		/* The user is changing the fail mode explicitly; stop messing with it. */
-		GAMESTATE->m_bChangedFailMode = true;
+		GAMESTATE->m_bChangedFailType = true;
 		so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
 	}
 	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
