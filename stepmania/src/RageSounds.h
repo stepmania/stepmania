@@ -3,7 +3,6 @@
 /* This contains all of the generally useful user-level SOUNDMAN calls, as well
  * as some other simple helper stuff.  Don't include RageSoundManager for normal
  * use; it's only for drivers and sound code.  This file should be very lightweight. */
- */
 class RageSound;
 class RageSounds
 {
