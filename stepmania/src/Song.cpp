@@ -301,8 +301,14 @@ void Song::RevertFromDisk()
 	/* Erase all existing data. */
 	Reset();
 
+	FILEMAN->FlushDirCache( dir );
+
+	const bool OldVal = PREFSMAN->m_bFastLoad;
+	PREFSMAN->m_bFastLoad = false;
+
 	LoadFromSongDir( dir );	
 
+	PREFSMAN->m_bFastLoad = OldVal;
 
 	if( GAMESTATE->m_pCurSong == this )
 	{
