@@ -454,73 +454,71 @@ bool HasExtension(CString ext)
 static void CheckPalettedTextures( bool LowColor )
 {
 	CString error;
-
-	if( GLExt::glColorTableEXT == NULL )
+	do
 	{
-		error = "glColorTableEXT missing";
-		goto fail;
-	}
-
-	if( GLExt::glGetColorTableParameterivEXT == NULL )
-	{
-		error = "glGetColorTableParameterivEXT missing";
-		goto fail;
-	}
-
-	/* Check to see if paletted textures really work. */
-	GLenum glTexFormat; glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
-	GLenum glImageFormat; glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
-	GLenum glImageType; glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
-
-	int bits; bits = 8;
-
-	if( LowColor )
-	{
-		glTexFormat = GL_COLOR_INDEX4_EXT;
-		bits = 4;
-	}
-
-	FlushGLErrors();
-#define GL_CHECK_ERROR(f) \
-		{ \
-			GLenum glError = glGetError(); \
-			if( glError != GL_NO_ERROR ) { \
-				error = ssprintf(f " failed (%s)", GLToString(glError).c_str() ); \
-				goto fail; \
-			} \
+		if( GLExt::glColorTableEXT == NULL )
+		{
+			error = "glColorTableEXT missing";
+			break;
 		}
 
-	glTexImage2D(GL_PROXY_TEXTURE_2D,
+		if( GLExt::glGetColorTableParameterivEXT == NULL )
+		{
+			error = "glGetColorTableParameterivEXT missing";
+			break;
+		}
+
+		/* Check to see if paletted textures really work. */
+		GLenum glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
+		GLenum glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
+		GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
+
+		int bits = 8;
+
+		if( LowColor )
+		{
+			glTexFormat = GL_COLOR_INDEX4_EXT;
+			bits = 4;
+		}
+
+		FlushGLErrors();
+#define GL_CHECK_ERROR(f) \
+{ \
+	GLenum glError = glGetError(); \
+	if( glError != GL_NO_ERROR ) { \
+		error = ssprintf(f " failed (%s)", GLToString(glError).c_str() ); \
+		break; \
+	} \
+}
+
+		glTexImage2D(GL_PROXY_TEXTURE_2D,
 				0, glTexFormat, 
 				16, 16, 0,
 				glImageFormat, glImageType, NULL);
-	GL_CHECK_ERROR( "glTexImage2D" );
+		GL_CHECK_ERROR( "glTexImage2D" );
 
-	{
 		GLuint ifmt = 0;
 		glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *)&ifmt );
 		if( ifmt != glTexFormat )
 		{
 			error = ssprintf( "Expected format %s, got %s instead",
-				GLToString(glTexFormat).c_str(),
-				GLToString(ifmt).c_str() );
-			goto fail;
+					GLToString(glTexFormat).c_str(),
+					GLToString(ifmt).c_str() );
+			break;
 		}
-	}
 
-	GLubyte palette[256*4];
-	memset(palette, 0, sizeof(palette));
-	GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 1 << bits, GL_RGBA, GL_UNSIGNED_BYTE, palette);
-	GL_CHECK_ERROR( "glColorTableEXT" );
+		GLubyte palette[256*4];
+		memset(palette, 0, sizeof(palette));
+		GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 1 << bits, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+		GL_CHECK_ERROR( "glColorTableEXT" );
 
-	{	// in brackets to hush VC6 error
 		GLint size = 0;
 		glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
 		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INDEX_SIZE_EXT)" );
 		if( bits > size || size > 8 )
 		{
 			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
-			goto fail;
+			break;
 		}
 
 		GLint RealWidth = 0;
@@ -529,22 +527,23 @@ static void CheckPalettedTextures( bool LowColor )
 		if( RealWidth != 1 << bits )
 		{
 			error = ssprintf("GL_COLOR_TABLE_WIDTH returned %i instead of %i", int(RealWidth), 1 << bits );
-			goto fail;
+			break;
 		}
-		
+
 		GLint RealFormat = 0;
 		GLExt::glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_FORMAT)" );
 		if( RealFormat != GL_RGBA8 )
 		{
 			error = ssprintf("GL_COLOR_TABLE_FORMAT returned %s instead of GL_RGBA8", GLToString(RealFormat).c_str() );
-			goto fail;
+			break;
 		}
-	}
+	} while(0);
+#undef GL_CHECK_ERROR
 
-	return;
+	if( error == "" )
+		return;
 
-fail:
 	if( LowColor )
 	{
 		/* Disable 4-bit palettes, but allow 8-bit ones. */
@@ -557,7 +556,6 @@ fail:
 		GLExt::glGetColorTableParameterivEXT = NULL;
 		LOG->Info("Paletted textures disabled: %s.", error.c_str());
 	}
-#undef GL_CHECK_ERROR
 }
 
 static void CheckReversePackedPixels()
