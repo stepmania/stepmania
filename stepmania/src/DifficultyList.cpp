@@ -359,10 +359,15 @@ void DifficultyList::HideRows()
 {
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		ActorCommands c = ActorCommands( "finishtweening;diffusealpha,0" );
-		m_Lines[m].m_Description.RunCommands( c );
-		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
-		m_Lines[m].m_Number.RunCommands( c );
+		Line &l = m_Lines[m];
+
+		l.m_Description.FinishTweening();
+		l.m_Meter.FinishTweening();
+		l.m_Number.FinishTweening();
+
+		l.m_Description.SetDiffuseAlpha(0); 
+		l.m_Meter.SetDiffuseAlpha(0);
+		l.m_Number.SetDiffuseAlpha(0); 
 	}
 }
 
@@ -372,10 +377,11 @@ void DifficultyList::TweenOnScreen()
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		ActorCommands c = ActorCommands( "finishtweening" );
-		m_Lines[m].m_Description.RunCommands( c );
-		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
-		m_Lines[m].m_Number.RunCommands( c );
+		Line &l = m_Lines[m];
+
+		l.m_Description.FinishTweening();
+		l.m_Meter.FinishTweening();
+		l.m_Number.FinishTweening();
 	}
 
 //	PositionItems();
