@@ -78,7 +78,7 @@ void Profile::InitGeneralData()
 	{
 		m_sGuid = "";
 		for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
-			m_sGuid += ssprintf( "%hx", random_byte() );
+			m_sGuid += ssprintf( "%02x", random_byte() );
 	}
 
 
