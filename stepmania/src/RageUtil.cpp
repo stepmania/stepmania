@@ -613,9 +613,9 @@ CString DerefRedir(const CString &path)
 	return sDir+sNewFileName;
 }
 
-Regex::Regex(const CString &pattern)
+void Regex::Compile()
 {
-	reg = new regex_t;
+    reg = new regex_t;
 
     int ret = regcomp((regex_t *) reg, pattern.c_str(), REG_EXTENDED|REG_ICASE);
     if(ret != 0)
@@ -627,10 +627,30 @@ Regex::Regex(const CString &pattern)
         if(pattern[i] == '(') backrefs++;
     ASSERT(backrefs+1 < 128);
 }
+void Regex::Release()
+{
+    delete (regex_t *)reg;
+	reg = NULL;
+}
+
+
+Regex::Regex(const CString &pattern_)
+{
+	reg = NULL;
+    pattern=pattern_;
+	Compile();
+}
+
+Regex::Regex(const Regex &rhs)
+{
+	reg = NULL;
+    pattern=rhs.pattern;
+	Compile();
+}
 
 Regex::~Regex()
 {
-	delete reg;
+    Release();
 }
 
 bool Regex::Compare(const CString &str)

@@ -197,9 +197,12 @@ CString DerefRedir(const CString &path);
 class Regex {
 	void *reg;
 	unsigned backrefs;
-
+    CString pattern;
+    void Compile();
+    void Release();
 public:
 	Regex(const CString &pat);
+	Regex(const Regex &rhs);
 	~Regex();
 	bool Compare(const CString &str);
 	bool Compare(const CString &str, vector<CString> &matches);
