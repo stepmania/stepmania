@@ -21,6 +21,8 @@
 #include "arch_Win32.h"
 #endif
 
+#include "Sound/RageSoundDriver_SDL.h"
+
 LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }
 ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
 ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
