@@ -55,7 +55,6 @@ static void FlipSpriteHorizontally(Sprite &s)
 {
 	RectF texCoords = *s.GetCurrentTextureCoords();
 	swap( texCoords.left, texCoords.right );
-	swap( texCoords.top, texCoords.bottom );
 	s.SetCustomTextureCoords( texCoords );
 }
 
