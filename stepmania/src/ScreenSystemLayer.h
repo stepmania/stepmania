@@ -13,11 +13,13 @@ class ScreenSystemLayer : public Screen
 {
 public:
 	ScreenSystemLayer();
+	virtual ~ScreenSystemLayer();
 	virtual void Init();
+	void HandleMessage( const CString &sCommandName );
+
 	void SystemMessage( const CString &sMessage );
 	void SystemMessageNoAnimate( const CString &sMessage );
 	void ReloadCreditsText();
-	void RefreshCreditsMessages();
 	void Update( float fDeltaTime );
 
 private:

@@ -99,7 +99,7 @@ void ScreenManager::ThemeChanged()
 	m_SystemLayer = new ScreenSystemLayer;
 	m_SystemLayer->Init();
 	m_SystemLayer->ReloadCreditsText();
-	m_SystemLayer->RefreshCreditsMessages();
+	this->RefreshCreditsMessages();
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -533,7 +533,7 @@ void ScreenManager::SystemMessageNoAnimate( const CString &sMessage )
 
 void ScreenManager::RefreshCreditsMessages()
 {
-	m_SystemLayer->RefreshCreditsMessages();
+	MESSAGEMAN->Broadcast( "RefreshCreditText" );
 
 	/* This is called when GAMESTATE->m_bSideIsJoined changes. */
 	CString joined;

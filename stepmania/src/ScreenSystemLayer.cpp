@@ -31,6 +31,12 @@
 //REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
+	MESSAGEMAN->Subscribe( this, "RefreshCreditText" );
+}
+
+ScreenSystemLayer::~ScreenSystemLayer()
+{
+	MESSAGEMAN->Unsubscribe( this, "RefreshCreditText" );
 }
 
 void ScreenSystemLayer::Init()
@@ -210,11 +216,16 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 	}
 }
 
-void ScreenSystemLayer::RefreshCreditsMessages()
+void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 {
-	// update joined
-	FOREACH_PlayerNumber( pn )
-		m_textCredits[pn].SetText( GetCreditsMessage(pn) );
+	if( sMessage == "RefreshCreditText" )
+	{
+		// update joined
+		FOREACH_PlayerNumber( pn )
+			m_textCredits[pn].SetText( GetCreditsMessage(pn) );
+	}
+	
+	Screen::HandleMessage( sMessage );
 }
 
 void ScreenSystemLayer::AddTimestampLine( const CString &txt, const RageColor &color )
