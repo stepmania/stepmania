@@ -6,23 +6,23 @@
 
 LightsDriver *MakeLightsDriver(CString driver)
 {
-	LOG->Trace("Initializing lights driver: %s", driver.c_str());
+	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
 
 	LightsDriver *ret = NULL;
 
 #ifdef _WINDOWS
-	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
+	if( !driver.CompareNoCase("Parallel") ) ret = new LightsDriver_Win32Parallel;
 #endif
-	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
+	if( !driver.CompareNoCase("SystemMessage") ) ret = new LightsDriver_SystemMessage;
 
 #ifdef LINUX
-	if(!driver.CompareNoCase("WeedTech")) ret = new LightsDriver_LinuxWeedTech;
-	if(!driver.CompareNoCase("LinuxParallel")) ret = new LightsDriver_LinuxParallel;
+	if( !driver.CompareNoCase("WeedTech") ) ret = new LightsDriver_LinuxWeedTech;
+	if( !driver.CompareNoCase("LinuxParallel") ) ret = new LightsDriver_LinuxParallel;
 #endif
-	if(!driver.CompareNoCase("Null") || !ret )
+	if( !driver.CompareNoCase("Null") || ret == NULL )
 	{
 		if( driver.CompareNoCase("Null") )
-			LOG->Warn("Unknown lights driver name: %s", driver.c_str());
+			LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
 		ret = new LightsDriver_Null;
 	}
 	
