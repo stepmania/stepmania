@@ -13,7 +13,6 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "BitmapText.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 
@@ -31,7 +30,7 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;
 
-	BitmapText	m_textAttack;
+	Sprite		m_sprAttack;
 };
 
 #endif
