@@ -359,6 +359,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenOptionsMaster.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsMaster.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsMasterPrefs.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsMasterPrefs.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsMenu.cpp">
 			</File>
 			<File
@@ -393,6 +405,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenRaveOptions.h">
+			</File>
+			<File
+				RelativePath="ScreenReloadSongs.cpp">
+			</File>
+			<File
+				RelativePath="ScreenReloadSongs.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">
