@@ -5,19 +5,20 @@
 #include "RageFileManager.h"
 #include "archutils/win32/WindowsResources.h"
 #include <windows.h>
-#include "SDL_utils.h"
 #include "RageSurface_Load.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 
 static HBITMAP g_hBitmap = NULL;
 
 /* Load a file into a GDI surface. */
 HBITMAP LoadWin32Surface( CString fn )
 {
-	SDL_Surface *s = RageSurfaceUtils::LoadFile( fn );
+	RageSurface *s = RageSurfaceUtils::LoadFile( fn );
 	if( s == NULL )
 		return NULL;
 
-	ConvertSDLSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
+	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
 
 	HBITMAP bitmap = CreateCompatibleBitmap( GetDC(NULL), s->w, s->h );
 	ASSERT( bitmap );
@@ -40,7 +41,7 @@ HBITMAP LoadWin32Surface( CString fn )
 	SelectObject( BitmapDC, NULL );
 	DeleteObject( BitmapDC );
 
-	SDL_FreeSurface( s );
+	delete s;
 	return bitmap;
 }
 

@@ -7,6 +7,8 @@
 #include "LoadingWindow_SDL.h"
 #include "loading.xpm"
 #include "StepMania.xpm" /* icon */
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 
 /* XXX: What is all this Xbox junk doing in LoadingWindow_SDL? */
 
@@ -27,34 +29,40 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	SDL_WM_SetCaption("Loading StepMania", "");
 
 	CString error;
-	SDL_Surface *srf = RageSurface_Load_XPM( icon, error );
+	RageSurface *srf = RageSurface_Load_XPM( icon, error );
 
-	Uint32 color;
-	if( mySDL_MapRGBExact( srf->format, 0xFF, 0, 0xFF, color ) )
-		mySDL_AddColorKey( srf, color );
+	uint32_t color;
+	if( srf->fmt.MapRGBA( 0xFF, 0, 0xFF, 0xFF, color ) )
+		srf->format->palette->colors[ color ].a = 0;
 
-#if !defined(DARWIN) || !DARWIN
-  /* Windows icons are 32x32 and SDL can't resize them for us, which
+#if !defined(DARWIN)
+	/* Windows icons are 32x32 and SDL can't resize them for us, which
 	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
 	 * this is here just in case it changes.) */
-	ConvertSDLSurface(srf, srf->w, srf->h,
+	RageSurfaceUtils::ConvertSurface(srf, srf->w, srf->h,
 		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
 	zoomSurface(srf, 32, 32);
 
-	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
-	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
-	SDL_FreeSurface(srf);
+	{
+		SDL_Surface *pSDLSurface = SDLSurfaceFromRageSurface( srf );
+
+		SDL_SetAlpha( pSDLSurface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
+		SDL_WM_SetIcon( pSDLSurface, NULL ); /* derive from alpha */
+		SDL_FreeSurface( pSDLSurface );
+	}
+
+	delete srf;
 #endif
 
 
 	/* Load the BMP - we need its dimensions */
-    SDL_Surface *image = RageSurface_Load_XPM( loading, error );
-    if( image == NULL )
-        RageException::Throw("Couldn't load loading.bmp: %s",SDL_GetError());
+    srf = RageSurface_Load_XPM( loading, error );
+    if( srf == NULL ) // XXX SDL_GetError
+        RageException::Throw( "Couldn't load loading.bmp: %s",SDL_GetError() );
 
 
     /* Initialize the window */
-    loading_screen = SDL_SetVideoMode(image->w, image->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME);
+    loading_screen = SDL_SetVideoMode( srf->w, srf->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME );
     if( loading_screen == NULL )
         RageException::Throw( "Couldn't initialize loading window: %s", SDL_GetError() );
 
@@ -86,12 +94,15 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 
 #endif
 
-    SDL_BlitSurface(image, NULL, loading_screen, NULL);
+	{
+		SDL_Surface *pSDLSurface = SDLSurfaceFromRageSurface( srf );
+		SDL_BlitSurface( pSDLSurface, NULL, loading_screen, NULL );
+		SDL_FreeSurface( pSDLSurface );
+	}
 
-    SDL_FreeSurface(image);
+    delete srf;
 
-	SDL_UpdateRect(loading_screen, 0,0,0,0);
-	SDL_UpdateRect(loading_screen, 0,0,0,0);
+	SDL_UpdateRect( loading_screen, 0,0,0,0 );
 }
 
 #ifdef _XBOX

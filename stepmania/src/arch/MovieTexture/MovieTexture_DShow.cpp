@@ -18,6 +18,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
+#include "RageSurface.h"
 #include "arch/Dialog/Dialog.h"
 #include "SDL_utils.h"
 
@@ -212,14 +213,14 @@ void MovieTexture_DShow::CheckFrame()
 	CreateTexture();
 
 	// DirectShow feeds us in BGR8
-	SDL_Surface *fromDShow = SDL_CreateRGBSurfaceFrom(
-		(void*)buffer, m_iSourceWidth, m_iSourceHeight,
+	RageSurface *fromDShow = CreateSurfaceFrom(
+		m_iSourceWidth, m_iSourceHeight,
 		24, 
-		m_iSourceWidth*3,
 		0xFF0000,
 		0x00FF00,
 		0x0000FF,
-		0x000000 );
+		0x000000,
+		(uint8_t *) buffer, m_iSourceWidth*3 );
 
 	/* Optimization notes:
 	 *
@@ -239,7 +240,7 @@ void MovieTexture_DShow::CheckFrame()
 		m_iImageWidth, m_iImageHeight );
 	CHECKPOINT;
 
-	SDL_FreeSurface( fromDShow );
+	delete fromDShow;
 
 	buffer = NULL;
 
@@ -464,12 +465,12 @@ void MovieTexture_DShow::CreateTexture()
 
 
 	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
-	SDL_Surface *img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight,
-		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+	RageSurface *img = CreateSurface( m_iTextureWidth, m_iTextureHeight,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img, false );
 
-	SDL_FreeSurface( img );
+	delete img;
 }
 
 

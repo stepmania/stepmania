@@ -6,6 +6,7 @@
 #include "RageException.h"
 #include "MovieTexture_Null.h"
 #include "SDL_utils.h"
+#include "RageSurface.h"
 
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 {
@@ -30,12 +31,12 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
     RageDisplay::PixelFormat pixfmt = RageDisplay::FMT_RGBA4;
 
     const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
-    SDL_Surface *img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, size, size, pfd->bpp, pfd->masks[0],
-                                                pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+    RageSurface *img = CreateSurface( size, size, pfd->bpp,
+		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
     texHandle = DISPLAY->CreateTexture( pixfmt, img, false );
 
-    SDL_FreeSurface(img);
+    delete img;
 }
 
 MovieTexture_Null::~MovieTexture_Null()

@@ -6,6 +6,7 @@
 #include "RageUtil.h"
 #include "RageTimer.h"
 #include "RageFile.h"
+#include "RageSurface.h"
 #include "SDL_utils.h"
 #include "PrefsManager.h"
 
@@ -629,7 +630,7 @@ void MovieTexture_FFMpeg::DestroyTexture()
 {
 	if( m_img )
 	{
-		SDL_FreeSurface( m_img );
+		delete m_img;
 		m_img=NULL;
 	}
 	if(m_uTexHandle)
@@ -712,8 +713,8 @@ void MovieTexture_FFMpeg::CreateTexture()
 		LOG->Trace("format %i, %08x %08x %08x %08x",
 			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 
-		m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight,
-			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+		m_img = CreateSurface( m_iTextureWidth, m_iTextureHeight, pfd->bpp,
+			pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 	}
 
     m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_img, false );

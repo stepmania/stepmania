@@ -14,7 +14,7 @@
 #include "archutils/win32/WindowsResources.h"
 
 #include <mmsystem.h>
-#pragma comment(lib, "winmm.lib") // for GetMicrosecondsSinceStart
+#pragma comment(lib, "winmm.lib") // for timeGetTime
 
 ArchHooks_Win32::ArchHooks_Win32()
 {
