@@ -5,26 +5,13 @@
 #include <math.h>
 
 /*
- * This class handles sound conversion.
- *
- * Rules:
- *
- * We only handle 16-bit, signed data in the local endianness.  We don't need
- * to handle 8-bit data right now, because SDL_sound will let us tell it to
- * do the conversion, but if we need to handle other types ourself, the conversions
- * are trivial.
- *
- * The primary function here is to resample between arbitrary sample rates.
- *
- * We also handle channel conversion.  If we have a mono signal, and we're outputting
- * a stereo signal, it'd be silly to do the channel doubling before the resample.
- *
+ * This class handles sound resampling.
  *
  * This isn't very efficient; we write to a static buffer instead of a circular
  * one.  I'll optimize it if it becomes an issue.
  */
 
-
+const int channels = 2;
 
 RageSoundResampler::RageSoundResampler()
 {
@@ -37,7 +24,6 @@ void RageSoundResampler::reset()
 	memset(prev, 0, sizeof(prev));
 	memset(t, 0, sizeof(t));
 	ipos = 0;
-	InputChannels = OutputChannels = 2;
 }
 
 
@@ -49,7 +35,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 	const Sint16 *data = (const Sint16 *) data_;
 
 	const unsigned samples = bytes / sizeof(Sint16);
-	const unsigned frames = samples / InputChannels;
+	const unsigned frames = samples / channels;
 
 	if(InputRate == OutputRate)
 	{
@@ -69,7 +55,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 			int ipos_begin = (int) roundf(ipos / div);
 			int ipos_end = (int) roundf((ipos+1) / div);
 
-			for(int c = 0; c < InputChannels; ++c)
+			for(int c = 0; c < channels; ++c)
 			{
 				const float f = 0.5f;
 				prev[c] = Sint16(prev[c] * (f) + data[c] * (1-f));
@@ -78,14 +64,14 @@ void RageSoundResampler::write(const void *data_, int bytes)
 			}
 			ipos++;
 		}
-		data += InputChannels;
+		data += channels;
 	}
 #else
 	/* Lerp. */
 	const float div = float(InputRate) / OutputRate;
 	for(unsigned f = 0; f < frames; ++f)
 	{
-		for(int c = 0; c < InputChannels; ++c)
+		for(int c = 0; c < channels; ++c)
 		{
 			while(t[c] < 1.0f)
 			{
@@ -99,7 +85,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 		}
 
 		ipos++;
-		data += InputChannels;
+		data += channels;
 	}
 #endif
 }
@@ -110,7 +96,7 @@ void RageSoundResampler::eof()
 	ASSERT(!at_eof);
 
 	/* Write some silence to flush out the real data. */
-	const int size = InputChannels*16;
+	const int size = channels*16;
 	Sint16 *data = new Sint16[size];
 	memset(data, 0, size * sizeof(Sint16));
 	write(data, size * sizeof(Sint16));

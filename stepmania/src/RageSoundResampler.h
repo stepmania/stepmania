@@ -8,7 +8,6 @@ enum { MAX_CHANNELS = 15 };
 class RageSoundResampler
 {
 	int InputRate, OutputRate;
-	int InputChannels, OutputChannels;
 
 	Sint16 prev[MAX_CHANNELS];
 
@@ -24,8 +23,6 @@ public:
 	/* Configuration: */
 	void SetInputSampleRate(int hz) { InputRate = hz; }
 	void SetOutputSampleRate(int hz) { OutputRate = hz; }
-	void SetInputChannels(int ch) { InputChannels = ch; }
-	void SetOutputChannels(int ch) { OutputChannels = ch; }
 
 	/* Write data to be converted. */
 	void write(const void *data, int bytes);
