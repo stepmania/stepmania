@@ -45,7 +45,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	if( bDemonstration )
 	{
 		split( DIFFICULTIES_TO_SHOW, ",", asBits );
-		for( int i=0; i<asBits.size(); i++ )
+		for( unsigned i=0; i<asBits.size(); i++ )
 		{
 			Difficulty dc = StringToDifficulty( asBits[i] );
 			if( dc != DIFFICULTY_INVALID )
