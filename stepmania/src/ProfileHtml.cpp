@@ -37,7 +37,7 @@ const CString STYLE_CSS		= "Style.css";
 #define FOOTER					THEME->GetMetric("ProfileHtml","Footer")
 #define VERIFICATION_TEXT		THEME->GetMetric("ProfileHtml","VerificationText")
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetric("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
-#define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetric("ProfileHtml","ShowRadarCategory"+RadarCategoryToString(rc))
+#define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetricB("ProfileHtml","ShowRadarCategory"+RadarCategoryToString(rc))
 
 
 static int g_Level = 1;
@@ -784,6 +784,14 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 
 	vector<Steps*> vpSteps = pSong->GetAllSteps();
 
+	bool bShowRadarCategory[NUM_RADAR_CATEGORIES];
+	CString sThemedRadarCategory[NUM_RADAR_CATEGORIES];
+	FOREACH_RadarCategory(rc)
+	{
+		bShowRadarCategory[rc] = SHOW_RADAR_CATEGORY(rc);
+		sThemedRadarCategory[rc] = RadarCategoryToThemedString(rc);
+	}
+
 	PRINT_OPEN(f, pSong->GetFullDisplayTitle().c_str() );
 	{
 		BEGIN_TABLE(2);
@@ -820,12 +828,13 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 				END_TABLE;
 
 				BEGIN_TABLE(2);
+
 				FOREACH_RadarCategory( cat )
 				{
-					if( !SHOW_RADAR_CATEGORY(cat) )
+					if( !bShowRadarCategory[cat] )
 						continue;	// skip
 
-					CString sCat = RadarCategoryToThemedString(cat);
+					const CString &sCat = sThemedRadarCategory[cat];
 					float fVal = pSteps->GetRadarValues()[cat];
 					CString sVal = ssprintf( "%.2f", fVal );
 					TABLE_LINE2( sCat, sVal );
