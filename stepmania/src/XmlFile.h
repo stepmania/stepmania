@@ -20,7 +20,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <vector>
-#include <RageUtil.h>
+struct DateTime;
+class RageFile;
 
 struct XAttr;
 typedef XAttr* LPXAttr;
@@ -104,11 +105,12 @@ struct XAttr
 {
 	CString name;
 	CString	value;
-	void GetValue(CString &out) const	{ out = value; }
-	void GetValue(int &out) const		{ out = atoi(value); }
-	void GetValue(float &out) const		{ out = (float) atof(value); }
-	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
-	void GetValue(unsigned &out) const	{ sscanf(value,"%u",&out); }
+	void GetValue(CString &out) const;
+	void GetValue(int &out) const;
+	void GetValue(float &out) const;
+	void GetValue(bool &out) const;
+	void GetValue(unsigned &out) const;
+	void GetValue(DateTime &out) const;
 	
 	XNode*	parent;
 
@@ -122,15 +124,17 @@ struct XNode
 	// name and value
 	CString name;
 	CString	value;
-	void GetValue(CString &out) const	{ out = value; }
-	void GetValue(int &out) const		{ out = atoi(value); }
-	void GetValue(float &out) const		{ out = (float) atof(value); }
-	void GetValue(bool &out) const		{ out = atoi(value) != 0; }
-	void GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
+	void GetValue(CString &out) const;
+	void GetValue(int &out) const;
+	void GetValue(float &out) const;
+	void GetValue(bool &out) const;
+	void GetValue(unsigned &out) const;
+	void GetValue(DateTime &out) const;
 	void SetValue(int v);
 	void SetValue(float v);
 	void SetValue(bool v);
 	void SetValue(unsigned v);
+	void SetValue(const DateTime &v);
 
 	// internal variables
 	LPXNode	parent;		// parent node
@@ -154,6 +158,7 @@ struct XNode
 	bool GetAttrValue(const char* name,float &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,unsigned &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(const char* name,DateTime &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	XAttrs	GetAttrs( const char* name ); 
 
 	// in one level child nodes
@@ -165,6 +170,7 @@ struct XNode
 	bool GetChildValue(const char* name,float &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,unsigned &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(const char* name,DateTime &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	XNodes	GetChilds( const char* name ); 
 	XNodes	GetChilds(); 
 
@@ -180,6 +186,7 @@ struct XNode
 	LPXNode	AppendChild( const char* name, float value );
 	LPXNode	AppendChild( const char* name, int value );
 	LPXNode	AppendChild( const char* name, unsigned value );
+	LPXNode	AppendChild( const char* name, const DateTime &value );
 	LPXNode	AppendChild( LPXNode node );
 	bool	RemoveChild( LPXNode node );
 	LPXNode DetachChild( LPXNode node );
@@ -192,6 +199,7 @@ struct XNode
 	LPXAttr AppendAttr( const char* name, float value );
 	LPXAttr AppendAttr( const char* name, int value );
 	LPXAttr AppendAttr( const char* name, unsigned value );
+	LPXAttr AppendAttr( const char* name, const DateTime &value );
 	LPXAttr	AppendAttr( LPXAttr attr );
 	bool	RemoveAttr( LPXAttr attr );
 	LPXAttr DetachAttr( LPXAttr attr );
@@ -211,13 +219,6 @@ inline long XStr2Int( const char* str, long default_value = 0 )
 	return str ? atol(str) : default_value;
 }
 
-inline bool XIsEmptyString( const char* str )
-{
-	CString s(str);
-	TrimLeft( s );
-	TrimRight( s );
-
-	return ( s.empty() || s == "" );
-}
+bool XIsEmptyString( const char* str );
 
 #endif

@@ -5,6 +5,8 @@
 #include <string>
 #include "RageFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
+#include "DateTime.h"
 
 
 static const TCHAR chXMLTagOpen		= '<';
@@ -633,22 +635,33 @@ bool XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 //--------------------------------------------------------
 // Coder    Date                      Desc
 //========================================================
-void XNode::SetValue(int v)
-{
-	value = ssprintf("%d",v);
-}
-void XNode::SetValue(float v)
-{
-	value = ssprintf("%f",v);
-}
-void XNode::SetValue(bool v)
-{
-	value = ssprintf("%d",v);
-}
-void XNode::SetValue(unsigned v)
-{
-	value = ssprintf("%u",v);
-}
+void XNode::GetValue(CString &out) const	{ out = value; }
+void XNode::GetValue(int &out) const		{ out = atoi(value); }
+void XNode::GetValue(float &out) const		{ out = (float) atof(value); }
+void XNode::GetValue(bool &out) const		{ out = atoi(value) != 0; }
+void XNode::GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
+void XNode::GetValue(DateTime &out) const	{ out.FromString( value ); }
+
+void XAttr::GetValue(CString &out) const	{ out = value; }
+void XAttr::GetValue(int &out) const		{ out = atoi(value); }
+void XAttr::GetValue(float &out) const		{ out = (float) atof(value); }
+void XAttr::GetValue(bool &out) const		{ out = atoi(value) != 0; }
+void XAttr::GetValue(unsigned &out) const	{ out = (unsigned)atoi(value) != 0; }
+void XAttr::GetValue(DateTime &out) const	{ out.FromString( value ); }
+
+//========================================================
+// Name   : SetValue
+// Desc   : 
+// Param  :
+// Return : 
+//--------------------------------------------------------
+// Coder    Date                      Desc
+//========================================================
+void XNode::SetValue(int v)				{ value = ssprintf("%d",v); }
+void XNode::SetValue(float v)			{ value = ssprintf("%f",v); }
+void XNode::SetValue(bool v)			{ value = ssprintf("%d",v); }
+void XNode::SetValue(unsigned v)		{ value = ssprintf("%u",v); }
+void XNode::SetValue(const DateTime &v) { value = v.GetString(); }
 
 //========================================================
 // Name   : GetAttr
@@ -879,25 +892,11 @@ XNodes::iterator XNode::GetChildIterator( LPXNode node )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode	XNode::AppendChild( const char* name /*= NULL*/, const char* value /*= NULL*/ )
-{
-	return AppendChild( CreateNode( name, value ) );
-}
-
-LPXNode	XNode::AppendChild( const char* name /*= NULL*/, float value /*= NULL*/ )
-{
-	return AppendChild( name, ssprintf("%f",value) );
-}
-
-LPXNode	XNode::AppendChild( const char* name /*= NULL*/, int value /*= NULL*/ )
-{
-	return AppendChild( name, ssprintf("%d",value) );
-}
-
-LPXNode	XNode::AppendChild( const char* name /*= NULL*/, unsigned value /*= NULL*/ )
-{
-	return AppendChild( name, ssprintf("%u",value) );
-}
+LPXNode	XNode::AppendChild( const char* name, const char* value )		{ XNode *p = new XNode; p->name = name; p->value = value; return AppendChild( p ); }
+LPXNode	XNode::AppendChild( const char* name, float value )				{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
+LPXNode	XNode::AppendChild( const char* name, int value )				{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
+LPXNode	XNode::AppendChild( const char* name, unsigned value )			{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
+LPXNode	XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p = new XNode; p->name = name; p->SetValue( value ); return AppendChild( p ); }
 
 //========================================================
 // Name   : AppendChild
@@ -1274,4 +1273,13 @@ bool XNode::SaveToFile( CString sFile, LPDISP_OPT opt )
 	if( f.Flush() == -1 )
 		return false;
 	return true;
+}
+
+bool XIsEmptyString( const char* str )
+{
+	CString s(str);
+	TrimLeft( s );
+	TrimRight( s );
+
+	return ( s.empty() || s == "" );
 }
