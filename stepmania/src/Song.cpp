@@ -477,7 +477,7 @@ void Song::TidyUpData()
 	//
 	if( !HasBanner() )
 	{
-		m_sBannerFile = "";
+//		m_sBannerFile = "";
 
 		// find an image with "banner" in the file name
 		CStringArray arrayPossibleBanners;
@@ -491,7 +491,7 @@ void Song::TidyUpData()
 
 	if( !HasBackground() )
 	{
-		m_sBackgroundFile = "";
+//		m_sBackgroundFile = "";
 
 		// find an image with "bg" or "background" in the file name
 		CStringArray arrayPossibleBGs;
@@ -509,7 +509,7 @@ void Song::TidyUpData()
 
 	if( !HasCDTitle() )
 	{
-		m_sCDTitleFile = "";
+//		m_sCDTitleFile = "";
 
 		// find an image with "cdtitle" in the file name
 		CStringArray arrayPossibleCDTitles;
