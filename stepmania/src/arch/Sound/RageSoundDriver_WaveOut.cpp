@@ -126,9 +126,9 @@ void RageSound_WaveOut::Update(float delta)
 	vector<sound *> snds = sounds;
 	for(unsigned i = 0; i < snds.size(); ++i)
 	{
-		if(!sounds[i]->stopping) continue;
+		if(!snds[i]->stopping) continue;
 
-		if(GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
+		if(GetPosition(snds[i]->snd) < snds[i]->flush_pos)
 			continue; /* stopping but still flushing */
 
 		/* This sound is done. */
