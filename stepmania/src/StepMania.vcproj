@@ -1072,12 +1072,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="archutils\Win32\CrashList.h">
 					</File>
 					<File
-						RelativePath="archutils\Win32\Disasm.cpp">
-					</File>
-					<File
-						RelativePath="archutils\Win32\Disasm.h">
-					</File>
-					<File
 						RelativePath="archutils\Win32\Tls.cpp">
 					</File>
 					<File

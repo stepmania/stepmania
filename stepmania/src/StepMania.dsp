@@ -2258,30 +2258,6 @@ SOURCE=.\archutils\Win32\CrashList.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\archutils\Win32\Disasm.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-# PROP BASE Exclude_From_Build 1
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\archutils\Win32\Disasm.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\archutils\Win32\Tls.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
