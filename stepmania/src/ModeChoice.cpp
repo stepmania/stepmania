@@ -13,6 +13,7 @@
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "MemoryCardManager.h"
+#include "song.h"
 
 void ModeChoice::Init()
 {
@@ -98,6 +99,8 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	m_sName = sChoice;
 	m_bInvalid = false;
 
+	CString sSteps;
+
 	CStringArray asCommands;
 	split( sChoice, ";", asCommands );
 	for( unsigned i=0; i<asCommands.size(); i++ )
@@ -171,8 +174,25 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 				m_bInvalid |= true;
 		}
 
+		if( sName == "steps" )
+		{
+			/* Save the name of the steps, and set this later, since we want to process
+			 * any "song" and "style" commands first. */
+			sSteps = sValue;
+		}
+
 		if( sName == "screen" )
 			m_sScreen = sValue;
+	}
+
+	if( !m_bInvalid && sSteps != "" )
+	{
+		if( m_pSong == NULL || m_style == STYLE_INVALID )
+			RageException::Throw( "Must set Song and Style to set Steps" );
+
+		m_pSteps = m_pSong->GetStepsByDescription( GAMEMAN->GetStyleDefForStyle(m_style)->m_StepsType, sSteps );
+		if( m_pSteps == NULL )
+			m_bInvalid |= true;
 	}
 }
 
