@@ -4,8 +4,15 @@
 #include "FormatConverterClient.h"
 #include "CAStreamBasicDescription.h"
 
-typedef CAStreamBasicDescription Desc;
+static const UInt32 kFramesPerPacket = 1;
+static const UInt32 kChannelsPerFrame = 2;
+static const UInt32 kBitsPerChannel = 16;
+static const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
+static const UInt32 kBytesPerFrame = kBytesPerPacket;
+static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian |
+kAudioFormatFlagIsSignedInteger;
 
+typedef CAStreamBasicDescription Desc;
 
 class AudioConverter : public FormatConverterClient
 {
@@ -17,8 +24,6 @@ protected:
                                       AudioBufferList& ioData,
                                       AudioStreamPacketDescription **outDesc);
 private:
-    static Desc FindClosestFormat(const vector<Desc>& formats);
-    
     RageSound_CA *mDriver;
     UInt8 *mBuffer;
     UInt32 mBufferSize;

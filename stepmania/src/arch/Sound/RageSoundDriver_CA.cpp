@@ -15,7 +15,7 @@
 #include <mach/mach_init.h>
 #include <mach/mach_error.h>
 
-static AudioConverter *gConverter;
+static AudioConverter *gConverter = NULL;
 
 /* temporary hack: */
 static float g_fLastIOProcTime = 0;
@@ -40,7 +40,8 @@ static CString FormatToString( int fmt )
 	return ssprintf( "%c%c%c%c", c[0], c[1], c[2], c[3] );
 }
 
-static Desc FindClosestFormat(const vector<Desc>& formats)
+static Desc FindClosestFormat(const vector<Desc>& formats,
+							  RageSound_CA::format& type)
 {
 	vector<Desc> v;
 
@@ -56,24 +57,30 @@ static Desc FindClosestFormat(const vector<Desc>& formats)
 			continue;
 
 		if (format.SampleWordSize() == 2 &&
-            (format.mFormatFlags & kAudioFormatFlagIsSignedInteger) ==
-				kAudioFormatFlagIsSignedInteger)
+            (format.mFormatFlags & kFormatFlags) == kFormatFlags)
 		{ // exact match
+			type = RageSound_CA::EXACT;
 			return format;
 		}
 		v.push_back(format);
 	}
 
+	const Desc CanonicalFormat(44100.0, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
+							   kAudioFormatFlagsNativeFloatPacked);
+
 	for (i = v.begin(); i != v.end(); ++i)
 	{
 		const Desc& format = *i;
-		if (format.SampleWordSize() == 2)
+
+		if (format == CanonicalFormat)
 		{
-			return format; // close
+			type = RageSound_CA::CANONICAL;
+			return format;
 		}
 	}
 	if (v.empty())
 		RageException::ThrowNonfatal("Couldn't find a close format.");
+	type = RageSound_CA::OTHER;
 	return v[0]; // something is better than nothing.
 }
 
@@ -157,7 +164,7 @@ RageSound_CA::RageSound_CA()
 				  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
 				  f.mChannelsPerFrame, f.mBitsPerChannel);
 	}
-	const Desc& physicalFormat = FindClosestFormat( physicalFormats );
+	const Desc& physicalFormat = FindClosestFormat( physicalFormats, mFormat );
 	stream.SetCurrentPhysicalFormat( physicalFormat );
 
 	vector<Desc> procFormats;
@@ -173,10 +180,14 @@ RageSound_CA::RageSound_CA()
 				  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
 				  f.mChannelsPerFrame, f.mBitsPerChannel);
 	}
-	const Desc& procFormat = FindClosestFormat( procFormats );
+
+	const Desc& procFormat = FindClosestFormat( procFormats, mFormat );
 	stream.SetCurrentIOProcFormat( procFormat );
-    
-    
+
+	LOG->Info("Proc format is %s.",
+			  mFormat == EXACT ? "exact" : (mFormat == CANONICAL ?
+											"canonical" : "other"));
+
 	try
 	{
 		UInt32 bufferSize = mOutputDevice->GetIOBufferSize();
@@ -212,12 +223,26 @@ RageSound_CA::RageSound_CA()
 
 	StartDecodeThread();
 
-	gConverter = new AudioConverter( this, procFormat );
+	if (mFormat = OTHER)
+		gConverter = new AudioConverter( this, procFormat );
     
 	try
 	{
-		mOutputDevice->AddIOProc(GetData, this);
-		mOutputDevice->StartIOProc(GetData);
+		switch (mFormat)
+		{
+		case EXACT:
+			mOutputDevice->AddIOProc(GetDataExact, this);
+			mOutputDevice->StartIOProc(GetDataExact);
+			break;
+		case CANONICAL:
+			mOutputDevice->AddIOProc(GetDataCanonical, this);
+			mOutputDevice->StartIOProc(GetDataCanonical);
+			break;
+		case OTHER:
+			mOutputDevice->AddIOProc(GetDataOther, this);
+			mOutputDevice->StartIOProc(GetDataOther);
+			break;
+		}
 	}
 	catch(const CAException& e)
 	{
@@ -229,8 +254,19 @@ RageSound_CA::RageSound_CA()
 
 RageSound_CA::~RageSound_CA()
 {
-	mOutputDevice->StopIOProc(GetData);
-	delete gConverter;
+	switch (mFormat)
+	{
+	case EXACT:
+		mOutputDevice->StopIOProc(GetDataExact);
+		break;
+	case CANONICAL:
+		mOutputDevice->StopIOProc(GetDataCanonical);
+		break;
+	case OTHER:
+		mOutputDevice->StopIOProc(GetDataOther);
+		delete gConverter;
+		break;
+	}
 	delete mOutputDevice;
 }
 
@@ -242,24 +278,85 @@ int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
 	return int64_t(time.mSampleTime);
 }
 
+OSStatus RageSound_CA::GetDataExact(AudioDeviceID inDevice,
+									const AudioTimeStamp *inNow,
+									const AudioBufferList *inInputData,
+									const AudioTimeStamp *inInputTime,
+									AudioBufferList *outOutputData,
+									const AudioTimeStamp *inOutputTime,
+									void *inClientData)
+{
+	RageTimer tm;
+	RageSound_CA *This = (RageSound_CA *)inClientData;
+	AudioBuffer& buf = outOutputData->mBuffers[0];
+	UInt32 dataPackets = buf.mDataByteSize / kBytesPerPacket;
+	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
+	RageTimer mixTM;
+
+	This->Mix((int16_t *)buf.mData, dataPackets, decodePos,
+			  int64_t(inNow->mSampleTime));
+	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
+	++g_fLastMixTimePos;
+	wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
+
+	g_fLastIOProcTime = tm.GetDeltaTime();
+	++g_iNumIOProcCalls;
+
+	return noErr;
+}
+
+OSStatus RageSound_CA::GetDataCanonical(AudioDeviceID inDevice,
+										const AudioTimeStamp *inNow,
+										const AudioBufferList *inInputData,
+										const AudioTimeStamp *inInputTime,
+										AudioBufferList *outOutputData,
+										const AudioTimeStamp *inOutputTime,
+										void *inClientData)
+{
+	RageTimer tm;
+	RageSound_CA *This = (RageSound_CA *)inClientData;
+	AudioBuffer& buf = outOutputData->mBuffers[0];
+	UInt32 dataPackets = buf.mDataByteSize / 8;
+	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
+	int16_t buffer[dataPackets * kBytesPerPacket];
+	RageTimer mixTM;
+
+	This->Mix(buffer, dataPackets, decodePos, int64_t(inNow->mSampleTime));
+	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
+	++g_fLastMixTimePos;
+	wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
+
+	int16_t *ip = buffer;
+	float *fp = (float *)buf.mData;
+
+	for (unsigned i = 0; i < dataPackets; ++i)
+	{
+		int16_t val = *(++ip);
+
+		*(++fp) = val < 0 ? val / 32768.0 : val / 32767.0;
+	}
+
+	return noErr;
+}
+
 void RageSound_CA::FillConverter( void *data, UInt32 frames )
 {
 	RageTimer tm;
-
-	this->Mix( (int16_t *)data, frames, mDecodePos, int64_t(mNow->mSampleTime) );
+	
+	Mix( (int16_t *)data, frames, mDecodePos, int64_t(mNow->mSampleTime) );
 
 	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
 	++g_fLastMixTimePos;
 	wrap( g_fLastMixTimePos, NUM_MIX_TIMES );
 }
 
-OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
-							   const AudioTimeStamp *inNow,
-							   const AudioBufferList *inInputData,
-							   const AudioTimeStamp *inInputTime,
-							   AudioBufferList *outOutputData,
-							   const AudioTimeStamp *inOutputTime,
-							   void *inClientData)
+OSStatus RageSound_CA::GetDataOther(AudioDeviceID inDevice,
+									const AudioTimeStamp *inNow,
+									const AudioBufferList *inInputData,
+									const AudioTimeStamp *inInputTime,
+									AudioBufferList *outOutputData,
+									const AudioTimeStamp *inOutputTime,
+									void *inClientData)
 {
 	RageTimer tm;
 
@@ -291,7 +388,7 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
 		Output += ssprintf( "%.3f ", g_fLastMixTimes[pos] );
 	}
 
-	if( g_iNumIOProcCalls >= 100 )
+	//if( g_iNumIOProcCalls >= 100 )
 		LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s)",
 			   g_fLastIOProcTime, g_iNumIOProcCalls, Output.c_str() );
 	g_iNumIOProcCalls = 0;

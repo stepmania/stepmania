@@ -2,14 +2,6 @@
 #include "RageSoundDriver_CA.h"
 #include "CAHelpers.h"
 
-const UInt32 kFramesPerPacket = 1;
-const UInt32 kChannelsPerFrame = 2;
-const UInt32 kBitsPerChannel = 16;
-const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
-const UInt32 kBytesPerFrame = kBytesPerPacket;
-const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian |
-                            kAudioFormatFlagIsSignedInteger;
-
 AudioConverter::AudioConverter( RageSound_CA *driver, const Desc &procFormat )
     : mBuffer(NULL), mBufferSize(0)
 {
