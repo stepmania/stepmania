@@ -33,7 +33,6 @@ class RageSound_DSound: public RageSoundDriver
 	    stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
 		~stream();
 	};
-	friend struct stream;
 
 	/* Pool of available streams. */
 	vector<stream *> stream_pool;

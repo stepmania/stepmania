@@ -14,10 +14,8 @@ class RageSound_DSound_Software: public RageSoundDriver
 	struct sound {
 	    RageSoundBase *snd;
 		RageTimer start_time;
-
 		bool stopping;
-
-		int flush_pos; /* state == STOPPING only */
+		int flush_pos; /* when stopping only */
 
 	    sound() { snd = NULL; stopping=false; }
 	};
