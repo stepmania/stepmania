@@ -984,6 +984,8 @@ void Profile::LoadSongScoresFromDirSM390a12( CString sDir )
 				if( !FileRead(f, fPercentDP) )
 					WARN_AND_RETURN;
 
+				if( grade == NUM_GRADES || grade == GRADE_NO_DATA )
+					continue;	// ignore this high score
 				if( pSteps == NULL )
 					continue;	// ignore this high score
 				
