@@ -204,7 +204,14 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		{
 			// don't show keyboard if didn't make any high scores
 			if( !m_bStillEnteringName[p] )
+			{
+				m_sprOutOfRanking[p].Load( THEME->GetPathG( "ScreenNameEntryTraditional",ssprintf("OutOfRankingP%i",p+1)) );
+				m_sprOutOfRanking[p]->SetName( ssprintf("OutOfRankingP%i",p+1) );
+				SET_XY_AND_ON_COMMAND( m_sprOutOfRanking[p] );
+				this->AddChild( m_sprOutOfRanking[p] );
+
 				continue;	// skip
+			}
 
 			m_sprNameFrame[p].SetName( ssprintf("EntryFrameP%i",p+1) );
 			m_sprNameFrame[p].Load( THEME->GetPathToG( ssprintf("ScreenNameEntryTraditional name frame p%i",p+1) ) );

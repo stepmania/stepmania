@@ -77,6 +77,7 @@ private:
 	vector<BitmapText*>	m_textAlphabet[NUM_PLAYERS];
 	vector<int>		m_AlphabetLetter[NUM_PLAYERS];
 	int				m_SelectedChar[NUM_PLAYERS];
+	AutoActor		m_sprOutOfRanking[NUM_PLAYERS];	// shown if didn't make any high scores
 
 	/* Feat display: */
 	struct FeatDisplay
