@@ -134,7 +134,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	this->AddActor( &m_Fade );
 
-
+	
 	// LEAVE THIS HERE! ITS ESSENTIAL
 	// I know you're a fan of removing my code, but if this isn't here
 	// the Ez2dancer announcer will be the default (as it loads in alphabetical order, and ez2dancer
@@ -142,10 +142,16 @@ ScreenTitleMenu::ScreenTitleMenu()
 	// so just leave it yeah?
 	// I don't wanna fix this a 3rd TIME!!
 	// - Andy.
-	if (GAMEMAN->m_CurGame != GAME_EZ2)
-	{
-		ANNOUNCER->SwitchAnnouncer( "default" );
-	}
+	// if (GAMEMAN->m_CurGame != GAME_EZ2)
+	//{
+	//	ANNOUNCER->SwitchAnnouncer( "default" );
+	//}
+
+	// Dear Andy:
+	// The above code breaks the program by making the announcer unswitchable.
+	// This is the wrong place for such a code change anyway. Might I suggest
+	// changing something in the PrefsManager instead?
+	// -- dro kulix
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
