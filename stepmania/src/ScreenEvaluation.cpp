@@ -411,19 +411,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentP%dY",p+1)) );
 			m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOnCommand",p+1)) );
 			this->AddChild( &m_Percent[p] );
-
-#if 0
-			if( !PREFSMAN->m_bDancePointsForOni )
-			{
-				m_textPercentWhole[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
-
-				m_textPercentRemainder[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
-			}
-			else	// PREFSMAN->m_bDancePointsForOni
-			{
-				m_textDancePoints[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
-			}
-#endif
 		}
 	}
 
