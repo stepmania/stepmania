@@ -12,6 +12,7 @@
 
 #include "RageException.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 
 RageException::RageException( const char *fmt, ...)
 {
@@ -38,6 +39,12 @@ RageException::ThrowFatal(const char *fmt, ...)
     CString error = vssprintf( fmt, va );
     va_end(va);
 
+	if(LOG)
+	{
+		LOG->Trace("Fatal exception thrown: %s", error.GetString());
+		LOG->Flush();
+	}
+
 #if defined(WIN32) && defined(DEBUG)
 	MessageBox( NULL, error, "Fatal Error", MB_OK );
 	DebugBreak();
@@ -51,5 +58,11 @@ RageException::ThrowNonfatal(const char *fmt, ...)
     va_list	va;
     va_start(va, fmt);
 
+	if(LOG)
+	{
+		LOG->Trace("Nonfatal exception thrown: %s", vssprintf( fmt, va ).GetString());
+		LOG->Flush();
+	}
+	
 	throw RageException(fmt, va);
 }
