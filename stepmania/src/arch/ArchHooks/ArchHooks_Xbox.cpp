@@ -22,6 +22,11 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return (timeGetTime() - g_iStartTime) * 1000;
 }
 
+ArchHooks_Xbox::ArchHooks_Xbox()
+{
+	XGetCustomLaunchData();
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

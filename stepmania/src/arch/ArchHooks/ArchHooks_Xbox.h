@@ -7,14 +7,7 @@ class RageMutex;
 class ArchHooks_Xbox: public ArchHooks
 {
 public:
-    ArchHooks_Xbox() {}
-    ~ArchHooks_Xbox() {}
-    void DumpDebugInfo() {}
-	void RestartProgram() {}
-
-	void EnterTimeCriticalSection() {}
-	void ExitTimeCriticalSection() {}
-	void SetTime( tm newtime ) {}
+	ArchHooks_Xbox();
 };
 
 #undef ARCH_HOOKS
