@@ -1,0 +1,67 @@
+# transferCvs2WebSite for plib
+#
+# you must already be logged in !! 
+# That means, you must do the following ONCE (once is enough for a lifetime :-)):
+# cvs -d:pserver:anonymous@cvs1:/cvsroot/plib login
+#
+# export doesnt create the "cvs"-directories. Update would. Therefore I use export
+
+
+echo running cd
+cd /home/groups/p/pl/plib/htdocs
+
+echo handling "sg"
+rm -R sg
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d sg plib/doc/sg >/dev/null 2>&1 
+
+echo handling "ssg"
+rm -R ssg
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d ssg plib/doc/ssg >/dev/null 2>&1 
+
+echo handling "sl"
+rm -R sl
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d sl plib/doc/sl >/dev/null 2>&1 
+
+echo handling "js"
+rm -R js
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d js plib/doc/js >/dev/null 2>&1 
+
+echo handling "fnt"
+rm -R fnt
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d fnt plib/doc/fnt >/dev/null 2>&1 
+
+echo handling "ssgAux"
+rm -R ssgAux
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d ssgAux plib/doc/ssgAux >/dev/null 2>&1 
+
+echo handling "util"
+rm -R util
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d util plib/doc/util >/dev/null 2>&1 
+
+echo handling "pui"
+rm -R pui
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d pui plib/doc/pui >/dev/null 2>&1 
+
+echo handling "net"
+rm -R net
+cvs -d:pserver:anonymous@cvs1:/cvsroot/plib export -Dtoday -d net plib/doc/net >/dev/null 2>&1 
+
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/sg
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/ssg
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/sl
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/js
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/fnt
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/ssgAux
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/util
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/pui
+chmod -R u=rwX,g=rwX,o=rX /home/groups/p/pl/plib/htdocs/net
+
+echo done.
+
+ 
+
+ 
+
+
+
+

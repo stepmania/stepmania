@@ -1,0 +1,69 @@
+NEW FEATURES:
+
+Structure section
+
+*	SSG needs RTTI to replace the rapidly vanishing SSG_TYPE bits resource.
+
+*	I'd like to see the FGFS sky model moved into ssgAux so everyone can use
+	it.  We got part of the way towards that - but it was never finished.
+
+*	I'd like to have a ROAM engine built into ssgAux for terrain rendering.
+	(maybe not *literally* ROAM - but something very like it).
+
+SSG section
+
+*	Support for bump maps, cubic environment maps, etc, etc on hardware
+	that supports it.
+
+*	Support for multi-texture.
+
+*	Import some kind of Skin & Bones animation into ssgAux (using the
+	ExPoser code - or something even better).
+
+
+Loader section
+
+*	MORE file readers and writer.
+For example, a reader/loader for WWII Fighters would be nice.
+
+*	No file writers for about 2/3rds of the file formats we support.
+
+*	I want the PPE material editor's file format built into SSG so we can
+	load and save material lists.
+
+*	Model formats
+	* VRML
+	* XML version of ssg
+	* WWII (I think thats the name)
+
+SG section
+
+*	function to get the angle between two vectors
+
+*	plot points on a vector (walking in a straight line)
+
+*	Expand SG with more intersection and distance-measuring tricks.
+
+
+PUI section
+
+*	PUI should also be implemented with RTTI as well.
+
+*	Movable widgets
+
+*	PUI is still somewhat tied to GLUT...that should go.  It'll need a
+	way to get the window dimensions - and at least one built-in font
+	before we can do that.
+
+SL section
+
+*	Re-implement SL on top of OpenAL.
+
+*	Write players for more modern MOD-like music formats.
+
+Examples section
+
+*	More example programs - more complete demo games and tools.
+
+*	More documentation for all the new features.
+

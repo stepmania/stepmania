@@ -1,0 +1,176 @@
+
+Portability Libraries.
+======================
+             by Steve Baker.
+
+All the documentation and installation instructions
+are now online at:
+
+  http://plib.sourceforge.net
+
+They are also downloadable - along with example
+programs and demos from the same site.
+
+
+SUPPORT:
+
+Please don't email me (Steve Baker) directly - I
+get *WAY* too much mail as it is!  Instead, please
+sign up to the PLIB user's mailing list.  Instructions
+can be found here:
+
+  http://plib.sourceforge.net
+
+
+LICENSING:
+
+These libraries are offered as OpenSource freeware
+under the provisions of the GNU Library Public
+License (LGPL). Those terms and conditions are
+detailed in the file 'LICENSE' in this directory.
+
+I have added a short preamble to LGPL that removes
+no rights from ordinary users but offers special
+dispensation to allow PLIB to be used under certain
+commercial conditions (such as Games Consoles) where
+the constraints of LGPL are impossible to meet.
+
+|  As a special exception Steve Baker gives permission to link these 
+|  libraries with proprietary software and distribute the resulting 
+|  executable without including that proprietary code in any distribution 
+|  as the LGPL would normally dictate. 
+| 
+|  This exception is ONLY granted in the case of an embedded system in 
+|  which there is no possibility of an end user re-linking or recompiling 
+|  against new versions of this library that may appear in the future.
+
+
+REQUIREMENTS:
+
+In addition to the libraries that I provide, you
+will also need OpenGL (OpenGL 1.1 or later -
+Mesa 3.0 or later) and GLUT (The OpenGL utilities
+toolkit - version 3.7 or later) and a hardware 3D
+graphics accellerator that supports OpenGL.
+
+
+WHAT DO YOU GET?
+
+The following libraries are provided:
+
+JS  -- A Joystick interface.
+PUI -- A simple GUI built on top of OpenGL.
+SG  -- Some Standard Geometry functions (vector and
+       matrix math, spheres, boxes, frustra, etc)
+SL  -- A Games-oriented Sound Library.
+FNT -- OpenGL texture-mapped font Library.
+SSG -- A Simple Scene Graph API built on top of OpenGL.
+NET -- Some Networking functions for games.
+UTIL-- Utilities - things that your OS would normally
+       handle - but these functions are portable.
+
+
+DIRECTORY STRUCTURE:
+
+PLIB expects to be installed in one standard place:
+
+  /usr/lib
+
+...with header files at:
+
+  /usr/include/plib
+
+
+PORTABILITY and DEPENDANCIES:
+
+Although all these libraries are designed to be easily
+portable (and more importantly so that programs using
+them can be UTTERLY portable), some of them have not
+yet been ported to all operating systems.
+
+JS  -- Currently Linux/Windows/BSD only.
+
+UTIL-- Should be portable to POSIX-compliant
+       OS's ... and Windows.
+
+SG  -- Totally portable, no dependancies.
+
+PUI -- Requires GLUT and OpenGL also FNT and SG.
+       There is now an option to compile PUI without
+       GLUT - but that is not the default.
+
+NET -- Should be portable to POSIX-compliant
+       OS's.
+
+FNT and SSG -- Require OpenGL, SG and UTIL.
+
+SL  -- This has now been ported onto:
+
+         Linux
+         FreeBSD
+         OpenBSD
+         M$ Windows (NT,95,98 - so far)
+         MacOS
+         SGI IRIX
+         Sun Solaris
+         Any operating system that supports OSS (The
+              Open Sound System).
+
+       NOTE: SL has a subsidiary library 'SM' that
+       can be used to control the audio mixer - but
+       that is not portable beyond Linux.  You might
+       get it to work under OSS-based sound systems
+       too. Don't use SM if you want to write portable
+       code.
+
+       No other requirements.
+
+
+STABILITY AND RELIABILITY:
+
+SSG, SG, SL, JS and PUI have all been in use for a long time
+in a huge number of applications - so they are reliable
+and unlikely to change much in the future.
+
+UTIL and FNT are pretty simple and should be very stable.
+
+SSGAUX is still fairly new though - new features added
+to it should not destroy older features though - so
+you can use it with confidence.
+
+
+AUX LIBRARIES AND TOOLS:
+
+The 'tools' directory contains a number of useful tools
+and utility programs that are either built using PLIB or
+which are specifically useful when writing PLIB programs.
+
+
+COMPILING/LINKING WITH PLIB
+
+In your source code, add any combination of:
+
+     #include <plib/ul.h>
+     #include <plib/js.h>
+     #include <plib/sg.h>
+     #include <plib/fnt.h>
+     #include <plib/pu.h>
+     #include <plib/ssg.h>
+     #include <plib/sl.h>
+     #include <plib/net.h>
+     #include <plib/ssgAux.h>
+
+Add any of these to your link line:
+
+  -lplibjs -lplibssgaux -lplibssg -lplibsl -lplibpu 
+  -lplibfnt -lplibnet -lplibsg -lplibul
+
+Under UNIX/Linux, you'll also need:
+
+  -lglut -lGLU -lGL -L/usr/X11/lib -lX11 -lXext -lXmu -lm
+ 
+
+             Steve Baker.
+             <sjbaker1@airmail.net>
+             http://www.sjbaker.org
+

@@ -1,0 +1,27 @@
+
+Though PUI depends on GLUT or freeglut by default, it is possible to
+build a GLUT-free PUI library by passing --without-glut to the configure
+script if you can live with a couple of limitations:
+
+
+Since there is no longer any way for PUI to glutGet() the screen
+dimensions, your application must tell PUI every time it changes the
+screen size:
+
+  puSetWindowSize ( int width, int height ) ;
+
+
+Spreading PUI widgets across multiple Windows does (at the moment) not
+work without GLUT.
+
+
+Without GLUT, PUI can also not create the default PUI fonts from the
+seven GLUT bitmap fonts like it normally would. Instead, it tries to load
+some textured fonts in the puInit routine. Hence, you have to ensure that
+the Courier.txf, Times-Roman.txf and Helvetica.txf files from
+examples/src/fnt/data/ are in the current directory when using the
+GLUT-free PUI library.
+
+
+- Sebastian Ude, August 2002
+

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="ssgAux"
+	SccProjectName="ssgAux"
+	SccLocalPath=".">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\sg,..\util,..\ssg"
+				PreprocessorDefinitions="_DEBUG,WIN32,_LIB"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="1"
+				PrecompiledHeaderFile=".\Debug/ssgAux.pch"
+				AssemblerListingLocation=".\Debug/"
+				ObjectFile=".\Debug/"
+				ProgramDataBaseFileName=".\Debug/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="0"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="../../ssgAux_d.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Copy Library to plib directory"
+				CommandLine="copy debug\*.lib ..\..\*.*
+copy ssgAux.h ..\..\ssgAux.h
+copy ssgaFire.h ..\..\ssgaFire.h
+copy ssgaLensFlare.h ..\..\ssgaLensFlare.h
+copy ssgaParticleSystem.h ..\..\ssgaParticleSystem.h
+copy ssgaShapes.h ..\..\ssgaShapes.h
+copy ssgaWaveSystem.h ..\..\ssgaWaveSystem.h
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1031"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\sg,..\util,..\ssg"
+				PreprocessorDefinitions="NDEBUG,WIN32,_LIB"
+				StringPooling="TRUE"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\Release/ssgAux.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="../../ssgAux.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Copy Library to plib directory"
+				CommandLine="copy release\*.lib ..\..\*.*
+copy ssgAux.h ..\..\ssgAux.h
+copy ssgaFire.h ..\..\ssgaFire.h
+copy ssgaLensFlare.h ..\..\ssgaLensFlare.h
+copy ssgaParticleSystem.h ..\..\ssgaParticleSystem.h
+copy ssgaShapes.h ..\..\ssgaShapes.h
+copy ssgaWaveSystem.h ..\..\ssgaWaveSystem.h
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1031"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath=".\ssgAux.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaFire.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaLensFlare.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaLensFlareTexture.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaParticleSystem.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaPatch.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaShapes.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaTeapot.cxx">
+			</File>
+			<File
+				RelativePath=".\ssgaWaveSystem.cxx">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath=".\ssgAux.h">
+			</File>
+			<File
+				RelativePath=".\ssgaFire.h">
+			</File>
+			<File
+				RelativePath=".\ssgaLensFlare.h">
+			</File>
+			<File
+				RelativePath=".\ssgaParticleSystem.h">
+			</File>
+			<File
+				RelativePath=".\ssgaShapes.h">
+			</File>
+			<File
+				RelativePath=".\ssgaWaveSystem.h">
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

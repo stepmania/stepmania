@@ -1,0 +1,138 @@
+
++============+
+| TO BE DONE |
++============+
+
+A tasks and bugs are now being tracked by sourceforge. Please 
+goto: http://sourceforge.net/projects/plib/
+
+  * Have a look into known_bugs and fix them.
+
+  * Lines in ASCII files are terminated...
+
+          With '\n' under UNIX/Linux
+          With '\r' under MacOS
+          With BOTH under Windoze.
+
+    Hence, UNIX/Linux does no conversions of either '\r' or '\n'.
+    and    MAC swaps '\r' and '\n' on input.
+    and    Windoze dumps '\r' if it follows a '\n'.
+
+    This is a mess - so I'm changing all the ASCII I/O code
+    to allow either or both '\n' or '\r' and I'm reading the
+    ASCII files in BINARY mode.
+ 
+  * Array deletion requires '[]' after 'delete' on Mac.
+
+  * Some of the MSVC-project files for plib_examples seem to be 
+    broken, for example some miss a "winmm.lib".
+
+  * Check whether the new ssgStripify works with TuxKart
+    See Steves post from 11.12.2000 15:12 for a problem description
+
+
+
+The abbreviation NIV14 means not in Version 1.4.
+
+
+
+
+
+
+Bugs:
+=====
+
+- When creating fgfsTux, sometimes .ac, .dxf,
+  .ase and .obj saved zero objects, although 
+  there were objects. For example, PLIB 
+  created this .ac file:
+  ----------- snip ------------
+  AC3Db
+  OBJECT world
+  kids 0
+  OBJECT group
+  kids 0
+  ----------- snip ------------
+  This seems to happen after ssgFlatten.
+- WK: Create a sphere in ppe. Save it as .ASE. See that values like
+  diffuse colour are cr*p. Try to load it. It crashes. This could be 
+  one or - probably - two bugs. I don't think this is a ppe problem. 
+  The loader complains that number of faces is -2.
+  The problem seems to be the writer.
+
+  *new remark*: About the diffuse values: I think it has to do with
+  colour material, a loader (.ASE?) loading colours into a colour
+    list and writing colours from the ssgSimpleState where they are
+    undefined. I think the same bug is in .AC 
+
+- WK: I have a crash in ssgFlatten if I load .ac files with 
+  unused materials (not reproducable?)
+- Loading and saving lines in .OBJ doesn't work. Maybe NIV14.
+- Sam wrote:
+  Has anyone here debugged with plib under Windoze 2000 and MSVC++?
+  I get a whole bunch of
+  "Free Heap block modifed after it was free"
+  warnings with the ssgFlatten and ssgStripify.
+  I'll try and hunt this one down.
+  ...
+  I think it may be because I'm using MFC which (if I remember 
+  correctly) enables a bunch more memory checks.  Also I'm doing
+  #ifdef _WIN32
+      #ifdef _DEBUG
+          #define new DEBUG_NEW
+      #endif
+  #endif
+- Not all loaders use ssgLoaderOptions::begin. Don't all have to?
+
+- Search for todo, fix, fixme, kludge.
+
+
+  
+Misc:
+=====
+
+- Look whether scaling works. [see current discussion]
+  If not and if we can't/don't want to make it work, for example 
+  because of performance issues we need a warning in the docs and 
+  IMHO PLIB should "write out" a warning if an unallowed matrix is
+  sent to it.
+  Update: Scaling does not work (intentionally). Uniform scaling may be
+  enabled by uncommenting "radius *= sgLengthVec3(m[0])" in
+  sgSphere::orthoXform. It is currently disabled because that extra
+  calculation would degrade performance on non-scaled matrices.
+- Reduce lint warnings. Lint is an error checking tool that gives warnings 
+  where things *could be* wrong as opposed to the compiler that tells 
+  you where they are wrong.
+
+- It would be great if we had one or even two working native .ssg 
+  file formats. Currently (16.12.2001) the format work most of the time, but not all 
+  entities are implemented.
+- We should write the GetWrapU/GetWrapV function, since 
+  loading /writing .ssg files can't work 100% without it.
+- When saving, there is often a warning that "ref count doesn't 
+  tally with parent count"
+- Go through the mailing list for unfinished business.
+- Someone, preferably a native english speaker with ssg-knowledge,
+  should go through the new ssg-doc and fix any mistakes. It should be 
+  fairly complete by now.
+- Add Per's new Formats to the doc?
+- For the other parts of plib, people should bring the doc up to 
+  date.
+- There is a bug in the 3Dfx driver for Linux (tdfx_dri-4.0.1-1) that
+  causes the "complex" example program to crash in "fxSetupBlend".
+  This is fixed in more recent DRI snapshots (requires kernel 2.4.x).
+
+
+Probably after 1.4.0:
+=====================
+- In fgfsTux, not a large object, you get a DList overflow
+  with the standard values for its size. Can we make its
+  size dynamic?
+- Look at handling of normals. For example, loaders, 
+  stripify etc should only recalculate missing normals.
+  Have *one* function that recalculates normals.
+
+
+
+It would be nice if people would volunteer for tasks.
+
