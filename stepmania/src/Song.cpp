@@ -1452,8 +1452,8 @@ void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
 
 int CompareSongPointersByBPM(const void *arg1, const void *arg2)
 {
-	Song* pSong1 = *(Song**)arg1;
-	Song* pSong2 = *(Song**)arg2;
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
 		
 	float fMinBPM1, fMaxBPM1, fMinBPM2, fMaxBPM2;
 	pSong1->GetMinMaxBPM( fMinBPM1, fMaxBPM1 );

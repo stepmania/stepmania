@@ -117,7 +117,7 @@ public:
 	void AddStopSegment( StopSegment seg );
 	void AddAnimationSegment( AnimationSegment seg );
 
-	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM )
+	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM ) const
 	{
 		fMaxBPM = 0;
 		fMinBPM = 100000;	// inf
@@ -128,7 +128,7 @@ public:
 			fMinBPM = min( seg.m_fBPM, fMinBPM );
 		}
 	};
-	float GetBPMAtBeat( float fBeat )
+	float GetBPMAtBeat( float fBeat ) const
 	{
 		for( int i=0; i<m_BPMSegments.GetSize()-1; i++ )
 			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
