@@ -17,6 +17,7 @@ static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
 XToString( LayoutType );
 StringToX( LayoutType );
 
+
 OptionRow::OptionRow()
 {
 }
@@ -28,6 +29,34 @@ OptionRow::~OptionRow()
 	FOREACH_PlayerNumber( p )
 		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
 			SAFE_DELETE( m_Underline[p][i] );
+}
+
+
+int OptionRow::GetOneSelection( PlayerNumber pn ) const
+{
+	for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
+		if( m_vbSelected[pn][i] )
+			return i;
+	ASSERT(0);	// shouldn't call this if not expecting one to be selected
+	return -1;
+}
+
+int OptionRow::GetOneSharedSelection() const
+{
+	return GetOneSelection( (PlayerNumber)0 );
+}
+
+void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
+{
+	for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
+		m_vbSelected[pn][i] = false;
+	m_vbSelected[pn][iChoice] = true;
+}
+
+void OptionRow::SetOneSharedSelection( int iChoice )
+{
+	FOREACH_HumanPlayer( pn )
+		SetOneSelection( pn, iChoice );
 }
 
 /*

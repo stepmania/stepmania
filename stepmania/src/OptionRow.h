@@ -40,6 +40,7 @@ class OptionRow : public ActorFrame
 public:
 	OptionRow();
 	~OptionRow();
+
 	OptionRowDefinition		m_RowDef;
 	enum { ROW_NORMAL, ROW_EXIT } Type;
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
@@ -54,30 +55,12 @@ public:
 	int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 
 	// Only one will true at a time if m_RowDef.bMultiSelect
-	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().
-	int GetOneSelection( PlayerNumber pn ) const
-	{
-		for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
-			if( m_vbSelected[pn][i] )
-				return i;
-		ASSERT(0);	// shouldn't call this if not expecting one to be selected
-		return -1;
-	}
-	int GetOneSharedSelection() const
-	{
-		return GetOneSelection( (PlayerNumber)0 );
-	}
-	void SetOneSelection( PlayerNumber pn, int iChoice )
-	{
-		for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
-			m_vbSelected[pn][i] = false;
-		m_vbSelected[pn][iChoice] = true;
-	}
-	void SetOneSharedSelection( int iChoice )
-	{
-		FOREACH_HumanPlayer( pn )
-			SetOneSelection( pn, iChoice );
-	}
+	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
+
+	int GetOneSelection( PlayerNumber pn ) const;
+	int GetOneSharedSelection() const;
+	void SetOneSelection( PlayerNumber pn, int iChoice );
+	void SetOneSharedSelection( int iChoice );
 };
 
 #endif
