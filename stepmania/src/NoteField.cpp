@@ -195,8 +195,8 @@ void NoteField::DrawPrimitives()
 		//
 		// Draw measure bars
 		//
-		unsigned iFirstMeasureToDraw = int(fFirstBeatToDraw)/BEATS_PER_MEASURE;
-		unsigned iLastMeasureToDraw = (int(fLastBeatToDraw)/BEATS_PER_MEASURE)+1;
+		unsigned iFirstMeasureToDraw = max(0, int(fFirstBeatToDraw)/BEATS_PER_MEASURE);
+		unsigned iLastMeasureToDraw = max(0, (int(fLastBeatToDraw)/BEATS_PER_MEASURE)+1);
 		for( i=iFirstMeasureToDraw; i<=iLastMeasureToDraw; i++ )
 			DrawMeasureBar( i );
 
@@ -260,7 +260,7 @@ void NoteField::DrawPrimitives()
 			const HoldNote &hn = GetHoldNote(i);
 			const HoldNoteScore hns = GetHoldNoteScore(i);
 			const float fLife = GetHoldNoteLife(i);
-			const bool bIsHoldingNote = (i < m_bIsHoldingHoldNote.size())?
+			const bool bIsHoldingNote = (i < int(m_bIsHoldingHoldNote.size()))?
 				m_bIsHoldingHoldNote[i]: false;
 			
 			if( hns == HNS_OK )	// if this HoldNote was completed
