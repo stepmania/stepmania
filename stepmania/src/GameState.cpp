@@ -52,6 +52,10 @@ GameState::GameState()
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
 	m_iRoundSeed = m_iGameSeed = 0;
 
+	m_PlayMode = PLAY_MODE_INVALID; // used by IsPlayerEnabled before the first screen
+	FOREACH_PlayerNumber( p )
+		m_bSideIsJoined[p] = false; // used by GetNumSidesJoined before the first screen
+
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
 //	Reset();
