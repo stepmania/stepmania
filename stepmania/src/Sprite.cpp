@@ -588,6 +588,8 @@ void Sprite::DrawPrimitives()
 			ts.crop.right = 1 - (ts.crop.left + FadeSize.left);
 			ts.crop.top += FadeDist.top;		// lop off the corner if fading both x and y
 			ts.crop.bottom += FadeDist.bottom;
+			ts.diffuse[0].a = 0;				// top left
+			ts.diffuse[2].a = 0;				// bottom left
 			ts.diffuse[3].a *= LeftAlpha;			// bottom right
 			ts.diffuse[1].a *= LeftAlpha;			// top right
 			DrawTexture( &ts );
@@ -602,8 +604,11 @@ void Sprite::DrawPrimitives()
 			ts.crop.left = 1 - (ts.crop.right + FadeSize.right);
 			ts.crop.top += FadeDist.top;
 			ts.crop.bottom += FadeDist.bottom;
-			ts.diffuse[0] *= RightAlpha;		// top left
-			ts.diffuse[2] *= RightAlpha;		// bottom left
+			ts.diffuse[0].a *= RightAlpha;		// top left
+			ts.diffuse[2].a *= RightAlpha;		// bottom left
+			ts.diffuse[3].a = 0;			// bottom right
+			ts.diffuse[1].a = 0;			// top right
+
 			DrawTexture( &ts );
 		}
 
@@ -616,8 +621,11 @@ void Sprite::DrawPrimitives()
 			ts.crop.bottom = 1 - (ts.crop.top + FadeSize.top);
 			ts.crop.left += FadeDist.left;
 			ts.crop.right += FadeDist.right;
-			ts.diffuse[2] *= TopAlpha;			// bottom left
-			ts.diffuse[3] *= TopAlpha;			// bottom right
+			ts.diffuse[0].a = 0;				// top left
+			ts.diffuse[2].a *= TopAlpha;			// bottom left
+			ts.diffuse[3].a *= TopAlpha;			// bottom right
+			ts.diffuse[1].a = 0;				// top right
+
 			DrawTexture( &ts );
 		}
 
@@ -630,8 +638,10 @@ void Sprite::DrawPrimitives()
 			ts.crop.top = 1 - (ts.crop.bottom + FadeSize.bottom);
 			ts.crop.left += FadeDist.left;
 			ts.crop.right += FadeDist.right;
-			ts.diffuse[0] *= BottomAlpha;		// top left
-			ts.diffuse[1] *= BottomAlpha;		// top right
+			ts.diffuse[0].a *= BottomAlpha;		// top left
+			ts.diffuse[2].a = 0;			// bottom left
+			ts.diffuse[3].a = 0;			// bottom right
+			ts.diffuse[1].a *= BottomAlpha;		// top right
 			DrawTexture( &ts );
 		}
 	}
