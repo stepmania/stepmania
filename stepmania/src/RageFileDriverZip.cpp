@@ -117,7 +117,9 @@ public:
 
 	RageFileObj *Copy( RageFile &p ) const
 	{
-		return new RageFileObjZipStored( zip, info, p );
+		RageFileObjZipStored *pRet = new RageFileObjZipStored( zip, info, p );
+		pRet->FilePos = FilePos;
+		return pRet;
 	}
 };
 
