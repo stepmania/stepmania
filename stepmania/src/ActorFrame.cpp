@@ -2,6 +2,8 @@
 #include "ActorFrame.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageUtil.h"
+#include "XmlFile.h"
+#include "ActorUtil.h"
 
 ActorFrame::ActorFrame()
 {
@@ -13,6 +15,24 @@ ActorFrame::~ActorFrame()
 {
 	if( m_bDeleteChildren )
 		DeleteAllChildren();
+}
+
+void ActorFrame::LoadFromNode( const CString &sDir, const XNode* pNode )
+{
+	Actor::LoadFromNode( pNode );
+
+	//
+	// Load children
+	//
+	const XNode* pChildren = pNode->GetChild("children");
+	if( pChildren )
+	{
+		FOREACH_CONST_Child( pChildren, pChild )
+		{
+			Actor* pChildActor = LoadFromActorFile( sDir, *pChild );
+			AddChild( pChildActor );
+		}
+	}
 }
 
 void ActorFrame::AddChild( Actor* pActor )

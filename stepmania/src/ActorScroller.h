@@ -22,7 +22,7 @@ public:
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();	// DOES draw
 
-	void LoadFromNode( const CString &sFile, const XNode *pNode );
+	void LoadFromNode( const CString &sDir, const XNode *pNode );
 	void SetDestinationItem( int iItem ) { m_fDestinationItem = float(iItem); }
 	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = float(iItem); }
 

@@ -7,6 +7,7 @@
 #include "Command.h"
 #include <deque>
 #include <map>
+struct XNode;
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-100
 #define DRAW_ORDER_TRANSITIONS			100
@@ -18,6 +19,7 @@ public:
 	Actor();
 	virtual ~Actor() {}
 	virtual void Reset();
+	void LoadFromNode( const XNode* pNode );
 
 	static void SetBGMTime( float fTime, float fBeat ) { g_fCurrentBGMTime = fTime; g_fCurrentBGMBeat = fBeat; }
 
@@ -301,7 +303,7 @@ public:
 	//
 	// Commands
 	//
-	void AddCommands( const CString sName, const Commands &cmds );
+	virtual void PlayCommand( const CString &sCommandName );
 	void RunCommands( const Commands &cmds );
 	virtual void HandleCommand( const Command &command );	// derivable
 	static float GetCommandsLengthSeconds( const Commands &cmds );
@@ -319,7 +321,6 @@ public:
 	//
 	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
 	virtual void LoseFocus() {}
-	virtual void PlayCommand( const CString &sCommandName );
 
 protected:
 

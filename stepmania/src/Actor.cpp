@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
+#include "XmlFile.h"
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
@@ -60,6 +61,44 @@ Actor::Actor()
 	m_size = RageVector2( 1, 1 );
 	Reset();
 	m_bFirstUpdate = true;
+}
+
+void Actor::LoadFromNode( const XNode* pNode )
+{
+	// Load Name, if any.
+	pNode->GetAttrValue( "Name", m_sName );
+
+
+	float f;
+	if( pNode->GetAttrValue( "BaseRotationXDegrees", f ) )	SetBaseRotationX( f );
+	if( pNode->GetAttrValue( "BaseRotationYDegrees", f ) )	SetBaseRotationY( f );
+	if( pNode->GetAttrValue( "BaseRotationZDegrees", f ) )	SetBaseRotationZ( f );
+	if( pNode->GetAttrValue( "BaseZoomX", f ) )			SetBaseZoomX( f );
+	if( pNode->GetAttrValue( "BaseZoomY", f ) )			SetBaseZoomY( f );
+	if( pNode->GetAttrValue( "BaseZoomZ", f ) )			SetBaseZoomZ( f );
+
+
+	//
+	// Load commands
+	//
+	FOREACH_CONST_Attr( pNode, a )
+	{
+		CString sKeyName = a->m_sName; /* "OnCommand" */
+		sKeyName.MakeLower();
+
+		if( sKeyName.Right(7) != "command" )
+			continue; /* not a command */
+
+		const CString &sCommands = a->m_sValue;
+		Commands cmds = ParseCommands( sCommands );
+		CString sCmdName;
+		/* Special case: "Command=foo" -> "OnCommand=foo" */
+		if( sKeyName.size() == 7 )
+			sCmdName="on";
+		else
+			sCmdName = sKeyName.Left( sKeyName.size()-7 );
+		m_mapNameToCommands[sCmdName] = cmds;
+	}
 }
 
 void Actor::Draw()
@@ -624,13 +663,6 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::AddCommands( const CString sName, const Commands &cmds )
-{
-	CString sKey = sName;
-	sKey.MakeLower();
-	m_mapNameToCommands[sKey] = cmds;
-}
-
 void Actor::RunCommands( const Commands &cmds )
 {
 	FOREACH_CONST( Command, cmds.v, c )
@@ -755,10 +787,18 @@ void Actor::HandleCommand( const Command &command )
 	 * sent to all sub-actors (which aren't necessarily Sprites) on 
 	 * GainFocus and LoseFocus.  So, don't run EndHandleArgs 
 	 * on these commands. */
-	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
-		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" ||
-		 sName=="rate" || sName=="propagate" )
+	else if( 
+		sName=="customtexturerect" || 
+		sName=="texcoordvelocity" || 
+		sName=="scaletoclipped" ||
+		sName=="stretchtexcoords" || 
+		sName=="position" || 
+		sName=="loop" ||
+		sName=="rate" || 
+		sName=="propagate" )
+	{
 		return;
+	}
 	else
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );

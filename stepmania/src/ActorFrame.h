@@ -10,6 +10,9 @@ class ActorFrame : public Actor
 public:
 	ActorFrame();
 	virtual ~ActorFrame();
+
+	void LoadFromNode( const CString &sDir, const XNode* pNode );
+
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
 	virtual void MoveToTail( Actor* pActor );

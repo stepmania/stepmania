@@ -39,11 +39,13 @@ void ActorScroller::Load(
 	m_bLoaded = true;
 }
 
-void ActorScroller::LoadFromNode( const CString &sFile, const XNode *pNode )
+void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 {
+	ActorFrame::LoadFromNode( sDir, pNode );
+
 #define REQUIRED_GET_VALUE( szName, valueOut ) \
 	if( !pNode->GetAttrValue( szName, valueOut ) ) \
-		Dialog::OK( ssprintf("File '%s' is missing the value Scroller::%s", sFile.c_str(), szName) );
+		Dialog::OK( ssprintf("Animation in '%s' is missing the value Scroller::%s", sDir.c_str(), szName) );
 
 	float fSecondsPerItem = 1;
 	float fNumItemsToDraw = 7;

@@ -170,7 +170,6 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 {
 	DEBUG_ASSERT( node.m_sName == "BGAnimation" );
 
-
 	CString sInitCommand;
 	if( node.GetAttrValue( "InitCommand", sInitCommand ) )
 	{
@@ -180,15 +179,7 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 		this->RunCommands( ParseCommands(sInitCommand) );
 	}
 
-	const XNode* pChildren = node.GetChild("children");
-	if( pChildren )
-	{
-		FOREACH_CONST_Child( pChildren, pChild )
-		{
-			Actor* pChildActor = LoadFromActorFile( sDir, *pChild );
-			AddChild( pChildActor );
-		}
-	}
+	ActorFrame::LoadFromNode( sDir, &node );
 
 	Command cmd;
 	cmd.Load( "PlayCommand,Init" );

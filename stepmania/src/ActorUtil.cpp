@@ -230,37 +230,8 @@ retry:
 	}
 
 
-	float f;
-	if( layer.GetAttrValue( "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
-	if( layer.GetAttrValue( "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
-	if( layer.GetAttrValue( "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
-	if( layer.GetAttrValue( "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
-	if( layer.GetAttrValue( "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
-	if( layer.GetAttrValue( "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
-
-
-	//
-	// Load commands
-	//
-	FOREACH_CONST_Attr( &layer, a )
-	{
-		CString KeyName = a->m_sName; /* "OnCommand" */
-		KeyName.MakeLower();
-
-		if( KeyName.Right(7) != "command" )
-			continue; /* not a command */
-
-		const CString &sCommands = a->m_sValue;
-		Commands cmds = ParseCommands( sCommands );
-		CString sCmdName;
-		/* Special case: "Command=foo" -> "OnCommand=foo" */
-		if( KeyName.size() == 7 )
-			sCmdName="on";
-		else
-			sCmdName = KeyName.Left( KeyName.size()-7 );
-		pActor->AddCommands( sCmdName, cmds );
-	}
-
+	// TODO: LoadFromNode should be called when we still have a pointer to the derived type.
+ 	pActor->LoadFromNode( &layer );
 
 	ASSERT( pActor );	// we should have filled this in above
 	return pActor;
