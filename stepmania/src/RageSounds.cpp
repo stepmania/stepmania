@@ -28,7 +28,7 @@ void RageSounds::PlayMusic(CString file, bool force_loop, float start_sec, float
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), music->GetLoadedFilePath().c_str());
 	if(music->IsPlaying())
 	{
-		if( music->GetLoadedFilePath() == file )
+		if( !music->GetLoadedFilePath().CompareNoCase(file) )
 			return;		// do nothing
 
 		music->StopPlaying();
