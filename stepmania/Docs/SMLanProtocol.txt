@@ -188,7 +188,8 @@ NOTE: Server responces always add 128, thus a server responce for no operation
  Desc:		This introduces the server.
  Payload:
     Size	Description
-    1		Server protocol version
+    1		Server protocol version //NOTE: if protocol version is 128+, then this
+			server is an SMOnline server
     NT		Server Name
 
 003:	Allow Start
@@ -370,6 +371,9 @@ Server SMOnline packets:
 	If Room Title Update:
     NT		Room Title
     NT		Room Description
+    1		Type of room:
+		0: Chat room
+		1: Game room
 	
 	If Room List Update:
     1		Number of rooms

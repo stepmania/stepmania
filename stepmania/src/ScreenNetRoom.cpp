@@ -94,6 +94,12 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			{
 			case 0: //Room title Change
 				m_textTitle.SetText( NSMAN->m_SMOnlinePacket.ReadNT() + '\n' + NSMAN->m_SMOnlinePacket.ReadNT() );
+				if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
+				{
+					CString SMOnlineSelectScreen;
+					THEME->GetMetric( m_sName, "MusicSelectScreen", SMOnlineSelectScreen );
+					SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
+				}
 			case 1: //Rooms list change
 				{
 					int numRooms = NSMAN->m_SMOnlinePacket.Read1();
