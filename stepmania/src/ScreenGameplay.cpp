@@ -1412,7 +1412,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
-	FOREACH_EnabledPlayer( pn )
+	//Will not compile
+	//This causes compile error for me
+	//Someone edited it to read:  FOREACH_EnabledPlayer( pn )
+	//I edited it back.
+	//IT looks like it would cause problems as it was
+	//but by updating the life, it does not effect it.
+	//For non-enabled players, the life will not get sent.
+	//FOREACH_EnabledPlayer( pn )
+	//If you do not like my fix, please message me.
+	for (pn = 0;pn<NUM_PLAYERS;pn++);
 	{
 		if( m_pLifeMeter[pn] )
 			NSMAN->m_playerLife[pn] = int(m_pLifeMeter[pn]->GetLife()*10000);
