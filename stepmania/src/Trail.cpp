@@ -51,34 +51,42 @@ bool TrailEntry::ContainsTransformOrTurn() const
 
 RadarValues Trail::GetRadarValues() const
 {
-	RadarValues rv;
-
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
+	if( m_bRadarValuesCached )
 	{
-		const Steps *pSteps = e->pSteps;
-		ASSERT( pSteps );
-		if( e->ContainsTransformOrTurn() )
-		{
-			NoteData nd;
-			pSteps->GetNoteData( &nd );
-			RadarValues rv_orig;
-			NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv_orig );
-			PlayerOptions po;
-			po.FromString( e->Modifiers );
-			if( po.ContainsTransformOrTurn() )
-				NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
-			NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
-			RadarValues rv2;
-			NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv2 );
-			rv += rv2;
-		}
-		else
-		{
-			rv += pSteps->GetRadarValues();			
-		}
+		return m_CachedRadarValues;
 	}
+	else
+	{
+		m_bRadarValuesCached = true;
+		m_CachedRadarValues.Init();
 
-	return rv;
+		FOREACH_CONST( TrailEntry, m_vEntries, e )
+		{
+			const Steps *pSteps = e->pSteps;
+			ASSERT( pSteps );
+			if( e->ContainsTransformOrTurn() )
+			{
+				NoteData nd;
+				pSteps->GetNoteData( &nd );
+				RadarValues rv_orig;
+				NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv_orig );
+				PlayerOptions po;
+				po.FromString( e->Modifiers );
+				if( po.ContainsTransformOrTurn() )
+					NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
+				NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
+				RadarValues rv;
+				NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv );
+				m_CachedRadarValues += rv;
+			}
+			else
+			{
+				m_CachedRadarValues += pSteps->GetRadarValues();			
+			}
+		}
+
+		return m_CachedRadarValues;
+	}
 }
 
 int Trail::GetMeter() const

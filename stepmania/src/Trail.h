@@ -45,6 +45,8 @@ public:
 	CourseDifficulty	m_CourseDifficulty;
 	vector<TrailEntry>  m_vEntries;
 	int					m_iSpecifiedMeter;	// == -1 if no meter specified
+	mutable bool		m_bRadarValuesCached;
+	mutable RadarValues	m_CachedRadarValues;
 
 	Trail()
 	{
@@ -56,6 +58,7 @@ public:
 		m_CourseDifficulty = DIFFICULTY_INVALID;
 		m_iSpecifiedMeter = -1;
 		m_vEntries.clear();
+		m_bRadarValuesCached = false;
 	}
 
 	RadarValues GetRadarValues() const;
