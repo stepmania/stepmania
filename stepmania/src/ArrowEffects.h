@@ -52,12 +52,12 @@ bool ArrowsNeedZBuffer( PlayerNumber pn );
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	AppearanceType.
-float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
+float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail );
 
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	AppearanceType.
-float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
+float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail );
 
 
 //	Depends on fYOffset.

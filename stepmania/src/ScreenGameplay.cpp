@@ -790,8 +790,8 @@ void ScreenGameplay::LoadNextSong()
 
 	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 	const bool bReverse[NUM_PLAYERS] = { 
-		GAMESTATE->m_PlayerOptions[0].m_fReverseScroll == 1,
-		GAMESTATE->m_PlayerOptions[1].m_fReverseScroll == 1
+		GAMESTATE->m_PlayerOptions[0].m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1,
+		GAMESTATE->m_PlayerOptions[1].m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1
 	};
 
 	for( p=0; p<NUM_PLAYERS; p++ )

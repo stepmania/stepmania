@@ -40,7 +40,7 @@ enum
 	GOINGRIGHT
 };
 
-#define DEFAULT_SCROLL_DIRECTION	THEME->GetMetricI("Steps","DefaultScrollDirection")
+
 #define PREVIEWMUSICMODE			THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
 
 MusicBannerWheel::MusicBannerWheel() 
@@ -51,11 +51,12 @@ MusicBannerWheel::MusicBannerWheel()
 	SingleLoad=0;
 	bScanning = false;
 
-	if(DEFAULT_SCROLL_DIRECTION && GAMESTATE->m_pCurSong == NULL) /* check the song is null... incase they have just come back from a song and changed their PlayerOptions */
-	{
-		for(int i=0; i<NUM_PLAYERS; i++)
-			GAMESTATE->m_PlayerOptions[i].m_fReverseScroll = 1;
-	}
+	// Use pref DefaultModifiers to acomplish this
+//	if(DEFAULT_SCROLL_DIRECTION && GAMESTATE->m_pCurSong == NULL) /* check the song is null... incase they have just come back from a song and changed their PlayerOptions */
+//	{
+//		for(int i=0; i<NUM_PLAYERS; i++)
+//			GAMESTATE->m_PlayerOptions[i].m_fReverseScroll = 1;
+//	}
 
 	m_ScrollingList.UseSpriteType(BANNERTYPE);
 	m_ScrollingList.SetXY( 0, 0 );

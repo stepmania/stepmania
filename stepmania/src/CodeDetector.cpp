@@ -168,7 +168,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
 			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();								break;
 			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();										break;
-			case CODE_REVERSE:			FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll );				break;
+			case CODE_REVERSE:			GAMESTATE->m_PlayerOptions[pn].NextScroll();									break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
 			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
 			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();

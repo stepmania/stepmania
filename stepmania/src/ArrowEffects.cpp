@@ -182,8 +182,8 @@ float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset )
 float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
 {
 	float f = ArrowGetYPosWithoutReverse(pn,iCol,fYOffset);
-	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll, 0.f, 1.f, 1.f, -1.f );
-	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll, 0.f, 1.f, 0.f, fYReverseOffsetPixels );
+	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
+	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels );
 
 	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
@@ -197,9 +197,9 @@ const float fCenterLine = 160;	// from fYPos == 0
 const float fFadeDist = 100;
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
+float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos )
 {
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll > 0.5f )
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol) > 0.5f )
 		fYPos *= -1;
 
 	const float fDistFromCenterLine = fYPos - fCenterLine;
@@ -252,10 +252,10 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
-float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
+float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail )
 {
 //	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
+	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -263,10 +263,10 @@ float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
+float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail )
 {
 //	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
+	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;

@@ -67,6 +67,14 @@ struct PlayerOptions
 		TRANSFORM_MINES,
 		NUM_TRANSFORMS
 	};
+	enum Scroll {
+		SCROLL_REVERSE=0,
+		SCROLL_SPLIT,
+		SCROLL_ALTERNATE,
+		NUM_SCROLLS
+	};
+	float GetReversePercentForColumn( int iCol ); // accounts for all Directions
+
 	
 	bool		m_bTimeSpacing;	// instead of Beat spacing
 	float		m_fScrollSpeed;		// used if !m_bTimeSpacing
@@ -74,7 +82,7 @@ struct PlayerOptions
 	float		m_fAccels[NUM_ACCELS];
 	float		m_fEffects[NUM_EFFECTS];
 	float		m_fAppearances[NUM_APPEARANCES];
-	float		m_fReverseScroll;
+	float		m_fScrolls[NUM_SCROLLS];
 	float		m_fDark;
 	Turn		m_Turn;
 	Transform	m_Transform;
@@ -91,14 +99,17 @@ struct PlayerOptions
 	void NextTurn();
 	void NextTransform();
 	void NextPerspective();
+	void NextScroll();
 
 	Accel GetFirstAccel();
 	Effect GetFirstEffect();
 	Appearance GetFirstAppearance();
+	Scroll GetFirstScroll();
 
 	void SetOneAccel( Accel a );
 	void SetOneEffect( Effect e );
 	void SetOneAppearance( Appearance a );
+	void SetOneScroll( Scroll s );
 };
 
 #endif

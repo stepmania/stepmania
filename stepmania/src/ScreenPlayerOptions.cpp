@@ -51,7 +51,7 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Appear\n-ance",		"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK", "R.VANISH" ),	
 	OptionRow( "Turn",				"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","S.SHUFFLE" ),	
 	OptionRow( "Trans\n-form",		"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY","MINES" ),	
-	OptionRow( "Scroll",			"STANDARD","REVERSE" ),	
+	OptionRow( "Scroll",			"STANDARD","REVERSE","SPLIT","ALTERNATE" ),	
 	OptionRow( "Note\nSkin",		"" ),	
 	OptionRow( "Holds",				"OFF","ON" ),	
 	OptionRow( "Dark",				"OFF","ON" ),	
@@ -204,7 +204,7 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_APPEAR]		= po.GetFirstAppearance()+1;
 		m_iSelectedOption[p][PO_TURN]		= po.m_Turn;
 		m_iSelectedOption[p][PO_TRANSFORM]	= po.m_Transform;
-		m_iSelectedOption[p][PO_SCROLL]		= po.m_fReverseScroll==1 ? 1 : 0 ;
+		m_iSelectedOption[p][PO_SCROLL]		= po.GetFirstScroll()+1;
 
 
 		// highlight currently selected skin
@@ -321,7 +321,10 @@ void ScreenPlayerOptions::ExportOptions()
 
 		po.m_Turn			= (PlayerOptions::Turn)m_iSelectedOption[p][PO_TURN];
 		po.m_Transform		= (PlayerOptions::Transform)m_iSelectedOption[p][PO_TRANSFORM];
-		po.m_fReverseScroll	= (m_iSelectedOption[p][PO_SCROLL] == 1) ? 1.f : 0.f;
+		
+		ZERO( po.m_fScrolls );
+		if( m_iSelectedOption[p][PO_SCROLL] != 0 )
+			po.SetOneScroll( (PlayerOptions::Scroll)(m_iSelectedOption[p][PO_SCROLL]-1) );
 
 
 		int iSelectedSkin = m_iSelectedOption[p][PO_NOTE_SKIN];

@@ -1029,7 +1029,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 
 	po_out.Init();
 	so_out.Init();
-	po_out.m_fReverseScroll = 1;
+	po_out.m_fScrolls[PlayerOptions::SCROLL_REVERSE] = 1;
 	po_out.m_fScrollSpeed = 1.5f;
 	so_out.m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
 	po_out.m_fDark = 1;

@@ -27,7 +27,7 @@ void PlayerOptions::Init()
 	ZERO( m_fAccels );
 	ZERO( m_fEffects );
 	ZERO( m_fAppearances );
-	m_fReverseScroll = 0;
+	ZERO( m_fScrolls );
 	m_fDark = 0;
 	m_Turn = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
@@ -50,7 +50,8 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 		fapproach( m_fEffects[i], other.m_fEffects[i], fDeltaSeconds );
 	for( i=0; i<NUM_APPEARANCES; i++ )
 		fapproach( m_fAppearances[i], other.m_fAppearances[i], fDeltaSeconds );
-	fapproach( m_fReverseScroll, other.m_fReverseScroll, fDeltaSeconds );
+	for( i=0; i<NUM_SCROLLS; i++ )
+		fapproach( m_fScrolls[i], other.m_fScrolls[i], fDeltaSeconds );
 	fapproach( m_fDark, other.m_fDark, fDeltaSeconds );
 	fapproach( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
 }
@@ -103,7 +104,9 @@ CString PlayerOptions::GetString()
 	if( m_fAppearances[APPEARANCE_BLINK]==1 )	sReturn += "Blink, ";
 	if( m_fAppearances[APPEARANCE_RANDOMVANISH]==1) sReturn += "RandomVanish, ";
 
-	if( m_fReverseScroll == 1 )		sReturn += "Reverse, ";
+	if( m_fScrolls[SCROLL_REVERSE]==1 )		sReturn += "Reverse, ";
+	if( m_fScrolls[SCROLL_SPLIT]==1 )		sReturn += "Split, ";
+	if( m_fScrolls[SCROLL_ALTERNATE]==1 )	sReturn += "Alternate, ";
 
 	if( m_fDark == 1)				sReturn += "Dark, ";
 
@@ -212,7 +215,9 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
 		else if( sBit == "skippy" )		m_Transform = TRANSFORM_SKIPPY;
 		else if( sBit == "mines" )		m_Transform = TRANSFORM_MINES;
-		else if( sBit == "reverse" )	m_fReverseScroll = 1;
+		else if( sBit == "reverse" )	m_fScrolls[SCROLL_REVERSE] = 1;
+		else if( sBit == "split" )		m_fScrolls[SCROLL_SPLIT] = 1;
+		else if( sBit == "alternate" )	m_fScrolls[SCROLL_ALTERNATE] = 1;
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_fDark = 1;
@@ -278,6 +283,11 @@ void PlayerOptions::NextTransform()
 	m_Transform = (Transform) ((m_Transform+1)%NUM_TRANSFORMS);
 }
 
+void PlayerOptions::NextScroll()
+{
+	NextFloat( m_fScrolls, NUM_SCROLLS );
+}
+
 void PlayerOptions::NextPerspective()
 {
 	switch( (int)m_fPerspectiveTilt )
@@ -293,7 +303,7 @@ void PlayerOptions::ChooseRandomMofifiers()
 	if( RandomFloat(0,1)>0.8f )
 		m_fScrollSpeed = 1.5f;
 	if( RandomFloat(0,1)>0.8f )
-		m_fReverseScroll = 1;
+		m_fScrolls[SCROLL_REVERSE] = 1;
 	if( RandomFloat(0,1)>0.9f )
 		m_fDark = 1;
 	float f;
@@ -333,6 +343,14 @@ PlayerOptions::Appearance PlayerOptions::GetFirstAppearance()
 	return (Appearance)-1;
 }
 
+PlayerOptions::Scroll PlayerOptions::GetFirstScroll()
+{
+	for( int i=0; i<NUM_SCROLLS; i++ )
+		if( m_fScrolls[i] == 1.f )
+			return (Scroll)i;
+	return (Scroll)-1;
+}
+
 void PlayerOptions::SetOneAccel( Accel a )
 {
 	ZERO( m_fAccels );
@@ -349,4 +367,25 @@ void PlayerOptions::SetOneAppearance( Appearance a )
 {
 	ZERO( m_fAppearances );
 	m_fAppearances[a] = 1;
+}
+
+void PlayerOptions::SetOneScroll( Scroll s )
+{
+	ZERO( m_fScrolls );
+	m_fScrolls[s] = 1;
+}
+
+float PlayerOptions::GetReversePercentForColumn( int iCol )
+{
+	float f = 0;
+	f += m_fScrolls[SCROLL_REVERSE];
+	if( iCol >= GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer/2 )
+		f += m_fScrolls[SCROLL_SPLIT];
+	if( (iCol%2)==1 )
+		f += m_fScrolls[SCROLL_ALTERNATE];
+	if( f > 2 )
+		f = fmodf( f, 2 );
+	if( f > 1 )
+		f -= 1;
+	return f;
 }
