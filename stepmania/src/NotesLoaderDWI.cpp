@@ -316,14 +316,20 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
-			if( sscanf( sParams[1], "%f..%f", &out.m_fDisplayBPMMin, &out.m_fDisplayBPMMax ) == 2 )
+		    int iMin, iMax;
+			/* We can't parse this as a float with sscanf, since '.' is a valid
+			 * character in a float.  (We could do it with a regex, but it's not
+			 * worth bothering with since we don't display fractional BPM anyway.) */
+		    if( sscanf( sParams[1], "%i..%i", &iMin, &iMax ) == 2 )
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_fDisplayBPMMin = (float) iMin;
+				out.m_fDisplayBPMMax = (float) iMax;
 			}
-			else if( sscanf( sParams[1], "%f", &out.m_fDisplayBPMMin ) == 1 )
+			else if( sscanf( sParams[1], "%i", &iMin ) == 1 )
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
-				out.m_fDisplayBPMMax = out.m_fDisplayBPMMin;
+				out.m_fDisplayBPMMin = out.m_fDisplayBPMMax = (float) iMin;
 			}
 			else
 			{

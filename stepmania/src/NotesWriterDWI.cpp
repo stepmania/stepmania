@@ -236,9 +236,9 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		break;
 	case Song::DISPLAY_SPECIFIED:
 		if( out.m_fDisplayBPMMin == out.m_fDisplayBPMMax )
-			fprintf( fp, "#DISPLAYBPM:%.3f;\n", out.m_fDisplayBPMMin );
+			fprintf( fp, "#DISPLAYBPM:%i;\n", (int) out.m_fDisplayBPMMin );
 		else
-			fprintf( fp, "#DISPLAYBPM:%.3f..%.3f;\n", out.m_fDisplayBPMMin, out.m_fDisplayBPMMax );
+			fprintf( fp, "#DISPLAYBPM:%i..%i;\n", (int) out.m_fDisplayBPMMin, (int) out.m_fDisplayBPMMax );
 		break;
 	case Song::DISPLAY_RANDOM:
 		fprintf( fp, "#DISPLAYBPM:*" );
