@@ -11,15 +11,6 @@
  *
  */
 
-/* ugh, what a hack! QT includes Carbon/Carbon.h which
-* has defs for a few things defined in RageUtil.h which
-* is included in arch.cpp along w/ (eventually) this.
-* How do I do this without using phony namespaces?
-* --Steve
-*
-namespace QT {
-#include <QuickTime/QuickTime.h>
-}*/
 #include "RageSoundDriver.h"
 
 class RageSound_QT: public RageSoundDriver {

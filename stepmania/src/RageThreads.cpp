@@ -53,7 +53,7 @@ struct ThreadSlot
 #endif
 
 	#undef CHECKPOINT_COUNT
-	#define CHECKPOINT_COUNT 2
+	#define CHECKPOINT_COUNT 5
 	struct ThreadCheckpoint
 	{
 		const char *File, *Message;
