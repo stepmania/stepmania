@@ -840,8 +840,31 @@ Premium	PrefsManager::GetPremium()
 		return m_Premium; 
 }
 
-
+#include "RageLog.h"
 #include "LuaFunctions.h"
+
+
+int LuaFunc_GetPreference( lua_State *L )
+{
+	REQ_ARGS( "GetPreference", 1 );
+	REQ_ARG( "GetPreference", 1, string );
+
+	CString sName;
+	LUA->PopStack( sName );
+
+	IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
+	if( pPref == NULL )
+	{
+		LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
+		lua_pushnil( L );
+	}
+	else
+		pPref->PushValue( L );
+
+	return 1;
+}
+LuaFunction( GetPreference ); /* register it */
+
 LuaFunction_NoArgs( EventMode,		PREFSMAN->m_bEventMode )
 LuaFunction_NoArgs( ShowCaution,	PREFSMAN->m_bShowCaution )
 
