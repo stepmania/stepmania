@@ -154,7 +154,10 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 
 	for( int i=0; i<NUM_CHOICES; i++ )
 		if (i != m_Choice)
+		{
+			m_textChoice[i].SetZoom( ZOOM_NOT_SELECTED );
 			m_textChoice[i].Command( MENU_ITEM_CREATE );
+		}
 		else
 			GainFocus( m_Choice );
 
