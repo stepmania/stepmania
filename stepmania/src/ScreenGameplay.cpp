@@ -658,6 +658,7 @@ void ScreenGameplay::Init()
 		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textDebug.SetName( "Debug" );
 		SET_XY( m_textDebug );
+		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
 		this->AddChild( &m_textDebug );
 
 		m_In.Load( THEME->GetPathB(m_sName,"in") );
