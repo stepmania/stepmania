@@ -39,6 +39,10 @@ void HelpDisplay::Load()
 void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt )
 { 
 	ASSERT( arrayTips.size() == arrayTipsAlt.size() );
+
+	if( arrayTips == m_arrayTips && arrayTipsAlt == m_arrayTipsAlt )
+		return;
+
 	m_textTip.SetText( "" );
 
 	m_arrayTips = arrayTips;
