@@ -21,26 +21,15 @@ namespace QT
 class RageSound_QT1: public RageSound_Generic_Software
 {
 private:
-/*    struct sound
-    {
-        RageSoundBase *snd;
-        bool stopping;
-        int flush_pos;
-        sound() { snd=NULL; stopping=false; flush_pos=0; }
-    };*/
-
-//    vector<sound *> sounds;
     QT::ComponentInstance clock;
     QT::SndChannelPtr channel;
-    int last_pos;
+    int64_t last_pos;
+	double unitsPerSample;
     float latency;
 
 protected:
-//    virtual void StartMixing(RageSoundBase *snd);
-//    virtual void StopMixing(RageSoundBase *snd);
     int64_t GetPosition(const RageSoundBase *snd) const;
-//    void Update (float delta);
-    float GetPlayLatency() const;
+    float GetPlayLatency() const { return latency; }
 
 public:
     RageSound_QT1();

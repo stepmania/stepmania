@@ -1,5 +1,5 @@
 /*
- *  RageSoundDriver_QT.cpp
+ *  RageSoundDriver_QT1.cpp
  *  stepmania
  *
  *  Created by Steve Checkoway on Mon Jun 23 2003.
@@ -76,6 +76,11 @@ RageSound_QT1::RageSound_QT1()
     cmd.param2 = reinterpret_cast<long>(&clock);
     err |= SndDoImmediate(channel, &cmd);
     last_pos = 0;
+	
+	TimeRecord tr;
+		
+	ClockGetTime(clock, &tr);
+	unitsPerSample = double(tr.scale) / freq;
 
     cmd.cmd = callBackCmd;
     cmd.param2 = 0;
@@ -96,26 +101,15 @@ RageSound_QT1::~RageSound_QT1()
 
 void RageSound_QT1::GetData(SndChannelPtr chan, SndCommand *cmd_passed)
 {
-//    while (!SOUNDMAN)
-//        SDL_Delay(10);
-//    LockMutex L(SOUNDMAN->lock);
     RageSound_QT1 *P = reinterpret_cast<RageSound_QT1 *>(chan->userInfo);
-    LOG->Trace("GetData");
-    LOG->Flush();
 
     fill_me = cmd_passed->param2;
     uint32_t play_me = !fill_me;
 
     if (!P->last_pos)
-    {
         P->last_pos = P->GetPosition(NULL);
-        // Why the hell do I do this?
-        // Maybe because there should be a hardware interrupt when the sound buffer
-        // is half empty? But what does that have to do with the number of samples?
-        P->last_pos += samples * 3 / 2;
-    }
     else
-        P->last_pos += samples;
+        P->last_pos += static_cast<int64_t>(samples*P->unitsPerSample);
 
     /* Swap buffers */
     header.samplePtr = reinterpret_cast<Ptr>(buffer[play_me]);
@@ -126,21 +120,13 @@ void RageSound_QT1::GetData(SndChannelPtr chan, SndCommand *cmd_passed)
     OSErr err = SndDoCommand(chan, &cmd, false);
     if (err != noErr)
         goto bail;
-    LOG->Trace("First command");
-    LOG->Flush();
 
-    /* Clear the fill buffer */
-//    memset(buffer[fill_me], 0, buffersize);
-//    moreThanOneSound = P->sounds.size() > 1;
-
-    P->Mix((int16_t *)buffer[fill_me], buffersize/channels, P->last_pos, P->GetPosition(NULL));
+    P->Mix((int16_t *)buffer[fill_me], samples, P->last_pos, P->GetPosition(NULL));
     cmd.cmd = callBackCmd;
     cmd.param2 = play_me;
     err = SndDoCommand(chan, &cmd, false);
     if (err != noErr)
         goto bail;
-    LOG->Trace("Second command");
-    LOG->Flush();
 
     return;
 
@@ -154,16 +140,11 @@ int64_t RageSound_QT1::GetPosition(const RageSoundBase *snd) const
 #pragma unused (snd)
     TimeRecord tr;
     ClockGetTime(clock, &tr);
-    uint64_t temp = tr.value.hi;
+    int64_t temp = tr.value.hi;
+	
     temp <<= 32;
     temp |= tr.value.lo;
-    double d = static_cast<double>(temp)/tr.scale*freq;
-    return static_cast<int64_t>(d);
-}
-
-float RageSound_QT1::GetPlayLatency() const
-{
-    return latency;
+    return temp;
 }
 
 /*
