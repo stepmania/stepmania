@@ -1137,26 +1137,26 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		bool MissedNoteOnThisRow = false;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
+			/* XXX: cleaner to pick the things we do want to apply misses to, instead of
+			 * the things we don't? */
 			switch( m_NoteData.GetTapNote(t, r).type )
 			{
 			case TapNote::empty:
 			case TapNote::attack:
+			case TapNote::mine:
 				continue; /* no note here */
 			}
 			if( m_NoteData.GetTapNoteScore(t, r) != TNS_NONE ) /* note here is already hit */
 				continue; 
 			
-			if( m_NoteData.GetTapNote(t, r).type != TapNote::mine )
-			{
-				// A normal note.  Penalize for not stepping on it.
-				MissedNoteOnThisRow = true;
-				m_NoteData.SetTapNoteScore( t, r, TNS_MISS );
+			// A normal note.  Penalize for not stepping on it.
+			MissedNoteOnThisRow = true;
+			m_NoteData.SetTapNoteScore( t, r, TNS_MISS );
 
-				if( m_pPlayerStageStats )
-				{
-					m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
-					m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
-				}
+			if( m_pPlayerStageStats )
+			{
+				m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
+				m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
 			}
 		}
 
