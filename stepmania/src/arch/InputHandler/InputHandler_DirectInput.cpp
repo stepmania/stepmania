@@ -244,6 +244,18 @@ void UpdatePolled(DIDevice &device)
 			case DIJOFS_RZ: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP), state.lRz < -50);
 							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN), state.lRz > 50);
 							break;
+			case DIJOFS_SLIDER(0):
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_1), state.rglSlider[0] < -50);
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_2), state.rglSlider[0] > 50);
+							break;
+			case DIJOFS_SLIDER(1):
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_3), state.rglSlider[1] < -50);
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_AUX_4), state.rglSlider[1] > 50);
+							break;
+			default: LOG->MapLog("unknown input", 
+							"Controller '%s' is returning an unknown joystick offset, %i",
+							device.JoystickInst.tszProductName, in.ofs );
+					 continue;
 			}
 
 			break;
@@ -251,7 +263,7 @@ void UpdatePolled(DIDevice &device)
 
 		case in.HAT:
 		{
-			ASSERT( in.num == 1 ); // XXX
+			ASSERT( in.num == 0 ); // XXX
 
 			const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
 			INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
@@ -323,7 +335,12 @@ void UpdateBuffered(DIDevice &device)
 				case DIJOFS_RX: up = JOY_ROT_UP; down = JOY_ROT_DOWN; break;
 				case DIJOFS_RY: up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; break;
 				case DIJOFS_RZ: up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; break;
-				default: ASSERT(0);
+				case DIJOFS_SLIDER(0): up = JOY_AUX_1; down = JOY_AUX_2; break;
+				case DIJOFS_SLIDER(1): up = JOY_AUX_3; down = JOY_AUX_4; break;
+				default: LOG->MapLog("unknown input", 
+							 "Controller '%s' is returning an unknown joystick offset, %i",
+							 device.JoystickInst.tszProductName, in.ofs );
+					continue;
 				}
 
 				INPUTFILTER->ButtonPressed(DeviceInput(dev, up), int(evtbuf[i].dwData) < -50);
