@@ -16,9 +16,7 @@
 //-----------------------------------------------------------------------------
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
-#if !defined(LINUX)
-# include "RageMovieTexture.h"
-#endif
+#include "arch/MovieTexture/MovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
@@ -90,14 +88,10 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	splitpath( ID.filename, sDir, sFName, sExt );
 
 	RageTexture* pTexture;
-#ifndef LINUX
 	if( sExt == ".avi" || sExt == ".mpg" || sExt == ".mpeg" )
-		pTexture = new RageMovieTexture( ID );
+		pTexture = MakeRageMovieTexture( ID );
 	else
 		pTexture = new RageBitmapTexture( ID );
-#else
-	pTexture = new RageBitmapTexture(ID);
-#endif
 
 //	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
 
@@ -164,7 +158,6 @@ void RageTextureManager::UnloadTexture( RageTextureID ID )
 	if(p == m_mapPathToTexture.end())
 		RageException::Throw( "Tried to Unload texture '%s' that wasn't loaded.", ID.filename.GetString() );
 	
-	RageTexture* pTexture = p->second;
 	UnloadTexture(p->second);
 	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
 }
