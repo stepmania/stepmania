@@ -150,20 +150,28 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		case MEMORY_CARD_STATE_CHECKING:	return CREDITS_CARD_CHECKING.GetValue();
 		case MEMORY_CARD_STATE_REMOVED:		return CREDITS_CARD_REMOVED.GetValue();
 		case MEMORY_CARD_STATE_READY:
-			if( PROFILEMAN->LastLoadWasFromLastGood(pn) && pProfile )
-				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
-			else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) )
-				return CREDITS_LOAD_FAILED.GetValue();
-			// Prefer the name of the profile over the name of the card.
-			else if( pProfile )
-				return pProfile->GetDisplayName();
-			else if( !MEMCARDMAN->IsNameAvailable(pn) )
-				return CREDITS_CARD_READY.GetValue();
-			else if( !MEMCARDMAN->GetName(pn).empty() )
-				return MEMCARDMAN->GetName(pn);
-			else
-				return CREDITS_CARD_NO_NAME.GetValue();
+			{
+				// If the profile failed to load and there was no usable backup...
+				if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) && !PROFILEMAN->LastLoadWasFromLastGood(pn) )
+					return CREDITS_LOAD_FAILED.GetValue();
 
+				// If there is a local profile loaded, prefer it over the name of the memory card.
+				if( pProfile )
+				{
+					CString s = pProfile->GetDisplayName();
+					if( s.empty() )
+						s = CREDITS_CARD_NO_NAME.GetValue();
+					if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
+						s += CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
+					return s;
+				}
+				else if( !MEMCARDMAN->IsNameAvailable(pn) )
+					return CREDITS_CARD_READY.GetValue();
+				else if( !MEMCARDMAN->GetName(pn).empty() )
+					return MEMCARDMAN->GetName(pn);
+				else
+					return CREDITS_CARD_NO_NAME.GetValue();
+			}
 		default:
 			FAIL_M( ssprintf("%i",mcs) );
 		}

@@ -156,7 +156,7 @@ CString Profile::GetDisplayName() const
 	else if( !m_sLastUsedHighScoreName.empty() )
 		return m_sLastUsedHighScoreName;
 	else
-		return "NoName";
+		return "";
 }
 
 static CString FormatCalories( float fCals )
