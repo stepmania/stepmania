@@ -150,20 +150,15 @@ HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
 //-----------------------------------------------------------------------------
 HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
-    BYTE  *pBmpBuffer, *pTxtBuffer;     // Bitmap buffer, texture buffer
-    LONG  lTxtPitch;                // Pitch of bitmap, texture
+    BYTE  *pBmpBuffer;		// Bitmap buffer
     
     // Get the video bitmap buffer
     pSample->GetPointer( &pBmpBuffer );
 
 
 	// Find which texture we should render to.  We want to copy to the "back buffer"
-	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo;
-	switch( m_pTexture->m_iIndexFrontBuffer )
-	{
-	case 0:	pD3DTextureCopyTo = m_pTexture->m_pd3dTexture[1];	break;		// 0 is front, so copy to 1
-	case 1:	pD3DTextureCopyTo = m_pTexture->m_pd3dTexture[0];	break;		// 1 is front, so copy to 0
-	}
+	int iIndexBackBuffer = !m_pTexture->m_iIndexFrontBuffer;
+	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo = m_pTexture->m_pd3dTexture[iIndexBackBuffer];
 
     // Lock the Texture
     D3DLOCKED_RECT d3dlr;
@@ -176,10 +171,9 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 	m_bBackBufferLocked = TRUE;
 
     // Get the texture buffer & pitch
-    pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
-    lTxtPitch = d3dlr.Pitch;
-    
-
+	BYTE  *pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
+    LONG  lTxtPitch = d3dlr.Pitch;
+   
     // Copy the bits    
     // OPTIMIZATION OPPORTUNITY: Use a video and texture
     // format that allows a simpler copy than this one.
@@ -238,11 +232,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     
 
 	// flip active texture
-	switch( m_pTexture->m_iIndexFrontBuffer )
-	{
-	case 0:	m_pTexture->m_iIndexFrontBuffer = 1;	break;
-	case 1:	m_pTexture->m_iIndexFrontBuffer = 0;	break;
-	}
+	m_pTexture->m_iIndexFrontBuffer = !m_pTexture->m_iIndexFrontBuffer;
 
 
     return S_OK;
@@ -344,6 +334,9 @@ VOID RageMovieTexture::Create()
 
 void HandleDivXError()
 {
+	/* Actually, we might need XviD; we might want to look
+	 * at the file and try to figure out if it's something
+	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
 	throw RageException( 
 		"Could not locate the DivX video codec.\n"
 		"DivX is required to movie textures and must\n"
