@@ -870,7 +870,7 @@ void ScreenGameplay::LoadNextSong()
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
 
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && g_CurStageStats.bFailed[p] )	// already failed
-			ShowOniGameOver((PlayerNumber)p);
+			ShowOniGameOver(p);
 
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode && !m_bDemonstration)
 		{
@@ -1220,26 +1220,72 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	m_BeginnerHelper.Update(fDeltaTime);
 	
+
+	/* Set g_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
+	 * SM_BeginFailed if all players failed, and kill dead Oni players. */
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
+		return;
+
+	// check for individual fail
+	FOREACH_EnabledPlayer( pn )
+	{
+		if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+			(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing(pn)) )
+			continue; /* isn't failing */
+		if( g_CurStageStats.bFailed[pn] )
+			continue; /* failed and is already dead */
+	
+		/* If recovery is enabled, only set fail if both are failing.
+		 * There's no way to recover mid-song in battery mode. */
+		if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
+			PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
+			continue;
+
+		LOG->Trace("Player %d failed", (int)pn);
+		g_CurStageStats.bFailed[pn] = true;	// fail
+
+		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
+			GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
+		{
+			if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
+			{
+				// kill them!
+				SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
+				ShowOniGameOver(pn);
+				m_Player[pn].Init();		// remove all notes and scoring
+				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
+			}
+		}
+	}
+
+	/* If FAIL_IMMEDIATE and everyone is failing, start SM_BeginFailed. */
+	if( GAMESTATE->AllAreDead() && GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
+	{
+		if( PREFSMAN->m_bMin1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
+			;	// do nothing
+		else
+			SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
+	}
+
+
 	//
 	// update GameState HealthState
 	//
     FOREACH_EnabledPlayer(p)
 	{
-		if( 
+		if( g_CurStageStats.bFailed[p] )
+		{
+			GAMESTATE->m_HealthState[p] = GameState::DEAD;
+		}
+		else if(
 			(m_pLifeMeter[p] && m_pLifeMeter[p]->IsHot()) || 
-			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsHot((PlayerNumber)p)) )
+			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsHot(p)) )
 		{
 			GAMESTATE->m_HealthState[p] = GameState::HOT;
 		}
 		else if( 
-			(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
-			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
-		{
-			GAMESTATE->m_HealthState[p] = GameState::DEAD;
-		}
-		else if( 
 			(m_pLifeMeter[p] && m_pLifeMeter[p]->IsInDanger()) || 
-			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsInDanger((PlayerNumber)p)) )
+			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsInDanger(p)) )
 		{
 			GAMESTATE->m_HealthState[p] = GameState::DANGER;
 		}
@@ -1248,6 +1294,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			GAMESTATE->m_HealthState[p] = GameState::ALIVE;
 		}
 	}
+
 
 	switch( m_DancingState )
 	{
@@ -1272,16 +1319,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSongOut.IsTransitioning() )
 			m_SongFinished.StartTransitioning( SM_NotesEnded );
-
-		//
-		// check for fail
-		//
-		UpdateCheckFail();
 	
 		//
 		// update 2d dancing characters
 		//
-
         FOREACH_EnabledPlayer(p)
 		{
 			if(m_Background.GetDancingCharacters() != NULL)
@@ -1353,7 +1394,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		/* Unless we're in FailOff, giving up means failing the song. */
 		switch( GAMESTATE->m_SongOptions.m_FailType )
 		{
-		case SongOptions::FAIL_ARCADE:
+		case SongOptions::FAIL_IMMEDIATE:
 		case SongOptions::FAIL_END_OF_SONG:
             FOREACH_EnabledPlayer(pn)
 				g_CurStageStats.bFailed[pn] = true;	// fail
@@ -1480,51 +1521,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 
 
-}
-
-/* Set g_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
- * SM_BeginFailed if all players failed, and kill dead Oni players. */
-void ScreenGameplay::UpdateCheckFail()
-{
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
-		return;
-
-	// check for individual fail
-	FOREACH_EnabledPlayer( pn )
-	{
-		if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
-			(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
-			continue; /* isn't failing */
-		if( g_CurStageStats.bFailed[pn] )
-			continue; /* failed and is already dead */
-		
-		/* If recovery is enabled, only set fail if both are failing.
-		 * There's no way to recover mid-song in battery mode. */
-		if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
-			PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
-			continue;
-
-		LOG->Trace("Player %d failed", (int)pn);
-		g_CurStageStats.bFailed[pn] = true;	// fail
-
-		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
-			GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )
-		{
-			if( !g_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
-			{
-				// kill them!
-				SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-				ShowOniGameOver((PlayerNumber)pn);
-				m_Player[pn].Init();		// remove all notes and scoring
-				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
-			}
-		}
-	}
-
-	/* If FAIL_ARCADE and everyone is failing, start SM_BeginFailed. */
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE &&
-		GAMESTATE->AllAreDead() )
-		SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 }
 
 void ScreenGameplay::AbortGiveUp()

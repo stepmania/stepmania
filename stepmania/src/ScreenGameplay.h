@@ -78,7 +78,6 @@ protected:
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );
 	void UpdateLyrics( float fDeltaTime );
-	void UpdateCheckFail();
 	void SongFinished();
 	void StageFinished( bool bBackedOut );
 

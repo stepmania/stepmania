@@ -302,7 +302,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	if( !ss.bFailed[p] )
 	{
 		pProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
-		pProfile->m_iNumSongsPassedByGrade[ss.GetGrade((PlayerNumber)p)]++;
+		pProfile->m_iNumSongsPassedByGrade[ss.GetGrade(p)]++;
 	}
 }
 

@@ -339,7 +339,7 @@ static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
 
 		switch( sel )
 		{
-		case 0:	so.m_FailType = SongOptions::FAIL_ARCADE;		break;
+		case 0:	so.m_FailType = SongOptions::FAIL_IMMEDIATE;		break;
 		case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;	break;
 		case 2:	so.m_FailType = SongOptions::FAIL_OFF;			break;
 		default:
@@ -473,7 +473,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Progressive\nLifebar",	ProgressiveLifebar,	"OFF","1","2","3","4","5","6","7","8"),
 	ConfOption( "Progressive\nStage Lifebar",ProgressiveStageLifebar,	"OFF","1","2","3","4","5","6","7","8","INSANITY"),
 	ConfOption( "Progressive\nNonstop Lifebar",ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY"),
-	ConfOption( "Default\nFail Type",	DefaultFailType,	"ARCADE","END OF SONG","OFF" ),	
+	ConfOption( "Default\nFail Type",	DefaultFailType,	"IMMEDIATE","END OF SONG","OFF" ),	
 	ConfOption( "Coins Per\nCredit",	CoinsPerCredit,		"1","2","3","4","5","6","7","8" ),
 	ConfOption( "Premium",				Premium,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ),
 	ConfOption( "Show Song\nOptions",	ShowSongOptions,	"HIDE","SHOW","ASK" ),

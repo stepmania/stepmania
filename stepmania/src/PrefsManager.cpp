@@ -91,6 +91,7 @@ void PrefsManager::Init()
 	m_iMaxRegenComboAfterMiss = 10;
 	m_bTwoPlayerRecovery = true;
 	m_bMercifulDrain = true;
+	m_bMin1FullSongInCourses = false;
 	
 	m_iPercentScoreWeightMarvelous = 3;
 	m_iPercentScoreWeightPerfect = 2;
@@ -382,6 +383,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
 	ini.GetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
+	ini.GetValue( "Options", "Min1FullSongInCourses",			m_bMin1FullSongInCourses );
 
 	ini.GetValue( "Options", "PercentScoreWeightMarvelous",		m_iPercentScoreWeightMarvelous );
 	ini.GetValue( "Options", "PercentScoreWeightPerfect",		m_iPercentScoreWeightPerfect );
@@ -612,6 +614,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
 	ini.SetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
+	ini.SetValue( "Options", "Min1FullSongInCourses",			m_bMin1FullSongInCourses );
 
 	ini.SetValue( "Options", "PercentScoreWeightMarvelous",		m_iPercentScoreWeightMarvelous );
 	ini.SetValue( "Options", "PercentScoreWeightPerfect",		m_iPercentScoreWeightPerfect );
