@@ -146,7 +146,7 @@ File "COPYING.txt"
 File "README-FIRST.TXT"
 File "NEWS"
 File "stepmania.exe"
-File "stepmania.ini"
+; File "stepmania.ini"
 File "smpackage.exe"
 
 ; Create Start Menu icons
