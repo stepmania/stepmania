@@ -185,43 +185,49 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
 
+Screen* ScreenManager::MakeNewScreen( CString sClassName )
+{
+	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )return new ScreenAppearanceOptions;
+	else if( 0==stricmp(sClassName, "ScreenCaution") )			return new ScreenCaution;
+	else if( 0==stricmp(sClassName, "ScreenEdit") )				return new ScreenEdit;
+	else if( 0==stricmp(sClassName, "ScreenEditMenu") )			return new ScreenEditMenu;
+	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		return new ScreenEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	return new ScreenFinalEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	return new ScreenEz2SelectPlayer;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectStyle") )	return new ScreenEz2SelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenGameOptions") )		return new ScreenGameOptions;
+	else if( 0==stricmp(sClassName, "ScreenGameOver") )			return new ScreenGameOver;
+	else if( 0==stricmp(sClassName, "ScreenGameplay") )			return new ScreenGameplay;
+	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	return new ScreenGraphicOptions;
+	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		return new ScreenHowToPlay;
+	else if( 0==stricmp(sClassName, "ScreenMapInstruments") )	return new ScreenMapInstruments;
+	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		return new ScreenMusicScroll;
+	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	return new ScreenPlayerOptions;
+	else if( 0==stricmp(sClassName, "ScreenSandbox") )			return new ScreenSandbox;
+	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		return new ScreenSelectCourse;
+	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )	return new ScreenSelectDifficulty;
+	else if( 0==stricmp(sClassName, "ScreenSelectGame") )		return new ScreenSelectGame;
+	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )		return new ScreenSelectGroup;
+	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )		return new ScreenSelectMusic;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )	return new ScreenSelectStyle5th;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		return new ScreenSelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		return new ScreenSongOptions;
+	else if( 0==stricmp(sClassName, "ScreenStage") )			return new ScreenStage;
+	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		return new ScreenTitleMenu;
+	else
+		throw RageException( "Invalid Screen class name '%s'", sClassName );
+}
+
 void ScreenManager::SetNewScreen( CString sClassName )
 {
+	/* Explicitely flush the directory cache each time we load a new screen.
+	 * Perhaps we should only do this in debug? */
+	FlushDirCache();
+
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
-
-	Screen* pNewScreen;
-
-	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )pNewScreen = new ScreenAppearanceOptions;
-	else if( 0==stricmp(sClassName, "ScreenCaution") )			pNewScreen = new ScreenCaution;
-	else if( 0==stricmp(sClassName, "ScreenEdit") )				pNewScreen = new ScreenEdit;
-	else if( 0==stricmp(sClassName, "ScreenEditMenu") )			pNewScreen = new ScreenEditMenu;
-	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		pNewScreen = new ScreenEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	pNewScreen = new ScreenFinalEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	pNewScreen = new ScreenEz2SelectPlayer;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectStyle") )	pNewScreen = new ScreenEz2SelectStyle;
-	else if( 0==stricmp(sClassName, "ScreenGameOptions") )		pNewScreen = new ScreenGameOptions;
-	else if( 0==stricmp(sClassName, "ScreenGameOver") )			pNewScreen = new ScreenGameOver;
-	else if( 0==stricmp(sClassName, "ScreenGameplay") )			pNewScreen = new ScreenGameplay;
-	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	pNewScreen = new ScreenGraphicOptions;
-	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		pNewScreen = new ScreenHowToPlay;
-	else if( 0==stricmp(sClassName, "ScreenMapInstruments") )	pNewScreen = new ScreenMapInstruments;
-	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		pNewScreen = new ScreenMusicScroll;
-	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	pNewScreen = new ScreenPlayerOptions;
-	else if( 0==stricmp(sClassName, "ScreenSandbox") )			pNewScreen = new ScreenSandbox;
-	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		pNewScreen = new ScreenSelectCourse;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )	pNewScreen = new ScreenSelectDifficulty;
-	else if( 0==stricmp(sClassName, "ScreenSelectGame") )		pNewScreen = new ScreenSelectGame;
-	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )		pNewScreen = new ScreenSelectGroup;
-	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )		pNewScreen = new ScreenSelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )	pNewScreen = new ScreenSelectStyle5th;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		pNewScreen = new ScreenSelectStyle;
-	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		pNewScreen = new ScreenSongOptions;
-	else if( 0==stricmp(sClassName, "ScreenStage") )			pNewScreen = new ScreenStage;
-	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		pNewScreen = new ScreenTitleMenu;
-	else
-		throw RageException( "Invalid Screen class name '%s'", sClassName );
+	Screen* pNewScreen = MakeNewScreen(sClassName);
 
 	// move current screen to ScreenToDelete
 	RefreshCreditsMessages();
@@ -233,12 +239,16 @@ void ScreenManager::SetNewScreen( CString sClassName )
 
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
+	FlushDirCache();
+
 	// add the new state onto the back of the array
 	m_ScreenStack.Add( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo) );
 }
 
 void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
 {	
+	FlushDirCache();
+
 	// add the new state onto the back of the array
 	m_ScreenStack.Add( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
 }

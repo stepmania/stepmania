@@ -50,6 +50,7 @@ private:
 	BitmapText m_textSystemMessage;
 	BitmapText m_textCreditInfo[NUM_PLAYERS];
 
+	Screen* MakeNewScreen( CString sClassName );
 	void EmptyDeleteQueue();
 };
 
