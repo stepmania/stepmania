@@ -28,7 +28,7 @@ AutoCloseWindow true ; (can be true for the window go away automatically at end)
 SetDateSave on ; (can be on to have files restored to their orginal date)
 InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" ""
-DirShow show ; (make this hide to not let the user change it)
+; DirShow show ; (make this hide to not let the user change it)
 DirText "${PRODUCT_NAME_VER}"
 
 
@@ -43,16 +43,52 @@ prompt_uninstall_vise:
 MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of StepMania must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_vise
 Abort
 do_uninstall_vise:
-Exec '$WINDIR\unvise32.exe $INSTDIR\uninstal.log'	; don't use quotes here, or unvise32 will fail
+ExecWait '$WINDIR\unvise32.exe $INSTDIR\uninstal.log' $R1	; don't use quotes here, or unvise32 will fail
+
+; unvise32.exe doesn't return a useful exit code.  See if uninstal.log still exists.
+IfFileExists "$INSTDIR\uninstal.log" vise_still_exists old_vise_not_installed
+vise_still_exists:
+MessageBox MB_OK|MB_ICONINFORMATION "Uninstallation failed."
+Abort
+
 old_vise_not_installed:
 
 ; force uninstall of previous version using NSIS
-IfFileExists "$INSTDIR\uninst.exe" prompt_uninstall_nsis old_nsis_not_installed
+; We need to wait until the uninstaller finishes before continuing, since it's possible
+; to click the next button again before the uninstaller's window appears and takes focus.
+; This is tricky: we can't just ExecWait the uninstaller, since it copies off the uninstaller
+; EXE and exec's that (otherwise it couldn't delete itself), so it appears to exit immediately.
+; We need to copy it off ourself, run it with the hidden parameter to tell it it's a copy,
+; and then delete the copy ourself.  There's one more trick: the hidden parameter changed
+; between NSIS 1 and 2: in 1.x it was _=C:\Foo, in 2.x it's _?=C:\Foo.  Rename the installer
+; for newer versions, so we can tell the difference: "uninst.exe" is the old 1.x uninstaller,
+; "uninstall.exe" is 2.x.
+StrCpy $R1 "$INSTDIR\uninst.exe"
+StrCpy $R2 "_="
+IfFileExists "$R1" prompt_uninstall_nsis
+StrCpy $R1 "$INSTDIR\uninstall.exe"
+StrCpy $R2 "_?="
+IfFileExists "$R1" prompt_uninstall_nsis old_nsis_not_installed
+
 prompt_uninstall_nsis:
 MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of StepMania must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_nsis
 Abort
+
 do_uninstall_nsis:
-Exec "$INSTDIR\uninst.exe"
+GetTempFileName $R3
+CopyFiles /SILENT $R1 $R3
+ExecWait '$R3 $R2$INSTDIR' $R4
+; Delete the copy of the installer.
+Delete $R3
+
+; $R4 is the exit value of the uninstaller.  0 means success, anything else is
+; failure (eg. aborted).
+IntCmp $R4 0 old_nsis_not_installed ; jump if 0
+
+MessageBox MB_OK|MB_ICONINFORMATION "Uninstallation failed."
+Abort
+
+
 old_nsis_not_installed:
 
 ; Check for DirectX 8.0 (to be moved to the right section later)
@@ -90,12 +126,12 @@ Section ""
 ; write out uninstaller
 SetOutPath "$INSTDIR"
 SetOverwrite on
-WriteUninstaller "$INSTDIR\uninst.exe"
+WriteUninstaller "$INSTDIR\uninstall.exe"
 
 ; add registry entries
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "" "$INSTDIR"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
-WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninst.exe"'
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
@@ -238,7 +274,7 @@ CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open StepMania Program Folder.lnk" "$W
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Data\MachineProfile\stats.html"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 
 CreateShortCut "$INSTDIR\StepMania.lnk" "$INSTDIR\Program\stepmania.exe"
@@ -267,7 +303,7 @@ UninstallText "This will uninstall StepMania from your system.$\nAny add-on pack
 Section Uninstall
 
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
-Delete "$INSTDIR\uninst.exe"
+Delete "$INSTDIR\uninstall.exe"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
