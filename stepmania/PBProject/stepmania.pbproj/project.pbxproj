@@ -46,7 +46,6 @@
 				AAA0F7D0047AC7EA005F316C,
 				AA8DD84904A2E51400D02EE9,
 				AAA0F7D2047ACBC9005F316C,
-				AAECB3730512794D001B792B,
 				AA4B425705733D71005FB5DB,
 				AA4B425805733D71005FB5DB,
 				AA4B425905733D71005FB5DB,
@@ -262,7 +261,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				LIBRARY_STYLE = Static;
 				OPTIMIZATION_CFLAGS = "-O0";
 				ZERO_LINK = NO;
@@ -1352,7 +1353,7 @@
 			usesTabs = 1;
 		};
 		AA1C654B050D212D0073A143 = {
-			explicitFileType = sourcecode.cpp;
+			explicitFileType = sourcecode.c.c;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = main.c;
@@ -1436,7 +1437,7 @@
 			usesTabs = 1;
 		};
 		AA1C6560050D2ABC0073A143 = {
-			explicitFileType = sourcecode.cpp;
+			explicitFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = InstallerWindowController.m;
@@ -1458,7 +1459,7 @@
 			usesTabs = 1;
 		};
 		AA1C6566050D2D0D0073A143 = {
-			explicitFileType = sourcecode.cpp;
+			explicitFileType = sourcecode.cpp.objcpp;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = Helper.mm;
@@ -1474,39 +1475,6 @@
 			isa = PBXFileReference;
 			name = NetGameState.h;
 			path = ../src/NetGameState.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C659D050FD1E00073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = NetworkInput.h;
-			path = ../src/NetworkInput.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C659E050FD1E00073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = NetworkManager.cpp;
-			path = ../src/NetworkManager.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C659F050FD1E00073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = NetworkManager.h;
-			path = ../src/NetworkManager.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -2203,8 +2171,6 @@
 				AA29CD160558741A00961A51,
 				AA29CD170558741A00961A51,
 				AA29CD180558741A00961A51,
-				AA29CD190558741A00961A51,
-				AA29CD1A0558741A00961A51,
 				AA29CD1B0558741A00961A51,
 				AA29CD1C0558741A00961A51,
 				AA29CD1D0558741A00961A51,
@@ -3745,18 +3711,6 @@
 			settings = {
 			};
 		};
-		AA29CD190558741A00961A51 = {
-			fileRef = AAABAD3604F0E12B00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CD1A0558741A00961A51 = {
-			fileRef = AAABAD3A04F0E12B00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CD1B0558741A00961A51 = {
 			fileRef = AAC28BBA04F758E500D02EE9;
 			isa = PBXBuildFile;
@@ -4177,7 +4131,6 @@
 				AA29CE1A0558741A00961A51,
 				AA29CE1B0558741A00961A51,
 				AA29CE1C0558741A00961A51,
-				AA29CE1D0558741A00961A51,
 				AA29CE1E0558741A00961A51,
 				AA29CE1F0558741A00961A51,
 				AA29CE200558741A00961A51,
@@ -5562,12 +5515,6 @@
 		};
 		AA29CE1C0558741A00961A51 = {
 			fileRef = AAADA51F04E77F4400D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE1D0558741A00961A51 = {
-			fileRef = AAABAD3904F0E12B00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7309,18 +7256,21 @@
 			fileRef = AA1C654B050D212D0073A143;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-x c";
 			};
 		};
 		AA67BFC00558751E00EF34A6 = {
 			fileRef = AA1C6560050D2ABC0073A143;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-x objective-c";
 			};
 		};
 		AA67BFC10558751E00EF34A6 = {
 			fileRef = AA1C6566050D2D0D0073A143;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-x objective-c++";
 			};
 		};
 		AA67BFC20558751E00EF34A6 = {
@@ -7346,7 +7296,6 @@
 			files = (
 				AA67BFC60558751E00EF34A6,
 				AA67BFC70558751E00EF34A6,
-				AA67BFC80558751E00EF34A6,
 				AA67BFC90558751E00EF34A6,
 				AA67BFCA0558751E00EF34A6,
 				AA67BFCB0558751E00EF34A6,
@@ -7362,12 +7311,6 @@
 		};
 		AA67BFC70558751E00EF34A6 = {
 			fileRef = AAF33F2A04FF213100F93C24;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFC80558751E00EF34A6 = {
-			fileRef = AAECB3730512794D001B792B;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7590,8 +7533,6 @@
 				AAD64AA40604079E00EF8CDE,
 				AA6E000A047711F3005F316C,
 				AA6E000B047711F3005F316C,
-				AA6E000C047711F3005F316C,
-				AA6E000D047711F3005F316C,
 				AA6E0010047711F3005F316C,
 				AA6E0011047711F3005F316C,
 				AA56E5B805FBF36E006B24C7,
@@ -7604,7 +7545,6 @@
 				AA6E0017047711F3005F316C,
 				AAC622F805389A0500D02EE9,
 				AAC622F905389A0500D02EE9,
-				AA6E0018047711F3005F316C,
 				AA6E0019047711F3005F316C,
 				AA6E001A047711F3005F316C,
 				AA6E001B047711F3005F316C,
@@ -7632,14 +7572,10 @@
 				AA6E0028047711F3005F316C,
 				AA6E0029047711F3005F316C,
 				AA6E002A047711F3005F316C,
-				AA6E002D047711F3005F316C,
-				AA6E002E047711F3005F316C,
 				AA6E002F047711F3005F316C,
 				AA6E0030047711F3005F316C,
 				AA6E0033047711F3005F316C,
 				AA6E0034047711F3005F316C,
-				AA6E0035047711F3005F316C,
-				AA6E0036047711F3005F316C,
 				AA6E0037047711F3005F316C,
 				AA6E0038047711F3005F316C,
 				AA6E0039047711F3005F316C,
@@ -7744,30 +7680,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA6E000C047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenAlbums.cpp;
-			path = ../src/ScreenAlbums.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E000D047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenAlbums.h;
-			path = ../src/ScreenAlbums.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA6E0010047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -7811,18 +7723,6 @@
 			isa = PBXFileReference;
 			name = ScreenCaution.h;
 			path = ../src/ScreenCaution.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0018047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenCompany.h;
-			path = ../src/ScreenCompany.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -8044,30 +7944,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA6E002D047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenGraphicOptions.cpp;
-			path = ../src/ScreenGraphicOptions.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E002E047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenGraphicOptions.h;
-			path = ../src/ScreenGraphicOptions.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA6E002F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -8111,30 +7987,6 @@
 			isa = PBXFileReference;
 			name = ScreenInstructions.h;
 			path = ../src/ScreenInstructions.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0035047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenIntroMovie.cpp;
-			path = ../src/ScreenIntroMovie.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0036047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenIntroMovie.h;
-			path = ../src/ScreenIntroMovie.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -8900,9 +8752,6 @@
 				AAC6DCE40567660A00B5D56F,
 				AA1DCB6304A4872700D02EE9,
 				AA1C659C050FD1E00073A143,
-				AA1C659D050FD1E00073A143,
-				AA1C659E050FD1E00073A143,
-				AA1C659F050FD1E00073A143,
 				AA6E010B0477128A005F316C,
 				AA6E010C0477128A005F316C,
 				AA6E010D0477128A005F316C,
@@ -11981,8 +11830,6 @@
 				AA6EFF2204770F63005F316C,
 				AA6EFF2304770F63005F316C,
 				AA6EFF2404770F63005F316C,
-				AAABAD3904F0E12B00D02EE9,
-				AAABAD3A04F0E12B00D02EE9,
 				AAD620A5052EC78B00D02EE9,
 				AAD620A6052EC78B00D02EE9,
 				AA0E393304DA8EE700D02EE9,
@@ -12623,7 +12470,6 @@
 				AA8F118304A04F9B00D02EE9,
 				AA6EFFBD04770FFD005F316C,
 				AA6EFFBE04770FFD005F316C,
-				AAABAD3604F0E12B00D02EE9,
 				AA6EFFBF04770FFD005F316C,
 				AA6EFFC004770FFD005F316C,
 				AA6EFFC104770FFD005F316C,
@@ -13549,39 +13395,6 @@
 			isa = PBXFileReference;
 			name = ActorUtil.cpp;
 			path = ../src/ActorUtil.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AAABAD3604F0E12B00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ModelOrSprite.h;
-			path = ../src/ModelOrSprite.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AAABAD3904F0E12B00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = NoteFieldPlus.cpp;
-			path = ../src/NoteFieldPlus.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AAABAD3A04F0E12B00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = NoteFieldPlus.h;
-			path = ../src/NoteFieldPlus.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -16773,15 +16586,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		AAECB3730512794D001B792B = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
-			lastKnownFileType = wrapper.framework;
-			name = Security.framework;
-			path = /System/Library/Frameworks/Security.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
 		};
 		AAECF8BF05265DB600D02EE9 = {
 			explicitFileType = sourcecode.cpp;
