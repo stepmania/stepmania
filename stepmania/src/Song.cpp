@@ -1115,9 +1115,8 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 
 void Song::SaveToDWIFile()
 {
-	LOG->Trace( "Song::SaveToSongFileAndDWI()" );
-
-	CString sPath = SetExtension( GetSongFilePath(), "dwi" );
+	const CString sPath = SetExtension( GetSongFilePath(), "dwi" );
+	LOG->Trace( "Song::SaveToDWIFile(%s)", sPath.c_str() );
 
 	NotesWriterDWI wr;
 	wr.Write(sPath, *this);
