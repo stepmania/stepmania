@@ -847,11 +847,11 @@ void Player::Step( int col, const RageTimer &tm )
 
 		// Do game-specific score mapping.
 		const Game* pGame = GAMESTATE->GetCurrentGame();
-		if( score == TNS_MARVELOUS )	score = pGame->m_mapMarvelousTo;
-		if( score == TNS_PERFECT )		score = pGame->m_mapPerfectTo;
-		if( score == TNS_GREAT )		score = pGame->m_mapGreatTo;
-		if( score == TNS_GOOD )			score = pGame->m_mapGoodTo;
-		if( score == TNS_BOO )			score = pGame->m_mapBooTo;
+		if( score == TNS_MARVELOUS )		score = pGame->m_mapMarvelousTo;
+		else if( score == TNS_PERFECT )		score = pGame->m_mapPerfectTo;
+		else if( score == TNS_GREAT )		score = pGame->m_mapGreatTo;
+		else if( score == TNS_GOOD )		score = pGame->m_mapGoodTo;
+		else if( score == TNS_BOO )			score = pGame->m_mapBooTo;
 
 
 
@@ -864,7 +864,7 @@ void Player::Step( int col, const RageTimer &tm )
 				m_pPlayerStageStats->iTotalError += ms_error;
 		}
 
-		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
+		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
 			score = TNS_PERFECT;
 
 		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
