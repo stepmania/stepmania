@@ -873,7 +873,7 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 						 * style is set. */
 						if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 							GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-						TranslatedWrite(f, ssprintf("(%d)",pCourse->GetMeter(cd)) );
+						TranslatedWrite(f, ssprintf("(%.2f)",pCourse->GetMeter(cd)) );
 						HighScore hs = pProfile->GetCourseHighScoreList(pCourse, st, cd).GetTopScore();
 						Grade grade = hs.grade;
 						if( grade != GRADE_NO_DATA )
