@@ -565,6 +565,7 @@ void ScreenGameplay::LoadNextSong()
 			}
 
 		}
+		break;
 	default:
 		ASSERT(0);
 		break;
