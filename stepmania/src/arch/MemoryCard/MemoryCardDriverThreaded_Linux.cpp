@@ -145,52 +145,37 @@ static bool BlockDevicesChanged()
 		LOG->Trace( "Change in USB storage devices detected." );
 	return bChanged;
 }
-#if 0
-bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
+
+bool MemoryCardDriverThreaded_Linux::NeedUpdate( bool bMount ) const
 {
-	/* Check if any devices need a write test. */
-	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
+	if( bMount )
 	{
-		UsbStorageDevice &d = m_vDevicesLastSeen[i];
-		if( d.bNeedsWriteTest )
-			return true;
+		/* Check if any devices need a write test. */
+		for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
+		{
+			const UsbStorageDevice &d = m_vDevicesLastSeen[i];
+			if( d.m_State == UsbStorageDevice::STATE_CHECKING )
+				return true;
+		}
 	}
 
-	/* Nothing needs a write test.  If no devices have changed, either,
-	 * delay. */
+	/* Nothing needs a write test (or we ca'nt do it right now).  If no devices
+	 * have changed, either, we have nothing to do. */
 	if( BlockDevicesChanged() )
 		return true;
 
-	/* Nothing to do.  Delay, so we don't busy loop. */
-	usleep(1000*300);  // 300 ms
+	/* Nothing to do. */
 	return false;
 }
-#endif
+
 bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
 {
-	if( !BlockDevicesChanged() )
+	if( !NeedUpdate(bMount) )
 		return false;
 
-	vector<UsbStorageDevice> vNew;
-	GetNewStorageDevices( vNew );
 	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
-	
-	// check for disconnects
-	vector<UsbStorageDevice> vDisconnects;
-	FOREACH( UsbStorageDevice, vOld, old )
-	{
-		vector<UsbStorageDevice>::iterator iter = find( vNew.begin(), vNew.end(), *old );
-		if( iter == vNew.end() )    // didn't find
-		{
-			LOG->Trace( "Disconnected bus %d port %d level %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
-			vDisconnects.push_back( *old );
-			
-			vector<UsbStorageDevice>::iterator iter = find( m_vDevicesLastSeen.begin(), m_vDevicesLastSeen.end(), *old );
-			ASSERT( iter != m_vDevicesLastSeen.end() );
-			m_vDevicesLastSeen.erase( iter );
-		}
-	}
-	
+	GetNewStorageDevices( vStorageDevicesOut );
+	vector<UsbStorageDevice> &vNew = vStorageDevicesOut;
 	
 	// check for connects
 	vector<UsbStorageDevice> vConnects;
@@ -201,82 +186,71 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		{
 			LOG->Trace( "Connected bus %d port %d level %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
 			vConnects.push_back( *newd );
-			
-			m_vDevicesLastSeen.push_back( *newd );
 		}
 	}
 	
-	bool bDidAnyMounts = false;	
-	
-	// unmount all disconnects
-	//if( ShouldDoOsMount() )
-	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
-	  {
-	    UsbStorageDevice &d = m_vDevicesLastSeen[i];
-	    d.m_State = UsbStorageDevice::STATE_READY;
-	  }
-
-	if( false )
+	/* When we first see a device, regardless of bMount, just return it as CHECKING,
+	 * so the main thread knows about the device.  On the next call where bMount is
+	 * true, check it. */
+	for( unsigned i=0; i<vStorageDevicesOut.size(); i++ )
 	{
-		for( unsigned i=0; i<vDisconnects.size(); i++ )
+		UsbStorageDevice &d = vStorageDevicesOut[i];
+
+		/* If this device was just connected (it wasn't here last time), set it to
+		 * CHECKING and return it, to let the main thread know about the device before
+		 * we start checking. */
+		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
+		if( iter == vOld.end() )    // didn't find
 		{
-			UsbStorageDevice &d = vDisconnects[i];
-			CString sCommand = "umount " + d.sOsMountDir;
-			LOG->Trace( "unmount disconnects %i/%i (%s)", i, vDisconnects.size(), sCommand.c_str() );
-			ExecuteCommand( sCommand );
-			LOG->Trace( "unmount disconnects %i/%i done", i, vDisconnects.size() );
+			d.m_State = UsbStorageDevice::STATE_CHECKING;
+			continue;
 		}
-		
-		// mount all devices that need a write test
-		for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
-		{	  
-			UsbStorageDevice &d = m_vDevicesLastSeen[i];
-			if( d.m_State != UsbStorageDevice::STATE_CHECKING )
-				continue;  // skip
-			
-			bDidAnyMounts = true;
-			
-			CString sCommand;
-			
-			// unmount this device before trying to mount it.  If this device
-			// wasn't unmounted before, then our mount call will fail and the 
-			// mount may contain an out-of-date view of the files on the device.
-			sCommand = "umount " + d.sOsMountDir;
-			LOG->Trace( "unmount old connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
-			ExecuteCommand( sCommand );   // don't care if this fails
-			LOG->Trace( "unmount old connect %i/%i done", i, vConnects.size() );
-			
-			sCommand = "mount " + d.sOsMountDir;
-			LOG->Trace( "mount new connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
+
+		/* If the device already existed, and was set to CHECKING, check the device
+		 * now if we're allowed to. */
+		if( iter->m_State == UsbStorageDevice::STATE_CHECKING )
+		{
+			if( !bMount )
+			{
+				/* We can't check it now.  Keep the checking state and check it when
+				 * we can. */
+				d.m_State = UsbStorageDevice::STATE_CHECKING;
+				continue;
+			}
+
+			CString sCommand = "mount " + d.sOsMountDir;
 			bool bMountedSuccessfully = ExecuteCommand( sCommand );
-			LOG->Trace( "mount new connect %i/%i done", i, vConnects.size() );
 			
 			if( bMountedSuccessfully && TestWrite( d.sOsMountDir ) )
+			{
+				/* We've successfully mounted and tested the device.  Read the
+				 * profile name (by mounting a temporary, private mountpoint),
+				 * and then unmount it until Mount() is called. */
 				d.m_State = UsbStorageDevice::STATE_READY;
+			
+				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
+
+				Profile profile;
+				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+				profile.LoadEditableDataFromDir( sProfileDir );
+				d.sName = profile.GetDisplayName();
+
+				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
+
+				CString sCommand = "umount " + d.sOsMountDir;
+				ExecuteCommand( sCommand );
+			}
 			else
 				d.m_State = UsbStorageDevice::STATE_WRITE_ERROR;
-			
-			// read name
-			this->Mount( &d );
-			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-
-			Profile profile;
-			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-			profile.LoadEditableDataFromDir( sProfileDir );
-			d.sName = profile.GetDisplayName();
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_WRITE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
 	}
 	
-	if( bDidAnyMounts || !vDisconnects.empty() || !vConnects.empty() )	  
-	{
-		vStorageDevicesOut = m_vDevicesLastSeen;
-		return true;
-	}
+	m_vDevicesLastSeen = vNew;
 	
 	CHECKPOINT;
-	return false;
+	return true;
 }
 
 struct WhiteListEntry
@@ -522,10 +496,6 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
         CString sCommand = "mount " + pDevice->sOsMountDir;
         LOG->Trace( "hack mount (%s)", sCommand.c_str() );
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
-
-//	pDevice->bWriteTestSucceeded = bMountedSuccessfully && TestWrite( pDevice->sOsMountDir );
-//
-//	LOG->Trace( "WriteTest: %s, Name: %s", pDevice->bWriteTestSucceeded ? "succeeded" : "failed", pDevice->sName.c_str() );
 
 	return bMountedSuccessfully;
 }
