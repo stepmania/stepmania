@@ -115,8 +115,6 @@ struct XAttr
 	void GetValue(unsigned &out) const;
 	void GetValue(DateTime &out) const;
 	
-	XNode*	parent;
-
 	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 };
 
@@ -139,7 +137,6 @@ struct XNode
 	void SetValue(const DateTime &v);
 
 	// internal variables
-	XNode	*parent;		// parent node
 	XNodes	childs;		// child node
 	XAttrs	attrs;		// attributes
 
@@ -207,7 +204,7 @@ struct XNode
 	bool	RemoveAttr( XAttr *attr );
 	XAttr *DetachAttr( XAttr *attr );
 
-	XNode() { parent = NULL; }
+	XNode() { }
 	~XNode();
 
 	void Close();

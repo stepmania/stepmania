@@ -210,7 +210,6 @@ char* XNode::LoadAttributes( const char* pszAttrs , PARSEINFO *pi /*= &piDefault
 		}
 		
 		XAttr *attr = new XAttr;
-		attr->parent = this;
 
 		// XML Attr Name
 		SetString( xml, pEnd, &attr->name );
@@ -370,7 +369,6 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 		while( xml && *xml )
 		{
 			XNode *node = new XNode;
-			node->parent = this;
 			
 			xml = node->Load( xml,pi );
 			if( !node->name.empty() )
@@ -861,7 +859,6 @@ XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p 
 //========================================================
 XNode *XNode::AppendChild( XNode *node )
 {
-	node->parent = this;
 	childs.push_back( node );
 	return node;
 }
@@ -934,7 +931,6 @@ XAttrs::iterator XNode::GetAttrIterator( XAttr *attr )
 //========================================================
 XAttr *XNode::AppendAttr( XAttr *attr )
 {
-	attr->parent = this;
 	attrs.push_back( attr );
 	return attr;
 }
