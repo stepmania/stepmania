@@ -76,10 +76,10 @@ private:
 	// Keep these sounds always loaded, because they could be 
 	// played at any time.  We want to eliminate SOUND->PlayOnce
 public:
-	void PlayStartSound()		{ m_soundStart.Play(); }
-	void PlayCoinSound()		{ m_soundCoin.Play(); }
-	void PlayInvalidSound()		{ m_soundInvalid.Play(); }
-	void PlayScreenshotSound()	{ m_soundScreenshot.Play(); }
+	void PlayStartSound();
+	void PlayCoinSound();
+	void PlayInvalidSound();
+	void PlayScreenshotSound();
 private:
 	RageSound	m_soundStart;
 	RageSound	m_soundCoin;

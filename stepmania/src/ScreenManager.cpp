@@ -719,3 +719,31 @@ void ScreenManager::ReloadCreditsText()
 	m_SystemLayer->ReloadCreditsText();
 }
 
+/* Always play these sounds, even if we're in a silent attract loop. */
+void ScreenManager::PlayStartSound()
+{
+	RageSoundParams p;
+	p.m_Volume = PREFSMAN->m_fSoundVolume;
+	m_soundStart.Play( &p );
+}
+
+void ScreenManager::PlayCoinSound()
+{
+	RageSoundParams p;
+	p.m_Volume = PREFSMAN->m_fSoundVolume;
+	m_soundCoin.Play( &p );
+}
+
+void ScreenManager::PlayInvalidSound()
+{
+	RageSoundParams p;
+	p.m_Volume = PREFSMAN->m_fSoundVolume;
+	m_soundInvalid.Play( &p );
+}
+
+void ScreenManager::PlayScreenshotSound()
+{
+	RageSoundParams p;
+	p.m_Volume = PREFSMAN->m_fSoundVolume;
+	m_soundScreenshot.Play( &p );
+}
