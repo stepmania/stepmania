@@ -26,14 +26,33 @@
 
 class InputHandler
 {
+	RageTimer m_LastUpdate;
+
 public:
-	virtual void Update(float fDeltaTime) { }
+	/* It's vital that this be called at the *end* of any overloads. */
+	virtual void Update(float fDeltaTime);
 	virtual ~InputHandler() { }
 	virtual void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut) = 0;
 
 	/* In Windows, some devices need to be recreated if we recreate our main window.
 	 * Override this if you need to do that. */
 	virtual void WindowReset() { }
+
+protected:
+	/* Convenience function: Call this to queue a received event.  This may be called
+	 * in a thread. 
+	 *
+	 * Important detail: If the timestamp, di.ts, is zero, then it is assumed that
+	 * this is not a threaded event handler.  In that case, input is being polled,
+	 * and the actual time the button was pressed may be any time since the last
+	 * poll.  In this case, ButtonPressed will pretend the button was pressed at
+	 * the midpoint since the last update, which will smooth out the error.
+	 *
+	 * Note that timestamps are set to the current time by default, so for this to
+	 * happen, you need to explicitly call di.ts.SetZero(). 
+	 *
+	 * If the timestamp is set, it'll be left alone. */
+	void ButtonPressed( DeviceInput di, bool Down );
 };
 
 #endif
