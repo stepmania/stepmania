@@ -153,7 +153,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 			continue;	// skip
 
 		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
-		m_sprDifficultyFrame[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty frame 2x1") );
+		m_sprDifficultyFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic difficulty frame p%d",p+1)) );
 		m_sprDifficultyFrame[p].StopAnimating();
 		m_sprDifficultyFrame[p].SetState( p );
 		this->AddChild( &m_sprDifficultyFrame[p] );
@@ -171,9 +171,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 		this->AddChild( &m_OptionIconRow[p] );
 
 		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
-		m_sprMeterFrame[p].Load( THEME->GetPathToG("ScreenSelectMusic meter frame") );
-		m_sprMeterFrame[p].StopAnimating();
-		m_sprMeterFrame[p].SetState( p );
+		m_sprMeterFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic meter frame p%d",p+1)) );
 		this->AddChild( &m_sprMeterFrame[p] );
 
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
@@ -181,7 +179,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 		this->AddChild( &m_DifficultyMeter[p] );
 		
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
-		m_sprHighScoreFrame[p].Load( THEME->GetPathToG("ScreenSelectMusic score frame 1x2") );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		this->AddChild( &m_sprHighScoreFrame[p] );
