@@ -44,13 +44,9 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	m_LifeMeterBar.Load( PLAYER_1 );
 	m_LifeMeterBar.SetXY( 480, 40 );
-	this->AddChild( &m_LifeMeterBar );
-	
-
-
-
-
-
+	// we need to be a little lower than half if we want to hit
+	// zero with the actual miss steps. cheat.
+	m_LifeMeterBar.ChangeLife(TNS_MISS);
 
 	// Display random character+pad
 	if( GAMESTATE->m_pCharacters.size() )
@@ -69,12 +65,6 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		this->AddChild(&m_mDancePad);
 	}
 	//
-
-
-
-
-
-
 
 	NoteData* pND = new NoteData;
 	pND->SetNumTracks( iNumOfTracks );
@@ -133,12 +123,11 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_Player.SetX( 480 );
 	// Don't show judgement
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
+	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+	GAMESTATE->m_bDemonstrationOrJukebox = true;
 	this->AddChild( &m_Player );
+	this->AddChild( &m_LifeMeterBar );
 	delete pND;
-
-	// Try filling LifeMeterBar..
-		// DAMN IT! Nothing makes this work right.
-	// ------------------------
 
 	m_fFakeSecondsIntoSong = 0;
 	this->ClearMessageQueue();
@@ -190,6 +179,10 @@ void ScreenHowToPlay::Update( float fDelta )
 			}
 			// ----------------------------------------------------------------------- */
 
+			// we want misses from here on out, so change to a HUMAN controller.
+			// since we aren't taking input from the user, the steps are always missed.
+			if(GAMESTATE->m_fSongBeat > 22.8f)
+				GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 
 			if( (GAMESTATE->m_fSongBeat >= 0.0f && GAMESTATE->m_fSongBeat <= 15.0f) ||
 				(GAMESTATE->m_fSongBeat >= 16.8f && GAMESTATE->m_fSongBeat <= 17.0f) ||
