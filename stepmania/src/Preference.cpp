@@ -32,6 +32,14 @@ void IPreference::PushValue( lua_State *L ) const
 	lua_pushnil( L );
 }
 
+void IPreference::SetFromStack( lua_State *L )
+{
+	if( LOG )
+		LOG->Trace( "The preference value \"%s\" is of a type not supported by Lua", m_sName.c_str() );
+
+	lua_pop( L, 1 );
+}
+
 #define READFROM_AND_WRITETO( type ) \
 	void Preference<type>::FromString( const CString &s ) \
 	{ \
@@ -44,6 +52,10 @@ void IPreference::PushValue( lua_State *L ) const
 	void Preference<type>::PushValue( lua_State *L ) const \
 	{ \
 		LuaManager::PushStack( m_currentValue, L ); \
+	} \
+	void Preference<type>::SetFromStack( lua_State *L ) \
+	{ \
+		LuaManager::PopStack( m_currentValue, L ); \
 	}
 
 READFROM_AND_WRITETO( int )

@@ -29,6 +29,7 @@ public:
 	virtual CString ToString() const = 0;
 	virtual void FromString( const CString &s ) = 0;
 
+	virtual void SetFromStack( lua_State *L );
 	virtual void PushValue( lua_State *L ) const;
 
 	PrefsGroup GetPrefsGroup() const { return m_PrefsGroup; }
@@ -59,6 +60,7 @@ public:
 
 	CString ToString() const;
 	void FromString( const CString &s );
+	void SetFromStack( lua_State *L );
 	void PushValue( lua_State *L ) const;
 
 	void LoadDefault()
