@@ -627,14 +627,14 @@ float ScreenRanking::SetPage( PageToShow pts )
 			const unsigned num_songs = SONGMAN->GetAllSongs().size();
 			for( unsigned s=0; s<num_songs; s++ )
 			{
-				Song* pSong = SONGMAN->GetAllSongs()[s];
+				const Song* pSong = SONGMAN->GetAllSongs()[s];
 				StepsScoreRowItem *pStepsScoreRowItem = m_vpStepsScoreRowItem[s];
 
 				pStepsScoreRowItem->m_textSongTitle.SetText( pSong->GetFullDisplayTitle() );
 
 				for( vector<Difficulty>::iterator dc_iter = m_vDiffsToShow.begin(); dc_iter != m_vDiffsToShow.end(); dc_iter++ )
 				{							
-					Steps* pSteps = pSong->GetStepsByDifficulty( pts.nt, *dc_iter, false );
+					const Steps* pSteps = pSong->GetStepsByDifficulty( pts.nt, *dc_iter, false );
 					BitmapText* pTextStepsScore = &pStepsScoreRowItem->m_textStepsScore[*dc_iter];
 
 					if( pSteps == NULL )
@@ -648,7 +648,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 						if( !pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.empty() )
 						{
 							hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0];
-							CString *psName = &pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].sName;
+							const CString *psName = &pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].sName;
 							bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 						}
 						else
