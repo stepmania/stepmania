@@ -18,8 +18,6 @@ public:
 	PrefsManager();
 	~PrefsManager();
 
-	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES };
-
 	// GameOptions (ARE saved between sessions)
 	bool			m_bWindowed;
 	int				m_iDisplayWidth;
@@ -29,7 +27,7 @@ public:
 	int				m_iMaxTextureResolution;
 	int				m_iRefreshRate;
 	bool			m_bShowStats;
-	BackgroundMode	m_BackgroundMode;
+	enum { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
 	float			m_fBGBrightness;
 	int 			m_iMovieDecodeMS;
 	bool			m_bUseBGIfNoBanner;
@@ -59,6 +57,10 @@ public:
 	bool			m_bChangeBannersWhenFast;
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
+	enum { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES } m_CoinMode;
+	int				m_iCoinsPerCredit;
+	bool			m_bJointPremium;
+
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;

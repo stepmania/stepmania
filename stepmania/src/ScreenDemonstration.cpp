@@ -27,12 +27,8 @@ const ScreenMessage	SM_BeginFadingToNextScreen	= ScreenMessage(SM_User+1000);
 const ScreenMessage	SM_GoToNextScreen			= ScreenMessage(SM_User+1002);
 
 
-ScreenDemonstration::ScreenDemonstration() : ScreenGameplay( false )
+bool SetUpSongOptions()		// always return true.
 {
-	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
-	GAMESTATE->m_bDemonstration = true;
-
-
 	//
 	// Set the current song to prepare for a demonstration
 	//
@@ -60,8 +56,8 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay( false )
 		if( pSong == NULL )	// returns NULL there are no songs
 		{
 			// we didn't find a song.  Abort demonstration.
-			this->SendScreenMessage( SM_GoToNextScreen, 0 );
-			return;
+			SCREENMAN->SendMessageToTopScreen( SM_GoToNextScreen, 0 );
+			return true;
 		}
 
 		if( pSong->m_apNotes.empty() )
@@ -136,22 +132,14 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay( false )
 
 	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
 	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+
+	return true;
 }
 
-ScreenDemonstration::~ScreenDemonstration()
+ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
-	GAMESTATE->m_bDemonstration = false;
-	GAMESTATE->Reset();
-}
-
-void ScreenDemonstration::FirstUpdate()
-{
-	LOG->Trace( "ScreenDemonstration::FirstUpdate()" );
-
-	if( GAMESTATE->m_pCurSong == NULL ) 
-		return;
-
-	ScreenGameplay::FirstUpdate();
+	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
+	GAMESTATE->m_bDemonstration = true;
 
 
 	m_sprDemonstrationOverlay.Load( THEME->GetPathTo("Graphics","demonstration overlay") );
@@ -165,21 +153,21 @@ void ScreenDemonstration::FirstUpdate()
 
 	m_Fade.OpenWipingRight();
 
-	this->ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
+	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 
 	m_StarWipe.SetOpened();
 	m_DancingState = STATE_DANCING;
 	this->SendScreenMessage( SM_BeginFadingToNextScreen, SECONDS_TO_SHOW );	
 }
 
+ScreenDemonstration::~ScreenDemonstration()
+{
+	GAMESTATE->m_bDemonstration = false;
+	GAMESTATE->Reset();
+}
+
 void ScreenDemonstration::Update( float fDeltaTime )
 {
-	if( GAMESTATE->m_pCurSong == NULL ) 
-	{
-		Screen::Update(fDeltaTime);	// handle screen messages
-		return;
-	}
-
 	ScreenGameplay::Update( fDeltaTime );
 
 	// hide status icons
@@ -191,10 +179,27 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 {
 	//LOG->Trace( "ScreenDemonstration::Input()" );
 
+
+	//
+	// This should be the same as ScreenAttract::Input()
+	//
+
 	if(type != IET_FIRST_PRESS) return; // don't care
 
-	if( m_Fade.IsClosing() )
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
+	{
+		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
+		ResetGame();
+		CString sMessage = "Coin Mode: ";
+		switch( PREFSMAN->m_CoinMode )
+		{
+		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
+		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
+		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
+		}
+		SCREENMAN->SystemMessage( sMessage );
 		return;
+	}
 
 	if( MenuI.IsValid() )
 	{
@@ -202,20 +207,34 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+			if( !m_Fade.IsOpening() && !m_Fade.IsClosing() )
+				m_Fade.CloseWipingRight( SM_GoToNextScreen );
 			break;
-		case MENU_BUTTON_START:
+		case MENU_BUTTON_COIN:
+			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			m_soundMusic.Stop();
-			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
-			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
-			GAMESTATE->m_bPlayersCanJoin = false;
-
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-			::Sleep( 1000 );	// do a little pause, like the arcade does
+			::Sleep( 200 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
+		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
-			Exit();
+
+			switch( PREFSMAN->m_CoinMode )
+			{
+			case PrefsManager::COIN_PAY:
+				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+					break;	// don't fall through
+				// fall through
+			case PrefsManager::COIN_FREE:
+			case PrefsManager::COIN_HOME:
+				m_soundMusic.Stop();
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+				::Sleep( 200 );	// do a little pause, like the arcade does
+				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+				break;
+			default:
+				ASSERT(0);
+			}
 			break;
 		}
 	}

@@ -24,8 +24,6 @@ public:
 	ScreenTitleMenu();
 	virtual ~ScreenTitleMenu();
 
-	virtual void FirstUpdate();
-
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -49,10 +47,6 @@ public:
 private:
 	void GainFocus( int iChoiceIndex );
 	void LoseFocus( int iChoiceIndex );
-	void MenuUp( PlayerNumber pn );
-	void MenuDown( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
 
 	TitleMenuChoice m_TitleMenuChoice;
 

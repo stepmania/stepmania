@@ -49,9 +49,9 @@ const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
 class ScreenGameplay : public Screen
 {
 public:
-	ScreenGameplay( bool bLoadSounds = true );
+	ScreenGameplay( bool bDemonstration = true );
 	virtual ~ScreenGameplay();
-	virtual void FirstUpdate();
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

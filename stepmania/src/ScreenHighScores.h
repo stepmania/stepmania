@@ -15,11 +15,7 @@
 class ScreenHighScores : public ScreenAttract
 {
 public:
-
-private:
-	virtual CString	GetMetricName() { return "HighScores"; };	// used to loop up theme metrics
-	virtual CString	GetElementName() { return "high scores"; };	// used to loop up theme elements
-
+	ScreenHighScores() : ScreenAttract("HighScores","high scores") { };
 };
 
 

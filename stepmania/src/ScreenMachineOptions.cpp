@@ -33,6 +33,9 @@ enum {
 	MO_SHOWSTATS,
 	MO_EASTER_EGGS,
 	MO_MARVELOUS,
+	MO_COIN_MODE,
+	MO_COINS_PER_CREDIT,
+	MO_JOINT_PREMIUM,
 	NUM_MACHINE_OPTIONS_LINES
 };
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
@@ -47,6 +50,9 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	{ "Show\nStats",		2, {"OFF","ON"} },
 	{ "Easter\nEggs",		2, {"OFF","ON"} },
 	{ "Marvelous\nTiming",	2, {"OFF","ON"} },
+	{ "Coin\nMode",			3, {"HOME","PAY","FREE PLAY"} },
+	{ "Coins Per\nCredit",	8, {"1","2","3","4","5","6","7","8"} },
+	{ "Joint\nPremium",		2, {"OFF","ON"} },
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -114,6 +120,9 @@ void ScreenMachineOptions::ImportOptions()
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_EASTER_EGGS]			= PREFSMAN->m_bEasterEggs ? 1:0;
 	m_iSelectedOption[0][MO_MARVELOUS]				= PREFSMAN->m_bMarvelousTiming ? 1:0;
+	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_CoinMode;
+	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
+	m_iSelectedOption[0][MO_JOINT_PREMIUM]			= PREFSMAN->m_bJointPremium ? 1:0;
 }
 
 void ScreenMachineOptions::ExportOptions()
@@ -152,6 +161,9 @@ void ScreenMachineOptions::ExportOptions()
 	PREFSMAN->m_bShowStats			= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 	PREFSMAN->m_bEasterEggs			= m_iSelectedOption[0][MO_EASTER_EGGS] == 1;
 	PREFSMAN->m_bMarvelousTiming	= m_iSelectedOption[0][MO_MARVELOUS] == 1;
+	(int&)PREFSMAN->m_CoinMode		= m_iSelectedOption[0][MO_COIN_MODE];
+	PREFSMAN->m_iCoinsPerCredit		= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
+	PREFSMAN->m_bJointPremium		= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;
 }
 
 void ScreenMachineOptions::GoToPrevState()

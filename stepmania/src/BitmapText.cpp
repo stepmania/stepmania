@@ -74,7 +74,10 @@ BitmapText::BitmapText()
 
 	m_iWidestLineWidth = 0;
 	
-	m_bShadow = true;
+	// Shadow should be off by default.  It requires us to draw 2x as many verticies,
+	// and is better left baked into the font texture.
+//	m_bShadow = true;
+	
 
 	m_bRainbow = false;
 }

@@ -67,11 +67,11 @@ int NoteDisplay::GetTapFrameNo( const float fNoteBeat )
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPercentIntoMeasure = fmodf( fSongBeat, g_fTapAnimationLengthInBeats ) / g_fTapAnimationLengthInBeats;
 	fPercentIntoMeasure += 1/(iNumFrames*2.f);	// fudge factor so that the "full white" frame shows when the arrow overlaps the receptors
-	int iSongBeatFrameContrib = fPercentIntoMeasure * iNumFrames;
+	int iSongBeatFrameContrib = roundf( fPercentIntoMeasure * iNumFrames );
 
 	float fBeatFraction = fmodf( fNoteBeat, 1.0f );
 	fBeatFraction = froundf( fBeatFraction, 0.25f );
-	int iBeatFractionContrib = fBeatFraction * iNumFrames;
+	int iBeatFractionContrib = roundf( fBeatFraction * iNumFrames );
 
 	int iFrameNo;
 	if( g_bAllowVivid  &&  GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType == PlayerOptions::COLOR_VIVID )
@@ -114,7 +114,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fYBodyTop = g_bDrawTapOnTopOfHoldHead ? fYHeadBottom : fYHead;			// middle of head		
 	const float fYBodyBottom = fYTailTop;	// top of tail
 
-	const int	fYStep = fFrameHeight/4.f;	// 4 segments per frame
+	const int	fYStep = fFrameHeight/4;	// 4 segments per frame
 
 	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 	DISPLAY->SetBlendModeNormal();

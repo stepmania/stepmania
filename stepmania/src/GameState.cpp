@@ -38,6 +38,7 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 GameState::GameState()
 {
 	m_CurGame = GAME_DANCE;
+	m_iCoins = 0;
 	Reset();
 }
 
@@ -51,8 +52,9 @@ void GameState::Reset()
 
 	m_CurStyle = STYLE_NONE;
 	m_bPlayersCanJoin = false;
-	for( int i=0; i<2; i++ )
-		m_bSideIsJoined[i] = false;
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_bSideIsJoined[p] = false;
+//	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= "";
 	for( p=0; p<NUM_PLAYERS; p++ )

@@ -40,6 +40,7 @@ public:
 	Style			m_CurStyle;
 	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join - this only has an effect on the credits message
 	bool			m_bSideIsJoined[2];	// left side, right side
+	int				m_iCoins;
 	PlayerNumber	m_MasterPlayerNumber;
 	int				GetNumSidesJoined()
 	{ 

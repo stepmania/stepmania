@@ -51,8 +51,8 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_top );
 	m_textSystemMessage.SetXY( 4.0f, 4.0f );
-	m_textSystemMessage.SetZoom( 0.5f );
-	m_textSystemMessage.SetShadowLength( 2 );
+	m_textSystemMessage.SetZoom( 1.0f );
+//	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
@@ -248,7 +248,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenAlbums") )			ret = new ScreenAlbums;
 	else if( 0==stricmp(sClassName, "ScreenLogo") )				ret = new ScreenLogo;
 	else if( 0==stricmp(sClassName, "ScreenUnlock") )			ret = new ScreenUnlock;
-	else if( 0==stricmp(sClassName, "ScreenDemonstration") )	ret = new ScreenDemonstration;
+	else if( 0==stricmp(sClassName, "ScreenDemonstration") )	ret = (ScreenGameplay*)new ScreenDemonstration;
 	else if( 0==stricmp(sClassName, "ScreenInstructions") )		ret = new ScreenInstructions;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
@@ -381,10 +381,26 @@ void ScreenManager::RefreshCreditsMessages()
 		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
 		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
-		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+//		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
 
-		if(      GAMESTATE->m_bSideIsJoined[p] )	m_textCreditInfo[p].SetText( "" );
-		else if( GAMESTATE->m_bPlayersCanJoin )	m_textCreditInfo[p].SetText( "PRESS START" );
-		else									m_textCreditInfo[p].SetText( "CREDIT(S) 0 / 0" );
+		switch( PREFSMAN->m_CoinMode )
+		{
+		case PrefsManager::COIN_HOME:
+			if( GAMESTATE->m_bSideIsJoined[p] )
+				m_textCreditInfo[p].SetText( "" );
+			else if( GAMESTATE->m_bPlayersCanJoin )
+				m_textCreditInfo[p].SetText( "PRESS START" );
+			else
+				m_textCreditInfo[p].SetText( "NOT PRESENT" );
+			break;
+		case PrefsManager::COIN_PAY:
+			m_textCreditInfo[p].SetText( ssprintf("CREDIT(S) %d / %d", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit ) );
+			break;
+		case PrefsManager::COIN_FREE:
+			m_textCreditInfo[p].SetText( "FREE PLAY" );
+			break;
+		default:
+			ASSERT(0);
+		}
 	}
 }

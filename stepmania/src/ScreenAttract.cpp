@@ -27,16 +27,39 @@
 #include "RageSoundManager.h"
 
 
-#define SECONDS_TO_SHOW					THEME->GetMetricF("Screen"+this->GetMetricName(),"SecondsToShow")
-#define NEXT_SCREEN						THEME->GetMetric("Screen"+this->GetMetricName(),"NextScreen")
+#define SECONDS_TO_SHOW					THEME->GetMetricF("Screen"+m_sMetricName,"SecondsToShow")
+#define NEXT_SCREEN						THEME->GetMetric("Screen"+m_sMetricName,"NextScreen")
 
 const ScreenMessage SM_BeginFadingOut	=	ScreenMessage(SM_User+2);
 const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+3);
 
 
-ScreenAttract::ScreenAttract()
+ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 {
-	LOG->Trace( "ScreenAttract::ScreenAttract()" );
+	LOG->Trace( "ScreenAttract::ScreenAttract(%s, %s)", sMetricName.c_str(), sElementName.c_str() );
+
+	m_sMetricName = sMetricName;
+	m_sElementName = sElementName;
+
+	// We have to do initialization in the first update because this->GetElementName() won't
+	// work until the object has been fully constructed.
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sElementName) );
+	this->AddChild( &m_Background );
+
+	m_Fade.SetClosed();
+	m_Fade.OpenWipingRight( SM_None );
+	this->AddChild( &m_Fade );
+
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sElementName) );
+
+	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
+
+	m_soundMusic.Load( THEME->GetPathTo("Sounds",m_sElementName + " music") );
+	m_soundMusic.Play();
+
+	GAMESTATE->m_bPlayersCanJoin = true;
+
+	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
 }
 
 
@@ -48,12 +71,24 @@ ScreenAttract::~ScreenAttract()
 
 void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-//	LOG->Trace( "ScreenAttract::Input()" );
+	LOG->Trace( "ScreenAttract::Input()" );
 
 	if(type != IET_FIRST_PRESS) return; // don't care
 
-	if( m_Fade.IsOpening() || m_Fade.IsClosing() )
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
+	{
+		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
+		ResetGame();
+		CString sMessage = "Coin Mode: ";
+		switch( PREFSMAN->m_CoinMode )
+		{
+		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
+		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
+		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
+		}
+		SCREENMAN->SystemMessage( sMessage );
 		return;
+	}
 
 	if( MenuI.IsValid() )
 	{
@@ -61,46 +96,39 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+			if( !m_Fade.IsOpening() && !m_Fade.IsClosing() )
+				m_Fade.CloseWipingRight( SM_GoToNextScreen );
 			break;
-		case MENU_BUTTON_START:
+		case MENU_BUTTON_COIN:
+			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			m_soundMusic.Stop();
-			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
-			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
-			GAMESTATE->m_bPlayersCanJoin = false;
-
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-			::Sleep( 1000 );	// do a little pause, like the arcade does
+			::Sleep( 200 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
+		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
-			Exit();
+
+			switch( PREFSMAN->m_CoinMode )
+			{
+			case PrefsManager::COIN_PAY:
+				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+					break;	// don't fall through
+				// fall through
+			case PrefsManager::COIN_FREE:
+			case PrefsManager::COIN_HOME:
+				m_soundMusic.Stop();
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+				::Sleep( 200 );	// do a little pause, like the arcade does
+				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+				break;
+			default:
+				ASSERT(0);
+			}
 			break;
 		}
 	}
 
 //	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
-}
-
-void ScreenAttract::FirstUpdate()
-{
-	// We have to do initialization in the first update because this->GetElementName() won't
-	// work until the object has been fully constructed.
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",this->GetElementName()) );
-	this->AddChild( &m_Background );
-
-	m_Fade.SetClosed();
-	m_Fade.OpenWipingRight( SM_None );
-	this->AddChild( &m_Fade );
-
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(this->GetElementName()) );
-
-	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
-
-	m_soundMusic.Load( THEME->GetPathTo("Sounds",this->GetElementName() + " music") );
-	m_soundMusic.Play();
-
-	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
 }
 
 void ScreenAttract::Update( float fDelta )

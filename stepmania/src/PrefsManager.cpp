@@ -73,6 +73,9 @@ PrefsManager::PrefsManager()
 	m_bChangeBannersWhenFast = false;
 	m_bEasterEggs = true;
 	m_bMarvelousTiming = true;
+	m_CoinMode = COIN_HOME;
+	m_iCoinsPerCredit = 1;
+	m_bJointPremium = false;
 	m_iBoostAppPriority = -1;
 	
 	/* I'd rather get occasional people asking for support for this even though it's
@@ -137,6 +140,9 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
+	ini.GetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
+	ini.GetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
+	ini.GetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 
 	m_asAdditionalSongFolders.clear();
@@ -196,6 +202,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
+	ini.SetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
+	ini.SetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
+	ini.SetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 
 	/* Only write these if they aren't the default.  This ensures that we can change

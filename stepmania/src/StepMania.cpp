@@ -108,7 +108,7 @@ void ApplyGraphicOptions()
 		TEXTUREMAN->ReloadAll(); 
 }
 
-void Exit()
+void ExitGame()
 {
 	SDL_Event *event;
 	event = (SDL_Event *) malloc(sizeof(event));
@@ -116,7 +116,7 @@ void Exit()
 	SDL_PushEvent(event);
 }
 
-void Reset()
+void ResetGame()
 {
 	GAMESTATE->Reset();
 	PREFSMAN->ReadGamePrefsFromDisk();
@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
 	 * this after loading songs. */
 	BoostAppPri();
 
-	Reset();
+	ResetGame();
 
 	/* Run the main loop. */
 	GameLoop();
@@ -358,6 +358,11 @@ static void HandleInputEvents(float fDeltaTime)
 	{
 		DeviceInput DeviceI = (DeviceInput)ieArray[i];
 		InputEventType type = ieArray[i].type;
+
+		// HACK:  Numlock is read is being pressed if the NumLock light is on.
+		// Filter out all NumLock repeat messages
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
+			continue;	// skip
 
 		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 		{
@@ -464,6 +469,7 @@ static void GameLoop()
 				fDeltaTime /= 4;
 
 		TEXTUREMAN->Update( fDeltaTime );
+
 		SCREENMAN->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
 		HandleInputEvents( fDeltaTime );

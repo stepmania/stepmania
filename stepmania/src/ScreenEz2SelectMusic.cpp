@@ -226,7 +226,7 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
 	    m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
 
-		for(int i=0; i<asOptions.size(); i++)
+		for(unsigned i=0; i<asOptions.size(); i++)
 		{
 			if(asOptions[0] == "2X" || asOptions[0] == "1.5X" || asOptions[0] == "3X" || asOptions[0] == "4X" || asOptions[0] == "5X" || asOptions[0] == "8X" || asOptions[0] == "0.5X" || asOptions[0] == "0.75X")
 			{

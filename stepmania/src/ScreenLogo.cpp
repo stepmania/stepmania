@@ -24,18 +24,9 @@
 #define SONGS_X							THEME->GetMetricF("ScreenLogo","SongsX")
 #define SONGS_Y							THEME->GetMetricF("ScreenLogo","SongsY")
 
-ScreenLogo::ScreenLogo()
+
+ScreenLogo::ScreenLogo() : ScreenAttract("Logo","logo")
 {
-	LOG->Trace( "ScreenLogo::ScreenLogo()" );
-
-}
-
-void ScreenLogo::FirstUpdate()
-{
-	ScreenAttract::FirstUpdate();
-
-	// we have to do init here because ScreenAttract does it's initialization in FirstUpdate()
-
 	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("logo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
 	m_sprLogo.SetGlow( RageColor(1,1,1,1) );

@@ -96,17 +96,13 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+125);
 
 
 
-ScreenGameplay::ScreenGameplay( bool bLoadSounds )
+ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
-	/* Important!  Don't do any with GAMESTATE in the ScreenGameplay constructor.
-	 * ScreenDemonstration sets the song and other properties in its constructor, 
-	 * which is always called after the ScreenGameplay constructor.  Instead,
-	 * do this initialization in FirstUpdate()
-	 */
+	int p;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_pLifeMeter[p] = NULL;
 		m_pScoreDisplay[p] = NULL;
@@ -114,58 +110,14 @@ ScreenGameplay::ScreenGameplay( bool bLoadSounds )
 
 	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
 
-
 	SOUNDMAN->music->StopPlaying();
 
 
-	
-	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
-
-
-	if( bLoadSounds )	// don't load sounds if just playing demonstration
-	{
-		m_soundFail.Load(				THEME->GetPathTo("Sounds","gameplay failed") );
-		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","gameplay try extra stage") );
-		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","gameplay oni die") );
-		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
-		else if( GAMESTATE->IsFinalStage() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
-		else
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
-		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
-		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
-		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
-		m_announcerOni.Load(			ANNOUNCER->GetPathTo("gameplay comment oni") );
-
-		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
-		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
-		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("gameplay 300 combo") );
-		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("gameplay 400 combo") );
-		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("gameplay 500 combo") );
-		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("gameplay 600 combo") );
-		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("gameplay 700 combo") );
-		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("gameplay 800 combo") );
-		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
-		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
-		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
-	}
-
-	m_iRowLastCrossed = -1;
-
-	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
-}
-
-void ScreenGameplay::FirstUpdate()
-{
-	Screen::FirstUpdate();
-
-	/* It's OK to operate on GAMESTATE here, but not in the constructor */
+		/* It's OK to operate on GAMESTATE here, but not in the constructor */
 	GAMESTATE->ResetStageStatistics();	// clear values
 	
 	// Update possible dance points
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
@@ -466,6 +418,44 @@ void ScreenGameplay::FirstUpdate()
 		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );	// Send messages to we can get the introduction rolling
 
 	LoadNextSong( true );
+
+	
+	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
+
+
+	if( bDemonstration )	// don't load sounds if just playing demonstration
+	{
+		m_soundFail.Load(				THEME->GetPathTo("Sounds","gameplay failed") );
+		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","gameplay try extra stage") );
+		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","gameplay oni die") );
+		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
+		else if( GAMESTATE->IsFinalStage() )
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
+		else
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
+		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
+		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
+		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
+		m_announcerOni.Load(			ANNOUNCER->GetPathTo("gameplay comment oni") );
+
+		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
+		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
+		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("gameplay 300 combo") );
+		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("gameplay 400 combo") );
+		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("gameplay 500 combo") );
+		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("gameplay 600 combo") );
+		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("gameplay 700 combo") );
+		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("gameplay 800 combo") );
+		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
+		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
+		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
+	}
+
+	m_iRowLastCrossed = -1;
+
+	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 }
 
 ScreenGameplay::~ScreenGameplay()

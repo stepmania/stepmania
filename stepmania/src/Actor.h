@@ -50,7 +50,6 @@ public:
 	virtual void DrawPrimitives() = 0;	// override with Actor specific action
 	virtual void EndDraw();		// pops transform from world matrix stack
 	bool IsFirstUpdate();
-	virtual void FirstUpdate();	// called after object is constructed, but before the first call to Update()
 	virtual void Update( float fDeltaTime );
 	virtual void UpdateTweening( float fDeltaTime );
 

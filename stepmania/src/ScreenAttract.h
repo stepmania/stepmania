@@ -25,18 +25,17 @@
 class ScreenAttract : public Screen
 {
 public:
-	ScreenAttract();
+	ScreenAttract( CString sMetricName, CString sElementName );
 	virtual ~ScreenAttract();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void FirstUpdate();
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
 
-	virtual CString	GetMetricName() = 0;	// used to loop up theme metrics
-	virtual CString	GetElementName() = 0;	// used to loop up theme elements 
+	CString		m_sMetricName;	// used to loop up theme metrics
+	CString		m_sElementName;	// used to loop up theme elements
 
 	BGAnimation			m_Background;
 	TransitionFade		m_Fade;

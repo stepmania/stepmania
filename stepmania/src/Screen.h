@@ -57,13 +57,15 @@ public:
 	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuRight(pn); }
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuStart(pn); }
 	virtual void MenuBack(	PlayerNumber pn, const InputEventType type );
+	virtual void MenuCoin(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuCoin(pn); }
 
-	virtual void MenuUp(	PlayerNumber pn )	{};
-	virtual void MenuDown(	PlayerNumber pn )	{};
-	virtual void MenuLeft(	PlayerNumber pn )	{};
-	virtual void MenuRight( PlayerNumber pn )	{};
-	virtual void MenuStart( PlayerNumber pn )	{};
-	virtual void MenuBack(	PlayerNumber pn )	{};
+	virtual void MenuUp(	PlayerNumber pn )	{}
+	virtual void MenuDown(	PlayerNumber pn )	{}
+	virtual void MenuLeft(	PlayerNumber pn )	{}
+	virtual void MenuRight( PlayerNumber pn )	{}
+	virtual void MenuStart( PlayerNumber pn )	{}
+	virtual void MenuBack(	PlayerNumber pn )	{}
+	virtual void MenuCoin(	PlayerNumber pn );
 
 private:
 	bool m_FirstUpdate;

@@ -15,10 +15,7 @@
 class ScreenAlbums : public ScreenAttract
 {
 public:
-
-private:
-	virtual CString	GetMetricName() { return "Albums"; };	// used to loop up theme metrics
-	virtual CString	GetElementName() { return "albums"; };	// used to loop up theme elements
+	ScreenAlbums() : ScreenAttract("Albums","albums") { };
 
 };
 

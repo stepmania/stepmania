@@ -164,7 +164,7 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 			scrlistpos = 0 1 2 [3] [4] [0] [1] [2] 3 4
 			scrlistpos = 1 2 3 [4] [0] [1] [2] [3] 4 0 // we lost 3 and got a new one												
 		 */
-		if(currentPos+2 <= arraySongs.size()-1)
+		if((unsigned)currentPos+2 <= arraySongs.size()-1)
 			pSong = arraySongs[currentPos+2];
 		else
 			pSong = arraySongs[0+ (((currentPos+2) - (arraySongs.size()-1)) - 1)]; // wrap around. (it does honestly!)
@@ -236,7 +236,7 @@ void MusicBannerWheel::LoadSongData()
 			*/
 			else if(count == scrlistPos+2 || (scrlistPos == MAXSONGSINBUFFER-2 && count == 0))
 			{
-				if(currentPos+2 <= arraySongs.size()-1)
+				if((unsigned)currentPos+2 <= arraySongs.size()-1)
 					pSong = arraySongs[currentPos+2];
 				else
 					pSong = arraySongs[0+2];
@@ -250,7 +250,7 @@ void MusicBannerWheel::LoadSongData()
 			}
 			else if(count == scrlistPos+1 || (scrlistPos == MAXSONGSINBUFFER-1 && count == 0))
 			{
-				if(currentPos+1 <= arraySongs.size()-1)
+				if((unsigned)currentPos+1 <= arraySongs.size()-1)
 					pSong = arraySongs[currentPos+1];
 				else
 					pSong = arraySongs[0];

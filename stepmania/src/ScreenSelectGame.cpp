@@ -101,12 +101,12 @@ void ScreenSelectGame::ExportOptions()
 
 void ScreenSelectGame::GoToPrevState()
 {
-	Reset();
+	ResetGame();
 }
 
 void ScreenSelectGame::GoToNextState()
 {
-	Reset();
+	ResetGame();
 }
 
 

@@ -15,11 +15,7 @@
 class ScreenUnlock : public ScreenAttract
 {
 public:
-
-private:
-	virtual CString	GetMetricName() { return "Unlock"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "unlock"; };	// used to look up theme elements
-
+	ScreenUnlock() : ScreenAttract("Unlock","unlock") { };
 };
 
 

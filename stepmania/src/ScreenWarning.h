@@ -15,11 +15,7 @@
 class ScreenWarning : public ScreenAttract
 {
 public:
-
-private:
-	virtual CString	GetMetricName() { return "Warning"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "warning"; };	// used to look up theme elements 
-
+	ScreenWarning() : ScreenAttract("Warning","warning") {};
 };
 
 

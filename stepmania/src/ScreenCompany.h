@@ -15,10 +15,7 @@
 class ScreenCompany : public ScreenAttract
 {
 public:
-
-private:
-	virtual CString	GetMetricName() { return "Company"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "company"; };	// used to look up theme elements
+	ScreenCompany() : ScreenAttract("Company","company") { };
 
 };
 

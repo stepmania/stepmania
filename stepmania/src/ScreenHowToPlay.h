@@ -15,11 +15,7 @@
 class ScreenHowToPlay : public ScreenAttract
 {
 public:
-
-private:
-	virtual CString	GetMetricName() { return "HowToPlay"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "how to play"; };	// used to look up theme elements 
-
+	ScreenHowToPlay() : ScreenAttract("HowToPlay","how to play") {};
 };
 
 

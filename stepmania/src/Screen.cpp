@@ -14,6 +14,9 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "RageSound.h"
+#include "ThemeManager.h"
+#include "ScreenManager.h"
 
 Screen::Screen()
 {
@@ -92,9 +95,26 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	return;
 	case MENU_BUTTON_BACK:	this->MenuBack( MenuI.player, type );	return;
 	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	return;
+	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	return;
 	}
 }
 
+void Screen::MenuCoin( PlayerNumber pn )
+{
+	switch( PREFSMAN->m_CoinMode )
+	{
+	case PrefsManager::COIN_PAY:
+		GAMESTATE->m_iCoins++;
+		SCREENMAN->RefreshCreditsMessages();
+		// fall through
+	case PrefsManager::COIN_HOME:
+	case PrefsManager::COIN_FREE:
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+		break;
+	default:
+		ASSERT(0);
+	}
+}
 
 void Screen::SendScreenMessage( ScreenMessage SM, float fDelay )
 {

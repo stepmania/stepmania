@@ -14,9 +14,9 @@
 
 void ApplyGraphicOptions();
 
-void Exit();
+void ExitGame();
 
-void Reset();
+void ResetGame();
 
 
 #endif

@@ -115,6 +115,8 @@ are on right half.
 The following is a list of special keys:
 
 Any time:
+  * F1 = insert coin for player 1
+  * F2 = insert coin for player 2
   * F4 = toggle fullscreen
   * F5 = toggle detail
   * Hold Tab = increase game speed 4x (useful for moving through menus quickly)
@@ -124,6 +126,13 @@ In menus:
   * Arrow keys navigate menus
   * Enter = Start
   * Escape = Back
+
+In any attract screen:
+  * Left or Right = next attract screen
+  * F3 = toggle CoinMode
+
+In title menu:
+  * Escape = return to attract sequence
 
 In gameplay:
   * F8  = toggle AutoPlay

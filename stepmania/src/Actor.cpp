@@ -205,20 +205,9 @@ bool Actor::IsFirstUpdate()
 	return m_bFirstUpdate;
 }
 
-void Actor::FirstUpdate()
-{
-	
-}
-
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
-
-	if( m_bFirstUpdate )
-	{
-		this->FirstUpdate();
-		m_bFirstUpdate = false;
-	}
 
 	// update effect
 	switch( m_Effect )
@@ -269,6 +258,9 @@ void Actor::Update( float fDeltaTime )
 	}
 
 	UpdateTweening( fDeltaTime );
+
+	if( m_bFirstUpdate )
+		m_bFirstUpdate = false;
 }
 
 void Actor::BeginTweening( float time, TweenType tt )
