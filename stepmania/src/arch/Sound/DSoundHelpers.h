@@ -49,7 +49,7 @@ public:
 	DSoundBuf(DSound &ds, hw hardware, 
 		int channels, int samplerate, int samplebits, int writeahead);
 
-	bool get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, int chunksize);
+	bool get_output_buf(char **buffer, unsigned *bufsiz, int chunksize);
 	void release_output_buf(char *buffer, unsigned bufsiz);
 
 	void Reset();
@@ -60,7 +60,7 @@ public:
 
 	~DSoundBuf();
 	int GetPosition() const;
-	int GetMaxPosition() const { return last_cursor_pos; }
+	int GetOutputPosition() const { return last_cursor_pos; }
 };
 
 #endif

@@ -105,16 +105,16 @@ bool RageSound_DSound::stream::GetData(bool init)
 
 	char *locked_buf;
 	unsigned len;
-	int play_pos;
+	const int play_pos = str_ds->GetOutputPosition();
 
 	if(init) {
 		/* We're initializing; fill the entire buffer. The buffer is supposed to
 		 * be empty, so this should never fail. */
-		if(!str_ds->get_output_buf(&locked_buf, &len, &play_pos, buffersize))
+		if(!str_ds->get_output_buf(&locked_buf, &len, buffersize))
 			ASSERT(0);
 	} else {
 		/* Just fill one chunk. */
-		if(!str_ds->get_output_buf(&locked_buf, &len, &play_pos, chunksize))
+		if(!str_ds->get_output_buf(&locked_buf, &len, chunksize))
 			return false;
 	}
 
@@ -133,7 +133,7 @@ bool RageSound_DSound::stream::GetData(bool init)
 			state = STOPPING;
 
 			/* Flush two buffers worth of data. */
-			flush_pos = str_ds->GetMaxPosition();
+			flush_pos = str_ds->GetOutputPosition();
 		}
 	} else {
 		/* Silence the buffer. */
@@ -280,7 +280,7 @@ void RageSound_DSound::StopMixing(RageSound *snd)
 	stream_pool[i]->state = stream_pool[i]->STOPPING;
 
 	/* Flush two buffers worth of data. */
-	stream_pool[i]->flush_pos = stream_pool[i]->str_ds->GetMaxPosition();
+	stream_pool[i]->flush_pos = stream_pool[i]->str_ds->GetOutputPosition();
 
 	/* This function is called externally (by RageSound) to stop immediately.
 	 * We need to prevent SoundStopped from being called; it should only be

@@ -257,7 +257,7 @@ DSoundBuf::~DSoundBuf()
 	buf->Release();
 }
 
-bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, int chunksize)
+bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 {
 	ASSERT(!buffer_locked);
 
@@ -311,9 +311,11 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 		if(!contained(first_byte_filled, write_cursor, cursorstart) ||
 		   !contained(first_byte_filled, write_cursor, cursorend))
 		{
+			int missed_by = cursorend - write_cursor;
+			wrap( missed_by, buffersize );
 			LOG->Trace("underrun: %i..%i filled but cursor at %i..%i (missed it by %i)",
 				first_byte_filled, write_cursor, cursorstart, cursorend,
-				(cursorend - write_cursor + buffersize) % buffersize);
+				missed_by);
 //				(cursorend - first_byte_filled + buffersize) % buffersize);
 
 			/* Pretend the space between the play and write cursor is filled
@@ -370,9 +372,6 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 
 	buffer_bytes_filled += num_bytes_empty;
 
-	if( play_pos )
-		*play_pos = last_cursor_pos;
-	
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
 	last_cursor_pos += num_bytes_empty / samplesize();

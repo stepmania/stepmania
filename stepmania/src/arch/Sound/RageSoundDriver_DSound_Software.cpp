@@ -63,9 +63,9 @@ bool RageSound_DSound_Software::GetData()
 
 	char *locked_buf;
 	unsigned len;
-	int play_pos;
+	const int play_pos = str_ds->GetOutputPosition();
 
-	if(!str_ds->get_output_buf(&locked_buf, &len, &play_pos, chunksize))
+	if(!str_ds->get_output_buf(&locked_buf, &len, chunksize))
 		return false;
 
 	/* Silence the buffer. */
@@ -96,7 +96,7 @@ bool RageSound_DSound_Software::GetData()
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = str_ds->GetMaxPosition();
+			sounds[i]->flush_pos = str_ds->GetOutputPosition();
 		}
 	}
 
