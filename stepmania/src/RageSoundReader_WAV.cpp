@@ -40,8 +40,16 @@
 
 enum
 {
-	FMT_NORMAL=1,     /* Uncompressed waveform data.     */
-	FMT_ADPCM =2    /* ADPCM compressed waveform data. */
+	FMT_NORMAL= 1,           /* Uncompressed waveform data.     */
+	FMT_ADPCM = 2,           /* ADPCM compressed waveform data. */
+	FMT_ITU_G711_ALAW = 6,   /* ITU G.711 A-law */
+	FMT_ITU_G711_MULAW = 7,  /* ITU G.711 mu-law */
+	FMT_IMA_ADPCM = 17,      /* IMA ADPCM */
+	FMT_ITU_G723_ADPCM = 20, /* ITU G.723 ADPCM */
+	FMT_GSM_610 = 49,        /* GSM 6.10 */
+	FMT_ITU_G721_ADPCM = 64, /* ITU G.721 ADPCM */
+	FMT_MPEG = 80,           /* MPEG */
+	FMT_MPEG_L3 = 85         /* MPEG Layer 3 */
 };
 
 /* Call this to convert milliseconds to an actual byte position, based on audio data characteristics. */
@@ -450,12 +458,29 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::WAV_open_internal()
 	if( fmt.wFormatTag != FMT_NORMAL &&
 		fmt.wFormatTag != FMT_ADPCM )
 	{
-		SetError( ssprintf("Unsupported WAV format %i", fmt.wFormatTag) );
+		CString format;
+		switch( fmt.wFormatTag )
+		{
+		case FMT_ITU_G711_ALAW:  format = "ITU G.711 A-law"; break;
+		case FMT_ITU_G711_MULAW: format = "ITU G.711 mu-law"; break;
+		case FMT_IMA_ADPCM:      format = "IMA ADPCM"; break;
+		case FMT_ITU_G723_ADPCM: format = "ITU G.723 ADPCM"; break;
+		case FMT_GSM_610:        format = "GSM 6.10"; break;
+		case FMT_ITU_G721_ADPCM: format = "ITU G.721 ADPCM"; break;
+		case FMT_MPEG:           format = "MPEG"; break;
+		case FMT_MPEG_L3:        format = "MPEG Layer 3"; break; // or "other"?
+		default: format = ssprintf( "Unknown WAV format #%i", fmt.wFormatTag ); break;
+		}
+
+		SetError( ssprintf("%s not supported", format.c_str() ) );
 
 		/* It might be MP3 data in a WAV.  (Why do people *do* that?)  It's possible
 		 * that the MAD decoder will figure that out, so let's return OPEN_NO_MATCH
 		 * and keep searching for a decoder. */
-		return OPEN_NO_MATCH;
+		if( fmt.wFormatTag == FMT_MPEG_L3 )
+			return OPEN_NO_MATCH;
+
+		return OPEN_MATCH_BUT_FAIL;
 	}
 
     if ( fmt.wBitsPerSample == 4 && this->fmt.wFormatTag == FMT_ADPCM )
