@@ -254,7 +254,7 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
-		m_textStats.SetDiffuse( RageColor(1,1,1,1) );
+		m_textStats.SetDiffuse( RageColor(1,1,1,0.5) );
 
 		/* If FPS == 0, we don't have stats yet. */
 		if(DISPLAY->GetFPS())
