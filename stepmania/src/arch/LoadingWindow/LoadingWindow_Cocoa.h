@@ -13,7 +13,6 @@
 
 extern void MakeNewCocoaWindow();
 extern void DisposeOfCocoaWindow();
-extern void PaintCocoaWindow();
 extern void SetCocoaWindowText(const char *s);
 
 class LoadingWindow_Cocoa : public LoadingWindow {

@@ -13,7 +13,7 @@ static NSWindow *window;
 static NSTextView *text;
 
 void MakeNewCocoaWindow() {
-	NSImage *image = [NSImage imageNamed:@"loading"];
+	NSImage *image = [NSImage imageNamed:@"splash"];
 	NSSize size = [image size];
 	float height = size.height;
 	NSImageView *iView = [[[NSImageView alloc] initWithFrame:NSMakeRect(0, height+1, size.width, height)] autorelease];
