@@ -368,13 +368,7 @@ void ScreenEvaluation::Init()
 					if( !GAMESTATE->IsPlayerEnabled(p) )
 						continue;	// skip
 
-#ifdef _XBOX
-					//shorten filenames for FATX
-					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation diff icons 1x%d",NUM_DIFFICULTIES)) );
-#else
 					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation difficulty icons 1x%d",NUM_DIFFICULTIES)) );
-#endif
-
 					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
 					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
