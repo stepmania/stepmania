@@ -115,7 +115,7 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 		fAlpha = 0;
 		break;
 	case PlayerOptions::APPEARANCE_BLINK: // this is an Ez2dancer Appearance Mode
-		fAlpha = sinf( TIMER->GetTimeSinceStart()*3 );
+		fAlpha = sinf( TIMER->GetTimeSinceStart()*12 );
 		fAlpha = froundf( fAlpha, 0.3333f );
 		break;
 	default:

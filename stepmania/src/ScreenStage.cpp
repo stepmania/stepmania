@@ -373,9 +373,9 @@ ScreenStage::ScreenStage()
 
 		for (i=0; i<2; i++) // specify the font file.
 		{
-			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 			m_ez2ukm[i].TurnShadowOff();
-			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 			m_stagedesc[i].TurnShadowOff();
 		}
 
@@ -489,7 +489,7 @@ ScreenStage::ScreenStage()
 
 
 		// write the stage name
-		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_stagename.TurnShadowOff();
 
 		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
