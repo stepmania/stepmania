@@ -42,8 +42,6 @@ public:
 	bool IsScrolling() const { return m_bScrolling; }
 	float ScrollingPercent() const { return m_fPercentScrolling; }
 
-	static RageTextureID BannerTex( RageTextureID ID );
-
 protected:
 
 	bool m_bScrolling;
