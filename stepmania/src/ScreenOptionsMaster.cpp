@@ -571,27 +571,30 @@ void ScreenOptionsMaster::GoToPrevState()
 
 void ScreenOptionsMaster::RefreshIcons()
 {
-	ASSERT( m_iNumOptionRows < (int) MAX_OPTION_LINES );
+	ASSERT( m_Rows.size() < MAX_OPTION_LINES );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+		for( int i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
-			const OptionRow &row = m_OptionRow[i];
+			if( m_Rows[i]->Type == Row::ROW_EXIT )
+				continue;	// skip
+
+			const OptionRow &row = m_Rows[i]->m_RowDef;
 
 			int iSelection = m_iSelectedOption[p][i];
-			if( iSelection >= (int)m_OptionRow[i].choices.size() )
+			if( iSelection >= (int)row.choices.size() )
 			{
 				/* Invalid selection.  Send debug output, to aid debugging. */
 				CString error = ssprintf("Option row with name '%s' selects item %i, but there are only %i items:\n",
-					m_OptionRow[i].name.c_str(),
-					iSelection, (int) m_OptionRow[i].choices.size() );
+					row.name.c_str(),
+					iSelection, (int) row.choices.size() );
 
-				for( unsigned j = 0; j < m_OptionRow[i].choices.size(); ++j )
-					error += ssprintf("    %s\n", m_OptionRow[i].choices[j].c_str());
+				for( unsigned j = 0; j < row.choices.size(); ++j )
+					error += ssprintf("    %s\n", row.choices[j].c_str());
 
 				RageException::Throw( "%s", error.c_str() );
 			}

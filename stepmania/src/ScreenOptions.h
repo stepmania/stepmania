@@ -30,8 +30,9 @@ struct OptionRow
 	CString name;
 	bool bOneChoiceForAllPlayers;
 	vector<CString> choices;
+	bool bMultiSelect;
 
-	OptionRow(): name(""), bOneChoiceForAllPlayers(false) { }
+	OptionRow(): name(""), bOneChoiceForAllPlayers(false), bMultiSelect(false) { }
 
 	OptionRow( const char *n, int b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
@@ -40,6 +41,7 @@ struct OptionRow
 #define PUSH( c )	if(c) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
+		bMultiSelect = false;
 	}
 };
 
@@ -98,22 +100,21 @@ protected:
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
 
 	MenuElements	m_Menu;
-	OptionRow*		m_OptionRow;
 
 protected:	// derived classes need access to these
 	int				m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
-	int				m_iNumOptionRows;
 
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 
-private:
+protected:
 	/* Map menu lines to m_OptionRow entries. */
 	struct Row
 	{
 		Row();
 		~Row();
+		OptionRow				m_RowDef;
 		enum { ROW_NORMAL, ROW_EXIT } Type;
 		vector<BitmapText *>	m_textItems;
 		Sprite					m_sprBullet;

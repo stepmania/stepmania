@@ -123,15 +123,19 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	LOG->Trace( "ScreenOptions::Set()" );
 
 	m_InputMode = im;
-	m_OptionRow = OptionRows;
-	m_iNumOptionRows = iNumOptionLines;
 
 	this->ImportOptions();
 
-	for( int l=0; l<m_iNumOptionRows; l++ )
-		if( m_OptionRow[l].bOneChoiceForAllPlayers )
-			m_iSelectedOption[PLAYER_2][l] = m_iSelectedOption[PLAYER_1][l];
+	int r;
+	for( r=0; r<iNumOptionLines; r++ )		// foreach row
+	{
+		m_Rows.push_back( new Row() );
+		m_Rows[r]->m_RowDef = OptionRows[r];
 
+		if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
+			for( int p=1; p<NUM_PLAYERS; p++ )
+				m_iSelectedOption[0][r] = m_iSelectedOption[p][r];
+	}
 
 
 	int p;
@@ -157,11 +161,6 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_framePage.AddChild( &m_Highlight[p] );
 	}
 
-	int r;
-	for( r=0; r<m_iNumOptionRows; r++ )		// foreach row
-	{
-		m_Rows.push_back( new Row() );
-	}
 	
 	// init underlines
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -169,7 +168,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
-		for( int l=0; l<m_iNumOptionRows; l++ )
+		for( unsigned l=0; l<m_Rows.size(); l++ )
 		{	
 			Row &row = *m_Rows[l];
 
@@ -182,13 +181,13 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	}
 
 	// init m_textItems from optionLines
-	for( r=0; r<m_iNumOptionRows; r++ )		// foreach row
+	for( r=0; r<m_Rows.size(); r++ )		// foreach row
 	{
 		Row &row = *m_Rows[r];
 		row.Type = Row::ROW_NORMAL;
 
 		vector<BitmapText *> & textItems = row.m_textItems;
-		const OptionRow &optline = m_OptionRow[r];
+		const OptionRow &optline = m_Rows[r]->m_RowDef;
 
 		unsigned c;
 
@@ -382,7 +381,7 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	if( m_Rows[iRow]->Type == Row::ROW_EXIT )
 		return "";
 
-	CString sLineName = m_OptionRow[iRow].name;
+	CString sLineName = m_Rows[iRow]->m_RowDef.name;
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
@@ -394,7 +393,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	if( m_Rows[iRow]->Type == Row::ROW_EXIT )
 		return "";
 	
-	CString sLineName = m_OptionRow[iRow].name;
+	CString sLineName = m_Rows[iRow]->m_RowDef.name;
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
@@ -429,7 +428,7 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
 		return *row.m_textItems[iOptionInRow];
 	}
 
-	const bool bOneChoice = m_OptionRow[iRow].bOneChoiceForAllPlayers;
+	const bool bOneChoice = m_Rows[iRow]->m_RowDef.bOneChoiceForAllPlayers;
 
 	if( bOneChoice )
 		return *row.m_textItems[0];
@@ -510,7 +509,7 @@ void ScreenOptions::PositionUnderlines()
 
 			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
 			// It looks silly.
-			bool bOnlyOneChoice = m_OptionRow[i].choices.size() == 1;
+			bool bOnlyOneChoice = m_Rows[i]->m_RowDef.choices.size() == 1;
 			bool hidden = bOnlyOneChoice || row.m_bHidden;
 
 			if( underline.GetDestY() != row.m_fY )
@@ -618,14 +617,14 @@ void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 
 	int iChoiceInRow = m_iSelectedOption[player_no][iRow];
 
-	const OptionRow &optrow = m_OptionRow[iRow];
+	const OptionRow &optrow = m_Rows[iRow]->m_RowDef;
 
 	unsigned item_no = optrow.bOneChoiceForAllPlayers?0:player_no;
 
 	/* If player_no is 2 and there is no player 1: */
 	item_no = min( item_no, m_Rows[iRow]->m_textItems.size()-1 );
 
-	m_Rows[iRow]->m_textItems[item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
+	m_Rows[iRow]->m_textItems[item_no]->SetText( m_Rows[iRow]->m_RowDef.choices[iChoiceInRow] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -1014,7 +1013,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	const int iCurRow = m_iCurrentRow[pn];
 	Row &row = *m_Rows[iCurRow];
-	OptionRow &optrow = m_OptionRow[iCurRow];
+	OptionRow &optrow = m_Rows[iCurRow]->m_RowDef;
 
 	/* If START is being pressed, and in NAV_THREE_KEY, then we're holding left/right
 	 * and start to move backwards.  Don't move left and right, too. */
