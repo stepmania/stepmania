@@ -181,17 +181,24 @@ bool CreateDirectories( CString Path )
 		}
 #endif
 
+		if(LOG)LOG->Trace("mkdir %s", curpath.c_str());
 		if( DoMkdir(curpath, 0755) == 0 )
 			continue;
 
-		if(errno == EEXIST)
-			continue;		// we expect to see this error
-
-		// Log the error, but continue on.
 		/* When creating a directory that already exists over Samba, Windows is
 		 * returning ENOENT instead of EEXIST. */
-		if( LOG )
+		/* I can't reproduce this anymore.  If we get ENOENT, log it but keep
+		 * going. */
+		if( errno == ENOENT && LOG )
 			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+		if( errno == EEXIST || errno == ENOENT )
+			continue;		// we expect to see these errors
+
+		if( LOG )
+		{
+			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+			return false;
+		}
 
 		/* Make sure it's a directory. */
 		struct stat st;
