@@ -280,6 +280,22 @@ void RageSound::RateChange(char *buf, int &cnt,
 	cnt = (cnt * speed_output_samples) / speed_input_samples;
 }
 
+/* Dupe mono to stereo in-place; do it in reverse, to handle overlap. */
+void ConvertMonoToStereoInPlace( int16_t *data, int iFrames )
+{
+	int16_t *input = data;
+	int16_t *output = input;
+	input += iFrames;
+	output += iFrames * 2;
+	while( iFrames-- )
+	{
+		input -= 1;
+		output -= 2;
+		output[0] = input[0];
+		output[1] = input[0];
+	}
+}
+
 /* Fill the buffer by about "bytes" worth of data.  (We might go a little
  * over, and we won't overflow our buffer.)  Return the number of bytes
  * actually read; 0 = EOF.  Convert mono input to stereo. */
@@ -322,20 +338,7 @@ int RageSound::FillBuf( int frames )
 
 		if( Sample->GetNumChannels() == 1 )
 		{
-			/* Dupe mono to stereo in-place; do it in reverse, to handle overlap. */
-			int num_samples = cnt / sizeof(int16_t);
-			int16_t *input = (int16_t *) inbuf;
-			int16_t *output = input;
-			input += num_samples;
-			output += num_samples*2;
-			while( num_samples-- )
-			{
-				input -= 1;
-				output -= 2;
-				output[0] = input[0];
-				output[1] = input[0];
-			}
-
+			ConvertMonoToStereoInPlace( (int16_t *) inbuf, cnt / sizeof(int16_t) );
 			cnt *= 2;
 		}
 
