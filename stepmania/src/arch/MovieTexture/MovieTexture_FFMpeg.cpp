@@ -345,6 +345,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 	float Clock = 0;
 	RageTimer Timer;
 
+	bool FirstFrame = true;
 	float pts = 0, last_IP_pts = 0;
 	CHECKPOINT;
 
@@ -378,6 +379,15 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 				LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
 
+				if( FirstFrame )
+				{
+					/* It's the first frame, and we're at EOF, which menas there aren't
+					 * any frames.  Kick Create(), if needed, and abort. */
+					if( m_State == PLAYING_ONE )
+						SDL_SemPost( m_OneFrameDecoded );
+					return;
+				}
+
 				/* Restart. */
 				DestroyDecoder();
 				CreateDecoder();
@@ -387,6 +397,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 				FrameSkipMode = false;
 				LastFrameDelay = 0;
 				Clock = 0;
+				FirstFrame = true;
 				continue;
 			}
 
@@ -442,6 +453,8 @@ void MovieTexture_FFMpeg::DecoderThread()
 			if (!got_frame)
 				continue;
 
+			FirstFrame=false;
+
 			/* Length of this frame: */
 			LastFrameDelay = (float)m_stream->codec.frame_rate_base / m_stream->codec.frame_rate;
 			LastFrameDelay += frame.repeat_pict * (LastFrameDelay * 0.5f);
@@ -454,7 +467,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 			if ( m_stream->codec.has_b_frames &&
 				 frame.pict_type != FF_B_TYPE )
 			{
-				LOG->Trace("%s BF", GetID().filename.c_str() );
 				swap( pts, last_IP_pts );
 			}
 
@@ -465,7 +477,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 			else
 			{
 				/* If the timestamp is zero, this frame is to be played at the
-				 * time of the last frame plus the length of the last frame. */
+					* time of the last frame plus the length of the last frame. */
 				CurrentTimestamp += LastFrameDelay;
 			}
 
