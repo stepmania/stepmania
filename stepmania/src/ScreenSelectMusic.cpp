@@ -104,6 +104,10 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_BPMDisplay.SetName( "BPM" );
 	this->AddChild( &m_BPMDisplay );
 
+	m_DifficultyDisplay.SetName( "DifficultyDisplay" );
+	m_DifficultyDisplay.EnableShadow( false );
+	this->AddChild( &m_DifficultyDisplay );
+
 	m_sprStage.SetName( "Stage" );
 	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_sprStage );
@@ -241,6 +245,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	SET_XY_AND_ON_COMMAND( m_Banner );
 	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
+	SET_XY_AND_ON_COMMAND( m_DifficultyDisplay );
 	SET_XY_AND_ON_COMMAND( m_sprStage );
 	SET_XY_AND_ON_COMMAND( m_sprCDTitleFront );
 	SET_XY_AND_ON_COMMAND( m_sprCDTitleBack );
@@ -278,6 +283,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_Banner );
 	OFF_COMMAND( m_sprBannerFrame );
 	OFF_COMMAND( m_BPMDisplay );
+	OFF_COMMAND( m_DifficultyDisplay );
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
@@ -835,6 +841,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCDTitleBack.Load( CDTitlePath );
 			FlipSpriteHorizontally(m_sprCDTitleBack);
 
+			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+ 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )

@@ -23,6 +23,7 @@
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "OptionIconRow.h"
+#include "DifficultyDisplay.h"
 
 
 class ScreenSelectMusic : public Screen
@@ -80,6 +81,7 @@ protected:
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
 	Sprite				m_sprBalloon;
+	DifficultyDisplay   m_DifficultyDisplay;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
