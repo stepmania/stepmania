@@ -1,16 +1,16 @@
 #ifndef UNLOCK_SYSTEM_H
 #define UNLOCK_SYSTEM_H
 
-#include "Grade.h"
-
+#include "grade.h"
 /*
 -----------------------------------------------------------------------------
  Class: UnlockSystem
 
- Desc: See header.
+ Desc: The unlock system for Stepmania.
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Kevin Slaughter
+	curewater
 -----------------------------------------------------------------------------
 */
 enum UnlockTypes { UNLOCK_AP, UNLOCK_DP, UNLOCK_SP,
@@ -23,7 +23,8 @@ struct SongEntry
 								for a lot easier compatibility since a lot of people's 
 								song folders are named differantly, song names tend to
 								be the same in the file.*/
-	float	m_fDancePointsRequired;	// Amount of Dance Points needed to unlock this song
+	
+	float	m_fDancePointsRequired;	// Ways to unlock/lock songs.
 	float	m_fArcadePointsRequired;
 	float	m_fSongPointsRequired;
 	float	m_fExtraStagesCleared;
@@ -32,14 +33,15 @@ struct SongEntry
 	float	m_fToastysSeen;
 	int		m_iRouletteSeed;
 
-	bool	isLocked;
+	bool	isLocked;    // cached locked tag
 
 	SongEntry();
 
+	// if song is selectable vai two means
 	bool	SelectableWheel();
 	bool	SelectableRoulette();
 
-	bool	updateLocked();
+	bool	updateLocked();  //updates isLocked flag
 
 };
 
@@ -51,9 +53,9 @@ public:
 	bool SongIsLocked( CString sSongName );
 	bool SongIsRoulette( CString sSongName );
 	bool LoadFromDATFile( CString sPath );
-//	bool	m_bAllSongsAreUnlocked;	// Quick way to check if all songs are unlocked
 	vector<SongEntry>	m_SongEntries;	// All locked songs are stored here
 
+	// functions that add to values, which don't really work.
 	float UnlockAddAP(Grade credit);
 	float UnlockAddDP(float credit);
 	float UnlockAddSP(Grade credit);
@@ -64,7 +66,7 @@ public:
 	bool UnlockRouletteSeed(int seed);
 
 private:
-	void SortSongEntriesArray();
+	void SortSongEntriesArray();  // sorts unlocks
 	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
 };
 

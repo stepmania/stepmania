@@ -6,6 +6,7 @@
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Kevin Slaughter
+	curewater
 -----------------------------------------------------------------------------
 */
 
@@ -21,8 +22,6 @@ using namespace std;
 
 #include "stdio.h"
 
-// #define	POINTS_ACCUMULATED_BEFORE_LAST_ROUND	// Load from file here
-
 UnlockSystem::UnlockSystem()
 {
 }
@@ -32,6 +31,7 @@ bool UnlockSystem::SongIsLocked( CString sSongName )
 {
 	sSongName.MakeUpper();	//Avoid case-sensitive problems
 	
+	// searches for song in unlock list
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_sSongName == sSongName)
 			return m_SongEntries[i].isLocked;
@@ -49,40 +49,6 @@ bool UnlockSystem::SongIsRoulette( CString sSongName )
 	
 	return false;
 }
-
-/* These don't appear to be used.  If you need them, I'd suggest making them
- * members.  They also need return types. */
-#if 0
-operator == (const SongEntry &a, const SongEntry &b)
-{
-	return a.m_sSongName == b.m_sSongName;
-}
-
-operator != (const SongEntry &a, const SongEntry &b)
-{
-	return a.m_sSongName != b.m_sSongName;
-}
-
-operator >= (const SongEntry &a, const SongEntry &b)
-{
-	return a.m_sSongName >= b.m_sSongName;
-}
-
-operator <= (const SongEntry &a, const SongEntry &b)
-{
-	return a.m_sSongName <= b.m_sSongName;
-}
-
-operator > (const SongEntry &a, const SongEntry &b)
-{
-	return a.m_sSongName > b.m_sSongName;
-}
-
-operator < (const SongEntry &a, const SongEntry &b)
-{
-	return a.m_sSongName <= b.m_sSongName;
-}
-#endif
 
 SongEntry::SongEntry()
 {
@@ -108,7 +74,7 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 							CString &songname)
 {
 	int pos = -1;
-	int end;
+	int end = text.GetLength();  // sets a value in case | does not exist
 	char unlock_type[4];
 	char qty_text[20];
 
@@ -128,6 +94,9 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 	 * I havn't looked at this code to see if it's a problem, but I don't want
 	 * to simply silence the warning without being sure.  (Can this just be
 	 * a standard INI--does it actually need to be another file format?) -glenn */
+
+	// glenn: ok, i set it at the beginning.
+
 	songname = text.Right(text.GetLength() - 1 - end);
 	
 	sscanf(text, "%s %s|", unlock_type, qty_text);
