@@ -897,14 +897,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			float& fScrollSpeed = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed;
 			float fNewScrollSpeed = fScrollSpeed;
 
-			if( DeviceI.button == KEY_UP )
+			if( EditB == EDIT_BUTTON_SCROLL_SPEED_DOWN )
 			{
 				if( fScrollSpeed == 4 )
 					fNewScrollSpeed = 2;
 				else if( fScrollSpeed == 2 )
 					fNewScrollSpeed = 1;
 			}
-			else if( DeviceI.button == KEY_DOWN )
+			else if( EditB == EDIT_BUTTON_SCROLL_SPEED_UP )
 			{
 				if( fScrollSpeed == 2 )
 					fNewScrollSpeed = 4;
