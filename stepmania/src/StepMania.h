@@ -9,7 +9,7 @@ void __cdecl main();
 int main( int argc, char* argv[] );
 #endif
 void ApplyGraphicOptions();
-void HandleException( CString error );
+void NORETURN HandleException( CString error );
 void ExitGame();
 void ResetGame( bool ReturnToFirstScreen=true );
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );

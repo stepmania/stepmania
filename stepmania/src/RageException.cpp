@@ -2,10 +2,10 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageLog.h"
+#include "StepMania.h"
 
 #if defined(_WINDOWS) && defined(DEBUG)
-#include "windows.h"
+#include <windows.h>
 #endif
 
 RageException::RageException( const CString &str ):
@@ -18,6 +18,8 @@ const char* RageException::what() const throw ()
 	return m_sError;
 }
 
+/* This is no longer actually implemented by throwing an exception, but it acts
+ * the same way to code in practice. */
 void RageException::Throw(const char *fmt, ...)
 {
     va_list	va;
@@ -47,7 +49,7 @@ void RageException::Throw(const char *fmt, ...)
 	DebugBreak();
 #endif
 
-	throw RageException( error );
+	HandleException( error );
 }
 
 void RageException::ThrowNonfatal(const char *fmt, ...)

@@ -161,12 +161,66 @@ void ApplyGraphicOptions()
 	INPUTMAN->WindowReset();
 }
 
+/* Shutdown all global singletons.  Note that this may be called partway through
+ * initialization, due to an object failing to initialize, in which case some of
+ * these may still be NULL. */
+void ShutdownGame()
+{
+	/* First, tell SOUND that we're shutting down.  This signals sound drivers to
+	 * stop sounds, which we want to do before any threads that may have started sounds
+	 * are closed; this prevents annoying DirectSound glitches and delays. */
+	if( SOUNDMAN )
+		SOUNDMAN->Shutdown();
+
+	SAFE_DELETE( SCREENMAN );
+    SAFE_DELETE( NSMAN );
+	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
+	 * driver may try to send a message to INPUTFILTER after we delete it. */
+	SAFE_DELETE( INPUTMAN );
+	SAFE_DELETE( INPUTQUEUE );
+	SAFE_DELETE( INPUTMAPPER );
+	SAFE_DELETE( INPUTFILTER );
+	SAFE_DELETE( MODELMAN );
+	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
+	SAFE_DELETE( UNLOCKMAN );
+	SAFE_DELETE( CRYPTMAN );
+	SAFE_DELETE( MEMCARDMAN );
+	SAFE_DELETE( SONGMAN );
+	SAFE_DELETE( BANNERCACHE );
+	SAFE_DELETE( SONGINDEX );
+	SAFE_DELETE( SOUND ); /* uses GAMESTATE, PREFSMAN */
+	SAFE_DELETE( PREFSMAN );
+	SAFE_DELETE( GAMESTATE );
+	SAFE_DELETE( GAMEMAN );
+	SAFE_DELETE( NOTESKIN );
+	SAFE_DELETE( THEME );
+	SAFE_DELETE( ANNOUNCER );
+	SAFE_DELETE( BOOKKEEPER );
+	SAFE_DELETE( LIGHTSMAN );
+	SAFE_DELETE( SOUNDMAN );
+	SAFE_DELETE( FONT );
+	SAFE_DELETE( TEXTUREMAN );
+	SAFE_DELETE( DISPLAY );
+	Dialog::Shutdown();
+	SAFE_DELETE( LOG );
+	SAFE_DELETE( FILEMAN );
+	SAFE_DELETE( HOOKS );
+}
+
+/* Cleanly shut down, show a dialog and exit the game.  We don't go back
+ * up the call stack, to avoid having to use exceptions. */
 void HandleException( CString error )
 {
+	/* Shut down first, so we exit graphics mode before trying to open a dialog. */
+	ShutdownGame();
+
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
 
-	Dialog::Error( error ); // throw up a pretty error dialog
+	/* Throw up a pretty error dialog. */
+	Dialog::Error( error );
+
+	exit(1);
 }
 	
 void ExitGame()
@@ -938,12 +992,7 @@ int main(int argc, char* argv[])
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();
 
-	CString  g_sErrorString = "";
 #if !defined(DEBUG)
-	/* Always catch RageExceptions; they should always have distinct strings. */
-
-	try { /* RageException */
-
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
 	 * we need to catch the exception and force a crash.  The call stack is still
 	 * there, and gets picked up by the crash handler.  (If we don't catch it, we'll
@@ -1141,53 +1190,7 @@ int main(int argc, char* argv[])
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	SaveGamePrefsToDisk();
 
-#if !defined(DEBUG)
-	}
-	catch( const RageException &e )
-	{
-		/* Gracefully shut down. */
-		g_sErrorString = e.what();
-	}
-#endif
-
-	/* First, tell SOUND that we're shutting down.  This signals sound drivers to
-	 * stop sounds, which we want to do before any threads that may have started sounds
-	 * are closed; this prevents annoying DirectSound glitches and delays. */
-	if( SOUNDMAN )
-		SOUNDMAN->Shutdown();
-
-	SAFE_DELETE( SCREENMAN );
-    SAFE_DELETE( NSMAN );
-	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
-	 * driver may try to send a message to INPUTFILTER after we delete it. */
-	SAFE_DELETE( INPUTMAN );
-	SAFE_DELETE( INPUTQUEUE );
-	SAFE_DELETE( INPUTMAPPER );
-	SAFE_DELETE( INPUTFILTER );
-	SAFE_DELETE( MODELMAN );
-	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
-	SAFE_DELETE( UNLOCKMAN );
-	SAFE_DELETE( CRYPTMAN );
-	SAFE_DELETE( MEMCARDMAN );
-	SAFE_DELETE( SONGMAN );
-	SAFE_DELETE( BANNERCACHE );
-	SAFE_DELETE( SONGINDEX );
-	SAFE_DELETE( SOUND ); /* uses GAMESTATE, PREFSMAN */
-	SAFE_DELETE( PREFSMAN );
-	SAFE_DELETE( GAMESTATE );
-	SAFE_DELETE( GAMEMAN );
-	SAFE_DELETE( NOTESKIN );
-	SAFE_DELETE( THEME );
-	SAFE_DELETE( ANNOUNCER );
-	SAFE_DELETE( BOOKKEEPER );
-	SAFE_DELETE( LIGHTSMAN );
-	SAFE_DELETE( SOUNDMAN );
-	SAFE_DELETE( FONT );
-	SAFE_DELETE( TEXTUREMAN );
-	SAFE_DELETE( DISPLAY );
-	Dialog::Shutdown();
-	SAFE_DELETE( LOG );
-	SAFE_DELETE( FILEMAN );
+	ShutdownGame();
 
 #if !defined(DEBUG) && defined(_WINDOWS)
 	}
@@ -1200,14 +1203,8 @@ int main(int argc, char* argv[])
 	}
 #endif
 	
-	if( g_sErrorString != "" )
-		HandleException( g_sErrorString );
-
-	SAFE_DELETE( HOOKS );
-
 #ifndef _XBOX
 	return 0;
-	
 #endif
 }
 
