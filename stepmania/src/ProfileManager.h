@@ -33,8 +33,8 @@ public:
 	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const;
 	void GetLocalProfileNames( vector<CString> &asNamesOut ) const;
 
-	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
-	bool LoadProfileFromMemoryCard( PlayerNumber pn );
+	bool LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadNamesOnly );	// memory card or local profile
+	bool LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadNamesOnly );
 	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
 	
@@ -103,9 +103,9 @@ public:
 //	void ReadSM300NoteScores();
 
 private:
-	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
+	bool LoadDefaultProfileFromMachine( PlayerNumber pn, bool bLoadNamesOnly );
 	bool CreateMemoryCardProfile( PlayerNumber pn );
-	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
+	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard, bool bLoadNamesOnly );
 	bool CreateProfile( CString sProfileDir, CString sName );
 
 	// Directory that contains the profile.  Either on local machine or

@@ -110,8 +110,8 @@ void ScreenEvaluation::Init()
 	
 	if( PREFSMAN->m_bScreenTestMode )
 	{
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1, false);
+		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;

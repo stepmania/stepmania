@@ -81,7 +81,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 }
 
 
-bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
+bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard, bool bLoadNamesOnly )
 {
 	ASSERT( !sProfileDir.empty() );
 	ASSERT( sProfileDir.Right(1) == "/" );
@@ -89,13 +89,10 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	m_sProfileDir[pn] = sProfileDir;
 	m_bWasLoadedFromMemoryCard[pn] = bIsMemCard;
 
-	bool bResult = m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn] );
-	if( !bResult )
-	{
-		LOG->Warn( "Attempting to load profile from '%s' and does not exist", sProfileDir.c_str() );
-		UnloadProfile( pn );
-		return false;
-	}
+	if( bLoadNamesOnly )
+		m_Profile[pn].LoadEditableDataFromDir( m_sProfileDir[pn] );
+	else
+		m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn] );
 
 	return true;
 }
@@ -114,7 +111,7 @@ bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 	return true;	
 }
 
-bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
+bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn, bool bLoadNamesOnly )
 {
 	CString sProfileID = PREFSMAN->m_sDefaultLocalProfileID[pn];
 	if( sProfileID.empty() )
@@ -125,10 +122,10 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 
 	CString sDir = USER_PROFILES_DIR + sProfileID + "/";
 
-	return LoadProfile( pn, sDir, false );
+	return LoadProfile( pn, sDir, false, bLoadNamesOnly );
 }
 
-bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
+bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadNamesOnly )
 {
 	UnloadProfile( pn );
 #ifndef _XBOX
@@ -142,13 +139,13 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		sDir += '/'; 
 
 		bool bResult;
-		bResult = LoadProfile( pn, sDir, true );
+		bResult = LoadProfile( pn, sDir, true, bLoadNamesOnly );
 		if( bResult )
 			return true;
 	
 		CreateMemoryCardProfile( pn );
 		
-		bResult = LoadProfile( pn, sDir, true );
+		bResult = LoadProfile( pn, sDir, true, bLoadNamesOnly );
 		return bResult;
 	}
 #endif
@@ -172,12 +169,12 @@ bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
 	return CreateProfile( sDir, NEW_MEM_CARD_NAME );
 }
 
-bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
+bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadNamesOnly )
 {
-	if( LoadProfileFromMemoryCard(pn) )
+	if( LoadProfileFromMemoryCard(pn,bLoadNamesOnly) )
 		return true;
 
-	if( LoadDefaultProfileFromMachine(pn) )
+	if( LoadDefaultProfileFromMachine(pn,bLoadNamesOnly) )
 		return true;
 	
 	return false;

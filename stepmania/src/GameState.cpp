@@ -201,6 +201,8 @@ void GameState::PlayersFinalized()
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
 	{
+		PROFILEMAN->LoadFirstAvailableProfile( pn, false );	// load full profile
+
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;	// skip
 

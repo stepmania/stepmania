@@ -196,7 +196,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 
-		PROFILEMAN->LoadFirstAvailableProfile( MenuI.player );
+		PROFILEMAN->LoadFirstAvailableProfile( MenuI.player, true );	// fast load
 		SCREENMAN->RefreshCreditsMessages();
 
 		SCREENMAN->PlayStartSound();

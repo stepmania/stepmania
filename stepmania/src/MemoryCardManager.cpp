@@ -63,7 +63,7 @@ void MemoryCardManager::Update( float fDelta )
 		{
 			for( unsigned i=0; i<vOld.size(); i++ )
 			{
-				const UsbStorageDevice old = vOld[i];
+				const UsbStorageDevice &old = vOld[i];
 				if( find(vNew.begin(),vNew.end(),old) == vNew.end() )	// didn't find
 				{
 					LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
@@ -76,7 +76,7 @@ void MemoryCardManager::Update( float fDelta )
 		{
 			for( unsigned i=0; i<vNew.size(); i++ )
 			{
-				const UsbStorageDevice newd = vNew[i];
+				const UsbStorageDevice &newd = vNew[i];
 				if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )	// didn't find
 				{
 					LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
@@ -107,10 +107,15 @@ void MemoryCardManager::Update( float fDelta )
 
 		AssignUnassignedCards();
 
+		// Load profiles from cards that were just connected.
 		if( !m_bCardsLocked )
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				PROFILEMAN->LoadFirstAvailableProfile( (PlayerNumber)p );
+			FOREACH_PlayerNumber( pn )
+			{
+				bool bPlayersCardWasJustConnected = find(vConnects.begin(),vConnects.end(),m_Device[pn]) != vConnects.end();
+				if( bPlayersCardWasJustConnected )
+					PROFILEMAN->LoadFirstAvailableProfile( pn, true );	// fast load
+			}
 		}
 		SCREENMAN->RefreshCreditsMessages();
 	}
@@ -153,8 +158,6 @@ void MemoryCardManager::LockCards( bool bLock )
 		// clear too late flag
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			m_bTooLate[p] = false;
-
-		AssignUnassignedCards();
 	}
 }
 
