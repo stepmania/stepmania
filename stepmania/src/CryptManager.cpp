@@ -7,7 +7,6 @@
 // crypt headers
 #include "CryptHelpers.h"
 #include "crypto51/sha.h"
-#include "crypto51/channels.h"
 #include "crypto51/rsa.h"
 #include "crypto51/osrng.h"
 #include "crypto/CryptMD5.h"
