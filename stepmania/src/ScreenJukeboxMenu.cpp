@@ -117,7 +117,7 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 		return;
 
 	Style style		= m_Selector.GetSelectedStyle();
-	string sGroup	= m_Selector.GetSelectedGroup();
+	CString sGroup	= m_Selector.GetSelectedGroup();
 	Difficulty dc	= m_Selector.GetSelectedDifficulty();
 	bool bModifiers	= m_Selector.GetSelectedModifiers();
 
