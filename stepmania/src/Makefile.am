@@ -15,7 +15,7 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(XCFLAGS)
 
-LDADD = $(SDL_LIBS)
+LIBS += -lpthread
 
 $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && sh ./configure && make
@@ -132,9 +132,7 @@ if HAVE_SDL
 InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
 LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
-
-# This isn't really in ArchUtils, but it's used by lots of other SDL-related drivers.
-ArchUtils += SDL_utils.cpp SDL_utils.h
+StepMania += SDL_utils.cpp SDL_utils.h
 endif
 
 # Platform-specific drivers:
@@ -333,7 +331,6 @@ test_audio_readers_SOURCES = \
 
 test_audio_readers_LDADD = \
 		$(AUDIO_LIBS) \
-		$(SDL_LIBS) \
 		$(srcdir)/libresample/libresample.a
 
 TESTS += test_file_readers
