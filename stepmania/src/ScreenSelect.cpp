@@ -130,10 +130,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
-
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
-
-	SOUNDMAN->PlayMusic( THEME->GetPathToS(m_sName+" music") );
 }
 
 
@@ -144,6 +140,13 @@ ScreenSelect::~ScreenSelect()
 
 void ScreenSelect::Update( float fDelta )
 {
+	if(m_bFirstUpdate)
+	{
+		/* Don't play sounds during the ctor, since derived classes havn't loaded yet. */
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
+		SOUNDMAN->PlayMusic( THEME->GetPathToS(m_sName+" music") );
+	}
+
 	Screen::Update( fDelta );
 	m_BGAnimations[ this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber) ].Update( fDelta );
 }
