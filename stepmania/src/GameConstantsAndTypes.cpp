@@ -36,7 +36,7 @@ XToThemedString( PlayMode );
 StringToX( PlayMode );
 
 
-RankingCategory AverageMeterToRankingCategory( float fAverageMeter )
+RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 {
 	if(      fAverageMeter <= 3 )	return RANKING_A;
 	else if( fAverageMeter <= 6 )	return RANKING_B;

@@ -959,8 +959,8 @@ void ScreenEvaluation::CommitScores(
 					if( stageStats.bFailed[p] ) 
 						continue;
 
-					float fAverageMeter = stageStats.GetAverageMeter(p);
-					rcOut[p] = AverageMeterToRankingCategory( fAverageMeter );
+					int iAverageMeter = stageStats.GetAverageMeter(p);
+					rcOut[p] = AverageMeterToRankingCategory( iAverageMeter );
 
 					PROFILEMAN->AddCategoryScore( st, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 					

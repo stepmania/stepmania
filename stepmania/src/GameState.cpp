@@ -286,7 +286,6 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	ASSERT( ss.vpSongs.size() == ss.vpSteps[pn].size() );
 	for( unsigned i=0; i<ss.vpSongs.size(); i++ )
 	{
-		Song *pSong = ss.vpSongs[i];
 		Steps *pSteps = ss.vpSteps[pn][i];
 
 		pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
@@ -637,7 +636,7 @@ void GameState::FinishStage()
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = g_CurStageStats.fGameplaySeconds;
+	int iGameplaySeconds = (int)truncf(g_CurStageStats.fGameplaySeconds);
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iCurrentCombo = 0;
