@@ -449,6 +449,12 @@ int main(int argc, char* argv[])
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();
 
+	CString  g_sErrorString = "";
+
+#ifndef DEBUG
+	try{
+#endif
+
 	ChangeToDirOfExecutable(argv[0]);
 
 	/* Set this up second.  Do this early, since it's needed for RageException::Throw. 
@@ -463,13 +469,6 @@ int main(int argc, char* argv[])
 	 * We use our own error handlers. */
 	int SDL_flags = SDL_INIT_NOPARACHUTE;
 	SDL_Init(SDL_flags);
-
-	CString  g_sErrorString = "";
-
-#ifndef DEBUG
-	try{
-#endif
-
 
 	LoadingWindow *loading_window = MakeLoadingWindow();
 
