@@ -595,6 +595,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 		}
 	}
 
+	fclose (file);
 
 	return true;
 }
