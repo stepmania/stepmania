@@ -301,8 +301,7 @@ float FindFirstDisplayedBeat( PlayerNumber pn, int iFirstPixelToDraw )
 	while( fFirstBeatToDraw < GAMESTATE->m_fSongBeat )
 	{
 		float fYOffset = ArrowGetYOffset(pn, 0, fFirstBeatToDraw);
-		float fYPosWOReverse = ArrowGetYPosWithoutReverse(pn, 0, fYOffset );
-		if( fYPosWOReverse < iFirstPixelToDraw )	// off screen
+		if( fYOffset < iFirstPixelToDraw )	// off screen
 			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
 		else	// on screen
 			break;	// stop probing
@@ -331,9 +330,8 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 	for( int i=0; i<NUM_ITERATIONS; i++ )
 	{
 		float fYOffset = ArrowGetYOffset( pn, 0, fLastBeatToDraw );
-		float fYPosWOReverse = ArrowGetYPosWithoutReverse( pn, 0, fYOffset );
 
-		if( fYPosWOReverse > iLastPixelToDraw )	// off screen
+		if( fYOffset > iLastPixelToDraw )	// off screen
 			fLastBeatToDraw -= fSearchDistance;
 		else	// on screen
 			fLastBeatToDraw += fSearchDistance;

@@ -19,11 +19,8 @@
 
 //	fYOffset is a vertical position in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
-//	The ArrowEffect is applied in this stage.
+//	The ArrowEffect and ScrollSpeed is applied in this stage.
 float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat );
-
-//	This value is fYOffset with fScrollSpeed factored in.
-float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset );
 
 //	Actual display position, with reverse factored in.
 float ArrowGetYPos(	PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels );

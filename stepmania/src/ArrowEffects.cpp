@@ -47,7 +47,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
-		return fYOffset;
+		return fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 
 	const float* fAccels = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAccels;
 	//const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
@@ -81,18 +81,15 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
-	return fYOffset + fYAdjust;
-}
+	fYOffset += fYAdjust;
+	fYOffset *= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 
-float ArrowGetYPosWithoutReverse( PlayerNumber pn, int iCol, float fYOffset )
-{
-	float fYPos = fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	return fYPos;
+	return fYOffset;
 }
 
 float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
 {
-	float f = ArrowGetYPosWithoutReverse(pn,iCol,fYOffset);
+	float f = fYOffset;
 	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
 
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
