@@ -19,14 +19,12 @@
 #include "UnlockSystem.h"
 #include "SongManager.h"
 #include "GameState.h"
-#include "IniFile.h"
 #include "MsdFile.h"
 #include "ProfileManager.h"
 
 UnlockSystem*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
 #define UNLOCKS_PATH "Data/Unlocks.dat"
-#define MEMCARD_PATH "Data/MemCard.ini"
 
 static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
 {
