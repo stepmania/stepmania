@@ -125,25 +125,30 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 		{
 			m_Rows.push_back( new Row() );
-			m_Rows[r]->m_RowDef = OptionRows[r];
+			Row &Row = *m_Rows[r];
+			Row.m_RowDef = OptionRows[r];
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				m_Rows[r]->m_iSelection[p] = 0;
-
-			if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
-				for( int p=1; p<NUM_PLAYERS; p++ )
-					m_Rows[r]->m_iSelection[p] = m_Rows[r]->m_iSelection[0];
+			{
+				vector<bool> &vbSelected = Row.m_vbSelected[p];
+				vbSelected.resize( Row.m_RowDef.choices.size() );
+				for( int j=0; j<vbSelected.size(); j++ )
+					vbSelected[j] = false;
+			}
 		}
 	}
 
 	this->ImportOptions();
 
+	// Make all selections the same if bOneChoiceForAllPlayers
 	{
 		for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 		{
+			Row &Row = *m_Rows[r];
+
 			if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
 				for( int p=1; p<NUM_PLAYERS; p++ )
-					m_Rows[r]->m_iSelection[p] = m_Rows[r]->m_iSelection[0];
+					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
 		}
 	}
 
@@ -261,7 +266,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					BitmapText *bt = new BitmapText;
 					textItems.push_back( bt );
 
-					const int iChoiceInRow = m_Rows[r]->m_iSelection[p];
+					const int iChoiceInRow = row.GetOneSelection( (PlayerNumber)p );
 
 					bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 					bt->SetText( optline.choices[iChoiceInRow] );
@@ -562,20 +567,25 @@ void ScreenOptions::PositionUnderlines()
 
 			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
 
-			if( row.m_bRowIsLong )
+			const int iNumUnderlines = row.m_bRowIsLong ? 1 : vpUnderlines.size();
+			
+			for( int i=0; i<iNumUnderlines; i++ )
 			{
-				OptionsCursor& ul = *vpUnderlines[0];
+				OptionsCursor& ul = *vpUnderlines[i];
+	
+				int iChoiceInRow = row.m_bRowIsLong ? row.GetOneSelection( (PlayerNumber)p ) : i;
 
 				/* Don't tween X movement and color changes. */
 				int iWidth, iX, iY;
-				GetWidthXY( (PlayerNumber)p, r, row.m_iSelection[p], iWidth, iX, iY );
+				GetWidthXY( (PlayerNumber)p, r, iChoiceInRow, iWidth, iX, iY );
 				ul.SetGlobalX( (float)iX );
 				ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
 
 				// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
 				// It looks silly.
 				bool bOnlyOneChoice = row.m_RowDef.choices.size() == 1;
-				bool hidden = bOnlyOneChoice || row.m_bHidden;
+				bool bSelected = iChoiceInRow == row.GetOneSelection( (PlayerNumber)p );
+				bool bHidden = bOnlyOneChoice || !bSelected || row.m_bHidden;
 
 				if( ul.GetDestY() != row.m_fY )
 				{
@@ -584,38 +594,9 @@ void ScreenOptions::PositionUnderlines()
 				}
 
 				/* XXX: diffuse doesn't work since underline is an ActorFrame */
-				ul.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
+				ul.SetDiffuse( RageColor(1,1,1,bHidden? 0.0f:1.0f) );
 				ul.SetBarWidth( iWidth );
 				ul.SetY( (float)iY );
-			}
-			else	// !row.m_bRowIsLong
-			{
-				for( unsigned i=0; i<vpUnderlines.size(); i++ )
-				{
-					OptionsCursor& ul = *vpUnderlines[i];
-
-					/* Don't tween X movement and color changes. */
-					int iWidth, iX, iY;
-					GetWidthXY( (PlayerNumber)p, r, row.m_iSelection[p], iWidth, iX, iY );
-					ul.SetGlobalX( (float)iX );
-					ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
-
-					// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
-					// It looks silly.
-					bool bOnlyOneChoice = row.m_RowDef.choices.size() == 1;
-					bool hidden = bOnlyOneChoice || row.m_bHidden;
-
-					if( ul.GetDestY() != row.m_fY )
-					{
-						ul.StopTweening();
-						ul.BeginTweening( 0.3f );
-					}
-
-					/* XXX: diffuse doesn't work since underline is an ActorFrame */
-					ul.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
-					ul.SetBarWidth( iWidth );
-					ul.SetY( (float)iY );
-				}
 			}
 		}
 	}
@@ -636,8 +617,10 @@ void ScreenOptions::PositionIcons()
 
 			OptionIcon &icon = row.m_OptionIcons[p];
 
+			int iChoiceInRow = row.GetOneSelection( (PlayerNumber)p );
+
 			int iWidth, iX, iY;			// We only use iY
-			GetWidthXY( (PlayerNumber)p, i, row.m_iSelection[p], iWidth, iX, iY );
+			GetWidthXY( (PlayerNumber)p, i, iChoiceInRow, iWidth, iX, iY );
 			icon.SetX( ICONS_X(p) );
 
 			if( icon.GetDestY() != row.m_fY )
@@ -673,8 +656,10 @@ void ScreenOptions::PositionCursors()
 
 		OptionsCursor &highlight = m_Highlight[p];
 
+		int iChoiceInRow = Row.GetOneSelection( (PlayerNumber)p );
+
 		int iWidth, iX, iY;
-		GetWidthXY( (PlayerNumber)p, row, Row.m_iSelection[p], iWidth, iX, iY );
+		GetWidthXY( (PlayerNumber)p, row, iChoiceInRow, iWidth, iX, iY );
 		highlight.SetBarWidth( iWidth );
 		highlight.SetXY( (float)iX, (float)iY );
 	}
@@ -690,8 +675,10 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	int row = m_iCurrentRow[pn];		
 	Row &Row = *m_Rows[row];
 
+	int iChoiceInRow = Row.GetOneSelection( pn );
+
 	int iWidth, iX, iY;
-	GetWidthXY( pn, iCurRow, Row.m_iSelection[pn], iWidth, iX, iY );
+	GetWidthXY( pn, iCurRow, iChoiceInRow, iWidth, iX, iY );
 
 	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
@@ -707,18 +694,18 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 }
 
-void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
+void ScreenOptions::UpdateText( PlayerNumber pn, int iRow )
 {
 	Row &row = *m_Rows[iRow];
 
 	if( !row.m_bRowIsLong )
 		return;
 
-	int iChoiceInRow = m_Rows[iRow]->m_iSelection[player_no];
+	int iChoiceInRow = row.GetOneSelection( pn );
 
 	const OptionRowData &optrow = m_Rows[iRow]->m_RowDef;
 
-	unsigned item_no = optrow.bOneChoiceForAllPlayers?0:player_no;
+	unsigned item_no = optrow.bOneChoiceForAllPlayers ? 0 : pn;
 
 	/* If player_no is 2 and there is no player 1: */
 	item_no = min( item_no, m_Rows[iRow]->m_textItems.size()-1 );
@@ -1143,23 +1130,26 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 		if( p != pn )
 			continue;	// skip
 
-		int iNewSel = m_Rows[iCurRow]->m_iSelection[p] + iDelta;
+		Row &row = *m_Rows[iCurRow];
+
+		int iCurrentSel = row.GetOneSelection( (PlayerNumber)p );
+		int iNewSel = row.GetOneSelection( (PlayerNumber)p ) + iDelta;
 		wrap( iNewSel, iNumOptions );
 		
-		if( iNewSel != m_Rows[iCurRow]->m_iSelection[p] )
+		if( iCurrentSel != iNewSel )
 			bOneChanged = true;
 
 		if( optrow.bOneChoiceForAllPlayers )
 		{
 			for( int p2=0; p2<NUM_PLAYERS; p2++ )
 			{
-				m_Rows[iCurRow]->m_iSelection[p2] = iNewSel;
+				row.SetOneSelection( (PlayerNumber)p2, iNewSel );
 				UpdateText( (PlayerNumber)p2, iCurRow );
 			}
 		}
 		else
 		{
-			m_Rows[iCurRow]->m_iSelection[p] = iNewSel;
+			row.SetOneSelection( (PlayerNumber)p, iNewSel );
 			UpdateText( (PlayerNumber)p, iCurRow );
 		}
 		OnChange( (PlayerNumber)p );

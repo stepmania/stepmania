@@ -362,24 +362,27 @@ void ScreenOptionsMaster::ImportOptions()
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowData &row = m_OptionRowAlloc[i];
+		const OptionRowData &data = m_OptionRowAlloc[i];
+		Row &row = *m_Rows[i];
 
-		if( row.bOneChoiceForAllPlayers )
+		if( data.bOneChoiceForAllPlayers )
 		{
-			int col = ImportOption( row, hand, 0, i );
-			m_Rows[i]->m_iSelection[0] = col;
-			ASSERT( m_Rows[i]->m_iSelection[0] < (int)row.choices.size() );
+			int choice = ImportOption( data, hand, 0, i );
+			row.SetOneSharedSelection( choice );
+			ASSERT( row.GetOneSharedSelection() < (int)data.choices.size() );
 		}
 		else
-			for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( !GAMESTATE->IsHumanPlayer(pn) )
+				if( !GAMESTATE->IsHumanPlayer(p) )
 					continue;
 
-				int col = ImportOption( row, hand, pn, i );
-				m_Rows[i]->m_iSelection[pn] = col;
-				ASSERT( m_Rows[i]->m_iSelection[pn] < (int)row.choices.size() );
+				int choice = ImportOption( data, hand, p, i );
+				row.SetOneSelection( (PlayerNumber)p, choice );
+				ASSERT( row.GetOneSelection((PlayerNumber)p) < (int)data.choices.size() );
 			}
+		}
 	}
 }
 
@@ -485,14 +488,15 @@ void ScreenOptionsMaster::ExportOptions()
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowData &row = m_OptionRowAlloc[i];
+		const OptionRowData &data = m_OptionRowAlloc[i];
+		Row &row = *m_Rows[i];
 
-		for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMESTATE->IsHumanPlayer(pn) )
+			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;
 
-			ChangeMask |= ExportOption( row, hand, pn, m_Rows[i]->m_iSelection[pn] );
+			ChangeMask |= ExportOption( data, hand, p, row.GetOneSelection((PlayerNumber)p) );
 		}
 	}
 
@@ -507,7 +511,7 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowHandler &hand = OptionRowHandlers[row];
 		if( hand.type == ROW_LIST )
 		{
-			const int sel = m_Rows[row]->m_iSelection[0];
+			const int sel = m_Rows[row]->GetOneSharedSelection();
 			const ModeChoice &mc = hand.ListEntries[sel];
 			if( mc.m_sScreen != "" )
 				m_NextScreen = mc.m_sScreen;
@@ -583,7 +587,7 @@ void ScreenOptionsMaster::RefreshIcons()
 
 			const OptionRowData &row = m_Rows[i]->m_RowDef;
 
-			int iSelection = m_Rows[i]->m_iSelection[p];
+			int iSelection = m_Rows[i]->GetOneSelection((PlayerNumber)p);
 			if( iSelection >= (int)row.choices.size() )
 			{
 				/* Invalid selection.  Send debug output, to aid debugging. */

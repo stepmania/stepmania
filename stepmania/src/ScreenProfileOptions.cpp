@@ -97,14 +97,14 @@ void ScreenProfileOptions::ImportOptions()
 		vsProfiles.end(),
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] );
 	if( iter != vsProfiles.end() )
-		m_Rows[PO_PLAYER1]->m_iSelection[0] = iter - vsProfiles.begin() + 1;
+		m_Rows[PO_PLAYER1]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
 
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] );
 	if( iter != vsProfiles.end() )
-		m_Rows[PO_PLAYER2]->m_iSelection[0] = iter - vsProfiles.begin() + 1;
+		m_Rows[PO_PLAYER2]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
 }
 
 void ScreenProfileOptions::ExportOptions()
@@ -112,13 +112,13 @@ void ScreenProfileOptions::ExportOptions()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_Rows[PO_PLAYER1]->m_iSelection[0] > 0 )
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = vsProfiles[m_Rows[PO_PLAYER1]->m_iSelection[0]-1];
+	if( m_Rows[PO_PLAYER1]->GetOneSharedSelection() > 0 )
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = vsProfiles[m_Rows[PO_PLAYER1]->GetOneSharedSelection()-1];
 	else
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = "";
 
-	if( m_Rows[PO_PLAYER2]->m_iSelection[0] > 0 )
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = vsProfiles[m_Rows[PO_PLAYER2]->m_iSelection[0]-1];
+	if( m_Rows[PO_PLAYER2]->GetOneSharedSelection() > 0 )
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = vsProfiles[m_Rows[PO_PLAYER2]->GetOneSharedSelection()-1];
 	else
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = "";
 }
@@ -212,17 +212,17 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_Rows[GetCurrentRow()]->m_iSelection[0] )
+	if( m_Rows[GetCurrentRow()]->GetOneSharedSelection() )
 		return "";
 	else
-		return vsProfiles[ m_Rows[GetCurrentRow()]->m_iSelection[0]-1];
+		return vsProfiles[ m_Rows[GetCurrentRow()]->GetOneSharedSelection()-1];
 }
 
 CString ScreenProfileOptions::GetSelectedProfileName()
 {
-	if( m_Rows[GetCurrentRow()]->m_iSelection[0] )
+	if( m_Rows[GetCurrentRow()]->GetOneSharedSelection() )
 		return "";
 	else
-		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_Rows[GetCurrentRow()]->m_iSelection[0] ];
+		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_Rows[GetCurrentRow()]->GetOneSharedSelection() ];
 }
 

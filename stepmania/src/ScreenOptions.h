@@ -112,8 +112,8 @@ protected:
 		~Row();
 		OptionRowData				m_RowDef;
 		enum { ROW_NORMAL, ROW_EXIT } Type;
-		vector<BitmapText *>	m_textItems;
-		vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];
+		vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
+		vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 		Sprite					m_sprBullet;
 		BitmapText				m_textTitle;
 		OptionIcon				m_OptionIcons[NUM_PLAYERS];
@@ -121,7 +121,30 @@ protected:
 		float m_fY;
 		bool m_bRowIsLong;	// goes off edge of screen
 		bool m_bHidden; // currently off screen
-		int m_iSelection[NUM_PLAYERS];
+
+		// Only one will true at a time if m_RowDef.bMultiSelect
+		vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().
+		int GetOneSelection( PlayerNumber pn )
+		{
+			for( int i=0; i<m_vbSelected[pn].size(); i++ )
+				if( m_vbSelected[pn][i] )
+					return i;
+			return -1;
+		}
+		int GetOneSharedSelection()
+		{
+			return GetOneSelection( (PlayerNumber)0 );
+		}
+		void SetOneSelection( PlayerNumber pn, int iChoice )
+		{
+			for( int i=0; i<m_vbSelected[pn].size(); i++ )
+				m_vbSelected[pn][i] = false;
+			m_vbSelected[pn][iChoice] = true;
+		}
+		void SetOneSharedSelection( int iChoice )
+		{
+			SetOneSelection( (PlayerNumber)0, iChoice );
+		}
 	};
 	vector<Row*>		m_Rows;
 
