@@ -27,7 +27,7 @@ Course::Course()
 {
 	m_bRepeat = false;
 	m_bRandomize = false;
-	m_iLives = 4;
+	m_iLives = -1;
 	m_iExtra = 0;
 
 
