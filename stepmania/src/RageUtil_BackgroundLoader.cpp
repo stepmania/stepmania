@@ -17,8 +17,8 @@ static const bool g_bWriteToCache = true;
 static const bool g_bEnableBackgroundLoading = false;
 
 BackgroundLoader::BackgroundLoader():
-	m_Mutex( "BackgroundLoaderMutex" ),
-	m_StartSem( "BackgroundLoaderSem" )
+	m_StartSem( "BackgroundLoaderSem" ),
+	m_Mutex( "BackgroundLoaderMutex" )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
