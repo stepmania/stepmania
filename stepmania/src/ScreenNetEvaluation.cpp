@@ -56,7 +56,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 {
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
 	//If unessiary, just don't do this function.
-	if ( m_iActivePlayers == m_textUsers.size() )
+	if ( m_iActivePlayers == (int)m_textUsers.size() )
 		return;
 
 	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));

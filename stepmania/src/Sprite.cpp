@@ -358,7 +358,8 @@ void Sprite::Update( float fDelta )
 		 * As long as we adjust all four coordinates by the same amount,this won't be visible. */
 		if( m_bTextureWrapping )
 		{
-			const float fXAdjust = floor( fTexCoords[0] ), fYAdjust = floor( fTexCoords[1] );
+			const float fXAdjust = floorf( fTexCoords[0] );
+			const float fYAdjust = floorf( fTexCoords[1] );
 			fTexCoords[0] -= fXAdjust;
 			fTexCoords[2] -= fXAdjust;
 			fTexCoords[4] -= fXAdjust;
