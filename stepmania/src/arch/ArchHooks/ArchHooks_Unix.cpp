@@ -20,7 +20,7 @@ ArchHooks_Unix::ArchHooks_Unix()
 {
 #if defined(CRASH_HANDLER)
 	CrashHandlerHandleArgs();
-
+	InitializeCrashHandler();
 	SignalHandler::OnClose( CrashSignalHandler );
 #endif
 
