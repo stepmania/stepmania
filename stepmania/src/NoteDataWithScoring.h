@@ -38,7 +38,7 @@ struct NoteDataWithScoring : public NoteData
 	inline bool IsRowComplete( int index )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
-			if( m_TapNotes[t][index] != '0'  &&  m_TapNoteScores[t][index] < TNS_GREAT )
+			if( GetTapNote(t, index) != TAP_EMPTY && m_TapNoteScores[t][index] < TNS_GREAT )
 				return false;
 		return true;
 	}

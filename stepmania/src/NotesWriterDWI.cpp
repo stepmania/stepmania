@@ -123,33 +123,33 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 			case NOTES_TYPE_DANCE_COUPLE:
 			case NOTES_TYPE_DANCE_DOUBLE:
 				fprintf( fp, NotesToDWIString( 
-					notedata.m_TapNotes[start+0][row], 
-					notedata.m_TapNotes[start+1][row],
-					notedata.m_TapNotes[start+2][row],
-					notedata.m_TapNotes[start+3][row] ) );
+					notedata.GetTapNote(start+0, row), 
+					notedata.GetTapNote(start+1, row),
+					notedata.GetTapNote(start+2, row),
+					notedata.GetTapNote(start+3, row) ) );
 
 				// Blank out the notes so we don't write them again if the incrementer is small
-				notedata.m_TapNotes[start+0][row] = '0';
-				notedata.m_TapNotes[start+1][row] = '0';
-				notedata.m_TapNotes[start+2][row] = '0';
-				notedata.m_TapNotes[start+3][row] = '0';
+				notedata.SetTapNote(start+0, row, TAP_EMPTY);
+				notedata.SetTapNote(start+1, row, TAP_EMPTY);
+				notedata.SetTapNote(start+2, row, TAP_EMPTY);
+				notedata.SetTapNote(start+3, row, TAP_EMPTY);
 				break;
 			case NOTES_TYPE_DANCE_SOLO:
 				fprintf( fp, NotesToDWIString( 
-					notedata.m_TapNotes[0][row], 
-					notedata.m_TapNotes[1][row],
-					notedata.m_TapNotes[2][row],
-					notedata.m_TapNotes[3][row],
-					notedata.m_TapNotes[4][row],
-					notedata.m_TapNotes[5][row] ) );
+					notedata.GetTapNote(0, row),
+					notedata.GetTapNote(1, row),
+					notedata.GetTapNote(2, row),
+					notedata.GetTapNote(3, row),
+					notedata.GetTapNote(4, row),
+					notedata.GetTapNote(5, row) ) );
 
 				// Blank out the notes so we don't write them again if the incrementer is small
-				notedata.m_TapNotes[start+0][row] = '0';
-				notedata.m_TapNotes[start+1][row] = '0';
-				notedata.m_TapNotes[start+2][row] = '0';
-				notedata.m_TapNotes[start+3][row] = '0';
-				notedata.m_TapNotes[start+4][row] = '0';
-				notedata.m_TapNotes[start+5][row] = '0';
+				notedata.SetTapNote(start+0, row, TAP_EMPTY);
+				notedata.SetTapNote(start+1, row, TAP_EMPTY);
+				notedata.SetTapNote(start+2, row, TAP_EMPTY);
+				notedata.SetTapNote(start+3, row, TAP_EMPTY);
+				notedata.SetTapNote(start+4, row, TAP_EMPTY);
+				notedata.SetTapNote(start+5, row, TAP_EMPTY);
 				break;
 			default:
 				ASSERT(0);	// not a type supported by DWI.  We shouldn't have called in here if that's the case

@@ -177,7 +177,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
 
 					if( iColumnNumber != -1 )
-						pNoteData->m_TapNotes[iColumnNumber][iNoteIndex] = cNoteChar;
+						pNoteData->SetTapNote(iColumnNumber, iNoteIndex, cNoteChar);
 				}
 			}
 		}
