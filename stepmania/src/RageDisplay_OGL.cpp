@@ -1820,16 +1820,6 @@ void RageDisplay_OGL::SetAlphaTest( bool b )
 		glDisable( GL_ALPHA_TEST );
 }
 
-RageMatrix RageDisplay_OGL::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
-{
-	RageMatrix m(
-		2/(r-l),      0,            0,           0,
-		0,            2/(t-b),      0,           0,
-		0,            0,            -2/(zf-zn),   0,
-		-(r+l)/(r-l), -(t+b)/(t-b), -(zf+zn)/(zf-zn),  1 );
-	return m;
-}
-
 
 /*
  * Although we pair texture formats (eg. GL_RGB8) and surface formats

@@ -604,6 +604,19 @@ RageDisplay::PixelFormat RageDisplay::FindPixelFormat(
 	return NUM_PIX_FORMATS;
 }
 	
+/* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left, +1,+1 is the
+ * top-right, and Z goes from -1 (viewer) to +1 (distance).  It's a little odd, but
+ * very well-defined. */
+RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+{
+	RageMatrix m(
+		2/(r-l),      0,            0,           0,
+		0,            2/(t-b),      0,           0,
+		0,            0,            -2/(zf-zn),   0,
+		-(r+l)/(r-l), -(t+b)/(t-b), -(zf+zn)/(zf-zn),  1 );
+	return m;
+}
+
 RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf )
 {
 	// glFrustrum
