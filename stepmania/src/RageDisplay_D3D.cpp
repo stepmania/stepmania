@@ -902,7 +902,7 @@ void RageDisplay_D3D::DeleteTexture( unsigned uTexHandle )
 
 unsigned RageDisplay_D3D::CreateTexture( 
 	PixelFormat pixfmt,
-	SDL_Surface*& img )
+	SDL_Surface* img )
 {
 	// texture must be power of two
 	ASSERT( img->w == power_of_two(img->w) );

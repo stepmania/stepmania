@@ -318,6 +318,7 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	LOG->Info("OGL Renderer: %s", glGetString(GL_RENDERER));
 	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
 	LOG->Info("OGL Extensions: %s", glGetString(GL_EXTENSIONS));
+	LOG->Info("OGL Max texture size: %i", GetMaxTextureSize() );
 
 	if( IsSoftwareRenderer() )
 	{
@@ -1074,7 +1075,7 @@ PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg
 
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
-	SDL_Surface*& img )
+	SDL_Surface* img )
 {
 	unsigned int uTexHandle;
 	glGenTextures(1, reinterpret_cast<GLuint*>(&uTexHandle));
