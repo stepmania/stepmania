@@ -413,20 +413,20 @@ struct VideoCardDefaults
 } const g_VideoCardDefaults[] = 
 {
 	{
-		"Voodoo *3",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		256,
-		false	// broken, causes black screen
-	},
-	{
 		"Voodoo *5",
 		"d3d,opengl",	// recevied 3 reports of open opengl crashing. -Chris
 		640,480,
 		32,32,32,
 		2048,
 		true	// accelerated
+	},
+	{
+		"Voodoo", /* all other Voodoos: some drivers don't identify which one */
+		"d3d,opengl",
+		640,480,
+		16,16,16,
+		256,
+		false	// broken, causes black screen
 	},
 	{
 		"Radeon 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx
