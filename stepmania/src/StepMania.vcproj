@@ -388,6 +388,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSelectDifficulty.h">
 			</File>
 			<File
+				RelativePath="ScreenSelectDifficultyEX.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectDifficultyEX.h">
+			</File>
+			<File
 				RelativePath="ScreenSelectGame.cpp">
 			</File>
 			<File
@@ -793,6 +799,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_Null.cpp">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.h">
