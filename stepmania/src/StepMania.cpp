@@ -551,6 +551,9 @@ int main(int argc, char* argv[])
 #endif
 
 	SAFE_DELETE( SCREENMAN );
+	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
+	 * driver may try to send a message to INPUTFILTER after we delete it. */
+	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
@@ -563,7 +566,6 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
-	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
