@@ -14,7 +14,6 @@
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenDemonstration","NextScreen")
 
-
 REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName )
 {

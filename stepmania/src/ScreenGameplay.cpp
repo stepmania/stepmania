@@ -65,24 +65,23 @@ static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBet
 /* Global, so it's accessible from ShowSavePrompt: */
 static float g_fOldOffset;  // used on offset screen to calculate difference
 
-const AutoScreenMessage	SM_PlayReady;
-const AutoScreenMessage	SM_PlayGo;
+AutoScreenMessage( SM_PlayReady )
+AutoScreenMessage( SM_PlayGo )
 
 // received while STATE_DANCING
-const AutoScreenMessage	SM_NotesEnded;
-const AutoScreenMessage	SM_LoadNextSong;
-const AutoScreenMessage	SM_StartLoadingNextSong;
+AutoScreenMessage( SM_LoadNextSong )
+AutoScreenMessage( SM_StartLoadingNextSong )
 
 
 // received while STATE_OUTRO
-const AutoScreenMessage	SM_SaveChangedBeforeGoingBack;
-const AutoScreenMessage	SM_GoToScreenAfterBack;
+AutoScreenMessage( SM_SaveChangedBeforeGoingBack )
+AutoScreenMessage( SM_GoToScreenAfterBack )
 
-const AutoScreenMessage	SM_BeginFailed;
+AutoScreenMessage( SM_BeginFailed )
 
 // received while STATE_INTRO
-const AutoScreenMessage	SM_StartHereWeGo;
-const AutoScreenMessage	SM_StopHereWeGo;
+AutoScreenMessage( SM_StartHereWeGo )
+AutoScreenMessage( SM_StopHereWeGo )
 
 static Preference<float> g_fNetStartOffset( Options, "NetworkStartOffset",	-3.0 );
 

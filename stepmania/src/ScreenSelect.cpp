@@ -18,8 +18,6 @@
 #include "LightsManager.h"
 #include "Command.h"
 
-const AutoScreenMessage SM_AllDoneChoosing;
-
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( sChoiceName )	THEME->GetMetricM(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
 #define CODE_NAMES				THEME->GetMetric (m_sName,"CodeNames")

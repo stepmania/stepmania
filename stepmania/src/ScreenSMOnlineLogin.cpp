@@ -18,8 +18,10 @@ REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 #define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
 #define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
-const AutoScreenMessage SM_SMOnlinePack;
-const AutoScreenMessage SM_PasswordDone;
+
+AutoScreenMessage( SM_SMOnlinePack )
+AutoScreenMessage( SM_PasswordDone )
+
 OptionRowDefinition g_ProfileLine[1] = {
 	OptionRowDefinition("Profile",false)
 };

@@ -25,9 +25,9 @@
 #define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
 #define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
 
-const AutoScreenMessage	SM_AddToChat;
-const AutoScreenMessage SM_UsersUpdate;
-const AutoScreenMessage SM_SMOnlinePack;	//Unused, but should be known
+AutoScreenMessage( SM_AddToChat )
+AutoScreenMessage( SM_UsersUpdate )
+AutoScreenMessage( SM_SMOnlinePack )
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMenuElements( sName )

@@ -32,9 +32,9 @@ OptionRowDefinition g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRowDefinition( "OsMountPlayer2",	true, "" ),
 };
 
-const AutoScreenMessage	SM_DoneCreating;
-const AutoScreenMessage	SM_DoneRenaming;
-const AutoScreenMessage	SM_DoneDeleting;
+AutoScreenMessage( SM_DoneCreating )
+AutoScreenMessage( SM_DoneRenaming )
+AutoScreenMessage( SM_DoneDeleting )
 
 REGISTER_SCREEN_CLASS( ScreenProfileOptions );
 ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions( sClassName )

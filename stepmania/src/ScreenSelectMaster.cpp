@@ -14,8 +14,7 @@
 #include "Foreach.h"
 #include "RageSoundManager.h"
 
-
-const AutoScreenMessage SM_PlayPostSwitchPage;
+AutoScreenMessage( SM_PlayPostSwitchPage )
 
 CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetXFromIcon",int(part+1),int(p+1)); }
 CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetYFromIcon",int(part+1),int(p+1)); }

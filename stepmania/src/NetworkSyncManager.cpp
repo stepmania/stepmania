@@ -42,11 +42,11 @@ void NetworkSyncManager::SelectUserSong() { }
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "PlayerState.h"
 
-const AutoScreenMessage	SM_AddToChat;
-const AutoScreenMessage SM_ChangeSong;
-const AutoScreenMessage SM_GotEval;
-const AutoScreenMessage SM_UsersUpdate;
-const AutoScreenMessage SM_SMOnlinePack;
+AutoScreenMessage( SM_AddToChat )
+AutoScreenMessage( SM_ChangeSong );
+AutoScreenMessage( SM_GotEval );
+AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_SMOnlinePack );
 
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )

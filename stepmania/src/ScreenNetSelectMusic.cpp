@@ -22,11 +22,12 @@
 #include "RageLog.h"
 #include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
 
-const AutoScreenMessage SM_NoSongs;
-const AutoScreenMessage SM_ChangeSong;
-const AutoScreenMessage SM_SMOnlinePack;	//Unused, but should be known
-const AutoScreenMessage	SM_SetWheelSong;
-const AutoScreenMessage SM_RefreshWheelLocation;
+AutoScreenMessage( SM_NoSongs )
+AutoScreenMessage( SM_ChangeSong )
+AutoScreenMessage( SM_SMOnlinePack )
+AutoScreenMessage( SM_SetWheelSong )
+AutoScreenMessage( SM_RefreshWheelLocation )
+AutoScreenMessage( SM_SongChanged )
 
 const CString AllGroups			= "[ALL MUSIC]";
 

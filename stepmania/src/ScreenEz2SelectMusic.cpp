@@ -64,7 +64,7 @@
 
 const float TWEEN_TIME		= 0.5f;
 
-const AutoScreenMessage SM_NoSongs;
+AutoScreenMessage( SM_NoSongs )
 
 REGISTER_SCREEN_CLASS( ScreenEz2SelectMusic );
 ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElements( sName )

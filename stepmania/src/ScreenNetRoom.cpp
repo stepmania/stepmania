@@ -21,9 +21,9 @@
 #define ROOMLOWERBOUND				THEME->GetMetricF(m_sName,"RoomsLowerBound")
 #define ROOMUPPERBOUND				THEME->GetMetricF(m_sName,"RoomsUpperBound")
 
-const AutoScreenMessage SM_SMOnlinePack;	// Unused, but should be known
-const AutoScreenMessage	SM_BackFromRoomName;
-const AutoScreenMessage	SM_BackFromRoomDesc;
+AutoScreenMessage( SM_SMOnlinePack )
+AutoScreenMessage( SM_BackFromRoomName )
+AutoScreenMessage( SM_BackFromRoomDesc )
 
 REGISTER_SCREEN_CLASS( ScreenNetRoom );
 ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )

@@ -18,10 +18,6 @@
 class Course;
 class Song;
 
-extern const AutoScreenMessage SM_SongChanged;		// TODO: Replace this with a Message and MESSAGEMAN
-extern const AutoScreenMessage SM_SortOrderChanging;
-extern const AutoScreenMessage SM_SortOrderChanged;
-
 struct CompareSongPointerArrayBySectionName;
 
 class MusicWheel : public ActorFrame

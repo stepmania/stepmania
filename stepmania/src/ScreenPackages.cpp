@@ -18,7 +18,7 @@
 #define	NUM_PACKAGES_SHOW			THEME->GetMetricI(m_sName,"NumPackagesShow")
 #define NUM_LINKS_SHOW				THEME->GetMetricI(m_sName,"NumLinksShow")
 
-const AutoScreenMessage	SM_BackFromURL;
+AutoScreenMessage( SM_BackFromURL )
 
 REGISTER_SCREEN_CLASS( ScreenPackages );
 ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( sClassName )

@@ -29,12 +29,10 @@
 
 
 // received while STATE_DANCING
-const AutoScreenMessage	SM_NotesEnded;
-
-const AutoScreenMessage	SM_Ready;
-
-const AutoScreenMessage	SM_GoToStateAfterCleared;
-const AutoScreenMessage	SM_GoToScreenAfterBack;
+AutoScreenMessage( SM_NotesEnded )
+AutoScreenMessage( SM_Ready )
+AutoScreenMessage( SM_GoToStateAfterCleared )
+AutoScreenMessage( SM_GoToScreenAfterBack )
 
 
 REGISTER_SCREEN_CLASS( ScreenGameplayMultiplayer );

@@ -3,6 +3,8 @@
 #ifndef SCREENMESSAGE_H
 #define SCREENMESSAGE_H
 
+#include <map>
+
 enum ScreenMessage {
 	SM_None = 0,
 	SM_DoneClosingWipingLeft,
@@ -42,22 +44,32 @@ enum ScreenMessage {
 	SM_BattleDamageLevel1,
 	SM_BattleDamageLevel2,
 	SM_BattleDamageLevel3,
+
+	SM_User
 };
 
-// Automatically generate a unique ScreenMessage value
-class AutoScreenMessage
+//AutoScreenMessageHandler Class
+class ASMHClass
 {
 public:
-	AutoScreenMessage();
-	operator ScreenMessage() const { return m_sm; }
-protected:
-	ScreenMessage m_sm;
+	ScreenMessage ToMessageNumber( const CString & Name );
+	void LogMessageNumbers();
+private:
+	map < CString, ScreenMessage > *m_pScreenMessages;
+	ScreenMessage m_iCurScreenMessage;
 };
+
+extern ASMHClass AutoScreenMessageHandler;
+
+// Automatically generate a unique ScreenMessage value
+#define AutoScreenMessage( x ) \
+	const ScreenMessage x = AutoScreenMessageHandler.ToMessageNumber( #x );
+
 
 #endif
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2003-2005 Chris Danford, Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

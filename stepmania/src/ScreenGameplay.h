@@ -27,7 +27,7 @@ class Inventory;
 #include "AutoKeysounds.h"
 #include "ThemeMetric.h"
 
-extern const AutoScreenMessage	SM_NotesEnded;
+AutoScreenMessage( SM_NotesEnded )
 
 class LyricsLoader;
 class ScreenGameplay : public Screen

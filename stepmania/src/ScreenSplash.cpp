@@ -3,7 +3,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
-const AutoScreenMessage	SM_PrepScreen;
+AutoScreenMessage( SM_PrepScreen )
 
 
 REGISTER_SCREEN_CLASS( ScreenSplash );

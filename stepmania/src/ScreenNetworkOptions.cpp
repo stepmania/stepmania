@@ -28,8 +28,8 @@ OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 	OptionRowDefinition( "Server",		true, "PRESS START" )
 };
 
-const AutoScreenMessage	SM_DoneConnecting;
-const AutoScreenMessage	SM_ServerNameEnter;
+AutoScreenMessage( SM_DoneConnecting )
+AutoScreenMessage( SM_ServerNameEnter )
 
 static Preference<CString> g_sLastServer( Options, "LastConnectedServer",	"" );
 

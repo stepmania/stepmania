@@ -1,15 +1,41 @@
 #include "global.h"
 #include "ScreenMessage.h"
+#include "RageLog.h"
 
-AutoScreenMessage::AutoScreenMessage()
+ASMHClass AutoScreenMessageHandler;
+
+ScreenMessage ASMHClass::ToMessageNumber( const CString &Name )
 {
-	static int s_NextID = 100;	// a value larger than all the values in the ScreenMessageEnum
-	m_sm = (ScreenMessage)s_NextID;
-	s_NextID++;
+	//If uninitilized, initilize the map.  We KNOW it will be NULL
+	if ( m_pScreenMessages == NULL )
+	{
+		m_pScreenMessages = new map < CString, ScreenMessage >;
+		m_iCurScreenMessage = SM_User;
+	}
+
+	//If the ScreenMessage doesn't exist yet, create it
+	if ( m_pScreenMessages->find( Name ) == m_pScreenMessages->end() )
+	{
+		m_iCurScreenMessage = ScreenMessage((int)m_iCurScreenMessage + 1);
+		(*m_pScreenMessages)[ Name ] = m_iCurScreenMessage;
+	}
+
+	return (*m_pScreenMessages)[Name];
+}
+
+void ASMHClass::LogMessageNumbers( )
+{
+	map < CString, ScreenMessage >::iterator iter;
+
+	//Log all ScreenMessages currently in the map
+
+	LOG->Trace( "Current ScreenMessage: %d  -- SM_User: %d", m_iCurScreenMessage, SM_User );
+    for ( iter = m_pScreenMessages->begin(); iter != m_pScreenMessages->end(); iter++ )
+		LOG->Trace( "ScreenMessage: %3d: %s", iter->second, (*iter).first.c_str() );
 }
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2005 Chris Danford, Glenn Maynard, Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

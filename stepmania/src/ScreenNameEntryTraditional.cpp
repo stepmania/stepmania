@@ -36,7 +36,7 @@ static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND		("ScreenNameEntryTra
 	if( !actor.GetName().empty() ) \
 		COMMAND( actor, command_name );
 
-const AutoScreenMessage	SM_ChangeDisplayedFeat;
+AutoScreenMessage( SM_ChangeDisplayedFeat )
 
 static const int CHAR_OK = -1;
 static const int CHAR_BACK = -2;

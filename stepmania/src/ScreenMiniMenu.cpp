@@ -12,8 +12,8 @@
 #include "GameState.h"
 #include "FontCharAliases.h"
 
-const AutoScreenMessage SM_GoToOK;
-const AutoScreenMessage SM_GoToCancel;
+AutoScreenMessage( SM_GoToOK )
+AutoScreenMessage( SM_GoToCancel )
 
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;

@@ -83,8 +83,8 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
-const AutoScreenMessage SM_PlayCheer;
-const AutoScreenMessage SM_AddBonus;
+AutoScreenMessage( SM_PlayCheer )
+AutoScreenMessage( SM_AddBonus )
 
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );

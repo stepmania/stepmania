@@ -48,22 +48,22 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define PLAY_RECORD_HELP_TEXT	THEME->GetMetric(m_sName,"PlayRecordHelpText")
 
-const AutoScreenMessage SM_BackFromMainMenu;
-const AutoScreenMessage SM_BackFromAreaMenu;
-const AutoScreenMessage SM_BackFromStepsInformation;
-const AutoScreenMessage SM_BackFromEditOptions;
-const AutoScreenMessage SM_BackFromSongInformation;
-const AutoScreenMessage SM_BackFromBGChange;
-const AutoScreenMessage SM_BackFromInsertAttack;
-const AutoScreenMessage SM_BackFromInsertAttackModifiers;
-const AutoScreenMessage SM_BackFromPrefs;
-const AutoScreenMessage SM_BackFromCourseModeMenu;
-const AutoScreenMessage SM_DoRevertToLastSave;
-const AutoScreenMessage SM_DoUpdateTextInfo;
-const AutoScreenMessage SM_BackFromBPMChange;
-const AutoScreenMessage SM_BackFromStopChange;
-const AutoScreenMessage SM_DoSaveAndExit;
-const AutoScreenMessage SM_DoExit;
+AutoScreenMessage( SM_BackFromMainMenu )
+AutoScreenMessage( SM_BackFromAreaMenu )
+AutoScreenMessage( SM_BackFromStepsInformation )
+AutoScreenMessage( SM_BackFromEditOptions )
+AutoScreenMessage( SM_BackFromSongInformation )
+AutoScreenMessage( SM_BackFromBGChange )
+AutoScreenMessage( SM_BackFromInsertAttack )
+AutoScreenMessage( SM_BackFromInsertAttackModifiers )
+AutoScreenMessage( SM_BackFromPrefs ) 
+AutoScreenMessage( SM_BackFromCourseModeMenu )
+AutoScreenMessage( SM_DoRevertToLastSave )
+AutoScreenMessage( SM_DoUpdateTextInfo )
+AutoScreenMessage( SM_BackFromBPMChange )
+AutoScreenMessage( SM_BackFromStopChange )
+AutoScreenMessage( SM_DoSaveAndExit )
+AutoScreenMessage( SM_DoExit )
 
 const CString INPUT_TIPS_TEXT = 
 #if defined(XBOX)

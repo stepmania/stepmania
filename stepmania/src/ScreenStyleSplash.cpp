@@ -16,8 +16,8 @@
 #define NONSTOP_SCREEN				THEME->GetMetric("ScreenStyleSplash","NonstopScreen")
 #define ONI_SCREEN				THEME->GetMetric("ScreenStyleSplash","OniScreen")
 
-const AutoScreenMessage SM_DoneOpening;
-const AutoScreenMessage SM_StartClosing;
+AutoScreenMessage( SM_DoneOpening )
+AutoScreenMessage( SM_StartClosing )
 
 
 REGISTER_SCREEN_CLASS( ScreenStyleSplash );

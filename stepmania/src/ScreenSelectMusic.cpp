@@ -37,7 +37,10 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 
-static const AutoScreenMessage	SM_AllowOptionsMenuRepeat;
+AutoScreenMessage( SM_AllowOptionsMenuRepeat )
+AutoScreenMessage( SM_SongChanged )
+AutoScreenMessage( SM_SortOrderChanging )
+AutoScreenMessage( SM_SortOrderChanged )
 
 static CString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;

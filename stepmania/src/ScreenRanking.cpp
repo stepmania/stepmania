@@ -43,8 +43,8 @@ XToString( PageType, NUM_PAGE_TYPES );
 #define COURSE_DIFFICULTY_X(col)	(COURSE_DIFFICULTY_START_X+COL_SPACING_X*col)
 #define COURSE_SCORE_OFFSET_X(col)	(COURSE_SCORE_OFFSET_START_X+COL_SPACING_X*col)
 
-const AutoScreenMessage SM_ShowNextPage;
-const AutoScreenMessage SM_HidePage;
+AutoScreenMessage( SM_ShowNextPage )
+AutoScreenMessage( SM_HidePage )
 
 
 static void GetAllSongsToShow( vector<Song*> &vpOut )

@@ -18,8 +18,8 @@
 #define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
 
-const AutoScreenMessage SM_RefreshSelector;
-const AutoScreenMessage SM_BackFromEditDescription;
+AutoScreenMessage( SM_RefreshSelector )
+AutoScreenMessage( SM_BackFromEditDescription )
 
 REGISTER_SCREEN_CLASS( ScreenEditMenu );
 ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName )

@@ -3,7 +3,7 @@
 
 #include "ScreenOptionsMaster.h"
 
-extern const AutoScreenMessage SM_BackFromSongOptions;
+AutoScreenMessage( SM_BackFromSongOptions )
 
 class ScreenSongOptions : public ScreenOptionsMaster
 {

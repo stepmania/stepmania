@@ -6,8 +6,6 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 
-const AutoScreenMessage SM_BackFromSongOptions;
-
 #define PREV_SCREEN		THEME->GetMetric ("ScreenSongOptions","PrevScreen")
 #define NEXT_SCREEN		THEME->GetMetric ("ScreenSongOptions","NextScreen")
 

@@ -19,7 +19,7 @@
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 
-const AutoScreenMessage	SM_PrepScreen;
+AutoScreenMessage( SM_PrepScreen )
 
 REGISTER_SCREEN_CLASS( ScreenStage );
 ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )

@@ -3,7 +3,7 @@
 
 #include "ScreenOptionsMaster.h"
 
-extern const AutoScreenMessage SM_BackFromPlayerOptions;
+AutoScreenMessage( SM_BackFromPlayerOptions )
 
 class ScreenPlayerOptions : public ScreenOptionsMaster
 {

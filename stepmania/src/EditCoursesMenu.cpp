@@ -34,7 +34,7 @@
 #define ROW_VALUE_X( i )		THEME->GetMetricF("EditCoursesMenu",ssprintf("RowValue%dX",i+1))
 #define ROW_Y( i )				THEME->GetMetricF("EditCoursesMenu",ssprintf("Row%dY",i+1))
 
-const AutoScreenMessage SM_BackFromCourseOptionsMenu;
+AutoScreenMessage( SM_BackFromCourseOptionsMenu )
 							  
 enum CourseEntryMenuRow
 {
