@@ -57,9 +57,36 @@ int ThreadImpl_Win32::Wait()
 	return ret;
 }
 
+/* SetThreadName magic comes from VirtualDub. */
+#define MS_VC_EXCEPTION 0x406d1388
+
+typedef struct tagTHREADNAME_INFO
+{
+    DWORD dwType;        // must be 0x1000
+    LPCSTR szName;       // pointer to name (in same addr space)
+    DWORD dwThreadID;    // thread ID (-1 caller thread)
+    DWORD dwFlags;       // reserved for future use, most be zero
+} THREADNAME_INFO;
+
+static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
+{
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = szThreadName;
+    info.dwThreadID = dwThreadID;
+    info.dwFlags = 0;
+
+    __try {
+        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR *)&info);
+    } __except (EXCEPTION_CONTINUE_EXECUTION) {
+    }
+}
+
 static DWORD WINAPI StartThread( LPVOID pData )
 {
 	ThreadImpl_Win32 *pThis = (ThreadImpl_Win32 *) pData;
+
+	SetThreadName( GetCurrentThreadId(), RageThread::GetCurThreadName() );
 
 	DWORD ret = (DWORD) pThis->m_pFunc( pThis->m_pData );
 
@@ -98,6 +125,8 @@ static int GetOpenSlot( uint64_t iID )
 ThreadImpl *MakeThisThread()
 {
 	ThreadImpl_Win32 *thread = new ThreadImpl_Win32;
+
+	SetThreadName( GetCurrentThreadId(), RageThread::GetCurThreadName() );
 
 	const HANDLE CurProc = GetCurrentProcess();
 	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
