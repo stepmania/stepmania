@@ -213,8 +213,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
 	  {
 	    UsbStorageDevice &d = m_vDevicesLastSeen[i];
-	    d.bNeedsWriteTest = false;
-	    d.bWriteTestSucceeded = true;
+	    d.m_State = UsbStorageDevice::STATE_READY;
 	  }
 
 	if( false )
@@ -232,14 +231,10 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
 		{	  
 			UsbStorageDevice &d = m_vDevicesLastSeen[i];
-			if( !d.bNeedsWriteTest )
+			if( d.m_State != UsbStorageDevice::STATE_CHECKING )
 				continue;  // skip
 			
 			bDidAnyMounts = true;
-			
-			d.bNeedsWriteTest = false;
-
-			d.bWriteTestSucceeded = true;
 			
 			CString sCommand;
 			
@@ -256,7 +251,10 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 			bool bMountedSuccessfully = ExecuteCommand( sCommand );
 			LOG->Trace( "mount new connect %i/%i done", i, vConnects.size() );
 			
-			d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
+			if( bMountedSuccessfully && TestWrite( d.sOsMountDir ) )
+				d.m_State = UsbStorageDevice::STATE_READY;
+			else
+				d.m_State = UsbStorageDevice::STATE_WRITE_ERROR;
 			
 			// read name
 			this->Mount( &d );
@@ -267,7 +265,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 			profile.LoadEditableDataFromDir( sProfileDir );
 			d.sName = profile.GetDisplayName();
 
-			LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
+			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_WRITE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
 	}
 	
@@ -525,9 +523,9 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
         LOG->Trace( "hack mount (%s)", sCommand.c_str() );
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
-	pDevice->bWriteTestSucceeded = bMountedSuccessfully && TestWrite( pDevice->sOsMountDir );
-
-	LOG->Trace( "WriteTest: %s, Name: %s", pDevice->bWriteTestSucceeded ? "succeeded" : "failed", pDevice->sName.c_str() );
+//	pDevice->bWriteTestSucceeded = bMountedSuccessfully && TestWrite( pDevice->sOsMountDir );
+//
+//	LOG->Trace( "WriteTest: %s, Name: %s", pDevice->bWriteTestSucceeded ? "succeeded" : "failed", pDevice->sName.c_str() );
 
 	return bMountedSuccessfully;
 }
