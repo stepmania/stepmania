@@ -537,14 +537,11 @@ void ScreenManager::RefreshCreditsMessages()
 
 	/* This is called when GAMESTATE->m_bSideIsJoined changes. */
 	CString joined;
-	FOREACH_PlayerNumber( pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( GAMESTATE->m_bSideIsJoined[pn] )
-		{
-			if( joined != "" )
-				joined += ", ";
-			joined += ssprintf( "P%i", pn+1 );
-		}
+		if( joined != "" )
+			joined += ", ";
+		joined += ssprintf( "P%i", pn+1 );
 	}
 
 	if( joined == "" )
