@@ -227,19 +227,6 @@ void GameState::BeginGame()
 	MEMCARDMAN->LockCards( false );
 }
 
-void CheckStageStats( const StageStats &ss, int p )
-{
-	if( ss.pSong )
-		CHECKPOINT_M( ss.pSong->GetFullTranslitTitle() );
-	ASSERT( ss.pSteps[p] );
-	ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("playmode %i", ss.playMode) );
-	ASSERT( ss.pStyle != NULL );
-	ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", ss.pSteps[p]->GetDifficulty()) );
-	/* Meter values can exceed MAX_METER; MAX_METER is just the highest meter value we
-	 * display/track. */
-//	ASSERT_M( ss.iMeter[p] < MAX_METER+1, ssprintf("%i", ss.iMeter[p]) );
-}
-
 void GameState::PlayersFinalized()
 {
 	if( m_bPlayersFinalized )
@@ -288,33 +275,43 @@ void GameState::PlayersFinalized()
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
-void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber p )
+void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn )
 {
-	CheckStageStats( ss, p );
+	ss.AssertValid( pn );
 	CHECKPOINT;
-	const int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
 
-	pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
 	StyleID sID;
 	sID.FromStyle( ss.pStyle );
-	pProfile->m_iNumSongsPlayedByStyle[sID]++;
-	pProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-	pProfile->m_iNumSongsPlayedByMeter[iMeter]++;
-	pProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
+
+	ASSERT( ss.vpSongs.size() == ss.vpSteps[pn].size() );
+	for( unsigned i=0; i<ss.vpSongs.size(); i++ )
+	{
+		Song *pSong = ss.vpSongs[i];
+		Steps *pSteps = ss.vpSteps[pn][i];
+
+		pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+		pProfile->m_iNumSongsPlayedByStyle[sID] ++;
+		pProfile->m_iNumSongsPlayedByDifficulty[pSteps->GetDifficulty()] ++;
+		pProfile->m_iNumSongsPlayedByMeter[pSteps->GetMeter()] ++;
+	}
+	
+	pProfile->m_iTotalDancePoints += ss.iActualDancePoints[pn];
 
 	if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
 	{
-		if( ss.bFailed[p] )
+		if( ss.bFailed[pn] )
 			++pProfile->m_iNumExtraStagesFailed;
 		else
 			++pProfile->m_iNumExtraStagesPassed;
 	}
 
-	if( !ss.bFailed[p] )
-	{
-		pProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
-		pProfile->m_iNumSongsPassedByGrade[ss.GetGrade(p)]++;
-	}
+	// If you fail in a course, you passed all but the final song.
+	// FIXME: Not true.  If playing with 2 players, one player could have failed earlier.
+	int iNumSongsPassed = ss.vpSongs.size();
+	if( ss.bFailed[pn] )
+		iNumSongsPassed -= 1;
+	pProfile->m_iNumSongsPassedByPlayMode[ss.playMode] += iNumSongsPassed;
+	pProfile->m_iNumSongsPassedByGrade[ss.GetGrade(pn)] += iNumSongsPassed;
 }
 
 void GameState::EndGame()
@@ -1013,9 +1010,9 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 	return win;
 }
 
-void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut ) const
+void GameState::GetFinalEvalStats( StageStats& statsOut ) const
 {
-	statsOut = StageStats();
+	statsOut.Init();
 
 	// Show stats only for the latest 3 normal songs + passed extra stages
 	int PassedRegularSongsLeft = 3;
@@ -1035,11 +1032,9 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 		}
 
 		statsOut.AddStats( s );
-
-		vSongsOut.insert( vSongsOut.begin(), s.pSong );
 	}
 
-	if(!vSongsOut.size()) return;
+	if( statsOut.vpSongs.empty() ) return;	// don't divide by 0 below
 
 	/* Scale radar percentages back down to roughly 0..1.  Don't scale RADAR_NUM_TAPS_AND_HOLDS
 	 * and the rest, which are counters. */
@@ -1047,8 +1042,8 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	{
 		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
 		{
-			statsOut.radarPossible[p][r] /= vSongsOut.size();
-			statsOut.radarActual[p][r] /= vSongsOut.size();
+			statsOut.radarPossible[p][r] /= statsOut.vpSongs.size();
+			statsOut.radarActual[p][r] /= statsOut.vpSongs.size();
 		}
 	}
 }
@@ -1386,7 +1381,6 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_REGULAR:
 		{
 			CHECKPOINT;
-			unsigned i, j;
 
 			StepsType st = this->GetCurrentStyle()->m_StepsType;
 
@@ -1397,13 +1391,13 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			//
 			vector<SongAndSteps> vSongAndSteps;
 
-			for( i=0; i<g_vPlayedStageStats.size(); i++ )
+			for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
 			{
 				CHECKPOINT_M( ssprintf("%u/%i", i, (int)g_vPlayedStageStats.size() ) );
 				SongAndSteps sas;
-				sas.pSong = g_vPlayedStageStats[i].pSong;
+				sas.pSong = g_vPlayedStageStats[i].vpSongs[0];
 				ASSERT( sas.pSong );
-				sas.pSteps = g_vPlayedStageStats[i].pSteps[pn];
+				sas.pSteps = g_vPlayedStageStats[i].vpSteps[pn][0];
 				ASSERT( sas.pSteps );
 				vSongAndSteps.push_back( sas );
 			}
@@ -1415,7 +1409,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
 			CHECKPOINT;
-			for( i=0; i<vSongAndSteps.size(); i++ )
+			for( unsigned i=0; i<vSongAndSteps.size(); i++ )
 			{
 				Song* pSong = vSongAndSteps[i].pSong;
 				Steps* pSteps = vSongAndSteps[i].pSteps;
@@ -1423,7 +1417,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				// Find Machine Records
 				{
 					HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
-					for( j=0; j<hsl.vHighScores.size(); j++ )
+					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
 
@@ -1451,7 +1445,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				if( pProf )
 				{
 					HighScoreList &hsl = pProf->GetStepsHighScoreList(pSong,pSteps);
-					for( j=0; j<hsl.vHighScores.size(); j++ )
+					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
 
@@ -1481,8 +1475,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 			CHECKPOINT;
 			StageStats stats;
-			vector<Song*> vSongs;
-			GetFinalEvalStatsAndSongs( stats, vSongs );
+			GetFinalEvalStats( stats );
 
 
 			// Find Machine Category Records
@@ -1497,11 +1490,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 					RankingFeat feat;
 					feat.Type = RankingFeat::CATEGORY;
-					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
 					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = (int) hs.iScore;
-					feat.fPercentDP = (float) hs.fPercentDP;
+					feat.iScore = hs.iScore;
+					feat.fPercentDP = hs.fPercentDP;
 					asFeatsOut.push_back( feat );
 				}
 			}
@@ -1520,11 +1513,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 						RankingFeat feat;
 						feat.Type = RankingFeat::CATEGORY;
-						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
 						feat.pStringToFill = &hs.sName;
 						feat.grade = GRADE_NO_DATA;
-						feat.iScore = (int) hs.iScore;
-						feat.fPercentDP = (float) hs.fPercentDP;
+						feat.iScore = hs.iScore;
+						feat.fPercentDP = hs.fPercentDP;
 						asFeatsOut.push_back( feat );
 					}
 				}

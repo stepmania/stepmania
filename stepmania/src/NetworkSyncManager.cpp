@@ -338,11 +338,11 @@ void NetworkSyncManager::StartRequest(short position)
 	unsigned char ctr=0;
 
 	Steps * tSteps;
-	tSteps = g_CurStageStats.pSteps[PLAYER_1];
+	tSteps = g_CurStageStats.vpSteps[PLAYER_1].back();
 	if (tSteps!=NULL)
 		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
-	tSteps = g_CurStageStats.pSteps[PLAYER_2];
+	tSteps = g_CurStageStats.vpSteps[PLAYER_2].back();
 	if (tSteps!=NULL)
 		ctr = uint8_t(ctr+tSteps->GetMeter());
 

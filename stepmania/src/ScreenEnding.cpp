@@ -146,8 +146,8 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
-		g_CurStageStats.pSteps[PLAYER_1] = GAMESTATE->m_pCurSteps[PLAYER_1];
-		g_CurStageStats.pSteps[PLAYER_2] = GAMESTATE->m_pCurSteps[PLAYER_2];
+		g_CurStageStats.vpSteps[PLAYER_1].push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+		g_CurStageStats.vpSteps[PLAYER_2].push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;

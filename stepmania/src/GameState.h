@@ -211,7 +211,7 @@ public:
 	StageResult GetStageResult( PlayerNumber pn ) const;
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
-	void GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut ) const;	// shown on arcade final evaluation
+	void GetFinalEvalStats( StageStats& statsOut ) const;	// shown on final evaluation
 
 
 	//

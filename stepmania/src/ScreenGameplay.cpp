@@ -221,15 +221,12 @@ void ScreenGameplay::Init()
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
-	g_CurStageStats.pSong = NULL; // set in LoadNextSong
 	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
 	g_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
 
     FOREACH_EnabledPlayer(p)
 	{
 		ASSERT( !m_vpStepsQueue[p].empty() );
-		g_CurStageStats.pSteps[p] = m_vpStepsQueue[p][0];
-		g_CurStageStats.iMeter[p] = m_vpStepsQueue[p][0]->GetMeter();
 
 		/* Record combo rollover. */
 		g_CurStageStats.UpdateComboList( p, 0, true );
@@ -877,7 +874,7 @@ void ScreenGameplay::LoadNextSong()
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
 	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
-	g_CurStageStats.pSong = GAMESTATE->m_pCurSong;
+	g_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
 
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
@@ -899,7 +896,7 @@ void ScreenGameplay::LoadNextSong()
 
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-		g_CurStageStats.pSteps[p] = pSteps;
+		g_CurStageStats.vpSteps[p].push_back( pSteps );
 
 		ASSERT( GAMESTATE->m_pCurSteps[p] );
 		m_textStepsDescription[p].SetText( GAMESTATE->m_pCurSteps[p]->GetDescription() );

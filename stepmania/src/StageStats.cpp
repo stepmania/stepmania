@@ -5,6 +5,9 @@
 #include "SongManager.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
+#include "Foreach.h"
+#include "Steps.h"
+#include "Song.h"
 
 StageStats	g_CurStageStats;
 vector<StageStats>	g_vPlayedStageStats;
@@ -13,14 +16,13 @@ void StageStats::Init()
 {
 	playMode = PLAY_MODE_INVALID;
 	pStyle = NULL;
-	pSong = NULL;
+	vpSongs.clear();
 	StageType = STAGE_INVALID;
 	fGameplaySeconds = 0;
 
 	FOREACH_PlayerNumber( p )
 	{
-		pSteps[p] = NULL;
-		iMeter[p] = 0;
+		vpSteps[p].clear();
 		fAliveSeconds[p] = 0;
 		bFailed[p] = bFailedEarlier[p] = false;
 		iPossibleDancePoints[p] = iActualDancePoints[p] = 0;
@@ -39,22 +41,53 @@ void StageStats::Init()
 	}
 }
 
+void StageStats::AssertValid( PlayerNumber pn ) const
+{
+	if( vpSongs[0] )
+		CHECKPOINT_M( vpSongs[0]->GetFullTranslitTitle() );
+	ASSERT( vpSteps[pn][0] );
+	ASSERT_M( playMode < NUM_PLAY_MODES, ssprintf("playmode %i", playMode) );
+	ASSERT( pStyle != NULL );
+	ASSERT_M( vpSteps[pn][0]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", vpSteps[pn][0]->GetDifficulty()) );
+	ASSERT( vpSongs.size() == vpSteps[pn].size() );
+}
+
+
+int StageStats::GetAverageMeter( PlayerNumber pn ) const
+{
+	int iTotalMeter = 0;
+	int iTotalCount = 0;
+	ASSERT( vpSongs.size() == vpSteps[pn].size() );
+
+	for( unsigned i=0; i<vpSongs.size(); i++ )
+	{
+		Song* pSong = vpSongs[i];
+		Steps* pSteps = vpSteps[pn][i];
+
+		// weight long and marathon songs
+		int iWeight = SongManager::GetNumStagesForSong( pSong );
+		int iMeter = pSteps->GetMeter();
+		
+		iTotalMeter += iMeter;
+		iTotalCount += iWeight;
+	}
+	return iTotalMeter / iTotalCount;	// round down
+}
+
 void StageStats::AddStats( const StageStats& other )
 {
-	pSong = NULL;		// meaningless
+	ASSERT( !other.vpSongs.empty() );
+	FOREACH_CONST( Song*, other.vpSongs, s )
+		vpSongs.push_back( *s );
 	StageType = STAGE_INVALID; // meaningless
-	memset( fAliveSeconds, 0, sizeof(fAliveSeconds) );	// why? -Chris
+	memset( fAliveSeconds, 0, sizeof(fAliveSeconds) );	// why not accumulate? -Chris
 	
-	// weight long and marathon songs
-	ASSERT( other.pSong );
-	const int iLengthMultiplier = SongManager::GetNumStagesForSong( other.pSong );
-
 	fGameplaySeconds += other.fGameplaySeconds;
 
 	FOREACH_PlayerNumber( p )
 	{
-		pSteps[p] = NULL;
-		iMeter[p] += other.iMeter[p] * iLengthMultiplier;
+		FOREACH_CONST( Steps*, other.vpSteps[p], s )
+			vpSteps[p].push_back( *s );
 		fAliveSeconds[p] += other.fAliveSeconds[p];
 		bFailed[p] |= other.bFailed[p];
 		bFailedEarlier[p] |= other.bFailedEarlier[p];
@@ -496,22 +529,20 @@ Grade GetFinalGrade( PlayerNumber pn )
 {
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return GRADE_NO_DATA;
-	vector<Song*> vSongs;
 	StageStats stats;
-	GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
+	GAMESTATE->GetFinalEvalStats( stats );
 	return stats.GetGrade( pn );
 }
-LuaFunction_PlayerNumber( GetFinalGrade, GetFinalGrade( pn ) );
+LuaFunction_PlayerNumber( GetFinalGrade, GetFinalGrade(pn) );
 
 Grade GetBestFinalGrade()
 {
 	Grade top_grade = GRADE_FAILED;
-	vector<Song*> vSongs;
 	StageStats stats;
-	GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
+	GAMESTATE->GetFinalEvalStats( stats );
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsHumanPlayer(p) )
-			top_grade = min( top_grade, stats.GetGrade((PlayerNumber)p) );
+			top_grade = min( top_grade, stats.GetGrade(p) );
 	return top_grade;
 }
 LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );

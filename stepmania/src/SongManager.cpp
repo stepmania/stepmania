@@ -695,24 +695,23 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	// Fix GAMESTATE->m_CurSteps, g_CurStageStats, g_vPlayedStageStats[] after reloading.
 	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
 	 * so we can check to make sure we didn't lose any steps which are referenced ... */
-	StepsID OldCurSteps[NUM_PLAYERS];
-	StepsID OldCurStageStats[NUM_PLAYERS];
-	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
-	FOREACH_PlayerNumber( p )
-	{
-		Steps* pCurSteps = GAMESTATE->m_pCurSteps[p];
-		Steps* pCurStageStats = g_CurStageStats.pSteps[p];
 
-		OldCurSteps[p].FromSteps( pCurSteps );
-		OldCurStageStats[p].FromSteps( pCurStageStats );
-		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
-		{
-			const StageStats &ss = g_vPlayedStageStats[i];;
-			OldPlayedStageStats[p].push_back( StepsID() );
-			OldPlayedStageStats[p][i].FromSteps( ss.pSteps[p] );
-		}
+
+	//
+	// Save list of all old Steps pointers for the song
+	//
+	map<Steps*,StepsID> mapOldStepsToStepsID;
+	FOREACH_CONST( Steps*, pSong->GetAllSteps(), pSteps )
+	{
+		StepsID id;
+		id.FromSteps( *pSteps );
+		mapOldStepsToStepsID[*pSteps] = id;
 	}
 
+
+	//
+	// Reload the song
+	//
 	const CString dir = pSong->GetSongDir();
 	FILEMAN->FlushDirCache( dir );
 
@@ -734,21 +733,23 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	StepsID::Invalidate( pSong );
 
 
+
+#define CONVERT_STEPS_POINTER( pSteps ) { \
+	StepsID id = mapOldStepsToStepsID[pSteps]; /* this will always succeed */ \
+	pSteps = id.ToSteps( pSong, bAllowNotesLoss ); }
+
+
+
 	FOREACH_PlayerNumber( p )
 	{
-		CHECKPOINT;
-		if( GAMESTATE->m_pCurSong == pSong )
-			GAMESTATE->m_pCurSteps[p] = OldCurSteps[p].ToSteps( pSong, bAllowNotesLoss );
-		CHECKPOINT;
-		if( g_CurStageStats.pSong == pSong )
-			g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( pSong, bAllowNotesLoss );
-		CHECKPOINT;
-		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
-		{
-			CHECKPOINT_M(ssprintf("%i", i));
-			if( g_vPlayedStageStats[i].pSong == pSong )
-				g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( pSong, bAllowNotesLoss );
-		}
+		CONVERT_STEPS_POINTER( GAMESTATE->m_pCurSteps[p] );
+
+		FOREACH( Steps*, g_CurStageStats.vpSteps[p], pSteps )
+			CONVERT_STEPS_POINTER( *pSteps );
+
+		FOREACH( StageStats, g_vPlayedStageStats, ss )
+			FOREACH( Steps*, ss->vpSteps[p], pSteps )
+				CONVERT_STEPS_POINTER( *pSteps );
 	}
 }
 

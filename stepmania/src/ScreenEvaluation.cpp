@@ -109,8 +109,8 @@ void ScreenEvaluation::Init()
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
-		g_CurStageStats.pSteps[PLAYER_1] = GAMESTATE->m_pCurSteps[PLAYER_1];
-		g_CurStageStats.pSteps[PLAYER_2] = GAMESTATE->m_pCurSteps[PLAYER_2];
+		g_CurStageStats.vpSteps[PLAYER_1].push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+		g_CurStageStats.vpSteps[PLAYER_2].push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;
@@ -189,12 +189,10 @@ void ScreenEvaluation::Init()
 	// Figure out which statistics and songs we're going to display
 	//
 	StageStats stageStats;
-
-	vector<Song*> vSongsToShow;
 	switch( m_Type )
 	{
 	case summary:
-		GAMESTATE->GetFinalEvalStatsAndSongs( stageStats, vSongsToShow );
+		GAMESTATE->GetFinalEvalStats( stageStats );
 		break;
 	case stage:
 	case course:
@@ -333,9 +331,11 @@ void ScreenEvaluation::Init()
 			break;
 		case summary:
 			{
-				for( unsigned i=0; i<vSongsToShow.size(); i++ )
+				for( unsigned i=0; i<stageStats.vpSongs.size(); i++ )
 				{
-					m_SmallBanner[i].LoadFromSong( vSongsToShow[i] );
+					Song *pSong = stageStats.vpSongs[i];
+
+					m_SmallBanner[i].LoadFromSong( pSong );
 					m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 					m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
 					SET_XY_AND_ON_COMMAND( m_SmallBanner[i] );
@@ -959,7 +959,7 @@ void ScreenEvaluation::CommitScores(
 					if( stageStats.bFailed[p] ) 
 						continue;
 
-					float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
+					float fAverageMeter = stageStats.GetAverageMeter(p);
 					rcOut[p] = AverageMeterToRankingCategory( fAverageMeter );
 
 					PROFILEMAN->AddCategoryScore( st, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );

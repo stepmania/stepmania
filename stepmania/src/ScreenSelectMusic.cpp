@@ -1055,7 +1055,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			if( PREFSMAN->m_bEventMode )
 				i = max( 0, int(g_vPlayedStageStats.size())-5 );
 			for( ; i < (int)g_vPlayedStageStats.size(); ++i )
-				if( g_vPlayedStageStats[i].pSong == m_MusicWheel.GetSelectedSong() )
+				if( g_vPlayedStageStats[i].vpSongs.back() == m_MusicWheel.GetSelectedSong() )
 					bIsRepeat = true;
 
 			/* Don't complain about repeats if the user didn't get to pick. */

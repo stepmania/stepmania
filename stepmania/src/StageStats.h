@@ -16,6 +16,9 @@ struct StageStats
 {
 	StageStats() { Init(); }
 	void Init();
+
+	void AssertValid( PlayerNumber pn ) const;
+	
 	void AddStats( const StageStats& other );		// accumulate
 	Grade GetGrade( PlayerNumber pn ) const;
 	bool OnePassed() const;
@@ -25,10 +28,10 @@ struct StageStats
 
 	PlayMode	playMode;
 	const Style*	pStyle;
-	Song*	pSong;
+	vector<Song*>	vpSongs;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
-	Steps*  pSteps[NUM_PLAYERS];
-	int		iMeter[NUM_PLAYERS];
+	vector<Steps*>  vpSteps[NUM_PLAYERS];
+	int		GetAverageMeter( PlayerNumber pn ) const;
 	float	fAliveSeconds[NUM_PLAYERS];		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
 	float	fGameplaySeconds;				// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
 

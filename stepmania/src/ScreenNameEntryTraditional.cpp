@@ -136,32 +136,32 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		StageStats ss;
 		for( int z = 0; z < 3; ++z )
 		{
-			ss.pSong = SONGMAN->GetRandomSong();
+			ss.vpSongs.push_back( SONGMAN->GetRandomSong() );
 			ss.iPossibleDancePoints[PLAYER_1] = 100;
 			ss.iActualDancePoints[PLAYER_1] = 100;
 			ss.iScore[PLAYER_1] = 100;
 			ss.iPossibleDancePoints[PLAYER_2] = 100;
 			ss.iActualDancePoints[PLAYER_2] = 100;
 			ss.iScore[PLAYER_2] = 100;
-			ASSERT( ss.pSong );
-			ASSERT( ss.pSong->GetAllSteps().size() );
+			ASSERT( ss.vpSongs[0]->GetAllSteps().size() );
 			FOREACH_PlayerNumber( p )
 			{
-				GAMESTATE->m_pCurSteps[p] = ss.pSteps[p] = ss.pSong->GetAllSteps()[0];
+				ss.vpSteps[p].push_back( ss.vpSongs[0]->GetAllSteps()[0] );
+				GAMESTATE->m_pCurSteps[p] = ss.vpSteps[p][0];
 				ss.iPossibleDancePoints[p] = 1000;
 				ss.iActualDancePoints[p] = 985;
 
 				HighScore hs;
 				hs.grade = GRADE_TIER_3;
-				hs.fPercentDP = ss.GetPercentDancePoints((PlayerNumber)p);
+				hs.fPercentDP = ss.GetPercentDancePoints(p);
 				hs.iScore = ss.iScore[p];
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				int a, b;
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.pSong, GAMESTATE->m_pCurSteps[p], (PlayerNumber)p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
 				PROFILEMAN->AddCategoryScore( st, RANKING_A, p, hs, a, b );
 			}
 
@@ -175,7 +175,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	FOREACH_PlayerNumber( p )
 	{
 		vector<GameState::RankingFeat> aFeats;
-		GAMESTATE->GetRankingFeats( (PlayerNumber)p, aFeats );
+		GAMESTATE->GetRankingFeats( p, aFeats );
 		m_bStillEnteringName[p] = aFeats.size()>0;
 		m_CurFeat[p] = 0;
 	}
@@ -265,7 +265,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			PositionCharsAndCursor( p );
 
 			// load last used ranking name if any
-			const Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+			const Profile* pProfile = PROFILEMAN->GetProfile(p);
 			if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			{
 				m_sSelection[p] = CStringToWstring( pProfile->m_sLastUsedHighScoreName );
@@ -273,7 +273,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 					m_sSelection[p].erase( MAX_RANKING_NAME_LENGTH );
 				ASSERT( (int) m_sSelection[p].size() <= MAX_RANKING_NAME_LENGTH );
 				if( m_sSelection[p].size() )
-					SelectChar( (PlayerNumber) p, CHAR_OK );
+					SelectChar(  p, CHAR_OK );
 			}
 
 			UpdateSelectionText( p );
@@ -308,8 +308,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
 			StageStats &ss = g_vPlayedStageStats[i];
-			Song* pSong = ss.pSong;
-			Steps* pSteps = ss.pSteps[p];
+			Song* pSong = ss.vpSongs[0];
+			Steps* pSteps = ss.vpSteps[p][0];
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
@@ -536,7 +536,7 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 		if( !m_Out.IsTransitioning() )
 		{
 			FOREACH_PlayerNumber( p )
-				Finish( (PlayerNumber)p );
+				Finish( p );
 			MenuStart( PLAYER_INVALID, IET_FIRST_PRESS );
 		}
 		break;
