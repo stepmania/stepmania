@@ -8,7 +8,6 @@
 #include "CryptHelpers.h"
 #include "crypto51/sha.h"
 #include "crypto51/channels.h"
-#include "crypto51/hex.h"
 #include "crypto51/rsa.h"
 #include "crypto51/osrng.h"
 #include "crypto/CryptMD5.h"
@@ -74,7 +73,7 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	CString sPrivFilename = PRIVATE_KEY_PATH;
-	CString sMessageFilename = sPath;;
+	CString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
@@ -100,7 +99,7 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	CString sPubFilename = PUBLIC_KEY_PATH;
-	CString sMessageFilename = sPath;;
+	CString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
