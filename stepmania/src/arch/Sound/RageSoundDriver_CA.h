@@ -92,7 +92,6 @@ private:
 
     int64_t ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const;
 
-protected:
     void StartMixing(RageSoundBase *snd);
     void Update (float delta);
     void StopMixing(RageSoundBase *snd);
