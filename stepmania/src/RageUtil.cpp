@@ -675,12 +675,12 @@ bool IsADirectory( const CString &sPath )
 
 bool CompareCStringsAsc(const CString &str1, const CString &str2)
 {
-	return str2.CompareNoCase( str1 ) < 0;
+	return str1.CompareNoCase( str2 ) < 0;
 }
 
 bool CompareCStringsDesc(const CString &str1, const CString &str2)
 {
-	return str2.CompareNoCase( str1 ) > 0;
+	return str1.CompareNoCase( str2 ) > 0;
 }
 
 void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
