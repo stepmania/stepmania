@@ -55,6 +55,7 @@ XNode* HighScore::CreateNode() const
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
 	pNode->AppendChild( "Time",				(int)time );
+	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 
 	return pNode;
@@ -74,6 +75,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 		else if( (*child)->name == "SurviveSeconds" )	(*child)->GetValue( fSurviveSeconds );
 		else if( (*child)->name == "Modifiers" )		(*child)->GetValue( sModifiers );
 		else if( (*child)->name == "Time" )				(*child)->GetValue( (int&)time );
+		else if( (*child)->name == "PlayerGuid" )		(*child)->GetValue( sPlayerGuid );
 		else if( (*child)->name == "MachineGuid" )		(*child)->GetValue( sMachineGuid );
 	}
 

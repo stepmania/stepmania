@@ -945,6 +945,7 @@ void ScreenEvaluation::CommitScores(
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
 			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
 			hs.time = time(NULL);
+			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;

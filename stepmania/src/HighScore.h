@@ -17,24 +17,28 @@
 
 struct HighScore
 {
-	CString	sName;
+	CString	sName;	// name that shows in the machine's ranking screen
 	Grade grade;
 	int iScore;
 	float fPercentDP;
 	float fSurviveSeconds;
 	CString	sModifiers;
 	time_t time;		// return value of time() when screenshot was taken
-	CString sMachineGuid;	// where this screenshot was taken
+	CString sPlayerGuid;	// who made this high score
+	CString sMachineGuid;	// where this high score was made
 
 
 	HighScore() { Unset(); }
 	void Unset()
 	{
+		sName = "";
 		grade = GRADE_NO_DATA;
 		iScore = 0;
 		fPercentDP = 0;
 		fSurviveSeconds = 0;
 		time = 0;
+		sPlayerGuid = "";
+		sMachineGuid = "";
 	}
 
 	bool operator>=( const HighScore& other ) const;

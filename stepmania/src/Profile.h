@@ -285,8 +285,8 @@ public:
 		InitScreenshotData(); 
 		InitCalorieData(); 
 		InitAwards(); 
-		InitSongLastScores(); 
-		InitCourseLastScores(); 
+		InitLastSongScores(); 
+		InitLastCourseScores(); 
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -296,8 +296,8 @@ public:
 	void InitScreenshotData(); 
 	void InitCalorieData(); 
 	void InitAwards(); 
-	void InitSongLastScores(); 
-	void InitCourseLastScores(); 
+	void InitLastSongScores(); 
+	void InitLastCourseScores(); 
 
 	//
 	// Loading and saving
@@ -318,8 +318,8 @@ public:
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
 	void LoadAwardsFromNode( const XNode* pNode );
-	void LoadSongLastScoresFromNode( const XNode* pNode );
-	void LoadCourseLastScoresFromNode( const XNode* pNode );
+	void LoadLastSongScoresFromNode( const XNode* pNode );
+	void LoadLastCourseScoresFromNode( const XNode* pNode );
 
 	void SaveEditableDataToDir( CString sDir ) const;
 	XNode* SaveGeneralDataCreateNode() const;
@@ -329,8 +329,8 @@ public:
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
 	XNode* SaveAwardsCreateNode() const;
-	XNode* SaveSongLastScoresCreateNode() const;
-	XNode* SaveCourseLastScoresCreateNode() const;
+	XNode* SaveLastSongScoresCreateNode() const;
+	XNode* SaveLastCourseScoresCreateNode() const;
 
 	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
 	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;

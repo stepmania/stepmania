@@ -157,12 +157,12 @@ void Profile::InitAwards()
 	}
 }
 
-void Profile::InitSongLastScores()
+void Profile::InitLastSongScores()
 {
 	m_vLastStepsScores.clear();
 }
 
-void Profile::InitCourseLastScores()
+void Profile::InitLastCourseScores()
 {
 	m_vLastCourseScores.clear();
 }
@@ -533,8 +533,8 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		LOAD_NODE( ScreenshotData );
 		LOAD_NODE( CalorieData );
 		LOAD_NODE( Awards );
-		LOAD_NODE( SongLastScores );
-		LOAD_NODE( CourseLastScores );
+		LOAD_NODE( LastSongScores );
+		LOAD_NODE( LastCourseScores );
 	}
 		
 	return true;	// FIXME?  Investigate what happens if we always return true.
@@ -560,8 +560,8 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		xml.AppendChild( SaveScreenshotDataCreateNode() );
 		xml.AppendChild( SaveCalorieDataCreateNode() );
 		xml.AppendChild( SaveAwardsCreateNode() );
-		xml.AppendChild( SaveSongLastScoresCreateNode() );
-		xml.AppendChild( SaveCourseLastScoresCreateNode() );
+		xml.AppendChild( SaveLastSongScoresCreateNode() );
+		xml.AppendChild( SaveLastCourseScoresCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
 		
 		// Update file cache, or else IsAFile in CryptManager won't see this new file.
@@ -1838,7 +1838,7 @@ void Profile::HighScoreForASongAndSteps::LoadFromNode( const XNode* pNode )
 		hs.LoadFromNode( p );
 }
 
-void Profile::LoadSongLastScoresFromNode( const XNode* pNode )
+void Profile::LoadLastSongScoresFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
@@ -1859,7 +1859,7 @@ void Profile::LoadSongLastScoresFromNode( const XNode* pNode )
 	}	
 }
 
-XNode* Profile::SaveSongLastScoresCreateNode() const
+XNode* Profile::SaveLastSongScoresCreateNode() const
 {
 	CHECKPOINT;
 
@@ -1912,7 +1912,7 @@ void Profile::HighScoreForACourse::LoadFromNode( const XNode* pNode )
 		hs.LoadFromNode( p );
 }
 
-void Profile::LoadCourseLastScoresFromNode( const XNode* pNode )
+void Profile::LoadLastCourseScoresFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
@@ -1933,7 +1933,7 @@ void Profile::LoadCourseLastScoresFromNode( const XNode* pNode )
 	}	
 }
 
-XNode* Profile::SaveCourseLastScoresCreateNode() const
+XNode* Profile::SaveLastCourseScoresCreateNode() const
 {
 	CHECKPOINT;
 
