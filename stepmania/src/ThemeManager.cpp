@@ -199,7 +199,7 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 				continue;
 			if( !isdigit(sValue[0]) )
 				continue;
-			if( sName.Right(1) == "SpacingX" || sName.Right(1) == "SpacingY" )
+			if( sName.Right(8) == "SpacingX" || sName.Right(8) == "SpacingY" )
 				continue;
 
 			int i = atoi( sValue );
