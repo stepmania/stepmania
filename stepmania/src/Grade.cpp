@@ -63,7 +63,7 @@ Grade StringToGrade( const CString &sGrade )
 	else if( s == "NODATA" )	return GRADE_NO_DATA;
 
 	int iTier;
-	if( sscanf(sGrade.c_str(),"TIER%02d",&iTier) == 1 )
+	if( sscanf(sGrade.c_str(),"Tier%02d",&iTier) == 1 )
 		return (Grade)(iTier-1);
 
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
