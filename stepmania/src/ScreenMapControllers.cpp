@@ -147,6 +147,28 @@ void ScreenMapControllers::DrawPrimitives()
 	m_Menu.DrawTopLayer();
 }
 
+static bool IsAxis( const DeviceInput& DeviceI )
+{
+	if( !DeviceI.IsJoystick() )
+		return false;
+
+	static int axes[] = 
+	{
+		JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
+		JOY_Z_UP, JOY_Z_DOWN,
+		JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
+		JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
+		JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
+		-1
+	};
+
+	for( int ax = 0; axes[ax] != -1; ++ax )
+		if( DeviceI.button == axes[ax] )
+			return true;
+
+	return false;
+}
+
 void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
@@ -169,6 +191,9 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	// Update so that a button presses are favored for mapping over axis presses.
 	//
 
+	/* We can't do that: it assumes that button presses are always received after
+	 * corresponding axis events.  We need to check and explicitly prefer non-axis events
+	 * over axis events. */
 	if( m_iWaitingForPress )
 	{
 		/* Don't allow function keys to be mapped. */
@@ -184,6 +209,14 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		}
 		else
 		{
+			if( m_DeviceIToMap.IsValid() &&
+				!IsAxis(m_DeviceIToMap) &&
+				IsAxis(DeviceI) )
+			{
+				LOG->Trace("Ignored input; non-axis event already received");
+				return;	// ignore this press
+			}
+
 			m_DeviceIToMap = DeviceI;
 		}
 	}
