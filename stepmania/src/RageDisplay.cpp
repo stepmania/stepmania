@@ -662,6 +662,7 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 		return false;
 	}
 
+	SDL_RWclose( rw );
 	SDL_FreeRW( rw );
 
 	SDL_FreeSurface( surface );

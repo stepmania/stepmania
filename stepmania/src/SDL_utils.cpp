@@ -1158,8 +1158,6 @@ int RWRageFile_Close(struct SDL_RWops *context)
 
 SDL_RWops *OpenRWops( const CString &sPath, bool Write )
 {
-	SDL_RWops *rw = SDL_AllocRW();
-
 	RageFile *f = new RageFile;
 	if( !f->Open(sPath, Write? RageFile::WRITE:RageFile::READ) )
 	{
@@ -1168,6 +1166,8 @@ SDL_RWops *OpenRWops( const CString &sPath, bool Write )
 		return NULL;
 	}
 
+	SDL_RWops *rw = SDL_AllocRW();
+	ASSERT( rw );
 	rw->hidden.unknown.data1 = f;
 	rw->seek = RWRageFile_Seek;
 	rw->read = RWRageFile_Read;
@@ -1183,7 +1183,8 @@ SDL_Surface *SDL_LoadImage( const CString &sPath )
 	if( rw == NULL )
 		return NULL;
 
-	SDL_Surface *ret = IMG_LoadTyped_RW( rw, true, (char *) GetExtension(sPath).c_str() );
+	SDL_Surface *ret = IMG_LoadTyped_RW( rw, false, (char *) GetExtension(sPath).c_str() );
+	SDL_RWclose( rw );
 	SDL_FreeRW( rw );
 
 	return ret;
