@@ -140,6 +140,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			m_Rows.push_back( new Row() );
 			Row &Row = *m_Rows[r];
 			Row.m_RowDef = OptionRows[r];
+			
+			if( !OptionRows[r].choices.size() )
+				RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
+					m_sName.c_str(), OptionRows[r].name.c_str() );
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -1107,7 +1111,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 			TweenCursor( (PlayerNumber) p );
 
 		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == Row::ROW_EXIT;
-		if( p == pn || GAMESTATE->GetNumSidesJoined() == 1 )
+		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
 			if( m_bWasOnExit[p] != ExitSelected )
 			{
