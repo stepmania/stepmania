@@ -11342,15 +11342,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = GraphDisplay.cpp;
-			path = /Users/steve/stepmania/src/GraphDisplay.cpp;
-			refType = 0;
+			path = ../src/GraphDisplay.cpp;
+			refType = 4;
 		};
 		AAFF551E0549F39700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = GraphDisplay.h;
-			path = /Users/steve/stepmania/src/GraphDisplay.h;
-			refType = 0;
+			path = ../src/GraphDisplay.h;
+			refType = 4;
 		};
 		AAFF551F0549F39700D02EE9 = {
 			fileRef = AAFF551D0549F39700D02EE9;
@@ -11368,15 +11368,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ComboGraph.cpp;
-			path = /Users/steve/stepmania/src/ComboGraph.cpp;
-			refType = 0;
+			path = ../src/ComboGraph.cpp;
+			refType = 4;
 		};
 		AAFF55220549F43A00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ComboGraph.h;
-			path = /Users/steve/stepmania/src/ComboGraph.h;
-			refType = 0;
+			path = ../src/ComboGraph.h;
+			refType = 4;
 		};
 		AAFF55230549F43A00D02EE9 = {
 			fileRef = AAFF55210549F43A00D02EE9;
