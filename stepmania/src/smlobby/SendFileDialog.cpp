@@ -32,7 +32,7 @@ CSendFileDialog::CSendFileDialog(CWnd* pParent /*=NULL*/)
 	m_ToFrom = _T("");
 	//}}AFX_DATA_INIT
 
-	m_pDCCServer = NULL;
+	m_bIsCanceled = false;
 }
 
 
@@ -65,13 +65,8 @@ END_MESSAGE_MAP()
 
 void CSendFileDialog::OnCancel() 
 {
-	//Tell the DCC Server to abort as the file isn't transfering
-	// or the user has beome impatient :)
-	if (m_pDCCServer)
-	{
-		CIrcDCCServer* pServer = (CIrcDCCServer *)m_pDCCServer;
-		pServer->Stop(0);
-	}
+	//Thread is going to check up on us to see if it's time to bail
+	m_bIsCanceled = true;
 
 	CDialog::OnCancel();
 }

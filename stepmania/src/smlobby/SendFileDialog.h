@@ -44,10 +44,10 @@ public:
 
 // Implementation
 public:
-	void AssignDCCServer(void* pServer)	{ m_pDCCServer = pServer; }
+	bool isCanceled()	{ return m_bIsCanceled; }
 
 protected:
-	void* m_pDCCServer;
+	bool m_bIsCanceled;
 
 protected:
 	

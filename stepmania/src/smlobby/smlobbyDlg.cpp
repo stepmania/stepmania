@@ -22,6 +22,7 @@ static const NetworkInit g_wsInit;
 static const unsigned short FILE_XFER_RATE = 4096;
 
 irc::CIrcSession g_ircSession;
+irc::CIrcDCCServer g_DCCServer;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -148,6 +149,7 @@ BOOL CSmlobbyDlg::OnInitDialog()
 	IRC_MAP_ENTRY(CSmlobbyDlg, "NICK", OnIrc_NICK)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "PART", OnIrc_PART)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "PRIVMSG", OnIrc_PRIVMSG)
+	IRC_MAP_ENTRY(CSmlobbyDlg, "DCC", OnIrc_DCC_SEND)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "002", OnIrc_YOURHOST)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "321", OnIrc_RPL_LISTSTART)
 	IRC_MAP_ENTRY(CSmlobbyDlg, "322", OnIrc_RPL_LIST)
@@ -311,8 +313,77 @@ bool CSmlobbyDlg::OnIrc_PRIVMSG(const CIrcMessage* pmsg)
 	return true;
 }
 
+bool CSmlobbyDlg::OnIrc_DCC_SEND(const CIrcMessage *pmsg)
+{
+	//incoming:
+	// /DCC SEND <recipient> 
+	//outgoing: 
+	// PRIVMSG <recipient> :<0x01>DCC SEND <filename> <ipaddress> <port> <filesize><0x01>
+	const kRecptParm = 1;
+
+	//Make sure we have a parameter
+	if ( pmsg->parameters.size() < (kRecptParm + 1) ) 
+		return false;
+
+	//Make sure we're not trying to send a file to ourselves (people can be silly :p)
+	CString partnerName = pmsg->parameters[kRecptParm].c_str();
+	if ( partnerName == g_ircSession.GetInfo().sNick.c_str())
+		return false;
+
+	//Make sure partner is currently in the room
+	if (LB_ERR == m_listUsers.FindString(-1, partnerName))
+		return false;
+
+	//open a file dialog box to get the file the user wants to send
+	CFileDialog fileDialog(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER, 
+							NULL, AfxGetMainWnd());
+	if (IDOK != fileDialog.DoModal())
+		return false;
+
+	//Setup retrieval params
+	IPaddress ipaddr;
+	char szHostName[256];
+	gethostname(szHostName, 256);
+	SDLNet_ResolveHost(&ipaddr, szHostName, 0);
+
+	//Get filename and directory
+	CString filename = fileDialog.GetFileName();
+	CString fullpath = fileDialog.GetPathName();
+	CString dirname = fullpath.Left(fullpath.GetLength() - filename.GetLength());
+
+	//Place all of the connection info into a dcc info structure
+	irc::CIrcDCCServer::DCCTransferInfo dccInfo;
+	dccInfo.m_bIsSender = true;
+	dccInfo.m_fileName = filename;
+	dccInfo.m_directory = dirname;
+	dccInfo.m_partnerName = partnerName;
+	dccInfo.m_uiPort = g_DCCServer.MakePortReservation();
+	dccInfo.m_uiXferRate = FILE_XFER_RATE;
+	dccInfo.m_ulFileSize = GetFileSizeInBytes(fullpath);
+	dccInfo.m_ulPartnerIP = ipaddr.host;
+
+	//Create a dcc command to send to the user to which our file is going
+	char szDCCString[512];
+	sprintf(szDCCString, "PRIVMSG %s :\001DCC SEND %s %ul %u %ul\001",
+			dccInfo.m_partnerName, dccInfo.m_fileName, ipaddr.host,
+			dccInfo.m_uiPort, dccInfo.m_ulFileSize);
+
+	//Send of the dcc command to the other party
+	g_ircSession << irc::CIrcMessage(szDCCString);
+
+	//We now have enough info to fire off a thread that will
+	//wait for the other party to connect to us and then
+	//transfer the file to them
+	g_DCCServer.Start(dccInfo);  
+
+	return true;
+}
+
 bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 {
+	//incoming::
+	// PRIVMSG <recipient> :<0x01>DCC SEND <filename> <ipaddress> <port> <filesize><0x01>
+
 	//Make sure we have a parameter
 	if ( pmsg->parameters.size() < 1 ) 
 		return false;
@@ -328,20 +399,29 @@ bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 	unsigned short uiPartnerPort;
 	unsigned long ulFileSize;
 
+	//Snag the dcc info fields from the message string
 	if ( 4 != sscanf(pszRawString, "\001DCC SEND %255s %lu %u %lu", 
 				&szFilename, &ulPartnerIP, &uiPartnerPort, &ulFileSize) )
 		return false;
 
 	//Open a dialog box so user can decide where to save file
 	CString pathname = SelectFolder();
+	if (pathname.GetLength() <= 1)
+		return false;
 
-	//We now have enough info to fire off a thread which downloads the file
-	CIrcDCCServer DCCServer;
-	CString filename(szFilename);
-	CString partner(pmsg->prefix.sNick.c_str());
+	//Assemble all of this info into a dcc info structure
+	irc::CIrcDCCServer::DCCTransferInfo dccInfo;
+	dccInfo.m_bIsSender = false;
+	dccInfo.m_directory = pathname;
+	dccInfo.m_fileName = szFilename;
+	dccInfo.m_partnerName = pmsg->prefix.sNick.c_str();
+	dccInfo.m_uiPort = uiPartnerPort;
+	dccInfo.m_uiXferRate = FILE_XFER_RATE;
+	dccInfo.m_ulFileSize = ulFileSize;
+	dccInfo.m_ulPartnerIP = ulPartnerIP;
 
-	DCCServer.Start(filename, pathname, partner, ulPartnerIP, uiPartnerPort, 
-					ulFileSize, FILE_XFER_RATE);  
+	//We now have enough info to fire off a thread that downloads the file
+	g_DCCServer.Start(dccInfo);  
 
 	return true;
 }
@@ -612,10 +692,18 @@ void CSmlobbyDlg::OnButtonCreateGame()
 		return;
 	}
 
+	//Make sure a song is selected
+	int iIndex = m_comboMusic.GetCurSel();
+	if( iIndex <= 0 )
+	{
+		MessageBox("Need to select a song to play!");
+		return;
+	}
+
 	//Tell the server that we wanted to create a chat room
 	g_ircSession << irc::CIrcMessage(CString("join ") + "#" + gameName);
 	
-	//Get the IP address of our machine
+	//Get the IP address of our machine in network byte order
 	IPaddress ipaddr;
 	char szHostName[256];
 	gethostname(szHostName, 256);
@@ -625,14 +713,9 @@ void CSmlobbyDlg::OnButtonCreateGame()
 	sprintf(host_ip_str, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 
 	//Insert song name/hash code here
-
-	int iIndex = m_comboMusic.GetCurSel();
-	if( iIndex <= 0 )
-		ASSERT(0);	// what do we do here?
 	CString sSongDir;
 	m_comboMusic.GetLBText( iIndex, sSongDir );
 	unsigned long hash = GetHashForDirectory( sSongDir );
-
 
 	//Now tell the server our game info
 	CString sIrcMessage = ssprintf( "topic #%s :%s %s %s %u",

@@ -35,6 +35,12 @@ InetAddr::InetAddr(short wPort)
 	port = wPort;
 }
 
+InetAddr::InetAddr(long dwIP, short wPort)
+{
+	host = dwIP;
+	port = wPort;
+}
+
 InetAddr::InetAddr(const char* lpszAddress, short wPort)
 {
 	Resolve(lpszAddress, wPort);

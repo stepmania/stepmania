@@ -168,46 +168,56 @@ private :
 
 class CIrcDCCServer
 {
+public:
+	struct DCCTransferInfo
+	{
+		bool m_bIsSender;
+		CString m_fileName;
+		CString m_directory;
+		CString m_partnerName;
+		unsigned long m_ulPartnerIP;
+		unsigned int m_uiPort;
+		unsigned long m_ulFileSize;
+		unsigned long m_ulBytesSent;
+		unsigned long m_ulStartTime;
+		unsigned int m_uiXferRate;
+		CIrcDCCServer* m_pDCCSever;
+		HANDLE m_pThread;
+
+		DCCTransferInfo() : 
+			m_bIsSender(false),
+			m_ulPartnerIP(0L),
+			m_uiPort(0),
+			m_ulFileSize(0L),
+			m_ulBytesSent(0L),
+			m_ulStartTime(0L),
+			m_uiXferRate(0),
+			m_pDCCSever(NULL),
+			m_pThread(NULL)
+		{}
+	};
+
 public :
-	CIrcDCCServer();
 	virtual ~CIrcDCCServer();
 
-	bool Start(
-			const CString fileName,
-			const CString directory,
-			const CString partner,
-			unsigned long ulPartnerIP,
-			unsigned short uiPort,
-			unsigned long ulFileSize,
-			unsigned short uiXferRate,
-			const bool bIsSender = false
-			);
+	bool Start(DCCTransferInfo dccinfo);
+	void Stop(DWORD timeout = 0, HANDLE hThread = NULL);
 
-	void Stop(DWORD timeout = 5000L);
+	unsigned short MakePortReservation();
 
-	bool IsSender() { return m_bIsSender; }
+protected:
+	void FreePort(unsigned short port);
+	void FreeThread(HANDLE pThread);
 
-protected :
-	bool m_bIsSender;
-	CString m_fileName;
-	CString m_directory;
-	CString m_partnerName;
-	unsigned long m_ulPartnerIP;
-	unsigned int m_uiPort;
-	unsigned long m_ulFileSize;
-	unsigned long m_ulBytesSent;
-	unsigned long m_ulStartTime;
-	unsigned int m_uiXferRate;
-	CSendFileDialog* m_pSendFileDialog;
+protected:
+	static std::vector<HANDLE> m_hThread;
+	static std::vector<unsigned short> m_usedPorts;
 
-	void DoThreadSend();
-	void DoThreadRecv();
+	static const unsigned short kFirstPort;
+	static const unsigned short kLastPort;
 
-private :
-	Socket m_socket;
-	HANDLE m_hThread;
-
-	static DWORD WINAPI ListenProc(LPVOID pparam);
+	static DWORD WINAPI DoThreadSend(void* dccinfo);
+	static DWORD WINAPI DoThreadRecv(void* dccinfo);
 };
 
 ////////////////////////////////////////////////////////////////////

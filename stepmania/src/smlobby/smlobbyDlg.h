@@ -70,6 +70,7 @@ protected:
 	bool OnIrc_RPL_LIST(const CIrcMessage *pmsg);
 	bool OnIrc_RPL_TOPIC(const CIrcMessage *pmsg);
 	bool OnIrc_RPL_NAMREPLY(const CIrcMessage *pmsg);
+	bool OnIrc_DCC_SEND(const CIrcMessage *pmsg);
 	bool OnIrc_DCC_RECV(const CIrcMessage *pmsg);
 	bool OnIrc_IgnoreMesg(const CIrcMessage *pmsg)		{ return true; }
 

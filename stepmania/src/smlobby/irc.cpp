@@ -469,231 +469,267 @@ DWORD WINAPI CIrcIdentServer::ListenProc(LPVOID pparam)
 }
 
 ////////////////////////////////////////////////////////////////////
+std::vector<unsigned short> CIrcDCCServer::m_usedPorts;
+std::vector<HANDLE> CIrcDCCServer::m_hThread;
+const unsigned short CIrcDCCServer::kFirstPort = 1024;
+const unsigned short CIrcDCCServer::kLastPort = 5000;
 
-CIrcDCCServer::CIrcDCCServer()
-	: m_uiPort(0), m_hThread(NULL), m_bIsSender(false), 
-		m_ulPartnerIP(0L), m_ulFileSize(0L),
-		m_pSendFileDialog(NULL), m_ulStartTime(0L),
-		m_ulBytesSent(0L), m_uiXferRate(0)
-{
-}
-
+////////////////////////////////////////////////////////////////////
 CIrcDCCServer::~CIrcDCCServer()
 {
 	Stop();
 }
 
-bool CIrcDCCServer::Start(
-			const CString fileName,
-			const CString directory,
-			const CString partner,
-			unsigned long ulPartnerIP,
-			unsigned short uiPort,
-			unsigned long ulFileSize,
-			unsigned short uiXferRate,
-			const bool bIsSender
-			)
+unsigned short CIrcDCCServer::MakePortReservation()
 {
-	//Clean up old send file dialog
-	if (m_pSendFileDialog)
-	{
-		delete m_pSendFileDialog;
-		m_pSendFileDialog = NULL;
-	}
-
-	if( m_socket )
-		return false;
-
-	//Setup the connection info vars
-	m_fileName = fileName;
-	m_directory = directory;
-	m_partnerName = partner;
-	m_ulPartnerIP = ulPartnerIP;
-	m_uiPort = uiPort;
-	m_ulFileSize = ulFileSize;
-	m_bIsSender = bIsSender;
-	m_ulBytesSent = 0L;
-	m_uiXferRate = uiXferRate;
-
-	//Remember when we started
-	m_ulStartTime = GetTickCount();
-
-	//Create a file transfer dialog
-	m_pSendFileDialog = new CSendFileDialog(AfxGetMainWnd());
-	if ( !m_pSendFileDialog->Create(IDD_FILEXFER, AfxGetMainWnd()) )
-		return false;
-
-	m_pSendFileDialog->m_BytesSent = "0 bytes";
-	m_pSendFileDialog->m_ProgressFile.SetRange(0, 100);
-	m_pSendFileDialog->m_ProgressFile.SetPos(0);
-	sprintf(m_pSendFileDialog->m_Filesize.GetBuffer(32), "%lu bytes", m_ulFileSize);
-	m_pSendFileDialog->m_FolderName = m_directory;
-	m_pSendFileDialog->m_FileName = m_fileName;
-	m_pSendFileDialog->m_RecvrName = m_partnerName;
-	m_pSendFileDialog->m_TimeLeft = "Infinite";
-	m_pSendFileDialog->m_XferRate = "0 bytes/sec";
-	m_pSendFileDialog->m_XferStatus = "Waiting to Connect...";
+	//Assume the first port number is open
+	unsigned short uiPort = kFirstPort;
 	
-	//Some fields in the 
-	if (m_bIsSender)
-	{
-		m_pSendFileDialog->m_SentRecvd = "Sent:";
-		m_pSendFileDialog->m_ToFrom = "To:";
-	}
+	//if there are no used ports in the list use the first one
+	if (m_usedPorts.size() <= 0)
+		m_usedPorts.push_back(kFirstPort);
+
+	//next see if the port range is saturated (pigeon hole principal)
+	else if ((*m_usedPorts.end() - kFirstPort + 1) >= m_usedPorts.size())
+		m_usedPorts.push_back(*m_usedPorts.end() + 1);
+
+	//there must be a find a gap in the used port list
+	//since the list is always sorted
 	else
 	{
-		m_pSendFileDialog->m_SentRecvd = "Recv'd:";
-		m_pSendFileDialog->m_ToFrom = "From:";
+		std::vector<unsigned short>::iterator iter;
+		for (iter = m_usedPorts.begin(); iter < m_usedPorts.end(); iter++)
+		{
+			//oops, this port is being used, let's try the next one over
+			if (*iter == uiPort) uiPort++;
+			//looks like we found a gap, stop here
+			else break;
+		}
+
+		//Insert our port number into the gap we just found
+		m_usedPorts.insert(iter, uiPort);
 	}
 
-	//Show the dialog and tell it about this server
-	m_pSendFileDialog->AssignDCCServer(this);
-	m_pSendFileDialog->ShowWindow(SW_SHOW);
-
-	//Fire off the thread 
-	m_hThread = CreateThread(NULL, 0, ListenProc, this, 0, NULL);
-	Sleep(100);
-
-	return true;
+	return uiPort;
 }
 
-void CIrcDCCServer::Stop(DWORD timeout)
+void CIrcDCCServer::FreePort(unsigned short port)
 {
-	if( m_hThread )
+	//Tell used port list that this port is now open
+	std::vector<unsigned short>::iterator iter;
+	for (iter = m_usedPorts.begin(); iter < m_usedPorts.end(); iter++)
 	{
-		m_socket.Close();
-		if( WaitForSingleObject(m_hThread, timeout) != WAIT_OBJECT_0 && m_hThread )
+		//Find the port number, remove it
+		if (*iter == port)
 		{
-			TerminateThread(m_hThread, 1);
-			CloseHandle(m_hThread);
-			m_hThread = NULL;
+			m_usedPorts.erase(iter);
+			return;
 		}
 	}
 }
 
-void CIrcDCCServer::DoThreadRecv()
+void CIrcDCCServer::FreeThread(HANDLE pThread)
+{
+	//If thread list is empty, bail
+	if (m_hThread.size() <= 0) return;
+
+	//Tell thread ptr list that this thread is done
+	std::vector<HANDLE>::iterator iter;
+	for (iter = m_hThread.begin(); iter < m_hThread.end(); iter++)
+	{
+		//is this the the thread were looking for?
+		if ( *iter == pThread )
+		{
+			//Now we can forget about the thread
+			CloseHandle(*iter);
+			m_hThread.erase(iter);
+		}
+	}
+}
+
+bool CIrcDCCServer::Start(DCCTransferInfo dccinfo)
+{
+	//Make sure we have a port reservation made if were hosting a file
+	if (dccinfo.m_bIsSender && dccinfo.m_uiPort < kFirstPort)
+		return false;
+
+	//Remember when we started and who spawned us
+	dccinfo.m_ulStartTime = GetTickCount();
+	dccinfo.m_pDCCSever = this;
+
+	//Create the appropriate thread, but don't start it just yet
+	/*if (dccinfo.m_bIsSender)
+		dccinfo.m_pThread = CreateThread(NULL, 0, DoThreadSend, (void *)&dccinfo, 
+											CREATE_SUSPENDED, NULL);
+	else
+		dccinfo.m_pThread = CreateThread(NULL, 0, DoThreadRecv, (void *)&dccinfo,
+											CREATE_SUSPENDED, NULL);
+
+	//Rememeber who what threads we spawned
+	m_hThread.push_back(dccinfo.m_pThread);
+
+	//Now we can fire off the thread
+	if (-1 == ResumeThread(dccinfo.m_pThread)) return false;
+	Sleep(100);*/
+
+	if (dccinfo.m_bIsSender)
+		DoThreadSend((void *)&dccinfo);
+	else
+		DoThreadRecv((void *)&dccinfo);
+
+	return true;
+}
+
+void CIrcDCCServer::Stop(DWORD timeout, HANDLE hThread)
+{
+	//make sure we have a threads running
+	if (m_hThread.size() <= 0) return;
+
+	//Generate an iterator for the thread list
+	std::vector<HANDLE>::iterator iter;
+
+	//if the thread specified is NULL, kill all of the threads in the list
+	if (hThread == NULL)
+	{
+		//Start at the beginning
+		iter = m_hThread.begin();
+		while(m_hThread.size() > 0)
+		{
+			//wait for each thread to finish
+			if( *iter && WaitForSingleObject(*iter, timeout) != WAIT_OBJECT_0 )
+			{
+				TerminateThread(*iter, 1);
+				CloseHandle(*iter);
+			}
+
+			//now we can forget about the thread
+			iter = m_hThread.erase(iter);
+		}
+	}
+
+	//otherwise, find all a specific thread to close
+	else
+	{
+		for (iter = m_hThread.begin(); iter < m_hThread.end(); iter++)
+		{
+			//is this the the thread were looking for?
+			if ( *iter == hThread )
+			{
+				//wait for each thread to finish
+				if( *iter && WaitForSingleObject(*iter, timeout) != WAIT_OBJECT_0 )
+				{
+					TerminateThread(*iter, 1);
+					CloseHandle(*iter);
+				}
+
+				//now we can forget about the thread
+				m_hThread.erase(iter);
+			}
+		}
+	}
+}
+
+DWORD WINAPI CIrcDCCServer::DoThreadRecv(void* dccInfo)
 {
 	char szBuf[8193];
-	unsigned long cbRead, cbSent;
+	unsigned long cbRead, cbSent, replyTotal;
 	float fracSent;
 	unsigned long seconds, minutes, hours, rate;
 
+	//Make a local copy of the dcc info
+	DCCTransferInfo info = *((DCCTransferInfo*)dccInfo);
+
+	//Create a file transfer dialog
+	CSendFileDialog* pSendFileDialog = new CSendFileDialog(NULL);
+	CWnd* pParent= pSendFileDialog->FromHandle( AfxGetMainWnd()->m_hWnd );
+	if (!pParent || !pSendFileDialog || !pSendFileDialog->Create(IDD_FILEXFER, pParent) )
+		return false;
+
+	//Setup the status info on the dialog
+	pSendFileDialog->m_BytesSent = "0 bytes";
+	pSendFileDialog->m_ProgressFile.SetRange(0, 100);
+	pSendFileDialog->m_ProgressFile.SetPos(0);
+	pSendFileDialog->m_FolderName = info.m_directory;
+	pSendFileDialog->m_FileName = info.m_fileName;
+	pSendFileDialog->m_RecvrName = info.m_partnerName;
+	pSendFileDialog->m_TimeLeft = "Infinite";
+	pSendFileDialog->m_XferRate = "0 bytes/sec";
+	pSendFileDialog->m_XferStatus = "Waiting to Connect...";
+	pSendFileDialog->m_SentRecvd = "Recv'd:";
+	pSendFileDialog->m_ToFrom = "From:";
+	sprintf(pSendFileDialog->m_Filesize.GetBuffer(32), "%lu bytes", 
+			info.m_ulFileSize);
+
+	//Show the dialog and tell it about this server
+	pSendFileDialog->ShowWindow(SW_SHOW);
+
 	//Create an active socket to retrieve data from (close listening socket)
 	InetAddr addr;
-	addr.host = m_ulPartnerIP;
-	addr.port = m_uiPort;
-	m_socket.Connect(addr);
-	if ( !m_socket ) return;
+	Socket sock;
+	addr.host = htonl(info.m_ulPartnerIP);
+	addr.port = htons(info.m_uiPort);
+	sock.Connect(addr);
+	
+	//bail if we can't open the socket
+	if ( !sock )
+	{
+		pSendFileDialog->ShowWindow(SW_HIDE);
+		delete pSendFileDialog;
+		return 0;
+	}
 
 	//Tell user file transfer has started
-	m_pSendFileDialog->m_XferStatus = "Recieving File...";
+	pSendFileDialog->m_XferStatus = "Recieving File...";
 
 	//Create a file to write incoming data to
-	CString filename = m_directory+m_fileName;
+	CString filename = info.m_directory+info.m_fileName;
 	FILE* fp = fopen(filename, "wb");
-	if ( !fp ) return;
+	
+	//bail if we can't open the file
+	if ( !sock )
+	{
+		pSendFileDialog->ShowWindow(SW_HIDE);
+		delete pSendFileDialog;
+		return 0;
+	}
 
 	//Start grabbing data blocks
-	while(m_ulBytesSent < m_ulFileSize)
+	while(info.m_ulBytesSent < info.m_ulFileSize && !pSendFileDialog->isCanceled())
 	{
 		//Grab the next buffer
-		cbRead = m_socket.Receive((unsigned char*)szBuf, sizeof(szBuf)-1);
-		
+		cbRead = sock.Receive((unsigned char*)szBuf, sizeof(szBuf)-1);
+			
 		if( cbRead <= 0 ) continue;
 		else szBuf[cbRead] = '\0';
-
-		//Update the file transfer statistics
-		m_ulBytesSent += cbRead;
-		fracSent = float(m_ulBytesSent)/float(m_ulFileSize);
-		seconds = (GetTickCount() - m_ulStartTime)/1000;
-		rate = m_ulBytesSent / seconds;
-		seconds = (unsigned long)(float(seconds)/fracSent);
-		minutes = (seconds/60) % 60;
-		hours = (seconds/3600);
-		seconds = seconds % 60;
-
-		//Update the file transfer window
-		sprintf(m_pSendFileDialog->m_BytesSent.GetBuffer(64), "%lu bytes", m_ulBytesSent);
-		sprintf(m_pSendFileDialog->m_TimeLeft.GetBuffer(32), "%luh%lum%lus", 
-				hours, minutes, seconds);
-		sprintf(m_pSendFileDialog->m_XferRate.GetBuffer(64), "%lubytes/sec", rate);
-		m_pSendFileDialog->m_ProgressFile.SetPos(int(fracSent*100.F));
 
 		//Write it to file
 		fwrite(szBuf, cbRead, 1, fp);
 
-		//Tell the sender how many bytes we received
-		cbRead = htonl(cbRead);
-		cbSent = 0;
-		while ( cbSent <= 0 )
-			cbSent = m_socket.Send((unsigned char *)&cbRead, 4);
-	}
+		//update byte count
+		info.m_ulBytesSent += cbRead;
 
-	//Close our data transfer socket
-	m_socket.Close();
-
-	//Close our file
-	fclose(fp);
-}
-
-void CIrcDCCServer::DoThreadSend()
-{
-	char szBuf[8193];
-	unsigned long cbSend, cbRead, numAck;
-	float fracSent;
-	unsigned long seconds, minutes, hours, rate;
-
-	//Wait for someone to connect to us
-	//on a pre-arranged port
-	m_socket.Bind(InetAddr(m_uiPort));
-	m_socket.Listen();
-
-	//Create an active socket to write data from (close listening socket)
-	Socket sock = m_socket.Accept();
-	if ( !sock ) return;
-	m_socket.Close();
-
-	//Tell user file transfer has started
-	m_pSendFileDialog->m_XferStatus = "Sending File...";
-
-	//Create a file to read incoming data from
-	CString filename = m_directory+"\\"+m_fileName;
-	FILE* fp = fopen(filename, "rb");
-	if ( !fp ) return;
-
-
-	//Start grapping data blocks
-	while( m_ulBytesSent < m_ulFileSize )
-	{
-		//Pull a data block from the file
-		fread(szBuf, m_uiXferRate, 1, fp);
-
-		//Send the next chunk out
-		cbSend = 0;
-		while (cbSend <= 0)
-			cbSend = sock.Send((unsigned char *)szBuf, m_uiXferRate);	
-
-		//Make sure chunk gets acknowledged
-		cbRead = 0;
-		while( cbRead <= 0)
-			cbRead = m_socket.Receive((unsigned char*)&numAck, 4);
-
-		//Update that statistics
-		m_ulBytesSent += ntohl(numAck);
-		fracSent = float(m_ulBytesSent)/float(m_ulFileSize);
-		seconds = (GetTickCount() - m_ulStartTime)/1000;
-		rate = m_ulBytesSent / seconds;
+		//Update the file transfer statistics
+		fracSent = float(info.m_ulBytesSent)/float(info.m_ulFileSize);
+		seconds = (GetTickCount() - info.m_ulStartTime)/1000;
+		rate = (seconds > 0) ? info.m_ulBytesSent / seconds : 0;
 		seconds = (unsigned long)(float(seconds)/fracSent);
 		minutes = (seconds/60) % 60;
 		hours = (seconds/3600);
 		seconds = seconds % 60;
 
 		//Update the file transfer window
-		sprintf(m_pSendFileDialog->m_BytesSent.GetBuffer(64), "%lu bytes", m_ulBytesSent);
-		sprintf(m_pSendFileDialog->m_TimeLeft.GetBuffer(32), "%luh%lum%lus", 
+		sprintf(pSendFileDialog->m_BytesSent.GetBuffer(64), "%lu bytes", 
+				info.m_ulBytesSent);
+		sprintf(pSendFileDialog->m_TimeLeft.GetBuffer(32), "%luh%lum%lus", 
 				hours, minutes, seconds);
-		sprintf(m_pSendFileDialog->m_XferRate.GetBuffer(64), "%lubytes/sec", rate);
-		m_pSendFileDialog->m_ProgressFile.SetPos(int(fracSent*100.F));
+		sprintf(pSendFileDialog->m_XferRate.GetBuffer(64), "%lubytes/sec", rate);
+		pSendFileDialog->m_ProgressFile.SetPos(int(fracSent*100.F));
+
+		//Tell the sender how many bytes we received
+		replyTotal = htonl(info.m_ulBytesSent);
+
+		//Send out response
+		cbSent = sock.Send((unsigned char *)&replyTotal, 4);
 	}
 
 	//Close our data transfer socket
@@ -701,19 +737,163 @@ void CIrcDCCServer::DoThreadSend()
 
 	//Close our file
 	fclose(fp);
+
+	//Clean up file dialog
+	pSendFileDialog->ShowWindow(SW_HIDE);
+	delete pSendFileDialog;
+
+	//Free this thread from the system
+	if (info.m_pDCCSever) 
+		info.m_pDCCSever->FreeThread(info.m_pThread);
+
+	return 0;
 }
 
-DWORD WINAPI CIrcDCCServer::ListenProc(LPVOID pparam)
+DWORD WINAPI CIrcDCCServer::DoThreadSend(void* dccInfo)
 {
-	CIrcDCCServer* pThis = (CIrcDCCServer*)pparam;
+	char szBuf[8193];
+	unsigned long cbSend, cbRead, numAck;
+	float fracSent;
+	unsigned long seconds, minutes, hours, rate;
+	const k_ulTimeout = 10000;		//30 second timeout
 
-	if (pThis->IsSender())
-		try { pThis->DoThreadSend(); } catch( ... ) {}
-	else
-		try { pThis->DoThreadRecv(); } catch( ... ) {}
+	//Make a local copy of the dcc info
+	DCCTransferInfo info = *((DCCTransferInfo*)dccInfo);
 
-	CloseHandle(pThis->m_hThread);
-	pThis->m_hThread = NULL;
+	//Create a file transfer dialog
+	CSendFileDialog* pSendFileDialog = new CSendFileDialog(NULL);
+	ASSERT (pSendFileDialog);
+
+	CWnd* pParent= pSendFileDialog->FromHandle( AfxGetMainWnd()->m_hWnd );
+	ASSERT (pParent);
+
+	ASSERT (pSendFileDialog->Create(IDD_FILEXFER, pParent) == TRUE);
+	//if (!pParent || !pSendFileDialog || !pSendFileDialog->Create(IDD_FILEXFER, pParent) )
+	//	return false;
+
+	//Setup the status info on the dialog
+	pSendFileDialog->m_BytesSent = "0 bytes";
+	pSendFileDialog->m_ProgressFile.SetRange(0, 100);
+	pSendFileDialog->m_ProgressFile.SetPos(0);
+	pSendFileDialog->m_FolderName = info.m_directory;
+	pSendFileDialog->m_FileName = info.m_fileName;
+	pSendFileDialog->m_RecvrName = info.m_partnerName;
+	pSendFileDialog->m_TimeLeft = "Infinite";
+	pSendFileDialog->m_XferRate = "0 bytes/sec";
+	pSendFileDialog->m_XferStatus = "Waiting to Connect...";
+	pSendFileDialog->m_SentRecvd = "Sent:";
+	pSendFileDialog->m_ToFrom = "To:";
+	sprintf(pSendFileDialog->m_Filesize.GetBuffer(32), "%lu bytes", 
+			info.m_ulFileSize);
+
+	//Show the dialog and tell it about this server
+	pSendFileDialog->ShowWindow(SW_SHOW);
+
+	//Wait for someone to connect to us
+	//on a pre-arranged port
+	Socket sockListen;
+	sockListen.Bind(InetAddr(INADDR_ANY, htons(info.m_uiPort)));
+	if (!sockListen.Listen())
+	{
+		pSendFileDialog->ShowWindow(SW_HIDE);
+		delete pSendFileDialog;		
+		return 0;
+	}
+
+	//Wait for partner to connect to us
+	Socket sock;
+	while(!sock && (GetTickCount() - info.m_ulStartTime) < k_ulTimeout)
+		sock = sockListen.Accept();
+
+	//Make sure socket is valid (we didn't timeout)
+	if ( !sock )
+	{
+		pSendFileDialog->ShowWindow(SW_HIDE);
+		delete pSendFileDialog;		
+		return 0;
+	}
+
+	//Close the socket we were listening on
+	sockListen.Close();
+
+	//Tell user file transfer has started
+	pSendFileDialog->m_XferStatus = "Sending File...";
+
+	//Create a file to read incoming data from
+	CString filename = info.m_directory+info.m_fileName;
+	FILE* fp = fopen(filename, "rb");
+	ASSERT( fp != NULL );
+	if ( !fp )
+	{
+		pSendFileDialog->ShowWindow(SW_HIDE);
+		delete pSendFileDialog;		
+		return 0;
+	}
+
+	//Start grabbing data blocks
+	while( info.m_ulBytesSent < info.m_ulFileSize && !pSendFileDialog->isCanceled() )
+	{
+		//Pull a data block from the file
+		cbRead = fread(szBuf, info.m_uiXferRate, 1, fp);
+
+		//Send the next chunk out
+		cbSend = 0;
+		while (cbSend <= 0)
+			cbSend = sock.Send((unsigned char *)szBuf, cbRead);
+		
+		//Update sent byte count
+		info.m_ulBytesSent += cbSend;
+
+		//Make sure chunk gets acknowledged
+		cbRead = 0;
+		while( cbRead <= 0)
+			cbRead = sock.Receive((unsigned char*)&numAck, 4);
+
+		//Make sure numAck matches current amount of data seny
+		//Update that statistics
+		if (info.m_ulBytesSent != ntohl(numAck))
+		{
+			pSendFileDialog->ShowWindow(SW_HIDE);
+			delete pSendFileDialog;	
+			sock.Close();
+			fclose(fp);
+
+			return 0;
+		}
+
+		fracSent = float(info.m_ulBytesSent)/float(info.m_ulFileSize);
+		seconds = (GetTickCount() - info.m_ulStartTime)/1000;
+		rate = info.m_ulBytesSent / seconds;
+		seconds = (unsigned long)(float(seconds)/fracSent);
+		minutes = (seconds/60) % 60;
+		hours = (seconds/3600);
+		seconds = seconds % 60;
+
+		//Update the file transfer window
+		sprintf(pSendFileDialog->m_BytesSent.GetBuffer(64), "%lu bytes", 
+				info.m_ulBytesSent);
+		sprintf(pSendFileDialog->m_TimeLeft.GetBuffer(32), "%luh%lum%lus", 
+				hours, minutes, seconds);
+		sprintf(pSendFileDialog->m_XferRate.GetBuffer(64), "%lubytes/sec", rate);
+		pSendFileDialog->m_ProgressFile.SetPos(int(fracSent*100.F));
+	}
+
+	//Close our data transfer socket
+	sock.Close();
+
+	//Close our file
+	fclose(fp);
+
+	//Clean up file dialog
+	pSendFileDialog->ShowWindow(SW_HIDE);
+	delete pSendFileDialog;
+
+	//Free this thread and port from the system
+	if (info.m_pDCCSever) 
+	{
+		info.m_pDCCSever->FreeThread(info.m_pThread);
+		info.m_pDCCSever->FreePort(info.m_uiPort);
+	}
 
 	return 0;
 }

@@ -33,6 +33,7 @@ class InetAddr : public IPaddress
 {
 public :
 	InetAddr(short wPort = 0);
+	InetAddr(long dwIP, short wPort);
 	InetAddr(const char* lpszAddress, short wPort = 0);
 	InetAddr& operator = (char* lpszAddress);
 
