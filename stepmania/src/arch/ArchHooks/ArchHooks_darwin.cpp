@@ -12,6 +12,7 @@
 #include "RageLog.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
+#include "StepMania.h"
 #include <Carbon/Carbon.h>
 #include <signal.h>
 
@@ -40,7 +41,7 @@ SInt16 ShowAlert(int type, CFStringRef message, CFStringRef OK, CFStringRef canc
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
-    CrashHandlerHandleArgs();
+    CrashHandlerHandleArgs( g_argc, g_argv );
     
     long response;
     CString error = "";

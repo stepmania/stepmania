@@ -2,6 +2,7 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "ArchHooks_Unix.h"
+#include "StepMania.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 
@@ -23,7 +24,7 @@ static void EmergencyShutdown( int signal )
 ArchHooks_Unix::ArchHooks_Unix()
 {
 #if defined(CRASH_HANDLER)
-	CrashHandlerHandleArgs();
+	CrashHandlerHandleArgs( g_argc, g_argv );
 	InitializeCrashHandler();
 	SignalHandler::OnClose( CrashSignalHandler );
 #endif

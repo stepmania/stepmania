@@ -2,7 +2,7 @@
 #define CRASH_HANDLER_H
 
 void CrashSignalHandler(int signal);
-void CrashHandlerHandleArgs();
+void CrashHandlerHandleArgs( int argc, char* argv[] );
 void InitializeCrashHandler();
 	
 #endif

@@ -12,7 +12,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "StepMania.h" /* for g_argv */
 #include "RageUtil.h"
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
@@ -26,6 +25,8 @@
 #if defined(HAVE_VERSION_INFO)
 extern const unsigned version_num;
 #endif
+
+const char *g_pCrashHandlerArgv0 = NULL;
 
 struct BacktraceNames
 {
@@ -100,7 +101,7 @@ CString BacktraceNames::Format() const
     if( ShortenedPath != "" )
     {
         /* We have some sort of symbol name, so abbreviate or elide the module name. */
-        if( ShortenedPath == g_argv[0] )
+        if( ShortenedPath == g_pCrashHandlerArgv0 )
             ShortenedPath = "";
         else
         {
@@ -507,13 +508,14 @@ static void child_process()
 }
 
 
-void CrashHandlerHandleArgs()
+void CrashHandlerHandleArgs( int argc, char* argv[] )
 {
-    if(g_argc == 2 && !strcmp(g_argv[1], CHILD_MAGIC_PARAMETER))
-    {
-        child_process();
-        exit(0);
-    }
+	g_pCrashHandlerArgv0 = argv[0];
+	if( argc == 2 && !strcmp(argv[1], CHILD_MAGIC_PARAMETER) )
+	{
+		child_process();
+		exit(0);
+	}
 }
 
 

@@ -9,8 +9,6 @@
 #include <limits.h>
 #include <fcntl.h>
 
-#include "StepMania.h" /* for g_argv */
-
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
 #include "RageThreads.h"
 
@@ -19,6 +17,8 @@
 
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
+
+extern const char *g_pCrashHandlerArgv0;
 
 static void safe_print(int fd, ...)
 {
@@ -49,10 +49,10 @@ static void NORETURN spawn_child_process( int from_parent )
 		close(from_parent);
 	}
 
-	execl(g_argv[0], g_argv[0], CHILD_MAGIC_PARAMETER, NULL);
+	execl( g_pCrashHandlerArgv0, g_pCrashHandlerArgv0, CHILD_MAGIC_PARAMETER, NULL);
 
 	/* If we got here, the exec failed. */
-	safe_print(fileno(stderr), "Crash handler execl(", g_argv[0], ") failed: ", strerror(errno), "\n", NULL);
+	safe_print(fileno(stderr), "Crash handler execl(", g_pCrashHandlerArgv0, ") failed: ", strerror(errno), "\n", NULL);
 	_exit(1);
 }
 
@@ -452,9 +452,9 @@ void CrashSignalHandler( int signal )
 		return;
 #endif
 
-	if( g_argv == 0 || g_argc < 1 )
+	if( g_pCrashHandlerArgv0 )
 	{
-		safe_print(fileno(stderr), "Crash handler failed: g_argv or g_argc not set\n", NULL);
+		safe_print(fileno(stderr), "Crash handler failed: CrashHandlerHandleArgs was not called\n", NULL);
 		_exit(1);
 	}
 	
