@@ -88,6 +88,8 @@ inline int lrintf( float f )
 
 #define ENDIAN_LITTLE
 
+#define HAVE_SDL
+
 #ifdef _XBOX
 #include <xtl.h>
 #include <xgraphics.h>
