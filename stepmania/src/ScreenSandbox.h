@@ -19,23 +19,19 @@
 #include "MenuElements.h"
 #include "TipDisplay.h"
 #include "RageSoundStream.h"
+#include "Sample3dObject.h"
 
 
 class ScreenSandbox : public Screen
 {
-	float rot;
-	float tX;
-	float tY;
-	float tZ;
 public:
 	ScreenSandbox();
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	Sprite m_sprite;
+	Sample3dObject obj;
 };
 
 
