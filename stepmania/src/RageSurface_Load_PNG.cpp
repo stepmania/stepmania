@@ -192,6 +192,8 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		}
 	}
 
+	png_set_interlace_handling( png );
+
 	png_read_update_info( png, info_ptr );
 
 	switch( type )
@@ -217,9 +219,16 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 	ASSERT( img );
 
-	png_byte *pixels = (png_byte *) img->pixels;
+	/* alloca to prevent memleaks if libpng longjmps us */
+	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
+
 	for( unsigned y = 0; y < height; ++y )
-		png_read_row( png, pixels + img->pitch*y, NULL );
+	{
+		png_byte *p = (png_byte *) img->pixels;
+		row_pointers[y] = p + img->pitch*y;
+	}
+
+	png_read_image( png, row_pointers );
 
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, NULL );
