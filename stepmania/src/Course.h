@@ -22,7 +22,7 @@ class Notes;
 class Course
 {
 	struct Entry {
-		enum Type { fixed, random, random_within_group, best, worst } type;
+		enum Type { fixed, random, random_within_group, best, worst, caprice } type;
 		Song* pSong;			// used in type=fixed
 		CString group_name;		// used in type=random_within_group
 		Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
@@ -40,6 +40,9 @@ class Course
 		}
 	};
 	vector<Entry> m_entries;
+
+	mutable bool m_bCapriceCached;          // whether or not caprice has been generated
+	mutable vector<Song*> m_CapriceEntries; // caprice entries
 
 public:
 	Course();

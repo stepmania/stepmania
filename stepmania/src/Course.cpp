@@ -186,6 +186,8 @@ void Course::LoadFromCRSFile( CString sPath )
 				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				CLAMP( new_entry.players_index, 0, 500 );
 			}
+			else if( sParams[1] == "CAPRICE" )
+				new_entry.type = Entry::caprice;
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
 				new_entry.type = Entry::worst;
@@ -452,7 +454,7 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		const Entry& e = entries[i];
+		const Entry &e = entries[i];
 
 		Song* pSong = NULL;	// fill this in
 		Notes* pNotes = NULL;	// fill this in
@@ -464,6 +466,52 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 
 		switch( e.type )
 		{
+		case Entry::caprice:
+			if (m_bCapriceCached)
+			{
+				if (i > m_CapriceEntries.size()) break;  // out of range
+
+				pSong = m_CapriceEntries[i];
+				LOG->Trace("Accessing caprice at %d - %s", pSong, pSong->GetFullTranslitTitle().c_str());
+				if( pSong )
+				{
+					if( e.difficulty == DIFFICULTY_INVALID )
+						pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
+					else
+						pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+				}
+			}
+			else
+			{
+				// find a song with the notes we want
+				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
+				{
+					/* See if the first song matches what we want. */
+					pSong = AllSongsShuffled[CurSong];
+					CurSong = (CurSong+1) % AllSongsShuffled.size();
+
+					if(e.type == Entry::random_within_group &&
+					   pSong->m_sGroupName.CompareNoCase(e.group_name))
+					   continue; /* wrong group */
+
+					if( e.difficulty == DIFFICULTY_INVALID )
+						pNotes = pSong->GetNotes( nt, low_meter, high_meter, PREFSMAN->m_bAutogenMissingTypes );
+					else
+						pNotes = pSong->GetNotes( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
+
+					if( pNotes )	// found a match
+					{
+						LOG->Trace("Accessing caprice at %d", pSong);
+						m_CapriceEntries.push_back(pSong);	// cache it for later
+						LOG->Trace("Song title: %s", pSong->GetFullTranslitTitle().c_str() );
+						break;						// stop searching
+					}
+
+					pSong = NULL;
+					pNotes = NULL;
+				}
+			}
+			break;
 		case Entry::fixed:
 			pSong = e.pSong;
 			if( pSong )
@@ -560,6 +608,8 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci, int Difficul
 		cinfo.Difficult = IsDifficult(Difficult);
 		ci.push_back( cinfo ); 
 	}
+
+	m_bCapriceCached = true;
 }
 
 RageColor Course::GetColor() const
@@ -861,6 +911,9 @@ bool Course::HasBanner() const
 void Course::UpdateCourseStats()
 {
 	LOG->Trace("Updating course stats for %s", this->m_sName.c_str() );
+
+	m_CapriceEntries.clear();  // regenerate caprice entries
+	m_bCapriceCached = false;  // on update
 
 	SortOrder_AvgDifficulty = 0;
 	SortOrder_Ranking = 2;
