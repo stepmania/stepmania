@@ -41,7 +41,6 @@ public:
 	int GetHeight() const;
 	int GetBPP() const;
 	
-	void ResetMatrixStack();
 	void PushMatrix();
 	void PopMatrix();
 	void Translate( float x, float y, float z );
@@ -50,6 +49,7 @@ public:
 	void RotateX( float r );
 	void RotateY( float r );
 	void RotateZ( float r );
+	void smPostMultMatrixf( const RageMatrix &f );
 
 	void SetTexture( RageTexture* pTexture );
 

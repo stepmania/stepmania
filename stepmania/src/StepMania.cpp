@@ -436,7 +436,6 @@ static void GameLoop()
 		 * Render
 		 */
 		DISPLAY->Clear();
-		DISPLAY->ResetMatrixStack();
 
 		SCREENMAN->Draw();		// draw the game
 

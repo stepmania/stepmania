@@ -30,8 +30,6 @@ RageDisplay*		DISPLAY	= NULL;
 ////////////
 const int MAX_NUM_VERTICIES = 1000;
 SDL_Surface			*g_screen = NULL;		// this class is a singleton, so there can be only one
-vector<RageMatrix>	g_matModelStack;	// model matrix stack
-RageMatrix&			GetTopModelMatrix() { return g_matModelStack.back(); }
 int					g_flags = 0;		/* SDL video flags */
 GLenum				g_vertMode = GL_TRIANGLES;
 RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
@@ -42,7 +40,7 @@ int					g_iFPS, g_iVPF, g_iDPF;
 int					g_PerspectiveMode = 0;
 
 int					g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
-
+int					g_ModelMatrixCnt=0;
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
 int RageDisplay::GetDPF() const { return g_iDPF; }
@@ -67,7 +65,6 @@ void GetGLExtensions(set<string> &ext)
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
 //	LOG->Trace( "RageDisplay::RageDisplay()" );
-
 	m_oglspecs = new oglspecs_t;
 	
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
@@ -404,7 +401,9 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	 * if both scale factors in the matrix are ~0.  (Actually, I think
 	 * it's true if two of the three scale factors are ~0, but we don't
 	 * use this for anything 3d at the moment anyway ...) */
-	RageMatrix &mat = GetTopModelMatrix();
+	RageMatrix mat;
+	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)mat );
+
 	if(mat.m[0][0] < 1e-5 && mat.m[1][1] < 1e-5) 
 	    return;
 
@@ -425,8 +424,7 @@ void RageDisplay::AddVerts( const RageVertex v[], int iNumVerts )
 		if( g_iNumVerts+1 > MAX_NUM_VERTICIES )	
 			FlushQueue();
 
-		// transform the verticies as we copy
-		RageVec3TransformCoord( &g_vertQueue[g_iNumVerts].p, &v[i].p, &GetTopModelMatrix() ); 
+		g_vertQueue[g_iNumVerts].p = v[i].p;
 		g_vertQueue[g_iNumVerts].c = v[i].c;
 		g_vertQueue[g_iNumVerts].t = v[i].t;
 		g_iNumVerts++; 
@@ -447,24 +445,16 @@ void RageDisplay::FlushQueue()
 	g_iDrawsSinceLastCheck++;
 }
 
-void RageDisplay::ResetMatrixStack() 
-{ 
-	RageMatrix ident;
-	RageMatrixIdentity( &ident );
-	g_matModelStack.clear();
-	g_matModelStack.push_back(ident);
-}
-
 void RageDisplay::PushMatrix() 
 { 
-	g_matModelStack.push_back( GetTopModelMatrix() );	
-	ASSERT(g_matModelStack.size()<20);		// check for infinite loop
+	glPushMatrix();
+	ASSERT(++g_ModelMatrixCnt<20);
 }
 
 void RageDisplay::PopMatrix() 
 { 
-	g_matModelStack.erase( g_matModelStack.end()-1, g_matModelStack.end() ); 
-	ASSERT(g_matModelStack.size()>=1);	// popped a matrix we didn't push
+	glPopMatrix();
+	ASSERT(g_ModelMatrixCnt-->0);
 }
 
 /* Switch from orthogonal to perspective view.
@@ -508,7 +498,9 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 	glScalef(1, -1, 1);
 
 	if(preserve_loc) {
-		RageMatrix &matTop = GetTopModelMatrix();
+		RageMatrix matTop;
+		glGetFloatv( GL_MODELVIEW_MATRIX, (float*)matTop );
+
 		{
 			/* Pull out the 2d translation. */
 			float x = matTop.m[3][0], y = matTop.m[3][1];
@@ -539,7 +531,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 			matTop.m[2][2] == 1.f && matTop.m[3][2] == 0.f && matTop.m[3][3] == 1.f);
 
 		/* Reset the matrix back to identity. */
-		RageMatrixIdentity( &matTop );
+		glLoadIdentity();
 	}
 
 	glMatrixMode( GL_MODELVIEW );
@@ -573,62 +565,49 @@ void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const Ra
 	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)view ); /* cheesy :) */
 	glPopMatrix();
 
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &view, &matTop );
+	smPostMultMatrixf(view);
 }
 
 void RageDisplay::Translate( float x, float y, float z )
 {
-	RageMatrix matTemp;
-	RageMatrixTranslation( &matTemp, x, y, z );
-
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	glTranslatef(x, y, z);
 }
+
 
 void RageDisplay::TranslateLocal( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
 
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTop, &matTemp );
+	smPostMultMatrixf(matTemp);
 }
 
 void RageDisplay::Scale( float x, float y, float z )
 {
-	RageMatrix matTemp;
-	RageMatrixScaling( &matTemp, x, y, z );
-
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	glScalef(x, y, z);
 }
 
 void RageDisplay::RotateX( float r )
 {
-	RageMatrix matTemp;
-	RageMatrixRotationX( &matTemp, r );
-
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	glRotatef(r* 180/PI, 1, 0, 0);
 }
 
 void RageDisplay::RotateY( float r )
 {
-	RageMatrix matTemp;
-	RageMatrixRotationY( &matTemp, r );
-
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	glRotatef(r* 180/PI, 0, 1, 0);
 }
 
 void RageDisplay::RotateZ( float r )
 {
-	RageMatrix matTemp;
-	RageMatrixRotationZ( &matTemp, r );
+	glRotatef(r* 180/PI, 0, 0, 1);
+}
 
-	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+void RageDisplay::smPostMultMatrixf( const RageMatrix &f )
+{
+	RageMatrix m;
+	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)m );
+	RageMatrixMultiply( &m, &f, &m );
+	glLoadMatrixf((const float*) m);
 }
 
 void RageDisplay::SetTexture( RageTexture* pTexture )
