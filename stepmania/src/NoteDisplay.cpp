@@ -619,6 +619,8 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const 
 	const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
 	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
+	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5f;
+
 	if( bGlow )
 		fColorScale = 1;
 
@@ -626,11 +628,9 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const 
 	float fDrawYCapBottom;
 	{
 		float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYStartOffset, m_fYReverseOffsetPixels );
-		fDrawYCapTop = max( fYCapTop, fYStartPos );
-	}
-	{
 		float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYEndOffset, m_fYReverseOffsetPixels );
-		fDrawYCapBottom = min( fYCapBottom, fYEndPos );
+		fDrawYCapTop = max( fYCapTop, bReverse ? fYEndPos : fYStartPos );
+		fDrawYCapBottom = min( fYCapBottom, bReverse ? fYStartPos : fYEndPos );
 	}
 
 	// don't draw any part of the head that is after the middle of the tail
@@ -723,11 +723,10 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bo
 	float fDrawYBodyBottom;
 	{
 		float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYStartOffset, m_fYReverseOffsetPixels );
-		fDrawYBodyTop = max( fYBodyTop, fYStartPos );
-	}
-	{
 		float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYEndOffset, m_fYReverseOffsetPixels );
-		fDrawYBodyBottom = min( fYBodyBottom, fYEndPos );
+
+		fDrawYBodyTop = max( fYBodyTop, bReverse ? fYEndPos : fYStartPos );
+		fDrawYBodyBottom = min( fYBodyBottom, bReverse ? fYStartPos : fYEndPos );
 	}
 
 	// top to bottom
@@ -801,6 +800,8 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, con
 	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
 
+	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5f;
+
 	if( bGlow )
 		fColorScale = 1;
 
@@ -808,11 +809,9 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, con
 	float fDrawYCapBottom;
 	{
 		float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYStartOffset, m_fYReverseOffsetPixels );
-		fDrawYCapTop = max( fYCapTop, fYStartPos );
-	}
-	{
 		float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYEndOffset, m_fYReverseOffsetPixels );
-		fDrawYCapBottom = min( fYCapBottom, fYEndPos );
+		fDrawYCapTop = max( fYCapTop, bReverse ? fYEndPos : fYStartPos );
+		fDrawYCapBottom = min( fYCapBottom, bReverse ? fYStartPos : fYEndPos );
 	}
 
 	bool bAllAreTransparent = true;
