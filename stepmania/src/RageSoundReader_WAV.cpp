@@ -227,10 +227,6 @@ int RageSoundReader_WAV::get_length_fmt_normal() const
     BAIL_IF_MACRO( ret == -1, strerror(errno), -1 );
     int offset = ftell( this->rw );
 
-	LOG->Trace("offs %i, st %i, pos %i, bps %i, chan %i, ret %i", 
-		offset, this->fmt.data_starting_offset,
-		offset - this->fmt.data_starting_offset, BytesPerSample, Channels,
-		ConvertBytePosToMs( BytesPerSample, Channels, offset - this->fmt.data_starting_offset));
     return ConvertBytePosToMs( BytesPerSample, Channels, offset - this->fmt.data_starting_offset);
 }
 
