@@ -20,6 +20,7 @@
 #include "ProfileManager.h"
 #include "StageStats.h"
 #include "RageDisplay.h"
+#include "Foreach.h"
 
 
 //
@@ -628,6 +629,7 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 		if( (int) m_sSelection[pn].size() == MAX_RANKING_NAME_LENGTH )
 		{
 			m_soundInvalid.Play();
+			SelectChar( pn, CHAR_BACK );
 			break;
 		}
 		m_sSelection[pn] += wchar_t(SelectedLetter);
@@ -642,11 +644,16 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 
 void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
 {
-	m_SelectedChar[pn] = 0;
-	while( m_AlphabetLetter[pn][m_SelectedChar[pn]] != CHAR_OK )
-		++m_SelectedChar[pn];
-	ASSERT( m_AlphabetLetter[pn][m_SelectedChar[pn]] == CHAR_OK );
-	PositionCharsAndCursor( pn );
+	FOREACH( int, m_AlphabetLetter[pn], letter )
+	{
+		if( *letter == c )	// character found
+		{
+			m_SelectedChar[pn] = letter - m_AlphabetLetter[pn].begin();
+			PositionCharsAndCursor( pn );
+			return;
+		}
+	}
+	ASSERT( false );	// character not found
 }
 
 void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType type )
