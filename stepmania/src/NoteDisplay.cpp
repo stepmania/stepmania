@@ -223,13 +223,13 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	const int	fYStep = 8;		// draw a segment every 8 pixels	// this requires that the texture dimensions be a multiple of 8
 
+	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 	DISPLAY->SetBlendModeNormal();
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
 	else
 		DISPLAY->SetTextureModeModulate();
 	DISPLAY->EnableTextureWrapping();
-	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 
 	//
 	// Draw the tail

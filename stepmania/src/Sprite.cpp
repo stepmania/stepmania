@@ -224,6 +224,7 @@ void Sprite::DrawPrimitives()
 	v[2].p = RageVector3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
 	v[3].p = RageVector3( quadVerticies.right,	quadVerticies.top,		0 );	// top right
 
+	DISPLAY->SetTexture( m_pTexture );
 
 	if( m_pTexture )
 	{
@@ -253,7 +254,6 @@ void Sprite::DrawPrimitives()
 		}
 	}
 
-	DISPLAY->SetTexture( m_pTexture );
 	DISPLAY->SetTextureModeModulate();
 	if( m_bBlendAdd )
 		DISPLAY->SetBlendModeAdd();
