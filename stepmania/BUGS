@@ -31,3 +31,45 @@ have nothing to do with the current tween (eg. here, changing the dim
 while we're tweening X,Y) is tricky right now; I'm not sure how to handle
 this cleanly ...
 
+***
+
+All pixels have RGB components--even fully transparent ones.  We're
+getting odd borders on textures that have a transparent border, because
+the RGB component of a fully transparent pixel is being blended with
+a non-transparent pixel.  (For example, a picture with a black border
+on a black background that has a white, #FFFFFF00 border will have a 
+small one-pixel gray border around its real border, since blending
+#FFFFFF00 with #000000FF gets something like #AAAAAAAA.)
+
+We can't tell artists to fix the textures; they shouldn't have to worry
+about the hidden RGB components in a transparent texel.
+
+We need to do a pass at texture load that iterates over each transparent
+pixel, searches the 8 bordering pixels, and sets the color components
+to those of a bordering one if any are non-transparent.
+
+Could be slow.
+
+I guess I could write a simple tool for this ... a bit of a pain, though.
+
+***
+
+We'll probably get seaming in tiled backgrounds; the resize filter can't
+handle wrapping border pixels instead of clamping them.
+
+Need higher quality rate conversions; 22khz files sound bad.  Don't
+give a DESIRED to SDL_sound and do the conversion ourself.
+
+********
+
+CJK characters in the group song list look bad: It's a 20-pixel-high font,
+and the CJK font is 16px; it's too small.
+
+The font system can handle this: make another CJK font of a more
+appropriate size (20px), call it "_japanese 20px", and import it to
+overide the default 16-pixel one.  (It'd probably look better if the
+CJK font was too big than too small, so a 24px font may look better
+than 16px.)
+
+Need an easier way to make CJK fonts.
+
