@@ -157,13 +157,13 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		{
 			int iOldCombo = iCurCombo;
 
-			if( GAMESTATE->IsCourseMode() )
+			if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )
 			{
 				switch( scoreOfLastTap )
 				{
 				case TNS_MARVELOUS:
 				case TNS_PERFECT:
-					iCurCombo += iNumTapsInRow;
+					iCurCombo++;
 					break;
 				case TNS_GREAT:
 //					int aosid = 4;
@@ -274,7 +274,7 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
 	switch( hns )
 	{
-	case HNS_OK:	return +6;
+	case HNS_OK:	return GAMESTATE->IsCourseMode() ? +3 : +6;
 	case HNS_NG:	return +0;
 	default:	ASSERT(0);	return 0;
 	}
