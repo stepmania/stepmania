@@ -491,20 +491,20 @@ static avcodec::URLProtocol RageProtocol =
 	NULL
 };
 
-static void InitProtocol()
+static void RegisterProtocols()
 {
 	static bool Done = false;
 	if( Done )
 		return;
 	Done = true;
 
+	avcodec::av_register_all();
 	avcodec::register_protocol( &RageProtocol );
 }
 
 void MovieTexture_FFMpeg::CreateDecoder()
 {
-	avcodec::av_register_all();
-	InitProtocol();
+	RegisterProtocols();
 
 	int ret = avcodec::av_open_input_file( &decoder->m_fctx, "rage://" + GetID().filename, NULL, 0, NULL );
 	if( ret < 0 )
