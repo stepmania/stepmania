@@ -18,7 +18,7 @@
 #include "GameState.h"
 
 
-const float SCORE_TWEEN_TIME = 0.5f;
+const float SCORE_TWEEN_TIME = 0.2f;
 
 
 ScoreDisplayNormal::ScoreDisplayNormal()

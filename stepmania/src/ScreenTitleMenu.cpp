@@ -285,7 +285,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 				if( RandomFloat(0,1)>0.8f )
 					GAMESTATE->m_PlayerOptions[p].m_bDark = true;
 			}
-			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType(rand()%SongOptions::NUM_LIFE_TYPES);
+			GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.7f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
 			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 
 			GAMESTATE->m_bDemonstration = true;

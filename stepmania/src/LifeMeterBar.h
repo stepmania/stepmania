@@ -13,12 +13,14 @@
 #include "LifeMeter.h"
 #include "Sprite.h"
 #include "Quad.h"
+class LifeMeterStream;
 
 
 class LifeMeterBar : public LifeMeter
 {
 public:
 	LifeMeterBar();
+	~LifeMeterBar();
 	
 	virtual void Load( PlayerNumber pn );
 
@@ -27,6 +29,7 @@ public:
 
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score );
+	virtual void AfterLifeChanged();
 	virtual void OnDancePointsChange() {};	// this life meter doesn't care
 	virtual bool IsInDanger();
 	virtual bool IsHot();
@@ -39,16 +42,12 @@ private:
 	ActorFrame	m_frame;	// hold everything and mirror this for PLAYER_2 instead of mirroring all the individual Actors 
 
 	Quad		m_quadBlackBackground;
-	Sprite		m_sprStreamNormal;
-	Sprite		m_sprStreamHot;
-	Sprite		m_sprFrame;
+	LifeMeterStream*	m_pStream;
 
 	float		m_fLifePercentage;
 	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage
-	float		m_fLifeVelocity;	// how m_fTrailingLifePercentage approaches m_fLifePercentage
+	float		m_fLifeVelocity;
+
 	float		m_fHotAlpha;
 	bool		m_bFailedEarlier;		// set this to true when life dips below 0
-	int			m_iMeterWidth;
-	int			m_iMeterHeight;
-	float		m_fDangerThreshold;
 };

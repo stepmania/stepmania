@@ -157,14 +157,12 @@ HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
 {
 	HRESULT hr;
 
-	LPDIRECT3DTEXTURE8 pD3DTexture = pTexture->GetD3DTexture();
-
-	if (pD3DTexture == NULL) {
-        DXTRACE_ERR(TEXT("SetRenderTarget called with a NULL texture!"), 0);
-		return E_FAIL;
-	}
 	m_pTexture = pTexture;
 
+	if( m_pTexture == NULL )
+		return S_OK;
+	
+	LPDIRECT3DTEXTURE8 pD3DTexture = pTexture->GetD3DTexture();
 
 	// get the format of the texture
     D3DSURFACE_DESC ddsd;
@@ -189,6 +187,9 @@ HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
 //-----------------------------------------------------------------------------
 HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
+	if( m_pTexture == NULL )
+		throw RageException( "DoRenderSample called while m_pTexture was NULL!" );
+
     BYTE  *pBmpBuffer;		// Bitmap buffer
 
     // Get the video bitmap buffer
@@ -516,11 +517,15 @@ void RageMovieTexture::CheckMovieStatus()
 //-----------------------------------------------------------------------------
 void RageMovieTexture::CleanupDShow()
 {
+	m_pCTR->SetRenderTarget( NULL );
     // Shut down the graph
     if (m_pGB) {
 		Stop();
 		m_pGB.Release ();
 	}
+
+	// MEM LEAK!  Why in the world does this cause a crash...  I'm commenting it out for now.
+	//	SAFE_DELETE( m_pCTR );
 }
     
 void RageMovieTexture::Play()

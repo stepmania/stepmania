@@ -23,12 +23,193 @@
 #define METER_WIDTH			THEME->GetMetricI("LifeMeterBar","MeterWidth")
 #define METER_HEIGHT		THEME->GetMetricI("LifeMeterBar","MeterHeight")
 #define DANGER_THRESHOLD	THEME->GetMetricF("LifeMeterBar","DangerThreshold")
+#define NUM_CHAMBERS		THEME->GetMetricI("LifeMeterBar","NumChambers")
+#define NUM_STRIPS			THEME->GetMetricI("LifeMeterBar","NumStrips")
+
+int		g_iMeterWidth;
+int		g_iMeterHeight;
+float	g_fDangerThreshold;
+int		g_iNumChambers;
+int		g_iNumStrips;
+
 
 const float FAIL_THRESHOLD = 0;
 
 
+class LifeMeterStream : public Actor
+{
+public:
+	LifeMeterStream()
+	{
+		g_iMeterWidth = METER_WIDTH;
+		g_iMeterHeight = METER_HEIGHT;
+		g_fDangerThreshold = DANGER_THRESHOLD;
+		g_iNumChambers = NUM_CHAMBERS;
+		g_iNumStrips = NUM_STRIPS;
+
+
+		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
+
+		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+		m_quadMask.SetZ( -1 );
+
+		CString sGraphicPath;
+		
+		sGraphicPath = ssprintf("gameplay %slifemeter stream normal", bExtra?"extra ":"");
+		m_sprStreamNormal.Load( THEME->GetPathTo("Graphics", sGraphicPath) );
+
+		sGraphicPath = ssprintf("gameplay %slifemeter stream hot", bExtra?"extra ":"");
+		m_sprStreamHot.Load( THEME->GetPathTo("Graphics", sGraphicPath) );
+
+		sGraphicPath = ssprintf("gameplay %slifemeter bar", bExtra?"extra ":"");
+		m_sprFrame.Load( THEME->GetPathTo("Graphics", sGraphicPath) );
+	}
+
+	Sprite		m_sprStreamNormal;
+	Sprite		m_sprStreamHot;
+	Sprite		m_sprFrame;
+	Quad		m_quadMask;
+
+	PlayerNumber m_PlayerNumber;
+	float m_fPercent;
+	float m_fHotAlpha;
+
+	void GetChamberIndexAndOverslow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut )
+	{
+		iChamberOut = (int)(fPercent*g_iNumChambers);
+		fChamberOverflowPercentOut = fPercent*g_iNumChambers - iChamberOut;
+	}
+
+	float GetChamberLeftPercent( int iChamber )
+	{
+		return (iChamber+0) / (float)g_iNumChambers;
+	}
+
+	float GetChamberRightPercent( int iChamber )
+	{
+		return (iChamber+1) / (float)g_iNumChambers;
+	}
+
+	float GetRightEdgePercent( int iChamber, float fChamberOverflowPercent )
+	{
+		if( (iChamber%2) == 0 )
+			return (iChamber+fChamberOverflowPercent) / (float)g_iNumChambers;
+		else
+			return (iChamber+1) / (float)g_iNumChambers;
+	}
+
+	float GetHeightPercent( int iChamber, float fChamberOverflowPercent )
+	{
+		if( (iChamber%2) == 1 )
+			return 1-fChamberOverflowPercent;
+		else
+			return 0;
+	}
+
+	void DrawPrimitives()
+	{
+		DISPLAY->EnableZBuffer();
+
+		DrawMask( m_fPercent );
+		
+		const float fPercentBetweenStrips = 1.0f/g_iNumStrips;
+
+		const float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
+		ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
+
+		for( float f=fPercentOffset+1; f>=fPercentOffset; f-=fPercentBetweenStrips )
+		{
+			DrawMask( f );
+			DrawStrip( f );
+		}
+
+		DISPLAY->DisableZBuffer();
+
+		m_sprFrame.Draw();
+
+	}
+
+	void DrawStrip( float fRightEdgePercent )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+			return;
+
+		RECT rect;
+
+		const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
+		const float fStripWidthInPercent = 1.0f/g_iNumStrips;
+		
+		const float fCorrectedRightEdgePercent = fRightEdgePercent + fChamberWidthInPercent;
+		const float fCorrectedStripWidthInPercent = fStripWidthInPercent + 2*fChamberWidthInPercent;
+		const float fCorrectedLeftEdgePercent = fCorrectedRightEdgePercent - fCorrectedStripWidthInPercent;
+
+
+		// set size of streams
+		rect.left	= -g_iMeterWidth/2 + g_iMeterWidth*fCorrectedLeftEdgePercent;
+		rect.top	= -g_iMeterHeight/2;
+		rect.right	= -g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent);
+		rect.bottom	= +g_iMeterHeight/2;
+
+		float fPercentCroppedFromRight = max( 0, fCorrectedRightEdgePercent-1 );
+
+
+		m_sprStreamNormal.StretchTo( &rect );
+		m_sprStreamHot.StretchTo( &rect );
+
+
+		// set custom texture coords
+		float fPrecentOffset = fRightEdgePercent;
+
+		FRECT frectCustomTexCoords(
+			0,
+			0,
+			1-fPercentCroppedFromRight,
+			1);
+
+		m_sprStreamNormal.SetCustomTextureRect( frectCustomTexCoords );
+		m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
+
+		m_sprStreamHot.SetDiffuse( D3DXCOLOR(1,1,1,m_fHotAlpha) );
+
+		m_sprStreamNormal.Draw();
+		m_sprStreamHot.Draw();
+	}
+
+	void DrawMask( float fPercent )
+	{
+		RECT rect;
+
+		int iChamber;
+		float fChamberOverflowPercent;
+		GetChamberIndexAndOverslow( fPercent, iChamber, fChamberOverflowPercent );
+		float fRightPercent = GetRightEdgePercent( iChamber, fChamberOverflowPercent );
+		float fHeightPercent = GetHeightPercent( iChamber, fChamberOverflowPercent );
+		float fChamberLeftPercent = GetChamberLeftPercent( iChamber );
+		float fChamberRightPercent = GetChamberRightPercent( iChamber );
+
+		// draw mask for vertical chambers
+		rect.left	= -g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth; 
+		rect.top	= -g_iMeterHeight/2;
+		rect.right	= -g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth;
+		rect.bottom	= -g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight;
+		m_quadMask.StretchTo( &rect );
+		m_quadMask.Draw();
+
+		// draw mask for horizontal chambers
+		rect.left	= -g_iMeterWidth/2 + fRightPercent*g_iMeterWidth; 
+		rect.top	= -g_iMeterHeight/2;
+		rect.right	= +g_iMeterWidth/2;
+		rect.bottom	= +g_iMeterHeight/2;
+		m_quadMask.StretchTo( &rect );
+		m_quadMask.Draw();
+	}
+};
+
+
 LifeMeterBar::LifeMeterBar()
 {
+	m_pStream = new LifeMeterStream;
+
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:			m_fLifePercentage = 0.5f;	break;
@@ -41,38 +222,27 @@ LifeMeterBar::LifeMeterBar()
 	m_fLifeVelocity = 0;
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
-	m_iMeterWidth = METER_WIDTH;
-	m_iMeterHeight = METER_HEIGHT;
-	m_fDangerThreshold = DANGER_THRESHOLD;
 
 	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(0,0,0,1) );
-	m_quadBlackBackground.SetZoomX( (float)m_iMeterWidth );
-	m_quadBlackBackground.SetZoomY( (float)m_iMeterHeight );
+	m_quadBlackBackground.SetZoomX( (float)g_iMeterWidth );
+	m_quadBlackBackground.SetZoomY( (float)g_iMeterHeight );
 	m_frame.AddChild( &m_quadBlackBackground );
 
-	if( GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2() )
-		m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay extra lifemeter stream normal") );
-	else
-		m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream normal") );
-	m_frame.AddChild( &m_sprStreamNormal );
+	this->AddChild( m_pStream );
 
-	if( GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2() )
-		m_sprStreamHot.Load( THEME->GetPathTo("Graphics","gameplay extra lifemeter stream hot") );
-	else
-		m_sprStreamHot.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream hot") );
-	m_frame.AddChild( &m_sprStreamHot );
+	AfterLifeChanged();
+}
 
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter bar") );
-	m_frame.AddChild( &m_sprFrame );
-
-	this->AddChild( &m_frame );
-
-	ResetBarVelocity();
+LifeMeterBar::~LifeMeterBar()
+{
+	delete m_pStream;
 }
 
 void LifeMeterBar::Load( PlayerNumber pn )
 {
 	LifeMeter::Load( pn );
+
+	m_pStream->m_PlayerNumber = pn;
 
 	if( pn == PLAYER_2 )
 		m_frame.SetZoomX( -1 );
@@ -110,9 +280,9 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		{
 		case TNS_PERFECT:	fDeltaLife = +0;	break;
 		case TNS_GREAT:		fDeltaLife = +0;	break;
-		case TNS_GOOD:		fDeltaLife = -100;	break;
-		case TNS_BOO:		fDeltaLife = -100;	break;
-		case TNS_MISS:		fDeltaLife = -100;	break;
+		case TNS_GOOD:		fDeltaLife = -1.0;	break;
+		case TNS_BOO:		fDeltaLife = -1.0;	break;
+		case TNS_MISS:		fDeltaLife = -1.0;	break;
 		}
 		break;
 	default:
@@ -130,20 +300,17 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	if( m_fLifePercentage <= FAIL_THRESHOLD )
 		m_bFailedEarlier = true;
 
-	ResetBarVelocity();
+	m_fLifeVelocity += fDeltaLife;
 }
 
 void LifeMeterBar::ChangeLife( HoldNoteScore score )
 {
-	// do nothing
+
 }
 
-void LifeMeterBar::ResetBarVelocity()
+void LifeMeterBar::AfterLifeChanged()
 {
-	// update bar animation
-	const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 
-	m_fLifeVelocity = fDelta * 5;	// change in life percent per second
 }
 
 bool LifeMeterBar::IsHot() 
@@ -153,7 +320,7 @@ bool LifeMeterBar::IsHot()
 
 bool LifeMeterBar::IsInDanger() 
 { 
-	return m_fLifePercentage < m_fDangerThreshold; 
+	return m_fLifePercentage < g_fDangerThreshold; 
 }
 
 bool LifeMeterBar::IsFailing() 
@@ -170,23 +337,40 @@ void LifeMeterBar::Update( float fDeltaTime )
 {
 	LifeMeter::Update( fDeltaTime );
 
-	float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
-	m_fLifeVelocity += fDelta * fDeltaTime;		// accelerate
-	m_fLifeVelocity *= 1-fDeltaTime;		// dampen
-	m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
+	// HACK:  Tweaking these values is very difficulty.  Update the
+	// "physics" many times so that the spring motion appears faster
 
-	float fNewDelta = m_fLifePercentage - m_fTrailingLifePercentage;
+	for( int i=0; i<10; i++ )
+	{
 
-	if( fDelta * fNewDelta < 0 )	// the deltas have different signs
-		m_fLifeVelocity /= 4;		// make some drag
-	CLAMP( m_fTrailingLifePercentage, 0, 1 );
+		const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
+		const float fSign = (fDelta>0) ? 1 : -1;
 
-	m_fHotAlpha  += IsHot() ? +fDeltaTime*2 : -fDeltaTime*2;
+//		const float fLinearForce = fSign * 0.2f;
+//		m_fLifeVelocity += fSpringForce * fDeltaTime;
+
+		const float fSpringForce = fDelta * 2.0f;
+		m_fLifeVelocity += fSpringForce * fDeltaTime;
+
+		const float fViscousForce = -m_fLifeVelocity * 0.2f;
+		m_fLifeVelocity += fViscousForce * fDeltaTime;
+
+		CLAMP( m_fLifeVelocity, -.02f, +.02f );
+
+		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
+	}
+
+	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fHotAlpha, 0, 1 );
+
+	if( IsHot() )
+		m_fLifeVelocity = max( 0, m_fLifeVelocity );
 }
+
 
 void LifeMeterBar::DrawPrimitives()
 {
+	/*
 	// set custom texture coords
 	static RECT rectSize;
 	rectSize.left	= -m_iMeterWidth/2; 
@@ -210,26 +394,21 @@ void LifeMeterBar::DrawPrimitives()
 
 	m_sprStreamHot.SetDiffuse(    D3DXCOLOR(1,1,1,m_fHotAlpha) );
 
+*/
 
+	m_pStream->m_fPercent = m_fTrailingLifePercentage;
+	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
-
-	float fPercentRed = (m_fTrailingLifePercentage<m_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
+	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
-
-	if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-	{
-		m_sprStreamNormal.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-		m_sprStreamHot.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-	}
 
 	ActorFrame::DrawPrimitives();
 }
 
 /*
 
-  Chris:  
-  I'm making the coloring of the lifemeter a property of the theme.  
-  That's where it belongs anyway...
+  Chris:  I'm making the coloring of the lifemeter a property 
+  of the theme.  That's where it belongs anyway...
 
   
 const D3DXCOLOR COLOR_EZ2NORMAL_1	= D3DXCOLOR(0.7f,0.4f,0,1);

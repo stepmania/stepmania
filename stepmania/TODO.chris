@@ -2,6 +2,12 @@
 Fix
 /////////////////////////
 
+fix movie texture crash
+
+life meter snaking
+
+eval letters glow faster
+
 The "groove bar" reports at the results screen is broken. 
 Getting a nearly full voltage bar on a 
 song when I barely maitain combo (it should be max combo/max possible combo), 
