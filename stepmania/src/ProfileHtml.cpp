@@ -779,7 +779,7 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		TABLE_LINE2( "BPM", sBPM );
 		TABLE_LINE2( "Credit", pSong->m_sCredit );
 		TABLE_LINE2( "MusicLength", SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
-		TABLE_LINE2( "Lyrics", !pSong->m_sLyricsFile.empty() );
+		TABLE_LINE2( "Lyrics", pSong->HasLyrics() );
 		TABLE_LINE2( "NumTimesPlayed", pProfile->GetSongNumTimesPlayed(pSong) );
 		END_TABLE;
 
