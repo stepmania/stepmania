@@ -164,12 +164,17 @@ CString Profile::GetDisplayTotalCaloriesBurned() const
 
 CString Profile::GetDisplayTotalCaloriesBurnedToday() const
 {
-	DateTime now = DateTime::GetNowDate();
-	float fCals = GetCaloriesBurnedForDay(now);
+	float fCals = GetCaloriesBurnedToday();
 	if( m_iWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
 		return FormatCalories( fCals );
+}
+
+float Profile::GetCaloriesBurnedToday() const
+{
+	DateTime now = DateTime::GetNowDate();
+	return GetCaloriesBurnedForDay(now);
 }
 
 int Profile::GetTotalNumSongsPlayed() const
@@ -1640,6 +1645,31 @@ bool Profile::CreateNewProfile( CString sProfileDir, CString sName )
 	FlushDirCache();
 	return bResult;
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaProfile : public Luna<T>
+{
+public:
+	LunaProfile() { LUA->Register( Register ); }
+
+	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
+	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetGoalCalories )
+		ADD_METHOD( GetCaloriesBurnedToday )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Profile )
+// lua end
+
 
 /*
  * (c) 2001-2004 Chris Danford

@@ -16,6 +16,7 @@
 #include "StyleUtil.h"	// for StyleID
 
 struct XNode;
+struct lua_State;
 
 //
 // Current file versions
@@ -61,8 +62,9 @@ public:
 	// smart accessors
 	//
 	CString GetDisplayName() const;
-	CString GetDisplayTotalCaloriesBurned() const;
-	CString GetDisplayTotalCaloriesBurnedToday() const;
+	CString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
+	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
+	float GetCaloriesBurnedToday() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
 	float GetSongsPossible( StepsType st, Difficulty dc ) const;
@@ -298,6 +300,9 @@ public:
 
 	static bool CreateNewProfile( CString sProfileDir, CString sName );
 	static void BackupToDir( CString sFromDir, CString sToDir );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	const HighScoresForASong *GetHighScoresForASong( const SongID& songID ) const;

@@ -540,11 +540,13 @@ class LunaProfileManager : public Luna<T>
 public:
 	LunaProfileManager() { LUA->Register( Register ); }
 
-	static int IsUsingProfile( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsUsingProfile((PlayerNumber)IArg(1)) ); return 1; }
+	static int IsUsingProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsUsingProfile((PlayerNumber)IArg(1)) ); return 1; }
+	static int GetProfile( T* p, lua_State *L )		{ p->GetProfile((PlayerNumber)IArg(1))->PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsUsingProfile )
+		ADD_METHOD( GetProfile )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
