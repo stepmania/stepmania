@@ -109,7 +109,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	}
 
 	SMLoader smfile;		
-	smfile.LoadFromSMFile( THEME->GetPathToSM(STEPFILE), m_Song, false );
+	smfile.LoadFromSMFile( THEME->GetPathToO(STEPFILE), m_Song, false );
 	ASSERT( m_Song.m_apNotes.size() == 1 );
 	m_Song.m_apNotes[0]->GetNoteData(&m_NoteData);
 

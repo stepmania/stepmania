@@ -41,7 +41,8 @@ const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 	"Fonts",
 	"Graphics",
 	"Numbers",
-	"Sounds"
+	"Sounds",
+	"Other"
 };
 
 ThemeManager::ThemeManager()
