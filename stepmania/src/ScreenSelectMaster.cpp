@@ -206,6 +206,21 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	// init m_Next order info
 	for( int dir = 0; dir < NUM_DIRS; ++dir )
 	{
+		/* Reasonable defaults: */
+		for( unsigned c = 0; c < m_aModeChoices.size(); ++c )
+		{
+			int add;
+			switch( dir )
+			{
+			case DIR_UP:
+			case DIR_LEFT:	add = -1; break;
+			default:		add = +1; break;
+			}
+
+			m_Next[dir][c] = c + add;
+			wrap( m_Next[dir][c], m_aModeChoices.size() );
+		}
+
 		const CString dirname = dirs[dir];
 		const CString order = OPTION_ORDER( dirname );
 		vector<CString> parts;
@@ -213,8 +228,6 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 		if( parts.size() == 0 )
 			continue;
-		for( unsigned c = 0; c < m_aModeChoices.size(); ++c )
-			m_Next[dir][c] = -1;
 
 		for( unsigned part = 0; part < parts.size(); ++part )
 		{
