@@ -1,3 +1,6 @@
+#ifndef ARCH_SETUP_DARWIN_H
+#define ARCH_SETUP_DARWIN_H
+
 typedef unsigned char 	   UInt8;
 typedef unsigned short 	   UInt16;
 typedef unsigned long 	   UInt32;
@@ -30,6 +33,8 @@ typedef unsigned long long UInt64;
 #define ArchSwap16(n) OSSwapInt16((n))
 #define HAVE_BYTE_SWAPS
 extern "C" long long llabs(long long i);
+
+#endif
 
 /*
  * (c) 2003-2004 Steve Checkoway
