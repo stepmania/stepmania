@@ -35,6 +35,9 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 
+	IDLE_COMMENT_SECONDS.Read();
+	IDLE_TIMEOUT_SECONDS.Read();
+
 	m_sName = sClassName;
 
 	//
