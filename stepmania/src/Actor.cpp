@@ -78,6 +78,8 @@ void Actor::Draw()
 		return;	// early abort
 	if( m_fHibernateSecondsLeft > 0 )
 		return;	// early abort
+//	if( this->EarlyAbortDraw() )
+//		return;
 
 	// call the most-derived versions
 	this->BeginDraw();	
@@ -605,101 +607,6 @@ void Actor::SetShadowLength( float fLength )
 	{
 		m_fShadowLength = fLength;
 		m_bShadow = true;
-	}
-}
-
-void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff )
-{
-	sFadeString.MakeLower();
-	sFadeString.Replace( ' ', ',' );
-
-	TweenState original = m_current;
-	TweenState mod = m_current;
-
-	CStringArray asBits;
-	split( sFadeString, ",", asBits );
-	
-#define CONTAINS(needle)	(find( asBits.begin(), asBits.end(), needle ) != asBits.end())
-
-	TweenType tt;
-	if( CONTAINS("linear") )			tt = TWEEN_LINEAR;
-	else if( CONTAINS("accelerate") )	tt = bFadingOff ? TWEEN_ACCELERATE : TWEEN_DECELERATE;
-	else if( CONTAINS("bounce") )		tt = bFadingOff ? TWEEN_BOUNCE_BEGIN : TWEEN_BOUNCE_END;
-	else if( CONTAINS("spring") )		tt = TWEEN_SPRING;
-	else								tt = TWEEN_LINEAR;
-
-	
-	float fDeltaX	= (float)(CONTAINS("left")?-SCREEN_WIDTH:0) + (CONTAINS("right")?+SCREEN_HEIGHT:0);
-	float fDeltaY	= (float)(CONTAINS("top")?-SCREEN_WIDTH:0)  + (CONTAINS("bottom")?+SCREEN_HEIGHT:0);
-	float fDeltaZ	= (float)0;
-	if( CONTAINS("far") )
-	{
-		fDeltaX *= 2;
-		fDeltaY *= 2;
-		fDeltaZ *= 2;
-	}
-	mod.pos.x		+= fDeltaX;
-	mod.pos.y		+= fDeltaY;
-	mod.pos.z		+= fDeltaZ;
-	mod.rotation.x	+= (CONTAINS("spinx")?-360:0);
-	mod.rotation.y	+= (CONTAINS("spiny")?-360:0);
-	mod.rotation.z	+= (CONTAINS("spinz")?-360:0);
-	mod.scale.x		*= (CONTAINS("foldx")?0:1) * (CONTAINS("zoomx")||CONTAINS("zoom")?3:1);
-	mod.scale.y		*= (CONTAINS("foldy")?0:1) * (CONTAINS("zoomy")||CONTAINS("zoom")?3:1);
-	for( int i=0; i<4; i++ )
-	{
-		mod.diffuse[i] = GetDiffuse();
-		mod.diffuse[i].a *= CONTAINS("fade")?0:1;
-	}
-	mod.glow = GetGlow();
-	mod.glow.a *= CONTAINS("glow")?1:0;
-
-
-
-	TweenState& start = bFadingOff ? original : mod;
-	TweenState& end = bFadingOff ? mod : original;
-
-	// apply tweens
-	StopTweening();
-
-	if( CONTAINS("ghost") )
-	{
-		// start with no glow, no alpha
-		start.glow.a = 0;
-		int i;
-		for( i=0; i<4; i++ )
-			start.diffuse[i].a = 0;
-		
-		m_current = start;
-
-
-		TweenState mid;
-		TweenState::MakeWeightedAverage( mid, start, end, 0.5 );
-
-		// tween to full glow, no alpha
-		mid.glow.a = 1;
-		for( i=0; i<4; i++ )
-			mid.diffuse[i].a = 0;
-		BeginTweening( fFadeSeconds/2, tt );
-		LatestTween() = mid;
-
-		// snap to full alpha
-		for( i=0; i<4; i++ )
-			mid.diffuse[i].a = 1;
-		BeginTweening( 0.0001f, tt );
-		LatestTween() = mid;
-
-		// tween to no glow
-		mid.glow.a = 0;
-		BeginTweening( fFadeSeconds/2, tt );
-		LatestTween() = mid;
-	}
-	else
-	{
-		m_current = start;
-		BeginTweening( fSleepSeconds );
-		BeginTweening( fFadeSeconds, tt );
-		LatestTween() = end;
 	}
 }
 
