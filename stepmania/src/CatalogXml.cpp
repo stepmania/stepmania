@@ -16,6 +16,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "XmlFile.h"
+#include "Course.h"
 
 const CString CATALOG_XML	= "Catalog.xml";
 
@@ -58,7 +59,23 @@ void SaveCatalogXml( CString sDir )
 		}
 	}
 
-	// bool bSaved =
+
+	vector<Course*> vpCourses;
+	SONGMAN->GetAllCourses( vpCourses, false );
+	for( unsigned i=0; i<vpCourses.size(); i++ )
+	{
+		Course* pCourse = vpCourses[i];
+
+		CourseID courseID;
+		courseID.FromCourse( pCourse );
+
+		XNode* pCourseNode = courseID.CreateNode();
+
+		xml.AppendChild( pCourseNode );
+
+		pCourseNode->AppendChild( "Title", pCourse->m_sName );
+		pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
+	}
+
 	xml.SaveToFile(fn);
-	LOG->Trace( "Done." );
 }
