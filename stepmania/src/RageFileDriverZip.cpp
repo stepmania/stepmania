@@ -81,9 +81,9 @@ public:
 	RageFileObjZipDeflated( const RageFile &f, const FileInfo &info );
 	RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy );
 	~RageFileObjZipDeflated();
-	int Read(void *buffer, size_t bytes);
-	int Write(const void *buffer, size_t bytes) { SetError( "Not implemented" ); return -1; }
-	int Seek( int offset );
+	int ReadInternal( void *pBuffer, size_t iBytes );
+	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
+	int SeekInternal( int iOffset );
 	int GetFileSize() { return info.uncompr_size; }
 	RageFileObj *Copy() const
 	{
@@ -102,10 +102,10 @@ private:
 
 public:
 	RageFileObjZipStored( const RageFile &f, const FileInfo &info );
-	int Read(void *buffer, size_t bytes);
-	int Write(const void *buffer, size_t bytes) { SetError( "Not implemented" ); return -1; }
+	int ReadInternal( void *pBuffer, size_t iBytes );
+	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
 
-	int Seek( int offset );
+	int SeekInternal( int iOffset );
 	int GetFileSize() { return info.uncompr_size; }
 
 	RageFileObj *Copy() const
@@ -499,7 +499,7 @@ RageFileObjZipDeflated::~RageFileObjZipDeflated()
 		LOG->Trace( "Huh? inflateEnd() err = %i", err );
 }
 
-int RageFileObjZipDeflated::Read( void *buf, size_t bytes )
+int RageFileObjZipDeflated::ReadInternal( void *buf, size_t bytes )
 {
 	bool done=false;
 	int ret = 0;
@@ -560,7 +560,7 @@ int RageFileObjZipDeflated::Read( void *buf, size_t bytes )
 	return ret;
 }
 
-int RageFileObjZipDeflated::Seek( int iPos )
+int RageFileObjZipDeflated::SeekInternal( int iPos )
 {
 	/* Optimization: if offset is the end of the file, it's a lseek(0,SEEK_END).  Don't
 	 * decode anything. */
@@ -612,7 +612,7 @@ RageFileObjZipStored::RageFileObjZipStored( const RageFile &f, const FileInfo &i
 	FilePos = 0;
 }
 
-int RageFileObjZipStored::Read( void *buf, size_t bytes )
+int RageFileObjZipStored::ReadInternal( void *buf, size_t bytes )
 {
 	const int bytes_left = info.compr_size-this->FilePos;
 	const int got = zip.Read( buf, min( (int) bytes, bytes_left ) );
@@ -628,7 +628,7 @@ int RageFileObjZipStored::Read( void *buf, size_t bytes )
 }
 
 
-int RageFileObjZipStored::Seek( int offset )
+int RageFileObjZipStored::SeekInternal( int offset )
 {
 	ASSERT( offset >= 0 );
 	offset = min( (unsigned) offset, info.compr_size );

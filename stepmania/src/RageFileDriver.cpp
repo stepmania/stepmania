@@ -90,6 +90,27 @@ RageFileDriver *MakeFileDriver( CString Type, CString Root )
 	return NULL;
 }
 
+
+int RageFileObj::Seek( int iOffset )
+{
+	return SeekInternal( iOffset );
+}
+
+int RageFileObj::Read( void *pBuffer, size_t iBytes )
+{
+	return ReadInternal( pBuffer, iBytes );
+}
+
+int RageFileObj::Write( const void *pBuffer, size_t iBytes )
+{
+	return WriteInternal( pBuffer, iBytes );
+}
+
+int RageFileObj::Flush()
+{
+	return FlushInternal();
+}
+
 /*
  * Copyright (c) 2003-2004 Glenn Maynard
  * All rights reserved.

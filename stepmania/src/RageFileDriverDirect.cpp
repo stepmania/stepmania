@@ -43,10 +43,10 @@ private:
 public:
 	RageFileObjDirect( const CString &path, int fd_, int mode_ );
 	virtual ~RageFileObjDirect();
-	virtual int Read(void *buffer, size_t bytes);
-	virtual int Write(const void *buffer, size_t bytes);
-	virtual int Flush();
-	virtual int Seek( int offset );
+	virtual int ReadInternal( void *pBuffer, size_t iBytes );
+	virtual int WriteInternal( const void *pBuffer, size_t iBytes );
+	virtual int FlushInternal();
+	virtual int SeekInternal( int offset );
 	virtual RageFileObj *Copy() const;
 	virtual CString GetDisplayPath() const { return path; }
 	virtual int GetFileSize();
@@ -290,7 +290,7 @@ RageFileObjDirect::~RageFileObjDirect()
 	}
 }
 
-int RageFileObjDirect::Read( void *buf, size_t bytes )
+int RageFileObjDirect::ReadInternal( void *buf, size_t bytes )
 {
 	int ret = read( fd, buf, bytes );
 	if( ret == -1 )
@@ -316,7 +316,7 @@ static int retried_write( int fd, const void *buf, size_t count )
 }
 
 
-int RageFileObjDirect::Flush()
+int RageFileObjDirect::FlushInternal()
 {
 	if( !write_buf.size() )
 		return 0;
@@ -333,7 +333,7 @@ int RageFileObjDirect::Flush()
 	return ret;
 }
 
-int RageFileObjDirect::Write( const void *buf, size_t bytes )
+int RageFileObjDirect::WriteInternal( const void *buf, size_t bytes )
 {
 	if( write_buf.size()+bytes > BUFSIZE )
 	{
@@ -360,7 +360,7 @@ int RageFileObjDirect::Write( const void *buf, size_t bytes )
 	return bytes;
 }
 
-int RageFileObjDirect::Seek( int offset )
+int RageFileObjDirect::SeekInternal( int offset )
 {
 	return lseek( fd, offset, SEEK_SET );
 }

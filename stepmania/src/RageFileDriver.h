@@ -33,24 +33,43 @@ protected:
 
 class RageFileObj
 {
-protected:
-	void SetError( const CString &sErr ) { m_sError = sErr; }
-	CString m_sError;
-
 public:
 	virtual ~RageFileObj() { }
 
-	CString GetError() const { return m_sError; }
+	virtual CString GetError() const { return m_sError; }
 	
-	virtual int Seek( int offset ) = 0;
+	/* Seek to the given absolute offset.  Return to the position actually
+	 * seeked to; if the position given was beyond the end of the file, the
+	 * return value will be the size of the file. */
+	int Seek( int iOffset );
+
+	/* Read at most iSize bytes into pBuf.  Return the number of bytes read,
+	 * 0 on end of stream, or -1 on error.  Note that reading less than iSize
+	 * does not necessarily mean that the end of the stream has been reached;
+	 * keep reading until 0 is returned. */
+	int Read( void *pBuffer, size_t iBytes );
+
+	/* Write iSize bytes of data from pBuf.  Return 0 on success, -1 on error. */
+	int Write( const void *pBuffer, size_t iBytes );
+
+	/* Due to buffering, writing may not happen by the end of a Write() call, so not
+	 * all errors may be returned by it.  Data will be flushed when the stream (or its
+	 * underlying object) is destroyed, but errors can no longer be returned.  Call
+	 * Flush() to flush pending data, in order to check for errors. */
+	int Flush();
+
 	virtual int GetFileSize() = 0;
 	virtual CString GetDisplayPath() const { return ""; }
+	virtual RageFileObj *Copy() const { FAIL_M( "Copying unimplemented" ); }
 
-	/* Raw I/O: */
-	virtual int Read(void *buffer, size_t bytes) = 0;
-	virtual int Write(const void *buffer, size_t bytes) = 0;
-	virtual int Flush() { return 0; }
-	virtual RageFileObj *Copy() const = 0;
+protected:
+	virtual int SeekInternal( int iOffset ) { FAIL_M( "Seeking unimplemented" ); }
+	virtual int ReadInternal( void *pBuffer, size_t iBytes ) = 0;
+	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
+	virtual int FlushInternal() { return 0; }
+
+	virtual void SetError( const CString &sError ) { m_sError = sError; }
+	CString m_sError;
 };
 
 /* This is used to register the driver, so RageFileManager can see it. */

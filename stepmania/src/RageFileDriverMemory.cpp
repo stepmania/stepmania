@@ -44,7 +44,7 @@ public:
 			delete m_pFile;
 	}
 
-	int Read( void *buffer, size_t bytes )
+	int ReadInternal( void *buffer, size_t bytes )
 	{
 		m_pFile->m_Mutex.Lock();
 
@@ -57,7 +57,7 @@ public:
 		return bytes;
 	}
 
-	int Write( const void *buffer, size_t bytes )
+	int WriteInternal( const void *buffer, size_t bytes )
 	{
 		m_pFile->m_Mutex.Lock();
 		m_pFile->m_sBuf.append( (const char *) buffer, bytes );
@@ -67,7 +67,7 @@ public:
 		return bytes;
 	}
 
-	int Seek( int offset )
+	int SeekInternal( int offset )
 	{
 		m_iFilePos = clamp( offset, 0, GetFileSize() );
 		return m_iFilePos;
