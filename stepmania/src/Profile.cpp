@@ -44,6 +44,17 @@ const int SM_390A12_SONG_SCORES_VERSION = 9;
 const int SM_390A12_COURSE_SCORES_VERSION = 8;
 
 
+#if defined(WIN32)
+#pragma warning (disable : 4706) // assignment within conditional expression
+#endif
+
+#define FOREACH_Node( Node, Var ) \
+	XNodes::const_iterator Var##Iter; \
+	const XNode *Var = NULL; \
+	for( Var##Iter = Node->childs.begin(); \
+		(Var##Iter != Node->childs.end() && (Var = *Var##Iter) ),  Var##Iter != Node->childs.end(); \
+		++Var##Iter )
+
 
 void Profile::InitEditableData()
 {
@@ -575,28 +586,28 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	{
 		XNode* pNumSongsPlayedByStyle = pNode->GetChild("NumSongsPlayedByStyle");
 		if( pNumSongsPlayedByStyle )
-			for( XNodes::const_iterator style = pNumSongsPlayedByStyle->childs.begin(); 
-				style != pNumSongsPlayedByStyle->childs.end(); 
-				style++ )
+		{
+			FOREACH_Node( pNumSongsPlayedByStyle, style )
 			{
-				if( (*style)->name != "Style" )
+				if( style->name != "Style" )
 					continue;
 
 				CString sGame;
-				if( !(*style)->GetAttrValue( "Game", sGame ) )
+				if( !style->GetAttrValue( "Game", sGame ) )
 					WARN_AND_CONTINUE;
 				Game g = GAMEMAN->StringToGameType( sGame );
 				if( g == GAME_INVALID )
 					WARN_AND_CONTINUE;
 
 				CString sStyle;
-				if( !(*style)->GetAttrValue( "Style", sStyle ) )
+				if( !style->GetAttrValue( "Style", sStyle ) )
 					WARN_AND_CONTINUE;
 
 				Style s = GAMEMAN->GameAndStringToStyle( g, sStyle );
 
-				(*style)->GetValue( m_iNumSongsPlayedByStyle[s] );
+				style->GetValue( m_iNumSongsPlayedByStyle[s] );
 			}
+		}
 	}
 
 	{
