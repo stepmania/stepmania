@@ -34,12 +34,8 @@ void Foreground::LoadFromSong( const Song *pSong )
 		const BackgroundChange &change = pSong->m_ForegroundChanges[i];
 		CString sBGName = change.m_sBGName;
 		
-		const CString sAniDir = pSong->GetSongDir()+sBGName;
-		if( !IsADirectory(sAniDir) )
-			RageException::Throw( "The song foreground BGA \"%s\" is not a directory", sAniDir.c_str() );
-
 		LoadedBGA bga;
-		bga.m_bga = ActorUtil::MakeActor( sAniDir );
+		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName );
 		bga.m_bga->PlayCommand( "On" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 
