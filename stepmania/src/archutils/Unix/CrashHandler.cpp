@@ -425,7 +425,7 @@ OSStatus CrashExceptionHandler( ExceptionInformation *e )
 	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
 
 	RunCrashHandler( &crash );
-	return -1;
+	_exit(1);
 }
 #endif
 
