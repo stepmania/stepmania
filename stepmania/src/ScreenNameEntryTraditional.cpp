@@ -60,7 +60,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 
 		// DEBUGGING STUFF
-	if(1)
+	if(0)
 	{
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
