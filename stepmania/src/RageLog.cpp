@@ -228,14 +228,18 @@ void RageLog::Write( int where, const CString &line )
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
 
+	CString LineHeader;
+	if( m_bTimestamping )
+		LineHeader += SecondsToTime(RageTimer::GetTimeSinceStart()) + ": ";
+	if( where & WRITE_LOUD )
+		LineHeader += "WARNING: ";
+
 	for( unsigned i = 0; i < lines.size(); ++i )
 	{
 		CString &str = lines[i];
 
-		if( where & WRITE_LOUD )
-			str = "WARNING: " + str;
-		if( m_bTimestamping )
-			str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
+		if( LineHeader.size() )
+			str.insert( 0, LineHeader );
 
 		if( where&WRITE_TO_INFO && g_fileInfo.IsOpen() )
 			g_fileInfo.PutLine( str );
