@@ -522,7 +522,7 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
 	bool bLast = false;
-	for( float fY=fYCapTop; fY<fYCapBottom; fY+=fYStep )
+	for( float fY=fYCapTop; !bLast; fY+=fYStep )
 	{
 		if( fY >= fYCapBottom )
 		{
