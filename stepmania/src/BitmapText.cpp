@@ -336,7 +336,7 @@ void BitmapText::DrawPrimitives()
 	}
 
 	/* render the glow pass */
-	if( m_temp.glow.a != 0 )
+	if( m_temp.glow.a > 0.0001f )
 	{
 		DISPLAY->SetTextureModeGlow();
 

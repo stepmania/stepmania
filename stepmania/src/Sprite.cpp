@@ -318,7 +318,7 @@ void Sprite::DrawPrimitives()
 	//////////////////////
 	// render the glow pass
 	//////////////////////
-	if( m_temp.glow.a != 0 )
+	if( m_temp.glow.a > 0.0001f )
 	{
 		DISPLAY->SetTextureModeGlow();
 		v[0].c = v[1].c = v[2].c = v[3].c = m_temp.glow;
