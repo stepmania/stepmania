@@ -46,6 +46,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define HARD_COLOR			THEME->GetMetricC("SongManager","HardColor")
 #define CHALLENGE_COLOR		THEME->GetMetricC("SongManager","ChallengeColor")
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
+#define EXTRA_COLOR_METER	THEME->GetMetricI("SongManager","ExtraColorMeter")
 
 vector<RageColor> g_vGroupColors;
 RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
@@ -365,7 +366,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 //		if(pNotes->m_StepsType != nt)
 //			continue;
 
-		if( pNotes->GetMeter() >= 10 && PREFSMAN->m_bTenFooterInRed )
+		if( pNotes->GetMeter() >= EXTRA_COLOR_METER )
 			return EXTRA_COLOR;
 	}
 
