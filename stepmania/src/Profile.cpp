@@ -861,6 +861,30 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 	}
 }
 
+static Grade ConvertA12Grade( Grade g )
+{
+	/*
+	 * Map
+	 *   GRADE_NO_DATA=0, GRADE_E, GRADE_D, GRADE_C, GRADE_B, GRADE_A,
+	 *   GRADE_AA,GRADE_AAA,GRADE_AAAA, NUM_GRADES 
+	 *
+	 * to GRADE_TIER_1 (AAAA) ... GRADE_TIER_7 (D), GRADE_FAILED (E), GRADE_NO_DATA.
+	 */
+	switch( g )
+	{
+	case 0: return GRADE_NO_DATA;
+	case 1: return GRADE_FAILED; /* E */
+	case 2: return GRADE_TIER_7; /* D */
+	case 3: return GRADE_TIER_6; /* C */
+	case 4: return GRADE_TIER_5; /* B */
+	case 5: return GRADE_TIER_4; /* A */
+	case 6: return GRADE_TIER_3; /* AA */
+	case 7: return GRADE_TIER_2; /* AAA */
+	case 8: return GRADE_TIER_1; /* AAAA */
+	default: return GRADE_NO_DATA;
+	}
+}
+
 void Profile::LoadSongScoresFromDirSM390a12( CString sDir )
 {
 	Profile* pProfile = this;
@@ -950,7 +974,7 @@ void Profile::LoadSongScoresFromDirSM390a12( CString sDir )
 				Grade grade;
 				if( !FileRead(f, (int&)grade) )
 					WARN_AND_RETURN;
-				CLAMP( grade, (Grade)0, (Grade)(NUM_GRADES-1) );
+				grade = ConvertA12Grade( grade );
 
 				int iScore;
 				if( !FileRead(f, iScore) )
@@ -1007,7 +1031,9 @@ void Profile::LoadCategoryScoresFromDirSM390a12( CString sDir )
 	if( version != SM_390A12_CATEGORY_RANKING_VERSION )
 		WARN_AND_RETURN;
 
-	for( int st=0; st<NUM_STEPS_TYPES; st++ )
+	/* NUM_STEPS_TYPES changed after A12.  Only read up to the last unchanged type. We
+	 * can probably drop all of this compatibility code before the final release, anyway ... */
+	for( int st=0; st<=STEPS_TYPE_DS3DDX_SINGLE; st++ )
 	{
 		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 		{
