@@ -32,9 +32,9 @@ OptionRowDefinition g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRowDefinition( "OsMountPlayer2",	true, "" ),
 };
 
-const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
-const ScreenMessage	SM_DoneRenaming		= ScreenMessage(SM_User+2);
-const ScreenMessage	SM_DoneDeleting		= ScreenMessage(SM_User+3);
+const AutoScreenMessage	SM_DoneCreating;
+const AutoScreenMessage	SM_DoneRenaming;
+const AutoScreenMessage	SM_DoneDeleting;
 
 REGISTER_SCREEN_CLASS( ScreenProfileOptions );
 ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions( sClassName )
@@ -147,9 +147,8 @@ void ScreenProfileOptions::GoToNextScreen()
 
 void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_DoneCreating)
 	{
-	case SM_DoneCreating:
 		if( !ScreenTextEntry::s_bCancelledLast && ScreenTextEntry::s_sLastAnswer != "" )
 		{
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
@@ -159,8 +158,9 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			else
 				SCREENMAN->Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
 		}
-		break;
-	case SM_DoneRenaming:
+	}
+	else if( SM == SM_DoneRenaming )
+	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			CString sProfileID = GetSelectedProfileID();
@@ -172,8 +172,9 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			else
 				SCREENMAN->Prompt( SM_None, ssprintf("Error renaming profile %s '%s'\nto '%s'.", sProfileID.c_str(), sName.c_str(), sNewName.c_str()) );
 		}
-		break;
-	case SM_DoneDeleting:
+	}
+	else if ( SM == SM_DoneDeleting )
+	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
 			CString sProfileID = GetSelectedProfileID();
@@ -184,7 +185,6 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			else
 				SCREENMAN->Prompt( SM_None, ssprintf("Error deleting profile %s '%s'.", sName.c_str(), sProfileID.c_str()) );
 		}
-		break;
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );

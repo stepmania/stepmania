@@ -1,42 +1,15 @@
-#ifndef SCREENPLAYEROPTIONS_H
-#define SCREENPLAYEROPTIONS_H
+#include "global.h"
+#include "ScreenMessage.h"
 
-#include "ScreenOptionsMaster.h"
-
-extern const AutoScreenMessage SM_BackFromPlayerOptions;
-
-class ScreenPlayerOptions : public ScreenOptionsMaster
+AutoScreenMessage::AutoScreenMessage()
 {
-public:
-	ScreenPlayerOptions( CString sName );
-	virtual void Init();
-
-	virtual void Update( float fDelta );
-	virtual void DrawPrimitives();
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-private:
-	void GoToNextScreen();
-	void GoToPrevScreen();
-
-	vector<bool>	m_bRowCausesDisqualified[NUM_PLAYERS];
-	void UpdateDisqualified( int row, PlayerNumber pn );
-
-	bool        m_bAcceptedChoices;
-	bool        m_bGoToOptions;
-	bool        m_bAskOptionsMessage;
-	Sprite      m_sprOptionsMessage;
-
-	RageSound	m_CancelAll;
-	
-	AutoActor	m_sprCancelAll[NUM_PLAYERS];
-};
-
-#endif
+	static int s_NextID = 100;	// a value larger than all the values in the ScreenMessageEnum
+	m_sm = (ScreenMessage)s_NextID;
+	s_NextID++;
+}
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

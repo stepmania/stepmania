@@ -13,8 +13,8 @@
 #include "Transition.h"
 
 // Sent to ScreenGameplay so it can keep all it's data ready for when we resume play.
-const ScreenMessage SM_BreakInitiated	= ScreenMessage(SM_User+100);
-const ScreenMessage SM_BreakCompleted	= ScreenMessage(SM_User+101);
+const AutoScreenMessage SM_BreakInitiated;
+const AutoScreenMessage SM_BreakCompleted;
 
 class ScreenEndlessBreak : public Screen
 {

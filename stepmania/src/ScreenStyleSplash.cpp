@@ -16,8 +16,8 @@
 #define NONSTOP_SCREEN				THEME->GetMetric("ScreenStyleSplash","NonstopScreen")
 #define ONI_SCREEN				THEME->GetMetric("ScreenStyleSplash","OniScreen")
 
-const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
-const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
+const AutoScreenMessage SM_DoneOpening;
+const AutoScreenMessage SM_StartClosing;
 
 
 REGISTER_SCREEN_CLASS( ScreenStyleSplash );
@@ -61,21 +61,21 @@ void ScreenStyleSplash::Input( const DeviceInput& DeviceI, const InputEventType 
 
 void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_StartClosing )
 	{
-	case SM_StartClosing:
 		if( !IsTransitioning() )
 			StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_DoneOpening:
-	
-		break;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_DoneOpening )
+	{
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
 	}
 }
 

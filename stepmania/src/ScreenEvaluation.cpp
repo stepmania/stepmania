@@ -83,8 +83,8 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
-const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
-const ScreenMessage SM_AddBonus			= ScreenMessage(SM_User+7);
+const AutoScreenMessage SM_PlayCheer;
+const AutoScreenMessage SM_AddBonus;
 
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
@@ -1349,12 +1349,11 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 
 void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
 		EndScreen();
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
 	{
 		if( GAMESTATE->GetEventMode() )
 		{
@@ -1369,7 +1368,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			if( bReallyFailed )
 			{
 				SCREENMAN->SetNewScreen( FAILED_SCREEN );
-				break;
+				return;
 			}
 
 			/* We passed.  If we have another stage to play, go to NEXT_SCREEN. */
@@ -1396,12 +1395,13 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 		if(	m_sndPassFail.IsPlaying() )
 			m_sndPassFail.Stop();
-		break;
 	}
-	case SM_PlayCheer:
+	else if( SM == SM_PlayCheer )
+	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
-		break;
-	case SM_AddBonus:
+	}
+	else if( SM == SM_AddBonus )
+	{
 		FOREACH_EnabledPlayer( p ) 
 		{
 			if( STATSMAN->m_CurStageStats.m_player[p].iBonus == 0 )
@@ -1421,7 +1421,6 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			if( SHOW_SCORE_AREA )
 				m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].iScore) );
 		}
-		break;		
 	}
 }
 

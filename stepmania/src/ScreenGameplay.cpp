@@ -43,7 +43,6 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
-#include "GameplayMessages.h"
 #include "Style.h"
 #include "LuaManager.h"
 #include "MemoryCardManager.h"
@@ -66,23 +65,24 @@ static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBet
 /* Global, so it's accessible from ShowSavePrompt: */
 static float g_fOldOffset;  // used on offset screen to calculate difference
 
-const ScreenMessage	SM_PlayReady			= ScreenMessage(SM_User+0);
-const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
-
+const AutoScreenMessage	SM_PlayReady;
+const AutoScreenMessage	SM_PlayGo;
 
 // received while STATE_DANCING
-const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
-const ScreenMessage	SM_StartLoadingNextSong	= ScreenMessage(SM_User+12);
+const AutoScreenMessage	SM_NotesEnded;
+const AutoScreenMessage	SM_LoadNextSong;
+const AutoScreenMessage	SM_StartLoadingNextSong;
+
 
 // received while STATE_OUTRO
-const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
-const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+21);
+const AutoScreenMessage	SM_SaveChangedBeforeGoingBack;
+const AutoScreenMessage	SM_GoToScreenAfterBack;
 
-const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+30);
+const AutoScreenMessage	SM_BeginFailed;
 
 // received while STATE_INTRO
-const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
-const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
+const AutoScreenMessage	SM_StartHereWeGo;
+const AutoScreenMessage	SM_StopHereWeGo;
 
 static Preference<float> g_fNetStartOffset( Options, "NetworkStartOffset",	-3.0 );
 
@@ -2088,14 +2088,13 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
 	CHECKPOINT_M( ssprintf("HandleScreenMessage(%i)", SM) );
-	switch( SM )
+	if( SM == SM_PlayReady )
 	{
-	case SM_PlayReady:
 		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
 		m_Ready.StartTransitioning( SM_PlayGo );
-		break;
-
-	case SM_PlayGo:
+	}
+	else if( SM == SM_PlayGo )
+	{
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go extra" );
 		else if( GAMESTATE->IsFinalStage() )
@@ -2106,158 +2105,152 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bPastHereWeGo = true;
 		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
-		break;
+	}
+	else if( SM == SM_NotesEnded )	// received while STATE_DANCING
+	{
+		/* Do this in LoadNextSong, so we don't tween off old attacks until
+			* m_NextSong finishes. */
+		// GAMESTATE->RemoveAllActiveAttacks();
 
-	// received while STATE_DANCING
-	case SM_NotesEnded:
+	        FOREACH_EnabledPlayer(p)
 		{
-			/* Do this in LoadNextSong, so we don't tween off old attacks until
-			 * m_NextSong finishes. */
-			// GAMESTATE->RemoveAllActiveAttacks();
-
-            FOREACH_EnabledPlayer(p)
+			/* If either player's passmark is enabled, check it. */
+			if( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark > 0 &&
+				m_pLifeMeter[p] &&
+				m_pLifeMeter[p]->GetLife() < GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark )
 			{
-				/* If either player's passmark is enabled, check it. */
-				if( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark > 0 &&
-					m_pLifeMeter[p] &&
-					m_pLifeMeter[p]->GetLife() < GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark )
-				{
-					LOG->Trace("Player %i failed: life %f is under %f",
-						p+1, m_pLifeMeter[p]->GetLife(), GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark );
-					STATSMAN->m_CurStageStats.m_player[p].bFailed = true;
-				}
-
-				/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
-				if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF &&
-					(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
-					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(p)) )
-					STATSMAN->m_CurStageStats.m_player[p].bFailed = true;
-
-				if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
-					STATSMAN->m_CurStageStats.m_player[p].iSongsPassed++;
+				LOG->Trace("Player %i failed: life %f is under %f",
+					p+1, m_pLifeMeter[p]->GetLife(), GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPassmark );
+				STATSMAN->m_CurStageStats.m_player[p].bFailed = true;
 			}
 
-			/* If all players have *really* failed (bFailed, not the life meter or
-			 * bFailedEarlier): */
-			const bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
+			/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
+			if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF &&
+				(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
+				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(p)) )
+				STATSMAN->m_CurStageStats.m_player[p].bFailed = true;
 
-			if( !bAllReallyFailed && !IsLastSong() )
-			{
-				/* Load the next course song.  First, fade out and stop the music. */
-				float fFadeLengthSeconds = MUSIC_FADE_OUT_SECONDS;
-				RageSoundParams p = m_pSoundMusic->GetParams();
-				p.m_FadeLength = fFadeLengthSeconds;
-				p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;
-				m_pSoundMusic->SetParams(p);
+			if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
+				STATSMAN->m_CurStageStats.m_player[p].iSongsPassed++;
+		}
 
-				SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );
-				return;
-			}
+		/* If all players have *really* failed (bFailed, not the life meter or
+			* bFailedEarlier): */
+		const bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
 
-			// update dancing characters for win / lose
-			DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
-			if( Dancers )
+
+		if( !bAllReallyFailed && !IsLastSong() )
+		{
+			/* Load the next course song.  First, fade out and stop the music. */
+			float fFadeLengthSeconds = MUSIC_FADE_OUT_SECONDS;
+			RageSoundParams p = m_pSoundMusic->GetParams();
+			p.m_FadeLength = fFadeLengthSeconds;
+			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;
+			m_pSoundMusic->SetParams(p);
+			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );
+			return;
+		}
+
+		// update dancing characters for win / lose
+		DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
+		if( Dancers )
                 FOREACH_EnabledPlayer(p)
-				{
-					/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
-					if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
-						Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
-					else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
-						Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
-					else
-						Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
-				}
-
-			/* End round. */
-			if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
-				return;		// ignore
-			m_DancingState = STATE_OUTRO;
-			AbortGiveUp( false );
-
-			GAMESTATE->RemoveAllActiveAttacks();
-			FOREACH_EnabledPlayer( p )
-				m_ActiveAttackList[p].Refresh();
-
-			LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
-
-
-			if( bAllReallyFailed )
-			{
-				this->PostScreenMessage( SM_BeginFailed, 0 );
-				return;
-			}
-
-			// do they deserve an extra stage?
-			if( GAMESTATE->HasEarnedExtraStage() )
-			{
-				TweenOffScreen();
-				m_Extra.StartTransitioning( SM_GoToNextScreen );
-				SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
-			}
-			else
-			{
-				TweenOffScreen();
-				
-				switch( GAMESTATE->m_PlayMode )
-				{
-				case PLAY_MODE_BATTLE:
-				case PLAY_MODE_RAVE:
-					{
-						PlayerNumber winner = GAMESTATE->GetBestPlayer();
-						switch( winner )
-						{
-						case PLAYER_INVALID:
-							m_Draw.StartTransitioning( SM_GoToNextScreen );
-							break;
-						default:
-							m_Win[winner].StartTransitioning( SM_GoToNextScreen );
-							break;
-						}
-					}
-					break;
-				default:
-					m_Cleared.StartTransitioning( SM_GoToNextScreen );
-					break;
-				}
-				
-				SOUND->PlayOnceFromAnnouncer( "gameplay cleared" );
-			}
-		}
-
-		break;
-	case SM_StartLoadingNextSong:
 		{
-			m_pSoundMusic->Stop();
-
-			/* Next song. */
-			FOREACH_EnabledPlayer(p)
-			{
-				if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
-				{
-					// give a little life back between stages
-					if( m_pLifeMeter[p] )
-						m_pLifeMeter[p]->OnSongEnded();	
-					if( m_pCombinedLifeMeter )
-						m_pCombinedLifeMeter->OnSongEnded();	
-				}
-			}
-
-			int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
-			iPlaySongIndex %= m_apSongsQueue.size();
-			m_apSongsQueue[iPlaySongIndex]->PushSelf( LUA->L );
-			GAMESTATE->m_Environment->Set( "NextSong" );
-			MESSAGEMAN->Broadcast( "NextCourseSong" );
-			GAMESTATE->m_Environment->Unset( "NextSong" );
-
-			m_NextSong.PlayCommand( "Start" );
-			m_NextSong.Reset();
-			m_NextSong.StartTransitioning( SM_LoadNextSong );
-			LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
-			COMMAND( m_sprCourseSongNumber, "ChangeIn" );
+			/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
+			if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
+				Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
+			else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
+				Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
+			else
+				Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
 		}
-		break;
 
-	case SM_LoadNextSong:
+		/* End round. */
+		if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
+			return;		// ignore
+		m_DancingState = STATE_OUTRO;
+		AbortGiveUp( false );
+
+		GAMESTATE->RemoveAllActiveAttacks();
+		FOREACH_EnabledPlayer( p )
+			m_ActiveAttackList[p].Refresh();
+
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
+
+
+		if( bAllReallyFailed )
+		{
+			this->PostScreenMessage( SM_BeginFailed, 0 );
+			return;
+		}
+
+		// do they deserve an extra stage?
+		if( GAMESTATE->HasEarnedExtraStage() )
+		{
+			TweenOffScreen();
+			m_Extra.StartTransitioning( SM_GoToNextScreen );
+			SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
+		}
+		else
+		{
+			TweenOffScreen();
+			
+			switch( GAMESTATE->m_PlayMode )
+			{
+			case PLAY_MODE_BATTLE:
+			case PLAY_MODE_RAVE:
+				{
+					PlayerNumber winner = GAMESTATE->GetBestPlayer();
+					switch( winner )
+					{
+					case PLAYER_INVALID:
+						m_Draw.StartTransitioning( SM_GoToNextScreen );
+						break;
+					default:
+						m_Win[winner].StartTransitioning( SM_GoToNextScreen );
+						break;
+					}
+				}
+				break;
+			default:
+				m_Cleared.StartTransitioning( SM_GoToNextScreen );
+				break;
+			}
+			
+			SOUND->PlayOnceFromAnnouncer( "gameplay cleared" );
+		}
+	}
+	else if( SM == SM_StartLoadingNextSong )
+	{
+		m_pSoundMusic->Stop();
+
+		/* Next song. */
+		FOREACH_EnabledPlayer(p)
+		{
+			if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
+			{
+				// give a little life back between stages
+				if( m_pLifeMeter[p] )
+					m_pLifeMeter[p]->OnSongEnded();	
+				if( m_pCombinedLifeMeter )
+					m_pCombinedLifeMeter->OnSongEnded();	
+			}
+		}
+
+		int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
+		iPlaySongIndex %= m_apSongsQueue.size();
+		m_apSongsQueue[iPlaySongIndex]->PushSelf( LUA->L );
+		GAMESTATE->m_Environment->Set( "NextSong" );
+		MESSAGEMAN->Broadcast( "NextCourseSong" );
+		GAMESTATE->m_Environment->Unset( "NextSong" );
+		m_NextSong.PlayCommand( "Start" );
+		m_NextSong.Reset();
+		m_NextSong.StartTransitioning( SM_LoadNextSong );
+		LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
+		COMMAND( m_sprCourseSongNumber, "ChangeIn" );
+	}
+	else if( SM == SM_LoadNextSong )
+	{
 		SongFinished();
 
 		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
@@ -2272,86 +2265,57 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		/* We're fading in, so don't hit any notes for a few seconds; they'll be
 		 * obscured by the fade. */
 		StartPlayingSong( m_NextSong.GetLengthSeconds()+2, 0 );
-		break;
-
-	case SM_PlayToasty:
+	}
+	else if( SM == SM_PlayToasty )
+	{
 		if( PREFSMAN->m_bEasterEggs )
 			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
 				m_Toasty.StartTransitioning();
-		break;
-
-#define SECS_SINCE_LAST_COMMENT (SECONDS_BETWEEN_COMMENTS-m_fTimeLeftBeforeDancingComment)
-	case SM_100Combo:
-		PlayAnnouncer( "gameplay 100 combo", 2 );
-		break;
-	case SM_200Combo:
-		PlayAnnouncer( "gameplay 200 combo", 2 );
-		break;
-	case SM_300Combo:
-		PlayAnnouncer( "gameplay 300 combo", 2 );
-		break;
-	case SM_400Combo:
-		PlayAnnouncer( "gameplay 400 combo", 2 );
-		break;
-	case SM_500Combo:
-		PlayAnnouncer( "gameplay 500 combo", 2 );
-		break;
-	case SM_600Combo:
-		PlayAnnouncer( "gameplay 600 combo", 2 );
-		break;
-	case SM_700Combo:
-		PlayAnnouncer( "gameplay 700 combo", 2 );
-		break;
-	case SM_800Combo:
-		PlayAnnouncer( "gameplay 800 combo", 2 );
-		break;
-	case SM_900Combo:
-		PlayAnnouncer( "gameplay 900 combo", 2 );
-		break;
-	case SM_1000Combo:
-		PlayAnnouncer( "gameplay 1000 combo", 2 );
-		break;
-	case SM_ComboStopped:
+	}
+	else if( SM >= SM_100Combo && SM <= SM_1000Combo )
+	{
+		int iCombo = (SM-SM_100Combo+1)*100;
+		PlayAnnouncer( ssprintf("gameplay %d combo",iCombo), 2 );
+	}
+	else if( SM == SM_ComboStopped )
+	{
 		PlayAnnouncer( "gameplay combo stopped", 2 );
-		break;
-	case SM_ComboContinuing:
+	}
+	else if( SM == SM_ComboContinuing )
+	{
 		PlayAnnouncer( "gameplay combo overflow", 2 );
-		break;	
-	case SM_BattleTrickLevel1:
-		PlayAnnouncer( "gameplay battle trick level1", 3 );
-		m_soundBattleTrickLevel1.Play();
-		break;
-	case SM_BattleTrickLevel2:
-		PlayAnnouncer( "gameplay battle trick level2", 3 );
-		m_soundBattleTrickLevel2.Play();
-		break;
-	case SM_BattleTrickLevel3:
-		PlayAnnouncer( "gameplay battle trick level3", 3 );
-		m_soundBattleTrickLevel3.Play();
-		break;
-	
-	case SM_BattleDamageLevel1:
-		PlayAnnouncer( "gameplay battle damage level1", 3 );
-		break;
-	case SM_BattleDamageLevel2:
-		PlayAnnouncer( "gameplay battle damage level2", 3 );
-		break;
-	case SM_BattleDamageLevel3:
-		PlayAnnouncer( "gameplay battle damage level3", 3 );
-		break;
-	
-	case SM_SaveChangedBeforeGoingBack:
+	}
+	else if( SM >= SM_BattleTrickLevel1 && SM <= SM_BattleTrickLevel3 )
+	{
+		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
+		PlayAnnouncer( ssprintf("gameplay battle trick level%d",iTrickLevel), 3 );
+		switch( SM )
+		{
+		case SM_BattleTrickLevel1: m_soundBattleTrickLevel1.Play();	break;
+		case SM_BattleTrickLevel2: m_soundBattleTrickLevel2.Play();	break;
+		case SM_BattleTrickLevel3: m_soundBattleTrickLevel3.Play();	break;
+		default:	ASSERT(0);
+		}
+	}
+	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
+	{
+		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
+		PlayAnnouncer( ssprintf("gameplay battle damage level%d",iDamageLevel), 3 );
+	}
+	else if( SM == SM_SaveChangedBeforeGoingBack )
+	{
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
 			ShowSavePrompt( SM_GoToScreenAfterBack );
-			break;
 		}
-
-		HandleScreenMessage( SM_GoToScreenAfterBack );
-		break;
-
-	case SM_GoToScreenAfterBack:
+		else
+		{
+			HandleScreenMessage( SM_GoToScreenAfterBack );
+		}
+	}
+	else if( SM == SM_GoToScreenAfterBack )
+	{
 		SongFinished();
 		StageFinished( true );
 
@@ -2359,28 +2323,29 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
-
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
 			ShowSavePrompt( SM_GoToNextScreen );
-			break;
 		}
-		
-		SongFinished();
-		StageFinished( false );
+		else
+		{	
+			SongFinished();
+			StageFinished( false );
 
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
-
-	case SM_LoseFocus:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		}
+	}
+	else if( SM == SM_LoseFocus )
+	{
 		/* We might have turned the song timer off.  Be sure to turn it back on. */
 		SOUND->HandleSongTimer( true );
-		break;
-
-	case SM_BeginFailed:
+	}
+	else if( SM == SM_BeginFailed )
+	{
 		m_DancingState = STATE_OUTRO;
 		AbortGiveUp( false );
 		m_pSoundMusic->StopPlaying();
@@ -2406,20 +2371,19 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed" );
 		else
 			SOUND->PlayOnceFromAnnouncer( "gameplay failed" );
-		break;
-
-	case SM_StopMusic:
+	}
+	else if( SM == SM_StopMusic )
+	{
 		m_pSoundMusic->Stop();
-		break;
-
-	case SM_Pause:
+	}
+	else if( SM == SM_Pause )
+	{
 		/* Ignore SM_Pause when in demonstration. */
 		if( GAMESTATE->m_bDemonstrationOrJukebox )
 			return;
 
 		if( !m_bPaused )
 			PauseGame( true );
-		break;
 	}
 }
 

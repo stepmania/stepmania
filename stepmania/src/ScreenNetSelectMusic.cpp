@@ -22,11 +22,11 @@
 #include "RageLog.h"
 #include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
 
-const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
-const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
-const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
-const ScreenMessage	SM_SetWheelSong = ScreenMessage(SM_User+19);
-const ScreenMessage SM_RefreshWheelLocation = ScreenMessage(SM_User+20);
+const AutoScreenMessage SM_NoSongs;
+const AutoScreenMessage SM_ChangeSong;
+const AutoScreenMessage SM_SMOnlinePack;	//Unused, but should be known
+const AutoScreenMessage	SM_SetWheelSong;
+const AutoScreenMessage SM_RefreshWheelLocation;
 
 const CString AllGroups			= "[ALL MUSIC]";
 
@@ -147,117 +147,119 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GoToPrevScreen )
 	{
-	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SOUND->StopMusic();
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-		break;
-	case SM_NoSongs:
+	}
+	else if( SM == SM_NoSongs )
+	{
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NoSongsScreen") );
-		break;
-	case SM_ChangeSong:
+	}
+	else if( SM_ChangeSong )
+	{
+		//First check to see if this song is already selected.
+		//This is so that if you multiple copies of the "same" song
+		//you can chose which copy to play.
+		Song* CurSong = m_MusicWheel.GetSelectedSong();
+
+		if (CurSong != NULL )
+
+			if ( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
+					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
+					( !CurSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
 		{
-			//First check to see if this song is already selected.
-			//This is so that if you multiple copies of the "same" song
-			//you can chose which copy to play.
-			Song* CurSong = m_MusicWheel.GetSelectedSong();
-
-			if (CurSong != NULL )
-
-				if ( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					 ( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					 ( !CurSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
+			switch ( NSMAN->m_iSelectMode )
 			{
-				switch ( NSMAN->m_iSelectMode )
-				{
-				case 0:
-				case 1:
-					NSMAN->m_iSelectMode = 0;
-					NSMAN->SelectUserSong();
-					break;
-				case 2:	//Proper starting of song
-				case 3:	//Blind starting of song
-					StartSelectedSong();
-					break;
-				}
-				break;
-			}
-
-			vector <Song *> AllSongs = SONGMAN->GetAllSongs();
-			unsigned i;
-			for( i=0; i < AllSongs.size(); i++ )
-			{
-				m_cSong = AllSongs[i];
-				if ( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					 ( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					 ( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
-					 break;
-			}
-
-			bool haveSong = i != AllSongs.size();
-
-			switch (NSMAN->m_iSelectMode)
-			{
-			case 3:
-				StartSelectedSong();
-				break;
-			case 2: //We need to do cmd 1 as well here
-				if (haveSong)
-				{
-					if (!m_MusicWheel.SelectSong( m_cSong ) )
-					{
-						m_MusicWheel.ChangeSort( SORT_GROUP );
-						m_MusicWheel.FinishTweening();
-						SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
-					}
-					m_MusicWheel.Select();
-					m_MusicWheel.Move(-1);
-					m_MusicWheel.Move(1);
-					StartSelectedSong();
-					m_MusicWheel.Select();
-				}
-				break;
-			case 1:	//Scroll to song as well
-				if (haveSong)
-				{
-					if (!m_MusicWheel.SelectSong( m_cSong ) )
-					{
-						//m_MusicWheel.ChangeSort( SORT_GROUP );
-						//m_MusicWheel.FinishTweening();
-						//SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
-						m_MusicWheel.SetOpenGroup( "", SORT_GROUP );
-					}
-					m_MusicWheel.SelectSong( m_cSong );
-					m_MusicWheel.Select();
-					m_MusicWheel.Move(-1);
-					m_MusicWheel.Move(1);
-					m_MusicWheel.Select();
-				}
-				//don't break here
-			case 0:	//See if client has song
-				if (haveSong)
-					NSMAN->m_iSelectMode = 0;
-				else
-					NSMAN->m_iSelectMode = 1;
+			case 0:
+			case 1:
+				NSMAN->m_iSelectMode = 0;
 				NSMAN->SelectUserSong();
+				break;
+			case 2:	//Proper starting of song
+			case 3:	//Blind starting of song
+				StartSelectedSong();
+				goto done;
 			}
 		}
-		break;
-		//After we're done the sort on wheel, select song.
-	case SM_SetWheelSong:
+
+		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
+		unsigned i;
+		for( i=0; i < AllSongs.size(); i++ )
+		{
+			m_cSong = AllSongs[i];
+			if ( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
+					( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
+					( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
+					break;
+		}
+
+		bool haveSong = i != AllSongs.size();
+
+		switch (NSMAN->m_iSelectMode)
+		{
+		case 3:
+			StartSelectedSong();
+			break;
+		case 2: //We need to do cmd 1 as well here
+			if (haveSong)
+			{
+				if (!m_MusicWheel.SelectSong( m_cSong ) )
+				{
+					m_MusicWheel.ChangeSort( SORT_GROUP );
+					m_MusicWheel.FinishTweening();
+					SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
+				}
+				m_MusicWheel.Select();
+				m_MusicWheel.Move(-1);
+				m_MusicWheel.Move(1);
+				StartSelectedSong();
+				m_MusicWheel.Select();
+			}
+			break;
+		case 1:	//Scroll to song as well
+			if (haveSong)
+			{
+				if (!m_MusicWheel.SelectSong( m_cSong ) )
+				{
+					//m_MusicWheel.ChangeSort( SORT_GROUP );
+					//m_MusicWheel.FinishTweening();
+					//SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
+					m_MusicWheel.SetOpenGroup( "", SORT_GROUP );
+				}
+				m_MusicWheel.SelectSong( m_cSong );
+				m_MusicWheel.Select();
+				m_MusicWheel.Move(-1);
+				m_MusicWheel.Move(1);
+				m_MusicWheel.Select();
+			}
+			//don't break here
+		case 0:	//See if client has song
+			if (haveSong)
+				NSMAN->m_iSelectMode = 0;
+			else
+				NSMAN->m_iSelectMode = 1;
+			NSMAN->SelectUserSong();
+		}
+	}
+	else if( SM == SM_SetWheelSong )	//After we're done the sort on wheel, select song.
+	{
 		m_MusicWheel.SelectSong( m_cSong );
-	case SM_RefreshWheelLocation:
+	}
+	else if( SM == SM_RefreshWheelLocation )
+	{
 		m_MusicWheel.Select();
 		m_MusicWheel.Move(-1);
 		m_MusicWheel.Move(1);
 		m_MusicWheel.Select();
 		m_bAllowInput = true;
-		break;
-	case SM_BackFromPlayerOptions:
+	}
+	else if( SM == SM_BackFromPlayerOptions )
+	{
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
 		NSMAN->ReportNSSOnOff(1);
 		GAMESTATE->m_bEditing = false;
@@ -269,13 +271,16 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_OptionIconRow[p].Load( p );
 			m_OptionIconRow[p].Refresh();
 		}
-		break;
-	case SM_SongChanged:
+	}
+	else if( SM == SM_SongChanged )
+	{
 		GAMESTATE->m_pCurSong.Set( m_MusicWheel.GetSelectedSong() );
 		MusicChanged();
-		break;
-	case SM_SMOnlinePack:
+	}
+	else if( SM == SM_SMOnlinePack )
+	{
 		if ( NSMAN->m_SMOnlinePacket.Read1() == 1 )
+		{
 			switch ( NSMAN->m_SMOnlinePacket.Read1() )
 			{
 			case 0: //Room title Change
@@ -291,8 +296,11 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 					}
 				}
 			}
-		break;
+		}
 	}
+
+done:
+
 	//Must be at end, as so it is last resort for SMOnline packets.
 	//If it doens't know what to do, then it'll just remove them.
 	ScreenNetSelectBase::HandleScreenMessage( SM );

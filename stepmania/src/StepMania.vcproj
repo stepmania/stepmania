@@ -374,6 +374,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenMapControllers.h">
 			</File>
 			<File
+				RelativePath="ScreenMessage.cpp">
+			</File>
+			<File
 				RelativePath="ScreenMessage.h">
 			</File>
 			<File
@@ -766,9 +769,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="GameInput.h">
-			</File>
-			<File
-				RelativePath="GameplayMessages.h">
 			</File>
 			<File
 				RelativePath=".\Grade.cpp">

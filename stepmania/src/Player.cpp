@@ -32,7 +32,6 @@
 #include "RageSoundManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
-#include "GameplayMessages.h"
 #include "GameSoundManager.h"
 #include "Style.h"
 #include "MessageManager.h"

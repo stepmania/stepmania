@@ -3,7 +3,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
-const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
+const AutoScreenMessage	SM_PrepScreen;
 
 
 REGISTER_SCREEN_CLASS( ScreenSplash );
@@ -26,33 +26,32 @@ void ScreenSplash::Init()
 
 void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_PrepScreen )
 	{
-	case SM_PrepScreen:
-		{
-			RageTimer length;
-			if( PREPARE_SCREEN )
-				SCREENMAN->PrepareScreen( NEXT_SCREEN );
-			float fScreenLoadSeconds = length.GetDeltaTime();
+		RageTimer length;
+		if( PREPARE_SCREEN )
+			SCREENMAN->PrepareScreen( NEXT_SCREEN );
+		float fScreenLoadSeconds = length.GetDeltaTime();
 
-			/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
-			 * no less than MINIMUM_DELAY seconds. */
-			this->PostScreenMessage( SM_GoToNextScreen, max( 0, MINIMUM_LOAD_DELAY_SECONDS-fScreenLoadSeconds) );
-		}
-		break;
-	case SM_BeginFadingOut:
+		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
+			* no less than MINIMUM_DELAY seconds. */
+		this->PostScreenMessage( SM_GoToNextScreen, max( 0, MINIMUM_LOAD_DELAY_SECONDS-fScreenLoadSeconds) );
+	}
+	else if( SM == SM_BeginFadingOut )
+	{
 		StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( SCREENMAN->IsStackedScreen(SCREENMAN->GetTopScreen()) )
 			SCREENMAN->PopTopScreen( SM_None );
 		else
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
 	}
 }
 

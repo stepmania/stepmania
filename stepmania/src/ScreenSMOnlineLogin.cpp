@@ -18,8 +18,8 @@ REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 #define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
 #define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
-const ScreenMessage SM_SMOnlinePack	    = ScreenMessage(SM_User+8);
-const ScreenMessage SM_PasswordDone	    = ScreenMessage(SM_User+9);
+const AutoScreenMessage SM_SMOnlinePack;
+const AutoScreenMessage SM_PasswordDone;
 OptionRowDefinition g_ProfileLine[1] = {
 	OptionRowDefinition("Profile",false)
 };
@@ -136,36 +136,34 @@ void ScreenSMOnlineLogin::GoToNextScreen()
 
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
-	switch(SM)
+	if( SM == SM_PasswordDone )
 	{
-	case SM_PasswordDone:
 		if(!ScreenTextEntry::s_bCancelledLast)
 			SendLogin(ScreenTextEntry::s_sLastAnswer);
 		else
 			SCREENMAN->SetNewScreen(PREV_SCREEN);
-	  break;
-
-	case SM_SMOnlinePack:
+	}
+	else if( SM == SM_SMOnlinePack )
+	{
 		int ResponceCode = NSMAN->m_SMOnlinePacket.Read1();
 		if (ResponceCode == 0)
 		{
 			int Status = NSMAN->m_SMOnlinePacket.Read1();
-				if(Status == 0)
-				{
-					NSMAN->isSMOLoggedIn[m_iPlayer] = true;
-					m_iPlayer++;
-					if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
-						SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
-					else
-						SCREENMAN->SetNewScreen(NEXT_SCREEN);
-				}
+			if(Status == 0)
+			{
+				NSMAN->isSMOLoggedIn[m_iPlayer] = true;
+				m_iPlayer++;
+				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
+					SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
 				else
-				{
-					CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
-					SCREENMAN->Password( SM_PasswordDone, Responce + "\n\nYou are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
-				}
+					SCREENMAN->SetNewScreen(NEXT_SCREEN);
+			}
+			else
+			{
+				CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
+				SCREENMAN->Password( SM_PasswordDone, Responce + "\n\nYou are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
+			}
 		}
-		break;
 	}
 	ScreenOptions::HandleScreenMessage(SM);
 }

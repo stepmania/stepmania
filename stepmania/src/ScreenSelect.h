@@ -9,7 +9,7 @@
 #include "ThemeMetric.h"
 
 // Derived classes must send this when done
-const ScreenMessage SM_AllDoneChoosing = (ScreenMessage)(SM_User+123);	// unique
+extern const AutoScreenMessage SM_AllDoneChoosing;
 
 class ScreenSelect : public ScreenWithMenuElements
 {

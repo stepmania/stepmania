@@ -18,9 +18,9 @@
 class Course;
 class Song;
 
-const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
-const ScreenMessage SM_SortOrderChanging=	ScreenMessage(SM_User+48);	
-const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+49);	
+const AutoScreenMessage	SM_SongChanged;		// TODO: Replace this with a Message and MESSAGEMAN
+const AutoScreenMessage SM_SortOrderChanging;
+const AutoScreenMessage SM_SortOrderChanged;
 
 struct CompareSongPointerArrayBySectionName;
 

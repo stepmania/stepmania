@@ -28,8 +28,8 @@ OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 	OptionRowDefinition( "Server",		true, "PRESS START" )
 };
 
-const ScreenMessage	SM_DoneConnecting		= ScreenMessage(SM_User+1);
-const ScreenMessage	SM_ServerNameEnter		= ScreenMessage(SM_User+2);
+const AutoScreenMessage	SM_DoneConnecting;
+const AutoScreenMessage	SM_ServerNameEnter;
 
 static Preference<CString> g_sLastServer( Options, "LastConnectedServer",	"" );
 
@@ -81,9 +81,8 @@ void ScreenNetworkOptions::GoToNextScreen()
 
 void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_DoneConnecting )
 	{
-	case SM_DoneConnecting:
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
@@ -92,8 +91,9 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			UpdateConnectStatus( );
 			g_sLastServer = ScreenTextEntry::s_sLastAnswer;
 		}
-		break;
-	case SM_ServerNameEnter:
+	}
+	else if( SM == SM_ServerNameEnter )
+	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			if ( NSMAN->LANserver == NULL)

@@ -17,7 +17,7 @@ void ChangeText(CString txt)
 {
 	CustomText = txt;
 }
-const ScreenMessage SM_ChangeText		=	ScreenMessage(SM_User+1);
+const AutoScreenMessage SM_ChangeText;
 
 void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 {

@@ -54,24 +54,24 @@ void ScreenDemonstration::Init()
 
 void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_NotesEnded ||
+		SM == SM_BeginFadingOut )
 	{
-	case SM_NotesEnded:
-	case SM_BeginFadingOut:
 		if(!m_Out.IsTransitioning())
 			m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
-
-	case SM_GainFocus:
+	}
+	else if( SM == SM_GainFocus )
+	{
 		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 			SOUNDMAN->SetPrefs( 0 );	// silent
-		break;
-
-	case SM_LoseFocus:
+	}
+	else if( SM == SM_LoseFocus )
+	{
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
-		break;
-
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
 		GAMESTATE->Reset();

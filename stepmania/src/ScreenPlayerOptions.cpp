@@ -14,6 +14,7 @@
 #include "PlayerState.h"
 #include "Foreach.h"
 
+const AutoScreenMessage SM_BackFromPlayerOptions;
 
 #define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
 #define NEXT_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","NextScreen")

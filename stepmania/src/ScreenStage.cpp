@@ -19,7 +19,7 @@
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 
-const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
+const AutoScreenMessage	SM_PrepScreen;
 
 REGISTER_SCREEN_CLASS( ScreenStage );
 ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
@@ -102,9 +102,7 @@ void ScreenStage::Init()
 
 void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
-	{
-	case SM_PrepScreen:
+	if( SM == SM_PrepScreen )
 	{
 		RageTimer length;
 		SCREENMAN->PrepareScreen( NEXT_SCREEN );
@@ -113,24 +111,24 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
 		 * no less than MINIMUM_DELAY seconds. */
 		this->PostScreenMessage( SM_BeginFadingOut, max( 0, MINIMUM_DELAY-fScreenLoadSeconds) );
-		break;
 	}
-	case SM_BeginFadingOut:
+	else if( SM == SM_BeginFadingOut )
+	{
 		m_Out.StartTransitioning();
 		FOREACH_PlayerNumber( p )
 			OFF_COMMAND( m_sprCharacterIcon[p] );
 		OFF_COMMAND( m_SongTitle );
 		OFF_COMMAND( m_Artist );
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
-		
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
 	}
 }
 

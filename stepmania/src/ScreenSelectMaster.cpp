@@ -15,7 +15,7 @@
 #include "RageSoundManager.h"
 
 
-const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
+const AutoScreenMessage SM_PlayPostSwitchPage;
 
 CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1); }
 CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1); }
@@ -275,75 +275,68 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenSelect::HandleScreenMessage( SM );
 
-	switch( SM )
+	if( SM == SM_PlayPostSwitchPage )
 	{
-	case SM_PlayPostSwitchPage:
+		if( SHARED_PREVIEW_AND_CURSOR )
 		{
-			if( SHARED_PREVIEW_AND_CURSOR )
+			for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 			{
-				for( int i=0; i<NUM_CURSOR_PARTS; i++ )
+				m_sprCursor[i][0]->SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
+				COMMAND( m_sprCursor[i][0], "PostSwitchPage" );
+			}
+		}
+		else
+		{
+			for( int i=0; i<NUM_CURSOR_PARTS; i++ )
+				FOREACH_HumanPlayer( p )
 				{
-					m_sprCursor[i][0]->SetXY( GetCursorX((PlayerNumber)0,i), GetCursorY((PlayerNumber)0,i) );
-					COMMAND( m_sprCursor[i][0], "PostSwitchPage" );
+					m_sprCursor[i][p]->SetXY( GetCursorX(p,i), GetCursorY(p,i) );
+					COMMAND( m_sprCursor[i][p], "PostSwitchPage" );
 				}
-			}
-			else
-			{
-				for( int i=0; i<NUM_CURSOR_PARTS; i++ )
-					FOREACH_HumanPlayer( p )
-					{
-						m_sprCursor[i][p]->SetXY( GetCursorX(p,i), GetCursorY(p,i) );
-						COMMAND( m_sprCursor[i][p], "PostSwitchPage" );
-					}
-			}
-
-			if( SHARED_PREVIEW_AND_CURSOR )
-			{
-				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-					COMMAND( m_sprPreview[i][m_iChoice[0]][0], "PostSwitchPage" );
-			}
-			else
-			{
-				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-					FOREACH_HumanPlayer( p )
-						COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PostSwitchPage" );
-			}
-
-			m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
 		}
-		break;
-	case SM_BeginFadingOut:
+
+		if( SHARED_PREVIEW_AND_CURSOR )
 		{
-			TweenOffScreen();
-
-			/*
-			 * We start our own tween-out (TweenOffScreen), wait some amount of time, then
-			 * start the base tween (ScreenWithMenuElements, called from SM_AllDoneChoosing);
-			 * we move on when that finishes.  This is a pain to tweak, especially now
-			 * that elements essentially owned by the derived class are starting to tween
-			 * in the ScreenWithMenuElements tween (underlay, overlay); we have to tweak the
-			 * duration of the "out" transition to determine how long to wait after fSecs
-			 * before moving on.
-			 *
-			 * Send a command to all children, so we can run overlay and underlay tweens at the
-			 * same time as the elements controlled by TweenOffScreen.  Run this here, so
-			 * it affects the result of GetTweenTimeLeft().
-			 */
-			this->PlayCommand( "TweenOff" );
-
-			float fSecs = 0;
-			/* This can be used to allow overlap between the main tween-off and the MenuElements
-			 * tweenoff. */
-			if( OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS )
-				fSecs = SLEEP_AFTER_TWEEN_OFF_SECONDS;
-			else
-				fSecs = GetTweenTimeLeft();
-			fSecs = max( fSecs, 0 );
-
-			SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
-			StopTimer();
+			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
+				COMMAND( m_sprPreview[i][m_iChoice[0]][0], "PostSwitchPage" );
 		}
-		break;
+		else
+		{
+			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
+				FOREACH_HumanPlayer( p )
+					COMMAND( m_sprPreview[i][m_iChoice[p]][p], "PostSwitchPage" );
+		}
+		m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
+	}
+	else if( SM == SM_BeginFadingOut )
+	{
+		TweenOffScreen();
+		/*
+			* We start our own tween-out (TweenOffScreen), wait some amount of time, then
+			* start the base tween (ScreenWithMenuElements, called from SM_AllDoneChoosing);
+			* we move on when that finishes.  This is a pain to tweak, especially now
+			* that elements essentially owned by the derived class are starting to tween
+			* in the ScreenWithMenuElements tween (underlay, overlay); we have to tweak the
+			* duration of the "out" transition to determine how long to wait after fSecs
+			* before moving on.
+			*
+			* Send a command to all children, so we can run overlay and underlay tweens at the
+			* same time as the elements controlled by TweenOffScreen.  Run this here, so
+			* it affects the result of GetTweenTimeLeft().
+			*/
+		this->PlayCommand( "TweenOff" );
+
+		float fSecs = 0;
+		/* This can be used to allow overlap between the main tween-off and the MenuElements
+			* tweenoff. */
+		if( OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS )
+			fSecs = SLEEP_AFTER_TWEEN_OFF_SECONDS;
+		else
+			fSecs = GetTweenTimeLeft();
+		fSecs = max( fSecs, 0 );
+
+		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
+		StopTimer();
 	}
 }
 

@@ -18,6 +18,7 @@
 #include "LightsManager.h"
 #include "Command.h"
 
+const AutoScreenMessage SM_AllDoneChoosing;
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( sChoiceName )	THEME->GetMetricM(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
@@ -181,69 +182,63 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_BeginFadingOut )	/* Screen is starting to tween out. */
 	{
-		/* Screen is starting to tween out. */
-		case SM_BeginFadingOut:
+		/* At this point, we're tweening out; we can't change the selection.
+			* We don't want to allow players to join if the style will be set,
+			* since that can change the available selection and is likely to
+			* invalidate the choice we've already made.  Hack: apply the style.
+			* (Applying the style may have other side-effects, so it'll be re-applied
+			* in SM_GoToNextScreen.) */
+		FOREACH_HumanPlayer( p )
 		{
-			/* At this point, we're tweening out; we can't change the selection.
-			 * We don't want to allow players to join if the style will be set,
-			 * since that can change the available selection and is likely to
-			 * invalidate the choice we've already made.  Hack: apply the style.
-			 * (Applying the style may have other side-effects, so it'll be re-applied
-			 * in SM_GoToNextScreen.) */
-			FOREACH_HumanPlayer( p )
-			{
-				const int sel = GetSelectionIndex( p );
-				if( m_aGameCommands[sel].m_pStyle )
-					GAMESTATE->m_pCurStyle = m_aGameCommands[sel].m_pStyle;
-			}
-			SCREENMAN->RefreshCreditsMessages();
+			const int sel = GetSelectionIndex( p );
+			if( m_aGameCommands[sel].m_pStyle )
+				GAMESTATE->m_pCurStyle = m_aGameCommands[sel].m_pStyle;
 		}
-		break;
-
-	/* It's our turn to tween out. */
-	case SM_AllDoneChoosing:		
+		SCREENMAN->RefreshCreditsMessages();
+	}
+	else if( SM == SM_AllDoneChoosing ) 	/* It's our turn to tween out. */
+	{
 		if( !IsTransitioning() )
 			StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
+		/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
+			* long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
+			* off-screen.
+			*
+			* Hack: only apply one Screen. */
+		CString sScreen;
+		FOREACH_HumanPlayer( p )
 		{
-			/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
-			 * long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
-			 * off-screen.
-			 *
-			 * Hack: only apply one Screen. */
-			CString sScreen;
-			FOREACH_HumanPlayer( p )
-			{
-				GameCommand gc = m_aGameCommands[this->GetSelectionIndex(p)];
-				if( sScreen == "" )
-					sScreen = gc.m_sScreen;
-				gc.m_sScreen = "";
-				gc.Apply( p );
-			}
+			GameCommand gc = m_aGameCommands[this->GetSelectionIndex(p)];
+			if( sScreen == "" )
+				sScreen = gc.m_sScreen;
+			gc.m_sScreen = "";
+			gc.Apply( p );
+		}
 
-			//
-			// Finalize players if we set a style on this screen.
-			//
-			FOREACH_HumanPlayer( p )
+		//
+		// Finalize players if we set a style on this screen.
+		//
+		FOREACH_HumanPlayer( p )
+		{
+			const int sel = GetSelectionIndex( p );
+			if( m_aGameCommands[sel].m_pStyle )
 			{
-				const int sel = GetSelectionIndex( p );
-				if( m_aGameCommands[sel].m_pStyle )
-				{
-					GAMESTATE->PlayersFinalized();
-					break;
-				}
+				GAMESTATE->PlayersFinalized();
+				break;
 			}
+		}
 
-			if( sScreen != "" )
-				SCREENMAN->SetNewScreen( sScreen );
-			else
-			{
-				const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
-			}
+		if( sScreen != "" )
+			SCREENMAN->SetNewScreen( sScreen );
+		else
+		{
+			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+			SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}
 		return;
 	}

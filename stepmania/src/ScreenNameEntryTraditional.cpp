@@ -36,7 +36,7 @@ static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND		("ScreenNameEntryTra
 	if( !actor.GetName().empty() ) \
 		COMMAND( actor, command_name );
 
-const ScreenMessage	SM_ChangeDisplayedFeat			= ScreenMessage(SM_User+0);
+const AutoScreenMessage	SM_ChangeDisplayedFeat;
 
 static const int CHAR_OK = -1;
 static const int CHAR_BACK = -2;
@@ -540,24 +540,23 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 {
 	LOG->Trace( "ScreenNameEntryTraditional::HandleScreenMessage( %d )", SM );
 
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
 		if( !m_Out.IsTransitioning() )
 		{
 			FOREACH_PlayerNumber( p )
 				Finish( p );
 			MenuStart( PLAYER_INVALID, IET_FIRST_PRESS );
 		}
-		break;
-	case SM_ChangeDisplayedFeat:
+	}
+	else if( SM == SM_ChangeDisplayedFeat )
+	{
 		ChangeDisplayedFeat();
 		this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
-		break;
-
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
 	}
 }
 

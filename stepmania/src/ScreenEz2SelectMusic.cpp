@@ -64,7 +64,7 @@
 
 const float TWEEN_TIME		= 0.5f;
 
-const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
+const AutoScreenMessage SM_NoSongs;
 
 REGISTER_SCREEN_CLASS( ScreenEz2SelectMusic );
 ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElements( sName )
@@ -371,12 +371,12 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
 	Screen::HandleScreenMessage( SM );
 
-	switch( SM )
+	if( SM == SM_GoToPrevScreen )
 	{
-	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( m_bGoToOptions )
 		{
 			SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
@@ -386,12 +386,11 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			SOUND->StopMusic();
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
-		break;
-	case SM_NoSongs:
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	break;
 	}
-
+	else if( SM == SM_NoSongs )
+	{
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
+	}
 }
 
 

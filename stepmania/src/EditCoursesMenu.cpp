@@ -34,7 +34,7 @@
 #define ROW_VALUE_X( i )		THEME->GetMetricF("EditCoursesMenu",ssprintf("RowValue%dX",i+1))
 #define ROW_Y( i )				THEME->GetMetricF("EditCoursesMenu",ssprintf("Row%dY",i+1))
 
-const ScreenMessage SM_BackFromCourseOptionsMenu		= (ScreenMessage)(SM_User+1);
+const AutoScreenMessage SM_BackFromCourseOptionsMenu;
 							  
 enum CourseEntryMenuRow
 {
@@ -326,7 +326,7 @@ void EditCoursesMenu::Start()
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions = PlayerOptions();
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.FromString( pEntry->modifiers );
 
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
 		break;
 	case ROW_ENTRY_SONG_OPTIONS:	
 		SCREENMAN->PlayStartSound();
@@ -334,7 +334,7 @@ void EditCoursesMenu::Start()
 		GAMESTATE->m_SongOptions = SongOptions();
 		GAMESTATE->m_SongOptions.FromString( pEntry->modifiers );
 
-		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions", SM_BackFromSongOptions );
+		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
 		break;
 	default:
 		SCREENMAN->PlayInvalidSound();
@@ -348,9 +348,8 @@ void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 	Course* pCourse = GetSelectedCourse();
 	CourseEntry* pEntry = GetSelectedEntry();
 
-	switch( SM )
+	if( SM == SM_BackFromCourseOptionsMenu )
 	{
-	case SM_BackFromCourseOptionsMenu:
 		pCourse->m_bRepeat = !!ScreenMiniMenu::s_viLastAnswers[repeat];
 		pCourse->m_bRandomize = !!ScreenMiniMenu::s_viLastAnswers[randomize];
 		pCourse->m_iLives = ScreenMiniMenu::s_viLastAnswers[lives];
@@ -358,13 +357,14 @@ void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 			pCourse->m_iLives = -1;
 		
 		OnRowValueChanged( ROW_COURSE_OPTIONS );
-		break;
-	case SM_BackFromPlayerOptions:
-	case SM_BackFromSongOptions:
+	}
+	else if( 
+		SM == SM_BackFromPlayerOptions || 
+		SM == SM_BackFromSongOptions )
+	{
 		// coming back from PlayerOptions or SongOptions
 		pEntry->modifiers = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetString() + "," + GAMESTATE->m_SongOptions.GetString();
 		OnRowValueChanged( ROW_ENTRY_PLAYER_OPTIONS );
-		break;
 	}
 }
 

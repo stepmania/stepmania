@@ -47,22 +47,22 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define PLAY_RECORD_HELP_TEXT	THEME->GetMetric(m_sName,"PlayRecordHelpText")
 
-const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);
-const ScreenMessage SM_BackFromAreaMenu				= (ScreenMessage)(SM_User+2);
-const ScreenMessage SM_BackFromStepsInformation	= (ScreenMessage)(SM_User+3);
-const ScreenMessage SM_BackFromEditOptions			= (ScreenMessage)(SM_User+4);
-const ScreenMessage SM_BackFromSongInformation			= (ScreenMessage)(SM_User+5);
-const ScreenMessage SM_BackFromBGChange				= (ScreenMessage)(SM_User+6);
-const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
-const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
-const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
-const ScreenMessage SM_BackFromCourseModeMenu		= (ScreenMessage)(SM_User+12);
-const ScreenMessage SM_DoRevertToLastSave			= (ScreenMessage)(SM_User+13);
-const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
-const ScreenMessage SM_BackFromBPMChange			= (ScreenMessage)(SM_User+15);
-const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
-const ScreenMessage SM_DoSaveAndExit				= (ScreenMessage)(SM_User+17);
-const ScreenMessage SM_DoExit						= (ScreenMessage)(SM_User+18);
+const AutoScreenMessage SM_BackFromMainMenu;
+const AutoScreenMessage SM_BackFromAreaMenu;
+const AutoScreenMessage SM_BackFromStepsInformation;
+const AutoScreenMessage SM_BackFromEditOptions;
+const AutoScreenMessage SM_BackFromSongInformation;
+const AutoScreenMessage SM_BackFromBGChange;
+const AutoScreenMessage SM_BackFromInsertAttack;
+const AutoScreenMessage SM_BackFromInsertAttackModifiers;
+const AutoScreenMessage SM_BackFromPrefs;
+const AutoScreenMessage SM_BackFromCourseModeMenu;
+const AutoScreenMessage SM_DoRevertToLastSave;
+const AutoScreenMessage SM_DoUpdateTextInfo;
+const AutoScreenMessage SM_BackFromBPMChange;
+const AutoScreenMessage SM_BackFromStopChange;
+const AutoScreenMessage SM_DoSaveAndExit;
+const AutoScreenMessage SM_DoExit;
 
 const CString INPUT_TIPS_TEXT = 
 #if !defined(XBOX)
@@ -1455,46 +1455,49 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GoToNextScreen )
 	{
-	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		GAMESTATE->m_bEditing = false;
-		break;
-	case SM_BackFromMainMenu:
+	}
+	else if( SM == SM_BackFromMainMenu )
+	{
 		HandleMainMenuChoice( (MainMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
-		break;
-	case SM_BackFromAreaMenu:
+	}
+	else if( SM == SM_BackFromAreaMenu )
+	{
 		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
-		break;
-	case SM_BackFromStepsInformation:
+	}
+	else if( SM == SM_BackFromStepsInformation )
+	{
 		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
-		break;
-	case SM_BackFromSongInformation:
+	}
+	else if( SM == SM_BackFromSongInformation )
+	{
 		HandleSongInformationChoice( (SongInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
-		break;
-	case SM_BackFromBPMChange:
-		{
-			float fBPM = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
-			if( fBPM > 0 )
-				m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
-		}
-		break;
-	case SM_BackFromStopChange:
-		{
-			float fStop = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
-			if( fStop >= 0 )
-				m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fStop );
-		}
-		break;
-	case SM_BackFromBGChange:
+	}
+	else if( SM == SM_BackFromBPMChange )
+	{
+		float fBPM = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
+		if( fBPM > 0 )
+			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
+	}
+	else if( SM == SM_BackFromStopChange )
+	{
+		float fStop = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
+		if( fStop >= 0 )
+			m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fStop );
+	}
+	else if( SM == SM_BackFromBGChange )
+	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
-		break;
-	case SM_BackFromPrefs:
+	}
+	else if( SM == SM_BackFromPrefs )
+	{
 		PREFSMAN->m_bEditorShowBGChangesPlay = !!ScreenMiniMenu::s_viLastAnswers[pref_show_bgs_play];
 		PREFSMAN->SaveGlobalPrefsToDisk();
-		break;
-	case SM_BackFromCourseModeMenu:
+	}
+	else if( SM == SM_BackFromCourseModeMenu )
 	{
 		const int num = ScreenMiniMenu::s_viLastAnswers[0];
 		m_pAttacksFromCourse = NULL;
@@ -1504,56 +1507,56 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			m_pAttacksFromCourse = SONGMAN->FindCourse( name );
 			ASSERT( m_pAttacksFromCourse );
 		}
-		break;
 	}
-	case SM_BackFromPlayerOptions:
-	case SM_BackFromSongOptions:
+	else if( 
+		SM == SM_BackFromPlayerOptions ||
+		SM == SM_BackFromSongOptions )
+	{
 		// coming back from PlayerOptions or SongOptions
 		GAMESTATE->StoreSelectedOptions();
 
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();
+	}
+	else if( SM == SM_BackFromInsertAttack )
+	{
+		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
+		g_fLastInsertAttackDurationSeconds = strtof( g_InsertAttack.rows[0].choices[iDurationChoice], NULL );
+		GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
 
-		break;
-	case SM_BackFromInsertAttack:
-		{
-			int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
-			g_fLastInsertAttackDurationSeconds = strtof( g_InsertAttack.rows[0].choices[iDurationChoice], NULL );
-			GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
-
-			// XXX: Fix me
-			//SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
-		}
-		break;
-	case SM_BackFromInsertAttackModifiers:
-		{
-			PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
-			CString sMods = poChosen.GetString();
-			const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-			
-			TapNote tn(
-				TapNote::attack, TapNote::original, 
-				sMods,
-				g_fLastInsertAttackDurationSeconds, 
-				false,
-				0 );
-			m_NoteDataEdit.SetTapNote( g_iLastInsertAttackTrack, row, tn );
-			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
-		}
-		break;
-	case SM_DoRevertToLastSave:
+		// XXX: Fix me
+		//SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
+	}
+	else if( SM == SM_BackFromInsertAttackModifiers )
+	{
+		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		CString sMods = poChosen.GetString();
+		const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+		
+		TapNote tn(
+			TapNote::attack, TapNote::original, 
+			sMods,
+			g_fLastInsertAttackDurationSeconds, 
+			false,
+			0 );
+		m_NoteDataEdit.SetTapNote( g_iLastInsertAttackTrack, row, tn );
+		GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
+	}
+	else if( SM == SM_DoRevertToLastSave )
+	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
 			CopyFromLastSave();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
 		}
-		break;
-	case SM_DoUpdateTextInfo:
+	}
+	else if( SM == SM_DoUpdateTextInfo )
+	{
 		this->PostScreenMessage( SM_DoUpdateTextInfo, 0.5f );
 		UpdateTextInfo();
-		break;
-
-	case SM_DoSaveAndExit: // just asked "save before exiting? yes, no, cancel"
+	}
+	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
+	{
 		switch( ScreenPrompt::s_LastAnswer )
 		{
 		case ANSWER_YES:
@@ -1567,61 +1570,56 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		case ANSWER_CANCEL:
 			break; // do nothing
 		}
-
-		break;
-
-	case SM_Success:
+	}
+	else if( SM == SM_Success )
+	{
 		LOG->Trace( "Save successful." );
 		m_pSteps->SetSavedToDisk( true );
 		CopyToLastSave();
 
 		if( m_CurrentAction == save_on_exit )
 			HandleScreenMessage( SM_DoExit );
-
-		break;
-
-	case SM_Failure: // save failed; stay in the editor
+	}
+	else if( SM == SM_Failure ) // save failed; stay in the editor
+	{
 		/* We committed the steps to SongManager.  Revert to the last save, and
 		 * recommit the reversion to SongManager. */
 		LOG->Trace( "Save failed.  Changes uncommitted from memory." );
 		CopyFromLastSave();
 		m_pSteps->SetNoteData( m_NoteDataEdit );
+	}
+	else if( SM == SM_DoExit )
+	{
+		// IMPORTANT: CopyFromLastSave before deleteing the Steps below
+		CopyFromLastSave();
 
-		break;
-
-	case SM_DoExit:
+		// If these steps have never been saved, then we should delete them.
+		// If the user created them in the edit menu and never bothered
+		// to save them, then they aren't wanted.
+		Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		if( !pSteps->GetSavedToDisk() )
 		{
-			// IMPORTANT: CopyFromLastSave before deleteing the Steps below
-			CopyFromLastSave();
-
-			// If these steps have never been saved, then we should delete them.
-			// If the user created them in the edit menu and never bothered
-			// to save them, then they aren't wanted.
-			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			if( !pSteps->GetSavedToDisk() )
-			{
-				Song* pSong = GAMESTATE->m_pCurSong;
-				pSong->RemoveSteps( pSteps );
-				m_pSteps = NULL;
-				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
-			}
+			Song* pSong = GAMESTATE->m_pCurSong;
+			pSong->RemoveSteps( pSteps );
+			m_pSteps = NULL;
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
-		break;
-
-	case SM_GainFocus:
+	}
+	else if( SM == SM_GainFocus )
+	{
 		/* We do this ourself. */
 		SOUND->HandleSongTimer( false );
 
 		/* When another screen comes up, RageSounds takes over the sound timer.  When we come
 		 * back, put the timer back to where it was. */
 		GAMESTATE->m_fSongBeat = m_fTrailingBeat;
-		break;
-	case SM_LoseFocus:
+	}
+	else if( SM == SM_LoseFocus )
+	{
 		/* Snap the trailing beat, in case we lose focus while tweening. */
 		m_fTrailingBeat = GAMESTATE->m_fSongBeat;
-		break;
 	}
 }
 

@@ -2628,6 +2628,10 @@ SOURCE=.\ScreenMapControllers.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenMessage.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenMessage.h
 # End Source File
 # Begin Source File

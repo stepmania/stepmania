@@ -11,8 +11,8 @@
 #include "CommonMetrics.h"
 #include "GameState.h"
 
-const ScreenMessage SM_GoToOK		= (ScreenMessage)(SM_User+1);
-const ScreenMessage SM_GoToCancel	= (ScreenMessage)(SM_User+2);
+const AutoScreenMessage SM_GoToOK;
+const AutoScreenMessage SM_GoToCancel;
 
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;

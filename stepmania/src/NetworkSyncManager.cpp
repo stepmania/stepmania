@@ -42,11 +42,11 @@ void NetworkSyncManager::SelectUserSong() { }
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "PlayerState.h"
 
-const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
-const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
-const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
-const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
-const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);
+const AutoScreenMessage	SM_AddToChat;
+const AutoScreenMessage SM_ChangeSong;
+const AutoScreenMessage SM_GotEval;
+const AutoScreenMessage SM_UsersUpdate;
+const AutoScreenMessage SM_SMOnlinePack;
 
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )

@@ -17,7 +17,7 @@ const int NUM_SCORE_DIGITS	=	9;
 
 #define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
 
-const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
+const AutoScreenMessage SM_GotEval;
 
 REGISTER_SCREEN_CLASS( ScreenNetEvaluation );
 ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEvaluation( sClassName )
@@ -124,9 +124,8 @@ void ScreenNetEvaluation::MenuDown( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GotEval )
 	{
-	case SM_GotEval:
 		m_bHasStats = true;
 
 		LOG->Trace("SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers);
@@ -167,9 +166,10 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			LOG->Trace("SMNETCheckpoint%d",i);
 		}
 		return;	//no need to let ScreenEvaluation get ahold of this.
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		NSMAN->ReportNSSOnOff( 4 );
-		break;
 	}
 	ScreenEvaluation::HandleScreenMessage( SM );
 }

@@ -37,7 +37,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 
-static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
+static const AutoScreenMessage	SM_AllowOptionsMenuRepeat;
 
 static CString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -1021,12 +1021,12 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_AllowOptionsMenuRepeat )
 	{
-	case SM_AllowOptionsMenuRepeat:
 		m_bAllowOptionsMenuRepeat = true;
-		break;
-	case SM_MenuTimer:
+	}
+	else if( SM == SM_MenuTimer )
+	{
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart(PLAYER_INVALID);
@@ -1053,7 +1053,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			MenuStart(PLAYER_INVALID);
 		}
 		return;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 
@@ -1062,14 +1064,17 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		 * the game state, so just discard them. */
 		ClearMessageQueue();
 		return;
-	case SM_BeginFadingOut:
+	}
+	else if( SM == SM_BeginFadingOut )
+	{
 		/* XXX: yuck.  Later on, maybe this can be done in one BGA with lua ... */
 		if( m_bGoToOptions )
 			m_bgOptionsOut.StartTransitioning( SM_GoToNextScreen );
 		else
 			m_bgNoOptionsOut.StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( m_bGoToOptions )
 		{
 			SCREENMAN->SetNewScreen( NEXT_OPTIONS_SCREEN );
@@ -1081,22 +1086,27 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		return;
-	case SM_SongChanged:
+	}
+	else if( SM == SM_SongChanged )
+	{
 		AfterMusicChange();
-		break;
-	case SM_SortOrderChanging: /* happens immediately */
-//				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
+	}
+	else if( SM == SM_SortOrderChanging ) /* happens immediately */
+	{
+//		m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 		TweenScoreOnAndOffAfterChangeSort();
-		break;
-	case SM_SortOrderChanged: /* happens after the wheel is off and the new song is selected */
+	}
+	else if( SM == SM_SortOrderChanged ) /* happens after the wheel is off and the new song is selected */
+	{
 		SortOrderChanged();
-		break;
-	case SM_GainFocus:
+	}
+	else if( SM == SM_GainFocus )
+	{
 		CodeDetector::RefreshCacheItems( CODES );
-		break;
-	case SM_LoseFocus:
+	}
+	else if( SM == SM_LoseFocus )
+	{
 		CodeDetector::RefreshCacheItems(); /* reset for other screens */
-		break;
 	}
 
 	Screen::HandleScreenMessage( SM );

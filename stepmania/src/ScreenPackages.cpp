@@ -18,7 +18,7 @@
 #define	NUM_PACKAGES_SHOW			THEME->GetMetricI(m_sName,"NumPackagesShow")
 #define NUM_LINKS_SHOW				THEME->GetMetricI(m_sName,"NumLinksShow")
 
-const ScreenMessage	SM_BackFromURL			= ScreenMessage(SM_User+2);
+const AutoScreenMessage	SM_BackFromURL;
 
 REGISTER_SCREEN_CLASS( ScreenPackages );
 ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -120,18 +120,18 @@ void ScreenPackages::Init()
 
 void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GoToPrevScreen )
 	{
-	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM ==SM_GoToNextScreen )
+	{
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-		break;
-	case SM_BackFromURL:
+	}
+	else if( SM == SM_BackFromURL )
+	{
 		if ( !ScreenTextEntry::s_bCancelledLast )
 			EnterURL( ScreenTextEntry::s_sLastAnswer );
-		break;
 	}
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }

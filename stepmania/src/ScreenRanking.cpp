@@ -43,8 +43,8 @@ XToString( PageType, NUM_PAGE_TYPES );
 #define COURSE_DIFFICULTY_X(col)	(COURSE_DIFFICULTY_START_X+COL_SPACING_X*col)
 #define COURSE_SCORE_OFFSET_X(col)	(COURSE_SCORE_OFFSET_START_X+COL_SPACING_X*col)
 
-const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
-const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
+const AutoScreenMessage SM_ShowNextPage;
+const AutoScreenMessage SM_HidePage;
 
 
 CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",i+1); }
@@ -422,9 +422,8 @@ void ScreenRanking::MenuBack( PlayerNumber pn )
 
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_ShowNextPage )
 	{
-	case SM_ShowNextPage:
 		if( m_vPagesToShow.size() > 0 )
 		{
 			float fSecsToShow = SetPage( m_vPagesToShow[0] );
@@ -439,11 +438,11 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		{
 			StartTransitioning(SM_GoToNextScreen);
 		}
-		break;
-	case SM_HidePage:
+	}
+	else if( SM == SM_HidePage )
+	{
 		TweenPageOffScreen();
 		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
-		break;
 	}
 
 	ScreenAttract::HandleScreenMessage( SM );

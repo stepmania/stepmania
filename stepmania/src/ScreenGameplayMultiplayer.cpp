@@ -29,12 +29,12 @@
 
 
 // received while STATE_DANCING
-const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
+const AutoScreenMessage	SM_NotesEnded;
 
-const ScreenMessage	SM_Ready				= ScreenMessage(SM_User+12);
+const AutoScreenMessage	SM_Ready;
 
-const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+22);
-const ScreenMessage	SM_GoToScreenAfterBack = ScreenMessage(SM_User+23);
+const AutoScreenMessage	SM_GoToStateAfterCleared;
+const AutoScreenMessage	SM_GoToScreenAfterBack;
 
 
 REGISTER_SCREEN_CLASS( ScreenGameplayMultiplayer );
@@ -606,30 +606,28 @@ void ScreenGameplayMultiplayer::StageFinished( bool bBackedOut )
 void ScreenGameplayMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 {
 	CHECKPOINT_M( ssprintf("HandleScreenMessage(%i)", SM) );
-	switch( SM )
+	if( SM == SM_Ready )
 	{
-	case SM_Ready:
 		GAMESTATE->m_bPastHereWeGo = true;
-		break;
-
-	case SM_NotesEnded:
+	}
+	else if( SM == SM_NotesEnded )
+	{
 		m_Out.StartTransitioning( SM_GoToStateAfterCleared );
-		break;
-
-	case SM_GoToScreenAfterBack:
+	}
+	else if( SM == SM_GoToScreenAfterBack )
+	{
 		StageFinished( true );
 
 		GAMESTATE->CancelStage();
 
 		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
-
-	case SM_GoToStateAfterCleared:
+	}
+	else if( SM == SM_GoToStateAfterCleared )
+	{
 		StageFinished( false );
 
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
 	}
 }
 

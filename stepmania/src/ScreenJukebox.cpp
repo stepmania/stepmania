@@ -220,14 +220,15 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_NotesEnded )
 	{
-	case SM_NotesEnded:
 		if( m_Out.IsTransitioning() || m_Out.IsFinished() )
 			return;	// ignore - we're already fading or faded
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
 		SCREENMAN->SetNewScreen( "ScreenJukebox" );

@@ -18,8 +18,8 @@
 #define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
 
-const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
-const ScreenMessage SM_BackFromEditDescription	=	(ScreenMessage)(SM_User+2);
+const AutoScreenMessage SM_RefreshSelector;
+const AutoScreenMessage SM_BackFromEditDescription;
 
 REGISTER_SCREEN_CLASS( ScreenEditMenu );
 ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName )
@@ -74,32 +74,35 @@ void DeleteCurSteps( void* pThrowAway )
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_RefreshSelector )
 	{
-	case SM_RefreshSelector:
 		m_Selector.RefreshAll();
 		RefreshNumStepsLoadedFromProfile();
-		break;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SCREENMAN->SetNewScreen( "ScreenEdit" );
-		break;
-	case SM_Success:
+	}
+	else if( SM == SM_Success )
+	{
 		LOG->Trace( "Delete successful; deleting steps from memory" );
 		DeleteCurSteps( NULL );
-		break;
-	case SM_Failure:
+	}
+	else if( SM == SM_Failure )
+	{
 		LOG->Trace( "Delete failed; not deleting steps" );
-		break;
-	case SM_BackFromEditDescription:
+	}
+	else if( SM == SM_BackFromEditDescription )
+	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			SOUND->StopMusic();
 			StartTransitioning( SM_GoToNextScreen );
 		}
-		break;
 	}
 }
 	

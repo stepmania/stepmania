@@ -25,9 +25,9 @@
 #define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
 #define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
 
-const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
-const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);			
-const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
+const AutoScreenMessage	SM_AddToChat;
+const AutoScreenMessage SM_UsersUpdate;
+const AutoScreenMessage SM_SMOnlinePack;	//Unused, but should be known
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMenuElements( sName )
@@ -179,30 +179,29 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 {
 	Screen::HandleScreenMessage( SM );
-	switch( SM )
+	
+	if( SM == SM_GoToPrevScreen )
 	{
-	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SOUND->StopMusic();
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-		break;
-	case SM_AddToChat:
-		{
-			m_textOutHidden.SetText( NSMAN->m_sChatText );
-			vector <wstring> wLines;
-			m_textOutHidden.GetLines( wLines );
-			m_actualText = "";
-			for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
-				m_actualText += WStringToCString( wLines[i] )+'\n';
-			m_textChatOutput.SetText( m_actualText );
-			break;
-		}
-	case SM_UsersUpdate:
+	}
+	else if( SM == SM_AddToChat )
+	{
+		m_textOutHidden.SetText( NSMAN->m_sChatText );
+		vector <wstring> wLines;
+		m_textOutHidden.GetLines( wLines );
+		m_actualText = "";
+		for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
+			m_actualText += WStringToCString( wLines[i] )+'\n';
+		m_textChatOutput.SetText( m_actualText );
+	}
+	else if( SM == SM_UsersUpdate )
+	{
 		UpdateUsers();
-		break;
-
 	}
 
 }

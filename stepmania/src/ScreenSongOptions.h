@@ -3,7 +3,7 @@
 
 #include "ScreenOptionsMaster.h"
 
-const ScreenMessage SM_BackFromSongOptions				= (ScreenMessage)(SM_User+4);
+extern const AutoScreenMessage SM_BackFromSongOptions;
 
 class ScreenSongOptions : public ScreenOptionsMaster
 {

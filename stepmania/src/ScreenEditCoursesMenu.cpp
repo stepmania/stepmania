@@ -16,7 +16,7 @@
 #define EXPLANATION_TEXT			THEME->GetMetric (m_sName,"ExplanationText")
 #define HELP_TEXT					THEME->GetMetric (m_sName,"HelpText")
 
-const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
+const AutoScreenMessage SM_RefreshSelector;
 
 REGISTER_SCREEN_CLASS( ScreenEditCoursesMenu );
 ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuElements( sName )

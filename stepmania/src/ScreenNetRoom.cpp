@@ -21,9 +21,9 @@
 #define ROOMLOWERBOUND				THEME->GetMetricF(m_sName,"RoomsLowerBound")
 #define ROOMUPPERBOUND				THEME->GetMetricF(m_sName,"RoomsUpperBound")
 
-const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
-const ScreenMessage	SM_BackFromRoomName	= ScreenMessage(SM_User+15);
-const ScreenMessage	SM_BackFromRoomDesc	= ScreenMessage(SM_User+16);
+const AutoScreenMessage SM_SMOnlinePack;	// Unused, but should be known
+const AutoScreenMessage	SM_BackFromRoomName;
+const AutoScreenMessage	SM_BackFromRoomDesc;
 
 REGISTER_SCREEN_CLASS( ScreenNetRoom );
 ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )
@@ -94,16 +94,18 @@ void ScreenNetRoom::Input( const DeviceInput& DeviceI, const InputEventType type
 
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GoToPrevScreen )
 	{
-	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-		break;
-	case SM_SMOnlinePack:
+	}
+	else if( SM == SM_SMOnlinePack )
+	{
 		if ( NSMAN->m_SMOnlinePacket.Read1() == 1 )
+		{
 			switch ( NSMAN->m_SMOnlinePacket.Read1() )
 			{
 			case 0: //Room title Change
@@ -141,21 +143,23 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					UpdateRoomsList();
 				}
 			}
-		break;
-	case SM_BackFromRoomName:
+		}
+	}
+	else if ( SM == SM_BackFromRoomName )
+	{
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomName = ScreenTextEntry::s_sLastAnswer;
 			SCREENMAN->TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "", 255 );
 		}
-		break;
-	case SM_BackFromRoomDesc:
+	}
+	else if( SM == SM_BackFromRoomDesc )
+	{
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomDesc = ScreenTextEntry::s_sLastAnswer;
 			CreateNewRoom( m_newRoomName, m_newRoomDesc);
 		}
-		break;
 	}
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
