@@ -12,7 +12,7 @@
 #include "StepMania.h" /* for g_argv */
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
-#include <RageThreads.h>
+#include "RageThreads.h"
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -57,14 +57,14 @@ static void spawn_child_process(int from_parent)
 }
 
 /* write(), but retry a couple times on EINTR. */
-int retried_write( int fd, const void *buf, size_t count )
+static int retried_write( int fd, const void *buf, size_t count )
 {
 	int tries = 3, ret;
 	do
 	{
 		ret = write( fd, buf, count );
 	}
-	while( tries-- && ret == -1 && errno == EINTR );
+	while( ret == -1 && errno == EINTR && tries-- );
 	
 	return ret;
 }

@@ -901,6 +901,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					Name="ArchHooks"
 					Filter="">
 					<File
+						RelativePath="arch\ArchHooks\ArchHooks.cpp">
+					</File>
+					<File
 						RelativePath="arch\ArchHooks\ArchHooks.h">
 					</File>
 					<File
@@ -1905,9 +1908,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="AnnouncerManager.h">
-			</File>
-			<File
-				RelativePath="arch\ArchHooks\ArchHooks.cpp">
 			</File>
 			<File
 				RelativePath="Bookkeeper.cpp">
