@@ -916,7 +916,8 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 
 void ScreenSelectMusic::AfterMusicChange()
 {
-	m_Menu.m_MenuTimer.Stall();
+	if( !m_MusicWheel.IsRouletting() )
+		m_Menu.m_MenuTimer.Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	if( pSong )
