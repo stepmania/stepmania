@@ -258,7 +258,11 @@ bool FilenameDB::ResolvePath(CString &path)
 
 	/* Split path into components. */
 	vector<CString> p;
-	split(path, SLASH, p, false);
+	split(path, SLASH, p, true);
+
+	/* If we have "/foo", then add a blank entry to the beginning to line things up. */
+	if( path.Right( strlen(SLASH) ) == SLASH )
+		p.insert( p.begin(), "" );
 
 	/* Resolve each component.  Assume the first component is correct. XXX
 	 * don't do that! "Songs/" vs "songs/" */
