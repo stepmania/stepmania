@@ -76,19 +76,6 @@ protected:
 
 #endif
 
-void OS_GenerateRandomBlock(bool blocking, byte *output, unsigned int size);
-
-//! Automaticly Seeded Randomness Pool
-/*! This class seeds itself using an operating system provided RNG. */
-class AutoSeededRandomPool : public RandomPool
-{
-public:
-	//! blocking will be ignored if the prefered RNG isn't available
-	explicit AutoSeededRandomPool(bool blocking = false, unsigned int seedSize = 32)
-		{Reseed(blocking, seedSize);}
-	void Reseed(bool blocking = false, unsigned int seedSize = 32);
-};
-
 NAMESPACE_END
 
 #endif

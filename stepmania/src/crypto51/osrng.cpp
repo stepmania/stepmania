@@ -139,38 +139,6 @@ void BlockingRng::GenerateBlock(byte *output, unsigned int size)
 
 #endif
 
-// *************************************************************
-
-void OS_GenerateRandomBlock(bool blocking, byte *output, unsigned int size)
-{
-#ifdef NONBLOCKING_RNG_AVAILABLE
-	if (blocking)
-#endif
-	{
-#ifdef BLOCKING_RNG_AVAILABLE
-		BlockingRng rng;
-		rng.GenerateBlock(output, size);
-#endif
-	}
-
-#ifdef BLOCKING_RNG_AVAILABLE
-	if (!blocking)
-#endif
-	{
-#ifdef NONBLOCKING_RNG_AVAILABLE
-		NonblockingRng rng;
-		rng.GenerateBlock(output, size);
-#endif
-	}
-}
-
-void AutoSeededRandomPool::Reseed(bool blocking, unsigned int seedSize)
-{
-	SecByteBlock seed(seedSize);
-	OS_GenerateRandomBlock(blocking, seed, seedSize);
-	Put(seed, seedSize);
-}
-
 NAMESPACE_END
 
 #endif
