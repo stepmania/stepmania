@@ -282,9 +282,6 @@ test_audio_readers_LDADD = \
 test_file_readers_SOURCES = $(all_test_SOURCES) \
 		tests/test_file_readers.cpp
 
-test_file_readers_LDADD = \
-	      $(USE_SDL_LIBS)
-
 test_timing_data_SOURCES = $(all_test_SOURCES) \
 		tests/test_timing_data.cpp TimingData.cpp TimingData.h
 
