@@ -96,7 +96,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	}
 
 	m_MenuTimer.SetXY( TIMER_X, TIMER_Y );
-	if( !bTimerEnabled  ||  !PREFSMAN->m_bMenuTimer )
+	if( !bTimerEnabled  ||  !PREFSMAN->m_bMenuTimer  ||  GAMESTATE->m_bEditing )
 	{
 		m_MenuTimer.SetTimer( 99 );
 		m_MenuTimer.Update( 0 );

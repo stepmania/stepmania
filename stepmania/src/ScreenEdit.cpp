@@ -624,7 +624,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 						m_fDestinationScrollSpeed = 2;
 						m_soundMarker.Play();
 					}
-					else if( m_fDestinationScrollSpeed == 2 )
+					else // if( m_fDestinationScrollSpeed == 2 )
 					{
 						m_fDestinationScrollSpeed = 1;
 						m_soundMarker.Play();
@@ -633,14 +633,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 				else if( DeviceI.button == SDLK_DOWN )
 				{
-					if( m_fDestinationScrollSpeed == 1 )
-					{
-						m_fDestinationScrollSpeed = 2;
-						m_soundMarker.Play();
-					}
-					else if( m_fDestinationScrollSpeed == 2 )
+					if( m_fDestinationScrollSpeed == 2 )
 					{
 						m_fDestinationScrollSpeed = 4;
+						m_soundMarker.Play();
+					}
+					else //if( m_fDestinationScrollSpeed == 1 )
+					{
+						m_fDestinationScrollSpeed = 2;
 						m_soundMarker.Play();
 					}
 					break;

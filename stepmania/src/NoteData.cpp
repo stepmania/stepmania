@@ -1075,7 +1075,7 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval )
 		// don't insert a new note if there's already one within this interval
 		bool bNoteInMiddle = false;
 		for( int j=iRowEarlier+1; j<=iRowLater-1; j++ )
-			if( !in.IsRowEmpty(iRowMiddle) )
+			if( !in.IsRowEmpty(j) )
 			{
 				bNoteInMiddle = true;
 				break;
