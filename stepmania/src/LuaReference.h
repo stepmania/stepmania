@@ -25,6 +25,7 @@ public:
 
 	/* Return true if set.  (SetFromNil() counts as being set.) */
 	bool IsSet() const;
+	void Unset() { Unregister(); }
 
 	/* Return the referenced type, or LUA_TNONE if not set. */
 	int GetLuaType() const;
@@ -52,7 +53,7 @@ private:
 class LuaExpression: public LuaReference
 {
 public:
-	LuaExpression( const CString &sExpression = "" ) { SetFromExpression( sExpression ); }
+	LuaExpression( const CString &sExpression = "" ) { if( sExpression != "" ) SetFromExpression( sExpression ); }
 	void SetFromExpression( const CString &sExpression );
 
 protected:
