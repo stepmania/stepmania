@@ -29,8 +29,9 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 	#include <fcntl.h>
 	#include <linux/types.h>
 
-	static const char *PROC_KMSG = "/proc/kmsg";
-	static int fds_kmsg = -1;
+	static const char *USB_DEVICE_LIST_FILE = "/proc/bus/usb/devices";
+	static int g_fds = -1;
+	static time_t g_last_mtime = 0;
 
 	struct UsbStorageDevice
 	{
@@ -227,76 +228,37 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 
 	MemoryCardManager::MemoryCardManager()
 	{
-		fds_kmsg = open(PROC_KMSG, O_RDONLY);
-		if( fds_kmsg == -1 )
-			LOG->Warn("Open '%s' failed", PROC_KMSG);
+		g_fds = open(USB_DEVICE_LIST_FILE, O_RDONLY);
+		ASSERT( g_fds != -1 );
 	}
 
 	MemoryCardManager::~MemoryCardManager()
 	{
-		if( fds_kmsg != -1 ) 
-			close( fds_kmsg );
+		if( g_fds != -1 ) 
+		{
+			close( g_fds );
+			g_fds = -1;
+		}
 	}
 
 
 	bool UsbChanged()
 	{
-	  LOG->Trace( "USBChanged" );
-
-
-		// check PROC_KMSG for any "usb" messages
-		if( fds_kmsg == -1 )
-		  {
-		    printf("closed\n");
-			return false;
-		  }
-
-		fd_set fdset;
-		FD_ZERO( &fdset );
-		FD_SET( fds_kmsg, &fdset );
-		int max_fd = fds_kmsg;
-		
-		struct timeval zero = {0,0};
-		if ( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+		// has USB_DEVICE_LIST_FILE changed?
+		if( g_fds == -1 )
 			return false;
 
-		LOG->Trace( "kmsg: fd isset" );
-
-		if( !FD_ISSET(fds_kmsg, &fdset) )
-			return false;
-
-		printf( "kmsg: reading...\n" );
-
-		static char buffer[1024];	// large enough to read all messages in one call
-		int ret = read(fds_kmsg, buffer, sizeof(buffer));
-
-		printf("kmsg: read %d bytes\n", ret );
-		if( ret == 0 )
+		struct stat st;
+		if( stat(ent->d_name, &st) == -1 )
 		{
-		  printf( "closing kmsg" );
-			close(fds_kmsg);
-			fds_kmsg = -1;
+			LOG->Warn( "stat failed." );
 			return false;
 		}
-		else if( ret == sizeof(buffer) )
-		{
-			LOG->Warn("Buffer size %d is too small to read all messages from '%s'", sizeof(buffer), PROC_KMSG);
-			buffer[sizeof(buffer)-1] = '\0'; 
-		}
-	        else
-		  {
-		    buffer[ret] = '\0';
-		  }
-		char* temp = buffer;
-		while( *temp )
-		  {
-		    if( *temp<32  )
-		      *temp = '\n';
-		    temp++;
-		  }
-		printf( "kmsg: '%s'", buffer );
+
+		bool bChanged = st.st_mtime != g_last_mtime;
+		g_last_mtime = st.st_mtime;
 	       
-		return true;
+		return bChanged;
 	}
 
 	void MemoryCardManager::Update( float fDelta )
