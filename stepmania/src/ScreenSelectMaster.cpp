@@ -316,6 +316,21 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 		{
 			TweenOffScreen();
 
+			/*
+			 * We start our own tween-out (TweenOffScreen), wait some amount of time, then
+			 * start the base tween (ScreenWithMenuElements, called from SM_AllDoneChoosing);
+			 * we move on when that finishes.  This is a pain to tweak, especially now
+			 * that elements essentially owned by the derived class are starting to tween
+			 * in the ScreenWithMenuElements tween (underlay, overlay); we have to tweak the
+			 * duration of the "out" transition to determine how long to wait after fSecs
+			 * before moving on.
+			 *
+			 * Send a command to all children, so we can run overlay and underlay tweens at the
+			 * same time as the elements controlled by TweenOffScreen.  Run this here, so
+			 * it affects the result of GetTweenTimeLeft().
+			 */
+			this->PlayCommand( "TweenOff" );
+
 			float fSecs = 0;
 			/* This can be used to allow overlap between the main tween-off and the MenuElements
 			 * tweenoff. */
