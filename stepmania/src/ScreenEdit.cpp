@@ -996,6 +996,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				iOriginalRow = max( iOriginalRow, 0 );
 				iDestinationRow = max( iDestinationRow, 0 );
 
+				if( iOriginalRow == iDestinationRow )	// didn't change rows, so don't create a hold
+					continue;
+
 				// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
 				// that the user made.  Dragging the hold bigger can only absorb and remove
 				// other taps, so dragging won't cause us to exceed the note limit.
@@ -2624,17 +2627,20 @@ float ScreenEdit::GetMaximumBeat() const
 {
 	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
 	{
-		// Jump to GetLastBeat even if it's past m_pCurSong->m_fLastBeat
-		// so that users can delete garbage steps past then end that they have 
-		// have inserted in a text editor.  Once they delete all steps on 
-		// GetLastBeat() and move off of that beat, they won't be able to return.
-		float fEndBeat = max( m_NoteDataEdit.GetLastBeat(), GAMESTATE->m_pCurSong->m_fLastBeat );
+		float fEndBeat = GAMESTATE->m_pCurSong->m_fLastBeat;
 
 		// Round up to the next measure end.  Some songs end on weird beats 
 		// mid-measure, and it's odd to have movement capped to these weird
 		// beats.
 		fEndBeat += BEATS_PER_MEASURE;
 		fEndBeat = ftruncf( fEndBeat, (float)BEATS_PER_MEASURE );
+
+		// Jump to GetLastBeat even if it's past m_pCurSong->m_fLastBeat
+		// so that users can delete garbage steps past then end that they have 
+		// have inserted in a text editor.  Once they delete all steps on 
+		// GetLastBeat() and move off of that beat, they won't be able to return.
+		fEndBeat = max( fEndBeat, GAMESTATE->m_pCurSong->m_fLastBeat );
+
 		return fEndBeat;
 	}
 	else
