@@ -982,7 +982,7 @@ void xing_init(struct xing *xing)
  */
 int xing_parse(struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen)
 {
-	const int XING_MAGIC = (('X' << 24) | ('i' << 16) | ('n' << 8) | 'g');
+	const unsigned XING_MAGIC = (('X' << 24) | ('i' << 16) | ('n' << 8) | 'g');
 	if (bitlen < 64 || mad_bit_read(&ptr, 32) != XING_MAGIC)
 	goto fail;
 
