@@ -42,7 +42,22 @@ SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_vorbis=yes,  have_vorbis=no)
 AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_ogg=yes,  have_ogg=no)
 AC_SEARCH_LIBS(ov_open, [vorbisfile], have_vorbisfile=yes,  have_vorbisfile=no)
-AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
+
+AC_ARG_ENABLE(mp3, AC_HELP_STRING([--disable-mp3], [Disable MP3 support]), enable_mp3=$enableval, enable_mp3=yes)
+if test "$enable_mp3" = "yes"; then
+	AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
+	if test "$have_mad" = "no"; then
+		echo "WARNING: libmad was not found; MP3 support disabled"
+	fi
+else
+	have_mad=no
+fi
+
+if test "$have_mad" = "no"; then
+	AC_DEFINE(NO_MP3_SUPPORT, 1, [MP3 support not available])
+fi
+
+AM_CONDITIONAL(HAVE_MP3, test "$have_mad" != "yes" )
 
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
@@ -53,14 +68,6 @@ if test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
 	AC_DEFINE(HAVE_FFMPEG, 1, [FMPEG support available])
 fi
 AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" == "yes" )
-
-#if test "x$have_mad" = "xno"; then
-#  echo
-#  echo "*** Madlib is required to build StepMania; please"
-#  echo "*** make sure that madlib is installed to continue"
-#  echo "*** the installation process."
-#  exit 0;
-#fi
 
 SM_CHECK_CRASH_HANDLER
 
