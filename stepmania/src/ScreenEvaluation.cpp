@@ -136,6 +136,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		{
 			int ScoreBonuses[9] = {0, 0, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000};
 			GAMESTATE->m_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+			stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
 		}
 	}
 
@@ -168,7 +169,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			{
 				if( GAMESTATE->IsHumanPlayer(p) )
 				{
-					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p], bNewRecord[p] );
+					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p] + stageStats.iBonus[p], bNewRecord[p] );
 					
 					// update unlock data if unlocks are on
 					if ( PREFSMAN->m_bUseUnlockSystem )
