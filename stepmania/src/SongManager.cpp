@@ -759,9 +759,11 @@ void SongManager::CleanData()
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
-		for( unsigned n=0; n<m_pSongs[i]->m_apNotes.size(); n++ )
-		{	
-			m_pSongs[i]->m_apNotes[n]->Compress();
+		Song* pSong = m_pSongs[i];
+		for( unsigned n=0; n<pSong->m_apNotes.size(); n++ )
+		{
+			Notes* pNotes = pSong->m_apNotes[n];
+			pNotes->Compress();
 		}
 	}
 }

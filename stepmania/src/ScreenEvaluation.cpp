@@ -865,19 +865,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 
 	if( PREFSMAN->m_bEventMode )
 	{
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:
-			m_Menu.StartTransitioning( SM_GoToNextScreen );
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			m_Menu.StartTransitioning( SM_GoToSelectCourse );
-			break;
-		default:
-			ASSERT(0);
-		}
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 	}
 	else	// not event mode
 	{
