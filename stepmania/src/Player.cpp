@@ -143,7 +143,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	float fNoteFieldMidde = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	m_pNoteField->SetY( fNoteFieldMidde );
 	float fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
-	m_pNoteField->Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, fNoteFieldHeight );
+	m_pNoteField->Load( this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
 
 	/* Cache note skins that are used as attacks. */
