@@ -23,6 +23,7 @@
 
 ScreenTestSound::ScreenTestSound()
 {	
+	int i;
 	this->AddChild(&HEEEEEEEEELP);
 
 	HEEEEEEEEELP.SetXY(450, 400);
@@ -35,7 +36,7 @@ ScreenTestSound::ScreenTestSound()
 		"a  Set autostop\n"
 		"c  Set continue");
 
-	for(int i = 0; i < nsounds; ++i)
+	for(i = 0; i < nsounds; ++i)
 	{
 		this->AddChild(&s[i].txt);
 		s[i].txt.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -62,7 +63,7 @@ s[0].s.SetPlaybackRate(1.20f);
 //s[0].s.Play();
 
 	selected = 0;
-	for(int i = 0; i < nsounds; ++i)
+	for(i = 0; i < nsounds; ++i)
 		UpdateText(i);
 }
 

@@ -84,7 +84,7 @@ MusicBannerWheel::MusicBannerWheel()
 	else // theres a song already selected (i.e. they came back from gameplay)...
 	{
 		// find our song and change the currentPos to wherever it may be.
-		for(int i=0; i<arraySongs.size(); i++)
+		for(unsigned i=0; i<arraySongs.size(); i++)
 		{
 			if( GAMESTATE->m_pCurSong == arraySongs[i])
 			{
@@ -104,7 +104,7 @@ MusicBannerWheel::MusicBannerWheel()
 /************ TODO: OPTIMIZE THIS: MUST!!!! ********************/
 void MusicBannerWheel::LoadSongData()
 {
-	Song* pSong;
+	Song* pSong = NULL;
 	CStringArray asGraphicPaths;
 
 	if(MAXSONGSINBUFFER >= arraySongs.size() && SingleLoad != 1)  // less than the MAXSONGSINBUFFER means we can get away with loading the lot in one go
@@ -115,7 +115,7 @@ void MusicBannerWheel::LoadSongData()
 		difference = MAXSONGSINBUFFER - arraySongs.size();
 		for(int i=0; i<=difference; i++)
 		{
-			for(int c=0; c<arraySongs.size(); c++)
+			for(unsigned c=0; c<arraySongs.size(); c++)
 			{
 				pSong = arraySongs[c];
 

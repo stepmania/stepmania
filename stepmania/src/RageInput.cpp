@@ -416,9 +416,15 @@ void RageInput::Update( float fDeltaTime )
 		for( int axis=0; axis<iNumJoyAxes; axis++ )
 		{
 			Sint16 val = SDL_JoystickGetAxis(pJoy,axis);
-			if( val < -100 )
+			LOG->Trace( "val = %d", val );
+			if( val < -16000 )
 			{
 				JoystickButton b = (JoystickButton)(JOY_LEFT+2*axis);
+				m_joyState[joy].button[b] = true;
+			}
+			else if( val > +16000 )
+			{
+				JoystickButton b = (JoystickButton)(JOY_RIGHT+2*axis);
 				m_joyState[joy].button[b] = true;
 			}
 		}

@@ -1156,21 +1156,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageMovieTextureHelper.h">
 			</File>
 			<File
-				RelativePath="RageNetworkClient.cpp">
-			</File>
-			<File
-				RelativePath="RageNetworkClient.h">
-			</File>
-			<File
-				RelativePath="RageNetworkPacket.h">
-			</File>
-			<File
-				RelativePath="RageNetworkServer.cpp">
-			</File>
-			<File
-				RelativePath="RageNetworkServer.h">
-			</File>
-			<File
 				RelativePath="RageSound.cpp">
 			</File>
 			<File

@@ -51,7 +51,7 @@ protected:
 	Sprite  m_StyleListFrame;
 	Sprite  m_SelectedStyleFrame;
 
-	CArray<ModeChoice,ModeChoice> m_aPossibleModeChoices;
+	vector<ModeChoice> m_aPossibleModeChoices;
 
 	ScrollingList m_ScrollingList;
 	void RefreshModeChoices();

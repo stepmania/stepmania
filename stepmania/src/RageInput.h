@@ -39,7 +39,8 @@ enum InputDevice {
 
 // button byte codes for directional pad
 enum JoystickButton {
-	JOY_LEFT = 0, JOY_RIGHT, JOY_UP, JOY_DOWN,
+	JOY_LEFT = 0, JOY_RIGHT, 
+	JOY_UP, JOY_DOWN,
 	JOY_Z_UP, JOY_Z_DOWN,
 	JOY_Z_ROT_UP, JOY_Z_ROT_DOWN,
 	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 

@@ -57,7 +57,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                           	cl                                            /Zl                                            /nologo                                            /c                                            verstub.cpp                                            /Fo$(IntDir)\ 
@@ -92,7 +92,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                           	cl                                            /Zl                                            /nologo                                            /c                                            verstub.cpp                                            /Fo$(IntDir)\ 
@@ -220,14 +220,6 @@ SOURCE=.\RageMovieTexture.cpp
 # Begin Source File
 
 SOURCE=.\RageMovieTexture.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageNetworkClient.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageNetworkClient.h
 # End Source File
 # Begin Source File
 
@@ -1272,6 +1264,14 @@ SOURCE=.\Screen.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenAlbums.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAlbums.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenAppearanceOptions.cpp
 # End Source File
 # Begin Source File
@@ -1280,11 +1280,31 @@ SOURCE=.\ScreenAppearanceOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenAttract.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAttract.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenCaution.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ScreenCaution.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenCompany.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenDemonstration.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenDemonstration.h
 # End Source File
 # Begin Source File
 
@@ -1361,7 +1381,11 @@ SOURCE=.\ScreenGraphicOptions.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenHowToPlay.cpp
+SOURCE=.\ScreenHighScores.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenHighScores.h
 # End Source File
 # Begin Source File
 
@@ -1374,6 +1398,18 @@ SOURCE=.\ScreenInputOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenInputOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenInstructions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenInstructions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenLogo.h
 # End Source File
 # Begin Source File
 
@@ -1401,6 +1437,10 @@ SOURCE=.\ScreenMapControllers.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenMemoryCard.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenMessage.h
 # End Source File
 # Begin Source File
@@ -1410,14 +1450,6 @@ SOURCE=.\ScreenMusicScroll.cpp
 # Begin Source File
 
 SOURCE=.\ScreenMusicScroll.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenNetworkWaiting.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenNetworkWaiting.h
 # End Source File
 # Begin Source File
 
@@ -1570,6 +1602,14 @@ SOURCE=.\ScreenTitleMenu.cpp
 # Begin Source File
 
 SOURCE=.\ScreenTitleMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenUnlock.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenWarning.h
 # End Source File
 # End Group
 # Begin Group "Global Singletons"

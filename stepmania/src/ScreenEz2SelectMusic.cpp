@@ -30,16 +30,16 @@
 #include "InputMapper.h"
 #include "CodeDetector.h"
 
-#define SCROLLING_LIST_X				THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
-#define SCROLLING_LIST_Y				THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
-#define PUMP_DIFF_X	THEME->GetMetricI("ScreenEz2SelectMusic","PumpDifficultyX")
-#define PUMP_DIFF_Y	THEME->GetMetricI("ScreenEz2SelectMusic","PumpDifficultyY")
+#define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
+#define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
+#define PUMP_DIFF_X				THEME->GetMetricF("ScreenEz2SelectMusic","PumpDifficultyX")
+#define PUMP_DIFF_Y				THEME->GetMetricF("ScreenEz2SelectMusic","PumpDifficultyY")
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectMusic","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 #define METER_X( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dX",p+1))
 #define METER_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dY",p+1))
-#define GUIDE_X							THEME->GetMetricF("ScreenSelectMode","GuideX")
-#define GUIDE_Y							THEME->GetMetricF("ScreenSelectMode","GuideY")
+#define GUIDE_X					THEME->GetMetricF("ScreenSelectMode","GuideX")
+#define GUIDE_Y					THEME->GetMetricF("ScreenSelectMode","GuideY")
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
