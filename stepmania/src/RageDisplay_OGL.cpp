@@ -31,6 +31,7 @@
 #define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
 #endif
 #include <set>
+#include <sstream>
 
 /* Not in glext.h: */
 typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
@@ -1071,7 +1072,6 @@ PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg
 
 	return pixfmt;
 }
-#include <sstream>
 
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
