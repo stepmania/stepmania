@@ -20,7 +20,6 @@ enum {
     kMacOSX_10_3 = 0x1030
 };
 
-void HandleSignal(int sig);
 OSStatus HandleException(ExceptionInformation *theException);
 
 const unsigned maxLogMessages = 10; /* Follow the windows example */
@@ -43,7 +42,6 @@ ArchHooks_darwin::ArchHooks_darwin() {
         MessageBoxOK(error, "");
         exit(0);
     }
-    SignalHandler::OnClose(HandleSignal);
     InstallExceptionHandler(HandleException);
 }
 
@@ -297,29 +295,6 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     return result;
 }
 
-void HandleSignal(int sig) {
-    FILE *fp = fopen("crashinfo.txt", "w");
-
-    /* ***FIXME*** we need to track build number somehow */
-    fprintf(fp,
-            "StepMania crash report -- build unknown\n"
-            "---------------------------------------\n\n"
-            "Crash reason: Signal %d\n\n"
-            "All stack trace information in ~/Library/Logs/CrashReporter/stepmania.crash.log\n\n"
-            "Static log:\n", sig);
-    unsigned size = staticLog.size();
-    for (unsigned i=0; i<size; ++i)
-        fprintf(fp, "%s\n", staticLog[i].c_str());
-    fprintf(fp, "\nPartial log:\n");
-    while (!crashLog.empty()) {
-        CString s = crashLog.front();
-        fprintf(fp, "%s\n", s.c_str());
-        crashLog.pop();
-    }
-    fprintf(fp, "\nAdditionalLog:\n%s\n\n-- End of report\n", additionalLog.c_str());
-    fclose(fp);
-}
-
 #define CASE_CODE(code,addr) case k##code: strcpy((addr),#code); break
 
 OSStatus HandleException(ExceptionInformation *theException) {
@@ -362,6 +337,5 @@ OSStatus HandleException(ExceptionInformation *theException) {
     }
     fprintf(fp, "\nAdditionalLog:\n%s\n\n-- End of report\n", additionalLog.c_str());
     fclose(fp);
-    _exit(-1);
     return -1;
 }    
