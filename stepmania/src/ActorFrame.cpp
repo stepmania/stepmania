@@ -110,7 +110,8 @@ void ActorFrame::SortByZ()
 	{
 		Actor* pToInsert = m_SubActors[i];
 
-		for( unsigned j=0; j<v.size(); j++ )
+	        unsigned j;
+		for( j=0; j<v.size(); j++ )
 			if( pToInsert->GetZ() > v[j]->GetZ() )
 			{
 				v.insert( v.begin()+j, pToInsert );
