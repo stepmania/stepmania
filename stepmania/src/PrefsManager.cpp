@@ -165,6 +165,7 @@ PrefsManager::PrefsManager()
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
+	m_bLockCourseDifficulties = true;
 	m_ShowDancingCharacters = CO_OFF;
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
@@ -434,6 +435,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
 	ini.GetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
+	ini.GetValue( "Options", "LockCourseDifficulties",			m_bLockCourseDifficulties );
 	ini.GetValue( "Options", "ShowDancingCharacters",			(int&)m_ShowDancingCharacters );
 
 	ini.GetValue( "Options", "CourseSortOrder",					(int&)m_iCourseSortOrder );
@@ -645,6 +647,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.SetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
 	ini.SetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
+	ini.SetValue( "Options", "LockCourseDifficulties",			m_bLockCourseDifficulties );
 	ini.SetValue( "Options", "ShowDancingCharacters",			m_ShowDancingCharacters );
 	ini.SetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
 	ini.SetValue( "Options", "FirstRun",						m_bFirstRun );

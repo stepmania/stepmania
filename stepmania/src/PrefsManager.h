@@ -160,6 +160,7 @@ public:
 	bool			m_bAutogenMissingTypes;
 	bool			m_bAutogenGroupCourses;
 	bool			m_bBreakComboToGetItem;
+	bool			m_bLockCourseDifficulties;
 	enum CharacterOption { CO_OFF = 0, CO_RANDOM = 1, CO_SELECT = 2};
 	CharacterOption	m_ShowDancingCharacters;
 	bool			m_bUseUnlockSystem;
