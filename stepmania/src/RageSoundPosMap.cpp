@@ -91,6 +91,7 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 		if( dist < closest_position_dist )
 		{
 			closest_position_dist = dist;
+			closest_block = i;
 			closest_position = m_Queue[i].position + m_Queue[i].frames;
 		}
 	}
