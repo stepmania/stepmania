@@ -285,9 +285,7 @@ void Song::RevertFromDisk()
 	/* Erase all existing data. */
 	Reset();
 
-	// Don't load from cache, or else we'll get an old version
-	// if they've saved in the editor.
-	LoadFromSongDir( dir, false );	
+	LoadFromSongDir( dir );	
 
 
 	if( GAMESTATE->m_pCurSong == this )
@@ -955,6 +953,7 @@ void Song::Save()
 
 	SaveToSMFile( GetSongFilePath(), false );
 	SaveToDWIFile();
+	SaveToCacheFile();
 
 	/* We've safely written our files and created backups.  Rename non-SM and non-DWI
 	 * files to avoid confusion. 
