@@ -29,13 +29,14 @@ Model::Model ()
 {
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
-	SetUseZBuffer( true );
+	SetCullMode( CULL_BACK );
 	m_pGeometry = NULL;
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
 	m_iRefCount = 1;
+	m_bUseTempVertices = false;
 }
 
 Model::~Model ()
@@ -110,8 +111,8 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	//
     // Setup temp vertices (if necessary)
 	//
-	bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
-	if( bUseTempVertices )
+	m_bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
+	if( m_bUseTempVertices )
 	{
 		m_vTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
@@ -428,36 +429,6 @@ void Model::DrawPrimitives()
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
 
-	//
-	// process vertices
-	//
-	if( bUseTempVertices )
-	{
-		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
-		{
-			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
-			for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
-			{
-				RageModelVertex& tempVert = TempVertices[j];
-				RageModelVertex& originalVert = pMesh->Vertices[j];
-
-				tempVert.t = originalVert.t;
-				
-				if( originalVert.boneIndex == -1 )
-				{
-					tempVert.n = originalVert.n;
-					tempVert.p = originalVert.p;
-				}
-				else
-				{
-					int bone = originalVert.boneIndex;
-					RageVec3TransformNormal( &tempVert.n, &originalVert.n, &m_vpBones[bone].mFinal );
-					RageVec3TransformCoord( &tempVert.p, &originalVert.p, &m_vpBones[bone].mFinal );
-				}
-			}
-		}
-	}
 
 	//////////////////////
 	// render the diffuse pass
@@ -469,7 +440,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
+			RageModelVertexVector& TempVertices = m_bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
@@ -539,7 +510,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
+			RageModelVertexVector& TempVertices = m_bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
 
 			// apply material
 			if( pMesh->nMaterialIndex != -1 )
@@ -811,6 +782,37 @@ void Model::Update( float fDelta )
 	{
 		m_Materials[i].diffuse.ani.Update( fDelta );
 		m_Materials[i].alpha.ani.Update( fDelta );
+	}
+
+	//
+	// process vertices
+	//
+	if( m_bUseTempVertices && m_pGeometry )
+	{
+		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+		{
+			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
+			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
+			for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
+			{
+				RageModelVertex& tempVert = TempVertices[j];
+				RageModelVertex& originalVert = pMesh->Vertices[j];
+
+				tempVert.t = originalVert.t;
+				
+				if( originalVert.boneIndex == -1 )
+				{
+					tempVert.n = originalVert.n;
+					tempVert.p = originalVert.p;
+				}
+				else
+				{
+					int bone = originalVert.boneIndex;
+					RageVec3TransformNormal( &tempVert.n, &originalVert.n, &m_vpBones[bone].mFinal );
+					RageVec3TransformCoord( &tempVert.p, &originalVert.p, &m_vpBones[bone].mFinal );
+				}
+			}
+		}
 	}
 }
 

@@ -68,7 +68,7 @@ private:
 	// true if any vertex has a bone weight.
 	// If true, then render from m_vTempVerticesByBone.  
 	// Otherwise, render directly from the mesh's vertices
-	bool bUseTempVertices;
+	bool m_bUseTempVertices;
 	
 	typedef vector<RageModelVertex>	RageModelVertexVector;
 	vector<RageModelVertexVector>	m_vTempVerticesByMesh;
