@@ -234,34 +234,25 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 		CString value_data;
 
 		// BMS value names can be separated by a space or a colon.
-		int iIndexOfFirstColon = line.Find( ":" );
-		int iIndexOfFirstSpace = line.Find( " " );
-
-		if( iIndexOfFirstColon == -1 )
-			iIndexOfFirstColon = 10000;
-		if( iIndexOfFirstSpace == -1 )
-			iIndexOfFirstSpace = 10000;
-
-		int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
-
-		if( iIndexOfSeparator != 10000 )
+		size_t iIndexOfSeparator = line.find_first_of( ": " );
+		if( iIndexOfSeparator != line.npos )
 		{
 			value_name = line.substr( 0, iIndexOfSeparator );
-			value_data = line;	// the rest
-			value_data.erase(0,iIndexOfSeparator+1);
+			value_data = line.substr( iIndexOfSeparator+1 );
 		}
 		else	// no separator
 		{
 			value_name = line;
 		}
+		LOG->Trace("'%s', '%s'", value_name.c_str(), value_data.c_str());
 
 		value_name.MakeLower();
 
-		if( -1 != value_name.Find("#player") )
+		if( value_name.Find("#player") != -1 )
 		{
 			iPlayer = atoi(value_data);
 		}
-		if( -1 != value_name.Find("#title") )
+		if( value_name.Find("#title") != -1 )
 		{
 			value_data.MakeLower();
 
@@ -284,7 +275,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 			if( value_data.Find("6") != -1 )
 				out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
 		}
-		if( -1 != value_name.Find("#playlevel") )
+		if( value_name.Find("#playlevel") != -1 )
 		{
 			out.SetMeter(atoi(value_data));
 		}
