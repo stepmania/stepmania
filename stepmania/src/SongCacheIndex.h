@@ -1,7 +1,6 @@
 #ifndef SONG_CACHE_INDEX_H
 #define SONG_CACHE_INDEX_H
 
-#include "stdafx.h"
 #include "IniFile.h"
 
 class SongCacheIndex {
