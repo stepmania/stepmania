@@ -74,6 +74,7 @@ public:
 	Song* GetRandomSong();
 
 
+	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
 	void GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if life meter type is BAR.
 	void GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen );		// add to if life meter type is BATTERY.
 	void GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if set to REPEAT.

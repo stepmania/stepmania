@@ -808,6 +808,13 @@ void SongManager::CleanData()
 	}
 }
 
+void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
+{
+	for( unsigned i=0; i<m_pCourses.size(); i++ )
+		if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
+			AddTo.push_back( m_pCourses[i] );
+}
+
 void SongManager::GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
