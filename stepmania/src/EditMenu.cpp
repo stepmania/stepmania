@@ -77,6 +77,9 @@ EditMenu::EditMenu()
 		this->AddChild( &m_textValue[r] );
 	}
 
+	/* Load low-res banners, if needed. */
+	BANNERCACHE->Demand();
+
 	m_GroupBanner.SetName( "GroupBanner" );
 	SET_XY( m_GroupBanner );
 	this->AddChild( &m_GroupBanner );
