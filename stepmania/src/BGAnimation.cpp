@@ -55,7 +55,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( !sAniDir.empty() && sAniDir.Right(1) != SLASH )
 		sAniDir += SLASH;
 
-	ASSERT( IsADirectory(sAniDir) );
+	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 
 	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
