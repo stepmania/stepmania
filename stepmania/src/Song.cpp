@@ -437,9 +437,7 @@ bool Song::LoadFromSongDir( CString sDir )
 		else {
 			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
 			if( !asFileNames.empty() ) {
-				m_sSongFileName += asFileNames[0];
-				/* XXX: This would mess up "vote.for.dwight.d.eisenhower.dwi". */
-				m_sSongFileName.Replace( ".dwi", ".sm" );
+				m_sSongFileName += SetExtension( asFileNames[0], "sm" );
 			} else {
 				m_sSongFileName += sDirectoryParts[sDirectoryParts.size()-2];	// last item
 				m_sSongFileName += ".sm";
@@ -1052,8 +1050,7 @@ void Song::SaveToDWIFile()
 {
 	LOG->Trace( "Song::SaveToSongFileAndDWI()" );
 
-	CString sPath = GetSongFilePath();
-	sPath.Replace( ".sm", ".dwi" );
+	CString sPath = SetExtension( GetSongFilePath(), "dwi" );
 
 	NotesWriterDWI wr;
 	wr.Write(sPath, *this);
