@@ -9,20 +9,15 @@
 #endif
 
 /* Don't include windows.h everywhere; when we do eventually include it, use this: */
-#ifdef _WINDOWS
 #define WIN32_LEAN_AND_MEAN
-#endif
+
+/* If this isn't defined to 0, VC fails to define things like stat and alloca. */
+#define __STDC__ 0
 
 #include <direct.h> /* has stuff that should be in unistd.h */
 #include <wchar.h> /* needs to be included before our fixes below */
 
-#define getcwd _getcwd
-#define wgetcwd _wgetcwd
-#define chdir _chdir
-#define wchdir _wchdir
-#define alloca _alloca
-#define stat _stat
-#define lstat _stat
+#define lstat stat
 #define fsync _commit
 /* mkdir is missing the mode arg */
 #define mkdir(p,m) mkdir(p)
