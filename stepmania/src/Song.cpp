@@ -712,6 +712,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 
 		/* Artists: */
 		ttab.push_back(TitleTrans("", "", "Omega", "", "", "&omega;") );
+		ttab.push_back(TitleTrans("", "", "ZZ", "", "", "&doublezeta;") );
 
 		/* 亜熱帯マジ-SKA爆弾 (serious tropical ska bomb? ruh roh) */
 		ttab.push_back(TitleTrans("", "", "^Anettai Maji.*Ska (Bakudan|Bukuden)", "", "", "&anettai1;&anettai2;&anettai3;&kma;&kji;-SKA&bakudan1;&bakudan2;") );
