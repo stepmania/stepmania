@@ -200,6 +200,7 @@ public:
 
 private:
 	void AdjustDuplicateSteps(); // part of TidyUpData
+	void DeleteDuplicateSteps( vector<Steps*> &vSteps );
 	CString GetUniqueSongDescription( StepsType st );
 };
 

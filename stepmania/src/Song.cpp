@@ -351,7 +351,7 @@ static CString RemoveInitialWhitespace( CString s )
 }
 
 /* This is called within TidyUpData, before autogen notes are added. */
-static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
+void Song::DeleteDuplicateSteps( vector<Steps*> &vSteps )
 {
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
 	 * same m_sDescription, m_iMeter and SMNoteData. */
@@ -379,16 +379,16 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 				continue;
 
 			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
-				s2, song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
+				s2, this->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
 				
 			/* Don't use RemoveSteps; autogen notes havn't yet been created and it'll
 			 * create them. */
-			for( int k=song->m_vpSteps.size()-1; k>=0; k-- )
+			for( int k=this->m_vpSteps.size()-1; k>=0; k-- )
 			{
-				if( song->m_vpSteps[k] == s2 )
+				if( this->m_vpSteps[k] == s2 )
 				{
-					delete song->m_vpSteps[k];
-					song->m_vpSteps.erase( song->m_vpSteps.begin()+k );
+					delete this->m_vpSteps[k];
+					this->m_vpSteps.erase( this->m_vpSteps.begin()+k );
 					break;
 				}
 			}
@@ -416,7 +416,7 @@ void Song::AdjustDuplicateSteps()
 
 			/* Delete steps that are completely identical.  This happened due to a
 			 * bug in an earlier version. */
-			DeleteDuplicateSteps( this, vSteps );
+			DeleteDuplicateSteps( vSteps );
 
 			CHECKPOINT;
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
@@ -871,11 +871,11 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 	if( st != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
 		bIncludeAutoGen = false;
 
+	if( !Max )
+		return;
+
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
-		if( !Max )
-			break;
-
 		Steps* pSteps = m_vpSteps[i];
 
 		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st ) 
@@ -886,13 +886,17 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 			continue;
 		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
 			continue;
-		if( sDescription != "" && sDescription != pSteps->GetDescription() )
+		if( sDescription.size() && sDescription != pSteps->GetDescription() )
 			continue;
 		if( !bIncludeAutoGen && pSteps->IsAutogen() )
 			continue;
 
 		if( Max != -1 )
+		{
 			--Max;
+			if( !Max )
+				break;
+		}
 
 		arrayAddTo.push_back( pSteps );
 	}
