@@ -75,6 +75,7 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 	else if( dwNewLogicalDrives == m_dwLastLogicalDrives )
 	{
 		// no change from last update
+		usleep( 50000 );
 		return;
 	}
 
