@@ -38,6 +38,7 @@
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define FEAT_INTERVAL				THEME->GetMetricF(m_sName,"FeatInterval")
 #define KEYBOARD_LETTERS					THEME->GetMetric (m_sName,"KeyboardLetters")
+#define NEXT_SCREEN					THEME->GetMetric(m_sName,"NextScreen")
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
 	if( !actor.GetName().empty() ) \
@@ -393,7 +394,8 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 		//	if( max_grade >= GRADE_AA )
 		//		SCREENMAN->SetNewScreen( "ScreenCredits" );
 		//	else
-				SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
+			//	SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
+				SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		break;
 	}
