@@ -416,22 +416,6 @@ void ScoreKeeper5th::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTap
 		SCREENMAN->PostMessageToTopScreen( SM_900Combo, 0 );
 	else if( CROSSED(1000))	
 		SCREENMAN->PostMessageToTopScreen( SM_1000Combo, 0 );
-
-	// new max combo
-	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
-
-
-	switch( scoreOfLastTap )
-	{
-	case TNS_GOOD:
-	case TNS_BOO:
-	case TNS_MISS:
-		if( iCurCombo>50 )
-			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-
-		iCurCombo = 0;
-		break;
-	}
 }
 
 

@@ -31,6 +31,8 @@
 #include "PlayerAI.h"
 #include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
+#include "ScreenGameplay.h" /* for SM_ComboStopped */
+#include "ScreenManager.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","GrayArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","GrayArrowsYReverse");
@@ -824,6 +826,23 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
+
+
+	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
+	switch( scoreOfLastTap )
+	{
+	case TNS_GOOD:
+	case TNS_BOO:
+	case TNS_MISS:
+		if( iCurCombo > 50 )
+			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
+
+		iCurCombo = 0;
+		break;
+	}
+
+	// new max combo
+	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
