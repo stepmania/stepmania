@@ -18,6 +18,7 @@
 #include "song.h"
 #include "SongManager.h"
 #include "GameManager.h"
+#include "XmlFile.h"
 
 //
 // Sorting stuff

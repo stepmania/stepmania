@@ -19,6 +19,7 @@
 #include "ProfileManager.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
+#include "XmlFile.h"
 
 
 /////////////////////////////////////

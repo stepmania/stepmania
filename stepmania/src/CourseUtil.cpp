@@ -15,6 +15,7 @@
 #include "RageTimer.h"
 #include "ProfileManager.h"
 #include "SongManager.h"
+#include "XmlFile.h"
 
 
 //

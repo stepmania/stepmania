@@ -15,6 +15,7 @@
 #include "RageLog.h"
 #include "song.h"
 #include "Steps.h"
+#include "XmlFile.h"
 
 const CString CATALOG_XML	= "Catalog.xml";
 
