@@ -1,7 +1,9 @@
 bin_PROGRAMS = stepmania
-AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0 -DLINUX
+AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0
 if DARWIN
 AM_LDFLAGS = -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
+else
+AM_CXXFLAGS = $(AM_CXXFLAGS) -DLINUX
 endif
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
