@@ -32,12 +32,6 @@ Uint32 mySDL_Swap24(Uint32 x)
 	return SDL_Swap32(x) >> 8; // xx223344 -> 443322xx -> 00443322
 }
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define mySDL_SwapLE24(x) mySDL_Swap24(x)
-#else
-#define mySDL_SwapLE24(x) (x)
-#endif
-
 /* These conditionals in the inner loop are slow.  Templates? */
 inline Uint32 decodepixel(const Uint8 *p, int bpp)
 {
@@ -257,36 +251,13 @@ void ConvertSDLSurface(SDL_Surface *&image,
 	image = ret_image;
 }
 
-/* With d3d, textures are stored little endian (local endian for x86).
- *
- * I'm not sure if we should store textures in big endian, little endian
- * or local endian with OpenGL.  It doesn't really impact anything except
- * the actual code that loads the texture itself, and OpenGL does have
- * byte order toggles, so maybe we can get rid of this. */
 SDL_Surface *SDL_CreateRGBSurfaceSane
 			(Uint32 flags, int width, int height, int depth, 
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
-	/* This is untested on big-endian machines. */
-	if(depth == 16) {
-		Rmask = SDL_SwapLE16((Uint16)Rmask);
-		Gmask = SDL_SwapLE16((Uint16)Gmask);
-		Bmask = SDL_SwapLE16((Uint16)Bmask);
-		Amask = SDL_SwapLE16((Uint16)Amask);
-	} else if(depth == 24) {  // completely untested
-		Rmask = mySDL_SwapLE24(Rmask);
-		Gmask = mySDL_SwapLE24(Gmask);
-		Bmask = mySDL_SwapLE24(Bmask);
-		Amask = mySDL_SwapLE24(Amask);
-	} else if(depth == 32) {
-		Rmask = SDL_SwapLE32(Rmask);
-		Gmask = SDL_SwapLE32(Gmask);
-		Bmask = SDL_SwapLE32(Bmask);
-		Amask = SDL_SwapLE32(Amask);
-	}
-
 	SDL_Surface *ret = SDL_CreateRGBSurface(flags, width, height, depth,
 		Rmask, Gmask, Bmask, Amask);
+
 	if(ret == NULL)
 		RageException::Throw("SDL_CreateRGBSurface(%i, %i, %i, %i, %8x, %8x, %8x, %8x) failed: %s",
 			flags, width, height, depth, Rmask, Gmask, Bmask, Amask, SDL_GetError());

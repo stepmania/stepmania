@@ -100,37 +100,37 @@ static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	{
 		/* B8G8R8A8 */
 		32,
-		{ 0x000000FF,
-		  0x0000FF00,
+		{ 0xFF000000,
 		  0x00FF0000,
-		  0xFF000000 }
+		  0x0000FF00,
+		  0x000000FF }
 	}, {
-		/* B4G4R4A4 */
+		/* R4G4B4A4 */
 		16,
 		{ 0xF000,
 		  0x0F00,
 		  0x00F0,
 		  0x000F },
 	}, {
-		/* B5G5R5A1 */
+		/* R5G5B5A1 */
 		16,
 		{ 0xF800,
 		  0x07C0,
 		  0x003E,
 		  0x0001 },
 	}, {
-		/* B5G5R5 */
+		/* R5G5B5 */
 		16,
 		{ 0xF800,
 		  0x07C0,
 		  0x003E,
 		  0x0000 },
 	}, {
-		/* B8G8R8 */
+		/* R8G8B8 */
 		24,
-		{ 0x0000FF,
+		{ 0xFF0000,
 		  0x00FF00,
-		  0xFF0000,
+		  0x0000FF,
 		  0x000000 }
 	}, {
 		/* Paletted */
@@ -180,10 +180,11 @@ struct GLPixFmtInfo_t {
 	}
 };
 
+Uint32 mySDL_Swap24(Uint32 x);
 
-static void FixBigEndian()
+static void FixLilEndian()
 {
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 	static bool Initialized = false;
 	if( Initialized )
 		return;
@@ -193,8 +194,9 @@ static void FixBigEndian()
 	{
 		PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
 
-		/* Byte formats aren't affected by endianness. */
-		if( GL_PIXFMT_INFO[i].type == GL_UNSIGNED_BYTE )
+		/* OpenGL and SDL handle byte formats differently; we need
+		 * to flip non-paletted masks to make them line up. */
+		if( GL_PIXFMT_INFO[i].type != GL_UNSIGNED_BYTE || pf.bpp == 8 )
 			continue;
 
 		for( int mask = 0; mask < 4; ++mask)
@@ -202,8 +204,9 @@ static void FixBigEndian()
 			int m = pf.masks[mask];
 			switch( pf.bpp )
 			{
-			case 16: m = SDL_Swap16(m); break;
+			case 24: m = mySDL_Swap24(m); break;
 			case 32: m = SDL_Swap32(m); break;
+			default: ASSERT(0);
 			}
 			pf.masks[mask] = m;
 		}
@@ -237,7 +240,7 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
-	FixBigEndian();
+	FixLilEndian();
 
 	wind = MakeLowLevelWindow();
 
@@ -1040,7 +1043,6 @@ void RageDisplay_OGL::UpdateTexture(
 		glImageFormat, glImageType, img->pixels);
 
 	/* Must unset PixelStore when we're done! */
-	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 }
