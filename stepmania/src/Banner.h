@@ -29,6 +29,8 @@ public:
 
 	void LoadFromSong( Song* pSong );		// NULL means no song
 	void LoadAllMusic();
+	void LoadSort();
+	void LoadMode();
 	void LoadFromGroup( CString sGroupName );
 	void LoadFromCourse( Course* pCourse );
 	void LoadCardFromCharacter( Character* pCharacter );

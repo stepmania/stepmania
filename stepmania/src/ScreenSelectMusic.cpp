@@ -1285,7 +1285,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				m_iSelection[p] = -1;
 
-			m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 			m_BPMDisplay.NoBPM();
 			m_sprCDTitleFront.UnloadTexture();
 			m_sprCDTitleBack.UnloadTexture();
@@ -1296,9 +1295,19 @@ void ScreenSelectMusic::AfterMusicChange()
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
+				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 				SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic section music");
 				break;
 			case TYPE_SORT:
+				switch( GAMESTATE->m_SortOrder )
+				{
+				case SORT_SORT_MENU:
+					m_Banner.LoadSort();
+					break;
+				case SORT_MODE_MENU:
+					m_Banner.LoadMode();
+					break;
+				}
 				SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic sort music");
 				break;
 			default:

@@ -161,6 +161,18 @@ void FadingBanner::LoadAllMusic()
 	m_Banner[GetBackIndex()].LoadAllMusic();
 }
 
+void FadingBanner::LoadSort()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadSort();
+}
+
+void FadingBanner::LoadMode()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadMode();
+}
+
 void FadingBanner::LoadFromGroup( CString sGroupName )
 {
 	const CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );

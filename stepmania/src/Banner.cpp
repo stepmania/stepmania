@@ -20,16 +20,23 @@
 #include "Course.h"
 #include "Character.h"
 
+CachedThemeMetricB SCROLL_RANDOM			("Banner","ScrollRandom");
+CachedThemeMetricB SCROLL_ROULETTE			("Banner","ScrollRoulette");
 
 Banner::Banner()
 {
+	SCROLL_RANDOM.Refresh();
+	SCROLL_ROULETTE.Refresh();
+
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
-	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Banner all music")) );
-	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Common fallback banner")) );
-	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Banner roulette")) );
-	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Banner random")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","all music")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","random")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Sort")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
 }
 
 bool Banner::Load( RageTextureID ID )
@@ -89,7 +96,19 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 void Banner::LoadAllMusic()
 {
-	Load( THEME->GetPathToG("Banner all") );
+	Load( THEME->GetPathG("Banner","All") );
+	m_bScrolling = false;
+}
+
+void Banner::LoadSort()
+{
+	Load( THEME->GetPathG("Banner","Sort") );
+	m_bScrolling = false;
+}
+
+void Banner::LoadMode()
+{
+	Load( THEME->GetPathG("Banner","Mode") );
 	m_bScrolling = false;
 }
 
@@ -149,11 +168,11 @@ void Banner::LoadFallback()
 void Banner::LoadRoulette()
 {
 	Load( THEME->GetPathToG("Banner roulette") );
-	m_bScrolling = true;
+	m_bScrolling = (bool)SCROLL_RANDOM;
 }
 
 void Banner::LoadRandom()
 {
 	Load( THEME->GetPathToG("Banner random") );
-	m_bScrolling = true;
+	m_bScrolling = (bool)SCROLL_ROULETTE;
 }
