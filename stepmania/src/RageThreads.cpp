@@ -196,7 +196,8 @@ RageThread::RageThread()
 
 RageThread::~RageThread()
 {
-
+	if( m_pSlot != NULL )
+		Wait();
 }
 
 const char *ThreadSlot::GetThreadName() const
