@@ -358,6 +358,7 @@ struct VideoCardDefaults
 	int iDisplayColor;
 	int iTextureColor;
 	int iMovieColor;
+	int iTextureSize;
 	bool bAntiAliasing;
 } const g_VideoCardDefaults[] = 
 {
@@ -366,6 +367,7 @@ struct VideoCardDefaults
 		"d3d,opengl",
 		640,480,
 		16,16,16,
+		256,
 		0	// broken, causes black screen
 	},
 	{
@@ -373,20 +375,23 @@ struct VideoCardDefaults
 		"opengl,d3d",
 		640,480,
 		16,16,16,
-		1	// hardware accelerated
+		2048,
+		0	// accelerated?
 	},
 	{
 		"GeForce|Radeon",
 		"opengl,d3d",
 		640,480,
 		32,32,32,	// 32 bit textures are faster to load
+		2048,
 		1	// hardware accelerated
 	},
 	{
 		"TNT|Vanta|M64",
 		"opengl,d3d",
 		640,480,
-		16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
+		16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
+		2048,
 		1	// hardware accelerated
 	},
 	{
@@ -394,6 +399,7 @@ struct VideoCardDefaults
 		"d3d,opengl",
 		640,480,
 		16,16,16,
+		2048,
 		0	// broken, causes black screen
 	},
 	{
@@ -404,6 +410,7 @@ struct VideoCardDefaults
 			// simple NeHe demos.  -Chris
 		640,480,
 		16,16,16,
+		2048,
 		false
 	},
 	{
@@ -415,6 +422,7 @@ struct VideoCardDefaults
 			// -Chris
 		400,300,	// lower resolution for 60fps
 		16,16,16,
+		256,
 		0
 	},
 	{
@@ -422,6 +430,7 @@ struct VideoCardDefaults
 		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
 		400,300,	// lower resolution for 60fps
 		16,16,16,
+		256,
 		0
 	},
 	{
@@ -429,6 +438,7 @@ struct VideoCardDefaults
 		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
 		512,384,	// lower resolution for 60fps
 		16,16,16,
+		512,
 		0
 	},
 	{
@@ -441,6 +451,7 @@ struct VideoCardDefaults
 		"d3d,opengl",
 		640,480,
 		16,16,16,
+		2048,
 		0
 	},
 	{
@@ -448,6 +459,7 @@ struct VideoCardDefaults
 		"opengl",
 		640,480,
 		16,16,16,
+		2048,
 		1		// Right now, they've got to have NVidia or ATi Cards anyway..
 	},
 	{
@@ -457,6 +469,7 @@ struct VideoCardDefaults
 		"opengl,d3d",
 		640,480,
 		16,16,16,
+		2048,
 		0  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
 	},
 };
@@ -517,6 +530,7 @@ static void CheckVideoDefaultSettings()
 		PREFSMAN->m_iDisplayColorDepth = pDefaults->iDisplayColor;
 		PREFSMAN->m_iTextureColorDepth = pDefaults->iTextureColor;
 		PREFSMAN->m_iMovieColorDepth = pDefaults->iMovieColor;
+		PREFSMAN->m_iMaxTextureResolution = pDefaults->iTextureSize;
 		PREFSMAN->m_bAntiAliasing = pDefaults->bAntiAliasing;
 
 		// Update last seen video card
