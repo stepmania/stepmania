@@ -86,7 +86,7 @@ void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromI
 	
 	while( f<=iFromIndexEnd )
 	{
-		for( unsigned c=0; c<GetNumTracks(); c++ )
+		for( int c=0; c<GetNumTracks(); c++ )
 		{
 			TapNote tn = From.GetTapNote( c, f );
 			if( tn.type == TapNote::attack )
@@ -116,7 +116,7 @@ void NoteData::CopyAll( const NoteData* pFrom )
 	Config(*pFrom);
 	ClearAll();
 
-	for( unsigned c=0; c<GetNumTracks(); c++ )
+	for( int c=0; c<GetNumTracks(); c++ )
 		m_TapNotes[c] = pFrom->m_TapNotes[c];
 	m_HoldNotes = pFrom->m_HoldNotes;
 	m_AttackMap = pFrom->m_AttackMap;
@@ -128,7 +128,7 @@ bool NoteData::IsRowEmpty( int index ) const
 	if( index < 0 || index >= GetNumRows() )
 		return true;
 
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNoteX(t, index).type != TapNote::empty )
 			return false;
 	return true;
@@ -150,7 +150,7 @@ bool NoteData::IsRangeEmpty( int track, int iIndexBegin, int iIndexEnd ) const
 int NoteData::GetNumTapNonEmptyTracks( int index ) const
 {
 	int iNum = 0;
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, index).type != TapNote::empty )
 			iNum++;
 	return iNum;
@@ -158,7 +158,7 @@ int NoteData::GetNumTapNonEmptyTracks( int index ) const
 
 void NoteData::GetTapNonEmptyTracks( int index, set<int>& addTo ) const
 {
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, index).type != TapNote::empty )
 			addTo.insert(t);
 }
@@ -169,7 +169,7 @@ int NoteData::GetFirstNonEmptyTrack( int index ) const
 	if( index < 0 || index >= GetNumRows() )
 		return 0;
 
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNoteX( t, index ).type != TapNote::empty )
 			return t;
 	return -1;
@@ -182,7 +182,7 @@ int NoteData::GetNumTracksWithTap( int index ) const
 		return 0;
 
 	int iNum = 0;
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		TapNote tn = GetTapNoteX( t, index );
 		if( tn.type == TapNote::tap )
@@ -198,7 +198,7 @@ int NoteData::GetNumTracksWithTapOrHoldHead( int index ) const
 		return 0;
 
 	int iNum = 0;
-		for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		TapNote tn = GetTapNoteX( t, index );
 		if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
@@ -213,7 +213,7 @@ int NoteData::GetFirstTrackWithTap( int index ) const
 	if( index < 0 || index >= GetNumRows() )
 		return -1;
 
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		TapNote tn = GetTapNoteX( t, index );
 		if( tn.type == TapNote::tap )
@@ -228,7 +228,7 @@ int NoteData::GetFirstTrackWithTapOrHoldHead( int index ) const
 	if( index < 0 || index >= GetNumRows() )
 		return -1;
 
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		TapNote tn = GetTapNoteX( t, index );
 		if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
@@ -326,7 +326,7 @@ void NoteData::PruneUnusedAttacksFromMap()
 	set<unsigned> setUsedIndices;
 
 	int num_rows = GetNumRows();
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		for( int r=0; r<num_rows; r++ )
 		{
@@ -433,7 +433,7 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 	iStartIndex = max( iStartIndex, 0 );
 	iEndIndex = min( iEndIndex, GetNumRows()-1 );
 	
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		for( int i=iStartIndex; i<=iEndIndex; i++ )
 		{
@@ -475,7 +475,7 @@ int NoteData::GetNumMines( float fStartBeat, float fEndBeat ) const
 	iStartIndex = max( iStartIndex, 0 );
 	iEndIndex = min( iEndIndex, GetNumRows()-1 );
 	
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		for( int i=iStartIndex; i<=iEndIndex; i++ )
 			if( GetTapNoteX(t, i).type == TapNote::mine )
@@ -503,7 +503,7 @@ int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) co
 int NoteData::RowNeedsHands( const int row ) const
 {
 	int iNumNotesThisIndex = 0;
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		TapNote tn = GetTapNoteX(t, row);
 		switch( tn.type )
@@ -579,7 +579,7 @@ int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
-		for( unsigned t=0; t<GetNumTracks(); t++ )
+		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			TapNote tn = GetTapNoteX(t, i);
 			if( tn.type != TapNote::mine  &&  tn.type != TapNote::empty )	// mines don't count
@@ -739,7 +739,7 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 	SetNumTracks( iNewNumTracks );
 
 	// copy tracks
-	for( unsigned t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
 		ASSERT_M( iOriginalTrack < Original.GetNumTracks(), ssprintf("from %i >= %i (to %i)", 

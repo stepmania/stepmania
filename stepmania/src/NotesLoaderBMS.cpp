@@ -115,9 +115,9 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	bool bTrackHasNote[NUM_BMS_TRACKS];
 	ZERO( bTrackHasNote );
 
-	for( unsigned t=0; t<nd.GetNumTracks(); t++ )
+	for( int t=0; t<nd.GetNumTracks(); t++ )
 	{
-		for( unsigned r=0; r<nd.GetNumRows(); r++ )
+		for( int r=0; r<nd.GetNumRows(); r++ )
 		{
 			if( nd.GetTapNoteX(t, r).type != TapNote::empty )
 			{
