@@ -1,3 +1,4 @@
+#include "global.h"
 #include <gtk/gtk.h>
 #include "loading.xpm"
 
