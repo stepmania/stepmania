@@ -1343,7 +1343,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GoToNextScreen:
 		// Reload song from disk to discard changes.
-		GAMESTATE->m_pCurSong->RevertFromDisk();
+		GAMESTATE->m_pCurSong->RevertFromDisk( true );
 		/* We might do something with m_pNotes (eg. UpdateTextInfo) before we end up
 		 * in ScreenEditMenu, and m_pNotes might be invalid due to RevertFromDisk. */
 		m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
@@ -1414,13 +1414,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			return;
 
 		const StepsType st = m_pNotes->m_StepsType;
-		const Difficulty dc = m_pNotes->GetDifficulty();
+		const CString id = m_pNotes->GetID();
 
 		GAMESTATE->m_pCurNotes[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
 		GAMESTATE->m_pCurSong->RevertFromDisk();
 
 		CString sMessage = "Reloaded from disk.";
-		Steps *pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, dc, false );
+		Steps *pSteps = GAMESTATE->m_pCurSong->GetStepsByID( st, id, false );
 
 		/* If we couldn't find the steps we were on before, warn and use the first available. */
 		if( pSteps == NULL )
@@ -1429,7 +1429,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 			if( pSteps )
 				sMessage = ssprintf( "%s steps not found; changed to %s.",
-					Capitalize(DifficultyToString(dc)).c_str(),
+					Capitalize(id).c_str(),
 					DifficultyToString(pSteps->GetDifficulty()).c_str() );
 		}
 
