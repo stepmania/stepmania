@@ -113,6 +113,7 @@ Menu g_KeyboardShortcuts
 	MenuRow( "P: Play selection",								false ),
 	MenuRow( "Ctrl + P: Play whole song",						false ),
 	MenuRow( "Shift + P: Play current beat to end",				false ),
+	MenuRow( "Ctrl + R: Record",								false ),
 	MenuRow( "F7/F8: Decrease/increase BPM at cur beat",		false ),
 	MenuRow( "F9/F10: Decrease/increase stop at cur beat",		false ),
 	MenuRow( "F11/F12: Decrease/increase music offset",			false ),
@@ -945,6 +946,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			else
 				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
 					HandleAreaMenuChoice( play, NULL );
+		}
+		break;
+	case SDLK_r:
+		{
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
+				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
+					HandleAreaMenuChoice( record, NULL );
 		}
 		break;
 	case SDLK_INSERT:
