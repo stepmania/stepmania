@@ -12,7 +12,6 @@
 */
 
 #include "RageInput.h"
-#include "RageDisplay.h"
 #include "ActorFrame.h"
 #include "ScreenMessage.h"
 #include "InputFilter.h"

@@ -22,6 +22,7 @@
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "RageDisplay.h"
 
 
 enum {
