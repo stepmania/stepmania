@@ -47,7 +47,7 @@
 
 /* XXX: char*GetLockedMutexesForThisThread? */
 #define MAX_THREADS 128
-static vector<RageMutex*> *g_MutexList = NULL; /* watch out for static initialization order problems */
+//static vector<RageMutex*> *g_MutexList = NULL; /* watch out for static initialization order problems */
 
 static const unsigned int UnknownThreadID = 0xFFFFFFFF;
 struct ThreadSlot
@@ -776,6 +776,7 @@ bool RageMutexImpl::IsLockedByThisThread() const
 }
 #endif
 
+#if 0
 static const int MAX_MUTEXES = 256;
 
 /* g_MutexesBefore[n] is a list of mutex IDs which must be locked before n (if at all). 
@@ -843,13 +844,14 @@ void RageMutex::MarkLockedMutex()
 
 /* XXX: How can g_FreeMutexIDs and g_MutexList be threadsafed? */
 static set<int> *g_FreeMutexIDs = NULL;
+#endif
 
 RageMutex::RageMutex( const CString name ):
 	m_sName( name )
 {
 	mut = new RageMutexImpl(this);
 
-	if( g_FreeMutexIDs == NULL )
+/*	if( g_FreeMutexIDs == NULL )
 	{
 		g_FreeMutexIDs = new set<int>;
 		for( int i = 0; i < MAX_MUTEXES; ++i )
@@ -871,16 +873,19 @@ RageMutex::RageMutex( const CString name ):
 	}
 
 	m_UniqueID = *g_FreeMutexIDs->begin();
+
 	g_FreeMutexIDs->erase( g_FreeMutexIDs->begin() );
 
 	if( g_MutexList == NULL )
 		g_MutexList = new vector<RageMutex*>;
 
 	g_MutexList->push_back( this );
+*/
 }
 
 RageMutex::~RageMutex()
 {
+/*
 	vector<RageMutex*>::iterator it = find( g_MutexList->begin(), g_MutexList->end(), this );
 	ASSERT( it != g_MutexList->end() );
 	g_MutexList->erase( it );
@@ -893,7 +898,7 @@ RageMutex::~RageMutex()
 	delete mut;
 
 	g_FreeMutexIDs->insert( m_UniqueID );
-
+*/
 }
 
 void RageMutex::Lock()
