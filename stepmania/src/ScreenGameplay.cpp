@@ -759,6 +759,15 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+	if( GAMESTATE->m_pCurSong == NULL  )
+	{
+		/* ScreenDemonstration will move us to the next screen.  We just need to
+		 * survive for one update without crashing.  We need to call Screen::Update
+		 * to make sure we receive the next-screen message. */
+		Screen::Update( fDeltaTime );
+		return;
+	}
+
 	if( m_bFirstUpdate )
 	{
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay intro") );	// crowd cheer
@@ -811,13 +820,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
 		m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
-	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
-
-
-	if( GAMESTATE->m_pCurSong == NULL )
-		return;
-
 
 	int pn;
 	switch( m_DancingState )

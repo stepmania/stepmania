@@ -78,7 +78,7 @@ bool ScreenJukebox::PrepareForJukebox()		// always return true.
 
 	SetSong();
 
-	ASSERT( GAMESTATE->m_pCurSong );
+//	ASSERT( GAMESTATE->m_pCurSong );
 
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 
