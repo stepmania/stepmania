@@ -101,7 +101,7 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 bool StageStats::OnePassed() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
+		if( GAMESTATE->IsHumanPlayer(p) && !bFailed[p] )
 			return true;
 	return false;
 }
