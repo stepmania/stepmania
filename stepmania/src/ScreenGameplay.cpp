@@ -776,18 +776,14 @@ void ScreenGameplay::LoadNextSong()
 	/* Set up song-specific graphics. */
 	
 	
-	bool UseBeginnerhelper = false;
 	// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
-	m_iPOB = 0;
+	m_iPOB = -1;
 	for( int pb=0; pb<NUM_PLAYERS; pb++ )
 		if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
-		{
-			UseBeginnerhelper = true;
 			m_iPOB = pb;
-		}
 
 	/* TODO: fall back on m_Background if nobody is on beginner. */
-	if( PREFSMAN->m_bShowBeginnerHelper && UseBeginnerhelper)
+	if( PREFSMAN->m_bShowBeginnerHelper && m_iPOB != -1)
 	{
 		m_Background.Unload();	// BeginnerHelper has it's own BG control.
 		m_Background.StopAnimating();
@@ -997,7 +993,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			// Check to see what we animate on this one
 		/* tip: Store a NoteData inside BeginnerHelper, Load it above and handle all of this
 		 * within BeginnerHelper::Update. */
-		if( PREFSMAN->m_bShowBeginnerHelper )
+		if( PREFSMAN->m_bShowBeginnerHelper && m_iPOB != -1)
 		{
 			int iStep = 0;
 			if( (m_Player[m_iPOB].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.1f)) ) ) )
