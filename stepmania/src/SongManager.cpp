@@ -20,6 +20,7 @@
 #include "PrefsManager.h"
 #include "RageException.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "Course.h"
 
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
@@ -624,6 +625,8 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Notes* pNotes = pSong->m_apNotes[i];
+		if( pNotes->GetDifficulty() == DIFFICULTY_CHALLENGE )
+			continue;
 
 //		if(pNotes->m_NotesType != nt)
 //			continue;

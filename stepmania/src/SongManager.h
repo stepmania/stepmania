@@ -13,12 +13,18 @@
 */
 
 
-#include "Course.h"
-
 class LoadingWindow;
 class Song;
 class StyleDef;
+class Course;
+class Notes;
 struct PlayerOptions;
+
+#include "RageTypes.h"
+#include "GameConstantsAndTypes.h"
+#include "SongOptions.h"
+#include "PlayerOptions.h"
+#include "PlayerNumber.h"
 
 class SongManager
 {
