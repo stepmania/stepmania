@@ -76,6 +76,7 @@ protected:
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
+	void UpdateLights();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );

@@ -1509,6 +1509,34 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update lights
 	//
+	UpdateLights();
+	//
+	// update song position meter
+	//
+	// IMHHO, The song position bar is best used to represent where in the
+	// step sequence the players are. It looks "better" that way, showing a
+	// song "depleting" as the players wear on. So, it starts "ticking" at
+	// the first arrow and winds down to the very end.
+	float fPercentPositionSong = SCALE( GAMESTATE->m_fMusicSeconds, m_fSongPosMeterOffset, 
+					    m_fSongPosMeterEnd, 0.0f, 1.0f );
+
+	CLAMP( fPercentPositionSong, 0, 1 );
+	m_meterSongPosition.SetPercent( fPercentPositionSong );
+
+	if( NSMAN->useSMserver )
+	{
+		FOREACH_EnabledPlayer( pn2 )
+			if( m_pLifeMeter[pn2] )
+				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
+
+		FOREACH_NSScoreBoardColumn(cn)
+			if( m_ShowScoreboard && NSMAN->ChangedScoreboard(cn) )
+				m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
+	}
+}
+
+void ScreenGameplay::UpdateLights()
+{
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
 	bool bBlinkGameButton[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
@@ -1608,30 +1636,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( bBlinkGameButton[gc][gb] )
 				LIGHTSMAN->BlinkGameButton( GameInput(gc,gb) );
 		}
-	}
-
-	//
-	// update song position meter
-	//
-	// IMHHO, The song position bar is best used to represent where in the
-	// step sequence the players are. It looks "better" that way, showing a
-	// song "depleting" as the players wear on. So, it starts "ticking" at
-	// the first arrow and winds down to the very end.
-	float fPercentPositionSong = SCALE( GAMESTATE->m_fMusicSeconds, m_fSongPosMeterOffset, 
-					    m_fSongPosMeterEnd, 0.0f, 1.0f );
-
-	CLAMP( fPercentPositionSong, 0, 1 );
-	m_meterSongPosition.SetPercent( fPercentPositionSong );
-
-	if( NSMAN->useSMserver )
-	{
-		FOREACH_EnabledPlayer( pn2 )
-			if( m_pLifeMeter[pn2] )
-				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
-
-		FOREACH_NSScoreBoardColumn(cn)
-			if( m_ShowScoreboard && NSMAN->ChangedScoreboard(cn) )
-				m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
 }
 
