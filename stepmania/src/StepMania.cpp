@@ -858,17 +858,17 @@ static void WriteLogHeader()
 
 	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
-	if(g_argc > 1) {
+	if( g_argc > 1 )
+	{
 		CString args;
-		for(int i = 1; i < g_argc; ++i) {
-			CString CurArg = g_argv[i];
-
-			if(i>1)
+		for( int i = 1; i < g_argc; ++i )
+		{
+			if( i>1 )
 				args += " ";
 
 			// surround all params with some marker, as they might have whitespace.
 			// using [[ and ]], as they are not likely to be in the params.
-			args += "[[" + CurArg + "]]";
+			args += "[[" + g_argv[i] + "]]";
 		}
 		LOG->Info( "Command line args (count=%d): %s", (g_argc - 1), args.c_str());
 	}
