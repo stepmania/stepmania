@@ -18,7 +18,7 @@
 #include "ThemeManager.h"
 #include "Notes.h"
 #include "RageDisplay.h"
-#include "Song.h"
+#include "song.h"
 #include "GameState.h"
 #include "StyleDef.h"
 #include <math.h>

@@ -24,7 +24,7 @@
 #include "GameState.h"
 #include <math.h>
 #include "ThemeManager.h"
-#include "Song.h"
+#include "song.h"
 #include "Course.h"
 #include "RageDisplay.h"
 

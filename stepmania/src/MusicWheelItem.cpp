@@ -25,7 +25,7 @@
 #include <math.h>
 #include "ThemeManager.h"
 #include "Notes.h"
-#include "Song.h"
+#include "song.h"
 
 
 // WheelItem stuff
