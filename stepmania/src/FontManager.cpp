@@ -154,7 +154,8 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 			cfg.CharToGlyphNo[c] = frame;
 			continue;
 		}
-
+#if 0
+		/* not implemented yet */
 		if(val.substr(0, 6) == "RANGE ")
 		{
 			/* range RANGE=first_frame
@@ -187,7 +188,7 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 
 			continue;
 		}
-
+#endif
 	}
 }
 
