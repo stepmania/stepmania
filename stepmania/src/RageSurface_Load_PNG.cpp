@@ -17,6 +17,8 @@
 
 #if defined(_XBOX)
 #  include <malloc.h>	// for alloca
+#  include "archutils/Xbox/VirtualMemory.h"
+#  define PNG_USER_MEM_SUPPORTED
 #elif !defined(WIN32)
 #  include <alloca.h>
 #endif
@@ -89,6 +91,17 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	error.fn = fn;
 
 	png_struct *png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
+
+#if defined(XBOX)
+	while(png == NULL)
+	{
+		if(!vmem_Manager.DecommitLRU())
+			break;
+
+		png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
+	}
+#endif
+
 	if( png == NULL )
 	{
 		sprintf( errorbuf, "creating png_create_read_struct failed");

@@ -34,6 +34,10 @@
 #include "RageSoundReader_Resample.h"
 #include "RageSoundReader_FileReader.h"
 
+#if defined(XBOX)
+#include "archutils/Xbox/VirtualMemory.h"
+#endif
+
 const int channels = 2;
 const int framesize = 2 * channels; /* 16-bit */
 #define samplerate() Sample->GetSampleRate()
@@ -350,6 +354,11 @@ int RageSound::FillBuf( int frames )
  * that would be read. */
 int RageSound::GetData( char *buffer, int frames )
 {
+#if defined(XBOX)
+	// should prevent a page fault crash
+	vmem_Manager.Lock(buffer);
+#endif
+
 	if( m_Param.m_LengthSeconds != -1 )
 	{
 		/* We have a length; only read up to the end. */
@@ -377,6 +386,10 @@ int RageSound::GetData( char *buffer, int frames )
 		if( buffer )
 			databuf.read( buffer, got*framesize );
 	}
+
+#if defined(XBOX)
+	vmem_Manager.Unlock(buffer);
+#endif
 
 	return got;
 }

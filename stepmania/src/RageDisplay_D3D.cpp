@@ -24,6 +24,7 @@
 #include "archutils/Win32/GraphicsWindow.h"
 #else
 #include "archutils/Xbox/GraphicsWindow.h"
+#include "archutils/Xbox/VirtualMemory.h"
 #endif
 
 #include "ScreenDimensions.h"
@@ -1204,6 +1205,16 @@ unsigned RageDisplay_D3D::CreateTexture(
 	HRESULT hr;
 	IDirect3DTexture8* pTex;
 	hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+
+#if defined(XBOX)
+	while(hr == E_OUTOFMEMORY)
+	{
+		if(!vmem_Manager.DecommitLRU())
+			break;
+		hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+	}
+#endif
+
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,pixfmt=%i) failed: %s", 
 		img->w, img->h, pixfmt, GetErrorString(hr).c_str() );
