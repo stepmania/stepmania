@@ -193,11 +193,6 @@ endif
 if LINUX
 MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
 InputHandler +=	arch/InputHandler/InputHandler_Linux_Joystick.h arch/InputHandler/InputHandler_Linux_Joystick.cpp
-
-# XXX: WTF? InputHandler_Linux_tty depends on SDL!
-if HAVE_SDL
-InputHandler +=	arch/InputHandler/InputHandler_Linux_tty.h arch/InputHandler/InputHandler_Linux_tty.cpp
-endif
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
