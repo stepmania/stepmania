@@ -64,7 +64,7 @@ public:
 	virtual void DrawPrimitives() {};	// Derivitives should override
 	virtual void EndDraw();				// pops transform from world matrix stack
 	
-	bool IsFirstUpdate();
+	bool IsFirstUpdate() const;
 	virtual void Update( float fDeltaTime );
 	void UpdateTweening( float fDeltaTime );
 	void CopyTweening( const Actor &from );

@@ -297,7 +297,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 	}
 }
 
-bool Actor::IsFirstUpdate()
+bool Actor::IsFirstUpdate() const
 {
 	return m_bFirstUpdate;
 }
