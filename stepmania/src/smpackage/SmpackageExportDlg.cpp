@@ -162,47 +162,47 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 
 	zip.SetGlobalComment( sComment );
 
+	/* Find files to add to zip. */
+	int i;
+	CStringArray asFilePaths;
+	for( i=0; i<asDirectoriesToExport.GetSize(); i++ )
+		GetFilePaths( asDirectoriesToExport[i], asFilePaths );
+
 	//
 	// Add files to zip
 	//
-	for( int i=0; i<asDirectoriesToExport.GetSize(); i++ )
+	for( int j=0; j<asFilePaths.GetSize(); j++ )
 	{
-		CStringArray asFilePaths;
-		GetFilePaths( asDirectoriesToExport[i], asFilePaths );
- 
-		for( int j=0; j<asFilePaths.GetSize(); j++ )
+		CString sFilePath = asFilePaths[j];
+		
+		// don't export "thumbs.db" files or "CVS" folders
+		if( sFilePath.Find("CVS")!=-1 )
+			continue;	// skip
+		if( sFilePath.Find("Thumbs.db")!=-1 )
+			continue;	// skip
+
+		CString sDir, sFName, sExt;
+		splitrelpath( sFilePath, sDir, sFName, sExt );
+		bool bUseCompression = true;
+		if( sExt.CompareNoCase("avi")==0 ||
+			sExt.CompareNoCase("mpeg")==0 ||
+			sExt.CompareNoCase("mpg")==0 ||
+			sExt.CompareNoCase("ogg")==0 ||
+			sExt.CompareNoCase("gif")==0 ||
+			sExt.CompareNoCase("jpg")==0 ||
+			sExt.CompareNoCase("png")==0 )
+			bUseCompression = false;
+
+		try
 		{
-			CString sFilePath = asFilePaths[j];
-			
-			// don't export "thumbs.db" files or "CVS" folders
-			if( sFilePath.Find("CVS")!=-1 )
-				continue;	// skip
-			if( sFilePath.Find("Thumbs.db")!=-1 )
-				continue;	// skip
-
-			CString sDir, sFName, sExt;
-			splitrelpath( sFilePath, sDir, sFName, sExt );
-			bool bUseCompression = true;
-			if( sExt.CompareNoCase("avi")==0 ||
-				sExt.CompareNoCase("mpeg")==0 ||
-				sExt.CompareNoCase("mpg")==0 ||
-				sExt.CompareNoCase("ogg")==0 ||
-				sExt.CompareNoCase("gif")==0 ||
-				sExt.CompareNoCase("jpg")==0 ||
-				sExt.CompareNoCase("png")==0 )
-				bUseCompression = false;
-
-			try
-			{
-				zip.AddNewFile( sFilePath, bUseCompression?Z_BEST_COMPRESSION:Z_NO_COMPRESSION, true );
-			}
-			catch (CException* e)
-			{
-				AfxMessageBox( ssprintf("Error adding file '%s'.", sFilePath) );
-				zip.Close();
-				e->Delete();
-				return false;
-			}
+			zip.AddNewFile( sFilePath, bUseCompression?Z_BEST_COMPRESSION:Z_NO_COMPRESSION, true );
+		}
+		catch (CException* e)
+		{
+			AfxMessageBox( ssprintf("Error adding file '%s'.", sFilePath) );
+			zip.Close();
+			e->Delete();
+			return false;
 		}
 	}
 
