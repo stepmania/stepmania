@@ -135,6 +135,8 @@ public:
 		record,
 		insert_and_shift,
 		delete_and_shift,
+		shift_pauses_forward,
+		shift_pauses_backward,
 		convert_beat_to_pause,
 		convert_pause_to_beat,
 		NUM_AREA_MENU_CHOICES

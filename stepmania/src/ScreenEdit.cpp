@@ -131,7 +131,11 @@ static const MenuRow g_KeyboardShortcutsItems[] =
 	{ "M: Play sample music",							false, 0, { NULL } },
 	{ "B: Add/Edit Background Change",					false, 0, { NULL } },
 	{ "Insert: Insert beat and shift down",				false, 0, { NULL } },
+	{ "Ctrl + Insert: Shift BPM changes and stops down one beat",
+														false, 0, { NULL } },
 	{ "Delete: Delete beat and shift up",				false, 0, { NULL } },
+	{ "Ctrl + Delete: Shift BPM changes and stops up one beat",
+														false, 0, { NULL } },
 	{ "Shift + number: Lay mine",						false, 0, { NULL } },
 	{ "Alt + number: Add to/remove from right half",	false, 0, { NULL } },
 	{ NULL, true, 0, { NULL } }
@@ -172,6 +176,10 @@ static const MenuRow g_AreaMenuItems[] =
 	{ "Record in selection",		true, 0, { NULL } },
 	{ "Insert beat and shift down",	true, 0, { NULL } },
 	{ "Delete beat and shift up",	true, 0, { NULL } },
+	{ "Shift pauses and BPM changes down",			
+									true, 0, { NULL } },
+	{ "Shift pauses and BPM changes up",
+									true, 0, { NULL } },
 	{ "Convert beats to pause",		true, 0, { NULL } },
 	{ "Convert pause to beats",		true, 0, { NULL } },
 	{ NULL, true, 0, { NULL } }
@@ -1171,10 +1179,19 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 	case SDLK_INSERT:
-		HandleAreaMenuChoice( insert_and_shift, NULL );
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
+				HandleAreaMenuChoice( shift_pauses_forward, NULL );
+			else
+				HandleAreaMenuChoice( insert_and_shift, NULL );
 		break;
 	case SDLK_DELETE:
-		HandleAreaMenuChoice( delete_and_shift, NULL );
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
+				HandleAreaMenuChoice( shift_pauses_backward, NULL );
+			else
+				HandleAreaMenuChoice( delete_and_shift, NULL );
+			
 		break;
 	}
 
@@ -1960,10 +1977,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case insert_and_shift:
 			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, 1 );
-			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, 1 );
 			break;
 		case delete_and_shift:
 			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, -1 );
+			break;
+		case shift_pauses_forward:
+			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, 1 );
+			break;
+		case shift_pauses_backward:
 			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, -1 );
 			break;
 		// MD 11/02/03 - Converting selected region to a pause of the same length.
