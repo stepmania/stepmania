@@ -96,6 +96,14 @@ CString DeviceInput::GetDescription()
 		case JOY_22:	sReturn += "22";	break;
 		case JOY_23:	sReturn += "23";	break;
 		case JOY_24:	sReturn += "24";	break;
+		case JOY_25:	sReturn += "25";	break;
+		case JOY_26:	sReturn += "26";	break;
+		case JOY_27:	sReturn += "27";	break;
+		case JOY_28:	sReturn += "28";	break;
+		case JOY_29:	sReturn += "29";	break;
+		case JOY_30:	sReturn += "30";	break;
+		case JOY_31:	sReturn += "31";	break;
+		case JOY_32:	sReturn += "32";	break;
 		}
 		
 		break;
