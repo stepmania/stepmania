@@ -321,13 +321,15 @@ void DSoundBuf::SetVolume(float vol)
 	volume = new_volume;
 }
 
-/* Determine if "pos" is between "start" and "end", for a circular buffer. */
+/* Determine if "pos" is between "start" and "end", for a circular buffer.  Note that
+ * a start/end pos is ambiguous when start == end; it can mean that the buffer is
+ * completely full or completely empty; this function treats it as completely empty. */
 static bool contained( int start, int end, int pos )
 {
 	if( end >= start ) /* start ... pos ... end */
-		return start <= pos && pos <= end;
+		return start <= pos && pos < end;
 	else
-		return pos >= start || pos <= end;
+		return pos >= start || pos < end;
 }
 
 DSoundBuf::~DSoundBuf()
@@ -400,7 +402,7 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend )
 	wrap( first_byte_filled, buffersize );
 
 	/* If the end of the play cursor has data, we haven't underrun. */
-	if( contained(first_byte_filled, write_cursor, cursorend) )
+	if( buffer_bytes_filled > 0 && contained(first_byte_filled, write_cursor, cursorend) )
 		return;
 
 	/* Extend the writeahead to force fill as much as required to stop underrunning.
@@ -408,7 +410,10 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend )
 	 * buffer (64k = ~350ms), this doesn't break stride.  We'll skip forward, but
 	 * the beat won't be lost, which is a lot easier to recover from in play. */
 	/* XXX: If this happens repeatedly over a period of time, increase writeahead. */
-	int needed_writeahead = (cursorstart + writeahead) - write_cursor;
+	/* XXX: What was I doing here?  This isn't working.  We want to know the writeahead
+	 * value needed to fill from the current first_byte_filled all the way to cursorend. */
+	// int needed_writeahead = (cursorstart + writeahead) - write_cursor;
+	int needed_writeahead = cursorend - first_byte_filled;
 	wrap( needed_writeahead, buffersize );
 	if( needed_writeahead > writeahead )
 	{
@@ -459,6 +464,35 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 	 * when prebuffering. */
 	if( !playing )
 		cursorend = cursorstart;
+
+	/*
+	 * Some cards (Game Theater XP 7.1 hercwdm.sys 5.12.01.4101 [466688b, 01-10-2003])
+	 * have odd behavior when starting a sound: the start/end cursors go:
+	 *
+	 * 0,0             end cursor forced equal to start above (normal)
+	 * 4608, 1764      end cursor trailing the write cursor; except with old emulated
+	 *                   WaveOut devices, this shouldn't happen; it indicates that the
+	 *                   driver expects almost the whole buffer to be filled.  Also, the
+	 *                   play cursor is too far ahead from the last call for the amount
+	 *                   of actual time passed.
+	 * 704, XXX        start cursor moves back to where it should be.  I don't have an exact
+	 *                   end cursor position, but in general from now on it stays about 5kb
+	 *                   ahead of start (which is where it should be).
+	 *
+	 * The second call is completely wrong; both the start and end cursors are meaningless.
+	 * Detect this: if the end cursor is close behind the start cursor, don't do anything.
+	 * (We can't; we have no idea what the cursors actually are.)
+	 */
+	{
+		int prefetch = cursorend - cursorstart;
+		wrap( prefetch, buffersize );
+
+		if( buffersize-prefetch < 1024*4 )
+		{
+			LOG->Trace( "Strange DirectSound cursor ignored: %i..%i", cursorstart, cursorend );
+			return false;
+		}
+	}
 
 	/* Update buffer_bytes_filled. */
 	{
