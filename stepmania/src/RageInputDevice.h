@@ -186,10 +186,6 @@ enum RageKeySym
 
 #ifdef COMPAT_KEYSYMS
 /* XXX: remove */
-#define SDLK_FIRST 0
-#define SDLK_LAST NUM_KEYS
-#define SDLKey RageKeySym
-
 #define SDLK_BACKSPACE	KEY_BACK
 #define SDLK_TAB		KEY_TAB
 #define SDLK_RETURN		KEY_ENTER
@@ -227,32 +223,6 @@ enum RageKeySym
 #define SDLK_GREATER	KEY_RANGLE
 #define SDLK_QUESTION	KEY_QUESTION
 #define SDLK_AT			KEY_AT
-/*#define KEY_CA
-#define KEY_CB
-#define KEY_CC
-#define KEY_CD
-#define KEY_CE
-#define KEY_CF
-#define KEY_CG
-#define KEY_CH
-#define KEY_CI
-#define KEY_CJ
-#define KEY_CK
-#define KEY_CL
-#define KEY_CM
-#define KEY_CN
-#define KEY_CO
-#define KEY_CP
-#define KEY_CQ
-#define KEY_CR
-#define KEY_CS
-#define KEY_CT
-#define KEY_CU
-#define KEY_CV
-#define KEY_CW
-#define KEY_CX
-#define KEY_CY
-#define KEY_CZ*/
 #define SDLK_LEFTBRACKET	KEY_LBRACKET
 #define SDLK_BACKSLASH	KEY_BACKSLASH
 #define SDLK_RIGHTBRACKET	KEY_RBRACKET
