@@ -735,9 +735,12 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 
 
 #define CONVERT_STEPS_POINTER( pSteps ) { \
-	StepsID id = mapOldStepsToStepsID[pSteps]; /* this will always succeed */ \
-	pSteps = id.ToSteps( pSong, bAllowNotesLoss ); }
-
+	if( pSteps != NULL ) { \
+		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pSteps); \
+		if( it != mapOldStepsToStepsID.end() ) \
+			pSteps = it->second.ToSteps( pSong, bAllowNotesLoss ); \
+	} \
+}
 
 
 	FOREACH_PlayerNumber( p )
