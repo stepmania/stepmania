@@ -11,6 +11,7 @@ class ScreenCenterImage : public ScreenWithMenuElements
 {
 public:
 	ScreenCenterImage( CString sName );
+	void Init();
 	virtual ~ScreenCenterImage();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

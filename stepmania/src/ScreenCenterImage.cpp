@@ -16,6 +16,11 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuEleme
 	LOG->Trace( "ScreenCenterImage::ScreenCenterImage()" );
 
 	ZERO( m_fScale );
+}
+
+void ScreenCenterImage::Init()
+{
+	ScreenWithMenuElements::Init();
 
 #if defined(XBOX)
 	CStringArray strArray;
@@ -33,7 +38,6 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuEleme
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenCenterImage","music") );
 }
-
 
 
 ScreenCenterImage::~ScreenCenterImage()
