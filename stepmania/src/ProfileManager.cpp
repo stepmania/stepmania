@@ -55,10 +55,16 @@ ProfileManager::ProfileManager()
 {
 	PROFILEMAN = this;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_bWasLoadedFromMemoryCard[p] = false;
+	try
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			m_bWasLoadedFromMemoryCard[p] = false;
 
-	LoadMachineProfile();
+		LoadMachineProfile();
+	} catch(...) {
+		PROFILEMAN = NULL;
+		throw;
+	}
 }
 
 ProfileManager::~ProfileManager()
