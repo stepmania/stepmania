@@ -467,7 +467,7 @@ retry:
 	case GL_RGBA8:				props += "GL_RGBA8 ";				break;
 	case GL_RGB5_A1:			props += "GL_RGB5_A1 ";				break;
 	case GL_ALPHA8:				props += "GL_ALPHA8 ";				break;
-	case GL_COLOR_INDEX8_EXT:	props += "GL_COLOR_INDEX8_EXT` ";	break;
+	case GL_COLOR_INDEX8_EXT:	props += "GL_COLOR_INDEX8_EXT ";	break;
 	default:	props += ssprintf("unknown-format-%d ",internalfmt); break;
 	}
 
