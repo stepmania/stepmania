@@ -21,6 +21,9 @@ public:
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
 	void SetTime( tm newtime );
+
+private:
+	void CheckVideoDriver();
 };
 
 #undef ARCH_HOOKS
