@@ -23,9 +23,9 @@ enum EditMenuRow
 	ROW_ACTION, 
 	NUM_EDIT_MENU_ROWS 
 };
-#define FOREACH_EditMenuRow( emr ) FOREACH_ENUM( EditMenuRow, NUM_EDIT_MENU_ROWS, emr )
-const CString& RadarCategoryToString( RadarCategory cat );
-const CString& RadarCategoryToThemedString( RadarCategory cat );
+#define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, NUM_EDIT_MENU_ROWS, r )
+const CString& EditMenuRowToString( EditMenuRow r );
+const CString& EditMenuRowToThemedString( EditMenuRow r );
 
 
 class EditMenu: public ActorFrame 
@@ -57,6 +57,8 @@ public:
 
 	Difficulty	GetSelectedDifficulty();
 	Difficulty	GetSelectedSourceDifficulty();
+
+	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
 private:
 	Sprite	m_sprArrows[2];

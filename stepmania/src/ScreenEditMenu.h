@@ -22,6 +22,8 @@ private:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
+	void RefreshExplanationText();
+
 	EditMenu		m_Selector;
 
 	BitmapText		m_textExplanation;

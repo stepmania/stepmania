@@ -13,9 +13,9 @@
 #include "Steps.h"
 #include "song.h"
 
-#define PREV_SCREEN			THEME->GetMetric(m_sName,"PrevScreen")
-#define EXPLANATION_TEXT	THEME->GetMetric(m_sName,"ExplanationText")
-#define HELP_TEXT			THEME->GetMetric(m_sName,"HelpText")
+#define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
+#define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
+#define HELP_TEXT				THEME->GetMetric(m_sName,"HelpText")
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
@@ -40,8 +40,8 @@ void ScreenEditMenu::Init()
 
 	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
-	SET_XY_AND_ON_COMMAND( m_textExplanation );
-	m_textExplanation.SetText( EXPLANATION_TEXT );
+	SET_XY( m_textExplanation );
+	RefreshExplanationText();
 	this->AddChild( &m_textExplanation );
 
 	this->SortByDrawOrder();
@@ -67,22 +67,38 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	
 void ScreenEditMenu::MenuUp( PlayerNumber pn )
 {
-	m_Selector.Up();
+	if( m_Selector.CanGoUp() )
+	{
+		m_Selector.Up();
+		RefreshExplanationText();
+	}
 }
 
 void ScreenEditMenu::MenuDown( PlayerNumber pn )
 {
-	m_Selector.Down();
+	if( m_Selector.CanGoDown() )
+	{
+		m_Selector.Down();
+		RefreshExplanationText();
+	}
 }
 
 void ScreenEditMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	m_Selector.Left();
+	if( m_Selector.CanGoLeft() )
+	{
+		m_Selector.Left();
+		RefreshExplanationText();
+	}
 }
 
 void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	m_Selector.Right();
+	if( m_Selector.CanGoRight() )
+	{
+		m_Selector.Right();
+		RefreshExplanationText();
+	}
 }
 
 
@@ -220,6 +236,14 @@ void ScreenEditMenu::MenuBack( PlayerNumber pn )
 
 	SOUND->StopMusic();
 }
+
+void ScreenEditMenu::RefreshExplanationText()
+{
+	m_textExplanation.SetText( EXPLANATION_TEXT(m_Selector.GetSelectedRow()) );
+	m_textExplanation.StopTweening();
+	ON_COMMAND( m_textExplanation );
+}
+
 
 /*
  * (c) 2002-2004 Chris Danford
