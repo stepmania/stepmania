@@ -1149,11 +1149,16 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 		sTemp.MakeUpper();
 		if(sTemp.empty()) return "";
 
-		sTemp = sTemp[0];
-		if( IsAnInt(sTemp) )
-			sTemp = "NUM";
+		/* If it starts with a number, or a decimal point followed by a number,
+		 * sort it in NUM. */
+		if( sTemp[0] >= '0' && sTemp[0] <= '9' )
+			return "NUM";
+		else if( sTemp.size() > 1 && sTemp[0] == '.' && sTemp[1] >= '0' && sTemp[1] <= '9' )
+			return "NUM";
 		else if(toupper(sTemp[0]) < 'A' || toupper(sTemp[0]) > 'Z')
-			sTemp = "OTHER";
+			return "OTHER";
+
+		sTemp = sTemp[0];
 		return sTemp;
 	case SORT_BPM:
 	case SORT_MOST_PLAYED:
