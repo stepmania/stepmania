@@ -42,7 +42,7 @@ private:
 struct Checkpoint_
 {
 	CString key;
-	Checkpoint_(CString key, int n, CString fmt, ...);
+	Checkpoint_(CString key, int n, const char *fmt, ...);
 	~Checkpoint_();
 };
 #define Checkpoint(t) Checkpoint_ CP_( __FILE__, __LINE__, t )
