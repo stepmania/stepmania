@@ -26,7 +26,7 @@ class Course;
 class Song;
 
 
-const int MAX_WHEEL_ITEMS	=	15;
+const int MAX_WHEEL_ITEMS	=	25;
 
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
 const ScreenMessage SM_SortOrderChanging=	ScreenMessage(SM_User+48);	

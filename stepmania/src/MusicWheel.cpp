@@ -691,7 +691,7 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 {
 	if( USE_3D )
 	{
-		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-7,+7,-PI/2.f,+PI/2.f);
+		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2,+NUM_WHEEL_ITEMS/2,-PI/2.f,+PI/2.f);
 
 //		printf( "fRotationX_out = %f\n", fRotationX_out );
 
@@ -703,30 +703,27 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 
 		fRotationX_out *= 180.f/PI;	// to degrees
 	}
+	else if(!USE_LINEAR_WHEEL)
+	{
+		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
+		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
+		fZ_out = 0;
+		fRotationX_out = 0;
+
+		fX_out = roundf( fX_out );
+		fY_out = roundf( fY_out );
+		fZ_out = roundf( fZ_out );
+	}
 	else
 	{
-		if(!USE_LINEAR_WHEEL)
-		{
-			fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
-			fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
-			fZ_out = 0;
-			fRotationX_out = 0;
+		fX_out = fPosOffsetsFromMiddle*ITEM_CURVE_X;
+		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
+		fZ_out = 0;
+		fRotationX_out = 0;
 
-			fX_out = roundf( fX_out );
-			fY_out = roundf( fY_out );
-			fZ_out = roundf( fZ_out );
-		}
-		else
-		{
-			fX_out = fPosOffsetsFromMiddle*ITEM_CURVE_X;
-			fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
-			fZ_out = 0;
-			fRotationX_out = 0;
-
-			fX_out = roundf( fX_out );
-			fY_out = roundf( fY_out );
-			fZ_out = roundf( fZ_out );
-		}
+		fX_out = roundf( fX_out );
+		fY_out = roundf( fY_out );
+		fZ_out = roundf( fZ_out );
 	}
 }
 
