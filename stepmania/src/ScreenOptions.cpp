@@ -40,7 +40,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 #define NUM_SHOWN_ITEMS		THEME->GetMetricI("ScreenOptions","NumShownItems")
 
-ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("ScreenOptions")
+ScreenOptions::ScreenOptions( CString sClassName ) : Screen("ScreenOptions")
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
@@ -51,7 +51,7 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev") );
 	m_SoundStart.Load( THEME->GetPathToS("Common start") );
 
-	m_Menu.Load( sClassName, bEnableTimer );
+	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
 
 	// add everything to m_framePage so we can animate everything at once

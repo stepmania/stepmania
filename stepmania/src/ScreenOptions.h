@@ -50,7 +50,7 @@ enum InputMode
 class ScreenOptions : public Screen
 {
 public:
-	ScreenOptions( CString sClassName, bool bEnableTimer );
+	ScreenOptions( CString sClassName );
 	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bLoadExplanations );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
