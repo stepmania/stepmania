@@ -8,6 +8,8 @@
 #include "RageTimer.h"
 #include "ALSA9Dynamic.h"
 
+#include "archutils/Unix/GetSysInfo.h"
+
 #include <sys/time.h>
 #include <sys/resource.h>
 
@@ -153,30 +155,6 @@ int RageSound_ALSA9_Software::GetPosition(const RageSound *snd) const
 	return pcm->GetPosition();
 }       
 
-#include <sys/utsname.h>
-
-static void GetKernel( CString &sys, int &vers )
-{
-	utsname uts;
-	uname( &uts );
-	
-	sys = uts.sysname;
-	vers = 0;
-
-	if( sys == "Linux" )
-	{
-		static Regex ver( "([0-9]+)\\.([0-9]+)\\.([0-9]+)" );
-		vector<CString> matches;
-		if( ver.Compare(uts.release, matches) )
-		{
-			ASSERT( matches.size() >= 2 );
-			int major = atoi(matches[0]);
-			int minor = atoi(matches[1]);
-			int revision = atoi(matches[2]);
-			vers = (major << 16) + (minor << 8) + (revision);
-		}
-	}
-}
 
 RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 {
