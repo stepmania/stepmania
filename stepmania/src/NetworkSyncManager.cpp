@@ -16,7 +16,7 @@ void NetworkSyncManager::ReportStyle() {}
 void NetworkSyncManager::StartRequest(short position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
-bool NetworkSyncManager::ChangedScoreboard(int Column)  { }
+bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
