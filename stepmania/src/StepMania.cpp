@@ -125,10 +125,6 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WIN32)
 	chdir( DirOfExecutable + "/.." );
-#elif defined(LINUX)
-	const char *home = getenv("HOME");
-	if( home )
-		chdir( home );
 #elif defined(DARWIN)
 	chdir(DirOfExecutable + "/../../..");
 #endif
