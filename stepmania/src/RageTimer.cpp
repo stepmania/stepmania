@@ -38,24 +38,24 @@ void mySDL_GetTicks( unsigned &secs, unsigned &us )
 	 * wrapping isn't a problem.
 	 */
 
-	static Uint32 last = 0;
-	static Uint32 offset_secs = 0, offset_us = 0;
+	static uint32_t last = 0;
+	static uint32_t offset_secs = 0, offset_us = 0;
 
-	const Uint32 millisecs = SDL_GetTicks();
+	const uint32_t millisecs = SDL_GetTicks();
 
 	/* The time has wrapped if the last time was very high and the current time is very low. */
-	const Uint32 one_day = 24*60*60*1000;
+	const uint32_t one_day = 24*60*60*1000;
 	if( last > (0-one_day) && millisecs < one_day )
 	{
-		const Uint32 wraparound_secs = 4294967; /* (2^32 / 1000) */
-		const Uint32 wraparound_us = 296000;    /* (2^32 % 1000) * 1000 */
+		const uint32_t wraparound_secs = 4294967; /* (2^32 / 1000) */
+		const uint32_t wraparound_us = 296000;    /* (2^32 % 1000) * 1000 */
 		offset_secs += wraparound_secs;
 		offset_us += wraparound_us;
 	}
 	else if( millisecs < last )
 	{
 		/* The time has moved backwards.  Increase the offset by the amount we moved. */
-		const Uint32 offset_ms = last - millisecs;
+		const uint32_t offset_ms = last - millisecs;
 		offset_secs +=  offset_ms/1000;
 		offset_us   += (offset_ms%1000) * 1000;
 	}

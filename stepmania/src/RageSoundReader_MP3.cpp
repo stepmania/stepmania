@@ -180,7 +180,7 @@ static void mad_timer_sub(mad_timer_t *a, mad_timer_t b)
 /* internal->decoder_private field */
 struct madlib_t
 {
-    Uint8 inbuf[16384], outbuf[8192];
+    uint8_t inbuf[16384], outbuf[8192];
     int outpos;
 	unsigned outleft;
 
@@ -716,9 +716,9 @@ static void mono_to_stereo( char *dst, const char *src, unsigned len )
 
 int RageSoundReader_MP3::Read( char *buf, unsigned len )
 {
-	Uint32 bw = 0;
+	uint32_t bw = 0;
 
-	ASSERT( (len % (sizeof(Sint16)*2)) == 0 );
+	ASSERT( (len % (sizeof(int16_t)*2)) == 0 );
 
 	while( bw < len )
 	{

@@ -26,7 +26,7 @@ static const int DitherMat[DitherMatDim][DitherMatDim] =
 static int DitherMatCalc[DitherMatDim][DitherMatDim];
 
 /* conv is the ratio from the input to the output. */
-static Uint8 DitherPixel(int x, int y, int intensity,  int conv)
+static uint8_t DitherPixel(int x, int y, int intensity,  int conv)
 {
 	/* The intensity matrix wraps.  This assumes the matrix dims are a power of 2. */
 	x &= DitherMatDim-1;
@@ -49,7 +49,7 @@ static Uint8 DitherPixel(int x, int y, int intensity,  int conv)
 	out_intensity += DitherMatCalc[y][x];
 
 	/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-	return Uint8((out_intensity + 1) >> 16);
+	return uint8_t((out_intensity + 1) >> 16);
 }
 
 void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
@@ -74,7 +74,7 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 	/* We can't dither to paletted surfaces. */
 	ASSERT( dst->format->BytesPerPixel > 1 );
 
-	Uint32 src_cbits[4], dst_cbits[4];
+	uint32_t src_cbits[4], dst_cbits[4];
 	mySDL_GetBitsPerChannel( src->format, src_cbits );
 	mySDL_GetBitsPerChannel( dst->format, dst_cbits );
 
@@ -92,18 +92,18 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 	}
 
 	/* Max alpha value; used when there's no alpha source.  */
-	const Uint8 alpha_max = Uint8((1 << dst_cbits[3]) - 1);
+	const uint8_t alpha_max = uint8_t((1 << dst_cbits[3]) - 1);
 
 	/* For each row: */
 	for( int row = 0; row < src->h; ++row )
 	{
-		const Uint8 *srcp = (const Uint8 *) src->pixels + row * src->pitch;
-		Uint8 *dstp = (Uint8 *) dst->pixels + row * dst->pitch;
+		const uint8_t *srcp = (const uint8_t *) src->pixels + row * src->pitch;
+		uint8_t *dstp = (uint8_t *) dst->pixels + row * dst->pitch;
 
 		/* For each pixel: */
 		for( int col = 0; col < src->w; ++col )
 		{
-			Uint8 colors[4];
+			uint8_t colors[4];
 			mySDL_GetRawRGBAV( srcp, src, colors );
 
 			/* Note that we don't dither the alpha channel. */
@@ -125,13 +125,13 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 				int out_intensity = colors[3] * conv[3];
 	
 				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-//				colors[3] = Uint8((out_intensity + 1) >> 16);
+//				colors[3] = uint8_t((out_intensity + 1) >> 16);
 
 				/* I don't remember why this used to truncate.  Doing that causes
 				 * dithering to an image with 1-bit alpha to be transparent on all
 				 * source alpha values except for full-opaque, which is wrong. 
 				 * Add .5, so we round. */
-				colors[3] = Uint8((out_intensity + 32767) >> 16);
+				colors[3] = uint8_t((out_intensity + 32767) >> 16);
 			}
 
 			/* Raw value -> int -> pixel */
@@ -172,7 +172,7 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 	/* We can't dither to paletted surfaces. */
 	ASSERT( dst->format->BytesPerPixel > 1 );
 
-	Uint32 src_cbits[4], dst_cbits[4];
+	uint32_t src_cbits[4], dst_cbits[4];
 	mySDL_GetBitsPerChannel( src->format, src_cbits );
 	mySDL_GetBitsPerChannel( dst->format, dst_cbits );
 
@@ -190,20 +190,20 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 	}
 
 	/* Max alpha value; used when there's no alpha source.  */
-	const Uint8 alpha_max = Uint8((1 << dst_cbits[3]) - 1);
+	const uint8_t alpha_max = uint8_t((1 << dst_cbits[3]) - 1);
 
 	/* For each row: */
 	for(int row = 0; row < src->h; ++row) 
 	{
-		Sint32 accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
+		int32_t accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
 
-		const Uint8 *srcp = (const Uint8 *)src->pixels + row * src->pitch;
-		Uint8 *dstp = (Uint8 *)dst->pixels + row * dst->pitch;
+		const uint8_t *srcp = (const uint8_t *)src->pixels + row * src->pitch;
+		uint8_t *dstp = (uint8_t *)dst->pixels + row * dst->pitch;
 
 		/* For each pixel in row: */
 		for( int col = 0; col < src->w; ++col )
 		{
-			Uint8 colors[4];
+			uint8_t colors[4];
 			mySDL_GetRawRGBAV( srcp, src, colors );
 
 			for( int c = 0; c < 3; ++c )
@@ -225,7 +225,7 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				clamped_intensity &= 0xFF0000;
 
 				/* Truncate. */
-				colors[c] = Uint8(clamped_intensity >> 16);
+				colors[c] = uint8_t(clamped_intensity >> 16);
 
 				accumError[c] = out_intensity - clamped_intensity;
 
@@ -255,13 +255,13 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				int out_intensity = colors[3] * conv[3];
 	
 				/* Truncate, and add e to make sure a value of 14.999998 -> 15. */
-//				colors[3] = Uint8((out_intensity + 1) >> 16);
+//				colors[3] = uint8_t((out_intensity + 1) >> 16);
 
 				/* I don't remember why this used to truncate.  Doing that causes
 				 * dithering to an image with 1-bit alpha to be transparent on all
 				 * source alpha values except for full-opaque, which is wrong. 
 				 * Add .5, so we round. */
-				colors[3] = Uint8((out_intensity + 32767) >> 16);
+				colors[3] = uint8_t((out_intensity + 32767) >> 16);
 			}
 
 			mySDL_SetRawRGBAV( dstp, dst, colors );

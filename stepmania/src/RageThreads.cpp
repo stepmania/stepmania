@@ -53,7 +53,7 @@ static const unsigned int UnknownThreadID = 0xFFFFFFFF;
 struct ThreadSlot
 {
 	mutable char name[1024]; /* mutable so we can force nul-termination */
-	Uint32 threadid;
+	uint32_t threadid;
 
 	/* Format this beforehand, since it's easier to do that than to do it under crash conditions. */
 	char ThreadFormattedOutput[1024];

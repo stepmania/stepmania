@@ -29,7 +29,7 @@ typedef struct
 	struct jpeg::jpeg_destination_mgr pub;
 
 	SDL_RWops *ctx;
-	Uint8 buffer[OUTPUT_BUFFER_SIZE];
+	uint8_t buffer[OUTPUT_BUFFER_SIZE];
 } my_destination_mgr;
 
 

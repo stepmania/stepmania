@@ -81,25 +81,25 @@ static void ZoomSurface( SDL_Surface * src, SDL_Surface * dst )
 		}
     }
 
-    const Uint8 *sp = (Uint8 *) src->pixels;
+    const uint8_t *sp = (uint8_t *) src->pixels;
 
     for( y = 0; y < dst->h; y++ )
 	{
-		Uint8 *dp = ((Uint8 *) dst->pixels + dst->pitch*y);
+		uint8_t *dp = ((uint8_t *) dst->pixels + dst->pitch*y);
 		/* current source pointer and next source pointer (first and second 
 		 * rows sampled for this row): */
-		const Uint8 *csp = (Uint8 *) (sp + esy0[y] * src->pitch);
-		const Uint8 *ncsp = (Uint8 *) (sp + esy1[y] * src->pitch);
+		const uint8_t *csp = (uint8_t *) (sp + esy0[y] * src->pitch);
+		const uint8_t *ncsp = (uint8_t *) (sp + esy1[y] * src->pitch);
 
 		for( x = 0; x < dst->w; x++ )
 		{
 			/* Grab pointers to the sampled pixels: */
-			const Uint8 *c00 = (Uint8 *) (csp + esx0[x]*4);
-			const Uint8 *c01 = (Uint8 *) (csp + esx1[x]*4);
-			const Uint8 *c10 = (Uint8 *) (ncsp + esx0[x]*4);
-			const Uint8 *c11 = (Uint8 *) (ncsp + esx1[x]*4);
+			const uint8_t *c00 = (uint8_t *) (csp + esx0[x]*4);
+			const uint8_t *c01 = (uint8_t *) (csp + esx1[x]*4);
+			const uint8_t *c10 = (uint8_t *) (ncsp + esx0[x]*4);
+			const uint8_t *c11 = (uint8_t *) (ncsp + esx1[x]*4);
 
-			Uint8 color[4];
+			uint8_t color[4];
 			for( int c = 0; c < 4; ++c )
 			{
 				float x0, x1;
@@ -109,9 +109,9 @@ static void ZoomSurface( SDL_Surface * src, SDL_Surface * dst )
 				x1 += c11[c] * (1-ex0[x]);
 
 				const float res = (x0 * ey0[y]) + (x1 * (1-ey0[y]));
-				color[c] = Uint8(res);
+				color[c] = uint8_t(res);
 			}
-			*(Uint32 *) dp = *(Uint32 *) color;
+			*(uint32_t *) dp = *(uint32_t *) color;
 
 			/* Advance destination pointer. */
 			dp += 4;

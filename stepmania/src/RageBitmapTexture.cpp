@@ -87,10 +87,10 @@ void RageBitmapTexture::Create()
 		// TODO:  Get rid of this hack and save DDR PC textures in a format that supports alpha.
 		bool bUse248 = false;
 		{
-			const Uint8 *p = (Uint8*)img->pixels;
+			const uint8_t *p = (uint8_t*)img->pixels;
 			for( int i=0; i<img->w; i++ )
 			{
-				Uint8 color[4];
+				uint8_t color[4];
 				mySDL_GetRGBAV( p, img, color );
 				if( color[0]==248 && color[1]==0 && color[2]==248 )
 				{
@@ -101,11 +101,11 @@ void RageBitmapTexture::Create()
 			}
 		}
 		{
-			const Uint8 *p = (Uint8*)img->pixels;
+			const uint8_t *p = (uint8_t*)img->pixels;
 			p += img->pitch * (img->h-1);
 			for( int i=0; i<img->w; i++ )
 			{
-				Uint8 color[4];
+				uint8_t color[4];
 				mySDL_GetRGBAV( p, img, color );
 				if( color[0]==248 && color[1]==0 && color[2]==248 )
 				{
