@@ -642,7 +642,6 @@ void RageDisplay_OGL::DrawIndexedTriangles( const RageVertex v[], int iNumVerts,
 {
 	if( iNumIndices == 0 )
 		return;
-	ASSERT( iNumIndices >= 3 );
 	ASSERT( (iNumIndices%3) == 0 );
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (const float*)GetProjection() );
