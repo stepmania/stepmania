@@ -1,5 +1,4 @@
 #include "global.h"
-#define COMPAT_KEYSYMS
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"

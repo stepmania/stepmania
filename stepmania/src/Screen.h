@@ -3,8 +3,6 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#define COMPAT_KEYSYMS
-
 #include "ActorFrame.h"
 #include "ScreenMessage.h"
 #include "InputFilter.h"

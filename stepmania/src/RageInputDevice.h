@@ -184,143 +184,6 @@ enum RageKeySym
 	KEY_INVALID
 };
 
-#ifdef COMPAT_KEYSYMS
-/* XXX: remove */
-#define SDLK_BACKSPACE	KEY_BACK
-#define SDLK_TAB		KEY_TAB
-#define SDLK_RETURN		KEY_ENTER
-#define SDLK_PAUSE		KEY_PAUSE
-#define SDLK_ESCAPE		KEY_ESC
-#define SDLK_SPACE		KEY_SPACE
-#define SDLK_EXCLAIM	KEY_EXCL
-#define SDLK_QUOTEDBL	KEY_QUOTE
-#define SDLK_HASH		KEY_HASH
-#define SDLK_DOLLAR		KEY_DOLLAR
-#define SDLK_AMPERSAND	KEY_AMPER
-#define SDLK_QUOTE		KEY_SQUOTE
-#define SDLK_LEFTPAREN	KEY_LPAREN
-#define SDLK_RIGHTPAREN	KEY_RPAREN
-#define SDLK_ASTERISK	KEY_ASTERISK
-#define SDLK_PLUS		KEY_PLUS
-#define SDLK_COMMA		KEY_COMMA
-#define SDLK_MINUS		KEY_HYPHEN
-#define SDLK_PERIOD		KEY_PERIOD
-#define SDLK_SLASH		KEY_SLASH
-#define SDLK_0			KEY_C0
-#define SDLK_1			KEY_C1
-#define SDLK_2			KEY_C2
-#define SDLK_3			KEY_C3
-#define SDLK_4			KEY_C4
-#define SDLK_5			KEY_C5
-#define SDLK_6			KEY_C6
-#define SDLK_7			KEY_C7
-#define SDLK_8			KEY_C8
-#define SDLK_9			KEY_C9
-#define SDLK_COLON		KEY_COLON
-#define SDLK_SEMICOLON	KEY_SEMICOLON
-#define SDLK_LESS		KEY_LANGLE
-#define SDLK_EQUALS		KEY_EQUAL
-#define SDLK_GREATER	KEY_RANGLE
-#define SDLK_QUESTION	KEY_QUESTION
-#define SDLK_AT			KEY_AT
-#define SDLK_LEFTBRACKET	KEY_LBRACKET
-#define SDLK_BACKSLASH	KEY_BACKSLASH
-#define SDLK_RIGHTBRACKET	KEY_RBRACKET
-#define SDLK_CARET		KEY_CARAT
-#define SDLK_UNDERSCORE	KEY_UNDERSCORE
-#define SDLK_BACKQUOTE	KEY_ACCENT
-#define SDLK_a			KEY_Ca
-#define SDLK_b			KEY_Cb
-#define SDLK_c			KEY_Cc
-#define SDLK_d			KEY_Cd
-#define SDLK_e			KEY_Ce
-#define SDLK_f			KEY_Cf
-#define SDLK_g			KEY_Cg
-#define SDLK_h			KEY_Ch
-#define SDLK_i			KEY_Ci
-#define SDLK_j			KEY_Cj
-#define SDLK_k			KEY_Ck
-#define SDLK_l			KEY_Cl
-#define SDLK_m			KEY_Cm
-#define SDLK_n			KEY_Cn
-#define SDLK_o			KEY_Co
-#define SDLK_p			KEY_Cp
-#define SDLK_q			KEY_Cq
-#define SDLK_r			KEY_Cr
-#define SDLK_s			KEY_Cs
-#define SDLK_t			KEY_Ct
-#define SDLK_u			KEY_Cu
-#define SDLK_v			KEY_Cv
-#define SDLK_w			KEY_Cw
-#define SDLK_x			KEY_Cx
-#define SDLK_y			KEY_Cy
-#define SDLK_z			KEY_Cz
-#define KEY_PIPE
-#define SDLK_DELETE		KEY_DEL
-
-#define SDLK_F1			KEY_F1
-#define SDLK_F2			KEY_F2
-#define SDLK_F3			KEY_F3
-#define SDLK_F4			KEY_F4
-#define SDLK_F5			KEY_F5
-#define SDLK_F6			KEY_F6
-#define SDLK_F7			KEY_F7
-#define SDLK_F8			KEY_F8
-#define SDLK_F9			KEY_F9
-#define SDLK_F10		KEY_F10
-#define SDLK_F11		KEY_F11
-#define SDLK_F12		KEY_F12
-#define SDLK_F13		KEY_F13
-#define SDLK_F14		KEY_F14
-#define SDLK_F15		KEY_F15
-
-#define SDLK_LCTRL		KEY_LCTRL
-#define SDLK_RCTRL		KEY_RCTRL
-#define SDLK_LSHIFT		KEY_LSHIFT
-#define SDLK_RSHIFT		KEY_RSHIFT
-#define SDLK_LALT		KEY_LALT
-#define SDLK_RALT		KEY_RALT
-#define SDLK_LMETA		KEY_LMETA
-#define SDLK_RMETA		KEY_RMETA
-#define SDLK_LSUPER		KEY_LSUPER
-#define SDLK_RSUPER		KEY_RSUPER
-#define SDLK_MENU		KEY_MENU
-
-#define SDLK_NUMLOCK	KEY_NUMLOCK
-#define SDLK_SCROLLOCK	KEY_SCRLLOCK
-#define SDLK_CAPSLOCK	KEY_CAPSLOCK
-#define SDLK_PRINT		KEY_PRTSC
-
-#define SDLK_UP			KEY_UP
-#define SDLK_DOWN		KEY_DOWN
-#define SDLK_LEFT		KEY_LEFT
-#define SDLK_RIGHT		KEY_RIGHT
-
-#define SDLK_INSERT		KEY_INSERT
-#define SDLK_HOME		KEY_HOME
-#define SDLK_END		KEY_END
-#define SDLK_PAGEUP		KEY_PGUP
-#define SDLK_PAGEDOWN	KEY_PGDN
-
-#define SDLK_KP0		KEY_KP_C0
-#define SDLK_KP1		KEY_KP_C1
-#define SDLK_KP2		KEY_KP_C2
-#define SDLK_KP3		KEY_KP_C3
-#define SDLK_KP4		KEY_KP_C4
-#define SDLK_KP5		KEY_KP_C5
-#define SDLK_KP6		KEY_KP_C6
-#define SDLK_KP7		KEY_KP_C7
-#define SDLK_KP8		KEY_KP_C8
-#define SDLK_KP9		KEY_KP_C9
-#define SDLK_KP_DIVIDE	KEY_KP_SLASH
-#define SDLK_KP_MULTIPLY KEY_KP_ASTERISK
-#define SDLK_KP_MINUS	KEY_KP_HYPHEN
-#define SDLK_KP_PLUS	KEY_KP_PLUS
-#define SDLK_KP_PERIOD	KEY_KP_PERIOD
-#define SDLK_KP_ENTER	KEY_KP_ENTER
-
-#endif
-
 const int NUM_KEYBOARD_BUTTONS = NUM_KEYS;
 const int NUM_JOYSTICKS = 6;
 const int NUM_JOYSTICK_HATS = 1;
@@ -419,6 +282,8 @@ public:
 
 	bool operator==( const DeviceInput &other ) 
 	{ 
+		/* Return true if we represent the same button on the same device.  Don't
+		 * compare ts. */
 		return device == other.device  &&  button == other.button;
 	};
 
