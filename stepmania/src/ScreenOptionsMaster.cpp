@@ -282,7 +282,7 @@ ScreenOptionsMaster::~ScreenOptionsMaster()
 	delete [] m_OptionRowAlloc;
 }
 
-int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn )
+int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int rowno )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -313,7 +313,7 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 			}
 		}
 
-		ASSERT( ret != -1 );
+		RAGE_ASSERT_M( ret != -1, ssprintf("%s line %i (\"%s\"): couldn't find default", m_sName.c_str(), rowno, row.name.c_str()) );
 		return ret;
 	}
 	case ROW_STEP:
@@ -369,7 +369,7 @@ void ScreenOptionsMaster::ImportOptions()
 
 		if( row.bOneChoiceForAllPlayers )
 		{
-			int col = ImportOption( row, hand, 0 );
+			int col = ImportOption( row, hand, 0, i );
 			m_iSelectedOption[0][i] = col;
 			ASSERT( m_iSelectedOption[0][i] < (int)row.choices.size() );
 		}
@@ -379,7 +379,7 @@ void ScreenOptionsMaster::ImportOptions()
 				if( !GAMESTATE->IsHumanPlayer(pn) )
 					continue;
 
-				int col = ImportOption( row, hand, pn );
+				int col = ImportOption( row, hand, pn, i );
 				m_iSelectedOption[pn][i] = col;
 				ASSERT( m_iSelectedOption[pn][i] < (int)row.choices.size() );
 			}

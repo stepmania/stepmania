@@ -43,7 +43,7 @@ private:
 
 	CString ConvertParamToThemeDifficulty( const CString &in ) const;
 	int ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel );
-	int ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn );
+	int ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int rowno );
 	void SetList( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );
 	void SetStep( OptionRow &row, OptionRowHandler &hand );
 	void SetConf( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );
