@@ -323,8 +323,8 @@ int RageSound::FillBuf( int frames )
 		{
 			/* Dupe mono to stereo in-place; do it in reverse, to handle overlap. */
 			int num_samples = cnt / sizeof(int16_t);
-			float *input = (float *) inbuf;
-			float *output = input;
+			int16_t *input = (int16_t *) inbuf;
+			int16_t *output = input;
 			input += num_samples;
 			output += num_samples*2;
 			while( num_samples-- )
