@@ -61,7 +61,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	LOG->WriteLine( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 	ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 	ez2_lasttimercheck[1] = 0.0f;
-	m_iSelectedStyle=0;
+	m_iSelectedStyle=3; // by bbf: frieza, was this supposed to be 3 ?
 	GAMESTATE->m_CurStyle = STYLE_NONE;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
 
@@ -284,7 +284,7 @@ presses the button bound to start
 void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 {
 	//disallow multiple presses of the menu start.
-	if (m_iSelectedStyle == 0 && p == PLAYER_1 || m_iSelectedStyle == 1 && p == PLAYER_2)
+	if ( (m_iSelectedStyle == 0 && p == PLAYER_1) || (m_iSelectedStyle == 1 && p == PLAYER_2))
 	{
 		return;
 	}

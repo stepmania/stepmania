@@ -90,7 +90,11 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 			* 2.0f * D3DX_PI );
 		break;
 	case spinning:
-		ASSERT( false );	// ugh.  What was here before!
+		//ASSERT( false );
+		// ugh.  What was here before!
+
+		// BBF update: This was here before (till revision 1.16):
+		// nothing special needed
 		break;
 	case vibrating:
 		m_temp_pos.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();

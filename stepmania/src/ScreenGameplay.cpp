@@ -167,14 +167,16 @@ ScreenGameplay::ScreenGameplay()
 		m_pLifeMeter[p]->Load( (PlayerNumber)p );
 		m_pLifeMeter[p]->SetXY( LIFE_LOCAL_X[p], LIFE_LOCAL_Y[p] );
 		m_frameTop.AddSubActor( m_pLifeMeter[p] );
-		
+
 		if( GAMESTATE->m_CurGame == GAME_EZ2 )
-		{	
+		{
+			m_pScoreDisplay[p] = new ScoreDisplayNormal;
 			m_pScoreDisplay[p]->SetXY( SCORE_LOCALEZ2_X[p], SCORE_LOCALEZ2_Y[p] );
 			m_pScoreDisplay[p]->SetZoom( 0.5f );
 			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
 			m_frameTop.AddSubActor( m_pScoreDisplay[p] );
 		}
+		
 	}
 
 	// TopFrame goes above LifeMeter
@@ -224,29 +226,33 @@ ScreenGameplay::ScreenGameplay()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		switch( GAMESTATE->m_PlayMode )
+		if( GAMESTATE->m_CurGame != GAME_EZ2 )
 		{
-		case PLAY_MODE_ARCADE:
-			m_pScoreDisplay[p] = new ScoreDisplayNormal;
-			break;
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			m_pScoreDisplay[p] = new ScoreDisplayOni;
-			break;
-		default:
-			ASSERT(0);
-		}
+			switch( GAMESTATE->m_PlayMode )
+			{
+			case PLAY_MODE_ARCADE:
+				m_pScoreDisplay[p] = new ScoreDisplayNormal;
+				break;
+			case PLAY_MODE_ONI:
+			case PLAY_MODE_ENDLESS:
+				m_pScoreDisplay[p] = new ScoreDisplayOni;
+				break;
+			default:
+				ASSERT(0);
+			}
 
-		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
-		m_pScoreDisplay[p]->SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
-		m_pScoreDisplay[p]->SetZoom( 0.8f );
-		m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
-		m_frameBottom.AddSubActor( m_pScoreDisplay[p] );
+			m_pScoreDisplay[p]->Init( (PlayerNumber)p );
+			m_pScoreDisplay[p]->SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
+			m_pScoreDisplay[p]->SetZoom( 0.8f );
+			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
+			m_frameBottom.AddSubActor( m_pScoreDisplay[p] );
+		}
 
 		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
 
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
+
 		if( GAMESTATE->m_CurGame != GAME_EZ2 )
 		{	
 			m_pScoreDisplay[p]->SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
