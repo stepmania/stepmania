@@ -141,6 +141,7 @@ public:
 	virtual int Seek( int offset );
 	virtual RageFileObj *Copy( RageFile &p ) const;
 	virtual CString GetDisplayPath() const { return path; }
+	virtual int GetFileSize();
 };
 
 
@@ -410,6 +411,15 @@ int RageFileObjDirect::Seek( int offset )
 {
 	return lseek( fd, offset, SEEK_SET );
 }
+
+int RageFileObjDirect::GetFileSize()
+{
+	const int OldPos = lseek( fd, 0, SEEK_CUR );
+	const int ret = lseek( fd, 0, SEEK_END );
+	lseek( fd, OldPos, SEEK_SET );
+	return ret;
+}
+
 
 /*
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
