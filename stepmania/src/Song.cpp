@@ -130,6 +130,27 @@ void Song::AddBPMSegment( BPMSegment seg )
 	SortBPMSegmentsArray( m_BPMSegments );
 }
 
+void Song::SetBPMAtBeat( float fBeat, float fBPM )
+{
+	unsigned i;
+	for( i=0; i<m_BPMSegments.size(); i++ )
+		if( m_BPMSegments[i].m_fStartBeat == fBeat )
+			break;
+
+	if( i == m_BPMSegments.size() )	// there is no BPMSegment at the current beat
+	{
+		// create a new BPMSegment
+		AddBPMSegment( BPMSegment(fBeat, fBPM) );
+	}
+	else	// BPMSegment being modified is m_BPMSegments[i]
+	{
+		if( i > 0  &&  fabsf(m_BPMSegments[i-1].m_fBPM - fBPM) < 0.009f )
+			m_BPMSegments.erase( m_BPMSegments.begin()+i,
+										  m_BPMSegments.begin()+i+1);
+		else
+			m_BPMSegments[i].m_fBPM = fBPM;
+	}
+}
 
 void Song::AddStopSegment( StopSegment seg )
 {

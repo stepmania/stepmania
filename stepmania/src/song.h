@@ -210,6 +210,7 @@ public:
 				break;
 		return m_BPMSegments[i].m_fBPM;
 	}
+	void SetBPMAtBeat( float fBeat, float fBPM );
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat )
 	{
 		unsigned i;

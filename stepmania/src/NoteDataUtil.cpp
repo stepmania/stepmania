@@ -980,3 +980,46 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType
 	}
 }
 
+void NoteDataUtil::Scale( NoteData &nd, float fScale )
+{
+	ASSERT( fScale > 0 );
+
+	NoteData temp;
+	temp.CopyAll( &nd );
+	nd.ClearAll();
+
+	for( int r=0; r<=temp.GetLastRow(); r++ )
+	{
+		for( int t=0; t<temp.GetNumTracks(); t++ )
+		{
+			TapNote tn = temp.GetTapNote( t, r );
+			if( tn != TAP_EMPTY )
+			{
+				temp.SetTapNote( t, r, TAP_EMPTY );
+
+				int new_row = r*fScale;
+				nd.SetTapNote( t, new_row, tn );
+			}
+		}
+	}
+}
+
+void NoteDataUtil::ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift )
+{
+	NoteData temp;
+	temp.SetNumTracks( nd.GetNumTracks() );
+	int iTakeFromRow=0;
+	int iPasteAtRow;
+
+	iTakeFromRow = BeatToNoteRow( fStartBeat );
+	iPasteAtRow = BeatToNoteRow( fStartBeat );
+
+	if( fBeatsToShift > 0 )	// add blank rows
+		iPasteAtRow += BeatToNoteRow( fBeatsToShift );
+	else	// delete rows
+		iTakeFromRow += BeatToNoteRow( -fBeatsToShift );
+
+	temp.CopyRange( &nd, iTakeFromRow, nd.GetLastRow() );
+	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), nd.GetLastRow()  );
+	nd.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );		
+}

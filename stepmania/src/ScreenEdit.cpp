@@ -156,6 +156,7 @@ Menu g_AreaMenu
 	MenuRow( "Turn",						true, 0, "Left","Right","Mirror","Shuffle","Super Shuffle" ),
 	MenuRow( "Transform",					true, 0, "Little","Wide","Big","Quick","Skippy" ),
 	MenuRow( "Alter",						true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right" ),
+	MenuRow( "Tempo",						true, 0, "Compress 2x","Expand 2x" ),
 	MenuRow( "Play selection",				true ),
 	MenuRow( "Record in selection",			true ),
 	MenuRow( "Insert beat and shift down",	true ),
@@ -569,6 +570,7 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	}
 }
 
+
 void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( DeviceI.device != DEVICE_KEYBOARD )
@@ -826,6 +828,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[turn].enabled = bAreaSelected;
 			g_AreaMenu.rows[transform].enabled = bAreaSelected;
 			g_AreaMenu.rows[alter].enabled = bAreaSelected;
+			g_AreaMenu.rows[tempo].enabled = bAreaSelected;
 			g_AreaMenu.rows[play].enabled = bAreaSelected;
 			g_AreaMenu.rows[record].enabled = bAreaSelected;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
@@ -909,26 +912,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
 			case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
 			}
+			
 			float fNewBPM = fBPM + fDeltaBPM;
-
-			unsigned i;
-			for( i=0; i<m_pSong->m_BPMSegments.size(); i++ )
-				if( m_pSong->m_BPMSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-					break;
-
-			if( i == m_pSong->m_BPMSegments.size() )	// there is no BPMSegment at the current beat
-			{
-				// create a new BPMSegment
-				m_pSong->AddBPMSegment( BPMSegment(GAMESTATE->m_fSongBeat, fNewBPM) );
-			}
-			else	// BPMSegment being modified is m_BPMSegments[i]
-			{
-				if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.009f )
-					m_pSong->m_BPMSegments.erase( m_pSong->m_BPMSegments.begin()+i,
-												  m_pSong->m_BPMSegments.begin()+i+1);
-				else
-					m_pSong->m_BPMSegments[i].m_fBPM = fNewBPM;
-			}
+			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fNewBPM );
 		}
 		break;
 	case SDLK_F9:
@@ -1501,8 +1487,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case transform:
 			{
-//				HandleAreaMenuChoice( cut, NULL );
-				
 				float fBeginBeat = m_NoteFieldEdit.m_fBeginMarker;
 				float fEndBeat = m_NoteFieldEdit.m_fEndMarker;
 				TransformType tt = (TransformType)iAnswers[c];
@@ -1518,8 +1502,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				// bake in the additions
 				NoteDataUtil::ConvertAdditionsToRegular( m_NoteFieldEdit );
-
-//				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 			}
 			break;
 		case alter:
@@ -1542,6 +1524,43 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				}
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+			}
+			break;
+		case tempo:
+			{
+				HandleAreaMenuChoice( cut, NULL );
+				
+				AlterType at = (AlterType)iAnswers[c];
+				float fScale = -1;
+				switch( at )
+				{
+				case compress_2x:	fScale = 0.5f;	break;
+				case expand_2x:		fScale = 2;		break;
+				default:		ASSERT(0);
+				}
+
+				switch( at )
+				{
+				case compress_2x:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
+				case expand_2x:		NoteDataUtil::Scale( m_Clipboard, fScale );	break;
+				default:		ASSERT(0);
+				}
+
+				float fOldClipboardEndBeat = m_NoteFieldEdit.m_fEndMarker;
+				float fOldClipboardBeats = m_NoteFieldEdit.m_fEndMarker - m_NoteFieldEdit.m_fBeginMarker;
+				float fNewClipboardBeats = fOldClipboardBeats * fScale;
+				float fDeltaBeats = fNewClipboardBeats - fOldClipboardBeats;
+				float fNewClipboardEndBeat = m_NoteFieldEdit.m_fBeginMarker + fNewClipboardBeats;
+				NoteDataUtil::ShiftRows( m_NoteFieldEdit, m_NoteFieldEdit.m_fBeginMarker, fDeltaBeats );
+
+				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+
+				m_NoteFieldEdit.m_fEndMarker = fNewClipboardEndBeat;
+
+				float fOldBPM = m_pSong->GetBPMAtBeat( m_NoteFieldEdit.m_fBeginMarker );
+				float fNewBPM = fOldBPM * fScale;
+				m_pSong->SetBPMAtBeat( m_NoteFieldEdit.m_fBeginMarker, fNewBPM );
+				m_pSong->SetBPMAtBeat( fNewClipboardEndBeat, fOldBPM );
 			}
 			break;
 		case play:
@@ -1596,34 +1615,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			}
 			break;
 		case insert_and_shift:
-			{
-				NoteData temp;
-				temp.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
-				int iTakeFromRow=0;
-				int iPasteAtRow;
-
-				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
-
-				temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, m_NoteFieldEdit.GetLastRow() );
-				m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), m_NoteFieldEdit.GetLastRow()  );
-				m_NoteFieldEdit.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );
-			}
+			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, 1 );
 			break;
 		case delete_and_shift:
-			{
-				NoteData temp;
-				temp.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
-				int iTakeFromRow=0;
-				int iPasteAtRow;
-
-				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
-				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-
-				temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, m_NoteFieldEdit.GetLastRow() );
-				m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), m_NoteFieldEdit.GetLastRow()  );
-				m_NoteFieldEdit.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );		
-			}
+			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, -1 );
 			break;
 		default:
 			ASSERT(0);

@@ -77,6 +77,11 @@ namespace NoteDataUtil
 	void EliminateNonPassingTaps( NoteData &in, int row, const bool bValidMask[] ); 
 
 	void TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st );
+
+	void Scale( NoteData &nd, float fScale );
+
+	// If fBeatsToShift>0, add blank rows.  If fBeatsToShift<0, delete rows
+	void ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift );
 };
 
 #endif
