@@ -98,11 +98,6 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCreditInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
-		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
-		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
-		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
-		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
 		this->AddChild(&m_textCreditInfo[p]);
 	}
 
@@ -154,6 +149,12 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_textCreditInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
+		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
+		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
+		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
+		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+
 		CString sText;
 		switch( PREFSMAN->m_iCoinMode )
 		{
