@@ -139,8 +139,20 @@ void MsdFile::ReadBuf( char *buf, int len )
 		{
 			i++; /* skip */
 			value_start = i;
-			if(buf[value_start] == '\001')
+			/* If there's a \001 (^A) after the : (possibly separated by whitespace),
+			 * it's binary. */
+			bool Found001 = false;
+			int pos = value_start;
+			do {
+				if(buf[pos] == '\001') { Found001 = true; break; }
+				if(!strchr("\r\n\t ", buf[pos])) break;
+				pos++;
+			} while(pos < len);
+
+
+			if(Found001)
 			{
+				value_start = pos;
 				value_start++;
 				
 				/* Binary param.  Expect digits followed by a comma. */
