@@ -651,7 +651,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 
 	// should we do something fancy here, like turn on different effects?
 	int iSongHash = GetHashForString( pSongOut->GetSongDir() );
-	switch( ((UINT)iSongHash) % 5 )
+	switch( ((unsigned int)iSongHash) % 5 )
 	{
 	case 0:	po_out.m_bEffects[PlayerOptions::EFFECT_DIZZY] = true;	break;
 	case 1:	po_out.m_bDark = true;									break;
