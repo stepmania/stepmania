@@ -152,8 +152,10 @@ private:
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
 	 * when we stop (too slow), but we want to be able to report the position we
-	 * were at when we stopped without jumping to the last position we buffered. */
-	int64_t stopped_position;
+	 * were at when we stopped without jumping to the last position we buffered. 
+	 * Keep track of the position after a seek or stop, so we can return a sane
+	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
+	int stopped_position;
 	bool    playing;
 
 	/* Unique ID number for this instance of RageSound. */

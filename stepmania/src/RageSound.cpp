@@ -71,7 +71,7 @@ RageSound::RageSound()
 	original = this;
 	Sample = NULL;
 	position = 0;
-	stopped_position = -1;
+	stopped_position = 0;
 	playing = false;
 	databuf.reserve(internal_buffer_size);
 
@@ -103,6 +103,7 @@ RageSound::RageSound(const RageSound &cpy):
 	original = cpy.original;
 	m_Param = cpy.m_Param;
 	position = cpy.position;
+	stopped_position = cpy.stopped_position;
 	playing = false;
 
 	databuf.reserve(internal_buffer_size);
@@ -150,7 +151,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	Unload();
 
 	m_sFilePath = sSoundFilePath;
-	position = 0;
+	position = stopped_position = 0;
 
 	CString error;
 	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
@@ -570,8 +571,6 @@ void RageSound::StartPlaying()
 	if( m_Param.m_Volume == -1 )
 		m_Param.m_Volume = SOUNDMAN->GetMixVolume();
 
-	stopped_position = -1;
-
 	ASSERT(!playing);
 
 	/* If StartTime is in the past, then we probably set a start time but took too
@@ -591,7 +590,7 @@ void RageSound::StopPlaying()
 	if(!playing)
 		return;
 
-	stopped_position = GetPositionSecondsInternal();
+	stopped_position = (int) GetPositionSecondsInternal();
 
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
@@ -712,11 +711,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
-	{
-		if(stopped_position != -1)
-			return stopped_position;
-		return position;
-	}
+		return stopped_position;
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so guess what we think the real time is. */
@@ -725,7 +720,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 		LOG->Trace("no data yet; %i", position);
 		if( approximate )
 			*approximate = true;
-		return position - int(samplerate()*SOUNDMAN->GetPlayLatency());
+		return stopped_position;
 	}
 
 	/* Get our current hardware position. */
@@ -767,9 +762,6 @@ float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) c
 
 bool RageSound::SetPositionSeconds( float fSeconds )
 {
-	if( fSeconds == -1 )
-		fSeconds = m_Param.m_StartSecond;
-
 	return SetPositionFrames( int(fSeconds * samplerate()) );
 }
 
@@ -800,7 +792,7 @@ bool RageSound::SetPositionFrames( int frames )
 	    if( position == scaled_frames )
 		    return true;
 
-	    position = scaled_frames;
+	    stopped_position = position = scaled_frames;
 	}
 
 	/* The position we're going to seek the input stream to.  We have
