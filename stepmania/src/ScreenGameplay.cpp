@@ -1122,6 +1122,8 @@ void ScreenGameplay::PauseGame( bool bPause )
 	/* Don't pause if we're already tweening out. */
 	if( bPause && m_DancingState == STATE_OUTRO )
 		return;
+	
+	AbortGiveUp( false );
 
 	m_bPaused = bPause;
 	m_pSoundMusic->Pause( bPause );
