@@ -43,7 +43,6 @@ struct NoteFieldMode
 
 	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
 	CString m_Backdrop;
-	Actor m_PositionBackdrop;
 
 	CString m_JudgmentCmd, m_ComboCmd;
 	CString m_HoldJudgmentCmd[MAX_NOTE_TRACKS];

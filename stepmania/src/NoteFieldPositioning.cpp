@@ -39,17 +39,13 @@ void NoteFieldMode::BeginDrawTrack(int tn)
 		DISPLAY->EnterPerspective(m_fFov, true, m_fNear, m_fFar);
 	
 	m_Position.BeginDraw();
-	if(tn == -1)
-		m_PositionBackdrop.BeginDraw();
-	else
+	if(tn != -1)
 		m_PositionTrack[tn].BeginDraw();
 }
 
 void NoteFieldMode::EndDrawTrack(int tn)
 {
-	if(tn == -1)
-		m_PositionBackdrop.EndDraw();
-	else
+	if(tn != -1)
 		m_PositionTrack[tn].EndDraw();
 	m_Position.EndDraw();
 
@@ -99,7 +95,6 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 
 	GetValue( ini, pn, id, "Center",				m_Center );
 	GetValue( ini, pn, id, "Position",				m_Position );
-	GetValue( ini, pn, id, "BackdropPosition",		m_PositionBackdrop );
 	GetValue( ini, pn, id, "Judgment",				m_JudgmentCmd );
 	GetValue( ini, pn, id, "Combo",					m_ComboCmd );
 
