@@ -614,7 +614,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	{
 	case GRADE_AA:
 	case GRADE_AAA:	
-		this->SendScreenMessage( SM_PlayCheer, 3 );	
+		this->SendScreenMessage( SM_PlayCheer, 2.5f );	
 		break;
 	}
 

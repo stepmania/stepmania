@@ -264,8 +264,9 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	for( int i=0; i<asDirectoriesToExport.GetSize(); i++ )
 	{
 		CStringArray asFilePaths;
+		asFilePaths.Add( asDirectoriesToExport[i] );
 		GetFilePathsInDirectory( asDirectoriesToExport[i], asFilePaths );
-
+ 
 		for( int j=0; j<asFilePaths.GetSize(); j++ )
 		{
 			CString sFilePath = asFilePaths[j];

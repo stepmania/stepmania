@@ -968,13 +968,23 @@ void ApplyGraphicOptions()
 		);
 
 	//
-	// If the requested resolution doesn't work, keep switching until we find one that does.
+	// If the requested modes doesn't work, keep switching until we find one that does.
 	//
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
 	LOG->Trace( "We failed.  Using default refresh rate." );
 	iRefreshRate = RageDisplay::REFRESH_DEFAULT;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
+	LOG->Trace( "Failed again.  Try 16 BPP." );
+	iDisplayBPP = 16;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
+	LOG->Trace( "Failed again.  Try 32 BPP." );
+	iDisplayBPP = 32;
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
@@ -998,6 +1008,27 @@ void ApplyGraphicOptions()
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
+	LOG->Trace( "Failed again.  Try 32 BPP." );
+	iDisplayBPP = 32;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
+	LOG->Trace( "Failed again.  Try 16 BPP." );
+	iDisplayBPP = 16;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
+	LOG->Trace( "Failed again.  Try 640x480." );
+	iDisplayWidth = 640;
+	iDisplayHeight = 480;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
+	LOG->Trace( "We failed.  Try full screen with same params." );
+	bWindowed = false;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
 	LOG->Trace( "Failed again.  Try 16 BPP." );
 	iDisplayBPP = 16;
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
@@ -1008,15 +1039,18 @@ void ApplyGraphicOptions()
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
-	LOG->Trace( "Failed again.  Try 640x480." );
-	iDisplayWidth = 640;
-	iDisplayHeight = 480;
+	LOG->Trace( "We failed.  Try windowed with same params." );
+	bWindowed = false;
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
-	LOG->Trace( "Failed again.  Try 320x240." );
-	iDisplayWidth = 320;
-	iDisplayHeight = 240;
+	LOG->Trace( "Failed again.  Try 32 BPP." );
+	iDisplayBPP = 32;
+	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
+		goto success;
+
+	LOG->Trace( "Failed again.  Try 16 BPP." );
+	iDisplayBPP = 16;
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate, PREFSMAN->m_bVsync ) )
 		goto success;
 
