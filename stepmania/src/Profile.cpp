@@ -700,7 +700,10 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		DeleteCategoryScoresFromDirSM390a12( sDir );
 	}
 
-	SaveStatsWebPageToDir( sDir );
+	const bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile()); // XXX
+	if( (bThisIsMachineProfile && PREFSMAN->m_bWriteMachineStatsHtml) ||
+		(!bThisIsMachineProfile && PREFSMAN->m_bWriteProfileStatsHtml) )
+		SaveStatsWebPageToDir( sDir );
 
 	//
 	// create edits dir

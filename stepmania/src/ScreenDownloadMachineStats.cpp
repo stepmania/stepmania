@@ -18,7 +18,13 @@ static void SaveMachineStatsToFirstMemCard()
 
 		CString sDir = MEM_CARD_MOUNT_POINT[pn];
 		sDir += "MachineProfile/";
+
+		bool bOldVal = PREFSMAN->m_bWriteMachineStatsHtml;
+		PREFSMAN->m_bWriteMachineStatsHtml = true;
+		
 		PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+		
+		PREFSMAN->m_bWriteMachineStatsHtml = bOldVal;
 		SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
 		return;
 	}

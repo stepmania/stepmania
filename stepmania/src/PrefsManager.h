@@ -211,7 +211,8 @@ public:
 	// and verified when reading profile data.  Leave this false if 
 	// you want to use a profile on different machines that don't 
 	// have the same key, or else the profile's data will be discarded.
-	bool			m_bSignProfileData;	
+	bool			m_bSignProfileData;
+	bool			m_bWriteMachineStatsHtml, m_bWriteProfileStatsHtml;
 
 	/* Editor prefs: */
 	bool			m_bEditorShowBGChangesPlay;

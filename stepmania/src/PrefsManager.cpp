@@ -231,6 +231,9 @@ void PrefsManager::Init()
 	m_bAnisotropicFiltering = false;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
+	/* Most people use local profiles, so writing profile stats is redundant. */
+	m_bWriteMachineStatsHtml = true;
+	m_bWriteProfileStatsHtml = false;
 
 	m_bEditorShowBGChangesPlay = false;
 
@@ -529,6 +532,8 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
+	ini.GetValue( "Options", "WriteMachineStatsHtml",			m_bWriteMachineStatsHtml );
+	ini.GetValue( "Options", "WriteProfileStatsHtml",			m_bWriteProfileStatsHtml );
 
 	ini.GetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
 
@@ -753,6 +758,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
+	ini.SetValue( "Options", "WriteMachineStatsHtml",			m_bWriteMachineStatsHtml );
+	ini.SetValue( "Options", "WriteProfileStatsHtml",			m_bWriteProfileStatsHtml );
 	
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 
