@@ -108,6 +108,8 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
 			if ( NSMAN->m_EvalPlayerData[i].grade < GRADE_TIER_3 )	//Yes, hardcoded (I'd like to leave it that way)
 				m_textUsers[i].TurnRainbowOn();
+			else
+				m_textUsers[i].TurnRainbowOff();
 			ON_COMMAND( m_textUsers[i] );
 		}
 		return;	//no need to let ScreenEvaluation get ahold of this.

@@ -90,7 +90,6 @@ private:
 	time_t statsTime;
 	GameInfo CurrentSongInfo;
 	GameInfo LastSongInfo;
-	bool StatsNameChange;
 	bool SecondSameSelect;
 	vector<CString> bannedIPs;
 
@@ -127,6 +126,8 @@ private:
 	bool CheckConnection(const unsigned int clientNum);
 	void PopulatePlayersPtr(vector<LanPlayer*> &playersPtr);
 	void Disconnect(const unsigned int clientNum);
+	void ClientsSongSelectStart();
+	void ResetLastSongInfo();
 };
 
 #endif

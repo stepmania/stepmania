@@ -244,7 +244,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) )
+	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) && (type != IET_FAST_REPEAT ) )
 		return;
 
 	bool bHoldingShift = 
@@ -380,6 +380,9 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 			switch (NSMAN->m_iSelectMode)
 			{
+			case 3:
+				StartSelectedSong();
+				break;
 			case 2: //We need to do cmd 1 as well here
 				if (haveSong)
 				{
@@ -613,12 +616,17 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+	if ( ( m_DC[pn] < DIFFICULTY_EDIT ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
+		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+	else
+		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-	if ( m_DC[pn] != NUM_DIFFICULTIES )
+
+	if ( ( m_DC[pn] < NUM_DIFFICULTIES ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
 		m_DifficultyMeters[pn].SetFromSteps( GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] ) );
 	else
-		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, m_DC[pn] ); 
+		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
 }
 
 void ScreenNetSelectMusic::UpdateSongsListPos()
