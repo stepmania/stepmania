@@ -125,6 +125,8 @@ float Course::GetMeter( int Difficult ) const
 		else
 			fTotalMeter += ci[c].pNotes->GetMeter();
 	}
+
+	LOG->Trace("Course '%s': %f", m_sName.c_str(), fTotalMeter/ci.size() );
 	return fTotalMeter / ci.size();
 }
 
@@ -873,6 +875,16 @@ static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const C
 {
 	float fNum1 = pCourse1->GetMeter( false );
 	float fNum2 = pCourse2->GetMeter( false );
+
+	// push non-fixed courses to end
+	if ( !pCourse1->IsFixed() )
+		fNum1 = 1000.0f;
+	if ( !pCourse2->IsFixed() )
+		fNum2 = 1000.0f;
+
+	LOG->Trace("Comparison between %s (%f) and %s (%f)",
+		pCourse1->m_sName.c_str() , fNum1,
+		pCourse2->m_sName.c_str() , fNum2);
 
 	if( fNum1 < fNum2 )
 		return true;
