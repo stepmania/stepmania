@@ -16,9 +16,7 @@ class ScreenDemonstration : public ScreenJukebox
 {
 public:
 	ScreenDemonstration( CString sName );
-	~ScreenDemonstration();
 
-	virtual void Update( float fDeltaTime );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:

@@ -160,15 +160,6 @@ ScreenJukebox::ScreenJukebox( CString sName, bool bDemonstration ) : ScreenGamep
 	m_DancingState = STATE_DANCING;
 }
 
-ScreenJukebox::~ScreenJukebox()
-{
-}
-
-void ScreenJukebox::Update( float fDeltaTime )
-{
-	ScreenGameplay::Update( fDeltaTime );
-}
-
 void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	//LOG->Trace( "ScreenJukebox::Input()" );

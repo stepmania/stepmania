@@ -80,15 +80,6 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
 }
 
-ScreenDemonstration::~ScreenDemonstration()
-{
-}
-
-void ScreenDemonstration::Update( float fDeltaTime )
-{
-	ScreenGameplay::Update( fDeltaTime );
-}
-
 void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
@@ -105,7 +96,6 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_LoseFocus:
-		LOG->Trace("XXX: lose foc");
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 		break;
 
