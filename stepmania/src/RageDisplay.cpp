@@ -168,7 +168,7 @@ void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVerte
 }
 
 
-void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 2 );
 
@@ -184,7 +184,7 @@ void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, floa
 		DrawCircle( v[i], LineWidth/2 );
 }
 
-void RageDisplay::DrawCircle( const RageSpriteVertex &p, float radius )
+void RageDisplay::DrawCircleInternal( const RageSpriteVertex &p, float radius )
 {
 	const int subdivisions = 32;
 	RageSpriteVertex v[subdivisions+2];
@@ -677,4 +677,77 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	out.Write( buf );
 
 	return true;
+}
+
+void RageDisplay::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( (iNumVerts%4) == 0 );
+
+	if(iNumVerts == 0)
+		return;
+
+	this->DrawQuadsInternal(v,iNumVerts);
+	
+	StatsAddVerts(iNumVerts);
+}
+
+void RageDisplay::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( (iNumVerts%2) == 0 );
+
+	if(iNumVerts < 4)
+		return;
+
+	this->DrawQuadStripInternal(v,iNumVerts);
+	
+	StatsAddVerts(iNumVerts);
+}
+
+void RageDisplay::DrawFan( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( iNumVerts >= 3 );
+
+	this->DrawFanInternal(v,iNumVerts);
+	
+	StatsAddVerts(iNumVerts);
+}
+
+void RageDisplay::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( iNumVerts >= 3 );
+
+	this->DrawStripInternal(v,iNumVerts);
+	
+	StatsAddVerts(iNumVerts); 
+}
+
+void RageDisplay::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
+{
+	if( iNumVerts == 0 )
+		return;
+	
+	ASSERT( iNumVerts >= 3 );
+
+	this->DrawTrianglesInternal(v,iNumVerts);
+
+	StatsAddVerts(iNumVerts);
+}
+
+void RageDisplay::DrawIndexedTriangles( const RageModelVertexArray *p )
+{
+	this->DrawIndexedTrianglesInternal(p);
+
+	StatsAddVerts(p->sizeTriangles()*3);
+}
+
+void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+{
+	ASSERT( iNumVerts >= 2 );
+
+	this->DrawLineStripInternal( v, iNumVerts, LineWidth );
+}
+
+void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
+{
+	this->DrawCircleInternal( v, radius );
 }

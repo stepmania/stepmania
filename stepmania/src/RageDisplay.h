@@ -209,16 +209,16 @@ public:
 	virtual RageModelVertexArray* CreateRageModelVertexArray() = 0;
 	virtual void DeleteRageModelVertexArray( RageModelVertexArray* p ) = 0;
 
-	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
-	virtual void DrawQuads( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawFan( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawStrip( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawTriangles( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawIndexedTriangles( const RageModelVertexArray *p ) = 0;
-	virtual void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
-
+	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
+	void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts );
+	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
+	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
+	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
+	void DrawIndexedTriangles( const RageModelVertexArray *p );
+	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	void DrawCircle( const RageSpriteVertex &v, float radius );
+
+	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
 
 	enum GraphicsFileFormat
 	{
@@ -231,6 +231,15 @@ public:
 	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }
 
 protected:
+	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawIndexedTrianglesInternal( const RageModelVertexArray *p ) = 0;
+	virtual void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
+	virtual void DrawCircleInternal( const RageSpriteVertex &v, float radius );
+
 	// Return "" if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.

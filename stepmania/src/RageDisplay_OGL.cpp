@@ -1146,85 +1146,57 @@ void RageDisplay_OGL::DeleteRageModelVertexArray( RageModelVertexArray* p )
 	delete p;
 }
 
-void RageDisplay_OGL::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( (iNumVerts%4) == 0 );
-
-	if(iNumVerts == 0)
-		return;
-
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
-
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( (iNumVerts%2) == 0 );
-
-	if(iNumVerts < 4)
-		return;
-
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_QUAD_STRIP, 0, iNumVerts );
-
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawFan( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
 
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( iNumVerts >= 3 );
-
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	if( iNumVerts == 0 )
-		return;
-	ASSERT( (iNumVerts%3) == 0 );
-
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_OGL::DrawIndexedTriangles( const RageModelVertexArray *p )
+void RageDisplay_OGL::DrawIndexedTrianglesInternal( const RageModelVertexArray *p )
 {
 	SendCurrentMatrices();
 
 	p->Draw();
-
-	StatsAddVerts( p->sizeTriangles()*3 );
 }
 
-void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
 {
-	ASSERT( iNumVerts >= 2 );
-
 	if( !GetVideoModeParams().bSmoothLines )
 	{
 		RageDisplay::DrawLineStrip(v, iNumVerts, LineWidth );

@@ -78,15 +78,14 @@ public:
 	RageModelVertexArray* CreateRageModelVertexArray();
 	void DeleteRageModelVertexArray( RageModelVertexArray* p );
 
-	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
-	void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts );
-	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
-	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
-	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
-	void DrawIndexedTriangles( const RageModelVertexArray *p );
-//	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
-
 protected:
+	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawIndexedTrianglesInternal( const RageModelVertexArray *p );
+
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
 	SDL_Surface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);

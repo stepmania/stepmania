@@ -63,15 +63,15 @@ public:
 	RageModelVertexArray* CreateRageModelVertexArray();
 	void DeleteRageModelVertexArray( RageModelVertexArray* p );
 
-	void DrawQuads( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawFan( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawStrip( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts ) { }
-	void DrawIndexedTriangles( const RageModelVertexArray *p ) { }
-	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth ) { }
-
 protected:
+	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts ) { }
+	void DrawIndexedTrianglesInternal( const RageModelVertexArray *p ) { }
+	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth ) { }
+
 	VideoModeParams m_Params;
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) { m_Params = params; return ""; }
 	SDL_Surface* CreateScreenshot();

@@ -826,13 +826,8 @@ void RageDisplay_D3D::DeleteRageModelVertexArray( RageModelVertexArray* p )
 	delete p;
 }
 
-void RageDisplay_D3D::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( (iNumVerts%4) == 0 );
-
-	if(iNumVerts == 0)
-		return;
-
 	// there isn't a quad primitive in D3D, so we have to fake it with indexed triangles
 	int iNumQuads = iNumVerts/4;
 	int iNumTriangles = iNumQuads*2;
@@ -865,17 +860,10 @@ void RageDisplay_D3D::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 		v, // pVertexStreamZeroData,
 		sizeof(RageSpriteVertex) // VertexStreamZeroStride
 	);
-
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( (iNumVerts%2) == 0 );
-
-	if(iNumVerts < 4)
-		return;
-
 	// there isn't a quad strip primitive in D3D, so we have to fake it with indexed triangles
 	int iNumQuads = (iNumVerts-2)/2;
 	int iNumTriangles = iNumQuads*2;
@@ -908,13 +896,10 @@ void RageDisplay_D3D::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
 		v, // pVertexStreamZeroData,
 		sizeof(RageSpriteVertex) // VertexStreamZeroStride
 	);
-
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawFan( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( iNumVerts >= 3 );
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
@@ -923,12 +908,10 @@ void RageDisplay_D3D::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 		v, // pVertexStreamZeroData,
 		sizeof(RageSpriteVertex)
 	);
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	ASSERT( iNumVerts >= 3 );
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
@@ -937,14 +920,10 @@ void RageDisplay_D3D::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 		v, // pVertexStreamZeroData,
 		sizeof(RageSpriteVertex)
 	);
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
-	if( iNumVerts == 0 )
-		return;
-	ASSERT( iNumVerts >= 3 );
 	g_pd3dDevice->SetVertexShader( D3DFVF_RageSpriteVertex );
 	SEND_CURRENT_MATRICES;
 	g_pd3dDevice->DrawPrimitiveUP(
@@ -953,16 +932,13 @@ void RageDisplay_D3D::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 		v, // pVertexStreamZeroData,
 		sizeof(RageSpriteVertex)
 	);
-	StatsAddVerts( iNumVerts );
 }
 
-void RageDisplay_D3D::DrawIndexedTriangles( const RageModelVertexArray *p )
+void RageDisplay_D3D::DrawIndexedTrianglesInternal( const RageModelVertexArray *p )
 {
 	SEND_CURRENT_MATRICES;
 
 	p->Draw();
-		
-	StatsAddVerts( p->sizeTriangles()*3 );
 }
 
 /* Use the default poly-based implementation.  D3D lines apparently don't support
