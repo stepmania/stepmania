@@ -361,7 +361,17 @@ float LuaManager::RunExpressionF( const CString &str )
 
 int LuaManager::RunExpressionI( const CString &str )
 {
-	return (int)RunExpressionF(str);
+	if( !RunExpression( str ) )
+		return 0;
+
+	/* Don't accept a function as a return value. */
+	if( lua_isfunction( L, -1 ) )
+		RageException::Throw( "result is a function; did you forget \"()\"?" );
+
+	int result = (int) lua_tonumber( L, -1 );
+	lua_pop( L, -1 );
+
+	return result;
 }
 
 bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
