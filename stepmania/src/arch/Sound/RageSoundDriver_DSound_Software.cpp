@@ -24,7 +24,7 @@ void RageSound_DSound_Software::MixerThread()
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while( !SOUNDMAN && !shutdown_mixer_thread )
-		SDL_Delay( 10 );
+		usleep( 10000 );
 
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
 		if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
@@ -34,7 +34,7 @@ void RageSound_DSound_Software::MixerThread()
 	{
 		char *locked_buf;
 		unsigned len;
-		const int64_t play_pos = pcm->GetOutputPosition();
+		const int64_t play_pos = pcm->GetOutputPosition(); /* must be called before get_output_buf */
 
 		if( !pcm->get_output_buf(&locked_buf, &len, chunksize()) )
 		{
