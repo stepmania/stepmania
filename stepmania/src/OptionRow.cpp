@@ -64,6 +64,7 @@ void OptionRow::Clear()
 	ASSERT( m_pHand == NULL );
 
 	m_bFirstItemGoesDown = false;
+	ZERO( m_bRowHasFocus );
 }
 
 void OptionRow::DetachHandler()
@@ -118,8 +119,8 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 	{
 		vector<bool> &vbSelected = m_vbSelected[p];
 		vbSelected.resize( m_RowDef.choices.size() );
-		for( unsigned j=0; j<vbSelected.size(); j++ )
-			vbSelected[j] = false;
+		FOREACH( bool, vbSelected, b )
+			*b = false;
 		
 		// set select the first item if a SELECT_ONE row
 		if( m_RowDef.selectType == SELECT_ONE )
@@ -471,23 +472,28 @@ void OptionRow::UpdateText()
 	}
 }
 
-void OptionRow::UpdateEnabledDisabled( 
-	bool bThisRowHasFocus[NUM_PLAYERS], 
-	float fTweenSeconds )
+void OptionRow::SetRowFocus( bool bRowHasFocus[NUM_PLAYERS] )
+{
+	FOREACH_PlayerNumber( p )
+		m_bRowHasFocus[p] = bRowHasFocus[p];
+}
+
+void OptionRow::UpdateEnabledDisabled()
 {
 	/*
 		COLOR_SELECTED, 
 		COLOR_NOT_SELECTED, 
 		COLOR_DISABLED, 
+		TWEEN_SECONDS
 	*/
 
 	bool bThisRowHasFocusByAny = false;
 	FOREACH_HumanPlayer( p )
-		bThisRowHasFocusByAny |= bThisRowHasFocus[p];
+		bThisRowHasFocusByAny |= m_bRowHasFocus[p];
 
 	bool bThisRowHasFocusByAll = true;
 	FOREACH_HumanPlayer( p )
-		bThisRowHasFocusByAll &= bThisRowHasFocus[p];
+		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
 	
 	float fDiffuseAlpha = m_bHidden? 0.0f:1.0f;
 
@@ -508,7 +514,7 @@ void OptionRow::UpdateEnabledDisabled(
 				continue;
 
 			m_textItems[j]->StopTweening();
-			m_textItems[j]->BeginTweening( fTweenSeconds );
+			m_textItems[j]->BeginTweening( TWEEN_SECONDS );
 			m_textItems[j]->SetDiffuseAlpha( fDiffuseAlpha );
 			m_textItems[j]->SetY( m_fY );
 		}
@@ -518,7 +524,7 @@ void OptionRow::UpdateEnabledDisabled(
 		{
 			bool bRowEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
 			
-			if( bThisRowHasFocus[pn] )
+			if( m_bRowHasFocus[pn] )
 				color = COLOR_SELECTED;
 			else if( bRowEnabled )
 				color = COLOR_NOT_SELECTED;
@@ -537,14 +543,14 @@ void OptionRow::UpdateEnabledDisabled(
 			if( bt.GetDestY() != m_fY  ||  bt.DestTweenState().diffuse[0] != color )
 			{
 				bt.StopTweening();
-				bt.BeginTweening( fTweenSeconds );
+				bt.BeginTweening( TWEEN_SECONDS );
 				bt.SetDiffuse( color );
 				bt.SetY( m_fY );
 				FOREACH_HumanPlayer( p )
 				{
 					OptionsCursor &ul = *m_Underline[p][item_no];
 					ul.StopTweening();
-					ul.BeginTweening( fTweenSeconds );
+					ul.BeginTweening( TWEEN_SECONDS );
 					ul.SetDiffuseAlpha( color.a );
 					ul.SetY( m_fY );
 				}
@@ -567,8 +573,8 @@ void OptionRow::UpdateEnabledDisabled(
 	{
 		m_sprBullet.StopTweening();
 		m_textTitle.StopTweening();
-		m_sprBullet.BeginTweening( fTweenSeconds );
-		m_textTitle.BeginTweening( fTweenSeconds );
+		m_sprBullet.BeginTweening( TWEEN_SECONDS );
+		m_textTitle.BeginTweening( TWEEN_SECONDS );
 		m_sprBullet.SetDiffuseAlpha( m_bHidden? 0.0f:1.0f );
 		m_textTitle.SetDiffuseAlpha( m_bHidden? 0.0f:1.0f );
 		m_sprBullet.SetY( m_fY );
@@ -664,20 +670,20 @@ void OptionRow::Reload()
 			if( m_pHand == NULL )
 				return;
 
-			ExportOptions();
+			if( m_RowDef.m_bExportOnChange )
+				ExportOptions();
 
-			OptionRowDefinition def;
-			m_pHand->Reload( def );
+			m_pHand->Reload( m_RowDef );
 			ASSERT( !m_RowDef.choices.empty() );
 
-			m_RowDef = def;
 			FOREACH_PlayerNumber( p )
 				m_vbSelected[p].resize( m_RowDef.choices.size(), false );
 
+			ImportOptions();
+
+			UpdateEnabledDisabled();
 			UpdateText();
 			PositionUnderlines();
-
-			ImportOptions();
 		}
 		break;
 	case OptionRow::ROW_EXIT:
@@ -702,14 +708,16 @@ void OptionRow::HandleMessage( const CString& sMessage )
 #define INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
 	if( GetFirstItemGoesDown() ) \
 		vbSelected.insert( vbSelected.begin(), false );
-#define VERIFY_SELECTED( vbSelected ) if( m_RowDef.selectType == SELECT_ONE ) VerifyOneSelected(vbSelected);
-static void VerifyOneSelected( const vector<bool> vbSelected )
+static void VerifySelected( SelectType st, const vector<bool> vbSelected )
 {
 	int iNumSelected = 0;
-	for( unsigned e = 0; e < vbSelected.size(); ++e )
-		if( vbSelected[e] )
-			iNumSelected++;
-	ASSERT( iNumSelected == 1 );
+	if( st == SELECT_ONE )
+	{
+		for( unsigned e = 0; e < vbSelected.size(); ++e )
+			if( vbSelected[e] )
+				iNumSelected++;
+		ASSERT( iNumSelected == 1 );
+	}
 }
 
 void OptionRow::ImportOptions()
@@ -722,13 +730,15 @@ void OptionRow::ImportOptions()
 		FOREACH( bool, m_vbSelected[p], b )
 			*b = false;
 
+	ASSERT( m_RowDef.choices.size() > 0 );
+
 	if( m_RowDef.bOneChoiceForAllPlayers )
 	{
 		ASSERT( m_vbSelected[0].size() == m_RowDef.choices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
 		m_pHand->ImportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
 		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
-		VERIFY_SELECTED( m_vbSelected[0] );
+		VerifySelected( m_RowDef.selectType, m_vbSelected[0] );
 	}
 	else
 	{
@@ -738,7 +748,7 @@ void OptionRow::ImportOptions()
 			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 			m_pHand->ImportOption( m_RowDef, p, m_vbSelected[p] );
 			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
-			VERIFY_SELECTED( m_vbSelected[p] );
+			VerifySelected( m_RowDef.selectType, m_vbSelected[p] );
 		}
 	}
 }

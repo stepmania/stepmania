@@ -100,9 +100,8 @@ public:
 	void PositionUnderlines();
 	void PositionIcons();
 	void UpdateText();
-	void UpdateEnabledDisabled( 
-		bool bThisRowHasFocus[NUM_PLAYERS], 
-		float fTweenSeconds );
+	void SetRowFocus( bool bRowHasFocus[NUM_PLAYERS] );
+	void UpdateEnabledDisabled();
 
 	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
 	int GetOneSharedSelection() const;
@@ -154,6 +153,7 @@ protected:
 	BitmapText				m_textTitle;
 	OptionIcon				m_OptionIcons[NUM_PLAYERS];
 	bool					m_bFirstItemGoesDown;
+	bool					m_bRowHasFocus[NUM_PLAYERS];
 
 	float m_fY;
 	bool m_bHidden; // currently off screen

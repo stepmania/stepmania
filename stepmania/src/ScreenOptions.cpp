@@ -462,9 +462,8 @@ void ScreenOptions::UpdateEnabledDisabled( int r )
 	FOREACH_PlayerNumber( pn )
 		bRowHasFocus[pn] = GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r;
 
-	row.UpdateEnabledDisabled( 
-		bRowHasFocus, 
-		TWEEN_SECONDS );
+	row.SetRowFocus( bRowHasFocus );
+	row.UpdateEnabledDisabled();
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
