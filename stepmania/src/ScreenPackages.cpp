@@ -564,7 +564,7 @@ static size_t FindEndOfHeaders( const CString &buf )
 {
 	size_t iPos1 = buf.find( "\n\n" );
 	size_t iPos2 = buf.find( "\r\n\r\n" );
-	LOG->Trace("end: %i, %i", iPos1, iPos2);
+	LOG->Trace("end: %u, %u", unsigned(iPos1), unsigned(iPos2));
 	if( iPos1 != string::npos && (iPos2 == string::npos || iPos2 > iPos1) )
 		return iPos1 + 2;
 	else if( iPos2 != string::npos && (iPos1 == string::npos || iPos1 > iPos2) )
@@ -652,7 +652,7 @@ void ScreenPackages::HTTPUpdate()
 
 		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{
-			m_sStatus = ssprintf( "%d", m_iResponseCode ) + m_sResponseName;
+			m_sStatus = ssprintf( "%ld", m_iResponseCode ) + m_sResponseName;
 		}
 		else
 		{
