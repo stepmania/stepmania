@@ -67,13 +67,8 @@ map<CString, CString> LogMaps;
 
 // constants
 /* We need to use SYS_BASE_PATH here, because this doesn't go through RageFile. */
-#if defined(DARWIN)
-#define LOG_PATH  "../../../log.txt"
-#define INFO_PATH "../../../info.txt"
-#else
 #define LOG_PATH	SYS_BASE_PATH "log.txt"
 #define INFO_PATH	SYS_BASE_PATH "info.txt"
-#endif
 
 static RageFile g_fileLog, g_fileInfo;
 

@@ -94,9 +94,6 @@ RageFileManager::RageFileManager()
 
 	/* Paths relative to the CWD: */
 	RageFileManager::Mount( "dir", ".", "" );
-#elif defined(DARWIN)
-    /* TopLevelDir/StepMania.app/Contents/MacOS/ is CWD */
-    RageFileManager::Mount( "dir", "../../..", "");
 #else
 	/* Paths relative to the CWD: */
 	RageFileManager::Mount( "dir", ".", "" );

@@ -127,6 +127,8 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	const char *home = getenv("HOME");
 	if( home )
 		chdir( home );
+#elif defined(DARWIN)
+	chdir(DirOfExecutable + "/../../..");
 #endif
 	
 #endif
