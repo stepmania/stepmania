@@ -78,6 +78,8 @@ const CString CREDIT_LINES[] =
 	"Dro Kulix (Peter S. May)",
 	"nmspaz (Jared Roberts)",
 	"binarys (Brendan Walker)",
+	"Lance Gilbert (Neovanglist)",
+	"Michel Donais",
 	"Mantis (Ben Nordstrom)",
 	"Parasyte (Chris Gomez)",
 	"dirkthedaring (Michael Patterson)",

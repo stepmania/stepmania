@@ -78,11 +78,14 @@ ScreenInstructions::ScreenInstructions()
 	case PLAY_MODE_ARCADE:
 		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions arcade");
 		break;
-	case PLAY_MODE_ENDLESS:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions endless");
+	case PLAY_MODE_NONSTOP:
+		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions nonstop");
 		break;
 	case PLAY_MODE_ONI:
 		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions oni");
+		break;
+	case PLAY_MODE_ENDLESS:
+		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions endless");
 		break;
 	default:
 		ASSERT(0);
@@ -144,6 +147,7 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_ARCADE:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );
 			break;
+		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );

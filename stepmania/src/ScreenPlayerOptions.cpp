@@ -138,7 +138,8 @@ void ScreenPlayerOptions::ExportOptions()
 
 void ScreenPlayerOptions::GoToPrevState()
 {
-	if(GAMESTATE->m_PlayMode == PLAY_MODE_ONI ||
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP  ||
+		GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||
 		GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 	else

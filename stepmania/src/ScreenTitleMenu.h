@@ -28,7 +28,7 @@ public:
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	enum TitleMenuChoice {
+	enum Choice {
 		CHOICE_GAME_START = 0,
 		CHOICE_SELECT_GAME,
 		CHOICE_MAP_INSTRUMENTS,
@@ -41,24 +41,25 @@ public:
 		CHOICE_SANDBOX,
 		#endif
 		CHOICE_EXIT,
-		NUM_TITLE_MENU_CHOICES	// leave this at the end!
+		NUM_CHOICES	// leave this at the end!
 	};
+
 
 private:
 	void GainFocus( int iChoiceIndex );
 	void LoseFocus( int iChoiceIndex );
 
-	TitleMenuChoice m_TitleMenuChoice;
+	Choice			m_Choice;
 
-	BitmapText			m_textHelp;
-	BitmapText			m_textChoice[NUM_TITLE_MENU_CHOICES];
+	BitmapText		m_textHelp;
+	BitmapText		m_textChoice[NUM_CHOICES];
 
-	RandomSample		m_soundAttract;
-	RandomSample		m_soundChange;
-	RandomSample		m_soundSelect;
-	RandomSample		m_soundInvalid;
+	RandomSample	m_soundAttract;
+	RandomSample	m_soundChange;
+	RandomSample	m_soundSelect;
+	RandomSample	m_soundInvalid;
 
-	RageTimer			TimeToDemonstration;
+	RageTimer		TimeToDemonstration;
 };
 
 

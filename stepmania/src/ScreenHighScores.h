@@ -10,8 +10,8 @@
 */
 
 #include "ScreenAttract.h"
+#include "GameConstantsAndTypes.h"	// for NUM_HIGH_SCORE_LINES
 
-#define NUM_HIGH_SCORES	5
 
 class ScreenHighScores : public ScreenAttract
 {
@@ -20,9 +20,9 @@ public:
 
 protected:
 	BitmapText m_textCategory;
-	Sprite m_sprBullets[NUM_HIGH_SCORES];
-	BitmapText m_textNames[NUM_HIGH_SCORES];
-	BitmapText m_textScores[NUM_HIGH_SCORES];
+	Sprite m_sprBullets[NUM_HIGH_SCORE_LINES];
+	BitmapText m_textNames[NUM_HIGH_SCORE_LINES];
+	BitmapText m_textScores[NUM_HIGH_SCORE_LINES];
 };
 
 

@@ -18,13 +18,23 @@
 #include "RandomSample.h"
 
 
-const unsigned NUM_ITEMS_ON_PAGE_1 = 3;	// easy, medium, hard, 
-const unsigned NUM_ITEMS_ON_PAGE_2 = 2;	// Oni, Endless
-const unsigned NUM_DIFFICULTY_ITEMS = NUM_ITEMS_ON_PAGE_1 + NUM_ITEMS_ON_PAGE_2;
-const unsigned NUM_PAGES = 2;	// easy-medium-hard, Oni
-
 class ScreenSelectDifficulty : public Screen
 {
+	enum Choice
+	{
+		CHOICE_EASY,	// page 1
+		CHOICE_MEDIUM,
+		CHOICE_HARD,
+		CHOICE_NONSTOP,	// page 2
+		CHOICE_ONI,	
+		CHOICE_ENDLESS,
+		NUM_CHOICES
+	};
+
+#define NUM_CHOICES_ON_PAGE_1	3	// easy, medium, hard, 
+#define NUM_CHOICES_ON_PAGE_2	3	// Nonstop, Oni, Endless
+#define NUM_PAGES	2
+
 public:
 	ScreenSelectDifficulty();
 	virtual ~ScreenSelectDifficulty();
@@ -52,8 +62,8 @@ private:
 
 	ActorFrame	m_framePages;	// 2 pages
 
-	Sprite	m_sprHeader[NUM_DIFFICULTY_ITEMS];
-	Sprite	m_sprPicture[NUM_DIFFICULTY_ITEMS];
+	Sprite	m_sprHeader[NUM_CHOICES];
+	Sprite	m_sprPicture[NUM_CHOICES];
 	Sprite	m_sprExplanation[NUM_PAGES];
 	Sprite	m_sprMoreArrows[NUM_PAGES];
 
@@ -65,7 +75,7 @@ private:
 	RageSound	m_soundSelect;
 	RandomSample m_soundDifficult;
 
-	int m_iSelection[NUM_PLAYERS];
+	Choice m_Choice[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 
 	float m_fLockInputTime;

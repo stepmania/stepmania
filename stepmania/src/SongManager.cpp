@@ -265,11 +265,10 @@ void SongManager::ReadStatisticsFromDisk()
 
 
 	// load song statistics
-	const IniFile::key *Key = ini.GetKey( "Statistics" );
-	if( Key )
+	const IniFile::key *pSongsKey = ini.GetKey( "Statistics" );
+	if( pSongsKey )
 	{
-		for( IniFile::key::const_iterator i = Key->begin(); 
-			i != Key->end(); ++i )
+		for( IniFile::key::const_iterator i = pSongsKey->begin(); i != pSongsKey->end(); ++i )
 		{
 			CString name = i->first;
 			CString value = i->second;
@@ -282,7 +281,7 @@ void SongManager::ReadStatisticsFromDisk()
 			unsigned i;
 
 			// Parse for Song name and Notes name
-			iRetVal = sscanf( name, "%[^:]::%[^:]::%[^\n]", szSongDir, szNotesType, szNotesDescription );
+			iRetVal = sscanf( name.c_str(), "%[^:]::%[^:]::%[^\n]", szSongDir, szNotesType, szNotesDescription );
 			if( iRetVal != 3 )
 				continue;	// this line doesn't match what is expected
 	
@@ -321,7 +320,7 @@ void SongManager::ReadStatisticsFromDisk()
 			char szGradeLetters[10];	// longest possible string is "AAA"
 
 			iRetVal = sscanf( 
-				value, 
+				value.c_str(), 
 				"%d::%[^:]::%d::%d", 
 				&pNotes->m_iNumTimesPlayed,
 				szGradeLetters,
@@ -334,6 +333,45 @@ void SongManager::ReadStatisticsFromDisk()
 			pNotes->m_TopGrade = StringToGrade( szGradeLetters );
 		}
 	}
+
+	// load course statistics
+	const IniFile::key *pCoursesKey = ini.GetKey( "Courses" );
+	if( pCoursesKey )
+	{
+		for( IniFile::key::const_iterator i = pCoursesKey->begin(); i != pCoursesKey->end(); ++i )
+		{
+			CString name = i->first;
+			CString value = i->second;
+
+			// Each value has the format "CoursePath,Difficulty,Slot=DancePoints,SurviveTime,sName"
+
+			// Parse left hand side
+			char szCoursePath[256];
+			Difficulty difficulty;
+			int iSlot;
+			int iDancePoints;
+			float fSurviveTime;
+			char szName[256];
+
+			int iRetVal;
+			iRetVal = sscanf( name.c_str(), "%[^,],%d,%d", szCoursePath, &difficulty, &iSlot );
+			if( iRetVal != 3 )
+				continue;	// line doesn't match what is expected
+			iRetVal = sscanf( value.c_str(), "%d,%f,%d[^\n]", &iDancePoints, &fSurviveTime, &szName );
+			if( iRetVal != 3 )
+				continue;	// line doesn't match what is expected
+
+			
+			// Search for the corresponding Course pointer.
+			Course* pCourse = SONGMAN->GetCourseFromPath( szCoursePath );
+			if( pCourse == NULL )	// didn't find a match
+				continue;	// skip this entry
+
+//			pCourse->m_TopGrade = StringToGrade( szGradeLetters );
+		}
+	}
+
+
 }
 
 void SongManager::SaveStatisticsToDisk()
@@ -460,11 +498,11 @@ void SongManager::InitCoursesFromDisk()
 		Course course;
 		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
 		if( course.GetNumStages() > 0 )
-			m_aOniCourses.push_back( course );
+			m_Courses.push_back( course );
 	}
 	
 	//
-	// Create endless courses
+	// Create group courses for Endless and Nonstop
 	//
 	CStringArray saGroupNames;
 	this->GetGroupNames( saGroupNames );
@@ -481,30 +519,9 @@ void SongManager::InitCoursesFromDisk()
 			course.CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
 
 			if( course.GetNumStages() > 0 )
-				m_aEndlessCourses.push_back( course );
+				m_Courses.push_back( course );
 		}
 	}
-
-
-	//
-	// Load extra stages
-	//
-	for( g=0; g<saGroupNames.size(); g++ )	// foreach Group
-	{
-		CString sGroupName = saGroupNames[g];
-		CStringArray saCoursePaths;
-		GetDirListing( "Songs\\" + sGroupName + "\\*.crs", saCoursePaths, false, true );
-		for( unsigned i=0; i<saCoursePaths.size(); i++ )
-		{
-			Course course;
-			course.LoadFromCRSFile( saCoursePaths[i], m_pSongs );
-			if( course.GetNumStages() > 0 )
-				m_aExtraCourses.push_back( course );
-		}
-	}
-
-
-
 }
 
 void SongManager::ReloadCourses()
@@ -523,8 +540,45 @@ void SongManager::CleanCourses()
 			m_pSongs[i]->m_apNotes[n]->Compress();
 		}
 	}
-
 }
+
+void SongManager::GetNonstopCourses( vector<Course*> AddTo )
+{
+	PlayerOptions po;
+	for( unsigned i=0; i<m_Courses.size(); i++ )
+	{
+		if( m_Courses[i].m_bRepeat )
+			continue;	// skip
+		if( m_Courses[i].m_iLives > 0 )	// use battery life meter
+			continue;
+		
+		AddTo.push_back( &m_Courses[i] );
+	}
+}
+
+void SongManager::GetOniCourses( vector<Course*> AddTo )
+{
+	PlayerOptions po;
+	for( unsigned i=0; i<m_Courses.size(); i++ )
+	{
+		if( m_Courses[i].m_bRepeat )
+			continue;	// skip
+		if( m_Courses[i].m_iLives <= 0 )	// use bar life meter
+			continue;
+		
+		AddTo.push_back( &m_Courses[i] );
+	}
+}
+
+void SongManager::GetEndlessCourses( vector<Course*> AddTo )
+{
+	for( unsigned i=0; i<m_Courses.size(); i++ )
+	{
+		if( m_Courses[i].m_bRepeat )
+			AddTo.push_back( &m_Courses[i] );
+	}	
+}
+
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
@@ -540,8 +594,8 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	pNotesOut = course.GetNotesForStage( 0 );
 	if( pNotesOut == NULL ) return false;
 	
-	po_out.FromString( course.GetModifiers(0) );
-	so_out.FromString( course.GetModifiers(0) );
+	course.GetPlayerOptions( 0, &po_out );
+	course.GetSongOptions( &so_out );
 
 	return true;
 }
@@ -639,6 +693,15 @@ Song* SongManager::GetSongFromDir( CString sDir )
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
 		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )
 			return m_pSongs[i];
+
+	return NULL;
+}
+
+Course* SongManager::GetCourseFromPath( CString sPath )
+{
+	for( unsigned int i=0; i<m_Courses.size(); i++ )
+		if( sPath.CompareNoCase(m_Courses[i].m_sPath) == 0 )
+			return &m_Courses[i];
 
 	return NULL;
 }

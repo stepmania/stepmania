@@ -27,21 +27,6 @@
 #include "RageSoundManager.h"
 
 
-const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
-	"GAME START",
-	"SWITCH GAME",
-	"CONFIG KEY/JOY",
-	"INPUT OPTIONS",
-	"MACHINE OPTIONS",
-	"GRAPHIC OPTIONS",
-	"APPEARANCE OPTIONS",
-	"EDIT/RECORD/SYNCH",
-	#ifdef _DEBUG
-	"SANDBOX",
-	#endif
-	"EXIT",
-};
-
 #define HELP_X							THEME->GetMetricF("ScreenTitleMenu","HelpX")
 #define HELP_Y							THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define CHOICES_X						THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
@@ -63,6 +48,20 @@ const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
+const CString CHOICE_TEXT[ScreenTitleMenu::NUM_CHOICES]= {
+	"GAME START",
+	"SWITCH GAME",
+	"CONFIG KEY/JOY",
+	"INPUT OPTIONS",
+	"MACHINE OPTIONS",
+	"GRAPHIC OPTIONS",
+	"APPEARANCE OPTIONS",
+	"EDIT/RECORD/SYNCH",
+	#ifdef _DEBUG
+	"SANDBOX",
+	#endif
+	"EXIT",
+};
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
@@ -90,7 +89,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	{
 	case PrefsManager::COIN_HOME:
 		int i;
-		for( i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
+		for( i=0; i<NUM_CHOICES; i++ )
 		{
 			m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","titlemenu") );
 			m_textChoice[i].SetText( CHOICE_TEXT[i] );
@@ -117,11 +116,11 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
 
-	m_TitleMenuChoice = CHOICE_GAME_START;
+	m_Choice = CHOICE_GAME_START;
 
-	for( int i=0; i<NUM_TITLE_MENU_CHOICES; i++ )
+	for( int i=0; i<NUM_CHOICES; i++ )
 		LoseFocus( i );
-	GainFocus( m_TitleMenuChoice );
+	GainFocus( m_Choice );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 
@@ -168,12 +167,12 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		{
 		case PrefsManager::COIN_HOME:
 			TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
-			LoseFocus( m_TitleMenuChoice );
-			if( m_TitleMenuChoice == 0 ) // wrap around
-				m_TitleMenuChoice = (ScreenTitleMenu::TitleMenuChoice)((int)NUM_TITLE_MENU_CHOICES); 
-			m_TitleMenuChoice = TitleMenuChoice( m_TitleMenuChoice-1 );
+			LoseFocus( m_Choice );
+			if( m_Choice == 0 ) // wrap around
+				m_Choice = (Choice)((int)NUM_CHOICES); 
+			m_Choice = Choice( m_Choice-1 );
 			m_soundChange.PlayRandom();
-			GainFocus( m_TitleMenuChoice );
+			GainFocus( m_Choice );
 			break;
 		case PrefsManager::COIN_PAY:
 		case PrefsManager::COIN_FREE:
@@ -185,12 +184,12 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		{
 		case PrefsManager::COIN_HOME:
 			TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
-			LoseFocus( m_TitleMenuChoice );
-			if( m_TitleMenuChoice == (int)ScreenTitleMenu::NUM_TITLE_MENU_CHOICES-1 ) 
-				m_TitleMenuChoice = (TitleMenuChoice)-1; // wrap around
-			m_TitleMenuChoice = TitleMenuChoice( m_TitleMenuChoice+1 );
+			LoseFocus( m_Choice );
+			if( m_Choice == (int)ScreenTitleMenu::NUM_CHOICES-1 ) 
+				m_Choice = (Choice)-1; // wrap around
+			m_Choice = Choice( m_Choice+1 );
 			m_soundChange.PlayRandom();
-			GainFocus( m_TitleMenuChoice );
+			GainFocus( m_Choice );
 			break;
 		case PrefsManager::COIN_PAY:
 		case PrefsManager::COIN_FREE:
@@ -219,7 +218,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 			GAMESTATE->m_bPlayersCanJoin = false;
 
-			switch( m_TitleMenuChoice )
+			switch( m_Choice )
 			{
 			case CHOICE_GAME_START:
 			case CHOICE_SELECT_GAME:
@@ -284,7 +283,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );
 		break;
 	case SM_GoToNextScreen:
-		switch( m_TitleMenuChoice )
+		switch( m_Choice )
 		{
 		case CHOICE_GAME_START:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );

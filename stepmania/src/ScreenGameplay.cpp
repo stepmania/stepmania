@@ -132,6 +132,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
 			GAMESTATE->m_iPossibleDancePoints[p] = notedata.GetPossibleDancePoints();
 			break;
+		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			{
@@ -151,6 +152,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 				}
 			}
 			break;
+		default:
+			ASSERT(0);
 		}
 	}
 
@@ -252,6 +255,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	case PLAY_MODE_ARCADE:
 		this->AddChild( &m_textStageNumber );
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		for( p=0; p<NUM_PLAYERS; p++ )
@@ -300,6 +304,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		case PLAY_MODE_ARCADE:
 			m_pScoreDisplay[p] = new ScoreDisplayNormal;
 			break;
+		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;
@@ -480,6 +485,7 @@ bool ScreenGameplay::IsLastSong()
 	{
 	case PLAY_MODE_ARCADE:
 		return true;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
@@ -510,6 +516,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	{
 	case PLAY_MODE_ARCADE:
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
@@ -542,8 +549,8 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 				if( asModifiers[iPlaySongIndex] != "" )		// some modifiers specified
 					GAMESTATE->m_PlayerOptions[p].FromString( asModifiers[iPlaySongIndex] );	// put them into effect
 			}
+
 		}
-		break;
 	default:
 		ASSERT(0);
 		break;
@@ -804,6 +811,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
 				else						m_announcerGood.PlayRandom();
 				break;
+			case PLAY_MODE_NONSTOP:
 			case PLAY_MODE_ONI:
 			case PLAY_MODE_ENDLESS:
 				m_announcerOni.PlayRandom();
@@ -1040,6 +1048,7 @@ void SaveChanges()
 	case PLAY_MODE_ARCADE:
 		GAMESTATE->m_pCurSong->Save();
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
@@ -1064,6 +1073,7 @@ void DontSaveChanges()
 		ld.LoadFromSMFile(GAMESTATE->m_pCurSong->GetCacheFilePath(),
 			*GAMESTATE->m_pCurSong);
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
@@ -1093,6 +1103,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 			"Choosing NO will discard your changes.",
 			GAMESTATE->m_pCurSong->GetFullTitle().GetString() );
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		sMessage = ssprintf( 
@@ -1392,6 +1403,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			// SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 			SCREENMAN->SetNewScreen( SONGSEL_SCREEN );
 			break;
+		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
@@ -1474,7 +1486,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToScreenAfterFail );
 			break;
 		}
-		if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP  ||
+			GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  
+			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
 			SCREENMAN->SetNewScreen( "ScreenEvaluation" );
 		else if( PREFSMAN->m_bEventMode )
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );

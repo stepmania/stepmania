@@ -233,10 +233,13 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_ARCADE:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 			break;
+		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 			break;
+		default:
+			ASSERT(0);
 		}
 		break;
 	}

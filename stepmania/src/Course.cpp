@@ -33,6 +33,8 @@ Course::Course()
 
 void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 {
+	m_sPath = sPath;	// save path
+
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
 		RageException::Throw( "Error opening CRS file '%s'.", sPath.GetString() );
@@ -220,10 +222,6 @@ CString Course::GetDescription( int iStage ) const
 	return entries[iStage].description;
 }
 
-CString Course::GetModifiers( int iStage ) const
-{
-	return entries[iStage].modifiers;
-}
 
 void Course::AddStage( Song* pSong, CString sDescription, CString sModifiers )
 {
@@ -273,12 +271,12 @@ RageColor Course::GetColor()
 		return RageColor(0,1,0,1);	// green
 }
 
-void Course::GetPlayerOptions( PlayerOptions* pPO_out )
+void Course::GetPlayerOptions( int iStage, PlayerOptions* pPO_out ) const
 {
-	*pPO_out = PlayerOptions();
+	pPO_out->FromString( entries[iStage].modifiers );
 }
 
-void Course::GetSongOptions( SongOptions* pSO_out )
+void Course::GetSongOptions( SongOptions* pSO_out ) const
 {
 	*pSO_out = SongOptions();
 	pSO_out->m_LifeType = (m_iLives==-1) ? SongOptions::LIFE_BAR : SongOptions::LIFE_BATTERY;

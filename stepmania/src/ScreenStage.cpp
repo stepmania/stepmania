@@ -50,6 +50,7 @@ enum StageMode
 	MODE_FINAL,
 	MODE_EXTRA1,
 	MODE_EXTRA2,
+	MODE_NONSTOP,
 	MODE_ONI,
 	MODE_ENDLESS
 };
@@ -62,7 +63,8 @@ ScreenStage::ScreenStage()
 
 
 	StageMode		stage_mode;
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )			stage_mode = MODE_ONI;
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )		stage_mode = MODE_NONSTOP;
+	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )		stage_mode = MODE_ONI;
 	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )	stage_mode = MODE_ENDLESS;
 	else if( GAMESTATE->IsExtraStage() )					stage_mode = MODE_EXTRA1;
 	else if( GAMESTATE->IsExtraStage2() )					stage_mode = MODE_EXTRA2;
@@ -89,9 +91,10 @@ ScreenStage::ScreenStage()
 			}
 		}
 		break;
-	case MODE_FINAL:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage final") );		break;
-	case MODE_EXTRA1:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra1") );		break;
-	case MODE_EXTRA2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra2") );		break;
+	case MODE_FINAL:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage final") );	break;
+	case MODE_EXTRA1:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra1") );	break;
+	case MODE_EXTRA2:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage extra2") );	break;
+	case MODE_NONSTOP:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage nonstop") );	break;
 	case MODE_ONI:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage oni") );		break;
 	case MODE_ENDLESS:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage endless") );	break;
 	default:		ASSERT(0);
@@ -184,6 +187,9 @@ ScreenStage::ScreenStage()
 		break;
 	case MODE_EXTRA2:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra2") );
+		break;
+	case MODE_NONSTOP:
+		m_sprStage.Load( THEME->GetPathTo("Graphics","stage nonstop") );
 		break;
 	case MODE_ONI:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage oni") );

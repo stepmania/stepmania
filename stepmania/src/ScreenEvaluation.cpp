@@ -126,6 +126,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	case PLAY_MODE_ARCADE:
 		m_ResultMode = bSummary ? RM_ARCADE_SUMMARY : RM_ARCADE_STAGE;
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		m_ResultMode = RM_ONI;
@@ -835,6 +836,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		case PLAY_MODE_ARCADE:
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 			break;
+		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectCourse );

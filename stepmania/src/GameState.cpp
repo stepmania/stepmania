@@ -28,7 +28,9 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 #define STAGE_COLOR_FINAL		THEME->GetMetricC("GameState","StageColorFinal")
 #define STAGE_COLOR_EXTRA1		THEME->GetMetricC("GameState","StageColorExtra1")
 #define STAGE_COLOR_EXTRA2		THEME->GetMetricC("GameState","StageColorExtra2")
+#define STAGE_COLOR_NONSTOP		THEME->GetMetricC("GameState","StageColorNonstop")
 #define STAGE_COLOR_ONI			THEME->GetMetricC("GameState","StageColorOni")
+#define STAGE_COLOR_ENDLESS		THEME->GetMetricC("GameState","StageColorEndless")
 #define STAGE_TEXT_DEMO			THEME->GetMetric("GameState","StageTextDemo")
 #define STAGE_TEXT_FINAL		THEME->GetMetric("GameState","StageTextFinal")
 #define STAGE_TEXT_EXTRA1		THEME->GetMetric("GameState","StageTextExtra1")
@@ -169,6 +171,7 @@ void GameState::ResetStageStatistics()
 
 	switch( m_PlayMode )
 	{
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		m_apSongsPlayed.clear();
@@ -256,12 +259,14 @@ CString GameState::GetStageText()
 
 RageColor GameState::GetStageColor()
 {
-	if( m_bDemonstration )		return STAGE_COLOR_DEMO;
-	else if( m_PlayMode==PLAY_MODE_ONI || m_PlayMode==PLAY_MODE_ENDLESS )	return STAGE_COLOR_ONI;
-	else if( IsFinalStage() )	return STAGE_COLOR_FINAL;
-	else if( IsExtraStage() )	return STAGE_COLOR_EXTRA1;
-	else if( IsExtraStage2() )	return STAGE_COLOR_EXTRA2;
-	else						return STAGE_COLOR( min(m_iCurrentStageIndex,4) );
+	if( m_bDemonstration )						return STAGE_COLOR_DEMO;
+	else if( m_PlayMode==PLAY_MODE_NONSTOP )	return STAGE_COLOR_NONSTOP;
+	else if( m_PlayMode==PLAY_MODE_ONI )		return STAGE_COLOR_ONI;
+	else if( m_PlayMode==PLAY_MODE_ENDLESS )	return STAGE_COLOR_ENDLESS;
+	else if( IsFinalStage() )					return STAGE_COLOR_FINAL;
+	else if( IsExtraStage() )					return STAGE_COLOR_EXTRA1;
+	else if( IsExtraStage2() )					return STAGE_COLOR_EXTRA2;
+	else										return STAGE_COLOR( min(m_iCurrentStageIndex,4) );
 }
 
 GameDef* GameState::GetCurrentGameDef()

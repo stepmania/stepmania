@@ -631,23 +631,17 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		}
 
 		break;
+	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			unsigned i;
-
 			vector<Course*> apCourses;
 			switch( GAMESTATE->m_PlayMode )
 			{
-			case PLAY_MODE_ONI:
-				for( i=0; i<SONGMAN->m_aOniCourses.size(); i++ )
-					apCourses.push_back( &SONGMAN->m_aOniCourses[i] );
-				SortCoursePointerArrayByDifficulty( apCourses );
-				break;
-			case PLAY_MODE_ENDLESS:
-				for( i=0; i<SONGMAN->m_aEndlessCourses.size(); i++ )
-					apCourses.push_back( &SONGMAN->m_aEndlessCourses[i] );
-				break;
+			case PLAY_MODE_NONSTOP:	SONGMAN->GetNonstopCourses( apCourses );	break;
+			case PLAY_MODE_ONI:		SONGMAN->GetOniCourses( apCourses );		break;
+			case PLAY_MODE_ENDLESS:	SONGMAN->GetEndlessCourses( apCourses );	break;
+			default:	ASSERT(0);
 			}
 
 			for( unsigned c=0; c<apCourses.size(); c++ )	// foreach course

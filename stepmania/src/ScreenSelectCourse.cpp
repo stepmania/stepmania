@@ -302,7 +302,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			pCourse->GetPlayerOptions( &GAMESTATE->m_PlayerOptions[p] );
+			pCourse->GetPlayerOptions( 0, &GAMESTATE->m_PlayerOptions[p] );
 		pCourse->GetSongOptions( &GAMESTATE->m_SongOptions );
 
 		m_Menu.StopTimer();

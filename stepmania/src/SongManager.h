@@ -46,18 +46,19 @@ public:
 	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
 
 
-	// for Oni
-	vector<Course> m_aOniCourses;
-
-	// for Extra Stages
-	vector<Course> m_aExtraCourses;
-	
-	// for Endless
-	vector<Course> m_aEndlessCourses;
+	//
+	// Courses for Nonstop, Oni, and Endless
+	//
+	vector<Course> m_Courses;
 
 	void InitCoursesFromDisk();
 	void ReloadCourses();
 	void CleanCourses();
+
+	void GetNonstopCourses( vector<Course*> AddTo );	// add to if life meter type is BAR.
+	void GetOniCourses( vector<Course*> AddTo );		// add to if life meter type is BATTERY.
+	void GetEndlessCourses( vector<Course*> AddTo );	// add to if set to REPEAT.
+
 
 	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
@@ -65,6 +66,7 @@ public:
 	Song* GetRandomSong();
 
 	Song* GetSongFromDir( CString sDir );
+	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );

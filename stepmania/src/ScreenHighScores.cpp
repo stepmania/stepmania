@@ -37,7 +37,7 @@ ScreenHighScores::ScreenHighScores() : ScreenAttract("ScreenHighScores","high sc
 	m_textCategory.SetXY( CATEGORY_X, CATEGORY_Y );
 	m_textCategory.SetText( "" );
 
-	for( int i=0; i<NUM_HIGH_SCORES; i++ )
+	for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
 	{
 		m_sprBullets[i].Load( THEME->GetPathTo("Graphics",("high scores bullets 1x5")) );
 		m_sprBullets[i].SetXY( BULLETS_START_X+LINE_SPACING_X*i, BULLETS_START_Y+LINE_SPACING_Y*i );

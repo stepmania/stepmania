@@ -87,8 +87,9 @@ enum NotesType
 enum PlayMode
 {
 	PLAY_MODE_ARCADE,
-	PLAY_MODE_ONI,
-	PLAY_MODE_ENDLESS,
+	PLAY_MODE_NONSTOP,	// DDR EX Nonstop
+	PLAY_MODE_ONI,		// DDR EX Challenge
+	PLAY_MODE_ENDLESS,	// DDR PlayStation Endless
 	NUM_PLAY_MODES,
 	PLAY_MODE_INVALID
 };
@@ -168,5 +169,7 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	default:	ASSERT(0);	return 0;
 	}
 }
+
+const int NUM_HIGH_SCORE_LINES	= 5;
 
 #endif
