@@ -379,7 +379,7 @@ bool FromString( const CString &sValue, int &out );
 bool FromString( const CString &sValue, unsigned  &out );
 bool FromString( const CString &sValue, float &out );
 bool FromString( const CString &sValue, bool &out );
-bool FromString( const CString &sValue, CString &out ) { out = sValue; return true; }
+inline bool FromString( const CString &sValue, CString &out ) { out = sValue; return true; }
 
 CString ToString( int value );
 CString ToString( unsigned value );
