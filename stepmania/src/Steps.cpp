@@ -31,6 +31,8 @@
 #include "PrefsManager.h"
 #include "NotesLoaderSM.h"
 
+const int MAX_DESCRIPTION_LENGTH = 20;
+
 Steps::Steps()
 {
 	m_StepsType = STEPS_TYPE_INVALID;
@@ -155,6 +157,9 @@ void Steps::TidyUpData()
 
 	if( GetMeter() < 1) // meter is invalid
 		SetMeter( int(PredictMeter()) );
+
+	if( m_sDescription.size() > MAX_DESCRIPTION_LENGTH )
+		m_sDescription = m_sDescription.Left( MAX_DESCRIPTION_LENGTH );
 }
 
 void Steps::Decompress() const
