@@ -1,0 +1,222 @@
+﻿# This file is UTF-8; to be readable, edit it in an editor capable
+# of UTF-8, such as Notepad in Windows 2000 and later.
+#
+# Six keywords: TitleFrom, ArtistFrom, SubtitleFrom, TitleTo,
+# ArtistTo, SubtitleTo.
+#
+# From lines are regular expressions.  If all From lines for a set
+# are matched, all To lines are replaced.
+#
+# All lines, by default, must match the entire line; for example,
+# "Foo" matches only "Foo", not "Foobar".  Matches are case-insensitive.
+#
+# Matches are checked in the order given in this file; more than one
+# set may match a single song.
+#
+# Courses are matched by title only.
+#
+# Note that changes to this file are only applied to songs when they are
+# first loaded.  Delete the files in the "Cache" directory after making
+# changes.
+TitleFrom: Candy
+ArtistFrom: Luv.*
+TitleTo: CANDY ☆
+*
+TitleFrom: Candy
+ArtistFrom: .*Riyu.*
+TitleTo: CANDY ♡
+*
+# Make sure this appears after the above "Riyu" match, so it doesn't
+# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
+# correct, but handle both. */
+ArtistFrom: Riyu Kosak[au]
+ArtistTo: 小坂りゆ
+*
+ArtistFrom: Kosak[au] Riyu
+ArtistTo: 小坂りゆ
+*
+# Matsuri Japan is often just "Japan".  There may be other songs by
+# that name, too, so match the artist, too.
+TitleFrom: Japan
+ArtistFrom: .*(Re-Venge)|(RevenG).*
+TitleTo: 祭 JAPAN
+*
+/* Fix up hacked titles: */
+TitleFrom: Max 300
+ArtistFrom: %
+SubtitleTo: Ω
+*
+TitleFrom: Bre=kdown
+TitleTo: BRE∀K DOWN!
+*
+TitleFrom: Candy #
+TitleTo: Candy ☆
+*
+TitleFrom: Candy \$
+TitleTo: Candy ♡
+*
+TitleFrom: } JAPAN
+TitleTo: 祭 JAPAN
+*
+TitleFrom: \+\{
+TitleTo: 革命
+*
+TitleFrom: Sweet Sweet \$ Magic
+TitleTo: Sweet Sweet ♡ Magic
+*
+
+# Special stuff is done.  Titles:
+TitleFrom: Matsuri Japan
+TitleTo: 祭 JAPAN
+*
+TitleFrom: Kakumei
+TitleTo: 革命
+*
+TitleFrom: Sweet Sweet (Love )?Magic
+TitleTo: Sweet Sweet ♡ Magic
+*
+TitleFrom: Break ?Down!?
+TitleTo: BRE∀K DOWN!
+*
+# People can't decide how they want to spell this, so cope with
+# both l or r, and one or two l/r and t.
+TitleFrom: Sana Mo((ll?)|(rr?))et(t?)e Ne Ente
+TitleTo: サナ・モレッテ・ネ・エンテ
+*
+TitleFrom: Freckles
+TitleTo: そばかす
+*
+TitleFrom: Sobakasu
+TitleTo: そばかす
+*
+TitleFrom: Hypnotic Crisis
+TitleTo: HYPNØTIC CRISIS
+*
+TitleFrom: Yozora no Muko
+TitleTo: 夜空のムコウ
+*
+TitleFrom: 17 ?(Sai)?
+TitleTo: 17才
+*
+# Handle "Mobo Moga:Mobo * Moga"; spaces optional.
+TitleFrom: Mobo ?\*? ?Moga
+TitleTo: MOBO☆MOGA
+*
+TitleFrom: Love (Love )?Shine
+TitleTo: LOVE ♡ SHINE
+*
+TitleFrom: God of Romance
+TitleTo: ロマンスの神様
+*
+TitleFrom: Dancing Pompokolin
+TitleTo: おどるポンポコリン
+*
+TitleFrom: Aoi Shoudou
+TitleTo: 青い振動
+*
+TitleFrom: Blue Impulse
+TitleTo: 青い衝動
+*
+# Handle a typo:
+TitleFrom: Aio Shoudou
+TitleTo: 青い衝動
+*
+TitleFrom: Daikenkai
+TitleTo: 大見解
+*
+TitleFrom: Love Love Sugar
+TitleTo: ♡LOVE²シュガ→♡
+*
+TitleFrom: Mikeneko Rock
+TitleTo: 三毛猫ロック
+*
+TitleFrom: Sakura
+TitleTo: 桜
+*
+# Handle Door and Doors
+TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
+TitleTo: 魔法の扉
+ArtistTo: スペース☆マコのテーマ
+* 
+TitleFrom: Senorita
+TitleTo: Señorita
+* 
+TitleFrom: Senorita\(Speedy Mix\)
+TitleTo: Señorita
+ArtistTo: Speedy Mix
+*
+TitleFrom: La Senorita
+TitleTo: La Señorita
+*
+TitleFrom: La Senorita Virtual
+TitleTo: La Señorita Virtual
+*
+# Subtitles:
+# (Title is Graduation.)
+SubtitleFrom: Each Tomorrow
+ArtistTo: それぞれの明日
+*
+
+# Artists:
+ArtistFrom: Omega
+ArtistTo: Ω
+*
+ArtistFrom: ZZ
+ArtistTo: &doublezeta;
+*
+# Serious tropical ska bomb? ruh roh
+ArtistFrom: Anettai Maji.*Ska (Bakudan|Bukuden)
+ArtistTo: 亜熱帯マジ-SKA爆弾
+*
+ArtistFrom: Spanish Folk Music
+ArtistTo: メキシコ民謡
+*
+ArtistFrom: Sanae? Shintani
+ArtistTo: 新谷さなえ
+*
+ArtistFrom: dj TAKA feat. ?Noria
+SubtitleTo: dj TAKA feat. のりあ
+*
+ArtistFrom: Miyuki Kunitake
+SubtitleTo: くにたけみゆき
+*
+ArtistFrom: Kunitake Miyuki
+SubtitleTo: くにたけみゆき
+*
+# Courses:
+TitleFrom: Kidou
+TitleTo: 鬼道
+*
+TitleFrom: Demon Road
+TitleTo: 鬼道
+*
+TitleFrom: Kidou 2
+TitleTo: 鬼道弐
+*
+TitleFrom: Demon Road 2
+TitleTo: 鬼道弐
+*
+TitleFrom: Love
+TitleTo: Love ♡
+*
+TitleFrom: Love Love
+TitleTo: Love ♡
+*
+TitleFrom: 2 ?MB
+TitleTo: 2MB鬼
+*
+TitleFrom: Dancemania( Oni)?
+TitleTo: Dancemania 鬼
+*
+TitleFrom: TaQ( Oni)?
+TitleTo: TaQ 鬼
+*
+TitleFrom: Legend Road
+TitleTo: 伝説道
+*
+TitleFrom: Slow Demon Road
+TitleTo: 鬼の遅道
+*
+TitleFrom: True Demon Road
+TitleTo: 真鬼道
+*
