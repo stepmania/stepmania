@@ -770,7 +770,12 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 {
 	XNode* pGeneralDataNode = new XNode;
 	pGeneralDataNode->name = "GeneralData";
-	
+
+	// TRICKY: DisplayName is only written and is not read on load.  The reason
+	// for this is so that other apps that read this XML can get the player 
+	// name without having to read Editable.ini.
+	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayName() );
+
 	pGeneralDataNode->AppendChild( "Guid",							m_sGuid );
 	pGeneralDataNode->AppendChild( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	pGeneralDataNode->AppendChild( "DefaultModifiers",				m_sDefaultModifiers );
