@@ -83,10 +83,10 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
 			const int iIndex = BeatToNoteRow( fBeat );
 
-			if( m_iNumTracks != sMeasureLine.GetLength() )
-				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+//			if( m_iNumTracks != sMeasureLine.GetLength() )
+//				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
-			for( int c=0; c<sMeasureLine.GetLength(); c++ )
+			for( int c=0; c<min(sMeasureLine.GetLength(),m_iNumTracks); c++ )
 				m_TapNotes[c][iIndex] = sMeasureLine[c];
 		}
 	}

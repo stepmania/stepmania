@@ -112,19 +112,18 @@ public:
 
 		if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		{
-
-
-			DrawMask( m_fPercent );
+			DrawMask( m_fPercent );		// this is the "right endcap" to the life
 			
 			const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
 			float fPercentBetweenStrips = 1.0f/g_iNumStrips;
+			// round this so that the chamber overflows align
 			if( g_iNumChambers > 10 )
 				fPercentBetweenStrips = froundf( fPercentBetweenStrips, fChamberWidthInPercent );
 
 			float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 			ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
 
-			for( float f=fPercentOffset+1; f>=fPercentOffset; f-=fPercentBetweenStrips )
+			for( float f=fPercentOffset+1; f>=0; f-=fPercentBetweenStrips )
 			{
 				DrawMask( f );
 				DrawStrip( f );
@@ -219,6 +218,7 @@ public:
 
 		m_quadMask.StretchTo( &rect );
 		m_quadMask.Draw();
+		
 	}
 };
 

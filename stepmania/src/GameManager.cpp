@@ -1333,6 +1333,11 @@ int GameManager::NotesTypeToNumTracks( NotesType nt )
 NotesType GameManager::StringToNotesType( CString sNotesType )
 {
 	sNotesType.MakeLower();
+
+	// HACK!  We elminitated "ez2-single-hard", but we should still handle it.
+	if( sNotesType == "ez2-single-hard" )
+		sNotesType = "ez2-single";
+
 	for( int i=0; i<NUM_NOTES_TYPES; i++ )
 		if( NotesTypes[i].name == sNotesType )
 			return NotesType(i);
