@@ -39,6 +39,7 @@ public:
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	CString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
+	ProfileSlot GetLoadedFromProfile() const { return m_LoadedFromProfile; }
 	int GetMeter() const { return Real()->m_iMeter; }
 	const RadarValues& GetRadarValues() const { return Real()->m_RadarValues; }
 
