@@ -258,6 +258,74 @@ void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &
 	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
 }
 
+/* Use:
+
+CString str="a,b,c";
+int start = 0, size = -1;
+while( 1 )
+{
+	do_split( str, ",", begin, size );
+	if( begin == str.end() )
+		break;
+	str[begin] = 'Q';
+}
+
+ */
+
+template <class S>
+void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
+{
+	if( size != -1 )
+	{
+		/* Start points to the beginning of the last delimiter.  Move it up. */
+		begin += size+Delimitor.size();
+		begin = min( begin, len );
+	}
+
+	size = 0;
+
+	if( bIgnoreEmpty )
+	{
+		/* Skip delims. */
+		while( begin + Delimitor.size() < Source.size() &&
+			!Source.compare( begin, Delimitor.size(), Delimitor ) )
+			++begin;
+	}
+
+	/* Where's the string function to find within a substring?  C++ strings apparently
+	 * are missing that ... */
+	unsigned pos;
+	if( Delimitor.size() == 1 )
+		pos = Source.find( Delimitor[0], begin );
+	else
+		pos = Source.find( Delimitor, begin );
+	if( pos == Source.npos || (int) pos > len )
+		pos = len;
+	size = pos - begin;
+}
+
+void split( const CString &Source, const CString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
+{
+	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
+
+}
+
+void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
+{
+	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
+}
+
+void split( const CString &Source, const CString &Delimitor, int &begin, int &size, const bool bIgnoreEmpty )
+{
+	do_split( Source, Delimitor, begin, size, Source.size(), bIgnoreEmpty );
+}
+
+void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, const bool bIgnoreEmpty )
+{
+	do_split( Source, Delimitor, begin, size, Source.size(), bIgnoreEmpty );
+}
+
+
 
 /*
  * foo\fum\          -> "foo\fum\", "", ""

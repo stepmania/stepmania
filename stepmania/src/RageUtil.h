@@ -162,9 +162,17 @@ wchar_t utf8_get_char (const char *p);
 int utf8_get_char_len (const char *p);
 bool utf8_is_valid(const CString &str);
 
-// Splits a CString into an CStringArray according the Deliminator.
+// Splits a CString into an CStringArray according the Delimitor.
 void split( const CString &Source, const CString &Delimitor, CStringArray& AddIt, const bool bIgnoreEmpty = true );
-void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty = true );
+void split( const wstring &Source, const wstring &Delimitor, vector<wstring> &AddIt, const bool bIgnoreEmpty = true );
+
+/* In-place split. */
+void split( const CString &Source, const CString &Delimitor, int &begin, int &size, const bool bIgnoreEmpty = true );
+void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, const bool bIgnoreEmpty = true );
+
+/* In-place split of partial string. */
+void split( const CString &Source, const CString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
+void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty );
 
 // Joins a CStringArray to create a CString according the Deliminator.
 CString join( const CString &Delimitor, const CStringArray& Source );
