@@ -52,7 +52,7 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
-SM_OPENGL
+SM_X_WITH_OPENGL
 
 AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
 AM_CONDITIONAL(NHAVE_SDL, test "$enable_sdl" = "no" )

@@ -13,6 +13,8 @@ AM_CFLAGS =
 # generates enormous output.
 AM_CXXFLAGS += -finline-limit=300
 
+AM_CXXFLAGS += $(X_CFLAGS)
+
 if NHAVE_SDL
 # We use our own copy of SDL if the one on the system isn't new enough.  (Most
 # systems have 1.2.5; we need 1.2.6.)  We still end up linking dynamically to
@@ -103,7 +105,7 @@ Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h
 	 arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h \
 	 ALSA9Functions.h
 
-# Add this to CPPFLAGS, not stepmania_CPPFLAGS: that'll cause multiple copies of
+# Add this to AM_CXXFLAGS, not stepmania_CXXFLAGS: that'll cause multiple copies of
 # several sources to be built. We link to this at runtime, so don't add ALSA_LDFLAGS.
 AM_CXXFLAGS += $(ALSA_CFLAGS)
 endif
@@ -233,7 +235,7 @@ stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arc
 					$(Rage) $(Actors) $(GlobalSingletons) $(crypto)
 
 stepmania_LDADD = \
-		  $(GL_LIBS) \
+		  $(XLIBS) \
 		  $(USE_SDL_LIBS) -lSDL_image \
 		  $(LUA_LIBS) \
 		  $(AUDIO_LIBS) \

@@ -1,47 +1,30 @@
-AC_DEFUN(SM_OPENGL,
+AC_DEFUN(SM_X_WITH_OPENGL,
 [
-    GL_LIBS=
-    if test "$GL_LIBS" = ""; then
-	AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
-	AC_CHECK_LIB(GLU, gluGetString, have_glu=yes, , [-lGL])
-	if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
-	    GL_LIBS="-lGL -lGLU"
-	fi
-    fi
+    AC_PATH_X
+    AC_PATH_XTRA
+    
+    # See if we can compile X applications without using X_CFLAGS.
+    AC_MSG_CHECKING(if $X_CFLAGS is really necessary)
+    AC_TRY_COMPILE( [#include <X11/Xos.h>], [],
+	[X_CFLAGS=
+	AC_MSG_RESULT(no)],
+	[AC_MSG_RESULT(yes)])
 
-    # Some broken systems need us to link to X explicitly because
-    # the GL library needs it, instead of doing it automatically.
-    if test "$GL_LIBS" = ""; then
-	AC_PATH_X
-	AC_PATH_XTRA
+    XLIBS="$X_LIBS $X_EXTRA_LIBS $X_PRE_LIBS -lX11"
 
-	oldLIBS=$LIBS
-	EXTRALIBS="$X_LIBS $X_EXTRA_LIBS $X_PRE_LIBS -lX11"
-	LIBS="$LIBS $EXTRALIBS"
+    # Check for libXtst.
+    AC_CHECK_LIB(Xtst, XTestQueryExtension, 
+	XLIBS="$XLIBS -lXtst"
+	[AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
+	,
+	[$XLIBS])
 
-	if test "$GL_LIBS" = ""; then
-	    AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
-	    AC_CHECK_LIB(GLU, gluGetString, have_glu=yes, , [-lGL])
-	    if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
-		GL_LIBS="-lGL -lGLU"
-	    fi
-	fi
+    # Check for libGL and libGLU.
+    AC_CHECK_LIB(GL, glPushMatrix, XLIBS="$XLIBS -lGL",
+	AC_MSG_ERROR([No OpenGL library could be found.]), [$XLIBS])
+    AC_CHECK_LIB(GLU, gluGetString, XLIBS="$XLIBS -lGLU",
+	AC_MSG_ERROR([No GLU library could be found.]), [$XLIBS])
 
-	if test "$GL_LIBS" != ""; then
-	    GL_LIBS="$GL_LIBS $EXTRALIBS"
-	fi
-	LIBS=$oldLIBS
-	oldLIBS=
-	EXTRALIBS=
-    fi
-
-    if test "$GL_LIBS" = ""; then
-    	if test "$have_gl" != "yes"; then
-	    AC_MSG_ERROR([No OpenGL library could be found.])
-	else
-	    AC_MSG_ERROR([No GLU library could be found.])
-	fi
-    fi
-    AC_SUBST(GL_LIBS)
+    AC_SUBST(XLIBS)
 ])
 
