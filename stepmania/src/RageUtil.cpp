@@ -351,15 +351,6 @@ void GetCwd(CString &s)
 	s = buf;
 }
 
-//-----------------------------------------------------------------------------
-// Name: GetHashForString( CString s )
-// Desc: This new version of GetHashForString uses a stronger hashing algorithm
-//       than the former, assuring to a greater degree that two distinct
-//       strings do not produce the same result.
-//       The hashing algorithm is a modified CRC-32 (modified in that the
-//       characters in the CString are recast as unsigned char and that the
-//       unsigned int result from the hash is recast as a signed int).
-//-----------------------------------------------------------------------------
 unsigned int GetHashForString ( CString string )
 {
 /*
@@ -377,8 +368,6 @@ unsigned int GetHashForString ( CString string )
  *	Copyright (C) 2002 Peter S. May.
  *	SourceForge ID: drokulix
  *
- *	- Header file added
- *	- Name of function changed to GetCrc32
  *	- Values in table changed from long int to int
  *
  *	Chris:
@@ -479,20 +468,12 @@ static const unsigned int crc32_tab[] = {
 	0x2d02ef8d
 };
 
-/* Return a 32-bit CRC of the contents of the buffer. */
-
-//unsigned int
-//GetCrc32(const unsigned char *s, unsigned int len)
-//{
-	const char* s = string;
-	int len = string.GetLength();
-
+	/* Return a 32-bit CRC of the contents of the buffer. */
 	unsigned int crc32val = 0;
-	for( int i=0; i<len; i++ )
-		crc32val = crc32_tab[(crc32val ^ s[i]) & 0xff] ^ (crc32val >> 8);
+	for( unsigned i=0; i < string.size(); i++ )
+		crc32val = crc32_tab[(crc32val ^ string[i]) & 0xff] ^ (crc32val >> 8);
 
 	return crc32val;
-//}
 }
 
 bool DoStat(CString sPath, struct stat *st)
@@ -523,7 +504,7 @@ unsigned int GetHashForDirectory( CString sDir )
 	hash += GetHashForFile( sDir );
 
 	CStringArray arrayFiles;
-	GetDirListing( sDir+"\\*", arrayFiles, false );
+	GetDirListing( sDir+"/*", arrayFiles, false );
 	for( unsigned i=0; i<arrayFiles.size(); i++ )
 	{
 		const CString sFilePath = sDir + arrayFiles[i];
