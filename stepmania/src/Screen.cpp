@@ -303,34 +303,34 @@ Screen* Screen::Create( CString sClassName )
 {
 	/* These are just compatibility aliases. */
 	if( !sClassName.CompareNoCase("ScreenCompany") )
-		sClassName = "ScreenAttract@ScreenCompany";
+		sClassName = "ScreenCompany@ScreenAttract";
 	if( !sClassName.CompareNoCase("ScreenIntroMovie") )
-		sClassName = "ScreenAttract@ScreenIntroMovie";
+		sClassName = "ScreenIntroMovie@ScreenAttract";
 	if( !sClassName.CompareNoCase("ScreenAlbums") )
-		sClassName = "ScreenAttract@ScreenAlbums";
+		sClassName = "ScreenAlbums@ScreenAttract";
 	if( !sClassName.CompareNoCase("ScreenWarning") )
-		sClassName = "ScreenAttract@ScreenWarning";
+		sClassName = "ScreenWarning@ScreenAttract";
 
 	if( !sClassName.CompareNoCase("ScreenEvaluationStage") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationStage";
+		sClassName = "ScreenEvaluationStage@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationSummary") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationSummary";
+		sClassName = "ScreenEvaluationSummary@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationNonstop") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationNonstop";
+		sClassName = "ScreenEvaluationNonstop@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationOni") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationOni";
+		sClassName = "ScreenEvaluationOni@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationEndless") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationEndless";
+		sClassName = "ScreenEvaluationEndless@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationEndless") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationEndless";
+		sClassName = "ScreenEvaluationEndless@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationBattle") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationBattle";
+		sClassName = "ScreenEvaluationBattle@ScreenEvaluation";
 	if( !sClassName.CompareNoCase("ScreenEvaluationRave") )
-		sClassName = "ScreenEvaluation@ScreenEvaluationRave";
+		sClassName = "ScreenEvaluationRave@ScreenEvaluation";
 
-	/* "ScreenCompany@ScreenOtherCompany" loads ScreenCompany with the
-	 * asset "ScreenOtherCompany", so (if it supports it) it'll use
-	 * metric, graphic, etc. names starting with "ScreenOtherCompany". */
+	/* "ScreenCompany@ScreenAttract" loads ScreenAttract with the asset name
+	 * "ScreenCompany", so (if it supports it) it'll use metric, graphic, etc.
+	 * names starting with "ScreenCompany". */
 	CStringArray parts;
 	split( sClassName, "@", parts );
 	if( parts.size() != 1 &&  parts.size() != 2 )
@@ -339,8 +339,8 @@ Screen* Screen::Create( CString sClassName )
 	CString sName = sClassName;
 	if( parts.size() == 2 )
 	{
-		sClassName = parts[0];
-		sName = parts[1];
+		sClassName = parts[1];
+		sName = parts[0];
 	}
 
 #define IF_RETURN(X)	if(sClassName.CompareNoCase(#X)==0)	return new X(sName);
