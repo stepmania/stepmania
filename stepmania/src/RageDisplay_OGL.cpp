@@ -533,11 +533,6 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 	SDL_FreeSurface( temp );
 }
 
-CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
-{
-	return "";
-}
-
 RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
 
 static void SetupVertices( const RageVertex v[], int iNumVerts )
@@ -1032,6 +1027,11 @@ void RageDisplay_OGL::UpdateTexture(
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
+}
+
+CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
+{
+	return "";
 }
 
 void RageDisplay_OGL::SetAlphaTest( bool b )
