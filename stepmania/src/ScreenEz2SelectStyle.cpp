@@ -325,16 +325,12 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			if (m_iSelectedStyle == 0) // easy
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
 			//	m_soundInvalid.PlayRandom();
 			//	return;
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD_VERSUS;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
@@ -349,26 +345,10 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 			if (m_iSelectedStyle == 0) // easy
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
-				if (m_iSelectedPlayer == 0)
-				{
-					PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
-				}
-				else
-				{
-					PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;
-				}
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
-				if (m_iSelectedPlayer == 0)
-				{
-					PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
-				}
-				else
-				{
-					PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;
-				}
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
@@ -739,22 +719,14 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			if (m_iSelectedStyle == 0 || m_iSelectedStyle == 3) // easy
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-			//	m_soundInvalid.PlayRandom();
-			//	return;
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
-				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD_VERSUS;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
-				//m_soundInvalid.PlayRandom();
-				//return;
 			}
 
 		}
@@ -763,14 +735,10 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			if (m_iSelectedStyle == 0) // easy
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
-				PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_EASY;
 			}
 			else if (m_iSelectedStyle == 1) // hard
 			{
-			//	m_soundInvalid.PlayRandom();
-			//	return;
-				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
-				PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_HARD;	
 			}
 			else if (m_iSelectedStyle == 2) // real
 			{

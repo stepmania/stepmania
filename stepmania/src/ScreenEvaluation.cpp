@@ -214,7 +214,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			}
 			else if (l == 5 && GAMEMAN->m_CurGame == GAME_EZ2 ) // sneakily use this one for the max combo.
 			{
-				if (p == PLAYER_ )
+				if (p == PLAYER_1 )
 				{
 					m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p]-40, JUDGE_EZ2_COOL_Y + 180);
 				}
