@@ -395,6 +395,19 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 		if( !arraySteps.empty() )
 			arraySongs.push_back( pSong );
 	}
+
+	/* Hack: Add extra stage item if it was eliminated for any reason (eg. it's a long
+	 * song). */
+	{
+		Song* pSong;
+		Steps* pSteps;
+		PlayerOptions po;
+		SongOptions so;
+		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
+
+		if( find( arraySongs.begin(), arraySongs.end(), pSong ) == arraySongs.end() )
+			arraySongs.push_back( pSong );
+	}
 }
 
 
@@ -592,7 +605,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 		}
 
-		// HACK:  Add extra stage item if it isn't already present on the music wheel
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		{
 			Song* pSong;
@@ -601,21 +613,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			SongOptions so;
 			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
 			
-			bool bFoundExtraSong = false;
-
 			for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
 			{
 				if( arrayWheelItemDatas[i].m_pSong == pSong )
 				{
 					/* Change the song color. */
 					arrayWheelItemDatas[i].m_color = SONG_REAL_EXTRA_COLOR;
-					bFoundExtraSong = true;
 					break;
 				}
 			}
-
-			if( !bFoundExtraSong )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONG_REAL_EXTRA_COLOR, SORT_INVALID) );
 		}
 		break;
 	}
