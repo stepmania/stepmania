@@ -1,4 +1,4 @@
-/* Screen - Class representing a game state.  It also holds Actors. */
+/* Screen - Class that holds a screen-full of Actors. */
 
 #ifndef SCREEN_H
 #define SCREEN_H
