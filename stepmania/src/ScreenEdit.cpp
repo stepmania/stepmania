@@ -1317,13 +1317,13 @@ void ScreenEdit::TransitionFromRecordToEdit()
 {
 	TransitionToEdit();
 
-	int iNoteIndexBegin = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-	int iNoteIndexEnd = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+	int rowBegin = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
+	int rowEnd = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
 
 	// delete old TapNotes in the range
-	m_NoteFieldEdit.ClearRange( iNoteIndexBegin, iNoteIndexEnd );
+	m_NoteFieldEdit.ClearRange( rowBegin, rowEnd );
 
-	m_NoteFieldEdit.CopyRange( m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
+	m_NoteFieldEdit.CopyRange( m_NoteFieldRecord, rowBegin, rowEnd, rowBegin );
 }
 
 /* Helper for SM_DoReloadFromDisk */

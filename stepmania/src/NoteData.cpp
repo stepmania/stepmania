@@ -44,13 +44,13 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 }
 
 
-/* Clear [iNoteIndexBegin,iNoteIndexEnd]; that is, including iNoteIndexEnd. */
-void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
+/* Clear [rowBegin,rowEnd]; that is, including rowEnd. */
+void NoteData::ClearRange( int rowBegin, int rowEnd )
 {
 	this->ConvertHoldNotesTo4s();
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, i, iNoteIndexBegin, iNoteIndexEnd )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, i, rowBegin, rowEnd )
 			SetTapNote(t, i, TAP_EMPTY);
 	}
 	this->Convert4sToHoldNotes();

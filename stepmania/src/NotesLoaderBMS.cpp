@@ -300,7 +300,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 				{
 					float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
 
-					const int iNoteIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
+					const int row = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 					BmsTrack bmsTrack;
 					bool bIsHold;
@@ -313,7 +313,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 						{
 							TapNote tn = vTapNotes[j];
 							tn.type = bIsHold ? TapNote::hold_head : TapNote::tap;
-							ndNotes.SetTapNote( bmsTrack, iNoteIndex, tn );
+							ndNotes.SetTapNote( bmsTrack, row, tn );
 						}
 					}
 				}

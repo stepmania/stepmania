@@ -1291,13 +1291,13 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 		default:	ASSERT( false );						return;
 	}
 
-	int iNoteIndexBegin = BeatToNoteRow( fBeginBeat );
-	int iNoteIndexEnd = BeatToNoteRow( fEndBeat );
+	int rowBegin = BeatToNoteRow( fBeginBeat );
+	int rowEnd = BeatToNoteRow( fEndBeat );
 
 	in.ConvertHoldNotesTo2sAnd3s();
 
 	// iterate over all TapNotes in the interval and snap them
-	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
+	for( int i=rowBegin; i<=rowEnd; i++ )
 	{
 		int iOldIndex = i;
 		float fOldBeat = NoteRowToBeat( iOldIndex );

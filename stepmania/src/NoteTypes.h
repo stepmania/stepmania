@@ -109,15 +109,15 @@ enum NoteType
 };
 
 float NoteTypeToBeat( NoteType nt );
-NoteType GetNoteType( int iNoteIndex );
+NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );
-bool IsNoteOfType( int iNoteIndex, NoteType t );
+bool IsNoteOfType( int row, NoteType t );
 CString NoteTypeToString( NoteType nt );
 
 inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ROWS_PER_BEAT + 0.5f); };	// round
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); };
 inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ROWS_PER_BEAT;	 };
-inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };
+inline float NoteRowToBeat( int row )			{ return NoteRowToBeat( (float)row );	 };
 
 
 

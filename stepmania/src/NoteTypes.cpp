@@ -34,16 +34,16 @@ float NoteTypeToBeat( NoteType nt )
 	}
 }
 
-NoteType GetNoteType( int iNoteIndex )
+NoteType GetNoteType( int row )
 { 
-	if(      iNoteIndex % (ROWS_PER_MEASURE/4) == 0)	return NOTE_TYPE_4TH;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/8) == 0)	return NOTE_TYPE_8TH;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/12) == 0)	return NOTE_TYPE_12TH;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/16) == 0)	return NOTE_TYPE_16TH;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/24) == 0)	return NOTE_TYPE_24TH;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/48) == 0)	return NOTE_TYPE_48TH;
-	else if( iNoteIndex % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
+	if(      row % (ROWS_PER_MEASURE/4) == 0)	return NOTE_TYPE_4TH;
+	else if( row % (ROWS_PER_MEASURE/8) == 0)	return NOTE_TYPE_8TH;
+	else if( row % (ROWS_PER_MEASURE/12) == 0)	return NOTE_TYPE_12TH;
+	else if( row % (ROWS_PER_MEASURE/16) == 0)	return NOTE_TYPE_16TH;
+	else if( row % (ROWS_PER_MEASURE/24) == 0)	return NOTE_TYPE_24TH;
+	else if( row % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
+	else if( row % (ROWS_PER_MEASURE/48) == 0)	return NOTE_TYPE_48TH;
+	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
 	else												return NOTE_TYPE_INVALID;
 };
 
@@ -70,9 +70,9 @@ NoteType BeatToNoteType( float fBeat )
 	return GetNoteType( BeatToNoteRow(fBeat) );
 }
 
-bool IsNoteOfType( int iNoteIndex, NoteType t )
+bool IsNoteOfType( int row, NoteType t )
 { 
-	return GetNoteType(iNoteIndex) == t;
+	return GetNoteType(row) == t;
 }
 
 /*
