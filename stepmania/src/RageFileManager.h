@@ -31,6 +31,11 @@ public:
 	void Unmount( CString Type, CString Root, CString MountPoint );
 	bool IsMounted( CString MountPoint );
 	bool MountpointIsReady( CString MountPoint );
+	struct DriverLocation
+	{
+		CString Type, Root, MountPoint;
+	};
+	void GetLoadedDrivers( vector<DriverLocation> &Mounts );
 
 	void FlushDirCache( const CString &sPath );
 

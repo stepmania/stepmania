@@ -352,6 +352,18 @@ bool RageFileManager::MountpointIsReady( CString MountPoint )
 	return false;
 }
 
+void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &Mounts )
+{
+	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	{
+		DriverLocation l;
+		l.MountPoint = g_Drivers[i].MountPoint;
+		l.Type = g_Drivers[i].Type;
+		l.Root = g_Drivers[i].Root;
+		Mounts.push_back( l );
+	}
+}
+
 void RageFileManager::FlushDirCache( const CString &sPath )
 {
 	LockMut( *g_Mutex );
