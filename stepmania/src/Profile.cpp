@@ -1372,7 +1372,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
 {
 	if( PREFSMAN->m_bSignProfileData && IsAFile(CRYPTMAN->GetPublicKeyFileName()) )
-		FileCopy( CRYPTMAN->GetPublicKeyFileName(), PUBLIC_KEY_FILE );
+		FileCopy( CRYPTMAN->GetPublicKeyFileName(), sDir+PUBLIC_KEY_FILE );
 }
 
 void Profile::AddScreenshot( Screenshot screenshot )
