@@ -121,7 +121,7 @@ void ScreenSelect::Update( float fDelta )
 		}
 	}
 
-	Screen::Update( fDelta );
+	ScreenWithMenuElements::Update( fDelta );
 }
 
 void ScreenSelect::DrawPrimitives()
