@@ -320,9 +320,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 #ifdef _XBOX
 					//shorten filenames for FATX
-					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation diff icons 1x5") );
+					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation diff icons 1x%d",NUM_DIFFICULTIES)) );
 #else
-					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation difficulty icons 1x5") );
+					m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation difficulty icons 1x%d",NUM_DIFFICULTIES)) );
 #endif
 
 					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
@@ -655,8 +655,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	if( SHOW_SCORE_AREA )
 	{
 		m_sprScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation score label") );
-		m_sprScoreLabel.SetState( 0 );
-		m_sprScoreLabel.StopAnimating();
 		m_sprScoreLabel.SetName( "ScoreLabel" );
 		SET_XY_AND_ON_COMMAND( m_sprScoreLabel );
 		this->AddChild( &m_sprScoreLabel );
@@ -679,8 +677,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	if( SHOW_TOTAL_SCORE_AREA )
 	{
 		m_sprTotalScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation totalscore label") );
-		m_sprTotalScoreLabel.SetState( 0 );
-		m_sprTotalScoreLabel.StopAnimating();
 		m_sprTotalScoreLabel.SetName( "TotalScoreLabel" );
 		SET_XY_AND_ON_COMMAND( m_sprTotalScoreLabel );
 		this->AddChild( &m_sprTotalScoreLabel );
