@@ -34,12 +34,6 @@
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
 
-// temp
-#include "Command.h"
-#include "LuaBinding.h"
-#include "ActorCommands.h"
-#include "Sprite.h"
-
 //
 // StepMania global classes
 //
