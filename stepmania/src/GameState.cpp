@@ -122,6 +122,7 @@ void GameState::Reset()
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
+	SONGMAN->FreeAllLoadedFromProfiles();
 	SONGMAN->UpdateBest();
 	SONGMAN->UpdateShuffled();
 
