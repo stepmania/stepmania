@@ -100,6 +100,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
+	if( GAMESTATE->m_pCurSong == NULL )
+		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
+
 	int p;
 
 	for( p=0; p<NUM_PLAYERS; p++ )

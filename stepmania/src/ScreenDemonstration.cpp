@@ -54,11 +54,7 @@ bool SetUpSongOptions()		// always return true.
 	{
 		Song* pSong = SONGMAN->GetRandomSong();
 		if( pSong == NULL )	// returns NULL there are no songs
-		{
-			// we didn't find a song.  Abort demonstration.
-			SCREENMAN->SendMessageToTopScreen( SM_GoToNextScreen, 0 );
-			return true;
-		}
+			return true;	// we need to detect this and abort demonstration later
 
 		if( pSong->m_apNotes.empty() )
 			continue;	// skip
@@ -140,6 +136,12 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	
 {
 	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
 	GAMESTATE->m_bDemonstration = true;
+
+	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
+	{
+		this->SendScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
+		return;
+	}
 
 
 	m_sprDemonstrationOverlay.Load( THEME->GetPathTo("Graphics","demonstration overlay") );
