@@ -165,6 +165,20 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	}
 };
 
+static D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] = 
+{
+	D3DFMT_A8R8G8B8,
+	D3DFMT_A4R4G4B4,
+	D3DFMT_A1R5G5B5,
+	D3DFMT_X1R5G5B5,
+#ifndef _XBOX
+	D3DFMT_R8G8B8,
+#else
+	D3DFMT_A8R8G8B8,
+#endif
+	D3DFMT_P8
+};
+
 const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
@@ -516,20 +530,6 @@ void RageDisplay_D3D::EndFrame()
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
 	ProcessStatsOnFlip();
 }
-
-D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] = 
-{
-	D3DFMT_A8R8G8B8,
-	D3DFMT_A4R4G4B4,
-	D3DFMT_A1R5G5B5,
-	D3DFMT_X1R5G5B5,
-#ifndef _XBOX
-	D3DFMT_R8G8B8,
-#else
-	D3DFMT_A8R8G8B8,
-#endif
-	D3DFMT_P8
-};
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 {
