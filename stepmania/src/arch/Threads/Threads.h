@@ -49,10 +49,6 @@ public:
 	/* Unlock the mutex.  This must only be called when the mutex is locked; implementations
 	 * may fail with an assertion if the mutex is not locked. */
 	virtual void Unlock() = 0;
-
-	/* Return the thread ID of the thread that has this mutex locked.  If no thread
-	 * holds the mutex, return GetInvalidThreadId. */
-	virtual uint64_t GetLockedByThreadId() const = 0;
 };
 
 /* These functions must be implemented by the thread implementation. */

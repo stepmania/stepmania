@@ -38,9 +38,6 @@ public:
 
 struct MutexImpl_Pthreads: public MutexImpl
 {
-	uint64_t LockedBy;
-	volatile int LockCnt;
-
 	pthread_mutex_t mutex;
 
 	MutexImpl_Pthreads( RageMutex *parent );
@@ -48,7 +45,6 @@ struct MutexImpl_Pthreads: public MutexImpl
 
 	bool Lock();
 	void Unlock();
-	uint64_t GetLockedByThreadId() const;
 };
 
 #endif

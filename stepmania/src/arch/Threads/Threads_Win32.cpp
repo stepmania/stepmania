@@ -87,8 +87,6 @@ MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 {
 	mutex = CreateMutex( NULL, false, NULL );
 	ASSERT_M( mutex != NULL, werr_ssprintf(GetLastError(), "CreateMutex") );
-	LockedBy = GetInvalidThreadId();
-	LockCnt = 0;
 }
 
 MutexImpl_Win32::~MutexImpl_Win32()
@@ -98,12 +96,6 @@ MutexImpl_Win32::~MutexImpl_Win32()
 
 bool MutexImpl_Win32::Lock()
 {
-	if( LockedBy == GetCurrentThreadId() )
-	{
-		++LockCnt;
-		return true;
-	}
-
 	int len = 15000;
 	int tries = 2;
 
@@ -120,7 +112,6 @@ bool MutexImpl_Win32::Lock()
 			break;
 
 		case WAIT_OBJECT_0:
-			LockedBy = GetCurrentThreadId();
 			return true;
 
 		case WAIT_TIMEOUT:
@@ -140,24 +131,12 @@ bool MutexImpl_Win32::Lock()
 
 void MutexImpl_Win32::Unlock()
 {
-	if( LockCnt )
-	{
-		--LockCnt;
-		return;
-	}
-
-	LockedBy = GetInvalidThreadId();
 	const bool ret = !!ReleaseMutex( mutex );
 
 	/* We can't ASSERT here, since this is called from checkpoints, which is
 	 * called from ASSERT. */
 	if( !ret )
 		sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
-}
-
-uint64_t MutexImpl_Win32::GetLockedByThreadId() const
-{
-	return LockedBy;
 }
 
 uint64_t GetThisThreadId()

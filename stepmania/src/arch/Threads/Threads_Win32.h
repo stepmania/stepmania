@@ -22,9 +22,6 @@ public:
 
 struct MutexImpl_Win32: public MutexImpl
 {
-	uint64_t LockedBy;
-	volatile int LockCnt;
-
 	HANDLE mutex;
 
 	MutexImpl_Win32( RageMutex *parent );
@@ -32,7 +29,6 @@ struct MutexImpl_Win32: public MutexImpl
 
 	bool Lock();
 	void Unlock();
-	uint64_t GetLockedByThreadId() const;
 };
 
 #endif

@@ -114,8 +114,6 @@ MutexImpl_Pthreads::MutexImpl_Pthreads( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
 	pthread_mutex_init( &mutex, NULL );
-	LockedBy = GetInvalidThreadId();
-	LockCnt = 0;
 }
 
 MutexImpl_Pthreads::~MutexImpl_Pthreads()
@@ -128,12 +126,6 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 
 bool MutexImpl_Pthreads::Lock()
 {
-	if( LockedBy == (uint64_t) GetThisThreadId() )
-	{
-		++LockCnt;
-		return true;
-	}
-
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
 	int len = 10; /* seconds */
 	int tries = 2;
@@ -151,7 +143,6 @@ bool MutexImpl_Pthreads::Lock()
 		switch( ret )
 		{
 		case 0:
-			LockedBy = GetCurrentThreadId();
 			return true;
 
 		case ETIMEDOUT:
@@ -171,7 +162,6 @@ bool MutexImpl_Pthreads::Lock()
 	int ret = pthread_mutex_lock( &mutex );
 	if( ret )
 		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(ret) );
-	LockedBy = GetThisThreadId();
 	return true;
 #endif
 }
@@ -179,19 +169,7 @@ bool MutexImpl_Pthreads::Lock()
 
 void MutexImpl_Pthreads::Unlock()
 {
-	if( LockCnt )
-	{
-		--LockCnt;
-		return;
-	}
-
-	LockedBy = GetInvalidThreadId();
 	pthread_mutex_unlock( &mutex );
-}
-
-uint64_t MutexImpl_Pthreads::GetLockedByThreadId() const
-{
-	return LockedBy;
 }
 
 uint64_t GetThisThreadId()
