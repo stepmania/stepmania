@@ -162,7 +162,7 @@ RageException.cpp RageException.h RageFile.cpp RageFile.h RageInput.cpp RageInpu
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.cpp RageSoundReader.h RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
-RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h RageSoundReader_MP3.cpp RageSoundReader_MP3.h \
+RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h \
 RageSoundReader_WAV.cpp RageSoundReader_WAV.h RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h \
 RageTexture.cpp RageTexture.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
 RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
