@@ -205,37 +205,26 @@ void BacktraceNames::FromAddr( void *p )
     }
     else
     {
-#if 1
-        fprintf(stderr, "um, crashed\n");
         CStringArray mangledAndFile;
 
         split(f, " ", mangledAndFile, true);
-        fprintf(stderr, "split %d: %s\n", int(mangledAndFile.size()), f);
         if (mangledAndFile.size() > 0)
         {
-            fprintf(stderr, "size>0\n");
             Symbol = mangledAndFile[0];
             if (Symbol[0] != '-' && Symbol[0] != '+')
             {
                 if (Symbol[0] == '_')
                     Symbol = Symbol.substr(1);
-                fprintf(stderr, "Symbol: %s\n", Symbol.c_str());
                 if (mangledAndFile.size() > 3)
                 {
-                    fprintf(stderr, "size > 3\n");
                     File = mangledAndFile[3];
-                    fprintf(stderr, "File: %s\n", File.c_str());
                     unsigned pos = File.find('(');
                     unsigned start = (pos == File.npos ? 0 : pos+1);
                     pos = File.rfind(')') - 1;
-                    fprintf(stderr, "start/end: %u/%u\n", start, pos);
                     File = File.substr(start, pos);
                 }
                 else if (mangledAndFile.size() == 3)
-                {
-                    fprintf(stderr, "size==3\n");
                     File = mangledAndFile[2].substr(0, mangledAndFile[2].rfind(')'));
-                }
                 else
                     File = "";
             }
@@ -245,11 +234,9 @@ void BacktraceNames::FromAddr( void *p )
                 if (mangledAndFile.size() == 3)
                 {
                     File = mangledAndFile[2];
-                    fprintf(stderr, "File: %s\n", File.c_str());
                     unsigned pos = File.find('(');
                     unsigned start = (pos == File.npos ? 0 : pos+1);
                     pos = File.rfind(')') - 1;
-                    fprintf(stderr, "start/end: %u/%u\n", start, pos);
                     File = File.substr(start, pos);
                 }
                  else
@@ -261,11 +248,6 @@ void BacktraceNames::FromAddr( void *p )
             Symbol = "";
             File = "";
         }
-        fprintf(stderr, "File: %s\n", File.c_str());
-#else
-        Symbol = f;
-        File = "";
-#endif
     }
 }
 #else
