@@ -1481,7 +1481,8 @@ public:
 		return 1;
 	}
 	static int GetSongDir( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongDir() ); return 1; }
-
+	static int GetBannerPath( T* p, lua_State *L )		{ if( !p->HasBanner() ) lua_pushnil(L); else lua_pushstring(L, p->GetBannerPath()); return 1; }
+	static int GetBackgroundPath( T* p, lua_State *L )	{ if( !p->HasBackground() ) lua_pushnil(L); else lua_pushstring(L, p->GetBackgroundPath()); return 1; }
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetFullDisplayTitle )
@@ -1492,6 +1493,8 @@ public:
 		ADD_METHOD( GetAllSteps )
 		ADD_METHOD( GetStepsByStepsType )
 		ADD_METHOD( GetSongDir )
+		ADD_METHOD( GetBannerPath )
+		ADD_METHOD( GetBackgroundPath )
 		Luna<T>::Register( L );
 	}
 };
