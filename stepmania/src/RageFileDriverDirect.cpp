@@ -182,13 +182,12 @@ private:
 
 	CString write_buf;
 
-	int FlushWrites();
-
 public:
 	RageFileObjDirect( const CString &path, int fd_, RageFile &p );
 	virtual ~RageFileObjDirect();
 	virtual int Read(void *buffer, size_t bytes);
 	virtual int Write(const void *buffer, size_t bytes);
+	virtual int Flush();
 	virtual void Rewind();
 	virtual int Seek( int offset );
 	virtual int GetFileSize();
@@ -368,7 +367,7 @@ RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p
 
 RageFileObjDirect::~RageFileObjDirect()
 {
-	FlushWrites();
+	Flush();
 
 	if( fd != -1 )
 		close( fd );
@@ -386,7 +385,7 @@ int RageFileObjDirect::Read( void *buf, size_t bytes )
 	return ret;
 }
 
-int RageFileObjDirect::FlushWrites()
+int RageFileObjDirect::Flush()
 {
 	if( !write_buf.size() )
 		return 0;
@@ -406,7 +405,7 @@ int RageFileObjDirect::Write( const void *buf, size_t bytes )
 {
 	if( write_buf.size()+bytes > BUFSIZE )
 	{
-		if( FlushWrites() == -1 )
+		if( Flush() == -1 )
 			return -1;
 	}
 

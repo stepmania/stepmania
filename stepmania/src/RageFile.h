@@ -57,10 +57,11 @@ public:
 	void Rewind();
     
 	/* Raw I/O: */
-	int Write( const void *buffer, size_t bytes );
-	int Write( const CString& string ) { return Write( string.data(), string.size() ); }
 	int Read( void *buffer, size_t bytes );
 	int Read( CString &buffer, size_t bytes );
+	int Write( const void *buffer, size_t bytes );
+	int Write( const CString& string ) { return Write( string.data(), string.size() ); }
+	int Flush();
 
 	/* These are just here to make wrappers (eg. vorbisfile, SDL_rwops) easier. */
 	int Write( const void *buffer, size_t bytes, int nmemb );

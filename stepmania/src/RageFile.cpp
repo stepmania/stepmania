@@ -281,17 +281,6 @@ int RageFile::Read( void *buffer, size_t bytes )
 	return ret;
 }
 
-int RageFile::Write( const void *buffer, size_t bytes )
-{
-	if( !IsOpen() )
-		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
-
-	if( m_Mode != WRITE )
-		RageException::Throw("\"%s\" is not open for writing", GetPath().c_str());
-
-	return m_File->Write( buffer, bytes );
-}
-
 int RageFile::Seek( int offset )
 {
 	if( !IsOpen() )
@@ -395,6 +384,18 @@ int RageFile::Read( CString &buffer, size_t bytes )
 	return ret;
 }
 
+int RageFile::Write( const void *buffer, size_t bytes )
+{
+	if( !IsOpen() )
+		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
+
+	if( m_Mode != WRITE )
+		RageException::Throw("\"%s\" is not open for writing", GetPath().c_str());
+
+	return m_File->Write( buffer, bytes );
+}
+
+
 int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
 {
 	/* Simple write.  We never return partial writes. */
@@ -402,6 +403,11 @@ int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
 	if( ret == -1 )
 		return -1;
 	return ret / bytes;
+}
+
+int RageFile::Flush()
+{
+	return m_File->Flush();
 }
 
 int RageFile::Read( void *buffer, size_t bytes, int nmemb )

@@ -46,6 +46,7 @@ public:
 	/* Raw I/O: */
 	virtual int Read(void *buffer, size_t bytes) = 0;
 	virtual int Write(const void *buffer, size_t bytes) = 0;
+	virtual int Flush() { return 0; }
 	virtual void Rewind() = 0;
 	virtual RageFileObj *Copy( RageFile &p ) const = 0;
 };
