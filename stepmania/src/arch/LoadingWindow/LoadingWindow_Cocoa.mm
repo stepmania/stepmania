@@ -3,7 +3,8 @@
 static NSWindow *window;
 static NSTextView *text;
 
-void MakeNewCocoaWindow() {
+void MakeNewCocoaWindow()
+{
 	NSImage *image = [NSImage imageNamed:@"splash"];
 	NSSize size = [image size];
 	float height = size.height;
@@ -41,11 +42,13 @@ void MakeNewCocoaWindow() {
 	[window makeKeyAndOrderFront:nil];
 }
 
-void DisposeOfCocoaWindow() {
+void DisposeOfCocoaWindow()
+{
 	[window close]; /* Released by setReleasedWhenClosed */
 }
 
-void SetCocoaWindowText(const char *s) {
+void SetCocoaWindowText(const char *s)
+{
 	[text setString:[NSString stringWithCString:s]];
 	[text display];
 }
