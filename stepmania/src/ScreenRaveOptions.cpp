@@ -22,33 +22,28 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 
-#define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenRaveOptions","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
-#define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenRaveOptions","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define PREV_SCREEN			THEME->GetMetric ("ScreenRaveOptions","PrevScreen")
+#define NEXT_SCREEN			THEME->GetMetric ("ScreenRaveOptions","NextScreen")
 
 enum {
-	RO_P1_SUPER_GROWTH,
-	RO_P2_SUPER_GROWTH,
+	RO_SUPER_GROWTH,
 	RO_CPU_SKILL,
 	NUM_RAVE_OPTIONS_LINES
 };
 
 OptionRow g_RaveOptionsLines[NUM_RAVE_OPTIONS_LINES] = {
-	OptionRow( "P1 Super\nGrowth",	true, "25%","50%","75%","100%","125%","150%","175%","200%" ),
-	OptionRow( "P2 Super\nGrowth",	true, "25%","50%","75%","100%","125%","150%","175%","200%" ),
+	OptionRow( "Super\nGrowth",		false, "25%","50%","75%","100%","125%","150%","175%","200%" ),
 	OptionRow( "CPU\nSkill",		true, "-5","-4","-3","-2","-1","DEFAULT","+1","+2","+3","+4","+5" )
 };
-
-PlayerNumber OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 ScreenRaveOptions::ScreenRaveOptions( CString sClassName ): ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenRaveOptions::ScreenRaveOptions()" );
 
-	bool bComputerPlayersPresent = GAMESTATE->GetNumSidesJoined()==1;
 	Init( 
 		INPUTMODE_TOGETHER, 
 		g_RaveOptionsLines, 
-		bComputerPlayersPresent ? 3 : 1,
+		GAMESTATE->AnyPlayersAreCpu()? 2 : 1,
 		false );
 }
 
@@ -58,7 +53,7 @@ void ScreenRaveOptions::ImportOptions()
 	{
 		int iSuperGrowthIndex = (int)SCALE( GAMESTATE->m_fSuperMeterGrowthScale[p], 0.25f, 2.f, 0.f, 7.f );
 		CLAMP( iSuperGrowthIndex, 0, 9 );
-		m_iSelectedOption[0][RO_P1_SUPER_GROWTH+p] = iSuperGrowthIndex;
+		m_iSelectedOption[p][RO_SUPER_GROWTH] = iSuperGrowthIndex;
 	}
 
 	m_iSelectedOption[0][RO_CPU_SKILL] = GAMESTATE->m_iCpuSkill[0];
@@ -69,17 +64,17 @@ void ScreenRaveOptions::ExportOptions()
 {
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
-		GAMESTATE->m_fSuperMeterGrowthScale[p]	= SCALE( m_iSelectedOption[0][RO_P1_SUPER_GROWTH+p], 0.f, 7.f, 0.25f, 2.f );
+		GAMESTATE->m_fSuperMeterGrowthScale[p]	= SCALE( m_iSelectedOption[p][RO_SUPER_GROWTH], 0.f, 7.f, 0.25f, 2.f );
 	for( p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_iCpuSkill[p]	= m_iSelectedOption[0][RO_CPU_SKILL];
 }
 
 void ScreenRaveOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+	SCREENMAN->SetNewScreen( PREV_SCREEN );
 }
 
 void ScreenRaveOptions::GoToNextState()
 {
-	SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+	SCREENMAN->SetNewScreen( NEXT_SCREEN );
 }
