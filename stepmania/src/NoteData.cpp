@@ -469,7 +469,7 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 	SetNumTracks( iNewNumTracks );
 
 	NoteData in;
-	in.To2sAnd3s( *pOriginal );
+	in.To4s( *pOriginal );
 
 	const int iLastRow = in.GetMaxRow();
 	for ( int i = 0; i < in.GetNumTracks(); i++ )
@@ -481,12 +481,15 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 		{
 			const TapNote iStepFrom = in.m_TapNotes[iTrackFrom][row];
 
-			if( GetTapNote(iTrackTo, row) == TAP_EMPTY ) 
-				SetTapNote( iTrackTo, row, iStepFrom );
+			/* Hold notes always take precedence: don't split holds. */
+			if( GetTapNote(iTrackTo, row) == TAP_HOLD )
+				continue;
+
+			SetTapNote( iTrackTo, row, iStepFrom );
 		}
 	}
 
-	ConvertHoldNotesTo2sAnd3s();
+	Convert4sToHoldNotes();
 }
 
 void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNewNumTracks )
