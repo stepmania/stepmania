@@ -7,11 +7,10 @@
 #include "BGAnimation.h"
 #include "GameCommand.h"
 #include "CodeDetector.h"
+#include "ThemeMetric.h"
 
 // Derived classes must send this when done
 const ScreenMessage SM_AllDoneChoosing = (ScreenMessage)(SM_User+123);	// unique
-
-#define MAX_CHOICES 30
 
 class ScreenSelect : public ScreenWithMenuElements
 {
@@ -26,7 +25,6 @@ public:
 
 	virtual void MenuBack( PlayerNumber pn );
 	
-
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
@@ -37,6 +35,12 @@ protected:
 
 	vector<CodeItem>	m_aCodes;
 	vector<GameCommand>	m_aCodeChoices;
+
+	RageTimer		m_timerIdleComment;	// count up to time between idle comment announcer sounds
+	RageTimer		m_timerIdleTimeout;	// count up to go to the timeout screen
+
+	ThemeMetric<float> IDLE_COMMENT_SECONDS;
+	ThemeMetric<float> IDLE_TIMEOUT_SECONDS;
 };
 
 #endif

@@ -25,8 +25,13 @@
 #define CODE_ACTION( c )		THEME->GetMetricA(m_sName,ssprintf("Code%dAction",c+1))
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
 #define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
+#define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
+#define ALLOW_DISABLED_PLAYER_INPUT		THEME->GetMetricB(m_sName,"AllowDisabledPlayerInput")
 
-ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClassName)
+ScreenSelect::ScreenSelect( CString sClassName ) : 
+	ScreenWithMenuElements(sClassName),
+	IDLE_COMMENT_SECONDS(m_sName,"IdleCommentSeconds"),
+	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds")
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 
@@ -100,6 +105,26 @@ void ScreenSelect::Update( float fDelta )
 		SOUND->PlayMusic( THEME->GetPathToS(m_sName+" music") );
 	}
 
+	if( !IsTransitioning() )
+	{
+		if( IDLE_COMMENT_SECONDS > 0 && m_timerIdleComment.PeekDeltaTime() >= IDLE_COMMENT_SECONDS )
+		{
+			SOUND->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
+			m_timerIdleComment.GetDeltaTime();
+		}
+		// don't time out on this screen is coin mode is pay.  
+		// If we're here, then there's a credit in the machine.
+		if( PREFSMAN->GetCoinMode() != COIN_PAY )
+		{
+			if( IDLE_TIMEOUT_SECONDS > 0 && m_timerIdleTimeout.PeekDeltaTime() >= IDLE_TIMEOUT_SECONDS )
+			{
+				SCREENMAN->SetNewScreen( IDLE_TIMEOUT_SCREEN );
+				m_timerIdleTimeout.GetDeltaTime();
+				return;
+			}
+		}
+	}
+
 	Screen::Update( fDelta );
 	
 	// GAMESTATE->m_MasterPlayerNumber is set to PLAYER_INVALID when going Back to 
@@ -127,12 +152,20 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
+	/* Reset the demonstration timer when a key is pressed. */
+	m_timerIdleComment.GetDeltaTime();
+	m_timerIdleTimeout.GetDeltaTime();
+
 	if( MenuI.button == MENU_BUTTON_COIN ||
 		Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
 	{
 		if( type == IET_FIRST_PRESS )
 			this->UpdateSelectableChoices();
-		return;	// don't let the screen handle the MENU_START press
+	
+		if( ALLOW_DISABLED_PLAYER_INPUT )
+			;
+		else
+			return;	// don't let the screen handle the MENU_START press
 	}
 
 	if( IsTransitioning() )
