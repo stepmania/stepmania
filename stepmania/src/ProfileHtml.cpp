@@ -792,6 +792,8 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 
 				if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
 					continue;	// skip
+				if( UNLOCKMAN->SongIsLocked(pSong) )
+					continue;
 
 				TranslatedWrite(f, "<tr>" );
 				
