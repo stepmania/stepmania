@@ -46,6 +46,7 @@ struct {
 	{ "ez2-double",		10 },	// Double: Single x2
 	{ "ez2-real",		7 },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
 	{ "para-single",	5 },
+	{ "para-versus",	10 },
 	{ "ds3ddx-single",	8 },
 	{ "bm-single",		6 },
 	{ "bm-double",      12 },
@@ -1830,6 +1831,39 @@ Style g_Styles[] =
 		STEPS_TYPE_PARA_SINGLE,						// m_StepsType
 		Style::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
+		5,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	PARA_BUTTON_LEFT,	-PARA_COL_SPACING*2 },
+				{ TRACK_2,	GAME_CONTROLLER_1,	PARA_BUTTON_UPLEFT,	-PARA_COL_SPACING*1 },
+				{ TRACK_3,	GAME_CONTROLLER_1,	PARA_BUTTON_UP,	+PARA_COL_SPACING*0 },
+				{ TRACK_4,	GAME_CONTROLLER_1,	PARA_BUTTON_UPRIGHT,	+PARA_COL_SPACING*1 },
+				{ TRACK_5,	GAME_CONTROLLER_1,	PARA_BUTTON_RIGHT,	+PARA_COL_SPACING*2 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	PARA_BUTTON_LEFT,	-PARA_COL_SPACING*2 },
+				{ TRACK_2,	GAME_CONTROLLER_2,	PARA_BUTTON_UPLEFT,	-PARA_COL_SPACING*1 },
+				{ TRACK_3,	GAME_CONTROLLER_2,	PARA_BUTTON_UP,	+PARA_COL_SPACING*0 },
+				{ TRACK_4,	GAME_CONTROLLER_2,	PARA_BUTTON_UPRIGHT,	+PARA_COL_SPACING*1 },
+				{ TRACK_5,	GAME_CONTROLLER_2,	PARA_BUTTON_RIGHT,	+PARA_COL_SPACING*2 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			2,0,4,1,3 
+		},
+		false, // m_bNeedsZoomOutWith2Players
+		false, // m_bCanUseBeginnerHelper
+	},
+	{	// STYLE_PARA_VERSUS
+		GAME_PARA,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
+		"versus",								// m_szName
+		STEPS_TYPE_PARA_VERSUS,						// m_StepsType
+		Style::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
