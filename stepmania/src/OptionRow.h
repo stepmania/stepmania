@@ -7,12 +7,28 @@
 #include "BitmapText.h"
 #include "OptionsCursor.h"
 #include "OptionIcon.h"
+#include "ThemeMetric.h"
 
-enum SelectType { SELECT_ONE, SELECT_MULTIPLE, SELECT_NONE, NUM_SELECT_TYPES, SELECT_INVALID };
+class Font;
+
+enum SelectType
+{
+	SELECT_ONE,
+	SELECT_MULTIPLE,
+	SELECT_NONE,
+	NUM_SELECT_TYPES,
+	SELECT_INVALID
+};
 const CString& SelectTypeToString( SelectType pm );
 SelectType StringToSelectType( const CString& s );
 
-enum LayoutType { LAYOUT_SHOW_ALL_IN_ROW, LAYOUT_SHOW_ONE_IN_ROW, NUM_LAYOUT_TYPES, LAYOUT_INVALID };
+enum LayoutType
+{
+	LAYOUT_SHOW_ALL_IN_ROW,
+	LAYOUT_SHOW_ONE_IN_ROW,
+	NUM_LAYOUT_TYPES,
+	LAYOUT_INVALID
+};
 const CString& LayoutTypeToString( LayoutType pm );
 LayoutType StringToLayoutType( const CString& s );
 
@@ -41,8 +57,71 @@ public:
 	OptionRow();
 	~OptionRow();
 
+	void LoadNormal( const OptionRowDefinition &def );
+	void LoadExit(
+		const CString &sFontPath,
+		const CString &sExitText,
+		float fItemLongRowSharedX,
+		float fItemZoom
+		);
+	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
+
+	void AfterImportOptions( 
+		Font* pFont, 
+		float fItemStartX, 
+		float fItemGapX, 
+		float fItemEndX, 
+		float fItemLongRowSharedX,
+		const ThemeMetric1D<float> &fItemLongRowX,
+		float fItemZoom, 
+		bool bCapitalizeAllOptionNames,
+		const CString &sFontItemPath,
+		const CString &sFontTitlePath,
+		const CString &sTitle,
+		const CString &sBulletPath,
+		float fLabelX, 
+		float fArrowX,
+		float fY,
+		const ThemeMetric<apActorCommands> &cmdLabelOn
+		);
+
+	void PositionUnderlines( bool bShowUnderlines, float fTweenSeconds );
+	void PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenSeconds );
+	void UpdateText( bool bCapitalizeAllOptionNames );
+	void UpdateEnabledDisabled( 
+		bool bThisRowIsSelected, 
+		bool bThisRowIsSelectedByAll, 
+		const RageColor &colorSelected, 
+		const RageColor &colorNotSelected, 
+		float fTweenSeconds );
+
+	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
+	int GetOneSharedSelection() const;
+	void SetOneSelection( PlayerNumber pn, int iChoice );
+	void SetOneSharedSelection( int iChoice );
+
+	int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
+
+	// Only one will true at a time if m_RowDef.bMultiSelect
+	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
+
+	enum RowType { ROW_NORMAL, ROW_EXIT };
+	RowType GetRowType() const { return m_RowType; }
+	const OptionRowDefinition &GetRowDef() const { return m_RowDef; }
+
+	BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow );
+	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
+
+	void SetRowY( float fRowY ) { m_fY = fRowY; }
+	void SetRowHidden( bool bRowHidden ) { m_bHidden = bRowHidden; }
+	bool GetRowHidden() { return m_bHidden; }
+	unsigned GetTextItemsSize() { return m_textItems.size(); }
+
+	void SetExitText( CString sExitText );
+
+protected:
 	OptionRowDefinition		m_RowDef;
-	enum { ROW_NORMAL, ROW_EXIT } m_Type;
+	RowType					m_RowType;
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 	Sprite					m_sprBullet;
@@ -52,15 +131,6 @@ public:
 	float m_fY;
 	bool m_bHidden; // currently off screen
 
-	int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
-
-	// Only one will true at a time if m_RowDef.bMultiSelect
-	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
-
-	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
-	int GetOneSharedSelection() const;
-	void SetOneSelection( PlayerNumber pn, int iChoice );
-	void SetOneSharedSelection( int iChoice );
 };
 
 #endif

@@ -141,7 +141,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 
 void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 {
-	m_Rows[iRow]->m_OptionIcons[pn].Load( pn, sText, false );
+	m_Rows[iRow]->LoadOptionIcon( pn, sText );
 }
 
 void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNumOptionLines, bool bShowUnderlines )
@@ -156,74 +156,57 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 	{
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
-		row.m_RowDef = defs[r];
-		row.m_Type = OptionRow::ROW_NORMAL;
-		
-		if( !defs[r].choices.size() )
-			RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
-			m_sName.c_str(), defs[r].name.c_str() );
-		
-		FOREACH_PlayerNumber( p )
-		{
-			vector<bool> &vbSelected = row.m_vbSelected[p];
-			vbSelected.resize( row.m_RowDef.choices.size() );
-			for( unsigned j=0; j<vbSelected.size(); j++ )
-				vbSelected[j] = false;
-			
-			// set select the first item if a SELECT_ONE row
-			if( row.m_RowDef.selectType == SELECT_ONE )
-				vbSelected[0] = true;
-		}
+		row.LoadNormal( defs[r] );
 	}
 	
 	this->ImportOptions();
 	
+	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
+
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
 		OptionRow &row = *m_Rows[r];
-		
-		// Make all selections the same if bOneChoiceForAllPlayers
-		if( row.m_RowDef.bOneChoiceForAllPlayers )
-		{
-			for( int p=1; p<NUM_PLAYERS; p++ )
-				row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
-		}
-			
-		CHECKPOINT_M( ssprintf("row %i: %s", r, row.m_RowDef.name.c_str()) );
-		FOREACH_PlayerNumber( p )
-		{
-			//
-			// Set focus to one item in the row
-			//
-			if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
-			{
-				row.m_iChoiceInRowWithFocus[p] = 0;	// focus on the first row, which is "go down"
-			}
-			else if( row.m_RowDef.selectType == SELECT_ONE )
-			{
-				/* Make sure the row actually has a selection. */
-				bool bHasSelection = false;
-				unsigned i;
-				for( i=0; i<row.m_vbSelected[p].size(); i++ )
-				{
-					if( row.m_vbSelected[p][i] )
-						bHasSelection = true;
-				}
 
-				if( !bHasSelection )
-				{
-					LOG->Warn( "Options menu \"%s\" row index %i has no selection", m_sName.c_str(), r );
-					row.m_vbSelected[p][0] = true;
-				}
-				
-				row.m_iChoiceInRowWithFocus[p] = row.GetOneSelection(p);	// focus on the selection we just set
-			}
-			else
-			{
-				row.m_iChoiceInRowWithFocus[p] = 0;
-			}
-		}
+		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().name.c_str()) );
+
+		unsigned pos = r;
+		CLAMP( pos, 0, NUM_ROWS_SHOWN-1 );
+		const float fY = ROW_Y.GetValue( pos );
+
+		row.AfterImportOptions( 
+			pFont, 
+			ITEMS_START_X, 
+			ITEMS_GAP_X, 
+			ITEMS_END_X, 
+			ITEMS_LONG_ROW_SHARED_X,
+			ITEMS_LONG_ROW_X,
+			ITEMS_ZOOM, 
+			CAPITALIZE_ALL_OPTION_NAMES,
+			THEME->GetPathF(m_sName,"item"),
+			THEME->GetPathF(m_sName,"title"),
+			GetExplanationTitle( r ),
+			THEME->GetPathG(m_sName,"bullet"),
+			LABELS_X,
+			ARROWS_X,
+			fY,
+			LABELS_ON_COMMAND
+			);
+			
+
+
+
+
+
+		//
+		// HACK: Set focus to one item in the row, which is "go down"
+		//
+		if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
+			FOREACH_PlayerNumber( p )
+				row.m_iChoiceInRowWithFocus[p] = 0;	
 	}
+
+	FONT->UnloadFont( pFont );
+	pFont = NULL;
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
 	m_sprPage->SetName( "Page" );
@@ -246,172 +229,24 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 		m_Highlight[p].Load( p, false );
 		m_framePage.AddChild( &m_Highlight[p] );
 	}
-
-	// init row icons
-	FOREACH_HumanPlayer( p )
-	{
-		for( unsigned l=0; l<m_Rows.size(); l++ )
-		{	
-			OptionRow &row = *m_Rows[l];
-
-			LoadOptionIcon( p, l, "" );
-			m_framePage.AddChild( &row.m_OptionIcons[p] );
-		}
-	}
-
 	
-	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
-
-
-	// init m_textItems from optionLines
-	for( unsigned  r=0; r<m_Rows.size(); r++ )		// foreach row
+	for( unsigned r=0; r<m_Rows.size(); r++ )		// foreach row
 	{
 		OptionRow &row = *m_Rows[r];
-
-		vector<BitmapText *> & textItems = row.m_textItems;
-		const OptionRowDefinition &optline = m_Rows[r]->m_RowDef;
-
-		m_framePage.AddChild( &row.m_sprBullet );
-		m_framePage.AddChild( &row.m_textTitle );		
-
-
-		// If the items will go off the edge of the screen, then re-init with the "long row" style.
-		{
-			float fX = ITEMS_START_X;
-			
-			for( unsigned c=0; c<optline.choices.size(); c++ )
-			{
-				CString sText = optline.choices[c];
-				if( CAPITALIZE_ALL_OPTION_NAMES )
-					sText.MakeUpper();
-				fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
-				
-				if( c != optline.choices.size()-1 )
-					fX += ITEMS_GAP_X;
-
-				if( fX > ITEMS_END_X ) 
-				{
-					row.m_RowDef.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-					break;
-				}
-			}
-		}
-
-		switch( row.m_RowDef.layoutType )
-		{
-		case LAYOUT_SHOW_ONE_IN_ROW:
-			// init text
-			FOREACH_HumanPlayer( p )
-			{
-				BitmapText *bt = new BitmapText;
-				textItems.push_back( bt );
-
-				const int iChoiceInRowWithFocus = row.m_iChoiceInRowWithFocus[p];
-
-				bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
-				CString sText = optline.choices[iChoiceInRowWithFocus];
-				if( CAPITALIZE_ALL_OPTION_NAMES )
-					sText.MakeUpper();
-				bt->SetText( sText );
-				bt->SetZoom( ITEMS_ZOOM );
-				bt->SetShadowLength( 0 );
-
-				if( optline.bOneChoiceForAllPlayers )
-				{
-					bt->SetX( ITEMS_LONG_ROW_SHARED_X );
-					break;	// only initialize one item since it's shared
-				}
-				else
-				{
-					bt->SetX( ITEMS_LONG_ROW_X.GetValue(p) );
-				}
-			}
-
-			// init underlines
-			FOREACH_HumanPlayer( p )
-			{
-				OptionsCursor *ul = new OptionsCursor;
-				row.m_Underline[p].push_back( ul );
-				ul->Load( p, true );
-				int iWidth, iX, iY;
-				GetWidthXY( p, r, 0, iWidth, iX, iY );
-				ul->SetX( float(iX) );
-				ul->SetWidth( float(iWidth) );
-			}
-			break;
-
-		case LAYOUT_SHOW_ALL_IN_ROW:
-			{
-				float fX = ITEMS_START_X;
-				for( unsigned c=0; c<optline.choices.size(); c++ )
-				{
-					// init text
-					BitmapText *bt = new BitmapText;
-					textItems.push_back( bt );
-					bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
-					CString sText = optline.choices[c];
-					if( CAPITALIZE_ALL_OPTION_NAMES )
-						sText.MakeUpper();
-					bt->SetText( sText );
-					bt->SetZoom( ITEMS_ZOOM );
-					bt->SetShadowLength( 0 );
-
-					// set the X position of each item in the line
-					float fItemWidth = bt->GetZoomedWidth();
-					fX += fItemWidth/2;
-					bt->SetX( fX );
-
-					// init underlines
-					FOREACH_HumanPlayer( p )
-					{
-						OptionsCursor *ul = new OptionsCursor;
-						row.m_Underline[p].push_back( ul );
-						ul->Load( p, true );
-						ul->SetX( fX );
-						ul->SetWidth( truncf(fItemWidth) );
-					}
-
-					fX += fItemWidth/2 + ITEMS_GAP_X;
-				}
-			}
-			break;
-
-		default:
-			ASSERT(0);
-		}
-
-		// Add children here and not above because of the logic that starts
-		// over if we run off the right edge of the screen.
-		{
-			for( unsigned c=0; c<textItems.size(); c++ )
-				m_framePage.AddChild( textItems[c] );
-			FOREACH_PlayerNumber( p )
-				for( unsigned c=0; c<row.m_Underline[p].size(); c++ )
-					m_framePage.AddChild( row.m_Underline[p][c] );
-		}
+		m_framePage.AddChild( &row );
 	}
-
-	FONT->UnloadFont( pFont );
-	pFont = NULL;
-
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	m_Rows.push_back( new OptionRow() );
 	OptionRow &row = *m_Rows.back();
-	row.m_Type = OptionRow::ROW_EXIT;
+	row.LoadExit(
+		THEME->GetPathF(m_sName,"item"),
+		THEME->GetMetric("OptionNames","Exit"),
+		ITEMS_LONG_ROW_SHARED_X,
+		ITEMS_ZOOM
+		);
 
-	BitmapText *bt = new BitmapText;
-	row.m_textItems.push_back( bt );
-
-	bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
-	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
-	bt->SetZoom( ITEMS_ZOOM );
-	bt->SetShadowLength( 0 );
-	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
-
-	m_framePage.AddChild( bt );
-
-	InitOptionsText();
+	m_framePage.AddChild( &row );
 
 	// add explanation here so it appears on top
 	FOREACH_PlayerNumber( p )
@@ -492,17 +327,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 	for( int r=0; r<(int) m_Rows.size(); r++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[r];
-		row.m_sprBullet.FinishTweening();
-		row.m_textTitle.FinishTweening();
-
-		for( unsigned c=0; c<row.m_textItems.size(); c++ )
-			row.m_textItems[c]->FinishTweening();
-		FOREACH_PlayerNumber( p )
-		{
-			for( unsigned c=0; c<row.m_Underline[p].size(); c++ )
-				row.m_Underline[p][c]->FinishTweening();
-			row.m_OptionIcons[p].FinishTweening();
-		}
+		row.FinishTweening();
 	}
 
 	m_sprMore->FinishTweening();
@@ -519,10 +344,11 @@ ScreenOptions::~ScreenOptions()
 
 CString ScreenOptions::GetExplanationText( int iRow ) const
 {
-	if( m_Rows[iRow]->m_Type == OptionRow::ROW_EXIT )
+	OptionRow &row = *m_Rows[iRow];
+	if( row.GetRowType() == OptionRow::ROW_EXIT )
 		return "";
 
-	CString sLineName = m_Rows[iRow]->m_RowDef.name;
+	CString sLineName = row.GetRowDef().name;
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
@@ -531,10 +357,11 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 
 CString ScreenOptions::GetExplanationTitle( int iRow ) const
 {
-	if( m_Rows[iRow]->m_Type == OptionRow::ROW_EXIT )
+	OptionRow &row = *m_Rows[iRow];
+	if( row.GetRowType() == OptionRow::ROW_EXIT )
 		return "";
 	
-	CString sLineName = m_Rows[iRow]->m_RowDef.name;
+	CString sLineName = row.GetRowDef().name;
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
@@ -576,73 +403,14 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 {
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 	OptionRow &row = *m_Rows[iRow];
-	if( row.m_Type == OptionRow::ROW_EXIT )
-		return *row.m_textItems[0];
-
-	bool bOneChoice = row.m_RowDef.bOneChoiceForAllPlayers;
-	int index = -1;
-	switch( row.m_RowDef.layoutType )
-	{
-	case LAYOUT_SHOW_ONE_IN_ROW:
-		index = bOneChoice ? 0 : pn;
-		/* If only P2 is enabled, his selections will be in index 0. */
-		if( row.m_textItems.size() == 1 )
-			index = 0;
-		break;
-	case LAYOUT_SHOW_ALL_IN_ROW:
-		index = iChoiceOnRow;
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	ASSERT_M( index < (int)row.m_textItems.size(), ssprintf("%i < %i", index, (int)row.m_textItems.size() ) );
-	return *row.m_textItems[index];
+	return row.GetTextItemForRow( pn, iChoiceOnRow );
 }
 
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
-	BitmapText &text = GetTextItemForRow( pn, iRow, iChoiceOnRow );
-
-	iWidthOut = int(roundf( text.GetZoomedWidth() ));
-	iXOut = int(roundf( text.GetDestX() ));
-	/* We update m_fY, change colors and tween items, and then tween rows to
-	 * their final positions.  (This is so we don't tween colors, too.)  m_fY
-	 * is the actual destination position, even though we may not have set up the
-	 * tween yet. */
-	iYOut = int(roundf( m_Rows[iRow]->m_fY ));
-}
-
-void ScreenOptions::InitOptionsText()
-{
-	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
-	{
-		OptionRow &row = *m_Rows[i];
-		if( row.m_Type == OptionRow::ROW_EXIT )
-			continue;
-
-		unsigned pos = i;
-		CLAMP( pos, 0, NUM_ROWS_SHOWN-1 );
-
-		const float fY = ROW_Y.GetValue( pos );
-
-		BitmapText &title = row.m_textTitle;
-
-		title.LoadFromFont( THEME->GetPathF(m_sName,"title") );
-
-		const CString sText = GetExplanationTitle( i );
-		title.SetText( sText );
-		title.SetXY( LABELS_X, fY );
-		title.RunCommands( LABELS_ON_COMMAND );
-
-		Sprite &bullet = row.m_sprBullet;
-		bullet.Load( THEME->GetPathG(m_sName,"bullet") );
-		bullet.SetXY( ARROWS_X, fY );
-		
-		// set the Y position of each item in the line
-		for( unsigned c=0; c<row.m_textItems.size(); c++ )
-			row.m_textItems[c]->SetY( fY );
-	}
+	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
+	OptionRow &row = *m_Rows[iRow];
+	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
 void ScreenOptions::PositionUnderlines()
@@ -655,77 +423,17 @@ void ScreenOptions::PositionUnderlines()
 	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[r];
-		if( row.m_Type == OptionRow::ROW_EXIT )
-			continue;
-
-		FOREACH_HumanPlayer( p )
-		{
-			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
-
-			const int iNumUnderlines = (row.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? 1 : vpUnderlines.size();
-			
-			for( int i=0; i<iNumUnderlines; i++ )
-			{
-				OptionsCursor& ul = *vpUnderlines[i];
-	
-				int iChoiceWithFocus = (row.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? row.m_iChoiceInRowWithFocus[p] : i;
-
-				/* Don't tween X movement and color changes. */
-				int iWidth, iX, iY;
-				GetWidthXY( p, r, iChoiceWithFocus, iWidth, iX, iY );
-				ul.SetGlobalX( (float)iX );
-				ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
-
-				bool bSelected = row.m_vbSelected[p][ iChoiceWithFocus ];
-				bool bHidden = !bSelected || row.m_bHidden;
-				if( !m_bShowUnderlines )
-					bHidden = true;
-
-				if( ul.GetDestY() != row.m_fY )
-				{
-					ul.StopTweening();
-					ul.BeginTweening( TWEEN_SECONDS );
-				}
-
-				ul.SetHidden( bHidden );
-				ul.SetBarWidth( iWidth );
-				ul.SetY( (float)iY );
-			}
-		}
+		row.PositionUnderlines( m_bShowUnderlines, TWEEN_SECONDS );
 	}
 }
 
 void ScreenOptions::PositionIcons()
 {
-	FOREACH_PlayerNumber( p )	// foreach player
+	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
+		OptionRow &row = *m_Rows[i];
+		row.PositionIcons( ICONS_X, TWEEN_SECONDS );
 			continue;
-
-		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
-		{
-			OptionRow &row = *m_Rows[i];
-			if( row.m_Type == OptionRow::ROW_EXIT )
-				continue;
-
-			OptionIcon &icon = row.m_OptionIcons[p];
-
-			int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[p];
-
-			int iWidth, iX, iY;			// We only use iY
-			GetWidthXY( p, i, iChoiceWithFocus, iWidth, iX, iY );
-			icon.SetX( ICONS_X.GetValue(p) );
-
-			if( icon.GetDestY() != row.m_fY )
-			{
-				icon.StopTweening();
-				icon.BeginTweening( TWEEN_SECONDS );
-			}
-
-			icon.SetY( (float)iY );
-			/* XXX: this doesn't work since icon is an ActorFrame */
-			icon.SetDiffuse( RageColor(1,1,1, row.m_bHidden? 0.0f:1.0f) );
-		}
 	}
 }
 
@@ -739,11 +447,8 @@ void ScreenOptions::PositionCursors()
 {
 	// Set the position of the highlight showing the current option the user is changing.
 	// Set the position of the underscores showing the current choice for each option line.
-	FOREACH_PlayerNumber( pn )	// foreach player
+	FOREACH_HumanPlayer( pn )	// foreach player
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
-
 		const int iRow = m_iCurrentRow[pn];
 		ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 		OptionRow &OptionRow = *m_Rows[iRow];
@@ -765,22 +470,22 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	const int iRow = m_iCurrentRow[pn];
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 
-	const OptionRow &OptionRow = *m_Rows[iRow];
-	const int iChoiceWithFocus = OptionRow.m_iChoiceInRowWithFocus[pn];
+	const OptionRow &row = *m_Rows[iRow];
+	const int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[pn];
 
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
 	OptionsCursor &highlight = m_Highlight[pn];
 	highlight.StopTweening();
-	highlight.BeginTweening( 0.2f );
+	highlight.BeginTweening( TWEEN_SECONDS );
 	highlight.TweenBarWidth( iWidth );
 	highlight.SetXY( (float)iX, (float)iY );
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
 		COMMAND( m_sprLineHighlight[pn], "Change" );
-		if( m_Rows[iRow]->m_Type == OptionRow::ROW_EXIT )
+		if( row.GetRowType() == OptionRow::ROW_EXIT )
 			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
 		m_sprLineHighlight[pn].SetY( (float)iY );
 	}
@@ -795,24 +500,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 void ScreenOptions::UpdateText( int iRow )
 {
 	OptionRow &row = *m_Rows[iRow];
-	const OptionRowDefinition &data = row.m_RowDef;
-
-	if( !row.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW )
-		return;
-
-	FOREACH_HumanPlayer( pn )
-	{
-		int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[pn];
-		unsigned item_no = data.bOneChoiceForAllPlayers ? 0 : pn;
-
-		/* If player_no is 2 and there is no player 1: */
-		item_no = min( item_no, row.m_textItems.size()-1 );
-
-		CString sText = data.choices[iChoiceWithFocus];
-		if( CAPITALIZE_ALL_OPTION_NAMES )
-			sText.MakeUpper();
-		row.m_textItems[item_no]->SetText( sText );
-	}
+	row.UpdateText( CAPITALIZE_ALL_OPTION_NAMES );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -829,52 +517,17 @@ void ScreenOptions::UpdateEnabledDisabled()
 			if( GAMESTATE->IsHumanPlayer(p) && m_iCurrentRow[p] == (int) i )
 				bThisRowIsSelected = true;
 
-		const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
+		bool bThisRowIsSelectedByAll = true;
+		FOREACH_PlayerNumber( p )
+			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != (int) i )
+				bThisRowIsSelectedByAll = false;
 
-		/* Don't tween selection colors at all. */
-		const RageColor color = bThisRowIsSelected? colorSelected:colorNotSelected;
-		row.m_sprBullet.SetGlobalDiffuseColor( color );
-		row.m_textTitle.SetGlobalDiffuseColor( color );
-
-		for( unsigned j=0; j<row.m_textItems.size(); j++ ) 	 
-			row.m_textItems[j]->SetGlobalDiffuseColor( color ); 	 
-
-		for( unsigned j=0; j<row.m_textItems.size(); j++ )
-		{
-			if( row.m_textItems[j]->GetDestY() == row.m_fY && 	 
-				row.m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha ) 	 
-				continue;
-
-			row.m_textItems[j]->StopTweening();
-			row.m_textItems[j]->BeginTweening( TWEEN_SECONDS );
-			row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
-			row.m_textItems[j]->SetY( row.m_fY );
-		}
-
-		if( row.m_Type == OptionRow::ROW_EXIT )
-		{
-			bool bExitRowIsSelectedByBoth = true;
-			FOREACH_PlayerNumber( p )
-				if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != (int) i )
-					bExitRowIsSelectedByBoth = false;
-
-			if( bExitRowIsSelectedByBoth )
-				row.m_textItems[0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
-			else
-				row.m_textItems[0]->SetEffectNone();
-		}
-
-		if( row.m_sprBullet.GetDestY() != row.m_fY ) 	 
-		{
-			row.m_sprBullet.StopTweening();
-			row.m_textTitle.StopTweening();
-			row.m_sprBullet.BeginTweening( TWEEN_SECONDS );
-			row.m_textTitle.BeginTweening( TWEEN_SECONDS );
-			row.m_sprBullet.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-			row.m_textTitle.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-			row.m_sprBullet.SetY( row.m_fY );
-			row.m_textTitle.SetY( row.m_fY );
-		}
+		row.UpdateEnabledDisabled( 
+			bThisRowIsSelected, 
+			bThisRowIsSelectedByAll, 
+			colorSelected, 
+			colorNotSelected, 
+			TWEEN_SECONDS );
 	}
 }
 
@@ -962,7 +615,7 @@ void ScreenOptions::PositionItems()
 	vector<OptionRow*> Rows( m_Rows );
 	OptionRow *ExitRow = NULL;
 
-	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->m_Type == OptionRow::ROW_EXIT )
+	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->GetRowType() == OptionRow::ROW_EXIT )
 	{
 		ExitRow = &*Rows.back();
 
@@ -1040,17 +693,18 @@ void ScreenOptions::PositionItems()
 			
 		OptionRow &row = *Rows[i];
 
-		row.m_fY = fY;
-		row.m_bHidden = 
+		row.SetRowY( fY );
+		bool bHidden = 
 			i < first_start ||
 			(i >= first_end && i < second_start) ||
 			i >= second_end;
+		row.SetRowHidden( bHidden );
 	}
 
 	if( ExitRow )
 	{
-		ExitRow->m_fY = SEPARATE_EXIT_ROW_Y;
-		ExitRow->m_bHidden = ( second_end != (int) Rows.size() );
+		ExitRow->SetRowY( SEPARATE_EXIT_ROW_Y );
+		ExitRow->SetRowHidden( second_end != (int) Rows.size() );
 	}
 }
 
@@ -1079,7 +733,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 
 
 	/* If the last row is EXIT, and is hidden, then show MORE. */
-	const bool ShowMore = m_Rows.back()->m_Type == OptionRow::ROW_EXIT && m_Rows.back()->m_bHidden;
+	const bool ShowMore = m_Rows.back()->GetRowType() == OptionRow::ROW_EXIT && m_Rows.back()->GetHidden();
 	if( m_bMoreShown != ShowMore )
 	{
 		m_bMoreShown = ShowMore;
@@ -1092,7 +746,8 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( GAMESTATE->IsHumanPlayer(p) )
 			TweenCursor(  p );
 
-		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->m_Type == OptionRow::ROW_EXIT;
+		int iCurrentRow = m_iCurrentRow[pn];
+		const bool ExitSelected = m_Rows[iCurrentRow]->GetRowType() == OptionRow::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
 			if( m_bWasOnExit[p] != ExitSelected )
@@ -1145,8 +800,8 @@ void ScreenOptions::StartGoToNextScreen()
 
 bool ScreenOptions::AllAreOnExit() const
 {
-	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->m_Type != OptionRow::ROW_EXIT )
+	FOREACH_HumanPlayer( p )
+		if( m_Rows[m_iCurrentRow[p]]->GetRowType() != OptionRow::ROW_EXIT )
 			return false;
 	return true;
 }
@@ -1167,8 +822,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 	}
 	
 	OptionRow &row = *m_Rows[m_iCurrentRow[pn]];
-	OptionRowDefinition &data = row.m_RowDef;
-
+	
 
 	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
 	 * MENU_BUTTON_RIGHT are being held. */
@@ -1190,7 +844,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 
 
 	// If on exit, check it all players are on "Exit"
-	if( row.m_Type == OptionRow::ROW_EXIT )
+	if( row.GetRowType() == OptionRow::ROW_EXIT )
 	{
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
 		if( AllAreOnExit()  &&  selectType == IET_FIRST_PRESS && !IsTransitioning() )
@@ -1210,7 +864,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 	}
 	
 	// If this is a bFirstChoiceGoesDown, then if this is a multiselect row.
-	if( data.selectType == SELECT_MULTIPLE )
+	if( row.GetRowDef().selectType == SELECT_MULTIPLE )
 	{
 		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
@@ -1236,10 +890,10 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( data.selectType != SELECT_MULTIPLE )
+			if( row.GetRowDef().selectType != SELECT_MULTIPLE )
 			{
 				int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
-				if( row.m_RowDef.bOneChoiceForAllPlayers )
+				if( row.GetRowDef().bOneChoiceForAllPlayers )
 					row.SetOneSharedSelection( iChoiceInRow );
 				else
 					row.SetOneSelection( pn, iChoiceInRow );
@@ -1266,8 +920,9 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
 	/* Long rows always put us in the center, so don't update the focus. */
-	const OptionRow &OptionRow = *m_Rows[m_iCurrentRow[pn]];
-	if( OptionRow.m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW )
+	int iCurrentRow = m_iCurrentRow[pn];
+	const OptionRow &row = *m_Rows[iCurrentRow];
+	if( row.GetRowDef().layoutType == LAYOUT_SHOW_ONE_IN_ROW )
 		return;
 
 	int iWidth, iY;
@@ -1281,9 +936,8 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	const int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_Rows[iCurRow];
-	OptionRowDefinition &optrow = m_Rows[iCurRow]->m_RowDef;
-
-	const int iNumOptions = (row.m_Type == OptionRow::ROW_EXIT)? 1: optrow.choices.size();
+	
+	const int iNumOptions = (row.GetRowType() == OptionRow::ROW_EXIT)? 1: row.GetRowDef().choices.size();
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
@@ -1298,7 +952,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	if( Repeat )
 		return;
 
-	if( row.m_Type == OptionRow::ROW_EXIT	)	// EXIT is selected
+	if( row.GetRowType() == OptionRow::ROW_EXIT	)	// EXIT is selected
 		return;		// don't allow a move
 
 	bool bOneChanged = false;
@@ -1314,7 +968,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	row.m_iChoiceInRowWithFocus[pn] = iNewChoiceWithFocus;
 	StoreFocus( pn );
 
-	if( optrow.bOneChoiceForAllPlayers )
+	if( row.GetRowDef().bOneChoiceForAllPlayers )
 	{
 		/* If this row is bOneChoiceForAllPlayers, then lock the cursors together
 		 * for this row.  Don't do this in toggle modes, since the current selection
@@ -1322,8 +976,10 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		bool bForceFocusedChoiceTogether = false;
 		if( m_OptionsNavigation!=NAV_TOGGLE_THREE_KEY &&
 			m_OptionsNavigation!=NAV_TOGGLE_FIVE_KEY &&
-			optrow.bOneChoiceForAllPlayers )
+			row.GetRowDef().bOneChoiceForAllPlayers )
+		{
 			bForceFocusedChoiceTogether = true;
+		}
 
 		/* Also lock focus if the screen is explicitly set to share cursors. */
 		if( m_InputMode == INPUTMODE_SHARE_CURSOR )
@@ -1347,7 +1003,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			}
 			else
 			{
-				if( optrow.selectType == SELECT_MULTIPLE )
+				if( row.GetRowDef().selectType == SELECT_MULTIPLE )
 					;	// do nothing.  User must press Start to toggle the selection.
 				else
 					row.SetOneSelection( p, iNewChoiceWithFocus );			
@@ -1362,7 +1018,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		}
 		else
 		{
-			if( optrow.selectType == SELECT_MULTIPLE )
+			if( row.GetRowDef().selectType == SELECT_MULTIPLE )
 				;	// do nothing.  User must press Start to toggle the selection.
 			else
 				row.SetOneSelection( pn, iNewChoiceWithFocus );
@@ -1397,24 +1053,27 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
 			continue;	// skip
 
-		int row = m_iCurrentRow[p] + dir;
-		if( Repeat && ( row == -1 || row == (int) m_Rows.size() ) )
+		int r = m_iCurrentRow[p] + dir;
+		if( Repeat && ( r == -1 || r == (int) m_Rows.size() ) )
 			continue; // don't wrap while repeating
 
-		wrap( row, m_Rows.size() );
+		wrap( r, m_Rows.size() );
 
-		const unsigned iOldSelection = m_Rows[m_iCurrentRow[p]]->m_iChoiceInRowWithFocus[p];
+		int iCurrentRow = m_iCurrentRow[p];
+		const unsigned iOldSelection = m_Rows[iCurrentRow]->m_iChoiceInRowWithFocus[p];
 
-		m_iCurrentRow[p] = row;
+		m_iCurrentRow[p] = r;
+
+		OptionRow &row = *m_Rows[r];
 
 		switch( m_OptionsNavigation )
 		{
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( m_Rows[row]->m_RowDef.layoutType != LAYOUT_SHOW_ONE_IN_ROW )
+			if( row.GetRowDef().layoutType != LAYOUT_SHOW_ONE_IN_ROW )
 			{
 				int iSelectionDist = -1;
-				for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
+				for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
 				{
 					int iWidth, iX, iY;
 					GetWidthXY( p, m_iCurrentRow[p], i, iWidth, iX, iY );
@@ -1422,10 +1081,10 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 					if( iSelectionDist == -1 || iDist < iSelectionDist )
 					{
 						iSelectionDist = iDist;
-						m_Rows[row]->m_iChoiceInRowWithFocus[p] = i;
+						row.m_iChoiceInRowWithFocus[p] = i;
 					}
 				}
-				m_Rows[row]->m_iChoiceInRowWithFocus[p] = min( iOldSelection, m_Rows[row]->m_textItems.size()-1 );
+				row.m_iChoiceInRowWithFocus[p] = min( iOldSelection, row.GetTextItemsSize()-1 );
 			}
 		}
 
@@ -1443,10 +1102,12 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 
 int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 {
-	const int l = m_iCurrentRow[pn];
-	if( m_Rows[l]->m_Type != OptionRow::ROW_NORMAL )
+	const int r = m_iCurrentRow[pn];
+	OptionRow &row = *m_Rows[r];
+
+	if( row.GetRowType() != OptionRow::ROW_NORMAL )
 		return -1;
-	return l;
+	return r;
 }
 
 /*

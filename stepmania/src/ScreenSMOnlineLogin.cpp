@@ -42,8 +42,7 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sCl
 		InitMenu(INPUTMODE_SHARE_CURSOR, g_ProfileLine, 1);
   		SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
 		OptionRow &row = *m_Rows.back();
-		BitmapText *bt = row.m_textItems.back();
-		bt->SetText("Login");		//Change "Exit" Text
+		row.SetExitText("Login");
 	}
 }
 
