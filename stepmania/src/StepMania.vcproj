@@ -537,6 +537,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="Data Structures"
 			Filter="">
 			<File
+				RelativePath="BannerCache.cpp">
+			</File>
+			<File
+				RelativePath="BannerCache.h">
+			</File>
+			<File
 				RelativePath="Character.cpp">
 			</File>
 			<File
@@ -1179,6 +1185,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="MenuTimer.h">
+			</File>
+			<File
+				RelativePath="ModeSwitcher.cpp">
+			</File>
+			<File
+				RelativePath="ModeSwitcher.h">
 			</File>
 			<File
 				RelativePath="MusicBannerWheel.cpp">
