@@ -42,7 +42,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
-	int NumUnlocks = NUM_UNLOCKS;
+	unsigned NumUnlocks = NUM_UNLOCKS;
 	if (GAMESTATE->m_pUnlockingSys->m_SongEntries.size() < NumUnlocks)
 		NumUnlocks = GAMESTATE->m_pUnlockingSys->m_SongEntries.size();
 
@@ -55,7 +55,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
-	int i;
+	unsigned i;
 	CString IconCommand = ICON_COMMAND;
 	for(i=1; i <= NumUnlocks; i++)
 	{
@@ -235,7 +235,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		for(i=1; i <= UNLOCK_TEXT_SCROLL_ROWS; i++)
 		{
-			if (i > (int) LastUnlocks.size())
+			if (i > LastUnlocks.size())
 				continue;
 
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];

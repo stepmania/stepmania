@@ -84,7 +84,7 @@ void ScreenSongOptions::ImportOptions()
 	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
 
 	m_iSelectedOption[0][SO_RATE] = 7;	// in case we don't match below
-	for( int i=0; i<g_SongOptionsLines[SO_RATE].choices.size(); i++ )
+	for( unsigned i=0; i<g_SongOptionsLines[SO_RATE].choices.size(); i++ )
 		if( so.m_fMusicRate == atof(g_SongOptionsLines[SO_RATE].choices[i]) ) 
 			m_iSelectedOption[0][SO_RATE] = i;
 }
