@@ -150,9 +150,16 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
     return RandomFloat( low, high );
 }
 
+/* return f rounded to the nearest multiple of fRoundInterval */
 inline float froundf( const float f, const float fRoundInterval )
 {
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
+}
+
+/* return f truncated to the nearest multiple of fTruncInterval */
+inline float ftruncf( const float f, const float fTruncInterval )
+{
+	return int( (f)/fTruncInterval ) * fTruncInterval;
 }
 
 // Move val toward other_val by to_move.

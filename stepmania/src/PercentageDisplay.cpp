@@ -71,7 +71,11 @@ void PercentageDisplay::Refresh()
 	m_Last = iActualDancePoints;
 
 	CString sNumToDisplay;
-	if( !PREFSMAN->m_bDancePointsForOni )
+	if( PREFSMAN->m_bDancePointsForOni )
+	{
+		sNumToDisplay = ssprintf( "%*d", DANCE_POINT_DIGITS, max( 0, iActualDancePoints ) );
+	}
+	else
 	{
 		float fPercentDancePoints = m_pSource->GetPercentDancePoints( m_PlayerNumber );
 
@@ -86,16 +90,18 @@ void PercentageDisplay::Refresh()
 			m_textPercentRemainder.SetText( ssprintf(".%01d%%", iPercentRemainder) );
 		}
 		else
-		{
-			float fNumToDisplay = fPercentDancePoints*100;
-			sNumToDisplay = ssprintf( "%*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, fNumToDisplay );
+		{		
+			// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
+			// score that's too high and doesn't match up with the calculated grade.
+			float fTruncInterval = powf(0.1f,PERCENT_TOTAL_SIZE);
+			fPercentDancePoints = ftruncf( fPercentDancePoints, fTruncInterval );
+			
+			sNumToDisplay = ssprintf( "%*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
 			
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');
 		}
 	}
-	else
-		sNumToDisplay = ssprintf( "%*d", DANCE_POINT_DIGITS, max( 0, iActualDancePoints ) );
 
 	m_textPercent.SetText( sNumToDisplay );
 }
