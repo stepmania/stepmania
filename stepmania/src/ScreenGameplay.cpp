@@ -572,6 +572,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
 		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
+		m_announcerComboContinuing.Load(ANNOUNCER->GetPathTo("gameplay combo overflow") );
 		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick") );
 
 		switch( GAMESTATE->m_PlayMode )
@@ -1663,7 +1664,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
-	
+	case SM_ComboContinuing:
+		if( SECS_SINCE_LAST_COMMENT > 2 )
+		{
+			m_announcerComboContinuing.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		break;	
 	case SM_BattleTrickLevel1:
 		if( SECS_SINCE_LAST_COMMENT > 3 )
 		{
@@ -1766,8 +1773,15 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if (PREFSMAN->m_bUseUnlockSystem)
 				GAMESTATE->m_pUnlockingSys->UnlockFailExtraStage();
 		}
-
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
+		
+		// Feels hackish. Feel free to make cleaner.
+		if(GAMESTATE->IsCourseMode())
+			if(GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ) && GAMESTATE->GetCourseSongIndex() < (int(m_apSongsQueue.size() / 2) + 1))
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed halfway" ) );
+			else
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed" ) );
+		else
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 		break;
 
 	case SM_GoToScreenAfterFail:

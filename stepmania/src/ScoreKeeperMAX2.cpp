@@ -401,6 +401,8 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		SCREENMAN->PostMessageToTopScreen( SM_900Combo, 0 );
 	else if( CROSSED(1000))	
 		SCREENMAN->PostMessageToTopScreen( SM_1000Combo, 0 );
+	else if( (iOldCombo / 100) < (iCurCombo / 100) && iCurCombo > 1000 )
+		SCREENMAN->PostMessageToTopScreen( SM_ComboContinuing, 0 );
 
 	// new max combo
 	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);

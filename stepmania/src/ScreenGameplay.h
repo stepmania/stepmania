@@ -43,6 +43,7 @@ const ScreenMessage	SM_800Combo					= ScreenMessage(SM_User+207);
 const ScreenMessage	SM_900Combo					= ScreenMessage(SM_User+208);
 const ScreenMessage	SM_1000Combo				= ScreenMessage(SM_User+209);
 const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
+const ScreenMessage SM_ComboContinuing			= ScreenMessage(SM_User+211);
 
 const ScreenMessage SM_BattleTrickLevel1		= ScreenMessage(SM_User+301);
 const ScreenMessage SM_BattleTrickLevel2		= ScreenMessage(SM_User+302);
@@ -169,6 +170,7 @@ protected:
 	RandomSample	m_announcer900Combo;
 	RandomSample	m_announcer1000Combo;
 	RandomSample	m_announcerComboStopped;
+	RandomSample	m_announcerComboContinuing;
 	RandomSample	m_announcerBattleTrickLevel1;
 	RandomSample	m_announcerBattleTrickLevel2;
 	RandomSample	m_announcerBattleTrickLevel3;
