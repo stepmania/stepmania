@@ -57,12 +57,12 @@ void PlayerAI::InitFromDisk()
 
 		TapScoreDistribution& dist = g_Distributions[i];
 		dist.fPercent[TNS_NONE] = 0;
-		ini.GetValueF( sKey, "MissWeight", dist.fPercent[TNS_MISS] );
-		ini.GetValueF( sKey, "BooWeight", dist.fPercent[TNS_BOO] );
-		ini.GetValueF( sKey, "GoodWeight", dist.fPercent[TNS_GOOD] );
-		ini.GetValueF( sKey, "GreatWeight", dist.fPercent[TNS_GREAT] );
-		ini.GetValueF( sKey, "PerfectWeight", dist.fPercent[TNS_PERFECT] );
-		ini.GetValueF( sKey, "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
+		ini.GetValue ( sKey, "MissWeight", dist.fPercent[TNS_MISS] );
+		ini.GetValue ( sKey, "BooWeight", dist.fPercent[TNS_BOO] );
+		ini.GetValue ( sKey, "GoodWeight", dist.fPercent[TNS_GOOD] );
+		ini.GetValue ( sKey, "GreatWeight", dist.fPercent[TNS_GREAT] );
+		ini.GetValue ( sKey, "PerfectWeight", dist.fPercent[TNS_PERFECT] );
+		ini.GetValue ( sKey, "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
 		
 		float fSum = 0;
 		int j;

@@ -395,12 +395,12 @@ static void CheckVideoDefaultSettings()
 	if( SetDefaultVideoParams )
 	{
 		ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
-		ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
-		ini.GetValueI( sKey, "Height", PREFSMAN->m_iDisplayHeight );
-		ini.GetValueI( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
-		ini.GetValueI( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
-		ini.GetValueI( sKey, "MovieColor", PREFSMAN->m_iMovieColorDepth );
-		ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
+		ini.GetValue( sKey, "Width", PREFSMAN->m_iDisplayWidth );
+		ini.GetValue( sKey, "Height", PREFSMAN->m_iDisplayHeight );
+		ini.GetValue( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
+		ini.GetValue( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
+		ini.GetValue( sKey, "MovieColor", PREFSMAN->m_iMovieColorDepth );
+		ini.GetValue( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
 
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver = GetVideoDriverName();

@@ -55,12 +55,44 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 
 	m_BeingHeld[di.device][di.button] = Down;
 	m_fSecsHeld[di.device][di.button] = 0;
-
+#if 0
+	if( 1 ) // PREFSMAN->m_bJoytechInput && di.IsJoystick() )
+	{
+		/* If this is a release of the right button, force it down for a little while, so
+		 * the axis motion has a chance to come in before we register the right arrow release. */
+		const int RightButton = 'd';//JOY_13;
+//		const int LeftButton = 'a';//JOY_15;
+		if( !Down && di.button == RightButton )
+		{
+			LOG->Trace("temp force d");
+			ForceKey( DeviceInput(di.device, RightButton), 1 );
+		}
+	}
+#endif
 	if( WasBeingPressed != IsBeingPressed(di) )
 	{
 		InputEventType iet = IsBeingPressed(di)? IET_FIRST_PRESS:IET_RELEASE;
 		queue.push_back( InputEvent(di,iet) );
 	}
+#if 0
+	if( 1 ) // PREFSMAN->m_bJoytechInput && di.IsJoystick() )
+	{
+		const int RightButton = 'd';//JOY_13;
+		const int LeftButton = 'a';//JOY_15;
+		bool NeedToForceBothButtons =
+			IsBeingPressed( DeviceInput(di.device, 'e'/*JOY_RIGHT*/) ) &&
+			!IsBeingPressed( DeviceInput(di.device, RightButton) );
+			LOG->Trace("--- %i", NeedToForceBothButtons );
+		if( NeedToForceBothButtons )
+		{
+			ForceKey( DeviceInput(di.device, RightButton), 0 );
+			ForceKey( DeviceInput(di.device, LeftButton), 0 );
+		} else {
+			StopForcingKey( DeviceInput(di.device, RightButton) );
+			StopForcingKey( DeviceInput(di.device, LeftButton) );
+		}
+	}
+#endif
 }
 
 /* Force a key down.  Duration is the amount of time to force the key, or 0 to force
@@ -116,6 +148,14 @@ void InputFilter::ResetDevice( InputDevice dev )
 
 void InputFilter::Update(float fDeltaTime)
 {
+//	static float AutoStartTime=0;
+//	AutoStartTime -= fDeltaTime;
+//	if( AutoStartTime <= 0 )
+//	{
+//		AutoStartTime = 0.5f;
+//		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, 'a'), true );
+//		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, 'a'), false );
+//	}
 	RageTimer now;
 
 	// Constructing the DeviceInput inside the nested loops caues terrible 

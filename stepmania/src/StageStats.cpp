@@ -68,7 +68,9 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 		return GRADE_E;
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
-	 * is tricky since at that point the ScoreKeepers no longer exist. */
+	 * is tricky since at that point the ScoreKeepers no longer exist. 
+	 *
+	 * See http://www.aaroninjapan.com/ddr2.html ("Regular play scoring") */
 	const float TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, -8, -4, 0, +1, +2, +2 };
 	const float HoldScoreValues[NUM_HOLD_NOTE_SCORES] = { 0, 0, +6 };
 

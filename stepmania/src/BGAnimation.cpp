@@ -77,7 +77,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			m_Layers.push_back( pLayer );
 		}
 
-		if( !ini.GetValueF( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
+		if( !ini.GetValue( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
 		{
 			m_fLengthSeconds = 0;
 			for( i=0; (unsigned)i < m_Layers.size(); i++ )

@@ -14,24 +14,20 @@
 #include "IniFile.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageFile.h"
 #include <string.h>
 #include <errno.h>
-using namespace std;
-#include "RageFile.h"
 
-//constructor, can specify pathname here instead of using SetPath later
 IniFile::IniFile(CString inipath)
 {
 	path = inipath;
 }
 
-//default destructor
 IniFile::~IniFile()
 {
 
 }
 
-// sets path of ini file to read and write from
 void IniFile::SetPath(CString newpath)
 {
 	path = newpath;
@@ -41,7 +37,7 @@ void IniFile::SetPath(CString newpath)
 // returns true if successful, false otherwise
 bool IniFile::ReadFile()
 {
-LOG->Trace("INI: Reading '%s'",path.c_str() );
+	LOG->Trace("INI: Reading '%s'",path.c_str() );
 	FILE *f = fopen(path, "r");
 
 	if (f == NULL)
@@ -166,7 +162,7 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString
 }
 
 // gets value of [keyname] valuename = 
-bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& value) const
+bool IniFile::GetValue(const CString &keyname, const CString &valuename, int& value) const
 {
 	CString sValue;
 	if( !GetValue(keyname,valuename,sValue) )
@@ -175,7 +171,7 @@ bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& v
 	return true;
 }
 
-bool IniFile::GetValueU(const CString &keyname, const CString &valuename, unsigned &value) const
+bool IniFile::GetValue(const CString &keyname, const CString &valuename, unsigned &value) const
 {
 	CString sValue;
 	if( !GetValue(keyname,valuename,sValue) )
@@ -185,7 +181,7 @@ bool IniFile::GetValueU(const CString &keyname, const CString &valuename, unsign
 }
 
 // gets value of [keyname] valuename = 
-bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float& value) const
+bool IniFile::GetValue(const CString &keyname, const CString &valuename, float& value) const
 {
 	CString sValue;
 	if( !GetValue(keyname,valuename,sValue) )
@@ -195,7 +191,7 @@ bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float&
 }
 
 // gets value of [keyname] valuename = 
-bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& value) const
+bool IniFile::GetValue(const CString &keyname, const CString &valuename, bool& value) const
 {
 	CString sValue;
 	if( !GetValue(keyname,valuename,sValue) )

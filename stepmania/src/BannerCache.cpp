@@ -240,9 +240,9 @@ RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 
 	int src_width = 0, src_height = 0;
 	bool WasRotatedBanner = false;
-	BannerData.GetValueI( BannerPath, "Width", src_width );
-	BannerData.GetValueI( BannerPath, "Height", src_height );
-	BannerData.GetValueB( BannerPath, "Rotated", WasRotatedBanner );
+	BannerData.GetValue( BannerPath, "Width", src_width );
+	BannerData.GetValue( BannerPath, "Height", src_height );
+	BannerData.GetValue( BannerPath, "Rotated", WasRotatedBanner );
 	if(src_width == 0 || src_height == 0)
 	{
 		LOG->Warn("Couldn't load '%s'", BannerPath.c_str() );
@@ -292,7 +292,7 @@ void BannerCache::CacheBanner( CString BannerPath )
 	{
 		unsigned CurFullHash;
 		const unsigned FullHash = GetHashForFile( BannerPath );
-		if( BannerData.GetValueU( BannerPath, "FullHash", CurFullHash ) &&
+		if( BannerData.GetValue( BannerPath, "FullHash", CurFullHash ) &&
 			CurFullHash == FullHash )
 		{
 			/* It's identical.  Just load it. */

@@ -475,15 +475,15 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 //	LOG->Trace("Loading font page '%s' settings from page name '%s'",
 //		TexturePath.c_str(), PageName.c_str());
 	
-	ini.GetValueI( PageName, "DrawExtraPixelsLeft", cfg.DrawExtraPixelsLeft );
-	ini.GetValueI( PageName, "DrawExtraPixelsRight", cfg.DrawExtraPixelsRight );
-	ini.GetValueI( PageName, "AddToAllWidths", cfg.AddToAllWidths );
-	ini.GetValueF( PageName, "ScaleAllWidthsBy", cfg.ScaleAllWidthsBy );
-	ini.GetValueI( PageName, "LineSpacing", cfg.LineSpacing );
-	ini.GetValueI( PageName, "Top", cfg.Top );
-	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
-	ini.GetValueI( PageName, "DefaultWidth", cfg.DefaultWidth );
-	ini.GetValueI( PageName, "AdvanceExtraPixels", cfg.AdvanceExtraPixels );
+	ini.GetValue( PageName, "DrawExtraPixelsLeft", cfg.DrawExtraPixelsLeft );
+	ini.GetValue( PageName, "DrawExtraPixelsRight", cfg.DrawExtraPixelsRight );
+	ini.GetValue( PageName, "AddToAllWidths", cfg.AddToAllWidths );
+	ini.GetValue( PageName, "ScaleAllWidthsBy", cfg.ScaleAllWidthsBy );
+	ini.GetValue( PageName, "LineSpacing", cfg.LineSpacing );
+	ini.GetValue( PageName, "Top", cfg.Top );
+	ini.GetValue( PageName, "Baseline", cfg.Baseline );
+	ini.GetValue( PageName, "DefaultWidth", cfg.DefaultWidth );
+	ini.GetValue( PageName, "AdvanceExtraPixels", cfg.AdvanceExtraPixels );
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);
@@ -778,7 +778,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		ini.SetPath( IniPath );
 		ini.ReadFile();
 		ini.RenameKey("Char Widths", "main");
-		ini.GetValueB( "main", "CapitalsOnly", CapitalsOnly );
+		ini.GetValue( "main", "CapitalsOnly", CapitalsOnly );
 	}
 
 	{

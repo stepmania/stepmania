@@ -387,13 +387,13 @@ bool UnlockSystem::ReadValues( CString filename)
 	if (!data.ReadFile())
 		return false;
 
-	data.GetValueF( "Unlock", "ArcadePointsAccumulated",	ArcadePoints );
-	data.GetValueF( "Unlock", "DancePointsAccumulated",		DancePoints );
-	data.GetValueF( "Unlock", "SongPointsAccumulated",		SongPoints );
-	data.GetValueF( "Unlock", "ExtraStagesCleared",			ExtraClearPoints );
-	data.GetValueF( "Unlock", "ExtraStagesFailed",			ExtraFailPoints );
-	data.GetValueF( "Unlock", "TotalStagesCleared",			StagesCleared );
-	data.GetValueF( "Unlock", "TotalToastysSeen",			ToastyPoints );
+	data.GetValue ( "Unlock", "ArcadePointsAccumulated",	ArcadePoints );
+	data.GetValue ( "Unlock", "DancePointsAccumulated",		DancePoints );
+	data.GetValue ( "Unlock", "SongPointsAccumulated",		SongPoints );
+	data.GetValue ( "Unlock", "ExtraStagesCleared",			ExtraClearPoints );
+	data.GetValue ( "Unlock", "ExtraStagesFailed",			ExtraFailPoints );
+	data.GetValue ( "Unlock", "TotalStagesCleared",			StagesCleared );
+	data.GetValue ( "Unlock", "TotalToastysSeen",			ToastyPoints );
 	data.GetValue ( "Unlock", "RouletteSeeds",				RouletteSeeds );
 
 	return true;

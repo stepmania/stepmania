@@ -132,13 +132,13 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 		CString sDelayKey = ssprintf( "Delay%04d", i );
 		State newState;
 
-		if( !ini.GetValueI( "Sprite", sFrameKey, newState.iFrameIndex ) )
+		if( !ini.GetValue( "Sprite", sFrameKey, newState.iFrameIndex ) )
 			break;
 		if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
 			RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
 				m_sSpritePath.c_str(), sFrameKey.c_str(), newState.iFrameIndex, ID.filename.c_str(), m_pTexture->GetNumFrames() );
 
-		if( !ini.GetValueF( "Sprite", sDelayKey, newState.fDelay ) )
+		if( !ini.GetValue( "Sprite", sDelayKey, newState.fDelay ) )
 			break;
 
 		if( i == 0 )	// the ini file defines at least one frame
@@ -148,12 +148,12 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 	}
 
 	float f;
-	if( ini.GetValueF( "Sprite", "BaseRotationXDegrees", f ) )	Actor::SetBaseRotationX( f );
-	if( ini.GetValueF( "Sprite", "BaseRotationYDegrees", f ) )	Actor::SetBaseRotationY( f );
-	if( ini.GetValueF( "Sprite", "BaseRotationZDegrees", f ) )	Actor::SetBaseRotationZ( f );
-	if( ini.GetValueF( "Sprite", "BaseZoomX", f ) )				Actor::SetBaseZoomX( f );
-	if( ini.GetValueF( "Sprite", "BaseZoomY", f ) )				Actor::SetBaseZoomY( f );
-	if( ini.GetValueF( "Sprite", "BaseZoomZ", f ) )				Actor::SetBaseZoomZ( f );
+	if( ini.GetValue( "Sprite", "BaseRotationXDegrees", f ) )	Actor::SetBaseRotationX( f );
+	if( ini.GetValue( "Sprite", "BaseRotationYDegrees", f ) )	Actor::SetBaseRotationY( f );
+	if( ini.GetValue( "Sprite", "BaseRotationZDegrees", f ) )	Actor::SetBaseRotationZ( f );
+	if( ini.GetValue( "Sprite", "BaseZoomX", f ) )				Actor::SetBaseZoomX( f );
+	if( ini.GetValue( "Sprite", "BaseZoomY", f ) )				Actor::SetBaseZoomY( f );
+	if( ini.GetValue( "Sprite", "BaseZoomZ", f ) )				Actor::SetBaseZoomZ( f );
 
 
 	return true;

@@ -40,7 +40,7 @@ void SongCacheIndex::ReadCacheIndex()
 	CacheIndex.ReadFile();	// don't care if this fails
 
 	int iCacheVersion;
-	CacheIndex.GetValueI( "Cache", "CacheVersion", iCacheVersion );
+	CacheIndex.GetValue( "Cache", "CacheVersion", iCacheVersion );
 	if( iCacheVersion == FILE_CACHE_VERSION )
 		return; /* OK */
 
@@ -62,7 +62,7 @@ void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
 unsigned SongCacheIndex::GetCacheHash( const CString &path ) const
 {
 	unsigned iDirHash;
-	CacheIndex.GetValueU( "Cache", MangleName(path), iDirHash );
+	CacheIndex.GetValue( "Cache", MangleName(path), iDirHash );
 	return iDirHash;
 }
 

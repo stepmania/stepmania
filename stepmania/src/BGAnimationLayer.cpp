@@ -413,20 +413,20 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	ini.SetPath( sIniPath );
 	if( ini.ReadFile() )
 	{
-		ini.GetValueF( "BGAnimationLayer", "SetXpos", m_PosX );
-		ini.GetValueF( "BGAnimationLayer", "SetYpos", m_PosY );
-		ini.GetValueF( "BGAnimationLayer", "SetZoom", m_Zoom );
-		ini.GetValueF( "BGAnimationLayer", "SetRot", m_Rot );
-		ini.GetValueF( "BGAnimationLayer", "TweenStartTime", m_TweenStartTime );
-		ini.GetValueF( "BGAnimationLayer", "TweenX", m_TweenX );
-		ini.GetValueF( "BGAnimationLayer", "TweenY", m_TweenY );
-		ini.GetValueF( "BGAnimationLayer", "TweenSpeed", m_TweenSpeed );
-		ini.GetValueF( "BGAnimationLayer", "ShowTime", m_ShowTime );
-		ini.GetValueF( "BGAnimationLayer", "HideTime", m_HideTime );
-		ini.GetValueF( "BGAnimationLayer", "TexCoordVelocityX", m_vTexCoordVelocity.x );
-		ini.GetValueF( "BGAnimationLayer", "TexCoordVelocityY", m_vTexCoordVelocity.y );
-		ini.GetValueF( "BGAnimationLayer", "RotationalVelocity", m_fRotationalVelocity );
-		ini.GetValueF( "BGAnimationLayer", "SetY", m_fStretchScrollH_Y );
+		ini.GetValue( "BGAnimationLayer", "SetXpos", m_PosX );
+		ini.GetValue( "BGAnimationLayer", "SetYpos", m_PosY );
+		ini.GetValue( "BGAnimationLayer", "SetZoom", m_Zoom );
+		ini.GetValue( "BGAnimationLayer", "SetRot", m_Rot );
+		ini.GetValue( "BGAnimationLayer", "TweenStartTime", m_TweenStartTime );
+		ini.GetValue( "BGAnimationLayer", "TweenX", m_TweenX );
+		ini.GetValue( "BGAnimationLayer", "TweenY", m_TweenY );
+		ini.GetValue( "BGAnimationLayer", "TweenSpeed", m_TweenSpeed );
+		ini.GetValue( "BGAnimationLayer", "ShowTime", m_ShowTime );
+		ini.GetValue( "BGAnimationLayer", "HideTime", m_HideTime );
+		ini.GetValue( "BGAnimationLayer", "TexCoordVelocityX", m_vTexCoordVelocity.x );
+		ini.GetValue( "BGAnimationLayer", "TexCoordVelocityY", m_vTexCoordVelocity.y );
+		ini.GetValue( "BGAnimationLayer", "RotationalVelocity", m_fRotationalVelocity );
+		ini.GetValue( "BGAnimationLayer", "SetY", m_fStretchScrollH_Y );
 	}
 
 	if(m_ShowTime != 0) // they don't want to show until a certain point... hide it all
@@ -527,31 +527,31 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		sPath = asElementPaths[0];
 	}
 
-	ini.GetValueI( sLayer, "Type", (int&)m_Type );
+	ini.GetValue( sLayer, "Type", (int&)m_Type );
 	CLAMP( m_Type, (Type)0, TYPE_INVALID );
-	ini.GetValue ( sLayer, "Command", m_sOnCommand );
-	ini.GetValue ( sLayer, "OffCommand", m_sOffCommand );
-	ini.GetValueF( sLayer, "FOV", m_fFOV );
-	ini.GetValueB( sLayer, "Lighting", m_bLighting );
-	ini.GetValueF( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
-	ini.GetValueF( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
-	ini.GetValueF( sLayer, "ZoomMin", m_fZoomMin );
-	ini.GetValueF( sLayer, "ZoomMax", m_fZoomMax );
-	ini.GetValueF( sLayer, "VelocityXMin", m_fVelocityXMin );
-	ini.GetValueF( sLayer, "VelocityXMax", m_fVelocityXMax );
-	ini.GetValueF( sLayer, "VelocityYMin", m_fVelocityYMin );
-	ini.GetValueF( sLayer, "VelocityYMax", m_fVelocityYMax );
-	ini.GetValueF( sLayer, "VelocityZMin", m_fVelocityZMin );
-	ini.GetValueF( sLayer, "VelocityZMax", m_fVelocityZMax );
-	ini.GetValueF( sLayer, "OverrideSpeed", m_fOverrideSpeed );
-	ini.GetValueI( sLayer, "NumParticles", m_iNumParticles );
-	ini.GetValueB( sLayer, "ParticlesBounce", m_bParticlesBounce );
-	ini.GetValueF( sLayer, "TilesStartX", m_fTilesStartX );
-	ini.GetValueF( sLayer, "TilesStartY", m_fTilesStartY );
-	ini.GetValueF( sLayer, "TilesSpacingX", m_fTilesSpacingX );
-	ini.GetValueF( sLayer, "TilesSpacingY", m_fTilesSpacingY );
-	ini.GetValueF( sLayer, "TileVelocityX", m_fTileVelocityX );
-	ini.GetValueF( sLayer, "TileVelocityY", m_fTileVelocityY );
+	ini.GetValue( sLayer, "Command", m_sOnCommand );
+	ini.GetValue( sLayer, "OffCommand", m_sOffCommand );
+	ini.GetValue( sLayer, "FOV", m_fFOV );
+	ini.GetValue( sLayer, "Lighting", m_bLighting );
+	ini.GetValue( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
+	ini.GetValue( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
+	ini.GetValue( sLayer, "ZoomMin", m_fZoomMin );
+	ini.GetValue( sLayer, "ZoomMax", m_fZoomMax );
+	ini.GetValue( sLayer, "VelocityXMin", m_fVelocityXMin );
+	ini.GetValue( sLayer, "VelocityXMax", m_fVelocityXMax );
+	ini.GetValue( sLayer, "VelocityYMin", m_fVelocityYMin );
+	ini.GetValue( sLayer, "VelocityYMax", m_fVelocityYMax );
+	ini.GetValue( sLayer, "VelocityZMin", m_fVelocityZMin );
+	ini.GetValue( sLayer, "VelocityZMax", m_fVelocityZMax );
+	ini.GetValue( sLayer, "OverrideSpeed", m_fOverrideSpeed );
+	ini.GetValue( sLayer, "NumParticles", m_iNumParticles );
+	ini.GetValue( sLayer, "ParticlesBounce", m_bParticlesBounce );
+	ini.GetValue( sLayer, "TilesStartX", m_fTilesStartX );
+	ini.GetValue( sLayer, "TilesStartY", m_fTilesStartY );
+	ini.GetValue( sLayer, "TilesSpacingX", m_fTilesSpacingX );
+	ini.GetValue( sLayer, "TilesSpacingY", m_fTilesSpacingY );
+	ini.GetValue( sLayer, "TileVelocityX", m_fTileVelocityX );
+	ini.GetValue( sLayer, "TileVelocityY", m_fTileVelocityY );
 
 	if( IsBanner )
 		TEXTUREMAN->DisableOddDimensionWarning();
@@ -628,7 +628,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		TEXTUREMAN->EnableOddDimensionWarning();
 
 	bool bStartOnRandomFrame = false;
-	ini.GetValueB( sLayer, "StartOnRandomFrame", bStartOnRandomFrame );
+	ini.GetValue( sLayer, "StartOnRandomFrame", bStartOnRandomFrame );
 	if( bStartOnRandomFrame )
 	{
 		for( unsigned i=0; i<m_pActors.size(); i++ )

@@ -53,7 +53,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 			CString sFileName;
 			float fDelay = 0;
 			if( ini.GetValue( "AnimatedTexture", sFileKey, sFileName ) &&
-				ini.GetValueF( "AnimatedTexture", sDelayKey, fDelay ) ) 
+				ini.GetValue( "AnimatedTexture", sDelayKey, fDelay ) ) 
 			{
 				RageTextureID ID;
 				ID.filename = sDir+sFileName;

@@ -176,112 +176,112 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	if( !ini.ReadFile() )
 		return;		// could not read config file, load nothing
 
-	ini.GetValueB( "Options", "Windowed",						m_bWindowed );
-	ini.GetValueB( "Options", "Interlaced",						m_bInterlaced );
+	ini.GetValue( "Options", "Windowed",						m_bWindowed );
+	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
 #ifdef _XBOX
-	ini.GetValueB( "Options", "PAL",							m_bPAL );
+	ini.GetValue( "Options", "PAL",							m_bPAL );
 #endif
-	ini.GetValueI( "Options", "DisplayWidth",					m_iDisplayWidth );
-	ini.GetValueI( "Options", "DisplayHeight",					m_iDisplayHeight );
-	ini.GetValueI( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );
-	ini.GetValueI( "Options", "TextureColorDepth",				m_iTextureColorDepth );
-	ini.GetValueI( "Options", "MovieColorDepth",				m_iMovieColorDepth );
-	ini.GetValueI( "Options", "MaxTextureResolution",			m_iMaxTextureResolution );
-	ini.GetValueI( "Options", "RefreshRate",					m_iRefreshRate );
-	ini.GetValueB( "Options", "UseDedicatedMenuButtons",		m_bOnlyDedicatedMenuButtons );
-	ini.GetValueB( "Options", "ShowStats",						m_bShowStats );
-	ini.GetValueI( "Options", "BackgroundMode",					(int&)m_BackgroundMode );
-	ini.GetValueI( "Options", "NumBackgrounds",					m_iNumBackgrounds);
-	ini.GetValueB( "Options", "ShowDanger",						m_bShowDanger );
-	ini.GetValueF( "Options", "BGBrightness",					m_fBGBrightness );
-	ini.GetValueB( "Options", "MenuTimer",						m_bMenuTimer );
-	ini.GetValueI( "Options", "NumArcadeStages",				m_iNumArcadeStages );
-	ini.GetValueB( "Options", "EventMode",						m_bEventMode );
-	ini.GetValueB( "Options", "AutoPlay",						m_bAutoPlay );
-	ini.GetValueF( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
-	ini.GetValueF( "Options", "JudgeWindowMarvelousSeconds",	m_fJudgeWindowMarvelousSeconds );
-	ini.GetValueF( "Options", "JudgeWindowPerfectSeconds",		m_fJudgeWindowPerfectSeconds );
-	ini.GetValueF( "Options", "JudgeWindowGreatSeconds",		m_fJudgeWindowGreatSeconds );
-	ini.GetValueF( "Options", "JudgeWindowGoodSeconds",			m_fJudgeWindowGoodSeconds );
-	ini.GetValueF( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
-	ini.GetValueF( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
-	ini.GetValueF( "Options", "LifeDifficultyScale",			m_fLifeDifficultyScale );
-	ini.GetValueI( "Options", "MovieDecodeMS",					m_iMovieDecodeMS );
-	ini.GetValueB( "Options", "DelayedEscape",					m_bDelayedEscape );
-	ini.GetValueB( "Options", "HiddenSongs",					m_bHiddenSongs );
-	ini.GetValueB( "Options", "Vsync",							m_bVsync );
-	ini.GetValueB( "Options", "HowToPlay",						m_bInstructions );
-	ini.GetValueB( "Options", "Caution",						m_bShowDontDie );
-	ini.GetValueB( "Options", "ShowSelectGroup",				m_bShowSelectGroup );
-	ini.GetValueB( "Options", "ShowNative",						m_bShowNative );
-	ini.GetValueB( "Options", "ArcadeOptionsNavigation",		m_bArcadeOptionsNavigation );
-	ini.GetValue ( "Options", "DWIPath",						m_DWIPath );
-	ini.GetValueB( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
-	ini.GetValueB( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
-	ini.GetValueB( "Options", "BannerCache",					m_bBannerCache );
-	ini.GetValueI( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
-	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
-	ini.GetValue ( "Options", "SoundDrivers",					m_sSoundDrivers );
-	ini.GetValue ( "Options", "MovieDrivers",					m_sMovieDrivers );
-	ini.GetValueB( "Options", "EasterEggs",						m_bEasterEggs );
-	ini.GetValueI( "Options", "MarvelousTiming",				(int&)m_iMarvelousTiming );
-	ini.GetValueF( "Options", "SoundVolume",					m_fSoundVolume );
-	ini.GetValueB( "Options", "SoundPreloadAll",				m_bSoundPreloadAll );
-	ini.GetValueI( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	ini.GetValueI( "Options", "CoinMode",						m_iCoinMode );
-	ini.GetValueI( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
-	ini.GetValueB( "Options", "JointPremium",					m_bJointPremium );
-	ini.GetValueI( "Options", "BoostAppPriority",				m_iBoostAppPriority );
-	ini.GetValueB( "Options", "PickExtraStage",					m_bPickExtraStage );
-	ini.GetValueB( "Options", "ComboContinuesBetweenSongs",		m_bComboContinuesBetweenSongs );
-	ini.GetValueF( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
-	ini.GetValueF( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
-	ini.GetValueI( "Options", "ShowSongOptions",				(int&)m_ShowSongOptions );
-	ini.GetValueB( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
-	ini.GetValueB( "Options", "ThreadedInput",					m_bThreadedInput );
-	ini.GetValue ( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
-	ini.GetValueB( "Options", "SoloSingle",						m_bSoloSingle );
-	ini.GetValueB( "Options", "DancePointsForOni",				m_bDancePointsForOni );
-	ini.GetValueB( "Options", "ShowLyrics",						m_bShowLyrics );
-	ini.GetValueB( "Options", "AutogenMissingTypes",			m_bAutogenMissingTypes );
-	ini.GetValueB( "Options", "AutogenGroupCourses",			m_bAutogenGroupCourses );
-	ini.GetValueB( "Options", "Timestamping",					m_bTimestamping );
-	ini.GetValueB( "Options", "BreakComboToGetItem",			m_bBreakComboToGetItem );
-	ini.GetValueI( "Options", "ShowDancingCharacters",			(int&)m_ShowDancingCharacters );
-	ini.GetValueB( "Options", "TenFooterInRed",					m_bTenFooterInRed );
+	ini.GetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
+	ini.GetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
+	ini.GetValue( "Options", "DisplayColorDepth",				m_iDisplayColorDepth );
+	ini.GetValue( "Options", "TextureColorDepth",				m_iTextureColorDepth );
+	ini.GetValue( "Options", "MovieColorDepth",				m_iMovieColorDepth );
+	ini.GetValue( "Options", "MaxTextureResolution",			m_iMaxTextureResolution );
+	ini.GetValue( "Options", "RefreshRate",					m_iRefreshRate );
+	ini.GetValue( "Options", "UseDedicatedMenuButtons",		m_bOnlyDedicatedMenuButtons );
+	ini.GetValue( "Options", "ShowStats",						m_bShowStats );
+	ini.GetValue( "Options", "BackgroundMode",					(int&)m_BackgroundMode );
+	ini.GetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
+	ini.GetValue( "Options", "ShowDanger",						m_bShowDanger );
+	ini.GetValue( "Options", "BGBrightness",					m_fBGBrightness );
+	ini.GetValue( "Options", "MenuTimer",						m_bMenuTimer );
+	ini.GetValue( "Options", "NumArcadeStages",				m_iNumArcadeStages );
+	ini.GetValue( "Options", "EventMode",						m_bEventMode );
+	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
+	ini.GetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
+	ini.GetValue( "Options", "JudgeWindowMarvelousSeconds",	m_fJudgeWindowMarvelousSeconds );
+	ini.GetValue( "Options", "JudgeWindowPerfectSeconds",		m_fJudgeWindowPerfectSeconds );
+	ini.GetValue( "Options", "JudgeWindowGreatSeconds",		m_fJudgeWindowGreatSeconds );
+	ini.GetValue( "Options", "JudgeWindowGoodSeconds",			m_fJudgeWindowGoodSeconds );
+	ini.GetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
+	ini.GetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
+	ini.GetValue( "Options", "LifeDifficultyScale",			m_fLifeDifficultyScale );
+	ini.GetValue( "Options", "MovieDecodeMS",					m_iMovieDecodeMS );
+	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
+	ini.GetValue( "Options", "HiddenSongs",					m_bHiddenSongs );
+	ini.GetValue( "Options", "Vsync",							m_bVsync );
+	ini.GetValue( "Options", "HowToPlay",						m_bInstructions );
+	ini.GetValue( "Options", "Caution",						m_bShowDontDie );
+	ini.GetValue( "Options", "ShowSelectGroup",				m_bShowSelectGroup );
+	ini.GetValue( "Options", "ShowNative",						m_bShowNative );
+	ini.GetValue( "Options", "ArcadeOptionsNavigation",		m_bArcadeOptionsNavigation );
+	ini.GetValue( "Options", "DWIPath",						m_DWIPath );
+	ini.GetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
+	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
+	ini.GetValue( "Options", "BannerCache",					m_bBannerCache );
+	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
+	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
+	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
+	ini.GetValue( "Options", "MovieDrivers",					m_sMovieDrivers );
+	ini.GetValue( "Options", "EasterEggs",						m_bEasterEggs );
+	ini.GetValue( "Options", "MarvelousTiming",				(int&)m_iMarvelousTiming );
+	ini.GetValue( "Options", "SoundVolume",					m_fSoundVolume );
+	ini.GetValue( "Options", "SoundPreloadAll",				m_bSoundPreloadAll );
+	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
+	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
+	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
+	ini.GetValue( "Options", "JointPremium",					m_bJointPremium );
+	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
+	ini.GetValue( "Options", "PickExtraStage",					m_bPickExtraStage );
+	ini.GetValue( "Options", "ComboContinuesBetweenSongs",		m_bComboContinuesBetweenSongs );
+	ini.GetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
+	ini.GetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
+	ini.GetValue( "Options", "ShowSongOptions",				(int&)m_ShowSongOptions );
+	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
+	ini.GetValue( "Options", "ThreadedInput",					m_bThreadedInput );
+	ini.GetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
+	ini.GetValue( "Options", "SoloSingle",						m_bSoloSingle );
+	ini.GetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
+	ini.GetValue( "Options", "ShowLyrics",						m_bShowLyrics );
+	ini.GetValue( "Options", "AutogenMissingTypes",			m_bAutogenMissingTypes );
+	ini.GetValue( "Options", "AutogenGroupCourses",			m_bAutogenGroupCourses );
+	ini.GetValue( "Options", "Timestamping",					m_bTimestamping );
+	ini.GetValue( "Options", "BreakComboToGetItem",			m_bBreakComboToGetItem );
+	ini.GetValue( "Options", "ShowDancingCharacters",			(int&)m_ShowDancingCharacters );
+	ini.GetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
 
-	ini.GetValueI( "Options", "CourseSortOrder",				(int&)m_iCourseSortOrder );
-	ini.GetValueB( "Options", "MoveRandomToEnd",				m_bMoveRandomToEnd );
+	ini.GetValue( "Options", "CourseSortOrder",				(int&)m_iCourseSortOrder );
+	ini.GetValue( "Options", "MoveRandomToEnd",				m_bMoveRandomToEnd );
 
-	ini.GetValueI( "Options", "ScoringType",					(int&)m_iScoringType );
+	ini.GetValue( "Options", "ScoringType",					(int&)m_iScoringType );
 
-	ini.GetValueI( "Options", "ProgressiveLifebar",				(int&)m_iProgressiveLifebar );
-	ini.GetValueI( "Options", "ProgressiveNonstopLifebar", 		(int&)m_iProgressiveNonstopLifebar );
-	ini.GetValueI( "Options", "ProgressiveStageLifebar",		(int&)m_iProgressiveStageLifebar );
+	ini.GetValue( "Options", "ProgressiveLifebar",				m_iProgressiveLifebar );
+	ini.GetValue( "Options", "ProgressiveNonstopLifebar", 		m_iProgressiveNonstopLifebar );
+	ini.GetValue( "Options", "ProgressiveStageLifebar",		m_iProgressiveStageLifebar );
 
-	ini.GetValueB( "Options", "UseUnlockSystem",				m_bUseUnlockSystem );
+	ini.GetValue( "Options", "UseUnlockSystem",				m_bUseUnlockSystem );
 
-	ini.GetValueB( "Options", "FirstRun",						m_bFirstRun );
-	ini.GetValueB( "Options", "AutoMapJoysticks",				m_bAutoMapJoysticks );
-	ini.GetValue ( "Options", "VideoRenderers",					m_sVideoRenderers );
-	ini.GetValue ( "Options", "LastSeenVideoDriver",			m_sLastSeenVideoDriver );
+	ini.GetValue( "Options", "FirstRun",						m_bFirstRun );
+	ini.GetValue( "Options", "AutoMapJoysticks",				m_bAutoMapJoysticks );
+	ini.GetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
+	ini.GetValue( "Options", "LastSeenVideoDriver",			m_sLastSeenVideoDriver );
 #if defined(WIN32)
-	ini.GetValue ( "Options", "LastSeenMemory",					m_iLastSeenMemory );
+	ini.GetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
 #endif
-	ini.GetValue ( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
-	ini.GetValueB( "Options", "AntiAliasing",					m_bAntiAliasing );
-	ini.GetValueF( "Options", "GlobalOffsetSeconds",			m_fGlobalOffsetSeconds );
-	ini.GetValueB( "Options", "ForceLogFlush",					m_bForceLogFlush );
-	ini.GetValueB( "Options", "Logging",						m_bLogging );
-	ini.GetValueB( "Options", "ShowLogWindow",					m_bShowLogWindow );
-	ini.GetValueB( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
-	ini.GetValue ( "Options", "Language",						m_sLanguage );
-	ini.GetValueB( "Options", "EndlessBreakEnabled",			m_bEndlessBreakEnabled );
-	ini.GetValueI( "Options", "EndlessStagesUntilBreak",		m_iEndlessNumStagesUntilBreak );
-	ini.GetValueI( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
+	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
+	ini.GetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
+	ini.GetValue( "Options", "GlobalOffsetSeconds",			m_fGlobalOffsetSeconds );
+	ini.GetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
+	ini.GetValue( "Options", "Logging",						m_bLogging );
+	ini.GetValue( "Options", "ShowLogWindow",					m_bShowLogWindow );
+	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
+	ini.GetValue( "Options", "Language",						m_sLanguage );
+	ini.GetValue( "Options", "EndlessBreakEnabled",			m_bEndlessBreakEnabled );
+	ini.GetValue( "Options", "EndlessStagesUntilBreak",		m_iEndlessNumStagesUntilBreak );
+	ini.GetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		ini.GetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
+		ini.GetValue( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -292,7 +292,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	if( bSwitchToLastPlayedGame )
 	{
 		Game game;
-		if( ini.GetValueI("Options", "Game", (int&)game) )
+		if( ini.GetValue("Options", "Game", (int&)game) )
 			GAMESTATE->m_CurGame = game;
 	}
 }

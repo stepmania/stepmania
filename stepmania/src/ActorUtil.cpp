@@ -51,12 +51,12 @@ Actor* MakeActor( CString sPath )
 		Actor* pActor = MakeActor( sNewPath );
 
 		float f;
-		if( ini.GetValueF( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
-		if( ini.GetValueF( "Actor", "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
-		if( ini.GetValueF( "Actor", "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
-		if( ini.GetValueF( "Actor", "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
-		if( ini.GetValueF( "Actor", "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
-		if( ini.GetValueF( "Actor", "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
+		if( ini.GetValue ( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
+		if( ini.GetValue ( "Actor", "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
+		if( ini.GetValue ( "Actor", "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
+		if( ini.GetValue ( "Actor", "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
+		if( ini.GetValue ( "Actor", "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
+		if( ini.GetValue ( "Actor", "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
 			
 		return pActor;
 	}

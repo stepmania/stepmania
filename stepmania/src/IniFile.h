@@ -70,13 +70,10 @@ public:
 	//gets value of [keyname] valuename = 
 	//returns "", or 0 if key/value not found.  Sets error member to show problem
 	bool GetValue(const CString &key, const CString &valuename, CString& value) const;
-	bool GetValueI(const CString &key, const CString &valuename, int& value) const;
-	bool GetValueU(const CString &key, const CString &valuename, unsigned& value) const;
-	bool GetValueF(const CString &key, const CString &valuename, float& value) const;
-	bool GetValueB(const CString &key, const CString &valuename, bool& value) const;
-	bool GetValue(const CString &key, const CString &valuename, int& value) const { return GetValueI(key, valuename, value); }
-	bool GetValue(const CString &key, const CString &valuename, float& value) const { return GetValueF(key, valuename, value); }
-	bool GetValue(const CString &key, const CString &valuename, bool& value) const { return GetValueB(key, valuename, value); }
+	bool GetValue(const CString &key, const CString &valuename, int& value) const;
+	bool GetValue(const CString &key, const CString &valuename, unsigned& value) const;
+	bool GetValue(const CString &key, const CString &valuename, float& value) const;
+	bool GetValue(const CString &key, const CString &valuename, bool& value) const;
 
 	//sets value of [keyname] valuename =.
 	//specify the optional paramter as false (0) if you do not want it to create
