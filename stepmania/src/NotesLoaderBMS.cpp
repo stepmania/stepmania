@@ -335,7 +335,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		break;
 	case STEPS_TYPE_DANCE_SOLO:
 	case STEPS_TYPE_BM_SINGLE5:
-		// Hey! Why the hell are these exactly the same? :-)
+		// Hey! Why are these exactly the same? :-)
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
