@@ -11,16 +11,6 @@
 class BeginnerHelper : public ActorFrame
 {
 public:
-	enum STEPTYPE
-	{
-		ST_LEFT=6,
-		ST_DOWN=3,
-		ST_UP=8,
-		ST_RIGHT=4,
-		ST_JUMPLR=10,
-		ST_JUMPUD=11
-	};
-
 	BeginnerHelper();
 	~BeginnerHelper();
 	

@@ -24,6 +24,12 @@
 #define HELPER_X			THEME->GetMetricF("BeginnerHelper","HelperX")
 #define HELPER_Y			THEME->GetMetricF("BeginnerHelper","HelperY")
 
+#define ST_LEFT		0x08
+#define ST_DOWN		0x04
+#define ST_UP		0x02
+#define ST_RIGHT	0x01
+#define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
+#define ST_JUMPUD	(ST_UP | ST_DOWN)
 
 BeginnerHelper::BeginnerHelper()
 {
@@ -261,17 +267,10 @@ void BeginnerHelper::Update( float fDeltaTime )
 			if((m_NoteData[pn].IsThereATapAtRow( iRow )))
 			{
 				int iStep = 0;
-				for( int k=0; k<m_NoteData[pn].GetNumTracks(); k++ )
+				int iNumTracks = m_NoteData[pn].GetNumTracks(); 
+				for( int k=0; k<iNumTracks; k++ )
 					if( m_NoteData[pn].GetTapNote(k, iRow ) == TAP_TAP )
-					{
-						switch(k)
-						{
-						case 0: iStep += 6; break;
-						case 1: iStep += 3; break;
-						case 2: iStep += 8; break;
-						case 3: iStep += 4; break;
-						};
-					}
+						iStep += 1 << ( iNumTracks - (k + 1));
 				Step( pn, iStep );
 			}
 		}
