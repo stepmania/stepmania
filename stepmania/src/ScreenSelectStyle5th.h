@@ -12,11 +12,8 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
-#include "Quad.h"
 #include "RandomSample.h"
 #include "Quad.h"
-#include "TransitionKeepAlive.h"
 #include "MenuElements.h"
 
 // 

@@ -14,8 +14,6 @@
 
 
 #include "Screen.h"
-#include "TransitionFade.h"
-#include "TransitionFadeWipe.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
 #include "TransitionBGAnimation.h"

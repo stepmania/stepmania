@@ -16,8 +16,6 @@
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "BitmapText.h"
-#include "TransitionFadeWipe.h"
-#include "TransitionFade.h"
 #include "SongManager.h"
 #include "Sprite.h"
 #include "AnnouncerManager.h"

@@ -12,8 +12,6 @@
 #include "Screen.h"
 #include "JukeboxMenu.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
-#include "RandomSample.h"
 #include "MenuElements.h"
 
 
