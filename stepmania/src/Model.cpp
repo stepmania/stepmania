@@ -593,54 +593,20 @@ void Model::DrawPrimitives()
 		return;	// bail early
 
 	/* Don't if we're fully transparent */
-	if( m_pTempState->diffuse[0].a <= 0.001f )
+	if( m_pTempState->diffuse[0].a < 0.001f && m_pTempState->glow.a < 0.001f )
 		return;
 
 	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
 
-
-	//////////////////////
-	// render the diffuse pass
-	//////////////////////
-
-	DISPLAY->SetTextureModeModulate();
-
+	//
+	// process vertices
+	//
 	for (int i = 0; i < (int)m_Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_Meshes[i];
 		RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
-
-		// apply material
-		if( pMesh->nMaterialIndex != -1 )
-		{
-			msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-			DISPLAY->SetMaterial( 
-				mat.Emissive,
-				mat.Ambient,
-				mat.Diffuse,
-				mat.Specular,
-				mat.fShininess );
-			DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
-		}
-		else
-		{
-			float emissive[4] = {0,0,0,0};
-			float ambient[4] = {0.2f,0.2f,0.2f,1};
-			float diffuse[4] = {0.7f,0.7f,0.7f,1};
-			float specular[4] = {0.2f,0.2f,0.2f,1};
-			float shininess = 1;
-			DISPLAY->SetMaterial(
-				emissive,
-				ambient,
-				diffuse,
-				specular,
-				shininess );
-			DISPLAY->SetTexture( NULL );
-		}
-
-		// process vertices
 		for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
 			RageModelVertex& tempVert = TempVertices[j];
@@ -663,8 +629,59 @@ void Model::DrawPrimitives()
 				RageVec3TransformCoord( &tempVert.p, &originalVert.Vertex, &m_pBones[bone].mFinal );
 			}
 		}
+	}
 
-		DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+	//////////////////////
+	// render the diffuse pass
+	//////////////////////
+	if( m_pTempState->diffuse[0].a > 0 )
+	{
+		DISPLAY->SetTextureModeModulate();
+
+		for (int i = 0; i < (int)m_Meshes.size(); i++)
+		{
+			msMesh *pMesh = &m_Meshes[i];
+			RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
+
+			// apply material
+			if( pMesh->nMaterialIndex != -1 )
+			{
+				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
+
+				RageColor Emissive = mat.Emissive;
+				RageColor Ambient = mat.Ambient;
+				RageColor Diffuse = mat.Diffuse;
+				
+				Emissive.a = m_pTempState->diffuse[0].a;
+				Ambient.a = m_pTempState->diffuse[0].a;
+				Diffuse.a = m_pTempState->diffuse[0].a;
+
+				DISPLAY->SetMaterial( 
+					Emissive,
+					Ambient,
+					Diffuse,
+					mat.Specular,
+					mat.fShininess );
+				DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
+			}
+			else
+			{
+				RageColor emissive( 0,0,0,0 );
+				RageColor ambient( 0.2f,0.2f,0.2f,1 );
+				RageColor diffuse( 0.7f,0.7f,0.7f,1 );
+				RageColor specular( 0.2f,0.2f,0.2f,1 );
+				float shininess = 1;
+				DISPLAY->SetMaterial(
+					emissive,
+					ambient,
+					diffuse,
+					specular,
+					shininess );
+				DISPLAY->SetTexture( NULL );
+			}
+
+			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+		}
 	}
 
 	//////////////////////
@@ -672,7 +689,53 @@ void Model::DrawPrimitives()
 	//////////////////////
 	if( m_pTempState->glow.a > 0.0001f )
 	{
-		// TODO: Support glow.
+		DISPLAY->SetTextureModeGlow();
+
+		for (int i = 0; i < (int)m_Meshes.size(); i++)
+		{
+			msMesh *pMesh = &m_Meshes[i];
+			RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
+
+			// apply material
+			if( pMesh->nMaterialIndex != -1 )
+			{
+				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
+
+				RageColor Emissive = mat.Emissive;
+				RageColor Ambient = mat.Ambient;
+				RageColor Diffuse = mat.Diffuse;
+				
+				Emissive = m_pTempState->glow;
+				Ambient = m_pTempState->glow;
+				Diffuse = m_pTempState->glow;
+
+				DISPLAY->SetMaterial( 
+					Emissive,
+					Ambient,
+					Diffuse,
+					mat.Specular,
+					mat.fShininess );
+				DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
+			}
+			else
+			{
+				RageColor emissive = m_pTempState->glow;
+				RageColor ambient = m_pTempState->glow;
+				RageColor diffuse = m_pTempState->glow;
+				RageColor specular = m_pTempState->glow;
+				float shininess = 1;
+				DISPLAY->SetMaterial(
+					emissive,
+					ambient,
+					diffuse,
+					specular,
+					shininess );
+				DISPLAY->SetTexture( NULL );
+			}
+
+			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+		}
+
 	}
 }
 

@@ -109,10 +109,10 @@ typedef struct msMaterial
 {
     int         nFlags;
     char        szName[MS_MAX_NAME];
-    RageVector4      Ambient;
-    RageVector4      Diffuse;
-    RageVector4      Specular;
-    RageVector4      Emissive;
+    RageColor   Ambient;
+    RageColor   Diffuse;
+    RageColor   Specular;
+    RageColor   Emissive;
     float       fShininess;
     float       fTransparency;
     char        szDiffuseTexture[MS_MAX_PATH];
