@@ -875,7 +875,7 @@ Steps* Song::GetOneSteps(
 
 Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
 {
-	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
+	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? GetAllSteps():GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -893,7 +893,7 @@ Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAut
 
 Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const
 {
-	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
+	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? GetAllSteps():GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -924,7 +924,7 @@ Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 {
 	ASSERT( dc != DIFFICULTY_INVALID );
 
-	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
+	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? GetAllSteps():GetStepsByStepsType(st);
 	Steps *pClosest = NULL;
 	int iClosestDistance = 999;
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
