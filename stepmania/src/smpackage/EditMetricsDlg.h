@@ -21,9 +21,10 @@ public:
 // Dialog Data
 	//{{AFX_DATA(EditMetricsDlg)
 	enum { IDD = IDD_EDIT_METRICS };
+	CEdit	m_editValue;
+	CEdit	m_editDefault;
 	CButton	m_buttonRemove;
 	CButton	m_buttonOverride;
-	CButton	m_buttonNew;
 	CTreeCtrlEx	m_tree;
 	//}}AFX_DATA
 
@@ -42,10 +43,18 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(EditMetricsDlg)
 	virtual BOOL OnInitDialog();
+	afx_msg void OnSelchangedTree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnKillfocusEditValue();
+	afx_msg void OnButtonOverride();
+	afx_msg void OnButtonRemove();
+	afx_msg void OnButtonNew();
+	afx_msg void OnButtonRefresh();
+	afx_msg void OnButtonSave();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 	void RefreshTree();
+	void GetSelectedKeyAndName( CString& sKeyOut, CString& sNameOut );
 };
 
 //{{AFX_INSERT_LOCATION}}
