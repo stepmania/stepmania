@@ -808,6 +808,19 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\ArchHooks\ArchHooks_none.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="InputHandler"
+					Filter="">
+					<File
+						RelativePath="arch\InputHandler\InputHandler.h">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.cpp">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"

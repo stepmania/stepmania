@@ -24,12 +24,11 @@ const float TIME_BETWEEN_FAST_REPEATS = 0.125f;
 
 enum InputEventType { IET_FIRST_PRESS, IET_SLOW_REPEAT, IET_FAST_REPEAT, IET_RELEASE };
 
-class InputEvent : public DeviceInput
+struct InputEvent : public DeviceInput
 {
-public:
 	InputEvent() { type=IET_FIRST_PRESS; };
-	InputEvent( InputDevice d, int b, InputEventType t ) { device=d; button=b; type=t; };
-	InputEvent( DeviceInput di, InputEventType t ) { device=di.device; button=di.button; type=t; };
+	InputEvent( InputDevice d, int b, InputEventType t ): DeviceInput(d, b) { type=t; };
+	InputEvent( DeviceInput di, InputEventType t ): DeviceInput(di) { type=t; };
 
 	InputEventType type;
 };
@@ -38,17 +37,20 @@ typedef vector<InputEvent> InputEventArray;
 
 class InputFilter
 {
-public:
-	InputFilter();
+	bool m_BeingHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
+	float m_fSecsHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
 
-	bool BeingPressed( DeviceInput di, bool Prev = false);
-	bool WasBeingPressed( DeviceInput di );
+	InputEventArray queue;
+
+public:
+	void ButtonPressed( DeviceInput di, bool Down );
+	InputFilter();
+	void Update(float fDeltaTime);
+
 	bool IsBeingPressed( DeviceInput di );
 	float GetSecsHeld( DeviceInput di );
 	
-	void GetInputEvents( InputEventArray &array, float fDeltaTime );
-
-	float m_fSecsHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
+	void GetInputEvents( InputEventArray &array );
 };
 
 

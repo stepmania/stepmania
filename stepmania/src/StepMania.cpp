@@ -420,8 +420,8 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 	{
 		if(type != IET_FIRST_PRESS) return true;
-		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-			INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 		{
 			// pressed Alt+F4
 			SDL_Event *event;
@@ -458,8 +458,8 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
 	{
-		if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-			INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 		{
 			if(type != IET_FIRST_PRESS) return true;
 			/* alt-enter */
@@ -474,9 +474,11 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 static void HandleInputEvents(float fDeltaTime)
 {
+	INPUTFILTER->Update( fDeltaTime );
+	
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array
-	INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
+	INPUTFILTER->GetInputEvents( ieArray );
 	for( unsigned i=0; i<ieArray.size(); i++ )
 	{
 		DeviceInput DeviceI = (DeviceInput)ieArray[i];
@@ -502,11 +504,6 @@ static void HandleInputEvents(float fDeltaTime)
 
 		if( HandleGlobalInputs(DeviceI, type, GameI, MenuI, StyleI ) )
 			continue;	// skip
-
-
-
-
-
 		
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
@@ -521,6 +518,9 @@ static void GameLoop()
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
+			if(INPUTMAN->FeedSDLEvent(event))
+				continue; /* it took care of it */
+
 			switch(event.type)
 			{
 			case SDL_QUIT:
@@ -554,13 +554,13 @@ static void GameLoop()
 		 */
 		float fDeltaTime = timer.GetDeltaTime();
 		
-		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime = 0; /* both; stop time */
 			else
 				fDeltaTime *= 4;
 		} else
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime /= 4;
 
 		TEXTUREMAN->Update( fDeltaTime );

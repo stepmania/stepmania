@@ -1,5 +1,6 @@
 /*
- * Define all of the input devices we know about.
+ * Define all of the input devices we know about.  This is the public
+ * interface for describing input devices.
  */
 
 #include "stdafx.h"

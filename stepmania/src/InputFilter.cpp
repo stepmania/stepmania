@@ -10,17 +10,17 @@
 -----------------------------------------------------------------------------
 */
 
-#include <math.h>	// for fmod
 #include "InputFilter.h"
 #include "RageLog.h"
 #include "RageInput.h"
-#include "SDL_keyboard.h"
 
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
 InputFilter::InputFilter()
 {
+	memset(m_BeingHeld, 0, sizeof(m_BeingHeld));
+
 	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
 	{
 		for( int j=0; j<NUM_DEVICE_BUTTONS; j++ )
@@ -28,28 +28,59 @@ InputFilter::InputFilter()
 	}
 }
 
-bool InputFilter::BeingPressed( DeviceInput di, bool Prev )
+void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 {
-	if(di.device == DEVICE_JOY1 || di.device == DEVICE_JOY2 || di.device == DEVICE_JOY3 || di.device == DEVICE_JOY4)
-	switch( di.button ) {
-	case JOY_Z_UP: case JOY_Z_DOWN:
-	case JOY_Z_ROT_UP: case JOY_Z_ROT_DOWN:
-	case JOY_HAT_LEFT: case JOY_HAT_RIGHT: case JOY_HAT_UP: case JOY_HAT_DOWN:
-		/* For now, ignore these. */
-		return false;
-	}
+	if(m_BeingHeld[di.device][di.button] == Down)
+		return;
 
-	return INPUTMAN->BeingPressed(di, Prev);
+	m_BeingHeld[di.device][di.button] = Down;
+	m_fSecsHeld[di.device][di.button] = 0;
+
+	InputEventType iet = Down? IET_FIRST_PRESS:IET_RELEASE;
+	queue.push_back( InputEvent(di,iet) );
 }
 
-bool InputFilter::WasBeingPressed( DeviceInput di )
+void InputFilter::Update(float fDeltaTime)
 {
-	return BeingPressed(di, true);
+	INPUTMAN->Update( fDeltaTime );
+
+	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
+	{
+		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
+		{
+			if(!m_BeingHeld[d][b])
+				continue;
+
+			const float fOldHoldTime = m_fSecsHeld[d][b];
+			m_fSecsHeld[d][b] += fDeltaTime;
+			const float fNewHoldTime = m_fSecsHeld[d][b];
+
+			float fTimeBetweenRepeats;
+			InputEventType iet;
+			if( fOldHoldTime > TIME_BEFORE_SLOW_REPEATS )
+			{
+				if( fOldHoldTime > TIME_BEFORE_FAST_REPEATS )
+				{
+					fTimeBetweenRepeats = TIME_BETWEEN_FAST_REPEATS;
+					iet = IET_FAST_REPEAT;
+				}
+				else
+				{
+					fTimeBetweenRepeats = TIME_BETWEEN_SLOW_REPEATS;
+					iet = IET_SLOW_REPEAT;
+				}
+				if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
+					queue.push_back( InputEvent(InputDevice(d),b,iet) );
+
+			}
+		}
+	}
+
 }
 
 bool InputFilter::IsBeingPressed( DeviceInput di )
 {
-	return BeingPressed(di, false);
+	return m_BeingHeld[di.device][di.button];
 }
 
 float InputFilter::GetSecsHeld( DeviceInput di )
@@ -57,56 +88,8 @@ float InputFilter::GetSecsHeld( DeviceInput di )
 	return m_fSecsHeld[di.device][di.button];
 }
 
-void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
+void InputFilter::GetInputEvents( InputEventArray &array )
 {
-	INPUTMAN->Update( fDeltaTime );
-
-	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
-	{
-		int iNumButtonsToCheck = DeviceInput::NumButtons(InputDevice(d));
-
-		for( int b=0; b<iNumButtonsToCheck; b++ )	// foreach button
-		{
-			const DeviceInput di = DeviceInput(InputDevice(d),b);
-
-			if( WasBeingPressed(di) )
-			{
-				if( IsBeingPressed(di) )
-				{
-					const float fOldHoldTime = m_fSecsHeld[d][b];
-					m_fSecsHeld[d][b] += fDeltaTime;
-					const float fNewHoldTime = m_fSecsHeld[d][b];
-
-					float fTimeBetweenRepeats;
-					InputEventType iet;
-					if( fOldHoldTime > TIME_BEFORE_SLOW_REPEATS )
-					{
-						if( fOldHoldTime > TIME_BEFORE_FAST_REPEATS )
-						{
-							fTimeBetweenRepeats = TIME_BETWEEN_FAST_REPEATS;
-							iet = IET_FAST_REPEAT;
-						}
-						else
-						{
-							fTimeBetweenRepeats = TIME_BETWEEN_SLOW_REPEATS;
-							iet = IET_SLOW_REPEAT;
-						}
-						if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
-							array.push_back( InputEvent(di,iet) );
-					}
-				}
-				else {	// !IsBeingPressed(di)
-					m_fSecsHeld[d][b] = 0;
-					array.push_back( InputEvent(di,IET_RELEASE) );
-				}
-			}
-			else	// !WasBeingPressed(di)
-			{
-				if( IsBeingPressed(di) )
-					array.push_back( InputEvent(di,IET_FIRST_PRESS) );
-				else	// !IsBeingPressed(di)
-					;	// don't care
-			}
-		}
-	}
+	array = queue;
+	queue.clear();
 }
