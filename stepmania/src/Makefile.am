@@ -40,7 +40,7 @@ ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameE
 ScreenOptions.cpp ScreenOptions.h ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenNetworkOptions.h \
 ScreenNetworkOptions.cpp ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
-ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenSandbox.cpp ScreenSandbox.h ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h \
+ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenSandbox.cpp ScreenSandbox.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
 ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
@@ -52,7 +52,7 @@ ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h Sc
 ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
 if !WITHOUT_NETWORKING
-Screens += ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h
+Screens += ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
 endif
 
 DataStructures = \
