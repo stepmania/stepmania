@@ -130,6 +130,23 @@ CString SecondsToTime( float fSecs )
 	return sReturn;
 }
 
+int MonthOfYear()
+{
+	const time_t t = time(NULL);
+	struct tm tm;
+	localtime_r( &t, &tm );
+	return tm.tm_mon;
+}
+
+int DayOfMonth()
+{
+	const time_t t = time(NULL);
+	struct tm tm;
+	localtime_r( &t, &tm );
+	return tm.tm_mday;
+}
+
+
 CString ssprintf( const char *fmt, ...)
 {
     va_list	va;

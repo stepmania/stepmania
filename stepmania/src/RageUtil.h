@@ -140,6 +140,9 @@ bool IsHexVal( const CString &s );
 float TimeToSeconds( const CString &sHMS );
 CString SecondsToTime( float fSecs );
 
+int MonthOfYear();
+int DayOfMonth();
+
 CString ssprintf( const char *fmt, ...) PRINTF(1,2);
 CString vssprintf( const char *fmt, va_list argList );
 
