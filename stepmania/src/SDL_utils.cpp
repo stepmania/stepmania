@@ -272,8 +272,13 @@ SDL_Surface *SDL_CreateRGBSurfaceSane
 		Amask = SDL_SwapLE32(Amask);
 	}
 
-	return SDL_CreateRGBSurface(flags, width, height, depth,
+	SDL_Surface *ret = SDL_CreateRGBSurface(flags, width, height, depth,
 		Rmask, Gmask, Bmask, Amask);
+	if(ret == NULL)
+		RageException::Throw("SDL_CreateRGBSurface(%i, %i, %i, %i, %8x, %8x, %8x, %8x) failed: %s",
+			flags, width, height, depth, Rmask, Gmask, Bmask, Amask, SDL_GetError());
+
+	return ret;
 }
 
 static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, bool reverse)
