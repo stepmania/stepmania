@@ -1032,7 +1032,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		for( pn=0; pn<NUM_PLAYERS; pn++ )
 			if( GAMESTATE->IsPlayerEnabled(pn) && !GAMESTATE->m_CurStageStats.bFailed[pn])
-				GAMESTATE->m_CurStageStats.fAliveSeconds [pn] += fDeltaTime;
+				GAMESTATE->m_CurStageStats.fAliveSeconds [pn] += fDeltaTime * GAMESTATE->m_SongOptions.m_fMusicRate;
 
 		//
 		// Check for end of song
