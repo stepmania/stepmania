@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "NotesWriterSM.h"
 #include "Notes.h"
+#include "RageUtil.h"
+#include "GameManager.h"
 
 void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 {
@@ -69,6 +71,24 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 
 }
 
+void NotesWriterSM::WriteSMNotesTag( const Notes &in, FILE* fp )
+{
+	fprintf( fp, "\n//---------------%s - %s----------------\n",
+		GameManager::NotesTypeToString(in.m_NotesType).GetString(), in.m_sDescription.GetString() );
+	fprintf( fp, "#NOTES:\n" );
+	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(in.m_NotesType).GetString() );
+	fprintf( fp, "     %s:\n", in.m_sDescription.GetString() );
+	fprintf( fp, "     %s:\n", DifficultyToString(in.m_Difficulty).GetString() );
+	fprintf( fp, "     %d:\n", in.m_iMeter );
+	
+	CStringArray asRadarValues;
+	for( int r=0; r < NUM_RADAR_VALUES; r++ )
+		asRadarValues.push_back( ssprintf("%.3f", in.m_fRadarValues[r]) );
+	fprintf( fp, "     %s:\n", join(",",asRadarValues).GetString() );
+
+	fprintf( fp, "%s;\n", in.GetSMNoteData().GetString() );
+}
+
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 {
 	unsigned i;
@@ -89,8 +109,10 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	for( i=0; i<out.m_apNotes.size(); i++ ) 
 	{
 		Notes* pNotes = out.m_apNotes[i];
-		if( bSavingCache  ||  !pNotes->m_bAutoGen )	// If notes aren't autogen
-			out.m_apNotes[i]->WriteSMNotesTag( fp );
+		if( !bSavingCache && pNotes->m_bAutoGen )
+			continue; /* only write autogen notes to cache */
+
+		WriteSMNotesTag( *out.m_apNotes[i], fp );
 	}
 
 	fclose( fp );

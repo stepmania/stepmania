@@ -35,7 +35,6 @@ public:
 
 	// Loading
 	bool LoadFromNotesFile( const CString &sPath );
-	void WriteSMNotesTag( FILE* fp );
 
 public:
 	NotesType		m_NotesType;
