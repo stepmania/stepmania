@@ -42,7 +42,6 @@ private:
 	bool m_bFlush;
 	bool m_bTimestamping;
 	bool m_bShowLogOutput;
-	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
 	void UpdateMappedLog();
 	void AddToInfo( CString buf );

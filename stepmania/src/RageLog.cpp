@@ -75,6 +75,8 @@ map<CString, CString> LogMaps;
 #define INFO_PATH	SYS_BASE_PATH "info.txt"
 #endif
 
+static FILE *g_fileLog, *g_fileInfo;
+
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
 extern const char *version_time;
@@ -102,16 +104,16 @@ RageLog::RageLog()
 	remove( INFO_PATH );
 
 	// Open log file and leave it open.
-	m_fileLog = fopen( LOG_PATH, "w" );
+	g_fileLog = fopen( LOG_PATH, "w" );
 	
 	// Failing to open shouldn't be fatal
-	//if( m_fileLog == NULL )
+	//if( g_fileLog == NULL )
 	//	RageException::Throw( " Couldn't open log.txt: %s", strerror(errno) );
 
-	m_fileInfo = fopen( INFO_PATH, "w" );
+	g_fileInfo = fopen( INFO_PATH, "w" );
 
 	// Failing to open shouldn't be fatal
-	//if( m_fileInfo == NULL )
+	//if( g_fileInfo == NULL )
 	//	RageException::Throw( " Couldn't open info.txt: %s", strerror(errno) );
 
 	this->Info( PRODUCT_NAME_VER );
@@ -151,8 +153,8 @@ RageLog::~RageLog()
 
 	Flush();
 	ShowLogOutput( false );
-	if(m_fileLog) fclose( m_fileLog );
-	if(m_fileInfo) fclose( m_fileInfo );
+	if(g_fileLog) fclose( g_fileLog );
+	if(g_fileInfo) fclose( g_fileInfo );
 }
 
 void RageLog::SetLogging( bool b )
@@ -236,8 +238,8 @@ void RageLog::Write( int where, CString str)
 	if( m_bTimestamping )
 		str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
 
-	if( where&WRITE_TO_INFO && m_fileInfo )
-		fprintf(m_fileInfo, "%s\n", str.c_str() );
+	if( where&WRITE_TO_INFO && g_fileInfo )
+		fprintf(g_fileInfo, "%s\n", str.c_str() );
 
 	if( HOOKS )
 		HOOKS->Log( str, where & WRITE_TO_INFO );
@@ -258,8 +260,8 @@ void RageLog::Write( int where, CString str)
 			  str.c_str());
 	}
 
-	if( m_fileLog )
-		fprintf(m_fileLog, "%s\n", str.c_str() );
+	if( g_fileLog )
+		fprintf(g_fileLog, "%s\n", str.c_str() );
 
 	if( m_bShowLogOutput || where != 0 )
 		printf("%s\n", str.c_str() );
@@ -271,8 +273,8 @@ void RageLog::Write( int where, CString str)
 
 void RageLog::Flush()
 {
-	fflush( m_fileLog );
-	fflush( m_fileInfo );
+	fflush( g_fileLog );
+	fflush( g_fileInfo );
 }
 
 
