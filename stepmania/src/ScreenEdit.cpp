@@ -1000,9 +1000,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 	case SDLK_x:
+	case SDLK_c:
 		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
 		{
 			m_soundInvalid.Play();
+			SCREENMAN->SystemMessage( "You must select a range before copying." );
 		} else {
 			int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
 			int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
