@@ -7,6 +7,49 @@
 
 #include "arch/arch.h"
 
+#include "Selector_Dialog.h"
+DialogDriver *MakeDialogDriver()
+{
+	CString drivers = "win32,cocoa,null";
+	CStringArray DriversToTry;
+	split(drivers, ",", DriversToTry, true);
+
+	ASSERT( DriversToTry.size() != 0 );
+
+	CString Driver;
+	DialogDriver *ret = NULL;
+
+	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	{
+		Driver = DriversToTry[i];
+
+#ifdef USE_DIALOG_DRIVER_COCOA
+		if( !DriversToTry[i].CompareNoCase("Cocoa") )	ret = new DialogDriver_Cocoa;
+#endif
+#ifdef USE_DIALOG_DRIVER_NULL
+		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new DialogDriver_Null;
+#endif
+#ifdef USE_DIALOG_DRIVER_WIN32
+		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new DialogDriver_Win32;
+#endif
+
+		if( ret == NULL )
+		{
+			continue;
+		}
+
+		CString sError = ret->Init();
+		if( sError != "" )
+		{
+			if( LOG )
+				LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
+			SAFE_DELETE( ret );
+		}
+	}
+
+	return ret;
+}
+
 static DialogDriver *g_pImpl = NULL;
 static DialogDriver_Null g_NullDriver;
 static bool g_bWindowed = true;		// Start out true so that we'll show errors before DISPLAY is init'd.

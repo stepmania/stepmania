@@ -3,6 +3,12 @@
 
 ArchHooks *HOOKS = NULL;
 
+#include "Selector_ArchHooks.h"
+ArchHooks *MakeArchHooks()
+{
+	return new ARCH_HOOKS;
+}
+
 /*
  * This is a helper for GetMicrosecondsSinceStart on systems with a system
  * timer that may loop or move backwards.
