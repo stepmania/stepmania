@@ -126,10 +126,9 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				{
 					p++;
 
-					// TODO: this buffer could overflow
 					char szModifiers[256] = "";
 					float fDurationSeconds = 0;
-					if( 2 == sscanf( p, "%[^:]:%f}", szModifiers, &fDurationSeconds ) )	// not fatal if this fails due to malformed data
+					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )	// not fatal if this fails due to malformed data
 					{
 						tn.type = TapNote::attack;
 						tn.sAttackModifiers = szModifiers;
