@@ -9,7 +9,7 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-/* foo */
+
 #include "RageLog.h"
 #include "RageUtil.h"
 #include <fstream>
