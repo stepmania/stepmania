@@ -153,21 +153,12 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX
 		  0x001F,
 		  0x0000 },
 	}, {
-#if defined _XBOX
-		/* A8B8G8R8 */
-		32,
-		{ 0x00FF0000,
-		  0x0000FF00,
-		  0x000000FF,
-		  0xFF000000 }
-#else
 		/* B8G8R8 */
 		24,
 		{ 0xFF0000,
 		  0x00FF00,
 		  0x0000FF,
 		  0x000000 }
-#endif
 	}, {
 		/* Paletted */
 		8,
@@ -187,8 +178,8 @@ static D3DFORMAT D3DFORMATS[RageDisplay::NUM_PIX_FORMATS] =
 	D3DFMT_A4R4G4B4,
 	D3DFMT_A1R5G5B5,
 	D3DFMT_X1R5G5B5,
-#if defined _XBOX
-	D3DFMT_A8R8G8B8,
+#if defined(XBOX)
+	D3DFMT_UNKNOWN,  /* no RGB */
 #else
 	D3DFMT_R8G8B8,
 #endif
