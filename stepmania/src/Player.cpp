@@ -1065,23 +1065,24 @@ void Player::DrawColorArrows()
 
 
 		float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
-
 		float fYPos = GetColorArrowYPos( j, m_fSongBeat );
+
 		if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
 		{
 			if( fYPos < GetGrayArrowYPos() )
 				continue;		// don't draw
 		}
+
+		if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
+			fYPos = max( fYPos, GetGrayArrowYPos() );
 		if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
+
 		m_ColorArrow[iColNum].SetY( fYPos );
 		float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 		m_ColorArrow[iColNum].SetAlpha( fAlpha );
 		m_ColorArrow[iColNum].DrawGrayPart();
 
 
-		if( hss.m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  ||  hss.m_HoldScore == HoldStepScore::HOLD_SCORE_OK )
-			fYPos = max( fYPos, GetGrayArrowYPos() );
-		if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 		m_ColorArrow[iColNum].SetY( fYPos );
 		m_ColorArrow[iColNum].SetColorPartFromIndexAndBeat( i, m_fSongBeat );
 		m_ColorArrow[iColNum].SetGrayPartFromIndexAndBeat( i, m_fSongBeat );

@@ -788,7 +788,7 @@ int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
 	CString sFilePath2 = pSong2->GetSongFilePath();
 
-	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
+	if( iNumTimesPlayed1 > iNumTimesPlayed2 )
 		return -1;
 	else if( iNumTimesPlayed1 == iNumTimesPlayed2 )
 		return CompareCStrings( (void*)&sFilePath1, (void*)&sFilePath2 );

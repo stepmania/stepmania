@@ -16,16 +16,15 @@ class MusicSortDisplay;
 
 
 #include "Sprite.h"
+#include "GameTypes.h"
 
-
-enum MusicSortOrder { SORT_GROUP, SORT_TITLE, SORT_BPM, SORT_ARTIST, SORT_MOST_PLAYED, NUM_SORT_ORDERS };
 
 
 class MusicSortDisplay : public Sprite
 {
 public:
 	MusicSortDisplay();
-	void Set( MusicSortOrder so );
+	void Set( SongSortOrder so );
 
 protected:
 

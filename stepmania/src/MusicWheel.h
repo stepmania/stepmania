@@ -22,6 +22,7 @@
 #include "SoundSet.h"
 #include "GradeDisplay.h"
 #include "RageSoundStream.h"
+#include "GameTypes.h"
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
 #include "Window.h"	// for WindowMessage
@@ -59,6 +60,7 @@ public:
 	enum WheelItemType { TYPE_SECTION, TYPE_MUSIC };
 	WheelItemType m_WheelItemType;
 	D3DXCOLOR m_colorTint;
+	CString m_sSectionName;
 
 	// for a section
 	Sprite m_sprSectionBackground;
@@ -77,6 +79,7 @@ class MusicWheel : public ActorFrame
 {
 public:
 	MusicWheel();
+	~MusicWheel();
 
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
@@ -94,11 +97,12 @@ public:
 	float GetBannerX( float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
-	Song* GetSelectedSong() { return m_WheelItems[m_iSelection].m_pSong; };
+	Song* GetSelectedSong() { return GetCurWheelItems()[m_iSelection].m_pSong; };
 
 
 protected:
-	void RebuildWheelItems();
+	void BuildWheelItems( CArray<WheelItem, WheelItem&> &arrayWheelItems, SongSortOrder so );
+	void SwitchSortOrder();
 
 
 	Sprite		m_sprSelectionBackground;
@@ -108,8 +112,9 @@ protected:
 
 	
 	
-	CArray<WheelItem, WheelItem&> m_WheelItems;
-	MusicSortOrder m_SortOrder;
+	CArray<WheelItem, WheelItem&> m_WheelItems[NUM_SORT_ORDERS];
+	SongSortOrder m_SortOrder;
+	CArray<WheelItem, WheelItem&> &GetCurWheelItems() { return m_WheelItems[m_SortOrder]; };
 	
 	int	m_iSelection;
 	CString m_sExpandedSectionName;
@@ -136,37 +141,37 @@ protected:
 
 
 
-	CString GetSectionNameFromSongAndSort( Song* pSong, MusicSortOrder order )
+	CString GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so )
 	{
 		CString sTemp;
 
-		switch( m_SortOrder )
+		switch( so )
 		{
 		case SORT_GROUP:	
 			sTemp = pSong->GetGroupName();
 			sTemp.MakeUpper();
-			if( sTemp.GetLength() > 0 )
-				return sTemp;
-			else
-				return " ";
+			sTemp =  (sTemp.GetLength() > 0) ? sTemp : "";
+			if( IsAnInt(sTemp) )
+				sTemp = "NUM";
+			return sTemp;
 		case SORT_ARTIST:	
 			sTemp = pSong->GetArtist();
 			sTemp.MakeUpper();
-			if( sTemp.GetLength() > 0 )
-				return sTemp[0];
-			else
-				return " ";
+			sTemp =  (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
+			if( IsAnInt(sTemp) )
+				sTemp = "NUM";
+			return sTemp;
 		case SORT_TITLE:	
 			sTemp = pSong->GetTitle();
 			sTemp.MakeUpper();
-			if( sTemp.GetLength() > 0 )
-				return sTemp[0];
-			else
-				return " ";
+			sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
+			if( IsAnInt(sTemp) )
+				sTemp = "NUM";
+			return sTemp;
 		case SORT_BPM:
 		case SORT_MOST_PLAYED:
 		default:
-			return " ";
+			return "";
 		}
 	};
 

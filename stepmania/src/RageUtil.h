@@ -111,13 +111,8 @@ void RageLogHr( HRESULT hr, LPCTSTR fmt, ...);
 VOID DisplayErrorAndDie( CString sError );
 
 
-#if defined(DEBUG) | defined(_DEBUG)
-    #define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%s(%d)", str,						 __FILE__, (DWORD)__LINE__) )
-    #define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%s(%d)", str, DXGetErrorString8(hr), __FILE__, (DWORD)__LINE__) )
-#else
-    #define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%", str						 ) )
-    #define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%", str, DXGetErrorString8(hr) ) )
-#endif
+#define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%s(%d)", str,						 __FILE__, (DWORD)__LINE__) )
+#define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%s(%d)", str, DXGetErrorString8(hr), __FILE__, (DWORD)__LINE__) )
 
 
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);

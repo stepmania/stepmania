@@ -28,7 +28,7 @@ MusicSortDisplay::MusicSortDisplay()
 }
 
 
-void MusicSortDisplay::Set( MusicSortOrder so ) 
+void MusicSortDisplay::Set( SongSortOrder so ) 
 { 
 
 	switch( so )

@@ -95,9 +95,10 @@ void RageLog( LPCTSTR fmt, ...)
     CString sBuff = vssprintf( fmt, va );
 	sBuff += "\n";
 
-	fprintf(g_fileLog, sBuff); 
-	fclose( g_fileLog );
-	g_fileLog = fopen( g_sLogFileName, "w" );
+	fprintf( g_fileLog, sBuff ); 
+	fflush( g_fileLog );
+//	fclose( g_fileLog );
+//	g_fileLog = fopen( g_sLogFileName, "w" );
 }
 
 void RageLogHr( HRESULT hr, LPCTSTR fmt, ...)

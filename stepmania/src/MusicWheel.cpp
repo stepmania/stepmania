@@ -203,12 +203,13 @@ MusicWheel::MusicWheel()
 	}
 
 
+	m_SortOrder = GAMEINFO->m_SongSortOrder;
+	m_MusicSortDisplay.Set( m_SortOrder );
+	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 
 
-	m_SortOrder = SORT_GROUP;
 	m_sExpandedSectionName = "";
 
-	RebuildWheelItems();
 	m_iSelection = 0;
 
 	
@@ -218,21 +219,31 @@ MusicWheel::MusicWheel()
 
 
 	// find the previously selected song (if any), and select it
-	for( i=0; i<m_WheelItems.GetSize(); i++ )
+	for( i=0; i<GetCurWheelItems().GetSize(); i++ )
 	{
-		if( m_WheelItems[i].m_pSong != NULL
-		 && m_WheelItems[i].m_pSong == GAMEINFO->m_pCurSong )
+		if( GetCurWheelItems()[i].m_pSong != NULL
+		 && GetCurWheelItems()[i].m_pSong == GAMEINFO->m_pCurSong )
 			m_iSelection = i;
 	}
+
+
+	for( int so=0; so<NUM_SORT_ORDERS; so++ )
+		BuildWheelItems( m_WheelItems[so], SongSortOrder(so) );
+
 }
 
-void MusicWheel::RebuildWheelItems()
+MusicWheel::~MusicWheel()
+{
+	GAMEINFO->m_SongSortOrder = m_SortOrder;
+}
+
+void MusicWheel::BuildWheelItems( CArray<WheelItem, WheelItem&> &arrayWheelItems, SongSortOrder so )
 {
 	CArray<Song*, Song*&> arraySongs;
 	arraySongs.Copy( GAMEINFO->m_pSongs );
 	
 	// sort the songs
-	switch( m_SortOrder )
+	switch( so )
 	{
 	case SORT_GROUP:
 		SortSongPointerArrayByGroup( arraySongs );
@@ -254,22 +265,29 @@ void MusicWheel::RebuildWheelItems()
 	}
 
 		
-	m_WheelItems.RemoveAll();	// clear out the previous wheel items...
+	for( int i=0; i<arraySongs.GetSize(); i++ )
+	{
+		Song* pSong = arraySongs[i];
+		int iNumTimesPlayed = pSong->GetNumTimesPlayed();
+	}
+	arrayWheelItems.RemoveAll();	// clear out the previous wheel items...
 
 	// ...and load new ones
-	switch( m_SortOrder )
+	switch( so )
 	{
 	case SORT_GROUP:
 	case SORT_MOST_PLAYED:
 	case SORT_BPM:
 		// make WheelItems without sections
-		m_WheelItems.SetSize( arraySongs.GetSize() );
+		arrayWheelItems.SetSize( arraySongs.GetSize() );
 		{
 			for( int i=0; i< arraySongs.GetSize(); i++ )
 			{
 				Song* pSong = arraySongs[i];
-				m_WheelItems[i].LoadFromSong( pSong );
-				m_WheelItems[i].SetTintColor( *m_mapGroupNameToColorPtr[pSong->GetGroupName()] );
+				WheelItem &WI = arrayWheelItems[i];
+				WI.LoadFromSong( pSong );
+				WI.SetTintColor( *m_mapGroupNameToColorPtr[pSong->GetGroupName()] );
+				WI.m_sSectionName = "";
 			}
 		}
 		break;
@@ -277,7 +295,7 @@ void MusicWheel::RebuildWheelItems()
 	case SORT_ARTIST:
 		// make WheelItems with sections
 
-		m_WheelItems.SetSize( arraySongs.GetSize()*2 );	// make sure we have enough room for all music and section items
+		arrayWheelItems.SetSize( arraySongs.GetSize()*2 );	// make sure we have enough room for all music and section items
 
 		{
 			CString sLastSection = "";
@@ -286,24 +304,24 @@ void MusicWheel::RebuildWheelItems()
 			for( int i=0; i< arraySongs.GetSize(); i++ )
 			{
 				Song* pSong = arraySongs[i];
-				CString sThisSection = GetSectionNameFromSongAndSort( pSong, m_SortOrder );
+				CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
 				if( sThisSection != sLastSection )	// new section, make a section item
 				{
-					WheelItem &WI = m_WheelItems[iCurWheelItem++];
+					WheelItem &WI = arrayWheelItems[iCurWheelItem++];
 					WI.LoadFromSectionName( sThisSection );
+					WI.m_sSectionName = sThisSection;
 					WI.SetTintColor( COLOR_SECTION_TINTS[iNextSectionTint++] );
 					if( iNextSectionTint >= NUM_SECTION_TINTS )
 						iNextSectionTint = 0;
 					sLastSection = sThisSection;
 				}
-				if( sThisSection == m_sExpandedSectionName )	// this song is in the expanded section
-				{
-					WheelItem &WI = m_WheelItems[iCurWheelItem++];
-					WI.LoadFromSong( pSong );
-					WI.SetTintColor( *m_mapGroupNameToColorPtr[pSong->GetGroupName()] );
-				}
+
+				WheelItem &WI = arrayWheelItems[iCurWheelItem++];
+				WI.LoadFromSong( pSong );
+				WI.m_sSectionName = sThisSection;
+				WI.SetTintColor( *m_mapGroupNameToColorPtr[pSong->GetGroupName()] );
 			}
-			m_WheelItems.SetSize( iCurWheelItem );	// make sure we have enough room for all music and section items
+			arrayWheelItems.SetSize( iCurWheelItem );	// make sure we have enough room for all music and section items
 		}
 		break;
 	default:
@@ -311,26 +329,30 @@ void MusicWheel::RebuildWheelItems()
 	}
 
 
-	if( m_SortOrder == SORT_MOST_PLAYED )
+	if( so == SORT_MOST_PLAYED )
 	{
 		// init crown icons 
-		for( int i=0; i<m_WheelItems.GetSize(); i++ )
+		for( int i=0; i<arrayWheelItems.GetSize(); i++ )
 		{
-			m_WheelItems[i].m_MusicStatusDisplay.SetBlinking( true );
-			m_WheelItems[i].m_MusicStatusDisplay.SetRank( i+1 );
+			arrayWheelItems[i].m_MusicStatusDisplay.SetBlinking( true );
+			arrayWheelItems[i].m_MusicStatusDisplay.SetRank( i+1 );
 		}
 	}
 
 
 
-	if( m_WheelItems.GetSize() == 0 )
+	if( arrayWheelItems.GetSize() == 0 )
 	{
-		m_WheelItems.SetSize( 1 );
-		m_WheelItems[0].LoadFromSectionName( "No Songs" );
-		m_WheelItems[0].SetTintColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
+		arrayWheelItems.SetSize( 1 );
+		arrayWheelItems[0].LoadFromSectionName( "No Songs" );
+		arrayWheelItems[0].SetTintColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
 	}
 }
 
+void MusicWheel::SwitchSortOrder()
+{
+	
+}
 
 float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 {
@@ -403,15 +425,23 @@ void MusicWheel::RenderPrimitives()
 	int iIndex = m_iSelection;
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
 	{
-		iIndex--;
-		if( iIndex < 0 )
-			iIndex = m_WheelItems.GetSize()-1;
+		do
+		{
+			iIndex--;
+			if( iIndex < 0 )
+				iIndex = GetCurWheelItems().GetSize()-1;
+		} 
+		while( GetCurWheelItems()[iIndex].m_WheelItemType == WheelItem::TYPE_MUSIC 
+			&& GetCurWheelItems()[iIndex].m_sSectionName != ""
+			&& GetCurWheelItems()[iIndex].m_sSectionName != m_sExpandedSectionName );
+
+
 	}
 
 	// iIndex is now the index of the lowest WheelItem to draw
 	for( i=-NUM_WHEEL_ITEMS_TO_DRAW/2; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
 	{
-		WheelItem& WI = m_WheelItems[iIndex];
+		WheelItem& WI = GetCurWheelItems()[iIndex];
 
 		float fThisBannerPositionOffsetFromSelection = m_fPositionOffsetFromSelection + i;
 
@@ -426,9 +456,16 @@ void MusicWheel::RenderPrimitives()
 		WI.Draw();
 
 
-		iIndex++;
-		if( iIndex > m_WheelItems.GetSize()-1 )
-			iIndex = 0;
+		do
+		{
+			iIndex++;
+			if( iIndex > GetCurWheelItems().GetSize()-1 )
+				iIndex = 0;
+		} 
+		while( GetCurWheelItems()[iIndex].m_WheelItemType == WheelItem::TYPE_MUSIC 
+			&& GetCurWheelItems()[iIndex].m_sSectionName != ""
+			&& GetCurWheelItems()[iIndex].m_sSectionName != m_sExpandedSectionName );
+
 	}
 
 
@@ -446,9 +483,9 @@ void MusicWheel::Update( float fDeltaTime )
 
 
 
-	for( int i=0; i<m_WheelItems.GetSize(); i++ )
+	for( int i=0; i<GetCurWheelItems().GetSize(); i++ )
 	{
-		m_WheelItems[i].Update( fDeltaTime );
+		GetCurWheelItems()[i].Update( fDeltaTime );
 	}
 
 
@@ -467,14 +504,14 @@ void MusicWheel::Update( float fDeltaTime )
 			m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 			m_fTimeLeftInState = FADE_TIME;
 
-			Song* pPrevSelectedSong = m_WheelItems[m_iSelection].m_pSong;
+			Song* pPrevSelectedSong = GetCurWheelItems()[m_iSelection].m_pSong;
 
 			// change the sort order
-			m_SortOrder = MusicSortOrder(m_SortOrder+1);
+			m_SortOrder = SongSortOrder(m_SortOrder+1);
 			if( m_SortOrder > NUM_SORT_ORDERS-1 )
-				m_SortOrder = (MusicSortOrder)0;
+				m_SortOrder = (SongSortOrder)0;
 			m_sExpandedSectionName = GetSectionNameFromSongAndSort( pPrevSelectedSong, m_SortOrder );
-			RebuildWheelItems();
+			//RebuildWheelItems();
 
 			m_MusicSortDisplay.Set( m_SortOrder );
 			m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_BEGIN );
@@ -482,9 +519,9 @@ void MusicWheel::Update( float fDeltaTime )
 
 
 			// find the previously selected song, and select it
-			for( i=0; i<m_WheelItems.GetSize(); i++ )
+			for( i=0; i<GetCurWheelItems().GetSize(); i++ )
 			{
-				if( m_WheelItems[i].m_pSong == pPrevSelectedSong )
+				if( GetCurWheelItems()[i].m_pSong == pPrevSelectedSong )
 					m_iSelection = i;
 			}
 			}
@@ -534,9 +571,16 @@ void MusicWheel::PrevMusic()
 
 	MUSIC->Stop();
 
-	m_iSelection--;
-	if( m_iSelection < 0 )
-		m_iSelection = m_WheelItems.GetSize()-1;
+	do
+	{
+		m_iSelection--;
+		if( m_iSelection < 0 )
+			m_iSelection = GetCurWheelItems().GetSize()-1;
+	} 
+	while( GetCurWheelItems()[m_iSelection].m_WheelItemType == WheelItem::TYPE_MUSIC 
+		&& GetCurWheelItems()[m_iSelection].m_sSectionName != ""
+		&& GetCurWheelItems()[m_iSelection].m_sSectionName != m_sExpandedSectionName );
+
 
 	m_fPositionOffsetFromSelection -= 1;
 
@@ -558,9 +602,16 @@ void MusicWheel::NextMusic()
 
 	MUSIC->Stop();
 
-	m_iSelection++;
-	if( m_iSelection > m_WheelItems.GetSize()-1 )
-		m_iSelection = 0;
+	do
+	{
+		m_iSelection++;
+		if( m_iSelection > GetCurWheelItems().GetSize()-1 )
+			m_iSelection = 0;
+	} 
+	while( GetCurWheelItems()[m_iSelection].m_WheelItemType == WheelItem::TYPE_MUSIC 
+		&& GetCurWheelItems()[m_iSelection].m_sSectionName != ""
+		&& GetCurWheelItems()[m_iSelection].m_sSectionName != m_sExpandedSectionName );
+
 
 	m_fPositionOffsetFromSelection += 1;
 
@@ -593,17 +644,17 @@ void MusicWheel::NextSort()
 
 bool MusicWheel::Select()
 {
-	switch( m_WheelItems[m_iSelection].m_WheelItemType )
+	switch( GetCurWheelItems()[m_iSelection].m_WheelItemType )
 	{
 	case WheelItem::TYPE_SECTION:
 		{
-		CString sThisItemSectionName = m_WheelItems[m_iSelection].GetSectionName();
+		CString sThisItemSectionName = GetCurWheelItems()[m_iSelection].GetSectionName();
 		if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
 			m_sExpandedSectionName = "";		// collapse it
 		else				// already collapsed
 			m_sExpandedSectionName = sThisItemSectionName;	// expand it
 
-		RebuildWheelItems();
+		//RebuildWheelItems();
 
 
 		m_soundExpand.PlayRandom();
@@ -611,10 +662,10 @@ bool MusicWheel::Select()
 
 		m_iSelection = 0;	// reset in case we can't find the last selected song
 		// find the section header and select it
-		for( int i=0; i<m_WheelItems.GetSize(); i++ )
+		for( int i=0; i<GetCurWheelItems().GetSize(); i++ )
 		{
-			if( m_WheelItems[i].m_WheelItemType == WheelItem::TYPE_SECTION  
-				&&  m_WheelItems[i].GetSectionName() == sThisItemSectionName )
+			if( GetCurWheelItems()[i].m_WheelItemType == WheelItem::TYPE_SECTION  
+				&&  GetCurWheelItems()[i].GetSectionName() == sThisItemSectionName )
 			{
 				m_iSelection = i;
 				break;
