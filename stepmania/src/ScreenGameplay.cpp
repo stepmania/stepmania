@@ -57,10 +57,8 @@
 #define EVAL_ON_FAIL							THEME->GetMetricB(m_sName,"ShowEvaluationOnFail")
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB(m_sName,"ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH				THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
-/* XXX: This is ugly; most people don't need to override this per-mode.  This will
- * go away eventually, once metrics can redirect to Lua calls. */
-#define INITIAL_BACKGROUND_BRIGHTNESS( play_mode )	THEME->GetMetricF(m_sName,"InitialBackgroundBrightness"+Capitalize(PlayModeToString(play_mode)))
 #define PLAYER_X( p, styleType )				THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
+static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<float> TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -1062,7 +1060,7 @@ void ScreenGameplay::LoadNextSong()
 			 * black), or it might be 1, if the stage screen has the song BG and we're
 			 * coming from it (like Pump).  This used to be done in SM_PlayReady, but
 			 * that means it's impossible to snap to the new brightness immediately. */
-			m_Background.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS(GAMESTATE->m_PlayMode) );
+			m_Background.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );
 			m_Background.FadeToActualBrightness();
 		}
 	}
