@@ -126,8 +126,8 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_MenuTimer:
 	case SM_BeginFadingOut:
-		if( !m_Out.IsTransitioning() )
-			m_Out.StartTransitioning( SM_GoToNextScreen );
+		if( !IsTransitioning() )
+			StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
 		/* Look at the def of the screen we're going to; if it has a music theme element
