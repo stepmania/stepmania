@@ -876,7 +876,7 @@ int main(int argc, char* argv[])
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
 	 * we need to catch the exception and force a crash.  The call stack is still
 	 * there, and gets picked up by the crash handler.  (If we don't catch it, we'll
-	 * get a generic, useless "abnormal terminaiton" dialog.)  In Linux, if we do this
+	 * get a generic, useless "abnormal termination" dialog.)  In Linux, if we do this
 	 * we'll only get main() on the stack, but if we don't catch the exception, it'll
 	 * just work.  So, only catch generic exceptions in Windows. */
 #if defined(_WINDOWS)
