@@ -13,6 +13,7 @@
  */
 
 #include "RageSound.h"
+#include "RageSoundDriver.h"
 
 #define ALSA_PCM_NEW_HW_PARAMS_API
 #include <alsa/asoundlib.h>
