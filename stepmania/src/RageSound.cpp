@@ -224,13 +224,18 @@ void RageSound::SetLengthSeconds(float secs)
 }
 
 /* Read data at the rate we're playing it.  We only do this to smooth out the rate
- * we read data; the sound thread will always read more if it's needed. */
+ * we read data; the sound thread will always read more if it's needed. 
+ *
+ * Actually, this isn't a good idea.  The sound driver will read in small chunks,
+ * interleaving between files.  For example, if four files are playing, and each
+ * is two chunks behind, it'll read a chunk from each file twice, instead of reading
+ * two chunks for each file at a time, which reduces the chance of underrun. */
 void RageSound::Update(float delta)
 {
-	LockMut(SOUNDMAN->lock);
+//	LockMut(SOUNDMAN->lock);
 
-	if( playing && delta )
-		FillBuf(int(delta * GetSampleRate() * samplesize));
+//	if( playing && delta )
+//		FillBuf(int(delta * GetSampleRate() * samplesize));
 }
 
 /* Return the number of bytes available in the input buffer. */
