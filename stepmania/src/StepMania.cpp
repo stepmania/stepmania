@@ -470,11 +470,8 @@ int main(int argc, char* argv[])
 
 	loading_window->Paint();
 
-	// changed to use time.  GetTimeSinceStart is silly because it always return 0! -Chris
 	srand( time(NULL) );	// seed number generator	
 	
-	HOOKS->DumpDebugInfo();
-
 	//
 	// Create game objects
 	//
@@ -483,6 +480,10 @@ int main(int argc, char* argv[])
 
 	if( PREFSMAN->m_bShowLogWindow )
 		LOG->ShowConsole();
+
+	/* This should be done after PREFSMAN is set up, so it can use HOOKS->MessageBoxOK,
+	 * but before we do more complex things that might crash. */
+	HOOKS->DumpDebugInfo();
 
 	LOG->SetLogging( PREFSMAN->m_bLogging );
 
