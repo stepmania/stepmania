@@ -537,6 +537,9 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 
 	m_ScreenStack.push_back( pNewScreen );
 	
+	/* Make sure we always send at least one update before drawing. */
+	pNewScreen->Update( 0 );
+
 	PostMessageToTopScreen( SM_GainFocus, 0 );
 }
 
