@@ -20,7 +20,10 @@ static float GetNoteFieldHeight( PlayerNumber pn )
 	return SCREEN_HEIGHT + fabsf(GAMESTATE->m_CurrentPlayerOptions[pn].m_fPerspectiveTilt)*200;
 }
 
-float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
+/* For visibility testing: if iAbsolute is -1, then all random modifiers must return
+ * the minimal possible offset; if +1, they must return the maximum possible offset.
+ * When actually rendering, iAbsolute is 0. */
+float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, int iAbsolute )
 {
 	float fYOffset = 0;
 
@@ -83,14 +86,22 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
 	float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	if ( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 1.0f )
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 1.0f )
 	{
 		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
-		float soRandom = RandomFloat( seed );
+		float fRandom;
+		switch( iAbsolute )
+		{
+		case 0: fRandom = RandomFloat( seed ); break;
+		case -1: fRandom = 1.0f; break; /* highest scroll speed = lowest visibility */
+		case +1: fRandom = 0.0f; break;
+		default: FAIL_M( ssprintf("%i",iAbsolute) );
+		};
+
 		fScrollSpeed *=
-							SCALE( soRandom,
-								   0.0f, 1.0f,
-								   1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed ); // min. scale shold be defined as a constatnt somewhere
+				SCALE( fRandom,
+						0.0f, 1.0f,
+						1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed ); // min. scale shold be defined as a constatnt somewhere
 	}	
 
 
