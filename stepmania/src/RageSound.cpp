@@ -149,8 +149,20 @@ void RageSound::Fail(CString reason)
 	error = reason;
 }
 
+class RageSoundReader_Silence: public SoundReader
+{
+public:
+	int GetLength() const { return 0; }
+	int GetLength_Fast() const { return 0; }
+	int SetPosition_Accurate(int ms)  { return 0; }
+	int SetPosition_Fast(int ms) { return 0; }
+	int Read(char *buf, unsigned len) { return 0; }
+	int GetSampleRate() const { return 44100; }
+	SoundReader *Copy() const { return new RageSoundReader_Silence; }
+};
 
-bool RageSound::Load(CString sSoundFilePath, int precache)
+
+bool RageSound::Load( CString sSoundFilePath, int precache )
 {
 	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.c_str() );
 
@@ -168,8 +180,12 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	CString error;
 	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
 	if( Sample == NULL )
-		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
-			m_sFilePath.c_str(), error.c_str());
+	{
+		LOG->Warn( "RageSoundManager::RageSoundManager: error opening sound \"%s\": %s",
+			m_sFilePath.c_str(), error.c_str() );
+
+		Sample = new RageSoundReader_Silence;
+	}
 
 	const int NeededRate = SOUNDMAN->GetDriverSampleRate( Sample->GetSampleRate() );
 	if( NeededRate != Sample->GetSampleRate() )
