@@ -26,7 +26,7 @@ public:
 	void Remove() {
 		next->prev = prev;
 		prev->next = next;
-#ifdef _DEBUG
+#ifdef DEBUG
 		prev = next = 0;
 #endif
 	}
