@@ -1,12 +1,9 @@
-/*
- * RageBitmapTexture: Holder for a static texture with metadata.
- */
+/* RageBitmapTexture: Holder for a static texture with metadata. */
 
 #ifndef RAGEBITMAPTEXTURE_H
 #define RAGEBITMAPTEXTURE_H
 
 #include "RageTexture.h"
-struct SDL_Surface;
 
 class RageBitmapTexture : public RageTexture
 {
@@ -22,8 +19,6 @@ private:
 	void Create();	// called by constructor and Reload
 	void Destroy();
 	unsigned m_uTexHandle;	// treat as unsigned in OpenGL, ID3D8Texture* for D3D
-
-	SDL_Surface *CreateImg(int &pixfmt);
 };
 
 #endif
