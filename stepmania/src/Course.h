@@ -58,6 +58,7 @@ public:
 	bool		m_bRandomize;	// play the songs in a random order
 	bool		m_bDifficult; // only make something difficult once
 	int			m_iLives;	// -1 means use bar life meter
+	int			m_iMeter;	// -1 autogens
 
 	struct Info
 	{
@@ -94,6 +95,7 @@ public:
 	bool IsOni() const { return !m_bRepeat && m_iLives > 0; } 	// use battery life meter
 	bool IsEndless() const { return m_bRepeat; }
 	PlayMode GetPlayMode() const;
+	int GetMeter() const;
 
 	void LoadFromCRSFile( CString sPath );
 	void Save();

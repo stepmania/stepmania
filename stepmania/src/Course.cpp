@@ -39,6 +39,7 @@ Course::Course()
 	m_bRandomize = false;
 	m_bDifficult = false;
 	m_iLives = -1;
+	m_iMeter = -1;
 
 	SetDefaultScore();
 }
@@ -107,6 +108,43 @@ PlayMode Course::GetPlayMode() const
 	return PLAY_MODE_NONSTOP;
 }
 
+const int DifficultMeterRamp = 3;
+int Course::GetMeter() const
+{
+	if( m_iMeter != -1 )
+		return m_iMeter + GAMESTATE->m_bDifficultCourses? DifficultMeterRamp:0;
+
+	vector<Info> ci;
+	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+
+	/* Take the aveage meter. */
+	float fTotalMeter = 0;
+	for( unsigned c = 0; c < ci.size(); ++c )
+	{
+		if( ci[c].Random )
+		{
+			switch( GetDifficulty(ci[c]) )
+			{
+			case DIFFICULTY_INVALID:
+			{
+				int iMeterLow, iMeterHigh;
+				GetMeterRange(ci[c], iMeterLow, iMeterHigh);
+				fTotalMeter += int( (iMeterLow + iMeterHigh) / 2.0f );
+				break;
+			}
+			case DIFFICULTY_BEGINNER:	fTotalMeter += 1; break;
+			case DIFFICULTY_EASY:		fTotalMeter += 2; break;
+			case DIFFICULTY_MEDIUM:		fTotalMeter += 5; break;
+			case DIFFICULTY_HARD:		fTotalMeter += 7; break;
+			case DIFFICULTY_CHALLENGE:	fTotalMeter += 9; break;
+			}
+		}
+		else
+			fTotalMeter += ci[c].Notes->GetMeter();
+	}
+	return (int)roundf( fTotalMeter / ci.size() );
+}
+
 void Course::LoadFromCRSFile( CString sPath )
 {
 	m_sPath = sPath;	// save path
@@ -153,6 +191,9 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		else if( 0 == stricmp(sValueName, "LIVES") )
 			m_iLives = atoi( sParams[1] );
+
+		else if( 0 == stricmp(sValueName, "METER") )
+			m_iMeter = atoi( sParams[1] );
 
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
@@ -275,6 +316,7 @@ void Course::Save()
 	fprintf( fp, "#COURSE:%s;\n", m_sName.c_str() );
 	fprintf( fp, "#REPEAT:%s;\n", m_bRepeat ? "YES" : "NO" );
 	fprintf( fp, "#LIVES:%i;\n", m_iLives );
+	fprintf( fp, "#METER:%i;\n", m_iMeter );
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
@@ -320,6 +362,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
+	m_iMeter = -1;
 
 	m_sName = SONGMAN->ShortenGroupName( sGroupName );	
 	m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
