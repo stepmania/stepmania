@@ -143,8 +143,9 @@ public:
 
 	// Session statistics are cleared by calling Reset()
 
-
-	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
+	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];    // The currently active options
+	PlayerOptions   m_SelectedOptions[NUM_PLAYERS];  // Keep track of player-selected options for
+													 // courses separately from the active options.
 	SongOptions		m_SongOptions;
 };
 

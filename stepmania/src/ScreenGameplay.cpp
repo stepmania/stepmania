@@ -518,8 +518,12 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	case PLAY_MODE_ENDLESS:
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
 				m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_iSongsBeforeFail[p]+1) );
-
+				// If it's the first song, record the options the player selected for later.
+				if (GAMESTATE->m_iSongsIntoCourse == 0)
+					GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
+			}
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			CArray<Song*,Song*> apSongs;
 			CArray<Notes*,Notes*> apNotes;
@@ -534,6 +538,10 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				GAMESTATE->m_pCurNotes[p] = apNotes[iPlaySongIndex];
+				// Wipe the options used on the last song (including course specified ones)
+				GAMESTATE->m_PlayerOptions[p].Init();	
+				// Now restore the player's originally selected options.
+				GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
 				if( asModifiers[iPlaySongIndex] != "" )		// some modifiers specified
 					GAMESTATE->m_PlayerOptions[p].FromString( asModifiers[iPlaySongIndex] );	// put them into effect
 			}
