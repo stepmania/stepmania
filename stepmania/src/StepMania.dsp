@@ -55,11 +55,11 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
 # SUBTRACT BASE LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /nodefaultlib:"msvcrt.lib" /out:"../../itg/itg/Program/StepMania-debug.exe"
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /nodefaultlib:"msvcrt.lib" /out:"../Program/StepMania-debug.exe"
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\itg\itg\Program
+TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                             	cl                     /Zl                     /nologo                     /c                     verstub.cpp                     /Fo$(IntDir)\ 
@@ -143,30 +143,6 @@ SOURCE=.\pcre\pcre.h
 SOURCE=.\pcre\study.c
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\SDL_dither.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_dither.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_rotozoom.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_rotozoom.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_SaveJPEG.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SDL_SaveJPEG.h
-# End Source File
 # End Group
 # Begin Source File
 
@@ -536,6 +512,14 @@ SOURCE=.\RageSurface_Save_BMP.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageSurface_Save_JPEG.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSurface_Save_JPEG.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageSurfaceUtils.cpp
 # End Source File
 # Begin Source File
@@ -544,11 +528,27 @@ SOURCE=.\RageSurfaceUtils.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageSurfaceUtils_Dither.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSurfaceUtils_Dither.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageSurfaceUtils_Palettize.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\RageSurfaceUtils_Palettize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSurfaceUtils_Zoom.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSurfaceUtils_Zoom.h
 # End Source File
 # Begin Source File
 
