@@ -29,17 +29,7 @@ struct UsbStorageDevice
 	
 	bool IsBlank() { return sOsMountDir.empty(); }
 	
-	bool operator==(const UsbStorageDevice& other) const
-	{
-#define COMPARE(x) if( x != other.x ) return false;
-		COMPARE( iBus );
-		COMPARE( iPort );
-		COMPARE( iLevel );
-		COMPARE( sName );
-		COMPARE( sOsMountDir );
-		return true;
-#undef COMPARE
-	}
+        bool operator==(const UsbStorageDevice& other) const;
 	bool operator!=(const UsbStorageDevice& other) const
 	{
 		return !operator==(other);
@@ -59,6 +49,8 @@ public:
 	virtual void ResetUsbStorage() = 0;
 	virtual void PauseMountingThread() = 0;
 	virtual void UnPauseMountingThread() = 0;
+	virtual void DoOsMount() = 0;
+	virtual void DontDoOsMount() = 0;
 };
 
 MemoryCardDriver *MakeMemoryCardDriver();

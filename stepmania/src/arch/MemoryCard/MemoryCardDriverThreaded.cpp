@@ -26,6 +26,7 @@ MemoryCardDriverThreaded::MemoryCardDriverThreaded() :
 {
 	m_bShutdownNextUpdate = false;
 	m_bStorageDevicesChanged = false;
+	m_bDoOsMount = true;
 }
 
 void MemoryCardDriverThreaded::StartThread()
@@ -59,6 +60,16 @@ void MemoryCardDriverThreaded::PauseMountingThread()
 void MemoryCardDriverThreaded::UnPauseMountingThread()
 {
 	m_mutexPause.Unlock();
+}
+
+void MemoryCardDriverThreaded::DoOsMount()
+{
+  m_bDoOsMount = true;
+}
+
+void MemoryCardDriverThreaded::DontDoOsMount()
+{
+  m_bDoOsMount = false;
 }
 
 int MemoryCardDriverThreaded::MountThread_Start( void *p )

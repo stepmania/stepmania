@@ -4,6 +4,21 @@
 
 #include "arch/arch_platform.h"
 
+bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
+{
+  //  LOG->Trace( "Comparing %d %d %d %s %s to %d %d %d %s %s",
+  //	      iBus, iPort, iLevel, sName.c_str(), sOsMountDir.c_str(),
+  //	      other.iBus, other.iPort, other.iLevel, other.sName.c_str(), other.sOsMountDir.c_str() );
+#define COMPARE(x) if( x != other.x ) return false;
+  COMPARE( iBus );
+  COMPARE( iPort );
+  COMPARE( iLevel );
+  COMPARE( sOsMountDir );
+  return true;
+#undef COMPARE
+}
+
+
 MemoryCardDriver *MakeMemoryCardDriver()
 {
 	if( !PREFSMAN->m_bMemoryCards )

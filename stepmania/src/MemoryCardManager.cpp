@@ -148,6 +148,11 @@ void MemoryCardManager::LockCards( bool bLock )
 		FOREACH_PlayerNumber( p )
 			m_bTooLate[p] = false;
 	}
+
+	if( m_bCardsLocked )
+	  m_pDriver->DontDoOsMount();
+	else
+	  m_pDriver->DoOsMount();
 }
 
 void MemoryCardManager::AssignUnassignedCards()

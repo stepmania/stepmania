@@ -221,7 +221,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		UsbStorageDeviceEx &old = vOld[i];
 		if( find(vNew.begin(),vNew.end(),old) == vNew.end() )// didn't find
 		{
-			LOG->Trace( ssprintf("Disconnected bus %d port %d level %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str()) );
+			LOG->Trace( "Disconnected bus %d port %d level %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str() );
 			vDisconnects.push_back( &old );
 		}
 	}
@@ -233,24 +233,26 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		UsbStorageDeviceEx &newd = vNew[i];
 		if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )// didn't find
 		{
-			LOG->Trace( ssprintf("Connected bus %d port %d level %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str()) );
+			LOG->Trace( "Connected bus %d port %d level %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str() );
 			vConnects.push_back( &newd );
 		}
 	}
 	
 	// unmount all disconnects
-	for( unsigned i=0; i<vDisconnects.size(); i++ )
-	{
+	if( ShouldDoOsMount() )
+	  {
+	    for( unsigned i=0; i<vDisconnects.size(); i++ )
+	      {
 		UsbStorageDeviceEx &d = *vDisconnects[i];
 		CString sCommand = "umount " + d.sOsMountDir;
 		LOG->Trace( "unmount disconnects %i/%i (%s)", i, vDisconnects.size(), sCommand.c_str() );
 		ExecuteCommand( sCommand );
 		LOG->Trace( "unmount disconnects %i/%i done", i, vDisconnects.size() );
-	}
-	
-	// mount all connects
-	for( unsigned i=0; i<vConnects.size(); i++ )
-	{	  
+	      }
+	    
+	    // mount all connects
+	    for( unsigned i=0; i<vConnects.size(); i++ )
+	      {	  
 		UsbStorageDeviceEx &d = *vConnects[i];
 		CString sCommand;
 		
@@ -263,9 +265,9 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		LOG->Trace( "unmount old connect %i/%i done", i, vConnects.size() );
 		
 		sCommand = "mount " + d.sOsMountDir;
-		LOG->Trace( "unmount new connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
+		LOG->Trace( "mount new connect %i/%i (%s)", i, vConnects.size(), sCommand.c_str() );
 		bool bMountedSuccessfully = ExecuteCommand( sCommand );
-		LOG->Trace( "unmount new connect %i/%i done", i, vConnects.size() );
+		LOG->Trace( "mount new connect %i/%i done", i, vConnects.size() );
 		
 		d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
 		
@@ -278,8 +280,9 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 		d.sName = profile.GetDisplayName();
 		
 		LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
-	}
-	
+	      }
+	  }
+
 	if( !vDisconnects.empty() || !vConnects.empty() )	  
 	{
 		LockMut( m_mutexStorageDevices );

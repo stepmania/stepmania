@@ -15,6 +15,8 @@ public:
 	virtual void ResetUsbStorage() {}
 	virtual void PauseMountingThread() {}
 	virtual void UnPauseMountingThread() {}
+	virtual void DoOsMount() {}
+	virtual void DontDoOsMount() {}
 };
 
 #endif
