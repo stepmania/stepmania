@@ -136,6 +136,14 @@ inline float cosf(float x) { return float(cos(double(x))); }
 inline float acosf(float x) { return float(acos(double(x))); }
 #endif
 
+#ifdef NEED_TRUNCF
+inline float truncf( float f )	{ return float(int(f)); };
+#endif
+
+#ifdef NEED_ROUNDF
+inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
+#endif
+
 #ifdef _XBOX
 #include <xtl.h>
 #include <xgraphics.h>

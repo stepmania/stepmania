@@ -119,19 +119,6 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
     return low + ( high - low ) * ( (float)rand() ) / RAND_MAX;
 }
 
-/* XXX: These are C99 functions (except for the roundf(double) overload); what's
- * the C99 define we can test for? XXX autoconf */
-#if defined(WIN32)
-inline double trunc( double f )	{ return float(int(f)); };
-#else
-#include <math.h>
-#endif
-#if defined(NEED_TRUNCF)
-inline float truncf( float f )	{ return float(int(f)); };
-#endif
-#if defined(NEED_ROUNDF)
-inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
-#endif
 inline float froundf( const float f, const float fRoundInterval )
 {
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
