@@ -109,8 +109,8 @@ static void ArrowGetReverseShiftAndScale( PlayerNumber pn, int iCol, float fYRev
 
 	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol);
 	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
-	float fPercentConverge = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrolls[PlayerOptions::SCROLL_CONVERGE];
-	fShiftOut = SCALE( fPercentConverge, 0.f, 1.f, fShiftOut, 0.5f );
+	float fPercentCentered = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrolls[PlayerOptions::SCROLL_CENTERED];
+	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.5f );
 
 	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f);
 }

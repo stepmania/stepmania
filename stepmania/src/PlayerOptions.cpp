@@ -122,7 +122,7 @@ CString PlayerOptions::GetString() const
 	sReturn += AddPart( m_fScrolls[SCROLL_SPLIT],		"Split" );
 	sReturn += AddPart( m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
 	sReturn += AddPart( m_fScrolls[SCROLL_CROSS],		"Cross" );
-	sReturn += AddPart( m_fScrolls[SCROLL_CONVERGE],	"Converge" );
+	sReturn += AddPart( m_fScrolls[SCROLL_CENTERED],	"Centered" );
 
 	sReturn += AddPart( m_fDark, "Dark");
 
@@ -285,7 +285,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
 		else if( sBit == "cross" )		SET_FLOAT( fScrolls[SCROLL_CROSS] )
-		else if( sBit == "converge" )	SET_FLOAT( fScrolls[SCROLL_CONVERGE] )
+		else if( sBit == "centered" || sBit == "converge" )	SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 		else if( sBit == "noholds" || sBit == "nofreeze" )	m_bTransforms[TRANSFORM_NOHOLDS] = on;
 		else if( sBit == "nomines" )	m_bTransforms[TRANSFORM_NOMINES] = on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )

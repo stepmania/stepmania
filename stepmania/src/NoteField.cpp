@@ -407,12 +407,12 @@ void NoteField::DrawPrimitives()
 	// Adjust draw range depending on some effects
 	//
 	int iFirstPixelToDraw = m_iStartDrawingPixel;
-	// HACK: if boomerang and converge are on, then we want to draw much 
+	// HACK: if boomerang and centered are on, then we want to draw much 
 	// earlier to that the notes don't pop on screen.
-	float fConvergeTimesBoomerang = 
-		current_po.m_fScrolls[PlayerOptions::SCROLL_CONVERGE] * 
+	float fCenteredTimesBoomerang = 
+		current_po.m_fScrolls[PlayerOptions::SCROLL_CENTERED] * 
 		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
-	iFirstPixelToDraw += SCALE( fConvergeTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 );
+	iFirstPixelToDraw += SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 );
 	int iLastPixelToDraw = m_iEndDrawingPixel;
 	
 	float fDrawScale = 1;
