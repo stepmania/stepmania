@@ -95,13 +95,12 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
 	glGetFloatv(GL_LINE_WIDTH_RANGE, m_oglspecs->line_range);
-	LOG->Trace("Line width range: %f, %f", m_oglspecs->line_range[0], m_oglspecs->line_range[1]);
 	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &m_oglspecs->line_granularity);
-	LOG->Trace("Line width granularity: %f", m_oglspecs->line_granularity);
+	LOG->Info("Line width range: %f-%f +%f", m_oglspecs->line_range[0], m_oglspecs->line_range[1], m_oglspecs->line_granularity);
+
 	glGetFloatv(GL_POINT_SIZE_RANGE, m_oglspecs->point_range);
-	LOG->Trace("Point size range: %f-%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1]);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &m_oglspecs->point_granularity);
-	LOG->Trace("Point size granularity: %f", m_oglspecs->point_granularity);
+	LOG->Info("Point size range: %f-%f +%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1], m_oglspecs->point_granularity);
 }
 
 bool RageDisplay::IsSoftwareRenderer()
