@@ -115,8 +115,8 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 					dsnd_pcm_info_get_subdevices_avail(pcminfo),
 					dsnd_pcm_info_get_subdevices_count(pcminfo) );
 
-			dsnd_ctl_close(handle);
 		}
+		dsnd_ctl_close(handle);
 	}
 
 	if( card == 0 )
