@@ -233,6 +233,29 @@ void MemoryCardManager::MountAllCards()
 	}
 }
 
+void MemoryCardManager::UnmountAllCards()
+{
+	FOREACH_PlayerNumber( p )
+	{
+		if( m_Device[p].IsBlank() )	// they don't have an assigned card
+			continue;
+		
+		m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+	}
+}
+
+void MemoryCardManager::MountCard( PlayerNumber pn )
+{
+	ASSERT( !m_Device[pn].IsBlank() );
+	m_pDriver->MountAndTestWrite(&m_Device[pn], MEM_CARD_MOUNT_POINT[pn]);
+}
+
+void MemoryCardManager::UnmountCard( PlayerNumber pn )
+{
+	ASSERT( !m_Device[pn].IsBlank() );
+	m_pDriver->Unmount(&m_Device[pn], MEM_CARD_MOUNT_POINT[pn]);
+}
+
 void MemoryCardManager::FlushAndReset()
 {
 	FOREACH_PlayerNumber( p )

@@ -27,6 +27,7 @@
 #include "StepMania.h"
 #include "CryptManager.h"
 #include "Style.h"
+#include "MemoryCardManager.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -1352,12 +1353,18 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsUsingProfile(pn) )
 			{
+				if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+					MEMCARDMAN->MountCard( pn );
+			
 				Profile* pProfile = PROFILEMAN->GetProfile(pn);
 				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
 				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
 				CString sFileName = SaveScreenshot( sDir, true, true, iScreenshotIndex );
 				CString sPath = sDir+sFileName;
 				
+				if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+					MEMCARDMAN->UnmountCard( pn );
+
 				if( !sFileName.empty() )
 				{
 					Screenshot screenshot;

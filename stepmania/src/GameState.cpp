@@ -234,7 +234,6 @@ void GameState::PlayersFinalized()
 
 	MEMCARDMAN->LockCards( true );
 
-
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
 	{
@@ -270,6 +269,9 @@ void GameState::PlayersFinalized()
 		if( !IsHumanPlayer(pn) )
 			ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
 	}
+
+	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+		MEMCARDMAN->UnmountAllCards();
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -341,6 +343,9 @@ void GameState::EndGame()
 		}
 	}
 
+
+	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+		MEMCARDMAN->MountAllCards();
 
 
 	BOOKKEEPER->WriteToDisk();

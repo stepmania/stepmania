@@ -28,6 +28,9 @@ public:
 
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
 	void MountAllCards();
+	void UnmountAllCards();
+	void MountCard( PlayerNumber pn );
+	void UnmountCard( PlayerNumber pn );
 	
 	void PauseMountingThread();	// call this before reading or writing to memory card
 	void UnPauseMountingThread();	// call this when done reading or writing to memory card
