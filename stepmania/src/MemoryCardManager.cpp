@@ -8,6 +8,7 @@
 #include "ScreenManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
+#include "GameState.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -180,7 +181,7 @@ void MemoryCardManager::Update( float fDelta )
 
 			assigned_device = *d;    // save a copy
 			vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
-			m_bTooLate[p] = m_bCardsLocked;    // the device is too late if inserted when cards were locked
+			m_bTooLate[p] = GAMESTATE->m_bPlayersFinalized;    // the device is too late if inserted when cards were locked
 			
 			// play sound
 			if( m_bTooLate[p] )
