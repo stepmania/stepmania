@@ -2132,7 +2132,6 @@
 				AA29CCEC0558741A00961A51,
 				AA29CCED0558741A00961A51,
 				AA29CCEE0558741A00961A51,
-				AA29CCEF0558741A00961A51,
 				AA29CCF00558741A00961A51,
 				AA29CCF10558741A00961A51,
 				AA29CCF30558741A00961A51,
@@ -3483,12 +3482,6 @@
 		};
 		AA29CCEE0558741A00961A51 = {
 			fileRef = AABE36F60497CE16005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CCEF0558741A00961A51 = {
-			fileRef = AABE36F70497CE16005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7610,6 +7603,22 @@
 			shellPath = /bin/sh;
 			shellScript = scripts/increment_version.sh;
 		};
+		AA69675006840991007802A5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = InputHandler_Carbon.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA69675106840991007802A5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = InputHandler_Carbon.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		AA6DAF0805300B3D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -9218,7 +9227,6 @@
 				AABE36F80497CE16005F316C,
 				AA98E298049ACE39005F316C,
 				AABE36F60497CE16005F316C,
-				AABE36F70497CE16005F316C,
 				AABE36FE0497CE67005F316C,
 				AA6E01540477136A005F316C,
 				AAC6DCED0567663800B5D56F,
@@ -9254,8 +9262,8 @@
 				AA272BF804C7B37A00D02EE9,
 				AA272BF904C7B37A00D02EE9,
 				AA272BFA04C7B37A00D02EE9,
-				AABEB521051F163A00D02EE9,
-				AABEB522051F163A00D02EE9,
+				AA69675006840991007802A5,
+				AA69675106840991007802A5,
 			);
 			isa = PBXGroup;
 			path = InputHandler;
@@ -14682,17 +14690,6 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AABE36F70497CE16005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			path = arch_internal.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AABE36F80497CE16005F316C = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -14831,26 +14828,6 @@
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = Vsync.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AABEB521051F163A00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = InputHandler_Carbon.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AABEB522051F163A00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = InputHandler_Carbon.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
