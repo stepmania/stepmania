@@ -88,9 +88,11 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 
 		FOREACH_CONST_Attr( pKey, pAttr )
 		{
-			f.PutLine( ssprintf("%s=%s", pAttr->m_sName.c_str(), pAttr->m_sValue.c_str()) );
-			m_sError = f.GetError();
-			return false;
+			if( f.PutLine( ssprintf("%s=%s", pAttr->m_sName.c_str(), pAttr->m_sValue.c_str()) ) == -1 )
+			{
+				m_sError = f.GetError();
+				return false;
+			}
 		}
 
 		if( f.PutLine( "" ) == -1 )
