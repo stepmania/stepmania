@@ -55,11 +55,37 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define FRAME_ON_COMMAND				THEME->GetMetric ("ScreenOptions","FrameOnCommand")
 #define FRAME_OFF_COMMAND				THEME->GetMetric ("ScreenOptions","FrameOffCommand")
 
+/*
+ * Three navigation types are provided:
+ *
+ * NAV_THREE_KEY:
+ *  left, right -> change option
+ *  up, down -> don't matter (change row)
+ *  start -> move to next row
+ *  left+right+start -> move to prev row
+ *  (next screen via "exit" entry)
+ * This is the minimal navigation, for using menus with only three buttons.
+ *
+ * NAV_FIVE_KEY:
+ *  left, right -> change option
+ *  up, down -> change row
+ *  start -> next screen
+ * This is a much more convenient navigation, requiring five keys.
+ *
+ * NAV_THREE_KEY_MENU:
+ *  left, right -> change row
+ *  up, down -> change row
+ *  start -> next screen
+ * This is a specialized navigation for ScreenOptionsMenu.  It must be enabled to
+ * allow screens that use rows to select other screens to work with only three
+ * buttons.  (It's also used when in five-key mode.)
+ */
+
 ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
-	m_SMOptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation;
+	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 
 	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change"), true );
 	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next"), true );
@@ -696,7 +722,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 	// if we are in dedicated menubutton input and arcade navigation
 	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
 	const bool bHoldingLeftOrRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
-		!m_SMOptionsNavigation &&
+		m_OptionsNavigation == NAV_THREE_KEY &&
 		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) || 
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
 
@@ -902,7 +928,9 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	if( type == IET_RELEASE )
 		return;
 
-	if( !m_SMOptionsNavigation )
+	switch( m_OptionsNavigation )
+	{
+	case NAV_THREE_KEY:
 	{
 		bool bAllOnExit = true;
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -914,9 +942,10 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		else if( bAllOnExit && type == IET_FIRST_PRESS )
 			StartGoToNextState();
 	}
-	else if( type == IET_FIRST_PRESS )	// m_SMOptionsNavigation
-	{
-		StartGoToNextState();
+	case NAV_THREE_KEY_MENU:
+	case NAV_FIVE_KEY:
+		if( type == IET_FIRST_PRESS )	// m_SMOptionsNavigation
+			StartGoToNextState();
 	}
 }
 
@@ -927,13 +956,13 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 	Row &row = *m_Rows[iCurRow];
 	OptionRow &optrow = m_OptionRow[iCurRow];
 
-	/* If START is being pressed, and arcade nav is on, then we're holding left/right
+	/* If START is being pressed, and in NAV_THREE_KEY, then we're holding left/right
 	 * and start to move backwards.  Don't move left and right, too. */
-	if( !m_SMOptionsNavigation && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
+	if( m_OptionsNavigation == NAV_THREE_KEY && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
 		return;
 
 	const int iNumOptions = (row.Type == Row::ROW_EXIT)? 1: optrow.choices.size();
-	if( iNumOptions <= 1 )	// 1 or 0
+	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
 		 * This allows navigating the options menu with left/right/start. */

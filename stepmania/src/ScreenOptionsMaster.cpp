@@ -204,7 +204,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
 		}
 		if( Flags[i] == "smnavigation" )
-			SetSMOptionsNavigation( true );
+			SetNavigation( NAV_THREE_KEY_MENU );
 	}
 
 	if( NumRows == -1 )
