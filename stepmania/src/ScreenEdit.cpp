@@ -399,7 +399,9 @@ void ScreenEdit::PlayTicks()
 	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
-	static int iRowLastCrossed = 0;
+	static int iRowLastCrossed = -1;
+	if( iSongRow < iRowLastCrossed )
+		iRowLastCrossed = -1;
 
 	int iTickRow = -1;
 	for( int r=iRowLastCrossed+1; r<=iSongRow; r++ )  // for each index we crossed since the last update
