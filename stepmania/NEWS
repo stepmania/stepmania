@@ -1,6 +1,9 @@
--------------------------- CVS after 3.00 final ----------------
-CHANGE: OKs now count as a step in score calculation.
-CHANGE: Maximum number of hold steps removed.
+----------------------- Version 3.01 ---------------------------
+CHANGE:  OKs now count as a step in score calculation.
+CHANGE:  Maximum number of hold steps removed.
+BUG FIX:  Fixed "autogen doesn't generate patterns for all difficulties for some songs"
+BUG FIX:  Fixed incorrect "show" value in "show!hold" being written in DWIs
+BUG FIX:  Fixed "song ends early after adding an edit then playing"
 BUG FIX:  Oni score now displays a % sign after the score.
 BUG FIX:  An E Grade is now properly awarded to a player who fails a song
           when two players are playing.
