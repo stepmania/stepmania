@@ -52,8 +52,6 @@ const int NUM_SCORE_DIGITS	=	9;
 #define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_OPTIONS_SCREEN( play_mode )	THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen"+Capitalize(PlayModeToString(play_mode)))
-#define COURSE_CONTENTS_X					THEME->GetMetricF("ScreenSelectMusic","CourseContentsX")
-#define COURSE_CONTENTS_Y					THEME->GetMetricF("ScreenSelectMusic","CourseContentsY")
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 
@@ -182,7 +180,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_textSongOptions );
 	this->AddChild( &m_textSongOptions );
 
-	m_CourseContentsFrame.SetXY( COURSE_CONTENTS_X, COURSE_CONTENTS_Y );
+	m_CourseContentsFrame.SetName( "CourseContents" );
+	SET_XY( m_CourseContentsFrame );
 	this->AddChild( &m_CourseContentsFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )

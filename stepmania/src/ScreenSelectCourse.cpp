@@ -41,8 +41,6 @@
 #define STAGES_Y			THEME->GetMetricF("ScreenSelectCourse","StagesY")
 #define TIME_X				THEME->GetMetricF("ScreenSelectCourse","TimeX")
 #define TIME_Y				THEME->GetMetricF("ScreenSelectCourse","TimeY")
-#define CONTENTS_X			THEME->GetMetricF("ScreenSelectCourse","ContentsX")
-#define CONTENTS_Y			THEME->GetMetricF("ScreenSelectCourse","ContentsY")
 #define WHEEL_X				THEME->GetMetricF("ScreenSelectCourse","WheelX")
 #define WHEEL_Y				THEME->GetMetricF("ScreenSelectCourse","WheelY")
 #define SCORE_X( p )		THEME->GetMetricF("ScreenSelectCourse",ssprintf("ScoreP%dX",p+1))
@@ -96,7 +94,8 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
 	m_textTime.SetXY( TIME_X, TIME_Y );
 	this->AddChild( &m_textTime );
 
-	m_CourseContentsFrame.SetXY( CONTENTS_X, CONTENTS_Y );
+	m_CourseContentsFrame.SetName( "Contents" );
+	SET_XY( m_CourseContentsFrame );
 	this->AddChild( &m_CourseContentsFrame );
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
