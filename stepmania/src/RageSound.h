@@ -1,8 +1,6 @@
 #ifndef RAGE_SOUND_OBJ_H
 #define RAGE_SOUND_OBJ_H
 
-#include "RageThreads.h"
-
 #include <deque>
 
 class CircBuf
