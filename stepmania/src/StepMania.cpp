@@ -460,17 +460,45 @@ int main(int argc, char* argv[])
 			InputEventType type = ieArray[i].type;
 
 			/* ALT-F4 -> quit (better place for this? in ScreenManager perhaps?) */
-			if(type == IET_FIRST_PRESS &&
-			   DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_F4) &&
-			   (INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_RMENU)) ||
-			    INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LMENU)) ) )
+			/* Nah.  this is fine.  -Chris */
+			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_F4))
 			{
-				SDL_Event *event;
-				event = (SDL_Event *) malloc(sizeof(event));
-				event->type = SDL_QUIT;
-				SDL_PushEvent(event);
-				continue;
+				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_RMENU)) ||
+					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LMENU)) )
+				{
+					// pressed Alt+F4
+					SDL_Event *event;
+					event = (SDL_Event *) malloc(sizeof(event));
+					event->type = SDL_QUIT;
+					SDL_PushEvent(event);
+					continue;
+				}
+				else
+				{
+					// pressed just F4
+					PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+					ApplyGraphicOptions();
+					// fall through
+				}
 			}
+			else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_F5))
+			{
+				// pressed F5.  Toggle detail.
+				if(PREFSMAN->m_iDisplayWidth != 640)
+				{
+					PREFSMAN->m_iDisplayWidth = 640;
+					PREFSMAN->m_iDisplayHeight = 480;
+					ApplyGraphicOptions();
+				}			
+				else
+				{
+					PREFSMAN->m_iDisplayWidth = 320;
+					PREFSMAN->m_iDisplayHeight = 240;
+					ApplyGraphicOptions();
+				}			
+	
+			}
+
 
 			GameInput GameI;
 			MenuInput MenuI;
