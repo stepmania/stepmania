@@ -78,7 +78,7 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 		byte result;
 		m_file.Read( &result, 1 );
 		m_file.Seek( current );
-		if (m_file.AtEOF())	// GCC workaround: 2.95.2 doesn't have char_traits<char>::eof()
+		if (m_file.AtEOF())
 		{
 			return 0;
 		}
@@ -91,12 +91,11 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	}
 	
 	// TODO: figure out what happens on cin
+	// (What does that mean?)
 	int current = m_file.Tell();
-	int endPosition = m_file.GetFileSize();
-	m_file.Seek( endPosition );
 	int newPosition = current + (streamoff)begin;
 	
-	if (newPosition >= endPosition)
+	if( newPosition >= m_file.GetFileSize() )
 	{
 		m_file.Seek(current);
 		return 0;	// don't try to seek beyond the end of file
