@@ -137,6 +137,12 @@ CLIENT to SERVER protocol:
     NT		Song Artist   (As Gotten by GetTranslitArtist)
     NT		Song Subtitle (As gotten by GetTranslitSubTitle)
 
+009: //Reserved
+
+010:	User entered/exited Network Music Selection Screen
+ Size:
+    1		If this value is 1 then the user entered the screen
+		If this value is 0 then the user exited the screen
 
 SERVER to CLIENT protocol: (begins at 128)
 
@@ -259,10 +265,13 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 	0	Inative (no info on this user yet)
 	1	Active (you know who it is)
 
+010:	Force change to Networking select music screen.
+ Size:
+    NT		Set Specified gametype
+    NT		Set Specified style
 
-
-///Potential for SMOnline/SMLAN
-010:	SMonline Packet.  (Adam)
+///Potential for SMOnline/SMLAN  (Changed to 020)
+020:	SMonline Packet.  (Adam)
       Bytemap(Game Packet - SMO/TCP[C=010] Data)
       +----+---//---+-+---//---+-+---+------+-----+
       |iiii|GameName|0|SongName|0|pmd|Length|Steps|
