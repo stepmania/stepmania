@@ -192,8 +192,8 @@ public:
 	bool				m_bMemoryCardsMountOnlyWhenNecessary;
 	int				m_iCenterImageTranslateX;
 	int				m_iCenterImageTranslateY;
-	float			m_fCenterImageScaleX;
-	float			m_fCenterImageScaleY;
+	int				m_fCenterImageAddWidth;
+	int				m_fCenterImageAddHeight;
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
 	bool			m_bHideDefaultNoteSkin;

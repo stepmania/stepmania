@@ -238,8 +238,8 @@ void PrefsManager::Init()
 
 	m_iCenterImageTranslateX = 0;
 	m_iCenterImageTranslateY = 0;
-	m_fCenterImageScaleX = 1;
-	m_fCenterImageScaleY = 1;
+	m_fCenterImageAddWidth = 0;
+	m_fCenterImageAddHeight = 0;
 
 	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
@@ -554,8 +554,8 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
 	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
-	ini.GetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
-	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
+	ini.GetValue( "Options", "CenterImageAddWidth",				m_fCenterImageAddWidth );
+	ini.GetValue( "Options", "CenterImageAddHeight",			m_fCenterImageAddHeight );
 	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
@@ -789,8 +789,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
 	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
-	ini.SetValue( "Options", "CenterImageScaleX",				m_fCenterImageScaleX );
-	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
+	ini.SetValue( "Options", "CenterImageAddWidth",				m_fCenterImageAddWidth );
+	ini.SetValue( "Options", "CenterImageAddHeight",			m_fCenterImageAddHeight );
 	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );

@@ -52,7 +52,7 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_SPACE )
 		{
 			PREFSMAN->m_iCenterImageTranslateX = PREFSMAN->m_iCenterImageTranslateY = 0;
-			PREFSMAN->m_fCenterImageScaleX = PREFSMAN->m_fCenterImageScaleY = 1;
+			PREFSMAN->m_fCenterImageAddWidth = PREFSMAN->m_fCenterImageAddHeight = 0;
 			return;
 		}
 
@@ -148,29 +148,29 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 
 void ScreenCenterImage::Move( Axis axis, float fDelta )
 {
-	float fValues[4] =
+	int *piValues[4] =
 	{
-		(float) PREFSMAN->m_iCenterImageTranslateX,
-		(float) PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageScaleX,
-		PREFSMAN->m_fCenterImageScaleY
+		&PREFSMAN->m_iCenterImageTranslateX,
+		&PREFSMAN->m_iCenterImageTranslateY,
+		&PREFSMAN->m_fCenterImageAddWidth,
+		&PREFSMAN->m_fCenterImageAddHeight
 	};
 
-	if( axis == AXIS_SCALE_X || axis == AXIS_SCALE_Y )
-		fDelta *= 0.001f;
-
-	fValues[axis] += fDelta;
-
-	PREFSMAN->m_iCenterImageTranslateX = lrintf( fValues[0] );
-	PREFSMAN->m_iCenterImageTranslateY = lrintf( fValues[1] );
-	PREFSMAN->m_fCenterImageScaleX = fValues[2];
-	PREFSMAN->m_fCenterImageScaleY = fValues[3];
+	*piValues[axis] += lrintf( fDelta );
 
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
 		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageScaleX,
-		PREFSMAN->m_fCenterImageScaleY );
+		PREFSMAN->m_fCenterImageAddWidth,
+		PREFSMAN->m_fCenterImageAddHeight );
+
+	CString sMessage = 
+		ssprintf( "Centering: x=%d, y=%d, width=%d, height=%d",
+		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageAddWidth,
+		PREFSMAN->m_fCenterImageAddHeight );
+	SCREENMAN->SystemMessageNoAnimate( sMessage );
 }
 
 void ScreenCenterImage::Update( float fDeltaTime )

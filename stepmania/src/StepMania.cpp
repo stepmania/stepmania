@@ -128,8 +128,8 @@ void ApplyGraphicOptions()
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
 		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageScaleX,
-		PREFSMAN->m_fCenterImageScaleY );
+		PREFSMAN->m_fCenterImageAddWidth,
+		PREFSMAN->m_fCenterImageAddHeight );
 
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		RageTextureManagerPrefs( 
@@ -1066,8 +1066,8 @@ int main(int argc, char* argv[])
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
 		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageScaleX,
-		PREFSMAN->m_fCenterImageScaleY );
+		PREFSMAN->m_fCenterImageAddWidth,
+		PREFSMAN->m_fCenterImageAddHeight );
 
 	TEXTUREMAN	= new RageTextureManager();
 	TEXTUREMAN->SetPrefs( 

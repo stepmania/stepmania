@@ -836,14 +836,18 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 
 void RageDisplay_OGL::SendCurrentMatrices()
 {
+	RageMatrix projection;
+	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
 	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjectionTop() );
+	glLoadMatrixf( (const float*)&projection );
+
+	// OpenGL has just "modelView", whereas D3D has "world" and "view"
 	RageMatrix modelView;
-	RageMatrixMultiply( &modelView, GetCentering(), GetViewTop() );
-	RageMatrixMultiply( &modelView, &modelView, GetWorldTop() );
+	RageMatrixMultiply( &modelView, GetViewTop(), GetWorldTop() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)&modelView );
-	glMatrixMode( GL_TEXTURE  );
+
+	glMatrixMode( GL_TEXTURE );
 	glLoadMatrixf( (const float*)GetTextureTop() );
 }
 
