@@ -574,12 +574,6 @@ void Song::TidyUpData()
 	}
 }
 
-/* Get Notes that match a given style and player. */
-void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const
-{
-	GetNotesThatMatch( s->m_NotesTypes[p], arrayAddTo );
-}
-
 void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
@@ -592,12 +586,8 @@ void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
 {
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
-	{
-		if(st->m_NotesTypes[pn] == NOTES_TYPE_INVALID) continue; /* unused */
-		if(!SongHasNotesType(st->m_NotesTypes[pn]))
-			return false;
-	}
+	if(!SongHasNotesType(st->m_NotesType))
+		return false;
 	return true;
 }
 
@@ -802,7 +792,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) co
 {
 	// return max grade of notes in difficulty class
 	CArray<Notes*, Notes*> aNotes;
-	this->GetNotesThatMatch( st, p, aNotes );
+	this->GetNotesThatMatch( st->m_NotesType, aNotes );
 	SortNotesArrayByDifficulty( aNotes );
 
 	Grade grade = GRADE_NO_DATA;
@@ -869,8 +859,8 @@ int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
 	CArray<Notes*,Notes*> aNotes1;
 	CArray<Notes*,Notes*> aNotes2;
 
-	pSong1->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), PLAYER_1, aNotes1 );
-	pSong2->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), PLAYER_1, aNotes2 );
+	pSong1->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, aNotes1 );
+	pSong2->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, aNotes2 );
 
 	int iEasiestMeter1 = 1000;	// infinity
 	int iEasiestMeter2 = 1000;	// infinity

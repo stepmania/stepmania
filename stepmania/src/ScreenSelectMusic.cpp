@@ -726,7 +726,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
-				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), pn, m_arrayNotes[pn] );
+				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, m_arrayNotes[pn] );
 				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 			}
 

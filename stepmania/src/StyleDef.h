@@ -40,11 +40,9 @@ public:
 	/* The name of the style.  (This is currently unused.) */
 	char		m_szName[60];
 	
-	/* m_NotesTypes[] defines the notes format used for each player.  For
-	 * example, the "dance versus" reads the Notes with the tag "dance-single".
-	 * For most modes, this will be the same for all styles; it's different
-	 * for each player in couples. */
-	NotesType	m_NotesTypes[NUM_PLAYERS];
+	/* Notes format used for each player.  For example, "dance versus" reads
+	 * the Notes with the tag "dance-single". */
+	NotesType	m_NotesType;
 									
 	enum StyleType
 	{
@@ -74,6 +72,6 @@ public:
 
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
 
-	bool MatchesNotesType( NotesType type, int pn ) const;
+	bool MatchesNotesType( NotesType type ) const;
 };
 

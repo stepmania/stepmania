@@ -206,7 +206,8 @@ void NoteData::AddHoldNote( HoldNote add )
 	int i;
 
 	// look for other hold notes that overlap and merge them
-	// XXX: this is done implicitly with 4s
+	// XXX: this is done implicitly with 4s, but 4s uses this function.
+	// Rework this later.
 	for( i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
 	{
 		HoldNote &other = m_HoldNotes[i];
@@ -509,8 +510,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	case PlayerOptions::TURN_LEFT:
 	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
 		// Chris: Handling each NotesType case is a terrible way to do this, but oh well...
-		/* XXX: This assumes each NotesType in a style turns the same. */
-		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0] )
+		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 		{
 		case NOTES_TYPE_DANCE_SINGLE:
 		case NOTES_TYPE_DANCE_DOUBLE:

@@ -81,9 +81,9 @@ PlayerNumber StyleDef::ControllerToPlayerNumber( GameController controller ) con
 	}
 }
 
-bool StyleDef::MatchesNotesType( NotesType type, int pn ) const
+bool StyleDef::MatchesNotesType( NotesType type ) const
 {
-	if(type == m_NotesTypes[pn]) return true;
+	if(type == m_NotesType) return true;
 
 	return false;
 }

@@ -348,7 +348,6 @@ MusicWheel::MusicWheel()
 				GAMESTATE->m_PlayerOptions[p] = po;
 			}
 		}
-		/* XXX: Set up couples correctly */
 		GAMESTATE->m_SongOptions = so;
 	}
 
@@ -448,7 +447,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				}
 
 				CArray<Notes*, Notes*> arraySteps;
-				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), 0, arraySteps );
+				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
 
 				if( arraySteps.GetSize() > 0 )
 					arraySongs.Add( pSong );
@@ -611,7 +610,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		if( pSong == NULL )
 			continue;
 
-		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0] ); 
+		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesType ); 
 		WheelItemData& WID = arrayWheelItemDatas[i];
 		WID.m_IconType = bIsEasy ? MusicStatusDisplay::easy : MusicStatusDisplay::none;
 	}

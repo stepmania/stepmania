@@ -188,7 +188,7 @@ ScreenEdit::ScreenEdit()
 	{
 		m_pNotes = new Notes;
 		m_pNotes->m_Difficulty = DIFFICULTY_MEDIUM;
-		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0];
+		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 		m_pNotes->m_sDescription = "Untitled";
 
 		// In ScreenEditMenu, the screen preceding this one,
