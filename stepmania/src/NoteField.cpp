@@ -102,8 +102,6 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 
 	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
-
-	/* if last != SearchForSongBeat ... copy */
 }
 
 
