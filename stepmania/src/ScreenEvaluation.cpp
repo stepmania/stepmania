@@ -1270,8 +1270,7 @@ void ScreenEvaluation::TweenOffScreen()
 	}
 
 	// judgement area
-	int l;
-	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		if( !SHOW_JUDGMENT(l) )
 			continue;
@@ -1283,7 +1282,7 @@ void ScreenEvaluation::TweenOffScreen()
 	}
 
 	// stats area
-	for( l=0; l<NUM_STATS_LINES; l++ ) 
+	for( int l=0; l<NUM_STATS_LINES; l++ ) 
 	{
 		if( !SHOW_STAT(l) )
 			continue;
@@ -1319,16 +1318,14 @@ void ScreenEvaluation::TweenOffScreen()
 	}
 
 	// extra area
+	FOREACH_EnabledPlayer( p ) 
 	{
-		FOREACH_EnabledPlayer( p ) 
-		{
-			OFF_COMMAND( m_sprMachineRecord[p] );
-			OFF_COMMAND( m_sprPersonalRecord[p] );
-			if( m_PerDifficultyAward[p].IsLoaded() )
-				OFF_COMMAND( m_PerDifficultyAward[p] );
-			if( m_PeakComboAward[p].IsLoaded() )
-				OFF_COMMAND( m_PeakComboAward[p] );
-		}
+		OFF_COMMAND( m_sprMachineRecord[p] );
+		OFF_COMMAND( m_sprPersonalRecord[p] );
+		if( m_PerDifficultyAward[p].IsLoaded() )
+			OFF_COMMAND( m_PerDifficultyAward[p] );
+		if( m_PeakComboAward[p].IsLoaded() )
+			OFF_COMMAND( m_PeakComboAward[p] );
 	}
 	OFF_COMMAND( m_sprTryExtraStage );
 }
@@ -1361,11 +1358,8 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		}
 	}
 	
-	for( int p=0; p<NUM_PLAYERS; p++)
+	FOREACH_EnabledPlayer( p ) 
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
 		if( g_CurStageStats.iBonus[p] == 0 )
 			continue;
 
