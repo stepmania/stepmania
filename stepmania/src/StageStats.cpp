@@ -149,6 +149,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	float TapScoreValues[NUM_TAP_NOTE_SCORES] = 
 	{ 
 		0,
+		PREFSMAN->m_iGradeHitMineWeight,
 		PREFSMAN->m_iGradeMissWeight,
 		PREFSMAN->m_iGradeBooWeight,
 		PREFSMAN->m_iGradeGoodWeight,
