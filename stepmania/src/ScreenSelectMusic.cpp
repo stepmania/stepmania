@@ -56,6 +56,8 @@ CString g_sFallbackCDTitlePath;
  * on Y by flipping texture coordinates. */
 static void FlipSpriteHorizontally(Sprite &s)
 {
+	s.StopUsingCustomCoords();
+
 	float Coords[8];
 	s.GetActiveTextureCoords(Coords);
 	swap(Coords[0], Coords[6]); /* top left X <-> top right X */
@@ -870,6 +872,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCDTitleFront.Load( CDTitlePath );
 			m_sprCDTitleBack.Load( CDTitlePath );
 			TEXTUREMAN->EnableOddDimensionWarning();
+			FlipSpriteHorizontally(m_sprCDTitleBack);
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
