@@ -120,6 +120,14 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #define PRINTF(a,b)
 #endif
 
+#if !defined(ALIGN)
+#if defined(__GNUC__)
+#define ALIGN(n) __attribute__((aligned(n)))
+#else
+#define ALIGN(n)
+#endif
+#endif
+
 /* Use CStdString: */
 #include "StdString.h"
 
