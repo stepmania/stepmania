@@ -916,51 +916,36 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 	in.Convert2sAnd3sToHoldNotes();
 
 
-
-
-
 	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
 	{
 		// We already did the normal shuffling code above, which did a good job
 		// of shuffling HoldNotes without creating impossible patterns.
-		// Now, go in and shuffle the TapNotes some more.
-
-		// clear tempNoteData because we're going to use it as a scratch buffer again
-		tempNoteData.Init();
-		tempNoteData.Config(in);
-
-		// copy all HoldNotes before copying taps
-		for( int i=0; i<in.GetNumHoldNotes(); i++ )
-			tempNoteData.AddHoldNote( in.GetHoldNote(i) );
-
+		// Now, go in and shuffle the TapNotes per-row.
 		in.ConvertHoldNotesTo4s();
-
-		for( int r=0; r<=in.GetLastRow(); r++ )	// foreach row
+		for( int r=0; r<=max_row; r++ )
 		{
-			if( in.IsRowEmpty(r) )
-				continue;	// no need to super shuffle this row
-
-			// shuffle this row
-			vector<int> aiTracksThatCouldHaveTapNotes;
-			for( t=0; t<in.GetNumTracks(); t++ )
-				if( in.GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
-					aiTracksThatCouldHaveTapNotes.push_back( t );
-
-			for( t=0; t<in.GetNumTracks(); t++ )
+			for( int t1=0; t1<in.GetNumTracks(); t1++ )
 			{
-				if( in.GetTapNote(t, r) != TAP_HOLD  &&  in.GetTapNote(t, r) != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
+				TapNote tn1 = in.GetTapNote(t1, r);
+				if( tn1!='4' )	// a tap that is not part of a hold
 				{
-					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.size();
-					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
-					aiTracksThatCouldHaveTapNotes.erase( aiTracksThatCouldHaveTapNotes.begin()+iRandIndex,
-													     aiTracksThatCouldHaveTapNotes.begin()+iRandIndex+1 );
-	
-					tempNoteData.SetTapNote(iTo, r, in.GetTapNote(t, r));
+					// probe for a spot to swap with
+					while( 1 )
+					{
+						int t2 = rand() % in.GetNumTracks();
+						TapNote tn2 = in.GetTapNote(t2, r);
+						if( tn2!='4' )	// a tap that is not part of a hold
+						{
+							// swap
+							in.SetTapNote(t1, r, tn2);
+							in.SetTapNote(t2, r, tn1);
+							break;
+						}
+					}
 				}
 			}
 		}
-
-		in.CopyAll( &tempNoteData );		// copy note data from newData back into this
+		in.Convert4sToHoldNotes();
 	}
 }
 

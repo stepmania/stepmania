@@ -267,10 +267,7 @@ void Notes::AutogenFrom( Notes *parent_, NotesType ntTo )
 
 void Notes::BakeAutoGen()
 {
-	NoteData noteData;
-	parent->GetNoteData( &noteData );
-	this->SetNoteData( &noteData );		// this will call DeAutoGen
-
+	Decompress();
 	parent = NULL;
 }
 

@@ -158,7 +158,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	if( !pSong->HasMusic() )
 	{
-		SCREENMAN->Prompt( SM_None, "This song is missing a music file and cannot be edited" );
+		SCREENMAN->Prompt( SM_None, "This song is missing a music file\nand cannot be edited" );
 		return;
 	}
 
