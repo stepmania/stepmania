@@ -68,7 +68,7 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowGoodSeconds = 0.135f;
 	m_fJudgeWindowBooSeconds = 0.180f;
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
-	m_fJudgeWindowMineSeconds = 0.135f;
+	m_fJudgeWindowMineSeconds = 0.090f;	// same as great
 	m_fJudgeWindowAttackSeconds = 0.135f;
 	m_fLifeDeltaMarvelousPercentChange = +0.008f;
 	m_fLifeDeltaPerfectPercentChange = +0.008f;
