@@ -64,21 +64,23 @@ void RageBitmapTexture::Create()
 	D3DXIMAGE_INFO ddii;
 
 	// load texture
-	if (FAILED (hr = D3DXCreateTextureFromFileEx( 
-						m_pd3dDevice,					// device
-						m_sFilePath,					// soure file
-						D3DX_DEFAULT, D3DX_DEFAULT,		// width, height 
-						D3DX_DEFAULT,					// mip map levels
-						0,								// usage (is a render target?)
-						D3DFMT_A4R4G4B4, /*D3DFMT_UNKNOWN*/		// our preferred texture format
-						D3DPOOL_MANAGED,				// which memory pool
-						D3DX_DEFAULT,					// filter
-						D3DX_DEFAULT,					// mip filter
-						0,								// no color key
-						&ddii,							// struct to fill with source image info
-						NULL,							// no palette
-						&m_pd3dTexture ) ) )
+	if( FAILED( hr = D3DXCreateTextureFromFileEx( 
+		m_pd3dDevice,				// device
+		m_sFilePath,				// soure file
+		D3DX_DEFAULT, D3DX_DEFAULT,	// width, height 
+		D3DX_DEFAULT,				// mip map levels
+		0,							// usage (is a render target?)
+		D3DFMT_A4R4G4B4,			// our preferred texture format
+		D3DPOOL_MANAGED,			// which memory pool
+		D3DX_FILTER_BOX | D3DX_FILTER_DITHER,			// filter
+		D3DX_FILTER_BOX | D3DX_FILTER_DITHER,			// mip filter
+		0,							// no color key
+		&ddii,						// struct to fill with source image info
+		NULL,						// no palette
+		&m_pd3dTexture ) ) )
+	{
         RageErrorHr( ssprintf("D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath), hr );
+	}
 
 	// save the source image's width and height
 	m_uSourceWidth = ddii.Width;
