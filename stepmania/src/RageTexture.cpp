@@ -22,6 +22,7 @@ void RageTextureID::Init()
 	bDither = false;
 	bStretch = false;
 	iColorDepth = TEXTUREMAN->GetTextureColorDepth();
+	bHotPinkColorKey = false;
 }
 
 bool RageTextureID::equal(const RageTextureID &rhs) const
@@ -33,6 +34,7 @@ bool RageTextureID::equal(const RageTextureID &rhs) const
 	if(iColorDepth != rhs.iColorDepth) return false;
 	if(bDither != rhs.bDither) return false;
 	if(bStretch != rhs.bStretch) return false;
+	if(bHotPinkColorKey != rhs.bHotPinkColorKey) return false;
 	return true;
 }
 

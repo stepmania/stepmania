@@ -29,6 +29,7 @@ struct RageTextureID
 	int iColorDepth;
 	bool bDither;
 	bool bStretch;
+	bool bHotPinkColorKey; /* #FF00FF */
 
 	/* Define an ordering so this can be used in a set<>.  This defines a partial
 	 * ordering; use equal() to see if they're equal. */
