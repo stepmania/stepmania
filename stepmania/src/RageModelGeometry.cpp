@@ -127,7 +127,7 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 
                 strcpy( mesh.szName, szName );
 //                mesh.nFlags = nFlags;
-                mesh.nMaterialIndex = (byte)nIndex;
+                mesh.nMaterialIndex = (uint8_t) nIndex;
 
 				mesh.nBoneIndex = -1;
 
@@ -161,7 +161,7 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
                     }
 
 //                  vertex.nFlags = nFlags;
-                    v.bone = (byte)nIndex;
+                    v.bone = (uint8_t) nIndex;
 					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
                 }
 
@@ -210,8 +210,8 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 				    if( f.GetLine( sLine ) <= 0 )
 						THROW
 
-                    word nIndices[3];
-                    word nNormalIndices[3];
+                    uint16_t nIndices[3];
+                    uint16_t nNormalIndices[3];
                     if (sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
                         &nFlags,
                         &nIndices[0], &nIndices[1], &nIndices[2],

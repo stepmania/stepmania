@@ -274,7 +274,6 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
 	CString sLine;
 	int iLineNum = 0;
-    int nFlags, j;
 
     while( f.GetLine( sLine ) > 0 )
     {
@@ -287,17 +286,16 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
         // bones
         //
         int nNumBones = 0;
-        if (sscanf (sLine, "Bones: %d", &nNumBones) == 1)
+        if( sscanf (sLine, "Bones: %d", &nNumBones) == 1 )
         {
 			m_mapNameToAnimation[sAniName] = msAnimation();
 			msAnimation &Animation = m_mapNameToAnimation[sAniName];
 
-            int i;
             char szName[MS_MAX_NAME];
 
             Animation.Bones.resize( nNumBones );
 
-            for (i = 0; i < nNumBones; i++)
+            for( int i = 0; i < nNumBones; i++ )
             {
 				msBone& Bone = Animation.Bones[i];
 
@@ -326,6 +324,8 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 RageVector3 Position, Rotation;
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
+
+				int nFlags;
                 if (sscanf (sLine, "%d %f %f %f %f %f %f",
                     &nFlags,
                     &Position[0], &Position[1], &Position[2],
@@ -337,8 +337,6 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
                 memcpy( &Bone.Rotation, &Rotation, sizeof(Bone.Rotation) );
 
-                float fTime;
-
                 // position key count
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
@@ -348,10 +346,12 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
                 Bone.PositionKeys.resize( nNumPositionKeys );
 
-                for (j = 0; j < nNumPositionKeys; j++)
+                for( int j = 0; j < nNumPositionKeys; ++j )
                 {
 				    if( f.GetLine( sLine ) <= 0 )
 						THROW;
+
+					float fTime;
                     if (sscanf (sLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
 						THROW;
 
@@ -370,10 +370,12 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
                 Bone.RotationKeys.resize( nNumRotationKeys );
 
-                for (j = 0; j < nNumRotationKeys; j++)
+                for( int j = 0; j < nNumRotationKeys; ++j )
                 {
 				    if( f.GetLine( sLine ) <= 0 )
 						THROW;
+
+					float fTime;
                     if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
 						THROW;
 
@@ -386,17 +388,13 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
 			// Ignore "Frames:" in file.  Calculate it ourself
 			Animation.nTotalFrames = 0;
-			for ( i = 0; i < (int)Animation.Bones.size(); i++)
+			for( int i = 0; i < (int)Animation.Bones.size(); i++ )
 			{
 				msBone& Bone = Animation.Bones[i];
-				{
-					for( int j=0; j<(int)Bone.PositionKeys.size(); j++ )
-						Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
-				}
-				{
-					for( int j=0; j<(int)Bone.RotationKeys.size(); j++ )
-						Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
-				}
+				for( unsigned j = 0; j < Bone.PositionKeys.size(); ++j )
+					Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
+				for( unsigned j = 0; j < Bone.RotationKeys.size(); ++j )
+					Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
 			}
 
 			PlayAnimation( sAniName );
@@ -799,7 +797,7 @@ void Model::Update( float fDelta )
 	Actor::Update( fDelta );
 	AdvanceFrame( fDelta );
 
-	for( int i=0; i<(int)m_Materials.size(); i++ )
+	for( unsigned i = 0; i < m_Materials.size(); ++i )
 	{
 		m_Materials[i].diffuse.Update( fDelta );
 		m_Materials[i].alpha.Update( fDelta );
@@ -810,13 +808,13 @@ void Model::Update( float fDelta )
 	//
 	if( m_pGeometry && m_pTempGeometry )
 	{
-		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{
 			msMesh &origMesh = m_pGeometry->m_Meshes[i];
 			msMesh &tempMesh = m_vTempMeshes[i];
 			vector<RageModelVertex> &origVertices = origMesh.Vertices;
 			vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
-			for (unsigned j = 0; j < origVertices.size(); j++)
+			for( unsigned j = 0; j < origVertices.size(); j++ )
 			{
 				RageVector3& tempPos =			tempVertices[j].p;
 				RageVector3& originalPos =		origVertices[j].p;

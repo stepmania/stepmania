@@ -5,52 +5,19 @@
 
 #define MS_MAX_NAME             32
 
-#ifndef byte
-typedef unsigned char byte;
-#endif /* byte */
-
-#ifndef word
-typedef unsigned short word;
-#endif /* word */
-
 #include "RageTypes.h"
 
-
-/* msFlag */
-typedef enum {
-    eSelected = 1, eSelected2 = 2, eHidden = 4, eDirty = 8, eAveraged = 16, eUnused = 32
-} msFlag;
-
-/* msVertex */
-/*
-typedef struct msVertex
+struct msTriangle
 {
-//  byte        nFlags;	// we don't care about saving this flag
-    RageVector3 Vertex;
-    RageVector3 Normal;
-    RageVector2 uv;
-    char        nBoneIndex;
-} msVertex;
-*/
-
-/* msTriangle */
-typedef struct
-{
-//  word        nFlags;	// we don't care about saving this flag
-    word        nVertexIndices[3];
-//  word        nNormalIndices[3];	// we don't care about this.  Use the normals in each vertex
-//  msVec3      Normal;	// we don't care about per-triangle normals.  Each vertex has its own
-//  byte        nSmoothingGroup;	// we don't care about this, so don't save it
-} msTriangle;
+    uint16_t    nVertexIndices[3];
+};
 
 
-/* msMesh */
-typedef struct msMesh
+struct msMesh
 {
 	msMesh();
 	~msMesh();
 
-//  byte        nFlags;	// we don't care about saving this flag
     char        szName[MS_MAX_NAME];
     char        nMaterialIndex;
 
@@ -62,9 +29,8 @@ typedef struct msMesh
 	char        nBoneIndex;	// -1 = no bone
 
     vector<msTriangle> Triangles;
-} msMesh;
+};
 
-/* msMaterial */
 class RageTexture;
 
 // merge this into Sprite?
@@ -103,7 +69,7 @@ private:
 	vector<AnimatedTextureState> vFrames;
 };
 
-typedef struct msMaterial
+struct msMaterial
 {
     int         nFlags;
     CString     sName;
@@ -117,24 +83,21 @@ typedef struct msMaterial
 
 	AnimatedTexture diffuse;
 	AnimatedTexture alpha;
-} msMaterial;
+};
 
-/* msPositionKey */
-typedef struct msPositionKey
+struct msPositionKey
 {
     float       fTime;
     RageVector3      Position;
-} msPositionKey;
+};
 
-/* msRotationKey */
-typedef struct msRotationKey
+struct msRotationKey
 {
     float   fTime;
     RageVector3  Rotation;
-} msRotationKey;
+};
 
-/* msBone */
-typedef struct msBone
+struct msBone
 {
     int             nFlags;
     char            szName[MS_MAX_NAME];
@@ -147,15 +110,7 @@ typedef struct msBone
     int             nNumRotationKeys;
     int             nNumAllocedRotationKeys;
     vector<msRotationKey>  RotationKeys;
-} msBone;
-
-/* msModel */
-//typedef struct msModel
-//{
-//    vector<msMesh>     Meshes;
-//
-//    vector<msMaterial> Materials;
-//} msModel;
+};
 
 struct msAnimation
 {
@@ -169,20 +124,19 @@ struct msAnimation
 		return -1;
 	}
 
-//  int         nFrame;	// not used in SM.  We keep track of this outside this structure.
     int         nTotalFrames;
 
     RageVector3      Position;
     RageVector3      Rotation;
 };
 
-typedef struct
+struct myBone_t
 {
 	RageMatrix	mRelative;
 	RageMatrix	mAbsolute;
 	RageMatrix	mRelativeFinal;
 	RageMatrix	mFinal;
-} myBone_t;
+};
 
 #endif
 
