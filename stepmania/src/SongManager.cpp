@@ -107,22 +107,13 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 			LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, sBannerPath) );
 		}
 
-		/* Add this group to the group array. */
-		int j;
-		for(j = 0; j < m_arrayGroupNames.GetSize(); ++j)
-			if( sGroupDirName == m_arrayGroupNames[j] ) break;
-
-		if( j == m_arrayGroupNames.GetSize() )
-		{
-			m_arrayGroupNames.Add( sGroupDirName );
-			m_GroupBannerPaths.Add(sBannerPath);
-		}
-
-
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
 		GetDirListing( ssprintf("%s\\%s\\*.*", sDir, sGroupDirName), arraySongDirs, true );
 		SortCStringArray( arraySongDirs );
+
+		int j;
+		int loaded = 0;
 
 		for( j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
 		{
@@ -138,6 +129,20 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 			Song* pNewSong = new Song;
 			pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName) );
 			m_pSongs.Add( pNewSong );
+			loaded++;
+		}
+
+		/* Don't add the group name if we didn't load any songs in this group. */
+		if(!loaded) continue;
+
+		/* Add this group to the group array. */
+		for(j = 0; j < m_arrayGroupNames.GetSize(); ++j)
+			if( sGroupDirName == m_arrayGroupNames[j] ) break;
+
+		if( j == m_arrayGroupNames.GetSize() )
+		{
+			m_arrayGroupNames.Add( sGroupDirName );
+			m_GroupBannerPaths.Add(sBannerPath);
 		}
 	}
 
