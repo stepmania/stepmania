@@ -25,6 +25,7 @@
 #include "ScreenRanking.h"
 #include "Course.h"
 #include "ActorUtil.h"
+#include "FontCharAliases.h"
 #include <math.h>
 
 
@@ -35,16 +36,12 @@
 #define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI(m_sName,"NumAlphabetDisplayed")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define FEAT_INTERVAL				THEME->GetMetricF(m_sName,"FeatInterval")
+#define NAME_CHARS					THEME->GetMetric (m_sName,"NameChars")
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
 	if( !actor.GetName().empty() ) \
 		COMMAND( actor, command_name );
 
-
-static const wchar_t NAME_CHARS[] =
-{
-	L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-};
 
 
 
@@ -60,7 +57,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 
 		// DEBUGGING STUFF
-	if(0)
+	if(1)
 	{
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
@@ -141,17 +138,18 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 		/* Add letters to m_Keyboard. */
 		const CString fontpath = THEME->GetPathToF("ScreenNameEntryTraditional letters");
-		for( int ch = 0; NAME_CHARS[ch]; ++ch )
+		const wstring Chars = CStringToWstring(NAME_CHARS);
+		for( unsigned ch = 0; ch < Chars.size(); ++ch )
 		{
 			BitmapText *Letter = new BitmapText;
 			Letter->SetName( ssprintf("LetterP%i",p+1) );
 			Letter->LoadFromFont( fontpath );
-			Letter->SetText( ssprintf("%lc", NAME_CHARS[ch]) );
+			Letter->SetText( ssprintf("%lc", Chars[ch]) );
 			m_textAlphabet[p].push_back( Letter );
 			m_Keyboard[p].AddChild( Letter );
 			Letter->Command( THEME->GetMetric("ScreenNameEntryTraditional","AlphabetInitCommand") );
 
-			m_AlphabetLetter[p].push_back( NAME_CHARS[ch] );
+			m_AlphabetLetter[p].push_back( Chars[ch] );
 		}
 
 		/* Add "OK". */
@@ -159,7 +157,9 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			BitmapText *Letter = new BitmapText;
 			Letter->SetName( ssprintf("LetterP%i",p+1) );
 			Letter->LoadFromFont( fontpath );
-			Letter->SetText( "!" ); // XXX: assign a glyph to "OK"
+			CString text = "&ok;";
+			FontCharAliases::ReplaceMarkers( text );
+			Letter->SetText( text );
 			m_textAlphabet[p].push_back( Letter );
 			m_Keyboard[p].AddChild( Letter );
 
@@ -370,9 +370,9 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
-			if( max_grade >= GRADE_AA )
-				SCREENMAN->SetNewScreen( "ScreenCredits" );
-			else
+		//	if( max_grade >= GRADE_AA )
+		//		SCREENMAN->SetNewScreen( "ScreenCredits" );
+		//	else
 				SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
 		}
 		break;
