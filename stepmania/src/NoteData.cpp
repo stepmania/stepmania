@@ -12,6 +12,7 @@
 
 #include "NoteData.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 
 
 NoteData::NoteData()
@@ -436,60 +437,57 @@ void NoteData::ConvertHoldNotesTo4s()
 }
 
 // -1 for iOriginalTracksToTakeFrom means no track
-void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
+void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
 	// reset all notes
 	Init();
 	
-	pOriginal->ConvertHoldNotesTo4s();
+	NoteData Original;
+	Original.To4s( *pOriginal );
 
-	Config(*pOriginal);
+	Config( Original );
 	m_iNumTracks = iNewNumTracks;
 
 	// copy tracks
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-
-	
-		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
-
-
+		ASSERT( iOriginalTrack < Original.m_iNumTracks );
 
 		if( iOriginalTrack == -1 )
 			continue;
-		m_TapNotes[t] = pOriginal->m_TapNotes[iOriginalTrack];
+		m_TapNotes[t] = Original.m_TapNotes[iOriginalTrack];
 	}
 
-	pOriginal->Convert4sToHoldNotes();
 	Convert4sToHoldNotes();
 }
-#include "RageLog.h"
 
-void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks )
+void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNewNumTracks )
 {
 	// reset all notes
 	Init();
 
-	pOriginal->ConvertHoldNotesTo4s();
+	NoteData Original;
+	Original.To4s( *pOriginal );
+
 	Config(*pOriginal);
 	m_iNumTracks = iNewNumTracks;
 
 
 	int iCurTrackOffset = 0;
 	int iTrackOffsetMin = 0;
-	int iTrackOffsetMax = abs( iNewNumTracks - pOriginal->m_iNumTracks );
+	int iTrackOffsetMax = abs( iNewNumTracks - Original.m_iNumTracks );
 	int bOffsetIncreasing = true;
 
-	int iLastRow = pOriginal->GetLastRow();
+	int iLastRow = Original.GetLastRow();
 	for( int r=0; r<=iLastRow; )
 	{
 		// copy notes in this measure
-		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
+		for( int t=0; t<Original.m_iNumTracks; t++ )
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
+			this->SetTapNote(iNewTrack, r, Original.GetTapNote(iOldTrack, r));
 		}
 		r++;
 
@@ -499,10 +497,10 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 			bool bHoldCrossesThisMeasure = false;
 
 			if( r )
-			for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
+			for( int t=0; t<=Original.m_iNumTracks; t++ )
 			{
-				if( pOriginal->GetTapNote(t, r) == TAP_HOLD &&
-					pOriginal->GetTapNote(t, r-1) == TAP_HOLD)
+				if( Original.GetTapNote(t, r) == TAP_HOLD &&
+					Original.GetTapNote(t, r-1) == TAP_HOLD)
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
@@ -520,7 +518,6 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 		}
 	}
 
-	pOriginal->Convert4sToHoldNotes();
 	Convert4sToHoldNotes();
 }
 

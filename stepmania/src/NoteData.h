@@ -124,8 +124,8 @@ public:
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
 
 	// Transformations
-	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
-	void LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks );	// used by autogen
+	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
+	void LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNewNumTracks );	// used by autogen
 
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();
@@ -137,9 +137,6 @@ public:
 	void ConvertHoldNotesTo4s();
 	void To4s( const NoteData &out );
 	void From4s( const NoteData &out );
-
-	// True if no notes in row that aren't true in the mask
-	bool RowPassesValidMask( int row, bool bValidMask[] );
 
 	void EliminateAllButOneTap( int row ); 
 };
