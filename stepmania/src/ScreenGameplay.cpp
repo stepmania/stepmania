@@ -1569,11 +1569,12 @@ void ScreenGameplay::UpdateLights()
 			}
 		}
 
-		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+		FOREACH_EnabledPlayer( pn )
 		{
-			FOREACH_EnabledPlayer( pn )
+			for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
 			{
-				for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
+				// for each index we crossed since the last update:
+				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iRowNow )
 				{
 					TapNote tn = m_Player[pn].m_NoteData.GetTapNote(t,r);
 					bool bBlink = (tn.type != TapNote::empty && tn.type != TapNote::mine);
