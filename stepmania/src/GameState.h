@@ -73,6 +73,7 @@ public:
 	bool IsPlayerEnabled( PlayerNumber pn ) const;
 	bool IsPlayerEnabled( int p ) const { return IsPlayerEnabled( (PlayerNumber)p ); };
 	int	GetNumPlayersEnabled() const;
+	bool PlayerUsingBothSides() const;
 
 	bool IsHumanPlayer( PlayerNumber pn ) const;
 	bool IsHumanPlayer( int p ) const { return IsHumanPlayer( (PlayerNumber)p ); };

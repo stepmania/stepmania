@@ -653,6 +653,11 @@ int	GameState::GetNumPlayersEnabled() const
 	return count;
 }
 
+bool GameState::PlayerUsingBothSides() const
+{
+	return this->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
+}
+
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
 	if( m_CurStyle == STYLE_INVALID )	// no style chosen
@@ -1502,12 +1507,7 @@ LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
 LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
 LuaFunction_NoArgs( CurStyle,				GAMESTATE->m_CurStyle )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
-
-static bool PlayerUsingBothSides()
-{
-	return GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
-}
-LuaFunction_NoArgs( PlayerUsingBothSides,	PlayerUsingBothSides() )
+LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
  * can't easily do if we return pointers. */
