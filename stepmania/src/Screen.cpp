@@ -235,7 +235,8 @@ void Screen::ClearMessageQueue()
 void Screen::ClearMessageQueue( const ScreenMessage SM )
 {
 	for( int i=m_QueuedMessages.size()-1; i>=0; i-- )
-		m_QueuedMessages.erase( m_QueuedMessages.begin()+i ); 
+		if( m_QueuedMessages[i].SM == SM )
+			m_QueuedMessages.erase( m_QueuedMessages.begin()+i ); 
 }
 
 
