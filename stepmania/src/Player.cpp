@@ -695,7 +695,7 @@ void Player::Step( int col, RageTimer tm )
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
-		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
+		const float fStepBeat = NoteRowToBeat( iIndexOverlappingNote );
 		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
 
 		/* We actually stepped on the note this long ago: */
