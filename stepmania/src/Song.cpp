@@ -662,8 +662,8 @@ void Song::TranslateTitles()
 		/* 桜 */
 		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
 
-		/* 魔法の扉, スペース★マコのテーマ */
-        ttab.push_back(TitleTrans("^(Door of Magic)|(Mahou no Tobira)$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "&ksu;&kpe;&kdash;&ksu;&whitestar;&kma;&kko;&hno;&kti;&kdash;&kmu;", "") ); 
+		/* 魔法の扉, スペース★マコのテーマ  (handle Door and Doors) */
+        ttab.push_back(TitleTrans("^(Doors? of Magic)|(Mahou no Tobira)$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "&ksu;&kpe;&kdash;&ksu;&whitestar;&kma;&kko;&hno;&kti;&kdash;&kmu;", "") ); 
 
 		/* Subtitles: */
 		/* それぞれの明日 (title is Graduation) */
