@@ -261,37 +261,44 @@ void TestSeek( bool relative )
 	CString line;
 	test.GetLine( line );
 
-	/* Seek to the binary test data. */
-	int ret;
-	if( relative )
-		ret = test.Seek( test.Tell() + junk.size() );
-	else
-		ret = test.Seek( TestLine.size()+junk.size() );
-
-	if( ret != int(TestLine.size()+junk.size()) )
+	/* Run the absolute seek test twice. */
+	for( int pass = 0; pass < 2; ++pass )
 	{
-		LOG->Warn( "Seek(%i) failed: got %i", TestLine.size()+junk.size(), ret );
-		return;
-	}
+		/* Seek to the binary test data. */
+		if( relative && pass > 0 )
+			break;
 
-	/* Check the binary test data (making sure we don't get any junk). */
-	TestBinaryRead( test, 256, false, test.Tell(), 256*0 );
-	TestBinaryRead( test, 256, false, test.Tell(), 256*1 );
-	TestBinaryRead( test, 256, false, test.Tell(), 256*2 );
-	TestBinaryRead( test, 256, false, test.Tell(), 256*3 );
+		int ret;
+		if( relative )
+			ret = test.Seek( test.Tell() + junk.size() );
+		else
+			ret = test.Seek( TestLine.size()+junk.size() );
 
-	/* Check EOF. */
-	char c;
-	ret = test.Read( &c, 1 );
-	if( ret != 0 )
-	{
-		LOG->Warn( "Read(1) failed: got %i, expected 0", ret );
-		return;
-	}
-	if( !test.AtEOF() )
-	{
-		LOG->Warn( "AtEOF returned false, expected true");
-		return;
+		if( ret != int(TestLine.size()+junk.size()) )
+		{
+			LOG->Warn( "Seek(%i) failed: got %i", TestLine.size()+junk.size(), ret );
+			return;
+		}
+
+		/* Check the binary test data (making sure we don't get any junk). */
+		TestBinaryRead( test, 256, false, test.Tell(), 256*0 );
+		TestBinaryRead( test, 256, false, test.Tell(), 256*1 );
+		TestBinaryRead( test, 256, false, test.Tell(), 256*2 );
+		TestBinaryRead( test, 256, false, test.Tell(), 256*3 );
+
+		/* Check EOF. */
+		char c;
+		ret = test.Read( &c, 1 );
+		if( ret != 0 )
+		{
+			LOG->Warn( "Read(1) failed: got %i, expected 0", ret );
+			return;
+		}
+		if( !test.AtEOF() )
+		{
+			LOG->Warn( "AtEOF returned false, expected true");
+			return;
+		}
 	}
 
 	test.Seek( 5 );
@@ -303,7 +310,8 @@ void TestSeek( bool relative )
 
 	/* Make sure a read after seeking far past EOF returns 0. */
 	test.Seek( 9999999 );
-	ret = test.Read( &c, 1 );
+	char c;
+	int ret = test.Read( &c, 1 );
 	if( ret != 0 )
 	{
 		LOG->Warn( "Read(1) failed: got %i, expected 0", ret );
