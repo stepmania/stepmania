@@ -345,6 +345,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 	float Clock = 0;
 	RageTimer Timer;
 
+	float pts = 0, last_IP_pts = 0;
 	CHECKPOINT;
 
 	while( m_State != DECODER_QUIT )
@@ -414,14 +415,9 @@ void MovieTexture_FFMpeg::DecoderThread()
 			if ( GetNextTimestamp )
 			{
 				if (pkt.pts != AV_NOPTS_VALUE)
-					CurrentTimestamp = (float)pkt.pts * m_fctx->pts_num / m_fctx->pts_den;
+					pts = (float)pkt.pts * m_fctx->pts_num / m_fctx->pts_den;
 				else
-				{
-					/* If the timestamp is zero, this frame is to be played at the
-					 * time of the last frame plus the length of the last frame. */
-					CurrentTimestamp += LastFrameDelay;
-				}
-
+					pts = -1;
 				GetNextTimestamp = false;
 			}
 
@@ -457,7 +453,21 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 			if ( m_stream->codec.has_b_frames &&
 				 frame.pict_type != FF_B_TYPE )
-				swap( CurrentTimestamp, Last_IP_Timestamp );
+			{
+				LOG->Trace("%s BF", GetID().filename.c_str() );
+				swap( pts, last_IP_pts );
+			}
+
+			if (pts != -1)
+			{
+				CurrentTimestamp = pts;
+			}
+			else
+			{
+				/* If the timestamp is zero, this frame is to be played at the
+				 * time of the last frame plus the length of the last frame. */
+				CurrentTimestamp += LastFrameDelay;
+			}
 
 			m_Position = CurrentTimestamp;
 
@@ -504,7 +514,8 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 				if( -Offset >= FrameSkipThreshold && !FrameSkipMode )
 				{
-					LOG->Trace( "Entering frame skip mode" );
+					LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
+						GetID().filename.c_str(), CurrentTimestamp, Clock );
 					FrameSkipMode = true;
 				}
 			}
@@ -521,8 +532,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 				avcodec::img_convert(&pict, AVPixelFormats[m_AVTexfmt].pf,
 						(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
 						m_stream->codec.width, m_stream->codec.height);
-
-				ASSERT( SDL_SemValue( m_BufferFinished ) == 0 );
 
 				/* Signal the main thread to update the image on the next Update. */
 				m_ImageWaiting=true;
@@ -589,6 +598,9 @@ void MovieTexture_FFMpeg::Reload()
 
 void MovieTexture_FFMpeg::StartThread()
 {
+	/* If we had a frame waiting from a previous thread start, clear it. */
+	m_ImageWaiting = false;
+
 	ASSERT( m_State == DECODER_QUIT );
 	m_State = PAUSE_DECODER;
 	m_DecoderThread.SetName( ssprintf("MovieTexture_FFMpeg(%s)", GetID().filename.c_str()) );
