@@ -693,14 +693,21 @@ void ScreenGameplay::LoadNextSong()
 
 		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
 
-		// Put courses options into effect.
+		// Put course options into effect.
 		for( unsigned i=0; i<m_asModifiersQueue[p][iPlaySongIndex].size(); ++i )
 		{
 			GAMESTATE->LaunchAttack( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex][i] );
 			GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex][i].sModifier );
 		}
 
-		/* Queue course attacks. */
+		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
+		for( int s=0; s < GameState::MAX_SIMULTANEOUS_ATTACKS; s++ )
+		{
+			if( GAMESTATE->m_ActiveAttacks[p][s].fStartSecond == 0 )
+				GAMESTATE->m_ActiveAttacks[p][s].fStartSecond = -1;
+		}
+		GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+		GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 
@@ -738,8 +745,7 @@ void ScreenGameplay::LoadNextSong()
 		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 
 		/* The actual note data for scoring is the base class of Player.  This includes
-		 * transforms, like Wide.  Otherwise, the scoring will operate on the worng
-		 * data. */
+		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
 		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p], &m_Player[p] );
 		if( m_pSecondaryScoreKeeper[p] )
 			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p], &m_Player[p] );
