@@ -80,6 +80,7 @@ void ScreenSMOnlineLogin::GoToPrevScreen()
 
 void ScreenSMOnlineLogin::GoToNextScreen()
 {
+	ExportOptions();
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	FOREACH_EnabledPlayer(pn)
 	{
@@ -119,8 +120,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			int Status = NSMAN->m_SMOnlinePacket.Read1();
 				if(Status == 0)
 				{
-					NSMAN->isSMOLoggedIn[m_iPlayer++] = true;
-					if(GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
+					NSMAN->isSMOLoggedIn[m_iPlayer] = true;
+					m_iPlayer++;
+					if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
 						SCREENMAN->Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter you password.", NULL );
 					else
 						SCREENMAN->SetNewScreen(NEXT_SCREEN);
