@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030410.exe"
+OutFile "StepMania-CVS-20030419.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -128,9 +128,6 @@ File "Characters\instructions.txt"
 CreateDirectory "$INSTDIR\Courses"
 SetOutPath "$INSTDIR\Courses"
 File "Courses\instructions.txt"
-
-CreateDirectory "$INSTDIR\Courses"
-SetOutPath "$INSTDIR\Courses"
 File /r "Courses\Samples"
 
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
@@ -142,6 +139,8 @@ SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
 ; why do this? -glenn
 ; instructions.txt can be deleted.  -Chris
+; Huh?  I mean, why create each of these directories?  File /r
+; does that for us.
 CreateDirectory "$INSTDIR\NoteSkins\dance\default"
 CreateDirectory "$INSTDIR\NoteSkins\dance\flat"
 CreateDirectory "$INSTDIR\NoteSkins\dance\note"
@@ -266,6 +265,7 @@ RMDir "$INSTDIR\Characters"
 RMDir /r "$INSTDIR\Cache"
 
 Delete "$INSTDIR\Courses\instructions.txt"
+RMDir /r "$INSTDIR\Courses\Samples"
 RMDir "$INSTDIR\Courses"
 
 Delete "$INSTDIR\NoteSkins\instructions.txt"
