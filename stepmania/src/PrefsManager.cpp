@@ -24,6 +24,7 @@
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
+const float DEFAULT_SOUND_VOLUME = 0.50;
 
 PrefsManager::PrefsManager()
 {
@@ -74,6 +75,7 @@ PrefsManager::PrefsManager()
 	m_bVsync = true;
 
 	m_bSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 
 	ReadGlobalPrefsFromDisk( true );
 }
@@ -125,6 +127,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
 	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.GetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -186,6 +189,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	 * tweaked this value). */
 	if(m_bSoundDrivers != DEFAULT_SOUND_DRIVER_LIST)
 		ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
+		ini.SetValueF( "Options", "SoundVolume",			m_fSoundVolume );
+
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 
