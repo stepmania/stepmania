@@ -345,11 +345,19 @@ bool CreateDirectories( CString Path )
 			continue;
 
 		if(errno != EEXIST)
+		{
+			if( LOG )
+				LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
 			return false;
+		}
 
 		/* Make sure it's a directory. */
 		if( !IsADirectory(curpath) )
+		{
+			if( LOG )
+				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
 			return false;
+		}
 	}
 	
 	return true;
