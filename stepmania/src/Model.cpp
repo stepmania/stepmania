@@ -333,7 +333,9 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 {
 					THROW;
                 }
-                Bone.nFlags = nFlags;
+				Rotation *= 180.0f / PI; /* rad -> deg */
+
+				Bone.nFlags = nFlags;
                 memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
                 memcpy( &Bone.Rotation, &Rotation, sizeof(Bone.Rotation) );
 
@@ -378,6 +380,7 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 					float fTime;
                     if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
 						THROW;
+					Rotation *= 180.0f / PI; /* rad -> deg */
 
 					msRotationKey key;
 					key.fTime = fTime;
@@ -564,11 +567,10 @@ void Model::SetDefaultAnimation( CString sAnimation, float fPlayRate )
 
 void Model::PlayAnimation( CString sAniName, float fPlayRate )
 {
-	msAnimation *pNewAnimation = NULL;
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
 		return;
-	else
-		pNewAnimation = &m_mapNameToAnimation[sAniName];
+
+	msAnimation *pNewAnimation = &m_mapNameToAnimation[sAniName];
 
 	m_fCurFrame = 0;
 	m_fCurAnimationRate = fPlayRate;
@@ -579,17 +581,13 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	m_pCurAnimation = pNewAnimation;
 
 	// setup bones
-	int nBoneCount = (int)m_pCurAnimation->Bones.size();
+	unsigned nBoneCount = m_pCurAnimation->Bones.size();
 	m_vpBones.resize( nBoneCount );
 
-	int i;
-	for (i = 0; i < nBoneCount; i++)
+	for( unsigned i = 0; i < nBoneCount; i++ )
 	{
-		msBone *pBone = &m_pCurAnimation->Bones[i];
-		RageVector3 vRot;
-		vRot[0] = pBone->Rotation[0] * 180 / (float) PI;
-		vRot[1] = pBone->Rotation[1] * 180 / (float) PI;
-		vRot[2] = pBone->Rotation[2] * 180 / (float) PI;
+		const msBone *pBone = &m_pCurAnimation->Bones[i];
+		const RageVector3 &vRot = pBone->Rotation;
 
 		RageMatrixAngles( &m_vpBones[i].mRelative, vRot );
 		
@@ -612,7 +610,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	}
 
 	// subtract out the bone's resting position
-	for (i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+	for ( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 	{
 		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 		vector<RageModelVertex> &Vertices = pMesh->Vertices;
@@ -621,7 +619,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 //			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : bone;
 			RageVector3 &pos = Vertices[j].p;
 			int8_t bone = Vertices[j].bone;
-			if (bone != -1)
+			if( bone != -1 )
 			{
 				pos[0] -= m_vpBones[bone].mAbsolute.m[3][0];
 				pos[1] -= m_vpBones[bone].mAbsolute.m[3][1];
@@ -638,9 +636,8 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		}
 	}
 	
-	/* Run AdvanceFrame once, to set up m_vpBones, just in case we're drawn without
-	 * being Update(). */
-	AdvanceFrame( 0.0f );
+	/* Set up m_vpBones, just in case we're drawn without being Update()d. */
+	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
@@ -705,9 +702,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			{
 				float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
 				float s = (fFrame - pLastPositionKey->fTime) / d;
-				vPos[0] = pLastPositionKey->Position[0] + (pThisPositionKey->Position[0] - pLastPositionKey->Position[0]) * s;
-				vPos[1] = pLastPositionKey->Position[1] + (pThisPositionKey->Position[1] - pLastPositionKey->Position[1]) * s;
-				vPos[2] = pLastPositionKey->Position[2] + (pThisPositionKey->Position[2] - pLastPositionKey->Position[2]) * s;
+				vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 			}
 			else if( pLastPositionKey == NULL )
 				vPos = pThisPositionKey->Position;
@@ -735,24 +730,20 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 				const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 
 				RageVector4 q1, q2, q;
-				RageQuatFromHPR( &q1, RageVector3(pLastRotationKey->Rotation) * (180 / PI) );
-				RageQuatFromHPR( &q2, RageVector3(pThisRotationKey->Rotation) * (180 / PI) );
+				RageQuatFromHPR( &q1, pLastRotationKey->Rotation );
+				RageQuatFromHPR( &q2, pThisRotationKey->Rotation );
 				RageQuatSlerp( &q, q1, q2, s );
 
 				RageMatrixFromQuat( &m, q );
 			}
 			else if (pLastRotationKey == 0)
 			{
-				vRot[0] = pThisRotationKey->Rotation[0] * 180 / (float) PI;
-				vRot[1] = pThisRotationKey->Rotation[1] * 180 / (float) PI;
-				vRot[2] = pThisRotationKey->Rotation[2] * 180 / (float) PI;
+				vRot = pThisRotationKey->Rotation;
 				RageMatrixAngles( &m, vRot );
 			}
 			else if (pThisRotationKey == 0)
 			{
-				vRot[0] = pLastRotationKey->Rotation[0] * 180 / (float) PI;
-				vRot[1] = pLastRotationKey->Rotation[1] * 180 / (float) PI;
-				vRot[2] = pLastRotationKey->Rotation[2] * 180 / (float) PI;
+				vRot = pLastRotationKey->Rotation;
 				RageMatrixAngles( &m, vRot );
 			}
 			m.m[3][0] = vPos[0];
