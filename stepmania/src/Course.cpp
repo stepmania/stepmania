@@ -268,10 +268,7 @@ void Course::LoadFromCRSFile( CString sPath )
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
 					if( !mods[j].CompareNoCase("showcourse") )
-					{
-						LOG->Trace("XXXXXXXXXXXXXX %s", m_sPath.c_str());
 						new_entry.mystery = false;
-					}
 					else if( !mods[j].CompareNoCase("noshowcourse") )
 						new_entry.mystery = true;
 					else 
