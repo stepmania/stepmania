@@ -245,9 +245,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		m_Menu.Back( SM_GoToAttractLoop );
 		break;
 	case MENU_BUTTON_START:
-		if( !Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
-			return;
-
 		/* return if the choice is invalid */
 		const ModeChoice &mc = m_aModeChoices[m_Choice];
 		CString why;
@@ -258,6 +255,9 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 				SCREENMAN->SystemMessage( why );
 			return;
 		}
+
+		if( !Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
+			return;
 
 		if( !m_Menu.m_Out.IsTransitioning() )
 			m_Menu.StartTransitioning( SM_GoToNextScreen );
