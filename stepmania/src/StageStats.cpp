@@ -178,17 +178,24 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		Possible += iHoldNoteScores[pn][i] * HoldScoreValues[HNS_OK];
 	}
 
-	float fPercent = Actual / Possible;
-	LOG->Trace( "GetGrade: Actual: %f, Possible: %f, Percent: %f", Actual, Possible, fPercent );
-
-	// calculate grade
+	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
 
 #define ROUNDING_ERROR 0.00001f
 	Grade grade = (Grade)(NUM_GRADE_TIERS-1);	// lowest non-failing grade
 
-	for( int g=0; g<NUM_GRADES; g++ )
+	if( Possible == 0 )
+		return grade;
+
+	float fPercent = Actual / Possible;
+
+	for( int g=0; g<NUM_GRADE_TIERS; g++ )
+	{
 		if( fPercent >= PREFSMAN->m_fGradePercentTier[g]-ROUNDING_ERROR )
+		{
 			grade = (Grade)g;
+			break;
+		}
+	}
 
 	if( PREFSMAN->m_bGradeTier02IsAllPerfects &&
 		iTapNoteScores[pn][TNS_PERFECT] > 0 &&
@@ -199,6 +206,8 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		iTapNoteScores[pn][TNS_HIT_MINE] == 0 &&
 		iHoldNoteScores[pn][HNS_NG] == 0 )
 		return GRADE_TIER_2;
+
+	LOG->Trace( "GetGrade: Grade: %s", GradeToString(grade).c_str() );
 
 	return grade;
 }
