@@ -41,6 +41,14 @@ void RageSound_DSound_Software::MixerThread()
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
+	/* Fill a buffer before we start playing, so we don't play whatever junk is
+	 * in the buffer. */
+	while(GetData())
+		;
+
+	/* Start playing. */
+	str_ds->Play();
+
 	while(!shutdown) {
 		Sleep(10);
 		while(GetData())
@@ -170,8 +178,6 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 		DSoundBuf::HW_DONT_CARE, 
 		channels, samplerate, 16, buffersize);
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
-
-	str_ds->Play();
 }
 
 RageSound_DSound_Software::~RageSound_DSound_Software()
