@@ -101,24 +101,24 @@ using namespace std;
 /* Define a few functions if necessary */
 /* You're right, that was the wrong way, how's this? */
 #include <math.h>
-#ifndef HAVE_POWF
-inline float powf (float x, float y){ return float(pow(double(x),double(y))); }
+#ifdef NEED_POWF
+inline float powf (float x, float y) { return float(pow(double(x),double(y))); }
 #endif
 
-#ifndef HAVE_SQRTF
-inline float sqrtf (float x) { return float(sqrt(double(x))); }
+#ifdef NEED_SQRTF
+inline float sqrtf(float x) { return float(sqrt(double(x))); }
 #endif
 
-#ifndef HAVE_SINF
-inline float sinf (float x) { return float(sin(double(x))); }
+#ifdef NEED_SINF
+inline float sinf(float x) { return float(sin(double(x))); }
 #endif
 
-#ifndef HAVE_COSF
-inline float cosf (float x) { return float(cos(double(x))); }
+#ifdef NEED_COSF
+inline float cosf(float x) { return float(cos(double(x))); }
 #endif
 
-#ifndef HAVE_ACOSF
-inline float acosf (float x) { return float(acos(double(x))); }
+#ifdef NEED_ACOSF
+inline float acosf(float x) { return float(acos(double(x))); }
 #endif
 
 
