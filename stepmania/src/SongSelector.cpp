@@ -119,7 +119,7 @@ SongSelector::SongSelector()
 		OnGroupChange();
 
 
-	m_soundChangeMusic.Load( THEME->GetPathTo("Sounds","select music change music") );
+	m_soundChangeMusic.Load( THEME->GetPathTo("Sounds","select music change") );
 }
 
 SongSelector::~SongSelector()
