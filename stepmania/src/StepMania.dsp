@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                      	cl                                                                                                                                      /Zl                                                                                                                                      /nologo                                                                                                                                      /c                                                                                                                                      verstub.cpp                                                                                                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                       	cl                                                                                                                                       /Zl                                                                                                                                       /nologo                                                                                                                                       /c                                                                                                                                       verstub.cpp                                                                                                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                       	cl                                                                                                /Zl                                                                                                /nologo                                                                                                /c                                                                                                verstub.cpp                                                                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                        	cl                                                                                                 /Zl                                                                                                 /nologo                                                                                                 /c                                                                                                 verstub.cpp                                                                                                 /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1106,14 +1106,6 @@ SOURCE=.\arch\LoadingWindow\LoadingWindow_Null.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.cpp
 # End Source File
 # Begin Source File
@@ -1227,23 +1219,6 @@ SOURCE=.\arch\InputHandler\InputHandler_DirectInputHelper.cpp
 # Begin Source File
 
 SOURCE=.\arch\InputHandler\InputHandler_DirectInputHelper.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\InputHandler\InputHandler_SDL.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\InputHandler\InputHandler_SDL.h
 # End Source File
 # Begin Source File
 
