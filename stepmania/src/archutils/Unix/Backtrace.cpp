@@ -383,6 +383,7 @@ typedef struct Frame
 
 void GetExceptionBacktraceContext( BacktraceContext *ctx, const ExceptionInformation *exception )
 {
+	ctx->PC = (void *) exception->machineState->PC.lo;
 	ctx->FramePtr = (void *) exception->registerImage->R1.lo;
 }
 
@@ -398,11 +399,15 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		/* __builtin_frame_address is broken on OS X; it sometimes returns bogus results. */
 		register void *r1 __asm__ ("r1");
 		CurrentCtx.FramePtr = (void *) r1;
+		CurrentCtx.PC = NULL;
 	}
 	
 	const Frame *frame = (Frame *) ctx->FramePtr;
 
 	unsigned i = 0;
+	if( ctx->PC && i < size-1 )
+		buf[i++] = ctx->PC;
+
 	while( frame && i < size-1 ) // -1 for NULL
 	{
 		if( frame->linkReg )

@@ -12,7 +12,7 @@ struct BacktraceContext
 #endif
 
 #if defined(DARWIN)
-	void *FramePtr;
+	void *FramePtr, *PC;
 #endif
 };
 
