@@ -263,46 +263,6 @@ void RageSoundManager::DeleteSound( RageSound *p )
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
 }
 
-/*
- * If bLockSounds is true, all returned sounds will be locked; you must call Unlock()
- * on all returned sounds when you're done.  This is used for thread safety: without
- * it, if this is called in a separate thread, returned copies might stop playing
- * and be deleted by RageSoundManager::Update before you're done with them.
- *
- * If bLockSounds is false, sounds are not locked.  This is only safe to use in the same
- * thread as RageSoundManager::Update (the gameplay thread).
- */
-void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, bool bLockSounds )
-{
-	snds.clear();
-
-	/* Locking this means that Update() will not delete sounds.  g_SoundManMutex does that,
-	 * too, but we can't hold g_SoundManMutex when we lock sounds. */
-	g_DeletionMutex.Lock();
-
-	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	set<RageSound *> sounds;
-	for( set<RageSound *>::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
-		sounds.insert( *iter );
-	g_SoundManMutex.Unlock(); /* finished with all_sounds */
-	
-	RageSound *parent = snd.GetOriginal();
-
-	set<RageSound *>::const_iterator it;
-	for( it = sounds.begin(); it != sounds.end(); ++it )
-	{
-		CHECKPOINT_M( ssprintf("%p %p", *it, parent) );
-		if( (*it)->GetOriginal() != parent )
-			continue;
-		if( bLockSounds )
-			(*it)->LockSound();
-
-		snds.push_back( *it );
-	}
-
-	g_DeletionMutex.Unlock();
-}
-
 /* Don't hold the lock when we don't have to.  We call this function from other
  * threads, to avoid stalling the gameplay thread. */
 void RageSoundManager::PlayOnce( CString sPath )
