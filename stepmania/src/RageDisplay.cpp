@@ -670,12 +670,12 @@ void RageDisplay::SetBlendMode(int src, int dst)
 
 void RageDisplay::SetTextureModeGlow()
 {
+	FlushQueue();
+
 	if(!g_oglspecs.EXT_texture_env_combine) {
 		SetBlendMode( GL_SRC_ALPHA, GL_ONE );
 		return;
 	}
-
-	FlushQueue();
 
 	/* Source color is the diffuse color only: */
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
