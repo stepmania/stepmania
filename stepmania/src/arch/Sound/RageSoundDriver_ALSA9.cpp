@@ -66,25 +66,52 @@ bool RageSound_ALSA9::stream::GetData(bool init)
     static Sint16 *buf = NULL;
 	if ( !buf )
 		buf = new Sint16[max_writeahead*samples_per_frame];
+	char *cbuf = (char*) buf;
 
-	unsigned len = frames_to_fill*bytes_per_frame;
+	const int play_pos = pcm->GetPlayPos();
+	const int cur_play_pos = pcm->GetPosition();
+
+	int len = frames_to_fill*bytes_per_frame;
 	/* It might be INACTIVE, when we're prebuffering. We just don't want to
 	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
 	if( state != STOPPING )
 	{
-		const unsigned got = snd->GetPCM( (char *) buf, len, pcm->GetPlayPos() );
+		int bytes_read = 0;
+		int bytes_left = len;
 
-		if( got < len )
+		/* Does the sound have a start time? */
+		if( !start_time.IsZero() )
+		{
+			/* If the sound is supposed to start at a time past this buffer, insert silence. */
+			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			const float fSecondsBeforeStart = -start_time.Ago();
+			const int iFramesBeforeStart = int(fSecondsBeforeStart * pcm->GetSampleRate());
+			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
+
+			memset( cbuf+bytes_read, 0, iSilentBytesInThisBuffer );
+			bytes_read += iSilentBytesInThisBuffer;
+			bytes_left -= iSilentBytesInThisBuffer;
+
+			if( !iSilentBytesInThisBuffer )
+				start_time.SetZero();
+		}
+
+		int got = snd->GetPCM( cbuf+bytes_read, len-bytes_read, play_pos + (bytes_read/bytes_per_frame) );
+		bytes_read += got;
+		bytes_left -= got;
+
+		if( bytes_left > 0 )
 		{
 			/* Fill the remainder of the buffer with silence. */
-			memset( buf+got, 0, len-got );
+			memset( cbuf+bytes_read, 0, bytes_left );
 
 			/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
 			 * buffers have been flushed. */
 			state = STOPPING;
 
 			/* Flush two buffers worth of data. */
-			flush_pos = pcm->GetPlayPos();
+			flush_pos = pcm->GetPlayPos() + (bytes_read / bytes_per_frame);
 		}
 	} else {
 		/* Silence the buffer. */
@@ -121,6 +148,7 @@ void RageSound_ALSA9::StartMixing(RageSound *snd)
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
 	stream_pool[i]->pcm->SetSampleRate( snd->GetSampleRate() );
+	stream_pool[i]->start_time = snd->GetStartTime();
 
 	/* Pre-buffer the stream. */
 	stream_pool[i]->GetData(true);

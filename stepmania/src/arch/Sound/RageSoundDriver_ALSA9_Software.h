@@ -13,6 +13,7 @@ private:
 	struct sound
 	{
 		RageSound *snd;
+		RageTimer start_time;
 		bool stopping;
 		int flush_pos; /* state == STOPPING only */
 		sound() { snd = NULL; stopping=false; }

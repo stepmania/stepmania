@@ -18,6 +18,7 @@ private:
 		/* Sound object that's playing on this stream, or NULL if this
 		 * channel is available: */
 		RageSound *snd;
+		RageTimer start_time;
 
 		enum {
 			INACTIVE,
