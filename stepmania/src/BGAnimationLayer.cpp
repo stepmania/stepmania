@@ -1020,6 +1020,9 @@ void BGAnimationLayer::LosingFocus()
 
 void BGAnimationLayer::PlayCommand( CString cmd )
 {
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		m_pActors[i]->Command( ssprintf("playcommand,%s", cmd.c_str()) );
+
 	cmd.MakeLower();
 	map<CString, CString>::const_iterator it = m_asCommands.find( cmd );
 
