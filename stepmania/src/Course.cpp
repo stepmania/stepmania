@@ -568,6 +568,7 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci ) const
 		cinfo.Notes = pNotes;
 		cinfo.Modifiers = e.modifiers;
 		cinfo.Random = ( e.type == Entry::random || e.type == Entry::random_within_group );
+		cinfo.CourseIndex = i;
 		ci.push_back( cinfo ); 
 	}
 }
