@@ -131,8 +131,9 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */
 	/* XXX: %lli normally, %I64i in Windows */
-	LOG->Trace( "Approximate sound time: driver frame %lli, m_Queue frame %lli (dist %lli), closest position is %lli",
-		frame, m_Queue[closest_block].frameno, closest_position_dist, closest_position );
+	LOG->Trace( "Approximate sound time: driver frame %lli, m_Queue frame %lli..%lli (dist %lli), closest position is %lli",
+		frame, m_Queue[closest_block].frameno, m_Queue[closest_block].frameno+m_Queue[closest_block].frames,
+		closest_position_dist, closest_position );
 
 	if( approximate )
 		*approximate = true;
