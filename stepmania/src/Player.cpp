@@ -215,13 +215,31 @@ void Player::SetX( float fX )
 }
 
 
-void Player::SetSteps( const Steps& newSteps )
+void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoadOnlyRightSide )
 { 
-	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) {
+	// copy the steps
+	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) 
+	{
 		m_OriginalStep[i] = newSteps.m_steps[i];
-		m_LeftToStepOn[i] = newSteps.m_steps[i];
+	
+		if( bLoadOnlyLeftSide ) {
+			// mask off the pad2 steps
+			m_OriginalStep[i] &= ~(STEP_PAD2_LEFT | STEP_PAD2_UPLEFT | STEP_PAD2_DOWN | STEP_PAD2_UP | STEP_PAD2_UPRIGHT | STEP_PAD2_RIGHT );
+		} else if( bLoadOnlyRightSide ) {
+			// replace the step making pad2's step the new pad1 step
+			Step new_step = (m_OriginalStep[i]&STEP_PAD2_LEFT	? STEP_PAD1_LEFT	: 0) |
+							(m_OriginalStep[i]&STEP_PAD2_UPLEFT	? STEP_PAD1_UPLEFT	: 0) |
+							(m_OriginalStep[i]&STEP_PAD2_DOWN	? STEP_PAD1_DOWN	: 0) |
+							(m_OriginalStep[i]&STEP_PAD2_UP		? STEP_PAD1_UP		: 0) |
+							(m_OriginalStep[i]&STEP_PAD2_UPRIGHT? STEP_PAD1_UPRIGHT	: 0) |
+							(m_OriginalStep[i]&STEP_PAD2_RIGHT	? STEP_PAD1_RIGHT	: 0);
+			m_OriginalStep[i] = new_step;
+		}
+
+		m_LeftToStepOn[i] = m_OriginalStep[i];
 		m_iColorArrowFrameOffset[i] = (int)( i/(FLOAT)ELEMENTS_PER_BEAT*NUM_FRAMES_IN_COLOR_ARROW_SPRITE );
 	}
+
 }
 
 void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference )

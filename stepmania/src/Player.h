@@ -31,7 +31,7 @@ class Player
 public:
 	Player();
 
-	void SetSteps( const Steps& newSteps );
+	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
 	void Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void Draw();

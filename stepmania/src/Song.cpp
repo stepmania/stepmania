@@ -419,12 +419,9 @@ void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arra
 
 void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int& iDiffHardOut )
 {
-	iDiffEasyOut = iDiffMediumOut = iDiffHardOut = -1;
+	iDiffEasyOut = iDiffMediumOut = iDiffHardOut = -1;		// -1 means not found
 	CArray<Steps*, Steps*&> arrayMatchingSteps;
 	GetStepsThatMatchGameMode( gm, arrayMatchingSteps );
-
-	//bool bFoundEasy, bFoundMedium, bFoundHard;
-	//bFoundEasy = bFoundMedium = bFoundHard = false;
 
 	for( int i=0; i<arrayMatchingSteps.GetSize(); i++ )
 	{
@@ -447,7 +444,7 @@ void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int&
 				iDiffEasyOut = iNumFeet;
 			else if( iDiffHardOut < 0  &&  iNumFeet >= 7 )
 				iDiffHardOut = iNumFeet;
-			else
+			else if( iDiffMediumOut < 0 )
 				iDiffMediumOut = iNumFeet;
 			break;
 		}
