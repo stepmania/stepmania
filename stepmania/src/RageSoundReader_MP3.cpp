@@ -735,7 +735,23 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 SoundReader *RageSoundReader_MP3::Copy() const
 {
 	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
-	ret->Open( filename );
+
+	ret->filename = filename;
+	ret->rw = fopen(filename, "rb");
+	ASSERT( rw );
+
+	ret->mad->filesize = mad->filesize;
+	ret->mad->bitrate = mad->bitrate;
+	ret->SampleRate = SampleRate;
+	ret->mad->framelength = mad->framelength;
+	ret->Channels = Channels;
+	ret->OffsetFix = OffsetFix;
+	ret->mad->length = mad->length;
+
+//	int n = ret->do_mad_frame_decode();
+//	ASSERT( n > 0 );
+//	ret->synth_output();
+
 	return ret;
 }
 
@@ -1075,9 +1091,7 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 
 int RageSoundReader_MP3::GetLengthConst( bool fast ) const
 {
-	RageSoundReader_MP3 *cpy = new RageSoundReader_MP3;
-	SoundReader_FileReader::OpenResult  ret = cpy->Open( filename );
-	ASSERT( ret == OPEN_OK );
+	RageSoundReader_MP3 *cpy = (RageSoundReader_MP3 *) Copy();
 
 	int length = cpy->GetLengthInternal( fast );
 
