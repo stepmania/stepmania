@@ -242,6 +242,8 @@ void ScreenSelectMaxType2::ChangePage( Page newPage )
 	for( p=0; p<NUM_PLAYERS; p++ )
 		ChangeWithinPage( (PlayerNumber)p, iNewChoice, true );
 
+	m_soundChange.Play();
+
 	// move frame with choices
 	m_framePages.StopTweening();
 	m_framePages.BeginTweening( 0.2f );
@@ -274,7 +276,10 @@ void ScreenSelectMaxType2::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bo
 		m_sprShadow[p].SetTweenY( fCursorY + SHADOW_LENGTH_Y );
 	}
 
-	m_soundChange.Play();
+	/* If we're changing pages, it's ChangePage's responsibility to play this
+	 * (so we don't play it more than once). */
+	if(!bChangingPages)
+		m_soundChange.Play();
 }
 
 void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
@@ -289,14 +294,24 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 		m_sprMore[page].FadeOff( 0, "fade", 0.5f );
 
 	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaxType2 comment %s",mc.name)) );
+	/* Don't play sound if we're on the second page and another player
+	 * has already selected, since it just played. */
+	bool AnotherPlayerSelected = false;
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
+		if(p != pn && m_bChosen[p])
+			AnotherPlayerSelected = true;
 
-	/* XXX: This will play the same announcer twice at the same time; that'll probably
-	 * result in an echo effect. */
+	if(m_CurrentPage != PAGE_2 || !AnotherPlayerSelected)
+	{
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectMaxType2 comment %s",mc.name)) );
+		m_soundSelect.Play();
+	}
+
 	if( m_CurrentPage == PAGE_2 )
 	{
 		// choose this for all the other players too
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( m_bChosen[p] )
 				continue;
@@ -311,8 +326,6 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 	m_sprOK[pn].Command( OK_CHOOSE_COMMAND );
 	m_sprShadow[pn].Command( SHADOW_CHOOSE_COMMAND );
 
-
-	m_soundSelect.Play();
 
 	// check to see if everyone has chosen
 	for( int p=0; p<NUM_PLAYERS; p++ )
