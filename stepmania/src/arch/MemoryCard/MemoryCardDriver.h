@@ -30,7 +30,7 @@ struct UsbStorageDevice
 	      return false;
 	  if( (iPort!=-1 || other.iPort!=-1) && iPort != other.iPort )
 	      return false;
-	  if( (iLevel!=-1 || other.iLevel!=-1) && iBus != other.iLevel )
+	  if( (iLevel!=-1 || other.iLevel!=-1) && iLevel != other.iLevel )
 	      return false;
 	  return sOsMountDir==other.sOsMountDir;  // every time a device is plugged in, it gets a unique device number
 	}
