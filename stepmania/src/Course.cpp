@@ -491,8 +491,10 @@ static vector<Song*> GetFilteredBestSongs( StepsType st )
 		if( SONGMAN->GetNumStagesForSong(pSong) > 1 )
 			continue;
 
+		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
+
 		bool FoundMedium = false, FoundHard = false;
-		FOREACH( Steps*, pSong->m_vpSteps, pSteps )
+		FOREACH_CONST( Steps*, vpSteps, pSteps )
 		{
 			if( (*pSteps)->m_StepsType != st )
 				continue;

@@ -118,8 +118,8 @@ void ScreenEvaluation::Init()
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
-		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->m_vpSteps[0];
-		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->m_vpSteps[0];
+		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
+		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		g_CurStageStats.pSteps[PLAYER_1] = GAMESTATE->m_pCurSteps[PLAYER_1];
 		g_CurStageStats.pSteps[PLAYER_2] = GAMESTATE->m_pCurSteps[PLAYER_2];
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;

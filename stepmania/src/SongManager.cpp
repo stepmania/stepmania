@@ -391,9 +391,10 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * set up, which is too restrictive.  How to handle this?
 	 */
 //	const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	for( unsigned i=0; i<pSong->m_vpSteps.size(); i++ )
+	const vector<Steps*>& vpSteps = pSong->GetAllSteps();
+	for( unsigned i=0; i<vpSteps.size(); i++ )
 	{
-		const Steps* pSteps = pSong->m_vpSteps[i];
+		const Steps* pSteps = vpSteps[i];
 		switch( pSteps->GetDifficulty() )
 		{
 		case DIFFICULTY_CHALLENGE:
@@ -660,9 +661,10 @@ void SongManager::Cleanup()
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
-		for( unsigned n=0; n<pSong->m_vpSteps.size(); n++ )
+		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
+		for( unsigned n=0; n<vpSteps.size(); n++ )
 		{
-			Steps* pSteps = pSong->m_vpSteps[n];
+			Steps* pSteps = vpSteps[n];
 			pSteps->Compress();
 		}
 	}
@@ -1100,8 +1102,9 @@ static bool CheckPointer( const Steps *p )
 	const vector<Song*> &songs = SONGMAN->GetAllSongs();
 	for( unsigned i = 0; i < songs.size(); ++i )
 	{
-		for( unsigned j = 0; j < songs.size(); ++j )
-			if( songs[i]->m_vpSteps[j] == p )
+		const vector<Steps*>& vpSteps = songs[i]->GetAllSteps();
+		for( unsigned j = 0; j < vpSteps.size(); ++j )
+			if( vpSteps[j] == p )
 				return true;
 	}
 	return false;
