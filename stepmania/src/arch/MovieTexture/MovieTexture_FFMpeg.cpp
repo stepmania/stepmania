@@ -839,12 +839,19 @@ void MovieTexture_FFMpeg::DecoderThread()
 		/* Signal the main thread to update the image on the next Update. */
 		m_ImageWaiting=true;
 
-		CHECKPOINT;
-		SDL_SemWait( m_BufferFinished );
-		CHECKPOINT;
+		/* SDL_SemWait does not properly retry sem_wait in Linux on EINTR. */
+		do
+		{
+			CHECKPOINT;
+			errno = 0;
+			ret = SDL_SemWait( m_BufferFinished );
+		}
+		while( ret == -1 && errno == EINTR );
+
+		ASSERT_M( ret != -1, ssprintf("%s, %s", SDL_GetError(), strerror(errno)) );
 
 		/* If the frame wasn't used, then we must be shutting down. */
-		ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT );
+		ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT, ssprintf("%i", m_State) );
 	}
 	CHECKPOINT;
 }
