@@ -78,22 +78,29 @@ char **g_argv = NULL;
 static bool g_bHasFocus = true;
 static bool g_bQuitting = false;
 
+CString DirOfExecutable;
+
 static void ChangeToDirOfExecutable(const char *argv0)
 {
+	DirOfExecutable = argv0;
+	// strip off executable name
+	unsigned n = DirOfExecutable.find_last_of("/\\");
+	if( n != DirOfExecutable.npos )
+		DirOfExecutable.erase(n);
+	else
+		DirOfExecutable.erase();
+
+	if( DirOfExecutable.size() == 0 || (DirOfExecutable[0] != '/' && DirOfExecutable[0] != '\\') )
+		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
+
+	printf("doe = '%s'\n", DirOfExecutable.c_str());
 #ifndef _XBOX
 	/* Make sure the current directory is the root program directory
 	 * We probably shouldn't do this; rather, we should know where things
 	 * are and use paths as needed, so we don't depend on the binary being
 	 * in the same place as "Songs" ... */
 	if( !DoesFileExist("Songs") )
-	{
-		// strip off executable name
-		CString dir = argv0;
-		unsigned n = dir.find_last_of("/\\");
-		if (n != dir.npos) dir.erase(n);
-
-		chdir( dir.c_str() );
-	}
+		chdir( DirOfExecutable );
 #endif
 }
 
