@@ -461,10 +461,10 @@ void ScreenEz2SelectStyle::Update( float fDeltaTime )
 
 	fDeltaTime /= .01f;
 
-	ez2_bounce = fmod((ez2_bounce+fDeltaTime), 20);
+	ez2_bounce = fmodf((ez2_bounce+fDeltaTime), 20);
 
 	/* 0..10..19 -> 10..0..9 */
-	int offset = abs(10-ez2_bounce);
+	int offset = abs(10-int(ez2_bounce));
 	m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
 	m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
 }
