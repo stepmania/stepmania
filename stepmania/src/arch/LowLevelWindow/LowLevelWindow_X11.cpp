@@ -157,10 +157,6 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 void LowLevelWindow_X11::SwapBuffers()
 {
 	glXSwapBuffers(X11Helper::Dpy, X11Helper::Win);
-	// XXX HACK: I added this sleep on a strange hunch while trying to find
-	// the source of crippling performance issues, and suddenly
-	// those performance issues simply stopped...
-	usleep(10000); // Allows up to ~100fps
 }
 
 /*
