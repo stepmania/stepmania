@@ -14,6 +14,8 @@
 #include "SDL_rotozoom.h"
 
 #include <math.h>
+#include <vector>
+using namespace std;
 
 struct tColorRGBA {
     Uint8 c[4];
@@ -34,95 +36,96 @@ struct tColorRGBA {
  * lines.)
  */
 
-float frac(float x) { return x-int(x); }
-int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
+void zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
 {
     /* Ratio from source to dest. */
     float sx = float(src->w) / dst->w;
     float sy = float(src->h) / dst->h;
 
-    float *sax = new float[dst->w];
-    float *say = new float[dst->h];
+    /* For each destination coordinate, two source rows, two source columns
+     * and the percentage of the first row and first column: */
+    vector<int> esx0, esx1, esy0, esy1;
+    vector<float> ex0, ey0;
 
-    /* Precalculate row increments */
     int x, y;
+
     /* sax[x] is the exact (floating-point) x coordinate in the source
      * that the destination pixel at x should from.  For example, if we're
      * going 512->256, then dst[0] should come from the pixels from 0..1 and
      * 1..2, so sax[0] is 1. sx is the total number of pixels, so sx/2 is the
      * distance from the start of the sample to its center. */
-    for (x = 0; x < dst->w; x++)
-	sax[x] = sx*x + sx/2;
+    for (x = 0; x < dst->w; x++) {
+	float sax = sx*x + sx/2;
 
-    for (y = 0; y < dst->h; y++)
-	say[y] = sy*y + sy/2;
+	/* sx/2 is the distance from the start of the sample to the center;
+	 * sx/4 is the distance from the center of the sample to the center of
+	 * either pixel. */
+	float xstep = sx/4;
+
+	/* source x coordinates of left and right pixels to sample */
+	esx0.push_back(int(sax-xstep));
+	esx1.push_back(int(sax+xstep));
+
+	if(esx1[x] == esx0[x]) {
+	    /* If the sampled pixels happen to be the same, the distance
+	     * will be 0.  Avoid division by zero. */
+	    ex0.push_back(1.f);
+	} else {
+            int xdist = esx1[x] - esx0[x];
+
+	    /* fleft is the left pixel sampled; +.5 is the center: */
+    	    float fleft = esx0[x] + .5f;
+	    
+	    /* sax is somewhere between the centers of both sampled
+	     * pixels; find the percentage: */
+	    float p = (sax - fleft) / xdist;
+	    ex0.push_back(1-p);
+	}
+    }
+
+    for (y = 0; y < dst->h; y++) {
+	float say = sy*y + sy/2;
+
+	float ystep = sy/4;
+
+	esy0.push_back(int(say-ystep));
+	esy1.push_back(int(say+ystep));
+
+	if(esy0[y] == esy1[y]) {
+    	    ey0.push_back(1.f);
+	} else {
+	    int ydist = esy1[y] - esy0[y];
+      	    float ftop = esy0[y] + .5f;
+	    float p = (say - ftop) / ydist;
+	    ey0.push_back(1-p);
+	}
+    }
 
     tColorRGBA *sp = (tColorRGBA *) src->pixels;
 
     /* Scan destination */
     for (y = 0; y < dst->h; y++) {
-	/* Set destination pointer. */
-
-	/* sx/2 is the distance from the start of the sample to the center;
-	 * sx/4 is the distance from the center of the sample to the center of
-	 * either pixel. */
-        float xstep = sx/4;
-        float ystep = sy/4;
-
-	int ytop = int(say[y]-ystep);
-	int ybottom = int(say[y]+ystep);
-
 	tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
-	tColorRGBA *csp = (tColorRGBA *) ((Uint8 *) sp + ytop * src->pitch);
-	tColorRGBA *ncsp = (tColorRGBA *) ((Uint8 *) sp + ybottom * src->pitch);
+	/* current source pointer and next source pointer (first and second 
+	 * rows sampled for this row): */
+	tColorRGBA *csp = (tColorRGBA *) ((Uint8 *) sp + esy0[y] * src->pitch);
+	tColorRGBA *ncsp = (tColorRGBA *) ((Uint8 *) sp + esy1[y] * src->pitch);
 
 	for (x = 0; x < dst->w; x++) {
-	    /* x coordinates of left and right pixels to sample */
-	    int xleft = int(sax[x]-xstep);
-	    int xright = int(sax[x]+xstep);
-
 	    /* Grab pointers to the sampled pixels: */
-	    tColorRGBA *c00 = csp + xleft;
-	    tColorRGBA *c01 = csp + xright;
-	    tColorRGBA *c10 = ncsp + xleft;
-	    tColorRGBA *c11 = ncsp + xright;
-
-	    /* Distance between the pixels that were sampled: */
-	    int xdist = xright - xleft;
-	    int ydist = ybottom - ytop;
-
-	    float ex0, ex1, ey0, ey1;
-	    if(xdist == 0) {
-		/* If the sampled pixels happen to be the same, the distance
-		 * will be 0.  Avoid division by zero. */
-		ex0 = 1.f; ex1 = 0.f;
-	    } else {
-		/* fleft is the left pixel sampled; +.5 is the center: */
-    		float fleft = xleft + .5f;
-		/* sax[x] is somewhere between the centers of both sampled
-		 * pixels; find the percentage: */
-		float p = (sax[x] - fleft) / xdist;
-		ex0 = 1-p;
-		ex1 = 1-ex0;
-	    }
-
-	    if(ydist == 0) {
-		ey0 = 1.f; ey1 = 0.f;
-	    } else {
-    		float ftop = ytop + .5f;
-		float p = (say[y] - ftop) / ydist;
-		ey0 = 1-p;
-		ey1 = 1-ey0;
-	    }
+	    tColorRGBA *c00 = csp + esx0[x];
+	    tColorRGBA *c01 = csp + esx1[x];
+	    tColorRGBA *c10 = ncsp + esx0[x];
+	    tColorRGBA *c11 = ncsp + esx1[x];
 
 	    for(int c = 0; c < 4; ++c) {
-		float xxx0, xxx1;
-		xxx0 = c01->c[c] * ex1;
-		xxx0 += c00->c[c] * ex0;
-		xxx1 = c11->c[c] * ex1;
-		xxx1 += c10->c[c] * ex0;
+		float x0, x1;
+		x0 = c00->c[c] * ex0[x];
+		x0 += c01->c[c] * (1-ex0[x]);
+		x1 = c10->c[c] * ex0[x];
+		x1 += c11->c[c] * (1-ex0[x]);
 
-		float res = (xxx0 * ey0) + (xxx1 * ey1);
+		float res = (x0 * ey0[y]) + (x1 * (1-ey0[y]));
 		dp->c[c] = Uint8(res);
 	    }
 
@@ -130,12 +133,6 @@ int zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
 	    dp++;
 	}
     }
-
-    /* Remove temp arrays */
-    delete [] sax;
-    delete [] say;
-
-    return (0);
 }
 
 #define VALUE_LIMIT	0.001
