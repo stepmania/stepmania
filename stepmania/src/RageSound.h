@@ -20,18 +20,45 @@ public:
 	virtual CString GetLoadedFilePath() const = 0;
 };
 
-struct RageSoundParams;
-
-class RageSound: public RageSoundBase
+/* These are parameters to play a sound.  These are normally changed before playing begins,
+ * and are constant from then on. */
+struct RageSoundParams
 {
-public:
+	RageSoundParams();
+
+	/* The amount of data to play (or loop): */
+	float m_StartSecond;
+	float m_LengthSeconds;
+
+	/* Amount of time to fade out at the end. */
+	float m_FadeLength;
+
+	float m_Volume;
+
+	/* Pan: -1, left; 1, right */
+	float m_Balance;
+
+	/* Number of samples input and output when changing speed.  Currently,
+	 * this is either 1/1, 5/4 or 4/5. */
+	int speed_input_samples, speed_output_samples;
+
+	bool AccurateSync;
+
+	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
+	 * supported, it'll start immediately. */
+	RageTimer StartTime;
+
 	/* M_STOP (default) stops the sound at the end.
 	 * M_LOOP restarts.
 	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound. */
 	enum StopMode_t {
 		M_STOP, M_LOOP, M_CONTINUE
-	};
+	} StopMode;
+};
 
+class RageSound: public RageSoundBase
+{
+public:
 	RageSound();
 	~RageSound();
 	RageSound(const RageSound &cpy);
@@ -55,8 +82,8 @@ public:
 	bool Load(CString fn, int precache = 2);
 	void Unload();
 
-	void SetStopMode( StopMode_t m );
-	StopMode_t GetStopMode() const;
+	void SetStopMode( RageSoundParams::StopMode_t m );
+	RageSoundParams::StopMode_t GetStopMode() const;
 
 	void SetStartSeconds(float secs = 0); /* default = beginning */
 	void SetLengthSeconds(float secs = -1); /* default = no length limit */
@@ -73,15 +100,16 @@ public:
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;
 	bool SetPositionSeconds( float fSeconds = -1);
+	CString GetLoadedFilePath() const { return m_sFilePath; }
+	bool IsPlaying() const { return playing; }
+
 	void SetAccurateSync( bool yes=true );
 	void SetPlaybackRate( float fScale );
 	void SetFadeLength( float fSeconds );
-	void SetNoFade() { SetFadeLength(0); }
 	void SetVolume( float fVolume );
 	float GetVolume() const;
+	void SetNoFade() { SetFadeLength(0); }
 	float GetPlaybackRate() const;
-	bool IsPlaying() const { return playing; }
-	CString GetLoadedFilePath() const { return m_sFilePath; }
 	void SetStartTime( const RageTimer &tm );
 	RageTimer GetStartTime() const;
 	void SetBalance( float f );
@@ -116,7 +144,7 @@ private:
 	
 	CString m_sFilePath;
 
-	RageSoundParams *m_Param;
+	RageSoundParams m_Param;
 	
 	/* Current position of the output sound; if < 0, nothing will play until it
 	 * becomes positive.  This is recorded in frames, to avoid rounding error. */

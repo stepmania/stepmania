@@ -1021,7 +1021,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	m_soundMusic->SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 
 	/* Keep the music playing after it's finished; we'll stop it. */
-	m_soundMusic->SetStopMode(RageSound::M_CONTINUE);
+	m_soundMusic->SetStopMode( RageSoundParams::M_CONTINUE );
 	m_soundMusic->StartPlaying();
 
 	SOUND->TakeOverSound( m_soundMusic, &GAMESTATE->m_pCurSong->m_Timing );

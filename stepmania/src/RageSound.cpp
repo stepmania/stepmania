@@ -50,37 +50,6 @@ const unsigned read_block_size = 1024;
  * is mostly harmless; the data is small. */
 const int pos_map_backlog_frames = 100000;
 
-/* These are parameters to play a sound.  These are normally changed before playing begins,
- * and are constant from then on. */
-struct RageSoundParams
-{
-	RageSoundParams();
-
-	/* The amount of data to play (or loop): */
-	float m_StartSecond;
-	float m_LengthSeconds;
-
-	/* Amount of time to fade out at the end. */
-	float m_FadeLength;
-
-	float m_Volume;
-
-	/* Pan: -1, left; 1, right */
-	float m_Balance;
-
-	/* Number of samples input and output when changing speed.  Currently,
-	 * this is either 1/1, 5/4 or 4/5. */
-	int speed_input_samples, speed_output_samples;
-
-	bool AccurateSync;
-
-	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
-	 * supported, it'll start immediately. */
-	RageTimer StartTime;
-
-	RageSound::StopMode_t StopMode;
-};
-
 RageSoundParams::RageSoundParams():
 	StartTime( RageZeroTimer )
 {
@@ -91,7 +60,7 @@ RageSoundParams::RageSoundParams():
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
 	AccurateSync = false;
-	StopMode = RageSound::M_STOP;
+	StopMode = RageSoundParams::M_STOP;
 }
 
 RageSound::RageSound()
@@ -101,7 +70,6 @@ RageSound::RageSound()
 
 	original = this;
 	Sample = NULL;
-	m_Param = new RageSoundParams;
 	position = 0;
 	stopped_position = -1;
 	playing = false;
@@ -124,8 +92,6 @@ RageSound::~RageSound()
 	SOUNDMAN->lock.Lock();
 	SOUNDMAN->all_sounds.erase(this);
 	SOUNDMAN->lock.Unlock();
-
-	delete m_Param;
 }
 
 RageSound::RageSound(const RageSound &cpy):
@@ -137,7 +103,7 @@ RageSound::RageSound(const RageSound &cpy):
 	Sample = NULL;
 
 	original = cpy.original;
-	m_Param = new RageSoundParams( *cpy.m_Param );
+	m_Param = cpy.m_Param;
 	position = cpy.position;
 	playing = false;
 
@@ -190,9 +156,9 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	
 	// Check for "loop" hint
 	if( m_sFilePath.Find("loop") != -1 )
-		SetStopMode( M_LOOP );
+		SetStopMode( RageSoundParams::M_LOOP );
 	else
-		SetStopMode( M_STOP );
+		SetStopMode( RageSoundParams::M_STOP );
 
 	CString error;
 	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
@@ -229,7 +195,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 void RageSound::SetStartSeconds( float secs )
 {
 	ASSERT(!playing);
-	m_Param->m_StartSecond = secs;
+	m_Param.m_StartSecond = secs;
 }
 
 void RageSound::SetLengthSeconds(float secs)
@@ -237,7 +203,7 @@ void RageSound::SetLengthSeconds(float secs)
 	RAGE_ASSERT_M( secs == -1 || secs >= 0, ssprintf("%f",secs) );
 	ASSERT(!playing);
 	
-	m_Param->m_LengthSeconds = secs;
+	m_Param.m_LengthSeconds = secs;
 }
 
 /* Read data at the rate we're playing it.  We only do this to smooth out the rate
@@ -339,14 +305,14 @@ int RageSound::FillBuf(int bytes)
 		unsigned read_size = read_block_size;
 		int cnt = 0;
 
-		if( m_Param->speed_input_samples != m_Param->speed_output_samples )
+		if( m_Param.speed_input_samples != m_Param.speed_output_samples )
 		{
 			/* Read enough data to produce read_block_size. */
-			read_size = read_size * m_Param->speed_input_samples / m_Param->speed_output_samples;
+			read_size = read_size * m_Param.speed_input_samples / m_Param.speed_output_samples;
 
 			/* Read in blocks that are a multiple of a sample, the number of
 			 * channels and the number of input samples. */
-			int block_size = sizeof(Sint16) * channels * m_Param->speed_input_samples;
+			int block_size = sizeof(Sint16) * channels * m_Param.speed_input_samples;
 			read_size = (read_size / block_size) * block_size;
 			ASSERT(read_size < sizeof(inbuf));
 		}
@@ -365,7 +331,7 @@ int RageSound::FillBuf(int bytes)
 			return 0;
 		}
 
-		RateChange( inbuf, cnt, m_Param->speed_input_samples, m_Param->speed_output_samples, channels );
+		RateChange( inbuf, cnt, m_Param.speed_input_samples, m_Param.speed_output_samples, channels );
 
 		/* Add the data to the buffer. */
 		databuf.write((const char *) inbuf, cnt);
@@ -380,10 +346,10 @@ int RageSound::FillBuf(int bytes)
  * that would be read. */
 int RageSound::GetData(char *buffer, int size)
 {
-	if( m_Param->m_LengthSeconds != -1 )
+	if( m_Param.m_LengthSeconds != -1 )
 	{
 		/* We have a length; only read up to the end. */
-		const float LastSecond = m_Param->m_StartSecond + m_Param->m_LengthSeconds;
+		const float LastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
 		int FramesToRead = int(LastSecond*samplerate()) - position;
 
 		/* If it's negative, we're past the end, so cap it at 0. Don't read
@@ -450,7 +416,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 				continue; /* we have more */
 
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
-			if( m_Param->StopMode == M_LOOP )
+			if( m_Param.StopMode == RageSoundParams::M_LOOP )
 			{
 				NumRewindsThisCall++;
 				if(NumRewindsThisCall > 3)
@@ -461,13 +427,13 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 					 * over the remainder.  If we keep doing this, we'll chew CPU rewinding,
 					 * so stop. */
 					LOG->Warn( "Sound %s is busy looping.  Sound stopped (start = %f, length = %f)",
-						GetLoadedFilePath().c_str(), m_Param->m_StartSecond, m_Param->m_LengthSeconds );
+						GetLoadedFilePath().c_str(), m_Param.m_StartSecond, m_Param.m_LengthSeconds );
 
 					return 0;
 				}
 
 				/* Rewind and start over. */
-				SetPositionSeconds( m_Param->m_StartSecond );
+				SetPositionSeconds( m_Param.m_StartSecond );
 
 				/* Make sure we can get some data.  If we can't, then we'll have
 				 * nothing to send and we'll just end up coming back here. */
@@ -475,7 +441,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 				if(GetData(NULL, size) == 0)
 				{
 					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
-						GetLoadedFilePath().c_str(), m_Param->m_StartSecond );
+						GetLoadedFilePath().c_str(), m_Param.m_StartSecond );
 
 					/* Stop here. */
 					return bytes_stored;
@@ -485,7 +451,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 			}
 
 			/* Not looping.  Normally, we'll just stop here. */
-			if( m_Param->StopMode == M_STOP )
+			if( m_Param.StopMode == RageSoundParams::M_STOP )
 				break;
 
 			/* We're out of data, but we're not going to stop, so fill in the
@@ -504,16 +470,16 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 		 * m_LengthFrames is -1, we don't know the length we're playing.
 		 * (m_LengthFrames is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if( m_Param->m_FadeLength != 0 && m_Param->m_LengthSeconds != -1 )
+		if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
 		{
 			Sint16 *p = (Sint16 *) buffer;
 			int this_position = position;
 
 			for(int samp = 0; samp < got_frames; ++samp)
 			{
-				const float fLastSecond = m_Param->m_StartSecond+m_Param->m_LengthSeconds;
+				const float fLastSecond = m_Param.m_StartSecond+m_Param.m_LengthSeconds;
 				const float fSecsUntilSilent = fLastSecond - float(this_position) / samplerate();
-				float fVolPercent = fSecsUntilSilent / m_Param->m_FadeLength;
+				float fVolPercent = fSecsUntilSilent / m_Param.m_FadeLength;
 
 				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
 				for(int i = 0; i < channels; ++i) {
@@ -524,11 +490,11 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 			}
 		}
 
-		if( m_Param->m_Balance != 0 )
+		if( m_Param.m_Balance != 0 )
 		{
 			Sint16 *p = (Sint16 *) buffer;
-			const float fLeft = SCALE( m_Param->m_Balance, -1, 1, 1, 0 );
-			const float fRight = SCALE( m_Param->m_Balance, -1, 1, 0, 1 );
+			const float fLeft = SCALE( m_Param.m_Balance, -1, 1, 1, 0 );
+			const float fRight = SCALE( m_Param.m_Balance, -1, 1, 0, 1 );
 			const int iLeft = int(fLeft*256);
 			const int iRight = int(fRight*256);
 			RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
@@ -565,9 +531,9 @@ void RageSound::StartPlaying()
 
 	/* If StartTime is in the past, then we probably set a start time but took too
 	 * long loading.  We don't want that; log it, since it can be unobvious. */
-	if( !m_Param->StartTime.IsZero() && m_Param->StartTime.Ago() > 0 )
+	if( !m_Param.StartTime.IsZero() && m_Param.StartTime.Ago() > 0 )
 		LOG->Trace("Sound \"%s\" has a start time %f seconds in the past",
-			GetLoadedFilePath().c_str(), m_Param->StartTime.Ago() );
+			GetLoadedFilePath().c_str(), m_Param.StartTime.Ago() );
 
 	/* Tell the sound manager to start mixing us. */
 	playing = true;
@@ -752,7 +718,7 @@ float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) c
 bool RageSound::SetPositionSeconds( float fSeconds )
 {
 	if( fSeconds == -1 )
-		fSeconds = m_Param->m_StartSecond;
+		fSeconds = m_Param.m_StartSecond;
 
 	return SetPositionFrames( int(fSeconds * samplerate()) );
 }
@@ -797,7 +763,7 @@ bool RageSound::SetPositionFrames( int frames )
 	ASSERT(Sample);
 
 	int ret;
-	if( m_Param->AccurateSync )
+	if( m_Param.AccurateSync )
 		ret = Sample->SetPosition_Accurate(ms);
 	else
 		ret = Sample->SetPosition_Fast(ms);
@@ -822,19 +788,19 @@ bool RageSound::SetPositionFrames( int frames )
 	return true;
 }
 
-void RageSound::SetStopMode( StopMode_t m )
+void RageSound::SetStopMode( RageSoundParams::StopMode_t m )
 {
-	m_Param->StopMode = m;
+	m_Param.StopMode = m;
 }
 
-RageSound::StopMode_t RageSound::GetStopMode() const
+RageSoundParams::StopMode_t RageSound::GetStopMode() const
 {
-	return m_Param->StopMode;
+	return m_Param.StopMode;
 }
 
 void RageSound::SetAccurateSync( bool yes )
 {
-	m_Param->AccurateSync = yes;
+	m_Param.AccurateSync = yes;
 }
 
 void RageSound::SetPlaybackRate( float NewSpeed )
@@ -846,47 +812,47 @@ void RageSound::SetPlaybackRate( float NewSpeed )
 
 	if( NewSpeed == 1.00f )
 	{
-		m_Param->speed_input_samples = 1; m_Param->speed_output_samples = 1;
+		m_Param.speed_input_samples = 1; m_Param.speed_output_samples = 1;
 	} else {
 		/* Approximate it to the nearest tenth. */
-		m_Param->speed_input_samples = int( roundf(NewSpeed * 10) );
-		m_Param->speed_output_samples = 10;
+		m_Param.speed_input_samples = int( roundf(NewSpeed * 10) );
+		m_Param.speed_output_samples = 10;
 	}
 }
 
 void RageSound::SetFadeLength( float fSeconds )
 {
-	m_Param->m_FadeLength = fSeconds;
+	m_Param.m_FadeLength = fSeconds;
 }
 
 void RageSound::SetVolume( float fVolume )
 {
-	m_Param->m_Volume = fVolume;
-}
-
-float RageSound::GetPlaybackRate() const
-{
-	return float(m_Param->speed_input_samples) / m_Param->speed_output_samples;
+	m_Param.m_Volume = fVolume;
 }
 
 float RageSound::GetVolume() const
 {
-	return m_Param->m_Volume;
+	return m_Param.m_Volume;
+}
+
+float RageSound::GetPlaybackRate() const
+{
+	return float(m_Param.speed_input_samples) / m_Param.speed_output_samples;
 }
 
 void RageSound::SetStartTime( const RageTimer &tm )
 {
-	m_Param->StartTime = tm;
+	m_Param.StartTime = tm;
 }
 
 RageTimer RageSound::GetStartTime() const
 {
-	return m_Param->StartTime;
+	return m_Param.StartTime;
 }
 
 void RageSound::SetBalance( float f )
 {
-	m_Param->m_Balance = f;
+	m_Param.m_Balance = f;
 }
 
 /*

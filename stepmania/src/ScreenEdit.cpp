@@ -374,7 +374,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	m_soundMusic.Load(m_pSong->GetMusicPath());
 	m_soundMusic.SetAccurateSync(true);
-	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
+	m_soundMusic.SetStopMode( RageSoundParams::M_CONTINUE );
 
 	m_soundAssistTick.Load(		THEME->GetPathToS("ScreenEdit assist tick") );
 }
