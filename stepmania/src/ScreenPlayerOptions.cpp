@@ -282,8 +282,8 @@ void ScreenPlayerOptions::ExportOptions()
 		case 6:	po.m_bTimeSpacing = false;	po.m_fScrollSpeed = 3.0f;	break;
 		case 7:	po.m_bTimeSpacing = false;	po.m_fScrollSpeed = 5.0f;	break;
 		case 8:	po.m_bTimeSpacing = false;	po.m_fScrollSpeed = 8.0f;	break;
-		case 9: po.m_bTimeSpacing = true;	po.m_fScrollBPM = 200;		break;
-		case 10:po.m_bTimeSpacing = true;	po.m_fScrollBPM = 300;		break;
+		case 9: po.m_bTimeSpacing = true;	po.m_fScrollSpeed = 1.0f;	po.m_fScrollBPM = 200;		break;
+		case 10:po.m_bTimeSpacing = true;	po.m_fScrollSpeed = 1.0f;	po.m_fScrollBPM = 300;		break;
 		default:	ASSERT(0);
 		}
 
