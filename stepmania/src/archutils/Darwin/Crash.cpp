@@ -29,12 +29,12 @@ void *GetCrashedFramePtr()
     return (crashedFramePtr ? crashedFramePtr : __builtin_return_address(2));
 }
 
-void InformUserOfCrash()
+void InformUserOfCrash( const CString &sPath )
 {
     CFStringRef error = CFStringCreateWithCString(NULL,
                                                   "StepMania has crashed.  Debug information has been output to\n"
                                                   "\n"
-                                                  "    /tmp/crashinfo.txt\n"
+                                                  "    " + sPath + "\n"
                                                   "\n"
                                                   "Please report a bug at:\n"
                                                   "\n"

@@ -13,6 +13,6 @@
 
 OSStatus HandleException(ExceptionInformation *theException);
 void *GetCrashedFramePtr();
-void InformUserOfCrash();
+void InformUserOfCrash( const CString &sPath );
 
 #endif /* DARWIN_CRASH_H */
