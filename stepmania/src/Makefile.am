@@ -110,6 +110,9 @@ if HAVE_FFMPEG
 MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif
 
+Lights = arch/Lights/LightsDriver.h \
+		 arch/Lights/LightsDriver_LinuxSerial.cpp arch/Lights/LightsDriver_LinuxSerial.h
+
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \
 		 arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
 
@@ -120,7 +123,7 @@ ArchUtils += archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
 	     archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h
 endif
 
-Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) $(LowLevelWindow) $(ArchUtils) \
+Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) $(Lights) $(LowLevelWindow) $(ArchUtils) \
        arch/arch.cpp arch/arch.h arch/arch_default.h arch/arch_linux.h
 
 RageSoundFileReaders = \
@@ -187,8 +190,8 @@ Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.h Bookkeeper.cpp FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
-NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
-ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
+LightsManager.cpp LightsManager.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
+ProfileManager.cpp ProfileManager.h ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
 UnlockSystem.cpp UnlockSystem.h
 
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
