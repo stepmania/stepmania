@@ -35,6 +35,13 @@ enum pixfmts {
 	NUM_PIX_FORMATS
 };
 
+/* Return true for pixfmts that need to be converted to FMT_RGBA8 for GLDirect
+ * (those with packed pixel data types). */
+static bool IsPackedPixelFormat(GLenum pixfmt)
+{
+    return pixfmt == FMT_RGBA4 || pixfmt == FMT_RGB5A1;
+}
+
 /* Definitions for various texture formats.  We'll probably want RGBA
  * in OpenGL, not ARGB ... All of these are in local (little) endian;
  * this may or may not need adjustment for OpenGL. */
@@ -360,10 +367,28 @@ retry:
 	}
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
-	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
-			m_iTextureWidth, m_iTextureHeight, 0,
-			PixFmtMasks[pixfmt].format, PixFmtMasks[pixfmt].type, img->pixels);
+	if(DISPLAY->GetSpecs().bPackedPixelsCauseProblems &&
+	   IsPackedPixelFormat(pixfmt))
+	{
+	    /* GLDirect crashes if we give it packed pixel format.  We need
+	     * to convert to a non-packed format (FMT_RGBA8).  However, we
+	     * can still get 16-bit textures by passing it the appropriate
+	     * internalformat; it'll simply truncate the extra bits.  This
+	     * means that it'll still use the dithering we gave it; we just
+	     * have to do a bit of redundant conversion work. */
+	    ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PixFmtMasks[FMT_RGBA8].bpp,
+		    PixFmtMasks[FMT_RGBA8].masks[0], PixFmtMasks[FMT_RGBA8].masks[1],
+		    PixFmtMasks[FMT_RGBA8].masks[2], PixFmtMasks[FMT_RGBA8].masks[3]);
 
+	    /* Make sure we use the same internalformat that we dithered the image to. */
+	    glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
+			    m_iTextureWidth, m_iTextureHeight, 0,
+			    PixFmtMasks[FMT_RGBA8].format, PixFmtMasks[FMT_RGBA8].type, img->pixels);
+	} else {
+	    glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
+			    m_iTextureWidth, m_iTextureHeight, 0,
+			    PixFmtMasks[pixfmt].format, PixFmtMasks[pixfmt].type, img->pixels);
+	}
 	/* If we're paletted, and didn't get the 8-bit palette we asked for ...*/
 	if(img->format->BitsPerPixel == 8)
 	{
