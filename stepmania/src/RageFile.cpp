@@ -345,7 +345,7 @@ void RageFile::Rewind()
 
 int RageFile::Read( CString &buffer, int bytes )
 {
-	buffer.clear();
+	buffer.erase( buffer.begin(), buffer.end() );
 	buffer.reserve( bytes != -1? bytes: this->GetFileSize() );
 
 	int ret = 0;
