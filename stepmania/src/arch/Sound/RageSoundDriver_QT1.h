@@ -33,6 +33,7 @@ protected:
 
 public:
     RageSound_QT1();
+    CString Init();
     virtual ~RageSound_QT1();
     static void GetData(QT::SndChannel *chan, QT::SndCommand *cmd_passed);
 };

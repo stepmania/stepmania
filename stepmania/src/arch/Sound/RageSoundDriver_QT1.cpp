@@ -33,6 +33,13 @@ namespace
 
 RageSound_QT1::RageSound_QT1()
 {
+	channel = NULL;
+	buffer[0] = NULL;
+	buffer[1] = NULL;
+}
+
+CString RageSound_QT1::Init()
+{
     SndCallBackUPP callback;
     callback = NewSndCallBackUPP(GetData);
     memset(&header, 0, sizeof(header));
@@ -59,11 +66,7 @@ RageSound_QT1::RageSound_QT1()
     OSErr err = SndNewChannel(&channel, sampledSynth, initStereo, callback);
 
     if (err != noErr)
-    {
-        delete channel;
-        channel = NULL;
-        RageException::ThrowNonfatal("Unable to create audio channel");
-    }
+        return "Unable to create audio channel";
 
     SndCommand cmd;
     cmd.cmd = clockComponentCmd;
@@ -87,9 +90,9 @@ RageSound_QT1::RageSound_QT1()
     err |= SndDoCommand(channel, &cmd, false);
 
     if (err != noErr)
-        RageException::ThrowNonfatal("Unable to create audio channel");
+        return "Unable to create audio channel";
 }
-
+    
 RageSound_QT1::~RageSound_QT1()
 {
     if (channel)

@@ -39,6 +39,7 @@ private:
                               
 public:
     RageSound_CA();
+    CString Init();
     ~RageSound_CA();
     float GetPlayLatency() const { return mLatency; }
     int64_t GetPosition(const RageSoundBase *sound) const;

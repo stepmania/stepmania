@@ -51,16 +51,20 @@ static CString FormatToString( int fmt )
 
 RageSound_CA::RageSound_CA()
 {
+	mOutputDevice = NULL;
+	mConverter = NULL;
+}
+
+CString RageSound_OSS::Init()
+{
 	try
 	{
-		AudioDeviceID dID;
-	
-		dID = CAAudioHardwareSystem::GetDefaultDevice(false, false);
+		AudioDeviceID dID = CAAudioHardwareSystem::GetDefaultDevice( false, false );
 		mOutputDevice = new CAAudioHardwareDevice(dID);
 	}
 	catch (const CAException& e)
 	{
-		RageException::ThrowNonfatal("Couldn't create default output device.");
+		return "Couldn't create default output device.";
 	}
     
 	try
@@ -69,20 +73,16 @@ RageSound_CA::RageSound_CA()
 	}
 	catch (const CAException& e)
 	{
-		RageException::ThrowNonfatal("Couldn't set the nominal sample rate.");
+		return "Couldn't set the nominal sample rate.";
 	}
-	AudioStreamID sID;
-
-	sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
+	AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
 	CAAudioHardwareStream stream( sID );
 
 	try
 	{
 		mOutputDevice->AddPropertyListener(kAudioPropertyWildcardChannel,
-										   kAudioPropertyWildcardSection,
-										   kAudioDeviceProcessorOverload,
-										   OverloadListener, this);
-    }
+				   kAudioPropertyWildcardSection, kAudioDeviceProcessorOverload, OverloadListener, this);
+	}
 	catch (const CAException& e)
 	{
 		LOG->Warn("Could not install the overload listener.");
@@ -97,10 +97,7 @@ RageSound_CA::RageSound_CA()
 	stream.SetCurrentIOProcFormat(CanonicalFormat);
 	
 	if (AudioConverterNew(&SMFormat, &CanonicalFormat, &mConverter))
-	{
-		delete mOutputDevice;
-		RageException::ThrowNonfatal("Couldn't create the audio converter");
-	}
+		return "Couldn't create the audio converter";
 	
 	try
 	{
@@ -131,9 +128,7 @@ RageSound_CA::RageSound_CA()
 	}
 	catch (const CAException& e)
 	{
-		delete mOutputDevice;
-		AudioConverterDispose(mConverter);
-		RageException::ThrowNonfatal("Couldn't get Latency.");
+		return "Couldn't get latency.";
 	}
 
 	StartDecodeThread();
@@ -145,17 +140,18 @@ RageSound_CA::RageSound_CA()
 	}
 	catch(const CAException& e)
 	{
-		delete mOutputDevice;
-		AudioConverterDispose(mConverter);
-		RageException::Throw("Couldn't start the IOProc.");
+		return "Couldn't start the IOProc.";
 	}
 }
 
 RageSound_CA::~RageSound_CA()
 {
-	mOutputDevice->StopIOProc(GetData);
+	if( mOutputDevice != NULL )
+		mOutputDevice->StopIOProc( GetData );
 	delete mOutputDevice;
-	AudioConverterDispose(mConverter);
+
+	if( mConverter != NULL )
+		AudioConverterDispose( mConverter );
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
