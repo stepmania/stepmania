@@ -665,6 +665,7 @@ void RageSound::SoundIsFinishedPlaying()
 
 RageSound *RageSound::Play( const RageSoundParams *params )
 {
+	ASSERT( Sample );
 	return SOUNDMAN->PlaySound( *this, params );
 }
 
