@@ -105,7 +105,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 			case COIN_HOME:
 			case COIN_FREE:
 				SOUND->StopMusic();
-				/* We already played the it was a coin was inserted.  Don't play it again. */
+				/* We already played the coin sound.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
 					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does

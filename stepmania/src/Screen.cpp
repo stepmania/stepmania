@@ -290,6 +290,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenOptionsMaster.h"
 #include "ScreenCenterImage.h"
 #include "ScreenTestInput.h"
+#include "ScreenBookkeeping.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -389,6 +390,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenOptionsMaster );
 	IF_RETURN( ScreenCenterImage );
 	IF_RETURN( ScreenTestInput );
+	IF_RETURN( ScreenBookkeeping );
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }

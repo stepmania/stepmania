@@ -52,6 +52,7 @@
 #include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageFile.h"
+#include "Bookkeeper.h"
 
 
 #if defined(_XBOX)
@@ -807,6 +808,7 @@ int main(int argc, char* argv[])
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	SOUND		= new RageSounds;
 	PROFILEMAN	= new ProfileManager;
+	BOOKKEEPER	= new Bookkeeper;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
@@ -909,6 +911,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( PROFILEMAN );
+	SAFE_DELETE( BOOKKEEPER );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
@@ -942,6 +945,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		if( !GAMESTATE->m_bIsOnSystemMenu )
 		{
 			SCREENMAN->SystemMessage( "OPERATOR" );
+			GAMESTATE->Reset();
 			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		}
 		return true;
@@ -951,6 +955,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		if( GAMESTATE->m_bEditing )	// no coins while editing
 			break;
 		GAMESTATE->m_iCoins++;
+		BOOKKEEPER->CoinInserted();
 		SCREENMAN->RefreshCreditsMessages();
 		SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
