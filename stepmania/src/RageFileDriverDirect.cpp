@@ -66,10 +66,11 @@ RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
 
 static CString MakeTempFilename( const CString &sPath )
 {
-	/* "Foo/bar/baz" -> "Foo/bar/new.baz".  Prepend to the basename, so if we're
-	 * writing something that might be wildcard-searched, these temp files won't
-	 * match. */
-	return Dirname(sPath) + "new." + Basename(sPath);
+	/* "Foo/bar/baz" -> "Foo/bar/new.baz.new".  Both prepend and append: we don't
+	 * want a wildcard search for the filename to match (foo.txt.new matches foo.txt*),
+	 * and we don't want to have the same extension (so "new.foo.sm" doesn't show up
+	 * in *.sm). */
+	return Dirname(sPath) + "new." + Basename(sPath) + ".new";
 }
 
 RageFileObj *MakeFileObjDirect( CString sPath, int mode, RageFile &p, int &err )
