@@ -208,24 +208,23 @@ ScreenSelectGroup::ScreenSelectGroup()
 			for( int r=0; r<TITLES_ROWS; r++ )	// foreach row
 			{
 				int iIndex = c*TITLES_ROWS + r;
-				if( iIndex < aSongs.GetSize() )
+				if( iIndex >= aSongs.GetSize() )
+					continue;
+
+				if( c == TITLES_COLUMNS-1  &&  r == TITLES_ROWS-1 )
 				{
-					if( c == TITLES_COLUMNS-1  &&  r == TITLES_ROWS-1 )
-					{
-						sText += ssprintf( "%d more.....", aSongs.GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
-					}
-					else
-					{
-						CString sTitle = aSongs[iIndex]->GetFullTitle();
-						// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
-						if( sTitle.GetLength() > 40 )
-						{
-							sTitle = sTitle.Left( 37 );
-							sTitle += "...";
-						}
-						sText += sTitle + "\n";
-					}
+					sText += ssprintf( "%d more.....", aSongs.GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
+					continue;
 				}
+
+				CString sTitle = aSongs[iIndex]->GetFullTitle();
+				// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
+				if( sTitle.GetLength() > 40 )
+				{
+					sTitle = sTitle.Left( 37 );
+					sTitle += "...";
+				}
+				sText += sTitle + "\n";
 			}
 			m_sContentsText[i][c] = sText;
 		}
