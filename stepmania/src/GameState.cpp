@@ -199,6 +199,15 @@ RageColor GameState::GetStageColor()
 	else										return STAGE_COLOR( min(m_iCurrentStageIndex,4) );
 }
 
+int GameState::GetCourseSongIndex()
+{
+	int iSongIndex = 0;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( IsPlayerEnabled(p) )
+			iSongIndex = max( iSongIndex, m_CurStageStats.iSongsPassed[p] );
+	return iSongIndex;
+}
+
 GameDef* GameState::GetCurrentGameDef()
 {
 	ASSERT( m_CurGame != GAME_INVALID );	// the game must be set before calling this

@@ -34,16 +34,16 @@
 //
 // Defines
 //
-#define SONGSEL_SCREEN				THEME->GetMetric("ScreenGameplay","SongSelectScreen")
-#define MAXCOMBO_X					THEME->GetMetricF("ScreenGameplay","MAXCOMBOX")
-#define MAXCOMBO_Y					THEME->GetMetricF("ScreenGameplay","MAXCOMBOY")
-#define MAXCOMBO_ZOOM				THEME->GetMetricF("ScreenGameplay","MAXCOMBOZoom")
-#define BPM_X					THEME->GetMetricF("ScreenGameplay","BPMX")
-#define BPM_Y					THEME->GetMetricF("ScreenGameplay","BPMY")
-#define BPM_ZOOM				THEME->GetMetricF("ScreenGameplay","BPMZoom")
-#define STAGENAME_X					THEME->GetMetricF("ScreenGameplay","StagenameX")
-#define STAGENAME_Y					THEME->GetMetricF("ScreenGameplay","StagenameY")
-#define STAGENAME_ZOOM				THEME->GetMetricF("ScreenGameplay","StagenameZoom")
+#define SONGSEL_SCREEN					THEME->GetMetric("ScreenGameplay","SongSelectScreen")
+#define MAXCOMBO_X						THEME->GetMetricF("ScreenGameplay","MAXCOMBOX")		// Please follow the capitalization conventions used everywhere else.  This is case sensitive.  -Chris
+#define MAXCOMBO_Y						THEME->GetMetricF("ScreenGameplay","MAXCOMBOY")
+#define MAXCOMBO_ZOOM					THEME->GetMetricF("ScreenGameplay","MAXCOMBOZoom")
+#define BPM_X							THEME->GetMetricF("ScreenGameplay","BPMX")
+#define BPM_Y							THEME->GetMetricF("ScreenGameplay","BPMY")
+#define BPM_ZOOM						THEME->GetMetricF("ScreenGameplay","BPMZoom")
+#define STAGENAME_X						THEME->GetMetricF("ScreenGameplay","StagenameX")
+#define STAGENAME_Y						THEME->GetMetricF("ScreenGameplay","StagenameY")
+#define STAGENAME_ZOOM					THEME->GetMetricF("ScreenGameplay","StagenameZoom")
 #define LIFE_FRAME_X					THEME->GetMetricF("ScreenGameplay","LifeFrameX")
 #define LIFE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("LifeFrame%sY",e?"Extra":""))
 #define SCORE_FRAME_X					THEME->GetMetricF("ScreenGameplay","ScoreFrameX")
@@ -106,64 +106,64 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
 
-	int p;
-
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_pLifeMeter[p] = NULL;
-		m_pScoreDisplay[p] = NULL;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_pLifeMeter[p] = NULL;
+			m_pScoreDisplay[p] = NULL;
+		}
 	}
 
 	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
 
-	SOUNDMAN->StopMusic();
-
 
 	GAMESTATE->m_CurStageStats = StageStats();	// clear values
-	
+
 	// Fill in m_CurStageStats
-	for( p=0; p<NUM_PLAYERS; p++ )
+	NoteData notedata;
+	switch( GAMESTATE->m_PlayMode )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;	// skip
-
-		NoteData notedata;
-		switch( GAMESTATE->m_PlayMode )
+	case PLAY_MODE_ARCADE:
 		{
-		case PLAY_MODE_ARCADE:
 			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
-			GAMESTATE->m_CurStageStats.iMeter[p] = GAMESTATE->m_pCurNotes[p]->GetMeter();
-
-			GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
-			GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = notedata.GetPossibleDancePoints();
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
+			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				GAMESTATE->m_CurStageStats.pSong = NULL;
-				GAMESTATE->m_CurStageStats.iMeter[p] = 0;
-
-				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = 0;
-
-				Course* pCourse = GAMESTATE->m_pCurCourse;
-				vector<Song*> apSongs;
-				vector<Notes*> apNotes;
-				CStringArray asModifiers;
-				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
-
-				for( unsigned i=0; i<apNotes.size(); i++ )
-				{
-					GAMESTATE->m_CurStageStats.iMeter[p] += apNotes[i]->GetMeter();
-					apNotes[i]->GetNoteData( &notedata );
-					int iPossibleDancePoints = notedata.GetPossibleDancePoints();
-					GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] += iPossibleDancePoints;
-				}
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;	// skip
+				GAMESTATE->m_CurStageStats.iMeter[p] = GAMESTATE->m_pCurNotes[p]->GetMeter();
+				GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
+				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = notedata.GetPossibleDancePoints();
 			}
-			break;
-		default:
-			ASSERT(0);
 		}
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			pCourse->GetCourseInfo( m_apCourseSongs, m_apCourseNotes, m_asCourseModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
+
+			int iTotalMeter = 0;
+			int iTotalPossibleDancePoints = 0;
+			for( unsigned i=0; i<m_apCourseNotes.size(); i++ )
+			{
+				iTotalMeter += m_apCourseNotes[i]->GetMeter();
+				m_apCourseNotes[i]->GetNoteData( &notedata );
+				iTotalPossibleDancePoints += notedata.GetPossibleDancePoints();
+			}
+
+			GAMESTATE->m_CurStageStats.pSong = NULL;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;	// skip
+				GAMESTATE->m_CurStageStats.iMeter[p] = iTotalMeter;
+				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = iTotalPossibleDancePoints;
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
 	}
 
 
@@ -187,7 +187,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	this->AddChild( &m_Background );
 
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
@@ -495,23 +495,10 @@ bool ScreenGameplay::IsLastSong()
 	case PLAY_MODE_ENDLESS:
 		{
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-
 			if( pCourse->m_bRepeat )
 				return false;
-
-			vector<Song*> apSongs;
-			vector<Notes*> apNotes;
-			CStringArray asModifiers;
-			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
-
-			/* XXX: Should we really be using iSongsPassed to figure out what song we're
-			 * on?  Wouldn't m_iCurrentStageIndex be better for that? -glenn */
-			int iPlaySongIndex = 0;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
-					iPlaySongIndex = max( iPlaySongIndex, GAMESTATE->m_CurStageStats.iSongsPassed[p] );
-
-			return unsigned(iPlaySongIndex) >= apSongs.size();	// there are no more songs left
+			else
+                return GAMESTATE->GetCourseSongIndex() == (int)m_apCourseSongs.size();
 		}
 		break;
 	default:
@@ -540,31 +527,18 @@ void ScreenGameplay::LoadNextSong()
 				if( GAMESTATE->m_CurStageStats.iSongsPassed[p] == 0 )
 					GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
 			}
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			vector<Song*> apSongs;
-			vector<Notes*> apNotes;
-			CStringArray asModifiers;
+			int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
+			iPlaySongIndex %= m_apCourseSongs.size();
+			GAMESTATE->m_pCurSong = m_apCourseSongs[iPlaySongIndex];
 
-			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
-
-			int iPlaySongIndex = 0;
-			for( p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
-					iPlaySongIndex = max( iPlaySongIndex, GAMESTATE->m_CurStageStats.iSongsPassed[p] );
-			iPlaySongIndex %= apSongs.size();
-
-			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
-				GAMESTATE->m_pCurNotes[p] = apNotes[iPlaySongIndex];
-				// Wipe the options used on the last song (including course specified ones)
-				GAMESTATE->m_PlayerOptions[p].Init();	
-				// Now restore the player's originally selected options.
+				GAMESTATE->m_pCurNotes[p] = m_apCourseNotes[iPlaySongIndex];
+				// Restore the player's originally selected options.
 				GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
-				if( asModifiers[iPlaySongIndex] != "" )		// some modifiers specified
-					GAMESTATE->m_PlayerOptions[p].FromString( asModifiers[iPlaySongIndex] );	// put them into effect
+				// Put courses options into effect.
+				GAMESTATE->m_PlayerOptions[p].FromString( m_asCourseModifiers[iPlaySongIndex] );
 			}
-
 		}
 		break;
 	default:
@@ -1070,7 +1044,7 @@ void SaveChanges()
 	 * playing out of a course, and use that here, so these things wouldn't need to
 	 * special case play modes.  Need to make sure m_pCurCourse gets erased
 	 * correctly, though. -glenn */
-	/* That's a very clever idea!   I will look into this soon.  -Chris */
+	/* That's a very clever idea!   I should look into this.  -Chris */
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -1080,11 +1054,9 @@ void SaveChanges()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			for( int i=0; i<GAMESTATE->m_pCurCourse->GetNumStages(); i++ )
-			{
-				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
-				pSong->Save();
-			}
+			// FIXME
+			//for( int i=0; i<m_apCourseSongs.size(); i++ )
+			//	m_apCourseSongs[i]->Save();
 		}
 		break;
 	default:
@@ -1105,11 +1077,12 @@ void DontSaveChanges()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			for( int i=0; i<GAMESTATE->m_pCurCourse->GetNumStages(); i++ )
-			{
-				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
-				ld.LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath(), *pSong );
-			}
+			// FIXME
+//			for( int i=0; i<GAMESTATE->m_pCurCourse->GetNumStages(); i++ )
+//			{
+//				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
+//				ld.LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath(), *pSong );
+//			}
 		}
 		break;
 	default:

@@ -236,9 +236,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
-				CString sName = pts.pCourse->m_MachineScores[pts.nt][l].sName;
-				int iDancePoints = pts.pCourse->m_MachineScores[pts.nt][l].iDancePoints;
-				float fSurviveTime = pts.pCourse->m_MachineScores[pts.nt][l].fSurviveTime;
+				CString sName = pts.pCourse->m_RankingScores[pts.nt][l].sName;
+				int iDancePoints = pts.pCourse->m_RankingScores[pts.nt][l].iDancePoints;
+				float fSurviveTime = pts.pCourse->m_RankingScores[pts.nt][l].fSurviveTime;
 				m_textNames[l].SetText( sName );
 				m_textScores[l].SetText( "" );
 				m_textPoints[l].SetText( ssprintf("%04d",iDancePoints) );

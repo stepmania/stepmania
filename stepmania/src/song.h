@@ -206,7 +206,7 @@ public:
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
 	void GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
-	Notes* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	Notes* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true, CString sDescription = "" ) const;
 	void GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;

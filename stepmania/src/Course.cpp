@@ -15,7 +15,6 @@
 #include "Song.h"
 #include "GameManager.h"
 #include "SongManager.h"
-#include "GameState.h"
 #include "RageException.h"
 #include "RageLog.h"
 #include "MsdFile.h"
@@ -24,31 +23,31 @@
 #include "RageUtil.h"
 #include "TitleSubstitution.h"
 
+
 Course::Course()
 {
+	m_bIsAutoGen = false;
 	m_bRepeat = false;
 	m_bRandomize = false;
 	m_iLives = -1;
-	m_iExtra = 0;
-	m_iNumTimesPlayed = 0;
 
 	//
 	// Init high scores
 	//
-	unsigned i, j;
-	for( i=0; i<NUM_NOTES_TYPES; i++ )
-		for( j=0; j<NUM_RANKING_LINES; j++ )
+	for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
+		for( unsigned j=0; j<NUM_RANKING_LINES; j++ )
 		{
-			m_MachineScores[i][j].iDancePoints = 573;
-			m_MachineScores[i][j].fSurviveTime = 57.3f;
-			m_MachineScores[i][j].sName = "STEP";
+			m_RankingScores[i][j].iDancePoints = 573;
+			m_RankingScores[i][j].fSurviveTime = 57.3f;
+			m_RankingScores[i][j].sName = DEFAULT_RANKING_NAME;
 		}
 
-	for( i=0; i<NUM_NOTES_TYPES; i++ )
-		for( j=0; j<NUM_PLAYERS; j++ )
+	for( unsigned m=0; m<NUM_MEMORY_CARDS; m++ )
+		for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
 		{
-			m_MemCardScores[i][j].iDancePoints = 0;
-			m_MemCardScores[i][j].fSurviveTime = 0;
+			m_MemCardScores[m][i].iNumTimesPlayed = 0;
+			m_MemCardScores[m][i].iDancePoints = 0;
+			m_MemCardScores[m][i].fSurviveTime = 0;
 		}
 }
 
@@ -69,7 +68,7 @@ Course::Course()
  * songs in "Songs"; we don't want that.
  */
 
-Song *Course::FindSong(CString sSongDir)
+Song *Course::FindSong(CString sSongDir) const
 {
 	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
 
@@ -156,21 +155,16 @@ void Course::LoadFromCRSFile( CString sPath )
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
 			CString sSongDir = sParams[1];
-			CString sNotesDescription = sParams[2];
+			Difficulty dc = StringToDifficulty( sParams[2] );
 			CString sModifiers = sParams[3];
 
-			if(!sSongDir.GetLength()) {
+			if( sSongDir.GetLength() == 0 ) {
 			    /* Err. */
 			    LOG->Trace( "Course file '%s' has an empty #SONG.  Ignored.", sPath.GetString(), sSongDir.GetString() );
 			    continue;
 			}
-
-			Song *pSong = FindSong(sSongDir);
-
-			if( pSong == NULL )	// we didn't find the Song
-				continue;	// skip this song
 			
-			AddStage( pSong, sNotesDescription, sModifiers );
+			m_entries.push_back( course_entry(sSongDir, dc, sModifiers) );
 		}
 
 		else
@@ -184,8 +178,9 @@ void Course::LoadFromCRSFile( CString sPath )
 }
 
 
-void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup )
+void Course::AutoGenEndlessFromGroupAndDifficulty( CString sGroupName, Difficulty dc, vector<Song*> &apSongsInGroup )
 {
+	m_bIsAutoGen = true;
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
@@ -213,162 +208,204 @@ void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Diff
 	for( unsigned s=0; s<apSongsInGroup.size(); s++ )
 	{
 		Song* pSong = apSongsInGroup[s];
-		AddStage( pSong, DifficultyToString(dc), "" );
+		m_entries.push_back( course_entry(pSong->GetSongDir(), dc, "") );
 	}
-	Shuffle();
 }
 
-void Course::Shuffle()
+
+bool Course::HasDifficult() const
 {
-	/* Shuffle the list. */
-	for( int i = 0; i < GetNumStages(); ++i)
-		swap(order[i], order[rand() % GetNumStages()]);
+	for( unsigned i=0; i<m_entries.size(); i++ )
+		if( m_entries[i].difficulty >= DIFFICULTY_HARD )
+			return false;
+	return true;
 }
 
-Notes* Course::GetNotesForStage( int iStage )
+
+void Course::GetCourseInfo( 
+	vector<Song*>& vSongsOut, 
+	vector<Notes*>& vNotesOut, 
+	vector<CString>& vsModifiersOut, 
+	NotesType nt, 
+	bool bDifficult ) const
 {
-	Song* pSong = GetSong(iStage);
-	CString sDescription = entries[iStage].description;
-	
-	/* First, search for an exact description match. */
-	unsigned i;
-	for( i=0; i<pSong->m_apNotes.size(); i++ )
+	if( bDifficult )
+		ASSERT( HasDifficult() );
+
+
+	vector<course_entry> entries = m_entries;
+
+	if( m_bRandomize )
+		random_shuffle( entries.begin(), entries.end() );
+
+	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		Notes* pNotes = pSong->m_apNotes[i];
+		CString sSongDir = entries[i].songDir;
 
-		if( !GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
-			continue;
+		Song* pSong;
+		if( sSongDir.Left(strlen("PlayersBest")) == "PlayersBest" )
+		{
+			int iNumber = atoi( sSongDir.Right(sSongDir.length()-strlen("PlayersBest")) );
+			int index = iNumber - 1;
+			pSong = SONGMAN->GetPlayersBest( index );
+		}
+		else if( sSongDir.Left(strlen("PlayersWorst")) == "PlayersWorst" )
+		{
+			int iNumber = atoi( sSongDir.Right(sSongDir.length()-strlen("PlayersWorst")) );
+			int index = iNumber - 1;
+			pSong = SONGMAN->GetPlayersWorst( index );
+		}
+		else if( sSongDir.Right(1) == "*" )
+		{
+			CStringArray asSongDirs;
+			GetDirListing( sSongDir, asSongDirs, true, true );
+			if( asSongDirs.empty() )
+				pSong = NULL;
+			else
+				pSong = FindSong( asSongDirs[rand()%asSongDirs.size()] );
+		}
+		else
+			pSong = FindSong( sSongDir );
 
-		if( !pNotes->GetDescription().CompareNoCase(sDescription) )
-			return pNotes;
-	}
-
-	/* If that failed, try to do a difficulty match. */
-	Difficulty dc = StringToDifficulty(sDescription);
-	for( i=0; i < pSong->m_apNotes.size(); i++ )
-	{
-		Notes* pNotes = pSong->m_apNotes[i];
-
-		if( !GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
-			continue;
-
-		if(dc == pNotes->GetDifficulty())
-			return pNotes;
-	}
-
-	return NULL;
-}
-
-Song *Course::GetSong( int iStage ) const
-{
-	return entries[iStage].song;
-}
-
-CString Course::GetDescription( int iStage ) const
-{
-	return entries[iStage].description;
-}
-
-
-void Course::AddStage( Song* pSong, CString sDescription, CString sModifiers )
-{
-	course_entry e;
-	e.song = pSong;
-	e.description = sDescription;
-	e.modifiers = sModifiers;
-	entries.push_back(e);
-
-	order.push_back(order.size());
-}
-
-/* When bShuffled is true, returns courses in the song ordering list. */
-void Course::GetSongAndNotesForCurrentStyle( 
-	vector<Song*>& apSongsOut,
-	vector<Notes*>& apNotesOut, 
-	CStringArray& asModifiersOut,
-	bool bShuffled )
-{
-	for( int i=0; i<GetNumStages(); i++ )
-	{
-		int num = bShuffled? order[i]:i;
-
-		Song* pSong = GetSong(num);
-		Notes* pNotes = GetNotesForStage( num );
-		CString sModifiers = entries[num].modifiers;
-
-		if( !pSong->HasMusic() )
+		if( pSong == NULL )
 			continue;	// skip
+
+
+		Difficulty dc = entries[i].difficulty;
+		if( bDifficult  &&  dc != NUM_DIFFICULTIES-1 )
+			dc = (Difficulty)(dc+1);
+		Notes* pNotes = pSong->GetNotes( nt, dc );
+
 		if( pNotes == NULL )
 			continue;	// skip
 
-		apSongsOut.push_back( pSong );
-		apNotesOut.push_back( pNotes );
-		asModifiersOut.push_back( sModifiers );
+
+		CString sModifiers = entries[i].modifiers;
+
+		vSongsOut.push_back( pSong ); 
+		vNotesOut.push_back( pNotes ); 
+		vsModifiersOut.push_back( sModifiers );
 	}
 }
 
-RageColor Course::GetColor()
+bool Course::GetFirstStageInfo(
+	Song*& pSongOut, 
+	Notes*& pNotesOut, 
+	CString& sModifiersOut, 
+	NotesType nt ) const
+{
+	vector<Song*> vSongs; 
+	vector<Notes*> vNotes; 
+	vector<CString> vsModifiers;
+
+	GetCourseInfo(
+		vSongs, 
+		vNotes, 
+		vsModifiers, 
+		nt, 
+		false );
+	if( vSongs.empty() )
+		return false;
+	
+	pSongOut = vSongs[0]; 
+	pNotesOut = vNotes[0]; 
+	sModifiersOut = vsModifiers[0];
+	return true;
+}
+
+RageColor Course::GetColor() const
 {
 	// This could be made smarter
-	if( GetNumStages() >= 7 )
+	if( m_entries.size() >= 7 )
 		return RageColor(1,0,0,1);	// red
-	else if( GetNumStages() >= 4 )
+	else if( m_entries.size() >= 4 )
 		return RageColor(1,0.5f,0,1);	// orange
 	else
 		return RageColor(0,1,0,1);	// green
 }
 
-void Course::GetPlayerOptions( int iStage, PlayerOptions* pPO_out ) const
+bool Course::IsMysterySong( int stage ) const
 {
-	pPO_out->FromString( entries[iStage].modifiers );
+	CString sSongDir = m_entries[stage].songDir;
+	return sSongDir.Right(1) == "*";
 }
 
-void Course::GetSongOptions( SongOptions* pSO_out ) const
+bool Course::ContainsAnyMysterySongs() const
 {
-	*pSO_out = SongOptions();
-	//hack: The lifebar modifiers were not showing up (in the extra stages) - had to add it here.
-	if( entries.size() > 0 )
-		pSO_out->FromString( entries[0].modifiers ); 
-	pSO_out->m_LifeType = (m_iLives==-1) ? SongOptions::LIFE_BAR : SongOptions::LIFE_BATTERY;
-	if( m_iLives != -1 )
-		pSO_out->m_iBatteryLives = m_iLives;
+	for( unsigned i=0; i<m_entries.size(); i++ )
+		if( IsMysterySong(i) )
+			return true;
+	return false;
 }
 
-int Course::GetNumStages() const
+bool Course::GetTotalSeconds( float& fSecondsOut ) const
 {
-	return entries.size();
+	if( ContainsAnyMysterySongs() )
+		return false;
+	
+	vector<Song*> vSongsOut;
+	vector<Notes*> vNotesOut;
+	vector<CString> vsModifiersOut;
+	GetCourseInfo(
+		vSongsOut, 
+		vNotesOut, 
+		vsModifiersOut, 
+		NOTES_TYPE_DANCE_SINGLE, 	// doesn't matter
+		false );	// doesn't matter
+
+	fSecondsOut = 0;
+	for( unsigned i=0; i<vSongsOut.size(); i++ )
+		fSecondsOut += vSongsOut[i]->m_fMusicLengthSeconds;
+	return true;
 }
 
 
-struct CourseScoreToInsert
+struct RankingToInsert
 {
 	PlayerNumber pn;
 	int iDancePoints;
 	float fSurviveTime;
 
-	static int CompareDescending( const CourseScoreToInsert &hs1, const CourseScoreToInsert &hs2 )
+	static int CompareDescending( const RankingToInsert &hs1, const RankingToInsert &hs2 )
 	{
 		if( hs1.iDancePoints > hs2.iDancePoints )		return -1;
 		else if( hs1.iDancePoints == hs2.iDancePoints )	return 0;
 		else											return +1;
 	}
-	static void SortDescending( vector<CourseScoreToInsert>& vHSout )
+	static void SortDescending( vector<RankingToInsert>& vHSout )
 	{ 
 		sort( vHSout.begin(), vHSout.end(), CompareDescending ); 
 	}
 };
 
-void Course::AddMachineRecords( NotesType nt, int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
 {
-	vector<CourseScoreToInsert> vHS;
+	m_MemCardScores[MEMORY_CARD_MACHINE][nt].iNumTimesPlayed++;
+
+
+	vector<RankingToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		iRankingIndexOut[p] = -1;
+		bNewRecordOut = false;
 
-		if( !GAMESTATE->IsPlayerEnabled(p) )
+		if( !bPlayerEnabled[p] )
 			continue;	// skip
+        
 
-		CourseScoreToInsert hs;
+		// Update memory card
+		m_MemCardScores[p][nt].iNumTimesPlayed++;
+
+		if( iDancePoints[p] > m_MemCardScores[p][nt].iDancePoints )
+		{
+			m_MemCardScores[p][nt].iDancePoints = iDancePoints[p];
+			m_MemCardScores[p][nt].fSurviveTime = fSurviveTime[p];
+			bNewRecordOut[p] = true;
+		}
+
+
+		// Update Ranking
+		RankingToInsert hs;
 		hs.iDancePoints = iDancePoints[p];
 		hs.fSurviveTime = fSurviveTime[p];
 		hs.pn = (PlayerNumber)p;
@@ -377,39 +414,27 @@ void Course::AddMachineRecords( NotesType nt, int iDancePoints[NUM_PLAYERS], flo
 
 	// Sort descending before inserting.
 	// This guarantees that a high score will not switch poitions on us when we later insert scores for the other player
-	CourseScoreToInsert::SortDescending( vHS );
+	RankingToInsert::SortDescending( vHS );
 
 	for( unsigned i=0; i<vHS.size(); i++ )
 	{
-		CourseScoreToInsert& newHS = vHS[i];
-		MachineScore* machineScores = m_MachineScores[nt];
+		RankingToInsert& newHS = vHS[i];
+		RankingScore* rankingScores = m_RankingScores[nt];
 		for( int i=0; i<NUM_RANKING_LINES; i++ )
 		{
-			if( newHS.iDancePoints > machineScores[i].iDancePoints )
+			if( newHS.iDancePoints > rankingScores[i].iDancePoints )
 			{
 				// We found the insert point.  Shift down.
 				for( int j=i+1; j<NUM_RANKING_LINES; j++ )
-					machineScores[j] = machineScores[j-1];
+					rankingScores[j] = rankingScores[j-1];
 				// insert
-				machineScores[i].fSurviveTime = newHS.fSurviveTime;
-				machineScores[i].iDancePoints = newHS.iDancePoints;
-				machineScores[i].sName = "STEP";
+				rankingScores[i].fSurviveTime = newHS.fSurviveTime;
+				rankingScores[i].iDancePoints = newHS.iDancePoints;
+				rankingScores[i].sName = DEFAULT_RANKING_NAME;
 				iRankingIndexOut[newHS.pn] = i;
 			}
 		}
 	}
-}
-
-bool Course::AddMemCardRecord( PlayerNumber pn, NotesType nt, int iDancePoints, float fSurviveTime )	// return true if new record
-{
-	MemCardScore& hs = m_MemCardScores[nt][pn];
-	if( iDancePoints > hs.iDancePoints )
-	{
-		hs.iDancePoints = iDancePoints;
-		hs.fSurviveTime = fSurviveTime;
-		return true;
-	}
-	return false;
 }
 
 
@@ -418,7 +443,7 @@ bool Course::AddMemCardRecord( PlayerNumber pn, NotesType nt, int iDancePoints, 
 //
 static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	return pCourse1->GetNumStages() < pCourse2->GetNumStages();
+	return pCourse1->GetEstimatedNumStages() < pCourse2->GetEstimatedNumStages();
 }
 
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )

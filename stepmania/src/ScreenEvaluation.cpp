@@ -247,36 +247,28 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	//
 	// update persistent statistics
 	//
-	bool bNewRecord[NUM_PLAYERS];
-	memset( bNewRecord, 0, sizeof(bNewRecord) );
+	bool bIsPlayerEnabled[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(p) || grade[p] == GRADE_E )
-			continue;	// can't be a new record
+		bIsPlayerEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
+	int iRankingLine[NUM_PLAYERS] = { -1, -1 };
+	bool bNewRecord[NUM_PLAYERS] = { false, false };
 
-		switch( m_ResultMode )
-		{
-		case RM_ARCADE_STAGE:
-			{
-				Notes* pNotes = GAMESTATE->m_pCurNotes[p];
-				if( SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
-					bNewRecord[p] = pNotes->AddMemCardRecord( (PlayerNumber)p, grade[p], stageStats.fScore[p] );
-			}
-			break;
-		case RM_ARCADE_SUMMARY:
-			{
-			}
-			break;
-		case RM_COURSE:
-			{
-				Course* pCourse = GAMESTATE->m_pCurCourse;
-				NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-				pCourse->AddMemCardRecord( (PlayerNumber)p, nt, stageStats.iActualDancePoints[p], stageStats.fAliveSeconds[p] );
-			}
-			break;
-		default:
-			ASSERT(0);
-		}
+	switch( m_ResultMode )
+	{
+	case RM_ARCADE_STAGE:
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.fScore[p], bNewRecord[p] );
+		break;
+	case RM_ARCADE_SUMMARY:
+		break;
+	case RM_COURSE:
+		NotesType nt;
+		nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+		GAMESTATE->m_pCurCourse->AddScores( nt, bIsPlayerEnabled, stageStats.iActualDancePoints, stageStats.fAliveSeconds, iRankingLine, bNewRecord );
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	m_bTryExtraStage = 

@@ -58,7 +58,11 @@ public:
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
 	int GetNumSongs() const;
 	int GetNumGroups() const;
+	int GetNumCourses() const;
 	Song* GetRandomSong();
+	Song* GetPlayersBest( int index );
+	Song* GetPlayersWorst( int index );
+
 
 	void GetNonstopCourses( vector<Course*> &AddTo );	// add to if life meter type is BAR.
 	void GetOniCourses( vector<Course*> &AddTo );		// add to if life meter type is BATTERY.
@@ -69,6 +73,7 @@ public:
 
 	Song* GetSongFromDir( CString sDir );
 	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
+	Course* GetCourseFromName( CString sName );
 
 
 	//

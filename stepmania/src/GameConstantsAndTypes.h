@@ -175,6 +175,18 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 
 
 //
+// MemCard stuff
+//
+enum MemoryCard
+{
+	MEMORY_CARD_PLAYER_1,
+	MEMORY_CARD_PLAYER_2,
+	MEMORY_CARD_MACHINE,
+	NUM_MEMORY_CARDS
+};
+
+
+//
 // Ranking stuff
 //
 enum RankingCategory
@@ -185,6 +197,8 @@ enum RankingCategory
 	RANKING_D,	// 10+ meter per song avg.	// doesn't count extra stage!
 	NUM_RANKING_CATEGORIES
 };
+
+const CString DEFAULT_RANKING_NAME = "STEP";
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 

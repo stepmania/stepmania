@@ -54,16 +54,15 @@ public:
 	void CreateBlank( NotesType ntTo );
 
 
-	// High scores;
-	int m_iNumTimesPlayed;
-
+	// High scores
 	struct MemCardScore
 	{
+		int iNumTimesPlayed;
 		Grade grade;
 		float fScore;
-	} m_MemCardScores[NUM_PLAYERS];
+	} m_MemCardScores[NUM_MEMORY_CARDS];
 
-	bool AddMemCardRecord( PlayerNumber pn, Grade grade, float fScore );	// return true if new high score
+	void AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut );
 
 
 	void TidyUpData();

@@ -299,9 +299,13 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
+		Song* pSong;
+		Notes* pNotes;
+		CString sModifiers;
+		pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			pCourse->GetPlayerOptions( 0, &GAMESTATE->m_PlayerOptions[p] );
-		pCourse->GetSongOptions( &GAMESTATE->m_SongOptions );
+			GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
+		GAMESTATE->m_SongOptions.FromString( sModifiers );
 
 		m_Menu.StopTimer();
 
@@ -328,11 +332,12 @@ void ScreenSelectCourse::AfterCourseChange()
 		{
 			Course* pCourse = m_MusicWheel.GetSelectedCourse();
 
-			m_textNumSongs.SetText( ssprintf("%d", pCourse->GetNumStages()) );
-			float fTotalSeconds = 0;
-			for( int i=0; i<pCourse->GetNumStages(); i++ )
-				fTotalSeconds += pCourse->GetSong(i)->m_fMusicLengthSeconds;
-			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
+			m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
+			float fTotalSeconds;
+			if( pCourse->GetTotalSeconds(fTotalSeconds) )
+				m_textTime.SetText( SecondsToTime(fTotalSeconds) );
+			else
+				m_textTime.SetText( "??:??:??" );
 
 			m_Banner.LoadFromCourse( pCourse );
 

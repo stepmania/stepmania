@@ -163,17 +163,21 @@ ScreenNameEntry::ScreenNameEntry()
 	
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 		
+			bool bPlayerIsEnabled[NUM_PLAYERS];
 			int iDancePoints[NUM_PLAYERS];
 			float fAliveSeconds[NUM_PLAYERS];
-			int iRankingIndex[NUM_PLAYERS];
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
+				bPlayerIsEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
 				iDancePoints[p] = stageStats.iActualDancePoints[p];
 				fAliveSeconds[p] = stageStats.fAliveSeconds[p];
 			}
 
+			int iRankingIndex[NUM_PLAYERS];
+			bool bNewRecord[NUM_PLAYERS];
+
 			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-			pCourse->AddMachineRecords( nt, iDancePoints, fAliveSeconds, iRankingIndex );
+			pCourse->AddScores( nt, bPlayerIsEnabled, iDancePoints, fAliveSeconds, iRankingIndex, bNewRecord );
 	
 			GAMESTATE->m_LastRankingNotesType = nt;
 			GAMESTATE->m_pLastPlayedCourse = pCourse;
@@ -409,7 +413,7 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 		TrimLeft( m_sSelectedName[pn], " " );
 
 		if( m_sSelectedName[pn] == "" )
-			m_sSelectedName[pn] = "STEP";
+			m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
 
 		
 		switch( GAMESTATE->m_PlayMode )
@@ -420,7 +424,7 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			GAMESTATE->m_pLastPlayedCourse->m_MachineScores[GAMESTATE->m_LastRankingNotesType][GAMESTATE->m_iLastRankingIndex[pn]].sName = m_sSelectedName[pn];
+			GAMESTATE->m_pLastPlayedCourse->m_RankingScores[GAMESTATE->m_LastRankingNotesType][GAMESTATE->m_iLastRankingIndex[pn]].sName = m_sSelectedName[pn];
 			break;
 		default:
 			ASSERT(0);

@@ -44,15 +44,15 @@ Notes::Notes()
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
 		m_fRadarValues[i] = -1; /* unknown */
 
-	m_iNumTimesPlayed = 0;
 	notes = NULL;
 	notes_comp = NULL;
 	parent = NULL;
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( int m=0; m<NUM_MEMORY_CARDS; m++ )
 	{
-		m_MemCardScores[p].grade = GRADE_NO_DATA;
-		m_MemCardScores[p].fScore = 0;
+		m_MemCardScores[m].iNumTimesPlayed = 0;
+		m_MemCardScores[m].grade = GRADE_NO_DATA;
+		m_MemCardScores[m].fScore = 0;
 	}
 }
 
@@ -332,13 +332,23 @@ void Notes::SetRadarValue(int r, float val)
 	m_fRadarValues[r] = val;
 }
 
-bool Notes::AddMemCardRecord( PlayerNumber pn, Grade grade, float fScore )	// return true if new high score
+void Notes::AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut )
 {
+	bNewRecordOut = false;
+
+	m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed++;
+	m_MemCardScores[pn].iNumTimesPlayed++;
+
 	if( fScore > m_MemCardScores[pn].fScore )
 	{
 		m_MemCardScores[pn].fScore = fScore;
 		m_MemCardScores[pn].grade = grade;
-		return true;
+		bNewRecordOut = true;
 	}
-	return false;
+
+	if( fScore > m_MemCardScores[MEMORY_CARD_MACHINE].fScore )
+	{
+		m_MemCardScores[MEMORY_CARD_MACHINE].fScore = fScore;
+		m_MemCardScores[MEMORY_CARD_MACHINE].grade = grade;
+	}
 }

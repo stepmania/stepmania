@@ -22,19 +22,18 @@
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "Notes.h"
+#include "GameState.h"
+#include "StyleDef.h"
 
 
-const float TEXT_BANNER_X	= 0;
-const float TEXT_BANNER_Y	= 0;
-
-const float NUMBER_X		= -118;
-const float NUMBER_Y		= 0;
-
-const float FOOT_X			= 102;
-const float FOOT_Y			= 8;
-
-const float DIFFICULTY_X	= FOOT_X+18;
-const float DIFFICULTY_Y	= FOOT_Y;
+#define TEXT_BANNER_X	THEME->GetMetricF("CourseContentDisplay","TextBannerX")
+#define TEXT_BANNER_Y	THEME->GetMetricF("CourseContentDisplay","TextBannerY")
+#define NUMBER_X		THEME->GetMetricF("CourseContentDisplay","NumberX")
+#define NUMBER_Y		THEME->GetMetricF("CourseContentDisplay","NumberY")
+#define FOOT_X			THEME->GetMetricF("CourseContentDisplay","FootX")
+#define FOOT_Y			THEME->GetMetricF("CourseContentDisplay","FootY")
+#define DIFFICULTY_X	THEME->GetMetricF("CourseContentDisplay","DifficultyX")
+#define DIFFICULTY_Y	THEME->GetMetricF("CourseContentDisplay","DifficultyY")
 
 
 CourseContentDisplay::CourseContentDisplay()
@@ -103,13 +102,16 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 
 	m_iNumContents = 0; 
 
-	for( int i=0; i<min(pCourse->GetNumStages(), MAX_TOTAL_CONTENTS); i++ )
-	{
-		Song* pSong = pCourse->GetSong(i);
-		Notes* pNotes = pCourse->GetNotesForStage(i);
+	vector<Song*> vSongs;
+	vector<Notes*> vNotes;
+	vector<CString> vsModifiers;
+	pCourse->GetCourseInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
 
-		if( pNotes == NULL )
-			continue;	// skip
+	for( int i=0; i<min((int)vSongs.size(), MAX_TOTAL_CONTENTS); i++ )
+	{
+		Song* pSong = vSongs[i];
+		Notes* pNotes = vNotes[i];
+		CString sModifiers = vsModifiers[i];
 
 		LOG->Trace( "Adding song '%s'\n", pSong->m_sMainTitle.GetString() );
 		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );

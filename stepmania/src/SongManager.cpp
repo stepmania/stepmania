@@ -28,10 +28,14 @@
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 
-const CString CATEGORY_TOP_SCORE_FILE = "CategoryTopScores.dat";
-const CString COURSE_TOP_SCORE_FILE = "CourseTopScores.dat";
-const int CATEGORY_TOP_SCORE_VERSION = 1;
-const int COURSE_TOP_SCORE_VERSION = 1;
+const CString CATEGORY_RANKING_FILE = "CategoryRanking.dat";
+const CString COURSE_RANKING_FILE = "CourseRanking.dat";
+const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { "Player1NotesScores.dat", "Player2NotesScores.dat", "MachineNotesScores.dat" };
+const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { "Player1CourseScores.dat", "Player2CourseScores.dat", "MachineCourseScores.dat" };
+const int CATEGORY_RANKING_VERSION = 1;
+const int COURSE_RANKING_VERSION = 1;
+const int NOTES_SCORES_VERSION = 1;
+const int COURSE_SCORES_VERSION = 1;
 
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
@@ -211,25 +215,25 @@ void SongManager::ReloadSongArray()
 void SongManager::InitMachineScoresFromDisk()
 {
 	
-	// Init category top scores
+	// Init category ranking
 	{
 		for( int i=0; i<NUM_NOTES_TYPES; i++ )
 			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 				for( int k=0; k<NUM_RANKING_LINES; k++ )
 				{
 					m_MachineScores[i][j][k].fScore = 573000;
-					m_MachineScores[i][j][k].sName = "STEP";
+					m_MachineScores[i][j][k].sName = DEFAULT_RANKING_NAME;
 				}
 	}
 
-	// Read category top scores
+	// category ranking
 	{
-		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "r" );
+		FILE* fp = fopen( CATEGORY_RANKING_FILE, "r" );
 		if( fp )
 		{
 			int version;
 			fscanf(fp, "%d\n", &version );
-			if( version == CATEGORY_TOP_SCORE_VERSION )
+			if( version == CATEGORY_RANKING_VERSION )
 			{			
 				for( int i=0; i<NUM_NOTES_TYPES; i++ )
 					for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
@@ -245,52 +249,137 @@ void SongManager::InitMachineScoresFromDisk()
 		}
 	}
 
-	// Read course top scores
+	// course ranking
 	{
-		FILE* fp = fopen( COURSE_TOP_SCORE_FILE, "r" );
+		FILE* fp = fopen( COURSE_RANKING_FILE, "r" );
 
 		if( fp )
 		{
 			int version;
-			fscanf(fp, "%d\n", &version );
-			if( version == COURSE_TOP_SCORE_VERSION )
+			fscanf(fp, "%[^\n]\n", &version );
+			if( version == COURSE_RANKING_VERSION )
 			{			
 				while( fp && !feof(fp) )
 				{
-						char szPath[256];
-						fscanf(fp, "%s\n", szPath);
-						Course* pCourse = GetCourseFromPath( szPath );
-						
+					char szPath[256];
+					fscanf(fp, "%s\n", szPath);
+					Course* pCourse = GetCourseFromPath( szPath );
+					if( pCourse == NULL )
+						pCourse = GetCourseFromName( szPath );
+				
 						for( int i=0; i<NUM_NOTES_TYPES; i++ )
-							for( int j=0; j<NUM_RANKING_LINES; j++ )
-								if( fp && !feof(fp) )
+						for( int j=0; j<NUM_RANKING_LINES; j++ )
+							if( fp && !feof(fp) )
+							{
+								int iDancePoints;
+								float fSurviveTime;
+								char szName[256];
+								fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
+								if( pCourse )
 								{
-									int iDancePoints;
-									float fSurviveTime;
-									char szName[256];
-									fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
-									if( pCourse )
-									{
-										pCourse->m_MachineScores[i][j].iDancePoints = iDancePoints;
-										pCourse->m_MachineScores[i][j].fSurviveTime = fSurviveTime;
-										pCourse->m_MachineScores[i][j].sName = szName;
-									}
+									pCourse->m_RankingScores[i][j].iDancePoints = iDancePoints;
+									pCourse->m_RankingScores[i][j].fSurviveTime = fSurviveTime;
+									pCourse->m_RankingScores[i][j].sName = szName;
 								}
+							}
 				}
 			}
 			fclose(fp);
+		}
+	}
+
+	// notes scores
+	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+	{
+		FILE* fp = fopen( NOTES_SCORES_FILE[c], "r" );
+		if( fp )
+		{
+			int version;
+			fscanf(fp, "%d\n", &version );
+			if( version == COURSE_SCORES_VERSION )
+			{			
+				while( fp && !feof(fp) )
+				{
+					char szSongDir[256];
+					unsigned uNumNotes;
+					fscanf(fp, "%[^\n]\n%u\n", szSongDir, &uNumNotes);
+					Song* pSong = this->GetSongFromDir( szSongDir );
+
+					for( unsigned i=0; i<uNumNotes; i++ )
+					{
+						NotesType nt;
+						Difficulty dc;
+						char szDescription[256];
+						fscanf(fp, "[%d\n%d\n%[^\n]\n", &nt, &dc, szDescription);
+						Notes* pNotes = !pSong ? NULL : pSong->GetNotes( nt, dc, true, szDescription );
+
+						int iNumTimesPlayed;
+						Grade grade;
+						float fScore;
+						fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &grade, &fScore );
+						if( pNotes )
+						{
+							pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
+							pNotes->m_MemCardScores[c].grade = grade;
+							pNotes->m_MemCardScores[c].fScore = fScore;
+						}
+					}
+				}
+			}
+			fclose(fp);
+		}
+	}
+
+	// course scores
+	{
+		for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+		{
+			FILE* fp = fopen( COURSE_SCORES_FILE[c], "r" );
+
+			if( fp )
+			{
+				int version;
+				fscanf(fp, "%d\n", &version );
+				if( version == COURSE_SCORES_VERSION )
+				{			
+					while( fp && !feof(fp) )
+					{
+						char szPath[256];
+						fscanf(fp, "%[^\n]\n", szPath);
+						Course* pCourse = GetCourseFromPath( szPath );
+						if( pCourse == NULL )
+							pCourse = GetCourseFromName( szPath );
+					
+						for( int i=0; i<NUM_NOTES_TYPES; i++ )
+							if( fp && !feof(fp) )
+							{
+								int iNumTimesPlayed;
+								int iDancePoints;
+								float fSurviveTime;
+								fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &iDancePoints, &fSurviveTime);
+								if( pCourse )
+								{
+									pCourse->m_MemCardScores[c][i].iNumTimesPlayed = iNumTimesPlayed;
+									pCourse->m_MemCardScores[c][i].iDancePoints = iDancePoints;
+									pCourse->m_MemCardScores[c][i].fSurviveTime = fSurviveTime;
+								}
+							}
+					}
+				}
+				fclose(fp);
+			}
 		}
 	}
 }
 
 void SongManager::SaveMachineScoresToDisk()
 {
-	// Write category top scores
+	// category ranking
 	{
-		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "w" );
+		FILE* fp = fopen( CATEGORY_RANKING_FILE, "w" );
 		if( fp )
 		{
-			fprintf(fp,"%d\n",CATEGORY_TOP_SCORE_VERSION);
+			fprintf(fp,"%d\n",CATEGORY_RANKING_VERSION);
 			for( int i=0; i<NUM_NOTES_TYPES; i++ )
 				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 					for( int k=0; k<NUM_RANKING_LINES; k++ )
@@ -300,30 +389,100 @@ void SongManager::SaveMachineScoresToDisk()
 		}
 	}
 
-	// Write course top scores
+	// course ranking
 	{
-		FILE* fp = fopen( COURSE_TOP_SCORE_FILE, "w" );
+		FILE* fp = fopen( COURSE_RANKING_FILE, "w" );
 
 		if( fp )
 		{
-			fprintf(fp,"%d",COURSE_TOP_SCORE_VERSION);
-			for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach course
+			fprintf(fp,"%d\n",COURSE_RANKING_VERSION);
+			for( unsigned c=0; c<m_pCourses.size(); c++ )	// foreach course
 			{
-				Course* pCourse = m_pCourses[i];
-
-				fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
+				Course* pCourse = m_pCourses[c];
+				if( pCourse->m_bIsAutoGen )
+					fprintf(fp, "%s\n", pCourse->m_sName.c_str());
+				else
+					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 				
 				for( int i=0; i<NUM_NOTES_TYPES; i++ )
 					for( int j=0; j<NUM_RANKING_LINES; j++ )
 						fprintf(fp, "%d %f %s\n", 
-							pCourse->m_MachineScores[i][j].iDancePoints, 
-							pCourse->m_MachineScores[i][j].fSurviveTime, 
-							pCourse->m_MachineScores[i][j].sName.c_str());
+							pCourse->m_RankingScores[i][j].iDancePoints, 
+							pCourse->m_RankingScores[i][j].fSurviveTime, 
+							pCourse->m_RankingScores[i][j].sName.c_str());
+			}
+
+			fclose(fp);
+		}
+	}
+
+	// notes scores
+	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+	{
+		FILE* fp = fopen( NOTES_SCORES_FILE[c], "w" );
+		if( fp )
+		{
+			fprintf(fp,"%d\n",NOTES_SCORES_VERSION);
+
+			for( unsigned s=0; s<m_pSongs.size(); s++ )	// foreach song
+			{
+				Song* pSong = m_pSongs[s];
+				vector<Notes*> vNotes = pSong->m_apNotes;
+				for( int n=(int)vNotes.size()-1; n>=0; n-- )
+					if( vNotes[n]->m_MemCardScores[c].grade <= GRADE_E )
+						vNotes.erase( vNotes.begin()+n );
+				if( vNotes.size() == 0 )
+					continue;	// skip	
+
+				fprintf(fp, "%s\n%u\n", 
+					pSong->GetSongDir().c_str(),
+					vNotes.size() );
+
+				for( unsigned i=0; i<vNotes.size(); i++ )
+				{
+					Notes* pNotes = vNotes[i];
+					fprintf(fp, "%d\n%d\n%s\n", 
+						pNotes->m_NotesType,
+						pNotes->GetDifficulty(),
+						pNotes->GetDescription().c_str() );
+					fprintf(fp, "%d %d %f\n", 
+						pNotes->m_MemCardScores[c].iNumTimesPlayed,
+						pNotes->m_MemCardScores[c].grade,
+						pNotes->m_MemCardScores[c].fScore);
+				}
+			}
+
+			fclose(fp);
+		}
+	}
+
+	// course scores
+	{
+		for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+		{
+			FILE* fp = fopen( COURSE_SCORES_FILE[c], "w" );
+			if( fp )
+			{
+				fprintf(fp,"%d\n",COURSE_SCORES_VERSION);
+
+				for( unsigned c=0; c<m_pCourses.size(); c++ )	// foreach song
+				{
+					Course* pCourse = m_pCourses[c];
+					if( pCourse->m_bIsAutoGen )
+						fprintf(fp, "%s\n", pCourse->m_sName.c_str());
+					else
+						fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
+					
+					for( int i=0; i<NUM_NOTES_TYPES; i++ )
+						fprintf(fp, "%d %d %f\n", 
+							pCourse->m_MemCardScores[c][i].iNumTimesPlayed, 
+							pCourse->m_MemCardScores[c][i].iDancePoints, 
+							pCourse->m_MemCardScores[c][i].fSurviveTime);
+				}
+
+				fclose(fp);
 			}
 		}
-
-		if( fp )
-			fclose(fp);
 	}
 }
 
@@ -392,6 +551,11 @@ int SongManager::GetNumGroups() const
 	return m_arrayGroupNames.size();
 }
 
+int SongManager::GetNumCourses() const
+{
+	return m_pCourses.size();
+}
+
 CString SongManager::ShortenGroupName( CString sLongGroupName )
 {
 	sLongGroupName.Replace( "Dance Dance Revolution", "DDR" );
@@ -434,10 +598,7 @@ void SongManager::InitCoursesFromDisk()
 	{
 		Course* pCourse = new Course;
 		pCourse->LoadFromCRSFile( saCourseFiles[i] );
-		if( pCourse->GetNumStages() > 0 )
-			m_pCourses.push_back( pCourse );
-		else
-			delete pCourse;
+		m_pCourses.push_back( pCourse );
 	}
 	
 	//
@@ -455,12 +616,9 @@ void SongManager::InitCoursesFromDisk()
 		for( Difficulty dc=DIFFICULTY_EASY; dc<=DIFFICULTY_HARD; dc=Difficulty(dc+1) )	// foreach Difficulty
 		{
 			Course* pCourse = new Course;
-			pCourse->CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
+			pCourse->AutoGenEndlessFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
 
-			if( pCourse->GetNumStages() > 0 )
-				m_pCourses.push_back( pCourse );
-			else
-				delete pCourse;
+			m_pCourses.push_back( pCourse );
 		}
 	}
 }
@@ -556,16 +714,17 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 
 	Course course;
 	course.LoadFromCRSFile( sCoursePath );
-	if( course.GetNumStages() <= 0 ) return false;
+	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	pSongOut = course.GetSong(0);
-	pNotesOut = course.GetNotesForStage( 0 );
-	if( pNotesOut == NULL ) return false;
-	
-	course.GetPlayerOptions( 0, &po_out );
-	course.GetSongOptions( &so_out );
-
-	return true;
+	CString sModifiers;
+	if( course.GetFirstStageInfo( pSongOut, pNotesOut, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
+	{
+		po_out.FromString( sModifiers );
+		so_out.FromString( sModifiers );
+		return true;
+	}
+	else
+		return false;
 }
 
 /* Return true if n1 < n2. */
@@ -670,6 +829,24 @@ Song* SongManager::GetRandomSong()
 	return SONGMAN->m_pSongs[ rand()%m_pSongs.size() ];
 }
 
+Song* SongManager::GetPlayersBest( int index )
+{
+	vector<Song*> vSongs = m_pSongs;
+	if( (unsigned)index >= vSongs.size() )
+		return NULL;
+	SortSongPointerArrayByMostPlayed( vSongs );
+	return vSongs[index];
+}
+
+Song* SongManager::GetPlayersWorst( int index )
+{
+	vector<Song*> vSongs = m_pSongs;
+	if( (unsigned)index >= vSongs.size() )
+		return NULL;
+	SortSongPointerArrayByMostPlayed( vSongs );
+	return vSongs[vSongs.size()-1-index];
+}
+
 Song* SongManager::GetSongFromDir( CString sDir )
 {
 	if( sDir[sDir.GetLength()-1] != '/' )
@@ -690,6 +867,16 @@ Course* SongManager::GetCourseFromPath( CString sPath )
 
 	return NULL;
 }
+
+Course* SongManager::GetCourseFromName( CString sName )
+{
+	for( unsigned int i=0; i<m_pCourses.size(); i++ )
+		if( sName.CompareNoCase(m_pCourses[i]->m_sName) == 0 )
+			return m_pCourses[i];
+
+	return NULL;
+}
+
 
 bool SongManager::IsUsingMemoryCard( PlayerNumber pn )
 {
@@ -749,7 +936,7 @@ void SongManager::AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYE
 					machineScores[j] = machineScores[j-1];
 				// insert
 				machineScores[i].fScore = newHS.fScore;
-				machineScores[i].sName = "STEP";
+				machineScores[i].sName = DEFAULT_RANKING_NAME;
 				iNewRecordIndexOut[newHS.pn] = i;
 				break;
 			}

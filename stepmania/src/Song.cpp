@@ -635,12 +635,13 @@ void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAuto
 				arrayAddTo.push_back( m_apNotes[i] );
 }
 
-Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen, CString sDescription ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 		if( m_apNotes[i]->m_NotesType==nt &&  m_apNotes[i]->GetDifficulty()==dc )
 			if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
-				return m_apNotes[i];
+				if( sDescription.empty() || m_apNotes[i]->GetDescription()==sDescription )
+					return m_apNotes[i];
 	return NULL;
 }
 
@@ -1008,7 +1009,7 @@ int Song::GetNumTimesPlayed() const
 	int iTotalNumTimesPlayed = 0;
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
-		iTotalNumTimesPlayed += m_apNotes[i]->m_iNumTimesPlayed;
+		iTotalNumTimesPlayed += m_apNotes[i]->m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
 }
