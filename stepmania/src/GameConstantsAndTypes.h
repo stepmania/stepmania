@@ -77,7 +77,7 @@ enum StepsType
 	STEPS_TYPE_PARA_SINGLE,
 	STEPS_TYPE_DS3DDX_SINGLE,
 	STEPS_TYPE_BM_SINGLE,
-	NUM_NOTES_TYPES,		// leave this at the end
+	NUM_STEPS_TYPES,		// leave this at the end
 	STEPS_TYPE_INVALID,
 };
 

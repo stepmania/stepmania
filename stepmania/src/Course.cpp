@@ -62,7 +62,7 @@ void Course::SetDefaultScore()
 	//
 	// Init high scores
 	//
-	for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
+	for( unsigned i=0; i<NUM_STEPS_TYPES; i++ )
 		for( int j=0; j<NUM_RANKING_LINES; j++ )
 		{
 			m_RankingScores[i][j].iScore = IsOni()? 573:573000;
@@ -71,7 +71,7 @@ void Course::SetDefaultScore()
 		}
 
 	for( unsigned m=0; m<NUM_MEMORY_CARDS; m++ )
-		for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
+		for( unsigned i=0; i<NUM_STEPS_TYPES; i++ )
 		{
 			m_MemCardScores[m][i].iNumTimesPlayed = 0;
 			m_MemCardScores[m][i].iScore = 0;

@@ -105,13 +105,13 @@ public:
 		int iScore;
 		float fSurviveTime;
 		CString	sName;
-	} m_RankingScores[NUM_NOTES_TYPES][NUM_RANKING_LINES];	// sorted highest to lowest by iDancePoints
+	} m_RankingScores[NUM_STEPS_TYPES][NUM_RANKING_LINES];	// sorted highest to lowest by iDancePoints
 	struct MemCardScore
 	{
 		int iNumTimesPlayed;
 		int iScore;
 		float fSurviveTime;
-	} m_MemCardScores[NUM_MEMORY_CARDS][NUM_NOTES_TYPES];
+	} m_MemCardScores[NUM_MEMORY_CARDS][NUM_STEPS_TYPES];
 	
 	void AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] );	// iNewRecordIndexOut[p] = -1 if not a new record
 

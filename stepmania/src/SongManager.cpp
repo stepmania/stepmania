@@ -352,7 +352,7 @@ void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 			if( pCourse == NULL )
 				pCourse = GetCourseFromName( szPath );
 		
-			for( int i=0; i<NUM_NOTES_TYPES; i++ )
+			for( int i=0; i<NUM_STEPS_TYPES; i++ )
 				if( !feof(fp) )
 				{
 					int iNumTimesPlayed;
@@ -382,7 +382,7 @@ void SongManager::ReadCategoryRankingsFromFile( CString fn )
 	fscanf(fp, "%d\n", &version );
 	if( version == CATEGORY_RANKING_VERSION )
 	{			
-		for( int i=0; i<NUM_NOTES_TYPES; i++ )
+		for( int i=0; i<NUM_STEPS_TYPES; i++ )
 			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 				for( int k=0; k<NUM_RANKING_LINES; k++ )
 					if( !feof(fp) )
@@ -413,7 +413,7 @@ void SongManager::ReadCourseRankingsFromFile( CString fn )
 			if( pCourse == NULL )
 				pCourse = GetCourseFromName( szPath );
 		
-				for( int i=0; i<NUM_NOTES_TYPES; i++ )
+				for( int i=0; i<NUM_STEPS_TYPES; i++ )
 				for( int j=0; j<NUM_RANKING_LINES; j++ )
 					if( !feof(fp) )
 					{
@@ -439,7 +439,7 @@ void SongManager::InitMachineScoresFromDisk()
 	
 	// Init category ranking
 	{
-		for( int i=0; i<NUM_NOTES_TYPES; i++ )
+		for( int i=0; i<NUM_STEPS_TYPES; i++ )
 			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 				for( int k=0; k<NUM_RANKING_LINES; k++ )
 				{
@@ -474,7 +474,7 @@ void SongManager::SaveCategoryRankingsToFile( CString fn )
 	if( fp )
 	{
 		fprintf(fp,"%d\n",CATEGORY_RANKING_VERSION);
-		for( int i=0; i<NUM_NOTES_TYPES; i++ )
+		for( int i=0; i<NUM_STEPS_TYPES; i++ )
 			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 				for( int k=0; k<NUM_RANKING_LINES; k++ )
 					if( fp )
@@ -503,7 +503,7 @@ void SongManager::SaveCourseRankingsToFile( CString fn )
 				else
 					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 				
-				for( int i=0; i<NUM_NOTES_TYPES; i++ )
+				for( int i=0; i<NUM_STEPS_TYPES; i++ )
 					for( int j=0; j<NUM_RANKING_LINES; j++ )
 					{
 						fprintf(fp, "%d %f %s\n", 
@@ -593,7 +593,7 @@ void SongManager::SaveCourseScoresToFile( CString fn, int c )
 				else
 					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 				
-				for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
+				for( int nt=0; nt<NUM_STEPS_TYPES; nt++ )
 					fprintf(fp, "%d %d %f\n", 
 						pCourse->m_MemCardScores[c][nt].iNumTimesPlayed, 
 						pCourse->m_MemCardScores[c][nt].iScore, 

@@ -98,7 +98,7 @@ public:
 	{
 		int iScore;
 		CString	sName;
-	} m_MachineScores[NUM_NOTES_TYPES][NUM_RANKING_CATEGORIES][NUM_RANKING_LINES];
+	} m_MachineScores[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES][NUM_RANKING_LINES];
 	void AddScores( StepsType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], int iScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
 	void UpdateBest();
 

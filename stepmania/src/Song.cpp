@@ -1001,7 +1001,7 @@ void Song::SaveToDWIFile()
 
 void Song::AddAutoGenNotes()
 {
-	for( StepsType ntMissing=(StepsType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(StepsType)(ntMissing+1) )
+	for( StepsType ntMissing=(StepsType)0; ntMissing<NUM_STEPS_TYPES; ntMissing=(StepsType)(ntMissing+1) )
 	{
 		if( SongHasNotesType(ntMissing) )
 			continue;
@@ -1014,7 +1014,7 @@ void Song::AddAutoGenNotes()
 		StepsType	ntBestMatch = (StepsType)-1;
 		int			iBestTrackDifference = 10000;	// inf
 
-		for( StepsType nt=(StepsType)0; nt<NUM_NOTES_TYPES; nt=(StepsType)(nt+1) )
+		for( StepsType nt=(StepsType)0; nt<NUM_STEPS_TYPES; nt=(StepsType)(nt+1) )
 		{
 			vector<Steps*> apNotes;
 			this->GetNotes( apNotes, nt );

@@ -37,7 +37,7 @@ const int BM_COL_SPACING=34;
 struct {
 	char *name;
 	int NumTracks;
-} const NotesTypes[NUM_NOTES_TYPES] = {
+} const NotesTypes[NUM_STEPS_TYPES] = {
 	{ "dance-single", 4 },
 	{ "dance-double", 8 },
 	{ "dance-couple", 8 },
@@ -1612,7 +1612,7 @@ void GameManager::GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoi
 
 void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo )
 {
-	for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
+	for( int nt=0; nt<NUM_STEPS_TYPES; nt++ )
 	{
 		bool found = false;
 		for( int s=0; !found && s<NUM_STYLES; s++ )
@@ -1646,7 +1646,7 @@ void GameManager::GetEnabledGames( vector<Game>& aGamesOut )
 
 int GameManager::NotesTypeToNumTracks( StepsType nt )
 {
-	if(nt >= NUM_NOTES_TYPES)
+	if(nt >= NUM_STEPS_TYPES)
 	{
 		// invalid StepsType
 		ASSERT(0);
@@ -1668,7 +1668,7 @@ StepsType GameManager::StringToNotesType( CString sNotesType )
 	if( sNotesType == "para" )
 		sNotesType = "para-single";
 
-	for( int i=0; i<NUM_NOTES_TYPES; i++ )
+	for( int i=0; i<NUM_STEPS_TYPES; i++ )
 		if( NotesTypes[i].name == sNotesType )
 			return StepsType(i);
 	
@@ -1679,7 +1679,7 @@ StepsType GameManager::StringToNotesType( CString sNotesType )
 
 CString GameManager::NotesTypeToString( StepsType nt )
 {
-	if(nt >= NUM_NOTES_TYPES)
+	if(nt >= NUM_STEPS_TYPES)
 	{
 		// invalid StepsType
 		ASSERT(0);
