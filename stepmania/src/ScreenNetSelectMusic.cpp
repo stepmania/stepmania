@@ -52,6 +52,7 @@
 
 #define SUBTITLE_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsSubtitleWidth")
 #define ARTIST_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsArtistWidth")
+#define GROUP_WIDTH					THEME->GetMetricF("ScreenNetSelectMusic","SongsGroupWidth")
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
@@ -118,7 +119,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_rectGroupsBackground );
 	this->AddChild( &m_rectGroupsBackground );
 
-	m_textGroups.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textGroups.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
 	m_textGroups.SetShadowLength( 0 );
 	m_textGroups.SetName( "GroupsList" );
 	m_textGroups.SetMaxWidth( GROUPSBG_WIDTH );
@@ -133,7 +134,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_rectSongsBackground );
 	this->AddChild( &m_rectSongsBackground );
 
-	m_textSongs.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textSongs.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
 	m_textSongs.SetShadowLength( 0 );
 	m_textSongs.SetName( "SongsList" );
 	m_textSongs.SetMaxWidth( SONGSBG_WIDTH );
@@ -147,14 +148,21 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_rectExInfo );
 	this->AddChild( &m_rectExInfo );
 
-	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"song") );
 	m_textArtist.SetShadowLength( 0 );
 	m_textArtist.SetName( "SongsArtist" );
 	m_textArtist.SetMaxWidth( ARTIST_WIDTH );
 	SET_XY_AND_ON_COMMAND( m_textArtist );
 	this->AddChild( &m_textArtist);
 
-	m_textSubtitle.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textGroup.LoadFromFont( THEME->GetPathF(m_sName,"song") );
+	m_textGroup.SetShadowLength( 0 );
+	m_textGroup.SetName( "SongsGroup" );
+	m_textGroup.SetMaxWidth( GROUP_WIDTH );
+	SET_XY_AND_ON_COMMAND( m_textGroup );
+	this->AddChild( &m_textGroup );
+
+	m_textSubtitle.LoadFromFont( THEME->GetPathF(m_sName,"song") );
 	m_textSubtitle.SetShadowLength( 0 );
 	m_textSubtitle.SetName( "SongsSubtitle" );
 	m_textSubtitle.SetMaxWidth( SUBTITLE_WIDTH );
@@ -362,6 +370,28 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 	case SM_ChangeSong:
 		{
+			//First check to see if this song is already selected.
+			//This is so that if you multiple copies of the "same" song
+			//you can chose which copy to play.
+			if ( ( !m_vSongs[m_iSongNum % m_vSongs.size()]->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
+				 ( !m_vSongs[m_iSongNum % m_vSongs.size()]->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
+				 ( !m_vSongs[m_iSongNum % m_vSongs.size()]->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
+			{
+				switch ( NSMAN->m_iSelectMode )
+				{
+				case 0:
+				case 1:
+					NSMAN->m_iSelectMode = 0;
+					NSMAN->SelectUserSong();
+					break;
+				case 2:	//Proper starting of song
+				case 3:	//Blind starting of song
+					StartSelectedSong();
+					break;
+				}
+				break;
+			}
+
 			//We always need to find the song
 			m_iGroupNum=m_vGroups.size()-1;	//Alphabetical
 
@@ -568,6 +598,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_textArtist );
 	OFF_COMMAND( m_textSubtitle );
+	OFF_COMMAND( m_textGroup );
 
 	OFF_COMMAND( m_rectExInfo );
 	OFF_COMMAND( m_rectDiff );
@@ -647,6 +678,7 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 
 	m_textArtist.SetText( m_vSongs[j]->GetTranslitArtist() );
 	m_textSubtitle.SetText( m_vSongs[j]->GetTranslitSubTitle() );
+	m_textGroup.SetText( m_vSongs[j]->m_sGroupName );
 	GAMESTATE->m_pCurSong = m_vSongs[j];
 
 	//Update the difficulty Icons

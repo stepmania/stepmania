@@ -91,6 +91,7 @@ private:
 
 	BitmapText		m_textArtist;
 	BitmapText		m_textSubtitle;
+	BitmapText		m_textGroup;
 
 	//Difficulty Icon(s)
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
