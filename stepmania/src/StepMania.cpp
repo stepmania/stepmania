@@ -429,9 +429,9 @@ int main(int argc, char* argv[])
 	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
 	LOG			= new RageLog();
 
-#ifdef DEBUG
+//#ifdef DEBUG
 	LOG->ShowConsole();
-#endif
+//#endif
 
 	/* Whew--we should be able to crash safely now! */
 
@@ -475,9 +475,6 @@ int main(int argc, char* argv[])
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
-	
-	loading_window->SetText("Loading banners ...");
-	loading_window->Paint();
 	BANNERCACHE = new BannerCache;
 	
 	/* depends on SONGINDEX: */
