@@ -77,7 +77,7 @@ CString BacktraceNames::Format() const
 	if( ShortenedPath != "" )
 	{
 		/* Abbreviate the module name. */
-		unsigned slash = ShortenedPath.rfind('/');
+		size_t slash = ShortenedPath.rfind('/');
 		if( slash != ShortenedPath.npos )
 			ShortenedPath = ShortenedPath.substr(slash+1);
 		ShortenedPath = CString("(") + ShortenedPath + ")";
@@ -316,7 +316,7 @@ void BacktraceNames::FromString( CString s )
 
     if( MangledAndOffset != "" )
     {
-        unsigned plus = MangledAndOffset.rfind('+');
+        size_t plus = MangledAndOffset.rfind('+');
 
         if(plus == MangledAndOffset.npos)
         {
@@ -410,8 +410,8 @@ void BacktraceNames::FromAddr( const void *p )
         if (mangledAndFile.size() == 3)
         {
             File = mangledAndFile[2];
-            unsigned pos = File.find('(');
-            unsigned start = (pos == File.npos ? 0 : pos+1);
+            size_t pos = File.find('(');
+            size_t start = (pos == File.npos ? 0 : pos+1);
             pos = File.rfind(')') - 1;
             File = File.substr(start, pos);
         }
@@ -431,8 +431,8 @@ void BacktraceNames::FromAddr( const void *p )
     if (mangledAndFile.size() > 3)
     {
         File = mangledAndFile[3];
-        unsigned pos = File.find('(');
-        unsigned start = (pos == File.npos ? 0 : pos+1);
+        size_t pos = File.find('(');
+        size_t start = (pos == File.npos ? 0 : pos+1);
         pos = File.rfind(')') - 1;
         File = File.substr(start, pos);
     }
