@@ -203,7 +203,8 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	case SONG_MACHINE_HIGH_NAME: /* set val for color */
 	case SONG_MACHINE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSteps).GetTopScore().fPercentDP;
+		CHECKPOINT;
+		val = 100.0f * PROFILEMAN->GetProfile(PROFILE_SLOT_MACHINE)->GetStepsHighScoreList(pSteps).GetTopScore().fPercentDP;
 		break;
 
 	case SONG_MACHINE_RANK:
