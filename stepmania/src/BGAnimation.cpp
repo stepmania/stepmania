@@ -202,6 +202,10 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			 * in metrics.ini commands, not here. */
 			this->RunCommands( ParseCommands(sInitCommand) );
 		}
+	
+		Command cmd;
+		cmd.Load( "PlayCommand,Init" );
+		this->RunCommandOnChildren( cmd );
 	}
 	else
 	{
