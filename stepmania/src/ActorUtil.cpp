@@ -105,6 +105,14 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 				pActor = MakeActor( sFile );
 				TEXTUREMAN->EnableOddDimensionWarning();
 			}
+			else if( IsAFile(sDir+sFile) || IsADirectory(sDir+sFile) )
+			{
+				// If we know this is an exact match, don't bother with the
+				// GetDirListing below.  The GetDirListing is causing problems with 
+				// partial matching BGAnimation directory names.
+				CString sNewPath = DerefRedir( sDir+sFile );
+				pActor = MakeActor( sNewPath );
+			}
 			else
 			{
 				CStringArray asPaths;
