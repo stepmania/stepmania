@@ -11,6 +11,7 @@
 #define HAVE_CXA_DEMANGLE
 #define HAVE_FFMPEG
 #define _BSD_WCHAR_T_DEFINED_
+#define ENDIAN_BIG
 #ifndef __MACOSX__
 # define __MACOSX__
 #endif
