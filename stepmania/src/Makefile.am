@@ -12,7 +12,7 @@ AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0 $(CXXFLAGS_EXTRA)
 # want to have to integrate their entire build systems.
 SDL-1.2.5/src/.libs/libSDL.a:
 	cd SDL-1.2.5 && ./configure \
-		--disable-nasm --enable-static --disable-shared --enable-debug
+		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared --enable-debug
 	make -C SDL-1.2.5
 
 SDL_sound-1.0.0/.libs/libSDL_sound.a:
@@ -76,7 +76,7 @@ ActorsInMenus = \
 Banner.cpp Banner.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
 CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h CroppedSprite.cpp CroppedSprite.h \
 DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h EditMenu.cpp EditMenu.h \
-FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveGraph.h GrooveGraph.h GrooveRadar.cpp \
+FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveGraph.h GrooveGraph.cpp GrooveGraph.h GrooveRadar.cpp \
 GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h \
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp \
 MusicSortDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
@@ -164,8 +164,8 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 # dealing with its build and libjpeg, png, etc--not worth it.
 stepmania_LDADD = \
 		  $(GL_LIBS) \
-		  $(VPATH)/SDL-1.2.5/src/.libs/libSDL.a \
-		  $(VPATH)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
+		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
+		  $(srcdir)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
 		  $(SDL_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
