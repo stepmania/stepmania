@@ -18,39 +18,35 @@ static const bool SCREEN_DEBUG = false;
 LightsDriver_LinuxParallel::LightsDriver_LinuxParallel()
 {
 	// Give port's permissions and reset all bits to zero
-	ioperm(PORT_ADDRESS,1,1);
-	outb(0,PORT_ADDRESS);
+	ioperm( PORT_ADDRESS, 1, 1 );
+	outb( 0, PORT_ADDRESS );
 }
 
 LightsDriver_LinuxParallel::~LightsDriver_LinuxParallel()
 {
 	// Reset all bits to zero and free the port's permissions
-	outb(0,PORT_ADDRESS);
-	ioperm(PORT_ADDRESS,1,0);
+	outb( 0, PORT_ADDRESS );
+	ioperm( PORT_ADDRESS, 1, 0 );
 }
 
 void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 {
 	// Set LightState to port
 	CString s;
-	unsigned char output;
-	int i = 0;
 
 	// Prepare Screen Output too for debugging
 	s += "LinuxParallel Lights Driver Debug\n";
 	s += "Lights Mode: " + LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
 
 	// Cabinet Lights
-	i = 0;
-	output = 0;
+	int i = 0;
+	unsigned char output = 0;
 	s += "Cabinet Bits: ";
 	FOREACH_CabinetLight( cl )
 	{
 		s += ls->m_bCabinetLights[cl] ? '1' : '0';
 		if ( ls->m_bCabinetLights[cl] )
-		{
 			output += (unsigned char)pow((double)2,i);
-		}
 		i++;
 	}
 	s += "\n";
@@ -60,18 +56,17 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 	{
 		s += ssprintf("Controller%d Bits: ",gc+1);
 		for( int gb=0; gb<iNumGameButtonsToShow; gb++ )
-		{
 			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
-		}
 		s += "\n";
 	}
 	s += ssprintf("Output Port: 0x%x\n", PORT_ADDRESS);
 	s += ssprintf("Output Byte: %i\n", output);
 
-	if ( SCREEN_DEBUG ) { SCREENMAN->SystemMessageNoAnimate( s ); }
+	if( SCREEN_DEBUG )
+		SCREENMAN->SystemMessageNoAnimate( s );
 
 	// Send byte to port
-	outb(output, PORT_ADDRESS);
+	outb( output, PORT_ADDRESS );
 }
 
 /*
