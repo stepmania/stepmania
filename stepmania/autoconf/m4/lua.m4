@@ -17,11 +17,16 @@ else
 	if test "$LIB_LUA_LIB" = ""; then
 		AC_CHECK_LIB(lualib50, luaopen_base, LIB_LUA_LIB=-llualib50, , [$LIB_LUA])
 	fi
-	if test "$LIB_LUA" = "" -o "$LIB_LUA_LIB" = ""; then
+	if test "$LIB_LUA" = ""; then
 		echo
-		echo "*** liblua is required to build StepMania; please"
-		echo "*** make sure that liblua is installed to continue"
-		echo "*** the installation process."
+		echo "*** liblua is required to build StepMania; please make sure that"
+		echo "*** it is installed to continue the installation process."
+		exit 0;
+	fi
+	if test "$LIB_LUA_LIB" = ""; then
+		echo
+		echo "*** liblualib is required to build StepMania; please make sure that"
+		echo "*** it is installed to continue the installation process."
 		exit 0;
 	fi
 	LUA_CFLAGS=
