@@ -586,6 +586,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_RANK)
 				SortCoursePointerArrayByRanking( apCourses );
+
+			// since we can't agree, make it an option
+			if (PREFSMAN->m_bMoveRandomToEnd)
+				MoveRandomToEnd( apCourses );
 		}
 
 		if( so == SORT_ALL_COURSES )

@@ -125,8 +125,7 @@ float Course::GetMeter( int Difficult ) const
 		else
 			fTotalMeter += ci[c].pNotes->GetMeter();
 	}
-
-	LOG->Trace("Course '%s': %f", m_sName.c_str(), fTotalMeter/ci.size() );
+//	LOG->Trace("Course '%s': %f", m_sName.c_str(), fTotalMeter/ci.size() );
 	return fTotalMeter / ci.size();
 }
 
@@ -514,7 +513,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		const CourseEntry &e = entries[i];
+		CourseEntry &e = entries[i];
 
 		Song* pSong = NULL;	// fill this in
 		Steps* pNotes = NULL;	// fill this in
@@ -537,6 +536,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 				else
 					pNotes = pSong->GetStepsByDifficulty( nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes );
 			}
+			e.mystery = false;
 			break;
 		case COURSE_ENTRY_RANDOM:
 		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
@@ -566,6 +566,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 					pNotes = NULL;
 				}
 			}
+			e.mystery = true;
 			break;
 		case COURSE_ENTRY_BEST:
 		case COURSE_ENTRY_WORST:
@@ -599,6 +600,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 				if( pNotes == NULL )
 					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
 			}
+			e.mystery = false;
 			break;
 		default:
 			ASSERT(0);
@@ -873,16 +875,6 @@ static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const C
 	float fNum1 = pCourse1->GetMeter( false );
 	float fNum2 = pCourse2->GetMeter( false );
 
-	// push non-fixed courses to end
-	if ( !pCourse1->IsFixed() )
-		fNum1 = 1000.0f;
-	if ( !pCourse2->IsFixed() )
-		fNum2 = 1000.0f;
-
-	LOG->Trace("Comparison between %s (%f) and %s (%f)",
-		pCourse1->m_sName.c_str() , fNum1,
-		pCourse2->m_sName.c_str() , fNum2);
-
 	if( fNum1 < fNum2 )
 		return true;
 	else if( fNum1 > fNum2 )
@@ -934,6 +926,21 @@ static bool MovePlayersBestToEnd( const Course* pCourse1, const Course* pCourse2
 	return pCourse1->m_sName < pCourse2->m_sName;
 }
 
+static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
+{
+	bool C1Fixed = pCourse1->IsFixed();
+	bool C2Fixed = pCourse2->IsFixed();
+	if( !C1Fixed && !C2Fixed )
+		return false;
+	if( C1Fixed && !C2Fixed )
+		return true;
+	if( !C1Fixed && C2Fixed )
+		return false;
+
+	return false;
+//	return pCourse1->m_sName < pCourse2->m_sName;
+}
+
 static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
 {
 	int iNum1 = pCourse1->SortOrder_Ranking;
@@ -977,6 +984,10 @@ static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pC
 	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
 }
 
+void MoveRandomToEnd( vector<Course*> &apCourses )
+{
+	stable_sort( apCourses.begin(), apCourses.end(), CompareRandom );
+}
 
 void SortCoursePointerArrayByType( vector<Course*> &apCourses )
 {

@@ -166,5 +166,6 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
 
+void MoveRandomToEnd( vector<Course*> &apCourses );
 
 #endif

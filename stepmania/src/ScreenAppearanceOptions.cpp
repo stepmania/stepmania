@@ -38,6 +38,7 @@ enum {
 	AO_WHEEL_SECTIONS,
 	AO_TEN_FOOT_RED,
 	AO_COURSE_SORT,
+	AO_COURSE_MOVE_RANDOM,
 	AO_SHOW_TRANSLATIONS,
 	AO_SHOW_LYRICS,
 	NUM_APPEARANCE_OPTIONS_LINES
@@ -55,6 +56,7 @@ OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	OptionRow( "Wheel\nSections",	"NEVER","ALWAYS", "ABC ONLY"),
 	OptionRow( "10+ foot\nIn Red",	"NO", "YES"),
 	OptionRow( "Course\nSort",		"# SONGS", "AVG FEET", "TOTAL FEET", "RANKING"),
+	OptionRow( "Random\nAt End",	"NO","YES"),
 	OptionRow( "Translations",		"NATIVE","TRANSLITERATE"),
 	OptionRow( "Lyrics",			"HIDE","SHOW"),
 };
@@ -148,6 +150,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
 	m_iSelectedOption[0][AO_TEN_FOOT_RED]				= PREFSMAN->m_bTenFooterInRed? 1:0;
 	m_iSelectedOption[0][AO_COURSE_SORT]				= (int)PREFSMAN->m_iCourseSortOrder;
+	m_iSelectedOption[0][AO_COURSE_MOVE_RANDOM]			= PREFSMAN->m_bMoveRandomToEnd? 1:0;
 	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowNative? 0:1;
 	m_iSelectedOption[0][AO_SHOW_LYRICS]				= PREFSMAN->m_bShowLyrics;
 }
@@ -199,6 +202,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bDancePointsForOni				= !!m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI];
 	PREFSMAN->m_bTenFooterInRed					= !!m_iSelectedOption[0][AO_TEN_FOOT_RED];
 	(int&)PREFSMAN->m_iCourseSortOrder			=   m_iSelectedOption[0][AO_COURSE_SORT];
+	PREFSMAN->m_bMoveRandomToEnd				= !!m_iSelectedOption[0][AO_COURSE_MOVE_RANDOM];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();

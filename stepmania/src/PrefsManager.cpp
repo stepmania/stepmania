@@ -116,6 +116,7 @@ PrefsManager::PrefsManager()
 
 	// default to old sort order
 	m_iCourseSortOrder = COURSE_SORT_SONGS;
+	m_bMoveRandomToEnd = false;
 	m_iScoringType = SCORING_MAX2;
 
 	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
@@ -235,7 +236,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.GetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
+
 	ini.GetValueI( "Options", "CourseSortOrder",			(int&)m_iCourseSortOrder );
+	ini.GetValueB( "Options", "MoveRandomToEnd",			m_bMoveRandomToEnd );
 
 	ini.GetValueI( "Options", "ScoringType",				(int&)m_iScoringType );
 
@@ -358,6 +361,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.SetValueI( "Options", "CourseSortOrder",			m_iCourseSortOrder );
+	ini.SetValueB( "Options", "MoveRandomToEnd",			m_bMoveRandomToEnd );
+
 	ini.SetValueI( "Options", "ScoringType",				m_iScoringType );
 	
 	ini.SetValueI( "Options", "ProgressiveLifebar",			m_iProgressiveLifebar );

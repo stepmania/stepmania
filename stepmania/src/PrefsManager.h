@@ -93,6 +93,7 @@ public:
 
 	// course ranking
 	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
+	bool			m_bMoveRandomToEnd;
 
 	// scoring type; SCORING_MAX2 should always be first
 	enum { SCORING_MAX2, SCORING_5TH } m_iScoringType;
