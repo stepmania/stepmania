@@ -2,6 +2,7 @@
 #define RAGE_SOUND_MANAGER_H
 
 #include <set>
+#include <map>
 #include "arch/Sound/RageSoundDriver.h"
 
 #include "RageThreads.h"
@@ -20,6 +21,12 @@ class RageSoundManager
 	/* Set of sounds that are finished and should be deleted. */
 	set<RageSound *> sounds_to_delete;
 
+	struct FakeSound {
+		float begin;
+		int samples_read;
+	};
+	map<RageSound *, FakeSound> fake_sounds;
+
 	RageSoundDriver *driver;
 
 public:
@@ -30,9 +37,9 @@ public:
 
 	void Update(float delta);
 	void StartMixing(RageSound *snd);	/* used by RageSound */
-	void StopMixing(RageSound *snd);		/* used by RageSound */
+	void StopMixing(RageSound *snd);	/* used by RageSound */
 	int GetPosition(const RageSound *snd) const;	/* used by RageSound */
-
+	void AddFakeSound(RageSound *snd);		/* used by drivers */
 	float GetPlayLatency() const;
 
 	void PlayOnce( CString sPath );

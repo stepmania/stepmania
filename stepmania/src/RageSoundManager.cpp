@@ -47,10 +47,24 @@ void RageSoundManager::StopMixing(RageSound *snd)
 		sounds_to_delete.insert(snd);
 		owned_sounds.erase(snd);
 	}
+
+	map<RageSound *, FakeSound>::iterator fake = 
+		fake_sounds.find(const_cast<RageSound *>(snd));
+	if(fake != fake_sounds.end())
+		fake_sounds.erase(fake);
 }
 
 int RageSoundManager::GetPosition(const RageSound *snd) const
 {
+	map<RageSound *, FakeSound>::const_iterator fake = 
+		fake_sounds.find(const_cast<RageSound *>(snd));
+	if(fake != fake_sounds.end())
+	{
+		float time_since = RageTimer::GetTimeSinceStart() - fake->second.begin;
+		
+		return int(time_since * 44100); // XXX
+	}
+	
 	return driver->GetPosition(snd);
 }
 
@@ -67,6 +81,45 @@ void RageSoundManager::Update(float delta)
 		(*i)->Update(delta);
 
 	driver->Update(delta);
+
+	/* We keep a list of "fake" sound effects.  These are sound effects that
+	 * have been requested to play, but the driver couldn't play them; usually
+	 * because it's run out of sound channels.  Pretend we're playing them,
+	 * since this should be uncommon. */
+	{
+		char buf[1024*16];
+		map<RageSound *, FakeSound>::iterator j = fake_sounds.begin(),
+			next = j;
+		while(j != fake_sounds.end())
+		{
+			next++;
+
+			RageSound *s = j->first;
+			FakeSound &fake = j->second;
+
+			int bytes = min(unsigned(delta * 44100*4), sizeof(buf));
+			
+			int now = int(RageTimer::GetTimeSinceStart() - fake.begin) * 44100;
+
+			int got = s->GetPCM(buf, bytes, now);
+			if(got < bytes)
+				s->SoundStopped();
+
+			j = next;
+		}
+	}
+}
+
+void RageSoundManager::AddFakeSound(RageSound *snd)
+{
+	map<RageSound *, FakeSound>::const_iterator fake = 
+		fake_sounds.find(const_cast<RageSound *>(snd));
+
+	ASSERT(fake == fake_sounds.end());
+	FakeSound newfake;
+	newfake.begin = RageTimer::GetTimeSinceStart();
+	newfake.samples_read = 0;
+	fake_sounds[snd] = newfake;
 }
 
 float RageSoundManager::GetPlayLatency() const
