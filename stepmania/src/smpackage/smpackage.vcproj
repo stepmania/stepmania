@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="smpackage"
+	ProjectGUID="{73DC9F74-4013-4608-85A3-6D3EEA25E064}"
 	SccProjectName=""
 	SccLocalPath=""
 	Keyword="MFCProj">
