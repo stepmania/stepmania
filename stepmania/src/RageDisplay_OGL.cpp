@@ -95,6 +95,93 @@ const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 LowLevelWindow *wind;
 
+
+static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
+	{
+		/* B8G8R8A8 */
+		32,
+		{ 0x000000FF,
+		  0x0000FF00,
+		  0x00FF0000,
+		  0xFF000000 }
+	}, {
+		/* B4G4R4A4 */
+		16,
+		{ 0xF000,
+		  0x0F00,
+		  0x00F0,
+		  0x000F },
+	}, {
+		/* B5G5R5A1 */
+		16,
+		{ 0xF800,
+		  0x07C0,
+		  0x003E,
+		  0x0001 },
+	}, {
+		/* B5G5R5 */
+		16,
+		{ 0xF800,
+		  0x07C0,
+		  0x003E,
+		  0x0000 },
+	}, {
+		/* B8G8R8 */
+		24,
+		{ 0x0000FF,
+		  0x00FF00,
+		  0xFF0000,
+		  0x000000 }
+	}, {
+		/* Paletted */
+		8,
+		{ 0,0,0,0 } /* N/A */
+	}
+};
+
+struct GLPixFmtInfo_t {
+	GLenum internalfmt; /* target format */
+	GLenum format; /* target format */
+	GLenum type; /* data format */
+} GL_PIXFMT_INFO[NUM_PIX_FORMATS] = {
+	/* XXX: GL_UNSIGNED_SHORT_4_4_4_4 is affected by endianness; GL_UNSIGNED_BYTE
+	 * is not, but all SDL masks are affected by endianness, so GL_UNSIGNED_BYTE
+	 * is reversed.  This isn't endian-safe. */
+	{
+		/* B8G8R8A8 */
+		GL_RGBA8,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+	}, {
+		/* B4G4R4A4 */
+		GL_RGBA4,
+		GL_RGBA,
+		GL_UNSIGNED_SHORT_4_4_4_4,
+	}, {
+		/* B5G5R5A1 */
+		GL_RGB5_A1,
+		GL_RGBA,
+		GL_UNSIGNED_SHORT_5_5_5_1,
+	}, {
+		/* B5G5R5 */
+		GL_RGB5,
+		GL_RGBA,
+		GL_UNSIGNED_SHORT_5_5_5_1,
+	}, {
+		/* B8G8R8 */
+		GL_RGB8,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+	}, {
+		/* Paletted */
+		GL_COLOR_INDEX8_EXT,
+		GL_COLOR_INDEX,
+		GL_UNSIGNED_BYTE,
+	}
+};
+
+
+
 void GetGLExtensions(set<string> &ext)
 {
     const char *buf = (const char *)glGetString(GL_EXTENSIONS);
@@ -157,6 +244,57 @@ bool HasExtension(CString ext)
 	return g_glExts.find(ext) != g_glExts.end();
 }
 
+static void CheckPalettedTextures()
+{
+//	GLuint texture;
+//	glGenTextures(1, reinterpret_cast<GLuint*>(&texture));
+
+	/* Check to see if paletted textures really work. */
+	GLenum glTexFormat = GL_PIXFMT_INFO[FMT_PAL].internalfmt;
+	GLenum glImageFormat = GL_PIXFMT_INFO[FMT_PAL].format;
+	GLenum glImageType = GL_PIXFMT_INFO[FMT_PAL].type;
+
+	glTexImage2D(GL_PROXY_TEXTURE_2D,
+				0, glTexFormat, 
+				16, 16, 0,
+				glImageFormat, glImageType, NULL);
+
+//	glBindTexture( GL_TEXTURE_2D, GL_PROXY_TEXTURE_2D );
+	CString error;
+
+	GLenum glError = glGetError();
+	if( glError != GL_NO_ERROR )
+	{
+		error = "glTexImage2D failed";
+		goto fail;
+	}
+
+	GLubyte palette[256*4];
+	memset(palette, 0, sizeof(palette));
+	GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+	glError = glGetError();
+	if( glError != GL_NO_ERROR )
+	{
+		error = "glColorTableEXT failed";
+		goto fail;
+	}
+
+	GLint size = 0;
+	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+	if(size != 8)
+	{
+		error = ssprintf("Expected an 8-bit palette, got a %i-bit one instead", size);
+		goto fail;
+	}
+
+	return;
+
+fail:
+	GLExt::glColorTableEXT = NULL;
+	GLExt::glGetColorTableParameterivEXT = NULL;
+	LOG->Info("Paletted textures disabled: %s.", error);
+}
+
 void SetupExtensions()
 {
 	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
@@ -169,6 +307,7 @@ void SetupExtensions()
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
 	g_bAALinesBroken = false;
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
+	CheckPalettedTextures();
 
 	// Checks for known bad drivers
 	CString sRenderer = (const char*)glGetString(GL_RENDERER);
@@ -177,10 +316,10 @@ void SetupExtensions()
 	{
 		LOG->Info("Anti-aliased lines are known to cause problems with this driver.");
 		g_bAALinesBroken = true;
-
+/* Shouldn't be needed anymore.
 		LOG->Info("Paletted textures are broken with this driver.");
 		GLExt::glColorTableEXT = NULL;
-		GLExt::glGetColorTableParameterivEXT = NULL;
+		GLExt::glGetColorTableParameterivEXT = NULL; */
 	}
 }
 
@@ -701,96 +840,11 @@ void RageDisplay_OGL::SetBackfaceCull( bool b )
         glDisable( GL_CULL_FACE );
 }
 
-static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
-	{
-		/* B8G8R8A8 */
-		32,
-		{ 0x000000FF,
-		  0x0000FF00,
-		  0x00FF0000,
-		  0xFF000000 }
-	}, {
-		/* B4G4R4A4 */
-		16,
-		{ 0xF000,
-		  0x0F00,
-		  0x00F0,
-		  0x000F },
-	}, {
-		/* B5G5R5A1 */
-		16,
-		{ 0xF800,
-		  0x07C0,
-		  0x003E,
-		  0x0001 },
-	}, {
-		/* B5G5R5 */
-		16,
-		{ 0xF800,
-		  0x07C0,
-		  0x003E,
-		  0x0000 },
-	}, {
-		/* B8G8R8 */
-		24,
-		{ 0x0000FF,
-		  0x00FF00,
-		  0xFF0000,
-		  0x000000 }
-	}, {
-		/* Paletted */
-		8,
-		{ 0,0,0,0 } /* N/A */
-	}
-};
-
 const PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
 	return &PIXEL_FORMAT_DESC[pf];
 }
-
-
-struct GLPixFmtInfo_t {
-	GLenum internalfmt; /* target format */
-	GLenum format; /* target format */
-	GLenum type; /* data format */
-} GL_PIXFMT_INFO[NUM_PIX_FORMATS] = {
-	/* XXX: GL_UNSIGNED_SHORT_4_4_4_4 is affected by endianness; GL_UNSIGNED_BYTE
-	 * is not, but all SDL masks are affected by endianness, so GL_UNSIGNED_BYTE
-	 * is reversed.  This isn't endian-safe. */
-	{
-		/* B8G8R8A8 */
-		GL_RGBA8,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE,
-	}, {
-		/* B4G4R4A4 */
-		GL_RGBA4,
-		GL_RGBA,
-		GL_UNSIGNED_SHORT_4_4_4_4,
-	}, {
-		/* B5G5R5A1 */
-		GL_RGB5_A1,
-		GL_RGBA,
-		GL_UNSIGNED_SHORT_5_5_5_1,
-	}, {
-		/* B5G5R5 */
-		GL_RGB5,
-		GL_RGBA,
-		GL_UNSIGNED_SHORT_5_5_5_1,
-	}, {
-		/* B8G8R8 */
-		GL_RGB8,
-		GL_RGB,
-		GL_UNSIGNED_BYTE,
-	}, {
-		/* Paletted */
-		GL_COLOR_INDEX8_EXT,
-		GL_COLOR_INDEX,
-		GL_UNSIGNED_BYTE,
-	}
-};
 
 
 void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
@@ -890,10 +944,13 @@ unsigned RageDisplay_OGL::CreateTexture(
 			/* I don't know any reason this should actually fail (paletted textures
 			 * but no support for 8-bit palettes?), so let's just disable paletted
 			 * textures the first time this happens. */
-			LOG->Info("Expected an 8-bit palette, got a %i-bit one instead; disabling paletted textures", size);
+			/* We can remove this if this doesn't actually happen, and simplify this code. */
+			RageException::Throw("Thought paletted textures worked, but they don't.");
+//			LOG->Info("Expected an 8-bit palette, got a %i-bit one instead; disabling paletted textures", size);
 //			DISPLAY->DisablePalettedTexture();
 			
 			/* TODO:  Fix this */
+			/* Shouldn't be needed anymore. */
 //			ASSERT(0);
 //			pixfmt = FMT_RGBA8;
 //			ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[pixfmt].bpp,
