@@ -495,30 +495,21 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	iStartIndex = max( iStartIndex, 0 );
 	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
 
-//	vector<int> HoldsAtRow;
-//	HoldsAtRow.insert( HoldsAtRow.begin(), iEndIndex-iStartIndex+1, 0 );
-	int i;
-//	for( i=0; i<GetNumHoldNotes(); i++ )
-//	{
-//		/* Skip the first row of each hold, since there's also a TAP_HOLD_HEAD there. */
-//		const HoldNote &hn = GetHoldNote(i);
-//		for( int row = hn.iStartRow+1; row < hn.iEndRow; ++row )
-//			++HoldsAtRow[row-iStartIndex];
-//	}
-
 	int iNum = 0;
-	for( i=iStartIndex; i<=iEndIndex; i++ )
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			TapNote tn = GetTapNoteX(t, i);
 			if( tn != TAP_MINE && tn != TAP_EMPTY ) // mines don't count
-				iNumNotesThisIndex++;
+				++iNumNotesThisIndex;
 		}
+
 		/* We must have at least one non-hold-body at this row to count it. */
 		if( !iNumNotesThisIndex )
 			continue;
+
 		if( iNumNotesThisIndex < 3 )
 		{
 			/* We have at least one, but not enough.  Count holds. */
@@ -526,15 +517,14 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 			{
 				const HoldNote &hn = GetHoldNote(j);
 				if( hn.iStartRow+1 <= j && j <= hn.iEndRow )
-					iNumNotesThisIndex++;
+					++iNumNotesThisIndex;
 			}
 		}
 
-//		iNumNotesThisIndex += HoldsAtRow[i-iStartIndex];
 		if( iNumNotesThisIndex >= 3 )
 			iNum++;
 	}
-LOG->Trace("xxxxxx %i", iNum);
+
 	return iNum;
 }
 
