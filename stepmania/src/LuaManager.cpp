@@ -359,6 +359,11 @@ float LuaManager::RunExpressionF( const CString &str )
 	return result;
 }
 
+int LuaManager::RunExpressionI( const CString &str )
+{
+	return (int)RunExpressionF(str);
+}
+
 bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 {
 	if( !RunExpression( str ) )

@@ -30,6 +30,7 @@ public:
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );
 	float RunExpressionF( const CString &str );
+	int RunExpressionI( const CString &str );
 	bool RunExpressionS( const CString &str, CString &sOut );
 
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
