@@ -150,7 +150,7 @@ float AnimatedTexture::GetSecondsIntoAnimation() const
 	for( unsigned i=0; i<vFrames.size(); i++ )
 	{
 		const AnimatedTextureState& ats = vFrames[i];
-		if( i >= m_iCurState )
+		if( int(i) >= m_iCurState )
 			break;
 
 		fSeconds += ats.fDelaySecs;
