@@ -106,8 +106,7 @@ bool RageSound_WaveOut::GetPCM()
   	if(ret != MMSYSERR_NOERROR)
 		RageException::ThrowFatal(wo_ssprintf(ret, "waveOutWrite failed"));
 
-	/* Increment last_cursor_pos to point at where the data we're about to
-	 * ask for will actually be played. */
+	/* Increment last_cursor_pos. */
 	last_cursor_pos += chunksize_frames;
 
 	return true;
