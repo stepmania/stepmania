@@ -164,16 +164,11 @@ void split(
 void split( const lstring &Source, const lstring &Deliminator, vector<lstring> &AddIt, const bool bIgnoreEmpty = true );
 
 // Joins a CStringArray to create a CString according the Deliminator.
-CString join(
-	const CString &Deliminator,
-	const CStringArray& Source
-);
+CString join(const CString &Deliminator, const CStringArray& Source);
 
 bool CreateDirectories( CString Path );
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 
-bool GetExtDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... );
-bool GetExtDirListingV( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, const char *masks[] );
 void FlushDirCache();
 
 unsigned int GetHashForString( CString s );
@@ -199,9 +194,40 @@ void TrimRight(CString &str, const char *s = "\r\n\t ");
 
 CString DerefRedir(const CString &path);
 
-bool regex(CString str, CString pattern, vector<CString> &matches);
-bool regex(CString str, CString pattern);
-void regex_flags(int flags);
+class Regex {
+	void *reg;
+	unsigned backrefs;
+
+public:
+	Regex(const CString &pat);
+	~Regex();
+	bool Compare(const CString &str);
+	bool Compare(const CString &str, vector<CString> &matches);
+};
+
+struct FileSet;
+class FilenameDB
+{
+	FileSet &GetFileSet(CString dir, bool ResolveCase = true);
+
+	/* Directories we have cached: */
+	map<CString, FileSet *> dirs;
+
+	void GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
+	void GetFilesStartingAndEndingWith(const CString &dir, const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs);
+
+public:
+	/* This handles at most one * wildcard.  If we need anything more complicated,
+	 * we'll need to use fnmatch or regex. */
+	void GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
+
+	/* Search for "path" case-insensitively and replace it with the correct
+	 * case.  If "path" doesn't exist at all, return false and don't change it. */
+	bool ResolvePath(CString &path);
+	
+	void FlushDirCache();
+};
+extern FilenameDB FDB;
 
 void Replace_Unicode_Markers( CString &Text );
 void ReplaceText( CString &Text, const map<CString,CString> &m );

@@ -21,6 +21,7 @@
 #include <fstream>
 #include "regex.h"
 #include <map>
+#include <set>
 
 unsigned long randseed = time(NULL);
 
@@ -195,13 +196,18 @@ void splitpath( CString Path, CString& Dir, CString& Filename, CString& Ext )
 
 	CStringArray mat;
 
-	/* One level of escapes for the regex, one for C. Ew. */
-	ASSERT(regex("^(.*[\\\\/])?(.*)$", Path, mat));
+	/* One level of escapes for the regex, one for C. Ew. 
+	 * This is really:
+	 * ^(.*[\\/])?(.*)$    */
+	static Regex sep("^(.*[\\\\/])?(.*)$");
+	ASSERT(sep.Compare(Path, mat));
 
 	Dir = mat[0];
 	Path = mat[1];
 
-	if(regex("^(.*)(\\.[^\\.]+)$", Path, mat))
+	/* ^(.*)(\.[^\.]+)$ */
+	static Regex SplitExt("^(.*)(\\.[^\\.]+)$");
+	if(SplitExt.Compare(Path, mat))
 	{
 		Filename = mat[0];
 		Ext = mat[1];
@@ -313,160 +319,6 @@ void GetCwd(CString &s)
 	ASSERT(ret);
 
 	s = buf;
-}
-
-/* This is a little big; I'm undecided whether it deserves its own file.
- * For now, I'll leave it here, since the interface is extremely simple.
- * If it gets more interfaces, I'll move them to members of DirCache and
- * give it its own file. -glenn */
-
-/* Keep a cache of read directories, with attributes and the extension
- * split off, so we don't have to request this from the system every
- * time, and so we can do searches by extension quickly. */
-class DirCache {
-public:
-	struct CacheEntry {
-		CStringArray files;
-		CStringArray exts;
-		vector<int> Attributes;
-
-		CString dir;
-	};
-
-	const CacheEntry *SearchDirCache( const CString &sPath );
-
-	void FlushCache();
-	~DirCache() { FlushCache(); }
-private:
-	CacheEntry *LoadDirCache( const CString &sPath );
-
-	/* We don't have too many directories ... XXX - glenn */
-	vector<CacheEntry *> directory_cache;
-} static DirectoryCache;
-
-void DirCache::FlushCache()
-{
-	for(unsigned i = 0; i < directory_cache.size(); ++i)
-		delete directory_cache[i];
-	directory_cache.clear();
-}
-
-void FlushDirCache() { DirectoryCache.FlushCache(); }
-
-/* Read a directory and return a CacheEntry object for it. */
-DirCache::CacheEntry *DirCache::LoadDirCache( const CString &sPath )
-{
-	CString sFile, sDir, sThrowAway;
-	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
-
-	CString oldpath;
-	GetCwd(oldpath);
-	if(chdir(sDir) == -1) return NULL;
-
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile( "*", &fd );
-
-	if( hFind == INVALID_HANDLE_VALUE )
-	{
-		chdir(oldpath);
-		return NULL;
-	}
-
-	DirCache::CacheEntry *dir = new DirCache::CacheEntry;
-	dir->dir = sPath;
-
-	do {
-		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
-			continue;
-
-		CString sExt, sThrowAway;
-		splitrelpath( fd.cFileName, sThrowAway, sThrowAway, sExt );
-
-		dir->files.push_back(fd.cFileName);
-		dir->exts.push_back(sExt);
-		dir->Attributes.push_back(fd.dwFileAttributes);
-	} while( ::FindNextFile( hFind, &fd ) );
-	directory_cache.push_back(dir);
-
-	chdir(oldpath);
-	return dir;
-}
-
-/* Return a CacheEntry object for a directory, reading it if necessary. */
-const DirCache::CacheEntry *DirCache::SearchDirCache( const CString &sPath )
-{
-	unsigned i;
-	for(i = 0; i < directory_cache.size(); ++i)
-		if(directory_cache[i]->dir == sPath) break;
-
-	if(i == directory_cache.size())
-		/* Didn't find it. */
-		return LoadDirCache( sPath );
-
-	return directory_cache[i];
-}
-
-/* GetExtDirListing(V):
- * sPath is a path, which may include a filename.  If a filename
- * portion is included, return only files which have that as a
- * prefix.  (If you don't use this, make sure the path ends in a
- * backslash, to prevent the last element of the directory from
- * looking like a filename.)
- *
- * Each argument (or each element in the array) is an extension to
- * return.  If no arguments are provided, return all files.
- */
-bool GetExtDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... )
-{
-	const char *masks[32];
-	unsigned nmasks = 0;
-    va_list	va;
-	
-    va_start(va, bReturnPathToo);
-	while(const char *next = va_arg(va, const char *))
-	{
-		masks[nmasks++] = next;
-		ASSERT(nmasks+1 < sizeof(masks)/sizeof(*masks));
-	}
-    va_end(va);
-	masks[nmasks++] = NULL;
-
-	return GetExtDirListingV(sPath, AddTo, bOnlyDirs, bReturnPathToo, masks );
-}
-
-bool GetExtDirListingV( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, const char *masks[] )
-{
-	CString sFile, sDir, sThrowAway;
-	splitrelpath( sPath, sDir, sFile, sThrowAway );
-
-	const DirCache::CacheEntry *cache = DirectoryCache.SearchDirCache(sDir);
-	if(!cache) return false;
-
-	for(unsigned i = 0; i < cache->files.size(); ++i)
-	{
-		if( bOnlyDirs && !(cache->Attributes[i] & FILE_ATTRIBUTE_DIRECTORY) )
-			continue;	// skip
-
-		if(strnicmp(sFile, cache->files[i], sFile.GetLength()))
-			continue;
-
-		bool matched = false;
-		for(int j = 0; !matched && masks[j]; ++j)
-		{
-			if(stricmp(masks[j], cache->exts[i]))
-				continue;
-			matched = true;
-		}
-		
-		if(!matched) continue;
-
-		if( bReturnPathToo )
-			AddTo.push_back( sDir + cache->files[i] );
-		else
-			AddTo.push_back( cache->files[i] );
-	}
-
-	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -641,7 +493,7 @@ unsigned int GetHashForDirectory( CString sDir )
 	hash += GetHashForFile( sDir );
 
 	CStringArray arrayFiles;
-	GetDirListing( sDir+"\\*.*", arrayFiles, false );
+	GetDirListing( sDir+"\\*", arrayFiles, false );
 	for( unsigned i=0; i<arrayFiles.size(); i++ )
 	{
 		const CString sFilePath = sDir + arrayFiles[i];
@@ -759,47 +611,42 @@ CString DerefRedir(const CString &path)
 	return sDir+sNewFileName;
 }
 
-/* Call this if you need flags other than the default.  They'll be
- * reset after the next regex() call. */
-static const int re_flags_default = REG_EXTENDED|REG_ICASE;
-static int re_flags = re_flags_default;
-void regex_flags(int flags)
+Regex::Regex(const CString &pattern)
 {
-    re_flags = flags;
-}
+	reg = new regex_t;
 
-void regex_reset()
-{
-    re_flags = re_flags_default;
-}
-
-bool regex(CString pattern, CString str, vector<CString> &matches)
-{
-    matches.clear();
-
-    regex_t reg;
-
-    /* Count the number of backreferences. */
-    int backref_count = 0;
-    int i;
-    for(i = 0; i < int(pattern.size()); ++i)
-        if(pattern[i] == '(') backref_count++;
-    ASSERT(backref_count+1 < 128);
-
-    int ret = regcomp(&reg, pattern.c_str(), re_flags);
-    regex_reset();
+    int ret = regcomp((regex_t *) reg, pattern.c_str(), REG_EXTENDED|REG_ICASE);
     if(ret != 0)
 		RageException::Throw("Invalid regex: '%s'", pattern.c_str());
 
+    /* Count the number of backreferences. */
+    backrefs = 0;
+    for(int i = 0; i < int(pattern.size()); ++i)
+        if(pattern[i] == '(') backrefs++;
+    ASSERT(backrefs+1 < 128);
+}
+
+Regex::~Regex()
+{
+	delete reg;
+}
+
+bool Regex::Compare(const CString &str)
+{
+    return regexec((regex_t *) reg, str.c_str(), 0, NULL, 0) != REG_NOMATCH;
+}
+
+bool Regex::Compare(const CString &str, vector<CString> &matches)
+{
+    matches.clear();
+
     regmatch_t mat[128];
-    ret = regexec(&reg, str.c_str(), 128, mat, 0);
+    int ret = regexec((regex_t *) reg, str.c_str(), 128, mat, 0);
 
-    regfree(&reg);
-
-    if(ret == REG_NOMATCH)
+	if(ret == REG_NOMATCH)
         return false;
 
-    for(i = 1; i < backref_count+1; ++i)
+    for(unsigned i = 1; i < backrefs+1; ++i)
     {
         if(mat[i].rm_so == -1)
             matches.push_back(""); /* no match */
@@ -808,12 +655,6 @@ bool regex(CString pattern, CString str, vector<CString> &matches)
     }
 
     return true;
-}
-
-bool regex(CString pattern, CString str)
-{
-    vector<CString> matches;
-    return regex(pattern, str, matches);
 }
 
 /* UTF-8 decoding code from glib. */
@@ -1045,3 +886,25 @@ CString WcharDisplayText(wchar_t c)
 	if(c < 128) chr += ssprintf(" ('%c')", char(c));
 	return chr;
 }
+
+
+
+
+
+
+/* Return the last named component of dir:
+ * a/b/c -> c
+ * a/b/c/ -> c
+ */
+CString Basename(CString dir)
+{
+	TrimRight(dir, "/\\");
+
+	unsigned pos = dir.find_last_of("/\\");
+	if(pos != dir.npos)
+		return dir.substr(pos+1);
+
+	return dir;
+}
+
+
