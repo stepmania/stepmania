@@ -65,7 +65,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		IniFile ini(sPathToIni);
 		ini.ReadFile();
 
-		unsigned i;
+		int i;
 		for( i=0; i<MAX_LAYERS; i++ )
 		{
 			CString sLayer = ssprintf("Layer%d",i+1);
@@ -80,7 +80,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		if( !ini.GetValueF( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
 		{
 			m_fLengthSeconds = 0;
-			for( i=0; i < m_Layers.size(); i++ )
+			for( i=0; (unsigned)i < m_Layers.size(); i++ )
 				m_fLengthSeconds = max(m_fLengthSeconds, m_Layers[i]->GetMaxTweenTimeLeft());
 		}
 	}

@@ -128,7 +128,7 @@ void GameState::Update( float fDelta )
 
 		m_bActiveAttackEndedThisUpdate[p] = false;
 
-		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
 			if( m_ActiveAttacks[p][s].fSecsRemaining > 0 )
 			{
@@ -510,7 +510,7 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 	LOG->Trace( "Launch attack '%s' against P%d", a.sModifier.c_str(), target+1 );
 
 	// search for an open slot
-	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
 		{
 			m_ActiveAttacks[target][s] = a;
@@ -521,7 +521,7 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn )
 {
-	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
 		m_ActiveAttacks[pn][s].fSecsRemaining = 0;
 		m_ActiveAttacks[pn][s].sModifier = "";
@@ -532,7 +532,7 @@ void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn )
 void GameState::RemoveAllInventory()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
 			m_Inventory[p][s].fSecsRemaining = 0;
 			m_Inventory[p][s].sModifier = "";
@@ -552,7 +552,7 @@ int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
 {
 	int iSum = 0;
 
-	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 )
 			iSum += m_ActiveAttacks[pn][s].level;
 

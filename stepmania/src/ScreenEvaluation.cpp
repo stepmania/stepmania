@@ -150,6 +150,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		break;
 	case stage:
 	case course:
+		LOG->Trace("We made it to stage");
 		stageStats = GAMESTATE->m_CurStageStats;
 		break;
 	default:
@@ -752,7 +753,7 @@ void ScreenEvaluation::TweenOffScreen()
 	}
 
 	// small banner area
-	for( unsigned i=0; i<MAX_SONGS_TO_SHOW; i++ )
+	for( int i=0; i<MAX_SONGS_TO_SHOW; i++ )
 	{
 		UtilOffCommand( m_SmallBanner[i], "ScreenEvaluation" );
 		UtilOffCommand( m_sprSmallBannerFrame[i], "ScreenEvaluation" );

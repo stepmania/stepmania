@@ -281,7 +281,7 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 			Difficulty dc;
 
 			getline(f, line);
-			if( sscanf(line.c_str(), "%d %d", &nt, &dc) != 2 )
+			if( sscanf(line.c_str(), "%d %d", (int *)&nt, (int *)&dc) != 2 )
 				break;
 
 			CString sDescription;
@@ -301,7 +301,7 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 			int iNumTimesPlayed;
 			Grade grade;
 			int iScore;
-			if( sscanf(line.c_str(), "%d %d %i\n", &iNumTimesPlayed, &grade, &iScore) != 3 )
+			if( sscanf(line.c_str(), "%d %d %i\n", &iNumTimesPlayed, (int *)&grade, &iScore) != 3 )
 				break;
 			if( pNotes )
 			{
@@ -530,7 +530,7 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 
 				fprintf(fp, "%s\n%u\n", 
 					pSong->GetSongDir().c_str(),
-					vNotes.size() );
+					(unsigned)vNotes.size() );
 
 				for( unsigned i=0; i<vNotes.size(); i++ )
 				{

@@ -161,7 +161,7 @@ void GroupList::SetSelection( unsigned sel )
 
 	m_iSelection=sel;
 
-	if( m_asLabels.size() <= MAX_GROUPS_ONSCREEN ||
+	if( (int)m_asLabels.size() <= MAX_GROUPS_ONSCREEN ||
 		  sel <= MAX_GROUPS_ONSCREEN/2 )
 		m_iTop = 0;
 	else if ( sel >= m_asLabels.size() - MAX_GROUPS_ONSCREEN/2 )

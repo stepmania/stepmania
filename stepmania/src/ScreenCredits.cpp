@@ -170,7 +170,7 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 {
 	LOG->Trace( "ScreenCredits::ScreenCredits()" );
 
-	unsigned i;
+	int i;
 
 	GAMESTATE->Reset();		// so that credits message for both players will show
 

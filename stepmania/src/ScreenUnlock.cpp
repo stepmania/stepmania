@@ -75,7 +75,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		CString SongTitle = DISPLAYED_SONG(i);
 		if (USE_UNLOCKS_DAT == 1)
 		{
-			if (i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
+			if ((unsigned)i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
 				SongTitle = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
 		}
 		
@@ -127,7 +127,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			CString DisplayedSong = DISPLAYED_SONG(i);
 			if (USE_UNLOCKS_DAT == 1)
 			{
-				if (i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
+				if ((unsigned)i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
 					DisplayedSong = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
 			}
 
@@ -249,7 +249,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			if (i > (int) LastUnlocks.size())
 				continue;
 
-			int NextIcon = LastUnlocks[LastUnlocks.size() - i];
+			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
 			Sprite* NewIcon = new Sprite;
 			BitmapText* NewText = new BitmapText;
