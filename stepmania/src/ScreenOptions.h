@@ -106,7 +106,7 @@ private:
 	Sprite			m_sprPage;
 	Sprite			m_sprBullets[MAX_OPTION_LINES];
 	BitmapText		m_textTitles[MAX_OPTION_LINES];
-	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_VISIBLE_VALUES_PER_LINE];	// this array has to be big enough to hold all of the options
+	vector<BitmapText *>	m_textItems[MAX_OPTION_LINES];
 
 	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
 

@@ -129,15 +129,21 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 
 		m_framePage.AddChild( &m_textTitles[r] );		
 
-		int iNumChoices = min( m_OptionRow[r].choices.size(), MAX_VISIBLE_VALUES_PER_LINE );
-		for( int c=0; c<iNumChoices; c++ )
+		for( unsigned c=0; c<m_OptionRow[r].choices.size(); c++ )
 		{
-			m_framePage.AddChild( &m_textItems[r][c] );
+			BitmapText *bt = new BitmapText;
+			m_textItems[r].push_back( bt );
+
+			m_framePage.AddChild( bt );
 		}
 	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
-	m_framePage.AddChild( &m_textItems[r][0] );
+	{
+		BitmapText *bt = new BitmapText;
+		m_textItems[r].push_back( bt );
+		m_framePage.AddChild( bt );
+	}
 
 	// add explanation here so it appears on top
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
@@ -151,10 +157,15 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	PositionItems();
 	PositionUnderlines();
 	PositionIcons();
+	CHECKPOINT;
 	RefreshIcons();
+	CHECKPOINT;
 	PositionCursors();
+	CHECKPOINT;
 	UpdateEnabledDisabled();
+	CHECKPOINT;
 	OnChange();
+	CHECKPOINT;
 
 	/* It's tweening into position, but on the initial tween-in we only want to
 	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
@@ -163,8 +174,10 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	{
 		m_textTitles[r].FinishTweening();
 		m_sprBullets[r].FinishTweening();
-		for( unsigned c=0; c<m_OptionRow[r].choices.size(); c++ )
-			m_textItems[r][c].FinishTweening();
+		for( unsigned c=0; c<m_textItems[r].size(); c++ )
+		{
+			m_textItems[r][c]->FinishTweening();
+		}
 
 		for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 		{
@@ -177,6 +190,9 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
+	for( int i=0; i<m_iNumOptionRows; i++ )
+		for( unsigned j = 0; j < m_textItems[i].size(); ++j)
+			delete m_textItems[i][j];
 }
 
 
@@ -184,9 +200,10 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 {
 	bool bExitRow = iRow == m_iNumOptionRows;
 	bool bLotsOfOptions = m_bRowIsLong[iRow];
-	int iOptionInRow = bExitRow ? 0 : bLotsOfOptions ? pn : m_iSelectedOption[pn][iRow];
+	unsigned iOptionInRow = bExitRow ? 0 : bLotsOfOptions ? pn : m_iSelectedOption[pn][iRow];
 
-	BitmapText &text = m_textItems[iRow][iOptionInRow];
+	ASSERT( iOptionInRow < m_textItems[iRow].size() );
+	BitmapText &text = *m_textItems[iRow][iOptionInRow];
 
 	iWidthOut = int(roundf( text.GetWidestLineWidthInSourcePixels() * text.GetZoomX() ));
 	iXOut = int(roundf( text.GetDestX() ));
@@ -229,7 +246,8 @@ void ScreenOptions::InitOptionsText()
 		float fX = ITEMS_START_X;	// indent 70 pixels
 		for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
 		{
-			BitmapText &option = m_textItems[i][j];
+			ASSERT( j < m_textItems[i].size() );
+			BitmapText &option = *m_textItems[i][j];
 
 			option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 			option.SetText( optline.choices[j] );
@@ -248,16 +266,24 @@ void ScreenOptions::InitOptionsText()
 		if( m_bRowIsLong[i] )
 		{
 			// re-init with "long row" style
-		        unsigned j;
+			unsigned j;
 			for( j=0; j<optline.choices.size(); j++ )	// for each option on this line
-				m_textItems[i][j].SetText( "" );
+				m_textItems[i][j]->SetText( "" );
 
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			for( unsigned p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsHumanPlayer(p) )
 					continue;
 
-				BitmapText &option = m_textItems[i][p];
+				if( p >= m_textItems[i].size() )
+				{
+					BitmapText *bt = new BitmapText;
+					m_textItems[i].push_back( bt );
+
+					m_framePage.AddChild( bt );
+				}
+
+				BitmapText &option = *m_textItems[i][p];
 
 				const int iChoiceInRow = m_iSelectedOption[p][i];
 
@@ -279,7 +305,7 @@ void ScreenOptions::InitOptionsText()
 		}
 	}
 
-	BitmapText &option = m_textItems[i][0];
+	BitmapText &option = *m_textItems[i][0];
 	option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 	option.SetText( "EXIT" );
 	option.SetZoom( ITEMS_ZOOM );
@@ -349,6 +375,8 @@ void ScreenOptions::PositionIcons()
 
 void ScreenOptions::RefreshIcons()
 {
+	ASSERT( m_iNumOptionRows < MAX_OPTION_LINES );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -427,7 +455,10 @@ void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 	OptionRow &row = m_OptionRow[iRow];
 
 	if( bLotsOfOptions )
-		m_textItems[iRow][row.bOneChoiceForAllPlayers?0:player_no].SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
+	{
+		unsigned item_no = row.bOneChoiceForAllPlayers?0:player_no;
+		m_textItems[iRow][item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
+	}
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -450,10 +481,10 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		if( m_bRowIsLong[i] )
 			for( unsigned j=0; j<NUM_PLAYERS; j++ )
-				m_textItems[i][j].SetGlobalDiffuseColor( color );
+				m_textItems[i][j]->SetGlobalDiffuseColor( color );
 		else
 			for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-				m_textItems[i][j].SetGlobalDiffuseColor( color );
+				m_textItems[i][j]->SetGlobalDiffuseColor( color );
 
 		if( m_sprBullets[i].GetDestY() != m_fRowY[i] )
 		{
@@ -468,21 +499,23 @@ void ScreenOptions::UpdateEnabledDisabled()
 			m_sprBullets[i].SetY( m_fRowY[i] );
 			m_textTitles[i].SetY( m_fRowY[i] );
 
+			/* XXX: If we're long, then remove the old choices when we switch to long so we don't
+			 * need a special case here. */
 			if( m_bRowIsLong[i] )
 				for( unsigned j=0; j<NUM_PLAYERS; j++ )
 				{
-					m_textItems[i][j].StopTweening();
-					m_textItems[i][j].BeginTweening( 0.3f );
-					m_textItems[i][j].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-					m_textItems[i][j].SetY( m_fRowY[i] );
+					m_textItems[i][j]->StopTweening();
+					m_textItems[i][j]->BeginTweening( 0.3f );
+					m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+					m_textItems[i][j]->SetY( m_fRowY[i] );
 				}
 			else
 				for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
 				{
-					m_textItems[i][j].StopTweening();
-					m_textItems[i][j].BeginTweening( 0.3f );
-					m_textItems[i][j].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
-					m_textItems[i][j].SetY( m_fRowY[i] );
+					m_textItems[i][j]->StopTweening();
+					m_textItems[i][j]->BeginTweening( 0.3f );
+					m_textItems[i][j]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+					m_textItems[i][j]->SetY( m_fRowY[i] );
 				}
 		}
 
@@ -500,8 +533,8 @@ void ScreenOptions::UpdateEnabledDisabled()
 						continue;
 					}
 				}
-				m_textItems[i][j].StopTweening();
-				m_textItems[i][j].SetDiffuse( RageColor(1,1,1,0) );
+				m_textItems[i][j]->StopTweening();
+				m_textItems[i][j]->SetDiffuse( RageColor(1,1,1,0) );
 			}
 		}
 	}
@@ -512,20 +545,20 @@ void ScreenOptions::UpdateEnabledDisabled()
 			bExitRowIsSelectedByBoth = false;
 
 	RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
-	m_textItems[m_iNumOptionRows][0].SetGlobalDiffuseColor( color );
+	m_textItems[m_iNumOptionRows][0]->SetGlobalDiffuseColor( color );
 
-	if( m_textItems[m_iNumOptionRows][0].GetDestY() != m_fRowY[m_iNumOptionRows] )
+	if( m_textItems[m_iNumOptionRows][0]->GetDestY() != m_fRowY[m_iNumOptionRows] )
 	{
-		m_textItems[m_iNumOptionRows][0].StopTweening();
-		m_textItems[m_iNumOptionRows][0].BeginTweening( 0.3f );
-		m_textItems[m_iNumOptionRows][0].SetDiffuseAlpha( m_bRowIsHidden[m_iNumOptionRows]? 0.0f:1.0f );
-		m_textItems[m_iNumOptionRows][0].SetY( m_fRowY[m_iNumOptionRows] );
+		m_textItems[m_iNumOptionRows][0]->StopTweening();
+		m_textItems[m_iNumOptionRows][0]->BeginTweening( 0.3f );
+		m_textItems[m_iNumOptionRows][0]->SetDiffuseAlpha( m_bRowIsHidden[m_iNumOptionRows]? 0.0f:1.0f );
+		m_textItems[m_iNumOptionRows][0]->SetY( m_fRowY[m_iNumOptionRows] );
 	}
 
 	if( bExitRowIsSelectedByBoth )
-		m_textItems[m_iNumOptionRows][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
+		m_textItems[m_iNumOptionRows][0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 	else
-		m_textItems[m_iNumOptionRows][0].SetEffectNone();
+		m_textItems[m_iNumOptionRows][0]->SetEffectNone();
 }
 
 void ScreenOptions::Update( float fDeltaTime )
