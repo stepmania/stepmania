@@ -5,7 +5,6 @@
 #ifndef RAGEDISPLAY_H
 #define RAGEDISPLAY_H
 
-#include "SDL_types.h"
 #include "RageTypes.h"
 #include "ModelTypes.h"
 
