@@ -9,7 +9,9 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-#if defined(WIN32)
+#if defined(_XBOX)
+#include <WinSockX.h>
+#elif defined(_WINDOWS)
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
@@ -105,8 +107,8 @@ public:
 
 private:
 
-	//Only necessiary in windows
-#if defined(WIN32)
+	//Only necessiary in windows, xbox
+#if defined(_WINDOWS) || defined(_XBOX)
 	WSADATA wsda;
 #endif
 

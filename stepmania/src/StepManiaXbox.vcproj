@@ -93,7 +93,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".;.\sdl_xbox_includes;&quot;.\SDL_image-1.2&quot;;&quot;.\plib-1.6.0&quot;;&quot;.\SDL_sound-1.0.0&quot;;vorbis"
+				AdditionalIncludeDirectories=".,sdl_xbox_includes,SDL_image-1.2;vorbis,libjpeg,lua-5.0"
 				PreprocessorDefinitions="WIN32,_XBOX,_DEBUG,OGG_ONLY"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -1093,18 +1093,6 @@ cl                                                                              
 					<File
 						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
-					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
-					</File>
-					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
-					</File>
-					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.cpp">
-					</File>
-					<File
-						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
-					</File>
 				</Filter>
 				<Filter
 					Name="Sound"
@@ -1125,28 +1113,10 @@ cl                                                                              
 						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
 					</File>
 					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.cpp">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.h">
-					</File>
-					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.cpp">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.h">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_WaveOut.cpp">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1175,28 +1145,10 @@ cl                                                                              
 						RelativePath="arch\InputHandler\InputHandler.h">
 					</File>
 					<File
-						RelativePath="arch\InputHandler\InputHandler_DirectInput.cpp">
+						RelativePath="arch\InputHandler\InputHandler_SDL.cpp">
 					</File>
 					<File
-						RelativePath="arch\InputHandler\InputHandler_DirectInput.h">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.h">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_Para.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_Para.h">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.h">
+						RelativePath="arch\InputHandler\InputHandler_SDL.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1207,18 +1159,6 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture.h">
-					</File>
-					<File
-						RelativePath="arch\MovieTexture\MovieTexture_DShow.cpp">
-					</File>
-					<File
-						RelativePath="arch\MovieTexture\MovieTexture_DShow.h">
-					</File>
-					<File
-						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.cpp">
-					</File>
-					<File
-						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.h">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp">
@@ -1275,18 +1215,6 @@ cl                                                                              
 						RelativePath="arch\MemoryCard\MemoryCardDriver.h">
 					</File>
 					<File
-						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded.cpp">
-					</File>
-					<File
-						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded.h">
-					</File>
-					<File
-						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded_Windows.cpp">
-					</File>
-					<File
-						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded_Windows.h">
-					</File>
-					<File
 						RelativePath="arch\MemoryCard\MemoryCardDriver_Null.h">
 					</File>
 				</Filter>
@@ -1326,75 +1254,6 @@ cl                                                                              
 			<Filter
 				Name="system"
 				Filter="">
-				<File
-					RelativePath="archutils\Win32\AppInstance.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\AppInstance.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\Crash.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\Crash.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\DebugInfoHunt.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\DebugInfoHunt.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\GetFileInformation.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\GetFileInformation.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\GotoURL.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\GotoURL.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\RegistryAccess.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\RegistryAccess.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\RestartProgram.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\RestartProgram.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\StepMania.ico">
-				</File>
-				<File
-					RelativePath="archutils\Win32\USB.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\USB.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\VideoDriverInfo.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\VideoDriverInfo.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\WindowsResources.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\WindowsResources.rc">
-				</File>
-				<File
-					RelativePath="archutils\Win32\arch_setup.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\arch_setup.h">
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1909,12 +1768,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="RageDisplay_Null.h">
-			</File>
-			<File
-				RelativePath="RageDisplay_OGL.cpp">
-			</File>
-			<File
-				RelativePath="RageDisplay_OGL.h">
 			</File>
 			<File
 				RelativePath="RageException.cpp">
@@ -2434,225 +2287,9 @@ cl                                                                              
 		<Filter
 			Name="Crypto"
 			Filter="">
-			<File
-				RelativePath="crypto\CryptBn.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptBn.h">
-			</File>
-			<File
-				RelativePath="CryptHelpers.cpp">
-			</File>
-			<File
-				RelativePath="CryptHelpers.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptMD5.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptMD5.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptNoise.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptPrime.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptPrime.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptSH512.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptSH512.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptSHA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptSHA.h">
-			</File>
 			<Filter
 				Name="crypto++"
 				Filter="">
-				<File
-					RelativePath="crypto51\algebra.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\algebra.h">
-				</File>
-				<File
-					RelativePath="crypto51\algparam.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\algparam.h">
-				</File>
-				<File
-					RelativePath="crypto51\argnames.h">
-				</File>
-				<File
-					RelativePath="crypto51\asn.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\asn.h">
-				</File>
-				<File
-					RelativePath="crypto51\config.h">
-				</File>
-				<File
-					RelativePath="crypto51\cryptlib.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\cryptlib.h">
-				</File>
-				<File
-					RelativePath="crypto51\files.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\files.h">
-				</File>
-				<File
-					RelativePath="crypto51\filters.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\filters.h">
-				</File>
-				<File
-					RelativePath="crypto51\fltrimpl.h">
-				</File>
-				<File
-					RelativePath="crypto51\integer.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\integer.h">
-				</File>
-				<File
-					RelativePath="crypto51\iterhash.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\iterhash.h">
-				</File>
-				<File
-					RelativePath="crypto51\mdc.h">
-				</File>
-				<File
-					RelativePath="crypto51\misc.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\misc.h">
-				</File>
-				<File
-					RelativePath="crypto51\modarith.h">
-				</File>
-				<File
-					RelativePath="crypto51\modes.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\modes.h">
-				</File>
-				<File
-					RelativePath="crypto51\mqueue.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\mqueue.h">
-				</File>
-				<File
-					RelativePath="crypto51\nbtheory.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\nbtheory.h">
-				</File>
-				<File
-					RelativePath="crypto51\oaep.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\oaep.h">
-				</File>
-				<File
-					RelativePath="crypto51\oids.h">
-				</File>
-				<File
-					RelativePath="crypto51\osrng.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\osrng.h">
-				</File>
-				<File
-					RelativePath="crypto51\pch.h">
-				</File>
-				<File
-					RelativePath="crypto51\pkcspad.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\pkcspad.h">
-				</File>
-				<File
-					RelativePath="crypto51\pubkey.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\pubkey.h">
-				</File>
-				<File
-					RelativePath="crypto51\queue.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\queue.h">
-				</File>
-				<File
-					RelativePath="crypto51\randpool.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\randpool.h">
-				</File>
-				<File
-					RelativePath="crypto51\rng.h">
-				</File>
-				<File
-					RelativePath="crypto51\rsa.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\rsa.h">
-				</File>
-				<File
-					RelativePath="crypto51\secblock.h">
-				</File>
-				<File
-					RelativePath="crypto51\seckey.h">
-				</File>
-				<File
-					RelativePath="crypto51\sha.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\sha.h">
-				</File>
-				<File
-					RelativePath="crypto51\simple.h">
-				</File>
-				<File
-					RelativePath="crypto51\smartptr.h">
-				</File>
-				<File
-					RelativePath="crypto51\strciphr.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\strciphr.h">
-				</File>
-				<File
-					RelativePath="crypto51\words.h">
-				</File>
 			</Filter>
 		</Filter>
 		<File

@@ -8,6 +8,11 @@
 
 #include <setjmp.h>
 
+// Don't let jpeglib.h define the boolean type on Xbox.
+#if defined(_XBOX)
+#  define HAVE_BOOLEAN
+#endif
+
 #if defined(WIN32)
 /* work around namespace bugs in win32/libjpeg: */
 #define XMD_H

@@ -683,7 +683,9 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
-#ifndef _XBOX
+#if defined(_XBOX)
+	return NULL;
+#elif
 	/* Get the back buffer. */
 	IDirect3DSurface8* pSurface;
 	g_pd3dDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );

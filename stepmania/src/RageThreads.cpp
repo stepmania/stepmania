@@ -22,7 +22,7 @@
 #include "arch/Threads/Threads.h"
 
 #if defined(CRASH_HANDLER)
-#if defined(WIN32)
+#if defined(_WINDOWS)
 #include "archutils/Win32/crash.h"
 #elif defined(LINUX) || defined(DARWIN)
 #include "archutils/Unix/CrashHandler.h"

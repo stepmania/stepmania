@@ -12,7 +12,8 @@
 #include "global.h"
 #include "ezsockets.h"
 
-#if defined(WIN32)
+#if defined(_XBOX)
+#elif defined(_WINDOWS)
 #pragma comment(lib,"wsock32.lib")
 #else
 #include <sys/types.h>
@@ -26,7 +27,7 @@ EzSockets::EzSockets()
 	memset ( &addr, 0, sizeof(addr) ); //Clear the sockaddr_in structure
 
 	// Windows REQUIRES WinSock Startup
-#if defined(WIN32)
+#if defined(_WINDOWS) || defined(_XBOX)
 	WSAStartup( MAKEWORD(1,1), &wsda );
 #endif
 
@@ -135,7 +136,11 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 	if (! check() )
 		return false;
 
-#if defined(WIN32)
+#if defined(_XBOX)
+	// FIXME: Xbox doesn't have gethostbyname or any way to get a hostent.  
+	// Investigate the samples and figure out how this is supposed to work.
+	return false;
+#elif defined(_WINDOWS)
 	struct hostent* phe;
 
 	addr.sin_family = AF_INET;
@@ -144,15 +149,15 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 	addr.sin_addr = *( (LPIN_ADDR)*phe->h_addr_list );
 
 	int desc = ::connect( sock, (struct sockaddr *)&addr, sizeof(addr) );
+	return desc >= 0;
 #else
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons( port );
 	inet_pton( AF_INET, host.c_str(), &addr.sin_addr );
 
 	int desc = ::connect( sock, (struct sockaddr *)&addr, sizeof(addr) );
-#endif
-
 	return desc >= 0;
+#endif
 }
 
 
