@@ -124,6 +124,8 @@ inline const T& min(const T &a, const T &b, P Pr)
 #endif
 
 /* Define a few functions if necessary */
+/* This is the wrong way to do this; see my post to sm-devs. -glenn */
+#if 0
 #ifndef powf
 #define powf (float)pow
 #endif
@@ -142,6 +144,7 @@ inline const T& min(const T &a, const T &b, P Pr)
 
 #ifndef acosf
 #define acosf (float)acos
+#endif
 #endif
 
 /* Don't include our own headers here, since they tend to change

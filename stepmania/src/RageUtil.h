@@ -24,16 +24,12 @@
 #define ZERO(x)					memset(&x, 0, sizeof(x))
 #define COPY(a,b)				{ ASSERT(sizeof(a)==sizeof(b)); memcpy(&a, &b, sizeof(a)); }
 
-/* Common harmless mismatches. */
-/* replace both with a single function (same with max)
- * --Steve */
-#ifndef min
-inline float min(float a, float b) { return a < b? a:b; }
-#endif
-
-#ifndef max
-inline float max(float a, float b) { return a > b? a:b; }
-#endif
+/* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
+ * by the generic template we get from <algorithm>. */
+inline float min(float a, int b) { return a < b? a:b; }
+inline float min(int a, float b) { return a < b? a:b; }
+inline float max(float a, int b) { return a > b? a:b; }
+inline float max(int a, float b) { return a > b? a:b; }
 
 /* Traditional defines.  Only use this if you absolutely need
  * a constant value. */
