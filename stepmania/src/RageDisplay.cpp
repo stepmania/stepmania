@@ -206,57 +206,57 @@ public:
 		LoadIdentity();
 	}
 
-    // Pops the top of the stack.
-    void Pop()
+	// Pops the top of the stack.
+	void Pop()
 	{
 		stack.pop_back();
 		ASSERT( stack.size() > 0 );	// underflow
 	}
 
-    // Pushes the stack by one, duplicating the current matrix.
-    void Push()
+	// Pushes the stack by one, duplicating the current matrix.
+	void Push()
 	{
 		stack.push_back( stack.back() );
 		ASSERT( stack.size() < 100 );	// overflow
 	}
 
-    // Loads identity in the current matrix.
-    void LoadIdentity()
+	// Loads identity in the current matrix.
+	void LoadIdentity()
 	{
 		RageMatrixIdentity( &stack.back() );
 	}
 
-    // Loads the given matrix into the current matrix
-    void LoadMatrix( const RageMatrix& m )
+	// Loads the given matrix into the current matrix
+	void LoadMatrix( const RageMatrix& m )
 	{
 		stack.back() = m;
 	}
 
-    // Right-Multiplies the given matrix to the current matrix.
-    // (transformation is about the current world origin)
-    void MultMatrix( const RageMatrix& m )
+	// Right-Multiplies the given matrix to the current matrix.
+	// (transformation is about the current world origin)
+	void MultMatrix( const RageMatrix& m )
 	{
 		RageMatrixMultiply( &stack.back(), &m, &stack.back() );
 	}
 
-    // Left-Multiplies the given matrix to the current matrix
-    // (transformation is about the local origin of the object)
-    void MultMatrixLocal( const RageMatrix& m )
+	// Left-Multiplies the given matrix to the current matrix
+	// (transformation is about the local origin of the object)
+	void MultMatrixLocal( const RageMatrix& m )
 	{
 		RageMatrixMultiply( &stack.back(), &stack.back(), &m );
 	}
 
-    // Right multiply the current matrix with the computed rotation
-    // matrix, counterclockwise about the given axis with the given angle.
-    // (rotation is about the current world origin)
-    void RotateX( float degrees )
+	// Right multiply the current matrix with the computed rotation
+	// matrix, counterclockwise about the given axis with the given angle.
+	// (rotation is about the current world origin)
+	void RotateX( float degrees )
 	{
 		RageMatrix m;
 		RageMatrixRotationX( &m, degrees );
 		MultMatrix( m );
 	}
-    void RotateY( float degrees )
- 	{
+	void RotateY( float degrees )
+	{
 		RageMatrix m;
 		RageMatrixRotationY( &m, degrees );
 		MultMatrix( m );
@@ -269,15 +269,15 @@ public:
 	}
 	
 	// Left multiply the current matrix with the computed rotation
-    // matrix. All angles are counterclockwise. (rotation is about the
-    // local origin of the object)
+	// matrix. All angles are counterclockwise. (rotation is about the
+	// local origin of the object)
 	void RotateXLocal( float degrees )
 	{
 		RageMatrix m;
 		RageMatrixRotationX( &m, degrees );
 		MultMatrixLocal( m );
 	}
-    void RotateYLocal( float degrees )
+	void RotateYLocal( float degrees )
  	{
 		RageMatrix m;
 		RageMatrixRotationY( &m, degrees );
@@ -290,44 +290,44 @@ public:
 		MultMatrixLocal( m );
 	}
 
-    // Right multiply the current matrix with the computed scale
-    // matrix. (transformation is about the current world origin)
-    void Scale( float x, float y, float z)
+	// Right multiply the current matrix with the computed scale
+	// matrix. (transformation is about the current world origin)
+	void Scale( float x, float y, float z)
  	{
 		RageMatrix m;
 		RageMatrixScaling( &m, x, y, z );
 		MultMatrix( m );
 	}
 
-    // Left multiply the current matrix with the computed scale
-    // matrix. (transformation is about the local origin of the object)
-    void ScaleLocal( float x, float y, float z)
+	// Left multiply the current matrix with the computed scale
+	// matrix. (transformation is about the local origin of the object)
+	void ScaleLocal( float x, float y, float z)
  	{
 		RageMatrix m;
 		RageMatrixScaling( &m, x, y, z );
 		MultMatrixLocal( m );
 	}
 
-    // Right multiply the current matrix with the computed translation
-    // matrix. (transformation is about the current world origin)
-    void Translate( float x, float y, float z)
+	// Right multiply the current matrix with the computed translation
+	// matrix. (transformation is about the current world origin)
+	void Translate( float x, float y, float z)
  	{
 		RageMatrix m;
 		RageMatrixTranslation( &m, x, y, z );
 		MultMatrix( m );
 	}
 
-    // Left multiply the current matrix with the computed translation
-    // matrix. (transformation is about the local origin of the object)
-    void TranslateLocal( float x, float y, float z)
+	// Left multiply the current matrix with the computed translation
+	// matrix. (transformation is about the local origin of the object)
+	void TranslateLocal( float x, float y, float z)
  	{
 		RageMatrix m;
 		RageMatrixTranslation( &m, x, y, z );
 		MultMatrixLocal( m );
 	}
 
-    // Obtain the current matrix at the top of the stack
-    const RageMatrix* GetTop() { return &stack.back(); }
+	// Obtain the current matrix at the top of the stack
+	const RageMatrix* GetTop() { return &stack.back(); }
 };
 
 
