@@ -92,10 +92,15 @@ inline int RandomInt(int nLow, int nHigh)
 	return ((Random() >> 2) % (nHigh - nLow + 1)) + nLow;
 }
 
-// Debug new for memory leak tracing
-//#ifdef _DEBUG
-//#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
-//#endif
+/* Alternative: */
+class RandomGen
+{
+	unsigned long seed;
+
+public:
+	RandomGen( unsigned long seed = 0 );
+	int operator() ( int maximum = INT_MAX-1 );
+};
 
 
 // Simple function for generating random numbers

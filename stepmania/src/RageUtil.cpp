@@ -25,6 +25,20 @@
 
 unsigned long randseed = time(NULL);
 
+RandomGen::RandomGen( unsigned long seed_ )
+{
+	seed = seed_;
+	if(seed == 0)
+		seed = time(NULL);
+}
+
+int RandomGen::operator() ( int maximum )
+{
+	seed = 1664525L * seed + 1013904223L;
+	return (seed >> 2) % (maximum + 1);
+}
+
+
 void fapproach( float& val, float other_val, float to_move )
 {
 	ASSERT( to_move >= 0 );
