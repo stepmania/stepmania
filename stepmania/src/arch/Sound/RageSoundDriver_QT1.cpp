@@ -91,6 +91,7 @@ CString RageSound_QT1::Init()
 
     if (err != noErr)
         return "Unable to create audio channel";
+	return "";
 }
     
 RageSound_QT1::~RageSound_QT1()

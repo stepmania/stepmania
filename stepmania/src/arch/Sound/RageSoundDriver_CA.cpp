@@ -55,7 +55,7 @@ RageSound_CA::RageSound_CA()
 	mConverter = NULL;
 }
 
-CString RageSound_OSS::Init()
+CString RageSound_CA::Init()
 {
 	try
 	{
@@ -142,6 +142,7 @@ CString RageSound_OSS::Init()
 	{
 		return "Couldn't start the IOProc.";
 	}
+	return "";
 }
 
 RageSound_CA::~RageSound_CA()
