@@ -190,7 +190,7 @@ void ScreenSelectDifficultyEX::UpdateSelectableChoices()
 		{
 			/* If the icon is text, use a dimmer diffuse, or we won't be
 			 * able to see the glow. */
-			if( GAMESTATE->IsPlayable(m_ModeChoices[i]) )
+			if( m_ModeChoices[i].IsPlayable() )
 			{
 				m_sprInfo[p].SetDiffuse( RageColor(1,1,1,1) );
 				m_sprPicture[p].SetDiffuse( RageColor(1,1,1,1) );
