@@ -26,6 +26,8 @@
 /* Platform-specific fixes. */
 #if defined(WIN32)
 #include "archutils/Win32/arch_setup.h"
+#elif defined(PBBUILD)
+#include "archutils/Darwin/arch_setup.h"
 #endif
 
 /* Make sure everyone has min and max: */
