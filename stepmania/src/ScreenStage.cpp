@@ -30,6 +30,8 @@ void ScreenStage::Init()
 {
 	Screen::Init();
 
+	ALLOW_BACK.Load( m_sName, "AllowBack" );
+
 	m_bZeroDeltaOnNextUpdate = false;
 
 	SOUND->StopMusic();
@@ -148,6 +150,9 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
 		return;
 
+	if( !ALLOW_BACK.GetValue() )
+		return;
+	
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
 	SOUND->PlayOnce( THEME->GetPathS("Common","back") );

@@ -9,6 +9,7 @@
 #include "Character.h"
 #include "BitmapText.h"
 #include "ActorUtil.h"
+#include "ThemeMetric.h"
 
 class ScreenStage : public Screen
 {
@@ -21,6 +22,8 @@ public:
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
+	ThemeMetric<bool>	ALLOW_BACK;
+
 	Transition		m_In, m_Out, m_Back;
 	AutoActor		m_Overlay; // overlays all elements except bitmaptexts
 	BitmapText		m_SongTitle;
