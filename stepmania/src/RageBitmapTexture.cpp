@@ -148,6 +148,7 @@ apply_color_key:
 	else if( HintString.Find("16bpp") != -1 )		actualID.iColorDepth = 16;
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
+	if( HintString.Find("nomipmaps") != -1 )		actualID.bMipMaps = false;
 
 	/* If the image is marked grayscale, then use all bits not used for alpha
 	 * for the intensity.  This way, if an image has no alpha, you get an 8-bit
