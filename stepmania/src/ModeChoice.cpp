@@ -226,6 +226,7 @@ void ModeChoice::ApplyToAllPlayers() const
 
 void ModeChoice::Apply( PlayerNumber pn ) const
 {
+	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 	if( m_game != GAME_INVALID )
 		GAMESTATE->m_CurGame = m_game;
 	if( m_pm != PLAY_MODE_INVALID )
@@ -241,7 +242,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && GAMESTATE->m_PlayMode != OldPlayMode )
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 
 
