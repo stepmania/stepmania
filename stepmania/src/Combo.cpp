@@ -72,7 +72,11 @@ void Combo::SetCombo( int iCombo )
 		m_textComboNumber.SetDiffuse( RageColor(1,1,1,1) );	// visible
 		m_sprCombo.SetDiffuse( RageColor(1,1,1,1) );	// visible
 
-		m_textComboNumber.SetText( ssprintf("%d", iCombo) );
+		CString txt = ssprintf("%d", iCombo);
+		/* Don't do anything if it's not changing. */
+		if(m_textComboNumber.GetText() == txt) return;
+
+		m_textComboNumber.SetText( txt );
 		float fNumberZoom = SCALE(iCombo,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
 		CLAMP( fNumberZoom, (float)NUMBER_MIN_ZOOM, (float)NUMBER_MAX_ZOOM );
 		m_textComboNumber.SetZoom( fNumberZoom * (float)PULSE_ZOOM ); 
