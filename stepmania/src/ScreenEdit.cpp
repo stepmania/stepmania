@@ -39,12 +39,16 @@
 //
 const float RECORD_HOLD_SECONDS = 0.3f;
 
-#define EDIT_X			(SCREEN_CENTER_X)
-
 #define PLAYER_X			(SCREEN_CENTER_X)
 #define PLAYER_Y			(SCREEN_CENTER_Y)
 #define PLAYER_HEIGHT		(360)
 #define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
+
+#define EDIT_X				(SCREEN_CENTER_X)
+#define EDIT_Y				(PLAYER_Y)
+
+#define RECORD_X			(SCREEN_CENTER_X)
+#define RECORD_Y			(SCREEN_CENTER_Y)
 
 #define PLAY_RECORD_HELP_TEXT	THEME->GetMetric(m_sName,"PlayRecordHelpText")
 
@@ -535,16 +539,16 @@ void ScreenEdit::Init()
 	m_pSteps->GetNoteData( noteData );
 	m_NoteDataEdit.CopyAll( noteData );
 
-	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
+	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
 	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2 );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 800 );
 	this->AddChild( &m_NoteFieldEdit );
 
 	m_NoteDataRecord.CopyAll( noteData );
-	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
-	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 350 );
-	m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
+	m_NoteFieldRecord.SetXY( RECORD_X, RECORD_Y );
+	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 10 );
+	m_NoteFieldRecord.Load( &m_NoteDataRecord, -SCREEN_HEIGHT/2, SCREEN_HEIGHT/2 );
 	this->AddChild( &m_NoteFieldRecord );
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
