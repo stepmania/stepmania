@@ -94,7 +94,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
-	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations")
+	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
+	ALLOW_REPEATING_CHANGE_VALUE_INPUT(m_sName,"AllowRepeatingChangeValueInput")
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
@@ -926,7 +927,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	if( iNumChoices == 0 )
 		return;
 
-	if( Repeat )
+	if( Repeat && !ALLOW_REPEATING_CHANGE_VALUE_INPUT )
 		return;
 
 	bool bOneChanged = false;

@@ -141,6 +141,7 @@ protected:
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
 	ThemeMetric<bool>				SHOW_EXPLANATIONS;
+	ThemeMetric<bool>				ALLOW_REPEATING_CHANGE_VALUE_INPUT;
 
 	float m_fLockInputSecs;
 };
