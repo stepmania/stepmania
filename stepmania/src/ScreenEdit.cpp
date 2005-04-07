@@ -416,11 +416,11 @@ static Menu g_StepsInformation(
 	MenuRow( ScreenEdit::quads,			"Quads",			false, true, 0, NULL ),
 	MenuRow( ScreenEdit::holds,			"Holds",			false, true, 0, NULL ),
 	MenuRow( ScreenEdit::mines,			"Mines",			false, true, 0, NULL ),
-	MenuRow( ScreenEdit::stream,		"Stream",			false, true, 0, NULL ),
-	MenuRow( ScreenEdit::voltage,		"Voltage",			false, true, 0, NULL ),
-	MenuRow( ScreenEdit::air,			"Air",				false, true, 0, NULL ),
-	MenuRow( ScreenEdit::freeze,		"Freeze",			false, true, 0, NULL ),
-	MenuRow( ScreenEdit::chaos,			"Chaos",			false, true, 0, NULL )
+	MenuRow( ScreenEdit::stream,		"Stream",			false, false, 0, NULL ),
+	MenuRow( ScreenEdit::voltage,		"Voltage",			false, false, 0, NULL ),
+	MenuRow( ScreenEdit::air,			"Air",				false, false, 0, NULL ),
+	MenuRow( ScreenEdit::freeze,		"Freeze",			false, false, 0, NULL ),
+	MenuRow( ScreenEdit::chaos,			"Chaos",			false, false, 0, NULL )
 );
 
 static Menu g_SongInformation(
