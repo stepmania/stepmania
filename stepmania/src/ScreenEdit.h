@@ -17,6 +17,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 
@@ -164,6 +165,7 @@ protected:
 	Song*			m_pSong;
 	Steps*			m_pSteps;
 
+	PlayerState		m_PlayerStateEdit;
 	NoteField		m_NoteFieldEdit;
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;

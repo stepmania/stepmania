@@ -511,11 +511,10 @@ void ScreenEdit::Init()
 
 	/* Not all games have a noteskin named "note" ... */
 	if( NOTESKIN->DoesNoteSkinExist("note") )
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
-	// Reset player options, but don't reset the current NoteSkin
-	CString sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
-	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
-	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = sNoteSkin;
+		m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
+	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
+	m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
+	m_PlayerStateEdit.ResetNoteSkins();
 
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
@@ -538,7 +537,7 @@ void ScreenEdit::Init()
 
 	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Init( GAMESTATE->m_pPlayerState[PLAYER_1], PLAYER_HEIGHT*2 );
+	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2 );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 800 );
 	this->AddChild( &m_NoteFieldEdit );
 
@@ -661,6 +660,8 @@ void ScreenEdit::PlayPreviewMusic()
 
 void ScreenEdit::Update( float fDeltaTime )
 {
+	m_PlayerStateEdit.Update( fDeltaTime );
+
 	if( m_soundMusic.IsPlaying() )
 	{
 		RageTimer tm;
@@ -715,7 +716,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	float fDelta = GAMESTATE->m_fSongBeat - m_fTrailingBeat;
 	if( fabsf(fDelta) < 10 )
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
-			fDeltaTime*40 / GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions.m_fScrollSpeed );
+			fDeltaTime*40 / m_PlayerStateEdit.m_CurrentPlayerOptions.m_fScrollSpeed );
 	else
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
 			fabsf(fDelta) * fDeltaTime*5 );
@@ -909,7 +910,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
-			float& fScrollSpeed = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed;
+			float& fScrollSpeed = m_PlayerStateEdit.m_PlayerOptions.m_fScrollSpeed;
 			float fNewScrollSpeed = fScrollSpeed;
 
 			if( EditB == EDIT_BUTTON_SCROLL_SPEED_DOWN )
@@ -1473,14 +1474,10 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 
 			CheckNumberOfNotesAndUndo();
 		}
-
-		GAMESTATE->ResetCurrentOptions();
 		break;
 	case MODE_RECORDING:
-		GAMESTATE->RestoreSelectedOptions();
 		break;
 	case MODE_PLAYING:
-		GAMESTATE->RestoreSelectedOptions();
 		break;
 	default:
 		ASSERT(0);
@@ -1579,8 +1576,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		SM == SM_BackFromPlayerOptions ||
 		SM == SM_BackFromSongOptions )
 	{
-		GAMESTATE->StoreSelectedOptions();
-		GAMESTATE->ResetCurrentOptions();
+		GAMESTATE->StoreSelectedOptions();	// so that the options stick when we reset Course attacks
 
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();
@@ -1589,8 +1585,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		g_fLastInsertAttackDurationSeconds = strtof( g_InsertAttack.rows[0].choices[iDurationChoice], NULL );
-		GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
-		GAMESTATE->ResetCurrentOptions();
 
 		// XXX: Fix me
 		//SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackPlayerOptions );
@@ -1611,8 +1605,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		SaveUndo();
 		m_NoteDataEdit.SetTapNote( g_iLastInsertAttackTrack, row, tn );
 		CheckNumberOfNotesAndUndo();
-
-		GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 	}
 	else if( SM == SM_DoRevertToLastSave )
 	{

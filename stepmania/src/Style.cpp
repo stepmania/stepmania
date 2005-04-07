@@ -96,6 +96,8 @@ bool Style::MatchesStepsType( StepsType type ) const
 
 void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
 {
+	ASSERT( pn != PLAYER_INVALID );
+
 	fMixXOut = FLT_MAX;
 	fMaxXOut = FLT_MIN;
 	for( int i=0; i<m_iColsPerPlayer; i++ )

@@ -44,6 +44,8 @@ struct PlayerState
 			m_Inventory[i].MakeBlank();
 	}
 
+	void ResetNoteSkins();
+	void Update( float fDelta );
 
 	// TODO: Remove use of PlayerNumber.  All data about the player should live 
 	// in PlayerState and callers should not use PlayerNumber to index into 

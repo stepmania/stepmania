@@ -1,6 +1,16 @@
 #include "global.h"
 #include "PlayerState.h"
 
+void PlayerState::ResetNoteSkins()
+{
+	m_BeatToNoteSkin.clear();
+	m_BeatToNoteSkin[-1000] = m_PlayerOptions.m_sNoteSkin;
+}
+
+void PlayerState::Update( float fDelta )
+{
+	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );
+}
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez

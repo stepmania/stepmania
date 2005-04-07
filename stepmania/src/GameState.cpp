@@ -512,7 +512,7 @@ void GameState::Update( float fDelta )
 {
 	FOREACH_PlayerNumber( p )
 	{
-		m_pPlayerState[p]->m_CurrentPlayerOptions.Approach( m_pPlayerState[p]->m_PlayerOptions, fDelta );
+		m_pPlayerState[p]->Update( fDelta );
 
 		// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 		// so we'll clear these flags here and let them get turned on later
@@ -1069,8 +1069,7 @@ void GameState::ResetNoteSkins()
 
 void GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
 {
-	m_pPlayerState[pn]->m_BeatToNoteSkin.clear();
-	m_pPlayerState[pn]->m_BeatToNoteSkin[-1000] = m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+	m_pPlayerState[pn]->ResetNoteSkins();
 
 	++m_BeatToNoteSkinRev;
 }
