@@ -96,9 +96,9 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	{
 		float fOriginalYOffset = fYOffset;
 
-		fYOffset = (-1*fOriginalYOffset*fOriginalYOffset/SCREEN_HEIGHT) + 1.5*fOriginalYOffset;
-		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75;	// zero point of function above
-		fPeakYOffsetOut = (-1*fPeakAtYOffset*fPeakAtYOffset/SCREEN_HEIGHT) + 1.5*fPeakAtYOffset;
+		fYOffset = (-1*fOriginalYOffset*fOriginalYOffset/SCREEN_HEIGHT) + 1.5f*fOriginalYOffset;
+		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75f;	// zero point of function above
+		fPeakYOffsetOut = (-1*fPeakAtYOffset*fPeakAtYOffset/SCREEN_HEIGHT) + 1.5f*fPeakAtYOffset;
 		bIsPastPeakOut = fOriginalYOffset < fPeakAtYOffset;
 	}
 
