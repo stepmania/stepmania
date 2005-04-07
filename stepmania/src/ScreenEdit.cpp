@@ -1372,6 +1372,11 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			if( iRow < 0 )
 				break;
 
+			// Remove hold if any so that we don't have taps inside of a hold.
+			int iHeadRow;
+			if( m_NoteDataRecord.IsHoldNoteAtBeat( iCol, iRow, &iHeadRow ) )
+				m_NoteDataRecord.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
+
 			m_NoteDataRecord.SetTapNote(iCol, iRow, TAP_ORIGINAL_TAP);
 			m_NoteFieldRecord.Step( iCol, TNS_MARVELOUS );
 		}
