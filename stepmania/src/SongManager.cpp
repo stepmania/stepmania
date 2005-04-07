@@ -642,7 +642,8 @@ void SongManager::FreeCourses()
 	m_pCourses.clear();
 
 	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
-		m_pBestCourses[i].clear();
+		FOREACH_CourseType( ct )
+			m_pBestCourses[i][ct].clear();
 	m_pShuffledCourses.clear();
 }
 
@@ -845,30 +846,13 @@ void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 			AddTo.push_back( m_pCourses[i] );
 }
 
-void SongManager::GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
+void SongManager::GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( m_pCourses[i]->IsNonstop() )
+		if( m_pCourses[i]->GetCourseType() == ct )
 			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
 				AddTo.push_back( m_pCourses[i] );
 }
-
-void SongManager::GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
-{
-	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( m_pCourses[i]->IsOni() )
-			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
-				AddTo.push_back( m_pCourses[i] );
-}
-
-void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
-{
-	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( m_pCourses[i]->IsEndless() )
-			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
-				AddTo.push_back( m_pCourses[i] );
-}
-
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
@@ -1117,7 +1101,7 @@ Course *SongManager::FindCourse( CString sName )
 void SongManager::UpdateBest()
 {
 	// update players best
-	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
+	FOREACH_ProfileSlot( i )
 	{
 		vector<Song*> &Best = m_pBestSongs[i];
 		Best = m_pSongs;
@@ -1141,11 +1125,16 @@ void SongManager::UpdateBest()
 		}
 
 		SongUtil::SortSongPointerArrayByTitle( m_pBestSongs[i] );
-		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
+		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], i, true );
 
-		m_pBestCourses[i] = m_pCourses;
-		CourseUtil::SortCoursePointerArrayByTitle( m_pBestCourses[i] );
-		CourseUtil::SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
+		FOREACH_CourseType( ct )
+		{
+			vector<Course*> &vpCourses = m_pBestCourses[i][ct];
+			vpCourses.clear();
+			GetCourses( ct, vpCourses, PREFSMAN->m_bAutogenGroupCourses );
+			CourseUtil::SortCoursePointerArrayByTitle( vpCourses );
+			CourseUtil::SortCoursePointerArrayByNumPlays( vpCourses, i, true );
+		}
 	}
 }
 

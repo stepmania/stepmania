@@ -9,6 +9,7 @@
 #include <map>
 #include "Trail.h"
 #include <set>
+#include "EnumHelper.h"
 
 struct PlayerOptions;
 struct SongOptions;
@@ -16,6 +17,18 @@ class Song;
 class Steps;
 class Profile;
 struct lua_State;
+
+enum CourseType
+{
+	COURSE_TYPE_NONSTOP,	// if life meter type is BAR
+	COURSE_TYPE_ONI,		// if life meter type is BATTERY
+	COURSE_TYPE_ENDLESS,	// if set to REPEAT
+	NUM_COURSE_TYPES
+};
+#define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_COURSE_TYPES, i )
+
+inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
+inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
 
 enum CourseEntryType
 {
@@ -125,6 +138,7 @@ public:
 	bool IsNonstop() const { return GetPlayMode() == PLAY_MODE_NONSTOP; }
 	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
 	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
+	CourseType GetCourseType() const;
 	PlayMode GetPlayMode() const;
 
 	bool IsFixed() const;

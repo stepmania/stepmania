@@ -40,11 +40,22 @@ Course::Course()
 	Init();
 }
 
-PlayMode Course::GetPlayMode() const
+CourseType Course::GetCourseType() const
 {
 	if( m_bRepeat )
-		return PLAY_MODE_ENDLESS;
-	return m_iLives > 0? PLAY_MODE_ONI:PLAY_MODE_NONSTOP;
+		return COURSE_TYPE_ENDLESS;
+	return m_iLives > 0? COURSE_TYPE_ONI:COURSE_TYPE_NONSTOP;
+}
+
+PlayMode Course::GetPlayMode() const
+{
+	switch( GetCourseType() )
+	{
+	case COURSE_TYPE_ENDLESS:	return PLAY_MODE_ENDLESS;
+	case COURSE_TYPE_ONI:		return PLAY_MODE_ONI;
+	case COURSE_TYPE_NONSTOP:	return PLAY_MODE_NONSTOP;
+	default: ASSERT(0);	return PLAY_MODE_INVALID;
+	}
 }
 
 void Course::LoadFromCRSFile( CString sPath )

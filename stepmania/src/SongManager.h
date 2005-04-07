@@ -6,7 +6,6 @@
 class LoadingWindow;
 class Song;
 class Style;
-class Course;
 class Steps;
 struct PlayerOptions;
 struct lua_State;
@@ -17,6 +16,7 @@ struct lua_State;
 #include "PlayerOptions.h"
 #include "PlayerNumber.h"
 #include "Difficulty.h"
+#include "Course.h"
 
 class SongManager
 {
@@ -65,7 +65,7 @@ public:
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
 	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const;
 	const vector<Song*> &GetBestSongs( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestSongs[slot]; }
-	const vector<Course*> &GetBestCourses( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[slot]; }
+	const vector<Course*> &GetBestCourses( CourseType ct, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[slot][ct]; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,INT_MAX); }
@@ -79,9 +79,7 @@ public:
 
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
-	void GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if life meter type is BAR.
-	void GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen );		// add to if life meter type is BATTERY.
-	void GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen );	// add to if set to REPEAT.
+	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen );
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
 		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
@@ -116,7 +114,7 @@ protected:
 	CStringArray		m_sGroupNames;
 	CStringArray		m_sGroupBannerPaths; // each song group may have a banner associated with it
 	vector<Course*>		m_pCourses;
-	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS];
+	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_COURSE_TYPES];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 };
 

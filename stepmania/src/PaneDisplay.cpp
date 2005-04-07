@@ -250,9 +250,10 @@ void PaneDisplay::SetContent( PaneContents c )
 
 		case COURSE_MACHINE_RANK:
 			{
-			const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
-			val = (float) FindIndex( best.begin(), best.end(), pCourse );
-			val += 1;
+				CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
+				const vector<Course*> best = SONGMAN->GetBestCourses( ct, PROFILE_SLOT_MACHINE );
+				val = (float) FindIndex( best.begin(), best.end(), pCourse );
+				val += 1;
 			}
 			break;
 
@@ -264,9 +265,12 @@ void PaneDisplay::SetContent( PaneContents c )
 			break;
 
 		case COURSE_PROFILE_RANK:
-			const vector<Course*> best = SONGMAN->GetBestCourses( PlayerMemCard(m_PlayerNumber) );
-			val = (float) FindIndex( best.begin(), best.end(), pCourse );
-			val += 1;
+			{
+				CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
+				const vector<Course*> best = SONGMAN->GetBestCourses( ct, PlayerMemCard(m_PlayerNumber) );
+				val = (float) FindIndex( best.begin(), best.end(), pCourse );
+				val += 1;
+			}
 			break;
 		};
 

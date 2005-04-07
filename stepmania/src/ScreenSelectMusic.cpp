@@ -1709,7 +1709,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 		}
 
-		const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
+		CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
+		const vector<Course*> best = SONGMAN->GetBestCourses( ct, PROFILE_SLOT_MACHINE );
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
 			m_MachineRank.SetText( AddNumberSuffix( index+1 ) );
