@@ -298,32 +298,23 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
 	ASSERT( iEndRow >= iStartRow );
 	
-	tn.iDuration = iEndRow - iStartRow;
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
 	iterator begin, end;
-	GetTapNoteRangeInclusive( iTrack, iStartRow, iStartRow+tn.iDuration, begin, end, true );
+	GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end, true );
 
 	/* Look for other hold notes that overlap and merge them into add. */
 	for( iterator it = begin; it != end; ++it )
 	{
-		int iRow = it->first;
-		if( it->second.type == TapNote::hold_head )
+		int iOtherRow = it->first;
+		const TapNote &tnOther = it->second;
+		if( tnOther.type == TapNote::hold_head )
 		{
-			if( iRow < iStartRow )
-			{
-				/* extend tn up */
-				int iExtendBy = iStartRow - iRow;
-				tn.iDuration += iExtendBy;
-				iStartRow -= iExtendBy;
-			}
-			else
-			{
-				/* extend tn down */
-				int iEndRow = iRow + it->second.iDuration;
-				tn.iDuration = iEndRow - iStartRow;
-			}
+			iStartRow = min( iStartRow, iOtherRow );
+			iEndRow = max( iEndRow, iOtherRow + tnOther.iDuration );
 		}
 	}
+
+	tn.iDuration = iEndRow - iStartRow;
 
 	/* Remove everything in the range. */
 	while( begin != end )
