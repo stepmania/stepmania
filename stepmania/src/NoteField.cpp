@@ -572,12 +572,18 @@ void NoteField::DrawPrimitives()
 				// TRICKY: If boomerang is on, then all notes in the range 
 				// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 				// Test every note to make sure it's on screen before drawing
-				float fYStartOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iStartRow) );
-				float fYEndOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iEndRow) );
-				if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
-					iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
-					fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
+				float fThrowAway;
+				bool bStartIsPastPeak = false;
+				bool bEndIsPastPeak = false;
+				float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iStartRow), fThrowAway, bStartIsPastPeak );
+				float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iEndRow), fThrowAway, bEndIsPastPeak );
+
+				bool bTailIsOnVisible = iFirstPixelToDraw <= fEndYOffset && fEndYOffset <= iLastPixelToDraw;
+				bool bHeadIsVisible = iFirstPixelToDraw <= fStartYOffset  && fStartYOffset <= iLastPixelToDraw;
+				bool bStraddlingVisible = bStartIsPastPeak && !bEndIsPastPeak;
+				if( !(bTailIsOnVisible || bHeadIsVisible || bStraddlingVisible) )
 				{
+					//LOG->Trace( "skip drawing this hold." );
 					continue;	// skip
 				}
 

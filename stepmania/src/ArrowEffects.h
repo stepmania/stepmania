@@ -12,7 +12,13 @@ public:
 	//	fYOffset is a vertical position in pixels relative to the center.
 	//	(positive if has not yet been stepped on, negative if has already passed).
 	//	The ArrowEffect and ScrollSpeed is applied in this stage.
-	static float GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, bool bAbsolute=false );
+	static float GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakYOffset, bool bAbsolute=false );
+	static float GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, bool bAbsolute=false )
+	{
+		float fThrowAway;
+		bool bThrowAway;
+		return GetYOffset( pPlayerState, iCol, fNoteBeat, fThrowAway, bThrowAway, bAbsolute );
+	}
 
 	/* Actual display position, with reverse and post-reverse-effects factored in
 	 * (fYOffset -> YPos). */

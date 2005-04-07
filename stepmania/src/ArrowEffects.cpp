@@ -25,8 +25,13 @@ static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 
 /* For visibility testing: if bAbsolute is false, random modifiers must return the
  * minimum possible scroll speed. */
-float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, bool bAbsolute )
+float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
 {
+	// Default values that are returned if boomerang is off.
+	fPeakYOffsetOut = FLT_MAX;
+	bIsPastPeakOut = true;
+
+
 	float fYOffset = 0;
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
@@ -84,9 +89,22 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	fYOffset += fYAdjust;
 
+	//
+	// Factor in boomerang
+	//
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
-		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
+	{
+		float fOriginalYOffset = fYOffset;
 
+		fYOffset = (-1*fOriginalYOffset*fOriginalYOffset/SCREEN_HEIGHT) + 1.5*fOriginalYOffset;
+		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75;	// zero point of function above
+		fPeakYOffsetOut = (-1*fPeakAtYOffset*fPeakAtYOffset/SCREEN_HEIGHT) + 1.5*fPeakAtYOffset;
+		bIsPastPeakOut = fOriginalYOffset < fPeakAtYOffset;
+	}
+
+	//
+	// Factor in scroll speed
+	//
 	float fScrollSpeed = pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
 	if( pPlayerState->m_CurrentPlayerOptions.m_fRandomSpeed > 0 && !bAbsolute )
 	{
@@ -119,10 +137,10 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	}
 
 	fYOffset *= fScrollSpeed;
+	fPeakYOffsetOut *= fScrollSpeed;
 
 	return fYOffset;
 }
-
 
 void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {

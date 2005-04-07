@@ -986,20 +986,34 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, const boo
 
 void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fYStartOffset, float fYEndOffset )
 {
-	int iEndBeat = iRow + tn.iDuration;
+	int iEndRow = iRow + tn.iDuration;
 
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
 	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5f;
 	float fStartBeat = NoteRowToBeat( max(tn.HoldResult.iLastHeldRow, iRow) );
-	float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat );
-	
-	// HACK: If active, don't allow the top of the hold to go above the receptor
-	if( bIsActive )
-		fStartYOffset = 0;
+	float fThrowAway = 0;
 
+	// HACK: If active, don't set YOffset to 0 so that it doesn't jiggle around the receptor.
+	bool bStartIsPastPeak = true;
+	float fStartYOffset	= 0;
+	if( bIsActive )
+		;	// use the default values filled in above
+	else
+		fStartYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat, fThrowAway, bStartIsPastPeak );
+	
 	float fStartYPos	= ArrowEffects::GetYPos( m_pPlayerState, iCol, fStartYOffset, fReverseOffsetPixels );
-	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, NoteRowToBeat(iEndBeat) );
+	float fEndPeakYOffset	= 0;
+	bool bEndIsPastPeak = false;
+	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, NoteRowToBeat(iEndRow), fEndPeakYOffset, bEndIsPastPeak );
+
+	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.  
+	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we 
+	// want to draw the tail at that max Y offset, or else the hold will appear 
+	// to magically grow as the tail approaches the max Y offset.
+	if( bStartIsPastPeak && !bEndIsPastPeak )
+		fEndYOffset	= fEndPeakYOffset;	// use the calculated PeakYOffset so that long holds don't appear to grow
+	
 	float fEndYPos		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fEndYOffset, fReverseOffsetPixels );
 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
