@@ -580,8 +580,9 @@ void NoteField::DrawPrimitives()
 
 				bool bTailIsOnVisible = iFirstPixelToDraw <= fEndYOffset && fEndYOffset <= iLastPixelToDraw;
 				bool bHeadIsVisible = iFirstPixelToDraw <= fStartYOffset  && fStartYOffset <= iLastPixelToDraw;
-				bool bStraddlingVisible = bStartIsPastPeak && !bEndIsPastPeak;
-				if( !(bTailIsOnVisible || bHeadIsVisible || bStraddlingVisible) )
+				bool bStraddlingVisible = fStartYOffset <= iFirstPixelToDraw && iLastPixelToDraw <= fEndYOffset;
+				bool bStaddlingPeak = bStartIsPastPeak && !bEndIsPastPeak;
+				if( !(bTailIsOnVisible || bHeadIsVisible || bStraddlingVisible || bStaddlingPeak) )
 				{
 					//LOG->Trace( "skip drawing this hold." );
 					continue;	// skip
