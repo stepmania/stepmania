@@ -1335,6 +1335,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		FOREACH_EnabledPlayer( pn )
 		{
 			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType(pn);
+			SongOptions::LifeType lt = GAMESTATE->m_SongOptions.m_LifeType;
+
 			if( ft == SongOptions::FAIL_OFF )
 				continue;
 			
@@ -1347,15 +1349,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 		
 			/* If recovery is enabled, only set fail if both are failing.
 			* There's no way to recover mid-song in battery mode. */
-			if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
+			if( lt != SongOptions::LIFE_BATTERY &&
 				PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
 				continue;
 
 			LOG->Trace("Player %d failed", (int)pn);
 			STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
 
-			if( ft  == SongOptions::LIFE_BATTERY &&
-				ft  == SongOptions::FAIL_IMMEDIATE )
+			if( lt == SongOptions::LIFE_BATTERY &&
+				ft == SongOptions::FAIL_IMMEDIATE )
 			{
 				if( !STATSMAN->m_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
 				{
