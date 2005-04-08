@@ -552,11 +552,15 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
 
 		if( pOld )
+		{
 			pOld->LoseFocus();
+			pOld->PlayCommand( "LoseFocus" );
+		}
 		if( m_pCurrentBGA )
 		{
 			m_pCurrentBGA->GainFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
 			m_pCurrentBGA->PlayCommand( "On" );
+			m_pCurrentBGA->PlayCommand( "GainFocus" );
 		}
 
 		m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
