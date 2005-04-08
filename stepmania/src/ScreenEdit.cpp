@@ -548,7 +548,7 @@ void ScreenEdit::Init()
 	m_NoteDataRecord.CopyAll( noteData );
 	m_NoteFieldRecord.SetXY( RECORD_X, RECORD_Y );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 10 );
-	m_NoteFieldRecord.Load( &m_NoteDataRecord, -SCREEN_HEIGHT/2.0f, SCREEN_HEIGHT/2.0f );
+	m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
 	this->AddChild( &m_NoteFieldRecord );
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
