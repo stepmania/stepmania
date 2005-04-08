@@ -858,7 +858,6 @@ void ScreenEvaluation::Init()
 	this->SortByDrawOrder();
 
 
-	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 	m_timerSoundSequences.SetZero(); // zero the sound sequence timer
 	m_timerSoundSequences.Touch(); // set the timer going :]
 
@@ -1290,7 +1289,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 void ScreenEvaluation::DrawPrimitives()
 {
-	Screen::DrawPrimitives();
+	ScreenWithMenuElements::DrawPrimitives();
 }
 
 void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -1338,7 +1337,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 		}
 	}
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )

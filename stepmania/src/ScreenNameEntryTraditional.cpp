@@ -419,8 +419,6 @@ void ScreenNameEntryTraditional::Init()
 	m_soundChange.Load( THEME->GetPathS(m_sName,"change",true) );
 	m_soundInvalid.Load( THEME->GetPathS(m_sName,"invalid",true) );
 
-	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
-
 	this->SortByDrawOrder();
 }
 
@@ -481,7 +479,7 @@ void ScreenNameEntryTraditional::Update( float fDelta )
 	if( m_bFirstUpdate )
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("name entry") );
 
-	Screen::Update(fDelta);
+	ScreenWithMenuElements::Update(fDelta);
 }
 
 void ScreenNameEntryTraditional::DrawPrimitives()
@@ -489,7 +487,7 @@ void ScreenNameEntryTraditional::DrawPrimitives()
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->LoadMenuPerspective( FOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
 
-	Screen::DrawPrimitives();
+	ScreenWithMenuElements::DrawPrimitives();
 	
 	DISPLAY->CameraPopMatrix();
 }
@@ -499,7 +497,7 @@ void ScreenNameEntryTraditional::Input( const DeviceInput& DeviceI, const InputE
 	if( IsTransitioning() )
 		return;
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenNameEntryTraditional::ChangeDisplayedFeat()
