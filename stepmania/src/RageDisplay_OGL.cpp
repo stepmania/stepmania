@@ -816,6 +816,10 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 		desc.masks[0], desc.masks[1], desc.masks[2], 0 );
 
 	FlushGLErrors();
+
+	glReadBuffer( GL_FRONT );
+	AssertNoGLError();
+	
 	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGBA,
 	             GL_UNSIGNED_BYTE, image->pixels);
 	AssertNoGLError();
