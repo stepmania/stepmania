@@ -35,10 +35,15 @@ static inline void enum_add( T &val, int iAmt )
 #define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
 
 
+static const CString EMPTY_STRING;
+
 #define XToString(X, CNT)	\
 	const CString& X##ToString( X x ) \
 	{	\
-		ASSERT(unsigned(x) < CNT);	\
+		if( x == CNT+1 ) 	\
+			return EMPTY_STRING;	\
+		ASSERT( x < CNT );	\
+		ASSERT( x < (int)ARRAYSIZE(X##Names) );	\
 		return X##Names[x];	\
 	}
 
