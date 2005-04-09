@@ -554,6 +554,12 @@ void GameState::Update( float fDelta )
 
 		if( m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut > 0 )
 			m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = max( 0, m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut - fDelta );
+
+		if( !m_bGoalComplete[p] && IsGoalComplete(p) )
+		{
+			m_bGoalComplete[p] = true;
+			MESSAGEMAN->Broadcast( (Message)(MESSAGE_GOAL_COMPLETE_P1+p) );
+		}
 	}
 }
 
@@ -643,6 +649,8 @@ void GameState::ResetStageStatistics()
 
 		m_pPlayerState[p]->m_iLastPositiveSumOfAttackLevels = 0;
 		m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = 0;	// PlayerAI not affected
+
+		m_bGoalComplete[p] = false;
 	}
 
 
@@ -1830,6 +1838,31 @@ bool GameState::IsPlayerDead( PlayerNumber pn ) const
 	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DEAD;
 }
 
+float GameState::GetGoalPercentComplete( PlayerNumber pn )
+{
+	if( !PROFILEMAN->IsUsingProfile(pn) )
+		return 0;
+	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
+	const StageStats &ssAccum = STATSMAN->GetAccumStageStats();
+	const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
+	const PlayerStageStats &pssAccum = ssAccum.m_player[pn];
+	const PlayerStageStats &pssCurrent = ssCurrent.m_player[pn];
+
+	float fActual = 0;
+	float fGoal = 0;
+	switch( pProfile->m_GoalType )
+	{
+	case GOAL_CALORIES:
+		fActual = pssAccum.fCaloriesBurned + pssCurrent.fCaloriesBurned;
+		fGoal = pProfile->m_iGoalCalories;
+		break;
+	case GOAL_TIME:
+		fActual = ssAccum.fGameplaySeconds + ssCurrent.fGameplaySeconds;
+		fGoal = pProfile->m_iGoalSeconds;
+		break;
+	}
+	return fActual / fGoal;
+}
 
 
 // lua start

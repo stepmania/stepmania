@@ -15,6 +15,12 @@ static const CString MessageNames[NUM_MESSAGES] = {
 	"EditStepsTypeChanged",
 	"EditSourceStepsChanged",
 	"EditSourceStepsTypeChanged",
+	"EditPreferredDifficutyP1Changed",
+	"EditPreferredDifficutyP2Changed",
+	"EditPreferredCourseDifficutyP1Changed",
+	"EditPreferredCourseDifficutyP2Changed",
+	"GoalCompleteP1",
+	"GoalCompleteP2",
 };
 XToString( Message, NUM_MESSAGES );
 
@@ -57,6 +63,8 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, Message m )
 
 void MessageManager::Broadcast( const CString& sMessage ) const
 {
+	ASSERT( !sMessage.empty() );
+
 	map<CString,SubscribersSet>::const_iterator iter = m_MessageToSubscribers.find( sMessage );
 	if( iter == m_MessageToSubscribers.end() )
 		return;

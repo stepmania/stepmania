@@ -182,6 +182,9 @@ public:
 
 	// used in PLAY_MODE_RAVE
 	float	m_fTugLifePercentP1;
+
+	// used in workout
+	bool	m_bGoalComplete[NUM_PLAYERS];
 	
 	void GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, const Attack& a );
@@ -289,6 +292,10 @@ public:
 	BroadcastOnChange<StepsType> m_stEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
 	BroadcastOnChange<StepsType> m_stEditSource;
+
+	// Workout stuff
+	float GetGoalPercentComplete( PlayerNumber pn );
+	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
 
 	// Lua
 	void PushSelf( lua_State *L );
