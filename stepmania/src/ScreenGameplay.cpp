@@ -78,6 +78,7 @@ AutoScreenMessage( SM_SaveChangedBeforeGoingBack )
 AutoScreenMessage( SM_GoToScreenAfterBack )
 
 AutoScreenMessage( SM_BeginFailed )
+AutoScreenMessage( SM_LeaveGameplay )
 
 // received while STATE_INTRO
 AutoScreenMessage( SM_StartHereWeGo )
@@ -95,6 +96,7 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	START_GIVES_UP.Load( sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
 	GIVING_UP_FAILS.Load( sName, "GivingUpFails" );
+	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( sName, "GivingUpGoesToNextScreen" );
 }
 
 void ScreenGameplay::Init()
@@ -1523,6 +1525,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
+		else if( GIVING_UP_GOES_TO_NEXT_SCREEN )
+		{
+			HandleScreenMessage( SM_LeaveGameplay );
+			return;
+		}
 		else
 		{
 			BackOutFromGameplay();
@@ -2129,77 +2136,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( bStopCourseEarly || bAllReallyFailed || bIsLastSong )
 		{
 			// Time to leave from ScreenGameplay
-
-			// update dancing characters for win / lose
-			DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
-			if( Dancers )
-			{
-				FOREACH_EnabledPlayer(p)
-				{
-					/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
-					if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
-						Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
-					else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
-						Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
-					else
-						Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
-				}
-			}
-
-			/* End round. */
-			if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
-				return;		// ignore
-			m_DancingState = STATE_OUTRO;
-			AbortGiveUp( false );
-
-			GAMESTATE->RemoveAllActiveAttacks();
-			FOREACH_EnabledPlayer( p )
-				m_ActiveAttackList[p].Refresh();
-
-			LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
-
-
-			if( bAllReallyFailed )
-			{
-				this->PostScreenMessage( SM_BeginFailed, 0 );
-				return;
-			}
-
-			// do they deserve an extra stage?
-			if( GAMESTATE->HasEarnedExtraStage() )
-			{
-				TweenOffScreen();
-				m_Extra.StartTransitioning( SM_GoToNextScreen );
-				SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
-			}
-			else
-			{
-				TweenOffScreen();
-				
-				switch( GAMESTATE->m_PlayMode )
-				{
-				case PLAY_MODE_BATTLE:
-				case PLAY_MODE_RAVE:
-					{
-						PlayerNumber winner = GAMESTATE->GetBestPlayer();
-						switch( winner )
-						{
-						case PLAYER_INVALID:
-							m_Draw.StartTransitioning( SM_GoToNextScreen );
-							break;
-						default:
-							m_Win[winner].StartTransitioning( SM_GoToNextScreen );
-							break;
-						}
-					}
-					break;
-				default:
-					m_Cleared.StartTransitioning( SM_GoToNextScreen );
-					break;
-				}
-				
-				SOUND->PlayOnceFromAnnouncer( "gameplay cleared" );
-			}
+			HandleScreenMessage( SM_LeaveGameplay );
 		}
 		else
 		{
@@ -2212,6 +2149,81 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );
 			return;
 		}
+	}
+	else if( SM == SM_LeaveGameplay )
+	{
+		// update dancing characters for win / lose
+		DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
+		if( Dancers )
+		{
+			FOREACH_EnabledPlayer(p)
+			{
+				/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
+				if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
+					Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
+				else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
+					Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
+				else
+					Dancers->Change2DAnimState( p, AS2D_WIN ); // pass anim
+			}
+		}
+
+		/* End round. */
+		if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
+			return;		// ignore
+		m_DancingState = STATE_OUTRO;
+		AbortGiveUp( false );
+
+		GAMESTATE->RemoveAllActiveAttacks();
+		FOREACH_EnabledPlayer( p )
+			m_ActiveAttackList[p].Refresh();
+
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
+
+		bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
+
+		if( bAllReallyFailed )
+		{
+			this->PostScreenMessage( SM_BeginFailed, 0 );
+			return;
+		}
+
+		// do they deserve an extra stage?
+		if( GAMESTATE->HasEarnedExtraStage() )
+		{
+			TweenOffScreen();
+			m_Extra.StartTransitioning( SM_GoToNextScreen );
+			SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
+		}
+		else
+		{
+			TweenOffScreen();
+			
+			switch( GAMESTATE->m_PlayMode )
+			{
+			case PLAY_MODE_BATTLE:
+			case PLAY_MODE_RAVE:
+				{
+					PlayerNumber winner = GAMESTATE->GetBestPlayer();
+					switch( winner )
+					{
+					case PLAYER_INVALID:
+						m_Draw.StartTransitioning( SM_GoToNextScreen );
+						break;
+					default:
+						m_Win[winner].StartTransitioning( SM_GoToNextScreen );
+						break;
+					}
+				}
+				break;
+			default:
+				m_Cleared.StartTransitioning( SM_GoToNextScreen );
+				break;
+			}
+			
+			SOUND->PlayOnceFromAnnouncer( "gameplay cleared" );
+		}
+
 	}
 	else if( SM == SM_StartLoadingNextSong )
 	{

@@ -51,6 +51,7 @@ protected:
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;
 	ThemeMetric<bool> GIVING_UP_FAILS;
+	ThemeMetric<bool> GIVING_UP_GOES_TO_NEXT_SCREEN;
 
 	void TweenOnScreen();
 	void TweenOffScreen();
