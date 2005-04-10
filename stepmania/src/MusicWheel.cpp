@@ -1089,6 +1089,8 @@ void MusicWheel::Update( float fDeltaTime )
 				RebuildAllMusicWheelItems();
 				TweenOnScreen(true);
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
+
+				SCREENMAN->ZeroNextUpdate();
 			}
 			break;
 
