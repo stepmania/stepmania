@@ -118,9 +118,6 @@ TitleTo: HYPNØTIC CRISIS
 TitleFrom: Yozora no Muko
 TitleTo: 夜空ノムコウ
 *
-TitleFrom: 17 ?(Sai|Ages)?
-TitleTo: 17才
-*
 # Handle "Mobo Moga:Mobo * Moga"; spaces optional.
 TitleFrom: Mobo ?\*? ?Moga
 TitleTo: MOBO★MOGA
