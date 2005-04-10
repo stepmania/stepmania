@@ -1854,11 +1854,11 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 	{
 	case GOAL_CALORIES:
 		fActual = pssAccum.fCaloriesBurned + pssCurrent.fCaloriesBurned;
-		fGoal = pProfile->m_iGoalCalories;
+		fGoal = (float)pProfile->m_iGoalCalories;
 		break;
 	case GOAL_TIME:
 		fActual = ssAccum.fGameplaySeconds + ssCurrent.fGameplaySeconds;
-		fGoal = pProfile->m_iGoalSeconds;
+		fGoal = (float)pProfile->m_iGoalSeconds;
 		break;
 	}
 	return fActual / fGoal;
