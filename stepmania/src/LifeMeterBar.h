@@ -3,6 +3,7 @@
 
 #include "LifeMeter.h"
 #include "Sprite.h"
+#include "AutoActor.h"
 #include "Quad.h"
 class LifeMeterStream;
 
@@ -36,7 +37,8 @@ public:
 private:
 	void ResetBarVelocity();
 
-	Quad		m_quadBlackBackground;
+	AutoActor			m_sprBackground;
+	Quad				m_quadDangerGlow;
 	LifeMeterStream*	m_pStream;
 
 	float		m_fLifePercentage;

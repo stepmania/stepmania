@@ -10,6 +10,8 @@
 #include "StatsManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "Quad.h"
+#include "ActorUtil.h"
 
 
 static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
@@ -216,8 +218,6 @@ public:
 
 LifeMeterBar::LifeMeterBar()
 {
-	m_pStream = new LifeMeterStream;
-
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
@@ -237,16 +237,8 @@ LifeMeterBar::LifeMeterBar()
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
 
-	// set up lifebar
 	m_fBaseLifeDifficulty = PREFSMAN->m_fLifeDifficultyScale;
 	m_fLifeDifficulty = m_fBaseLifeDifficulty;
-
-	m_quadBlackBackground.SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBlackBackground.SetZoomX( (float)METER_WIDTH );
-	m_quadBlackBackground.SetZoomY( (float)METER_HEIGHT );
-
-	this->AddChild( &m_quadBlackBackground );
-	this->AddChild( m_pStream );
 
 	// set up progressive lifebar
 	m_iProgressiveLifebar = PREFSMAN->m_iProgressiveLifebar;
@@ -254,6 +246,20 @@ LifeMeterBar::LifeMeterBar()
 
 	// set up combotoregainlife
 	m_iComboToRegainLife = 0;
+
+	m_sprBackground.Load( THEME->GetPathG("LifeMeterBar","background") );
+	m_sprBackground->SetName( "Background" );
+	m_sprBackground->ZoomToWidth( METER_WIDTH );
+	m_sprBackground->ZoomToHeight( METER_HEIGHT );
+	this->AddChild( m_sprBackground );
+
+	m_quadDangerGlow.ZoomToWidth( METER_WIDTH );
+	m_quadDangerGlow.ZoomToHeight( METER_HEIGHT );
+	m_quadDangerGlow.SetDiffuse( RageColor(1,0,0,1) );
+	this->AddChild( &m_quadDangerGlow );
+
+	m_pStream = new LifeMeterStream;
+	this->AddChild( m_pStream );
 
 	AfterLifeChanged();
 }
@@ -526,7 +532,7 @@ void LifeMeterBar::DrawPrimitives()
 		fPercentRed = 0;
 	else if( m_fTrailingLifePercentage<DANGER_THRESHOLD ) 
 		fPercentRed = RageFastSin( RageTimer::GetTimeSinceStartFast()*PI*4 )/2+0.5f;
-	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
+	m_quadDangerGlow.SetDiffuseAlpha( fPercentRed*0.8f );
 
 	ActorFrame::DrawPrimitives();
 }
