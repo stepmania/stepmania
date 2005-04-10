@@ -8671,7 +8671,6 @@
 			children = (
 				AAEF3D1004B53E2900D02EE9,
 				AAEF3D0C04B533CC00D02EE9,
-				AA71446E0809E1A700545684,
 				AAEF3D0D04B533CC00D02EE9,
 				AA80C71A07F2069F00C99272,
 			);
@@ -12185,17 +12184,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		AA71446E0809E1A700545684 = {
-			explicitFileType = sourcecode.cpp.objcpp;
-			fileEncoding = 4;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			path = LoadingWindow_Cocoa.mm;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
 		};
 		AA729C420599B50D00779F33 = {
 			explicitFileType = sourcecode.cpp;
