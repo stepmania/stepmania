@@ -15,9 +15,9 @@ public:
 	void Load( CString sType );	// load metrics
 	void LoadFromSong( const Song* pSong );
 	void LoadFromString( 
-		CString sDisplayTitle, CString sTranslitTitle, 
-		CString sDisplaySubTitle, CString sTranslitSubTitle, 
-		CString sDisplayArtist, CString sTranslitArtist );
+		const CString &sDisplayTitle, const CString &sTranslitTitle, 
+		const CString &sDisplaySubTitle, const CString &sTranslitSubTitle, 
+		const CString &sDisplayArtist, const CString &sTranslitArtist );
 
 private:
 	bool m_bInitted;

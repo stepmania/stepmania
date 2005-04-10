@@ -47,9 +47,9 @@ TextBanner::TextBanner()
 
 
 void TextBanner::LoadFromString( 
-	CString sDisplayTitle, CString sTranslitTitle, 
-	CString sDisplaySubTitle, CString sTranslitSubTitle, 
-	CString sDisplayArtist, CString sTranslitArtist )
+	const CString &sDisplayTitle, const CString &sTranslitTitle, 
+	const CString &sDisplaySubTitle, const CString &sTranslitSubTitle, 
+	const CString &sDisplayArtist, const CString &sTranslitArtist )
 {
 	ASSERT( m_bInitted );
 
