@@ -250,6 +250,7 @@
 		4A9504CDFFE6A4B311CA0CBA = {
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -1929,7 +1930,7 @@
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -5322,7 +5323,6 @@
 			fileRef = AAEF3D0D04B533CC00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
-				COMPILER_FLAGS = "-x objective-c++";
 			};
 		};
 		AA29CE090558741A00961A51 = {
@@ -8671,6 +8671,7 @@
 			children = (
 				AAEF3D1004B53E2900D02EE9,
 				AAEF3D0C04B533CC00D02EE9,
+				AA71446E0809E1A700545684,
 				AAEF3D0D04B533CC00D02EE9,
 				AA80C71A07F2069F00C99272,
 			);
@@ -12185,6 +12186,17 @@
 			settings = {
 			};
 		};
+		AA71446E0809E1A700545684 = {
+			explicitFileType = sourcecode.cpp.objcpp;
+			fileEncoding = 4;
+			indentWidth = 4;
+			isa = PBXFileReference;
+			path = LoadingWindow_Cocoa.mm;
+			refType = 4;
+			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 1;
+		};
 		AA729C420599B50D00779F33 = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -15134,10 +15146,10 @@
 			};
 		};
 		AACA591707B5DB1700763545 = {
-			explicitFileType = sourcecode.cpp;
+			explicitFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			path = Crash.mm;
+			path = Crash.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -15145,7 +15157,6 @@
 			fileRef = AACA591707B5DB1700763545;
 			isa = PBXBuildFile;
 			settings = {
-				COMPILER_FLAGS = "-x objective-c++";
 			};
 		};
 		AACA592407B5E1E500763545 = {
@@ -16487,11 +16498,11 @@
 			usesTabs = 1;
 		};
 		AAEF3D0D04B533CC00D02EE9 = {
-			explicitFileType = sourcecode.cpp.objcpp;
+			explicitFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			path = LoadingWindow_Cocoa.mm;
+			path = LoadingWindow_Cocoa.m;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;

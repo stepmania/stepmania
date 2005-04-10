@@ -1,5 +1,5 @@
 #import <Cocoa/Cocoa.h>
-#include "ProductInfo.h"
+#import "ProductInfo.h"
 
 static NSWindow *window;
 static NSTextView *text;

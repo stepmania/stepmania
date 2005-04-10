@@ -1,12 +1,21 @@
-#ifndef DARWIN_CRASH_H
-#define DARWIN_CRASH_H
+#import <Cocoa/Cocoa.h>
 
-extern "C"
+void InformUserOfCrash( const char *sPath )
 {
-	extern void InformUserOfCrash( const char *sPath );
+	int ret = NSRunAlertPanel(@"StepMania has crashed",
+							  @"StepMania has crashed. Debugging information "
+							  @"has been output to\n\n%s\n\nPlease file a bug "
+							  @"report at\n\nhttp://sf.net/tracker/?func=add&"
+							  @"group_id=37892&atid=421366",
+							  @"Open crashinfo.txt", @"Quit", nil, sPath);
+	
+	if( ret == NSAlertDefaultReturn )
+	{
+		NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+		
+		[ws openFile:[NSString stringWithUTF8String:sPath]];
+	}
 }
-
-#endif /* DARWIN_CRASH_H */
 
 /*
  * (c) 2003-2005 Steve Checkoway
@@ -32,3 +41,4 @@ extern "C"
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+	

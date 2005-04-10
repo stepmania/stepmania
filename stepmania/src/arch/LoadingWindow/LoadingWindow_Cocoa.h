@@ -5,9 +5,12 @@
 
 #include "LoadingWindow.h"
 
-extern void MakeNewCocoaWindow();
-extern void DisposeOfCocoaWindow();
-extern void SetCocoaWindowText(const char *s);
+extern "C"
+{
+	extern void MakeNewCocoaWindow();
+	extern void DisposeOfCocoaWindow();
+	extern void SetCocoaWindowText(const char *s);
+}
 
 class LoadingWindow_Cocoa : public LoadingWindow
 {
