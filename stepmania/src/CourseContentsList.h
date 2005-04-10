@@ -3,30 +3,16 @@
 #ifndef COURSE_CONTENTS_LIST_H
 #define COURSE_CONTENTS_LIST_H
 
-#include "BitmapText.h"
-#include "ActorFrame.h"
-#include "Sprite.h"
-#include "Quad.h"
-#include "CourseEntryDisplay.h"
-class Course;
-class Song;
-class Steps;
+#include "ActorScroller.h"
+class CourseEntryDisplay;
 
-
-const int MAX_VISIBLE_CONTENTS = 5;
-const int MAX_TOTAL_CONTENTS = 56;
-
-
-
-class CourseContentsList : public ActorFrame
+class CourseContentsList : public ActorScroller
 {
 public:
 	CourseContentsList();
+	~CourseContentsList();
 	
 	void Load();
-
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 
 	void SetFromGameState();
 	void TweenInAfterChangedCourse();
@@ -35,12 +21,10 @@ protected:
 
 	Quad		m_quad;
 
-	int						m_iNumContents;
-	CourseEntryDisplay		m_CourseContentDisplays[MAX_TOTAL_CONTENTS];
-	float ContentsBarHeight, ContentsBarWidth;
+	vector<CourseEntryDisplay*>		m_vpDisplay;
 
 	float m_fTimeUntilScroll;
-	float m_fItemAtTopOfList;	// between 0 and m_iNumContents
+	float m_fItemAtPosition0InList;	// 0 <= val < m_vpDisplay.size()
 };
 
 #endif

@@ -12,45 +12,37 @@
 #include "GameState.h"
 #include "Style.h"
 #include "RageTexture.h"
+#include "CourseEntryDisplay.h"
 
+const int MAX_VISIBLE_ITEMS = 5;
+const int MAX_ITEMS = MAX_VISIBLE_ITEMS+2;
 
 CourseContentsList::CourseContentsList()
 {
-	m_iNumContents = 0;
-	m_quad.SetDiffuse( RageColor(0,0,0,1) );
-	m_quad.SetBlendMode( BLEND_NO_EFFECT );		// invisible, since we want to write only to the Zbuffer
+	for( int i=0; i<MAX_ITEMS; i++ )
+		m_vpDisplay.push_back( new CourseEntryDisplay );
+}
 
-	m_fTimeUntilScroll = 0;
-	m_fItemAtTopOfList = 0;
-
-	ContentsBarHeight = 1;
-	ContentsBarWidth = 1;
+CourseContentsList::~CourseContentsList()
+{
+	FOREACH( CourseEntryDisplay*, m_vpDisplay, d )
+		delete *d;
+	m_vpDisplay.clear();
 }
 
 void CourseContentsList::Load()
 {
-	m_quad.SetUseZBuffer( true );
-	for( int i = 0; i < MAX_TOTAL_CONTENTS; ++i )
+	FOREACH( CourseEntryDisplay*, m_vpDisplay, d )
 	{
-		m_CourseContentDisplays[i].SetName( "CourseEntryDisplay" );
-		m_CourseContentDisplays[i].Load();
-		m_CourseContentDisplays[i].SetUseZBuffer( true );
+		(*d)->SetName( "CourseEntryDisplay" );
+		(*d)->Load();
+		(*d)->SetUseZBuffer( true );
 	}
-
-	/* These are all the same; grab the dimensions. */
-	ContentsBarHeight = m_CourseContentDisplays[0].GetUnzoomedHeight();
-	ContentsBarWidth = m_CourseContentDisplays[0].GetUnzoomedWidth();
 }
 
 void CourseContentsList::SetFromGameState()
 {
-	Course* pCourse = GAMESTATE->m_pCurCourse;
-
-	if( pCourse == NULL )
-	{
-		m_iNumContents = 0;
-		return;
-	}
+	RemoveAllChildren();
 
 	// FIXME: Is there a better way to handle when players don't have 
 	// the same number of TrailEntries?
@@ -59,13 +51,13 @@ void CourseContentsList::SetFromGameState()
 	Trail* pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 	if( pMasterTrail == NULL )
 		return;
-	int iNumEntriesToShow = min((int)pMasterTrail->m_vEntries.size(), MAX_TOTAL_CONTENTS);
+	unsigned uNumEntriesToShow = min( pMasterTrail->m_vEntries.size(), m_vpDisplay.size() );
 
-	m_iNumContents = 0;
-	
-	for( int i=0; i<iNumEntriesToShow; i++ )
+	for( int i=0; i<(int)uNumEntriesToShow; i++ )
 	{
-		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
+		CourseEntryDisplay &d = *m_vpDisplay[i];
+
+		this->AddChild( &d );
 
 		const TrailEntry* pte[NUM_PLAYERS];
 		ZERO( pte );
@@ -78,73 +70,43 @@ void CourseContentsList::SetFromGameState()
 			if( unsigned(i) < pTrail->m_vEntries.size() )
 				pte[pn] = &pTrail->m_vEntries[i];
 		}
-		display.LoadFromTrailEntry( m_iNumContents+1, pte );
-		
-		m_iNumContents++;
-	}
-}
-
-void CourseContentsList::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
-
-	if( m_fTimeUntilScroll > 0  &&  m_iNumContents > MAX_VISIBLE_CONTENTS)
-		m_fTimeUntilScroll -= fDeltaTime;
-	if( m_fTimeUntilScroll <= 0 ) {
-		m_fItemAtTopOfList += fDeltaTime;
-		m_fItemAtTopOfList = fmodf(m_fItemAtTopOfList, float(m_iNumContents));
+		d.LoadFromTrailEntry( (int)(truncf(m_fItemAtPosition0InList))+i+1, pte );
 	}
 
-	for( int i=0; i<m_iNumContents; i++ )
-		m_CourseContentDisplays[i].Update( fDeltaTime );
-}
+	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;
 
-void CourseContentsList::DrawPrimitives()
-{
-	// write to z buffer so that top and bottom are clipped
-	m_quad.SetZ( 1 );
+	this->Load2( 
+		(float)MAX_VISIBLE_ITEMS,
+		m_vpDisplay[0]->GetUnzoomedWidth(),
+		m_vpDisplay[0]->GetUnzoomedHeight(),
+		bLoop,
+		0.7f,
+		0.7f );
 
-	RectF rectBarSize(-ContentsBarWidth/2, -ContentsBarHeight/2,
-						ContentsBarWidth/2, ContentsBarHeight/2);
-	m_quad.StretchTo( rectBarSize );
-
-	m_quad.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 - 1) * float(ContentsBarHeight) );
-	m_quad.Draw();
-
-	m_quad.SetY( ((MAX_VISIBLE_CONTENTS-1)/2 + 1) * float(ContentsBarHeight) );
-	m_quad.Draw();
-
-	int iItemToDraw = (int)m_fItemAtTopOfList;
-
-	// HACK:  Insert a little pause as a new item appears on the screen
-	float fRemainder = m_fItemAtTopOfList - (int)m_fItemAtTopOfList;
-	fRemainder = min( fRemainder*1.5f, 1 );
-
-	const float fY = (-fRemainder-(MAX_VISIBLE_CONTENTS-1)/2) * ContentsBarHeight;
-
-	for( int i=0; i<min(MAX_VISIBLE_CONTENTS+1, m_iNumContents); i++ )
+	this->SetCurrentAndDestinationItem( (MAX_VISIBLE_ITEMS-1)/2 );
+	if( bLoop )
 	{
-		if( m_fTimeUntilScroll <= 0 )
-			m_CourseContentDisplays[iItemToDraw].SetY( fY + i*ContentsBarHeight);
-		m_CourseContentDisplays[iItemToDraw].Draw();
-		iItemToDraw = (iItemToDraw+1) % m_iNumContents;
+		SetPauseCountdownSeconds( 1.5f );
+		this->SetDestinationItem( MAX_ITEMS+1 );	// loop forever
 	}
 }
 
 void CourseContentsList::TweenInAfterChangedCourse()
 {
+	/*
 	m_fItemAtTopOfList = 0;
 	m_fTimeUntilScroll = 3;
 
-	for( int i=0; i<m_iNumContents; i++ )
+	for( int i=0; i<m_fItemAtPosition0InList; i++ )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[i];
 
 		display.StopTweening();
-		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
+		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(CONTENTS_BAR_HEIGHT) );
 		display.BeginTweening( i*0.1f );
-		display.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(ContentsBarHeight) );
+		display.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(CONTENTS_BAR_HEIGHT) );
 	}
+	*/
 }
 
 /*

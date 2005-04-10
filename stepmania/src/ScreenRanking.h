@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "Banner.h"
-#include "ListDisplay.h"
+#include "ActorScroller.h"
 #include "ActorUtil.h"
 #include "Difficulty.h"
 #include "ThemeMetric.h"
@@ -95,7 +95,7 @@ protected:
 		BitmapText m_textScore[NUM_DIFFICULTIES];
 	};
 	vector<ScoreRowItem> m_vScoreRowItem;	// for all_steps
-	ListDisplay m_ListScoreRowItems;
+	ActorScroller m_ListScoreRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
 

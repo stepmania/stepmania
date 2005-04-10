@@ -73,6 +73,26 @@ inline void wrap(float &x, float n)
 	x = fmodf(x,n);
 }
 
+template<class T>
+void CircularShift( vector<T> &v, int dist )
+{
+	for( int i = abs(dist); i>0; i-- )
+	{
+		if( dist > 0 )
+		{
+			T t = v[0];
+			v.erase( v.begin() );
+			v.push_back( t );
+		}
+		else
+		{
+			T t = v.back();
+			v.erase( v.end()-1 );
+			v.insert( v.begin(), t );
+		}
+	}
+}
+
 /*
  * We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
  *

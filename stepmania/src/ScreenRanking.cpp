@@ -390,7 +390,7 @@ void ScreenRanking::Scroll( int iDir )
 	float fDest = m_ListScoreRowItems.GetDestinationItem();
 	float fOldDest = fDest;
 	fDest += iDir;
-	CLAMP( fDest, 0.0f, (float)m_vScoreRowItem.size()-SONG_SCORE_ROWS_TO_SHOW );
+	CLAMP( fDest, (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f, m_vScoreRowItem.size()-(SONG_SCORE_ROWS_TO_SHOW-1)/2.0f-1 );
 	if( fOldDest != fDest )
 	{
 		// TODO: play sound
@@ -627,15 +627,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_ListScoreRowItems.Reset();
 		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 
-		vector<Actor*> vpActors;
 		for( unsigned i=0; i<m_vScoreRowItem.size(); i++ )
-			vpActors.push_back( &m_vScoreRowItem[i] );
-		m_ListScoreRowItems.Load( vpActors, SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0, false );
+			m_ListScoreRowItems.AddChild( &m_vScoreRowItem[i] );
+		m_ListScoreRowItems.Load2( (float)SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0 );
 
 		if( (bool)MANUAL_SCROLLING )
 		{
-			m_ListScoreRowItems.SetCurrentItem( 0 );
-			m_ListScoreRowItems.SetDestinationItem( 0 );
+			m_ListScoreRowItems.SetCurrentAndDestinationItem( (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f );
 		}
 
 		for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
@@ -680,13 +678,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 		vector<Actor*> vpActors;
 		for( unsigned i=0; i<m_vScoreRowItem.size(); i++ )
-			vpActors.push_back( &m_vScoreRowItem[i] );
-		m_ListScoreRowItems.Load( vpActors, SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0, false );
+			m_ListScoreRowItems.AddChild( &m_vScoreRowItem[i] );
+		m_ListScoreRowItems.Load2( (float)SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0 );
 
 		if( (bool)MANUAL_SCROLLING )
 		{
-			m_ListScoreRowItems.SetCurrentItem( 0 );
-			m_ListScoreRowItems.SetDestinationItem( 0 );
+			m_ListScoreRowItems.SetCurrentAndDestinationItem( (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f );
 		}
 
 		for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )

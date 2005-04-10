@@ -28,11 +28,22 @@ ActorScroller::ActorScroller()
 	m_fDestinationItem = 0;
 	m_fSecondsPerItem = 1;
 	m_fNumItemsToDraw = 7;
+	m_fSecondsPauseBetweenItems = 0;
+	m_fNumItemsToDraw = 7;
+	m_bLoop = false; 
+	m_fPauseCountdownSeconds = 0;
+	
+	m_fMaskWidth = 1;
+	m_fMaskHeight = 1;
 
 	m_vRotationDegrees = RageVector3(0,0,0);
 	m_vTranslateTerm0 = RageVector3(0,0,0);
 	m_vTranslateTerm1 = RageVector3(0,0,0);
 	m_vTranslateTerm2 = RageVector3(0,0,0);
+
+	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
+	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
+	m_quadMask.SetHidden( true );
 }
 
 void ActorScroller::Load( 
@@ -52,6 +63,50 @@ void ActorScroller::Load(
 	m_vTranslateTerm2 = vTranslateTerm2;
 
 	m_bLoaded = true;
+}
+
+void ActorScroller::Load2(
+	float fNumItemsToDraw, 
+	float fItemWidth, 
+	float fItemHeight, 
+	bool bLoop, 
+	float fSecondsPerItem, 
+	float fSecondsPauseBetweenItems )
+{
+	CLAMP( fNumItemsToDraw, 1, 10000 );
+	CLAMP( fItemWidth, 1, 10000 );
+	CLAMP( fItemHeight, 1, 10000 );
+	CLAMP( fSecondsPerItem, 0.01f, 10000 );
+	CLAMP( fSecondsPauseBetweenItems, 0, 10000 );
+
+	m_fNumItemsToDraw = fNumItemsToDraw;
+	m_fMaskWidth = fItemWidth;
+	m_fMaskHeight = fItemHeight;
+	m_vTranslateTerm1 = RageVector3( 0, fItemHeight, 0 );
+	m_bLoop = bLoop; 
+	m_fSecondsPerItem = fSecondsPerItem; 
+	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
+	m_fCurrentItem = m_bLoop ? 0 : (float)-m_fNumItemsToDraw;
+	m_fDestinationItem = (float)(m_SubActors.size()+1);
+	m_fPauseCountdownSeconds = 0;
+
+	RectF rectBarSize(
+		-m_fMaskWidth/2,
+		-m_fMaskHeight/2,
+		m_fMaskWidth/2,
+		m_fMaskHeight/2 );
+	m_quadMask.StretchTo( rectBarSize );
+	m_quadMask.SetZ( 1 );
+
+	m_quadMask.SetHidden( false );
+
+	m_bLoaded = true;
+}
+
+float ActorScroller::GetSecondsForCompleteScrollThrough()
+{
+	float fTotalItems = m_fNumItemsToDraw + m_SubActors.size();
+	return fTotalItems * (m_fSecondsPerItem + m_fSecondsPauseBetweenItems );
 }
 
 void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
@@ -115,9 +170,54 @@ void ActorScroller::Update( float fDeltaTime )
 	if( m_fHibernateSecondsLeft > 0 )
 		return;	// early abort
 
+	/* If we have no children, the code below will busy loop. */
+	if( !m_SubActors.size() )
+		return;
+
+	// handle pause
+	if( fDeltaTime > m_fPauseCountdownSeconds )
+	{
+		fDeltaTime -= m_fPauseCountdownSeconds;
+		m_fPauseCountdownSeconds = 0;
+	}
+	else
+	{
+		m_fPauseCountdownSeconds -= fDeltaTime;
+		fDeltaTime = 0;
+		return;
+	}
+
+
+	if( m_fCurrentItem == m_fDestinationItem )
+		return;	// done scrolling
+
+
+	float fOldItemAtTop = m_fCurrentItem;
 	if( m_fSecondsPerItem > 0 )
 		fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fSecondsPerItem );
+
+	// if items changed, then pause
+	if( (int)fOldItemAtTop != (int)m_fCurrentItem )
+		m_fPauseCountdownSeconds = m_fSecondsPauseBetweenItems;
+
+	if( m_bLoop )
+		m_fCurrentItem = fmodf( m_fCurrentItem, m_fNumItemsToDraw+1 );
 }
+
+#define PUSH_AND_TRANSFORM_FOR_ITEM( fPosition ) { \
+	DISPLAY->PushMatrix(); \
+	if( m_vRotationDegrees.x )	DISPLAY->RotateX( m_vRotationDegrees.x*fPosition ); \
+	if( m_vRotationDegrees.y )	DISPLAY->RotateY( m_vRotationDegrees.y*fPosition ); \
+	if( m_vRotationDegrees.z )	DISPLAY->RotateZ( m_vRotationDegrees.z*fPosition ); \
+	RageVector3 vTranslation = \
+		m_vTranslateTerm0 + 							/* m_vTranslateTerm0*fPosition^0 */ \
+		m_vTranslateTerm1 * fPosition +				/* m_vTranslateTerm1*fPosition^1 */ \
+		m_vTranslateTerm2 * fPosition*fPosition; 	/* m_vTranslateTerm2*fPosition^2 */ \
+	DISPLAY->Translate( \
+		vTranslation.x, \
+		vTranslation.y, \
+		vTranslation.z ); \
+	}
 
 void ActorScroller::DrawPrimitives()
 {
@@ -128,34 +228,37 @@ void ActorScroller::DrawPrimitives()
 	}
 	else
 	{
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-		{
-			float fItemOffset = i - m_fCurrentItem;
+		if( m_SubActors.empty() )
+			return;
 
-			if( fabsf(fItemOffset) > m_fNumItemsToDraw / 2 )
+		// write to z buffer so that top and bottom are clipped
+		float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;
+		float fPositionFullyOnScreenBottom = (m_fNumItemsToDraw-1)/2.f;
+		float fPositionCompletelyOffScreenTop = fPositionFullyOnScreenTop - 1;
+		float fPositionCompletelyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
+
+		PUSH_AND_TRANSFORM_FOR_ITEM( fPositionCompletelyOffScreenTop )
+		m_quadMask.Draw();
+		DISPLAY->PopMatrix();
+
+		PUSH_AND_TRANSFORM_FOR_ITEM( fPositionCompletelyOffScreenBottom )
+		m_quadMask.Draw();
+		DISPLAY->PopMatrix();
+
+		float fFirstItemToDraw = fPositionCompletelyOffScreenTop + m_fCurrentItem;
+		float fLastItemToDraw = fPositionCompletelyOffScreenBottom + m_fCurrentItem;
+
+		for( int iItem=(int)truncf(ceilf(fFirstItemToDraw)); iItem<=fLastItemToDraw; iItem++ )
+		{
+			float fPosition = iItem - m_fCurrentItem;
+			int iIndex = iItem;
+			if( m_bLoop )
+				wrap( iIndex, m_SubActors.size()-1 );
+			else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 				continue;
 
-			DISPLAY->PushMatrix();
-
-			if( m_vRotationDegrees.x )
-				DISPLAY->RotateX( m_vRotationDegrees.x*fItemOffset );
-			if( m_vRotationDegrees.y )
-				DISPLAY->RotateY( m_vRotationDegrees.y*fItemOffset );
-			if( m_vRotationDegrees.z )
-				DISPLAY->RotateZ( m_vRotationDegrees.z*fItemOffset );
-			
-			RageVector3 vTranslation = 
-				m_vTranslateTerm0 +								// m_vTranslateTerm0*itemOffset^0
-				m_vTranslateTerm1 * fItemOffset +				// m_vTranslateTerm1*itemOffset^1
-				m_vTranslateTerm2 * fItemOffset*fItemOffset;	// m_vTranslateTerm2*itemOffset^2
-			DISPLAY->Translate( 
-				vTranslation.x,
-				vTranslation.y,
-				vTranslation.z
-				);
-
-			m_SubActors[i]->Draw();
-			
+			PUSH_AND_TRANSFORM_FOR_ITEM( fPosition )
+			m_SubActors[iIndex]->Draw();
 			DISPLAY->PopMatrix();
 		}
 	}

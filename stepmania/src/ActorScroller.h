@@ -4,6 +4,7 @@
 #define ActorScroller_H
 
 #include "ActorFrame.h"
+#include "Quad.h"
 struct XNode;
 
 template<class T>
@@ -34,12 +35,25 @@ public:
 		const RageVector3	&vTranslateTerm1,
 		const RageVector3	&vTranslateTerm2 );
 
+	void Load2(
+		float fNumItemsToDraw, 
+		float fItemWidth, 
+		float fItemHeight, 
+		bool bLoop, 
+		float fSecondsPerItem, 
+		float fSecondsPauseBetweenItems );
+
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();	// DOES draw
 
 	void LoadFromNode( const CString &sDir, const XNode *pNode );
-	void SetDestinationItem( float fItemIndex ) { m_fDestinationItem = fItemIndex; }
-	void SetCurrentAndDestinationItem( float fItemIndex ) { m_fCurrentItem = m_fDestinationItem = fItemIndex; }
+	
+	void SetDestinationItem( float fItemIndex )				{ m_fDestinationItem = fItemIndex; }
+	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
+	float GetDestinationItem()								{ return m_fDestinationItem; }
+	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
+
+	float	GetSecondsForCompleteScrollThrough();
 
 	//
 	// Commands
@@ -47,12 +61,19 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	bool		m_bLoaded;
-	float		m_fCurrentItem; // usually between 0 and m_SubActors.size()
-	float		m_fDestinationItem;
-	float		m_fSecondsPerItem;		// <= 0 means don't scroll
-	float		m_fNumItemsToDraw;
+	bool	m_bLoaded;
+	float	m_fCurrentItem; // Item at top of list, usually between 0 and m_SubActors.size(), approaches destination
+	float	m_fDestinationItem;
+	float	m_fSecondsPerItem;		// <= 0 means don't scroll
+	float	m_fSecondsPauseBetweenItems;
+	float	m_fNumItemsToDraw;
+	bool	m_bLoop; 
+	float	m_fPauseCountdownSeconds;
 	
+	float	m_fMaskWidth;
+	float	m_fMaskHeight;
+	Quad	m_quadMask;
+
 	// Note: Rotation is applied before translation.
 
 	// rot = m_vRotationDegrees*itemOffset^1

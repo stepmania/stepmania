@@ -829,26 +829,6 @@ void MusicWheel::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 	item.SetRotationX( fRotationX );
 }
 
-template<class T>
-void CircularShift( vector<T> &v, int dist )
-{
-	for( int i = abs( dist ); i>0; i-- )
-	{
-		if( dist > 0 )
-		{
-			T t = v[0];
-			v.erase( v.begin() );
-			v.push_back( t );
-		}
-		else
-		{
-			T t = v.back();
-			v.erase( v.end()-1 );
-			v.insert( v.begin(), t );
-		}
-	}
-}
-
 void MusicWheel::RebuildAllMusicWheelItems()
 {
 	RebuildMusicWheelItems( INT_MAX );
