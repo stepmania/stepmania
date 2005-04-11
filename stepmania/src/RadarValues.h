@@ -11,10 +11,26 @@ struct XNode;
 
 struct RadarValues
 {
-	float m_fValues[NUM_RADAR_CATEGORIES];
+	union Values
+	{
+		struct
+		{
+			float fStream;
+			float fVoltage;
+			float fAir;
+			float fFreeze;
+			float fChaos;
+			float fNumTapsAndHolds;
+			float fNumJumps;
+			float fNumHolds;
+			float fNumMines;
+			float fNumHands;
+		} v;
+		float f[NUM_RADAR_CATEGORIES];
+	} m_Values;
 
-    operator const float* () const	{ return m_fValues; };
-    operator float* ()				{ return m_fValues; };
+    operator const float* () const	{ return m_Values.f; };
+    operator float* ()				{ return m_Values.f; };
 
 	RadarValues();
 	void MakeUnknown();
@@ -24,14 +40,14 @@ struct RadarValues
 	RadarValues& operator+=( const RadarValues& other )
 	{
 		FOREACH_RadarCategory( rc )
-			m_fValues[rc] += other.m_fValues[rc];
+			m_Values.f[rc] += other.m_Values.f[rc];
 		return *this;
 	}
 	bool operator==( const RadarValues& other ) const
 	{
 		FOREACH_RadarCategory( rc )
 		{
-			if( m_fValues[rc] != other.m_fValues[rc] )
+			if( m_Values.f[rc] != other.m_Values.f[rc] )
 				return false;
 		}
 		return true;

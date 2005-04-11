@@ -16,13 +16,13 @@ RadarValues::RadarValues()
 void RadarValues::MakeUnknown()
 {
 	FOREACH_RadarCategory( rc )
-		m_fValues[rc] = RADAR_VAL_UNKNOWN;
+		m_Values.f[rc] = RADAR_VAL_UNKNOWN;
 }
 
 void RadarValues::Zero()
 {
 	FOREACH_RadarCategory( rc )
-		m_fValues[rc] = 0;
+		m_Values.f[rc] = 0;
 }
 
 XNode* RadarValues::CreateNode() const
@@ -36,12 +36,12 @@ XNode* RadarValues::CreateNode() const
 		if( rc >= RADAR_NUM_TAPS_AND_HOLDS )
 		{
 			if( WRITE_SIMPLE_VALUES )
-				pNode->AppendChild( RadarCategoryToString(rc),	(int)m_fValues[rc] );
+				pNode->AppendChild( RadarCategoryToString(rc),	(int)m_Values.f[rc] );
 		}
 		else
 		{
 			if( WRITE_COMPLEX_VALUES )
-				pNode->AppendChild( RadarCategoryToString(rc),	m_fValues[rc] );
+				pNode->AppendChild( RadarCategoryToString(rc),	m_Values.f[rc] );
 		}
 	}
 
@@ -55,7 +55,7 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 	Zero();
 
 	FOREACH_RadarCategory( rc )
-		pNode->GetChildValue( RadarCategoryToString(rc),	m_fValues[rc] );
+		pNode->GetChildValue( RadarCategoryToString(rc),	m_Values.f[rc] );
 }
 
 /* iMaxValues is only used for writing compatibility fields in non-cache
@@ -68,7 +68,7 @@ CString RadarValues::ToString( int iMaxValues ) const
 
 	CStringArray asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
-		asRadarValues.push_back( ssprintf("%.3f", m_fValues[r]) );
+		asRadarValues.push_back( ssprintf("%.3f", m_Values.f[r]) );
 
 	return join( ",",asRadarValues );
 }
@@ -85,7 +85,7 @@ void RadarValues::FromString( CString sRadarValues )
 	}
 
 	FOREACH_RadarCategory(rc)
-		m_fValues[rc] = strtof( saValues[rc], NULL );
+		m_Values.f[rc] = strtof( saValues[rc], NULL );
     
 }
 

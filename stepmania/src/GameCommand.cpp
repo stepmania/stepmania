@@ -603,7 +603,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	FOREACH_HoldNoteScore( hns )
 		hs.iHoldNoteScores[hns] = rand() % 100;
 	FOREACH_RadarCategory( rc )
-		hs.radarValues.m_fValues[rc] = randomf( 0, 1 );
+		hs.radarValues.m_Values.f[rc] = randomf( 0, 1 );
 
 	return hs;
 }
