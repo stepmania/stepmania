@@ -17,7 +17,14 @@ struct SongOptions
 		FAIL_OFF };					// never fail
 	FailType m_FailType;
 	float m_fMusicRate;
-	bool m_bAssistTick, m_bAutoSync, m_bSaveScore;
+	bool m_bAssistTick;
+	enum AutosyncType { 
+		AUTOSYNC_OFF,
+		AUTOSYNC_SONG,
+		AUTOSYNC_MACHINE
+	};
+	AutosyncType m_AutosyncType;
+	bool m_bSaveScore;
 
 	SongOptions() { Init(); };
 	void Init();

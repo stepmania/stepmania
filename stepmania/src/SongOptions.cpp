@@ -11,7 +11,7 @@ void SongOptions::Init()
 	m_FailType = FAIL_IMMEDIATE;
 	m_bAssistTick = false;
 	m_fMusicRate = 1.0f;
-	m_bAutoSync = false;
+	m_AutosyncType = AUTOSYNC_OFF;
 	m_bSaveScore = true;
 }
 
@@ -32,6 +32,7 @@ CString SongOptions::GetString() const
 	case LIFE_BATTERY:
 		sReturn	+= ssprintf( "%dLives, ", m_iBatteryLives );
 		break;
+	default:	ASSERT(0);
 	}
 
 
@@ -41,6 +42,7 @@ CString SongOptions::GetString() const
 	case FAIL_COMBO_OF_30_MISSES:	sReturn	+= "Fail30Misses, ";	break;
 	case FAIL_END_OF_SONG:			sReturn	+= "FailEndOfSong, ";	break;
 	case FAIL_OFF:					sReturn	+= "FailOff, ";			break;
+	default:	ASSERT(0);
 	}
 
 	if( m_fMusicRate != 1 )
@@ -51,8 +53,13 @@ CString SongOptions::GetString() const
 		sReturn += s + "xMusic, ";
 	}
 
-	if( m_bAutoSync )
-		sReturn += "AutoSync, ";
+	switch( m_AutosyncType )
+	{
+	case AUTOSYNC_OFF:										break;
+	case AUTOSYNC_SONG:		sReturn += "AutosyncSong, ";	break;
+	case AUTOSYNC_MACHINE:	sReturn += "AutosyncMachine, ";	break;
+	default:	ASSERT(0);
+	}
 
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
@@ -122,7 +129,10 @@ void SongOptions::FromString( CString sOptions )
 		}
 
 		else if( sBit == "assisttick" )		m_bAssistTick = on;
-		else if( sBit == "autosync" )		m_bAutoSync = on;
+		else if( sBit == "autosync" || sBit == "autosyncsong" )
+											m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
+		else if( sBit == "autosyncmachine" )	
+											m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF;
 		else if( sBit == "savescore" )		m_bSaveScore = on;
 		else if( sBit == "bar" )			m_LifeType = LIFE_BAR;
 		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
@@ -138,7 +148,7 @@ bool SongOptions::operator==( const SongOptions &other ) const
 	COMPARE( m_FailType );
 	COMPARE( m_fMusicRate );
 	COMPARE( m_bAssistTick );
-	COMPARE( m_bAutoSync );
+	COMPARE( m_AutosyncType );
 	COMPARE( m_bSaveScore );
 #undef COMPARE
 	return true;

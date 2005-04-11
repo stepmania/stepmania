@@ -205,7 +205,7 @@ void ScreenGameplay::Init()
 		}
 	}
 
-	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;
+	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_SONG;
 
 	m_DancingState = STATE_INTRO;
 
@@ -1800,9 +1800,20 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			this->HandleScreenMessage( SM_NotesEnded );
 			break;
 		case KEY_F6:
-			m_bChangedOffsetOrBPM = true;
-			GAMESTATE->m_SongOptions.m_bAutoSync = !GAMESTATE->m_SongOptions.m_bAutoSync;	// toggle
-			UpdateAutoPlayText();
+			{
+				bool bHoldingShift = 
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
+				
+				// toggle
+				if( GAMESTATE->m_SongOptions.m_AutosyncType != SongOptions::AUTOSYNC_OFF )
+					GAMESTATE->m_SongOptions.m_AutosyncType = SongOptions::AUTOSYNC_OFF;
+				else
+					GAMESTATE->m_SongOptions.m_AutosyncType = bHoldingShift ? SongOptions::AUTOSYNC_MACHINE : SongOptions::AUTOSYNC_SONG;
+				
+				m_bChangedOffsetOrBPM |= !bHoldingShift;
+				UpdateAutoPlayText();
+			}
 			break;
 		case KEY_F7:
 			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
@@ -1934,8 +1945,13 @@ void ScreenGameplay::UpdateAutoPlayText()
 
 	if( PREFSMAN->m_bAutoPlay )
 		sText += "AutoPlay     ";
-	if( GAMESTATE->m_SongOptions.m_bAutoSync )
-		sText += "AutoSync     ";
+	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+	{
+	case SongOptions::AUTOSYNC_OFF:											break;
+	case SongOptions::AUTOSYNC_SONG:	sText += "AutosyncSong     ";		break;
+	case SongOptions::AUTOSYNC_MACHINE:	sText += "AutosyncMachine     ";	break;
+	default:	ASSERT(0);
+	}
 
 	if( sText.length() > 0 )
 		sText.resize( sText.length()-5 );

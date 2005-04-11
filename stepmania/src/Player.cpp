@@ -1008,21 +1008,36 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 void Player::HandleAutosync(float fNoteOffset)
 {
-	if( !GAMESTATE->m_SongOptions.m_bAutoSync )
+	if( GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_OFF )
 		return;
 
 	m_fOffset[m_iOffsetSample++] = fNoteOffset;
-	if (m_iOffsetSample < SAMPLE_COUNT) 
+	if( m_iOffsetSample < SAMPLE_COUNT ) 
 		return; /* need more */
 
-	const float mean = calc_mean(m_fOffset, m_fOffset+SAMPLE_COUNT);
-	const float stddev = calc_stddev(m_fOffset, m_fOffset+SAMPLE_COUNT);
+	const float mean = calc_mean( m_fOffset, m_fOffset+SAMPLE_COUNT );
+	const float stddev = calc_stddev( m_fOffset, m_fOffset+SAMPLE_COUNT );
 
-	if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .03 error
-		GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;
+	if( stddev < .03 && stddev < fabsf(mean) )  // If they stepped with less than .03 error
+	{
+		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+		{
+		case SongOptions::AUTOSYNC_SONG:
+			GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;
+			break;
+		case SongOptions::AUTOSYNC_MACHINE:
+			PREFSMAN->m_fGlobalOffsetSeconds = PREFSMAN->m_fGlobalOffsetSeconds + mean;
+			break;
+		default:
+			ASSERT(0);
+		}
+
 		LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
-	} else
+	}
+	else
+	{
 		LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);
+	}
 
 	m_iOffsetSample = 0;
 }
