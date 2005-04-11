@@ -829,61 +829,41 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
-
 		/* If we're rouletting, hands off. */
-		if(m_MusicWheel.IsRouletting())
+		if( m_MusicWheel.IsRouletting() )
 			return;
 
-		// TRICKY:  There's lots of weirdness that can happen here when tapping 
-		// Left and Right quickly, like when changing sort.
-		bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
-		bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
-		bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
-		bool bLeftOrRightPressed = bLeftPressed || bRightPressed;
-
-		switch( type )
+		bool bLeftIsDown = false;
+		bool bRightIsDown = false;
+		FOREACH_EnabledPlayer( p )
 		{
-		case IET_RELEASE:
-			// when a key is released, stop moving the wheel
-			if( !bLeftOrRightPressed )
-				m_MusicWheel.Move( 0 );
-			
-			// Reset the repeat timer when a key is released.
-			// This fixes jumping when you release Left and Right at the same 
-			// time (e.g. after tapping Left+Right to change sort).
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
-			break;
-		case IET_FIRST_PRESS:
-			if( MenuI.button == MENU_BUTTON_RIGHT )
-				m_MusicWheel.Move( +1 );
-			else
-				m_MusicWheel.Move( -1 );
+			bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
+			bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
+		}
+		
+		bool bBothDown = bLeftIsDown && bRightIsDown;
+		bool bNeitherDown = !bLeftIsDown && !bRightIsDown;
 
-			// The wheel moves faster than one item between FIRST_PRESS
-			// and SLOW_REPEAT.  Stop the wheel immediately after moving one 
-			// item if both Left and Right are held.  This way, we won't move
-			// another item 
-			if( bLeftAndRightPressed )
-				m_MusicWheel.Move( 0 );
-			break;
-		case IET_SLOW_REPEAT:
-		case IET_FAST_REPEAT:
-			// We need to handle the repeat events to start the wheel spinning again
-			// when Left and Right are being held, then one is released.
-			if( bLeftAndRightPressed )
+		if( bBothDown || bNeitherDown )
+			m_MusicWheel.Move( 0 );
+		else if( bLeftIsDown )
+			m_MusicWheel.Move( -1 );
+		else if( bRightIsDown )
+			m_MusicWheel.Move( +1 );
+		else
+			ASSERT(0);
+
+
+		// Reset the repeat timer when a key is released.
+		// This fixes jumping when you release Left and Right at the same 
+		// time (e.g. after tapping Left+Right to change sort).
+		if( type == IET_RELEASE )
+		{
+			FOREACH_EnabledPlayer( p )
 			{
-				// Don't spin if holding both buttons
-				m_MusicWheel.Move( 0 );
+				INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_LEFT) );
+				INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_RIGHT) );
 			}
-			else
-			{
-				if( MenuI.button == MENU_BUTTON_RIGHT )
-					m_MusicWheel.Move( +1 );
-				else
-					m_MusicWheel.Move( -1 );
-			}
-			break;
 		}
 	}
 
