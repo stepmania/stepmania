@@ -402,6 +402,7 @@ public:
 		m_sName = sParam;
 
 		defOut.bOneChoiceForAllPlayers = true;
+		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 		defOut.name = "Group";
 		Default.m_sSongGroup = GROUP_ALL_MUSIC;
 
