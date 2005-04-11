@@ -10,6 +10,7 @@
 #include "SongManager.h"
 #include "ActorUtil.h"
 #include "Style.h"
+#include "XmlFile.h"
 
 // lua start
 LUA_REGISTER_CLASS( DifficultyMeter )
@@ -23,7 +24,7 @@ DifficultyMeter::DifficultyMeter()
 
 static CString GetDifficultyCommandName( Difficulty d ) { return "Set"+DifficultyToString(d); }
 static CString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+CourseDifficultyToString(d)+"Course"; }
-static const CString DIFFICULTY_COMMAND_NAME_NONE = "None";
+static const CString DIFFICULTY_COMMAND_NAME_NONE = "SetNone";
 
 /* sID experiment:
  *
@@ -51,16 +52,14 @@ void DifficultyMeter::Load( const CString &sType )
 {
 	/* We can't use global ThemeMetric<CString>s, because we can have multiple
 	 * DifficultyMeters on screen at once, with different names. */
-	m_iNumFeetInMeter = THEME->GetMetricI(sType,"NumFeetInMeter");
-	m_iMaxFeetInMeter = THEME->GetMetricI(sType,"MaxFeetInMeter");
-	m_iGlowIfMeterGreaterThan = THEME->GetMetricI(sType,"GlowIfMeterGreaterThan");
-	m_bShowFeet = THEME->GetMetricB(sType,"ShowFeet");
-	/* "easy", "hard" */
-	m_bShowDifficulty = THEME->GetMetricB(sType,"ShowDifficulty");
-	/* 3, 9 */
-	m_bShowMeter = THEME->GetMetricB(sType,"ShowMeter");
-	m_bFeetIsDifficultyColor = THEME->GetMetricB(sType,"FeetIsDifficultyColor");
-	m_bFeetPerDifficulty = THEME->GetMetricB(sType,"FeetPerDifficulty");
+	m_iNumFeetInMeter.Load(sType,"NumFeetInMeter");
+	m_iMaxFeetInMeter.Load(sType,"MaxFeetInMeter");
+	m_iGlowIfMeterGreaterThan.Load(sType,"GlowIfMeterGreaterThan");
+	m_bShowFeet.Load(sType,"ShowFeet");
+	m_bShowDifficulty.Load(sType,"ShowDifficulty");
+	m_bShowMeter.Load(sType,"ShowMeter");
+	m_bShowEditDescription.Load(sType,"ShowEditDescription");
+	m_bFeetPerDifficulty.Load(sType,"FeetPerDifficulty");
 
 	if( m_bShowFeet )
 	{
@@ -106,8 +105,26 @@ void DifficultyMeter::Load( const CString &sType )
 			ActorUtil::LoadCommand( m_textMeter, sType, GetCourseDifficultyCommandName(d) );
 		ActorUtil::LoadCommand( m_textMeter, sType, DIFFICULTY_COMMAND_NAME_NONE );
 	}
+	
+	if( m_bShowEditDescription )
+	{
+		m_textEditDescription.SetName( "EditDescription" );
+		m_textEditDescription.LoadFromFont( THEME->GetPathF(sType,"EditDescription") );
+		ActorUtil::SetXYAndOnCommand( m_textEditDescription, sType );
+		this->AddChild( &m_textEditDescription );
+	}
 
 	Unset();
+}
+
+void DifficultyMeter::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	ActorFrame::LoadFromNode( sDir, pNode );
+
+	CString s;
+	pNode->GetAttrValue( "Type", s );
+	ASSERT( s.size() );
+	Load( s );
 }
 
 void DifficultyMeter::SetFromGameState( PlayerNumber pn )
@@ -138,8 +155,21 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 		return;
 	}
 
-	SetFromMeterAndDifficulty( pSteps->GetMeter(), pSteps->GetDifficulty() );
-	PlayDifficultyCommand( GetDifficultyCommandName( pSteps->GetDifficulty() ) );
+	Difficulty dc = pSteps->GetDifficulty();
+	SetFromMeterAndDifficulty( pSteps->GetMeter(), dc );
+	PlayDifficultyCommand( GetDifficultyCommandName( dc ) );
+	if( m_bShowEditDescription )
+	{
+		if( dc == DIFFICULTY_EDIT )
+		{
+			m_textEditDescription.SetVisible( true );
+			m_textEditDescription.SetText( pSteps->GetDescription() );
+		}
+		else
+		{
+			m_textEditDescription.SetVisible( false );
+		}
+	}
 }
 
 void DifficultyMeter::SetFromTrail( const Trail* pTrail )
@@ -150,14 +180,19 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 		return;
 	}
 
-	SetFromMeterAndDifficulty( pTrail->GetMeter(), pTrail->m_CourseDifficulty );
-	PlayDifficultyCommand( GetCourseDifficultyCommandName( pTrail->m_CourseDifficulty ) );
+	CourseDifficulty cd = pTrail->m_CourseDifficulty;
+	SetFromMeterAndDifficulty( pTrail->GetMeter(), cd );
+	PlayDifficultyCommand( GetCourseDifficultyCommandName( cd ) );
+	if( m_bShowEditDescription )
+		m_textEditDescription.SetVisible( false );
 }
 
 void DifficultyMeter::Unset()
 {
 	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	PlayDifficultyCommand( DIFFICULTY_COMMAND_NAME_NONE );
+	if( m_bShowEditDescription )
+		m_textEditDescription.SetText("");
 }
 
 void DifficultyMeter::SetFromDifficulty( Difficulty dc )
@@ -182,7 +217,7 @@ void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 			on = char(dc + '0');
 
 		CString sNewText;
-		int iNumOn = min( m_iMaxFeetInMeter, iMeter );
+		int iNumOn = min( (int)m_iMaxFeetInMeter, iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
 		int iNumOff = max( 0, m_iNumFeetInMeter-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
@@ -193,9 +228,6 @@ void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 			m_textFeet.SetEffectGlowShift();
 		else
 			m_textFeet.SetEffectNone();
-
-		if( m_bFeetIsDifficultyColor )
-			m_textFeet.SetDiffuse( SONGMAN->GetDifficultyColor( dc ) );
 	}
 
 	if( m_bShowMeter )

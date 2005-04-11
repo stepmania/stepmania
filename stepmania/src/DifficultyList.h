@@ -30,10 +30,8 @@ private:
 	void PositionItems();
 	int GetCurrentRowIndex( PlayerNumber pn ) const;
 	void HideRows();
-	CString GetDifficultyString( Difficulty d ) const;
 
 	ThemeMetric<float> ITEMS_SPACING_Y;
-	ThemeMetric<float> DESCRIPTION_MAX_WIDTH;
 	ThemeMetric<int> NUM_SHOWN_ITEMS;
 	ThemeMetric<bool> CAPITALIZE_DIFFICULTY_NAMES;
 	ThemeMetric<apActorCommands> MOVE_COMMAND;
@@ -44,8 +42,6 @@ private:
 	struct Line
 	{
 		DifficultyMeter m_Meter;
-		BitmapText		m_Description;
-		BitmapText		m_Number;
 	};
 	vector<Line>	m_Lines;
 

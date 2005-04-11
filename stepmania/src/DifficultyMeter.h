@@ -10,6 +10,7 @@
 #include "ActorUtil.h"
 #include "Difficulty.h"
 #include "ActorFrame.h"
+#include "ThemeMetric.h"
 
 class Steps;
 class Trail;
@@ -51,6 +52,9 @@ public:
 	DifficultyMeter();
 
 	void Load( const CString &sType );
+
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
+
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
 	void SetFromSteps( const Steps* pSteps );
@@ -66,15 +70,20 @@ private:
 
 	void PlayDifficultyCommand( CString diff );
 
-	BitmapText		m_textFeet;
-
+	BitmapText		m_textFeet;		// bar
 	CString			m_sCurDifficultyCommand;
-	AutoActor		m_Difficulty;
+	AutoActor		m_Difficulty;	/* "easy", "hard" */
+	BitmapText		m_textMeter;	/* 3, 9 */
+	BitmapText		m_textEditDescription;
 
-	BitmapText		m_textMeter;
-
-	int m_iNumFeetInMeter, m_iMaxFeetInMeter, m_iGlowIfMeterGreaterThan;
-	bool m_bShowFeet, m_bShowDifficulty, m_bShowMeter, m_bFeetIsDifficultyColor, m_bFeetPerDifficulty;
+	ThemeMetric<int>	m_iNumFeetInMeter;
+	ThemeMetric<int>	m_iMaxFeetInMeter;
+	ThemeMetric<int>	m_iGlowIfMeterGreaterThan;
+	ThemeMetric<bool>	m_bShowFeet;
+	ThemeMetric<bool>	m_bShowDifficulty;
+	ThemeMetric<bool>	m_bShowMeter;
+	ThemeMetric<bool>	m_bShowEditDescription;
+	ThemeMetric<bool>	m_bFeetPerDifficulty;
 };
 
 #endif

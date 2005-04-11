@@ -30,7 +30,6 @@ void DifficultyList::SetName( const CString &sName, const CString &sID )
 	ActorFrame::SetName( sName, sID );
 
 	ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
-	DESCRIPTION_MAX_WIDTH.Load( m_sName, "DescriptionMaxWidth" );
 	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );
 	CAPITALIZE_DIFFICULTY_NAMES.Load( m_sName, "CapitalizeDifficultyNames" );
 	MOVE_COMMAND.Load( m_sName, "MoveCommand" );
@@ -61,27 +60,15 @@ void DifficultyList::Load()
 	for( unsigned m = 0; m < m_Lines.size(); ++m )
 	{
 		m_Lines[m].m_Meter.SetName( "Row" );
-		m_Lines[m].m_Meter.Load( "DifficultySummaryRow" );
+		m_Lines[m].m_Meter.Load( "DifficultyListRow" );
 		this->AddChild( &m_Lines[m].m_Meter );
-
-		m_Lines[m].m_Description.SetName( "Description" );
-		m_Lines[m].m_Description.LoadFromFont( THEME->GetPathF(m_sName,"description") );
-		this->AddChild( &m_Lines[m].m_Description );
-
-		m_Lines[m].m_Number.SetName( "Number" );
-		m_Lines[m].m_Number.LoadFromFont( THEME->GetPathF(m_sName,"number") );
-		this->AddChild( &m_Lines[m].m_Number );
 	}
 
 	FOREACH_HumanPlayer( pn )
 		ON_COMMAND( m_Cursors[pn] );
 
 	for( int m = 0; m < MAX_METERS; ++m )
-	{
 		ON_COMMAND( m_Lines[m].m_Meter );
-		ON_COMMAND( m_Lines[m].m_Description );
-		ON_COMMAND( m_Lines[m].m_Number );
-	}
 
 	UpdatePositions();
 	PositionItems();
@@ -207,9 +194,7 @@ void DifficultyList::PositionItems()
 	for( int i = 0; i < MAX_METERS; ++i )
 	{
 		bool bUnused = ( i >= (int)m_Rows.size() );
-		m_Lines[i].m_Description.SetHidden( bUnused );
 		m_Lines[i].m_Meter.SetHidden( bUnused );
-		m_Lines[i].m_Number.SetHidden( bUnused );
 	}
 
 	for( int m = 0; m < (int)m_Rows.size(); ++m )
@@ -220,18 +205,14 @@ void DifficultyList::PositionItems()
 			bHidden = true;
 
 		const float fDiffuseAlpha = bHidden? 0.0f:1.0f;
-		if( m_Lines[m].m_Number.GetDestY() != row.m_fY ||
-			m_Lines[m].m_Number.DestTweenState().diffuse[0][3] != fDiffuseAlpha )
+		if( m_Lines[m].m_Meter.GetDestY() != row.m_fY ||
+			m_Lines[m].m_Meter.DestTweenState().diffuse[0][3] != fDiffuseAlpha )
 		{
-			m_Lines[m].m_Description.RunCommands( MOVE_COMMAND );
 			m_Lines[m].m_Meter.RunCommands( MOVE_COMMAND );
 			m_Lines[m].m_Meter.RunCommandsOnChildren( MOVE_COMMAND );
-			m_Lines[m].m_Number.RunCommands( MOVE_COMMAND );
 		}
 
-		m_Lines[m].m_Description.SetY( row.m_fY );
 		m_Lines[m].m_Meter.SetY( row.m_fY );
-		m_Lines[m].m_Number.SetY( row.m_fY );
 	}
 
 	for( int m=0; m < MAX_METERS; ++m )
@@ -242,9 +223,7 @@ void DifficultyList::PositionItems()
 
 		float fDiffuseAlpha = bHidden?0.0f:1.0f;
 
-		m_Lines[m].m_Description.SetDiffuseAlpha( fDiffuseAlpha );
 		m_Lines[m].m_Meter.SetDiffuseAlpha( fDiffuseAlpha );
-		m_Lines[m].m_Number.SetDiffuseAlpha( fDiffuseAlpha );
 	}
 
 
@@ -275,8 +254,6 @@ void DifficultyList::SetFromGameState()
 		for( int m = 0; m < MAX_METERS; ++m )
 		{
 			m_Lines[m].m_Meter.Unset();
-			m_Lines[m].m_Number.SetText( "" );
-			m_Lines[m].m_Description.SetText( "" );
 		}
 
 		m_Rows.clear();
@@ -296,12 +273,6 @@ void DifficultyList::SetFromGameState()
 				row.m_dc = *d;
 
 				m_Lines[i].m_Meter.SetFromMeterAndDifficulty( 0, *d );
-
-				m_Lines[i].m_Description.SetText( GetDifficultyString(*d) );
-				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(*d) );
-
-				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(*d) );
-				m_Lines[i].m_Number.SetText( "?" );
 
 				i++;
 			}
@@ -324,19 +295,6 @@ void DifficultyList::SetFromGameState()
 				m_Lines[i].m_Meter.SetFromSteps( m_Rows[i].m_Steps );
 
 				row.m_dc = row.m_Steps->GetDifficulty();
-				
-				CString s;
-				if( row.m_Steps->GetDifficulty() == DIFFICULTY_EDIT )
-					s = row.m_Steps->GetDescription();
-				else
-					s = GetDifficultyString(row.m_dc);
-				m_Lines[i].m_Description.SetMaxWidth( DESCRIPTION_MAX_WIDTH );
-				m_Lines[i].m_Description.SetText( s );
-				/* Don't mess with alpha; it might be fading on. */
-				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(row.m_dc) );
-				
-				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(row.m_dc) );
-				m_Lines[i].m_Number.SetText( ssprintf("%d",row.m_Steps->GetMeter()) );
 			}
 		}
 	}
@@ -347,11 +305,7 @@ void DifficultyList::SetFromGameState()
 	if( bSongChanged )
 	{
 		for( int m = 0; m < MAX_METERS; ++m )
-		{
 			m_Lines[m].m_Meter.FinishTweening();
-			m_Lines[m].m_Description.FinishTweening();
-			m_Lines[m].m_Number.FinishTweening();
-		}
 	}
 }
 
@@ -361,13 +315,8 @@ void DifficultyList::HideRows()
 	{
 		Line &l = m_Lines[m];
 
-		l.m_Description.FinishTweening();
 		l.m_Meter.FinishTweening();
-		l.m_Number.FinishTweening();
-
-		l.m_Description.SetDiffuseAlpha(0); 
 		l.m_Meter.SetDiffuseAlpha(0);
-		l.m_Number.SetDiffuseAlpha(0); 
 	}
 }
 
@@ -379,20 +328,14 @@ void DifficultyList::TweenOnScreen()
 	{
 		Line &l = m_Lines[m];
 
-		l.m_Description.FinishTweening();
 		l.m_Meter.FinishTweening();
-		l.m_Number.FinishTweening();
 	}
 
-//	PositionItems();
 	HideRows();
-	
 	PositionItems();
 
 	FOREACH_HumanPlayer( pn )
-	{
 		COMMAND( m_Cursors[pn], "TweenOn" );
-	}
 }
 
 void DifficultyList::TweenOffScreen()
@@ -410,9 +353,7 @@ void DifficultyList::Show()
 	PositionItems();
 
 	FOREACH_HumanPlayer( pn )
-	{
 		COMMAND( m_Cursors[pn], "Show" );
-	}
 }
 
 void DifficultyList::Hide()
@@ -421,17 +362,7 @@ void DifficultyList::Hide()
 	PositionItems();
 
 	FOREACH_HumanPlayer( pn )
-	{
 		COMMAND( m_Cursors[pn], "Hide" );
-	}
-}
-
-CString DifficultyList::GetDifficultyString( Difficulty d ) const
-{
-	CString s = DifficultyToThemedString( d );
-	if( CAPITALIZE_DIFFICULTY_NAMES )
-		s.MakeUpper();
-	return s;
 }
 
 /*
