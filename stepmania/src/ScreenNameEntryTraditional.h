@@ -13,6 +13,7 @@
 #include "PercentageDisplay.h"
 #include "BGAnimation.h"
 #include "ThemeMetric.h"
+#include "DifficultyMeter.h"
 
 
 class HighScoreWheelItem : public ActorFrame
@@ -83,7 +84,8 @@ private:
 	{
 		HighScoreWheel		m_Wheel;
 		GradeDisplay		m_Grade;
-		AutoActor			m_sprDifficulty;
+		DifficultyIcon		m_DifficultyIcon;
+		DifficultyMeter		m_DifficultyMeter;
 		BitmapText			m_textCategory;
 		PercentageDisplay	m_textScore;
 		Banner				m_sprBanner;

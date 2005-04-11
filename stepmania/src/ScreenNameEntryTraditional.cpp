@@ -381,13 +381,23 @@ void ScreenNameEntryTraditional::Init()
 				this->AddChild( &display.m_Grade );
 			}
 
+			display.m_DifficultyIcon.Load( THEME->GetPathG(m_sName,"DifficultyIcon") );
 			if( GAMESTATE->IsCourseMode() )
-				display.m_sprDifficulty.Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(pTrail->m_CourseDifficulty)) );
+				display.m_DifficultyIcon.SetFromTrail( p, pTrail );
 			else
-				display.m_sprDifficulty.Load( THEME->GetPathG(m_sName,"Difficulty "+DifficultyToString(pSteps->GetDifficulty())) );
-			display.m_sprDifficulty->SetName( ssprintf("DifficultyP%i",p+1) );
-			SET_ON( *(Actor*)display.m_sprDifficulty );
-			this->AddChild( display.m_sprDifficulty );
+				display.m_DifficultyIcon.SetFromSteps( p, pSteps );
+			display.m_DifficultyIcon.SetName( ssprintf("DifficultyIconP%i",p+1) );
+			SET_ON( display.m_DifficultyIcon );
+			this->AddChild( &display.m_DifficultyIcon );
+
+			display.m_DifficultyMeter.Load( m_sName+ssprintf(" DifficultyMeterP%d",p+1) );
+			if( GAMESTATE->IsCourseMode() )
+				display.m_DifficultyMeter.SetFromTrail( pTrail );
+			else
+				display.m_DifficultyMeter.SetFromSteps( pSteps );
+			display.m_DifficultyMeter.SetName( ssprintf("DifficultyMeterP%i",p+1) );
+			SET_ON( display.m_DifficultyMeter );
+			this->AddChild( &display.m_DifficultyMeter );
 
 			display.m_textScore.Load( p, &ss.m_player[p], "ScreenNameEntryTraditional Percent", false );
 			display.m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
@@ -520,8 +530,10 @@ void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_Wheel, "Unhide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_Grade, "Hide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_Grade, "Unhide" );
-		COMMAND_OPTIONAL( *(Actor*)m_FeatDisplay[pn][OldFeat].m_sprDifficulty, "Hide" );
-		COMMAND_OPTIONAL( *(Actor*)m_FeatDisplay[pn][NewFeat].m_sprDifficulty, "Unhide" );
+		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_DifficultyIcon, "Hide" );
+		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_DifficultyIcon, "Unhide" );
+		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_DifficultyMeter, "Hide" );
+		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_DifficultyMeter, "Unhide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_sprBanner, "Hide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][NewFeat].m_sprBanner, "Unhide" );
 		COMMAND_OPTIONAL( m_FeatDisplay[pn][OldFeat].m_textScore, "Hide" );
