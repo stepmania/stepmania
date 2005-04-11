@@ -775,65 +775,68 @@ bool ScreenGameplay::IsLastSong()
 	return GAMESTATE->GetCourseSongIndex() >= (int)m_apSongsQueue.size()-1; // GetCourseSongIndex() is 0-based
 }
 
-void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
+void ScreenGameplay::SetupSong( int iSongIndex )
 {
-	/* This is the first beat that can be changed without it being visible.  Until
-	 * we draw for the first time, any beat can be changed. */
-	GAMESTATE->m_pPlayerState[p]->m_fLastDrawnBeat = -100;
-	GAMESTATE->m_pCurSteps[p].Set( m_vpStepsQueue[p][iSongIndex] );
-
-	/* Load new NoteData into Player.  Do this before 
-	 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
-	 * propogated to GAMESTATE->m_PlayerOptions too early and be double-applied
-	 * to the NoteData:
-	 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
-	 * is very bad for transforms like AddMines.
-	 */
-	NoteData originalNoteData;
-	GAMESTATE->m_pCurSteps[p]->GetNoteData( originalNoteData );
-	
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	NoteData ndTransformed;
-	pStyle->GetTransformedNoteDataForStyle( p, originalNoteData, ndTransformed );
-
-	// load player
+	FOREACH_EnabledPlayer( p )
 	{
-		NoteData nd = ndTransformed;
-		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
-		m_Player[p].Load( nd );
-	}
+		/* This is the first beat that can be changed without it being visible.  Until
+		 * we draw for the first time, any beat can be changed. */
+		GAMESTATE->m_pPlayerState[p]->m_fLastDrawnBeat = -100;
+		GAMESTATE->m_pCurSteps[p].Set( m_vpStepsQueue[p][iSongIndex] );
 
-	// load auto keysounds
-	{
-		NoteData nd = ndTransformed;
-		NoteDataUtil::RemoveAllTapsExceptForType( nd, TapNote::autoKeysound );
-		m_AutoKeysounds.Load( p, nd );
-	}
-
-
-	// Put course options into effect.  Do this after Player::Load so
-	// that mods aren't double-applied.
-	GAMESTATE->m_pPlayerState[p]->m_ModsToApply.clear();
-	for( unsigned i=0; i<m_asModifiersQueue[p][iSongIndex].size(); ++i )
-	{
-		Attack a = m_asModifiersQueue[p][iSongIndex][i];
-		if( a.fStartSecond == 0 )
-			a.fStartSecond = -1;	// now
+		/* Load new NoteData into Player.  Do this before 
+		 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
+		 * propogated to GAMESTATE->m_PlayerOptions too early and be double-applied
+		 * to the NoteData:
+		 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
+		 * is very bad for transforms like AddMines.
+		 */
+		NoteData originalNoteData;
+		GAMESTATE->m_pCurSteps[p]->GetNoteData( originalNoteData );
 		
-		GAMESTATE->LaunchAttack( p, a );
-		GAMESTATE->m_SongOptions.FromString( a.sModifier );
+		const Style* pStyle = GAMESTATE->GetCurrentStyle();
+		NoteData ndTransformed;
+		pStyle->GetTransformedNoteDataForStyle( p, originalNoteData, ndTransformed );
+
+		// load player
+		{
+			NoteData nd = ndTransformed;
+			NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
+			m_Player[p].Load( nd );
+		}
+
+		// load auto keysounds
+		{
+			NoteData nd = ndTransformed;
+			NoteDataUtil::RemoveAllTapsExceptForType( nd, TapNote::autoKeysound );
+			m_AutoKeysounds.Load( p, nd );
+		}
+
+
+		// Put course options into effect.  Do this after Player::Load so
+		// that mods aren't double-applied.
+		GAMESTATE->m_pPlayerState[p]->m_ModsToApply.clear();
+		for( unsigned i=0; i<m_asModifiersQueue[p][iSongIndex].size(); ++i )
+		{
+			Attack a = m_asModifiersQueue[p][iSongIndex][i];
+			if( a.fStartSecond == 0 )
+				a.fStartSecond = -1;	// now
+			
+			GAMESTATE->LaunchAttack( p, a );
+			GAMESTATE->m_SongOptions.FromString( a.sModifier );
+		}
+
+		// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 
+		// we'll do it on the first update and skip.
+		m_Player[p].ApplyWaitingTransforms();
+
+		/* Update attack bOn flags. */
+		GAMESTATE->Update(0);
+		GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( p );
+
+		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
+		GAMESTATE->m_pPlayerState[p]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
 	}
-
-	// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 
-	// we'll do it on the first update and skip.
-	m_Player[p].ApplyWaitingTransforms();
-
-	/* Update attack bOn flags. */
-	GAMESTATE->Update(0);
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( p );
-
-	/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
-	GAMESTATE->m_pPlayerState[p]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
 }
 
 void ScreenGameplay::LoadCourseSongNumber( int SongNumber )
@@ -878,10 +881,10 @@ void ScreenGameplay::LoadNextSong()
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
+	SetupSong( iPlaySongIndex );
+
 	FOREACH_EnabledPlayer( p )
 	{
-		SetupSong( p, iPlaySongIndex );
-
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 		STATSMAN->m_CurStageStats.m_player[p].vpSteps.push_back( pSteps );
@@ -2075,12 +2078,10 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 			 iPlaySongIndex < m_apSongsQueue.size(); ++iPlaySongIndex )
 		{
 			LOG->Trace("Running stats for %i", iPlaySongIndex );
+			SetupSong( iPlaySongIndex );
 			FOREACH_EnabledPlayer(p)
-			{
-				SetupSong( p, iPlaySongIndex );
 				m_Player[p].ApplyWaitingTransforms();
-				SongFinished();
-			}
+			SongFinished();
 		}
 	}
 
@@ -2356,7 +2357,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{	
 			SongFinished();
 			StageFinished( false );
-
+			
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 	}
