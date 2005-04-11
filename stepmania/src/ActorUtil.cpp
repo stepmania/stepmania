@@ -125,8 +125,10 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 
 	// Element name is the type in XML.
 	// Type= is the name in INI.
-	CString sType = pNode->m_sName;
-	bool bHasType = pNode->GetAttrValue( "Type", sType );
+	CString sClass = pNode->m_sName;
+	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
+	if( !bHasClass )
+		bHasClass = pNode->GetAttrValue( "Type", sClass );	// for backward compatibility
 
 	CString sFile;
 	pNode->GetAttrValue( "File", sFile );
@@ -142,21 +144,21 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	//
 	// backward compatibility hacks
 	//
-	if( bHasText && !bHasType )
-		sType = "BitmapText";
+	if( bHasText && !bHasClass )
+		sClass = "BitmapText";
 	else if( sFile.CompareNoCase("songbackground") == 0 )
-		sType = "SongBackground";
+		sClass = "SongBackground";
 	else if( sFile.CompareNoCase("songbanner") == 0 )
-		sType = "SongBanner";
+		sClass = "SongBanner";
 	else if( sFile.CompareNoCase("coursebanner") == 0 )
-		sType = "CourseBanner";
+		sClass = "CourseBanner";
 
 
-	if( IsRegistered(sType) )
+	if( IsRegistered(sClass) )
 	{
-		return ActorUtil::Create( sType, sAniDir, pNode );
+		return ActorUtil::Create( sClass, sAniDir, pNode );
 	}
-	else if( sType == "SongBackground" )
+	else if( sClass == "SongBackground" )
 	{
 		Song *pSong = GAMESTATE->m_pCurSong;
 		if( pSong && pSong->HasBackground() )
@@ -172,7 +174,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	 	pSprite->LoadFromNode( sAniDir, pNode );
 		return pSprite;
 	}
-	else if( sType == "SongBanner" )
+	else if( sClass == "SongBanner" )
 	{
 		Song *pSong = GAMESTATE->m_pCurSong;
 		if( pSong == NULL )
@@ -204,7 +206,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		TEXTUREMAN->EnableOddDimensionWarning();
 		return pSprite;
 	}
-	else if( sType == "CourseBanner" )
+	else if( sClass == "CourseBanner" )
 	{
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		if( pCourse == NULL )
@@ -235,14 +237,17 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		TEXTUREMAN->EnableOddDimensionWarning();
 		return pSprite;
 	}
-	else // sType is empty or garbage (e.g. "1" // 0==Sprite")
+	else // sClass is empty or garbage (e.g. "1" // 0==Sprite")
 	{
 		// automatically figure out the type
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the BGAnimationLayer that we're in. */
 		if( sFile == "" )
-			RageException::Throw( "The actor file in '%s' is missing the File attribute or has an invalid Type \"%s\"",
-				sAniDir.c_str(), sType.c_str() );
+		{
+			CString sError = ssprintf( "The actor file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
+				sAniDir.c_str(), sClass.c_str() );
+			RageException::Throw( sError );
+		}
 
 		CString sNewPath = bIsAbsolutePath ? sFile : sAniDir+sFile;
 
