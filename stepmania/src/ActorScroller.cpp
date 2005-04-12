@@ -33,17 +33,17 @@ ActorScroller::ActorScroller()
 	m_bLoop = false; 
 	m_fPauseCountdownSeconds = 0;
 	
+	m_bUseMask = false;
 	m_fMaskWidth = 1;
 	m_fMaskHeight = 1;
+	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
+	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
+	m_quadMask.SetHidden( true );
 
 	m_vRotationDegrees = RageVector3(0,0,0);
 	m_vTranslateTerm0 = RageVector3(0,0,0);
 	m_vTranslateTerm1 = RageVector3(0,0,0);
 	m_vTranslateTerm2 = RageVector3(0,0,0);
-
-	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
-	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
-	m_quadMask.SetHidden( true );
 }
 
 void ActorScroller::Load( 
@@ -90,6 +90,7 @@ void ActorScroller::Load2(
 	m_fDestinationItem = (float)(m_SubActors.size()+1);
 	m_fPauseCountdownSeconds = 0;
 
+	m_bUseMask = true;
 	RectF rectBarSize(
 		-m_fMaskWidth/2,
 		-m_fMaskHeight/2,
@@ -234,19 +235,33 @@ void ActorScroller::DrawPrimitives()
 		// write to z buffer so that top and bottom are clipped
 		float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;
 		float fPositionFullyOnScreenBottom = (m_fNumItemsToDraw-1)/2.f;
-		float fPositionCompletelyOffScreenTop = fPositionFullyOnScreenTop - 1;
-		float fPositionCompletelyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
+		float fPositionFullyOffScreenTop = fPositionFullyOnScreenTop - 1;
+		float fPositionFullyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
+		float fPositionOnEdgeOfScreenTop = -(m_fNumItemsToDraw)/2.f;
+		float fPositionOnEdgeOfScreenBottom = (m_fNumItemsToDraw)/2.f;
+		
+		float fFirstItemToDraw = 0;
+		float fLastItemToDraw = 0;
 
-		PUSH_AND_TRANSFORM_FOR_ITEM( fPositionCompletelyOffScreenTop )
-		m_quadMask.Draw();
-		DISPLAY->PopMatrix();
+		if( m_bUseMask )
+		{
+			PUSH_AND_TRANSFORM_FOR_ITEM( fPositionFullyOffScreenTop )
+			m_quadMask.Draw();
+			DISPLAY->PopMatrix();
 
-		PUSH_AND_TRANSFORM_FOR_ITEM( fPositionCompletelyOffScreenBottom )
-		m_quadMask.Draw();
-		DISPLAY->PopMatrix();
+			PUSH_AND_TRANSFORM_FOR_ITEM( fPositionFullyOffScreenBottom )
+			m_quadMask.Draw();
+			DISPLAY->PopMatrix();
 
-		float fFirstItemToDraw = fPositionCompletelyOffScreenTop + m_fCurrentItem;
-		float fLastItemToDraw = fPositionCompletelyOffScreenBottom + m_fCurrentItem;
+			fFirstItemToDraw = fPositionFullyOffScreenTop + m_fCurrentItem;
+			fLastItemToDraw = fPositionFullyOffScreenBottom + m_fCurrentItem;
+		}
+		else
+		{
+			fFirstItemToDraw = fPositionOnEdgeOfScreenTop + m_fCurrentItem;
+			fLastItemToDraw = fPositionOnEdgeOfScreenBottom + m_fCurrentItem;
+		}
+
 
 		for( int iItem=(int)truncf(ceilf(fFirstItemToDraw)); iItem<=fLastItemToDraw; iItem++ )
 		{

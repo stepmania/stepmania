@@ -70,6 +70,7 @@ protected:
 	bool	m_bLoop; 
 	float	m_fPauseCountdownSeconds;
 	
+	bool	m_bUseMask;
 	float	m_fMaskWidth;
 	float	m_fMaskHeight;
 	Quad	m_quadMask;
