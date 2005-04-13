@@ -15,14 +15,9 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 		
 		CString sFullElement = sElement  + " " + sJudge;
 
-		// HACK: for backward noteskin compatibility
-		CString sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullElement, true);	// optional
-		if( sPath.empty() )
-			sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement);	// not optional
-
 		ASSERT( !m_spr[i].IsLoaded() );	// don't double-load
 
-		m_spr[i].Load( sPath );
+		m_spr[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullElement) );
 		m_spr[i]->SetHidden( true );
 		this->AddChild( m_spr[i] );
 	}
