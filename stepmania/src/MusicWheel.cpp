@@ -1655,10 +1655,13 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 
 		FOREACH( Difficulty, vDifficultiesToRequire, d )
 			if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
-				continue;
+				goto try_next;
 		return wid[iSelection].m_pSong;
+try_next:
+		;
 	}
-	FAIL_M( "Couldn't find any songs" );
+	LOG->Warn( "Couldn't find any songs" );
+	return wid[0].m_pSong;
 }
 
 /*
