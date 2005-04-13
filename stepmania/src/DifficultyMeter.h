@@ -57,6 +57,7 @@ public:
 
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
+	void SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd );
 	void SetFromSteps( const Steps* pSteps );
 	void SetFromTrail( const Trail* pTrail );
 	void Unset();
@@ -65,10 +66,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetFromDifficulty( Difficulty dc );
-	void SetFromCourseDifficulty( CourseDifficulty cd );
-
-	void PlayDifficultyCommand( CString diff );
+	void SetInternal( int iMeter, Difficulty dc, const CString &sDifficultyCommand, const CString &sDescription );
 
 	BitmapText		m_textFeet;		// bar
 	CString			m_sCurDifficultyCommand;

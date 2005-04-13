@@ -135,7 +135,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 		if( pTrail )
 			SetFromTrail( pTrail );
 		else
-			SetFromCourseDifficulty( GAMESTATE->m_PreferredCourseDifficulty[pn] );
+			SetFromMeterAndCourseDifficulty( 0, GAMESTATE->m_PreferredCourseDifficulty[pn] );
 	}
 	else
 	{
@@ -143,7 +143,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 		if( pSteps )
 			SetFromSteps( pSteps );
 		else
-			SetFromDifficulty( GAMESTATE->m_PreferredDifficulty[pn] );
+			SetFromMeterAndDifficulty( 0, GAMESTATE->m_PreferredDifficulty[pn] );
 	}
 }
 
@@ -156,20 +156,7 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 	}
 
 	Difficulty dc = pSteps->GetDifficulty();
-	SetFromMeterAndDifficulty( pSteps->GetMeter(), dc );
-	PlayDifficultyCommand( GetDifficultyCommandName( dc ) );
-	if( m_bShowEditDescription )
-	{
-		if( dc == DIFFICULTY_EDIT )
-		{
-			m_textEditDescription.SetVisible( true );
-			m_textEditDescription.SetText( pSteps->GetDescription() );
-		}
-		else
-		{
-			m_textEditDescription.SetVisible( false );
-		}
-	}
+	SetInternal( pSteps->GetMeter(), dc, GetDifficultyCommandName(dc), dc == DIFFICULTY_EDIT ? pSteps->GetDescription() : CString() );
 }
 
 void DifficultyMeter::SetFromTrail( const Trail* pTrail )
@@ -181,33 +168,25 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 	}
 
 	CourseDifficulty cd = pTrail->m_CourseDifficulty;
-	SetFromMeterAndDifficulty( pTrail->GetMeter(), cd );
-	PlayDifficultyCommand( GetCourseDifficultyCommandName( cd ) );
-	if( m_bShowEditDescription )
-		m_textEditDescription.SetVisible( false );
+	SetInternal( pTrail->GetMeter(), cd, GetCourseDifficultyCommandName( cd ), CString() );
 }
 
 void DifficultyMeter::Unset()
 {
-	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
-	PlayDifficultyCommand( DIFFICULTY_COMMAND_NAME_NONE );
-	if( m_bShowEditDescription )
-		m_textEditDescription.SetText("");
-}
-
-void DifficultyMeter::SetFromDifficulty( Difficulty dc )
-{
-	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
-	PlayDifficultyCommand( GetDifficultyCommandName( dc ) );
-}
-
-void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
-{
-	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
-	PlayDifficultyCommand( GetCourseDifficultyCommandName( cd ) );
+	SetInternal( 0, DIFFICULTY_BEGINNER, DIFFICULTY_COMMAND_NAME_NONE, CString() );
 }
 
 void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
+{
+	SetInternal( 0, DIFFICULTY_BEGINNER, GetDifficultyCommandName(dc), CString() );
+}
+
+void DifficultyMeter::SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd )
+{
+	SetInternal( 0, DIFFICULTY_BEGINNER, GetCourseDifficultyCommandName(cd), CString() );
+}
+
+void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDifficultyCommand, const CString &sDescription )
 {
 	if( m_bShowFeet )
 	{
@@ -242,10 +221,20 @@ void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 			m_textMeter.SetText( sMeter );
 		}
 	}
-}
 
-void DifficultyMeter::PlayDifficultyCommand( CString sDifficultyCommand )
-{
+	if( m_bShowEditDescription )
+	{
+		if( dc == DIFFICULTY_EDIT )
+		{
+			m_textEditDescription.SetVisible( true );
+			m_textEditDescription.SetText( sDescription );
+		}
+		else
+		{
+			m_textEditDescription.SetVisible( false );
+		}
+	}
+
 	if( m_sCurDifficultyCommand == sDifficultyCommand )
 		return;
 	m_sCurDifficultyCommand = sDifficultyCommand;
