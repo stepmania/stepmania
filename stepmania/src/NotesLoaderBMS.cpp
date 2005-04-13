@@ -237,11 +237,14 @@ void BMSLoader::SearchForDifficulty( CString sTag, Steps *pOut )
 
 	/* Only match "Light" in parentheses. */
 	if( sTag.find( "(light" ) != sTag.npos )
+	{
 		pOut->SetDifficulty( DIFFICULTY_EASY );
+	}
 	else if( sTag.find( "another" ) != sTag.npos )
+	{
 		pOut->SetDifficulty( DIFFICULTY_HARD );
-
-	if( sTag.find( "(solo)" ) != sTag.npos )
+	}
+	else if( sTag.find( "(solo)" ) != sTag.npos )
 	{
 		pOut->SetDescription( "Solo" );
 		pOut->SetDifficulty( DIFFICULTY_EDIT );

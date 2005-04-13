@@ -43,10 +43,11 @@ public:
 	void SetFile( CString fn );
 	void SetSavedToDisk( bool b ) { m_bSavedToDisk = b; }
 	bool GetSavedToDisk() { return m_bSavedToDisk; }
-	void SetDescription(CString desc);
+	void SetDifficultyAndDescription( Difficulty dc, CString sDescription );
+	void SetDifficulty( Difficulty dc ) { SetDifficultyAndDescription( dc, this->GetDescription() ); }
+	void SetDescription( CString sDescription ) { SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
 	static bool MakeValidEditDescription( CString &sPreferredDescription );	// return true if was modified
 
-	void SetDifficulty(Difficulty d);
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
 	void SetRadarValues( const RadarValues& v );

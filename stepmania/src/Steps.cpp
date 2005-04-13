@@ -322,10 +322,11 @@ void Steps::SetFile( CString fn )
 	m_sFilename = fn;
 }
 
-void Steps::SetDescription(CString desc)
+void Steps::SetDifficultyAndDescription( Difficulty dc, CString sDescription )
 {
 	DeAutogen();
-	m_sDescription = desc;
+	m_Difficulty = dc;
+	m_sDescription = sDescription;
 	if( GetDifficulty() == DIFFICULTY_EDIT )
 		MakeValidEditDescription( m_sDescription );
 }
@@ -338,12 +339,6 @@ bool Steps::MakeValidEditDescription( CString &sPreferredDescription )
 		return true;
 	}
 	return false;
-}
-
-void Steps::SetDifficulty(Difficulty d)
-{
-	DeAutogen();
-	m_Difficulty = d;
 }
 
 void Steps::SetMeter(int meter)
