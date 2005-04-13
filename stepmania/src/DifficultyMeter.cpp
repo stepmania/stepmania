@@ -59,21 +59,24 @@ void DifficultyMeter::Load( const CString &sType )
 	m_bShowDifficulty.Load(sType,"ShowDifficulty");
 	m_bShowMeter.Load(sType,"ShowMeter");
 	m_bShowEditDescription.Load(sType,"ShowEditDescription");
-	m_bFeetPerDifficulty.Load(sType,"FeetPerDifficulty");
+	m_bAutoColorFeet.Load(sType,"AutoColorFeet");
 
 	if( m_bShowFeet )
 	{
 		m_textFeet.SetName( "Feet" );
 		CString Feet;
-		if( m_bFeetPerDifficulty )
+		if( !m_bAutoColorFeet )
 		{
 			for( unsigned i = 0; i < NUM_DIFFICULTIES; ++i )
 				Feet += char(i + '0'); // 01234
 			Feet += 'X'; // Off
 		}
 		else
+		{
 			Feet = "0X";
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(sType,"bar"), Feet );
+		}
+		int iNumFrames = m_bAutoColorFeet ? 2 : NUM_DIFFICULTIES+1;
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(sType,ssprintf("bar %dx1",iNumFrames)), Feet );
 		ActorUtil::SetXYAndOnCommand( m_textFeet, sType );
 		this->AddChild( &m_textFeet );
 	}
@@ -192,7 +195,7 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 	{
 		char on = '0';
 		char off = 'X';
-		if( m_bFeetPerDifficulty )
+		if( !m_bAutoColorFeet )
 			on = char(dc + '0');
 
 		CString sNewText;
@@ -202,6 +205,8 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 		sNewText.insert( sNewText.end(), iNumOff, off );
 
 		m_textFeet.SetText( sNewText );
+		if( m_bAutoColorFeet )
+			m_textFeet.SetDiffuse( SONGMAN->GetDifficultyColor(dc) );
 
 		if( iMeter > m_iGlowIfMeterGreaterThan )
 			m_textFeet.SetEffectGlowShift();

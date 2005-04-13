@@ -81,7 +81,7 @@ private:
 	ThemeMetric<bool>	m_bShowDifficulty;
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowEditDescription;
-	ThemeMetric<bool>	m_bFeetPerDifficulty;
+	ThemeMetric<bool>	m_bAutoColorFeet;
 };
 
 #endif
