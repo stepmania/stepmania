@@ -136,6 +136,7 @@ enum TapNoteScore {
 	TNS_PERFECT,
 	TNS_MARVELOUS,
 	NUM_TAP_NOTE_SCORES,
+	TNS_INVALID,
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
 const CString& TapNoteScoreToString( TapNoteScore tns );

@@ -3,6 +3,7 @@
 #include "NoteData.h"
 #include "StageStats.h"
 #include "StatsManager.h"
+#include <float.h>
 
 namespace
 {
@@ -23,25 +24,15 @@ int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartInd
 	return iNumSuccessfulTapNotes;
 }
 
-int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
+int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW )
 {
 	int iNumSuccessfulDoubles = 0;
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartRow, iEndRow )
 	{
-		int iNumNotesThisIndex = 0;
-		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
-		for( int t=0; t<in.GetNumTracks(); t++ )
-		{
-			const TapNote &tn = in.GetTapNote(t,i);
-			switch( tn.type )
-			{
-			case TapNote::tap:		
-			case TapNote::hold_head: 
-				iNumNotesThisIndex++;
-				minTapNoteScore = min( minTapNoteScore, tn.result.tns );
-			}
-		}
-		if( iNumNotesThisIndex >= MinTaps && minTapNoteScore >= tns )
+		int iNumNotesInRow = in.GetNumTracksWithTapOrHoldHead( r );
+		TapNoteScore tnsRow = NoteDataWithScoring::LastTapNoteScore( in, r );
+
+		if( iNumNotesInRow >= MinTaps && tnsRow >= tns )
 			iNumSuccessfulDoubles++;
 	}
 	
