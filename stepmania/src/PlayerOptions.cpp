@@ -166,7 +166,8 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 
-	if( m_fSkew==1 && m_fPerspectiveTilt==-1 )		AddTo.push_back( "Incoming" );
+	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		AddTo.push_back( "Overhead" );
+	else if( m_fSkew==1 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Incoming" );
 	else if( m_fSkew==1 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Space" );
 	else if( m_fSkew==0 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Hallway" );
 	else if( m_fSkew==0 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Distant" );
