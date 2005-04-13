@@ -77,7 +77,7 @@ int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
 			const TapNote &tn = in.GetTapNote(t,i);
-			if( tn.type == TapNote::mine  &&  tn.result.tns != TNS_HIT_MINE )
+			if( tn.type == TapNote::mine  &&  tn.result.tns == TNS_AVOIDED_MINE )
 				iNumSuccessfulMinesNotes++;
 		}
 	}

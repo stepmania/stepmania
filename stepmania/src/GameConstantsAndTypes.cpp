@@ -126,6 +126,7 @@ StringToX( SortOrder );
 static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {
 	"None",
 	"HitMine",
+	"AvoidMine",
 	"Miss",
 	"Boo",
 	"Good",

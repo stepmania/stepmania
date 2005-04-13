@@ -1435,19 +1435,27 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				TapNoteScore tns = m_Player[p].GetLastTapNoteScore();
 				
-				ANIM_STATES_2D StateMap[NUM_TAP_NOTE_SCORES] =
-				{
-					AS2D_MISS, /* TNS_NONE (shouldn't happen) */
-					AS2D_MISS, /* TNS_HIT_MINE (shouldn't happen) */
-					AS2D_MISS, /* TNS_MISS */
-					AS2D_MISS, /* TNS_BOO */
-					AS2D_GOOD, /* TNS_GOOD */
-					AS2D_GOOD, /* TNS_GREAT */
-					AS2D_GREAT, /* TNS_PERFECT */
-					AS2D_GREAT /* TNS_MARVELOUS */
-				};
+				ANIM_STATES_2D state = AS2D_MISS;
 
-				ANIM_STATES_2D state = StateMap[tns];
+				switch( tns )
+				{
+				case TNS_NONE:
+				case TNS_MISS:
+				case TNS_BOO:
+					state = AS2D_MISS;
+					break;
+				case TNS_GOOD:
+				case TNS_GREAT:
+					state = AS2D_GOOD;
+					break;
+				case TNS_PERFECT:
+				case TNS_MARVELOUS:
+					state = AS2D_GREAT;
+					break;
+				default:
+					ASSERT(0);
+				}
+
 				if( state == AS2D_GREAT && m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
 					state = AS2D_FEVER;
 

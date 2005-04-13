@@ -129,15 +129,16 @@ Grade PlayerStageStats::GetGrade() const
 		int iTapScoreValue;
 		switch( tns )
 		{
-		case TNS_NONE:		iTapScoreValue = 0;									break;
-		case TNS_HIT_MINE:	iTapScoreValue = PREFSMAN->m_iGradeWeightHitMine;	break;
-		case TNS_MISS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMiss;		break;
-		case TNS_BOO:		iTapScoreValue = PREFSMAN->m_iGradeWeightBoo;		break;
-		case TNS_GOOD:		iTapScoreValue = PREFSMAN->m_iGradeWeightGood;		break;
-		case TNS_GREAT:		iTapScoreValue = PREFSMAN->m_iGradeWeightGreat;		break;
-		case TNS_PERFECT:	iTapScoreValue = PREFSMAN->m_iGradeWeightPerfect;	break;
-		case TNS_MARVELOUS:	iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
-		default: FAIL_M( ssprintf("%i", tns) );									break;
+		case TNS_NONE:			iTapScoreValue = 0;									break;
+		case TNS_AVOIDED_MINE:	iTapScoreValue = 0;									break;
+		case TNS_HIT_MINE:		iTapScoreValue = PREFSMAN->m_iGradeWeightHitMine;	break;
+		case TNS_MISS:			iTapScoreValue = PREFSMAN->m_iGradeWeightMiss;		break;
+		case TNS_BOO:			iTapScoreValue = PREFSMAN->m_iGradeWeightBoo;		break;
+		case TNS_GOOD:			iTapScoreValue = PREFSMAN->m_iGradeWeightGood;		break;
+		case TNS_GREAT:			iTapScoreValue = PREFSMAN->m_iGradeWeightGreat;		break;
+		case TNS_PERFECT:		iTapScoreValue = PREFSMAN->m_iGradeWeightPerfect;	break;
+		case TNS_MARVELOUS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
+		default: FAIL_M( ssprintf("%i", tns) );										break;
 		}
 		Actual += iTapNoteScores[tns] * iTapScoreValue;
 		if( tns != TNS_HIT_MINE )

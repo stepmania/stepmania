@@ -128,13 +128,14 @@ inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SO
 enum TapNoteScore { 
 	TNS_NONE, 
 	TNS_HIT_MINE,
+	TNS_AVOIDED_MINE,
 	TNS_MISS,
 	TNS_BOO,
 	TNS_GOOD,
 	TNS_GREAT,
 	TNS_PERFECT,
 	TNS_MARVELOUS,
-	NUM_TAP_NOTE_SCORES
+	NUM_TAP_NOTE_SCORES,
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
 const CString& TapNoteScoreToString( TapNoteScore tns );

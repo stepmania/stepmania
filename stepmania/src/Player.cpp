@@ -1063,6 +1063,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	TapNoteScore score = NoteDataWithScoring::LastTapNoteScore( m_NoteData, iIndexThatWasSteppedOn );
 	ASSERT(score != TNS_NONE);
 	ASSERT(score != TNS_HIT_MINE);
+	ASSERT(score != TNS_AVOIDED_MINE);
 
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */
@@ -1143,21 +1144,25 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			{
 			case TapNote::empty:
 			case TapNote::attack:
-			case TapNote::mine:
 				continue; /* no note here */
 			}
 			if( tn.result.tns != TNS_NONE ) /* note here is already hit */
 				continue; 
 
-			tn.result.tns =	TNS_MISS;
-
-			// A normal note.  Penalize for not stepping on it.
-			MissedNoteOnThisRow = true;
+			if( tn.type == TapNote::mine )
+			{
+				tn.result.tns =	TNS_AVOIDED_MINE;
+			}
+			else
+			{
+				// A normal note.  Penalize for not stepping on it.
+				MissedNoteOnThisRow = true;
+				tn.result.tns =	TNS_MISS;
+				if( m_pPlayerStageStats )
+					m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
+			}
 
 			m_NoteData.SetTapNote( t, r, tn );
-
-			if( m_pPlayerStageStats )
-				m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
 		}
 
 		if( MissedNoteOnThisRow )
