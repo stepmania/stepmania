@@ -1213,7 +1213,7 @@ void Player::CrossedMineRow( int iNoteRow )
 			{
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-					Step( t, now+(-PREFSMAN->m_fPadStickSeconds) );
+					Step( t, now+(-PREFSMAN->m_fPadStickSeconds), true );
 			}
 			else
 			{
