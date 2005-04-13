@@ -82,6 +82,7 @@ private:
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowEditDescription;
 	ThemeMetric<bool>	m_bAutoColorFeet;
+	ThemeMetric<CString> m_sZeroMeterString;
 };
 
 #endif

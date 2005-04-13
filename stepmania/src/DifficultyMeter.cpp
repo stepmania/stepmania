@@ -60,6 +60,7 @@ void DifficultyMeter::Load( const CString &sType )
 	m_bShowMeter.Load(sType,"ShowMeter");
 	m_bShowEditDescription.Load(sType,"ShowEditDescription");
 	m_bAutoColorFeet.Load(sType,"AutoColorFeet");
+	m_sZeroMeterString.Load(sType,"ZeroMeterString");
 
 	if( m_bShowFeet )
 	{
@@ -218,7 +219,7 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 	{
 		if( iMeter == 0 )	// Unset calls with this
 		{
-			m_textMeter.SetText( "x" );
+			m_textMeter.SetText( m_sZeroMeterString );
 		}
 		else
 		{

@@ -142,16 +142,6 @@ EditMenu::EditMenu()
 	SET_XY( m_SourceMeter );
 	this->AddChild( &m_SourceMeter );
 
-	m_textMeter.SetName( "MeterNumber" );
-	m_textMeter.LoadFromFont( THEME->GetPathF("EditMenu","meter") );
-	SET_XY_AND_ON_COMMAND( m_textMeter );
-	this->AddChild( &m_textMeter );
-
-	m_textSourceMeter.SetName( "SourceMeterNumber" );
-	m_textSourceMeter.LoadFromFont( THEME->GetPathF("EditMenu","meter") );
-	SET_XY_AND_ON_COMMAND( m_textSourceMeter );
-	this->AddChild( &m_textSourceMeter );
-
 
 	m_soundChangeRow.Load( THEME->GetPathS("EditMenu","row") );
 	m_soundChangeValue.Load( THEME->GetPathS("EditMenu","value") );
@@ -407,17 +397,9 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textValue[ROW_STEPS].SetText( s );
 		}
 		if( GetSelectedSteps() )
-		{
 			m_Meter.SetFromSteps( GetSelectedSteps() );
-			m_textMeter.SetText( ssprintf("%d", GetSelectedSteps()->GetMeter()) );
-			m_textMeter.SetDiffuse( SONGMAN->GetDifficultyColor( GetSelectedSteps()->GetDifficulty() ) );
-		}
 		else
-		{
 			m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
-			m_textMeter.SetText( ssprintf("%d", 0) );
-		}
-		m_textMeter.SetHidden( GetSelectedSteps()? false:true );
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
@@ -468,22 +450,12 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			bool bHideMeter = false;
 			if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
-			{
 				bHideMeter = true;
-			}
 			else if( GetSelectedSourceSteps() )
-			{
 				m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
-				m_textSourceMeter.SetText( ssprintf("%d", GetSelectedSourceSteps()->GetMeter()) );
-				m_textSourceMeter.SetDiffuse( SONGMAN->GetDifficultyColor( GetSelectedSourceSteps()->GetDifficulty() ) );
-			}
 			else
-			{
 				m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
-				m_textSourceMeter.SetText( ssprintf("%d", 0) );
-			}
 			m_SourceMeter.SetHidden( (bHideMeter || GetSelectedSteps()) );
-			m_textSourceMeter.SetHidden( bHideMeter || !(GetSelectedSteps() == false && GetSelectedSourceSteps()) );
 
 			m_Actions.clear();
 			if( GetSelectedSteps() )
