@@ -326,14 +326,15 @@ void Steps::SetDescription(CString desc)
 {
 	DeAutogen();
 	m_sDescription = desc;
-	MakeValidDescription( m_sDescription );
+	if( GetDifficulty() == DIFFICULTY_EDIT )
+		MakeValidEditDescription( m_sDescription );
 }
 
-bool Steps::MakeValidDescription( CString &sPreferredDescription )
+bool Steps::MakeValidEditDescription( CString &sPreferredDescription )
 {
-	if( int(sPreferredDescription.size()) > MAX_DESCRIPTION_LENGTH )
+	if( int(sPreferredDescription.size()) > MAX_EDIT_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = sPreferredDescription.Left( MAX_DESCRIPTION_LENGTH );
+		sPreferredDescription = sPreferredDescription.Left( MAX_EDIT_DESCRIPTION_LENGTH );
 		return true;
 	}
 	return false;

@@ -2454,7 +2454,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			SM_None, 
 			"Enter a description.", 
 			m_pSteps->GetDescription(), 
-			MAX_DESCRIPTION_LENGTH,
+			(dc == DIFFICULTY_EDIT) ? MAX_EDIT_DESCRIPTION_LENGTH : 255,
 			NULL,
 			ChangeDescription, 
 			NULL 

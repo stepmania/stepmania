@@ -12,7 +12,7 @@
 class Profile;
 struct lua_State;
 
-const int MAX_DESCRIPTION_LENGTH = 12;
+const int MAX_EDIT_DESCRIPTION_LENGTH = 12;
 
 class Steps
 {
@@ -44,7 +44,7 @@ public:
 	void SetSavedToDisk( bool b ) { m_bSavedToDisk = b; }
 	bool GetSavedToDisk() { return m_bSavedToDisk; }
 	void SetDescription(CString desc);
-	static bool MakeValidDescription( CString &sPreferredDescription );	// return true if was modified
+	static bool MakeValidEditDescription( CString &sPreferredDescription );	// return true if was modified
 
 	void SetDifficulty(Difficulty d);
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }

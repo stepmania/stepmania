@@ -1444,7 +1444,7 @@ void Song::MakeUniqueEditDescription( StepsType st, CString &sPreferredDescripti
 	{
 		// make name "My Edit" -> "My Edit"
 		CString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescriptionInOut.Left( MAX_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = sPreferredDescriptionInOut.Left( MAX_EDIT_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(st, sTemp, NULL) )
 		{

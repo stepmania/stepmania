@@ -285,7 +285,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 					SM_BackFromEditDescription, 
 					"Name the new edit.", 
 					GAMESTATE->m_pCurSteps[0]->GetDescription(), 
-					MAX_DESCRIPTION_LENGTH,
+					MAX_EDIT_DESCRIPTION_LENGTH,
 					ValidateCurrentStepsDescription,
 					SetCurrentStepsDescription, 
 					DeleteCurrentSteps );
