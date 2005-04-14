@@ -58,7 +58,7 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 {
 	vpSongsOut.clear();
 	SONGMAN->GetSongs( vpSongsOut, sGroup );
-	if( HOME_EDIT_MODE )
+	if( EDIT_MODE == EDIT_MODE_HOME )
 	{
 		// strip groups that have no unlocked songs
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
@@ -154,36 +154,6 @@ EditMenu::EditMenu()
 	//
 	GetGroupsToShow( m_sGroups );
 	m_StepsTypes = STEPS_TYPES_TO_SHOW.GetValue();
-	if( HOME_EDIT_MODE )
-	{
-		m_vDifficulties.push_back( DIFFICULTY_EDIT );
-	}
-	else
-	{
-		FOREACH_Difficulty( dc )
-			m_vDifficulties.push_back( dc );
-	}
-
-	m_vSourceDifficulties.push_back( DIFFICULTY_INVALID );	// "blank"
-	FOREACH_Difficulty( dc )
-		m_vSourceDifficulties.push_back( dc );
-
-
-	// start out on easy if available, or "blank"
-	{
-		vector<Difficulty>::const_iterator it = find( m_vDifficulties.begin(), m_vDifficulties.end(), DIFFICULTY_EASY );
-		if( it != m_vDifficulties.end() )
-			m_iSelection[ROW_STEPS] = it - m_vDifficulties.begin();
-		else
-			m_iSelection[ROW_STEPS] = 0;
-	}
-
-	// start out on easy
-	{
-		vector<Difficulty>::const_iterator it = find( m_vSourceDifficulties.begin(), m_vSourceDifficulties.end(), DIFFICULTY_EASY );
-		ASSERT( it != m_vDifficulties.end() );
-		m_iSelection[ROW_SOURCE_STEPS] = it - m_vSourceDifficulties.begin();
-	}
 
 
 	RefreshAll();
@@ -226,7 +196,7 @@ void EditMenu::RefreshAll()
 
 			for( unsigned i=0; i<m_vpSteps.size(); i++ )
 			{
-				const Steps *pSteps = m_vpSteps[i];
+				const Steps *pSteps = m_vpSteps[i].pSteps;
 				if( pSteps == GAMESTATE->m_pCurSteps[PLAYER_1] )
 				{
 					m_iSelection[ROW_STEPS] = i;
@@ -357,24 +327,36 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		// fall through
 	case ROW_STEPS_TYPE:
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedStepsType()) );
-		CLAMP( m_iSelection[ROW_STEPS], 0, m_vDifficulties.size()-1 );	// jump back to the slot for DIFFICULTY_EDIT
+
 		m_vpSteps.clear();
-		FOREACH( Difficulty, m_vDifficulties, dc )
+		
+		FOREACH_Difficulty( dc )
 		{
-			if( *dc == DIFFICULTY_EDIT )
+			if( dc == DIFFICULTY_EDIT )
 			{
 				vector<Steps*> v;
 				GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
 				StepsUtil::SortStepsByDescription( v );
-				m_vpSteps.insert( m_vpSteps.end(), v.begin(), v.end() );
-				m_vpSteps.push_back( NULL );	// "New Edit"
+				FOREACH_CONST( Steps*, v, p )
+					m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+
+				if( EDIT_MODE != EDIT_MODE_PRACTICE )
+					m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
 			}
 			else
 			{
-				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), *dc );
-				m_vpSteps.push_back( pSteps );
+				// don't show non-edits in HomeMode
+				if( EDIT_MODE == EDIT_MODE_HOME )
+					continue;
+
+				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), dc );
+				if( pSteps  ||  EDIT_MODE != EDIT_MODE_PRACTICE )
+					m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 			}
 		}
+
+		CLAMP( m_iSelection[ROW_STEPS], 0, m_vpSteps.size()-1 );
+
 		// fall through
 	case ROW_STEPS:
 		{
@@ -393,7 +375,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				s = DifficultyToThemedString(GetSelectedDifficulty());
 
 				// UGLY.  "Edit" -> "New Edit"
-				if( HOME_EDIT_MODE )
+				if( EDIT_MODE == EDIT_MODE_HOME )
 					s = "New " + s;
 			}
 			m_textValue[ROW_STEPS].SetText( s );
@@ -408,32 +390,28 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedSourceStepsType()) );
 
-		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vSourceDifficulties.size()-1 );	// jump back to the slot for DIFFICULTY_EDIT
-		
 		m_vpSourceSteps.clear();
-		FOREACH( Difficulty, m_vSourceDifficulties, dc )
+		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,DIFFICULTY_INVALID) );	// "blank"
+		FOREACH_Difficulty( dc )
 		{
-			if( *dc == DIFFICULTY_INVALID )
+			// fill in pSteps
+			if( dc != DIFFICULTY_EDIT )
 			{
-				m_vpSourceSteps.push_back( NULL );
-			}
-			else if( *dc == DIFFICULTY_EDIT )
-			{
-				vector<Steps*> v;
-				GetSelectedSong()->GetSteps( v, GetSelectedSourceStepsType(), DIFFICULTY_EDIT );
-				StepsUtil::SortStepsByDescription( v );
-				m_vpSourceSteps.insert( m_vpSourceSteps.end(), v.begin(), v.end() );
-				
-				// if we don't have any edits, pad with NULL so that we have one slot for every difficulty
-				if( v.empty() )
-					m_vpSourceSteps.push_back( NULL );
+				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedSourceStepsType(), dc );
+				m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 			}
 			else
 			{
-				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedSourceStepsType(), *dc );
-				m_vpSourceSteps.push_back( pSteps );
+				vector<Steps*> v;
+				GetSelectedSong()->GetSteps( v, GetSelectedSourceStepsType(), dc );
+				StepsUtil::SortStepsByDescription( v );
+				FOREACH_CONST( Steps*, v, pSteps )
+					m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
+				if( v.empty() )
+					m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,dc) );
 			}
 		}
+		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
 		// fall through
 	case ROW_SOURCE_STEPS:
 		{
@@ -463,7 +441,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( GetSelectedSteps() )
 			{
 				m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
-				m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
+				if( EDIT_MODE != EDIT_MODE_PRACTICE )
+					m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
 			}
 			else
 			{
@@ -480,19 +459,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	}
 }
 
-Difficulty EditMenu::GetSelectedDifficulty()
-{
-	int i = m_iSelection[ROW_STEPS];
-	CLAMP( i, 0, m_vDifficulties.size()-1 );
-	return m_vDifficulties[i];
-}
-
-Difficulty EditMenu::GetSelectedSourceDifficulty()
-{
-	int i = m_iSelection[ROW_SOURCE_STEPS];
-	CLAMP( i, 0, m_vSourceDifficulties.size()-1 );
-	return m_vSourceDifficulties[i];
-}
 
 /*
  * (c) 2001-2004 Chris Danford

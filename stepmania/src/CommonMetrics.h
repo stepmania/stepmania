@@ -39,6 +39,14 @@ public:
 private:
 	vector<StepsType> m_v;
 };
+template <class T>
+class ThemeMetricEnum : public ThemeMetric<int>
+{
+public:
+	ThemeMetricEnum( const CString& sGroup, const CString& sName ) : ThemeMetric<int>(sGroup,sName) {}
+	T GetValue() const { return (T)ThemeMetric<int>::GetValue(); }
+	bool operator ==( T other ) const { return GetValue() == other; }
+};
 
 
 //
@@ -50,7 +58,7 @@ extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
 extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
 extern ThemeMetric1D<RageColor> PLAYER_COLOR;
 extern ThemeMetric<CString>		WINDOW_TITLE;
-extern ThemeMetric<bool>		HOME_EDIT_MODE;
+extern ThemeMetricEnum<EditMode>	EDIT_MODE;
 extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 extern ThemeMetric<float>		TICK_EARLY_SECONDS;
 extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;

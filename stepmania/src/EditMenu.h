@@ -62,13 +62,12 @@ public:
 	CString			GetSelectedGroup() const			{ ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
 	Song*			GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG]				< (int)m_pSongs.size());		return m_pSongs[m_iSelection[ROW_SONG]]; }
 	StepsType		GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
-	Steps*			GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]]; }
+	Steps*			GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
+	Difficulty		GetSelectedDifficulty() const		{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]].dc; }
 	StepsType		GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE]< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
-	Steps*			GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]]; }
+	Steps*			GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; }
+	Difficulty		GetSelectedSourceDifficulty() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc; }
 	EditMenuAction	GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION]			< (int)m_Actions.size());		return m_Actions[m_iSelection[ROW_ACTION]]; }
-
-	Difficulty	GetSelectedDifficulty();
-	Difficulty	GetSelectedSourceDifficulty();
 
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
@@ -88,14 +87,18 @@ private:
 	DifficultyMeter	m_SourceMeter;
 
 
-	vector<Difficulty>			m_vDifficulties;
-	vector<Difficulty>			m_vSourceDifficulties;
+	struct StepsAndDifficulty
+	{
+		StepsAndDifficulty( Steps *s, Difficulty d ) { pSteps = s; dc = d; }
+		Steps *pSteps;
+		Difficulty dc;
+	};
 
 	CStringArray				m_sGroups;
 	vector<Song*>				m_pSongs;
 	vector<StepsType>			m_StepsTypes;
-	vector<Steps*>				m_vpSteps;
-	vector<Steps*>				m_vpSourceSteps;
+	vector<StepsAndDifficulty>	m_vpSteps;
+	vector<StepsAndDifficulty>	m_vpSourceSteps;
 	vector<EditMenuAction>		m_Actions;
 
 	void OnRowValueChanged( EditMenuRow row );

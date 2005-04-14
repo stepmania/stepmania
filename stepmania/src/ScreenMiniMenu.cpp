@@ -43,7 +43,7 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 	FOREACH_CONST( MenuRow, pDef->rows, r )
 	{
 		// Don't add rows that aren't applicable to HomeEditMode.
-		if( !HOME_EDIT_MODE || r->bShowInHomeEditMode )
+		if( EDIT_MODE >= r->emShowIn )
 			m_vMenuRows.push_back( *r );
 	}
 

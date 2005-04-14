@@ -139,8 +139,8 @@ public:
 protected:
 	ThemeMetric<CString> PREV_SCREEN;
 	
-	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING, NUM_EDIT_MODES, MODE_INVALID };
-	void TransitionEditMode( EditMode em );
+	enum EditState { STATE_EDITING, STATE_RECORDING, STATE_PLAYING, NUM_EDIT_STATES, STATE_INVALID };
+	void TransitionEditState( EditState em );
 	void PlayTicks();
 	void PlayPreviewMusic();
 	
@@ -160,7 +160,7 @@ protected:
 	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
 
 
-	EditMode m_EditMode;
+	EditState		m_EditState;
 
 	Song*			m_pSong;
 	Steps*			m_pSteps;

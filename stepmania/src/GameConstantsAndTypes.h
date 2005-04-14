@@ -371,6 +371,16 @@ const CString& GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const CString& s );
 
 
+enum EditMode
+{
+	EDIT_MODE_PRACTICE,	// subset of EDIT_MODE_HOME
+	EDIT_MODE_HOME,		// subset of EDIT_MODE_FULL
+	EDIT_MODE_FULL,		// complete
+	NUM_EDIT_MODES,
+	EDIT_MODE_INVALID,
+};
+
+
 #endif
 
 /*

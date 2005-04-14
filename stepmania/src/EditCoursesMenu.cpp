@@ -45,9 +45,9 @@ enum CourseEntryMenuRow
 
 static Menu g_CourseOptionsMenu(
 	"ScreenMiniMenuCourseOptions",
-	MenuRow( repeat,	"Repeat",		true, true, 0, "NO","YES" ),
-	MenuRow( randomize,	"Randomize",	true, true, 0, "NO","YES" ),
-	MenuRow( lives,		"Lives",		true, true, 4, "Use Bar Life","1","2","3","4","5","6","7","8","9","10" )
+	MenuRow( repeat,	"Repeat",		true, EDIT_MODE_FULL, 0, "NO","YES" ),
+	MenuRow( randomize,	"Randomize",	true, EDIT_MODE_FULL, 0, "NO","YES" ),
+	MenuRow( lives,		"Lives",		true, EDIT_MODE_FULL, 4, "Use Bar Life","1","2","3","4","5","6","7","8","9","10" )
 );
 
 enum CourseOptionsMenuRow

@@ -62,7 +62,7 @@ void DeleteCurSteps( void* pThrowAway )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
-	if( !HOME_EDIT_MODE )
+	if( EDIT_MODE == EDIT_MODE_FULL )
 	{
 		pSong->Save();
 		SCREENMAN->ZeroNextUpdate();
@@ -224,13 +224,16 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
-		if( HOME_EDIT_MODE )
+		switch( EDIT_MODE )
 		{
+		case EDIT_MODE_HOME:
 			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );
-		}
-		else
-		{
+			break;
+		case EDIT_MODE_FULL:
 			SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
+			break;
+		default:
+			ASSERT(0);
 		}
 		break;
 	case EDIT_MENU_ACTION_CREATE:

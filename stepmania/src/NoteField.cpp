@@ -485,7 +485,7 @@ void NoteField::DrawPrimitives()
 		//
 		// BGChange text
 		//
-		if( !HOME_EDIT_MODE )
+		if( EDIT_MODE == EDIT_MODE_FULL )
 		{
 			vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
 			for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
