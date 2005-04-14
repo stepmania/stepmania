@@ -440,8 +440,8 @@ try_element_again:
 
 		CString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element element that matches "
-			"'%s/%s/%s %s'.  Please remove all but one of these matches.",
-			sThemeName.c_str(), sCategory.c_str(), sClassName.c_str(), sElement.c_str() );
+			"'%s/%s/%s'.  Please remove all but one of these matches.",
+			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sClassName,sElement).c_str() );
 
 		switch( Dialog::AbortRetryIgnore(message) )
 		{
