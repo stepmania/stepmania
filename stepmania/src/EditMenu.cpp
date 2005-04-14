@@ -12,6 +12,7 @@
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "UnlockManager.h"
+#include "SongUtil.h"
 
 
 static const CString EditMenuRowNames[NUM_EDIT_MENU_ROWS] = {
@@ -67,6 +68,7 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 	}
+	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
 static void GetGroupsToShow( vector<CString> &vsGroupsOut )
 {
