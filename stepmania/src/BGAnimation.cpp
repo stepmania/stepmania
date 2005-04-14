@@ -189,7 +189,8 @@ void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
 		Actor *pActor = new Actor;
 		pActor->SetHidden( true );
-		pActor->BeginTweening( fLengthSeconds );
+		apActorCommands ap( new ActorCommands(ssprintf("sleep,%f",fLengthSeconds)) );
+		pActor->AddCommand( "On", ap );
 		AddChild( pActor );
 	}
 }
