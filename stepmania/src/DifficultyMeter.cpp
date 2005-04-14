@@ -177,17 +177,17 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 
 void DifficultyMeter::Unset()
 {
-	SetInternal( 0, DIFFICULTY_BEGINNER, DIFFICULTY_COMMAND_NAME_NONE, CString() );
+	SetInternal( 0, DIFFICULTY_EDIT, DIFFICULTY_COMMAND_NAME_NONE, CString() );
 }
 
 void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 {
-	SetInternal( 0, DIFFICULTY_BEGINNER, GetDifficultyCommandName(dc), CString() );
+	SetInternal( 0, dc, GetDifficultyCommandName(dc), CString() );
 }
 
 void DifficultyMeter::SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd )
 {
-	SetInternal( 0, DIFFICULTY_BEGINNER, GetCourseDifficultyCommandName(cd), CString() );
+	SetInternal( 0, cd, GetCourseDifficultyCommandName(cd), CString() );
 }
 
 void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDifficultyCommand, const CString &sDescription )
