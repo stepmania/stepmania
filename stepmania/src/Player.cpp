@@ -161,11 +161,13 @@ void Player::Init(
 
 	m_Combo.SetName( "Combo" );
 	m_Combo.Load( pn );
+	ActorUtil::OnCommand( m_Combo, sType );
+
+	m_Judgment.SetName( "Judgment" );
+	ActorUtil::OnCommand( m_Judgment, sType );
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
-
-	ActorUtil::OnCommand( m_Combo, sType );
 }
 
 void Player::Load( const NoteData& noteData )
