@@ -38,6 +38,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName );
 		bga.m_bga->PlayCommand( "On" );
 		bga.m_fStartBeat = change.m_fStartBeat;
+		bga.m_bFinished = false;
 
 		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
 		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
@@ -63,13 +64,17 @@ void Foreground::Update( float fDeltaTime )
 	{
 		LoadedBGA &bga = m_BGAnimations[i];
 
-		const bool Shown = bga.m_fStartBeat <= GAMESTATE->m_fSongBeat && GAMESTATE->m_fSongBeat <= bga.m_fStopBeat;
-		if( !Shown )
+		if( GAMESTATE->m_fSongBeat < bga.m_fStartBeat )
 		{
-			bga.m_bga->SetHidden( true );
+			/* The animation hasn't started yet. */
 			continue;
 		}
 
+		if( bga.m_bFinished )
+			continue;
+
+		/* Update the actor even if we're about to hide it, so queued commands
+		 * are always run. */
 		float fDeltaTime;
 		if( bga.m_bga->GetHidden() )
 		{
@@ -83,6 +88,14 @@ void Foreground::Update( float fDeltaTime )
 			fDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
 		}
 		bga.m_bga->Update( fDeltaTime / fRate );
+
+		if( GAMESTATE->m_fSongBeat > bga.m_fStopBeat )
+		{
+			/* Finished. */
+			bga.m_bga->SetHidden( true );
+			bga.m_bFinished = true;
+			continue;
+		}
 	}
 
 	m_fLastMusicSeconds = GAMESTATE->m_fMusicSeconds;

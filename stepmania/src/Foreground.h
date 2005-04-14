@@ -22,6 +22,7 @@ protected:
 		Actor			*m_bga;
 		float			m_fStartBeat;
 		float			m_fStopBeat;
+		bool			m_bFinished;
 	};
 
 	vector<LoadedBGA>	m_BGAnimations;
