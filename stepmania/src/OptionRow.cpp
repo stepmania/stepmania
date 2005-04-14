@@ -701,7 +701,7 @@ void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
 
 void OptionRow::SetOneSharedSelection( int iChoice )
 {
-	FOREACH_HumanPlayer( pn )
+	FOREACH_PlayerNumber( pn )
 		SetOneSelection( pn, iChoice );
 }
 
