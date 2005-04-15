@@ -74,6 +74,7 @@ BitmapText::BitmapText()
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
+	m_fMaxHeight = 0;
 
 	SetShadowLength( 4 );
 }
@@ -421,9 +422,15 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 	UpdateBaseZoom();
 }
 
-void BitmapText::SetMaxWidth( float MaxWidth )
+void BitmapText::SetMaxWidth( float fMaxWidth )
 {
-	m_fMaxWidth = MaxWidth;
+	m_fMaxWidth = fMaxWidth;
+	UpdateBaseZoom();
+}
+
+void BitmapText::SetMaxHeight( float fMaxHeight )
+{
+	m_fMaxHeight = fMaxHeight;
 	UpdateBaseZoom();
 }
 
@@ -432,18 +439,32 @@ void BitmapText::UpdateBaseZoom()
 	if( m_fMaxWidth == 0 )
 	{
 		this->SetBaseZoomX( 1 );
-		return;
+	}
+	else
+	{
+		const float fWidth = GetUnzoomedWidth();
+		if( fWidth != 0 )	// don't divide by 0
+		{
+			/* Never decrease the zoom. */
+			const float fZoom = min( 1, m_fMaxWidth/fWidth );
+			this->SetBaseZoomX( fZoom );
+		}
 	}
 
-	const float Width = GetUnzoomedWidth();
-
-	/* Avoid division by zero. */
-	if( !Width )
-		return;
-
-	/* Never decrease the zoom. */
-	const float Zoom = min( 1, m_fMaxWidth/Width );
-	this->SetBaseZoomX( Zoom );
+	if( m_fMaxHeight == 0 )
+	{
+		this->SetBaseZoomY( 1 );
+	}
+	else
+	{
+		const float fHeight = GetUnzoomedHeight();
+		if( fHeight != 0 )	// don't divide by 0
+		{
+			/* Never decrease the zoom. */
+			const float fZoom = min( 1, m_fMaxHeight/fHeight );
+			this->SetBaseZoomY( fZoom );
+		}
+	}
 }
 
 bool BitmapText::StringWillUseAlternate( const CString& sText, const CString& sAlternateText ) const

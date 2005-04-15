@@ -17,12 +17,14 @@ public:
 
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
+	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )			{ p->SetText( SArg(1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( wrapwidthpixels )
 		ADD_METHOD( maxwidth )
+		ADD_METHOD( maxheight )
 		ADD_METHOD( settext )
 		LunaActor<T>::Register( L );
 	}
@@ -40,7 +42,8 @@ public:
 	bool LoadFromFont( const CString& sFontName );
 	bool LoadFromTextureAndChars( const CString& sTexturePath, const CString& sChars );
 	void SetText( const CString& sText, const CString& sAlternateText = "", int iWrapWidthPixels = -1 );
-	void SetMaxWidth( float MaxWidth );
+	void SetMaxWidth( float fMaxWidth );
+	void SetMaxHeight( float fMaxHeight );
 	void SetWrapWidthPixels( int iWrapWidthPixels );
 
 	void CropToWidth( int iWidthInSourcePixels );
@@ -76,6 +79,7 @@ protected:
 	vector<int>		m_iLineWidths;			// in source pixels
 	int				m_iWrapWidthPixels;	// -1 = no wrap
 	float			m_fMaxWidth;
+	float			m_fMaxHeight;
 
 	bool m_bRainbow;
 
