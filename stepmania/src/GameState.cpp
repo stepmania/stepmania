@@ -1954,10 +1954,11 @@ public:
 	}
 	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
 	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
-	static int GetPlayMode( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
-	static int GetSortOrder( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
-	static int IsGoalComplete( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
+	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
+	static int GetSortOrder( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
+	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
 	static int PlayerIsUsingModifier( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
+	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1983,6 +1984,7 @@ public:
 		ADD_METHOD( GetSortOrder )
 		ADD_METHOD( IsGoalComplete )
 		ADD_METHOD( PlayerIsUsingModifier )
+		ADD_METHOD( GetCourseSongIndex )
 
 		Luna<T>::Register( L );
 
