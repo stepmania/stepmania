@@ -645,10 +645,20 @@ public:
 	LunaScreenManager() { LUA->Register( Register ); }
 
 	static int SetNewScreen( T* p, lua_State *L )		{ p->SetNewScreen( SArg(1) ); return 0; }
+	static int GetTopScreen( T* p, lua_State *L )
+	{
+		Actor *pScreen = p->GetTopScreen();
+		if( pScreen != NULL )
+			pScreen->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( SetNewScreen )
+		ADD_METHOD( GetTopScreen )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
