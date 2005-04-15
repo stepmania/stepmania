@@ -109,8 +109,6 @@ protected:
 	ThemeMetric<bool>			SHOW_ALL_COURSE_SCORES;
 	ThemeMetric<float>			SECONDS_PER_PAGE;
 	ThemeMetric<float>			PAGE_FADE_SECONDS;
-	ThemeMetric<int>			PERCENT_DECIMAL_PLACES;
-	ThemeMetric<int>			PERCENT_TOTAL_SIZE;
 	ThemeMetric<CString>		NO_SCORE_NAME;
 
 	ThemeMetric<float>			ROW_SPACING_X;

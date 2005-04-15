@@ -19,12 +19,10 @@ public:
 	void Update( float fDeltaTime );
 	void TweenOffScreen();
 
-	static CString FormatPercentScore( float fPercentDancePoints, int iTotalSize, int iDecimalPlaces );
+	static CString FormatPercentScore( float fPercentDancePoints );
 
 private:
 	ThemeMetric<int> DANCE_POINT_DIGITS;
-	ThemeMetric<int> PERCENT_DECIMAL_PLACES;
-	ThemeMetric<int> PERCENT_TOTAL_SIZE;
 	ThemeMetric<bool> PERCENT_USE_REMAINDER;
 	ThemeMetric<bool> APPLY_SCORE_DISPLAY_OPTIONS;
 

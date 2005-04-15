@@ -13,6 +13,7 @@
 #include "RageLog.h"
 #include "UnlockManager.h"
 #include "ScreenDimensions.h"
+#include "PercentageDisplay.h"
 
 static const CString PageTypeNames[NUM_PAGE_TYPES] = {
 	"Category",
@@ -90,8 +91,6 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	SHOW_ALL_COURSE_SCORES		(m_sName,"ShowAllCourseScores"),
 	SECONDS_PER_PAGE			(m_sName,"SecondsPerPage"),
 	PAGE_FADE_SECONDS			(m_sName,"PageFadeSeconds"),
-	PERCENT_DECIMAL_PLACES		(m_sName,"PercentDecimalPlaces"),
-	PERCENT_TOTAL_SIZE			(m_sName,"PercentTotalSize"),
 	NO_SCORE_NAME				(m_sName,"NoScoreName"),
 
 	ROW_SPACING_X				(m_sName,"RowSpacingX"),
@@ -844,9 +843,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 							hs.sName = NO_SCORE_NAME;				
 						}
 
-						CString s;
-						s = hs.GetDisplayName() + "\n";
-						s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE.GetValue(), PERCENT_DECIMAL_PLACES.GetValue(), hs.fPercentDP*100 );
+						CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
 						pTextStepsScore->SetText( s );
 					}
 				}
@@ -887,9 +884,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 						hs.sName = NO_SCORE_NAME;				
 					}
 
-					CString s;
-					s = hs.GetDisplayName() + "\n";
-					s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE.GetValue(), PERCENT_DECIMAL_PLACES.GetValue(), hs.fPercentDP*100 );
+					CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
 					pTextStepsScore->SetText( s );
 				}
 			}

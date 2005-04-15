@@ -305,7 +305,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		case COURSE_MACHINE_HIGH_SCORE:
 		case SONG_PROFILE_HIGH_SCORE:
 		case COURSE_PROFILE_HIGH_SCORE:
-			str = PercentageDisplay::FormatPercentScore( val, 5, 2 );
+			str = PercentageDisplay::FormatPercentScore( val );
 			break;
 		case SONG_NUM_STEPS:
 		case SONG_JUMPS:

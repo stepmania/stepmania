@@ -9,6 +9,8 @@
 #include "StageStats.h"
 #include "PlayerState.h"
 
+ThemeMetric<int> PERCENT_DECIMAL_PLACES	( "PercentageDisplay", "PercentDecimalPlaces" );
+ThemeMetric<int> PERCENT_TOTAL_SIZE		( "PercentageDisplay", "PercentTotalSize" );
 
 PercentageDisplay::PercentageDisplay()
 {
@@ -24,8 +26,6 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const 
 	m_LastMax = -1;
 
 	DANCE_POINT_DIGITS.Load( sMetricsGroup, "DancePointsDigits" );
-	PERCENT_DECIMAL_PLACES.Load( sMetricsGroup, "PercentDecimalPlaces" );
-	PERCENT_TOTAL_SIZE.Load( sMetricsGroup, "PercentTotalSize" );
 	PERCENT_USE_REMAINDER.Load( sMetricsGroup, "PercentUseRemainder" );
 	APPLY_SCORE_DISPLAY_OPTIONS.Load( sMetricsGroup, "ApplyScoreDisplayOptions" );
 
@@ -121,7 +121,7 @@ void PercentageDisplay::Refresh()
 		}
 		else
 		{		
-			sNumToDisplay = FormatPercentScore( fPercentDancePoints, PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES );
+			sNumToDisplay = FormatPercentScore( fPercentDancePoints );
 			
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');
@@ -131,11 +131,11 @@ void PercentageDisplay::Refresh()
 	m_textPercent.SetText( sNumToDisplay );
 }
 
-CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints, int iTotalSize, int iDecimalPlaces )
+CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 {
 	// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
 	// score that's too high and doesn't match up with the calculated grade.
-	float fTruncInterval = powf( 0.1f, (float)iTotalSize-1 );
+	float fTruncInterval = powf( 0.1f, (float)PERCENT_TOTAL_SIZE-1 );
 	
 	// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004.  Give a little boost to 
 	// fPercentDancePoints to correct for this.
@@ -143,8 +143,12 @@ CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints, int iT
 
 	fPercentDancePoints = ftruncf( fPercentDancePoints, fTruncInterval );
 	
-	return ssprintf( "%*.*f%%", iTotalSize, iDecimalPlaces, fPercentDancePoints*100 );
+	CString s = ssprintf( "%*.*f%%", (int)PERCENT_TOTAL_SIZE, (int)PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
+	return s;
 }
+
+LuaFunction_Float( FormatPercentScore,	PercentageDisplay::FormatPercentScore(a1) )
+
 
 /*
  * (c) 2001-2003 Chris Danford
