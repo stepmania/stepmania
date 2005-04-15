@@ -135,8 +135,6 @@ protected:
 	ThemeMetric<float>				SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>				SCROLL_BAR_TIME;
 	ThemeMetric<float>				EXPLANATION_ZOOM;
-	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
-	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;
 	ThemeMetric<bool>				SHOW_EXIT_ROW;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;

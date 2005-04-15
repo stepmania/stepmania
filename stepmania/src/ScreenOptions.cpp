@@ -89,8 +89,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
 	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
 	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
-	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
-	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
@@ -116,6 +114,7 @@ void ScreenOptions::Init()
 	m_SoundToggleOff.Load( THEME->GetPathS(m_sName,"toggle off"), true );
 
 	// add everything to m_framePage so we can animate everything at once
+	m_framePage.SetName( "Frame" );
 	this->AddChild( &m_framePage );
 
 	m_bMoreShown = false;
@@ -127,7 +126,7 @@ void ScreenOptions::Init()
 		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
-	m_framePage.RunCommands( FRAME_ON_COMMAND );
+	ON_COMMAND( m_framePage );
 }
 
 void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
@@ -529,7 +528,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->PlayStartSound();
 
-		m_framePage.RunCommands( FRAME_OFF_COMMAND );
+		OFF_COMMAND( m_framePage );
 		break;
 	case SM_GainFocus:
 		INPUTFILTER->SetRepeatRate( 0.25f, 12, 0.25f, 12 );
