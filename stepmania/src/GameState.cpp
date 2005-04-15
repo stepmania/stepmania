@@ -1213,6 +1213,12 @@ void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 	RebuildPlayerOptionsFromActiveAttacks( pn );
 }
 
+void GameState::EndActiveAttacksForPlayer( PlayerNumber pn )
+{
+	FOREACH( Attack, m_pPlayerState[pn]->m_ActiveAttacks, a )
+		a->fSecsRemaining = 0;
+}
+
 void GameState::RemoveAllInventory()
 {
 	FOREACH_PlayerNumber( p )

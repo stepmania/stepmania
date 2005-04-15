@@ -192,6 +192,7 @@ public:
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
 	void RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
+	void EndActiveAttacksForPlayer( PlayerNumber pn );
 	void RemoveAllInventory();
 	int GetSumOfActiveAttackLevels( PlayerNumber pn ) const;
 	PlayerNumber GetBestPlayer() const;
