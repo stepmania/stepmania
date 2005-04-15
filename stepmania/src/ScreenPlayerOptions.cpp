@@ -76,7 +76,7 @@ void ScreenPlayerOptions::Init()
 
 void ScreenPlayerOptions::GoToPrevScreen()
 {
-	if( GAMESTATE->m_bEditing )
+	if( SCREENMAN->IsStackedScreen(this) )
 	{
 		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
 	}
@@ -89,7 +89,7 @@ void ScreenPlayerOptions::GoToPrevScreen()
 
 void ScreenPlayerOptions::GoToNextScreen()
 {
-	if( GAMESTATE->m_bEditing )
+	if( SCREENMAN->IsStackedScreen(this) )
 	{
 		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
 	}
