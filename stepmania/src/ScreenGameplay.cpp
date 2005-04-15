@@ -1439,11 +1439,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 				switch( tns )
 				{
-				case TNS_NONE:
-				case TNS_MISS:
-				case TNS_BOO:
-					state = AS2D_MISS;
-					break;
 				case TNS_GOOD:
 				case TNS_GREAT:
 					state = AS2D_GOOD;
@@ -1453,7 +1448,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 					state = AS2D_GREAT;
 					break;
 				default:
-					ASSERT(0);
+					state = AS2D_MISS;
+					break;
 				}
 
 				if( state == AS2D_GREAT && m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
