@@ -31,9 +31,26 @@ ThemeMetric<float> BOTTOM_EDGE						("Background","BottomEdge");
 ThemeMetric<bool> BLINK_DANGER_ALL					("Background","BlinkDangerAll");
 ThemeMetric<bool> DANGER_ALL_IS_OPAQUE				("Background","DangerAllIsOpaque");
 ThemeMetric<apActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
+ThemeMetric<float> CLAMP_OUTPUT_PERCENT				("Background","ClampOutputPercent");
 
 static float g_fBackgroundCenterWidth = 40;
 const CString STATIC_BACKGROUND = "static background";
+
+static RageColor GetBrightnessColor( float fBrightnessPercent )
+{
+	RageColor cBrightness = RageColor( 0,0,0,1-fBrightnessPercent );
+	RageColor cClamp = RageColor( 0.5f,0.5f,0.5f,CLAMP_OUTPUT_PERCENT );
+
+	// blend the two colors above as if cBrightness is drawn, then cClamp drawn on top
+	cBrightness.a *= (1-cClamp.a);	// premultiply alpha
+
+	RageColor ret;
+	ret.a = cBrightness.a + cClamp.a;
+	ret.r = (cBrightness.r * cBrightness.a + cClamp.r * cClamp.a) / ret.a;
+	ret.g = (cBrightness.g * cBrightness.a + cClamp.g * cClamp.a) / ret.a;
+	ret.b = (cBrightness.b * cBrightness.a + cClamp.b * cClamp.a) / ret.a;
+	return ret;
+}
 
 Background::Background()
 {
@@ -59,11 +76,8 @@ void Background::Init()
 
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;
-
 		bOneOrMoreChars = true;
 		// Disable dancing characters if BH will be showing.
 		if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse() && 
@@ -74,19 +88,21 @@ void Background::Init()
 	if( bOneOrMoreChars && !bShowingBeginnerHelper )
 		m_pDancingCharacters = new DancingCharacters;
 
-	m_quadBorder[0].StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[1].StretchTo( RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
-	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[2].StretchTo( RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[3].StretchTo( RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
+	RageColor c = GetBrightnessColor(0);
 
-	this->AddChild( &m_quadBorder[0] );
-	this->AddChild( &m_quadBorder[1] );
-	this->AddChild( &m_quadBorder[2] );
-	this->AddChild( &m_quadBorder[3] );
+	m_quadBorderLeft.StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorderLeft.SetDiffuse( c );
+	m_quadBorderTop.StretchTo( RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
+	m_quadBorderTop.SetDiffuse( c );
+	m_quadBorderRight.StretchTo( RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorderRight.SetDiffuse( c );
+	m_quadBorderBottom.StretchTo( RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorderBottom.SetDiffuse( c );
+
+	this->AddChild( &m_quadBorderLeft );
+	this->AddChild( &m_quadBorderTop );
+	this->AddChild( &m_quadBorderRight );
+	this->AddChild( &m_quadBorderBottom );
 
 	this->AddChild( &m_Brightness );
 }
@@ -735,8 +751,8 @@ void BrightnessOverlay::SetActualBrightness()
 	if( !GAMESTATE->IsHumanPlayer(PLAYER_2) )
 		fRightBrightness = fLeftBrightness;
 
-	RageColor LeftColor( 0,0,0,1-fLeftBrightness );
-	RageColor RightColor( 0,0,0,1-fRightBrightness );
+	RageColor LeftColor = GetBrightnessColor(fLeftBrightness);
+	RageColor RightColor = GetBrightnessColor(fRightBrightness);
 
 	m_quadBGBrightness[PLAYER_1].SetDiffuse( LeftColor );
 	m_quadBGBrightness[PLAYER_2].SetDiffuse( RightColor );
@@ -746,9 +762,11 @@ void BrightnessOverlay::SetActualBrightness()
 
 void BrightnessOverlay::Set( float fBrightness )
 {
+	RageColor c = GetBrightnessColor(fBrightness);
+
 	FOREACH_PlayerNumber(pn)
-		m_quadBGBrightness[pn].SetDiffuse( RageColor(0,0,0,1-fBrightness) );
-	m_quadBGBrightnessFade.SetDiffuse( RageColor(0,0,0,1-fBrightness) );
+		m_quadBGBrightness[pn].SetDiffuse( c );
+	m_quadBGBrightnessFade.SetDiffuse( c );
 }
 
 void BrightnessOverlay::FadeToActualBrightness()

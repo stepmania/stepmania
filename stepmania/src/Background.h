@@ -73,7 +73,9 @@ protected:
 	Actor *m_pFadingBGA;
 	float m_fSecsLeftInFade;
 	float m_fLastMusicSeconds;
-	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
+	
+	// cover up the edge of animations that might hang outside of the background rectangle
+	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
 
 	BrightnessOverlay m_Brightness;
 };
