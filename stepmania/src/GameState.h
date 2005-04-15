@@ -216,6 +216,7 @@ public:
 	void ResetCurrentOptions();
 
 	bool IsDisqualified( PlayerNumber pn );
+	bool PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier );
 
 	SongOptions::FailType GetPlayerFailType( PlayerNumber pn ) const;
 

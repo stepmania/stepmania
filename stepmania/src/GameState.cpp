@@ -1865,6 +1865,16 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 	return fActual / fGoal;
 }
 
+bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier )
+{
+	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
+	SongOptions so = GAMESTATE->m_SongOptions;
+	po.FromString( sModifier );
+	so.FromString( sModifier );
+
+	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -1941,6 +1951,7 @@ public:
 	static int GetPlayMode( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
 	static int GetSortOrder( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
 	static int IsGoalComplete( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
+	static int PlayerIsUsingModifier( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1965,6 +1976,8 @@ public:
 		ADD_METHOD( GetPlayMode )
 		ADD_METHOD( GetSortOrder )
 		ADD_METHOD( IsGoalComplete )
+		ADD_METHOD( PlayerIsUsingModifier )
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
@@ -2012,16 +2025,6 @@ LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 LuaFunction_NoArgs( CurSong,				(void *) GAMESTATE->m_pCurSong )
 LuaFunction_PlayerNumber( CurSteps,			(Steps*)GAMESTATE->m_pCurSteps[pn].Get() )
 
-bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
-{
-	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
-	SongOptions so = GAMESTATE->m_SongOptions;
-	po.FromString( sModifier );
-	so.FromString( sModifier );
-
-	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
-}
-
 int LuaFunc_UsingModifier( lua_State *L )
 {
 	REQ_ARGS( "UsingModifier", 2 );
@@ -2030,7 +2033,7 @@ int LuaFunc_UsingModifier( lua_State *L )
 
 	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, 1 ))-1);
 	const CString modifier = lua_tostring( L, 2 );
-	LUA_RETURN( PlayerIsUsingModifier( pn, modifier ), L );
+	LUA_RETURN( GAMESTATE->PlayerIsUsingModifier( pn, modifier ), L );
 }
 LuaFunction( UsingModifier );
 
