@@ -103,17 +103,17 @@ static const CString SortOrderNames[NUM_SORT_ORDERS] = {
 	"Preferred",
 	"Group",
 	"Title",
-	"BPM",
+	"Bpm",
 	"Popularity",
-	"TopGrade",
+	"TopGrades",
 	"Artist",
 	"Genre",
 	"EasyMeter",
 	"MediumMeter",
 	"HardMeter",
 	"ChallengeMeter",
-	"Mode",
-	"Courses",
+	"ModeMenu",
+	"AllCourses",
 	"Nonstop",
 	"Oni",
 	"Endless",
@@ -121,6 +121,28 @@ static const CString SortOrderNames[NUM_SORT_ORDERS] = {
 };
 XToString( SortOrder, NUM_SORT_ORDERS );
 StringToX( SortOrder );
+
+static void LuaSortOrder(lua_State* L)
+{
+	FOREACH_SortOrder( so )
+	{
+		CString s = SortOrderToString( so );
+		
+		// [uppercase] -> _[uppercase]
+		for( unsigned i=0; i<s.size(); i++ )
+		{
+			if( isupper(s[i]) )
+			{
+				s.insert( s.begin()+i, '_' );
+				i++;
+			}
+		}
+
+		s.MakeUpper();
+		LUA->SetGlobal( "SORT"+s, so );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaSortOrder );
 
 
 static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {

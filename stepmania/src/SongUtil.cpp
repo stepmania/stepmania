@@ -254,9 +254,9 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
-	case SORT_MOST_PLAYED:
+	case SORT_POPULARITY:
 		return "";
-	case SORT_GRADE:
+	case SORT_TOP_GRADES:
 		{
 			int iCounts[NUM_GRADES];
 			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );

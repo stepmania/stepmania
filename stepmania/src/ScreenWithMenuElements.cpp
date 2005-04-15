@@ -84,9 +84,7 @@ void ScreenWithMenuElements::Init()
 	m_textHelp->SetName( "HelpDisplay", "Help" );
 	m_textHelp->Load();
 	SET_XY_AND_ON_COMMAND( m_textHelp );
-	CStringArray asHelpTips;
-	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
-	m_textHelp->SetTips( asHelpTips );
+	LoadHelpText();
 	this->AddChild( m_textHelp );
 
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
@@ -123,6 +121,13 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 {
 	SAFE_DELETE( m_MenuTimer );
 	SAFE_DELETE( m_textHelp );
+}
+
+void ScreenWithMenuElements::LoadHelpText()
+{
+	CStringArray asHelpTips;
+	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
+	m_textHelp->SetTips( asHelpTips );
 }
 
 void ScreenWithMenuElements::StartPlayingMusic()

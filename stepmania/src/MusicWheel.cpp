@@ -45,7 +45,7 @@ static const SortOrder g_SongSortOrders[] =
 	SORT_GROUP, 
 	SORT_TITLE, 
 	SORT_BPM, 
-	SORT_MOST_PLAYED, 
+	SORT_POPULARITY, 
 	SORT_ARTIST,
 	SORT_GENRE,
 };
@@ -211,7 +211,10 @@ void MusicWheel::Load( CString sType )
 	/* Only save the sort order if the player didn't already have one.  If he did, don't
 	 * overwrite it. */
 	if( GAMESTATE->m_PreferredSortOrder == SORT_INVALID )
+	{
 		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
+		GAMESTATE->m_SortOrder = m_SortOrder;
+	}
 
 	/* Update for SORT_MOST_PLAYED. */
 	SONGMAN->UpdateBest();
@@ -424,7 +427,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
 //	else
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
-	if( so == SORT_MOST_PLAYED )
+	if( so == SORT_POPULARITY )
 		SONGMAN->GetBestSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
 	else
 		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );	
@@ -514,8 +517,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case SORT_GROUP:
 	case SORT_TITLE:
 	case SORT_BPM:
-	case SORT_MOST_PLAYED:
-	case SORT_GRADE:
+	case SORT_POPULARITY:
+	case SORT_TOP_GRADES:
 	case SORT_ARTIST:
 	case SORT_GENRE:
 	case SORT_EASY_METER:
@@ -550,12 +553,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		case SORT_BPM:
 			SongUtil::SortSongPointerArrayByBPM( arraySongs );
 			break;
-		case SORT_MOST_PLAYED:
+		case SORT_POPULARITY:
 			if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
 				arraySongs.erase( arraySongs.begin()+MOST_PLAYED_SONGS_TO_SHOW, arraySongs.end() );
 			bUseSections = false;
 			break;
-		case SORT_GRADE:
+		case SORT_TOP_GRADES:
 			SongUtil::SortSongPointerArrayByGrade( arraySongs );
 			break;
 		case SORT_ARTIST:
@@ -608,7 +611,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				* so don't re-sort for them. */
 //				/* We're using sections, so use the section name as the top-level
 //				 * sort. */
-			if( so != SORT_GRADE && so != SORT_BPM )
+			if( so != SORT_TOP_GRADES && so != SORT_BPM )
 				SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
 
 			// make WheelItemDatas with sections
@@ -767,7 +770,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	}
 
 	// init crowns
-	if( so == SORT_MOST_PLAYED )
+	if( so == SORT_POPULARITY )
 	{
 		// init crown icons 
 		for( unsigned i=0; i< min(3u,arrayWheelItemDatas.size()); i++ )
@@ -1258,6 +1261,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 	/* Save the new preference. */
 	if( IsSongSort(new_so) )
 		GAMESTATE->m_PreferredSortOrder = new_so;
+	GAMESTATE->m_SortOrder = new_so;
 
 	m_SortOrder = new_so;
 	

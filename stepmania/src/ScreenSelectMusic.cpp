@@ -1476,6 +1476,14 @@ void ScreenSelectMusic::AfterMusicChange()
 	g_bWantFallbackCdTitle = false;
 	bool bWantBanner = true;
 
+	static SortOrder s_lastSortOrder = SORT_INVALID;
+	if( m_MusicWheel.GetSortOrder() != s_lastSortOrder )
+	{
+		// Reload to let Lua metrics have a chance to change the help text.
+		ScreenWithMenuElements::LoadHelpText();
+		s_lastSortOrder = m_MusicWheel.GetSortOrder();
+	}
+
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
