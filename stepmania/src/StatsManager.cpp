@@ -181,11 +181,14 @@ public:
 
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
 	static int GetAccumStageStats( T* p, lua_State *L )	{ p->GetAccumStageStats().PushSelf(L); return 1; }
+	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCurStageStats )
 		ADD_METHOD( GetAccumStageStats )
+		ADD_METHOD( Reset )
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
