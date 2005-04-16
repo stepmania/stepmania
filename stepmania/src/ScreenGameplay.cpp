@@ -51,8 +51,6 @@
 //
 // Defines
 //
-#define PREV_SCREEN								THEME->GetMetric (m_sName,"PrevScreen")
-#define NEXT_SCREEN								THEME->GetMetric (m_sName,"NextScreen")
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
 #define EVAL_ON_FAIL							THEME->GetMetricB(m_sName,"ShowEvaluationOnFail")
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB(m_sName,"ShowScoreInRave")
@@ -2349,8 +2347,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		GAMESTATE->CancelStage();
 
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
+		HandleScreenMessage( SM_GoToPrevScreen );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
@@ -2358,14 +2355,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{
 			m_bChangedOffsetOrBPM = false;
 			ShowSavePrompt( SM_GoToNextScreen );
+			return;
 		}
-		else
-		{	
-			SongFinished();
-			StageFinished( false );
-			
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		}
+
+		SongFinished();
+		StageFinished( false );
 	}
 	else if( SM == SM_LoseFocus )
 	{
@@ -2413,6 +2407,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( !m_bPaused )
 			PauseGame( true );
 	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 
