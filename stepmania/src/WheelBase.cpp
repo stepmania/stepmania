@@ -26,7 +26,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "ScreenDimensions.h"
-
+#include "RageUtil.h"
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
@@ -38,26 +38,6 @@ static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()
 		
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
-template<class T>
-void CircularShift( vector<T> &v, int dist )
-{
-	for( int i = abs( dist ); i>0; i-- )
-	{
-		if( dist > 0 )
-		{
-			T t = v[0];
-			v.erase( v.begin() );
-			v.push_back( t );
-		}
-		else
-		{
-			T t = v.back();
-			v.erase( v.end()-1 );
-			v.insert( v.begin(), t );
-		}
-	}
-}
-	
 WheelBase::WheelBase()
 {
 }
