@@ -103,6 +103,12 @@ void Transition::StartTransitioning( ScreenMessage send_when_done )
 {
 	if( m_State != waiting )
 		return;	// ignore
+	
+	// If transition isn't loaded don't set state to transitioning.
+	// We assume elsewhere that m_sprTransition is loaded.
+	if( !m_sprTransition.IsLoaded() )
+		return;
+	
 	m_sprTransition->PlayCommand( "StartTransitioning" );
 
 	m_MessageToSendWhenDone = send_when_done;
