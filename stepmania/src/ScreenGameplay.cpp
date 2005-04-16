@@ -1090,6 +1090,8 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 
 	ASSERT( !m_pSoundMusic->IsPlaying() );
 	m_pSoundMusic->Play( &p );
+	if( m_bPaused )
+		m_pSoundMusic->Pause( true );
 
 	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
 	GAMESTATE->m_fMusicSeconds = -5000;
