@@ -93,7 +93,7 @@ public:
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
-	void AfterImportOptions( float fY );
+	void AfterImportOptions();
 	void DetachHandler();
 
 	void PositionUnderlines( PlayerNumber pn );
@@ -172,6 +172,7 @@ protected:
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
 	OptionRowHandler*		m_pHand;
+	ActorFrame				m_Frame;
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 	Sprite					m_sprBullet;

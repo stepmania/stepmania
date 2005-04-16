@@ -161,11 +161,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	
 		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().name.c_str()) );
 
-		unsigned pos = r;
-		CLAMP( pos, 0, NUM_ROWS_SHOWN-1 );
-		const float fY = ROW_Y.GetValue( pos );
-
-		row.AfterImportOptions( fY );
+		row.AfterImportOptions();
 	}
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
@@ -415,10 +411,14 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
 	OptionsCursor &cursor = m_Cursor[pn];
-	cursor.StopTweening();
-	cursor.BeginTweening( TWEEN_SECONDS );
+	if( cursor.GetDestX() != (float) iX || cursor.GetDestY() != (float) iY )
+	{
+		cursor.StopTweening();
+		cursor.BeginTweening( TWEEN_SECONDS );
+		cursor.SetXY( (float)iX, (float)iY );
+	}
+
 	cursor.TweenBarWidth( iWidth );
-	cursor.SetXY( (float)iX, (float)iY );
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{

@@ -62,9 +62,11 @@ OptionRow::OptionRow()
 	Clear();
 
 	FOREACH_PlayerNumber( p )
-		this->AddChild( &m_OptionIcons[p] );
-	this->AddChild( &m_sprBullet );
-	this->AddChild( &m_textTitle );
+		m_Frame.AddChild( &m_OptionIcons[p] );
+	m_Frame.AddChild( &m_sprBullet );
+	m_Frame.AddChild( &m_textTitle );
+
+	this->AddChild( &m_Frame );
 }
 
 OptionRow::~OptionRow()
@@ -216,7 +218,7 @@ CString OptionRow::GetRowTitle() const
 	return sTitle;
 }
 
-void OptionRow::AfterImportOptions( float fY )
+void OptionRow::AfterImportOptions()
 {
 	// Make all selections the same if bOneChoiceForAllPlayers
 	if( m_RowDef.bOneChoiceForAllPlayers )
@@ -375,25 +377,21 @@ void OptionRow::AfterImportOptions( float fY )
 	}
 
 	for( unsigned c=0; c<m_textItems.size(); c++ )
-		this->AddChild( m_textItems[c] );
+		m_Frame.AddChild( m_textItems[c] );
 	FOREACH_PlayerNumber( p )
 		for( unsigned c=0; c<m_Underline[p].size(); c++ )
-			this->AddChild( m_Underline[p][c] );
+			m_Frame.AddChild( m_Underline[p][c] );
 
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sType,"title") );
 	CString sTitle = GetRowTitle();
 	m_textTitle.SetText( sTitle );
-	m_textTitle.SetXY( LABELS_X, fY );
+	m_textTitle.SetX( LABELS_X );
 	m_textTitle.RunCommands( LABELS_ON_COMMAND );
 
 	m_sprBullet.Load( THEME->GetPathG(m_sType,"bullet") );
-	m_sprBullet.SetXY( ARROWS_X, fY );
+	m_sprBullet.SetX( ARROWS_X );
 	
-	// set the Y position of each item in the line
-	for( unsigned c=0; c<m_textItems.size(); c++ )
-		m_textItems[c]->SetY( fY );
-
 	//
 	// HACK: Set focus to one item in the row, which is "go down"
 	//
@@ -418,7 +416,7 @@ void OptionRow::LoadExit()
 	bt->RunCommands( ITEMS_ON_COMMAND );
 	bt->SetShadowLength( 0 );
 	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
-	this->AddChild( bt );
+	m_Frame.AddChild( bt );
 
 	FOREACH_PlayerNumber( p )
 		m_OptionIcons[p].SetHidden( true );
@@ -454,15 +452,10 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
 		bool bHidden = !bSelected || m_bHidden;
 
-		if( ul.GetDestY() != m_fY )
-		{
-			ul.StopTweening();
-			ul.BeginTweening( TWEEN_SECONDS );
-		}
-
+		ul.StopTweening();
+		ul.BeginTweening( TWEEN_SECONDS );
 		ul.SetHidden( bHidden );
 		ul.SetBarWidth( iWidth );
-		ul.SetY( (float)iY );
 	}
 }
 
@@ -475,19 +468,8 @@ void OptionRow::PositionIcons()
 	{
 		OptionIcon &icon = m_OptionIcons[p];
 
-		int iChoiceWithFocus = m_iChoiceInRowWithFocus[p];
-
-		int iWidth, iX, iY;			// We only use iY
-		GetWidthXY( p, iChoiceWithFocus, iWidth, iX, iY );
 		icon.SetX( ICONS_X.GetValue(p) );
 
-		if( icon.GetDestY() != m_fY )
-		{
-			icon.StopTweening();
-			icon.BeginTweening( TWEEN_SECONDS );
-		}
-
-		icon.SetY( (float)iY );
 		/* XXX: this doesn't work since icon is an ActorFrame */
 		icon.SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
 	}
@@ -541,6 +523,12 @@ void OptionRow::UpdateEnabledDisabled()
 		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
 	
 	bool bRowEnabled = !m_RowDef.m_vEnabledForPlayers.empty();
+	if( m_Frame.GetDestY() != m_fY )
+	{
+		m_Frame.StopTweening();
+		m_Frame.BeginTweening( TWEEN_SECONDS );
+		m_Frame.SetY( m_fY );
+	}
 
 	/* Don't tween selection colors at all. */
 	RageColor color;
@@ -557,18 +545,14 @@ void OptionRow::UpdateEnabledDisabled()
 	switch( m_RowDef.layoutType )
 	{
 	case LAYOUT_SHOW_ALL_IN_ROW:
-		for( unsigned j=0; j<m_textItems.size(); j++ ) 	 
-			m_textItems[j]->SetGlobalDiffuseColor( color ); 	 
 		for( unsigned j=0; j<m_textItems.size(); j++ )
 		{
-			if( m_textItems[j]->GetDestY() == m_fY && 	 
-				m_textItems[j]->DestTweenState().diffuse[0] == color ) 	 
+			if( m_textItems[j]->DestTweenState().diffuse[0] == color ) 	 
 				continue;
 
 			m_textItems[j]->StopTweening();
 			m_textItems[j]->BeginTweening( TWEEN_SECONDS );
-			m_textItems[j]->SetDiffuseAlpha( color.a );
-			m_textItems[j]->SetY( m_fY );
+			m_textItems[j]->SetDiffuse( color );
 		}
 		break;
 	case LAYOUT_SHOW_ONE_IN_ROW:
@@ -590,18 +574,16 @@ void OptionRow::UpdateEnabledDisabled()
 
 			BitmapText &bt = *m_textItems[item_no];
 
-			if( bt.GetDestY() != m_fY  ||  bt.DestTweenState().diffuse[0] != color )
+			if( bt.DestTweenState().diffuse[0] != color )
 			{
 				bt.StopTweening();
 				bt.BeginTweening( TWEEN_SECONDS );
 				bt.SetDiffuse( color );
-				bt.SetY( m_fY );
 
 				OptionsCursor &ul = *m_Underline[pn][0];
 				ul.StopTweening();
 				ul.BeginTweening( TWEEN_SECONDS );
 				ul.SetDiffuseAlpha( color.a );
-				ul.SetY( m_fY );
 			}
 		}
 		break;
@@ -617,7 +599,7 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[0]->SetEffectNone();
 	}
 
-	if( m_sprBullet.GetDestY() != m_fY || m_sprBullet.DestTweenState().diffuse[0] != color )
+	if( m_sprBullet.DestTweenState().diffuse[0] != color )
 	{
 		m_sprBullet.StopTweening();
 		m_textTitle.StopTweening();
@@ -625,8 +607,6 @@ void OptionRow::UpdateEnabledDisabled()
 		m_textTitle.BeginTweening( TWEEN_SECONDS );
 		m_sprBullet.SetDiffuseAlpha( color.a );
 		m_textTitle.SetDiffuseAlpha( color.a );
-		m_sprBullet.SetY( m_fY );
-		m_textTitle.SetY( m_fY );
 	}
 }
 
