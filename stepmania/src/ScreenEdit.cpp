@@ -753,7 +753,8 @@ void ScreenEdit::UpdateTextInfo()
 	CString sText;
 	sText += ssprintf( "Current beat:\n  %.3f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current sec:\n  %.3f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
-	sText += ssprintf( "Snap to:\n  %s\n",				sNoteType.c_str() );
+	if( EDIT_MODE >= EDIT_MODE_HOME )
+		sText += ssprintf( "Snap to:\n  %s\n",				sNoteType.c_str() );
 	sText += ssprintf( "Selection beat:\n  %s\n  %s\n",	m_NoteFieldEdit.m_iBeginMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str(), m_NoteFieldEdit.m_iEndMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
 	if( EDIT_MODE == EDIT_MODE_FULL )
 	{
