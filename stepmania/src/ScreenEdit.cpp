@@ -406,7 +406,7 @@ static Menu g_AreaMenu(
 
 static Menu g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
-	MenuRow( ScreenEdit::difficulty,	"Difficulty",		true, EDIT_MODE_PRACTICE, 0, "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE","EDIT" ),
+	MenuRow( ScreenEdit::difficulty,	"Difficulty",		true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRow( ScreenEdit::meter,			"Meter",			true, EDIT_MODE_PRACTICE, 0, "1","2","3","4","5","6","7","8","9","10","11","12","13" ),
 	MenuRow( ScreenEdit::description,	"Description",		true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRow( ScreenEdit::predict_meter,	"Predicted Meter",	false, EDIT_MODE_PRACTICE, 0, NULL ),
@@ -1771,10 +1771,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
+				g_StepsInformation.rows[difficulty].choices.clear();
+				FOREACH_Difficulty( dc )
+					g_StepsInformation.rows[difficulty].choices.push_back( DifficultyToThemedString(pSteps->GetDifficulty()) );
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
-				g_StepsInformation.rows[difficulty].bEnabled = EDIT_MODE == EDIT_MODE_FULL;
-				g_StepsInformation.rows[difficulty].bEnabled = EDIT_MODE <= EDIT_MODE_HOME;
+				g_StepsInformation.rows[difficulty].bEnabled = EDIT_MODE >= EDIT_MODE_FULL;
 				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
+				g_StepsInformation.rows[meter].bEnabled = EDIT_MODE >= EDIT_MODE_HOME;
 				g_StepsInformation.rows[predict_meter].choices.resize(1);g_StepsInformation.rows[predict_meter].choices[0] = ssprintf("%.2f",pSteps->PredictMeter());
 				g_StepsInformation.rows[description].choices.resize(1);	g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();	g_StepsInformation.rows[description].bEnabled = EDIT_MODE == EDIT_MODE_FULL;
 				g_StepsInformation.rows[tap_notes].choices.resize(1);	g_StepsInformation.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumTapNotes());
