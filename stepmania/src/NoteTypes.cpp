@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NoteTypes.h"
+#include "RageUtil.h"
 
 TapNote TAP_EMPTY					( TapNote::empty,		TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			TapNote::original, "", 0, false, 0 );
@@ -9,6 +10,19 @@ TapNote TAP_ORIGINAL_ATTACK			( TapNote::attack,		TapNote::original, "", 0, fals
 TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::original, "", 0, false, 0 );
 TapNote TAP_ADDITION_TAP			( TapNote::tap,			TapNote::addition, "", 0, false, 0 );
 TapNote TAP_ADDITION_MINE			( TapNote::mine,		TapNote::addition, "", 0, false, 0 );
+
+static const CString NoteTypeNames[NUM_NOTE_TYPES] = {
+	"4th",
+	"8th",
+	"12th",
+	"16th",
+	"24th",
+	"32nd",
+	"48th",
+	"64th",
+	"192nd",
+};
+XToString( NoteType, NUM_NOTE_TYPES );
 
 float NoteTypeToBeat( NoteType nt )
 {
@@ -45,24 +59,6 @@ NoteType GetNoteType( int row )
 	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
 	else												return NOTE_TYPE_INVALID;
 };
-
-CString NoteTypeToString( NoteType nt )
-{
-	switch( nt )
-	{
-	case NOTE_TYPE_4TH:		return "4th";
-	case NOTE_TYPE_8TH:		return "8th";
-	case NOTE_TYPE_12TH:	return "12th";
-	case NOTE_TYPE_16TH:	return "16th";
-	case NOTE_TYPE_24TH:	return "24th";
-	case NOTE_TYPE_32ND:	return "32nd";
-	case NOTE_TYPE_48TH:	return "48th";
-	case NOTE_TYPE_64TH:	return "64th";
-	case NOTE_TYPE_192ND:	// fall through
-	case NOTE_TYPE_INVALID:	return "192nd";
-	default:	ASSERT(0);	return "";
-	}
-}
 
 NoteType BeatToNoteType( float fBeat )
 { 

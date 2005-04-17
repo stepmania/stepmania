@@ -173,12 +173,11 @@ enum NoteType
 	NUM_NOTE_TYPES,
 	NOTE_TYPE_INVALID
 };
-
+const CString& NoteTypeToString( NoteType nt );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int row, NoteType t );
-CString NoteTypeToString( NoteType nt );
 
 /* This is more accurate: by computing the integer and fractional parts separately, we
  * can avoid storing very large numbers in a float and possibly losing precision.  It's

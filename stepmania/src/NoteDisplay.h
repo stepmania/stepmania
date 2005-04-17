@@ -11,13 +11,37 @@ struct HoldNoteResult;
 struct NoteMetricCache_t;
 struct PlayerState;
 
+#define NOTE_COLOR_IMAGES 8
+
+struct NoteColorActor
+{
+	NoteColorActor();
+	~NoteColorActor();
+	void Load( bool bIsNoteColor, const CString &sNoteSkin, const CString &sButton, const CString &sElement );
+	Actor* Get( NoteType nt );
+private:
+	Actor* m_p[NOTE_COLOR_IMAGES];
+	bool m_bIsNoteColor;
+};
+
+struct NoteColorSprite
+{
+	NoteColorSprite();
+	~NoteColorSprite();
+	void Load( bool bIsNoteColor, const CString &sNoteSkin, const CString &sButton, const CString &sElement );
+	Sprite* Get( NoteType nt );
+private:
+	Sprite*	m_p[NOTE_COLOR_IMAGES];
+	bool m_bIsNoteColor;
+};
+
 class NoteDisplay
 {
 public:
 	NoteDisplay();
 	~NoteDisplay();
 
-	void Load( int iColNum, const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffsetPixels );
+	void Load( int iColNum, const PlayerState* pPlayerState, const CString &sNoteSkin, float fYReverseOffsetPixels );
 
 	static void Update( float fDeltaTime );
 
@@ -48,21 +72,19 @@ protected:
 
 	struct NoteMetricCache_t *cache;
 
-#define NOTE_COLOR_IMAGES 8
-
-	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
-	Actor*		m_pTapAddition[NOTE_COLOR_IMAGES];
-	Actor*		m_pTapMine[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
-	Sprite*		m_pHoldTopCapActive[NOTE_COLOR_IMAGES];
-	Sprite*		m_pHoldTopCapInactive[NOTE_COLOR_IMAGES];
-	Sprite*		m_pHoldBodyActive[NOTE_COLOR_IMAGES];
-	Sprite*		m_pHoldBodyInactive[NOTE_COLOR_IMAGES];
-	Sprite*		m_pHoldBottomCapActive[NOTE_COLOR_IMAGES];
-	Sprite*		m_pHoldBottomCapInactive[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldTailActive[NOTE_COLOR_IMAGES];
-	Actor*		m_pHoldTailInactive[NOTE_COLOR_IMAGES];
+	NoteColorActor		m_TapNote;
+	NoteColorActor		m_TapAddition;
+	NoteColorActor		m_TapMine;
+	NoteColorActor		m_HoldHeadActive;
+	NoteColorActor		m_HoldHeadInactive;
+	NoteColorSprite		m_HoldTopCapActive;
+	NoteColorSprite		m_HoldTopCapInactive;
+	NoteColorSprite		m_HoldBodyActive;
+	NoteColorSprite		m_HoldBodyInactive;
+	NoteColorSprite		m_HoldBottomCapActive;
+	NoteColorSprite		m_HoldBottomCapInactive;
+	NoteColorActor		m_HoldTailActive;
+	NoteColorActor		m_HoldTailInactive;
 	float		m_fYReverseOffsetPixels;
 };
 
