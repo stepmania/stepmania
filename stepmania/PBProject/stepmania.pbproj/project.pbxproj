@@ -2242,7 +2242,6 @@
 				AA729C530599B58D00779F33,
 				AA729C550599B58D00779F33,
 				AA729C67059A2F2400779F33,
-				AABFA8CC05A4535700D3FDD1,
 				AABE321D05ACD8ED001A0E84,
 				AABE322105ACD931001A0E84,
 				AABE322505ACDA52001A0E84,
@@ -2395,6 +2394,7 @@
 				AA80C73307F208E200C99272,
 				AA80C75507F20D0D00C99272,
 				AA80C75A07F20D6600C99272,
+				AA7144B20809EEEC00545684,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4123,7 +4123,6 @@
 				AA729C520599B58D00779F33,
 				AA729C540599B58D00779F33,
 				AA729C66059A2F2400779F33,
-				AABFA8CB05A4535700D3FDD1,
 				AABE321C05ACD8ED001A0E84,
 				AABE322005ACD931001A0E84,
 				AABE322405ACDA52001A0E84,
@@ -4247,6 +4246,7 @@
 				AA80C75907F20D6600C99272,
 				AA80C75C07F20D8000C99272,
 				AA6E6E0A07F518E800C3EBB4,
+				AA7144B10809EEEC00545684,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9537,6 +9537,8 @@
 				AA6E01E7047720A3005F316C,
 				AA8BD2BB07C939F800EA04E1,
 				AA8BD2BC07C939F800EA04E1,
+				AA7144AF0809EEEC00545684,
+				AA7144B00809EEEC00545684,
 				AA8BD2BD07C939F800EA04E1,
 				AA8BD2BE07C939F800EA04E1,
 				AA6E01E20477205A005F316C,
@@ -10486,8 +10488,6 @@
 				AA6EFE9304770E7C005F316C,
 				AA6EFE9404770E7C005F316C,
 				AA6EFE9504770E7C005F316C,
-				AABFA8C905A4535700D3FDD1,
-				AABFA8CA05A4535700D3FDD1,
 				AA729C460599B54D00779F33,
 				AA729C470599B54D00779F33,
 				AA6EFE9A04770E7C005F316C,
@@ -12181,6 +12181,36 @@
 		};
 		AA70E36D0663112800DAE1FD = {
 			fileRef = AA70E3680663112800DAE1FD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA7144AF0809EEEC00545684 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScoreDisplayAliveTime.cpp;
+			path = ../src/ScoreDisplayAliveTime.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA7144B00809EEEC00545684 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScoreDisplayAliveTime.h;
+			path = ../src/ScoreDisplayAliveTime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA7144B10809EEEC00545684 = {
+			fileRef = AA7144AF0809EEEC00545684;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA7144B20809EEEC00545684 = {
+			fileRef = AA7144B00809EEEC00545684;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -14727,38 +14757,6 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
-		};
-		AABFA8C905A4535700D3FDD1 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ListDisplay.cpp;
-			path = ../src/ListDisplay.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
-		AABFA8CA05A4535700D3FDD1 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ListDisplay.h;
-			path = ../src/ListDisplay.h;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
-		AABFA8CB05A4535700D3FDD1 = {
-			fileRef = AABFA8C905A4535700D3FDD1;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AABFA8CC05A4535700D3FDD1 = {
-			fileRef = AABFA8CA05A4535700D3FDD1;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AAC23F7C0485E68D005F316C = {
 			explicitFileType = sourcecode.cpp;
