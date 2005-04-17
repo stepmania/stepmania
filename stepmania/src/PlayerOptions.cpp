@@ -28,6 +28,7 @@ void PlayerOptions::Init()
 	m_fDark = 0;				m_SpeedfDark = 1.0f;
 	m_fBlind = 0;				m_SpeedfBlind = 1.0f;
 	m_fCover = 0;				m_SpeedfCover = 1.0f;
+	m_bSetTiltOrSkew = false;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
@@ -166,7 +167,7 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 
-	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		AddTo.push_back( "Overhead" );
+	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		{ if( m_bSetTiltOrSkew ) AddTo.push_back( "Overhead" ); }
 	else if( m_fSkew==1 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Incoming" );
 	else if( m_fSkew==1 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Space" );
 	else if( m_fSkew==0 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Hallway" );
@@ -297,11 +298,11 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
 		else if( sBit == "cover" )		SET_FLOAT( fCover )
 		else if( sBit == "passmark" )	SET_FLOAT( fPassmark )
-		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0;				m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "incoming" )	{ m_fSkew = level; m_fPerspectiveTilt = -level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "space" )		{ m_fSkew = level; m_fPerspectiveTilt = +level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "overhead" )	{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "incoming" )	{ m_bSetTiltOrSkew = true; m_fSkew = level; m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "space" )		{ m_bSetTiltOrSkew = true; m_fSkew = level; m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "hallway" )	{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "distant" )	{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = "default";
 		else if( sBit == "randomspeed" ) 		SET_FLOAT( fRandomSpeed )
