@@ -1006,9 +1006,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				// that the user made.  Dragging the hold bigger can only absorb and remove
 				// other taps, so dragging won't cause us to exceed the note limit.
 				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
-				else
 					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_ROLL_HEAD );
+				else
+					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
 			}
 
 			if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
