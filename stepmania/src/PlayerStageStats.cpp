@@ -390,16 +390,26 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 {
 	ASSERT( tnsAllGreaterOrEqual >= TNS_GREAT );
 	ASSERT( tnsAllGreaterOrEqual <= TNS_MARVELOUS );
-	
+
+	// If missed any holds, then it's not a full combo
 	if( iHoldNoteScores[HNS_NG] > 0 )
 		return false;
 
+	// If has any of the judgments below, then not a full combo
 	for( int i=TNS_MISS; i<tnsAllGreaterOrEqual; i++ )
 	{
 		if( iTapNoteScores[i] > 0 )
 			return false;
 	}
-	return true;
+
+	// If has at least one of the judgments equal to or above, then is a full combo.
+	for( int i=tnsAllGreaterOrEqual; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		if( iTapNoteScores[i] > 0 )
+			return true;
+	}
+
+	return false;
 }
 
 bool PlayerStageStats::SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const
