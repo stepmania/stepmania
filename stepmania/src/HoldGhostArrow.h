@@ -10,7 +10,7 @@ class HoldGhostArrow : public Sprite
 public:
 	HoldGhostArrow();
 
-	virtual void Load( CString sNoteSkin, CString sButton, CString sElement );
+	virtual void Load( const CString &sButton, const CString &sElement );
 
 	virtual void Update( float fDeltaTime );
 	virtual bool EarlyAbortDraw() { return !m_bHoldIsActive; }

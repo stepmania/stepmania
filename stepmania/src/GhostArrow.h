@@ -14,7 +14,7 @@ class GhostArrow : public ActorFrame
 public:
 	GhostArrow();
 
-	void Load( CString sNoteSkin, CString sButton, CString sFile );
+	void Load( const CString &sButton, const CString &sFile );
 
 	void Step( TapNoteScore score );
 

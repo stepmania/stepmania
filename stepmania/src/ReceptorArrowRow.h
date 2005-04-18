@@ -15,7 +15,7 @@ class ReceptorArrowRow : public ActorFrame
 public:
 	ReceptorArrowRow();
 
-	void Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset );
+	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

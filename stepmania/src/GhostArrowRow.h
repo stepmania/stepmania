@@ -19,7 +19,7 @@ public:
 	virtual void DrawPrimitives();
 	virtual void CopyTweening( const GhostArrowRow &from );
 
-	void Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset );
+	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
 	void Unload();
 	
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );

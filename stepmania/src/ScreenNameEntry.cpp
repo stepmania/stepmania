@@ -20,6 +20,7 @@
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
 #include "Style.h"
+#include "NoteSkinManager.h"
 
 
 //
@@ -181,10 +182,14 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
 
-		m_ReceptorArrowRow[p].Load( GAMESTATE->m_pPlayerState[p], GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_sNoteSkin, 0 );
-		m_ReceptorArrowRow[p].SetX( fPlayerX );
-		m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
-		this->AddChild( &m_ReceptorArrowRow[p] );
+		{
+			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_sNoteSkin );
+
+			m_ReceptorArrowRow[p].Load( GAMESTATE->m_pPlayerState[p], 0 );
+			m_ReceptorArrowRow[p].SetX( fPlayerX );
+			m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
+			this->AddChild( &m_ReceptorArrowRow[p] );
+		}
 
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();

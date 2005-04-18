@@ -16,7 +16,7 @@ ReceptorArrowRow::ReceptorArrowRow()
 	m_iNumCols = 0;
 }
 
-void ReceptorArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset )
+void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
 {
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffset;
@@ -28,7 +28,7 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		m_ReceptorArrow[c].SetName( "ReceptorArrow" );
-		m_ReceptorArrow[c].Load( NoteSkin, m_pPlayerState, c );
+		m_ReceptorArrow[c].Load( m_pPlayerState, c );
 	}
 }
 

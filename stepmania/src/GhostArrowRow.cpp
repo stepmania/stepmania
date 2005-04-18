@@ -18,7 +18,7 @@ GhostArrowRow::GhostArrowRow()
 	m_iNumCols = 0;
 }
 
-void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset )
+void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
 {
 	Unload();
 
@@ -32,7 +32,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, flo
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		CString Button = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
+		const CString &sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
 
 		m_GhostDim.push_back( new GhostArrow );
 		m_GhostBright.push_back( new GhostArrow );
@@ -42,9 +42,9 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, flo
 		m_GhostBright[c]->SetName( "GhostArrowBright" );
 		m_HoldGhost[c]->SetName( "HoldGhostArrow" );
 		
-		m_GhostDim[c]->Load( NoteSkin, Button, "tap explosion dim" );
-		m_GhostBright[c]->Load( NoteSkin, Button, "tap explosion bright" );
-		m_HoldGhost[c]->Load( NoteSkin, Button, "hold explosion" );
+		m_GhostDim[c]->Load( sButton, "tap explosion dim" );
+		m_GhostBright[c]->Load( sButton, "tap explosion bright" );
+		m_HoldGhost[c]->Load( sButton, "hold explosion" );
 	}
 }
 

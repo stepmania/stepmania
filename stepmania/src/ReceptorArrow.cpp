@@ -17,24 +17,23 @@ ReceptorArrow::ReceptorArrow()
 	StopAnimating();
 }
 
-bool ReceptorArrow::Load( CString NoteSkin, const PlayerState* pPlayerState, int iColNo )
+bool ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 {
 	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
 
 	CString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
 
-	CString sPath;
-	m_pReceptorWaiting.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor waiting") );
-	m_pReceptorGo.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor go") );
+	m_pReceptorWaiting.Load( NOTESKIN->GetPath(sButton,"receptor waiting") );
+	m_pReceptorGo.Load( NOTESKIN->GetPath(sButton,"receptor go") );
 	FOREACH_TapNoteScore( i )
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = apActorCommands( new ActorCommands(NOTESKIN->GetMetric(NoteSkin,m_sName,sCommand)) );
+		m_sScoreCommand[i] = NOTESKIN->GetMetricA(m_sName,sCommand);
 	}
 
-	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
+	m_pPressBlock.Load( NOTESKIN->GetPath(sButton,"KeypressBlock") );
 
 	m_pReceptorWaiting->SetEffectClock( Actor::CLOCK_BGM_BEAT );
 	m_pReceptorGo->SetEffectClock( Actor::CLOCK_BGM_BEAT );

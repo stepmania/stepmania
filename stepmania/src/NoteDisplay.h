@@ -17,7 +17,7 @@ struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
-	void Load( bool bIsNoteColor, const CString &sNoteSkin, const CString &sButton, const CString &sElement );
+	void Load( bool bIsNoteColor, const CString &sButton, const CString &sElement );
 	Actor* Get( NoteType nt );
 private:
 	Actor* m_p[NOTE_COLOR_IMAGES];
@@ -28,12 +28,21 @@ struct NoteColorSprite
 {
 	NoteColorSprite();
 	~NoteColorSprite();
-	void Load( bool bIsNoteColor, const CString &sNoteSkin, const CString &sButton, const CString &sElement );
+	void Load( bool bIsNoteColor, const CString &sButton, const CString &sElement );
 	Sprite* Get( NoteType nt );
 private:
 	Sprite*	m_p[NOTE_COLOR_IMAGES];
 	bool m_bIsNoteColor;
 };
+
+enum HoldType { hold, roll, NUM_HOLD_TYPES };
+#define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, NUM_HOLD_TYPES, i )
+const CString &HoldTypeToString( HoldType ht );
+
+enum ActiveType { active, inactive, NUM_ACTIVE_TYPES };
+#define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, NUM_ACTIVE_TYPES, i )
+const CString &ActiveTypeToString( ActiveType at );
+
 
 class NoteDisplay
 {
@@ -41,7 +50,7 @@ public:
 	NoteDisplay();
 	~NoteDisplay();
 
-	void Load( int iColNum, const PlayerState* pPlayerState, const CString &sNoteSkin, float fYReverseOffsetPixels );
+	void Load( int iColNum, const PlayerState* pPlayerState, float fYReverseOffsetPixels );
 
 	static void Update( float fDeltaTime );
 
@@ -56,17 +65,17 @@ protected:
 	Actor *GetTapNoteActor( float fNoteBeat );
 	Actor *GetTapAdditionActor( float fNoteBeat );
 	Actor *GetTapMineActor( float fNoteBeat );
-	Actor *GetHoldHeadActor( float fNoteBeat, bool bIsBeingHeld );
-	Actor* GetHoldTailActor( float fNoteBeat, bool bIsBeingHeld );
-	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bIsBeingHeld );
-	Sprite *GetHoldBodySprite( float fNoteBeat, bool bIsBeingHeld );
-	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bIsBeingHeld );
+	Actor *GetHoldHeadActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Actor *GetHoldTailActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Sprite *GetHoldBodySprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
-	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, const bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldBody( const TapNote& tn, int iCol, int iRow, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldTail( const TapNote& tn, int iCol, int iRow, const bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldHead( const TapNote& tn, int iCol, int iRow, const bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
 
 	const PlayerState* m_pPlayerState;	// to look up PlayerOptions
 
@@ -75,16 +84,11 @@ protected:
 	NoteColorActor		m_TapNote;
 	NoteColorActor		m_TapAddition;
 	NoteColorActor		m_TapMine;
-	NoteColorActor		m_HoldHeadActive;
-	NoteColorActor		m_HoldHeadInactive;
-	NoteColorSprite		m_HoldTopCapActive;
-	NoteColorSprite		m_HoldTopCapInactive;
-	NoteColorSprite		m_HoldBodyActive;
-	NoteColorSprite		m_HoldBodyInactive;
-	NoteColorSprite		m_HoldBottomCapActive;
-	NoteColorSprite		m_HoldBottomCapInactive;
-	NoteColorActor		m_HoldTailActive;
-	NoteColorActor		m_HoldTailInactive;
+	NoteColorActor		m_HoldHead[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
+	NoteColorSprite		m_HoldTopCap[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
+	NoteColorSprite		m_HoldBody[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
+	NoteColorSprite		m_HoldBottomCap[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
+	NoteColorActor		m_HoldTail[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
 	float		m_fYReverseOffsetPixels;
 };
 

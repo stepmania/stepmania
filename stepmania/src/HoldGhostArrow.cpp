@@ -2,15 +2,17 @@
 #include "HoldGhostArrow.h"
 #include "NoteSkinManager.h"
 
+
+
 HoldGhostArrow::HoldGhostArrow()
 {
 	m_bHoldIsActive = false;
 }
 
-void HoldGhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
+void HoldGhostArrow::Load( const CString &sButton, const CString &sElement )
 {
-	Sprite::Load( NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement) );	// not optional
-	this->RunCommands( ActorCommands(NOTESKIN->GetMetric(sNoteSkin,"HoldGhostArrow","OnCommand")) );
+	Sprite::Load( NOTESKIN->GetPath(sButton, sElement) );	// not optional
+	this->RunCommands( NOTESKIN->GetMetricA("HoldGhostArrow","OnCommand") );
 }
 
 void HoldGhostArrow::Update( float fDeltaTime )

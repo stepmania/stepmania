@@ -7,7 +7,7 @@ GhostArrow::GhostArrow()
 {
 }
 
-void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
+void GhostArrow::Load( const CString &sButton, const CString &sElement )
 {
 	FOREACH_TapNoteScore( i )
 	{
@@ -17,7 +17,7 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 
 		ASSERT( !m_spr[i].IsLoaded() );	// don't double-load
 
-		m_spr[i].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullElement) );
+		m_spr[i].Load( NOTESKIN->GetPath(sButton, sFullElement) );
 		m_spr[i]->SetHidden( true );
 		this->AddChild( m_spr[i] );
 	}
@@ -26,8 +26,7 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		apActorCommands p( new ActorCommands(NOTESKIN->GetMetric(sNoteSkin,m_sName,sCommand)) );
-		m_acScoreCommand[i] = p;
+		m_acScoreCommand[i] = NOTESKIN->GetMetricA(m_sName,sCommand);
 	}
 }
 

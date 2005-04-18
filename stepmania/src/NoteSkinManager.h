@@ -3,7 +3,7 @@
 #ifndef NOTE_SKIN_MANAGER_H
 #define NOTE_SKIN_MANAGER_H
 
-#include "Command.h"
+#include "ActorCommands.h"
 #include "RageTypes.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"
@@ -21,21 +21,25 @@ public:
 	void RefreshNoteSkinData( const Game* game );
 	void GetNoteSkinNames( const Game* game, CStringArray &AddTo, bool bFilterDefault=true );
 	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current const Game* in GAMESTATE
-	bool DoesNoteSkinExist( const CString &sSkinName );	// looks up current const Game* in GAMESTATE
+	bool DoesNoteSkinExist( const CString &sNoteSkin );	// looks up current const Game* in GAMESTATE
 
-	CString GetPathToFromNoteSkinAndButton( const CString &sNoteSkin, const CString &sButtonName, const CString &sElement, bool bOptional=false );
+	void SetCurrentNoteSkin( const CString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
+	const CString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
 
-	CString		GetMetric( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValue );
-	int			GetMetricI( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
-	float		GetMetricF( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
-	bool		GetMetricB( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
-	RageColor	GetMetricC( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
-	Commands   GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
+	CString GetPath( const CString &sButtonName, const CString &sElement );
 
-	CString GetNoteSkinDir( const CString &sSkinName );
+	CString		GetMetric( const CString &sButtonName, const CString &sValue );
+	int			GetMetricI( const CString &sButtonName, const CString &sValueName );
+	float		GetMetricF( const CString &sButtonName, const CString &sValueName );
+	bool		GetMetricB( const CString &sButtonName, const CString &sValueName );
+	apActorCommands   GetMetricA( const CString &sButtonName, const CString &sValueName );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
-	CString GetPathToFromDir( const CString &sDir, const CString &sFileName );
+	CString GetNoteSkinDir( const CString &sSkinName );
+	CString GetPathFromDirAndFile( const CString &sDir, const CString &sFileName );
 
 	struct NoteSkinData
 	{
@@ -47,6 +51,7 @@ protected:
 	};
 	void LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinData& data_out );
 	void LoadNoteSkinDataRecursive( const CString &sNoteSkinName, NoteSkinData& data_out );
+	CString m_sCurrentNoteSkin;
 	map<CString,NoteSkinData> m_mapNameToData;
 	const Game* m_pCurGame;
 };
@@ -54,6 +59,14 @@ protected:
 
 
 extern NoteSkinManager*	NOTESKIN;	// global and accessable from anywhere in our program
+
+class LockNoteSkin
+{
+public:
+	LockNoteSkin( const CString &sNoteSkin ) { ASSERT( NOTESKIN->GetCurrentNoteSkin().empty() ); NOTESKIN->SetCurrentNoteSkin( sNoteSkin ); }
+	~LockNoteSkin() { NOTESKIN->SetCurrentNoteSkin( CString() ); }
+};
+
 
 #endif
 

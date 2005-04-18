@@ -32,7 +32,7 @@ public:
 	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
-	void CacheNoteSkin( CString skin );
+	void CacheNoteSkin( const CString &sNoteSkin );
 
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );

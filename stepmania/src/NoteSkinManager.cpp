@@ -156,9 +156,10 @@ CString NoteSkinManager::GetNoteSkinDir( const CString &sSkinName )
 	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
 }
 
-CString NoteSkinManager::GetMetric( const CString &_sNoteSkinName, const CString &sButtonName, const CString &sValue )
+CString NoteSkinManager::GetMetric( const CString &sButtonName, const CString &sValue )
 {
-	CString sNoteSkinName = _sNoteSkinName;
+	ASSERT( !m_sCurrentNoteSkin.empty() );
+	CString sNoteSkinName = m_sCurrentNoteSkin;
 	sNoteSkinName.MakeLower();
 	map<CString,NoteSkinData>::const_iterator it = m_mapNameToData.find(sNoteSkinName);
 	ASSERT_M( it != m_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
@@ -173,68 +174,55 @@ CString NoteSkinManager::GetMetric( const CString &_sNoteSkinName, const CString
 	return sReturn;
 }
 
-int NoteSkinManager::GetMetricI( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
+int NoteSkinManager::GetMetricI( const CString &sButtonName, const CString &sValueName )
 {
-	return atoi( GetMetric(sNoteSkinName,sButtonName,sValueName) );
+	return atoi( GetMetric(sButtonName,sValueName) );
 }
 
-float NoteSkinManager::GetMetricF( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
+float NoteSkinManager::GetMetricF( const CString &sButtonName, const CString &sValueName )
 {
-	return strtof( GetMetric(sNoteSkinName,sButtonName,sValueName), NULL );
+	return strtof( GetMetric(sButtonName,sValueName), NULL );
 }
 
-bool NoteSkinManager::GetMetricB( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
+bool NoteSkinManager::GetMetricB( const CString &sButtonName, const CString &sValueName )
 {
-	return atoi( GetMetric(sNoteSkinName,sButtonName,sValueName) ) != 0;
+	return atoi( GetMetric(sButtonName,sValueName) ) != 0;
 }
 
-RageColor NoteSkinManager::GetMetricC( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
+apActorCommands NoteSkinManager::GetMetricA( const CString &sButtonName, const CString &sValueName )
 {
-	RageColor c;
-	if( !c.FromString( GetMetric(sNoteSkinName,sButtonName,sValueName) ) )
-		LOG->Warn( "The color value for NoteSkin metric '%s : %s : %s' is invalid.", sNoteSkinName.c_str(), sButtonName.c_str(), sValueName.c_str() );
-	return c;
+	return apActorCommands( new ActorCommands( GetMetric(sButtonName,sValueName) ) );
 }
 
-Commands NoteSkinManager::GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
-{
-	return ParseCommands( GetMetric(sNoteSkinName,sButtonName,sValueName) );
-}
-
-CString NoteSkinManager::GetPathToFromNoteSkinAndButton( const CString &NoteSkin, const CString &sButtonName, const CString &sElement, bool bOptional )
+CString NoteSkinManager::GetPath( const CString &sButtonName, const CString &sElement )
 {
 try_again:
-
-	const CString CacheString = NoteSkin + "/" + sButtonName + "/" + sElement;
+	const CString CacheString = m_sCurrentNoteSkin + "/" + sButtonName + "/" + sElement;
 	map<CString,CString>::iterator it = g_PathCache.find( CacheString );
 	if( it != g_PathCache.end() )
 		return it->second;
 
-	const NoteSkinData &data = m_mapNameToData[NoteSkin];
+	map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.find( m_sCurrentNoteSkin );
+	ASSERT( iter != m_mapNameToData.end() );
+	const NoteSkinData &data = iter->second;
 
-	CString sPath;
+	CString sPath;	// fill this in below
 	FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
 	{
 		 if( *iter == GLOBAL_BASE_NOTESKIN_DIR )
-			 sPath = GetPathToFromDir( *iter, "Fallback "+sElement );
+			 sPath = GetPathFromDirAndFile( *iter, "Fallback "+sElement );
 		 else
-			 sPath = GetPathToFromDir( *iter, sButtonName+" "+sElement );
+			 sPath = GetPathFromDirAndFile( *iter, sButtonName+" "+sElement );
 		 if( !sPath.empty() )
 			 break;	// done searching
 	}
 
 	if( sPath.empty() )
 	{
-		if( bOptional )
-		{
-			g_PathCache[CacheString] = sPath;
-			return sPath;
-		}
-
 		CString message = ssprintf(
 			"The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
 			sButtonName.c_str(), sElement.c_str(), 
-			GetNoteSkinDir(NoteSkin).c_str(),
+			GetNoteSkinDir(m_sCurrentNoteSkin).c_str(),
 			GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
 			GLOBAL_BASE_NOTESKIN_DIR.c_str() );
 
@@ -255,7 +243,7 @@ try_again:
 
 		FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
 		{
-			 sRealPath = GetPathToFromDir( *iter, sNewFileName );
+			 sRealPath = GetPathFromDirAndFile( *iter, sNewFileName );
 			 if( !sRealPath.empty() )
 				 break;	// done searching
 		}
@@ -284,7 +272,7 @@ try_again:
 	return sPath;
 }
 
-CString NoteSkinManager::GetPathToFromDir( const CString &sDir, const CString &sFileName )
+CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CString &sFileName )
 {
 	CStringArray matches;		// fill this with the possible files
 
@@ -311,6 +299,37 @@ CString NoteSkinManager::GetPathToFromDir( const CString &sDir, const CString &s
 	
 	return matches[0];
 }
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaNoteSkinManager : public Luna<T>
+{
+public:
+	LunaNoteSkinManager() { LUA->Register( Register ); }
+
+	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath(SArg(1),SArg(2)) ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetPath )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( NOTESKIN )
+		{
+			lua_pushstring(L, "NOTESKIN");
+			NOTESKIN->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( NoteSkinManager )
+// lua end
 
 /*
  * (c) 2003-2004 Chris Danford
