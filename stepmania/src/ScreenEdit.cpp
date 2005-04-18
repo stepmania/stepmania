@@ -113,7 +113,7 @@ void ScreenEdit::InitEditMappings()
 
 	g_EditMappings.button[EDIT_BUTTON_RIGHT_SIDE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	g_EditMappings.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
-	g_EditMappings.button[EDIT_BUTTON_LAY_MINE][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	g_EditMappings.button[EDIT_BUTTON_LAY_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
 
@@ -890,7 +890,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
 			}
-			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE) )
+			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
 			{
 				m_soundAddNote.Play();
 				SaveUndo();
@@ -1005,7 +1005,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
 				// that the user made.  Dragging the hold bigger can only absorb and remove
 				// other taps, so dragging won't cause us to exceed the note limit.
-				m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
+				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
+					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
+				else
+					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_ROLL_HEAD );
 			}
 
 			if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
@@ -1605,7 +1608,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 		
 		TapNote tn(
-			TapNote::attack, TapNote::original, 
+			TapNote::attack, 
+			false,
+			TapNote::original, 
 			sMods,
 			g_fLastInsertAttackDurationSeconds, 
 			false,

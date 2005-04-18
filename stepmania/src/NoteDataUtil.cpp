@@ -104,7 +104,13 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				case '0': tn = TAP_EMPTY;					break;
 				case '1': tn = TAP_ORIGINAL_TAP;			break;
 				case '2':
-					tn = TAP_ORIGINAL_HOLD_HEAD;
+				case '4':
+					switch( ch )
+					{
+					case '2':	tn = TAP_ORIGINAL_HOLD_HEAD;	break;
+					case '4':	tn = TAP_ORIGINAL_ROLL_HEAD;	break;
+					default:	ASSERT(0);
+					}
 
 					/* Set the hold note to have infinite length.  We'll clamp it when
 					 * we hit the tail. */
@@ -295,7 +301,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 				{
 				case TapNote::empty:		c = '0'; break;
 				case TapNote::tap:			c = '1'; break;
-				case TapNote::hold_head:	c = '2'; break;
+				case TapNote::hold_head:	c = tn.bIsRoll ? '2':'4'; break;
 				case TapNote::hold_tail:	c = '3'; break;
 				case TapNote::mine:			c = 'M'; break;
 				case TapNote::attack:		c = 'A'; break;
@@ -1734,7 +1740,9 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		int iBeat = (int)fBeat;
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
 		TapNote tn(
-			TapNote::attack, TapNote::original, 
+			TapNote::attack,
+			false,
+			TapNote::original, 
 			szAttacks[rand()%ARRAYSIZE(szAttacks)],
 			15.0f, 
 			false,

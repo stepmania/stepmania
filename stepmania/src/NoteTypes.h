@@ -57,12 +57,13 @@ struct TapNote
 	enum Type { 
 		empty, 		// no note here
 		tap, 
-		hold_head,	// graded like a TAP_TAP
+		hold_head,	// graded like a TAP_TAP if
 		hold_tail,	/* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
 		mine,		// don't step!
 		attack,
 		autoKeysound,
  	} type;
+	bool bIsRoll;	// only possibly true if type == hold_head
 	enum Source {
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
@@ -99,7 +100,8 @@ struct TapNote
 	
 	TapNote() {}
 	TapNote( 
-		Type type_, 
+		Type type_,
+		bool bIsRoll_,
 		Source source_, 
 		CString sAttackModifiers_,
 		float fAttackDurationSeconds_,
@@ -107,6 +109,7 @@ struct TapNote
 		int iKeysoundIndex_ )
 	{
 		type = type_;
+		bIsRoll = bIsRoll_;
 		source = source_;
 		sAttackModifiers = sAttackModifiers_;
 		fAttackDurationSeconds = fAttackDurationSeconds_;
@@ -118,6 +121,7 @@ struct TapNote
 	{
 #define COMPARE(x)	if(x!=other.x) return false;
 		COMPARE(type);
+		COMPARE(bIsRoll);
 		COMPARE(source);
 		COMPARE(sAttackModifiers);
 		COMPARE(fAttackDurationSeconds);
@@ -132,6 +136,7 @@ struct TapNote
 extern TapNote TAP_EMPTY;					// '0'
 extern TapNote TAP_ORIGINAL_TAP;			// '1'
 extern TapNote TAP_ORIGINAL_HOLD_HEAD;		// '2'
+extern TapNote TAP_ORIGINAL_ROLL_HEAD;		// '4'
 extern TapNote TAP_ORIGINAL_MINE;			// 'M'
 extern TapNote TAP_ORIGINAL_ATTACK;			// 'A'
 extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
