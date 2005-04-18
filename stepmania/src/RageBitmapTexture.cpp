@@ -73,7 +73,8 @@ void RageBitmapTexture::Create()
 	/* Tolerate corrupt/unknown images. */
 	if( img == NULL )
 	{
-		LOG->Warn( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
+		CString sWarning = ssprintf( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
+		Dialog::OK( sWarning );
 		img = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( img != NULL );
 	}
