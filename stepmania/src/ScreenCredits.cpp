@@ -253,12 +253,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		fTime = max( fTime, TEXTS_SCROLL_SECONDS_PER_ITEM*(fLast-fFirst) );
 	}
 
-	m_Overlay.LoadFromAniDir( THEME->GetPathB("ScreenCredits","overlay") );
-	m_Overlay.PlayCommand( "On" );
-	this->AddChild( &m_Overlay );
-
-	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
-	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
+	this->SortByDrawOrder();
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 	this->PostScreenMessage( SM_BeginFadingOut, fTime );

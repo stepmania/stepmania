@@ -21,8 +21,6 @@ private:
 	ActorScroller			m_ScrollerBackgrounds;
 	ActorScroller			m_ScrollerFrames;
 	ActorScroller			m_ScrollerTexts;
-
-	BGAnimation				m_Overlay;
 };
 
 #endif
