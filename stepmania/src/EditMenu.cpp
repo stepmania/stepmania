@@ -58,9 +58,8 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 {
 	vpSongsOut.clear();
 	SONGMAN->GetSongs( vpSongsOut, sGroup );
-	if( EDIT_MODE == EDIT_MODE_HOME )
+	if( EDIT_MODE < EDIT_MODE_FULL )
 	{
-		// strip groups that have no unlocked songs
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
@@ -79,6 +78,7 @@ static void GetGroupsToShow( vector<CString> &vsGroupsOut )
 		const CString &sGroup = vsGroupsOut[i];
 		vector<Song*> vpSongs;
 		GetSongsToShowForGroup( sGroup, vpSongs );
+		// strip groups that have no unlocked songs
 		if( vpSongs.empty() )
 			vsGroupsOut.erase( vsGroupsOut.begin()+i );
 	}
@@ -345,7 +345,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			else
 			{
-				// don't show non-edits in HomeMode
+				// don't allow selecting of non-edits in HomeMode
 				if( EDIT_MODE == EDIT_MODE_HOME )
 					continue;
 
