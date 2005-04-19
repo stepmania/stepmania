@@ -65,7 +65,7 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( UNLOCKMAN->SongIsLocked(pSong) )
+			if( UNLOCKMAN->SongIsLocked(pSong)  ||  pSong->IsTutorial() )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;
