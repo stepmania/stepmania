@@ -63,7 +63,7 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 	m_textScore.SetName( "Score" );
 	m_textScore.LoadFromFont( THEME->GetPathF(m_sName,"score") );
 	if( PREFSMAN->m_bPercentageScoring )
-		m_textScore.SetText( ssprintf("%.2f%%", hs.fPercentDP*100) );
+		m_textScore.SetText( PercentageDisplay::FormatPercentScore(hs.fPercentDP) );
 	else
 		m_textScore.SetText( ssprintf("%i", hs.iScore) );
 	m_textScore.SetShadowLength( 2 );
