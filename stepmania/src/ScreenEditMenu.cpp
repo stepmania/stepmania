@@ -62,7 +62,7 @@ void DeleteCurSteps( void* pThrowAway )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
-	switch( EDIT_MODE )
+	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_HOME:
 		break;
@@ -230,7 +230,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
-		switch( EDIT_MODE )
+		switch( EDIT_MODE.GetValue() )
 		{
 		case EDIT_MODE_HOME:
 			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );

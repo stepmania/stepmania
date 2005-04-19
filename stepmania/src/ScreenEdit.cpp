@@ -753,7 +753,7 @@ void ScreenEdit::UpdateTextInfo()
 	CString sText;
 	sText += ssprintf( "Current beat:\n  %.3f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current sec:\n  %.3f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
-	switch( EDIT_MODE )
+	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
 		break;
@@ -765,7 +765,7 @@ void ScreenEdit::UpdateTextInfo()
 		ASSERT(0);
 	}
 	sText += ssprintf( "Selection beat:\n  %s\n  %s\n",	m_NoteFieldEdit.m_iBeginMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str(), m_NoteFieldEdit.m_iEndMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
-	switch( EDIT_MODE )
+	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
 	case EDIT_MODE_HOME:
@@ -784,7 +784,7 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Hands:\n  %d\n", iNumHands );
 	sText += ssprintf( "Holds:\n  %d\n", iNumHolds );
 	sText += ssprintf( "Mines:\n  %d\n", iNumMines );
-	switch( EDIT_MODE )
+	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
 	case EDIT_MODE_HOME:
@@ -1804,7 +1804,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				FOREACH_Difficulty( dc )
 					g_StepsInformation.rows[difficulty].choices.push_back( DifficultyToThemedString(pSteps->GetDifficulty()) );
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
 				case EDIT_MODE_HOME:
@@ -1817,7 +1817,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					ASSERT(0);
 				}
 				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
 					g_StepsInformation.rows[meter].bEnabled = false;
@@ -1833,7 +1833,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[predict_meter].choices[0] = ssprintf("%.2f",pSteps->PredictMeter());
 				g_StepsInformation.rows[description].choices.resize(1);	
 				g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
 				case EDIT_MODE_HOME:
@@ -1887,7 +1887,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				pSteps->SetNoteData( m_NoteDataEdit );
 				pSteps->CalculateRadarValues( pSong->m_fMusicLengthSeconds );
 
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_HOME:
 					{
@@ -2091,7 +2091,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			PlayPreviewMusic();
 			break;
 		case exit:
-			switch( EDIT_MODE )
+			switch( EDIT_MODE.GetValue() )
 			{
 			case EDIT_MODE_FULL:
 			case EDIT_MODE_HOME:
@@ -2730,7 +2730,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 
 float ScreenEdit::GetMaximumBeatForNewNote() const
 {
-	switch( EDIT_MODE )
+	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
 	case EDIT_MODE_HOME:

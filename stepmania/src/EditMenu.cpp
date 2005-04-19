@@ -58,7 +58,7 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 {
 	vpSongsOut.clear();
 	SONGMAN->GetSongs( vpSongsOut, sGroup );
-	switch( EDIT_MODE )
+	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
 	case EDIT_MODE_HOME:
@@ -347,7 +347,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				FOREACH_CONST( Steps*, v, p )
 					m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
 
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
 					break;
@@ -362,7 +362,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			{
 				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), dc );
 
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_HOME:
 					// don't allow selecting of non-edits in HomeMode
@@ -402,7 +402,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				s = DifficultyToThemedString(GetSelectedDifficulty());
 
 				// UGLY.  "Edit" -> "New Edit"
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_HOME:
 					s = "New " + s;
@@ -477,7 +477,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( GetSelectedSteps() )
 			{
 				m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
-				switch( EDIT_MODE )
+				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
 					break;
