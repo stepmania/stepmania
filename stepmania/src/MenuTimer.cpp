@@ -65,7 +65,6 @@ void MenuTimer::Update( float fDeltaTime )
 
 	const float fOldSecondsLeft = m_fSecondsLeft;
 	m_fSecondsLeft -= fDeltaTime;
-	CLAMP( m_fSecondsLeft, 0, 99 );
 	const float fNewSecondsLeft = m_fSecondsLeft;
 
 	const int iOldDisplay = (int)(fOldSecondsLeft + 0.99f);
@@ -135,7 +134,6 @@ void MenuTimer::Stall()
 void MenuTimer::SetSeconds( float fSeconds )
 {
 	m_fSecondsLeft = fSeconds;
-	CLAMP( m_fSecondsLeft, 0, 99 );
 
 	m_textDigit1.RunCommands( ON_COMMAND );
 	m_textDigit2.RunCommands( ON_COMMAND );
