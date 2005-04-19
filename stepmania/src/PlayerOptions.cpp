@@ -44,6 +44,9 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 #define APP( opt ) \
 	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
 
+	APP( fTimeSpacing );
+	APP( fScrollSpeed );
+	APP( fScrollBPM );
 	for( int i=0; i<NUM_ACCELS; i++ )
 		APP( fAccels[i] );
 	for( int i=0; i<NUM_EFFECTS; i++ )
@@ -52,8 +55,6 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 		APP( fAppearances[i] );
 	for( int i=0; i<NUM_SCROLLS; i++ )
 		APP( fScrolls[i] );
-	APP( fTimeSpacing );
-	APP( fScrollSpeed );
 	APP( fDark );
 	APP( fBlind );
 	APP( fCover );
