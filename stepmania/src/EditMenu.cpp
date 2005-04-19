@@ -354,6 +354,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				case EDIT_MODE_HOME:
 				case EDIT_MODE_FULL:
 					m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
+					break;
 				default:
 					ASSERT(0);
 				}
