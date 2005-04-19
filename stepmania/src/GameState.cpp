@@ -1867,8 +1867,15 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 		fActual = ssAccum.fGameplaySeconds + ssCurrent.fGameplaySeconds;
 		fGoal = (float)pProfile->m_iGoalSeconds;
 		break;
+	case GOAL_NONE:
+		return 0;	// never complete
+	default:
+		ASSERT(0);
 	}
-	return fActual / fGoal;
+	if( fGoal == 0 )
+		return 0;
+	else
+		return fActual / fGoal;
 }
 
 bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier )
