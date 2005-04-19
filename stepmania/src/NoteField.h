@@ -44,6 +44,8 @@ public:
 protected:
 	void CacheAllUsedNoteSkins();
 
+	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw );
+
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
