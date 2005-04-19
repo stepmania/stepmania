@@ -406,6 +406,19 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 	return fLastBeatToDraw;
 }
 
+bool NoteField::IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw )
+{
+	// TRICKY: If boomerang is on, then ones in the range 
+	// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+	// Test to see if this beat is visible before drawing.
+	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	if( fYOffset > iLastPixelToDraw )	// off screen
+		return false;
+	if( fYOffset < iFirstPixelToDraw )	// off screen
+		return false;
+
+	return true;
+}
 
 void NoteField::DrawPrimitives()
 {
@@ -451,6 +464,8 @@ void NoteField::DrawPrimitives()
 //	LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
 //	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
 
+#define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, iFirstPixelToDraw, iLastPixelToDraw )
+
 	if( GAMESTATE->m_bEditing )
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
@@ -461,7 +476,10 @@ void NoteField::DrawPrimitives()
 		{
 			float fStartDrawingMeasureBars = max( 0, Quantize(fFirstBeatToDraw-0.25f,0.25f) );
 			for( float f=fStartDrawingMeasureBars; f<fLastBeatToDraw; f+=0.25f )
-				DrawBeatBar( f );
+			{
+				if( IS_ON_SCREEN(f) )
+					DrawBeatBar( f );
+			}
 		}
 
 		//
@@ -470,9 +488,13 @@ void NoteField::DrawPrimitives()
 		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
-			if(aBPMSegments[i].m_iStartIndex >= iFirstIndexToDraw &&
-			   aBPMSegments[i].m_iStartIndex <= iLastIndexToDraw)
-			   DrawBPMText( NoteRowToBeat(aBPMSegments[i].m_iStartIndex), aBPMSegments[i].GetBPM() );
+			if( aBPMSegments[i].m_iStartIndex >= iFirstIndexToDraw &&
+			    aBPMSegments[i].m_iStartIndex <= iLastIndexToDraw)
+			{
+				float fBeat = NoteRowToBeat(aBPMSegments[i].m_iStartIndex);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawBPMText( fBeat, aBPMSegments[i].GetBPM() );
+			}
 		}
 		//
 		// Freeze text
@@ -480,9 +502,13 @@ void NoteField::DrawPrimitives()
 		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
 		for( unsigned i=0; i<aStopSegments.size(); i++ )
 		{
-			if(aStopSegments[i].m_iStartRow >= iFirstIndexToDraw &&
-			   aStopSegments[i].m_iStartRow <= iLastIndexToDraw)
-			DrawFreezeText( NoteRowToBeat(aStopSegments[i].m_iStartRow), aStopSegments[i].m_fStopSeconds );
+			if( aStopSegments[i].m_iStartRow >= iFirstIndexToDraw &&
+			    aStopSegments[i].m_iStartRow <= iLastIndexToDraw)
+			{
+				float fBeat = NoteRowToBeat(aStopSegments[i].m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds );
+			}
 		}
 
 		//
@@ -509,7 +535,8 @@ void NoteField::DrawPrimitives()
 							change.m_bRewindMovie ? " Rewind" : "",
 							change.m_bLoop ? " Loop" : "" );
 
-						DrawBGChangeText( change.m_fStartBeat, sChangeText );
+						if( IS_ON_SCREEN(change.m_fStartBeat) )
+							DrawBGChangeText( change.m_fStartBeat, sChangeText );
 					}
 				}
 			}
@@ -648,10 +675,7 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(i) );
-			if( fYOffset > iLastPixelToDraw )	// off screen
-				continue;	// skip
-			if( fYOffset < iFirstPixelToDraw )	// off screen
+			if( !IS_ON_SCREEN(NoteRowToBeat(i)) )
 				continue;	// skip
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
