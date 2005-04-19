@@ -409,17 +409,71 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 				}
 				else
 				{
-					m_wTextLines.push_back( CStringToWstring(sCurLine) );
-					sCurLine = sWord;
-					iCurLineWidth = iWidthWord;
+					AddLine( sCurLine, iCurLineWidth );
+					if ( sCurLine.length() != 0 )
+					{
+						sCurLine += " " + sWord;
+						iCurLineWidth += iWidthWord;
+					}
+					else
+					{
+						sCurLine = sWord;
+						iCurLineWidth = iWidthWord;
+					}
 				}
 			}
-			m_wTextLines.push_back( CStringToWstring(sCurLine) );
+			int LastWidth = iCurLineWidth;
+			while ( sCurLine.length() > 0 )
+			{
+				AddLine( sCurLine, iCurLineWidth );
+				if ( LastWidth < iCurLineWidth )
+					break;	//Something's wrong (infinite loop)
+				else
+					LastWidth = iCurLineWidth;
+			}
 		}
 	}
 
 	BuildChars();
 	UpdateBaseZoom();
+}
+
+/* This will get called only if the sAddition is already somewhat
+   broken down into lines.  This is in place only to handle single
+   words that are too wide for the line. */
+void BitmapText::AddLine( CString &sAddition, int & iWidthPixels )
+{
+	if ( ( iWidthPixels < m_iWrapWidthPixels ) || ( sAddition.length() == 0 ) )
+	{
+		m_wTextLines.push_back( CStringToWstring( sAddition ) );
+		sAddition = "";
+		iWidthPixels = 0;
+	}
+	else
+	{
+		CString sCurrentLine;
+		int		iCurrentLineWidth;
+		for ( unsigned i = 0; i < sAddition.length(); i++ )
+		{
+			CString sCurrentChar = sAddition.substr( i, 1 );
+			int		iCurrentCharWidth = m_pFont->GetLineWidthInSourcePixels( CStringToWstring( sCurrentChar ) );
+
+			if ( iCurrentLineWidth + iCurrentCharWidth > m_iWrapWidthPixels )
+			{
+				if ( sCurrentLine.length() != 0 )
+					m_wTextLines.push_back( CStringToWstring( sCurrentLine ) );
+				sCurrentLine = sCurrentChar;
+				iCurrentLineWidth = iCurrentCharWidth;
+			}
+			else
+			{
+				sCurrentLine += sCurrentChar;
+				iCurrentLineWidth += iCurrentCharWidth;
+			}
+		}
+		sAddition = sCurrentLine;
+		iWidthPixels = iCurrentLineWidth;
+	}
 }
 
 void BitmapText::SetMaxWidth( float fMaxWidth )

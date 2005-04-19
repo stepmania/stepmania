@@ -79,7 +79,7 @@ void ScreenNetSelectBase::Init()
 	vector <wstring> wLines;
 	m_textOutHidden.GetLines( wLines );
 	m_actualText = "";
-	for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
+	for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES + 1, 0 ) ; i < wLines.size() ; ++i)
 		m_actualText += WStringToCString( wLines[i] )+'\n';
 	m_textChatOutput.SetText( m_actualText );
 
@@ -201,7 +201,7 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 		vector <wstring> wLines;
 		m_textOutHidden.GetLines( wLines );
 		m_actualText = "";
-		for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
+		for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES + 1, 0 ) ; i < wLines.size() ; ++i)
 			m_actualText += WStringToCString( wLines[i] )+'\n';
 		m_textChatOutput.SetText( m_actualText );
 	}
