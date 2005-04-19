@@ -58,14 +58,21 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 {
 	vpSongsOut.clear();
 	SONGMAN->GetSongs( vpSongsOut, sGroup );
-	if( EDIT_MODE < EDIT_MODE_FULL )
+	switch( EDIT_MODE )
 	{
+	case EDIT_MODE_PRACTICE:
+	case EDIT_MODE_HOME:
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
 			if( UNLOCKMAN->SongIsLocked(pSong) )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
+		break;
+	case EDIT_MODE_FULL:
+		break;
+	default:
+		ASSERT(0);
 	}
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
@@ -340,18 +347,38 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				FOREACH_CONST( Steps*, v, p )
 					m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
 
-				if( EDIT_MODE != EDIT_MODE_PRACTICE )
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_PRACTICE:
+					break;
+				case EDIT_MODE_HOME:
+				case EDIT_MODE_FULL:
 					m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
+				default:
+					ASSERT(0);
+				}
 			}
 			else
 			{
-				// don't allow selecting of non-edits in HomeMode
-				if( EDIT_MODE == EDIT_MODE_HOME )
-					continue;
-
 				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), dc );
-				if( pSteps  ||  EDIT_MODE != EDIT_MODE_PRACTICE )
+
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_HOME:
+					// don't allow selecting of non-edits in HomeMode
+					break;
+				case EDIT_MODE_PRACTICE:
+					// only show this difficulty if steps exist
+					if( pSteps )
+						m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+					break;
+				case EDIT_MODE_FULL:
+					// show this difficulty whether or not steps exist.
 					m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+					break;
+				default:
+					ASSERT(0);
+				}
 			}
 		}
 
@@ -375,8 +402,17 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				s = DifficultyToThemedString(GetSelectedDifficulty());
 
 				// UGLY.  "Edit" -> "New Edit"
-				if( EDIT_MODE == EDIT_MODE_HOME )
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_HOME:
 					s = "New " + s;
+					break;
+				case EDIT_MODE_PRACTICE:
+				case EDIT_MODE_FULL:
+					break;
+				default:
+					ASSERT(0);
+				}
 			}
 			m_textValue[ROW_STEPS].SetText( s );
 		}
@@ -441,8 +477,17 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( GetSelectedSteps() )
 			{
 				m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
-				if( EDIT_MODE != EDIT_MODE_PRACTICE )
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_PRACTICE:
+					break;
+				case EDIT_MODE_HOME:
+				case EDIT_MODE_FULL:
 					m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
+					break;
+				default:
+					ASSERT(0);
+				}
 			}
 			else
 			{

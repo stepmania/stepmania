@@ -753,26 +753,49 @@ void ScreenEdit::UpdateTextInfo()
 	CString sText;
 	sText += ssprintf( "Current beat:\n  %.3f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current sec:\n  %.3f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
-	if( EDIT_MODE >= EDIT_MODE_HOME )
-		sText += ssprintf( "Snap to:\n  %s\n",				sNoteType.c_str() );
-	sText += ssprintf( "Selection beat:\n  %s\n  %s\n",	m_NoteFieldEdit.m_iBeginMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str(), m_NoteFieldEdit.m_iEndMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
-	if( EDIT_MODE == EDIT_MODE_FULL )
+	switch( EDIT_MODE )
 	{
+	case EDIT_MODE_PRACTICE:
+		break;
+	case EDIT_MODE_HOME:
+	case EDIT_MODE_FULL:
+		sText += ssprintf( "Snap to:\n  %s\n",				sNoteType.c_str() );
+		break;
+	default:
+		ASSERT(0);
+	}
+	sText += ssprintf( "Selection beat:\n  %s\n  %s\n",	m_NoteFieldEdit.m_iBeginMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str(), m_NoteFieldEdit.m_iEndMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
+	switch( EDIT_MODE )
+	{
+	case EDIT_MODE_PRACTICE:
+	case EDIT_MODE_HOME:
+		break;
+	case EDIT_MODE_FULL:
 		sText += ssprintf( "Difficulty:\n  %s\n",		DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 		sText += ssprintf( "Description:\n  %s\n",		GAMESTATE->m_pCurSteps[PLAYER_1] ? GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription().c_str() : "no description" );
 		sText += ssprintf( "Main title:\n  %s\n", m_pSong->m_sMainTitle.c_str() );
 		sText += ssprintf( "Sub title:\n  %s\n", m_pSong->m_sSubTitle.c_str() );
+		break;
+	default:
+		ASSERT(0);
 	}
 	sText += ssprintf( "Tap steps:\n  %d\n", iNumTaps );
 	sText += ssprintf( "Jumps:\n  %d\n", iNumJumps );
 	sText += ssprintf( "Hands:\n  %d\n", iNumHands );
 	sText += ssprintf( "Holds:\n  %d\n", iNumHolds );
 	sText += ssprintf( "Mines:\n  %d\n", iNumMines );
-	if( EDIT_MODE == EDIT_MODE_FULL )
+	switch( EDIT_MODE )
 	{
+	case EDIT_MODE_PRACTICE:
+	case EDIT_MODE_HOME:
+		break;
+	case EDIT_MODE_FULL:
 		sText += ssprintf( "Beat 0 Offset:\n  %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
 		sText += ssprintf( "Preview Start:\n  %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
 		sText += ssprintf( "Preview Length:\n  %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	m_textInfo.SetText( sText );
@@ -1781,11 +1804,48 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				FOREACH_Difficulty( dc )
 					g_StepsInformation.rows[difficulty].choices.push_back( DifficultyToThemedString(pSteps->GetDifficulty()) );
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
-				g_StepsInformation.rows[difficulty].bEnabled = EDIT_MODE >= EDIT_MODE_FULL;
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_PRACTICE:
+				case EDIT_MODE_HOME:
+					g_StepsInformation.rows[difficulty].bEnabled = false;
+					break;
+				case EDIT_MODE_FULL:
+					g_StepsInformation.rows[difficulty].bEnabled = true;
+					break;
+				default:
+					ASSERT(0);
+				}
 				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
-				g_StepsInformation.rows[meter].bEnabled = EDIT_MODE >= EDIT_MODE_HOME;
-				g_StepsInformation.rows[predict_meter].choices.resize(1);g_StepsInformation.rows[predict_meter].choices[0] = ssprintf("%.2f",pSteps->PredictMeter());
-				g_StepsInformation.rows[description].choices.resize(1);	g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();	g_StepsInformation.rows[description].bEnabled = EDIT_MODE == EDIT_MODE_FULL;
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_PRACTICE:
+					g_StepsInformation.rows[meter].bEnabled = false;
+					break;
+				case EDIT_MODE_HOME:
+				case EDIT_MODE_FULL:
+					g_StepsInformation.rows[meter].bEnabled = true;
+					break;
+				default:
+					ASSERT(0);
+				}
+				g_StepsInformation.rows[predict_meter].choices.resize(1);
+				g_StepsInformation.rows[predict_meter].choices[0] = ssprintf("%.2f",pSteps->PredictMeter());
+				g_StepsInformation.rows[description].choices.resize(1);	
+				g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();
+				switch( EDIT_MODE )
+				{
+				case EDIT_MODE_PRACTICE:
+				case EDIT_MODE_HOME:
+					g_StepsInformation.rows[description].bEnabled = false;
+					break;
+				case EDIT_MODE_FULL:
+					g_StepsInformation.rows[description].bEnabled = true;
+					break;
+				default:
+					ASSERT(0);
+				}
+				g_StepsInformation.rows[description].choices.resize(1);	g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();
 				g_StepsInformation.rows[tap_notes].choices.resize(1);	g_StepsInformation.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumTapNotes());
 				g_StepsInformation.rows[jumps].choices.resize(1);		g_StepsInformation.rows[jumps].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumJumps());
 				g_StepsInformation.rows[hands].choices.resize(1);		g_StepsInformation.rows[hands].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumHands());
@@ -2670,21 +2730,25 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 
 float ScreenEdit::GetMaximumBeatForNewNote() const
 {
-	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
+	switch( EDIT_MODE )
 	{
-		float fEndBeat = GAMESTATE->m_pCurSong->m_fLastBeat;
+	case EDIT_MODE_PRACTICE:
+	case EDIT_MODE_HOME:
+		{
+			float fEndBeat = GAMESTATE->m_pCurSong->m_fLastBeat;
 
-		// Round up to the next measure end.  Some songs end on weird beats 
-		// mid-measure, and it's odd to have movement capped to these weird
-		// beats.
-		fEndBeat += BEATS_PER_MEASURE;
-		fEndBeat = ftruncf( fEndBeat, (float)BEATS_PER_MEASURE );
+			// Round up to the next measure end.  Some songs end on weird beats 
+			// mid-measure, and it's odd to have movement capped to these weird
+			// beats.
+			fEndBeat += BEATS_PER_MEASURE;
+			fEndBeat = ftruncf( fEndBeat, (float)BEATS_PER_MEASURE );
 
-		return fEndBeat;
-	}
-	else
-	{
+			return fEndBeat;
+		}
+	case EDIT_MODE_FULL:
 		return FLT_MAX;
+	default:
+		ASSERT(0);	return 0;
 	}
 }
 

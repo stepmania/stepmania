@@ -62,10 +62,16 @@ void DeleteCurSteps( void* pThrowAway )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
-	if( EDIT_MODE == EDIT_MODE_FULL )
+	switch( EDIT_MODE )
 	{
+	case EDIT_MODE_HOME:
+		break;
+	case EDIT_MODE_FULL:
 		pSong->Save();
 		SCREENMAN->ZeroNextUpdate();
+		break;
+	default:
+		ASSERT(0);
 	}
 	SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
 }
