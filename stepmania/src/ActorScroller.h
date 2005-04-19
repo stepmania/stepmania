@@ -69,7 +69,8 @@ protected:
 	float	m_fNumItemsToDraw;
 	bool	m_bLoop; 
 	float	m_fPauseCountdownSeconds;
-	
+	float	m_fQuantizePixels;
+
 	bool	m_bUseMask;
 	float	m_fMaskWidth;
 	float	m_fMaskHeight;

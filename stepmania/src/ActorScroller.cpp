@@ -89,6 +89,7 @@ void ActorScroller::Load2(
 	m_fCurrentItem = m_bLoop ? 0 : (float)-m_fNumItemsToDraw;
 	m_fDestinationItem = (float)(m_SubActors.size()+1);
 	m_fPauseCountdownSeconds = 0;
+	m_fQuantizePixels = 0;
 
 	m_bUseMask = true;
 	RectF rectBarSize(
@@ -162,6 +163,8 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		vTranslateTerm2 );
 	SetCurrentAndDestinationItem( -fItemPaddingStart );
 	SetDestinationItem( m_SubActors.size()-1+fItemPaddingEnd );
+
+	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 }
 
 void ActorScroller::Update( float fDeltaTime )
@@ -214,6 +217,11 @@ void ActorScroller::Update( float fDeltaTime )
 		m_vTranslateTerm0 + 							/* m_vTranslateTerm0*fPosition^0 */ \
 		m_vTranslateTerm1 * fPosition +				/* m_vTranslateTerm1*fPosition^1 */ \
 		m_vTranslateTerm2 * fPosition*fPosition; 	/* m_vTranslateTerm2*fPosition^2 */ \
+	if( m_fQuantizePixels > 0 ) { \
+		vTranslation.x = Quantize( vTranslation.x, m_fQuantizePixels ); \
+		vTranslation.y = Quantize( vTranslation.y, m_fQuantizePixels ); \
+		vTranslation.z = Quantize( vTranslation.z, m_fQuantizePixels ); \
+	} \
 	DISPLAY->Translate( \
 		vTranslation.x, \
 		vTranslation.y, \
