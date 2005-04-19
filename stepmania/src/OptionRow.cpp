@@ -221,10 +221,15 @@ CString OptionRow::GetRowTitle() const
 void OptionRow::AfterImportOptions()
 {
 	// Make all selections the same if bOneChoiceForAllPlayers
+	// Hack: we only import active players, so if only player 2 is imported,
+	// we need to copy p2 to p1, not p1 to p2.
 	if( m_RowDef.bOneChoiceForAllPlayers )
 	{
-		for( int p=1; p<NUM_PLAYERS; p++ )
-			m_vbSelected[p] = m_vbSelected[0];
+		PlayerNumber pnCopyFrom = GAMESTATE->m_MasterPlayerNumber;
+		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
+			pnCopyFrom = PLAYER_1;
+		FOREACH_PlayerNumber( p )
+			m_vbSelected[p] = m_vbSelected[pnCopyFrom];
 	}
 
 	FOREACH_PlayerNumber( p )
