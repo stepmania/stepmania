@@ -5,11 +5,13 @@
 #include "PlayerNumber.h"
 
 struct StageStats;
+struct PlayerStageStats;
+
 class ComboGraph: public ActorFrame
 {
 public:
 	~ComboGraph() { Unload(); }
-	void Load( const CString& sScreen, const CString& sElement, const StageStats &s, PlayerNumber pn );
+	void Load( const CString& sScreen, const CString& sElement, const StageStats &s, const PlayerStageStats &pss );
 	void Unload();
 	void TweenOffScreen();
 

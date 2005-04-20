@@ -39,11 +39,11 @@ void GraphDisplay::Unload()
 	m_pTexture = NULL;
 }
 
-void GraphDisplay::LoadFromStageStats( const PlayerStageStats &s )
+void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageStats &pss )
 {
 	memcpy( m_LastValues, m_CurValues, sizeof(m_CurValues) );
 	m_Position = 0;
-	s.GetLifeRecord( m_DestValues, VALUE_RESOLUTION );
+	pss.GetLifeRecord( m_DestValues, VALUE_RESOLUTION, ss.GetTotalPossibleMusicLengthSeconds() );
 	for( unsigned i=0; i<ARRAYSIZE(m_DestValues); i++ )
 		CLAMP( m_DestValues[i], 0.f, 1.f );
 	UpdateVerts();

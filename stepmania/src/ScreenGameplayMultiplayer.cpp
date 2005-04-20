@@ -346,7 +346,7 @@ void ScreenGameplayMultiplayer::LoadNextSong()
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_vpSongsQueue.size();
 	GAMESTATE->m_pCurSong.Set( m_vpSongsQueue[iPlaySongIndex] );
-	STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
+	STATSMAN->m_CurStageStats.vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
 
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
@@ -361,7 +361,7 @@ void ScreenGameplayMultiplayer::LoadNextSong()
 
 	Steps* pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
 
-	STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].vpSteps.push_back( pSteps );
+	STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].vpPlayedSteps.push_back( pSteps );
 
 	FOREACH_MultiPlayer( p )
 	{

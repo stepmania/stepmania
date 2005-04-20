@@ -15,7 +15,8 @@
 
 void PlayerStageStats::Init()
 {
-	vpSteps.clear();
+	vpPlayedSteps.clear();
+	vpPossibleSteps.clear();
 	fAliveSeconds = 0;
 	bFailed = bFailedEarlier = false;
 	iPossibleDancePoints = iCurPossibleDancePoints = iActualDancePoints = 0;
@@ -35,8 +36,10 @@ void PlayerStageStats::Init()
 
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
-	FOREACH_CONST( Steps*, other.vpSteps, s )
-		vpSteps.push_back( *s );
+	FOREACH_CONST( Steps*, other.vpPlayedSteps, s )
+		vpPlayedSteps.push_back( *s );
+	FOREACH_CONST( Steps*, other.vpPossibleSteps, s )
+		vpPossibleSteps.push_back( *s );
 	fAliveSeconds += other.fAliveSeconds;
 	bFailed |= other.bFailed;
 	bFailedEarlier |= other.bFailedEarlier;
@@ -292,7 +295,10 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fSecond ) const
 	if( earlier != fLifeRecord.begin() )
 		--earlier;
 
-	if( earlier->first == later->first )
+	if( earlier->first == later->first )	// two samples from the same time.  Don't divide by zero in SCALE
+		return earlier->second;
+
+	if( later == fLifeRecord.end() )
 		return earlier->second;
 
 	/* earlier <= pos <= later */
@@ -300,11 +306,11 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fSecond ) const
 }
 
 
-void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples ) const
+void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fEndSecond ) const
 {
 	for( int i = 0; i < iNumSamples; ++i )
 	{
-		float from = SCALE( i, 0, (float)iNumSamples, fFirstSecond, fLastSecond );
+		float from = SCALE( i, 0, (float)iNumSamples, 0.0f, fEndSecond );
 		fLifeOut[i] = GetLifeRecordLerpAt( from );
 	}
 }

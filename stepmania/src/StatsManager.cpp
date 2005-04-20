@@ -20,7 +20,7 @@ StageStats AccumStageStats( const vector<StageStats>& vss )
 	FOREACH_CONST( StageStats, vss, ss )
 		ssreturn.AddStats( *ss );
 
-	unsigned uNumSongs = ssreturn.vpSongs.size();
+	unsigned uNumSongs = ssreturn.vpPlayedSongs.size();
 
 	if( uNumSongs == 0 ) return ssreturn;	// don't divide by 0 below
 
@@ -84,10 +84,10 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	StyleID sID;
 	sID.FromStyle( ss.pStyle );
 
-	ASSERT( ss.vpSongs.size() == ss.m_player[pn].vpSteps.size() );
-	for( unsigned i=0; i<ss.vpSongs.size(); i++ )
+	ASSERT( ss.vpPlayedSongs.size() == ss.m_player[pn].vpPlayedSteps.size() );
+	for( unsigned i=0; i<ss.vpPlayedSongs.size(); i++ )
 	{
-		Steps *pSteps = ss.m_player[pn].vpSteps[i];
+		Steps *pSteps = ss.m_player[pn].vpPlayedSteps[i];
 
 		pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
 		pProfile->m_iNumSongsPlayedByStyle[sID] ++;
@@ -142,7 +142,7 @@ void StatsManager::CommitStatsToProfiles()
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iCurrentCombo = 0;
-	pMachineProfile->m_iNumTotalSongsPlayed += m_CurStageStats.vpSongs.size();
+	pMachineProfile->m_iNumTotalSongsPlayed += m_CurStageStats.vpPlayedSongs.size();
 
 	CHECKPOINT;
 	FOREACH_HumanPlayer( pn )
@@ -157,7 +157,7 @@ void StatsManager::CommitStatsToProfiles()
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
 				m_CurStageStats.m_player[pn].iCurCombo : 
 				0;
-			pPlayerProfile->m_iNumTotalSongsPlayed += m_CurStageStats.vpSongs.size();
+			pPlayerProfile->m_iNumTotalSongsPlayed += m_CurStageStats.vpPlayedSongs.size();
 		}
 
 		AddPlayerStatsToProfile( pMachineProfile, m_CurStageStats, pn );

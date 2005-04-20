@@ -110,12 +110,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
-		STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
+		STATSMAN->m_CurStageStats.vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
 		GAMESTATE->m_pCurSteps[PLAYER_2].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].vpSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].vpSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;
@@ -335,9 +335,9 @@ void ScreenEvaluation::Init()
 			break;
 		case summary:
 			{
-				for( unsigned i=0; i<stageStats.vpSongs.size(); i++ )
+				for( unsigned i=0; i<stageStats.vpPlayedSongs.size(); i++ )
 				{
-					Song *pSong = stageStats.vpSongs[i];
+					Song *pSong = stageStats.vpPlayedSongs[i];
 
 					m_SmallBanner[i].LoadFromSong( pSong );
 					m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
@@ -455,7 +455,7 @@ void ScreenEvaluation::Init()
 
 			m_Graph[p].SetName( ssprintf("GraphP%i",p+1) );
 			m_Graph[p].Load( THEME->GetPathG(m_sName,ssprintf("graph p%i", p+1)), GRAPH_START_HEIGHT );
-			m_Graph[p].LoadFromStageStats( stageStats.m_player[p] );
+			m_Graph[p].LoadFromStageStats( stageStats, stageStats.m_player[p] );
 			SET_XY_AND_ON_COMMAND( m_Graph[p] );
 			this->AddChild( &m_Graph[p] );
 		}
@@ -466,7 +466,7 @@ void ScreenEvaluation::Init()
 		FOREACH_EnabledPlayer( p )
 		{
 			m_Combo[p].SetName( m_sName, ssprintf("ComboP%i",p+1) );
-			m_Combo[p].Load( m_sName, ssprintf("combo p%i",p+1), stageStats, p );
+			m_Combo[p].Load( m_sName, ssprintf("combo p%i",p+1), stageStats, stageStats.m_player[p] );
 			SET_XY_AND_ON_COMMAND( m_Combo[p] );
 
 			this->AddChild( &m_Combo[p] );

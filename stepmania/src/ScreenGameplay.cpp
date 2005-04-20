@@ -704,7 +704,7 @@ void ScreenGameplay::InitSongQueues()
 			m_apSongsQueue.push_back( e->pSong );
 		}
 
-        FOREACH_EnabledPlayer(p)
+		FOREACH_EnabledPlayer(p)
 		{
 			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
 			ASSERT( pTrail );
@@ -724,12 +724,17 @@ void ScreenGameplay::InitSongQueues()
 	else
 	{
 		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
-        FOREACH_PlayerNumber(p)
+		FOREACH_PlayerNumber(p)
 		{
 			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurSteps[p] );
 			m_asModifiersQueue[p].push_back( AttackArray() );
 		}
 	}
+
+	// Fill StageStats
+	STATSMAN->m_CurStageStats.vpPossibleSongs = m_apSongsQueue;
+	FOREACH_PlayerNumber(p)
+		STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps = m_vpStepsQueue[p];
 }
 
 ScreenGameplay::~ScreenGameplay()
@@ -864,7 +869,7 @@ void ScreenGameplay::LoadNextSong()
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
 	GAMESTATE->m_pCurSong.Set( m_apSongsQueue[iPlaySongIndex] );
-	STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
+	STATSMAN->m_CurStageStats.vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
 
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
@@ -885,7 +890,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-		STATSMAN->m_CurStageStats.m_player[p].vpSteps.push_back( pSteps );
+		STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps.push_back( pSteps );
 
 		ASSERT( GAMESTATE->m_pCurSteps[p] );
 		m_textStepsDescription[p].SetText( GAMESTATE->m_pCurSteps[p]->GetDescription() );

@@ -1403,9 +1403,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			{
 				CHECKPOINT_M( ssprintf("%u/%i", i, (int)STATSMAN->m_vPlayedStageStats.size() ) );
 				SongAndSteps sas;
-				sas.pSong = STATSMAN->m_vPlayedStageStats[i].vpSongs[0];
+				sas.pSong = STATSMAN->m_vPlayedStageStats[i].vpPlayedSongs[0];
 				ASSERT( sas.pSong );
-				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].vpSteps[0];
+				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].vpPlayedSteps[0];
 				ASSERT( sas.pSteps );
 				vSongAndSteps.push_back( sas );
 			}

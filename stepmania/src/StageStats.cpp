@@ -9,7 +9,8 @@ StageStats::StageStats()
 {
 	playMode = PLAY_MODE_INVALID;
 	pStyle = NULL;
-	vpSongs.clear();
+	vpPlayedSongs.clear();
+	vpPossibleSongs.clear();
 	StageType = STAGE_INVALID;
 	fGameplaySeconds = 0;
 }
@@ -21,50 +22,55 @@ void StageStats::Init()
 
 void StageStats::AssertValid( PlayerNumber pn ) const
 {
-	ASSERT( vpSongs.size() != 0 );
-	if( vpSongs[0] )
-		CHECKPOINT_M( vpSongs[0]->GetFullTranslitTitle() );
-	ASSERT( m_player[pn].vpSteps.size() != 0 );
-	ASSERT( m_player[pn].vpSteps[0] );
+	ASSERT( vpPlayedSongs.size() != 0 );
+	ASSERT( vpPossibleSongs.size() != 0 );
+	if( vpPlayedSongs[0] )
+		CHECKPOINT_M( vpPlayedSongs[0]->GetFullTranslitTitle() );
+	ASSERT( m_player[pn].vpPlayedSteps.size() != 0 );
+	ASSERT( m_player[pn].vpPlayedSteps[0] );
 	ASSERT_M( playMode < NUM_PLAY_MODES, ssprintf("playmode %i", playMode) );
 	ASSERT( pStyle != NULL );
-	ASSERT_M( m_player[pn].vpSteps[0]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", m_player[pn].vpSteps[0]->GetDifficulty()) );
-	ASSERT( vpSongs.size() == m_player[pn].vpSteps.size() );
+	ASSERT_M( m_player[pn].vpPlayedSteps[0]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", m_player[pn].vpPlayedSteps[0]->GetDifficulty()) );
+	ASSERT( vpPlayedSongs.size() == m_player[pn].vpPlayedSteps.size() );
+	ASSERT( vpPossibleSongs.size() == m_player[pn].vpPossibleSteps.size() );
 }
 
 
 int StageStats::GetAverageMeter( PlayerNumber pn ) const
 {
-	int iTotalMeter = 0;
-	ASSERT( vpSongs.size() == m_player[pn].vpSteps.size() );
+	AssertValid( pn );
 
-	for( unsigned i=0; i<vpSongs.size(); i++ )
+	// TODO: This isn't correct for courses.
+	
+	int iTotalMeter = 0;
+
+	for( unsigned i=0; i<vpPlayedSongs.size(); i++ )
 	{
-		const Steps* pSteps = m_player[pn].vpSteps[i];
+		const Steps* pSteps = m_player[pn].vpPlayedSteps[i];
 		iTotalMeter += pSteps->GetMeter();
 	}
-	return iTotalMeter / vpSongs.size();	// round down
+	return iTotalMeter / vpPlayedSongs.size();	// round down
 }
 
 void StageStats::AddStats( const StageStats& other )
 {
-	ASSERT( !other.vpSongs.empty() );
-	FOREACH_CONST( Song*, other.vpSongs, s )
-		vpSongs.push_back( *s );
+	ASSERT( !other.vpPlayedSongs.empty() );
+	FOREACH_CONST( Song*, other.vpPlayedSongs, s )
+		vpPlayedSongs.push_back( *s );
+	FOREACH_CONST( Song*, other.vpPossibleSongs, s )
+		vpPossibleSongs.push_back( *s );
 	StageType = STAGE_INVALID; // meaningless
 	
 	fGameplaySeconds += other.fGameplaySeconds;
 
 	FOREACH_PlayerNumber( p )
-	{
 		m_player[p].AddStats( other.m_player[p] );
-	}
 }
 
 bool StageStats::OnePassed() const
 {
-	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsHumanPlayer(p) && !m_player[p].bFailed )
+	FOREACH_HumanPlayer( p )
+		if( !m_player[p].bFailed )
 			return true;
 	return false;
 }
@@ -83,6 +89,15 @@ bool StageStats::AllFailedEarlier() const
 		if( !m_player[p].bFailedEarlier )
 			return false;
 	return true;
+}
+
+float StageStats::GetTotalPossibleMusicLengthSeconds() const
+{
+	float fSecs = 0;
+	FOREACH_CONST( Song*, vpPossibleSongs, s )
+		fSecs += (*s)->m_fMusicLengthSeconds;
+
+	return fSecs;
 }
 
 

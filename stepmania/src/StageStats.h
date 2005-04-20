@@ -27,9 +27,12 @@ struct StageStats
 
 	PlayMode	playMode;
 	const Style*	pStyle;
-	vector<Song*>	vpSongs;
+	vector<Song*>	vpPlayedSongs;
+	vector<Song*>	vpPossibleSongs;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 	float	fGameplaySeconds;				// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
+
+	float GetTotalPossibleMusicLengthSeconds() const;		// TODO: Scale this by the music rate
 
 	PlayerStageStats m_player[NUM_PLAYERS];
 

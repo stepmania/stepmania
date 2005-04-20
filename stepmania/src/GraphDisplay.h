@@ -4,6 +4,7 @@
 #include "ActorFrame.h"
 #include "RageTexture.h"
 
+struct StageStats;
 struct PlayerStageStats;
 
 class GraphDisplay: public ActorFrame
@@ -14,14 +15,14 @@ public:
 	void Load( const CString &TexturePath, float height );
 	void Unload();
 
-	void LoadFromStageStats( const PlayerStageStats &s );
+	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );
 	void Update( float fDeltaTime );
 	void DrawPrimitives();
 
 private:
 	void UpdateVerts();
 
-	enum { VALUE_RESOLUTION=100 };
+	enum { VALUE_RESOLUTION=200 };
 	float m_CurValues[VALUE_RESOLUTION];
 	float m_DestValues[VALUE_RESOLUTION];
 	float m_LastValues[VALUE_RESOLUTION];

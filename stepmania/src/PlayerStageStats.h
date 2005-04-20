@@ -22,7 +22,8 @@ struct PlayerStageStats
 	float GetPercentDancePoints() const;
 	float GetCurMaxPercentDancePoints() const;
 
-	vector<Steps*>  vpSteps;
+	vector<Steps*>  vpPlayedSteps;
+	vector<Steps*>  vpPossibleSteps;
 	float	fAliveSeconds;		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
 
 	/* Set if the player actually failed at any point during the song.  This is always
@@ -57,7 +58,7 @@ struct PlayerStageStats
 
 	map<float,float>	fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fSecond );
-	void	GetLifeRecord( float *fLifeOut, int iNumSamples ) const;
+	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fEndSecond ) const;
 	float	GetLifeRecordAt( float fSecond ) const;
 	float	GetLifeRecordLerpAt( float fSecond ) const;
 
