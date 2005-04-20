@@ -105,6 +105,7 @@ PrefsManager::PrefsManager() :
 	m_fJudgeWindowSecondsGood		( Options, "JudgeWindowSecondsGood",			0.135f ),
 	m_fJudgeWindowSecondsBoo		( Options, "JudgeWindowSecondsBoo",			0.180f ),
 	m_fJudgeWindowSecondsOK			( Options, "JudgeWindowSecondsOK",			0.250f ),	// allow enough time to take foot off and put back on
+	m_fJudgeWindowSecondsRoll		( Options, "JudgeWindowSecondsRoll",		0.350f ),
 	m_fJudgeWindowSecondsMine		( Options, "JudgeWindowSecondsMine",			0.090f ),	// same as great
 	m_fJudgeWindowSecondsAttack		( Options, "JudgeWindowSecondsAttack",		0.135f ),
 
@@ -576,6 +577,7 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "JudgeWindowSecondsGood",			m_fJudgeWindowSecondsGood );
 	ini.SetValue( "Options", "JudgeWindowSecondsBoo",			m_fJudgeWindowSecondsBoo );
 	ini.SetValue( "Options", "JudgeWindowSecondsOK",			m_fJudgeWindowSecondsOK );
+	ini.SetValue( "Options", "JudgeWindowSecondsRoll",			m_fJudgeWindowSecondsRoll );
 	ini.SetValue( "Options", "JudgeWindowSecondsMine",			m_fJudgeWindowSecondsMine );
 	ini.SetValue( "Options", "JudgeWindowSecondsAttack",		m_fJudgeWindowSecondsAttack );
 	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );

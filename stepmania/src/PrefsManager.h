@@ -63,6 +63,7 @@ public:
 	Preference<float>	m_fJudgeWindowSecondsGood;
 	Preference<float>	m_fJudgeWindowSecondsBoo;
 	Preference<float>	m_fJudgeWindowSecondsOK;
+	Preference<float>	m_fJudgeWindowSecondsRoll;
 	Preference<float>	m_fJudgeWindowSecondsMine;
 	Preference<float>	m_fJudgeWindowSecondsAttack;
 

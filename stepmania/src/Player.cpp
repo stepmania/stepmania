@@ -433,23 +433,40 @@ void Player::Update( float fDeltaTime )
 			// If the song beat is in the range of this hold:
 			if( iRow <= iSongRow && iRow <= iEndRow )
 			{
-				// set hold flag so NoteField can do intelligent drawing
-				tn.HoldResult.bHeld = bIsHoldingButton && bSteppedOnTapNote;
-				tn.HoldResult.bActive = bSteppedOnTapNote;
-
-				if( bSteppedOnTapNote && bIsHoldingButton )
+				switch( tn.subType )
 				{
-					// Increase life
-					fLife = 1;
+				case TapNote::hold_head_hold:
+					// set hold flag so NoteField can do intelligent drawing
+					tn.HoldResult.bHeld = bIsHoldingButton && bSteppedOnTapNote;
+					tn.HoldResult.bActive = bSteppedOnTapNote;
 
-					if( m_pNoteField )
-						m_pNoteField->DidHoldNote( iTrack );		// update the "electric ghost" effect
-				}
-				else
-				{
+					if( bSteppedOnTapNote && bIsHoldingButton )
+					{
+						// Increase life
+						fLife = 1;
+
+						if( m_pNoteField )
+							m_pNoteField->DidHoldNote( iTrack );		// update the "electric ghost" effect
+					}
+					else
+					{
+						// Decrease life
+						fLife -= fDeltaTime/ADJUSTED_WINDOW(OK);
+						fLife = max( fLife, 0 );	// clamp
+					}
+					break;
+				case TapNote::hold_head_roll:
+					tn.HoldResult.bHeld = true;
+					tn.HoldResult.bActive = bSteppedOnTapNote;
+
+					// give positive life in Step(), not here.
+
 					// Decrease life
 					fLife -= fDeltaTime/ADJUSTED_WINDOW(OK);
 					fLife = max( fLife, 0 );	// clamp
+					break;
+				default:
+					ASSERT(0);
 				}
 			}
 
@@ -1005,6 +1022,90 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
 		if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 			m_vKeysounds[tn.iKeysoundIndex].Play();
+	}
+
+
+	// Update roll life
+	// Let's not check the whole array every time.
+	// Instead, only check 1 beat back.  Even 1 is overkill.
+	const int iSongRow = BeatToNoteRow(fSongBeat);
+	const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+	NoteData::iterator begin, end;
+	m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
+	for( ; begin != end; ++begin )
+	{
+		TapNote &tn = begin->second;
+		if( tn.type != TapNote::hold_head )
+			continue;
+		int iRow = begin->first;
+
+		HoldNoteScore hns = tn.HoldResult.hns;
+		if( hns != HNS_NONE )	// if this HoldNote already has a result
+			continue;	// we don't need to update the logic for this one
+
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+		// if they got a bad score or haven't stepped on the corresponding tap yet
+		const TapNoteScore tns = tn.result.tns;
+		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this roll?
+
+		int iEndRow = iRow + tn.iDuration;
+
+		float fLife = tn.HoldResult.fLife;
+		if( bSteppedOnTapNote && fLife != 0 )
+		{
+			/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
+			 * Do this even if we're a little beyond the end of the hold note, to make sure
+			 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+			tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+		}
+
+		// If the song beat is in the range of this hold:
+		if( iRow <= iSongRow && iRow <= iEndRow )
+		{
+			switch( tn.subType )
+			{
+			case TapNote::hold_head_hold:
+				// this is handled in Update
+				break;
+			case TapNote::hold_head_roll:
+				// Increase life
+				fLife = 1;
+				LOG->Trace( "rolling" );
+				break;
+			default:
+				ASSERT(0);
+			}
+		}
+
+		/* check for NG.  If the head was missed completely, don't count an NG. */
+		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
+			hns = HNS_NG;
+
+		// check for OK
+		if( iSongRow >= iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
+		{
+			fLife = 1;
+			hns = HNS_OK;
+			if( m_pNoteField )
+				m_pNoteField->DidTapNote( col, TNS_PERFECT, true );	// bright ghost flash
+		}
+
+		if( hns != HNS_NONE )
+		{
+			/* this note has been judged */
+			HandleHoldScore( hns, tns );
+			m_HoldJudgment[col].SetHoldJudgment( hns );
+
+			int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
+
+			if( m_pPlayerStageStats )
+				m_pPlayerStageStats->iTotalError += ms_error;
+		}
+
+		tn.HoldResult.fLife = fLife;
+		tn.HoldResult.hns = hns;
 	}
 }
 
