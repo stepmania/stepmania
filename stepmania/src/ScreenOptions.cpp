@@ -60,8 +60,6 @@
  * in player options menus, but it should in the options menu.
  */
 
-const float TWEEN_SECONDS = 0.3f;
-
 static CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",int(r+1)); }
 static CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",int(p+1)); }
 static CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",int(p+1)); }
@@ -93,7 +91,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
 	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
-	ALLOW_REPEATING_CHANGE_VALUE_INPUT(m_sName,"AllowRepeatingChangeValueInput")
+	ALLOW_REPEATING_CHANGE_VALUE_INPUT(m_sName,"AllowRepeatingChangeValueInput"),
+	CURSOR_TWEEN_SECONDS			(m_sName,"CursorTweenSeconds")
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
@@ -414,7 +413,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	if( cursor.GetDestX() != (float) iX || cursor.GetDestY() != (float) iY )
 	{
 		cursor.StopTweening();
-		cursor.BeginTweening( TWEEN_SECONDS );
+		cursor.BeginTweening( CURSOR_TWEEN_SECONDS );
 		cursor.SetXY( (float)iX, (float)iY );
 	}
 
