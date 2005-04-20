@@ -462,7 +462,7 @@ void Player::Update( float fDeltaTime )
 					// give positive life in Step(), not here.
 
 					// Decrease life
-					fLife -= fDeltaTime/ADJUSTED_WINDOW(OK);
+					fLife -= fDeltaTime/ADJUSTED_WINDOW(Roll);
 					fLife = max( fLife, 0 );	// clamp
 					break;
 				default:
@@ -1042,9 +1042,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		HoldNoteScore hns = tn.HoldResult.hns;
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
-
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
 		const TapNoteScore tns = tn.result.tns;
