@@ -301,7 +301,14 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 				{
 				case TapNote::empty:		c = '0'; break;
 				case TapNote::tap:			c = '1'; break;
-				case TapNote::hold_head:	c = tn.bIsRoll ? '2':'4'; break;
+				case TapNote::hold_head:
+					switch( tn.subType )
+					{
+					case TapNote::hold_head_hold:	c = '2'; break;
+					case TapNote::hold_head_roll:	c = '4'; break;
+					default:	ASSERT(0);
+					}
+					break;
 				case TapNote::hold_tail:	c = '3'; break;
 				case TapNote::mine:			c = 'M'; break;
 				case TapNote::attack:		c = 'A'; break;
@@ -1741,7 +1748,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
 		TapNote tn(
 			TapNote::attack,
-			false,
+			TapNote::SubType_invalid,
 			TapNote::original, 
 			szAttacks[rand()%ARRAYSIZE(szAttacks)],
 			15.0f, 

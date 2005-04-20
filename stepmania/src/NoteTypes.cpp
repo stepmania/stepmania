@@ -2,15 +2,15 @@
 #include "NoteTypes.h"
 #include "RageUtil.h"
 
-TapNote TAP_EMPTY					( TapNote::empty,		false,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			false,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_HOLD_HEAD		( TapNote::hold_head,	false,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_ROLL_HEAD		( TapNote::hold_head,	true,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_MINE			( TapNote::mine,		false,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_ATTACK			( TapNote::attack,		false,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,false,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ADDITION_TAP			( TapNote::tap,			false,	TapNote::addition, "", 0, false, 0 );
-TapNote TAP_ADDITION_MINE			( TapNote::mine,		false,	TapNote::addition, "", 0, false, 0 );
+TapNote TAP_EMPTY					( TapNote::empty,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_HOLD_HEAD		( TapNote::hold_head,	TapNote::hold_head_hold,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_ROLL_HEAD		( TapNote::hold_head,	TapNote::hold_head_roll,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_MINE			( TapNote::mine,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_ATTACK			( TapNote::attack,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ADDITION_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
+TapNote TAP_ADDITION_MINE			( TapNote::mine,		TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
 
 static const CString NoteTypeNames[NUM_NOTE_TYPES] = {
 	"4th",

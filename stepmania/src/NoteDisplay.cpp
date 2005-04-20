@@ -541,7 +541,7 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 	//
 	StripBuffer queue;
 
-	Sprite* pSprTopCap = GetHoldTopCapSprite( NoteRowToBeat(iRow), tn.bIsRoll, bIsBeingHeld );
+	Sprite* pSprTopCap = GetHoldTopCapSprite( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -630,7 +630,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	StripBuffer queue;
 
-	Sprite* pSprBody = GetHoldBodySprite( NoteRowToBeat(iRow), tn.bIsRoll, bIsBeingHeld );
+	Sprite* pSprBody = GetHoldBodySprite( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -728,7 +728,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 	//
 	StripBuffer queue;
 
-	Sprite* pBottomCap = GetHoldBottomCapSprite( NoteRowToBeat(iRow), tn.bIsRoll, bIsBeingHeld );
+	Sprite* pBottomCap = GetHoldBottomCapSprite( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -810,7 +810,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	// Draw the tail
 	//
-	Actor* pSprTail = GetHoldTailActor( NoteRowToBeat(iRow), tn.bIsRoll, bIsBeingHeld );
+	Actor* pSprTail = GetHoldTailActor( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -864,7 +864,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	// Draw the head
 	//
-	Actor* pActor = GetHoldHeadActor( NoteRowToBeat(iRow), tn.bIsRoll, bIsBeingHeld );
+	Actor* pActor = GetHoldHeadActor( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 

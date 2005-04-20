@@ -63,7 +63,12 @@ struct TapNote
 		attack,
 		autoKeysound,
  	} type;
-	bool bIsRoll;	// only possibly true if type == hold_head
+	enum SubType
+	{
+		hold_head_hold,
+		hold_head_roll,
+		SubType_invalid
+	} subType;	// only used if type == hold_head
 	enum Source {
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
@@ -101,7 +106,7 @@ struct TapNote
 	TapNote() {}
 	TapNote( 
 		Type type_,
-		bool bIsRoll_,
+		SubType subType_,
 		Source source_, 
 		CString sAttackModifiers_,
 		float fAttackDurationSeconds_,
@@ -109,7 +114,7 @@ struct TapNote
 		int iKeysoundIndex_ )
 	{
 		type = type_;
-		bIsRoll = bIsRoll_;
+		subType = subType_;
 		source = source_;
 		sAttackModifiers = sAttackModifiers_;
 		fAttackDurationSeconds = fAttackDurationSeconds_;
@@ -121,7 +126,7 @@ struct TapNote
 	{
 #define COMPARE(x)	if(x!=other.x) return false;
 		COMPARE(type);
-		COMPARE(bIsRoll);
+		COMPARE(subType);
 		COMPARE(source);
 		COMPARE(sAttackModifiers);
 		COMPARE(fAttackDurationSeconds);
