@@ -317,11 +317,10 @@ float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBea
 
 static float GetCenterLine( const PlayerState* pPlayerState )
 {
-	const float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	const float fZoom = 1 - fMiniPercent*0.5f;
-
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
 	 * not 160. */
+	const float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
+	const float fZoom = 1 - fMiniPercent*0.5f;
 	return CENTER_LINE_Y / fZoom;
 }
 
@@ -346,22 +345,30 @@ static float GetHiddenSudden( const PlayerState* pPlayerState )
 // TRICKY:  We fudge hidden and sudden to be farther apart if they're both on.
 static float GetHiddenEndLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -1.0f, -1.25f );
+	return GetCenterLine( pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -1.0f, -1.25f ) + 
+		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetHiddenStartLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +0.0f, -0.25f );
+	return GetCenterLine( pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +0.0f, -0.25f ) + 
+		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetSuddenEndLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -0.0f, +0.25f );
+	return GetCenterLine( pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -0.0f, +0.25f ) + 
+		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
 static float GetSuddenStartLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +1.0f, +1.25f );
+	return GetCenterLine( pPlayerState ) + 
+		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +1.0f, +1.25f ) + 
+		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below

@@ -123,11 +123,13 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],	"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],	"Beat" );
 
-	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],		"Hidden" );
-	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN],		"Sudden" );
-	AddPart( AddTo, m_fAppearances[APPEARANCE_STEALTH],		"Stealth" );
-	AddPart( AddTo, m_fAppearances[APPEARANCE_BLINK],		"Blink" );
-	AddPart( AddTo, m_fAppearances[APPEARANCE_RANDOMVANISH],"RandomVanish" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN],			"Sudden" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN_OFFSET],	"SuddenOffset" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_STEALTH],			"Stealth" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_BLINK],			"Blink" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_RANDOMVANISH],	"RandomVanish" );
 
 	AddPart( AddTo, m_fScrolls[SCROLL_REVERSE],		"Reverse" );
 	AddPart( AddTo, m_fScrolls[SCROLL_SPLIT],		"Split" );
@@ -263,7 +265,9 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		else if( sBit == "bumpy" )		SET_FLOAT( fEffects[EFFECT_BUMPY] )
 		else if( sBit == "beat" )		SET_FLOAT( fEffects[EFFECT_BEAT] )
 		else if( sBit == "hidden" )		SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
+		else if( sBit == "hiddenoffset" )	SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
 		else if( sBit == "sudden" )		SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
+		else if( sBit == "suddenoffset" )	SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
 		else if( sBit == "stealth" )	SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
 		else if( sBit == "blink" )		SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
 		else if( sBit == "randomvanish" ) SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
