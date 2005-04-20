@@ -230,23 +230,27 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		CStringArray asParts;
 		split( sBit, " ", asParts, true );
 
-		for( unsigned j = 0; j < asParts.size()-1; ++j )
+		FOREACH_CONST( CString, asParts, s )
 		{
-			if( asParts[j] == "no" )
+			if( *s == "no" )
+			{
 				level = 0;
-			else if( isdigit(asParts[j][0]) )
+			}
+			else if( isdigit((*s)[0]) || (*s)[0] == '-' )
 			{
 				/* If the last character is a *, they probably said "123*" when
 				 * they meant "*123". */
-				if( asParts[j].Right(1) == "*" )
+				if( s->Right(1) == "*" )
 					RageException::Throw("Invalid player options '%i*'; did you mean '*%i'?", 
-						atoi(asParts[j]), atoi(asParts[j]) );
-				level = strtof( asParts[j], NULL ) / 100.0f;
+						atoi(*s), atoi(*s) );
+				level = strtof( *s, NULL ) / 100.0f;
 			}
-			else if( asParts[j][0]=='*' )
-				sscanf( asParts[j], "*%f", &speed );
+			else if( *s[0]=='*' )
+			{
+				sscanf( *s, "*%f", &speed );
+			}
 		}
-		sBit = asParts[asParts.size()-1];
+		sBit = asParts.back();
 
 #define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
 		const bool on = (level > 0.5f);
