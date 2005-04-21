@@ -118,8 +118,11 @@ void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns
 	OptionRow &row = *m_Rows[r];
 	bool bRowHasFocus[NUM_PLAYERS];
 	ZERO( bRowHasFocus );
-	FOREACH_CONST( PlayerNumber, vpns, pn )
-		bRowHasFocus[*pn] = m_iCurrentRow[*pn] == r;
+	FOREACH_CONST( PlayerNumber, vpns, p )
+	{
+		int iCurRow = m_iCurrentRow[*p];
+		bRowHasFocus[*p] = iCurRow == r;
+	}
 	m_iChangeMask |= row.ExportOptions( vpns, bRowHasFocus );
 }
 
