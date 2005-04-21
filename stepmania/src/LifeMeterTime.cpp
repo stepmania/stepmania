@@ -30,8 +30,6 @@ void LifeMeterTime::Load( PlayerNumber pn )
 
 	const CString sType = "LifeMeterTime";
 
-	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
-
 	m_sprBackground.Load( THEME->GetPathG(sType,"background") );
 	m_sprBackground->SetName( "Background" );
 	m_sprBackground->ZoomToWidth( METER_WIDTH );
