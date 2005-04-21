@@ -149,20 +149,21 @@ Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h
 
 Threads = arch/Threads/Threads.h
 
+if HAVE_SDL
+LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
+StepMania += SDL_utils.cpp SDL_utils.h
+if !HAVE_X11
+#InputHandler_SDL depends on LowLevelWindow_SDL
+InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
+LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
+endif
+endif
+
 if HAVE_X11
 # InputHandler_X11 depends on LowLevelWindow_X11
 InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_X11.cpp arch/LowLevelWindow/LowLevelWindow_X11.h
 ArchUtils += archutils/Unix/X11Helper.cpp archutils/Unix/X11Helper.h
-endif
-if HAVE_SDL
-# InputHandler_SDL depends on LowLevelWindow_SDL
-InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
-LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
-endif
-if HAVE_SDL
-LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
-StepMania += SDL_utils.cpp SDL_utils.h
 endif
 
 # Platform-specific drivers:
