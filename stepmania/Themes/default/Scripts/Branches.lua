@@ -29,7 +29,7 @@ function SelectFirstOptionsScreen()
 	return "ScreenPlayerOptions"
 end
 
-function SelectGameplayScreen()
+function GetGameplayScreen()
 	if IsExtraStage() or IsExtraStage2() then return "ScreenGameplay" end
 	return "ScreenGameplay"
 end
