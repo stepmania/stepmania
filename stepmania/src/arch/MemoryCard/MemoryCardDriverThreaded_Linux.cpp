@@ -205,9 +205,12 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 			continue;
 		}
 
-		/* If the device already existed, and was set to CHECKING, check the device
-		 * now if we're allowed to. */
-		if( iter->m_State == UsbStorageDevice::STATE_CHECKING )
+		/* Preserve the state of the device. */
+		d.m_State = iter->m_State;
+
+		/* The device was here last time.  If CHECKING, check the device now if
+		 * we're allowed to. */
+		if( d.m_State == UsbStorageDevice::STATE_CHECKING )
 		{
 			if( !bMount )
 			{
@@ -323,7 +326,6 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			UsbStorageDevice usbd;
 
 			CString sPath = sBlockDevicePath + asDevices[i] + "/";
-			LOG->Trace("'%s'", sPath.c_str());
 
 			/* Ignore non-removable devices. */
 			CString sBuf;
