@@ -626,6 +626,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_ListScoreRowItems.Reset();
 		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 
+		m_ListScoreRowItems.RemoveAllChildren();
 		for( unsigned i=0; i<m_vScoreRowItem.size(); i++ )
 			m_ListScoreRowItems.AddChild( &m_vScoreRowItem[i] );
 		m_ListScoreRowItems.Load2( (float)SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0 );
@@ -675,7 +676,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_ListScoreRowItems.Reset();
 		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 
-		vector<Actor*> vpActors;
+		m_ListScoreRowItems.RemoveAllChildren();
 		for( unsigned i=0; i<m_vScoreRowItem.size(); i++ )
 			m_ListScoreRowItems.AddChild( &m_vScoreRowItem[i] );
 		m_ListScoreRowItems.Load2( (float)SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, SONG_SCORE_SECONDS_PER_ROW, 0 );
