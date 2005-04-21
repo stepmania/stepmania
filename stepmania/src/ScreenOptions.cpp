@@ -906,9 +906,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	OptionRow &row = *m_Rows[iCurRow];
 	
-	if( row.GetRowType() == OptionRow::ROW_EXIT	)	// EXIT is selected
-		return;		// don't allow a move
-
 	const int iNumChoices = row.GetRowDef().choices.size();
 
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumChoices <= 1 )	// 1 or 0
@@ -922,7 +919,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		return;
 	}
 
-	if( iNumChoices == 0 )
+	if( iNumChoices <= 1 )	// nowhere to move
 		return;
 
 	if( Repeat && !ALLOW_REPEATING_CHANGE_VALUE_INPUT )
