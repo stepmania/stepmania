@@ -17,11 +17,15 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	virtual void MenuLeft( PlayerNumber pn );
+	virtual void MenuRight( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
 	BitmapText	m_textInputs;
+
+	RageTimer m_timerBackToAutoCycle;
 };
 
 #endif

@@ -16,7 +16,7 @@ ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElement
 {
 	LOG->Trace( "ScreenTestLights::ScreenTestLights()" );
 
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
 }
 
 void ScreenTestLights::Init()
@@ -45,11 +45,16 @@ void ScreenTestLights::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	int iSec = (int)RageTimer::GetTimeSinceStartFast();
 
-	CabinetLight cl = (CabinetLight)(iSec%NUM_CABINET_LIGHTS);
-	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
-	GameButton gb = (GameButton)(iSec%iNumGameButtonsToShow);
+	if( m_timerBackToAutoCycle.Ago() > 20 )
+	{
+		m_timerBackToAutoCycle.Touch();
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
+	}
+
+
+	CabinetLight cl = LIGHTSMAN->GetCurrentTestCabinetLight();
+	GameButton gb = (GameButton)(LIGHTSMAN->GetCurrentTestGameplayLight());
 	CString sCabLight = CabinetLightToString(cl);
 	CString sGameButton = GAMESTATE->GetCurrentGame()->m_szButtonNames[gb];
 
@@ -82,8 +87,23 @@ void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		break;
 	}
+}
+
+void ScreenTestLights::MenuLeft( PlayerNumber pn )
+{
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
+	LIGHTSMAN->PrevTestLight();
+	m_timerBackToAutoCycle.Touch();
+}
+
+void ScreenTestLights::MenuRight( PlayerNumber pn )
+{
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
+	LIGHTSMAN->NextTestLight();
+	m_timerBackToAutoCycle.Touch();
 }
 
 void ScreenTestLights::MenuStart( PlayerNumber pn )

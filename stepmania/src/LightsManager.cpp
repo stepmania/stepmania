@@ -31,7 +31,8 @@ static const CString LightsModeNames[NUM_LIGHTS_MODES] = {
 	"Gameplay",
 	"Stage",
 	"Cleared",
-	"Test",
+	"TestAutoCycle",
+	"TestManualCycle",
 };
 XToString( LightsMode, NUM_LIGHTS_MODES );
 
@@ -41,8 +42,8 @@ LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our p
 LightsManager::LightsManager(CString sDriver)
 {
 	m_LightsMode = LIGHTSMODE_JOINING;
-
 	m_pDriver = MakeLightsDriver(sDriver);
+	m_fCurrentCurrentTestLightIndex = 0;
 
 	ZERO( m_fSecsLeftInCabinetLightBlink );
 	ZERO( m_fSecsLeftInGameButtonBlink );
@@ -73,6 +74,12 @@ void LightsManager::Update( float fDeltaTime )
 	{
 		ZERO( m_LightsState.m_bCabinetLights );
 		ZERO( m_LightsState.m_bGameButtonLights );
+	}
+
+	if( m_LightsMode == LIGHTSMODE_TEST_AUTO_CYCLE )
+	{
+		m_fCurrentCurrentTestLightIndex += fDeltaTime;
+		m_fCurrentCurrentTestLightIndex = fmodf( m_fCurrentCurrentTestLightIndex, NUM_CABINET_LIGHTS*100 );
 	}
 
 	switch( m_LightsMode )
@@ -152,9 +159,10 @@ void LightsManager::Update( float fDeltaTime )
 				m_LightsState.m_bCabinetLights[cl] = true;
 		}
 		break;
-	case LIGHTSMODE_TEST:
+	case LIGHTSMODE_TEST_AUTO_CYCLE:
+	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
-			int iSec = (int)RageTimer::GetTimeSinceStartFast();
+			int iSec = GetCurrentTestLightIndex();
 			FOREACH_CabinetLight( cl )
 			{
 				bool bOn = (iSec%NUM_CABINET_LIGHTS) == cl;
@@ -244,9 +252,10 @@ void LightsManager::Update( float fDeltaTime )
 			}
 		}
 		break;
-	case LIGHTSMODE_TEST:
+	case LIGHTSMODE_TEST_AUTO_CYCLE:
+	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
-			int iSec = (int)RageTimer::GetTimeSinceStartFast();
+			int iSec = GetCurrentTestLightIndex();
 
 			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
 
@@ -286,6 +295,32 @@ void LightsManager::SetLightsMode( LightsMode lm )
 LightsMode LightsManager::GetLightsMode()
 {
 	return m_LightsMode;
+}
+
+void LightsManager::PrevTestLight()
+{
+	m_fCurrentCurrentTestLightIndex -= 1;
+	m_fCurrentCurrentTestLightIndex = Quantize( m_fCurrentCurrentTestLightIndex, 1.0f );
+	fmodf( m_fCurrentCurrentTestLightIndex, NUM_CABINET_LIGHTS*100 );
+}
+
+void LightsManager::NextTestLight()
+{
+	m_fCurrentCurrentTestLightIndex += 1;
+	m_fCurrentCurrentTestLightIndex = Quantize( m_fCurrentCurrentTestLightIndex, 1.0f );
+	fmodf( m_fCurrentCurrentTestLightIndex, NUM_CABINET_LIGHTS*100 );
+}
+
+
+CabinetLight LightsManager::GetCurrentTestCabinetLight()
+{
+	return (CabinetLight)(GetCurrentTestLightIndex()%NUM_CABINET_LIGHTS);
+}
+
+int LightsManager::GetCurrentTestGameplayLight()
+{ 
+	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
+	return GetCurrentTestLightIndex()%iNumGameButtonsToShow; 
 }
 
 /*

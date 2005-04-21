@@ -33,7 +33,8 @@ enum LightsMode
 	LIGHTSMODE_GAMEPLAY,
 	LIGHTSMODE_STAGE,
 	LIGHTSMODE_ALL_CLEARED,
-	LIGHTSMODE_TEST,
+	LIGHTSMODE_TEST_AUTO_CYCLE,
+	LIGHTSMODE_TEST_MANUAL_CYCLE,
 	NUM_LIGHTS_MODES
 };
 const CString& LightsModeToString( LightsMode lm );
@@ -61,6 +62,12 @@ public:
 	void SetLightsMode( LightsMode lm );
 	LightsMode GetLightsMode();
 
+	void PrevTestLight();
+	void NextTestLight();
+
+	CabinetLight GetCurrentTestCabinetLight();
+	int GetCurrentTestGameplayLight();
+
 private:
 	float m_fSecsLeftInCabinetLightBlink[NUM_CABINET_LIGHTS];
 	float m_fSecsLeftInGameButtonBlink[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
@@ -68,6 +75,9 @@ private:
 	LightsDriver* m_pDriver;
 	LightsMode m_LightsMode;
 	LightsState m_LightsState;
+
+	int GetCurrentTestLightIndex() { return (int)m_fCurrentCurrentTestLightIndex; }
+	float m_fCurrentCurrentTestLightIndex;
 };
 
 
