@@ -8,7 +8,7 @@
 ScoreDisplayPercentage::ScoreDisplayPercentage()
 {
 	m_sprFrame.Load( THEME->GetPathG("ScoreDisplayNormal","frame") );
-	this->AddChild( &m_sprFrame );
+	this->AddChild( m_sprFrame );
 
 	m_Percent.SetName( "ScoreDisplayPercentage Percent" );
 	this->AddChild( &m_Percent );

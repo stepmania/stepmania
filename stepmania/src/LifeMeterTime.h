@@ -10,6 +10,8 @@
 #include "PercentageDisplay.h"
 #include "AutoActor.h"
 #include "MeterDisplay.h"
+#include "Quad.h"
+class StreamDisplay;
 
 class LifeMeterTime : public LifeMeter
 {
@@ -23,22 +25,24 @@ public:
 	virtual void OnLoadSong();
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
-	virtual void ChangeLife( float fDeltaLifePercent );
 	virtual void OnDancePointsChange();	// look in GAMESTATE and update the display
 	virtual bool IsInDanger() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const;
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
+	virtual void ForceFail();
 
 private:
-	float		m_fLifeRemainingSeconds;
-	AutoActor	m_sprFrame;
-	BitmapText	m_textTimeRemaining;
-	MeterDisplay	m_Meter;
+	float GetLifeSeconds() const;
 
-	apActorCommands	m_TapCommands[NUM_TAP_NOTE_SCORES];
-	apActorCommands	m_GainLife;
+	AutoActor			m_sprBackground;
+	Quad				m_quadDangerGlow;
+	StreamDisplay*		m_pStream;
+	AutoActor			m_sprFrame;
+	
+	float		m_fLifeTotalGainedSeconds;
+	float		m_fLifeTotalLostSeconds;
 
 	RageSound	m_soundGainLife;
 };

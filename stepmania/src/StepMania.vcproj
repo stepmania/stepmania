@@ -1467,6 +1467,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="MeterDisplay.h">
 			</File>
 			<File
+				RelativePath="StreamDisplay.cpp">
+			</File>
+			<File
+				RelativePath="StreamDisplay.h">
+			</File>
+			<File
 				RelativePath="Transition.cpp">
 			</File>
 			<File
@@ -1881,6 +1887,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScoreDisplayCalories.h">
+			</File>
+			<File
+				RelativePath="ScoreDisplayLifeTime.cpp">
+			</File>
+			<File
+				RelativePath="ScoreDisplayLifeTime.h">
 			</File>
 			<File
 				RelativePath="ScoreDisplayNormal.cpp">

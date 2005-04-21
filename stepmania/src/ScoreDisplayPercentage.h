@@ -5,7 +5,7 @@
 
 #include "ScoreDisplay.h"
 #include "PercentageDisplay.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 
 class ScoreDisplayPercentage: public ScoreDisplay
 {
@@ -14,8 +14,8 @@ public:
 	void Init( const PlayerState* pPlayerState );
 
 private:
+	AutoActor			m_sprFrame;
 	PercentageDisplay	m_Percent;
-	Sprite		m_sprFrame;
 };
 
 #endif

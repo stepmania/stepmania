@@ -24,6 +24,8 @@ void PlayerStageStats::Init()
 	iSongsPassed = iSongsPlayed = 0;
 	iTotalError = 0;
 	fCaloriesBurned = 0;
+	iTotalError = 0;
+	fLifeRemainingSeconds = 0;
 
 	ZERO( iTapNoteScores );
 	ZERO( iHoldNoteScores );
@@ -63,6 +65,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	iSongsPlayed += other.iSongsPlayed;
 	iTotalError += other.iTotalError;
 	fCaloriesBurned += other.fCaloriesBurned;
+	fLifeRemainingSeconds = other.fLifeRemainingSeconds;	// don't accumulate
 
 	const float fOtherFirstSecond = other.fFirstSecond + fLastSecond;
 	const float fOtherLastSecond = other.fLastSecond + fLastSecond;

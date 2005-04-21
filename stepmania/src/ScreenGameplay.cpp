@@ -13,6 +13,7 @@
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayPercentage.h"
+#include "ScoreDisplayLifeTime.h"
 #include "ScoreDisplayOni.h"
 #include "ScoreDisplayBattle.h"
 #include "ScoreDisplayRave.h"
@@ -414,7 +415,10 @@ void ScreenGameplay::Init()
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			m_pPrimaryScoreDisplay[p] = new ScoreDisplayOni;
+			if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_TIME )
+				m_pPrimaryScoreDisplay[p] = new ScoreDisplayLifeTime;
+			else
+				m_pPrimaryScoreDisplay[p] = new ScoreDisplayOni;
 			break;
 		default:
 			ASSERT(0);
@@ -1045,10 +1049,14 @@ void ScreenGameplay::LoadNextSong()
 			// give a little life back between stages
 			if( m_pLifeMeter[p] )
 				m_pLifeMeter[p]->OnLoadSong();	
-			if( m_pCombinedLifeMeter )
-				m_pCombinedLifeMeter->OnLoadSong();	
+			if( m_pPrimaryScoreDisplay[p] )
+				m_pPrimaryScoreDisplay[p]->OnLoadSong();	
+			if( m_pSecondaryScoreDisplay[p] )
+				m_pSecondaryScoreDisplay[p]->OnLoadSong();	
 		}
 	}
+	if( m_pCombinedLifeMeter )
+		m_pCombinedLifeMeter->OnLoadSong();	
 
 
 	m_SongForeground.LoadFromSong( GAMESTATE->m_pCurSong );
@@ -1552,8 +1560,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 			case SongOptions::FAIL_IMMEDIATE:
 			case SongOptions::FAIL_COMBO_OF_30_MISSES:
 			case SongOptions::FAIL_END_OF_SONG:
-				FOREACH_EnabledPlayer(pn)
-					STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
+				FOREACH_EnabledPlayer(p)
+				{
+					STATSMAN->m_CurStageStats.m_player[p].bFailed = true;	// fail
+					m_pLifeMeter[p]->ForceFail();
+					STATSMAN->m_CurStageStats.m_player[p].SetLifeRecordAt( 0, STATSMAN->m_CurStageStats.fGameplaySeconds );
+				}
 			}
 
 			this->PostScreenMessage( SM_NotesEnded, 0 );
@@ -2280,17 +2292,22 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_pSoundMusic->Stop();
 
 		/* Next song. */
+
+		// give a little life back between stages
 		FOREACH_EnabledPlayer(p)
 		{
 			if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
 			{
-				// give a little life back between stages
 				if( m_pLifeMeter[p] )
 					m_pLifeMeter[p]->OnSongEnded();	
-				if( m_pCombinedLifeMeter )
-					m_pCombinedLifeMeter->OnSongEnded();	
+				if( m_pPrimaryScoreDisplay[p] )
+					m_pPrimaryScoreDisplay[p]->OnSongEnded();	
+				if( m_pSecondaryScoreDisplay[p] )
+					m_pSecondaryScoreDisplay[p]->OnSongEnded();	
 			}
 		}
+		if( m_pCombinedLifeMeter )
+			m_pCombinedLifeMeter->OnSongEnded();	
 
 		int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
 		iPlaySongIndex %= m_apSongsQueue.size();

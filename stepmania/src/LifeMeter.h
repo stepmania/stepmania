@@ -25,9 +25,9 @@ public:
 	virtual bool IsInDanger() const = 0;
 	virtual bool IsHot() const = 0;
 	virtual bool IsFailing() const = 0;
-
 	virtual float GetLife() const { return 0; } // for cosmetic use only
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) = 0;
+	virtual void ForceFail() = 0;
 
 protected:
 	PlayerNumber m_PlayerNumber;

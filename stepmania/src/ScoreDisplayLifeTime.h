@@ -1,54 +1,31 @@
-/* LifeMeterBattery - Battery life meter used in Oni. */
+/* ScoreDisplayLifeTime - Display a updating count of life time remaining. */
 
-#ifndef LIFEMETERBATTERY_H
-#define LIFEMETERBATTERY_H
+#ifndef ScoreDisplayLifeTime_H
+#define ScoreDisplayLifeTime_H
 
-#include "LifeMeter.h"
-#include "Sprite.h"
+#include "ScoreDisplay.h"
 #include "BitmapText.h"
-#include "RageSound.h"
-#include "PercentageDisplay.h"
+#include "AutoActor.h"
 
-
-class LifeMeterBattery : public LifeMeter
+class ScoreDisplayLifeTime : public ScoreDisplay
 {
 public:
-	LifeMeterBattery();
+	ScoreDisplayLifeTime();
 
-	virtual void Load( PlayerNumber pn );
+	virtual void Init( const PlayerState* pPlayerState );
 
-	virtual void Update( float fDeltaTime );
+	virtual void Update( float fDelta );
 
+	virtual void OnLoadSong();
 	virtual void OnSongEnded();
-	virtual void ChangeLife( TapNoteScore score );
-	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
-	virtual void ChangeLife( float fDeltaLifePercent );
-	virtual void OnDancePointsChange();	// look in GAMESTATE and update the display
-	virtual bool IsInDanger() const;
-	virtual bool IsHot() const;
-	virtual bool IsFailing() const;
-	virtual float GetLife() const;
-	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
-	virtual void ForceFail();
+	virtual void OnJudgment( TapNoteScore score );
+	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore );
 
-	void Refresh();
-
-private:
-	int			m_iLivesLeft;			// dead when 0
-	int			m_iTrailingLivesLeft;	// lags m_iLivesLeft
-
-	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking
-
-	Sprite		m_sprFrame;
-	Sprite		m_sprBattery;
-	BitmapText	m_textNumLives;
-
-	PercentageDisplay	m_Percent;
-
-	RageSound	m_soundLoseLife;
-	RageSound	m_soundGainLife;
+protected:
+	AutoActor	m_sprFrame;
+	BitmapText	m_textTimeRemaining;
+	BitmapText	m_textDeltaSeconds;
 };
-
 
 #endif
 

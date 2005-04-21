@@ -945,12 +945,15 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 			if( m_pLifeMeter )
 				m_pLifeMeter->ChangeLife( score );
-
+			if( m_pScoreDisplay )
+				m_pScoreDisplay->OnJudgment( score );
+			if( m_pSecondaryScoreDisplay )
+				m_pSecondaryScoreDisplay->OnJudgment( score );
 			// TODO: Remove use of PlayerNumber
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 			if( m_pCombinedLifeMeter )
 				m_pCombinedLifeMeter->ChangeLife( pn, score );
+
 			tn.result.bHidden = true;
 			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 			if( m_pNoteField )
@@ -1473,18 +1476,26 @@ void Player::HandleTapRowScore( unsigned row )
 		if( m_pPlayerStageStats )
 			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.fGameplaySeconds );
 
-	if (m_pScoreDisplay)
+	if( m_pScoreDisplay )
+	{
 		if( m_pPlayerStageStats )
-			m_pScoreDisplay->SetScore(m_pPlayerStageStats->iScore);
-	if (m_pSecondaryScoreDisplay)
+			m_pScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+		m_pScoreDisplay->OnJudgment( scoreOfLastTap );
+	}
+	if( m_pSecondaryScoreDisplay )
+	{
 		if( m_pPlayerStageStats )
-			m_pSecondaryScoreDisplay->SetScore(m_pPlayerStageStats->iScore);
+			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+		m_pSecondaryScoreDisplay->OnJudgment( scoreOfLastTap );
+	}
 
-	if( m_pLifeMeter ) {
+	if( m_pLifeMeter )
+	{
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
 		m_pLifeMeter->OnDancePointsChange();    // update oni life meter
 	}
-	if( m_pCombinedLifeMeter ) {
+	if( m_pCombinedLifeMeter )
+	{
 		m_pCombinedLifeMeter->ChangeLife( pn, scoreOfLastTap );
 		m_pCombinedLifeMeter->OnDancePointsChange( pn );    // update oni life meter
 	}
@@ -1498,7 +1509,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 	NoCheating = false;
 #endif
 
-	if(GAMESTATE->m_bDemonstrationOrJukebox)
+	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.
 	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
@@ -1512,12 +1523,18 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	if (m_pScoreDisplay)
-		if( m_pPlayerStageStats )
-			m_pScoreDisplay->SetScore(m_pPlayerStageStats->iScore);
-	if (m_pSecondaryScoreDisplay)
-		if( m_pPlayerStageStats )
-			m_pSecondaryScoreDisplay->SetScore(m_pPlayerStageStats->iScore);
+	if( m_pScoreDisplay )
+	{
+		if( m_pPlayerStageStats ) 
+			m_pScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+		m_pScoreDisplay->OnJudgment( holdScore, tapScore );
+	}
+	if( m_pSecondaryScoreDisplay )
+	{
+		if( m_pPlayerStageStats ) 
+			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+		m_pSecondaryScoreDisplay->OnJudgment( holdScore, tapScore );
+	}
 
 	if( m_pLifeMeter ) 
 	{

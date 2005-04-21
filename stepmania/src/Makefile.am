@@ -210,7 +210,8 @@ endif
 
 ActorsInGameplayAndMenus = \
 BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp BGAnimationLayer.h Banner.cpp Banner.h \
-ConditionalBGA.cpp ConditionalBGA.h DifficultyIcon.cpp DifficultyIcon.h MeterDisplay.cpp MeterDisplay.h \
+ConditionalBGA.cpp ConditionalBGA.h DifficultyIcon.cpp DifficultyIcon.h \
+MeterDisplay.cpp MeterDisplay.h StreamDisplay.cpp StreamDisplay.h 
 Transition.cpp Transition.h
 
 ActorsInMenus = \
@@ -244,6 +245,7 @@ ReceptorArrow.cpp ReceptorArrow.h ReceptorArrowRow.cpp ReceptorArrowRow.h \
 ScoreDisplay.cpp ScoreDisplay.h \
 ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
 ScoreDisplayCalories.cpp ScoreDisplayCalories.h \
+ScoreDisplayLifeTime.cpp ScoreDisplayLifeTime.h 
 ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h
 

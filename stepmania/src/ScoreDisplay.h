@@ -3,6 +3,7 @@
 
 #include "PlayerNumber.h"
 #include "ActorFrame.h"
+#include "GameConstantsAndTypes.h"
 
 struct PlayerState;
 
@@ -12,6 +13,14 @@ public:
 	virtual void Init( const PlayerState* pPlayerState ) { m_pPlayerState = pPlayerState; }
 
 	virtual void SetScore( int iNewScore ) {}
+	virtual void OnLoadSong() {};
+	virtual void OnSongEnded() {};
+	/* Notification of a tap note judgment.  This *is* called for
+	 * the head of hold notes. */
+	virtual void OnJudgment( TapNoteScore score ) {};
+	/* Notification of a hold judgment.  tscore is the score
+	 * received for the initial tap note. */
+	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore ) {};
 
 protected:
 	const PlayerState* m_pPlayerState;	// needed to look up statistics in GAMESTATE

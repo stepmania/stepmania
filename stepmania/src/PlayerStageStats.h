@@ -52,6 +52,7 @@ struct PlayerStageStats
 	int		iSongsPassed;
 	int		iSongsPlayed;
 	int		iTotalError;
+	float	fLifeRemainingSeconds;	// used in survival
 
 	// workout
 	float	fCaloriesBurned;

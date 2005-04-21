@@ -156,6 +156,12 @@ float LifeMeterBattery::GetLife() const
 	return float(m_iLivesLeft) / GAMESTATE->m_SongOptions.m_iBatteryLives;
 }
 
+void LifeMeterBattery::ForceFail()
+{
+	m_iLivesLeft = 0;
+	Refresh();
+}
+
 void LifeMeterBattery::Refresh()
 {
 	if( m_iLivesLeft <= 4 )

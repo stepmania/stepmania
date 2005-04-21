@@ -12,6 +12,7 @@
 #include "PlayerState.h"
 #include "Quad.h"
 #include "ActorUtil.h"
+#include "StreamDisplay.h"
 
 
 static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
@@ -21,199 +22,7 @@ static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterBar","NumChambers");
 static ThemeMetric<int> NUM_STRIPS			("LifeMeterBar","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
 
-
 const float FAIL_THRESHOLD = 0;
-
-
-class LifeMeterStream : public Actor
-{
-public:
-	LifeMeterStream()
-	{
-		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
-
-		m_quadMask.SetDiffuse( RageColor(0,0,0,1) );
-		m_quadMask.SetZ( 1 );
-		m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
-		m_quadMask.SetUseZBuffer( true );
-
-		CString sGraphicPath;
-		RageTextureID ID;
-		ID.bStretch = true;
-
-		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%snormal", bExtra?"extra ":""));
-		m_sprStreamNormal.Load( ID );
-		m_sprStreamNormal.SetUseZBuffer( true );
-
-		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%shot", bExtra?"extra ":""));
-		m_sprStreamHot.Load( ID );
-		m_sprStreamHot.SetUseZBuffer( true );
-		
-		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%spassing", bExtra?"extra ":""));
-		m_sprStreamPassing.Load( ID );
-		m_sprStreamPassing.SetUseZBuffer( true );
-
-		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%sframe", bExtra?"extra ":""));
-		m_sprFrame.Load( ID );
-	}
-
-	Sprite		m_sprStreamNormal;
-	Sprite		m_sprStreamHot;
-	Sprite		m_sprStreamPassing;
-	Sprite		m_sprFrame;
-	Quad		m_quadMask;
-
-	PlayerNumber m_PlayerNumber;
-	float m_fPercent;
-	float m_fPassingAlpha;
-	float m_fHotAlpha;
-
-	void GetChamberIndexAndOverslow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut )
-	{
-		iChamberOut = (int)(fPercent*NUM_CHAMBERS);
-		fChamberOverflowPercentOut = fPercent*NUM_CHAMBERS - iChamberOut;
-	}
-
-	float GetChamberLeftPercent( int iChamber )
-	{
-		return (iChamber+0) / (float)NUM_CHAMBERS;
-	}
-
-	float GetChamberRightPercent( int iChamber )
-	{
-		return (iChamber+1) / (float)NUM_CHAMBERS;
-	}
-
-	float GetRightEdgePercent( int iChamber, float fChamberOverflowPercent )
-	{
-		if( (iChamber%2) == 0 )
-			return (iChamber+fChamberOverflowPercent) / (float)NUM_CHAMBERS;
-		else
-			return (iChamber+1) / (float)NUM_CHAMBERS;
-	}
-
-	float GetHeightPercent( int iChamber, float fChamberOverflowPercent )
-	{
-		if( (iChamber%2) == 1 )
-			return 1-fChamberOverflowPercent;
-		else
-			return 0;
-	}
-
-	void DrawPrimitives()
-	{
-		if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-		{
-			DrawMask( m_fPercent );		// this is the "right endcap" to the life
-			
-			const float fChamberWidthInPercent = 1.0f/NUM_CHAMBERS;
-			float fPercentBetweenStrips = 1.0f/NUM_STRIPS;
-			// round this so that the chamber overflows align
-			if( NUM_CHAMBERS > 10 )
-				fPercentBetweenStrips = Quantize( fPercentBetweenStrips, fChamberWidthInPercent );
-
-			float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
-			ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
-
-			for( float f=fPercentOffset+1; f>=0; f-=fPercentBetweenStrips )
-			{
-				DrawMask( f );
-				DrawStrip( f );
-			}
-
-		}
-
-		m_sprFrame.Draw();
-
-	}
-
-	void DrawStrip( float fRightEdgePercent )
-	{
-		RectF rect;
-
-		const float fChamberWidthInPercent = 1.0f/NUM_CHAMBERS;
-		const float fStripWidthInPercent = 1.0f/NUM_STRIPS;
-		
-		const float fCorrectedRightEdgePercent = fRightEdgePercent + fChamberWidthInPercent;
-		const float fCorrectedStripWidthInPercent = fStripWidthInPercent + 2*fChamberWidthInPercent;
-		const float fCorrectedLeftEdgePercent = fCorrectedRightEdgePercent - fCorrectedStripWidthInPercent;
-
-
-		// set size of streams
-		rect.left	= -METER_WIDTH/2 + METER_WIDTH*max(0,fCorrectedLeftEdgePercent);
-		rect.top	= -METER_HEIGHT/2;
-		rect.right	= -METER_WIDTH/2 + METER_WIDTH*min(1,fCorrectedRightEdgePercent);
-		rect.bottom	= +METER_HEIGHT/2;
-
-		ASSERT( rect.left <= METER_WIDTH/2  &&  rect.right <= METER_WIDTH/2 );  
-
-		float fPercentCroppedFromLeft = max( 0, -fCorrectedLeftEdgePercent );
-		float fPercentCroppedFromRight = max( 0, fCorrectedRightEdgePercent-1 );
-
-
-		m_sprStreamNormal.StretchTo( rect );
-		m_sprStreamPassing.StretchTo( rect );
-		m_sprStreamHot.StretchTo( rect );
-
-
-		// set custom texture coords
-//		float fPrecentOffset = fRightEdgePercent;
-
-		RectF frectCustomTexRect(
-			fPercentCroppedFromLeft,
-			0,
-			1-fPercentCroppedFromRight,
-			1);
-
-		m_sprStreamNormal.SetCustomTextureRect( frectCustomTexRect );
-		m_sprStreamPassing.SetCustomTextureRect( frectCustomTexRect );
-		m_sprStreamHot.SetCustomTextureRect( frectCustomTexRect );
-
-		m_sprStreamPassing.SetDiffuse( RageColor(1,1,1,m_fPassingAlpha) );
-		m_sprStreamHot.SetDiffuse( RageColor(1,1,1,m_fHotAlpha) );
-
-		m_sprStreamNormal.Draw();
-		m_sprStreamPassing.Draw();
-		m_sprStreamHot.Draw();
-	}
-
-	void DrawMask( float fPercent )
-	{
-		RectF rect;
-
-		int iChamber;
-		float fChamberOverflowPercent;
-		GetChamberIndexAndOverslow( fPercent, iChamber, fChamberOverflowPercent );
-		float fRightPercent = GetRightEdgePercent( iChamber, fChamberOverflowPercent );
-		float fHeightPercent = GetHeightPercent( iChamber, fChamberOverflowPercent );
-		float fChamberLeftPercent = GetChamberLeftPercent( iChamber );
-		float fChamberRightPercent = GetChamberRightPercent( iChamber );
-
-		// draw mask for vertical chambers
-		rect.left	= -METER_WIDTH/2 + fChamberLeftPercent*METER_WIDTH-1;
-		rect.top	= -METER_HEIGHT/2;
-		rect.right	= -METER_WIDTH/2 + fChamberRightPercent*METER_WIDTH+1;
-		rect.bottom	= -METER_HEIGHT/2 + fHeightPercent*METER_HEIGHT;
-
-		rect.left  = MIN( rect.left,  + METER_WIDTH/2 );
-		rect.right = MIN( rect.right, + METER_WIDTH/2 );
-
-		m_quadMask.StretchTo( rect );
-		m_quadMask.Draw();
-
-		// draw mask for horizontal chambers
-		rect.left	= -METER_WIDTH/2 + fRightPercent*METER_WIDTH; 
-		rect.top	= -METER_HEIGHT/2;
-		rect.right	= +METER_WIDTH/2;
-		rect.bottom	= +METER_HEIGHT/2;
-
-		rect.left  = MIN( rect.left,  + METER_WIDTH/2 );
-		rect.right = MIN( rect.right, + METER_WIDTH/2 );
-
-		m_quadMask.StretchTo( rect );
-		m_quadMask.Draw();
-	}
-};
 
 
 LifeMeterBar::LifeMeterBar()
@@ -231,8 +40,8 @@ LifeMeterBar::LifeMeterBar()
 	default:	ASSERT(0);
 	}
 
-	m_fTrailingLifePercentage = 0;
-	m_fLifeVelocity = 0;
+	const CString sType = "LifeMeterBar";
+
 	m_fPassingAlpha = 0;
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
@@ -247,7 +56,7 @@ LifeMeterBar::LifeMeterBar()
 	// set up combotoregainlife
 	m_iComboToRegainLife = 0;
 
-	m_sprBackground.Load( THEME->GetPathG("LifeMeterBar","background") );
+	m_sprBackground.Load( THEME->GetPathG(sType,"background") );
 	m_sprBackground->SetName( "Background" );
 	m_sprBackground->ZoomToWidth( METER_WIDTH );
 	m_sprBackground->ZoomToHeight( METER_HEIGHT );
@@ -255,25 +64,41 @@ LifeMeterBar::LifeMeterBar()
 
 	m_quadDangerGlow.ZoomToWidth( METER_WIDTH );
 	m_quadDangerGlow.ZoomToHeight( METER_HEIGHT );
-	m_quadDangerGlow.SetDiffuse( RageColor(1,0,0,1) );
+	m_quadDangerGlow.SetEffectDiffuseShift();
+	m_quadDangerGlow.SetEffectColor1( RageColor(1,0,0,0.8f) );
+	m_quadDangerGlow.SetEffectColor2( RageColor(1,0,0,0) );
+	m_quadDangerGlow.SetEffectClock( Actor::CLOCK_BGM_BEAT );
 	this->AddChild( &m_quadDangerGlow );
 
-	m_pStream = new LifeMeterStream;
+	m_pStream = new StreamDisplay;
+	bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
+	CString sExtra = bExtra ? "extra " : "";
+	m_pStream->Load(
+		METER_WIDTH,
+		METER_HEIGHT,
+		NUM_STRIPS,
+		NUM_CHAMBERS,		
+		THEME->GetPathG(sType,sExtra+"normal"),
+		THEME->GetPathG(sType,sExtra+"hot"),
+		THEME->GetPathG(sType,sExtra+"passing")
+		);
 	this->AddChild( m_pStream );
+
+	m_sprFrame.Load( THEME->GetPathG(sType,sExtra+"frame") );
+	m_sprFrame->SetName( "Frame" );
+	this->AddChild( m_sprFrame );
 
 	AfterLifeChanged();
 }
 
 LifeMeterBar::~LifeMeterBar()
 {
-	delete m_pStream;
+	SAFE_DELETE( m_pStream );
 }
 
 void LifeMeterBar::Load( PlayerNumber pn )
 {
 	LifeMeter::Load( pn );
-
-	m_pStream->m_PlayerNumber = pn;
 
 	if( pn == PLAYER_2 )
 		m_pStream->SetZoomX( -1 );
@@ -435,16 +260,15 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
+	AfterLifeChanged();
 
 	if( m_fLifePercentage <= FAIL_THRESHOLD )
 		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
-
-	m_fLifeVelocity += fDeltaLife;
 }
 
 void LifeMeterBar::AfterLifeChanged()
 {
-
+	m_pStream->SetPercent( m_fLifePercentage );
 }
 
 bool LifeMeterBar::IsPastPassmark() const
@@ -478,37 +302,6 @@ bool LifeMeterBar::IsFailing() const
 void LifeMeterBar::Update( float fDeltaTime )
 {
 	LifeMeter::Update( fDeltaTime );
-
-
-	// HACK:  Tweaking these values is very difficulty.  Update the
-	// "physics" many times so that the spring motion appears faster
-	for( int i=0; i<10; i++ )
-	{
-		const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
-
-		// Don't apply spring and viscous forces if we're full or empty.
-		// Just move straight to either full or empty.
-		if( IsFailing() || IsHot() )
-		{
-			m_fLifeVelocity = (fDelta / fabsf(fDelta)) * 4;
-		}
-		else
-		{
-			const float fSpringForce = fDelta * 2.0f;
-			m_fLifeVelocity += fSpringForce * fDeltaTime;
-
-			const float fViscousForce = -m_fLifeVelocity * 0.2f;
-			m_fLifeVelocity += fViscousForce * fDeltaTime;
-		}
-
-		CLAMP( m_fLifeVelocity, -.06f, +.02f );
-
-		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
-	}
-
-	// Don't clamp life percentage a little outside the visible range so
-	// that the clamp doesn't dampen the "jiggle" of the meter.
-	CLAMP( m_fTrailingLifePercentage, -0.1f, 1.1f );
 	
 	m_fPassingAlpha += IsPastPassmark() ? +fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fPassingAlpha, 0, 1 );
@@ -516,24 +309,18 @@ void LifeMeterBar::Update( float fDeltaTime )
 	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fHotAlpha, 0, 1 );
 
-	if( IsHot() )
-		m_fLifeVelocity = max( 0, m_fLifeVelocity );
+	m_pStream->SetPassingAlpha( m_fPassingAlpha );
+	m_pStream->SetHotAlpha( m_fHotAlpha );
+
+	if( m_pStream->GetTrailingLifePercent() < DANGER_THRESHOLD && !GAMESTATE->IsPlayerDead(m_PlayerNumber) )
+		m_quadDangerGlow.SetDiffuseAlpha( 1 );
+	else
+		m_quadDangerGlow.SetDiffuseAlpha( 0 );
 }
 
 
 void LifeMeterBar::DrawPrimitives()
 {
-	m_pStream->m_fPercent = m_fTrailingLifePercentage;
-	m_pStream->m_fPassingAlpha = m_fPassingAlpha;
-	m_pStream->m_fHotAlpha = m_fHotAlpha;
-
-	float fPercentRed = 0;
-	if( GAMESTATE->IsPlayerDead(m_PlayerNumber) ) 
-		fPercentRed = 0;
-	else if( m_fTrailingLifePercentage<DANGER_THRESHOLD ) 
-		fPercentRed = RageFastSin( RageTimer::GetTimeSinceStartFast()*PI*4 )/2+0.5f;
-	m_quadDangerGlow.SetDiffuseAlpha( fPercentRed*0.8f );
-
 	ActorFrame::DrawPrimitives();
 }
 #include "RageLog.h"
@@ -627,6 +414,13 @@ void LifeMeterBar::FillForHowToPlay(int NumPerfects, int NumMisses)
 	CLAMP( m_fLifePercentage, 0.0f, 1.0f );
 	AfterLifeChanged();
 }
+
+void LifeMeterBar::ForceFail()
+{
+	m_fLifePercentage = 0;
+	AfterLifeChanged();
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford

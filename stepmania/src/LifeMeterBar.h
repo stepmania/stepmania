@@ -5,7 +5,7 @@
 #include "Sprite.h"
 #include "AutoActor.h"
 #include "Quad.h"
-class LifeMeterStream;
+class StreamDisplay;
 
 
 class LifeMeterBar : public LifeMeter
@@ -29,21 +29,19 @@ public:
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
+	virtual void ForceFail();
 
 	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
 	void FillForHowToPlay(int NumPerfects, int NumMisses);
 	// this function is solely for HowToPlay
 
 private:
-	void ResetBarVelocity();
-
 	AutoActor			m_sprBackground;
 	Quad				m_quadDangerGlow;
-	LifeMeterStream*	m_pStream;
+	StreamDisplay*		m_pStream;
+	AutoActor			m_sprFrame;
 
 	float		m_fLifePercentage;
-	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage
-	float		m_fLifeVelocity;
 
 	float		m_fPassingAlpha;
 	float		m_fHotAlpha;
