@@ -184,6 +184,16 @@ void PrefsManager::Init()
 	m_fSuperMeterPercentChangeNG =			-0.20f;
 	m_bMercifulSuperMeter = true;
 
+	m_fTimeMeterSecondsChangeMarvelous =	-0.0f;
+	m_fTimeMeterSecondsChangePerfect =		-0.25f;
+	m_fTimeMeterSecondsChangeGreat =		-0.5f;
+	m_fTimeMeterSecondsChangeGood =			-1.0f;
+	m_fTimeMeterSecondsChangeBoo =			-2.0f;
+	m_fTimeMeterSecondsChangeMiss =			-4.0f;
+	m_fTimeMeterSecondsChangeHitMine =		-2.0f;
+	m_fTimeMeterSecondsChangeOK =			-0.0f;
+	m_fTimeMeterSecondsChangeNG =			-4.0f;
+
 	m_bDelayedBack = true;
 	m_bShowInstructions = true;
 	m_bShowSelectGroup = true;
@@ -419,6 +429,16 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "SuperMeterPercentChangeNG",		m_fSuperMeterPercentChangeNG );
 	ini.GetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
 
+	ini.GetValue( "Options", "TimeMeterSecondsChangeMarvelous",	m_fTimeMeterSecondsChangeMarvelous );
+	ini.GetValue( "Options", "TimeMeterSecondsChangePerfect",	m_fTimeMeterSecondsChangePerfect );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeGreat",		m_fTimeMeterSecondsChangeGreat );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeGood",		m_fTimeMeterSecondsChangeGood );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeBoo",		m_fTimeMeterSecondsChangeBoo );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeMiss",		m_fTimeMeterSecondsChangeMiss );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeHitMine",	m_fTimeMeterSecondsChangeHitMine );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeOK",		m_fTimeMeterSecondsChangeOK );
+	ini.GetValue( "Options", "TimeMeterSecondsChangeNG",		m_fTimeMeterSecondsChangeNG );
+
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedBack );
 	ini.GetValue( "Options", "ShowInstructions",				m_bShowInstructions );
 	ini.GetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
@@ -638,6 +658,16 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "SuperMeterPercentChangeOK",		m_fSuperMeterPercentChangeOK );
 	ini.SetValue( "Options", "SuperMeterPercentChangeNG",		m_fSuperMeterPercentChangeNG );
 	ini.SetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
+
+	ini.SetValue( "Options", "TimeMeterSecondsChangeMarvelous",	m_fTimeMeterSecondsChangeMarvelous );
+	ini.SetValue( "Options", "TimeMeterSecondsChangePerfect",	m_fTimeMeterSecondsChangePerfect );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeGreat",		m_fTimeMeterSecondsChangeGreat );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeGood",		m_fTimeMeterSecondsChangeGood );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeBoo",		m_fTimeMeterSecondsChangeBoo );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeMiss",		m_fTimeMeterSecondsChangeMiss );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeHitMine",	m_fTimeMeterSecondsChangeHitMine );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeOK",		m_fTimeMeterSecondsChangeOK );
+	ini.SetValue( "Options", "TimeMeterSecondsChangeNG",		m_fTimeMeterSecondsChangeNG );
 
 	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedBack );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );

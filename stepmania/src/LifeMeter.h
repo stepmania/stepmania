@@ -13,6 +13,7 @@ public:
 	virtual ~LifeMeter() {};
 	
 	virtual void Load( PlayerNumber pn ) { m_PlayerNumber = pn; }
+	virtual void OnLoadSong() {};
 	virtual void OnSongEnded() {};
 	/* Change life after receiving a tap note grade.  This *is* called for
 	 * the head of hold notes. */

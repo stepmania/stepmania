@@ -122,6 +122,7 @@ public:
 	int				m_iGradeWeightOK;
 	int				m_iGradeWeightNG;
 
+	// super meter used in rave
 	float			m_fSuperMeterPercentChangeMarvelous;
 	float			m_fSuperMeterPercentChangePerfect;
 	float			m_fSuperMeterPercentChangeGreat;
@@ -132,6 +133,17 @@ public:
 	float			m_fSuperMeterPercentChangeOK;
 	float			m_fSuperMeterPercentChangeNG;
 	bool			m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
+
+	// time meter used in survival
+	float			m_fTimeMeterSecondsChangeMarvelous;
+	float			m_fTimeMeterSecondsChangePerfect;
+	float			m_fTimeMeterSecondsChangeGreat;
+	float			m_fTimeMeterSecondsChangeGood;
+	float			m_fTimeMeterSecondsChangeBoo;
+	float			m_fTimeMeterSecondsChangeMiss;
+	float			m_fTimeMeterSecondsChangeHitMine;
+	float			m_fTimeMeterSecondsChangeOK;
+	float			m_fTimeMeterSecondsChangeNG;
 
 	bool			m_bAutoPlay;
 	bool			m_bDelayedBack;

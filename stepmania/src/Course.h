@@ -23,6 +23,7 @@ enum CourseType
 	COURSE_TYPE_NONSTOP,	// if life meter type is BAR
 	COURSE_TYPE_ONI,		// if life meter type is BATTERY
 	COURSE_TYPE_ENDLESS,	// if set to REPEAT
+	COURSE_TYPE_SURVIVAL,	// if life meter type is TIME
 	NUM_COURSE_TYPES
 };
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_COURSE_TYPES, i )
@@ -66,7 +67,8 @@ public:
 	int high_meter;			// = -1 if no meter range specified
 	int players_index;		// ignored if type isn't 'best' or 'worst'
 	CString modifiers;		// set player and song options using these
-	AttackArray attacks;	// set timed modifiers
+	AttackArray attacks;	// timed modifiers
+	float fGainSeconds;		// time gained back at the beginning of the song.  LifeMeterTime only.
 
 	CourseEntry()
 	{
@@ -80,6 +82,7 @@ public:
 		high_meter = -1;
 		players_index = 0;
 		modifiers = "";
+		fGainSeconds = 0;
 	}
 };
 

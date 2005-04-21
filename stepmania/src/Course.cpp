@@ -44,7 +44,14 @@ CourseType Course::GetCourseType() const
 {
 	if( m_bRepeat )
 		return COURSE_TYPE_ENDLESS;
-	return m_iLives > 0? COURSE_TYPE_ONI:COURSE_TYPE_NONSTOP;
+	if( m_iLives > 0 ) 
+		return COURSE_TYPE_ONI;
+	FOREACH_CONST( CourseEntry, m_entries, e )
+	{
+		if( e->fGainSeconds > 0 )
+			return COURSE_TYPE_SURVIVAL;
+	}
+	return COURSE_TYPE_NONSTOP;
 }
 
 PlayMode Course::GetPlayMode() const
@@ -53,6 +60,7 @@ PlayMode Course::GetPlayMode() const
 	{
 	case COURSE_TYPE_ENDLESS:	return PLAY_MODE_ENDLESS;
 	case COURSE_TYPE_ONI:		return PLAY_MODE_ONI;
+	case COURSE_TYPE_SURVIVAL:	return PLAY_MODE_ONI;
 	case COURSE_TYPE_NONSTOP:	return PLAY_MODE_NONSTOP;
 	default: ASSERT(0);	return PLAY_MODE_INVALID;
 	}
@@ -104,6 +112,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		m_sBannerPath = arrayPossibleBanners[0];
 
 	AttackArray attacks;
+	float fGainSeconds = 0;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		CString sValueName = msd.GetParam(i, 0);
@@ -124,6 +133,9 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		else if( 0 == stricmp(sValueName, "LIVES") )
 			m_iLives = atoi( sParams[1] );
+
+		else if( 0 == stricmp(sValueName, "GAINSECONDS") )
+			fGainSeconds = atof( sParams[1] );
 
 		else if( 0 == stricmp(sValueName, "METER") )
 		{
@@ -275,6 +287,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 
 			new_entry.attacks = attacks;
+			new_entry.fGainSeconds = fGainSeconds;
 			attacks.clear();
 			
 			m_entries.push_back( new_entry );

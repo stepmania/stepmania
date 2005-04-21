@@ -9,6 +9,7 @@
 #include "RageLog.h"
 #include "LifeMeterBar.h"
 #include "LifeMeterBattery.h"
+#include "LifeMeterTime.h"
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayPercentage.h"
@@ -348,6 +349,9 @@ void ScreenGameplay::Init()
 				break;
 			case SongOptions::LIFE_BATTERY:
 				m_pLifeMeter[p] = new LifeMeterBattery;
+				break;
+			case SongOptions::LIFE_TIME:
+				m_pLifeMeter[p] = new LifeMeterTime;
 				break;
 			default:
 				ASSERT(0);
@@ -1030,7 +1034,22 @@ void ScreenGameplay::LoadNextSong()
 		}
 	}
 	else
+	{
 		m_BeginnerHelper.SetHidden( false );
+	}
+
+	FOREACH_EnabledPlayer(p)
+	{
+		if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
+		{
+			// give a little life back between stages
+			if( m_pLifeMeter[p] )
+				m_pLifeMeter[p]->OnLoadSong();	
+			if( m_pCombinedLifeMeter )
+				m_pCombinedLifeMeter->OnLoadSong();	
+		}
+	}
+
 
 	m_SongForeground.LoadFromSong( GAMESTATE->m_pCurSong );
 

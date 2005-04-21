@@ -900,11 +900,14 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 	}
-
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && GAMESTATE->m_PlayMode != OldPlayMode )
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && 
+		GAMESTATE->m_PlayMode != OldPlayMode &&
+		GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BAR )
+	{
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+	}
 }
 
 bool GameCommand::IsZero() const

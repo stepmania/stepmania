@@ -32,6 +32,9 @@ CString SongOptions::GetString() const
 	case LIFE_BATTERY:
 		sReturn	+= ssprintf( "%dLives, ", m_iBatteryLives );
 		break;
+	case LIFE_TIME:
+		sReturn	+= "LifeTime, ";
+		break;
 	default:	ASSERT(0);
 	}
 
@@ -136,6 +139,7 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "savescore" )		m_bSaveScore = on;
 		else if( sBit == "bar" )			m_LifeType = LIFE_BAR;
 		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
+		else if( sBit == "lifetime" )		m_LifeType = LIFE_TIME;
 	}
 }
 

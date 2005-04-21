@@ -687,10 +687,19 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		vector<Course*> apCourses;
 		switch( so )
 		{
-		case SORT_NONSTOP_COURSES:	SONGMAN->GetCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
-		case SORT_ONI_COURSES:		SONGMAN->GetCourses( COURSE_TYPE_ONI,		apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
-		case SORT_ENDLESS_COURSES:	SONGMAN->GetCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
-		case SORT_ALL_COURSES:		SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );	break;
+		case SORT_NONSTOP_COURSES:
+			SONGMAN->GetCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );	
+			break;
+		case SORT_ONI_COURSES:
+			SONGMAN->GetCourses( COURSE_TYPE_ONI,		apCourses, PREFSMAN->m_bAutogenGroupCourses );
+			SONGMAN->GetCourses( COURSE_TYPE_SURVIVAL,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+			break;
+		case SORT_ENDLESS_COURSES:
+			SONGMAN->GetCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+			break;
+		case SORT_ALL_COURSES:
+			SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );
+			break;
 		default: ASSERT(0); break;
 		}
 
