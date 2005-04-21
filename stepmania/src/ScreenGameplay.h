@@ -61,7 +61,7 @@ protected:
 	void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
-	void PauseGame( bool bPause );
+	void PauseGame( bool bPause, GameController gc = GAME_CONTROLLER_INVALID );
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
 	void UpdateLights();
@@ -82,6 +82,7 @@ protected:
 		NUM_DANCING_STATES
 	} m_DancingState;
 	bool				m_bPaused;
+	GameController			m_PauseController;
 	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
 	vector<Steps*>		m_vpStepsQueue[NUM_PLAYERS];	// size may be >1 if playing a course
 	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course

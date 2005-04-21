@@ -1107,7 +1107,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 }
 
 
-void ScreenGameplay::PauseGame( bool bPause )
+void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 {
 	if( m_bPaused == bPause )
 	{
@@ -1122,6 +1122,8 @@ void ScreenGameplay::PauseGame( bool bPause )
 	AbortGiveUp( false );
 
 	m_bPaused = bPause;
+	m_PauseController = gc;
+
 	m_pSoundMusic->Pause( bPause );
 	if( bPause )
 		this->PlayCommand( "Pause" );
@@ -1733,8 +1735,11 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	if( m_bPaused )
 	{
 		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
-		if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START && type == IET_FIRST_PRESS )
-			this->PauseGame( false );
+		if( MenuI.IsValid() && GAMESTATE->IsHumanPlayer(MenuI.player) && MenuI.button == MENU_BUTTON_START && type == IET_FIRST_PRESS )
+		{
+			if( m_PauseController == GAME_CONTROLLER_INVALID || m_PauseController == GameI.controller )
+				this->PauseGame( false );
+		}
 		return;
 	}
 
