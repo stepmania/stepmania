@@ -44,6 +44,24 @@ void OptionsCursor::Set( PlayerNumber pn )
 	m_sprRight.SetState(  iBaseFrameNo+2 );
 }
 
+void OptionsCursor::StopTweening()
+{
+	ActorFrame::StopTweening();
+
+	m_sprLeft.StopTweening();
+	m_sprMiddle.StopTweening();
+	m_sprRight.StopTweening();
+}
+
+void OptionsCursor::BeginTweening( float fSecs )
+{
+	ActorFrame::BeginTweening( fSecs );
+
+	m_sprLeft.BeginTweening( fSecs );
+	m_sprMiddle.BeginTweening( fSecs );
+	m_sprRight.BeginTweening( fSecs );
+}
+
 void OptionsCursor::SetBarWidth( int iWidth )
 {
 	if( iWidth%2 == 1 )
@@ -54,19 +72,6 @@ void OptionsCursor::SetBarWidth( int iWidth )
 
 	m_sprLeft.SetX( -iWidth/2 - fFrameWidth/2 );
 	m_sprRight.SetX( +iWidth/2 + fFrameWidth/2 );
-}
-
-void OptionsCursor::TweenBarWidth( int iNewWidth )
-{
-	m_sprLeft.StopTweening();
-	m_sprMiddle.StopTweening();
-	m_sprRight.StopTweening();
-
-	m_sprLeft.BeginTweening( 0.2f );
-	m_sprMiddle.BeginTweening( 0.2f );
-	m_sprRight.BeginTweening( 0.2f );
-
-	SetBarWidth( iNewWidth );	
 }
 
 /*

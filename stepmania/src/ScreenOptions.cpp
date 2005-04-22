@@ -417,7 +417,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 		cursor.SetXY( (float)iX, (float)iY );
 	}
 
-	cursor.TweenBarWidth( iWidth );
+	cursor.SetBarWidth( iWidth );
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{

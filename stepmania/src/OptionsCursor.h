@@ -16,8 +16,10 @@ public:
 	enum Element { cursor, underline };
 	void Load( CString sType, Element elem );
 	void Set( PlayerNumber pn );
+
+	void StopTweening();
+	void BeginTweening( float fSecs );
 	void SetBarWidth( int iWidth );
-	void TweenBarWidth( int iNewWidth );
 
 protected:
 
