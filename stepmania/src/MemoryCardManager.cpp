@@ -413,6 +413,7 @@ void MemoryCardManager::CheckStateChanges()
 		UsbStorageDevice &new_device = m_Device[p];		    
 
 		MemoryCardState state = MEMORY_CARD_STATE_INVALID;
+		CString sError;
 
 		if( m_bCardsLocked )
 		{
@@ -434,9 +435,9 @@ void MemoryCardManager::CheckStateChanges()
 				{
 					if( m_FinalDevice[p].sSerial != new_device.sSerial )
 					{
-						/* A different card is inserted than we had when we finalized;
-						 * ignore it. */
-						state = MEMORY_CARD_STATE_REMOVED;
+						/* A different card is inserted than we had when we finalized. */
+						state = MEMORY_CARD_STATE_ERROR;
+						sError = "Changed";
 					}
 				}
 
@@ -458,6 +459,7 @@ void MemoryCardManager::CheckStateChanges()
 
 			case UsbStorageDevice::STATE_ERROR:
 				state = MEMORY_CARD_STATE_ERROR;
+				sError = new_device.m_sError;
 				break;
 
 			case UsbStorageDevice::STATE_READY:
@@ -489,6 +491,7 @@ void MemoryCardManager::CheckStateChanges()
 			}
 
 			m_State[p] = state;
+			m_sError[p] = sError;
 		}
 	}
 

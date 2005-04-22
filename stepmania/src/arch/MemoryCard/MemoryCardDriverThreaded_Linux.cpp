@@ -220,10 +220,17 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				continue;
 			}
 
-			CString sCommand = "mount " + d.sDevice;
-			bool bMountedSuccessfully = ExecuteCommand( sCommand );
-			
-			if( bMountedSuccessfully && TestWrite( d.sOsMountDir ) )
+			if( !ExecuteCommand("mount " + d.sDevice) )
+			{
+				d.SetError( "MountFailed" );
+				continue;
+			}
+
+			if( !TestWrite(d.sOsMountDir) )
+			{
+				d.SetError( "TestFailed" );
+			}
+			else
 			{
 				/* We've successfully mounted and tested the device.  Read the
 				 * profile name (by mounting a temporary, private mountpoint),
@@ -239,11 +246,9 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 
-				CString sCommand = "umount " + d.sOsMountDir;
-				ExecuteCommand( sCommand );
 			}
-			else
-				d.m_State = UsbStorageDevice::STATE_ERROR;
+
+			ExecuteCommand( "umount " + d.sOsMountDir );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}

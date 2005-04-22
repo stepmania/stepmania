@@ -37,7 +37,6 @@ private:
 
 	ThemeMetric<CString> CREDITS_PRESS_START;
 	ThemeMetric<CString> CREDITS_INSERT_CARD;
-	ThemeMetric<CString> CREDITS_CARD_ERROR;
 	ThemeMetric<CString> CREDITS_CARD_TOO_LATE;
 	ThemeMetric<CString> CREDITS_CARD_NO_NAME;
 	ThemeMetric<CString> CREDITS_CARD_READY;

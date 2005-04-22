@@ -21,7 +21,6 @@ ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 
 	CREDITS_PRESS_START.Load("ScreenSystemLayer","CreditsPressStart");
 	CREDITS_INSERT_CARD.Load("ScreenSystemLayer","CreditsInsertCard");
-	CREDITS_CARD_ERROR.Load("ScreenSystemLayer","CreditsCardError");
 	CREDITS_CARD_TOO_LATE.Load("ScreenSystemLayer","CreditsCardTooLate");
 	CREDITS_CARD_NO_NAME.Load("ScreenSystemLayer","CreditsCardNoName");
 	CREDITS_CARD_READY.Load("ScreenSystemLayer","CreditsCardReady");
@@ -145,7 +144,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 			else
 				return "";
 
-		case MEMORY_CARD_STATE_ERROR: 		return CREDITS_CARD_ERROR.GetValue();
+		case MEMORY_CARD_STATE_ERROR: 		return THEME->GetMetric( m_sName, "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
 		case MEMORY_CARD_STATE_TOO_LATE:	return CREDITS_CARD_TOO_LATE.GetValue();
 		case MEMORY_CARD_STATE_CHECKING:	return CREDITS_CARD_CHECKING.GetValue();
 		case MEMORY_CARD_STATE_REMOVED:		return CREDITS_CARD_REMOVED.GetValue();

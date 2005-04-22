@@ -47,6 +47,9 @@ struct UsbStorageDevice
 		STATE_READY,
 	};
 	State m_State;
+	CString m_sError;
+
+	void SetError( const CString &sError ) { m_State = STATE_ERROR; m_sError = sError; }
 
 	bool bIsNameAvailable;  // Name in the profile on the memory card.
 	CString sName;  // Name in the profile on the memory card.
