@@ -457,7 +457,7 @@ void MemoryCardManager::CheckStateChanges()
 				break;
 
 			case UsbStorageDevice::STATE_WRITE_ERROR:
-				state = MEMORY_CARD_STATE_WRITE_ERROR;
+				state = MEMORY_CARD_STATE_ERROR;
 				break;
 
 			case UsbStorageDevice::STATE_READY:
@@ -483,7 +483,7 @@ void MemoryCardManager::CheckStateChanges()
 			case MEMORY_CARD_STATE_TOO_LATE:
 				m_soundTooLate.Play();
 				break;
-			case MEMORY_CARD_STATE_WRITE_ERROR:
+			case MEMORY_CARD_STATE_ERROR:
 				m_soundError.Play();
 				break;
 			}
