@@ -464,8 +464,8 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				{
 					usbd.sOsMountDir = sMountPoint;
 					
-					LOG->Trace( "iScsiIndex: %d, sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-						usbd.iScsiIndex, usbd.sDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sOsMountDir.c_str() );
+					LOG->Trace( "sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
+						usbd.sDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sOsMountDir.c_str() );
 					
 					break;	// stop looking for a match
 				}

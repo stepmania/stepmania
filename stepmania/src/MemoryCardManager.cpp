@@ -393,8 +393,8 @@ void MemoryCardManager::Update( float fDelta )
 				PREFSMAN->m_iMemoryCardUsbLevel[p] != d->iLevel )
 				continue;       // not a match
 			
-			LOG->Trace( "Player %i: device match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-				p+1, d->iScsiIndex, d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
+			LOG->Trace( "Player %i: device match:  sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
+				p+1, d->sDevice.c_str(), d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
 
 			assigned_device = *d;    // save a copy
 			vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
