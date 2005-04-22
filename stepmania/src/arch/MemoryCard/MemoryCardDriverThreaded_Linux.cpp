@@ -220,7 +220,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				continue;
 			}
 
-			CString sCommand = "mount " + d.sOsMountDir;
+			CString sCommand = "mount " + d.sDevice;
 			bool bMountedSuccessfully = ExecuteCommand( sCommand );
 			
 			if( bMountedSuccessfully && TestWrite( d.sOsMountDir ) )
@@ -336,7 +336,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				continue;
 
 
-			usbd.sDevice = "/dev/" + sDevice;
+			usbd.sDevice = "/dev/" + sDevice + "1";
 
 			/*
 			 * sPath/device should be a symlink to the actual device.  For USB
@@ -460,7 +460,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			for( unsigned i=0; i<vDevicesOut.size(); i++ )
 			{
 				UsbStorageDevice& usbd = vDevicesOut[i];
-				if( usbd.sDevice+"1" == szScsiDevice )	// found our match
+				if( usbd.sDevice == szScsiDevice )	// found our match
 				{
 					usbd.sOsMountDir = sMountPoint;
 					
@@ -494,7 +494,7 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
 	ASSERT( !pDevice->sOsMountDir.empty() );
 	
-        CString sCommand = "mount " + pDevice->sOsMountDir;
+        CString sCommand = "mount " + pDevice->sDevice;
         LOG->Trace( "hack mount (%s)", sCommand.c_str() );
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
@@ -506,7 +506,7 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 	if( pDevice->sOsMountDir.empty() )
 		return;
 	
-	CString sCommand = "umount " + pDevice->sOsMountDir;
+	CString sCommand = "umount " + pDevice->sDevice;
 	LOG->Trace( "hack unmount (%s)", sCommand.c_str() );
 	ExecuteCommand( sCommand );
 }
@@ -521,7 +521,7 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 	// that the flush is completed on return.  However, we can mount the filesystem
 	// with the flag "-o sync", which forces synchronous access (but that's probably
 	// very slow.) -glenn
-	ExecuteCommand( "mount -o remount " + pDevice->sOsMountDir );
+	ExecuteCommand( "mount -o remount " + pDevice->sDevice );
 }
 
 /*
