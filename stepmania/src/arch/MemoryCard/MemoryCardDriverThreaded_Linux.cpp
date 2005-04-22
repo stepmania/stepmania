@@ -320,12 +320,13 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 
 		for( unsigned i = 0; i < asDevices.size(); ++i )
 		{
-			if( asDevices[i] == "." || asDevices[i] == ".." )
+			const CString &sDevice = asDevices[i];
+			if( sDevice == "." || sDevice == ".." )
 				continue;
 
 			UsbStorageDevice usbd;
 
-			CString sPath = sBlockDevicePath + asDevices[i] + "/";
+			CString sPath = sBlockDevicePath + sDevice + "/";
 
 			/* Ignore non-removable devices. */
 			CString sBuf;
@@ -335,7 +336,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				continue;
 
 
-			usbd.sScsiDevice = "/dev/" + asDevices[i];
+			usbd.sScsiDevice = "/dev/" + sDevice;
 
 			/*
 			 * sPath/device should be a symlink to the actual device.  For USB
