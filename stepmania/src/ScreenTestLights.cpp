@@ -25,8 +25,8 @@ void ScreenTestLights::Init()
 
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInputs.SetText( "" );
-	m_textInputs.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
+	m_textInputs.SetXY( SCREEN_CENTER_X - 200, SCREEN_CENTER_Y );
+	m_textInputs.SetHorizAlign( Actor::align_left );
 	m_textInputs.SetZoom( 0.8f );
 	this->AddChild( &m_textInputs );
 
@@ -53,15 +53,39 @@ void ScreenTestLights::Update( float fDeltaTime )
 	}
 
 
-	CabinetLight cl = LIGHTSMAN->GetCurrentTestCabinetLight();
-	GameButton gb = (GameButton)(LIGHTSMAN->GetCurrentTestGameplayLight());
-	CString sCabLight = CabinetLightToString(cl);
-	CString sGameButton = GAMESTATE->GetCurrentGame()->m_szButtonNames[gb];
+	CabinetLight cl = LIGHTSMAN->GetFirstLitCabinetLight();
+	GameController gc;
+	GameButton gb;
+	LIGHTSMAN->GetFirstLitGameButtonLight( gc, gb );
 
 	CString s;
-	s += ssprintf("cabinet light %d: %s\n", cl, sCabLight.c_str());
-	FOREACH_GameController( gc )
-		s += ssprintf("controller %d light %d: %s\n", gc+1, gb, sGameButton.c_str());
+
+	switch( LIGHTSMAN->GetLightsMode() )
+	{
+	case LIGHTSMODE_TEST_AUTO_CYCLE:
+		s += "Auto Cycle\n";
+		break;
+	case LIGHTSMODE_TEST_MANUAL_CYCLE:
+		s += "Manual Cycle\n";
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	if( cl == LIGHT_INVALID )
+		s += "cabinet light: -----\n";
+	else
+		s += ssprintf( "cabinet light: %d %s\n", cl, CabinetLightToString(cl).c_str() );
+
+	if( gc == GAME_CONTROLLER_INVALID )
+	{
+		s += ssprintf( "controller light: -----\n" );
+	}
+	else
+	{
+		CString sGameButton = GAMESTATE->GetCurrentGame()->m_szButtonNames[gb];
+		s += ssprintf( "controller light: P%d %d %s\n", gc+1, gb, sGameButton.c_str() );
+	}
 
 	m_textInputs.SetText( s );
 }
@@ -95,14 +119,20 @@ void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 void ScreenTestLights::MenuLeft( PlayerNumber pn )
 {
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
-	LIGHTSMAN->PrevTestLight();
+	if( pn == PLAYER_1 )
+		LIGHTSMAN->PrevTestCabinetLight();
+	else
+		LIGHTSMAN->PrevTestGameButtonLight();
 	m_timerBackToAutoCycle.Touch();
 }
 
 void ScreenTestLights::MenuRight( PlayerNumber pn )
 {
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
-	LIGHTSMAN->NextTestLight();
+	if( pn == PLAYER_1 )
+		LIGHTSMAN->NextTestCabinetLight();
+	else
+		LIGHTSMAN->NextTestGameButtonLight();
 	m_timerBackToAutoCycle.Touch();
 }
 

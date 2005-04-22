@@ -41,12 +41,15 @@ LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our p
 
 LightsManager::LightsManager(CString sDriver)
 {
-	m_LightsMode = LIGHTSMODE_JOINING;
-	m_pDriver = MakeLightsDriver(sDriver);
-	m_fCurrentCurrentTestLightIndex = 0;
-
 	ZERO( m_fSecsLeftInCabinetLightBlink );
 	ZERO( m_fSecsLeftInGameButtonBlink );
+
+	m_LightsMode = LIGHTSMODE_JOINING;
+	m_pDriver = MakeLightsDriver(sDriver);
+	m_fTestAutoCycleCurrentIndex = 0;
+	m_clTestManualCycleCurrent = LIGHT_INVALID;
+	m_gcTestManualCycleCurrent = GAME_CONTROLLER_INVALID;
+	m_gbTestManualCycleCurrent = GAME_BUTTON_INVALID;
 }
 
 LightsManager::~LightsManager()
@@ -78,8 +81,8 @@ void LightsManager::Update( float fDeltaTime )
 
 	if( m_LightsMode == LIGHTSMODE_TEST_AUTO_CYCLE )
 	{
-		m_fCurrentCurrentTestLightIndex += fDeltaTime;
-		m_fCurrentCurrentTestLightIndex = fmodf( m_fCurrentCurrentTestLightIndex, NUM_CABINET_LIGHTS*100 );
+		m_fTestAutoCycleCurrentIndex += fDeltaTime;
+		m_fTestAutoCycleCurrentIndex = fmodf( m_fTestAutoCycleCurrentIndex, NUM_CABINET_LIGHTS*100 );
 	}
 
 	switch( m_LightsMode )
@@ -160,12 +163,20 @@ void LightsManager::Update( float fDeltaTime )
 		}
 		break;
 	case LIGHTSMODE_TEST_AUTO_CYCLE:
-	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
-			int iSec = GetCurrentTestLightIndex();
+			int iSec = GetTestAutoCycleCurrentIndex();
 			FOREACH_CabinetLight( cl )
 			{
 				bool bOn = (iSec%NUM_CABINET_LIGHTS) == cl;
+				m_LightsState.m_bCabinetLights[cl] = bOn;
+			}
+		}
+		break;
+	case LIGHTSMODE_TEST_MANUAL_CYCLE:
+		{
+			FOREACH_CabinetLight( cl )
+			{
+				bool bOn = cl == m_clTestManualCycleCurrent;
 				m_LightsState.m_bCabinetLights[cl] = bOn;
 			}
 		}
@@ -253,17 +264,25 @@ void LightsManager::Update( float fDeltaTime )
 		}
 		break;
 	case LIGHTSMODE_TEST_AUTO_CYCLE:
+		{
+			int index = GetTestAutoCycleCurrentIndex();
+			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
+			wrap( index, MAX_GAME_CONTROLLERS*iNumGameButtonsToShow );
+
+			ZERO( m_LightsState.m_bGameButtonLights );
+
+			GameController gc = (GameController)(index / iNumGameButtonsToShow);
+			GameButton gb = (GameButton)(index % iNumGameButtonsToShow);
+			m_LightsState.m_bGameButtonLights[gc][gb] = true;
+		}
+		break;
 	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
-			int iSec = GetCurrentTestLightIndex();
-
-			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
-
 			FOREACH_GameController( gc )
 			{
 				FOREACH_GameButton( gb )
 				{
-					bool bOn = gb==(iSec%iNumGameButtonsToShow);
+					bool bOn = gc==m_gcTestManualCycleCurrent && gb==m_gbTestManualCycleCurrent;
 					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 				}
 			}
@@ -297,31 +316,57 @@ LightsMode LightsManager::GetLightsMode()
 	return m_LightsMode;
 }
 
-void LightsManager::PrevTestLight()
+void LightsManager::ChangeTestCabinetLight( int iDir )
 {
-	m_fCurrentCurrentTestLightIndex -= 1;
-	m_fCurrentCurrentTestLightIndex = Quantize( m_fCurrentCurrentTestLightIndex, 1.0f );
-	fmodf( m_fCurrentCurrentTestLightIndex, NUM_CABINET_LIGHTS*100 );
+	m_gcTestManualCycleCurrent = GAME_CONTROLLER_INVALID;
+	m_gbTestManualCycleCurrent = GAME_BUTTON_INVALID;
+
+	m_clTestManualCycleCurrent = (CabinetLight)(m_clTestManualCycleCurrent+iDir);
+	wrap( (int&)m_clTestManualCycleCurrent, NUM_CABINET_LIGHTS );
 }
 
-void LightsManager::NextTestLight()
+void LightsManager::ChangeTestGameButtonLight( int iDir )
 {
-	m_fCurrentCurrentTestLightIndex += 1;
-	m_fCurrentCurrentTestLightIndex = Quantize( m_fCurrentCurrentTestLightIndex, 1.0f );
-	fmodf( m_fCurrentCurrentTestLightIndex, NUM_CABINET_LIGHTS*100 );
-}
-
-
-CabinetLight LightsManager::GetCurrentTestCabinetLight()
-{
-	return (CabinetLight)(GetCurrentTestLightIndex()%NUM_CABINET_LIGHTS);
-}
-
-int LightsManager::GetCurrentTestGameplayLight()
-{ 
+	m_clTestManualCycleCurrent = LIGHT_INVALID;
+	
 	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
-	return GetCurrentTestLightIndex()%iNumGameButtonsToShow; 
+	int index = m_gcTestManualCycleCurrent * iNumGameButtonsToShow + m_gbTestManualCycleCurrent;
+
+	index += iDir;
+	wrap( index, MAX_GAME_CONTROLLERS * iNumGameButtonsToShow );
+
+	m_gcTestManualCycleCurrent = (GameController)(index / iNumGameButtonsToShow);
+	m_gbTestManualCycleCurrent = (GameButton)(index % iNumGameButtonsToShow);
 }
+
+CabinetLight LightsManager::GetFirstLitCabinetLight()
+{
+	FOREACH_CabinetLight( cl )
+	{
+		if( m_LightsState.m_bCabinetLights[cl] )
+			return cl;
+	}
+	return LIGHT_INVALID;
+}
+
+void LightsManager::GetFirstLitGameButtonLight( GameController &gcOut, GameButton &gbOut )
+{
+	FOREACH_GameController( gc )
+	{
+		FOREACH_GameButton( gb )
+		{
+			if( m_LightsState.m_bGameButtonLights[gc][gb] )
+			{
+				gcOut = gc;
+				gbOut = gb;
+				return;
+			}
+		}
+	}
+	gcOut = GAME_CONTROLLER_INVALID;
+	gbOut = GAME_BUTTON_INVALID;
+}
+
 
 /*
  * (c) 2003-2004 Chris Danford

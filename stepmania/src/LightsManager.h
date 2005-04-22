@@ -19,7 +19,8 @@ enum CabinetLight
 	LIGHT_BUTTONS_RIGHT,
 	LIGHT_BASS_LEFT,
 	LIGHT_BASS_RIGHT,
-	NUM_CABINET_LIGHTS
+	NUM_CABINET_LIGHTS,
+	LIGHT_INVALID
 };
 #define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CABINET_LIGHTS, i )
 const CString& CabinetLightToString( CabinetLight cl );
@@ -62,13 +63,18 @@ public:
 	void SetLightsMode( LightsMode lm );
 	LightsMode GetLightsMode();
 
-	void PrevTestLight();
-	void NextTestLight();
+	void PrevTestCabinetLight()		{ ChangeTestCabinetLight(-1); }
+	void NextTestCabinetLight()		{ ChangeTestCabinetLight(+1); }
+	void PrevTestGameButtonLight()	{ ChangeTestGameButtonLight(-1); }
+	void NextTestGameButtonLight()	{ ChangeTestGameButtonLight(+1); }
 
-	CabinetLight GetCurrentTestCabinetLight();
-	int GetCurrentTestGameplayLight();
+	CabinetLight	GetFirstLitCabinetLight();
+	void			GetFirstLitGameButtonLight( GameController &gcOut, GameButton &gbOut );
 
 private:
+	void ChangeTestCabinetLight( int iDir );
+	void ChangeTestGameButtonLight( int iDir );
+
 	float m_fSecsLeftInCabinetLightBlink[NUM_CABINET_LIGHTS];
 	float m_fSecsLeftInGameButtonBlink[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
 
@@ -76,8 +82,12 @@ private:
 	LightsMode m_LightsMode;
 	LightsState m_LightsState;
 
-	int GetCurrentTestLightIndex() { return (int)m_fCurrentCurrentTestLightIndex; }
-	float m_fCurrentCurrentTestLightIndex;
+	int GetTestAutoCycleCurrentIndex() { return (int)m_fTestAutoCycleCurrentIndex; }
+
+	float			m_fTestAutoCycleCurrentIndex;
+	CabinetLight	m_clTestManualCycleCurrent;
+	GameController	m_gcTestManualCycleCurrent;
+	GameButton		m_gbTestManualCycleCurrent;
 };
 
 
