@@ -65,7 +65,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
-	if( fAccels[PlayerOptions::ACCEL_BOOST] > 0 )
+	if( fAccels[PlayerOptions::ACCEL_BOOST] != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
@@ -74,7 +74,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		CLAMP( fAccelYAdjust, -400.f, 400.f );
 		fYAdjust += fAccelYAdjust;
 	}
-	if( fAccels[PlayerOptions::ACCEL_BRAKE] > 0 )
+	if( fAccels[PlayerOptions::ACCEL_BRAKE] != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
@@ -84,7 +84,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		CLAMP( fBrakeYAdjust, -400.f, 400.f );
 		fYAdjust += fBrakeYAdjust;
 	}
-	if( fAccels[PlayerOptions::ACCEL_WAVE] > 0 )
+	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*RageFastSin( fYOffset/38.0f );
 
 	fYOffset += fYAdjust;
@@ -92,7 +92,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	//
 	// Factor in boomerang
 	//
-	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
+	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0 )
 	{
 		float fOriginalYOffset = fYOffset;
 
@@ -124,7 +124,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	}	
 
 
-	if( fAccels[PlayerOptions::ACCEL_EXPAND] > 0 )
+	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
 		/* Timers can't be global, since they'll be initialized before SDL. */
 		static RageTimer timerExpand;
@@ -171,7 +171,7 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
-	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
 		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
 	return f;
 }
@@ -181,7 +181,7 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 	float f = YPos;
 
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
-	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
 		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
 
 	float fShift, fScale;
@@ -200,7 +200,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
-	if( fEffects[PlayerOptions::EFFECT_TORNADO] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
@@ -236,9 +236,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
 
-	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
-	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
 		// TODO: Don't index by PlayerNumber.
 		PlayerNumber pn = pPlayerState->m_PlayerNumber;
@@ -249,7 +249,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
 	}
 
-	if( fEffects[PlayerOptions::EFFECT_BEAT] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	do {
 		float fAccelTime = 0.2f, fTotalTime = 0.5f;
 		
@@ -298,7 +298,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat ) 
 {
-	if( pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_DIZZY] > 0 )
+	if( pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_DIZZY] != 0 )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
@@ -386,28 +386,28 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 
 	float fVisibleAdjust = 0;
 
-	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] > 0 )
+	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] != 0 )
 	{
 		float fHiddenVisibleAdjust = SCALE( fYPos, GetHiddenStartLine(pPlayerState), GetHiddenEndLine(pPlayerState), 0, -1 );
 		CLAMP( fHiddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
 	}
-	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] > 0 )
+	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] != 0 )
 	{
 		float fSuddenVisibleAdjust = SCALE( fYPos, GetSuddenStartLine(pPlayerState), GetSuddenEndLine(pPlayerState), -1, 0 );
 		CLAMP( fSuddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
 
-	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] > 0 )
+	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] != 0 )
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
-	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
+	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
 		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
 		f = Quantize( f, 0.3333f );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
-	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] > 0)
+	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] != 0 )
 	{
 		const float fRealFadeDist = 80;
 		fVisibleAdjust += SCALE( fabsf(fDistFromCenterLine), fRealFadeDist, 2*fRealFadeDist, -1, 0 )
@@ -457,7 +457,7 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	float fZPos=0;
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
-	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
 
 	return fZPos;
@@ -466,7 +466,7 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
 {
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
-	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
+	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		return true;
 
 	return false;
