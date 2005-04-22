@@ -1640,7 +1640,7 @@ void ScreenGameplay::UpdateLights()
 		FOREACH_CabinetLight( cl )
 		{	
 			// for each index we crossed since the last update:
-			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed, iRowNow )
+			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed+1, iRowNow+1 )
 			{
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
@@ -1655,7 +1655,7 @@ void ScreenGameplay::UpdateLights()
 			for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
 			{
 				// for each index we crossed since the last update:
-				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iRowNow )
+				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iRowNow+1 )
 				{
 					TapNote tn = m_Player[pn].m_NoteData.GetTapNote(t,r);
 					bool bBlink = (tn.type != TapNote::empty && tn.type != TapNote::mine);
