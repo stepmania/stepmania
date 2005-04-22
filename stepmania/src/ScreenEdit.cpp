@@ -2720,8 +2720,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		{
 			Undo();
 			CString sError = ssprintf(
-				"This change creates notes past the end of the music and is not allowed.\n\nThe change has been reverted.", 
-				MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
+				"This change creates notes past the end of the music and is not allowed.\n\nThe change has been reverted." );
 			SCREENMAN->Prompt( SM_None, sError );
 			return;
 		}
