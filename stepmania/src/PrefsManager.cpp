@@ -574,8 +574,12 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 		(*p)->ReadFrom( ini );
 }
 
-void PrefsManager::SaveGlobalPrefsToDisk() const
+void PrefsManager::SaveGlobalPrefsToDisk()
 {
+	// Re-read before writing so we don't clobber any changes the use made while 
+	// the program was running.
+	ReadGlobalPrefsFromDisk();
+
 	IniFile ini;
 	SaveGlobalPrefsToIni( ini );
 	ini.WriteFile( STEPMANIA_INI_PATH );

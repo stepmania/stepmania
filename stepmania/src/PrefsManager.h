@@ -306,7 +306,7 @@ public:
 	void SaveGlobalPrefsToIni( IniFile &ini ) const;
 
 	void ReadGlobalPrefsFromDisk();
-	void SaveGlobalPrefsToDisk() const;
+	void SaveGlobalPrefsToDisk();
 
 	void ResetToFactoryDefaults();
 
