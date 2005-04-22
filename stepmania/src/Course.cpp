@@ -184,6 +184,10 @@ void Course::LoadFromCRSFile( CString sPath )
 					attack.sModifier = sBits[1];
 					attacks.push_back( attack );
 				}
+				else
+				{
+					LOG->Warn( "Unexpected value named '%s'", sBits[0].c_str() );
+				}
 			}
 
 				
@@ -304,7 +308,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		}
 		else
 		{
-			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+			LOG->Warn( "Unexpected value named '%s'", sValueName.c_str() );
 		}
 	}
 	static TitleSubst tsub("courses");
