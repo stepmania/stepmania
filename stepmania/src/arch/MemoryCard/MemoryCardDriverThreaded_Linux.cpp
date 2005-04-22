@@ -393,8 +393,6 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			if( ReadFile( sPath + "device/../idProduct", sBuf ) )
 				sscanf( sBuf, "%x", &usbd.idProduct );
 
-			/* These queries cause communication with the USB device.  Disabling
-			 * them may result in higher reliability. */
 			if( ReadFile( sPath + "device/../serial", sBuf ) )
 			{
 				usbd.sSerial = sBuf;
