@@ -177,6 +177,7 @@ void Course::LoadFromCRSFile( CString sPath )
 				{
 					if( end != -9999 )
 					{
+						ASSERT_M( end >= attack.fStartSecond, ssprintf("Attack ends before it starts.  end %f, start %f", end, attack.fStartSecond) );
 						attack.fSecsRemaining = end - attack.fStartSecond;
 						end = -9999;
 					}

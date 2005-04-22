@@ -32,6 +32,7 @@ void Attack::GetAttackBeats( const Song *song, const PlayerState* pPlayerState, 
 		GAMESTATE->GetUndisplayedBeats( pPlayerState, fSecsRemaining, fStartBeat, fEndBeat );
 	}
 
+	// loading the course should have caught this.
 	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
 }
 
