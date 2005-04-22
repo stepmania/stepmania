@@ -68,8 +68,6 @@ void ScreenTestLights::Update( float fDeltaTime )
 	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		s += "Manual Cycle\n";
 		break;
-	default:
-		ASSERT(0);
 	}
 
 	if( cl == LIGHT_INVALID )
