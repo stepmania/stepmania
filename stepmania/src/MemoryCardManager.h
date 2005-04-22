@@ -18,6 +18,7 @@ public:
 	void Update( float fDelta );
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
+	CString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
@@ -50,6 +51,7 @@ protected:
 	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
 
 	MemoryCardState m_State[NUM_PLAYERS];
+	CString m_sError[NUM_PLAYERS]; // if MEMORY_CARD_STATE_ERROR
 
 	RageSound m_soundReady;
 	RageSound m_soundError;
