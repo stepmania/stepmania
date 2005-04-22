@@ -336,7 +336,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				continue;
 
 
-			usbd.sScsiDevice = "/dev/" + sDevice;
+			usbd.sDevice = "/dev/" + sDevice;
 
 			/*
 			 * sPath/device should be a symlink to the actual device.  For USB
@@ -456,16 +456,16 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			TrimLeft( sMountPoint );
 			TrimRight( sMountPoint );
 			
-			// search for the usb-storage device corresponding to the SCSI device
+			// search for the mountpoint corresponding to the device
 			for( unsigned i=0; i<vDevicesOut.size(); i++ )
 			{
 				UsbStorageDevice& usbd = vDevicesOut[i];
-				if( usbd.sScsiDevice+"1" == szScsiDevice )	// found our match
+				if( usbd.sDevice+"1" == szScsiDevice )	// found our match
 				{
 					usbd.sOsMountDir = sMountPoint;
 					
-					LOG->Trace( "iScsiIndex: %d, sScsiDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-						usbd.iScsiIndex, usbd.sScsiDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sOsMountDir.c_str() );
+					LOG->Trace( "iScsiIndex: %d, sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
+						usbd.iScsiIndex, usbd.sDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sOsMountDir.c_str() );
 					
 					break;	// stop looking for a match
 				}

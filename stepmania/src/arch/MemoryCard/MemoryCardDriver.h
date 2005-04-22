@@ -12,7 +12,7 @@ struct UsbStorageDevice
 		iPort = -1;
 		iLevel = -1;
 		iScsiIndex = -1;
-		sScsiDevice = "";
+		sDevice = "";
 		sSerial = "<none>"; // be different than a card with no serial
 		sOsMountDir = "";
 		m_State = STATE_NONE;
@@ -28,7 +28,7 @@ struct UsbStorageDevice
 	int iLevel;
 	CString sSerial;
 	int iScsiIndex;
-	CString sScsiDevice;
+	CString sDevice;
 	CString	sOsMountDir;	// WITHOUT trailing slash
 	enum State
 	{
