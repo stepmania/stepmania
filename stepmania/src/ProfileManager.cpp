@@ -129,22 +129,19 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	UnloadProfile( pn );
 
 	// mount slot
-	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
-	{
+	if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+		return false;
 
-		CString sDir = MEM_CARD_MOUNT_POINT[pn];
+	CString sDir = MEM_CARD_MOUNT_POINT[pn];
 
-		// tack on a subdirectory so that we don't write everything to the root
-		sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
-		sDir += '/'; 
+	// tack on a subdirectory so that we don't write everything to the root
+	sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
+	sDir += '/'; 
 
-		bool bSuccess;
-		bSuccess = LoadProfile( pn, sDir, true );
+	bool bSuccess;
+	bSuccess = LoadProfile( pn, sDir, true );
 
-		return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
-	}
-
-	return false;
+	return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
 }
 			
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
