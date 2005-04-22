@@ -243,9 +243,9 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				ExecuteCommand( sCommand );
 			}
 			else
-				d.m_State = UsbStorageDevice::STATE_WRITE_ERROR;
+				d.m_State = UsbStorageDevice::STATE_ERROR;
 
-			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_WRITE_ERROR? "failed":"succeeded", d.sName.c_str() );
+			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
 	}
 	

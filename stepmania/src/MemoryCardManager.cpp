@@ -456,7 +456,7 @@ void MemoryCardManager::CheckStateChanges()
 				state = MEMORY_CARD_STATE_CHECKING;
 				break;
 
-			case UsbStorageDevice::STATE_WRITE_ERROR:
+			case UsbStorageDevice::STATE_ERROR:
 				state = MEMORY_CARD_STATE_ERROR;
 				break;
 

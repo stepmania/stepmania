@@ -43,7 +43,7 @@ struct UsbStorageDevice
 
 		/* We can't write to the device; it may be write-protected, use a filesystem
 		 * that we don't understand, unformatted, etc. */
-		STATE_WRITE_ERROR,
+		STATE_ERROR,
 
 		/* The device is ready and usable.  sName is filled in, if available. */
 		STATE_READY,
