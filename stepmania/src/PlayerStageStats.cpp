@@ -229,21 +229,21 @@ float PlayerStageStats::GetCurMaxPercentDancePoints() const
 	return fCurMaxPercentDancePoints;
 }
 
-void PlayerStageStats::SetLifeRecordAt( float fLife, float fSecond )
+void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 {
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
 	
-	if( fSecond < 0 )
+	if( fStepsSecond < 0 )
 		return;
 
-	fFirstSecond = min( fSecond, fFirstSecond );
-	fLastSecond = max( fSecond, fLastSecond );
+	fFirstSecond = min( fStepsSecond, fFirstSecond );
+	fLastSecond = max( fStepsSecond, fLastSecond );
 	//LOG->Trace( "fLastSecond = %f", fLastSecond );
 
 	// fSecond will always be greater than any value already in the map.
-	fLifeRecord[fSecond] = fLife;
+	fLifeRecord[fStepsSecond] = fLife;
 
 	//
 	// Memory optimization:
@@ -269,13 +269,13 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fSecond )
 		fLifeRecord.erase(B);
 }
 
-float PlayerStageStats::GetLifeRecordAt( float fSecond ) const
+float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
 {
 	if( fLifeRecord.empty() )
 		return 0;
 	
 	/* Find the first element whose key is greater than k. */
-	map<float,float>::const_iterator it = fLifeRecord.upper_bound( fSecond );
+	map<float,float>::const_iterator it = fLifeRecord.upper_bound( fStepsSecond );
 
 	/* Find the last element whose key is less than or equal to k. */
 	if( it != fLifeRecord.begin() )
@@ -285,13 +285,13 @@ float PlayerStageStats::GetLifeRecordAt( float fSecond ) const
 
 }
 
-float PlayerStageStats::GetLifeRecordLerpAt( float fSecond ) const
+float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 {
 	if( fLifeRecord.empty() )
 		return 0;
 	
 	/* Find the first element whose key is greater than k. */
-	map<float,float>::const_iterator later = fLifeRecord.upper_bound( fSecond );
+	map<float,float>::const_iterator later = fLifeRecord.upper_bound( fStepsSecond );
 
 	/* Find the last element whose key is less than or equal to k. */
 	map<float,float>::const_iterator earlier = later;
@@ -305,15 +305,15 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fSecond ) const
 		return earlier->second;
 
 	/* earlier <= pos <= later */
-	return SCALE( fSecond, earlier->first, later->first, earlier->second, later->second );
+	return SCALE( fStepsSecond, earlier->first, later->first, earlier->second, later->second );
 }
 
 
-void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fEndSecond ) const
+void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const
 {
 	for( int i = 0; i < iNumSamples; ++i )
 	{
-		float from = SCALE( i, 0, (float)iNumSamples, 0.0f, fEndSecond );
+		float from = SCALE( i, 0, (float)iNumSamples, 0.0f, fStepsEndSecond );
 		fLifeOut[i] = GetLifeRecordLerpAt( from );
 	}
 }

@@ -58,10 +58,10 @@ struct PlayerStageStats
 	float	fCaloriesBurned;
 
 	map<float,float>	fLifeRecord;
-	void	SetLifeRecordAt( float fLife, float fSecond );
-	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fEndSecond ) const;
-	float	GetLifeRecordAt( float fSecond ) const;
-	float	GetLifeRecordLerpAt( float fSecond ) const;
+	void	SetLifeRecordAt( float fLife, float fStepsSecond );
+	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const;
+	float	GetLifeRecordAt( float fStepsSecond ) const;
+	float	GetLifeRecordLerpAt( float fStepsSecond ) const;
 
 	struct Combo_t
 	{

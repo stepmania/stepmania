@@ -120,8 +120,8 @@ public:
 
 	CString	m_sMusicFile;
 	float	m_fMusicLengthSeconds;
-	float	m_fFirstBeat;
-	float	m_fLastBeat;
+	float	m_fFirstBeat;	// beat of first note
+	float	m_fLastBeat;	// beat of last note
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;

@@ -17,7 +17,7 @@ void ComboGraph::Load( const CString& sScreen, const CString& sElement, const St
 	ASSERT( m_SubActors.size() == 0 );
 
 	const float fFirstSecond = 0;
-	const float fLastSecond = s.GetTotalPossibleMusicLengthSeconds();
+	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
 
 	/* Find the largest combo. */
 	int MaxComboSize = 0;

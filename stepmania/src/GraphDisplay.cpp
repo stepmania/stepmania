@@ -43,7 +43,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 {
 	memcpy( m_LastValues, m_CurValues, sizeof(m_CurValues) );
 	m_Position = 0;
-	pss.GetLifeRecord( m_DestValues, VALUE_RESOLUTION, ss.GetTotalPossibleMusicLengthSeconds() );
+	pss.GetLifeRecord( m_DestValues, VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
 	for( unsigned i=0; i<ARRAYSIZE(m_DestValues); i++ )
 		CLAMP( m_DestValues[i], 0.f, 1.f );
 	UpdateVerts();

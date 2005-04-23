@@ -180,7 +180,7 @@ void LifeMeterTime::ForceFail()
 
 float LifeMeterTime::GetLifeSeconds() const
 {
-	float fSecs = m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.fGameplaySeconds);
+	float fSecs = m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.fStepsSeconds);
 	return fSecs;
 }
 

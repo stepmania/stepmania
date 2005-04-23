@@ -13,6 +13,7 @@ StageStats::StageStats()
 	vpPossibleSongs.clear();
 	StageType = STAGE_INVALID;
 	fGameplaySeconds = 0;
+	fStepsSeconds = 0;
 }
 
 void StageStats::Init()
@@ -62,6 +63,7 @@ void StageStats::AddStats( const StageStats& other )
 	StageType = STAGE_INVALID; // meaningless
 	
 	fGameplaySeconds += other.fGameplaySeconds;
+	fStepsSeconds += other.fStepsSeconds;
 
 	FOREACH_PlayerNumber( p )
 		m_player[p].AddStats( other.m_player[p] );
@@ -91,12 +93,11 @@ bool StageStats::AllFailedEarlier() const
 	return true;
 }
 
-float StageStats::GetTotalPossibleMusicLengthSeconds() const
+float StageStats::GetTotalPossibleStepsSeconds() const
 {
 	float fSecs = 0;
 	FOREACH_CONST( Song*, vpPossibleSongs, s )
-		fSecs += (*s)->m_fMusicLengthSeconds;
-
+		fSecs += (*s)->GetElapsedTimeFromBeat( (*s)->m_fLastBeat ) - (*s)->GetElapsedTimeFromBeat( (*s)->m_fFirstBeat );
 	return fSecs;
 }
 

@@ -1447,6 +1447,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		// update fGameplaySeconds
 		STATSMAN->m_CurStageStats.fGameplaySeconds += fDeltaTime;
+		if( GAMESTATE->m_fSongBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
+			STATSMAN->m_CurStageStats.fStepsSeconds += fDeltaTime;
 
 		//
 		// Check for end of song

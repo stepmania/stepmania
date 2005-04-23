@@ -30,9 +30,14 @@ struct StageStats
 	vector<Song*>	vpPlayedSongs;
 	vector<Song*>	vpPossibleSongs;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
-	float	fGameplaySeconds;				// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
 
-	float GetTotalPossibleMusicLengthSeconds() const;		// TODO: Scale this by the music rate
+	// TODO: These are updated in ScreenGameplay::Update based on fDelta.  
+	// They should be made more accurate.
+	float	fGameplaySeconds;		// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
+	float	fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
+
+	// Total number of seconds between first beat and last beat for every song.
+	float GetTotalPossibleStepsSeconds() const;	// TODO: Scale this by the music rate
 
 	PlayerStageStats m_player[NUM_PLAYERS];
 

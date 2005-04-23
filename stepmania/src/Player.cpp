@@ -1458,7 +1458,7 @@ void Player::HandleTapRowScore( unsigned row )
 	 * GAMESTATE->m_fMusicSeconds.  Use fGameplaySeconds instead.
 	 */
 	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.fGameplaySeconds, false );
+		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.fStepsSeconds, false );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -1476,7 +1476,7 @@ void Player::HandleTapRowScore( unsigned row )
 	}
 	if( life != -1 )
 		if( m_pPlayerStageStats )
-			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.fGameplaySeconds );
+			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.fStepsSeconds );
 
 	if( m_pScoreDisplay )
 	{
