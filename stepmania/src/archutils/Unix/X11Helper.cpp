@@ -7,7 +7,7 @@
 #include "RageDisplay.h"
 #include "RageThreads.h"
 
-static vector<long>		pMasks;				// Currently open masks
+static vector<long>		g_aiMasks;				// Currently open masks
 static unsigned short int	pCt		= 0;		// Number of subsystems
 							// using the X connection
 
@@ -41,7 +41,7 @@ void X11Helper::Stop()
 	{
 		XCloseDisplay( Dpy );
 		Dpy = NULL;	// For sanity's sake
-		pMasks.clear();
+		g_aiMasks.clear();
 	}
 }
 
@@ -49,17 +49,17 @@ static bool pApplyMasks();
 
 bool X11Helper::OpenMask( long mask )
 {
-	pMasks.push_back(mask);
+	g_aiMasks.push_back(mask);
 	return pApplyMasks();
 }
 
 bool X11Helper::CloseMask( long mask )
 {
-	vector<long>::iterator i = find( pMasks.begin(), pMasks.end(), mask );
-	if( i == pMasks.end() )
+	vector<long>::iterator i = find( g_aiMasks.begin(), g_aiMasks.end(), mask );
+	if( i == g_aiMasks.end() )
 		return true;
 
-	pMasks.erase( i );
+	g_aiMasks.erase( i );
 
 	return pApplyMasks();
 }
@@ -73,9 +73,9 @@ static bool pApplyMasks()
 		LOG->Trace("X11Helper: Reapplying event masks.");
 
 		unsigned int i = 0;
-		while(i < pMasks.size() )
+		while(i < g_aiMasks.size() )
 		{
-			finalMask |= pMasks[i];
+			finalMask |= g_aiMasks[i];
 			i++;
 		}
 
@@ -105,8 +105,8 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 
 	winAttribs.border_pixel = 0;
 	winAttribs.event_mask = 0;
-	i = pMasks.begin();
-	while( i != pMasks.end() )
+	i = g_aiMasks.begin();
+	while( i != g_aiMasks.end() )
 	{
 		winAttribs.event_mask |= *i;
 		i++;
