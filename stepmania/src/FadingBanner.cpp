@@ -43,11 +43,6 @@ void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 		m_Banner[i].ScaleToClipped( fWidth, fHeight );
 }
 
-float FadingBanner::GetFadeSeconds() const
-{
-	return FADE_SECONDS;
-}
-
 void FadingBanner::Update( float fDeltaTime )
 {
 	// update children manually

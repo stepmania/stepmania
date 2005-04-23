@@ -48,7 +48,6 @@ public:
 
 	bool LoadFromCachedBanner( const CString &path );
 
-	float GetFadeSeconds() const;
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
