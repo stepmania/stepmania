@@ -14,20 +14,20 @@ static unsigned short int	pCt		= 0;		// Number of subsystems
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win;
 
-int protoErrorCallback(Display*, XErrorEvent*);
-int protoFatalCallback(Display*);
+int protoErrorCallback( Display*, XErrorEvent* );
+int protoFatalCallback( Display* );
 
 bool X11Helper::Go()
 {
 	int i;
 
-	if(pCt == 0)
+	if( pCt == 0 )
 	{
 		Dpy = XOpenDisplay(0);
 		if(Dpy == NULL) { return false; }
 
-		XSetIOErrorHandler(&protoFatalCallback);
-		XSetErrorHandler(&protoErrorCallback);
+		XSetIOErrorHandler( &protoFatalCallback );
+		XSetErrorHandler( &protoErrorCallback );
 	}
 	pCt++;
 
@@ -38,9 +38,9 @@ void X11Helper::Stop()
 {
 	pCt--;
 
-	if(pCt == 0)
+	if( pCt == 0 )
 	{
-		XCloseDisplay(Dpy);
+		XCloseDisplay( Dpy );
 		Dpy = NULL;	// For sanity's sake
 		pMasks.clear();
 	}
@@ -48,13 +48,13 @@ void X11Helper::Stop()
 
 static bool pApplyMasks();
 
-bool X11Helper::OpenMask(long mask)
+bool X11Helper::OpenMask( long mask )
 {
 	pMasks.push_back(mask);
 	return pApplyMasks();
 }
 
-bool X11Helper::CloseMask(long mask)
+bool X11Helper::CloseMask( long mask )
 {
 	vector<long>::iterator i;
 	
@@ -76,7 +76,7 @@ bool X11Helper::CloseMask(long mask)
 
 static bool pApplyMasks()
 {
-	if(X11Helper::Dpy != NULL)
+	if( X11Helper::Dpy != NULL )
 	{
 		long finalMask = 0;
 
@@ -95,14 +95,19 @@ static bool pApplyMasks()
 	return true;
 }
 
-bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, int height)
+bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height )
 {
 	static bool pHaveWin = false;
 	vector<long>::iterator i;
 	
-	if(pCt == 0) { return false; }
+	if( pCt == 0 )
+		return false;
 
-	if(pHaveWin) { XDestroyWindow(Dpy, Win); pHaveWin = false; }
+	if( pHaveWin )
+	{
+		XDestroyWindow( Dpy, Win );
+		pHaveWin = false;
+	}
 		// pHaveWin will stay false if an error occurs once I do error
 		// checking here...
 
@@ -111,7 +116,7 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, 
 	winAttribs.border_pixel = 0;
 	winAttribs.event_mask = 0;
 	i = pMasks.begin();
-	while(i != pMasks.end() )
+	while( i != pMasks.end() )
 	{
 		winAttribs.event_mask |= *i;
 		i++;
@@ -119,31 +124,30 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, 
 
 	// XXX: Error catching/handling?
 
-	winAttribs.colormap = XCreateColormap(Dpy, RootWindow(Dpy, screenNum),
-							visual, AllocNone);
+	winAttribs.colormap = XCreateColormap( Dpy, RootWindow(Dpy, screenNum), visual, AllocNone );
 
-	Win = XCreateWindow(Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
+	Win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
 		height, 0, depth, InputOutput, visual,
-		CWBorderPixel | CWColormap | CWEventMask, &winAttribs);
+		CWBorderPixel | CWColormap | CWEventMask, &winAttribs );
 
 	pHaveWin = true;
 
 	return true;
 }
 
-int protoErrorCallback(Display *d, XErrorEvent *err)
+int protoErrorCallback( Display *d, XErrorEvent *err )
 {
 	char errText[512];
-	XGetErrorText(d,  err->error_code, errText, 512);
-	LOG->Warn("X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
-		errText, err->error_code, err->request_code, err->minor_code, err->resourceid);
+	XGetErrorText( d,  err->error_code, errText, 512 );
+	LOG->Warn( "X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
+		errText, err->error_code, err->request_code, err->minor_code, err->resourceid );
 
 	return 0; // Xlib ignores our return value
 }
 
-int protoFatalCallback(Display *d)
+int protoFatalCallback( Display *d )
 {
-	RageException::Throw("Fatal I/O error communicating with X server.");
+	RageException::Throw( "Fatal I/O error communicating with X server." );
 }
 
 /*
