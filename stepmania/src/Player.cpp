@@ -1072,7 +1072,9 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			case TapNote::hold_head_roll:
 				// Increase life
 				fLife = 1;
-				LOG->Trace( "rolling" );
+
+				if( m_pNoteField )
+					m_pNoteField->DidTapNote( col, TNS_PERFECT, true );	// bright ghost flash
 				break;
 			default:
 				ASSERT(0);
