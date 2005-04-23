@@ -101,13 +101,13 @@ struct NoteSkinAndPath
 	CString sPath;
 	bool operator<( const NoteSkinAndPath &other ) const
 	{
-		switch( strcmp(sNoteSkin, other.sNoteSkin) )
-		{
-		case -1:	return true;
-		case 0:		return sPath < other.sPath;
-		case 1:		return false;
-		default:	ASSERT(0);	return false;
-		}
+		int cmp = strcmp(sNoteSkin, other.sNoteSkin);
+		if( cmp < 0 )
+			return true;
+		else if( cmp == 0 )
+			return sPath < other.sPath;
+		else
+			return false;
 	}
 };
 
