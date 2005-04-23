@@ -729,6 +729,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 			return;
 
 		CString sPath;
+		bool bFreeCache = false;
 		if( TEXTUREMAN->IsTextureRegistered( Sprite::SongBannerTexture(g_sBannerPath) ) )
 		{
 			/* If the file is already loaded into a texture, it's finished,
@@ -739,11 +740,14 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 		{
 			if( !m_BackgroundLoader.IsCacheFileFinished( g_sBannerPath, sPath ) )
 				return;
-			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
+			bFreeCache = true;
 		}
 
 		g_bBannerWaiting = false;
 		m_Banner.Load( sPath );
+
+		if( bFreeCache )
+			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
 	}
 
 	/* Nothing else is going.  Start the music, if we havn't yet. */
