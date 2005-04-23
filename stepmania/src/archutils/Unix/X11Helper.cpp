@@ -7,9 +7,11 @@
 #include "RageDisplay.h"
 #include "RageThreads.h"
 
-static vector<long>		g_aiMasks;				// Currently open masks
-static unsigned short int	pCt		= 0;		// Number of subsystems
-							// using the X connection
+// Currently open masks:
+static vector<long> g_aiMasks;
+
+// Number of subsystems using the X connection:
+static unsigned short int g_iRefCount = 0;
 
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win;
@@ -19,7 +21,7 @@ int protoFatalCallback( Display* );
 
 bool X11Helper::Go()
 {
-	if( pCt == 0 )
+	if( g_iRefCount == 0 )
 	{
 		Dpy = XOpenDisplay(0);
 		if( Dpy == NULL )
@@ -28,16 +30,16 @@ bool X11Helper::Go()
 		XSetIOErrorHandler( &protoFatalCallback );
 		XSetErrorHandler( &protoErrorCallback );
 	}
-	pCt++;
+	g_iRefCount++;
 
 	return true;
 }
 
 void X11Helper::Stop()
 {
-	pCt--;
+	g_iRefCount--;
 
-	if( pCt == 0 )
+	if( g_iRefCount == 0 )
 	{
 		XCloseDisplay( Dpy );
 		Dpy = NULL;	// For sanity's sake
@@ -90,7 +92,7 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 	static bool pHaveWin = false;
 	vector<long>::iterator i;
 	
-	if( pCt == 0 )
+	if( g_iRefCount == 0 )
 		return false;
 
 	if( pHaveWin )
