@@ -1,16 +1,14 @@
 #include "global.h"
 #include "X11Helper.h"
 
-#include <vector>
-
 #include <X11/Xlib.h>		// Display, Window
 
-#include "RageLog.h"		// LOG
-#include "RageDisplay.h"	// RageDisplay
-#include "RageThreads.h"	// Don't make me list everything...
+#include "RageLog.h"
+#include "RageDisplay.h"
+#include "RageThreads.h"
 
-vector<long>		pMasks;				// Currently open masks
-unsigned short int	pCt		= 0;		// Number of subsystems
+static vector<long>		pMasks;				// Currently open masks
+static unsigned short int	pCt		= 0;		// Number of subsystems
 							// using the X connection
 
 Display *X11Helper::Dpy = NULL;
