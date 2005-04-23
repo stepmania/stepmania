@@ -22,6 +22,8 @@ public:
 	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore );
 
 protected:
+	void PlayGainLoss( const CString &sCommand, float fDeltaLifeSecs );
+
 	AutoActor	m_sprFrame;
 	BitmapText	m_textTimeRemaining;
 	BitmapText	m_textDeltaSeconds;

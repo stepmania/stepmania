@@ -9,6 +9,7 @@
 #include "StatsManager.h"
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
+#include "Course.h"
 
 static const CString GAIN_LIFE_COMMAND_NAME = "GainLife";
 
@@ -73,7 +74,14 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 void ScoreDisplayLifeTime::OnLoadSong()
 {
-	m_textTimeRemaining.PlayCommand( GAIN_LIFE_COMMAND_NAME );
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailedEarlier )
+		return;
+
+	Course* pCourse = GAMESTATE->m_pCurCourse;
+	ASSERT( pCourse );
+	const CourseEntry *pEntry = &pCourse->m_entries[GAMESTATE->GetCourseSongIndex()];
+
+	PlayGainLoss( GAIN_LIFE_COMMAND_NAME, pEntry->fGainSeconds );
 }
 
 void ScoreDisplayLifeTime::OnSongEnded()
@@ -98,12 +106,7 @@ void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 	default:	ASSERT(0);
 	}
 
-	if( fMeterChange != 0 )
-	{
-		CString s = ssprintf( fMeterChange>0 ? "%.0fms" : "-%.0fms",fMeterChange*1000);
-		m_textDeltaSeconds.SetText( s );
-		m_textDeltaSeconds.PlayCommand( TapNoteScoreToString(tns) );
-	}
+	PlayGainLoss( TapNoteScoreToString(tns), fMeterChange );
 }
 
 void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
@@ -119,12 +122,22 @@ void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 	default:	ASSERT(0);
 	}
 
-	if( fMeterChange != 0 )
+	PlayGainLoss( HoldNoteScoreToString(hns), fMeterChange );
+}
+
+void ScoreDisplayLifeTime::PlayGainLoss( const CString &sCommand, float fDeltaLifeSecs )
+{
+	if( fDeltaLifeSecs != 0 )
 	{
-		CString s = ssprintf( fMeterChange>0 ? "%.0fms" : "-%.0fms",fMeterChange*1000);
+		CString s;
+		if( fabs(fDeltaLifeSecs) >= 1 )
+			s = ssprintf( fDeltaLifeSecs>0 ? "+%.0fsecs" : "-%.0fs",fDeltaLifeSecs);
+		else
+			s = ssprintf( fDeltaLifeSecs>0 ? "+%.0fms" : "-%.0fms",fDeltaLifeSecs*1000);
 		m_textDeltaSeconds.SetText( s );
-		m_textDeltaSeconds.PlayCommand( HoldNoteScoreToString(hns) );
+		m_textDeltaSeconds.PlayCommand( sCommand );
 	}
+
 }
 
 
