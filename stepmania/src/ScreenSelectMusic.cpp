@@ -67,7 +67,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	DO_ROULETTE_ON_MENU_TIMER( m_sName, "DoRouletteOnMenuTimer" ),
 	ALIGN_MUSIC_BEATS( m_sName, "AlignMusicBeat" ),
 	CODES( m_sName, "Codes" ),
-	MUSIC_WHEEL_TYPE( m_sName, "MusicWheelType" )
+	MUSIC_WHEEL_TYPE( m_sName, "MusicWheelType" ),
+	OPTIONS_MENU_AVAILABLE( m_sName, "OptionsMenuAvailable" )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
@@ -806,8 +807,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		type != IET_RELEASE  &&
 		type != IET_LEVEL_CHANGED &&
 		IsTransitioning() &&
-		!GAMESTATE->IsExtraStage()  &&
-		!GAMESTATE->IsExtraStage2() )
+		OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
 		if(m_bGoToOptions) return; /* got it already */
 		if(!m_bAllowOptionsMenu) return; /* not allowed */
@@ -1209,7 +1209,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		TweenOffScreen();
 		SCREENMAN->PlayStartSound();
 
-		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+		if( OPTIONS_MENU_AVAILABLE )
 		{
 //			float fShowSeconds = m_Out.GetLengthSeconds();
 

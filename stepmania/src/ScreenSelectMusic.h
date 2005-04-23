@@ -86,6 +86,7 @@ protected:
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<CString> CODES;
 	ThemeMetric<CString> MUSIC_WHEEL_TYPE;
+	ThemeMetric<bool> OPTIONS_MENU_AVAILABLE;
 
 	CString m_sSectionMusicPath;
 	CString m_sSortMusicPath;
