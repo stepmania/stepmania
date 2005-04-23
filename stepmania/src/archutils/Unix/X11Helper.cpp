@@ -11,7 +11,7 @@
 static vector<long> g_aiMasks;
 
 // Number of subsystems using the X connection:
-static unsigned short int g_iRefCount = 0;
+static int g_iRefCount = 0;
 
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win;
@@ -68,21 +68,17 @@ bool X11Helper::CloseMask( long mask )
 
 static bool pApplyMasks()
 {
-	if( X11Helper::Dpy != NULL )
-	{
-		long finalMask = 0;
+	if( X11Helper::Dpy == NULL )
+		return true;
 
-		LOG->Trace("X11Helper: Reapplying event masks.");
+	LOG->Trace("X11Helper: Reapplying event masks.");
 
-		unsigned int i = 0;
-		while(i < g_aiMasks.size() )
-		{
-			finalMask |= g_aiMasks[i];
-			i++;
-		}
+	long iMask = 0;
+	for( unsigned i = 0; i < g_aiMasks.size(); ++i )
+		iMask |= g_aiMasks[i];
 
-		if(XSelectInput(X11Helper::Dpy, X11Helper::Win, finalMask) == 0) { return false; }
-	}
+	if( XSelectInput(X11Helper::Dpy, X11Helper::Win, iMask) == 0 )
+		return false;
 
 	return true;
 }
