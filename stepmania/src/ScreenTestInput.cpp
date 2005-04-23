@@ -9,6 +9,7 @@
 #include "Game.h"
 #include "ScreenDimensions.h"
 #include "GameManager.h"
+#include "PrefsManager.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenTestInput );
@@ -22,10 +23,10 @@ void ScreenTestInput::Init()
 	ScreenWithMenuElements::Init();
 
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textInputs.SetText( "" );
-	m_textInputs.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
+	m_textInputs.SetXY( SCREEN_CENTER_X-250, SCREEN_CENTER_Y );
 	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
-	m_textInputs.SetZoom( 0.8f );
+	m_textInputs.SetZoom( 0.7f );
+	m_textInputs.SetHorizAlign( Actor::align_left );
 	this->AddChild( &m_textInputs );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenTestInput","music") );
@@ -63,13 +64,18 @@ void ScreenTestInput::Update( float fDeltaTime )
 				if( INPUTMAPPER->DeviceToGame(di,gi) )
 				{
 					CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
-					CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
-					
-					sTemp += ssprintf("  (Controller %d %s)  %s", gi.controller+1, sName.c_str(), sSecondary.c_str() );
+					sTemp += ssprintf(" - Controller %d %s", gi.controller+1, sName.c_str() );
+
+					if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
+					{
+						CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
+						if( !sSecondary.empty() )
+							sTemp += ssprintf(" - (%s secondary)", sSecondary.c_str() );
+					}
 				}
 				else
 				{
-					sTemp += "  (not mapped)";
+					sTemp += " - not mapped";
 				}
 
 				asInputs.push_back( sTemp );
@@ -77,7 +83,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 		}
 	}
 
-	m_textInputs.SetText( join( "\n ", asInputs ) );
+	m_textInputs.SetText( join( "\n", asInputs ) );
 }
 
 

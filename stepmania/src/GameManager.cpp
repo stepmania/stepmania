@@ -2703,11 +2703,8 @@ CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButt
 	 * it) and/or map to a menu button (if m_DedicatedMenuButton or m_SecondaryMenuButton
 	 * map to it).
 	 *
-	 * If a button is only used in gameplay, return ""; the primary description is
-	 * sufficient.
-	 *
-	 * If a button is only used in menus, return "(dedicated)" if any other button
-	 * maps to the same MenuButton; otherwise return "".
+	 * If a button is only used in gameplay or is only used in menus, return ""; the 
+	 * primary description is sufficient.
 	 *
 	 * If a button is used in both gameplay and menus, return szSecondaryNames[] for
 	 * the MenuButton.
@@ -2728,26 +2725,20 @@ CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButt
 
 	static const char *szSecondaryNames[NUM_MENU_BUTTONS] =
 	{
-		"(MenuLeft)",
-		"(MenuRight)",
-		"(MenuUp)",
-		"(MenuDown)",
-		"(MenuStart)",
-		"(MenuBack)",
-		"(Coin)",
-		"(Operator)"
+		"MenuLeft",
+		"MenuRight",
+		"MenuUp",
+		"MenuDown",
+		"MenuStart",
+		"MenuBack",
+		"Coin",
+		"Operator"
 	};
 
 	FOREACH_MenuButton(m)
 	{
 		if( !bUsedInGameplay && pGame->m_DedicatedMenuButton[m] == gb )
-		{
-			if( pGame->m_SecondaryMenuButton[m] == pGame->m_DedicatedMenuButton[m] ||
-			    pGame->m_SecondaryMenuButton[m] == GAME_BUTTON_INVALID )
-				return "";
-			else
-				return "(dedicated)";
-		}
+			return "";
 		else if( bUsedInGameplay && pGame->m_SecondaryMenuButton[m] == gb )
 			return szSecondaryNames[m];
 	}
