@@ -105,9 +105,13 @@ class ThemeMetric1D : public IThemeMetric
 	vector<ThemeMetricT> m_metric;
 
 public:
-	ThemeMetric1D( const CString& sGroup = "", MetricName1D pfn = NULL, size_t N = 0 )
+	ThemeMetric1D( const CString& sGroup, MetricName1D pfn, size_t N )
 	{
 		Load( sGroup, pfn, N );
+	}
+	ThemeMetric1D()
+	{
+		Load( CString(), NULL, 0 );
 	}
 	void Load( const CString& sGroup, MetricName1D pfn, size_t N )
 	{
