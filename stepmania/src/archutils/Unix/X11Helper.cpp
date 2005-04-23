@@ -19,12 +19,11 @@ int protoFatalCallback( Display* );
 
 bool X11Helper::Go()
 {
-	int i;
-
 	if( pCt == 0 )
 	{
 		Dpy = XOpenDisplay(0);
-		if(Dpy == NULL) { return false; }
+		if( Dpy == NULL )
+			return false;
 
 		XSetIOErrorHandler( &protoFatalCallback );
 		XSetErrorHandler( &protoErrorCallback );
@@ -56,20 +55,11 @@ bool X11Helper::OpenMask( long mask )
 
 bool X11Helper::CloseMask( long mask )
 {
-	vector<long>::iterator i;
-	
-	i = pMasks.begin();
-	while(true)
-	{
-		if(*i == mask)
-		{
-			pMasks.erase(i);
-			break;
-		}
-		if(i == pMasks.end() ) { return true; }	// Never set in the
-							// first place...
-		i++;
-	}
+	vector<long>::iterator i = find( pMasks.begin(), pMasks.end(), mask );
+	if( i == pMasks.end() )
+		return true;
+
+	pMasks.erase( i );
 
 	return pApplyMasks();
 }
