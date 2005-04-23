@@ -724,8 +724,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 
 	if( g_bBannerWaiting )
 	{
-		float HighQualTime = m_Banner.GetFadeSeconds();
-		if( g_StartedLoadingAt.Ago() < HighQualTime )
+		if( m_Banner.GetTweenTimeLeft() > 0 )
 			return;
 
 		CString sPath;
