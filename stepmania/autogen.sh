@@ -42,15 +42,12 @@ DIE=0
 if automake-1.9 --version > /dev/null 2>&1; then
 	ACLOCAL=aclocal-1.9
 	AUTOMAKE=automake-1.9
-	echo 1.9
 elif automake-1.8 --version > /dev/null 2>&1; then
 	ACLOCAL=aclocal-1.8
 	AUTOMAKE=automake-1.8
-	echo 1.8
 elif automake-1.7 --version > /dev/null 2>&1; then
 	ACLOCAL=aclocal-1.7
 	AUTOMAKE=automake-1.7
-	echo 1.7
 fi
 
 # If none of those were found, check if "automake" exists, and check the version.
