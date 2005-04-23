@@ -73,7 +73,7 @@ CLIENT to SERVER protocol:
     NT		Song Artist   
     NT		Course Title     (If none exists; make it just a null)
     NT		Song Options (in string-format)
-    NT		Primary Player's options
+    NT		Primary Player's options (Null if non-existant)
     NT		Secondary Player's Options (Null if non-existant)
     
  Responce: 	Server 003
