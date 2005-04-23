@@ -393,10 +393,7 @@ void ActorUtil::LoadAllCommands( Actor& actor, const CString &sType )
 		const CString &sv = *v;
 		if( sv.Right(7) == "Command" )
 		{
-			// Ugh.  Where did StdString::Mid go?
-			CString sCommandName = sv;
-			sCommandName = sCommandName.Left( sCommandName.size()-7 );	// strip off "Command"
-			sCommandName = sCommandName.Right( sCommandName.size()-actor.GetID().size() );	// strip off actor ID
+			CString sCommandName( sv.begin()+actor.GetID().size(), sv.end()-7 );
 			LoadCommand( actor, sType, sCommandName );
 		}
 	}
