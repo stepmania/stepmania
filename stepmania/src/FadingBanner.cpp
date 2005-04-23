@@ -29,7 +29,7 @@ FadingBanner::FadingBanner()
 	m_bMovingFast = false;
 	m_bSkipNextBannerUpdate = false;
 	m_iIndexLatest = 0;
-	for( int i=0; i<3; i++ )
+	for( int i=0; i<NUM_BANNERS; i++ )
 	{
 		m_Banner[i].SetName( "Banner" );
 		ActorUtil::OnCommand( m_Banner[i], "FadingBanner" );
@@ -41,7 +41,7 @@ FadingBanner::FadingBanner()
 
 void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 {
-	for( int i=0; i<3; i++ )
+	for( int i=0; i<NUM_BANNERS; i++ )
 		m_Banner[i].ScaleToClipped( fWidth, fHeight );
 }
 
@@ -53,9 +53,8 @@ void FadingBanner::Update( float fDeltaTime )
 
 	if( !m_bSkipNextBannerUpdate )
 	{
-		m_Banner[0].Update( fDeltaTime );
-		m_Banner[1].Update( fDeltaTime );
-		m_Banner[2].Update( fDeltaTime );
+		for( int i = 0; i < NUM_BANNERS; ++i )
+			m_Banner[i].Update( fDeltaTime );
 	}
 
 	m_bSkipNextBannerUpdate = false;
@@ -67,28 +66,36 @@ void FadingBanner::DrawPrimitives()
 //	ActorFrame::DrawPrimitives();
 
 	/* Render the latest banner first. */
-	for( int i = 0; i < 3; ++i )
+	for( int i = 0; i < NUM_BANNERS; ++i )
 	{
 		int index = m_iIndexLatest - i;
-		wrap( index, 3 );
+		wrap( index, NUM_BANNERS );
 		m_Banner[index].Draw();
 	}
 }
 
-bool FadingBanner::Load( RageTextureID ID )
+bool FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
 {
-	BeforeChange();
+	BeforeChange( bLowResToHighRes );
 	bool bRet = m_Banner[m_iIndexLatest].Load(ID);
 	return bRet;
 }
 
-void FadingBanner::BeforeChange()
+/* If bFromLowRes is true, we're fading from a low-res banner to the corresponding
+ * high-res banner. */
+void FadingBanner::BeforeChange( bool bLowResToHighRes )
 {
-	m_Banner[m_iIndexLatest].PlayCommand( "FadeOff" );
-	++m_iIndexLatest;
-	wrap( m_iIndexLatest, 3 );
+	CString sCommand;
+	if( bLowResToHighRes )
+		sCommand = "FadeFromCached";
+	else
+		sCommand = "FadeOff";
 
-	m_Banner[m_iIndexLatest].PlayCommand( "FadeOn" );
+	m_Banner[m_iIndexLatest].PlayCommand( sCommand );
+	++m_iIndexLatest;
+	wrap( m_iIndexLatest, NUM_BANNERS );
+
+	m_Banner[m_iIndexLatest].PlayCommand( "ResetFade" );
 
 	/* We're about to load a banner.  It'll probably cause a frame skip or
 	 * two.  Skip an update, so the fade-in doesn't skip. */

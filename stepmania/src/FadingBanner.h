@@ -36,7 +36,9 @@ public:
 
 	void ScaleToClipped( float fWidth, float fHeight );
 
-	bool Load( RageTextureID ID );
+	/* If you previously loaded a cached banner, and are now loading the full-
+	 * resolution banner, set bLowResToHighRes to true. */
+	bool Load( RageTextureID ID, bool bLowResToHighRes=false );
 	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadMode();
@@ -56,9 +58,10 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void BeforeChange();
+	void BeforeChange( bool bLowResToHighRes=false );
 
-	Banner		m_Banner[3];
+	enum { NUM_BANNERS = 5 };
+	Banner		m_Banner[NUM_BANNERS];
 	int		m_iIndexLatest;
 
 	bool		m_bMovingFast;

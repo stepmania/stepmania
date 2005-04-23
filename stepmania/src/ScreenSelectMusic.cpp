@@ -743,7 +743,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 		}
 
 		g_bBannerWaiting = false;
-		m_Banner.Load( sPath );
+		m_Banner.Load( sPath, true );
 
 		if( bFreeCache )
 			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
