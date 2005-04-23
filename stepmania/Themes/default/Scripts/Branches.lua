@@ -98,6 +98,11 @@ function GetGameplayNextScreen()
 	return "ScreenGameOver"
 end
 
+function OptionsMenuAvailable()
+	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return "0" end
+	return "1"
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 

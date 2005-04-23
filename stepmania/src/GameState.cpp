@@ -1966,8 +1966,8 @@ public:
 	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
 	static int PlayerIsUsingModifier( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
-	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushnumber(L, p->IsExtraStage() ); return 1; }
-	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushnumber(L, p->IsExtraStage2() ); return 1; }
+	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
+	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
