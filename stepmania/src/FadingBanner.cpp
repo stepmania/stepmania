@@ -16,8 +16,6 @@ LUA_REGISTER_CLASS( FadingBanner )
 // lua end
 REGISTER_ACTOR_CLASS( FadingBanner )
 
-static ThemeMetric<float> FADE_SECONDS			("FadingBanner","FadeSeconds");
-
 /*
  * Allow fading from one banner to another.  We can handle two fades at once;
  * this is used to fade from an old banner to a low-quality banner to a high-
@@ -32,7 +30,11 @@ FadingBanner::FadingBanner()
 	m_bSkipNextBannerUpdate = false;
 	m_iIndexLatest = 0;
 	for( int i=0; i<3; i++ )
+	{
+		m_Banner[i].SetName( "Banner" );
+		ActorUtil::OnCommand( m_Banner[i], "FadingBanner" );
 		this->AddChild( &m_Banner[i] );
+	}
 
 	Banner::CacheGlobalBanners();
 }
@@ -82,15 +84,11 @@ bool FadingBanner::Load( RageTextureID ID )
 
 void FadingBanner::BeforeChange()
 {
-	m_Banner[m_iIndexLatest].SetDiffuse( RageColor(1,1,1,1) );
-	m_Banner[m_iIndexLatest].StopTweening();
-	m_Banner[m_iIndexLatest].BeginTweening( FADE_SECONDS );		// fade out
-	m_Banner[m_iIndexLatest].SetDiffuse( RageColor(1,1,1,0) );
-
+	m_Banner[m_iIndexLatest].PlayCommand( "FadeOff" );
 	++m_iIndexLatest;
 	wrap( m_iIndexLatest, 3 );
 
-	m_Banner[m_iIndexLatest].SetDiffuse( RageColor(1,1,1,1) );
+	m_Banner[m_iIndexLatest].PlayCommand( "FadeOn" );
 
 	/* We're about to load a banner.  It'll probably cause a frame skip or
 	 * two.  Skip an update, so the fade-in doesn't skip. */
