@@ -14,18 +14,17 @@
 #include "Course.h"
 #include "ProfileManager.h"
 #include "ActorUtil.h"
+#include "ThemeMetric.h"
 
+CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
 
-// WheelItem stuff
-#define ICON_X			THEME->GetMetricF("MusicWheelItem","IconX")
-#define SONG_NAME_X		THEME->GetMetricF("MusicWheelItem","SongNameX")
-#define SECTION_NAME_X	THEME->GetMetricF("MusicWheelItem","SectionNameX")
-#define SECTION_ZOOM	THEME->GetMetricF("MusicWheelItem","SectionZoom")
-#define ROULETTE_X		THEME->GetMetricF("MusicWheelItem","RouletteX")
-#define ROULETTE_ZOOM	THEME->GetMetricF("MusicWheelItem","RouletteZoom")
-#define GRADE_X( p )	THEME->GetMetricF("MusicWheelItem",ssprintf("GradeP%dX",p+1))
-
-
+ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
+ThemeMetric<float>				SONG_NAME_X			("MusicWheelItem","SongNameX");
+ThemeMetric<float>				SECTION_X			("MusicWheelItem","SectionX");
+ThemeMetric<apActorCommands>	SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
+ThemeMetric<float>				ROULETTE_X			("MusicWheelItem","RouletteX");
+ThemeMetric<apActorCommands>	ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
+ThemeMetric1D<float>			GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
 
 
 WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
@@ -64,23 +63,22 @@ MusicWheelItem::MusicWheelItem()
 	m_textSectionName.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
 	m_textSectionName.SetShadowLength( 0 );
 	m_textSectionName.SetVertAlign( align_middle );
-	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
-	m_textSectionName.SetZoom( SECTION_ZOOM );
+	m_textSectionName.SetXY( SECTION_X, 0 );
+	m_textSectionName.RunCommands( SECTION_ON_COMMAND );
 	m_All.AddChild( &m_textSectionName );
-
 
 	m_textRoulette.LoadFromFont( THEME->GetPathF("MusicWheelItem","roulette") );
 	m_textRoulette.SetShadowLength( 0 );
 	m_textRoulette.TurnRainbowOn();
-	m_textRoulette.SetZoom( ROULETTE_ZOOM );
 	m_textRoulette.SetXY( ROULETTE_X, 0 );
+	m_textRoulette.RunCommands( ROULETTE_ON_COMMAND );
 	m_All.AddChild( &m_textRoulette );
 
 	FOREACH_PlayerNumber( p )
 	{
 		m_GradeDisplay[p].Load( THEME->GetPathG("MusicWheelItem","grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
-		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
+		m_GradeDisplay[p].SetXY( GRADE_X.GetValue(p), 0 );
 		m_All.AddChild( &m_GradeDisplay[p] );
 	}
 
