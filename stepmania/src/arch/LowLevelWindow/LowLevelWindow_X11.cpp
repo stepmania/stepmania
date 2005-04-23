@@ -18,9 +18,9 @@ extern Display *g_X11Display;
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	g_X11Display = NULL;
-	if(!X11Helper::Go() )
+	if( !X11Helper::Go() )
 	{
-		RageException::Throw("Failed to establish a connection with the X server.");
+		RageException::Throw( "Failed to establish a connection with the X server." );
 	}
 	g_X11Display = X11Helper::Dpy;
 }
@@ -30,7 +30,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	X11Helper::Stop();	// Xlib cleans up the window for us
 }
 
-void *LowLevelWindow_X11::GetProcAddress(CString s)
+void *LowLevelWindow_X11::GetProcAddress( CString s )
 {
 	// XXX: We should check whether glXGetProcAddress or
 	// glXGetProcAddressARB is available, and go by that, instead of
@@ -38,7 +38,7 @@ void *LowLevelWindow_X11::GetProcAddress(CString s)
 	return (void*) glXGetProcAddressARB( (const GLubyte*) s.c_str() );
 }
 
-CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &bNewDeviceOut)
+CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
 #if defined(LINUX)
 	/* nVidia cards:
@@ -56,27 +56,22 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 	XEvent ev;
 	stack<XEvent> otherEvs;
 
-	int i;
-
 	// XXX: LLW_SDL allows the window to be resized. Do we really want to?
 	hints.flags = PMinSize | PMaxSize | PBaseSize;
 	hints.min_width = hints.max_width = hints.base_width = p.width;
 	hints.min_height = hints.max_height = hints.base_height = p.height;
 
-	if(!windowIsOpen || p.bpp != CurrentParams.bpp)
+	if( !windowIsOpen || p.bpp != CurrentParams.bpp )
 	{
-		int visAttribs[32];
-		XVisualInfo *xvi;
-		GLXContext ctxt;
-
-		X11Helper::OpenMask(StructureNotifyMask);
+		X11Helper::OpenMask( StructureNotifyMask );
 
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
 
-		i = 0;
-		ASSERT(p.bpp == 16 || p.bpp == 32);
-		if(p.bpp == 32)
+		int visAttribs[32];
+		int i = 0;
+		ASSERT( p.bpp == 16 || p.bpp == 32 );
+		if( p.bpp == 32 )
 		{
 			visAttribs[i++] = GLX_RED_SIZE;		visAttribs[i++] = 8;
 			visAttribs[i++] = GLX_GREEN_SIZE;	visAttribs[i++] = 8;
@@ -95,29 +90,28 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 		visAttribs[i++] = None;
 
-		xvi = glXChooseVisual(X11Helper::Dpy,
-				DefaultScreen(X11Helper::Dpy), visAttribs);
+		XVisualInfo *xvi = glXChooseVisual( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy), visAttribs );
 
-		if(!xvi)
+		if( xvi == NULL )
 		{
 			return "No visual available for that depth.";
 		}
 
-		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height) )
+		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height) )
 		{
 			return "Failed to create the window.";
 		}
 		windowIsOpen = true;
 
 		char WindowTitle[] = "StepMania";
-		XChangeProperty(g_X11Display, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
-				reinterpret_cast<unsigned char*>(WindowTitle), strlen(WindowTitle));
+		XChangeProperty( g_X11Display, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
+				reinterpret_cast<unsigned char*>(WindowTitle), strlen(WindowTitle) );
 
-		ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
+		GLXContext ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
 
-		glXMakeCurrent(X11Helper::Dpy, X11Helper::Win, ctxt);
+		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, ctxt );
 
-		XMapWindow(X11Helper::Dpy, X11Helper::Win);
+		XMapWindow( X11Helper::Dpy, X11Helper::Win );
 
 		// HACK: Wait for the MapNotify event, without spinning and
 		// eating CPU unnecessarily, and without smothering other
@@ -127,22 +121,19 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		while(true)
 		{
 			XNextEvent(X11Helper::Dpy, &ev);
-			if(ev.type == MapNotify)
-			{
+			if( ev.type == MapNotify )
 				break;
-			}
-			else
-			{
-				otherEvs.push(ev);
-			}
+
+			otherEvs.push(ev);
 		}
-		while(!otherEvs.empty() )
+
+		while( !otherEvs.empty() )
 		{
-			XPutBackEvent(X11Helper::Dpy, &otherEvs.top() );
+			XPutBackEvent( X11Helper::Dpy, &otherEvs.top() );
 			otherEvs.pop();
 		}
 
-		X11Helper::CloseMask(StructureNotifyMask);
+		X11Helper::CloseMask( StructureNotifyMask );
 
 	}
 	else
@@ -155,11 +146,11 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
-	XSetWMNormalHints(X11Helper::Dpy, X11Helper::Win, &hints);
+	XSetWMNormalHints( X11Helper::Dpy, X11Helper::Win, &hints );
 
 	// Do this even if we just created the window -- works around Ion2 not
 	// catching WM normal hints changes in mapped windows.
-	XResizeWindow(X11Helper::Dpy, X11Helper::Win, p.width, p.height);
+	XResizeWindow( X11Helper::Dpy, X11Helper::Win, p.width, p.height );
 
 	CurrentParams = p;
 
@@ -168,7 +159,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 void LowLevelWindow_X11::SwapBuffers()
 {
-	glXSwapBuffers(X11Helper::Dpy, X11Helper::Win);
+	glXSwapBuffers( X11Helper::Dpy, X11Helper::Win );
 }
 
 /*
