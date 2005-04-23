@@ -99,8 +99,8 @@ function GetGameplayNextScreen()
 end
 
 function OptionsMenuAvailable()
-	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return "0" end
-	return "1"
+	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return false end
+	return true
 end
 
 -- (c) 2005 Glenn Maynard, Chris Danford
