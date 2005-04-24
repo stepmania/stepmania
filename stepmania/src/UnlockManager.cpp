@@ -431,7 +431,7 @@ class LunaUnlockManager: public Luna<T>
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
-	static int FindCode( T* p, lua_State *L )			{ CString sName = SArg(1); lua_pushnumber(L, p->FindCode(sName)); return 1; }
+	static int FindCode( T* p, lua_State *L )			{ CString sName = SArg(1); int i = p->FindCode(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
 	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
 	static int PreferUnlockCode( T* p, lua_State *L )	{ int iCode = IArg(1); p->PreferUnlockCode(iCode); return 0; }
 
