@@ -130,6 +130,15 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	return LoadProfile( pn, sDir, false ) == Profile::success;
 }
 
+void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry )
+{
+	/* Try to load the preferred profile. */
+	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
+
+	/* If that failed, try loading from all fallback directories. */
+	split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
+}
+
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
 	UnloadProfile( pn );
@@ -139,13 +148,9 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		return false;
 
 	vector<CString> asDirsToTry;
+	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 
-	/* Try to load the preferred profile. */
-	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
-
-	/* If that failed, try loading from all fallback directories. */
-	split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
-
+	int iLoadedFrom = -1;
 	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
 	{
 		const CString &sSubdir = asDirsToTry[i];
@@ -160,8 +165,16 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		 * a directory for edits before playing, so keep searching if the directory
 		 * exists with exists with no scores. */
 		Profile::LoadResult res = LoadProfile( pn, sDir, true );
-		if( res != Profile::failed_no_profile )
+		if( res == Profile::success )
+			iLoadedFrom = i;
+		else if( res != Profile::failed_no_profile )
 			break;
+	}
+
+	/* Store the directory we imported from, for display purposes. */
+	if( iLoadedFrom > 0 )
+	{
+		m_sProfileDirImportedFrom[pn] = asDirsToTry[iLoadedFrom];
 	}
 
 	/* If we imported a profile fallback directory, change the memory card
@@ -209,6 +222,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 void ProfileManager::UnloadProfile( PlayerNumber pn )
 {
 	m_sProfileDir[pn] = "";
+	m_sProfileDirImportedFrom[pn] = "";
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasTamperedOrCorrupt[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
@@ -348,6 +362,20 @@ CString ProfileManager::GetProfileDir( ProfileSlot slot ) const
 		return m_sProfileDir[slot];
 	case PROFILE_SLOT_MACHINE:
 		return MACHINE_PROFILE_DIR;
+	default:
+		ASSERT(0);
+	}
+}
+
+CString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
+{
+	switch( slot )
+	{
+	case PROFILE_SLOT_PLAYER_1:
+	case PROFILE_SLOT_PLAYER_2:
+		return m_sProfileDirImportedFrom[slot];
+	case PROFILE_SLOT_MACHINE:
+		return "";
 	default:
 		ASSERT(0);
 	}

@@ -32,6 +32,7 @@ public:
 	void SaveAllProfiles() const;
 	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
+	void GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry );
 	
 	//
 	// General data
@@ -53,6 +54,7 @@ public:
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
 	CString GetProfileDir( ProfileSlot slot ) const;
+	CString GetProfileDirImportedFrom( ProfileSlot slot ) const;
 
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
 
@@ -93,6 +95,9 @@ private:
 	// Directory that contains the profile.  Either on local machine or
 	// on a memory card.
 	CString m_sProfileDir[NUM_PLAYERS];
+
+	// MemoryCardProfileImportSubdirs name, if the profile was imported.
+	CString m_sProfileDirImportedFrom[NUM_PLAYERS];
 
 	bool m_bWasLoadedFromMemoryCard[NUM_PLAYERS];
 	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)
