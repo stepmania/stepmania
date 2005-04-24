@@ -116,7 +116,7 @@ bool CodeItem::Load( CString sButtonsNames )
 		split( sButtonsNames, ",", asButtonNames, false );
 	}
 
-	if( asButtonNames.size() < 2 )
+	if( asButtonNames.size() < 1 )
 	{
 		if( sButtonsNames != "" )
 			LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sButtonsNames.c_str() );
@@ -142,8 +142,10 @@ bool CodeItem::Load( CString sButtonsNames )
 	switch( m_Type )
 	{
 	case sequence:
-		ASSERT( buttons.size() >= 2 )
-		fMaxSecondsBack = (buttons.size()-1)*0.6f;
+		if( buttons.size() == 1 )
+			fMaxSecondsBack = -1;
+		else
+			fMaxSecondsBack = (buttons.size()-1)*0.6f;
 		break;
 	case hold_and_press:
 		fMaxSecondsBack = -1.f;	// not applicable
