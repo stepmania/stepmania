@@ -135,8 +135,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	CString sDir = MEM_CARD_MOUNT_POINT[pn];
 
 	// tack on a subdirectory so that we don't write everything to the root
-	sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
-	sDir += '/'; 
+	sDir += PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
 	bool bSuccess;
 	bSuccess = LoadProfile( pn, sDir, true );
