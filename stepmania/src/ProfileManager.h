@@ -33,7 +33,6 @@ public:
 	void SaveAllProfiles() const;
 	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
-	void GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry );
 	
 	//
 	// General data
@@ -92,6 +91,7 @@ public:
 
 private:
 	Profile::LoadResult LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
+	void GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const;
 
 	// Directory that contains the profile.  Either on local machine or
 	// on a memory card.

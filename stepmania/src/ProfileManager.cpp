@@ -130,7 +130,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	return LoadProfile( pn, sDir, false ) == Profile::success;
 }
 
-void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry )
+void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const
 {
 	/* Try to load the preferred profile. */
 	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
@@ -199,12 +199,26 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 
 bool ProfileManager::FastLoadProfileNameFromMemoryCard( CString sRootDir, CString &sName ) const
 {
-	CString sProfileDir = sRootDir + PREFSMAN->m_sMemoryCardProfileSubdir + '/';
+	vector<CString> asDirsToTry;
+	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 
-	Profile profile;
-	profile.LoadEditableDataFromDir( sProfileDir );
-	sName = profile.GetDisplayName();
-	return true;
+	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+	{
+		const CString &sSubdir = asDirsToTry[i];
+		CString sDir = sRootDir + sSubdir + "/";
+
+		Profile profile;
+		Profile::LoadResult res = profile.LoadEditableDataFromDir( sDir );
+		if( res == Profile::success )
+		{
+			sName = profile.GetDisplayName();
+			return true;
+		}
+		else if( res != Profile::failed_no_profile )
+			break;
+	}
+
+	return false;
 }
 
 void ProfileManager::SaveAllProfiles() const
