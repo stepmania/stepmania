@@ -48,6 +48,30 @@ void UnlockManager::UnlockSong( const Song *song )
 	UnlockCode( p->m_iCode );
 }
 
+int UnlockManager::FindCode( const CString &sName ) const
+{
+	const UnlockEntry *pEntry = NULL;
+	
+	const Song *pSong = SONGMAN->FindSong( sName );
+	if( pSong != NULL )
+		pEntry = FindSong( pSong );
+
+	const Course *pCourse = SONGMAN->FindCourse( sName );
+	if( pCourse != NULL )
+		pEntry = FindCourse( pCourse );
+	
+	if( pEntry == NULL )
+		pEntry = FindModifier( sName );
+
+	if( pEntry == NULL )
+	{
+		LOG->Warn( "Couldn't find locked entry \"%s\"", sName.c_str() );
+		return -1;
+	}
+
+	return pEntry->m_iCode;
+}
+
 bool UnlockManager::CourseIsLocked( const Course *course ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
@@ -407,11 +431,13 @@ class LunaUnlockManager: public Luna<T>
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
+	static int FindCode( T* p, lua_State *L )			{ CString sName = SArg(1); lua_pushnumber(L, p->FindCode(sName)); return 1; }
 	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
 	static int PreferUnlockCode( T* p, lua_State *L )	{ int iCode = IArg(1); p->PreferUnlockCode(iCode); return 0; }
 
 	static void Register(lua_State *L)
 	{
+		ADD_METHOD( FindCode )
 		ADD_METHOD( UnlockCode )
 		ADD_METHOD( PreferUnlockCode )
 		Luna<T>::Register( L );

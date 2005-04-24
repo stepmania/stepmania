@@ -81,6 +81,9 @@ public:
 	// Unlocks a song.
 	void UnlockSong( const Song *song );
 
+	// Return the associated code.
+	int FindCode( const CString &sName ) const;
+
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_UnlockEntries;
 
