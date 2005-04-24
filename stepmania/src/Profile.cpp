@@ -1014,13 +1014,14 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 		CLAMP( m_iWeightPounds, 50, 500 );
 }
 
-CString Profile::FastLoadProfileNameFromMemoryCard( CString sDir )
+bool Profile::FastLoadProfileNameFromMemoryCard( CString sDir, CString &sName )
 {
 	CString sProfileDir = sDir + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 
 	Profile profile;
 	profile.LoadEditableDataFromDir( sProfileDir );
-	return profile.GetDisplayName();
+	sName = profile.GetDisplayName();
+	return true;
 }
 
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )

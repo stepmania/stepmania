@@ -238,7 +238,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				d.m_State = UsbStorageDevice::STATE_READY;
 			
 				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
-				d.sName = Profile::FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT );
+				d.bIsNameAvailable = Profile::FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
 
