@@ -308,6 +308,7 @@ void ResetGame( bool ReturnToFirstScreen )
 		{
 			LOG->Info( "Remapping joysticks." );
 			INPUTMAPPER->AutoMapJoysticksForCurrentGame();
+			INPUTMAPPER->SaveMappingsToDisk();
 		}
 
 		PREFSMAN->m_sLastSeenInputDevices = sInputDevices;
