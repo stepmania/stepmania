@@ -81,8 +81,8 @@ bool FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
 	return bRet;
 }
 
-/* If bFromLowRes is true, we're fading from a low-res banner to the corresponding
- * high-res banner. */
+/* If bLowResToHighRes is true, we're fading from a low-res banner to the
+ * corresponding high-res banner. */
 void FadingBanner::BeforeChange( bool bLowResToHighRes )
 {
 	CString sCommand;
