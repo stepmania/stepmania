@@ -332,6 +332,11 @@ static int DelimitorLength( wchar_t Delimitor )
 template <class S, class C>
 void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
 {
+	/* Short-circuit if the source is empty; we want to return an empty vector if
+	 * the string is empty, even if bIgnoreEmpty is true. */
+	if( Source.empty() )
+		return;
+
 	size_t startpos = 0;
 
 	do {
