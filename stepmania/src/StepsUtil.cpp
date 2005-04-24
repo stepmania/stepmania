@@ -6,6 +6,7 @@
 #include "SongManager.h"
 #include "GameManager.h"
 #include "XmlFile.h"
+#include "UnlockManager.h"
 
 //
 // Sorting stuff
@@ -117,6 +118,15 @@ bool StepsUtil::CompareStepsPointersByDescription(const Steps *pStep1, const Ste
 void StepsUtil::SortStepsByDescription( vector<Steps*> &arraySongPointers )
 {
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByDescription );
+}
+
+void StepsUtil::RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpSteps )
+{
+	for( int i=vpSteps.size()-1; i>=0; i-- )
+	{
+		if( UNLOCKMAN->StepsIsLocked(pSong, vpSteps[i]) )
+			vpSteps.erase( vpSteps.begin()+i );
+	}		
 }
 
 

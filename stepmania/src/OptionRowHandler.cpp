@@ -270,7 +270,7 @@ public:
 		}
 	}
 
-	void FillSteps( OptionRowDefinition &defOut, CString sParam, bool bLocked )
+	void FillSteps( OptionRowDefinition &defOut, CString sParam, bool bLockedTogether )
 	{
 		Init();
 		defOut.Init();
@@ -279,7 +279,7 @@ public:
 		m_sName = sParam;
 
 		defOut.name = "Steps";
-		defOut.bOneChoiceForAllPlayers = bLocked;
+		defOut.bOneChoiceForAllPlayers = bLockedTogether;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// fill in difficulty names
@@ -308,12 +308,14 @@ public:
 		}
 		else // !GAMESTATE->IsCourseMode(), playing a song
 		{
-			vector<Steps*> vSteps;
-			GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
-			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			for( unsigned i=0; i<vSteps.size(); i++ )
+			vector<Steps*> vpSteps;
+			Song *pSong = GAMESTATE->m_pCurSong;
+			pSong->GetSteps( vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
+			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
+			for( unsigned i=0; i<vpSteps.size(); i++ )
 			{
-				Steps* pSteps = vSteps[i];
+				Steps* pSteps = vpSteps[i];
 
 				CString s;
 				if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )

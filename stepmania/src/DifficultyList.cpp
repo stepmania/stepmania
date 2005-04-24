@@ -242,14 +242,14 @@ void DifficultyList::PositionItems()
 
 void DifficultyList::SetFromGameState()
 {
-	Song *song = GAMESTATE->m_pCurSong;
+	Song *pSong = GAMESTATE->m_pCurSong;
 
-	const bool bSongChanged = (song != m_CurSong);
+	const bool bSongChanged = (pSong != m_CurSong);
 
 	/* If the song has changed, update displays: */
 	if( bSongChanged )
 	{
-		m_CurSong = song;
+		m_CurSong = pSong;
 
 		for( int m = 0; m < MAX_METERS; ++m )
 		{
@@ -258,7 +258,7 @@ void DifficultyList::SetFromGameState()
 
 		m_Rows.clear();
 
-		if( song == NULL )
+		if( pSong == NULL )
 		{
 			// FIXME: This clamps to between the min and the max difficulty, but
 			// it really should round to the nearest difficulty that's in 
@@ -280,9 +280,10 @@ void DifficultyList::SetFromGameState()
 		else
 		{
 			vector<Steps*>	CurSteps;
-			song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			pSong->GetSteps( CurSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
+			StepsUtil::RemoveLockedSteps( pSong, CurSteps );
 			StepsUtil::SortNotesArrayByDifficulty( CurSteps );
 
 			m_Rows.resize( CurSteps.size() );

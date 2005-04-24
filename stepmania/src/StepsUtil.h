@@ -21,6 +21,7 @@ namespace StepsUtil
 	void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, const Profile* pProfile, bool bDescending );
 	bool CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2);
 	void SortStepsByDescription( vector<Steps*> &vStepsPointers );
+	void RemoveLockedSteps( const Song *pSong, vector<Steps*> &arrayNotess );	
 };
 
 class StepsID

@@ -1547,6 +1547,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 
 			pSong->GetSteps( m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			StepsUtil::RemoveLockedSteps( pSong, m_vpSteps );
 			StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
 
 			if ( PREFSMAN->m_bShowBanners )
