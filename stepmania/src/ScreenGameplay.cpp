@@ -2163,6 +2163,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_NotesEnded )	// received while STATE_DANCING
 	{
+		AbortGiveUp( false );	// don't allow giveup while the next song is loading
+
 		/* Do this in LoadNextSong, so we don't tween off old attacks until
 		 * m_NextSong finishes. */
 		// GAMESTATE->RemoveAllActiveAttacks();
