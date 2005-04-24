@@ -3,7 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFileManager.h"
-#include "Profile.h"
+#include "ProfileManager.h"
 #include "PrefsManager.h"
 #include "Foreach.h"
 
@@ -238,7 +238,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				d.m_State = UsbStorageDevice::STATE_READY;
 			
 				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
-				d.bIsNameAvailable = Profile::FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
+				d.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
 

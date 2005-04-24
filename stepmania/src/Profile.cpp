@@ -1018,16 +1018,6 @@ Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	return success;
 }
 
-bool Profile::FastLoadProfileNameFromMemoryCard( CString sDir, CString &sName )
-{
-	CString sProfileDir = sDir + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-
-	Profile profile;
-	profile.LoadEditableDataFromDir( sProfileDir );
-	sName = profile.GetDisplayName();
-	return true;
-}
-
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->m_sName == "GeneralData" );

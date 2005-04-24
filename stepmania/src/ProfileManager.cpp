@@ -196,6 +196,17 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 	return false;
 }
 
+
+bool ProfileManager::FastLoadProfileNameFromMemoryCard( CString sRootDir, CString &sName ) const
+{
+	CString sProfileDir = sRootDir + PREFSMAN->m_sMemoryCardProfileSubdir + '/';
+
+	Profile profile;
+	profile.LoadEditableDataFromDir( sProfileDir );
+	sName = profile.GetDisplayName();
+	return true;
+}
+
 void ProfileManager::SaveAllProfiles() const
 {
 	this->SaveMachineProfile();

@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "Profile.h"
+#include "ProfileManager.h"
 #include "PrefsManager.h"
 
 const CString TEMP_MOUNT_POINT_INTERNAL = "@mctemp/";
@@ -99,7 +99,7 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 			FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
 			FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 
-			usbd.bIsNameAvailable = Profile::FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, usbd.sName );
+			usbd.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, usbd.sName );
 
 			FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 			FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
