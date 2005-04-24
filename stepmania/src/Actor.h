@@ -487,6 +487,10 @@ public:
 	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; }
 	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); return 0; }
 	static int diffuse( T* p, lua_State *L )			{ p->SetDiffuse( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuseupperleft( T* p, lua_State *L )	{ p->SetDiffuseUpperLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuseupperright( T* p, lua_State *L )	{ p->SetDiffuseUpperRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuselowerleft( T* p, lua_State *L )	{ p->SetDiffuseLowerLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuselowerright( T* p, lua_State *L )	{ p->SetDiffuseLowerRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int diffuseleftedge( T* p, lua_State *L )	{ p->SetDiffuseLeftEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int diffuserightedge( T* p, lua_State *L )	{ p->SetDiffuseRightEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int diffusetopedge( T* p, lua_State *L )		{ p->SetDiffuseTopEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
@@ -588,6 +592,10 @@ public:
 		ADD_METHOD( faderight )
 		ADD_METHOD( fadebottom )
 		ADD_METHOD( diffuse )
+		ADD_METHOD( diffuseupperleft )
+		ADD_METHOD( diffuseupperright )
+		ADD_METHOD( diffuselowerleft )
+		ADD_METHOD( diffuselowerright )
 		ADD_METHOD( diffuseleftedge )
 		ADD_METHOD( diffuserightedge )
 		ADD_METHOD( diffusetopedge )
