@@ -21,6 +21,10 @@ static const CString MessageNames[NUM_MESSAGES] = {
 	"EditPreferredCourseDifficutyP2Changed",
 	"GoalCompleteP1",
 	"GoalCompleteP2",
+	"NoteCrossed",
+	"NoteWillCrossIn500Ms",
+	"NoteWillCrossIn1000Ms",
+	"NoteWillCrossIn1500Ms",
 };
 XToString( Message, NUM_MESSAGES );
 

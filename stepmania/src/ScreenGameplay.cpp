@@ -97,6 +97,8 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
 	GIVING_UP_FAILS.Load( sName, "GivingUpFails" );
 	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( sName, "GivingUpGoesToNextScreen" );
+	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
+	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
 }
 
 void ScreenGameplay::Init()
@@ -969,8 +971,14 @@ void ScreenGameplay::LoadNextSong()
 		{
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PC_HUMAN;
 		}
-	}
 
+		if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
+		{
+			GAMESTATE->ApplyModifiers( p, FORCED_MODIFIERS_IN_BEGINNER );
+			GAMESTATE->StoreSelectedOptions();
+		}
+	}
+	
 	const bool bReverse[NUM_PLAYERS] = 
 	{
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1,
@@ -1593,15 +1601,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_BPMDisplay.SetConstantBpm( GAMESTATE->m_fCurBPS * 60.0f );
 	}
 
-	//
-	// play assist ticks
-	//
 	PlayTicks();
 
-	//
-	// update lights
-	//
 	UpdateLights();
+
+	SendCrossedMessages();
 
 	if( NSMAN->useSMserver )
 	{
@@ -1726,6 +1730,49 @@ void ScreenGameplay::UpdateLights()
 		{
 			if( bBlinkGameButton[gc][gb] )
 				LIGHTSMAN->BlinkGameButton( GameInput(gc,gb) );
+		}
+	}
+}
+
+void ScreenGameplay::SendCrossedMessages()
+{
+	const int NUM_MESSAGES_TO_SEND = 4;
+	const float MESSAGE_SPACING_SECONDS = 0.5f;
+
+	PlayerNumber pn = PLAYER_INVALID;
+	FOREACH_EnabledPlayer( p )
+	{
+		if( GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			pn = p;
+	}
+	if( pn == PLAYER_INVALID )
+		return;
+
+	for( int i=0; i<NUM_MESSAGES_TO_SEND; i++ )
+	{
+		float fOffsetFromCurrentSeconds = MESSAGE_SPACING_SECONDS * i;
+
+		bool bCrossedABeat = false;
+		{
+			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fOffsetFromCurrentSeconds;	// trigger the light a tiny bit early
+			float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+
+			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+			iRowNow = max( 0, iRowNow );
+			static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
+			int &iRowLastCrossed = iRowLastCrossedAll[i];
+
+			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_Player[pn].m_NoteData, r, iRowLastCrossed+1, iRowNow+1 )
+			{
+				if( m_CabinetLightsNoteData.IsThereATapOrHoldHeadAtRow(r) )
+				{
+					LOG->Trace( "r = %d", r );
+					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+					break;
+				}
+			}
+
+			iRowLastCrossed = iRowNow;
 		}
 	}
 }

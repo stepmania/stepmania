@@ -52,6 +52,8 @@ protected:
 	ThemeMetric<bool> BACK_GIVES_UP;
 	ThemeMetric<bool> GIVING_UP_FAILS;
 	ThemeMetric<bool> GIVING_UP_GOES_TO_NEXT_SCREEN;
+	ThemeMetric<bool> USE_FORCED_MODIFIERS_IN_BEGINNER;
+	ThemeMetric<CString> FORCED_MODIFIERS_IN_BEGINNER;
 
 	void TweenOnScreen();
 	void TweenOffScreen();
@@ -65,6 +67,7 @@ protected:
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
 	void UpdateLights();
+	void SendCrossedMessages();
 	void BackOutFromGameplay();
 
 	void PlayTicks();
