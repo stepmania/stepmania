@@ -695,6 +695,7 @@ RageFileBasic *RageFileDriverTimeout::Open( const CString &sPath, int iMode, int
 
 void RageFileDriverTimeout::FlushDirCache( const CString &sPath )
 {
+	RageFileDriver::FlushDirCache( sPath );
 	m_pWorker->FlushDirCache( sPath );
 }
 
