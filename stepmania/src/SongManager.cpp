@@ -1183,30 +1183,34 @@ void SongManager::LoadAllFromProfile( ProfileSlot s )
 	CString sProfileDir = PROFILEMAN->GetProfileDir( s );
 	if( sProfileDir.empty() )
 		return;	// skip
+
+	LoadEditsFromDir( sProfileDir, s );
+}
+
+void SongManager::LoadEditsFromDir( const CString &sDir, ProfileSlot slot )
+{
 	//
 	// Load all .edit files.
 	//
+	CString sEditsDir = sDir+"Edits/";
+
+	CStringArray asEditsFilesWithPath;
+	GetDirListing( sEditsDir+"*.edit", asEditsFilesWithPath, false, true );
+
+	unsigned size = min( asEditsFilesWithPath.size(), (unsigned)MAX_EDITS_PER_PROFILE );
+
+	for( unsigned i=0; i<size; i++ )
 	{
-		CString sEditsDir = sProfileDir+"Edits/";
+		CString fn = asEditsFilesWithPath[i];
 
-		CStringArray asEditsFilesWithPath;
-		GetDirListing( sEditsDir+"*.edit", asEditsFilesWithPath, false, true );
-
-		unsigned size = min( asEditsFilesWithPath.size(), (unsigned)MAX_EDITS_PER_PROFILE );
-
-		for( unsigned i=0; i<size; i++ )
+		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+		if( iBytes > MAX_EDIT_SIZE_BYTES )
 		{
-			CString fn = asEditsFilesWithPath[i];
-
-			int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-			if( iBytes > MAX_EDIT_SIZE_BYTES )
-			{
-				LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-				continue;
-			}
-
-			SMLoader::LoadEdit( fn, s );
+			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+			continue;
 		}
+
+		SMLoader::LoadEdit( fn, slot );
 	}
 }
 
