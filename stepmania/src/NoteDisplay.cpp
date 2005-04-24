@@ -14,7 +14,7 @@
 #include "Game.h"
 #include "PlayerState.h"
 
-enum part
+enum Part
 {
 	PART_TAP,
 	PART_ADDITION,
@@ -26,6 +26,20 @@ enum part
 	PART_HOLD_BOTTOM_CAP,
 	NUM_PARTS
 };
+const CString& PartToString( Part p );
+#define FOREACH_Part( p ) FOREACH_ENUM( Part, NUM_PARTS, p )
+
+static const CString PartNames[NUM_PARTS] = {
+	"TapNote",
+	"TapAddition",
+	"TapMine",
+	"HoldHead",
+	"HoldTopCap",
+	"HoldBody",
+	"HoldBottomCap",
+	"HoldTail",
+};
+XToString( Part, NUM_PARTS );
 
 
 // cache
@@ -53,44 +67,24 @@ struct NoteMetricCache_t
 
 void NoteMetricCache_t::Load( const CString &sButton )
 {
-	m_bDrawHoldHeadForTapsOnSameRow =				NOTESKIN->GetMetricB(sButton,"DrawHoldHeadForTapsOnSameRow");
-	m_fAnimationLengthInBeats[PART_TAP] =			NOTESKIN->GetMetricF(sButton,"TapNoteAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_ADDITION] =		NOTESKIN->GetMetricF(sButton,"TapAdditionAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_MINE] =			NOTESKIN->GetMetricF(sButton,"TapMineAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_HOLD_HEAD] =		NOTESKIN->GetMetricF(sButton,"HoldHeadAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_HOLD_TOP_CAP] =	NOTESKIN->GetMetricF(sButton,"HoldTopCapAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_HOLD_BODY] =		NOTESKIN->GetMetricF(sButton,"HoldBodyAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_HOLD_BOTTOM_CAP]=NOTESKIN->GetMetricF(sButton,"HoldBottomCapAnimationLengthInBeats");
-	m_fAnimationLengthInBeats[PART_HOLD_TAIL] =		NOTESKIN->GetMetricF(sButton,"HoldTailAnimationLengthInBeats");
-	m_bAnimationIsVivid[PART_TAP] =					NOTESKIN->GetMetricB(sButton,"TapNoteAnimationIsVivid");
-	m_bAnimationIsVivid[PART_ADDITION] =			NOTESKIN->GetMetricB(sButton,"TapAdditionAnimationIsVivid");
-	m_bAnimationIsVivid[PART_MINE] =				NOTESKIN->GetMetricB(sButton,"TapMineAnimationIsVivid");
-	m_bAnimationIsVivid[PART_HOLD_HEAD] =			NOTESKIN->GetMetricB(sButton,"HoldHeadAnimationIsVivid");
-	m_bAnimationIsVivid[PART_HOLD_TOP_CAP] =		NOTESKIN->GetMetricB(sButton,"HoldTopCapAnimationIsVivid");
-	m_bAnimationIsVivid[PART_HOLD_BODY] =			NOTESKIN->GetMetricB(sButton,"HoldBodyAnimationIsVivid");
-	m_bAnimationIsVivid[PART_HOLD_BOTTOM_CAP] =		NOTESKIN->GetMetricB(sButton,"HoldBottomCapAnimationIsVivid");
-	m_bAnimationIsVivid[PART_HOLD_TAIL] =			NOTESKIN->GetMetricB(sButton,"HoldTailAnimationIsVivid");
-
-	m_bAnimationIsNoteColor[PART_TAP] =				NOTESKIN->GetMetricB(sButton,"TapNoteAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_ADDITION] =		NOTESKIN->GetMetricB(sButton,"TapAdditionAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_MINE] =			NOTESKIN->GetMetricB(sButton,"TapMineAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_HOLD_HEAD] =		NOTESKIN->GetMetricB(sButton,"HoldHeadAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_HOLD_TOP_CAP] =	NOTESKIN->GetMetricB(sButton,"HoldTopCapAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_HOLD_BODY] =		NOTESKIN->GetMetricB(sButton,"HoldBodyAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_HOLD_BOTTOM_CAP] =	NOTESKIN->GetMetricB(sButton,"HoldBottomCapAnimationIsNoteColor");
-	m_bAnimationIsNoteColor[PART_HOLD_TAIL] =		NOTESKIN->GetMetricB(sButton,"HoldTailAnimationIsNoteColor");
-
-	m_bHoldHeadIsAboveWavyParts =				NOTESKIN->GetMetricB(sButton,"HoldHeadIsAboveWavyParts");
-	m_bHoldTailIsAboveWavyParts =				NOTESKIN->GetMetricB(sButton,"HoldTailIsAboveWavyParts");
-	m_iStartDrawingHoldBodyOffsetFromHead =		NOTESKIN->GetMetricI(sButton,"StartDrawingHoldBodyOffsetFromHead");
-	m_iStopDrawingHoldBodyOffsetFromTail =		NOTESKIN->GetMetricI(sButton,"StopDrawingHoldBodyOffsetFromTail");
-	m_fHoldNGGrayPercent =						NOTESKIN->GetMetricF(sButton,"HoldNGGrayPercent");
-	m_bTapNoteUseLighting =						NOTESKIN->GetMetricB(sButton,"TapNoteUseLighting");
-	m_bTapAdditionUseLighting =					NOTESKIN->GetMetricB(sButton,"TapAdditionUseLighting");
-	m_bTapMineUseLighting =						NOTESKIN->GetMetricB(sButton,"TapMineUseLighting");
-	m_bHoldHeadUseLighting =					NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
-	m_bHoldTailUseLighting =					NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
-	m_bFlipHeadAndTailWhenReverse =				NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
+	m_bDrawHoldHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawHoldHeadForTapsOnSameRow");
+	FOREACH_Part( p )
+		m_fAnimationLengthInBeats[p] = NOTESKIN->GetMetricF(sButton,PartToString(p)+"AnimationLengthInBeats");
+	FOREACH_Part( p )
+		m_bAnimationIsVivid[p] = NOTESKIN->GetMetricB(sButton,PartToString(p)+"AnimationIsVivid");
+	FOREACH_Part( p )
+		m_bAnimationIsNoteColor[p] = NOTESKIN->GetMetricB(sButton,PartToString(p)+"AnimationIsNoteColor");
+	m_bHoldHeadIsAboveWavyParts =			NOTESKIN->GetMetricB(sButton,"HoldHeadIsAboveWavyParts");
+	m_bHoldTailIsAboveWavyParts =			NOTESKIN->GetMetricB(sButton,"HoldTailIsAboveWavyParts");
+	m_iStartDrawingHoldBodyOffsetFromHead =	NOTESKIN->GetMetricI(sButton,"StartDrawingHoldBodyOffsetFromHead");
+	m_iStopDrawingHoldBodyOffsetFromTail =	NOTESKIN->GetMetricI(sButton,"StopDrawingHoldBodyOffsetFromTail");
+	m_fHoldNGGrayPercent =					NOTESKIN->GetMetricF(sButton,"HoldNGGrayPercent");
+	m_bTapNoteUseLighting =					NOTESKIN->GetMetricB(sButton,"TapNoteUseLighting");
+	m_bTapAdditionUseLighting =				NOTESKIN->GetMetricB(sButton,"TapAdditionUseLighting");
+	m_bTapMineUseLighting =					NOTESKIN->GetMetricB(sButton,"TapMineUseLighting");
+	m_bHoldHeadUseLighting =				NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
+	m_bHoldTailUseLighting =				NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
+	m_bFlipHeadAndTailWhenReverse =			NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
 }
 
 
