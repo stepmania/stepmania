@@ -4,6 +4,7 @@
 #define UNLOCK_SYSTEM_H
 
 #include "Grade.h"
+#include "Command.h"
 #include <set>
 
 class Song;
@@ -26,15 +27,26 @@ enum UnlockType
 
 struct UnlockEntry
 {
-	UnlockEntry();
+	UnlockEntry()
+	{
+		m_Type = TYPE_INVALID;
 
-	enum Type { TYPE_SONG, TYPE_COURSE, TYPE_MODIFIER };
+		m_pSong = NULL;
+		m_dc = DIFFICULTY_INVALID;
+		m_pCourse = NULL;
+
+		ZERO( m_fRequired );
+		m_iCode = -1;
+	}
+
+	enum Type { TYPE_SONG, TYPE_STEPS, TYPE_COURSE, TYPE_MODIFIER, NUM_TYPES, TYPE_INVALID };
 	Type m_Type;
-	CString m_sName;
+	Command m_cmd;
 
 	/* A cached pointer to the song or course this entry refers to.  Only one of
 	 * these will be non-NULL. */
 	Song	*m_pSong;
+	Difficulty m_dc;
 	Course	*m_pCourse;
 
 	float	m_fRequired[NUM_UNLOCK_TYPES];
@@ -59,13 +71,12 @@ public:
 	// Used on select screens:
 	bool SongIsLocked( const Song *song ) const;
 	bool SongIsRouletteOnly( const Song *song ) const;
+	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
 	bool CourseIsLocked( const Course *course ) const;
 	bool ModifierIsLocked( const CString &sOneMod ) const;
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
-
-	const UnlockEntry *FindLockEntry( CString lockname ) const;
 
 	void GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const;
 
@@ -88,7 +99,7 @@ public:
 	vector<UnlockEntry>	m_UnlockEntries;
 
 	// If global song or course points change, call to update
-	void UpdateSongs();
+	void UpdateCachedPointers();
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -98,6 +109,7 @@ private:
 	void Load();
 	
 	const UnlockEntry *FindSong( const Song *pSong ) const;
+	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;
 	const UnlockEntry *FindModifier( const CString &sOneMod ) const;
 

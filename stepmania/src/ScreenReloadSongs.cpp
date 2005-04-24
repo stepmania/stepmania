@@ -81,7 +81,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 	ASSERT( !IsFirstUpdate() );
 
 	SONGMAN->Reload( m_LoadingWindow );
-	UNLOCKMAN->UpdateSongs();
+	UNLOCKMAN->UpdateCachedPointers();
 	SCREENMAN->SetNewScreen( NEXT_SCREEN );
 }
 

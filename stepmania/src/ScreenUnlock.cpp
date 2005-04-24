@@ -51,30 +51,25 @@ void ScreenUnlock::Init()
 	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
-		CString SongTitle = UNLOCKMAN->m_UnlockEntries[i-1].m_sName;
-		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
-		
-		const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry( SongTitle );
+		const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
+		const Song *pSong = entry.m_pSong;
 
 		if( pSong == NULL)
-		{
-			LOG->Trace("Can't find song %s", SongTitle.c_str());
 			continue;
-		}
 
-		Sprite* entry = new Sprite;
+		Sprite* pSpr = new Sprite;
 
 		// new unlock graphic
-		entry->Load( THEME->GetPathG("ScreenUnlock",ssprintf("%d icon", i)) );
+		pSpr->Load( THEME->GetPathG("ScreenUnlock",ssprintf("%d icon", i)) );
 
 		// set graphic location
-		entry->SetName( ssprintf("Unlock%d",i) );
-		SET_XY( *entry );
+		pSpr->SetName( ssprintf("Unlock%d",i) );
+		SET_XY( pSpr );
 
-		entry->RunCommands(IconCommand);
-		Unlocks.push_back(entry);
+		pSpr->RunCommands(IconCommand);
+		Unlocks.push_back(pSpr);
 
-		if ( !pSong->IsLocked() )
+		if ( !entry.IsLocked() )
 			this->AddChild(Unlocks[Unlocks.size() - 1]);
 	}
 
@@ -101,57 +96,61 @@ void ScreenUnlock::Init()
 
 		for(unsigned i = 1; i <= NumUnlocks; i++)
 		{
-			CString DisplayedSong = UNLOCKMAN->m_UnlockEntries[i-1].m_sName;
+			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
 			
-			DisplayedSong.MakeUpper();
-			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
-			if ( pSong == NULL )  // no such song
-				continue;
-
 			BitmapText* text = new BitmapText;
 
 			text->LoadFromFont( THEME->GetPathF("ScreenUnlock","text") );
 			text->SetHorizAlign( Actor::align_left );
 			text->SetZoom(ScrollingTextZoom);
 
-			if (pSong && pSong->m_pSong != NULL)
+			switch( entry.m_Type )
 			{
-				CString title = pSong->m_pSong->GetDisplayMainTitle();
-				CString subtitle = pSong->m_pSong->GetDisplaySubTitle();
-				if( subtitle != "" )
-					title = title + "\n" + subtitle;
-				text->SetMaxWidth( MaxWidth );
-				text->SetText( title );
-			}
-			else		 // song is missing, might be a course
-			{
-				Course *crs = SONGMAN->FindCourse( DisplayedSong );
-				if (crs != NULL)
+			case UnlockEntry::TYPE_SONG:
 				{
+					const Song *pSong = entry.m_pSong;
+					ASSERT( pSong );
+		
+					CString title = pSong->GetDisplayMainTitle();
+					CString subtitle = pSong->GetDisplaySubTitle();
+					if( subtitle != "" )
+						title = title + "\n" + subtitle;
 					text->SetMaxWidth( MaxWidth );
-					text->SetText( crs->GetFullDisplayTitle() );
+					text->SetText( title );
+				}
+				break;
+			case UnlockEntry::TYPE_COURSE:
+				{
+					const Course *pCourse = entry.m_pCourse;
+					ASSERT( pCourse );
+
+					text->SetMaxWidth( MaxWidth );
+					text->SetText( pCourse->GetFullDisplayTitle() );
 					text->SetDiffuse( RageColor(0,1,0,1) );
 				}
-				else   // entry isn't a song or course
-				{
-					text->SetText( "" );
-					text->SetDiffuse( RageColor(0.5,0,0,1) );
-				}
+				break;
+			default:
+				text->SetText( "" );
+				text->SetDiffuse( RageColor(0.5,0,0,1) );
+				break;
 			}
 
-			if (pSong != NULL && pSong->m_pSong != NULL)
+			if( entry.IsLocked() )
 			{
-				if( pSong->IsLocked() ) // song is locked
-				{
-					text->SetText("???");
-					text->SetZoomX(1);
-				} else {             // song is unlocked, change color
-					RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
-					text->SetGlobalDiffuseColor(color);
-				}
+				text->SetText("???");
+				text->SetZoomX(1);
+			}
+			else
+			{
+				// unlocked. change color
+				const Song *pSong = entry.m_pSong;
+				RageColor color = RageColor(1,1,1,1);
+				if( pSong )
+					color = SONGMAN->GetGroupColor(pSong->m_sGroupName);
+				text->SetGlobalDiffuseColor(color);
 			}
 
-			text->SetXY(ScrollingTextX, ScrollingTextStartY);
+			text->SetXY( ScrollingTextX, ScrollingTextStartY );
 
 			if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NumUnlocks)
 			{   // special command for last unlocks when extreme-style scrolling is in effect
@@ -208,7 +207,7 @@ void ScreenUnlock::Init()
 					
 				if (UNLOCK_TEXT_SCROLL == 3)
 				{
-					if ( !pSong->IsLocked() )
+					if ( !entry.IsLocked() )
 						LastUnlocks.push_back(i);
 				}
 			}
@@ -232,12 +231,9 @@ void ScreenUnlock::Init()
 
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
-			CString DisplayedSong = UNLOCKMAN->m_UnlockEntries[NextIcon-1].m_sName;
-
-			DisplayedSong.MakeUpper();
-			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
-
-			if (pSong->m_pSong == NULL)
+			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[NextIcon-1];
+			const Song *pSong = entry.m_pSong;
+			if( pSong == NULL )
 				continue;
 
 			BitmapText* NewText = new BitmapText;
@@ -245,8 +241,8 @@ void ScreenUnlock::Init()
 			NewText->LoadFromFont( THEME->GetPathF("ScreenUnlock","text") );
 			NewText->SetHorizAlign( Actor::align_left );
 
-			CString title = pSong->m_pSong->GetDisplayMainTitle();
-			CString subtitle = pSong->m_pSong->GetDisplaySubTitle();
+			CString title = pSong->GetDisplayMainTitle();
+			CString subtitle = pSong->GetDisplaySubTitle();
 
 			if( subtitle != "" )
 				title = title + "\n" + subtitle;
@@ -254,7 +250,7 @@ void ScreenUnlock::Init()
 			NewText->SetMaxWidth( MaxWidth );
 			NewText->SetText( title );
 
-			RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
+			RageColor color = SONGMAN->GetGroupColor(pSong->m_sGroupName);
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);

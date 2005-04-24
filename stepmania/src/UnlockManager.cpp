@@ -10,6 +10,7 @@
 #include "ProfileManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
+#include "Steps.h"
 #include <float.h>
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
@@ -103,11 +104,23 @@ bool UnlockManager::SongIsRouletteOnly( const Song *song ) const
 		return false;
 
 	const UnlockEntry *p = FindSong( song );
-	if( !p )
+	if( p == NULL )
 		return false;
 
 	/* If the song is locked by a code, and it's a roulette code, honor IsLocked. */
 	if( p->m_iCode == -1 || m_RouletteCodes.find( p->m_iCode ) == m_RouletteCodes.end() )
+		return false;
+
+	return p->IsLocked();
+}
+
+bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) const
+{
+	if( !PREFSMAN->m_bUseUnlockSystem )
+		return false;
+
+	const UnlockEntry *p = FindSteps( pSong, pSteps );
+	if( p == NULL )
 		return false;
 
 	return p->IsLocked();
@@ -125,19 +138,18 @@ bool UnlockManager::ModifierIsLocked( const CString &sOneMod ) const
 	return p->IsLocked();
 }
 
-
-const UnlockEntry *UnlockManager::FindLockEntry( CString songname ) const
+const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( !songname.CompareNoCase(e->m_sName) )
+		if( e->m_pSong == pSong  &&  e->m_dc == DIFFICULTY_INVALID )
 			return &(*e);
 	return NULL;
 }
 
-const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
+const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSteps ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_pSong == pSong )
+		if( e->m_pSong == pSong  &&  e->m_dc == pSteps->GetDifficulty() )
 			return &(*e);
 	return NULL;
 }
@@ -153,19 +165,9 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 const UnlockEntry *UnlockManager::FindModifier( const CString &sOneMod ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_sName.CompareNoCase(sOneMod) == 0 )
+		if( e->m_cmd.GetArg(1).s.CompareNoCase(sOneMod) == 0 )
 			return &(*e);
 	return NULL;
-}
-
-
-UnlockEntry::UnlockEntry()
-{
-	memset( m_fRequired, 0, sizeof(m_fRequired) );
-	m_iCode = -1;
-
-	m_pSong = NULL;
-	m_pCourse = NULL;
 }
 
 static float GetArcadePoints( const Profile *pProfile )
@@ -292,17 +294,22 @@ void UnlockManager::Load()
 			if( sName == "song" )
 			{
 				current.m_Type = UnlockEntry::TYPE_SONG;
-				current.m_sName = (CString) cmd.GetArg(1);
+				current.m_cmd = cmd;
+			}
+			if( sName == "steps" )
+			{
+				current.m_Type = UnlockEntry::TYPE_STEPS;
+				current.m_cmd = cmd;
 			}
 			if( sName == "course" )
 			{
 				current.m_Type = UnlockEntry::TYPE_COURSE;
-				current.m_sName = (CString) cmd.GetArg(1);
+				current.m_cmd = cmd;
 			}
 			if( sName == "mod" )
 			{
 				current.m_Type = UnlockEntry::TYPE_MODIFIER;
-				current.m_sName = (CString) cmd.GetArg(1);
+				current.m_cmd = cmd;
 			}
 			else if( sName == "code" )
 			{
@@ -329,11 +336,11 @@ void UnlockManager::Load()
 		m_UnlockEntries.push_back( current );
 	}
 
-	UpdateSongs();
+	UpdateCachedPointers();
 
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
-		CString str = ssprintf( "Unlock: %s; ", e->m_sName.c_str() );
+		CString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
 		FOREACH_UnlockType(j)
 			if( e->m_fRequired[j] )
 				str += ssprintf( "%s = %f; ", UnlockTypeToString(j).c_str(), e->m_fRequired[j] );
@@ -367,21 +374,37 @@ float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
 
 /* Update the cached pointers.  Only call this when it's likely to have changed,
  * such as on load, or when a song title changes in the editor. */
-void UnlockManager::UpdateSongs()
+void UnlockManager::UpdateCachedPointers()
 {
 	FOREACH( UnlockEntry, m_UnlockEntries, e )
 	{
 		switch( e->m_Type )
 		{
 		case UnlockEntry::TYPE_SONG:
-			e->m_pSong = SONGMAN->FindSong( e->m_sName );
+			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(1) );
 			if( e->m_pSong == NULL )
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_sName.c_str() );
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+			break;
+		case UnlockEntry::TYPE_STEPS:
+			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(1) );
+			if( e->m_pSong == NULL )
+			{
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				break;
+			}
+
+			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(2) );
+			if( e->m_dc == DIFFICULTY_INVALID )
+			{
+				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(2).s.c_str() );
+				break;
+			}
+
 			break;
 		case UnlockEntry::TYPE_COURSE:
-			e->m_pCourse = SONGMAN->FindCourse( e->m_sName );
+			e->m_pCourse = SONGMAN->FindCourse( e->m_cmd.GetArg(1) );
 			if( e->m_pCourse == NULL )
-				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_sName.c_str() );
+				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
 			break;
 		case UnlockEntry::TYPE_MODIFIER:
 			// nothing to cache
