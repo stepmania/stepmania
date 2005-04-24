@@ -75,10 +75,16 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
 	if( !IsAFile(sPrivFilename) )
+	{
+		LOG->Trace( "SignFileToFile: \"%s\" doesn't exist", sSignatureFile.c_str() );
 		return;
+	}
 
 	if( !IsAFile(sMessageFilename) )
+	{
+		LOG->Trace( "SignFileToFile: \"%s\" doesn't exist", sMessageFilename.c_str() );
 		return;
+	}
 
 	try {
 		RageFileSource privFile(sPrivFilename, true);
