@@ -88,7 +88,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
+	Profile::LoadResult LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
 
 	// Directory that contains the profile.  Either on local machine or
 	// on a memory card.

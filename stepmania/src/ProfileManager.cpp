@@ -29,6 +29,12 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
 const CString LAST_GOOD_DIR	=	"LastGood/";
 
+// Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
+// exist, separated by ";":
+static Preference<CString> g_sMemoryCardProfileImportSubdirs(
+	Options, "MemoryCardProfileImportSubdirs", "" );
+
+
 ProfileManager::ProfileManager()
 {
 }
@@ -70,7 +76,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 }
 
 
-bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
+Profile::LoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
   LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
 
@@ -107,7 +113,7 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 
 	LOG->Trace( "Done loading profile - result %d", lr );
 
-	return lr == Profile::success;
+	return lr;
 }
 
 bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
@@ -121,7 +127,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 
 	CString sDir = USER_PROFILES_DIR + sProfileID + "/";
 
-	return LoadProfile( pn, sDir, false );
+	return LoadProfile( pn, sDir, false ) == Profile::success;
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
@@ -132,13 +138,36 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 		return false;
 
-	CString sDir = MEM_CARD_MOUNT_POINT[pn];
+	vector<CString> asDirsToTry;
 
-	// tack on a subdirectory so that we don't write everything to the root
-	sDir += PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	/* Try to load the preferred profile. */
+	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
 
-	bool bSuccess;
-	bSuccess = LoadProfile( pn, sDir, true );
+	/* If that failed, try loading from all fallback directories. */
+	split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
+
+	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+	{
+		const CString &sSubdir = asDirsToTry[i];
+		CString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
+
+		/* If the load fails with Profile::no_profile, keep searching.  However,
+		 * if it fails with failed_tampered, data existed but couldn't be loaded;
+		 * we don't want to mess with it, since it's confusing and may wipe out
+		 * recoverable backup data.  The only time we really want to import data
+		 * is on the very first use, when the new profile doesn't exist at all,
+		 * but we also want to import scores in the case where the player created
+		 * a directory for edits before playing, so keep searching if the directory
+		 * exists with exists with no scores. */
+		Profile::LoadResult res = LoadProfile( pn, sDir, true );
+		if( res != Profile::failed_no_profile )
+			break;
+	}
+
+	/* If we imported a profile fallback directory, change the memory card
+	 * directory back to the preferred directory: never write over imported
+	 * scores. */
+	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
 	return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
 }
