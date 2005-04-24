@@ -1208,12 +1208,6 @@ void SongManager::LoadAllFromProfile( ProfileSlot s )
 			SMLoader::LoadEdit( fn, s );
 		}
 	}
-
-	//
-	// Load all songs
-	//
-	{
-	}
 }
 
 void SongManager::FreeAllLoadedFromProfiles()
