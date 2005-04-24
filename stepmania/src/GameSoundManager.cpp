@@ -671,10 +671,12 @@ public:
 		p->DimMusic( fVolume, fDurationSeconds );
 		return 0;
 	}
+	static int PlayOnce( T* p, lua_State *L ) { CString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( DimMusic )
+		ADD_METHOD( PlayOnce )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
