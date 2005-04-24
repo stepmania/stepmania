@@ -242,7 +242,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
 
-			ExecuteCommand( "umount " + d.sOsMountDir );
+			ExecuteCommand( "umount -l \"" + d.sOsMountDir + "\"" );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
@@ -491,10 +491,9 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 
 bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
-	ASSERT( !pDevice->sOsMountDir.empty() );
+	ASSERT( !pDevice->sDevice.empty() );
 	
         CString sCommand = "mount " + pDevice->sDevice;
-        LOG->Trace( "hack mount (%s)", sCommand.c_str() );
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
 	return bMountedSuccessfully;
@@ -502,17 +501,21 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 
 void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 {
-	if( pDevice->sOsMountDir.empty() )
+	if( pDevice->sDevice.empty() )
 		return;
 	
-	CString sCommand = "umount " + pDevice->sDevice;
-	LOG->Trace( "hack unmount (%s)", sCommand.c_str() );
+	/* Use umount -l, so we unmount the device even if it's in use.  Open
+	 * files remain usable, and the device (eg. /dev/sda) won't be reused
+	 * by new devices until those are closed.  Without this, if something
+	 * causes the device to not unmount here, we'll never unmount it; that
+	 * causes a device name leak, eventually running us out of mountpoints. */
+	CString sCommand = "umount -l \"" + pDevice->sDevice + "\"";
 	ExecuteCommand( sCommand );
 }
 
 void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 {
-	if( pDevice->sOsMountDir.empty() )
+	if( pDevice->sDevice.empty() )
 		return;
 	
 	// "sync" will only flush all file systems at the same time.  -Chris
