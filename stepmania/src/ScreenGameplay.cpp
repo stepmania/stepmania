@@ -1752,28 +1752,25 @@ void ScreenGameplay::SendCrossedMessages()
 	{
 		float fOffsetFromCurrentSeconds = MESSAGE_SPACING_SECONDS * i;
 
-		bool bCrossedABeat = false;
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fOffsetFromCurrentSeconds;	// trigger the light a tiny bit early
+		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+
+		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		iRowNow = max( 0, iRowNow );
+		static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
+		int &iRowLastCrossed = iRowLastCrossedAll[i];
+
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_Player[pn].m_NoteData, r, iRowLastCrossed+1, iRowNow+1 )
 		{
-			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fOffsetFromCurrentSeconds;	// trigger the light a tiny bit early
-			float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
-
-			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-			iRowNow = max( 0, iRowNow );
-			static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
-			int &iRowLastCrossed = iRowLastCrossedAll[i];
-
-			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_Player[pn].m_NoteData, r, iRowLastCrossed+1, iRowNow+1 )
+			if( m_CabinetLightsNoteData.IsThereATapOrHoldHeadAtRow(r) )
 			{
-				if( m_CabinetLightsNoteData.IsThereATapOrHoldHeadAtRow(r) )
-				{
-					LOG->Trace( "r = %d", r );
-					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
-					break;
-				}
+				LOG->Trace( "r = %d", r );
+				MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+				break;
 			}
-
-			iRowLastCrossed = iRowNow;
 		}
+
+		iRowLastCrossed = iRowNow;
 	}
 }
 
