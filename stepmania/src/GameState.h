@@ -63,7 +63,7 @@ public:
 	bool ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
 	bool ChangePreferredCourseDifficulty( PlayerNumber pn, int dir );
 	bool IsCourseDifficultyShown( CourseDifficulty cd );
-	Difficulty GetEasiestNotesDifficulty() const;
+	Difficulty GetEasiestStepsDifficulty() const;
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
 	map<CString,CString> m_mapEnv;
 	LuaTable			*m_Environment;

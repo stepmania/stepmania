@@ -1788,7 +1788,7 @@ bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 	return find(v.begin(), v.end(), cd) != v.end();
 }
 
-Difficulty GameState::GetEasiestNotesDifficulty() const
+Difficulty GameState::GetEasiestStepsDifficulty() const
 {
 	Difficulty dc = DIFFICULTY_INVALID;
 	FOREACH_HumanPlayer( p )
@@ -1975,6 +1975,7 @@ public:
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
 	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
 	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
+	static int GetEasiestStepsDifficulty( T* p, lua_State *L ){ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2005,6 +2006,7 @@ public:
 		ADD_METHOD( GetCourseSongIndex )
 		ADD_METHOD( IsExtraStage )
 		ADD_METHOD( IsExtraStage2 )
+		ADD_METHOD( GetEasiestStepsDifficulty )
 
 		Luna<T>::Register( L );
 
@@ -2045,7 +2047,7 @@ LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
 LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
-LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficulty() )
+LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
 LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
