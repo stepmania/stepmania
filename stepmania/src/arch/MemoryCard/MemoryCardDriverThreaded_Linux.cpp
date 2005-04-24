@@ -238,14 +238,8 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				d.m_State = UsbStorageDevice::STATE_READY;
 			
 				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
-
-				Profile profile;
-				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-				profile.LoadEditableDataFromDir( sProfileDir );
-				d.sName = profile.GetDisplayName();
-
+				d.sName = Profile::FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT );
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
-
 			}
 
 			ExecuteCommand( "umount " + d.sOsMountDir );

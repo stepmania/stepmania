@@ -99,11 +99,7 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 			FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
 			FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 
-			Profile profile;
-			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-			profile.LoadEditableDataFromDir( sProfileDir );
-			usbd.bIsNameAvailable = true;
-			usbd.sName = profile.GetDisplayName();
+			usbd.sName = Profile::FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT );
 
 			FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 			FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
