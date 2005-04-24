@@ -131,7 +131,8 @@ void ScreenMapControllers::Update( float fDeltaTime )
 
 		INPUTMAPPER->SetInputMap( m_DeviceIToMap, curGameI, m_iCurSlot );
 		INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
-		// commit to disk so we don't lose the changes!
+
+		// commit to disk after each change
 		INPUTMAPPER->SaveMappingsToDisk();
 
 		Refresh();
@@ -263,7 +264,8 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				GameInput curGameI( (GameController)m_iCurController, (GameButton)m_iCurButton );
 				INPUTMAPPER->ClearFromInputMap( curGameI, m_iCurSlot );
 				INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
-				// commit to disk so we don't lose the changes!
+		
+				// commit to disk after each change
 				INPUTMAPPER->SaveMappingsToDisk();
 			}
 			break;
@@ -299,9 +301,12 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_iCurButton++;
 			break;
 		case KEY_ESC: /* Quit the screen. */
-			if(!IsTransitioning())
+			if( !IsTransitioning() )
 			{
 				SCREENMAN->PlayStartSound();
+
+				INPUTMAPPER->SaveMappingsToDisk();	// save changes
+
 				StartTransitioning( SM_GoToNextScreen );		
 				for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 					m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
@@ -345,7 +350,7 @@ void ScreenMapControllers::Refresh()
 				GameInput cur_gi( (GameController)p, (GameButton)b );
 				DeviceInput di;
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
-					m_textMappedTo[p][b][s].SetText( di.GetDescription() );
+					m_textMappedTo[p][b][s].SetText( di.toString() );
 				else
 					m_textMappedTo[p][b][s].SetText( "-----------" );
 				
