@@ -55,6 +55,7 @@ enum ThreadRequest
 	REQ_GET_FILE_SIZE,
 	REQ_READ,
 	REQ_WRITE,
+	REQ_SEEK,
 	REQ_FLUSH,
 	REQ_COPY,
 	REQ_POPULATE_FILE_SET,
@@ -74,6 +75,7 @@ public:
 	RageFileBasic *Open( const CString &sPath, int iMode, int &iErr );
 	void Close( RageFileBasic *pFile );
 	int GetFileSize( RageFileBasic *&pFile );
+	int Seek( RageFileBasic *&pFile, int iPos, CString &sError );
 	int Read( RageFileBasic *&pFile, void *pBuf, int iSize, CString &sError );
 	int Write( RageFileBasic *&pFile, const void *pBuf, int iSize, CString &sError );
 	int Flush( RageFileBasic *&pFile, CString &sError );
@@ -110,12 +112,15 @@ private:
 	/* REQ_CLOSE, REQ_GET_FILE_SIZE, REQ_COPY: */
 	RageFileBasic *m_pRequestFile; /* in */
 
-	/* REQ_OPEN, REQ_GET_FILE_SIZE, REQ_READ */
+	/* REQ_OPEN, REQ_GET_FILE_SIZE, REQ_READ, REQ_SEEK */
 	int m_iResultRequest; /* out */
 
 	/* REQ_READ, REQ_WRITE */
 	int m_iRequestSize; /* in */
 	CString m_sResultError; /* out */
+
+	/* REQ_SEEK */
+	int m_iRequestPos; /* in */
 
 	/* REQ_READ */
 	char *m_pResultBuffer; /* out */
@@ -211,6 +216,11 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		m_iResultRequest = m_pRequestFile->GetFileSize();
 		break;
 
+	case REQ_SEEK:
+		ASSERT( m_pRequestFile != NULL );
+		m_iResultRequest = m_pRequestFile->Seek( m_iRequestPos );
+		m_sResultError = m_pRequestFile->GetError();
+		break;
 	case REQ_READ:
 		ASSERT( m_pRequestFile != NULL );
 		ASSERT( m_pResultBuffer != NULL );
@@ -333,6 +343,39 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 	if( !DoRequest(REQ_GET_FILE_SIZE) )
 	{
 		/* If we time out, we can no longer access pFile. */
+		pFile = NULL;
+		return -1;
+	}
+
+	m_pRequestFile = NULL;
+
+	return m_iResultRequest;
+}
+
+int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, CString &sError )
+{
+	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+	{
+		this->Close( pFile );
+		pFile = NULL;
+	}
+
+	if( pFile == NULL )
+	{
+		sError = "Operation timed out";
+		return -1;
+	}
+
+	m_pRequestFile = pFile;
+	m_iRequestPos = iPos; /* in */
+
+	if( !DoRequest(REQ_SEEK) )
+	{
+		/* If we time out, we can no longer access pFile. */
+		sError = "Operation timed out";
 		pFile = NULL;
 		return -1;
 	}
@@ -574,6 +617,24 @@ public:
 	}
 
 protected:
+	int SeekInternal( int iPos )
+	{
+		CString sError;
+		int iRet = m_pWorker->Seek( m_pFile, iPos, sError );
+
+		if( m_pFile == NULL )
+		{
+			SetError( "Operation timed out" );
+			return -1;
+		}
+
+		if( iRet == -1 )
+			SetError( sError );
+
+		return iRet;
+	}
+
+
 	int ReadInternal( void *pBuffer, size_t iBytes )
 	{
 		CString sError;
