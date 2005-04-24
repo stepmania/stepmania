@@ -5,6 +5,8 @@
 
 #include "EnumHelper.h"
 
+class Game;
+
 enum GameController
 {
 	GAME_CONTROLLER_1 = 0,	// left controller
@@ -15,6 +17,9 @@ enum GameController
 #define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, MAX_GAME_CONTROLLERS, gc )
 
 typedef int GameButton;
+CString GameButtonToString( GameButton i );
+GameButton StringToGameButton( const Game* pGame, const CString& s );
+
 const GameButton MAX_GAME_BUTTONS = 20;
 const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
 #define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, MAX_GAME_BUTTONS, gb )
@@ -236,8 +241,8 @@ struct GameInput
 	inline bool IsValid() const { return controller != GAME_CONTROLLER_INVALID; };
 	inline void MakeInvalid() { controller = GAME_CONTROLLER_INVALID; button = GAME_BUTTON_INVALID; };
 
-	CString toString();
-	bool fromString( CString s );
+	CString toString( const Game* pGame );
+	bool fromString( const Game* pGame, CString s );
 };
 
 #endif

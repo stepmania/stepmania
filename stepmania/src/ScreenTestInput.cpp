@@ -48,17 +48,17 @@ void ScreenTestInput::Update( float fDeltaTime )
 
 	DeviceInput di;
 
-	for( int d=0; d<NUM_INPUT_DEVICES; d++ )
+	FOREACH_InputDevice( d )
 	{
-		for( int b=0; b<NUM_DEVICE_BUTTONS[d]; b++ )
+		for( int b=0; b<GetNumDeviceButtons(d); b++ )
 		{
-			di.device = (InputDevice)d;
+			di.device = d;
 			di.button = b;
 
 			if( INPUTFILTER->IsBeingPressed(di) )
 			{
 				CString sTemp;
-				sTemp += di.GetDescription();
+				sTemp += di.toString();
 				
 				GameInput gi;
 				if( INPUTMAPPER->DeviceToGame(di,gi) )

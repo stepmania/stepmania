@@ -2,25 +2,51 @@
 #include "GameInput.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "Game.h"
 
 
-CString GameInput::toString() 
+static const CString GameControllerNames[MAX_GAME_CONTROLLERS] = {
+	"Controller1",
+	"Controller2",
+};
+XToString( GameController, MAX_GAME_CONTROLLERS );
+StringToX( GameController );
+
+
+CString GameButtonToString( const Game* pGame, GameButton i )
 {
-	return ssprintf("%d-%d", controller, button );
+	return pGame->m_szButtonNames[i];
 }
 
-bool GameInput::fromString( CString s )
-{ 
-	CStringArray a;
-	split( s, "-", a);
+GameButton StringToGameButton( const Game* pGame, const CString& s )
+{
+	for( int i=0; i<pGame->m_iButtonsPerController; i++ )
+	{
+		if( s == GameButtonToString(pGame,(GameButton)i) )
+			return (GameButton)i;
+	}
+	return GAME_BUTTON_INVALID;
+}
 
-	if( a.size() != 2 ) {
-		MakeInvalid();
+
+CString GameInput::toString( const Game* pGame ) 
+{
+	return GameControllerToString(controller) + CString("_") + GameButtonToString(pGame,button);
+}
+
+bool GameInput::fromString( const Game* pGame, CString s )
+{ 
+	char szController[32] = "";
+	char szButton[32] = "";
+
+	if( 2 != sscanf( s, "%31[^_]_%31[^_]", szController, szButton ) )
+	{
+		controller = GAME_CONTROLLER_INVALID;
 		return false;
 	}
 
-	controller = (GameController)atoi( a[0] );
-	button = (GameButton)atoi( a[1] );
+	controller = StringToGameController( szController );
+	button = StringToGameButton( pGame, szButton );
 	return true;
 };
 

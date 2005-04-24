@@ -395,7 +395,9 @@ void InputMapper::ReadMappingsFromDisk()
 	if( !ini.ReadFile( KEYMAPS_PATH ) )
 		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.GetError().c_str() );
 
-	const XNode *Key = ini.GetChild( GAMESTATE->GetCurrentGame()->m_szName );
+	const Game *pGame = GAMESTATE->GetCurrentGame();
+
+	const XNode *Key = ini.GetChild( pGame->m_szName );
 
 	if( Key  )
 	{
@@ -405,7 +407,7 @@ void InputMapper::ReadMappingsFromDisk()
 			const CString &value = i->m_sValue;
 
 			GameInput GameI;
-			GameI.fromString( name );
+			GameI.fromString( pGame, name );
 
 			CStringArray sDeviceInputStrings;
 			split( value, ",", sDeviceInputStrings, false );
@@ -429,16 +431,18 @@ void InputMapper::SaveMappingsToDisk()
 	IniFile ini;
 	ini.ReadFile( KEYMAPS_PATH );
 	
+	const Game* pGame = GAMESTATE->GetCurrentGame();
+
 	// erase the key so that we overwrite everything for this game
-	ini.DeleteKey( GAMESTATE->GetCurrentGame()->m_szName );
+	ini.DeleteKey( pGame->m_szName );
 
 	// iterate over our input map and write all mappings to the ini file
-	FOREACH_GameController(i)
+	FOREACH_GameController( i )
 	{
-		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+		for( int j=0; j<pGame->m_iButtonsPerController; j++ )
 		{
-			GameInput GameI( (GameController)i, (GameButton)j );
-			CString sNameString = GameI.toString();
+			GameInput GameI( i, (GameButton)j );
+			CString sNameString = GameI.toString( pGame );
 			
 			vector<CString> asValues;
 			for( int button = 0; button < NUM_GAME_TO_DEVICE_SLOTS; ++button )
@@ -447,7 +451,7 @@ void InputMapper::SaveMappingsToDisk()
 				asValues.erase( asValues.begin()+asValues.size()-1 );
 			CString sValueString = join( ",", asValues );
 
-			ini.SetValue( GAMESTATE->GetCurrentGame()->m_szName, sNameString, sValueString );
+			ini.SetValue( pGame->m_szName, sNameString, sValueString );
 		}
 	}
 
@@ -514,9 +518,9 @@ bool InputMapper::IsMapped( GameInput GameI )
 void InputMapper::UpdateTempDItoGI()
 {
 	// clear out m_tempDItoGI
-	for( int d=0; d<NUM_INPUT_DEVICES; d++ )
+	FOREACH_InputDevice( d )
 	{
-		for( int b=0; b<NUM_DEVICE_BUTTONS[d]; b++ )
+		for( int b=0; b<GetNumDeviceButtons(d); b++ )
 		{
 			m_tempDItoGI[d][b].MakeInvalid();
 		}

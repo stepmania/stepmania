@@ -67,10 +67,10 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 }
 
 /* Release all buttons on the given device. */
-void InputFilter::ResetDevice( InputDevice dev )
+void InputFilter::ResetDevice( InputDevice device )
 {
-	for( int button = 0; button < NUM_DEVICE_BUTTONS[dev]; ++button )
-		ButtonPressed( DeviceInput(dev, button), false );
+	for( int button = 0; button < GetNumDeviceButtons(device); ++button )
+		ButtonPressed( DeviceInput(device, button), false );
 }
 
 void InputFilter::Update(float fDeltaTime)
@@ -97,11 +97,11 @@ void InputFilter::Update(float fDeltaTime)
 	// taking 4% of the CPU on a P3-666.
 	DeviceInput di( (InputDevice)0,0,1.0f,now);
 
-	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
+	FOREACH_InputDevice( d )
 	{
-		di.device = (InputDevice)d;
+		di.device = d;
 
-		for( int b=0; b < NUM_DEVICE_BUTTONS[d]; b++ )	// foreach button
+		for( int b=0; b < GetNumDeviceButtons(d); b++ )	// foreach button
 		{
 			ButtonState &bs = m_ButtonState[d][b];
 			di.button = b;

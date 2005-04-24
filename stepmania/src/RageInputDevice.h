@@ -3,6 +3,40 @@
 #define RAGE_INPUT_DEVICE_H
 
 #include "RageTimer.h"
+#include "EnumHelper.h"
+
+const int NUM_JOYSTICKS = 16;
+const int NUM_PUMPS = 2;
+const int NUM_PARAS = 2;
+
+enum InputDevice {
+	DEVICE_KEYBOARD = 0,
+	DEVICE_JOY1,
+	DEVICE_JOY2,
+	DEVICE_JOY3,
+	DEVICE_JOY4,
+	DEVICE_JOY5,
+	DEVICE_JOY6,
+	DEVICE_JOY7,
+	DEVICE_JOY8,
+	DEVICE_JOY9,
+	DEVICE_JOY10,
+	DEVICE_JOY11,
+	DEVICE_JOY12,
+	DEVICE_JOY13,
+	DEVICE_JOY14,
+	DEVICE_JOY15,
+	DEVICE_JOY16,
+	DEVICE_PUMP1,
+	DEVICE_PUMP2,
+	DEVICE_PARA1,
+	NUM_INPUT_DEVICES,	// leave this at the end
+	DEVICE_NONE			// means this is NULL
+};
+#define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, NUM_INPUT_DEVICES, i )
+const CString& InputDeviceToString( InputDevice i );
+InputDevice StringToInputDevice( const CString& s );
+
 
 /* Only raw, unshifted keys go in this table; this doesn't include internationalized
  * keyboards, only keys that we might actually want to test for programmatically.  Any
@@ -183,36 +217,9 @@ enum RageKeySym
 	NUM_KEYS,
 	KEY_INVALID
 };
+CString RageKeySymToString( RageKeySym i );
+RageKeySym StringToRageKeySym( const CString& s );
 
-const int NUM_KEYBOARD_BUTTONS = NUM_KEYS;
-const int NUM_JOYSTICKS = 16;
-const int NUM_PUMPS = 2;
-const int NUM_PARAS = 2;
-
-enum InputDevice {
-	DEVICE_KEYBOARD = 0,
-	DEVICE_JOY1,
-	DEVICE_JOY2,
-	DEVICE_JOY3,
-	DEVICE_JOY4,
-	DEVICE_JOY5,
-	DEVICE_JOY6,
-	DEVICE_JOY7,
-	DEVICE_JOY8,
-	DEVICE_JOY9,
-	DEVICE_JOY10,
-	DEVICE_JOY11,
-	DEVICE_JOY12,
-	DEVICE_JOY13,
-	DEVICE_JOY14,
-	DEVICE_JOY15,
-	DEVICE_JOY16,
-	DEVICE_PUMP1,
-	DEVICE_PUMP2,
-	DEVICE_PARA,
-	NUM_INPUT_DEVICES,	// leave this at the end
-	DEVICE_NONE			// means this is NULL
-};
 
 /* Joystick inputs.  We try to have enough input names so any input on a reasonable
  * joystick has an obvious mapping, but keep it generic and don't try to handle odd
@@ -238,10 +245,15 @@ enum JoystickButton
 	JOY_11,	JOY_12,	JOY_13,	JOY_14,	JOY_15,	JOY_16,	JOY_17,	JOY_18,	JOY_19,	JOY_20,
 	JOY_21,	JOY_22,	JOY_23,	JOY_24, JOY_25, JOY_26, JOY_27, JOY_28, JOY_29, JOY_30,
 	JOY_31,	JOY_32,
-	NUM_JOYSTICK_BUTTONS	// leave this at the end
-};
 
-enum PumpButton {
+	NUM_JOYSTICK_BUTTONS,
+	JOYSTICK_BUTTON_INVALID
+};
+const CString& JoystickButtonToString( JoystickButton i );
+JoystickButton StringToJoystickButton( const CString& s );
+
+
+enum PumpPadButton {
 	PUMP_UL,
 	PUMP_UR,
 	PUMP_MID,
@@ -256,10 +268,15 @@ enum PumpButton {
 	PUMP_2P_MID,
 	PUMP_2P_DL,
 	PUMP_2P_DR,
-	NUM_PUMP_PAD_BUTTONS	// leave this at the end
-};
 
-enum ParaButton {
+	NUM_PUMP_PAD_BUTTONS,
+	PUMP_PAD_BUTTON_INVALID
+};
+const CString& PumpPadButtonToString( PumpPadButton i );
+PumpPadButton StringToPumpPadButton( const CString& s );
+
+
+enum ParaPadButton {
 	PARA_L,
 	PARA_UL,
 	PARA_U,
@@ -269,31 +286,53 @@ enum ParaButton {
 	PARA_START,
 	PARA_MENU_LEFT,
 	PARA_MENU_RIGHT,
-	NUM_PARA_PAD_BUTTONS	// leave this at the end
+
+	NUM_PARA_PAD_BUTTONS,
+	PARA_PAD_BUTTON_INVALID
 };
+const CString& ParaPadButtonToString( ParaPadButton i );
+ParaPadButton StringToParaPadButton( const CString& s );
 
 
-const int NUM_DEVICE_BUTTONS[NUM_INPUT_DEVICES] =
+typedef int DeviceButton;
+//CString DeviceButtonToString( InputDevice device, DeviceButton i );
+//DeviceButton StringToDeviceButton( InputDevice device, const CString& s );
+
+inline int GetNumDeviceButtons( InputDevice device )
 {
-	NUM_KEYBOARD_BUTTONS, // DEVICE_KEYBOARD
-	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY1
-	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY2
-	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY3
-	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY4
-	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY5
-	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY6
-	NUM_PUMP_PAD_BUTTONS, // DEVICE_PUMP1
-	NUM_PUMP_PAD_BUTTONS, // DEVICE_PUMP2
-	NUM_PARA_PAD_BUTTONS, // DEVICE_PARA
+	switch( device )
+	{
+	case DEVICE_KEYBOARD:	return NUM_KEYS;
+	case DEVICE_JOY1:
+	case DEVICE_JOY2:
+	case DEVICE_JOY3:
+	case DEVICE_JOY4:
+	case DEVICE_JOY5:
+	case DEVICE_JOY6:
+	case DEVICE_JOY7:
+	case DEVICE_JOY8:
+	case DEVICE_JOY9:
+	case DEVICE_JOY10:
+	case DEVICE_JOY11:
+	case DEVICE_JOY12:
+	case DEVICE_JOY13:
+	case DEVICE_JOY14:
+	case DEVICE_JOY15:
+	case DEVICE_JOY16:	return NUM_JOYSTICK_BUTTONS;
+	case DEVICE_PUMP1:
+	case DEVICE_PUMP2:	return NUM_PUMP_PAD_BUTTONS;
+	case DEVICE_PARA1:	return NUM_PARA_PAD_BUTTONS;
+	default:	ASSERT(0);	return 0;
+	}
 };
-
-const int MAX_DEVICE_BUTTONS = NUM_KEYBOARD_BUTTONS;
+const int MAX_DEVICE_BUTTONS = NUM_KEYS;
+const DeviceButton DEVICE_BUTTON_INVALID = MAX_DEVICE_BUTTONS+1;
 
 struct DeviceInput
 {
 public:
 	InputDevice device;
-	int button;
+	DeviceButton button;
 
 	/* This is usually 0 or 1.  Analog joystick inputs can set this to a percentage (0..1).
 	 * This should be 0 for analog axes within the dead zone. */
@@ -312,8 +351,6 @@ public:
 		 * compare level or ts. */
 		return device == other.device  &&  button == other.button;
 	};
-
-	CString GetDescription();
 	
 	CString toString();
 	bool fromString( const CString &s );
@@ -324,8 +361,6 @@ public:
 	char ToChar() const;
 
 	bool IsJoystick() const { return DEVICE_JOY1 <= device && device < DEVICE_JOY1+NUM_JOYSTICKS; }
-
-	static int NumButtons(InputDevice device);
 };
 
 #endif
