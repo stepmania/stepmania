@@ -61,6 +61,9 @@ bool InputQueue::MatchesSequence( GameController c, const GameButton* button_seq
 	if( c == GAME_CONTROLLER_INVALID )
 		return false;
 
+	if( fMaxSecondsBack == -1 )
+		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
+
 	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
