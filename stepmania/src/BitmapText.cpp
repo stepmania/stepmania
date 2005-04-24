@@ -452,7 +452,7 @@ void BitmapText::AddLine( CString &sAddition, int & iWidthPixels )
 	else
 	{
 		CString sCurrentLine;
-		int		iCurrentLineWidth;
+		int		iCurrentLineWidth = 0;
 		for ( unsigned i = 0; i < sAddition.length(); i++ )
 		{
 			CString sCurrentChar = sAddition.substr( i, 1 );
