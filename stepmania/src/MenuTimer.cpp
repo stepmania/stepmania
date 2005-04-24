@@ -10,15 +10,17 @@
 #include "GameSoundManager.h"
 #include "ThemeMetric.h"
 
-static const ThemeMetric<int>	WARNING_START		("MenuTimer","WarningStart");
-static const ThemeMetric<int>	WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
-static const ThemeMetric<float>	MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
-#define		WARNING_COMMAND(i)	THEME->GetMetricA	("MenuTimer", ssprintf("WarningCommand%i",i))
-static const ThemeMetric<apActorCommands> ON_COMMAND	("MenuTimer","OnCommand");
+CString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",i); }
+
+static const ThemeMetric<int>				WARNING_START		("MenuTimer","WarningStart");
+static const ThemeMetric<int>				WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
+static const ThemeMetric<float>				MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
+static const ThemeMetric<apActorCommands>	ON_COMMAND	("MenuTimer","OnCommand");
 
 static const float TIMER_PAUSE_SECONDS = 99;
 
-MenuTimer::MenuTimer()
+MenuTimer::MenuTimer() :
+	WARNING_COMMAND("MenuTimer", WARNING_COMMAND_NAME, WARNING_START+1)
 {
 	m_fStallSeconds = 0;
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
@@ -80,8 +82,8 @@ void MenuTimer::Update( float fDeltaTime )
 
 	if( iNewDisplay <= WARNING_START )
 	{
-		m_textDigit1.RunCommands( WARNING_COMMAND(iNewDisplay) );
-		m_textDigit2.RunCommands( WARNING_COMMAND(iNewDisplay) );
+		m_textDigit1.RunCommands( WARNING_COMMAND.GetValue(iNewDisplay) );
+		m_textDigit2.RunCommands( WARNING_COMMAND.GetValue(iNewDisplay) );
 	}
 	
 	if( iNewDisplay == 0 )

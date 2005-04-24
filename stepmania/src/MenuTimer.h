@@ -8,6 +8,7 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "RageSound.h"
+#include "ThemeMetric.h"
 
 
 class MenuTimer : public ActorFrame
@@ -36,6 +37,8 @@ protected:
 	BitmapText m_textDigit2;
 
 	RageSound	m_soundBeep;
+
+	ThemeMetric1D<apActorCommands>	WARNING_COMMAND;
 };
 
 #endif
