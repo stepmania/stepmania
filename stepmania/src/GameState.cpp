@@ -1940,6 +1940,13 @@ public:
 		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; }
 		return 0;
 	}
+	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int SetPreferredSong( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->m_pPreferredSong = NULL; }
+		else { Song *pS = Luna<Song>::check(L,1); p->m_pPreferredSong = pS; }
+		return 0;
+	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
 	static int Env( T* p, lua_State *L )	{ p->m_Environment->PushSelf(L); return 1; }
 	static int SetEnv( T* p, lua_State *L )	{ p->m_mapEnv[SArg(1)] = SArg(2); return 0; }
@@ -1982,6 +1989,8 @@ public:
 		ADD_METHOD( SetCurrentSteps )
 		ADD_METHOD( GetCurrentCourse )
 		ADD_METHOD( SetCurrentCourse )
+		ADD_METHOD( SetPreferredSong )
+		ADD_METHOD( GetPreferredSong )
 		ADD_METHOD( SetTemporaryEventMode )
 		ADD_METHOD( Env )
 		ADD_METHOD( SetEnv )
