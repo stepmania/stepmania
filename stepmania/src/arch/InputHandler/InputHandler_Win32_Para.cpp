@@ -49,7 +49,7 @@ void InputHandler_Win32_Para::HandleInput( int devno, int event )
 	/* buttons */	(1<<16),(1<<17), (1<<20), (1<<21),
 	};
 
-	InputDevice id = DEVICE_PARA;
+	InputDevice id = DEVICE_PARA1;
 
 	for (int butno = 0 ; butno < NUM_PARA_PAD_BUTTONS ; butno++)
 	{
@@ -67,7 +67,7 @@ void InputHandler_Win32_Para::GetDevicesAndDescriptions(vector<InputDevice>& vDe
 {
 	if( dev->IsOpen() )
 	{
-		vDevicesOut.push_back( DEVICE_PARA );
+		vDevicesOut.push_back( DEVICE_PARA1 );
 		vDescriptionsOut.push_back( "Para USB" );
 	}
 }
