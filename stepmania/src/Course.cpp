@@ -135,7 +135,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			m_iLives = atoi( sParams[1] );
 
 		else if( 0 == stricmp(sValueName, "GAINSECONDS") )
-			fGainSeconds = (float)atof( sParams[1] );
+			fGainSeconds = strtof( sParams[1], NULL );
 
 		else if( 0 == stricmp(sValueName, "METER") )
 		{
