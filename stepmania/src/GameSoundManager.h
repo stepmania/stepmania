@@ -8,6 +8,8 @@
 class TimingData;
 class RageSound;
 struct RageSoundParams;
+struct lua_State;
+
 class GameSoundManager
 {
 public:
@@ -19,6 +21,7 @@ public:
 	void PlayMusic( const CString &file, const CString &timing_file, bool force_loop = false, float start_sec = 0, float length_sec = -1, float fade_len = 0, bool align_beat = true );
 	void PlayMusic( const CString &file, TimingData *pTiming, bool force_loop = false, float start_sec = 0, float length_sec = -1, float fade_len = 0, bool align_beat = true );
 	void StopMusic() { PlayMusic(""); }
+	void DimMusic( float fVolume, float fDurationSeconds );
 	CString GetMusicPath() const;
 	void Flush();
 
@@ -31,6 +34,9 @@ public:
 	float GetFrameTimingAdjustment( float fDeltaTime );
 
 	static void SetPlayerBalance( PlayerNumber pn, RageSoundParams &params );
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 extern GameSoundManager *SOUND;

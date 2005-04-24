@@ -31,6 +31,12 @@ static bool g_UpdatingTimer;
 static bool g_Shutdown;
 static bool g_bFlushing = false;
 
+enum FadeState { FADE_NONE, FADE_OUT, FADE_WAIT, FADE_IN };
+static FadeState g_FadeState = FADE_NONE;
+static float g_fDimVolume = 1.0f;
+static float g_fOriginalVolume = 1.0f;
+static float g_fDimDurationRemaining = 0.0f;
+
 struct MusicPlaying
 {
 	bool m_TimingDelayed;
@@ -87,6 +93,9 @@ CHECKPOINT;
 CHECKPOINT;
 	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(ToPlay.file) )
 		return;
+
+	/* We're changing or stopping the music.  If we were dimming, reset. */
+	g_FadeState = FADE_NONE;
 
 CHECKPOINT;
 	if( ToPlay.file.empty() )
@@ -436,6 +445,36 @@ void GameSoundManager::Update( float fDeltaTime )
 {
 	LockMut( *g_Mutex );
 
+	{
+		/* Duration of the fade-in and fade-out: */
+		static float fFadeInSpeed = 1.5f;
+		static float fFadeOutSpeed = 0.3f;
+		float fVolume = g_Playing->m_Music->GetVolume();
+		switch( g_FadeState )
+		{
+		case FADE_NONE: break;
+		case FADE_OUT:
+			fapproach( fVolume, g_fDimVolume, fDeltaTime/fFadeOutSpeed );
+			if( fabsf(fVolume-g_fDimVolume) < 0.001f )
+				g_FadeState = FADE_WAIT;
+			break;
+		case FADE_WAIT:
+			g_fDimDurationRemaining -= fDeltaTime;
+			if( g_fDimDurationRemaining <= 0 )
+				g_FadeState = FADE_IN;
+			break;
+		case FADE_IN:
+			fapproach( fVolume, g_fOriginalVolume, fDeltaTime/fFadeInSpeed );
+			if( fabsf(fVolume-g_fOriginalVolume) < 0.001f )
+				g_FadeState = FADE_NONE;
+			break;
+		}
+		
+		RageSoundParams p = g_Playing->m_Music->GetParams();
+		p.m_Volume = fVolume;
+		g_Playing->m_Music->SetParams( p );
+	}
+
 	if( !g_UpdatingTimer )
 		return;
 
@@ -555,6 +594,20 @@ void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool
 	g_Mutex->Unlock();
 }
 
+void GameSoundManager::DimMusic( float fVolume, float fDurationSeconds )
+{
+	LockMut( *g_Mutex );
+
+	if( g_FadeState == FADE_NONE )
+		g_fOriginalVolume = g_Playing->m_Music->GetVolume();
+	// otherwise, g_fOriginalVolume is already set and GetVolume will return the
+	// current state, not the original state
+
+	g_fDimDurationRemaining = fDurationSeconds;
+	g_fDimVolume = fVolume;
+	g_FadeState = FADE_OUT;
+}
+
 void GameSoundManager::HandleSongTimer( bool on )
 {
 	LockMut( *g_Mutex );
@@ -601,6 +654,43 @@ void GameSoundManager::SetPlayerBalance( PlayerNumber pn, RageSoundParams &param
 	else
 		params.m_Balance = 0;
 }
+
+
+#include "LuaBinding.h"
+
+template<class T>
+class LunaGameSoundManager: public Luna<T>
+{
+public:
+	LunaGameSoundManager() { LUA->Register( Register ); }
+
+	static int DimMusic( T* p, lua_State *L )
+	{
+		float fVolume = FArg(1);
+		float fDurationSeconds = FArg(2);
+		p->DimMusic( fVolume, fDurationSeconds );
+		return 0;
+	}
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( DimMusic )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( SOUND )
+		{
+			lua_pushstring(L, "SOUND");
+			SOUND->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( GameSoundManager )
+
 
 /*
  * Copyright (c) 2003-2005 Glenn Maynard
