@@ -282,7 +282,7 @@ public:
 	LoadResult LoadAllFromDir( CString sDir, bool bRequireSignature );
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
-	void LoadEditableDataFromDir( CString sDir );
+	LoadResult LoadEditableDataFromDir( CString sDir );
 	static bool FastLoadProfileNameFromMemoryCard( CString sDir, CString &sName );
 	LoadResult LoadStatsXmlFromNode( const XNode* pNode );
 	void LoadGeneralDataFromNode( const XNode* pNode );

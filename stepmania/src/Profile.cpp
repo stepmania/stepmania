@@ -982,7 +982,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	return pGeneralDataNode;
 }
 
-void Profile::LoadEditableDataFromDir( CString sDir )
+Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 {
 	CString fn = sDir + EDITABLE_INI;
 
@@ -993,9 +993,11 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 	if( iBytes > MAX_EDITABLE_INI_SIZE_BYTES )
 	{
 		LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-		return;
+		return failed_tampered;
 	}
 
+	if( !IsAFile(fn) )
+		return failed_no_profile;
 
 	IniFile ini;
 	ini.ReadFile( fn );
@@ -1012,6 +1014,8 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 	// TODO: strip invalid chars?
 	if( m_iWeightPounds != 0 )
 		CLAMP( m_iWeightPounds, 50, 500 );
+
+	return success;
 }
 
 bool Profile::FastLoadProfileNameFromMemoryCard( CString sDir, CString &sName )
