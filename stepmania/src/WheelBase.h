@@ -6,17 +6,14 @@
 #include "AutoActor.h"
 #include "ActorFrame.h"
 #include "RageSound.h"
-#include "RandomSample.h"
 #include "GameConstantsAndTypes.h"
-#include "MusicSortDisplay.h"
 #include "ScreenMessage.h"
-#include "ScoreDisplayNormal.h"
 #include "ScrollBar.h"
 #include "RageTimer.h"
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 
-AutoScreenMessage( SM_SongChanged );		// TODO: Replace this with a Message and MESSAGEMAN
+//AutoScreenMessage( SM_SongChanged );		// TODO: Replace this with a Message and MESSAGEMAN
 
 //struct CompareSongPointerArrayBySectionName;
 
@@ -37,7 +34,7 @@ public:
 	virtual void TweenOffScreen() { TweenOffScreen(false); }
 
 	void Move(int n);
-	void ChangeMusic(int dist); /* +1 or -1 */
+	virtual void ChangeMusic(int dist); /* +1 or -1 */
 
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
@@ -56,6 +53,10 @@ public:
 	WheelItemBaseData* LastSelected();
 
 protected:
+	virtual void LoadFromMetrics( CString sType );
+	void LoadVariables();
+	void CommonUpdateProcedure(float fDeltaTime);
+
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData *> &arrayWheelItemDatas );
 //	bool SelectModeMenuItem();
 	int FirstVisibleIndex();
@@ -81,11 +82,15 @@ protected:
 	float				m_SpinSpeed;
 	enum WheelState { 
 		STATE_SELECTING_GENERIC,
+		STATE_SELECTING_MUSIC,
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
 		STATE_FLYING_ON_AFTER_NEXT_SORT, 
 		STATE_TWEENING_ON_SCREEN, 
 		STATE_TWEENING_OFF_SCREEN, 
 		STATE_WAITING_OFF_SCREEN,
+		STATE_ROULETTE_SPINNING,
+		STATE_ROULETTE_SLOWING_DOWN,
+		STATE_RANDOM_SPINNING,
 		STATE_LOCKED,
 	};
 	WheelState			m_WheelState;
@@ -100,8 +105,6 @@ protected:
 	void UpdateScrollbar();
 
 	ThemeMetric<float>	SWITCH_SECONDS;
-	ThemeMetric<float> ROULETTE_SWITCH_SECONDS;
-	ThemeMetric<int> ROULETTE_SLOW_DOWN_SWITCHES;
 	ThemeMetric<float> LOCKED_INITIAL_VELOCITY;
 	ThemeMetric<float> SCROLL_BAR_X;
 	ThemeMetric<int> SCROLL_BAR_HEIGHT;
@@ -110,17 +113,8 @@ protected:
 	ThemeMetric<float>	ITEM_SPACING_Y;
 	ThemeMetric<float>	WHEEL_3D_RADIUS;
 	ThemeMetric<float>	CIRCLE_PERCENT;
-	ThemeMetric<int> NUM_SECTION_COLORS;
-	ThemeMetric<RageColor> SONG_REAL_EXTRA_COLOR;
-	ThemeMetric<RageColor> SORT_MENU_COLOR;
-	ThemeMetric<bool> SHOW_ROULETTE;
-	ThemeMetric<bool> SHOW_RANDOM;
-	ThemeMetric<bool> SHOW_PORTAL;
 	ThemeMetric<bool>	USE_3D;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
-	ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW;
-	ThemeMetric<CString> MODE_MENU_CHOICE_NAMES;
-	ThemeMetricMap<CString> CHOICE;
 	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_CENTER;
 	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_OFFSET;
 	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_CENTER;

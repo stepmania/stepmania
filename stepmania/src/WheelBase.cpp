@@ -1,7 +1,6 @@
 #include "global.h"
 #include "WheelBase.h"
 #include "RageUtil.h"
-#include "SongManager.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"	// for sending SM_PlayMusicSample
@@ -10,23 +9,13 @@
 #include "GameState.h"
 #include "RageMath.h"
 #include "ThemeManager.h"
-#include "song.h"
-#include "Course.h"
-#include "RageDisplay.h"
 #include "RageTextureManager.h"
-#include "Banner.h"
-#include "Steps.h"
-#include "UnlockManager.h"
 #include "GameCommand.h"
 #include "ActorUtil.h"
-#include "SongUtil.h"
-#include "CourseUtil.h"
 #include "Foreach.h"
 #include "Style.h"
 #include "ThemeMetric.h"
-#include "PlayerState.h"
 #include "ScreenDimensions.h"
-#include "RageUtil.h"
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
@@ -56,37 +45,10 @@ WheelBase::~WheelBase()
 
 void WheelBase::Load( CString sType ) 
 {
-	m_isEmpty = true;
-	LOG->Trace( "MusicWheel::Load('%s')", sType.c_str() );
+	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 
-	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
-	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
-	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
-	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
-	SCROLL_BAR_X				.Load(sType,"ScrollBarX");
-	SCROLL_BAR_HEIGHT			.Load(sType,"ScrollBarHeight");
-	ITEM_CURVE_X				.Load(sType,"ItemCurveX");
-	USE_LINEAR_WHEEL			.Load(sType,"NoCurving");
-	ITEM_SPACING_Y				.Load(sType,"ItemSpacingY");
-	WHEEL_3D_RADIUS				.Load(sType,"Wheel3DRadius");
-	CIRCLE_PERCENT				.Load(sType,"CirclePercent");
-	NUM_SECTION_COLORS			.Load(sType,"NumSectionColors");
-	SONG_REAL_EXTRA_COLOR		.Load(sType,"SongRealExtraColor");
-	SORT_MENU_COLOR				.Load(sType,"SortMenuColor");
-	SHOW_ROULETTE				.Load(sType,"ShowRoulette");
-	SHOW_RANDOM					.Load(sType,"ShowRandom");
-	SHOW_PORTAL					.Load(sType,"ShowPortal");
-	USE_3D						.Load(sType,"Use3D");
-	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
-	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
-	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
-	vector<CString> vsModeChoiceNames;
-	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
-	CHOICE						.Load(sType,CHOICE_NAME,vsModeChoiceNames);
-	WHEEL_ITEM_ON_DELAY_CENTER	.Load(sType,"WheelItemOnDelayCenter");
-	WHEEL_ITEM_ON_DELAY_OFFSET	.Load(sType,"WheelItemOnDelayOffset");
-	WHEEL_ITEM_OFF_DELAY_CENTER	.Load(sType,"WheelItemOffDelayCenter");
-	WHEEL_ITEM_OFF_DELAY_OFFSET	.Load(sType,"WheelItemOffDelayOffset");
+	LoadFromMetrics( sType );
+	LoadVariables();
 //	SECTION_COLORS				.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
@@ -97,7 +59,32 @@ void WheelBase::Load( CString sType )
 		m_WheelBaseItems.push_back( new WheelItemBase );
 	}
 
-	m_LastSelection = NULL;
+	m_WheelState = STATE_SELECTING_GENERIC;
+
+	BuildWheelItemsData(m_WheelBaseItemsData);
+	RebuildWheelItems();
+}
+
+void WheelBase::LoadFromMetrics( CString sType ) {
+
+	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
+	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
+	SCROLL_BAR_X				.Load(sType,"ScrollBarX");
+	SCROLL_BAR_HEIGHT			.Load(sType,"ScrollBarHeight");
+	ITEM_CURVE_X				.Load(sType,"ItemCurveX");
+	USE_LINEAR_WHEEL			.Load(sType,"NoCurving");
+	ITEM_SPACING_Y				.Load(sType,"ItemSpacingY");
+	WHEEL_3D_RADIUS				.Load(sType,"Wheel3DRadius");
+	CIRCLE_PERCENT				.Load(sType,"CirclePercent");
+	USE_3D						.Load(sType,"Use3D");
+	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
+	WHEEL_ITEM_ON_DELAY_CENTER	.Load(sType,"WheelItemOnDelayCenter");
+	WHEEL_ITEM_ON_DELAY_OFFSET	.Load(sType,"WheelItemOnDelayOffset");
+	WHEEL_ITEM_OFF_DELAY_CENTER	.Load(sType,"WheelItemOffDelayCenter");
+	WHEEL_ITEM_OFF_DELAY_OFFSET	.Load(sType,"WheelItemOffDelayOffset");
+
+	m_soundChangeMusic.Load(	THEME->GetPathS(sType,"change"), true );
+	m_soundLocked.Load(			THEME->GetPathS(sType,"locked"), true );
 
 	m_sprHighlight.Load( THEME->GetPathG(sType,"highlight") );
 	m_sprHighlight->SetName( "Highlight" );
@@ -107,21 +94,16 @@ void WheelBase::Load( CString sType )
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
+}
 
-	m_soundChangeMusic.Load(	THEME->GetPathS(sType,"change"), true );
-	m_soundLocked.Load(			THEME->GetPathS(sType,"locked"), true );
-
+void WheelBase::LoadVariables() {
+	m_isEmpty = true;
+	m_LastSelection = NULL;
 	m_iSelection = 0;
-
-	m_WheelState = STATE_SELECTING_GENERIC;
 	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;
-
 	m_iSwitchesLeftInSpinDown = 0;
 	m_Moving = 0;
-
-	BuildWheelItemsData(m_WheelBaseItemsData);
-	RebuildWheelItems();
 }
 
 void WheelBase::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out )
@@ -267,7 +249,9 @@ void WheelBase::Update( float fDeltaTime )
 	{
 		m_WheelBaseItems[i]->Update( fDeltaTime );
 	}
-
+/*
+	//Moved to CommonUpdateProcedure, seems to work fine
+	//Revert if it happens to break something
 	UpdateScrollbar();
 
 	if( m_Moving )
@@ -275,7 +259,7 @@ void WheelBase::Update( float fDeltaTime )
 		m_TimeBeforeMovingBegins -= fDeltaTime;
 		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
 	}
-
+*/
 	// update wheel state
 	m_fTimeLeftInState -= fDeltaTime;
 	if( m_fTimeLeftInState <= 0 )	// time to go to a new state
@@ -312,6 +296,21 @@ void WheelBase::Update( float fDeltaTime )
 		}
 	}
 
+	CommonUpdateProcedure(fDeltaTime);
+}
+
+void WheelBase::CommonUpdateProcedure(float fDeltaTime) {
+
+	//This bit of code now happens after it's normal execution, but it seems to work fine.
+	UpdateScrollbar();
+
+	if( m_Moving )
+	{
+		m_TimeBeforeMovingBegins -= fDeltaTime;
+		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
+	}
+
+	//The following code is just fine here.
 	if( m_WheelState == STATE_LOCKED )
 	{
 		/* Do this in at most .1 sec chunks, so we don't get weird if we
@@ -402,7 +401,7 @@ bool WheelBase::Select()	// return true if this selection ends the screen
 		case TYPE_GENERIC:
 			m_LastSelection = m_WheelBaseItemsData[m_iSelection];
 			return false;
-		case TYPE_GROUP:
+		case TYPE_SECTION:
 			{
 				CString sThisItemSectionName = m_WheelBaseItemsData[m_iSelection]->m_sText;
 				if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
@@ -558,7 +557,7 @@ void WheelBase::Move(int n)
 
 		/* Make sure the user always gets an SM_SongChanged when
 		 * Moving() is 0, so the final banner, etc. always gets set. */
-		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+//		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	}
 
 	m_TimeBeforeMovingBegins = 1/4.0f;
@@ -600,7 +599,7 @@ void WheelBase::ChangeMusic(int dist)
 
 	m_fPositionOffsetFromSelection += dist;
 
-	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+//	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 
 	/* If we're moving automatically, don't play this; it'll be called in Update. */
 	if(!IsMoving())
