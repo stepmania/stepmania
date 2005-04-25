@@ -225,20 +225,20 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		ASSERT( m_pRequestFile != NULL );
 		ASSERT( m_pResultBuffer != NULL );
 		m_iResultRequest = m_pRequestFile->Read( m_pResultBuffer, m_iRequestSize );
-        m_sResultError = m_pRequestFile->GetError();
+		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_WRITE:
 		ASSERT( m_pRequestFile != NULL );
 		ASSERT( m_pRequestBuffer != NULL );
 		m_iResultRequest = m_pRequestFile->Write( m_pRequestBuffer, m_iRequestSize );
-        m_sResultError = m_pRequestFile->GetError();
+		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_FLUSH:
 		ASSERT( m_pRequestFile != NULL );
 		m_iResultRequest = m_pRequestFile->Flush();
-        m_sResultError = m_pRequestFile->GetError();
+		m_sResultError = m_pRequestFile->GetError();
 		break;
 
 	case REQ_COPY:
