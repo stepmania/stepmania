@@ -25,6 +25,7 @@ struct RadarValues
 			float fNumHolds;
 			float fNumMines;
 			float fNumHands;
+			float fNumRolls;
 		} v;
 		float f[NUM_RADAR_CATEGORIES];
 	} m_Values;
