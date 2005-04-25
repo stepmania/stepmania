@@ -28,7 +28,8 @@ StageStats AccumStageStats( const vector<StageStats>& vss )
 
 	unsigned uNumSongs = ssreturn.vpPlayedSongs.size();
 
-	if( uNumSongs == 0 ) return ssreturn;	// don't divide by 0 below
+	if( uNumSongs == 0 )
+		return ssreturn;	// don't divide by 0 below
 
 	/* Scale radar percentages back down to roughly 0..1.  Don't scale RADAR_NUM_TAPS_AND_HOLDS
 	 * and the rest, which are counters. */
