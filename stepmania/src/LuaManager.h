@@ -28,7 +28,7 @@ namespace LuaHelpers
 	bool FromStack( CString &Object, int iOffset, lua_State *L );
 
 	template<class T>
-	void ReadArrayFromTable( vector<T> aOut, lua_State *L = NULL );
+	void ReadArrayFromTable( vector<T> &aOut, lua_State *L = NULL );
 	template<class T>
 	void PushStack( const T &val, lua_State *L = NULL );
 	template<class T>
@@ -99,7 +99,7 @@ public:
 namespace LuaHelpers
 {
 	template<class T>
-	void ReadArrayFromTable( vector<T> aOut, lua_State *L )
+	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
 	{
 		if( L == NULL )
 			L = LUA->L;
