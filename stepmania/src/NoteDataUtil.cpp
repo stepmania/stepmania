@@ -634,6 +634,21 @@ void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex
 	}
 }
 
+void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIndex )
+{
+	for( int t=0; t<in.GetNumTracks(); ++t )
+	{
+		NoteData::iterator begin, end;
+		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
+		for( ; begin != end; ++begin )
+		{
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_roll )
+				continue;
+			begin->second.subType != TapNote::hold_head_hold;
+		}
+	}
+}
 
 void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
 {
