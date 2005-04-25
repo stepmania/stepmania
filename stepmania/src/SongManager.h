@@ -105,6 +105,7 @@ protected:
 					   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
+	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
 	Song *FindSong( CString sGroup, CString sSong );
 

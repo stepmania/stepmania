@@ -1185,9 +1185,10 @@ void SongManager::LoadAllFromProfileDir( const CString &sDir, ProfileSlot slot )
 	CStringArray asEditsFilesWithPath;
 	GetDirListing( sEditsDir+"*.edit", asEditsFilesWithPath, false, true );
 
-	unsigned size = min( asEditsFilesWithPath.size(), (unsigned)MAX_EDITS_PER_PROFILE );
+	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+	int size = min( (int) asEditsFilesWithPath.size(), MAX_EDITS_PER_PROFILE - iNumEditsLoaded );
 
-	for( unsigned i=0; i<size; i++ )
+	for( int i=0; i<size; i++ )
 	{
 		CString fn = asEditsFilesWithPath[i];
 
@@ -1200,6 +1201,25 @@ void SongManager::LoadAllFromProfileDir( const CString &sDir, ProfileSlot slot )
 
 		SMLoader::LoadEdit( fn, slot );
 	}
+}
+
+int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
+{
+	int iCount = 0;
+	for( unsigned s=0; s<m_pSongs.size(); s++ )
+	{
+		const Song *pSong = m_pSongs[s];
+		vector<Steps*> apSteps;
+		pSong->GetSteps( apSteps );
+
+		for( unsigned i = 0; i < apSteps.size(); ++i )
+		{
+			const Steps *pSteps = apSteps[i];
+			if( pSteps->WasLoadedFromProfile() && pSteps->GetLoadedFromProfileSlot() == slot )
+				++iCount;
+		}
+	}
+	return iCount;
 }
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
