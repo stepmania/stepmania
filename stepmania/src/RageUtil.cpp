@@ -1464,11 +1464,25 @@ bool FileCopy( CString sSrcFile, CString sDstFile )
 	if( !out.Open(sDstFile, RageFile::WRITE) )
 		return false;
 
-	CString data;
-	if( in.Read(data) == -1 )
-		return false;
-	if( out.Write(data) == -1 )
-		return false;
+	while(1)
+	{
+		CString data;
+		if( in.Read(data, 1024*32) == -1 )
+		{
+			LOG->Warn( "FileCopy(%s,%s): read error: %s",
+					sSrcFile.c_str(), sDstFile.c_str(), in.GetError().c_str() );
+			return false;
+		}
+		if( data.empty() )
+			break;
+		int i = out.Write(data);
+		if( i == -1 )
+		{
+			LOG->Warn( "FileCopy(%s,%s): write error: %s",
+					sSrcFile.c_str(), sDstFile.c_str(), out.GetError().c_str() );
+			return false;
+		}
+	}
 	if( out.Flush() == -1 )
 		return false;
 	return true;
