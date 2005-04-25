@@ -114,7 +114,7 @@ float Steps::PredictMeter() const
 	const float RadarCoeffs[NUM_RADAR_CATEGORIES] =
 	{
 		10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
-		0,0,0,0,0
+		0,0,0,0,0,0
 	};
 	for( int r = 0; r < NUM_RADAR_CATEGORIES; ++r )
 		pMeter += this->GetRadarValues()[r] * RadarCoeffs[r];

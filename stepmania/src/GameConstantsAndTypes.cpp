@@ -22,6 +22,7 @@ static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
 	"Holds",
 	"Mines",
 	"Hands",
+	"Rolls"
 };
 XToString( RadarCategory, NUM_RADAR_CATEGORIES );
 XToThemedString( RadarCategory, NUM_RADAR_CATEGORIES );

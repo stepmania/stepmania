@@ -28,6 +28,7 @@ enum RadarCategory
 	RADAR_NUM_HOLDS,
 	RADAR_NUM_MINES,
 	RADAR_NUM_HANDS,
+	RADAR_NUM_ROLLS,
 	NUM_RADAR_CATEGORIES	// leave this at the end
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )

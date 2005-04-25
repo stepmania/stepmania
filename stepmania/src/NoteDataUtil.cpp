@@ -540,6 +540,7 @@ void NoteDataUtil::GetRadarValues( const NoteData &in, float fSongSeconds, Radar
 		case RADAR_NUM_HOLDS:			out[rc] = (float) in.GetNumHoldNotes();				break;
 		case RADAR_NUM_MINES:			out[rc] = (float) in.GetNumMines();					break;
 		case RADAR_NUM_HANDS:			out[rc] = (float) in.GetNumHands();					break;
+		case RADAR_NUM_ROLLS:			out[rc] = (float) in.GetNumRolls();					break;
 		default:	ASSERT(0);
 		}
 	}
@@ -645,7 +646,7 @@ void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIn
 			if( begin->second.type != TapNote::hold_head ||
 				begin->second.subType != TapNote::hold_head_roll )
 				continue;
-			begin->second.subType != TapNote::hold_head_hold;
+			begin->second.subType = TapNote::hold_head_hold;
 		}
 	}
 }
