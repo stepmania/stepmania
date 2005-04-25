@@ -7,6 +7,7 @@
 #include "ThemeMetric.h"
 #include "MessageManager.h"
 
+struct lua_State;
 
 class HelpDisplay : public BitmapText
 {
@@ -21,6 +22,9 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void SetName( const CString &sName, const CString &sID = "" );
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	ThemeMetric<float> TIP_SHOW_TIME;

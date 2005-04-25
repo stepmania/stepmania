@@ -6,6 +6,7 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
+REGISTER_ACTOR_CLASS( HelpDisplay )
 
 HelpDisplay::HelpDisplay()
 {
@@ -71,6 +72,46 @@ void HelpDisplay::Update( float fDeltaTime )
 	m_iCurTipIndex++;
 	m_iCurTipIndex = m_iCurTipIndex % m_arrayTips.size();
 }
+
+
+template<class T>
+class LunaHelpDisplay : public LunaBitmapText<T>
+{
+public:
+	LunaHelpDisplay() { LUA->Register( Register ); }
+
+	static int settips( T* p, lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TTABLE );
+		lua_pushvalue( L, 1 );
+		vector<CString> arrayTips;
+		LuaHelpers::ReadArrayFromTable( arrayTips, LUA->L );
+		lua_pop( L, 1 );
+
+		if( lua_gettop(L) > 1 && !lua_isnil( L, 2 ) )
+		{
+			vector<CString> arrayTipsAlt;
+			luaL_checktype( L, 2, LUA_TTABLE );
+			lua_pushvalue( L, 2 );
+			LuaHelpers::ReadArrayFromTable( arrayTipsAlt, L );
+			lua_pop( L, 1 );
+
+			p->SetTips( arrayTips, arrayTipsAlt );
+		}
+		else
+			p->SetTips( arrayTips );
+
+		return 0;
+	}
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( settips )
+		LunaActor<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( HelpDisplay )
 
 
 #include "song.h"
