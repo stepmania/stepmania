@@ -68,6 +68,9 @@ bool WorkerThread::DoRequest( int iRequest )
 	ASSERT( !m_bTimedOut );
 	ASSERT( m_iRequest == REQ_NONE );
 
+	if( m_Timeout.IsZero() )
+		LOG->Warn( "Request made with timeout disabled" );
+
 	/* Set the request, and wake up the worker thread. */
 	m_WorkerEvent.Lock();
 
