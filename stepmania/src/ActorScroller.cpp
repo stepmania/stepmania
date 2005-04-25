@@ -32,7 +32,8 @@ ActorScroller::ActorScroller()
 	m_fNumItemsToDraw = 7;
 	m_bLoop = false; 
 	m_fPauseCountdownSeconds = 0;
-	
+	m_fQuantizePixels = 0;
+
 	m_bUseMask = false;
 	m_fMaskWidth = 1;
 	m_fMaskHeight = 1;
@@ -61,6 +62,7 @@ void ActorScroller::Load(
 	m_vTranslateTerm0 = vTranslateTerm0;
 	m_vTranslateTerm1 = vTranslateTerm1;
 	m_vTranslateTerm2 = vTranslateTerm2;
+	m_fQuantizePixels = 0;
 
 	m_bLoaded = true;
 }
