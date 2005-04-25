@@ -137,31 +137,34 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		for( int z = 0; z < 3; ++z )
 		{
 			ss.vpPlayedSongs.push_back( SONGMAN->GetRandomSong() );
-			ss.m_player[PLAYER_1].iPossibleDancePoints = 100;
-			ss.m_player[PLAYER_1].iActualDancePoints = 100;
-			ss.m_player[PLAYER_1].iScore = 100;
-			ss.m_player[PLAYER_2].iPossibleDancePoints = 100;
-			ss.m_player[PLAYER_2].iActualDancePoints = 100;
-			ss.m_player[PLAYER_2].iScore = 100;
+			ss.vpPossibleSongs = ss.vpPlayedSongs;
+			ss.pStyle = GAMESTATE->m_pCurStyle;
+			ss.playMode = GAMESTATE->m_PlayMode;
 			ASSERT( ss.vpPlayedSongs[0]->GetAllSteps().size() );
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
 			FOREACH_PlayerNumber( p )
 			{
-				ss.m_player[p].vpPlayedSteps.push_back( ss.vpPlayedSongs[0]->GetAllSteps()[0] );
-				GAMESTATE->m_pCurSteps[p].Set( ss.m_player[p].vpPlayedSteps[0] );
+				Steps *pSteps = ss.vpPlayedSongs[0]->GetAllSteps()[0];
+				ss.m_player[p].vpPlayedSteps.push_back( pSteps );
+				GAMESTATE->m_pCurSteps[p].Set( pSteps );
+				ss.m_player[p].iPossibleDancePoints = 100;
+				ss.m_player[p].iActualDancePoints = 100;
+				ss.m_player[p].iScore = 100;
 				ss.m_player[p].iPossibleDancePoints = 1000;
 				ss.m_player[p].iActualDancePoints = 985;
+				ss.m_player[p].vpPossibleSteps.push_back( pSteps );
 
 				HighScore hs;
 				hs.grade = GRADE_TIER03;
 				hs.fPercentDP = ss.m_player[p].GetPercentDancePoints();
 				hs.iScore = ss.m_player[p].iScore;
-				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				int a, b;
-				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
-				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
 				PROFILEMAN->AddCategoryScore( st, RANKING_A, p, hs, a, b );
 			}
 

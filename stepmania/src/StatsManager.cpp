@@ -17,6 +17,12 @@ StageStats AccumStageStats( const vector<StageStats>& vss )
 {
 	StageStats ssreturn;
 
+	if( !vss.empty() )
+	{
+		ssreturn.pStyle = vss[0].pStyle;
+		ssreturn.playMode = vss[0].playMode;
+	}
+
 	FOREACH_CONST( StageStats, vss, ss )
 		ssreturn.AddStats( *ss );
 
