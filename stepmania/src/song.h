@@ -215,7 +215,7 @@ public:
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
 	void RemoveSteps( const Steps* pSteps );
 
-	void FreeAllLoadedFromProfiles();
+	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;

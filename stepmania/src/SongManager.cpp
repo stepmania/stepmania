@@ -1219,7 +1219,7 @@ void SongManager::FreeAllLoadedFromProfiles()
 	for( unsigned s=0; s<m_pSongs.size(); s++ )
 	{
 		Song* pSong = m_pSongs[s];
-		pSong->FreeAllLoadedFromProfiles();
+		pSong->FreeAllLoadedFromProfile();
 	}
 
 	// After freeing some Steps pointers, the cache will be invalid.

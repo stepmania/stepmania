@@ -1359,7 +1359,7 @@ bool Song::Matches(CString sGroup, CString sSong) const
 	return false;
 }
 
-void Song::FreeAllLoadedFromProfiles()
+void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
 	/* RemoveSteps will remove and recreate autogen notes, which may reorder
 	 * m_vpSteps, so be careful not to skip over entries. */
@@ -1367,7 +1367,9 @@ void Song::FreeAllLoadedFromProfiles()
 	for( int s=m_vpSteps.size()-1; s>=0; s-- )
 	{
 		Steps* pSteps = m_vpSteps[s];
-		if( pSteps->WasLoadedFromProfile() )
+		if( !pSteps->WasLoadedFromProfile() )
+			continue;
+		if( slot == PROFILE_SLOT_INVALID || pSteps->GetLoadedFromProfileSlot() == slot )
 			apToRemove.push_back( pSteps );
 	}
 
