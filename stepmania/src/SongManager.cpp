@@ -1175,18 +1175,6 @@ void SongManager::UpdateRankingCourses()
 	}
 }
 
-void SongManager::LoadAllFromProfile( ProfileSlot s )
-{
-	if( !PROFILEMAN->IsUsingProfile(s) )
-		return;
-
-	CString sProfileDir = PROFILEMAN->GetProfileDir( s );
-	if( sProfileDir.empty() )
-		return;	// skip
-
-	LoadEditsFromDir( sProfileDir, s );
-}
-
 void SongManager::LoadEditsFromDir( const CString &sDir, ProfileSlot slot )
 {
 	//
