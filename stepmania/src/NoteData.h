@@ -134,6 +134,7 @@ public:
 	int GetNumRowsWithTapOrHoldHead( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumRolls( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
 	// Count rows that contain iMinTaps or more taps.
 	int GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
