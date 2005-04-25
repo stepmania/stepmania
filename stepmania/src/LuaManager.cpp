@@ -312,7 +312,7 @@ bool LuaManager::RunExpressionB( const CString &str )
 		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	bool result = !!lua_toboolean( L, -1 );
-	lua_pop( L, -1 );
+	lua_pop( L, 1 );
 
 	return result;
 }
@@ -327,7 +327,7 @@ float LuaManager::RunExpressionF( const CString &str )
 		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	float result = (float) lua_tonumber( L, -1 );
-	lua_pop( L, -1 );
+	lua_pop( L, 1 );
 
 	return result;
 }
@@ -347,7 +347,7 @@ bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 		RageException::Throw( "result is a function; did you forget \"()\"?" );
 
 	sOut = lua_tostring( L, -1 );
-	lua_pop( L, -1 );
+	lua_pop( L, 1 );
 
 	return true;
 }
