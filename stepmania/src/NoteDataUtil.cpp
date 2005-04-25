@@ -138,7 +138,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				// Don't be loose with the definition.  Use only 'M' since
 				// that's what we've been writing to disk.  -Chris
 				case 'M': tn = TAP_ORIGINAL_MINE;			break;
-				case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
+				// case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
 				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;	break;
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
@@ -152,6 +152,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				
 				p++;
 				
+#if 0
 				// look for optional attack info (e.g. "{tipsy,50% drunk:15.2}")
 				if( *p == '{' )
 				{
@@ -177,6 +178,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 						p++;
 					}
 				}
+#endif
 
 				// look for optional keysound index (e.g. "[123]")
 				if( *p == '[' )
