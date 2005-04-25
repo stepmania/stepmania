@@ -137,7 +137,8 @@ static int FindEmptyThreadSlot()
 
 static void InitThreads()
 {
-	/* We don't have to worry about two threads calling this at on */
+	/* We don't have to worry about two threads calling this at once, since it's
+	 * called when we create a thread. */
 	static bool bInitialized = false;
 	if( bInitialized )
 		return;
