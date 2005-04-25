@@ -289,8 +289,6 @@ void GameState::PlayersFinalized()
 
 		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
 
-		SONGMAN->LoadAllFromProfile( (ProfileSlot) pn );
-
 		MEMCARDMAN->UnmountCard( pn );
 
 		if( !PROFILEMAN->IsUsingProfile(pn) )
@@ -320,8 +318,6 @@ void GameState::PlayersFinalized()
 		if( m_pPreferredCourse == NULL )
 			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
 	}
-
-	SONGMAN->LoadAllFromProfile( PROFILE_SLOT_MACHINE );
 
 	FOREACH_PlayerNumber( pn )
 	{

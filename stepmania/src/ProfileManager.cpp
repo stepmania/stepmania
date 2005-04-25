@@ -182,6 +182,15 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	 * scores. */
 	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
+	/* Load edits from all fallback directories, newest first. */
+	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+	{
+		const CString &sSubdir = asDirsToTry[i];
+		CString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
+
+		SONGMAN->LoadEditsFromDir( sDir, (ProfileSlot) pn );
+	}
+
 	return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
 }
 			
@@ -362,6 +371,8 @@ void ProfileManager::LoadMachineProfile()
 
 	// If the machine name has changed, make sure we use the new name
 	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
+
+	SONGMAN->LoadEditsFromDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 }
 
 bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
