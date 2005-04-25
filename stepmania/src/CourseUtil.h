@@ -11,16 +11,17 @@ struct XNode;
 
 namespace CourseUtil
 {
-	void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses );
-	void SortCoursePointerArrayByType( vector<Course*> &apCourses );
-	void SortCoursePointerArrayByTitle( vector<Course*> &apCourses );
-	void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
-	void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
-	void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
-	void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, ProfileSlot slot, bool bDescending );
-	void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, const Profile* pProfile, bool bDescending );
+	void SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByType( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByTitle( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByRanking( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending );
+	void SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending );
+	void SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesInOut );
 
-	void MoveRandomToEnd( vector<Course*> &apCourses );
+	void MoveRandomToEnd( vector<Course*> &vpCoursesInOut );
 };
 
 class CourseID

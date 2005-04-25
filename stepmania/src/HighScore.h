@@ -75,26 +75,37 @@ struct HighScore
 
 struct HighScoreList
 {
-	int iNumTimesPlayed;
-	vector<HighScore> vHighScores;
-
-	
+public:
 	HighScoreList()
 	{
 		iNumTimesPlayed = 0;
 	}
-	
 	void Init();
+	
+	int GetNumTimesPlayed() const
+	{
+		return iNumTimesPlayed;
+	}
+	DateTime GetLastPlayed() const
+	{
+		ASSERT( iNumTimesPlayed > 0 );	// don't call this unless the song has been played
+		return dtLastPlayed;
+	}
+	const HighScore& GetTopScore() const;
 
 	void AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine );
-
-	const HighScore& GetTopScore() const;
+	void IncrementPlayCount( DateTime dtLastPlayed );
+	void RemoveAllButOneOfEachName();
+	void ClampSize( bool bIsMachine );
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	void RemoveAllButOneOfEachName();
-	void ClampSize( bool bIsMachine );
+	vector<HighScore> vHighScores;
+private:
+	int iNumTimesPlayed;
+	DateTime dtLastPlayed;	// meaningless if iNumTimesPlayed == 0
+	
 };
 
 struct Screenshot

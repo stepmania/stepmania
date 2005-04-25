@@ -44,7 +44,7 @@ static const ThemeMetric<int>		NUM_GROUP_COLORS	("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
 static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
 static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
-static const ThemeMetric<RageColor> MEDIUM_COLOR			("SongManager","MediumColor");
+static const ThemeMetric<RageColor> MEDIUM_COLOR		("SongManager","MediumColor");
 static const ThemeMetric<RageColor> HARD_COLOR			("SongManager","HardColor");
 static const ThemeMetric<RageColor> CHALLENGE_COLOR		("SongManager","ChallengeColor");
 static const ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");

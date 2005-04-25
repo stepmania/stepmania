@@ -77,8 +77,6 @@ public:
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
-	int GetSongNumTimesPlayed( const Song* pSong ) const;
-	int GetSongNumTimesPlayed( const SongID& songID ) const;
 	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
 	bool IsCodeUnlocked( int iCode ) const;
@@ -157,7 +155,9 @@ public:
 	int GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const;
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps );
 	void GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES] ) const;
-
+	int GetSongNumTimesPlayed( const Song* pSong ) const;
+	int GetSongNumTimesPlayed( const SongID& songID ) const;
+	DateTime GetSongLastPlayedDateTime( const Song* pSong ) const;
 
 	//
 	// Course high scores
@@ -179,6 +179,7 @@ public:
 	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail ) const;
 	int GetCourseNumTimesPlayed( const Course* pCourse ) const;
 	int GetCourseNumTimesPlayed( const CourseID& courseID ) const;
+	DateTime GetCourseLastPlayedDateTime( const Course* pCourse ) const;
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail );
 
 

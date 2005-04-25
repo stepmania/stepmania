@@ -13,19 +13,20 @@ struct XNode;
 namespace SongUtil
 {
 	CString MakeSortString( CString s );
-	void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByDisplayArtist( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByGenre( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
-	void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, ProfileSlot slot, bool bDescending );
-	void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, const Profile* pProfile, bool bDescending );
-	void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
+	void SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGrade( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGenre( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGroupAndTitle( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
+	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
+	void SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc );
 	CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
-	void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SortOrder so );
+	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
+	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
 }
 
 class SongID

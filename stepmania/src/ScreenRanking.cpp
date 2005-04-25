@@ -48,7 +48,7 @@ AutoScreenMessage( SM_ShowNextPage )
 AutoScreenMessage( SM_HidePage )
 
 
-static void GetAllSongsToShow( vector<Song*> &vpOut )
+static void GetAllSongsToShow( vector<Song*> &vpOut, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
 	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
@@ -59,12 +59,18 @@ static void GetAllSongsToShow( vector<Song*> &vpOut )
 			continue;	// skip
 		vpOut.push_back( *s );
 	}
+
+	if( bShowOnlyMostRecentScores )
+	{
+		SongUtil::SortByMostRecentlyPlayedForMachine( vpOut );
+		if( vpOut.size() > iNumMostRecentScoresToShow )
+			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
+	}
 }
 
-static void GetAllCoursesToShow( vector<Course*> &vpOut )
+static void GetAllCoursesToShow( vector<Course*> &vpOut, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-
 	vector<Course*> vpCourses;
 	SONGMAN->GetAllCourses( vpCourses, false );
 
@@ -75,6 +81,12 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut )
 		if( !(*c)->ShowInDemonstrationAndRanking() )
 			continue;	// skip
 		vpOut.push_back( *c );
+	}
+	if( bShowOnlyMostRecentScores )
+	{
+		CourseUtil::SortByMostRecentlyPlayedForMachine( vpOut );
+		if( vpOut.size() > iNumMostRecentScoresToShow )
+			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
 	}
 }
 
@@ -87,8 +99,10 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
 
 	SHOW_CATEGORIES				(m_sName,"ShowCategories"),
-	SHOW_ALL_STEPS_SCORES		(m_sName,"ShowAllStepsScores"),
-	SHOW_ALL_COURSE_SCORES		(m_sName,"ShowAllCourseScores"),
+	SHOW_STEPS_SCORES			(m_sName,"ShowStepsScores"),
+	SHOW_COURSE_SCORES			(m_sName,"ShowCourseScores"),
+	SHOW_ONLY_MOST_RECENT_SCORES	(m_sName,"ShowOnlyMostRecentScores"),
+	NUM_MOST_RECENT_SCORES_TO_SHOW	(m_sName,"NumMostRecentScoresToShow"),
 	SECONDS_PER_PAGE			(m_sName,"SecondsPerPage"),
 	PAGE_FADE_SECONDS			(m_sName,"PageFadeSeconds"),
 	NO_SCORE_NAME				(m_sName,"NoScoreName"),
@@ -208,7 +222,7 @@ void ScreenRanking::Init()
 				pts.type = PAGE_TYPE_CATEGORY;
 				pts.colorIndex = i;
 				pts.category = (RankingCategory)c;
-				pts.nt = STEPS_TYPES_TO_SHOW.GetValue()[i];
+				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
 			}
 		}
@@ -224,12 +238,12 @@ void ScreenRanking::Init()
 				PageToShow pts;
 				pts.type = PAGE_TYPE_TRAIL;
 				pts.colorIndex = i;
-				pts.nt = STEPS_TYPES_TO_SHOW.GetValue()[i];
+				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
 				if( pts.pCourse == NULL )
 					continue;
 
-				pts.pTrail = pts.pCourse->GetTrail( pts.nt );
+				pts.pTrail = pts.pCourse->GetTrail( pts.st );
 				if( pts.pTrail == NULL )
 					continue;
 
@@ -263,14 +277,14 @@ void ScreenRanking::Init()
 	}
 
 
-	ASSERT( !SHOW_ALL_STEPS_SCORES || !SHOW_ALL_COURSE_SCORES );	// Can't do both on the same screen
+	ASSERT( !SHOW_STEPS_SCORES || !SHOW_COURSE_SCORES );	// Can't do both on the same screen
 
 
-	if( SHOW_ALL_STEPS_SCORES )
+	if( SHOW_STEPS_SCORES )
 	{
 		m_vScoreRowItem.clear();
 		vector<Song*> vpSongs;
-		GetAllSongsToShow( vpSongs );
+		GetAllSongsToShow( vpSongs, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
 		m_vScoreRowItem.resize( vpSongs.size() );
 		FOREACH_CONST( Song*, vpSongs, s )
 		{
@@ -309,16 +323,16 @@ void ScreenRanking::Init()
 				PageToShow pts;
 				pts.type = PAGE_TYPE_ALL_STEPS;
 				pts.colorIndex = i;
-				pts.nt = STEPS_TYPES_TO_SHOW.GetValue()[i];
+				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
 			}
 		}
 	}
 
-	if( SHOW_ALL_COURSE_SCORES )
+	if( SHOW_COURSE_SCORES )
 	{
 		vector<Course*> vpCourses;
-		GetAllCoursesToShow( vpCourses );
+		GetAllCoursesToShow( vpCourses, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
 		LOG->Trace("rankings: adding %u courses", vpCourses.size());
 		m_vScoreRowItem.resize( vpCourses.size() );
 		FOREACH_CONST( Course*, vpCourses, c )
@@ -360,7 +374,7 @@ void ScreenRanking::Init()
 				PageToShow pts;
 				pts.type = PAGE_TYPE_ALL_COURSES;
 				pts.colorIndex = i;
-				pts.nt = STEPS_TYPES_TO_SHOW.GetValue()[i];
+				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
 			}
 		}
@@ -721,11 +735,11 @@ float ScreenRanking::SetPage( PageToShow pts )
 	case PAGE_TYPE_CATEGORY:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				HighScoreList& hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(pts.nt,pts.category);
+				HighScoreList& hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(pts.st,pts.category);
 				HighScore hs;
 				bool bRecentHighScore = false;
 				if( l < (int)hsl.vHighScores.size() )
@@ -761,7 +775,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_textCourseTitle.SetText( pts.pCourse->GetFullDisplayTitle() );
 			m_Banner.LoadFromCourse( pts.pCourse );
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.pTrail );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -810,7 +824,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PAGE_TYPE_ALL_STEPS:
 		{
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
 			{
@@ -821,7 +835,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
 				{							
-					const Steps* pSteps = pSong->GetStepsByDifficulty( pts.nt, *iter, false );
+					const Steps* pSteps = pSong->GetStepsByDifficulty( pts.st, *iter, false );
 					BitmapText* pTextStepsScore = &item.m_textScore[*iter];
 
 					if( pSteps == NULL )
@@ -853,7 +867,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
 	case PAGE_TYPE_ALL_COURSES:
 		{
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			for( unsigned c=0; c<m_vScoreRowItem.size(); c++ )
 			{
@@ -865,7 +879,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				{
 					BitmapText* pTextStepsScore = &item.m_textScore[cd];
 
-					Trail *pTrail = pCourse->GetTrail( pts.nt, cd );
+					Trail *pTrail = pCourse->GetTrail( pts.st, cd );
 					pTextStepsScore->SetHidden( pTrail==NULL );
 					if( pTrail == NULL )
 						continue;

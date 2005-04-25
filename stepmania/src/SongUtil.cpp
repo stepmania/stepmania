@@ -9,6 +9,7 @@
 #include "SongManager.h"
 #include "XmlFile.h"
 #include "PrefsManager.h"
+#include "Foreach.h"
 
 
 /////////////////////////////////////
@@ -69,9 +70,9 @@ bool CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath()) < 0;
 }
 
-void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByTitle );
+	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByTitle );
 }
 
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
@@ -88,9 +89,9 @@ bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 	return CompareCStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
 }
 
-void SongUtil::SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByBPM );
+	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByBPM );
 }
 
 void AppendOctal( int n, int digits, CString &out )
@@ -106,17 +107,17 @@ void AppendOctal( int n, int digits, CString &out )
 bool CompDescending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
 { return a.second > b.second; }
 
-void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &vpSongsInOut )
 {
 	/* Optimize by pre-writing a string to compare, since doing GetNumNotesWithGrade
 	 * inside the sort is too slow. */
 	typedef pair< Song *, CString > val;
 	vector<val> vals;
-	vals.reserve( arraySongPointers.size() );
+	vals.reserve( vpSongsInOut.size() );
 
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
 	{
-		Song *pSong = arraySongPointers[i];
+		Song *pSong = vpSongsInOut[i];
 
 		int iCounts[NUM_GRADES];
 		PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
@@ -130,25 +131,25 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 
 	sort( vals.begin(), vals.end(), CompDescending );
 
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
-		arraySongPointers[i] = vals[i].first;
+	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
+		vpSongsInOut[i] = vals[i].first;
 }
 
 
-void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut )
 {
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
-		song_sort_val[arraySongPointers[i]] = MakeSortString( arraySongPointers[i]->GetTranslitArtist() );
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
+	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
+		song_sort_val[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetTranslitArtist() );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
 /* This is for internal use, not display; sorting by Unicode codepoints isn't very
  * interesting for display. */
-void SongUtil::SortSongPointerArrayByDisplayArtist( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut )
 {
-	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
-		song_sort_val[arraySongPointers[i]] = MakeSortString( arraySongPointers[i]->GetDisplayArtist() );
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
+	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
+		song_sort_val[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetDisplayArtist() );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
 static int CompareSongPointersByGenre(const Song *pSong1, const Song *pSong2)
@@ -156,9 +157,9 @@ static int CompareSongPointersByGenre(const Song *pSong1, const Song *pSong2)
 	return pSong1->m_sGenre < pSong2->m_sGenre;
 }
 
-void SongUtil::SortSongPointerArrayByGenre( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByGenre( vector<Song*> &vpSongsInOut )
 {
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGenre );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByGenre );
 }
 
 static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
@@ -166,10 +167,10 @@ static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 	return pSong1->m_sGroupName < pSong2->m_sGroupName;
 }
 
-void SongUtil::SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &vpSongsInOut )
 {
-	SortSongPointerArrayByMeter( arraySongPointers, DIFFICULTY_EASY );
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
+	SortSongPointerArrayByMeter( vpSongsInOut, DIFFICULTY_EASY );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByGroup );
 }
 
 int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)
@@ -186,25 +187,25 @@ int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)
 	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
 
-void SongUtil::SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers )
+void SongUtil::SortSongPointerArrayByGroupAndTitle( vector<Song*> &vpSongsInOut )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndTitle );
+	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByGroupAndTitle );
 }
 
-void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, ProfileSlot slot, bool bDescending )
+void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending )
 {
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	if( pProfile == NULL )
 		return;	// nothing to do since we don't have data
-	SortSongPointerArrayByNumPlays( arraySongPointers, pProfile, bDescending );
+	SortSongPointerArrayByNumPlays( vpSongsInOut, pProfile, bDescending );
 }
 
-void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, const Profile* pProfile, bool bDescending )
+void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending )
 {
 	ASSERT( pProfile );
-	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(arraySongPointers[i]));
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );
+	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
+		song_sort_val[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );
 	song_sort_val.clear();
 }
 
@@ -309,35 +310,35 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	}
 }
 
-void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SortOrder so )
+void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so )
 {
-	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
+	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		CString val = GetSectionNameFromSongAndSort( arraySongPointers[i], so );
+		CString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
 		/* Make sure NUM comes first and OTHER comes last. */
 		if( val == "NUM" )			val = "0";
 		else if( val == "OTHER" )	val = "2";
 		else						val = "1" + MakeSortString(val);
 
-		song_sort_val[arraySongPointers[i]] = val;
+		song_sort_val[vpSongsInOut[i]] = val;
 	}
 
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 	song_sort_val.clear();
 }
 
-void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc )
+void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc )
 {
 	song_sort_val.clear();
-	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
+	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		const Steps* pSteps = arraySongPointers[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
-		CString &s = song_sort_val[arraySongPointers[i]];
+		const Steps* pSteps = vpSongsInOut[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+		CString &s = song_sort_val[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
 		/* Hack: always put tutorial songs first. */
-		s += ssprintf( "%c", arraySongPointers[i]->IsTutorial()? '0':'1' );
+		s += ssprintf( "%c", vpSongsInOut[i]->IsTutorial()? '0':'1' );
 
 		/* 
 		 * pSteps may not be exactly the difficulty we want; for example, we may
@@ -354,7 +355,22 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 		if( PREFSMAN->m_bSubSortByNumSteps )
 			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues()[RADAR_NUM_TAPS_AND_HOLDS] : 0);
 	}
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
+}
+
+void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
+{
+	Profile *pProfile = PROFILEMAN->GetMachineProfile();
+
+	FOREACH_CONST( Song*, vpSongsInOut, s )
+	{
+		int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed( *s );
+		CString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "9999999999999";
+		song_sort_val[*s] = val;
+	}
+
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
+	song_sort_val.clear();
 }
 
 //////////////////////////////////

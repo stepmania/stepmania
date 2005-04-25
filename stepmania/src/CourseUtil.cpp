@@ -7,6 +7,7 @@
 #include "XmlFile.h"
 #include "GameState.h"
 #include "Style.h"
+#include "Foreach.h"
 
 
 //
@@ -92,23 +93,23 @@ static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course*
 	return iNum1 < iNum2;
 }
 
-void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
+void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesInOut )
 {
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
+	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByDifficulty );
 }
 
-void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
+void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &vpCoursesInOut )
 {
-	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
+	for(unsigned i=0; i<vpCoursesInOut.size(); i++)
+		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
+	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByRanking );
 }
 
-void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
+void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCoursesInOut )
 {
-	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTotalDifficulty );
+	for(unsigned i=0; i<vpCoursesInOut.size(); i++)
+		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
+	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTotalDifficulty );
 }
 
 static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pCourse2)
@@ -116,17 +117,17 @@ static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pC
 	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
 }
 
-void CourseUtil::SortCoursePointerArrayByType( vector<Course*> &apCourses )
+void CourseUtil::SortCoursePointerArrayByType( vector<Course*> &vpCoursesInOut )
 {
-	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByType );
+	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByType );
 }
 
-void CourseUtil::MoveRandomToEnd( vector<Course*> &apCourses )
+void CourseUtil::MoveRandomToEnd( vector<Course*> &vpCoursesInOut )
 {
-	stable_sort( apCourses.begin(), apCourses.end(), CompareRandom );
+	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareRandom );
 }
 
-static map<const Course*, float> course_sort_val;
+static map<const Course*, CString> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)
 {
@@ -143,43 +144,64 @@ bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse
 	return CompareCoursePointersByName( pCourse1, pCourse2 );
 }
 
-void CourseUtil::SortCoursePointerArrayByTitle( vector<Course*> &apCourses )
+void CourseUtil::SortCoursePointerArrayByTitle( vector<Course*> &vpCoursesInOut )
 {
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
+	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
 }
 
-void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
+void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCoursesInOut )
 {
 	RageTimer foo;
 	course_sort_val.clear();
-	for(unsigned i = 0; i < apCourses.size(); ++i)
+	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
 	{
-		const Trail* pTrail = apCourses[i]->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
-		course_sort_val[apCourses[i]] = pTrail != NULL? (float) pTrail->GetMeter(): 0.0f;
+		const Trail* pTrail = vpCoursesInOut[i]->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
+		course_sort_val[vpCoursesInOut[i]] = pTrail != NULL? (float) pTrail->GetMeter(): 0.0f;
 	}
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
-	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersBySortValueAscending );
+	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
+	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
 
-	stable_sort( apCourses.begin(), apCourses.end(), MovePlayersBestToEnd );
+	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), MovePlayersBestToEnd );
 }
  
 
-void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, ProfileSlot slot, bool bDescending )
+void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending )
 {
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	if( pProfile == NULL )
 		return;	// nothing to do since we don't have data
-	SortCoursePointerArrayByNumPlays( arrayCoursePointers, pProfile, bDescending );
+	SortCoursePointerArrayByNumPlays( vpCoursesInOut, pProfile, bDescending );
 }
 
-void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, const Profile* pProfile, bool bDescending )
+void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
 {
 	ASSERT( pProfile );
-	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
-		course_sort_val[arrayCoursePointers[i]] = (float) pProfile->GetCourseNumTimesPlayed(arrayCoursePointers[i]);
-	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
+	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
+		course_sort_val[vpCoursesInOut[i]] = (float) pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]);
+	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
 	course_sort_val.clear();
 }
+
+void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesInOut )
+{
+	Profile *pProfile = PROFILEMAN->GetMachineProfile();
+
+	FOREACH_CONST( Course*, vpCoursesInOut, c )
+	{
+		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( *c );
+		CString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(*c).GetString() : "9999999999999";
+		course_sort_val[*c] = val;
+	}
+
+	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
+	course_sort_val.clear();
+}
+
+
+
+//////////////////////////////////
+// CourseID
+//////////////////////////////////
 
 void CourseID::FromCourse( const Course *p )
 {

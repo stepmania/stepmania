@@ -139,6 +139,12 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 	}
 }
 
+void HighScoreList::IncrementPlayCount( DateTime dtLastPlayed )
+{
+	dtLastPlayed = dtLastPlayed;
+	iNumTimesPlayed++;
+}
+
 const HighScore& HighScoreList::GetTopScore() const
 {
 	if( vHighScores.empty() )
@@ -179,6 +185,10 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 		if( p->m_sName == "NumTimesPlayed" )
 		{
 			p->GetValue( iNumTimesPlayed );
+		}
+		else if( p->m_sName == "LastPlayed" )
+		{
+			p->GetValue( dtLastPlayed );
 		}
 		else if( p->m_sName == "HighScore" )
 		{

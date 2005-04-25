@@ -58,7 +58,7 @@ protected:
 
 		PageType		type;
 		int				colorIndex;
-		StepsType		nt;
+		StepsType		st;
 		RankingCategory	category;
 		Course*			pCourse;
 		Trail*			pTrail;
@@ -105,8 +105,10 @@ protected:
 	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
 
 	ThemeMetric<bool>			SHOW_CATEGORIES;
-	ThemeMetric<bool>			SHOW_ALL_STEPS_SCORES;
-	ThemeMetric<bool>			SHOW_ALL_COURSE_SCORES;
+	ThemeMetric<bool>			SHOW_STEPS_SCORES;
+	ThemeMetric<bool>			SHOW_COURSE_SCORES;
+	ThemeMetric<bool>			SHOW_ONLY_MOST_RECENT_SCORES;
+	ThemeMetric<int>			NUM_MOST_RECENT_SCORES_TO_SHOW;
 	ThemeMetric<float>			SECONDS_PER_PAGE;
 	ThemeMetric<float>			PAGE_FADE_SECONDS;
 	ThemeMetric<CString>		NO_SCORE_NAME;

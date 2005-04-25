@@ -475,7 +475,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 	{
 		const HighScoresForASteps &hsSteps = j->second;
 
-		iTotalNumTimesPlayed += hsSteps.hsl.iNumTimesPlayed;
+		iTotalNumTimesPlayed += hsSteps.hsl.GetNumTimesPlayed();
 	}
 	return iTotalNumTimesPlayed;
 }
@@ -541,12 +541,35 @@ HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* p
 
 int Profile::GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const
 {
-	return GetStepsHighScoreList(pSong,pSteps).iNumTimesPlayed;
+	return GetStepsHighScoreList(pSong,pSteps).GetNumTimesPlayed();
+}
+
+DateTime Profile::GetSongLastPlayedDateTime( const Song* pSong ) const
+{
+	SongID id;
+	id.FromSong( pSong );
+	std::map<SongID,HighScoresForASong>::const_iterator iter = m_SongHighScores.find( id );
+
+	// don't call this unless has been played once
+	ASSERT( iter != m_SongHighScores.end() );
+	ASSERT( !iter->second.m_StepsHighScores.empty() );
+
+	DateTime dtLatest;	// starts out zeroed
+	FOREACHM_CONST( StepsID, HighScoresForASteps, iter->second.m_StepsHighScores, i )
+	{
+		const HighScoreList &hsl = i->second.hsl;
+		if( hsl.GetNumTimesPlayed() == 0 )
+			continue;
+		if( dtLatest < hsl.GetLastPlayed() )
+			dtLatest = hsl.GetLastPlayed();
+	}
+	return dtLatest;
 }
 
 void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
 {
-	GetStepsHighScoreList(pSong,pSteps).iNumTimesPlayed++;
+	DateTime now = DateTime::GetNowDate();
+	GetStepsHighScoreList(pSong,pSteps).IncrementPlayCount( now );
 }
 
 void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES] ) const
@@ -624,14 +647,37 @@ int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
 	{
 		const HighScoresForATrail &hsTrail = j->second;
 
-		iTotalNumTimesPlayed += hsTrail.hsl.iNumTimesPlayed;
+		iTotalNumTimesPlayed += hsTrail.hsl.GetNumTimesPlayed();
 	}
 	return iTotalNumTimesPlayed;
 }
 
+DateTime Profile::GetCourseLastPlayedDateTime( const Course* pCourse ) const
+{
+	CourseID id;
+	id.FromCourse( pCourse );
+	std::map<CourseID,HighScoresForACourse>::const_iterator iter = m_CourseHighScores.find( id );
+
+	// don't call this unless has been played once
+	ASSERT( iter != m_CourseHighScores.end() );
+	ASSERT( !iter->second.m_TrailHighScores.empty() );
+
+	DateTime dtLatest;	// starts out zeroed
+	FOREACHM_CONST( TrailID, HighScoresForATrail, iter->second.m_TrailHighScores, i )
+	{
+		const HighScoreList &hsl = i->second.hsl;
+		if( hsl.GetNumTimesPlayed() == 0 )
+			continue;
+		if( dtLatest < hsl.GetLastPlayed() )
+			dtLatest = hsl.GetLastPlayed();
+	}
+	return dtLatest;
+}
+
 void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail )
 {
-	GetCourseHighScoreList(pCourse,pTrail).iNumTimesPlayed++;
+	DateTime now = DateTime::GetNowDate();
+	GetCourseHighScoreList(pCourse,pTrail).IncrementPlayCount( now );
 }
 
 //
@@ -656,13 +702,14 @@ int Profile::GetCategoryNumTimesPlayed( StepsType st ) const
 {
 	int iNumTimesPlayed = 0;
 	FOREACH_RankingCategory( rc )
-		iNumTimesPlayed += m_CategoryHighScores[st][rc].iNumTimesPlayed;
+		iNumTimesPlayed += m_CategoryHighScores[st][rc].GetNumTimesPlayed();
 	return iNumTimesPlayed;
 }
 
 void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 {
-	m_CategoryHighScores[st][rc].iNumTimesPlayed++;
+	DateTime now = DateTime::GetNowDate();
+	m_CategoryHighScores[st][rc].IncrementPlayCount( now );
 }
 
 
@@ -1204,7 +1251,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 			const HighScoreList &hsl = hsSteps.hsl;
 
 			// skip steps that have never been played
-			if( hsl.iNumTimesPlayed == 0 )
+			if( hsl.GetNumTimesPlayed() == 0 )
 				continue;
 
 			XNode* pStepsNode = pSongNode->AppendChild( stepsID.CreateNode() );
@@ -1287,7 +1334,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 			const HighScoreList &hsl = hsTrail.hsl;
 
 			// skip steps that have never been played
-			if( hsl.iNumTimesPlayed == 0 )
+			if( hsl.GetNumTimesPlayed() == 0 )
 				continue;
 
 			XNode* pTrailNode = pCourseNode->AppendChild( trailID.CreateNode() );
@@ -1357,7 +1404,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 		FOREACH_RankingCategory( rc )
 		{
 			// skip steps types/categories that have never been played
-			if( pProfile->GetCategoryHighScoreList(st,rc).iNumTimesPlayed == 0 )
+			if( pProfile->GetCategoryHighScoreList(st,rc).GetNumTimesPlayed() == 0 )
 				continue;
 
 			XNode* pRankingCategoryNode = pStepsTypeNode->AppendChild( "RankingCategory" );
