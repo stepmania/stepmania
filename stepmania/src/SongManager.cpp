@@ -1175,7 +1175,7 @@ void SongManager::UpdateRankingCourses()
 	}
 }
 
-void SongManager::LoadEditsFromDir( const CString &sDir, ProfileSlot slot )
+void SongManager::LoadAllFromProfileDir( const CString &sDir, ProfileSlot slot )
 {
 	//
 	// Load all .edit files.
