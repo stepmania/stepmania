@@ -1214,12 +1214,12 @@ void SongManager::LoadEditsFromDir( const CString &sDir, ProfileSlot slot )
 	}
 }
 
-void SongManager::FreeAllLoadedFromProfiles()
+void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
 	for( unsigned s=0; s<m_pSongs.size(); s++ )
 	{
 		Song* pSong = m_pSongs[s];
-		pSong->FreeAllLoadedFromProfile();
+		pSong->FreeAllLoadedFromProfile( slot );
 	}
 
 	// After freeing some Steps pointers, the cache will be invalid.

@@ -185,7 +185,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( pn )
 		PROFILEMAN->UnloadProfile( pn );
 
-	SONGMAN->FreeAllLoadedFromProfiles();
+	SONGMAN->FreeAllLoadedFromProfile();
 	SONGMAN->UpdateBest();
 	SONGMAN->UpdateShuffled();
 
@@ -385,7 +385,7 @@ void GameState::EndGame()
 //	MEMCARDMAN->FlushAndReset();
 	CHECKPOINT;
 
-	SONGMAN->FreeAllLoadedFromProfiles();
+	SONGMAN->FreeAllLoadedFromProfile();
 
 	// make sure we don't execute EndGame twice.
 	m_timeGameStarted.SetZero();

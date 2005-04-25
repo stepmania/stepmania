@@ -37,7 +37,7 @@ public:
 	void LoadAllFromProfile( ProfileSlot s );	// songs, edits
 	void LoadEditsFromDir( const CString &sDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
-	void FreeAllLoadedFromProfiles();
+	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
 
 	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );
 
