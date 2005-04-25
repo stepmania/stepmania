@@ -153,6 +153,7 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	if( m_bTurns[TURN_SUPER_SHUFFLE] )	AddTo.push_back( "SuperShuffle" );
 
 	if( m_bTransforms[TRANSFORM_NOHOLDS] )	AddTo.push_back( "NoHolds" );
+	if( m_bTransforms[TRANSFORM_NOROLLS] )	AddTo.push_back( "NoRolls" );
 	if( m_bTransforms[TRANSFORM_NOMINES] )	AddTo.push_back( "NoMines" );
 	if( m_bTransforms[TRANSFORM_LITTLE] )	AddTo.push_back( "Little" );
 	if( m_bTransforms[TRANSFORM_WIDE] )		AddTo.push_back( "Wide" );
@@ -302,6 +303,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		else if( sBit == "cross" )		SET_FLOAT( fScrolls[SCROLL_CROSS] )
 		else if( sBit == "centered" || sBit == "converge" )	SET_FLOAT( fScrolls[SCROLL_CENTERED] )
 		else if( sBit == "noholds" || sBit == "nofreeze" )	m_bTransforms[TRANSFORM_NOHOLDS] = on;
+		else if( sBit == "norolls" )	m_bTransforms[TRANSFORM_NOROLLS] = on;
 		else if( sBit == "nomines" )	m_bTransforms[TRANSFORM_NOMINES] = on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
@@ -558,6 +560,8 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 		return true;
 	if( m_bTransforms[TRANSFORM_NOHOLDS] && pSteps->GetRadarValues()[RADAR_NUM_HOLDS]>0 )
 		return true;
+	if( m_bTransforms[TRANSFORM_NOROLLS] && pSteps->GetRadarValues()[RADAR_NUM_ROLLS]>0 )
+		return true;
 	if( m_bTransforms[TRANSFORM_NOMINES] && pSteps->GetRadarValues()[RADAR_NUM_MINES]>0 )
 		return true;
 	if( m_bTransforms[TRANSFORM_NOHANDS] && pSteps->GetRadarValues()[RADAR_NUM_HANDS]>0 )
@@ -651,6 +655,7 @@ CString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_fScrolls[SCROLL_REVERSE] );
 	SAVE( m_fPerspectiveTilt );
 	SAVE( m_bTransforms[TRANSFORM_NOHOLDS] );
+	SAVE( m_bTransforms[TRANSFORM_NOROLLS] );
 	SAVE( m_bTransforms[TRANSFORM_NOMINES] );
 	SAVE( m_bTransforms[TRANSFORM_NOJUMPS] );
 	SAVE( m_bTransforms[TRANSFORM_NOHANDS] );
@@ -671,6 +676,7 @@ void PlayerOptions::ResetSavedPrefs()
 	CPY( m_fScrolls[SCROLL_REVERSE] );
 	CPY( m_fPerspectiveTilt );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
+	CPY( m_bTransforms[TRANSFORM_NOROLLS] );
 	CPY( m_bTransforms[TRANSFORM_NOMINES] );
 	CPY( m_bTransforms[TRANSFORM_NOJUMPS] );
 	CPY( m_bTransforms[TRANSFORM_NOHANDS] );

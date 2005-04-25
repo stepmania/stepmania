@@ -1709,8 +1709,10 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, Steps
 void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Apply remove transforms before others so that we don't go removing
-	// notes we just inserted.
+	// notes we just inserted.  Apply TRANSFORM_NOROLLS before TRANSFORM_NOHOLDS,
+	// since NOROLLS creates holds.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_LITTLE] )		NoteDataUtil::Little( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOROLLS] )	NoteDataUtil::ChangeRollsToHolds( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
