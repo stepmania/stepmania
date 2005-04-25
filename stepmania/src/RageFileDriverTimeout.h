@@ -15,6 +15,7 @@ public:
 
 	RageFileBasic *Open( const CString &path, int mode, int &err );
 	void FlushDirCache( const CString &sPath );
+	bool Remove( const CString &sPath );
 
 	static void SetTimeout( float fSeconds );
 	static void ResetTimeout() { SetTimeout( -1 ); }

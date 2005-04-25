@@ -60,6 +60,7 @@ enum ThreadRequest
 	REQ_COPY,
 	REQ_POPULATE_FILE_SET,
 	REQ_FLUSH_DIR_CACHE,
+	REQ_REMOVE,
 };
 
 /* This is the class that does most of the work. */
@@ -82,6 +83,7 @@ public:
 	RageFileBasic *Copy( RageFileBasic *&pFile, CString &sError );
 
 	bool FlushDirCache( const CString &sPath );
+	int Remove( const CString &sPath );
 	bool PopulateFileSet( FileSet &fs, const CString &sPath );
 
 protected:
@@ -97,7 +99,7 @@ private:
 	vector<RageFileBasic *> m_apDeletedFiles;
 	RageMutex m_DeletedFilesLock;
 
-	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE: */
+	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE, REQ_REMOVE: */
 	CString m_sRequestPath; /* in */
 
 	/* REQ_OPEN, REQ_COPY: */
@@ -208,7 +210,6 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		ASSERT( m_pRequestFile != NULL );
 		delete m_pRequestFile;
 		m_pRequestFile = NULL;
-
 		break;
 
 	case REQ_GET_FILE_SIZE:
@@ -221,6 +222,7 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		m_iResultRequest = m_pRequestFile->Seek( m_iRequestPos );
 		m_sResultError = m_pRequestFile->GetError();
 		break;
+
 	case REQ_READ:
 		ASSERT( m_pRequestFile != NULL );
 		ASSERT( m_pResultBuffer != NULL );
@@ -248,13 +250,18 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 
 	case REQ_POPULATE_FILE_SET:
 		ASSERT( !m_sRequestPath.empty() );
-
 		m_ResultFileSet = FileSet();
 		m_pChildDriver->FDB->GetFileSetCopy( m_sRequestPath, m_ResultFileSet );
 		break;
 
 	case REQ_FLUSH_DIR_CACHE:
+		ASSERT( !m_sRequestPath.empty() );
 		m_pChildDriver->FlushDirCache( m_sRequestPath );
+		break;
+
+	case REQ_REMOVE:
+		ASSERT( !m_sRequestPath.empty() );
+		m_iResultRequest = m_pChildDriver->Remove( m_sRequestPath )? 0:-1;
 		break;
 
 	default:
@@ -552,6 +559,25 @@ bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const CString &sPath )
 	return true;
 }
 
+int ThreadedFileWorker::Remove( const CString &sPath )
+{
+	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+		return -1;
+
+	m_sRequestPath = sPath;
+
+	if( !DoRequest(REQ_REMOVE) )
+	{
+		/* If we time out, we can no longer access pFile. */
+		return -1;
+	}
+
+	return m_iResultRequest;
+}
+
 bool ThreadedFileWorker::FlushDirCache( const CString &sPath )
 {
 	if( m_pChildDriver == NULL )
@@ -758,6 +784,18 @@ void RageFileDriverTimeout::FlushDirCache( const CString &sPath )
 {
 	RageFileDriver::FlushDirCache( sPath );
 	m_pWorker->FlushDirCache( sPath );
+}
+
+bool RageFileDriverTimeout::Remove( const CString &sPath )
+{
+	int iRet = m_pWorker->Remove( sPath );
+	if( iRet == -1 )
+	{
+		LOG->Warn( "RageFileDriverTimeout::Remove(%s) failed", sPath.c_str() );
+		return false;
+	}
+
+	return true;
 }
 
 RageFileDriverTimeout::~RageFileDriverTimeout()
