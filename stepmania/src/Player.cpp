@@ -410,7 +410,21 @@ void Player::Update( float fDeltaTime )
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
 				// TODO: Make the CPU miss sometimes.
-				bIsHoldingButton = true;
+				switch( tn.subType )
+				{
+				case TapNote::hold_head_hold:
+					bIsHoldingButton = true;
+					break;
+				case TapNote::hold_head_roll:
+					if( tn.HoldResult.fLife < 0.5f )
+					{
+						RageTimer now;
+						Step( iTrack, now, false );
+					}
+					break;
+				default:
+					ASSERT(0);
+				}
 			}
 			else
 			{
@@ -769,8 +783,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				{
 				case 0:
 					// autoplay is on, or this is a computer player
-					fCals = 0;
-					break;
+					iNumTracksHeld = 1;
+					// fall through
 				default:
 					{
 						float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.193f );
