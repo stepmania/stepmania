@@ -1652,6 +1652,34 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 		// save name pointers as we fill them
 		m_vpsNamesThatWereFilled.push_back( aFeats[i].pStringToFill );
 	}
+
+
+	Profile *pProfile = PROFILEMAN->GetMachineProfile();
+
+	if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
+	{
+		//
+		// erase all but the highest score for each name
+		//
+		FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
+			FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
+				iter2->second.hsl.RemoveAllButOneOfEachName();
+
+		FOREACHM( CourseID, Profile::HighScoresForACourse, pProfile->m_CourseHighScores, iter )
+			FOREACHM( TrailID, Profile::HighScoresForATrail, iter->second.m_TrailHighScores, iter2 )
+				iter2->second.hsl.RemoveAllButOneOfEachName();
+	}
+
+	//
+	// clamp high score sizes
+	//
+	FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
+		FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
+			iter2->second.hsl.ClampSize( true );
+
+	FOREACHM( CourseID, Profile::HighScoresForACourse, pProfile->m_CourseHighScores, iter )
+		FOREACHM( TrailID, Profile::HighScoresForATrail, iter->second.m_TrailHighScores, iter2 )
+			iter2->second.hsl.ClampSize( true );
 }
 
 bool GameState::AllAreInDangerOrWorse() const

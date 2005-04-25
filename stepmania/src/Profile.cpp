@@ -333,9 +333,9 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			CHECKPOINT;
 			
 			const HighScoresForASteps& h = j->second;
-			const HighScoreList& hs = h.hs;
+			const HighScoreList& hsl = h.hsl;
 			
-			fTotalPercents += hs.GetTopScore().fPercentDP;
+			fTotalPercents += hsl.GetTopScore().fPercentDP;
 		}
 		CHECKPOINT;
 	}
@@ -416,9 +416,9 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 				continue;
 
 			const HighScoresForATrail& h = j->second;
-			const HighScoreList& hs = h.hs;
+			const HighScoreList& hsl = h.hsl;
 
-			fTotalPercents += hs.GetTopScore().fPercentDP;
+			fTotalPercents += hsl.GetTopScore().fPercentDP;
 		}
 	}
 
@@ -474,7 +474,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 	{
 		const HighScoresForASteps &hsSteps = j->second;
 
-		iTotalNumTimesPlayed += hsSteps.hs.iNumTimesPlayed;
+		iTotalNumTimesPlayed += hsSteps.hsl.iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
 }
@@ -535,7 +535,7 @@ HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* p
 	HighScoresForASong &hsSong = m_SongHighScores[songID];	// operator[] inserts into map
 	HighScoresForASteps &hsSteps = hsSong.m_StepsHighScores[stepsID];	// operator[] inserts into map
 
-	return hsSteps.hs;
+	return hsSteps.hsl;
 }
 
 int Profile::GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const
@@ -569,7 +569,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES
 				continue;
 
 			const HighScoresForASteps &hsSteps = it->second;
-			if( hsSteps.hs.GetTopScore().grade == g )
+			if( hsSteps.hsl.GetTopScore().grade == g )
 				iCounts[g]++;
 		}
 	}
@@ -599,7 +599,7 @@ HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, const Tra
 	HighScoresForACourse &hsCourse = m_CourseHighScores[courseID];	// operator[] inserts into map
 	HighScoresForATrail &hsTrail = hsCourse.m_TrailHighScores[trailID];	// operator[] inserts into map
 
-	return hsTrail.hs;
+	return hsTrail.hsl;
 }
 
 int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
@@ -623,7 +623,7 @@ int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
 	{
 		const HighScoresForATrail &hsTrail = j->second;
 
-		iTotalNumTimesPlayed += hsTrail.hs.iNumTimesPlayed;
+		iTotalNumTimesPlayed += hsTrail.hsl.iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
 }
@@ -1197,7 +1197,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 			const StepsID &stepsID = j->first;
 			const HighScoresForASteps &hsSteps = j->second;
 
-			const HighScoreList &hsl = hsSteps.hs;
+			const HighScoreList &hsl = hsSteps.hsl;
 
 			// skip steps that have never been played
 			if( hsl.iNumTimesPlayed == 0 )
@@ -1242,7 +1242,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 			if( pHighScoreListNode == NULL )
 				WARN_AND_CONTINUE;
 			
-			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hs;
+			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hsl;
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
 	}
@@ -1280,7 +1280,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 			const TrailID &trailID = j->first;
 			const HighScoresForATrail &hsTrail = j->second;
 
-			const HighScoreList &hsl = hsTrail.hs;
+			const HighScoreList &hsl = hsTrail.hsl;
 
 			// skip steps that have never been played
 			if( hsl.iNumTimesPlayed == 0 )
@@ -1325,7 +1325,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 			if( pHighScoreListNode == NULL )
 				WARN_AND_CONTINUE;
 			
-			HighScoreList &hsl = m_CourseHighScores[courseID].m_TrailHighScores[trailID].hs;
+			HighScoreList &hsl = m_CourseHighScores[courseID].m_TrailHighScores[trailID].hsl;
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
 	}

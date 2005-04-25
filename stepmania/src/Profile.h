@@ -142,7 +142,7 @@ public:
 	//
 	struct HighScoresForASteps
 	{
-		HighScoreList hs;
+		HighScoreList hsl;
 	};
 	struct HighScoresForASong
 	{
@@ -165,7 +165,7 @@ public:
 	// in processing the templates for map::operator[].
 	struct HighScoresForATrail
 	{
-		HighScoreList hs;
+		HighScoreList hsl;
 	};
 	struct HighScoresForACourse	
 	{

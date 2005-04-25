@@ -214,6 +214,7 @@ public:
 	bool			m_bHideDefaultNoteSkin;
 	int				m_iMaxHighScoresPerListForMachine;
 	int				m_iMaxHighScoresPerListForPlayer;
+	bool			m_bAllowMultipleHighScoreWithSameName;
 	bool			m_bCelShadeModels;
 
 	/* experimental: force a specific update rate.  This prevents big 

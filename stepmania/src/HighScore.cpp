@@ -129,8 +129,13 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 	{
 		vHighScores.insert( vHighScores.begin()+i, hs );
 		iIndexOut = i;
-		if( vHighScores.size() > unsigned(iMaxScores) )
-			vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
+
+		// Delete extra machine high scores in RemoveAllButOneOfEachNameAndClampSize
+		// and not here so that we don't end up with less than iMaxScores after 
+		// removing HighScores with duplicate names.
+		//
+		if( !bIsMachine )
+			ClampSize( bIsMachine );
 	}
 }
 
@@ -185,6 +190,30 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 				vHighScores.pop_back();
 		}
 	}
+}
+
+void HighScoreList::RemoveAllButOneOfEachName()
+{
+	FOREACH( HighScore, vHighScores, i )
+	{
+		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
+		{
+			if( i->sName == j->sName )
+			{
+				j--;
+				vHighScores.erase( j+1 );
+			}
+		}
+	}
+}
+
+void HighScoreList::ClampSize( bool bIsMachine )
+{
+	const int iMaxScores = bIsMachine ? 
+		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
+	if( vHighScores.size() > unsigned(iMaxScores) )
+		vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
 }
 
 XNode* Screenshot::CreateNode() const

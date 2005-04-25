@@ -92,6 +92,9 @@ struct HighScoreList
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+
+	void RemoveAllButOneOfEachName();
+	void ClampSize( bool bIsMachine );
 };
 
 struct Screenshot
