@@ -189,21 +189,9 @@ bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned ro
 	return MinTapNoteScore( in, row ) >= TNS_MISS;
 }
 
-/* From aaroninjapan.com (http://www.aaroninjapan.com/ddr2.html)
- *
- * Stream: The ratio of your number of Perfects to getting all Perfects 
- * Voltage: The ratio of your maximum combo to getting a Full Combo 
- * Air: The ratio of your number of Perfects on all your jumps (R+L, R+D, etc) to getting all Perfects on all Jumps 
- * Chaos: The ratio of your dance level compared to that of AAA (all Perfect) level 
- * Freeze: The ratio of your total number of "OK"s on all the Freeze arrows to getting all "OK" on all the Freeze arrows 
- *
- * I don't think chaos is correct, at least relative to DDREX. You can AA songs and get a full Chaos graph.
- * No idea what it actually could be, though.
- */
-
 namespace
 {
-
+/* Return the ratio of actual to possible Perfects. */
 float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	int iTotalSteps = in.GetNumTapNotes();
@@ -214,6 +202,7 @@ float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerN
 	return clamp( float(Perfects)/iTotalSteps, 0.0f, 1.0f );
 }
 
+/* Return the ratio of actual combo to max combo. */
 float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
@@ -225,6 +214,7 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, Player
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
+/* Return the ratio of actual to possible Perfects on jumps. */
 float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	const int iTotalDoubles = in.GetNumJumps();
@@ -236,6 +226,7 @@ float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumb
 	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
+/* Return the ratio of actual to possible dance points. */
 float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	const int iPossibleDP = STATSMAN->m_CurStageStats.m_player[pn].iPossibleDancePoints;
@@ -246,6 +237,7 @@ float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, PlayerNu
 	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 
+/* Return the ratio of actual to possible successful holds. */
 float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	// number of hold steps
