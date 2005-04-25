@@ -129,8 +129,6 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 /* Return the last tap score of a row: the grade of the tap that completed
  * the row.  If the row has no tap notes, return -1.  If any tap notes aren't
  * graded (any tap is TNS_NONE) or are missed (TNS_MISS), return it. */
-
-/* XXX: this will fill in many empty tap notes due to excess GetTapnote calls */
 int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow )
 {
 	float scoretime = -9999;
