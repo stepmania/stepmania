@@ -32,6 +32,7 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "SongNumSteps",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "SongJumps",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "SongHolds",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongRolls",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "SongMines",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "SongHands",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "DifficultyStream",		NUM_PANES,					NEED_NOTES }, // hide
@@ -57,7 +58,8 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "CourseJumps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseHolds",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseMines",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseHands",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
+	{ "CourseHands",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseRolls",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
 };
 
 static ProfileSlot PlayerMemCard( PlayerNumber pn )
@@ -199,6 +201,8 @@ void PaneDisplay::SetContent( PaneContents c )
 		case SONG_JUMPS:					val = rv[RADAR_NUM_JUMPS]; break;
 		case COURSE_HOLDS:
 		case SONG_HOLDS:					val = rv[RADAR_NUM_HOLDS]; break;
+		case COURSE_ROLLS:
+		case SONG_ROLLS:					val = rv[RADAR_NUM_ROLLS]; break;
 		case COURSE_MINES:
 		case SONG_MINES:					val = rv[RADAR_NUM_MINES]; break;
 		case COURSE_HANDS:
@@ -305,16 +309,23 @@ void PaneDisplay::SetContent( PaneContents c )
 		case COURSE_MACHINE_HIGH_SCORE:
 		case SONG_PROFILE_HIGH_SCORE:
 		case COURSE_PROFILE_HIGH_SCORE:
+			/* "100.00%" is bigger than anything else, and since we'll never
+			 * be any higher, we don't need to display the decimal places.
+			 * Display 1.0 as "100%" instead. */
 			str = PercentageDisplay::FormatPercentScore( val );
+			if( str == "100.00%" )
+				str = "100%";
 			break;
 		case SONG_NUM_STEPS:
 		case SONG_JUMPS:
 		case SONG_HOLDS:
+		case SONG_ROLLS:
 		case SONG_MINES:
 		case SONG_HANDS:
 		case COURSE_NUM_STEPS:
 		case COURSE_JUMPS:
 		case COURSE_HOLDS:
+		case COURSE_ROLLS:
 		case COURSE_MINES:
 		case COURSE_HANDS:
 		case SONG_MACHINE_NUM_PLAYS:
