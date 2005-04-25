@@ -252,6 +252,7 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	m_bLastLoadWasTamperedOrCorrupt[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
 	m_Profile[pn].InitAll();
+	SONGMAN->FreeAllLoadedFromProfile( (ProfileSlot) pn );
 }
 
 const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
