@@ -128,6 +128,7 @@ void ScreenWithMenuElements::LoadHelpText()
 	CStringArray asHelpTips;
 	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
 	m_textHelp->SetTips( asHelpTips );
+	m_textHelp->PlayCommand( "Changed" );
 }
 
 void ScreenWithMenuElements::StartPlayingMusic()
