@@ -38,7 +38,7 @@ public:
 	// General data
 	//
 	void IncrementToastiesCount( PlayerNumber pn );
-	void AddStepTotals( PlayerNumber pn, int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands, float fCaloriesBurned );
+	void AddStepTotals( PlayerNumber pn, int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned );
 
 
 	//

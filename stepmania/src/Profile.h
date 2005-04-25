@@ -83,7 +83,7 @@ public:
 	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
 	bool IsCodeUnlocked( int iCode ) const;
 	
-	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands, float fCaloriesBurned );
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned );
 
 	bool IsMachine() const;
 
@@ -121,6 +121,7 @@ public:
 	int m_iTotalTapsAndHolds;
 	int m_iTotalJumps;
 	int m_iTotalHolds;
+	int m_iTotalRolls;
 	int m_iTotalMines;
 	int m_iTotalHands;
 	set<int> m_UnlockedSongs;

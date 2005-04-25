@@ -94,6 +94,7 @@ void Profile::InitGeneralData()
 	m_iTotalTapsAndHolds = 0;
 	m_iTotalJumps = 0;
 	m_iTotalHolds = 0;
+	m_iTotalRolls = 0;
 	m_iTotalMines = 0;
 	m_iTotalHands = 0;
 
@@ -889,6 +890,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalTapsAndHolds",				m_iTotalTapsAndHolds );
 	pGeneralDataNode->AppendChild( "TotalJumps",					m_iTotalJumps );
 	pGeneralDataNode->AppendChild( "TotalHolds",					m_iTotalHolds );
+	pGeneralDataNode->AppendChild( "TotalRolls",					m_iTotalRolls );
 	pGeneralDataNode->AppendChild( "TotalMines",					m_iTotalMines );
 	pGeneralDataNode->AppendChild( "TotalHands",					m_iTotalHands );
 	pGeneralDataNode->AppendChild( "Data",							m_SavedLuaData.Serialize() );
@@ -1048,6 +1050,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalTapsAndHolds",				m_iTotalTapsAndHolds );
 	pNode->GetChildValue( "TotalJumps",						m_iTotalJumps );
 	pNode->GetChildValue( "TotalHolds",						m_iTotalHolds );
+	pNode->GetChildValue( "TotalRolls",						m_iTotalRolls );
 	pNode->GetChildValue( "TotalMines",						m_iTotalMines );
 	pNode->GetChildValue( "TotalHands",						m_iTotalHands );
 
@@ -1149,11 +1152,12 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 
 }
 
-void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalMines, int iTotalHands, float fCaloriesBurned )
+void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalRolls, int iTotalMines, int iTotalHands, float fCaloriesBurned )
 {
 	m_iTotalTapsAndHolds += iTotalTapsAndHolds;
 	m_iTotalJumps += iTotalJumps;
 	m_iTotalHolds += iTotalHolds;
+	m_iTotalRolls += iTotalRolls;
 	m_iTotalMines += iTotalMines;
 	m_iTotalHands += iTotalHands;
 	m_fTotalCaloriesBurned += fCaloriesBurned;

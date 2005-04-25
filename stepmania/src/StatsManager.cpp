@@ -135,10 +135,11 @@ void StatsManager::CommitStatsToProfiles()
 		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
 		int iNumJumps			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
 		int iNumHolds			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
+		int iNumRolls			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_ROLLS];
 		int iNumMines			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
 		int iNumHands			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
 		float fCaloriesBurned	= m_CurStageStats.m_player[pn].fCaloriesBurned;
-		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
+		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
 	}
 
 	// Update profile stats
