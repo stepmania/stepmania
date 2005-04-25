@@ -37,6 +37,18 @@ namespace OptionRowHandlerUtil
 	OptionRowHandler* Make( const Command &cmd, OptionRowDefinition &defOut );
 }
 
+inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )
+{
+	int iNumSelected = 0;
+	if( st == SELECT_ONE )
+	{
+		ASSERT_M( vbSelected.size() > 0, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
+		for( unsigned e = 0; e < vbSelected.size(); ++e )
+			if( vbSelected[e] )
+				iNumSelected++;
+		ASSERT_M( iNumSelected == 1, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
+	}
+}
 
 #endif
 

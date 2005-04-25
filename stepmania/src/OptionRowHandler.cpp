@@ -26,6 +26,7 @@
 
 static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
+	ASSERT_M( iSelection >= 0  &&  iSelection < vbSelectedOut.size(), ssprintf("%d/%u",iSelection,vbSelectedOut.size()) );
 	for( int i=0; i<(int)vbSelectedOut.size(); i++ )
 		vbSelectedOut[i] = i==iSelection;
 }
@@ -153,8 +154,8 @@ public:
 	}
 	void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		int FallbackOption = -1;
-		bool UseFallbackOption = true;
+		int iFallbackOption = -1;
+		bool bUseFallbackOption = true;
 
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -170,10 +171,10 @@ public:
 				if( mc.IsZero() )
 				{
 					/* The entry has no effect.  This is usually a default "none of the
-						* above" entry.  It will always return true for DescribesCurrentMode().
-						* It's only the selected choice if nothing else matches. */
+					 * above" entry.  It will always return true for DescribesCurrentMode().
+					 * It's only the selected choice if nothing else matches. */
 					if( def.selectType != SELECT_MULTIPLE )
-						FallbackOption = e;
+						iFallbackOption = e;
 					continue;
 				}
 
@@ -181,7 +182,7 @@ public:
 				{
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
-						UseFallbackOption = false;
+						bUseFallbackOption = false;
 						if( def.selectType != SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelOut );
 						else
@@ -192,7 +193,7 @@ public:
 				{
 					if( mc.DescribesCurrentMode( p) )
 					{
-						UseFallbackOption = false;
+						bUseFallbackOption = false;
 						if( def.selectType != SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelOut );
 						else
@@ -201,16 +202,20 @@ public:
 				}
 			}
 
-			if( def.selectType == SELECT_ONE && UseFallbackOption )
+			if( def.selectType == SELECT_ONE && bUseFallbackOption )
 			{
-				if( FallbackOption == -1 )
+				if( iFallbackOption == -1 )
 				{
-					LOG->Warn( "No options in row \"%s\" were selected, and no fallback row found; selected entry 0", m_sName.c_str() );
-					FallbackOption = 0;
+					CString s = ssprintf("No options in row \"%s\" were selected, and no fallback row found; selected entry 0", m_sName.c_str());
+					LOG->Warn( s );
+					CHECKPOINT_M( s );
+					iFallbackOption = 0;
 				}
 
-				SelectExactlyOne( FallbackOption, vbSelOut );
+				SelectExactlyOne( iFallbackOption, vbSelOut );
 			}
+
+			VerifySelected( def.selectType, vbSelOut, def.name );
 		}
 	}
 

@@ -776,18 +776,6 @@ void OptionRow::HandleMessage( const CString& sMessage )
 #define INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
 	if( GetFirstItemGoesDown() ) \
 		vbSelected.insert( vbSelected.begin(), false );
-static void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )
-{
-	int iNumSelected = 0;
-	if( st == SELECT_ONE )
-	{
-		ASSERT_M( vbSelected.size() > 0, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
-		for( unsigned e = 0; e < vbSelected.size(); ++e )
-			if( vbSelected[e] )
-				iNumSelected++;
-		ASSERT_M( iNumSelected == 1, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
-	}
-}
 
 void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 {
