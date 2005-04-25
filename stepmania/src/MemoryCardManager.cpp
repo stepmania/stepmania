@@ -567,6 +567,7 @@ void MemoryCardManager::UnlockCards()
 /* Called just before reading or writing to the memory card.  Should block. */
 void MemoryCardManager::MountCard( PlayerNumber pn )
 {
+	LOG->Trace( "MemoryCardManager::MountCard(%i)", pn );
 	if( GetCardState(pn) != MEMORY_CARD_STATE_READY )
 		return;
 	ASSERT( !m_Device[pn].IsBlank() );
@@ -601,6 +602,11 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 	{
 		FILEMAN->Mount( "dir", m_Device[pn].sOsMountDir, MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
+		
+		/* We just created a worker thread.  Reset the timeout, or those threads
+		 * won't time out.  This is a hack; we should really be creating the timeout
+		 * driver on startup. */
+		this->PauseMountingThread();
 	}
 	else
 	{
@@ -615,6 +621,7 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
  * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
+	LOG->Trace( "MemoryCardManager::UnmountCard(%i)", pn );
 	if ( m_Device[pn].IsBlank() )
 		return;
 
