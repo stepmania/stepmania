@@ -106,13 +106,15 @@ void RageSoundManager::Update(float delta)
 	set<RageSound *> ToDelete;
 	for( set<RageSound *>::iterator it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
 	{
-		if( (*it)->IsPlaying() )
+		RageSound *pSound = *it;
+		if( pSound->IsPlaying() )
 			continue;
 
-		LOG->Trace("XXX: deleting '%s'", (*it)->GetLoadedFilePath().c_str());
-		ToDelete.insert( (*it) );
-	}
+		LOG->Trace("XXX: deleting '%s'", pSound->GetLoadedFilePath().c_str());
 
+		ToDelete.insert( pSound );
+	}
+	
 	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		owned_sounds.erase( *it );
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
