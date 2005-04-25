@@ -626,7 +626,8 @@ void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
-			if( begin->second.type != TapNote::hold_head )
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_hold )
 				continue;
 			begin->second.type = TapNote::tap;
 		}
