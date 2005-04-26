@@ -62,7 +62,6 @@ MusicWheelItem::MusicWheelItem()
 
 	m_textSectionName.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
 	m_textSectionName.SetShadowLength( 0 );
-	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_X, 0 );
 	m_textSectionName.RunCommands( SECTION_ON_COMMAND );
 	m_All.AddChild( &m_textSectionName );
@@ -144,9 +143,6 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 			bt->TurnRainbowOff();
 
 			const float fSourcePixelWidth = (float)bt->GetUnzoomedWidth();
-			const float fMaxTextWidth = 200;
-			if( fSourcePixelWidth > fMaxTextWidth  )
-				bt->SetZoomX( fMaxTextWidth / fSourcePixelWidth );
 		}
 		break;
 	case TYPE_SONG:
