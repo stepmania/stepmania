@@ -736,8 +736,14 @@ void ScreenGameplay::InitSongQueues()
 		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
 		FOREACH_PlayerNumber(p)
 		{
-			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurSteps[p] );
-			m_asModifiersQueue[p].push_back( AttackArray() );
+			Steps *pSteps = GAMESTATE->m_pCurSteps[p];
+			m_vpStepsQueue[p].push_back( pSteps );
+
+			AttackArray aa;
+			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
+				aa.push_back( Attack(ATTACK_LEVEL_1, 0, 0, FORCED_MODIFIERS_IN_BEGINNER, false, true) );
+
+			m_asModifiersQueue[p].push_back( aa );
 		}
 	}
 
@@ -970,12 +976,6 @@ void ScreenGameplay::LoadNextSong()
 		else
 		{
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PC_HUMAN;
-		}
-
-		if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
-		{
-			GAMESTATE->ApplyModifiers( p, FORCED_MODIFIERS_IN_BEGINNER );
-			GAMESTATE->StoreSelectedOptions();
 		}
 	}
 	
