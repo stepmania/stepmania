@@ -430,6 +430,10 @@ void Model::DrawPrimitives()
 					else
 					{
 						DISPLAY->SetTexture( 1, NULL );
+
+						// set current texture back to 0 or else texture transform applied above 
+						// isn't used.  Why?!?
+						DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
 					}
 
 					/* go */
