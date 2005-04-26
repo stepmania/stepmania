@@ -12,10 +12,18 @@ struct Attack
 	float fStartSecond; // -1 = now
 	float fSecsRemaining;
 	CString sModifier;
-	bool bOn; // for GAMESTATE
+	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
 
-	void MakeBlank() { sModifier=""; fStartSecond = -1; bOn = false; bGlobal = false; }
+	void MakeBlank()
+	{
+		level = ATTACK_LEVEL_1;
+		fStartSecond = -1;
+		fSecsRemaining = 0;
+		sModifier = CString();
+		bOn = false;
+		bGlobal = false;
+	}
 	Attack() { MakeBlank(); }
 	Attack(
 		AttackLevel	level_,
