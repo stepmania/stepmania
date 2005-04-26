@@ -2145,7 +2145,7 @@ void ScreenGameplay::SongFinished()
 		 * not for the percentages (RADAR_AIR). */
 		RadarValues v;
 		
-		NoteDataUtil::GetRadarValues( m_Player[p].m_NoteData, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
+		NoteDataUtil::CalculateRadarValues( m_Player[p].m_NoteData, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
 		STATSMAN->m_CurStageStats.m_player[p].radarPossible += v;
 
 		NoteDataWithScoring::GetActualRadarValues( m_Player[p].m_NoteData, p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );

@@ -522,7 +522,7 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	}
 }
 
-void NoteDataUtil::GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
+void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.

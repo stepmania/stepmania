@@ -51,7 +51,7 @@ void SMLoader::LoadFromSMTokens(
 		RadarValues v;
 		FOREACH_RadarCategory(rc)
 			v[rc] = strtof( saValues[rc], NULL );
-		out.SetRadarValues( v ); 
+		out.SetCachedRadarValues( v ); 
 	}
     
 	out.SetSMNoteData(sNoteData);

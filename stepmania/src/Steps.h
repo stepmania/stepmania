@@ -38,7 +38,7 @@ public:
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
 	ProfileSlot GetLoadedFromProfile() const { return m_LoadedFromProfile; }
 	int GetMeter() const { return Real()->m_iMeter; }
-	const RadarValues& GetRadarValues() const { return Real()->m_RadarValues; }
+	const RadarValues& GetRadarValues() const { return Real()->m_CachedRadarValues; }
 
 	void SetFile( CString fn );
 	void SetSavedToDisk( bool b ) { m_bSavedToDisk = b; }
@@ -50,7 +50,7 @@ public:
 
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
-	void SetRadarValues( const RadarValues& v );
+	void SetCachedRadarValues( const RadarValues& v );
 	bool IsAutogen() const;	// Was created by autogen?
 	float PredictMeter() const;
 	
@@ -90,7 +90,7 @@ protected:
 	CString			m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty		m_Difficulty;		// difficulty classification
 	int				m_iMeter;			// difficulty rating from MIN_METER to MAX_METER
-	RadarValues		m_RadarValues;
+	RadarValues		m_CachedRadarValues;
 };
 
 #endif

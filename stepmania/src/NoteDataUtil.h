@@ -31,7 +31,7 @@ namespace NoteDataUtil
 	float GetFreezeRadarValue( const NoteData &in, float fSongSeconds );
 	float GetChaosRadarValue( const NoteData &in, float fSongSeconds );
 
-	void GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
+	void CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 
 	void RemoveHoldNotes( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIndex );

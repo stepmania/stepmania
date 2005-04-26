@@ -9,6 +9,7 @@
 #include <float.h>
 #include "GameState.h"
 #include "Course.h"
+#include "Steps.h"
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
@@ -129,7 +130,14 @@ Grade PlayerStageStats::GetGrade() const
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
 	 * is tricky since at that point the ScoreKeepers no longer exist. */
-	float Possible = 0, Actual = 0;
+	float fPossible = 0;
+	FOREACH_CONST( Steps*, vpPossibleSteps, s )
+	{
+		fPossible += (*s)->GetRadarValues().m_Values.v.fNumTapsAndHolds * PREFSMAN->m_iGradeWeightMarvelous;
+		fPossible += (*s)->GetRadarValues().m_Values.v.fNumHolds * PREFSMAN->m_iGradeWeightOK;
+	}
+
+	float fActual = 0;
 	FOREACH_TapNoteScore( tns )
 	{
 		int iTapScoreValue;
@@ -146,9 +154,7 @@ Grade PlayerStageStats::GetGrade() const
 		case TNS_MARVELOUS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
 		default: FAIL_M( ssprintf("%i", tns) );										break;
 		}
-		Actual += iTapNoteScores[tns] * iTapScoreValue;
-		if( tns != TNS_HIT_MINE )
-			Possible += iTapNoteScores[tns] * PREFSMAN->m_iGradeWeightMarvelous;
+		fActual += iTapNoteScores[tns] * iTapScoreValue;
 	}
 
 	FOREACH_HoldNoteScore( hns )
@@ -161,14 +167,13 @@ Grade PlayerStageStats::GetGrade() const
 		case HNS_OK:	iHoldScoreValue = PREFSMAN->m_iGradeWeightOK;	break;
 		default: FAIL_M( ssprintf("%i", hns) );							break;
 		}
-		Actual += iHoldNoteScores[hns] * iHoldScoreValue;
-		Possible += iHoldNoteScores[hns] * PREFSMAN->m_iGradeWeightOK;
+		fActual += iHoldNoteScores[hns] * iHoldScoreValue;
 	}
 
-	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
+	LOG->Trace( "GetGrade: fActual: %f, fPossible: %f", fActual, fPossible );
 
 
-	float fPercent = (Possible == 0) ? 0 : Actual / Possible;
+	float fPercent = (fPossible == 0) ? 0 : fActual / fPossible;
 
 	Grade grade = GetGradeFromPercent( fPercent );
 

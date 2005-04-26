@@ -153,7 +153,7 @@ void Steps::TidyUpData()
 
 void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 {
-	m_RadarValues = RadarValues();
+	m_CachedRadarValues = RadarValues();
 	
 	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
 	if( parent != NULL )
@@ -165,7 +165,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 
 	NoteData tempNoteData;
 	this->GetNoteData( tempNoteData );
-	NoteDataUtil::GetRadarValues( tempNoteData, fMusicLengthSeconds, m_RadarValues );
+	NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues );
 }
 
 void Steps::Decompress() const
@@ -270,7 +270,7 @@ void Steps::DeAutogen()
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
-	m_RadarValues   = Real()->m_RadarValues;
+	m_CachedRadarValues   = Real()->m_CachedRadarValues;
 
 	parent = NULL;
 
@@ -347,10 +347,10 @@ void Steps::SetMeter(int meter)
 	m_iMeter = meter;
 }
 
-void Steps::SetRadarValues( const RadarValues& v )
+void Steps::SetCachedRadarValues( const RadarValues& v )
 {
 	DeAutogen();
-	m_RadarValues = v;
+	m_CachedRadarValues = v;
 }
 
 
