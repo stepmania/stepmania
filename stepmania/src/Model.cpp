@@ -413,6 +413,11 @@ void Model::DrawPrimitives()
 				}
 				else
 				{
+					// render the diffuse texture with texture unit 1
+					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					Actor::SetTextureRenderStates();	// set Actor-specified render states
+					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
+					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
@@ -427,11 +432,6 @@ void Model::DrawPrimitives()
 						DISPLAY->SetTexture( 1, NULL );
 					}
 
-					// render the diffuse texture with texture unit 1
-					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
-					Actor::SetTextureRenderStates();	// set Actor-specified render states
-					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
-					
 					/* go */
 					DrawMesh( i );
 
