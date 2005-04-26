@@ -804,6 +804,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
+	// Check for "Press START again for options" button press
 	if( m_bMadeChoice  &&
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
