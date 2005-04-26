@@ -406,7 +406,7 @@ void Player::Update( float fDeltaTime )
 			const TapNoteScore tns = tn.result.tns;
 			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
-			bool bIsHoldingButton;
+			bool bIsHoldingButton = false;
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
 				// TODO: Make the CPU miss sometimes.
