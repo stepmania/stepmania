@@ -212,9 +212,9 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_HumanPlayer( p )
 		{
 			GameCommand gc = m_aGameCommands[this->GetSelectionIndex(p)];
+			CString sThisScreen = gc.GetAndClearScreen();
 			if( sScreen == "" )
-				sScreen = gc.m_sScreen;
-			gc.m_sScreen = "";
+				sScreen = sThisScreen;
 			gc.Apply( p );
 		}
 

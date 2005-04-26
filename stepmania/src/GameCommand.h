@@ -37,6 +37,7 @@ public:
 	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( CString *why = NULL ) const;
 	bool IsZero() const;
+	CString GetAndClearScreen();
 
 	// Same as what was passed to Load.  We need to keep the original commands
 	// so that we know the order of commands when it comes time to Apply.

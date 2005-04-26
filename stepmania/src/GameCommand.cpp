@@ -608,6 +608,29 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	return hs;
 }
 
+/* Hack: if this GameCommand would set the screen, clear the setting and return
+ * the screen that would have been set. */
+CString GameCommand::GetAndClearScreen()
+{
+	CString sRet;
+	FOREACH( Command, m_Commands.v, cmd )
+	{
+		GameCommand gc;
+		gc.m_bInvalid = false;
+		gc.LoadOne( *cmd );
+		if( gc.m_sScreen != "" )
+		{
+			sRet = gc.m_sScreen;
+			m_Commands.v.erase( cmd );
+			break;
+		}
+	}
+
+	m_sScreen = "";
+
+	return sRet;
+}
+
 void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 {
 	if( m_Commands.v.size() )
