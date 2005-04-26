@@ -50,7 +50,8 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"NextGame2",
 	"NextBannerGroup",
 	"NextBannerGroup2",
-	"SaveScreenshot",
+	"SaveScreenshot1",
+	"SaveScreenshot2",
 	"CancelAllPlayerOptions",
 	"BackInEventMode",
 };
