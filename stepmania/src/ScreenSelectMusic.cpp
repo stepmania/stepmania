@@ -68,7 +68,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	ALIGN_MUSIC_BEATS( m_sName, "AlignMusicBeat" ),
 	CODES( m_sName, "Codes" ),
 	MUSIC_WHEEL_TYPE( m_sName, "MusicWheelType" ),
-	OPTIONS_MENU_AVAILABLE( m_sName, "OptionsMenuAvailable" )
+	OPTIONS_MENU_AVAILABLE( m_sName, "OptionsMenuAvailable" ),
+	SELECT_MENU_AVAILABLE( m_sName, "SelectMenuAvailable" )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
@@ -90,6 +91,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 void ScreenSelectMusic::Init()
 {
+	m_bSelectIsDown = false; // used by LoadHelpText which is called by ScreenWithMenuElements::Init()
+
 	ScreenWithMenuElements::Init();
 
 	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
@@ -831,6 +834,29 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	if( m_bMadeChoice )		return;		// ignore
 
+	LoadHelpText();
+
+	bool bSelectIsPressed =
+		SELECT_MENU_AVAILABLE && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_SELECT) );
+	if( bSelectIsPressed )
+	{
+		if( type == IET_FIRST_PRESS )
+		{
+			switch( MenuI.button )
+			{
+			case MENU_BUTTON_LEFT:
+				ChangeDifficulty( pn, -1 );
+				break;
+			case MENU_BUTTON_RIGHT:
+				ChangeDifficulty( pn, +1 );
+				break;
+			case MENU_BUTTON_START:
+				m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+				break;
+			}
+		}
+	}
+
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
 		/* If we're rouletting, hands off. */
@@ -841,8 +867,11 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		bool bRightIsDown = false;
 		FOREACH_EnabledPlayer( p )
 		{
-			bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
-			bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
+			if( !bSelectIsPressed )
+			{
+				bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
+				bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
+			}
 		}
 		
 		bool bBothDown = bLeftIsDown && bRightIsDown;
@@ -872,6 +901,8 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	}
 
 
+	if( bSelectIsPressed )
+		return;
 
 	// TRICKY:  Do default processing of MenuLeft and MenuRight before detecting 
 	// codes.  Do default processing of Start AFTER detecting codes.  This gives us a 
@@ -941,6 +972,26 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_START:	Screen::MenuStart( MenuI.player, type );	break;
+	}
+}
+
+void ScreenSelectMusic::LoadHelpText()
+{
+	ScreenWithMenuElements::LoadHelpText();
+
+	bool bSelectIsDown = false;
+	FOREACH_EnabledPlayer( p )
+		bSelectIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_SELECT) );
+	if( !SELECT_MENU_AVAILABLE )
+		bSelectIsDown = false;
+
+	if( m_bSelectIsDown != bSelectIsDown )
+	{
+		m_bSelectIsDown = bSelectIsDown;
+		if( bSelectIsDown )
+			MESSAGEMAN->Broadcast( "SelectMenuOn" );
+		else
+			MESSAGEMAN->Broadcast( "SelectMenuOff" );
 	}
 }
 
@@ -1484,7 +1535,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	if( m_MusicWheel.GetSortOrder() != s_lastSortOrder )
 	{
 		// Reload to let Lua metrics have a chance to change the help text.
-		ScreenWithMenuElements::LoadHelpText();
+		LoadHelpText();
 		s_lastSortOrder = m_MusicWheel.GetSortOrder();
 	}
 

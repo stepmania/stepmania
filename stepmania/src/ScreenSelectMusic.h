@@ -54,6 +54,7 @@ protected:
 	void TweenCoursePartsOffScreen( bool Final );
 	void SkipSongPartTweens();
 	void SkipCoursePartTweens();
+	virtual void LoadHelpText();
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
 
@@ -87,6 +88,7 @@ protected:
 	ThemeMetric<CString> CODES;
 	ThemeMetric<CString> MUSIC_WHEEL_TYPE;
 	ThemeMetric<bool> OPTIONS_MENU_AVAILABLE;
+	DynamicThemeMetric<bool> SELECT_MENU_AVAILABLE;
 
 	CString m_sSectionMusicPath;
 	CString m_sSortMusicPath;
@@ -137,6 +139,7 @@ protected:
 	TimingData			*m_pSampleMusicTimingData;
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
+	bool				m_bSelectIsDown;
 
 	Transition			m_bgOptionsOut;
 	Transition			m_bgNoOptionsOut;
