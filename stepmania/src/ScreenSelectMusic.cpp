@@ -1060,6 +1060,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 
 	case TYPE_RANDOM:
 	case TYPE_ROULETTE:
+	case TYPE_SECTION:
 		/* XXX: We could be on a music or course sort, or even one with both; we don't
 		 * really know which difficulty to change.  Maybe the two difficulties should be
 		 * linked ... */
@@ -1082,6 +1083,8 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 			AfterStepsChange( vpns );
 		}
 		break;
+	default:
+		ASSERT(0);
 	}
 }
 
