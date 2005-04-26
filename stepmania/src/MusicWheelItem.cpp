@@ -141,8 +141,6 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 			bt->SetText( sDisplayName, sTranslitName );
 			bt->SetDiffuse( data->m_color );
 			bt->TurnRainbowOff();
-
-			const float fSourcePixelWidth = (float)bt->GetUnzoomedWidth();
 		}
 		break;
 	case TYPE_SONG:
