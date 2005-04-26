@@ -14,6 +14,7 @@ struct Attack
 	CString sModifier;
 	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
+	bool bShowInAttackList;
 
 	void MakeBlank()
 	{
@@ -23,6 +24,7 @@ struct Attack
 		sModifier = CString();
 		bOn = false;
 		bGlobal = false;
+		bShowInAttackList = true;
 	}
 	Attack() { MakeBlank(); }
 	Attack(
@@ -31,7 +33,8 @@ struct Attack
 		float fSecsRemaining_,
 		CString sModifier_,
 		bool bOn_,
-		bool bGlobal_ )
+		bool bGlobal_,
+		bool bShowInAttackList_ = true )
 	{
 		level = level_;
 		fStartSecond = fStartSecond_;
@@ -39,6 +42,7 @@ struct Attack
 		sModifier = sModifier_;
 		bOn = bOn_;
 		bGlobal = bGlobal_;
+		bShowInAttackList = bShowInAttackList_;
 	}
 
 	void GetAttackBeats( const Song *song, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;

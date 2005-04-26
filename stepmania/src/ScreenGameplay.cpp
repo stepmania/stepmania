@@ -741,7 +741,7 @@ void ScreenGameplay::InitSongQueues()
 
 			AttackArray aa;
 			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
-				aa.push_back( Attack(ATTACK_LEVEL_1, 0, 0, FORCED_MODIFIERS_IN_BEGINNER, false, true) );
+				aa.push_back( Attack(ATTACK_LEVEL_1, 0, 0, FORCED_MODIFIERS_IN_BEGINNER, false, true, false) );	// don't show in AttackList
 
 			m_asModifiersQueue[p].push_back( aa );
 		}

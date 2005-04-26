@@ -41,6 +41,8 @@ void ActiveAttackList::Refresh()
 
 		if( !attack.bOn )
 			continue; /* hasn't started yet */
+		if( !attack.bShowInAttackList )
+			continue;
 
 		PlayerOptions po;
 		po.FromString( attack.sModifier, true );
