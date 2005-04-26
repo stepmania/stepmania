@@ -52,7 +52,10 @@ void StreamDisplay::Update( float fDeltaSecs )
 		// Just move straight to either full or empty.
 		if( m_fPercent <= 0 || m_fPercent >= 1 )
 		{
-			m_fVelocity = (fDelta / fabsf(fDelta)) * 4;
+			if( fabsf(fDelta) < 0.00001f )
+				m_fVelocity = 0; // prevent div/0
+			else
+				m_fVelocity = (fDelta / fabsf(fDelta)) * 4;
 		}
 		else
 		{
