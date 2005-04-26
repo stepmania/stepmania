@@ -734,7 +734,7 @@ void NoteField::FadeToFail()
 void NoteField::Step( int iCol, TapNoteScore score ) { SearchForSongBeat()->m_ReceptorArrowRow.Step( iCol, score ); }
 void NoteField::SetPressed( int iCol ) { SearchForSongBeat()->m_ReceptorArrowRow.SetPressed( iCol ); }
 void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
-void NoteField::DidHoldNote( int iCol ) { /*SearchForSongBeat()->m_GhostArrowRow.DidHoldNote( iCol );*/ }
+void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
 
 /*
  * (c) 2001-2004 Chris Danford

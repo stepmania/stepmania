@@ -16,11 +16,14 @@ public:
 
 	void Load( const CString &sButton, const CString &sFile );
 
-	void Step( TapNoteScore score );
+	void StepTap( TapNoteScore tns );
+	void StepHold( HoldNoteScore hns );
 
 protected:
-	AutoActor	m_spr[NUM_TAP_NOTE_SCORES];
-	apActorCommands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
+	AutoActor	m_sprTap[NUM_TAP_NOTE_SCORES];
+	AutoActor	m_sprHold[NUM_HOLD_NOTE_SCORES];
+	apActorCommands m_acTap[NUM_TAP_NOTE_SCORES];
+	apActorCommands m_acHold[NUM_HOLD_NOTE_SCORES];
 };
 
 

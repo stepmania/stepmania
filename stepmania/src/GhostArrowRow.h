@@ -22,7 +22,8 @@ public:
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
 	void Unload();
 	
-	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
+	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
+	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );
 	void SetHoldIsActive( int iCol );
 	
 protected:

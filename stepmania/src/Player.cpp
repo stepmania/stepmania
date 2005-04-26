@@ -458,9 +458,6 @@ void Player::Update( float fDeltaTime )
 					{
 						// Increase life
 						fLife = 1;
-
-						if( m_pNoteField )
-							m_pNoteField->DidHoldNote( iTrack );		// update the "electric ghost" effect
 					}
 					else
 					{
@@ -493,8 +490,9 @@ void Player::Update( float fDeltaTime )
 			{
 				fLife = 1;
 				hns = HNS_OK;
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
-					m_pNoteField->DidTapNote( iTrack, TNS_PERFECT, true );	// bright ghost flash
+					m_pNoteField->DidHoldNote( iTrack, HNS_OK, bBright );	// bright ghost flash
 			}
 
 			if( hns != HNS_NONE )
@@ -1084,11 +1082,14 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				// this is handled in Update
 				break;
 			case TapNote::hold_head_roll:
-				// Increase life
-				fLife = 1;
+				{
+					// Increase life
+					fLife = 1;
 
-				if( m_pNoteField )
-					m_pNoteField->DidTapNote( col, TNS_PERFECT, true );	// bright ghost flash
+					bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					if( m_pNoteField )
+						m_pNoteField->DidHoldNote( col, HNS_OK, bBright );
+				}
 				break;
 			default:
 				ASSERT(0);
@@ -1104,8 +1105,9 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		{
 			fLife = 1;
 			hns = HNS_OK;
+			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 			if( m_pNoteField )
-				m_pNoteField->DidTapNote( col, TNS_PERFECT, true );	// bright ghost flash
+				m_pNoteField->DidHoldNote( col, HNS_OK, bBright );
 		}
 
 		if( hns != HNS_NONE )
@@ -1203,10 +1205,11 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		}
 
 		// show the ghost arrow for this column
+		bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 		if (m_pPlayerState->m_PlayerOptions.m_fBlind)
 		{
 			if( m_pNoteField )
-				m_pNoteField->DidTapNote( c, TNS_MARVELOUS, false );
+				m_pNoteField->DidTapNote( c, TNS_MARVELOUS, bBright );
 		}
 		else
 		{

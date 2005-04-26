@@ -37,7 +37,7 @@ public:
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
-	void DidHoldNote( int iCol );
+	void DidHoldNote( int iCol, HoldNoteScore score, bool bBright );
 
 	void RefreshBeatToNoteSkin();
 

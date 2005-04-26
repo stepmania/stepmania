@@ -15,35 +15,75 @@ void GhostArrow::Load( const CString &sButton, const CString &sElement )
 		
 		CString sFullElement = sElement  + " " + sJudge;
 
-		ASSERT( !m_spr[i].IsLoaded() );	// don't double-load
+		ASSERT( !m_sprTap[i].IsLoaded() );	// don't double-load
 
-		m_spr[i].Load( NOTESKIN->GetPath(sButton, sFullElement) );
-		m_spr[i]->SetHidden( true );
-		this->AddChild( m_spr[i] );
+		m_sprTap[i].Load( NOTESKIN->GetPath(sButton, sFullElement) );
+		m_sprTap[i]->SetHidden( true );
+		this->AddChild( m_sprTap[i] );
+
+		
+		CString sCommand = Capitalize(sJudge)+"Command";
+		m_acTap[i] = NOTESKIN->GetMetricA(m_sName,sCommand);
 	}
 
-	FOREACH_TapNoteScore( i )
+	FOREACH_HoldNoteScore( i )
 	{
-		CString sJudge = TapNoteScoreToString( i );
+		CString sJudge = HoldNoteScoreToString( i );
+		
+		CString sFullElement = sElement  + " " + sJudge;
+
+		ASSERT( !m_sprHold[i].IsLoaded() );	// don't double-load
+
+		m_sprHold[i].Load( NOTESKIN->GetPath(sButton, sFullElement) );
+		m_sprHold[i]->SetHidden( true );
+		this->AddChild( m_sprHold[i] );
+
+
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_acScoreCommand[i] = NOTESKIN->GetMetricA(m_sName,sCommand);
+		m_acHold[i] = NOTESKIN->GetMetricA(m_sName,sCommand);
 	}
 }
 
-void GhostArrow::Step( TapNoteScore score )
+void GhostArrow::StepTap( TapNoteScore score )
 {
 	FOREACH_TapNoteScore( i )
 	{
 		// HACK: never hide the mine explosion
 		if( i == TNS_HIT_MINE )
 			continue;
-		m_spr[i]->StopTweening();
-		m_spr[i]->SetHidden( true );
+		m_sprTap[i]->StopTweening();
+		m_sprTap[i]->SetHidden( true );
+	}
+	FOREACH_HoldNoteScore( i )
+	{
+		m_sprHold[i]->StopTweening();
+		m_sprHold[i]->SetHidden( true );
 	}
 
-	m_spr[score]->SetHidden( false );
-	m_spr[score]->StopTweening();
-	m_spr[score]->RunCommands( m_acScoreCommand[score] );
+	m_sprTap[score]->SetHidden( false );
+	m_sprTap[score]->StopTweening();
+	m_sprTap[score]->RunCommands( m_acTap[score] );
+}
+
+void GhostArrow::StepHold( HoldNoteScore score )
+{
+	FOREACH_TapNoteScore( i )
+	{
+		// HACK: never hide the mine explosion
+		if( i == TNS_HIT_MINE )
+			continue;
+		m_sprTap[i]->StopTweening();
+		m_sprTap[i]->SetHidden( true );
+	}
+	FOREACH_HoldNoteScore( i )
+	{
+		m_sprHold[i]->StopTweening();
+		m_sprHold[i]->SetHidden( true );
+	}
+
+	m_sprHold[score]->SetHidden( false );
+	m_sprHold[score]->StopTweening();
+	m_sprHold[score]->RunCommands( m_acHold[score] );
 }
 
 /*

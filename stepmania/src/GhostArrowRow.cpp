@@ -114,13 +114,22 @@ void GhostArrowRow::DrawPrimitives()
 }
 
 
-void GhostArrowRow::DidTapNote( int iCol, TapNoteScore score, bool bBright )
+void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
 	if( bBright )
-		m_GhostBright[iCol]->Step( score );
+		m_GhostBright[iCol]->StepTap( tns );
 	else
-		m_GhostDim[iCol]->Step( score );
+		m_GhostDim[iCol]->StepTap( tns );
+}
+
+void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
+{
+	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
+	if( bBright )
+		m_GhostBright[iCol]->StepHold( hns );
+	else
+		m_GhostDim[iCol]->StepHold( hns );
 }
 
 void GhostArrowRow::SetHoldIsActive( int iCol )
