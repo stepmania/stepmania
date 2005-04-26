@@ -156,7 +156,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
 	{
 		const Trail* pTrail = vpCoursesInOut[i]->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
-		course_sort_val[vpCoursesInOut[i]] = pTrail != NULL? (float) pTrail->GetMeter(): 0.0f;
+		course_sort_val[vpCoursesInOut[i]] = ssprintf("%09.3f", pTrail != NULL? (float) pTrail->GetMeter(): 0.0f);
 	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
@@ -177,7 +177,7 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
-		course_sort_val[vpCoursesInOut[i]] = (float) pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]);
+		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]) );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
 	course_sort_val.clear();
 }
