@@ -202,6 +202,104 @@ public:
 	}
 };
 
+/* Like ThemeMetric, but evaluates Lua expressions each time.  This is fast,
+ * since we only compile the expression once, but not as fast as ThemeMetric. */
+template <class T>
+class DynamicThemeMetric : public IThemeMetric
+{
+private:
+	CString		m_sGroup;
+	CString		m_sName;
+	mutable T	m_currentValue;
+	bool		m_bIsLoaded;
+	LuaExpression m_Expr;
+
+public:
+	/* Initializing with no group and name is allowed; if you do this, you must
+	 * call Load() to set them.  This is done to allow initializing cached metrics
+	 * in one place for classes that don't receive their m_sName in the constructor
+	 * (everything except screens). */
+	DynamicThemeMetric( const CString& sGroup = "", const CString& sName = "" ):
+		m_sGroup( sGroup ),
+		m_sName( sName ),
+		m_bIsLoaded( false )
+	{
+		m_currentValue = T();
+		ThemeManager::Subscribe( this );
+	}
+
+	DynamicThemeMetric( const ThemeMetric<T> &cpy ):
+		IThemeMetric( cpy ),
+		m_sGroup( cpy.m_sGroup ),
+		m_sName( cpy.m_sName ),
+		m_currentValue( cpy.m_currentValue ),
+		m_bIsLoaded( cpy.m_bIsLoaded ),
+		m_Expr( cpy.m_Expr )
+	{
+		ThemeManager::Subscribe( this );
+	}
+	
+	~DynamicThemeMetric()
+	{
+		ThemeManager::Unsubscribe( this );
+	}
+
+	void Load( const CString &sGroup, const CString& sName )
+	{
+		m_sGroup = sGroup;
+		m_sName = sName;
+		Read();
+	}
+
+	void ChangeGroup( const CString &sGroup )
+	{
+		m_sGroup = sGroup;
+		Read();
+	}
+
+	void Read()
+	{
+		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
+		{
+			CString sExpression;
+			THEME->GetMetric( m_sGroup, m_sName, sExpression );
+			m_Expr.SetFromExpression( "function() return " + sExpression + " end" );
+
+			m_bIsLoaded = true;
+		}
+	}
+
+	const T& GetValue() const
+	{
+		ASSERT( m_sName != "" );
+		ASSERT( m_bIsLoaded );
+
+		// function
+		m_Expr.PushSelf( LUA->L );
+		ASSERT( !lua_isnil(LUA->L, -1) );
+
+		// call function with 0 arguments and 1 result
+		lua_call(LUA->L, 0, 1); 
+
+		LuaHelpers::FromStack( m_currentValue, -1, LUA->L );
+		return m_currentValue;
+	}
+	
+	operator const T& () const
+	{
+		return GetValue();
+	}
+
+	bool IsLoaded() const	{ return m_bIsLoaded; }
+
+	//Hacks for VC6 for all boolean operators.
+	bool operator ! () const { return !GetValue(); }
+	bool operator && ( const T& input ) const { return GetValue() && input; }
+	bool operator || ( const T& input ) const { return GetValue() || input; }
+	bool operator == ( const T& input ) const { return GetValue() == input; }
+};
+
+
 #endif
 
 /*
