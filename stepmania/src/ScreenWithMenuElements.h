@@ -32,7 +32,7 @@ public:
 
 protected:
 	virtual void StartPlayingMusic();
-	void LoadHelpText();
+	virtual void LoadHelpText();
 
 	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
