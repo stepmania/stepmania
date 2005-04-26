@@ -268,10 +268,7 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 {
 	ASSERT( pn >= 0 && pn<NUM_PLAYERS );
 
-	if( m_sProfileDir[pn].empty() )
-		return NULL;
-	else
-		return &m_Profile[pn];
+	return &m_Profile[pn];
 }
 
 CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
