@@ -130,13 +130,6 @@ Grade PlayerStageStats::GetGrade() const
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
 	 * is tricky since at that point the ScoreKeepers no longer exist. */
-	float fPossible = 0;
-	FOREACH_CONST( Steps*, vpPossibleSteps, s )
-	{
-		fPossible += (*s)->GetRadarValues().m_Values.v.fNumTapsAndHolds * PREFSMAN->m_iGradeWeightMarvelous;
-		fPossible += (*s)->GetRadarValues().m_Values.v.fNumHolds * PREFSMAN->m_iGradeWeightOK;
-	}
-
 	float fActual = 0;
 	FOREACH_TapNoteScore( tns )
 	{
@@ -170,10 +163,10 @@ Grade PlayerStageStats::GetGrade() const
 		fActual += iHoldNoteScores[hns] * iHoldScoreValue;
 	}
 
-	LOG->Trace( "GetGrade: fActual: %f, fPossible: %f", fActual, fPossible );
+	LOG->Trace( "GetGrade: fActual: %f, fPossible: %d", fActual, iPossibleDancePoints );
 
 
-	float fPercent = (fPossible == 0) ? 0 : fActual / fPossible;
+	float fPercent = (iPossibleDancePoints == 0) ? 0 : fActual / iPossibleDancePoints;
 
 	Grade grade = GetGradeFromPercent( fPercent );
 
