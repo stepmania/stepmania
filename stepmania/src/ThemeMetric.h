@@ -6,6 +6,7 @@
 #include "ThemeManager.h"
 #include <map>
 #include "Foreach.h"
+#include "LuaManager.h"
 
 class IThemeMetric
 {
