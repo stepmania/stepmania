@@ -1302,8 +1302,12 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 {
 	LOG->Trace( "MusicWheel::Select()" );
 
-	if( m_WheelState == STATE_ROULETTE_SLOWING_DOWN )
+	switch( m_WheelState )
+	{
+	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
+	case STATE_ROULETTE_SLOWING_DOWN:
 		return false;
+	}
 
 	m_Moving = 0;
 
