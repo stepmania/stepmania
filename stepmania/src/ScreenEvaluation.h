@@ -78,10 +78,10 @@ protected:
 
 	// graph area
 	AutoActor			m_sprGraphFrame[NUM_PLAYERS];
-	GraphDisplay		m_Graph[NUM_PLAYERS];
+	GraphDisplay		m_LifeGraph[NUM_PLAYERS];
 
 	// combo area
-	ComboGraph			m_Combo[NUM_PLAYERS];
+	ComboGraph			m_ComboGraph[NUM_PLAYERS];
 
 	// points area
 	bool				m_bNewSongsUnlocked;

@@ -453,11 +453,11 @@ void ScreenEvaluation::Init()
 			SET_XY_AND_ON_COMMAND( m_sprGraphFrame[p] );
 			this->AddChild( m_sprGraphFrame[p] );
 
-			m_Graph[p].SetName( ssprintf("GraphP%i",p+1) );
-			m_Graph[p].Load( THEME->GetPathG(m_sName,ssprintf("graph p%i", p+1)), GRAPH_START_HEIGHT );
-			m_Graph[p].LoadFromStageStats( stageStats, stageStats.m_player[p] );
-			SET_XY_AND_ON_COMMAND( m_Graph[p] );
-			this->AddChild( &m_Graph[p] );
+			m_LifeGraph[p].SetName( ssprintf("LifeGraphP%i",p+1) );
+			m_LifeGraph[p].Load( THEME->GetPathG(m_sName,ssprintf("LifeGraph p%i", p+1)), GRAPH_START_HEIGHT );
+			m_LifeGraph[p].LoadFromStageStats( stageStats, stageStats.m_player[p] );
+			SET_XY_AND_ON_COMMAND( m_LifeGraph[p] );
+			this->AddChild( &m_LifeGraph[p] );
 		}
 	}
 
@@ -465,11 +465,11 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_Combo[p].SetName( m_sName, ssprintf("ComboP%i",p+1) );
-			m_Combo[p].Load( m_sName, ssprintf("combo p%i",p+1), stageStats, stageStats.m_player[p] );
-			SET_XY_AND_ON_COMMAND( m_Combo[p] );
+			m_ComboGraph[p].SetName( m_sName, ssprintf("ComboGraphP%i",p+1) );
+			m_ComboGraph[p].Load( m_sName, ssprintf("ComboGraph p%i",p+1), stageStats, stageStats.m_player[p] );
+			SET_XY_AND_ON_COMMAND( m_ComboGraph[p] );
 
-			this->AddChild( &m_Combo[p] );
+			this->AddChild( &m_ComboGraph[p] );
 		}
 	}
 
@@ -1146,7 +1146,7 @@ void ScreenEvaluation::TweenOffScreen()
 		FOREACH_EnabledPlayer( p ) 
 		{
 			OFF_COMMAND( m_sprGraphFrame[p] );
-			OFF_COMMAND( m_Graph[p] );
+			OFF_COMMAND( m_LifeGraph[p] );
 		}
 	}
 
@@ -1154,7 +1154,7 @@ void ScreenEvaluation::TweenOffScreen()
 	{
 		FOREACH_EnabledPlayer( p ) 
 		{
-			OFF_COMMAND( m_Combo[p] );
+			OFF_COMMAND( m_ComboGraph[p] );
 		}
 	}
 
