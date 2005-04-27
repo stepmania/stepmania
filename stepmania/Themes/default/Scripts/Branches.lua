@@ -103,6 +103,14 @@ function OptionsMenuAvailable()
 	return true
 end
 
+function ModeMenuAvailable()
+	local PickExtraStage = PREFSMAN:GetPreference( "PickExtraStage" )
+	if (GAMESTATE:IsExtraStage() and not PickExtraStage) or GAMESTATE:IsExtraStage2() then
+		return false
+	end
+	return true
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
