@@ -227,8 +227,9 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 		m_iMissCombo++;
 		/* Increase by m_iRegenComboAfterMiss; never push it beyond m_iMaxRegenComboAfterMiss
 		 * but don't reduce it if it's already past. */
-		const int NewComboToRegainLife = min( PREFSMAN->m_iMaxRegenComboAfterMiss,
-				m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterMiss );
+		const int NewComboToRegainLife = min( 
+			(int)PREFSMAN->m_iMaxRegenComboAfterMiss,
+			m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterMiss );
 		m_iComboToRegainLife = max( m_iComboToRegainLife, NewComboToRegainLife );
 	}
 
@@ -248,13 +249,13 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	// check if this step would cause a fail
-	if( m_fLifePercentage + fDeltaLife <= FAIL_THRESHOLD 
-		&& m_fLifePercentage > FAIL_THRESHOLD )
+	if( m_fLifePercentage + fDeltaLife <= FAIL_THRESHOLD  &&  m_fLifePercentage > FAIL_THRESHOLD )
 	{
 		/* Increase by m_iRegenComboAfterFail; never push it beyond m_iMaxRegenComboAfterFail
 		 * but don't reduce it if it's already past. */
-		const int NewComboToRegainLife = min( PREFSMAN->m_iMaxRegenComboAfterFail,
-				m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterFail );
+		const int NewComboToRegainLife = min( 
+			(int)PREFSMAN->m_iMaxRegenComboAfterFail,
+			m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterFail );
 		m_iComboToRegainLife = max( m_iComboToRegainLife, NewComboToRegainLife );
 	}
 	

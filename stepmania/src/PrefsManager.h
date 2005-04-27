@@ -79,84 +79,87 @@ public:
 	Preference<float>	m_fLifeDeltaPercentChangeNG;
 
 	// tug meter used in rave
-	float			m_fTugMeterPercentChangeMarvelous;
-	float			m_fTugMeterPercentChangePerfect;
-	float			m_fTugMeterPercentChangeGreat;
-	float			m_fTugMeterPercentChangeGood;
-	float			m_fTugMeterPercentChangeBoo;
-	float			m_fTugMeterPercentChangeMiss;
-	float			m_fTugMeterPercentChangeHitMine;
-	float			m_fTugMeterPercentChangeOK;
-	float			m_fTugMeterPercentChangeNG;
+	Preference<float>	m_fTugMeterPercentChangeMarvelous;
+	Preference<float>	m_fTugMeterPercentChangePerfect;
+	Preference<float>	m_fTugMeterPercentChangeGreat;
+	Preference<float>	m_fTugMeterPercentChangeGood;
+	Preference<float>	m_fTugMeterPercentChangeBoo;
+	Preference<float>	m_fTugMeterPercentChangeMiss;
+	Preference<float>	m_fTugMeterPercentChangeHitMine;
+	Preference<float>	m_fTugMeterPercentChangeOK;
+	Preference<float>	m_fTugMeterPercentChangeNG;
 	
 	// Whoever added these: Please add a comment saying what they do. -Chris
-	int				m_iRegenComboAfterFail;
-	int				m_iRegenComboAfterMiss;
-	int				m_iMaxRegenComboAfterFail;
-	int				m_iMaxRegenComboAfterMiss;
-	bool			m_bTwoPlayerRecovery;
-	bool			m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
-	bool			m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
-	bool			m_bFailOffInBeginner;
-	bool			m_bFailOffForFirstStageEasy;
+	Preference<int>		m_iRegenComboAfterFail;
+	Preference<int>		m_iRegenComboAfterMiss;
+	Preference<int>		m_iMaxRegenComboAfterFail;
+	Preference<int>		m_iMaxRegenComboAfterMiss;
+	Preference<bool>	m_bTwoPlayerRecovery;
+	Preference<bool>	m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
+	Preference<bool>	m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
+	Preference<bool>	m_bFailOffInBeginner;
+	Preference<bool>	m_bFailOffForFirstStageEasy;
 
 	// percent score (the number that is shown on the screen and saved to memory card)
-	int				m_iPercentScoreWeightMarvelous;
-	int				m_iPercentScoreWeightPerfect;
-	int				m_iPercentScoreWeightGreat;
-	int				m_iPercentScoreWeightGood;
-	int				m_iPercentScoreWeightBoo;
-	int				m_iPercentScoreWeightMiss;
-	int				m_iPercentScoreWeightHitMine;
-	int				m_iPercentScoreWeightOK;
-	int				m_iPercentScoreWeightNG;
+	Preference<int>		m_iPercentScoreWeightMarvelous;
+	Preference<int>		m_iPercentScoreWeightPerfect;
+	Preference<int>		m_iPercentScoreWeightGreat;
+	Preference<int>		m_iPercentScoreWeightGood;
+	Preference<int>		m_iPercentScoreWeightBoo;
+	Preference<int>		m_iPercentScoreWeightMiss;
+	Preference<int>		m_iPercentScoreWeightHitMine;
+	Preference<int>		m_iPercentScoreWeightOK;
+	Preference<int>		m_iPercentScoreWeightNG;
 
 	// grades are calculated based on a percentage, but might have different weights than the percent score
-	int				m_iGradeWeightMarvelous;
-	int				m_iGradeWeightPerfect;
-	int				m_iGradeWeightGreat;
-	int				m_iGradeWeightGood;
-	int				m_iGradeWeightBoo;
-	int				m_iGradeWeightMiss;
-	int				m_iGradeWeightHitMine;
-	int				m_iGradeWeightOK;
-	int				m_iGradeWeightNG;
+	Preference<int>		m_iGradeWeightMarvelous;
+	Preference<int>		m_iGradeWeightPerfect;
+	Preference<int>		m_iGradeWeightGreat;
+	Preference<int>		m_iGradeWeightGood;
+	Preference<int>		m_iGradeWeightBoo;
+	Preference<int>		m_iGradeWeightMiss;
+	Preference<int>		m_iGradeWeightHitMine;
+	Preference<int>		m_iGradeWeightOK;
+	Preference<int>		m_iGradeWeightNG;
 
 	// super meter used in rave
-	float			m_fSuperMeterPercentChangeMarvelous;
-	float			m_fSuperMeterPercentChangePerfect;
-	float			m_fSuperMeterPercentChangeGreat;
-	float			m_fSuperMeterPercentChangeGood;
-	float			m_fSuperMeterPercentChangeBoo;
-	float			m_fSuperMeterPercentChangeMiss;
-	float			m_fSuperMeterPercentChangeHitMine;
-	float			m_fSuperMeterPercentChangeOK;
-	float			m_fSuperMeterPercentChangeNG;
-	bool			m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
+	Preference<float>	m_fSuperMeterPercentChangeMarvelous;
+	Preference<float>	m_fSuperMeterPercentChangePerfect;
+	Preference<float>	m_fSuperMeterPercentChangeGreat;
+	Preference<float>	m_fSuperMeterPercentChangeGood;
+	Preference<float>	m_fSuperMeterPercentChangeBoo;
+	Preference<float>	m_fSuperMeterPercentChangeMiss;
+	Preference<float>	m_fSuperMeterPercentChangeHitMine;
+	Preference<float>	m_fSuperMeterPercentChangeOK;
+	Preference<float>	m_fSuperMeterPercentChangeNG;
+	Preference<float>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
 	// time meter used in survival
-	float			m_fTimeMeterSecondsChangeMarvelous;
-	float			m_fTimeMeterSecondsChangePerfect;
-	float			m_fTimeMeterSecondsChangeGreat;
-	float			m_fTimeMeterSecondsChangeGood;
-	float			m_fTimeMeterSecondsChangeBoo;
-	float			m_fTimeMeterSecondsChangeMiss;
-	float			m_fTimeMeterSecondsChangeHitMine;
-	float			m_fTimeMeterSecondsChangeOK;
-	float			m_fTimeMeterSecondsChangeNG;
+	Preference<float>	m_fTimeMeterSecondsChangeMarvelous;
+	Preference<float>	m_fTimeMeterSecondsChangePerfect;
+	Preference<float>	m_fTimeMeterSecondsChangeGreat;
+	Preference<float>	m_fTimeMeterSecondsChangeGood;
+	Preference<float>	m_fTimeMeterSecondsChangeBoo;
+	Preference<float>	m_fTimeMeterSecondsChangeMiss;
+	Preference<float>	m_fTimeMeterSecondsChangeHitMine;
+	Preference<float>	m_fTimeMeterSecondsChangeOK;
+	Preference<float>	m_fTimeMeterSecondsChangeNG;
 
-	bool			m_bAutoPlay;
-	bool			m_bDelayedBack;
-	bool			m_bShowInstructions, m_bShowSelectGroup;
+	Preference<bool>	m_bAutoPlay;
+	Preference<bool>	m_bDelayedBack;
+	Preference<bool>	m_bShowInstructions;
+	Preference<bool>	m_bShowSelectGroup;
 	Preference<bool>	m_bShowCaution;
-	bool			m_bShowNativeLanguage;
-	bool			m_bArcadeOptionsNavigation;
-	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
-	int				m_iMusicWheelSwitchSpeed;
-	bool			m_bEasterEggs;
-	int 			m_iMarvelousTiming;
+	Preference<bool>	m_bShowNativeLanguage;
+	Preference<bool>	m_bArcadeOptionsNavigation;
+	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY };
+	Preference<int>		m_MusicWheelUsesSections;
+	Preference<int>		m_iMusicWheelSwitchSpeed;
+	Preference<bool>	m_bEasterEggs;
+	enum MarvelousTiming { MARVELOUS_NEVER, MARVELOUS_COURSES_ONLY, MARVELOUS_EVERYWHERE };
+	Preference<int>		m_iMarvelousTiming;
 	Preference<bool>	m_bEventMode;
-	int				m_iCoinsPerCredit;
+	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iNumArcadeStages;
 
 	// These options have weird interactions depending on m_bEventMode, 

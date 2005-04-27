@@ -1321,14 +1321,13 @@ SongOptions::FailType GameState::GetPlayerFailType( PlayerNumber pn ) const
 
 bool GameState::ShowMarvelous() const
 {
-	if (PREFSMAN->m_iMarvelousTiming == 2)
-		return true;
-
-	if (PREFSMAN->m_iMarvelousTiming == 1)
-		if (IsCourseMode())
-			return true;
-
-	return false;
+	switch( PREFSMAN->m_iMarvelousTiming )
+	{
+	case PrefsManager::MARVELOUS_NEVER:			return false;
+	case PrefsManager::MARVELOUS_COURSES_ONLY:	return IsCourseMode();
+	case PrefsManager::MARVELOUS_EVERYWHERE:	return true;
+	default:	ASSERT(0);
+	}
 }
 
 void GameState::GetCharacters( vector<Character*> &apCharactersOut )

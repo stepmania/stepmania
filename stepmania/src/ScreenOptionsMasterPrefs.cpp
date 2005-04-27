@@ -73,8 +73,8 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
 }
 
 /*
- * MoveMap for a generic preference.  We don't know its type, but MoveMap is only used on numeric
- * values, so pretend it's a float.
+ * MoveMap for a generic preference.  
+ * TODO: make this templated.
  */
 static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const float *mapping, unsigned cnt )
 {
@@ -88,6 +88,21 @@ static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const float *ma
 	} else {
 		/* sel -> opt */
 		CString sStr = ssprintf( "%f", mapping[sel] );
+		pOption.FromString( sStr );
+	}
+}
+static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const int *mapping, unsigned cnt )
+{
+	if( ToSel )
+	{
+		/* opt -> sel.  Find the closest entry in mapping. */
+		CString sStr = pOption.ToString();
+		int iValue = atoi( sStr );
+			
+		sel = FindClosestEntry( iValue, mapping, cnt );
+	} else {
+		/* sel -> opt */
+		CString sStr = ssprintf( "%i", mapping[sel] );
 		pOption.FromString( sStr );
 	}
 }
@@ -305,7 +320,7 @@ MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
-	MoveMap( sel, PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, (int&)PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Gameplay options */
@@ -317,7 +332,7 @@ MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
 static void MarvelousTiming( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 0, 1, 2 };
+	const int mapping[] = { PrefsManager::MARVELOUS_NEVER, PrefsManager::MARVELOUS_COURSES_ONLY, PrefsManager::MARVELOUS_EVERYWHERE };
 	MoveMap( sel, PREFSMAN->m_iMarvelousTiming, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 

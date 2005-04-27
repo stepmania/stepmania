@@ -77,18 +77,18 @@ PrefsManager::PrefsManager() :
 	),
 	m_bShowBanners			( Options, "ShowBanners",			true ),
 
-	m_iBackgroundMode		( Options, "BackgroundMode",			BGMODE_ANIMATIONS ),
-	m_iNumBackgrounds		( Options, "NumBackgrounds",			8 ),
+	m_iBackgroundMode		( Options, "BackgroundMode",		BGMODE_ANIMATIONS ),
+	m_iNumBackgrounds		( Options, "NumBackgrounds",		8 ),
 	m_fBGBrightness			( Options, "BGBrightness",			0.8f ),
 	m_bHiddenSongs			( Options, "HiddenSongs",			false ),	/* I'd rather get occasional people asking for support for this even though it's already here than lots of people asking why songs aren't being displayed. */
 	m_bVsync				( Options, "Vsync",					true ),
-	m_bInterlaced			( Options, "Interlaced",				false ),
+	m_bInterlaced			( Options, "Interlaced",			false ),
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 	m_bPAL					( Options, "PAL",					false ),
 	m_bDelayedTextureDelete	( Options, "DelayedTextureDelete",	true ),
-	m_bTexturePreload		( Options, "TexturePreload",			false ),
+	m_bTexturePreload		( Options, "TexturePreload",		false ),
 	m_bDelayedScreenLoad	( Options, "DelayedScreenLoad",		false ),
-	m_bDelayedModelDelete	( Options, "DelayedModelDelete",		false ),
+	m_bDelayedModelDelete	( Options, "DelayedModelDelete",	false ),
 	m_iBannerCache			( Options, "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( Options, "PalettedBannerCache",	false ),
 	m_bFastLoad				( Options, "FastLoad",				true ),
@@ -98,31 +98,104 @@ PrefsManager::PrefsManager() :
 	m_bShowDanger				( Options, "ShowDanger",					true ),
 
 	m_fJudgeWindowScale				( Options, "JudgeWindowScale",				1.0f ),
-	m_fJudgeWindowAdd				( Options, "JudgeWindowAdd",					0 ),
+	m_fJudgeWindowAdd				( Options, "JudgeWindowAdd",				0 ),
 	m_fJudgeWindowSecondsMarvelous	( Options, "JudgeWindowSecondsMarvelous",	0.0225f ),
 	m_fJudgeWindowSecondsPerfect	( Options, "JudgeWindowSecondsPerfect",		0.045f ),
 	m_fJudgeWindowSecondsGreat		( Options, "JudgeWindowSecondsGreat",		0.090f ),
-	m_fJudgeWindowSecondsGood		( Options, "JudgeWindowSecondsGood",			0.135f ),
+	m_fJudgeWindowSecondsGood		( Options, "JudgeWindowSecondsGood",		0.135f ),
 	m_fJudgeWindowSecondsBoo		( Options, "JudgeWindowSecondsBoo",			0.180f ),
 	m_fJudgeWindowSecondsOK			( Options, "JudgeWindowSecondsOK",			0.250f ),	// allow enough time to take foot off and put back on
 	m_fJudgeWindowSecondsRoll		( Options, "JudgeWindowSecondsRoll",		0.350f ),
-	m_fJudgeWindowSecondsMine		( Options, "JudgeWindowSecondsMine",			0.090f ),	// same as great
+	m_fJudgeWindowSecondsMine		( Options, "JudgeWindowSecondsMine",		0.090f ),	// same as great
 	m_fJudgeWindowSecondsAttack		( Options, "JudgeWindowSecondsAttack",		0.135f ),
 
 	m_fLifeDifficultyScale				( Options, "LifeDifficultyScale",				1.0f ),
 	m_fLifeDeltaPercentChangeMarvelous	( Options, "LifeDeltaPercentChangeMarvelous",	+0.008f ),
 	m_fLifeDeltaPercentChangePerfect	( Options, "LifeDeltaPercentChangePerfect",		+0.008f ),
 	m_fLifeDeltaPercentChangeGreat		( Options, "LifeDeltaPercentChangeGreat",		+0.004f ),
-	m_fLifeDeltaPercentChangeGood		( Options, "LifeDeltaPercentChangeGood",			+0.000f ),
+	m_fLifeDeltaPercentChangeGood		( Options, "LifeDeltaPercentChangeGood",		+0.000f ),
 	m_fLifeDeltaPercentChangeBoo		( Options, "LifeDeltaPercentChangeBoo",			-0.040f ),
-	m_fLifeDeltaPercentChangeMiss		( Options, "LifeDeltaPercentChangeMiss",			-0.080f ),
+	m_fLifeDeltaPercentChangeMiss		( Options, "LifeDeltaPercentChangeMiss",		-0.080f ),
 	m_fLifeDeltaPercentChangeHitMine	( Options, "LifeDeltaPercentChangeHitMine",		-0.160f ),
 	m_fLifeDeltaPercentChangeOK			( Options, "LifeDeltaPercentChangeOK",			+0.008f ),
 	m_fLifeDeltaPercentChangeNG			( Options, "LifeDeltaPercentChangeNG",			-0.080f ),
-	m_bShowCaution						( Options, "ShowCaution", true ),
-	m_bEventMode						( Options, "EventMode", false ),
-	m_iNumArcadeStages					( Options, "SongsPerPlay", 3 ),
-	m_fGlobalOffsetSeconds				( Options, "GlobalOffsetSeconds", 0 )
+
+	m_fTugMeterPercentChangeMarvelous	( Options, "TugMeterPercentChangeMarvelous",	+0.010f ),
+	m_fTugMeterPercentChangePerfect		( Options, "TugMeterPercentChangePerfect",		+0.008f ),
+	m_fTugMeterPercentChangeGreat		( Options, "TugMeterPercentChangeGreat",		+0.004f ),
+	m_fTugMeterPercentChangeGood		( Options, "TugMeterPercentChangeGood",			+0.000f ),
+	m_fTugMeterPercentChangeBoo			( Options, "TugMeterPercentChangeBoo",			-0.010f ),
+	m_fTugMeterPercentChangeMiss		( Options, "TugMeterPercentChangeMiss",			-0.020f ),
+	m_fTugMeterPercentChangeHitMine		( Options, "TugMeterPercentChangeHitMine",		-0.040f ),
+	m_fTugMeterPercentChangeOK			( Options, "TugMeterPercentChangeOK",			+0.008f ),
+	m_fTugMeterPercentChangeNG			( Options, "TugMeterPercentChangeNG",			-0.020f ),
+
+	m_iRegenComboAfterFail			( Options, "RegenComboAfterFail",			10 ),
+	m_iRegenComboAfterMiss			( Options, "RegenComboAfterMiss",			5 ),
+	m_iMaxRegenComboAfterFail		( Options, "MaxRegenComboAfterFail",		10 ),
+	m_iMaxRegenComboAfterMiss		( Options, "MaxRegenComboAfterMiss",		10 ),
+	m_bTwoPlayerRecovery			( Options, "TwoPlayerRecovery",				true ),
+	m_bMercifulDrain				( Options, "MercifulDrain",					true ),	// negative life deltas are scaled by the players life percentage
+	m_bMinimum1FullSongInCourses	( Options, "Minimum1FullSongInCourses",		false ),	// FEoS for 1st song, FailImmediate thereafter
+	m_bFailOffInBeginner			( Options, "FailOffInBeginner",				false ),
+	m_bFailOffForFirstStageEasy		( Options, "FailOffForFirstStageEasy",		false ),
+	
+	m_iPercentScoreWeightMarvelous	( Options, "PercentScoreWeightMarvelous",	3 ),
+	m_iPercentScoreWeightPerfect	( Options, "PercentScoreWeightPerfect",		2 ),
+	m_iPercentScoreWeightGreat		( Options, "PercentScoreWeightGreat",		1 ),
+	m_iPercentScoreWeightGood		( Options, "PercentScoreWeightGood",		0 ),
+	m_iPercentScoreWeightBoo		( Options, "PercentScoreWeightBoo",			0 ),
+	m_iPercentScoreWeightMiss		( Options, "PercentScoreWeightMiss",		0 ),
+	m_iPercentScoreWeightOK			( Options, "PercentScoreWeightOK",			3 ),
+	m_iPercentScoreWeightNG			( Options, "PercentScoreWeightNG",			0 ),
+	m_iPercentScoreWeightHitMine	( Options, "PercentScoreWeightHitMine",		-2 ),
+	
+	m_iGradeWeightMarvelous		( Options, "GradeWeightMarvelous",	2 ),
+	m_iGradeWeightPerfect		( Options, "GradeWeightPerfect",	2 ),
+	m_iGradeWeightGreat			( Options, "GradeWeightGreat",		1 ),
+	m_iGradeWeightGood			( Options, "GradeWeightGood",		0 ),
+	m_iGradeWeightBoo			( Options, "GradeWeightBoo",		-4 ),
+	m_iGradeWeightMiss			( Options, "GradeWeightMiss",		-8 ),
+	m_iGradeWeightHitMine		( Options, "GradeWeightHitMine",	-8 ),
+	m_iGradeWeightOK			( Options, "GradeWeightOK",			6 ),
+	m_iGradeWeightNG			( Options, "GradeWeightNG",			0 ),
+
+	m_fSuperMeterPercentChangeMarvelous	( Options, "SuperMeterPercentChangeMarvelous",	+0.05f ),
+	m_fSuperMeterPercentChangePerfect	( Options, "SuperMeterPercentChangePerfect",	+0.04f ),
+	m_fSuperMeterPercentChangeGreat		( Options, "SuperMeterPercentChangeGreat",		+0.02f ),
+	m_fSuperMeterPercentChangeGood		( Options, "SuperMeterPercentChangeGood",		+0.00f ),
+	m_fSuperMeterPercentChangeBoo		( Options, "SuperMeterPercentChangeBoo",		-0.00f ),
+	m_fSuperMeterPercentChangeMiss		( Options, "SuperMeterPercentChangeMiss",		-0.20f ),
+	m_fSuperMeterPercentChangeHitMine	( Options, "SuperMeterPercentChangeHitMine",	-0.40f ),
+	m_fSuperMeterPercentChangeOK		( Options, "SuperMeterPercentChangeOK",			+0.04f ),
+	m_fSuperMeterPercentChangeNG		( Options, "SuperMeterPercentChangeNG",			-0.20f ),
+	m_bMercifulSuperMeter				( Options, "MercifulSuperMeter",				true ),
+	
+	m_fTimeMeterSecondsChangeMarvelous	( Options, "TimeMeterSecondsChangeMarvelous",	-0.0f ),
+	m_fTimeMeterSecondsChangePerfect	( Options, "TimeMeterSecondsChangePerfect",		-0.25f ),
+	m_fTimeMeterSecondsChangeGreat		( Options, "TimeMeterSecondsChangeGreat",		-0.5f ),
+	m_fTimeMeterSecondsChangeGood		( Options, "TimeMeterSecondsChangeGood",		-1.0f ),
+	m_fTimeMeterSecondsChangeBoo		( Options, "TimeMeterSecondsChangeBoo",			-2.0f ),
+	m_fTimeMeterSecondsChangeMiss		( Options, "TimeMeterSecondsChangeMiss",		-4.0f ),
+	m_fTimeMeterSecondsChangeHitMine	( Options, "TimeMeterSecondsChangeHitMine",		-2.0f ),
+	m_fTimeMeterSecondsChangeOK			( Options, "TimeMeterSecondsChangeOK",			-0.0f ),
+	m_fTimeMeterSecondsChangeNG			( Options, "TimeMeterSecondsChangeNG",			-4.0f ),
+
+	m_bAutoPlay					( Options, "AutoPlay",					false ),
+	m_bDelayedBack				( Options, "DelayedBack",				true ),
+	m_bShowInstructions			( Options, "ShowInstructions",			true ),
+	m_bShowCaution				( Options, "ShowCaution",				true ),
+	m_bShowSelectGroup			( Options, "ShowSelectGroup",			true ),
+	m_bShowNativeLanguage		( Options, "ShowNativeLanguage",		true ),
+	m_bArcadeOptionsNavigation	( Options, "ArcadeOptionsNavigation",	false ),
+	m_MusicWheelUsesSections	( Options, "MusicWheelUsesSections",	ALWAYS ),
+	m_iMusicWheelSwitchSpeed	( Options, "MusicWheelSwitchSpeed",		10 ),
+	m_bEasterEggs				( Options, "EasterEggs",				true ),
+	m_iMarvelousTiming			( Options, "MarvelousTiming",			MARVELOUS_EVERYWHERE ),
+	m_bEventMode				( Options, "EventMode",					false ),
+	m_iCoinsPerCredit			( Options, "CoinsPerCredit",			1 ),
+	m_iNumArcadeStages			( Options, "SongsPerPlay",				3 ),
+	m_fGlobalOffsetSeconds		( Options, "GlobalOffsetSeconds",		0 )
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -131,81 +204,10 @@ PrefsManager::PrefsManager() :
 void PrefsManager::Init()
 {
 	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
-	m_fConstantUpdateDeltaSeconds = 0;
-	m_bAutoPlay = false;
-
-	m_fTugMeterPercentChangeMarvelous =		+0.010f;
-	m_fTugMeterPercentChangePerfect =		+0.008f;
-	m_fTugMeterPercentChangeGreat =			+0.004f;
-	m_fTugMeterPercentChangeGood =			+0.000f;
-	m_fTugMeterPercentChangeBoo =			-0.010f;
-	m_fTugMeterPercentChangeMiss =			-0.020f;
-	m_fTugMeterPercentChangeHitMine =		-0.040f;
-	m_fTugMeterPercentChangeOK =			+0.008f;
-	m_fTugMeterPercentChangeNG =			-0.020f;
-
-	m_iRegenComboAfterFail = 10; // cumulative
-	m_iRegenComboAfterMiss = 5; // cumulative
-	m_iMaxRegenComboAfterFail = 10;
-	m_iMaxRegenComboAfterMiss = 10;
-	m_bTwoPlayerRecovery = true;
-	m_bMercifulDrain = true;
-	m_bMinimum1FullSongInCourses = false;
-	m_bFailOffInBeginner = false;
-	m_bFailOffForFirstStageEasy = false;
+	m_fConstantUpdateDeltaSeconds = 0;	
 	
-	m_iPercentScoreWeightMarvelous = 3;
-	m_iPercentScoreWeightPerfect = 2;
-	m_iPercentScoreWeightGreat = 1;
-	m_iPercentScoreWeightGood = 0;
-	m_iPercentScoreWeightBoo = 0;
-	m_iPercentScoreWeightMiss = 0;
-	m_iPercentScoreWeightOK = 3;
-	m_iPercentScoreWeightNG = 0;
-	m_iPercentScoreWeightHitMine = -2;
-	m_iGradeWeightMarvelous = 2;
-	m_iGradeWeightPerfect = 2;
-	m_iGradeWeightGreat = 1;
-	m_iGradeWeightGood = 0;
-	m_iGradeWeightBoo = -4;
-	m_iGradeWeightMiss = -8;
-	m_iGradeWeightHitMine = -8;
-	m_iGradeWeightOK = 6;
-	m_iGradeWeightNG = 0;
-	
-	m_fSuperMeterPercentChangeMarvelous =	+0.05f;
-	m_fSuperMeterPercentChangePerfect =		+0.04f;
-	m_fSuperMeterPercentChangeGreat =		+0.02f;
-	m_fSuperMeterPercentChangeGood =		+0.00f;
-	m_fSuperMeterPercentChangeBoo =			-0.00f;
-	m_fSuperMeterPercentChangeMiss =		-0.20f;
-	m_fSuperMeterPercentChangeHitMine =		-0.40f;
-	m_fSuperMeterPercentChangeOK =			+0.04f;
-	m_fSuperMeterPercentChangeNG =			-0.20f;
-	m_bMercifulSuperMeter = true;
-
-	m_fTimeMeterSecondsChangeMarvelous =	-0.0f;
-	m_fTimeMeterSecondsChangePerfect =		-0.25f;
-	m_fTimeMeterSecondsChangeGreat =		-0.5f;
-	m_fTimeMeterSecondsChangeGood =			-1.0f;
-	m_fTimeMeterSecondsChangeBoo =			-2.0f;
-	m_fTimeMeterSecondsChangeMiss =			-4.0f;
-	m_fTimeMeterSecondsChangeHitMine =		-2.0f;
-	m_fTimeMeterSecondsChangeOK =			-0.0f;
-	m_fTimeMeterSecondsChangeNG =			-4.0f;
-
-	m_bDelayedBack = true;
-	m_bShowInstructions = true;
-	m_bShowSelectGroup = true;
-	m_bShowNativeLanguage = true;
-	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
-	m_MusicWheelUsesSections = ALWAYS;
-	m_iMusicWheelSwitchSpeed = 10;
-	m_bEasterEggs = true;
-	m_iMarvelousTiming = 2;
 	m_CoinMode = COIN_HOME;
-	m_iCoinsPerCredit = 1;
 	m_Premium = PREMIUM_NONE;
 	m_bDelayedCreditsReconcile = false;
 	m_iBoostAppPriority = -1;
@@ -380,86 +382,19 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 {
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
-	ini.GetValue( "Options", "TugMeterPercentChangeMarvelous",	m_fTugMeterPercentChangeMarvelous );
-	ini.GetValue( "Options", "TugMeterPercentChangePerfect",	m_fTugMeterPercentChangePerfect );
-	ini.GetValue( "Options", "TugMeterPercentChangeGreat",		m_fTugMeterPercentChangeGreat );
-	ini.GetValue( "Options", "TugMeterPercentChangeGood",		m_fTugMeterPercentChangeGood );
-	ini.GetValue( "Options", "TugMeterPercentChangeBoo",		m_fTugMeterPercentChangeBoo );
-	ini.GetValue( "Options", "TugMeterPercentChangeMiss",		m_fTugMeterPercentChangeMiss );
-	ini.GetValue( "Options", "TugMeterPercentChangeHitMine",	m_fTugMeterPercentChangeHitMine );
-	ini.GetValue( "Options", "TugMeterPercentChangeOK",			m_fTugMeterPercentChangeOK );
-	ini.GetValue( "Options", "TugMeterPercentChangeNG",			m_fTugMeterPercentChangeNG );
-	ini.GetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
-	ini.GetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
-	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
-	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
-	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
-	ini.GetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
-	ini.GetValue( "Options", "Minimum1FullSongInCourses",		m_bMinimum1FullSongInCourses );
-	ini.GetValue( "Options", "FailOffInBeginner",				m_bFailOffInBeginner );
-	ini.GetValue( "Options", "FailOffForFirstStageEasy",		m_bFailOffForFirstStageEasy );
-
-	ini.GetValue( "Options", "PercentScoreWeightMarvelous",		m_iPercentScoreWeightMarvelous );
-	ini.GetValue( "Options", "PercentScoreWeightPerfect",		m_iPercentScoreWeightPerfect );
-	ini.GetValue( "Options", "PercentScoreWeightGreat",			m_iPercentScoreWeightGreat );
-	ini.GetValue( "Options", "PercentScoreWeightGood",			m_iPercentScoreWeightGood );
-	ini.GetValue( "Options", "PercentScoreWeightBoo",			m_iPercentScoreWeightBoo );
-	ini.GetValue( "Options", "PercentScoreWeightMiss",			m_iPercentScoreWeightMiss );
-	ini.GetValue( "Options", "PercentScoreWeightOK",			m_iPercentScoreWeightOK );
-	ini.GetValue( "Options", "PercentScoreWeightNG",			m_iPercentScoreWeightNG );
-	ini.GetValue( "Options", "PercentScoreWeightHitMine",		m_iPercentScoreWeightHitMine );
-	ini.GetValue( "Options", "GradeWeightMarvelous",			m_iGradeWeightMarvelous );
-	ini.GetValue( "Options", "GradeWeightPerfect",				m_iGradeWeightPerfect );
-	ini.GetValue( "Options", "GradeWeightGreat",				m_iGradeWeightGreat );
-	ini.GetValue( "Options", "GradeWeightGood",					m_iGradeWeightGood );
-	ini.GetValue( "Options", "GradeWeightBoo",					m_iGradeWeightBoo );
-	ini.GetValue( "Options", "GradeWeightMiss",					m_iGradeWeightMiss );
-	ini.GetValue( "Options", "GradeWeightHitMine",				m_iGradeWeightHitMine );
-	ini.GetValue( "Options", "GradeWeightOK",					m_iGradeWeightOK );
-	ini.GetValue( "Options", "GradeWeightNG",					m_iGradeWeightNG );
-
-	ini.GetValue( "Options", "SuperMeterPercentChangeMarvelous",m_fSuperMeterPercentChangeMarvelous );
-	ini.GetValue( "Options", "SuperMeterPercentChangePerfect",	m_fSuperMeterPercentChangePerfect );
-	ini.GetValue( "Options", "SuperMeterPercentChangeGreat",	m_fSuperMeterPercentChangeGreat );
-	ini.GetValue( "Options", "SuperMeterPercentChangeGood",		m_fSuperMeterPercentChangeGood );
-	ini.GetValue( "Options", "SuperMeterPercentChangeBoo",		m_fSuperMeterPercentChangeBoo );
-	ini.GetValue( "Options", "SuperMeterPercentChangeMiss",		m_fSuperMeterPercentChangeMiss );
-	ini.GetValue( "Options", "SuperMeterPercentChangeHitMine",	m_fSuperMeterPercentChangeHitMine );
-	ini.GetValue( "Options", "SuperMeterPercentChangeOK",		m_fSuperMeterPercentChangeOK );
-	ini.GetValue( "Options", "SuperMeterPercentChangeNG",		m_fSuperMeterPercentChangeNG );
-	ini.GetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
-
-	ini.GetValue( "Options", "TimeMeterSecondsChangeMarvelous",	m_fTimeMeterSecondsChangeMarvelous );
-	ini.GetValue( "Options", "TimeMeterSecondsChangePerfect",	m_fTimeMeterSecondsChangePerfect );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeGreat",		m_fTimeMeterSecondsChangeGreat );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeGood",		m_fTimeMeterSecondsChangeGood );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeBoo",		m_fTimeMeterSecondsChangeBoo );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeMiss",		m_fTimeMeterSecondsChangeMiss );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeHitMine",	m_fTimeMeterSecondsChangeHitMine );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeOK",		m_fTimeMeterSecondsChangeOK );
-	ini.GetValue( "Options", "TimeMeterSecondsChangeNG",		m_fTimeMeterSecondsChangeNG );
-
-	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedBack );
-	ini.GetValue( "Options", "ShowInstructions",				m_bShowInstructions );
-	ini.GetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
-	ini.GetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
-	ini.GetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
-	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
-	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
+	
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
 	ini.GetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 	ini.GetValue( "Options", "SoundDevice",						m_iSoundDevice );
 	ini.GetValue( "Options", "InputDrivers",					m_sInputDrivers );
 	ini.GetValue( "Options", "MovieDrivers",					m_sMovieDrivers );
-	ini.GetValue( "Options", "EasterEggs",						m_bEasterEggs );
-	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						(int&)m_CoinMode );
-	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
-	m_iCoinsPerCredit = max(m_iCoinsPerCredit, 1);
+	
+	m_iCoinsPerCredit = max( (int)m_iCoinsPerCredit, 1);
+
 	ini.GetValue( "Options", "Premium",							(int&)m_Premium );
 	ini.GetValue( "Options", "DelayedCreditsReconcile",			m_bDelayedCreditsReconcile );
 	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
@@ -590,7 +525,7 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "BackgroundMode",					m_iBackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
-	ini.SetValue( "Options", "AutoPlay",						m_bAutoPlay );
+
 	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
 	ini.SetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
 	ini.SetValue( "Options", "JudgeWindowSecondsMarvelous",		m_fJudgeWindowSecondsMarvelous );
@@ -612,74 +547,12 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "LifeDeltaPercentChangeHitMine",	m_fLifeDeltaPercentChangeHitMine );
 	ini.SetValue( "Options", "LifeDeltaPercentChangeOK",		m_fLifeDeltaPercentChangeOK );
 	ini.SetValue( "Options", "LifeDeltaPercentChangeNG",		m_fLifeDeltaPercentChangeNG );
-	ini.SetValue( "Options", "TugMeterPercentChangeMarvelous",	m_fTugMeterPercentChangeMarvelous );
-	ini.SetValue( "Options", "TugMeterPercentChangePerfect",	m_fTugMeterPercentChangePerfect );
-	ini.SetValue( "Options", "TugMeterPercentChangeGreat",		m_fTugMeterPercentChangeGreat );
-	ini.SetValue( "Options", "TugMeterPercentChangeGood",		m_fTugMeterPercentChangeGood );
-	ini.SetValue( "Options", "TugMeterPercentChangeBoo",		m_fTugMeterPercentChangeBoo );
-	ini.SetValue( "Options", "TugMeterPercentChangeMiss",		m_fTugMeterPercentChangeMiss );
-	ini.SetValue( "Options", "TugMeterPercentChangeHitMine",	m_fTugMeterPercentChangeHitMine );
-	ini.SetValue( "Options", "TugMeterPercentChangeOK",			m_fTugMeterPercentChangeOK );
-	ini.SetValue( "Options", "TugMeterPercentChangeNG",			m_fTugMeterPercentChangeNG );
-	ini.SetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
-	ini.SetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
-	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
-	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
-	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
-	ini.SetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
-	ini.SetValue( "Options", "Minimum1FullSongInCourses",		m_bMinimum1FullSongInCourses );
-	ini.SetValue( "Options", "FailOffInBeginner",				m_bFailOffInBeginner );
-	ini.SetValue( "Options", "FailOffForFirstStageEasy",		m_bFailOffForFirstStageEasy );
 
-	ini.SetValue( "Options", "PercentScoreWeightMarvelous",		m_iPercentScoreWeightMarvelous );
-	ini.SetValue( "Options", "PercentScoreWeightPerfect",		m_iPercentScoreWeightPerfect );
-	ini.SetValue( "Options", "PercentScoreWeightGreat",			m_iPercentScoreWeightGreat );
-	ini.SetValue( "Options", "PercentScoreWeightGood",			m_iPercentScoreWeightGood );
-	ini.SetValue( "Options", "PercentScoreWeightBoo",			m_iPercentScoreWeightBoo );
-	ini.SetValue( "Options", "PercentScoreWeightMiss",			m_iPercentScoreWeightMiss );
-	ini.SetValue( "Options", "PercentScoreWeightOK",			m_iPercentScoreWeightOK );
-	ini.SetValue( "Options", "PercentScoreWeightNG",			m_iPercentScoreWeightNG );
-	ini.SetValue( "Options", "PercentScoreWeightHitMine",		m_iPercentScoreWeightHitMine );
-	ini.SetValue( "Options", "GradeWeightMarvelous",			m_iGradeWeightMarvelous );
-	ini.SetValue( "Options", "GradeWeightPerfect",				m_iGradeWeightPerfect );
-	ini.SetValue( "Options", "GradeWeightGreat",				m_iGradeWeightGreat );
-	ini.SetValue( "Options", "GradeWeightGood",					m_iGradeWeightGood );
-	ini.SetValue( "Options", "GradeWeightBoo",					m_iGradeWeightBoo );
-	ini.SetValue( "Options", "GradeWeightMiss",					m_iGradeWeightMiss );
-	ini.SetValue( "Options", "GradeWeightHitMine",				m_iGradeWeightHitMine );
-	ini.SetValue( "Options", "GradeWeightOK",					m_iGradeWeightOK );
-	ini.SetValue( "Options", "GradeWeightNG",					m_iGradeWeightNG );
-	
-	ini.SetValue( "Options", "SuperMeterPercentChangeMarvelous",m_fSuperMeterPercentChangeMarvelous );
-	ini.SetValue( "Options", "SuperMeterPercentChangePerfect",	m_fSuperMeterPercentChangePerfect );
-	ini.SetValue( "Options", "SuperMeterPercentChangeGreat",	m_fSuperMeterPercentChangeGreat );
-	ini.SetValue( "Options", "SuperMeterPercentChangeGood",		m_fSuperMeterPercentChangeGood );
-	ini.SetValue( "Options", "SuperMeterPercentChangeBoo",		m_fSuperMeterPercentChangeBoo );
-	ini.SetValue( "Options", "SuperMeterPercentChangeMiss",		m_fSuperMeterPercentChangeMiss );
-	ini.SetValue( "Options", "SuperMeterPercentChangeHitMine",	m_fSuperMeterPercentChangeHitMine );
-	ini.SetValue( "Options", "SuperMeterPercentChangeOK",		m_fSuperMeterPercentChangeOK );
-	ini.SetValue( "Options", "SuperMeterPercentChangeNG",		m_fSuperMeterPercentChangeNG );
-	ini.SetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
-
-	ini.SetValue( "Options", "TimeMeterSecondsChangeMarvelous",	m_fTimeMeterSecondsChangeMarvelous );
-	ini.SetValue( "Options", "TimeMeterSecondsChangePerfect",	m_fTimeMeterSecondsChangePerfect );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeGreat",		m_fTimeMeterSecondsChangeGreat );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeGood",		m_fTimeMeterSecondsChangeGood );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeBoo",		m_fTimeMeterSecondsChangeBoo );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeMiss",		m_fTimeMeterSecondsChangeMiss );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeHitMine",	m_fTimeMeterSecondsChangeHitMine );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeOK",		m_fTimeMeterSecondsChangeOK );
-	ini.SetValue( "Options", "TimeMeterSecondsChangeNG",		m_fTimeMeterSecondsChangeNG );
-
-	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedBack );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );
 	ini.SetValue( "Options", "Interlaced",						m_bInterlaced );
 	ini.SetValue( "Options", "PAL",								m_bPAL );
-	ini.SetValue( "Options", "ShowInstructions",				m_bShowInstructions );
-	ini.SetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
-	ini.SetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
-	ini.SetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
+
 	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
@@ -687,13 +560,8 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "BannerCache",						m_iBannerCache );
 	ini.SetValue( "Options", "PalettedBannerCache",				m_bPalettedBannerCache );
 	ini.SetValue( "Options", "FastLoad",						m_bFastLoad );
-	ini.SetValue( "Options", "MusicWheelUsesSections",			m_MusicWheelUsesSections );
-	ini.SetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
-	ini.SetValue( "Options", "EasterEggs",						m_bEasterEggs );
-	ini.SetValue( "Options", "MarvelousTiming",					m_iMarvelousTiming );
 	ini.SetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.SetValue( "Options", "CoinMode",						m_CoinMode );
-	ini.SetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
 	ini.SetValue( "Options", "Premium",							m_Premium );
 	ini.SetValue( "Options", "DelayedCreditsReconcile",			m_bDelayedCreditsReconcile );
 	ini.SetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
