@@ -23,7 +23,6 @@ struct SongOptions
 	int m_iBatteryLives;
 	enum FailType { 
 		FAIL_IMMEDIATE=0,			// fail when life touches 0
-		FAIL_COMBO_OF_30_MISSES,	// fail when 30 misses in a row, or on end of song if life touched 0
 		FAIL_END_OF_SONG,			// fail on end of song if life touched 0
 		FAIL_OFF };					// never fail
 	FailType m_FailType;

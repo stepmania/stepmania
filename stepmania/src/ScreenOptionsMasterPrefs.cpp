@@ -408,9 +408,8 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 		switch( sel )
 		{
 		case 0:	so.m_FailType = SongOptions::FAIL_IMMEDIATE;			break;
-		case 1:	so.m_FailType = SongOptions::FAIL_COMBO_OF_30_MISSES;	break;
-		case 2:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;			break;
-		case 3:	so.m_FailType = SongOptions::FAIL_OFF;					break;
+		case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;			break;
+		case 2:	so.m_FailType = SongOptions::FAIL_OFF;					break;
 		default:
 			ASSERT(0);
 		}

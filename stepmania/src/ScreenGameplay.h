@@ -50,8 +50,9 @@ protected:
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;
-	ThemeMetric<bool> GIVING_UP_FAILS;
+	ThemeMetric<bool> GIVING_UP_GOES_TO_PREV_SCREEN;
 	ThemeMetric<bool> GIVING_UP_GOES_TO_NEXT_SCREEN;
+	ThemeMetric<bool> GIVE_UP_AFTER_30_MISSES;
 	ThemeMetric<bool> USE_FORCED_MODIFIERS_IN_BEGINNER;
 	ThemeMetric<CString> FORCED_MODIFIERS_IN_BEGINNER;
 

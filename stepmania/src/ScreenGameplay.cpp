@@ -95,8 +95,9 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	MUSIC_FADE_OUT_SECONDS.Load( sName, "MusicFadeOutSeconds" );
 	START_GIVES_UP.Load( sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
-	GIVING_UP_FAILS.Load( sName, "GivingUpFails" );
+	GIVING_UP_GOES_TO_PREV_SCREEN.Load( sName, "GivingUpGoesToPrevScreen" );
 	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( sName, "GivingUpGoesToNextScreen" );
+	GIVE_UP_AFTER_30_MISSES.Load( sName, "GiveUpAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
 }
@@ -1428,10 +1429,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( GAMESTATE->m_pPlayerState[pn]->m_HealthState < PlayerState::DEAD )
 					bAllFailed = false;
 				break;
-			case SongOptions::FAIL_COMBO_OF_30_MISSES:
-				if( STATSMAN->m_CurStageStats.m_player[pn].iCurMissCombo < 30 )
-					bAllFailed = false;
-				break;
 			case SongOptions::FAIL_END_OF_SONG:
 				bAllFailed = false;	// wait until the end of the song to fail.
 				break;
@@ -1556,29 +1553,17 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 
 	//
-	// update give up timer
+	// update give up
 	//
-	if( !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f )
+	bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
+	if( bGiveUpTimerFired || GAMESTATE->AllHaveComboOf30OrMoreMisses() )
 	{
 		m_GiveUpTimer.SetZero();
 
-		if( GIVING_UP_FAILS )
+		if( GIVING_UP_GOES_TO_PREV_SCREEN )
 		{
-			/* Unless we're in FailOff, giving up means failing the song. */
-			switch( GAMESTATE->m_SongOptions.m_FailType )
-			{
-			case SongOptions::FAIL_IMMEDIATE:
-			case SongOptions::FAIL_COMBO_OF_30_MISSES:
-			case SongOptions::FAIL_END_OF_SONG:
-				FOREACH_EnabledPlayer(p)
-				{
-					STATSMAN->m_CurStageStats.m_player[p].bFailed = true;	// fail
-					m_pLifeMeter[p]->ForceFail();
-					STATSMAN->m_CurStageStats.m_player[p].SetLifeRecordAt( 0, STATSMAN->m_CurStageStats.fGameplaySeconds );
-				}
-			}
+			BackOutFromGameplay();
 
-			this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
 		else if( GIVING_UP_GOES_TO_NEXT_SCREEN )
 		{
@@ -1587,9 +1572,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 		else
 		{
-			BackOutFromGameplay();
-			return;
+			this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
+		return;
 	}
 
 	//
@@ -2233,6 +2218,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
 				STATSMAN->m_CurStageStats.m_player[p].iSongsPassed++;
+
+			// set a life record at the point of failue
+			if( STATSMAN->m_CurStageStats.m_player[p].bFailed )
+				STATSMAN->m_CurStageStats.m_player[p].SetLifeRecordAt( 0, STATSMAN->m_CurStageStats.fGameplaySeconds );
 		}
 
 		/* If all players have *really* failed (bFailed, not the life meter or
