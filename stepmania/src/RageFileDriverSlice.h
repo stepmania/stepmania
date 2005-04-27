@@ -8,8 +8,9 @@
 class RageFileDriverSlice: public RageFileObj
 {
 public:
-	/* pFile will be freed. */
+	/* pFile will be freed if DeleteFileWhenFinished is called. */
 	RageFileDriverSlice( RageFileBasic *pFile, int iOffset, int iFileSize );
+	RageFileDriverSlice( const RageFileDriverSlice &cpy );
 	~RageFileDriverSlice();
 	RageFileBasic *Copy() const;
 
