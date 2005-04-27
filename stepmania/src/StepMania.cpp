@@ -1260,7 +1260,7 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 void InsertCoin( int iNum )
 {
 	GAMESTATE->m_iCoins += iNum;
-	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit);
+	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Value() );
 	BOOKKEEPER->CoinInserted();
 	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayCoinSound();
