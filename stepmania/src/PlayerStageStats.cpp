@@ -147,6 +147,8 @@ Grade PlayerStageStats::GetGrade() const
 		case TNS_MARVELOUS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
 		default: FAIL_M( ssprintf("%i", tns) );										break;
 		}
+		if( PREFSMAN->m_bMercifulBeginner )
+			iTapScoreValue = max( 0, iTapScoreValue );
 		fActual += iTapNoteScores[tns] * iTapScoreValue;
 	}
 

@@ -139,7 +139,8 @@ PrefsManager::PrefsManager() :
 	m_bMinimum1FullSongInCourses	( Options, "Minimum1FullSongInCourses",		false ),	// FEoS for 1st song, FailImmediate thereafter
 	m_bFailOffInBeginner			( Options, "FailOffInBeginner",				false ),
 	m_bFailOffForFirstStageEasy		( Options, "FailOffForFirstStageEasy",		false ),
-	
+	m_bMercifulBeginner				( Options, "MercifulBeginner",				false ),
+
 	m_iPercentScoreWeightMarvelous	( Options, "PercentScoreWeightMarvelous",	3 ),
 	m_iPercentScoreWeightPerfect	( Options, "PercentScoreWeightPerfect",		2 ),
 	m_iPercentScoreWeightGreat		( Options, "PercentScoreWeightGreat",		1 ),

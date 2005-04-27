@@ -216,8 +216,6 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	int &iScore = m_pPlayerStageStats->iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->iCurMaxScore;
 /*
-  http://www.aaroninjapan.com/ddr2.html
-
   Regular scoring:
 
   Let p = score multiplier (Perfect = 10, Great = 5, other = 0)
@@ -353,10 +351,6 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	//
 	
 /*
-  http://www.aaroninjapan.com/ddr2.html
-
-  Note on ONI Mode scoring
-  
   Your combo counter only increased with a "Marvelous/Perfect", and double Marvelous/Perfect steps (left and right, etc.)
   only add 1 to your combo instead of 2. The combo counter thus becomes a "Marvelous/Perfect" counter. 
 */
@@ -483,30 +477,24 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 	if( !GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS )
 		tns = TNS_PERFECT;
 
-/*
-  http://www.aaroninjapan.com/ddr2.html
-
-  Note on ONI Mode scoring
-
-  The total number of Dance Points is calculated with Marvelous steps being worth 3 points, Perfects getting 
-  2 points, OKs getting 3 points, Greats getting 1 point, and everything else is worth 0 points. (Note: The 
-
-*/
-
 	/* This is used for Oni percentage displays.  Grading values are currently in
 	 * StageStats::GetGrade. */
+	int iWeight = 0;
 	switch( tns )
 	{
-	case TNS_NONE:		return 0;
-	case TNS_HIT_MINE:	return PREFSMAN->m_iPercentScoreWeightHitMine;
-	case TNS_MISS:		return PREFSMAN->m_iPercentScoreWeightMiss;
-	case TNS_BOO:		return PREFSMAN->m_iPercentScoreWeightBoo;
-	case TNS_GOOD:		return PREFSMAN->m_iPercentScoreWeightGood;
-	case TNS_GREAT:		return PREFSMAN->m_iPercentScoreWeightGreat;
-	case TNS_PERFECT:	return PREFSMAN->m_iPercentScoreWeightPerfect;
-	case TNS_MARVELOUS:	return PREFSMAN->m_iPercentScoreWeightMarvelous;
+	case TNS_NONE:		iWeight = 0;
+	case TNS_HIT_MINE:	iWeight = PREFSMAN->m_iPercentScoreWeightHitMine;	break;
+	case TNS_MISS:		iWeight = PREFSMAN->m_iPercentScoreWeightMiss;		break;
+	case TNS_BOO:		iWeight = PREFSMAN->m_iPercentScoreWeightBoo;		break;
+	case TNS_GOOD:		iWeight = PREFSMAN->m_iPercentScoreWeightGood;		break;
+	case TNS_GREAT:		iWeight = PREFSMAN->m_iPercentScoreWeightGreat;		break;
+	case TNS_PERFECT:	iWeight = PREFSMAN->m_iPercentScoreWeightPerfect;	break;
+	case TNS_MARVELOUS:	iWeight = PREFSMAN->m_iPercentScoreWeightMarvelous;	break;
 	default: FAIL_M( ssprintf("%i", tns) );
 	}
+	if( PREFSMAN->m_bMercifulBeginner )
+		iWeight = max( 0, iWeight );
+	return iWeight;
 }
 
 int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )

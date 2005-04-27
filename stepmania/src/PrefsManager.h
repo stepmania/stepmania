@@ -99,6 +99,7 @@ public:
 	Preference<bool>	m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
 	Preference<bool>	m_bFailOffForFirstStageEasy;
+	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP
 
 	// percent score (the number that is shown on the screen and saved to memory card)
 	Preference<int>		m_iPercentScoreWeightMarvelous;
