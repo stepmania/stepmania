@@ -141,8 +141,11 @@ void ScreenOptionsMaster::BeginFadingOut()
 		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
 		if( row.GetFirstItemGoesDown() )
 			iChoice--;
-		OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
-		m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
+		if( iChoice != -1 )	// not the "goes down" item
+		{
+			OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
+			m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
+		}
 	}
 
 	// If options set a NextScreen or one is specified in metrics, then fade out
