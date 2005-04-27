@@ -70,7 +70,12 @@ bool RandomSample::LoadSound( CString sSoundFilePath )
 	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath.c_str() );
 
 	RageSound *pSS = new RageSound;
-	pSS->Load( sSoundFilePath );
+	if( !pSS->Load(sSoundFilePath) )
+	{
+		LOG->Trace( "Error loading \"%s\": %s", sSoundFilePath.c_str(), pSS->GetError().c_str() );
+		delete pSS;
+		return false;
+	}
 
 
 	m_pSamples.push_back( pSS );
