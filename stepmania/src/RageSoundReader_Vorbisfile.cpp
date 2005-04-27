@@ -282,7 +282,12 @@ SoundReader *RageSoundReader_Vorbisfile::Copy() const
 	RageFileBasic *pFile = pFrom->Copy();
 	pFile->Seek(0);
 	RageSoundReader_Vorbisfile *ret = new RageSoundReader_Vorbisfile;
-	ret->Open( pFile );
+
+	/* If we were able to open the sound in the first place, we expect to
+	 * be able to reopen it. */
+	if( !ret->Open(pFile) )
+		FAIL_M( ssprintf("Copying sound failed: %s", ret->GetError().c_str()) );
+
 	return ret;
 }
 
