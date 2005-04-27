@@ -3,6 +3,7 @@
 
 #include "ActorFrame.h"
 #include "RageTexture.h"
+#include "AutoActor.h"
 
 struct StageStats;
 struct PlayerStageStats;
@@ -12,10 +13,10 @@ class GraphDisplay: public ActorFrame
 public:
 	GraphDisplay();
 	~GraphDisplay() { Unload(); }
-	void Load( const CString &TexturePath, float height );
+	void Load( const CString &sTexturePath, float fInitialHeight, const CString &sJustBarelyPath );
 	void Unload();
 
-	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );
+	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s, const CString &sSongBoundaryPath );
 	void Update( float fDeltaTime );
 	void DrawPrimitives();
 
@@ -28,9 +29,13 @@ private:
 	float m_LastValues[VALUE_RESOLUTION];
 	float m_Position;
 
+	RectF m_quadVertices;
 	RageSpriteVertex Slices[4*(VALUE_RESOLUTION-1)];
 
 	RageTexture	*m_pTexture;
+
+	AutoActor m_sprJustBarely;
+	vector<AutoActor*> m_vpSongBoundaries;
 };
 
 #endif

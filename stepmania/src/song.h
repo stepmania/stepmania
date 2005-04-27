@@ -173,6 +173,7 @@ public:
 	float GetBeatFromElapsedTime( float fElapsedTime ) const { return m_Timing.GetBeatFromElapsedTime( fElapsedTime ); }
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
 	bool HasSignificantBpmChangesOrStops() const;
+	float GetStepsSeconds() const;
 
 	bool SongCompleteForStyle( const Style *st ) const;
 	bool HasStepsType( StepsType st ) const;

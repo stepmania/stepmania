@@ -1417,6 +1417,11 @@ bool Song::HasSignificantBpmChangesOrStops() const
 	return m_Timing.HasBpmChangesOrStops();
 }
 
+float Song::GetStepsSeconds() const
+{
+	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
+}
+
 bool Song::IsEditDescriptionUnique( StepsType st, CString sPreferredDescription, const Steps *pExclude ) const
 {
 	FOREACH_CONST( Steps*, m_vpSteps, s )

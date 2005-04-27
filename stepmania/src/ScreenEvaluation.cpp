@@ -70,7 +70,7 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_COMBO_AREA						THEME->GetMetricB(m_sName,"ShowComboArea")
 #define SHOW_PER_DIFFICULTY_AWARD			THEME->GetMetricB(m_sName,"ShowPerDifficultyAward")
 #define SHOW_PEAK_COMBO_AWARD				THEME->GetMetricB(m_sName,"ShowPeakComboAward")
-#define GRAPH_START_HEIGHT					THEME->GetMetricF(m_sName,"GraphStartHeight")
+#define LIFE_GRAPH_START_HEIGHT				THEME->GetMetricF(m_sName,"LifeGraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 #define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
 #define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
@@ -454,8 +454,8 @@ void ScreenEvaluation::Init()
 			this->AddChild( m_sprGraphFrame[p] );
 
 			m_LifeGraph[p].SetName( ssprintf("LifeGraphP%i",p+1) );
-			m_LifeGraph[p].Load( THEME->GetPathG(m_sName,ssprintf("LifeGraph p%i", p+1)), GRAPH_START_HEIGHT );
-			m_LifeGraph[p].LoadFromStageStats( stageStats, stageStats.m_player[p] );
+			m_LifeGraph[p].Load( THEME->GetPathG(m_sName,ssprintf("LifeGraph p%i", p+1)), LIFE_GRAPH_START_HEIGHT, THEME->GetPathG(m_sName,"JustBarely") );
+			m_LifeGraph[p].LoadFromStageStats( stageStats, stageStats.m_player[p], THEME->GetPathG(m_sName,"SongBoundary") );
 			SET_XY_AND_ON_COMMAND( m_LifeGraph[p] );
 			this->AddChild( &m_LifeGraph[p] );
 		}
@@ -468,7 +468,6 @@ void ScreenEvaluation::Init()
 			m_ComboGraph[p].SetName( m_sName, ssprintf("ComboGraphP%i",p+1) );
 			m_ComboGraph[p].Load( m_sName, ssprintf("ComboGraph p%i",p+1), stageStats, stageStats.m_player[p] );
 			SET_XY_AND_ON_COMMAND( m_ComboGraph[p] );
-
 			this->AddChild( &m_ComboGraph[p] );
 		}
 	}

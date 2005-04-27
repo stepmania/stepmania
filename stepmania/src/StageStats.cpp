@@ -97,7 +97,7 @@ float StageStats::GetTotalPossibleStepsSeconds() const
 {
 	float fSecs = 0;
 	FOREACH_CONST( Song*, vpPossibleSongs, s )
-		fSecs += (*s)->GetElapsedTimeFromBeat( (*s)->m_fLastBeat ) - (*s)->GetElapsedTimeFromBeat( (*s)->m_fFirstBeat );
+		fSecs += (*s)->GetStepsSeconds();
 	return fSecs;
 }
 
