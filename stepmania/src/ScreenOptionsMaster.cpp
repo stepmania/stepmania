@@ -138,7 +138,9 @@ void ScreenOptionsMaster::BeginFadingOut()
 
 	if( row.GetRowType() != OptionRow::ROW_EXIT )
 	{
-		const int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		if( row.GetFirstItemGoesDown() )
+			iChoice--;
 		OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
 		m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
 	}
