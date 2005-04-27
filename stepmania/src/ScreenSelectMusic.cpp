@@ -69,7 +69,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	CODES( m_sName, "Codes" ),
 	MUSIC_WHEEL_TYPE( m_sName, "MusicWheelType" ),
 	OPTIONS_MENU_AVAILABLE( m_sName, "OptionsMenuAvailable" ),
-	SELECT_MENU_AVAILABLE( m_sName, "SelectMenuAvailable" )
+	SELECT_MENU_AVAILABLE( m_sName, "SelectMenuAvailable" ),
+	MODE_MENU_AVAILABLE( m_sName, "ModeMenuAvailable" )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
@@ -851,7 +852,10 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				ChangeDifficulty( pn, +1 );
 				break;
 			case MENU_BUTTON_START:
-				m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+				if( MODE_MENU_AVAILABLE )
+					m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+				else
+					m_soundLocked.Play();
 				break;
 			}
 		}
@@ -947,10 +951,10 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 		if( CodeDetector::EnteredModeMenu(GameI.controller) )
 		{
-			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
-				m_soundLocked.Play();
-			else
+			if( MODE_MENU_AVAILABLE )
 				m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+			else
+				m_soundLocked.Play();
 			return;
 		}
 		if( CodeDetector::EnteredNextSort(GameI.controller) )
