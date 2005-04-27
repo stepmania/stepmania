@@ -450,6 +450,9 @@ void Course::Save( CString sPath, bool bSavingCache )
 			f.PutLine( line );
 		}
 
+		if( entry.fGainSeconds > 0 )
+			f.PutLine( ssprintf("#GAINSECONDS:%f;", entry.fGainSeconds) );
+
 		CString line;
 		switch( entry.type )
 		{
