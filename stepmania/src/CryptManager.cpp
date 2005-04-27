@@ -4,23 +4,41 @@
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "RageFileManager.h"
+#include "crypto/CryptMD5.h"
+
+CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
+
+static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
+static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
+
+#if !defined(HAVE_CRYPTOPP)
+CryptManager::CryptManager() { }
+CryptManager::~CryptManager() { }
+void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed ) { }
+void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile ) { }
+bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
+{
+	return true;
+}
+
+bool CryptManager::Verify( CString sPath, CString sSignature )
+{
+	return true;
+}
+
+#else
 
 // crypt headers
 #include "CryptHelpers.h"
 #include "crypto51/sha.h"
 #include "crypto51/rsa.h"
 #include "crypto51/osrng.h"
-#include "crypto/CryptMD5.h"
 #include <memory>
 
 using namespace CryptoPP;
 
-static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
-static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const int KEY_LENGTH = 1024;
 #define MAX_SIGNATURE_SIZE_BYTES 1024	// 1 KB
-
-CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
 CryptManager::CryptManager()
 {
@@ -167,6 +185,7 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 		return false;
 	}
 }
+#endif
 
 static CString BinaryToHex( const unsigned char *string, int iNumBytes )
 {

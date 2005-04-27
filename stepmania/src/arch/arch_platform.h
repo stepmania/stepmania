@@ -11,10 +11,12 @@
 #define HAVE_COCOA
 #define HAVE_COREAUDIO
 #define HAVE_SDL
+#define HAVE_CRYPTOPP
 #endif
 #if defined(_WINDOWS)
 #define HAVE_DIRECTX
 #define HAVE_WIN32 // XXX: Better name for this API?
+#define HAVE_CRYPTOPP
 #endif
 #if defined(_XBOX)
 #define HAVE_DIRECTX
@@ -23,6 +25,7 @@
 #if defined(LINUX)
 #define HAVE_UNIX	// Here just to be explicit.
 #define HAVE_LINUXKERNEL
+#define HAVE_CRYPTOPP
 #endif
 
 #endif
