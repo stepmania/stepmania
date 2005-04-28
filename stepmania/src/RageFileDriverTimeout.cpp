@@ -255,7 +255,6 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		break;
 
 	case REQ_FLUSH_DIR_CACHE:
-		ASSERT( !m_sRequestPath.empty() );
 		m_pChildDriver->FlushDirCache( m_sRequestPath );
 		break;
 
