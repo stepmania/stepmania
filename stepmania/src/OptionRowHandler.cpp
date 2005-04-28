@@ -26,8 +26,9 @@
 
 static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
-	ASSERT_M( iSelection >= 0  &&  iSelection < (int) vbSelectedOut.size(), ssprintf("%d/%u",iSelection,vbSelectedOut.size()) );
-	for( int i=0; i<(int)vbSelectedOut.size(); i++ )
+	ASSERT_M( iSelection >= 0  &&  iSelection < (int) vbSelectedOut.size(),
+			  ssprintf("%d/%u",iSelection, unsigned(vbSelectedOut.size())) );
+	for( int i=0; i<int(vbSelectedOut.size()); i++ )
 		vbSelectedOut[i] = i==iSelection;
 }
 
