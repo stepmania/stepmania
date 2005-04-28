@@ -17,20 +17,17 @@ void Combo::Load( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
+	SHOW_COMBO_AT.Load(m_sName,"ShowComboAt");
 	LABEL_X.Load(m_sName,"LabelX");
 	LABEL_Y.Load(m_sName,"LabelY");
-	LABEL_HORIZ_ALIGN.Load(m_sName,"LabelHorizAlign");
-	LABEL_VERT_ALIGN.Load(m_sName,"LabelVertAlign");
+	LABEL_ON_COMMAND.Load(m_sName,"LabelOnCommand");
 	NUMBER_X.Load(m_sName,"NumberX");
 	NUMBER_Y.Load(m_sName,"NumberY");
-	NUMBER_HORIZ_ALIGN.Load(m_sName,"NumberHorizAlign");
-	NUMBER_VERT_ALIGN.Load(m_sName,"NumberVertAlign");
-	SHOW_COMBO_AT.Load(m_sName,"ShowComboAt");
+	NUMBER_ON_COMMAND.Load(m_sName,"NumberOnCommand");
 	NUMBER_MIN_ZOOM.Load(m_sName,"NumberMinZoom");
 	NUMBER_MAX_ZOOM.Load(m_sName,"NumberMaxZoom");
 	NUMBER_MAX_ZOOM_AT.Load(m_sName,"NumberMaxZoomAt");
-	PULSE_ZOOM.Load(m_sName,"PulseZoom");
-	C_TWEEN_SECONDS.Load(m_sName,"TweenSeconds");
+	PULSE_COMMAND.Load(m_sName,"PulseCommand");
 	FULL_COMBO_GREATS_COMMAND.Load(m_sName,"FullComboGreatsCommand");
 	FULL_COMBO_PERFECTS_COMMAND.Load(m_sName,"FullComboPerfectsCommand");
 	FULL_COMBO_MARVELOUSES_COMMAND.Load(m_sName,"FullComboMarvelousesCommand");
@@ -41,23 +38,20 @@ void Combo::Load( PlayerNumber pn )
 	m_sprComboLabel.SetShadowLength( 4 );
 	m_sprComboLabel.StopAnimating();
 	m_sprComboLabel.SetXY( LABEL_X, LABEL_Y );
-	m_sprComboLabel.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
-	m_sprComboLabel.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
+	m_sprComboLabel.RunCommands( LABEL_ON_COMMAND );
 	m_sprComboLabel.SetHidden( true );
 
 	m_sprMissesLabel.Load( THEME->GetPathG(m_sName,"misses") );
 	m_sprMissesLabel.SetShadowLength( 4 );
 	m_sprMissesLabel.StopAnimating();
 	m_sprMissesLabel.SetXY( LABEL_X, LABEL_Y );
-	m_sprMissesLabel.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
-	m_sprMissesLabel.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
+	m_sprMissesLabel.RunCommands( LABEL_ON_COMMAND );
 	m_sprMissesLabel.SetHidden( true );
 
 	m_textNumber.LoadFromFont( THEME->GetPathF(m_sName,"numbers") );
 	m_textNumber.SetShadowLength( 4 );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
-	m_textNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
-	m_textNumber.SetVertAlign( (Actor::VertAlign)(int)NUMBER_VERT_ALIGN );
+	m_textNumber.RunCommands( NUMBER_ON_COMMAND );
 	m_textNumber.SetHidden( true );
 }
 
@@ -87,16 +81,13 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	float fNumberZoom = SCALE(iNum,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
 	CLAMP( fNumberZoom, (float)NUMBER_MIN_ZOOM, (float)NUMBER_MAX_ZOOM );
 	m_textNumber.StopTweening();
-	m_textNumber.SetZoom( fNumberZoom * (float)PULSE_ZOOM ); 
-	m_textNumber.BeginTweening( C_TWEEN_SECONDS );
 	m_textNumber.SetZoom( fNumberZoom );
+	m_textNumber.RunCommands( PULSE_COMMAND ); 
 
 	Sprite &sprLabel = bMisses ? m_sprMissesLabel : m_sprComboLabel;
 
 	sprLabel.StopTweening();
-	sprLabel.SetZoom( PULSE_ZOOM ); 
-	sprLabel.BeginTweening( C_TWEEN_SECONDS );
-	sprLabel.SetZoom( 1 );
+	sprLabel.RunCommands( PULSE_COMMAND );
 
 	// don't show a colored combo until 1/4 of the way through the song
 	bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||

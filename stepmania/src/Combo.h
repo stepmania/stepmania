@@ -21,25 +21,24 @@ public:
 	void SetCombo( int iCombo, int iMisses );
 
 protected:
-	ThemeMetric<float>	LABEL_X;
-	ThemeMetric<float>	LABEL_Y;
-	ThemeMetric<int>	LABEL_HORIZ_ALIGN;
-	ThemeMetric<int>	LABEL_VERT_ALIGN;
-	ThemeMetric<float>	NUMBER_X;
-	ThemeMetric<float>	NUMBER_Y;
-	ThemeMetric<int>	NUMBER_HORIZ_ALIGN;
-	ThemeMetric<int>	NUMBER_VERT_ALIGN;
-	ThemeMetric<int>	SHOW_COMBO_AT;
-	ThemeMetric<float>	NUMBER_MIN_ZOOM;
-	ThemeMetric<float>	NUMBER_MAX_ZOOM;
-	ThemeMetric<float>	NUMBER_MAX_ZOOM_AT;
-	ThemeMetric<float>	PULSE_ZOOM;
-	ThemeMetric<float>	C_TWEEN_SECONDS;
+	ThemeMetric<int>				SHOW_COMBO_AT;
+	ThemeMetric<float>				LABEL_X;
+	ThemeMetric<float>				LABEL_Y;
+	ThemeMetric<apActorCommands>	LABEL_ON_COMMAND;
+	ThemeMetric<float>				NUMBER_X;
+	ThemeMetric<float>				NUMBER_Y;
+	ThemeMetric<apActorCommands>	NUMBER_ON_COMMAND;
+	ThemeMetric<float>				NUMBER_MIN_ZOOM;
+	ThemeMetric<float>				NUMBER_MAX_ZOOM;
+	ThemeMetric<float>				NUMBER_MAX_ZOOM_AT;
+	ThemeMetric<apActorCommands>	PULSE_COMMAND;
+	ThemeMetric<float>				TWEEN_SECONDS;
+
 	ThemeMetric<apActorCommands>	FULL_COMBO_GREATS_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_PERFECTS_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
-	ThemeMetric<bool>	SHOW_MISS_COMBO;
+	ThemeMetric<bool>				SHOW_MISS_COMBO;
 
 	PlayerNumber m_PlayerNumber;
 
