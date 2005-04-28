@@ -12,6 +12,7 @@
 			<xsl:with-param name="FullHeader" select="0" />
 			<xsl:with-param name="DocName" select="name()" />
 			<xsl:with-param name="Content">
+				<xsl:apply-templates select="/Catalog/Totals" />
 				<xsl:apply-templates select="/Catalog/Songs" />
 				<xsl:apply-templates select="/Catalog/Courses" />
 			</xsl:with-param>
@@ -20,6 +21,29 @@
 	
 	
 	
+	<!-- Totals -->
+	
+	<xsl:template match="/Catalog/Totals">
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				Totals
+			</xsl:with-param>
+			<xsl:with-param name="text">
+
+				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<xsl:call-template name="DataTableGenerator">
+						<xsl:with-param name="cols" select="2" />
+						<xsl:with-param name="nodeset" select="*[text()]" />
+					</xsl:call-template>
+				</xsl:element>
+				
+			</xsl:with-param>
+		</xsl:call-template>
+					
+	</xsl:template>		
+
+
+
 	<!-- TopScores for SongScores and CourseScores -->
 	
 	<xsl:template match="/Catalog/Songs | /Catalog/Courses">
