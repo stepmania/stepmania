@@ -59,10 +59,10 @@ void IPreference::SetFromStack( lua_State *L )
 		LuaHelpers::PopStack( (cast)m_currentValue, L ); \
 	}
 
-READFROM_AND_WRITETO( int, int )
-READFROM_AND_WRITETO( float, float )
-READFROM_AND_WRITETO( bool, bool )
-READFROM_AND_WRITETO( CString, CString )
+READFROM_AND_WRITETO( int, int& )
+READFROM_AND_WRITETO( float, float& )
+READFROM_AND_WRITETO( bool, bool& )
+READFROM_AND_WRITETO( CString, CString& )
 READFROM_AND_WRITETO( PrefsManager::BackgroundMode, int& )
 READFROM_AND_WRITETO( PrefsManager::BannerCache, int& )
 READFROM_AND_WRITETO( PrefsManager::MusicWheelUsesSections, int& )
