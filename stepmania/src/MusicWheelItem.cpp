@@ -17,14 +17,22 @@
 #include "ThemeMetric.h"
 
 CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
+CString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
 
 ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
+ThemeMetric<float>				ICON_Y				("MusicWheelItem","IconY");
+ThemeMetric<apActorCommands>	ICON_ON_COMMAND		("MusicWheelItem","IconOnCommand");
 ThemeMetric<float>				SONG_NAME_X			("MusicWheelItem","SongNameX");
+ThemeMetric<float>				SONG_NAME_Y			("MusicWheelItem","SongNameY");
+ThemeMetric<apActorCommands>	SONG_NAME_ON_COMMAND("MusicWheelItem","SongNameOnCommand");
 ThemeMetric<float>				SECTION_X			("MusicWheelItem","SectionX");
+ThemeMetric<float>				SECTION_Y			("MusicWheelItem","SectionY");
 ThemeMetric<apActorCommands>	SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
 ThemeMetric<float>				ROULETTE_X			("MusicWheelItem","RouletteX");
+ThemeMetric<float>				ROULETTE_Y			("MusicWheelItem","RouletteY");
 ThemeMetric<apActorCommands>	ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
 ThemeMetric1D<float>			GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
+ThemeMetric1D<float>			GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
 
 WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
@@ -45,51 +53,53 @@ MusicWheelItem::MusicWheelItem()
 	SetName( "MusicWheelItem" );
 
 	m_fPercentGray = 0;
-	m_WheelNotifyIcon.SetXY( ICON_X, 0 );
+	m_WheelNotifyIcon.SetXY( ICON_X, ICON_Y );
+	m_WheelNotifyIcon.RunCommands( ICON_ON_COMMAND );
+	this->AddChild( &m_WheelNotifyIcon );
 	
 	m_TextBanner.Load( "TextBanner" );
-	m_TextBanner.SetHorizAlign( align_left );
-	m_TextBanner.SetXY( SONG_NAME_X, 0 );
-	m_All.AddChild( &m_TextBanner );
+	m_TextBanner.SetXY( SONG_NAME_X, SONG_NAME_Y );
+	m_TextBanner.RunCommands( SONG_NAME_ON_COMMAND );
+	this->AddChild( &m_TextBanner );
 
 	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
 	m_sprSongBar.SetXY( 0, 0 );
-	m_All.AddChild( &m_sprSongBar );
+	this->AddChild( &m_sprSongBar );
 
 	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
 	m_sprSectionBar.SetXY( 0, 0 );
-	m_All.AddChild( &m_sprSectionBar );
+	this->AddChild( &m_sprSectionBar );
 
 	m_textSectionName.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
 	m_textSectionName.SetShadowLength( 0 );
-	m_textSectionName.SetXY( SECTION_X, 0 );
+	m_textSectionName.SetXY( SECTION_X, SECTION_Y );
 	m_textSectionName.RunCommands( SECTION_ON_COMMAND );
-	m_All.AddChild( &m_textSectionName );
+	this->AddChild( &m_textSectionName );
 
 	m_textRoulette.LoadFromFont( THEME->GetPathF("MusicWheelItem","roulette") );
 	m_textRoulette.SetShadowLength( 0 );
 	m_textRoulette.TurnRainbowOn();
-	m_textRoulette.SetXY( ROULETTE_X, 0 );
+	m_textRoulette.SetXY( ROULETTE_X, ROULETTE_Y );
 	m_textRoulette.RunCommands( ROULETTE_ON_COMMAND );
-	m_All.AddChild( &m_textRoulette );
+	this->AddChild( &m_textRoulette );
 
 	FOREACH_PlayerNumber( p )
 	{
 		m_GradeDisplay[p].Load( THEME->GetPathG("MusicWheelItem","grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( GRADE_X.GetValue(p), 0 );
-		m_All.AddChild( &m_GradeDisplay[p] );
+		this->AddChild( &m_GradeDisplay[p] );
 	}
 
 	m_textCourse.SetName( "CourseName" );
 	m_textCourse.LoadFromFont( THEME->GetPathF("MusicWheelItem","course") );
 	SET_XY_AND_ON_COMMAND( &m_textCourse );
-	m_All.AddChild( &m_textCourse );
+	this->AddChild( &m_textCourse );
 
 	m_textSort.SetName( "Sort" );
 	m_textSort.LoadFromFont( THEME->GetPathF("MusicWheelItem","sort") );
 	SET_XY_AND_ON_COMMAND( &m_textSort );
-	m_All.AddChild( &m_textSort );
+	this->AddChild( &m_textSort );
 }
 
 
@@ -200,6 +210,7 @@ void MusicWheelItem::RefreshGrades()
 void MusicWheelItem::Update( float fDeltaTime )
 {
 	Actor::Update( fDeltaTime );
+	// update manually
 
 	switch( data->m_Type )
 	{
@@ -237,6 +248,8 @@ void MusicWheelItem::Update( float fDeltaTime )
 
 void MusicWheelItem::DrawPrimitives()
 {
+	// draw manually
+
 	Sprite *bar = NULL;
 	switch( data->m_Type )
 	{
@@ -292,22 +305,6 @@ void MusicWheelItem::DrawPrimitives()
 	}
 }
 
-
-void MusicWheelItem::SetZTestMode( ZTestMode mode )
-{
-	ActorFrame::SetZTestMode( mode );
-
-	// set all sub-Actors
-	m_All.SetZTestMode( mode );
-}
-
-void MusicWheelItem::SetZWrite( bool b )
-{
-	ActorFrame::SetZWrite( b );
-
-	// set all sub-Actors
-	m_All.SetZWrite( b );
-}
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard

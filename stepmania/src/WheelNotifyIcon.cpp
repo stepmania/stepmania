@@ -8,6 +8,7 @@
 #include "ThemeManager.h"
 
 
+static ThemeMetric<bool>	SHOW_TRAINING	("WheelNotifyIcon","ShowTraining");
 
 WheelNotifyIcon::WheelNotifyIcon()
 {
@@ -39,7 +40,7 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 	default:	ASSERT(0);
 	}
 
-	if( flags.bHasBeginnerOr1Meter )
+	if( flags.bHasBeginnerOr1Meter && (bool)SHOW_TRAINING )
 		m_vIconsToShow.push_back( training );
 
 

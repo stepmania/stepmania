@@ -22,9 +22,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void SetZTestMode( ZTestMode mode );
-	virtual void SetZWrite( bool b );
-	
+
 	void LoadFromWheelItemData( WheelItemData* pWID );
 	void RefreshGrades();
 
@@ -49,7 +47,6 @@ public:
 
 	// for TYPE_SORT
 	BitmapText			m_textSort;
-	ActorFrame m_All;
 };
 
 enum WheelItemType 
