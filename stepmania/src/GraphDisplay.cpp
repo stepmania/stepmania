@@ -80,7 +80,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 			}
 		}
 		
-		if( fMinLifeSoFar < 0.1f )
+		if( fMinLifeSoFar > 0.0f  &&  fMinLifeSoFar < 0.1f )
 		{
 			float fX = SCALE( fMinLifeSoFarAtSecond, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
 			fX = Quantize( fX, 1.0f );
