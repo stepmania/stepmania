@@ -25,6 +25,19 @@ LUA_REGISTER_CLASS( Actor )
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
+static float g_bCabinetLights[NUM_CABINET_LIGHTS];
+
+void Actor::SetBGMTime( float fTime, float fBeat )
+{
+	g_fCurrentBGMTime = fTime;
+	g_fCurrentBGMBeat = fBeat;
+}
+
+void Actor::SetBGMLights( const float *bCabinetLights )
+{
+	memcpy( g_bCabinetLights, bCabinetLights, sizeof(float) * NUM_CABINET_LIGHTS );
+}
+
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */
 void Actor::Reset()
@@ -476,6 +489,14 @@ void Actor::Update( float fDeltaTime )
 		m_fEffectDelta = g_fCurrentBGMTime - m_fSecsIntoEffect;
 		m_fSecsIntoEffect = g_fCurrentBGMTime;
 		break;
+	default:
+		if( m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST )
+		{
+			int i = m_EffectClock - CLOCK_LIGHT_1;
+			m_fEffectDelta = g_bCabinetLights[i] - m_fSecsIntoEffect;
+			m_fSecsIntoEffect = g_bCabinetLights[i];
+		}
+		break;
 	}
 
 	// update effect
@@ -609,7 +630,17 @@ void Actor::SetEffectClockString( const CString &s )
 	else if(s.CompareNoCase("beat")==0)		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.CompareNoCase("music")==0)	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.CompareNoCase("bgm")==0)		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
-	else	ASSERT(0);
+	else
+	{
+		CabinetLight cl = StringToCabinetLight( s );
+		if( cl != LIGHT_INVALID )
+		{
+			this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
+			return;
+		}
+		else
+			ASSERT(0);
+	}
 }
 
 void Actor::StretchTo( const RectF &r )
