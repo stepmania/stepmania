@@ -19,6 +19,8 @@
 #include "PrefsManager.h"
 #include "Style.h"
 #include "CommonMetrics.h"
+#include "UnlockManager.h"
+#include "arch/LoadingWindow/LoadingWindow.h"
 
 #define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
@@ -29,8 +31,14 @@
 #define FOOTER_TEXT						THEME->GetMetric ("CatalogXml","FooterText")
 #define FOOTER_LINK						THEME->GetMetric ("CatalogXml","FooterLink")
 
-void SaveCatalogXml()
+void SaveCatalogXml( LoadingWindow *loading_window )
 {
+	ASSERT( SONGMAN );
+	ASSERT( UNLOCKMAN );
+
+	if( loading_window )
+		loading_window->SetText( "Saving Catalog.xml ..." );
+
 	CString fn = CATALOG_XML_FILE;
 
 	LOG->Trace( "Writing %s ...", fn.c_str() );
@@ -41,6 +49,72 @@ void SaveCatalogXml()
 	const vector<StepsType> &vStepsTypesToShow = STEPS_TYPES_TO_SHOW.GetValue();
 	
 	{
+		XNode* pNode = xml.AppendChild( "Totals" );
+
+		int iTotalSongs = 0;
+		int iTotalSteps = 0;
+		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), i )
+		{
+			Song *pSong = *i;
+			if( pSong->IsTutorial() )
+				continue;	// skip
+			if( UNLOCKMAN->SongIsLocked(pSong) )
+				continue;	// skip
+			iTotalSongs++;
+
+			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
+			{
+				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
+				{
+					Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
+					if( pSteps == NULL )
+						continue;	// skip
+					if( UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+						continue;	// skip
+					iTotalSteps++;
+				}
+			}
+		}
+
+		int iTotalCourses = 0;
+		vector<Course*> vpCourses;
+		SONGMAN->GetAllCourses( vpCourses, false );
+		for( unsigned i=0; i<vpCourses.size(); i++ )
+		{
+			Course* pCourse = vpCourses[i];
+			// skip non-fixed courses.  We don't have any stable data for them other than 
+			// the title.
+			if( !pCourse->IsFixed() )
+				continue;
+			if( UNLOCKMAN->CourseIsLocked(pCourse) )
+				continue;
+			iTotalCourses++;
+		}
+
+		int iNumUnlockedSongs = 0;
+		int iNumUnlockedSteps = 0;
+		int iNumUnlockedCourses = 0;
+		FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, e )
+		{
+			if( e->IsLocked() )
+				continue;
+			switch( e->m_Type )
+			{
+			case UnlockEntry::TYPE_SONG:	iNumUnlockedSongs++;	break;
+			case UnlockEntry::TYPE_STEPS:	iNumUnlockedSteps++;	break;
+			case UnlockEntry::TYPE_COURSE:	iNumUnlockedCourses++;	break;
+			}
+		}
+
+		pNode->AppendChild( "TotalSongs",			iTotalSongs );
+		pNode->AppendChild( "TotalSteps",			iTotalSteps );
+		pNode->AppendChild( "TotalCourses",			iTotalCourses );
+		pNode->AppendChild( "NumUnlockedSongs",		iNumUnlockedSongs );
+		pNode->AppendChild( "NumUnlockedSteps",		iNumUnlockedSteps );
+		pNode->AppendChild( "NumUnlockedCourses",	iNumUnlockedCourses );
+	}
+
+	{
 		XNode* pNode = xml.AppendChild( "Songs" );
 
 		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
@@ -49,6 +123,8 @@ void SaveCatalogXml()
 			Song* pSong = vpSongs[i];
 			
 			if( pSong->IsTutorial() )
+				continue;	// skip
+			if( UNLOCKMAN->SongIsLocked(pSong) )
 				continue;	// skip
 
 			SongID songID;
@@ -67,6 +143,8 @@ void SaveCatalogXml()
 				{
 					Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
 					if( pSteps == NULL )
+						continue;	// skip
+					if( UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
 						continue;	// skip
 
 					StepsID stepsID;
@@ -95,6 +173,8 @@ void SaveCatalogXml()
 			// skip non-fixed courses.  We don't have any stable data for them other than 
 			// the title.
 			if( !pCourse->IsFixed() )
+				continue;
+			if( UNLOCKMAN->CourseIsLocked(pCourse) )
 				continue;
 
 			CourseID courseID;

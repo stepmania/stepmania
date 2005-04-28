@@ -26,7 +26,6 @@
 #include "CourseUtil.h"
 #include "RageFileManager.h"
 #include "UnlockManager.h"
-#include "CatalogXml.h"
 #include "Foreach.h"
 #include "StatsManager.h"
 #include "Style.h"
@@ -84,12 +83,6 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
-
-	/* This shouldn't need to be here; if it's taking long enough that this is
-	 * even visible, we should be fixing it, not showing a progress display. */
-	if( ld )
-		ld->SetText( "Saving Catalog.xml ..." );
-	SaveCatalogXml();
 }
 
 void SongManager::Reload( LoadingWindow *ld )

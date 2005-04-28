@@ -4,12 +4,13 @@
 #define CATALOG_XML_H
 
 #include "GameConstantsAndTypes.h"
+class LoadingWindow;
 
 const CString CATALOG_XML	= "Catalog.xml";
 const CString CATALOG_XSL	= "Catalog.xsl";
 const CString CATALOG_XML_FILE	= DATA_DIR + "Catalog.xml";
 
-void SaveCatalogXml();
+void SaveCatalogXml( LoadingWindow *ld );
 
 #endif
 

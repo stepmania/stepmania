@@ -34,8 +34,8 @@
 #include "Game.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
-
 #include "arch/arch.h"
+#include "CatalogXml.h"
 
 //
 // StepMania global classes
@@ -1125,6 +1125,11 @@ int main(int argc, char* argv[])
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockManager;
+
+	/* This shouldn't need to be here; if it's taking long enough that this is
+	 * even visible, we should be fixing it, not showing a progress display. */
+	SaveCatalogXml( loading_window );
+	
 	NSMAN 		= new NetworkSyncManager( loading_window ); 
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
