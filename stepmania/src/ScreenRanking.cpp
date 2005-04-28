@@ -333,7 +333,7 @@ void ScreenRanking::Init()
 	{
 		vector<Course*> vpCourses;
 		GetAllCoursesToShow( vpCourses, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
-		LOG->Trace("rankings: adding %u courses", vpCourses.size());
+		LOG->Trace("rankings: adding %u courses", unsigned(vpCourses.size()));
 		m_vScoreRowItem.resize( vpCourses.size() );
 		FOREACH_CONST( Course*, vpCourses, c )
 		{
