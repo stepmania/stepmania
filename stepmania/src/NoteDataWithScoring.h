@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "NoteTypes.h"
 #include <map>
 
 struct RadarValues;
@@ -13,7 +14,7 @@ namespace NoteDataWithScoring
 {
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
-	TapNoteScore LastTapNoteScore( const NoteData &in, unsigned iRow );
+	TapNoteResult LastTapNoteResult( const NoteData &in, unsigned iRow );
 
 	void GetActualRadarValues( const NoteData &in, PlayerNumber pn, float fSongSeconds, RadarValues& out );
 };

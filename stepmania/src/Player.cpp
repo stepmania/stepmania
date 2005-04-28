@@ -45,8 +45,13 @@ CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisp
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
 
-#define ADJUSTED_WINDOW( judge ) ((PREFSMAN->m_fJudgeWindowSeconds##judge * PREFSMAN->m_fJudgeWindowScale) + PREFSMAN->m_fJudgeWindowAdd)
+#define ADJUSTED_WINDOW_HOLD( judge ) ( \
+	(PREFSMAN->m_fJudgeWindowSeconds##judge * PREFSMAN->m_fJudgeWindowScale) + \
+	PREFSMAN->m_fJudgeWindowAdd )
 
+#define ADJUSTED_WINDOW_TAP( judge, tns ) ( \
+	ADJUSTED_WINDOW_HOLD( judge ) + \
+	((PREFSMAN->m_bMercifulBeginner && (tns==TNS_MISS||tns==TNS_BOO) && IsPlayingBeginner()) ? 0.5f : 0) )
 
 Player::Player()
 {
@@ -164,6 +169,7 @@ void Player::Init(
 	ActorUtil::OnCommand( m_Combo, sType );
 
 	m_Judgment.SetName( "Judgment" );
+	m_Judgment.Load( IsPlayingBeginner() );
 	ActorUtil::OnCommand( m_Judgment, sType );
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
@@ -462,7 +468,7 @@ void Player::Update( float fDeltaTime )
 					else
 					{
 						// Decrease life
-						fLife -= fDeltaTime/ADJUSTED_WINDOW(OK);
+						fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(OK);
 						fLife = max( fLife, 0 );	// clamp
 					}
 					break;
@@ -473,7 +479,7 @@ void Player::Update( float fDeltaTime )
 					// give positive life in Step(), not here.
 
 					// Decrease life
-					fLife -= fDeltaTime/ADJUSTED_WINDOW(Roll);
+					fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(Roll);
 					fLife = max( fLife, 0 );	// clamp
 					break;
 				default:
@@ -850,20 +856,20 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			{
 			case TapNote::mine:
 				// stepped too close to mine?
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Mine) )
+				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Mine,TNS_HIT_MINE) )
 					score = TNS_HIT_MINE;
 				break;
 
 			case TapNote::attack:
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) && !tn.result.bHidden )
+				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Attack,TNS_NONE) && !tn.result.bHidden )
 					score = TNS_PERFECT; /* sentinel */
 				break;
 			default:
-				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )	score = TNS_PERFECT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_GREAT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )		score = TNS_GOOD;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )		score = TNS_BOO;
+				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Marvelous,	TNS_MARVELOUS) )	score = TNS_MARVELOUS;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Perfect,	TNS_PERFECT) )		score = TNS_PERFECT;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Great,		TNS_GREAT) )		score = TNS_GREAT;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Good,		TNS_GOOD) )			score = TNS_GOOD;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Boo,		TNS_BOO) )			score = TNS_BOO;
 				else	score = TNS_NONE;
 				break;
 			}
@@ -1180,8 +1186,9 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	 * the 2nd step of the jump, it sets another column's timer then AND's the jump 
 	 * columns with the "was pressed recently" columns to see whether or not you hit 
 	 * all the columns of the jump.  -Chris */
-//	TapNoteScore score = NoteDataWithScoring::MinTapNoteScore( m_NoteData, iIndexThatWasSteppedOn );
-	TapNoteScore score = NoteDataWithScoring::LastTapNoteScore( m_NoteData, iIndexThatWasSteppedOn );
+	TapNoteResult tnr = NoteDataWithScoring::LastTapNoteResult( m_NoteData, iIndexThatWasSteppedOn );
+	TapNoteScore score = tnr.tns;
+
 	ASSERT(score != TNS_NONE);
 	ASSERT(score != TNS_HIT_MINE);
 	ASSERT(score != TNS_AVOIDED_MINE);
@@ -1221,7 +1228,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		
 	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
 
-	m_Judgment.SetJudgment( score );
+	m_Judgment.SetJudgment( score, tnr.fTapNoteOffset < 0 );
 }
 
 
@@ -1295,7 +1302,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 
 	if( iNumMissesFound > 0 )
-		m_Judgment.SetJudgment( TNS_MISS );
+		m_Judgment.SetJudgment( TNS_MISS, false );
 }
 
 
@@ -1380,7 +1387,7 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteScore( m_NoteData, row );
+	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteResult( m_NoteData, row ).tns;
 	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
 	ASSERT(iNumTapsInRow > 0);
 
@@ -1569,13 +1576,29 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW(Boo);
+	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_TAP(Boo,TNS_BOO);
 }
 
 void Player::FadeToFail()
 {
 	if( m_pNoteField )
 		m_pNoteField->FadeToFail();
+}
+
+bool Player::IsPlayingBeginner() const
+{
+	if( !m_pPlayerStageStats->vpPossibleSteps.empty() )
+	{
+		Steps *pSteps = m_pPlayerStageStats->vpPossibleSteps[0];
+		return pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
+	}
+	else
+	{
+		if( m_pPlayerState->m_PlayerNumber == PLAYER_INVALID )
+			return false;
+		Steps *pSteps = GAMESTATE->m_pCurSteps[ m_pPlayerState->m_PlayerNumber ];
+		return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
+	}	
 }
 
 /*

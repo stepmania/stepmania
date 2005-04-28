@@ -13,9 +13,9 @@ class Judgment : public ActorFrame
 {
 public:
 	Judgment();
-
+	void Load( bool bAlternateLabel );
 	void Reset();
-	void SetJudgment( TapNoteScore score );
+	void SetJudgment( TapNoteScore score, bool bEarly );
 
 protected:
 	Sprite		m_sprJudgment;

@@ -30,7 +30,7 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartRow, iEndRow )
 	{
 		int iNumNotesInRow = in.GetNumTracksWithTapOrHoldHead( r );
-		TapNoteScore tnsRow = NoteDataWithScoring::LastTapNoteScore( in, r );
+		TapNoteScore tnsRow = NoteDataWithScoring::LastTapNoteResult( in, r ).tns;
 
 		if( iNumNotesInRow >= MinTaps && tnsRow >= tns )
 			iNumSuccessfulDoubles++;
@@ -156,12 +156,13 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow )
 }
 
 }
-TapNoteScore NoteDataWithScoring::LastTapNoteScore( const NoteData &in, unsigned iRow )
+
+TapNoteResult NoteDataWithScoring::LastTapNoteResult( const NoteData &in, unsigned iRow )
 {
 	int iTrack = LastTapNoteScoreTrack( in, iRow );
 	if( iTrack == -1 )
-		return TNS_NONE;
-	return in.GetTapNote(iTrack, iRow).result.tns;
+		return TapNoteResult();
+	return in.GetTapNote(iTrack, iRow).result;
 }
 
 

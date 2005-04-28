@@ -53,7 +53,7 @@ public:
 	void ApplyWaitingTransforms();
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
 
-	static float GetMaxStepDistanceSeconds();
+	float GetMaxStepDistanceSeconds();
 
 	NoteData m_NoteData;
 
@@ -69,6 +69,8 @@ protected:
 
 	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
+
+	bool IsPlayingBeginner() const;
 
 	PlayerState*	m_pPlayerState;
 	PlayerStageStats*	m_pPlayerStageStats;
