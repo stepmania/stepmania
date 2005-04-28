@@ -2395,6 +2395,9 @@
 				AA80C75507F20D0D00C99272,
 				AA80C75A07F20D6600C99272,
 				AA7144B20809EEEC00545684,
+				AA3D5E6108214C77002AA665,
+				AA3D5E92082152B6002AA665,
+				AA3D5E96082152E6002AA665,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4247,6 +4250,9 @@
 				AA80C75C07F20D8000C99272,
 				AA6E6E0A07F518E800C3EBB4,
 				AA7144B10809EEEC00545684,
+				AA3D5E6008214C77002AA665,
+				AA3D5E91082152B6002AA665,
+				AA3D5E95082152E5002AA665,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5836,6 +5842,96 @@
 		};
 		AA3A706306AA1645006F755E = {
 			fileRef = AA3A706106AA1645006F755E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D5E5A08214C77002AA665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = LifeMeterTime.cpp;
+			path = ../src/LifeMeterTime.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3D5E5B08214C77002AA665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = LifeMeterTime.h;
+			path = ../src/LifeMeterTime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3D5E5C08214C77002AA665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScoreDisplayLifeTime.cpp;
+			path = ../src/ScoreDisplayLifeTime.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3D5E5D08214C77002AA665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScoreDisplayLifeTime.h;
+			path = ../src/ScoreDisplayLifeTime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3D5E6008214C77002AA665 = {
+			fileRef = AA3D5E5C08214C77002AA665;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D5E6108214C77002AA665 = {
+			fileRef = AA3D5E5D08214C77002AA665;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D5E8F082152B6002AA665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = StreamDisplay.cpp;
+			path = ../src/StreamDisplay.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3D5E90082152B6002AA665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = StreamDisplay.h;
+			path = ../src/StreamDisplay.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3D5E91082152B6002AA665 = {
+			fileRef = AA3D5E8F082152B6002AA665;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D5E92082152B6002AA665 = {
+			fileRef = AA3D5E90082152B6002AA665;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D5E95082152E5002AA665 = {
+			fileRef = AA3D5E5A08214C77002AA665;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D5E96082152E6002AA665 = {
+			fileRef = AA3D5E5B08214C77002AA665;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -11267,6 +11363,8 @@
 				AA6EFF1C04770F63005F316C,
 				AA6EFF1D04770F63005F316C,
 				AA6EFF1E04770F63005F316C,
+				AA3D5E5A08214C77002AA665,
+				AA3D5E5B08214C77002AA665,
 				AA6EFF1F04770F63005F316C,
 				AA6EFF2004770F63005F316C,
 				AA6EFF2104770F63005F316C,
@@ -11283,6 +11381,8 @@
 				AA6EFF2604770F63005F316C,
 				AA6EFF2704770F63005F316C,
 				AA6EFF2804770F63005F316C,
+				AA3D5E5C08214C77002AA665,
+				AA3D5E5D08214C77002AA665,
 				AA6EFF2904770F63005F316C,
 				AA6EFF2A04770F63005F316C,
 				AA6EFF2B04770F63005F316C,
@@ -11296,6 +11396,8 @@
 				AA6EFF3204770F63005F316C,
 				AAE443F304B0FEB700D02EE9,
 				AAE443F404B0FEB700D02EE9,
+				AA3D5E8F082152B6002AA665,
+				AA3D5E90082152B6002AA665,
 			);
 			isa = PBXGroup;
 			name = ActorsInGameplay;
