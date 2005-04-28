@@ -240,7 +240,10 @@ public:
 	// effects
 	//
 	void SetEffectNone()						{ m_Effect = no_effect; }
-	Effect GetEffect()							{ return m_Effect; }
+	Effect GetEffect() const					{ return m_Effect; }
+	float GetSecsIntoEffect() const				{ return m_fSecsIntoEffect; }
+	float GetEffectDelta() const				{ return m_fEffectDelta; }
+
 	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )			{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fSecs )			{ m_fEffectPeriodSeconds = fSecs; } 
@@ -561,6 +564,8 @@ public:
 	static int GetZoom( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoom() ); return 1; }
 	static int GetZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomX() ); return 1; }
 	static int GetBaseZoomX( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetBaseZoomX() ); return 1; }
+	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
+	static int GetEffectDelta( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
 
 
 	static void Register(lua_State *L) {
@@ -667,6 +672,8 @@ public:
 		ADD_METHOD( GetZoom )
 		ADD_METHOD( GetZoomX )
 		ADD_METHOD( GetBaseZoomX )
+		ADD_METHOD( GetSecsIntoEffect )
+		ADD_METHOD( GetEffectDelta )
 
 		Luna<T>::Register( L );
 	}
