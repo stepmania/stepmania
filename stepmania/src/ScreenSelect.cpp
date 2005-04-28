@@ -14,7 +14,6 @@
 #include "ThemeManager.h"
 #include "GameCommand.h"
 #include "RageDisplay.h"
-#include "arch/ArchHooks/ArchHooks.h"
 #include "LightsManager.h"
 #include "Command.h"
 
