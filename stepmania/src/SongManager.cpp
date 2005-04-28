@@ -1175,12 +1175,12 @@ void SongManager::UpdateRankingCourses()
 	}
 }
 
-void SongManager::LoadAllFromProfileDir( const CString &sDir, ProfileSlot slot )
+void SongManager::LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot slot )
 {
 	//
 	// Load all .edit files.
 	//
-	CString sEditsDir = sDir+"Edits/";
+	CString sEditsDir = sProfileDir + EDIT_SUBDIR;
 
 	CStringArray asEditsFilesWithPath;
 	GetDirListing( sEditsDir+"*.edit", asEditsFilesWithPath, false, true );

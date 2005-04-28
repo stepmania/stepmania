@@ -369,6 +369,7 @@ void ProfileManager::LoadMachineProfile()
 	// If the machine name has changed, make sure we use the new name
 	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
 
+	SONGMAN->FreeAllLoadedFromProfile( PROFILE_SLOT_MACHINE );
 	SONGMAN->LoadAllFromProfileDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 }
 

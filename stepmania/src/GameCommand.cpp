@@ -25,6 +25,7 @@
 #include "ThemeManager.h"
 #include "PlayerState.h"
 #include "Course.h"
+#include "RageFileManager.h"
 
 void GameCommand::Init()
 {
@@ -56,9 +57,12 @@ void GameCommand::Init()
 
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
+	m_bClearMachineEdits = false;
 	m_bFillMachineStats = false;
 	m_bTransferStatsFromMachine = false;
 	m_bTransferStatsToMachine = false;
+	m_bCopyEditsFromMachine = false;
+	m_bCopyEditsToMachine = false;
 	m_bInsertCredit = false;
 	m_bResetToFactoryDefaults = false;
 	m_bStopMusic = false;
@@ -357,6 +361,10 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		m_bClearMachineStats = true;
 	}
+	else if( sName == "clearmachineedits" )
+	{
+		m_bClearMachineEdits = true;
+	}
 	else if( sName == "fillmachinestats" )
 	{
 		m_bFillMachineStats = true;
@@ -364,6 +372,14 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "transferstatsfrommachine" )
 	{
 		m_bTransferStatsFromMachine = true;
+	}
+	else if( sName == "copyeditstomachine" )
+	{
+		m_bCopyEditsToMachine = true;
+	}
+	else if( sName == "copyeditsfrommachine" )
+	{
+		m_bCopyEditsFromMachine = true;
 	}
 	else if( sName == "transferstatstomachine" )
 	{
@@ -789,6 +805,27 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		PROFILEMAN->SaveMachineProfile();
 		SCREENMAN->SystemMessage( "Machine stats cleared." );
 	}
+	if( m_bClearMachineEdits )
+	{
+		int iNumAttempted = 0;
+		int iNumSuccessful = 0;
+		
+		vector<CString> vsEditFiles;
+		GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_SUBDIR+"*.edit", vsEditFiles, false, true );
+		FOREACH_CONST( CString, vsEditFiles, i )
+		{
+			iNumAttempted++;
+			bool bSuccess = FILEMAN->Remove( *i );
+			if( bSuccess )
+				iNumSuccessful++;
+		}
+
+		// reload the machine profile
+		PROFILEMAN->SaveMachineProfile();
+		PROFILEMAN->LoadMachineProfile();
+		
+		SCREENMAN->SystemMessage( ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful) );
+	}
 	if( m_bFillMachineStats )
 	{
 		// Choose a percent for all scores.  This is useful for testing unlocks
@@ -905,6 +942,94 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 		if( !bTriedToLoad )
 			SCREENMAN->SystemMessage( "Stats not loaded - No memory cards ready." );
+
+		MEMCARDMAN->FlushAndReset();
+	}
+	if( m_bCopyEditsFromMachine )
+	{
+		bool bTriedToCopy = false;
+		FOREACH_PlayerNumber( pn )
+		{
+			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+				continue;	// skip
+
+			MEMCARDMAN->MountCard(pn);
+
+			bTriedToCopy = true;
+
+			CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_SUBDIR;
+			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
+
+			int iNumAttempted = 0;
+			int iNumSuccessful = 0;
+			int iNumOverwritten = 0;
+			
+			vector<CString> vsEditFiles;
+			GetDirListing( sFromDir+"*.edit", vsEditFiles, false, false );
+			FOREACH_CONST( CString, vsEditFiles, i )
+			{
+				iNumAttempted++;
+				if( DoesFileExist(sToDir+*i) )
+					iNumOverwritten++;
+				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+				if( bSuccess )
+					iNumSuccessful++;
+			}
+			
+			MEMCARDMAN->UnmountCard(pn);
+
+			SCREENMAN->SystemMessage( ssprintf("Copied to P%d card:\n  attempted %d copies (%d overwritten)\n  %d files copied, %d errors.",pn+1,iNumAttempted,iNumOverwritten,iNumSuccessful,iNumAttempted-iNumSuccessful) );
+			break;
+		}
+
+		if( !bTriedToCopy )
+			SCREENMAN->SystemMessage( "Edits not copied - No memory cards ready." );
+
+		MEMCARDMAN->FlushAndReset();
+	}
+	if( m_bCopyEditsToMachine )
+	{
+		bool bTriedToCopy = false;
+		FOREACH_PlayerNumber( pn )
+		{
+			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+				continue;	// skip
+
+			MEMCARDMAN->MountCard(pn);
+
+			bTriedToCopy = true;
+
+			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
+			CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_SUBDIR;
+
+			int iNumAttempted = 0;
+			int iNumSuccessful = 0;
+			int iNumOverwritten = 0;
+			
+			vector<CString> vsEditFiles;
+			GetDirListing( sFromDir+"*.edit", vsEditFiles, false, false );
+			FOREACH_CONST( CString, vsEditFiles, i )
+			{
+				iNumAttempted++;
+				if( DoesFileExist(sToDir+*i) )
+					iNumOverwritten++;
+				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+				if( bSuccess )
+					iNumSuccessful++;
+			}
+			
+			MEMCARDMAN->UnmountCard(pn);
+
+			// reload the machine profile
+			PROFILEMAN->SaveMachineProfile();
+			PROFILEMAN->LoadMachineProfile();
+
+			SCREENMAN->SystemMessage( ssprintf("Copied from P%d card:\n  attempted %d copies (%d overwritten)\n  %d files copied, %d errors.",pn+1,iNumAttempted,iNumOverwritten,iNumSuccessful,iNumAttempted-iNumSuccessful) );
+			break;
+		}
+
+		if( !bTriedToCopy )
+			SCREENMAN->SystemMessage( "Edits not copied - No memory cards ready." );
 
 		MEMCARDMAN->FlushAndReset();
 	}

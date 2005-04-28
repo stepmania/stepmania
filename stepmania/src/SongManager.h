@@ -34,7 +34,7 @@ public:
 	void RegenerateNonFixedCourses();
 	void SetPreferences();
 
-	void LoadAllFromProfileDir( const CString &sDir, ProfileSlot slot );
+	void LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
 	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
 
@@ -119,6 +119,7 @@ protected:
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 };
 
+static const CString EDIT_SUBDIR = "Edits/";
 
 extern SongManager*	SONGMAN;	// global and accessable from anywhere in our program
 
