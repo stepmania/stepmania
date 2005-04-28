@@ -89,7 +89,7 @@ void Steps::SetSMNoteData( const CString &notes_comp_ )
 	m_uHash = GetHashForString( m_sNoteDataCompressed );
 }
 
-/* XXX: this function should pull data from cache, like Decompress() */
+/* XXX: this function should pull data from m_sFilename, like Decompress() */
 void Steps::GetSMNoteData( CString &notes_comp_out ) const
 {
 	if( m_sNoteDataCompressed.empty() )
@@ -246,11 +246,16 @@ void Steps::Compress() const
 		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
 		 * don't always free the alocated memory. */
 		m_sNoteDataCompressed = CString("");
+		return;
 	}
 
+	/* We have no file on disk.  XXX: check whether there's any memory benefit to storing
+	 * data in SMData form.  We don't want to decompress everything on load (much too slow),
+	 * but there may be litle benefit to recompressing here. */
 	if( m_sNoteDataCompressed.empty() )
 	{
-		if(!m_bNoteDataIsFilled) return; /* no data is no data */
+		if( !m_bNoteDataIsFilled )
+			return; /* no data is no data */
 		NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
 	}
 
