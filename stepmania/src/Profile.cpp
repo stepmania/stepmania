@@ -32,8 +32,6 @@ const CString COMMON_XSL	= "Common.xsl";
 
 #define GUID_SIZE_BYTES 8
 
-#define MAX_RECENT_SCORES_TO_SAVE 100
-
 #define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
 #define MAX_PLAYER_STATS_XML_SIZE_BYTES	\
 	100 /* Songs */						\
@@ -1628,7 +1626,8 @@ XNode* Profile::SaveRecentSongScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "RecentSongScores";
 
-	unsigned uNumToSave = min( m_vRecentStepsScores.size(), (unsigned)MAX_RECENT_SCORES_TO_SAVE );
+	int iMaxRecentScoresToSave = IsMachine() ? PREFSMAN->m_iMaxRecentScoresForMachine : PREFSMAN->m_iMaxRecentScoresForPlayer;
+	unsigned uNumToSave = min( m_vRecentStepsScores.size(), (unsigned)iMaxRecentScoresToSave );
 
 	for( unsigned i=0; i<uNumToSave; i++ )
 	{
@@ -1705,7 +1704,8 @@ XNode* Profile::SaveRecentCourseScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "RecentCourseScores";
 
-	unsigned uNumToSave = min( m_vRecentCourseScores.size(), (unsigned)MAX_RECENT_SCORES_TO_SAVE );
+	int iMaxRecentScoresToSave = IsMachine() ? PREFSMAN->m_iMaxRecentScoresForMachine : PREFSMAN->m_iMaxRecentScoresForPlayer;
+	unsigned uNumToSave = min( m_vRecentStepsScores.size(), (unsigned)iMaxRecentScoresToSave );
 
 	for( unsigned i=0; i<uNumToSave; i++ )
 	{

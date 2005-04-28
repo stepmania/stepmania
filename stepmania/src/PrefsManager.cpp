@@ -270,6 +270,8 @@ void PrefsManager::Init()
 	m_bHideDefaultNoteSkin = false;
 	m_iMaxHighScoresPerListForMachine = 10;
 	m_iMaxHighScoresPerListForPlayer = 3;
+	m_iMaxRecentScoresForMachine = 100;
+	m_iMaxRecentScoresForPlayer = 20;
 	m_bAllowMultipleHighScoreWithSameName = true;
 	m_fPadStickSeconds = 0;
 	m_bForceMipMaps = false;
@@ -477,6 +479,8 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.GetValue( "Options", "MaxHighScoresPerListForMachine",	m_iMaxHighScoresPerListForMachine );
 	ini.GetValue( "Options", "MaxHighScoresPerListForPlayer",	m_iMaxHighScoresPerListForPlayer );
+	ini.GetValue( "Options", "MaxRecentScoresForMachine",	m_iMaxRecentScoresForMachine );
+	ini.GetValue( "Options", "MaxRecentScoresForPlayer",	m_iMaxRecentScoresForPlayer );
 	ini.GetValue( "Options", "AllowMultipleHighScoreWithSameName",	m_bAllowMultipleHighScoreWithSameName );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.GetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
@@ -641,6 +645,8 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.SetValue( "Options", "MaxHighScoresPerListForMachine",	m_iMaxHighScoresPerListForMachine );
 	ini.SetValue( "Options", "MaxHighScoresPerListForPlayer",	m_iMaxHighScoresPerListForPlayer );
+	ini.SetValue( "Options", "MaxRecentScoresForMachine",	m_iMaxRecentScoresForMachine );
+	ini.SetValue( "Options", "MaxRecentScoresForPlayer",	m_iMaxRecentScoresForPlayer );
 	ini.SetValue( "Options", "AllowMultipleHighScoreWithSameName",	m_bAllowMultipleHighScoreWithSameName );	
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.SetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );

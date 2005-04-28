@@ -218,6 +218,8 @@ public:
 	bool			m_bHideDefaultNoteSkin;
 	int				m_iMaxHighScoresPerListForMachine;
 	int				m_iMaxHighScoresPerListForPlayer;
+	int				m_iMaxRecentScoresForMachine;
+	int				m_iMaxRecentScoresForPlayer;
 	bool			m_bAllowMultipleHighScoreWithSameName;
 	bool			m_bCelShadeModels;
 
