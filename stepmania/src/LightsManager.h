@@ -24,6 +24,7 @@ enum CabinetLight
 };
 #define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CABINET_LIGHTS, i )
 const CString& CabinetLightToString( CabinetLight cl );
+CabinetLight StringToCabinetLight( const CString& s);
 
 enum LightsMode
 {

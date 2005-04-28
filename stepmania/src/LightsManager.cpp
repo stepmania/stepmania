@@ -22,6 +22,7 @@ static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
 	"BassRight",
 };
 XToString( CabinetLight, NUM_CABINET_LIGHTS );
+StringToX( CabinetLight );
 
 static const CString LightsModeNames[NUM_LIGHTS_MODES] = {
 	"Attract",
