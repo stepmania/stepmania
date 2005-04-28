@@ -129,7 +129,7 @@ void ScoreDisplayLifeTime::PlayGainLoss( const CString &sCommand, float fDeltaLi
 {
 	CString s;
 	if( fDeltaLifeSecs != 0 )
-		s = ssprintf( fDeltaLifeSecs>0 ? "+%1.1fs" : "%1.1fs",fDeltaLifeSecs);
+		s = ssprintf( "%+1.1fs", fDeltaLifeSecs);
 	m_textDeltaSeconds.SetText( s );
 	m_textDeltaSeconds.PlayCommand( sCommand );
 }
