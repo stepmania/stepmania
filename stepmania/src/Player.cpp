@@ -1587,7 +1587,7 @@ void Player::FadeToFail()
 
 bool Player::IsPlayingBeginner() const
 {
-	if( !m_pPlayerStageStats->vpPossibleSteps.empty() )
+	if( m_pPlayerStageStats != NULL && !m_pPlayerStageStats->vpPossibleSteps.empty() )
 	{
 		Steps *pSteps = m_pPlayerStageStats->vpPossibleSteps[0];
 		return pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
