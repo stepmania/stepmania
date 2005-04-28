@@ -1324,9 +1324,6 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				CString sFileName = SaveScreenshot( sDir, true, true, iScreenshotIndex );
 				CString sPath = sDir+sFileName;
 				
-				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
-					MEMCARDMAN->UnmountCard( pn );
-
 				if( !sFileName.empty() )
 				{
 					Screenshot screenshot;
@@ -1335,6 +1332,9 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 					screenshot.highScore = hs;
 					pProfile->AddScreenshot( screenshot );
 				}
+
+				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
+					MEMCARDMAN->UnmountCard( pn );
 
 				m_bSavedScreenshot[pn] = true;
 				return;	// handled
