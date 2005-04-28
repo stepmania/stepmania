@@ -127,17 +127,11 @@ void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 
 void ScoreDisplayLifeTime::PlayGainLoss( const CString &sCommand, float fDeltaLifeSecs )
 {
+	CString s;
 	if( fDeltaLifeSecs != 0 )
-	{
-		CString s;
-		if( fabs(fDeltaLifeSecs) >= 1 )
-			s = ssprintf( fDeltaLifeSecs>0 ? "+%.0fs" : "-%.0fs",fDeltaLifeSecs);
-		else
-			s = ssprintf( fDeltaLifeSecs>0 ? "+%.0fms" : "-%.0fms",fDeltaLifeSecs*1000);
-		m_textDeltaSeconds.SetText( s );
-		m_textDeltaSeconds.PlayCommand( sCommand );
-	}
-
+		s = ssprintf( fDeltaLifeSecs>0 ? "+%1.1fs" : "%1.1fs",fDeltaLifeSecs);
+	m_textDeltaSeconds.SetText( s );
+	m_textDeltaSeconds.PlayCommand( sCommand );
 }
 
 
