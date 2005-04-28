@@ -23,7 +23,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void LoadFromWheelItemData( WheelItemData* pWID );
+	void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
 	void RefreshGrades();
 
 	WheelItemData *data;
@@ -31,6 +31,7 @@ public:
 
 	Sprite				m_sprSongBar;
 	Sprite				m_sprSectionBar;
+	Sprite				m_sprExpandedBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
 	BitmapText			m_textSectionName;

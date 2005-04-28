@@ -60,6 +60,10 @@ MusicWheelItem::MusicWheelItem()
 	m_sprSectionBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSectionBar );
 
+	m_sprExpandedBar.Load( THEME->GetPathG("MusicWheelItem","expanded") );
+	m_sprExpandedBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprExpandedBar );
+
 	m_fPercentGray = 0;
 	m_WheelNotifyIcon.SetXY( ICON_X, ICON_Y );
 	m_WheelNotifyIcon.RunCommands( ICON_ON_COMMAND );
@@ -103,7 +107,7 @@ MusicWheelItem::MusicWheelItem()
 }
 
 
-void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
+void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded )
 {
 	ASSERT( pWID != NULL );
 	data = pWID;
@@ -114,6 +118,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 	m_TextBanner.SetHidden( true );
 	m_sprSongBar.SetHidden( true );
 	m_sprSectionBar.SetHidden( true );
+	m_sprExpandedBar.SetHidden( true );
 	m_textSectionName.SetHidden( true );
 	m_textRoulette.SetHidden( true );
 	FOREACH_PlayerNumber( p )
@@ -193,7 +198,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 	case TYPE_RANDOM:
 	case TYPE_PORTAL:
 	case TYPE_SORT:
-		m_sprSectionBar.SetHidden( false );
+		(bExpanded ? m_sprExpandedBar : m_sprSectionBar).SetHidden( false );
 		break;
 	case TYPE_SONG:		
 	case TYPE_COURSE:
@@ -229,7 +234,6 @@ void MusicWheelItem::RefreshGrades()
 
 		m_GradeDisplay[p].SetGrade( p, grade );
 	}
-
 }
 
 
@@ -244,7 +248,7 @@ void MusicWheelItem::DrawPrimitives()
 
 	if( m_fPercentGray > 0 )
 	{
-		Sprite &bar = m_sprSectionBar.GetHidden() ? m_sprSongBar : m_sprSectionBar;
+		Sprite &bar = m_sprSongBar.GetVisible() ? m_sprSongBar : (m_sprSectionBar.GetVisible() ? m_sprSectionBar : m_sprExpandedBar);
 		bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
 		bar.SetDiffuse( RageColor(0,0,0,0) );
 		bar.Draw();

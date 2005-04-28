@@ -872,7 +872,8 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 			WheelItemData	*data   = m_CurWheelItemData[iIndex];
 			MusicWheelItem	*display = m_MusicWheelItems[i];
 
-			display->LoadFromWheelItemData( data );
+			bool bExpanded = (data->m_Type == TYPE_SECTION) ? (data->m_sSectionName == m_sExpandedSectionName) : false;
+			display->LoadFromWheelItemData( data, bExpanded );
 		}
 	}
 	else
@@ -889,7 +890,8 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 				WheelItemData	*data   = m_CurWheelItemData[iIndex];
 				MusicWheelItem	*display = m_MusicWheelItems[i];
 
-				display->LoadFromWheelItemData( data );
+				bool bExpanded = (data->m_Type == TYPE_SECTION) ? (data->m_sSectionName == m_sExpandedSectionName) : false;
+				display->LoadFromWheelItemData( data, bExpanded );
 			}
 		}
 		else if( dist < 0 )
@@ -902,7 +904,8 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 				WheelItemData	*data   = m_CurWheelItemData[iIndex];
 				MusicWheelItem	*display = m_MusicWheelItems[i];
 
-				display->LoadFromWheelItemData( data );
+				bool bExpanded = (data->m_Type == TYPE_SECTION) ? (data->m_sSectionName == m_sExpandedSectionName) : false;
+				display->LoadFromWheelItemData( data, bExpanded );
 			}
 		}
 	}
