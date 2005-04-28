@@ -35,6 +35,7 @@ ActorCommands::ActorCommands( const CString &sCommands )
 			s << "\tself:" << sName << "(";
 
 			bool bFirstParamIsString =
+				sName == "luaeffect" ||
 				sName == "horizalign" ||
 				sName == "vertalign" ||
 				sName == "effectclock" ||
