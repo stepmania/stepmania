@@ -1626,13 +1626,8 @@ XNode* Profile::SaveRecentSongScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "RecentSongScores";
 
-	int iMaxRecentScoresToSave = IsMachine() ? PREFSMAN->m_iMaxRecentScoresForMachine : PREFSMAN->m_iMaxRecentScoresForPlayer;
-	unsigned uNumToSave = min( m_vRecentStepsScores.size(), (unsigned)iMaxRecentScoresToSave );
-
-	for( unsigned i=0; i<uNumToSave; i++ )
-	{
-		pNode->AppendChild( m_vRecentStepsScores[i].CreateNode() );
-	}
+	FOREACHD_CONST( HighScoreForASongAndSteps, m_vRecentStepsScores, i )
+		pNode->AppendChild( i->CreateNode() );
 
 	return pNode;
 }
@@ -1644,6 +1639,11 @@ void Profile::AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighS
 	h.stepsID.FromSteps( pSteps );
 	h.hs = hs;
 	m_vRecentStepsScores.push_back( h );
+
+	int iMaxRecentScoresToSave = IsMachine() ? PREFSMAN->m_iMaxRecentScoresForMachine : PREFSMAN->m_iMaxRecentScoresForPlayer;
+	int iNumToErase = m_vRecentStepsScores.size() - iMaxRecentScoresToSave;
+	if( iNumToErase > 0 )
+		m_vRecentStepsScores.erase( m_vRecentStepsScores.begin(), m_vRecentStepsScores.begin() +  iNumToErase );
 }
 
 
@@ -1704,13 +1704,8 @@ XNode* Profile::SaveRecentCourseScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "RecentCourseScores";
 
-	int iMaxRecentScoresToSave = IsMachine() ? PREFSMAN->m_iMaxRecentScoresForMachine : PREFSMAN->m_iMaxRecentScoresForPlayer;
-	unsigned uNumToSave = min( m_vRecentStepsScores.size(), (unsigned)iMaxRecentScoresToSave );
-
-	for( unsigned i=0; i<uNumToSave; i++ )
-	{
-		pNode->AppendChild( m_vRecentCourseScores[i].CreateNode() );
-	}
+	FOREACHD_CONST( HighScoreForACourseAndTrail, m_vRecentCourseScores, i )
+		pNode->AppendChild( i->CreateNode() );
 
 	return pNode;
 }
@@ -1722,6 +1717,11 @@ void Profile::AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, 
 	h.trailID.FromTrail( pTrail );
 	h.hs = hs;
 	m_vRecentCourseScores.push_back( h );
+	
+	int iMaxRecentScoresToSave = IsMachine() ? PREFSMAN->m_iMaxRecentScoresForMachine : PREFSMAN->m_iMaxRecentScoresForPlayer;
+	int iNumToErase = m_vRecentCourseScores.size() - iMaxRecentScoresToSave;
+	if( iNumToErase > 0 )
+		m_vRecentCourseScores.erase( m_vRecentCourseScores.begin(), m_vRecentCourseScores.begin() +  iNumToErase );
 }
 
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const

@@ -7,6 +7,7 @@
 #include "Grade.h"
 #include <map>
 #include <set>
+#include <deque>
 #include "HighScore.h"
 #include "DateTime.h"
 #include "SongUtil.h"	// for SongID
@@ -231,7 +232,7 @@ public:
 		XNode* CreateNode() const;
 		void LoadFromNode( const XNode* pNode );
 	};
-	vector<HighScoreForASongAndSteps> m_vRecentStepsScores;
+	deque<HighScoreForASongAndSteps> m_vRecentStepsScores;
 	void AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs );
 	
 	//
@@ -249,7 +250,7 @@ public:
 		XNode* CreateNode() const;
 		void LoadFromNode( const XNode* pNode );
 	};
-	vector<HighScoreForACourseAndTrail> m_vRecentCourseScores;
+	deque<HighScoreForACourseAndTrail> m_vRecentCourseScores;
 	void AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
 
 	//
