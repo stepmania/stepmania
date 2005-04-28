@@ -88,16 +88,13 @@ vector<MusicToPlay> g_MusicsToPlay;
 
 static void StartMusic( MusicToPlay &ToPlay )
 {
-CHECKPOINT;
 	LockMutex L( *g_Mutex );
-CHECKPOINT;
 	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(ToPlay.file) )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */
 	g_FadeState = FADE_NONE;
 
-CHECKPOINT;
 	if( ToPlay.file.empty() )
 	{
 		/* StopPlaying() can take a while, so don't hold the lock while we stop the sound.
@@ -112,7 +109,7 @@ CHECKPOINT;
 		SOUNDMAN->DeleteSound( pOldSound );
 		return;
 	}
-CHECKPOINT;
+
 	/* Unlock, load the sound here, and relock.  Loading may take a while if we're
 	 * reading from CD and we have to seek far, which can throw off the timing below. */
 	MusicPlaying *NewMusic;
@@ -126,7 +123,6 @@ CHECKPOINT;
 	}
 
 	NewMusic->m_Timing = g_Playing->m_Timing;
-CHECKPOINT;
 
 	/* See if we can find timing data, if it's not already loaded. */
 	if( !ToPlay.HasTiming && IsAFile(ToPlay.timing_file) )
@@ -135,7 +131,7 @@ CHECKPOINT;
 		if( SMLoader::LoadTimingFromFile( ToPlay.timing_file, ToPlay.timing_data ) )
 			ToPlay.HasTiming = true;
 	}
-CHECKPOINT;
+
 	if( ToPlay.HasTiming )
 		NewMusic->m_NewTiming = ToPlay.timing_data;
 
@@ -165,15 +161,12 @@ CHECKPOINT;
 		ToPlay.length_sec = fNewLengthSec;
 	}
 
-CHECKPOINT;
 	bool StartImmediately = false;
 	if( !ToPlay.HasTiming )
 	{
 		/* This song has no real timing data.  The offset is arbitrary.  Change it so
 		 * the beat will line up to where we are now, so we don't have to delay. */
 		float fDestBeat = fmodfp( GAMESTATE->m_fSongBeat, 1 );
-CHECKPOINT_M(ssprintf("%f",GAMESTATE->m_fSongBeat));
-CHECKPOINT_M(ssprintf("%p",NewMusic));
 		float fTime = NewMusic->m_NewTiming.GetElapsedTimeFromBeat( fDestBeat );
 
 		NewMusic->m_NewTiming.m_fBeat0OffsetInSeconds = fTime;
@@ -181,7 +174,6 @@ CHECKPOINT_M(ssprintf("%p",NewMusic));
 		StartImmediately = true;
 	}
 
-CHECKPOINT;
 	/* If we have an active timer, try to start on the next update.  Otherwise,
 	 * start now. */
 	if( !g_Playing->m_HasTiming && !g_UpdatingTimer )
@@ -189,7 +181,6 @@ CHECKPOINT;
 	if( !ToPlay.align_beat )
 		StartImmediately = true;
 
-CHECKPOINT;
 	RageTimer when; /* zero */
 	if( !StartImmediately )
 	{
@@ -214,7 +205,6 @@ CHECKPOINT;
 
 		when = GAMESTATE->m_LastBeatUpdate + PresumedLatency + fDistance;
 	}
-CHECKPOINT;
 
 	/* Important: don't hold the mutex while we load and seek the actual sound. */
 	L.Unlock();
@@ -238,11 +228,9 @@ CHECKPOINT;
 		NewMusic->m_Music->StartPlaying();
 	}
 
-CHECKPOINT;
 	LockMut( *g_Mutex );
 	delete g_Playing;
 	g_Playing = NewMusic;
-CHECKPOINT;
 }
 
 static void DoPlayOnceFromDir( CString sPath )
