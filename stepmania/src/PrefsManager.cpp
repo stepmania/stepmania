@@ -172,8 +172,8 @@ PrefsManager::PrefsManager() :
 	m_fSuperMeterPercentChangeNG		( Options, "SuperMeterPercentChangeNG",			-0.20f ),
 	m_bMercifulSuperMeter				( Options, "MercifulSuperMeter",				true ),
 	
-	m_fTimeMeterSecondsChangeMarvelous	( Options, "TimeMeterSecondsChangeMarvelous",	-0.0f ),
-	m_fTimeMeterSecondsChangePerfect	( Options, "TimeMeterSecondsChangePerfect",		-0.25f ),
+	m_fTimeMeterSecondsChangeMarvelous	( Options, "TimeMeterSecondsChangeMarvelous",	 0.0f ),
+	m_fTimeMeterSecondsChangePerfect	( Options, "TimeMeterSecondsChangePerfect",		-0.1f ),
 	m_fTimeMeterSecondsChangeGreat		( Options, "TimeMeterSecondsChangeGreat",		-0.5f ),
 	m_fTimeMeterSecondsChangeGood		( Options, "TimeMeterSecondsChangeGood",		-1.0f ),
 	m_fTimeMeterSecondsChangeBoo		( Options, "TimeMeterSecondsChangeBoo",			-2.0f ),
