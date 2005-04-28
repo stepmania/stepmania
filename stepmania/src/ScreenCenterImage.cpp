@@ -172,10 +172,10 @@ void ScreenCenterImage::Move( Axis axis, float fDelta )
 
 	CString sMessage = 
 		ssprintf( "Centering: x=%d, y=%d, width=%d, height=%d",
-		PREFSMAN->m_iCenterImageTranslateX, 
-		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageAddWidth,
-		PREFSMAN->m_fCenterImageAddHeight );
+		PREFSMAN->m_iCenterImageTranslateX.Value(), 
+		PREFSMAN->m_iCenterImageTranslateY.Value(),
+		PREFSMAN->m_fCenterImageAddWidth.Value(),
+		PREFSMAN->m_fCenterImageAddHeight.Value() );
 	SCREENMAN->SystemMessageNoAnimate( sMessage );
 }
 
