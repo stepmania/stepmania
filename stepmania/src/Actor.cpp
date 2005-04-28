@@ -15,6 +15,7 @@
 #include "ThemeManager.h"
 #include "LuaReference.h"
 #include "MessageManager.h"
+#include "LightsManager.h" // for NUM_CABINET_LIGHTS
 
 
 // lua start
@@ -170,6 +171,19 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	if( m_Effect == no_effect )
 	{
 		m_pTempState = &m_current;
+	}
+	else if( m_Effect == effect_lua )
+	{
+		/* Allow a Lua function to set the frame's draw state.  This may be expensive
+		 * and has not been well-benchmarked yet; use wisely.  This allows arbitrary
+		 * effects, instead of the mess of parameters below.  (In fact, all this does
+		 * is run a command, but to avoid calling RunCommand() all the time, and due
+		 * to the fact that this is the only place where the TempState is meaningful,
+		 * we treat this as an effect.) */
+		m_pTempState = &m_tempState;
+		m_tempState = m_current;
+
+		PlayCommand( m_sEffectCommand );
 	}
 	else
 	{
@@ -348,6 +362,7 @@ void Actor::SetTextureRenderStates()
 void Actor::EndDraw()
 {
 	DISPLAY->PopMatrix();
+	m_pTempState = NULL;
 }
 
 void Actor::UpdateTweening( float fDeltaTime )
@@ -620,6 +635,12 @@ void Actor::StretchTo( const RectF &r )
 
 
 // effect "macros"
+
+void Actor::SetEffectLua( const CString &sCommand )
+{
+	m_Effect = effect_lua;
+	m_sEffectCommand = sCommand;
+}
 
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {

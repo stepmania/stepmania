@@ -41,7 +41,7 @@ public:
 		TWEEN_BOUNCE_END,
 		TWEEN_SPRING,
 	};
-	enum Effect { no_effect,
+	enum Effect { no_effect, effect_lua,
 				diffuse_blink,	diffuse_shift,	diffuse_ramp,
 				glow_blink,		glow_shift,
 				rainbow,
@@ -205,7 +205,9 @@ public:
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
 	TweenState& DestTweenState()	// where Actor will end when its tween finish
 	{
-		if( m_Tweens.empty() )	// not tweening
+		if( m_pTempState != NULL ) // effect_lua running
+			return *m_pTempState;
+		else if( m_Tweens.empty() )	// not tweening
 			return m_current;
 		else
 			return LatestTween();
@@ -249,6 +251,7 @@ public:
 
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 
+	void SetEffectLua( const CString &sCommand );
 	void SetEffectDiffuseBlink( 
 		float fEffectPeriodSeconds = 1.0f,
 		RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
@@ -402,6 +405,7 @@ protected:
 	// Stuff for effects
 	//
 	Effect m_Effect;
+	CString m_sEffectCommand; // effect_lua
 	float m_fSecsIntoEffect, m_fEffectDelta;
 	float m_fEffectPeriodSeconds;
 	float m_fEffectDelay;
@@ -507,6 +511,7 @@ public:
 	static int shadowlength( T* p, lua_State *L )	{ p->SetShadowLength(FArg(1)); return 0; }
 	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlignString(SArg(1)); return 0; }
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlignString(SArg(1)); return 0; }
+	static int luaeffect( T* p, lua_State *L )		{ p->SetEffectLua(SArg(1)); return 0; }
 	static int diffuseblink( T* p, lua_State *L )	{ p->SetEffectDiffuseBlink(); return 0; }
 	static int diffuseshift( T* p, lua_State *L )	{ p->SetEffectDiffuseShift(); return 0; }
 	static int diffuseramp( T* p, lua_State *L )	{ p->SetEffectDiffuseRamp(); return 0; }
@@ -612,6 +617,7 @@ public:
 		ADD_METHOD( shadowlength )
 		ADD_METHOD( horizalign )
 		ADD_METHOD( vertalign )
+		ADD_METHOD( luaeffect )
 		ADD_METHOD( diffuseblink )
 		ADD_METHOD( diffuseshift )
 		ADD_METHOD( diffuseramp )
